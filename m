@@ -1,143 +1,35 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 6/6] ARM: EXYNOS4: Limit usage of pl330 device instance to
- non-dt build
-Date: Mon, 12 Sep 2011 23:59:25 +0530
-Message-ID: <1315852165-32402-7-git-send-email-thomas.abraham@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH v3 1/6] DMA: PL330: move filter function into driver
+Date: Tue, 13 Sep 2011 00:27:48 +0530
+Message-ID: <CABb+yY0Z5qH5TDAr+5mthzH8pdTu3Gfrzk9CLRWiJQ4n15eKEQ@mail.gmail.com>
 References: <1315852165-32402-1-git-send-email-thomas.abraham@linaro.org>
- <1315852165-32402-2-git-send-email-thomas.abraham@linaro.org>
- <1315852165-32402-3-git-send-email-thomas.abraham@linaro.org>
- <1315852165-32402-4-git-send-email-thomas.abraham@linaro.org>
- <1315852165-32402-5-git-send-email-thomas.abraham@linaro.org>
- <1315852165-32402-6-git-send-email-thomas.abraham@linaro.org>
+	<1315852165-32402-2-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53347 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753419Ab1ILSaO (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:50753 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753661Ab1ILS5t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Sep 2011 14:30:14 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRF005STA20V590@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Sep 2011 03:30:13 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRF00IKLA1VQ250@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 13 Sep 2011 03:30:13 +0900 (KST)
-In-reply-to: <1315852165-32402-6-git-send-email-thomas.abraham@linaro.org>
+	Mon, 12 Sep 2011 14:57:49 -0400
+Received: by bkbzt4 with SMTP id zt4so2890976bkb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Sep 2011 11:57:48 -0700 (PDT)
+In-Reply-To: <1315852165-32402-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, vinod.koul@intel.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, vinod.koul@intel.com, patches@linaro.org, boojin.kim@samsung.com
 
-The pl330 device instances and associated platform data is required only
-for non-device-tree builds. With device tree enabled, the data about the
-platform is obtained from the device tree. For images that include both
-dt and non-dt platforms, an addditional check is added to ensure that
-static amba device registrations is applicable to only non-dt platforms.
+On Mon, Sep 12, 2011 at 11:59 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
+> The dma channel selection filter function is moved from plat-samsung
+> into the pl330 driver. In additon to that, a check is added in the
+> filter function to ensure that the channel on which the filter has
+> been invoked is pl330 channel instance (and avoid any incorrect
+> access of chan->private in a system with multiple types of DMA
+> drivers).
+>
+> Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/mach-exynos4/Kconfig  |   10 ++++++++++
- arch/arm/mach-exynos4/Makefile |    3 ++-
- arch/arm/mach-exynos4/dma.c    |    6 ++++++
- 3 files changed, 18 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index d4d401c..679ba48 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -21,6 +21,11 @@ config EXYNOS4_MCT
- 	help
- 	  Use MCT (Multi Core Timer) as kernel timers
- 
-+config EXYNOS4_DEV_DMA
-+	bool
-+	help
-+	  Compile in amba device definitions for DMA controller
-+
- config EXYNOS4_DEV_AHCI
- 	bool
- 	help
-@@ -129,6 +134,7 @@ config MACH_SMDKC210
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung SMDKC210
- 
-@@ -153,6 +159,7 @@ config MACH_SMDKV310
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_KEYPAD
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung SMDKV310
- 
-@@ -191,6 +198,7 @@ config MACH_UNIVERSAL_C210
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C5
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung Mobile Universal S5PC210 Reference
- 	  Board.
-@@ -215,6 +223,7 @@ config MACH_NURI
- 	select EXYNOS4_SETUP_USB_PHY
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_ADC
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung Mobile NURI Board.
- 
-@@ -222,6 +231,7 @@ config MACH_EXYNOS4_DT
- 	bool "Samsung Exynos4 Machine using device tree"
- 	select CPU_EXYNOS4210
- 	select USE_OF
-+	select ARM_AMBA
- 	help
- 	  Machine support for Samsung Exynos4 machine with device tree enabled.
- 
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index d2bf5bf..a2f33dc 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -13,7 +13,8 @@ obj-				:=
- # Core support for EXYNOS4 system
- 
- obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
-+obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o pmu.o
-+obj-$(CONFIG_EXYNOS4_DEV_DMA)	+= dma.o
- obj-$(CONFIG_PM)		+= pm.o sleep.o
- obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
- 
-diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
-index c3c0d17..3203a31 100644
---- a/arch/arm/mach-exynos4/dma.c
-+++ b/arch/arm/mach-exynos4/dma.c
-@@ -24,6 +24,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/amba/bus.h>
- #include <linux/amba/pl330.h>
-+#include <linux/of.h>
- 
- #include <asm/irq.h>
- #include <plat/devs.h>
-@@ -138,6 +139,11 @@ struct amba_device exynos4_device_pdma1 = {
- 
- static int __init exynos4_dma_init(void)
- {
-+#ifdef CONFIG_OF
-+	if (of_have_populated_dt())
-+		return 0;
-+#endif
-+
- 	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
- 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
--- 
-1.6.6.rc2
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
