@@ -1,111 +1,161 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 1/6] DMA: PL330: move filter function into driver
-Date: Mon, 12 Sep 2011 23:59:20 +0530
-Message-ID: <1315852165-32402-2-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v3 4/6] DMA: PL330: Add device tree support
+Date: Mon, 12 Sep 2011 23:59:23 +0530
+Message-ID: <1315852165-32402-5-git-send-email-thomas.abraham@linaro.org>
 References: <1315852165-32402-1-git-send-email-thomas.abraham@linaro.org>
+ <1315852165-32402-2-git-send-email-thomas.abraham@linaro.org>
+ <1315852165-32402-3-git-send-email-thomas.abraham@linaro.org>
+ <1315852165-32402-4-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62857 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:62887 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753386Ab1ILSaF (ORCPT
+	with ESMTP id S1753643Ab1ILSaL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Sep 2011 14:30:05 -0400
+	Mon, 12 Sep 2011 14:30:11 -0400
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LRF00ER9A20FFD0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Sep 2011 03:30:03 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Sep 2011 03:30:09 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
  64bit (built Sep  7 2010)) with ESMTPA id <0LRF00IKLA1VQ250@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 13 Sep 2011 03:30:03 +0900 (KST)
-In-reply-to: <1315852165-32402-1-git-send-email-thomas.abraham@linaro.org>
+ for linux-samsung-soc@vger.kernel.org; Tue, 13 Sep 2011 03:30:09 +0900 (KST)
+In-reply-to: <1315852165-32402-4-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org
 Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, vinod.koul@intel.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com
 
-The dma channel selection filter function is moved from plat-samsung
-into the pl330 driver. In additon to that, a check is added in the
-filter function to ensure that the channel on which the filter has
-been invoked is pl330 channel instance (and avoid any incorrect
-access of chan->private in a system with multiple types of DMA
-drivers).
+For PL330 dma controllers instantiated from device tree, the channel
+lookup is based on phandle of the dma controller and dma request id
+specified by the client node. During probe, the private data of each
+channel of the controller is set to point to the device node of the
+dma controller. The 'chan_id' of the each channel is used as the
+dma request id.
 
-Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Client driver requesting dma channels specify the phandle of the
+dma controller and the request id. The pl330 filter function
+converts the phandle to the device node pointer and matches that
+with channel's private data. If a match is found, the request id
+from the client node and the 'chan_id' of the channel is matched.
+A channel is found if both the values match.
+
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Reviewed-by: Rob Herring <rob.herring@calxeda.com>
 ---
- arch/arm/plat-samsung/dma-ops.c |    6 ------
- drivers/dma/pl330.c             |   15 +++++++++++++++
- include/linux/amba/pl330.h      |    2 ++
- 3 files changed, 17 insertions(+), 6 deletions(-)
+ .../devicetree/bindings/dma/arm-pl330.txt          |   29 +++++++++++++++++
+ drivers/dma/pl330.c                                |   33 +++++++++++++++++--
+ 2 files changed, 58 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/arm-pl330.txt
 
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index 6e3d9ab..8d18425 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -17,12 +17,6 @@
- 
- #include <mach/dma.h>
- 
--static inline bool pl330_filter(struct dma_chan *chan, void *param)
--{
--	struct dma_pl330_peri *peri = chan->private;
--	return peri->peri_id == (unsigned)param;
--}
--
- static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
- 				struct samsung_dma_info *info)
- {
+diff --git a/Documentation/devicetree/bindings/dma/arm-pl330.txt b/Documentation/devicetree/bindings/dma/arm-pl330.txt
+new file mode 100644
+index 0000000..05b007d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dma/arm-pl330.txt
+@@ -0,0 +1,29 @@
++* ARM PrimeCell PL330 DMA Controller
++
++The ARM PrimeCell PL330 DMA controller can move blocks of memory contents
++between memory and peripherals or memory to memory.
++
++Required properties:
++  - compatible: should include both "arm,pl330" and "arm,primecell".
++  - reg: physical base address of the controller and length of memory mapped
++    region.
++  - interrupts: interrupt number to the cpu.
++
++Example: (from Samsung's Exynos4 processor dtsi file)
++
++	pdma0: pdma@12680000 {
++		compatible = "arm,pl330", "arm,primecell";
++		reg = <0x12680000 0x1000>;
++		interrupts = <99>;
++	};
++
++Client drivers (device nodes requiring dma transfers from dev-to-mem or
++mem-to-dev) should specify the DMA channel numbers using a two-value pair
++as shown below.
++
++  [property name]  = <[phandle of the dma controller] [dma request id]>;
++
++      where 'dma request id' is the dma request number which is connected
++      to the client controller.
++
++  Example:  tx-dma-channel = <&pdma0 12>;
 diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 621134f..5f1d24c 100644
+index 992bf82..7a4ebf1 100644
 --- a/drivers/dma/pl330.c
 +++ b/drivers/dma/pl330.c
-@@ -116,6 +116,9 @@ struct dma_pl330_desc {
- 	struct dma_pl330_chan *pchan;
- };
+@@ -19,6 +19,7 @@
+ #include <linux/amba/pl330.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/scatterlist.h>
++#include <linux/of.h>
  
-+/* forward declaration */
-+static struct amba_driver pl330_driver;
+ #define NR_DEFAULT_DESC	16
+ 
+@@ -277,6 +278,20 @@ bool pl330_filter(struct dma_chan *chan, void *param)
+ 	if (chan->device->dev->driver != &pl330_driver.drv)
+ 		return false;
+ 
++#ifdef CONFIG_OF
++	if (chan->device->dev->of_node) {
++		const __be32 *prop_value;
++		phandle phandle;
++		struct device_node *node;
 +
- static inline struct dma_pl330_chan *
- to_pchan(struct dma_chan *ch)
- {
-@@ -267,6 +270,18 @@ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
- 	tasklet_schedule(&pch->task);
++		prop_value = ((struct property *)param)->value;
++		phandle = be32_to_cpup(prop_value++);
++		node = of_find_node_by_phandle(phandle);
++		return ((chan->private == node) &&
++				(chan->chan_id == be32_to_cpup(prop_value)));
++	}
++#endif
++
+ 	peri_id = chan->private;
+ 	return *peri_id == (unsigned)param;
  }
+@@ -855,12 +870,17 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	INIT_LIST_HEAD(&pd->channels);
  
-+bool pl330_filter(struct dma_chan *chan, void *param)
-+{
-+	struct dma_pl330_peri *peri;
+ 	/* Initialize channel parameters */
+-	num_chan = max(pdat ? pdat->nr_valid_peri : 0, (u8)pi->pcfg.num_chan);
++	num_chan = max(pdat ? pdat->nr_valid_peri : (u8)pi->pcfg.num_peri,
++			(u8)pi->pcfg.num_chan);
+ 	pdmac->peripherals = kzalloc(num_chan * sizeof(*pch), GFP_KERNEL);
+ 
+ 	for (i = 0; i < num_chan; i++) {
+ 		pch = &pdmac->peripherals[i];
+-		pch->chan.private = pdat ? &pdat->peri_id[i] : NULL;
++		if (!adev->dev.of_node)
++			pch->chan.private = pdat ? &pdat->peri_id[i] : NULL;
++		else
++			pch->chan.private = adev->dev.of_node;
 +
-+	if (chan->device->dev->driver != &pl330_driver.drv)
-+		return false;
-+
-+	peri = chan->private;
-+	return peri->peri_id == (unsigned)param;
-+}
-+EXPORT_SYMBOL(pl330_filter);
-+
- static int pl330_alloc_chan_resources(struct dma_chan *chan)
- {
- 	struct dma_pl330_chan *pch = to_pchan(chan);
-diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
-index d12f077..6db72da 100644
---- a/include/linux/amba/pl330.h
-+++ b/include/linux/amba/pl330.h
-@@ -12,6 +12,7 @@
- #ifndef	__AMBA_PL330_H_
- #define	__AMBA_PL330_H_
+ 		INIT_LIST_HEAD(&pch->work_list);
+ 		spin_lock_init(&pch->lock);
+ 		pch->pl330_chid = NULL;
+@@ -874,10 +894,15 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
  
-+#include <linux/dmaengine.h>
- #include <asm/hardware/pl330.h>
+ 	pd->dev = &adev->dev;
+-	if (pdat)
++	if (pdat) {
+ 		pd->cap_mask = pdat->cap_mask;
+-	else
++	} else {
+ 		dma_cap_set(DMA_MEMCPY, pd->cap_mask);
++		if (pi->pcfg.num_peri) {
++			dma_cap_set(DMA_SLAVE, pd->cap_mask);
++			dma_cap_set(DMA_CYCLIC, pd->cap_mask);
++		}
++	}
  
- struct dma_pl330_peri {
-@@ -38,4 +39,5 @@ struct dma_pl330_platdata {
- 	unsigned mcbuf_sz;
- };
- 
-+extern bool pl330_filter(struct dma_chan *chan, void *param);
- #endif	/* __AMBA_PL330_H_ */
+ 	pd->device_alloc_chan_resources = pl330_alloc_chan_resources;
+ 	pd->device_free_chan_resources = pl330_free_chan_resources;
 -- 
 1.6.6.rc2
