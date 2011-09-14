@@ -1,38 +1,55 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: core: Fix the incorrect calculation for erase unit size.
-Date: Tue, 13 Sep 2011 22:29:52 -0400
-Message-ID: <m21uvjc0v3.fsf@bob.laptop.org>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: core: Fix the incorrect calculation for erase unit
+ size.
+Date: Wed, 14 Sep 2011 12:50:04 +0900
+Message-ID: <003101cc7291$63733220$2a599660$%jun@samsung.com>
 References: <1315461565-16009-1-git-send-email-tgih.jun@samsung.com>
-	<m24o0n6ujm.fsf@bob.laptop.org>
-	<002f01cc7285$d80dc660$88295320$%jun@samsung.com>
+ <m24o0n6ujm.fsf@bob.laptop.org>
+ <002f01cc7285$d80dc660$88295320$%jun@samsung.com>
+ <m21uvjc0v3.fsf@bob.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <002f01cc7285$d80dc660$88295320$%jun@samsung.com> (Seungwon
-	Jeon's message of "Wed, 14 Sep 2011 11:27:26 +0900")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:31616 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754765Ab1INDuV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 Sep 2011 23:50:21 -0400
+In-reply-to: <m21uvjc0v3.fsf@bob.laptop.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Chris Ball' <cjb@laptop.org>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-Hi,
+Chris Ball wrote:
+> 
+> Hi,
+> 
+> On Tue, Sep 13 2011, Seungwon Jeon wrote:
+> >> On Thu, Sep 08 2011, Seungwon Jeon wrote:
+> >> > Erase unit size of high capacity is multiple of 512KiB not 1024KiB.
+> >>
+> >> Could we have some more info, please?  What are the visible symptoms
+> >> of the erase unit size being incorrect, how did you realize this was
+> >> a problem, should this patch be applied to stable@, etc.
+> >
+> > It is mentioned from eMMC Spec.
+> > Erase unit size is defined in 512Kbyte * HC_ERASE_GRP_SIZE(EXT_CSD[224]).
+> 
+> You haven't answered any of the other questions I asked, though.
 
-On Tue, Sep 13 2011, Seungwon Jeon wrote:
->> On Thu, Sep 08 2011, Seungwon Jeon wrote:
->> > Erase unit size of high capacity is multiple of 512KiB not 1024KiB.
->> 
->> Could we have some more info, please?  What are the visible symptoms
->> of the erase unit size being incorrect, how did you realize this was
->> a problem, should this patch be applied to stable@, etc.
->
-> It is mentioned from eMMC Spec.
-> Erase unit size is defined in 512Kbyte * HC_ERASE_GRP_SIZE(EXT_CSD[224]).
+I didn't catch symptoms you expect. But it seems like plain.
+I just noticed the difference with spec.
 
-You haven't answered any of the other questions I asked, though.
+Best regards,
+Seungwon Jeon.
 
-Thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+> 
+> Thanks,
+> 
+> - Chris.
+> --
+> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+> One Laptop Per Child
