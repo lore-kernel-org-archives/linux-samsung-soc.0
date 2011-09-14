@@ -1,92 +1,109 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3 6/6] ARM: EXYNOS4: Limit usage of pl330 device instance
- to non-dt build
-Date: Wed, 14 Sep 2011 23:26:49 +0530
-Message-ID: <CAJuYYwRX20_qB69--dz2a9WrShN3hpUc_wSepdQ14D0Vr5QXoQ@mail.gmail.com>
-References: <1315852165-32402-1-git-send-email-thomas.abraham@linaro.org>
-	<1315852165-32402-2-git-send-email-thomas.abraham@linaro.org>
-	<1315852165-32402-3-git-send-email-thomas.abraham@linaro.org>
-	<1315852165-32402-4-git-send-email-thomas.abraham@linaro.org>
-	<1315852165-32402-5-git-send-email-thomas.abraham@linaro.org>
-	<1315852165-32402-6-git-send-email-thomas.abraham@linaro.org>
-	<1315852165-32402-7-git-send-email-thomas.abraham@linaro.org>
-	<20110914162633.GL3134@ponder.secretlab.ca>
+Subject: Re: [PATCH 2/2] input: samsung-keypad: Add device tree support
+Date: Wed, 14 Sep 2011 23:39:03 +0530
+Message-ID: <CAJuYYwRP2DGge1aHz-CWMnUrdz686s6X5Fp=LvRkM35VQS1XYw@mail.gmail.com>
+References: <1315916779-21793-1-git-send-email-thomas.abraham@linaro.org>
+	<1315916779-21793-2-git-send-email-thomas.abraham@linaro.org>
+	<1315916779-21793-3-git-send-email-thomas.abraham@linaro.org>
+	<20110914161144.GF3134@ponder.secretlab.ca>
+	<CAJuYYwSNaVCnHFTMtW0RZLGLaS+iKBibWYwn5mqNT-0EW31yAQ@mail.gmail.com>
+	<20110914171318.GA24425@ponder.secretlab.ca>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:62591 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757221Ab1INR4u convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Sep 2011 13:56:50 -0400
-Received: by gyg10 with SMTP id 10so1607425gyg.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Sep 2011 10:56:49 -0700 (PDT)
-In-Reply-To: <20110914162633.GL3134@ponder.secretlab.ca>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-Reply-To: <20110914171318.GA24425@ponder.secretlab.ca>
+Sender: linux-input-owner@vger.kernel.org
 To: Grant Likely <grant.likely@secretlab.ca>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, vinod.koul@intel.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi Grant,
 
-On 14 September 2011 21:56, Grant Likely <grant.likely@secretlab.ca> wr=
+On 14 September 2011 22:43, Grant Likely <grant.likely@secretlab.ca> wr=
 ote:
-> On Mon, Sep 12, 2011 at 11:59:25PM +0530, Thomas Abraham wrote:
->> The pl330 device instances and associated platform data is required =
-only
->> for non-device-tree builds. With device tree enabled, the data about=
- the
->> platform is obtained from the device tree. For images that include b=
-oth
->> dt and non-dt platforms, an addditional check is added to ensure tha=
-t
->> static amba device registrations is applicable to only non-dt platfo=
-rms.
+> On Wed, Sep 14, 2011 at 10:19:22PM +0530, Thomas Abraham wrote:
+>> Hi Grant,
 >>
->> Cc: Kukjin Kim <kgene.kim@samsung.com>
->> Cc: Kyungmin Park <kyungmin.park@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma=
-=2Ec
->> index c3c0d17..3203a31 100644
->> --- a/arch/arm/mach-exynos4/dma.c
->> +++ b/arch/arm/mach-exynos4/dma.c
->> @@ -24,6 +24,7 @@
->> =A0#include <linux/dma-mapping.h>
->> =A0#include <linux/amba/bus.h>
->> =A0#include <linux/amba/pl330.h>
->> +#include <linux/of.h>
->>
->> =A0#include <asm/irq.h>
->> =A0#include <plat/devs.h>
->> @@ -138,6 +139,11 @@ struct amba_device exynos4_device_pdma1 =3D {
->>
->> =A0static int __init exynos4_dma_init(void)
->> =A0{
->> +#ifdef CONFIG_OF
->> + =A0 =A0 if (of_have_populated_dt())
->> + =A0 =A0 =A0 =A0 =A0 =A0 return 0;
->> +#endif
->> +
->
-> Drop the #ifdef. =A0of_have_populated_dt() has an empty stub for
-> !CONFIG_OF. =A0Otherwise looks good to me. =A0Well done not breaking
-> non-DT support when CONFIG_OF is enabled. =A0:-)
+>> On 14 September 2011 21:41, Grant Likely <grant.likely@secretlab.ca>=
+ wrote:
+>> > On Tue, Sep 13, 2011 at 05:56:19PM +0530, Thomas Abraham wrote:
+>> >> Add device tree based discovery support for Samsung's keypad cont=
+roller.
+>> >>
+>> >> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+>> >> Cc: Donghwa Lee <dh09.lee@samsung.com>
+>> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> >> ---
+>> >> =A0.../devicetree/bindings/input/samsung-keypad.txt =A0 | =A0 88 =
+++++++++++
+>> >> =A0drivers/input/keyboard/samsung-keypad.c =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0177 ++++++++++++++++++--
+>> >> =A02 files changed, 253 insertions(+), 12 deletions(-)
+>> >> =A0create mode 100644 Documentation/devicetree/bindings/input/sam=
+sung-keypad.txt
+>> >>
 
-Ok. I will drop the #ifdef. Well, I actually learnt from you on not
-breaking non-dt support because of your comments on my earlier patches
-which did break non-dt support. Thanks.
+[...]
+
+>> >> +- Keys represented as child nodes: Each key connected to the key=
+pad
+>> >> + =A0controller is represented as a child node to the keypad cont=
+roller
+>> >> + =A0device node and should include the following properties.
+>> >> + =A0- keypad,row: the row number to which the key is connected.
+>> >> + =A0- keypad,column: the column number to which the key is conne=
+cted.
+>> >> + =A0- keypad,key-code: the key-code to be reported when the key =
+is pressed
+>> >> + =A0 =A0and released.
+>> >
+>> > What defines the meanings of the key codes?
+>>
+>> The key-code could be any value which the system would want the keyp=
+ad
+>> driver to report when that key is pressed.
+>
+> Are they linux keycodes? =A0If so, then this property name can
+> probably be linux,code. =A0There is already precedence for that
+> usage in Documentation/devicetree/bindings/gpio/gpio-keys.txt. =A0(I
+> would personally prefer "linux,key-code", but sometimes it is better
+> to go with existing precidence) You could also use linux,input-type a=
+s
+> specified in that binding.
+
+Ok. For linux, "keypad,key-code" would mean linux keycodes. The
+property name 'keypad,key-code' was chosen since it can be reused on
+non-linux platforms as well. I did have a look at
+Documentation/devicetree/bindings/gpio/gpio-keys.txt while doing this,
+but preferred using 'keypad,key-code' since it would be generic. Given
+a choice, I would like to retain this.
 
 >
-> The other patches in this series look good to me too.
+>>
+>> >
+>> >> +
+>> >> +Optional Properties specific to linux:
+>> >> +- linux,keypad-no-autorepeat: do no enable autorepeat feature.
+>> >> +- linux,keypad-wakeup: use any event on keypad as wakeup event.
+>> >
+>> > Is this really a linux-specific feature?
+>>
+>> Yes, it is a property defined by the linux subsystems. A non-linux
+>> system might not have such features.
+>
+> I was specifically referring to the wakeup property, but okay, I can
+> see the argument that it is linux-specific because it is usage-policy
+> related.
 >
 > g.
 
-Thanks for your review. I will do the changes you have recommended for
-the pl330 dt support patches and resubmit. I would like to add your
-Ack to the patches when resubmitting.
+Thanks for your review.
 
 Regards,
 Thomas.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-input" =
+in
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
