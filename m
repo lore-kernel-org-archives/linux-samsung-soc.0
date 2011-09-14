@@ -1,36 +1,33 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH v8 00/16] To use DMA generic APIs for Samsung DMA
-Date: Wed, 14 Sep 2011 17:03:53 +0530
-Message-ID: <CAJe_ZhdrPMbBOkfwg=PFyVU14eT0Gc0=rtKwEiQCH5-Q5-CtVQ@mail.gmail.com>
-References: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
-	<1315980099.26251.498.camel@vkoul-udesk3>
-	<CABb+yY25NTbtRPOw-KH8U4zA1Bo8q0BDM8SXyrsobG7NEv8edg@mail.gmail.com>
-	<1315999032.26251.501.camel@vkoul-udesk3>
+From: Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
+Date: Wed, 14 Sep 2011 08:36:05 -0300
+Message-ID: <CAOMZO5Cgq=+ukcyox9pz=2jWhQmfKXsqbXWLZ+Q=RkSJqBfpbg@mail.gmail.com>
+References: <1315998112-31395-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:51277 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932129Ab1INLdy (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Sep 2011 07:33:54 -0400
-Received: by wwf22 with SMTP id 22so2101682wwf.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Sep 2011 04:33:53 -0700 (PDT)
-In-Reply-To: <1315999032.26251.501.camel@vkoul-udesk3>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+In-Reply-To: <1315998112-31395-1-git-send-email-tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-On 14 September 2011 16:47, Vinod Koul <vinod.koul@intel.com> wrote:
-
->> The changelog for [PATCH v8 04/16] is misleading - we don't need any
->> modification for the reason mentioned in changelog. But the modification
->> has positive side-effect of preventing callbacks during terminate_all which
->> is no way understood from the changelog. So I would like to changelog
->> corrected.
-> I thought change log was correct in depicting what patch does and Boojin
-> had replied.... I will check again...
-
-I didn't reply because I ran out of ways to explain the same thing in
-different words.
+T24gV2VkLCBTZXAgMTQsIDIwMTEgYXQgODowMSBBTSwgVHVzaGFyIEJlaGVyYSA8dHVzaGFyLmJl
+aGVyYUBsaW5hcm8ub3JnPiB3cm90ZToKLi4uCj4gK3N0YXRpYyB2b2lkIGxjZF9odjA3MHdzYV9z
+ZXRfcG93ZXIoc3RydWN0IHBsYXRfbGNkX2RhdGEgKnBkLCB1bnNpZ25lZCBpbnQgcG93ZXIpCj4g
+K3sKPiArIMKgIMKgIMKgIGludCBncGlvID0gRVhZTk9TNF9HUEUzKDQpOwo+ICsKPiArIMKgIMKg
+IMKgIGdwaW9fcmVxdWVzdChncGlvLCAiR1BFM180Iik7Cj4gKyDCoCDCoCDCoCBncGlvX2RpcmVj
+dGlvbl9vdXRwdXQoZ3BpbywgcG93ZXIpOwoKWW91IHNob3VsZCBjaGVjayBmb3IgcmV0dXJuZWQg
+ZXJyb3JzIGZvciB0aGVzZSBmdW5jdGlvbnMuCgpSZWdhcmRzLAoKRmFiaW8gRXN0ZXZhbQoKX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KbGluYXJvLWRldiBt
+YWlsaW5nIGxpc3QKbGluYXJvLWRldkBsaXN0cy5saW5hcm8ub3JnCmh0dHA6Ly9saXN0cy5saW5h
+cm8ub3JnL21haWxtYW4vbGlzdGluZm8vbGluYXJvLWRldgo=
