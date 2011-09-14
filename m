@@ -1,108 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: convert boot_params to atag_offset
-Date: Wed, 14 Sep 2011 21:48:47 +0900
-Message-ID: <008601cc72dc$a5879700$f096c500$%kim@samsung.com>
-References: <1315802349-3892-1-git-send-email-tushar.behera@linaro.org>
+Subject: RE: [PATCH V4 5/6] ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer
+ support
+Date: Wed, 14 Sep 2011 22:06:06 +0900
+Message-ID: <008701cc72df$108e5aa0$31ab0fe0$%kim@samsung.com>
+References: <1315591301-17166-1-git-send-email-ajaykumar.rs@samsung.com>
+ <1315591301-17166-6-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21279 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932381Ab1INMsu (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:59331 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932412Ab1INNGI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Sep 2011 08:48:50 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Wed, 14 Sep 2011 09:06:08 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRI00H7XJL0UQ50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Sep 2011 21:48:48 +0900 (KST)
+ 2010)) with ESMTP id <0LRI001RWKE6LF60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Sep 2011 22:06:06 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRI00IDOJLC4I@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Sep 2011 21:48:48 +0900 (KST)
-In-reply-to: <1315802349-3892-1-git-send-email-tushar.behera@linaro.org>
+ with ESMTPA id <0LRI00LHTKE6SW@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Sep 2011 22:06:07 +0900 (KST)
+In-reply-to: <1315591301-17166-6-git-send-email-ajaykumar.rs@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org, 'Nicolas Pitre' <nicolas.pitre@linaro.org>
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com, m.szyprowski@samsung.com
 
-Tushar Behera wrote:
+Ajay Kumar wrote:
 > 
-> Based on "ARM: introduce atag_offset to replace boot_params"
-> by Nicolas Pitre (2bb9839e312ed55a6d5824ffa6077ce3d7d63b1e).
+> This patch:
+> 	-- Adds platform device support for LCD-LTE480.
+> 	-- Adds platform data for FB with win_mode and default_bpp.
+> 	-- Enables FB device support and platform-lcd support.
+> 	-- Adds SPCON settings for LCD.
 > 
-> Since boot_params variable is deleted from machine_desc, the variable
-> is modified in the newer board files.
-> 
-> CC: Nicolas Pitre <nicolas.pitre@linaro.org>
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 > ---
-> This is required when Kukjin's for-next branch is merged with
-> Russell's devel-stable branch.
+>  arch/arm/mach-s5p64x0/Kconfig                  |    2 +
+>  arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 +
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c          |   75
+> ++++++++++++++++++++++++
+>  3 files changed, 81 insertions(+), 0 deletions(-)
 > 
-> Nicolas's patchset already has changes for other EXYNSO4 based boards.
-> 
->  arch/arm/mach-exynos4/mach-origen.c   |    2 +-
->  arch/arm/mach-exynos4/mach-smdk4212.c |    2 +-
->  arch/arm/mach-exynos4/mach-smdkv310.c |    2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/mach-origen.c
-b/arch/arm/mach-exynos4/mach-
-> origen.c
-> index ed59f86..b5f6f38 100644
-> --- a/arch/arm/mach-exynos4/mach-origen.c
-> +++ b/arch/arm/mach-exynos4/mach-origen.c
-> @@ -100,7 +100,7 @@ static void __init origen_machine_init(void)
-> 
->  MACHINE_START(ORIGEN, "ORIGEN")
->  	/* Maintainer: JeongHyeon Kim <jhkim@insignal.co.kr> */
-> -	.boot_params	= S5P_PA_SDRAM + 0x100,
-> +	.atag_offset	= 0x100,
->  	.init_irq	= exynos4_init_irq,
->  	.map_io		= origen_map_io,
->  	.init_machine	= origen_machine_init,
-> diff --git a/arch/arm/mach-exynos4/mach-smdk4212.c b/arch/arm/mach-
-> exynos4/mach-smdk4212.c
-> index 3479a93..8c41ae1 100644
-> --- a/arch/arm/mach-exynos4/mach-smdk4212.c
-> +++ b/arch/arm/mach-exynos4/mach-smdk4212.c
-> @@ -284,7 +284,7 @@ static void __init smdk4212_machine_init(void)
-> 
->  MACHINE_START(SMDK4212, "SMDK4212")
->  	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> -	.boot_params	= S5P_PA_SDRAM + 0x100,
-> +	.atag_offset	= 0x100,
->  	.init_irq	= exynos4_init_irq,
->  	.map_io		= smdk4212_map_io,
->  	.init_machine	= smdk4212_machine_init,
-> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-
-> exynos4/mach-smdkv310.c
-> index 57cf632..7ce4d8b 100644
-> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-> @@ -344,7 +344,7 @@ MACHINE_END
-> 
->  MACHINE_START(SMDKC210, "SMDKC210")
->  	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
-> -	.boot_params	= S5P_PA_SDRAM + 0x100,
-> +	.atag_offset	= 0x100,
->  	.init_irq	= exynos4_init_irq,
->  	.map_io		= smdkv310_map_io,
->  	.init_machine	= smdkv310_machine_init,
-> --
-> 1.7.4.1
 
-Hi Tushar,
+(snip)
 
-Yes you're right and actually, I received the same information from Stephen
-when he merges my -next the end of last month.
+> +#include <plat/regs-fb.h>
 
-Anyway, if above fixing is required on my -next, will apply this.
+Should be <plat/regs-fb-v4.h>?
 
-Thanks :)
+(snip)
+
+> +/* Frame Buffer */
+> +static struct s3c_fb_pd_win smdk6440_fb_win0 = {
+> +	.win_mode = {
+> +		.left_margin	= 8,
+> +		.right_margin	= 13,
+> +		.upper_margin	= 7,
+> +		.lower_margin	= 5,
+> +		.hsync_len	= 3,
+> +		.vsync_len	= 1,
+> +		.xres		= 800,
+> +		.yres		= 480,
+> +		.refresh	= 60,
+
+if its value is 60, we don't need .refresh here.
+
+(snip)
+
+
+Thanks.
 
 Best regards,
 Kgene.
