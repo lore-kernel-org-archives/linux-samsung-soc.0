@@ -1,12 +1,12 @@
 From: Jongpill Lee <boyko.lee@samsung.com>
-Subject: [PATCH 1/3] ARM: EXYNOS4: Modify PMU register setting function
-Date: Thu, 15 Sep 2011 11:03:57 +0900
-Message-ID: <1316052239-8361-2-git-send-email-boyko.lee@samsung.com>
+Subject: [PATCH 2/3] ARM: EXYNOS4: Add PMU register definition for EXYNOS4212
+Date: Thu, 15 Sep 2011 11:03:58 +0900
+Message-ID: <1316052239-8361-3-git-send-email-boyko.lee@samsung.com>
 References: <1316052239-8361-1-git-send-email-boyko.lee@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:45702 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:45703 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755296Ab1IOIJ1 (ORCPT
+	with ESMTP id S1751162Ab1IOIJ1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Thu, 15 Sep 2011 04:09:27 -0400
 In-Reply-To: <1316052239-8361-1-git-send-email-boyko.lee@samsung.com>
@@ -15,296 +15,151 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, Jongpill Lee <boyko.lee@samsung.com>
 
-This patch modifies PMU register setting function to support the other Exynos4 series.
+This patch adds PMU register definition for Exynos4212
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 ---
- arch/arm/mach-exynos4/include/mach/pmu.h      |    5 +
- arch/arm/mach-exynos4/include/mach/regs-pmu.h |    1 -
- arch/arm/mach-exynos4/pmu.c                   |  238 +++++++++---------------
- 3 files changed, 94 insertions(+), 150 deletions(-)
+ arch/arm/mach-exynos4/include/mach/regs-pmu.h |   69 +++++++++++++++++++++----
+ 1 files changed, 58 insertions(+), 11 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/include/mach/pmu.h b/arch/arm/mach-exynos4/include/mach/pmu.h
-index a952904..430e917 100644
---- a/arch/arm/mach-exynos4/include/mach/pmu.h
-+++ b/arch/arm/mach-exynos4/include/mach/pmu.h
-@@ -20,6 +20,11 @@ enum sys_powerdown {
- 	NUM_SYS_POWERDOWN,
- };
- 
-+struct exynos4_pmu_conf {
-+	void __iomem *reg;
-+	unsigned long val[NUM_SYS_POWERDOWN];
-+};
-+
- extern void exynos4_sys_powerdown_conf(enum sys_powerdown mode);
- 
- #endif /* __ASM_ARCH_PMU_H */
 diff --git a/arch/arm/mach-exynos4/include/mach/regs-pmu.h b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-index cdf9b47..7fa44b9 100644
+index 7fa44b9..6fab38e 100644
 --- a/arch/arm/mach-exynos4/include/mach/regs-pmu.h
 +++ b/arch/arm/mach-exynos4/include/mach/regs-pmu.h
-@@ -27,7 +27,6 @@
+@@ -25,8 +25,10 @@
+ 
+ #define S5P_USE_STANDBY_WFI0			(1 << 16)
  #define S5P_USE_STANDBY_WFI1			(1 << 17)
++#define S5P_USE_STANDBYWFI_ISP_ARM		(1 << 18)
  #define S5P_USE_STANDBY_WFE0			(1 << 24)
  #define S5P_USE_STANDBY_WFE1			(1 << 25)
--#define S5P_USE_MASK				((0x3 << 16) | (0x3 << 24))
++#define S5P_USE_STANDBYWFE_ISP_ARM		(1 << 26)
  
  #define S5P_SWRESET				S5P_PMUREG(0x0400)
  
-diff --git a/arch/arm/mach-exynos4/pmu.c b/arch/arm/mach-exynos4/pmu.c
-index 7ea9eb2..0210231 100644
---- a/arch/arm/mach-exynos4/pmu.c
-+++ b/arch/arm/mach-exynos4/pmu.c
-@@ -16,160 +16,100 @@
- #include <mach/regs-clock.h>
- #include <mach/pmu.h>
+@@ -34,15 +36,11 @@
+ #define S5P_EINT_WAKEUP_MASK			S5P_PMUREG(0x0604)
+ #define S5P_WAKEUP_MASK				S5P_PMUREG(0x0608)
  
--static void __iomem *sys_powerdown_reg[] = {
--	S5P_ARM_CORE0_LOWPWR,
--	S5P_DIS_IRQ_CORE0,
--	S5P_DIS_IRQ_CENTRAL0,
--	S5P_ARM_CORE1_LOWPWR,
--	S5P_DIS_IRQ_CORE1,
--	S5P_DIS_IRQ_CENTRAL1,
--	S5P_ARM_COMMON_LOWPWR,
--	S5P_L2_0_LOWPWR,
--	S5P_L2_1_LOWPWR,
--	S5P_CMU_ACLKSTOP_LOWPWR,
--	S5P_CMU_SCLKSTOP_LOWPWR,
--	S5P_CMU_RESET_LOWPWR,
--	S5P_APLL_SYSCLK_LOWPWR,
--	S5P_MPLL_SYSCLK_LOWPWR,
--	S5P_VPLL_SYSCLK_LOWPWR,
--	S5P_EPLL_SYSCLK_LOWPWR,
--	S5P_CMU_CLKSTOP_GPS_ALIVE_LOWPWR,
--	S5P_CMU_RESET_GPSALIVE_LOWPWR,
--	S5P_CMU_CLKSTOP_CAM_LOWPWR,
--	S5P_CMU_CLKSTOP_TV_LOWPWR,
--	S5P_CMU_CLKSTOP_MFC_LOWPWR,
--	S5P_CMU_CLKSTOP_G3D_LOWPWR,
--	S5P_CMU_CLKSTOP_LCD0_LOWPWR,
--	S5P_CMU_CLKSTOP_LCD1_LOWPWR,
--	S5P_CMU_CLKSTOP_MAUDIO_LOWPWR,
--	S5P_CMU_CLKSTOP_GPS_LOWPWR,
--	S5P_CMU_RESET_CAM_LOWPWR,
--	S5P_CMU_RESET_TV_LOWPWR,
--	S5P_CMU_RESET_MFC_LOWPWR,
--	S5P_CMU_RESET_G3D_LOWPWR,
--	S5P_CMU_RESET_LCD0_LOWPWR,
--	S5P_CMU_RESET_LCD1_LOWPWR,
--	S5P_CMU_RESET_MAUDIO_LOWPWR,
--	S5P_CMU_RESET_GPS_LOWPWR,
--	S5P_TOP_BUS_LOWPWR,
--	S5P_TOP_RETENTION_LOWPWR,
--	S5P_TOP_PWR_LOWPWR,
--	S5P_LOGIC_RESET_LOWPWR,
--	S5P_ONENAND_MEM_LOWPWR,
--	S5P_MODIMIF_MEM_LOWPWR,
--	S5P_G2D_ACP_MEM_LOWPWR,
--	S5P_USBOTG_MEM_LOWPWR,
--	S5P_HSMMC_MEM_LOWPWR,
--	S5P_CSSYS_MEM_LOWPWR,
--	S5P_SECSS_MEM_LOWPWR,
--	S5P_PCIE_MEM_LOWPWR,
--	S5P_SATA_MEM_LOWPWR,
--	S5P_PAD_RETENTION_DRAM_LOWPWR,
--	S5P_PAD_RETENTION_MAUDIO_LOWPWR,
--	S5P_PAD_RETENTION_GPIO_LOWPWR,
--	S5P_PAD_RETENTION_UART_LOWPWR,
--	S5P_PAD_RETENTION_MMCA_LOWPWR,
--	S5P_PAD_RETENTION_MMCB_LOWPWR,
--	S5P_PAD_RETENTION_EBIA_LOWPWR,
--	S5P_PAD_RETENTION_EBIB_LOWPWR,
--	S5P_PAD_RETENTION_ISOLATION_LOWPWR,
--	S5P_PAD_RETENTION_ALV_SEL_LOWPWR,
--	S5P_XUSBXTI_LOWPWR,
--	S5P_XXTI_LOWPWR,
--	S5P_EXT_REGULATOR_LOWPWR,
--	S5P_GPIO_MODE_LOWPWR,
--	S5P_GPIO_MODE_MAUDIO_LOWPWR,
--	S5P_CAM_LOWPWR,
--	S5P_TV_LOWPWR,
--	S5P_MFC_LOWPWR,
--	S5P_G3D_LOWPWR,
--	S5P_LCD0_LOWPWR,
--	S5P_LCD1_LOWPWR,
--	S5P_MAUDIO_LOWPWR,
--	S5P_GPS_LOWPWR,
--	S5P_GPS_ALIVE_LOWPWR,
--};
-+static struct exynos4_pmu_conf *exynos4_pmu_config;
+-#define S5P_USBHOST_PHY_CONTROL			S5P_PMUREG(0x0708)
+-#define S5P_USBHOST_PHY_ENABLE			(1 << 0)
+-
+ #define S5P_MIPI_DPHY_CONTROL(n)		S5P_PMUREG(0x0710 + (n) * 4)
+ #define S5P_MIPI_DPHY_ENABLE			(1 << 0)
+ #define S5P_MIPI_DPHY_SRESETN			(1 << 1)
+ #define S5P_MIPI_DPHY_MRESETN			(1 << 2)
+ 
+-#define S5P_PMU_SATA_PHY_CONTROL		S5P_PMUREG(0x0720)
+ #define S5P_INFORM0				S5P_PMUREG(0x0800)
+ #define S5P_INFORM1				S5P_PMUREG(0x0804)
+ #define S5P_INFORM2				S5P_PMUREG(0x0808)
+@@ -75,7 +73,6 @@
+ #define S5P_CMU_CLKSTOP_MFC_LOWPWR		S5P_PMUREG(0x1148)
+ #define S5P_CMU_CLKSTOP_G3D_LOWPWR		S5P_PMUREG(0x114C)
+ #define S5P_CMU_CLKSTOP_LCD0_LOWPWR		S5P_PMUREG(0x1150)
+-#define S5P_CMU_CLKSTOP_LCD1_LOWPWR		S5P_PMUREG(0x1154)
+ #define S5P_CMU_CLKSTOP_MAUDIO_LOWPWR		S5P_PMUREG(0x1158)
+ #define S5P_CMU_CLKSTOP_GPS_LOWPWR		S5P_PMUREG(0x115C)
+ #define S5P_CMU_RESET_CAM_LOWPWR		S5P_PMUREG(0x1160)
+@@ -83,7 +80,6 @@
+ #define S5P_CMU_RESET_MFC_LOWPWR		S5P_PMUREG(0x1168)
+ #define S5P_CMU_RESET_G3D_LOWPWR		S5P_PMUREG(0x116C)
+ #define S5P_CMU_RESET_LCD0_LOWPWR		S5P_PMUREG(0x1170)
+-#define S5P_CMU_RESET_LCD1_LOWPWR		S5P_PMUREG(0x1174)
+ #define S5P_CMU_RESET_MAUDIO_LOWPWR		S5P_PMUREG(0x1178)
+ #define S5P_CMU_RESET_GPS_LOWPWR		S5P_PMUREG(0x117C)
+ #define S5P_TOP_BUS_LOWPWR			S5P_PMUREG(0x1180)
+@@ -91,14 +87,11 @@
+ #define S5P_TOP_PWR_LOWPWR			S5P_PMUREG(0x1188)
+ #define S5P_LOGIC_RESET_LOWPWR			S5P_PMUREG(0x11A0)
+ #define S5P_ONENAND_MEM_LOWPWR			S5P_PMUREG(0x11C0)
+-#define S5P_MODIMIF_MEM_LOWPWR			S5P_PMUREG(0x11C4)
+ #define S5P_G2D_ACP_MEM_LOWPWR			S5P_PMUREG(0x11C8)
+ #define S5P_USBOTG_MEM_LOWPWR			S5P_PMUREG(0x11CC)
+ #define S5P_HSMMC_MEM_LOWPWR			S5P_PMUREG(0x11D0)
+ #define S5P_CSSYS_MEM_LOWPWR			S5P_PMUREG(0x11D4)
+ #define S5P_SECSS_MEM_LOWPWR			S5P_PMUREG(0x11D8)
+-#define S5P_PCIE_MEM_LOWPWR			S5P_PMUREG(0x11E0)
+-#define S5P_SATA_MEM_LOWPWR			S5P_PMUREG(0x11E4)
+ #define S5P_PAD_RETENTION_DRAM_LOWPWR		S5P_PMUREG(0x1200)
+ #define S5P_PAD_RETENTION_MAUDIO_LOWPWR		S5P_PMUREG(0x1204)
+ #define S5P_PAD_RETENTION_GPIO_LOWPWR		S5P_PMUREG(0x1220)
+@@ -119,7 +112,6 @@
+ #define S5P_MFC_LOWPWR				S5P_PMUREG(0x1388)
+ #define S5P_G3D_LOWPWR				S5P_PMUREG(0x138C)
+ #define S5P_LCD0_LOWPWR				S5P_PMUREG(0x1390)
+-#define S5P_LCD1_LOWPWR				S5P_PMUREG(0x1394)
+ #define S5P_MAUDIO_LOWPWR			S5P_PMUREG(0x1398)
+ #define S5P_GPS_LOWPWR				S5P_PMUREG(0x139C)
+ #define S5P_GPS_ALIVE_LOWPWR			S5P_PMUREG(0x13A0)
+@@ -155,7 +147,6 @@
+ #define S5P_PMU_MFC_CONF			S5P_PMUREG(0x3C40)
+ #define S5P_PMU_G3D_CONF			S5P_PMUREG(0x3C60)
+ #define S5P_PMU_LCD0_CONF			S5P_PMUREG(0x3C80)
+-#define S5P_PMU_LCD1_CONF			S5P_PMUREG(0x3CA0)
+ #define S5P_PMU_GPS_CONF			S5P_PMUREG(0x3CE0)
+ 
+ #define S5P_PMU_SATA_PHY_CONTROL_EN		0x1
+@@ -164,4 +155,60 @@
+ 
+ #define S5P_CHECK_SLEEP				0x00000BAD
+ 
++/* Only for EXYNOS4210 */
++#define S5P_USBHOST_PHY_CONTROL		S5P_PMUREG(0x0708)
++#define S5P_USBHOST_PHY_ENABLE		(1 << 0)
 +
-+static unsigned int exynos4_pmu_entry_cnt;
- 
--static const unsigned int sys_powerdown_val[][NUM_SYS_POWERDOWN] = {
--	/* { AFTR, LPA, SLEEP }*/
--	{ 0, 0, 2 },	/* ARM_CORE0 */
--	{ 0, 0, 0 },	/* ARM_DIS_IRQ_CORE0 */
--	{ 0, 0, 0 },	/* ARM_DIS_IRQ_CENTRAL0 */
--	{ 0, 0, 2 },	/* ARM_CORE1 */
--	{ 0, 0, 0 },	/* ARM_DIS_IRQ_CORE1 */
--	{ 0, 0, 0 },	/* ARM_DIS_IRQ_CENTRAL1 */
--	{ 0, 0, 2 },	/* ARM_COMMON */
--	{ 2, 2, 3 },	/* ARM_CPU_L2_0 */
--	{ 2, 2, 3 },	/* ARM_CPU_L2_1 */
--	{ 1, 0, 0 },	/* CMU_ACLKSTOP */
--	{ 1, 0, 0 },	/* CMU_SCLKSTOP */
--	{ 1, 1, 0 },	/* CMU_RESET */
--	{ 1, 0, 0 },	/* APLL_SYSCLK */
--	{ 1, 0, 0 },	/* MPLL_SYSCLK */
--	{ 1, 0, 0 },	/* VPLL_SYSCLK */
--	{ 1, 1, 0 },	/* EPLL_SYSCLK */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_GPS_ALIVE */
--	{ 1, 1, 0 },	/* CMU_RESET_GPS_ALIVE */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_CAM */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_TV */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_MFC */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_G3D */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_LCD0 */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_LCD1 */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_MAUDIO */
--	{ 1, 1, 0 },	/* CMU_CLKSTOP_GPS */
--	{ 1, 1, 0 },	/* CMU_RESET_CAM */
--	{ 1, 1, 0 },	/* CMU_RESET_TV */
--	{ 1, 1, 0 },	/* CMU_RESET_MFC */
--	{ 1, 1, 0 },	/* CMU_RESET_G3D */
--	{ 1, 1, 0 },	/* CMU_RESET_LCD0 */
--	{ 1, 1, 0 },	/* CMU_RESET_LCD1 */
--	{ 1, 1, 0 },	/* CMU_RESET_MAUDIO */
--	{ 1, 1, 0 },	/* CMU_RESET_GPS */
--	{ 3, 0, 0 },	/* TOP_BUS */
--	{ 1, 0, 1 },	/* TOP_RETENTION */
--	{ 3, 0, 3 },	/* TOP_PWR */
--	{ 1, 1, 0 },	/* LOGIC_RESET */
--	{ 3, 0, 0 },	/* ONENAND_MEM */
--	{ 3, 0, 0 },	/* MODIMIF_MEM */
--	{ 3, 0, 0 },	/* G2D_ACP_MEM */
--	{ 3, 0, 0 },	/* USBOTG_MEM */
--	{ 3, 0, 0 },	/* HSMMC_MEM */
--	{ 3, 0, 0 },	/* CSSYS_MEM */
--	{ 3, 0, 0 },	/* SECSS_MEM */
--	{ 3, 0, 0 },	/* PCIE_MEM */
--	{ 3, 0, 0 },	/* SATA_MEM */
--	{ 1, 0, 0 },	/* PAD_RETENTION_DRAM */
--	{ 1, 1, 0 },	/* PAD_RETENTION_MAUDIO */
--	{ 1, 0, 0 },	/* PAD_RETENTION_GPIO */
--	{ 1, 0, 0 },	/* PAD_RETENTION_UART */
--	{ 1, 0, 0 },	/* PAD_RETENTION_MMCA */
--	{ 1, 0, 0 },	/* PAD_RETENTION_MMCB */
--	{ 1, 0, 0 },	/* PAD_RETENTION_EBIA */
--	{ 1, 0, 0 },	/* PAD_RETENTION_EBIB */
--	{ 1, 0, 0 },	/* PAD_RETENTION_ISOLATION */
--	{ 1, 0, 0 },	/* PAD_RETENTION_ALV_SEL */
--	{ 1, 1, 0 },	/* XUSBXTI */
--	{ 1, 1, 0 },	/* XXTI */
--	{ 1, 1, 0 },	/* EXT_REGULATOR */
--	{ 1, 0, 0 },	/* GPIO_MODE */
--	{ 1, 1, 0 },	/* GPIO_MODE_MAUDIO */
--	{ 7, 0, 0 },	/* CAM */
--	{ 7, 0, 0 },	/* TV */
--	{ 7, 0, 0 },	/* MFC */
--	{ 7, 0, 0 },	/* G3D */
--	{ 7, 0, 0 },	/* LCD0 */
--	{ 7, 0, 0 },	/* LCD1 */
--	{ 7, 7, 0 },	/* MAUDIO */
--	{ 7, 0, 0 },	/* GPS */
--	{ 7, 0, 0 },	/* GPS_ALIVE */
-+static struct exynos4_pmu_conf exynos4210_pmu_config[] = {
-+	/* { .reg = address, .val = { AFTR, LPA, SLEEP } */
-+	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
-+	{ S5P_DIS_IRQ_CORE0,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_CENTRAL0,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_ARM_CORE1_LOWPWR,			{ 0x0, 0x0, 0x2 } },
-+	{ S5P_DIS_IRQ_CORE1,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_CENTRAL1,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_ARM_COMMON_LOWPWR,		{ 0x0, 0x0, 0x2 } },
-+	{ S5P_L2_0_LOWPWR,			{ 0x2, 0x2, 0x3 } },
-+	{ S5P_L2_1_LOWPWR,			{ 0x2, 0x2, 0x3 } },
-+	{ S5P_CMU_ACLKSTOP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_SCLKSTOP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_LOWPWR,			{ 0x1, 0x1, 0x0 } },
-+	{ S5P_APLL_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_MPLL_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_VPLL_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_EPLL_SYSCLK_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_GPS_ALIVE_LOWPWR,	{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_GPSALIVE_LOWPWR,	{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_CAM_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_TV_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_MFC_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_G3D_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_LCD0_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_LCD1_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_MAUDIO_LOWPWR,	{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_GPS_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_CAM_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_TV_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_MFC_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_G3D_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_LCD0_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_LCD1_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_MAUDIO_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_GPS_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_TOP_BUS_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_TOP_RETENTION_LOWPWR,		{ 0x1, 0x0, 0x1 } },
-+	{ S5P_TOP_PWR_LOWPWR,			{ 0x3, 0x0, 0x3 } },
-+	{ S5P_LOGIC_RESET_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_ONENAND_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_MODIMIF_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_G2D_ACP_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_USBOTG_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_HSMMC_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_CSSYS_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_SECSS_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_PCIE_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_SATA_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_DRAM_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_MAUDIO_LOWPWR,	{ 0x1, 0x1, 0x0 } },
-+	{ S5P_PAD_RETENTION_GPIO_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_UART_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_MMCA_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_MMCB_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_EBIA_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_EBIB_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_ISOLATION_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_ALV_SEL_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_XUSBXTI_LOWPWR,			{ 0x1, 0x1, 0x0 } },
-+	{ S5P_XXTI_LOWPWR,			{ 0x1, 0x1, 0x0 } },
-+	{ S5P_EXT_REGULATOR_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_GPIO_MODE_LOWPWR,			{ 0x1, 0x0, 0x0 } },
-+	{ S5P_GPIO_MODE_MAUDIO_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CAM_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_TV_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_MFC_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_G3D_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_LCD0_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_LCD1_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_MAUDIO_LOWPWR,			{ 0x7, 0x7, 0x0 } },
-+	{ S5P_GPS_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_GPS_ALIVE_LOWPWR,			{ 0x7, 0x0, 0x0 } },
- };
- 
- void exynos4_sys_powerdown_conf(enum sys_powerdown mode)
- {
--	unsigned int count = ARRAY_SIZE(sys_powerdown_reg);
-+	unsigned int count = exynos4_pmu_entry_cnt;
- 
- 	for (; count > 0; count--)
--		__raw_writel(sys_powerdown_val[count - 1][mode],
--				sys_powerdown_reg[count - 1]);
-+		__raw_writel(exynos4_pmu_config[count - 1].val[mode],
-+				exynos4_pmu_config[count - 1].reg);
-+}
++#define S5P_PMU_SATA_PHY_CONTROL	S5P_PMUREG(0x0720)
 +
-+static int __init exynos4_pmu_init(void)
-+{
-+	exynos4_pmu_config = exynos4210_pmu_config;
-+	exynos4_pmu_entry_cnt = ARRAY_SIZE(exynos4210_pmu_config);
-+	printk(KERN_INFO "EXYNOS4210 PMU Initialize\n");
++#define S5P_CMU_CLKSTOP_LCD1_LOWPWR	S5P_PMUREG(0x1154)
++#define S5P_CMU_RESET_LCD1_LOWPWR	S5P_PMUREG(0x1174)
++#define S5P_MODIMIF_MEM_LOWPWR		S5P_PMUREG(0x11C4)
++#define S5P_PCIE_MEM_LOWPWR		S5P_PMUREG(0x11E0)
++#define S5P_SATA_MEM_LOWPWR		S5P_PMUREG(0x11E4)
++#define S5P_LCD1_LOWPWR			S5P_PMUREG(0x1394)
 +
-+	return 0;
- }
-+arch_initcall(exynos4_pmu_init);
++#define S5P_PMU_LCD1_CONF		S5P_PMUREG(0x3CA0)
++
++/* Only for EXYNOS4212 */
++#define S5P_ISP_ARM_LOWPWR			S5P_PMUREG(0x1050)
++#define S5P_DIS_IRQ_ISP_ARM_LOCAL_LOWPWR	S5P_PMUREG(0x1054)
++#define S5P_DIS_IRQ_ISP_ARM_CENTRAL_LOWPWR	S5P_PMUREG(0x1058)
++#define S5P_CMU_ACLKSTOP_COREBLK_LOWPWR		S5P_PMUREG(0x1110)
++#define S5P_CMU_SCLKSTOP_COREBLK_LOWPWR		S5P_PMUREG(0x1114)
++#define S5P_CMU_RESET_COREBLK_LOWPWR		S5P_PMUREG(0x111C)
++#define S5P_MPLLUSER_SYSCLK_LOWPWR		S5P_PMUREG(0x1130)
++#define S5P_CMU_CLKSTOP_ISP_LOWPWR		S5P_PMUREG(0x1154)
++#define S5P_CMU_RESET_ISP_LOWPWR		S5P_PMUREG(0x1174)
++#define S5P_TOP_BUS_COREBLK_LOWPWR		S5P_PMUREG(0x1190)
++#define S5P_TOP_RETENTION_COREBLK_LOWPWR	S5P_PMUREG(0x1194)
++#define S5P_TOP_PWR_COREBLK_LOWPWR		S5P_PMUREG(0x1198)
++#define S5P_OSCCLK_GATE_LOWPWR			S5P_PMUREG(0x11A4)
++#define S5P_LOGIC_RESET_COREBLK_LOWPWR		S5P_PMUREG(0x11B0)
++#define S5P_OSCCLK_GATE_COREBLK_LOWPWR		S5P_PMUREG(0x11B4)
++#define S5P_HSI_MEM_LOWPWR			S5P_PMUREG(0x11C4)
++#define S5P_ROTATOR_MEM_LOWPWR			S5P_PMUREG(0x11DC)
++#define S5P_PAD_RETENTION_GPIO_COREBLK_LOWPWR	S5P_PMUREG(0x123C)
++#define S5P_PAD_ISOLATION_COREBLK_LOWPWR	S5P_PMUREG(0x1250)
++#define S5P_GPIO_MODE_COREBLK_LOWPWR		S5P_PMUREG(0x1320)
++#define S5P_TOP_ASB_RESET_LOWPWR		S5P_PMUREG(0x1344)
++#define S5P_TOP_ASB_ISOLATION_LOWPWR		S5P_PMUREG(0x1348)
++#define S5P_ISP_LOWPWR				S5P_PMUREG(0x1394)
++#define S5P_DRAM_FREQ_DOWN_LOWPWR		S5P_PMUREG(0x13B0)
++#define S5P_DDRPHY_DLLOFF_LOWPWR		S5P_PMUREG(0x13B4)
++#define S5P_CMU_SYSCLK_ISP_LOWPWR		S5P_PMUREG(0x13B8)
++#define S5P_CMU_SYSCLK_GPS_LOWPWR		S5P_PMUREG(0x13BC)
++#define S5P_LPDDR_PHY_DLL_LOCK_LOWPWR		S5P_PMUREG(0x13C0)
++
++#define S5P_ARM_L2_0_OPTION			S5P_PMUREG(0x2608)
++#define S5P_ARM_L2_1_OPTION			S5P_PMUREG(0x2628)
++#define S5P_ONENAND_MEM_OPTION			S5P_PMUREG(0x2E08)
++#define S5P_HSI_MEM_OPTION			S5P_PMUREG(0x2E28)
++#define S5P_G2D_ACP_MEM_OPTION			S5P_PMUREG(0x2E48)
++#define S5P_USBOTG_MEM_OPTION			S5P_PMUREG(0x2E68)
++#define S5P_HSMMC_MEM_OPTION			S5P_PMUREG(0x2E88)
++#define S5P_CSSYS_MEM_OPTION			S5P_PMUREG(0x2EA8)
++#define S5P_SECSS_MEM_OPTION			S5P_PMUREG(0x2EC8)
++#define S5P_ROTATOR_MEM_OPTION			S5P_PMUREG(0x2F48)
++
+ #endif /* __ASM_ARCH_REGS_PMU_H */
 -- 
 1.7.1
