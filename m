@@ -1,106 +1,54 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Add keypad support for Origen
-Date: Thu, 15 Sep 2011 09:02:52 +0530
-Message-ID: <1316057572-13719-1-git-send-email-sachin.kamat@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
+Date: Thu, 15 Sep 2011 09:06:54 +0530
+Message-ID: <4E7172D6.4060601@linaro.org>
+References: <1315998112-31395-1-git-send-email-tushar.behera@linaro.org>	<CAOMZO5Cgq=+ukcyox9pz=2jWhQmfKXsqbXWLZ+Q=RkSJqBfpbg@mail.gmail.com>	<4E7098FD.2090905@linaro.org> <CAOMZO5DmwKOkHk2+FQ00Jjfo-SJ_Te97Mmypm+0XH=YBd8KUAA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f42.google.com ([74.125.83.42]:50185 "EHLO
-	mail-gw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754112Ab1IODgm (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:57940 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754112Ab1IODgz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Sep 2011 23:36:42 -0400
-Received: by gwb17 with SMTP id 17so2763612gwb.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Sep 2011 20:36:41 -0700 (PDT)
+	Wed, 14 Sep 2011 23:36:55 -0400
+Received: by iaqq3 with SMTP id q3so725613iaq.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Sep 2011 20:36:53 -0700 (PDT)
+In-Reply-To: <CAOMZO5DmwKOkHk2+FQ00Jjfo-SJ_Te97Mmypm+0XH=YBd8KUAA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
+To: Fabio Estevam <festevam@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
 
-This patch adds keypad support for Origen board as GPIO keys.
+Hi Fabio Estevam,
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos4/mach-origen.c |   58 +++++++++++++++++++++++++++++++++++
- 1 files changed, 58 insertions(+), 0 deletions(-)
+On Wednesday 14 September 2011 06:09 PM, Fabio Estevam wrote:
+> On Wed, Sep 14, 2011 at 9:07 AM, Tushar Behera<tushar.behera@linaro.org>  wrote:
+> ...
+>
+>> Will this be better?
+>>
+>> static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, \
+>>                                         unsigned int power)
+>> {
+>>         int ret;
+>>         unsigned long flag = power ? GPIOF_OUT_INIT_HIGH : \
+>>                                         GPIOF_OUT_INIT_LOW;
+>>
+>>         ret = gpio_request_one(EXYNOS4_GPE3(4), flag, "GPE3_4");
+>>
+>>         if (ret)
+>>                 printk(KERN_ERR "Could not request gpio for LCD power");
+>> }
+>
+> Looks better. You can use pr_err instead of printk(KERN_ERR .
+>
+Thanks for your review comments. I will send the next version with these 
+changes.
+> Regards,
+>
+> Fabio Estevam
 
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index ed59f86..61da36b 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -14,6 +14,7 @@
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/input.h>
-+#include <linux/gpio_keys.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -79,10 +80,67 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata __initdata = {
- 	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
- };
- 
-+static struct gpio_keys_button origen_gpio_keys_table[] = {
-+	{
-+		.code = KEY_MENU,
-+		.gpio = EXYNOS4_GPX1(5),
-+		.desc = "gpio-keys: KEY_MENU",
-+		.type = EV_KEY,
-+		.active_low = 1,
-+		.wakeup = 1,
-+		.debounce_interval = 1,
-+	}, {
-+		.code = KEY_HOME,
-+		.gpio = EXYNOS4_GPX1(6),
-+		.desc = "gpio-keys: KEY_HOME",
-+		.type = EV_KEY,
-+		.active_low = 1,
-+		.wakeup = 1,
-+		.debounce_interval = 1,
-+	}, {
-+		.code = KEY_BACK,
-+		.gpio = EXYNOS4_GPX1(7),
-+		.desc = "gpio-keys: KEY_BACK",
-+		.type = EV_KEY,
-+		.active_low = 1,
-+		.wakeup = 1,
-+		.debounce_interval = 1,
-+	}, {
-+		.code = KEY_UP,
-+		.gpio = EXYNOS4_GPX2(0),
-+		.desc = "gpio-keys: KEY_UP",
-+		.type = EV_KEY,
-+		.active_low = 1,
-+		.wakeup = 1,
-+		.debounce_interval = 1,
-+	}, {
-+		.code = KEY_DOWN,
-+		.gpio = EXYNOS4_GPX2(1),
-+		.desc = "gpio-keys: KEY_DOWN",
-+		.type = EV_KEY,
-+		.active_low = 1,
-+		.wakeup = 1,
-+		.debounce_interval = 1,
-+	},
-+};
-+
-+static struct gpio_keys_platform_data origen_gpio_keys_data = {
-+	.buttons = origen_gpio_keys_table,
-+	.nbuttons = ARRAY_SIZE(origen_gpio_keys_table),
-+};
-+
-+static struct platform_device origen_device_gpiokeys = {
-+	.name = "gpio-keys",
-+	.dev = {
-+		.platform_data = &origen_gpio_keys_data,
-+	},
-+};
-+
- static struct platform_device *origen_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-+	&origen_device_gpiokeys,
- };
- 
- static void __init origen_map_io(void)
+
 -- 
-1.7.4.1
+Tushar Behera
