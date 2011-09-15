@@ -1,91 +1,87 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH V2] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
-Date: Thu, 15 Sep 2011 11:03:39 +0530
-Message-ID: <4E718E33.4070608@linaro.org>
-References: <1315998112-31395-1-git-send-email-tushar.behera@linaro.org> <CAOMZO5Cgq=+ukcyox9pz=2jWhQmfKXsqbXWLZ+Q=RkSJqBfpbg@mail.gmail.com> <4E7098FD.2090905@linaro.org> <00a101cc7363$9b8960d0$d29c2270$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] arm: exynos4: fix incorrect pad configuration for keypad
+ row lines
+Date: Thu, 15 Sep 2011 14:52:18 +0900
+Message-ID: <00a201cc736b$a11dc740$e35955c0$%kim@samsung.com>
+References: <1315129244-26489-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:51461 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754263Ab1IOFdh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Sep 2011 01:33:37 -0400
-Received: by pzk32 with SMTP id 32so1826078pzk.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Sep 2011 22:33:37 -0700 (PDT)
-In-Reply-To: <00a101cc7363$9b8960d0$d29c2270$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-input-owner@vger.kernel.org>
+In-reply-to: <1315129244-26489-1-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
+Sender: linux-input-owner@vger.kernel.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Fabio Estevam' <festevam@gmail.com>, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Hi Kukjin,
-
-On Thursday 15 September 2011 10:24 AM, Kukjin Kim wrote:
-> Tushar Behera wrote:
->>
->> Hi Fabio,
->>
->> On Wednesday 14 September 2011 05:06 PM, Fabio Estevam wrote:
->>> On Wed, Sep 14, 2011 at 8:01 AM, Tushar Behera<tushar.behera@linaro.org>
->> wrote:
->>> ...
->>>> +static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int
->> power)
->>>> +{
->>>> +       int gpio = EXYNOS4_GPE3(4);
->>>> +
->>>> +       gpio_request(gpio, "GPE3_4");
->>>> +       gpio_direction_output(gpio, power);
->>>
->>> You should check for returned errors for these functions.
->>>
->> Ok.
->>
->> Will this be better?
->>
->> static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, \
->
-> No need '\'
->
->> 					unsigned int power)
->> {
->> 	int ret;
->> 	unsigned long flag = power ? GPIOF_OUT_INIT_HIGH : \
->
-> Same as above.
->
->> 					GPIOF_OUT_INIT_LOW;
->>
->> 	ret = gpio_request_one(EXYNOS4_GPE3(4), flag, "GPE3_4");
->>
->> 	if (ret)
->> 		printk(KERN_ERR "Could not request gpio for LCD power");
->> }
->
-> How about following?
->
-> 	if (power)
-> 		ret = gpio_request_one(EXYNOS4_GPE3(4), GPIOF_OUT_INIT_HIGH, "GPE3_4");
-> 	else
-> 		ret = gpio_request_one(EXYNOS4_GPE3(4), GPIOF_OUT_INIT_LOW, "GPE3_4");
->
-> 	if (ret)
-> 		pr_err("failed to request gpio for LCD power: %d\n", ret);
-Thanks, I will update accordingly.
-
-Also I will remove the .refresh value as suggested in the other thread.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
+Thomas Abraham wrote:
+> 
+> The keypad controller requires a external pull-up for all the keypad
+> row lines. Fix the incorrect pad configuration for keypad controller
+> row lines by enabling the pad pull-up for the all row lines of the
+> keypad controller.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> SMDKV310 board does not have pull-up resistors populated for the keypad
+> row lines (unlike the smdk boards for the previous Samsung SoC's). So
+> the pad pull-up for all keypad row lines should be enabled for
+> smdkv310 board.
+> 
+> The default requirement for the keypad controller is to enable the
+> pull-up for all the keypad row lines. If a exynos4 based board has
+> on-board pull-up's populated for keypad row lines, this patch would
+> cause no harm. And in such cases, if internal pad pull-up is to be
+> disabled (to reduce some power consumption), an alternative gpio
+> configuration function can be supplied that does not enable the
+> internal pad pull-up.
+> ---
+>  arch/arm/mach-exynos4/setup-keypad.c |   11 ++++++-----
+>  1 files changed, 6 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/setup-keypad.c b/arch/arm/mach-
+> exynos4/setup-keypad.c
+> index 1ee0ebf..7862bfb 100644
+> --- a/arch/arm/mach-exynos4/setup-keypad.c
+> +++ b/arch/arm/mach-exynos4/setup-keypad.c
+> @@ -19,15 +19,16 @@ void samsung_keypad_cfg_gpio(unsigned int rows,
+> unsigned int cols)
+> 
+>  	if (rows > 8) {
+>  		/* Set all the necessary GPX2 pins: KP_ROW[0~7] */
+> -		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX2(0), 8,
+> S3C_GPIO_SFN(3));
+> +		s3c_gpio_cfgall_range(EXYNOS4_GPX2(0), 8,
+> S3C_GPIO_SFN(3),
+> +					S3C_GPIO_PULL_UP);
+> 
+>  		/* Set all the necessary GPX3 pins: KP_ROW[8~] */
+> -		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX3(0), (rows - 8),
+> -					 S3C_GPIO_SFN(3));
+> +		s3c_gpio_cfgall_range(EXYNOS4_GPX3(0), (rows - 8),
+> +					 S3C_GPIO_SFN(3),
+> S3C_GPIO_PULL_UP);
+>  	} else {
+>  		/* Set all the necessary GPX2 pins: KP_ROW[x] */
+> -		s3c_gpio_cfgrange_nopull(EXYNOS4_GPX2(0), rows,
+> -					 S3C_GPIO_SFN(3));
+> +		s3c_gpio_cfgall_range(EXYNOS4_GPX2(0), rows,
+> S3C_GPIO_SFN(3),
+> +					S3C_GPIO_PULL_UP);
+>  	}
+> 
+>  	/* Set all the necessary GPX1 pins to special-function 3: KP_COL[x]
+*/
 > --
-> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
+> 1.6.6.rc2
 
+Oops, you're right, applied.
+Thanks.
 
--- 
-Tushar Behera
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
