@@ -1,80 +1,85 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
 Subject: RE: [PATCH V2] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
-Date: Thu, 15 Sep 2011 13:50:04 +0900
-Message-ID: <00a001cc7362$ef937770$ceba6650$%kim@samsung.com>
+Date: Thu, 15 Sep 2011 13:54:53 +0900
+Message-ID: <00a101cc7363$9b8960d0$d29c2270$%kim@samsung.com>
 References: <1315998112-31395-1-git-send-email-tushar.behera@linaro.org>
+ <CAOMZO5Cgq=+ukcyox9pz=2jWhQmfKXsqbXWLZ+Q=RkSJqBfpbg@mail.gmail.com>
+ <4E7098FD.2090905@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34344 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751716Ab1IOEuH (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48861 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752012Ab1IOEzA convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Sep 2011 00:50:07 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Thu, 15 Sep 2011 00:55:00 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRJ0055ES1FHK80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Sep 2011 13:50:05 +0900 (KST)
+ 2010)) with ESMTP id <0LRJ00JDJSBDLTD0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Sep 2011 13:54:53 +0900 (KST)
 Received: from kgenekim ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRJ0068SS3GRM40@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 15 Sep 2011 13:50:05 +0900 (KST)
-In-reply-to: <1315998112-31395-1-git-send-email-tushar.behera@linaro.org>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LRJ007CMSBH4C10@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 15 Sep 2011 13:54:53 +0900 (KST)
+In-reply-to: <4E7098FD.2090905@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Fabio Estevam' <festevam@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
 
 Tushar Behera wrote:
 > 
-> ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
-> resolution of the LCD panel is 1024x600.
+> Hi Fabio,
 > 
-> Also power domain device for LCD0 is registered.
+> On Wednesday 14 September 2011 05:06 PM, Fabio Estevam wrote:
+> > On Wed, Sep 14, 2011 at 8:01 AM, Tushar Behera<tushar.behera@linaro.org>
+> wrote:
+> > ...
+> >> +static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int
+> power)
+> >> +{
+> >> +       int gpio = EXYNOS4_GPE3(4);
+> >> +
+> >> +       gpio_request(gpio, "GPE3_4");
+> >> +       gpio_direction_output(gpio, power);
+> >
+> > You should check for returned errors for these functions.
+> >
+> Ok.
 > 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
-> Changes for V2:
-> 	* Added power domain device registration for LCD0
+> Will this be better?
 > 
-> The patch is rebased on [1]. For proper working of LCD on ORIGEN,
-> following patches are needed. These patches are already submitted to
-> the mailing list.
+> static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, \
+
+No need '\'
+
+> 					unsigned int power)
+> {
+> 	int ret;
+> 	unsigned long flag = power ? GPIOF_OUT_INIT_HIGH : \
+
+Same as above.
+
+> 					GPIOF_OUT_INIT_LOW;
 > 
-> a. ARM: EXYNOS4: Add PWM backlight support on Origen
-> 	Author: Giridhar Maruthy
+> 	ret = gpio_request_one(EXYNOS4_GPE3(4), flag, "GPE3_4");
+> 
+> 	if (ret)
+> 		printk(KERN_ERR "Could not request gpio for LCD power");
+> }
 
-As I said, it is already in my tree.
+How about following?
 
-> b. ARM: EXYNOS4: Configure MAX8997 PMIC for Origen
-> 	Author: Inderpal Singh
+	if (power)
+		ret = gpio_request_one(EXYNOS4_GPE3(4), GPIOF_OUT_INIT_HIGH, "GPE3_4");
+	else
+		ret = gpio_request_one(EXYNOS4_GPE3(4), GPIOF_OUT_INIT_LOW, "GPE3_4");
 
-Will review it.
-
-(snip)
-
-> +
-> +static struct s3c_fb_pd_win origen_fb_win0 = {
-> +	.win_mode = {
-> +		.left_margin	= 64,
-> +		.right_margin	= 16,
-> +		.upper_margin	= 64,
-> +		.lower_margin	= 16,
-> +		.hsync_len	= 48,
-> +		.vsync_len	= 3,
-> +		.xres		= 1024,
-> +		.yres		= 600,
-> +		.refresh	= 60,
-
-We don't need to add '.refresh' here because its default value is 60.
-
-> +	},
-> +	.max_bpp		= 32,
-> +	.default_bpp		= 24,
-> +};
+	if (ret)
+		pr_err("failed to request gpio for LCD power: %d\n", ret);
 
 Thanks.
 
