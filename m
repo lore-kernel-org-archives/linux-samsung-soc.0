@@ -1,40 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung Fixes for v3.1-rc7
-Date: Thu, 15 Sep 2011 17:32:59 +0200
-Message-ID: <201109151732.59886.arnd@arndb.de>
-References: <00b101cc738d$bcf46ce0$36dd46a0$%kim@samsung.com>
+From: Philip Rakity <prakity@marvell.com>
+Subject: Re: confusion regarding the CMD19 and CMD21 in eMMC/SD card spec
+Date: Thu, 15 Sep 2011 09:23:07 -0700
+Message-ID: <0356427A-B949-4DA6-9F5D-FE0DD54AEDFF@marvell.com>
+References: <CAGxe1ZH=mrAdfVR7Uw8mYNAD43BAbW7VGuhA1pN9hbSjTG9HVA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:50914 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934023Ab1IOPdQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Sep 2011 11:33:16 -0400
-In-Reply-To: <00b101cc738d$bcf46ce0$36dd46a0$%kim@samsung.com>
+Received: from na3sys009aog104.obsmtp.com ([74.125.149.73]:56363 "EHLO
+	na3sys009aog104.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934154Ab1IOQ0h convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Sep 2011 12:26:37 -0400
+In-Reply-To: <CAGxe1ZH=mrAdfVR7Uw8mYNAD43BAbW7VGuhA1pN9hbSjTG9HVA@mail.gmail.com>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On Thursday 15 September 2011, Kukjin Kim wrote:
-> This is Samsung fixes for v3.1
+
+Different committee's --- Different standards.
+
+There is no issue with overlap.  
+
+
+On Sep 15, 2011, at 4:58 AM, Girish K S wrote:
+
+> Dear all,
+>             The eMMC 4.5 specification mentions that the CMD21 in
+> class 2 is a SEND_TUNING BLOCK command. where as the SD card
+> specification
+> in the given link says CMD19 in class 2 is the SEND_TUNING_BLOCK
+> http://www.scribd.com/doc/50685191/53/Figure-4-8-Send-Tuning-Block-Command.
+> Also the implementation in the drivers/mmc/host/sdhci.c uses the CMD19
+> as the SEND_TUNING_BLOCK.
+> Can anybody clarify why there is overlapping in this command number.
+> May be my understand is wrong.
 > 
-> Please pull from:
->   git://github.com/kgene/linux-samsung.git samsung-fixes-2
-> As you know, git.kernel.org/master.kernel.org has been down so I use
-> temporary git repo. at github now.
+> In the MMC spec the CMD19 is BUS_TEST_W in class 0 and CMD21 is
+> reserved till eMMC 4.41 version.
+> But in the SD specification (given link) CMD19 is SEND_TUNING_BLOCK
+> and CMD21 is reserved.
 > 
-> These things are needed for v3.1 and if any problems, please let me know.
-> 
-> As a note, others for v3.2 will be sent in the next week...
-
-Thanks, pulled.
-
-Is it correct that you want none of these patches to be backported
-into the stable or longterm releases? Some of these look like they
-should be marked 'Cc: stable@kernel.org'.
-
-	Arnd
+> Thanks and regards
+> Girish K S
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
