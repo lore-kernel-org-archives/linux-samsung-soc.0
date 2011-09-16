@@ -1,134 +1,94 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: Add keypad support for Origen
-Date: Fri, 16 Sep 2011 21:12:10 +0900
-Message-ID: <00d201cc7469$dc599bf0$950cd3d0$%kim@samsung.com>
-References: <1316057572-13719-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH v2] ARM: EXYNOS4: Add HDMI support for Origen
+Date: Fri, 16 Sep 2011 21:19:57 +0900
+Message-ID: <00d301cc746a$f295a2f0$d7c0e8d0$%kim@samsung.com>
+References: <1315475289-10967-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58748 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968Ab1IPMMM (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:19957 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751820Ab1IPMT6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Sep 2011 08:12:12 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Fri, 16 Sep 2011 08:19:58 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRM00HRT786QX60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:12:10 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRM002Z478A6C70@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:12:10 +0900 (KST)
-In-reply-to: <1316057572-13719-1-git-send-email-sachin.kamat@linaro.org>
+ 2010)) with ESMTP id <0LRM00EBU7L86L80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:19:57 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRM0056N7L9R8@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:19:57 +0900 (KST)
+In-reply-to: <1315475289-10967-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org
 
 Sachin Kamat wrote:
 > 
-> This patch adds keypad support for Origen board as GPIO keys.
+> This patch adds HDMI (TVout) support for Origen board.
 > 
 > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  arch/arm/mach-exynos4/mach-origen.c |   58
-> +++++++++++++++++++++++++++++++++++
->  1 files changed, 58 insertions(+), 0 deletions(-)
+> Re-submitting the patch with minor changes since v1:
+> * Re-ordered the entries in Kconfig and init data
 > 
+> This patch is based on for-next branch of Kukjin Kim's tree:
+>
+http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=summary
+> 
+> This patch is tested using Hatim's patch:
+> http://www.spinics.net/lists/linux-samsung-soc/msg06367.html
+> ---
+>  arch/arm/mach-exynos4/Kconfig       |    2 ++
+>  arch/arm/mach-exynos4/mach-origen.c |    4 ++++
+>  2 files changed, 6 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+> index 181fb04..e0c217f 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -224,6 +224,8 @@ config MACH_ORIGEN
+>  	select S3C_DEV_RTC
+>  	select S3C_DEV_WDT
+>  	select S3C_DEV_HSMMC2
+> +	select S5P_DEV_I2C_HDMIPHY
+> +	select S5P_DEV_TV
+>  	select EXYNOS4_SETUP_SDHCI
+>  	help
+>  	  Machine support for ORIGEN based on Samsung EXYNOS4210
 > diff --git a/arch/arm/mach-exynos4/mach-origen.c
 b/arch/arm/mach-exynos4/mach-
 > origen.c
-> index ed59f86..61da36b 100644
+> index ed59f86..5525329 100644
 > --- a/arch/arm/mach-exynos4/mach-origen.c
 > +++ b/arch/arm/mach-exynos4/mach-origen.c
-> @@ -14,6 +14,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
->  #include <linux/input.h>
-> +#include <linux/gpio_keys.h>
-> 
->  #include <asm/mach/arch.h>
->  #include <asm/mach-types.h>
-> @@ -79,10 +80,67 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata
-> __initdata = {
->  	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
->  };
-> 
-> +static struct gpio_keys_button origen_gpio_keys_table[] = {
-> +	{
-> +		.code = KEY_MENU,
-
-If you're ok, will change tab between '.code' and '=', I think it would be
-better to read code.
-
-> +		.gpio = EXYNOS4_GPX1(5),
-> +		.desc = "gpio-keys: KEY_MENU",
-> +		.type = EV_KEY,
-> +		.active_low = 1,
-> +		.wakeup = 1,
-> +		.debounce_interval = 1,
-> +	}, {
-> +		.code = KEY_HOME,
-> +		.gpio = EXYNOS4_GPX1(6),
-> +		.desc = "gpio-keys: KEY_HOME",
-> +		.type = EV_KEY,
-> +		.active_low = 1,
-> +		.wakeup = 1,
-> +		.debounce_interval = 1,
-> +	}, {
-> +		.code = KEY_BACK,
-> +		.gpio = EXYNOS4_GPX1(7),
-> +		.desc = "gpio-keys: KEY_BACK",
-> +		.type = EV_KEY,
-> +		.active_low = 1,
-> +		.wakeup = 1,
-> +		.debounce_interval = 1,
-> +	}, {
-> +		.code = KEY_UP,
-> +		.gpio = EXYNOS4_GPX2(0),
-> +		.desc = "gpio-keys: KEY_UP",
-> +		.type = EV_KEY,
-> +		.active_low = 1,
-> +		.wakeup = 1,
-> +		.debounce_interval = 1,
-> +	}, {
-> +		.code = KEY_DOWN,
-> +		.gpio = EXYNOS4_GPX2(1),
-> +		.desc = "gpio-keys: KEY_DOWN",
-> +		.type = EV_KEY,
-> +		.active_low = 1,
-> +		.wakeup = 1,
-> +		.debounce_interval = 1,
-> +	},
-> +};
-> +
-> +static struct gpio_keys_platform_data origen_gpio_keys_data = {
-> +	.buttons = origen_gpio_keys_table,
-> +	.nbuttons = ARRAY_SIZE(origen_gpio_keys_table),
-> +};
-> +
-> +static struct platform_device origen_device_gpiokeys = {
-> +	.name = "gpio-keys",
-> +	.dev = {
-> +		.platform_data = &origen_gpio_keys_data,
-> +	},
-> +};
-> +
->  static struct platform_device *origen_devices[] __initdata = {
+> @@ -83,6 +83,9 @@ static struct platform_device *origen_devices[]
+__initdata = {
 >  	&s3c_device_hsmmc2,
 >  	&s3c_device_rtc,
 >  	&s3c_device_wdt,
-> +	&origen_device_gpiokeys,
+> +	&s5p_device_i2c_hdmiphy,
+> +	&s5p_device_hdmi,
+> +	&s5p_device_mixer,
 >  };
 > 
 >  static void __init origen_map_io(void)
+> @@ -95,6 +98,7 @@ static void __init origen_map_io(void)
+>  static void __init origen_machine_init(void)
+>  {
+>  	s3c_sdhci2_set_platdata(&origen_hsmmc2_pdata);
+> +	s5p_i2c_hdmiphy_set_platdata(NULL);
+>  	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+>  }
+> 
 > --
 > 1.7.4.1
 
-Looks ok to me, will apply.
+Looks ok, will apply.
 Thanks.
 
 Best regards,
