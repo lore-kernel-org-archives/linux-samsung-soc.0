@@ -1,296 +1,43 @@
-From: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: EXYNOS4: Add keypad support for Origen
-Date: Fri, 16 Sep 2011 20:42:45 +0530
-Message-ID: <CAK9yfHwM0c-jSe7XvfwT-9BqikxczSqBrDt0gxWg5YXCoMzCvw@mail.gmail.com>
-References: <1316057572-13719-1-git-send-email-sachin.kamat@linaro.org>
-	<00d201cc7469$dc599bf0$950cd3d0$%kim@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung Fixes for v3.1-rc7
+Date: Fri, 16 Sep 2011 18:34:35 +0200
+Message-ID: <1642876.jgt6epCtEP@wuerfel>
+References: <00b101cc738d$bcf46ce0$36dd46a0$%kim@samsung.com> <00cf01cc7466$e2cd66e0$a86834a0$%kim@samsung.com> <20110916134300.GB16280@suse.de>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8210998036745257328=="
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-In-Reply-To: <00d201cc7469$dc599bf0$950cd3d0$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============8210998036745257328==
-Content-Type: multipart/alternative; boundary=0016e6d77cf8eeecba04ad106cad
-
---0016e6d77cf8eeecba04ad106cad
-Content-Type: text/plain; charset=ISO-8859-1
-
-On 16 September 2011 17:42, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-
-> Sachin Kamat wrote:
-> >
-> > This patch adds keypad support for Origen board as GPIO keys.
-> >
-> > Signed-off-by: Sachin Kamat <sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > ---
-> >  arch/arm/mach-exynos4/mach-origen.c |   58
-> > +++++++++++++++++++++++++++++++++++
-> >  1 files changed, 58 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos4/mach-origen.c
-> b/arch/arm/mach-exynos4/mach-
-> > origen.c
-> > index ed59f86..61da36b 100644
-> > --- a/arch/arm/mach-exynos4/mach-origen.c
-> > +++ b/arch/arm/mach-exynos4/mach-origen.c
-> > @@ -14,6 +14,7 @@
-> >  #include <linux/platform_device.h>
-> >  #include <linux/io.h>
-> >  #include <linux/input.h>
-> > +#include <linux/gpio_keys.h>
-> >
-> >  #include <asm/mach/arch.h>
-> >  #include <asm/mach-types.h>
-> > @@ -79,10 +80,67 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata
-> > __initdata = {
-> >       .clk_type               = S3C_SDHCI_CLK_DIV_EXTERNAL,
-> >  };
-> >
-> > +static struct gpio_keys_button origen_gpio_keys_table[] = {
-> > +     {
-> > +             .code = KEY_MENU,
->
-> If you're ok, will change tab between '.code' and '=', I think it would be
-> better to read code.
-> OK. Sure.
->
-> > +             .gpio = EXYNOS4_GPX1(5),
-> > +             .desc = "gpio-keys: KEY_MENU",
-> > +             .type = EV_KEY,
-> > +             .active_low = 1,
-> > +             .wakeup = 1,
-> > +             .debounce_interval = 1,
-> > +     }, {
-> > +             .code = KEY_HOME,
-> > +             .gpio = EXYNOS4_GPX1(6),
-> > +             .desc = "gpio-keys: KEY_HOME",
-> > +             .type = EV_KEY,
-> > +             .active_low = 1,
-> > +             .wakeup = 1,
-> > +             .debounce_interval = 1,
-> > +     }, {
-> > +             .code = KEY_BACK,
-> > +             .gpio = EXYNOS4_GPX1(7),
-> > +             .desc = "gpio-keys: KEY_BACK",
-> > +             .type = EV_KEY,
-> > +             .active_low = 1,
-> > +             .wakeup = 1,
-> > +             .debounce_interval = 1,
-> > +     }, {
-> > +             .code = KEY_UP,
-> > +             .gpio = EXYNOS4_GPX2(0),
-> > +             .desc = "gpio-keys: KEY_UP",
-> > +             .type = EV_KEY,
-> > +             .active_low = 1,
-> > +             .wakeup = 1,
-> > +             .debounce_interval = 1,
-> > +     }, {
-> > +             .code = KEY_DOWN,
-> > +             .gpio = EXYNOS4_GPX2(1),
-> > +             .desc = "gpio-keys: KEY_DOWN",
-> > +             .type = EV_KEY,
-> > +             .active_low = 1,
-> > +             .wakeup = 1,
-> > +             .debounce_interval = 1,
-> > +     },
-> > +};
-> > +
-> > +static struct gpio_keys_platform_data origen_gpio_keys_data = {
-> > +     .buttons = origen_gpio_keys_table,
-> > +     .nbuttons = ARRAY_SIZE(origen_gpio_keys_table),
-> > +};
-> > +
-> > +static struct platform_device origen_device_gpiokeys = {
-> > +     .name = "gpio-keys",
-> > +     .dev = {
-> > +             .platform_data = &origen_gpio_keys_data,
-> > +     },
-> > +};
-> > +
-> >  static struct platform_device *origen_devices[] __initdata = {
-> >       &s3c_device_hsmmc2,
-> >       &s3c_device_rtc,
-> >       &s3c_device_wdt,
-> > +     &origen_device_gpiokeys,
-> >  };
-> >
-> >  static void __init origen_map_io(void)
-> > --
-> > 1.7.4.1
->
-> Looks ok to me, will apply.
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
-
-
--- 
-With warm regards,
-Sachin
-
---0016e6d77cf8eeecba04ad106cad
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-<br><br><div class=3D"gmail_quote">On 16 September 2011 17:42, Kukjin Kim <=
-span dir=3D"ltr">&lt;<a href=3D"mailto:kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org">kgene.kim@sam=
-sung.com</a>&gt;</span> wrote:<br><blockquote style=3D"margin: 0px 0px 0px =
-0.8ex; padding-left: 1ex; border-left-color: rgb(204, 204, 204); border-lef=
-t-width: 1px; border-left-style: solid;" class=3D"gmail_quote">
-<div class=3D"im">Sachin Kamat wrote:<br>
-&gt;<br>
-&gt; This patch adds keypad support for Origen board as GPIO keys.<br>
-&gt;<br>
-&gt; Signed-off-by: Sachin Kamat &lt;<a href=3D"mailto:sachin.kamat@linaro.=
-org">sachin.kamat-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt;<br>
-&gt; ---<br>
-&gt; =A0arch/arm/mach-exynos4/mach-origen.c | =A0 58<br>
-&gt; +++++++++++++++++++++++++++++++++++<br>
-&gt; =A01 files changed, 58 insertions(+), 0 deletions(-)<br>
-&gt;<br>
-&gt; diff --git a/arch/arm/mach-exynos4/mach-origen.c<br>
-b/arch/arm/mach-exynos4/mach-<br>
-&gt; origen.c<br>
-&gt; index ed59f86..61da36b 100644<br>
-&gt; --- a/arch/arm/mach-exynos4/mach-origen.c<br>
-&gt; +++ b/arch/arm/mach-exynos4/mach-origen.c<br>
-&gt; @@ -14,6 +14,7 @@<br>
-&gt; =A0#include &lt;linux/platform_device.h&gt;<br>
-&gt; =A0#include &lt;linux/io.h&gt;<br>
-&gt; =A0#include &lt;linux/input.h&gt;<br>
-&gt; +#include &lt;linux/gpio_keys.h&gt;<br>
-&gt;<br>
-&gt; =A0#include &lt;asm/mach/arch.h&gt;<br>
-&gt; =A0#include &lt;asm/mach-types.h&gt;<br>
-&gt; @@ -79,10 +80,67 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pda=
-ta<br>
-&gt; __initdata =3D {<br>
-&gt; =A0 =A0 =A0 .clk_type =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D S3C_SDHCI_CLK_DI=
-V_EXTERNAL,<br>
-&gt; =A0};<br>
-&gt;<br>
-&gt; +static struct gpio_keys_button origen_gpio_keys_table[] =3D {<br>
-&gt; + =A0 =A0 {<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .code =3D KEY_MENU,<br>
-<br>
-</div>If you&#39;re ok, will change tab between &#39;.code&#39; and &#39;=
-=3D&#39;, I think it would be<br>
-better to read code.<br>
-<div><div>OK. Sure.</div><div class=3D"h5"><br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .gpio =3D EXYNOS4_GPX1(5),<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .desc =3D &quot;gpio-keys: KEY_MENU&quot;,<b=
-r>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .type =3D EV_KEY,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .active_low =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .wakeup =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .debounce_interval =3D 1,<br>
-&gt; + =A0 =A0 }, {<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .code =3D KEY_HOME,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .gpio =3D EXYNOS4_GPX1(6),<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .desc =3D &quot;gpio-keys: KEY_HOME&quot;,<b=
-r>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .type =3D EV_KEY,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .active_low =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .wakeup =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .debounce_interval =3D 1,<br>
-&gt; + =A0 =A0 }, {<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .code =3D KEY_BACK,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .gpio =3D EXYNOS4_GPX1(7),<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .desc =3D &quot;gpio-keys: KEY_BACK&quot;,<b=
-r>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .type =3D EV_KEY,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .active_low =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .wakeup =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .debounce_interval =3D 1,<br>
-&gt; + =A0 =A0 }, {<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .code =3D KEY_UP,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .gpio =3D EXYNOS4_GPX2(0),<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .desc =3D &quot;gpio-keys: KEY_UP&quot;,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .type =3D EV_KEY,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .active_low =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .wakeup =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .debounce_interval =3D 1,<br>
-&gt; + =A0 =A0 }, {<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .code =3D KEY_DOWN,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .gpio =3D EXYNOS4_GPX2(1),<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .desc =3D &quot;gpio-keys: KEY_DOWN&quot;,<b=
-r>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .type =3D EV_KEY,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .active_low =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .wakeup =3D 1,<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .debounce_interval =3D 1,<br>
-&gt; + =A0 =A0 },<br>
-&gt; +};<br>
-&gt; +<br>
-&gt; +static struct gpio_keys_platform_data origen_gpio_keys_data =3D {<br>
-&gt; + =A0 =A0 .buttons =3D origen_gpio_keys_table,<br>
-&gt; + =A0 =A0 .nbuttons =3D ARRAY_SIZE(origen_gpio_keys_table),<br>
-&gt; +};<br>
-&gt; +<br>
-&gt; +static struct platform_device origen_device_gpiokeys =3D {<br>
-&gt; + =A0 =A0 .name =3D &quot;gpio-keys&quot;,<br>
-&gt; + =A0 =A0 .dev =3D {<br>
-&gt; + =A0 =A0 =A0 =A0 =A0 =A0 .platform_data =3D &amp;origen_gpio_keys_dat=
-a,<br>
-&gt; + =A0 =A0 },<br>
-&gt; +};<br>
-&gt; +<br>
-&gt; =A0static struct platform_device *origen_devices[] __initdata =3D {<br=
->
-&gt; =A0 =A0 =A0 &amp;s3c_device_hsmmc2,<br>
-&gt; =A0 =A0 =A0 &amp;s3c_device_rtc,<br>
-&gt; =A0 =A0 =A0 &amp;s3c_device_wdt,<br>
-&gt; + =A0 =A0 &amp;origen_device_gpiokeys,<br>
-&gt; =A0};<br>
-&gt;<br>
-&gt; =A0static void __init origen_map_io(void)<br>
-&gt; --<br>
-&gt; 1.7.4.1<br>
-<br>
-</div></div>Looks ok to me, will apply.<br>
-Thanks.<br>
-<br>
-Best regards,<br>
-Kgene.<br>
-<font color=3D"#888888">--<br>
-Kukjin Kim &lt;<a href=3D"mailto:kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org">kgene.kim@samsung.c=
-om</a>&gt;, Senior Engineer,<br>
-SW Solution Development Team, Samsung Electronics Co., Ltd.<br>
-<br>
-</font></blockquote></div><br><br clear=3D"all"><br>-- <br><div>With warm r=
-egards,</div>
-<div>Sachin</div><br>
-
---0016e6d77cf8eeecba04ad106cad--
-
-
---===============8210998036745257328==
 Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:63503 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753832Ab1IPTMW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Sep 2011 15:12:22 -0400
+In-Reply-To: <20110916134300.GB16280@suse.de>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Greg KH <gregkh@suse.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-_______________________________________________
-linaro-dev mailing list
-linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-http://lists.linaro.org/mailman/listinfo/linaro-dev
+On Friday 16 September 2011 15:43:00 Greg KH wrote:
+> > In this case, I'm not sure which following method is proper...
+> > - to send 'pull request' to Greg / stable@kernel.org like bug fix during -rc
+> > - to submit each patches with adding 'Cc: stable@kernel.org' again
+> > - or ?
 
---===============8210998036745257328==--
+The patches are currently queued in the stable branch of the arm-soc
+tree, I haven't forwarded them to Linus yet. I can easily change
+the changelog before I actually send them on (if you tell me which ones
+they are, or I can pull an updated set of patches to replace them.
+
+> Are these in Linus's tree already?  If so, send me the git commit ids
+> and I will add them to the stable kernels.
+> 
+> If not, wait until they are, and then send me the git commit ids, and I
+> will then add them.
+
+This is fine with me as well, but I'm trying to get more people to
+send me patches that are annotated already. I forgot to ask during
+the last set of bug fixes I forwarded and should probably go through
+the ones that are already merged and ask the authors about backporting.
+
+	Arnd
