@@ -1,68 +1,80 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung Fixes for v3.1-rc7
-Date: Fri, 16 Sep 2011 20:50:51 +0900
-Message-ID: <00cf01cc7466$e2cd66e0$a86834a0$%kim@samsung.com>
-References: <00b101cc738d$bcf46ce0$36dd46a0$%kim@samsung.com>
- <201109151732.59886.arnd@arndb.de>
+Subject: RE: [PATCH V4] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
+Date: Fri, 16 Sep 2011 21:02:18 +0900
+Message-ID: <00d101cc7468$7bbfcd10$733f6730$%kim@samsung.com>
+References: <1316076867-2138-1-git-send-email-tushar.behera@linaro.org>
+ <20110915091423.80E7C11F9E77@gemini.denx.de> <4E71E18E.2020205@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:21029 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:23361 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968Ab1IPLuy (ORCPT
+	with ESMTP id S1751968Ab1IPMCU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Sep 2011 07:50:54 -0400
+	Fri, 16 Sep 2011 08:02:20 -0400
 Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRM00I3C68SEP60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 20:50:53 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRM002B568RPS30@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 20:50:52 +0900 (KST)
-In-reply-to: <201109151732.59886.arnd@arndb.de>
+ 2010)) with ESMTP id <0LRM00DD46RUXN80@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:02:19 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRM003176RUH3@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:02:19 +0900 (KST)
+In-reply-to: <4E71E18E.2020205@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
-Cc: 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, 'Greg KH' <gregkh@suse.de>
+To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Wolfgang Denk' <wd@denx.de>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Arnd Bergmann wrote:
+Tushar Behera wrote:
 > 
-> On Thursday 15 September 2011, Kukjin Kim wrote:
-> > This is Samsung fixes for v3.1
+> Dear Wolfgang Denk,
+> 
+> On Thursday 15 September 2011 02:44 PM, Wolfgang Denk wrote:
+> > Dear Tushar Behera,
 > >
-> > Please pull from:
-> >   git://github.com/kgene/linux-samsung.git samsung-fixes-2
-> > As you know, git.kernel.org/master.kernel.org has been down so I use
-> > temporary git repo. at github now.
+> > In message<1316076867-2138-1-git-send-email-tushar.behera@linaro.org>
+you
+> wrote:
+> >> ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
+> >> resolution of the LCD panel is 1024x600.
+> > ...
+> >> +static struct s3c_fb_pd_win origen_fb_win0 = {
+> >> +	.win_mode = {
+> >> +		.left_margin	= 64,
+> >> +		.right_margin	= 16,
+> >> +		.upper_margin	= 64,
+> >> +		.lower_margin	= 16,
+> >> +		.hsync_len	= 48,
+> >> +		.vsync_len	= 3,
+> >> +		.xres		= 1024,
+> >> +		.yres		= 600,
+> >> +	},
+> >> +	.max_bpp		= 32,
+> >> +	.default_bpp		= 24,
+> >> +};
 > >
-> > These things are needed for v3.1 and if any problems, please let me
-know.
+> > Does it still make sense to hard-code such parameters?
 > >
-> > As a note, others for v3.2 will be sent in the next week...
+> > In PowerPC-land we pass display mode information in the device tree
+> > using a verbatim EDID block.
+> >
+> > Would it be not better (and way more flexible) to do the same here,
+> > now that ARM has device tree support?
+> >
+> Thanks for your suggestions.
 > 
-> Thanks, pulled.
+> Currently work for enabling device tree support for EXYNOS4 based
+> machine is going on. Once it is done, we should be able to pass this
+> information through device tree blob.
 > 
-> Is it correct that you want none of these patches to be backported
-> into the stable or longterm releases? Some of these look like they
-> should be marked 'Cc: stable@kernel.org'.
-> 
-(Cc'ed Greg K-H)
+> For non-DT machines, IMHO, we have to follow the current approach.
 
-Yes, you're right. Some patches are needed to sent to stable@kernel.org.
-But unfortunately, when they have been submitted, there was no 'Cc:
-stable@kernel.org'...
-
-In this case, I'm not sure which following method is proper...
-- to send 'pull request' to Greg / stable@kernel.org like bug fix during -rc
-- to submit each patches with adding 'Cc: stable@kernel.org' again
-- or ?
-
-Please kindly let me know.
-Thanks, have a nice weekend.
+OK, applied.
+Thanks.
 
 Best regards,
 Kgene.
