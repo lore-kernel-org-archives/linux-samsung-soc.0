@@ -1,79 +1,134 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V4] ARM: EXYNOS4: Add machine support for 7" LCD on ORIGEN
-Date: Fri, 16 Sep 2011 21:02:18 +0900
-Message-ID: <00d101cc7468$7bbfcd10$733f6730$%kim@samsung.com>
-References: <1316076867-2138-1-git-send-email-tushar.behera@linaro.org>
- <20110915091423.80E7C11F9E77@gemini.denx.de> <4E71E18E.2020205@linaro.org>
+Subject: RE: [PATCH] ARM: EXYNOS4: Add keypad support for Origen
+Date: Fri, 16 Sep 2011 21:12:10 +0900
+Message-ID: <00d201cc7469$dc599bf0$950cd3d0$%kim@samsung.com>
+References: <1316057572-13719-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23361 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751968Ab1IPMCU (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:58748 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751968Ab1IPMMM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Sep 2011 08:02:20 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Fri, 16 Sep 2011 08:12:12 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRM00DD46RUXN80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:02:19 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRM003176RUH3@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:02:19 +0900 (KST)
-In-reply-to: <4E71E18E.2020205@linaro.org>
+ 2010)) with ESMTP id <0LRM00HRT786QX60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:12:10 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LRM002Z478A6C70@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 16 Sep 2011 21:12:10 +0900 (KST)
+In-reply-to: <1316057572-13719-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Wolfgang Denk' <wd@denx.de>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linaro-dev@lists.linaro.org, patches@linaro.org
 
-Tushar Behera wrote:
+Sachin Kamat wrote:
 > 
-> Dear Wolfgang Denk,
+> This patch adds keypad support for Origen board as GPIO keys.
 > 
-> On Thursday 15 September 2011 02:44 PM, Wolfgang Denk wrote:
-> > Dear Tushar Behera,
-> >
-> > In message<1316076867-2138-1-git-send-email-tushar.behera@linaro.org>
-you
-> wrote:
-> >> ORIGEN board is fitted with 7" LCD panel HV070WSA. The pixel
-> >> resolution of the LCD panel is 1024x600.
-> > ...
-> >> +static struct s3c_fb_pd_win origen_fb_win0 = {
-> >> +	.win_mode = {
-> >> +		.left_margin	= 64,
-> >> +		.right_margin	= 16,
-> >> +		.upper_margin	= 64,
-> >> +		.lower_margin	= 16,
-> >> +		.hsync_len	= 48,
-> >> +		.vsync_len	= 3,
-> >> +		.xres		= 1024,
-> >> +		.yres		= 600,
-> >> +	},
-> >> +	.max_bpp		= 32,
-> >> +	.default_bpp		= 24,
-> >> +};
-> >
-> > Does it still make sense to hard-code such parameters?
-> >
-> > In PowerPC-land we pass display mode information in the device tree
-> > using a verbatim EDID block.
-> >
-> > Would it be not better (and way more flexible) to do the same here,
-> > now that ARM has device tree support?
-> >
-> Thanks for your suggestions.
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/mach-exynos4/mach-origen.c |   58
+> +++++++++++++++++++++++++++++++++++
+>  1 files changed, 58 insertions(+), 0 deletions(-)
 > 
-> Currently work for enabling device tree support for EXYNOS4 based
-> machine is going on. Once it is done, we should be able to pass this
-> information through device tree blob.
+> diff --git a/arch/arm/mach-exynos4/mach-origen.c
+b/arch/arm/mach-exynos4/mach-
+> origen.c
+> index ed59f86..61da36b 100644
+> --- a/arch/arm/mach-exynos4/mach-origen.c
+> +++ b/arch/arm/mach-exynos4/mach-origen.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/io.h>
+>  #include <linux/input.h>
+> +#include <linux/gpio_keys.h>
 > 
-> For non-DT machines, IMHO, we have to follow the current approach.
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach-types.h>
+> @@ -79,10 +80,67 @@ static struct s3c_sdhci_platdata origen_hsmmc2_pdata
+> __initdata = {
+>  	.clk_type		= S3C_SDHCI_CLK_DIV_EXTERNAL,
+>  };
+> 
+> +static struct gpio_keys_button origen_gpio_keys_table[] = {
+> +	{
+> +		.code = KEY_MENU,
 
-OK, applied.
+If you're ok, will change tab between '.code' and '=', I think it would be
+better to read code.
+
+> +		.gpio = EXYNOS4_GPX1(5),
+> +		.desc = "gpio-keys: KEY_MENU",
+> +		.type = EV_KEY,
+> +		.active_low = 1,
+> +		.wakeup = 1,
+> +		.debounce_interval = 1,
+> +	}, {
+> +		.code = KEY_HOME,
+> +		.gpio = EXYNOS4_GPX1(6),
+> +		.desc = "gpio-keys: KEY_HOME",
+> +		.type = EV_KEY,
+> +		.active_low = 1,
+> +		.wakeup = 1,
+> +		.debounce_interval = 1,
+> +	}, {
+> +		.code = KEY_BACK,
+> +		.gpio = EXYNOS4_GPX1(7),
+> +		.desc = "gpio-keys: KEY_BACK",
+> +		.type = EV_KEY,
+> +		.active_low = 1,
+> +		.wakeup = 1,
+> +		.debounce_interval = 1,
+> +	}, {
+> +		.code = KEY_UP,
+> +		.gpio = EXYNOS4_GPX2(0),
+> +		.desc = "gpio-keys: KEY_UP",
+> +		.type = EV_KEY,
+> +		.active_low = 1,
+> +		.wakeup = 1,
+> +		.debounce_interval = 1,
+> +	}, {
+> +		.code = KEY_DOWN,
+> +		.gpio = EXYNOS4_GPX2(1),
+> +		.desc = "gpio-keys: KEY_DOWN",
+> +		.type = EV_KEY,
+> +		.active_low = 1,
+> +		.wakeup = 1,
+> +		.debounce_interval = 1,
+> +	},
+> +};
+> +
+> +static struct gpio_keys_platform_data origen_gpio_keys_data = {
+> +	.buttons = origen_gpio_keys_table,
+> +	.nbuttons = ARRAY_SIZE(origen_gpio_keys_table),
+> +};
+> +
+> +static struct platform_device origen_device_gpiokeys = {
+> +	.name = "gpio-keys",
+> +	.dev = {
+> +		.platform_data = &origen_gpio_keys_data,
+> +	},
+> +};
+> +
+>  static struct platform_device *origen_devices[] __initdata = {
+>  	&s3c_device_hsmmc2,
+>  	&s3c_device_rtc,
+>  	&s3c_device_wdt,
+> +	&origen_device_gpiokeys,
+>  };
+> 
+>  static void __init origen_map_io(void)
+> --
+> 1.7.4.1
+
+Looks ok to me, will apply.
 Thanks.
 
 Best regards,
