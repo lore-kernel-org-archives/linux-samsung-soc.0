@@ -1,13 +1,15 @@
 From: Jongpill Lee <boyko.lee@samsung.com>
-Subject: [PATCH 1/3] ARM: EXYNOS4: Modify PMU register setting function
-Date: Mon, 19 Sep 2011 10:23:28 +0900
-Message-ID: <1316395410-12023-1-git-send-email-boyko.lee@samsung.com>
+Subject: [PATCH V2 1/3] ARM: EXYNOS4: Modify PMU register setting function
+Date: Mon, 19 Sep 2011 10:25:40 +0900
+Message-ID: <1316395542-27578-2-git-send-email-boyko.lee@samsung.com>
+References: <1316395542-27578-1-git-send-email-boyko.lee@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:49879 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:49886 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751164Ab1ISOUi (ORCPT
+	with ESMTP id S1751182Ab1ISOUi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Mon, 19 Sep 2011 10:20:38 -0400
+In-Reply-To: <1316395542-27578-1-git-send-email-boyko.lee@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
