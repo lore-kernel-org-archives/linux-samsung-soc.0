@@ -1,135 +1,135 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/7 (RE-SEND)] gpio/s3c24xx: move gpio driver into
- drivers/gpio/
-Date: Mon, 19 Sep 2011 20:13:12 +0900
-Message-ID: <001f01cc76bd$1ebad900$5c308b00$%kim@samsung.com>
-References: <1314707249-12241-1-git-send-email-kgene.kim@samsung.com>
- <1314707249-12241-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Cleanup mach/clkdev.h
+Date: Mon, 19 Sep 2011 20:36:26 +0900
+Message-ID: <002001cc76c0$5e236c80$1a6a4580$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55379 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752558Ab1ISLNN (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19940 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755699Ab1ISLg3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 07:13:13 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Mon, 19 Sep 2011 07:36:29 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRR002CPOHLEM60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:13:12 +0900 (KST)
+ 2010)) with ESMTP id <0LRR00EEUPKJZO10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:36:27 +0900 (KST)
 Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRR00DW1OI0BH@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:13:12 +0900 (KST)
-In-reply-to: <1314707249-12241-2-git-send-email-kgene.kim@samsung.com>
+ with ESMTPA id <0LRR00GOPPKR9R@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:36:27 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, 'Grant Likely' <grant.likely@secretlab.ca>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org
 
-Kukjin Kim wrote:
->
+According to commit a3831cf ("ARM: Consolidate the
+clkdev header files"), current mach/clkdev.h is no
+needed in Samsung stuff.
 
-(snip)...
+Cc: Ben Dooks <ben-linux@fluff.org>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/include/mach/clkdev.h |    7 -------
+ arch/arm/mach-s3c64xx/include/mach/clkdev.h |    7 -------
+ arch/arm/mach-s5p64x0/include/mach/clkdev.h |    7 -------
+ arch/arm/mach-s5pc100/include/mach/clkdev.h |    7 -------
+ arch/arm/mach-s5pv210/include/mach/clkdev.h |    7 -------
+ arch/arm/plat-s3c24xx/include/mach/clkdev.h |    7 -------
+ 6 files changed, 0 insertions(+), 42 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos4/include/mach/clkdev.h
+ delete mode 100644 arch/arm/mach-s3c64xx/include/mach/clkdev.h
+ delete mode 100644 arch/arm/mach-s5p64x0/include/mach/clkdev.h
+ delete mode 100644 arch/arm/mach-s5pc100/include/mach/clkdev.h
+ delete mode 100644 arch/arm/mach-s5pv210/include/mach/clkdev.h
+ delete mode 100644 arch/arm/plat-s3c24xx/include/mach/clkdev.h
 
-Hi Grant,
-
-I didn't get any comments on this series, gpio-samsung patches for
-consolidation of Samsung gpiolib. Please let me know whether this is ok to
-you or not. And I think, if you're ok, this should be sent to upstream via
-both gpio tree and arm(samsung) tree to avoid conflicts...
-
-As a note, following is its status...
-
-Kukjin Kim (9):
-      ARM: SAMSUNG: Move map header file into plat-samsung
-      gpio/s3c24xx: move gpio driver into drivers/gpio/
-      gpio/s3c64xx: move gpio driver into drivers/gpio/
-      gpio/s5p64x0: move gpio driver into drivers/gpio/
-      gpio/samsung: Remove useless old Samsung related GPIO drivers
-      gpio/samsung: Added gpio-samsung.c to support Samsung GPIOs
-      ARM: SAMSUNG: Update the name of regarding Samsung GPIO
-      ARM: SAMSUNG: Remove useless Samsung GPIO related CONFIGs
-      Merge branch 'next/topic-plat-samsung-1' into next/topic-gpio-samsung
-
- arch/arm/Kconfig                                   |    3 -
- arch/arm/mach-exynos4/include/mach/pm-core.h       |    2 +-
- arch/arm/mach-s3c2410/Kconfig                      |    7 -
- arch/arm/mach-s3c2410/Makefile                     |    1 -
- arch/arm/mach-s3c2410/include/mach/gpio-fns.h      |   99 +-
- arch/arm/mach-s3c2410/include/mach/gpio-track.h    |    6 +-
- arch/arm/mach-s3c2410/include/mach/map.h           |   52 +-
- arch/arm/mach-s3c2410/include/mach/pm-core.h       |    2 +-
- arch/arm/mach-s3c2410/s3c2410.c                    |    4 +-
- arch/arm/mach-s3c2412/Kconfig                      |    1 -
- arch/arm/mach-s3c2412/Makefile                     |    1 -
- arch/arm/mach-s3c2412/gpio.c                       |    2 +-
- arch/arm/mach-s3c2416/Kconfig                      |    1 -
- arch/arm/mach-s3c2416/s3c2416.c                    |    4 +-
- arch/arm/mach-s3c2440/Kconfig                      |    4 -
- arch/arm/mach-s3c2440/s3c2440.c                    |    4 +-
- arch/arm/mach-s3c2440/s3c2442.c                    |    4 +-
- arch/arm/mach-s3c2443/Kconfig                      |    1 -
- arch/arm/mach-s3c2443/s3c2443.c                    |    4 +-
- arch/arm/mach-s3c64xx/Makefile                     |    1 -
- arch/arm/mach-s3c64xx/gpiolib.c                    |  290 ---
- arch/arm/mach-s3c64xx/include/mach/map.h           |    9 +-
- arch/arm/mach-s3c64xx/include/mach/pm-core.h       |    2 +-
- arch/arm/mach-s5p64x0/Makefile                     |    2 +-
- arch/arm/mach-s5p64x0/gpiolib.c                    |  511 ----
- arch/arm/mach-s5pv210/include/mach/pm-core.h       |    2 +-
- arch/arm/plat-s3c24xx/Kconfig                      |    1 -
- arch/arm/plat-s3c24xx/Makefile                     |    2 -
- arch/arm/plat-s3c24xx/gpio.c                       |   96 -
- arch/arm/plat-s3c24xx/gpiolib.c                    |  229 --
- arch/arm/plat-s3c24xx/include/plat/map.h           |  100 -
- arch/arm/plat-s5p/Kconfig                          |    3 -
- arch/arm/plat-s5p/irq-gpioint.c                    |   10 +-
- arch/arm/plat-samsung/Kconfig                      |   27 -
- arch/arm/plat-samsung/Makefile                     |    2 -
- arch/arm/plat-samsung/gpio-config.c                |  431 ----
- arch/arm/plat-samsung/gpio.c                       |  167 --
- .../plat-samsung/include/plat/gpio-cfg-helpers.h   |  172 +-
- arch/arm/plat-samsung/include/plat/gpio-cfg.h      |   34 +-
- arch/arm/plat-samsung/include/plat/gpio-core.h     |   97 +-
- arch/arm/plat-samsung/include/plat/gpio-fns.h      |   98 +
- arch/arm/plat-samsung/include/plat/map-s3c.h       |   84 +
- .../include/plat/map-s5p.h                         |    6 +-
- arch/arm/plat-samsung/include/plat/pm.h            |   10 +-
- arch/arm/plat-samsung/pm-gpio.c                    |   72 +-
- arch/arm/plat-samsung/pm.c                         |    6 +-
- drivers/gpio/Kconfig                               |   16 -
- drivers/gpio/Makefile                              |    7 +-
- drivers/gpio/gpio-exynos4.c                        |  385 ---
- drivers/gpio/gpio-plat-samsung.c                   |  205 --
- drivers/gpio/gpio-s5pc100.c                        |  354 ---
- drivers/gpio/gpio-s5pv210.c                        |  287 ---
- drivers/gpio/gpio-samsung.c                        | 2686
-++++++++++++++++++++
- 53 files changed, 3072 insertions(+), 3534 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/gpiolib.c
- delete mode 100644 arch/arm/mach-s5p64x0/gpiolib.c
- delete mode 100644 arch/arm/plat-s3c24xx/gpio.c
- delete mode 100644 arch/arm/plat-s3c24xx/gpiolib.c
- delete mode 100644 arch/arm/plat-s3c24xx/include/plat/map.h
- delete mode 100644 arch/arm/plat-samsung/gpio-config.c
- delete mode 100644 arch/arm/plat-samsung/gpio.c
- create mode 100644 arch/arm/plat-samsung/include/plat/gpio-fns.h
- create mode 100644 arch/arm/plat-samsung/include/plat/map-s3c.h
- rename arch/arm/{plat-s5p => plat-samsung}/include/plat/map-s5p.h (94%)
- delete mode 100644 drivers/gpio/gpio-exynos4.c
- delete mode 100644 drivers/gpio/gpio-plat-samsung.c
- delete mode 100644 drivers/gpio/gpio-s5pc100.c
- delete mode 100644 drivers/gpio/gpio-s5pv210.c
- create mode 100644 drivers/gpio/gpio-samsung.c
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-exynos4/include/mach/clkdev.h
+b/arch/arm/mach-exynos4/include/mach/clkdev.h
+deleted file mode 100644
+index 7dffa83..0000000
+--- a/arch/arm/mach-exynos4/include/mach/clkdev.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __MACH_CLKDEV_H__
+-#define __MACH_CLKDEV_H__
+-
+-#define __clk_get(clk) ({ 1; })
+-#define __clk_put(clk) do {} while (0)
+-
+-#endif
+diff --git a/arch/arm/mach-s3c64xx/include/mach/clkdev.h
+b/arch/arm/mach-s3c64xx/include/mach/clkdev.h
+deleted file mode 100644
+index 7dffa83..0000000
+--- a/arch/arm/mach-s3c64xx/include/mach/clkdev.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __MACH_CLKDEV_H__
+-#define __MACH_CLKDEV_H__
+-
+-#define __clk_get(clk) ({ 1; })
+-#define __clk_put(clk) do {} while (0)
+-
+-#endif
+diff --git a/arch/arm/mach-s5p64x0/include/mach/clkdev.h
+b/arch/arm/mach-s5p64x0/include/mach/clkdev.h
+deleted file mode 100644
+index 7dffa83..0000000
+--- a/arch/arm/mach-s5p64x0/include/mach/clkdev.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __MACH_CLKDEV_H__
+-#define __MACH_CLKDEV_H__
+-
+-#define __clk_get(clk) ({ 1; })
+-#define __clk_put(clk) do {} while (0)
+-
+-#endif
+diff --git a/arch/arm/mach-s5pc100/include/mach/clkdev.h
+b/arch/arm/mach-s5pc100/include/mach/clkdev.h
+deleted file mode 100644
+index 7dffa83..0000000
+--- a/arch/arm/mach-s5pc100/include/mach/clkdev.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __MACH_CLKDEV_H__
+-#define __MACH_CLKDEV_H__
+-
+-#define __clk_get(clk) ({ 1; })
+-#define __clk_put(clk) do {} while (0)
+-
+-#endif
+diff --git a/arch/arm/mach-s5pv210/include/mach/clkdev.h
+b/arch/arm/mach-s5pv210/include/mach/clkdev.h
+deleted file mode 100644
+index 7dffa83..0000000
+--- a/arch/arm/mach-s5pv210/include/mach/clkdev.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __MACH_CLKDEV_H__
+-#define __MACH_CLKDEV_H__
+-
+-#define __clk_get(clk) ({ 1; })
+-#define __clk_put(clk) do {} while (0)
+-
+-#endif
+diff --git a/arch/arm/plat-s3c24xx/include/mach/clkdev.h
+b/arch/arm/plat-s3c24xx/include/mach/clkdev.h
+deleted file mode 100644
+index 7dffa83..0000000
+--- a/arch/arm/plat-s3c24xx/include/mach/clkdev.h
++++ /dev/null
+@@ -1,7 +0,0 @@
+-#ifndef __MACH_CLKDEV_H__
+-#define __MACH_CLKDEV_H__
+-
+-#define __clk_get(clk) ({ 1; })
+-#define __clk_put(clk) do {} while (0)
+-
+-#endif
+-- 
+1.7.1
