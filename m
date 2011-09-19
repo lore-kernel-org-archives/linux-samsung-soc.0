@@ -1,51 +1,127 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v8 00/16] To use DMA generic APIs for Samsung DMA
-Date: Mon, 19 Sep 2011 16:06:27 +0530
-Message-ID: <CABb+yY0Gv1=KvpBmYvZO_ux=b0QRssUvXxad5Y4E38OdwnhCxw@mail.gmail.com>
-References: <1314924284-25554-1-git-send-email-boojin.kim@samsung.com>
-	<1315980099.26251.498.camel@vkoul-udesk3>
-	<CABb+yY25NTbtRPOw-KH8U4zA1Bo8q0BDM8SXyrsobG7NEv8edg@mail.gmail.com>
-	<1315999032.26251.501.camel@vkoul-udesk3>
-	<CAJe_ZhdrPMbBOkfwg=PFyVU14eT0Gc0=rtKwEiQCH5-Q5-CtVQ@mail.gmail.com>
-	<1316401174.21359.3.camel@vkoul-udesk3>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung cleanup for v3.2
+Date: Mon, 19 Sep 2011 19:36:35 +0900
+Message-ID: <001901cc76b8$018d4fc0$04a7ef40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:65361 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755118Ab1ISKg2 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:57594 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755118Ab1ISKgh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 06:36:28 -0400
-Received: by bkbzt4 with SMTP id zt4so5179072bkb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2011 03:36:27 -0700 (PDT)
-In-Reply-To: <1316401174.21359.3.camel@vkoul-udesk3>
+	Mon, 19 Sep 2011 06:36:37 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LRR006E6MSIJMY0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 19:36:36 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LRR00F65MSZYZ90@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 19:36:36 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Jassi Brar <jaswinder.singh@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Boojin Kim <boojin.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-On Mon, Sep 19, 2011 at 8:29 AM, Vinod Koul <vinod.koul@intel.com> wrote:
->> >> The changelog for [PATCH v8 04/16] is misleading - we don't need any
->> >> modification for the reason mentioned in changelog. But the modification
->> >> has positive side-effect of preventing callbacks during terminate_all which
->> >> is no way understood from the changelog. So I would like to changelog
->> >> corrected.
->> > I thought change log was correct in depicting what patch does and Boojin
->> > had replied.... I will check again...
->>
->> I didn't reply because I ran out of ways to explain the same thing in
->> different words.
-> I checked again the patch, change log and your comments.
-> I agree with current change log, and also your observation is right but
-> that is just a side effect,
-It is not "just a side effect", it is "the only tangible effect".
-If it were not for this 'side-effect', the patch would be _purely_ cosmetic
-rearrangement.
-The _only_ difference seen would be by clients who would no longer
-have callbacks when they issue terminate_all.
-And I don't think that is expected at all reading the changelog in current form.
+Hi Arnd,
 
-> So no changes to this and I a ready to merge it to my next in a day or
-> two...
-I guess the world isn't gonna come to grinding halt with this changelog.
-Please feel free to do what you think is the best.
+This is Samsung cleanup for v3.2.
+
+Please pull from:
+  git://github.com/kgene/linux-samsung.git next-samsung-cleanup
+
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+The following changes since commit b6fd41e29dea9c6753b1843a77e50433e6123bcb:
+
+  Linux 3.1-rc6 (2011-09-12 14:02:02 -0700)
+
+are available in the git repository at:
+  git://github.com/kgene/linux-samsung.git next-samsung-cleanup
+
+Abhilash Kesavan (1):
+      ARM: S5PV210: Remove unnecessary symbol for PM
+
+Banajit Goswami (1):
+      ARM: SAMSUNG: Consolidate common function to set SDHCI plat data
+
+Heiko Stuebner (2):
+      ARM: S3C24XX: Remove hw_addr from s3c24xx dma channel declarations
+      ARM: S3C24XX: Remove s3c24xx_dma_addr definition
+
+Jonghwan Choi (1):
+      ARM: S5P: Remove duplicate kdiv calculation
+
+Kukjin Kim (6):
+      ARM: EXYNOS4: Turn the mach-smdkc210.c into mach-smdv310.c
+      Merge branch 'next/topic-cleanup-dma' into next-samsung-cleanup
+      ARM: S3C24XX: remove unused gpio codes
+      Merge branch 'next/topic-cleanup-smdkv310' into next-samsung-cleanup
+      ARM: SAMSUNG: Move map header file into plat-samsung
+      Merge branch 'next/topic-plat-samsung-1' into next-samsung-cleanup
+
+Mark Brown (1):
+      ARM: S3C64XX: Remove unused CPU devices for Cragganmore
+
+Naveen Krishna Chatradhi (1):
+      ARM: SAMSUNG: Remove unnecessary duplication of plat_data on TSADC
+
+ arch/arm/mach-exynos4/Kconfig                      |   17 +-
+ arch/arm/mach-exynos4/Makefile                     |    2 +-
+ arch/arm/mach-exynos4/mach-smdkc210.c              |  309
+--------------------
+ arch/arm/mach-exynos4/mach-smdkv310.c              |   78 +++++
+ arch/arm/mach-s3c2410/Kconfig                      |    6 -
+ arch/arm/mach-s3c2410/Makefile                     |    1 -
+ arch/arm/mach-s3c2410/dma.c                        |   14 -
+ arch/arm/mach-s3c2410/gpio.c                       |   72 -----
+ arch/arm/mach-s3c2410/include/mach/map.h           |   52 +++-
+ arch/arm/mach-s3c2412/Kconfig                      |    1 -
+ arch/arm/mach-s3c2412/Makefile                     |    1 -
+ arch/arm/mach-s3c2412/dma.c                        |   18 --
+ arch/arm/mach-s3c2412/gpio.c                       |   62 ----
+ arch/arm/mach-s3c2440/Kconfig                      |    2 -
+ arch/arm/mach-s3c2440/dma.c                        |   17 -
+ arch/arm/mach-s3c2443/dma.c                        |   27 --
+ arch/arm/mach-s3c64xx/include/mach/map.h           |    9 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    3 -
+ arch/arm/mach-s3c64xx/mach-mini6410.c              |    8 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c              |    8 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |    8 +-
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |    8 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |    8 +-
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |    8 +-
+ arch/arm/mach-s5pv210/Kconfig                      |    6 -
+ arch/arm/mach-s5pv210/Makefile                     |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |    8 +-
+ arch/arm/plat-s3c24xx/include/plat/map.h           |  100 -------
+ arch/arm/plat-s5p/include/plat/pll.h               |    1 -
+ arch/arm/plat-samsung/dev-hsmmc.c                  |   19 +--
+ arch/arm/plat-samsung/dev-hsmmc1.c                 |   19 +--
+ arch/arm/plat-samsung/dev-hsmmc2.c                 |   19 +--
+ arch/arm/plat-samsung/dev-hsmmc3.c                 |   19 +--
+ arch/arm/plat-samsung/dev-ts.c                     |    9 +
+ arch/arm/plat-samsung/include/plat/dma-s3c24xx.h   |    6 -
+ arch/arm/plat-samsung/include/plat/map-s3c.h       |   84 ++++++
+ .../include/plat/map-s5p.h                         |    6 +-
+ arch/arm/plat-samsung/include/plat/sdhci.h         |    7 +
+ arch/arm/plat-samsung/platformdata.c               |   22 ++
+ 39 files changed, 264 insertions(+), 802 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos4/mach-smdkc210.c
+ delete mode 100644 arch/arm/mach-s3c2410/gpio.c
+ delete mode 100644 arch/arm/mach-s3c2412/gpio.c
+ delete mode 100644 arch/arm/plat-s3c24xx/include/plat/map.h
+ create mode 100644 arch/arm/plat-samsung/include/plat/map-s3c.h
+ rename arch/arm/{plat-s5p => plat-samsung}/include/plat/map-s5p.h (94%)
