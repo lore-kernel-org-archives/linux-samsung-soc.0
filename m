@@ -1,142 +1,100 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 6/6] ARM: EXYNOS4: Limit usage of pl330 device instance to
- non-dt build
-Date: Mon, 19 Sep 2011 11:59:02 +0530
-Message-ID: <1316413742-23535-7-git-send-email-thomas.abraham@linaro.org>
-References: <1316413742-23535-1-git-send-email-thomas.abraham@linaro.org>
- <1316413742-23535-2-git-send-email-thomas.abraham@linaro.org>
- <1316413742-23535-3-git-send-email-thomas.abraham@linaro.org>
- <1316413742-23535-4-git-send-email-thomas.abraham@linaro.org>
- <1316413742-23535-5-git-send-email-thomas.abraham@linaro.org>
- <1316413742-23535-6-git-send-email-thomas.abraham@linaro.org>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS4: Add TVOUT support for SMDKV310
+Date: Mon, 19 Sep 2011 10:27:07 +0200
+Message-ID: <4E76FCDB.8040708@samsung.com>
+References: <1314340747-13816-1-git-send-email-hatim.rv@samsung.com>
+ <1314340747-13816-2-git-send-email-hatim.rv@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63579 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751152Ab1ISG3t (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:12379 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752739Ab1ISI1O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 02:29:49 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRR0070YBDDZEP0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 15:29:48 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRR00A9LBD4LZ90@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 15:29:48 +0900 (KST)
-In-reply-to: <1316413742-23535-6-git-send-email-thomas.abraham@linaro.org>
+	Mon, 19 Sep 2011 04:27:14 -0400
+Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LRR00MS2GTB5J00@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 09:27:11 +0100 (BST)
+Received: from [106.116.48.223] by spt2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRR00MCMGTB7E@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 09:27:11 +0100 (BST)
+In-reply-to: <1314340747-13816-2-git-send-email-hatim.rv@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org, vinod.koul@intel.com
-Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+To: Hatim Ali <hatim.rv@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, m.szyprowski@samsung.com, banajit.g@samsung.com
 
-The pl330 device instances and associated platform data is required only
-for non-device-tree builds. With device tree enabled, the data about the
-platform is obtained from the device tree. For images that include both
-dt and non-dt platforms, an addditional check is added to ensure that
-static amba device registrations is applicable to only non-dt platforms.
+Hi Hatim Ali,
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
----
- arch/arm/mach-exynos4/Kconfig  |   10 ++++++++++
- arch/arm/mach-exynos4/Makefile |    3 ++-
- arch/arm/mach-exynos4/dma.c    |    4 ++++
- 3 files changed, 16 insertions(+), 1 deletions(-)
+On 08/26/2011 08:39 AM, Hatim Ali wrote:
+> Add support for TVOUT on SMDKV310 board.
+>
+> Signed-off-by: Hatim Ali<hatim.rv@samsung.com>
+> ---
+>   arch/arm/mach-exynos4/Kconfig         |    2 ++
+>   arch/arm/mach-exynos4/mach-smdkv310.c |    5 +++++
+>   2 files changed, 7 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+> index e6925de..4c399c0 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -139,6 +139,7 @@ config MACH_SMDKV310
+>   	select S3C_DEV_RTC
+>   	select S3C_DEV_WDT
+>   	select S3C_DEV_I2C1
+> +	select S5P_DEV_I2C_HDMIPHY
+>   	select S5P_DEV_MFC
+>   	select S3C_DEV_HSMMC
+>   	select S3C_DEV_HSMMC1
+> @@ -148,6 +149,7 @@ config MACH_SMDKV310
+>   	select EXYNOS4_DEV_AHCI
+>   	select SAMSUNG_DEV_KEYPAD
+>   	select EXYNOS4_DEV_PD
+> +	select S5P_DEV_TV
+>   	select SAMSUNG_DEV_PWM
+>   	select EXYNOS4_DEV_SYSMMU
+>   	select EXYNOS4_SETUP_FIMD0
+> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+> index 5f62b2b..8fdba16 100644
+> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+> @@ -173,6 +173,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+>   	&s3c_device_hsmmc2,
+>   	&s3c_device_hsmmc3,
+>   	&s3c_device_i2c1,
+> +	&s5p_device_i2c_hdmiphy,
+>   	&s3c_device_rtc,
+>   	&s3c_device_wdt,
+>   	&exynos4_device_ac97,
+> @@ -194,6 +195,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+>   	&samsung_asoc_idma,
+>   	&smdkv310_smsc911x,
+>   	&exynos4_device_ahci,
+> +	&s5p_device_hdmi,
+> +	&s5p_device_mixer,
+I should add TV power domain device exynos4_device_pd[PD_TV]  here.
+>   };
+>
+>   static void __init smdkv310_smsc911x_init(void)
+> @@ -254,6 +257,8 @@ static void __init smdkv310_machine_init(void)
+>   	s3c_sdhci2_set_platdata(&smdkv310_hsmmc2_pdata);
+>   	s3c_sdhci3_set_platdata(&smdkv310_hsmmc3_pdata);
+>
+> +	s5p_i2c_hdmiphy_set_platdata(NULL);
+> +
+You should set mixer's and hdmi's parents here to device for TV power 
+domain.
+You should also configure gpio for hot-plug detection. Please refer to 
+function s5p_tv_setup
+in arch/arm/mach-exynos4/mach-universal_c210.c:1012.
+>   	samsung_keypad_set_platdata(&smdkv310_keypad_data);
+>
+>   	samsung_bl_set(&smdkv310_bl_gpio_info,&smdkv310_bl_data);
+I hope you find this information useful.
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index d4d401c..679ba48 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -21,6 +21,11 @@ config EXYNOS4_MCT
- 	help
- 	  Use MCT (Multi Core Timer) as kernel timers
- 
-+config EXYNOS4_DEV_DMA
-+	bool
-+	help
-+	  Compile in amba device definitions for DMA controller
-+
- config EXYNOS4_DEV_AHCI
- 	bool
- 	help
-@@ -129,6 +134,7 @@ config MACH_SMDKC210
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung SMDKC210
- 
-@@ -153,6 +159,7 @@ config MACH_SMDKV310
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_KEYPAD
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung SMDKV310
- 
-@@ -191,6 +198,7 @@ config MACH_UNIVERSAL_C210
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C5
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung Mobile Universal S5PC210 Reference
- 	  Board.
-@@ -215,6 +223,7 @@ config MACH_NURI
- 	select EXYNOS4_SETUP_USB_PHY
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_ADC
-+	select EXYNOS4_DEV_DMA
- 	help
- 	  Machine support for Samsung Mobile NURI Board.
- 
-@@ -222,6 +231,7 @@ config MACH_EXYNOS4_DT
- 	bool "Samsung Exynos4 Machine using device tree"
- 	select CPU_EXYNOS4210
- 	select USE_OF
-+	select ARM_AMBA
- 	help
- 	  Machine support for Samsung Exynos4 machine with device tree enabled.
- 
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index d2bf5bf..a2f33dc 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -13,7 +13,8 @@ obj-				:=
- # Core support for EXYNOS4 system
- 
- obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
-+obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o pmu.o
-+obj-$(CONFIG_EXYNOS4_DEV_DMA)	+= dma.o
- obj-$(CONFIG_PM)		+= pm.o sleep.o
- obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
- 
-diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
-index c3c0d17..921d31d 100644
---- a/arch/arm/mach-exynos4/dma.c
-+++ b/arch/arm/mach-exynos4/dma.c
-@@ -24,6 +24,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/amba/bus.h>
- #include <linux/amba/pl330.h>
-+#include <linux/of.h>
- 
- #include <asm/irq.h>
- #include <plat/devs.h>
-@@ -138,6 +139,9 @@ struct amba_device exynos4_device_pdma1 = {
- 
- static int __init exynos4_dma_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
-+
- 	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
- 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
--- 
-1.6.6.rc2
+Best regards,
+Tomasz Stanislawski
