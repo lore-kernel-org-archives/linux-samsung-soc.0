@@ -1,100 +1,54 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS4: Add TVOUT support for SMDKV310
-Date: Mon, 19 Sep 2011 10:27:07 +0200
-Message-ID: <4E76FCDB.8040708@samsung.com>
-References: <1314340747-13816-1-git-send-email-hatim.rv@samsung.com>
- <1314340747-13816-2-git-send-email-hatim.rv@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v3 0/2] Add device tree support for Samsung's keypad controller
+ driver
+Date: Mon, 19 Sep 2011 15:49:11 +0530
+Message-ID: <1316427553-5033-1-git-send-email-thomas.abraham@linaro.org>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:12379 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752739Ab1ISI1O (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:60295 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755001Ab1ISKTz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 04:27:14 -0400
-Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LRR00MS2GTB5J00@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 09:27:11 +0100 (BST)
-Received: from [106.116.48.223] by spt2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRR00MCMGTB7E@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 09:27:11 +0100 (BST)
-In-reply-to: <1314340747-13816-2-git-send-email-hatim.rv@samsung.com>
+	Mon, 19 Sep 2011 06:19:55 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Hatim Ali <hatim.rv@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, m.szyprowski@samsung.com, banajit.g@samsung.com
+To: devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com
+Cc: grant.likely@secretlab.ca, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com
 
-Hi Hatim Ali,
+Changes since v2:
+- Addressed comments from Grant Likely.
+  - Renamed 'keypad,key-code' property name to 'linux,code'.
+  - Fixed incorrect data types for all instances of of_property+read_u32.
+  - linux,input-type binding was not added as suggested since the driver
+    supports only EV_KEY event type.
 
-On 08/26/2011 08:39 AM, Hatim Ali wrote:
-> Add support for TVOUT on SMDKV310 board.
->
-> Signed-off-by: Hatim Ali<hatim.rv@samsung.com>
-> ---
->   arch/arm/mach-exynos4/Kconfig         |    2 ++
->   arch/arm/mach-exynos4/mach-smdkv310.c |    5 +++++
->   2 files changed, 7 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-> index e6925de..4c399c0 100644
-> --- a/arch/arm/mach-exynos4/Kconfig
-> +++ b/arch/arm/mach-exynos4/Kconfig
-> @@ -139,6 +139,7 @@ config MACH_SMDKV310
->   	select S3C_DEV_RTC
->   	select S3C_DEV_WDT
->   	select S3C_DEV_I2C1
-> +	select S5P_DEV_I2C_HDMIPHY
->   	select S5P_DEV_MFC
->   	select S3C_DEV_HSMMC
->   	select S3C_DEV_HSMMC1
-> @@ -148,6 +149,7 @@ config MACH_SMDKV310
->   	select EXYNOS4_DEV_AHCI
->   	select SAMSUNG_DEV_KEYPAD
->   	select EXYNOS4_DEV_PD
-> +	select S5P_DEV_TV
->   	select SAMSUNG_DEV_PWM
->   	select EXYNOS4_DEV_SYSMMU
->   	select EXYNOS4_SETUP_FIMD0
-> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
-> index 5f62b2b..8fdba16 100644
-> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
-> @@ -173,6 +173,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
->   	&s3c_device_hsmmc2,
->   	&s3c_device_hsmmc3,
->   	&s3c_device_i2c1,
-> +	&s5p_device_i2c_hdmiphy,
->   	&s3c_device_rtc,
->   	&s3c_device_wdt,
->   	&exynos4_device_ac97,
-> @@ -194,6 +195,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
->   	&samsung_asoc_idma,
->   	&smdkv310_smsc911x,
->   	&exynos4_device_ahci,
-> +	&s5p_device_hdmi,
-> +	&s5p_device_mixer,
-I should add TV power domain device exynos4_device_pd[PD_TV]  here.
->   };
->
->   static void __init smdkv310_smsc911x_init(void)
-> @@ -254,6 +257,8 @@ static void __init smdkv310_machine_init(void)
->   	s3c_sdhci2_set_platdata(&smdkv310_hsmmc2_pdata);
->   	s3c_sdhci3_set_platdata(&smdkv310_hsmmc3_pdata);
->
-> +	s5p_i2c_hdmiphy_set_platdata(NULL);
-> +
-You should set mixer's and hdmi's parents here to device for TV power 
-domain.
-You should also configure gpio for hot-plug detection. Please refer to 
-function s5p_tv_setup
-in arch/arm/mach-exynos4/mach-universal_c210.c:1012.
->   	samsung_keypad_set_platdata(&smdkv310_keypad_data);
->
->   	samsung_bl_set(&smdkv310_bl_gpio_info,&smdkv310_bl_data);
-I hope you find this information useful.
+Changes since v1:
+- Addressed comments from Dmitry Torokhov.
+  - Type of controller is cached in driver's private data and the function
+    that determines the type of the controller for each keypad scan is
+    removed.
+  - pdata allocated during probe is explicitly freed after probe completes
+    without any error. In case of exit from probe due a error, no explicit
+    deallocation of pdata memory is performed and it is left to devres to
+    handle that.
+  - The generic code to translate KEY(x,y,code) is retained in the driver
+    itself. I am unsure of a right common place for it.
+  - Driver continues with the probe even if one or more gpio configuration
+    fails.
+  - Patch 1 that adds a new config option is still retained in this patchset.
 
-Best regards,
-Tomasz Stanislawski
+
+This patchset adds device tree support for samsung's keypad controller driver.
+First patch adds a new config option to be used by device tree enabled platforms
+for selecting the samsung's keypad controller driver. The second patch adds device
+tree support for the keypad driver.
+
+Thomas Abraham (2):
+  input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
+  input: samsung-keypad: Add device tree support
+
+ .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
+ drivers/input/keyboard/Kconfig                     |    9 +-
+ drivers/input/keyboard/samsung-keypad.c            |  179 ++++++++++++++++++--
+ 3 files changed, 263 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/samsung-keypad.txt
