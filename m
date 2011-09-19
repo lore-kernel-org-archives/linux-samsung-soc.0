@@ -1,181 +1,61 @@
-From: Jongpill Lee <boyko.lee@samsung.com>
-Subject: [PATCH V2 3/3] ARM: EXYNOS4: Support suspend/resume for EXYNOS4212
-Date: Mon, 19 Sep 2011 10:25:42 +0900
-Message-ID: <1316395542-27578-4-git-send-email-boyko.lee@samsung.com>
-References: <1316395542-27578-1-git-send-email-boyko.lee@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v3 0/4] ARM: Samsung: Add board setup for M-5MOLS and
+ NOON010PC30 camera sensors
+Date: Mon, 19 Sep 2011 19:30:37 +0200
+Message-ID: <1316453441-13525-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:49893 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751528Ab1ISOUi (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:55482 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753263Ab1ISRay (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 10:20:38 -0400
-In-Reply-To: <1316395542-27578-1-git-send-email-boyko.lee@samsung.com>
+	Mon, 19 Sep 2011 13:30:54 -0400
+Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LRS00CB75ZG82@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 18:30:52 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LRS00FH05ZFY6@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 18:30:52 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, Jongpill Lee <boyko.lee@samsung.com>
+Cc: kgene.kim@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, s.nawrocki@samsung.com
 
-This patch adds suspend and resume function for EXYNOS4212.
+Hello,
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
----
- arch/arm/mach-exynos4/pm.c  |    7 +++
- arch/arm/mach-exynos4/pmu.c |  118 ++++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 124 insertions(+), 1 deletions(-)
+the following change set adds board setup code for NOOON01PC30 sensor on GONI 
+and M-5MOLS on UNIVERSAL_C210 board.
+Some clocks are modified in line with latest FIMC driver modifications for v3.2.
 
-diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
-index 62e4f43..509a435 100644
---- a/arch/arm/mach-exynos4/pm.c
-+++ b/arch/arm/mach-exynos4/pm.c
-@@ -339,6 +339,13 @@ static int exynos4_pm_suspend(void)
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
- 
-+	if (soc_is_exynos4212()) {
-+		tmp = __raw_readl(S5P_CENTRAL_SEQ_OPTION);
-+		tmp &= ~(S5P_USE_STANDBYWFI_ISP_ARM |
-+			 S5P_USE_STANDBYWFE_ISP_ARM);
-+		__raw_writel(tmp, S5P_CENTRAL_SEQ_OPTION);
-+	}
-+
- 	/* Save Power control register */
- 	asm ("mrc p15, 0, %0, c15, c0, 0"
- 	     : "=r" (tmp) : : "cc");
-diff --git a/arch/arm/mach-exynos4/pmu.c b/arch/arm/mach-exynos4/pmu.c
-index 02bfa0d..bba48f5 100644
---- a/arch/arm/mach-exynos4/pmu.c
-+++ b/arch/arm/mach-exynos4/pmu.c
-@@ -94,6 +94,114 @@ static struct exynos4_pmu_conf exynos4210_pmu_config[] = {
- 	{ PMU_TABLE_END,},
- };
- 
-+static struct exynos4_pmu_conf exynos4212_pmu_config[] = {
-+	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
-+	{ S5P_DIS_IRQ_CORE0,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_CENTRAL0,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_ARM_CORE1_LOWPWR,			{ 0x0, 0x0, 0x2 } },
-+	{ S5P_DIS_IRQ_CORE1,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_CENTRAL1,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_ISP_ARM_LOWPWR,			{ 0x1, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_ISP_ARM_LOCAL_LOWPWR,	{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_ISP_ARM_CENTRAL_LOWPWR,	{ 0x0, 0x0, 0x0 } },
-+	{ S5P_ARM_COMMON_LOWPWR,		{ 0x0, 0x0, 0x2 } },
-+	{ S5P_L2_0_LOWPWR,			{ 0x0, 0x0, 0x3 } },
-+	/* XXX_OPTION register should be set other field */
-+	{ S5P_ARM_L2_0_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ S5P_L2_1_LOWPWR,			{ 0x0, 0x0, 0x3 } },
-+	{ S5P_ARM_L2_1_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ S5P_CMU_ACLKSTOP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_SCLKSTOP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_LOWPWR,			{ 0x1, 0x1, 0x0 } },
-+	{ S5P_DRAM_FREQ_DOWN_LOWPWR,		{ 0x1, 0x1, 0x1 } },
-+	{ S5P_DDRPHY_DLLOFF_LOWPWR,		{ 0x1, 0x1, 0x1 } },
-+	{ S5P_LPDDR_PHY_DLL_LOCK_LOWPWR,	{ 0x1, 0x1, 0x1 } },
-+	{ S5P_CMU_ACLKSTOP_COREBLK_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_SCLKSTOP_COREBLK_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_COREBLK_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_APLL_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_MPLL_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_VPLL_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_EPLL_SYSCLK_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_MPLLUSER_SYSCLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_GPS_ALIVE_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_GPSALIVE_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_CAM_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_TV_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_MFC_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_G3D_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_LCD0_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_ISP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_MAUDIO_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_CLKSTOP_GPS_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_CAM_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_TV_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_MFC_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_G3D_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_LCD0_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_ISP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_RESET_MAUDIO_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_CMU_RESET_GPS_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_TOP_BUS_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_TOP_RETENTION_LOWPWR,		{ 0x1, 0x0, 0x1 } },
-+	{ S5P_TOP_PWR_LOWPWR,			{ 0x3, 0x0, 0x3 } },
-+	{ S5P_TOP_BUS_COREBLK_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_TOP_RETENTION_COREBLK_LOWPWR,	{ 0x1, 0x0, 0x1 } },
-+	{ S5P_TOP_PWR_COREBLK_LOWPWR,		{ 0x3, 0x0, 0x3 } },
-+	{ S5P_LOGIC_RESET_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_OSCCLK_GATE_LOWPWR,		{ 0x1, 0x0, 0x1 } },
-+	{ S5P_LOGIC_RESET_COREBLK_LOWPWR,	{ 0x1, 0x1, 0x0 } },
-+	{ S5P_OSCCLK_GATE_COREBLK_LOWPWR,	{ 0x1, 0x0, 0x1 } },
-+	{ S5P_ONENAND_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_ONENAND_MEM_OPTION,		{ 0x10, 0x10, 0x0 } },
-+	{ S5P_HSI_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_HSI_MEM_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ S5P_G2D_ACP_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_G2D_ACP_MEM_OPTION,		{ 0x10, 0x10, 0x0 } },
-+	{ S5P_USBOTG_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_USBOTG_MEM_OPTION,		{ 0x10, 0x10, 0x0 } },
-+	{ S5P_HSMMC_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_HSMMC_MEM_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ S5P_CSSYS_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_CSSYS_MEM_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ S5P_SECSS_MEM_LOWPWR,			{ 0x3, 0x0, 0x0 } },
-+	{ S5P_SECSS_MEM_OPTION,			{ 0x10, 0x10, 0x0 } },
-+	{ S5P_ROTATOR_MEM_LOWPWR,		{ 0x3, 0x0, 0x0 } },
-+	{ S5P_ROTATOR_MEM_OPTION,		{ 0x10, 0x10, 0x0 } },
-+	{ S5P_PAD_RETENTION_DRAM_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_MAUDIO_LOWPWR,	{ 0x1, 0x1, 0x0 } },
-+	{ S5P_PAD_RETENTION_GPIO_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_UART_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_MMCA_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_MMCB_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_EBIA_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_EBIB_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_GPIO_COREBLK_LOWPWR,{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_ISOLATION_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_ISOLATION_COREBLK_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_PAD_RETENTION_ALV_SEL_LOWPWR,	{ 0x1, 0x0, 0x0 } },
-+	{ S5P_XUSBXTI_LOWPWR,			{ 0x1, 0x1, 0x0 } },
-+	{ S5P_XXTI_LOWPWR,			{ 0x1, 0x1, 0x0 } },
-+	{ S5P_EXT_REGULATOR_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_GPIO_MODE_LOWPWR,			{ 0x1, 0x0, 0x0 } },
-+	{ S5P_GPIO_MODE_COREBLK_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_GPIO_MODE_MAUDIO_LOWPWR,		{ 0x1, 0x1, 0x0 } },
-+	{ S5P_TOP_ASB_RESET_LOWPWR,		{ 0x1, 0x1, 0x1 } },
-+	{ S5P_TOP_ASB_ISOLATION_LOWPWR,		{ 0x1, 0x0, 0x1 } },
-+	{ S5P_CAM_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_TV_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_MFC_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_G3D_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_LCD0_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_ISP_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_MAUDIO_LOWPWR,			{ 0x7, 0x7, 0x0 } },
-+	{ S5P_GPS_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_GPS_ALIVE_LOWPWR,			{ 0x7, 0x0, 0x0 } },
-+	{ S5P_CMU_SYSCLK_ISP_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ S5P_CMU_SYSCLK_GPS_LOWPWR,		{ 0x1, 0x0, 0x0 } },
-+	{ PMU_TABLE_END,},
-+};
-+
- void exynos4_sys_powerdown_conf(enum sys_powerdown mode)
- {
- 	unsigned int i;
-@@ -107,7 +215,15 @@ static int __init exynos4_pmu_init(void)
- {
- 	exynos4_pmu_config = exynos4210_pmu_config;
- 
--	pr_info("EXYNOS4210 PMU Initialize\n");
-+	if (soc_is_exynos4210()) {
-+		exynos4_pmu_config = exynos4210_pmu_config;
-+		pr_info("EXYNOS4210 PMU Initialize\n");
-+	} else if (soc_is_exynos4212()) {
-+		exynos4_pmu_config = exynos4212_pmu_config;
-+		pr_info("EXYNOS4212 PMU Initialize\n");
-+	} else {
-+		pr_info("EXYNOS4: PMU not supported\n");
-+	}
- 
- 	return 0;
- }
+Changes since previous version:
+ - improved error handling, switched to gpio_request_array()
+ - created against git://github.com/kgene/linux-samsung.git for-next
+
+Sylwester Nawrocki (4):
+  ARM: S5PV210: Rename sclk_cam clocks for FIMC media driver
+  ARM: S5PV210: Add support for NOON010PC30 sensor on GONI board
+  ARM: EXYNOS4: Rename sclk_cam clocks for FIMC driver
+  ARM: S5PV210: UNIVERSAL_C210: Add support for M-5MOLS image sensor
+
+ arch/arm/mach-exynos4/Kconfig               |    3 +
+ arch/arm/mach-exynos4/clock.c               |    6 +-
+ arch/arm/mach-exynos4/mach-universal_c210.c |  206 +++++++++++++++++++++++++-
+ arch/arm/mach-s5pv210/Kconfig               |    1 +
+ arch/arm/mach-s5pv210/clock.c               |    6 +-
+ arch/arm/mach-s5pv210/mach-goni.c           |   53 +++++++
+ 6 files changed, 259 insertions(+), 16 deletions(-)
 -- 
-1.7.1
+1.7.6.3
+
+The patches can be pulled from git://git.infradead.org/users/kmpark/linux-2.6-samsung, 
+branch samsung-board-camera.
+
+Thanks,
+--
+Sylwester Nawrocki
+Samsung Poland R&D Center
