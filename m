@@ -1,182 +1,78 @@
 From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V5 6/6] ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer
- support
-Date: Mon, 19 Sep 2011 13:54:01 -0400
-Message-ID: <1316454841-20869-7-git-send-email-ajaykumar.rs@samsung.com>
-References: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
+Subject: [PATCH V5 0/6] ARM: S5P64X0: Add Framebuffer support
+Date: Mon, 19 Sep 2011 13:53:55 -0400
+Message-ID: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44422 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754519Ab1ISLw2 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:65014 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754519Ab1ISLwn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 07:52:28 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Mon, 19 Sep 2011 07:52:43 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRR00DPOQAV5830@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:52:27 +0900 (KST)
+ 2010)) with ESMTP id <0LRR00MKEQB1EU80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:52:19 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
  with ESMTPA id <0LRR00G4JQAZ9R@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:52:27 +0900 (KST)
-In-reply-to: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Sep 2011 20:52:19 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com
 
-This patch:
-	-- Adds platform device support for LCD-LTE480.
-	-- Adds platform data for FB with win_mode and default_bpp.
-	-- Enables FB device support and platform-lcd support.
-	-- Adds SPCON settings for LCD.
+ The patches are created against "for-next" branch of Kukjin Kim's tree at:
+ git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- arch/arm/mach-s5p64x0/Kconfig         |    2 +
- arch/arm/mach-s5p64x0/mach-smdk6450.c |   75 +++++++++++++++++++++++++++++++++
- 2 files changed, 77 insertions(+), 0 deletions(-)
+ Changes since V1:
+	- Remove mach/regs-fb.h, instead use plat/regs-fb.h.
+	- Add common pdata for FB and LCD in SMDK6440 and SMDK6450.
+	- Modify names(s5p-->smdk), max_bpp and refresh rate.
+	- Modify variable name(cfg-->chipid).
+	- Use __raw_readl, __raw_writel instead of readl and writel.
 
-diff --git a/arch/arm/mach-s5p64x0/Kconfig b/arch/arm/mach-s5p64x0/Kconfig
-index 3adc4b8..ecb4e44 100644
---- a/arch/arm/mach-s5p64x0/Kconfig
-+++ b/arch/arm/mach-s5p64x0/Kconfig
-@@ -54,6 +54,7 @@ config MACH_SMDK6440
- config MACH_SMDK6450
- 	bool "SMDK6450"
- 	select CPU_S5P6450
-+	select S3C_DEV_FB
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-@@ -62,6 +63,7 @@ config MACH_SMDK6450
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_TS
-+	select S5P64X0_SETUP_FB_24BPP
- 	select S5P64X0_SETUP_I2C1
- 	help
- 	  Machine support for the Samsung SMDK6450
-diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-index ee0da14..2a69caa 100644
---- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
-+++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
-@@ -23,6 +23,9 @@
- #include <linux/clk.h>
- #include <linux/gpio.h>
- #include <linux/pwm_backlight.h>
-+#include <linux/fb.h>
-+
-+#include <video/platform_lcd.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
-@@ -47,6 +50,8 @@
- #include <plat/ts.h>
- #include <plat/s5p-time.h>
- #include <plat/backlight.h>
-+#include <plat/fb.h>
-+#include <plat/regs-fb.h>
- 
- #define SMDK6450_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
- 				S3C2410_UCON_RXILEVEL |		\
-@@ -110,6 +115,59 @@ static struct s3c2410_uartcfg smdk6450_uartcfgs[] __initdata = {
- #endif
- };
- 
-+/* Frame Buffer */
-+static struct s3c_fb_pd_win smdk6450_fb_win0 = {
-+	.win_mode	= {
-+		.left_margin	= 8,
-+		.right_margin	= 13,
-+		.upper_margin	= 7,
-+		.lower_margin	= 5,
-+		.hsync_len	= 3,
-+		.vsync_len	= 1,
-+		.xres		= 800,
-+		.yres		= 480,
-+	},
-+	.max_bpp	= 32,
-+	.default_bpp	= 24,
-+};
-+
-+static struct s3c_fb_platdata smdk6450_lcd_pdata __initdata = {
-+	.win[0]		= &smdk6450_fb_win0,
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.setup_gpio	= s5p64x0_fb_gpio_setup_24bpp,
-+};
-+
-+/* LCD power controller */
-+static void smdk6450_lte480_reset_power(struct plat_lcd_data *pd,
-+					 unsigned int power)
-+{
-+	int err;
-+
-+	if (power) {
-+		err = gpio_request(S5P6450_GPN(5), "GPN");
-+		if (err) {
-+			printk(KERN_ERR "failed to request GPN for lcd reset\n");
-+			return;
-+		}
-+
-+		gpio_direction_output(S5P6450_GPN(5), 1);
-+		gpio_set_value(S5P6450_GPN(5), 0);
-+		gpio_set_value(S5P6450_GPN(5), 1);
-+		gpio_free(S5P6450_GPN(5));
-+	}
-+}
-+
-+static struct plat_lcd_data smdk6450_lcd_power_data = {
-+	.set_power	= smdk6450_lte480_reset_power,
-+};
-+
-+static struct platform_device smdk6450_lcd_lte480wv = {
-+	.name			= "platform-lcd",
-+	.dev.parent		= &s3c_device_fb.dev,
-+	.dev.platform_data	= &smdk6450_lcd_power_data,
-+};
-+
- static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_adc,
- 	&s3c_device_rtc,
-@@ -119,6 +177,9 @@ static struct platform_device *smdk6450_devices[] __initdata = {
- 	&s3c_device_wdt,
- 	&samsung_asoc_dma,
- 	&s5p6450_device_iis0,
-+	&s3c_device_fb,
-+	&smdk6450_lcd_lte480wv,
-+
- 	/* s5p6450_device_spi0 will be added */
- };
- 
-@@ -166,6 +227,17 @@ static void __init smdk6450_map_io(void)
- 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
- }
- 
-+static void s5p6450_set_lcd_interface(void)
-+{
-+	unsigned int cfg;
-+
-+	/* select TFT LCD type (RGB I/F) */
-+	cfg = __raw_readl(S5P64X0_SPCON0);
-+	cfg &= ~S5P64X0_SPCON0_LCD_SEL_MASK;
-+	cfg |= S5P64X0_SPCON0_LCD_SEL_RGB;
-+	__raw_writel(cfg, S5P64X0_SPCON0);
-+}
-+
- static void __init smdk6450_machine_init(void)
- {
- 	s3c24xx_ts_set_platdata(NULL);
-@@ -179,6 +251,9 @@ static void __init smdk6450_machine_init(void)
- 
- 	samsung_bl_set(&smdk6450_bl_gpio_info, &smdk6450_bl_data);
- 
-+	s5p6450_set_lcd_interface();
-+	s3c_fb_set_platdata(&smdk6450_lcd_pdata);
-+
- 	platform_add_devices(smdk6450_devices, ARRAY_SIZE(smdk6450_devices));
- }
- 
--- 
-1.7.0.4
+ Changes since V2:
+	-Change name of the config-COMMON_FB to SMDK64X0_COMMON_FB.
+	-Change filename common-fb.h to smdk64x0-common-fb.h.
+	-Change filename common-fb.c to smdk64x0-common-fb.c.
+
+ Changes since V3:
+	-Add FB and LCD plat-data in corresponding machine files
+	 instead of creating common file smdk64x0-common-fb.c.
+	-Modify name S5P64X0_SETUP_FB to S5P64X0_SETUP_FB_24BPP.
+	-Modify file name setup-fb.c to setup-fb-24bpp.c.
+	-Move SPCON settings to machine file.
+	-Use soc_is_s5p6440()/soc_is_s5p6450() to check CPU ID.
+
+ Changes since V4:
+	-Removed refresh rate from plat data(s3c_fb_pd_win)
+	-Fixed complation warning:"function declaration isn't a prototype"
+	 for s5p6440_set_lcd_interface() and s5p6450_set_lcd_interface().
+
+
+  These patches have dependency on the patch:
+  "ARM: S5P64X0: Fix mask value for S5P64X0 CPU IDs",
+  at http://www.spinics.net/lists/arm-kernel/msg138990.html
+
+o To Kukjin,
+  [PATCH RESEND V5 1/6] video: s3c-fb: Add S5P64X0 specific s3c_fb_driverdata
+  [PATCH RESEND V5 2/6] ARM: S5P64X0: Add register base and IRQ for Framebuffer
+  [PATCH RESEND V5 3/6] ARM: S5P64X0: Set s3c_device_fb name
+  [PATCH RESEND V5 4/6] ARM: S5P64X0: Add GPIO setup for LCD
+  [PATCH V5 5/6]ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer support
+  [PATCH V5 6/6]ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer support
+
+ arch/arm/mach-s5p64x0/Kconfig                  |   10 +++
+ arch/arm/mach-s5p64x0/Makefile                 |    1 +
+ arch/arm/mach-s5p64x0/cpu.c                    |    3 +
+ arch/arm/mach-s5p64x0/include/mach/irqs.h      |    4 +
+ arch/arm/mach-s5p64x0/include/mach/map.h       |    3 +
+ arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 +
+ arch/arm/mach-s5p64x0/mach-smdk6440.c          |   74 +++++++++++++++++++++++
+ arch/arm/mach-s5p64x0/mach-smdk6450.c          |   75 ++++++++++++++++++++++++
+ arch/arm/mach-s5p64x0/setup-fb-24bpp.c         |   29 +++++++++
+ arch/arm/plat-samsung/include/plat/fb.h        |    7 ++
+ drivers/video/s3c-fb.c                         |   27 +++++++++
+ 11 files changed, 237 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5p64x0/setup-fb-24bpp.c
