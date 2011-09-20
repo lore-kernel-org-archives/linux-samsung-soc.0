@@ -1,44 +1,65 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH] mmc: card: modify mmc_getgeo function
-Date: Tue, 20 Sep 2011 16:38:49 +0530
-Message-ID: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: Re: [PATCH 1/3] include: fb: Add definiton for window positioning
+ structure
+Date: Tue, 20 Sep 2011 14:10:21 +0300
+Message-ID: <1316517021.1949.13.camel@deskari>
+References: <1316532641-2657-1-git-send-email-ajaykumar.rs@samsung.com>
+	 <1316532641-2657-2-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:53776 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750806Ab1ITLJC (ORCPT
+Received: from na3sys009aog104.obsmtp.com ([74.125.149.73]:58339 "EHLO
+	na3sys009aog104.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750806Ab1ITLK1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Sep 2011 07:09:02 -0400
+	Tue, 20 Sep 2011 07:10:27 -0400
+In-Reply-To: <1316532641-2657-2-git-send-email-ajaykumar.rs@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, banajit.g@samsung.com
 
-In the earlier code the cylinder, sector and head are assigned
-independently. Current patch generates the cylinder number
-with the values of sector and head.
-This patch only makes they cylinder value to be dependent on
-the sector and head.
+On Tue, 2011-09-20 at 11:30 -0400, Ajay Kumar wrote:
+> This patch adds a data structure definiton to hold framebuffer windows/planes.
+> An ioctl number is also added to provide user access
+> to change window position dynamically.
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> Signed-off-by: Banajit Goswami <banajit.g@samsung.com>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  include/linux/fb.h |    7 +++++++
+>  1 files changed, 7 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/fb.h b/include/linux/fb.h
+> index 1d6836c..2141941 100644
+> --- a/include/linux/fb.h
+> +++ b/include/linux/fb.h
+> @@ -39,6 +39,7 @@
+>  #define FBIOPUT_MODEINFO        0x4617
+>  #define FBIOGET_DISPINFO        0x4618
+>  #define FBIO_WAITFORVSYNC	_IOW('F', 0x20, __u32)
+> +#define FBIOPOS_OVERLAY_WIN	_IOW('F', 0x21, struct fb_overlay_win_pos)
+>  
+>  #define FB_TYPE_PACKED_PIXELS		0	/* Packed Pixels	*/
+>  #define FB_TYPE_PLANES			1	/* Non interleaved planes */
+> @@ -366,6 +367,12 @@ struct fb_image {
+>  	struct fb_cmap cmap;	/* color map info */
+>  };
+>  
+> +/* Window overlaying */
+> +struct fb_overlay_win_pos {
+> +	__u32 win_pos_x;	/* x-offset from LCD(0,0) where window starts */
+> +	__u32 win_pos_y;	/* y-offset from LCD(0,0) where window starts */
+> +};
 
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
----
- drivers/mmc/card/block.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+Shouldn't this also include the window size (in case scaling is
+supported)?
 
-diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
-index 1ff5486..bebb13b 100644
---- a/drivers/mmc/card/block.c
-+++ b/drivers/mmc/card/block.c
-@@ -226,9 +226,10 @@ static int mmc_blk_release(struct gendisk *disk, fmode_t mode)
- static int
- mmc_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
- {
--	geo->cylinders = get_capacity(bdev->bd_disk) / (4 * 16);
- 	geo->heads = 4;
- 	geo->sectors = 16;
-+	geo->cylinders = get_capacity(bdev->bd_disk) /
-+		(geo->heads * geo->sectors);
- 	return 0;
- }
- 
--- 
-1.7.1
+This also won't work for setups where the same framebuffer is used by
+multiple overlays. For example, this is the case on OMAP when the same
+content is cloned to, say, LCD and TV, each of which is showing an
+overlay.
+
+ Tomi
