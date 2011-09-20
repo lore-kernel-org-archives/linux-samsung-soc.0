@@ -1,47 +1,32 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Add header file protection macros
-Date: Tue, 20 Sep 2011 10:16:01 +0530
-Message-ID: <1316493961-7650-1-git-send-email-sachin.kamat@linaro.org>
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Subject: [PATCH 0/3] FB: Add window positioning support
+Date: Tue, 20 Sep 2011 11:30:38 -0400
+Message-ID: <1316532641-2657-1-git-send-email-ajaykumar.rs@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:54471 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750836Ab1ITEuG (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:57311 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754744Ab1ITJ2w (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Sep 2011 00:50:06 -0400
-Received: by gyg10 with SMTP id 10so90893gyg.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2011 21:50:06 -0700 (PDT)
+	Tue, 20 Sep 2011 05:28:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
+To: FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: lethal@linux-sh.org, jg1.han@samsung.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, banajit.g@samsung.com
 
-This patch adds header file protection macros to prevent duplication.
+This patchset adds support for positioning the overlay windows on the LCD.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos4/include/mach/pm-core.h |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+These patches are based on the discussion about adding features to fbdev at:
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg06292.html
 
-diff --git a/arch/arm/mach-exynos4/include/mach/pm-core.h b/arch/arm/mach-exynos4/include/mach/pm-core.h
-index 1df3b81..4c3406b 100644
---- a/arch/arm/mach-exynos4/include/mach/pm-core.h
-+++ b/arch/arm/mach-exynos4/include/mach/pm-core.h
-@@ -14,6 +14,10 @@
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
- */
-+
-+#ifndef __ASM_ARCH_PM_CORE_H
-+#define __ASM_ARCH_PM_CORE_H __FILE__
-+
- #include <mach/regs-pmu.h>
- 
- static inline void s3c_pm_debug_init_uart(void)
-@@ -57,3 +61,5 @@ static inline void s3c_pm_saved_gpios(void)
- {
- 	/* nothing here yet */
- }
-+
-+#endif /* __ASM_ARCH_PM_CORE_H */
--- 
-1.7.4.1
+To Florian:
+  	include: fb: Add definiton for window positioning structure
+  	video: s3c-fb: Modify s3c-fb driver to support window positioning
+
+To Kukjin,
+  	ARM: SAMSUNG: Embed window positioning data structure in s3c-fb plat
+  		      data
+
+ arch/arm/plat-samsung/include/plat/fb.h |    3 ++
+ drivers/video/s3c-fb.c                  |   37 ++++++++++++++++++++++++++----
+ include/linux/fb.h                      |    7 ++++++
+ 3 files changed, 42 insertions(+), 5 deletions(-)
