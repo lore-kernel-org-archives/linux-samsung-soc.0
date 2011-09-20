@@ -1,63 +1,47 @@
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: Temporary change the URL of s5p tree for linux-next
-Date: Tue, 20 Sep 2011 10:55:54 +1000
-Message-ID: <20110920105554.68852fd25ab54b94abf5e767@canb.auug.org.au>
-References: <001701cc76b6$50db0c40$f29124c0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; protocol="application/pgp-signature";
- micalg="PGP-SHA1";
- boundary="Signature=_Tue__20_Sep_2011_10_55_54_+1000_OC/c4+BE1OKnojF+"
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Add header file protection macros
+Date: Tue, 20 Sep 2011 10:16:01 +0530
+Message-ID: <1316493961-7650-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from calzone.tip.net.au ([203.10.76.15]:44191 "EHLO
-	calzone.tip.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752157Ab1ITA4G (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:54471 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750836Ab1ITEuG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Sep 2011 20:56:06 -0400
-In-Reply-To: <001701cc76b6$50db0c40$f29124c0$%kim@samsung.com>
+	Tue, 20 Sep 2011 00:50:06 -0400
+Received: by gyg10 with SMTP id 10so90893gyg.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Sep 2011 21:50:06 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, sachin.kamat@linaro.org
 
---Signature=_Tue__20_Sep_2011_10_55_54_+1000_OC/c4+BE1OKnojF+
-Content-Type: text/plain; charset=US-ASCII
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch adds header file protection macros to prevent duplication.
 
-Hi,
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos4/include/mach/pm-core.h |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
 
-On Mon, 19 Sep 2011 19:24:29 +0900 Kukjin Kim <kgene.kim@samsung.com> wrote:
->
-> As you know, git.kernel.org has been down :(
->=20
-> So please change the URL of s5p tree for linux-next.
-> git://github.com/kgene/linux-samsung.git for-next.
-
-I will switch from today.
-
-> As a note, I'd like to restore to use git.kernel.org after available of
-> git.kernel.org.
-
-Understood.
-
---=20
-Cheers,
-Stephen Rothwell                    sfr@canb.auug.org.au
-http://www.canb.auug.org.au/~sfr/
-
---Signature=_Tue__20_Sep_2011_10_55_54_+1000_OC/c4+BE1OKnojF+
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQEcBAEBAgAGBQJOd+SaAAoJEDMEi1NhKgbs8JsIAJ+5UaAIvyxpExsyQPI2wnX4
-VMGuiGMfEFNxrvJ3D3QflMzG8UVX8d43gIDlAtb0Mvjaq8VntHVgD4GmZmyv6uCv
-SCKAiAvIUs/AW0y7CHf0Ty4bwQBSsH+HEC+apsFh1aLW/JTNqkVMSGYQ9L1phRW3
-54r8e3Mt1jKxXUD7xhbOZ4ktB75cjsiBAUESfIZhE8OKUmVbQ2/RoUW0UOU5NDi+
-j6va2eICaUT1XBPTafmVWWQYNcETZ11csWTrrQDzKp+XAPF6fmFIZId65s3PcSCG
-rKByD8zdZYH0K95cV9UZb6QpRuMB+ey8I9sx/KsEGk3xFpVJswQ+BnoZqVk+5Sc=
-=9S2w
------END PGP SIGNATURE-----
-
---Signature=_Tue__20_Sep_2011_10_55_54_+1000_OC/c4+BE1OKnojF+--
+diff --git a/arch/arm/mach-exynos4/include/mach/pm-core.h b/arch/arm/mach-exynos4/include/mach/pm-core.h
+index 1df3b81..4c3406b 100644
+--- a/arch/arm/mach-exynos4/include/mach/pm-core.h
++++ b/arch/arm/mach-exynos4/include/mach/pm-core.h
+@@ -14,6 +14,10 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+ */
++
++#ifndef __ASM_ARCH_PM_CORE_H
++#define __ASM_ARCH_PM_CORE_H __FILE__
++
+ #include <mach/regs-pmu.h>
+ 
+ static inline void s3c_pm_debug_init_uart(void)
+@@ -57,3 +61,5 @@ static inline void s3c_pm_saved_gpios(void)
+ {
+ 	/* nothing here yet */
+ }
++
++#endif /* __ASM_ARCH_PM_CORE_H */
+-- 
+1.7.4.1
