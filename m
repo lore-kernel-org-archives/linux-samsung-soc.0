@@ -1,95 +1,49 @@
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Subject: Re: [PATCH 1/3] include: fb: Add definiton for window positioning
- structure
-Date: Tue, 20 Sep 2011 21:57:17 +0300
-Message-ID: <1316545037.18781.34.camel@deskari>
-References: <1316532641-2657-1-git-send-email-ajaykumar.rs@samsung.com>
-	 <1316532641-2657-2-git-send-email-ajaykumar.rs@samsung.com>
-	 <1316517021.1949.13.camel@deskari>
-	 <CAEC9eQOTNaMcUWeSFN-DCTYrCJsVaDAO7uOZNQM=efjVdqtU2g@mail.gmail.com>
-	 <1316533193.18781.12.camel@deskari>  <4E78C579.9060305@gmx.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung cleanup for v3.2
+Date: Tue, 20 Sep 2011 22:22:41 +0200
+Message-ID: <201109202222.41747.arnd@arndb.de>
+References: <001901cc76b8$018d4fc0$04a7ef40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog119.obsmtp.com ([74.125.149.246]:44477 "EHLO
-	na3sys009aog119.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751429Ab1ITS5W (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:54846 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750871Ab1ITUWu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Sep 2011 14:57:22 -0400
-In-Reply-To: <4E78C579.9060305@gmx.de>
+	Tue, 20 Sep 2011 16:22:50 -0400
+In-Reply-To: <001901cc76b8$018d4fc0$04a7ef40$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Cc: Ajay kumar <ajaynumb@gmail.com>, Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, lethal@linux-sh.org, jg1.han@samsung.com, m.szyprowski@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org, banajit.g@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-On Tue, 2011-09-20 at 16:55 +0000, Florian Tobias Schandinat wrote:
+On Monday 19 September 2011, Kukjin Kim wrote:
+> This is Samsung cleanup for v3.2.
+> 
+> Please pull from:
+>   git://github.com/kgene/linux-samsung.git next-samsung-cleanup
 
-> Did you have a look at the (existing) API [1] Laurent proposed for discovering
-> the internal connections between the framebuffers (or with any other devices)?
+Pulled into arm-soc/next/cleanup.
 
-I know the basics of media controller, but I haven't really looked at
-the code.
+> If any problems, please let me know.
 
-> If you agree that it'd be a good idea to use it I feel that we should make the
-> windowing API more compatible with it. So basically what we want to have as a
+One tiny conflict with Nico's cross-platform series:
 
-I can't say if MC should be used for fb or not, but I think something
-similar should be used if we want to get overlays etc. supported. But
-even with MC (or something else) there, I'm not quite sure how they fit
-into the fb model.
++ 
++ MACHINE_START(SMDKC210, "SMDKC210")
++       /* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+ -      .boot_params    = S5P_PA_SDRAM + 0x100,
+++      .atag_offset    = 0x100,
++       .init_irq       = exynos4_init_irq,
++       .map_io         = smdkv310_map_io,
++       .init_machine   = smdkv310_machine_init,
++       .timer          = &exynos4_timer,
++ MACHINE_END
 
-I think the core problem here is that in a more complex setup (at least
-as I see it for OMAP) the fb should be just a framebuffer in memory,
-without any direct relation to hardware. The hardware part (an overlay,
-or whichever is the corresponding element) will then use the framebuffer
-as the pixel source.
+I'll handle this in the upstream submission.
 
-However, the current fb model combines those two things into one. If we
-manage to separate them, and add MC or similar, I think it'll work.
+Thanks,
 
-> window is one or more sunk pads so the pad-index should be also part of the
-> interface. I'm still confused with how OMAP works when it does not have a "root"
-
-Do you mean how the hardware works, or how I've designed omapfb driver?
-
-> window/framebuffer. Normally I feel that the window position should be a
-> property of the parent window as this is what the position is relative too. But
-> if the parent is no framebuffer, should we also include the entity into the
-> interface to allow configuring things that are nor even framebuffers?
-
-Right, I think you're pondering the core problem here =).
-
-On OMAP we have the display (the whole area shown on the panel/tv),
-which has video timings and things like that. But no pixel data as such
-(a configurable background color is there, though).
-
-And then we have the overlays, which are somewhere on the display, and
-the overlays get pixel data from memory (framebuffers).
-
-So in a way we have a contentless root window, but presenting that with
-an fb device doesn't feel right. And the fb device would logically be
-fb0, and if it couldn't show any content it couldn't be used as default
-framebuffer.
-
-> Also I think we need a z-index in case overlays overlap (might happen or?) and
-> enforcing that all z-indexes are different for the same entity.
-
-Yes, free z-order is supported in OMAP4. Previous OMAPs had fixed
-z-order, although in certain configuration (enable/disable alpha
-blending) the fixed z-order does change...
-
-> As I see it xres/yres (together with xoffset/yoffset) is always the visible part
-> of the framebuffer. Typically that's also part of the timings as they define
-> what is visible. With the introduction of overlays (and maybe even for some
-> hardware anyway) it is no longer always true to have any timings at all. So on
-> all framebuffer that do not have physical timings the timing interpretation is
-> useless anyway (I'm thinking about adding a FB_CAP_NOTIMING) and what remains is
-> the interpretation of xres/yres as visible screen region.
-
-For a system where there's always a root window for every output, plus
-variable size overlays, FB_CAP_NOTIMING makes sense. But it would still
-leave the problem if there's no root window. How to change timings on a
-system like OMAP?
-
- Tomi
+	Arnd
