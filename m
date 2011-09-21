@@ -1,123 +1,99 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/7] s3c-adc: describe features via quirk constants
-Date: Wed, 21 Sep 2011 21:32:14 +0900
-Message-ID: <005801cc785a$7e46a310$7ad3e930$%kim@samsung.com>
-References: <201109182241.48858.heiko@sntech.de>
- <201109182243.40440.heiko@sntech.de>
+Subject: RE: [PATCH 0/5] S5P64X0 PM Support
+Date: Wed, 21 Sep 2011 21:39:33 +0900
+Message-ID: <005901cc785b$8401f6a0$8c05e3e0$%kim@samsung.com>
+References: <1313144787-30666-1-git-send-email-a.kesavan@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:61110 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752529Ab1IUMcP convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:42932 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753657Ab1IUMjf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 08:32:15 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Wed, 21 Sep 2011 08:39:35 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRV00E3THHD8UM0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:32:14 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRV00F7LHHQU010@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:32:14 +0900 (KST)
-In-reply-to: <201109182243.40440.heiko@sntech.de>
+ 2010)) with ESMTP id <0LRV004KOHTQ93S0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:39:33 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRV005KDHTX6Q@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:39:34 +0900 (KST)
+In-reply-to: <1313144787-30666-1-git-send-email-a.kesavan@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Abhilash Kesavan' <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Heiko St=FCbner wrote:
->=20
-> The adc blocks of S3C2410 through S5P have a multitude of
-> quirks, i.e. moved bits or whole new registers.
->=20
-> This patch tries to describe these individual features
-> through constants which can be used to describe an adc.
->=20
-> As SoCs sometimes share only some of these quirks defining
-> TYPE_ADCVx values for each one wouldn't scale well when
-> adding more variants.
->=20
-Hi Heiko,
-
-I don't have idea we really need to use QUIRK in this case...as I know,=
- the
-QUIRK is used on other situation...
-
-In addition, the TYPE_ADCVx can support each Samsung SoCs' ADC...but I =
-need
-to check again.
-
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  arch/arm/plat-samsung/adc.c |   29 +++++++++++++++++++++++++++++
->  1 files changed, 29 insertions(+), 0 deletions(-)
->=20
-> diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/adc.=
-c
-> index ee8deef..b209d58 100644
-> --- a/arch/arm/plat-samsung/adc.c
-> +++ b/arch/arm/plat-samsung/adc.c
-> @@ -45,6 +45,35 @@ enum s3c_cpu_type {
->  	TYPE_ADCV3, /* S5PV210, S5PC110, EXYNOS4210 */
->  };
->=20
-> +/*
-> + * Resolution of the ADC - 10 or 12 bit
-> + */
-
-/* ... */
-
-> +#define S3C_ADC_QUIRK_10BIT		0
-> +#define S3C_ADC_QUIRK_12BIT		(1<<0)
-
-According to coding style, should be added blank around <<.
-
-> +
-> +/*
-> + * 12bit ADC can switch resolution between 10 bit and 12 bit
-> + * ADCCON bit 03 for S3C2416
-> + * ADCCON bit 16 for S3C64XX and up
-> + */
-> +#define S3C_ADC_QUIRK_RESSEL03		(1<<1)
-> +#define S3C_ADC_QUIRK_RESSEL16		(1<<2)
-
-Same as above.
-
-> +
-> +/*
-> + * Input channel select can either be in
-> + * - reg ADCCON, bit for S3C24XX and S3C64XX
-> + * - reg base+0x18 for 2443/2416/2450
-> + * - reg base+0x1C for S5P
-> + */
-> +#define S3C_ADC_QUIRK_MUXADCCON		(1<<3)
-> +#define S3C_ADC_QUIRK_MUX18		(1<<4)
-> +#define S3C_ADC_QUIRK_MUX1C		(1<<5)
-
-Same.
-
-> +
-> +/*
-> + * CLRINT register on S3C64xx
-> + */
-
-/* ... */
-
-> +#define S3C_ADC_QUIRK_CLRINT		(1<<6)
-
-Same.
-
-> +
->  struct s3c_adc_client {
->  	struct platform_device	*pdev;
->  	struct list_head	 pend;
+Abhilash Kesavan wrote:
+> 
+> The patchset adds Power Mangement support for S5P64X0. The first
+> four patches lay the groundwork for adding PM support, while the
+> final patch adds the SoC specific PM code.
+> Tested using external interrupts as wake-up sources on SMDK6440
+> and SMDK6450.
+> 
+> Abhilash Kesavan (5):
+>   ARM: S5P: Make the common S5P PM code conditionally compile
+>   ARM: SAMSUNG: Make the sleep code common for S3C64XX and newer SoCs
+>   ARM: S5P64X0: Add pm save/restore functions for GPIO banks
+>   ARM: S5P64X0: Fix incorrect serial clock name
+>   ARM: S5P64X0: Add Power Management support
+> 
+>  arch/arm/Kconfig                                |    2 +-
+>  arch/arm/mach-exynos4/Kconfig                   |    2 +
+>  arch/arm/mach-exynos4/Makefile                  |    2 +-
+>  arch/arm/mach-exynos4/sleep.S                   |   54 ------
+>  arch/arm/mach-s3c64xx/Kconfig                   |    1 +
+>  arch/arm/mach-s3c64xx/Makefile                  |    1 -
+>  arch/arm/mach-s3c64xx/sleep.S                   |   72 --------
+>  arch/arm/mach-s5p64x0/Kconfig                   |    4 +
+>  arch/arm/mach-s5p64x0/Makefile                  |    1 +
+>  arch/arm/mach-s5p64x0/clock-s5p6440.c           |    2 +-
+>  arch/arm/mach-s5p64x0/clock-s5p6450.c           |    2 +-
+>  arch/arm/mach-s5p64x0/gpiolib.c                 |    1 +
+>  arch/arm/mach-s5p64x0/include/mach/map.h        |    1 +
+>  arch/arm/mach-s5p64x0/include/mach/pm-core.h    |  117 +++++++++++++
+>  arch/arm/mach-s5p64x0/include/mach/regs-clock.h |   33 ++++
+>  arch/arm/mach-s5p64x0/include/mach/regs-gpio.h  |   19 ++
+>  arch/arm/mach-s5p64x0/init.c                    |    2 +-
+>  arch/arm/mach-s5p64x0/irq-eint.c                |    2 +
+>  arch/arm/mach-s5p64x0/irq-pm.c                  |   92 ++++++++++
+>  arch/arm/mach-s5p64x0/pm.c                      |  204
+> +++++++++++++++++++++++
+>  arch/arm/mach-s5pv210/Kconfig                   |    2 +
+>  arch/arm/mach-s5pv210/Makefile                  |    2 +-
+>  arch/arm/mach-s5pv210/sleep.S                   |   52 ------
+>  arch/arm/plat-s5p/Kconfig                       |    6 +
+>  arch/arm/plat-s5p/Makefile                      |    3 +-
+>  arch/arm/plat-samsung/Kconfig                   |    7 +
+>  arch/arm/plat-samsung/Makefile                  |    1 +
+>  arch/arm/plat-samsung/sleep.S                   |   80 +++++++++
+>  drivers/gpio/gpio-plat-samsung.c                |    4 +-
+>  29 files changed, 583 insertions(+), 188 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos4/sleep.S
+>  delete mode 100644 arch/arm/mach-s3c64xx/sleep.S
+>  create mode 100644 arch/arm/mach-s5p64x0/include/mach/pm-core.h
+>  create mode 100644 arch/arm/mach-s5p64x0/irq-pm.c
+>  create mode 100644 arch/arm/mach-s5p64x0/pm.c
+>  delete mode 100644 arch/arm/mach-s5pv210/sleep.S
+>  create mode 100644 arch/arm/plat-samsung/sleep.S
+> 
 > --
-> 1.7.2.3
+> 1.7.4.1
 
+Hi Abhilash,
+
+As I know, you need to rebase this series based on latest for-next.
+
+Please re-submit this series...and I agree with Russell's suggestion on
+patch 2/5.
+But it's enough to use s3c64xx_smdk_leds_resume() firstly not common smdk
+now.
+
+Of course, we need to do it later ;)
 
 Thanks.
 
