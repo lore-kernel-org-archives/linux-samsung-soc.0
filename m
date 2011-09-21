@@ -1,155 +1,78 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 2/7] s3c-adc: describe features via quirk constants
-Date: Wed, 21 Sep 2011 15:04:02 +0200
-Message-ID: <201109211504.03287.heiko@sntech.de>
-References: <201109182241.48858.heiko@sntech.de> <201109182243.40440.heiko@sntech.de> <005801cc785a$7e46a310$7ad3e930$%kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH V2 1/3] ARM: EXYNOS4: Add TVOUT support for SMDKV310
+Date: Wed, 21 Sep 2011 15:05:38 +0200
+Message-ID: <4E79E122.2000600@samsung.com>
+References: <1316583860-32510-1-git-send-email-hatim.rv@samsung.com>
+ <1316583860-32510-2-git-send-email-hatim.rv@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:48066 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753629Ab1IUNEP convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:52026 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753629Ab1IUNFl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 09:04:15 -0400
-In-Reply-To: <005801cc785a$7e46a310$7ad3e930$%kim@samsung.com>
+	Wed, 21 Sep 2011 09:05:41 -0400
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LRV0060DJ1FZY40@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 14:05:39 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LRV00KJCJ1E0C@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 14:05:39 +0100 (BST)
+In-reply-to: <1316583860-32510-2-git-send-email-hatim.rv@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
+To: Hatim Ali <hatim.rv@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.stanislaws@samsung.com, mchehab@infradead.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, banajit.g@samsung.com
 
-Hi,
+Hi Hatim,
 
-Am Mittwoch, 21. September 2011, 14:32:14 schrieben Sie:
-> Heiko St=FCbner wrote:
-> > The adc blocks of S3C2410 through S5P have a multitude of
-> > quirks, i.e. moved bits or whole new registers.
-> >=20
-> > This patch tries to describe these individual features
-> > through constants which can be used to describe an adc.
-> >=20
-> > As SoCs sometimes share only some of these quirks defining
-> > TYPE_ADCVx values for each one wouldn't scale well when
-> > adding more variants.
->=20
-> Hi Heiko,
->=20
-> I don't have idea we really need to use QUIRK in this case...as I kno=
-w, the
-> QUIRK is used on other situation...
->=20
-> In addition, the TYPE_ADCVx can support each Samsung SoCs' ADC...but =
-I need
-> to check again.
-The current types could not support the features of the 2443 and 2416/2=
-450 - I=20
-checked the datasheets.
+On 09/21/2011 07:44 AM, Hatim Ali wrote:
+> Add support for TVOUT on SMDKV310 board.
+> 
+> Signed-off-by: Hatim Ali <hatim.rv@samsung.com>
+> ---
+...
+> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+> index 7ce4d8b..50de270 100644
+> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+> @@ -239,6 +239,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+>  	&s3c_device_hsmmc2,
+>  	&s3c_device_hsmmc3,
+>  	&s3c_device_i2c1,
+> +	&s5p_device_i2c_hdmiphy,
+>  	&s3c_device_rtc,
+>  	&s3c_device_wdt,
+>  	&exynos4_device_ac97,
+> @@ -262,6 +263,8 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+>  	&smdkv310_lcd_lte480wv,
+>  	&smdkv310_smsc911x,
+>  	&exynos4_device_ahci,
+> +	&s5p_device_hdmi,
+> +	&s5p_device_mixer,
+>  };
+>  
+>  static void __init smdkv310_smsc911x_init(void)
+> @@ -298,6 +301,25 @@ static struct platform_pwm_backlight_data smdkv310_bl_data = {
+>  	.pwm_period_ns  = 1000,
+>  };
+>  
+> +static void s5p_tv_setup(void)
+> +{
+> +	int ret;
+> +
+> +	/* direct HPD to HDMI chip */
+> +	ret = gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
+> +
+> +	if (!ret) {
+> +		gpio_direction_input(EXYNOS4_GPX3(7));
 
-The mux register in base+0x18 does not exist on any of the current plat=
-forms.
-Also the bit 3 in ADCCON to select the resolution is specific to the 24=
-16/2450=20
-(see comments above constants and quirk definitions in patches 6 and 7)=
-=2E
+Since you're probably going to be reworking this anyway, I think gpio_request_one
+could be used here for simplicity.  
 
-So to support these SoCs would require the definition of two new types.=
-=20
-Including these new types in the existing conditionals would introduce =
-a lot=20
-of statements like
-	if ( (TYPE_X || TYPE_Y) && !TYPE_Z)
-
-In my opinion testing for specific features also describes the differen=
-ce=20
-between implementations better if one reads the code later on.
-
-
-I will change the styling of the "<<"s but am wondering why checkpatch =
-did not=20
-complain, i.e. it complains for all other whitespace mistakes one can m=
-ake but=20
-not these.
-
-Heiko
-
->=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >=20
-> >  arch/arm/plat-samsung/adc.c |   29 +++++++++++++++++++++++++++++
-> >  1 files changed, 29 insertions(+), 0 deletions(-)
-> >=20
-> > diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/ad=
-c.c
-> > index ee8deef..b209d58 100644
-> > --- a/arch/arm/plat-samsung/adc.c
-> > +++ b/arch/arm/plat-samsung/adc.c
-> > @@ -45,6 +45,35 @@ enum s3c_cpu_type {
-> >=20
-> >  	TYPE_ADCV3, /* S5PV210, S5PC110, EXYNOS4210 */
-> > =20
-> >  };
-> >=20
-> > +/*
-> > + * Resolution of the ADC - 10 or 12 bit
-> > + */
->=20
-> /* ... */
->=20
-> > +#define S3C_ADC_QUIRK_10BIT		0
-> > +#define S3C_ADC_QUIRK_12BIT		(1<<0)
->=20
-> According to coding style, should be added blank around <<.
->=20
-> > +
-> > +/*
-> > + * 12bit ADC can switch resolution between 10 bit and 12 bit
-> > + * ADCCON bit 03 for S3C2416
-> > + * ADCCON bit 16 for S3C64XX and up
-> > + */
-> > +#define S3C_ADC_QUIRK_RESSEL03		(1<<1)
-> > +#define S3C_ADC_QUIRK_RESSEL16		(1<<2)
->=20
-> Same as above.
->=20
-> > +
-> > +/*
-> > + * Input channel select can either be in
-> > + * - reg ADCCON, bit for S3C24XX and S3C64XX
-> > + * - reg base+0x18 for 2443/2416/2450
-> > + * - reg base+0x1C for S5P
-> > + */
-> > +#define S3C_ADC_QUIRK_MUXADCCON		(1<<3)
-> > +#define S3C_ADC_QUIRK_MUX18		(1<<4)
-> > +#define S3C_ADC_QUIRK_MUX1C		(1<<5)
->=20
-> Same.
->=20
-> > +
-> > +/*
-> > + * CLRINT register on S3C64xx
-> > + */
->=20
-> /* ... */
->=20
-> > +#define S3C_ADC_QUIRK_CLRINT		(1<<6)
->=20
-> Same.
->=20
-> > +
-> >=20
-> >  struct s3c_adc_client {
-> > =20
-> >  	struct platform_device	*pdev;
-> >  	struct list_head	 pend;
-> >=20
-> > --
-> > 1.7.2.3
->=20
-> Thanks.
->=20
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
+--
+Regards,
+Sylwester
