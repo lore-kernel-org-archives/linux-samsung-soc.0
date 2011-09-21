@@ -1,85 +1,60 @@
 From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: core: HS200 mode support for eMMC 4.5
-Date: Wed, 21 Sep 2011 14:26:40 -0400
-Message-ID: <m2obyd3g67.fsf@bob.laptop.org>
-References: <1316181604-31378-1-git-send-email-girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH] mmc: card: modify mmc_getgeo function
+Date: Wed, 21 Sep 2011 14:52:08 -0400
+Message-ID: <m2ty8520fb.fsf@bob.laptop.org>
+References: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:38801 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753754Ab1IUS0o (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 14:26:44 -0400
-In-Reply-To: <1316181604-31378-1-git-send-email-girish.shivananjappa@linaro.org>
-	(Girish K. S.'s message of "Fri, 16 Sep 2011 19:30:04 +0530")
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
+	(Girish K. S.'s message of "Tue, 20 Sep 2011 16:38:49 +0530")
+Sender: linux-mmc-owner@vger.kernel.org
 To: Girish K S <girish.shivananjappa@linaro.org>
 Cc: linux-mmc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Girish,
+Hi,
 
-On Fri, Sep 16 2011, Girish K S wrote:
-> This patch adds the support of the HS200 bus speed for
-> eMMC 4.5 devices.
-> The eMMC 4.5 devices have support for 200MHz bus speed.
-> The mmc core and host modules have been touched to add support
-> for this module.
-> It is necessary to know the card type in the sdhci.c file to
-> add support for eMMC tuning function. So card.h file is included
-> to import the card data structure.
+On Tue, Sep 20 2011, Girish K S wrote:
+> In the earlier code the cylinder, sector and head are assigned
+> independently. Current patch generates the cylinder number
+> with the values of sector and head.
+> This patch only makes they cylinder value to be dependent on
+> the sector and head.
 >
 > Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
 > ---
->  drivers/mmc/core/bus.c   |    3 +-
->  drivers/mmc/core/mmc.c   |  116 ++++++++++++++++++++++++++++++++++++++++++----
->  drivers/mmc/host/sdhci.c |   18 ++++++-
->  include/linux/mmc/card.h |    3 +
->  include/linux/mmc/host.h |    8 +++
->  include/linux/mmc/mmc.h  |    9 +++-
->  6 files changed, 143 insertions(+), 14 deletions(-)
+>  drivers/mmc/card/block.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
 >
-> diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-> index 393d817..a0aa7ab 100644
-> --- a/drivers/mmc/core/bus.c
-> +++ b/drivers/mmc/core/bus.c
-> @@ -301,10 +301,11 @@ int mmc_add_card(struct mmc_card *card)
->  			mmc_card_ddr_mode(card) ? "DDR " : "",
->  			type);
->  	} else {
-> -		printk(KERN_INFO "%s: new %s%s%s card at address %04x\n",
-> +		printk(KERN_INFO "%s: new %s%s%s%s card at address %04x\n",
->  			mmc_hostname(card->host),
->  			mmc_sd_card_uhs(card) ? "ultra high speed " :
->  			(mmc_card_highspeed(card) ? "high speed " : ""),
-> +			(mmc_card_hs200(card) ? "HS200 " : ""),
->  			mmc_card_ddr_mode(card) ? "DDR " : "",
->  			type, card->rca);
->  	}
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 9cbc113..c50ca42 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -283,6 +283,66 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
->  	}
->  	card->ext_csd.raw_card_type = ext_csd[EXT_CSD_CARD_TYPE];
->  	switch (ext_csd[EXT_CSD_CARD_TYPE] & EXT_CSD_CARD_TYPE_MASK) {
-> +	case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_52 |
-> +	     EXT_CSD_CARD_TYPE_26:
-> +		card->ext_csd.hs_max_dtr = 200000000;
-> +		card->ext_csd.card_type = EXT_CSD_CARD_TYPE_SDR_200;
-> +		break;
-> +	case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_1_8V |
-> +		 EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-> +		card->ext_csd.hs_max_dtr = 200000000;
-> +		card->ext_csd.card_type = EXT_CSD_CARD_TYPE_SDR_200;
-> +		break;
+> diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
+> index 1ff5486..bebb13b 100644
+> --- a/drivers/mmc/card/block.c
+> +++ b/drivers/mmc/card/block.c
+> @@ -226,9 +226,10 @@ static int mmc_blk_release(struct gendisk *disk, fmode_t mode)
+>  static int
+>  mmc_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+>  {
+> -	geo->cylinders = get_capacity(bdev->bd_disk) / (4 * 16);
+>  	geo->heads = 4;
+>  	geo->sectors = 16;
+> +	geo->cylinders = get_capacity(bdev->bd_disk) /
+> +		(geo->heads * geo->sectors);
+>  	return 0;
+>  }
 
-Please try shortening this switch-case by avoiding duplicating sections
-that repeat the same action, and having the case fall-through instead.
+Thanks, pushed to mmc-next for 3.2 with a reworded commit message:
 
-Thanks,
+Author: Girish K S <girish.shivananjappa@linaro.org>
+Date:   Tue Sep 20 16:38:49 2011 +0530
+
+    mmc: card: Remove duplicated constants
+
+    Reuse heads/sectors instead of duplicating them in the cylinders
+    calculation.
+
+    Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+    Signed-off-by: Chris Ball <cjb@laptop.org>                    
 
 - Chris.
 -- 
