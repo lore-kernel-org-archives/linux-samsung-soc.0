@@ -1,107 +1,40 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V5 0/6] ARM: S5P64X0: Add Framebuffer support
-Date: Wed, 21 Sep 2011 21:13:04 +0900
-Message-ID: <004a01cc7857$d0d8aa90$7289ffb0$%kim@samsung.com>
-References: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v2 1/2] mmc: sdhci-s3c: add default controller configuration
+Date: Wed, 21 Sep 2011 08:18:34 -0400
+Message-ID: <m2boue6qcl.fsf@bob.laptop.org>
+References: <1315984158-29651-1-git-send-email-thomas.abraham@linaro.org>
+	<1315984158-29651-2-git-send-email-thomas.abraham@linaro.org>
+	<002501cc784d$1618f110$424ad330$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:37028 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752778Ab1IUMNT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 08:13:19 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRV0083MGLSZRQ0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:13:04 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LRV00ET5GLSD560@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:13:04 +0900 (KST)
-In-reply-to: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <002501cc784d$1618f110$424ad330$%kim@samsung.com> (Kukjin Kim's
+	message of "Wed, 21 Sep 2011 19:56:16 +0900")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com
 
-Ajay Kumar wrote:
-> 
->  The patches are created against "for-next" branch of Kukjin Kim's tree
-at:
->  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> 
->  Changes since V1:
-> 	- Remove mach/regs-fb.h, instead use plat/regs-fb.h.
-> 	- Add common pdata for FB and LCD in SMDK6440 and SMDK6450.
-> 	- Modify names(s5p-->smdk), max_bpp and refresh rate.
-> 	- Modify variable name(cfg-->chipid).
-> 	- Use __raw_readl, __raw_writel instead of readl and writel.
-> 
->  Changes since V2:
-> 	-Change name of the config-COMMON_FB to SMDK64X0_COMMON_FB.
-> 	-Change filename common-fb.h to smdk64x0-common-fb.h.
-> 	-Change filename common-fb.c to smdk64x0-common-fb.c.
-> 
->  Changes since V3:
-> 	-Add FB and LCD plat-data in corresponding machine files
-> 	 instead of creating common file smdk64x0-common-fb.c.
-> 	-Modify name S5P64X0_SETUP_FB to S5P64X0_SETUP_FB_24BPP.
-> 	-Modify file name setup-fb.c to setup-fb-24bpp.c.
-> 	-Move SPCON settings to machine file.
-> 	-Use soc_is_s5p6440()/soc_is_s5p6450() to check CPU ID.
-> 
->  Changes since V4:
-> 	-Removed refresh rate from plat data(s3c_fb_pd_win)
-> 	-Fixed complation warning:"function declaration isn't a prototype"
-> 	 for s5p6440_set_lcd_interface() and s5p6450_set_lcd_interface().
-> 
-> 
->   These patches have dependency on the patch:
->   "ARM: S5P64X0: Fix mask value for S5P64X0 CPU IDs",
->   at http://www.spinics.net/lists/arm-kernel/msg138990.html
-> 
-> o To Kukjin,
->   [PATCH RESEND V5 1/6] video: s3c-fb: Add S5P64X0 specific
-> s3c_fb_driverdata
->   [PATCH RESEND V5 2/6] ARM: S5P64X0: Add register base and IRQ for
-> Framebuffer
->   [PATCH RESEND V5 3/6] ARM: S5P64X0: Set s3c_device_fb name
->   [PATCH RESEND V5 4/6] ARM: S5P64X0: Add GPIO setup for LCD
->   [PATCH V5 5/6]ARM: S5P6440: Add LCD-LTE480 and enable Framebuffer
-> support
->   [PATCH V5 6/6]ARM: S5P6450: Add LCD-LTE480 and enable Framebuffer
-> support
-> 
->  arch/arm/mach-s5p64x0/Kconfig                  |   10 +++
->  arch/arm/mach-s5p64x0/Makefile                 |    1 +
->  arch/arm/mach-s5p64x0/cpu.c                    |    3 +
->  arch/arm/mach-s5p64x0/include/mach/irqs.h      |    4 +
->  arch/arm/mach-s5p64x0/include/mach/map.h       |    3 +
->  arch/arm/mach-s5p64x0/include/mach/regs-gpio.h |    4 +
->  arch/arm/mach-s5p64x0/mach-smdk6440.c          |   74
-> +++++++++++++++++++++++
->  arch/arm/mach-s5p64x0/mach-smdk6450.c          |   75
-> ++++++++++++++++++++++++
->  arch/arm/mach-s5p64x0/setup-fb-24bpp.c         |   29 +++++++++
->  arch/arm/plat-samsung/include/plat/fb.h        |    7 ++
->  drivers/video/s3c-fb.c                         |   27 +++++++++
->  11 files changed, 237 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-s5p64x0/setup-fb-24bpp.c
+Hi,
 
-Looks ok to me, will apply.
+On Wed, Sep 21 2011, Kukjin Kim wrote:
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>
+> Hi Chris,
+>
+> This is ok to me. Could you please pick this up in your tree so that I can
+> pick 2nd patch up in my tree.
+>
+> As you know, this patch has no dependency with patch2/2 so that you can
+> handle without any conflicts.
 
-But as I said, the 'video: s3c-fb: Add S5P64X0 specific s3c_fb_driverdata'
-should be sent to Florian's tree.
+Thanks, pushed to mmc-next for 3.2.
 
-I think, it's enough to re-send it to Florian Tobias Schandina.
+I've been waiting for kernel.org to come back up, but I think later
+today I'll just move mmc-next to git://dev.laptop.org/users/cjb/mmc,
+so this will be available in linux-next soon.
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
