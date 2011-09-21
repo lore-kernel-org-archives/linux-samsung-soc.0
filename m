@@ -1,163 +1,125 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/7 (RE-SEND)] gpio/s3c24xx: move gpio driver into
- drivers/gpio/
-Date: Wed, 21 Sep 2011 08:58:21 +0900
-Message-ID: <003d01cc77f1$2dc59950$8950cbf0$%kim@samsung.com>
-References: <1314707249-12241-1-git-send-email-kgene.kim@samsung.com>
- <1314707249-12241-2-git-send-email-kgene.kim@samsung.com>
- <001f01cc76bd$1ebad900$5c308b00$%kim@samsung.com>
- <20110920235208.GW7781@ponder.secretlab.ca>
+Subject: RE: [GIT PULL] Samsung boards for v3.2
+Date: Wed, 21 Sep 2011 10:50:02 +0900
+Message-ID: <004101cc7800$c7cb8a00$57629e00$%kim@samsung.com>
+References: <001a01cc76b8$208e52c0$61aaf840$%kim@samsung.com>
+ <201109202230.09426.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15022 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752033Ab1ITX6X (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53418 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751122Ab1IUBuP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Sep 2011 19:58:23 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Tue, 20 Sep 2011 21:50:15 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRU00IUAIL7CB80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 08:58:22 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRU00H0XILAPH@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 08:58:22 +0900 (KST)
-In-reply-to: <20110920235208.GW7781@ponder.secretlab.ca>
+ 2010)) with ESMTP id <0LRU00FW0NQFL3G0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 10:50:04 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LRU000YKNREV840@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 10:50:03 +0900 (KST)
+In-reply-to: <201109202230.09426.arnd@arndb.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Grant Likely' <grant.likely@secretlab.ca>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-Grant Likely wrote:
+Arnd Bergmann wrote:
 > 
-> On Mon, Sep 19, 2011 at 08:13:12PM +0900, Kukjin Kim wrote:
-> > Kukjin Kim wrote:
-> > >
+> On Monday 19 September 2011, Kukjin Kim wrote:
+> > Please pull from:
+> >   git://github.com/kgene/linux-samsung.git next-samsung-board
 > >
-> > (snip)...
+> > As you see, the next-samsung-board includes new board, SMDK4212. Of
+course
+> > to support new SoC, EXYNOS4212 is required for it but current
+> > arch/arm/mach-exynos4 (ARCH_EXYNOS4) can support it so I merged it into
+> > next-samsung-board not next-samsung-soc and to support handling of cupid
+> and
+> > rev. in Samsung stuff for it. As I remember, you said -soc branch of
+arm-soc
+> > is for adding new architecture like arch/arm/mach-xxxx.
 > >
-> > Hi Grant,
-> >
-> > I didn't get any comments on this series, gpio-samsung patches for
-> > consolidation of Samsung gpiolib. Please let me know whether this is ok
-to
-> > you or not. And I think, if you're ok, this should be sent to upstream
-via
-> > both gpio tree and arm(samsung) tree to avoid conflicts...
-> >
-> > As a note, following is its status...
-> >
-> > Kukjin Kim (9):
-> >       ARM: SAMSUNG: Move map header file into plat-samsung
-> >       gpio/s3c24xx: move gpio driver into drivers/gpio/
-> >       gpio/s3c64xx: move gpio driver into drivers/gpio/
-> >       gpio/s5p64x0: move gpio driver into drivers/gpio/
-> >       gpio/samsung: Remove useless old Samsung related GPIO drivers
-> >       gpio/samsung: Added gpio-samsung.c to support Samsung GPIOs
-> >       ARM: SAMSUNG: Update the name of regarding Samsung GPIO
-> >       ARM: SAMSUNG: Remove useless Samsung GPIO related CONFIGs
-> >       Merge branch 'next/topic-plat-samsung-1' into
-next/topic-gpio-samsung
+> > As a note, this includes samsung-fixes-2 which has been already pulled
+in
+> > your tree too.
 > 
-> Actually, even though I said I would pick it up, you've already got it
-> in a tree, so you can go ahead and merge it with my ack.  I don't see
-> any major risk of conflicts for the next merge window, so there is no
-> need to merge it in the gpio tree also.
+> Looks good. I had to apply the same atag_offset change to the new board
+> file that was done in all other branches as well.
 > 
-Hi Grant,
+Yes, as a note, so I have applied following for it in my -next.
+It's ok to me either your handling or following.
 
-OK, I will do it after adding your ack.
+commit 61338e607202a7cf9d5f63e69eb538782643ff90
+Author: Tushar Behera <tushar.behera@linaro.org>
+Date:   Mon Sep 19 20:09:01 2011 +0900
 
-Thanks.
+    ARM: EXYNOS4: convert boot_params to atag_offset
+    
+    Based on "ARM: introduce atag_offset to replace boot_params"
+    by Nicolas Pitre (2bb9839e312ed55a6d5824ffa6077ce3d7d63b1e).
+    
+    Since boot_params variable is deleted from machine_desc, the variable
+    is modified in the newer board files.
+    
+    CC: Nicolas Pitre <nicolas.pitre@linaro.org>
+    Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+diff --git a/arch/arm/mach-exynos4/mach-origen.c
+b/arch/arm/mach-exynos4/mach-origen.c
+index c8121fc..421294b 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -209,7 +209,7 @@ static void __init origen_machine_init(void)
+ 
+ MACHINE_START(ORIGEN, "ORIGEN")
+ 	/* Maintainer: JeongHyeon Kim <jhkim@insignal.co.kr> */
+-	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.atag_offset	= 0x100,
+ 	.init_irq	= exynos4_init_irq,
+ 	.map_io		= origen_map_io,
+ 	.init_machine	= origen_machine_init,
+diff --git a/arch/arm/mach-exynos4/mach-smdk4212.c
+b/arch/arm/mach-exynos4/mach-smdk4212.c
+index 3479a93..8c41ae1 100644
+--- a/arch/arm/mach-exynos4/mach-smdk4212.c
++++ b/arch/arm/mach-exynos4/mach-smdk4212.c
+@@ -284,7 +284,7 @@ static void __init smdk4212_machine_init(void)
+ 
+ MACHINE_START(SMDK4212, "SMDK4212")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+-	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.atag_offset	= 0x100,
+ 	.init_irq	= exynos4_init_irq,
+ 	.map_io		= smdk4212_map_io,
+ 	.init_machine	= smdk4212_machine_init,
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c
+b/arch/arm/mach-exynos4/mach-smdkv310.c
+index 57cf632..7ce4d8b 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -344,7 +344,7 @@ MACHINE_END
+ 
+ MACHINE_START(SMDKC210, "SMDKC210")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+-	.boot_params	= S5P_PA_SDRAM + 0x100,
++	.atag_offset	= 0x100,
+ 	.init_irq	= exynos4_init_irq,
+ 	.map_io		= smdkv310_map_io,
+ 	.init_machine	= smdkv310_machine_init,
+
+> Pulled into next/board. Thanks!
+> 
+Thanks :)
 
 Best regards,
 Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> 
-> >
-> >  arch/arm/Kconfig                                   |    3 -
-> >  arch/arm/mach-exynos4/include/mach/pm-core.h       |    2 +-
-> >  arch/arm/mach-s3c2410/Kconfig                      |    7 -
-> >  arch/arm/mach-s3c2410/Makefile                     |    1 -
-> >  arch/arm/mach-s3c2410/include/mach/gpio-fns.h      |   99 +-
-> >  arch/arm/mach-s3c2410/include/mach/gpio-track.h    |    6 +-
-> >  arch/arm/mach-s3c2410/include/mach/map.h           |   52 +-
-> >  arch/arm/mach-s3c2410/include/mach/pm-core.h       |    2 +-
-> >  arch/arm/mach-s3c2410/s3c2410.c                    |    4 +-
-> >  arch/arm/mach-s3c2412/Kconfig                      |    1 -
-> >  arch/arm/mach-s3c2412/Makefile                     |    1 -
-> >  arch/arm/mach-s3c2412/gpio.c                       |    2 +-
-> >  arch/arm/mach-s3c2416/Kconfig                      |    1 -
-> >  arch/arm/mach-s3c2416/s3c2416.c                    |    4 +-
-> >  arch/arm/mach-s3c2440/Kconfig                      |    4 -
-> >  arch/arm/mach-s3c2440/s3c2440.c                    |    4 +-
-> >  arch/arm/mach-s3c2440/s3c2442.c                    |    4 +-
-> >  arch/arm/mach-s3c2443/Kconfig                      |    1 -
-> >  arch/arm/mach-s3c2443/s3c2443.c                    |    4 +-
-> >  arch/arm/mach-s3c64xx/Makefile                     |    1 -
-> >  arch/arm/mach-s3c64xx/gpiolib.c                    |  290 ---
-> >  arch/arm/mach-s3c64xx/include/mach/map.h           |    9 +-
-> >  arch/arm/mach-s3c64xx/include/mach/pm-core.h       |    2 +-
-> >  arch/arm/mach-s5p64x0/Makefile                     |    2 +-
-> >  arch/arm/mach-s5p64x0/gpiolib.c                    |  511 ----
-> >  arch/arm/mach-s5pv210/include/mach/pm-core.h       |    2 +-
-> >  arch/arm/plat-s3c24xx/Kconfig                      |    1 -
-> >  arch/arm/plat-s3c24xx/Makefile                     |    2 -
-> >  arch/arm/plat-s3c24xx/gpio.c                       |   96 -
-> >  arch/arm/plat-s3c24xx/gpiolib.c                    |  229 --
-> >  arch/arm/plat-s3c24xx/include/plat/map.h           |  100 -
-> >  arch/arm/plat-s5p/Kconfig                          |    3 -
-> >  arch/arm/plat-s5p/irq-gpioint.c                    |   10 +-
-> >  arch/arm/plat-samsung/Kconfig                      |   27 -
-> >  arch/arm/plat-samsung/Makefile                     |    2 -
-> >  arch/arm/plat-samsung/gpio-config.c                |  431 ----
-> >  arch/arm/plat-samsung/gpio.c                       |  167 --
-> >  .../plat-samsung/include/plat/gpio-cfg-helpers.h   |  172 +-
-> >  arch/arm/plat-samsung/include/plat/gpio-cfg.h      |   34 +-
-> >  arch/arm/plat-samsung/include/plat/gpio-core.h     |   97 +-
-> >  arch/arm/plat-samsung/include/plat/gpio-fns.h      |   98 +
-> >  arch/arm/plat-samsung/include/plat/map-s3c.h       |   84 +
-> >  .../include/plat/map-s5p.h                         |    6 +-
-> >  arch/arm/plat-samsung/include/plat/pm.h            |   10 +-
-> >  arch/arm/plat-samsung/pm-gpio.c                    |   72 +-
-> >  arch/arm/plat-samsung/pm.c                         |    6 +-
-> >  drivers/gpio/Kconfig                               |   16 -
-> >  drivers/gpio/Makefile                              |    7 +-
-> >  drivers/gpio/gpio-exynos4.c                        |  385 ---
-> >  drivers/gpio/gpio-plat-samsung.c                   |  205 --
-> >  drivers/gpio/gpio-s5pc100.c                        |  354 ---
-> >  drivers/gpio/gpio-s5pv210.c                        |  287 ---
-> >  drivers/gpio/gpio-samsung.c                        | 2686
-> > ++++++++++++++++++++
-> >  53 files changed, 3072 insertions(+), 3534 deletions(-)
-> >  delete mode 100644 arch/arm/mach-s3c64xx/gpiolib.c
-> >  delete mode 100644 arch/arm/mach-s5p64x0/gpiolib.c
-> >  delete mode 100644 arch/arm/plat-s3c24xx/gpio.c
-> >  delete mode 100644 arch/arm/plat-s3c24xx/gpiolib.c
-> >  delete mode 100644 arch/arm/plat-s3c24xx/include/plat/map.h
-> >  delete mode 100644 arch/arm/plat-samsung/gpio-config.c
-> >  delete mode 100644 arch/arm/plat-samsung/gpio.c
-> >  create mode 100644 arch/arm/plat-samsung/include/plat/gpio-fns.h
-> >  create mode 100644 arch/arm/plat-samsung/include/plat/map-s3c.h
-> >  rename arch/arm/{plat-s5p => plat-samsung}/include/plat/map-s5p.h (94%)
-> >  delete mode 100644 drivers/gpio/gpio-exynos4.c
-> >  delete mode 100644 drivers/gpio/gpio-plat-samsung.c
-> >  delete mode 100644 drivers/gpio/gpio-s5pc100.c
-> >  delete mode 100644 drivers/gpio/gpio-s5pv210.c
-> >  create mode 100644 drivers/gpio/gpio-samsung.c
-> >
-> > Thanks.
-> >
-> > Best regards,
-> > Kgene.
-> > --
-> > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> > SW Solution Development Team, Samsung Electronics Co., Ltd.
-> >
