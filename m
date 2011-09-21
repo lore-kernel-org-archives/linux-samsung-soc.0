@@ -1,146 +1,136 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCH V2 1/3] ARM: EXYNOS4: Add TVOUT support for SMDKV310
-Date: Wed, 21 Sep 2011 14:44:57 +0200
-Message-ID: <4E79DC49.1050407@samsung.com>
-References: <1316583860-32510-1-git-send-email-hatim.rv@samsung.com>
- <1316583860-32510-2-git-send-email-hatim.rv@samsung.com>
- <004901cc7856$d7ee21d0$87ca6570$%kim@samsung.com>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V5 0/6] ARM: S5P64X0: Add Framebuffer support
+Date: Wed, 21 Sep 2011 18:30:40 +0530
+Message-ID: <CAEC9eQPDq6tQCVv8GWRWOGfn5HN_WpAhHStahccF3=+7sGCb-Q@mail.gmail.com>
+References: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
+	<004a01cc7857$d0d8aa90$7289ffb0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:49972 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753640Ab1IUMpB (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:60396 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753706Ab1IUNAl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 08:45:01 -0400
-Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LRV004UUI2ZBF30@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 13:44:59 +0100 (BST)
-Received: from [106.116.48.223] by spt2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRV00MPHI2ZPW@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 13:44:59 +0100 (BST)
-In-reply-to: <004901cc7856$d7ee21d0$87ca6570$%kim@samsung.com>
+	Wed, 21 Sep 2011 09:00:41 -0400
+Received: by fxe4 with SMTP id 4so1591619fxe.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2011 06:00:40 -0700 (PDT)
+In-Reply-To: <004a01cc7857$d0d8aa90$7289ffb0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Hatim Ali' <hatim.rv@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mchehab@infradead.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, banajit.g@samsung.com
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com
 
-On 09/21/2011 02:06 PM, Kukjin Kim wrote:
-> Hatim Ali wrote:
->> Add support for TVOUT on SMDKV310 board.
+Hi Kukjin,
+
+On Wed, Sep 21, 2011 at 5:43 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Ajay Kumar wrote:
 >>
->> Signed-off-by: Hatim Ali<hatim.rv@samsung.com>
->> ---
->> Changes since V1:
->> Incorporated changes as suggested by Tomasz Stanislawski
->> - Added  GPIO settings for hot-plug detection.
->> - Added setting hdmi and mixer's parent for TV power domain.
+>> =A0The patches are created against "for-next" branch of Kukjin Kim's=
+ tree
+> at:
+>> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung=
+=2Egit
 >>
->>   arch/arm/mach-exynos4/Kconfig         |    2 ++
->>   arch/arm/mach-exynos4/mach-smdkv310.c |   25
->> +++++++++++++++++++++++++
->>   2 files changed, 27 insertions(+), 0 deletions(-)
+>> =A0Changes since V1:
+>> =A0 =A0 =A0 - Remove mach/regs-fb.h, instead use plat/regs-fb.h.
+>> =A0 =A0 =A0 - Add common pdata for FB and LCD in SMDK6440 and SMDK64=
+50.
+>> =A0 =A0 =A0 - Modify names(s5p-->smdk), max_bpp and refresh rate.
+>> =A0 =A0 =A0 - Modify variable name(cfg-->chipid).
+>> =A0 =A0 =A0 - Use __raw_readl, __raw_writel instead of readl and wri=
+tel.
 >>
->> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
->> index 3b594fe..0bf0fe04 100644
->> --- a/arch/arm/mach-exynos4/Kconfig
->> +++ b/arch/arm/mach-exynos4/Kconfig
->> @@ -131,6 +131,7 @@ config MACH_SMDKV310
->>   	select S3C_DEV_RTC
->>   	select S3C_DEV_WDT
->>   	select S3C_DEV_I2C1
->> +	select S5P_DEV_I2C_HDMIPHY
->>   	select S5P_DEV_MFC
->>   	select S3C_DEV_HSMMC
->>   	select S3C_DEV_HSMMC1
->> @@ -140,6 +141,7 @@ config MACH_SMDKV310
->>   	select EXYNOS4_DEV_AHCI
->>   	select SAMSUNG_DEV_KEYPAD
->>   	select EXYNOS4_DEV_PD
->> +	select S5P_DEV_TV
->>   	select SAMSUNG_DEV_PWM
->>   	select EXYNOS4_DEV_SYSMMU
->>   	select EXYNOS4_SETUP_FIMD0
->> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-
->> exynos4/mach-smdkv310.c
->> index 7ce4d8b..50de270 100644
->> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
->> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
->> @@ -239,6 +239,7 @@ static struct platform_device *smdkv310_devices[]
->> __initdata = {
->>   	&s3c_device_hsmmc2,
->>   	&s3c_device_hsmmc3,
->>   	&s3c_device_i2c1,
->> +	&s5p_device_i2c_hdmiphy,
->>   	&s3c_device_rtc,
->>   	&s3c_device_wdt,
->>   	&exynos4_device_ac97,
->> @@ -262,6 +263,8 @@ static struct platform_device *smdkv310_devices[]
->> __initdata = {
->>   	&smdkv310_lcd_lte480wv,
->>   	&smdkv310_smsc911x,
->>   	&exynos4_device_ahci,
->> +	&s5p_device_hdmi,
->> +	&s5p_device_mixer,
->>   };
+>> =A0Changes since V2:
+>> =A0 =A0 =A0 -Change name of the config-COMMON_FB to SMDK64X0_COMMON_=
+=46B.
+>> =A0 =A0 =A0 -Change filename common-fb.h to smdk64x0-common-fb.h.
+>> =A0 =A0 =A0 -Change filename common-fb.c to smdk64x0-common-fb.c.
 >>
->>   static void __init smdkv310_smsc911x_init(void)
->> @@ -298,6 +301,25 @@ static struct platform_pwm_backlight_data
->> smdkv310_bl_data = {
->>   	.pwm_period_ns  = 1000,
->>   };
+>> =A0Changes since V3:
+>> =A0 =A0 =A0 -Add FB and LCD plat-data in corresponding machine files
+>> =A0 =A0 =A0 =A0instead of creating common file smdk64x0-common-fb.c.
+>> =A0 =A0 =A0 -Modify name S5P64X0_SETUP_FB to S5P64X0_SETUP_FB_24BPP.
+>> =A0 =A0 =A0 -Modify file name setup-fb.c to setup-fb-24bpp.c.
+>> =A0 =A0 =A0 -Move SPCON settings to machine file.
+>> =A0 =A0 =A0 -Use soc_is_s5p6440()/soc_is_s5p6450() to check CPU ID.
 >>
->> +static void s5p_tv_setup(void)
->> +{
->> +	int ret;
->> +
->> +	/* direct HPD to HDMI chip */
->> +	ret = gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
->> +
->> +	if (!ret) {
-Maybe we should generate WARN_ON(1) here. Failure of gpio request 
-indicate that
-board was configued not correctly.
->> +		gpio_direction_input(EXYNOS4_GPX3(7));
->> +		s3c_gpio_cfgpin_range(EXYNOS4_GPX3(7),
->> +					1, S3C_GPIO_SFN(3));
-> Why do you use 's3c_gpio_cfgpin_range()' for just one gpio pin not range...?
+>> =A0Changes since V4:
+>> =A0 =A0 =A0 -Removed refresh rate from plat data(s3c_fb_pd_win)
+>> =A0 =A0 =A0 -Fixed complation warning:"function declaration isn't a =
+prototype"
+>> =A0 =A0 =A0 =A0for s5p6440_set_lcd_interface() and s5p6450_set_lcd_i=
+nterface().
+>>
+>>
+>> =A0 These patches have dependency on the patch:
+>> =A0 "ARM: S5P64X0: Fix mask value for S5P64X0 CPU IDs",
+>> =A0 at http://www.spinics.net/lists/arm-kernel/msg138990.html
+>>
+>> o To Kukjin,
+>> =A0 [PATCH RESEND V5 1/6] video: s3c-fb: Add S5P64X0 specific
+>> s3c_fb_driverdata
+>> =A0 [PATCH RESEND V5 2/6] ARM: S5P64X0: Add register base and IRQ fo=
+r
+>> Framebuffer
+>> =A0 [PATCH RESEND V5 3/6] ARM: S5P64X0: Set s3c_device_fb name
+>> =A0 [PATCH RESEND V5 4/6] ARM: S5P64X0: Add GPIO setup for LCD
+>> =A0 [PATCH V5 5/6]ARM: S5P6440: Add LCD-LTE480 and enable Framebuffe=
+r
+>> support
+>> =A0 [PATCH V5 6/6]ARM: S5P6450: Add LCD-LTE480 and enable Framebuffe=
+r
+>> support
+>>
+>> =A0arch/arm/mach-s5p64x0/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 10 +++
+>> =A0arch/arm/mach-s5p64x0/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =
+=A0 =A01 +
+>> =A0arch/arm/mach-s5p64x0/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A03 +
+>> =A0arch/arm/mach-s5p64x0/include/mach/irqs.h =A0 =A0 =A0| =A0 =A04 +
+>> =A0arch/arm/mach-s5p64x0/include/mach/map.h =A0 =A0 =A0 | =A0 =A03 +
+>> =A0arch/arm/mach-s5p64x0/include/mach/regs-gpio.h | =A0 =A04 +
+>> =A0arch/arm/mach-s5p64x0/mach-smdk6440.c =A0 =A0 =A0 =A0 =A0| =A0 74
+>> +++++++++++++++++++++++
+>> =A0arch/arm/mach-s5p64x0/mach-smdk6450.c =A0 =A0 =A0 =A0 =A0| =A0 75
+>> ++++++++++++++++++++++++
+>> =A0arch/arm/mach-s5p64x0/setup-fb-24bpp.c =A0 =A0 =A0 =A0 | =A0 29 +=
+++++++++
+>> =A0arch/arm/plat-samsung/include/plat/fb.h =A0 =A0 =A0 =A0| =A0 =A07=
+ ++
+>> =A0drivers/video/s3c-fb.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 27 +++++++++
+>> =A011 files changed, 237 insertions(+), 0 deletions(-)
+>> =A0create mode 100644 arch/arm/mach-s5p64x0/setup-fb-24bpp.c
 >
->> +	} else
->> +		pr_err("Failed to request gpio for hpd: %d\n", ret);
-> According to coding style, should be added { and } around above.
+> Looks ok to me, will apply.
 >
->> +
->> +	/* setup dependencies between TV devices */
->> +	s5p_device_hdmi.dev.parent =&exynos4_device_pd[PD_TV].dev;
->> +	s5p_device_mixer.dev.parent =&exynos4_device_pd[PD_TV].dev;
->> +}
->> +
->>   static void __init smdkv310_map_io(void)
->>   {
->>   	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
->> @@ -327,6 +349,9 @@ static void __init smdkv310_machine_init(void)
->>   	samsung_bl_set(&smdkv310_bl_gpio_info,&smdkv310_bl_data);
->>   	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
->>
->> +	s5p_tv_setup();
->> +	s5p_i2c_hdmiphy_set_platdata(NULL);
->> +
->>   	platform_add_devices(smdkv310_devices,
->> ARRAY_SIZE(smdkv310_devices));
->>   	s5p_device_mfc.dev.parent =&exynos4_device_pd[PD_MFC].dev;
->>   }
->> --
->> 1.7.2.3
+> But as I said, the 'video: s3c-fb: Add S5P64X0 specific s3c_fb_driver=
+data'
+> should be sent to Florian's tree.
+
+Yes. This patch was submitted to fbdev mailing list and Florian has
+already accepted it. Here is the link:
+http://lists.infradead.org/pipermail/linux-arm-kernel/2011-September/06=
+5154.html
+
+> I think, it's enough to re-send it to Florian Tobias Schandina.
+>
 > Thanks.
 >
 > Best regards,
 > Kgene.
 > --
-> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 > SW Solution Development Team, Samsung Electronics Co., Ltd.
 >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
+
+Ajay
