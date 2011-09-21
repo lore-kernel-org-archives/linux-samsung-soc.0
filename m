@@ -1,50 +1,69 @@
-From: Hatim Ali <hatim.rv@samsung.com>
-Subject: [RESEND PATCH 3/3] s5p-tv: Add PM_RUNTIME dependency
-Date: Wed, 21 Sep 2011 11:14:20 +0530
-Message-ID: <1316583860-32510-4-git-send-email-hatim.rv@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [RESEND PATCH 2/3] ARM: EXYNOS4: Update consistent DMA size to 8MB
+Date: Wed, 21 Sep 2011 15:25:17 +0900
+Message-ID: <CAH9JG2XegdW95MvFcstfrWOWsqQjJob9kiTwFq8tnZn_SbS+bQ@mail.gmail.com>
 References: <1316583860-32510-1-git-send-email-hatim.rv@samsung.com>
-Content-Transfer-Encoding: 7BIT
+	<1316583860-32510-3-git-send-email-hatim.rv@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18412 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751918Ab1IUFqQ (ORCPT
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:32845 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751821Ab1IUGZS convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 01:46:16 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRU002G5YORU3M0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 14:46:15 +0900 (KST)
-Received: from hatim-linux.sisodomain.com ([107.108.73.95])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRU0000KYO05M@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 14:46:15 +0900 (KST)
-In-reply-to: <1316583860-32510-1-git-send-email-hatim.rv@samsung.com>
+	Wed, 21 Sep 2011 02:25:18 -0400
+Received: by pzk1 with SMTP id 1so1285508pzk.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Sep 2011 23:25:18 -0700 (PDT)
+In-Reply-To: <1316583860-32510-3-git-send-email-hatim.rv@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
-Cc: t.stanislaws@samsung.com, mchehab@infradead.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, banajit.g@samsung.com, Hatim Ali <hatim.rv@samsung.com>
+To: Hatim Ali <hatim.rv@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.stanislaws@samsung.com, mchehab@infradead.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, banajit.g@samsung.com
 
-The TVOUT driver requires PM_RUNTIME support for proper clock
-enabling.
+Hi,
 
-Signed-off-by: Hatim Ali <hatim.rv@samsung.com>
----
- drivers/media/video/s5p-tv/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+As I know,  CONSISTENT_DMA_SIZE is removed, please use the updated APIs=
+=2E
 
-diff --git a/drivers/media/video/s5p-tv/Kconfig b/drivers/media/video/s5p-tv/Kconfig
-index 9c37dee..f2a0977 100644
---- a/drivers/media/video/s5p-tv/Kconfig
-+++ b/drivers/media/video/s5p-tv/Kconfig
-@@ -8,7 +8,7 @@
- 
- config VIDEO_SAMSUNG_S5P_TV
- 	bool "Samsung TV driver for S5P platform (experimental)"
--	depends on PLAT_S5P
-+	depends on PLAT_S5P && PM_RUNTIME
- 	depends on EXPERIMENTAL
- 	default n
- 	---help---
--- 
-1.7.2.3
+Thank you,
+Kyungmin Park
+
+On Wed, Sep 21, 2011 at 2:44 PM, Hatim Ali <hatim.rv@samsung.com> wrote=
+:
+> Change the consistent DMA allocation to 8MB to support the
+> TVOUT driver.
+>
+> NOTE: Once CMA support is merged into mainline, we will use it for me=
+mory
+> allocation.
+>
+> Signed-off-by: Hatim Ali <hatim.rv@samsung.com>
+> ---
+> =A0arch/arm/mach-exynos4/include/mach/memory.h | =A0 =A02 ++
+> =A01 files changed, 2 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos4/include/mach/memory.h b/arch/arm/m=
+ach-exynos4/include/mach/memory.h
+> index 374ef2c..7549742 100644
+> --- a/arch/arm/mach-exynos4/include/mach/memory.h
+> +++ b/arch/arm/mach-exynos4/include/mach/memory.h
+> @@ -15,6 +15,8 @@
+>
+> =A0#define PLAT_PHYS_OFFSET =A0 =A0 =A0 =A0 =A0 =A0 =A0 UL(0x40000000=
+)
+>
+> +#define CONSISTENT_DMA_SIZE =A0 =A0 =A0 =A0 =A0 =A0SZ_8M
+> +
+> =A0/* Maximum of 256MiB in one bank */
+> =A0#define MAX_PHYSMEM_BITS =A0 =A0 =A0 32
+> =A0#define SECTION_SIZE_BITS =A0 =A0 =A028
+> --
+> 1.7.2.3
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
