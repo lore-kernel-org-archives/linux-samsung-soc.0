@@ -1,104 +1,146 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/5] S5P64X0 PM Support
-Date: Wed, 21 Sep 2011 21:39:33 +0900
-Message-ID: <005901cc785b$8401f6a0$8c05e3e0$%kim@samsung.com>
-References: <1313144787-30666-1-git-send-email-a.kesavan@samsung.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCH V2 1/3] ARM: EXYNOS4: Add TVOUT support for SMDKV310
+Date: Wed, 21 Sep 2011 14:44:57 +0200
+Message-ID: <4E79DC49.1050407@samsung.com>
+References: <1316583860-32510-1-git-send-email-hatim.rv@samsung.com>
+ <1316583860-32510-2-git-send-email-hatim.rv@samsung.com>
+ <004901cc7856$d7ee21d0$87ca6570$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:42932 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753657Ab1IUMjf (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:49972 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753640Ab1IUMpB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 08:39:35 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LRV004KOHTQ93S0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:39:33 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LRV005KDHTX6Q@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 21:39:34 +0900 (KST)
-In-reply-to: <1313144787-30666-1-git-send-email-a.kesavan@samsung.com>
-Content-language: ko
+	Wed, 21 Sep 2011 08:45:01 -0400
+Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LRV004UUI2ZBF30@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 13:44:59 +0100 (BST)
+Received: from [106.116.48.223] by spt2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRV00MPHI2ZPW@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 13:44:59 +0100 (BST)
+In-reply-to: <004901cc7856$d7ee21d0$87ca6570$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Abhilash Kesavan' <a.kesavan@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Hatim Ali' <hatim.rv@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, mchehab@infradead.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, banajit.g@samsung.com
 
-Abhilash Kesavan wrote:
-> 
-> The patchset adds Power Mangement support for S5P64X0. The first
-> four patches lay the groundwork for adding PM support, while the
-> final patch adds the SoC specific PM code.
-> Tested using external interrupts as wake-up sources on SMDK6440
-> and SMDK6450.
-> 
-> Abhilash Kesavan (5):
->   ARM: S5P: Make the common S5P PM code conditionally compile
->   ARM: SAMSUNG: Make the sleep code common for S3C64XX and newer SoCs
->   ARM: S5P64X0: Add pm save/restore functions for GPIO banks
->   ARM: S5P64X0: Fix incorrect serial clock name
->   ARM: S5P64X0: Add Power Management support
-> 
->  arch/arm/Kconfig                                |    2 +-
->  arch/arm/mach-exynos4/Kconfig                   |    2 +
->  arch/arm/mach-exynos4/Makefile                  |    2 +-
->  arch/arm/mach-exynos4/sleep.S                   |   54 ------
->  arch/arm/mach-s3c64xx/Kconfig                   |    1 +
->  arch/arm/mach-s3c64xx/Makefile                  |    1 -
->  arch/arm/mach-s3c64xx/sleep.S                   |   72 --------
->  arch/arm/mach-s5p64x0/Kconfig                   |    4 +
->  arch/arm/mach-s5p64x0/Makefile                  |    1 +
->  arch/arm/mach-s5p64x0/clock-s5p6440.c           |    2 +-
->  arch/arm/mach-s5p64x0/clock-s5p6450.c           |    2 +-
->  arch/arm/mach-s5p64x0/gpiolib.c                 |    1 +
->  arch/arm/mach-s5p64x0/include/mach/map.h        |    1 +
->  arch/arm/mach-s5p64x0/include/mach/pm-core.h    |  117 +++++++++++++
->  arch/arm/mach-s5p64x0/include/mach/regs-clock.h |   33 ++++
->  arch/arm/mach-s5p64x0/include/mach/regs-gpio.h  |   19 ++
->  arch/arm/mach-s5p64x0/init.c                    |    2 +-
->  arch/arm/mach-s5p64x0/irq-eint.c                |    2 +
->  arch/arm/mach-s5p64x0/irq-pm.c                  |   92 ++++++++++
->  arch/arm/mach-s5p64x0/pm.c                      |  204
-> +++++++++++++++++++++++
->  arch/arm/mach-s5pv210/Kconfig                   |    2 +
->  arch/arm/mach-s5pv210/Makefile                  |    2 +-
->  arch/arm/mach-s5pv210/sleep.S                   |   52 ------
->  arch/arm/plat-s5p/Kconfig                       |    6 +
->  arch/arm/plat-s5p/Makefile                      |    3 +-
->  arch/arm/plat-samsung/Kconfig                   |    7 +
->  arch/arm/plat-samsung/Makefile                  |    1 +
->  arch/arm/plat-samsung/sleep.S                   |   80 +++++++++
->  drivers/gpio/gpio-plat-samsung.c                |    4 +-
->  29 files changed, 583 insertions(+), 188 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos4/sleep.S
->  delete mode 100644 arch/arm/mach-s3c64xx/sleep.S
->  create mode 100644 arch/arm/mach-s5p64x0/include/mach/pm-core.h
->  create mode 100644 arch/arm/mach-s5p64x0/irq-pm.c
->  create mode 100644 arch/arm/mach-s5p64x0/pm.c
->  delete mode 100644 arch/arm/mach-s5pv210/sleep.S
->  create mode 100644 arch/arm/plat-samsung/sleep.S
-> 
+On 09/21/2011 02:06 PM, Kukjin Kim wrote:
+> Hatim Ali wrote:
+>> Add support for TVOUT on SMDKV310 board.
+>>
+>> Signed-off-by: Hatim Ali<hatim.rv@samsung.com>
+>> ---
+>> Changes since V1:
+>> Incorporated changes as suggested by Tomasz Stanislawski
+>> - Added  GPIO settings for hot-plug detection.
+>> - Added setting hdmi and mixer's parent for TV power domain.
+>>
+>>   arch/arm/mach-exynos4/Kconfig         |    2 ++
+>>   arch/arm/mach-exynos4/mach-smdkv310.c |   25
+>> +++++++++++++++++++++++++
+>>   2 files changed, 27 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+>> index 3b594fe..0bf0fe04 100644
+>> --- a/arch/arm/mach-exynos4/Kconfig
+>> +++ b/arch/arm/mach-exynos4/Kconfig
+>> @@ -131,6 +131,7 @@ config MACH_SMDKV310
+>>   	select S3C_DEV_RTC
+>>   	select S3C_DEV_WDT
+>>   	select S3C_DEV_I2C1
+>> +	select S5P_DEV_I2C_HDMIPHY
+>>   	select S5P_DEV_MFC
+>>   	select S3C_DEV_HSMMC
+>>   	select S3C_DEV_HSMMC1
+>> @@ -140,6 +141,7 @@ config MACH_SMDKV310
+>>   	select EXYNOS4_DEV_AHCI
+>>   	select SAMSUNG_DEV_KEYPAD
+>>   	select EXYNOS4_DEV_PD
+>> +	select S5P_DEV_TV
+>>   	select SAMSUNG_DEV_PWM
+>>   	select EXYNOS4_DEV_SYSMMU
+>>   	select EXYNOS4_SETUP_FIMD0
+>> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-
+>> exynos4/mach-smdkv310.c
+>> index 7ce4d8b..50de270 100644
+>> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
+>> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+>> @@ -239,6 +239,7 @@ static struct platform_device *smdkv310_devices[]
+>> __initdata = {
+>>   	&s3c_device_hsmmc2,
+>>   	&s3c_device_hsmmc3,
+>>   	&s3c_device_i2c1,
+>> +	&s5p_device_i2c_hdmiphy,
+>>   	&s3c_device_rtc,
+>>   	&s3c_device_wdt,
+>>   	&exynos4_device_ac97,
+>> @@ -262,6 +263,8 @@ static struct platform_device *smdkv310_devices[]
+>> __initdata = {
+>>   	&smdkv310_lcd_lte480wv,
+>>   	&smdkv310_smsc911x,
+>>   	&exynos4_device_ahci,
+>> +	&s5p_device_hdmi,
+>> +	&s5p_device_mixer,
+>>   };
+>>
+>>   static void __init smdkv310_smsc911x_init(void)
+>> @@ -298,6 +301,25 @@ static struct platform_pwm_backlight_data
+>> smdkv310_bl_data = {
+>>   	.pwm_period_ns  = 1000,
+>>   };
+>>
+>> +static void s5p_tv_setup(void)
+>> +{
+>> +	int ret;
+>> +
+>> +	/* direct HPD to HDMI chip */
+>> +	ret = gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
+>> +
+>> +	if (!ret) {
+Maybe we should generate WARN_ON(1) here. Failure of gpio request 
+indicate that
+board was configued not correctly.
+>> +		gpio_direction_input(EXYNOS4_GPX3(7));
+>> +		s3c_gpio_cfgpin_range(EXYNOS4_GPX3(7),
+>> +					1, S3C_GPIO_SFN(3));
+> Why do you use 's3c_gpio_cfgpin_range()' for just one gpio pin not range...?
+>
+>> +	} else
+>> +		pr_err("Failed to request gpio for hpd: %d\n", ret);
+> According to coding style, should be added { and } around above.
+>
+>> +
+>> +	/* setup dependencies between TV devices */
+>> +	s5p_device_hdmi.dev.parent =&exynos4_device_pd[PD_TV].dev;
+>> +	s5p_device_mixer.dev.parent =&exynos4_device_pd[PD_TV].dev;
+>> +}
+>> +
+>>   static void __init smdkv310_map_io(void)
+>>   {
+>>   	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+>> @@ -327,6 +349,9 @@ static void __init smdkv310_machine_init(void)
+>>   	samsung_bl_set(&smdkv310_bl_gpio_info,&smdkv310_bl_data);
+>>   	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
+>>
+>> +	s5p_tv_setup();
+>> +	s5p_i2c_hdmiphy_set_platdata(NULL);
+>> +
+>>   	platform_add_devices(smdkv310_devices,
+>> ARRAY_SIZE(smdkv310_devices));
+>>   	s5p_device_mfc.dev.parent =&exynos4_device_pd[PD_MFC].dev;
+>>   }
+>> --
+>> 1.7.2.3
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-> 1.7.4.1
-
-Hi Abhilash,
-
-As I know, you need to rebase this series based on latest for-next.
-
-Please re-submit this series...and I agree with Russell's suggestion on
-patch 2/5.
-But it's enough to use s3c64xx_smdk_leds_resume() firstly not common smdk
-now.
-
-Of course, we need to do it later ;)
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
