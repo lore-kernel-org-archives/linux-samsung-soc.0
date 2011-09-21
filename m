@@ -1,84 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] arm: samsung: remove sdhci default configuration setup
- platform helper
-Date: Wed, 21 Sep 2011 19:44:49 +0900
-Message-ID: <001f01cc784b$7cbdde00$76399a00$%kim@samsung.com>
-References: <1314976702-19284-1-git-send-email-thomas.abraham@linaro.org>
- <1314976702-19284-2-git-send-email-thomas.abraham@linaro.org>
- <1314976702-19284-3-git-send-email-thomas.abraham@linaro.org>
- <001801cc6b8a$e953bda0$bbfb38e0$%kim@samsung.com>
- <CAJuYYwT1tW0XEiwWWpX08OorZw2q2Wce2r0fUvxLmWC8uq6uhQ@mail.gmail.com>
+Subject: RE: [PATCH v2 0/2] Move sdhci-s3c platform helper into driver
+Date: Wed, 21 Sep 2011 19:51:13 +0900
+Message-ID: <002401cc784c$61e2c180$25a84480$%kim@samsung.com>
+References: <1315984158-29651-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34666 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751756Ab1IUKou convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:56622 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751406Ab1IUKvP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 06:44:50 -0400
-In-reply-to: <CAJuYYwT1tW0XEiwWWpX08OorZw2q2Wce2r0fUvxLmWC8uq6uhQ@mail.gmail.com>
+	Wed, 21 Sep 2011 06:51:15 -0400
+In-reply-to: <1315984158-29651-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: cjb@laptop.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 
 Thomas Abraham wrote:
->=20
-> Dear Mr. Kim,
->=20
-> On 5 September 2011 10:46, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Thomas Abraham wrote:
-> >>
-> >> The sdhci platform helper function that sets up the default contro=
-ller
-> >> configuration is removed for all Samsung platforms since such defa=
-ult
-> >> controller configuration can be handled by the driver.
-> >>
-> >> Cc: Ben Dooks <ben-linux@fluff.org>
-> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> >> ---
-> >> =A0arch/arm/mach-exynos4/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 47
------------------------
-> >> =A0arch/arm/mach-s3c2416/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 37 ---=
----------------
-> >> =A0arch/arm/mach-s3c64xx/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 48
------------------------
-> >> =A0arch/arm/mach-s5pc100/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 42 ---=
------------------
-> >> =A0arch/arm/mach-s5pv210/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 41 ---=
------------------
-> >> =A0arch/arm/plat-samsung/dev-hsmmc.c =A0 =A0 =A0 =A0 =A0| =A0 =A02=
- -
-> >> =A0arch/arm/plat-samsung/dev-hsmmc1.c =A0 =A0 =A0 =A0 | =A0 =A02 -
-> >> =A0arch/arm/plat-samsung/dev-hsmmc2.c =A0 =A0 =A0 =A0 | =A0 =A02 -
-> >> =A0arch/arm/plat-samsung/dev-hsmmc3.c =A0 =A0 =A0 =A0 | =A0 =A02 -
-> >> =A0arch/arm/plat-samsung/include/plat/sdhci.h | =A0 57
-> > ----------------------------
-> >> =A010 files changed, 0 insertions(+), 280 deletions(-)
-> >>
->=20
-> [...]
->=20
-> >
-> > Hi Thomas,
-> >
-> > The arch/arm/plat-samsung/dev-hsmmcX.c files have been changed due =
-to
-> commit
-> > 61e62fcb ("ARM: SAMSUNG: Consolidate common function to set SDHCI p=
-lat
-> > data"). So if possible please make your patch based on latest my
-for-next :)
->=20
-> Sure. I will base these patches on your for-next, test and resubmit.
->=20
+> 
+> Changes since v1:
+> - Rebased with 'for-next' branch of
+>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>   (tested with commit id a08b7e19811181309da2306338027fe1d3f8001d at the
+>   tip of the for-next branch, not sure if there have been further
+>   commits after that).
+> 
+> The platform helper that sets up the default sdhci-s3c controller
+> configuration can be removed and moved into the sdhci-s3c driver.
+> This platform helper is removed for s3c2416, s3c64xx, s5pc100,
+> s5pv210 and Exynos4 platforms.
+> 
+> Since the platform helper function pointer was being passed in the
+> platform data of sdhci-s3c driver, the removal of this pointer from
+> the platform data is step closer to complete device tree support for
+> sdhci-s3c driver.
+> 
+> This patchset has been tested on the following platforms.
+> SMDK2416, SMDK6410, SMDKC100, SMDKV210 and SMDKV310.
 
-Hi Thomas,
+Oh, I found :)
+Looks ok to me, will apply.
 
-I missed? I didn't get your updated yet.
+As a note, please kindly ignore previous my comments on v.1 patch.
 
 Thanks.
 
