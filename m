@@ -1,104 +1,89 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [RESEND PATCH 2/3] ARM: EXYNOS4: Update consistent DMA size to
- 8MB
-Date: Wed, 21 Sep 2011 14:53:47 +0530
-Message-ID: <4E79AD23.8050807@linaro.org>
-References: <23185691.178841316589732769.JavaMail.weblogic@epv6ml02>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/2] arm: samsung: remove sdhci default configuration setup
+ platform helper
+Date: Wed, 21 Sep 2011 19:44:49 +0900
+Message-ID: <001f01cc784b$7cbdde00$76399a00$%kim@samsung.com>
+References: <1314976702-19284-1-git-send-email-thomas.abraham@linaro.org>
+ <1314976702-19284-2-git-send-email-thomas.abraham@linaro.org>
+ <1314976702-19284-3-git-send-email-thomas.abraham@linaro.org>
+ <001801cc6b8a$e953bda0$bbfb38e0$%kim@samsung.com>
+ <CAJuYYwT1tW0XEiwWWpX08OorZw2q2Wce2r0fUvxLmWC8uq6uhQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:43750 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752247Ab1IUJXl (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34666 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751756Ab1IUKou convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 05:23:41 -0400
-Received: by iaqq3 with SMTP id q3so1512168iaq.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2011 02:23:40 -0700 (PDT)
-In-Reply-To: <23185691.178841316589732769.JavaMail.weblogic@epv6ml02>
+	Wed, 21 Sep 2011 06:44:50 -0400
+In-reply-to: <CAJuYYwT1tW0XEiwWWpX08OorZw2q2Wce2r0fUvxLmWC8uq6uhQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: hatim.rv@samsung.com
-Cc: Kyungmin Park <kmpark@infradead.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, "mchehab@infradead.org" <mchehab@infradead.org>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, "laurent.pinchart@ideasonboard.com" <laurent.pinchart@ideasonboard.com>, BANAJIT GOSWAMI <banajit.g@samsung.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 
-Hi,
+Thomas Abraham wrote:
+>=20
+> Dear Mr. Kim,
+>=20
+> On 5 September 2011 10:46, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Thomas Abraham wrote:
+> >>
+> >> The sdhci platform helper function that sets up the default contro=
+ller
+> >> configuration is removed for all Samsung platforms since such defa=
+ult
+> >> controller configuration can be handled by the driver.
+> >>
+> >> Cc: Ben Dooks <ben-linux@fluff.org>
+> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> >> ---
+> >> =A0arch/arm/mach-exynos4/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 47
+-----------------------
+> >> =A0arch/arm/mach-s3c2416/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 37 ---=
+---------------
+> >> =A0arch/arm/mach-s3c64xx/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 48
+-----------------------
+> >> =A0arch/arm/mach-s5pc100/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 42 ---=
+-----------------
+> >> =A0arch/arm/mach-s5pv210/setup-sdhci.c =A0 =A0 =A0 =A0| =A0 41 ---=
+-----------------
+> >> =A0arch/arm/plat-samsung/dev-hsmmc.c =A0 =A0 =A0 =A0 =A0| =A0 =A02=
+ -
+> >> =A0arch/arm/plat-samsung/dev-hsmmc1.c =A0 =A0 =A0 =A0 | =A0 =A02 -
+> >> =A0arch/arm/plat-samsung/dev-hsmmc2.c =A0 =A0 =A0 =A0 | =A0 =A02 -
+> >> =A0arch/arm/plat-samsung/dev-hsmmc3.c =A0 =A0 =A0 =A0 | =A0 =A02 -
+> >> =A0arch/arm/plat-samsung/include/plat/sdhci.h | =A0 57
+> > ----------------------------
+> >> =A010 files changed, 0 insertions(+), 280 deletions(-)
+> >>
+>=20
+> [...]
+>=20
+> >
+> > Hi Thomas,
+> >
+> > The arch/arm/plat-samsung/dev-hsmmcX.c files have been changed due =
+to
+> commit
+> > 61e62fcb ("ARM: SAMSUNG: Consolidate common function to set SDHCI p=
+lat
+> > data"). So if possible please make your patch based on latest my
+for-next :)
+>=20
+> Sure. I will base these patches on your for-next, test and resubmit.
+>=20
 
-On Wednesday 21 September 2011 12:52 PM, HATIMALI RV wrote:
-> Hello Mr. Park,
->
-> As I mentioned in the cover letter of v1 patch set (http://www.spinic=
-s.net/lists/arm-kernel/msg138054.html),
-> this is a temporary patch which is just for testing HDMI on SMDKV310.
-> Once CMA gets merged, we will be using that to allocate memory.
->
-The macro definition CONSISTENT_DMA_SIZE has been removed and has been=20
-replaced by a function call. Please refer to this patch.
+Hi Thomas,
 
-http://www.spinics.net/lists/linux-samsung-soc/msg06627.html
+I missed? I didn't get your updated yet.
 
-> Thanks for your review.
->
-> Regards,
-> Hatim Ali
->
-> ------- Original Message -------
-> Sender : Kyungmin Park<kmpark@infradead.org>
-> Date   : Sep 21, 2011 11:55 (GMT+05:30)
-> Title  : Re: [RESEND PATCH 2/3] ARM: EXYNOS4: Update consistent DMA s=
-ize to 8MB
->
-> Hi,
->
-> As I know,  CONSISTENT_DMA_SIZE is removed, please use the updated AP=
-Is.
->
-> Thank you,
-> Kyungmin Park
->
-> On Wed, Sep 21, 2011 at 2:44 PM, Hatim Ali<hatim.rv@samsung.com>  wro=
-te:
->> Change the consistent DMA allocation to 8MB to support the
->> TVOUT driver.
->>
->> NOTE: Once CMA support is merged into mainline, we will use it for m=
-emory
->> allocation.
->>
->> Signed-off-by: Hatim Ali<hatim.rv@samsung.com>
->> ---
->>   arch/arm/mach-exynos4/include/mach/memory.h |    2 ++
->>   1 files changed, 2 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos4/include/mach/memory.h b/arch/arm/=
-mach-exynos4/include/mach/memory.h
->> index 374ef2c..7549742 100644
->> --- a/arch/arm/mach-exynos4/include/mach/memory.h
->> +++ b/arch/arm/mach-exynos4/include/mach/memory.h
->> @@ -15,6 +15,8 @@
->>
->>   #define PLAT_PHYS_OFFSET               UL(0x40000000)
->>
->> +#define CONSISTENT_DMA_SIZE            SZ_8M
->> +
->>   /* Maximum of 256MiB in one bank */
->>   #define MAX_PHYSMEM_BITS       32
->>   #define SECTION_SIZE_BITS      28
->> --
->> 1.7.2.3
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> N=8B=A7=B2=E6=ECr=B8=9By=FA=E8=9A=D8b=B2X=AC=B6=C7=A7v=D8^=96)=DE=BA{=
-=2En=C7+=89=B7=A5=8A{=B1=B1=A9=AC=BAx,=A1=C8=A7=B6=17=9B=A1=DC=A8}=A9=9E=
-=B2=C6 z=DA&j:+v=89=A8=BE=07=AB=91=EA=E7zZ+=80=CA+zf=A3=A2=B7h=9A=88=A7=
-~=86=AD=86=DBi=FF=FB=E0z=B9=1E=AEw=A5=A2=B8?=99=A8=E8=AD=DA&=A2)=DF=A2=1B=
-fl=3D=3D=3D
+Thanks.
 
-
---=20
-Tushar Behera
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
