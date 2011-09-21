@@ -1,43 +1,68 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 1/2] mmc: sdhci-s3c: add default controller configuration
-Date: Wed, 21 Sep 2011 19:56:16 +0900
-Message-ID: <002501cc784d$1618f110$424ad330$%kim@samsung.com>
-References: <1315984158-29651-1-git-send-email-thomas.abraham@linaro.org>
- <1315984158-29651-2-git-send-email-thomas.abraham@linaro.org>
+Subject: RE: [PATCH] ARM: EXYNOS4: Add header file protection macros
+Date: Wed, 21 Sep 2011 20:51:59 +0900
+Message-ID: <004501cc7854$df075f10$9d161d30$%kim@samsung.com>
+References: <1316493961-7650-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15791 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751406Ab1IUK4S (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:52549 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752992Ab1IULwB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 06:56:18 -0400
-In-reply-to: <1315984158-29651-2-git-send-email-thomas.abraham@linaro.org>
+	Wed, 21 Sep 2011 07:52:01 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LRV000CHFM2WYI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 20:52:00 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRV000ERFMON4@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Sep 2011 20:52:00 +0900 (KST)
+In-reply-to: <1316493961-7650-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: cjb@laptop.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linaro-dev@lists.linaro.org, patches@linaro.org
 
-Thomas Abraham wrote:
+Sachin Kamat wrote:
 > 
-> The default controller configuration which was previously setup by
-> platform helper functions is moved into the driver.
+> This patch adds header file protection macros to prevent duplication.
 > 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/mach-exynos4/include/mach/pm-core.h |    6 ++++++
+>  1 files changed, 6 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/include/mach/pm-core.h b/arch/arm/mach-
+> exynos4/include/mach/pm-core.h
+> index 1df3b81..4c3406b 100644
+> --- a/arch/arm/mach-exynos4/include/mach/pm-core.h
+> +++ b/arch/arm/mach-exynos4/include/mach/pm-core.h
+> @@ -14,6 +14,10 @@
+>   * it under the terms of the GNU General Public License version 2 as
+>   * published by the Free Software Foundation.
+>  */
+> +
+> +#ifndef __ASM_ARCH_PM_CORE_H
+> +#define __ASM_ARCH_PM_CORE_H __FILE__
+> +
+>  #include <mach/regs-pmu.h>
+> 
+>  static inline void s3c_pm_debug_init_uart(void)
+> @@ -57,3 +61,5 @@ static inline void s3c_pm_saved_gpios(void)
+>  {
+>  	/* nothing here yet */
+>  }
+> +
+> +#endif /* __ASM_ARCH_PM_CORE_H */
+> --
+> 1.7.4.1
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Hi Chris,
-
-This is ok to me. Could you please pick this up in your tree so that I can
-pick 2nd patch up in my tree.
-
-As you know, this patch has no dependency with patch2/2 so that you can
-handle without any conflicts.
-
+OK, will apply.
 Thanks.
 
 Best regards,
@@ -45,53 +70,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> ---
->  drivers/mmc/host/sdhci-s3c.c |   28 +++++++++++++++++-----------
->  1 files changed, 17 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index 2bd7bf4..d891682 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -203,17 +203,23 @@ static void sdhci_s3c_set_clock(struct sdhci_host
-*host,
-> unsigned int clock)
->  		writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
->  	}
-> 
-> -	/* reconfigure the hardware for new clock rate */
-> -
-> -	{
-> -		struct mmc_ios ios;
-> -
-> -		ios.clock = clock;
-> -
-> -		if (ourhost->pdata->cfg_card)
-> -			(ourhost->pdata->cfg_card)(ourhost->pdev, host-
-> >ioaddr,
-> -						   &ios, NULL);
-> -	}
-> +	/* reprogram default hardware configuration */
-> +	writel(S3C64XX_SDHCI_CONTROL4_DRIVE_9mA,
-> +		host->ioaddr + S3C64XX_SDHCI_CONTROL4);
-> +
-> +	ctrl = readl(host->ioaddr + S3C_SDHCI_CONTROL2);
-> +	ctrl |= (S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR |
-> +		  S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK |
-> +		  S3C_SDHCI_CTRL2_ENFBCLKRX |
-> +		  S3C_SDHCI_CTRL2_DFCNT_NONE |
-> +		  S3C_SDHCI_CTRL2_ENCLKOUTHOLD);
-> +	writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL2);
-> +
-> +	/* reconfigure the controller for new clock rate */
-> +	ctrl = (S3C_SDHCI_CTRL3_FCSEL1 | S3C_SDHCI_CTRL3_FCSEL0);
-> +	if (clock < 25 * 1000000)
-> +		ctrl |= (S3C_SDHCI_CTRL3_FCSEL3 |
-> S3C_SDHCI_CTRL3_FCSEL2);
-> +	writel(ctrl, host->ioaddr + S3C_SDHCI_CONTROL3);
->  }
-> 
->  /**
-> --
-> 1.6.6.rc2
