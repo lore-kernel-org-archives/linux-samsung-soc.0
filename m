@@ -1,92 +1,59 @@
-From: "Hatim R.V." <hatim.rv@gmail.com>
-Subject: Re: [PATCH V2 1/3] ARM: EXYNOS4: Add TVOUT support for SMDKV310
-Date: Wed, 21 Sep 2011 19:18:05 +0530
-Message-ID: <CAAYb1rh1_e88RWtXTByiMFZ2jeX_6C6nzZz+MJsZ6j+Pwwb8fA@mail.gmail.com>
-References: <1316583860-32510-1-git-send-email-hatim.rv@samsung.com>
-	<1316583860-32510-2-git-send-email-hatim.rv@samsung.com>
-	<4E79E122.2000600@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v3] mmc: core: Add default timeout value for CMD6.
+Date: Wed, 21 Sep 2011 13:45:21 -0400
+Message-ID: <m262kl6b7y.fsf@bob.laptop.org>
+References: <1315466232-27487-1-git-send-email-tgih.jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:36172 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844Ab1IUNsG convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 09:48:06 -0400
-Received: by iaqq3 with SMTP id q3so1708417iaq.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2011 06:48:05 -0700 (PDT)
-In-Reply-To: <4E79E122.2000600@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1315466232-27487-1-git-send-email-tgih.jun@samsung.com>
+	(Seungwon Jeon's message of "Thu, 8 Sep 2011 16:17:12 +0900")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Hatim Ali <hatim.rv@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, t.stanislaws@samsung.com, mchehab@infradead.org, hverkuil@xs4all.nl, laurent.pinchart@ideasonboard.com, banajit.g@samsung.com
 
-Hi Sylwester,
+Hi,
 
-On Wed, Sep 21, 2011 at 6:35 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Hi Hatim,
+On Thu, Sep 08 2011, Seungwon Jeon wrote:
+> EXT_CSD[248] includes the default maximum timeout for CMD6.
+> This field is added at eMMC4.5 Spec. And it can be used for default
+> timeout except for some operations which don't define the timeout(i.e.
+> background operation, sanitize, flush cache) in eMMC4.5 Spec.
 >
-> On 09/21/2011 07:44 AM, Hatim Ali wrote:
->> Add support for TVOUT on SMDKV310 board.
->>
->> Signed-off-by: Hatim Ali <hatim.rv@samsung.com>
->> ---
-> ...
->> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-e=
-xynos4/mach-smdkv310.c
->> index 7ce4d8b..50de270 100644
->> --- a/arch/arm/mach-exynos4/mach-smdkv310.c
->> +++ b/arch/arm/mach-exynos4/mach-smdkv310.c
->> @@ -239,6 +239,7 @@ static struct platform_device *smdkv310_devices[=
-] __initdata =3D {
->> =A0 =A0 =A0 &s3c_device_hsmmc2,
->> =A0 =A0 =A0 &s3c_device_hsmmc3,
->> =A0 =A0 =A0 &s3c_device_i2c1,
->> + =A0 =A0 &s5p_device_i2c_hdmiphy,
->> =A0 =A0 =A0 &s3c_device_rtc,
->> =A0 =A0 =A0 &s3c_device_wdt,
->> =A0 =A0 =A0 &exynos4_device_ac97,
->> @@ -262,6 +263,8 @@ static struct platform_device *smdkv310_devices[=
-] __initdata =3D {
->> =A0 =A0 =A0 &smdkv310_lcd_lte480wv,
->> =A0 =A0 =A0 &smdkv310_smsc911x,
->> =A0 =A0 =A0 &exynos4_device_ahci,
->> + =A0 =A0 &s5p_device_hdmi,
->> + =A0 =A0 &s5p_device_mixer,
->> =A0};
->>
->> =A0static void __init smdkv310_smsc911x_init(void)
->> @@ -298,6 +301,25 @@ static struct platform_pwm_backlight_data smdkv=
-310_bl_data =3D {
->> =A0 =A0 =A0 .pwm_period_ns =A0=3D 1000,
->> =A0};
->>
->> +static void s5p_tv_setup(void)
->> +{
->> + =A0 =A0 int ret;
->> +
->> + =A0 =A0 /* direct HPD to HDMI chip */
->> + =A0 =A0 ret =3D gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
->> +
->> + =A0 =A0 if (!ret) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 gpio_direction_input(EXYNOS4_GPX3(7));
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  drivers/mmc/core/mmc.c   |   19 +++++++++++++++----
+>  include/linux/mmc/card.h |    1 +
+>  include/linux/mmc/mmc.h  |    1 +
+>  3 files changed, 17 insertions(+), 4 deletions(-)
 >
-> Since you're probably going to be reworking this anyway, I think gpio=
-_request_one
-> could be used here for simplicity.
-
-Thanks for your suggestion. Will change accordingly.
-
-
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 5700b1c..a72d879 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -410,6 +410,15 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+>  	else
+>  		card->erased_byte = 0x0;
 >
-> --
-> Regards,
-> Sylwester
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> +	if (card->ext_csd.rev >= 6)
+> +		card->ext_csd.generic_cmd6_time = 10 *
+> +			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+> +	else
+> +		card->ext_csd.generic_cmd6_time = 0;
+> +
+>  out:
+>  	return err;
+>  }
+> @@ -668,7 +677,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>  	 */
+
+The patch is corrupt at this point:
+
+patching file drivers/mmc/core/mmc.c
+patch: **** malformed patch at line 39: @@ -668,7 +677,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
