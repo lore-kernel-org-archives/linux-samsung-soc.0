@@ -1,136 +1,155 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V5 0/6] ARM: S5P64X0: Add Framebuffer support
-Date: Wed, 21 Sep 2011 18:30:40 +0530
-Message-ID: <CAEC9eQPDq6tQCVv8GWRWOGfn5HN_WpAhHStahccF3=+7sGCb-Q@mail.gmail.com>
-References: <1316454841-20869-1-git-send-email-ajaykumar.rs@samsung.com>
-	<004a01cc7857$d0d8aa90$7289ffb0$%kim@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 2/7] s3c-adc: describe features via quirk constants
+Date: Wed, 21 Sep 2011 15:04:02 +0200
+Message-ID: <201109211504.03287.heiko@sntech.de>
+References: <201109182241.48858.heiko@sntech.de> <201109182243.40440.heiko@sntech.de> <005801cc785a$7e46a310$7ad3e930$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:60396 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753706Ab1IUNAl convert rfc822-to-8bit (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:48066 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753629Ab1IUNEP convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Sep 2011 09:00:41 -0400
-Received: by fxe4 with SMTP id 4so1591619fxe.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Sep 2011 06:00:40 -0700 (PDT)
-In-Reply-To: <004a01cc7857$d0d8aa90$7289ffb0$%kim@samsung.com>
+	Wed, 21 Sep 2011 09:04:15 -0400
+In-Reply-To: <005801cc785a$7e46a310$7ad3e930$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jg1.han@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
 
-Hi Kukjin,
+Hi,
 
-On Wed, Sep 21, 2011 at 5:43 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Ajay Kumar wrote:
->>
->> =A0The patches are created against "for-next" branch of Kukjin Kim's=
- tree
-> at:
->> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung=
-=2Egit
->>
->> =A0Changes since V1:
->> =A0 =A0 =A0 - Remove mach/regs-fb.h, instead use plat/regs-fb.h.
->> =A0 =A0 =A0 - Add common pdata for FB and LCD in SMDK6440 and SMDK64=
-50.
->> =A0 =A0 =A0 - Modify names(s5p-->smdk), max_bpp and refresh rate.
->> =A0 =A0 =A0 - Modify variable name(cfg-->chipid).
->> =A0 =A0 =A0 - Use __raw_readl, __raw_writel instead of readl and wri=
-tel.
->>
->> =A0Changes since V2:
->> =A0 =A0 =A0 -Change name of the config-COMMON_FB to SMDK64X0_COMMON_=
-=46B.
->> =A0 =A0 =A0 -Change filename common-fb.h to smdk64x0-common-fb.h.
->> =A0 =A0 =A0 -Change filename common-fb.c to smdk64x0-common-fb.c.
->>
->> =A0Changes since V3:
->> =A0 =A0 =A0 -Add FB and LCD plat-data in corresponding machine files
->> =A0 =A0 =A0 =A0instead of creating common file smdk64x0-common-fb.c.
->> =A0 =A0 =A0 -Modify name S5P64X0_SETUP_FB to S5P64X0_SETUP_FB_24BPP.
->> =A0 =A0 =A0 -Modify file name setup-fb.c to setup-fb-24bpp.c.
->> =A0 =A0 =A0 -Move SPCON settings to machine file.
->> =A0 =A0 =A0 -Use soc_is_s5p6440()/soc_is_s5p6450() to check CPU ID.
->>
->> =A0Changes since V4:
->> =A0 =A0 =A0 -Removed refresh rate from plat data(s3c_fb_pd_win)
->> =A0 =A0 =A0 -Fixed complation warning:"function declaration isn't a =
-prototype"
->> =A0 =A0 =A0 =A0for s5p6440_set_lcd_interface() and s5p6450_set_lcd_i=
-nterface().
->>
->>
->> =A0 These patches have dependency on the patch:
->> =A0 "ARM: S5P64X0: Fix mask value for S5P64X0 CPU IDs",
->> =A0 at http://www.spinics.net/lists/arm-kernel/msg138990.html
->>
->> o To Kukjin,
->> =A0 [PATCH RESEND V5 1/6] video: s3c-fb: Add S5P64X0 specific
->> s3c_fb_driverdata
->> =A0 [PATCH RESEND V5 2/6] ARM: S5P64X0: Add register base and IRQ fo=
-r
->> Framebuffer
->> =A0 [PATCH RESEND V5 3/6] ARM: S5P64X0: Set s3c_device_fb name
->> =A0 [PATCH RESEND V5 4/6] ARM: S5P64X0: Add GPIO setup for LCD
->> =A0 [PATCH V5 5/6]ARM: S5P6440: Add LCD-LTE480 and enable Framebuffe=
-r
->> support
->> =A0 [PATCH V5 6/6]ARM: S5P6450: Add LCD-LTE480 and enable Framebuffe=
-r
->> support
->>
->> =A0arch/arm/mach-s5p64x0/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 10 +++
->> =A0arch/arm/mach-s5p64x0/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =
-=A0 =A01 +
->> =A0arch/arm/mach-s5p64x0/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 =A03 +
->> =A0arch/arm/mach-s5p64x0/include/mach/irqs.h =A0 =A0 =A0| =A0 =A04 +
->> =A0arch/arm/mach-s5p64x0/include/mach/map.h =A0 =A0 =A0 | =A0 =A03 +
->> =A0arch/arm/mach-s5p64x0/include/mach/regs-gpio.h | =A0 =A04 +
->> =A0arch/arm/mach-s5p64x0/mach-smdk6440.c =A0 =A0 =A0 =A0 =A0| =A0 74
->> +++++++++++++++++++++++
->> =A0arch/arm/mach-s5p64x0/mach-smdk6450.c =A0 =A0 =A0 =A0 =A0| =A0 75
->> ++++++++++++++++++++++++
->> =A0arch/arm/mach-s5p64x0/setup-fb-24bpp.c =A0 =A0 =A0 =A0 | =A0 29 +=
-++++++++
->> =A0arch/arm/plat-samsung/include/plat/fb.h =A0 =A0 =A0 =A0| =A0 =A07=
- ++
->> =A0drivers/video/s3c-fb.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 | =A0 27 +++++++++
->> =A011 files changed, 237 insertions(+), 0 deletions(-)
->> =A0create mode 100644 arch/arm/mach-s5p64x0/setup-fb-24bpp.c
->
-> Looks ok to me, will apply.
->
-> But as I said, the 'video: s3c-fb: Add S5P64X0 specific s3c_fb_driver=
-data'
-> should be sent to Florian's tree.
+Am Mittwoch, 21. September 2011, 14:32:14 schrieben Sie:
+> Heiko St=FCbner wrote:
+> > The adc blocks of S3C2410 through S5P have a multitude of
+> > quirks, i.e. moved bits or whole new registers.
+> >=20
+> > This patch tries to describe these individual features
+> > through constants which can be used to describe an adc.
+> >=20
+> > As SoCs sometimes share only some of these quirks defining
+> > TYPE_ADCVx values for each one wouldn't scale well when
+> > adding more variants.
+>=20
+> Hi Heiko,
+>=20
+> I don't have idea we really need to use QUIRK in this case...as I kno=
+w, the
+> QUIRK is used on other situation...
+>=20
+> In addition, the TYPE_ADCVx can support each Samsung SoCs' ADC...but =
+I need
+> to check again.
+The current types could not support the features of the 2443 and 2416/2=
+450 - I=20
+checked the datasheets.
 
-Yes. This patch was submitted to fbdev mailing list and Florian has
-already accepted it. Here is the link:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2011-September/06=
-5154.html
+The mux register in base+0x18 does not exist on any of the current plat=
+forms.
+Also the bit 3 in ADCCON to select the resolution is specific to the 24=
+16/2450=20
+(see comments above constants and quirk definitions in patches 6 and 7)=
+=2E
 
-> I think, it's enough to re-send it to Florian Tobias Schandina.
->
+So to support these SoCs would require the definition of two new types.=
+=20
+Including these new types in the existing conditionals would introduce =
+a lot=20
+of statements like
+	if ( (TYPE_X || TYPE_Y) && !TYPE_Z)
+
+In my opinion testing for specific features also describes the differen=
+ce=20
+between implementations better if one reads the code later on.
+
+
+I will change the styling of the "<<"s but am wondering why checkpatch =
+did not=20
+complain, i.e. it complains for all other whitespace mistakes one can m=
+ake but=20
+not these.
+
+Heiko
+
+>=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >=20
+> >  arch/arm/plat-samsung/adc.c |   29 +++++++++++++++++++++++++++++
+> >  1 files changed, 29 insertions(+), 0 deletions(-)
+> >=20
+> > diff --git a/arch/arm/plat-samsung/adc.c b/arch/arm/plat-samsung/ad=
+c.c
+> > index ee8deef..b209d58 100644
+> > --- a/arch/arm/plat-samsung/adc.c
+> > +++ b/arch/arm/plat-samsung/adc.c
+> > @@ -45,6 +45,35 @@ enum s3c_cpu_type {
+> >=20
+> >  	TYPE_ADCV3, /* S5PV210, S5PC110, EXYNOS4210 */
+> > =20
+> >  };
+> >=20
+> > +/*
+> > + * Resolution of the ADC - 10 or 12 bit
+> > + */
+>=20
+> /* ... */
+>=20
+> > +#define S3C_ADC_QUIRK_10BIT		0
+> > +#define S3C_ADC_QUIRK_12BIT		(1<<0)
+>=20
+> According to coding style, should be added blank around <<.
+>=20
+> > +
+> > +/*
+> > + * 12bit ADC can switch resolution between 10 bit and 12 bit
+> > + * ADCCON bit 03 for S3C2416
+> > + * ADCCON bit 16 for S3C64XX and up
+> > + */
+> > +#define S3C_ADC_QUIRK_RESSEL03		(1<<1)
+> > +#define S3C_ADC_QUIRK_RESSEL16		(1<<2)
+>=20
+> Same as above.
+>=20
+> > +
+> > +/*
+> > + * Input channel select can either be in
+> > + * - reg ADCCON, bit for S3C24XX and S3C64XX
+> > + * - reg base+0x18 for 2443/2416/2450
+> > + * - reg base+0x1C for S5P
+> > + */
+> > +#define S3C_ADC_QUIRK_MUXADCCON		(1<<3)
+> > +#define S3C_ADC_QUIRK_MUX18		(1<<4)
+> > +#define S3C_ADC_QUIRK_MUX1C		(1<<5)
+>=20
+> Same.
+>=20
+> > +
+> > +/*
+> > + * CLRINT register on S3C64xx
+> > + */
+>=20
+> /* ... */
+>=20
+> > +#define S3C_ADC_QUIRK_CLRINT		(1<<6)
+>=20
+> Same.
+>=20
+> > +
+> >=20
+> >  struct s3c_adc_client {
+> > =20
+> >  	struct platform_device	*pdev;
+> >  	struct list_head	 pend;
+> >=20
+> > --
+> > 1.7.2.3
+>=20
 > Thanks.
->
+>=20
 > Best regards,
 > Kgene.
 > --
 > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 > SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
-
-Ajay
