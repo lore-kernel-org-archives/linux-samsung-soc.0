@@ -1,108 +1,137 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH RESEND] drivers: i2c: s3c2410: add support for HDMIPHY
- dedicated controller
-Date: Thu, 22 Sep 2011 12:24:56 +0200
-Message-ID: <1316687096-18307-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: (unknown)
+Date: Thu, 22 Sep 2011 16:40:43 +0530
+Message-ID: <1316689844-8663-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:11360 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752710Ab1IVKZF (ORCPT
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:37705 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751100Ab1IVLKf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Sep 2011 06:25:05 -0400
+	Thu, 22 Sep 2011 07:10:35 -0400
+Subject: 
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+This patch adds the support for power off notify feature
+available in eMMC 4.5 devices.
+	If the the host has support for this feature, then the
+mmc core will notify it to the device by setting the
+POWER_OFF_NOTIFICATION byte in the extended csd register
+with a value 1(POWER_ON).
+	This patch should be applied after Seungwon Jeon's
+patch for cmd6 timeout.
 
-This patch adds support for I2C HDMIPHY dedicated controller. It has
-different timeout handling and reset conditions.
-
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |   36 +++++++++++++++++++++++++++++++++++-
- 1 files changed, 35 insertions(+), 1 deletions(-)
+ v2:
+ adds poweroff notification handling in suspend/normal
+ v4:
+ updated with review comments of Jeon
+ v5:
+ This patch version fixes the problem with power off
+ notify function, when called for the first time and
+ card is not yet initialised.
+ v6:
+ fixes checkpatch errors. The patches are generated after
+ rebasing to chris's mmc-next branch.
+ 
+ drivers/mmc/core/mmc.c   |   17 +++++++++++++++++
+ include/linux/mmc/card.h |    1 +
+ include/linux/mmc/host.h |    1 +
+ include/linux/mmc/mmc.h  |    6 ++++++
+ 4 files changed, 25 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index f84a63c..e456cf9 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -54,6 +54,7 @@ enum s3c24xx_i2c_state {
- enum s3c24xx_i2c_type {
- 	TYPE_S3C2410,
- 	TYPE_S3C2440,
-+	TYPE_S3C2440_HDMIPHY,
- };
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 7adc30d..a547f49 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -412,6 +412,10 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	else
+ 		card->erased_byte = 0x0;
  
- struct s3c24xx_i2c {
-@@ -96,7 +97,21 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
- 	enum s3c24xx_i2c_type type;
- 
- 	type = platform_get_device_id(pdev)->driver_data;
--	return type == TYPE_S3C2440;
-+	return type == TYPE_S3C2440 || type == TYPE_S3C2440_HDMIPHY;
-+}
-+
-+/* s3c24xx_i2c_is2440_hdmiphy()
-+ *
-+ * return true is this is an s3c2440 dedicated for HDMIPHY interface
-+*/
-+
-+static inline int s3c24xx_i2c_is2440_hdmiphy(struct s3c24xx_i2c *i2c)
-+{
-+	struct platform_device *pdev = to_platform_device(i2c->dev);
-+	enum s3c24xx_i2c_type type;
-+
-+	type = platform_get_device_id(pdev)->driver_data;
-+	return type == TYPE_S3C2440_HDMIPHY;
++	if (card->ext_csd.rev >= 6) {
++		card->ext_csd.power_off_longtime = 10 *
++			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
++	}
+ out:
+ 	return err;
  }
- 
- /* s3c24xx_i2c_master_complete
-@@ -460,6 +475,13 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
- 	unsigned long iicstat;
- 	int timeout = 400;
- 
-+	/* if hang-up of HDMIPHY occured reduce timeout
-+	 * The controller will work after reset, so waiting
-+	 * 400 ms will cause unneccessary system hangup
-+	 */
-+	if (s3c24xx_i2c_is2440_hdmiphy(i2c))
-+		timeout = 10;
-+
- 	while (timeout-- > 0) {
- 		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
- 
-@@ -469,6 +491,15 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
- 		msleep(1);
+@@ -713,6 +717,19 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
  	}
  
-+	/* hang-up of bus dedicated for HDMIPHY occured, resetting */
-+	if (s3c24xx_i2c_is2440_hdmiphy(i2c)) {
-+		writel(0, i2c->regs + S3C2410_IICCON);
-+		writel(0, i2c->regs + S3C2410_IICSTAT);
-+		writel(0, i2c->regs + S3C2410_IICDS);
-+
-+		return 0;
+ 	/*
++	 * If the host supports the power_off_notify capability then
++	 * set the notification byte in the ext_csd register of device
++	 */
++	if (host->caps & MMC_CAP_POWER_OFF_NOTIFY) {
++		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++				EXT_CSD_POWER_OFF_NOTIFICATION,
++				EXT_CSD_POWER_ON,
++				card->ext_csd.generic_cmd6_time);
++		if (err && err != -EBADMSG)
++			goto free_card;
 +	}
 +
- 	return -ETIMEDOUT;
- }
++	/*
+ 	 * Activate high speed (if supported)
+ 	 */
+ 	if ((card->ext_csd.hs_max_dtr != 0) &&
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 5294ddf..0f9dbd6 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -53,6 +53,7 @@ struct mmc_ext_csd {
+ 	u8			rst_n_function;
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
++	unsigned int		power_off_longtime;	/* Units: ms */
+ 	unsigned int		hs_max_dtr;
+ 	unsigned int		sectors;
+ 	unsigned int		card_type;
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index b2aefea..ed49e88 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -235,6 +235,7 @@ struct mmc_host {
+ #define MMC_CAP_MAX_CURRENT_800	(1 << 29)	/* Host max current limit is 800mA */
+ #define MMC_CAP_CMD23		(1 << 30)	/* CMD23 supported. */
+ #define MMC_CAP_HW_RESET	(1 << 31)	/* Hardware reset */
++#define MMC_CAP_POWER_OFF_NOTIFY    (1 << 31)/*Notify poweroff supported */
  
-@@ -1008,6 +1039,9 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
- 	}, {
- 		.name		= "s3c2440-i2c",
- 		.driver_data	= TYPE_S3C2440,
-+	}, {
-+		.name		= "s3c2440-hdmiphy-i2c",
-+		.driver_data	= TYPE_S3C2440_HDMIPHY,
- 	}, { },
- };
- MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index ed8fca8..95912da 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -270,6 +270,7 @@ struct _mmc_csd {
+  * EXT_CSD fields
+  */
+ 
++#define EXT_CSD_POWER_OFF_NOTIFICATION	34 /* R/W */
+ #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+ #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+ #define EXT_CSD_RST_N_FUNCTION		162	/* R/W */
+@@ -294,6 +295,7 @@ struct _mmc_csd {
+ #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+ #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+ #define EXT_CSD_TRIM_MULT		232	/* RO */
++#define EXT_CSD_POWER_OFF_LONG_TIME	247 /*RO*/
+ 
+ /*
+  * EXT_CSD field definitions
+@@ -331,6 +333,10 @@ struct _mmc_csd {
+ 
+ #define EXT_CSD_RST_N_EN_MASK	0x3
+ #define EXT_CSD_RST_N_ENABLED	1	/* RST_n is enabled on card */
++#define EXT_CSD_NO_POWER_NOTIFICATION	0
++#define EXT_CSD_POWER_ON	1
++#define EXT_CSD_POWER_OFF_SHORT	2
++#define EXT_CSD_POWER_OFF_LONG	3
+ 
+ /*
+  * MMC_SWITCH access modes
 -- 
-1.7.1.569.g6f426
+1.7.1
