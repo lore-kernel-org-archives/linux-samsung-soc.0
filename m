@@ -1,62 +1,78 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: card: modify mmc_getgeo function
-Date: Wed, 21 Sep 2011 14:52:08 -0400
-Message-ID: <m2ty8520fb.fsf@bob.laptop.org>
-References: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v3] mmc: core: Add default timeout value for CMD6.
+Date: Thu, 22 Sep 2011 11:15:30 +0900
+Message-ID: <005601cc78cd$80c71020$82553060$%jun@samsung.com>
+References: <1315466232-27487-1-git-send-email-tgih.jun@samsung.com>
+ <m262kl6b7y.fsf@bob.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
-	(Girish K. S.'s message of "Tue, 20 Sep 2011 16:38:49 +0530")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:29807 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750876Ab1IVCPh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Sep 2011 22:15:37 -0400
+In-reply-to: <m262kl6b7y.fsf@bob.laptop.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Chris Ball' <cjb@laptop.org>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-Hi,
+Hi Chris Ball,
 
-On Tue, Sep 20 2011, Girish K S wrote:
-> In the earlier code the cylinder, sector and head are assigned
-> independently. Current patch generates the cylinder number
-> with the values of sector and head.
-> This patch only makes they cylinder value to be dependent on
-> the sector and head.
->
-> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-> ---
->  drivers/mmc/card/block.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
-> index 1ff5486..bebb13b 100644
-> --- a/drivers/mmc/card/block.c
-> +++ b/drivers/mmc/card/block.c
-> @@ -226,9 +226,10 @@ static int mmc_blk_release(struct gendisk *disk, fmode_t mode)
->  static int
->  mmc_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
->  {
-> -	geo->cylinders = get_capacity(bdev->bd_disk) / (4 * 16);
->  	geo->heads = 4;
->  	geo->sectors = 16;
-> +	geo->cylinders = get_capacity(bdev->bd_disk) /
-> +		(geo->heads * geo->sectors);
->  	return 0;
->  }
-
-Thanks, pushed to mmc-next for 3.2 with a reworded commit message:
-
-Author: Girish K S <girish.shivananjappa@linaro.org>
-Date:   Tue Sep 20 16:38:49 2011 +0530
-
-    mmc: card: Remove duplicated constants
-
-    Reuse heads/sectors instead of duplicating them in the cylinders
-    calculation.
-
-    Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-    Signed-off-by: Chris Ball <cjb@laptop.org>                    
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Chris Ball wrote:
+> Hi,
+> 
+> On Thu, Sep 08 2011, Seungwon Jeon wrote:
+> > EXT_CSD[248] includes the default maximum timeout for CMD6.
+> > This field is added at eMMC4.5 Spec. And it can be used for default
+> > timeout except for some operations which don't define the timeout(i.e.
+> > background operation, sanitize, flush cache) in eMMC4.5 Spec.
+> >
+> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> > ---
+> >  drivers/mmc/core/mmc.c   |   19 +++++++++++++++----
+> >  include/linux/mmc/card.h |    1 +
+> >  include/linux/mmc/mmc.h  |    1 +
+> >  3 files changed, 17 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > index 5700b1c..a72d879 100644
+> > --- a/drivers/mmc/core/mmc.c
+> > +++ b/drivers/mmc/core/mmc.c
+> > @@ -410,6 +410,15 @@ static int mmc_read_ext_csd(struct mmc_card *card,
+> u8 *ext_csd)
+> >  	else
+> >  		card->erased_byte = 0x0;
+> >
+> > +	if (card->ext_csd.rev >= 6)
+> > +		card->ext_csd.generic_cmd6_time = 10 *
+> > +			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+> > +	else
+> > +		card->ext_csd.generic_cmd6_time = 0;
+> > +
+> >  out:
+> >  	return err;
+> >  }
+> > @@ -668,7 +677,8 @@ static int mmc_init_card(struct mmc_host *host, u32
+> ocr,
+> >  	 */
+> 
+> The patch is corrupt at this point:
+> 
+> patching file drivers/mmc/core/mmc.c
+> patch: **** malformed patch at line 39: @@ -668,7 +677,8 @@ static int
+> mmc_init_card(struct mmc_host *host, u32 ocr,
+Oops.
+It's mistake. I'll resend.
+> 
+> - Chris.
+> --
+> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+> One Laptop Per Child
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
