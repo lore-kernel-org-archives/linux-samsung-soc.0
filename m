@@ -1,91 +1,174 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 1/7] SPI: S3C64XX: Use bus clocks created using clkdev
-Date: Fri, 23 Sep 2011 17:12:33 -0600
-Message-ID: <20110923231233.GE24631@ponder.secretlab.ca>
-References: <1316778827-24694-1-git-send-email-padma.v@samsung.com>
- <1316778827-24694-2-git-send-email-padma.v@samsung.com>
+Subject: Re: [PATCH] GPIO: Samsung: correct pin configuration for
+ S5PC100/S5PC110/Exynos4
+Date: Fri, 23 Sep 2011 17:32:37 -0600
+Message-ID: <20110923233237.GK24631@ponder.secretlab.ca>
+References: <1316777930-13136-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:61513 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752730Ab1IWXMh (ORCPT
+Received: from mail-gw0-f46.google.com ([74.125.83.46]:33749 "EHLO
+	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753025Ab1IWXcl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Sep 2011 19:12:37 -0400
-Received: by yxl31 with SMTP id 31so3036750yxl.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2011 16:12:37 -0700 (PDT)
+	Fri, 23 Sep 2011 19:32:41 -0400
+Received: by gwb15 with SMTP id 15so4084339gwb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2011 16:32:40 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <1316778827-24694-2-git-send-email-padma.v@samsung.com>
+In-Reply-To: <1316777930-13136-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, ben-linux@fluff.org, kgene.kim@samsung.com, s.nawrocki@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
 
-On Fri, Sep 23, 2011 at 05:23:41PM +0530, Padmavathi Venna wrote:
-> This patch modifies the driver to stop depending on the
-> clock names being passed from platform and switch over
-> to lookup clocks generic names using clkdev
+On Fri, Sep 23, 2011 at 01:38:50PM +0200, Marek Szyprowski wrote:
+> Commit 1b39d5f2cc introduced new common gpio driver for all Samsung GPIO
+> SoCs. The new driver use wrong configuration setup for all gpio pins on
+> S5PC100 and S5PV210 SoCs and external interrupt lines on Exynos4 SoCs.
+> This patch fixes this issue.
 > 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-
-Looks okay to me.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
 Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-This series I imagine should go in via the arm-soc tree.
-
-g.
-
 > ---
->  drivers/spi/spi-s3c64xx.c |   14 +++++---------
->  1 files changed, 5 insertions(+), 9 deletions(-)
+>  drivers/gpio/gpio-samsung.c |   30 +++++++++++++++---------------
+>  1 files changed, 15 insertions(+), 15 deletions(-)
 > 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 019a716..dcf7e10 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -971,6 +971,7 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
->  	struct s3c64xx_spi_info *sci;
->  	struct spi_master *master;
->  	int ret;
-> +	char clk_name[16];
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index cdffb0c..b6be77a 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -1862,7 +1862,7 @@ static struct samsung_gpio_chip s5pc100_gpios_4bit[] = {
+>   * Followings are the gpio banks in S5PV210/S5PC110
+>   *
+>   * The 'config' member when left to NULL, is initialized to the default
+> - * structure samsung_gpio_cfgs[4] in the init function below.
+> + * structure samsung_gpio_cfgs[3] in the init function below.
+>   *
+>   * The 'base' member is also initialized in the init function below.
+>   * Note: The initialization of 'base' member of samsung_gpio_chip structure
+> @@ -2083,7 +2083,7 @@ static struct samsung_gpio_chip s5pv210_gpios_4bit[] = {
+>   * Followings are the gpio banks in EXYNOS4210
+>   *
+>   * The 'config' member when left to NULL, is initialized to the default
+> - * structure samsung_gpio_cfgs[4] in the init function below.
+> + * structure samsung_gpio_cfgs[3] in the init function below.
+>   *
+>   * The 'base' member is also initialized in the init function below.
+>   * Note: The initialization of 'base' member of samsung_gpio_chip structure
+> @@ -2249,49 +2249,49 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  			.label	= "GPL2",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY0(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y0_NR,
+>  			.label	= "GPY0",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY1(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y1_NR,
+>  			.label	= "GPY1",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY2(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y2_NR,
+>  			.label	= "GPY2",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY3(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y3_NR,
+>  			.label	= "GPY3",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY4(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y4_NR,
+>  			.label	= "GPY4",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY5(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y5_NR,
+>  			.label	= "GPY5",
+>  		},
+>  	}, {
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[0],
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPY6(0),
+>  			.ngpio	= EXYNOS4_GPIO_Y6_NR,
+> @@ -2299,7 +2299,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  		},
+>  	}, {
+>  		.base	= (S5P_VA_GPIO2 + 0xC00),
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[3],
+>  		.irq_base = IRQ_EINT(0),
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPX0(0),
+> @@ -2309,7 +2309,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  		},
+>  	}, {
+>  		.base	= (S5P_VA_GPIO2 + 0xC20),
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[3],
+>  		.irq_base = IRQ_EINT(8),
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPX1(0),
+> @@ -2319,7 +2319,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  		},
+>  	}, {
+>  		.base	= (S5P_VA_GPIO2 + 0xC40),
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[3],
+>  		.irq_base = IRQ_EINT(16),
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPX2(0),
+> @@ -2329,7 +2329,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  		},
+>  	}, {
+>  		.base	= (S5P_VA_GPIO2 + 0xC60),
+> -		.config	= &samsung_gpio_cfgs[4],
+> +		.config	= &samsung_gpio_cfgs[3],
+>  		.irq_base = IRQ_EINT(24),
+>  		.chip	= {
+>  			.base	= EXYNOS4_GPX3(0),
+> @@ -2399,7 +2399,7 @@ static __init int samsung_gpiolib_init(void)
 >  
->  	if (pdev->id < 0) {
->  		dev_err(&pdev->dev,
-> @@ -984,11 +985,6 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
->  	}
+>  		for (i = 0; i < nr_chips; i++, chip++) {
+>  			if (!chip->config) {
+> -				chip->config = &samsung_gpio_cfgs[4];
+> +				chip->config = &samsung_gpio_cfgs[3];
+>  				chip->group = group++;
+>  			}
+>  		}
+> @@ -2414,7 +2414,7 @@ static __init int samsung_gpiolib_init(void)
 >  
->  	sci = pdev->dev.platform_data;
-> -	if (!sci->src_clk_name) {
-> -		dev_err(&pdev->dev,
-> -			"Board init must call s3c64xx_spi_set_info()\n");
-> -		return -EINVAL;
-> -	}
->  
->  	/* Check for availability of necessary resource */
->  
-> @@ -1073,17 +1069,17 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
->  		goto err4;
->  	}
->  
-> -	sdd->src_clk = clk_get(&pdev->dev, sci->src_clk_name);
-> +	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-> +	sdd->src_clk = clk_get(&pdev->dev, clk_name);
->  	if (IS_ERR(sdd->src_clk)) {
->  		dev_err(&pdev->dev,
-> -			"Unable to acquire clock '%s'\n", sci->src_clk_name);
-> +			"Unable to acquire clock '%s'\n", clk_name);
->  		ret = PTR_ERR(sdd->src_clk);
->  		goto err5;
->  	}
->  
->  	if (clk_enable(sdd->src_clk)) {
-> -		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n",
-> -							sci->src_clk_name);
-> +		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n", clk_name);
->  		ret = -EBUSY;
->  		goto err6;
->  	}
+>  		for (i = 0; i < nr_chips; i++, chip++) {
+>  			if (!chip->config) {
+> -				chip->config = &samsung_gpio_cfgs[4];
+> +				chip->config = &samsung_gpio_cfgs[3];
+>  				chip->group = group++;
+>  			}
+>  		}
 > -- 
-> 1.7.4.4
+> 1.7.1.569.g6f426
 > 
