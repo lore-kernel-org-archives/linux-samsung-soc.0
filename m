@@ -1,13 +1,13 @@
 From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: [PATCH 2/4 v2] ARM: S5P: Remove system MMU driver from arm/plat-s5p
-Date: Mon, 26 Sep 2011 13:42:48 +0900
-Message-ID: <1317012170-28597-3-git-send-email-pullip.cho@samsung.com>
-References: <1317012170-28597-1-git-send-email-pullip.cho@samsung.com>
+Subject: [PATCH 2/3] ARM: S5P: Remove system MMU driver from arm/plat-s5p
+Date: Fri, 23 Sep 2011 21:01:46 +0900
+Message-ID: <1316779307-2567-3-git-send-email-pullip.cho@samsung.com>
+References: <1316779307-2567-1-git-send-email-pullip.cho@samsung.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1317012170-28597-1-git-send-email-pullip.cho@samsung.com>
+In-Reply-To: <1316779307-2567-1-git-send-email-pullip.cho@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
-Cc: Russell King <linux@arm.linux.org.uk>, Joerg Roedel <joerg.roedel@amd.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, YoungLak Kim <younglak1004.kim@samsung.com>, Ohad Ben-Cohen <ohad@wizery.com>, KyongHo Cho <pullip.cho@samsung.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, YoungLak Kim <younglak1004.kim@samsung.com>, Ohad Ben-Cohen <ohad@wizery.com>, KyongHo Cho <pullip.cho@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Due to Ohad Ben-Cohen gathered IOMMU drivers in drivers/iommu directory,
