@@ -1,174 +1,63 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] GPIO: Samsung: correct pin configuration for
- S5PC100/S5PC110/Exynos4
-Date: Fri, 23 Sep 2011 13:38:50 +0200
-Message-ID: <1316777930-13136-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH 0/7]: ARM: SAMSUNG: Add SPI clkdev support
+Date: Fri, 23 Sep 2011 17:23:40 +0530
+Message-ID: <1316778827-24694-1-git-send-email-padma.v@samsung.com>
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:19715 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753446Ab1IWLjB (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16578 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752240Ab1IWLr0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Sep 2011 07:39:01 -0400
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LRZ00EIT4CYCE@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Sep 2011 12:38:58 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LRZ00KLW4CYOJ@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 23 Sep 2011 12:38:58 +0100 (BST)
+	Fri, 23 Sep 2011 07:47:26 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LRZ0026A4R0XMQ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Sep 2011 20:47:24 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LRZ009KD4QTUT@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 23 Sep 2011 20:47:24 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>, Grant Likely <grant.likely@secretlab.ca>
+To: padma.v@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: grant.likely@secretlab.ca, jassisinghbrar@gmail.com, ben-linux@fluff.org, kgene.kim@samsung.com, s.nawrocki@samsung.com
 
-Commit 1b39d5f2cc introduced new common gpio driver for all Samsung GPIO
-SoCs. The new driver use wrong configuration setup for all gpio pins on
-S5PC100 and S5PV210 SoCs and external interrupt lines on Exynos4 SoCs.
-This patch fixes this issue.
+This patchset modifies the existing clkdev to make SPI driver
+independent of the clock names send from platform data. This
+patches enables the SPI driver to request SPI bus clocks
+using generic connection ID.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/gpio/gpio-samsung.c |   30 +++++++++++++++---------------
- 1 files changed, 15 insertions(+), 15 deletions(-)
+The patches are created against "for-next" branch of Kukjin Kim's tree at:
+git://github.com/kgene/linux-samsung.git
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index cdffb0c..b6be77a 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -1862,7 +1862,7 @@ static struct samsung_gpio_chip s5pc100_gpios_4bit[] = {
-  * Followings are the gpio banks in S5PV210/S5PC110
-  *
-  * The 'config' member when left to NULL, is initialized to the default
-- * structure samsung_gpio_cfgs[4] in the init function below.
-+ * structure samsung_gpio_cfgs[3] in the init function below.
-  *
-  * The 'base' member is also initialized in the init function below.
-  * Note: The initialization of 'base' member of samsung_gpio_chip structure
-@@ -2083,7 +2083,7 @@ static struct samsung_gpio_chip s5pv210_gpios_4bit[] = {
-  * Followings are the gpio banks in EXYNOS4210
-  *
-  * The 'config' member when left to NULL, is initialized to the default
-- * structure samsung_gpio_cfgs[4] in the init function below.
-+ * structure samsung_gpio_cfgs[3] in the init function below.
-  *
-  * The 'base' member is also initialized in the init function below.
-  * Note: The initialization of 'base' member of samsung_gpio_chip structure
-@@ -2249,49 +2249,49 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
- 			.label	= "GPL2",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY0(0),
- 			.ngpio	= EXYNOS4_GPIO_Y0_NR,
- 			.label	= "GPY0",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY1(0),
- 			.ngpio	= EXYNOS4_GPIO_Y1_NR,
- 			.label	= "GPY1",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY2(0),
- 			.ngpio	= EXYNOS4_GPIO_Y2_NR,
- 			.label	= "GPY2",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY3(0),
- 			.ngpio	= EXYNOS4_GPIO_Y3_NR,
- 			.label	= "GPY3",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY4(0),
- 			.ngpio	= EXYNOS4_GPIO_Y4_NR,
- 			.label	= "GPY4",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY5(0),
- 			.ngpio	= EXYNOS4_GPIO_Y5_NR,
- 			.label	= "GPY5",
- 		},
- 	}, {
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[0],
- 		.chip	= {
- 			.base	= EXYNOS4_GPY6(0),
- 			.ngpio	= EXYNOS4_GPIO_Y6_NR,
-@@ -2299,7 +2299,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
- 		},
- 	}, {
- 		.base	= (S5P_VA_GPIO2 + 0xC00),
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[3],
- 		.irq_base = IRQ_EINT(0),
- 		.chip	= {
- 			.base	= EXYNOS4_GPX0(0),
-@@ -2309,7 +2309,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
- 		},
- 	}, {
- 		.base	= (S5P_VA_GPIO2 + 0xC20),
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[3],
- 		.irq_base = IRQ_EINT(8),
- 		.chip	= {
- 			.base	= EXYNOS4_GPX1(0),
-@@ -2319,7 +2319,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
- 		},
- 	}, {
- 		.base	= (S5P_VA_GPIO2 + 0xC40),
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[3],
- 		.irq_base = IRQ_EINT(16),
- 		.chip	= {
- 			.base	= EXYNOS4_GPX2(0),
-@@ -2329,7 +2329,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
- 		},
- 	}, {
- 		.base	= (S5P_VA_GPIO2 + 0xC60),
--		.config	= &samsung_gpio_cfgs[4],
-+		.config	= &samsung_gpio_cfgs[3],
- 		.irq_base = IRQ_EINT(24),
- 		.chip	= {
- 			.base	= EXYNOS4_GPX3(0),
-@@ -2399,7 +2399,7 @@ static __init int samsung_gpiolib_init(void)
- 
- 		for (i = 0; i < nr_chips; i++, chip++) {
- 			if (!chip->config) {
--				chip->config = &samsung_gpio_cfgs[4];
-+				chip->config = &samsung_gpio_cfgs[3];
- 				chip->group = group++;
- 			}
- 		}
-@@ -2414,7 +2414,7 @@ static __init int samsung_gpiolib_init(void)
- 
- 		for (i = 0; i < nr_chips; i++, chip++) {
- 			if (!chip->config) {
--				chip->config = &samsung_gpio_cfgs[4];
-+				chip->config = &samsung_gpio_cfgs[3];
- 				chip->group = group++;
- 			}
- 		}
+Due to the issue with the GPIO in the latest commits of for-next branch,
+following patches are tested against the following commit: 
+9eb1e9aeec6f6f68d83a463446d1b30cb8ffcc65
+ARM: S5PV210: enable TV support on GONI board
+
+Padmavathi Venna (7):
+  SPI: S3C64XX: Use bus clocks created using clkdev
+  ARM: SAMSUNG: Add CLK Macro for clkdev support
+  ARM: S3C64XX: Add SPI clkdev support
+  ARM: S5PC100: Add SPI clkdev support
+  ARM: S5P64X0: Add SPI clkdev support
+  ARM: S5PV210: Add SPI clkdev support
+  ARM: SAMSUNG: Remove SPI bus clocks from platform data
+
+ arch/arm/mach-s3c64xx/clock.c                    |   98 +++++++++++-----
+ arch/arm/mach-s3c64xx/dev-spi.c                  |    7 -
+ arch/arm/mach-s5p64x0/clock-s5p6440.c            |   57 ++++++----
+ arch/arm/mach-s5p64x0/clock-s5p6450.c            |   57 ++++++----
+ arch/arm/mach-s5p64x0/dev-spi.c                  |    6 -
+ arch/arm/mach-s5pc100/clock.c                    |  132 +++++++++++++---------
+ arch/arm/mach-s5pc100/dev-spi.c                  |    7 -
+ arch/arm/mach-s5pv210/clock.c                    |   58 ++++++----
+ arch/arm/mach-s5pv210/dev-spi.c                  |    6 -
+ arch/arm/plat-samsung/include/plat/clock.h       |    7 +
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 -
+ drivers/spi/spi-s3c64xx.c                        |   14 +--
+ 12 files changed, 271 insertions(+), 180 deletions(-)
+
 -- 
-1.7.1.569.g6f426
+1.7.4.4
