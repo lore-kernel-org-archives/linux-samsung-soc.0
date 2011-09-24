@@ -1,37 +1,70 @@
-From: =?euc-kr?B?wbaw5sij?= <pullip.cho@samsung.com>
-Subject: [PATCH 4/4] iommu/exynos: Use bus_set_iommu instead of register_iommu
-Date: Sat, 24 Sep 2011 07:36:28 +0000 (GMT)
-Message-ID: <9156991.50021316849787764.JavaMail.weblogic@epml24>
-Reply-To: pullip.cho@samsung.com
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 0/4] iommu/exynos: Add IOMMU and Enhance System MMU driver
+ for Exynos4
+Date: Sat, 24 Sep 2011 16:38:14 +0900
+Message-ID: <CAHQjnON8Wo1mN6GPQN1Ke6VsC+E2TLwWCY8U+Bk5ca0BWdeoMQ@mail.gmail.com>
+References: <19883641.49771316849198516.JavaMail.weblogic@epml24>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14377 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751931Ab1IXHg3 (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:61131 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751031Ab1IXHiQ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Sep 2011 03:36:29 -0400
-Received: from epcpsbge3.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LS000CC3NSLDU10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Sep 2011 16:36:28 +0900 (KST)
-MIME-version: 1.0
+	Sat, 24 Sep 2011 03:38:16 -0400
+In-Reply-To: <19883641.49771316849198516.JavaMail.weblogic@epml24>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, iommu@lists.linux-foundatio
-Cc: =?euc-kr?Q?=C1=B6=B0=E6=C8=A3?= <pullip.cho@samsung.com>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?euc-kr?Q?=C0=CC=BB=F3=C7=F6?= <sanghyun75.lee@samsung.com>, =?euc-kr?Q?=B1=E8=B1=B9=C1=F8?= <kgene.kim@samsung.com>, =?euc-kr?Q?=B1=E8=BF=B5=B6=F4?= <younglak1004.kim@samsung.com>, "ohad@wizery.com" <ohad@wizery.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: pullip.cho@samsung.com, joerg.roedel@amd.com, sanghyun75.lee@samsung.com, kgene.kim@samsung.com, younglak1004.kim@samsung.com, ohad@wizery.com
 
-VGhpcyByZXBsYWNlcyByZWdpc3Rlcl9pb21tdSgpIHdpdGggYnVzX3NldF9pb21tdSgpIGFjY29y
-ZGluZyB0byB0aGUNCnN1Z2dlc3Rpb24gb2YgSm9lcmcgUm9lZGVsLg0KDQpDYzogSm9lcmcgUm9l
-ZGVsIA0KU2lnbmVkLW9mZi1ieTogS3lvbmdIbyBDaG8gDQotLS0NCmRyaXZlcnMvaW9tbXUvZXh5
-bm9zX2lvbW11LmMgfCAgICAyICstDQoxIGZpbGVzIGNoYW5nZWQsIDEgaW5zZXJ0aW9ucygrKSwg
-MSBkZWxldGlvbnMoLSkNCg0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvaW9tbXUvZXh5bm9zX2lvbW11
-LmMgYi9kcml2ZXJzL2lvbW11L2V4eW5vc19pb21tdS5jDQppbmRleCBmZTViNWQ4Li4xNDhlMjM4
-IDEwMDY0NA0KLS0tIGEvZHJpdmVycy9pb21tdS9leHlub3NfaW9tbXUuYw0KKysrIGIvZHJpdmVy
-cy9pb21tdS9leHlub3NfaW9tbXUuYw0KQEAgLTg1Miw3ICs4NTIsNyBAQCBzdGF0aWMgaW50IF9f
-aW5pdCBleHlub3NfaW9tbXVfaW5pdCh2b2lkKQ0KaWYgKCFsMnRhYmxlX2NhY2hlcCkNCnJldHVy
-biAtRU5PTUVNOw0KDQotIHJlZ2lzdGVyX2lvbW11KCZleHlub3NfaW9tbXVfb3BzKTsNCisgYnVz
-X3NldF9pb21tdSgmcGxhdGZvcm1fYnVzX3R5cGUsICZvbWFwX2lvbW11X29wcyk7DQoNCnJldHVy
-biAwOw0KfQ0KLS0gDQoxLjcuMQ0K
+Sorry for duplicate emails :(
+
+My mistake.
+
+2011/9/24 =C1=B6=B0=E6=C8=A3 <pullip.cho@samsung.com>:
+> Hi.
+>
+> First 2 patches enhance System MMU platform device definition:
+>  - Removed System MMU for MDMA0 in LCD block because it is not used.
+>   Use MDMA2 in TOP block.
+>  - Removed System MMU ID. Instead a System MMU is bound to a device t=
+hat
+>   the System MMU is dedicated during machin initialization. If a devi=
+ce
+>   driver wants to handle System MMU, it must bind its device with Sys=
+tem
+>   MMU with sysmmu_set_owner().
+>  - clkdev
+>  - System MMU device driver is removed from arch/arm/plat-s5p to move=
+ it
+>   to driver/iommu directory.
+> Last 2 patches implements IOMMU API:
+>  - Implements IOMMU API and System MMU driver that is moved from
+>   arch/arm/plat-s5p.
+>  - Implements fault handling that is suggested by Ohad.
+>  - Used bus_set_iommu instead of register_iommu that is suggested by =
+Joerg.
+>
+> Regards,
+> Cho KyongHo.
+>
+> Diffstats:
+> arch/arm/mach-exynos4/Kconfig               |    2 -
+> arch/arm/mach-exynos4/clock.c               |   43 +-
+> arch/arm/mach-exynos4/dev-sysmmu.c          |  281 +++-------
+> arch/arm/mach-exynos4/include/mach/irqs.h   |    1 -
+> arch/arm/mach-exynos4/include/mach/map.h    |    1 -
+> arch/arm/mach-exynos4/include/mach/sysmmu.h |   96 ++--
+> arch/arm/mach-exynos4/mach-armlex4210.c     |   24 +-
+> arch/arm/mach-exynos4/mach-smdkv310.c       |   28 +-
+> arch/arm/plat-s5p/Kconfig                   |    8 -
+> arch/arm/plat-s5p/Makefile                  |    1 -
+> arch/arm/plat-s5p/include/plat/sysmmu.h     |   95 ---
+> arch/arm/plat-s5p/sysmmu.c                  |  312 ----------
+> drivers/iommu/Kconfig                       |   14 +
+> drivers/iommu/Makefile                      |    1 +
+> drivers/iommu/exynos_iommu.c                |  859 ++++++++++++++++++=
++++++++++
+> 15 files changed, 1084 insertions(+), 682 deletions(-)
