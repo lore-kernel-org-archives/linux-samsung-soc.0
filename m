@@ -1,174 +1,60 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] GPIO: Samsung: correct pin configuration for
- S5PC100/S5PC110/Exynos4
-Date: Fri, 23 Sep 2011 17:32:37 -0600
-Message-ID: <20110923233237.GK24631@ponder.secretlab.ca>
-References: <1316777930-13136-1-git-send-email-m.szyprowski@samsung.com>
+From: =?euc-kr?B?wbaw5sij?= <pullip.cho@samsung.com>
+Subject: [PATCH 0/4] iommu/exynos: Add IOMMU and Enhance System MMU driver for
+ Exynos4
+Date: Sat, 24 Sep 2011 07:26:39 +0000 (GMT)
+Message-ID: <19883641.49771316849198516.JavaMail.weblogic@epml24>
+Reply-To: pullip.cho@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gw0-f46.google.com ([74.125.83.46]:33749 "EHLO
-	mail-gw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753025Ab1IWXcl (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12515 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751426Ab1IXH0l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Sep 2011 19:32:41 -0400
-Received: by gwb15 with SMTP id 15so4084339gwb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Sep 2011 16:32:40 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1316777930-13136-1-git-send-email-m.szyprowski@samsung.com>
+	Sat, 24 Sep 2011 03:26:41 -0400
+Received: from epcpsbge1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LS000C5RNCEDU10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Sep 2011 16:26:39 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Angus Ainslie <angus.ainslie@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: pullip.cho@samsung.com, joerg.roedel@amd.com, sanghyun75.lee@samsung.com, kgene.kim@samsung.com, younglak1004.kim@samsung.com, ohad@wizery.com
 
-On Fri, Sep 23, 2011 at 01:38:50PM +0200, Marek Szyprowski wrote:
-> Commit 1b39d5f2cc introduced new common gpio driver for all Samsung GPIO
-> SoCs. The new driver use wrong configuration setup for all gpio pins on
-> S5PC100 and S5PV210 SoCs and external interrupt lines on Exynos4 SoCs.
-> This patch fixes this issue.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
-
-> ---
->  drivers/gpio/gpio-samsung.c |   30 +++++++++++++++---------------
->  1 files changed, 15 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> index cdffb0c..b6be77a 100644
-> --- a/drivers/gpio/gpio-samsung.c
-> +++ b/drivers/gpio/gpio-samsung.c
-> @@ -1862,7 +1862,7 @@ static struct samsung_gpio_chip s5pc100_gpios_4bit[] = {
->   * Followings are the gpio banks in S5PV210/S5PC110
->   *
->   * The 'config' member when left to NULL, is initialized to the default
-> - * structure samsung_gpio_cfgs[4] in the init function below.
-> + * structure samsung_gpio_cfgs[3] in the init function below.
->   *
->   * The 'base' member is also initialized in the init function below.
->   * Note: The initialization of 'base' member of samsung_gpio_chip structure
-> @@ -2083,7 +2083,7 @@ static struct samsung_gpio_chip s5pv210_gpios_4bit[] = {
->   * Followings are the gpio banks in EXYNOS4210
->   *
->   * The 'config' member when left to NULL, is initialized to the default
-> - * structure samsung_gpio_cfgs[4] in the init function below.
-> + * structure samsung_gpio_cfgs[3] in the init function below.
->   *
->   * The 'base' member is also initialized in the init function below.
->   * Note: The initialization of 'base' member of samsung_gpio_chip structure
-> @@ -2249,49 +2249,49 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
->  			.label	= "GPL2",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY0(0),
->  			.ngpio	= EXYNOS4_GPIO_Y0_NR,
->  			.label	= "GPY0",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY1(0),
->  			.ngpio	= EXYNOS4_GPIO_Y1_NR,
->  			.label	= "GPY1",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY2(0),
->  			.ngpio	= EXYNOS4_GPIO_Y2_NR,
->  			.label	= "GPY2",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY3(0),
->  			.ngpio	= EXYNOS4_GPIO_Y3_NR,
->  			.label	= "GPY3",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY4(0),
->  			.ngpio	= EXYNOS4_GPIO_Y4_NR,
->  			.label	= "GPY4",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY5(0),
->  			.ngpio	= EXYNOS4_GPIO_Y5_NR,
->  			.label	= "GPY5",
->  		},
->  	}, {
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[0],
->  		.chip	= {
->  			.base	= EXYNOS4_GPY6(0),
->  			.ngpio	= EXYNOS4_GPIO_Y6_NR,
-> @@ -2299,7 +2299,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
->  		},
->  	}, {
->  		.base	= (S5P_VA_GPIO2 + 0xC00),
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[3],
->  		.irq_base = IRQ_EINT(0),
->  		.chip	= {
->  			.base	= EXYNOS4_GPX0(0),
-> @@ -2309,7 +2309,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
->  		},
->  	}, {
->  		.base	= (S5P_VA_GPIO2 + 0xC20),
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[3],
->  		.irq_base = IRQ_EINT(8),
->  		.chip	= {
->  			.base	= EXYNOS4_GPX1(0),
-> @@ -2319,7 +2319,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
->  		},
->  	}, {
->  		.base	= (S5P_VA_GPIO2 + 0xC40),
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[3],
->  		.irq_base = IRQ_EINT(16),
->  		.chip	= {
->  			.base	= EXYNOS4_GPX2(0),
-> @@ -2329,7 +2329,7 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
->  		},
->  	}, {
->  		.base	= (S5P_VA_GPIO2 + 0xC60),
-> -		.config	= &samsung_gpio_cfgs[4],
-> +		.config	= &samsung_gpio_cfgs[3],
->  		.irq_base = IRQ_EINT(24),
->  		.chip	= {
->  			.base	= EXYNOS4_GPX3(0),
-> @@ -2399,7 +2399,7 @@ static __init int samsung_gpiolib_init(void)
->  
->  		for (i = 0; i < nr_chips; i++, chip++) {
->  			if (!chip->config) {
-> -				chip->config = &samsung_gpio_cfgs[4];
-> +				chip->config = &samsung_gpio_cfgs[3];
->  				chip->group = group++;
->  			}
->  		}
-> @@ -2414,7 +2414,7 @@ static __init int samsung_gpiolib_init(void)
->  
->  		for (i = 0; i < nr_chips; i++, chip++) {
->  			if (!chip->config) {
-> -				chip->config = &samsung_gpio_cfgs[4];
-> +				chip->config = &samsung_gpio_cfgs[3];
->  				chip->group = group++;
->  			}
->  		}
-> -- 
-> 1.7.1.569.g6f426
-> 
+SGkuDQoNCkZpcnN0IDIgcGF0Y2hlcyBlbmhhbmNlIFN5c3RlbSBNTVUgcGxhdGZvcm0gZGV2aWNl
+IGRlZmluaXRpb246ICAgICAgICAgICAgICAgICAgICAgICAgDQogLSBSZW1vdmVkIFN5c3RlbSBN
+TVUgZm9yIE1ETUEwIGluIExDRCBibG9jayBiZWNhdXNlIGl0IGlzIG5vdCB1c2VkLiAgICAgICAg
+ICAgICAgICAgIA0KICAgVXNlIE1ETUEyIGluIFRPUCBibG9jay4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAtIFJlbW92ZWQgU3lz
+dGVtIE1NVSBJRC4gSW5zdGVhZCBhIFN5c3RlbSBNTVUgaXMgYm91bmQgdG8gYSBkZXZpY2UgdGhh
+dCAgICAgICAgICAgICAgDQogICB0aGUgU3lzdGVtIE1NVSBpcyBkZWRpY2F0ZWQgZHVyaW5nIG1h
+Y2hpbiBpbml0aWFsaXphdGlvbi4gSWYgYSBkZXZpY2UgICAgICAgICAgICAgIA0KICAgZHJpdmVy
+IHdhbnRzIHRvIGhhbmRsZSBTeXN0ZW0gTU1VLCBpdCBtdXN0IGJpbmQgaXRzIGRldmljZSB3aXRo
+IFN5c3RlbSAgICAgICAgICAgICANCiAgIE1NVSB3aXRoIHN5c21tdV9zZXRfb3duZXIoKS4NCiAt
+IGNsa2Rldg0KIC0gU3lzdGVtIE1NVSBkZXZpY2UgZHJpdmVyIGlzIHJlbW92ZWQgZnJvbSBhcmNo
+L2FybS9wbGF0LXM1cCB0byBtb3ZlIGl0DQogICB0byBkcml2ZXIvaW9tbXUgZGlyZWN0b3J5Lg0K
+TGFzdCAyIHBhdGNoZXMgaW1wbGVtZW50cyBJT01NVSBBUEk6DQogLSBJbXBsZW1lbnRzIElPTU1V
+IEFQSSBhbmQgU3lzdGVtIE1NVSBkcml2ZXIgdGhhdCBpcyBtb3ZlZCBmcm9tDQogICBhcmNoL2Fy
+bS9wbGF0LXM1cC4NCiAtIEltcGxlbWVudHMgZmF1bHQgaGFuZGxpbmcgdGhhdCBpcyBzdWdnZXN0
+ZWQgYnkgT2hhZC4NCiAtIFVzZWQgYnVzX3NldF9pb21tdSBpbnN0ZWFkIG9mIHJlZ2lzdGVyX2lv
+bW11IHRoYXQgaXMgc3VnZ2VzdGVkIGJ5IEpvZXJnLg0KDQpSZWdhcmRzLA0KQ2hvIEt5b25nSG8u
+DQoNCkRpZmZzdGF0czoNCmFyY2gvYXJtL21hY2gtZXh5bm9zNC9LY29uZmlnICAgICAgICAgICAg
+ICAgfCAgICAyIC0NCmFyY2gvYXJtL21hY2gtZXh5bm9zNC9jbG9jay5jICAgICAgICAgICAgICAg
+fCAgIDQzICstDQphcmNoL2FybS9tYWNoLWV4eW5vczQvZGV2LXN5c21tdS5jICAgICAgICAgIHwg
+IDI4MSArKystLS0tLS0tDQphcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL2lycXMu
+aCAgIHwgICAgMSAtDQphcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL21hcC5oICAg
+IHwgICAgMSAtDQphcmNoL2FybS9tYWNoLWV4eW5vczQvaW5jbHVkZS9tYWNoL3N5c21tdS5oIHwg
+ICA5NiArKy0tDQphcmNoL2FybS9tYWNoLWV4eW5vczQvbWFjaC1hcm1sZXg0MjEwLmMgICAgIHwg
+ICAyNCArLQ0KYXJjaC9hcm0vbWFjaC1leHlub3M0L21hY2gtc21ka3YzMTAuYyAgICAgICB8ICAg
+MjggKy0NCmFyY2gvYXJtL3BsYXQtczVwL0tjb25maWcgICAgICAgICAgICAgICAgICAgfCAgICA4
+IC0NCmFyY2gvYXJtL3BsYXQtczVwL01ha2VmaWxlICAgICAgICAgICAgICAgICAgfCAgICAxIC0N
+CmFyY2gvYXJtL3BsYXQtczVwL2luY2x1ZGUvcGxhdC9zeXNtbXUuaCAgICAgfCAgIDk1IC0tLQ0K
+YXJjaC9hcm0vcGxhdC1zNXAvc3lzbW11LmMgICAgICAgICAgICAgICAgICB8ICAzMTIgLS0tLS0t
+LS0tLQ0KZHJpdmVycy9pb21tdS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgICB8ICAgMTQg
+Kw0KZHJpdmVycy9pb21tdS9NYWtlZmlsZSAgICAgICAgICAgICAgICAgICAgICB8ICAgIDEgKw0K
+ZHJpdmVycy9pb21tdS9leHlub3NfaW9tbXUuYyAgICAgICAgICAgICAgICB8ICA4NTkgKysrKysr
+KysrKysrKysrKysrKysrKysrKysrDQoxNSBmaWxlcyBjaGFuZ2VkLCAxMDg0IGluc2VydGlvbnMo
+KyksIDY4MiBkZWxldGlvbnMoLSk=
