@@ -1,67 +1,83 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
-Date: Mon, 26 Sep 2011 10:59:16 +0300
-Message-ID: <CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
-References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH] mmc: card: modify mmc_getgeo function
+Date: Mon, 26 Sep 2011 10:28:14 +0200
+Message-ID: <20110926082814.GA28149@pengutronix.de>
+References: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
+ <m2ty8520fb.fsf@bob.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:33135 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750855Ab1IZH7h convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 03:59:37 -0400
-In-Reply-To: <15669786.49881316849426265.JavaMail.weblogic@epml24>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <m2ty8520fb.fsf@bob.laptop.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Girish K S <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: pullip.cho@samsung.com
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
 
-2011/9/24 =EC=A1=B0=EA=B2=BD=ED=98=B8 <pullip.cho@samsung.com>:
-> This is the System MMU driver and IOMMU API implementation for
-> Exynos4 SOC platforms. Exynos4 platforms has more than 10 System
-> MMUs dedicated for each multimedia accellerators.
->
-> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
-=2E..
-> +static int exynos_iommu_fault_handler(struct iommu_domain *domain,
-> +                       struct device *dev, unsigned long iova, int f=
-lags)
-> +{
-> +       struct exynos_iommu_domain *priv =3D domain->priv;
-> +
-> +       dev_err(priv->dev, "%s occured at %p(Page table base: %p)\n",
-> +                               sysmmu_fault_name[flags], (void *)iov=
-a,
-> +                               (void *)(__pa(priv->pgtable)));
-> +       dev_err(priv->dev, "\t\tGenerating Kernel OOPS...\n");
-> +       dev_err(priv->dev, "\t\tbecause it is unrecoverable.\n");
-> +       dev_err(priv->dev,
-> +               "\t\tSet Fault handler with iommu_set_fault_handler()=
-=2E\n");
-> +       dev_err(priv->dev, "\t\tto handle System MMU fault.\n");
-> +
-> +       BUG();
-> +
-> +       return 0;
-> +}
-> +
-> +static int exynos_iommu_domain_init(struct iommu_domain *domain)
-> +{
-=2E..
-> +       iommu_set_fault_handler(domain, &exynos_iommu_fault_handler);
+Hello,
 
-It doesn't make a lot of sense to set an iommu fault handler here; the
-intention of iommu_set_fault_handler() is to allow upper layers to do
-that.
+On Wed, Sep 21, 2011 at 02:52:08PM -0400, Chris Ball wrote:
+> Hi,
+>=20
+> On Tue, Sep 20 2011, Girish K S wrote:
+> > In the earlier code the cylinder, sector and head are assigned
+> > independently. Current patch generates the cylinder number
+> > with the values of sector and head.
+> > This patch only makes they cylinder value to be dependent on
+> > the sector and head.
+> >
+> > Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> > ---
+> >  drivers/mmc/card/block.c |    3 ++-
+> >  1 files changed, 2 insertions(+), 1 deletions(-)
+> >
+> > diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
+> > index 1ff5486..bebb13b 100644
+> > --- a/drivers/mmc/card/block.c
+> > +++ b/drivers/mmc/card/block.c
+> > @@ -226,9 +226,10 @@ static int mmc_blk_release(struct gendisk *dis=
+k, fmode_t mode)
+> >  static int
+> >  mmc_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
+> >  {
+> > -	geo->cylinders =3D get_capacity(bdev->bd_disk) / (4 * 16);
+> >  	geo->heads =3D 4;
+> >  	geo->sectors =3D 16;
+> > +	geo->cylinders =3D get_capacity(bdev->bd_disk) /
+> > +		(geo->heads * geo->sectors);
+> >  	return 0;
+> >  }
+>=20
+> Thanks, pushed to mmc-next for 3.2 with a reworded commit message:
+This (i.e. ee9e0e0 (mmc: card: Remove duplicated constants) in next)
+makes gcc emit a reference to __aeabi_uldivmod in one of my nightly
+builds which isn't defined.
 
-Moreover, exynos_sysmmu_irq() anyway knows whenever a fault occurs, so
-calling report_iommu_fault() just to have it call into the driver
-again seems redundant.
+The final linking stage fails with:
 
-If you want an exynos-specific behavior to occur whenever there's an
-iommu fault, you should do that in exynos_sysmmu_irq itself. If you
-just want a generic default logging behavior to occur whenever there's
-no other fault handler installed, you might even want to consider
-adding it to the IOMMU core.
+	  LD      .tmp_vmlinux1
+	drivers/built-in.o: In function `mmc_blk_getgeo':
+	clkdev.c:(.text+0xd1528): undefined reference to `__aeabi_uldivmod'
+	make[2]: *** [.tmp_vmlinux1] Error 1
+	make[1]: *** [sub-make] Error 2
+	make: *** [all] Error 2
+
+(I don't know why clkdev.c is referenced here. I'm not using ccache.)
+
+It seems gcc isn't smart enough to notice that it can just use the same
+generated code ...
+
+Having said that AFAIK the code used before wasn't ok, too. (I.e. an u6=
+4
+division that was just noticed to be a shift by luck.)
+
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
