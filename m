@@ -1,74 +1,69 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] GPIO: Samsung: fix broken configuration for Exynos4 GPIO
- banks
-Date: Mon, 26 Sep 2011 13:22:24 +0900
-Message-ID: <00d201cc7c03$e4913750$adb3a5f0$%kim@samsung.com>
-References: <1316685759-14401-1-git-send-email-m.szyprowski@samsung.com>
- <20110922170556.GH17168@ponder.secretlab.ca>
+Subject: RE: [PATCH] GPIO: Samsung: fix GPIO interrupt registration for Exynos4
+ SoCs
+Date: Mon, 26 Sep 2011 13:24:32 +0900
+Message-ID: <00d401cc7c04$318365b0$948a3110$%kim@samsung.com>
+References: <1316703888-11986-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:10977 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab1IZEW0 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:16473 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881Ab1IZEYf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 00:22:26 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Mon, 26 Sep 2011 00:24:35 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LS4003W043IO2L0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2011 13:22:24 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LS400GZ445C6V50@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2011 13:22:24 +0900 (KST)
-In-reply-to: <20110922170556.GH17168@ponder.secretlab.ca>
+ 2010)) with ESMTP id <0LS4009TV48T9HB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2011 13:24:33 +0900 (KST)
+Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
+ by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LS4009XG48XMX@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2011 13:24:33 +0900 (KST)
+In-reply-to: <1316703888-11986-1-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Grant Likely' <grant.likely@secretlab.ca>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Angus Ainslie' <angus.ainslie@linaro.org>, 'Grant Likely' <grant.likely@secretlab.ca>
 
-Grant Likely wrote:
+Marek Szyprowski wrote:
 > 
-> On Thu, Sep 22, 2011 at 12:02:39PM +0200, Marek Szyprowski wrote:
-> > Commit 1b39d5f2cc introduced new common gpio driver for all Samsung GPIO
-> > SoCs. The new driver doesn't work correctly on Samsung Exynos4 SoC. It
-> > fails to set configuration for all but external interrupt pins. This
-> > patch fixes this issue.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Commit 1b39d5f2cc introduced new common gpio driver for all Samsung GPIO
+> SoCs. The new driver doesn't correctly register GPIO interrupts on
+> Samsung Exynos4 SoCs. This is caused by a typo in define name. This
+> patch fixes this issue.
 > 
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/gpio/gpio-samsung.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> > ---
-> >  drivers/gpio/gpio-samsung.c |    2 ++
-> >  1 files changed, 2 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> > index 36f3675..be13580 100644
-> > --- a/drivers/gpio/gpio-samsung.c
-> > +++ b/drivers/gpio/gpio-samsung.c
-> > @@ -446,6 +446,8 @@ static struct samsung_gpio_cfg s3c24xx_gpiocfg_banka
-> = {
-> >  static struct samsung_gpio_cfg exynos4_gpio_cfg = {
-> >  	.set_pull	= exynos4_gpio_setpull,
-> >  	.get_pull	= exynos4_gpio_getpull,
-> > +	.set_config	= samsung_gpio_setcfg_4bit,
-> > +	.get_config	= samsung_gpio_getcfg_4bit,
-> >  };
-> >
-> >  static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
-> > --
-> > 1.7.1.569.g6f426
-> >
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index be13580..cdffb0c 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -2461,7 +2461,7 @@ static __init int samsung_gpiolib_init(void)
+>  		}
+>  		samsung_gpiolib_add_4bit_chips(exynos4_gpios_3, nr_chips,
+> S5P_VA_GPIO3);
+> 
+> -#if defined(CONFIG_SOC_EXYNOS4210) && defined(CONFIG_S5P_GPIO_INT)
+> +#if defined(CONFIG_CPU_EXYNOS4210) && defined(CONFIG_S5P_GPIO_INT)
+>  		s5p_register_gpioint_bank(IRQ_GPIO_XA, 0,
+> IRQ_GPIO1_NR_GROUPS);
+>  		s5p_register_gpioint_bank(IRQ_GPIO_XB,
+> IRQ_GPIO1_NR_GROUPS, IRQ_GPIO2_NR_GROUPS);
+>  #endif
+> --
+> 1.7.1.569.g6f426
 
-Oops :(
-You're right, applied.
+Hi Marek,
 
-Thanks.
+Applied, thanks for pointing out typo.
 
 Best regards,
 Kgene.
