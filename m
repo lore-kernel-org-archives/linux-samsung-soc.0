@@ -1,83 +1,98 @@
-From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
-	<u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH] mmc: card: modify mmc_getgeo function
-Date: Mon, 26 Sep 2011 10:28:14 +0200
-Message-ID: <20110926082814.GA28149@pengutronix.de>
-References: <1316516929-26694-1-git-send-email-girish.shivananjappa@linaro.org>
- <m2ty8520fb.fsf@bob.laptop.org>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
+Date: Mon, 26 Sep 2011 17:58:49 +0900
+Message-ID: <CAHQjnOOtVHUS3KmBz7LdO88fLQyLA6f-w3ye9nAH0Bx+zh38XA@mail.gmail.com>
+References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
+	<CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <m2ty8520fb.fsf@bob.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Girish K S <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hello,
+Hi.
 
-On Wed, Sep 21, 2011 at 02:52:08PM -0400, Chris Ball wrote:
-> Hi,
->=20
-> On Tue, Sep 20 2011, Girish K S wrote:
-> > In the earlier code the cylinder, sector and head are assigned
-> > independently. Current patch generates the cylinder number
-> > with the values of sector and head.
-> > This patch only makes they cylinder value to be dependent on
-> > the sector and head.
-> >
-> > Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-> > ---
-> >  drivers/mmc/card/block.c |    3 ++-
-> >  1 files changed, 2 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
-> > index 1ff5486..bebb13b 100644
-> > --- a/drivers/mmc/card/block.c
-> > +++ b/drivers/mmc/card/block.c
-> > @@ -226,9 +226,10 @@ static int mmc_blk_release(struct gendisk *dis=
-k, fmode_t mode)
-> >  static int
-> >  mmc_blk_getgeo(struct block_device *bdev, struct hd_geometry *geo)
-> >  {
-> > -	geo->cylinders =3D get_capacity(bdev->bd_disk) / (4 * 16);
-> >  	geo->heads =3D 4;
-> >  	geo->sectors =3D 16;
-> > +	geo->cylinders =3D get_capacity(bdev->bd_disk) /
-> > +		(geo->heads * geo->sectors);
-> >  	return 0;
-> >  }
->=20
-> Thanks, pushed to mmc-next for 3.2 with a reworded commit message:
-This (i.e. ee9e0e0 (mmc: card: Remove duplicated constants) in next)
-makes gcc emit a reference to __aeabi_uldivmod in one of my nightly
-builds which isn't defined.
+On Mon, Sep 26, 2011 at 4:59 PM, Ohad Ben-Cohen <ohad@wizery.com> wrote=
+:
+> 2011/9/24 =EC=A1=B0=EA=B2=BD=ED=98=B8 <pullip.cho@samsung.com>:
+>> This is the System MMU driver and IOMMU API implementation for
+>> Exynos4 SOC platforms. Exynos4 platforms has more than 10 System
+>> MMUs dedicated for each multimedia accellerators.
+>>
+>> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+> ...
+>> +static int exynos_iommu_fault_handler(struct iommu_domain *domain,
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 struct device *dev, unsigned long iova, int flags)
+>> +{
+>> + =C2=A0 =C2=A0 =C2=A0 struct exynos_iommu_domain *priv =3D domain->=
+priv;
+>> +
+>> + =C2=A0 =C2=A0 =C2=A0 dev_err(priv->dev, "%s occured at %p(Page tab=
+le base: %p)\n",
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 sysmmu_fault_name[flags], (void =
+*)iova,
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 (void *)(__pa(priv->pgtable)));
+>> + =C2=A0 =C2=A0 =C2=A0 dev_err(priv->dev, "\t\tGenerating Kernel OOP=
+S...\n");
+>> + =C2=A0 =C2=A0 =C2=A0 dev_err(priv->dev, "\t\tbecause it is unrecov=
+erable.\n");
+>> + =C2=A0 =C2=A0 =C2=A0 dev_err(priv->dev,
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 "\t\tSet Fault ha=
+ndler with iommu_set_fault_handler().\n");
+>> + =C2=A0 =C2=A0 =C2=A0 dev_err(priv->dev, "\t\tto handle System MMU =
+fault.\n");
+>> +
+>> + =C2=A0 =C2=A0 =C2=A0 BUG();
+>> +
+>> + =C2=A0 =C2=A0 =C2=A0 return 0;
+>> +}
+>> +
+>> +static int exynos_iommu_domain_init(struct iommu_domain *domain)
+>> +{
+> ...
+>> + =C2=A0 =C2=A0 =C2=A0 iommu_set_fault_handler(domain, &exynos_iommu=
+_fault_handler);
+>
+> It doesn't make a lot of sense to set an iommu fault handler here; th=
+e
+> intention of iommu_set_fault_handler() is to allow upper layers to do
+> that.
 
-The final linking stage fails with:
+As you've noticed, it is default behavior for iommu fault.
+If an upper layer calls iommu_set_fault_handler(),
+it is replaced with the new one.
+>
+> Moreover, exynos_sysmmu_irq() anyway knows whenever a fault occurs, s=
+o
+> calling report_iommu_fault() just to have it call into the driver
+> again seems redundant.
+>
+I think calling report_iommu_fault() in exynos_sysmmu_irq() is rather s=
+imple.
+To do the default behavior in exynos_sysmmu_irq(),
+it must check if domain->handler is NULL or not.
+But the checking is also performed in report_iommu_fault() also.
 
-	  LD      .tmp_vmlinux1
-	drivers/built-in.o: In function `mmc_blk_getgeo':
-	clkdev.c:(.text+0xd1528): undefined reference to `__aeabi_uldivmod'
-	make[2]: *** [.tmp_vmlinux1] Error 1
-	make[1]: *** [sub-make] Error 2
-	make: *** [all] Error 2
+I think just calling report_iommu_fault() reduces redundancy.
 
-(I don't know why clkdev.c is referenced here. I'm not using ccache.)
+> If you want an exynos-specific behavior to occur whenever there's an
+> iommu fault, you should do that in exynos_sysmmu_irq itself. If you
+> just want a generic default logging behavior to occur whenever there'=
+s
+> no other fault handler installed, you might even want to consider
+> adding it to the IOMMU core.
 
-It seems gcc isn't smart enough to notice that it can just use the same
-generated code ...
+It is neither a specific behavior nor a generic logging.
 
-Having said that AFAIK the code used before wasn't ok, too. (I.e. an u6=
-4
-division that was just noticed to be a shift by luck.)
+Just a default MMU fault report that can be replaceable with a fault
+handler that a device driver provides.
 
-Best regards
-Uwe
-
---=20
-Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
-    |
-Industrial Linux Solutions                 | http://www.pengutronix.de/=
-  |
+Regards,
+Cho KyongHo.
