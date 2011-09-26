@@ -1,100 +1,107 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH 0/4 v2] iommu/exynos: Add IOMMU and Enhance System MMU
- driver for Exynos4
-Date: Mon, 26 Sep 2011 19:24:14 +0900
-Message-ID: <CAHQjnOODq2bSzSYA9QT8fZagD5sxwtgVytR7Sv2s09wYao=pVA@mail.gmail.com>
-References: <CAHQjnOMCU26ELOpn7h7hcju-s970SSG5E545rPgCpw3_LkkAhA@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH] mmc: dw_mmc: Support predefined multiple block transfers.
+Date: Mon, 26 Sep 2011 20:46:59 +0900
+Message-ID: <001901cc7c42$00147c10$003d7430$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:45775 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752282Ab1IZKYQ convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:19757 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752269Ab1IZLrB convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 06:24:16 -0400
-In-Reply-To: <CAHQjnOMCU26ELOpn7h7hcju-s970SSG5E545rPgCpw3_LkkAhA@mail.gmail.com>
+	Mon, 26 Sep 2011 07:47:01 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, iommu@lists.linux-foundation.org, Linux-Kernel <linux-kernel@vger.kernel.org>
-Cc: Russell King <linux@arm.linux.org.uk>, Joerg Roedel <joerg.roedel@amd.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Younglak Kim <younglak1004.kim@samsung.com>, Ohad Ben-Cohen <ohad@wizery.com>
+To: linux-mmc@vger.kernel.org
+Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com, 'Seungwon Jeon' <tgih.jun@samsung.com>
 
-I am sorry :(
+This patch adds the support for predefined multiple block read/write.
 
-My mailer converted tabs into spaces.
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c |   32 ++++++++++++++++++++++++++------
+ 1 files changed, 26 insertions(+), 6 deletions(-)
 
-Moreover, git send-email is not available now.
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 0ed1d28..36a5576 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -588,11 +588,10 @@ static void dw_mci_setup_bus(struct dw_mci_slot *slot)
+ 	mci_writel(host, CTYPE, (slot->ctype << slot->id));
+ }
 
-I stopped sending patches after sending "[PATCH 1/4 v2]".
+-static void dw_mci_start_request(struct dw_mci *host,
+-				 struct dw_mci_slot *slot)
++static void __dw_mci_start_request(struct dw_mci *host,
++				 struct dw_mci_slot *slot, struct mmc_command *cmd)
+ {
+ 	struct mmc_request *mrq;
+-	struct mmc_command *cmd;
+ 	struct mmc_data	*data;
+ 	u32 cmdflags;
 
-I will submit the complete patches after everything becomes OK.
+@@ -610,14 +609,13 @@ static void dw_mci_start_request(struct dw_mci *host,
+ 	host->completed_events = 0;
+ 	host->data_status = 0;
 
-Sorry for disrupting.
+-	data = mrq->data;
++	data = cmd->data;
+ 	if (data) {
+ 		dw_mci_set_timeout(host);
+ 		mci_writel(host, BYTCNT, data->blksz*data->blocks);
+ 		mci_writel(host, BLKSIZ, data->blksz);
+ 	}
 
-Regards,
-Cho KyongHo.
+-	cmd = mrq->cmd;
+ 	cmdflags = dw_mci_prepare_command(slot->mmc, cmd);
 
-On Mon, Sep 26, 2011 at 7:00 PM, KyongHo Cho <pullip.cho@samsung.com> w=
-rote:
-> This is the second try of submitting patches about IOMMU/System MMU
-> driver for Exynos4 SoCs with the fixes of the following problems
-> pointed by Russell King.:
-> =A0- Missing unlocking a spinlock in exynos_iommu_attach_dev().
-> =A0- atomic_t -> int in sysmmu_drvdata.activations
-> =A0- sysmmu_platdata -> sysmmu_drvdata
-> =A0- Change in error messages in irq handler
-> =A0- Removed casting in format of error message
-> =A0- omap_iommu_ops -> exynos_iommu_ops in the last patch.
->
-> First 2 patches enhance System MMU platform device definition:
-> =A0- Removed System MMU for MDMA0 in LCD block because it is not used=
-=2E
-> =A0Use MDMA2 in TOP block.
-> =A0- Removed System MMU ID. Instead a System MMU is bound to a device=
- that
-> =A0the System MMU is dedicated during machin initialization. If a dev=
-ice
-> =A0driver wants to handle System MMU, it must bind its device with Sy=
-stem
-> =A0MMU with sysmmu_set_owner().
-> =A0- clkdev
-> =A0- System MMU device driver is removed from arch/arm/plat-s5p to mo=
-ve it
-> =A0to driver/iommu directory.
-> Last 2 patches implements IOMMU API:
-> =A0- Implements IOMMU API and System MMU driver that is moved from
-> =A0arch/arm/plat-s5p.
-> =A0- Implements fault handling that is suggested by Ohad.
-> =A0- Used bus_set_iommu instead of register_iommu that is suggested b=
-y Joerg.
->
-> Regards,
-> Cho KyongHo.
->
-> Diffstats:
->
-> arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A02 =
--
-> arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 43 +-
-> arch/arm/mach-exynos4/dev-sysmmu.c =A0 =A0 =A0 =A0 =A0| =A0270 ++----=
+ 	/* this is the first command, send the initialization clock */
+@@ -635,6 +633,16 @@ static void dw_mci_start_request(struct dw_mci *host,
+ 		host->stop_cmdr = dw_mci_prepare_command(slot->mmc, mrq->stop);
+ }
+
++static void dw_mci_start_request(struct dw_mci *host,
++				 struct dw_mci_slot *slot)
++{
++	struct mmc_request *mrq = slot->mrq;
++	struct mmc_command *cmd;
++
++	cmd = mrq->sbc ? mrq->sbc : mrq->cmd;
++	__dw_mci_start_request(host, slot, cmd);
++}
++
+ /* must be called with host->lock held */
+ static void dw_mci_queue_request(struct dw_mci *host, struct dw_mci_slot *slot,
+ 				 struct mmc_request *mrq)
+@@ -889,7 +897,13 @@ static void dw_mci_tasklet_func(unsigned long priv)
+ 			cmd = host->cmd;
+ 			host->cmd = NULL;
+ 			set_bit(EVENT_CMD_COMPLETE, &host->completed_events);
+-			dw_mci_command_complete(host, host->mrq->cmd);
++			dw_mci_command_complete(host, cmd);
++			if ((cmd == host->mrq->sbc) && !cmd->error) {
++				prev_state = state = STATE_SENDING_CMD;
++				__dw_mci_start_request(host, host->cur_slot, host->mrq->cmd);
++				goto unlock;
++			}
++
+ 			if (!host->mrq->data || cmd->error) {
+ 				dw_mci_request_end(host, host->mrq);
+ 				goto unlock;
+@@ -967,6 +981,12 @@ static void dw_mci_tasklet_func(unsigned long priv)
+ 				goto unlock;
+ 			}
+
++			if (host->mrq->sbc && !data->error) {
++				data->stop->error = 0;
++				dw_mci_request_end(host, host->mrq);
++				goto unlock;
++			}
++
+ 			prev_state = state = STATE_SENDING_STOP;
+ 			if (!data->error)
+ 				send_stop_cmd(host, data);
 --
-> arch/arm/mach-exynos4/include/mach/irqs.h =A0 | =A0 =A01 -
-> arch/arm/mach-exynos4/include/mach/map.h =A0 =A0| =A0 =A01 -
-> arch/arm/mach-exynos4/include/mach/sysmmu.h | =A0 85 ++-
-> arch/arm/mach-exynos4/mach-armlex4210.c =A0 =A0 | =A0 24 +-
-> arch/arm/mach-exynos4/mach-smdkv310.c =A0 =A0 =A0 | =A0 28 +-
-> arch/arm/plat-s5p/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A0=
-8 -
-> arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A0=
-1 -
-> arch/arm/plat-s5p/include/plat/sysmmu.h =A0 =A0 | =A0 95 ---
-> arch/arm/plat-s5p/sysmmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A031=
-2 ---------
-> drivers/iommu/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0=
- 14 +
-> drivers/iommu/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A01 +
-> drivers/iommu/exynos_iommu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0933 =
-+++++++++++++++++++++++++++
-> 15 files changed, 1134 insertions(+), 684 deletions(-)
->
+1.7.0.4
