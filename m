@@ -1,83 +1,65 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: Samsung: gpio-interrupts: fix incorrect loop iterator
- usage
-Date: Mon, 26 Sep 2011 13:34:01 +0900
-Message-ID: <00d701cc7c05$84085100$8c18f300$%kim@samsung.com>
-References: <1316703918-12247-1-git-send-email-m.szyprowski@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
+Date: Mon, 26 Sep 2011 13:47:37 +0900
+Message-ID: <CAHQjnOMAdkf6FUcVsr74zWM9Vij-5nduZWK+pa2MQC8KJUjRtw@mail.gmail.com>
+References: <5525949.50001316849744994.JavaMail.weblogic@epml24>
+	<20110924093851.GB17169@n2100.arm.linux.org.uk>
+	<CAHQjnOPMRQetGF5VnwsMD=_JxWC5C-LQ5WRyZhPs2HtCzis2Tg@mail.gmail.com>
+	<4E7FE0A4.4050105@cn.fujitsu.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:35494 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab1IZEeD (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:42604 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750940Ab1IZEri convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 00:34:03 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LS4000BG4ON9KL0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2011 13:34:01 +0900 (KST)
-Received: from kgenekim (12-23-120-114.csky.net [12.23.120.114])
- by mmp2.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LS400BEB4OPF2@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 26 Sep 2011 13:34:01 +0900 (KST)
-In-reply-to: <1316703918-12247-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
+	Mon, 26 Sep 2011 00:47:38 -0400
+In-Reply-To: <4E7FE0A4.4050105@cn.fujitsu.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: gaowanlong@cn.fujitsu.com
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "ohad@wizery.com" <ohad@wizery.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>
 
-Marek Szyprowski wrote:
-> 
-> Loop iterator value after terminating list_for_each_entry() is not NULL.
-> This patch fixes incorrect iterator usage in GPIO interrupt code for
-> Samsung S5P platforms.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-s5p/irq-gpioint.c |    9 +++++----
->  1 files changed, 5 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/plat-s5p/irq-gpioint.c
-b/arch/arm/plat-s5p/irq-gpioint.c
-> index 0455519..a566523 100644
-> --- a/arch/arm/plat-s5p/irq-gpioint.c
-> +++ b/arch/arm/plat-s5p/irq-gpioint.c
-> @@ -114,17 +114,18 @@ static __init int s5p_gpioint_add(struct
-> samsung_gpio_chip *chip)
->  {
->  	static int used_gpioint_groups = 0;
->  	int group = chip->group;
-> -	struct s5p_gpioint_bank *bank = NULL;
-> +	struct s5p_gpioint_bank *b, *bank = NULL;
->  	struct irq_chip_generic *gc;
->  	struct irq_chip_type *ct;
-> 
->  	if (used_gpioint_groups >= S5P_GPIOINT_GROUP_COUNT)
->  		return -ENOMEM;
-> 
-> -	list_for_each_entry(bank, &banks, list) {
-> -		if (group >= bank->start &&
-> -		    group < bank->start + bank->nr_groups)
-> +	list_for_each_entry(b, &banks, list) {
-> +		if (group >= b->start && group < b->start + b->nr_groups) {
-> +			bank = b;
->  			break;
-> +		}
->  	}
->  	if (!bank)
->  		return -EINVAL;
+Thanks. I will try.
+
+Regards,
+Cho KyongHo.
+
+On Mon, Sep 26, 2011 at 11:17 AM, Wanlong Gao <gaowanlong@cn.fujitsu.co=
+m> wrote:
+> On 09/26/2011 08:44 AM, KyongHo Cho wrote:
+>
+>> Hi.
+>>
+>> On Sat, Sep 24, 2011 at 6:38 PM, Russell King - ARM Linux
+>> <linux@arm.linux.org.uk> wrote:
+>>> On Sat, Sep 24, 2011 at 07:35:45AM +0000, =EC=A1=B0=EA=B2=BD=ED=98=B8=
+ wrote:
+>>>> +# EXYNOS IOMMU support
+>>>> +config EXYNOS_IOMMU
+>>>> + bool "Exynos IOMMU Support"
+>>>> + depends on ARCH_EXYNOS4
+>>>> + select IOMMU_API
+>>>> + select EXYNOS4_DEV_SYSMMU
+>>>> + help
+>>>
+>>> Looks like your mailer converted tabs to one space. =C2=A0This make=
+s it more
+>>> difficult to read this patch as a whole. =C2=A0Don't expect good re=
+views as
+>>> long as your mailer breaks stuff in this way.
+>> Sorry for that :(
+>> I will try another way to send patches correctly.
+>
+>
+> Use *git send-email* instead.
+>
+> Thanks
 > --
-> 1.7.1.569.g6f426
-
-OK, applied.
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
+ml
+>
