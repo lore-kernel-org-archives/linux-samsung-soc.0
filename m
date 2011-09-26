@@ -1,69 +1,65 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
-Date: Mon, 26 Sep 2011 12:36:23 +0300
-Message-ID: <CAK=WgbaOwe8Q19tpZMeHdvyCj8fcV194zA-oSD20tF7j7_MvpQ@mail.gmail.com>
-References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
- <CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
- <CAHQjnOOtVHUS3KmBz7LdO88fLQyLA6f-w3ye9nAH0Bx+zh38XA@mail.gmail.com>
- <CAK=Wgbazwz9PRJSpZjopwxJ-PO88FtajmbXL=pVKDHOr1t61fQ@mail.gmail.com> <CAHQjnON7dksupFeAYLuYXX2PhgjX-GXEGJiy0dRTmpoBjbURVg@mail.gmail.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [PATCH 0/4 v2] iommu/exynos: Add IOMMU and Enhance System MMU driver
+ for Exynos4
+Date: Mon, 26 Sep 2011 19:00:49 +0900
+Message-ID: <CAHQjnOMCU26ELOpn7h7hcju-s970SSG5E545rPgCpw3_LkkAhA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:62665 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752513Ab1IZJgo (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:58141 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752887Ab1IZKAv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 05:36:44 -0400
-In-Reply-To: <CAHQjnON7dksupFeAYLuYXX2PhgjX-GXEGJiy0dRTmpoBjbURVg@mail.gmail.com>
+	Mon, 26 Sep 2011 06:00:51 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
+To: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, Linux Samsung SOC <linux-samsung-soc@vger.kernel.org>, iommu@lists.linux-foundation.org, Linux-Kernel <linux-kernel@vger.kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Joerg Roedel <joerg.roedel@amd.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Younglak Kim <younglak1004.kim@samsung.com>, Ohad Ben-Cohen <ohad@wizery.com>
 
-Hi,
+This is the second try of submitting patches about IOMMU/System MMU
+driver for Exynos4 SoCs with the fixes of the following problems
+pointed by Russell King.:
+ - Missing unlocking a spinlock in exynos_iommu_attach_dev().
+ - atomic_t -> int in sysmmu_drvdata.activations
+ - sysmmu_platdata -> sysmmu_drvdata
+ - Change in error messages in irq handler
+ - Removed casting in format of error message
+ - omap_iommu_ops -> exynos_iommu_ops in the last patch.
 
-On Mon, Sep 26, 2011 at 12:21 PM, KyongHo Cho <pullip.cho@samsung.com> wrote:
-> Every fault in IOMMU (System MMU) is an error logically
-> and must not happen in our multimedia device drivers
-> because, our device drivers always construct page table completely
-> before address translation in System MMU
-> and TLB loads translation information automatically when TLB miss.
+First 2 patches enhance System MMU platform device definition:
+ - Removed System MMU for MDMA0 in LCD block because it is not used.
+  Use MDMA2 in TOP block.
+ - Removed System MMU ID. Instead a System MMU is bound to a device that
+  the System MMU is dedicated during machin initialization. If a device
+  driver wants to handle System MMU, it must bind its device with System
+  MMU with sysmmu_set_owner().
+ - clkdev
+ - System MMU device driver is removed from arch/arm/plat-s5p to move it
+  to driver/iommu directory.
+Last 2 patches implements IOMMU API:
+ - Implements IOMMU API and System MMU driver that is moved from
+  arch/arm/plat-s5p.
+ - Implements fault handling that is suggested by Ohad.
+ - Used bus_set_iommu instead of register_iommu that is suggested by Joerg.
 
-Yeah, this is pretty much the same for OMAP too.
+Regards,
+Cho KyongHo.
 
-> I am not sure if the default behavior of MMU fault in our IOMMU driver
-> is also correct for other IOMMU drivers.
+Diffstats:
 
-It seems your default behavior just prints an error message with the
-details of the fault (addresses, flags, etc..). We can probably have
-this unified.
-
-In case you want to print exonys-specific info when the fault is not
-handled by upper layers, we can change report_iommu_fault() to return
-an error whenever a handler is not installed. This way
-exynos_sysmmu_irq() can easily tell whether to proceed with the
-default behavior or not, without installing a fault handler in the
-driver:
-
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index 297893f..dc4b282 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -103,7 +103,7 @@ extern void iommu_set_fault_handler(struct iommu_domain *dom
- static inline int report_iommu_fault(struct iommu_domain *domain,
-                struct device *dev, unsigned long iova, int flags)
- {
--       int ret = 0;
-+       int ret = -EFAULT;
-
-
-> BTW,
-> I think we need more fault type than IOMMU_FAULT_READ and IOMMU_FAULT_WRITE.
-> We have page fault, access fault(read, write), security fault
-> and bus error (translated physical address is not available)
-
-Initially we had a argument for the type of the fault, but dropped it
-because it was not used. Feel free to add it back if you need it.
-
-Thanks,
-Ohad.
+arch/arm/mach-exynos4/Kconfig               |    2 -
+arch/arm/mach-exynos4/clock.c               |   43 +-
+arch/arm/mach-exynos4/dev-sysmmu.c          |  270 ++------
+arch/arm/mach-exynos4/include/mach/irqs.h   |    1 -
+arch/arm/mach-exynos4/include/mach/map.h    |    1 -
+arch/arm/mach-exynos4/include/mach/sysmmu.h |   85 ++-
+arch/arm/mach-exynos4/mach-armlex4210.c     |   24 +-
+arch/arm/mach-exynos4/mach-smdkv310.c       |   28 +-
+arch/arm/plat-s5p/Kconfig                   |    8 -
+arch/arm/plat-s5p/Makefile                  |    1 -
+arch/arm/plat-s5p/include/plat/sysmmu.h     |   95 ---
+arch/arm/plat-s5p/sysmmu.c                  |  312 ---------
+drivers/iommu/Kconfig                       |   14 +
+drivers/iommu/Makefile                      |    1 +
+drivers/iommu/exynos_iommu.c                |  933 +++++++++++++++++++++++++++
+15 files changed, 1134 insertions(+), 684 deletions(-)
