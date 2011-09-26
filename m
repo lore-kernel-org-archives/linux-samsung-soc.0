@@ -1,44 +1,69 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2 0/4] S3C2416: Enable IIS and HSSPI clocks
-Date: Mon, 26 Sep 2011 21:55:03 +0200
-Message-ID: <201109262155.04287.heiko@sntech.de>
-References: <201108282006.31667.heiko@sntech.de> <201109150921.34406.heiko@sntech.de> <00ad01cc7384$59e4dcb0$0dae9610$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung Fixes for v3.1
+Date: Tue, 27 Sep 2011 08:22:00 +0900
+Message-ID: <003101cc7ca3$1820d4a0$48627de0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:42834 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752753Ab1IZTzR convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 15:55:17 -0400
-In-Reply-To: <00ad01cc7384$59e4dcb0$0dae9610$%kim@samsung.com>
+Received: from mailout2.samsung.com ([203.254.224.25]:38790 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752396Ab1IZXWE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 26 Sep 2011 19:22:04 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LS5006FCKW2L570@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2011 08:22:02 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LS5007HZKWOI6A0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2011 08:22:01 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: torvalds@linux-foundation.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>
 
-Am Donnerstag 15 September 2011, 10:49:15 schrieben Sie:
-> Heiko St=FCbner wrote:
-> > Am Sonntag, 28. August 2011, 20:06:31 schrieb Heiko St=FCbner:
-> > > S3C2416/2450 (probably S3C2443 too) can use the newer style
-> > > kernel-drivers made for S3C64xx and above for their I2S and
-> > > HS-SPI controllers.
-> > >=20
-> > > So as a first step in this direction, these patches add their
-> > > respective clocks.
-> >=20
-> > ping? Any comments?
->=20
-> Hi Heiko,
->=20
-> Sorry for late response...came back from Korean traditional holiday :=
-)
-> I will be back on this in this weekend.
+Hi Linus,
 
-Hi Kgene,
+This is Samsung fixes for v3.1
 
-another ping, as I'd really like to get this off my back :-)
+Please pull from:
+  git://github.com/kgene/linux-samsung.git samsung-fixes-3
 
-Thanks
-Heiko
+These things are needed for v3.1 and if any problems, please let me know.
+
+Arnd, since v3.1 is now close at hand, I'm sending this to Linus...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit d93dc5c4478c1fd5de85a3e8aece9aad7bbae044:
+
+  Linux 3.1-rc7 (2011-09-21 16:58:15 -0700)
+
+are available in the git repository at:
+ git://github.com/kgene/linux-samsung.git samsung-fixes-3
+
+Heiko Stuebner (1):
+      ARM: S3C2443: Fix bit-reset in setrate of clk_armdiv
+
+Marek Szyprowski (1):
+      ARM: S5P: fix incorrect loop iterator usage on gpio-interrupt
+
+Sylwester Nawrocki (2):
+      ARM: S5PV210: Rename sclk_cam clocks for FIMC media driver
+      ARM: EXYNOS4: Rename sclk_cam clocks for FIMC driver
+
+ arch/arm/mach-exynos4/clock.c   |    6 ++----
+ arch/arm/mach-s3c2443/clock.c   |    2 +-
+ arch/arm/mach-s5pv210/clock.c   |    6 ++----
+ arch/arm/plat-s5p/irq-gpioint.c |    9 +++++----
+ 4 files changed, 10 insertions(+), 13 deletions(-)
