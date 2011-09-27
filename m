@@ -1,100 +1,58 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
-Date: Tue, 27 Sep 2011 09:56:14 +0900
-Message-ID: <CAHQjnOPdsf-QB3st94WRSH325j8WPOLLe4rqv0WN1qK1KYWtmA@mail.gmail.com>
-References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
-	<CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
-	<CAHQjnOOtVHUS3KmBz7LdO88fLQyLA6f-w3ye9nAH0Bx+zh38XA@mail.gmail.com>
-	<CAK=Wgbazwz9PRJSpZjopwxJ-PO88FtajmbXL=pVKDHOr1t61fQ@mail.gmail.com>
-	<CAHQjnON7dksupFeAYLuYXX2PhgjX-GXEGJiy0dRTmpoBjbURVg@mail.gmail.com>
-	<CAK=WgbaOwe8Q19tpZMeHdvyCj8fcV194zA-oSD20tF7j7_MvpQ@mail.gmail.com>
-	<CAHQjnOM_KTiqzYnePScMHQ3bg5X1wqa4zu6=1A1z7UWeDxVZvQ@mail.gmail.com>
-	<CAK=WgbYzZKTRRf6hk=L5ZvXmFAUpq66Ud3F7xh2-8j6zSvAq9g@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: dw_mmc: Support predefined multiple block transfers.
+Date: Tue, 27 Sep 2011 11:12:43 +0900
+Message-ID: <001f01cc7cba$f1238560$d36a9020$%jun@samsung.com>
+References: <001901cc7c42$00147c10$003d7430$%jun@samsung.com>
+ <992253991.685205.1317054932934.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:65124 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750931Ab1I0A4P (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 20:56:15 -0400
-In-Reply-To: <CAK=WgbYzZKTRRf6hk=L5ZvXmFAUpq66Ud3F7xh2-8j6zSvAq9g@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <992253991.685205.1317054932934.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Andrei Warkentin' <awarkentin@vmware.com>
+Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, 'kgene kim' <kgene.kim@samsung.com>, 'dh han' <dh.han@samsung.com>, linux-mmc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ohad Ben-Cohen <ohad@wizery.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
 
-On Tue, Sep 27, 2011 at 12:59 AM, Ohad Ben-Cohen <ohad@wizery.com> wrote:
-> On Mon, Sep 26, 2011 at 5:48 PM, KyongHo Cho <pullip.cho@samsung.com> wrote:
->> I am sorry but I still think that
->> installing default fault handler is quite simple and straightforward.
->
-> ... and abusing the IOMMU API.
->
-> Please don't do that. Interfaces are written for specific goals, and
-> this one was added for IOMMU users, not drivers. Just like all the
-> other map/unmap/attach/... APIs.
->
-> By using this from the IOMMU driver itself, you are adding burden on
-> future development and evolution of this API. As use cases
-> materialize, we will have to change it to support them, while
-> considering existing use cases. Using this API inappropriately will
-> make our life harder later on.
-I didn't think about this case.
-It can be a problem if IOMMU driver is dependent upon the change of
-IOMMU API as you told above.
+Andrei Warkentin wrote:
+> Hi Seungwon,
+> 
+> ----- Original Message -----
+> > From: "Seungwon Jeon" <tgih.jun@samsung.com>
+> > To: linux-mmc@vger.kernel.org
+> > Cc: "Chris Ball" <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org,
+> "kgene kim" <kgene.kim@samsung.com>, "dh han"
+> > <dh.han@samsung.com>, "Seungwon Jeon" <tgih.jun@samsung.com>
+> > Sent: Monday, September 26, 2011 7:46:59 AM
+> > Subject: [PATCH] mmc: dw_mmc: Support predefined multiple block
+> transfers.
+> >
+> > This patch adds the support for predefined multiple block read/write.
+> >
+> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> 
+> Without knowing much about dw_mmc host, your logic otherwise looks ok,
+> given what
+> I've previously done for SDHCI as far as CMD23/Auto-CMD23 enhancement.
+> Just curious, what eMMC cards did you test this on, and what improvement
+> did you see?
 
->
-> Moreover, I'm really not sure how exactly are you going to use this.
->
-> If you're having an IOMMU user which installs its own fault handler,
-> then this is all moot since the default behavior you provide here will
-> be overridden.
-Yes, this is what I really want.
-I wanted the IOMMU driver to provide default fault handler to its users
-that does not provide fault handler for debugging purpose.
-If a user want to handle MMU fault, IOMMU driver welcomes to overwrite
-the existing 'default' fault handler.
+Thank you for review.
+As you done, predefined transfer is required for reliable writes and eMMC4.5 feature.
+Sadly, I didn't gain an improvement in my case.
+(I don't know whether I can clarify the tested eMMC card, just one sample.)
 
-> If you're not having an IOMMU user which installs its own fault
-> handler, then just provide the default behavior in your irq handler,
-> regardless whether you report the fault to the IOMMU core or not. Or
-> only when it fails. and yes, we can provide different error values for
-> different scenarios. it's not rocket science :).
->
-> Really, there's a myriad of ways to do this right. Please explain your
-> exact settings/use-case and I'll gladly help you find a clean
-> solution.
->
-Thank you.
+Best regards,
+Seungwon Jeon.
 
-As I explained before, MMU fault in our system is abnormal and
-the situation cannot be recovered because mapping information is set up
-completely before System MMU starts address translation with the mapping
-information.
-However we have to capture the MMU fault for debugging purpose.
-That's why our fault handler just prints debugging messages and
-generates kernel OOPS
-
-A user of IOMMU may handle MMU faults due to the following reason:
- - Its IOMMU sees the virtual address space of the user process (IOMMU
-refers the page table of CPU)
-   and virtual memory region allocated by userspace is not filled with
-physical memory.
-   Device driver which is user of IOMMU does not call get_user_pages()
-for the region but
-   handle page fault generated by IOMMU.
- - A device driver working in the Monitor mode in ARM processors need
-to protect a memory region
-   from access in the Normal mode. If it happens, the device driver
-must catch the situation,
-   stop the current operation and inform the problem to the userspace.
-
-For the above reasons, some user of IOMMU may override the default
-fault handler.
-
+> 
+> Acked-by: Andrei Warkentin <andrey.warkentin@gmail.com>
+> 
 > Thanks,
-> Ohad.
+> A
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-Thanks and regards,
-Cho KyongHo.
