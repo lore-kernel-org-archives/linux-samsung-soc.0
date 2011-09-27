@@ -1,99 +1,102 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3 1/2] input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD
- config option
-Date: Tue, 27 Sep 2011 13:58:20 +0530
-Message-ID: <CAJuYYwT0wDiWNR38iH84W9S3M78iYa_+j5dTNLxC4no2k0zDzw@mail.gmail.com>
-References: <1316427553-5033-1-git-send-email-thomas.abraham@linaro.org>
-	<1316427553-5033-2-git-send-email-thomas.abraham@linaro.org>
-	<20110922173507.GN17168@ponder.secretlab.ca>
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
+Date: Tue, 27 Sep 2011 11:48:07 +0300
+Message-ID: <CAK=Wgbbf2XbDrp6q5G3_7og+0wsmFmqpCsx_nDYTyRTa0-YBmg@mail.gmail.com>
+References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
+ <CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
+ <CAHQjnOOtVHUS3KmBz7LdO88fLQyLA6f-w3ye9nAH0Bx+zh38XA@mail.gmail.com>
+ <CAK=Wgbazwz9PRJSpZjopwxJ-PO88FtajmbXL=pVKDHOr1t61fQ@mail.gmail.com>
+ <CAHQjnON7dksupFeAYLuYXX2PhgjX-GXEGJiy0dRTmpoBjbURVg@mail.gmail.com>
+ <CAK=WgbaOwe8Q19tpZMeHdvyCj8fcV194zA-oSD20tF7j7_MvpQ@mail.gmail.com>
+ <CAHQjnOM_KTiqzYnePScMHQ3bg5X1wqa4zu6=1A1z7UWeDxVZvQ@mail.gmail.com>
+ <CAK=WgbYzZKTRRf6hk=L5ZvXmFAUpq66Ud3F7xh2-8j6zSvAq9g@mail.gmail.com> <CAHQjnOPdsf-QB3st94WRSH325j8WPOLLe4rqv0WN1qK1KYWtmA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:39212 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751960Ab1I0I2V convert rfc822-to-8bit (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:45441 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751417Ab1I0Is2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Sep 2011 04:28:21 -0400
-In-Reply-To: <20110922173507.GN17168@ponder.secretlab.ca>
+	Tue, 27 Sep 2011 04:48:28 -0400
+In-Reply-To: <CAHQjnOPdsf-QB3st94WRSH325j8WPOLLe4rqv0WN1qK1KYWtmA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
 
-Hi Grant,
+On Tue, Sep 27, 2011 at 3:56 AM, KyongHo Cho <pullip.cho@samsung.com> wrote:
+> I wanted the IOMMU driver to provide default fault handler to its users
+> that does not provide fault handler for debugging purpose.
+> If a user want to handle MMU fault, IOMMU driver welcomes to overwrite
+> the existing 'default' fault handler.
 
-On 22 September 2011 23:05, Grant Likely <grant.likely@secretlab.ca> wr=
-ote:
-> On Mon, Sep 19, 2011 at 03:49:12PM +0530, Thomas Abraham wrote:
->> For platforms using device tree, the static keypad device instances
->> are not required and SAMSUNG_DEV_KEYPAD is not selected. Since,
->> samsung keypad driver has dependency on SAMSUNG_DEV_KEYPAD config
->> option, the driver is left out of the compilation for dt enabled
->> platforms.
->>
->> An additional config option 'HAVE_SAMSUNG_KEYPAD' is added
->> which the device tree based platforms can select. This config
->> option is added as an alternative dependency for keypad driver.
->>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> =A0drivers/input/keyboard/Kconfig | =A0 =A09 ++++++++-
->> =A01 files changed, 8 insertions(+), 1 deletions(-)
->>
->> diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard=
-/Kconfig
->> index b4dee9d..7c322a3 100644
->> --- a/drivers/input/keyboard/Kconfig
->> +++ b/drivers/input/keyboard/Kconfig
->> @@ -423,9 +423,16 @@ config KEYBOARD_PMIC8XXX
->> =A0 =A0 =A0 =A0 To compile this driver as a module, choose M here: t=
-he module will
->> =A0 =A0 =A0 =A0 be called pmic8xxx-keypad.
->>
->> +config HAVE_SAMSUNG_KEYPAD
->> + =A0 =A0 bool
->> + =A0 =A0 help
->> + =A0 =A0 =A0 This will include Samsung Keypad controller driver sup=
-port. If you
->> + =A0 =A0 =A0 want to include Samsung Keypad support for any machine=
-, kindly
->> + =A0 =A0 =A0 select this in the respective mach-xxxx/Kconfig file.
->> +
->> =A0config KEYBOARD_SAMSUNG
->> =A0 =A0 =A0 tristate "Samsung keypad support"
->> - =A0 =A0 depends on SAMSUNG_DEV_KEYPAD
->> + =A0 =A0 depends on SAMSUNG_DEV_KEYPAD || HAVE_SAMSUNG_KEYPAD
->
-> It would be better to modify SAMSUNG_DEV_KEYPAD to select
-> HAVE_SAMSUNG_KEYPAD and then make KEYBOARD_SAMSUNG only depend on
-> HAVE_SAMSUNG_KEYPAD instead of both.
+Ok, this one patch below should allow you to do that.
+report_iommu_fault() will now reliably tell you if a fault handler
+failed or not, or if one isn't even installed.
 
-The SAMSUNG_DEV_KEYPAD is not selected for device tree enabled
-machine. For instance, the Kconfig section for Exynos4 dt-enabled
-machine file is as below.
+This way your IOMMU driver doesn't need to define a fault handler of
+its own, and instead, can do everything directly in
+exynos_sysmmu_irq() where all the required information is now
+available.
 
-config MACH_EXYNOS4_DT
-        bool "Samsung Exynos4 Machine using device tree"
-        select CPU_EXYNOS4210
-        select USE_OF
-        select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
-        help
-          Machine support for Samsung Exynos4 machine with device tree =
-enabled.
+Thanks,
+Ohad.
 
-SAMSUNG_DEV_KEYPAD (that selects the static platform device for
-keypad) should not be selected for MACH_EXYNOS4_DT config option. So
-selecting HAVE_SAMSUNG_KEYPAD in SAMSUNG_DEV_KEYPAD config option
-would not help in this case. So for now, this is kept unchanged.
-Please let me know if you think this needs to be changed.
+>From 0f2287abe5761e40d25f0da0c8e7964d18ebb3ef Mon Sep 17 00:00:00 2001
+From: Ohad Ben-Cohen <ohad@wizery.com>
+Date: Tue, 27 Sep 2011 11:14:22 +0300
+Subject: [PATCH] iommu/core: let drivers know if an iommu fault
+handler isn't installed
 
-Thanks for your review. I am sorry for delayed reply to your email.
+Let report_iommu_fault() return -ENOSYS whenever an iommu fault
+handler isn't installed, so IOMMU drivers can then do their own
+platform-specific default behavior if they want.
 
-Regards,
-Thomas.
+Clarify that -ENOSYS is reserved for this purpose, and that fault
+handlers are prohibited from using it.
 
->
-> g.
->
->
+Signed-off-by: Ohad Ben-Cohen <ohad@wizery.com>
+---
+ drivers/iommu/iommu.c |    7 +++++++
+ include/linux/iommu.h |    3 ++-
+ 2 files changed, 9 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 3a07259..c41a6a1 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -43,6 +43,13 @@ EXPORT_SYMBOL_GPL(iommu_found);
+  * iommu_set_fault_handler() - set a fault handler for an iommu domain
+  * @domain: iommu domain
+  * @handler: fault handler
++ *
++ * This function should be used by IOMMU users which want to be notified
++ * whenever an IOMMU fault happens.
++ *
++ * The fault handler itself should return 0 on success, and an appropriate
++ * error code otherwise. It should never return -ENOSYS though, as this is
++ * reserved for the IOMMU core to return when no handler is installed.
+  */
+ void iommu_set_fault_handler(struct iommu_domain *domain,
+ 					iommu_fault_handler_t handler)
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index d084e87..2987199 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -98,11 +98,12 @@ extern void iommu_set_fault_handler(struct
+iommu_domain *domain,
+  * Returns 0 on success and an appropriate error code otherwise (if dynamic
+  * PTE/TLB loading will one day be supported, implementations will be able
+  * to tell whether it succeeded or not according to this return value).
++ * If a fault handler isn't installed, -ENOSYS is returned.
+  */
+ static inline int report_iommu_fault(struct iommu_domain *domain,
+ 		struct device *dev, unsigned long iova, int flags)
+ {
+-	int ret = 0;
++	int ret = -ENOSYS;
+
+ 	/*
+ 	 * if upper layers showed interest and installed a fault handler,
+-- 
+1.7.4.1
