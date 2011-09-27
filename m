@@ -1,38 +1,64 @@
-From: Ohad Ben-Cohen <ohad@wizery.com>
-Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
-Date: Tue, 27 Sep 2011 12:19:08 +0300
-Message-ID: <CAK=WgbY_AuX2KaUAWFMkifCXst2TjUH6oC2041pQvdCfYRxEzg@mail.gmail.com>
-References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
- <CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
- <CAHQjnOOtVHUS3KmBz7LdO88fLQyLA6f-w3ye9nAH0Bx+zh38XA@mail.gmail.com>
- <CAK=Wgbazwz9PRJSpZjopwxJ-PO88FtajmbXL=pVKDHOr1t61fQ@mail.gmail.com>
- <CAHQjnON7dksupFeAYLuYXX2PhgjX-GXEGJiy0dRTmpoBjbURVg@mail.gmail.com>
- <CAK=WgbaOwe8Q19tpZMeHdvyCj8fcV194zA-oSD20tF7j7_MvpQ@mail.gmail.com>
- <CAHQjnOM_KTiqzYnePScMHQ3bg5X1wqa4zu6=1A1z7UWeDxVZvQ@mail.gmail.com>
- <CAK=WgbYzZKTRRf6hk=L5ZvXmFAUpq66Ud3F7xh2-8j6zSvAq9g@mail.gmail.com>
- <CAHQjnOPdsf-QB3st94WRSH325j8WPOLLe4rqv0WN1qK1KYWtmA@mail.gmail.com>
- <CAK=Wgbbf2XbDrp6q5G3_7og+0wsmFmqpCsx_nDYTyRTa0-YBmg@mail.gmail.com> <CAHQjnOOGvwo6P1SJXVwzUJDFiUN-QxCxHOWoOMd1+QjubJ2u-A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Abhilash Kesavan <a.kesavan@samsung.com>
+Subject: [PATCH V2 0/3] S5P64X0 PM Support
+Date: Tue, 27 Sep 2011 16:22:41 -0400
+Message-ID: <1317154964-22600-1-git-send-email-a.kesavan@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:55511 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752255Ab1I0JTa (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:20887 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752878Ab1I0KdM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Sep 2011 05:19:30 -0400
-In-Reply-To: <CAHQjnOOGvwo6P1SJXVwzUJDFiUN-QxCxHOWoOMd1+QjubJ2u-A@mail.gmail.com>
+	Tue, 27 Sep 2011 06:33:12 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LS6005U0FYSLSM0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2011 19:33:11 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LS60049OFZ1NM00@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2011 19:33:10 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On Tue, Sep 27, 2011 at 12:01 PM, KyongHo Cho <pullip.cho@samsung.com> wrote:
-> It looks good for me.
->
-> I will prepare new patches with the changed API.
+The patchset adds Power Mangement support for S5P64X0. The first
+two patches lay the groundwork for adding PM support, while the
+final patch adds the SoC specific PM code.
 
-Ok, thanks.
+Changes since V1:
+- Changed register naming as per User Manual.
+- Dropped the pm-gpio warning patch as it will be taken care in the gpio
+  movement patch by Kukjin Kim.
+- Used soc_is_* for differentiating between 6440 and 6450.
+- Merged all the sleep files of S5P SoCs while leaving the S3C64XX sleep
+  code as is.
 
-(I've just submitted it to the iommu ML too)
+Abhilash Kesavan (3):
+  ARM: S5P: Make the common S5P PM code conditionally compile
+  ARM: S5P: Make the sleep code common for S5P series SoCs
+  ARM: S5P64X0: Add Power Management support
 
-Ohad.
+ arch/arm/Kconfig                                |    2 +-
+ arch/arm/mach-exynos4/Kconfig                   |    4 +
+ arch/arm/mach-exynos4/Makefile                  |    2 +-
+ arch/arm/mach-s5p64x0/Kconfig                   |    4 +
+ arch/arm/mach-s5p64x0/Makefile                  |    1 +
+ arch/arm/mach-s5p64x0/include/mach/map.h        |    1 +
+ arch/arm/mach-s5p64x0/include/mach/pm-core.h    |  117 +++++++++++++
+ arch/arm/mach-s5p64x0/include/mach/regs-clock.h |   33 ++++
+ arch/arm/mach-s5p64x0/include/mach/regs-gpio.h  |   19 ++
+ arch/arm/mach-s5p64x0/irq-eint.c                |    2 +
+ arch/arm/mach-s5p64x0/irq-pm.c                  |   92 ++++++++++
+ arch/arm/mach-s5p64x0/pm.c                      |  204 +++++++++++++++++++++++
+ arch/arm/mach-s5pv210/Kconfig                   |    2 +
+ arch/arm/mach-s5pv210/Makefile                  |    2 +-
+ arch/arm/mach-s5pv210/sleep.S                   |   52 ------
+ arch/arm/plat-s5p/Kconfig                       |   12 ++
+ arch/arm/plat-s5p/Makefile                      |    4 +-
+ arch/arm/{mach-exynos4 => plat-s5p}/sleep.S     |   13 +-
+ 18 files changed, 500 insertions(+), 66 deletions(-)
+ create mode 100644 arch/arm/mach-s5p64x0/include/mach/pm-core.h
+ create mode 100644 arch/arm/mach-s5p64x0/irq-pm.c
+ create mode 100644 arch/arm/mach-s5p64x0/pm.c
+ delete mode 100644 arch/arm/mach-s5pv210/sleep.S
+ rename arch/arm/{mach-exynos4 => plat-s5p}/sleep.S (81%)
