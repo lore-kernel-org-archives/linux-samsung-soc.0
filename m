@@ -1,58 +1,94 @@
-From: "Andrei E. Warkentin" <andrey.warkentin@gmail.com>
-Subject: Re: [PATCH] mmc: dw_mmc: Support predefined multiple block transfers.
-Date: Tue, 27 Sep 2011 00:58:39 -0400
-Message-ID: <CANz0V+7xJF4h4XUGoL43odFyOpwcBmxgV18R-uR4oDaqV-9jJA@mail.gmail.com>
-References: <001901cc7c42$00147c10$003d7430$%jun@samsung.com>
-	<992253991.685205.1317054932934.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
-	<001f01cc7cba$f1238560$d36a9020$%jun@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v3 2/2] input: samsung-keypad: Add device tree support
+Date: Tue, 27 Sep 2011 13:39:58 +0530
+Message-ID: <CAJuYYwTgn2KqNr28MNEPEC7eVkuUA-dzVzJHMTy-MV+GBCn=zA@mail.gmail.com>
+References: <1316427553-5033-1-git-send-email-thomas.abraham@linaro.org>
+	<1316427553-5033-3-git-send-email-thomas.abraham@linaro.org>
+	<20110922174054.GO17168@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:42142 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752582Ab1I0E6l (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:41920 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751172Ab1I0IJ7 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Sep 2011 00:58:41 -0400
-In-Reply-To: <001f01cc7cba$f1238560$d36a9020$%jun@samsung.com>
+	Tue, 27 Sep 2011 04:09:59 -0400
+In-Reply-To: <20110922174054.GO17168@ponder.secretlab.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: Andrei Warkentin <awarkentin@vmware.com>, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, kgene kim <kgene.kim@samsung.com>, dh han <dh.han@samsung.com>, linux-mmc@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com
 
-2011/9/26 Seungwon Jeon <tgih.jun@samsung.com>:
-> Andrei Warkentin wrote:
->> Hi Seungwon,
+Hi Grant,
+
+On 22 September 2011 23:10, Grant Likely <grant.likely@secretlab.ca> wr=
+ote:
+> On Mon, Sep 19, 2011 at 03:49:13PM +0530, Thomas Abraham wrote:
+>> Add device tree based discovery support for Samsung's keypad control=
+ler.
 >>
->> ----- Original Message -----
->> > From: "Seungwon Jeon" <tgih.jun@samsung.com>
->> > To: linux-mmc@vger.kernel.org
->> > Cc: "Chris Ball" <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org,
->> "kgene kim" <kgene.kim@samsung.com>, "dh han"
->> > <dh.han@samsung.com>, "Seungwon Jeon" <tgih.jun@samsung.com>
->> > Sent: Monday, September 26, 2011 7:46:59 AM
->> > Subject: [PATCH] mmc: dw_mmc: Support predefined multiple block
->> transfers.
->> >
->> > This patch adds the support for predefined multiple block read/write.
->> >
->> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> Cc: Joonyoung Shim <jy0922.shim@samsung.com>
+>> Cc: Donghwa Lee <dh09.lee@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>
+> A few things to fix below, but you can add my acked-by when you've
+> addressed them.
+
+Ok. Thanks for your review. I will fix as per your comments.
+
+[...]
+
+>
+>> diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input=
+/keyboard/samsung-keypad.c
+>> index f689f49..2a477bc 100644
+>> --- a/drivers/input/keyboard/samsung-keypad.c
+>> +++ b/drivers/input/keyboard/samsung-keypad.c
+
+[...]
+
+>> +
+>> + =A0 =A0 of_property_read_u32(np, "samsung,keypad-num-rows", &num_r=
+ows);
+>> + =A0 =A0 of_property_read_u32(np, "samsung,keypad-num-columns", &nu=
+m_cols);
+>
+> property_read doesn't touch the values of num_rows or num_cols on
+> failure. =A0The values need to be initialized if you're going to test
+> the result value.
+
+Ok. num_rows and num_cols variables will be set to zero before the
+property read call.
+
+>
+>> + =A0 =A0 if (!num_rows || !num_cols) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "number of keypad rows/column=
+s not specified\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return NULL;
+>> + =A0 =A0 }
+
+[...]
+
 >>
->> Without knowing much about dw_mmc host, your logic otherwise looks ok,
->> given what
->> I've previously done for SDHCI as far as CMD23/Auto-CMD23 enhancement.
->> Just curious, what eMMC cards did you test this on, and what improvement
->> did you see?
+>> + =A0 =A0 if (pdev->dev.of_node) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 samsung_keypad_parse_dt_gpio(&pdev->dev, k=
+eypad);
+>> +#ifdef CONFIG_OF
+>> + =A0 =A0 =A0 =A0 =A0 =A0 keypad->type =3D of_device_is_compatible(p=
+dev->dev.of_node,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 "samsung,s5pv210-keypad");
+>> +#endif
 >
-> Thank you for review.
-> As you done, predefined transfer is required for reliable writes and eMMC4.5 feature.
-> Sadly, I didn't gain an improvement in my case.
-> (I don't know whether I can clarify the tested eMMC card, just one sample.)
+> This still looks odd. =A0If you move the #ifdef up one line, then you
+> can remove the empty version of samsung_keypad_parse_dt_gpio(), and
+> this block won't look so weird.
 >
 
-So far I've seen some Sandisk cards have a noticeable real-life
-improvement (30%) over
-open-ended transfers.
+That would be a better approach. Thanks for the suggestion.
 
-You might wish to try out https://github.com/andreiw/superalign to be certain.
+Regards,
+Thomas.
 
-A
+[...]
