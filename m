@@ -1,116 +1,100 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/7] SPI: S3C64XX: Use bus clocks created using clkdev
-Date: Tue, 27 Sep 2011 08:22:46 +0900
-Message-ID: <003301cc7ca3$3314dae0$993e90a0$%kim@samsung.com>
-References: <1316778827-24694-1-git-send-email-padma.v@samsung.com>
- <1316778827-24694-2-git-send-email-padma.v@samsung.com>
- <20110923231233.GE24631@ponder.secretlab.ca>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 3/4] iommu/exynos: Add iommu driver for Exynos4 Platforms
+Date: Tue, 27 Sep 2011 09:56:14 +0900
+Message-ID: <CAHQjnOPdsf-QB3st94WRSH325j8WPOLLe4rqv0WN1qK1KYWtmA@mail.gmail.com>
+References: <15669786.49881316849426265.JavaMail.weblogic@epml24>
+	<CAK=WgbYnGjPKs6_nmFRGfMnbh_7wDR-0QcptAGaqDKVOo-x3cg@mail.gmail.com>
+	<CAHQjnOOtVHUS3KmBz7LdO88fLQyLA6f-w3ye9nAH0Bx+zh38XA@mail.gmail.com>
+	<CAK=Wgbazwz9PRJSpZjopwxJ-PO88FtajmbXL=pVKDHOr1t61fQ@mail.gmail.com>
+	<CAHQjnON7dksupFeAYLuYXX2PhgjX-GXEGJiy0dRTmpoBjbURVg@mail.gmail.com>
+	<CAK=WgbaOwe8Q19tpZMeHdvyCj8fcV194zA-oSD20tF7j7_MvpQ@mail.gmail.com>
+	<CAHQjnOM_KTiqzYnePScMHQ3bg5X1wqa4zu6=1A1z7UWeDxVZvQ@mail.gmail.com>
+	<CAK=WgbYzZKTRRf6hk=L5ZvXmFAUpq66Ud3F7xh2-8j6zSvAq9g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:18352 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752327Ab1IZXWw (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:65124 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750931Ab1I0A4P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Sep 2011 19:22:52 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LS500J5YKWVEWB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2011 08:22:46 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LS500EBHKXYW120@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 27 Sep 2011 08:22:46 +0900 (KST)
-In-reply-to: <20110923231233.GE24631@ponder.secretlab.ca>
-Content-language: ko
+	Mon, 26 Sep 2011 20:56:15 -0400
+In-Reply-To: <CAK=WgbYzZKTRRf6hk=L5ZvXmFAUpq66Ud3F7xh2-8j6zSvAq9g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Grant Likely' <grant.likely@secretlab.ca>, 'Padmavathi Venna' <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, ben-linux@fluff.org, s.nawrocki@samsung.com
+To: Ohad Ben-Cohen <ohad@wizery.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "joerg.roedel@amd.com" <joerg.roedel@amd.com>, =?UTF-8?B?7J207IOB7ZiE?= <sanghyun75.lee@samsung.com>, =?UTF-8?B?6rmA6rWt7KeE?= <kgene.kim@samsung.com>, =?UTF-8?B?6rmA7JiB6529?= <younglak1004.kim@samsung.com>
 
-Grant Likely wrote:
-> 
-> On Fri, Sep 23, 2011 at 05:23:41PM +0530, Padmavathi Venna wrote:
-> > This patch modifies the driver to stop depending on the
-> > clock names being passed from platform and switch over
-> > to lookup clocks generic names using clkdev
-> >
-> > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> 
-> Looks okay to me.
-> 
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> 
-> This series I imagine should go in via the arm-soc tree.
-> 
-OK, if others ok to me, I will pick up this series so that it will be sent
-to upstream via arm-soc.
+On Tue, Sep 27, 2011 at 12:59 AM, Ohad Ben-Cohen <ohad@wizery.com> wrote:
+> On Mon, Sep 26, 2011 at 5:48 PM, KyongHo Cho <pullip.cho@samsung.com> wrote:
+>> I am sorry but I still think that
+>> installing default fault handler is quite simple and straightforward.
+>
+> ... and abusing the IOMMU API.
+>
+> Please don't do that. Interfaces are written for specific goals, and
+> this one was added for IOMMU users, not drivers. Just like all the
+> other map/unmap/attach/... APIs.
+>
+> By using this from the IOMMU driver itself, you are adding burden on
+> future development and evolution of this API. As use cases
+> materialize, we will have to change it to support them, while
+> considering existing use cases. Using this API inappropriately will
+> make our life harder later on.
+I didn't think about this case.
+It can be a problem if IOMMU driver is dependent upon the change of
+IOMMU API as you told above.
 
-Thanks.
+>
+> Moreover, I'm really not sure how exactly are you going to use this.
+>
+> If you're having an IOMMU user which installs its own fault handler,
+> then this is all moot since the default behavior you provide here will
+> be overridden.
+Yes, this is what I really want.
+I wanted the IOMMU driver to provide default fault handler to its users
+that does not provide fault handler for debugging purpose.
+If a user want to handle MMU fault, IOMMU driver welcomes to overwrite
+the existing 'default' fault handler.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> > ---
-> >  drivers/spi/spi-s3c64xx.c |   14 +++++---------
-> >  1 files changed, 5 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> > index 019a716..dcf7e10 100644
-> > --- a/drivers/spi/spi-s3c64xx.c
-> > +++ b/drivers/spi/spi-s3c64xx.c
-> > @@ -971,6 +971,7 @@ static int __init s3c64xx_spi_probe(struct
-> platform_device *pdev)
-> >  	struct s3c64xx_spi_info *sci;
-> >  	struct spi_master *master;
-> >  	int ret;
-> > +	char clk_name[16];
-> >
-> >  	if (pdev->id < 0) {
-> >  		dev_err(&pdev->dev,
-> > @@ -984,11 +985,6 @@ static int __init s3c64xx_spi_probe(struct
-> platform_device *pdev)
-> >  	}
-> >
-> >  	sci = pdev->dev.platform_data;
-> > -	if (!sci->src_clk_name) {
-> > -		dev_err(&pdev->dev,
-> > -			"Board init must call s3c64xx_spi_set_info()\n");
-> > -		return -EINVAL;
-> > -	}
-> >
-> >  	/* Check for availability of necessary resource */
-> >
-> > @@ -1073,17 +1069,17 @@ static int __init s3c64xx_spi_probe(struct
-> platform_device *pdev)
-> >  		goto err4;
-> >  	}
-> >
-> > -	sdd->src_clk = clk_get(&pdev->dev, sci->src_clk_name);
-> > +	sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-> > +	sdd->src_clk = clk_get(&pdev->dev, clk_name);
-> >  	if (IS_ERR(sdd->src_clk)) {
-> >  		dev_err(&pdev->dev,
-> > -			"Unable to acquire clock '%s'\n",
-sci->src_clk_name);
-> > +			"Unable to acquire clock '%s'\n", clk_name);
-> >  		ret = PTR_ERR(sdd->src_clk);
-> >  		goto err5;
-> >  	}
-> >
-> >  	if (clk_enable(sdd->src_clk)) {
-> > -		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n",
-> > -							sci->src_clk_name);
-> > +		dev_err(&pdev->dev, "Couldn't enable clock '%s'\n",
-clk_name);
-> >  		ret = -EBUSY;
-> >  		goto err6;
-> >  	}
-> > --
-> > 1.7.4.4
-> >
+> If you're not having an IOMMU user which installs its own fault
+> handler, then just provide the default behavior in your irq handler,
+> regardless whether you report the fault to the IOMMU core or not. Or
+> only when it fails. and yes, we can provide different error values for
+> different scenarios. it's not rocket science :).
+>
+> Really, there's a myriad of ways to do this right. Please explain your
+> exact settings/use-case and I'll gladly help you find a clean
+> solution.
+>
+Thank you.
+
+As I explained before, MMU fault in our system is abnormal and
+the situation cannot be recovered because mapping information is set up
+completely before System MMU starts address translation with the mapping
+information.
+However we have to capture the MMU fault for debugging purpose.
+That's why our fault handler just prints debugging messages and
+generates kernel OOPS
+
+A user of IOMMU may handle MMU faults due to the following reason:
+ - Its IOMMU sees the virtual address space of the user process (IOMMU
+refers the page table of CPU)
+   and virtual memory region allocated by userspace is not filled with
+physical memory.
+   Device driver which is user of IOMMU does not call get_user_pages()
+for the region but
+   handle page fault generated by IOMMU.
+ - A device driver working in the Monitor mode in ARM processors need
+to protect a memory region
+   from access in the Normal mode. If it happens, the device driver
+must catch the situation,
+   stop the current operation and inform the problem to the userspace.
+
+For the above reasons, some user of IOMMU may override the default
+fault handler.
+
+> Thanks,
+> Ohad.
+
+Thanks and regards,
+Cho KyongHo.
