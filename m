@@ -1,31 +1,58 @@
-From: Viresh Kumar <viresh.kumar@st.com>
-Subject: Re: [PATCH V2 1/1] dmaengine/amba-pl08x: Add support for s3c64xx
- DMAC
-Date: Wed, 28 Sep 2011 15:24:41 +0530
-Message-ID: <4E82EEE1.3020706@st.com>
-References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com> <1317189007-23033-2-git-send-email-alim.akhtar@samsung.com> <4E82D0A1.8050203@st.com> <CAGOxZ53qZy+VUM65oK68W088QR=RgQ=cNxOCbO7_WESJesJaVQ@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/8] S3C2416: Enable armdiv and armclk
+Date: Wed, 28 Sep 2011 12:17:33 +0200
+Message-ID: <201109281217.33813.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAGOxZ53qZy+VUM65oK68W088QR=RgQ=cNxOCbO7_WESJesJaVQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@gmail.com>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from h1778886.stratoserver.net ([85.214.133.74]:59830 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751157Ab1I1KRs (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Sep 2011 06:17:48 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
 
-On 9/28/2011 2:20 PM, Alim Akhtar wrote:
-> The main difference between Primecell PL080 and samsung variant is in
-> LLI control register bit [0:11] is reserved in case of samsung pl080
-> and one extra register is add to hold the transfer size at offset
-> 0x10. The purpose of cctl1 is store the transfer_size.
+To enable cpu frequency scaling on the S3C2416/2450 it is necessary
+to define the arm-divider and armclock.
 
-So, actually you need to modify pl08x_fill_lli_for_desc() and
-pl08x_cctl_bits() routines.
+The layout of the clocks (i.e. msysclk -> armdiv -> armclk) is the
+same on all three architectures (S3C2443/2416/2450) and only the
+possible dividers for armdiv differ.
+Therefore it is possible to move the armdiv and armclk to common
+code with only the divider table definition remaining in the respective
+clock.c-files.
+The s3c2443_common_init_clocks method is modified to make it possible
+to transmit the divider table to the common code.
 
-Updating cctl1 on the last lli will not solve your purpose,
-and transfers needing more than one lli will fail.
-BTW, did you try testing your patch for more than one LLI.
+As the armdiv is available in common code now, the fdiv function
+pointer passed to s3c2443_common_init_clocks becomes obsolete and is
+therefore removed as the fclk rate can be set by a clk_get_rate call.
+
+It works as expected on S3C2416, is compile-tested on S3C2443
+and checkpatch was happy.
+
+
+Heiko Stuebner (8):
+  S3C2416: Add armdiv_mask constant.
+  S3C2443: Add infrastructure to transmit armdiv to common code
+  S3C2443: Move clk_arm and clk_armdiv to common code.
+  S3C2416: Add comment describing the armdiv/armclk.
+  S3C2443: Add get_rate operation for clk_armdiv
+  S3C2443: handle unset armdiv values gracefully.
+  S3C2443: Accommodate cpufreq frequency scheme in armdiv
+  S3C2443: use clk_get_rate to init fclk in common_setup_clocks
+
+ .../mach-s3c2410/include/mach/regs-s3c2443-clock.h |    1 +
+ arch/arm/mach-s3c2416/clock.c                      |   21 ++--
+ arch/arm/mach-s3c2443/clock.c                      |   98 +--------------
+ arch/arm/plat-s3c24xx/include/plat/s3c2443.h       |    7 +-
+ arch/arm/plat-s3c24xx/s3c2443-clock.c              |  134 +++++++++++++++++++-
+ 5 files changed, 152 insertions(+), 109 deletions(-)
 
 -- 
-viresh
+1.7.5.4
