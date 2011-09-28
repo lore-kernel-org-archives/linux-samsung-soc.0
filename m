@@ -1,160 +1,31 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v5 6/6] ARM: EXYNOS4: Limit usage of pl330 device instance to
- non-dt build
-Date: Wed, 28 Sep 2011 14:55:25 +0530
-Message-ID: <1317201925-25148-7-git-send-email-thomas.abraham@linaro.org>
-References: <1317201925-25148-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15004 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753848Ab1I1JZx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Sep 2011 05:25:53 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LS8005XJ7I61YJ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 28 Sep 2011 18:25:52 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LS8006X77IKS650@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 28 Sep 2011 18:25:52 +0900 (KST)
-In-reply-to: <1317201925-25148-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Viresh Kumar <viresh.kumar@st.com>
+Subject: Re: [PATCH V2 1/1] dmaengine/amba-pl08x: Add support for s3c64xx
+ DMAC
+Date: Wed, 28 Sep 2011 15:24:41 +0530
+Message-ID: <4E82EEE1.3020706@st.com>
+References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com> <1317189007-23033-2-git-send-email-alim.akhtar@samsung.com> <4E82D0A1.8050203@st.com> <CAGOxZ53qZy+VUM65oK68W088QR=RgQ=cNxOCbO7_WESJesJaVQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAGOxZ53qZy+VUM65oK68W088QR=RgQ=cNxOCbO7_WESJesJaVQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alim Akhtar <alim.akhtar@gmail.com>
+Cc: Alim Akhtar <alim.akhtar@samsung.com>, "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org, vinod.koul@intel.com
-Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
 
-The pl330 device instances and associated platform data is required only
-for non-device-tree builds. With device tree enabled, the data about the
-platform is obtained from the device tree. For images that include both
-dt and non-dt platforms, an addditional check is added to ensure that
-static amba device registrations is applicable to only non-dt platforms.
+On 9/28/2011 2:20 PM, Alim Akhtar wrote:
+> The main difference between Primecell PL080 and samsung variant is in
+> LLI control register bit [0:11] is reserved in case of samsung pl080
+> and one extra register is add to hold the transfer size at offset
+> 0x10. The purpose of cctl1 is store the transfer_size.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
----
- arch/arm/mach-exynos4/Kconfig  |   12 ++++++++++++
- arch/arm/mach-exynos4/Makefile |    3 ++-
- arch/arm/mach-exynos4/dma.c    |    4 ++++
- 3 files changed, 18 insertions(+), 1 deletions(-)
+So, actually you need to modify pl08x_fill_lli_for_desc() and
+pl08x_cctl_bits() routines.
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index 0c964b7..b013907 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -26,6 +26,11 @@ config EXYNOS4_MCT
- 	help
- 	  Use MCT (Multi Core Timer) as kernel timers
- 
-+config EXYNOS4_DEV_DMA
-+	bool
-+	help
-+	  Compile in amba device definitions for DMA controller
-+
- config EXYNOS4_DEV_AHCI
- 	bool
- 	help
-@@ -144,6 +149,7 @@ config MACH_SMDKV310
- 	select EXYNOS4_DEV_PD
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_DEV_SYSMMU
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_KEYPAD
-@@ -161,6 +167,7 @@ config MACH_ARMLEX4210
- 	select S3C_DEV_HSMMC3
- 	select EXYNOS4_DEV_AHCI
- 	select EXYNOS4_DEV_SYSMMU
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_SDHCI
- 	help
- 	  Machine support for Samsung ARMLEX4210 based on EXYNOS4210
-@@ -185,6 +192,7 @@ config MACH_UNIVERSAL_C210
- 	select S5P_DEV_MFC
- 	select S5P_DEV_ONENAND
- 	select S5P_DEV_TV
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_DEV_PD
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
-@@ -211,6 +219,7 @@ config MACH_NURI
- 	select S3C_DEV_I2C5
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_DEV_PD
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
-@@ -237,6 +246,7 @@ config MACH_ORIGEN
- 	select S5P_DEV_I2C_HDMIPHY
- 	select S5P_DEV_TV
- 	select S5P_DEV_USB_EHCI
-+	select EXYNOS4_DEV_DMA
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_SETUP_SDHCI
-@@ -256,6 +266,7 @@ config MACH_SMDK4212
- 	select S3C_DEV_I2C7
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select EXYNOS4_DEV_DMA
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_KEYPAD
- 	select SAMSUNG_DEV_PWM
-@@ -271,6 +282,7 @@ config MACH_EXYNOS4_DT
- 	bool "Samsung Exynos4 Machine using device tree"
- 	select CPU_EXYNOS4210
- 	select USE_OF
-+	select ARM_AMBA
- 	help
- 	  Machine support for Samsung Exynos4 machine with device tree enabled.
- 
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 9e8b7e5..d0c5706 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -13,7 +13,7 @@ obj-				:=
- # Core support for EXYNOS4 system
- 
- obj-$(CONFIG_ARCH_EXYNOS4)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_ARCH_EXYNOS4)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= setup-i2c0.o irq-eint.o pmu.o
- obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
- obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
- obj-$(CONFIG_PM)		+= pm.o sleep.o
-@@ -44,6 +44,7 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
- obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
-+obj-$(CONFIG_EXYNOS4_DEV_DMA)		+= dma.o
- 
- obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
- obj-$(CONFIG_EXYNOS4_SETUP_FIMD0)	+= setup-fimd0.o
-diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
-index c3c0d17..921d31d 100644
---- a/arch/arm/mach-exynos4/dma.c
-+++ b/arch/arm/mach-exynos4/dma.c
-@@ -24,6 +24,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/amba/bus.h>
- #include <linux/amba/pl330.h>
-+#include <linux/of.h>
- 
- #include <asm/irq.h>
- #include <plat/devs.h>
-@@ -138,6 +139,9 @@ struct amba_device exynos4_device_pdma1 = {
- 
- static int __init exynos4_dma_init(void)
- {
-+	if (of_have_populated_dt())
-+		return 0;
-+
- 	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
- 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
+Updating cctl1 on the last lli will not solve your purpose,
+and transfers needing more than one lli will fail.
+BTW, did you try testing your patch for more than one LLI.
+
 -- 
-1.6.6.rc2
+viresh
