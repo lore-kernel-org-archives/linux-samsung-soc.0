@@ -1,195 +1,82 @@
-From: Alim Akhtar <alim.akhtar@gmail.com>
-Subject: Re: [PATCH V2 1/1] dmaengine/amba-pl08x: Add support for s3c64xx DMAC
-Date: Wed, 28 Sep 2011 14:29:30 +0530
-Message-ID: <CAGOxZ53Yu3fi7rNOMJ2BiT-vsFn2R9aGBTUc9s53AJsKa=AMBA@mail.gmail.com>
-References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com>
- <1317189007-23033-2-git-send-email-alim.akhtar@samsung.com> <CACRpkdZesKGuPGmUifLj4puN_e=kYAb4WyuQs+xERn9q7036rg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZesKGuPGmUifLj4puN_e=kYAb4WyuQs+xERn9q7036rg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alim Akhtar <alim.akhtar@samsung.com>, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, vinod.koul@intel.com, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, dan.j.williams@intel.com, linux-arm-kernel@lists.infradead.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v5 0/6] Add device tree support for PL330 dma controller driver
+Date: Wed, 28 Sep 2011 14:55:19 +0530
+Message-ID: <1317201925-25148-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:18463 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751973Ab1I1JZl (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Sep 2011 05:25:41 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LS8002XB7IRLLW0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Sep 2011 18:25:39 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LS8006X77IKS650@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 28 Sep 2011 18:25:39 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree-discuss@lists.ozlabs.org, vinod.koul@intel.com
+Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com
 
-HI Linus,
-Thanks for reviewing again.
+Changes since v4:
+- Rebased with Samsung maintainer's for-next branch which is at linux-3.1-rc7
+  - Modified Patch 6/6 to apply cleanly.
 
-On Wed, Sep 28, 2011 at 1:31 PM, Linus Walleij <linus.walleij@linaro.or=
-g> wrote:
-> Sorry if I missed a few nitpicks last time, anyway it's looking much =
-better now:
->
-> On Wed, Sep 28, 2011 at 7:50 AM, Alim Akhtar <alim.akhtar@samsung.com=
-> wrote:
->> + =A0 =A0 =A0 /*
->> + =A0 =A0 =A0 =A0* Samsung pl080 DMAC has one exrta control register
->
-> s/exrta/exstra
->
-I will correct this.
->> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(txd->ccfg, phychan->base + PL08=
-0S_CH_CONFIG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(lli->cctl1, phychan->base + PL0=
-80S_CH_CONTROL2);
->> + =A0 =A0 =A0 } else
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(txd->ccfg, phychan->base + PL08=
-0_CH_CONFIG);
->
-> What do you think about adding a field to the struct pl08x
-> like
->
-> u32 config_reg
->
-> that we set to the proper config register (PL080S_CH_CONFIG or
-> PL080_CH_CONFIG in probe(), so the above
-> becomes the simpler variant:
->
-> writel(txd->ccfg, phychan->base + pl08x->config_reg);
-> if (pl08x->vd->is_pl080_s3c)
-> =A0 =A0writel(lli->cctl1, phychan->base + PL080S_CH_CONTROL2);
->
-I will try implement this way or as viresh has pointed out to remove
-the code duplications.
+Changes since v3:
+- In Patch 4/6, a recommendation is added in the pl330 binding documentation
+  for the name of the property which specifies the dma channel in the client
+  device node.
+- In Patch 6/6, dropped #ifdef around of_have_populated_dt.
 
->> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(phychan->base + PL080S_C=
-H_CONFIG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 while ((val & PL080_CONFIG_ACTIVE) ||
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (val & PL080_CONFIG_EN=
-ABLE))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(phychan-=
->base + PL080S_CH_CONFIG);
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val | PL080_CONFIG_ENABLE,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 phychan->base + PL080S=
-_CH_CONFIG);
->> + =A0 =A0 =A0 } else {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0val =3D readl(phychan->base + PL080_C=
-H_CONFIG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 while ((val & PL080_CO=
-NFIG_ACTIVE) ||
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (val &=
- PL080_CONFIG_ENABLE))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D=
- readl(phychan->base + PL080_CH_CONFIG);
->>
->> - =A0 =A0 =A0 writel(val | PL080_CONFIG_ENABLE, phychan->base + PL08=
-0_CH_CONFIG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val | PL080_CONFIG_ENABLE,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 phychan->base + PL080_=
-CH_CONFIG);
->> + =A0 =A0 =A0 }
->
-> This would also become much simpler with that approach I think...
->
-OK, i will do that.
->> =A0 =A0 =A0 =A0/* Set the HALT bit and wait for the FIFO to drain */
->> - =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONFIG);
->> - =A0 =A0 =A0 val |=3D PL080_CONFIG_HALT;
->> - =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
->> -
->> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080S_CH_CON=
-=46IG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val |=3D PL080_CONFIG_HALT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080S_CH_CONFI=
-G);
->> + =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONF=
-IG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val |=3D PL080_CONFIG_HALT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG=
-);
->> + =A0 =A0 =A0 }
->
-> This would become simply:
->
-> val =3D readl(ch->base + pl08x->config_reg);
-> val |=3D PL080_CONFIG_HALT;
-> writel(val, ch->base + pl08x->config_reg);
->
->
-ok, i will do that.
->> =A0 =A0 =A0 =A0/* Clear the HALT bit */
->> - =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONFIG);
->> - =A0 =A0 =A0 val &=3D ~PL080_CONFIG_HALT;
->> - =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
->> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080S_CH_CON=
-=46IG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~PL080_CONFIG_HALT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080S_CH_CONFI=
-G);
->> + =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONF=
-IG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~PL080_CONFIG_HALT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG=
-);
->> + =A0 =A0 =A0 }
->
-> This would get rid of the if/else clauses
->
-ok, understand
->> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 u32 val =3D readl(ch->base + PL080S_CH=
-_CONFIG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~(PL080_CONFIG_ENABLE | PL080=
-_CONFIG_ERR_IRQ_MASK |
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 PL080_=
-CONFIG_TC_IRQ_MASK);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080S_CH_CONFI=
-G);
->> + =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 u32 val =3D readl(ch->base + PL080_CH_=
-CONFIG);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~(PL080_CONFIG_ENABLE | PL080=
-_CONFIG_ERR_IRQ_MASK |
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 PL080_=
-CONFIG_TC_IRQ_MASK);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG=
-);
->> + =A0 =A0 =A0 }
->
-> As would this...
->
->> + =A0 =A0 =A0 /* Samsung DMAC is PL080 variant*/
->> + =A0 =A0 =A0 {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =3D 0x00041082,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .mask =A0 =3D 0x000fffff,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .data =A0 =3D &vendor_pl080_s3c,
->
-> Does the hardware realy have this primecell number or is it something=
- that is
-> hardcoded from the board/device tree?
->
-It is a hardcoded value as s3c64xx does not have Identification registe=
-rs.
+Changes since v2:
+- Only the sixth patch is changed, to make dma platform data conditionally
+  selectable.
+- Tested with v8 version of pl330 dma driver update patches from Boojin Kim.
 
-> If it is hardcoded then no objections.
->
-> In the latter case, replace 0x41 (=3D 'A', ARM) with something like
-> 0x55 'U' for Samsung or so. Or 0x51 'S'. Or whatever you like.
->
-> Then add that to include/linux/amba/bus.h as
-> AMBA_VENDOR_SAMSUNG =3D 0x55,
-> so we have this under some kind of control.
->
-> Yours,
-> Linus Walleij
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
->
+Changes since v1:
+- Removed "arm,pl330-pdma" and "arm,pl330-mdma" compatible values.
+- Removed "arm,primecell-periphid" and "arm,pl330-peri-reqs"
+  property requirements.
 
+This patchset adds device tree support for PL330 driver and uses it
+to add device tree support for Samsung platforms, specifically Exynos4.
 
+First patch moves the pl330_filter function from Samsung specific wrappers
+to pl330 dma driver and also adds a check to ensure that the filter
+function proceeds only if it the dma channel being investigated belongs
+to pl330 dma controller instance.
 
---=20
-aLim akHtaR
-mAin hUn nA :-)
+Second patch adds support to infer the direction of the dma transfer
+using the direction specified with the transfer request instead of
+including this information in the platform data. This simlifies the
+addition of device tree support. Third patch simplifies the platform
+data for Exynos4 pl330 dma controllers. Similar patches simplifying
+the platform data for other Samsung platforms is under development.
+
+Fourth patch adds device tree support for pl330 dma controller driver.
+A dma channel is represented using a phandle of the dma controller
+node and the channel id within that controller. Client driver request
+a dma channel using the phandle and channel id pair. Correspondingly,
+the pl330 filter function has been modified to lookup a channel based
+on this value.
+
+Fifth patch adds device tree support for Samsung's DMA engine wrappers.
+Client drivers retrive the channel property from their device node and
+pass it to the wrappers. The wrapper functions use the property value
+as the filter function parameter. Sixth patch restricts the usage of
+pl330 device and platform data instances to non-dt platforms.
+
+This patchset is based on Linux 3.1-rc7 and tested tested for both
+device-tree and non-device-tree kernel on smdkv310.
+
+Thomas Abraham (6):
+  DMA: PL330: move filter function into driver
+  DMA: PL330: Infer transfer direction from transfer request instead of platform data
+  ARM: EXYNOS4: Modify platform data for pl330 driver
+  DMA: PL330: Add device tree support
+  ARM: SAMSUNG: Add device tree support for pl330 dma engine wrappers
+  ARM: EXYNOS4: Limit usage of pl330 device instance to non-dt build
