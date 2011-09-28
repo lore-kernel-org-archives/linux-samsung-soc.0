@@ -1,69 +1,60 @@
-From: Subash Patel <subashrp@gmail.com>
-Subject: Re: boot failure of exynos4 on 3.1.0-rc7
-Date: Wed, 28 Sep 2011 12:10:51 +0530
-Message-ID: <4E82C173.60208@gmail.com>
-References: <4E82BFC5.2020409@gmail.com> <CAH9JG2XqW+A1Y6US5TaavSt7vmkXWEMpiftH7fnOU5jnuNaJmA@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH v2 1/2] S3C2443/S3C2416: Add adc registers
+Date: Wed, 28 Sep 2011 08:42:19 +0200
+Message-ID: <201109280842.20542.heiko@sntech.de>
+References: <201109182241.48858.heiko@sntech.de> <201109182242.55394.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:54330 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751682Ab1I1Gk4 (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:38146 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751388Ab1I1Gmd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Sep 2011 02:40:56 -0400
-Received: by iaqq3 with SMTP id q3so6558167iaq.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Sep 2011 23:40:56 -0700 (PDT)
-In-Reply-To: <CAH9JG2XqW+A1Y6US5TaavSt7vmkXWEMpiftH7fnOU5jnuNaJmA@mail.gmail.com>
+	Wed, 28 Sep 2011 02:42:33 -0400
+In-Reply-To: <201109182242.55394.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
 
-On 09/28/2011 12:07 PM, Kyungmin Park wrote:
-> On Wed, Sep 28, 2011 at 3:33 PM, Subash Patel<subashrp@gmail.com>  wrote:
->> Hello,
->>
->> I am attempting to boot linux version in subject on SMDKV310 board[EVT0].
->> The booting stops after "Uncompressing Linux... done, booting the kernel."
->> After some debugging I found that the timer initialization fails.
->> exynos4_mct_frc_start() calls exynos4_mct_write(lo, EXYNOS4_MCT_G_CNT_L)
->> which fails to write to the register, which should have asserted
->> G-CNT_WSTAT[0] to 1. Hence panic() will be called which halts booting.
->>
->> I have booted 3.0.0-rc1 before this, which used PWM. I found a related
->> thread for C210, which I couldnt make head-tail out of it :(
->> http://www.spinics.net/lists/arm-kernel/msg140431.html
->>
->> Can anyone let me know if this is known issue and if there is a solution
->> available for this.
-> Need to wait for sched_clock patch are merged. Before that, you need a
-> workaround patch as universal_c210 does.
-> Note that de-select the MCT timer since EVT0 doesn't have it.
-This code is available in arch/arm/mach-exynos4/Kconfig
+The adc blocks of the S3C2443 and S3C2416 define some
+additional registers and bits.
 
-config EXYNOS4_MCT
-         bool
-         default y
-         help
-           Use MCT (Multi Core Timer) as kernel timers
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+changes since v1: add spaces around <<
+ arch/arm/plat-samsung/include/plat/regs-adc.h |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
 
-Which I think is wrong, if EVT0 doesnt have the hardware. It should have 
-had condition to check the silicon revision isn't it?
-
-Regards,
-Subash
-
-
->
-> Thank you,
-> Kyungmin Park
->>
->> Regards,
->> Subash
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+diff --git a/arch/arm/plat-samsung/include/plat/regs-adc.h b/arch/arm/plat-samsung/include/plat/regs-adc.h
+index 035e8c3..7061210 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-adc.h
++++ b/arch/arm/plat-samsung/include/plat/regs-adc.h
+@@ -20,6 +20,7 @@
+ #define S3C2410_ADCDAT0	   S3C2410_ADCREG(0x0C)
+ #define S3C2410_ADCDAT1	   S3C2410_ADCREG(0x10)
+ #define S3C64XX_ADCUPDN		S3C2410_ADCREG(0x14)
++#define S3C2443_ADCMUX		S3C2410_ADCREG(0x18)
+ #define S3C64XX_ADCCLRINT	S3C2410_ADCREG(0x18)
+ #define S5P_ADCMUX		S3C2410_ADCREG(0x1C)
+ #define S3C64XX_ADCCLRINTPNDNUP	S3C2410_ADCREG(0x20)
+@@ -33,6 +34,7 @@
+ #define S3C2410_ADCCON_PRSCVLMASK	(0xFF<<6)
+ #define S3C2410_ADCCON_SELMUX(x)	(((x)&0x7)<<3)
+ #define S3C2410_ADCCON_MUXMASK		(0x7<<3)
++#define S3C2416_ADCCON_RESSEL		(1 << 3)
+ #define S3C2410_ADCCON_STDBM		(1<<2)
+ #define S3C2410_ADCCON_READ_START	(1<<1)
+ #define S3C2410_ADCCON_ENABLE_START	(1<<0)
+@@ -40,6 +42,7 @@
+ 
+ 
+ /* ADCTSC Register Bits */
++#define S3C2443_ADCTSC_UD_SEN		(1 << 8)
+ #define S3C2410_ADCTSC_YM_SEN		(1<<7)
+ #define S3C2410_ADCTSC_YP_SEN		(1<<6)
+ #define S3C2410_ADCTSC_XM_SEN		(1<<5)
+-- 
+1.7.5.4
