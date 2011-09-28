@@ -1,123 +1,165 @@
-From: Viresh Kumar <viresh.kumar@st.com>
-Subject: Re: [PATCH V2 1/1] dmaengine/amba-pl08x: Add support for s3c64xx
- DMAC
-Date: Wed, 28 Sep 2011 13:15:37 +0530
-Message-ID: <4E82D0A1.8050203@st.com>
-References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com> <1317189007-23033-2-git-send-email-alim.akhtar@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2 1/1] dmaengine/amba-pl08x: Add support for s3c64xx DMAC
+Date: Wed, 28 Sep 2011 10:01:16 +0200
+Message-ID: <CACRpkdZesKGuPGmUifLj4puN_e=kYAb4WyuQs+xERn9q7036rg@mail.gmail.com>
+References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com>
+	<1317189007-23033-2-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eu1sys200aog107.obsmtp.com ([207.126.144.123]:56294 "EHLO
-	eu1sys200aog107.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752245Ab1I1HqX (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Sep 2011 03:46:23 -0400
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1317189007-23033-2-git-send-email-alim.akhtar@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: "linus.walleij@linaro.org" <linus.walleij@linaro.org>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, vinod.koul@intel.com, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, dan.j.williams@intel.com, linux-arm-kernel@lists.infradead.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-On 9/28/2011 11:20 AM, Alim Akhtar wrote:
-> Signed-off-by: Alim Akhtar <alim.akhtar@samsung.com>
-> ---
->  drivers/dma/amba-pl08x.c |  135 ++++++++++++++++++++++++++++++++++++++--------
->  1 files changed, 112 insertions(+), 23 deletions(-)
-> 
+Sorry if I missed a few nitpicks last time, anyway it's looking much better=
+ now:
 
-It would be good if you can add pick some part from cover-letter and put it in
-commit log too.
+On Wed, Sep 28, 2011 at 7:50 AM, Alim Akhtar <alim.akhtar@samsung.com> wrot=
+e:
+> + =A0 =A0 =A0 /*
+> + =A0 =A0 =A0 =A0* Samsung pl080 DMAC has one exrta control register
 
-> diff --git a/drivers/dma/amba-pl08x.c b/drivers/dma/amba-pl08x.c
-> index cd8df7f..501540f 100644
-> --- a/drivers/dma/amba-pl08x.c
-> +++ b/drivers/dma/amba-pl08x.c
-> @@ -110,6 +129,11 @@ struct pl08x_lli {
->  	u32 dst;
->  	u32 lli;
->  	u32 cctl;
-> +	/*
-> +	 * Samsung pl080 DMAC has one exrta control register
-> +	 * which is used to hold the transfer_size
-> +	 */
-> +	u32 cctl1;
+s/exrta/exstra
 
-Will you write transfer_size in cctl also? What is the purpose of cctl1?
+> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(txd->ccfg, phychan->base + PL080S_CH=
+_CONFIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(lli->cctl1, phychan->base + PL080S_C=
+H_CONTROL2);
+> + =A0 =A0 =A0 } else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(txd->ccfg, phychan->base + PL080_CH_=
+CONFIG);
 
-> @@ -215,11 +255,23 @@ static void pl08x_start_txd(struct pl08x_dma_chan *plchan,
->  		cpu_relax();
->  
->  	/* Do not access config register until channel shows as inactive */
-> -	val = readl(phychan->base + PL080_CH_CONFIG);
-> -	while ((val & PL080_CONFIG_ACTIVE) || (val & PL080_CONFIG_ENABLE))
-> +	if (pl08x->vd->is_pl080_s3c) {
-> +		val = readl(phychan->base + PL080S_CH_CONFIG);
-> +		while ((val & PL080_CONFIG_ACTIVE) ||
-> +			(val & PL080_CONFIG_ENABLE))
-> +			val = readl(phychan->base + PL080S_CH_CONFIG);
+What do you think about adding a field to the struct pl08x
+like
+
+u32 config_reg
+
+that we set to the proper config register (PL080S_CH_CONFIG or
+PL080_CH_CONFIG in probe(), so the above
+becomes the simpler variant:
+
+writel(txd->ccfg, phychan->base + pl08x->config_reg);
+if (pl08x->vd->is_pl080_s3c)
+    writel(lli->cctl1, phychan->base + PL080S_CH_CONTROL2);
+
+> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(phychan->base + PL080S_CH_CON=
+FIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 while ((val & PL080_CONFIG_ACTIVE) ||
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (val & PL080_CONFIG_ENABLE))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(phychan->base=
+ + PL080S_CH_CONFIG);
 > +
-> +		writel(val | PL080_CONFIG_ENABLE,
-> +			phychan->base + PL080S_CH_CONFIG);
-> +	} else {
->  		val = readl(phychan->base + PL080_CH_CONFIG);
-> +			while ((val & PL080_CONFIG_ACTIVE) ||
-> +				(val & PL080_CONFIG_ENABLE))
-> +				val = readl(phychan->base + PL080_CH_CONFIG);
->  
-> -	writel(val | PL080_CONFIG_ENABLE, phychan->base + PL080_CH_CONFIG);
-> +		writel(val | PL080_CONFIG_ENABLE,
-> +			phychan->base + PL080_CH_CONFIG);
-> +	}
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val | PL080_CONFIG_ENABLE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 phychan->base + PL080S_CH_C=
+ONFIG);
+> + =A0 =A0 =A0 } else {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0val =3D readl(phychan->base + PL080_CH_CON=
+FIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 while ((val & PL080_CONFIG_=
+ACTIVE) ||
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (val & PL08=
+0_CONFIG_ENABLE))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D rea=
+dl(phychan->base + PL080_CH_CONFIG);
+>
+> - =A0 =A0 =A0 writel(val | PL080_CONFIG_ENABLE, phychan->base + PL080_CH_=
+CONFIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val | PL080_CONFIG_ENABLE,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 phychan->base + PL080_CH_CO=
+NFIG);
+> + =A0 =A0 =A0 }
 
-You have similar stuff in most the the changes in this patch, because offset of
-config register changes for s3c, you placed in if,else block.
+This would also become much simpler with that approach I think...
 
-If you check these changes again, there is a lot of code duplication in this if,else
-blocks. The only different thing in if,else is the offset of CH_CONFIG register.
+> =A0 =A0 =A0 =A0/* Set the HALT bit and wait for the FIFO to drain */
+> - =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONFIG);
+> - =A0 =A0 =A0 val |=3D PL080_CONFIG_HALT;
+> - =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
+> -
+> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080S_CH_CONFIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val |=3D PL080_CONFIG_HALT;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080S_CH_CONFIG);
+> + =A0 =A0 =A0 } else {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONFIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val |=3D PL080_CONFIG_HALT;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
+> + =A0 =A0 =A0 }
 
-It would be much better if you can do following:
+This would become simply:
 
-u32 ch_cfg_off;
+val =3D readl(ch->base + pl08x->config_reg);
+val |=3D PL080_CONFIG_HALT;
+writel(val, ch->base + pl08x->config_reg);
 
-	if (pl08x->vd->is_pl080_s3c)
-		ch_cfg_off = PL080S_CH_CONFIG;
-	else
-		ch_cfg_off = PL080_CH_CONFIG;
 
-Now, this offset can be used in existing code, without much code duplication.
+> =A0 =A0 =A0 =A0/* Clear the HALT bit */
+> - =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONFIG);
+> - =A0 =A0 =A0 val &=3D ~PL080_CONFIG_HALT;
+> - =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
+> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080S_CH_CONFIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~PL080_CONFIG_HALT;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080S_CH_CONFIG);
+> + =A0 =A0 =A0 } else {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val =3D readl(ch->base + PL080_CH_CONFIG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~PL080_CONFIG_HALT;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
+> + =A0 =A0 =A0 }
 
-> @@ -569,6 +641,7 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
->  	u32 cctl, early_bytes = 0;
->  	size_t max_bytes_per_lli, total_bytes = 0;
->  	struct pl08x_lli *llis_va;
-> +	size_t lli_len = 0, target_len, tsize, odd_bytes;
->  
->  	txd->llis_va = dma_pool_alloc(pl08x->pool, GFP_NOWAIT, &txd->llis_bus);
->  	if (!txd->llis_va) {
-> @@ -700,7 +773,7 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
->  		 * width left
->  		 */
->  		while (bd.remainder > (mbus->buswidth - 1)) {
-> -			size_t lli_len, tsize, width;
-> +			size_t width;
->  
+This would get rid of the if/else clauses
 
-why do we need above two changes. odd_bytes and target_len are still unused.
+> + =A0 =A0 =A0 if (pl08x->vd->is_pl080_s3c) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 u32 val =3D readl(ch->base + PL080S_CH_CONF=
+IG);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~(PL080_CONFIG_ENABLE | PL080_CONF=
+IG_ERR_IRQ_MASK |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 PL080_CONFI=
+G_TC_IRQ_MASK);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080S_CH_CONFIG);
+> + =A0 =A0 =A0 } else {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 u32 val =3D readl(ch->base + PL080_CH_CONFI=
+G);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 val &=3D ~(PL080_CONFIG_ENABLE | PL080_CONF=
+IG_ERR_IRQ_MASK |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 PL080_CONFI=
+G_TC_IRQ_MASK);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(val, ch->base + PL080_CH_CONFIG);
+> + =A0 =A0 =A0 }
 
->  			/*
->  			 * If enough left try to send max possible,
-> @@ -759,6 +832,9 @@ static int pl08x_fill_llis_for_desc(struct pl08x_driver_data *pl08x,
->  	llis_va[num_llis - 1].lli = 0;
->  	/* The final LLI element shall also fire an interrupt. */
->  	llis_va[num_llis - 1].cctl |= PL080_CONTROL_TC_IRQ_EN;
-> +	/* Keep the TransferSize seperate to fill samsung specific register */
-> +	if (pl08x->vd->is_pl080_s3c)
-> +		llis_va[num_llis - 1].cctl1 |= lli_len;
+As would this...
 
-I couldn't get this completely. Why do you keep only length of
-last lli in cctl1. what about all other llis. Also why |=
-and not directly cctl1 = lli_len
+> + =A0 =A0 =A0 /* Samsung DMAC is PL080 variant*/
+> + =A0 =A0 =A0 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .id =A0 =A0 =3D 0x00041082,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .mask =A0 =3D 0x000fffff,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .data =A0 =3D &vendor_pl080_s3c,
 
---
-viresh
+Does the hardware realy have this primecell number or is it something that =
+is
+hardcoded from the board/device tree?
+
+If it is hardcoded then no objections.
+
+In the latter case, replace 0x41 (=3D 'A', ARM) with something like
+0x55 'U' for Samsung or so. Or 0x51 'S'. Or whatever you like.
+
+Then add that to include/linux/amba/bus.h as
+AMBA_VENDOR_SAMSUNG =3D 0x55,
+so we have this under some kind of control.
+
+Yours,
+Linus Walleij
