@@ -1,120 +1,75 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH] mmc: dw_mmc: Support predefined multiple block transfers.
-Date: Wed, 28 Sep 2011 10:20:25 +0900
-Message-ID: <002a01cc7d7c$cceccef0$66c66cd0$%jun@samsung.com>
-References: <1317028528-13400-1-git-send-email-tgih.jun@samsung.com>
+From: padma venkat <padma.kvr@gmail.com>
+Subject: Re: [PATCH 2/7] ARM: SAMSUNG: Add CLK Macro for clkdev support
+Date: Wed, 28 Sep 2011 09:55:24 +0530
+Message-ID: <CAAgF-Bdf59wBWqj43FhB9m3Oo9ZFyMEA1yfAf7b3_qnbARNLfw@mail.gmail.com>
+References: <1316778827-24694-1-git-send-email-padma.v@samsung.com>
+	<1316778827-24694-3-git-send-email-padma.v@samsung.com>
+	<20110923202606.GT17169@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38134 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751894Ab1I1BU1 (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:33287 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752120Ab1I1EZZ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Sep 2011 21:20:27 -0400
-In-reply-to: <1317028528-13400-1-git-send-email-tgih.jun@samsung.com>
-Content-language: ko
+	Wed, 28 Sep 2011 00:25:25 -0400
+Received: by wwf22 with SMTP id 22so8275665wwf.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Sep 2011 21:25:24 -0700 (PDT)
+In-Reply-To: <20110923202606.GT17169@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Seungwon Jeon' <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, dh.han@samsung.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, jassisinghbrar@gmail.com, s.nawrocki@samsung.com, ben-linux@fluff.org
 
-This is  a duplicate patch from our security machine.
-Please ignore this resending.
+Hi Russell,
 
-Best regards,
-Seungwon Jeon.
-> 
-> This patch adds the support for predefined multiple block read/write.
-> 
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
->  drivers/mmc/host/dw_mmc.c |   32 ++++++++++++++++++++++++++------
->  1 files changed, 26 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 0ed1d28..36a5576 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -588,11 +588,10 @@ static void dw_mci_setup_bus(struct dw_mci_slot
-> *slot)
->  	mci_writel(host, CTYPE, (slot->ctype << slot->id));
->  }
-> 
-> -static void dw_mci_start_request(struct dw_mci *host,
-> -				 struct dw_mci_slot *slot)
-> +static void __dw_mci_start_request(struct dw_mci *host,
-> +				 struct dw_mci_slot *slot, struct mmc_command
-> *cmd)
->  {
->  	struct mmc_request *mrq;
-> -	struct mmc_command *cmd;
->  	struct mmc_data	*data;
->  	u32 cmdflags;
-> 
-> @@ -610,14 +609,13 @@ static void dw_mci_start_request(struct dw_mci *host,
->  	host->completed_events = 0;
->  	host->data_status = 0;
-> 
-> -	data = mrq->data;
-> +	data = cmd->data;
->  	if (data) {
->  		dw_mci_set_timeout(host);
->  		mci_writel(host, BYTCNT, data->blksz*data->blocks);
->  		mci_writel(host, BLKSIZ, data->blksz);
->  	}
-> 
-> -	cmd = mrq->cmd;
->  	cmdflags = dw_mci_prepare_command(slot->mmc, cmd);
-> 
->  	/* this is the first command, send the initialization clock */
-> @@ -635,6 +633,16 @@ static void dw_mci_start_request(struct dw_mci *host,
->  		host->stop_cmdr = dw_mci_prepare_command(slot->mmc, mrq-
-> >stop);
->  }
-> 
-> +static void dw_mci_start_request(struct dw_mci *host,
-> +				 struct dw_mci_slot *slot)
-> +{
-> +	struct mmc_request *mrq = slot->mrq;
-> +	struct mmc_command *cmd;
-> +
-> +	cmd = mrq->sbc ? mrq->sbc : mrq->cmd;
-> +	__dw_mci_start_request(host, slot, cmd);
-> +}
-> +
->  /* must be called with host->lock held */
->  static void dw_mci_queue_request(struct dw_mci *host, struct dw_mci_slot
-> *slot,
->  				 struct mmc_request *mrq)
-> @@ -889,7 +897,13 @@ static void dw_mci_tasklet_func(unsigned long priv)
->  			cmd = host->cmd;
->  			host->cmd = NULL;
->  			set_bit(EVENT_CMD_COMPLETE, &host->completed_events);
-> -			dw_mci_command_complete(host, host->mrq->cmd);
-> +			dw_mci_command_complete(host, cmd);
-> +			if ((cmd == host->mrq->sbc) && !cmd->error) {
-> +				prev_state = state = STATE_SENDING_CMD;
-> +				__dw_mci_start_request(host, host->cur_slot,
-> host->mrq->cmd);
-> +				goto unlock;
-> +			}
-> +
->  			if (!host->mrq->data || cmd->error) {
->  				dw_mci_request_end(host, host->mrq);
->  				goto unlock;
-> @@ -967,6 +981,12 @@ static void dw_mci_tasklet_func(unsigned long priv)
->  				goto unlock;
->  			}
-> 
-> +			if (host->mrq->sbc && !data->error) {
-> +				data->stop->error = 0;
-> +				dw_mci_request_end(host, host->mrq);
-> +				goto unlock;
-> +			}
-> +
->  			prev_state = state = STATE_SENDING_STOP;
->  			if (!data->error)
->  				send_stop_cmd(host, data);
+On Sat, Sep 24, 2011 at 1:56 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+>
+> On Fri, Sep 23, 2011 at 05:23:42PM +0530, Padmavathi Venna wrote:
+> > diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/=
+plat-samsung/include/plat/clock.h
+> > index 73c66d4..c864825 100644
+> > --- a/arch/arm/plat-samsung/include/plat/clock.h
+> > +++ b/arch/arm/plat-samsung/include/plat/clock.h
+> > @@ -17,6 +17,13 @@
+> >
+> > =A0struct clk;
+> >
+> > +#define CLK(dev, con, ck) =A0 =A0\
+> > + =A0 =A0 { =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
+> > + =A0 =A0 =A0 =A0 =A0 =A0 .dev_id =3D dev, =A0\
+> > + =A0 =A0 =A0 =A0 =A0 =A0 .con_id =3D con, =A0\
+> > + =A0 =A0 =A0 =A0 =A0 =A0 .clk =3D ck, =A0 =A0 =A0\
+> > + =A0 =A0 }
+> > +
+>
+> How about a patch series which moves this to include/linux/clkdev.h,
+> preferably called CLKDEV_INIT() ?
+>
+   Thanks for the review. I am currently working on preparing the patch=
+ series
+   as per your suggestion.
+
+> There's versions of this already in:
+> arch/arm/mach-ux500/clock.h
+> arch/arm/mach-tegra/tegra2_clocks.c
+> arch/arm/mach-nomadik/clock.c
+> arch/arm/mach-davinci/clock.h
+>
+> so let's have it standardized instead of everyone inventing their own=
+=2E
+>
+> (Remember, that's what we're supposed to already being looking out fo=
+r
+> since Linus' whinge about how ARM stuff tends to grow out of control.=
+=2E.)
 > --
-> 1.7.0.4
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+
+Best Regards
+Padma
