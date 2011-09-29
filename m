@@ -1,180 +1,43 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS4: Add support MCT PPI for EXYNOS4212
-Date: Thu, 29 Sep 2011 16:25:00 +0900
-Message-ID: <009001cc7e78$e628f180$b27ad480$%kim@samsung.com>
+Subject: [PATCH 0/5] ARM: EXYNOS4: Add support for EXYNOS4412 SoC
+Date: Thu, 29 Sep 2011 17:12:42 +0900
+Message-ID: <009301cc7e7f$8fcdfe50$af69faf0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21452 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752627Ab1I2HZB (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:39485 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754822Ab1I2IMn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Sep 2011 03:25:01 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Thu, 29 Sep 2011 04:12:43 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LS900BRDWISJPQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Sep 2011 16:25:00 +0900 (KST)
+ 2010)) with ESMTP id <0LS9002CTYT1XF70@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Sep 2011 17:12:42 +0900 (KST)
 Received: from kgenekim ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LS900BILWLOUK00@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 29 Sep 2011 16:25:00 +0900 (KST)
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LS900CY8YT6G480@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 29 Sep 2011 17:12:42 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Marc Zyngier' <marc.zyngier@arm.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, chaos.youn@samsung.com
+To: 'LAK' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org
+Cc: chaos.youn@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-From: Changhwan Youn <chaos.youn@samsung.com>
+This patch adds support for EXYNOS4412 SoC which integrates a ARM Cortex A9 quad-core.
 
-This patch implements clock event timer using MCT PPI
-and make EXYNOS4212 use MCT PPI instead of MCT SPI.
+[PATCH 1/5] ARM: EXYNOS4: Add support new EXYNOS4412 SoC
+[PATCH 2/5] ARM: EXYNOS4: Add support clock for EXYNOS4412
+[PATCH 3/5] ARM: EXYNOS4: Add functions for gic interrupt handling
+[PATCH 4/5] ARM: EXYNOS4: Add MCT support for EXYNOS4412
+[PATCH 5/5] ARM: EXYNOS4: Add support SMDK4412 Board
 
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-exynos4/include/mach/entry-macro.S |    6 ++
- arch/arm/mach-exynos4/include/mach/irqs.h        |    2 +
- arch/arm/mach-exynos4/mct.c                      |   55 ++++++++++++++++++----
- 3 files changed, 53 insertions(+), 10 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-index d7a1e28..c09ab4c 100644
---- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
-+++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-@@ -80,4 +80,10 @@
- 		/* As above, this assumes that irqstat and base are preserved.. */
- 
- 		.macro test_for_ltirq, irqnr, irqstat, base, tmp
-+		bic	\irqnr, \irqstat, #0x1c00
-+		mov	\tmp, #0
-+		cmp	\irqnr, #28
-+		moveq	\tmp, #1
-+		streq	\irqstat, [\base, #GIC_CPU_EOI]
-+		cmp	\tmp, #0
- 		.endm
-diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-index 62093b9..dfd4b7e 100644
---- a/arch/arm/mach-exynos4/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-@@ -19,6 +19,8 @@
- 
- #define IRQ_PPI(x)		S5P_IRQ(x+16)
- 
-+#define IRQ_MCT_LOCALTIMER	IRQ_PPI(12)
-+
- /* SPI: Shared Peripheral Interrupt */
- 
- #define IRQ_SPI(x)		S5P_IRQ(x+32)
-diff --git a/arch/arm/mach-exynos4/mct.c b/arch/arm/mach-exynos4/mct.c
-index ddd8686..f43f3fa 100644
---- a/arch/arm/mach-exynos4/mct.c
-+++ b/arch/arm/mach-exynos4/mct.c
-@@ -20,12 +20,23 @@
- #include <linux/delay.h>
- #include <linux/percpu.h>
- 
-+#include <asm/hardware/gic.h>
-+
-+#include <plat/cpu.h>
-+
- #include <mach/map.h>
-+#include <mach/irqs.h>
- #include <mach/regs-mct.h>
- #include <asm/mach/time.h>
- 
-+enum {
-+	MCT_INT_SPI,
-+	MCT_INT_PPI
-+};
-+
- static unsigned long clk_cnt_per_tick;
- static unsigned long clk_rate;
-+static unsigned int mct_int_type;
- 
- struct mct_clock_event_device {
- 	struct clock_event_device *evt;
-@@ -321,9 +332,8 @@ static inline void exynos4_tick_set_mode(enum clock_event_mode mode,
- 	}
- }
- 
--static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
-+static inline int exynos4_mct_tick_clear(struct mct_clock_event_device *mevt)
- {
--	struct mct_clock_event_device *mevt = dev_id;
- 	struct clock_event_device *evt = mevt->evt;
- 
- 	/*
-@@ -335,7 +345,20 @@ static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
- 		exynos4_mct_tick_stop(mevt);
- 
- 	/* Clear the MCT tick interrupt */
--	exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
-+	if (__raw_readl(mevt->base + MCT_L_INT_CSTAT_OFFSET) & 1) {
-+		exynos4_mct_write(0x1, mevt->base + MCT_L_INT_CSTAT_OFFSET);
-+		return 1;
-+	} else {
-+		return 0;
-+	}
-+}
-+
-+static irqreturn_t exynos4_mct_tick_isr(int irq, void *dev_id)
-+{
-+	struct mct_clock_event_device *mevt = dev_id;
-+	struct clock_event_device *evt = mevt->evt;
-+
-+	exynos4_mct_tick_clear(mevt);
- 
- 	evt->event_handler(evt);
- 
-@@ -384,13 +407,17 @@ static void exynos4_mct_tick_init(struct clock_event_device *evt)
- 
- 	exynos4_mct_write(0x1, mct_tick[cpu].base + MCT_L_TCNTB_OFFSET);
- 
--	if (cpu == 0) {
--		mct_tick0_event_irq.dev_id = &mct_tick[cpu];
--		setup_irq(IRQ_MCT_L0, &mct_tick0_event_irq);
-+	if (mct_int_type == MCT_INT_SPI) {
-+		if (cpu == 0) {
-+			mct_tick0_event_irq.dev_id = &mct_tick[cpu];
-+			setup_irq(IRQ_MCT_L0, &mct_tick0_event_irq);
-+		} else {
-+			mct_tick1_event_irq.dev_id = &mct_tick[cpu];
-+			setup_irq(IRQ_MCT_L1, &mct_tick1_event_irq);
-+			irq_set_affinity(IRQ_MCT_L1, cpumask_of(1));
-+		}
- 	} else {
--		mct_tick1_event_irq.dev_id = &mct_tick[cpu];
--		setup_irq(IRQ_MCT_L1, &mct_tick1_event_irq);
--		irq_set_affinity(IRQ_MCT_L1, cpumask_of(1));
-+		gic_enable_ppi(IRQ_MCT_LOCALTIMER);
- 	}
- }
- 
-@@ -404,7 +431,10 @@ int __cpuinit local_timer_setup(struct clock_event_device *evt)
- 
- int local_timer_ack(void)
- {
--	return 0;
-+	unsigned int cpu = smp_processor_id();
-+	struct mct_clock_event_device *mevt = &mct_tick[cpu];
-+
-+	return exynos4_mct_tick_clear(mevt);
- }
- 
- #endif /* CONFIG_LOCAL_TIMERS */
-@@ -419,6 +449,11 @@ static void __init exynos4_timer_resources(void)
- 
- static void __init exynos4_timer_init(void)
- {
-+	if (soc_is_exynos4210())
-+		mct_int_type = MCT_INT_SPI;
-+	else
-+		mct_int_type = MCT_INT_PPI;
-+
- 	exynos4_timer_resources();
- 	exynos4_clocksource_init();
- 	exynos4_clockevent_init();
--- 
-1.7.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
