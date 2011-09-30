@@ -1,47 +1,60 @@
 From: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Subject: Re: [PATCH v2 2/5] ARM: S5P: Remove system MMU driver from
- arm/plat-s5p
-Date: Fri, 30 Sep 2011 15:42:43 +0200
-Message-ID: <20110930134243.GR2138@amd.com>
-References: <016d01cc7f42$e58a0aa0$b09e1fe0$%kim@samsung.com>
+Subject: Re: [PATCH v2 5/5] iommu/exynos: Use bus_set_iommu instead of
+ register_iommu
+Date: Fri, 30 Sep 2011 15:46:43 +0200
+Message-ID: <20110930134643.GS2138@amd.com>
+References: <017001cc7f43$04a2db60$0de89220$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from am1ehsobe005.messaging.microsoft.com ([213.199.154.208]:11583
-	"EHLO AM1EHSOBE005.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753295Ab1I3Nmz (ORCPT
+Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:5516 "EHLO
+	TX2EHSOBE007.bigfish.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757954Ab1I3NuW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Sep 2011 09:42:55 -0400
+	Fri, 30 Sep 2011 09:50:22 -0400
 Content-Disposition: inline
-In-Reply-To: <016d01cc7f42$e58a0aa0$b09e1fe0$%kim@samsung.com>
+In-Reply-To: <017001cc7f43$04a2db60$0de89220$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ohad Ben-Cohen' <ohad@wizery.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>
 
-On Fri, Sep 30, 2011 at 03:30:57AM -0400, Kukjin Kim wrote:
+On Fri, Sep 30, 2011 at 03:31:49AM -0400, Kukjin Kim wrote:
 > From: KyongHo Cho <pullip.cho@samsung.com>
 > 
-> Due to Ohad Ben-Cohen gathered IOMMU drivers in drivers/iommu directory,
-> System MMU driver is moved to drivers/iommu directory and removed
-> from arch/arm/plat-s5p directory.
+> This replaces register_iommu() with bus_set_iommu() according to the
+> suggestion of Joerg Roedel.
+
+This should be part of patch 3 already when the bus_set_iommu() change
+is merged. Otherwise it breaks bisectability too.
+
+	Joerg
+
 > 
-> Please see
-> https://lkml.org/lkml/2011/6/8/69
-> 
+> Cc: Joerg Roedel <joerg.roedel@amd.com>
 > Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
 > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
->  arch/arm/plat-s5p/Kconfig               |    8 -
->  arch/arm/plat-s5p/Makefile              |    1 -
->  arch/arm/plat-s5p/include/plat/sysmmu.h |   95 ----------
->  arch/arm/plat-s5p/sysmmu.c              |  312 -------------------------------
-
-You can use 'git mv' to just move the file. This ensures bisectability
-of your patches. No need to delete the code in one patch and re-add it
-in the next one (which breaks bisectability).
-
-	Joerg
+>  drivers/iommu/exynos_iommu.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/iommu/exynos_iommu.c b/drivers/iommu/exynos_iommu.c
+> index d355a2e..e36f7b2 100644
+> --- a/drivers/iommu/exynos_iommu.c
+> +++ b/drivers/iommu/exynos_iommu.c
+> @@ -912,7 +912,7 @@ static int __init exynos_iommu_init(void)
+>  	if (!l2table_cachep)
+>  		return -ENOMEM;
+>  
+> -	register_iommu(&exynos_iommu_ops);
+> +	bus_set_iommu(&platform_bus_type, &exynos_iommu_ops);
+>  
+>  	return 0;
+>  }
+> -- 
+> 1.7.1
+> 
+> 
 
 -- 
 AMD Operating System Research Center
