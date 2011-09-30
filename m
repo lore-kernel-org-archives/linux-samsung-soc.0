@@ -1,68 +1,56 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 0/2]: Add a common macro for creating struct clk_lookup entries
-Date: Fri, 30 Sep 2011 16:41:35 +0530
-Message-ID: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH 1/2] ARM: CLKDEV: Add Common Macro for clk_lookup
+Date: Fri, 30 Sep 2011 16:41:36 +0530
+Message-ID: <1317381097-2691-2-git-send-email-padma.v@samsung.com>
+References: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33994 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755503Ab1I3LF6 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:50848 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755517Ab1I3LGN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Sep 2011 07:05:58 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Fri, 30 Sep 2011 07:06:13 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSC00H5E1HWRZM0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:05:57 +0900 (KST)
+ 2010)) with ESMTP id <0LSC003801HR2OA0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:06:01 +0900 (KST)
 Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
  by mmp1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTPA id <0LSC00MDT1HMAOO1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:05:56 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:06:00 +0900 (KST)
+In-reply-to: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: padma.v@samsung.com, kgene.kim@samsung.com, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: khilman@ti.com, nsekhar@ti.com, hsweeten@visionengravers.com, rmallon@gmail.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, plagnioj@jcrosoft.com, amit.kucheria@canonical.com, kernel@pengutronix.de, hjk@hansjkoch.de, linux@arm.linux.org.uk
 
-This patchset consolidates the macro that creates 'struct clk_lookup'
-entries by introducing a common macro 'CLKDEV_INIT' as suggested by
-Russell King. Few of the platforms have been modified to use this new macro.
+Added a standardized macro CLKDEV_INIT which can used across all
+the platforms to support clkdev
 
-For Davinci, the last entry in the clk_lookup array is modified such
-that the NULL entry is created without using the macro in order to
-avoid a compilation issue when passing NULL as the third parameter
-to CLKDEV_INIT macro.
+Suggested by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+ include/linux/clkdev.h |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-I have done the replacement by using python script. I have only build tested
-for below platforms with existing defconfigs.
-
-
-Padmavathi Venna (2):
-  ARM: CLKDEV: Add Common Macro for clk_lookup
-  ARM: Switch to using CLKDEV_INIT macro for creating clk_lookup instance
-
- arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
- arch/arm/mach-davinci/clock.h            |    7 --
- arch/arm/mach-davinci/da830.c            |  101 +++++++++++----------
- arch/arm/mach-davinci/da850.c            |   95 ++++++++++----------
- arch/arm/mach-davinci/dm355.c            |   86 +++++++++---------
- arch/arm/mach-davinci/dm365.c            |  112 ++++++++++++------------
- arch/arm/mach-davinci/dm644x.c           |   77 ++++++++--------
- arch/arm/mach-davinci/dm646x.c           |   81 +++++++++--------
- arch/arm/mach-davinci/tnetv107x.c        |  134 ++++++++++++++--------------
- arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
- arch/arm/mach-imx/clock-imx1.c           |   38 ++++-----
- arch/arm/mach-imx/clock-imx21.c          |   91 +++++++++----------
- arch/arm/mach-imx/clock-imx25.c          |   77 +++++++---------
- arch/arm/mach-imx/clock-imx27.c          |  111 +++++++++++------------
- arch/arm/mach-imx/clock-imx31.c          |  103 ++++++++++-----------
- arch/arm/mach-imx/clock-imx35.c          |  117 +++++++++++-------------
- arch/arm/mach-lpc32xx/clock.c            |   75 +++++++---------
- arch/arm/mach-mx5/clock-mx51-mx53.c      |  145 ++++++++++++++----------------
- arch/arm/mach-mxs/clock-mx23.c           |   39 ++++-----
- arch/arm/mach-mxs/clock-mx28.c           |   67 ++++++--------
- arch/arm/mach-tcc8k/clock.c              |  107 ++++++++++------------
- include/linux/clkdev.h                   |    7 ++
- 22 files changed, 832 insertions(+), 904 deletions(-)
-
+diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
+index 457bcb0..f2db158 100644
+--- a/include/linux/clkdev.h
++++ b/include/linux/clkdev.h
+@@ -14,6 +14,13 @@
+ 
+ #include <asm/clkdev.h>
+ 
++#define CLKDEV_INIT(d, n, c) \
++	{ \
++		.dev_id = d, \
++		.con_id = n, \
++		.clk = &c, \
++	},
++
+ struct clk;
+ struct device;
+ 
 -- 
 1.7.4.4
