@@ -1,94 +1,68 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Enable MFC on Origen
-Date: Fri, 30 Sep 2011 16:01:52 +0530
-Message-ID: <1317378712-12287-1-git-send-email-sachin.kamat@linaro.org>
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH 0/2]: Add a common macro for creating struct clk_lookup entries
+Date: Fri, 30 Sep 2011 16:41:35 +0530
+Message-ID: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:56992 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754105Ab1I3Kg0 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33994 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755503Ab1I3LF6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Sep 2011 06:36:26 -0400
-Received: by pzk1 with SMTP id 1so4070658pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 30 Sep 2011 03:36:26 -0700 (PDT)
+	Fri, 30 Sep 2011 07:05:58 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSC00H5E1HWRZM0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:05:57 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LSC00MDT1HMAOO1@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:05:56 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, sachin.kamat@linaro.org
+To: padma.v@samsung.com, kgene.kim@samsung.com, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: khilman@ti.com, nsekhar@ti.com, hsweeten@visionengravers.com, rmallon@gmail.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, plagnioj@jcrosoft.com, amit.kucheria@canonical.com, kernel@pengutronix.de, hjk@hansjkoch.de, linux@arm.linux.org.uk
 
-This patch enables multi-format codec (MFC) support on Origen board.
+This patchset consolidates the macro that creates 'struct clk_lookup'
+entries by introducing a common macro 'CLKDEV_INIT' as suggested by
+Russell King. Few of the platforms have been modified to use this new macro.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-PD related code in KConfig and header are added only because for-next branch of 
-Kgene's tree does not have it enabled yet.
+For Davinci, the last entry in the clk_lookup array is modified such
+that the NULL entry is created without using the macro in order to
+avoid a compilation issue when passing NULL as the third parameter
+to CLKDEV_INIT macro.
 
----
- arch/arm/mach-exynos4/Kconfig       |    2 ++
- arch/arm/mach-exynos4/mach-origen.c |   13 +++++++++++++
- 2 files changed, 15 insertions(+), 0 deletions(-)
+I have done the replacement by using python script. I have only build tested
+for below platforms with existing defconfigs.
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index d0491c2..93f9a62 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -243,6 +243,8 @@ config MACH_ORIGEN
- 	select S5P_DEV_I2C_HDMIPHY
- 	select S5P_DEV_TV
- 	select S5P_DEV_USB_EHCI
-+	select S5P_DEV_MFC
-+	select EXYNOS4_DEV_PD
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_SETUP_SDHCI
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index 421294b..4e53d10 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -30,6 +30,8 @@
- #include <plat/clock.h>
- #include <plat/gpio-cfg.h>
- #include <plat/backlight.h>
-+#include <plat/mfc.h>
-+#include <plat/pd.h>
- 
- #include <mach/map.h>
- 
-@@ -167,6 +169,10 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&s5p_device_hdmi,
- 	&s5p_device_i2c_hdmiphy,
- 	&s5p_device_mixer,
-+	&s5p_device_mfc,
-+	&s5p_device_mfc_l,
-+	&s5p_device_mfc_r,
-+	&exynos4_device_pd[PD_MFC],
- 	&origen_device_gpiokeys,
- };
- 
-@@ -188,6 +194,11 @@ static void __init origen_map_io(void)
- 	s3c24xx_init_uarts(origen_uartcfgs, ARRAY_SIZE(origen_uartcfgs));
- }
- 
-+static void __init origen_reserve(void)
-+{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-+}
-+
- static void __init origen_machine_init(void)
- {
- 	/*
-@@ -203,6 +214,7 @@ static void __init origen_machine_init(void)
- 	s5p_i2c_hdmiphy_set_platdata(NULL);
- 
- 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
-+	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
- 
- 	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
- }
-@@ -214,4 +226,5 @@ MACHINE_START(ORIGEN, "ORIGEN")
- 	.map_io		= origen_map_io,
- 	.init_machine	= origen_machine_init,
- 	.timer		= &exynos4_timer,
-+	.reserve	= &origen_reserve,
- MACHINE_END
+
+Padmavathi Venna (2):
+  ARM: CLKDEV: Add Common Macro for clk_lookup
+  ARM: Switch to using CLKDEV_INIT macro for creating clk_lookup instance
+
+ arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
+ arch/arm/mach-davinci/clock.h            |    7 --
+ arch/arm/mach-davinci/da830.c            |  101 +++++++++++----------
+ arch/arm/mach-davinci/da850.c            |   95 ++++++++++----------
+ arch/arm/mach-davinci/dm355.c            |   86 +++++++++---------
+ arch/arm/mach-davinci/dm365.c            |  112 ++++++++++++------------
+ arch/arm/mach-davinci/dm644x.c           |   77 ++++++++--------
+ arch/arm/mach-davinci/dm646x.c           |   81 +++++++++--------
+ arch/arm/mach-davinci/tnetv107x.c        |  134 ++++++++++++++--------------
+ arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
+ arch/arm/mach-imx/clock-imx1.c           |   38 ++++-----
+ arch/arm/mach-imx/clock-imx21.c          |   91 +++++++++----------
+ arch/arm/mach-imx/clock-imx25.c          |   77 +++++++---------
+ arch/arm/mach-imx/clock-imx27.c          |  111 +++++++++++------------
+ arch/arm/mach-imx/clock-imx31.c          |  103 ++++++++++-----------
+ arch/arm/mach-imx/clock-imx35.c          |  117 +++++++++++-------------
+ arch/arm/mach-lpc32xx/clock.c            |   75 +++++++---------
+ arch/arm/mach-mx5/clock-mx51-mx53.c      |  145 ++++++++++++++----------------
+ arch/arm/mach-mxs/clock-mx23.c           |   39 ++++-----
+ arch/arm/mach-mxs/clock-mx28.c           |   67 ++++++--------
+ arch/arm/mach-tcc8k/clock.c              |  107 ++++++++++------------
+ include/linux/clkdev.h                   |    7 ++
+ 22 files changed, 832 insertions(+), 904 deletions(-)
+
 -- 
-1.7.4.1
+1.7.4.4
