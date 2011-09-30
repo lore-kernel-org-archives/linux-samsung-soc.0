@@ -1,111 +1,58 @@
 From: H Hartley Sweeten <hartleys@visionengravers.com>
 Subject: RE: [PATCH 2/2] ARM: Switch to using CLKDEV_INIT macro for creating
- clk_lookup instance
-Date: Fri, 30 Sep 2011 12:03:12 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F001F39DC5675C@AUSP01VMBX24.collaborationhost.net>
+	clk_lookup instance
+Date: Fri, 30 Sep 2011 12:08:58 -0500
+Message-ID: <ADE657CA350FB648AAC2C43247A983F001F39DC56761@AUSP01VMBX24.collaborationhost.net>
 References: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
- <1317381097-2691-3-git-send-email-padma.v@samsung.com>
+	<1317381097-2691-3-git-send-email-padma.v@samsung.com>
+	<4E85B779.7030402@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail131.messagelabs.com ([216.82.242.99]:10408 "EHLO
-	mail131.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753439Ab1I3RDV convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Sep 2011 13:03:21 -0400
-In-Reply-To: <1317381097-2691-3-git-send-email-padma.v@samsung.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4E85B779.7030402@gmail.com>
 Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ryan Mallon <rmallon@gmail.com>, Padmavathi Venna <padma.v@samsung.com>
+Cc: "khilman@ti.com" <khilman@ti.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "nsekhar@ti.com" <nsekhar@ti.com>, "amit.kucheria@canonical.com" <amit.kucheria@canonical.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "padma.kvr@gmail.com" <padma.kvr@gmail.com>, "hjk@hansjkoch.de" <hjk@hansjkoch.de>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "padma.kvr@gmail.com" <padma.kvr@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-sams>
-Cc: "khilman@ti.com" <khilman@ti.com>, "nsekhar@ti.com" <nsekhar@ti.com>, "rmallon@gmail.com" <rmallon@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "amit.kucheria@canonical.com" <amit.kucheria@canonical.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "hjk@hansjkoch.de" <hjk@hansjkoch.de>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>
 
-On Friday, September 30, 2011 4:12 AM, Padmavathi Venna wrote:
+On Friday, September 30, 2011 5:35 AM, Ryan Mallon wrote:
+> On 30/09/11 21:11, Padmavathi Venna wrote:
+>> Replace platform specific macros that creates struct clk_lookup
+>> instance with the new common CLKDEV_INIT macro
+>>
+>> Suggested by: Russell King <rmk+kernel@arm.linux.org.uk>
+>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+>> ---
+
+[...]
+
+>>  static struct clk_lookup cdce_clks[] = {
+>> -	CLK(NULL, "xin", &cdce_clk_in),
+>> -	CLK(NULL, NULL, NULL),
+>> +	CLKDEV_INIT(NULL, "xin", cdce_clk_in)
+>> +	{.dev_id = NULL, .con_id = NULL, .clk = NULL,},
 >
-> Replace platform specific macros that creates struct clk_lookup
-> instance with the new common CLKDEV_INIT macro
->
-> Suggested by: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
+> Why not CLKDEV_INIT(NULL, NULL, NULL)? Or create another macro
+> CLKDEV_NULL (or similar) for the last entry in the list rather than
+> duplicating this everywhere.
 
-For the ep93xx part:
+The CLKDEV_INIT macro does this with the third parameter:
 
-Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+	.clk = &c,
 
-> arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
->
-> diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
-> index ca4de71..118c905 100644
-> --- a/arch/arm/mach-ep93xx/clock.c
-> +++ b/arch/arm/mach-ep93xx/clock.c
-> @@ -198,39 +198,36 @@ static struct clk clk_m2m1 = {
->  	.enable_mask	= EP93XX_SYSCON_PWRCNT_DMA_M2M1,
->  };
->  
-> -#define INIT_CK(dev,con,ck)					\
-> -	{ .dev_id = dev, .con_id = con, .clk = ck }
-> -
->  static struct clk_lookup clocks[] = {
-> -	INIT_CK(NULL,			"xtali",	&clk_xtali),
-> -	INIT_CK("apb:uart1",		NULL,		&clk_uart1),
-> -	INIT_CK("apb:uart2",		NULL,		&clk_uart2),
-> -	INIT_CK("apb:uart3",		NULL,		&clk_uart3),
-> -	INIT_CK(NULL,			"pll1",		&clk_pll1),
-> -	INIT_CK(NULL,			"fclk",		&clk_f),
-> -	INIT_CK(NULL,			"hclk",		&clk_h),
-> -	INIT_CK(NULL,			"apb_pclk",	&clk_p),
-> -	INIT_CK(NULL,			"pll2",		&clk_pll2),
-> -	INIT_CK("ep93xx-ohci",		NULL,		&clk_usb_host),
-> -	INIT_CK("ep93xx-keypad",	NULL,		&clk_keypad),
-> -	INIT_CK("ep93xx-fb",		NULL,		&clk_video),
-> -	INIT_CK("ep93xx-spi.0",		NULL,		&clk_spi),
-> -	INIT_CK("ep93xx-i2s",		"mclk",		&clk_i2s_mclk),
-> -	INIT_CK("ep93xx-i2s",		"sclk",		&clk_i2s_sclk),
-> -	INIT_CK("ep93xx-i2s",		"lrclk",	&clk_i2s_lrclk),
-> -	INIT_CK(NULL,			"pwm_clk",	&clk_pwm),
-> -	INIT_CK(NULL,			"m2p0",		&clk_m2p0),
-> -	INIT_CK(NULL,			"m2p1",		&clk_m2p1),
-> -	INIT_CK(NULL,			"m2p2",		&clk_m2p2),
-> -	INIT_CK(NULL,			"m2p3",		&clk_m2p3),
-> -	INIT_CK(NULL,			"m2p4",		&clk_m2p4),
-> -	INIT_CK(NULL,			"m2p5",		&clk_m2p5),
-> -	INIT_CK(NULL,			"m2p6",		&clk_m2p6),
-> -	INIT_CK(NULL,			"m2p7",		&clk_m2p7),
-> -	INIT_CK(NULL,			"m2p8",		&clk_m2p8),
-> -	INIT_CK(NULL,			"m2p9",		&clk_m2p9),
-> -	INIT_CK(NULL,			"m2m0",		&clk_m2m0),
-> -	INIT_CK(NULL,			"m2m1",		&clk_m2m1),
-> +	CLKDEV_INIT(NULL,			"xtali",	clk_xtali)
-> +	CLKDEV_INIT("apb:uart1",		NULL,		clk_uart1)
-> +	CLKDEV_INIT("apb:uart2",		NULL,		clk_uart2)
-> +	CLKDEV_INIT("apb:uart3",		NULL,		clk_uart3)
-> +	CLKDEV_INIT(NULL,			"pll1",		clk_pll1)
-> +	CLKDEV_INIT(NULL,			"fclk",		clk_f)
-> +	CLKDEV_INIT(NULL,			"hclk",		clk_h)
-> +	CLKDEV_INIT(NULL,			"apb_pclk",	clk_p)
-> +	CLKDEV_INIT(NULL,			"pll2",		clk_pll2)
-> +	CLKDEV_INIT("ep93xx-ohci",		NULL,		clk_usb_host)
-> +	CLKDEV_INIT("ep93xx-keypad",	NULL,		clk_keypad)
-> +	CLKDEV_INIT("ep93xx-fb",		NULL,		clk_video)
-> +	CLKDEV_INIT("ep93xx-spi.0",		NULL,		clk_spi)
-> +	CLKDEV_INIT("ep93xx-i2s",		"mclk",		clk_i2s_mclk)
-> +	CLKDEV_INIT("ep93xx-i2s",		"sclk",		clk_i2s_sclk)
-> +	CLKDEV_INIT("ep93xx-i2s",		"lrclk",	clk_i2s_lrclk)
-> +	CLKDEV_INIT(NULL,			"pwm_clk",	clk_pwm)
-> +	CLKDEV_INIT(NULL,			"m2p0",		clk_m2p0)
-> +	CLKDEV_INIT(NULL,			"m2p1",		clk_m2p1)
-> +	CLKDEV_INIT(NULL,			"m2p2",		clk_m2p2)
-> +	CLKDEV_INIT(NULL,			"m2p3",		clk_m2p3)
-> +	CLKDEV_INIT(NULL,			"m2p4",		clk_m2p4)
-> +	CLKDEV_INIT(NULL,			"m2p5",		clk_m2p5)
-> +	CLKDEV_INIT(NULL,			"m2p6",		clk_m2p6)
-> +	CLKDEV_INIT(NULL,			"m2p7",		clk_m2p7)
-> +	CLKDEV_INIT(NULL,			"m2p8",		clk_m2p8)
-> +	CLKDEV_INIT(NULL,			"m2p9",		clk_m2p9)
-> +	CLKDEV_INIT(NULL,			"m2m0",		clk_m2m0)
-> +	CLKDEV_INIT(NULL,			"m2m1",		clk_m2m1)
->  };
->  
->  static DEFINE_SPINLOCK(clk_lock);
+I'm not sure &NULL is valid.
+
+Is the sentinel entry actually needed?  ep93xx does not have one.
+
+Regards,
+Hartley
