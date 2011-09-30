@@ -1,125 +1,190 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 4/4] ARM: S5PV210: Add SPI clkdev support
-Date: Fri, 30 Sep 2011 16:52:33 +0530
-Message-ID: <1317381753-2845-5-git-send-email-padma.v@samsung.com>
-References: <1317381753-2845-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:36614 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758321Ab1I3LQ7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Sep 2011 07:16:59 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSC004K2201GMQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:16:58 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTPA id <0LSC00N341ZU1RI1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 30 Sep 2011 20:16:58 +0900 (KST)
-In-reply-to: <1317381753-2845-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: "Hans J. Koch" <hjk@hansjkoch.de>
+Subject: Re: [PATCH 2/2] ARM: Switch to using CLKDEV_INIT macro for creating
+	clk_lookup instance
+Date: Fri, 30 Sep 2011 13:26:33 +0200
+Message-ID: <20110930112633.GB9046@local>
+References: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
+	<1317381097-2691-3-git-send-email-padma.v@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1317381097-2691-3-git-send-email-padma.v@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: khilman@ti.com, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, rmallon@gmail.com, s.hauer@pengutronix.de, nsekhar@ti.com, amit.kucheria@canonical.com, hsweeten@visionengravers.com, kgene.kim@samsung.com, kernel@pengutronix.de, u.kleine-koenig@pengutronix.de, padma.kvr@gmail.com, hjk@hansjkoch.de, plagnioj@jcrosoft.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma.v@samsung.com, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk
 
-Registered the SPI bus clocks with clkdev using generic
-connection id.
+On Fri, Sep 30, 2011 at 04:41:37PM +0530, Padmavathi Venna wrote:
+> Replace platform specific macros that creates struct clk_lookup
+> instance with the new common CLKDEV_INIT macro
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/mach-s5pv210/clock.c |   58 ++++++++++++++++++++++++++--------------
- 1 files changed, 38 insertions(+), 20 deletions(-)
+Well, for mach-tcc8k, it only saves 7 lines, but it's surely a good idea to
+have one common macro for all arm subarchs.
 
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index 4c5ac7a..3edf034 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -983,26 +983,6 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_div = { .reg = S5P_CLK_DIV1, .shift = 28, .size = 4 },
- 	}, {
- 		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.0",
--			.enable		= s5pv210_clk_mask0_ctrl,
--			.ctrlbit	= (1 << 16),
--		},
--		.sources = &clkset_group2,
--		.reg_src = { .reg = S5P_CLK_SRC5, .shift = 0, .size = 4 },
--		.reg_div = { .reg = S5P_CLK_DIV5, .shift = 0, .size = 4 },
--	}, {
--		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.1",
--			.enable		= s5pv210_clk_mask0_ctrl,
--			.ctrlbit	= (1 << 17),
--		},
--		.sources = &clkset_group2,
--		.reg_src = { .reg = S5P_CLK_SRC5, .shift = 4, .size = 4 },
--		.reg_div = { .reg = S5P_CLK_DIV5, .shift = 4, .size = 4 },
--	}, {
--		.clk		= {
- 			.name		= "sclk_pwi",
- 			.enable		= s5pv210_clk_mask0_ctrl,
- 			.ctrlbit	= (1 << 29),
-@@ -1022,6 +1002,39 @@ static struct clksrc_clk clksrcs[] = {
- 	},
- };
- 
-+static struct clksrc_clk sclk_spi0 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 16),
-+	},
-+	.sources = &clkset_group2,
-+	.reg_src = { .reg = S5P_CLK_SRC5, .shift = 0, .size = 4 },
-+	.reg_div = { .reg = S5P_CLK_DIV5, .shift = 0, .size = 4 },
-+};
-+
-+static struct clksrc_clk sclk_spi1 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.enable		= s5pv210_clk_mask0_ctrl,
-+		.ctrlbit	= (1 << 17),
-+	},
-+	.sources = &clkset_group2,
-+	.reg_src = { .reg = S5P_CLK_SRC5, .shift = 4, .size = 4 },
-+	.reg_div = { .reg = S5P_CLK_DIV5, .shift = 4, .size = 4 },
-+};
-+
-+static struct clk_lookup clk_lookup_table[] = {
-+	CLKDEV_INIT(NULL, "spi_busclk0", clk_p)
-+	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk1", sclk_spi0.clk)
-+	CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk1", sclk_spi1.clk)
-+};
-+
-+static struct clksrc_clk *clksrc_cdev[] = {
-+	&sclk_spi0,
-+	&sclk_spi1,
-+};
-+
- /* Clock initialisation code */
- static struct clksrc_clk *sysclks[] = {
- 	&clk_mout_apll,
-@@ -1273,6 +1286,9 @@ void __init s5pv210_register_clocks(void)
- 	for (ptr = 0; ptr < ARRAY_SIZE(sclk_tv); ptr++)
- 		s3c_register_clksrc(sclk_tv[ptr], 1);
- 
-+	for (ptr = 0; ptr < ARRAY_SIZE(clksrc_cdev); ptr++)
-+		s3c_register_clksrc(clksrc_cdev[ptr], 1);
-+
- 	s3c_register_clksrc(clksrcs, ARRAY_SIZE(clksrcs));
- 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
- 
-@@ -1281,4 +1297,6 @@ void __init s5pv210_register_clocks(void)
- 
- 	s3c24xx_register_clock(&dummy_apb_pclk);
- 	s3c_pwmclk_init();
-+
-+	clkdev_add_table(clk_lookup_table, ARRAY_SIZE(clk_lookup_table));
- }
--- 
-1.7.4.4
+> 
+> Suggested by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+
+For the tcc8k part:
+
+Acked-by: "Hans J. Koch" <hjk@hansjkoch.de>
+
+> ---
+>  arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
+>  arch/arm/mach-davinci/clock.h            |    7 --
+>  arch/arm/mach-davinci/da830.c            |  101 +++++++++++----------
+>  arch/arm/mach-davinci/da850.c            |   95 ++++++++++----------
+>  arch/arm/mach-davinci/dm355.c            |   86 +++++++++---------
+>  arch/arm/mach-davinci/dm365.c            |  112 ++++++++++++------------
+>  arch/arm/mach-davinci/dm644x.c           |   77 ++++++++--------
+>  arch/arm/mach-davinci/dm646x.c           |   81 +++++++++--------
+>  arch/arm/mach-davinci/tnetv107x.c        |  134 ++++++++++++++--------------
+>  arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
+>  arch/arm/mach-imx/clock-imx1.c           |   38 ++++-----
+>  arch/arm/mach-imx/clock-imx21.c          |   91 +++++++++----------
+>  arch/arm/mach-imx/clock-imx25.c          |   77 +++++++---------
+>  arch/arm/mach-imx/clock-imx27.c          |  111 +++++++++++------------
+>  arch/arm/mach-imx/clock-imx31.c          |  103 ++++++++++-----------
+>  arch/arm/mach-imx/clock-imx35.c          |  117 +++++++++++-------------
+>  arch/arm/mach-lpc32xx/clock.c            |   75 +++++++---------
+>  arch/arm/mach-mx5/clock-mx51-mx53.c      |  145 ++++++++++++++----------------
+>  arch/arm/mach-mxs/clock-mx23.c           |   39 ++++-----
+>  arch/arm/mach-mxs/clock-mx28.c           |   67 ++++++--------
+>  arch/arm/mach-tcc8k/clock.c              |  107 ++++++++++------------
+>  21 files changed, 825 insertions(+), 904 deletions(-)
+
+[...]
+
+> diff --git a/arch/arm/mach-tcc8k/clock.c b/arch/arm/mach-tcc8k/clock.c
+> index e7cdae5..086a9b4 100644
+> --- a/arch/arm/mach-tcc8k/clock.c
+> +++ b/arch/arm/mach-tcc8k/clock.c
+> @@ -468,64 +468,57 @@ DEFINE_BCLOCK(gdma2, BCLKCTR1, 17, NULL, NULL)
+>  DEFINE_BCLOCK(gdma3, BCLKCTR1, 18, NULL, NULL)
+>  DEFINE_BCLOCK(ddrc, BCLKCTR1, 19, NULL, NULL)
+>  
+> -#define _REGISTER_CLOCK(d, n, c) \
+> -	{ \
+> -		.dev_id = d, \
+> -		.con_id = n, \
+> -		.clk = &c, \
+> -	},
+> -
+>  static struct clk_lookup lookups[] = {
+> -	_REGISTER_CLOCK(NULL, "bus", bus)
+> -	_REGISTER_CLOCK(NULL, "cpu", cpu)
+> -	_REGISTER_CLOCK(NULL, "tct", tct)
+> -	_REGISTER_CLOCK(NULL, "tcx", tcx)
+> -	_REGISTER_CLOCK(NULL, "tcz", tcz)
+> -	_REGISTER_CLOCK(NULL, "ref", ref)
+> -	_REGISTER_CLOCK(NULL, "dai0", dai0)
+> -	_REGISTER_CLOCK(NULL, "pic", pic)
+> -	_REGISTER_CLOCK(NULL, "tc", tc)
+> -	_REGISTER_CLOCK(NULL, "gpio", gpio)
+> -	_REGISTER_CLOCK(NULL, "usbd", usbd)
+> -	_REGISTER_CLOCK("tcc-uart.0", NULL, uart0)
+> -	_REGISTER_CLOCK("tcc-uart.2", NULL, uart2)
+> -	_REGISTER_CLOCK("tcc-i2c", NULL, i2c)
+> -	_REGISTER_CLOCK("tcc-uart.3", NULL, uart3)
+> -	_REGISTER_CLOCK(NULL, "ecc", ecc)
+> -	_REGISTER_CLOCK(NULL, "adc", adc)
+> -	_REGISTER_CLOCK("tcc-usbh.0", "usb", usbh0)
+> -	_REGISTER_CLOCK(NULL, "gdma0", gdma0)
+> -	_REGISTER_CLOCK(NULL, "lcd", lcd)
+> -	_REGISTER_CLOCK(NULL, "rtc", rtc)
+> -	_REGISTER_CLOCK(NULL, "nfc", nfc)
+> -	_REGISTER_CLOCK("tcc-mmc.0", NULL, sd0)
+> -	_REGISTER_CLOCK(NULL, "g2d", g2d)
+> -	_REGISTER_CLOCK(NULL, "gdma1", gdma1)
+> -	_REGISTER_CLOCK("tcc-uart.1", NULL, uart1)
+> -	_REGISTER_CLOCK("tcc-spi.0", NULL, spi0)
+> -	_REGISTER_CLOCK(NULL, "mscl", mscl)
+> -	_REGISTER_CLOCK("tcc-spi.1", NULL, spi1)
+> -	_REGISTER_CLOCK(NULL, "bdma", bdma)
+> -	_REGISTER_CLOCK(NULL, "adma0", adma0)
+> -	_REGISTER_CLOCK(NULL, "spdif", spdif)
+> -	_REGISTER_CLOCK(NULL, "scfg", scfg)
+> -	_REGISTER_CLOCK(NULL, "cid", cid)
+> -	_REGISTER_CLOCK("tcc-mmc.1", NULL, sd1)
+> -	_REGISTER_CLOCK("tcc-uart.4", NULL, uart4)
+> -	_REGISTER_CLOCK(NULL, "dai1", dai1)
+> -	_REGISTER_CLOCK(NULL, "adma1", adma1)
+> -	_REGISTER_CLOCK(NULL, "c3dec", c3dec)
+> -	_REGISTER_CLOCK("tcc-can.0", NULL, can0)
+> -	_REGISTER_CLOCK("tcc-can.1", NULL, can1)
+> -	_REGISTER_CLOCK(NULL, "gps", gps)
+> -	_REGISTER_CLOCK("tcc-gsb.0", NULL, gsb0)
+> -	_REGISTER_CLOCK("tcc-gsb.1", NULL, gsb1)
+> -	_REGISTER_CLOCK("tcc-gsb.2", NULL, gsb2)
+> -	_REGISTER_CLOCK("tcc-gsb.3", NULL, gsb3)
+> -	_REGISTER_CLOCK(NULL, "gdma2", gdma2)
+> -	_REGISTER_CLOCK(NULL, "gdma3", gdma3)
+> -	_REGISTER_CLOCK(NULL, "ddrc", ddrc)
+> -	_REGISTER_CLOCK("tcc-usbh.1", "usb", usbh1)
+> +	CLKDEV_INIT(NULL, "bus", bus)
+> +	CLKDEV_INIT(NULL, "cpu", cpu)
+> +	CLKDEV_INIT(NULL, "tct", tct)
+> +	CLKDEV_INIT(NULL, "tcx", tcx)
+> +	CLKDEV_INIT(NULL, "tcz", tcz)
+> +	CLKDEV_INIT(NULL, "ref", ref)
+> +	CLKDEV_INIT(NULL, "dai0", dai0)
+> +	CLKDEV_INIT(NULL, "pic", pic)
+> +	CLKDEV_INIT(NULL, "tc", tc)
+> +	CLKDEV_INIT(NULL, "gpio", gpio)
+> +	CLKDEV_INIT(NULL, "usbd", usbd)
+> +	CLKDEV_INIT("tcc-uart.0", NULL, uart0)
+> +	CLKDEV_INIT("tcc-uart.2", NULL, uart2)
+> +	CLKDEV_INIT("tcc-i2c", NULL, i2c)
+> +	CLKDEV_INIT("tcc-uart.3", NULL, uart3)
+> +	CLKDEV_INIT(NULL, "ecc", ecc)
+> +	CLKDEV_INIT(NULL, "adc", adc)
+> +	CLKDEV_INIT("tcc-usbh.0", "usb", usbh0)
+> +	CLKDEV_INIT(NULL, "gdma0", gdma0)
+> +	CLKDEV_INIT(NULL, "lcd", lcd)
+> +	CLKDEV_INIT(NULL, "rtc", rtc)
+> +	CLKDEV_INIT(NULL, "nfc", nfc)
+> +	CLKDEV_INIT("tcc-mmc.0", NULL, sd0)
+> +	CLKDEV_INIT(NULL, "g2d", g2d)
+> +	CLKDEV_INIT(NULL, "gdma1", gdma1)
+> +	CLKDEV_INIT("tcc-uart.1", NULL, uart1)
+> +	CLKDEV_INIT("tcc-spi.0", NULL, spi0)
+> +	CLKDEV_INIT(NULL, "mscl", mscl)
+> +	CLKDEV_INIT("tcc-spi.1", NULL, spi1)
+> +	CLKDEV_INIT(NULL, "bdma", bdma)
+> +	CLKDEV_INIT(NULL, "adma0", adma0)
+> +	CLKDEV_INIT(NULL, "spdif", spdif)
+> +	CLKDEV_INIT(NULL, "scfg", scfg)
+> +	CLKDEV_INIT(NULL, "cid", cid)
+> +	CLKDEV_INIT("tcc-mmc.1", NULL, sd1)
+> +	CLKDEV_INIT("tcc-uart.4", NULL, uart4)
+> +	CLKDEV_INIT(NULL, "dai1", dai1)
+> +	CLKDEV_INIT(NULL, "adma1", adma1)
+> +	CLKDEV_INIT(NULL, "c3dec", c3dec)
+> +	CLKDEV_INIT("tcc-can.0", NULL, can0)
+> +	CLKDEV_INIT("tcc-can.1", NULL, can1)
+> +	CLKDEV_INIT(NULL, "gps", gps)
+> +	CLKDEV_INIT("tcc-gsb.0", NULL, gsb0)
+> +	CLKDEV_INIT("tcc-gsb.1", NULL, gsb1)
+> +	CLKDEV_INIT("tcc-gsb.2", NULL, gsb2)
+> +	CLKDEV_INIT("tcc-gsb.3", NULL, gsb3)
+> +	CLKDEV_INIT(NULL, "gdma2", gdma2)
+> +	CLKDEV_INIT(NULL, "gdma3", gdma3)
+> +	CLKDEV_INIT(NULL, "ddrc", ddrc)
+> +	CLKDEV_INIT("tcc-usbh.1", "usb", usbh1)
+>  };
+>  
+>  static struct clk *root_clk_by_index(enum root_clks src)
+> -- 
+> 1.7.4.4
+> 
+> 
