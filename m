@@ -1,76 +1,156 @@
-From: H Hartley Sweeten <hartleys@visionengravers.com>
-Subject: RE: [PATCH 1/2] ARM: CLKDEV: Add Common Macro for clk_lookup
-Date: Fri, 30 Sep 2011 12:17:55 -0500
-Message-ID: <ADE657CA350FB648AAC2C43247A983F001F39DC56773@AUSP01VMBX24.collaborationhost.net>
-References: <1317381097-2691-1-git-send-email-padma.v@samsung.com>
- <1317381097-2691-2-git-send-email-padma.v@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v2 3/5] iommu/exynos: Add iommu driver for Exynos4 Platforms
+Date: Sat, 1 Oct 2011 08:46:51 +0900
+Message-ID: <CAHQjnONrPRynW5_C3+CqOAM095m+FK7P5jJMzN-ohwV_Y6jzGQ@mail.gmail.com>
+References: <016e01cc7f42$f92bfb40$eb83f1c0$%kim@samsung.com>
+	<20110930120652.GP2138@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail209.messagelabs.com ([216.82.255.3]:12791 "EHLO
-	mail209.messagelabs.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755814Ab1I3RSB convert rfc822-to-8bit (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:45570 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036Ab1I3XrJ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Sep 2011 13:18:01 -0400
-In-Reply-To: <1317381097-2691-2-git-send-email-padma.v@samsung.com>
-Content-Language: en-US
+	Fri, 30 Sep 2011 19:47:09 -0400
+In-Reply-To: <20110930120652.GP2138@amd.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "padma.kvr@gmail.com" <padma.kvr@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-sams>
-Cc: "khilman@ti.com" <khilman@ti.com>, "nsekhar@ti.com" <nsekhar@ti.com>, "rmallon@gmail.com" <rmallon@gmail.com>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "u.kleine-koenig@pengutronix.de" <u.kleine-koenig@pengutronix.de>, "plagnioj@jcrosoft.com" <plagnioj@jcrosoft.com>, "amit.kucheria@canonical.com" <amit.kucheria@canonical.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>, "hjk@hansjkoch.de" <hjk@hansjkoch.de>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>
+To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Ohad Ben-Cohen <ohad@wizery.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>
 
-On Friday, September 30, 2011 4:12 AM, Padmavathi Venna wrote:
+On Fri, Sep 30, 2011 at 9:06 PM, Roedel, Joerg <Joerg.Roedel@amd.com> w=
+rote:
+> First comment: Pleas remove the 'inline' annotations in this patch. I=
+t
+> is better to let the compiler decide what to inline and what not.
+Ok. Thanks :)
+
 >
-> Added a standardized macro CLKDEV_INIT which can used across all
-> the platforms to support clkdev
+> Hmm, may it make sense to store data directly in dev->arch.iommu? Thi=
+s
+> will save you the list traversals to get the information.
 >
-> Suggested by: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  include/linux/clkdev.h |    7 +++++++
->  1 files changed, 7 insertions(+), 0 deletions(-)
-> 
-> diff --git a/include/linux/clkdev.h b/include/linux/clkdev.h
-> index 457bcb0..f2db158 100644
-> --- a/include/linux/clkdev.h
-> +++ b/include/linux/clkdev.h
-> @@ -14,6 +14,13 @@
->  
->  #include <asm/clkdev.h>
->  
-> +#define CLKDEV_INIT(d, n, c) \
-> +	{ \
-> +		.dev_id = d, \
-> +		.con_id = n, \
-> +		.clk = &c, \
-> +	},
+That looks better.
+However, adding features to dev_archdata of ARM is actively discussed
+in Linaro-mm-sig and the features also include iommu_domain.
 
-Padmavathi,
+On the other hand,
+I was not able to determine what will be accepted to the mainline kerne=
+l
+between Linaro's one that is suggested by Marek and Ohad's one.
 
-I just noticed you have the ending ',' in the macro.  This makes the
-clk_lookup tables look a bit strange and hides what each entry in the
-table is.
+>> +
+>> +static inline bool set_sysmmu_active(struct sysmmu_drvdata *data)
+>> +{
+>> + =A0 =A0 =A0 /* return true if the System MMU was not active previo=
+usly
+>> + =A0 =A0 =A0 =A0 =A0and it needs to be initialized */
+>> +
+>> + =A0 =A0 =A0 data->activations++;
+>
+> Is this variable only accessed under a lock? If not it should be an
+> atomic.
+>
+All 'sysmmu' functions must be called under a lock because a System MMU
+(Samsung's IOMMU) is a shared resource.
+I the first patch, I declared the 'data->activations' as atomic_t but
+Russell King pointed
+that atomic operations on data->activations is not helpful for
+preventing to become
+a System MMU enabled when its data->activations is 0.
 
-static struct clk_lookup foo_clks[] = {
-	CLKDEV("bar1_dev", "bar1_con", bar1_clk)
-	CLKDEV("bar2_dev", "bar2_con", bar2_clk)
-	...
-};
+>> + =A0 =A0 =A0 return data->activations =3D=3D 1;
+>
+> Is that right? Shouldn't it be 'data->activations > 0'?
+>
+The value returned by set_sysmmu_active() means "The System MMU must be
+initialized".
+System MMU is initialized when its state is changed from
+'inactive(disabled)' to active(enabled).
+If data->activations++ becomes 2 or more, the System MMU is already ena=
+bled and
+must not be initialized again.
 
-I think this is a bit clearer:
+>> +static inline void __set_fault_handler(struct sysmmu_drvdata *data,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 int (*handler)(enum S5=
+P_SYSMMU_INTERRUPT_TYPE itype,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 unsigned long pgtable_base,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 unsigned long fault_addr))
+>
+> Please typedef the function signature.
+>
+Ok. thanks.
 
-static struct clk_lookup foo_clks[] = {
-	CLKDEV("bar1_dev", "bar1_con", bar1_clk),
-	CLKDEV("bar2_dev", "bar2_con", bar2_clk),
-	...
-};
+>> +static int exynos_iommu_domain_init(struct iommu_domain *domain)
+>> +{
+>> + =A0 =A0 =A0 struct exynos_iommu_domain *priv;
+>> +
+>> + =A0 =A0 =A0 priv =3D kzalloc(sizeof(*priv), GFP_KERNEL);
+>> + =A0 =A0 =A0 if (!priv)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENOMEM;
+>> +
+>> + =A0 =A0 =A0 priv->pgtable =3D (unsigned long *)__get_free_pages(GF=
+P_KERNEL,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (S5P_LV1TABLE_ENTRIES * sizeof(unsigne=
+d long)) >> PAGE_SHIFT);
+>
+> For __get_free_pages you can't just pass in the number of pages, you
+> need the order. Please use get_order.
+>
+Oh! Thank you.
+I didn't notice the problem.
+It allocated too large memory so far.
 
-Also, having the macro automatically add the '&' to the clk parameter
-hides the fact that it's a pointer.  If you remove it CLKDEV(NULL, NULL, NULL)
-would then work for the sentinel entry's in mach0-davinci.
+>> + =A0 =A0 =A0 if (!priv->pgtable) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 kfree(priv);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENOMEM;
+>> + =A0 =A0 =A0 }
+>> +
+>> + =A0 =A0 =A0 memset(priv->pgtable, 0, S5P_LV1TABLE_ENTRIES * sizeof=
+(unsigned long));
+>> + =A0 =A0 =A0 pgtable_flush(priv->pgtable, priv->pgtable + S5P_LV1TA=
+BLE_ENTRIES);
+>> +
+>> + =A0 =A0 =A0 spin_lock_init(&priv->lock);
+>
+> No init for the page-table lock?
+>
+Thank you. I forgot that.
 
-Care to remove that comma, and possibly the '&', and redo the patch set?
+
+>> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain=
+)
+>> +{
+>> + =A0 =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
+>> +
+>> + =A0 =A0 =A0 free_pages((unsigned long)priv->pgtable,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (S5P_LV1TABLE_ENTRIES * sizeof(unsigne=
+d long)) >> PAGE_SHIFT);
+>
+> Same here, please use get_order.
+>
+True. I will fix that immediately.
+
+>> +static int __init exynos_iommu_init(void)
+>> +{
+>> + =A0 =A0 =A0 l2table_cachep =3D kmem_cache_create("SysMMU Lv2 Table=
+s",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P_LV=
+2TABLE_SIZE, S5P_LV2TABLE_SIZE, 0, NULL);
+>
+> Any reason you allocate a seperate slab-cache? It doesn't have a
+> constructor so it would be merged into the kmalloc-slabs anyway (at
+> least with SLUB).
+>
+I found that kmalloc(SZ_1K) returned an address that is not aligned by =
+SZ_1K.
+I did not understand why it happened and I changed it to the slab cache=
+=2E
+I will try it again with kmalloc().
+
 
 Regards,
-Hartley
+KyongHo
