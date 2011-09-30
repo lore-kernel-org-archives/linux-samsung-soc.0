@@ -1,55 +1,35 @@
 From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v2 2/5] ARM: S5P: Remove system MMU driver from
-	arm/plat-s5p
-Date: Sat, 1 Oct 2011 08:50:51 +0900
-Message-ID: <CAHQjnOPVReT3Lk7_Mk864Z8fPVC1dMRCoXmr1tHuBvxspYBGiw@mail.gmail.com>
-References: <016d01cc7f42$e58a0aa0$b09e1fe0$%kim@samsung.com>
-	<20110930134243.GR2138@amd.com>
+Subject: Re: [PATCH v2 5/5] iommu/exynos: Use bus_set_iommu instead of register_iommu
+Date: Sat, 1 Oct 2011 08:52:45 +0900
+Message-ID: <CAHQjnOPiAOA_RiHnF-aVEYnWcdkwNzVD1BTNua+-ztZrW_+6_A@mail.gmail.com>
+References: <017001cc7f43$04a2db60$0de89220$%kim@samsung.com>
+	<20110930134643.GS2138@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20110930134243.GR2138@amd.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sanghyun Lee <sanghyun75.lee@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:61593 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754291Ab1I3Xwr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 30 Sep 2011 19:52:47 -0400
+In-Reply-To: <20110930134643.GS2138@amd.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Ohad Ben-Cohen <ohad@wizery.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>
 
-On Fri, Sep 30, 2011 at 10:42 PM, Roedel, Joerg <Joerg.Roedel@amd.com> wrot=
-e:
-> On Fri, Sep 30, 2011 at 03:30:57AM -0400, Kukjin Kim wrote:
+On Fri, Sep 30, 2011 at 10:46 PM, Roedel, Joerg <Joerg.Roedel@amd.com> wrote:
+> On Fri, Sep 30, 2011 at 03:31:49AM -0400, Kukjin Kim wrote:
 >> From: KyongHo Cho <pullip.cho@samsung.com>
 >>
->> Due to Ohad Ben-Cohen gathered IOMMU drivers in drivers/iommu directory,
->> System MMU driver is moved to drivers/iommu directory and removed
->> from arch/arm/plat-s5p directory.
->>
->> Please see
->> https://lkml.org/lkml/2011/6/8/69
->>
->> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
->> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> ---
->> =A0arch/arm/plat-s5p/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A08 -
->> =A0arch/arm/plat-s5p/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A01 -
->> =A0arch/arm/plat-s5p/include/plat/sysmmu.h | =A0 95 ----------
->> =A0arch/arm/plat-s5p/sysmmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0312 ------=
--------------------------
+>> This replaces register_iommu() with bus_set_iommu() according to the
+>> suggestion of Joerg Roedel.
 >
-> You can use 'git mv' to just move the file. This ensures bisectability
-> of your patches. No need to delete the code in one patch and re-add it
-> in the next one (which breaks bisectability).
+> This should be part of patch 3 already when the bus_set_iommu() change
+> is merged. Otherwise it breaks bisectability too.
 >
-Thanks.
-I will do that
+Ok.
+Should I include fault handling feature (patch 4) in the patch 3 also?
 
-Regards,
+Thanks.
 KyongHo.
