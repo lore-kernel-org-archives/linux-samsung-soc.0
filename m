@@ -1,96 +1,51 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain framework for EXYNOS4210
-Date: Sun, 2 Oct 2011 13:47:01 +0200
-Message-ID: <201110021347.02146.rjw@sisk.pl>
-References: <4E4360B2.2060508@samsung.com> <201108140139.46434.rjw@sisk.pl> <001701cc80d2$02ee4940$08cadbc0$%kim@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain
+	framework for EXYNOS4210
+Date: Sun, 2 Oct 2011 12:48:11 +0100
+Message-ID: <20111002114811.GU11710@n2100.arm.linux.org.uk>
+References: <4E4360B2.2060508@samsung.com> <201108140139.46434.rjw@sisk.pl>
+	<001701cc80d2$02ee4940$08cadbc0$%kim@samsung.com>
+	<201110021347.02146.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:42621 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752258Ab1JBLoo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 2 Oct 2011 07:44:44 -0400
-In-Reply-To: <001701cc80d2$02ee4940$08cadbc0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <201110021347.02146.rjw@sisk.pl>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-On Sunday, October 02, 2011, Kukjin Kim wrote:
-> Rafael J. Wysocki wrote:
-> > 
-> > On Saturday, August 13, 2011, Russell King - ARM Linux wrote:
-> > > On Sat, Aug 13, 2011 at 11:24:07PM +0200, Rafael J. Wysocki wrote:
-> > > > On Thursday, August 11, 2011, Chanwoo Choi wrote:
-> > > > > The following patch set use the generic Power domain Framework
-> instead of
-> > > > > power domain code depend of Samsung SoC.
-> > > > >
-> > > > > Chanwoo Choi (4):
-> > > > >   ARM: EXYNOS4: Support for generic I/O power domains on EXYNOS4210
-> > > > >   ARM: EXYNOS4: Support for generic Clock manipulation PM callbacks
-> > > > >   ARM: EXYNOS4: Delete the power-domain code depend on Samsung SoC
-> > > > >   ARM: EXYNOS4: Add power domain to use generic Power domain
-> Framework
-> > > > >
-> > > > >  arch/arm/mach-exynos4/Kconfig                      |   10 +-
-> > > > >  arch/arm/mach-exynos4/Makefile                     |    4 +-
-> > > > >  arch/arm/mach-exynos4/dev-pd.c                     |  139
-> --------------
-> > > > >  arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   52 ++++++
-> > > > >  arch/arm/mach-exynos4/include/mach/regs-clock.h    |    8 +
-> > > > >  arch/arm/mach-exynos4/mach-nuri.c                  |   21 ++-
-> > > > >  arch/arm/mach-exynos4/mach-smdkc210.c              |   26 ++-
-> > > > >  arch/arm/mach-exynos4/mach-smdkv310.c              |   23 ++-
-> > > > >  arch/arm/mach-exynos4/mach-universal_c210.c        |   21 ++-
-> > > > >  arch/arm/mach-exynos4/pm-exynos4210.c              |  189
-> ++++++++++++++++++++
-> > > > >  arch/arm/mach-exynos4/pm-runtime.c                 |   56 ++++++
-> > > > >  arch/arm/plat-samsung/Kconfig                      |    8 -
-> > > > >  arch/arm/plat-samsung/Makefile                     |    4 -
-> > > > >  arch/arm/plat-samsung/include/plat/pd.h            |   30 ---
-> > > > >  arch/arm/plat-samsung/pd.c                         |   95
-> ----------
-> > > > >  15 files changed, 377 insertions(+), 309 deletions(-)
-> > > > >  delete mode 100644 arch/arm/mach-exynos4/dev-pd.c
-> > > > >  create mode 100644
-> arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
-> > > > >  create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
-> > > > >  create mode 100644 arch/arm/mach-exynos4/pm-runtime.c
-> > > > >  delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
-> > > > >  delete mode 100644 arch/arm/plat-samsung/pd.c
-> > > >
-> > > > The patchset looks good to me, but please note that some code it
-> > > > is based on will most likely change in 3.2 due to this patchset:
-> > > >
-> > > > https://lkml.org/lkml/2011/8/8/420
-> > >
-> > > Err, isn't all that pm_clk stuff just duplicating what the clk API does?
-> > 
-> > I'm not sure it's duplicating anything.  Maybe it does, but it came into
-> > being by moving some code that were duplicated in a few places throughout
-> > the ARM and sh trees into one place.
-> > 
-> > > IOW, drivers _can_ (and should be) calling clk_disable() when they don't
-> > > need the clock running.
-> > 
-> > Drivers may not know about what to do in a given situation.  For example,
-> > if the system has power domains, it may be better to switch a power domain
-> > off instead of or in addition to disabling the clock and the driver
-> usually
-> > doesn't know about that.
-> > 
-> Hmm... Even though each driver cannot know the given situation, the driver
-> can know each own clock should be alive or not. I think, if clock gating
-> (enable, disable clock) is required, it should be handled in each driver. In
-> addition, the clock and power are not always one-on-one match.
+On Sun, Oct 02, 2011 at 01:47:01PM +0200, Rafael J. Wysocki wrote:
+> On Sunday, October 02, 2011, Kukjin Kim wrote:
+> > Hmm... Even though each driver cannot know the given situation, the driver
+> > can know each own clock should be alive or not. I think, if clock gating
+> > (enable, disable clock) is required, it should be handled in each driver. In
+> > addition, the clock and power are not always one-on-one match.
+> 
+> If the driver is to be portable and there's no guarantee that the
+> clocks configuration on all systems it's supposed to be working with will
+> always be the same, the driver shouldn't handle clocks directly.
 
-If the driver is to be portable and there's no guarantee that the
-clocks configuration on all systems it's supposed to be working with will
-always be the same, the driver shouldn't handle clocks directly.
+How do these misconceptions start?
 
-Thanks,
-Rafael
+The clock API.  Drivers are supposed to get a clock (source) when they
+initialize.  Drivers then enable and disable the clock as they _themselves_
+require the use of that clock.
+
+The clock enable is counted such that if there is at least one user of
+the clock, it will be enabled.  It is not a forced 'off' when disable is
+called - the number of enable calls must be balanced by the same number
+of disable calls for the clock itself to be disabled.
+
+Drivers are _expected_ to do this themselves.  Or the runtime PM stuff
+if that's what they're doing.
