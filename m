@@ -1,34 +1,126 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 2/2] ARM: Switch to using CLKDEV_INIT macro for
-	creating clk_lookup instance
-Date: Sat, 1 Oct 2011 16:31:24 +0100
-Message-ID: <20111001153123.GE11710@n2100.arm.linux.org.uk>
-References: <1317381097-2691-1-git-send-email-padma.v@samsung.com> <1317381097-2691-3-git-send-email-padma.v@samsung.com> <20110930112633.GB9046@local>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Add HPD and PD support for HDMI on Origen
+Date: Sun, 02 Oct 2011 16:07:42 +0900
+Message-ID: <001301cc80d1$fadb2d90$f09188b0$%kim@samsung.com>
+References: <1317287742-23091-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55719 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751782Ab1JAPbg (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:63144 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751485Ab1JBHHp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 1 Oct 2011 11:31:36 -0400
-Content-Disposition: inline
-In-Reply-To: <20110930112633.GB9046@local>
+	Sun, 2 Oct 2011 03:07:45 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSF009WGFSTAU30@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sun, 02 Oct 2011 16:07:43 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSF00C6AFSUWQ10@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sun, 02 Oct 2011 16:07:42 +0900 (KST)
+In-reply-to: <1317287742-23091-1-git-send-email-sachin.kamat@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Hans J. Koch" <hjk@hansjkoch.de>
-Cc: Padmavathi Venna <padma.v@samsung.com>, kgene.kim@samsung.com, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@ti.com, nsekhar@ti.com, hsweeten@visionengravers.com, rmallon@gmail.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, plagnioj@jcrosoft.com, amit.kucheria@canonical.com, kernel@pengutronix.de
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-On Fri, Sep 30, 2011 at 01:26:33PM +0200, Hans J. Koch wrote:
-> On Fri, Sep 30, 2011 at 04:41:37PM +0530, Padmavathi Venna wrote:
-> > Replace platform specific macros that creates struct clk_lookup
-> > instance with the new common CLKDEV_INIT macro
+Sachin Kamat wrote:
 > 
-> Well, for mach-tcc8k, it only saves 7 lines, but it's surely a good idea to
-> have one common macro for all arm subarchs.
+> This patch adds hot plug detection (HPD) and power domain (PD) support for
+HDMI
+> on Origen board.
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+> I have added the KConfig entry and header file required for enabling PD
+> since the patch [1] is not yet applied on Kgene's tree [2].
+> 
+Hmm I don't know why it is missed :(
+Anyway, if required, will fix when I applying this.
 
-The savings are of course likely to be small, but it had two advantages:
+Thanks.
 
-1. We're not having one initializer per platform or SoC
-2. We have something common which can be grepped for, or sed'd (or whatever
-   your favourite in-place editing program) should it need to be changed.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> [1] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/6763
+> [2] https://github.com/kgene/linux-samsung/tree/for-next
+> ---
+>  arch/arm/mach-exynos4/Kconfig       |    1 +
+>  arch/arm/mach-exynos4/mach-origen.c |   14 ++++++++++++++
+>  2 files changed, 15 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+> index d0491c2..a02c94f 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos4/Kconfig
+> @@ -243,6 +243,7 @@ config MACH_ORIGEN
+>  	select S5P_DEV_I2C_HDMIPHY
+>  	select S5P_DEV_TV
+>  	select S5P_DEV_USB_EHCI
+> +	select EXYNOS4_DEV_PD
+>  	select SAMSUNG_DEV_BACKLIGHT
+>  	select SAMSUNG_DEV_PWM
+>  	select EXYNOS4_SETUP_SDHCI
+> diff --git a/arch/arm/mach-exynos4/mach-origen.c
+b/arch/arm/mach-exynos4/mach-origen.c
+> index 421294b..36709ea 100644
+> --- a/arch/arm/mach-exynos4/mach-origen.c
+> +++ b/arch/arm/mach-exynos4/mach-origen.c
+> @@ -30,6 +30,7 @@
+>  #include <plat/clock.h>
+>  #include <plat/gpio-cfg.h>
+>  #include <plat/backlight.h>
+> +#include <plat/pd.h>
+> 
+>  #include <mach/map.h>
+> 
+> @@ -168,6 +169,7 @@ static struct platform_device *origen_devices[]
+__initdata = {
+>  	&s5p_device_i2c_hdmiphy,
+>  	&s5p_device_mixer,
+>  	&origen_device_gpiokeys,
+> +	&exynos4_device_pd[PD_TV],
+>  };
+> 
+>  /* LCD Backlight data */
+> @@ -181,6 +183,14 @@ static struct platform_pwm_backlight_data
+origen_bl_data = {
+>  	.pwm_period_ns = 1000,
+>  };
+> 
+> +static void s5p_tv_setup(void)
+> +{
+> +	/* Direct HPD to HDMI chip */
+> +	gpio_request_one(EXYNOS4_GPX3(7), GPIOF_IN, "hpd-plug");
+> +	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
+> +	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
+> +}
+> +
+>  static void __init origen_map_io(void)
+>  {
+>  	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+> @@ -200,10 +210,14 @@ static void __init origen_machine_init(void)
+>  	origen_ehci_init();
+>  	clk_xusbxti.rate = 24000000;
+> 
+> +	s5p_tv_setup();
+>  	s5p_i2c_hdmiphy_set_platdata(NULL);
+> 
+>  	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+> 
+> +	s5p_device_hdmi.dev.parent = &exynos4_device_pd[PD_TV].dev;
+> +	s5p_device_mixer.dev.parent = &exynos4_device_pd[PD_TV].dev;
+> +
+>  	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+>  }
+> 
+> --
+> 1.7.4.1
