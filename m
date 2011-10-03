@@ -1,71 +1,38 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: S3C2410: Remove section mismatch warning
-Date: Mon, 3 Oct 2011 10:59:33 +0100
-Message-ID: <20111003095933.GC11710@n2100.arm.linux.org.uk>
-References: <1317634841-23339-1-git-send-email-tushar.behera@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] Samsung devel-2 for v3.2
+Date: Mon, 3 Oct 2011 11:36:26 +0100
+Message-ID: <20111003103626.GA3731@opensource.wolfsonmicro.com>
+References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com>
+ <20111002192950.GB1005@sirena.org.uk>
+ <005801cc817c$5d42f9e0$17c8eda0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:34462 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753955Ab1JCJ7u (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56560 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753369Ab1JCKg3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Oct 2011 05:59:50 -0400
+	Mon, 3 Oct 2011 06:36:29 -0400
 Content-Disposition: inline
-In-Reply-To: <1317634841-23339-1-git-send-email-tushar.behera@linaro.org>
+In-Reply-To: <005801cc817c$5d42f9e0$17c8eda0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaor.org, linaro-dev@lists.linaro.org, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 03, 2011 at 03:10:41PM +0530, Tushar Behera wrote:
-> Some of the functions and structures did not have _init or __initdata
-> attributes, even though they were referenced from functions / structures
-> with those attribute, resulting in section mismatches.
+On Mon, Oct 03, 2011 at 12:27:22PM +0900, Kukjin Kim wrote:
+> Mark Brown wrote:
 
-Firstly - it's a good idea to include the warnings which you're fixing
-in the commit log text, so that people know exactly what is being fixed.
+> > As I reported the other day this change breaks the boot early on on the
+> > Cragganmore S3C6410 based systems (I've not actually fired up my
+> > SMDK6410 but I suspect it may have issues too).  I did make some brief
+> > attempts to debug but as there's no console output at all and the diff
+> > is rather large it's not easy to see what's gone wrong.
 
-> diff --git a/arch/arm/mach-s3c2410/usb-simtec.c b/arch/arm/mach-s3c2410/usb-simtec.c
-> index 29bd3d9..3a1028c 100644
-> --- a/arch/arm/mach-s3c2410/usb-simtec.c
-> +++ b/arch/arm/mach-s3c2410/usb-simtec.c
-> @@ -104,7 +104,7 @@ static struct s3c2410_hcd_info usb_simtec_info __initdata = {
->  };
->  
->  
-> -int usb_simtec_init(void)
-> +int __init usb_simtec_init(void)
->  {
->  	int ret;
->  
+> Hmm, I thought it has no problem when I saw Thomas Abraham's 'serial:
+> samsung' patches because he said it works fine with my for-next plus his
+> patches on SMDK6410...Anyway, I need to sort it out.
 
-This one looks fine.
-
-> diff --git a/arch/arm/mach-s3c2416/irq.c b/arch/arm/mach-s3c2416/irq.c
-> index 28ad20d..153cb2f 100644
-> --- a/arch/arm/mach-s3c2416/irq.c
-> +++ b/arch/arm/mach-s3c2416/irq.c
-> @@ -234,7 +234,7 @@ static int __init s3c2416_irq_add(struct sys_device *sysdev)
->  	return 0;
->  }
->  
-> -static struct sysdev_driver s3c2416_irq_driver = {
-> +static struct sysdev_driver s3c2416_irq_driver __initdata = {
->  	.add		= s3c2416_irq_add,
->  };
->  
-
-I remain entirely unconvinced that this is correct.  As a result of
-the "sysdev_driver_register(&s3c2416_sysclass, &s3c2416_irq_driver);"
-call, this structure is placed on a list.
-
-If this structure is marked __initdata, then the memory behind the
-structure will be freed and overwritten - however, it's still on a
-list which might be walked.  Such a walk would cause a kernel oops
-or might even be an exploitable security hole if that page ends up
-in userspace - especially as said structure contains function calls
-which would be called in privileged mode.
-
-The same comment applies to the other sysdev driver structures you're
-marking __initdata too.
+It's possible it's something that doesn't manifest on that board, I've
+no real idea what's exploding or why.  There's also a bunch of other
+early boot problems right now like try_to_freeze() which aren't helping.
