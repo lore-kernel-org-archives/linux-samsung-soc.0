@@ -1,46 +1,67 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [GIT PULL] Samsung devel-2 for v3.2
-Date: Mon, 3 Oct 2011 13:16:39 +0100
-Message-ID: <20111003121639.GF23811@sirena.org.uk>
-References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com>
- <20111002192950.GB1005@sirena.org.uk>
- <005801cc817c$5d42f9e0$17c8eda0$%kim@samsung.com>
- <20111003103626.GA3731@opensource.wolfsonmicro.com>
- <20111003112235.GD11710@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add ARCH_EXYNOS and reorganize arch/arm/mach-exynos
+Date: Mon, 03 Oct 2011 21:40:36 +0900
+Message-ID: <4E89AD44.80609@samsung.com>
+References: <001f01cc80e5$3abd1c80$b0375580$%kim@samsung.com> <CAH9JG2UNwZxDTPnwjohxhCumKZx_mWcPUn2rROjmjmROoxF07w@mail.gmail.com> <5785830.Sj7W4aL3qy@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:59279 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755084Ab1JCMQm (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:54186 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755047Ab1JCMkr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Oct 2011 08:16:42 -0400
-Content-Disposition: inline
-In-Reply-To: <20111003112235.GD11710@n2100.arm.linux.org.uk>
+	Mon, 3 Oct 2011 08:40:47 -0400
+Received: by iaqq3 with SMTP id q3so4966116iaq.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Oct 2011 05:40:46 -0700 (PDT)
+In-Reply-To: <5785830.Sj7W4aL3qy@wuerfel>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Kyungmin Park <kmpark@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, =?UTF-8?B?Iuygleqyve2XjC9TL1cgU29sdXRpb27qsJzrsJztjIAoUy5MU0kpL0U1KOyxheyehA==?= =?UTF-8?B?KS/sgrzshLHsoITsnpAi?= <kyoungheon@samsung.com>
 
-On Mon, Oct 03, 2011 at 12:22:35PM +0100, Russell King - ARM Linux wrote:
-> On Mon, Oct 03, 2011 at 11:36:26AM +0100, Mark Brown wrote:
+On 10/03/11 18:33, Arnd Bergmann wrote:
+> On Monday 03 October 2011 13:02:16 Kyungmin Park wrote:
+>> I'm afraid to change machine directory name again. mach-s5pv310 ->
+>> mach-exynos4 ->  mach-exynos.
+>> As I remember linus blamed the renaming the file names are happened
+>> frequently at ARM
+>
+> I tend to agree with this. While the new name does make more sense,
+> I would first like to see the bigger plan. If you are eventually
+> planning to consolidate all of mach-s5p64x0, mach-s5pc100, mach-s5pv210,
+> mach-exynos4 and plat-s5p into one common mach-s5p or mach-exynos
+> directory, I'm all for that because it reduces code duplication
+> and work required for the overall cross-subarchitecture single zimage
+> work.
+>
+Yes, absolutely. As I said, the 'mach-exynos' can support upcoming 
+Samsung EXYNOS SoCs and the way is better than making mach-exynos5.
 
-> > It's possible it's something that doesn't manifest on that board, I've
-> > no real idea what's exploding or why.  There's also a bunch of other
-> > early boot problems right now like try_to_freeze() which aren't helping.
+My bigger plan is finally to make current directories to 3 mach- dir. 
+(mach-s3c, mach-s5p, and mach-exynos) and 1 plat-samsung directory. Of 
+course, the mach- directories can be reduced later.
 
-> I don't know whether I can solve that before the next merge window.
-> There's lots of corner cases, and I'm no longer convinced that my
-> previous patch doesn't introduce more problems than it solves (such
-> as completely breaking the -ERESTART_RESTARTBLOCK handing.)
+Firstly, as you can see, I'm merging plat-s3c24xx and plat-s5p into one 
+plat-samsung directory and actually the <plat/*.h> files and dev-*.c 
+files have been moved into plat-samsung. Maybe I can finish it during 
+3.2-rc.
 
-> While it's possible to shut up the warning by enabling IRQs, that makes
-> the race for restarting (or not restarting) syscalls *huge*, and that
-> could cause unexpected userspace behaviour depending on whether they
-> handle EINTR and _how_ they handle EINTR on system calls which they
-> expect would've been restarted by the kernel.
+Secondary, upcoming Samsung EXYNOS SoCs will be supported in mach-exynos 
+directory and this patch is required to that. For example, the EXYNOS5 
+SoCs (Cortex A15) will be supported in that with other EXYNOS4 SoCs soon 
+and of course it reduces code duplication :)
 
-It looks like the patches to stop it happening constantly have been
-applied so it's a much less serious problem than it was originally - we
-can boot and run reasonably cleanly.  It's certainly not the crippling
-issue it was originally.
+And then current mach-s5pxxxx stuff will be merged into mach-s5p. As I 
+talked to Ben Dooks, he also have a plan to merging mach-s3cxxxx stuff.
+
+> Simply renaming something because the name does not quite fit entirely
+> should be done very carefully.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
