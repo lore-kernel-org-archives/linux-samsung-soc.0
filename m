@@ -1,1253 +1,1271 @@
 From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH V2 2/2] ARM: SAMSUNG: Cleanup resources by using macro
-Date: Mon, 3 Oct 2011 12:53:44 +0900
-Message-ID: <CAH9JG2Wc4M2dVFOfNE5jgsygvigE8RbPH_yLcMqarr64LfbENw@mail.gmail.com>
-References: <005901cc817e$51a56d00$f4f04700$%kim@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add ARCH_EXYNOS and reorganize arch/arm/mach-exynos
+Date: Mon, 3 Oct 2011 13:02:16 +0900
+Message-ID: <CAH9JG2UNwZxDTPnwjohxhCumKZx_mWcPUn2rROjmjmROoxF07w@mail.gmail.com>
+References: <001f01cc80e5$3abd1c80$b0375580$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:63110 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751630Ab1JCDxq convert rfc822-to-8bit (ORCPT
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:43420 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819Ab1JCECS convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 2 Oct 2011 23:53:46 -0400
-Received: by qadb15 with SMTP id b15so1215511qad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Oct 2011 20:53:45 -0700 (PDT)
-In-Reply-To: <005901cc817e$51a56d00$f4f04700$%kim@samsung.com>
+	Mon, 3 Oct 2011 00:02:18 -0400
+Received: by qyk30 with SMTP id 30so1706731qyk.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 02 Oct 2011 21:02:17 -0700 (PDT)
+In-Reply-To: <001f01cc80e5$3abd1c80$b0375580$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Russell King <rmk+kernel@arm.linux.org.uk>, =?EUC-KR?B?waSw5sflL1MvVyBTb2x1dGlvbrCzud/GwChTLkxTSSkvRTUow6XA0ykvu++8usD8?= =?EUC-KR?B?wNo=?= <kyoungheon@samsung.com>
 
-On Mon, Oct 3, 2011 at 12:41 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> This patch adds macro SAMSUNG_RES_MEM, SAMSUNG_RES_IRQ
-> and so on to cleanup regarding 'struct resource' by using
-> defined helpers at <linux/ioport.h>.
->
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Changes since v1:
-> - Address comments from Russell King
-> =A0Using defined helpers to define resource
->
-> =A0arch/arm/mach-s3c2410/include/mach/map.h =A0| =A0 =A01 +
-> =A0arch/arm/plat-samsung/devs.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0697 +=
-++++------------------------
-> =A0arch/arm/plat-samsung/include/plat/devs.h | =A0 11 +
-> =A03 files changed, 129 insertions(+), 580 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c2410/include/mach/map.h b/arch/arm/mach=
--s3c2410/include/mach/map.h
-> index 4cf495f..78ae807 100644
-> --- a/arch/arm/mach-s3c2410/include/mach/map.h
-> +++ b/arch/arm/mach-s3c2410/include/mach/map.h
-> @@ -149,6 +149,7 @@
-> =A0#define S3C24XX_PA_RTC =A0 =A0 =A0S3C2410_PA_RTC
-> =A0#define S3C24XX_PA_ADC =A0 =A0 =A0S3C2410_PA_ADC
-> =A0#define S3C24XX_PA_SPI =A0 =A0 =A0S3C2410_PA_SPI
-> +#define S3C24XX_PA_SPI1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(S3C2410_PA_S=
-PI + S3C2410_SPI1)
-> =A0#define S3C24XX_PA_SDI =A0 =A0 =A0S3C2410_PA_SDI
-> =A0#define S3C24XX_PA_NAND =A0 =A0 =A0 =A0 =A0 =A0S3C2410_PA_NAND
->
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/dev=
-s.c
-> index a2112aa..ec14e36 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -67,34 +67,11 @@ static u64 samsung_device_dma_mask =3D DMA_BIT_MA=
-SK(32);
-> =A0/* AC97 */
-> =A0#ifdef CONFIG_CPU_S3C2440
-> =A0static struct resource s3c_ac97_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C2440_PA_AC97,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C2440_PA_AC97 + S3C24=
-40_SZ_AC97 - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_S3C244x_AC97,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_S3C244x_AC97,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D "PCM out",
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D DMACH_PCM_OUT,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D DMACH_PCM_OUT,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_DMA,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [3] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D "PCM in",
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D DMACH_PCM_IN,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D DMACH_PCM_IN,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_DMA,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [4] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D "Mic in",
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D DMACH_MIC_IN,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D DMACH_MIC_IN,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_DMA,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C2440, AC97, S3C2440_SZ_AC97)=
-,
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(S3C244x_AC97),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_DMA_NAMED(PCM_OUT, "PCM out"),
-> + =A0 =A0 =A0 [3] =3D SAMSUNG_RES_DMA_NAMED(PCM_IN, "PCM in"),
-> + =A0 =A0 =A0 [4] =3D SAMSUNG_RES_DMA_NAMED(MIC_IN, "Mic in"),
-> =A0};
->
-> =A0struct platform_device s3c_device_ac97 =3D {
-> @@ -113,21 +90,9 @@ struct platform_device s3c_device_ac97 =3D {
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_adc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_ADC + S3C24X=
-X_SZ_ADC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, ADC, S3C24XX_SZ_ADC),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(TC),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(ADC),
-> =A0};
->
-> =A0struct platform_device s3c_device_adc =3D {
-> @@ -140,21 +105,9 @@ struct platform_device s3c_device_adc =3D {
->
-> =A0#if defined(CONFIG_SAMSUNG_DEV_ADC)
-> =A0static struct resource s3c_adc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D SAMSUNG_PA_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D SAMSUNG_PA_ADC + SZ_256=
- - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(SAMSUNG, ADC, SZ_256),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(TC),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(ADC),
-> =A0};
->
-> =A0struct platform_device s3c_device_adc =3D {
-> @@ -169,16 +122,8 @@ struct platform_device s3c_device_adc =3D {
->
-> =A0#ifdef CONFIG_CPU_S3C2440
-> =A0static struct resource s3c_camif_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C2440_PA_CAMIF,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C2440_PA_CAMIF + S3C2=
-440_SZ_CAMIF - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_CAM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_CAM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C2440, CAMIF, S3C2440_SZ_CAMI=
-=46),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(CAM),
-> =A0};
->
-> =A0struct platform_device s3c_device_camif =3D {
-> @@ -217,26 +162,10 @@ struct platform_device samsung_asoc_idma =3D {
->
-> =A0#ifdef CONFIG_S3C_DEV_FB
-> =A0static struct resource s3c_fb_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_FB,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_FB + SZ_16K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_LCD_VSYNC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_LCD_VSYNC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_LCD_FIFO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_LCD_FIFO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [3] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_LCD_SYSTEM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_LCD_SYSTEM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, FB, SZ_16K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(LCD_VSYNC),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(LCD_FIFO),
-> + =A0 =A0 =A0 [3] =3D SAMSUNG_RES_IRQ(LCD_SYSTEM),
-> =A0};
->
-> =A0struct platform_device s3c_device_fb =3D {
-> @@ -261,16 +190,8 @@ void __init s3c_fb_set_platdata(struct s3c_fb_pl=
-atdata *pd)
->
-> =A0#ifdef CONFIG_S5P_DEV_FIMC0
-> =A0static struct resource s5p_fimc0_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_FIMC0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_FIMC0 + SZ_4K - =
-1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMC0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMC0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, FIMC0, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(FIMC0),
-> =A0};
->
-> =A0struct platform_device s5p_device_fimc0 =3D {
-> @@ -287,16 +208,8 @@ struct platform_device s5p_device_fimc0 =3D {
->
-> =A0#ifdef CONFIG_S5P_DEV_FIMC1
-> =A0static struct resource s5p_fimc1_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_FIMC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_FIMC1 + SZ_4K - =
-1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, FIMC1, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(FIMC1),
-> =A0};
->
-> =A0struct platform_device s5p_device_fimc1 =3D {
-> @@ -313,16 +226,8 @@ struct platform_device s5p_device_fimc1 =3D {
->
-> =A0#ifdef CONFIG_S5P_DEV_FIMC2
-> =A0static struct resource s5p_fimc2_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_FIMC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_FIMC2 + SZ_4K - =
-1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, FIMC2, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(FIMC2),
-> =A0};
->
-> =A0struct platform_device s5p_device_fimc2 =3D {
-> @@ -339,16 +244,8 @@ struct platform_device s5p_device_fimc2 =3D {
->
-> =A0#ifdef CONFIG_S5P_DEV_FIMC3
-> =A0static struct resource s5p_fimc3_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_FIMC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_FIMC3 + SZ_4K - =
-1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, FIMC3, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(FIMC3),
-> =A0};
->
-> =A0struct platform_device s5p_device_fimc3 =3D {
-> @@ -367,26 +264,10 @@ struct platform_device s5p_device_fimc3 =3D {
->
-> =A0#ifdef CONFIG_S5P_DEV_FIMD0
-> =A0static struct resource s5p_fimd0_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_FIMD0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_FIMD0 + SZ_32K -=
- 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMD0_VSYNC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMD0_VSYNC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMD0_FIFO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMD0_FIFO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [3] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_FIMD0_SYSTEM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_FIMD0_SYSTEM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, FIMD0, SZ_32K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(FIMD0_VSYNC),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(FIMD0_FIFO),
-> + =A0 =A0 =A0 [3] =3D SAMSUNG_RES_IRQ(FIMD0_SYSTEM),
-> =A0};
->
-> =A0struct platform_device s5p_device_fimd0 =3D {
-> @@ -425,20 +306,10 @@ void __init s3c_hwmon_set_platdata(struct s3c_h=
-wmon_pdata *pd)
->
-> =A0/* HSMMC */
->
-> -#define S3C_SZ_HSMMC =A0 0x1000
-> -
-> =A0#ifdef CONFIG_S3C_DEV_HSMMC
-> =A0static struct resource s3c_hsmmc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_HSMMC0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_HSMMC0 + S3C_SZ_=
-HSMMC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_HSMMC0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_HSMMC0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, HSMMC0, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(HSMMC0),
-> =A0};
->
-> =A0struct s3c_sdhci_platdata s3c_hsmmc0_def_platdata =3D {
-> @@ -468,16 +339,8 @@ void s3c_sdhci0_set_platdata(struct s3c_sdhci_pl=
-atdata *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_HSMMC1
-> =A0static struct resource s3c_hsmmc1_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_HSMMC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_HSMMC1 + S3C_SZ_=
-HSMMC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_HSMMC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_HSMMC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, HSMMC1, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(HSMMC1),
-> =A0};
->
-> =A0struct s3c_sdhci_platdata s3c_hsmmc1_def_platdata =3D {
-> @@ -509,16 +372,8 @@ void s3c_sdhci1_set_platdata(struct s3c_sdhci_pl=
-atdata *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_HSMMC2
-> =A0static struct resource s3c_hsmmc2_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_HSMMC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_HSMMC2 + S3C_SZ_=
-HSMMC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_HSMMC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_HSMMC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, HSMMC2, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(HSMMC2),
-> =A0};
->
-> =A0struct s3c_sdhci_platdata s3c_hsmmc2_def_platdata =3D {
-> @@ -548,16 +403,8 @@ void s3c_sdhci2_set_platdata(struct s3c_sdhci_pl=
-atdata *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_HSMMC3
-> =A0static struct resource s3c_hsmmc3_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_HSMMC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_HSMMC3 + S3C_SZ_=
-HSMMC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_HSMMC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_HSMMC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, HSMMC3, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(HSMMC3),
-> =A0};
->
-> =A0struct s3c_sdhci_platdata s3c_hsmmc3_def_platdata =3D {
-> @@ -588,16 +435,8 @@ void s3c_sdhci3_set_platdata(struct s3c_sdhci_pl=
-atdata *pd)
-> =A0/* I2C */
->
-> =A0static struct resource s3c_i2c0_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC + SZ_4K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c0 =3D {
-> @@ -634,16 +473,8 @@ void __init s3c_i2c0_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C1
-> =A0static struct resource s3c_i2c1_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC1 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC1, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC1),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c1 =3D {
-> @@ -672,16 +503,8 @@ void __init s3c_i2c1_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C2
-> =A0static struct resource s3c_i2c2_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC2 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC2,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC2, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC2),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c2 =3D {
-> @@ -710,16 +533,8 @@ void __init s3c_i2c2_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C3
-> =A0static struct resource s3c_i2c3_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC3 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC3,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC3, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC3),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c3 =3D {
-> @@ -748,16 +563,8 @@ void __init s3c_i2c3_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C4
-> =A0static struct resource s3c_i2c4_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC4,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC4 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC4,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC4,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC4, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC4),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c4 =3D {
-> @@ -786,16 +593,8 @@ void __init s3c_i2c4_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C5
-> =A0static struct resource s3c_i2c5_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC5,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC5 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC5,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC5,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC5, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC5),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c5 =3D {
-> @@ -824,16 +623,8 @@ void __init s3c_i2c5_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C6
-> =A0static struct resource s3c_i2c6_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC6,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC6 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC6,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC6,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC6, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC6),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c6 =3D {
-> @@ -862,16 +653,8 @@ void __init s3c_i2c6_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_I2C7
-> =A0static struct resource s3c_i2c7_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_IIC7,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_IIC7 + SZ_4K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC7,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC7,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, IIC7, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC7),
-> =A0};
->
-> =A0struct platform_device s3c_device_i2c7 =3D {
-> @@ -902,16 +685,8 @@ void __init s3c_i2c7_set_platdata(struct s3c2410=
-_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_S5P_DEV_I2C_HDMIPHY
-> =A0static struct resource s5p_i2c_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_IIC_HDMIPHY,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_IIC_HDMIPHY + SZ=
-_4K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_IIC_HDMIPHY,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_IIC_HDMIPHY,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, IIC_HDMIPHY, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(IIC_HDMIPHY),
-> =A0};
->
-> =A0struct platform_device s5p_device_i2c_hdmiphy =3D {
-> @@ -945,11 +720,7 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct =
-s3c2410_platform_i2c *pd)
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_iis_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_IIS,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_IIS + S3C24X=
-X_SZ_IIS - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, IIS, S3C24XX_SZ_IIS),
-> =A0};
->
-> =A0struct platform_device s3c_device_iis =3D {
-> @@ -979,16 +750,8 @@ struct platform_device s3c2412_device_iis =3D {
->
-> =A0#ifdef CONFIG_SAMSUNG_DEV_IDE
-> =A0static struct resource s3c_cfcon_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D SAMSUNG_PA_CFCON,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D SAMSUNG_PA_CFCON + SZ_1=
-6K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_CFCON,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_CFCON,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(SAMSUNG, CFCON, SZ_16K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(CFCON),
-> =A0};
->
-> =A0struct platform_device s3c_device_cfcon =3D {
-> @@ -1008,16 +771,8 @@ void s3c_ide_set_platdata(struct s3c_ide_platda=
-ta *pdata)
->
-> =A0#ifdef CONFIG_SAMSUNG_DEV_KEYPAD
-> =A0static struct resource samsung_keypad_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D SAMSUNG_PA_KEYPAD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D SAMSUNG_PA_KEYPAD + 0x2=
-0 - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_KEYPAD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_KEYPAD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(SAMSUNG, KEYPAD, SZ_32),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(KEYPAD),
-> =A0};
->
-> =A0struct platform_device samsung_device_keypad =3D {
-> @@ -1043,16 +798,8 @@ void __init samsung_keypad_set_platdata(struct =
-samsung_keypad_platdata *pd)
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_lcd_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_LCD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_LCD + S3C24X=
-X_SZ_LCD - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_LCD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_LCD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, LCD, S3C24XX_SZ_LCD),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(LCD),
-> =A0};
->
-> =A0struct platform_device s3c_device_lcd =3D {
-> @@ -1087,16 +834,8 @@ void __init s3c24xx_fb_set_platdata(struct s3c2=
-410fb_mach_info *pd)
->
-> =A0#ifdef CONFIG_S5P_DEV_MFC
-> =A0static struct resource s5p_mfc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_MFC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_MFC + SZ_64K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_MFC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_MFC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, MFC, SZ_64K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(MFC),
-> =A0};
->
-> =A0struct platform_device s5p_device_mfc =3D {
-> @@ -1139,16 +878,8 @@ struct platform_device s5p_device_mfc_r =3D {
->
-> =A0#ifdef CONFIG_S5P_DEV_CSIS0
-> =A0static struct resource s5p_mipi_csis0_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_MIPI_CSIS0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_MIPI_CSIS0 + SZ_=
-4K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_MIPI_CSIS0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_MIPI_CSIS0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, MIPI_CSIS0, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(MIPI_CSIS0),
-> =A0};
->
-> =A0struct platform_device s5p_device_mipi_csis0 =3D {
-> @@ -1161,16 +892,8 @@ struct platform_device s5p_device_mipi_csis0 =3D=
- {
->
-> =A0#ifdef CONFIG_S5P_DEV_CSIS1
-> =A0static struct resource s5p_mipi_csis1_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_MIPI_CSIS1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_MIPI_CSIS1 + SZ_=
-4K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_MIPI_CSIS1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_MIPI_CSIS1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, MIPI_CSIS1, SZ_4K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(MIPI_CSIS1),
-> =A0};
->
-> =A0struct platform_device s5p_device_mipi_csis1 =3D {
-> @@ -1185,11 +908,7 @@ struct platform_device s5p_device_mipi_csis1 =3D=
- {
->
-> =A0#ifdef CONFIG_S3C_DEV_NAND
-> =A0static struct resource s3c_nand_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_NAND,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_NAND + SZ_1M,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, NAND, SZ_1M),
-> =A0};
->
-> =A0struct platform_device s3c_device_nand =3D {
-> @@ -1294,21 +1013,9 @@ void __init s3c_nand_set_platdata(struct s3c24=
-10_platform_nand *nand)
->
-> =A0#ifdef CONFIG_S3C_DEV_ONENAND
-> =A0static struct resource s3c_onenand_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_ONENAND,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_ONENAND + 0x400 =
-- 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_ONENAND_BUF,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_ONENAND_BUF + S3=
-C_SZ_ONENAND_BUF - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_ONENAND,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_ONENAND,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, ONENAND, SZ_1K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_MEM(S3C, ONENAND_BUF, S3C_SZ_ONENAN=
-D_BUF),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(ONENAND),
-> =A0};
->
-> =A0struct platform_device s3c_device_onenand =3D {
-> @@ -1321,21 +1028,9 @@ struct platform_device s3c_device_onenand =3D =
-{
->
-> =A0#ifdef CONFIG_S3C64XX_DEV_ONENAND1
-> =A0static struct resource s3c64xx_onenand1_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C64XX_PA_ONENAND1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C64XX_PA_ONENAND1 + 0=
-x400 - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C64XX_PA_ONENAND1_BUF,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C64XX_PA_ONENAND1_BUF=
- + S3C64XX_SZ_ONENAND1_BUF - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_ONENAND1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_ONENAND1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C64XX, ONENAND1, SZ_1K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_MEM(S3C64XX, ONENAND1_BUF, S3C64XX_=
-SZ_ONENAND1_BUF),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(ONENAND1),
-> =A0};
->
-> =A0struct platform_device s3c64xx_device_onenand1 =3D {
-> @@ -1354,21 +1049,9 @@ void s3c64xx_onenand1_set_platdata(struct onen=
-and_platform_data *pdata)
->
-> =A0#ifdef CONFIG_S5P_DEV_ONENAND
-> =A0static struct resource s5p_onenand_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_ONENAND,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_ONENAND + SZ_128=
-K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_ONENAND_DMA,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_ONENAND_DMA + SZ=
-_8K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_ONENAND_AUDI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_ONENAND_AUDI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, ONENAND, SZ_128K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_MEM(S5P, ONENAND_DMA, SZ_8K),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(ONENAND_AUDI),
-> =A0};
->
-> =A0struct platform_device s5p_device_onenand =3D {
-> @@ -1382,17 +1065,15 @@ struct platform_device s5p_device_onenand =3D=
- {
-> =A0/* PMU */
->
-> =A0#ifdef CONFIG_PLAT_S5P
-> -static struct resource s5p_pmu_resource =3D {
-> - =A0 =A0 =A0 .start =A0=3D IRQ_PMU,
-> - =A0 =A0 =A0 .end =A0 =A0=3D IRQ_PMU,
-> - =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> +static struct resource s5p_pmu_resource[] =3D {
-> + =A0 =A0 =A0 SAMSUNG_RES_IRQ(PMU)
-> =A0};
->
-> =A0struct platform_device s5p_device_pmu =3D {
-> =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "arm-pmu",
-> =A0 =A0 =A0 =A0.id =A0 =A0 =A0 =A0 =A0 =A0 =3D ARM_PMU_DEVICE_CPU,
-> - =A0 =A0 =A0 .num_resources =A0=3D 1,
-> - =A0 =A0 =A0 .resource =A0 =A0 =A0 =3D &s5p_pmu_resource,
-> + =A0 =A0 =A0 .num_resources =A0=3D ARRAY_SIZE(s5p_pmu_resource),
-> + =A0 =A0 =A0 .resource =A0 =A0 =A0 =3D s5p_pmu_resource,
-> =A0};
->
-> =A0static int __init s5p_pmu_init(void)
-> @@ -1442,21 +1123,9 @@ struct platform_device s3c_device_timer[] =3D =
-{
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_rtc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_RTC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_RTC + 0xff,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_RTC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_RTC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_TICK,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_TICK,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, RTC, SZ_256),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(RTC),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(TICK),
-> =A0};
->
-> =A0struct platform_device s3c_device_rtc =3D {
-> @@ -1469,21 +1138,9 @@ struct platform_device s3c_device_rtc =3D {
->
-> =A0#ifdef CONFIG_S3C_DEV_RTC
-> =A0static struct resource s3c_rtc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_RTC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_RTC + 0xff,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_RTC_ALARM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_RTC_ALARM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_RTC_TIC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_RTC_TIC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, RTC, SZ_256),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(RTC_ALARM),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ(RTC_TIC),
-> =A0};
->
-> =A0struct platform_device s3c_device_rtc =3D {
-> @@ -1498,16 +1155,8 @@ struct platform_device s3c_device_rtc =3D {
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_sdi_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_SDI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_SDI + S3C24X=
-X_SZ_SDI - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_SDI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_SDI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, SDI, S3C24XX_SZ_SDI),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(SDI),
-> =A0};
->
-> =A0struct platform_device s3c_device_sdi =3D {
-> @@ -1528,16 +1177,8 @@ void __init s3c24xx_mci_set_platdata(struct s3=
-c24xx_mci_pdata *pdata)
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_spi0_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_SPI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_SPI + 0x1f,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_SPI0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_SPI0,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, SPI, SZ_32),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(SPI0),
-> =A0};
->
-> =A0struct platform_device s3c_device_spi0 =3D {
-> @@ -1552,16 +1193,8 @@ struct platform_device s3c_device_spi0 =3D {
-> =A0};
->
-> =A0static struct resource s3c_spi1_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_SPI + S3C2410_=
-SPI1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_SPI + S3C241=
-0_SPI1 + 0x1f,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_SPI1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_SPI1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, SPI1, SZ_32),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(SPI1),
-> =A0};
->
-> =A0struct platform_device s3c_device_spi1 =3D {
-> @@ -1580,17 +1213,8 @@ struct platform_device s3c_device_spi1 =3D {
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_ts_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_ADC + S3C24X=
-X_SZ_ADC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> -
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, ADC, S3C24XX_SZ_ADC),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(TC),
-> =A0};
->
-> =A0struct platform_device s3c_device_ts =3D {
-> @@ -1610,16 +1234,8 @@ void __init s3c24xx_ts_set_platdata(struct s3c=
-2410_ts_mach_info *hard_s3c2410ts_
->
-> =A0#ifdef CONFIG_SAMSUNG_DEV_TS
-> =A0static struct resource s3c_ts_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D SAMSUNG_PA_ADC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D SAMSUNG_PA_ADC + SZ_256=
- - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_TC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(SAMSUNG, ADC, SZ_256),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(TC),
-> =A0};
->
-> =A0static struct s3c2410_ts_mach_info default_ts_data __initdata =3D =
-{
-> @@ -1650,16 +1266,8 @@ void __init s3c24xx_ts_set_platdata(struct s3c=
-2410_ts_mach_info *pd)
-> =A0#ifdef CONFIG_S5P_DEV_TV
->
-> =A0static struct resource s5p_hdmi_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_HDMI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_HDMI + SZ_1M - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_HDMI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_HDMI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, HDMI, SZ_1M),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(HDMI),
-> =A0};
->
-> =A0struct platform_device s5p_device_hdmi =3D {
-> @@ -1670,16 +1278,8 @@ struct platform_device s5p_device_hdmi =3D {
-> =A0};
->
-> =A0static struct resource s5p_sdo_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_SDO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_SDO + SZ_64K - 1=
-,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_SDO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_SDO,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, SDO, SZ_64K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(SDO),
-> =A0};
->
-> =A0struct platform_device s5p_device_sdo =3D {
-> @@ -1690,24 +1290,9 @@ struct platform_device s5p_device_sdo =3D {
-> =A0};
->
-> =A0static struct resource s5p_mixer_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_MIXER,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_MIXER + SZ_64K -=
- 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D "mxr"
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_VP,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_VP + SZ_64K - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D "vp"
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [2] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_MIXER,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_MIXER,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =3D "irq"
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM_NAMED(S5P, MIXER, SZ_64K, "mxr"=
-),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_MEM_NAMED(S5P, VP, SZ_64K, "vp"),
-> + =A0 =A0 =A0 [2] =3D SAMSUNG_RES_IRQ_NAMED(MIXER, "irq"),
-> =A0};
->
-> =A0struct platform_device s5p_device_mixer =3D {
-> @@ -1726,16 +1311,8 @@ struct platform_device s5p_device_mixer =3D {
->
-> =A0#ifdef CONFIG_S3C_DEV_USB_HOST
-> =A0static struct resource s3c_usb_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_USBHOST,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_USBHOST + 0x100 =
-- 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_USBH,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_USBH,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, USBHOST, SZ_256),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(USBH),
-> =A0};
->
-> =A0struct platform_device s3c_device_ohci =3D {
-> @@ -1769,16 +1346,8 @@ void __init s3c_ohci_set_platdata(struct s3c24=
-10_hcd_info *info)
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_usbgadget_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C24XX_PA_USBDEV,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C24XX_PA_USBDEV + S3C=
-24XX_SZ_USBDEV - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_USBD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_USBD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C24XX, USBDEV, S3C24XX_SZ_USB=
-DEV),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(USBD),
-> =A0};
->
-> =A0struct platform_device s3c_device_usbgadget =3D {
-> @@ -1798,16 +1367,8 @@ void __init s3c24xx_udc_set_platdata(struct s3=
-c2410_udc_mach_info *pd)
->
-> =A0#ifdef CONFIG_S5P_DEV_USB_EHCI
-> =A0static struct resource s5p_ehci_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S5P_PA_EHCI,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S5P_PA_EHCI + SZ_256 - =
-1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_USB_HOST,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_USB_HOST,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S5P, EHCI, SZ_256),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(USB_HOST),
-> =A0};
->
-> =A0struct platform_device s5p_device_ehci =3D {
-> @@ -1839,16 +1400,8 @@ void __init s5p_ehci_set_platdata(struct s5p_e=
-hci_platdata *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_USB_HSOTG
-> =A0static struct resource s3c_usb_hsotg_resources[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_USB_HSOTG,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_USB_HSOTG + 0x10=
-000 - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_OTG,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_OTG,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 },
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, USB_HSOTG, SZ_16K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(OTG),
-> =A0};
->
-> =A0struct platform_device s3c_device_usb_hsotg =3D {
-> @@ -1867,16 +1420,8 @@ struct platform_device s3c_device_usb_hsotg =3D=
- {
->
-> =A0#ifdef CONFIG_PLAT_S3C24XX
-> =A0static struct resource s3c_hsudc_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C2416_PA_HSUDC,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C2416_PA_HSUDC + S3C2=
-416_SZ_HSUDC - 1,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_USBD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_USBD,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C2416, HSUDC, S3C2416_SZ_HSUD=
-C),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(USBD),
-> =A0};
->
-> =A0struct platform_device s3c_device_usb_hsudc =3D {
-> @@ -1900,16 +1445,8 @@ void __init s3c24xx_hsudc_set_platdata(struct =
-s3c24xx_hsudc_platdata *pd)
->
-> =A0#ifdef CONFIG_S3C_DEV_WDT
-> =A0static struct resource s3c_wdt_resource[] =3D {
-> - =A0 =A0 =A0 [0] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D S3C_PA_WDT,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D S3C_PA_WDT + SZ_1K,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_MEM,
-> - =A0 =A0 =A0 },
-> - =A0 =A0 =A0 [1] =3D {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .start =A0=3D IRQ_WDT,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .end =A0 =A0=3D IRQ_WDT,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0=3D IORESOURCE_IRQ,
-> - =A0 =A0 =A0 }
-> + =A0 =A0 =A0 [0] =3D SAMSUNG_RES_MEM(S3C, WDT, SZ_1K),
-> + =A0 =A0 =A0 [1] =3D SAMSUNG_RES_IRQ(WDT),
-> =A0};
->
-> =A0struct platform_device s3c_device_wdt =3D {
-> diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/pla=
-t-samsung/include/plat/devs.h
-> index 8f19241..a506831 100644
-> --- a/arch/arm/plat-samsung/include/plat/devs.h
-> +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> @@ -18,6 +18,17 @@
->
-> =A0#include <linux/platform_device.h>
->
-> +#define SAMSUNG_RES_MEM(soc, ip, sz) =A0 DEFINE_RES_MEM(soc##_PA_##i=
-p, sz)
-> +#define SAMSUNG_RES_IRQ(ip) =A0 =A0 =A0 =A0 =A0 =A0DEFINE_RES_IRQ(IR=
-Q_##ip)
-> +
-> +#define SAMSUNG_RES_MEM_NAMED(soc, ip, sz, name) =A0 =A0 =A0 \
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 DEFINE_=
-RES_MEM_NAMED(soc##_PA_##ip, sz, name)
-> +#define SAMSUNG_RES_IRQ_NAMED(ip, name) =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0\
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 DEFINE_=
-RES_IRQ_NAMED(IRQ_##ip, name)
-> +#define SAMSUNG_RES_DMA_NAMED(ch, name) =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0\
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 DEFINE_=
-RES_DMA_NAMED(DMACH_##ch, name)
+Hi,
 
-It's good for readability. but do you think that it's hard to find out
-defined macros are used at real place?
-e.g., Now I want to find out the S3C_PA_USB_HSOTG. it's difficult if
-you use the SAMSUNG_RES_* series macro.
-but if you use the DEFINED_RES_* series directly. it's easy to find
-out at real codes.
+I'm afraid to change machine directory name again. mach-s5pv310 ->
+mach-exynos4 -> mach-exynos.
+As I remember linus blamed the renaming the file names are happened
+frequently at ARM
 
 Thank you,
 Kyungmin Park
+
+2011/10/2 Kukjin Kim <kgene.kim@samsung.com>:
+> The arch/arm/mach-exynos4 directory (CONFIG_ARCH_EXYNOS4) has
+> made for plaforms based on EXYNOS4 SoCs. But since upcoming
+> Samsung's SoCs such as EXYNOS5 (ARM Cortex A15) can reuse most
+> codes in current mach-exynos4, one mach-exynos directory will
+> be used for them.
+>
+> This patch changes to CONFIG_ARCH_EXYNOS (arch/arm/mach-exynos)
+> but keeps original CONFIG_ARCH_EXYNOS4 in mach-exynos/Kconfig to
+> avoid changing in driver side.
+>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> NOTE: The codes for upcoming SoCs will be implemented soon.
+>
+> =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 | =A0 =A08 +-
+> =A0arch/arm/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/configs/exynos4_defconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A07 +--
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/Kconfig =A0 =A0 | =A0 41 =
++++++++++---
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/Makefile =A0 =A0| =A0 =A0=
+8 +-
+> =A0.../{mach-exynos4 =3D> mach-exynos}/Makefile.boot =A0 =A0| =A0 =A0=
+0
+> =A0.../clock-exynos4210.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 =A00
+> =A0.../clock-exynos4212.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/clock.c =A0 =A0 | =A0 =A0=
+0
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/cpu.c =A0 =A0 =A0 | =A0 6=
+9 +++++++++++---------
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/cpuidle.c =A0 | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-ahci.c =A0| =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-audio.c | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-dwmci.c | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-pd.c =A0 =A0| =A0 =A0=
+0
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/dev-sysmmu.c | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/dma.c =A0 =A0 =A0 | =A0 =A0=
+0
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/headsmp.S =A0 | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/hotplug.c =A0 | =A0 =A00
+> =A0.../include/mach/debug-macro.S =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A00
+> =A0.../include/mach/dma.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 =A00
+> =A0.../include/mach/dwmci.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 | =A0 =A00
+> =A0.../include/mach/entry-macro.S =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A00
+> =A0.../include/mach/exynos4-clock.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ | =A0 =A00
+> =A0.../include/mach/gpio.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0| =A0 =A00
+> =A0.../include/mach/hardware.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 =A00
+> =A0.../include/mach/io.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0| =A0 =A00
+> =A0.../include/mach/irqs.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0| =A0 =A00
+> =A0.../include/mach/map.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 32 ++++++----
+> =A0.../include/mach/memory.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| =A0 =A00
+> =A0.../include/mach/pm-core.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 | =A0 =A00
+> =A0.../include/mach/pmu.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 =A00
+> =A0.../include/mach/regs-audss.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0| =A0 =A00
+> =A0.../include/mach/regs-clock.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0| =A0 =A00
+> =A0.../include/mach/regs-gpio.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A00
+> =A0.../include/mach/regs-irq.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 =A00
+> =A0.../include/mach/regs-mct.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 =A00
+> =A0.../include/mach/regs-mem.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 =A00
+> =A0.../include/mach/regs-pmu.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 =A00
+> =A0.../include/mach/regs-sysmmu.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A00
+> =A0.../include/mach/regs-usb-phy.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0| =A0 =A00
+> =A0.../include/mach/sysmmu.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| =A0 =A00
+> =A0.../include/mach/system.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| =A0 =A00
+> =A0.../include/mach/timex.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 | =A0 =A00
+> =A0.../include/mach/uncompress.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0| =A0 =A00
+> =A0.../include/mach/vmalloc.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/init.c =A0 =A0 =A0| =A0 =A0=
+0
+> =A0.../{mach-exynos4 =3D> mach-exynos}/irq-combiner.c =A0 | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/irq-eint.c =A0| =A0 =A00
+> =A0.../mach-armlex4210.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0| =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-nuri.c | =A0 =A00
+> =A0.../{mach-exynos4 =3D> mach-exynos}/mach-origen.c =A0 =A0| =A0 =A0=
+0
+> =A0.../{mach-exynos4 =3D> mach-exynos}/mach-smdk4x12.c =A0| =A0 =A00
+> =A0.../{mach-exynos4 =3D> mach-exynos}/mach-smdkv310.c =A0| =A0 =A00
+> =A0.../mach-universal_c210.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/mct.c =A0 =A0 =A0 | =A0 =A0=
+0
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/platsmp.c =A0 | =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/pm.c =A0 =A0 =A0 =A0| =A0=
+ =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/pmu.c =A0 =A0 =A0 | =A0 =A0=
+0
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-fimc.c | =A0 =A00
+> =A0.../{mach-exynos4 =3D> mach-exynos}/setup-fimd0.c =A0 =A0| =A0 =A0=
+0
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c0.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c1.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c2.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c3.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c4.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c5.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c6.c | =A0 =A00
+> =A0.../arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c7.c | =A0 =A00
+> =A0.../{mach-exynos4 =3D> mach-exynos}/setup-keypad.c =A0 | =A0 =A00
+> =A0.../setup-sdhci-gpio.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 =A00
+> =A0.../{mach-exynos4 =3D> mach-exynos}/setup-sdhci.c =A0 =A0| =A0 =A0=
+0
+> =A0.../{mach-exynos4 =3D> mach-exynos}/setup-usb-phy.c =A0| =A0 =A00
+> =A0arch/arm/{mach-exynos4 =3D> mach-exynos}/sleep.S =A0 =A0 | =A0 =A0=
+0
+> =A0arch/arm/plat-s5p/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| =A0 =A02 +-
+> =A0arch/arm/plat-s5p/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0| =A0 =A06 +-
+> =A0arch/arm/plat-samsung/include/plat/exynos4.h =A0 =A0 =A0 | =A0 =A0=
+6 +-
+> =A077 files changed, 104 insertions(+), 77 deletions(-)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/Kconfig (91%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/Makefile (89%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/Makefile.boot (100=
+%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/clock-exynos4210.c=
+ (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/clock-exynos4212.c=
+ (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/clock.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/cpu.c (91%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/cpuidle.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-ahci.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-audio.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-dwmci.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-pd.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/dev-sysmmu.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/dma.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/headsmp.S (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/hotplug.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/debug=
+-macro.S (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/dma.h=
+ (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/dwmci=
+=2Eh (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/entry=
+-macro.S (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/exyno=
+s4-clock.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/gpio.=
+h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/hardw=
+are.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/io.h =
+(100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/irqs.=
+h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/map.h=
+ (93%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/memor=
+y.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/pm-co=
+re.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/pmu.h=
+ (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+audss.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+clock.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+gpio.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+irq.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+mct.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+mem.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+pmu.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+sysmmu.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/regs-=
+usb-phy.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/sysmm=
+u.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/syste=
+m.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/timex=
+=2Eh (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/uncom=
+press.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/include/mach/vmall=
+oc.h (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/init.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/irq-combiner.c (10=
+0%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/irq-eint.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-armlex4210.c =
+(100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-nuri.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-origen.c (100=
+%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-smdk4x12.c (1=
+00%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-smdkv310.c (1=
+00%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mach-universal_c21=
+0.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/mct.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/platsmp.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/pm.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/pmu.c (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-fimc.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-fimd0.c (100=
+%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c0.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c1.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c2.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c3.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c4.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c5.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c6.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-i2c7.c (100%=
+)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-keypad.c (10=
+0%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-sdhci-gpio.c=
+ (100%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-sdhci.c (100=
+%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/setup-usb-phy.c (1=
+00%)
+> =A0rename arch/arm/{mach-exynos4 =3D> mach-exynos}/sleep.S (100%)
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index bea81d0..21dbf01 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -781,8 +781,8 @@ config ARCH_S5PV210
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Samsung S5PV210/S5PC110 series based systems
+>
+> -config ARCH_EXYNOS4
+> - =A0 =A0 =A0 bool "Samsung EXYNOS4"
+> +config ARCH_EXYNOS
+> + =A0 =A0 =A0 bool "SAMSUNG EXYNOS"
+> =A0 =A0 =A0 =A0select CPU_V7
+> =A0 =A0 =A0 =A0select ARCH_SPARSEMEM_ENABLE
+> =A0 =A0 =A0 =A0select ARCH_HAS_HOLES_MEMORYMODEL
+> @@ -795,7 +795,7 @@ config ARCH_EXYNOS4
+> =A0 =A0 =A0 =A0select HAVE_S3C2410_I2C if I2C
+> =A0 =A0 =A0 =A0select HAVE_S3C2410_WATCHDOG if WATCHDOG
+> =A0 =A0 =A0 =A0help
+> - =A0 =A0 =A0 =A0 Samsung EXYNOS4 series based systems
+> + =A0 =A0 =A0 =A0 Support for SAMSUNG's EXYNOS SoCs (EXYNOS4/5)
+>
+> =A0config ARCH_SHARK
+> =A0 =A0 =A0 =A0bool "Shark"
+> @@ -1021,7 +1021,7 @@ source "arch/arm/mach-s5pc100/Kconfig"
+>
+> =A0source "arch/arm/mach-s5pv210/Kconfig"
+>
+> -source "arch/arm/mach-exynos4/Kconfig"
+> +source "arch/arm/mach-exynos/Kconfig"
+>
+> =A0source "arch/arm/mach-shmobile/Kconfig"
+>
+> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
+> index 70c424e..289439e 100644
+> --- a/arch/arm/Makefile
+> +++ b/arch/arm/Makefile
+> @@ -177,7 +177,7 @@ machine-$(CONFIG_ARCH_S3C64XX) =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0:=3D s3c64xx
+> =A0machine-$(CONFIG_ARCH_S5P64X0) =A0 =A0 =A0 =A0 :=3D s5p64x0
+> =A0machine-$(CONFIG_ARCH_S5PC100) =A0 =A0 =A0 =A0 :=3D s5pc100
+> =A0machine-$(CONFIG_ARCH_S5PV210) =A0 =A0 =A0 =A0 :=3D s5pv210
+> -machine-$(CONFIG_ARCH_EXYNOS4) =A0 =A0 =A0 =A0 :=3D exynos4
+> +machine-$(CONFIG_ARCH_EXYNOS4) =A0 =A0 =A0 =A0 :=3D exynos
+> =A0machine-$(CONFIG_ARCH_SA1100) =A0 =A0 =A0 =A0 =A0:=3D sa1100
+> =A0machine-$(CONFIG_ARCH_SHARK) =A0 =A0 =A0 =A0 =A0 :=3D shark
+> =A0machine-$(CONFIG_ARCH_SHMOBILE) =A0 =A0 =A0 =A0:=3D shmobile
+> diff --git a/arch/arm/configs/exynos4_defconfig b/arch/arm/configs/ex=
+ynos4_defconfig
+> index cd40bb5..b0d3c13 100644
+> --- a/arch/arm/configs/exynos4_defconfig
+> +++ b/arch/arm/configs/exynos4_defconfig
+> @@ -4,10 +4,9 @@ CONFIG_KALLSYMS_ALL=3Dy
+> =A0CONFIG_MODULES=3Dy
+> =A0CONFIG_MODULE_UNLOAD=3Dy
+> =A0# CONFIG_BLK_DEV_BSG is not set
+> -CONFIG_ARCH_EXYNOS4=3Dy
+> +CONFIG_ARCH_EXYNOS=3Dy
+> =A0CONFIG_S3C_LOWLEVEL_UART_PORT=3D1
+> =A0CONFIG_MACH_SMDKC210=3Dy
+> -CONFIG_MACH_SMDKV310=3Dy
+> =A0CONFIG_MACH_ARMLEX4210=3Dy
+> =A0CONFIG_MACH_UNIVERSAL_C210=3Dy
+> =A0CONFIG_MACH_NURI=3Dy
+> @@ -16,7 +15,6 @@ CONFIG_NO_HZ=3Dy
+> =A0CONFIG_HIGH_RES_TIMERS=3Dy
+> =A0CONFIG_SMP=3Dy
+> =A0CONFIG_NR_CPUS=3D2
+> -CONFIG_HOTPLUG_CPU=3Dy
+> =A0CONFIG_PREEMPT=3Dy
+> =A0CONFIG_AEABI=3Dy
+> =A0CONFIG_CMDLINE=3D"root=3D/dev/ram0 rw ramdisk=3D8192 initrd=3D0x41=
+000000,8M console=3DttySAC1,115200 init=3D/linuxrc mem=3D256M"
+> @@ -61,12 +59,9 @@ CONFIG_DETECT_HUNG_TASK=3Dy
+> =A0CONFIG_DEBUG_RT_MUTEXES=3Dy
+> =A0CONFIG_DEBUG_SPINLOCK=3Dy
+> =A0CONFIG_DEBUG_MUTEXES=3Dy
+> -CONFIG_DEBUG_SPINLOCK_SLEEP=3Dy
+> =A0CONFIG_DEBUG_INFO=3Dy
+> -# CONFIG_RCU_CPU_STALL_DETECTOR is not set
+> =A0CONFIG_SYSCTL_SYSCALL_CHECK=3Dy
+> =A0CONFIG_DEBUG_USER=3Dy
+> -CONFIG_DEBUG_ERRORS=3Dy
+> =A0CONFIG_DEBUG_LL=3Dy
+> =A0CONFIG_EARLY_PRINTK=3Dy
+> =A0CONFIG_DEBUG_S3C_UART=3D1
+> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos/Kco=
+nfig
+> similarity index 91%
+> rename from arch/arm/mach-exynos4/Kconfig
+> rename to arch/arm/mach-exynos/Kconfig
+> index 6dfde07..999989e 100644
+> --- a/arch/arm/mach-exynos4/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -1,4 +1,4 @@
+> -# arch/arm/mach-exynos4/Kconfig
+> +# arch/arm/mach-exynos/Kconfig
+> =A0#
+> =A0# Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+> =A0# =A0 =A0 =A0 =A0 =A0 =A0 =A0http://www.samsung.com/
+> @@ -7,21 +7,42 @@
+>
+> =A0# Configuration options for the EXYNOS4
+>
+> -if ARCH_EXYNOS4
+> +if ARCH_EXYNOS
 > +
+> +menu "SAMSUNG EXYNOS SoCs Support"
 > +
-> =A0struct s3c24xx_uart_resources {
-> =A0 =A0 =A0 =A0struct resource =A0 =A0 =A0 =A0 *resources;
-> =A0 =A0 =A0 =A0unsigned long =A0 =A0 =A0 =A0 =A0 =A0nr_resources;
+> +choice
+> + =A0 =A0 =A0 prompt "EXYNOS System Type"
+> + =A0 =A0 =A0 default ARCH_EXYNOS4
+> +
+> +config ARCH_EXYNOS4
+> + =A0 =A0 =A0 bool "SAMSUNG EXYNOS4"
+> + =A0 =A0 =A0 help
+> + =A0 =A0 =A0 =A0 Samsung EXYNOS4 SoCs based systems
+> +
+> +endchoice
+> +
+> +comment "EXYNOS SoCs"
+>
+> =A0config CPU_EXYNOS4210
+> - =A0 =A0 =A0 bool
+> + =A0 =A0 =A0 bool "SAMSUNG EXYNOS4210"
+> + =A0 =A0 =A0 default y
+> + =A0 =A0 =A0 depends on ARCH_EXYNOS4
+> =A0 =A0 =A0 =A0select SAMSUNG_DMADEV
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Enable EXYNOS4210 CPU support
+>
+> =A0config SOC_EXYNOS4212
+> - =A0 =A0 =A0 bool
+> + =A0 =A0 =A0 bool "SAMSUNG EXYNOS4212"
+> + =A0 =A0 =A0 default y
+> + =A0 =A0 =A0 depends on ARCH_EXYNOS4
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Enable EXYNOS4212 SoC support
+>
+> =A0config SOC_EXYNOS4412
+> - =A0 =A0 =A0 bool
+> + =A0 =A0 =A0 bool "SAMSUNG EXYNOS4412"
+> + =A0 =A0 =A0 default y
+> + =A0 =A0 =A0 depends on ARCH_EXYNOS4
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Enable EXYNOS4412 SoC support
+>
+> @@ -119,7 +140,7 @@ config EXYNOS4_SETUP_USB_PHY
+>
+> =A0# machine support
+>
+> -menu "EXYNOS4 Machines"
+> +if ARCH_EXYNOS4
+>
+> =A0comment "EXYNOS4210 Boards"
+>
+> @@ -286,12 +307,11 @@ config MACH_SMDK4412
+> =A0 =A0 =A0 =A0select MACH_SMDK4212
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Machine support for Samsung SMDK4412
+> +endif
+>
+> -endmenu
+> -
+> -comment "Configuration for HSMMC bus width"
+> +if ARCH_EXYNOS4
+>
+> -menu "Use 8-bit bus width"
+> +comment "Configuration for HSMMC 8-bit bus width"
+>
+> =A0config EXYNOS4_SDHCI_CH0_8BIT
+> =A0 =A0 =A0 =A0bool "Channel 0 with 8-bit bus"
+> @@ -304,6 +324,7 @@ config EXYNOS4_SDHCI_CH2_8BIT
+> =A0 =A0 =A0 =A0help
+> =A0 =A0 =A0 =A0 =A0Support HSMMC Channel 2 8-bit bus.
+> =A0 =A0 =A0 =A0 =A0If selected, Channel 3 is disabled.
+> +endif
+>
+> =A0endmenu
+>
+> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos/Ma=
+kefile
+> similarity index 89%
+> rename from arch/arm/mach-exynos4/Makefile
+> rename to arch/arm/mach-exynos/Makefile
+> index c9b2e1f..fa715eb 100644
+> --- a/arch/arm/mach-exynos4/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -1,4 +1,4 @@
+> -# arch/arm/mach-exynos4/Makefile
+> +# arch/arm/mach-exynos/Makefile
+> =A0#
+> =A0# Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+> =A0# =A0 =A0 =A0 =A0 =A0 =A0 =A0http://www.samsung.com/
+> @@ -12,8 +12,8 @@ obj- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0:=3D
+>
+> =A0# Core support for EXYNOS4 system
+>
+> -obj-$(CONFIG_ARCH_EXYNOS4) =A0 =A0 +=3D cpu.o init.o clock.o irq-com=
+biner.o
+> -obj-$(CONFIG_ARCH_EXYNOS4) =A0 =A0 +=3D setup-i2c0.o irq-eint.o dma.=
+o pmu.o
+> +obj-$(CONFIG_ARCH_EXYNOS) =A0 =A0 =A0+=3D cpu.o init.o clock.o irq-c=
+ombiner.o setup-i2c0.o
+> +obj-$(CONFIG_ARCH_EXYNOS4) =A0 =A0 +=3D irq-eint.o dma.o pmu.o
+> =A0obj-$(CONFIG_CPU_EXYNOS4210) =A0 +=3D clock-exynos4210.o
+> =A0obj-$(CONFIG_SOC_EXYNOS4212) =A0 +=3D clock-exynos4212.o
+> =A0obj-$(CONFIG_PM) =A0 =A0 =A0 =A0 =A0 =A0 =A0 +=3D pm.o sleep.o
+> @@ -39,7 +39,7 @@ obj-$(CONFIG_MACH_SMDK4412) =A0 =A0 =A0 =A0 =A0 +=3D=
+ mach-smdk4x12.o
+>
+> =A0# device support
+>
+> -obj-y =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0+=3D dev-audio.o
+> +obj-$(CONFIG_ARCH_EXYNOS4) =A0 =A0 =A0 =A0 =A0 =A0 +=3D dev-audio.o
+> =A0obj-$(CONFIG_EXYNOS4_DEV_AHCI) =A0 =A0 =A0 =A0 +=3D dev-ahci.o
+> =A0obj-$(CONFIG_EXYNOS4_DEV_PD) =A0 =A0 =A0 =A0 =A0 +=3D dev-pd.o
+> =A0obj-$(CONFIG_EXYNOS4_DEV_SYSMMU) =A0 =A0 =A0 +=3D dev-sysmmu.o
+> diff --git a/arch/arm/mach-exynos4/Makefile.boot b/arch/arm/mach-exyn=
+os/Makefile.boot
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/Makefile.boot
+> rename to arch/arm/mach-exynos/Makefile.boot
+> diff --git a/arch/arm/mach-exynos4/clock-exynos4210.c b/arch/arm/mach=
+-exynos/clock-exynos4210.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/clock-exynos4210.c
+> rename to arch/arm/mach-exynos/clock-exynos4210.c
+> diff --git a/arch/arm/mach-exynos4/clock-exynos4212.c b/arch/arm/mach=
+-exynos/clock-exynos4212.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/clock-exynos4212.c
+> rename to arch/arm/mach-exynos/clock-exynos4212.c
+> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos/clo=
+ck.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/clock.c
+> rename to arch/arm/mach-exynos/clock.c
+> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos/cpu.c
+> similarity index 91%
+> rename from arch/arm/mach-exynos4/cpu.c
+> rename to arch/arm/mach-exynos/cpu.c
+> index 5b1765b..90ec247 100644
+> --- a/arch/arm/mach-exynos4/cpu.c
+> +++ b/arch/arm/mach-exynos/cpu.c
+> @@ -1,4 +1,4 @@
+> -/* linux/arch/arm/mach-exynos4/cpu.c
+> +/* linux/arch/arm/mach-exynos/cpu.c
+> =A0*
+> =A0* Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+> =A0* =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
+> @@ -40,28 +40,47 @@ extern int combiner_init(unsigned int combiner_nr=
+, void __iomem *base,
+> =A0extern void combiner_cascade_irq(unsigned int combiner_nr, unsigne=
+d int irq);
+>
+> =A0/* Initial IO mappings */
+> -static struct map_desc exynos4_iodesc[] __initdata =3D {
+> +static struct map_desc exynos_iodesc[] __initdata =3D {
+> =A0 =A0 =A0 =A0{
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.virtual =A0 =A0 =A0 =A0=3D (unsigned =
+long)S5P_VA_SYSTIMER,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_SYSTIMER),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS_PA_SYSTIMER),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_4K,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> - =A0 =A0 =A0 }, {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S5P_VA_CMU,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_CMU),
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_128K,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVIC=
+E,
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.virtual =A0 =A0 =A0 =A0=3D (unsigned =
+long)S5P_VA_PMU,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_PMU),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS_PA_PMU),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_64K,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVIC=
+E,
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.virtual =A0 =A0 =A0 =A0=3D (unsigned =
+long)S5P_VA_COMBINER_BASE,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_COMBINER),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS_PA_COMBINER),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_4K,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVIC=
+E,
+> =A0 =A0 =A0 =A0}, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S5P_VA_GIC_CPU,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS_PA_GIC_CPU),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_64K,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S5P_VA_GIC_DIST,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS_PA_GIC_DIST),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_64K,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> + =A0 =A0 =A0 }, {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S3C_VA_UART,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(S3C_PA_UART),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_512K,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> + =A0 =A0 =A0 },
+> +};
+> +
+> +static struct map_desc exynos4_iodesc[] __initdata =3D {
+> + =A0 =A0 =A0 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S5P_VA_CMU,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_CMU),
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_128K,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> + =A0 =A0 =A0 }, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.virtual =A0 =A0 =A0 =A0=3D (unsigned =
+long)S5P_VA_COREPERI_BASE,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys=
+_to_pfn(EXYNOS4_PA_COREPERI),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_8K,
+> @@ -92,11 +111,6 @@ static struct map_desc exynos4_iodesc[] __initdat=
+a =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_4K,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVIC=
+E,
+> =A0 =A0 =A0 =A0}, {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S3C_VA_UART,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(S3C_PA_UART),
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_512K,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> - =A0 =A0 =A0 }, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.virtual =A0 =A0 =A0 =A0=3D (unsigned =
+long)S5P_VA_SROMC,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys=
+_to_pfn(EXYNOS4_PA_SROMC),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_4K,
+> @@ -106,16 +120,6 @@ static struct map_desc exynos4_iodesc[] __initda=
+ta =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys=
+_to_pfn(EXYNOS4_PA_HSPHY),
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.length =A0 =A0 =A0 =A0 =3D SZ_4K,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVIC=
+E,
+> - =A0 =A0 =A0 }, {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S5P_VA_GIC_CPU,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_GIC_CPU),
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_64K,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> - =A0 =A0 =A0 }, {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .virtual =A0 =A0 =A0 =A0=3D (unsigned l=
+ong)S5P_VA_GIC_DIST,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .pfn =A0 =A0 =A0 =A0 =A0 =A0=3D __phys_=
+to_pfn(EXYNOS4_PA_GIC_DIST),
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .length =A0 =A0 =A0 =A0 =3D SZ_64K,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .type =A0 =A0 =A0 =A0 =A0 =3D MT_DEVICE=
+,
+> =A0 =A0 =A0 =A0},
+> =A0};
+>
+> @@ -137,7 +141,7 @@ static struct map_desc exynos4_iodesc1[] __initda=
+ta =3D {
+> =A0 =A0 =A0 =A0},
+> =A0};
+>
+> -static void exynos4_idle(void)
+> +static void exynos_idle(void)
+> =A0{
+> =A0 =A0 =A0 =A0if (!need_resched())
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0cpu_do_idle();
+> @@ -151,12 +155,13 @@ static void exynos4_sw_reset(void)
+> =A0}
+>
+> =A0/*
+> - * exynos4_map_io
+> + * exynos_map_io
+> =A0*
+> =A0* register the standard cpu IO areas
+> =A0*/
+> =A0void __init exynos4_map_io(void)
+> =A0{
+> + =A0 =A0 =A0 iotable_init(exynos_iodesc, ARRAY_SIZE(exynos_iodesc));
+> =A0 =A0 =A0 =A0iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc=
+));
+>
+> =A0 =A0 =A0 =A0if (soc_is_exynos4210() && samsung_rev() =3D=3D EXYNOS=
+4210_REV_0)
+> @@ -250,7 +255,6 @@ static int __init exynos4_core_init(void)
+> =A0{
+> =A0 =A0 =A0 =A0return sysdev_class_register(&exynos4_sysclass);
+> =A0}
+> -
+> =A0core_initcall(exynos4_core_init);
+>
+> =A0#ifdef CONFIG_CACHE_L2X0
+> @@ -279,15 +283,16 @@ static int __init exynos4_l2x0_cache_init(void)
+> =A0early_initcall(exynos4_l2x0_cache_init);
+> =A0#endif
+>
+> -int __init exynos4_init(void)
+> +int __init exynos_init(void)
+> =A0{
+> - =A0 =A0 =A0 printk(KERN_INFO "EXYNOS4: Initializing architecture\n"=
+);
+> + =A0 =A0 =A0 printk(KERN_INFO "EXYNOS: Initializing architecture\n")=
+;
+>
+> =A0 =A0 =A0 =A0/* set idle function */
+> - =A0 =A0 =A0 pm_idle =3D exynos4_idle;
+> + =A0 =A0 =A0 pm_idle =3D exynos_idle;
+>
+> =A0 =A0 =A0 =A0/* set sw_reset function */
+> - =A0 =A0 =A0 s5p_reset_hook =3D exynos4_sw_reset;
+> + =A0 =A0 =A0 if (soc_is_exynos4210() || soc_is_exynos4212() || soc_i=
+s_exynos4412())
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s5p_reset_hook =3D exynos4_sw_reset;
+>
+> =A0 =A0 =A0 =A0return sysdev_register(&exynos4_sysdev);
+> =A0}
+> diff --git a/arch/arm/mach-exynos4/cpuidle.c b/arch/arm/mach-exynos/c=
+puidle.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/cpuidle.c
+> rename to arch/arm/mach-exynos/cpuidle.c
+> diff --git a/arch/arm/mach-exynos4/dev-ahci.c b/arch/arm/mach-exynos/=
+dev-ahci.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/dev-ahci.c
+> rename to arch/arm/mach-exynos/dev-ahci.c
+> diff --git a/arch/arm/mach-exynos4/dev-audio.c b/arch/arm/mach-exynos=
+/dev-audio.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/dev-audio.c
+> rename to arch/arm/mach-exynos/dev-audio.c
+> diff --git a/arch/arm/mach-exynos4/dev-dwmci.c b/arch/arm/mach-exynos=
+/dev-dwmci.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/dev-dwmci.c
+> rename to arch/arm/mach-exynos/dev-dwmci.c
+> diff --git a/arch/arm/mach-exynos4/dev-pd.c b/arch/arm/mach-exynos/de=
+v-pd.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/dev-pd.c
+> rename to arch/arm/mach-exynos/dev-pd.c
+> diff --git a/arch/arm/mach-exynos4/dev-sysmmu.c b/arch/arm/mach-exyno=
+s/dev-sysmmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/dev-sysmmu.c
+> rename to arch/arm/mach-exynos/dev-sysmmu.c
+> diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos/dma.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/dma.c
+> rename to arch/arm/mach-exynos/dma.c
+> diff --git a/arch/arm/mach-exynos4/headsmp.S b/arch/arm/mach-exynos/h=
+eadsmp.S
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/headsmp.S
+> rename to arch/arm/mach-exynos/headsmp.S
+> diff --git a/arch/arm/mach-exynos4/hotplug.c b/arch/arm/mach-exynos/h=
+otplug.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/hotplug.c
+> rename to arch/arm/mach-exynos/hotplug.c
+> diff --git a/arch/arm/mach-exynos4/include/mach/debug-macro.S b/arch/=
+arm/mach-exynos/include/mach/debug-macro.S
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/debug-macro.S
+> rename to arch/arm/mach-exynos/include/mach/debug-macro.S
+> diff --git a/arch/arm/mach-exynos4/include/mach/dma.h b/arch/arm/mach=
+-exynos/include/mach/dma.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/dma.h
+> rename to arch/arm/mach-exynos/include/mach/dma.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/dwmci.h b/arch/arm/ma=
+ch-exynos/include/mach/dwmci.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/dwmci.h
+> rename to arch/arm/mach-exynos/include/mach/dwmci.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/=
+arm/mach-exynos/include/mach/entry-macro.S
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/entry-macro.S
+> rename to arch/arm/mach-exynos/include/mach/entry-macro.S
+> diff --git a/arch/arm/mach-exynos4/include/mach/exynos4-clock.h b/arc=
+h/arm/mach-exynos/include/mach/exynos4-clock.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/exynos4-clock.h
+> rename to arch/arm/mach-exynos/include/mach/exynos4-clock.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/gpio.h b/arch/arm/mac=
+h-exynos/include/mach/gpio.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/gpio.h
+> rename to arch/arm/mach-exynos/include/mach/gpio.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/hardware.h b/arch/arm=
+/mach-exynos/include/mach/hardware.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/hardware.h
+> rename to arch/arm/mach-exynos/include/mach/hardware.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/io.h b/arch/arm/mach-=
+exynos/include/mach/io.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/io.h
+> rename to arch/arm/mach-exynos/include/mach/io.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mac=
+h-exynos/include/mach/irqs.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/irqs.h
+> rename to arch/arm/mach-exynos/include/mach/irqs.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach=
+-exynos/include/mach/map.h
+> similarity index 93%
+> rename from arch/arm/mach-exynos4/include/mach/map.h
+> rename to arch/arm/mach-exynos/include/mach/map.h
+> index 918a979..058541d 100644
+> --- a/arch/arm/mach-exynos4/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -1,4 +1,4 @@
+> -/* linux/arch/arm/mach-exynos4/include/mach/map.h
+> +/* linux/arch/arm/mach-exynos/include/mach/map.h
+> =A0*
+> =A0* Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+> =A0* =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com/
+> @@ -145,39 +145,45 @@
+> =A0#define S3C_PA_IIC5 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4=
+_PA_IIC(5)
+> =A0#define S3C_PA_IIC6 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4=
+_PA_IIC(6)
+> =A0#define S3C_PA_IIC7 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4=
+_PA_IIC(7)
+> -#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_AD=
+C
+> -#define SAMSUNG_PA_ADC1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0EXYNOS4_PA_ADC1
+> =A0#define S3C_PA_RTC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4=
+_PA_RTC
+> =A0#define S3C_PA_WDT =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4=
+_PA_WATCHDOG
+> +#define S3C_PA_UART =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_UART
+>
+> =A0#define S5P_PA_CHIPID =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_CHIPID
+> +#define S5P_PA_EHCI =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_EHCI
+> =A0#define S5P_PA_FIMC0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_FIMC0
+> =A0#define S5P_PA_FIMC1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_FIMC1
+> =A0#define S5P_PA_FIMC2 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_FIMC2
+> =A0#define S5P_PA_FIMC3 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_FIMC3
+> +#define S5P_PA_FIMD0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_=
+=46IMD0
+> +#define S5P_PA_HDMI =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_HDMI
+> +#define S5P_PA_IIC_HDMIPHY =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_IIC_HD=
+MIPHY
+> +#define S5P_PA_MFC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_MFC
+> =A0#define S5P_PA_MIPI_CSIS0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_PA_MI=
+PI_CSIS0
+> =A0#define S5P_PA_MIPI_CSIS1 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_PA_MI=
+PI_CSIS1
+> -#define S5P_PA_FIMD0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_=
+=46IMD0
+> +#define S5P_PA_MIXER =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_=
+MIXER
+> =A0#define S5P_PA_ONENAND =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_=
+ONENAND
+> =A0#define S5P_PA_ONENAND_DMA =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_ONEN=
+AND_DMA
+> +#define S5P_PA_SDO =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_SDO
+> =A0#define S5P_PA_SDRAM =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_SDRAM
+> =A0#define S5P_PA_SROMC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_SROMC
+> -#define S5P_PA_MFC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_MFC
+> =A0#define S5P_PA_SYSCON =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_SYSCON
+> =A0#define S5P_PA_TIMER =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_TIMER
+> -#define S5P_PA_EHCI =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_EHCI
+> -
+> -#define S5P_PA_SDO =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_P=
+A_SDO
+> =A0#define S5P_PA_VP =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNO=
+S4_PA_VP
+> -#define S5P_PA_MIXER =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_=
+MIXER
+> -#define S5P_PA_HDMI =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_HDMI
+> -#define S5P_PA_IIC_HDMIPHY =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_IIC_HD=
+MIPHY
+>
+> +#define SAMSUNG_PA_ADC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_AD=
+C
+> +#define SAMSUNG_PA_ADC1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0EXYNOS4_PA_ADC1
+> =A0#define SAMSUNG_PA_KEYPAD =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_PA_KE=
+YPAD
+>
+> -/* UART */
+> +#define EXYNOS_PA_COMBINER =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_COMBIN=
+ER
+> +#define EXYNOS_PA_GIC_CPU =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_PA_GIC_=
+CPU
+> +#define EXYNOS_PA_GIC_DIST =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_GIC_DI=
+ST
+> +#define EXYNOS_PA_PMU =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_PA_=
+PMU
+> +#define EXYNOS_PA_SYSTIMER =A0 =A0 =A0 =A0 =A0 =A0 EXYNOS4_PA_SYSTIM=
+ER
+>
+> -#define S3C_PA_UART =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXYNOS4_P=
+A_UART
+> +/* Compatibility UART */
+> +
+> +#define S3C_VA_UARTx(x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0(S3C_VA_UART + ((x) * S3C_UART_OFFSET))
+>
+> =A0#define S5P_PA_UART(x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (S3C_PA_UAR=
+T + ((x) * S3C_UART_OFFSET))
+> =A0#define S5P_PA_UART0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P_PA_UA=
+RT(0)
+> diff --git a/arch/arm/mach-exynos4/include/mach/memory.h b/arch/arm/m=
+ach-exynos/include/mach/memory.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/memory.h
+> rename to arch/arm/mach-exynos/include/mach/memory.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/pm-core.h b/arch/arm/=
+mach-exynos/include/mach/pm-core.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/pm-core.h
+> rename to arch/arm/mach-exynos/include/mach/pm-core.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/pmu.h b/arch/arm/mach=
+-exynos/include/mach/pmu.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/pmu.h
+> rename to arch/arm/mach-exynos/include/mach/pmu.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-audss.h b/arch/a=
+rm/mach-exynos/include/mach/regs-audss.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-audss.h
+> rename to arch/arm/mach-exynos/include/mach/regs-audss.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/a=
+rm/mach-exynos/include/mach/regs-clock.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-clock.h
+> rename to arch/arm/mach-exynos/include/mach/regs-clock.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-gpio.h b/arch/ar=
+m/mach-exynos/include/mach/regs-gpio.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-gpio.h
+> rename to arch/arm/mach-exynos/include/mach/regs-gpio.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-irq.h b/arch/arm=
+/mach-exynos/include/mach/regs-irq.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-irq.h
+> rename to arch/arm/mach-exynos/include/mach/regs-irq.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-mct.h b/arch/arm=
+/mach-exynos/include/mach/regs-mct.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-mct.h
+> rename to arch/arm/mach-exynos/include/mach/regs-mct.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-mem.h b/arch/arm=
+/mach-exynos/include/mach/regs-mem.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-mem.h
+> rename to arch/arm/mach-exynos/include/mach/regs-mem.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-pmu.h b/arch/arm=
+/mach-exynos/include/mach/regs-pmu.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-pmu.h
+> rename to arch/arm/mach-exynos/include/mach/regs-pmu.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-sysmmu.h b/arch/=
+arm/mach-exynos/include/mach/regs-sysmmu.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-sysmmu.h
+> rename to arch/arm/mach-exynos/include/mach/regs-sysmmu.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/regs-usb-phy.h b/arch=
+/arm/mach-exynos/include/mach/regs-usb-phy.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/regs-usb-phy.h
+> rename to arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/sysmmu.h b/arch/arm/m=
+ach-exynos/include/mach/sysmmu.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/sysmmu.h
+> rename to arch/arm/mach-exynos/include/mach/sysmmu.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/system.h b/arch/arm/m=
+ach-exynos/include/mach/system.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/system.h
+> rename to arch/arm/mach-exynos/include/mach/system.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/timex.h b/arch/arm/ma=
+ch-exynos/include/mach/timex.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/timex.h
+> rename to arch/arm/mach-exynos/include/mach/timex.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/uncompress.h b/arch/a=
+rm/mach-exynos/include/mach/uncompress.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/uncompress.h
+> rename to arch/arm/mach-exynos/include/mach/uncompress.h
+> diff --git a/arch/arm/mach-exynos4/include/mach/vmalloc.h b/arch/arm/=
+mach-exynos/include/mach/vmalloc.h
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/include/mach/vmalloc.h
+> rename to arch/arm/mach-exynos/include/mach/vmalloc.h
+> diff --git a/arch/arm/mach-exynos4/init.c b/arch/arm/mach-exynos/init=
+=2Ec
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/init.c
+> rename to arch/arm/mach-exynos/init.c
+> diff --git a/arch/arm/mach-exynos4/irq-combiner.c b/arch/arm/mach-exy=
+nos/irq-combiner.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/irq-combiner.c
+> rename to arch/arm/mach-exynos/irq-combiner.c
+> diff --git a/arch/arm/mach-exynos4/irq-eint.c b/arch/arm/mach-exynos/=
+irq-eint.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/irq-eint.c
+> rename to arch/arm/mach-exynos/irq-eint.c
+> diff --git a/arch/arm/mach-exynos4/mach-armlex4210.c b/arch/arm/mach-=
+exynos/mach-armlex4210.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mach-armlex4210.c
+> rename to arch/arm/mach-exynos/mach-armlex4210.c
+> diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos=
+/mach-nuri.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mach-nuri.c
+> rename to arch/arm/mach-exynos/mach-nuri.c
+> diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exyn=
+os/mach-origen.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mach-origen.c
+> rename to arch/arm/mach-exynos/mach-origen.c
+> diff --git a/arch/arm/mach-exynos4/mach-smdk4x12.c b/arch/arm/mach-ex=
+ynos/mach-smdk4x12.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mach-smdk4x12.c
+> rename to arch/arm/mach-exynos/mach-smdk4x12.c
+> diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-ex=
+ynos/mach-smdkv310.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mach-smdkv310.c
+> rename to arch/arm/mach-exynos/mach-smdkv310.c
+> diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/m=
+ach-exynos/mach-universal_c210.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mach-universal_c210.c
+> rename to arch/arm/mach-exynos/mach-universal_c210.c
+> diff --git a/arch/arm/mach-exynos4/mct.c b/arch/arm/mach-exynos/mct.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/mct.c
+> rename to arch/arm/mach-exynos/mct.c
+> diff --git a/arch/arm/mach-exynos4/platsmp.c b/arch/arm/mach-exynos/p=
+latsmp.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/platsmp.c
+> rename to arch/arm/mach-exynos/platsmp.c
+> diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos/pm.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/pm.c
+> rename to arch/arm/mach-exynos/pm.c
+> diff --git a/arch/arm/mach-exynos4/pmu.c b/arch/arm/mach-exynos/pmu.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/pmu.c
+> rename to arch/arm/mach-exynos/pmu.c
+> diff --git a/arch/arm/mach-exynos4/setup-fimc.c b/arch/arm/mach-exyno=
+s/setup-fimc.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-fimc.c
+> rename to arch/arm/mach-exynos/setup-fimc.c
+> diff --git a/arch/arm/mach-exynos4/setup-fimd0.c b/arch/arm/mach-exyn=
+os/setup-fimd0.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-fimd0.c
+> rename to arch/arm/mach-exynos/setup-fimd0.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c0.c b/arch/arm/mach-exyno=
+s/setup-i2c0.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c0.c
+> rename to arch/arm/mach-exynos/setup-i2c0.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c1.c b/arch/arm/mach-exyno=
+s/setup-i2c1.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c1.c
+> rename to arch/arm/mach-exynos/setup-i2c1.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c2.c b/arch/arm/mach-exyno=
+s/setup-i2c2.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c2.c
+> rename to arch/arm/mach-exynos/setup-i2c2.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c3.c b/arch/arm/mach-exyno=
+s/setup-i2c3.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c3.c
+> rename to arch/arm/mach-exynos/setup-i2c3.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c4.c b/arch/arm/mach-exyno=
+s/setup-i2c4.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c4.c
+> rename to arch/arm/mach-exynos/setup-i2c4.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c5.c b/arch/arm/mach-exyno=
+s/setup-i2c5.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c5.c
+> rename to arch/arm/mach-exynos/setup-i2c5.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c6.c b/arch/arm/mach-exyno=
+s/setup-i2c6.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c6.c
+> rename to arch/arm/mach-exynos/setup-i2c6.c
+> diff --git a/arch/arm/mach-exynos4/setup-i2c7.c b/arch/arm/mach-exyno=
+s/setup-i2c7.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-i2c7.c
+> rename to arch/arm/mach-exynos/setup-i2c7.c
+> diff --git a/arch/arm/mach-exynos4/setup-keypad.c b/arch/arm/mach-exy=
+nos/setup-keypad.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-keypad.c
+> rename to arch/arm/mach-exynos/setup-keypad.c
+> diff --git a/arch/arm/mach-exynos4/setup-sdhci-gpio.c b/arch/arm/mach=
+-exynos/setup-sdhci-gpio.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-sdhci-gpio.c
+> rename to arch/arm/mach-exynos/setup-sdhci-gpio.c
+> diff --git a/arch/arm/mach-exynos4/setup-sdhci.c b/arch/arm/mach-exyn=
+os/setup-sdhci.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-sdhci.c
+> rename to arch/arm/mach-exynos/setup-sdhci.c
+> diff --git a/arch/arm/mach-exynos4/setup-usb-phy.c b/arch/arm/mach-ex=
+ynos/setup-usb-phy.c
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/setup-usb-phy.c
+> rename to arch/arm/mach-exynos/setup-usb-phy.c
+> diff --git a/arch/arm/mach-exynos4/sleep.S b/arch/arm/mach-exynos/sle=
+ep.S
+> similarity index 100%
+> rename from arch/arm/mach-exynos4/sleep.S
+> rename to arch/arm/mach-exynos/sleep.S
+> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+> index f9241a7..4e98f09 100644
+> --- a/arch/arm/plat-s5p/Kconfig
+> +++ b/arch/arm/plat-s5p/Kconfig
+> @@ -7,7 +7,7 @@
+>
+> =A0config PLAT_S5P
+> =A0 =A0 =A0 =A0bool
+> - =A0 =A0 =A0 depends on (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV21=
+0 || ARCH_EXYNOS4)
+> + =A0 =A0 =A0 depends on (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV21=
+0 || ARCH_EXYNOS)
+> =A0 =A0 =A0 =A0default y
+> =A0 =A0 =A0 =A0select ARM_VIC if !ARCH_EXYNOS4
+> =A0 =A0 =A0 =A0select ARM_GIC if ARCH_EXYNOS4
+> diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
+> index 7b0a28f..a56959e 100644
+> --- a/arch/arm/plat-s5p/cpu.c
+> +++ b/arch/arm/plat-s5p/cpu.c
+> @@ -75,7 +75,7 @@ static struct cpu_table cpu_ids[] __initdata =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.map_io =A0 =A0 =A0 =A0 =3D exynos4_ma=
+p_io,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.init_clocks =A0 =A0=3D exynos4_init_c=
+locks,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.init_uarts =A0 =A0 =3D exynos4_init_u=
+arts,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D exynos4_i=
+nit,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D exynos_in=
+it,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D name_exy=
+nos4210,
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.idcode =A0 =A0 =A0 =A0 =3D EXYNOS4212=
+_CPU_ID,
+> @@ -83,7 +83,7 @@ static struct cpu_table cpu_ids[] __initdata =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.map_io =A0 =A0 =A0 =A0 =3D exynos4_ma=
+p_io,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.init_clocks =A0 =A0=3D exynos4_init_c=
+locks,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.init_uarts =A0 =A0 =3D exynos4_init_u=
+arts,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D exynos4_i=
+nit,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D exynos_in=
+it,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D name_exy=
+nos4212,
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.idcode =A0 =A0 =A0 =A0 =3D EXYNOS4412=
+_CPU_ID,
+> @@ -91,7 +91,7 @@ static struct cpu_table cpu_ids[] __initdata =3D {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.map_io =A0 =A0 =A0 =A0 =3D exynos4_ma=
+p_io,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.init_clocks =A0 =A0=3D exynos4_init_c=
+locks,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.init_uarts =A0 =A0 =3D exynos4_init_u=
+arts,
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D exynos4_i=
+nit,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .init =A0 =A0 =A0 =A0 =A0 =3D exynos_in=
+it,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D name_exy=
+nos4412,
+> =A0 =A0 =A0 =A0},
+> =A0};
+> diff --git a/arch/arm/plat-samsung/include/plat/exynos4.h b/arch/arm/=
+plat-samsung/include/plat/exynos4.h
+> index 20d73bf..f546e88 100644
+> --- a/arch/arm/plat-samsung/include/plat/exynos4.h
+> +++ b/arch/arm/plat-samsung/include/plat/exynos4.h
+> @@ -18,8 +18,8 @@ extern void exynos4210_register_clocks(void);
+> =A0extern void exynos4212_register_clocks(void);
+> =A0extern void exynos4_setup_clocks(void);
+>
+> -#ifdef CONFIG_ARCH_EXYNOS4
+> -extern =A0int exynos4_init(void);
+> +#ifdef CONFIG_ARCH_EXYNOS
+> +extern =A0int exynos_init(void);
+> =A0extern void exynos4_init_irq(void);
+> =A0extern void exynos4_map_io(void);
+> =A0extern void exynos4_init_clocks(int xtal);
+> @@ -31,5 +31,5 @@ extern struct sys_timer exynos4_timer;
+> =A0#define exynos4_init_clocks NULL
+> =A0#define exynos4_init_uarts NULL
+> =A0#define exynos4_map_io NULL
+> -#define exynos4_init NULL
+> +#define exynos_init NULL
+> =A0#endif
 > --
 > 1.7.1
 >
