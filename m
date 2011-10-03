@@ -1,56 +1,111 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung devel-2 for v3.2
-Date: Mon, 03 Oct 2011 12:27:22 +0900
-Message-ID: <005801cc817c$5d42f9e0$17c8eda0$%kim@samsung.com>
-References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com>
- <20111002192950.GB1005@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] gpio/samsung: Move SoC specific codes within macro
+Date: Mon,  3 Oct 2011 08:59:19 +0530
+Message-ID: <1317612559-8930-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14671 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751630Ab1JCD1X (ORCPT
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:40396 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751183Ab1JCDeA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 2 Oct 2011 23:27:23 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSH00JA109IXY80@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 12:27:22 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSH00FS809LLZ30@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 12:27:22 +0900 (KST)
-In-reply-to: <20111002192950.GB1005@sirena.org.uk>
-Content-language: ko
+	Sun, 2 Oct 2011 23:34:00 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: grant.likely@secretlab.ca, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Mark Brown wrote:
-> 
-> On Sun, Oct 02, 2011 at 06:25:36PM +0900, Kukjin Kim wrote:
-> 
-> >       gpio/samsung: gpio-samsung.c to support Samsung GPIOs
-> 
-> As I reported the other day this change breaks the boot early on on the
-> Cragganmore S3C6410 based systems (I've not actually fired up my
-> SMDK6410 but I suspect it may have issues too).  I did make some brief
-> attempts to debug but as there's no console output at all and the diff
-> is rather large it's not easy to see what's gone wrong.
+In drivers/gpio/gpio-samsung.c, there are certain structures
+and functions which are not getting used if the particular
+CPU is not selected. These code segments are moved under CPU
+specific macros to remove compilation warnings.
 
-Hmm, I thought it has no problem when I saw Thomas Abraham's 'serial:
-samsung' patches because he said it works fine with my for-next plus his
-patches on SMDK6410...Anyway, I need to sort it out.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+It has been build tested with s3c2410_defconfig, s3c6400_defconfig,
+s5p64x0_defconfig, s5pc100_defconfig, s5pv210_defconfig and
+exynos4_defconfig.
 
-Arnd, please hold this on, will request again soon.
+The patch has been rebased onto
+Commit: gpio/samsung: correct pin configuration for S5PC100/S5PC110/EXYNOS4
 
-Thanks.
+on git://github.com/kgene/linux-samsung.git (next/topic-gpio-samsung)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+ drivers/gpio/gpio-samsung.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index b6be77a..33d62d1 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -318,6 +318,7 @@ static unsigned samsung_gpio_getcfg_4bit(struct samsung_gpio_chip *chip,
+ 	return S3C_GPIO_SPECIAL(con);
+ }
+ 
++#ifdef CONFIG_PLAT_S3C24XX
+ /*
+  * s3c24xx_gpio_setcfg_abank - S3C24XX style GPIO configuration (Bank A)
+  * @chip: The gpio chip that is being configured.
+@@ -379,7 +380,9 @@ static unsigned s3c24xx_gpio_getcfg_abank(struct samsung_gpio_chip *chip,
+ 
+ 	return S3C_GPIO_SFN(con);
+ }
++#endif
+ 
++#if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6450)
+ static int s5p64x0_gpio_setcfg_rbank(struct samsung_gpio_chip *chip,
+ 				     unsigned int off, unsigned int cfg)
+ {
+@@ -417,6 +420,7 @@ static int s5p64x0_gpio_setcfg_rbank(struct samsung_gpio_chip *chip,
+ 
+ 	return 0;
+ }
++#endif
+ 
+ static void __init samsung_gpiolib_set_cfg(struct samsung_gpio_cfg *chipcfg,
+ 					   int nr_chips)
+@@ -438,10 +442,12 @@ struct samsung_gpio_cfg s3c24xx_gpiocfg_default = {
+ 	.get_config	= samsung_gpio_getcfg_2bit,
+ };
+ 
++#ifdef CONFIG_PLAT_S3C24XX
+ static struct samsung_gpio_cfg s3c24xx_gpiocfg_banka = {
+ 	.set_config	= s3c24xx_gpio_setcfg_abank,
+ 	.get_config	= s3c24xx_gpio_getcfg_abank,
+ };
++#endif
+ 
+ static struct samsung_gpio_cfg exynos4_gpio_cfg = {
+ 	.set_pull	= exynos4_gpio_setpull,
+@@ -450,6 +456,7 @@ static struct samsung_gpio_cfg exynos4_gpio_cfg = {
+ 	.get_config	= samsung_gpio_getcfg_4bit,
+ };
+ 
++#if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6450)
+ static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
+ 	.cfg_eint	= 0x3,
+ 	.set_config	= s5p64x0_gpio_setcfg_rbank,
+@@ -457,6 +464,7 @@ static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
+ 	.set_pull	= samsung_gpio_setpull_updown,
+ 	.get_pull	= samsung_gpio_getpull_updown,
+ };
++#endif
+ 
+ static struct samsung_gpio_cfg samsung_gpio_cfgs[] = {
+ 	{
+@@ -682,6 +690,7 @@ static int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_PLAT_S3C24XX
+ /* The next set of routines are for the case of s3c24xx bank a */
+ 
+ static int s3c24xx_gpiolib_banka_input(struct gpio_chip *chip, unsigned offset)
+@@ -717,6 +726,7 @@ static int s3c24xx_gpiolib_banka_output(struct gpio_chip *chip,
+ 	local_irq_restore(flags);
+ 	return 0;
+ }
++#endif
+ 
+ /* The next set of routines are for the case of s5p64x0 bank r */
+ 
+-- 
+1.7.4.1
