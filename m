@@ -1,77 +1,67 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: SAMSUNG: Cleanup resources by using macro
-Date: Mon, 03 Oct 2011 12:27:12 +0900
-Message-ID: <005601cc817c$577cdb70$06769250$%kim@samsung.com>
-References: <001e01cc80e5$1c9eb150$55dc13f0$%kim@samsung.com>
- <20111002110724.GT11710@n2100.arm.linux.org.uk>
+Subject: RE: [PATCH 0/4] ARM: EXYNOS4: Support generic Power domain framework
+ for EXYNOS4210
+Date: Mon, 03 Oct 2011 12:27:21 +0900
+Message-ID: <005701cc817c$5c54a240$14fde6c0$%kim@samsung.com>
+References: <4E4360B2.2060508@samsung.com> <201110021508.44083.rjw@sisk.pl>
+ <20111002131307.GV11710@n2100.arm.linux.org.uk>
+ <201110022000.56556.rjw@sisk.pl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14597 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:14656 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751044Ab1JCD1P (ORCPT
+	with ESMTP id S1751183Ab1JCD1W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 2 Oct 2011 23:27:15 -0400
+	Sun, 2 Oct 2011 23:27:22 -0400
 Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSH00C3O09CQL90@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 12:27:13 +0900 (KST)
+ 2010)) with ESMTP id <0LSH00MTA09ICH90@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 12:27:21 +0900 (KST)
 Received: from kgenekim ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSH00F1W09CE940@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 12:27:13 +0900 (KST)
-In-reply-to: <20111002110724.GT11710@n2100.arm.linux.org.uk>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSH00FS809LLZ30@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 12:27:21 +0900 (KST)
+In-reply-to: <201110022000.56556.rjw@sisk.pl>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Russell King - ARM Linux wrote:
+Rafael J. Wysocki wrote:
 > 
-> On Sun, Oct 02, 2011 at 06:24:40PM +0900, Kukjin Kim wrote:
-> > This patch adds macro SAMSUNG_RES_MEM and SAMSUNG_RES_IRQ to
-> cleanup
-> > regarding 'struct resource'
-> 
-> Why not include the braces inside the macro as well?
-> 
-I thought, if other member such as name is required additionally, can add it
-like following.
-
-[0] = { SAMSUNG_RES_MEM(xxx, xxx, xxx), .name = "xxx" },
-
-But below helpers can do it :)
-
-> > diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-
-> samsung/include/plat/devs.h
-> > index 8f19241..8b8bd1c 100644
-> > --- a/arch/arm/plat-samsung/include/plat/devs.h
-> > +++ b/arch/arm/plat-samsung/include/plat/devs.h
-> > @@ -18,6 +18,16 @@
+> On Sunday, October 02, 2011, Russell King - ARM Linux wrote:
+> > On Sun, Oct 02, 2011 at 03:08:43PM +0200, Rafael J. Wysocki wrote:
+> > > On Sunday, October 02, 2011, Russell King - ARM Linux wrote:
+> > > > How do these misconceptions start?
+> > > >
+> > > > The clock API.  Drivers are supposed to get a clock (source) when
+they
+> > > > initialize.  Drivers then enable and disable the clock as they
+_themselves_
+> > > > require the use of that clock.
+> > >
+> > > OK
+> > >
+> > > Now think of a driver that should handle the same device on both ARM
+and
+> > > x86-based SoCs.  Is the clock API available on x86?
 > >
-> >  #include <linux/platform_device.h>
-> >
-> > +#define SAMSUNG_RES_MEM(soc, ip, sz)			\
-> > +		.start	= soc##_PA_##ip,		\
-> > +		.end	= soc##_PA_##ip + sz - 1,	\
-> > +		.flags	= IORESOURCE_MEM,
-> > +
-> > +#define SAMSUNG_RES_IRQ(ip)				\
-> > +		.start	= IRQ_##ip,			\
-> > +		.end	= IRQ_##ip,			\
-> > +		.flags	= IORESOURCE_IRQ,
-> > +
+> > No one's bothered yet.
 > 
-> How about using DEFINE_RES_MEM and DEFINE_RES_IRQ here?
+> Prehaps because x86 doesn't allow us to control device clocks directly.
+> They are controlled through PCI PM or through ACPI methods, both of which
+> hide the clocks behind abstract low-power states we're supposed to use.
 > 
-> #define SAMSUNG_RES_MEM(soc, ip, sz) DEFINE_RES_MEM(soc##_PA_##ip,
-> sz)
-> #define SAMSUNG_RES_IRQ(ip) DEFINE_RES_IRQ(IRQ_##ip)
-
-Great, I don't know why I couldn't find it and nobody use it now...
+Well, I think Embedded drivers especially ARM sometimes need to control its
+own clock directly and each embedded drivers know when clock controlling is
+required or not. Actually, Samsung driver stuff have calling clk_enable() in
+probe() or open() and clk_disable() when clock is not needed more. But I'm
+not sure we _really_ can get some benefits when matching clock and power
+control on ARM devices.
 
 Thanks.
 
