@@ -1,69 +1,68 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH V2 2/2] ARM: SAMSUNG: Cleanup resources by using macro
-Date: Mon, 03 Oct 2011 16:20:34 +0200
-Message-ID: <4E89C4B2.605@samsung.com>
+Date: Mon, 03 Oct 2011 17:01:11 +0200
+Message-ID: <1957187.UuLfeIqa6D@wuerfel>
 References: <005901cc817e$51a56d00$f4f04700$%kim@samsung.com>
- <CAH9JG2Wc4M2dVFOfNE5jgsygvigE8RbPH_yLcMqarr64LfbENw@mail.gmail.com>
- <4E89B505.3060501@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:24782 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751489Ab1JCOUh (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:62382 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756260Ab1JCPB3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Oct 2011 10:20:37 -0400
-Received: from euspt2 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LSH00D97UIBLJ@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 15:20:35 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LSH0093QUIAH4@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Oct 2011 15:20:35 +0100 (BST)
-In-reply-to: <4E89B505.3060501@samsung.com>
+	Mon, 3 Oct 2011 11:01:29 -0400
+In-Reply-To: <005901cc817e$51a56d00$f4f04700$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kyungmin Park <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
 
-On 10/03/2011 03:13 PM, Kukjin Kim wrote:
-> On 10/03/11 12:53, Kyungmin Park wrote:
->> On Mon, Oct 3, 2011 at 12:41 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->>>
->>> +#define SAMSUNG_RES_MEM(soc, ip, sz)   DEFINE_RES_MEM(soc##_PA_##ip, sz)
->>> +#define SAMSUNG_RES_IRQ(ip)            DEFINE_RES_IRQ(IRQ_##ip)
->>> +
->>> +#define SAMSUNG_RES_MEM_NAMED(soc, ip, sz, name)       \
->>> +                               DEFINE_RES_MEM_NAMED(soc##_PA_##ip, sz, name)
->>> +#define SAMSUNG_RES_IRQ_NAMED(ip, name)                        \
->>> +                               DEFINE_RES_IRQ_NAMED(IRQ_##ip, name)
->>> +#define SAMSUNG_RES_DMA_NAMED(ch, name)                        \
->>> +                               DEFINE_RES_DMA_NAMED(DMACH_##ch, name)
->>
->> It's good for readability. but do you think that it's hard to find out
->> defined macros are used at real place?
->> e.g., Now I want to find out the S3C_PA_USB_HSOTG. it's difficult if
->> you use the SAMSUNG_RES_* series macro.
->> but if you use the DEFINED_RES_* series directly. it's easy to find
->> out at real codes.
->>
-> Well, I don't think so because the XXX_PA_XXX addresses are defined in each
-> mach/map.h and they are usually used in here so it's not hard to find it.
-
-Some minor disadvantage is that tagging tools like e.g. gtags don't handle
-these things properly. But I don't think it's really important.
-
+On Monday 03 October 2011 12:41:22 Kukjin Kim wrote:
+> This patch adds macro SAMSUNG_RES_MEM, SAMSUNG_RES_IRQ
+> and so on to cleanup regarding 'struct resource' by using
+> defined helpers at <linux/ioport.h>.
 > 
-> And now the 'S3C', 'S5P' and 'SAMSUNG' are used in the 'soc' part. I'm
-> preparing to consolidate the name and to remove duplicated resources.
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Do you also have any specific plans for supporting single image build for
-multiple SoC's while working on this ?
+When we introduced those macros, it was specifically so that platforms
+would be migrated to use them instead of providing their own.
 
+> index 8f19241..a506831 100644
+> --- a/arch/arm/plat-samsung/include/plat/devs.h
+> +++ b/arch/arm/plat-samsung/include/plat/devs.h
+> @@ -18,6 +18,17 @@
+>  
+>  #include <linux/platform_device.h>
+>  
+> +#define SAMSUNG_RES_MEM(soc, ip, sz)   DEFINE_RES_MEM(soc##_PA_##ip, sz)
+> +#define SAMSUNG_RES_IRQ(ip)            DEFINE_RES_IRQ(IRQ_##ip)
+> +
+> +#define SAMSUNG_RES_MEM_NAMED(soc, ip, sz, name)       \
+> +                               DEFINE_RES_MEM_NAMED(soc##_PA_##ip, sz, name)
+> +#define SAMSUNG_RES_IRQ_NAMED(ip, name)                        \
+> +                               DEFINE_RES_IRQ_NAMED(IRQ_##ip, name)
+> +#define SAMSUNG_RES_DMA_NAMED(ch, name)                        \
+> +                               DEFINE_RES_DMA_NAMED(DMACH_##ch, name)
 
-Thanks,
--- 
-Sylwester
+I think the string concatenation really just obfuscates the code, and
+it does not actually save much at all. When you replace
+
++       [0] = SAMSUNG_RES_MEM(S3C, WDT, SZ_1K),
++       [1] = SAMSUNG_RES_IRQ(WDT),
+
+with
+
++       [0] = DEFINE_RES_MEM(S3C_PA_WDT, SZ_1K),
++       [1] = DEFINE_RES_IRQ(IRQ_WDT),
+
+you need practically no extra space, but you gain the advantages that
+
+* Someone using grep for DEFINE_RES_MEM finds all memory resources without
+  having to look up what your macros do an where they are used.
+* Someone using grep to look for S3C_PA_WDT finds the place where it is used.
+* Someone reading the resource definition immediately knows what the
+  macro does if familiar with other platforms using that macro.
+
+	Arnd
