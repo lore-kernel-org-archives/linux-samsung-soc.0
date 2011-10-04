@@ -1,88 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 2/2] ARM: SAMSUNG: Cleanup resources by using macro
-Date: Tue, 04 Oct 2011 21:45:23 +0900
-Message-ID: <019401cc8293$7c17a6f0$7446f4d0$%kim@samsung.com>
-References: <005901cc817e$51a56d00$f4f04700$%kim@samsung.com>
- <CAH9JG2Wc4M2dVFOfNE5jgsygvigE8RbPH_yLcMqarr64LfbENw@mail.gmail.com>
- <4E89B505.3060501@samsung.com> <4E89C4B2.605@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] Samsung devel-2 for v3.2
+Date: Tue, 4 Oct 2011 13:59:17 +0100
+Message-ID: <20111004125916.GC6934@opensource.wolfsonmicro.com>
+References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com>
+ <20111002192950.GB1005@sirena.org.uk>
+ <019201cc8293$7776a790$6663f6b0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46316 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932079Ab1JDMpZ (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47924 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756570Ab1JDM7T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Oct 2011 08:45:25 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSJ00EWOKR6VLL0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 04 Oct 2011 21:45:24 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSJ00L7PKRNPF60@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 04 Oct 2011 21:45:24 +0900 (KST)
-In-reply-to: <4E89C4B2.605@samsung.com>
-Content-language: ko
+	Tue, 4 Oct 2011 08:59:19 -0400
+Content-Disposition: inline
+In-Reply-To: <019201cc8293$7776a790$6663f6b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: 'Kyungmin Park' <kmpark@infradead.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Sylwester Nawrocki wrote:
-> 
-> On 10/03/2011 03:13 PM, Kukjin Kim wrote:
-> > On 10/03/11 12:53, Kyungmin Park wrote:
-> >> On Mon, Oct 3, 2011 at 12:41 PM, Kukjin Kim<kgene.kim@samsung.com>
-> wrote:
-> >>>
-> >>> +#define SAMSUNG_RES_MEM(soc, ip, sz)
-> DEFINE_RES_MEM(soc##_PA_##ip, sz)
-> >>> +#define SAMSUNG_RES_IRQ(ip)            DEFINE_RES_IRQ(IRQ_##ip)
-> >>> +
-> >>> +#define SAMSUNG_RES_MEM_NAMED(soc, ip, sz, name)       \
-> >>> +
-> DEFINE_RES_MEM_NAMED(soc##_PA_##ip, sz, name)
-> >>> +#define SAMSUNG_RES_IRQ_NAMED(ip, name)
-> \
-> >>> +                               DEFINE_RES_IRQ_NAMED(IRQ_##ip,
-> name)
-> >>> +#define SAMSUNG_RES_DMA_NAMED(ch, name)
-> \
-> >>> +
-> DEFINE_RES_DMA_NAMED(DMACH_##ch, name)
-> >>
-> >> It's good for readability. but do you think that it's hard to find out
-> >> defined macros are used at real place?
-> >> e.g., Now I want to find out the S3C_PA_USB_HSOTG. it's difficult if
-> >> you use the SAMSUNG_RES_* series macro.
-> >> but if you use the DEFINED_RES_* series directly. it's easy to find
-> >> out at real codes.
-> >>
-> > Well, I don't think so because the XXX_PA_XXX addresses are defined in
-each
-> > mach/map.h and they are usually used in here so it's not hard to find
-it.
-> 
-> Some minor disadvantage is that tagging tools like e.g. gtags don't handle
-> these things properly. But I don't think it's really important.
-> 
-> >
-> > And now the 'S3C', 'S5P' and 'SAMSUNG' are used in the 'soc' part. I'm
-> > preparing to consolidate the name and to remove duplicated resources.
-> 
-> Do you also have any specific plans for supporting single image build for
-> multiple SoC's while working on this ?
+On Tue, Oct 04, 2011 at 09:45:16PM +0900, Kukjin Kim wrote:
+> Mark Brown wrote:
 
-Hmm, you could see through my plan :)
-As you know, we need to sort out resources and platform data to support
-single kernel image so I'm preparing it after this.
+> > As I reported the other day this change breaks the boot early on on the
+> > Cragganmore S3C6410 based systems (I've not actually fired up my
+> > SMDK6410 but I suspect it may have issues too).  I did make some brief
+> > attempts to debug but as there's no console output at all and the diff
+> > is rather large it's not easy to see what's gone wrong. 
 
-Thanks.
+> Could you please test on Cragganmore board again only with my for-next-test
+> branch?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> (I have did 'git-revert' some patches which have some dependencies with
+> other tree to build without others.)
+
+Sure - it may be tomorrow morning (so late tomorrow your time) before
+I'm sitting in front of a board for long enough to do it.
