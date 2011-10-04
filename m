@@ -1,39 +1,127 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [GIT PULL] Samsung devel-2 for v3.2
-Date: Tue, 4 Oct 2011 13:59:17 +0100
-Message-ID: <20111004125916.GC6934@opensource.wolfsonmicro.com>
-References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com>
- <20111002192950.GB1005@sirena.org.uk>
- <019201cc8293$7776a790$6663f6b0$%kim@samsung.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v4] mmc: core: Add default timeout value for CMD6.
+Date: Tue, 04 Oct 2011 16:11:04 +0300
+Message-ID: <4E8B05E8.2030206@intel.com>
+References: <1316657541-9221-1-git-send-email-tgih.jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47924 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756570Ab1JDM7T (ORCPT
+Received: from mga01.intel.com ([192.55.52.88]:42494 "EHLO mga01.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756482Ab1JDNLH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Oct 2011 08:59:19 -0400
-Content-Disposition: inline
-In-Reply-To: <019201cc8293$7776a790$6663f6b0$%kim@samsung.com>
+	Tue, 4 Oct 2011 09:11:07 -0400
+In-Reply-To: <1316657541-9221-1-git-send-email-tgih.jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-On Tue, Oct 04, 2011 at 09:45:16PM +0900, Kukjin Kim wrote:
-> Mark Brown wrote:
+On 22/09/11 05:12, Seungwon Jeon wrote:
+> EXT_CSD[248] includes the default maximum timeout for CMD6.
+> This field is added at eMMC4.5 Spec. And it can be used for default
+> timeout except for some operations which don't define the timeout(i.e.
+> background operation, sanitize, flush cache) in eMMC4.5 Spec.
+>
+> Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
 
-> > As I reported the other day this change breaks the boot early on on the
-> > Cragganmore S3C6410 based systems (I've not actually fired up my
-> > SMDK6410 but I suspect it may have issues too).  I did make some brief
-> > attempts to debug but as there's no console output at all and the diff
-> > is rather large it's not easy to see what's gone wrong. 
+What about the mmc_switch() in mmc_select_powerclass()?
 
-> Could you please test on Cragganmore board again only with my for-next-test
-> branch?
+> ---
+>   drivers/mmc/core/mmc.c   |   16 ++++++++++++----
+>   include/linux/mmc/card.h |    1 +
+>   include/linux/mmc/mmc.h  |    1 +
+>   3 files changed, 14 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 5700b1c..b2ee14a 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -410,6 +410,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+>   	else
+>   		card->erased_byte = 0x0;
+>
+> +	if (card->ext_csd.rev>= 6)
+> +		card->ext_csd.generic_cmd6_time = 10 *
+> +			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+> +	else
+> +		card->ext_csd.generic_cmd6_time = 0;
+> +
+>   out:
+>   	return err;
+>   }
+> @@ -668,7 +674,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>   	 */
+>   	if (card->ext_csd.enhanced_area_en) {
+>   		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> -				 EXT_CSD_ERASE_GROUP_DEF, 1, 0);
+> +				 EXT_CSD_ERASE_GROUP_DEF, 1,
+> +				 card->ext_csd.generic_cmd6_time);
+>
+>   		if (err&&  err != -EBADMSG)
+>   			goto free_card;
+> @@ -711,7 +718,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>   	if ((card->ext_csd.hs_max_dtr != 0)&&
+>   		(host->caps&  MMC_CAP_MMC_HIGHSPEED)) {
+>   		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> -				 EXT_CSD_HS_TIMING, 1, 0);
+> +				 EXT_CSD_HS_TIMING, 1,
+> +				 card->ext_csd.generic_cmd6_time);
+>   		if (err&&  err != -EBADMSG)
+>   			goto free_card;
+>
+> @@ -783,7 +791,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>   			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+>   					 EXT_CSD_BUS_WIDTH,
+>   					 ext_csd_bits[idx][0],
+> -					 0);
+> +					 card->ext_csd.generic_cmd6_time);
+>   			if (!err) {
+>   				mmc_set_bus_width(card->host, bus_width);
+>
+> @@ -806,7 +814,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>   			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+>   					 EXT_CSD_BUS_WIDTH,
+>   					 ext_csd_bits[idx][1],
+> -					 0);
+> +					 card->ext_csd.generic_cmd6_time);
+>   		}
+>   		if (err) {
+>   			printk(KERN_WARNING "%s: switch to bus width %d ddr %d "
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index b460fc2..b713abf 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -52,6 +52,7 @@ struct mmc_ext_csd {
+>   	u8			part_config;
+>   	unsigned int		part_time;		/* Units: ms */
+>   	unsigned int		sa_timeout;		/* Units: 100ns */
+> +	unsigned int		generic_cmd6_time;	/* Units: 10ms */
 
-> (I have did 'git-revert' some patches which have some dependencies with
-> other tree to build without others.)
 
-Sure - it may be tomorrow morning (so late tomorrow your time) before
-I'm sitting in front of a board for long enough to do it.
+Units are "ms" not "10ms" because you multiply by 10 in mmc_read_ext_csd
+
+
+>   	unsigned int		hs_max_dtr;
+>   	unsigned int		sectors;
+>   	unsigned int		card_type;
+> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+> index 5a794cb..e869f00 100644
+> --- a/include/linux/mmc/mmc.h
+> +++ b/include/linux/mmc/mmc.h
+> @@ -293,6 +293,7 @@ struct _mmc_csd {
+>   #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+>   #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+>   #define EXT_CSD_TRIM_MULT		232	/* RO */
+> +#define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+>
+>   /*
+>    * EXT_CSD field definitions
+> --
+> 1.7.0.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
