@@ -1,55 +1,116 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V2 2/2] ARM: SAMSUNG: Cleanup resources by using macro
-Date: Tue, 4 Oct 2011 17:26:02 +0200
-Message-ID: <201110041726.03056.arnd@arndb.de>
-References: <005901cc817e$51a56d00$f4f04700$%kim@samsung.com>
-	<1957187.UuLfeIqa6D@wuerfel>
-	<019301cc8293$79a6f510$6cf4df30$%kim@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH] gpio/samsung: Move SoC specific codes within macro
+Date: Tue, 4 Oct 2011 12:38:41 -0600
+Message-ID: <20111004183840.GH2870@ponder.secretlab.ca>
+References: <1317612559-8930-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <019301cc8293$79a6f510$6cf4df30$%kim@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1317612559-8930-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday 04 October 2011, Kukjin Kim wrote:
-> > I think the string concatenation really just obfuscates the code, and
-> > it does not actually save much at all. When you replace
-> > 
-> > +       [0] = SAMSUNG_RES_MEM(S3C, WDT, SZ_1K),
-> > +       [1] = SAMSUNG_RES_IRQ(WDT),
-> > 
-> > with
-> > 
-> > +       [0] = DEFINE_RES_MEM(S3C_PA_WDT, SZ_1K),
-> > +       [1] = DEFINE_RES_IRQ(IRQ_WDT),
-> > 
-> > you need practically no extra space, but you gain the advantages that
-> > 
-> > * Someone using grep for DEFINE_RES_MEM finds all memory resources without
-> >   having to look up what your macros do an where they are used.
-> > * Someone using grep to look for S3C_PA_WDT finds the place where it is
-> used.
-> > * Someone reading the resource definition immediately knows what the
-> >   macro does if familiar with other platforms using that macro.
+On Mon, Oct 03, 2011 at 08:59:19AM +0530, Tushar Behera wrote:
+> In drivers/gpio/gpio-samsung.c, there are certain structures
+> and functions which are not getting used if the particular
+> CPU is not selected. These code segments are moved under CPU
+> specific macros to remove compilation warnings.
 > 
-> Yes, right. But I'm preparing to reduce the 'soc' part to consolidate some
-> duplicated resources and platform data after this and the new SAMSUNG_RES
-> macro will be used.
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 
-Hmm, can't you instead change the names of these constants to be
-always the same? That would let you use the regular DEFINE_RES_*
-definitions without having to introduce your own.
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-	Arnd
+> ---
+> It has been build tested with s3c2410_defconfig, s3c6400_defconfig,
+> s5p64x0_defconfig, s5pc100_defconfig, s5pv210_defconfig and
+> exynos4_defconfig.
+> 
+> The patch has been rebased onto
+> Commit: gpio/samsung: correct pin configuration for S5PC100/S5PC110/EXYNOS4
+> 
+> on git://github.com/kgene/linux-samsung.git (next/topic-gpio-samsung)
+> 
+>  drivers/gpio/gpio-samsung.c |   10 ++++++++++
+>  1 files changed, 10 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index b6be77a..33d62d1 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -318,6 +318,7 @@ static unsigned samsung_gpio_getcfg_4bit(struct samsung_gpio_chip *chip,
+>  	return S3C_GPIO_SPECIAL(con);
+>  }
+>  
+> +#ifdef CONFIG_PLAT_S3C24XX
+>  /*
+>   * s3c24xx_gpio_setcfg_abank - S3C24XX style GPIO configuration (Bank A)
+>   * @chip: The gpio chip that is being configured.
+> @@ -379,7 +380,9 @@ static unsigned s3c24xx_gpio_getcfg_abank(struct samsung_gpio_chip *chip,
+>  
+>  	return S3C_GPIO_SFN(con);
+>  }
+> +#endif
+>  
+> +#if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6450)
+>  static int s5p64x0_gpio_setcfg_rbank(struct samsung_gpio_chip *chip,
+>  				     unsigned int off, unsigned int cfg)
+>  {
+> @@ -417,6 +420,7 @@ static int s5p64x0_gpio_setcfg_rbank(struct samsung_gpio_chip *chip,
+>  
+>  	return 0;
+>  }
+> +#endif
+>  
+>  static void __init samsung_gpiolib_set_cfg(struct samsung_gpio_cfg *chipcfg,
+>  					   int nr_chips)
+> @@ -438,10 +442,12 @@ struct samsung_gpio_cfg s3c24xx_gpiocfg_default = {
+>  	.get_config	= samsung_gpio_getcfg_2bit,
+>  };
+>  
+> +#ifdef CONFIG_PLAT_S3C24XX
+>  static struct samsung_gpio_cfg s3c24xx_gpiocfg_banka = {
+>  	.set_config	= s3c24xx_gpio_setcfg_abank,
+>  	.get_config	= s3c24xx_gpio_getcfg_abank,
+>  };
+> +#endif
+>  
+>  static struct samsung_gpio_cfg exynos4_gpio_cfg = {
+>  	.set_pull	= exynos4_gpio_setpull,
+> @@ -450,6 +456,7 @@ static struct samsung_gpio_cfg exynos4_gpio_cfg = {
+>  	.get_config	= samsung_gpio_getcfg_4bit,
+>  };
+>  
+> +#if defined(CONFIG_CPU_S5P6440) || defined(CONFIG_CPU_S5P6450)
+>  static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
+>  	.cfg_eint	= 0x3,
+>  	.set_config	= s5p64x0_gpio_setcfg_rbank,
+> @@ -457,6 +464,7 @@ static struct samsung_gpio_cfg s5p64x0_gpio_cfg_rbank = {
+>  	.set_pull	= samsung_gpio_setpull_updown,
+>  	.get_pull	= samsung_gpio_getpull_updown,
+>  };
+> +#endif
+>  
+>  static struct samsung_gpio_cfg samsung_gpio_cfgs[] = {
+>  	{
+> @@ -682,6 +690,7 @@ static int samsung_gpiolib_4bit2_output(struct gpio_chip *chip,
+>  	return 0;
+>  }
+>  
+> +#ifdef CONFIG_PLAT_S3C24XX
+>  /* The next set of routines are for the case of s3c24xx bank a */
+>  
+>  static int s3c24xx_gpiolib_banka_input(struct gpio_chip *chip, unsigned offset)
+> @@ -717,6 +726,7 @@ static int s3c24xx_gpiolib_banka_output(struct gpio_chip *chip,
+>  	local_irq_restore(flags);
+>  	return 0;
+>  }
+> +#endif
+>  
+>  /* The next set of routines are for the case of s5p64x0 bank r */
+>  
+> -- 
+> 1.7.4.1
+> 
