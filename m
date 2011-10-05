@@ -1,50 +1,31 @@
-From: Stephen Warren <swarren@nvidia.com>
-Subject: RE: [PATCH 2/3] mmc: Add OF bindings support for mmc host
- controller	capabilities
-Date: Wed, 5 Oct 2011 08:55:25 -0700
-Message-ID: <74CDBE0F657A3D45AFBB94109FB122FF173A2C7245@HQMAIL01.nvidia.com>
-References: <1317809581-28783-1-git-send-email-thomas.abraham@linaro.org>
-	<1317809581-28783-3-git-send-email-thomas.abraham@linaro.org>
-	<4E8C5BD6.2070709@gmail.com>
- <CAJuYYwS_NeE6OG9X2p2rkjgo4OqO-ijeVwr1sLGkUuLJOxMw2g@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] Samsung devel-2 for v3.2
+Date: Wed, 5 Oct 2011 17:54:02 +0100
+Message-ID: <20111005165401.GA7155@opensource.wolfsonmicro.com>
+References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com>
+ <20111002192950.GB1005@sirena.org.uk>
+ <019201cc8293$7776a790$6663f6b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from hqemgate03.nvidia.com ([216.228.121.140]:9563 "EHLO
-	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S934837Ab1JEPzi convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53188 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S934962Ab1JEQyE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Oct 2011 11:55:38 -0400
-In-Reply-To: <CAJuYYwS_NeE6OG9X2p2rkjgo4OqO-ijeVwr1sLGkUuLJOxMw2g@mail.gmail.com>
-Content-Language: en-US
+	Wed, 5 Oct 2011 12:54:04 -0400
+Content-Disposition: inline
+In-Reply-To: <019201cc8293$7776a790$6663f6b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, Rob Herring <robherring2@gmail.com>
-Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "cjb@laptop.org" <cjb@laptop.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Thomas Abraham wrote at Wednesday, October 05, 2011 8:28 AM:
-> On 5 October 2011 18:59, Rob Herring <robherring2@gmail.com> wrote:
-> > On 10/05/2011 05:13 AM, Thomas Abraham wrote:
-> >> Device nodes representing sd/mmc controllers in a device tree would include
-> >> mmc host controller capabilities. Add support for parsing of mmc host
-> >> controller capabilities included in device nodes.
-...
-> >> +- linux,mmc_cap_4_bit_data - host can do 4 bit transfers
-> >> +- linux,mmc_cap_mmc_highspeed - host can do MMC high-speed timing
-> >> +- linux,mmc_cap_sd_highspeed - host can do SD high-speed timing
-> >> +- linux,mmc_cap_needs_poll - host needs polling for card detection
-> >> +- linux,mmc_cap_8_bit_data - host can do 8 bit transfer
-> >
-> > "sdhci,1-bit-only" already exists as a binding. Perhaps add
-> > "sdhci,4-bit-only". No property then means can do 8-bit.
-> 
-> Ok. But that would remain just as sdhci host controller capability and
-> will not be applicable to other types of host controllers.
+On Tue, Oct 04, 2011 at 09:45:16PM +0900, Kukjin Kim wrote:
 
-Just as an FYI, NVIDIA's SDHCI controller bindings use property
-"support-8bit" to indicate 8-bit support. A similar property could be
-used for 4-bit support too.
+> Could you please test on Cragganmore board again only with my for-next-test
+> branch?
 
--- 
-nvpublic
+I tried this, same result as -next.  v3.1-rc8 works fine.  I also tried
+a bisect which was a bit of a nightmare due to soc_is_ and S5P_VA_GPIOn
+not being defined in the GPIO code and other places in a lot of
+revisions so I didn't finish it, perhaps later.
