@@ -1,343 +1,109 @@
 From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 1/4] ARM: EXYNOS4: Support for generic I/O power domains on
- EXYNOS4210
-Date: Wed, 05 Oct 2011 10:38:45 +0900
-Message-ID: <4E8BB525.1030509@samsung.com>
-References: <4E4360B3.7030804@samsung.com> <4E887B92.5090805@gmail.com>
+Subject: Re: [PATCH 4/4] ARM: EXYNOS4: Add power domain to use generic Power
+ domain Framework
+Date: Wed, 05 Oct 2011 10:54:35 +0900
+Message-ID: <4E8BB8DB.6020402@samsung.com>
+References: <4E4360BA.3020208@samsung.com>
+ <001901cc80d2$0da66d40$28f347c0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:32197 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757471Ab1JEBja (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:38129 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757810Ab1JEBzU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Oct 2011 21:39:30 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Tue, 4 Oct 2011 21:55:20 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSK00LKKKLDU3A0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Oct 2011 10:39:28 +0900 (KST)
+ 2010)) with ESMTP id <0LSK001O1LBW3GB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Oct 2011 10:55:18 +0900 (KST)
 Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp2.samsung.com
+ by mmp1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTPA id <0LSK00CA3KLSQ390@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Oct 2011 10:39:28 +0900 (KST)
-In-reply-to: <4E887B92.5090805@gmail.com>
+ 2010)) with ESMTPA id <0LSK00EJ5LC648A0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 05 Oct 2011 10:55:18 +0900 (KST)
+In-reply-to: <001901cc80d2$0da66d40$28f347c0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <snjw23@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 
-Sylwester Nawrocki wrote:
-> Hi Chanwoo,
-> 
-> a few minor comments below...
->  
-> On 08/11/2011 06:55 AM, Chanwoo Choi wrote:
->> Use the generic power domains support to implement support for
->> power domain on EXYNOS4210.
+Kukjin Kim wrote:
+> Chanwoo Choi wrote:
+>> This patch initializes the power domain of EXYNOS4210. The devices
+>> which suppot runtime-PM have to be added in specific power domain.
 >>
->> I refer to the following patch to implement what configure
->> the clock-gating control register for block to turn off/on:
->> http://git.infradead.org/users/kmpark/linux-2.6-samsung/commit/39a81876d034dcbdc2a4c4c4b847b3b49e38870c
->>
->> Signed-off-by: Chanwoo Choi<cw00.choi@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 >> ---
->>   arch/arm/mach-exynos4/Kconfig                      |    1 +
->>   arch/arm/mach-exynos4/Makefile                     |    1 +
->>   arch/arm/mach-exynos4/include/mach/pm-exynos4210.h |   52 ++++++
->>   arch/arm/mach-exynos4/include/mach/regs-clock.h    |    8 +
->>   arch/arm/mach-exynos4/pm-exynos4210.c              |  189 ++++++++++++++++++++
->>   5 files changed, 251 insertions(+), 0 deletions(-)
->>   create mode 100644 arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->>   create mode 100644 arch/arm/mach-exynos4/pm-exynos4210.c
+>>  arch/arm/mach-exynos4/mach-nuri.c           |   18 ++++++++++++++++++
+>>  arch/arm/mach-exynos4/mach-smdkc210.c       |   18
+>> ++++++++++++++++++
+>>  arch/arm/mach-exynos4/mach-smdkv310.c       |   15 +++++++++++++++
+>>  arch/arm/mach-exynos4/mach-universal_c210.c |   18 ++++++++++++++++++
+>>  4 files changed, 69 insertions(+), 0 deletions(-)
 >>
->> diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
->> index 64baca7..8d5e876 100644
->> --- a/arch/arm/mach-exynos4/Kconfig
->> +++ b/arch/arm/mach-exynos4/Kconfig
->> @@ -12,6 +12,7 @@ if ARCH_EXYNOS4
->>   config CPU_EXYNOS4210
->>   	bool
->>   	select S3C_PL330_DMA
->> +	select PM_GENERIC_DOMAINS if PM
->>   	help
->>   	  Enable EXYNOS4210 CPU support
+>> diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-
+>> nuri.c
+>> index 4c358cb..5844c55 100644
+>> --- a/arch/arm/mach-exynos4/mach-nuri.c
+>> +++ b/arch/arm/mach-exynos4/mach-nuri.c
+>> @@ -44,6 +44,7 @@
+>>  #include <plat/mfc.h>
 >>
->> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
->> index b7fe1d7..97c31ce 100644
->> --- a/arch/arm/mach-exynos4/Makefile
->> +++ b/arch/arm/mach-exynos4/Makefile
->> @@ -16,6 +16,7 @@ obj-$(CONFIG_CPU_EXYNOS4210)	+= cpu.o init.o clock.o irq-combiner.o
->>   obj-$(CONFIG_CPU_EXYNOS4210)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
->>   obj-$(CONFIG_PM)		+= pm.o sleep.o
->>   obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
->> +obj-$(CONFIG_CPU_EXYNOS4210)	+= pm-exynos4210.o
+>>  #include <mach/map.h>
+>> +#include <mach/pm-exynos4210.h>
 >>
->>   obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+>>  /* Following are default values for UCON, ULCON and UFCON UART registers */
+>>  #define NURI_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+>> @@ -1125,6 +1126,21 @@ static void __init nuri_reserve(void)
+>>  	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+>>  }
 >>
->> diff --git a/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h b/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->> new file mode 100644
->> index 0000000..e36425a
->> --- /dev/null
->> +++ b/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->> @@ -0,0 +1,52 @@
->> +/* linux/arch/arm/mach-exynos4/include/mach/pm-exynos4210.h
->> + *
->> + * Exynos4210 Power management support
->> + *
->> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#ifndef PM_EXYNOS4210_H
->> +#define PM_EXYNOS4210_H
->> +
->> +#include<linux/pm_domain.h>
->> +
->> +struct platform_device;
->> +
->> +struct exynos4210_pm_domain {
+>> +static void __init nuri_power_domain_init(void)
+>> +{
+>> +	/* Initialize Power domain */
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_mfc);
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_g3d);
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_lcd0);
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_lcd1);
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_tv);
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_cam);
+>> +	exynos4210_init_pm_domain(&exynos4210_pd_gps);
 > 
-> I wonder whether it isn't worth to start with 'struct exynos_pm_domain' as we're
-> consolidating the code for various exynos variants.
+> As you know, the EXYNOS421 boards have same power domains so how about to make array of struct exynos4210_pm_domain and just one calling exynos4210_init_pm_domain()?
 > 
-OK, I will modify it for supporting various exynos series.
+OK, I will reimplement it to remove duplicate function call for initializing the generic power-domain of exynos4210.
 
->> +	struct generic_pm_domain genpd;
 >> +
->> +	const char *name;
->> +	void __iomem *base;
->> +	u32 clkgate_mask;
->> +	int boot_on;
->> +};
->> +
->> +static inline struct exynos4210_pm_domain *to_exynos4210_pd(
->> +		struct generic_pm_domain *pd)
->> +{
->> +	return container_of(pd, struct exynos4210_pm_domain, genpd);
+>> +	/* Add device to MFC power domain */
+>> +	exynos4210_add_device_to_domain(&exynos4210_pd_mfc,
+>> &s5p_device_mfc);
 >> +}
 >> +
->> +#ifdef CONFIG_PM
->> +extern struct exynos4210_pm_domain exynos4210_pd_mfc;
->> +extern struct exynos4210_pm_domain exynos4210_pd_g3d;
->> +extern struct exynos4210_pm_domain exynos4210_pd_lcd0;
->> +extern struct exynos4210_pm_domain exynos4210_pd_lcd1;
->> +extern struct exynos4210_pm_domain exynos4210_pd_tv;
->> +extern struct exynos4210_pm_domain exynos4210_pd_cam;
->> +extern struct exynos4210_pm_domain exynos4210_pd_gps;
->> +
->> +extern void exynos4210_init_pm_domain(struct exynos4210_pm_domain *exynos4210_pd);
-> 
-> exynos_pd_init() ?
-OK, I will modity it.
-> 
->> +extern void exynos4210_add_device_to_domain(struct exynos4210_pm_domain *exynos4210_pd,
-> 
-> exynos_pd_add_device() ?
-OK, I will modity it.
-> 
->> +				struct platform_device *pdev);
->> +#else
->> +#define exynos4210_init_pm_domain(pd) do { } while(0)
->> +#define exynos4210_add_device_to_domain(pd, pdev) do { } while(0)
->> +#endif /* CONFIG_PM */
->> +
->> +#endif /* PM_EXYNOS4210_H */
->> diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/arm/mach-exynos4/include/mach/regs-clock.h
->> index d493fdb..0d1c9ec 100644
->> --- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
->> +++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
->> @@ -183,6 +183,14 @@
->>   #define S5P_CLKDIV_BUS_GPLR_SHIFT	(4)
-> 
-> nit: don't need braces
-Ok, I will remove braces.
-> 
->>   #define S5P_CLKDIV_BUS_GPLR_MASK	(0x7<<  S5P_CLKDIV_BUS_GPLR_SHIFT)
+>>  static void __init nuri_machine_init(void)
+>>  {
+>>  	nuri_sdhci_init();
+>> @@ -1145,6 +1161,8 @@ static void __init nuri_machine_init(void)
 >>
->> +#define S5P_CLKGATE_BLOCK_CAM		(1<<  0)
->> +#define S5P_CLKGATE_BLOCK_TV		(1<<  1)
->> +#define S5P_CLKGATE_BLOCK_MFC		(1<<  2)
->> +#define S5P_CLKGATE_BLOCK_G3D		(1<<  3)
->> +#define S5P_CLKGATE_BLOCK_LCD0		(1<<  4)
->> +#define S5P_CLKGATE_BLOCK_LCD1		(1<<  5)
->> +#define S5P_CLKGATE_BLOCK_GPS		(1<<  7)
+>>  	/* Last */
+>>  	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
 >> +
->>   /* Compatibility defines and inclusion */
+>> +	nuri_power_domain_init();
+>>  }
 >>
->>   #include<mach/regs-pmu.h>
->> diff --git a/arch/arm/mach-exynos4/pm-exynos4210.c b/arch/arm/mach-exynos4/pm-exynos4210.c
->> new file mode 100644
->> index 0000000..d43c37f
->> --- /dev/null
->> +++ b/arch/arm/mach-exynos4/pm-exynos4210.c
->> @@ -0,0 +1,189 @@
->> +/* linux/arch/arm/mach-exynos4/pm-exynos4210.c
->> + *
->> + * Exynos4210 Power management support
->> + *
->> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#include<linux/pm.h>
->> +#include<linux/module.h>
->> +#include<linux/delay.h>
->> +#include<linux/err.h>
->> +#include<linux/slab.h>
->> +#include<linux/pm_runtime.h>
->> +#include<linux/platform_device.h>
->> +#include<linux/pm_domain.h>
->> +#include<linux/io.h>
->> +
->> +#include<mach/regs-clock.h>
->> +#include<mach/pm-exynos4210.h>
->> +
->> +#ifdef CONFIG_PM
->> +static DEFINE_SPINLOCK(clkgate_block_lock);
->> +
->> +static int pd_power_down(struct generic_pm_domain *genpd)
+>>  MACHINE_START(NURI, "NURI")
+>> diff --git a/arch/arm/mach-exynos4/mach-smdkc210.c b/arch/arm/mach-
+>> exynos4/mach-smdkc210.c
+>> index 4d1976c..0a3b2a9 100644
+>> --- a/arch/arm/mach-exynos4/mach-smdkc210.c
+>> +++ b/arch/arm/mach-exynos4/mach-smdkc210.c
 > 
-> __exynos_pd_power_down() ?
-OK, I will modity it.
+> The mach-smdkc210.c and mach-smdkv310.c are merged one mach-smdkv310.c file.
 > 
->> +{
->> +	struct exynos4210_pm_domain *exynos4210_pd = to_exynos4210_pd(genpd);
->> +	u32 timeout;
->> +
->> +	/* Disable the power of power-domain */
->> +	__raw_writel(0, exynos4210_pd->base);
->> +
->> +	/* Wait max 1ms */
->> +	timeout = 10;
->> +	while (__raw_readl(exynos4210_pd->base + 0x4)&  S5P_INT_LOCAL_PWR_EN) {
->> +		if (timeout == 0) {
->> +			printk(KERN_ERR "Power domain %s disable failed.\n",
->> +				exynos4210_pd->name);
->> +			return -ETIMEDOUT;
->> +		}
->> +		timeout--;
->> +		udelay(100);
->> +	}
->> +
->> +	/* Configure the clock-gating control register for block to turn off */
->> +	if (exynos4210_pd->clkgate_mask) {
->> +		unsigned long flags;
->> +		u32 reg;
->> +
->> +		spin_lock_irqsave(&clkgate_block_lock, flags);
->> +		reg = __raw_readl(S5P_CLKGATE_BLOCK);
->> +		reg&= ~exynos4210_pd->clkgate_mask;
->> +		__raw_writel(reg, S5P_CLKGATE_BLOCK);
->> +		spin_unlock_irqrestore(&clkgate_block_lock, flags);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int pd_power_up(struct generic_pm_domain *genpd)
-> 
-> __exynos_pd_power_up() ?
-OK, I will modity it.
-> 
->> +{
->> +	struct exynos4210_pm_domain *exynos4210_pd = to_exynos4210_pd(genpd);
->> +	u32 timeout;
->> +
->> +	/* Enable power domain */
->> +	__raw_writel(S5P_INT_LOCAL_PWR_EN, exynos4210_pd->base);
->> +
->> +	/* Wait max 1ms */
->> +	timeout = 10;
->> +	while ((__raw_readl(exynos4210_pd->base + 0x4)&  S5P_INT_LOCAL_PWR_EN)
->> +		!= S5P_INT_LOCAL_PWR_EN) {
->> +		if (timeout == 0) {
->> +			printk(KERN_ERR "Power domain %s enable failed.\n",
->> +				exynos4210_pd->name);
->> +			return -ETIMEDOUT;
->> +		}
->> +		timeout--;
->> +		udelay(100);
->> +	}
->> +
->> +	/* Configure the clock-gating control register for block to turn on */
->> +	if (exynos4210_pd->clkgate_mask) {
->> +		unsigned long flags;
->> +		u32 reg;
->> +
->> +		spin_lock_irqsave(&clkgate_block_lock, flags);
->> +		reg = __raw_readl(S5P_CLKGATE_BLOCK);
->> +		reg |= exynos4210_pd->clkgate_mask;
->> +		__raw_writel(reg, S5P_CLKGATE_BLOCK);
->> +		spin_unlock_irqrestore(&clkgate_block_lock, flags);
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static bool pd_active_wakeup(struct device *dev)
-> 
-> __exynos_pd_active_wakeup() ?
-OK, I will modity it.
-> 
->> +{
->> +	return true;
->> +}
->> +
->> +void exynos4210_init_pm_domain(struct exynos4210_pm_domain *exynos4210_pd)
->> +{
->> +	struct generic_pm_domain *genpd;
->> +
->> +	if (!exynos4210_pd)
->> +		return;
->> +
->> +	genpd =&exynos4210_pd->genpd;
->> +
->> +	pm_genpd_init(genpd, NULL, false);
->> +	genpd->stop_device = pm_clk_suspend;
->> +	genpd->start_device = pm_clk_resume;
-> 
-> Perhaps each driver has to be inspected before we can do this.
-> I guess it's better to leave these 2 ops uninitialized for now.
-> 
-OK, I will respect for your comment.
+OK, I will modify it according to merged state of mach-smdkv310.c.
 
->> +	genpd->active_wakeup = pd_active_wakeup;
->> +	genpd->power_off = pd_power_down;
->> +	genpd->power_on = pd_power_up;
->> +
->> +	if (exynos4210_pd->boot_on)
->> +		pd_power_up(&exynos4210_pd->genpd);
->> +}
->> +
->> +void exynos4210_add_device_to_domain(struct exynos4210_pm_domain *exynos4210_pd,
->> +				struct platform_device *pdev)
->> +{
->> +	struct device *dev =&pdev->dev;
->> +
->> +	if (!exynos4210_pd || !pdev)
->> +		return;
->> +
->> +	if (!dev->power.subsys_data) {
->> +		pm_clk_init(dev);
->> +		pm_clk_add(dev, NULL);
-> 
-> Same here, this won't work for many devices, some have multiple clocks associated
-> with them and non null con_id. It might be needed to separate the clocks addition 
-> and to handle individually for each device.
-OK. I will respect for your comment. 
-Thank you for your comment.
-
-Regards,
+Thanks & Regards,
 Chanwoo Choi
