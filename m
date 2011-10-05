@@ -1,89 +1,117 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v5 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
-Date: Sat, 15 Oct 2011 10:55:52 +0900
-Message-ID: <CAHQjnOPsBr5sV=08CaO0bpvjVXA9y_rE5tumVuseRU-N6uHx-Q@mail.gmail.com>
-References: <000501cc897f$fa0204f0$ee060ed0$%cho@samsung.com>
-	<20111014141714.GD2198@amd.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH v5] mmc: core: Add default timeout value for CMD6.
+Date: Wed,  5 Oct 2011 19:37:51 +0900
+Message-ID: <1317811071-9111-1-git-send-email-tgih.jun@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:57110 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753701Ab1JOBzy convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43581 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753841Ab1JORsc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Oct 2011 21:55:54 -0400
-In-Reply-To: <20111014141714.GD2198@amd.com>
+	Sat, 15 Oct 2011 13:48:32 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Roedel, Joerg" <Joerg.Roedel@amd.com>
-Cc: Linux ARM Kernel <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Ohad Ben-Cohen <ohad@wizery.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, dh.han@samsung.com, jh80.chung@samsung.com, Seungwon Jeon <tgih.jun@samsung.com>
 
-On Fri, Oct 14, 2011 at 11:17 PM, Roedel, Joerg <Joerg.Roedel@amd.com> =
-wrote:
-> On Thu, Oct 13, 2011 at 04:13:23AM -0400, KyongHo Cho wrote:
->> +struct exynos_iommu_domain {
->> + =A0 =A0 =A0 struct device *dev;
->> + =A0 =A0 =A0 unsigned long *pgtable;
->> + =A0 =A0 =A0 spinlock_t lock;
->> + =A0 =A0 =A0 spinlock_t pgtablelock;
->> +};
->
-> Can you please add comments to document what these spinlocks protect?
->
-'lock' protects race condition on the domain private data.
-'pgtablelock' does it on the page table of the domain.
-Since updating page table does not need to be synchronized with
-domain private data, I defined those 2 locks seperately.
+EXT_CSD[248] includes the default maximum timeout for CMD6.
+This field is added at eMMC4.5 Spec. And it can be used for default
+timeout except for some operations which don't define the timeout(i.e.
+background operation, sanitize, flush cache) in eMMC4.5 Spec.
 
-I will add this information in the source code as comments.
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ drivers/mmc/core/mmc.c   |   18 +++++++++++++-----
+ include/linux/mmc/card.h |    1 +
+ include/linux/mmc/mmc.h  |    1 +
+ 3 files changed, 15 insertions(+), 5 deletions(-)
 
->> +static int exynos_iommu_attach_device(struct iommu_domain *domain,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-struct device *dev)
->> +{
->> + =A0 =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
->> + =A0 =A0 =A0 int ret;
->> +
->> + =A0 =A0 =A0 spin_lock(&priv->lock);
->> +
->> + =A0 =A0 =A0 priv->dev =3D dev;
->> +
->> + =A0 =A0 =A0 spin_unlock(&priv->lock);
->> +
->> + =A0 =A0 =A0 ret =3D exynos_iommu_enable(domain);
->> +
->> + =A0 =A0 =A0 return ret;
->> +}
->> +
->> +static void exynos_iommu_detach_device(struct iommu_domain *domain,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- struct device *dev)
->> +{
->> + =A0 =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
->> +
->> + =A0 =A0 =A0 spin_lock(&priv->lock);
->> +
->> + =A0 =A0 =A0 if (priv->dev =3D=3D dev) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 priv->dev =3D NULL;
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 spin_unlock(&priv->lock);
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 exynos_iommu_disable(domain);
->> + =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 spin_unlock(&priv->lock);
->> + =A0 =A0 =A0 }
->> +}
->
-> That looks weird. As I read this code there is a 1-1 mapping between =
-a
-> device and a domain. This breaks semantics of the iommu-api where a
-> domain can contain multiple devices.
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index c632b1f..c37b8d2 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -414,6 +414,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 	else
+ 		card->erased_byte = 0x0;
 
-I agree.
-I will implement it soon.
++	if (card->ext_csd.rev >= 6)
++		card->ext_csd.generic_cmd6_time = 10 *
++			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
++	else
++		card->ext_csd.generic_cmd6_time = 0;
++
+ out:
+ 	return err;
+ }
+@@ -607,7 +613,7 @@ static int mmc_select_powerclass(struct mmc_card *card,
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+ 				 EXT_CSD_POWER_CLASS,
+ 				 pwrclass_val,
+-				 0);
++				 card->ext_csd.generic_cmd6_time);
+ 	}
 
+ 	return err;
+@@ -757,7 +763,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	 */
+ 	if (card->ext_csd.enhanced_area_en) {
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-				 EXT_CSD_ERASE_GROUP_DEF, 1, 0);
++				 EXT_CSD_ERASE_GROUP_DEF, 1,
++				 card->ext_csd.generic_cmd6_time);
 
-Thank you
+ 		if (err && err != -EBADMSG)
+ 			goto free_card;
+@@ -800,7 +807,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	if ((card->ext_csd.hs_max_dtr != 0) &&
+ 		(host->caps & MMC_CAP_MMC_HIGHSPEED)) {
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-				 EXT_CSD_HS_TIMING, 1, 0);
++				 EXT_CSD_HS_TIMING, 1,
++				 card->ext_csd.generic_cmd6_time);
+ 		if (err && err != -EBADMSG)
+ 			goto free_card;
 
-KyongHo
+@@ -880,7 +888,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+ 					 EXT_CSD_BUS_WIDTH,
+ 					 ext_csd_bits[idx][0],
+-					 0);
++					 card->ext_csd.generic_cmd6_time);
+ 			if (!err) {
+ 				mmc_set_bus_width(card->host, bus_width);
+
+@@ -911,7 +919,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+ 					 EXT_CSD_BUS_WIDTH,
+ 					 ext_csd_bits[idx][1],
+-					 0);
++					 card->ext_csd.generic_cmd6_time);
+ 		}
+ 		if (err) {
+ 			printk(KERN_WARNING "%s: switch to bus width %d ddr %d "
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 5294ddf..d751ceb 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -53,6 +53,7 @@ struct mmc_ext_csd {
+ 	u8			rst_n_function;
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
++	unsigned int		generic_cmd6_time;	/* Units: ms */
+ 	unsigned int		hs_max_dtr;
+ 	unsigned int		sectors;
+ 	unsigned int		card_type;
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index 50af227..b26c9e4 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -304,6 +304,7 @@ struct _mmc_csd {
+ #define EXT_CSD_PWR_CL_DDR_52_195	238	/* RO */
+ #define EXT_CSD_PWR_CL_DDR_52_360	239	/* RO */
+ #define EXT_CSD_POWER_OFF_LONG_TIME	247	/* RO */
++#define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+
+ /*
+  * EXT_CSD field definitions
+--
+1.7.0.4
