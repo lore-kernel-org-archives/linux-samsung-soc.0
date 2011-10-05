@@ -1,132 +1,130 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] mmc: dw_mmc: Support predefined multiple block transfers.
-Date: Wed, 05 Oct 2011 17:19:34 +0900
-Message-ID: <4E8C1316.2040507@samsung.com>
-References: <001901cc7c42$00147c10$003d7430$%jun@samsung.com>
- <992253991.685205.1317054932934.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
- <001f01cc7cba$f1238560$d36a9020$%jun@samsung.com>
- <CANz0V+7xJF4h4XUGoL43odFyOpwcBmxgV18R-uR4oDaqV-9jJA@mail.gmail.com>
- <003101cc7db7$f203e350$d60ba9f0$%jun@samsung.com>
- <4E8BE4D7.1070308@samsung.com>
- <000c01cc8335$101b6d40$305247c0$%jun@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [GIT PULL] Samsung board-2 for v3.2
+Date: Wed, 5 Oct 2011 17:51:11 +0900
+Message-ID: <CAH9JG2XCeymVK8WjetnjWa3qumwJqmXu7wz_K2hX_u+LBjQTjw@mail.gmail.com>
+References: <019b01cc8298$846170c0$8d245240$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <000c01cc8335$101b6d40$305247c0$%jun@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, "'Andrei E. Warkentin'" <andrey.warkentin@gmail.com>, 'Andrei Warkentin' <awarkentin@vmware.com>, 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, 'kgene kim' <kgene.kim@samsung.com>, 'dh han' <dh.han@samsung.com>, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:51213 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932659Ab1JEIvM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Oct 2011 04:51:12 -0400
+Received: by qyk30 with SMTP id 30so4041029qyk.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Oct 2011 01:51:11 -0700 (PDT)
+In-Reply-To: <019b01cc8298$846170c0$8d245240$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
 
-On 10/05/2011 05:02 PM, Seungwon Jeon wrote:
+Hi,
 
-> Jaehoon Chung wrote:
->>
->> Hi Mr.Jeon
->>
->> One question...if we used predefined transfer, didn't send stop-command?
->> then i think that didn't need to enter this condition..how about this?
->>
->> In __dw_mci_start_reqeust() function(at your patch)
->>
->> if (mrq->stop)
->> 	host->stop_cmdr = dw_mci_prepare_command(slot->mmc, mrq->stop);
->>
->> If i misunderstood something, plz let me know...Thanks.
-> Yes, predefined transfer doesn't send stop command normally.
-> But if transfer error is occurred, stop command is required.
+As you decide to rename the mach name, how to change the board name tog=
+ether?
+Historically samsung use the "mach-" prefix for board name, but others
+are use the "board-" prefix.
+So let's use the same convention as others?
 
-Thanks for your answer. i didn't look in detail.
-your patch is worked when there is data->error, send stop command..right?
+How do you think?
 
-This patch looks good to me.
+Thank you,
+Kyungmin Park
 
-Best Regards,
-Jaehoon Chung
-
-> 
-> Thank you for test.
+On Tue, Oct 4, 2011 at 10:21 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Hi Arnd,
+>
+> This is a second Samsung board stuff for v3.2 and includes new board,
+> SMDK4412.
+>
+> Please pull from:
+> =A0git://github.com/kgene/linux-samsung.git next-samsung-board-2
+>
+> As a note, since supporting SMDK4412 needs previous next-samsung-boar=
+d
+> branch so this is based on next-samsung-board which has been already =
+merged
+> into arm-soc and this includes converting boot_params to atag_offset =
+for
+> adding/changing boards in this time.
+>
+> If any problems, please let me know.
+>
+> One more as a note, the next-samsung-devel and next-samsung-devel-2 w=
+ill be
+> sent to you soon after testing ;)
+>
+> Thanks.
+>
 > Best regards,
-> Seungwon Jeon.
->>
->> Tested-by: Jaehoon Chung <jh80.chung@samsung.com>
->>
->> On 09/28/2011 05:23 PM, Seungwon Jeon wrote:
->>
->>> Andrei Warkentin wrote:
->>>> 2011/9/26 Seungwon Jeon <tgih.jun@samsung.com>:
->>>>> Andrei Warkentin wrote:
->>>>>> Hi Seungwon,
->>>>>>
->>>>>> ----- Original Message -----
->>>>>>> From: "Seungwon Jeon" <tgih.jun@samsung.com>
->>>>>>> To: linux-mmc@vger.kernel.org
->>>>>>> Cc: "Chris Ball" <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org,
->>>>>> "kgene kim" <kgene.kim@samsung.com>, "dh han"
->>>>>>> <dh.han@samsung.com>, "Seungwon Jeon" <tgih.jun@samsung.com>
->>>>>>> Sent: Monday, September 26, 2011 7:46:59 AM
->>>>>>> Subject: [PATCH] mmc: dw_mmc: Support predefined multiple block
->>>>>> transfers.
->>>>>>>
->>>>>>> This patch adds the support for predefined multiple block read/write.
->>>>>>>
->>>>>>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->>>>>>
->>>>>> Without knowing much about dw_mmc host, your logic otherwise looks ok,
->>>>>> given what
->>>>>> I've previously done for SDHCI as far as CMD23/Auto-CMD23 enhancement.
->>>>>> Just curious, what eMMC cards did you test this on, and what
->>>> improvement
->>>>>> did you see?
->>>>>
->>>>> Thank you for review.
->>>>> As you done, predefined transfer is required for reliable writes and
->>>> eMMC4.5 feature.
->>>>> Sadly, I didn't gain an improvement in my case.
->>>>> (I don't know whether I can clarify the tested eMMC card, just one
->>>> sample.)
->>>>>
->>>>
->>>> So far I've seen some Sandisk cards have a noticeable real-life
->>>> improvement (30%) over
->>>> open-ended transfers.
->>>>
->>>> You might wish to try out https://github.com/andreiw/superalign to be
->>>> certain.
->>>
->>> I had already tested this patch with IOZONE, but I found no difference.
->>> Maybe a result depends on eMMC device.
->>> As your recommend, I applied above benchmark tool.
->>> Predefined transfer seems like a little better, but there is no
->> difference.
->>>
->>> Thanks.
->>> Seungwon Jeon.
->>>
->>>>
->>>> A
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>>
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> Kgene.
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> The following changes since commit 2520123382e97271e932377c83bca010c2=
+65be55:
+>
+> =A0Merge branch 'next-samsung-board-v3.1' into next-samsung-board (20=
+11-09-16
+> 17:13:09 +0900)
+>
+> are available in the git repository at:
+>
+> =A0git://github.com/kgene/linux-samsung.git next-samsung-board-2
+>
+> Changhwan Youn (7):
+> =A0 =A0 =A0ARM: EXYNOS4: Add support PPI in external GIC
+> =A0 =A0 =A0ARM: EXYNOS4: Add support MCT PPI for EXYNOS4212
+> =A0 =A0 =A0ARM: EXYNOS4: Add support new EXYNOS4412 SoC
+> =A0 =A0 =A0ARM: EXYNOS4: Add support clock for EXYNOS4412
+> =A0 =A0 =A0ARM: EXYNOS4: Add functions for gic interrupt handling
+> =A0 =A0 =A0ARM: EXYNOS4: Add MCT support for EXYNOS4412
+> =A0 =A0 =A0ARM: EXYNOS4: Add support SMDK4412 Board
+>
+> Tushar Behera (1):
+> =A0 =A0 =A0ARM: EXYNOS4: convert boot_params to atag_offset
+>
+> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0| =A0 14 ++
+> =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A03 +-
+> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0| =A0 =A04 +-
+> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 21 ++-
+> =A0arch/arm/mach-exynos4/include/mach/entry-macro.S =A0 | =A0 29 +++-
+> =A0arch/arm/mach-exynos4/include/mach/irqs.h =A0 =A0 =A0 =A0 =A0| =A0=
+ =A02 +
+> =A0arch/arm/mach-exynos4/include/mach/map.h =A0 =A0 =A0 =A0 =A0 | =A0=
+ =A01 -
+> =A0arch/arm/mach-exynos4/include/mach/regs-mct.h =A0 =A0 =A0| =A0 =A0=
+5 +-
+> =A0arch/arm/mach-exynos4/mach-origen.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 +-
+> =A0.../{mach-smdk4212.c =3D> mach-smdk4x12.c} =A0 =A0 =A0 =A0 =A0 | =A0=
+128 ++++++++-------
+> =A0arch/arm/mach-exynos4/mach-smdkv310.c =A0 =A0 =A0 =A0 =A0 =A0 =A0|=
+ =A0 =A04 +-
+> =A0arch/arm/mach-exynos4/mct.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0166
+> ++++++++++++--------
+> =A0arch/arm/mach-exynos4/platsmp.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0| =A0 =A05 +-
+> =A0arch/arm/plat-s5p/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0| =A0 =A09 +
+> =A0arch/arm/plat-samsung/include/plat/cpu.h =A0 =A0 =A0 =A0 =A0 | =A0=
+ =A08 +
+> =A015 files changed, 251 insertions(+), 150 deletions(-)
+> =A0rename arch/arm/mach-exynos4/{mach-smdk4212.c =3D> mach-smdk4x12.c=
+} (61%)
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
 > the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-
-
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
