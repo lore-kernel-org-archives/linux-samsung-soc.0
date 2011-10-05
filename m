@@ -1,139 +1,101 @@
-From: Chanwoo Choi <cw00.choi@samsung.com>
-Subject: Re: [PATCH 2/4] ARM: EXYNOS4: Support for generic Clock manipulation
- PM callbacks
-Date: Wed, 05 Oct 2011 10:57:46 +0900
-Message-ID: <4E8BB99A.30005@samsung.com>
-References: <4E4360B5.3050203@samsung.com>
- <001801cc80d2$065939a0$130bace0$%kim@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: Support predefined multiple block transfers.
+Date: Wed, 05 Oct 2011 14:02:15 +0900
+Message-ID: <4E8BE4D7.1070308@samsung.com>
+References: <001901cc7c42$00147c10$003d7430$%jun@samsung.com>
+ <992253991.685205.1317054932934.JavaMail.root@zimbra-prod-mbox-2.vmware.com>
+ <001f01cc7cba$f1238560$d36a9020$%jun@samsung.com>
+ <CANz0V+7xJF4h4XUGoL43odFyOpwcBmxgV18R-uR4oDaqV-9jJA@mail.gmail.com>
+ <003101cc7db7$f203e350$d60ba9f0$%jun@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41100 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933050Ab1JEB6b (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:49574 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933787Ab1JEFCb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Oct 2011 21:58:31 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSK00LCRLGVU3B0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Oct 2011 10:58:30 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTPA id <0LSK00DQULHH7U80@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Oct 2011 10:58:29 +0900 (KST)
-In-reply-to: <001801cc80d2$065939a0$130bace0$%kim@samsung.com>
+	Wed, 5 Oct 2011 01:02:31 -0400
+In-reply-to: <003101cc7db7$f203e350$d60ba9f0$%jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: "'Andrei E. Warkentin'" <andrey.warkentin@gmail.com>, 'Andrei Warkentin' <awarkentin@vmware.com>, 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, 'kgene kim' <kgene.kim@samsung.com>, 'dh han' <dh.han@samsung.com>, linux-mmc@vger.kernel.org
 
-Kukjin Kim wrote:
-> Chanwoo Choi wrote:
->> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  arch/arm/mach-exynos4/Makefile     |    2 +-
->>  arch/arm/mach-exynos4/pm-runtime.c |   56 ++++++++++++++++++++++++++++++++++++
->>  2 files changed, 57 insertions(+), 1 deletions(-)
->>  create mode 100644 arch/arm/mach-exynos4/pm-runtime.c
->>
->> diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
->> index 97c31ce..28cdb8b 100644
->> --- a/arch/arm/mach-exynos4/Makefile
->> +++ b/arch/arm/mach-exynos4/Makefile
->> @@ -5,7 +5,7 @@
->>  #
->>  # Licensed under GPLv2
->>
->> -obj-y				:=
->> +obj-y				:= pm-runtime.o
-> 
-> To move under depending CONFIG_ARCH_EXYNOS4 like others is better.
-Ok, I will modify it.
+Hi Mr.Jeon
 
+One question...if we used predefined transfer, didn't send stop-command?
+then i think that didn't need to enter this condition..how about this?
+
+In __dw_mci_start_reqeust() function(at your patch)
+
+if (mrq->stop)
+	host->stop_cmdr = dw_mci_prepare_command(slot->mmc, mrq->stop);
+
+If i misunderstood something, plz let me know...Thanks.
+
+Tested-by: Jaehoon Chung <jh80.chung@samsung.com>
+
+On 09/28/2011 05:23 PM, Seungwon Jeon wrote:
+
+> Andrei Warkentin wrote:
+>> 2011/9/26 Seungwon Jeon <tgih.jun@samsung.com>:
+>>> Andrei Warkentin wrote:
+>>>> Hi Seungwon,
+>>>>
+>>>> ----- Original Message -----
+>>>>> From: "Seungwon Jeon" <tgih.jun@samsung.com>
+>>>>> To: linux-mmc@vger.kernel.org
+>>>>> Cc: "Chris Ball" <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org,
+>>>> "kgene kim" <kgene.kim@samsung.com>, "dh han"
+>>>>> <dh.han@samsung.com>, "Seungwon Jeon" <tgih.jun@samsung.com>
+>>>>> Sent: Monday, September 26, 2011 7:46:59 AM
+>>>>> Subject: [PATCH] mmc: dw_mmc: Support predefined multiple block
+>>>> transfers.
+>>>>>
+>>>>> This patch adds the support for predefined multiple block read/write.
+>>>>>
+>>>>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>>>>
+>>>> Without knowing much about dw_mmc host, your logic otherwise looks ok,
+>>>> given what
+>>>> I've previously done for SDHCI as far as CMD23/Auto-CMD23 enhancement.
+>>>> Just curious, what eMMC cards did you test this on, and what
+>> improvement
+>>>> did you see?
+>>>
+>>> Thank you for review.
+>>> As you done, predefined transfer is required for reliable writes and
+>> eMMC4.5 feature.
+>>> Sadly, I didn't gain an improvement in my case.
+>>> (I don't know whether I can clarify the tested eMMC card, just one
+>> sample.)
+>>>
+>>
+>> So far I've seen some Sandisk cards have a noticeable real-life
+>> improvement (30%) over
+>> open-ended transfers.
+>>
+>> You might wish to try out https://github.com/andreiw/superalign to be
+>> certain.
 > 
->>  obj-m				:=
->>  obj-n				:=
->>  obj-				:=
->> diff --git a/arch/arm/mach-exynos4/pm-runtime.c b/arch/arm/mach-exynos4/pm-runtime.c
->> new file mode 100644
->> index 0000000..4fe9f73
->> --- /dev/null
->> +++ b/arch/arm/mach-exynos4/pm-runtime.c
->> @@ -0,0 +1,56 @@
->> +/* linux/arch/arm/mach-exynos4/pm-runtime.c
->> +
->> + * Exynos4210 Power management support
->> + *
->> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
->> + *		http://www.samsung.com
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +#include <linux/init.h>
->> +#include <linux/kernel.h>
->> +#include <linux/io.h>
->> +#include <linux/pm_runtime.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/clk.h>
->> +#include <linux/bitmap.h>
->> +#include <linux/slab.h>
->> +
->> +#ifdef CONFIG_PM_RUNTIME
->> +
->> +static int default_platform_runtime_idle(struct device *dev)
->> +{
->> +	return pm_runtime_suspend(dev);
->> +}
->> +
->> +static struct dev_pm_domain default_pm_domain = {
->> +	.ops = {
->> +		.runtime_suspend = pm_clk_suspend,
->> +		.runtime_resume = pm_clk_resume,
->> +		.runtime_idle = default_platform_runtime_idle,
->> +		USE_PLATFORM_PM_SLEEP_OPS
->> +	},
->> +};
->> +
->> +#define DEFAULT_PM_DOMAIN_PTR	(&default_pm_domain)
->> +
->> +#else
->> +
->> +#define DEFAULT_PM_DOMAIN_PTR	NULL
->> +
->> +#endif /* CONFIG_PM_RUNTIME */
->> +
->> +static struct pm_clk_notifier_block platform_bus_notifier = {
->> +	.pm_domain = DEFAULT_PM_DOMAIN_PTR,
->> +	.con_ids = { NULL, },
->> +};
->> +
->> +static int __init exynos4_pm_runtime_init(void)
->> +{
->> +	pm_clk_add_notifier(&platform_bus_type, &platform_bus_notifier);
->> +	return 0;
->> +}
->> +core_initcall(exynos4_pm_runtime_init);
+> I had already tested this patch with IOZONE, but I found no difference.
+> Maybe a result depends on eMMC device.
+> As your recommend, I applied above benchmark tool. 
+> Predefined transfer seems like a little better, but there is no difference.
+> 
+> Thanks.
+> Seungwon Jeon.
+> 
+>>
+>> A
 >> --
->> 1.7.0.4
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> How about to make common stuff in ARM instead of each platform has their own...
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > 
-> I think you can consolidate this pm_runtime with other ARM platform like omap, shmobile.
-> 
-> arch/arm/mach-omap1/pm_bus.c
-> arch/arm/mach-shmobile/pm_runtime.c
-> 
-OK, I received the comment of consolidating geneirc power-domain of exynos series from Sylwester Nawrocki. 
-I will reimplment for supporting various exynos series and resend it.
-
-Thanks,
-
-Best Regards,
-Chanwoo Choi
