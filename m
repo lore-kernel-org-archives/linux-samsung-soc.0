@@ -1,130 +1,144 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [GIT PULL] Samsung board-2 for v3.2
-Date: Wed, 5 Oct 2011 17:51:11 +0900
-Message-ID: <CAH9JG2XCeymVK8WjetnjWa3qumwJqmXu7wz_K2hX_u+LBjQTjw@mail.gmail.com>
-References: <019b01cc8298$846170c0$8d245240$%kim@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v4] mmc: core: Add default timeout value for CMD6.
+Date: Wed, 05 Oct 2011 18:25:47 +0900
+Message-ID: <000f01cc8340$c3df5200$4b9df600$%jun@samsung.com>
+References: <1316657541-9221-1-git-send-email-tgih.jun@samsung.com>
+ <4E8B05E8.2030206@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:51213 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932659Ab1JEIvM convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:52217 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933583Ab1JEJg7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Oct 2011 04:51:12 -0400
-Received: by qyk30 with SMTP id 30so4041029qyk.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Oct 2011 01:51:11 -0700 (PDT)
-In-Reply-To: <019b01cc8298$846170c0$8d245240$%kim@samsung.com>
+	Wed, 5 Oct 2011 05:36:59 -0400
+In-reply-to: <4E8B05E8.2030206@intel.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>
+To: 'Adrian Hunter' <adrian.hunter@intel.com>
+Cc: linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-Hi,
+Adrian Hunter wrote:
+> On 22/09/11 05:12, Seungwon Jeon wrote:
+> > EXT_CSD[248] includes the default maximum timeout for CMD6.
+> > This field is added at eMMC4.5 Spec. And it can be used for default
+> > timeout except for some operations which don't define the timeout(i.e.
+> > background operation, sanitize, flush cache) in eMMC4.5 Spec.
+> >
+> > Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
+> 
+> What about the mmc_switch() in mmc_select_powerclass()?
+During submission with revision, mmc_select_powerclass() is not considered.
+I'll apply it.
+Thank you for catch.
 
-As you decide to rename the mach name, how to change the board name tog=
-ether?
-Historically samsung use the "mach-" prefix for board name, but others
-are use the "board-" prefix.
-So let's use the same convention as others?
+> 
+> > ---
+> >   drivers/mmc/core/mmc.c   |   16 ++++++++++++----
+> >   include/linux/mmc/card.h |    1 +
+> >   include/linux/mmc/mmc.h  |    1 +
+> >   3 files changed, 14 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> > index 5700b1c..b2ee14a 100644
+> > --- a/drivers/mmc/core/mmc.c
+> > +++ b/drivers/mmc/core/mmc.c
+> > @@ -410,6 +410,12 @@ static int mmc_read_ext_csd(struct mmc_card *card,
+> u8 *ext_csd)
+> >   	else
+> >   		card->erased_byte = 0x0;
+> >
+> > +	if (card->ext_csd.rev>= 6)
+> > +		card->ext_csd.generic_cmd6_time = 10 *
+> > +			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+> > +	else
+> > +		card->ext_csd.generic_cmd6_time = 0;
+> > +
+> >   out:
+> >   	return err;
+> >   }
+> > @@ -668,7 +674,8 @@ static int mmc_init_card(struct mmc_host *host, u32
+> ocr,
+> >   	 */
+> >   	if (card->ext_csd.enhanced_area_en) {
+> >   		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> > -				 EXT_CSD_ERASE_GROUP_DEF, 1, 0);
+> > +				 EXT_CSD_ERASE_GROUP_DEF, 1,
+> > +				 card->ext_csd.generic_cmd6_time);
+> >
+> >   		if (err&&  err != -EBADMSG)
+> >   			goto free_card;
+> > @@ -711,7 +718,8 @@ static int mmc_init_card(struct mmc_host *host, u32
+> ocr,
+> >   	if ((card->ext_csd.hs_max_dtr != 0)&&
+> >   		(host->caps&  MMC_CAP_MMC_HIGHSPEED)) {
+> >   		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> > -				 EXT_CSD_HS_TIMING, 1, 0);
+> > +				 EXT_CSD_HS_TIMING, 1,
+> > +				 card->ext_csd.generic_cmd6_time);
+> >   		if (err&&  err != -EBADMSG)
+> >   			goto free_card;
+> >
+> > @@ -783,7 +791,7 @@ static int mmc_init_card(struct mmc_host *host, u32
+> ocr,
+> >   			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> >   					 EXT_CSD_BUS_WIDTH,
+> >   					 ext_csd_bits[idx][0],
+> > -					 0);
+> > +					 card->ext_csd.generic_cmd6_time);
+> >   			if (!err) {
+> >   				mmc_set_bus_width(card->host, bus_width);
+> >
+> > @@ -806,7 +814,7 @@ static int mmc_init_card(struct mmc_host *host, u32
+> ocr,
+> >   			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> >   					 EXT_CSD_BUS_WIDTH,
+> >   					 ext_csd_bits[idx][1],
+> > -					 0);
+> > +					 card->ext_csd.generic_cmd6_time);
+> >   		}
+> >   		if (err) {
+> >   			printk(KERN_WARNING "%s: switch to bus width %d ddr %d
+> "
+> > diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> > index b460fc2..b713abf 100644
+> > --- a/include/linux/mmc/card.h
+> > +++ b/include/linux/mmc/card.h
+> > @@ -52,6 +52,7 @@ struct mmc_ext_csd {
+> >   	u8			part_config;
+> >   	unsigned int		part_time;		/* Units: ms */
+> >   	unsigned int		sa_timeout;		/* Units: 100ns */
+> > +	unsigned int		generic_cmd6_time;	/* Units: 10ms */
+> 
+> 
+> Units are "ms" not "10ms" because you multiply by 10 in mmc_read_ext_csd
+The above comment is aimed to highlight 10ms is mentioned in spec.
+Yes, Units of generic_cmd6_time is "ms".
+Depending on point of view, the meaning can be construed differently.
+I will apply it.
 
-How do you think?
-
-Thank you,
-Kyungmin Park
-
-On Tue, Oct 4, 2011 at 10:21 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Hi Arnd,
->
-> This is a second Samsung board stuff for v3.2 and includes new board,
-> SMDK4412.
->
-> Please pull from:
-> =A0git://github.com/kgene/linux-samsung.git next-samsung-board-2
->
-> As a note, since supporting SMDK4412 needs previous next-samsung-boar=
-d
-> branch so this is based on next-samsung-board which has been already =
-merged
-> into arm-soc and this includes converting boot_params to atag_offset =
-for
-> adding/changing boards in this time.
->
-> If any problems, please let me know.
->
-> One more as a note, the next-samsung-devel and next-samsung-devel-2 w=
-ill be
-> sent to you soon after testing ;)
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> The following changes since commit 2520123382e97271e932377c83bca010c2=
-65be55:
->
-> =A0Merge branch 'next-samsung-board-v3.1' into next-samsung-board (20=
-11-09-16
-> 17:13:09 +0900)
->
-> are available in the git repository at:
->
-> =A0git://github.com/kgene/linux-samsung.git next-samsung-board-2
->
-> Changhwan Youn (7):
-> =A0 =A0 =A0ARM: EXYNOS4: Add support PPI in external GIC
-> =A0 =A0 =A0ARM: EXYNOS4: Add support MCT PPI for EXYNOS4212
-> =A0 =A0 =A0ARM: EXYNOS4: Add support new EXYNOS4412 SoC
-> =A0 =A0 =A0ARM: EXYNOS4: Add support clock for EXYNOS4412
-> =A0 =A0 =A0ARM: EXYNOS4: Add functions for gic interrupt handling
-> =A0 =A0 =A0ARM: EXYNOS4: Add MCT support for EXYNOS4412
-> =A0 =A0 =A0ARM: EXYNOS4: Add support SMDK4412 Board
->
-> Tushar Behera (1):
-> =A0 =A0 =A0ARM: EXYNOS4: convert boot_params to atag_offset
->
-> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0| =A0 14 ++
-> =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 | =A0 =A03 +-
-> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0| =A0 =A04 +-
-> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0 21 ++-
-> =A0arch/arm/mach-exynos4/include/mach/entry-macro.S =A0 | =A0 29 +++-
-> =A0arch/arm/mach-exynos4/include/mach/irqs.h =A0 =A0 =A0 =A0 =A0| =A0=
- =A02 +
-> =A0arch/arm/mach-exynos4/include/mach/map.h =A0 =A0 =A0 =A0 =A0 | =A0=
- =A01 -
-> =A0arch/arm/mach-exynos4/include/mach/regs-mct.h =A0 =A0 =A0| =A0 =A0=
-5 +-
-> =A0arch/arm/mach-exynos4/mach-origen.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 =A02 +-
-> =A0.../{mach-smdk4212.c =3D> mach-smdk4x12.c} =A0 =A0 =A0 =A0 =A0 | =A0=
-128 ++++++++-------
-> =A0arch/arm/mach-exynos4/mach-smdkv310.c =A0 =A0 =A0 =A0 =A0 =A0 =A0|=
- =A0 =A04 +-
-> =A0arch/arm/mach-exynos4/mct.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0166
-> ++++++++++++--------
-> =A0arch/arm/mach-exynos4/platsmp.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0| =A0 =A05 +-
-> =A0arch/arm/plat-s5p/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0| =A0 =A09 +
-> =A0arch/arm/plat-samsung/include/plat/cpu.h =A0 =A0 =A0 =A0 =A0 | =A0=
- =A08 +
-> =A015 files changed, 251 insertions(+), 150 deletions(-)
-> =A0rename arch/arm/mach-exynos4/{mach-smdk4212.c =3D> mach-smdk4x12.c=
-} (61%)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+> 
+> >   	unsigned int		hs_max_dtr;
+> >   	unsigned int		sectors;
+> >   	unsigned int		card_type;
+> > diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+> > index 5a794cb..e869f00 100644
+> > --- a/include/linux/mmc/mmc.h
+> > +++ b/include/linux/mmc/mmc.h
+> > @@ -293,6 +293,7 @@ struct _mmc_csd {
+> >   #define EXT_CSD_SEC_ERASE_MULT		230	/* RO */
+> >   #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
+> >   #define EXT_CSD_TRIM_MULT		232	/* RO */
+> > +#define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+> >
+> >   /*
+> >    * EXT_CSD field definitions
+> > --
+> > 1.7.0.4
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
