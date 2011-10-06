@@ -1,39 +1,39 @@
-From: Angus Ainslie <angus.ainslie@linaro.org>
-Subject: [PATCH] arm: exynos4: build is failing due to missing SZ_4K definition
-Date: Thu,  6 Oct 2011 16:03:15 -0600
-Message-ID: <1317938595-7007-1-git-send-email-angus.ainslie@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:62394 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758929Ab1JFWDj (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Oct 2011 18:03:39 -0400
-Received: by iakk32 with SMTP id k32so3428086iak.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Oct 2011 15:03:38 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] arm: samsung: move timer irq numbers to end of
+	linux irq space
+Date: Thu, 6 Oct 2011 23:15:17 +0100
+Message-ID: <20111006221517.GC21464@n2100.arm.linux.org.uk>
+References: <1317935503-11756-1-git-send-email-thomas.abraham@linaro.org>
+	<1317935503-11756-2-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1317935503-11756-2-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+	<mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org, Angus Ainslie <angus.ainslie@linaro.org>
 
-linux-next build is failing using the exynos4_defconfig. <asm/sizes.h> needs to be 
-for the SZ_4K definition
+On Fri, Oct 07, 2011 at 02:41:42AM +0530, Thomas Abraham wrote:
+> All of Samsung's s5p platforms have timer irqs statically mapped from linux
+> irq numbers 11 to 15. These timer irqs are moved to end of the statically
+> mapped linux irq space and the hardware irqs, which were statically mapped
+> starting from 32 is moved to start from 0. The NR_IRQS macro is consolidated
+> for all the s5p platforms in this process.
 
-Signed-off-by: Angus Ainslie <angus.ainslie@linaro.org>
----
- arch/arm/mach-exynos4/include/mach/map.h |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Am I reading this patch correctly - in that on platforms with the GIC,
+you add 32 to the GIC IRQ number _just_ to avoid the possibility that
+IRQs 11-15 are seen as valid?
 
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 918a979..02d68f1 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -13,6 +13,7 @@
- #ifndef __ASM_ARCH_MAP_H
- #define __ASM_ARCH_MAP_H __FILE__
- 
-+#include <asm/sizes.h>
- #include <plat/map-base.h>
- 
- /*
--- 
-1.7.4.1
+Or to put it another way, you're trying to ensure that if these timer
+IRQs are requested, they will fail?
