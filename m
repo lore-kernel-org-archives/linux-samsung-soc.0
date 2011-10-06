@@ -1,127 +1,45 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
-Date: Thu, 06 Oct 2011 09:18:37 +0100
-Message-ID: <4E8D645D.4020601@arm.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com> <1308555258-4322-6-git-send-email-chaos.youn@samsung.com> <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH] mmc: core: Add cache control for eMMC4.5 device
+Date: Thu, 06 Oct 2011 17:22:26 +0900
+Message-ID: <000f01cc8401$14d6ffd0$3e84ff70$%jun@samsung.com>
+References: <1315466950-28973-1-git-send-email-tgih.jun@samsung.com>
+ <4E8C43B5.7020704@intel.com> <000401cc83e1$ca2c8fa0$5e85aee0$%jun@samsung.com>
+ <CANz0V+4Ue_TNXsJEEpGwTyHFUJjz+f41aF+VfWdKqc=BqW1-0w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:36349 "HELO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S932245Ab1JFISM convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Oct 2011 04:18:12 -0400
-In-Reply-To: <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CANz0V+4Ue_TNXsJEEpGwTyHFUJjz+f41aF+VfWdKqc=BqW1-0w@mail.gmail.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: "'Andrei E. Warkentin'" <andrey.warkentin@gmail.com>
+Cc: 'Adrian Hunter' <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Changhwan Youn' <chaos.youn@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, 'Arnd Bergmann' <arnd@arndb.de>, Will Deacon <Will.Deacon@arm.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
 
-On 06/10/11 07:30, Kukjin Kim wrote:
-> Marc Zyngier wrote:
->>
->> Hi Changhwan,
->>
-> Hi Marc,
+Andrei E. Warkentin wrote:
+> Hi Seungwon,
 > 
-> (Cc'ed Will Deacon and Russell King)
+> 2011/10/6 Seungwon Jeon <tgih.jun@samsung.com>:
+> > Adrian Hunter wrote:
+> >> On 08/09/11 10:29, Seungwon Jeon wrote:
+> >> > This patch adds cache feature of eMMC4.5 Spec.
+> >> > If device supports cache capability, host can utilize some specific
+> >> > operations.
+> >> >
+> >> > Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
+> >> > ---
 > 
->> On 20/06/11 08:34, Changhwan Youn wrote:
->>> For full support of power modes, this patch adds implementation
->>> external GIC on EXYNOS4.
->>>
->>> External GIC of Exynos4 cannot support register banking so
->>> several interrupt related code for CPU1 should be different
->>> from that of CPU0.
->>
->> I just realized that patch has made it to mainline... Unfortunately, it
->> seems quite broken to me:
->>
->>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
->>> ---
->>>  arch/arm/mach-exynos4/cpu.c                      |   10 ++++++++
->>>  arch/arm/mach-exynos4/include/mach/entry-macro.S |    5 ++++
->>>  arch/arm/mach-exynos4/include/mach/map.h         |    1 +
->>>  arch/arm/mach-exynos4/platsmp.c                  |   27
->> +++++++++++++++++++++-
->>>  4 files changed, 42 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
->>> index fa33294..40a866c 100644
->>> --- a/arch/arm/mach-exynos4/cpu.c
->>> +++ b/arch/arm/mach-exynos4/cpu.c
->>> @@ -16,6 +16,7 @@
->>>
->>>  #include <asm/proc-fns.h>
->>>  #include <asm/hardware/cache-l2x0.h>
->>> +#include <asm/hardware/gic.h>
->>>
->>>  #include <plat/cpu.h>
->>>  #include <plat/clock.h>
->>> @@ -159,11 +160,20 @@ void __init exynos4_init_clocks(int xtal)
->>>  	exynos4_setup_clocks();
->>>  }
->>>
->>> +static void exynos4_gic_irq_eoi(struct irq_data *d)
->>> +{
->>> +	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
->>> +
->>> +	gic_data->cpu_base = S5P_VA_GIC_CPU +
->>> +			    (EXYNOS4_GIC_BANK_OFFSET *
->> smp_processor_id());
->>
->> Here, you're overwriting a field that is shared among *all* the
->> interrupts in the system.  What if an interrupt comes up on another CPU?
->> If you look at the implementation of gic_eoi_irq(), you'll definitely
->> see the race.
->>
-> Hmm...as you can see in git log, the EXYNOS4210 cannot support register
-> banking in GIC so this is needed.
+> I don't think eMMC 4.5 is public yet, so could you elaborate on the
+> volatile cache? I am
+> in particular interested in how the volatile cache affects reliable
+> writes (I would assume it doesn't
+> affect them at all).
+Right, no effect.
+Data of reliable write will be written the non-volatile memory not cache forcedly.
+> 
+> A
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-I don't dispute the need. I claim that the implementation is wrong, and
-will fail given the right timings.
-
->>> +}
->>> +
->>>  void __init exynos4_init_irq(void)
->>>  {
->>>  	int irq;
->>>
->>>  	gic_init(0, IRQ_LOCALTIMER, S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
->>> +	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
->>
->> And here you're abusing the GIC extension feature.
->>
-> I think gic_arch_extn.irq_eoi can be overwritten in each architecture to
-> support own specific extensions like in the EXYNOS4 case.
-
-Sure. My point is you are diverting the GIC extension from its purpose,
-which is mostly to be able to control wake-up sources (as for example in
-the Tegra case). Here, you use this hooks to work around the fact that
-the GIC driver is written with banking in mind, which is quite a
-different thing.
-
->> I've also had a look at -next, and this has been extended further to
->> support 4412. The problem with that is without banking, you're painfully
->> working around the GIC driver. At that stage, I wonder if you wouldn't
->> be better off with a separate driver instead of abusing the existing
-> one...
->>
-> Well, in this case, you mean separate driver is better to us even though
-> there is a gic driver in arch/arm/common? I don't think so because separate
-> driver will probably have many duplicated codes and if common gic driver can
-> support every silicons which have different version's gic it's better to us
-> and should do.
-
-If you really insist on using the GIC common code, then I'd suggest to
-adapt it to your needs instead of working around the problem.
-What about making cpu_base a percpu field inside struct gic_chip_data?
-No hook abuse, and no race conditions. You could also do that for
-dist_base, as it looks to be required for the 4412.
-
-Cheers,
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
