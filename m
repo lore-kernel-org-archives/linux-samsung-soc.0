@@ -1,323 +1,127 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH] mmc: core: Add cache control for eMMC4.5 device
-Date: Thu, 06 Oct 2011 10:06:03 +0300
-Message-ID: <4E8D535B.40200@intel.com>
-References: <1315466950-28973-1-git-send-email-tgih.jun@samsung.com> <4E8C43B5.7020704@intel.com> <000401cc83e1$ca2c8fa0$5e85aee0$%jun@samsung.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
+Date: Thu, 06 Oct 2011 09:18:37 +0100
+Message-ID: <4E8D645D.4020601@arm.com>
+References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com> <1308555258-4322-6-git-send-email-chaos.youn@samsung.com> <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga03.intel.com ([143.182.124.21]:43480 "EHLO mga03.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S934333Ab1JFHGH (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:36349 "HELO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S932245Ab1JFISM convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Oct 2011 03:06:07 -0400
-In-Reply-To: <000401cc83e1$ca2c8fa0$5e85aee0$%jun@samsung.com>
+	Thu, 6 Oct 2011 04:18:12 -0400
+In-Reply-To: <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Changhwan Youn' <chaos.youn@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, 'Arnd Bergmann' <arnd@arndb.de>, Will Deacon <Will.Deacon@arm.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
 
-On 06/10/11 07:38, Seungwon Jeon wrote:
-> Adrian Hunter wrote:
->> On 08/09/11 10:29, Seungwon Jeon wrote:
->>> This patch adds cache feature of eMMC4.5 Spec.
->>> If device supports cache capability, host can utilize some specific
->>> operations.
+On 06/10/11 07:30, Kukjin Kim wrote:
+> Marc Zyngier wrote:
+>>
+>> Hi Changhwan,
+>>
+> Hi Marc,
+> 
+> (Cc'ed Will Deacon and Russell King)
+> 
+>> On 20/06/11 08:34, Changhwan Youn wrote:
+>>> For full support of power modes, this patch adds implementation
+>>> external GIC on EXYNOS4.
 >>>
->>> Signed-off-by: Seungwon Jeon<tgih.jun@samsung.com>
+>>> External GIC of Exynos4 cannot support register banking so
+>>> several interrupt related code for CPU1 should be different
+>>> from that of CPU0.
+>>
+>> I just realized that patch has made it to mainline... Unfortunately, it
+>> seems quite broken to me:
+>>
+>>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 >>> ---
->>> This patch is base on [PATCH v3] mmc: core: Add default timeout value
->> for CMD6
+>>>  arch/arm/mach-exynos4/cpu.c                      |   10 ++++++++
+>>>  arch/arm/mach-exynos4/include/mach/entry-macro.S |    5 ++++
+>>>  arch/arm/mach-exynos4/include/mach/map.h         |    1 +
+>>>  arch/arm/mach-exynos4/platsmp.c                  |   27
+>> +++++++++++++++++++++-
+>>>  4 files changed, 42 insertions(+), 1 deletions(-)
 >>>
->>>    drivers/mmc/card/block.c |   14 ++++++----
->>>    drivers/mmc/core/core.c  |   62
->> ++++++++++++++++++++++++++++++++++++++++++++++
->>>    drivers/mmc/core/mmc.c   |   23 +++++++++++++++++
->>>    include/linux/mmc/card.h |    2 +
->>>    include/linux/mmc/core.h |    2 +
->>>    include/linux/mmc/host.h |    3 ++
->>>    include/linux/mmc/mmc.h  |    3 ++
->>>    7 files changed, 103 insertions(+), 6 deletions(-)
+>>> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+>>> index fa33294..40a866c 100644
+>>> --- a/arch/arm/mach-exynos4/cpu.c
+>>> +++ b/arch/arm/mach-exynos4/cpu.c
+>>> @@ -16,6 +16,7 @@
 >>>
->>> diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
->>> index e702c61..84fa4bb 100644
->>> --- a/drivers/mmc/card/block.c
->>> +++ b/drivers/mmc/card/block.c
->>> @@ -779,16 +779,18 @@ out:
->>>    static int mmc_blk_issue_flush(struct mmc_queue *mq, struct request
->> *req)
->>>    {
->>>    	struct mmc_blk_data *md = mq->data;
->>> +	struct mmc_card *card = md->queue.card;
->>> +	int ret = 0;
->>> +
->>> +	ret = mmc_flush_cache(card);
->>> +	if (ret)
->>> +		ret = -EIO;
+>>>  #include <asm/proc-fns.h>
+>>>  #include <asm/hardware/cache-l2x0.h>
+>>> +#include <asm/hardware/gic.h>
 >>>
->>> -	/*
->>> -	 * No-op, only service this because we need REQ_FUA for reliable
->>> -	 * writes.
->>> -	 */
->>>    	spin_lock_irq(&md->lock);
->>> -	__blk_end_request_all(req, 0);
->>> +	__blk_end_request_all(req, ret);
->>>    	spin_unlock_irq(&md->lock);
+>>>  #include <plat/cpu.h>
+>>>  #include <plat/clock.h>
+>>> @@ -159,11 +160,20 @@ void __init exynos4_init_clocks(int xtal)
+>>>  	exynos4_setup_clocks();
+>>>  }
 >>>
->>> -	return 1;
->>> +	return ret ? 0 : 1;
->>>    }
->>>
->>>    /*
->>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->>> index 557856b..14c2431 100644
->>> --- a/drivers/mmc/core/core.c
->>> +++ b/drivers/mmc/core/core.c
->>> @@ -1987,6 +1987,64 @@ int mmc_card_can_sleep(struct mmc_host *host)
->>>    }
->>>    EXPORT_SYMBOL(mmc_card_can_sleep);
->>>
->>> +/*
->>> + * Flush the cache to the non-volatile storage.
->>> + */
->>> +int mmc_flush_cache(struct mmc_card *card)
+>>> +static void exynos4_gic_irq_eoi(struct irq_data *d)
 >>> +{
->>> +	struct mmc_host *host = card->host;
->>> +	int err = 0;
+>>> +	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
 >>> +
->>> +	if (!(host->caps&   MMC_CAP_CACHE_CTRL))
->>> +		return err;
->>> +
->>> +	if (mmc_card_mmc(card)&&
->>> +			(card->ext_csd.cache_size>   0)&&
->>> +			(card->ext_csd.cache_ctrl&   1)) {
->>> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->>> +				EXT_CSD_FLUSH_CACHE, 1, 0);
->>> +		if (err)
->>> +			pr_err("%s: cache flush error %d\n",
->>> +					mmc_hostname(card->host), err);
->>> +	}
->>> +
->>> +	return err;
+>>> +	gic_data->cpu_base = S5P_VA_GIC_CPU +
+>>> +			    (EXYNOS4_GIC_BANK_OFFSET *
+>> smp_processor_id());
+>>
+>> Here, you're overwriting a field that is shared among *all* the
+>> interrupts in the system.  What if an interrupt comes up on another CPU?
+>> If you look at the implementation of gic_eoi_irq(), you'll definitely
+>> see the race.
+>>
+> Hmm...as you can see in git log, the EXYNOS4210 cannot support register
+> banking in GIC so this is needed.
+
+I don't dispute the need. I claim that the implementation is wrong, and
+will fail given the right timings.
+
 >>> +}
->>> +EXPORT_SYMBOL(mmc_flush_cache);
 >>> +
->>> +/*
->>> + * Turn the cache ON/OFF.
->>> + * Turning the cache OFF shall trigger flushing of the data
->>> + * to the non-volatile storage.
->>> + */
->>> +int mmc_cache_ctrl(struct mmc_host *host, u8 enable)
->>> +{
->>> +	struct mmc_card *card = host->card;
->>> +	int err = 0;
->>> +
->>> +	if (!(host->caps&   MMC_CAP_CACHE_CTRL))
->>> +		return err;
->>> +
+>>>  void __init exynos4_init_irq(void)
+>>>  {
+>>>  	int irq;
+>>>
+>>>  	gic_init(0, IRQ_LOCALTIMER, S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+>>> +	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
 >>
->> This patch does not cover code paths for removable cards.
->> For clarity and in case a platform does not set non-removable
->> flags for eMMC, a check is needed here e.g.
+>> And here you're abusing the GIC extension feature.
 >>
->> 	if (mmc_card_is_removable(host))
->> 		return 0;
+> I think gic_arch_extn.irq_eoi can be overwritten in each architecture to
+> support own specific extensions like in the EXYNOS4 case.
+
+Sure. My point is you are diverting the GIC extension from its purpose,
+which is mostly to be able to control wake-up sources (as for example in
+the Tegra case). Here, you use this hooks to work around the fact that
+the GIC driver is written with banking in mind, which is quite a
+different thing.
+
+>> I've also had a look at -next, and this has been extended further to
+>> support 4412. The problem with that is without banking, you're painfully
+>> working around the GIC driver. At that stage, I wonder if you wouldn't
+>> be better off with a separate driver instead of abusing the existing
+> one...
 >>
-> Is it worry about normal MMC card type and?
-> Then, "card->ext_csd.cache_size" is a good condition for deciding cache control.
-> Or even though eMMC should be non-removable type, platform does not set non-removable for eMMC type mistakenly?
+> Well, in this case, you mean separate driver is better to us even though
+> there is a gic driver in arch/arm/common? I don't think so because separate
+> driver will probably have many duplicated codes and if common gic driver can
+> support every silicons which have different version's gic it's better to us
+> and should do.
 
-Yes.  Looking at mmc_pm_notify() and mmc_attach_bus_ops() it seems that an eMMC 
-will get powered off before suspend if the MMC_CAP_NONREMOVABLE is not set.
-That was what I meant about not covering code paths for removable cards.
+If you really insist on using the GIC common code, then I'd suggest to
+adapt it to your needs instead of working around the problem.
+What about making cpu_base a percpu field inside struct gic_chip_data?
+No hook abuse, and no race conditions. You could also do that for
+dist_base, as it looks to be required for the 4412.
 
-This code does not cover cards that are not specified as non-removable, so:
+Cheers,
 
-	if (mmc_card_is_removable(host))
-		return 0;
-
-> I can't catch the meaning exactly.
-> Please let me know.
->
-> Thanks.
-> Beset regards,
-> Seungwon Jeon.
->
->>> +	if (card&&   mmc_card_mmc(card)&&
->>> +			(card->ext_csd.cache_size>   0)) {
->>> +		enable = !!enable;
->>> +
->>> +		if (card->ext_csd.cache_ctrl ^ enable)
->>> +			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->>> +					EXT_CSD_CACHE_CTRL, enable, 0);
->>> +		if (err)
->>> +			pr_err("%s: cache %s error %d\n",
->>> +					mmc_hostname(card->host),
->>> +					enable ? "on" : "off",
->>> +					err);
->>> +		else
->>> +			card->ext_csd.cache_ctrl = enable;
->>> +	}
->>> +
->>> +	return err;
->>> +}
->>> +EXPORT_SYMBOL(mmc_cache_ctrl);
->>> +
->>>    #ifdef CONFIG_PM
->>>
->>>    /**
->>> @@ -2001,6 +2059,9 @@ int mmc_suspend_host(struct mmc_host *host)
->>>    		cancel_delayed_work(&host->disable);
->>>    	cancel_delayed_work(&host->detect);
->>>    	mmc_flush_scheduled_work();
->>> +	err = mmc_cache_ctrl(host, 0);
->>> +	if (err)
->>> +		goto out;
->>>
->>>    	mmc_bus_get(host);
->>>    	if (host->bus_ops&&   !host->bus_dead) {
->>> @@ -2025,6 +2086,7 @@ int mmc_suspend_host(struct mmc_host *host)
->>>    	if (!err&&   !mmc_card_keep_power(host))
->>>    		mmc_power_off(host);
->>>
->>> +out:
->>>    	return err;
->>>    }
->>>
->>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->>> index ea58a0c..035112b 100644
->>> --- a/drivers/mmc/core/mmc.c
->>> +++ b/drivers/mmc/core/mmc.c
->>> @@ -419,6 +419,12 @@ static int mmc_read_ext_csd(struct mmc_card *card,
->> u8 *ext_csd)
->>>    		*/
->>>    		card->ext_csd.generic_cmd6_time = 0;
->>>
->>> +	card->ext_csd.cache_size =
->>> +		ext_csd[EXT_CSD_CACHE_SIZE + 0]<<   0 |
->>> +		ext_csd[EXT_CSD_CACHE_SIZE + 1]<<   8 |
->>> +		ext_csd[EXT_CSD_CACHE_SIZE + 2]<<   16 |
->>> +		ext_csd[EXT_CSD_CACHE_SIZE + 3]<<   24;
->>> +
->>>    out:
->>>    	return err;
->>>    }
->>> @@ -851,6 +857,23 @@ static int mmc_init_card(struct mmc_host *host, u32
->> ocr,
->>>    		}
->>>    	}
->>>
->>> +	/*
->>> +	 * If cache size is higher than 0, this indicates
->>> +	 * the the existence of cache and it can be turned on.
->>> +	 */
->>> +	if ((host->caps&   MMC_CAP_CACHE_CTRL)&&
->>> +			card->ext_csd.cache_size>   0) {
->>> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->>> +				EXT_CSD_CACHE_CTRL, 1, 0);
->>> +		if (err&&   err != -EBADMSG)
->>> +			goto free_card;
->>> +
->>> +		/*
->>> +		 * Only if no error, cache is turned on successfully.
->>> +		 */
->>> +		card->ext_csd.cache_ctrl = err ? 0 : 1;
->>> +	}
->>> +
->>>    	if (!oldcard)
->>>    		host->card = card;
->>>
->>> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
->>> index b713abf..519660b 100644
->>> --- a/include/linux/mmc/card.h
->>> +++ b/include/linux/mmc/card.h
->>> @@ -50,6 +50,7 @@ struct mmc_ext_csd {
->>>    	u8			rel_sectors;
->>>    	u8			rel_param;
->>>    	u8			part_config;
->>> +	u8			cache_ctrl;
->>>    	unsigned int		part_time;		/* Units: ms */
->>>    	unsigned int		sa_timeout;		/* Units: 100ns */
->>>    	unsigned int		generic_cmd6_time;	/* Units: 10ms */
->>> @@ -65,6 +66,7 @@ struct mmc_ext_csd {
->>>    	unsigned long long	enhanced_area_offset;	/* Units: Byte */
->>>    	unsigned int		enhanced_area_size;	/* Units: KB */
->>>    	unsigned int		boot_size;		/* in bytes */
->>> +	unsigned int		cache_size;		/* Units: KB */
->>>    	u8			raw_partition_support;	/* 160 */
->>>    	u8			raw_erased_mem_count;	/* 181 */
->>>    	u8			raw_ext_csd_structure;	/* 194 */
->>> diff --git a/include/linux/mmc/core.h b/include/linux/mmc/core.h
->>> index b8b1b7a..45b4acf 100644
->>> --- a/include/linux/mmc/core.h
->>> +++ b/include/linux/mmc/core.h
->>> @@ -171,6 +171,8 @@ extern void mmc_release_host(struct mmc_host *host);
->>>    extern void mmc_do_release_host(struct mmc_host *host);
->>>    extern int mmc_try_claim_host(struct mmc_host *host);
->>>
->>> +extern int mmc_flush_cache(struct mmc_card *);
->>> +
->>>    /**
->>>     *	mmc_claim_host - exclusively claim a host
->>>     *	@host: mmc host to claim
->>> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
->>> index 4c4bddf..6d0006d 100644
->>> --- a/include/linux/mmc/host.h
->>> +++ b/include/linux/mmc/host.h
->>> @@ -230,6 +230,7 @@ struct mmc_host {
->>>    #define MMC_CAP_MAX_CURRENT_600	(1<<   28)	/* Host max current
->> limit is 600mA */
->>>    #define MMC_CAP_MAX_CURRENT_800	(1<<   29)	/* Host max current
->> limit is 800mA */
->>>    #define MMC_CAP_CMD23		(1<<   30)	/* CMD23 supported. */
->>> +#define MMC_CAP_CACHE_CTRL		(1<<   31)	/* Allow cache
->> control. */
->>>
->>>    	mmc_pm_flag_t		pm_caps;	/* supported pm features */
->>>
->>> @@ -335,6 +336,8 @@ extern int mmc_power_restore_host(struct mmc_host
->> *host);
->>>    extern void mmc_detect_change(struct mmc_host *, unsigned long delay);
->>>    extern void mmc_request_done(struct mmc_host *, struct mmc_request *);
->>>
->>> +extern int mmc_cache_ctrl(struct mmc_host *, u8);
->>> +
->>>    static inline void mmc_signal_sdio_irq(struct mmc_host *host)
->>>    {
->>>    	host->ops->enable_sdio_irq(host, 0);
->>> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
->>> index e869f00..b7fa9f7 100644
->>> --- a/include/linux/mmc/mmc.h
->>> +++ b/include/linux/mmc/mmc.h
->>> @@ -270,6 +270,8 @@ struct _mmc_csd {
->>>     * EXT_CSD fields
->>>     */
->>>
->>> +#define EXT_CSD_FLUSH_CACHE		32	/* W */
->>> +#define EXT_CSD_CACHE_CTRL		33	/* R/W */
->>>    #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
->>>    #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
->>>    #define EXT_CSD_WR_REL_PARAM		166	/* RO */
->>> @@ -294,6 +296,7 @@ struct _mmc_csd {
->>>    #define EXT_CSD_SEC_FEATURE_SUPPORT	231	/* RO */
->>>    #define EXT_CSD_TRIM_MULT		232	/* RO */
->>>    #define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
->>> +#define EXT_CSD_CACHE_SIZE		249	/* RO, 4 bytes */
->>>
->>>    /*
->>>     * EXT_CSD field definitions
->>> --
->>> 1.7.0.4
->>>
->>> --
->>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->>> the body of a message to majordomo@vger.kernel.org
->>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
+	M.
+-- 
+Jazz is not dead. It just smells funny...
