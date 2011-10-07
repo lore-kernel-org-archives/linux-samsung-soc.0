@@ -1,39 +1,131 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Please submit patches for v3.2 before this weekend
-Date: Fri, 07 Oct 2011 20:30:05 +0900
-Message-ID: <01f901cc84e4$767598d0$6360ca70$%kim@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2 0/2] Add a common macro for creating struct clk_lookup
+ entries
+Date: Fri, 07 Oct 2011 17:00:24 +0530
+Message-ID: <4E8EE2D0.6070103@linaro.org>
+References: <1317981211-15745-1-git-send-email-rajeshwari.s@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:64349 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965187Ab1JGLaH (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:46017 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965393Ab1JGLad (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Oct 2011 07:30:07 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSP00MOP1A2L950@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 20:30:06 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSP007S91A5QR40@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 20:30:06 +0900 (KST)
-Content-language: ko
+	Fri, 7 Oct 2011 07:30:33 -0400
+Received: by ggnv2 with SMTP id v2so2631111ggn.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 04:30:33 -0700 (PDT)
+In-Reply-To: <1317981211-15745-1-git-send-email-rajeshwari.s@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Rajeshwari Shinde <rajeshwari.s@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, khilman@ti.com, nsekhar@ti.com, hsweeten@visionengravers.com, rmallon@gmail.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, plagnioj@jcrosoft.com, amit.kucheria@canonical.com, kernel@pengutronix.de, hjk@hansjkoch.de, linux@arm.linux.org.uk
 
-Hi all,
+On Friday 07 October 2011 03:23 PM, Rajeshwari Shinde wrote:
+> This patchset consolidates the macro that creates 'struct clk_lookup'
+> entries by introducing a common macro 'CLKDEV_INIT' as suggested by
+> Russell King. Few of the platforms have been modified to use this new macro.
+>
+> I have done the replacement by using python script. I have only build tested
+> for below platforms with existing defconfigs.
+>
+> Changes since V1:
+> - Removed "&" and "," from the CLKDEV_INIT macro.
+> - Replaced the platform specific macros to use the new CLKDEV_INIT macro.
+> - Rebased the patches on the latest master branch of Linux-Next.
+>
+> Rajeshwari Shinde (2):
+>    ARM: CLKDEV: Add Common Macro for clk_lookup
+>    ARM: Using CLKDEV_INIT for creating clk_lookup instance
+>
+>   arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
+>   arch/arm/mach-davinci/clock.h            |    7 --
+>   arch/arm/mach-davinci/da830.c            |  101 ++++++++++----------
+>   arch/arm/mach-davinci/da850.c            |   95 ++++++++++----------
+>   arch/arm/mach-davinci/dm355.c            |   87 +++++++++---------
+>   arch/arm/mach-davinci/dm365.c            |  113 +++++++++++-----------
+>   arch/arm/mach-davinci/dm644x.c           |   77 ++++++++--------
+>   arch/arm/mach-davinci/dm646x.c           |   81 ++++++++--------
+>   arch/arm/mach-davinci/tnetv107x.c        |  133 +++++++++++++-------------
+>   arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
+>   arch/arm/mach-imx/clock-imx1.c           |   38 +++-----
+>   arch/arm/mach-imx/clock-imx21.c          |   91 +++++++++----------
+>   arch/arm/mach-imx/clock-imx25.c          |   79 +++++++---------
+>   arch/arm/mach-imx/clock-imx27.c          |  111 ++++++++++------------
+>   arch/arm/mach-imx/clock-imx31.c          |  103 ++++++++++-----------
+>   arch/arm/mach-imx/clock-imx35.c          |  117 +++++++++++------------
+>   arch/arm/mach-lpc32xx/clock.c            |   75 +++++++--------
+>   arch/arm/mach-mx5/clock-mx51-mx53.c      |  149 ++++++++++++++----------------
+>   arch/arm/mach-mxs/clock-mx23.c           |   39 +++-----
+>   arch/arm/mach-mxs/clock-mx28.c           |   71 +++++++--------
+>   arch/arm/mach-tcc8k/clock.c              |  107 ++++++++++-----------
+>   include/linux/clkdev.h                   |    7 ++
+>   22 files changed, 838 insertions(+), 909 deletions(-)
+>
 
-I will be back in this weekend on submitted/remained patches :)
-So if you have some Samsung stuff for v3.2, please submit before that.
+Consider applying the macro to following files too.
 
-Thanks.
+CLKDEV_CON_DEV_ID
+arch/arm/mach-at91/at91cap9.c
+arch/arm/mach-at91/at91rm9200.c
+arch/arm/mach-at91/at91sam9260.c
+arch/arm/mach-at91/at91sam9261.c
+arch/arm/mach-at91/at91sam9263.c
+arch/arm/mach-at91/at91sam9g45.c
+arch/arm/mach-at91/at91sam9rl.c
+arch/arm/mach-at91/clock.h
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+CLKDEV_CON_ID
+arch/arm/mach-at91/at91sam9g45.c
+arch/arm/mach-at91/clock.h
+arch/arm/mach-shmobile/clock-sh7367.c
+arch/arm/mach-shmobile/clock-sh7372.c
+arch/arm/mach-shmobile/clock-sh7377.c
+arch/arm/mach-shmobile/clock-sh73a0.c
+
+INIT_CLKREG
+arch/arm/mach-mmp/clock.h
+arch/arm/mach-mmp/mmp2.c
+arch/arm/mach-mmp/pxa168.c
+arch/arm/mach-mmp/pxa910.c
+arch/arm/mach-pxa/clock.h
+arch/arm/mach-pxa/eseries.c
+arch/arm/mach-pxa/pxa25x.c
+arch/arm/mach-pxa/pxa27x.c
+arch/arm/mach-pxa/pxa300.c
+arch/arm/mach-pxa/pxa320.c
+arch/arm/mach-pxa/pxa3xx.c
+arch/arm/mach-pxa/pxa95x.c
+
+DEF_LOOKUP
+DEF_LOOKUP_CON
+arch/arm/mach-u300/clock.c
+
+DEF_CLKLOOK
+arch/arm/mach-nuc93x/clock.h
+arch/arm/mach-nuc93x/cpu.c
+arch/arm/mach-w90x900/clock.h
+arch/arm/mach-w90x900/cpu.c
+
+CLK
+arch/arm/mach-ux500/clock.c
+arch/arm/mach-ux500/clock.h
+
+Array unfolded:
+arch/arm/mach-bcmring/core.c
+arch/arm/mach-integrator/core.c
+arch/arm/mach-integrator/integrator_cp.c
+arch/arm/mach-nomadik/clock.c
+arch/arm/mach-prima2/clock.c
+arch/arm/mach-realview/core.c
+arch/arm/mach-versatile/core.c
+arch/arm/mach-vexpress/ct-ca9x4.c
+arch/arm/mach-vexpress/v2m.c
+arch/arm/mach-spear3xx/clock.c
+arch/arm/mach-spear6xx/clock.c
+arch/arm/mach-pnx4008/clock.c
+arch/arm/mach-tegra/tegra2_clocks.c
+
+
+-- 
+Tushar Behera
