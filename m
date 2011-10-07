@@ -1,43 +1,87 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [GIT PULL] Samsung devel-2 for v3.2
-Date: Fri, 7 Oct 2011 20:14:43 +0100
-Message-ID: <20111007191443.GA12004@opensource.wolfsonmicro.com>
-References: <002001cc80e5$3e497790$badc66b0$%kim@samsung.com> <20111002192950.GB1005@sirena.org.uk> <005801cc817c$5d42f9e0$17c8eda0$%kim@samsung.com> <201110071956.12034.arnd@arndb.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v3 RE-SEND 2/2] iommu/exynos: Add iommu driver for Exynos
+ Platforms
+Date: Fri, 07 Oct 2011 22:46:42 +0200
+Message-ID: <4E8F6532.9060609@gmail.com>
+References: <01e601cc84d9$4530d6a0$cf9283e0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48617 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754025Ab1JGTOp (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:48239 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758678Ab1JGUqq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Oct 2011 15:14:45 -0400
-Content-Disposition: inline
-In-Reply-To: <201110071956.12034.arnd@arndb.de>
+	Fri, 7 Oct 2011 16:46:46 -0400
+In-Reply-To: <01e601cc84d9$4530d6a0$cf9283e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, joerg.roedel@amd.com, 'Ohad Ben-Cohen' <ohad@wizery.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, younglak1004.kim@samsung.com
 
-On Fri, Oct 07, 2011 at 07:56:11PM +0200, Arnd Bergmann wrote:
-> On Monday 03 October 2011, Kukjin Kim wrote:
-> > Mark Brown wrote:
+On 10/07/2011 12:09 PM, Kukjin Kim wrote:
+> From: KyongHo Cho<pullip.cho@samsung.com>
+> 
+> This is the System MMU driver and IOMMU API implementation for
+> Exynos SOC platforms. Exynos platforms has more than 10 System
+> MMUs dedicated for each multimedia accellerators.
+> 
+> The System MMU driver is already in arc/arm/plat-s5p but it is
+> moved to drivers/iommu due to Ohad Ben-Cohen gathered IOMMU drivers
+> there
+> 
+> This patch also includes fault handling feature in IOMMU driver
+> suggested by Ohad.
+> Users of IOMMU API can register its own fault handler with
+> iommu_set_fault_handler() and the handler is called by IRQ handler
+> of System MMU.
+> If no user installs fault handler, IOMMU driver prints debugging
+> message and generates kernel oops.
+> 
+> This IOMMU driver calls bus_set_iommu() instead of register_iommu()
+> since Joerg suggested that installing iommu_ops in bus_type.
+> 
+> Cc: Joerg Roedel<joerg.roedel@amd.com>
+> Cc: Ohad Ben-Cohen<ohad@wizery.com>
+> Signed-off-by: KyongHo Cho<pullip.cho@samsung.com>
+> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> ---
+> NOTE: Since previous sending has problem, I'm re-sending.
+> Sorry, please kindly ignore previous one.
+> 
+>   arch/arm/plat-s5p/Kconfig                   |   14 -
+>   arch/arm/plat-s5p/Makefile                  |    1 -
+>   arch/arm/plat-s5p/sysmmu.c                  |  312 ---------
+>   arch/arm/plat-samsung/include/plat/sysmmu.h |   95 ---
+>   drivers/iommu/Kconfig                       |   14 +
+>   drivers/iommu/Makefile                      |    1 +
+>   drivers/iommu/exynos_iommu.c                |  963 +++++++++++++++++++++++++++
+>   7 files changed, 978 insertions(+), 422 deletions(-)
+>   delete mode 100644 arch/arm/plat-s5p/sysmmu.c
+>   delete mode 100644 arch/arm/plat-samsung/include/plat/sysmmu.h
+>   create mode 100644 drivers/iommu/exynos_iommu.c
+> 
+> diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+> index 7b9dada..fa374cc 100644
+> --- a/arch/arm/plat-s5p/Kconfig
+> +++ b/arch/arm/plat-s5p/Kconfig
+> @@ -46,20 +46,6 @@ config S5P_PM
+>   	  Common code for power management support on S5P and newer SoCs
+>   	  Note: Do not select this for S5P6440 and S5P6450.
+> 
+> -comment "System MMU"
+> -
+> -config S5P_SYSTEM_MMU
+> -	bool "S5P SYSTEM MMU"
+> -	depends on ARCH_EXYNOS4
+> -	help
+> -	  Say Y here if you want to enable System MMU
+> -
+> -config S5P_SLEEP
+> -	bool
+> -	help
+> -	  Internal config node to apply common S5P sleep management code.
+> -	  Can be selected by S5P and newer SoCs with similar sleep procedure.
+> -
 
-> > > As I reported the other day this change breaks the boot early on on the
-> > > Cragganmore S3C6410 based systems (I've not actually fired up my
-> > > SMDK6410 but I suspect it may have issues too).  I did make some brief
-
-> > Hmm, I thought it has no problem when I saw Thomas Abraham's 'serial:
-> > samsung' patches because he said it works fine with my for-next plus his
-> > patches on SMDK6410...Anyway, I need to sort it out.
-
-> > Arnd, please hold this on, will request again soon.
-
-> Any update on this?
-
-We've got a lot closer to working out what's wrong (and got useful
-logging) but not nailed it down yet.  Kukjin has confirmed that he can
-see what's likely the same issue on his systems.  My suggestion is that
-we go ahead with the pull request for now and then fix incrementally,
-there's a relatively small set of systems affected.  If it gets to more
-than a couple of -rcs we know which patches are problematic and so can
-always revert.
+Is S5P_SLEEP being removed intentionally ? It doesn't seem to belong here.
