@@ -1,167 +1,283 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
-Date: Fri, 07 Oct 2011 19:54:29 +0900
-Message-ID: <01ed01cc84df$7d105ea0$77311be0$%kim@samsung.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
- <1308555258-4322-6-git-send-email-chaos.youn@samsung.com>
- <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
- <4E8D645D.4020601@arm.com> <4E8ECA1B.5010005@arm.com>
+From: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Subject: Re: [PATCH 3/4] ARM: Exynos4: enable TV support on Universal_C210 board
+Date: Fri, 07 Oct 2011 13:06:05 +0200
+Message-ID: <4E8EDD1D.8070700@samsung.com>
+References: <1313142342-22403-1-git-send-email-t.stanislaws@samsung.com>
+ <1313142342-22403-4-git-send-email-t.stanislaws@samsung.com>
+ <CAK9yfHz-Y6sCnWOW_f80Rk_Lo=sNqLzVzz2uTNT4_BXyknLyOQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63909 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759767Ab1JGKyb (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:14850 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759732Ab1JGLGN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Oct 2011 06:54:31 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSO00407ZLXPLD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 19:54:30 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSO007BSZMT2660@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 19:54:29 +0900 (KST)
-In-reply-to: <4E8ECA1B.5010005@arm.com>
-Content-language: ko
+	Fri, 7 Oct 2011 07:06:13 -0400
+Received: from euspt2 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LSP006YF06ALW@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 12:06:10 +0100 (BST)
+Received: from [106.116.48.223] by spt2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTPA id <0LSP001QD069A5@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 12:06:10 +0100 (BST)
+In-reply-to: <CAK9yfHz-Y6sCnWOW_f80Rk_Lo=sNqLzVzz2uTNT4_BXyknLyOQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marc Zyngier' <marc.zyngier@arm.com>
-Cc: linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Will Deacon' <Will.Deacon@arm.com>, ben-linux@fluff.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Changhwan Youn' <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-Marc Zyngier wrote:
-> 
-> On 06/10/11 09:18, Marc Zyngier wrote:
-> > On 06/10/11 07:30, Kukjin Kim wrote:
-> >> Marc Zyngier wrote:
-> >>>
-> >>> Hi Changhwan,
-> >>>
-> >> Hi Marc,
-> >>
-> >> (Cc'ed Will Deacon and Russell King)
-> >>
-> >>> On 20/06/11 08:34, Changhwan Youn wrote:
-> >>>> For full support of power modes, this patch adds implementation
-> >>>> external GIC on EXYNOS4.
-> >>>>
-> >>>> External GIC of Exynos4 cannot support register banking so
-> >>>> several interrupt related code for CPU1 should be different
-> >>>> from that of CPU0.
-> >>>
-> >>> I just realized that patch has made it to mainline... Unfortunately,
-it
-> >>> seems quite broken to me:
-> >>>
-> >>>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-> >>>> ---
-> >>>>  arch/arm/mach-exynos4/cpu.c                      |   10 ++++++++
-> >>>>  arch/arm/mach-exynos4/include/mach/entry-macro.S |    5 ++++
-> >>>>  arch/arm/mach-exynos4/include/mach/map.h         |    1 +
-> >>>>  arch/arm/mach-exynos4/platsmp.c                  |   27
-> >>> +++++++++++++++++++++-
-> >>>>  4 files changed, 42 insertions(+), 1 deletions(-)
-> >>>>
-> >>>> diff --git a/arch/arm/mach-exynos4/cpu.c
-b/arch/arm/mach-exynos4/cpu.c
-> >>>> index fa33294..40a866c 100644
-> >>>> --- a/arch/arm/mach-exynos4/cpu.c
-> >>>> +++ b/arch/arm/mach-exynos4/cpu.c
-> >>>> @@ -16,6 +16,7 @@
-> >>>>
-> >>>>  #include <asm/proc-fns.h>
-> >>>>  #include <asm/hardware/cache-l2x0.h>
-> >>>> +#include <asm/hardware/gic.h>
-> >>>>
-> >>>>  #include <plat/cpu.h>
-> >>>>  #include <plat/clock.h>
-> >>>> @@ -159,11 +160,20 @@ void __init exynos4_init_clocks(int xtal)
-> >>>>  	exynos4_setup_clocks();
-> >>>>  }
-> >>>>
-> >>>> +static void exynos4_gic_irq_eoi(struct irq_data *d)
-> >>>> +{
-> >>>> +	struct gic_chip_data *gic_data =
-irq_data_get_irq_chip_data(d);
-> >>>> +
-> >>>> +	gic_data->cpu_base = S5P_VA_GIC_CPU +
-> >>>> +			    (EXYNOS4_GIC_BANK_OFFSET *
-> >>> smp_processor_id());
-> >>>
-> >>> Here, you're overwriting a field that is shared among *all* the
-> >>> interrupts in the system.  What if an interrupt comes up on another
-CPU?
-> >>> If you look at the implementation of gic_eoi_irq(), you'll definitely
-> >>> see the race.
-> >>>
-> >> Hmm...as you can see in git log, the EXYNOS4210 cannot support register
-> >> banking in GIC so this is needed.
-> >
-> > I don't dispute the need. I claim that the implementation is wrong, and
-> > will fail given the right timings.
-> >
-> >>>> +}
-> >>>> +
-> >>>>  void __init exynos4_init_irq(void)
-> >>>>  {
-> >>>>  	int irq;
-> >>>>
-> >>>>  	gic_init(0, IRQ_LOCALTIMER, S5P_VA_GIC_DIST,
-S5P_VA_GIC_CPU);
-> >>>> +	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
-> >>>
-> >>> And here you're abusing the GIC extension feature.
-> >>>
-> >> I think gic_arch_extn.irq_eoi can be overwritten in each architecture
-to
-> >> support own specific extensions like in the EXYNOS4 case.
-> >
-> > Sure. My point is you are diverting the GIC extension from its purpose,
-> > which is mostly to be able to control wake-up sources (as for example in
-> > the Tegra case). Here, you use this hooks to work around the fact that
-> > the GIC driver is written with banking in mind, which is quite a
-> > different thing.
-> >
-> >>> I've also had a look at -next, and this has been extended further to
-> >>> support 4412. The problem with that is without banking, you're
-painfully
-> >>> working around the GIC driver. At that stage, I wonder if you wouldn't
-> >>> be better off with a separate driver instead of abusing the existing
-> >> one...
-> >>>
-> >> Well, in this case, you mean separate driver is better to us even
-though
-> >> there is a gic driver in arch/arm/common? I don't think so because
-separate
-> >> driver will probably have many duplicated codes and if common gic
-driver can
-> >> support every silicons which have different version's gic it's better
-to us
-> >> and should do.
-> >
-> > If you really insist on using the GIC common code, then I'd suggest to
-> > adapt it to your needs instead of working around the problem.
-> > What about making cpu_base a percpu field inside struct gic_chip_data?
-> > No hook abuse, and no race conditions. You could also do that for
-> > dist_base, as it looks to be required for the 4412.
-> 
-> So to make my suggestion completely clear, here's a patch I'm now
-> carrying in my tree. It's only been test compiled on EXYNOS4, but works
-> nicely on my 11MP. It turns both dist_base and cpu_base into per-cpu
-> variables, removes these callbacks, removes your private copy of
-> gic_cpu_init, and makes struct gic_chip_data private again.
-> 
-> What do you think?
+Hi Sachin Kamat,
+The "hdmi-en" regulator was used to enable DC-DC converter(s).
+The converters supply HDMI hardware or produce 5V for HDMI connector. 
+According to Origen schematics 'DC5V' line is used to supply 5V to HDMI 
+connector. Therefore regulator 'hdmi-en' refers to the regulator 
+associated with 'DC5V' line. If the 'DC5V' regulator is not present in 
+mach-origen.c (???) then 'hdmi-en' becomes a dummy regulator.
 
-Let me check this soon. Actually I need to sort this out to test on my board
-with my git.
+Try to enable REGULATOR_DUMMY in kernel config.
 
-Thanks.
+The regulator framework would associate a dummy regulator to 'hdmi-en' 
+if it fails to find it.
+
+I hope you find this information useful.
 
 Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Tomasz Stanislawski
+
+
+On 10/07/2011 12:00 PM, Sachin Kamat wrote:
+> Hi Tomasz,
+> What is the significance of "hdmi-en" as a regulator? Is this specific
+> to your board.
+> I am unable to relate the GPIO pin corresponding to it on Origen board.
+> Thanks and regards
+> Sachin
+>
+> On 12 August 2011 15:15, Tomasz Stanislawski <t.stanislaws@samsung.com
+> <mailto:t.stanislaws@samsung.com>> wrote:
+>
+>     This patch adds platform devices and regulators for TV devices on
+>     Samsung Universal C210 board.
+>
+>     Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com
+>     <mailto:t.stanislaws@samsung.com>>
+>     Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com
+>     <mailto:kyungmin.park@samsung.com>>
+>     Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com
+>     <mailto:m.szyprowski@samsung.com>>
+>     ---
+>       arch/arm/mach-exynos4/Kconfig               |    2 +
+>       arch/arm/mach-exynos4/mach-universal_c210.c |   74
+>     +++++++++++++++++++++++++++
+>       2 files changed, 76 insertions(+), 0 deletions(-)
+>
+>     diff --git a/arch/arm/mach-exynos4/Kconfig
+>     b/arch/arm/mach-exynos4/Kconfig
+>     index 3ceefdb..144c05d 100644
+>     --- a/arch/arm/mach-exynos4/Kconfig
+>     +++ b/arch/arm/mach-exynos4/Kconfig
+>     @@ -184,9 +184,11 @@ config MACH_UNIVERSAL_C210
+>             select S3C_DEV_I2C1
+>             select S3C_DEV_I2C3
+>             select S3C_DEV_I2C5
+>     +       select S5P_DEV_I2C_HDMIPHY
+>             select S5P_DEV_MFC
+>             select S5P_DEV_ONENAND
+>             select EXYNOS4_DEV_PD
+>     +       select S5P_DEV_TV
+>             select EXYNOS4_SETUP_I2C1
+>             select EXYNOS4_SETUP_I2C3
+>             select EXYNOS4_SETUP_I2C5
+>     diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c
+>     b/arch/arm/mach-exynos4/mach-universal_c210.c
+>     index 0e280d1..e9dbe79 100644
+>     --- a/arch/arm/mach-exynos4/mach-universal_c210.c
+>     +++ b/arch/arm/mach-exynos4/mach-universal_c210.c
+>     @@ -110,6 +110,9 @@ static struct regulator_consumer_supply
+>     lp3974_buck1_consumer =
+>       static struct regulator_consumer_supply lp3974_buck2_consumer =
+>             REGULATOR_SUPPLY("vddg3d", NULL);
+>
+>     +static struct regulator_consumer_supply lp3974_buck3_consumer =
+>     +       REGULATOR_SUPPLY("vdet", "s5p-sdo");
+>     +
+>       static struct regulator_init_data lp3974_buck1_data = {
+>             .constraints    = {
+>                     .name           = "VINT_1.1V",
+>     @@ -153,6 +156,8 @@ static struct regulator_init_data
+>     lp3974_buck3_data = {
+>                             .enabled        = 1,
+>                     },
+>             },
+>     +       .num_consumer_supplies = 1,
+>     +       .consumer_supplies = &lp3974_buck3_consumer,
+>       };
+>
+>       static struct regulator_init_data lp3974_buck4_data = {
+>     @@ -181,6 +186,11 @@ static struct regulator_init_data
+>     lp3974_ldo2_data = {
+>             },
+>       };
+>
+>     +static struct regulator_consumer_supply lp3974_ldo3_consumer[] = {
+>     +       REGULATOR_SUPPLY("vdd", "exynos4-hdmi"),
+>     +       REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"),
+>     +};
+>     +
+>       static struct regulator_init_data lp3974_ldo3_data = {
+>             .constraints    = {
+>                     .name           = "VUSB+MIPI_1.1V",
+>     @@ -192,6 +202,12 @@ static struct regulator_init_data
+>     lp3974_ldo3_data = {
+>                             .disabled       = 1,
+>                     },
+>             },
+>     +       .num_consumer_supplies = ARRAY_SIZE(lp3974_ldo3_consumer),
+>     +       .consumer_supplies = lp3974_ldo3_consumer,
+>     +};
+>     +
+>     +static struct regulator_consumer_supply lp3974_ldo4_consumer[] = {
+>     +       REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"),
+>       };
+>
+>       static struct regulator_init_data lp3974_ldo4_data = {
+>     @@ -205,6 +221,8 @@ static struct regulator_init_data
+>     lp3974_ldo4_data = {
+>                             .disabled       = 1,
+>                     },
+>             },
+>     +       .num_consumer_supplies = ARRAY_SIZE(lp3974_ldo4_consumer),
+>     +       .consumer_supplies = lp3974_ldo4_consumer,
+>       };
+>
+>       static struct regulator_init_data lp3974_ldo5_data = {
+>     @@ -246,6 +264,10 @@ static struct regulator_init_data
+>     lp3974_ldo7_data = {
+>             },
+>       };
+>
+>     +static struct regulator_consumer_supply lp3974_ldo8_consumer[] = {
+>     +       REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
+>     +};
+>     +
+>       static struct regulator_init_data lp3974_ldo8_data = {
+>             .constraints    = {
+>                     .name           = "VUSB+VDAC_3.3V",
+>     @@ -257,6 +279,8 @@ static struct regulator_init_data
+>     lp3974_ldo8_data = {
+>                             .disabled       = 1,
+>                     },
+>             },
+>     +       .num_consumer_supplies = ARRAY_SIZE(lp3974_ldo8_consumer),
+>     +       .consumer_supplies = lp3974_ldo8_consumer,
+>       };
+>
+>       static struct regulator_init_data lp3974_ldo9_data = {
+>     @@ -472,6 +496,34 @@ static struct max8998_platform_data
+>     universal_lp3974_pdata = {
+>             .wakeup                 = true,
+>       };
+>
+>     +static struct regulator_consumer_supply hdmi_fixed_consumer =
+>     +       REGULATOR_SUPPLY("hdmi-en", "exynos4-hdmi");
+>     +
+>     +static struct regulator_init_data hdmi_fixed_voltage_init_data = {
+>     +       .constraints            = {
+>     +               .name           = "HDMI_5V",
+>     +               .valid_ops_mask = REGULATOR_CHANGE_STATUS,
+>     +       },
+>     +       .num_consumer_supplies  = 1,
+>     +       .consumer_supplies      = &hdmi_fixed_consumer,
+>     +};
+>     +
+>     +static struct fixed_voltage_config hdmi_fixed_voltage_config = {
+>     +       .supply_name            = "HDMI_EN1",
+>     +       .microvolts             = 5000000,
+>     +       .gpio                   = EXYNOS4_GPE0(1),
+>     +       .enable_high            = true,
+>     +       .init_data              = &hdmi_fixed_voltage_init_data,
+>     +};
+>     +
+>     +static struct platform_device hdmi_fixed_voltage = {
+>     +       .name                   = "reg-fixed-voltage",
+>     +       .id                     = 6,
+>     +       .dev                    = {
+>     +               .platform_data  = &hdmi_fixed_voltage_config,
+>     +       },
+>     +};
+>     +
+>       /* GPIO I2C 5 (PMIC) */
+>       static struct i2c_board_info i2c5_devs[] __initdata = {
+>             {
+>     @@ -714,6 +766,12 @@ static struct platform_device
+>     *universal_devices[] __initdata = {
+>     &s3c_device_hsmmc3,
+>     &s3c_device_i2c3,
+>     &s3c_device_i2c5,
+>     + &s5p_device_i2c_hdmiphy,
+>     + &hdmi_fixed_voltage,
+>     + &exynos4_device_pd[PD_TV],
+>     + &s5p_device_hdmi,
+>     + &s5p_device_sdo,
+>     + &s5p_device_mixer,
+>
+>             /* Universal Devices */
+>     &i2c_gpio12,
+>     @@ -732,6 +790,20 @@ static void __init universal_map_io(void)
+>             s3c24xx_init_uarts(universal_uartcfgs,
+>     ARRAY_SIZE(universal_uartcfgs));
+>       }
+>
+>     +void s5p_tv_setup(void)
+>     +{
+>     +       /* direct HPD to HDMI chip */
+>     +       gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
+>     +
+>     +       gpio_direction_input(EXYNOS4_GPX3(7));
+>     +       s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
+>     +       s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
+>     +
+>     +       /* setup dependencies between TV devices */
+>     +       s5p_device_hdmi.dev.parent = &exynos4_device_pd[PD_TV].dev;
+>     +       s5p_device_mixer.dev.parent = &exynos4_device_pd[PD_TV].dev;
+>     +}
+>     +
+>       static void __init universal_reserve(void)
+>       {
+>             s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+>     @@ -740,6 +812,7 @@ static void __init universal_reserve(void)
+>       static void __init universal_machine_init(void)
+>       {
+>             universal_sdhci_init();
+>     +       s5p_tv_setup();
+>
+>             i2c_register_board_info(0, i2c0_devs, ARRAY_SIZE(i2c0_devs));
+>             i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
+>     @@ -749,6 +822,7 @@ static void __init universal_machine_init(void)
+>             i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
+>
+>             s3c_i2c5_set_platdata(NULL);
+>     +       s5p_i2c_hdmiphy_set_platdata(NULL);
+>             i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
+>
+>             universal_touchkey_init();
+>     --
+>     1.7.6
+>
+>     --
+>     To unsubscribe from this list: send the line "unsubscribe
+>     linux-samsung-soc" in
+>     the body of a message to majordomo@vger.kernel.org
+>     <mailto:majordomo@vger.kernel.org>
+>     More majordomo info at http://vger.kernel.org/majordomo-info.html
+>
+>
+>
+>
+> --
+> With warm regards,
+> Sachin
+>
