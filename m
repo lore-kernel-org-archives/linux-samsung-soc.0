@@ -1,2126 +1,678 @@
-From: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-Subject: [PATCH V2 2/2] ARM: Using CLKDEV_INIT for creating clk_lookup instance
-Date: Fri, 07 Oct 2011 15:23:31 +0530
-Message-ID: <1317981211-15745-3-git-send-email-rajeshwari.s@samsung.com>
-References: <1317981211-15745-1-git-send-email-rajeshwari.s@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v3 RE-SEND 1/2] ARM: EXYNOS4: Change System MMU device
+ definition
+Date: Fri, 07 Oct 2011 19:09:51 +0900
+Message-ID: <01e501cc84d9$4104b920$c30e2b60$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46204 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:50492 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965051Ab1JGJ5d (ORCPT
+	with ESMTP id S1752211Ab1JGKKN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Oct 2011 05:57:33 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSO00B8RWZKJ310@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 18:57:31 +0900 (KST)
-Received: from rajeshwari-linux.sisodomain.com ([107.108.215.115])
- by mmp1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTPA id <0LSO00E5NWZHO450@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 18:57:30 +0900 (KST)
-In-reply-to: <1317981211-15745-1-git-send-email-rajeshwari.s@samsung.com>
+	Fri, 7 Oct 2011 06:10:13 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: khilman@ti.com, nsekhar@ti.com, hsweeten@visionengravers.com, rmallon@gmail.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, plagnioj@jcrosoft.com, amit.kucheria@canonical.com, kernel@pengutronix.de, hjk@hansjkoch.de, linux@arm.linux.org.uk, rajeshwari.s@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: 'Russell King' <rmk+kernel@arm.linux.org.uk>, joerg.roedel@amd.com, 'Ohad Ben-Cohen' <ohad@wizery.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, younglak1004.kim@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Replace platform specific macros that creates struct clk_lookup
-instance with the new common CLKDEV_INIT macro
+From: KyongHo Cho <pullip.cho@samsung.com>
 
-Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-Acked-by: Hans J. Koch <hjk@hansjkoch.de>
-Acked-by: Amit Kucheria <amit.kucheria@canonical.com>
-Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+This patch contains a lot of changes of System MMU device definition.
+
+1. Removed sysmmu_ips enumeration that are definitions of ID of System MMU
+   Instead, a System MMU device descriptor must be bound with a device
+   descriptor that needs System MMU in machine initialization.
+2. Removed MDMA that is included in LCD0 block because it is not used
+   anymore. Use MDMA in TOP block.
+3. Changed System MMU definitions of platform device. It is not an array
+   anymore.
+
+Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
- arch/arm/mach-davinci/clock.h            |    7 --
- arch/arm/mach-davinci/da830.c            |  101 ++++++++++----------
- arch/arm/mach-davinci/da850.c            |   95 ++++++++++----------
- arch/arm/mach-davinci/dm355.c            |   87 +++++++++---------
- arch/arm/mach-davinci/dm365.c            |  113 +++++++++++-----------
- arch/arm/mach-davinci/dm644x.c           |   77 ++++++++--------
- arch/arm/mach-davinci/dm646x.c           |   81 ++++++++--------
- arch/arm/mach-davinci/tnetv107x.c        |  133 +++++++++++++-------------
- arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
- arch/arm/mach-imx/clock-imx1.c           |   38 +++-----
- arch/arm/mach-imx/clock-imx21.c          |   91 +++++++++----------
- arch/arm/mach-imx/clock-imx25.c          |   79 +++++++---------
- arch/arm/mach-imx/clock-imx27.c          |  111 ++++++++++------------
- arch/arm/mach-imx/clock-imx31.c          |  103 ++++++++++-----------
- arch/arm/mach-imx/clock-imx35.c          |  117 +++++++++++------------
- arch/arm/mach-lpc32xx/clock.c            |   75 +++++++--------
- arch/arm/mach-mx5/clock-mx51-mx53.c      |  149 ++++++++++++++----------------
- arch/arm/mach-mxs/clock-mx23.c           |   39 +++-----
- arch/arm/mach-mxs/clock-mx28.c           |   71 +++++++--------
- arch/arm/mach-tcc8k/clock.c              |  107 ++++++++++-----------
- 21 files changed, 831 insertions(+), 909 deletions(-)
+NOTE: Since previous sending has problem, I'm re-sending.
+Sorry, please kindly ignore previous one.
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index e574d7f..63951d0 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -24,6 +24,7 @@
- #include <linux/i2c.h>
- #include <linux/i2c/at24.h>
- #include <linux/i2c/pcf857x.h>
-+#include <linux/clkdev.h>
+ arch/arm/mach-exynos4/Kconfig               |    2 -
+ arch/arm/mach-exynos4/clock.c               |   43 +++--
+ arch/arm/mach-exynos4/dev-sysmmu.c          |  267 ++++++---------------------
+ arch/arm/mach-exynos4/include/mach/irqs.h   |    1 -
+ arch/arm/mach-exynos4/include/mach/map.h    |    1 -
+ arch/arm/mach-exynos4/include/mach/sysmmu.h |   85 +++++----
+ arch/arm/mach-exynos4/mach-armlex4210.c     |   24 +++-
+ arch/arm/mach-exynos4/mach-smdkv310.c       |   28 +++-
+ 8 files changed, 183 insertions(+), 268 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
+index dd660eb..2f4a032 100644
+--- a/arch/arm/mach-exynos4/Kconfig
++++ b/arch/arm/mach-exynos4/Kconfig
+@@ -157,7 +157,6 @@ config MACH_SMDKV310
+ 	select SAMSUNG_DEV_KEYPAD
+ 	select EXYNOS4_DEV_PD
+ 	select SAMSUNG_DEV_PWM
+-	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_FIMD0
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_KEYPAD
+@@ -175,7 +174,6 @@ config MACH_ARMLEX4210
+ 	select S3C_DEV_HSMMC2
+ 	select S3C_DEV_HSMMC3
+ 	select EXYNOS4_DEV_AHCI
+-	select EXYNOS4_DEV_SYSMMU
+ 	select EXYNOS4_SETUP_SDHCI
+ 	help
+ 	  Machine support for Samsung ARMLEX4210 based on EXYNOS4210
+diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
+index db61691..1fc508c 100644
+--- a/arch/arm/mach-exynos4/clock.c
++++ b/arch/arm/mach-exynos4/clock.c
+@@ -691,59 +691,68 @@ static struct clk init_clocks_off[] = {
+ 		.enable		= exynos4_clk_ip_peril_ctrl,
+ 		.ctrlbit	= (1 << 14),
+ 	}, {
+-		.name		= "SYSMMU_MDMA",
+-		.enable		= exynos4_clk_ip_image_ctrl,
+-		.ctrlbit	= (1 << 5),
+-	}, {
+-		.name		= "SYSMMU_FIMC0",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(fimc0, 1),
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 7),
+ 	}, {
+-		.name		= "SYSMMU_FIMC1",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(fimc1, 2),
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 8),
+ 	}, {
+-		.name		= "SYSMMU_FIMC2",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(fimc2, 3),
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 9),
+ 	}, {
+-		.name		= "SYSMMU_FIMC3",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(fimc3, 4),
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 10),
+ 	}, {
+-		.name		= "SYSMMU_JPEG",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(jpeg, 5),
+ 		.enable		= exynos4_clk_ip_cam_ctrl,
+ 		.ctrlbit	= (1 << 11),
+ 	}, {
+-		.name		= "SYSMMU_FIMD0",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(fimd0, 6),
+ 		.enable		= exynos4_clk_ip_lcd0_ctrl,
+ 		.ctrlbit	= (1 << 4),
+ 	}, {
+-		.name		= "SYSMMU_FIMD1",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(fimd1, 7),
+ 		.enable		= exynos4_clk_ip_lcd1_ctrl,
+ 		.ctrlbit	= (1 << 4),
+ 	}, {
+-		.name		= "SYSMMU_PCIe",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(pcie, 8),
+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 18),
+ 	}, {
+-		.name		= "SYSMMU_G2D",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(g2d, 9),
+ 		.enable		= exynos4_clk_ip_image_ctrl,
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
+-		.name		= "SYSMMU_ROTATOR",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(rot, 10),
+ 		.enable		= exynos4_clk_ip_image_ctrl,
+ 		.ctrlbit	= (1 << 4),
+ 	}, {
+-		.name		= "SYSMMU_TV",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(tv, 12),
+ 		.enable		= exynos4_clk_ip_tv_ctrl,
+ 		.ctrlbit	= (1 << 4),
+ 	}, {
+-		.name		= "SYSMMU_MFC_L",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(mfc_l, 13),
+ 		.enable		= exynos4_clk_ip_mfc_ctrl,
+ 		.ctrlbit	= (1 << 1),
+ 	}, {
+-		.name		= "SYSMMU_MFC_R",
++		.name		= "sysmmu",
++		.devname	= SYSMMU_CLOCK_NAME(mfc_r, 14),
+ 		.enable		= exynos4_clk_ip_mfc_ctrl,
+ 		.ctrlbit	= (1 << 2),
+ 	}
+diff --git a/arch/arm/mach-exynos4/dev-sysmmu.c b/arch/arm/mach-exynos4/dev-sysmmu.c
+index 3b7cae0..a62b172 100644
+--- a/arch/arm/mach-exynos4/dev-sysmmu.c
++++ b/arch/arm/mach-exynos4/dev-sysmmu.c
+@@ -1,6 +1,6 @@
+ /* linux/arch/arm/mach-exynos4/dev-sysmmu.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+  * EXYNOS4 - System MMU support
+@@ -16,217 +16,64 @@
+ #include <mach/map.h>
+ #include <mach/irqs.h>
+ #include <mach/sysmmu.h>
+-#include <plat/s5p-clock.h>
  
- #include <media/tvp514x.h>
- 
-@@ -704,8 +705,8 @@ static struct clk cdce_clk_in = {
- };
- 
- static struct clk_lookup cdce_clks[] = {
--	CLK(NULL, "xin", &cdce_clk_in),
--	CLK(NULL, NULL, NULL),
-+	CLKDEV_INIT(NULL, "xin", &cdce_clk_in),
-+	CLKDEV_INIT(NULL, NULL, NULL),
- };
- 
- static void __init cdce_clk_init(void)
-diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
-index a705f36..df153d5 100644
---- a/arch/arm/mach-davinci/clock.h
-+++ b/arch/arm/mach-davinci/clock.h
-@@ -113,13 +113,6 @@ struct clk {
- #define PSC_SWRSTDISABLE	BIT(6) /* Disable state is SwRstDisable */
- #define PSC_FORCE		BIT(7) /* Force module state transtition */
- 
--#define CLK(dev, con, ck) 	\
--	{			\
--		.dev_id = dev,	\
--		.con_id = con,	\
--		.clk = ck,	\
--	}			\
+-/* These names must be equal to the clock names in mach-exynos4/clock.c */
+-const char *sysmmu_ips_name[EXYNOS4_SYSMMU_TOTAL_IPNUM] = {
+-	"SYSMMU_MDMA"	,
+-	"SYSMMU_SSS"	,
+-	"SYSMMU_FIMC0"	,
+-	"SYSMMU_FIMC1"	,
+-	"SYSMMU_FIMC2"	,
+-	"SYSMMU_FIMC3"	,
+-	"SYSMMU_JPEG"	,
+-	"SYSMMU_FIMD0"	,
+-	"SYSMMU_FIMD1"	,
+-	"SYSMMU_PCIe"	,
+-	"SYSMMU_G2D"	,
+-	"SYSMMU_ROTATOR",
+-	"SYSMMU_MDMA2"	,
+-	"SYSMMU_TV"	,
+-	"SYSMMU_MFC_L"	,
+-	"SYSMMU_MFC_R"	,
+-};
 -
- int davinci_clk_init(struct clk_lookup *clocks);
- int davinci_set_pllrate(struct pll_data *pll, unsigned int prediv,
- 				unsigned int mult, unsigned int postdiv);
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index a6bf5dc..f2f359b 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -11,6 +11,7 @@
- #include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/clk.h>
-+#include <linux/clkdev.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -374,56 +375,56 @@ static struct clk rmii_clk = {
- };
- 
- static struct clk_lookup da830_clks[] = {
--	CLK(NULL,		"ref",		&ref_clk),
--	CLK(NULL,		"pll0",		&pll0_clk),
--	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
--	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
--	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
--	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
--	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
--	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
--	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
--	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
--	CLK(NULL,		"timer0",	&timerp64_0_clk),
--	CLK("watchdog",		NULL,		&timerp64_1_clk),
--	CLK(NULL,		"arm_rom",	&arm_rom_clk),
--	CLK(NULL,		"scr0_ss",	&scr0_ss_clk),
--	CLK(NULL,		"scr1_ss",	&scr1_ss_clk),
--	CLK(NULL,		"scr2_ss",	&scr2_ss_clk),
--	CLK(NULL,		"dmax",		&dmax_clk),
--	CLK(NULL,		"tpcc",		&tpcc_clk),
--	CLK(NULL,		"tptc0",	&tptc0_clk),
--	CLK(NULL,		"tptc1",	&tptc1_clk),
--	CLK("davinci_mmc.0",	NULL,		&mmcsd_clk),
--	CLK(NULL,		"uart0",	&uart0_clk),
--	CLK(NULL,		"uart1",	&uart1_clk),
--	CLK(NULL,		"uart2",	&uart2_clk),
--	CLK("spi_davinci.0",	NULL,		&spi0_clk),
--	CLK("spi_davinci.1",	NULL,		&spi1_clk),
--	CLK(NULL,		"ecap0",	&ecap0_clk),
--	CLK(NULL,		"ecap1",	&ecap1_clk),
--	CLK(NULL,		"ecap2",	&ecap2_clk),
--	CLK(NULL,		"pwm0",		&pwm0_clk),
--	CLK(NULL,		"pwm1",		&pwm1_clk),
--	CLK(NULL,		"pwm2",		&pwm2_clk),
--	CLK("eqep.0",		NULL,		&eqep0_clk),
--	CLK("eqep.1",		NULL,		&eqep1_clk),
--	CLK("da8xx_lcdc.0",	NULL,		&lcdc_clk),
--	CLK("davinci-mcasp.0",	NULL,		&mcasp0_clk),
--	CLK("davinci-mcasp.1",	NULL,		&mcasp1_clk),
--	CLK("davinci-mcasp.2",	NULL,		&mcasp2_clk),
--	CLK(NULL,		"usb20",	&usb20_clk),
--	CLK(NULL,		"aemif",	&aemif_clk),
--	CLK(NULL,		"aintc",	&aintc_clk),
--	CLK(NULL,		"secu_mgr",	&secu_mgr_clk),
--	CLK("davinci_emac.1",	NULL,		&emac_clk),
--	CLK(NULL,		"gpio",		&gpio_clk),
--	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
--	CLK(NULL,		"usb11",	&usb11_clk),
--	CLK(NULL,		"emif3",	&emif3_clk),
--	CLK(NULL,		"arm",		&arm_clk),
--	CLK(NULL,		"rmii",		&rmii_clk),
--	CLK(NULL,		NULL,		NULL),
-+	CLKDEV_INIT(NULL,		"ref",		&ref_clk),
-+	CLKDEV_INIT(NULL,		"pll0",		&pll0_clk),
-+	CLKDEV_INIT(NULL,		"pll0_aux",	&pll0_aux_clk),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
-+	CLKDEV_INIT("i2c_davinci.1",	NULL,		&i2c0_clk),
-+	CLKDEV_INIT(NULL,		"timer0",	&timerp64_0_clk),
-+	CLKDEV_INIT("watchdog",		NULL,		&timerp64_1_clk),
-+	CLKDEV_INIT(NULL,		"arm_rom",	&arm_rom_clk),
-+	CLKDEV_INIT(NULL,		"scr0_ss",	&scr0_ss_clk),
-+	CLKDEV_INIT(NULL,		"scr1_ss",	&scr1_ss_clk),
-+	CLKDEV_INIT(NULL,		"scr2_ss",	&scr2_ss_clk),
-+	CLKDEV_INIT(NULL,		"dmax",		&dmax_clk),
-+	CLKDEV_INIT(NULL,		"tpcc",		&tpcc_clk),
-+	CLKDEV_INIT(NULL,		"tptc0",	&tptc0_clk),
-+	CLKDEV_INIT(NULL,		"tptc1",	&tptc1_clk),
-+	CLKDEV_INIT("davinci_mmc.0",	NULL,		&mmcsd_clk),
-+	CLKDEV_INIT(NULL,		"uart0",	&uart0_clk),
-+	CLKDEV_INIT(NULL,		"uart1",	&uart1_clk),
-+	CLKDEV_INIT(NULL,		"uart2",	&uart2_clk),
-+	CLKDEV_INIT("spi_davinci.0",	NULL,		&spi0_clk),
-+	CLKDEV_INIT("spi_davinci.1",	NULL,		&spi1_clk),
-+	CLKDEV_INIT(NULL,		"ecap0",	&ecap0_clk),
-+	CLKDEV_INIT(NULL,		"ecap1",	&ecap1_clk),
-+	CLKDEV_INIT(NULL,		"ecap2",	&ecap2_clk),
-+	CLKDEV_INIT(NULL,		"pwm0",		&pwm0_clk),
-+	CLKDEV_INIT(NULL,		"pwm1",		&pwm1_clk),
-+	CLKDEV_INIT(NULL,		"pwm2",		&pwm2_clk),
-+	CLKDEV_INIT("eqep.0",		NULL,		&eqep0_clk),
-+	CLKDEV_INIT("eqep.1",		NULL,		&eqep1_clk),
-+	CLKDEV_INIT("da8xx_lcdc.0",	NULL,		&lcdc_clk),
-+	CLKDEV_INIT("davinci-mcasp.0",	NULL,		&mcasp0_clk),
-+	CLKDEV_INIT("davinci-mcasp.1",	NULL,		&mcasp1_clk),
-+	CLKDEV_INIT("davinci-mcasp.2",	NULL,		&mcasp2_clk),
-+	CLKDEV_INIT(NULL,		"usb20",	&usb20_clk),
-+	CLKDEV_INIT(NULL,		"aemif",	&aemif_clk),
-+	CLKDEV_INIT(NULL,		"aintc",	&aintc_clk),
-+	CLKDEV_INIT(NULL,		"secu_mgr",	&secu_mgr_clk),
-+	CLKDEV_INIT("davinci_emac.1",	NULL,		&emac_clk),
-+	CLKDEV_INIT(NULL,		"gpio",		&gpio_clk),
-+	CLKDEV_INIT("i2c_davinci.2",	NULL,		&i2c1_clk),
-+	CLKDEV_INIT(NULL,		"usb11",	&usb11_clk),
-+	CLKDEV_INIT(NULL,		"emif3",	&emif3_clk),
-+	CLKDEV_INIT(NULL,		"arm",		&arm_clk),
-+	CLKDEV_INIT(NULL,		"rmii",		&rmii_clk),
-+	CLKDEV_INIT(NULL,		NULL,		NULL),
- };
- 
- /*
-diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
-index b047f87..1d6d511 100644
---- a/arch/arm/mach-davinci/da850.c
-+++ b/arch/arm/mach-davinci/da850.c
-@@ -17,6 +17,7 @@
- #include <linux/platform_device.h>
- #include <linux/cpufreq.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/clkdev.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -384,53 +385,53 @@ static struct clk sata_clk = {
- };
- 
- static struct clk_lookup da850_clks[] = {
--	CLK(NULL,		"ref",		&ref_clk),
--	CLK(NULL,		"pll0",		&pll0_clk),
--	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
--	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
--	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
--	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
--	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
--	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
--	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
--	CLK(NULL,		"pll1",		&pll1_clk),
--	CLK(NULL,		"pll1_aux",	&pll1_aux_clk),
--	CLK(NULL,		"pll1_sysclk2",	&pll1_sysclk2),
--	CLK(NULL,		"pll1_sysclk3",	&pll1_sysclk3),
--	CLK(NULL,		"pll1_sysclk4",	&pll1_sysclk4),
--	CLK(NULL,		"pll1_sysclk5",	&pll1_sysclk5),
--	CLK(NULL,		"pll1_sysclk6",	&pll1_sysclk6),
--	CLK(NULL,		"pll1_sysclk7",	&pll1_sysclk7),
--	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
--	CLK(NULL,		"timer0",	&timerp64_0_clk),
--	CLK("watchdog",		NULL,		&timerp64_1_clk),
--	CLK(NULL,		"arm_rom",	&arm_rom_clk),
--	CLK(NULL,		"tpcc0",	&tpcc0_clk),
--	CLK(NULL,		"tptc0",	&tptc0_clk),
--	CLK(NULL,		"tptc1",	&tptc1_clk),
--	CLK(NULL,		"tpcc1",	&tpcc1_clk),
--	CLK(NULL,		"tptc2",	&tptc2_clk),
--	CLK(NULL,		"uart0",	&uart0_clk),
--	CLK(NULL,		"uart1",	&uart1_clk),
--	CLK(NULL,		"uart2",	&uart2_clk),
--	CLK(NULL,		"aintc",	&aintc_clk),
--	CLK(NULL,		"gpio",		&gpio_clk),
--	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
--	CLK(NULL,		"emif3",	&emif3_clk),
--	CLK(NULL,		"arm",		&arm_clk),
--	CLK(NULL,		"rmii",		&rmii_clk),
--	CLK("davinci_emac.1",	NULL,		&emac_clk),
--	CLK("davinci-mcasp.0",	NULL,		&mcasp_clk),
--	CLK("da8xx_lcdc.0",	NULL,		&lcdc_clk),
--	CLK("davinci_mmc.0",	NULL,		&mmcsd0_clk),
--	CLK("davinci_mmc.1",	NULL,		&mmcsd1_clk),
--	CLK(NULL,		"aemif",	&aemif_clk),
--	CLK(NULL,		"usb11",	&usb11_clk),
--	CLK(NULL,		"usb20",	&usb20_clk),
--	CLK("spi_davinci.0",	NULL,		&spi0_clk),
--	CLK("spi_davinci.1",	NULL,		&spi1_clk),
--	CLK("ahci",		NULL,		&sata_clk),
--	CLK(NULL,		NULL,		NULL),
-+	CLKDEV_INIT(NULL,		"ref",		&ref_clk),
-+	CLKDEV_INIT(NULL,		"pll0",		&pll0_clk),
-+	CLKDEV_INIT(NULL,		"pll0_aux",	&pll0_aux_clk),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
-+	CLKDEV_INIT(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
-+	CLKDEV_INIT(NULL,		"pll1",		&pll1_clk),
-+	CLKDEV_INIT(NULL,		"pll1_aux",	&pll1_aux_clk),
-+	CLKDEV_INIT(NULL,		"pll1_sysclk2",	&pll1_sysclk2),
-+	CLKDEV_INIT(NULL,		"pll1_sysclk3",	&pll1_sysclk3),
-+	CLKDEV_INIT(NULL,		"pll1_sysclk4",	&pll1_sysclk4),
-+	CLKDEV_INIT(NULL,		"pll1_sysclk5",	&pll1_sysclk5),
-+	CLKDEV_INIT(NULL,		"pll1_sysclk6",	&pll1_sysclk6),
-+	CLKDEV_INIT(NULL,		"pll1_sysclk7",	&pll1_sysclk7),
-+	CLKDEV_INIT("i2c_davinci.1",	NULL,		&i2c0_clk),
-+	CLKDEV_INIT(NULL,		"timer0",	&timerp64_0_clk),
-+	CLKDEV_INIT("watchdog",		NULL,		&timerp64_1_clk),
-+	CLKDEV_INIT(NULL,		"arm_rom",	&arm_rom_clk),
-+	CLKDEV_INIT(NULL,		"tpcc0",	&tpcc0_clk),
-+	CLKDEV_INIT(NULL,		"tptc0",	&tptc0_clk),
-+	CLKDEV_INIT(NULL,		"tptc1",	&tptc1_clk),
-+	CLKDEV_INIT(NULL,		"tpcc1",	&tpcc1_clk),
-+	CLKDEV_INIT(NULL,		"tptc2",	&tptc2_clk),
-+	CLKDEV_INIT(NULL,		"uart0",	&uart0_clk),
-+	CLKDEV_INIT(NULL,		"uart1",	&uart1_clk),
-+	CLKDEV_INIT(NULL,		"uart2",	&uart2_clk),
-+	CLKDEV_INIT(NULL,		"aintc",	&aintc_clk),
-+	CLKDEV_INIT(NULL,		"gpio",		&gpio_clk),
-+	CLKDEV_INIT("i2c_davinci.2",	NULL,		&i2c1_clk),
-+	CLKDEV_INIT(NULL,		"emif3",	&emif3_clk),
-+	CLKDEV_INIT(NULL,		"arm",		&arm_clk),
-+	CLKDEV_INIT(NULL,		"rmii",		&rmii_clk),
-+	CLKDEV_INIT("davinci_emac.1",	NULL,		&emac_clk),
-+	CLKDEV_INIT("davinci-mcasp.0",	NULL,		&mcasp_clk),
-+	CLKDEV_INIT("da8xx_lcdc.0",	NULL,		&lcdc_clk),
-+	CLKDEV_INIT("davinci_mmc.0",	NULL,		&mmcsd0_clk),
-+	CLKDEV_INIT("davinci_mmc.1",	NULL,		&mmcsd1_clk),
-+	CLKDEV_INIT(NULL,		"aemif",	&aemif_clk),
-+	CLKDEV_INIT(NULL,		"usb11",	&usb11_clk),
-+	CLKDEV_INIT(NULL,		"usb20",	&usb20_clk),
-+	CLKDEV_INIT("spi_davinci.0",	NULL,		&spi0_clk),
-+	CLKDEV_INIT("spi_davinci.1",	NULL,		&spi1_clk),
-+	CLKDEV_INIT("ahci",		NULL,		&sata_clk),
-+	CLKDEV_INIT(NULL,		NULL,		NULL),
- };
- 
- /*
-diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
-index fe520d4..1df71e0 100644
---- a/arch/arm/mach-davinci/dm355.c
-+++ b/arch/arm/mach-davinci/dm355.c
-@@ -13,6 +13,7 @@
- #include <linux/serial_8250.h>
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
-+#include <linux/clkdev.h>
- 
- #include <linux/spi/spi.h>
- 
-@@ -336,49 +337,49 @@ static struct clk usb_clk = {
- };
- 
- static struct clk_lookup dm355_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "vpss_dac", &vpss_dac_clk),
--	CLK(NULL, "vpss_master", &vpss_master_clk),
--	CLK(NULL, "vpss_slave", &vpss_slave_clk),
--	CLK(NULL, "clkout1", &clkout1_clk),
--	CLK(NULL, "clkout2", &clkout2_clk),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
--	CLK(NULL, "clkout3", &clkout3_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "mjcp", &mjcp_clk),
--	CLK(NULL, "uart0", &uart0_clk),
--	CLK(NULL, "uart1", &uart1_clk),
--	CLK(NULL, "uart2", &uart2_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("davinci-mcbsp.0", NULL, &asp0_clk),
--	CLK("davinci-mcbsp.1", NULL, &asp1_clk),
--	CLK("davinci_mmc.0", NULL, &mmcsd0_clk),
--	CLK("davinci_mmc.1", NULL, &mmcsd1_clk),
--	CLK("spi_davinci.0", NULL, &spi0_clk),
--	CLK("spi_davinci.1", NULL, &spi1_clk),
--	CLK("spi_davinci.2", NULL, &spi2_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "pwm3", &pwm3_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("watchdog", NULL, &timer2_clk),
--	CLK(NULL, "timer3", &timer3_clk),
--	CLK(NULL, "rto", &rto_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK(NULL, NULL, NULL),
-+	CLKDEV_INIT(NULL, "ref", &ref_clk),
-+	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclk1", &pll1_sysclk1),
-+	CLKDEV_INIT(NULL, "pll1_sysclk2", &pll1_sysclk2),
-+	CLKDEV_INIT(NULL, "pll1_sysclk3", &pll1_sysclk3),
-+	CLKDEV_INIT(NULL, "pll1_sysclk4", &pll1_sysclk4),
-+	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
-+	CLKDEV_INIT(NULL, "vpss_dac", &vpss_dac_clk),
-+	CLKDEV_INIT(NULL, "vpss_master", &vpss_master_clk),
-+	CLKDEV_INIT(NULL, "vpss_slave", &vpss_slave_clk),
-+	CLKDEV_INIT(NULL, "clkout1", &clkout1_clk),
-+	CLKDEV_INIT(NULL, "clkout2", &clkout2_clk),
-+	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
-+	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
-+	CLKDEV_INIT(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
-+	CLKDEV_INIT(NULL, "clkout3", &clkout3_clk),
-+	CLKDEV_INIT(NULL, "arm", &arm_clk),
-+	CLKDEV_INIT(NULL, "mjcp", &mjcp_clk),
-+	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
-+	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
-+	CLKDEV_INIT(NULL, "uart2", &uart2_clk),
-+	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
-+	CLKDEV_INIT("davinci-mcbsp.0", NULL, &asp0_clk),
-+	CLKDEV_INIT("davinci-mcbsp.1", NULL, &asp1_clk),
-+	CLKDEV_INIT("davinci_mmc.0", NULL, &mmcsd0_clk),
-+	CLKDEV_INIT("davinci_mmc.1", NULL, &mmcsd1_clk),
-+	CLKDEV_INIT("spi_davinci.0", NULL, &spi0_clk),
-+	CLKDEV_INIT("spi_davinci.1", NULL, &spi1_clk),
-+	CLKDEV_INIT("spi_davinci.2", NULL, &spi2_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
-+	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
-+	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
-+	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
-+	CLKDEV_INIT(NULL, "pwm2", &pwm2_clk),
-+	CLKDEV_INIT(NULL, "pwm3", &pwm3_clk),
-+	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
-+	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
-+	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
-+	CLKDEV_INIT(NULL, "timer3", &timer3_clk),
-+	CLKDEV_INIT(NULL, "rto", &rto_clk),
-+	CLKDEV_INIT(NULL, "usb", &usb_clk),
-+	CLKDEV_INIT(NULL, NULL, NULL),
- };
- 
- /*----------------------------------------------------------------------*/
-diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
-index 679e168..b0637b4 100644
---- a/arch/arm/mach-davinci/dm365.c
-+++ b/arch/arm/mach-davinci/dm365.c
-@@ -18,6 +18,7 @@
- #include <linux/platform_device.h>
- #include <linux/dma-mapping.h>
- #include <linux/spi/spi.h>
-+#include <linux/clkdev.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -406,62 +407,62 @@ static struct clk mjcp_clk = {
- };
- 
- static struct clk_lookup dm365_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "clkout0", &clkout0_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_sysclk6", &pll1_sysclk6),
--	CLK(NULL, "pll1_sysclk7", &pll1_sysclk7),
--	CLK(NULL, "pll1_sysclk8", &pll1_sysclk8),
--	CLK(NULL, "pll1_sysclk9", &pll1_sysclk9),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_aux", &pll2_aux_clk),
--	CLK(NULL, "clkout1", &clkout1_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclk3", &pll2_sysclk3),
--	CLK(NULL, "pll2_sysclk4", &pll2_sysclk4),
--	CLK(NULL, "pll2_sysclk5", &pll2_sysclk5),
--	CLK(NULL, "pll2_sysclk6", &pll2_sysclk6),
--	CLK(NULL, "pll2_sysclk7", &pll2_sysclk7),
--	CLK(NULL, "pll2_sysclk8", &pll2_sysclk8),
--	CLK(NULL, "pll2_sysclk9", &pll2_sysclk9),
--	CLK(NULL, "vpss_dac", &vpss_dac_clk),
--	CLK(NULL, "vpss_master", &vpss_master_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "uart0", &uart0_clk),
--	CLK(NULL, "uart1", &uart1_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("davinci_mmc.0", NULL, &mmcsd0_clk),
--	CLK("davinci_mmc.1", NULL, &mmcsd1_clk),
--	CLK("spi_davinci.0", NULL, &spi0_clk),
--	CLK("spi_davinci.1", NULL, &spi1_clk),
--	CLK("spi_davinci.2", NULL, &spi2_clk),
--	CLK("spi_davinci.3", NULL, &spi3_clk),
--	CLK("spi_davinci.4", NULL, &spi4_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "pwm3", &pwm3_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("watchdog", NULL, &timer2_clk),
--	CLK(NULL, "timer3", &timer3_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("davinci_voicecodec", NULL, &voicecodec_clk),
--	CLK("davinci-mcbsp", NULL, &asp0_clk),
--	CLK(NULL, "rto", &rto_clk),
--	CLK(NULL, "mjcp", &mjcp_clk),
--	CLK(NULL, NULL, NULL),
-+	CLKDEV_INIT(NULL, "ref", &ref_clk),
-+	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
-+	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
-+	CLKDEV_INIT(NULL, "clkout0", &clkout0_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclk1", &pll1_sysclk1),
-+	CLKDEV_INIT(NULL, "pll1_sysclk2", &pll1_sysclk2),
-+	CLKDEV_INIT(NULL, "pll1_sysclk3", &pll1_sysclk3),
-+	CLKDEV_INIT(NULL, "pll1_sysclk4", &pll1_sysclk4),
-+	CLKDEV_INIT(NULL, "pll1_sysclk5", &pll1_sysclk5),
-+	CLKDEV_INIT(NULL, "pll1_sysclk6", &pll1_sysclk6),
-+	CLKDEV_INIT(NULL, "pll1_sysclk7", &pll1_sysclk7),
-+	CLKDEV_INIT(NULL, "pll1_sysclk8", &pll1_sysclk8),
-+	CLKDEV_INIT(NULL, "pll1_sysclk9", &pll1_sysclk9),
-+	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
-+	CLKDEV_INIT(NULL, "pll2_aux", &pll2_aux_clk),
-+	CLKDEV_INIT(NULL, "clkout1", &clkout1_clk),
-+	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
-+	CLKDEV_INIT(NULL, "pll2_sysclk2", &pll2_sysclk2),
-+	CLKDEV_INIT(NULL, "pll2_sysclk3", &pll2_sysclk3),
-+	CLKDEV_INIT(NULL, "pll2_sysclk4", &pll2_sysclk4),
-+	CLKDEV_INIT(NULL, "pll2_sysclk5", &pll2_sysclk5),
-+	CLKDEV_INIT(NULL, "pll2_sysclk6", &pll2_sysclk6),
-+	CLKDEV_INIT(NULL, "pll2_sysclk7", &pll2_sysclk7),
-+	CLKDEV_INIT(NULL, "pll2_sysclk8", &pll2_sysclk8),
-+	CLKDEV_INIT(NULL, "pll2_sysclk9", &pll2_sysclk9),
-+	CLKDEV_INIT(NULL, "vpss_dac", &vpss_dac_clk),
-+	CLKDEV_INIT(NULL, "vpss_master", &vpss_master_clk),
-+	CLKDEV_INIT(NULL, "arm", &arm_clk),
-+	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
-+	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
-+	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
-+	CLKDEV_INIT("davinci_mmc.0", NULL, &mmcsd0_clk),
-+	CLKDEV_INIT("davinci_mmc.1", NULL, &mmcsd1_clk),
-+	CLKDEV_INIT("spi_davinci.0", NULL, &spi0_clk),
-+	CLKDEV_INIT("spi_davinci.1", NULL, &spi1_clk),
-+	CLKDEV_INIT("spi_davinci.2", NULL, &spi2_clk),
-+	CLKDEV_INIT("spi_davinci.3", NULL, &spi3_clk),
-+	CLKDEV_INIT("spi_davinci.4", NULL, &spi4_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
-+	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
-+	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
-+	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
-+	CLKDEV_INIT(NULL, "pwm2", &pwm2_clk),
-+	CLKDEV_INIT(NULL, "pwm3", &pwm3_clk),
-+	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
-+	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
-+	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
-+	CLKDEV_INIT(NULL, "timer3", &timer3_clk),
-+	CLKDEV_INIT(NULL, "usb", &usb_clk),
-+	CLKDEV_INIT("davinci_emac.1", NULL, &emac_clk),
-+	CLKDEV_INIT("davinci_voicecodec", NULL, &voicecodec_clk),
-+	CLKDEV_INIT("davinci-mcbsp", NULL, &asp0_clk),
-+	CLKDEV_INIT(NULL, "rto", &rto_clk),
-+	CLKDEV_INIT(NULL, "mjcp", &mjcp_clk),
-+	CLKDEV_INIT(NULL, NULL, NULL),
- };
- 
- /*----------------------------------------------------------------------*/
-diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
-index 3470983..f61610e 100644
---- a/arch/arm/mach-davinci/dm644x.c
-+++ b/arch/arm/mach-davinci/dm644x.c
-@@ -12,6 +12,7 @@
- #include <linux/clk.h>
- #include <linux/serial_8250.h>
- #include <linux/platform_device.h>
-+#include <linux/clkdev.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -278,44 +279,44 @@ static struct clk timer2_clk = {
- };
- 
- static struct clk_lookup dm644x_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
--	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
--	CLK(NULL, "dsp", &dsp_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "vicp", &vicp_clk),
--	CLK(NULL, "vpss_master", &vpss_master_clk),
--	CLK(NULL, "vpss_slave", &vpss_slave_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "uart0", &uart0_clk),
--	CLK(NULL, "uart1", &uart1_clk),
--	CLK(NULL, "uart2", &uart2_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK("palm_bk3710", NULL, &ide_clk),
--	CLK("davinci-mcbsp", NULL, &asp_clk),
--	CLK("davinci_mmc.0", NULL, &mmcsd_clk),
--	CLK(NULL, "spi", &spi_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK(NULL, "usb", &usb_clk),
--	CLK(NULL, "vlynq", &vlynq_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "pwm2", &pwm2_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("watchdog", NULL, &timer2_clk),
--	CLK(NULL, NULL, NULL),
-+	CLKDEV_INIT(NULL, "ref", &ref_clk),
-+	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclk1", &pll1_sysclk1),
-+	CLKDEV_INIT(NULL, "pll1_sysclk2", &pll1_sysclk2),
-+	CLKDEV_INIT(NULL, "pll1_sysclk3", &pll1_sysclk3),
-+	CLKDEV_INIT(NULL, "pll1_sysclk5", &pll1_sysclk5),
-+	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
-+	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
-+	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
-+	CLKDEV_INIT(NULL, "pll2_sysclk2", &pll2_sysclk2),
-+	CLKDEV_INIT(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
-+	CLKDEV_INIT(NULL, "dsp", &dsp_clk),
-+	CLKDEV_INIT(NULL, "arm", &arm_clk),
-+	CLKDEV_INIT(NULL, "vicp", &vicp_clk),
-+	CLKDEV_INIT(NULL, "vpss_master", &vpss_master_clk),
-+	CLKDEV_INIT(NULL, "vpss_slave", &vpss_slave_clk),
-+	CLKDEV_INIT(NULL, "arm", &arm_clk),
-+	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
-+	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
-+	CLKDEV_INIT(NULL, "uart2", &uart2_clk),
-+	CLKDEV_INIT("davinci_emac.1", NULL, &emac_clk),
-+	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
-+	CLKDEV_INIT("palm_bk3710", NULL, &ide_clk),
-+	CLKDEV_INIT("davinci-mcbsp", NULL, &asp_clk),
-+	CLKDEV_INIT("davinci_mmc.0", NULL, &mmcsd_clk),
-+	CLKDEV_INIT(NULL, "spi", &spi_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
-+	CLKDEV_INIT(NULL, "usb", &usb_clk),
-+	CLKDEV_INIT(NULL, "vlynq", &vlynq_clk),
-+	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
-+	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
-+	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
-+	CLKDEV_INIT(NULL, "pwm2", &pwm2_clk),
-+	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
-+	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
-+	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
-+	CLKDEV_INIT(NULL, NULL, NULL),
- };
- 
- static struct emac_platform_data dm644x_emac_pdata = {
-diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
-index 0b68ed5..ad9b71b 100644
---- a/arch/arm/mach-davinci/dm646x.c
-+++ b/arch/arm/mach-davinci/dm646x.c
-@@ -13,6 +13,7 @@
- #include <linux/clk.h>
- #include <linux/serial_8250.h>
- #include <linux/platform_device.h>
-+#include <linux/clkdev.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -316,46 +317,46 @@ static struct clk vpif1_clk = {
- };
- 
- static struct clk_lookup dm646x_clks[] = {
--	CLK(NULL, "ref", &ref_clk),
--	CLK(NULL, "aux", &aux_clkin),
--	CLK(NULL, "pll1", &pll1_clk),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk1),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk2),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk3),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk4),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk5),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk6),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk8),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclk9),
--	CLK(NULL, "pll1_sysclk", &pll1_sysclkbp),
--	CLK(NULL, "pll1_aux", &pll1_aux_clk),
--	CLK(NULL, "pll2", &pll2_clk),
--	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
--	CLK(NULL, "dsp", &dsp_clk),
--	CLK(NULL, "arm", &arm_clk),
--	CLK(NULL, "edma_cc", &edma_cc_clk),
--	CLK(NULL, "edma_tc0", &edma_tc0_clk),
--	CLK(NULL, "edma_tc1", &edma_tc1_clk),
--	CLK(NULL, "edma_tc2", &edma_tc2_clk),
--	CLK(NULL, "edma_tc3", &edma_tc3_clk),
--	CLK(NULL, "uart0", &uart0_clk),
--	CLK(NULL, "uart1", &uart1_clk),
--	CLK(NULL, "uart2", &uart2_clk),
--	CLK("i2c_davinci.1", NULL, &i2c_clk),
--	CLK(NULL, "gpio", &gpio_clk),
--	CLK("davinci-mcasp.0", NULL, &mcasp0_clk),
--	CLK("davinci-mcasp.1", NULL, &mcasp1_clk),
--	CLK(NULL, "aemif", &aemif_clk),
--	CLK("davinci_emac.1", NULL, &emac_clk),
--	CLK(NULL, "pwm0", &pwm0_clk),
--	CLK(NULL, "pwm1", &pwm1_clk),
--	CLK(NULL, "timer0", &timer0_clk),
--	CLK(NULL, "timer1", &timer1_clk),
--	CLK("watchdog", NULL, &timer2_clk),
--	CLK("palm_bk3710", NULL, &ide_clk),
--	CLK(NULL, "vpif0", &vpif0_clk),
--	CLK(NULL, "vpif1", &vpif1_clk),
--	CLK(NULL, NULL, NULL),
-+	CLKDEV_INIT(NULL, "ref", &ref_clk),
-+	CLKDEV_INIT(NULL, "aux", &aux_clkin),
-+	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk1),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk2),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk3),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk4),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk5),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk6),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk8),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk9),
-+	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclkbp),
-+	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
-+	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
-+	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
-+	CLKDEV_INIT(NULL, "dsp", &dsp_clk),
-+	CLKDEV_INIT(NULL, "arm", &arm_clk),
-+	CLKDEV_INIT(NULL, "edma_cc", &edma_cc_clk),
-+	CLKDEV_INIT(NULL, "edma_tc0", &edma_tc0_clk),
-+	CLKDEV_INIT(NULL, "edma_tc1", &edma_tc1_clk),
-+	CLKDEV_INIT(NULL, "edma_tc2", &edma_tc2_clk),
-+	CLKDEV_INIT(NULL, "edma_tc3", &edma_tc3_clk),
-+	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
-+	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
-+	CLKDEV_INIT(NULL, "uart2", &uart2_clk),
-+	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
-+	CLKDEV_INIT("davinci-mcasp.0", NULL, &mcasp0_clk),
-+	CLKDEV_INIT("davinci-mcasp.1", NULL, &mcasp1_clk),
-+	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
-+	CLKDEV_INIT("davinci_emac.1", NULL, &emac_clk),
-+	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
-+	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
-+	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
-+	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
-+	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
-+	CLKDEV_INIT("palm_bk3710", NULL, &ide_clk),
-+	CLKDEV_INIT(NULL, "vpif0", &vpif0_clk),
-+	CLKDEV_INIT(NULL, "vpif1", &vpif1_clk),
-+	CLKDEV_INIT(NULL, NULL, NULL),
- };
- 
- static struct emac_platform_data dm646x_emac_pdata = {
-diff --git a/arch/arm/mach-davinci/tnetv107x.c b/arch/arm/mach-davinci/tnetv107x.c
-index 409bb86..c2f53f0 100644
---- a/arch/arm/mach-davinci/tnetv107x.c
-+++ b/arch/arm/mach-davinci/tnetv107x.c
-@@ -19,6 +19,7 @@
- #include <linux/io.h>
- #include <linux/err.h>
- #include <linux/platform_device.h>
-+#include <linux/clkdev.h>
- 
- #include <asm/mach/map.h>
- 
-@@ -230,72 +231,72 @@ static struct clk clk_rng = { .name = "rng", .parent = &clk_pktsec };
- static struct clk clk_pka = { .name = "pka", .parent = &clk_pktsec };
- 
- static struct clk_lookup clks[] = {
--	CLK(NULL,		"pll_sys_clk",		&pll_sys_clk),
--	CLK(NULL,		"pll_eth_clk",		&pll_eth_clk),
--	CLK(NULL,		"pll_tdm_clk",		&pll_tdm_clk),
--	CLK(NULL,		"sys_arm1176_clk",	&sys_arm1176_clk),
--	CLK(NULL,		"sys_dsp_clk",		&sys_dsp_clk),
--	CLK(NULL,		"sys_ddr_clk",		&sys_ddr_clk),
--	CLK(NULL,		"sys_full_clk",		&sys_full_clk),
--	CLK(NULL,		"sys_lcd_clk",		&sys_lcd_clk),
--	CLK(NULL,		"sys_vlynq_ref_clk",	&sys_vlynq_ref_clk),
--	CLK(NULL,		"sys_tsc_clk",		&sys_tsc_clk),
--	CLK(NULL,		"sys_half_clk",		&sys_half_clk),
--	CLK(NULL,		"eth_5mhz_clk",		&eth_5mhz_clk),
--	CLK(NULL,		"eth_50mhz_clk",	&eth_50mhz_clk),
--	CLK(NULL,		"eth_125mhz_clk",	&eth_125mhz_clk),
--	CLK(NULL,		"eth_250mhz_clk",	&eth_250mhz_clk),
--	CLK(NULL,		"eth_25mhz_clk",	&eth_25mhz_clk),
--	CLK(NULL,		"tdm_0_clk",		&tdm_0_clk),
--	CLK(NULL,		"tdm_extra_clk",	&tdm_extra_clk),
--	CLK(NULL,		"tdm_1_clk",		&tdm_1_clk),
--	CLK(NULL,		"clk_arm",		&clk_arm),
--	CLK(NULL,		"clk_gem",		&clk_gem),
--	CLK(NULL,		"clk_ddr2_phy",		&clk_ddr2_phy),
--	CLK(NULL,		"clk_tpcc",		&clk_tpcc),
--	CLK(NULL,		"clk_tptc0",		&clk_tptc0),
--	CLK(NULL,		"clk_tptc1",		&clk_tptc1),
--	CLK(NULL,		"clk_ram",		&clk_ram),
--	CLK(NULL,		"clk_mbx_lite",		&clk_mbx_lite),
--	CLK("tnetv107x-fb.0",	NULL,			&clk_lcd),
--	CLK(NULL,		"clk_ethss",		&clk_ethss),
--	CLK(NULL,		"aemif",		&clk_aemif),
--	CLK(NULL,		"clk_chipcfg",		&clk_chipcfg),
--	CLK("tnetv107x-ts.0",	NULL,			&clk_tsc),
--	CLK(NULL,		"clk_rom",		&clk_rom),
--	CLK(NULL,		"uart2",		&clk_uart2),
--	CLK(NULL,		"clk_pktsec",		&clk_pktsec),
--	CLK("tnetv107x-rng.0",	NULL,			&clk_rng),
--	CLK("tnetv107x-pka.0",	NULL,			&clk_pka),
--	CLK(NULL,		"clk_secctl",		&clk_secctl),
--	CLK(NULL,		"clk_keymgr",		&clk_keymgr),
--	CLK("tnetv107x-keypad.0", NULL,			&clk_keypad),
--	CLK(NULL,		"clk_gpio",		&clk_gpio),
--	CLK(NULL,		"clk_mdio",		&clk_mdio),
--	CLK("davinci_mmc.0",	NULL,			&clk_sdio0),
--	CLK(NULL,		"uart0",		&clk_uart0),
--	CLK(NULL,		"uart1",		&clk_uart1),
--	CLK(NULL,		"timer0",		&clk_timer0),
--	CLK(NULL,		"timer1",		&clk_timer1),
--	CLK("tnetv107x_wdt.0",	NULL,			&clk_wdt_arm),
--	CLK(NULL,		"clk_wdt_dsp",		&clk_wdt_dsp),
--	CLK("ti-ssp",		NULL,			&clk_ssp),
--	CLK(NULL,		"clk_tdm0",		&clk_tdm0),
--	CLK(NULL,		"clk_vlynq",		&clk_vlynq),
--	CLK(NULL,		"clk_mcdma",		&clk_mcdma),
--	CLK(NULL,		"clk_usbss",		&clk_usbss),
--	CLK(NULL,		"clk_usb0",		&clk_usb0),
--	CLK(NULL,		"clk_usb1",		&clk_usb1),
--	CLK(NULL,		"clk_tdm1",		&clk_tdm1),
--	CLK(NULL,		"clk_debugss",		&clk_debugss),
--	CLK(NULL,		"clk_ethss_rgmii",	&clk_ethss_rgmii),
--	CLK(NULL,		"clk_system",		&clk_system),
--	CLK(NULL,		"clk_imcop",		&clk_imcop),
--	CLK(NULL,		"clk_spare",		&clk_spare),
--	CLK("davinci_mmc.1",	NULL,			&clk_sdio1),
--	CLK(NULL,		"clk_ddr2_vrst",	&clk_ddr2_vrst),
--	CLK(NULL,		"clk_ddr2_vctl_rst",	&clk_ddr2_vctl_rst),
--	CLK(NULL,		NULL,			NULL),
-+	CLKDEV_INIT(NULL,		"pll_sys_clk",		&pll_sys_clk),
-+	CLKDEV_INIT(NULL,		"pll_eth_clk",		&pll_eth_clk),
-+	CLKDEV_INIT(NULL,		"pll_tdm_clk",		&pll_tdm_clk),
-+	CLKDEV_INIT(NULL,		"sys_arm1176_clk",	&sys_arm1176_clk),
-+	CLKDEV_INIT(NULL,		"sys_dsp_clk",		&sys_dsp_clk),
-+	CLKDEV_INIT(NULL,		"sys_ddr_clk",		&sys_ddr_clk),
-+	CLKDEV_INIT(NULL,		"sys_full_clk",		&sys_full_clk),
-+	CLKDEV_INIT(NULL,		"sys_lcd_clk",		&sys_lcd_clk),
-+	CLKDEV_INIT(NULL,		"sys_vlynq_ref_clk",	&sys_vlynq_ref_clk),
-+	CLKDEV_INIT(NULL,		"sys_tsc_clk",		&sys_tsc_clk),
-+	CLKDEV_INIT(NULL,		"sys_half_clk",		&sys_half_clk),
-+	CLKDEV_INIT(NULL,		"eth_5mhz_clk",		&eth_5mhz_clk),
-+	CLKDEV_INIT(NULL,		"eth_50mhz_clk",	&eth_50mhz_clk),
-+	CLKDEV_INIT(NULL,		"eth_125mhz_clk",	&eth_125mhz_clk),
-+	CLKDEV_INIT(NULL,		"eth_250mhz_clk",	&eth_250mhz_clk),
-+	CLKDEV_INIT(NULL,		"eth_25mhz_clk",	&eth_25mhz_clk),
-+	CLKDEV_INIT(NULL,		"tdm_0_clk",		&tdm_0_clk),
-+	CLKDEV_INIT(NULL,		"tdm_extra_clk",	&tdm_extra_clk),
-+	CLKDEV_INIT(NULL,		"tdm_1_clk",		&tdm_1_clk),
-+	CLKDEV_INIT(NULL,		"clk_arm",		&clk_arm),
-+	CLKDEV_INIT(NULL,		"clk_gem",		&clk_gem),
-+	CLKDEV_INIT(NULL,		"clk_ddr2_phy",		&clk_ddr2_phy),
-+	CLKDEV_INIT(NULL,		"clk_tpcc",		&clk_tpcc),
-+	CLKDEV_INIT(NULL,		"clk_tptc0",		&clk_tptc0),
-+	CLKDEV_INIT(NULL,		"clk_tptc1",		&clk_tptc1),
-+	CLKDEV_INIT(NULL,		"clk_ram",		&clk_ram),
-+	CLKDEV_INIT(NULL,		"clk_mbx_lite",		&clk_mbx_lite),
-+	CLKDEV_INIT("tnetv107x-fb.0",	NULL,			&clk_lcd),
-+	CLKDEV_INIT(NULL,		"clk_ethss",		&clk_ethss),
-+	CLKDEV_INIT(NULL,		"aemif",		&clk_aemif),
-+	CLKDEV_INIT(NULL,		"clk_chipcfg",		&clk_chipcfg),
-+	CLKDEV_INIT("tnetv107x-ts.0",	NULL,			&clk_tsc),
-+	CLKDEV_INIT(NULL,		"clk_rom",		&clk_rom),
-+	CLKDEV_INIT(NULL,		"uart2",		&clk_uart2),
-+	CLKDEV_INIT(NULL,		"clk_pktsec",		&clk_pktsec),
-+	CLKDEV_INIT("tnetv107x-rng.0",	NULL,			&clk_rng),
-+	CLKDEV_INIT("tnetv107x-pka.0",	NULL,			&clk_pka),
-+	CLKDEV_INIT(NULL,		"clk_secctl",		&clk_secctl),
-+	CLKDEV_INIT(NULL,		"clk_keymgr",		&clk_keymgr),
-+	CLKDEV_INIT("tnetv107x-keypad.0", NULL,			&clk_keypad),
-+	CLKDEV_INIT(NULL,		"clk_gpio",		&clk_gpio),
-+	CLKDEV_INIT(NULL,		"clk_mdio",		&clk_mdio),
-+	CLKDEV_INIT("davinci_mmc.0",	NULL,			&clk_sdio0),
-+	CLKDEV_INIT(NULL,		"uart0",		&clk_uart0),
-+	CLKDEV_INIT(NULL,		"uart1",		&clk_uart1),
-+	CLKDEV_INIT(NULL,		"timer0",		&clk_timer0),
-+	CLKDEV_INIT(NULL,		"timer1",		&clk_timer1),
-+	CLKDEV_INIT("tnetv107x_wdt.0",	NULL,			&clk_wdt_arm),
-+	CLKDEV_INIT(NULL,		"clk_wdt_dsp",		&clk_wdt_dsp),
-+	CLKDEV_INIT("ti-ssp",		NULL,			&clk_ssp),
-+	CLKDEV_INIT(NULL,		"clk_tdm0",		&clk_tdm0),
-+	CLKDEV_INIT(NULL,		"clk_vlynq",		&clk_vlynq),
-+	CLKDEV_INIT(NULL,		"clk_mcdma",		&clk_mcdma),
-+	CLKDEV_INIT(NULL,		"clk_usbss",		&clk_usbss),
-+	CLKDEV_INIT(NULL,		"clk_usb0",		&clk_usb0),
-+	CLKDEV_INIT(NULL,		"clk_usb1",		&clk_usb1),
-+	CLKDEV_INIT(NULL,		"clk_tdm1",		&clk_tdm1),
-+	CLKDEV_INIT(NULL,		"clk_debugss",		&clk_debugss),
-+	CLKDEV_INIT(NULL,		"clk_ethss_rgmii",	&clk_ethss_rgmii),
-+	CLKDEV_INIT(NULL,		"clk_system",		&clk_system),
-+	CLKDEV_INIT(NULL,		"clk_imcop",		&clk_imcop),
-+	CLKDEV_INIT(NULL,		"clk_spare",		&clk_spare),
-+	CLKDEV_INIT("davinci_mmc.1",	NULL,			&clk_sdio1),
-+	CLKDEV_INIT(NULL,		"clk_ddr2_vrst",	&clk_ddr2_vrst),
-+	CLKDEV_INIT(NULL,		"clk_ddr2_vctl_rst",	&clk_ddr2_vctl_rst),
-+	CLKDEV_INIT(NULL,		NULL,			NULL),
- };
- 
- static const struct mux_config pins[] = {
-diff --git a/arch/arm/mach-ep93xx/clock.c b/arch/arm/mach-ep93xx/clock.c
-index ca4de71..60fc2f3 100644
---- a/arch/arm/mach-ep93xx/clock.c
-+++ b/arch/arm/mach-ep93xx/clock.c
-@@ -198,39 +198,36 @@ static struct clk clk_m2m1 = {
- 	.enable_mask	= EP93XX_SYSCON_PWRCNT_DMA_M2M1,
- };
- 
--#define INIT_CK(dev,con,ck)					\
--	{ .dev_id = dev, .con_id = con, .clk = ck }
--
- static struct clk_lookup clocks[] = {
--	INIT_CK(NULL,			"xtali",	&clk_xtali),
--	INIT_CK("apb:uart1",		NULL,		&clk_uart1),
--	INIT_CK("apb:uart2",		NULL,		&clk_uart2),
--	INIT_CK("apb:uart3",		NULL,		&clk_uart3),
--	INIT_CK(NULL,			"pll1",		&clk_pll1),
--	INIT_CK(NULL,			"fclk",		&clk_f),
--	INIT_CK(NULL,			"hclk",		&clk_h),
--	INIT_CK(NULL,			"apb_pclk",	&clk_p),
--	INIT_CK(NULL,			"pll2",		&clk_pll2),
--	INIT_CK("ep93xx-ohci",		NULL,		&clk_usb_host),
--	INIT_CK("ep93xx-keypad",	NULL,		&clk_keypad),
--	INIT_CK("ep93xx-fb",		NULL,		&clk_video),
--	INIT_CK("ep93xx-spi.0",		NULL,		&clk_spi),
--	INIT_CK("ep93xx-i2s",		"mclk",		&clk_i2s_mclk),
--	INIT_CK("ep93xx-i2s",		"sclk",		&clk_i2s_sclk),
--	INIT_CK("ep93xx-i2s",		"lrclk",	&clk_i2s_lrclk),
--	INIT_CK(NULL,			"pwm_clk",	&clk_pwm),
--	INIT_CK(NULL,			"m2p0",		&clk_m2p0),
--	INIT_CK(NULL,			"m2p1",		&clk_m2p1),
--	INIT_CK(NULL,			"m2p2",		&clk_m2p2),
--	INIT_CK(NULL,			"m2p3",		&clk_m2p3),
--	INIT_CK(NULL,			"m2p4",		&clk_m2p4),
--	INIT_CK(NULL,			"m2p5",		&clk_m2p5),
--	INIT_CK(NULL,			"m2p6",		&clk_m2p6),
--	INIT_CK(NULL,			"m2p7",		&clk_m2p7),
--	INIT_CK(NULL,			"m2p8",		&clk_m2p8),
--	INIT_CK(NULL,			"m2p9",		&clk_m2p9),
--	INIT_CK(NULL,			"m2m0",		&clk_m2m0),
--	INIT_CK(NULL,			"m2m1",		&clk_m2m1),
-+	CLKDEV_INIT(NULL,			"xtali",	&clk_xtali),
-+	CLKDEV_INIT("apb:uart1",		NULL,		&clk_uart1),
-+	CLKDEV_INIT("apb:uart2",		NULL,		&clk_uart2),
-+	CLKDEV_INIT("apb:uart3",		NULL,		&clk_uart3),
-+	CLKDEV_INIT(NULL,			"pll1",		&clk_pll1),
-+	CLKDEV_INIT(NULL,			"fclk",		&clk_f),
-+	CLKDEV_INIT(NULL,			"hclk",		&clk_h),
-+	CLKDEV_INIT(NULL,			"apb_pclk",	&clk_p),
-+	CLKDEV_INIT(NULL,			"pll2",		&clk_pll2),
-+	CLKDEV_INIT("ep93xx-ohci",		NULL,		&clk_usb_host),
-+	CLKDEV_INIT("ep93xx-keypad",	NULL,		&clk_keypad),
-+	CLKDEV_INIT("ep93xx-fb",		NULL,		&clk_video),
-+	CLKDEV_INIT("ep93xx-spi.0",		NULL,		&clk_spi),
-+	CLKDEV_INIT("ep93xx-i2s",		"mclk",		&clk_i2s_mclk),
-+	CLKDEV_INIT("ep93xx-i2s",		"sclk",		&clk_i2s_sclk),
-+	CLKDEV_INIT("ep93xx-i2s",		"lrclk",	&clk_i2s_lrclk),
-+	CLKDEV_INIT(NULL,			"pwm_clk",	&clk_pwm),
-+	CLKDEV_INIT(NULL,			"m2p0",		&clk_m2p0),
-+	CLKDEV_INIT(NULL,			"m2p1",		&clk_m2p1),
-+	CLKDEV_INIT(NULL,			"m2p2",		&clk_m2p2),
-+	CLKDEV_INIT(NULL,			"m2p3",		&clk_m2p3),
-+	CLKDEV_INIT(NULL,			"m2p4",		&clk_m2p4),
-+	CLKDEV_INIT(NULL,			"m2p5",		&clk_m2p5),
-+	CLKDEV_INIT(NULL,			"m2p6",		&clk_m2p6),
-+	CLKDEV_INIT(NULL,			"m2p7",		&clk_m2p7),
-+	CLKDEV_INIT(NULL,			"m2p8",		&clk_m2p8),
-+	CLKDEV_INIT(NULL,			"m2p9",		&clk_m2p9),
-+	CLKDEV_INIT(NULL,			"m2m0",		&clk_m2m0),
-+	CLKDEV_INIT(NULL,			"m2m1",		&clk_m2m1),
- };
- 
- static DEFINE_SPINLOCK(clk_lock);
-diff --git a/arch/arm/mach-imx/clock-imx1.c b/arch/arm/mach-imx/clock-imx1.c
-index 4aabeb2..8bdcfa2 100644
---- a/arch/arm/mach-imx/clock-imx1.c
-+++ b/arch/arm/mach-imx/clock-imx1.c
-@@ -575,29 +575,23 @@ static struct clk rtc_clk = {
- 	.parent = &clk32,
- };
- 
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
+-static struct resource exynos4_sysmmu_resource[] = {
+-	[0] = {
+-		.start	= EXYNOS4_PA_SYSMMU_MDMA,
+-		.end	= EXYNOS4_PA_SYSMMU_MDMA + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
 -	},
- static struct clk_lookup lookups[] __initdata = {
--	_REGISTER_CLOCK(NULL, "dma", dma_clk)
--	_REGISTER_CLOCK("mx1-camera.0", NULL, csi_clk)
--	_REGISTER_CLOCK(NULL, "mma", mma_clk)
--	_REGISTER_CLOCK("imx_udc.0", NULL, usbd_clk)
--	_REGISTER_CLOCK(NULL, "gpt", gpt_clk)
--	_REGISTER_CLOCK("imx1-uart.0", NULL, uart_clk)
--	_REGISTER_CLOCK("imx1-uart.1", NULL, uart_clk)
--	_REGISTER_CLOCK("imx1-uart.2", NULL, uart_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c_clk)
--	_REGISTER_CLOCK("imx1-cspi.0", NULL, spi_clk)
--	_REGISTER_CLOCK("imx1-cspi.1", NULL, spi_clk)
--	_REGISTER_CLOCK("imx-mmc.0", NULL, sdhc_clk)
--	_REGISTER_CLOCK("imx-fb.0", NULL, lcdc_clk)
--	_REGISTER_CLOCK(NULL, "mshc", mshc_clk)
--	_REGISTER_CLOCK(NULL, "ssi", ssi_clk)
--	_REGISTER_CLOCK("mxc_rtc.0", NULL, rtc_clk)
-+	CLKDEV_INIT(NULL, "dma", &dma_clk),
-+	CLKDEV_INIT("mx1-camera.0", NULL, &csi_clk),
-+	CLKDEV_INIT(NULL, "mma", &mma_clk),
-+	CLKDEV_INIT("imx_udc.0", NULL, &usbd_clk),
-+	CLKDEV_INIT(NULL, "gpt", &gpt_clk),
-+	CLKDEV_INIT("imx1-uart.0", NULL, &uart_clk),
-+	CLKDEV_INIT("imx1-uart.1", NULL, &uart_clk),
-+	CLKDEV_INIT("imx1-uart.2", NULL, &uart_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c_clk),
-+	CLKDEV_INIT("imx1-cspi.0", NULL, &spi_clk),
-+	CLKDEV_INIT("imx1-cspi.1", NULL, &spi_clk),
-+	CLKDEV_INIT("imx-mmc.0", NULL, &sdhc_clk),
-+	CLKDEV_INIT("imx-fb.0", NULL, &lcdc_clk),
-+	CLKDEV_INIT(NULL, "mshc", &mshc_clk),
-+	CLKDEV_INIT(NULL, "ssi", &ssi_clk),
-+	CLKDEV_INIT("mxc_rtc.0", NULL, &rtc_clk),
- };
- 
- int __init mx1_clocks_init(unsigned long fref)
-diff --git a/arch/arm/mach-imx/clock-imx21.c b/arch/arm/mach-imx/clock-imx21.c
-index ee15d8c..2a7747d 100644
---- a/arch/arm/mach-imx/clock-imx21.c
-+++ b/arch/arm/mach-imx/clock-imx21.c
-@@ -1139,58 +1139,51 @@ static struct clk clko_clk = {
- 	.set_parent = _clk_clko_set_parent,
- };
- 
--
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
+-	[1] = {
+-		.start	= IRQ_SYSMMU_MDMA0_0,
+-		.end	= IRQ_SYSMMU_MDMA0_0,
+-		.flags	= IORESOURCE_IRQ,
 -	},
- static struct clk_lookup lookups[] = {
- /* It's unlikely that any driver wants one of them directly:
--	_REGISTER_CLOCK(NULL, "ckih", ckih_clk)
--	_REGISTER_CLOCK(NULL, "ckil", ckil_clk)
--	_REGISTER_CLOCK(NULL, "fpm", fpm_clk)
--	_REGISTER_CLOCK(NULL, "mpll", mpll_clk)
--	_REGISTER_CLOCK(NULL, "spll", spll_clk)
--	_REGISTER_CLOCK(NULL, "fclk", fclk_clk)
--	_REGISTER_CLOCK(NULL, "hclk", hclk_clk)
--	_REGISTER_CLOCK(NULL, "ipg", ipg_clk)
-+	CLKDEV_INIT(NULL, "ckih", &ckih_clk),
-+	CLKDEV_INIT(NULL, "ckil", &ckil_clk),
-+	CLKDEV_INIT(NULL, "fpm", &fpm_clk),
-+	CLKDEV_INIT(NULL, "mpll", &mpll_clk),
-+	CLKDEV_INIT(NULL, "spll", &spll_clk),
-+	CLKDEV_INIT(NULL, "fclk", &fclk_clk),
-+	CLKDEV_INIT(NULL, "hclk", &hclk_clk),
-+	CLKDEV_INIT(NULL, "ipg", &ipg_clk),
- */
--	_REGISTER_CLOCK(NULL, "perclk1", per_clk[0])
--	_REGISTER_CLOCK(NULL, "perclk2", per_clk[1])
--	_REGISTER_CLOCK(NULL, "perclk3", per_clk[2])
--	_REGISTER_CLOCK(NULL, "perclk4", per_clk[3])
--	_REGISTER_CLOCK(NULL, "clko", clko_clk)
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart_clk[0])
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart_clk[1])
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart_clk[2])
--	_REGISTER_CLOCK("imx21-uart.3", NULL, uart_clk[3])
--	_REGISTER_CLOCK(NULL, "gpt1", gpt_clk[0])
--	_REGISTER_CLOCK(NULL, "gpt1", gpt_clk[1])
--	_REGISTER_CLOCK(NULL, "gpt1", gpt_clk[2])
--	_REGISTER_CLOCK(NULL, "pwm", pwm_clk[0])
--	_REGISTER_CLOCK(NULL, "sdhc1", sdhc_clk[0])
--	_REGISTER_CLOCK(NULL, "sdhc2", sdhc_clk[1])
--	_REGISTER_CLOCK("imx21-cspi.0", NULL, cspi_clk[0])
--	_REGISTER_CLOCK("imx21-cspi.1", NULL, cspi_clk[1])
--	_REGISTER_CLOCK("imx21-cspi.2", NULL, cspi_clk[2])
--	_REGISTER_CLOCK("imx-fb.0", NULL, lcdc_clk[0])
--	_REGISTER_CLOCK(NULL, "csi", csi_clk[0])
--	_REGISTER_CLOCK("imx21-hcd.0", NULL, usb_clk[0])
--	_REGISTER_CLOCK(NULL, "ssi1", ssi_clk[0])
--	_REGISTER_CLOCK(NULL, "ssi2", ssi_clk[1])
--	_REGISTER_CLOCK("mxc_nand.0", NULL, nfc_clk)
--	_REGISTER_CLOCK(NULL, "dma", dma_clk[0])
--	_REGISTER_CLOCK(NULL, "brom", brom_clk)
--	_REGISTER_CLOCK(NULL, "emma", emma_clk[0])
--	_REGISTER_CLOCK(NULL, "slcdc", slcdc_clk[0])
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, wdog_clk)
--	_REGISTER_CLOCK(NULL, "gpio", gpio_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c_clk)
--	_REGISTER_CLOCK("mxc-keypad", NULL, kpp_clk)
--	_REGISTER_CLOCK(NULL, "owire", owire_clk)
--	_REGISTER_CLOCK(NULL, "rtc", rtc_clk)
-+	CLKDEV_INIT(NULL, "perclk1", &per_clk[0]),
-+	CLKDEV_INIT(NULL, "perclk2", &per_clk[1]),
-+	CLKDEV_INIT(NULL, "perclk3", &per_clk[2]),
-+	CLKDEV_INIT(NULL, "perclk4", &per_clk[3]),
-+	CLKDEV_INIT(NULL, "clko", &clko_clk),
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart_clk[0]),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart_clk[1]),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart_clk[2]),
-+	CLKDEV_INIT("imx21-uart.3", NULL, &uart_clk[3]),
-+	CLKDEV_INIT(NULL, "gpt1", &gpt_clk[0]),
-+	CLKDEV_INIT(NULL, "gpt1", &gpt_clk[1]),
-+	CLKDEV_INIT(NULL, "gpt1", &gpt_clk[2]),
-+	CLKDEV_INIT(NULL, "pwm", &pwm_clk[0]),
-+	CLKDEV_INIT(NULL, "sdhc1", &sdhc_clk[0]),
-+	CLKDEV_INIT(NULL, "sdhc2", &sdhc_clk[1]),
-+	CLKDEV_INIT("imx21-cspi.0", NULL, &cspi_clk[0]),
-+	CLKDEV_INIT("imx21-cspi.1", NULL, &cspi_clk[1]),
-+	CLKDEV_INIT("imx21-cspi.2", NULL, &cspi_clk[2]),
-+	CLKDEV_INIT("imx-fb.0", NULL, &lcdc_clk[0]),
-+	CLKDEV_INIT(NULL, "csi", &csi_clk[0]),
-+	CLKDEV_INIT("imx21-hcd.0", NULL, &usb_clk[0]),
-+	CLKDEV_INIT(NULL, "ssi1", &ssi_clk[0]),
-+	CLKDEV_INIT(NULL, "ssi2", &ssi_clk[1]),
-+	CLKDEV_INIT("mxc_nand.0", NULL, &nfc_clk),
-+	CLKDEV_INIT(NULL, "dma", &dma_clk[0]),
-+	CLKDEV_INIT(NULL, "brom", &brom_clk),
-+	CLKDEV_INIT(NULL, "emma", &emma_clk[0]),
-+	CLKDEV_INIT(NULL, "slcdc", &slcdc_clk[0]),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &wdog_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c_clk),
-+	CLKDEV_INIT("mxc-keypad", NULL, &kpp_clk),
-+	CLKDEV_INIT(NULL, "owire", &owire_clk),
-+	CLKDEV_INIT(NULL, "rtc", &rtc_clk),
- };
- 
- /*
-diff --git a/arch/arm/mach-imx/clock-imx25.c b/arch/arm/mach-imx/clock-imx25.c
-index b0fec74c..85508f4 100644
---- a/arch/arm/mach-imx/clock-imx25.c
-+++ b/arch/arm/mach-imx/clock-imx25.c
-@@ -265,53 +265,46 @@ DEFINE_CLOCK(can1_clk,	 0, CCM_CGCR1,  2, get_rate_ipg, NULL, NULL);
- DEFINE_CLOCK(can2_clk,	 1, CCM_CGCR1,  3, get_rate_ipg, NULL, NULL);
- DEFINE_CLOCK(iim_clk,    0, CCM_CGCR1, 26, NULL, NULL, NULL);
- 
--#define _REGISTER_CLOCK(d, n, c)	\
--	{				\
--		.dev_id = d,		\
--		.con_id = n,		\
--		.clk = &c,		\
+-	[2] = {
+-		.start	= EXYNOS4_PA_SYSMMU_SSS,
+-		.end	= EXYNOS4_PA_SYSMMU_SSS + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
 -	},
--
- static struct clk_lookup lookups[] = {
- 	/* i.mx25 has the i.mx21 type uart */
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
--	_REGISTER_CLOCK("imx21-uart.3", NULL, uart4_clk)
--	_REGISTER_CLOCK("imx21-uart.4", NULL, uart5_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb", usbotg_clk)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb", usbotg_clk)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb", usbotg_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb", usbotg_clk)
--	_REGISTER_CLOCK("mxc_nand.0", NULL, nfc_clk)
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-+	CLKDEV_INIT("imx21-uart.3", NULL, &uart4_clk),
-+	CLKDEV_INIT("imx21-uart.4", NULL, &uart5_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb", &usbotg_clk),
-+	CLKDEV_INIT("mxc-ehci.1", "usb", &usbotg_clk),
-+	CLKDEV_INIT("mxc-ehci.2", "usb", &usbotg_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb", &usbotg_clk),
-+	CLKDEV_INIT("mxc_nand.0", NULL, &nfc_clk),
- 	/* i.mx25 has the i.mx35 type cspi */
--	_REGISTER_CLOCK("imx35-cspi.0", NULL, cspi1_clk)
--	_REGISTER_CLOCK("imx35-cspi.1", NULL, cspi2_clk)
--	_REGISTER_CLOCK("imx35-cspi.2", NULL, cspi3_clk)
--	_REGISTER_CLOCK("mxc_pwm.0", NULL, pwm1_clk)
--	_REGISTER_CLOCK("mxc_pwm.1", NULL, pwm2_clk)
--	_REGISTER_CLOCK("mxc_pwm.2", NULL, pwm3_clk)
--	_REGISTER_CLOCK("mxc_pwm.3", NULL, pwm4_clk)
--	_REGISTER_CLOCK("imx-keypad", NULL, kpp_clk)
--	_REGISTER_CLOCK("mx25-adc", NULL, tsc_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c_clk)
--	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c_clk)
--	_REGISTER_CLOCK("imx-i2c.2", NULL, i2c_clk)
--	_REGISTER_CLOCK("imx25-fec.0", NULL, fec_clk)
--	_REGISTER_CLOCK("imxdi_rtc.0", NULL, dryice_clk)
--	_REGISTER_CLOCK("imx-fb.0", NULL, lcdc_clk)
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, wdt_clk)
--	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
--	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx25.0", NULL, esdhc1_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx25.1", NULL, esdhc2_clk)
--	_REGISTER_CLOCK("mx2-camera.0", NULL, csi_clk)
--	_REGISTER_CLOCK(NULL, "audmux", audmux_clk)
--	_REGISTER_CLOCK("flexcan.0", NULL, can1_clk)
--	_REGISTER_CLOCK("flexcan.1", NULL, can2_clk)
-+	CLKDEV_INIT("imx35-cspi.0", NULL, &cspi1_clk),
-+	CLKDEV_INIT("imx35-cspi.1", NULL, &cspi2_clk),
-+	CLKDEV_INIT("imx35-cspi.2", NULL, &cspi3_clk),
-+	CLKDEV_INIT("mxc_pwm.0", NULL, &pwm1_clk),
-+	CLKDEV_INIT("mxc_pwm.1", NULL, &pwm2_clk),
-+	CLKDEV_INIT("mxc_pwm.2", NULL, &pwm3_clk),
-+	CLKDEV_INIT("mxc_pwm.3", NULL, &pwm4_clk),
-+	CLKDEV_INIT("imx-keypad", NULL, &kpp_clk),
-+	CLKDEV_INIT("mx25-adc", NULL, &tsc_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c_clk),
-+	CLKDEV_INIT("imx-i2c.1", NULL, &i2c_clk),
-+	CLKDEV_INIT("imx-i2c.2", NULL, &i2c_clk),
-+	CLKDEV_INIT("imx25-fec.0", NULL, &fec_clk),
-+	CLKDEV_INIT("imxdi_rtc.0", NULL, &dryice_clk),
-+	CLKDEV_INIT("imx-fb.0", NULL, &lcdc_clk),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &wdt_clk),
-+	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-+	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx25.0", NULL, &esdhc1_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx25.1", NULL, &esdhc2_clk),
-+	CLKDEV_INIT("mx2-camera.0", NULL, &csi_clk),
-+	CLKDEV_INIT(NULL, "audmux", &audmux_clk),
-+	CLKDEV_INIT("flexcan.0", NULL, &can1_clk),
-+	CLKDEV_INIT("flexcan.1", NULL, &can2_clk),
- 	/* i.mx25 has the i.mx35 type sdma */
--	_REGISTER_CLOCK("imx35-sdma", NULL, sdma_clk)
--	_REGISTER_CLOCK(NULL, "iim", iim_clk)
-+	CLKDEV_INIT("imx35-sdma", NULL, &sdma_clk),
-+	CLKDEV_INIT(NULL, "iim", &iim_clk),
- };
- 
- int __init mx25_clocks_init(void)
-diff --git a/arch/arm/mach-imx/clock-imx27.c b/arch/arm/mach-imx/clock-imx27.c
-index 88fe00a..940a8cb 100644
---- a/arch/arm/mach-imx/clock-imx27.c
-+++ b/arch/arm/mach-imx/clock-imx27.c
-@@ -616,67 +616,60 @@ DEFINE_CLOCK(uart6_clk,    5, NULL,   0, NULL, &uart6_clk1, &per1_clk);
- DEFINE_CLOCK1(lcdc_clk,    0, NULL,   0, parent, &lcdc_clk1, &per3_clk);
- DEFINE_CLOCK1(csi_clk,     0, NULL,   0, parent, &csi_clk1, &per4_clk);
- 
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
+-	[3] = {
+-		.start	= IRQ_SYSMMU_SSS_0,
+-		.end	= IRQ_SYSMMU_SSS_0,
+-		.flags	= IORESOURCE_IRQ,
 -	},
--
- static struct clk_lookup lookups[] = {
- 	/* i.mx27 has the i.mx21 type uart */
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
--	_REGISTER_CLOCK("imx21-uart.3", NULL, uart4_clk)
--	_REGISTER_CLOCK("imx21-uart.4", NULL, uart5_clk)
--	_REGISTER_CLOCK("imx21-uart.5", NULL, uart6_clk)
--	_REGISTER_CLOCK(NULL, "gpt1", gpt1_clk)
--	_REGISTER_CLOCK(NULL, "gpt2", gpt2_clk)
--	_REGISTER_CLOCK(NULL, "gpt3", gpt3_clk)
--	_REGISTER_CLOCK(NULL, "gpt4", gpt4_clk)
--	_REGISTER_CLOCK(NULL, "gpt5", gpt5_clk)
--	_REGISTER_CLOCK(NULL, "gpt6", gpt6_clk)
--	_REGISTER_CLOCK("mxc_pwm.0", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxc-mmc.0", NULL, sdhc1_clk)
--	_REGISTER_CLOCK("mxc-mmc.1", NULL, sdhc2_clk)
--	_REGISTER_CLOCK("mxc-mmc.2", NULL, sdhc3_clk)
--	_REGISTER_CLOCK("imx27-cspi.0", NULL, cspi1_clk)
--	_REGISTER_CLOCK("imx27-cspi.1", NULL, cspi2_clk)
--	_REGISTER_CLOCK("imx27-cspi.2", NULL, cspi3_clk)
--	_REGISTER_CLOCK("imx-fb.0", NULL, lcdc_clk)
--	_REGISTER_CLOCK("mx2-camera.0", NULL, csi_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb", usb_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb_ahb", usb_clk1)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb", usb_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb_ahb", usb_clk1)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb", usb_clk)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb_ahb", usb_clk1)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb", usb_clk)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb_ahb", usb_clk1)
--	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
--	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
--	_REGISTER_CLOCK("mxc_nand.0", NULL, nfc_clk)
--	_REGISTER_CLOCK(NULL, "vpu", vpu_clk)
--	_REGISTER_CLOCK(NULL, "dma", dma_clk)
--	_REGISTER_CLOCK(NULL, "rtic", rtic_clk)
--	_REGISTER_CLOCK(NULL, "brom", brom_clk)
--	_REGISTER_CLOCK(NULL, "emma", emma_clk)
--	_REGISTER_CLOCK(NULL, "slcdc", slcdc_clk)
--	_REGISTER_CLOCK("imx27-fec.0", NULL, fec_clk)
--	_REGISTER_CLOCK(NULL, "emi", emi_clk)
--	_REGISTER_CLOCK(NULL, "sahara2", sahara2_clk)
--	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
--	_REGISTER_CLOCK(NULL, "mstick", mstick_clk)
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, wdog_clk)
--	_REGISTER_CLOCK(NULL, "gpio", gpio_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
--	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
--	_REGISTER_CLOCK(NULL, "iim", iim_clk)
--	_REGISTER_CLOCK(NULL, "kpp", kpp_clk)
--	_REGISTER_CLOCK("mxc_w1.0", NULL, owire_clk)
--	_REGISTER_CLOCK(NULL, "rtc", rtc_clk)
--	_REGISTER_CLOCK(NULL, "scc", scc_clk)
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-+	CLKDEV_INIT("imx21-uart.3", NULL, &uart4_clk),
-+	CLKDEV_INIT("imx21-uart.4", NULL, &uart5_clk),
-+	CLKDEV_INIT("imx21-uart.5", NULL, &uart6_clk),
-+	CLKDEV_INIT(NULL, "gpt1", &gpt1_clk),
-+	CLKDEV_INIT(NULL, "gpt2", &gpt2_clk),
-+	CLKDEV_INIT(NULL, "gpt3", &gpt3_clk),
-+	CLKDEV_INIT(NULL, "gpt4", &gpt4_clk),
-+	CLKDEV_INIT(NULL, "gpt5", &gpt5_clk),
-+	CLKDEV_INIT(NULL, "gpt6", &gpt6_clk),
-+	CLKDEV_INIT("mxc_pwm.0", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxc-mmc.0", NULL, &sdhc1_clk),
-+	CLKDEV_INIT("mxc-mmc.1", NULL, &sdhc2_clk),
-+	CLKDEV_INIT("mxc-mmc.2", NULL, &sdhc3_clk),
-+	CLKDEV_INIT("imx27-cspi.0", NULL, &cspi1_clk),
-+	CLKDEV_INIT("imx27-cspi.1", NULL, &cspi2_clk),
-+	CLKDEV_INIT("imx27-cspi.2", NULL, &cspi3_clk),
-+	CLKDEV_INIT("imx-fb.0", NULL, &lcdc_clk),
-+	CLKDEV_INIT("mx2-camera.0", NULL, &csi_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb", &usb_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb_ahb", &usb_clk1),
-+	CLKDEV_INIT("mxc-ehci.0", "usb", &usb_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb_ahb", &usb_clk1),
-+	CLKDEV_INIT("mxc-ehci.1", "usb", &usb_clk),
-+	CLKDEV_INIT("mxc-ehci.1", "usb_ahb", &usb_clk1),
-+	CLKDEV_INIT("mxc-ehci.2", "usb", &usb_clk),
-+	CLKDEV_INIT("mxc-ehci.2", "usb_ahb", &usb_clk1),
-+	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-+	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-+	CLKDEV_INIT("mxc_nand.0", NULL, &nfc_clk),
-+	CLKDEV_INIT(NULL, "vpu", &vpu_clk),
-+	CLKDEV_INIT(NULL, "dma", &dma_clk),
-+	CLKDEV_INIT(NULL, "rtic", &rtic_clk),
-+	CLKDEV_INIT(NULL, "brom", &brom_clk),
-+	CLKDEV_INIT(NULL, "emma", &emma_clk),
-+	CLKDEV_INIT(NULL, "slcdc", &slcdc_clk),
-+	CLKDEV_INIT("imx27-fec.0", NULL, &fec_clk),
-+	CLKDEV_INIT(NULL, "emi", &emi_clk),
-+	CLKDEV_INIT(NULL, "sahara2", &sahara2_clk),
-+	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
-+	CLKDEV_INIT(NULL, "mstick", &mstick_clk),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &wdog_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-+	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-+	CLKDEV_INIT(NULL, "iim", &iim_clk),
-+	CLKDEV_INIT(NULL, "kpp", &kpp_clk),
-+	CLKDEV_INIT("mxc_w1.0", NULL, &owire_clk),
-+	CLKDEV_INIT(NULL, "rtc", &rtc_clk),
-+	CLKDEV_INIT(NULL, "scc", &scc_clk),
- };
- 
- /* Adjust the clock path for TO2 and later */
-diff --git a/arch/arm/mach-imx/clock-imx31.c b/arch/arm/mach-imx/clock-imx31.c
-index 988a281..56510c5 100644
---- a/arch/arm/mach-imx/clock-imx31.c
-+++ b/arch/arm/mach-imx/clock-imx31.c
-@@ -516,63 +516,56 @@ DEFINE_CLOCK(nfc_clk,     0, NULL,          0, nfc_get_rate, NULL, &ahb_clk);
- DEFINE_CLOCK(scc_clk,     0, NULL,          0, NULL, NULL, &ipg_clk);
- DEFINE_CLOCK(ipg_clk,     0, NULL,          0, ipg_get_rate, NULL, &ahb_clk);
- 
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
+-	[4] = {
+-		.start	= EXYNOS4_PA_SYSMMU_FIMC0,
+-		.end	= EXYNOS4_PA_SYSMMU_FIMC0 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
 -	},
--
- static struct clk_lookup lookups[] = {
--	_REGISTER_CLOCK(NULL, "emi", emi_clk)
--	_REGISTER_CLOCK("imx31-cspi.0", NULL, cspi1_clk)
--	_REGISTER_CLOCK("imx31-cspi.1", NULL, cspi2_clk)
--	_REGISTER_CLOCK("imx31-cspi.2", NULL, cspi3_clk)
--	_REGISTER_CLOCK(NULL, "gpt", gpt_clk)
--	_REGISTER_CLOCK(NULL, "pwm", pwm_clk)
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, wdog_clk)
--	_REGISTER_CLOCK(NULL, "rtc", rtc_clk)
--	_REGISTER_CLOCK(NULL, "epit", epit1_clk)
--	_REGISTER_CLOCK(NULL, "epit", epit2_clk)
--	_REGISTER_CLOCK("mxc_nand.0", NULL, nfc_clk)
--	_REGISTER_CLOCK("ipu-core", NULL, ipu_clk)
--	_REGISTER_CLOCK("mx3_sdc_fb", NULL, ipu_clk)
--	_REGISTER_CLOCK(NULL, "kpp", kpp_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb", usb_clk1)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb_ahb", usb_clk2)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb", usb_clk1)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb_ahb", usb_clk2)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb", usb_clk1)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb_ahb", usb_clk2)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb", usb_clk1)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb_ahb", usb_clk2)
--	_REGISTER_CLOCK("mx3-camera.0", NULL, csi_clk)
-+	CLKDEV_INIT(NULL, "emi", &emi_clk),
-+	CLKDEV_INIT("imx31-cspi.0", NULL, &cspi1_clk),
-+	CLKDEV_INIT("imx31-cspi.1", NULL, &cspi2_clk),
-+	CLKDEV_INIT("imx31-cspi.2", NULL, &cspi3_clk),
-+	CLKDEV_INIT(NULL, "gpt", &gpt_clk),
-+	CLKDEV_INIT(NULL, "pwm", &pwm_clk),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &wdog_clk),
-+	CLKDEV_INIT(NULL, "rtc", &rtc_clk),
-+	CLKDEV_INIT(NULL, "epit", &epit1_clk),
-+	CLKDEV_INIT(NULL, "epit", &epit2_clk),
-+	CLKDEV_INIT("mxc_nand.0", NULL, &nfc_clk),
-+	CLKDEV_INIT("ipu-core", NULL, &ipu_clk),
-+	CLKDEV_INIT("mx3_sdc_fb", NULL, &ipu_clk),
-+	CLKDEV_INIT(NULL, "kpp", &kpp_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb", &usb_clk1),
-+	CLKDEV_INIT("mxc-ehci.0", "usb_ahb", &usb_clk2),
-+	CLKDEV_INIT("mxc-ehci.1", "usb", &usb_clk1),
-+	CLKDEV_INIT("mxc-ehci.1", "usb_ahb", &usb_clk2),
-+	CLKDEV_INIT("mxc-ehci.2", "usb", &usb_clk1),
-+	CLKDEV_INIT("mxc-ehci.2", "usb_ahb", &usb_clk2),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb", &usb_clk1),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb_ahb", &usb_clk2),
-+	CLKDEV_INIT("mx3-camera.0", NULL, &csi_clk),
- 	/* i.mx31 has the i.mx21 type uart */
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
--	_REGISTER_CLOCK("imx21-uart.3", NULL, uart4_clk)
--	_REGISTER_CLOCK("imx21-uart.4", NULL, uart5_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
--	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
--	_REGISTER_CLOCK("imx-i2c.2", NULL, i2c3_clk)
--	_REGISTER_CLOCK("mxc_w1.0", NULL, owire_clk)
--	_REGISTER_CLOCK("mxc-mmc.0", NULL, sdhc1_clk)
--	_REGISTER_CLOCK("mxc-mmc.1", NULL, sdhc2_clk)
--	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
--	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
--	_REGISTER_CLOCK(NULL, "firi", firi_clk)
--	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
--	_REGISTER_CLOCK(NULL, "rtic", rtic_clk)
--	_REGISTER_CLOCK(NULL, "rng", rng_clk)
--	_REGISTER_CLOCK("imx31-sdma", NULL, sdma_clk1)
--	_REGISTER_CLOCK(NULL, "sdma_ipg", sdma_clk2)
--	_REGISTER_CLOCK(NULL, "mstick", mstick1_clk)
--	_REGISTER_CLOCK(NULL, "mstick", mstick2_clk)
--	_REGISTER_CLOCK(NULL, "scc", scc_clk)
--	_REGISTER_CLOCK(NULL, "iim", iim_clk)
--	_REGISTER_CLOCK(NULL, "mpeg4", mpeg4_clk)
--	_REGISTER_CLOCK(NULL, "mbx", mbx_clk)
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-+	CLKDEV_INIT("imx21-uart.3", NULL, &uart4_clk),
-+	CLKDEV_INIT("imx21-uart.4", NULL, &uart5_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-+	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-+	CLKDEV_INIT("imx-i2c.2", NULL, &i2c3_clk),
-+	CLKDEV_INIT("mxc_w1.0", NULL, &owire_clk),
-+	CLKDEV_INIT("mxc-mmc.0", NULL, &sdhc1_clk),
-+	CLKDEV_INIT("mxc-mmc.1", NULL, &sdhc2_clk),
-+	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-+	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-+	CLKDEV_INIT(NULL, "firi", &firi_clk),
-+	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
-+	CLKDEV_INIT(NULL, "rtic", &rtic_clk),
-+	CLKDEV_INIT(NULL, "rng", &rng_clk),
-+	CLKDEV_INIT("imx31-sdma", NULL, &sdma_clk1),
-+	CLKDEV_INIT(NULL, "sdma_ipg", &sdma_clk2),
-+	CLKDEV_INIT(NULL, "mstick", &mstick1_clk),
-+	CLKDEV_INIT(NULL, "mstick", &mstick2_clk),
-+	CLKDEV_INIT(NULL, "scc", &scc_clk),
-+	CLKDEV_INIT(NULL, "iim", &iim_clk),
-+	CLKDEV_INIT(NULL, "mpeg4", &mpeg4_clk),
-+	CLKDEV_INIT(NULL, "mbx", &mbx_clk),
- };
- 
- int __init mx31_clocks_init(unsigned long fref)
-diff --git a/arch/arm/mach-imx/clock-imx35.c b/arch/arm/mach-imx/clock-imx35.c
-index 8116f11..8f5e1d9 100644
---- a/arch/arm/mach-imx/clock-imx35.c
-+++ b/arch/arm/mach-imx/clock-imx35.c
-@@ -438,71 +438,64 @@ static struct clk nfc_clk = {
- 	.disable	= clk_dummy_disable
- };
- 
--#define _REGISTER_CLOCK(d, n, c)	\
--	{				\
--		.dev_id = d,		\
--		.con_id = n,		\
--		.clk = &c,		\
+-	[5] = {
+-		.start	= IRQ_SYSMMU_FIMC0_0,
+-		.end	= IRQ_SYSMMU_FIMC0_0,
+-		.flags	= IORESOURCE_IRQ,
 -	},
+-	[6] = {
+-		.start	= EXYNOS4_PA_SYSMMU_FIMC1,
+-		.end	= EXYNOS4_PA_SYSMMU_FIMC1 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[7] = {
+-		.start	= IRQ_SYSMMU_FIMC1_0,
+-		.end	= IRQ_SYSMMU_FIMC1_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[8] = {
+-		.start	= EXYNOS4_PA_SYSMMU_FIMC2,
+-		.end	= EXYNOS4_PA_SYSMMU_FIMC2 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[9] = {
+-		.start	= IRQ_SYSMMU_FIMC2_0,
+-		.end	= IRQ_SYSMMU_FIMC2_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[10] = {
+-		.start	= EXYNOS4_PA_SYSMMU_FIMC3,
+-		.end	= EXYNOS4_PA_SYSMMU_FIMC3 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[11] = {
+-		.start	= IRQ_SYSMMU_FIMC3_0,
+-		.end	= IRQ_SYSMMU_FIMC3_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[12] = {
+-		.start	= EXYNOS4_PA_SYSMMU_JPEG,
+-		.end	= EXYNOS4_PA_SYSMMU_JPEG + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[13] = {
+-		.start	= IRQ_SYSMMU_JPEG_0,
+-		.end	= IRQ_SYSMMU_JPEG_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[14] = {
+-		.start	= EXYNOS4_PA_SYSMMU_FIMD0,
+-		.end	= EXYNOS4_PA_SYSMMU_FIMD0 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[15] = {
+-		.start	= IRQ_SYSMMU_LCD0_M0_0,
+-		.end	= IRQ_SYSMMU_LCD0_M0_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[16] = {
+-		.start	= EXYNOS4_PA_SYSMMU_FIMD1,
+-		.end	= EXYNOS4_PA_SYSMMU_FIMD1 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[17] = {
+-		.start	= IRQ_SYSMMU_LCD1_M1_0,
+-		.end	= IRQ_SYSMMU_LCD1_M1_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[18] = {
+-		.start	= EXYNOS4_PA_SYSMMU_PCIe,
+-		.end	= EXYNOS4_PA_SYSMMU_PCIe + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[19] = {
+-		.start	= IRQ_SYSMMU_PCIE_0,
+-		.end	= IRQ_SYSMMU_PCIE_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[20] = {
+-		.start	= EXYNOS4_PA_SYSMMU_G2D,
+-		.end	= EXYNOS4_PA_SYSMMU_G2D + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[21] = {
+-		.start	= IRQ_SYSMMU_2D_0,
+-		.end	= IRQ_SYSMMU_2D_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[22] = {
+-		.start	= EXYNOS4_PA_SYSMMU_ROTATOR,
+-		.end	= EXYNOS4_PA_SYSMMU_ROTATOR + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[23] = {
+-		.start	= IRQ_SYSMMU_ROTATOR_0,
+-		.end	= IRQ_SYSMMU_ROTATOR_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[24] = {
+-		.start	= EXYNOS4_PA_SYSMMU_MDMA2,
+-		.end	= EXYNOS4_PA_SYSMMU_MDMA2 + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[25] = {
+-		.start	= IRQ_SYSMMU_MDMA1_0,
+-		.end	= IRQ_SYSMMU_MDMA1_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[26] = {
+-		.start	= EXYNOS4_PA_SYSMMU_TV,
+-		.end	= EXYNOS4_PA_SYSMMU_TV + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[27] = {
+-		.start	= IRQ_SYSMMU_TV_M0_0,
+-		.end	= IRQ_SYSMMU_TV_M0_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[28] = {
+-		.start	= EXYNOS4_PA_SYSMMU_MFC_L,
+-		.end	= EXYNOS4_PA_SYSMMU_MFC_L + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[29] = {
+-		.start	= IRQ_SYSMMU_MFC_M0_0,
+-		.end	= IRQ_SYSMMU_MFC_M0_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-	[30] = {
+-		.start	= EXYNOS4_PA_SYSMMU_MFC_R,
+-		.end	= EXYNOS4_PA_SYSMMU_MFC_R + SZ_64K - 1,
+-		.flags	= IORESOURCE_MEM,
+-	},
+-	[31] = {
+-		.start	= IRQ_SYSMMU_MFC_M1_0,
+-		.end	= IRQ_SYSMMU_MFC_M1_0,
+-		.flags	= IORESOURCE_IRQ,
+-	},
+-};
 -
- static struct clk_lookup lookups[] = {
--	_REGISTER_CLOCK(NULL, "asrc", asrc_clk)
--	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
--	_REGISTER_CLOCK("flexcan.0", NULL, can1_clk)
--	_REGISTER_CLOCK("flexcan.1", NULL, can2_clk)
--	_REGISTER_CLOCK("imx35-cspi.0", NULL, cspi1_clk)
--	_REGISTER_CLOCK("imx35-cspi.1", NULL, cspi2_clk)
--	_REGISTER_CLOCK(NULL, "ect", ect_clk)
--	_REGISTER_CLOCK(NULL, "edio", edio_clk)
--	_REGISTER_CLOCK(NULL, "emi", emi_clk)
--	_REGISTER_CLOCK("imx-epit.0", NULL, epit1_clk)
--	_REGISTER_CLOCK("imx-epit.1", NULL, epit2_clk)
--	_REGISTER_CLOCK(NULL, "esai", esai_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx35.0", NULL, esdhc1_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx35.1", NULL, esdhc2_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx35.2", NULL, esdhc3_clk)
-+	CLKDEV_INIT(NULL, "asrc", &asrc_clk),
-+	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
-+	CLKDEV_INIT("flexcan.0", NULL, &can1_clk),
-+	CLKDEV_INIT("flexcan.1", NULL, &can2_clk),
-+	CLKDEV_INIT("imx35-cspi.0", NULL, &cspi1_clk),
-+	CLKDEV_INIT("imx35-cspi.1", NULL, &cspi2_clk),
-+	CLKDEV_INIT(NULL, "ect", &ect_clk),
-+	CLKDEV_INIT(NULL, "edio", &edio_clk),
-+	CLKDEV_INIT(NULL, "emi", &emi_clk),
-+	CLKDEV_INIT("imx-epit.0", NULL, &epit1_clk),
-+	CLKDEV_INIT("imx-epit.1", NULL, &epit2_clk),
-+	CLKDEV_INIT(NULL, "esai", &esai_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx35.0", NULL, &esdhc1_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx35.1", NULL, &esdhc2_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx35.2", NULL, &esdhc3_clk),
- 	/* i.mx35 has the i.mx27 type fec */
--	_REGISTER_CLOCK("imx27-fec.0", NULL, fec_clk)
--	_REGISTER_CLOCK(NULL, "gpio", gpio1_clk)
--	_REGISTER_CLOCK(NULL, "gpio", gpio2_clk)
--	_REGISTER_CLOCK(NULL, "gpio", gpio3_clk)
--	_REGISTER_CLOCK("gpt.0", NULL, gpt_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
--	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
--	_REGISTER_CLOCK("imx-i2c.2", NULL, i2c3_clk)
--	_REGISTER_CLOCK(NULL, "iomuxc", iomuxc_clk)
--	_REGISTER_CLOCK("ipu-core", NULL, ipu_clk)
--	_REGISTER_CLOCK("mx3_sdc_fb", NULL, ipu_clk)
--	_REGISTER_CLOCK(NULL, "kpp", kpp_clk)
--	_REGISTER_CLOCK(NULL, "mlb", mlb_clk)
--	_REGISTER_CLOCK(NULL, "mshc", mshc_clk)
--	_REGISTER_CLOCK("mxc_w1", NULL, owire_clk)
--	_REGISTER_CLOCK(NULL, "pwm", pwm_clk)
--	_REGISTER_CLOCK(NULL, "rngc", rngc_clk)
--	_REGISTER_CLOCK(NULL, "rtc", rtc_clk)
--	_REGISTER_CLOCK(NULL, "rtic", rtic_clk)
--	_REGISTER_CLOCK(NULL, "scc", scc_clk)
--	_REGISTER_CLOCK("imx35-sdma", NULL, sdma_clk)
--	_REGISTER_CLOCK(NULL, "spba", spba_clk)
--	_REGISTER_CLOCK(NULL, "spdif", spdif_clk)
--	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
--	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
-+	CLKDEV_INIT("imx27-fec.0", NULL, &fec_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio1_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio2_clk),
-+	CLKDEV_INIT(NULL, "gpio", &gpio3_clk),
-+	CLKDEV_INIT("gpt.0", NULL, &gpt_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-+	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-+	CLKDEV_INIT("imx-i2c.2", NULL, &i2c3_clk),
-+	CLKDEV_INIT(NULL, "iomuxc", &iomuxc_clk),
-+	CLKDEV_INIT("ipu-core", NULL, &ipu_clk),
-+	CLKDEV_INIT("mx3_sdc_fb", NULL, &ipu_clk),
-+	CLKDEV_INIT(NULL, "kpp", &kpp_clk),
-+	CLKDEV_INIT(NULL, "mlb", &mlb_clk),
-+	CLKDEV_INIT(NULL, "mshc", &mshc_clk),
-+	CLKDEV_INIT("mxc_w1", NULL, &owire_clk),
-+	CLKDEV_INIT(NULL, "pwm", &pwm_clk),
-+	CLKDEV_INIT(NULL, "rngc", &rngc_clk),
-+	CLKDEV_INIT(NULL, "rtc", &rtc_clk),
-+	CLKDEV_INIT(NULL, "rtic", &rtic_clk),
-+	CLKDEV_INIT(NULL, "scc", &scc_clk),
-+	CLKDEV_INIT("imx35-sdma", NULL, &sdma_clk),
-+	CLKDEV_INIT(NULL, "spba", &spba_clk),
-+	CLKDEV_INIT(NULL, "spdif", &spdif_clk),
-+	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-+	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
- 	/* i.mx35 has the i.mx21 type uart */
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb", usbotg_clk)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb", usbotg_clk)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb", usbotg_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb", usbotg_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb_ahb", usbahb_clk)
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, wdog_clk)
--	_REGISTER_CLOCK(NULL, "max", max_clk)
--	_REGISTER_CLOCK(NULL, "audmux", audmux_clk)
--	_REGISTER_CLOCK(NULL, "csi", csi_clk)
--	_REGISTER_CLOCK(NULL, "iim", iim_clk)
--	_REGISTER_CLOCK(NULL, "gpu2d", gpu2d_clk)
--	_REGISTER_CLOCK("mxc_nand.0", NULL, nfc_clk)
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb", &usbotg_clk),
-+	CLKDEV_INIT("mxc-ehci.1", "usb", &usbotg_clk),
-+	CLKDEV_INIT("mxc-ehci.2", "usb", &usbotg_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb", &usbotg_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb_ahb", &usbahb_clk),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &wdog_clk),
-+	CLKDEV_INIT(NULL, "max", &max_clk),
-+	CLKDEV_INIT(NULL, "audmux", &audmux_clk),
-+	CLKDEV_INIT(NULL, "csi", &csi_clk),
-+	CLKDEV_INIT(NULL, "iim", &iim_clk),
-+	CLKDEV_INIT(NULL, "gpu2d", &gpu2d_clk),
-+	CLKDEV_INIT("mxc_nand.0", NULL, &nfc_clk),
- };
- 
- int __init mx35_clocks_init()
-diff --git a/arch/arm/mach-lpc32xx/clock.c b/arch/arm/mach-lpc32xx/clock.c
-index 1e02751..37034c2 100644
---- a/arch/arm/mach-lpc32xx/clock.c
-+++ b/arch/arm/mach-lpc32xx/clock.c
-@@ -1041,48 +1041,41 @@ struct clk *clk_get_parent(struct clk *clk)
+-struct platform_device exynos4_device_sysmmu = {
+-	.name		= "s5p-sysmmu",
+-	.id		= 32,
+-	.num_resources	= ARRAY_SIZE(exynos4_sysmmu_resource),
+-	.resource	= exynos4_sysmmu_resource,
+-};
+-EXPORT_SYMBOL(exynos4_device_sysmmu);
+-
+-static struct clk *sysmmu_clk[S5P_SYSMMU_TOTAL_IPNUM];
+-void sysmmu_clk_init(struct device *dev, sysmmu_ips ips)
+-{
+-	sysmmu_clk[ips] = clk_get(dev, sysmmu_ips_name[ips]);
+-	if (IS_ERR(sysmmu_clk[ips]))
+-		sysmmu_clk[ips] = NULL;
+-	else
+-		clk_put(sysmmu_clk[ips]);
++#define SYSMMU_RESOURCE(ipname, base, irq) \
++static struct resource sysmmu_resource_##ipname[] =\
++{\
++	{\
++		.start	= EXYNOS4_PA_SYSMMU_##base,\
++		.end	= EXYNOS4_PA_SYSMMU_##base + SZ_4K - 1,\
++		.flags	= IORESOURCE_MEM,\
++	}, {\
++		.start	= IRQ_SYSMMU_##irq##_0,\
++		.end	= IRQ_SYSMMU_##irq##_0,\
++		.flags	= IORESOURCE_IRQ,\
++	},\
  }
- EXPORT_SYMBOL(clk_get_parent);
  
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = (d), \
--		.con_id = (n), \
--		.clk = &(c), \
--	},
+-void sysmmu_clk_enable(sysmmu_ips ips)
+-{
+-	if (sysmmu_clk[ips])
+-		clk_enable(sysmmu_clk[ips]);
++#define SYSMMU_PLATFORM_DEVICE(ipname, devid) \
++struct platform_device SYSMMU_PLATDEV(ipname) =\
++{\
++	.name		= SYSMMU_DEVNAME_BASE,\
++	.id		= devid,\
++	.num_resources	= ARRAY_SIZE(sysmmu_resource_##ipname),\
++	.resource	= sysmmu_resource_##ipname,\
++	.dev		= {\
++		.dma_mask		= &exynos_sysmmu_dma_mask,\
++		.coherent_dma_mask	= DMA_BIT_MASK(32),\
++	},\
+ }
+ 
+-void sysmmu_clk_disable(sysmmu_ips ips)
+-{
+-	if (sysmmu_clk[ips])
+-		clk_disable(sysmmu_clk[ips]);
+-}
++static u64 exynos_sysmmu_dma_mask = DMA_BIT_MASK(32);
++
++SYSMMU_RESOURCE(sss,	SSS,	SSS);
++SYSMMU_RESOURCE(fimc0,	FIMC0,	FIMC0);
++SYSMMU_RESOURCE(fimc1,	FIMC1,	FIMC1);
++SYSMMU_RESOURCE(fimc2,	FIMC2,	FIMC2);
++SYSMMU_RESOURCE(fimc3,	FIMC3,	FIMC3);
++SYSMMU_RESOURCE(jpeg,	JPEG,	JPEG);
++SYSMMU_RESOURCE(fimd0,	FIMD0,	LCD0_M0);
++SYSMMU_RESOURCE(fimd1,	FIMD1,	LCD1_M1);
++SYSMMU_RESOURCE(pcie,	PCIe,	PCIE);
++SYSMMU_RESOURCE(g2d,	G2D,	2D);
++SYSMMU_RESOURCE(rot,	ROTATOR, ROTATOR);
++SYSMMU_RESOURCE(mdma,	MDMA2,	MDMA1);
++SYSMMU_RESOURCE(tv,	TV,	TV_M0);
++SYSMMU_RESOURCE(mfc_l,	MFC_L,	MFC_M0);
++SYSMMU_RESOURCE(mfc_r,	MFC_R,	MFC_M1);
++
++SYSMMU_PLATFORM_DEVICE(sss,	0);
++SYSMMU_PLATFORM_DEVICE(fimc0,	1);
++SYSMMU_PLATFORM_DEVICE(fimc1,	2);
++SYSMMU_PLATFORM_DEVICE(fimc2,	3);
++SYSMMU_PLATFORM_DEVICE(fimc3,	4);
++SYSMMU_PLATFORM_DEVICE(jpeg,	5);
++SYSMMU_PLATFORM_DEVICE(fimd0,	6);
++SYSMMU_PLATFORM_DEVICE(fimd1,	7);
++SYSMMU_PLATFORM_DEVICE(pcie,	8);
++SYSMMU_PLATFORM_DEVICE(g2d,	9);
++SYSMMU_PLATFORM_DEVICE(rot,	10);
++SYSMMU_PLATFORM_DEVICE(mdma,	11);
++SYSMMU_PLATFORM_DEVICE(tv,	12);
++SYSMMU_PLATFORM_DEVICE(mfc_l,	13);
++SYSMMU_PLATFORM_DEVICE(mfc_r,	14);
+diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+index dfd4b7e..a33fdd1 100644
+--- a/arch/arm/mach-exynos4/include/mach/irqs.h
++++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+@@ -125,7 +125,6 @@
+ #define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
+ #define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
+ 
+-#define IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
+ #define IRQ_SYSMMU_SSS_0	COMBINER_IRQ(4, 1)
+ #define IRQ_SYSMMU_FIMC0_0	COMBINER_IRQ(4, 2)
+ #define IRQ_SYSMMU_FIMC1_0	COMBINER_IRQ(4, 3)
+diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
+index 918a979..aaf492c 100644
+--- a/arch/arm/mach-exynos4/include/mach/map.h
++++ b/arch/arm/mach-exynos4/include/mach/map.h
+@@ -71,7 +71,6 @@
+ #define EXYNOS4_PA_PDMA0		0x12680000
+ #define EXYNOS4_PA_PDMA1		0x12690000
+ 
+-#define EXYNOS4_PA_SYSMMU_MDMA		0x10A40000
+ #define EXYNOS4_PA_SYSMMU_SSS		0x10A50000
+ #define EXYNOS4_PA_SYSMMU_FIMC0		0x11A20000
+ #define EXYNOS4_PA_SYSMMU_FIMC1		0x11A30000
+diff --git a/arch/arm/mach-exynos4/include/mach/sysmmu.h b/arch/arm/mach-exynos4/include/mach/sysmmu.h
+index 6a5fbb5..1811c20 100644
+--- a/arch/arm/mach-exynos4/include/mach/sysmmu.h
++++ b/arch/arm/mach-exynos4/include/mach/sysmmu.h
+@@ -3,44 +3,59 @@
+  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+- * Samsung sysmmu driver for EXYNOS4
++ * Exynos - System MMU Support
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+ */
+ 
+-#ifndef __ASM_ARM_ARCH_SYSMMU_H
+-#define __ASM_ARM_ARCH_SYSMMU_H __FILE__
 -
- static struct clk_lookup lookups[] = {
--	_REGISTER_CLOCK(NULL, "osc_32KHz", osc_32KHz)
--	_REGISTER_CLOCK(NULL, "osc_pll397", osc_pll397)
--	_REGISTER_CLOCK(NULL, "osc_main", osc_main)
--	_REGISTER_CLOCK(NULL, "sys_ck", clk_sys)
--	_REGISTER_CLOCK(NULL, "arm_pll_ck", clk_armpll)
--	_REGISTER_CLOCK(NULL, "ck_pll5", clk_usbpll)
--	_REGISTER_CLOCK(NULL, "hclk_ck", clk_hclk)
--	_REGISTER_CLOCK(NULL, "pclk_ck", clk_pclk)
--	_REGISTER_CLOCK(NULL, "timer0_ck", clk_timer0)
--	_REGISTER_CLOCK(NULL, "timer1_ck", clk_timer1)
--	_REGISTER_CLOCK(NULL, "timer2_ck", clk_timer2)
--	_REGISTER_CLOCK(NULL, "timer3_ck", clk_timer3)
--	_REGISTER_CLOCK(NULL, "vfp9_ck", clk_vfp9)
--	_REGISTER_CLOCK(NULL, "clk_dmac", clk_dma)
--	_REGISTER_CLOCK("pnx4008-watchdog", NULL, clk_wdt)
--	_REGISTER_CLOCK(NULL, "uart3_ck", clk_uart3)
--	_REGISTER_CLOCK(NULL, "uart4_ck", clk_uart4)
--	_REGISTER_CLOCK(NULL, "uart5_ck", clk_uart5)
--	_REGISTER_CLOCK(NULL, "uart6_ck", clk_uart6)
--	_REGISTER_CLOCK("pnx-i2c.0", NULL, clk_i2c0)
--	_REGISTER_CLOCK("pnx-i2c.1", NULL, clk_i2c1)
--	_REGISTER_CLOCK("pnx-i2c.2", NULL, clk_i2c2)
--	_REGISTER_CLOCK("dev:ssp0", NULL, clk_ssp0)
--	_REGISTER_CLOCK("dev:ssp1", NULL, clk_ssp1)
--	_REGISTER_CLOCK("lpc32xx_keys.0", NULL, clk_kscan)
--	_REGISTER_CLOCK("lpc32xx-nand.0", "nand_ck", clk_nand)
--	_REGISTER_CLOCK("tbd", "i2s0_ck", clk_i2s0)
--	_REGISTER_CLOCK("tbd", "i2s1_ck", clk_i2s1)
--	_REGISTER_CLOCK("ts-lpc32xx", NULL, clk_tsc)
--	_REGISTER_CLOCK("dev:mmc0", "MCLK", clk_mmc)
--	_REGISTER_CLOCK("lpc-net.0", NULL, clk_net)
--	_REGISTER_CLOCK("dev:clcd", NULL, clk_lcd)
--	_REGISTER_CLOCK("lpc32xx_udc", "ck_usbd", clk_usbd)
--	_REGISTER_CLOCK("lpc32xx_rtc", NULL, clk_rtc)
-+	CLKDEV_INIT(NULL, "osc_32KHz", &osc_32KHz),
-+	CLKDEV_INIT(NULL, "osc_pll397", &osc_pll397),
-+	CLKDEV_INIT(NULL, "osc_main", &osc_main),
-+	CLKDEV_INIT(NULL, "sys_ck", &clk_sys),
-+	CLKDEV_INIT(NULL, "arm_pll_ck", &clk_armpll),
-+	CLKDEV_INIT(NULL, "ck_pll5", &clk_usbpll),
-+	CLKDEV_INIT(NULL, "hclk_ck", &clk_hclk),
-+	CLKDEV_INIT(NULL, "pclk_ck", &clk_pclk),
-+	CLKDEV_INIT(NULL, "timer0_ck", &clk_timer0),
-+	CLKDEV_INIT(NULL, "timer1_ck", &clk_timer1),
-+	CLKDEV_INIT(NULL, "timer2_ck", &clk_timer2),
-+	CLKDEV_INIT(NULL, "timer3_ck", &clk_timer3),
-+	CLKDEV_INIT(NULL, "vfp9_ck", &clk_vfp9),
-+	CLKDEV_INIT(NULL, "clk_dmac", &clk_dma),
-+	CLKDEV_INIT("pnx4008-watchdog", NULL, &clk_wdt),
-+	CLKDEV_INIT(NULL, "uart3_ck", &clk_uart3),
-+	CLKDEV_INIT(NULL, "uart4_ck", &clk_uart4),
-+	CLKDEV_INIT(NULL, "uart5_ck", &clk_uart5),
-+	CLKDEV_INIT(NULL, "uart6_ck", &clk_uart6),
-+	CLKDEV_INIT("pnx-i2c.0", NULL, &clk_i2c0),
-+	CLKDEV_INIT("pnx-i2c.1", NULL, &clk_i2c1),
-+	CLKDEV_INIT("pnx-i2c.2", NULL, &clk_i2c2),
-+	CLKDEV_INIT("dev:ssp0", NULL, &clk_ssp0),
-+	CLKDEV_INIT("dev:ssp1", NULL, &clk_ssp1),
-+	CLKDEV_INIT("lpc32xx_keys.0", NULL, &clk_kscan),
-+	CLKDEV_INIT("lpc32xx-nand.0", "nand_ck", &clk_nand),
-+	CLKDEV_INIT("tbd", "i2s0_ck", &clk_i2s0),
-+	CLKDEV_INIT("tbd", "i2s1_ck", &clk_i2s1),
-+	CLKDEV_INIT("ts-lpc32xx", NULL, &clk_tsc),
-+	CLKDEV_INIT("dev:mmc0", "MCLK", &clk_mmc),
-+	CLKDEV_INIT("lpc-net.0", NULL, &clk_net),
-+	CLKDEV_INIT("dev:clcd", NULL, &clk_lcd),
-+	CLKDEV_INIT("lpc32xx_udc", "ck_usbd", &clk_usbd),
-+	CLKDEV_INIT("lpc32xx_rtc", NULL, &clk_rtc),
- };
- 
- static int __init clk_init(void)
-diff --git a/arch/arm/mach-mx5/clock-mx51-mx53.c b/arch/arm/mach-mx5/clock-mx51-mx53.c
-index 2b9bd1f..d198515 100644
---- a/arch/arm/mach-mx5/clock-mx51-mx53.c
-+++ b/arch/arm/mach-mx5/clock-mx51-mx53.c
-@@ -1422,97 +1422,90 @@ DEFINE_CLOCK(ipu_di1_clk, 0, MXC_CCM_CCGR6, MXC_CCM_CCGRx_CG6_OFFSET,
- DEFINE_CLOCK(pata_clk, 0, MXC_CCM_CCGR4, MXC_CCM_CCGRx_CG0_OFFSET,
- 		NULL, NULL, &ipg_clk, &spba_clk);
- 
--#define _REGISTER_CLOCK(d, n, c) \
--       { \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c,   \
--       },
+-enum exynos4_sysmmu_ips {
+-	SYSMMU_MDMA,
+-	SYSMMU_SSS,
+-	SYSMMU_FIMC0,
+-	SYSMMU_FIMC1,
+-	SYSMMU_FIMC2,
+-	SYSMMU_FIMC3,
+-	SYSMMU_JPEG,
+-	SYSMMU_FIMD0,
+-	SYSMMU_FIMD1,
+-	SYSMMU_PCIe,
+-	SYSMMU_G2D,
+-	SYSMMU_ROTATOR,
+-	SYSMMU_MDMA2,
+-	SYSMMU_TV,
+-	SYSMMU_MFC_L,
+-	SYSMMU_MFC_R,
+-	EXYNOS4_SYSMMU_TOTAL_IPNUM,
+-};
 -
- static struct clk_lookup mx51_lookups[] = {
- 	/* i.mx51 has the i.mx21 type uart */
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
--	_REGISTER_CLOCK(NULL, "gpt", gpt_clk)
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-+	CLKDEV_INIT(NULL, "gpt", &gpt_clk),
- 	/* i.mx51 has the i.mx27 type fec */
--	_REGISTER_CLOCK("imx27-fec.0", NULL, fec_clk)
--	_REGISTER_CLOCK("mxc_pwm.0", "pwm", pwm1_clk)
--	_REGISTER_CLOCK("mxc_pwm.1", "pwm", pwm2_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
--	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
--	_REGISTER_CLOCK("imx-i2c.2", NULL, hsi2c_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb", usboh3_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb_ahb", usb_ahb_clk)
--	_REGISTER_CLOCK("mxc-ehci.0", "usb_phy1", usb_phy1_clk)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb", usboh3_clk)
--	_REGISTER_CLOCK("mxc-ehci.1", "usb_ahb", usb_ahb_clk)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb", usboh3_clk)
--	_REGISTER_CLOCK("mxc-ehci.2", "usb_ahb", usb_ahb_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb", usboh3_clk)
--	_REGISTER_CLOCK("fsl-usb2-udc", "usb_ahb", ahb_clk)
--	_REGISTER_CLOCK("imx-keypad", NULL, dummy_clk)
--	_REGISTER_CLOCK("mxc_nand", NULL, nfc_clk)
--	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
--	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
--	_REGISTER_CLOCK("imx-ssi.2", NULL, ssi3_clk)
-+	CLKDEV_INIT("imx27-fec.0", NULL, &fec_clk),
-+	CLKDEV_INIT("mxc_pwm.0", "pwm", &pwm1_clk),
-+	CLKDEV_INIT("mxc_pwm.1", "pwm", &pwm2_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-+	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-+	CLKDEV_INIT("imx-i2c.2", NULL, &hsi2c_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb", &usboh3_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb_ahb", &usb_ahb_clk),
-+	CLKDEV_INIT("mxc-ehci.0", "usb_phy1", &usb_phy1_clk),
-+	CLKDEV_INIT("mxc-ehci.1", "usb", &usboh3_clk),
-+	CLKDEV_INIT("mxc-ehci.1", "usb_ahb", &usb_ahb_clk),
-+	CLKDEV_INIT("mxc-ehci.2", "usb", &usboh3_clk),
-+	CLKDEV_INIT("mxc-ehci.2", "usb_ahb", &usb_ahb_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb", &usboh3_clk),
-+	CLKDEV_INIT("fsl-usb2-udc", "usb_ahb", &ahb_clk),
-+	CLKDEV_INIT("imx-keypad", NULL, &dummy_clk),
-+	CLKDEV_INIT("mxc_nand", NULL, &nfc_clk),
-+	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-+	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-+	CLKDEV_INIT("imx-ssi.2", NULL, &ssi3_clk),
- 	/* i.mx51 has the i.mx35 type sdma */
--	_REGISTER_CLOCK("imx35-sdma", NULL, sdma_clk)
--	_REGISTER_CLOCK(NULL, "ckih", ckih_clk)
--	_REGISTER_CLOCK(NULL, "ckih2", ckih2_clk)
--	_REGISTER_CLOCK(NULL, "gpt_32k", gpt_32k_clk)
--	_REGISTER_CLOCK("imx51-ecspi.0", NULL, ecspi1_clk)
--	_REGISTER_CLOCK("imx51-ecspi.1", NULL, ecspi2_clk)
-+	CLKDEV_INIT("imx35-sdma", NULL, &sdma_clk),
-+	CLKDEV_INIT(NULL, "ckih", &ckih_clk),
-+	CLKDEV_INIT(NULL, "ckih2", &ckih2_clk),
-+	CLKDEV_INIT(NULL, "gpt_32k", &gpt_32k_clk),
-+	CLKDEV_INIT("imx51-ecspi.0", NULL, &ecspi1_clk),
-+	CLKDEV_INIT("imx51-ecspi.1", NULL, &ecspi2_clk),
- 	/* i.mx51 has the i.mx35 type cspi */
--	_REGISTER_CLOCK("imx35-cspi.0", NULL, cspi_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx51.0", NULL, esdhc1_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx51.1", NULL, esdhc2_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx51.2", NULL, esdhc3_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx51.3", NULL, esdhc4_clk)
--	_REGISTER_CLOCK(NULL, "cpu_clk", cpu_clk)
--	_REGISTER_CLOCK(NULL, "iim_clk", iim_clk)
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, dummy_clk)
--	_REGISTER_CLOCK("imx2-wdt.1", NULL, dummy_clk)
--	_REGISTER_CLOCK(NULL, "mipi_hsp", mipi_hsp_clk)
--	_REGISTER_CLOCK("imx-ipuv3", NULL, ipu_clk)
--	_REGISTER_CLOCK("imx-ipuv3", "di0", ipu_di0_clk)
--	_REGISTER_CLOCK("imx-ipuv3", "di1", ipu_di1_clk)
--	_REGISTER_CLOCK(NULL, "gpc_dvfs", gpc_dvfs_clk)
--	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
-+	CLKDEV_INIT("imx35-cspi.0", NULL, &cspi_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx51.0", NULL, &esdhc1_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx51.1", NULL, &esdhc2_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx51.2", NULL, &esdhc3_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx51.3", NULL, &esdhc4_clk),
-+	CLKDEV_INIT(NULL, "cpu_clk", &cpu_clk),
-+	CLKDEV_INIT(NULL, "iim_clk", &iim_clk),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &dummy_clk),
-+	CLKDEV_INIT("imx2-wdt.1", NULL, &dummy_clk),
-+	CLKDEV_INIT(NULL, "mipi_hsp", &mipi_hsp_clk),
-+	CLKDEV_INIT("imx-ipuv3", NULL, &ipu_clk),
-+	CLKDEV_INIT("imx-ipuv3", "di0", &ipu_di0_clk),
-+	CLKDEV_INIT("imx-ipuv3", "di1", &ipu_di1_clk),
-+	CLKDEV_INIT(NULL, "gpc_dvfs", &gpc_dvfs_clk),
-+	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
- };
- 
- static struct clk_lookup mx53_lookups[] = {
- 	/* i.mx53 has the i.mx21 type uart */
--	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
--	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
--	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
--	_REGISTER_CLOCK("imx21-uart.3", NULL, uart4_clk)
--	_REGISTER_CLOCK("imx21-uart.4", NULL, uart5_clk)
--	_REGISTER_CLOCK(NULL, "gpt", gpt_clk)
-+	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-+	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-+	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-+	CLKDEV_INIT("imx21-uart.3", NULL, &uart4_clk),
-+	CLKDEV_INIT("imx21-uart.4", NULL, &uart5_clk),
-+	CLKDEV_INIT(NULL, "gpt", &gpt_clk),
- 	/* i.mx53 has the i.mx25 type fec */
--	_REGISTER_CLOCK("imx25-fec.0", NULL, fec_clk)
--	_REGISTER_CLOCK(NULL, "iim_clk", iim_clk)
--	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
--	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
--	_REGISTER_CLOCK("imx-i2c.2", NULL, i2c3_mx53_clk)
-+	CLKDEV_INIT("imx25-fec.0", NULL, &fec_clk),
-+	CLKDEV_INIT(NULL, "iim_clk", &iim_clk),
-+	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-+	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-+	CLKDEV_INIT("imx-i2c.2", NULL, &i2c3_mx53_clk),
- 	/* i.mx53 has the i.mx51 type ecspi */
--	_REGISTER_CLOCK("imx51-ecspi.0", NULL, ecspi1_clk)
--	_REGISTER_CLOCK("imx51-ecspi.1", NULL, ecspi2_clk)
-+	CLKDEV_INIT("imx51-ecspi.0", NULL, &ecspi1_clk),
-+	CLKDEV_INIT("imx51-ecspi.1", NULL, &ecspi2_clk),
- 	/* i.mx53 has the i.mx25 type cspi */
--	_REGISTER_CLOCK("imx35-cspi.0", NULL, cspi_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx53.0", NULL, esdhc1_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx53.1", NULL, esdhc2_mx53_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx53.2", NULL, esdhc3_mx53_clk)
--	_REGISTER_CLOCK("sdhci-esdhc-imx53.3", NULL, esdhc4_mx53_clk)
--	_REGISTER_CLOCK("imx2-wdt.0", NULL, dummy_clk)
--	_REGISTER_CLOCK("imx2-wdt.1", NULL, dummy_clk)
-+	CLKDEV_INIT("imx35-cspi.0", NULL, &cspi_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx53.0", NULL, &esdhc1_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx53.1", NULL, &esdhc2_mx53_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx53.2", NULL, &esdhc3_mx53_clk),
-+	CLKDEV_INIT("sdhci-esdhc-imx53.3", NULL, &esdhc4_mx53_clk),
-+	CLKDEV_INIT("imx2-wdt.0", NULL, &dummy_clk),
-+	CLKDEV_INIT("imx2-wdt.1", NULL, &dummy_clk),
- 	/* i.mx53 has the i.mx35 type sdma */
--	_REGISTER_CLOCK("imx35-sdma", NULL, sdma_clk)
--	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
--	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
--	_REGISTER_CLOCK("imx-ssi.2", NULL, ssi3_clk)
--	_REGISTER_CLOCK("imx-keypad", NULL, dummy_clk)
--	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
-+	CLKDEV_INIT("imx35-sdma", NULL, &sdma_clk),
-+	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-+	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-+	CLKDEV_INIT("imx-ssi.2", NULL, &ssi3_clk),
-+	CLKDEV_INIT("imx-keypad", NULL, &dummy_clk),
-+	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
- };
- 
- static void clk_tree_init(void)
-diff --git a/arch/arm/mach-mxs/clock-mx23.c b/arch/arm/mach-mxs/clock-mx23.c
-index 0163b6d..7714dc2 100644
---- a/arch/arm/mach-mxs/clock-mx23.c
-+++ b/arch/arm/mach-mxs/clock-mx23.c
-@@ -430,32 +430,25 @@ _DEFINE_CLOCK(audio_clk, XTAL, FILT_CLK24M_GATE, &ref_xtal_clk);
- _DEFINE_CLOCK(pwm_clk, XTAL, PWM_CLK24M_GATE, &ref_xtal_clk);
- _DEFINE_CLOCK(clk32k_clk, XTAL, TIMROT_CLK32K_GATE, &ref_xtal_clk);
- 
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
--	},
+-#define S5P_SYSMMU_TOTAL_IPNUM		EXYNOS4_SYSMMU_TOTAL_IPNUM
 -
- static struct clk_lookup lookups[] = {
- 	/* for amba bus driver */
--	_REGISTER_CLOCK("duart", "apb_pclk", xbus_clk)
-+	CLKDEV_INIT("duart", "apb_pclk", &xbus_clk),
- 	/* for amba-pl011 driver */
--	_REGISTER_CLOCK("duart", NULL, uart_clk)
--	_REGISTER_CLOCK("mxs-auart.0", NULL, uart_clk)
--	_REGISTER_CLOCK("rtc", NULL, rtc_clk)
--	_REGISTER_CLOCK("mxs-dma-apbh", NULL, hbus_clk)
--	_REGISTER_CLOCK("mxs-dma-apbx", NULL, xbus_clk)
--	_REGISTER_CLOCK("mxs-mmc.0", NULL, ssp_clk)
--	_REGISTER_CLOCK("mxs-mmc.1", NULL, ssp_clk)
--	_REGISTER_CLOCK(NULL, "usb", usb_clk)
--	_REGISTER_CLOCK(NULL, "audio", audio_clk)
--	_REGISTER_CLOCK("mxs-pwm.0", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.1", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.2", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.3", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.4", NULL, pwm_clk)
--	_REGISTER_CLOCK("imx23-fb", NULL, lcdif_clk)
-+	CLKDEV_INIT("duart", NULL, &uart_clk),
-+	CLKDEV_INIT("mxs-auart.0", NULL, &uart_clk),
-+	CLKDEV_INIT("rtc", NULL, &rtc_clk),
-+	CLKDEV_INIT("mxs-dma-apbh", NULL, &hbus_clk),
-+	CLKDEV_INIT("mxs-dma-apbx", NULL, &xbus_clk),
-+	CLKDEV_INIT("mxs-mmc.0", NULL, &ssp_clk),
-+	CLKDEV_INIT("mxs-mmc.1", NULL, &ssp_clk),
-+	CLKDEV_INIT(NULL, "usb", &usb_clk),
-+	CLKDEV_INIT(NULL, "audio", &audio_clk),
-+	CLKDEV_INIT("mxs-pwm.0", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.1", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.2", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.3", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.4", NULL, &pwm_clk),
-+	CLKDEV_INIT("imx23-fb", NULL, &lcdif_clk),
- };
- 
- static int clk_misc_init(void)
-diff --git a/arch/arm/mach-mxs/clock-mx28.c b/arch/arm/mach-mxs/clock-mx28.c
-index 7b28c2a..1c5c929 100644
---- a/arch/arm/mach-mxs/clock-mx28.c
-+++ b/arch/arm/mach-mxs/clock-mx28.c
-@@ -604,48 +604,41 @@ _DEFINE_CLOCK(clk32k_clk, XTAL, TIMROT_CLK32K_GATE, &ref_xtal_clk);
- _DEFINE_CLOCK(spdif_clk, SPDIF, CLKGATE, &pll0_clk);
- _DEFINE_CLOCK(fec_clk, ENET, DISABLE, &hbus_clk);
- 
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
--	},
+-extern const char *sysmmu_ips_name[EXYNOS4_SYSMMU_TOTAL_IPNUM];
 -
- static struct clk_lookup lookups[] = {
- 	/* for amba bus driver */
--	_REGISTER_CLOCK("duart", "apb_pclk", xbus_clk)
-+	CLKDEV_INIT("duart", "apb_pclk", &xbus_clk),
- 	/* for amba-pl011 driver */
--	_REGISTER_CLOCK("duart", NULL, uart_clk)
--	_REGISTER_CLOCK("imx28-fec.0", NULL, fec_clk)
--	_REGISTER_CLOCK("imx28-fec.1", NULL, fec_clk)
--	_REGISTER_CLOCK("mxs-auart.0", NULL, uart_clk)
--	_REGISTER_CLOCK("mxs-auart.1", NULL, uart_clk)
--	_REGISTER_CLOCK("mxs-auart.2", NULL, uart_clk)
--	_REGISTER_CLOCK("mxs-auart.3", NULL, uart_clk)
--	_REGISTER_CLOCK("mxs-auart.4", NULL, uart_clk)
--	_REGISTER_CLOCK("rtc", NULL, rtc_clk)
--	_REGISTER_CLOCK("pll2", NULL, pll2_clk)
--	_REGISTER_CLOCK("mxs-dma-apbh", NULL, hbus_clk)
--	_REGISTER_CLOCK("mxs-dma-apbx", NULL, xbus_clk)
--	_REGISTER_CLOCK("mxs-mmc.0", NULL, ssp0_clk)
--	_REGISTER_CLOCK("mxs-mmc.1", NULL, ssp1_clk)
--	_REGISTER_CLOCK("flexcan.0", NULL, can0_clk)
--	_REGISTER_CLOCK("flexcan.1", NULL, can1_clk)
--	_REGISTER_CLOCK(NULL, "usb0", usb0_clk)
--	_REGISTER_CLOCK(NULL, "usb1", usb1_clk)
--	_REGISTER_CLOCK("mxs-pwm.0", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.1", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.2", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.3", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.4", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.5", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.6", NULL, pwm_clk)
--	_REGISTER_CLOCK("mxs-pwm.7", NULL, pwm_clk)
--	_REGISTER_CLOCK(NULL, "lradc", lradc_clk)
--	_REGISTER_CLOCK(NULL, "spdif", spdif_clk)
--	_REGISTER_CLOCK("imx28-fb", NULL, lcdif_clk)
--	_REGISTER_CLOCK("mxs-saif.0", NULL, saif0_clk)
--	_REGISTER_CLOCK("mxs-saif.1", NULL, saif1_clk)
-+	CLKDEV_INIT("duart", NULL, &uart_clk),
-+	CLKDEV_INIT("imx28-fec.0", NULL, &fec_clk),
-+	CLKDEV_INIT("imx28-fec.1", NULL, &fec_clk),
-+	CLKDEV_INIT("mxs-auart.0", NULL, &uart_clk),
-+	CLKDEV_INIT("mxs-auart.1", NULL, &uart_clk),
-+	CLKDEV_INIT("mxs-auart.2", NULL, &uart_clk),
-+	CLKDEV_INIT("mxs-auart.3", NULL, &uart_clk),
-+	CLKDEV_INIT("mxs-auart.4", NULL, &uart_clk),
-+	CLKDEV_INIT("rtc", NULL, &rtc_clk),
-+	CLKDEV_INIT("pll2", NULL, &pll2_clk),
-+	CLKDEV_INIT("mxs-dma-apbh", NULL, &hbus_clk),
-+	CLKDEV_INIT("mxs-dma-apbx", NULL, &xbus_clk),
-+	CLKDEV_INIT("mxs-mmc.0", NULL, &ssp0_clk),
-+	CLKDEV_INIT("mxs-mmc.1", NULL, &ssp1_clk),
-+	CLKDEV_INIT("flexcan.0", NULL, &can0_clk),
-+	CLKDEV_INIT("flexcan.1", NULL, &can1_clk),
-+	CLKDEV_INIT(NULL, "usb0", &usb0_clk),
-+	CLKDEV_INIT(NULL, "usb1", &usb1_clk),
-+	CLKDEV_INIT("mxs-pwm.0", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.1", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.2", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.3", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.4", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.5", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.6", NULL, &pwm_clk),
-+	CLKDEV_INIT("mxs-pwm.7", NULL, &pwm_clk),
-+	CLKDEV_INIT(NULL, "lradc", &lradc_clk),
-+	CLKDEV_INIT(NULL, "spdif", &spdif_clk),
-+	CLKDEV_INIT("imx28-fb", NULL, &lcdif_clk),
-+	CLKDEV_INIT("mxs-saif.0", NULL, &saif0_clk),
-+	CLKDEV_INIT("mxs-saif.1", NULL, &saif1_clk),
- };
- 
- static int clk_misc_init(void)
-diff --git a/arch/arm/mach-tcc8k/clock.c b/arch/arm/mach-tcc8k/clock.c
-index e7cdae5..6b3dd06 100644
---- a/arch/arm/mach-tcc8k/clock.c
-+++ b/arch/arm/mach-tcc8k/clock.c
-@@ -468,64 +468,57 @@ DEFINE_BCLOCK(gdma2, BCLKCTR1, 17, NULL, NULL)
- DEFINE_BCLOCK(gdma3, BCLKCTR1, 18, NULL, NULL)
- DEFINE_BCLOCK(ddrc, BCLKCTR1, 19, NULL, NULL)
- 
--#define _REGISTER_CLOCK(d, n, c) \
--	{ \
--		.dev_id = d, \
--		.con_id = n, \
--		.clk = &c, \
--	},
+-typedef enum exynos4_sysmmu_ips sysmmu_ips;
 -
- static struct clk_lookup lookups[] = {
--	_REGISTER_CLOCK(NULL, "bus", bus)
--	_REGISTER_CLOCK(NULL, "cpu", cpu)
--	_REGISTER_CLOCK(NULL, "tct", tct)
--	_REGISTER_CLOCK(NULL, "tcx", tcx)
--	_REGISTER_CLOCK(NULL, "tcz", tcz)
--	_REGISTER_CLOCK(NULL, "ref", ref)
--	_REGISTER_CLOCK(NULL, "dai0", dai0)
--	_REGISTER_CLOCK(NULL, "pic", pic)
--	_REGISTER_CLOCK(NULL, "tc", tc)
--	_REGISTER_CLOCK(NULL, "gpio", gpio)
--	_REGISTER_CLOCK(NULL, "usbd", usbd)
--	_REGISTER_CLOCK("tcc-uart.0", NULL, uart0)
--	_REGISTER_CLOCK("tcc-uart.2", NULL, uart2)
--	_REGISTER_CLOCK("tcc-i2c", NULL, i2c)
--	_REGISTER_CLOCK("tcc-uart.3", NULL, uart3)
--	_REGISTER_CLOCK(NULL, "ecc", ecc)
--	_REGISTER_CLOCK(NULL, "adc", adc)
--	_REGISTER_CLOCK("tcc-usbh.0", "usb", usbh0)
--	_REGISTER_CLOCK(NULL, "gdma0", gdma0)
--	_REGISTER_CLOCK(NULL, "lcd", lcd)
--	_REGISTER_CLOCK(NULL, "rtc", rtc)
--	_REGISTER_CLOCK(NULL, "nfc", nfc)
--	_REGISTER_CLOCK("tcc-mmc.0", NULL, sd0)
--	_REGISTER_CLOCK(NULL, "g2d", g2d)
--	_REGISTER_CLOCK(NULL, "gdma1", gdma1)
--	_REGISTER_CLOCK("tcc-uart.1", NULL, uart1)
--	_REGISTER_CLOCK("tcc-spi.0", NULL, spi0)
--	_REGISTER_CLOCK(NULL, "mscl", mscl)
--	_REGISTER_CLOCK("tcc-spi.1", NULL, spi1)
--	_REGISTER_CLOCK(NULL, "bdma", bdma)
--	_REGISTER_CLOCK(NULL, "adma0", adma0)
--	_REGISTER_CLOCK(NULL, "spdif", spdif)
--	_REGISTER_CLOCK(NULL, "scfg", scfg)
--	_REGISTER_CLOCK(NULL, "cid", cid)
--	_REGISTER_CLOCK("tcc-mmc.1", NULL, sd1)
--	_REGISTER_CLOCK("tcc-uart.4", NULL, uart4)
--	_REGISTER_CLOCK(NULL, "dai1", dai1)
--	_REGISTER_CLOCK(NULL, "adma1", adma1)
--	_REGISTER_CLOCK(NULL, "c3dec", c3dec)
--	_REGISTER_CLOCK("tcc-can.0", NULL, can0)
--	_REGISTER_CLOCK("tcc-can.1", NULL, can1)
--	_REGISTER_CLOCK(NULL, "gps", gps)
--	_REGISTER_CLOCK("tcc-gsb.0", NULL, gsb0)
--	_REGISTER_CLOCK("tcc-gsb.1", NULL, gsb1)
--	_REGISTER_CLOCK("tcc-gsb.2", NULL, gsb2)
--	_REGISTER_CLOCK("tcc-gsb.3", NULL, gsb3)
--	_REGISTER_CLOCK(NULL, "gdma2", gdma2)
--	_REGISTER_CLOCK(NULL, "gdma3", gdma3)
--	_REGISTER_CLOCK(NULL, "ddrc", ddrc)
--	_REGISTER_CLOCK("tcc-usbh.1", "usb", usbh1)
-+	CLKDEV_INIT(NULL, "bus", &bus),
-+	CLKDEV_INIT(NULL, "cpu", &cpu),
-+	CLKDEV_INIT(NULL, "tct", &tct),
-+	CLKDEV_INIT(NULL, "tcx", &tcx),
-+	CLKDEV_INIT(NULL, "tcz", &tcz),
-+	CLKDEV_INIT(NULL, "ref", &ref),
-+	CLKDEV_INIT(NULL, "dai0", &dai0),
-+	CLKDEV_INIT(NULL, "pic", &pic),
-+	CLKDEV_INIT(NULL, "tc", &tc),
-+	CLKDEV_INIT(NULL, "gpio", &gpio),
-+	CLKDEV_INIT(NULL, "usbd", &usbd),
-+	CLKDEV_INIT("tcc-uart.0", NULL, &uart0),
-+	CLKDEV_INIT("tcc-uart.2", NULL, &uart2),
-+	CLKDEV_INIT("tcc-i2c", NULL, &i2c),
-+	CLKDEV_INIT("tcc-uart.3", NULL, &uart3),
-+	CLKDEV_INIT(NULL, "ecc", &ecc),
-+	CLKDEV_INIT(NULL, "adc", &adc),
-+	CLKDEV_INIT("tcc-usbh.0", "usb", &usbh0),
-+	CLKDEV_INIT(NULL, "gdma0", &gdma0),
-+	CLKDEV_INIT(NULL, "lcd", &lcd),
-+	CLKDEV_INIT(NULL, "rtc", &rtc),
-+	CLKDEV_INIT(NULL, "nfc", &nfc),
-+	CLKDEV_INIT("tcc-mmc.0", NULL, &sd0),
-+	CLKDEV_INIT(NULL, "g2d", &g2d),
-+	CLKDEV_INIT(NULL, "gdma1", &gdma1),
-+	CLKDEV_INIT("tcc-uart.1", NULL, &uart1),
-+	CLKDEV_INIT("tcc-spi.0", NULL, &spi0),
-+	CLKDEV_INIT(NULL, "mscl", &mscl),
-+	CLKDEV_INIT("tcc-spi.1", NULL, &spi1),
-+	CLKDEV_INIT(NULL, "bdma", &bdma),
-+	CLKDEV_INIT(NULL, "adma0", &adma0),
-+	CLKDEV_INIT(NULL, "spdif", &spdif),
-+	CLKDEV_INIT(NULL, "scfg", &scfg),
-+	CLKDEV_INIT(NULL, "cid", &cid),
-+	CLKDEV_INIT("tcc-mmc.1", NULL, &sd1),
-+	CLKDEV_INIT("tcc-uart.4", NULL, &uart4),
-+	CLKDEV_INIT(NULL, "dai1", &dai1),
-+	CLKDEV_INIT(NULL, "adma1", &adma1),
-+	CLKDEV_INIT(NULL, "c3dec", &c3dec),
-+	CLKDEV_INIT("tcc-can.0", NULL, &can0),
-+	CLKDEV_INIT("tcc-can.1", NULL, &can1),
-+	CLKDEV_INIT(NULL, "gps", &gps),
-+	CLKDEV_INIT("tcc-gsb.0", NULL, &gsb0),
-+	CLKDEV_INIT("tcc-gsb.1", NULL, &gsb1),
-+	CLKDEV_INIT("tcc-gsb.2", NULL, &gsb2),
-+	CLKDEV_INIT("tcc-gsb.3", NULL, &gsb3),
-+	CLKDEV_INIT(NULL, "gdma2", &gdma2),
-+	CLKDEV_INIT(NULL, "gdma3", &gdma3),
-+	CLKDEV_INIT(NULL, "ddrc", &ddrc),
-+	CLKDEV_INIT("tcc-usbh.1", "usb", &usbh1),
- };
+-void sysmmu_clk_init(struct device *dev, sysmmu_ips ips);
+-void sysmmu_clk_enable(sysmmu_ips ips);
+-void sysmmu_clk_disable(sysmmu_ips ips);
+-
+-#endif /* __ASM_ARM_ARCH_SYSMMU_H */
++#ifndef _ARM_MACH_EXYNOS_SYSMMU_H_
++#define _ARM_MACH_EXYNOS_SYSMMU_H_
++
++#include <linux/device.h>
++
++#define SYSMMU_DEVNAME_BASE "s5p-sysmmu"
++#define SYSMMU_CLOCK_NAME(ipname, id) SYSMMU_DEVNAME_BASE "." #id
++
++#ifdef CONFIG_EXYNOS4_DEV_SYSMMU
++
++#define SYSMMU_PLATDEV(ipname) exynos_device_sysmmu_##ipname
++
++#ifdef CONFIG_EXYNOS4_DEV_PD
++#define ASSIGN_SYSMMU_POWERDOMAIN(ipname, powerdomain) \
++		SYSMMU_PLATDEV(mfc_l).dev.parent = powerdomain
++#else
++#define ASSIGN_SYSMMU_POWERDOMAIN(ipname, powerdomain) do { } while (0)
++#endif
++
++extern struct platform_device SYSMMU_PLATDEV(sss);
++extern struct platform_device SYSMMU_PLATDEV(fimc0);
++extern struct platform_device SYSMMU_PLATDEV(fimc1);
++extern struct platform_device SYSMMU_PLATDEV(fimc2);
++extern struct platform_device SYSMMU_PLATDEV(fimc3);
++extern struct platform_device SYSMMU_PLATDEV(jpeg);
++extern struct platform_device SYSMMU_PLATDEV(fimd0);
++extern struct platform_device SYSMMU_PLATDEV(fimd1);
++extern struct platform_device SYSMMU_PLATDEV(pcie);
++extern struct platform_device SYSMMU_PLATDEV(g2d);
++extern struct platform_device SYSMMU_PLATDEV(rot);
++extern struct platform_device SYSMMU_PLATDEV(mdma);
++extern struct platform_device SYSMMU_PLATDEV(tv);
++extern struct platform_device SYSMMU_PLATDEV(mfc_l);
++extern struct platform_device SYSMMU_PLATDEV(mfc_r);
++extern struct platform_device SYSMMU_PLATDEV(g2d_acp);
++
++static inline void sysmmu_set_owner(struct device *sysmmu, struct device *owner)
++{
++	sysmmu->platform_data = owner;
++}
++
++#else /* CONFIG_EXYNOS4_DEV_SYSMMU */
++
++#define sysmmu_set_owner(sysmmu, owner) do { } while (0)
++#define ASSIGN_SYSMMU_POWERDOMAIN(ipname, powerdomain) do { } while (0)
++
++#endif /* CONFIG_EXYNOS4_DEV_SYSMMU */
++
++#endif /* _ARM_MACH_EXYNOS_SYSMMU_H_ */
+diff --git a/arch/arm/mach-exynos4/mach-armlex4210.c b/arch/arm/mach-exynos4/mach-armlex4210.c
+index b482c62..d7d2ff5 100644
+--- a/arch/arm/mach-exynos4/mach-armlex4210.c
++++ b/arch/arm/mach-exynos4/mach-armlex4210.c
+@@ -155,7 +155,23 @@ static struct platform_device *armlex4210_devices[] __initdata = {
+ 	&s3c_device_hsmmc3,
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
+-	&exynos4_device_sysmmu,
++#ifdef CONFIG_EXYNOS4_DEV_SYSMMU
++	&SYSMMU_PLATDEV(sss),
++	&SYSMMU_PLATDEV(fimc0),
++	&SYSMMU_PLATDEV(fimc1),
++	&SYSMMU_PLATDEV(fimc2),
++	&SYSMMU_PLATDEV(fimc3),
++	&SYSMMU_PLATDEV(jpeg),
++	&SYSMMU_PLATDEV(fimd0),
++	&SYSMMU_PLATDEV(fimd1),
++	&SYSMMU_PLATDEV(pcie),
++	&SYSMMU_PLATDEV(g2d),
++	&SYSMMU_PLATDEV(rot),
++	&SYSMMU_PLATDEV(mdma),
++	&SYSMMU_PLATDEV(tv),
++	&SYSMMU_PLATDEV(mfc_l),
++	&SYSMMU_PLATDEV(mfc_r),
++#endif
+ 	&samsung_asoc_dma,
+ 	&armlex4210_smsc911x,
+ 	&exynos4_device_ahci,
+@@ -193,6 +209,10 @@ static void __init armlex4210_map_io(void)
+ 			   ARRAY_SIZE(armlex4210_uartcfgs));
+ }
  
- static struct clk *root_clk_by_index(enum root_clks src)
++static void __init sysmmu_init(void)
++{
++}
++
+ static void __init armlex4210_machine_init(void)
+ {
+ 	armlex4210_smsc911x_init();
+@@ -201,6 +221,8 @@ static void __init armlex4210_machine_init(void)
+ 
+ 	armlex4210_wlan_init();
+ 
++	sysmmu_init();
++
+ 	platform_add_devices(armlex4210_devices,
+ 			     ARRAY_SIZE(armlex4210_devices));
+ }
+diff --git a/arch/arm/mach-exynos4/mach-smdkv310.c b/arch/arm/mach-exynos4/mach-smdkv310.c
+index cec2afa..341ee39 100644
+--- a/arch/arm/mach-exynos4/mach-smdkv310.c
++++ b/arch/arm/mach-exynos4/mach-smdkv310.c
+@@ -42,6 +42,7 @@
+ #include <plat/clock.h>
+ 
+ #include <mach/map.h>
++#include <mach/sysmmu.h>
+ 
+ /* Following are default values for UCON, ULCON and UFCON UART registers */
+ #define SMDKV310_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+@@ -273,7 +274,23 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&exynos4_device_pd[PD_TV],
+ 	&exynos4_device_pd[PD_GPS],
+ 	&exynos4_device_spdif,
+-	&exynos4_device_sysmmu,
++#ifdef CONFIG_S5P_SYSTEM_MMU
++	&SYSMMU_PLATDEV(sss),
++	&SYSMMU_PLATDEV(fimc0),
++	&SYSMMU_PLATDEV(fimc1),
++	&SYSMMU_PLATDEV(fimc2),
++	&SYSMMU_PLATDEV(fimc3),
++	&SYSMMU_PLATDEV(jpeg),
++	&SYSMMU_PLATDEV(fimd0),
++	&SYSMMU_PLATDEV(fimd1),
++	&SYSMMU_PLATDEV(pcie),
++	&SYSMMU_PLATDEV(g2d),
++	&SYSMMU_PLATDEV(rot),
++	&SYSMMU_PLATDEV(mdma),
++	&SYSMMU_PLATDEV(tv),
++	&SYSMMU_PLATDEV(mfc_l),
++	&SYSMMU_PLATDEV(mfc_r),
++#endif
+ 	&samsung_asoc_dma,
+ 	&samsung_asoc_idma,
+ 	&s5p_device_fimd0,
+@@ -342,6 +359,13 @@ static void __init smdkv310_reserve(void)
+ 	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+ }
+ 
++static void __init sysmmu_init(void)
++{
++	ASSIGN_SYSMMU_POWERDOMAIN(mfc, &exynos4_device_pd[PD_MFC].dev);
++	sysmmu_set_owner(&SYSMMU_PLATDEV(mfc_l).dev, &s5p_device_mfc.dev);
++	sysmmu_set_owner(&SYSMMU_PLATDEV(mfc_r).dev, &s5p_device_mfc.dev);
++}
++
+ static void __init smdkv310_machine_init(void)
+ {
+ 	s3c_i2c1_set_platdata(NULL);
+@@ -365,6 +389,8 @@ static void __init smdkv310_machine_init(void)
+ 	smdkv310_ehci_init();
+ 	clk_xusbxti.rate = 24000000;
+ 
++	sysmmu_init();
++
+ 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
+ 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+ }
 -- 
-1.7.4.4
+1.7.1
