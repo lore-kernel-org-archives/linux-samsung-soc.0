@@ -1,42 +1,51 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v2 5/5] iommu/exynos: Use bus_set_iommu instead of
-	register_iommu
-Date: Fri, 7 Oct 2011 13:37:01 +0200
-Message-ID: <20111007113701.GC1512@8bytes.org>
-References: <017001cc7f43$04a2db60$0de89220$%kim@samsung.com>
-	<20110930134643.GS2138@amd.com>
-	<CAHQjnOPiAOA_RiHnF-aVEYnWcdkwNzVD1BTNua+-ztZrW_+6_A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <CAHQjnOPiAOA_RiHnF-aVEYnWcdkwNzVD1BTNua+-ztZrW_+6_A@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "Roedel, Joerg" <Joerg.Roedel@amd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sanghyun Lee <sanghyun75.lee@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Enable regulator support for HDMI on Origen
+Date: Fri,  7 Oct 2011 17:15:36 +0530
+Message-ID: <1317987936-4461-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:63926 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752427Ab1JGLuc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Oct 2011 07:50:32 -0400
+Received: by qyk30 with SMTP id 30so451809qyk.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 04:50:31 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org, sachin.kamat@linaro.org
 
-On Sat, Oct 01, 2011 at 08:52:45AM +0900, KyongHo Cho wrote:
-> On Fri, Sep 30, 2011 at 10:46 PM, Roedel, Joerg <Joerg.Roedel@amd.com> wrote:
-> > On Fri, Sep 30, 2011 at 03:31:49AM -0400, Kukjin Kim wrote:
-> >> From: KyongHo Cho <pullip.cho@samsung.com>
-> >>
-> >> This replaces register_iommu() with bus_set_iommu() according to the
-> >> suggestion of Joerg Roedel.
-> >
-> > This should be part of patch 3 already when the bus_set_iommu() change
-> > is merged. Otherwise it breaks bisectability too.
-> >
-> Ok.
-> Should I include fault handling feature (patch 4) in the patch 3 also?
+This patch enables the regulators for HDMI on Origen board.
 
-Yes, makes sense to include patch 4 too.
+Since the DC5V line is connected directly to the HDMI connector,
+"hdmi-en" regulator would become a dummy regulator on origen board
+(by defining REGULATOR_DUMMY in the kernel config file).
+
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos4/mach-origen.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index 18909cf..39d8d4e 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -89,6 +89,8 @@ static struct s3c2410_uartcfg origen_uartcfgs[] __initdata = {
+ 
+ static struct regulator_consumer_supply __initdata ldo3_consumer[] = {
+ 	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
++	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"), /* HDMI */
++	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"), /* HDMI */
+ };
+ static struct regulator_consumer_supply __initdata ldo6_consumer[] = {
+ 	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"), /* MIPI */
+@@ -98,6 +100,7 @@ static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
+ };
+ static struct regulator_consumer_supply __initdata ldo8_consumer[] = {
+ 	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* ADC */
++	REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"), /* HDMI */
+ };
+ static struct regulator_consumer_supply __initdata ldo9_consumer[] = {
+ 	REGULATOR_SUPPLY("dvdd", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT */
+-- 
+1.7.4.1
