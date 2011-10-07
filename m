@@ -1,41 +1,42 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Register power domains on Origen.
-Date: Fri,  7 Oct 2011 16:57:33 +0530
-Message-ID: <1317986853-21631-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:62234 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965375Ab1JGLc3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Oct 2011 07:32:29 -0400
-Received: by pzk1 with SMTP id 1so9385121pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 04:32:28 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH v2 5/5] iommu/exynos: Use bus_set_iommu instead of
+	register_iommu
+Date: Fri, 7 Oct 2011 13:37:01 +0200
+Message-ID: <20111007113701.GC1512@8bytes.org>
+References: <017001cc7f43$04a2db60$0de89220$%kim@samsung.com>
+	<20110930134643.GS2138@amd.com>
+	<CAHQjnOPiAOA_RiHnF-aVEYnWcdkwNzVD1BTNua+-ztZrW_+6_A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAHQjnOPiAOA_RiHnF-aVEYnWcdkwNzVD1BTNua+-ztZrW_+6_A@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "Roedel, Joerg" <Joerg.Roedel@amd.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>, Sanghyun Lee <sanghyun75.lee@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, sachin.kamat@linaro.org
 
-This patch registers all the available power domains on Origen.
+On Sat, Oct 01, 2011 at 08:52:45AM +0900, KyongHo Cho wrote:
+> On Fri, Sep 30, 2011 at 10:46 PM, Roedel, Joerg <Joerg.Roedel@amd.com> wrote:
+> > On Fri, Sep 30, 2011 at 03:31:49AM -0400, Kukjin Kim wrote:
+> >> From: KyongHo Cho <pullip.cho@samsung.com>
+> >>
+> >> This replaces register_iommu() with bus_set_iommu() according to the
+> >> suggestion of Joerg Roedel.
+> >
+> > This should be part of patch 3 already when the bus_set_iommu() change
+> > is merged. Otherwise it breaks bisectability too.
+> >
+> Ok.
+> Should I include fault handling feature (patch 4) in the patch 3 also?
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos4/mach-origen.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index 18909cf..35b12d7 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -601,6 +601,10 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&s5p_device_mixer,
- 	&exynos4_device_pd[PD_LCD0],
- 	&exynos4_device_pd[PD_TV],
-+	&exynos4_device_pd[PD_G3D],
-+	&exynos4_device_pd[PD_LCD1],
-+	&exynos4_device_pd[PD_CAM],
-+	&exynos4_device_pd[PD_GPS],
- 	&origen_device_gpiokeys,
- 	&origen_lcd_hv070wsa,
- };
--- 
-1.7.4.1
+Yes, makes sense to include patch 4 too.
