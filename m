@@ -1,54 +1,162 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 1/2] ARM: EXYNOS4: Change System MMU device	definition
-Date: Fri, 07 Oct 2011 19:42:22 +0900
-Message-ID: <01eb01cc84dd$cb740940$625c1bc0$%kim@samsung.com>
-References: <01e001cc84d7$5e0b84b0$1a228e10$%kim@samsung.com>
-	<20111007102754.GF21464@n2100.arm.linux.org.uk>
+Subject: RE: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
+Date: Fri, 07 Oct 2011 19:54:29 +0900
+Message-ID: <01ed01cc84df$7d105ea0$77311be0$%kim@samsung.com>
+References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
+ <1308555258-4322-6-git-send-email-chaos.youn@samsung.com>
+ <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
+ <4E8D645D.4020601@arm.com> <4E8ECA1B.5010005@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20111007102754.GF21464@n2100.arm.linux.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:63909 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759767Ab1JGKyb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Oct 2011 06:54:31 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSO00407ZLXPLD0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 19:54:30 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSO007BSZMT2660@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 07 Oct 2011 19:54:29 +0900 (KST)
+In-reply-to: <4E8ECA1B.5010005@arm.com>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: 'Ohad Ben-Cohen' <ohad@wizery.com>, linux-samsung-soc@vger.kernel.org, joerg.roedel@amd.com, linux-kernel@vger.kernel.org, younglak1004.kim@samsung.com, iommu@lists.linux-foundation.org, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marc Zyngier' <marc.zyngier@arm.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Will Deacon' <Will.Deacon@arm.com>, ben-linux@fluff.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Changhwan Youn' <chaos.youn@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Russell King - ARM Linux wrote:
+Marc Zyngier wrote:
 > 
-> On Fri, Oct 07, 2011 at 06:56:21PM +0900, Kukjin Kim wrote:
-> > +#define SYSMMU_RESOURCE(ipname, base, irq) \
-> > +static struct resource sysmmu_resource_##ipname[] =\
-> > +{\
-> > +	{\
-> > +		.start	= EXYNOS4_PA_SYSMMU_##base,\
-> > +		.end	= EXYNOS4_PA_SYSMMU_##base + SZ_4K - 1,\
-> > +		.flags	= IORESOURCE_MEM,\
-> > +	}, {\
-> > +		.start	= IRQ_SYSMMU_##irq##_0,\
-> > +		.end	= IRQ_SYSMMU_##irq##_0,\
-> > +		.flags	= IORESOURCE_IRQ,\
-> > +	},\
-> >  }
+> On 06/10/11 09:18, Marc Zyngier wrote:
+> > On 06/10/11 07:30, Kukjin Kim wrote:
+> >> Marc Zyngier wrote:
+> >>>
+> >>> Hi Changhwan,
+> >>>
+> >> Hi Marc,
+> >>
+> >> (Cc'ed Will Deacon and Russell King)
+> >>
+> >>> On 20/06/11 08:34, Changhwan Youn wrote:
+> >>>> For full support of power modes, this patch adds implementation
+> >>>> external GIC on EXYNOS4.
+> >>>>
+> >>>> External GIC of Exynos4 cannot support register banking so
+> >>>> several interrupt related code for CPU1 should be different
+> >>>> from that of CPU0.
+> >>>
+> >>> I just realized that patch has made it to mainline... Unfortunately,
+it
+> >>> seems quite broken to me:
+> >>>
+> >>>> Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+> >>>> ---
+> >>>>  arch/arm/mach-exynos4/cpu.c                      |   10 ++++++++
+> >>>>  arch/arm/mach-exynos4/include/mach/entry-macro.S |    5 ++++
+> >>>>  arch/arm/mach-exynos4/include/mach/map.h         |    1 +
+> >>>>  arch/arm/mach-exynos4/platsmp.c                  |   27
+> >>> +++++++++++++++++++++-
+> >>>>  4 files changed, 42 insertions(+), 1 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/arm/mach-exynos4/cpu.c
+b/arch/arm/mach-exynos4/cpu.c
+> >>>> index fa33294..40a866c 100644
+> >>>> --- a/arch/arm/mach-exynos4/cpu.c
+> >>>> +++ b/arch/arm/mach-exynos4/cpu.c
+> >>>> @@ -16,6 +16,7 @@
+> >>>>
+> >>>>  #include <asm/proc-fns.h>
+> >>>>  #include <asm/hardware/cache-l2x0.h>
+> >>>> +#include <asm/hardware/gic.h>
+> >>>>
+> >>>>  #include <plat/cpu.h>
+> >>>>  #include <plat/clock.h>
+> >>>> @@ -159,11 +160,20 @@ void __init exynos4_init_clocks(int xtal)
+> >>>>  	exynos4_setup_clocks();
+> >>>>  }
+> >>>>
+> >>>> +static void exynos4_gic_irq_eoi(struct irq_data *d)
+> >>>> +{
+> >>>> +	struct gic_chip_data *gic_data =
+irq_data_get_irq_chip_data(d);
+> >>>> +
+> >>>> +	gic_data->cpu_base = S5P_VA_GIC_CPU +
+> >>>> +			    (EXYNOS4_GIC_BANK_OFFSET *
+> >>> smp_processor_id());
+> >>>
+> >>> Here, you're overwriting a field that is shared among *all* the
+> >>> interrupts in the system.  What if an interrupt comes up on another
+CPU?
+> >>> If you look at the implementation of gic_eoi_irq(), you'll definitely
+> >>> see the race.
+> >>>
+> >> Hmm...as you can see in git log, the EXYNOS4210 cannot support register
+> >> banking in GIC so this is needed.
+> >
+> > I don't dispute the need. I claim that the implementation is wrong, and
+> > will fail given the right timings.
+> >
+> >>>> +}
+> >>>> +
+> >>>>  void __init exynos4_init_irq(void)
+> >>>>  {
+> >>>>  	int irq;
+> >>>>
+> >>>>  	gic_init(0, IRQ_LOCALTIMER, S5P_VA_GIC_DIST,
+S5P_VA_GIC_CPU);
+> >>>> +	gic_arch_extn.irq_eoi = exynos4_gic_irq_eoi;
+> >>>
+> >>> And here you're abusing the GIC extension feature.
+> >>>
+> >> I think gic_arch_extn.irq_eoi can be overwritten in each architecture
+to
+> >> support own specific extensions like in the EXYNOS4 case.
+> >
+> > Sure. My point is you are diverting the GIC extension from its purpose,
+> > which is mostly to be able to control wake-up sources (as for example in
+> > the Tegra case). Here, you use this hooks to work around the fact that
+> > the GIC driver is written with banking in mind, which is quite a
+> > different thing.
+> >
+> >>> I've also had a look at -next, and this has been extended further to
+> >>> support 4412. The problem with that is without banking, you're
+painfully
+> >>> working around the GIC driver. At that stage, I wonder if you wouldn't
+> >>> be better off with a separate driver instead of abusing the existing
+> >> one...
+> >>>
+> >> Well, in this case, you mean separate driver is better to us even
+though
+> >> there is a gic driver in arch/arm/common? I don't think so because
+separate
+> >> driver will probably have many duplicated codes and if common gic
+driver can
+> >> support every silicons which have different version's gic it's better
+to us
+> >> and should do.
+> >
+> > If you really insist on using the GIC common code, then I'd suggest to
+> > adapt it to your needs instead of working around the problem.
+> > What about making cpu_base a percpu field inside struct gic_chip_data?
+> > No hook abuse, and no race conditions. You could also do that for
+> > dist_base, as it looks to be required for the 4412.
 > 
-> #define SYSMMU_RESOURCE(ipname, base, irq) \
-> static struct resource sysmmu_resource_##ipname[] = \
-> { \
-> 	DEFINE_RES_MEM(EXYNOS4_PA_SYSMMU_##base, SZ_4K), \
-> 	DEFINE_RES_IRQ(IRQ_SYSMMU_##irq##_0), \
-> }
+> So to make my suggestion completely clear, here's a patch I'm now
+> carrying in my tree. It's only been test compiled on EXYNOS4, but works
+> nicely on my 11MP. It turns both dist_base and cpu_base into per-cpu
+> variables, removes these callbacks, removes your private copy of
+> gic_cpu_init, and makes struct gic_chip_data private again.
+> 
+> What do you think?
 
-Oops, I missed that.
-OK, let him change it.
+Let me check this soon. Actually I need to sort this out to test on my board
+with my git.
 
 Thanks.
 
