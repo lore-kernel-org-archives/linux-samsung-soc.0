@@ -1,51 +1,47 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Enable regulator support for HDMI on Origen
-Date: Fri,  7 Oct 2011 17:15:36 +0530
-Message-ID: <1317987936-4461-1-git-send-email-sachin.kamat@linaro.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH V2 0/2] ARM: S3C2410: Remove section mismatch warning
+Date: Fri,  7 Oct 2011 17:25:11 +0530
+Message-ID: <1317988513-20800-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:63926 "EHLO
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:62115 "EHLO
 	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752427Ab1JGLuc (ORCPT
+	with ESMTP id S1759876Ab1JGMAH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Oct 2011 07:50:32 -0400
-Received: by qyk30 with SMTP id 30so451809qyk.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 04:50:31 -0700 (PDT)
+	Fri, 7 Oct 2011 08:00:07 -0400
+Received: by qyk30 with SMTP id 30so459306qyk.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 05:00:07 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, sachin.kamat@linaro.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, linux@arm.linux.org.uk, linaro-dev@lists.linaro.org, patches@linaro.org
 
-This patch enables the regulators for HDMI on Origen board.
+While compiling with s3c2410_defconfig, we receive 4 section mismatch
+warnings.
 
-Since the DC5V line is connected directly to the HDMI connector,
-"hdmi-en" regulator would become a dummy regulator on origen board
-(by defining REGULATOR_DUMMY in the kernel config file).
+Patch 1 addresses a couple of warnings related to usb_simtec_init().
+Patch 2 addresses mismatch warnings in a couple of mach-*/irq.c files.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos4/mach-origen.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+Changes for V2:
+	* The original patch is splitted to address to different logical
+	solutions.
+	* __initdata attribute is removed from struct sysdev_driver
+	structures and __init attribute is removed from all referenced
+	function definitions.
 
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index 18909cf..39d8d4e 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -89,6 +89,8 @@ static struct s3c2410_uartcfg origen_uartcfgs[] __initdata = {
- 
- static struct regulator_consumer_supply __initdata ldo3_consumer[] = {
- 	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
-+	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"), /* HDMI */
-+	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"), /* HDMI */
- };
- static struct regulator_consumer_supply __initdata ldo6_consumer[] = {
- 	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"), /* MIPI */
-@@ -98,6 +100,7 @@ static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
- };
- static struct regulator_consumer_supply __initdata ldo8_consumer[] = {
- 	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* ADC */
-+	REGULATOR_SUPPLY("vdd_osc", "exynos4-hdmi"), /* HDMI */
- };
- static struct regulator_consumer_supply __initdata ldo9_consumer[] = {
- 	REGULATOR_SUPPLY("dvdd", "swb-a31"), /* AR6003 WLAN & CSR 8810 BT */
+The patches are rebased on v3.1-rc8. They are only build tested,
+they are not boot tested on any hardware.
+
+
+Tushar Behera (2):
+  ARM: S3C2410: Add __init attribute to usb_simtec_init()
+  ARM: S3C2410: irq: Remove __init attributes to fix compilation
+    warning
+
+ arch/arm/mach-s3c2410/usb-simtec.c |    2 +-
+ arch/arm/mach-s3c2410/usb-simtec.h |    2 +-
+ arch/arm/mach-s3c2416/irq.c        |    4 ++--
+ arch/arm/mach-s3c2443/irq.c        |    4 ++--
+ 4 files changed, 6 insertions(+), 6 deletions(-)
+
 -- 
 1.7.4.1
