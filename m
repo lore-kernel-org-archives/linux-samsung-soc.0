@@ -1,39 +1,64 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v3 RE-SEND 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
-Date: Sat, 8 Oct 2011 22:25:45 +0900
-Message-ID: <CAHQjnOPRvjD1X-T3w1yDKhf5QLq9rz9Vc2vs2yzU1xynFx-Wow@mail.gmail.com>
-References: <01e601cc84d9$4530d6a0$cf9283e0$%kim@samsung.com>
-	<4E8F6532.9060609@gmail.com>
+From: Sergei Shtylyov <sshtylyov@ru.mvista.com>
+Subject: Re: [PATCH V2 1/2] ARM: S3C2410: Add __init attribute to
+	usb_simtec_init()
+Date: Sat, 08 Oct 2011 18:18:19 +0400
+Message-ID: <4E905BAB.5060108@ru.mvista.com>
+References: <1317988513-20800-1-git-send-email-tushar.behera@linaro.org>
+	<1317988513-20800-2-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52448 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752443Ab1JHNZr convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Oct 2011 09:25:47 -0400
-In-Reply-To: <4E8F6532.9060609@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1317988513-20800-2-git-send-email-tushar.behera@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, patches@linaro.org, ben-linux@fluff.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Russell King <rmk+kernel@arm.linux.org.uk>, joerg.roedel@amd.com, Ohad Ben-Cohen <ohad@wizery.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, younglak1004.kim@samsung.com
 
-On Sat, Oct 8, 2011 at 5:46 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
->> -
->> -config S5P_SLEEP
->> - =A0 =A0 bool
->> - =A0 =A0 help
->> - =A0 =A0 =A0 Internal config node to apply common S5P sleep managem=
-ent code.
->> - =A0 =A0 =A0 Can be selected by S5P and newer SoCs with similar sle=
-ep procedure.
->> -
+Hello.
+
+On 07-10-2011 15:55, Tushar Behera wrote:
+
+> usb_simtec_init() references s3c_ohci_set_platdata() which is defined
+> with __init attribute. Hence to remove section mismatch warning, __init
+> attribute is added to usb_simtec_init().
+
+> It removes following two warnigs.
+
+> WARNING: vmlinux.o(.text+0x1460c): Section mismatch in reference from
+> the function     usb_simtec_init() to the function
+>   .init.text:s3c_ohci_set_platdata()
+> The function usb_simtec_init() references the function
+>   __init s3c_ohci_set_platdata().
+
+> WARNING: vmlinux.o(.text+0x14650): Section mismatch in reference from
+> the function     usb_simtec_init() to the (unknown reference)
+> .init.data:(unknown)
+> The function usb_simtec_init() references the (unknown reference)
+> __initdata (unknown).
+
+> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+[...]
+
+> diff --git a/arch/arm/mach-s3c2410/usb-simtec.h b/arch/arm/mach-s3c2410/usb-simtec.h
+> index 03842ed..43cc88f 100644
+> --- a/arch/arm/mach-s3c2410/usb-simtec.h
+> +++ b/arch/arm/mach-s3c2410/usb-simtec.h
+> @@ -12,5 +12,5 @@
+>    * published by the Free Software Foundation.
+>   */
 >
-> Is S5P_SLEEP being removed intentionally ? It doesn't seem to belong =
-here.
+> -extern int usb_simtec_init(void);
+> +extern int __init usb_simtec_init(void);
 
-No, it is a mistake while rebasing the patches.
+    Function prototypes don't need to be annotated with __init.
 
-Thank you for pointing that.
+WBR, Sergei
