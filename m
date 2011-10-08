@@ -1,35 +1,27 @@
 From: Girish KS <girishks2000@gmail.com>
 Subject: Re: [PATCH] arm: mm: Fix infinite looping issue
-Date: Sat, 8 Oct 2011 10:49:50 +0530
-Message-ID: <CAKrE-KcLXDZ4ecPAFSdQUzQrBZqYAuy93Pw=u+6C1OGP7HOGQg@mail.gmail.com>
+Date: Sat, 8 Oct 2011 10:54:53 +0530
+Message-ID: <CAKrE-KfYAwsPGgFQyV6M3tYpzWPgZCGdRGNxQUiB4ESC9i_L8A@mail.gmail.com>
 References: <1317724684-29115-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:54763 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750839Ab1JHFTv convert rfc822-to-8bit (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:53389 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750730Ab1JHFYz convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Oct 2011 01:19:51 -0400
-Received: by gyg10 with SMTP id 10so4188775gyg.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 22:19:51 -0700 (PDT)
+	Sat, 8 Oct 2011 01:24:55 -0400
+Received: by ggnv2 with SMTP id v2so3340825ggn.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Oct 2011 22:24:55 -0700 (PDT)
 In-Reply-To: <1317724684-29115-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Girish K S <girish.shivananjappa@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, rmk+kernel@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, hyok.choi@samsung.com, patches@linaro.org
 
-Hello Mr choi,
-If there is no issue with this patch can you apply to your for-next tre=
-e
-
-regards
-Girish K S
-
 On Tue, Oct 4, 2011 at 4:08 PM, Girish K S
 <girish.shivananjappa@linaro.org> wrote:
->
 > This patch fixes the problem of infinite looping while booting.
 >
 > The bne instruction expects the z flag to be set to break the loop.
@@ -155,8 +147,12 @@ On Tue, Oct 4, 2011 at 4:08 PM, Girish K S
 > --
 > 1.7.1
 >
->
+>Hello Mr choi,
+ Sorry for my previous top posting.
+If there is no issue with this patch can you apply to your for-next tre=
+e
 > _______________________________________________
 > linux-arm-kernel mailing list
 > linux-arm-kernel@lists.infradead.org
 > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
