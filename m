@@ -1,23 +1,23 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] gpio/samsung: Fix incorrect gpio pull up/down callback for
- Exynos4
-Date: Sun, 09 Oct 2011 23:57:13 +0530
-Message-ID: <1318184833-32056-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [RESEND][PATCH] gpio/samsung: Fix incorrect gpio pull up/down callback
+ for Exynos4
+Date: Mon, 10 Oct 2011 00:05:25 +0530
+Message-ID: <1318185325-32256-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8496 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:8986 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751112Ab1JISZz (ORCPT
+	with ESMTP id S1751112Ab1JISeG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Oct 2011 14:25:55 -0400
+	Sun, 9 Oct 2011 14:34:06 -0400
 Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LST00JW39V6L710@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Oct 2011 03:25:54 +0900 (KST)
+ 2010)) with ESMTP id <0LST00JY9A8TL710@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 10 Oct 2011 03:34:05 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LST00IIW9UZPC70@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 10 Oct 2011 03:25:53 +0900 (KST)
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LST009DUA8NS000@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 10 Oct 2011 03:34:05 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
@@ -31,7 +31,7 @@ Fix this by adding two new exynos4 specific entries in the array of default
 configs with set_pull and get_pull callbacks set to exynos4 specific callbacks
 The new default gpio configs can then be used for exynos4 gpio chips.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@gmail.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
  drivers/gpio/gpio-samsung.c |   31 +++++++++++++++++++------------
  1 files changed, 19 insertions(+), 12 deletions(-)
