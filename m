@@ -1,208 +1,76 @@
-From: "Hyok S. Choi" <hyok.choi@samsung.com>
-Subject: RE: [PATCH] arm: mm: Fix infinite looping issue
-Date: Mon, 10 Oct 2011 09:31:58 +0900
-Message-ID: <04ed01cc86e4$05760d70$10622850$@samsung.com>
-References: <1317724684-29115-1-git-send-email-girish.shivananjappa@linaro.org>
- <CAKrE-KfYAwsPGgFQyV6M3tYpzWPgZCGdRGNxQUiB4ESC9i_L8A@mail.gmail.com>
-Reply-To: hyok.choi@samsung.com
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V2 1/2] ARM: S3C2410: Add __init attribute to usb_simtec_init()
+Date: Mon, 10 Oct 2011 09:39:30 +0530
+Message-ID: <4E926FFA.9080208@linaro.org>
+References: <1317988513-20800-1-git-send-email-tushar.behera@linaro.org> <1317988513-20800-2-git-send-email-tushar.behera@linaro.org> <4E905BAB.5060108@ru.mvista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25289 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750925Ab1JJAcn convert rfc822-to-8bit (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:36385 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750746Ab1JJEJg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 9 Oct 2011 20:32:43 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LST00ASBQU3EV60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 10 Oct 2011 09:32:41 +0900 (KST)
-Received: from DOHYOKCHOI03 ([168.219.193.154])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LST00F8JQUG9FB0@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 10 Oct 2011 09:32:40 +0900 (KST)
-In-reply-to: <CAKrE-KfYAwsPGgFQyV6M3tYpzWPgZCGdRGNxQUiB4ESC9i_L8A@mail.gmail.com>
-Content-language: ko
+	Mon, 10 Oct 2011 00:09:36 -0400
+Received: by yxl31 with SMTP id 31so5006951yxl.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 09 Oct 2011 21:09:35 -0700 (PDT)
+In-Reply-To: <4E905BAB.5060108@ru.mvista.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Girish KS' <girishks2000@gmail.com>, 'Girish K S' <girish.shivananjappa@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, rmk+kernel@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: Sergei Shtylyov <sshtylyov@ru.mvista.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux@arm.linux.org.uk, ben-linux@fluff.org, patches@linaro.org
 
-Seems to be okay.
+Hi Sergei,
 
-Thanks,
-Hyok
+On Saturday 08 October 2011 07:48 PM, Sergei Shtylyov wrote:
+> Hello.
+>
+> On 07-10-2011 15:55, Tushar Behera wrote:
+>
+>> usb_simtec_init() references s3c_ohci_set_platdata() which is defined
+>> with __init attribute. Hence to remove section mismatch warning, __init
+>> attribute is added to usb_simtec_init().
+>
+>> It removes following two warnigs.
+>
+>> WARNING: vmlinux.o(.text+0x1460c): Section mismatch in reference from
+>> the function usb_simtec_init() to the function
+>> .init.text:s3c_ohci_set_platdata()
+>> The function usb_simtec_init() references the function
+>> __init s3c_ohci_set_platdata().
+>
+>> WARNING: vmlinux.o(.text+0x14650): Section mismatch in reference from
+>> the function usb_simtec_init() to the (unknown reference)
+>> .init.data:(unknown)
+>> The function usb_simtec_init() references the (unknown reference)
+>> __initdata (unknown).
+>
+>> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
+> [...]
+>
+>> diff --git a/arch/arm/mach-s3c2410/usb-simtec.h
+>> b/arch/arm/mach-s3c2410/usb-simtec.h
+>> index 03842ed..43cc88f 100644
+>> --- a/arch/arm/mach-s3c2410/usb-simtec.h
+>> +++ b/arch/arm/mach-s3c2410/usb-simtec.h
+>> @@ -12,5 +12,5 @@
+>> * published by the Free Software Foundation.
+>> */
+>>
+>> -extern int usb_simtec_init(void);
+>> +extern int __init usb_simtec_init(void);
+>
+> Function prototypes don't need to be annotated with __init.
+>
 
------Original Message-----
-=46rom: Girish KS [mailto:girishks2000@gmail.com]=20
-Sent: Saturday, October 08, 2011 2:25 PM
-To: Girish K S
-Cc: linux-arm-kernel@lists.infradead.org; rmk+kernel@arm.linux.org.uk;
-linux-samsung-soc@vger.kernel.org; hyok.choi@samsung.com; patches@linar=
-o.org
-Subject: Re: [PATCH] arm: mm: Fix infinite looping issue
+I agree that function prototypes don't require to be annotated.
 
-On Tue, Oct 4, 2011 at 4:08 PM, Girish K S <girish.shivananjappa@linaro=
-=2Eorg>
-wrote:
-> This patch fixes the problem of infinite looping while booting.
->
-> The bne instruction expects the z flag to be set to break the loop.
-> The (mov r1, r1, lsr #1) doesn't behave in the expected way. If=20
-> replaced with the movs instruction then the execution will exit the=20
-> loop.
->
-> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-> ---
-> =A0arch/arm/mm/proc-arm740.S | =A0 =A04 ++--
-> =A0arch/arm/mm/proc-arm940.S | =A0 =A04 ++--
-> =A0arch/arm/mm/proc-arm946.S | =A0 =A04 ++--
-> =A03 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm/mm/proc-arm740.S b/arch/arm/mm/proc-arm740.S=20
-> index 4506be3..9284f10 100644
-> --- a/arch/arm/mm/proc-arm740.S
-> +++ b/arch/arm/mm/proc-arm740.S
-> @@ -77,7 +77,7 @@ __arm740_setup:
-> =A0 =A0 =A0 =A0ldr =A0 =A0 r1, =3D(CONFIG_DRAM_SIZE >> 12) =A0 @ size=
- of RAM (must be=20
-> >=3D 4KB)
-> =A0 =A0 =A0 =A0mov =A0 =A0 r2, #10 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 @ 11 is the minimum=20
-> (4KB)
-> =A01: =A0 =A0 add =A0 =A0 r2, r2, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0@ area size *=3D 2
-> - =A0 =A0 =A0 mov =A0 =A0 r1, r1, lsr #1
-> + =A0 =A0 =A0 movs =A0 =A0r1, r1, lsr #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0@ set zero bit if r1=3D0
-> =A0 =A0 =A0 =A0bne =A0 =A0 1b =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0@ count not zero=20
-> r-shift
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, r2, lsl #1 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0@ the area register=20
-> value
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0@ set enable bit @@=20
-> -87,7 +87,7 @@ __arm740_setup:
-> =A0 =A0 =A0 =A0ldr =A0 =A0 r1, =3D(CONFIG_FLASH_SIZE >> 12) =A0@ size=
- of FLASH (must=20
-> be >=3D 4KB)
-> =A0 =A0 =A0 =A0mov =A0 =A0 r2, #10 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 @ 11 is the minimum=20
-> (4KB)
-> =A01: =A0 =A0 add =A0 =A0 r2, r2, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0@ area size *=3D 2
-> - =A0 =A0 =A0 mov =A0 =A0 r1, r1, lsr #1
-> + =A0 =A0 =A0 movs =A0 =A0r1, r1, lsr #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0@ set zero bit if r1=3D0
-> =A0 =A0 =A0 =A0bne =A0 =A0 1b =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0@ count not zero=20
-> r-shift
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, r2, lsl #1 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0@ the area register=20
-> value
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0@ set enable bit diff=20
-> --git a/arch/arm/mm/proc-arm940.S b/arch/arm/mm/proc-arm940.S index=20
-> ac750d5..e639034 100644
-> --- a/arch/arm/mm/proc-arm940.S
-> +++ b/arch/arm/mm/proc-arm940.S
-> @@ -296,7 +296,7 @@ __arm940_setup:
-> =A0 =A0 =A0 =A0ldr =A0 =A0 r1, =3D(CONFIG_DRAM_SIZE >> 12) =A0 @ size=
- of RAM (must be=20
-> >=3D 4KB)
-> =A0 =A0 =A0 =A0mov =A0 =A0 r2, #10 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 @ 11 is the minimum=20
-> (4KB)
-> =A01: =A0 =A0 add =A0 =A0 r2, r2, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0@ area size *=3D 2
-> - =A0 =A0 =A0 mov =A0 =A0 r1, r1, lsr #1
-> + =A0 =A0 =A0 movs =A0 =A0r1, r1, lsr #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0@ set zero bit if r1=3D0
-> =A0 =A0 =A0 =A0bne =A0 =A0 1b =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0@ count not zero=20
-> r-shift
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, r2, lsl #1 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0@ the area register=20
-> value
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0@ set enable bit @@=20
-> -307,7 +307,7 @@ __arm940_setup:
-> =A0 =A0 =A0 =A0ldr =A0 =A0 r1, =3D(CONFIG_FLASH_SIZE >> 12) =A0@ size=
- of FLASH (must=20
-> be >=3D 4KB)
-> =A0 =A0 =A0 =A0mov =A0 =A0 r2, #10 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 @ 11 is the minimum=20
-> (4KB)
-> =A01: =A0 =A0 add =A0 =A0 r2, r2, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0@ area size *=3D 2
-> - =A0 =A0 =A0 mov =A0 =A0 r1, r1, lsr #1
-> + =A0 =A0 =A0 movs =A0 =A0r1, r1, lsr #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0@ set zero bit if r1=3D0
-> =A0 =A0 =A0 =A0bne =A0 =A0 1b =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0@ count not zero=20
-> r-shift
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, r2, lsl #1 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0@ the area register=20
-> value
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0@ set enable bit diff=20
-> --git a/arch/arm/mm/proc-arm946.S b/arch/arm/mm/proc-arm946.S index=20
-> 683af3a..731388a 100644
-> --- a/arch/arm/mm/proc-arm946.S
-> +++ b/arch/arm/mm/proc-arm946.S
-> @@ -341,7 +341,7 @@ __arm946_setup:
-> =A0 =A0 =A0 =A0ldr =A0 =A0 r1, =3D(CONFIG_DRAM_SIZE >> 12) =A0 @ size=
- of RAM (must be=20
-> >=3D 4KB)
-> =A0 =A0 =A0 =A0mov =A0 =A0 r2, #10 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 @ 11 is the minimum=20
-> (4KB)
-> =A01: =A0 =A0 add =A0 =A0 r2, r2, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0@ area size *=3D 2
-> - =A0 =A0 =A0 mov =A0 =A0 r1, r1, lsr #1
-> + =A0 =A0 =A0 movs =A0 =A0r1, r1, lsr #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0@ set zero bit if r1=3D0
-> =A0 =A0 =A0 =A0bne =A0 =A0 1b =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0@ count not zero=20
-> r-shift
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, r2, lsl #1 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0@ the region register=20
-> value
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0@ set enable bit @@=20
-> -351,7 +351,7 @@ __arm946_setup:
-> =A0 =A0 =A0 =A0ldr =A0 =A0 r1, =3D(CONFIG_FLASH_SIZE >> 12) =A0@ size=
- of FLASH (must=20
-> be >=3D 4KB)
-> =A0 =A0 =A0 =A0mov =A0 =A0 r2, #10 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 @ 11 is the minimum=20
-> (4KB)
-> =A01: =A0 =A0 add =A0 =A0 r2, r2, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0@ area size *=3D 2
-> - =A0 =A0 =A0 mov =A0 =A0 r1, r1, lsr #1
-> + =A0 =A0 =A0 movs =A0 =A0r1, r1, lsr #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0@ set zero bit if r1=3D0
-> =A0 =A0 =A0 =A0bne =A0 =A0 1b =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0@ count not zero=20
-> r-shift
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, r2, lsl #1 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0@ the region register=20
-> value
-> =A0 =A0 =A0 =A0orr =A0 =A0 r0, r0, #1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0@ set enable bit
-> --
-> 1.7.1
->
->Hello Mr choi,
- Sorry for my previous top posting.
-If there is no issue with this patch can you apply to your for-next tre=
-e
+But, will it not be better to have same annotation for both function 
+prototypes and the function definitions?
 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> WBR, Sergei
 >
+
+Thanks for your review.
+-- 
+Tushar Behera
