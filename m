@@ -1,302 +1,118 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v6 08/10] ARM: S5P64x0: Modify platform data for pl330 driver
-Date: Mon, 10 Oct 2011 23:45:36 +0530
-Message-ID: <1318270538-30450-9-git-send-email-thomas.abraham@linaro.org>
-References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-2-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-3-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-5-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-6-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-7-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-8-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59418 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753886Ab1JJSR2 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Oct 2011 14:17:28 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSV0099744OAAF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:27 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSV00AEB44DWK80@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:27 +0900 (KST)
-In-reply-to: <1318270538-30450-8-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v6 00/10] Add device tree support for PL330 dma controller
+	driver
+Date: Mon, 10 Oct 2011 23:45:28 +0530
+Message-ID: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>
+Cc: vinod.koul@intel.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-With the 'struct dma_pl330_peri' removed, the platfrom data for dma
-driver can be simplified to a simple list of peripheral request ids.
+Changes since v5:
+- Added alias clocks for pdma clocks on Exynos4.
+- Modified platform data for s5p64x0, s5pc100 and s5pv210.
+- Rebased on the tip of for-next branch of linux-samsung kernel and tested.
 
-Cc: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/mach-s5p64x0/dma.c |  227 ++++++++++++------------------------------
- 1 files changed, 65 insertions(+), 162 deletions(-)
+Changes since v4:
+- Rebased with Samsung maintainer's for-next branch which is at linux-3.1-rc7
+  - Modified Patch 6/6 to apply cleanly.
 
-diff --git a/arch/arm/mach-s5p64x0/dma.c b/arch/arm/mach-s5p64x0/dma.c
-index 442dd4a..f820c07 100644
---- a/arch/arm/mach-s5p64x0/dma.c
-+++ b/arch/arm/mach-s5p64x0/dma.c
-@@ -38,176 +38,74 @@
- 
- static u64 dma_dmamask = DMA_BIT_MASK(32);
- 
--struct dma_pl330_peri s5p6440_pdma_peri[22] = {
--	{
--		.peri_id = (u8)DMACH_UART0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART1_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART1_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART2_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART2_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART3_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART3_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = DMACH_MAX,
--	}, {
--		.peri_id = DMACH_MAX,
--	}, {
--		.peri_id = (u8)DMACH_PCM0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_PCM0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_I2S0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_I2S0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_SPI0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_SPI0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_MAX,
--	}, {
--		.peri_id = (u8)DMACH_MAX,
--	}, {
--		.peri_id = (u8)DMACH_MAX,
--	}, {
--		.peri_id = (u8)DMACH_MAX,
--	}, {
--		.peri_id = (u8)DMACH_SPI1_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_SPI1_RX,
--		.rqtype = DEVTOMEM,
--	},
-+u8 s5p6440_pdma_peri[] = {
-+	DMACH_UART0_RX,
-+	DMACH_UART0_TX,
-+	DMACH_UART1_RX,
-+	DMACH_UART1_TX,
-+	DMACH_UART2_RX,
-+	DMACH_UART2_TX,
-+	DMACH_UART3_RX,
-+	DMACH_UART3_TX,
-+	DMACH_MAX,
-+	DMACH_MAX,
-+	DMACH_PCM0_TX,
-+	DMACH_PCM0_RX,
-+	DMACH_I2S0_TX,
-+	DMACH_I2S0_RX,
-+	DMACH_SPI0_TX,
-+	DMACH_SPI0_RX,
-+	DMACH_MAX,
-+	DMACH_MAX,
-+	DMACH_MAX,
-+	DMACH_MAX,
-+	DMACH_SPI1_TX,
-+	DMACH_SPI1_RX,
- };
- 
- struct dma_pl330_platdata s5p6440_pdma_pdata = {
- 	.nr_valid_peri = ARRAY_SIZE(s5p6440_pdma_peri),
--	.peri = s5p6440_pdma_peri,
-+	.peri_id = s5p6440_pdma_peri,
- };
- 
--struct dma_pl330_peri s5p6450_pdma_peri[32] = {
--	{
--		.peri_id = (u8)DMACH_UART0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART1_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART1_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART2_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART2_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART3_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART3_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_UART4_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART4_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_PCM0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_PCM0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_I2S0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_I2S0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_SPI0_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_SPI0_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_PCM1_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_PCM1_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_PCM2_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_PCM2_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_SPI1_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_SPI1_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_USI_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_USI_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_MAX,
--	}, {
--		.peri_id = (u8)DMACH_I2S1_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_I2S1_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_I2S2_TX,
--		.rqtype = MEMTODEV,
--	}, {
--		.peri_id = (u8)DMACH_I2S2_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_PWM,
--	}, {
--		.peri_id = (u8)DMACH_UART5_RX,
--		.rqtype = DEVTOMEM,
--	}, {
--		.peri_id = (u8)DMACH_UART5_TX,
--		.rqtype = MEMTODEV,
--	},
-+u8 s5p6450_pdma_peri[] = {
-+	DMACH_UART0_RX,
-+	DMACH_UART0_TX,
-+	DMACH_UART1_RX,
-+	DMACH_UART1_TX,
-+	DMACH_UART2_RX,
-+	DMACH_UART2_TX,
-+	DMACH_UART3_RX,
-+	DMACH_UART3_TX,
-+	DMACH_UART4_RX,
-+	DMACH_UART4_TX,
-+	DMACH_PCM0_TX,
-+	DMACH_PCM0_RX,
-+	DMACH_I2S0_TX,
-+	DMACH_I2S0_RX,
-+	DMACH_SPI0_TX,
-+	DMACH_SPI0_RX,
-+	DMACH_PCM1_TX,
-+	DMACH_PCM1_RX,
-+	DMACH_PCM2_TX,
-+	DMACH_PCM2_RX,
-+	DMACH_SPI1_TX,
-+	DMACH_SPI1_RX,
-+	DMACH_USI_TX,
-+	DMACH_USI_RX,
-+	DMACH_MAX,
-+	DMACH_I2S1_TX,
-+	DMACH_I2S1_RX,
-+	DMACH_I2S2_TX,
-+	DMACH_I2S2_RX,
-+	DMACH_PWM,
-+	DMACH_UART5_RX,
-+	DMACH_UART5_TX,
- };
- 
- struct dma_pl330_platdata s5p6450_pdma_pdata = {
- 	.nr_valid_peri = ARRAY_SIZE(s5p6450_pdma_peri),
--	.peri = s5p6450_pdma_peri,
-+	.peri_id = s5p6450_pdma_peri,
- };
- 
- struct amba_device s5p64x0_device_pdma = {
-@@ -227,10 +125,15 @@ struct amba_device s5p64x0_device_pdma = {
- 
- static int __init s5p64x0_dma_init(void)
- {
--	if (soc_is_s5p6450())
-+	if (soc_is_s5p6450()) {
-+		dma_cap_set(DMA_SLAVE, s5p6450_pdma_pdata.cap_mask);
-+		dma_cap_set(DMA_CYCLIC, s5p6450_pdma_pdata.cap_mask);
- 		s5p64x0_device_pdma.dev.platform_data = &s5p6450_pdma_pdata;
--	else
-+	} else {
-+		dma_cap_set(DMA_SLAVE, s5p6440_pdma_pdata.cap_mask);
-+		dma_cap_set(DMA_CYCLIC, s5p6440_pdma_pdata.cap_mask);
- 		s5p64x0_device_pdma.dev.platform_data = &s5p6440_pdma_pdata;
-+	}
- 
- 	amba_device_register(&s5p64x0_device_pdma, &iomem_resource);
- 
--- 
-1.6.6.rc2
+Changes since v3:
+- In Patch 4/6, a recommendation is added in the pl330 binding documentation
+  for the name of the property which specifies the dma channel in the client
+  device node.
+- In Patch 6/6, dropped #ifdef around of_have_populated_dt.
+
+Changes since v2:
+- Only the sixth patch is changed, to make dma platform data conditionally
+  selectable.
+- Tested with v8 version of pl330 dma driver update patches from Boojin Kim.
+
+Changes since v1:
+- Removed "arm,pl330-pdma" and "arm,pl330-mdma" compatible values.
+- Removed "arm,primecell-periphid" and "arm,pl330-peri-reqs"
+  property requirements.
+
+This patchset adds device tree support for PL330 driver and uses it to add
+device tree support for Samsung platforms, specifically Exynos4.
+
+Patch 1 moves the pl330_filter function from Samsung specific wrappers to pl330
+dma driver and also adds a check to ensure that the filter function proceeds
+only if it the dma channel being investigated belongs to pl330 dma controller
+instance.
+
+Patch 2 adds support to infer the direction of the dma transfer using the
+direction specified with the transfer request instead of including this
+information in the platform data. This simlifies the addition of device tree
+support. Patch 3 simplifies the platform data for Exynos4 pl330 dma controllers.
+
+Patch 4 adds device tree support for pl330 dma controller driver. A dma channel
+is represented using a phandle of the dma controller node and the channel id
+within that controller. Client driver request a dma channel using the phandle
+and channel id pair. Correspondingly, the pl330 filter function has been
+modified to lookup a channel based on this value.
+
+Patch 5 adds device tree support for Samsung's DMA engine wrappers. Client
+drivers retrive the channel property from their device node and pass it to the
+wrappers. The wrapper functions use the property value as the filter function
+parameter. Patch 6 restricts the usage of pl330 device and platform data
+instances to non-dt platforms.
+
+Patch 7 adds clock alias for both the pdma clocks. When pdma controllers are
+instantiated from device tree, the amba device registration process enables
+clock to the controllers to read the peripheral id of the PDMA amba device. In
+case of Exynos4, the clocks to the PDMA controllers are named as 'dma' but
+amba_device_register() looks up the clock using the name 'apb_pclk'. Hence,
+alias clocks with name 'apb_pclk' clock are created for clocks with name 'dma'.
+
+Patch 8 to 10 simplifies the pdma platform data for s5p64x0, s5pc100 and
+s5pv210.
+
+This patchset is based on the following tree:
+https://github.com/kgene/linux-samsung.git   branch: for-next
+
+and tested tested for both device-tree and non-device-tree kernel on smdkv310.
+
+This patchset has dependency on the following patchset.
+[PATCH V2 0/2] Add a common macro for creating struct clk_lookup entries.
+
+
+Thomas Abraham (10):
+  DMA: PL330: move filter function into driver
+  DMA: PL330: Infer transfer direction from transfer request instead of platform data
+  ARM: EXYNOS4: Modify platform data for pl330 driver
+  DMA: PL330: Add device tree support
+  ARM: SAMSUNG: Add device tree support for pl330 dma engine wrappers
+  ARM: EXYNOS4: Limit usage of pl330 device instance to non-dt build
+  ARM: Exynos4: Add a alias for pdma clocks
+  ARM: S5P64x0: Modify platform data for pl330 driver
+  ARM: S5PC100: Modify platform data for pl330 driver
+  ARM: S5PV210: Modify platform data for pl330 driver
+
+ .../devicetree/bindings/dma/arm-pl330.txt          |   30 +++
+ arch/arm/mach-exynos4/Kconfig                      |   10 +
+ arch/arm/mach-exynos4/Makefile                     |    3 +-
+ arch/arm/mach-exynos4/clock.c                      |   35 ++-
+ arch/arm/mach-exynos4/dma.c                        |  227 ++++++-------------
+ arch/arm/mach-s5p64x0/dma.c                        |  227 +++++-------------
+ arch/arm/mach-s5pc100/dma.c                        |  247 ++++++--------------
+ arch/arm/mach-s5pv210/dma.c                        |  241 ++++++--------------
+ arch/arm/plat-samsung/dma-ops.c                    |   15 +-
+ arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 +
+ arch/arm/plat-samsung/include/plat/dma-pl330.h     |    3 +-
+ drivers/dma/pl330.c                                |   99 +++++----
+ include/linux/amba/pl330.h                         |   15 +-
+ 13 files changed, 405 insertions(+), 748 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/arm-pl330.txt
