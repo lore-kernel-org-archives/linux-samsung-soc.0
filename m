@@ -1,149 +1,302 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v6 06/10] ARM: EXYNOS4: Limit usage of pl330 device instance to
- non-dt build
-Date: Mon, 10 Oct 2011 23:45:34 +0530
-Message-ID: <1318270538-30450-7-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v6 08/10] ARM: S5P64x0: Modify platform data for pl330 driver
+Date: Mon, 10 Oct 2011 23:45:36 +0530
+Message-ID: <1318270538-30450-9-git-send-email-thomas.abraham@linaro.org>
 References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
  <1318270538-30450-2-git-send-email-thomas.abraham@linaro.org>
  <1318270538-30450-3-git-send-email-thomas.abraham@linaro.org>
  <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
  <1318270538-30450-5-git-send-email-thomas.abraham@linaro.org>
  <1318270538-30450-6-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-7-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-8-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59411 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:59418 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753886Ab1JJSRZ (ORCPT
+	with ESMTP id S1753886Ab1JJSR2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Oct 2011 14:17:25 -0400
+	Mon, 10 Oct 2011 14:17:28 -0400
 Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
  by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LSV0099744OAAF0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:24 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:27 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
  64bit (built Sep  7 2010)) with ESMTPA id <0LSV00AEB44DWK80@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:24 +0900 (KST)
-In-reply-to: <1318270538-30450-6-git-send-email-thomas.abraham@linaro.org>
+ for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:27 +0900 (KST)
+In-reply-to: <1318270538-30450-8-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>
 
-The pl330 device instances and associated platform data is required only
-for non-device-tree builds. With device tree enabled, the data about the
-platform is obtained from the device tree. For images that include both
-dt and non-dt platforms, an addditional check is added to ensure that
-static amba device registrations is applicable to only non-dt platforms.
+With the 'struct dma_pl330_peri' removed, the platfrom data for dma
+driver can be simplified to a simple list of peripheral request ids.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
 ---
- arch/arm/mach-exynos4/Kconfig  |   10 ++++++++++
- arch/arm/mach-exynos4/Makefile |    3 ++-
- arch/arm/mach-exynos4/dma.c    |    4 ++++
- 3 files changed, 16 insertions(+), 1 deletions(-)
+ arch/arm/mach-s5p64x0/dma.c |  227 ++++++++++++------------------------------
+ 1 files changed, 65 insertions(+), 162 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index dd660eb..0c5888a 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -35,6 +35,11 @@ config EXYNOS4_MCT
- 	help
- 	  Use MCT (Multi Core Timer) as kernel timers
+diff --git a/arch/arm/mach-s5p64x0/dma.c b/arch/arm/mach-s5p64x0/dma.c
+index 442dd4a..f820c07 100644
+--- a/arch/arm/mach-s5p64x0/dma.c
++++ b/arch/arm/mach-s5p64x0/dma.c
+@@ -38,176 +38,74 @@
  
-+config EXYNOS4_DEV_DMA
-+	bool
-+	help
-+	  Compile in amba device definitions for DMA controller
-+
- config EXYNOS4_DEV_AHCI
- 	bool
- 	help
-@@ -158,6 +163,7 @@ config MACH_SMDKV310
- 	select EXYNOS4_DEV_PD
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_DEV_SYSMMU
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_KEYPAD
-@@ -176,6 +182,7 @@ config MACH_ARMLEX4210
- 	select S3C_DEV_HSMMC3
- 	select EXYNOS4_DEV_AHCI
- 	select EXYNOS4_DEV_SYSMMU
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_SDHCI
- 	help
- 	  Machine support for Samsung ARMLEX4210 based on EXYNOS4210
-@@ -201,6 +208,7 @@ config MACH_UNIVERSAL_C210
- 	select S5P_DEV_ONENAND
- 	select S5P_DEV_TV
- 	select EXYNOS4_DEV_PD
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
-@@ -227,6 +235,7 @@ config MACH_NURI
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
- 	select EXYNOS4_DEV_PD
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
-@@ -253,6 +262,7 @@ config MACH_ORIGEN
- 	select S5P_DEV_I2C_HDMIPHY
- 	select S5P_DEV_TV
- 	select S5P_DEV_USB_EHCI
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_DEV_PD
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index c47aae3..8066538 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -13,7 +13,7 @@ obj-				:=
- # Core support for EXYNOS4 system
+ static u64 dma_dmamask = DMA_BIT_MASK(32);
  
- obj-$(CONFIG_ARCH_EXYNOS4)	+= cpu.o init.o clock.o irq-combiner.o
--obj-$(CONFIG_ARCH_EXYNOS4)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= setup-i2c0.o irq-eint.o pmu.o
- obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
- obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
- obj-$(CONFIG_PM)		+= pm.o
-@@ -44,6 +44,7 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
- obj-$(CONFIG_EXYNOS4_DEV_DWMCI)	+= dev-dwmci.o
-+obj-$(CONFIG_EXYNOS4_DEV_DMA)		+= dma.o
+-struct dma_pl330_peri s5p6440_pdma_peri[22] = {
+-	{
+-		.peri_id = (u8)DMACH_UART0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = DMACH_MAX,
+-	}, {
+-		.peri_id = DMACH_MAX,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_MAX,
+-	}, {
+-		.peri_id = (u8)DMACH_MAX,
+-	}, {
+-		.peri_id = (u8)DMACH_MAX,
+-	}, {
+-		.peri_id = (u8)DMACH_MAX,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_RX,
+-		.rqtype = DEVTOMEM,
+-	},
++u8 s5p6440_pdma_peri[] = {
++	DMACH_UART0_RX,
++	DMACH_UART0_TX,
++	DMACH_UART1_RX,
++	DMACH_UART1_TX,
++	DMACH_UART2_RX,
++	DMACH_UART2_TX,
++	DMACH_UART3_RX,
++	DMACH_UART3_TX,
++	DMACH_MAX,
++	DMACH_MAX,
++	DMACH_PCM0_TX,
++	DMACH_PCM0_RX,
++	DMACH_I2S0_TX,
++	DMACH_I2S0_RX,
++	DMACH_SPI0_TX,
++	DMACH_SPI0_RX,
++	DMACH_MAX,
++	DMACH_MAX,
++	DMACH_MAX,
++	DMACH_MAX,
++	DMACH_SPI1_TX,
++	DMACH_SPI1_RX,
+ };
  
- obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
- obj-$(CONFIG_EXYNOS4_SETUP_FIMD0)	+= setup-fimd0.o
-diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
-index c3c0d17..921d31d 100644
---- a/arch/arm/mach-exynos4/dma.c
-+++ b/arch/arm/mach-exynos4/dma.c
-@@ -24,6 +24,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/amba/bus.h>
- #include <linux/amba/pl330.h>
-+#include <linux/of.h>
+ struct dma_pl330_platdata s5p6440_pdma_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(s5p6440_pdma_peri),
+-	.peri = s5p6440_pdma_peri,
++	.peri_id = s5p6440_pdma_peri,
+ };
  
- #include <asm/irq.h>
- #include <plat/devs.h>
-@@ -138,6 +139,9 @@ struct amba_device exynos4_device_pdma1 = {
+-struct dma_pl330_peri s5p6450_pdma_peri[32] = {
+-	{
+-		.peri_id = (u8)DMACH_UART0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART4_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART4_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_USI_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_USI_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_MAX,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PWM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART5_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART5_TX,
+-		.rqtype = MEMTODEV,
+-	},
++u8 s5p6450_pdma_peri[] = {
++	DMACH_UART0_RX,
++	DMACH_UART0_TX,
++	DMACH_UART1_RX,
++	DMACH_UART1_TX,
++	DMACH_UART2_RX,
++	DMACH_UART2_TX,
++	DMACH_UART3_RX,
++	DMACH_UART3_TX,
++	DMACH_UART4_RX,
++	DMACH_UART4_TX,
++	DMACH_PCM0_TX,
++	DMACH_PCM0_RX,
++	DMACH_I2S0_TX,
++	DMACH_I2S0_RX,
++	DMACH_SPI0_TX,
++	DMACH_SPI0_RX,
++	DMACH_PCM1_TX,
++	DMACH_PCM1_RX,
++	DMACH_PCM2_TX,
++	DMACH_PCM2_RX,
++	DMACH_SPI1_TX,
++	DMACH_SPI1_RX,
++	DMACH_USI_TX,
++	DMACH_USI_RX,
++	DMACH_MAX,
++	DMACH_I2S1_TX,
++	DMACH_I2S1_RX,
++	DMACH_I2S2_TX,
++	DMACH_I2S2_RX,
++	DMACH_PWM,
++	DMACH_UART5_RX,
++	DMACH_UART5_TX,
+ };
  
- static int __init exynos4_dma_init(void)
+ struct dma_pl330_platdata s5p6450_pdma_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(s5p6450_pdma_peri),
+-	.peri = s5p6450_pdma_peri,
++	.peri_id = s5p6450_pdma_peri,
+ };
+ 
+ struct amba_device s5p64x0_device_pdma = {
+@@ -227,10 +125,15 @@ struct amba_device s5p64x0_device_pdma = {
+ 
+ static int __init s5p64x0_dma_init(void)
  {
-+	if (of_have_populated_dt())
-+		return 0;
-+
- 	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
- 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
+-	if (soc_is_s5p6450())
++	if (soc_is_s5p6450()) {
++		dma_cap_set(DMA_SLAVE, s5p6450_pdma_pdata.cap_mask);
++		dma_cap_set(DMA_CYCLIC, s5p6450_pdma_pdata.cap_mask);
+ 		s5p64x0_device_pdma.dev.platform_data = &s5p6450_pdma_pdata;
+-	else
++	} else {
++		dma_cap_set(DMA_SLAVE, s5p6440_pdma_pdata.cap_mask);
++		dma_cap_set(DMA_CYCLIC, s5p6440_pdma_pdata.cap_mask);
+ 		s5p64x0_device_pdma.dev.platform_data = &s5p6440_pdma_pdata;
++	}
+ 
+ 	amba_device_register(&s5p64x0_device_pdma, &iomem_resource);
+ 
 -- 
 1.6.6.rc2
