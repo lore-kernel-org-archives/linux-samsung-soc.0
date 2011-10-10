@@ -1,386 +1,113 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v5 2/2] input: samsung-keypad: Add device tree support
-Date: Mon, 10 Oct 2011 21:59:57 +0530
-Message-ID: <1318264197-6698-3-git-send-email-thomas.abraham@linaro.org>
-References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v6 01/10] DMA: PL330: move filter function into driver
+Date: Mon, 10 Oct 2011 23:45:29 +0530
+Message-ID: <1318270538-30450-2-git-send-email-thomas.abraham@linaro.org>
+References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64164 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752597Ab1JJQ2z (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:59391 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753031Ab1JJSRT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Oct 2011 12:28:55 -0400
-In-reply-to: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
+	Mon, 10 Oct 2011 14:17:19 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSV0099744OAAF0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:17 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSV00AEB44DWK80@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 03:17:17 +0900 (KST)
+In-reply-to: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com
-Cc: grant.likely@secretlab.ca, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com
 
-Add device tree based discovery support for Samsung's keypad controller.
+The dma channel selection filter function is moved from plat-samsung
+into the pl330 driver. In additon to that, a check is added in the
+filter function to ensure that the channel on which the filter has
+been invoked is pl330 channel instance (and avoid any incorrect
+access of chan->private in a system with multiple types of DMA
+drivers).
 
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>
-Cc: Donghwa Lee <dh09.lee@samsung.com>
+Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
 Acked-by: Grant Likely <grant.likely@secretlab.ca>
 ---
- .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
- drivers/input/keyboard/samsung-keypad.c            |  174 ++++++++++++++++++--
- 2 files changed, 250 insertions(+), 12 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/input/samsung-keypad.txt
+ arch/arm/plat-samsung/dma-ops.c |    6 ------
+ drivers/dma/pl330.c             |   15 +++++++++++++++
+ include/linux/amba/pl330.h      |    2 ++
+ 3 files changed, 17 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/samsung-keypad.txt b/Documentation/devicetree/bindings/input/samsung-keypad.txt
-new file mode 100644
-index 0000000..ce3e394
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/samsung-keypad.txt
-@@ -0,0 +1,88 @@
-+* Samsung's Keypad Controller device tree bindings
-+
-+Samsung's Keypad controller is used to interface a SoC with a matrix-type
-+keypad device. The keypad controller supports multiple row and column lines.
-+A key can be placed at each intersection of a unique row and a unique column.
-+The keypad controller can sense a key-press and key-release and report the
-+event using a interrupt to the cpu.
-+
-+Required SoC Specific Properties:
-+- compatible: should be one of the following
-+  - "samsung,s3c6410-keypad": For controllers compatible with s3c6410 keypad
-+    controller.
-+  - "samsung,s5pv210-keypad": For controllers compatible with s5pv210 keypad
-+    controller.
-+
-+- reg: physical base address of the controller and length of memory mapped
-+  region.
-+
-+- interrupts: The interrupt number to the cpu.
-+
-+Required Board Specific Properties:
-+- samsung,keypad-num-rows: Number of row lines connected to the keypad
-+  controller.
-+
-+- samsung,keypad-num-columns: Number of column lines connected to the
-+  keypad controller.
-+
-+- row-gpios: List of gpios used as row lines. The gpio specifier for
-+  this property depends on the gpio controller to which these row lines
-+  are connected.
-+
-+- col-gpios: List of gpios used as column lines. The gpio specifier for
-+  this property depends on the gpio controller to which these column
-+  lines are connected.
-+
-+- Keys represented as child nodes: Each key connected to the keypad
-+  controller is represented as a child node to the keypad controller
-+  device node and should include the following properties.
-+  - keypad,row: the row number to which the key is connected.
-+  - keypad,column: the column number to which the key is connected.
-+  - linux,code: the key-code to be reported when the key is pressed
-+    and released.
-+
-+Optional Properties specific to linux:
-+- linux,keypad-no-autorepeat: do no enable autorepeat feature.
-+- linux,keypad-wakeup: use any event on keypad as wakeup event.
-+
-+
-+Example:
-+	keypad@100A0000 {
-+		compatible = "samsung,s5pv210-keypad";
-+		reg = <0x100A0000 0x100>;
-+		interrupts = <173>;
-+		samsung,keypad-num-rows = <2>;
-+		samsung,keypad-num-columns = <8>;
-+		linux,input-no-autorepeat;
-+		linux,input-wakeup;
-+
-+		row-gpios = <&gpx2 0 3 3 0
-+			     &gpx2 1 3 3 0>;
-+
-+		col-gpios = <&gpx1 0 3 0 0
-+			     &gpx1 1 3 0 0
-+			     &gpx1 2 3 0 0
-+			     &gpx1 3 3 0 0
-+			     &gpx1 4 3 0 0
-+			     &gpx1 5 3 0 0
-+			     &gpx1 6 3 0 0
-+			     &gpx1 7 3 0 0>;
-+
-+		key_1 {
-+			keypad,row = <0>;
-+			keypad,column = <3>;
-+			linux,code = <2>;
-+		};
-+
-+		key_2 {
-+			keypad,row = <0>;
-+			keypad,column = <4>;
-+			linux,code = <3>;
-+		};
-+
-+		key_3 {
-+			keypad,row = <0>;
-+			keypad,column = <5>;
-+			linux,code = <4>;
-+		};
-+	};
-diff --git a/drivers/input/keyboard/samsung-keypad.c b/drivers/input/keyboard/samsung-keypad.c
-index f689f49..8a0060c 100644
---- a/drivers/input/keyboard/samsung-keypad.c
-+++ b/drivers/input/keyboard/samsung-keypad.c
-@@ -21,6 +21,8 @@
- #include <linux/module.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
- #include <linux/sched.h>
- #include <plat/keypad.h>
+diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
+index 6e3d9ab..8d18425 100644
+--- a/arch/arm/plat-samsung/dma-ops.c
++++ b/arch/arm/plat-samsung/dma-ops.c
+@@ -17,12 +17,6 @@
  
-@@ -68,31 +70,26 @@ struct samsung_keypad {
- 	wait_queue_head_t wait;
- 	bool stopped;
- 	int irq;
-+	enum samsung_keypad_type type;
- 	unsigned int row_shift;
- 	unsigned int rows;
- 	unsigned int cols;
- 	unsigned int row_state[SAMSUNG_MAX_COLS];
-+#ifdef CONFIG_OF
-+	int row_gpios[SAMSUNG_MAX_ROWS];
-+	int col_gpios[SAMSUNG_MAX_COLS];
-+#endif
- 	unsigned short keycodes[];
- };
+ #include <mach/dma.h>
  
--static int samsung_keypad_is_s5pv210(struct device *dev)
+-static inline bool pl330_filter(struct dma_chan *chan, void *param)
 -{
--	struct platform_device *pdev = to_platform_device(dev);
--	enum samsung_keypad_type type =
--		platform_get_device_id(pdev)->driver_data;
--
--	return type == KEYPAD_TYPE_S5PV210;
+-	struct dma_pl330_peri *peri = chan->private;
+-	return peri->peri_id == (unsigned)param;
 -}
 -
- static void samsung_keypad_scan(struct samsung_keypad *keypad,
- 				unsigned int *row_state)
+ static unsigned samsung_dmadev_request(enum dma_ch dma_ch,
+ 				struct samsung_dma_info *info)
  {
--	struct device *dev = keypad->input_dev->dev.parent;
- 	unsigned int col;
- 	unsigned int val;
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 621134f..5f1d24c 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -116,6 +116,9 @@ struct dma_pl330_desc {
+ 	struct dma_pl330_chan *pchan;
+ };
  
- 	for (col = 0; col < keypad->cols; col++) {
--		if (samsung_keypad_is_s5pv210(dev)) {
-+		if (keypad->type == KEYPAD_TYPE_S5PV210) {
- 			val = S5PV210_KEYIFCOLEN_MASK;
- 			val &= ~(1 << col) << 8;
- 		} else {
-@@ -235,6 +232,126 @@ static void samsung_keypad_close(struct input_dev *input_dev)
- 	samsung_keypad_stop(keypad);
++/* forward declaration */
++static struct amba_driver pl330_driver;
++
+ static inline struct dma_pl330_chan *
+ to_pchan(struct dma_chan *ch)
+ {
+@@ -267,6 +270,18 @@ static void dma_pl330_rqcb(void *token, enum pl330_op_err err)
+ 	tasklet_schedule(&pch->task);
  }
  
-+#ifdef CONFIG_OF
-+static struct samsung_keypad_platdata *samsung_keypad_parse_dt(
-+				struct device *dev)
++bool pl330_filter(struct dma_chan *chan, void *param)
 +{
-+	struct samsung_keypad_platdata *pdata;
-+	struct matrix_keymap_data *keymap_data;
-+	uint32_t *keymap, num_rows = 0, num_cols = 0;
-+	struct device_node *np = dev->of_node, *key_np;
-+	unsigned int key_count = 0;
++	struct dma_pl330_peri *peri;
 +
-+	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-+	if (!pdata) {
-+		dev_err(dev, "could not allocate memory for platform data\n");
-+		return NULL;
-+	}
++	if (chan->device->dev->driver != &pl330_driver.drv)
++		return false;
 +
-+	of_property_read_u32(np, "samsung,keypad-num-rows", &num_rows);
-+	of_property_read_u32(np, "samsung,keypad-num-columns", &num_cols);
-+	if (!num_rows || !num_cols) {
-+		dev_err(dev, "number of keypad rows/columns not specified\n");
-+		return NULL;
-+	}
-+	pdata->rows = num_rows;
-+	pdata->cols = num_cols;
-+
-+	keymap_data = devm_kzalloc(dev, sizeof(*keymap_data), GFP_KERNEL);
-+	if (!keymap_data) {
-+		dev_err(dev, "could not allocate memory for keymap data\n");
-+		return NULL;
-+	}
-+	pdata->keymap_data = keymap_data;
-+
-+	for_each_child_of_node(np, key_np)
-+		key_count++;
-+
-+	keymap_data->keymap_size = key_count;
-+	keymap = devm_kzalloc(dev, sizeof(uint32_t) * key_count, GFP_KERNEL);
-+	if (!keymap) {
-+		dev_err(dev, "could not allocate memory for keymap\n");
-+		return NULL;
-+	}
-+	keymap_data->keymap = keymap;
-+
-+	for_each_child_of_node(np, key_np) {
-+		u32 row, col, key_code;
-+		of_property_read_u32(key_np, "keypad,row", &row);
-+		of_property_read_u32(key_np, "keypad,column", &col);
-+		of_property_read_u32(key_np, "linux,code", &key_code);
-+		*keymap++ = KEY(row, col, key_code);
-+	}
-+
-+	if (of_get_property(np, "linux,input-no-autorepeat", NULL))
-+		pdata->no_autorepeat = true;
-+	if (of_get_property(np, "linux,input-wakeup", NULL))
-+		pdata->wakeup = true;
-+
-+	return pdata;
++	peri = chan->private;
++	return peri->peri_id == (unsigned)param;
 +}
++EXPORT_SYMBOL(pl330_filter);
 +
-+static void samsung_keypad_parse_dt_gpio(struct device *dev,
-+				struct samsung_keypad *keypad)
-+{
-+	struct device_node *np = dev->of_node;
-+	int gpio, ret, row, col;
-+
-+	for (row = 0; row < keypad->rows; row++) {
-+		gpio = of_get_named_gpio(np, "row-gpios", row);
-+		keypad->row_gpios[row] = gpio;
-+		if (!gpio_is_valid(gpio)) {
-+			dev_err(dev, "keypad row[%d]: invalid gpio %d\n",
-+					row, gpio);
-+			continue;
-+		}
-+
-+		ret = gpio_request(gpio, "keypad-row");
-+		if (ret)
-+			dev_err(dev, "keypad row[%d] gpio request failed\n",
-+					row);
-+	}
-+
-+	for (col = 0; col < keypad->cols; col++) {
-+		gpio = of_get_named_gpio(np, "col-gpios", col);
-+		keypad->col_gpios[col] = gpio;
-+		if (!gpio_is_valid(gpio)) {
-+			dev_err(dev, "keypad column[%d]: invalid gpio %d\n",
-+					col, gpio);
-+			continue;
-+		}
-+
-+		ret = gpio_request(gpio, "keypad-col");
-+		if (ret)
-+			dev_err(dev, "keypad column[%d] gpio request failed\n",
-+					col);
-+	}
-+}
-+
-+static void samsung_keypad_dt_gpio_free(struct samsung_keypad *keypad)
-+{
-+	int cnt;
-+
-+	for (cnt = 0; cnt < keypad->rows; cnt++)
-+		if (gpio_is_valid(keypad->row_gpios[cnt]))
-+			gpio_free(keypad->row_gpios[cnt]);
-+
-+	for (cnt = 0; cnt < keypad->cols; cnt++)
-+		if (gpio_is_valid(keypad->col_gpios[cnt]))
-+			gpio_free(keypad->col_gpios[cnt]);
-+}
-+#else
-+static
-+struct samsung_keypad_platdata *samsung_keypad_parse_dt(struct device *dev)
-+{
-+	return NULL;
-+}
-+
-+static void samsung_keypad_dt_gpio_free(struct samsung_keypad *keypad)
-+{
-+}
-+#endif
-+
- static int __devinit samsung_keypad_probe(struct platform_device *pdev)
+ static int pl330_alloc_chan_resources(struct dma_chan *chan)
  {
- 	const struct samsung_keypad_platdata *pdata;
-@@ -246,7 +363,10 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
- 	unsigned int keymap_size;
- 	int error;
+ 	struct dma_pl330_chan *pch = to_pchan(chan);
+diff --git a/include/linux/amba/pl330.h b/include/linux/amba/pl330.h
+index d12f077..6db72da 100644
+--- a/include/linux/amba/pl330.h
++++ b/include/linux/amba/pl330.h
+@@ -12,6 +12,7 @@
+ #ifndef	__AMBA_PL330_H_
+ #define	__AMBA_PL330_H_
  
--	pdata = pdev->dev.platform_data;
-+	if (pdev->dev.of_node)
-+		pdata = samsung_keypad_parse_dt(&pdev->dev);
-+	else
-+		pdata = pdev->dev.platform_data;
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "no platform data defined\n");
- 		return -EINVAL;
-@@ -303,6 +423,16 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
- 	keypad->cols = pdata->cols;
- 	init_waitqueue_head(&keypad->wait);
++#include <linux/dmaengine.h>
+ #include <asm/hardware/pl330.h>
  
-+	if (pdev->dev.of_node) {
-+#ifdef CONFIG_OF
-+		samsung_keypad_parse_dt_gpio(&pdev->dev, keypad);
-+		keypad->type = of_device_is_compatible(pdev->dev.of_node,
-+					"samsung,s5pv210-keypad");
-+#endif
-+	} else {
-+		keypad->type = platform_get_device_id(pdev)->driver_data;
-+	}
-+
- 	input_dev->name = pdev->name;
- 	input_dev->id.bustype = BUS_HOST;
- 	input_dev->dev.parent = &pdev->dev;
-@@ -343,12 +473,19 @@ static int __devinit samsung_keypad_probe(struct platform_device *pdev)
- 
- 	device_init_wakeup(&pdev->dev, pdata->wakeup);
- 	platform_set_drvdata(pdev, keypad);
-+
-+	if (pdev->dev.of_node) {
-+		devm_kfree(&pdev->dev, (void *)pdata->keymap_data->keymap);
-+		devm_kfree(&pdev->dev, (void *)pdata->keymap_data);
-+		devm_kfree(&pdev->dev, (void *)pdata);
-+	}
- 	return 0;
- 
- err_free_irq:
- 	free_irq(keypad->irq, keypad);
- err_put_clk:
- 	clk_put(keypad->clk);
-+	samsung_keypad_dt_gpio_free(keypad);
- err_unmap_base:
- 	iounmap(keypad->base);
- err_free_mem:
-@@ -374,6 +511,7 @@ static int __devexit samsung_keypad_remove(struct platform_device *pdev)
- 	free_irq(keypad->irq, keypad);
- 
- 	clk_put(keypad->clk);
-+	samsung_keypad_dt_gpio_free(keypad);
- 
- 	iounmap(keypad->base);
- 	kfree(keypad);
-@@ -447,6 +585,17 @@ static const struct dev_pm_ops samsung_keypad_pm_ops = {
+ struct dma_pl330_peri {
+@@ -38,4 +39,5 @@ struct dma_pl330_platdata {
+ 	unsigned mcbuf_sz;
  };
- #endif
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id samsung_keypad_dt_match[] = {
-+	{ .compatible = "samsung,s3c6410-keypad" },
-+	{ .compatible = "samsung,s5pv210-keypad" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, samsung_keypad_dt_match);
-+#else
-+#define samsung_keypad_dt_match NULL
-+#endif
-+
- static struct platform_device_id samsung_keypad_driver_ids[] = {
- 	{
- 		.name		= "samsung-keypad",
-@@ -465,6 +614,7 @@ static struct platform_driver samsung_keypad_driver = {
- 	.driver		= {
- 		.name	= "samsung-keypad",
- 		.owner	= THIS_MODULE,
-+		.of_match_table = samsung_keypad_dt_match,
- #ifdef CONFIG_PM
- 		.pm	= &samsung_keypad_pm_ops,
- #endif
++extern bool pl330_filter(struct dma_chan *chan, void *param);
+ #endif	/* __AMBA_PL330_H_ */
 -- 
 1.6.6.rc2
