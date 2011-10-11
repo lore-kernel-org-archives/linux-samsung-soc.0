@@ -1,147 +1,170 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] rtc: rtc-s3c: Add device tree support
-Date: Tue, 11 Oct 2011 12:35:27 +0530
-Message-ID: <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com>
-References: <1315064959-16930-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH] gpio: exynos4: Add device tree support
+Date: Tue, 11 Oct 2011 13:46:14 +0530
+Message-ID: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:61489 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750776Ab1JKHF2 convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:56424 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753143Ab1JKIOq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 03:05:28 -0400
-Received: by ggnv2 with SMTP id v2so5352447ggn.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2011 00:05:27 -0700 (PDT)
-In-Reply-To: <1315064959-16930-1-git-send-email-thomas.abraham@linaro.org>
+	Tue, 11 Oct 2011 04:14:46 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSW006UK6VGCGO0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 17:14:36 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSW003CJ6W7O410@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 17:14:36 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: rtc-linux@googlegroups.com
-Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: devicetree-discuss@lists.ozlabs.org
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 3 September 2011 21:19, Thomas Abraham <thomas.abraham@linaro.org> w=
-rote:
-> Add device tree based discovery support for Samsung's rtc controller.
->
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
-> =A0Documentation/devicetree/bindings/rtc/s3c-rtc.txt | =A0 20 +++++++=
-+++++++++++++
-> =A0drivers/rtc/rtc-s3c.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 | =A0 21 ++++++++++++++++++++-
-> =A02 files changed, 40 insertions(+), 1 deletions(-)
-> =A0create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.t=
-xt
+As gpio chips get registered, a device tree node which represents the
+gpio chip is searched and attached to it. A translate function is also
+provided to convert the gpio specifier into actual platform settings
+for pin function selection, pull up/down and driver strength settings.
 
-Ping. Any comments for this patch? If this looks fine, can this be
-considered for 3.2 merge via the Samsung kernel tree.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+This patch is based on the latest consolidated Samsung GPIO driver available
+in the following tree:
+  https://github.com/kgene/linux-samsung.git  branch: for-next
 
-Thanks,
-Thomas.
+ .../devicetree/bindings/gpio/gpio-samsung.txt      |   30 +++++++++++
+ drivers/gpio/gpio-samsung.c                        |   53 ++++++++++++++++++++
+ 2 files changed, 83 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
 
->
-> diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt b/Docu=
-mentation/devicetree/bindings/rtc/s3c-rtc.txt
-> new file mode 100644
-> index 0000000..90ec45f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> @@ -0,0 +1,20 @@
-> +* Samsung's S3C Real Time Clock controller
-> +
-> +Required properties:
-> +- compatible: should be one of the following.
-> + =A0 =A0* "samsung,s3c2410-rtc" - for controllers compatible with s3=
-c2410 rtc.
-> + =A0 =A0* "samsung,s3c6410-rtc" - for controllers compatible with s3=
-c6410 rtc.
-> +- reg: physical base address of the controller and length of memory =
-mapped
-> + =A0region.
-> +- interrupts: Two interrupt numbers to the cpu should be specified. =
-=46irst
-> + =A0interrupt number is the rtc alarm interupt and second interrupt =
-number
-> + =A0is the rtc tick interrupt. The number of cells representing a in=
-terrupt
-> + =A0depends on the parent interrupt controller.
-> +
-> +Example:
-> +
-> + =A0 =A0 =A0 rtc@10070000 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,s3c6410-rtc";
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x10070000 0x100>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <44 0 45 0>;
-> + =A0 =A0 =A0 };
-> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> index 4e7c04e..29f928c 100644
-> --- a/drivers/rtc/rtc-s3c.c
-> +++ b/drivers/rtc/rtc-s3c.c
-> @@ -25,6 +25,7 @@
-> =A0#include <linux/clk.h>
-> =A0#include <linux/log2.h>
-> =A0#include <linux/slab.h>
-> +#include <linux/of.h>
->
-> =A0#include <mach/hardware.h>
-> =A0#include <asm/uaccess.h>
-> @@ -481,7 +482,13 @@ static int __devinit s3c_rtc_probe(struct platfo=
-rm_device *pdev)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err_nortc;
-> =A0 =A0 =A0 =A0}
->
-> - =A0 =A0 =A0 s3c_rtc_cpu_type =3D platform_get_device_id(pdev)->driv=
-er_data;
-> +#ifdef CONFIG_OF
-> + =A0 =A0 =A0 if (pdev->dev.of_node)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D of_device_is_compa=
-tible(pdev->dev.of_node,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "samsung,s3c6410-rtc") =
-? TYPE_S3C64XX : TYPE_S3C2410;
-> + =A0 =A0 =A0 else
-> +#endif
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D platform_get_devic=
-e_id(pdev)->driver_data;
->
-> =A0 =A0 =A0 =A0/* Check RTC Time */
->
-> @@ -603,6 +610,17 @@ static int s3c_rtc_resume(struct platform_device=
- *pdev)
-> =A0#define s3c_rtc_resume =A0NULL
-> =A0#endif
->
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id s3c_rtc_dt_match[] =3D {
-> + =A0 =A0 =A0 { .compatible =3D "samsung,s3c2410-rtc" },
-> + =A0 =A0 =A0 { .compatible =3D "samsung,s3c6410-rtc" },
-> + =A0 =A0 =A0 {},
-> +};
-> +MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
-> +#else
-> +#define s3c_rtc_dt_match NULL
-> +#endif
-> +
-> =A0static struct platform_device_id s3c_rtc_driver_ids[] =3D {
-> =A0 =A0 =A0 =A0{
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "s3c2410=
--rtc",
-> @@ -625,6 +643,7 @@ static struct platform_driver s3c_rtc_driver =3D =
-{
-> =A0 =A0 =A0 =A0.driver =A0 =A0 =A0 =A0 =3D {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-rtc",
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.owner =A0=3D THIS_MODULE,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .of_match_table =3D s3c_rtc_dt_match,
-> =A0 =A0 =A0 =A0},
-> =A0};
->
-> --
-> 1.6.6.rc2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+new file mode 100644
+index 0000000..883faeb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+@@ -0,0 +1,30 @@
++Samsung Exynos4 GPIO Controller
++
++Required properties:
++- compatible: Format of compatible property value should be
++  "samsung,exynos4-gpio-<controller_name>". Example: For GPA0 controller, the
++  compatible property value should be "samsung,exynos4-gpio-gpa0".
++
++- reg: Physical base address of the controller and length of memory mapped region.
++
++- #gpio-cells: Should be 4. The syntax of the gpio specifier used by client nodes
++  should be the following with values derived from the SoC user manual.
++     <[phandle of the gpio controller node] <pin number within the gpio controller]
++      [mux function] [pull up/down] [drive strength]>
++
++- gpio-controller: Specifies that the node is a gpio controller.
++
++- #address-cells: should be 1.
++
++- #size-cells: should be 1. 
++
++Example:
++
++	gpa0: gpio-controller@11400000 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "samsung,exynos4-gpio-gpa0";
++		reg = <0x11400000 0x20>;
++		#gpio-cells = <4>;
++		gpio-controller;
++	};
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index b6be77a..037d3bb 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -24,6 +24,10 @@
+ #include <linux/interrupt.h>
+ #include <linux/sysdev.h>
+ #include <linux/ioport.h>
++#ifdef CONFIG_OF
++#include <linux/of.h>
++#include <linux/slab.h>
++#endif
+ 
+ #include <asm/irq.h>
+ 
+@@ -2353,6 +2357,52 @@ static struct samsung_gpio_chip exynos4_gpios_3[] = {
+ #endif
+ };
+ 
++#if defined(CONFIG_ARCH_EXYNOS4) && defined(CONFIG_OF)
++int exynos4_gpio_xlate(struct gpio_chip *gc, struct device_node *np,
++			 const void *gpio_spec, u32 *flags)
++{
++	const __be32 *gpio = gpio_spec;
++	const u32 n = be32_to_cpup(gpio);
++	unsigned int pin = gc->base + be32_to_cpu(gpio[0]);
++
++	if (gc->of_gpio_n_cells < 4) {
++		WARN_ON(1);
++		return -EINVAL;
++	}
++
++	if (n > gc->ngpio)
++		return -EINVAL;
++
++	s3c_gpio_cfgpin(pin, S3C_GPIO_SFN(be32_to_cpu(gpio[1])));
++	s3c_gpio_setpull(pin, be32_to_cpu(gpio[2]));
++	s5p_gpio_set_drvstr(pin, be32_to_cpu(gpio[3]));
++	return n;
++}
++
++static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *gc)
++{
++	const char exynos4_gpio_compat_base[] = "samsung,exynos4-gpio-";
++	char *exynos4_gpio_compat;
++
++	exynos4_gpio_compat = kzalloc(strlen(exynos4_gpio_compat_base) +
++				strlen(gc->label), GFP_KERNEL);
++	if (!exynos4_gpio_compat)
++		return;
++
++	strcpy(exynos4_gpio_compat, exynos4_gpio_compat_base);
++	strcat(exynos4_gpio_compat, gc->label);
++	gc->of_node = of_find_compatible_node(NULL, NULL, exynos4_gpio_compat);
++	gc->of_gpio_n_cells = 4;
++	gc->of_xlate = exynos4_gpio_xlate;
++	kfree(exynos4_gpio_compat);
++}
++#else
++static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *chip)
++{
++	return;
++}
++#endif /* defined(CONFIG_ARCH_EXYNOS4) && defined(CONFIG_OF) */
++
+ /* TODO: cleanup soc_is_* */
+ static __init int samsung_gpiolib_init(void)
+ {
+@@ -2434,6 +2484,7 @@ static __init int samsung_gpiolib_init(void)
+ 				chip->config = &exynos4_gpio_cfg;
+ 				chip->group = group++;
+ 			}
++			exynos4_gpiolib_attach_ofnode(&chip->chip);
+ 		}
+ 		samsung_gpiolib_add_4bit_chips(exynos4_gpios_1, nr_chips, S5P_VA_GPIO1);
+ 
+@@ -2446,6 +2497,7 @@ static __init int samsung_gpiolib_init(void)
+ 				chip->config = &exynos4_gpio_cfg;
+ 				chip->group = group++;
+ 			}
++			exynos4_gpiolib_attach_ofnode(&chip->chip);
+ 		}
+ 		samsung_gpiolib_add_4bit_chips(exynos4_gpios_2, nr_chips, S5P_VA_GPIO2);
+ 
+@@ -2458,6 +2510,7 @@ static __init int samsung_gpiolib_init(void)
+ 				chip->config = &exynos4_gpio_cfg;
+ 				chip->group = group++;
+ 			}
++			exynos4_gpiolib_attach_ofnode(&chip->chip);
+ 		}
+ 		samsung_gpiolib_add_4bit_chips(exynos4_gpios_3, nr_chips, S5P_VA_GPIO3);
+ 
+-- 
+1.6.6.rc2
