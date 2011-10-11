@@ -1,784 +1,230 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 2/2] ARM: dts: Add intial dts file for Exynos4210 SoC,
- SMDKV310 and Origen board
-Date: Tue, 11 Oct 2011 19:43:16 +0530
-Message-ID: <1318342396-26178-3-git-send-email-thomas.abraham@linaro.org>
-References: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH v6 00/10] Add device tree support for PL330 dma controller driver
+Date: Tue, 11 Oct 2011 20:35:36 +0530
+Message-ID: <CAJuYYwR_syveV=4Qb9-ZSi0dt7RWtRkXmJRoY8067-_BKv0rJg@mail.gmail.com>
+References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
+	<057401cc880e$41e30b20$c5a92160$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:62960 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753496Ab1JKOLv (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:46566 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752373Ab1JKPFj convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 10:11:51 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSW003EPNFGQO10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 23:11:49 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSW00BYLNFF5S40@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 23:11:49 +0900 (KST)
-In-reply-to: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
+	Tue, 11 Oct 2011 11:05:39 -0400
+Received: by bkbzt4 with SMTP id zt4so9904779bkb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2011 08:05:37 -0700 (PDT)
+In-Reply-To: <057401cc880e$41e30b20$c5a92160$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
-Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: vinod.koul@intel.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>
 
-Add initial dts file for Exynos4210 SoC. This dts file describes the SoC
-specific devices and properties. Along with this, add dts file for Samsung's
-SMDKV310 board and Insignal's Origen board which uses the Exynos4210 dts file
-and extends it to describe the board specific properties.
+Hi Vinod,
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/boot/dts/exynos4210-origen.dts   |  137 ++++++++++
- arch/arm/boot/dts/exynos4210-smdkv310.dts |  182 +++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi         |  403 +++++++++++++++++++++++++++++
- 3 files changed, 722 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos4210-origen.dts
- create mode 100644 arch/arm/boot/dts/exynos4210-smdkv310.dts
- create mode 100644 arch/arm/boot/dts/exynos4210.dtsi
+On 11 October 2011 17:36, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Thomas Abraham wrote:
+>>
+>> Changes since v5:
+>> - Added alias clocks for pdma clocks on Exynos4.
+>> - Modified platform data for s5p64x0, s5pc100 and s5pv210.
+>> - Rebased on the tip of for-next branch of linux-samsung kernel and
+> tested.
+>>
+>> Changes since v4:
+>> - Rebased with Samsung maintainer's for-next branch which is at
+> linux-3.1-rc7
+>> =A0 - Modified Patch 6/6 to apply cleanly.
+>>
+>> Changes since v3:
+>> - In Patch 4/6, a recommendation is added in the pl330 binding
+> documentation
+>> =A0 for the name of the property which specifies the dma channel in =
+the
+> client
+>> =A0 device node.
+>> - In Patch 6/6, dropped #ifdef around of_have_populated_dt.
+>>
+>> Changes since v2:
+>> - Only the sixth patch is changed, to make dma platform data conditi=
+onally
+>> =A0 selectable.
+>> - Tested with v8 version of pl330 dma driver update patches from Boo=
+jin
+> Kim.
+>>
+>> Changes since v1:
+>> - Removed "arm,pl330-pdma" and "arm,pl330-mdma" compatible values.
+>> - Removed "arm,primecell-periphid" and "arm,pl330-peri-reqs"
+>> =A0 property requirements.
+>>
+>> This patchset adds device tree support for PL330 driver and uses it =
+to add
+>> device tree support for Samsung platforms, specifically Exynos4.
+>>
+>> Patch 1 moves the pl330_filter function from Samsung specific wrappe=
+rs to
+> pl330
+>> dma driver and also adds a check to ensure that the filter function
+> proceeds
+>> only if it the dma channel being investigated belongs to pl330 dma
+> controller
+>> instance.
+>>
+>> Patch 2 adds support to infer the direction of the dma transfer usin=
+g the
+>> direction specified with the transfer request instead of including t=
+his
+>> information in the platform data. This simlifies the addition of dev=
+ice
+> tree
+>> support. Patch 3 simplifies the platform data for Exynos4 pl330 dma
+> controllers.
+>>
+>> Patch 4 adds device tree support for pl330 dma controller driver. A =
+dma
+> channel
+>> is represented using a phandle of the dma controller node and the ch=
+annel
+> id
+>> within that controller. Client driver request a dma channel using th=
+e
+> phandle
+>> and channel id pair. Correspondingly, the pl330 filter function has =
+been
+>> modified to lookup a channel based on this value.
+>>
+>> Patch 5 adds device tree support for Samsung's DMA engine wrappers. =
+Client
+>> drivers retrive the channel property from their device node and pass=
+ it to
+> the
+>> wrappers. The wrapper functions use the property value as the filter
+> function
+>> parameter. Patch 6 restricts the usage of pl330 device and platform =
+data
+>> instances to non-dt platforms.
+>>
+>> Patch 7 adds clock alias for both the pdma clocks. When pdma control=
+lers
+> are
+>> instantiated from device tree, the amba device registration process
+> enables
+>> clock to the controllers to read the peripheral id of the PDMA amba
+> device. In
+>> case of Exynos4, the clocks to the PDMA controllers are named as 'dm=
+a' but
+>> amba_device_register() looks up the clock using the name 'apb_pclk'.
+> Hence,
+>> alias clocks with name 'apb_pclk' clock are created for clocks with =
+name
+> 'dma'.
+>>
+>> Patch 8 to 10 simplifies the pdma platform data for s5p64x0, s5pc100=
+ and
+>> s5pv210.
+>>
+>> This patchset is based on the following tree:
+>> https://github.com/kgene/linux-samsung.git =A0 branch: for-next
+>>
+>> and tested tested for both device-tree and non-device-tree kernel on
+> smdkv310.
+>>
+>> This patchset has dependency on the following patchset.
+>> [PATCH V2 0/2] Add a common macro for creating struct clk_lookup ent=
+ries.
+>>
+>>
+>> Thomas Abraham (10):
+>> =A0 DMA: PL330: move filter function into driver
+>> =A0 DMA: PL330: Infer transfer direction from transfer request inste=
+ad of
+> platform
+>> data
+>> =A0 ARM: EXYNOS4: Modify platform data for pl330 driver
+>> =A0 DMA: PL330: Add device tree support
+>> =A0 ARM: SAMSUNG: Add device tree support for pl330 dma engine wrapp=
+ers
+>> =A0 ARM: EXYNOS4: Limit usage of pl330 device instance to non-dt bui=
+ld
+>> =A0 ARM: Exynos4: Add a alias for pdma clocks
+>> =A0 ARM: S5P64x0: Modify platform data for pl330 driver
+>> =A0 ARM: S5PC100: Modify platform data for pl330 driver
+>> =A0 ARM: S5PV210: Modify platform data for pl330 driver
+>>
+>> =A0.../devicetree/bindings/dma/arm-pl330.txt =A0 =A0 =A0 =A0 =A0| =A0=
+ 30 +++
+>> =A0arch/arm/mach-exynos4/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 10 +
+>> =A0arch/arm/mach-exynos4/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 | =A0 =A03 +-
+>> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0 35 ++-
+>> =A0arch/arm/mach-exynos4/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0227
+> ++++++-----------
+>> --
+>> =A0arch/arm/mach-s5p64x0/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0227
+> +++++-------------
+>> =A0arch/arm/mach-s5pc100/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0247
+> ++++++-----------
+>> ---
+>> =A0arch/arm/mach-s5pv210/dma.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0| =A0241
+> ++++++-----------
+>> ---
+>> =A0arch/arm/plat-samsung/dma-ops.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0| =A0 15 +-
+>> =A0arch/arm/plat-samsung/include/plat/dma-ops.h =A0 =A0 =A0 | =A0 =A0=
+1 +
+>> =A0arch/arm/plat-samsung/include/plat/dma-pl330.h =A0 =A0 | =A0 =A03=
+ +-
+>> =A0drivers/dma/pl330.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0| =A0 99 +++++----
+>> =A0include/linux/amba/pl330.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 | =A0 15 +-
+>> =A013 files changed, 405 insertions(+), 748 deletions(-)
+>> =A0create mode 100644 Documentation/devicetree/bindings/dma/arm-pl33=
+0.txt
+>
+> Hi,
+>
+> Looks ok to me and if required,
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+>
+> And I hope since this includes many changes of arch/arm/Samsung stuff=
+, this
+> would be sent to upstream via Samsung tree after ack from Vinod for d=
+ma
+> stuff.
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-new file mode 100644
-index 0000000..b8c4763
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -0,0 +1,137 @@
-+/*
-+ * Samsung's Exynos4210 based Origen board device tree source
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2010-2011 Linaro Ltd.
-+ *		www.linaro.org
-+ *
-+ * Device tree source file for Insignal's Origen board which is based on
-+ * Samsung's Exynos4210 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+/include/ "exynos4210.dtsi"
-+
-+/ {
-+	model = "Insignal Origen evaluation board based on Exynos4210";
-+	compatible = "insignal,origen", "samsung,exynos4210";
-+
-+	memory {
-+		reg = <0x40000000 0x40000000>;
-+	};
-+
-+	chosen {
-+		bootargs ="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
-+	};
-+
-+	sdhci@12530000 {
-+		samsung,sdhci-bus-width = <4>;
-+		linux,mmc_cap_4_bit_data;
-+		samsung,sdhci-cd-internal;
-+		gpio-cd = <&gpk2 2 2 3 3>;
-+		gpios = <&gpk2 0 2 0 3>,
-+			<&gpk2 1 2 0 3>,
-+			<&gpk2 3 2 3 3>,
-+			<&gpk2 4 2 3 3>,
-+			<&gpk2 5 2 3 3>,
-+			<&gpk2 6 2 3 3>;
-+	};
-+
-+	sdhci@12510000 {
-+		samsung,sdhci-bus-width = <4>;
-+		linux,mmc_cap_4_bit_data;
-+		samsung,sdhci-cd-internal;
-+		gpio-cd = <&gpk0 2 2 3 3>;
-+		gpios = <&gpk0 0 2 0 3>,
-+			<&gpk0 1 2 0 3>,
-+			<&gpk0 3 2 3 3>,
-+			<&gpk0 4 2 3 3>,
-+			<&gpk0 5 2 3 3>,
-+			<&gpk0 6 2 3 3>;
-+	};
-+
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		up {
-+			label = "Up";
-+			gpios = <&gpx2 0 0 0 2>;
-+			linux,code = <103>;
-+		};
-+
-+		down {
-+			label = "Down";
-+			gpios = <&gpx2 1 0 0 2>;
-+			linux,code = <108>;
-+		};
-+
-+		back {
-+			label = "Back";
-+			gpios = <&gpx1 7 0 0 2>;
-+			linux,code = <158>;
-+		};
-+
-+		home {
-+			label = "Home";
-+			gpios = <&gpx1 6 0 0 2>;
-+			linux,code = <102>;
-+		};
-+
-+		menu {
-+			label = "Menu";
-+			gpios = <&gpx1 5 0 0 2>;
-+			linux,code = <139>;
-+		};
-+	};
-+
-+	keypad@100A0000 {
-+		status = "disabled";
-+	};
-+
-+	sdhci@12520000 {
-+		status = "disabled";
-+	};
-+
-+	sdhci@12540000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13860000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13870000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13880000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13890000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138A0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138B0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138C0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138D0000 {
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-new file mode 100644
-index 0000000..27afc8e
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -0,0 +1,182 @@
-+/*
-+ * Samsung's Exynos4210 based SMDKV310 board device tree source
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2010-2011 Linaro Ltd.
-+ *		www.linaro.org
-+ *
-+ * Device tree source file for Samsung's SMDKV310 board which is based on
-+ * Samsung's Exynos4210 SoC.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+/include/ "exynos4210.dtsi"
-+
-+/ {
-+	model = "Samsung smdkv310 evaluation board based on Exynos4210";
-+	compatible = "samsung,smdkv310", "samsung,exynos4210";
-+
-+	memory {
-+		reg = <0x40000000 0x80000000>;
-+	};
-+
-+	chosen {
-+		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+	};
-+
-+	sdhci@12530000 {
-+		samsung,sdhci-bus-width = <4>;
-+		linux,mmc_cap_4_bit_data;
-+		samsung,sdhci-cd-internal;
-+		gpio-cd = <&gpk2 2 2 3 3>;
-+		gpios = <&gpk2 0 2 0 3>,
-+			<&gpk2 1 2 0 3>,
-+			<&gpk2 3 2 3 3>,
-+			<&gpk2 4 2 3 3>,
-+			<&gpk2 5 2 3 3>,
-+			<&gpk2 6 2 3 3>;
-+	};
-+
-+	keypad@100A0000 {
-+		samsung,keypad-num-rows = <2>;
-+		samsung,keypad-num-columns = <8>;
-+		linux,keypad-no-autorepeat;
-+		linux,keypad-wakeup;
-+
-+		row-gpios = <&gpx2 0 3 3 0>,
-+			    <&gpx2 1 3 3 0>;
-+
-+		col-gpios = <&gpx1 0 3 0 0>,
-+			    <&gpx1 1 3 0 0>,
-+			    <&gpx1 2 3 0 0>,
-+			    <&gpx1 3 3 0 0>,
-+			    <&gpx1 4 3 0 0>,
-+			    <&gpx1 5 3 0 0>,
-+			    <&gpx1 6 3 0 0>,
-+			    <&gpx1 7 3 0 0>;
-+
-+		key_1 {
-+			keypad,row = <0>;
-+			keypad,column = <3>;
-+			linux,code = <2>;
-+		};
-+
-+		key_2 {
-+			keypad,row = <0>;
-+			keypad,column = <4>;
-+			linux,code = <3>;
-+		};
-+
-+		key_3 {
-+			keypad,row = <0>;
-+			keypad,column = <5>;
-+			linux,code = <4>;
-+		};
-+
-+		key_4 {
-+			keypad,row = <0>;
-+			keypad,column = <6>;
-+			linux,code = <5>;
-+		};
-+
-+		key_5 {
-+			keypad,row = <0>;
-+			keypad,column = <7>;
-+			linux,code = <6>;
-+		};
-+
-+		key_a {
-+			keypad,row = <1>;
-+			keypad,column = <3>;
-+			linux,code = <30>;
-+		};
-+
-+		key_b {
-+			keypad,row = <1>;
-+			keypad,column = <4>;
-+			linux,code = <48>;
-+		};
-+
-+		key_c {
-+			keypad,row = <1>;
-+			keypad,column = <5>;
-+			linux,code = <46>;
-+		};
-+
-+		key_d {
-+			keypad,row = <1>;
-+			keypad,column = <6>;
-+			linux,code = <32>;
-+		};
-+
-+		key_e {
-+			keypad,row = <1>;
-+			keypad,column = <7>;
-+			linux,code = <18>;
-+		};
-+	};
-+
-+	i2c@13860000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		samsung,i2c-sda-delay = <100>;
-+		samsung,i2c-max-bus-freq = <20000>;
-+		gpios = <&gpd1 0 2 3 0>,
-+			<&gpd1 1 2 3 0>;
-+
-+		eeprom@50 {
-+			compatible = "samsung,24ad0xd1";
-+			reg = <0x50>;
-+		};
-+
-+		eeprom@52 {
-+			compatible = "samsung,24ad0xd1";
-+			reg = <0x52>;
-+		};
-+	};
-+
-+	sdhci@12510000 {
-+		status = "disabled";
-+	};
-+
-+	sdhci@12520000 {
-+		status = "disabled";
-+	};
-+
-+	sdhci@12540000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13870000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13880000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@13890000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138A0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138B0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138C0000 {
-+		status = "disabled";
-+	};
-+
-+	i2c@138D0000 {
-+		status = "disabled";
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-new file mode 100644
-index 0000000..7598a15
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -0,0 +1,403 @@
-+/*
-+ * Samsung's Exynos4210 SoC device tree source
-+ *
-+ * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2010-2011 Linaro Ltd.
-+ *		www.linaro.org
-+ *
-+ * Samsung's Exynos4210 SoC device nodes are listed in this file. Exynos4210
-+ * based board files can include this file and provide values for board specfic
-+ * bindings.
-+ *
-+ * Note: This file does not include device nodes for all the controllers in
-+ * Exynos4210 SoC. As device tree coverage for Exynos4210 increases, additional
-+ * nodes can be added to this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	compatible = "samsung,exynos4210";
-+	interrupt-parent = <&gic>;
-+
-+	gic:interrupt-controller@10490000 {
-+		compatible = "arm,cortex-a9-gic";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
-+	};
-+
-+	combiner: interrupt-controller@10440000 {
-+		compatible = "samsung,exynos4-combiner";
-+		#interrupt-cells = <2>;
-+		interrupt-controller;
-+		reg = <0x10440000 0x200>;
-+	};
-+
-+	watchdog@10060000 {
-+		compatible = "samsung,s3c2410-wdt";
-+		reg = <0x10060000 0x100>;
-+		interrupts = <0 43 0>;
-+	};
-+
-+	rtc@10070000 {
-+		compatible = "samsung,s3c6410-rtc";
-+		reg = <0x10070000 0x100>;
-+		interrupts = <0 44 0>, <0 45 0>;
-+	};
-+
-+	keypad@100A0000 {
-+		compatible = "samsung,s5pv210-keypad";
-+		reg = <0x100A0000 0x100>;
-+		interrupts = <0 109 0>;
-+	};
-+
-+	sdhci@12510000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12510000 0x100>;
-+		interrupts = <0 73 0>;
-+	};
-+
-+	sdhci@12520000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12520000 0x100>;
-+		interrupts = <0 74 0>;
-+	};
-+
-+	sdhci@12530000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12530000 0x100>;
-+		interrupts = <0 75 0>;
-+	};
-+
-+	sdhci@12540000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12540000 0x100>;
-+		interrupts = <0 76 0>;
-+	};
-+
-+	serial@13800000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x13800000 0x100>;
-+		interrupts = <0 52 0>;
-+	};
-+
-+	serial@13810000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x13810000 0x100>;
-+		interrupts = <0 53 0>;
-+	};
-+
-+	serial@13820000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x13820000 0x100>;
-+		interrupts = <0 54 0>;
-+	};
-+
-+	serial@13830000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x13830000 0x100>;
-+		interrupts = <0 55 0>;
-+	};
-+
-+	i2c@13860000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x13860000 0x100>;
-+		interrupts = <0 58 0>;
-+	};
-+
-+	i2c@13870000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x13870000 0x100>;
-+		interrupts = <0 59 0>;
-+	};
-+
-+	i2c@13880000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x13880000 0x100>;
-+		interrupts = <0 60 0>;
-+	};
-+
-+	i2c@13890000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x13890000 0x100>;
-+		interrupts = <0 61 0>;
-+	};
-+
-+	i2c@138A0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x138A0000 0x100>;
-+		interrupts = <0 62 0>;
-+	};
-+
-+	i2c@138B0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x138B0000 0x100>;
-+		interrupts = <0 63 0>;
-+	};
-+
-+	i2c@138C0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x138C0000 0x100>;
-+		interrupts = <0 64 0>;
-+	};
-+
-+	i2c@138D0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x138D0000 0x100>;
-+		interrupts = <0 65 0>;
-+	};
-+
-+	amba {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "arm,amba-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		pdma0: pdma@12680000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x12680000 0x1000>;
-+			interrupts = <0 35 0>;
-+		};
-+
-+		pdma1: pdma@12690000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x12690000 0x1000>;
-+			interrupts = <0 36 0>;
-+		};
-+	};
-+
-+	gpio-controllers {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		gpio-controller;
-+
-+		gpa0: gpio-controller@11400000 {
-+			compatible = "samsung,exynos4-gpio-gpa0", "samsung,exynos4-gpio";
-+			reg = <0x11400000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpa1: gpio-controller@11400020 {
-+			compatible = "samsung,exynos4-gpio-gpa1", "samsung,exynos4-gpio";
-+			reg = <0x11400020 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpb: gpio-controller@11400040 {
-+			compatible = "samsung,exynos4-gpio-gpb", "samsung,exynos4-gpio";
-+			reg = <0x11400040 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpc0: gpio-controller@11400060 {
-+			compatible = "samsung,exynos4-gpio-gpc0", "samsung,exynos4-gpio";
-+			reg = <0x11400060 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpc1: gpio-controller@11400080 {
-+			compatible = "samsung,exynos4-gpio-gpc1", "samsung,exynos4-gpio";
-+			reg = <0x11400080 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpd0: gpio-controller@114000A0 {
-+			compatible = "samsung,exynos4-gpio-gpd0", "samsung,exynos4-gpio";
-+			reg = <0x114000A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpd1: gpio-controller@114000C0 {
-+			compatible = "samsung,exynos4-gpio-gpd1", "samsung,exynos4-gpio";
-+			reg = <0x114000C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe0: gpio-controller@114000E0 {
-+			compatible = "samsung,exynos4-gpio-gpe0", "samsung,exynos4-gpio";
-+			reg = <0x114000E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe1: gpio-controller@11400100 {
-+			compatible = "samsung,exynos4-gpio-gpe1", "samsung,exynos4-gpio";
-+			reg = <0x11400100 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe2: gpio-controller@11400120 {
-+			compatible = "samsung,exynos4-gpio-gpe2", "samsung,exynos4-gpio";
-+			reg = <0x11400120 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe3: gpio-controller@11400140 {
-+			compatible = "samsung,exynos4-gpio-gpe3", "samsung,exynos4-gpio";
-+			reg = <0x11400140 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe4: gpio-controller@11400160 {
-+			compatible = "samsung,exynos4-gpio-gpe4", "samsung,exynos4-gpio";
-+			reg = <0x11400160 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpf0: gpio-controller@11400180 {
-+			compatible = "samsung,exynos4-gpio-gpf0", "samsung,exynos4-gpio";
-+			reg = <0x11400180 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpf1: gpio-controller@114001A0 {
-+			compatible = "samsung,exynos4-gpio-gpf1", "samsung,exynos4-gpio";
-+			reg = <0x114001A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpf2: gpio-controller@114001C0 {
-+			compatible = "samsung,exynos4-gpio-gpf2", "samsung,exynos4-gpio";
-+			reg = <0x114001C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpf3: gpio-controller@114001E0 {
-+			compatible = "samsung,exynos4-gpio-gpf3", "samsung,exynos4-gpio";
-+			reg = <0x114001E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpj0: gpio-controller@11000000 {
-+			compatible = "samsung,exynos4-gpio-gpj0", "samsung,exynos4-gpio";
-+			reg = <0x11000000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpj1: gpio-controller@11000020 {
-+			compatible = "samsung,exynos4-gpio-gpj1", "samsung,exynos4-gpio";
-+			reg = <0x11000020 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpk0: gpio-controller@11000040 {
-+			compatible = "samsung,exynos4-gpio-gpk0", "samsung,exynos4-gpio";
-+			reg = <0x11000040 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpk1: gpio-controller@11000060 {
-+			compatible = "samsung,exynos4-gpio-gpk1", "samsung,exynos4-gpio";
-+			reg = <0x11000060 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpk2: gpio-controller@11000080 {
-+			compatible = "samsung,exynos4-gpio-gpk2", "samsung,exynos4-gpio";
-+			reg = <0x11000080 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpk3: gpio-controller@110000A0 {
-+			compatible = "samsung,exynos4-gpio-gpk3", "samsung,exynos4-gpio";
-+			reg = <0x110000A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpl0: gpio-controller@110000C0 {
-+			compatible = "samsung,exynos4-gpio-gpl0", "samsung,exynos4-gpio";
-+			reg = <0x110000C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpl1: gpio-controller@110000E0 {
-+			compatible = "samsung,exynos4-gpio-gpl1", "samsung,exynos4-gpio";
-+			reg = <0x110000E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpl2: gpio-controller@11000100 {
-+			compatible = "samsung,exynos4-gpio-gpl2", "samsung,exynos4-gpio";
-+			reg = <0x11000100 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy0: gpio-controller@11000120 {
-+			compatible = "samsung,exynos4-gpio-gpy0", "samsung,exynos4-gpio";
-+			reg = <0x11000120 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy1: gpio-controller@11000140 {
-+			compatible = "samsung,exynos4-gpio-gpy1", "samsung,exynos4-gpio";
-+			reg = <0x11000140 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy2: gpio-controller@11000160 {
-+			compatible = "samsung,exynos4-gpio-gpy2", "samsung,exynos4-gpio";
-+			reg = <0x11000160 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy3: gpio-controller@11000180 {
-+			compatible = "samsung,exynos4-gpio-gpy3", "samsung,exynos4-gpio";
-+			reg = <0x11000180 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy4: gpio-controller@110001A0 {
-+			compatible = "samsung,exynos4-gpio-gpy4", "samsung,exynos4-gpio";
-+			reg = <0x110001A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy5: gpio-controller@110001C0 {
-+			compatible = "samsung,exynos4-gpio-gpy5", "samsung,exynos4-gpio";
-+			reg = <0x110001C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy6: gpio-controller@110001E0 {
-+			compatible = "samsung,exynos4-gpio-gpy6", "samsung,exynos4-gpio";
-+			reg = <0x110001E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx0: gpio-controller@11000C00 {
-+			compatible = "samsung,exynos4-gpio-gpx0", "samsung,exynos4-gpio";
-+			reg = <0x11000C00 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx1: gpio-controller@11000C20 {
-+			compatible = "samsung,exynos4-gpio-gpx1", "samsung,exynos4-gpio";
-+			reg = <0x11000C20 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx2: gpio-controller@11000C40 {
-+			compatible = "samsung,exynos4-gpio-gpx2", "samsung,exynos4-gpio";
-+			reg = <0x11000C40 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx3: gpio-controller@11000C60 {
-+			compatible = "samsung,exynos4-gpio-gpx3", "samsung,exynos4-gpio";
-+			reg = <0x11000C60 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpz: gpio-controller@03860000 {
-+			compatible = "samsung,exynos4-gpio-gpz", "samsung,exynos4-gpio";
-+			reg = <0x03860000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+	};
-+};
--- 
-1.6.6.rc2
+All the comments for this patchset that adds device tree support for
+pl330 dma controller driver have been addressed. This patchset is
+based on the linux-samsung kernel since there are many changes in the
+samsung platform code included in this patchset.
+
+If there are no other changes required, can this patchset be
+considered for merge in 3.2 ?
+
+Thanks,
+Thomas.
+
+
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
