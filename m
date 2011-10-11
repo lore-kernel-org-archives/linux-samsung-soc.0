@@ -1,182 +1,130 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] rtc: rtc-s3c: Add device tree support
-Date: Tue, 11 Oct 2011 19:48:07 +0900
-Message-ID: <053801cc8803$43676230$ca362690$%kim@samsung.com>
-References: <1315064959-16930-1-git-send-email-thomas.abraham@linaro.org>
- <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH RESEND] drivers: i2c: s3c2410: add support for HDMIPHY
+ dedicated controller
+Date: Tue, 11 Oct 2011 20:01:22 +0900
+Message-ID: <053a01cc8805$1cbec4a0$563c4de0$%kim@samsung.com>
+References: <1316687096-18307-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14592 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754145Ab1JKKsK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 06:48:10 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSW00IG3E00JJQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 19:48:09 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSW00850E071730@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 19:48:08 +0900 (KST)
-In-reply-to: <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1316687096-18307-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Marek Szyprowski' <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, 'Tomasz Stanislawski' <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, rtc-linux@googlegroups.com
-Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, a.zummo@towertech.it
 
-Thomas Abraham wrote:
->=20
-> On 3 September 2011 21:19, Thomas Abraham <thomas.abraham@linaro.org>
-> wrote:
-> > Add device tree based discovery support for Samsung's rtc controlle=
-r.
-> >
-> > Cc: Ben Dooks <ben-linux@fluff.org>
-> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > ---
-> > =A0Documentation/devicetree/bindings/rtc/s3c-rtc.txt | =A0 20
-> ++++++++++++++++++++
-> > =A0drivers/rtc/rtc-s3c.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 | =A0 21
-> ++++++++++++++++++++-
-> > =A02 files changed, 40 insertions(+), 1 deletions(-)
-> > =A0create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc=
-=2Etxt
->=20
-> Ping. Any comments for this patch? If this looks fine, can this be
-> considered for 3.2 merge via the Samsung kernel tree.
->=20
-(Cc'ed Alessandro Zummo who is RTC Subsystem maintainer)
+Marek Szyprowski wrote:
+> 
+> From: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> 
+> This patch adds support for I2C HDMIPHY dedicated controller. It has
+> different timeout handling and reset conditions.
+> 
+> Signed-off-by: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-I'm ok with this, so if this can be got the ack from Grant and Alessand=
-ro,
-will take this.
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-> >
-> > diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> > new file mode 100644
-> > index 0000000..90ec45f
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> > @@ -0,0 +1,20 @@
-> > +* Samsung's S3C Real Time Clock controller
-> > +
-> > +Required properties:
-> > +- compatible: should be one of the following.
-> > + =A0 =A0* "samsung,s3c2410-rtc" - for controllers compatible with =
-s3c2410
-rtc.
-> > + =A0 =A0* "samsung,s3c6410-rtc" - for controllers compatible with =
-s3c6410
-rtc.
-> > +- reg: physical base address of the controller and length of memor=
-y
-mapped
-> > + =A0region.
-> > +- interrupts: Two interrupt numbers to the cpu should be specified=
-=2E
-=46irst
-> > + =A0interrupt number is the rtc alarm interupt and second interrup=
-t
-number
-> > + =A0is the rtc tick interrupt. The number of cells representing a
-interrupt
-> > + =A0depends on the parent interrupt controller.
-> > +
-> > +Example:
-> > +
-> > + =A0 =A0 =A0 rtc@10070000 {
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,s3c6410-rtc";
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x10070000 0x100>;
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <44 0 45 0>;
-> > + =A0 =A0 =A0 };
-> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> > index 4e7c04e..29f928c 100644
-> > --- a/drivers/rtc/rtc-s3c.c
-> > +++ b/drivers/rtc/rtc-s3c.c
-> > @@ -25,6 +25,7 @@
-> > =A0#include <linux/clk.h>
-> > =A0#include <linux/log2.h>
-> > =A0#include <linux/slab.h>
-> > +#include <linux/of.h>
-> >
-> > =A0#include <mach/hardware.h>
-> > =A0#include <asm/uaccess.h>
-> > @@ -481,7 +482,13 @@ static int __devinit s3c_rtc_probe(struct
-> platform_device *pdev)
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err_nortc;
-> > =A0 =A0 =A0 =A0}
-> >
-> > - =A0 =A0 =A0 s3c_rtc_cpu_type =3D platform_get_device_id(pdev)->dr=
-iver_data;
-> > +#ifdef CONFIG_OF
-> > + =A0 =A0 =A0 if (pdev->dev.of_node)
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D of_device_is_com=
-patible(pdev-
-> >dev.of_node,
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "samsung,s3c6410-rtc"=
-) ? TYPE_S3C64XX :
-> TYPE_S3C2410;
-> > + =A0 =A0 =A0 else
-> > +#endif
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D
-platform_get_device_id(pdev)->driver_data;
-> >
-> > =A0 =A0 =A0 =A0/* Check RTC Time */
-> >
-> > @@ -603,6 +610,17 @@ static int s3c_rtc_resume(struct platform_devi=
-ce
-*pdev)
-> > =A0#define s3c_rtc_resume =A0NULL
-> > =A0#endif
-> >
-> > +#ifdef CONFIG_OF
-> > +static const struct of_device_id s3c_rtc_dt_match[] =3D {
-> > +       { .compatible =3D "samsung,s3c2410-rtc" },
-     ^^^^^^^
-> > +       { .compatible =3D "samsung,s3c6410-rtc" },
-     ^^^^^^^
-> > +       {},
-     ^^^^^^^
-should be Tab?
+Hi Ben,
 
-> > +};
-> > +MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
-> > +#else
-> > +#define s3c_rtc_dt_match NULL
-> > +#endif
-> > +
-> > =A0static struct platform_device_id s3c_rtc_driver_ids[] =3D {
-> > =A0 =A0 =A0 =A0{
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "s3c24=
-10-rtc",
-> > @@ -625,6 +643,7 @@ static struct platform_driver s3c_rtc_driver =3D=
- {
-> > =A0 =A0 =A0 =A0.driver =A0 =A0 =A0 =A0 =3D {
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-rtc",
-> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.owner =A0=3D THIS_MODULE,
-> > +               .of_match_table =3D s3c_rtc_dt_match,
-     ^^^^^^^^^^^^^^^
-Same as above...
-
-But I know, Thomas' original patch has no problem...probably when ping,
-happened above.
-
-> > =A0 =A0 =A0 =A0},
-> > =A0};
-> >
-> > --
+If you're ok with this, please apply this to go to upstream via your i2c
+tree.
 
 Thanks.
 
 Best regards,
 Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |   36
+> +++++++++++++++++++++++++++++++++++-
+>  1 files changed, 35 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
+b/drivers/i2c/busses/i2c-s3c2410.c
+> index f84a63c..e456cf9 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -54,6 +54,7 @@ enum s3c24xx_i2c_state {
+>  enum s3c24xx_i2c_type {
+>  	TYPE_S3C2410,
+>  	TYPE_S3C2440,
+> +	TYPE_S3C2440_HDMIPHY,
+>  };
+> 
+>  struct s3c24xx_i2c {
+> @@ -96,7 +97,21 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c
+*i2c)
+>  	enum s3c24xx_i2c_type type;
+> 
+>  	type = platform_get_device_id(pdev)->driver_data;
+> -	return type == TYPE_S3C2440;
+> +	return type == TYPE_S3C2440 || type == TYPE_S3C2440_HDMIPHY;
+> +}
+> +
+> +/* s3c24xx_i2c_is2440_hdmiphy()
+> + *
+> + * return true is this is an s3c2440 dedicated for HDMIPHY interface
+> +*/
+> +
+> +static inline int s3c24xx_i2c_is2440_hdmiphy(struct s3c24xx_i2c *i2c)
+> +{
+> +	struct platform_device *pdev = to_platform_device(i2c->dev);
+> +	enum s3c24xx_i2c_type type;
+> +
+> +	type = platform_get_device_id(pdev)->driver_data;
+> +	return type == TYPE_S3C2440_HDMIPHY;
+>  }
+> 
+>  /* s3c24xx_i2c_master_complete
+> @@ -460,6 +475,13 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
+*i2c)
+>  	unsigned long iicstat;
+>  	int timeout = 400;
+> 
+> +	/* if hang-up of HDMIPHY occured reduce timeout
+> +	 * The controller will work after reset, so waiting
+> +	 * 400 ms will cause unneccessary system hangup
+> +	 */
+> +	if (s3c24xx_i2c_is2440_hdmiphy(i2c))
+> +		timeout = 10;
+> +
+>  	while (timeout-- > 0) {
+>  		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
+> 
+> @@ -469,6 +491,15 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
+*i2c)
+>  		msleep(1);
+>  	}
+> 
+> +	/* hang-up of bus dedicated for HDMIPHY occured, resetting */
+> +	if (s3c24xx_i2c_is2440_hdmiphy(i2c)) {
+> +		writel(0, i2c->regs + S3C2410_IICCON);
+> +		writel(0, i2c->regs + S3C2410_IICSTAT);
+> +		writel(0, i2c->regs + S3C2410_IICDS);
+> +
+> +		return 0;
+> +	}
+> +
+>  	return -ETIMEDOUT;
+>  }
+> 
+> @@ -1008,6 +1039,9 @@ static struct platform_device_id
+s3c24xx_driver_ids[] = {
+>  	}, {
+>  		.name		= "s3c2440-i2c",
+>  		.driver_data	= TYPE_S3C2440,
+> +	}, {
+> +		.name		= "s3c2440-hdmiphy-i2c",
+> +		.driver_data	= TYPE_S3C2440_HDMIPHY,
+>  	}, { },
+>  };
+>  MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+> --
+> 1.7.1.569.g6f426
