@@ -1,171 +1,88 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 00/10] Add device tree support for PL330 dma controller
- driver
-Date: Tue, 11 Oct 2011 21:06:50 +0900
-Message-ID: <057401cc880e$41e30b20$c5a92160$%kim@samsung.com>
-References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
+Subject: RE: [PATCH v5 0/2] Add device tree support for Samsung's keypad
+ controller driver
+Date: Tue, 11 Oct 2011 21:09:53 +0900
+Message-ID: <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com>
+References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56713 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751246Ab1JKMGw (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:44111 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751497Ab1JKMJy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 08:06:52 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSW008I5HN9NBY0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 21:06:50 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSW0086MHNEVF60@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 21:06:50 +0900 (KST)
-In-reply-to: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
+	Tue, 11 Oct 2011 08:09:54 -0400
+In-reply-to: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, vinod.koul@intel.com
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com
+Cc: grant.likely@secretlab.ca, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
 
 Thomas Abraham wrote:
 > 
-> Changes since v5:
-> - Added alias clocks for pdma clocks on Exynos4.
-> - Modified platform data for s5p64x0, s5pc100 and s5pv210.
-> - Rebased on the tip of for-next branch of linux-samsung kernel and
-tested.
-> 
 > Changes since v4:
-> - Rebased with Samsung maintainer's for-next branch which is at
-linux-3.1-rc7
->   - Modified Patch 6/6 to apply cleanly.
+> - Tested with linux 3.1-rc9. No changes in code.
 > 
 > Changes since v3:
-> - In Patch 4/6, a recommendation is added in the pl330 binding
-documentation
->   for the name of the property which specifies the dma channel in the
-client
->   device node.
-> - In Patch 6/6, dropped #ifdef around of_have_populated_dt.
+> - Addressed comments from Grant Likely.
+>   - Set num_rows and num_cols to zero in samsung_keypad_parse_dt function.
+>   - Fixed the wierd looking if-else block in samsung_keypad_probe
+function.
 > 
 > Changes since v2:
-> - Only the sixth patch is changed, to make dma platform data conditionally
->   selectable.
-> - Tested with v8 version of pl330 dma driver update patches from Boojin
-Kim.
+> - Addressed comments from Grant Likely.
+>   - Renamed 'keypad,key-code' property name to 'linux,code'.
+>   - Fixed incorrect data types for all instances of of_property+read_u32.
+>   - linux,input-type binding was not added as suggested since the driver
+>     supports only EV_KEY event type.
 > 
 > Changes since v1:
-> - Removed "arm,pl330-pdma" and "arm,pl330-mdma" compatible values.
-> - Removed "arm,primecell-periphid" and "arm,pl330-peri-reqs"
->   property requirements.
-> 
-> This patchset adds device tree support for PL330 driver and uses it to add
-> device tree support for Samsung platforms, specifically Exynos4.
-> 
-> Patch 1 moves the pl330_filter function from Samsung specific wrappers to
-pl330
-> dma driver and also adds a check to ensure that the filter function
-proceeds
-> only if it the dma channel being investigated belongs to pl330 dma
-controller
-> instance.
-> 
-> Patch 2 adds support to infer the direction of the dma transfer using the
-> direction specified with the transfer request instead of including this
-> information in the platform data. This simlifies the addition of device
-tree
-> support. Patch 3 simplifies the platform data for Exynos4 pl330 dma
-controllers.
-> 
-> Patch 4 adds device tree support for pl330 dma controller driver. A dma
-channel
-> is represented using a phandle of the dma controller node and the channel
-id
-> within that controller. Client driver request a dma channel using the
-phandle
-> and channel id pair. Correspondingly, the pl330 filter function has been
-> modified to lookup a channel based on this value.
-> 
-> Patch 5 adds device tree support for Samsung's DMA engine wrappers. Client
-> drivers retrive the channel property from their device node and pass it to
-the
-> wrappers. The wrapper functions use the property value as the filter
-function
-> parameter. Patch 6 restricts the usage of pl330 device and platform data
-> instances to non-dt platforms.
-> 
-> Patch 7 adds clock alias for both the pdma clocks. When pdma controllers
-are
-> instantiated from device tree, the amba device registration process
-enables
-> clock to the controllers to read the peripheral id of the PDMA amba
-device. In
-> case of Exynos4, the clocks to the PDMA controllers are named as 'dma' but
-> amba_device_register() looks up the clock using the name 'apb_pclk'.
-Hence,
-> alias clocks with name 'apb_pclk' clock are created for clocks with name
-'dma'.
-> 
-> Patch 8 to 10 simplifies the pdma platform data for s5p64x0, s5pc100 and
-> s5pv210.
-> 
-> This patchset is based on the following tree:
-> https://github.com/kgene/linux-samsung.git   branch: for-next
-> 
-> and tested tested for both device-tree and non-device-tree kernel on
-smdkv310.
-> 
-> This patchset has dependency on the following patchset.
-> [PATCH V2 0/2] Add a common macro for creating struct clk_lookup entries.
+> - Addressed comments from Dmitry Torokhov.
+>   - Type of controller is cached in driver's private data and the function
+>     that determines the type of the controller for each keypad scan is
+>     removed.
+>   - pdata allocated during probe is explicitly freed after probe completes
+>     without any error. In case of exit from probe due a error, no explicit
+>     deallocation of pdata memory is performed and it is left to devres to
+>     handle that.
+>   - The generic code to translate KEY(x,y,code) is retained in the driver
+>     itself. I am unsure of a right common place for it.
+>   - Driver continues with the probe even if one or more gpio configuration
+>     fails.
+>   - Patch 1 that adds a new config option is still retained in this
+patchset.
 > 
 > 
-> Thomas Abraham (10):
->   DMA: PL330: move filter function into driver
->   DMA: PL330: Infer transfer direction from transfer request instead of
-platform
-> data
->   ARM: EXYNOS4: Modify platform data for pl330 driver
->   DMA: PL330: Add device tree support
->   ARM: SAMSUNG: Add device tree support for pl330 dma engine wrappers
->   ARM: EXYNOS4: Limit usage of pl330 device instance to non-dt build
->   ARM: Exynos4: Add a alias for pdma clocks
->   ARM: S5P64x0: Modify platform data for pl330 driver
->   ARM: S5PC100: Modify platform data for pl330 driver
->   ARM: S5PV210: Modify platform data for pl330 driver
+> This patchset adds device tree support for samsung's keypad controller
+driver.
+> First patch adds a new config option to be used by device tree enabled
+platforms
+> for selecting the samsung's keypad controller driver. The second patch
+adds
+> device
+> tree support for the keypad driver.
 > 
->  .../devicetree/bindings/dma/arm-pl330.txt          |   30 +++
->  arch/arm/mach-exynos4/Kconfig                      |   10 +
->  arch/arm/mach-exynos4/Makefile                     |    3 +-
->  arch/arm/mach-exynos4/clock.c                      |   35 ++-
->  arch/arm/mach-exynos4/dma.c                        |  227
-++++++-----------
-> --
->  arch/arm/mach-s5p64x0/dma.c                        |  227
-+++++-------------
->  arch/arm/mach-s5pc100/dma.c                        |  247
-++++++-----------
-> ---
->  arch/arm/mach-s5pv210/dma.c                        |  241
-++++++-----------
-> ---
->  arch/arm/plat-samsung/dma-ops.c                    |   15 +-
->  arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 +
->  arch/arm/plat-samsung/include/plat/dma-pl330.h     |    3 +-
->  drivers/dma/pl330.c                                |   99 +++++----
->  include/linux/amba/pl330.h                         |   15 +-
->  13 files changed, 405 insertions(+), 748 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/dma/arm-pl330.txt
+> 
+> Thomas Abraham (2):
+>   input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
+>   input: samsung-keypad: Add device tree support
+> 
+>  .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
+>  drivers/input/keyboard/Kconfig                     |    9 +-
+>  drivers/input/keyboard/samsung-keypad.c            |  174
+> ++++++++++++++++++--
+>  3 files changed, 258 insertions(+), 13 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/input/samsung-
+> keypad.txt
 
-Hi,
-
-Looks ok to me and if required,
+Looks ok to me,
 Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-And I hope since this includes many changes of arch/arm/Samsung stuff, this
-would be sent to upstream via Samsung tree after ack from Vinod for dma
-stuff.
+Hi Dmitry,
+If you're ok on this, please adding this in your tree for upcoming merge
+window.
 
 Thanks.
 
