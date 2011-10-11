@@ -1,207 +1,151 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCH] ARM: EXYNOS4: JPEG: board definition and device registration
-Date: Tue, 11 Oct 2011 14:19:13 +0200
-Message-ID: <1318335553-13355-2-git-send-email-andrzej.p@samsung.com>
-References: <1318335553-13355-1-git-send-email-andrzej.p@samsung.com>
+From: Changhwan Youn <chaos.youn@samsung.com>
+Subject: RE: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
+Date: Tue, 11 Oct 2011 21:22:58 +0900
+Message-ID: <00b901cc8810$8353e730$89fbb590$%youn@samsung.com>
+References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
+ <1308555258-4322-6-git-send-email-chaos.youn@samsung.com>
+ <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
+ <4E8D645D.4020601@arm.com> <4E8ECA1B.5010005@arm.com>
+ <20111007151646.GA2398@mudshark.cambridge.arm.com> <4E92ECD1.2010303@arm.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:54998 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751804Ab1JKMUJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40947 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750756Ab1JKMXB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 08:20:09 -0400
-Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LSW009PYI9JW640@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 13:20:07 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LSW00D4GI9JDU@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 13:20:07 +0100 (BST)
-In-reply-to: <1318335553-13355-1-git-send-email-andrzej.p@samsung.com>
+	Tue, 11 Oct 2011 08:23:01 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSW00001IEBR000@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 21:22:59 +0900 (KST)
+Received: from DOCHAOSYOUN01 ([12.23.121.151])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSW008PSIEAVF80@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 21:22:59 +0900 (KST)
+In-reply-to: <4E92ECD1.2010303@arm.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: 'Marc Zyngier' <marc.zyngier@arm.com>, 'Will Deacon' <will.deacon@arm.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Kukjin Kim' <kgene.kim@samsung.com>, ben-linux@fluff.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-Exynos4 JPEG IP board definition and device registration
+Dear Marc and Will,
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos4/Kconfig               |    1 +
- arch/arm/mach-exynos4/clock.c               |    5 +++
- arch/arm/mach-exynos4/include/mach/map.h    |    3 ++
- arch/arm/mach-exynos4/mach-universal_c210.c |    2 +
- arch/arm/plat-s5p/Kconfig                   |    5 +++
- arch/arm/plat-s5p/Makefile                  |    1 +
- arch/arm/plat-s5p/dev-jpeg.c                |   46 +++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h   |    1 +
- 8 files changed, 64 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-s5p/dev-jpeg.c
+On Monday, October 10, 2011 10:02 PM, Marc Zyngier wrote:
+> 
+> On 07/10/11 16:16, Will Deacon wrote:
+> > Hi Marc,
+> >
+> > On Fri, Oct 07, 2011 at 10:44:59AM +0100, Marc Zyngier wrote:
+> >> So to make my suggestion completely clear, here's a patch I'm now
+> >> carrying in my tree. It's only been test compiled on EXYNOS4, but works
+> >> nicely on my 11MP. It turns both dist_base and cpu_base into per-cpu
+> >> variables, removes these callbacks, removes your private copy of
+> >> gic_cpu_init, and makes struct gic_chip_data private again.
+> >>
+> >> What do you think?
+> >
+> > This looks like the right sort of idea, although I'm deeply suspicious about
+> > per-cpu base addresses for the GIC distributor. It would be nice if the
+> > Samsung guys can elaborate on what's going on here. Few comments inline.
+> 
+> Yeah, this seem odd, specially as what's currently in mainline doesn't
+> try to play tricks with the distributor. It looks like having a per-core
+> distributor address is required for PPI usage on these SoCs, but the
+> commit message is uninformative at best:
+> 
+> https://github.com/sfrothwell/linux-
+> next/commit/637c2afa57ec9cd0ddc8879ea0cda4d8835ba71d#arch/arm/mach-exynos4/cpu.c
+> 
+> Again, comments from Samsung people would be much appreciated.
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index cf5b8e2..001d742 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -175,6 +175,7 @@ config MACH_UNIVERSAL_C210
- 	select S5P_DEV_FIMC2
- 	select S5P_DEV_FIMC3
- 	select S5P_DEV_CSIS0
-+	select S5P_DEV_JPEG
- 	select S5P_DEV_FIMD0
- 	select S5P_DEV_G2D
- 	select S3C_DEV_HSMMC
-diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-index 38ebce3..fa4d954 100644
---- a/arch/arm/mach-exynos4/clock.c
-+++ b/arch/arm/mach-exynos4/clock.c
-@@ -469,6 +469,11 @@ static struct clk init_clocks_off[] = {
- 		.enable		= exynos4_clk_ip_cam_ctrl,
- 		.ctrlbit	= (1 << 5),
- 	}, {
-+		.name		= "jpeg",
-+		.id		= 0,
-+		.enable		= exynos4_clk_ip_cam_ctrl,
-+		.ctrlbit	= (1 << 6),
-+	}, {
- 		.name		= "fimc",
- 		.devname	= "exynos4-fimc.0",
- 		.enable		= exynos4_clk_ip_cam_ctrl,
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 8078644..16209fe 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -31,6 +31,8 @@
- #define EXYNOS4_PA_FIMC2		0x11820000
- #define EXYNOS4_PA_FIMC3		0x11830000
+Your guess is right.
+Exynos4 cannot support register banking, which means every CPU has
+its own CPU base and Distributor base address.
+Without the workaround I implemented, every CPU accesses the base address
+for CPU0 and thus the interrupts for other CPUs cannot be handled properly.
  
-+#define EXYNOS4_PA_JPEG			0x11840000
-+
- #define EXYNOS4_PA_G2D			0x12800000
- 
- #define EXYNOS4_PA_HSOTG		0x12480000
-@@ -162,6 +164,7 @@
- #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
- #define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
- #define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
-+#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
- #define S5P_PA_G2D			EXYNOS4_PA_G2D
- #define S5P_PA_MIPI_CSIS0		EXYNOS4_PA_MIPI_CSIS0
- #define S5P_PA_MIPI_CSIS1		EXYNOS4_PA_MIPI_CSIS1
-diff --git a/arch/arm/mach-exynos4/mach-universal_c210.c b/arch/arm/mach-exynos4/mach-universal_c210.c
-index f2fe3dd..8eeebcc 100644
---- a/arch/arm/mach-exynos4/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos4/mach-universal_c210.c
-@@ -1173,6 +1173,7 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&s5p_device_onenand,
- 	&s5p_device_fimd0,
- 	&s3c_device_usb_hsotg,
-+	&s5p_device_jpeg,
- 	&universal_spi_gpio,
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
-@@ -1260,6 +1261,7 @@ static void __init universal_machine_init(void)
- 	s5p_device_fimd0.dev.parent = &exynos4_device_pd[PD_LCD0].dev;
- 	clk_xusbxti.rate = 24000000;
- 
-+	s5p_device_jpeg.dev.parent =  &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc1.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc2.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index b0b3632..feb9c29 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -68,6 +68,11 @@ config S5P_DEV_FIMC3
- 	help
- 	  Compile in platform device definitions for FIMC controller 3
- 
-+config S5P_DEV_JPEG
-+	bool
-+	help
-+	  Compile in platform device definitions for JPEG codec
-+
- config S5P_DEV_G2D
- 	bool
- 	help
-diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 8712ccf..8c5aa54 100644
---- a/arch/arm/plat-s5p/Makefile
-+++ b/arch/arm/plat-s5p/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_S5P_DEV_FIMC0)	+= dev-fimc0.o
- obj-$(CONFIG_S5P_DEV_FIMC1)	+= dev-fimc1.o
- obj-$(CONFIG_S5P_DEV_FIMC2)	+= dev-fimc2.o
- obj-$(CONFIG_S5P_DEV_FIMC3)	+= dev-fimc3.o
-+obj-$(CONFIG_S5P_DEV_JPEG)	+= dev-jpeg.o
- obj-$(CONFIG_S5P_DEV_FIMD0)	+= dev-fimd0.o
- obj-$(CONFIG_S5P_DEV_G2D)	+= dev-g2d.o
- obj-$(CONFIG_S5P_DEV_I2C_HDMIPHY) += dev-i2c-hdmiphy.o
-diff --git a/arch/arm/plat-s5p/dev-jpeg.c b/arch/arm/plat-s5p/dev-jpeg.c
-new file mode 100644
-index 0000000..cad8ae4
---- /dev/null
-+++ b/arch/arm/plat-s5p/dev-jpeg.c
-@@ -0,0 +1,46 @@
-+/* linux/arch/arm/plat-s5p/dev-jpeg.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * Author: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-+ *
-+ * Base S5P JPEG resource and device definitions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+#include <linux/interrupt.h>
-+#include <linux/ioport.h>
-+#include <mach/map.h>
-+
-+static struct resource s5p_jpeg_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_JPEG,
-+		.end	= S5P_PA_JPEG + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_JPEG,
-+		.end	= IRQ_JPEG,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static u64 s5p_jpeg_dma_mask = DMA_BIT_MASK(32);
-+
-+struct platform_device s5p_device_jpeg = {
-+	.name		= "s5p-jpeg",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s5p_jpeg_resource),
-+	.resource	= s5p_jpeg_resource,
-+	.dev		= {
-+		.dma_mask		= &s5p_jpeg_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+	},
-+};
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index a048795..076bdc9 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -139,6 +139,7 @@ extern struct platform_device s5p_device_fimc0;
- extern struct platform_device s5p_device_fimc1;
- extern struct platform_device s5p_device_fimc2;
- extern struct platform_device s5p_device_fimc3;
-+extern struct platform_device s5p_device_jpeg;
- extern struct platform_device s5p_device_g2d;
- extern struct platform_device s5p_device_mfc;
- extern struct platform_device s5p_device_mfc_l;
--- 
-1.7.0.4
+> >> Subject: [PATCH] ARM: gic: allow GIC to support non-banked setups
+> >>
+> >> The GIC support code is heavily using the fact that hardware
+> >> implementations are exposing banked registers. Unfortunately, it
+> >> looks like at least one GIC implementation (EXYNOS4) offers both
+> >> the distributor and the CPU interfaces at different addresses,
+> >> depending on the CPU.
+> >>
+> >> This problem is solved by turning the distributor and CPU interface
+> >> addresses into per-cpu variables. The EXYNOS4 code is updated not
+> >> to mess with the GIC internals while handling interrupts, and
+> >> struct gic_chip_data is back to being private.
+> >>
+> >> Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+> >> ---
+> >>  arch/arm/common/gic.c               |   76 +++++++++++++++++++++++++++--------
+> >>  arch/arm/include/asm/hardware/gic.h |   17 +------
+> >>  arch/arm/mach-exynos4/cpu.c         |   14 ------
+> >>  arch/arm/mach-exynos4/platsmp.c     |   28 ++-----------
+> >>  4 files changed, 66 insertions(+), 69 deletions(-)
+> >>
+> >> diff --git a/arch/arm/common/gic.c b/arch/arm/common/gic.c
+> >> index b574931..c7521dd 100644
+> >> --- a/arch/arm/common/gic.c
+> >> +++ b/arch/arm/common/gic.c
+> >> @@ -37,6 +37,20 @@
+> >>  #include <asm/mach/irq.h>
+> >>  #include <asm/hardware/gic.h>
+> >>
+> >> +struct gic_chip_data {
+> >> +	unsigned int irq_offset;
+> >> +	void __percpu __iomem **dist_base;
+> >> +	void __percpu __iomem **cpu_base;
+> >> +#ifdef CONFIG_CPU_PM
+> >> +	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
+> >> +	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
+> >> +	u32 saved_spi_target[DIV_ROUND_UP(1020, 4)];
+> >> +	u32 __percpu *saved_ppi_enable;
+> >> +	u32 __percpu *saved_ppi_conf;
+> >> +#endif
+> >> +	unsigned int gic_irqs;
+> >> +};
+> >
+> > I think you can use DECLARE_PER_CPU(void __iomem *dist_base) etc. instead.
+> 
+> Unfortunately, you can't. That would be nice though... ;-)
+> 
+> >> +static void __cpuinit exynos4_secondary_init(unsigned int cpu)
+> >>  {
+> >>  	void __iomem *dist_base = S5P_VA_GIC_DIST +
+> >> -				(gic_bank_offset * smp_processor_id());
+> >> +				(gic_bank_offset * cpu_logical_map(cpu));
+> >
+> > Again, I'm deeply suspicious of this code :) Is there not a common memory
+> > alias for the distributor across all of the CPUs?
+> 
+> Kukjin, could you please comment on the presence of a common memory
+> region for the distributor? This seem quite odd...
+
+Some registers in Distributor are banked for PPI and SGI support (banked interrupts).
+The register for pending and enable status of these interrupts are 
+banked.
+
+Marc, I think the approach in your patch is much better than mine if it doesn't hurt
+the performance of other platforms which use the common gic code.
+I'll re-work the exynos4 interrupt code based on your patch though
+I'm not sure that it's possible to be merged in merge window.
+
+Kukjin, how do you think about this?
+
+> Thanks,
+> 
+> 	M.
+> --
+> Jazz is not dead. It just smells funny...
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
