@@ -1,236 +1,182 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH V3 3/3] ARM: SAMSUNG: Add lookup of sdhci-s3c clocks using generic names
-Date: Tue, 11 Oct 2011 11:22:07 +0200
-Message-ID: <201110111122.08241.heiko@sntech.de>
-References: <1318320907-8580-1-git-send-email-rajeshwari.s@samsung.com> <1318320907-8580-4-git-send-email-rajeshwari.s@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] rtc: rtc-s3c: Add device tree support
+Date: Tue, 11 Oct 2011 19:48:07 +0900
+Message-ID: <053801cc8803$43676230$ca362690$%kim@samsung.com>
+References: <1315064959-16930-1-git-send-email-thomas.abraham@linaro.org>
+ <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:55687 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752558Ab1JKJWR (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:14592 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754145Ab1JKKsK convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 05:22:17 -0400
-In-Reply-To: <1318320907-8580-4-git-send-email-rajeshwari.s@samsung.com>
+	Tue, 11 Oct 2011 06:48:10 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSW00IG3E00JJQ0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 19:48:09 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSW00850E071730@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 19:48:08 +0900 (KST)
+In-reply-to: <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, rtc-linux@googlegroups.com
+Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, a.zummo@towertech.it
 
-Hi,
+Thomas Abraham wrote:
+>=20
+> On 3 September 2011 21:19, Thomas Abraham <thomas.abraham@linaro.org>
+> wrote:
+> > Add device tree based discovery support for Samsung's rtc controlle=
+r.
+> >
+> > Cc: Ben Dooks <ben-linux@fluff.org>
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > ---
+> > =A0Documentation/devicetree/bindings/rtc/s3c-rtc.txt | =A0 20
+> ++++++++++++++++++++
+> > =A0drivers/rtc/rtc-s3c.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 21
+> ++++++++++++++++++++-
+> > =A02 files changed, 40 insertions(+), 1 deletions(-)
+> > =A0create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc=
+=2Etxt
+>=20
+> Ping. Any comments for this patch? If this looks fine, can this be
+> considered for 3.2 merge via the Samsung kernel tree.
+>=20
+(Cc'ed Alessandro Zummo who is RTC Subsystem maintainer)
 
-somehow this did not apply against linux-next for me:
+I'm ok with this, so if this can be got the ack from Grant and Alessand=
+ro,
+will take this.
 
-error: patch failed: arch/arm/mach-exynos4/clock.c:1250
-error: arch/arm/mach-exynos4/clock.c: patch does not apply
-error: patch failed: arch/arm/mach-s3c64xx/clock.c:697
-error: arch/arm/mach-s3c64xx/clock.c: patch does not apply
-error: patch failed: arch/arm/mach-s5pc100/clock.c:1099
-error: arch/arm/mach-s5pc100/clock.c: patch does not apply
-error: patch failed: arch/arm/mach-s5pv210/clock.c:1030
-error: arch/arm/mach-s5pv210/clock.c: patch does not apply
+> >
+> > diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> > new file mode 100644
+> > index 0000000..90ec45f
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+> > @@ -0,0 +1,20 @@
+> > +* Samsung's S3C Real Time Clock controller
+> > +
+> > +Required properties:
+> > +- compatible: should be one of the following.
+> > + =A0 =A0* "samsung,s3c2410-rtc" - for controllers compatible with =
+s3c2410
+rtc.
+> > + =A0 =A0* "samsung,s3c6410-rtc" - for controllers compatible with =
+s3c6410
+rtc.
+> > +- reg: physical base address of the controller and length of memor=
+y
+mapped
+> > + =A0region.
+> > +- interrupts: Two interrupt numbers to the cpu should be specified=
+=2E
+=46irst
+> > + =A0interrupt number is the rtc alarm interupt and second interrup=
+t
+number
+> > + =A0is the rtc tick interrupt. The number of cells representing a
+interrupt
+> > + =A0depends on the parent interrupt controller.
+> > +
+> > +Example:
+> > +
+> > + =A0 =A0 =A0 rtc@10070000 {
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,s3c6410-rtc";
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x10070000 0x100>;
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <44 0 45 0>;
+> > + =A0 =A0 =A0 };
+> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+> > index 4e7c04e..29f928c 100644
+> > --- a/drivers/rtc/rtc-s3c.c
+> > +++ b/drivers/rtc/rtc-s3c.c
+> > @@ -25,6 +25,7 @@
+> > =A0#include <linux/clk.h>
+> > =A0#include <linux/log2.h>
+> > =A0#include <linux/slab.h>
+> > +#include <linux/of.h>
+> >
+> > =A0#include <mach/hardware.h>
+> > =A0#include <asm/uaccess.h>
+> > @@ -481,7 +482,13 @@ static int __devinit s3c_rtc_probe(struct
+> platform_device *pdev)
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err_nortc;
+> > =A0 =A0 =A0 =A0}
+> >
+> > - =A0 =A0 =A0 s3c_rtc_cpu_type =3D platform_get_device_id(pdev)->dr=
+iver_data;
+> > +#ifdef CONFIG_OF
+> > + =A0 =A0 =A0 if (pdev->dev.of_node)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D of_device_is_com=
+patible(pdev-
+> >dev.of_node,
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "samsung,s3c6410-rtc"=
+) ? TYPE_S3C64XX :
+> TYPE_S3C2410;
+> > + =A0 =A0 =A0 else
+> > +#endif
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D
+platform_get_device_id(pdev)->driver_data;
+> >
+> > =A0 =A0 =A0 =A0/* Check RTC Time */
+> >
+> > @@ -603,6 +610,17 @@ static int s3c_rtc_resume(struct platform_devi=
+ce
+*pdev)
+> > =A0#define s3c_rtc_resume =A0NULL
+> > =A0#endif
+> >
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id s3c_rtc_dt_match[] =3D {
+> > +       { .compatible =3D "samsung,s3c2410-rtc" },
+     ^^^^^^^
+> > +       { .compatible =3D "samsung,s3c6410-rtc" },
+     ^^^^^^^
+> > +       {},
+     ^^^^^^^
+should be Tab?
 
-and:
-
-Am Dienstag, 11. Oktober 2011, 10:15:07 schrieb Rajeshwari Shinde:
-> Add support for lookup of sdhci-s3c controller clocks using generic names
-> for s3c2416, s3c64xx, s5pc100, s5pv210 and exynos4 SoC's.
-[...]
-> @@ -125,6 +124,14 @@ static struct clk hsmmc0_clk = {
->  	.ctrlbit	= S3C2416_HCLKCON_HSMMC0,
->  };
-> 
-> +static struct clk hsmmc1_clk = {
-> +	.name		= "hsmmc",
-> +	.devname	= "s3c-sdhci.1",
-> +	.parent		= &clk_h,
-> +	.enable		= s3c2443_clkcon_enable_h,
-> +	.ctrlbit	= S3C2443_HCLKCON_HSMMC,
-> +};
-> +
-this would lead to the hsmmc1 hclk being registered twice, as it is already
-registered in plat-s3c24xx/clock-2443.c .
-
-How about the following, which also adds the lookup for the s3c2443-specific
-hsmmc-sclk.
-
-Heiko
-
-diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
-index 72b7c62..0b0b7c2 100644
---- a/arch/arm/mach-s3c2416/clock.c
-+++ b/arch/arm/mach-s3c2416/clock.c
-@@ -82,39 +82,38 @@ static struct clksrc_clk hsmmc_div[] = {
- 	},
- };
- 
--static struct clksrc_clk hsmmc_mux[] = {
--	[0] = {
--		.clk	= {
--			.name	= "hsmmc-if",
--			.devname	= "s3c-sdhci.0",
--			.ctrlbit = (1 << 6),
--			.enable = s3c2443_clkcon_enable_s,
--		},
--		.sources = &(struct clksrc_sources) {
--			.nr_sources = 2,
--			.sources = (struct clk *[]) {
--				[0] = &hsmmc_div[0].clk,
--				[1] = NULL, /* to fix */
--			},
--		},
--		.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 16 },
-+static struct clksrc_clk hsmmc_mux0 = {
-+	.clk	= {
-+		.name	= "hsmmc-if",
-+		.devname	= "s3c-sdhci.0",
-+		.ctrlbit = (1 << 6),
-+		.enable = s3c2443_clkcon_enable_s,
- 	},
--	[1] = {
--		.clk	= {
--			.name	= "hsmmc-if",
--			.devname	= "s3c-sdhci.1",
--			.ctrlbit = (1 << 12),
--			.enable = s3c2443_clkcon_enable_s,
-+	.sources = &(struct clksrc_sources) {
-+		.nr_sources = 2,
-+		.sources = (struct clk * []) {
-+			[0] = &hsmmc_div[0].clk,
-+			[1] = NULL, /* to fix */
- 		},
--		.sources = &(struct clksrc_sources) {
--			.nr_sources = 2,
--			.sources = (struct clk *[]) {
--				[0] = &hsmmc_div[1].clk,
--				[1] = NULL, /* to fix */
--			},
-+	},
-+	.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 16 },
-+};
-+
-+static struct clksrc_clk hsmmc_mux1 = {
-+	.clk	= {
-+		.name	= "hsmmc-if",
-+		.devname	= "s3c-sdhci.1",
-+		.ctrlbit = (1 << 12),
-+		.enable = s3c2443_clkcon_enable_s,
-+	},
-+	.sources = &(struct clksrc_sources) {
-+		.nr_sources = 2,
-+		.sources = (struct clk * []) {
-+			[0] = &hsmmc_div[1].clk,
-+			[1] = NULL, /* to fix */
- 		},
--		.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 17 },
- 	},
-+	.reg_src = { .reg = S3C2443_CLKSRC, .size = 1, .shift = 17 },
- };
- 
- static struct clk hsmmc0_clk = {
-@@ -137,14 +136,19 @@ void __init_or_cpufreq s3c2416_setup_clocks(void)
- 	s3c2443_common_setup_clocks(s3c2416_get_pll, s3c2416_fclk_div);
- }
- 
--
- static struct clksrc_clk *clksrcs[] __initdata = {
- 	&hsspi_eplldiv,
- 	&hsspi_mux,
- 	&hsmmc_div[0],
- 	&hsmmc_div[1],
--	&hsmmc_mux[0],
--	&hsmmc_mux[1],
-+	&hsmmc_mux0,
-+	&hsmmc_mux1,
-+};
-+
-+static struct clk_lookup s3c2416_clk_lookup[] = {
-+	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.0", &hsmmc0_clk),
-+	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &hsmmc_mux0.clk),
-+	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &hsmmc_mux1.clk),
- };
- 
- void __init s3c2416_init_clocks(int xtal)
-@@ -164,6 +168,7 @@ void __init s3c2416_init_clocks(int xtal)
- 		s3c_register_clksrc(clksrcs[ptr], 1);
- 
- 	s3c24xx_register_clock(&hsmmc0_clk);
-+	clkdev_add_table(s3c2416_clk_lookup, ARRAY_SIZE(s3c2416_clk_lookup));
- 
- 	s3c_pwmclk_init();
- 
-diff --git a/arch/arm/mach-s3c2443/clock.c b/arch/arm/mach-s3c2443/clock.c
-index cd51d04..38ca7df 100644
---- a/arch/arm/mach-s3c2443/clock.c
-+++ b/arch/arm/mach-s3c2443/clock.c
-@@ -275,6 +275,8 @@ void __init_or_cpufreq s3c2443_setup_clocks(void)
- 	s3c2443_common_setup_clocks(s3c2443_get_mpll, s3c2443_fclk_div);
- }
- 
-+static struct clk_lookup hsmmc_lookup = CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_hsmmc);
-+
- void __init s3c2443_init_clocks(int xtal)
+> > +};
+> > +MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
+> > +#else
+> > +#define s3c_rtc_dt_match NULL
+> > +#endif
+> > +
+> > =A0static struct platform_device_id s3c_rtc_driver_ids[] =3D {
+> > =A0 =A0 =A0 =A0{
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "s3c24=
+10-rtc",
+> > @@ -625,6 +643,7 @@ static struct platform_driver s3c_rtc_driver =3D=
  {
- 	unsigned long epllcon = __raw_readl(S3C2443_EPLLCON);
-@@ -292,6 +294,8 @@ void __init s3c2443_init_clocks(int xtal)
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
- 		s3c_register_clksrc(clksrcs[ptr], 1);
- 
-+	clkdev_add(&hsmmc_lookup);
-+
- 	/* register clocks from clock array */
- 
- 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
-diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/plat-s3c24xx/s3c2443-clock.c
-index 07a4c81..6997819 100644
---- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
-+++ b/arch/arm/plat-s3c24xx/s3c2443-clock.c
-@@ -307,11 +307,6 @@ static struct clk init_clocks[] = {
- 		.enable		= s3c2443_clkcon_enable_h,
- 		.ctrlbit	= S3C2443_HCLKCON_DMA5,
- 	}, {
--		.name		= "hsmmc",
--		.parent		= &clk_h,
--		.enable		= s3c2443_clkcon_enable_h,
--		.ctrlbit	= S3C2443_HCLKCON_HSMMC,
--	}, {
- 		.name		= "gpio",
- 		.parent		= &clk_p,
- 		.enable		= s3c2443_clkcon_enable_p,
-@@ -393,6 +388,14 @@ static struct clk init_clocks[] = {
- 	}
- };
- 
-+static struct clk hsmmc1_clk = {
-+	.name		= "hsmmc",
-+	.devname	= "s3c-sdhci.1",
-+	.parent		= &clk_h,
-+	.enable		= s3c2443_clkcon_enable_h,
-+	.ctrlbit	= S3C2443_HCLKCON_HSMMC,
-+};
-+
- static inline unsigned long s3c2443_get_hdiv(unsigned long clkcon0)
- {
- 	clkcon0 &= S3C2443_CLKDIV0_HCLKDIV_MASK;
-@@ -469,6 +472,8 @@ static struct clksrc_clk *clksrcs[] __initdata = {
- 	&clk_msysclk,
- };
- 
-+static struct clk_lookup hsmmc_lookup = CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.0", &hsmmc1_clk);
-+
- void __init s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
- 				       fdiv_fn get_fdiv)
- {
-@@ -490,6 +495,9 @@ void __init s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
- 	s3c_register_clksrc(clksrc_clks, ARRAY_SIZE(clksrc_clks));
- 	s3c_register_clocks(init_clocks, ARRAY_SIZE(init_clocks));
- 
-+	s3c24xx_register_clock(&hsmmc1_clk);
-+	clkdev_add(&hsmmc_lookup);
-+
- 	/* See s3c2443/etc notes on disabling clocks at init time */
- 	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
- 	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
--- 
+> > =A0 =A0 =A0 =A0.driver =A0 =A0 =A0 =A0 =3D {
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-rtc",
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.owner =A0=3D THIS_MODULE,
+> > +               .of_match_table =3D s3c_rtc_dt_match,
+     ^^^^^^^^^^^^^^^
+Same as above...
+
+But I know, Thomas' original patch has no problem...probably when ping,
+happened above.
+
+> > =A0 =A0 =A0 =A0},
+> > =A0};
+> >
+> > --
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
