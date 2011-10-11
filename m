@@ -1,70 +1,105 @@
-From: Rob Herring <robherring2@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
 Subject: Re: [PATCH] gpio: exynos4: Add device tree support
-Date: Tue, 11 Oct 2011 10:30:17 -0500
-Message-ID: <4E946109.2000305@gmail.com>
-References: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org> <4E945C90.1050601@gmail.com> <CAJuYYwRwBxkAo2fMfVV9wtQ40XeROAnc-cGJK+cssjuh9px=qQ@mail.gmail.com>
+Date: Tue, 11 Oct 2011 21:36:00 +0530
+Message-ID: <CAJuYYwQWUjVf9Z5Rdw4fTK70=B1aw-5x_wjYm_fq+zHyQAWJvg@mail.gmail.com>
+References: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org>
+	<4E945C90.1050601@gmail.com>
+	<CAJuYYwRwBxkAo2fMfVV9wtQ40XeROAnc-cGJK+cssjuh9px=qQ@mail.gmail.com>
+	<4E946109.2000305@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:57615 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754651Ab1JKPaU (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:54612 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755046Ab1JKQGC convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 11:30:20 -0400
-Received: by qadb15 with SMTP id b15so4798380qad.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2011 08:30:20 -0700 (PDT)
-In-Reply-To: <CAJuYYwRwBxkAo2fMfVV9wtQ40XeROAnc-cGJK+cssjuh9px=qQ@mail.gmail.com>
+	Tue, 11 Oct 2011 12:06:02 -0400
+Received: by eye27 with SMTP id 27so2710426eye.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2011 09:06:00 -0700 (PDT)
+In-Reply-To: <4E946109.2000305@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
+To: Rob Herring <robherring2@gmail.com>
 Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 10/11/2011 10:19 AM, Thomas Abraham wrote:
-> Hi Rob,
-> 
-> On 11 October 2011 20:41, Rob Herring <robherring2@gmail.com> wrote:
->> Thomas,
+On 11 October 2011 21:00, Rob Herring <robherring2@gmail.com> wrote:
+> On 10/11/2011 10:19 AM, Thomas Abraham wrote:
+>> Hi Rob,
 >>
->> On 10/11/2011 03:16 AM, Thomas Abraham wrote:
->>> As gpio chips get registered, a device tree node which represents the
->>> gpio chip is searched and attached to it. A translate function is also
->>> provided to convert the gpio specifier into actual platform settings
->>> for pin function selection, pull up/down and driver strength settings.
+>> On 11 October 2011 20:41, Rob Herring <robherring2@gmail.com> wrote:
+>>> Thomas,
 >>>
->>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>> ---
->>> This patch is based on the latest consolidated Samsung GPIO driver available
->>> in the following tree:
->>>   https://github.com/kgene/linux-samsung.git  branch: for-next
+>>> On 10/11/2011 03:16 AM, Thomas Abraham wrote:
+>>>> As gpio chips get registered, a device tree node which represents =
+the
+>>>> gpio chip is searched and attached to it. A translate function is =
+also
+>>>> provided to convert the gpio specifier into actual platform settin=
+gs
+>>>> for pin function selection, pull up/down and driver strength setti=
+ngs.
+>>>>
+>>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>>>> ---
+>>>> This patch is based on the latest consolidated Samsung GPIO driver=
+ available
+>>>> in the following tree:
+>>>> =A0 https://github.com/kgene/linux-samsung.git =A0branch: for-next
+>>>>
+>>>> =A0.../devicetree/bindings/gpio/gpio-samsung.txt =A0 =A0 =A0| =A0 =
+30 +++++++++++
+>>>> =A0drivers/gpio/gpio-samsung.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0| =A0 53 ++++++++++++++++++++
+>>>> =A02 files changed, 83 insertions(+), 0 deletions(-)
+>>>> =A0create mode 100644 Documentation/devicetree/bindings/gpio/gpio-=
+samsung.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.t=
+xt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+>>>> new file mode 100644
+>>>> index 0000000..883faeb
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+>>>> @@ -0,0 +1,30 @@
+>>>> +Samsung Exynos4 GPIO Controller
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: Format of compatible property value should be
+>>>> + =A0"samsung,exynos4-gpio-<controller_name>". Example: For GPA0 c=
+ontroller, the
+>>>> + =A0compatible property value should be "samsung,exynos4-gpio-gpa=
+0".
 >>>
->>>  .../devicetree/bindings/gpio/gpio-samsung.txt      |   30 +++++++++++
->>>  drivers/gpio/gpio-samsung.c                        |   53 ++++++++++++++++++++
->>>  2 files changed, 83 insertions(+), 0 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
->>> new file mode 100644
->>> index 0000000..883faeb
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
->>> @@ -0,0 +1,30 @@
->>> +Samsung Exynos4 GPIO Controller
->>> +
->>> +Required properties:
->>> +- compatible: Format of compatible property value should be
->>> +  "samsung,exynos4-gpio-<controller_name>". Example: For GPA0 controller, the
->>> +  compatible property value should be "samsung,exynos4-gpio-gpa0".
+>>> Isn't gpa0 an instance of the h/w, not a version?
 >>
->> Isn't gpa0 an instance of the h/w, not a version?
-> 
-> GPA0 is a instance of the gpio controller. There are several such
-> instances and there could be differences in those instances such as
-> the number of GPIO lines managed by that gpio controller instance.
-> 
+>> GPA0 is a instance of the gpio controller. There are several such
+>> instances and there could be differences in those instances such as
+>> the number of GPIO lines managed by that gpio controller instance.
+>>
+>
+> That doesn't seem like a reason to have different compatible strings.
+> Does that affect the programming model of the controller? Unused line=
+s
+> whether at the board level or SOC level shouldn't really matter.
 
-That doesn't seem like a reason to have different compatible strings.
-Does that affect the programming model of the controller? Unused lines
-whether at the board level or SOC level shouldn't really matter.
 
-Rob
+No, that does not affect the programming of the controller. The reason
+for the instance name extension in compatible string is to match the
+gpio_chip with a gpio controller node. When matched, the of_node
+pointer of the gpio_chip is set to point to that controller node.
+
+This might not be the best possible implementation but the device tree
+support code in this patch is dictated by the structure of the
+existing gpio driver code. As you suggested previously, I will look at
+reworking the gpio driver a little later but for now, there was a need
+for working gpio dt solution to make progress on dt support for other
+controllers.
+
+Thanks,
+Thomas.
+
+>
+> Rob
+>
+>
