@@ -1,42 +1,60 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH RESEND V1] mmc: replace printk with appropriate display macro
-Date: Tue, 11 Oct 2011 10:11:26 -0400
-Message-ID: <m2y5wrk48h.fsf@bob.laptop.org>
-References: <1318313649-22465-1-git-send-email-girish.shivananjappa@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/2] ARM: Samsung: Add basic device tree support for Exynos4
+ boards
+Date: Tue, 11 Oct 2011 19:43:14 +0530
+Message-ID: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:41143 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752957Ab1JKOLf (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:59609 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752151Ab1JKOLq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 10:11:35 -0400
-In-Reply-To: <1318313649-22465-1-git-send-email-girish.shivananjappa@linaro.org>
-	(Girish K. S.'s message of "Tue, 11 Oct 2011 11:44:09 +0530")
+	Tue, 11 Oct 2011 10:11:46 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSW00BB0NFK8Z00@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 23:11:44 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSW00BYLNFF5S40@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 23:11:44 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
+To: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
+Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-Hi,
+This patchset adds a new basic device tree enabled machine/board file which is
+based on the Samsung's Exynos4 family of SoC's. Also included in this patchset is the
+dts file for Exynos4210 SoC, Samsung's SMDKV310 board and Insignal's Origen board.
 
-On Tue, Oct 11 2011, Girish K S wrote:
-> All the files using printk function for displaying kernel messages
-> in the mmc driver have been replaced with corresponding macro.
+The Exynos4210 dts file includes support for IRQ, GPIO, WDT, RTC, UART, SDHCI, Keypad,
+DMA and I2C controllers. As device tree coverage for Exynos4210 increases, additional
+device nodes to represent the controllers should be added.
 
-Thanks, applied!
+The device tree enabled machine file enables boot on two boards based on the
+Exynos4210 SoC. This provides a starting point to add additional device tree support
+on these boards, migrate other existing Exynos4 based boards to use device tree
+and enable device tree based boot on new upcoming boards.
 
-I haven't been sure how to handle this patch; in general cosmetic
-patches that touch many parts of many files are a bad idea, because they
-break the ability to merge patches.  Since we're getting near the end of
-merging the 3.2 merge window patches, though, maybe now is a good time.
+This patchset has been tested on the following tree:
+  https://github.com/kgene/linux-samsung.git   branch: for-next
 
-If this patch starts causing merge conflicts, I might pull it out later
-or remove the modifications for the most common files (core.c/sd.c/sdhci.c).
+Thomas Abraham (2):
+  ARM: Samsung: Add Exynos4 device tree enabled board file
+  ARM: dts: Add intial dts file for Exynos4210 SoC, SMDKV310 and Origen board
 
-Thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+ .../devicetree/bindings/arm/insignal-boards.txt    |    8 +
+ .../devicetree/bindings/arm/samsung-boards.txt     |    8 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |  137 +++++++
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  182 +++++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  403 ++++++++++++++++++++
+ arch/arm/mach-exynos4/Kconfig                      |   14 +
+ arch/arm/mach-exynos4/Makefile                     |    2 +
+ arch/arm/mach-exynos4/mach-exynos4-dt.c            |   85 ++++
+ 8 files changed, 839 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/insignal-boards.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung-boards.txt
+ create mode 100644 arch/arm/boot/dts/exynos4210-origen.dts
+ create mode 100644 arch/arm/boot/dts/exynos4210-smdkv310.dts
+ create mode 100644 arch/arm/boot/dts/exynos4210.dtsi
+ create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
