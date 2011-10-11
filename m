@@ -1,130 +1,70 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH RESEND] drivers: i2c: s3c2410: add support for HDMIPHY
- dedicated controller
-Date: Tue, 11 Oct 2011 20:01:22 +0900
-Message-ID: <053a01cc8805$1cbec4a0$563c4de0$%kim@samsung.com>
-References: <1316687096-18307-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1316687096-18307-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Content-language: ko
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Marek Szyprowski' <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, 'Tomasz Stanislawski' <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [RESEND][PATCH V2 0/2] Add a common macro for creating struct
+ clk_lookup entries
+Date: Tue, 11 Oct 2011 17:15:28 +0530
+Message-ID: <1318333530-7023-1-git-send-email-padma.v@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:37207 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750756Ab1JKLkx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Oct 2011 07:40:53 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSW00MCRGFOY600@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 20:40:51 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LSW00C76GFL9D00@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 20:40:51 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: padma.v@samsung.com, kgene.kim@samsung.com, padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: khilman@ti.com, nsekhar@ti.com, hsweeten@visionengravers.com, rmallon@gmail.com, s.hauer@pengutronix.de, u.kleine-koenig@pengutronix.de, plagnioj@jcrosoft.com, amit.kucheria@canonical.com, kernel@pengutronix.de, hjk@hansjkoch.de, linux@arm.linux.org.uk
 
-Marek Szyprowski wrote:
-> 
-> From: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> 
-> This patch adds support for I2C HDMIPHY dedicated controller. It has
-> different timeout handling and reset conditions.
-> 
-> Signed-off-by: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Padmavathi Venna <padma.v@samsung.com> 
 
-Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+This patchset consolidates the macro that creates 'struct clk_lookup'
+entries by introducing a common macro 'CLKDEV_INIT' as suggested by
+Russell King. Few of the platforms have been modified to use this new macro.
 
-Hi Ben,
+I have done the replacement by using python script. I have only build tested
+for below platforms with existing defconfigs.
 
-If you're ok with this, please apply this to go to upstream via your i2c
-tree.
+Changes since V1:
+- Removed "&" and "," from the CLKDEV_INIT macro.
+- Replaced the platform specific macros to use the new CLKDEV_INIT macro.
+- Rebased the patches on the latest master branch of Linux-Next.
 
-Thanks.
+Padmavathi Venna (2):
+  ARM: CLKDEV: Add Common Macro for clk_lookup
+  ARM: Using CLKDEV_INIT for creating clk_lookup instance
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+ arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
+ arch/arm/mach-davinci/clock.h            |    7 --
+ arch/arm/mach-davinci/da830.c            |  101 ++++++++++----------
+ arch/arm/mach-davinci/da850.c            |   95 ++++++++++----------
+ arch/arm/mach-davinci/dm355.c            |   87 +++++++++---------
+ arch/arm/mach-davinci/dm365.c            |  113 +++++++++++-----------
+ arch/arm/mach-davinci/dm644x.c           |   77 ++++++++--------
+ arch/arm/mach-davinci/dm646x.c           |   81 ++++++++--------
+ arch/arm/mach-davinci/tnetv107x.c        |  133 +++++++++++++-------------
+ arch/arm/mach-ep93xx/clock.c             |   61 ++++++-------
+ arch/arm/mach-imx/clock-imx1.c           |   38 +++-----
+ arch/arm/mach-imx/clock-imx21.c          |   91 +++++++++----------
+ arch/arm/mach-imx/clock-imx25.c          |   79 +++++++---------
+ arch/arm/mach-imx/clock-imx27.c          |  111 ++++++++++------------
+ arch/arm/mach-imx/clock-imx31.c          |  103 ++++++++++-----------
+ arch/arm/mach-imx/clock-imx35.c          |  117 +++++++++++------------
+ arch/arm/mach-lpc32xx/clock.c            |   75 +++++++--------
+ arch/arm/mach-mx5/clock-mx51-mx53.c      |  149 ++++++++++++++----------------
+ arch/arm/mach-mxs/clock-mx23.c           |   39 +++-----
+ arch/arm/mach-mxs/clock-mx28.c           |   71 +++++++--------
+ arch/arm/mach-tcc8k/clock.c              |  107 ++++++++++-----------
+ include/linux/clkdev.h                   |    7 ++
+ 22 files changed, 838 insertions(+), 909 deletions(-)
 
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c |   36
-> +++++++++++++++++++++++++++++++++++-
->  1 files changed, 35 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
-b/drivers/i2c/busses/i2c-s3c2410.c
-> index f84a63c..e456cf9 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -54,6 +54,7 @@ enum s3c24xx_i2c_state {
->  enum s3c24xx_i2c_type {
->  	TYPE_S3C2410,
->  	TYPE_S3C2440,
-> +	TYPE_S3C2440_HDMIPHY,
->  };
-> 
->  struct s3c24xx_i2c {
-> @@ -96,7 +97,21 @@ static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c
-*i2c)
->  	enum s3c24xx_i2c_type type;
-> 
->  	type = platform_get_device_id(pdev)->driver_data;
-> -	return type == TYPE_S3C2440;
-> +	return type == TYPE_S3C2440 || type == TYPE_S3C2440_HDMIPHY;
-> +}
-> +
-> +/* s3c24xx_i2c_is2440_hdmiphy()
-> + *
-> + * return true is this is an s3c2440 dedicated for HDMIPHY interface
-> +*/
-> +
-> +static inline int s3c24xx_i2c_is2440_hdmiphy(struct s3c24xx_i2c *i2c)
-> +{
-> +	struct platform_device *pdev = to_platform_device(i2c->dev);
-> +	enum s3c24xx_i2c_type type;
-> +
-> +	type = platform_get_device_id(pdev)->driver_data;
-> +	return type == TYPE_S3C2440_HDMIPHY;
->  }
-> 
->  /* s3c24xx_i2c_master_complete
-> @@ -460,6 +475,13 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
-*i2c)
->  	unsigned long iicstat;
->  	int timeout = 400;
-> 
-> +	/* if hang-up of HDMIPHY occured reduce timeout
-> +	 * The controller will work after reset, so waiting
-> +	 * 400 ms will cause unneccessary system hangup
-> +	 */
-> +	if (s3c24xx_i2c_is2440_hdmiphy(i2c))
-> +		timeout = 10;
-> +
->  	while (timeout-- > 0) {
->  		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
-> 
-> @@ -469,6 +491,15 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
-*i2c)
->  		msleep(1);
->  	}
-> 
-> +	/* hang-up of bus dedicated for HDMIPHY occured, resetting */
-> +	if (s3c24xx_i2c_is2440_hdmiphy(i2c)) {
-> +		writel(0, i2c->regs + S3C2410_IICCON);
-> +		writel(0, i2c->regs + S3C2410_IICSTAT);
-> +		writel(0, i2c->regs + S3C2410_IICDS);
-> +
-> +		return 0;
-> +	}
-> +
->  	return -ETIMEDOUT;
->  }
-> 
-> @@ -1008,6 +1039,9 @@ static struct platform_device_id
-s3c24xx_driver_ids[] = {
->  	}, {
->  		.name		= "s3c2440-i2c",
->  		.driver_data	= TYPE_S3C2440,
-> +	}, {
-> +		.name		= "s3c2440-hdmiphy-i2c",
-> +		.driver_data	= TYPE_S3C2440_HDMIPHY,
->  	}, { },
->  };
->  MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
-> --
-> 1.7.1.569.g6f426
+-- 
+1.7.4.4
