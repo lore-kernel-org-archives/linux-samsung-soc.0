@@ -1,93 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5 0/2] Add device tree support for Samsung's keypad
- controller driver
-Date: Tue, 11 Oct 2011 21:09:53 +0900
-Message-ID: <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com>
-References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH] ARM: EXYNOS4: JPEG: board definition and device registration
+Date: Tue, 11 Oct 2011 14:19:12 +0200
+Message-ID: <1318335553-13355-1-git-send-email-andrzej.p@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44111 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751497Ab1JKMJy (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:45879 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752797Ab1JKMT5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 08:09:54 -0400
-In-reply-to: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Tue, 11 Oct 2011 08:19:57 -0400
+Received: from euspt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LSW00GHFI97GR@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 13:19:55 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LSW00F2VI974Z@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 11 Oct 2011 13:19:55 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com
-Cc: grant.likely@secretlab.ca, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Thomas Abraham wrote:
-> 
-> Changes since v4:
-> - Tested with linux 3.1-rc9. No changes in code.
-> 
-> Changes since v3:
-> - Addressed comments from Grant Likely.
->   - Set num_rows and num_cols to zero in samsung_keypad_parse_dt function.
->   - Fixed the wierd looking if-else block in samsung_keypad_probe
-function.
-> 
-> Changes since v2:
-> - Addressed comments from Grant Likely.
->   - Renamed 'keypad,key-code' property name to 'linux,code'.
->   - Fixed incorrect data types for all instances of of_property+read_u32.
->   - linux,input-type binding was not added as suggested since the driver
->     supports only EV_KEY event type.
-> 
-> Changes since v1:
-> - Addressed comments from Dmitry Torokhov.
->   - Type of controller is cached in driver's private data and the function
->     that determines the type of the controller for each keypad scan is
->     removed.
->   - pdata allocated during probe is explicitly freed after probe completes
->     without any error. In case of exit from probe due a error, no explicit
->     deallocation of pdata memory is performed and it is left to devres to
->     handle that.
->   - The generic code to translate KEY(x,y,code) is retained in the driver
->     itself. I am unsure of a right common place for it.
->   - Driver continues with the probe even if one or more gpio configuration
->     fails.
->   - Patch 1 that adds a new config option is still retained in this
-patchset.
-> 
-> 
-> This patchset adds device tree support for samsung's keypad controller
-driver.
-> First patch adds a new config option to be used by device tree enabled
-platforms
-> for selecting the samsung's keypad controller driver. The second patch
-adds
-> device
-> tree support for the keypad driver.
-> 
-> 
-> Thomas Abraham (2):
->   input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
->   input: samsung-keypad: Add device tree support
-> 
->  .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
->  drivers/input/keyboard/Kconfig                     |    9 +-
->  drivers/input/keyboard/samsung-keypad.c            |  174
-> ++++++++++++++++++--
->  3 files changed, 258 insertions(+), 13 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/input/samsung-
-> keypad.txt
+Dear All,
 
-Looks ok to me,
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+This patch adds board definition code and device registration code
+for JPEG IP found in Exynos4 SoC.
 
-Hi Dmitry,
-If you're ok on this, please adding this in your tree for upcoming merge
-window.
+Andrzej Pietrasiewicz
 
-Thanks.
+Andrzej Pietrasiewicz (1):
+  ARM: EXYNOS4: JPEG: board definition and device registration
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+ arch/arm/mach-exynos4/Kconfig               |    1 +
+ arch/arm/mach-exynos4/clock.c               |    5 +++
+ arch/arm/mach-exynos4/include/mach/map.h    |    3 ++
+ arch/arm/mach-exynos4/mach-universal_c210.c |    2 +
+ arch/arm/plat-s5p/Kconfig                   |    5 +++
+ arch/arm/plat-s5p/Makefile                  |    1 +
+ arch/arm/plat-s5p/dev-jpeg.c                |   46 +++++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h   |    1 +
+ 8 files changed, 64 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-s5p/dev-jpeg.c
