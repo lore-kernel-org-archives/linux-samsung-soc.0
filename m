@@ -1,35 +1,38 @@
 From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH V6 RESEND 2/2] mmc: core: Add Poweroff Notify handling eMMC 4.5
-Date: Tue, 11 Oct 2011 10:00:24 -0400
-Message-ID: <m27h4bljbb.fsf@bob.laptop.org>
-References: <1316180377-30969-1-git-send-email-girish.shivananjappa@linaro.org>
-	<1316180377-30969-3-git-send-email-girish.shivananjappa@linaro.org>
-	<m2obxola02.fsf@bob.laptop.org>
-	<CAGxe1ZEMsqJr==Dk_4C-izK=sy=tkQD0CGzeyh84tURcXcEeZg@mail.gmail.com>
+Subject: Re: [PATCH RESEND V1] mmc: replace printk with appropriate display macro
+Date: Tue, 11 Oct 2011 10:11:26 -0400
+Message-ID: <m2y5wrk48h.fsf@bob.laptop.org>
+References: <1318313649-22465-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAGxe1ZEMsqJr==Dk_4C-izK=sy=tkQD0CGzeyh84tURcXcEeZg@mail.gmail.com>
-	(Girish K. S.'s message of "Tue, 11 Oct 2011 10:29:44 +0530")
-Sender: linux-mmc-owner@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:41143 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752957Ab1JKOLf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 11 Oct 2011 10:11:35 -0400
+In-Reply-To: <1318313649-22465-1-git-send-email-girish.shivananjappa@linaro.org>
+	(Girish K. S.'s message of "Tue, 11 Oct 2011 11:44:09 +0530")
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Girish K S <girish.shivananjappa@linaro.org>
 Cc: linux-mmc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Girish,
+Hi,
 
 On Tue, Oct 11 2011, Girish K S wrote:
-> This is a very old version of the patch. My latest patch has been
-> merged with Mr Chung's branch (the one with PULL REQUEST).
-> These comments have been already taken care.
+> All the files using printk function for displaying kernel messages
+> in the mmc driver have been replaced with corresponding macro.
 
-No, that's not the case.  Here is the version of the patch on the
-emmc4.5 branch that the pull request is for:
+Thanks, applied!
 
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/commitdiff/dac139c9591545a40ea0058d9305514130762682
+I haven't been sure how to handle this patch; in general cosmetic
+patches that touch many parts of many files are a bad idea, because they
+break the ability to merge patches.  Since we're getting near the end of
+merging the 3.2 merge window patches, though, maybe now is a good time.
 
-and it has the same problems I'm replying to here.  Maybe the wrong
-version got merged?
+If this patch starts causing merge conflicts, I might pull it out later
+or remove the modifications for the most common files (core.c/sd.c/sdhci.c).
 
 Thanks,
 
