@@ -1,92 +1,57 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v6 09/10] ARM: S5PC100: Modify platform data for pl330
+Subject: RE: [PATCH v6 00/10] Add device tree support for PL330 dma controller
  driver
-Date: Wed, 12 Oct 2011 13:52:12 +0900
-Message-ID: <063501cc889a$b52eb520$1f8c1f60$%kim@samsung.com>
+Date: Wed, 12 Oct 2011 14:03:12 +0900
+Message-ID: <063701cc889c$3e10dcf0$ba3296d0$%kim@samsung.com>
 References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-2-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-3-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-5-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-6-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-7-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-8-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-9-git-send-email-thomas.abraham@linaro.org>
- <1318270538-30450-10-git-send-email-thomas.abraham@linaro.org>
- <CAJL_dMvX-_ZpvJOUuD28RnoQpz6GFYiTvsWidfy3yeiu3Q04bA@mail.gmail.com>
- <CAJuYYwSj4D1bMbUtaPe=33GrS=e1_7+POHRWCb8Yzgpv8_Muzg@mail.gmail.com>
+ <057401cc880e$41e30b20$c5a92160$%kim@samsung.com>
+ <1318351780.1546.358.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29133 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752169Ab1JLEwO convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:38525 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751859Ab1JLFDN convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 00:52:14 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 12 Oct 2011 01:03:13 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSX002C4S5GQ330@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 13:52:12 +0900 (KST)
+ 2010)) with ESMTP id <0LSX00FG3SP92QK0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 14:03:11 +0900 (KST)
 Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSX007QYS70P440@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 13:52:12 +0900 (KST)
-In-reply-to: <CAJuYYwSj4D1bMbUtaPe=33GrS=e1_7+POHRWCb8Yzgpv8_Muzg@mail.gmail.com>
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSX004A7SPBQO70@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 14:03:11 +0900 (KST)
+In-reply-to: <1318351780.1546.358.camel@vkoul-udesk3>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Anca Emanuel' <anca.emanuel@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Boojin Kim' <boojin.kim@samsung.com>
+To: 'Vinod Koul' <vinod.koul@intel.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Thomas Abraham wrote:
->=20
-> Hi Anca,
->=20
-> On 12 October 2011 09:41, Anca Emanuel <anca.emanuel@gmail.com> wrote=
-:
-> > On Mon, Oct 10, 2011 at 9:15 PM, Thomas Abraham
-> > <thomas.abraham@linaro.org> wrote:
-> > <spnip>
+Vinod Koul wrote:
+> 
+> On Tue, 2011-10-11 at 21:06 +0900, Kukjin Kim wrote:
+> > Thomas Abraham wrote:
 > >
-> >> +u8 pdma1_peri[] =3D {
-> >> + =A0 =A0 =A0 DMACH_UART0_RX,
-> >> + =A0 =A0 =A0 DMACH_UART0_TX,
-> >> + =A0 =A0 =A0 DMACH_UART1_RX,
-> >> + =A0 =A0 =A0 DMACH_UART1_TX,
-> >> + =A0 =A0 =A0 DMACH_UART2_RX,
-> >> + =A0 =A0 =A0 DMACH_UART2_TX,
-> >> + =A0 =A0 =A0 DMACH_UART3_RX,
-> >> + =A0 =A0 =A0 DMACH_UART3_TX,
-> >> + =A0 =A0 =A0 DMACH_IRDA,
-> >> + =A0 =A0 =A0 DMACH_I2S0_RX,
-> >> + =A0 =A0 =A0 DMACH_I2S0_TX,
-> >> + =A0 =A0 =A0 DMACH_I2S0S_TX,
-> >> + =A0 =A0 =A0 DMACH_I2S1_RX,
-> >> + =A0 =A0 =A0 DMACH_I2S1_TX,
-> >> + =A0 =A0 =A0 DMACH_I2S2_RX,
-> >> + =A0 =A0 =A0 DMACH_I2S2_TX,
-> >> + =A0 =A0 =A0 DMACH_SPI0_RX,
-> >> + =A0 =A0 =A0 DMACH_SPI0_TX,
-> >> + =A0 =A0 =A0 DMACH_SPI1_RX,
-> >> + =A0 =A0 =A0 DMACH_SPI1_TX,
-> >> + =A0 =A0 =A0 DMACH_SPI2_RX,
-> >> + =A0 =A0 =A0 DMACH_SPI2_TX,
-> >> + =A0 =A0 =A0 DMACH_PCM0_RX,
-> >> + =A0 =A0 =A0 DMACH_PCM1_TX,
+> > Hi,
 > >
-> > typo ? =A0DMACH_PCM0_TX
->=20
-> Yes. That is a mistake. I cross-checked others with the user manual
-> and they are fine.
->=20
+> > Looks ok to me and if required,
+> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> >
+> > And I hope since this includes many changes of arch/arm/Samsung stuff, this
+> > would be sent to upstream via Samsung tree after ack from Vinod for dma
+> > stuff.
+> Sure, looks fine to me
+> Acked-by: Vinod Koul <vinod.koul@intel.com>
+> 
+Hi Vinod,
 
-OK, I think you don't need to re-send because I can fix it when I apply=
-=2E
-It would be helpful to me if you could check your patches again :)
+OK, I will apply this series to send to upstream via Samsung tree. If you need branch to apply in your tree, please let me know.
 
-If any problems, please let me know.
+As a note, Boojin Kim will test this series based on boards with -next of Samsung tree before sending to upstream even though I know Thomas tested and it works fine :)
 
 Thanks.
 
@@ -95,16 +60,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> Thanks for pointing this out.
->=20
-> >
-> >> + =A0 =A0 =A0 DMACH_PCM1_RX,
-> >> + =A0 =A0 =A0 DMACH_PCM1_TX,
-> >> + =A0 =A0 =A0 DMACH_MSM_REQ0,
-> >> + =A0 =A0 =A0 DMACH_MSM_REQ1,
-> >> + =A0 =A0 =A0 DMACH_MSM_REQ2,
-> >> + =A0 =A0 =A0 DMACH_MSM_REQ3,
-> >> =A0};
-> >
