@@ -1,54 +1,87 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] gpio/samsung: Move SoC specific codes within macro
-Date: Wed, 12 Oct 2011 21:42:32 +0900
-Message-ID: <069501cc88dc$695fa400$3c1eec00$%kim@samsung.com>
-References: <1317612559-8930-1-git-send-email-tushar.behera@linaro.org>
- <20111004183840.GH2870@ponder.secretlab.ca>
+Subject: RE: [PATCH v2] ARM: EXYNOS4: Add support for M-5MOLS camera on Nuri
+ board
+Date: Wed, 12 Oct 2011 21:43:01 +0900
+Message-ID: <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
+References: <034f01cc8705$199b0dc0$4cd12940$%kim@samsung.com>
+ <1318238959-28012-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44574 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752845Ab1JLMmd (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62059 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753215Ab1JLMnI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 08:42:33 -0400
+	Wed, 12 Oct 2011 08:43:08 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSY002SMDZOQ3L0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 21:43:00 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSY00DKSDZOER30@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 21:43:00 +0900 (KST)
 In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
 Kukjin Kim wrote:
 > 
-> Grant Likely wrote:
+> Sylwester Nawrocki wrote:
 > >
-> > On Mon, Oct 03, 2011 at 08:59:19AM +0530, Tushar Behera wrote:
-> > > In drivers/gpio/gpio-samsung.c, there are certain structures
-> > > and functions which are not getting used if the particular
-> > > CPU is not selected. These code segments are moved under CPU
-> > > specific macros to remove compilation warnings.
-> > >
-> > > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> > Add voltage regulator and platform data definition for M-5MOLS sensor
+> > and MIPI-CSI receiver drivers. Add CAM power domain dependencies for
+> > FIMC device and set up camera port A GPIO. Configure I2C0 bus timings.
 > >
-> > Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> > Signed-off-by: HeungJun Kim <riverful.kim@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> > Hi Kgene,
 > >
-> When I applied, following error was happened with s5p64x0_defconfig.
-Others, ok.
-> 
-> ...
-> Inconsistent kallsyms data
-> This is a bug - please report about it
-> Try make KALLSYMS_EXTRA_PASS=1 as a workaround
-> make: *** [vmlinux] Error 1
-> 
-> And it seems due to add condition around the 'static unsigned
-> s3c24xx_gpio_getcfg_abank()'.
-> 
-> I need to check it in detail and if any problems, let you know.
-> 
-There is no above problem now in my -next. Applied.
+> > I have corrected the white space issues as you pointed out and removed
+> > unnecessary gpio_free() in this patch.
+> >
+> > Thanks,
+> >  Sylwester
+> > ---
+> >  arch/arm/mach-exynos4/Kconfig     |    8 ++
+> >  arch/arm/mach-exynos4/mach-nuri.c |  156
+> > +++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 164 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/arch/arm/mach-exynos4/Kconfig
+b/arch/arm/mach-exynos4/Kconfig
+> > index dd660eb..4bc4b1f 100644
+> > --- a/arch/arm/mach-exynos4/Kconfig
+> > +++ b/arch/arm/mach-exynos4/Kconfig
+
+(snip)
+
+> > +static struct s5p_platform_fimc fimc_md_platdata = {
+> > +	.isp_info	= nuri_camera_sensors,
+> > +	.num_clients	= ARRAY_SIZE(nuri_camera_sensors),
+> > +};
+
+Hi Sylwester,
+
+You need to move 'struct platform_device s5p_device_fimc_md' to
+plat-samsung/devs.c or add 'static' because following error is happened.
+
+arch/arm/mach-exynos4/mach-nuri.o: In function `  CC      kernel/sysctl.o
+.LANCHOR1':
+mach-nuri.c:(.data+0x38): multiple definition of `s5p_device_fimc_md'
+arch/arm/mach-exynos4/mach-universal_c210.o:mach-universal_c210.c:(.data+0x1
+8): first defined here
+make[2]: *** [arch/arm/mach-exynos4/built-in.o] Error 1
+make[1]: *** [arch/arm/mach-exynos4] Error 2
+make[1]: *** Waiting for unfinished jobs....
+
 Thanks.
 
 Best regards,
