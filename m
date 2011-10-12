@@ -1,153 +1,214 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] gpio: exynos4: Add device tree support
-Date: Wed, 12 Oct 2011 21:45:25 +0530
-Message-ID: <CAJuYYwRsM_aGkeG9v97jdsJgSQeokViuLGdF5TvqEkNZCAgFVA@mail.gmail.com>
-References: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org>
-	<4E945C90.1050601@gmail.com>
-	<CAJuYYwRwBxkAo2fMfVV9wtQ40XeROAnc-cGJK+cssjuh9px=qQ@mail.gmail.com>
-	<4E946109.2000305@gmail.com>
-	<CAJuYYwQWUjVf9Z5Rdw4fTK70=B1aw-5x_wjYm_fq+zHyQAWJvg@mail.gmail.com>
-	<4E95AE26.8080702@gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH V4 3/3] ARM: SAMSUNG: Add lookup of sdhci-s3c clocks using
+ generic names
+Date: Wed, 12 Oct 2011 18:19:04 +0200
+Message-ID: <4E95BDF8.2080406@samsung.com>
+References: <1318412587-29987-1-git-send-email-rajeshwari.s@samsung.com>
+ <1318412587-29987-4-git-send-email-rajeshwari.s@samsung.com>
+ <4E956ADB.3060604@samsung.com>
+ <CAPs=JDf2N1kh4BO9nPBb-J6k51e-ytntrNOvw_UOKtw-ktdycA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:53501 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752891Ab1JLQP1 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 12:15:27 -0400
-Received: by ggnv2 with SMTP id v2so827721ggn.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2011 09:15:26 -0700 (PDT)
-In-Reply-To: <4E95AE26.8080702@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAPs=JDf2N1kh4BO9nPBb-J6k51e-ytntrNOvw_UOKtw-ktdycA@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Rajeshwari Birje <rajeshwari.birje@gmail.com>
+Cc: Rajeshwari Shinde <rajeshwari.s@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 12 October 2011 20:41, Rob Herring <robherring2@gmail.com> wrote:
-> On 10/11/2011 11:06 AM, Thomas Abraham wrote:
->> On 11 October 2011 21:00, Rob Herring <robherring2@gmail.com> wrote:
->>> On 10/11/2011 10:19 AM, Thomas Abraham wrote:
->>>> Hi Rob,
->>>>
->>>> On 11 October 2011 20:41, Rob Herring <robherring2@gmail.com> wrot=
-e:
->>>>> Thomas,
->>>>>
->>>>> On 10/11/2011 03:16 AM, Thomas Abraham wrote:
->>>>>> As gpio chips get registered, a device tree node which represent=
-s the
->>>>>> gpio chip is searched and attached to it. A translate function i=
-s also
->>>>>> provided to convert the gpio specifier into actual platform sett=
-ings
->>>>>> for pin function selection, pull up/down and driver strength set=
-tings.
->>>>>>
->>>>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>>>>> ---
->>>>>> This patch is based on the latest consolidated Samsung GPIO driv=
-er available
->>>>>> in the following tree:
->>>>>> =A0 https://github.com/kgene/linux-samsung.git =A0branch: for-ne=
-xt
->>>>>>
->>>>>> =A0.../devicetree/bindings/gpio/gpio-samsung.txt =A0 =A0 =A0| =A0=
- 30 +++++++++++
->>>>>> =A0drivers/gpio/gpio-samsung.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0| =A0 53 ++++++++++++++++++++
->>>>>> =A02 files changed, 83 insertions(+), 0 deletions(-)
->>>>>> =A0create mode 100644 Documentation/devicetree/bindings/gpio/gpi=
-o-samsung.txt
->>>>>>
->>>>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung=
-=2Etxt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
->>>>>> new file mode 100644
->>>>>> index 0000000..883faeb
->>>>>> --- /dev/null
->>>>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
->>>>>> @@ -0,0 +1,30 @@
->>>>>> +Samsung Exynos4 GPIO Controller
->>>>>> +
->>>>>> +Required properties:
->>>>>> +- compatible: Format of compatible property value should be
->>>>>> + =A0"samsung,exynos4-gpio-<controller_name>". Example: For GPA0=
- controller, the
->>>>>> + =A0compatible property value should be "samsung,exynos4-gpio-g=
-pa0".
->>>>>
->>>>> Isn't gpa0 an instance of the h/w, not a version?
->>>>
->>>> GPA0 is a instance of the gpio controller. There are several such
->>>> instances and there could be differences in those instances such a=
-s
->>>> the number of GPIO lines managed by that gpio controller instance.
->>>>
+On 10/12/2011 02:36 PM, Rajeshwari Birje wrote:
+> On Wed, Oct 12, 2011 at 3:54 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> Hi Rajeshwari,
+>>
+>> On 10/12/2011 11:43 AM, Rajeshwari Shinde wrote:
+>>> Add support for lookup of sdhci-s3c controller clocks using generic=
+ names
+>>> for s3c2416, s3c64xx, s5pc100, s5pv210 and exynos4 SoC's.
 >>>
->>> That doesn't seem like a reason to have different compatible string=
-s.
->>> Does that affect the programming model of the controller? Unused li=
-nes
->>> whether at the board level or SOC level shouldn't really matter.
+>>> Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
+>>> ---
+>>>  arch/arm/mach-exynos4/clock.c         |   88 ++++++++++-------
+>>>  arch/arm/mach-s3c2416/clock.c         |   68 +++++++------
+>>>  arch/arm/mach-s3c64xx/clock.c         |  126 +++++++++++++++------=
+----
+>>>  arch/arm/mach-s5pc100/clock.c         |  130 ++++++++++++++++-----=
+-----
+>>>  arch/arm/mach-s5pv210/clock.c         |  167 ++++++++++++++++++++-=
+------------
+>>>  arch/arm/plat-s3c24xx/s3c2443-clock.c |   15 ++-
+>>>  6 files changed, 359 insertions(+), 235 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/=
+clock.c
+>>> index 9f50e33..c6383b9 100644
+>>> --- a/arch/arm/mach-exynos4/clock.c
+>>> +++ b/arch/arm/mach-exynos4/clock.c
+>>> @@ -1157,42 +1157,6 @@ static struct clksrc_clk clksrcs[] =3D {
+>>>               .reg_div =3D { .reg =3D S5P_CLKDIV_MFC, .shift =3D 0,=
+ .size =3D 4 },
+=2E..
+>>> +static struct clksrc_clk clk_sclk_mmc0 =3D {
+>>> +     .clk            =3D {
+>>> +             .name           =3D "sclk_mmc",
+>>> +             .devname        =3D "s3c-sdhci.0",
 >>
+>> Would it make sense to drop this 'devname' field here and others
+>> until sclk_mmc3 ....
+>=20
+> *** The devname here distinguishes these clocks. So it should be okay
+> to have a devname for these clocks.
+
+I'm not sure what's Mr Kukjin's opinion on that, but I personally would=
+ really
+like to see all the devname fields disappear from samsung clk data stru=
+ctures.
+Possibly if all involved people would keep that in mind we could achiev=
+e this
+over time.
+
+>=20
 >>
->> No, that does not affect the programming of the controller. The reas=
-on
->> for the instance name extension in compatible string is to match the
->> gpio_chip with a gpio controller node. When matched, the of_node
->> pointer of the gpio_chip is set to point to that controller node.
+>>> +             .parent         =3D &clk_dout_mmc0.clk,
+>>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
+>>> +             .ctrlbit        =3D (1 << 0),
+>>> +     },
+>>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS1, .shift =3D 8, .size=
+ =3D 8 },
+>>> +};
+>>> +
+>>> +static struct clksrc_clk clk_sclk_mmc1 =3D {
+>>> +     .clk            =3D {
+>>> +             .name           =3D "sclk_mmc",
+>>> +             .devname        =3D "s3c-sdhci.1",
 >>
->> This might not be the best possible implementation but the device tr=
-ee
->> support code in this patch is dictated by the structure of the
->> existing gpio driver code. As you suggested previously, I will look =
-at
->> reworking the gpio driver a little later but for now, there was a ne=
-ed
->> for working gpio dt solution to make progress on dt support for othe=
-r
->> controllers.
->
-> Linux should provide clues about what's needed in a binding, but the
-> binding should not be defined based on current Linux code. Doing the
-> binding one way and changing it later is not a good plan.
+>>> +             .parent         =3D &clk_dout_mmc1.clk,
+>>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
+>>> +             .ctrlbit        =3D (1 << 4),
+>>> +     },
+>>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS1, .shift =3D 24, .siz=
+e =3D 8 },
+>>> +};
+>>> +
+>>> +static struct clksrc_clk clk_sclk_mmc2 =3D {
+>>> +     .clk            =3D {
+>>> +             .name           =3D "sclk_mmc",
+>>> +             .devname        =3D "s3c-sdhci.2",
+>>
+>>> +             .parent         =3D &clk_dout_mmc2.clk,
+>>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
+>>> +             .ctrlbit        =3D (1 << 8),
+>>> +     },
+>>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS2, .shift =3D 8, .size=
+ =3D 8 },
+>>> +};
+>>> +
+>>> +static struct clksrc_clk clk_sclk_mmc3 =3D {
+>>> +     .clk            =3D {
+>>> +             .name           =3D "sclk_mmc",
+>>> +             .devname        =3D "s3c-sdhci.3",
+>>
+>>> +             .parent         =3D &clk_dout_mmc3.clk,
+>>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
+>>> +             .ctrlbit        =3D (1 << 12),
+>>> +     },
+>>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS2, .shift =3D 24, .siz=
+e =3D 8 },
+>>> +};
+>>> +
+>>>  /* Clock initialization code */
+>>>  static struct clksrc_clk *sysclks[] =3D {
+>>>       &clk_mout_apll,
+>>> @@ -1289,6 +1297,10 @@ static struct clksrc_clk *clksrc_cdev[] =3D =
+{
+>>>       &clk_sclk_uart1,
+>>>       &clk_sclk_uart2,
+>>>       &clk_sclk_uart3,
+>>> +     &clk_sclk_mmc0,
+>>> +     &clk_sclk_mmc1,
+>>> +     &clk_sclk_mmc2,
+>>> +     &clk_sclk_mmc3,
+>>
+>> ..then drop the above 4 lines...
+>=20
+> **** The registration for these clocks are important. The
+> s3c_register_clksrc() function sets the .ops of this clock and also
+> its parent. So the registration cannot be dropped.
 
-Ok. When starting on this, two compatible values where used for the
-gpio controllers, one was "samsung,exynos4-gpio" and another was
-"samsung,exynos4-gpio-<ctrl_name>". And when the gpio dt support would
-mature, the second compatible value could be dropped. Non-linux
-platforms could always use the generic "samsung,exynos4-gpio"
-compatible value to match. I moved to using only
-"samsung,exynos4-gpio-<ctrl_name>" just before sending this patch
-because I was not sure of the right approach.
+OK.
 
->
-> I think you need to convert all users of gpio over as well so you can
-> move to dynamic gpio_chip creation and gpio numbering. Or maybe you c=
-an
-> match based on base address? This is going to be a common problem as
-> gpio is converted over to DT. Perhaps Grant or others have suggestion=
-s
-> on the approach to use.
+>=20
+>>
+>>>  };
+>>>
+>>>  static struct clk_lookup exynos4_clk_lookup[] =3D {
+>>> @@ -1296,6 +1308,10 @@ static struct clk_lookup exynos4_clk_lookup[=
+] =3D {
+>>>       CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &clk_sclk_=
+uart1.clk),
+>>>       CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &clk_sclk_=
+uart2.clk),
+>>>       CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &clk_sclk_=
+uart3.clk),
+>>> +     CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0=
+=2Eclk),
+>>> +     CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1=
+=2Eclk),
+>>> +     CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2=
+=2Eclk),
+>>> +     CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3=
+=2Eclk),
+>>
+>> ..and add something like:
+>>
+>>  +      CLKDEV_INIT("s3c-sdhci.0", "sclk_mmc", &clk_sclk_mmc0.clk),
+>>  +      CLKDEV_INIT("s3c-sdhci.1", "sclk_mmc", &clk_sclk_mmc1.clk),
+>>  +      CLKDEV_INIT("s3c-sdhci.2", "sclk_mmc", &clk_sclk_mmc2.clk),
+>>  +      CLKDEV_INIT("s3c-sdhci.3", "sclk_mmc", &clk_sclk_mmc3.clk),
+>>
+>> ?
+>=20
+> **** The driver uses a common name for the possible bus clock sources=
+,
+> that is =E2=80=9Cmmc_busclk=E2=80=9D. This keeps the clock lookup cod=
+e in the driver
+> simple. Also, there could be SoC=E2=80=99s which do no use sclk_mmc a=
+s the bus
+> clock name as per the user manual
 
-Yes, I agree with you about the dynamic gpio_chip creation and gpio
-numbering. Probably, I should have focussed more on this before moving
-to dt support for other controllers.
+OK, I was aware of that. I didn't mean removing the "mmc_busclk.2" entr=
+ies,
+just adding another 4, which are created anyway by s3c_register_clksrc(=
+)
+function. But for now I think the patch is OK.
 
-But matching based on base address is still an option if that is
-better than matching with compatible values as defined currently. The
-'struct samsung_gpio_chip' which encapsulates 'struct gpio_chip' has
-information about the base address of the gpio controller. The match
-of gpio device node with 'struct gpio_chip' can be quickly moved over
-to base address matching. Would this be better than the current
-approach?
+>=20
+>=20
+>>
+>> Also I'm wondering why we're using different device names for clk_sc=
+lk_mmc0..3
+>> clocks, i.e. exynos4-sdhci.? and s3c-sdhci.? ?
+>>
+>> Does it all work on exynos ? I would expect the device name to be sa=
+me
+>> across all the clock definitions, otherwise clk_get(dev, ..) will fa=
+il.
+>=20
+> **** There was a patch submitted to rename the device name of sdhci
+> for Exynos to exynos4-sdhci. I will remove this change from this patc=
+h
+> and let that patch handle this change.
 
-Thank you for your comments Rob.
+I wouldn't do that. IMHO it's better to keep this patch as is, to make =
+the final
+diff size lower.
+Perhaps it's even worth to consider doing the clock rename altogether i=
+n this patch.
+But it's of course up to you.
+
 
 Regards,
-Thomas.
-
->
-> Rob
->
+--=20
+Sylwester Nawrocki
+Samsung Poland R&D Center
