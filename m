@@ -1,190 +1,88 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v6 03/10] ARM: EXYNOS4: Modify platform data for pl330 driver
-Date: Wed, 12 Oct 2011 11:06:11 +0530
-Message-ID: <CAJuYYwRLGZ9Mt5vedM9cOaPu-9cH_41GC=XPTS80y9vUxr=gQw@mail.gmail.com>
-References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
-	<1318270538-30450-2-git-send-email-thomas.abraham@linaro.org>
-	<1318270538-30450-3-git-send-email-thomas.abraham@linaro.org>
-	<1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [PATCH v4 0/2] iommu/exynos: Add IOMMU and Enhance System MMU driver
+ for Exynos4
+Date: Wed, 12 Oct 2011 17:07:37 +0900
+Message-ID: <000101cc88b6$013d1ef0$03b75cd0$%cho@samsung.com>
+Reply-To: pullip.cho@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:51630 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751550Ab1JLFgM convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:21513 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751264Ab1JLIHj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 01:36:12 -0400
-Received: by ggnv2 with SMTP id v2so335530ggn.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 11 Oct 2011 22:36:11 -0700 (PDT)
-In-Reply-To: <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
+	Wed, 12 Oct 2011 04:07:39 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, Jassi Brar <jassisinghbrar@gmail.com>, Boojin Kim <boojin.kim@samsung.com>
+To: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: 'Russell King' <rmk+kernel@arm.linux.org.uk>, joerg.roedel@amd.com, 'Ohad Ben-Cohen' <ohad@wizery.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, younglak1004.kim@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Dear Mr. Kim,
+Hi.
 
-On 10 October 2011 23:45, Thomas Abraham <thomas.abraham@linaro.org> wr=
-ote:
-> With the 'struct dma_pl330_peri' removed, the platfrom data for dma
-> driver can be simplified to a simple list of peripheral request ids.
->
-> Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> ---
-> =A0arch/arm/mach-exynos4/dma.c | =A0223 ++++++++++++-----------------=
---------------
-> =A01 files changed, 62 insertions(+), 161 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.=
-c
-> index 9667c61..c3c0d17 100644
-> --- a/arch/arm/mach-exynos4/dma.c
-> +++ b/arch/arm/mach-exynos4/dma.c
-> @@ -35,95 +35,40 @@
->
-> =A0static u64 dma_dmamask =3D DMA_BIT_MASK(32);
->
-> -struct dma_pl330_peri pdma0_peri[28] =3D {
-> - =A0 =A0 =A0 {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_PCM0_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_PCM0_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_PCM2_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_PCM2_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_MSM_REQ0,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_MSM_REQ2,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SPI0_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SPI0_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SPI2_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SPI2_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_I2S0S_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_I2S0_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_I2S0_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_UART0_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_UART0_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_UART2_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_UART2_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_UART4_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_UART4_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SLIMBUS0_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SLIMBUS0_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SLIMBUS2_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SLIMBUS2_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SLIMBUS4_RX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_SLIMBUS4_TX,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_AC97_MICIN,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_AC97_PCMIN,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D DEVTOMEM,
-> - =A0 =A0 =A0 }, {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .peri_id =3D (u8)DMACH_AC97_PCMOUT,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 .rqtype =3D MEMTODEV,
-> - =A0 =A0 =A0 },
-> +u8 pdma0_peri[] =3D {
-> + =A0 =A0 =A0 DMACH_PCM0_RX,
-> + =A0 =A0 =A0 DMACH_PCM0_TX,
-> + =A0 =A0 =A0 DMACH_PCM2_RX,
-> + =A0 =A0 =A0 DMACH_PCM2_TX,
-> + =A0 =A0 =A0 DMACH_MSM_REQ0,
-> + =A0 =A0 =A0 DMACH_MSM_REQ2,
-> + =A0 =A0 =A0 DMACH_SPI0_RX,
-> + =A0 =A0 =A0 DMACH_SPI0_TX,
-> + =A0 =A0 =A0 DMACH_SPI2_RX,
-> + =A0 =A0 =A0 DMACH_SPI2_TX,
-> + =A0 =A0 =A0 DMACH_I2S0S_TX,
-> + =A0 =A0 =A0 DMACH_I2S0_RX,
-> + =A0 =A0 =A0 DMACH_I2S0_TX,
+This is the firth try of submitting patches about IOMMU/System MMU
 
-As you have suggested, I have rechecked the platform data for all s5p
-platforms in this patchset. Here, DMACH_I2S2_RX (event id 13) and
-DMACH_I2S2_TX (event id 14) of DMAC[0] are missing as per the
-exynos4210 user manual. But these where missing in the original code
-as well which this patch modified. If possible, could you please let
-me know if DMACH_I2S2_RX and DMACH_I2S2_TX are indeed event id 13 and
-14 in DMAC[0].
+Patch Summary:
+[PATCH v4 1/2] ARM: EXYNOS4: Change System MMU device definition
+[PATCH v4 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
 
-I have rechecked the other s5p platform data for dmac (s5p64x0,
-s5pc100, s5pv210). Apart from the typo pointed out by Anca for
-s5pc100, there are no other issues.
+The first patche enhances System MMU platform device definition:
+ - Removed System MMU for MDMA0 in LCD block because it is not
+   used. Use MDMA2 in TOP block.
+ - Removed System MMU ID. Instead a System MMU is bound to a device
+   That the System MMU is dedicated during machin initialization.
+   If a device driver wants to handle System MMU, it must bind its
+   device with System MMU with sysmmu_set_owner().
+ - clkdev
 
-Thanks,
-Thomas.
+The last patch implements IOMMU API:
+ - System MMU device driver is removed from arch/arm/plat-s5p
+   to move it to driver/iommu directory.
+ - Implements IOMMU API and System MMU driver that is moved from
+   arch/arm/plat-s5p.
+ - Implements fault handling that is suggested by Ohad.
+ - Used bus_set_iommu instead of register_iommu that is suggested
+    by Joerg.
 
-> + =A0 =A0 =A0 DMACH_UART0_RX,
-> + =A0 =A0 =A0 DMACH_UART0_TX,
-> + =A0 =A0 =A0 DMACH_UART2_RX,
-> + =A0 =A0 =A0 DMACH_UART2_TX,
-> + =A0 =A0 =A0 DMACH_UART4_RX,
-> + =A0 =A0 =A0 DMACH_UART4_TX,
-> + =A0 =A0 =A0 DMACH_SLIMBUS0_RX,
-> + =A0 =A0 =A0 DMACH_SLIMBUS0_TX,
-> + =A0 =A0 =A0 DMACH_SLIMBUS2_RX,
-> + =A0 =A0 =A0 DMACH_SLIMBUS2_TX,
-> + =A0 =A0 =A0 DMACH_SLIMBUS4_RX,
-> + =A0 =A0 =A0 DMACH_SLIMBUS4_TX,
-> + =A0 =A0 =A0 DMACH_AC97_MICIN,
-> + =A0 =A0 =A0 DMACH_AC97_PCMIN,
-> + =A0 =A0 =A0 DMACH_AC97_PCMOUT,
-> =A0};
->
-> =A0struct dma_pl330_platdata exynos4_pdma0_pdata =3D {
-> =A0 =A0 =A0 =A0.nr_valid_peri =3D ARRAY_SIZE(pdma0_peri),
-> - =A0 =A0 =A0 .peri =3D pdma0_peri,
-> + =A0 =A0 =A0 .peri_id =3D pdma0_peri,
-> =A0};
->
 
-[...]
+Changes since v3:
+- Used DEFINE_RES_MEM and DEFINE_RES_IRQ macros
+   to define resources of System MMU (Russell King's comment)
+- Fixed removal of CONFIG_S5P_SLEEP definition
+  (Sylwester Nawrocki's comment)
+
+Changes since v2:
+- Add lock for System MMU private data.
+ And fixes the following problems pointed by Joerg Rodel:
+- Fix wrong argument to kmalloc() and get_free_pages()
+- Merged patches into 2 due to bisectability
+
+Changes since v1:
+Fixes of the following problems pointed by Russell King.:
+ - Missing unlocking a spinlock in exynos_iommu_attach_dev().
+ - atomic_t -> int in sysmmu_drvdata.activations
+ - sysmmu_platdata -> sysmmu_drvdata
+ - Change in error messages in irq handler
+ - Removed casting in format of error message
+ - omap_iommu_ops -> exynos_iommu_ops in the last patch.
+
+Diffstat:
+
+ arch/arm/mach-exynos4/Kconfig               |    2 -
+ arch/arm/mach-exynos4/clock.c               |   43 +-
+ arch/arm/mach-exynos4/dev-sysmmu.c          |  260 ++------
+ arch/arm/mach-exynos4/include/mach/irqs.h   |    1 -
+ arch/arm/mach-exynos4/include/mach/map.h    |    1 -
+ arch/arm/mach-exynos4/include/mach/sysmmu.h |   85 ++-
+ arch/arm/mach-exynos4/mach-armlex4210.c     |   24 +-
+ arch/arm/mach-exynos4/mach-smdkv310.c       |   28 +-
+ arch/arm/plat-s5p/Kconfig                   |    8 -
+ arch/arm/plat-s5p/Makefile                  |    1 -
+ arch/arm/plat-s5p/sysmmu.c                  |  312 ---------
+ arch/arm/plat-samsung/include/plat/sysmmu.h |   95 ---
+ drivers/iommu/Kconfig                       |   14 +
+ drivers/iommu/Makefile                      |    1 +
+ drivers/iommu/exynos_iommu.c                |  962
++++++++++++++++++++++++++++
+ 15 files changed, 1153 insertions(+), 684 deletions(-)
