@@ -1,183 +1,300 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V4 3/3] ARM: SAMSUNG: Add lookup of sdhci-s3c clocks using
- generic names
-Date: Wed, 12 Oct 2011 12:24:27 +0200
-Message-ID: <4E956ADB.3060604@samsung.com>
-References: <1318412587-29987-1-git-send-email-rajeshwari.s@samsung.com>
- <1318412587-29987-4-git-send-email-rajeshwari.s@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1318412587-29987-4-git-send-email-rajeshwari.s@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v7 03/10] ARM: EXYNOS4: Modify platform data for pl330 driver
+Date: Wed, 12 Oct 2011 17:16:08 +0530
+Message-ID: <1318419968-27632-1-git-send-email-thomas.abraham@linaro.org>
+References: <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:49224 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751429Ab1JLLoZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Oct 2011 07:44:25 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSY003WUB9ZOMK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 20:44:23 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSY0024EB9O3C10@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 20:44:23 +0900 (KST)
+In-reply-to: <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: devicetree-discuss@lists.ozlabs.org, vinod.koul@intel.com
+Cc: grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, robherring2@gmail.com, patches@linaro.org, jassisinghbrar@gmail.com, boojin.kim@samsung.com
 
-Hi Rajeshwari,
+With the 'struct dma_pl330_peri' removed, the platfrom data for dma
+driver can be simplified to a simple list of peripheral request ids.
 
-On 10/12/2011 11:43 AM, Rajeshwari Shinde wrote:
-> Add support for lookup of sdhci-s3c controller clocks using generic names
-> for s3c2416, s3c64xx, s5pc100, s5pv210 and exynos4 SoC's.
-> 
-> Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-> ---
->  arch/arm/mach-exynos4/clock.c         |   88 ++++++++++-------
->  arch/arm/mach-s3c2416/clock.c         |   68 +++++++------
->  arch/arm/mach-s3c64xx/clock.c         |  126 +++++++++++++++----------
->  arch/arm/mach-s5pc100/clock.c         |  130 ++++++++++++++++----------
->  arch/arm/mach-s5pv210/clock.c         |  167 ++++++++++++++++++++-------------
->  arch/arm/plat-s3c24xx/s3c2443-clock.c |   15 ++-
->  6 files changed, 359 insertions(+), 235 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/clock.c
-> index 9f50e33..c6383b9 100644
-> --- a/arch/arm/mach-exynos4/clock.c
-> +++ b/arch/arm/mach-exynos4/clock.c
-> @@ -1157,42 +1157,6 @@ static struct clksrc_clk clksrcs[] = {
->  		.reg_div = { .reg = S5P_CLKDIV_MFC, .shift = 0, .size = 4 },
->  	}, {
->  		.clk		= {
-> -			.name		= "sclk_mmc",
-> -			.devname	= "s3c-sdhci.0",
-> -			.parent		= &clk_dout_mmc0.clk,
-> -			.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> -			.ctrlbit	= (1 << 0),
-> -		},
-> -		.reg_div = { .reg = S5P_CLKDIV_FSYS1, .shift = 8, .size = 8 },
-> -	}, {
-> -		.clk		= {
-> -			.name		= "sclk_mmc",
-> -			.devname	= "s3c-sdhci.1",
-> -			.parent         = &clk_dout_mmc1.clk,
-> -			.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> -			.ctrlbit	= (1 << 4),
-> -		},
-> -		.reg_div = { .reg = S5P_CLKDIV_FSYS1, .shift = 24, .size = 8 },
-> -	}, {
-> -		.clk		= {
-> -			.name		= "sclk_mmc",
-> -			.devname	= "s3c-sdhci.2",
-> -			.parent         = &clk_dout_mmc2.clk,
-> -			.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> -			.ctrlbit	= (1 << 8),
-> -		},
-> -		.reg_div = { .reg = S5P_CLKDIV_FSYS2, .shift = 8, .size = 8 },
-> -	}, {
-> -		.clk		= {
-> -			.name		= "sclk_mmc",
-> -			.devname	= "s3c-sdhci.3",
-> -			.parent         = &clk_dout_mmc3.clk,
-> -			.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> -			.ctrlbit	= (1 << 12),
-> -		},
-> -		.reg_div = { .reg = S5P_CLKDIV_FSYS2, .shift = 24, .size = 8 },
-> -	}, {
-> -		.clk		= {
->  			.name		= "sclk_dwmmc",
->  			.parent         = &clk_dout_mmc4.clk,
->  			.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> @@ -1250,6 +1214,50 @@ static struct clksrc_clk clk_sclk_uart3 = {
->  	.reg_div = { .reg = S5P_CLKDIV_PERIL0, .shift = 12, .size = 4 },
->  };
->  
-> +static struct clksrc_clk clk_sclk_mmc0 = {
-> +	.clk		= {
-> +		.name		= "sclk_mmc",
-> +		.devname	= "s3c-sdhci.0",
+Cc: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Boojin Kim <boojin.kim@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Acked-by: Boojin Kim <boojin.kim@samsung.com>
+---
+ arch/arm/mach-exynos4/dma.c |  225 ++++++++++++-------------------------------
+ 1 files changed, 64 insertions(+), 161 deletions(-)
 
-Would it make sense to drop this 'devname' field here and others
-until sclk_mmc3 ....
-
-> +		.parent		= &clk_dout_mmc0.clk,
-> +		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> +		.ctrlbit	= (1 << 0),
-> +	},
-> +	.reg_div = { .reg = S5P_CLKDIV_FSYS1, .shift = 8, .size = 8 },
-> +};
-> +
-> +static struct clksrc_clk clk_sclk_mmc1 = {
-> +	.clk		= {
-> +		.name		= "sclk_mmc",
-> +		.devname	= "s3c-sdhci.1",
-
-> +		.parent         = &clk_dout_mmc1.clk,
-> +		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> +		.ctrlbit	= (1 << 4),
-> +	},
-> +	.reg_div = { .reg = S5P_CLKDIV_FSYS1, .shift = 24, .size = 8 },
-> +};
-> +
-> +static struct clksrc_clk clk_sclk_mmc2 = {
-> +	.clk		= {
-> +		.name		= "sclk_mmc",
-> +		.devname	= "s3c-sdhci.2",
-
-> +		.parent         = &clk_dout_mmc2.clk,
-> +		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> +		.ctrlbit	= (1 << 8),
-> +	},
-> +	.reg_div = { .reg = S5P_CLKDIV_FSYS2, .shift = 8, .size = 8 },
-> +};
-> +
-> +static struct clksrc_clk clk_sclk_mmc3 = {
-> +	.clk		= {
-> +		.name		= "sclk_mmc",
-> +		.devname	= "s3c-sdhci.3",
-
-> +		.parent         = &clk_dout_mmc3.clk,
-> +		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-> +		.ctrlbit	= (1 << 12),
-> +	},
-> +	.reg_div = { .reg = S5P_CLKDIV_FSYS2, .shift = 24, .size = 8 },
-> +};
-> +
->  /* Clock initialization code */
->  static struct clksrc_clk *sysclks[] = {
->  	&clk_mout_apll,
-> @@ -1289,6 +1297,10 @@ static struct clksrc_clk *clksrc_cdev[] = {
->  	&clk_sclk_uart1,
->  	&clk_sclk_uart2,
->  	&clk_sclk_uart3,
-> +	&clk_sclk_mmc0,
-> +	&clk_sclk_mmc1,
-> +	&clk_sclk_mmc2,
-> +	&clk_sclk_mmc3,
-
-..then drop the above 4 lines...
-
->  };
->  
->  static struct clk_lookup exynos4_clk_lookup[] = {
-> @@ -1296,6 +1308,10 @@ static struct clk_lookup exynos4_clk_lookup[] = {
->  	CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &clk_sclk_uart1.clk),
->  	CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &clk_sclk_uart2.clk),
->  	CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &clk_sclk_uart3.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
-
-..and add something like:
-
- +	CLKDEV_INIT("s3c-sdhci.0", "sclk_mmc", &clk_sclk_mmc0.clk),
- +	CLKDEV_INIT("s3c-sdhci.1", "sclk_mmc", &clk_sclk_mmc1.clk),
- +	CLKDEV_INIT("s3c-sdhci.2", "sclk_mmc", &clk_sclk_mmc2.clk),
- +	CLKDEV_INIT("s3c-sdhci.3", "sclk_mmc", &clk_sclk_mmc3.clk),
-
-?
-
-Also I'm wondering why we're using different device names for clk_sclk_mmc0..3
-clocks, i.e. exynos4-sdhci.? and s3c-sdhci.? ?
-
-Does it all work on exynos ? I would expect the device name to be same
-across all the clock definitions, otherwise clk_get(dev, ..) will fail.
-
->  };
->  
-
-Regards
+diff --git a/arch/arm/mach-exynos4/dma.c b/arch/arm/mach-exynos4/dma.c
+index 9667c61..141093d 100644
+--- a/arch/arm/mach-exynos4/dma.c
++++ b/arch/arm/mach-exynos4/dma.c
+@@ -35,95 +35,42 @@
+ 
+ static u64 dma_dmamask = DMA_BIT_MASK(32);
+ 
+-struct dma_pl330_peri pdma0_peri[28] = {
+-	{
+-		.peri_id = (u8)DMACH_PCM0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ0,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ2,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0S_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART4_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART4_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS2_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS2_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS4_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS4_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_AC97_MICIN,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_AC97_PCMIN,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_AC97_PCMOUT,
+-		.rqtype = MEMTODEV,
+-	},
++u8 pdma0_peri[] = {
++	DMACH_PCM0_RX,
++	DMACH_PCM0_TX,
++	DMACH_PCM2_RX,
++	DMACH_PCM2_TX,
++	DMACH_MSM_REQ0,
++	DMACH_MSM_REQ2,
++	DMACH_SPI0_RX,
++	DMACH_SPI0_TX,
++	DMACH_SPI2_RX,
++	DMACH_SPI2_TX,
++	DMACH_I2S0S_TX,
++	DMACH_I2S0_RX,
++	DMACH_I2S0_TX,
++	DMACH_I2S2_RX,
++	DMACH_I2S2_TX,
++	DMACH_UART0_RX,
++	DMACH_UART0_TX,
++	DMACH_UART2_RX,
++	DMACH_UART2_TX,
++	DMACH_UART4_RX,
++	DMACH_UART4_TX,
++	DMACH_SLIMBUS0_RX,
++	DMACH_SLIMBUS0_TX,
++	DMACH_SLIMBUS2_RX,
++	DMACH_SLIMBUS2_TX,
++	DMACH_SLIMBUS4_RX,
++	DMACH_SLIMBUS4_TX,
++	DMACH_AC97_MICIN,
++	DMACH_AC97_PCMIN,
++	DMACH_AC97_PCMOUT,
+ };
+ 
+ struct dma_pl330_platdata exynos4_pdma0_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(pdma0_peri),
+-	.peri = pdma0_peri,
++	.peri_id = pdma0_peri,
+ };
+ 
+ struct amba_device exynos4_device_pdma0 = {
+@@ -142,86 +89,37 @@ struct amba_device exynos4_device_pdma0 = {
+ 	.periphid = 0x00041330,
+ };
+ 
+-struct dma_pl330_peri pdma1_peri[25] = {
+-	{
+-		.peri_id = (u8)DMACH_PCM0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_PCM1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ1,
+-	}, {
+-		.peri_id = (u8)DMACH_MSM_REQ3,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SPI1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0S_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_I2S1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART0_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_UART3_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS1_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS1_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS3_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS3_TX,
+-		.rqtype = MEMTODEV,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS5_RX,
+-		.rqtype = DEVTOMEM,
+-	}, {
+-		.peri_id = (u8)DMACH_SLIMBUS5_TX,
+-		.rqtype = MEMTODEV,
+-	},
++u8 pdma1_peri[] = {
++	DMACH_PCM0_RX,
++	DMACH_PCM0_TX,
++	DMACH_PCM1_RX,
++	DMACH_PCM1_TX,
++	DMACH_MSM_REQ1,
++	DMACH_MSM_REQ3,
++	DMACH_SPI1_RX,
++	DMACH_SPI1_TX,
++	DMACH_I2S0S_TX,
++	DMACH_I2S0_RX,
++	DMACH_I2S0_TX,
++	DMACH_I2S1_RX,
++	DMACH_I2S1_TX,
++	DMACH_UART0_RX,
++	DMACH_UART0_TX,
++	DMACH_UART1_RX,
++	DMACH_UART1_TX,
++	DMACH_UART3_RX,
++	DMACH_UART3_TX,
++	DMACH_SLIMBUS1_RX,
++	DMACH_SLIMBUS1_TX,
++	DMACH_SLIMBUS3_RX,
++	DMACH_SLIMBUS3_TX,
++	DMACH_SLIMBUS5_RX,
++	DMACH_SLIMBUS5_TX,
+ };
+ 
+ struct dma_pl330_platdata exynos4_pdma1_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(pdma1_peri),
+-	.peri = pdma1_peri,
++	.peri_id = pdma1_peri,
+ };
+ 
+ struct amba_device exynos4_device_pdma1 = {
+@@ -242,7 +140,12 @@ struct amba_device exynos4_device_pdma1 = {
+ 
+ static int __init exynos4_dma_init(void)
+ {
++	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
++	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
+ 	amba_device_register(&exynos4_device_pdma0, &iomem_resource);
++
++	dma_cap_set(DMA_SLAVE, exynos4_pdma1_pdata.cap_mask);
++	dma_cap_set(DMA_CYCLIC, exynos4_pdma1_pdata.cap_mask);
+ 	amba_device_register(&exynos4_device_pdma1, &iomem_resource);
+ 
+ 	return 0;
 -- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+1.6.6.rc2
