@@ -1,80 +1,50 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
-Date: Wed, 12 Oct 2011 14:16:45 +0900
-Message-ID: <063801cc889e$22a12c20$67e38460$%kim@samsung.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com>
- <1308555258-4322-6-git-send-email-chaos.youn@samsung.com>
- <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com>
- <4E8D645D.4020601@arm.com> <4E8ECA1B.5010005@arm.com>
- <20111007151646.GA2398@mudshark.cambridge.arm.com> <4E92ECD1.2010303@arm.com>
- <00b901cc8810$8353e730$89fbb590$%youn@samsung.com> <4E944508.4050202@arm.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: RE: [PATCH v6 00/10] Add device tree support for PL330 dma
+ controller driver
+Date: Wed, 12 Oct 2011 10:50:11 +0530
+Message-ID: <1318396811.1546.362.camel@vkoul-udesk3>
+References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
+	 <057401cc880e$41e30b20$c5a92160$%kim@samsung.com>
+	 <1318351780.1546.358.camel@vkoul-udesk3>
+	 <063701cc889c$3e10dcf0$ba3296d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:41706 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752283Ab1JLFQq (ORCPT
+Received: from mga03.intel.com ([143.182.124.21]:36369 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1750918Ab1JLF2J (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 01:16:46 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSX00HE8TBSTW00@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 14:16:44 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSX004TBTBWQO90@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 14:16:44 +0900 (KST)
-In-reply-to: <4E944508.4050202@arm.com>
-Content-language: ko
+	Wed, 12 Oct 2011 01:28:09 -0400
+In-Reply-To: <063701cc889c$3e10dcf0$ba3296d0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marc Zyngier' <marc.zyngier@arm.com>, 'Changhwan Youn' <chaos.youn@samsung.com>
-Cc: 'Will Deacon' <Will.Deacon@arm.com>, linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, ben-linux@fluff.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-Marc Zyngier wrote:
+On Wed, 2011-10-12 at 14:03 +0900, Kukjin Kim wrote:
+> Vinod Koul wrote:
+> > 
+> > On Tue, 2011-10-11 at 21:06 +0900, Kukjin Kim wrote:
+> > > Thomas Abraham wrote:
+> > >
+> > > Hi,
+> > >
+> > > Looks ok to me and if required,
+> > > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> > >
+> > > And I hope since this includes many changes of arch/arm/Samsung stuff, this
+> > > would be sent to upstream via Samsung tree after ack from Vinod for dma
+> > > stuff.
+> > Sure, looks fine to me
+> > Acked-by: Vinod Koul <vinod.koul@intel.com>
+> > 
+> Hi Vinod,
 > 
-> Hi Changwan,
-> 
-> On 11/10/11 13:22, Changhwan Youn wrote:
-> >> Kukjin, could you please comment on the presence of a common memory
-> >> region for the distributor? This seem quite odd...
-> >
-> > Some registers in Distributor are banked for PPI and SGI support (banked
-> interrupts).
-> > The register for pending and enable status of these interrupts are
-> > banked.
-> 
-> Right, that explains it then.
-> 
-> > Marc, I think the approach in your patch is much better than mine if it
-doesn't hurt
-> > the performance of other platforms which use the common gic code.
-> 
-> It probably doesn't hurt the general case too much (I expect a bit more
-> pressure on the d-cache because of the per-cpu stuff, but nothing to be
-> too worried about).
-> 
-> > I'll re-work the exynos4 interrupt code based on your patch though
-> > I'm not sure that it's possible to be merged in merge window.
-> 
-> My main concern at the moment is that mainline is broken as far as
-> EXYNOS4 is concerned (there's a race with the EOI hook), so that should
-> get fixed first.
-> 
-Hi Marc,
+> OK, I will apply this series to send to upstream via Samsung tree. If
+> you need branch to apply in your tree, please let me know.
+If you send to linus and there are no dependencies then I don't need to
+do anything...
 
-OK. I agree with Will and your opinions and I think Changhwan can fix it as
-per your suggestion, but he needs fixed/updated regarding gic codes to avoid
-re-work and conflicts with others. So it would be better to us if he could
-fix it after merging your patches even probably at the end of upcoming merge
-window. I hope he can do it before v3.2-rc1.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+~Vinod
