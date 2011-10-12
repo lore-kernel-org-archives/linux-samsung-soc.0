@@ -1,209 +1,99 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] gpio: exynos4: Add device tree support
-Date: Wed, 12 Oct 2011 22:33:48 +0900
-Message-ID: <069c01cc88e3$92f86d90$b8e948b0$%kim@samsung.com>
-References: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS4: Add support for M-5MOLS camera on Nuri
+ board
+Date: Wed, 12 Oct 2011 16:04:53 +0200
+Message-ID: <4E959E85.7070504@samsung.com>
+References: <034f01cc8705$199b0dc0$4cd12940$%kim@samsung.com>
+ <1318238959-28012-1-git-send-email-s.nawrocki@samsung.com>
+ <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53342 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753114Ab1JLNdv (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:40859 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751188Ab1JLOE4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 09:33:51 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LSY00178GCDLQJ0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 22:33:49 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LSY00E2EGCCII20@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 22:33:49 +0900 (KST)
-In-reply-to: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Wed, 12 Oct 2011 10:04:56 -0400
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LSY003Q4HS62Q50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 15:04:54 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LSY00CQAHS64O@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 15:04:54 +0100 (BST)
+In-reply-to: <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org
-Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Thomas Abraham wrote:
-> 
-> As gpio chips get registered, a device tree node which represents the
-> gpio chip is searched and attached to it. A translate function is also
-> provided to convert the gpio specifier into actual platform settings
-> for pin function selection, pull up/down and driver strength settings.
-> 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
-> This patch is based on the latest consolidated Samsung GPIO driver
-available
-> in the following tree:
->   https://github.com/kgene/linux-samsung.git  branch: for-next
-> 
->  .../devicetree/bindings/gpio/gpio-samsung.txt      |   30 +++++++++++
->  drivers/gpio/gpio-samsung.c                        |   53
-> ++++++++++++++++++++
->  2 files changed, 83 insertions(+), 0 deletions(-)
->  create mode 100644
-Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-> b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-> new file mode 100644
-> index 0000000..883faeb
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-> @@ -0,0 +1,30 @@
-> +Samsung Exynos4 GPIO Controller
-> +
-> +Required properties:
-> +- compatible: Format of compatible property value should be
-> +  "samsung,exynos4-gpio-<controller_name>". Example: For GPA0 controller,
-> the
-> +  compatible property value should be "samsung,exynos4-gpio-gpa0".
-> +
-> +- reg: Physical base address of the controller and length of memory
-mapped
-> region.
-> +
-> +- #gpio-cells: Should be 4. The syntax of the gpio specifier used by
-client nodes
-> +  should be the following with values derived from the SoC user manual.
-> +     <[phandle of the gpio controller node] <pin number within the gpio
-> controller]
-> +      [mux function] [pull up/down] [drive strength]>
-> +
-> +- gpio-controller: Specifies that the node is a gpio controller.
-> +
-> +- #address-cells: should be 1.
-> +
-> +- #size-cells: should be 1.
-> +
-> +Example:
-> +
-> +	gpa0: gpio-controller@11400000 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		compatible = "samsung,exynos4-gpio-gpa0";
-> +		reg = <0x11400000 0x20>;
-> +		#gpio-cells = <4>;
-> +		gpio-controller;
-> +	};
-> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> index b6be77a..037d3bb 100644
-> --- a/drivers/gpio/gpio-samsung.c
-> +++ b/drivers/gpio/gpio-samsung.c
-> @@ -24,6 +24,10 @@
->  #include <linux/interrupt.h>
->  #include <linux/sysdev.h>
->  #include <linux/ioport.h>
-> +#ifdef CONFIG_OF
-> +#include <linux/of.h>
-> +#include <linux/slab.h>
-> +#endif
-> 
->  #include <asm/irq.h>
-> 
-> @@ -2353,6 +2357,52 @@ static struct samsung_gpio_chip exynos4_gpios_3[] =
-> {
->  #endif
->  };
-> 
-> +#if defined(CONFIG_ARCH_EXYNOS4) && defined(CONFIG_OF)
-> +int exynos4_gpio_xlate(struct gpio_chip *gc, struct device_node *np,
-> +			 const void *gpio_spec, u32 *flags)
-> +{
-> +	const __be32 *gpio = gpio_spec;
-> +	const u32 n = be32_to_cpup(gpio);
-> +	unsigned int pin = gc->base + be32_to_cpu(gpio[0]);
-> +
-> +	if (gc->of_gpio_n_cells < 4) {
-> +		WARN_ON(1);
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (n > gc->ngpio)
-> +		return -EINVAL;
-> +
-> +	s3c_gpio_cfgpin(pin, S3C_GPIO_SFN(be32_to_cpu(gpio[1])));
-> +	s3c_gpio_setpull(pin, be32_to_cpu(gpio[2]));
-> +	s5p_gpio_set_drvstr(pin, be32_to_cpu(gpio[3]));
-> +	return n;
-> +}
-> +
-> +static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *gc)
-> +{
-> +	const char exynos4_gpio_compat_base[] = "samsung,exynos4-gpio-";
-> +	char *exynos4_gpio_compat;
-> +
-> +	exynos4_gpio_compat = kzalloc(strlen(exynos4_gpio_compat_base) +
-> +				strlen(gc->label), GFP_KERNEL);
-> +	if (!exynos4_gpio_compat)
-> +		return;
-> +
-> +	strcpy(exynos4_gpio_compat, exynos4_gpio_compat_base);
-> +	strcat(exynos4_gpio_compat, gc->label);
-> +	gc->of_node = of_find_compatible_node(NULL, NULL,
-> exynos4_gpio_compat);
-> +	gc->of_gpio_n_cells = 4;
-> +	gc->of_xlate = exynos4_gpio_xlate;
-> +	kfree(exynos4_gpio_compat);
-> +}
-> +#else
-> +static __init void exynos4_gpiolib_attach_ofnode(struct gpio_chip *chip)
-> +{
-> +	return;
-> +}
-> +#endif /* defined(CONFIG_ARCH_EXYNOS4) && defined(CONFIG_OF) */
-> +
->  /* TODO: cleanup soc_is_* */
->  static __init int samsung_gpiolib_init(void)
->  {
-> @@ -2434,6 +2484,7 @@ static __init int samsung_gpiolib_init(void)
->  				chip->config = &exynos4_gpio_cfg;
->  				chip->group = group++;
->  			}
-> +			exynos4_gpiolib_attach_ofnode(&chip->chip);
->  		}
->  		samsung_gpiolib_add_4bit_chips(exynos4_gpios_1, nr_chips,
-> S5P_VA_GPIO1);
-> 
-> @@ -2446,6 +2497,7 @@ static __init int samsung_gpiolib_init(void)
->  				chip->config = &exynos4_gpio_cfg;
->  				chip->group = group++;
->  			}
-> +			exynos4_gpiolib_attach_ofnode(&chip->chip);
->  		}
->  		samsung_gpiolib_add_4bit_chips(exynos4_gpios_2, nr_chips,
-> S5P_VA_GPIO2);
-> 
-> @@ -2458,6 +2510,7 @@ static __init int samsung_gpiolib_init(void)
->  				chip->config = &exynos4_gpio_cfg;
->  				chip->group = group++;
->  			}
-> +			exynos4_gpiolib_attach_ofnode(&chip->chip);
->  		}
->  		samsung_gpiolib_add_4bit_chips(exynos4_gpios_3, nr_chips,
-> S5P_VA_GPIO3);
-> 
-> --
-> 1.6.6.rc2
+Hi Kgene,
 
-Hi Thomas,
+On 10/12/2011 02:43 PM, Kukjin Kim wrote:
+> Kukjin Kim wrote:
+>> Sylwester Nawrocki wrote:
+>>>
+>>> Add voltage regulator and platform data definition for M-5MOLS sensor
+>>> and MIPI-CSI receiver drivers. Add CAM power domain dependencies for
+>>> FIMC device and set up camera port A GPIO. Configure I2C0 bus timings.
+>>>
+>>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>>> Signed-off-by: HeungJun Kim <riverful.kim@samsung.com>
+>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>> ---
+>>> Hi Kgene,
+>>>
+>>> I have corrected the white space issues as you pointed out and removed
+>>> unnecessary gpio_free() in this patch.
+>>>
+>>> Thanks,
+>>>  Sylwester
+>>> ---
+>>>  arch/arm/mach-exynos4/Kconfig     |    8 ++
+>>>  arch/arm/mach-exynos4/mach-nuri.c |  156
+>>> +++++++++++++++++++++++++++++++++++++
+>>>  2 files changed, 164 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos4/Kconfig
+> b/arch/arm/mach-exynos4/Kconfig
+>>> index dd660eb..4bc4b1f 100644
+>>> --- a/arch/arm/mach-exynos4/Kconfig
+>>> +++ b/arch/arm/mach-exynos4/Kconfig
+> 
+> (snip)
+> 
+>>> +static struct s5p_platform_fimc fimc_md_platdata = {
+>>> +	.isp_info	= nuri_camera_sensors,
+>>> +	.num_clients	= ARRAY_SIZE(nuri_camera_sensors),
+>>> +};
+> 
+> Hi Sylwester,
+> 
+> You need to move 'struct platform_device s5p_device_fimc_md' to
+> plat-samsung/devs.c or add 'static' because following error is happened.
 
-You got some comments from Rob, so could you please address from him?
-Others, looks ok to me.
+Yes, indeed there is an issue with multiple device definition, and the
+boards should really not create their own instance.
+I'll prepare a patch moving s5p_fimc_device_md to plat-samsung/devs.c
+This device instance is also needed for the aggregate FIMC driver to be
+initialized on other boards, even if they use only video mem-to-mem.
+So the patch should fix the driver initialization issue on these boards.
 
-And I need to get the ack from Grant to upstream via Samsung tree for
-upcoming merge window.
-Grant, is this ok for you?
+Sorry about the trouble.
 
-Thanks.
+> 
+> arch/arm/mach-exynos4/mach-nuri.o: In function `  CC      kernel/sysctl.o
+> .LANCHOR1':
+> mach-nuri.c:(.data+0x38): multiple definition of `s5p_device_fimc_md'
+> arch/arm/mach-exynos4/mach-universal_c210.o:mach-universal_c210.c:(.data+0x1
+> 8): first defined here
+> make[2]: *** [arch/arm/mach-exynos4/built-in.o] Error 1
+> make[1]: *** [arch/arm/mach-exynos4] Error 2
+> make[1]: *** Waiting for unfinished jobs....
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Regards,
+-- 
+Sylwester Nawrocki
+Samsung Poland R&D Center
