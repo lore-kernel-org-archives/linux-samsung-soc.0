@@ -1,99 +1,95 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2] ARM: EXYNOS4: Add support for M-5MOLS camera on Nuri
- board
-Date: Wed, 12 Oct 2011 16:04:53 +0200
-Message-ID: <4E959E85.7070504@samsung.com>
-References: <034f01cc8705$199b0dc0$4cd12940$%kim@samsung.com>
- <1318238959-28012-1-git-send-email-s.nawrocki@samsung.com>
- <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] gpio: exynos4: Add device tree support
+Date: Wed, 12 Oct 2011 10:11:34 -0500
+Message-ID: <4E95AE26.8080702@gmail.com>
+References: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org> <4E945C90.1050601@gmail.com> <CAJuYYwRwBxkAo2fMfVV9wtQ40XeROAnc-cGJK+cssjuh9px=qQ@mail.gmail.com> <4E946109.2000305@gmail.com> <CAJuYYwQWUjVf9Z5Rdw4fTK70=B1aw-5x_wjYm_fq+zHyQAWJvg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:40859 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751188Ab1JLOE4 (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:39718 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753219Ab1JLPLi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 10:04:56 -0400
-Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LSY003Q4HS62Q50@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 15:04:54 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LSY00CQAHS64O@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 15:04:54 +0100 (BST)
-In-reply-to: <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
+	Wed, 12 Oct 2011 11:11:38 -0400
+Received: by vws1 with SMTP id 1so385168vws.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2011 08:11:38 -0700 (PDT)
+In-Reply-To: <CAJuYYwQWUjVf9Z5Rdw4fTK70=B1aw-5x_wjYm_fq+zHyQAWJvg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-Hi Kgene,
-
-On 10/12/2011 02:43 PM, Kukjin Kim wrote:
-> Kukjin Kim wrote:
->> Sylwester Nawrocki wrote:
+On 10/11/2011 11:06 AM, Thomas Abraham wrote:
+> On 11 October 2011 21:00, Rob Herring <robherring2@gmail.com> wrote:
+>> On 10/11/2011 10:19 AM, Thomas Abraham wrote:
+>>> Hi Rob,
 >>>
->>> Add voltage regulator and platform data definition for M-5MOLS sensor
->>> and MIPI-CSI receiver drivers. Add CAM power domain dependencies for
->>> FIMC device and set up camera port A GPIO. Configure I2C0 bus timings.
+>>> On 11 October 2011 20:41, Rob Herring <robherring2@gmail.com> wrote:
+>>>> Thomas,
+>>>>
+>>>> On 10/11/2011 03:16 AM, Thomas Abraham wrote:
+>>>>> As gpio chips get registered, a device tree node which represents the
+>>>>> gpio chip is searched and attached to it. A translate function is also
+>>>>> provided to convert the gpio specifier into actual platform settings
+>>>>> for pin function selection, pull up/down and driver strength settings.
+>>>>>
+>>>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>>>>> ---
+>>>>> This patch is based on the latest consolidated Samsung GPIO driver available
+>>>>> in the following tree:
+>>>>>   https://github.com/kgene/linux-samsung.git  branch: for-next
+>>>>>
+>>>>>  .../devicetree/bindings/gpio/gpio-samsung.txt      |   30 +++++++++++
+>>>>>  drivers/gpio/gpio-samsung.c                        |   53 ++++++++++++++++++++
+>>>>>  2 files changed, 83 insertions(+), 0 deletions(-)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+>>>>> new file mode 100644
+>>>>> index 0000000..883faeb
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+>>>>> @@ -0,0 +1,30 @@
+>>>>> +Samsung Exynos4 GPIO Controller
+>>>>> +
+>>>>> +Required properties:
+>>>>> +- compatible: Format of compatible property value should be
+>>>>> +  "samsung,exynos4-gpio-<controller_name>". Example: For GPA0 controller, the
+>>>>> +  compatible property value should be "samsung,exynos4-gpio-gpa0".
+>>>>
+>>>> Isn't gpa0 an instance of the h/w, not a version?
 >>>
->>> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
->>> Signed-off-by: HeungJun Kim <riverful.kim@samsung.com>
->>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->>> ---
->>> Hi Kgene,
+>>> GPA0 is a instance of the gpio controller. There are several such
+>>> instances and there could be differences in those instances such as
+>>> the number of GPIO lines managed by that gpio controller instance.
 >>>
->>> I have corrected the white space issues as you pointed out and removed
->>> unnecessary gpio_free() in this patch.
->>>
->>> Thanks,
->>>  Sylwester
->>> ---
->>>  arch/arm/mach-exynos4/Kconfig     |    8 ++
->>>  arch/arm/mach-exynos4/mach-nuri.c |  156
->>> +++++++++++++++++++++++++++++++++++++
->>>  2 files changed, 164 insertions(+), 0 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos4/Kconfig
-> b/arch/arm/mach-exynos4/Kconfig
->>> index dd660eb..4bc4b1f 100644
->>> --- a/arch/arm/mach-exynos4/Kconfig
->>> +++ b/arch/arm/mach-exynos4/Kconfig
+>>
+>> That doesn't seem like a reason to have different compatible strings.
+>> Does that affect the programming model of the controller? Unused lines
+>> whether at the board level or SOC level shouldn't really matter.
 > 
-> (snip)
 > 
->>> +static struct s5p_platform_fimc fimc_md_platdata = {
->>> +	.isp_info	= nuri_camera_sensors,
->>> +	.num_clients	= ARRAY_SIZE(nuri_camera_sensors),
->>> +};
+> No, that does not affect the programming of the controller. The reason
+> for the instance name extension in compatible string is to match the
+> gpio_chip with a gpio controller node. When matched, the of_node
+> pointer of the gpio_chip is set to point to that controller node.
 > 
-> Hi Sylwester,
-> 
-> You need to move 'struct platform_device s5p_device_fimc_md' to
-> plat-samsung/devs.c or add 'static' because following error is happened.
+> This might not be the best possible implementation but the device tree
+> support code in this patch is dictated by the structure of the
+> existing gpio driver code. As you suggested previously, I will look at
+> reworking the gpio driver a little later but for now, there was a need
+> for working gpio dt solution to make progress on dt support for other
+> controllers.
 
-Yes, indeed there is an issue with multiple device definition, and the
-boards should really not create their own instance.
-I'll prepare a patch moving s5p_fimc_device_md to plat-samsung/devs.c
-This device instance is also needed for the aggregate FIMC driver to be
-initialized on other boards, even if they use only video mem-to-mem.
-So the patch should fix the driver initialization issue on these boards.
+Linux should provide clues about what's needed in a binding, but the
+binding should not be defined based on current Linux code. Doing the
+binding one way and changing it later is not a good plan.
 
-Sorry about the trouble.
+I think you need to convert all users of gpio over as well so you can
+move to dynamic gpio_chip creation and gpio numbering. Or maybe you can
+match based on base address? This is going to be a common problem as
+gpio is converted over to DT. Perhaps Grant or others have suggestions
+on the approach to use.
 
-> 
-> arch/arm/mach-exynos4/mach-nuri.o: In function `  CC      kernel/sysctl.o
-> .LANCHOR1':
-> mach-nuri.c:(.data+0x38): multiple definition of `s5p_device_fimc_md'
-> arch/arm/mach-exynos4/mach-universal_c210.o:mach-universal_c210.c:(.data+0x1
-> 8): first defined here
-> make[2]: *** [arch/arm/mach-exynos4/built-in.o] Error 1
-> make[1]: *** [arch/arm/mach-exynos4] Error 2
-> make[1]: *** Waiting for unfinished jobs....
-
-Regards,
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+Rob
