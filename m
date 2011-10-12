@@ -1,140 +1,68 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/3] mmc: Add OF bindings support for mmc host controller capabilities
-Date: Tue, 11 Oct 2011 23:38:19 +0530
-Message-ID: <CAJuYYwRfdUOTPxc5dTip28F5VGsNjzOHvuxRuu3AhyQ_Y4Ye1Q@mail.gmail.com>
-References: <1317809581-28783-1-git-send-email-thomas.abraham@linaro.org>
-	<1317809581-28783-3-git-send-email-thomas.abraham@linaro.org>
-	<4E8C5BD6.2070709@gmail.com>
-	<CAJuYYwS_NeE6OG9X2p2rkjgo4OqO-ijeVwr1sLGkUuLJOxMw2g@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173A2C7245@HQMAIL01.nvidia.com>
-	<CAJuYYwSOZsqKObmt4MeaJa+aPmktwLsFocfmpjbJbOYyvmuwLQ@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF173BE19AAE@HQMAIL01.nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH v6 09/10] ARM: S5PC100: Modify platform data for pl330
+ driver
+Date: Wed, 12 Oct 2011 12:58:03 +0900
+Message-ID: <000701cc8893$246a2d50$6d3e87f0$%kim@samsung.com>
+References: <1318270538-30450-1-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-2-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-3-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-4-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-5-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-6-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-7-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-8-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-9-git-send-email-thomas.abraham@linaro.org>
+ <1318270538-30450-10-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:56407 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755268Ab1JKSIT convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:63569 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751252Ab1JLD6P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Oct 2011 14:08:19 -0400
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF173BE19AAE@HQMAIL01.nvidia.com>
+	Tue, 11 Oct 2011 23:58:15 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LSX00KYBPOA7VK0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 12:58:04 +0900 (KST)
+Received: from DOBOOJINKIM03 ([12.23.120.72])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LSX005YWPOR3D40@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 12:58:04 +0900 (KST)
+In-reply-to: <1318270538-30450-10-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@nvidia.com>
-Cc: Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, Chris Ball <cjb@laptop.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, 'Jassi Brar' <jassisinghbrar@gmail.com>
 
-On 11 October 2011 21:59, Stephen Warren <swarren@nvidia.com> wrote:
-> Thomas Abraham wrote at Sunday, October 09, 2011 12:58 AM:
->> On 5 October 2011 21:25, Stephen Warren <swarren@nvidia.com> wrote:
->> > Thomas Abraham wrote at Wednesday, October 05, 2011 8:28 AM:
->> >> On 5 October 2011 18:59, Rob Herring <robherring2@gmail.com> wrot=
-e:
->> >> > On 10/05/2011 05:13 AM, Thomas Abraham wrote:
->> >> >> Device nodes representing sd/mmc controllers in a device tree =
-would include
->> >> >> mmc host controller capabilities. Add support for parsing of m=
-mc host
->> >> >> controller capabilities included in device nodes.
->> > ...
->> >> >> +- linux,mmc_cap_4_bit_data - host can do 4 bit transfers
->> >> >> +- linux,mmc_cap_mmc_highspeed - host can do MMC high-speed ti=
-ming
->> >> >> +- linux,mmc_cap_sd_highspeed - host can do SD high-speed timi=
-ng
->> >> >> +- linux,mmc_cap_needs_poll - host needs polling for card dete=
-ction
->> >> >> +- linux,mmc_cap_8_bit_data - host can do 8 bit transfer
->> >> >
->> >> > "sdhci,1-bit-only" already exists as a binding. Perhaps add
->> >> > "sdhci,4-bit-only". No property then means can do 8-bit.
->> >>
->> >> Ok. But that would remain just as sdhci host controller capabilit=
-y and
->> >> will not be applicable to other types of host controllers.
->> >
->> > Just as an FYI, NVIDIA's SDHCI controller bindings use property
->> > "support-8bit" to indicate 8-bit support. A similar property could=
- be
->> > used for 4-bit support too.
->>
->> In this case, the binding would be applicable only to nVidia's SDHCI
->> controller.
+Thomas Abraham wrote:
+> Sent: Tuesday, October 11, 2011 3:16 AM
+> To: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com;
+> vinod.koul@intel.com; Jassi Brar; Boojin Kim
+> Subject: [PATCH v6 09/10] ARM: S5PC100: Modify platform data for pl330
+> driver
 >
-> Sure, this is the case right now. And I thought I'd copied this prope=
-rty
-> name from some other driver, but it looks like I'm mistaken.
+> With the 'struct dma_pl330_peri' removed, the platfrom data for dma
+> driver can be simplified to a simple list of peripheral request ids.
 >
->> And this binding would select MMC_CAP_8_BIT_DATA in the
->> sdhci-tegra driver. There are sdhci drivers that can accept host
->> capabilities via platform data.
->>
->> The MMC_CAP_XXX macros in linux/mmc/host.h file are usuable across
->> host controllers and some of them are supplied as platform data for
->> non-device tree platforms.
->>
->> So, bindings for MMC_CAP_XXX macros can be defined which any host
->> controller supporting device tree could use. Host controllers could
->> use the mmc_of_parse_host_caps() helper function (listed in this
->> patch) to parse all the bindings for MMC_CAP_XXX =A0available in the
->> device node.
->>
->> I would like to retain this patch in this series but if there is a
->> definite no, then I will drop it. Please let me know your opinion.
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/mach-s5pc100/dma.c |  247 ++++++++++++-----------------------
+> --------
+>  1 files changed, 69 insertions(+), 178 deletions(-)
 >
-> I was simply pointing out that there are already some properties in t=
-his
-> area. It'd be nice if we could unify everything on a single style; ei=
-ther
-> expanding the existing "sdhci,1-bit-only" style that Rob mentioned, o=
-r
-> expanding the "support-8bit" style that Tegra currently uses, rather =
-than
-> adding a third way of indicating this. Still, given the early state o=
-f
-> DT on Tegra, I'd be happy migrating Tegra to whatever single unified
-> approach is chosen, so don't take my comments as nak'ing your patch o=
-r
-> anything like that.
 
-Ok.
+Looks good to me.
+Acked-by: Boojin Kim <boojin.kim@samsung.com>
 
-The sdhci bus width binding is an example that can be extended as you
-have suggested. If done this way, the sdhci bus width bindings would
-be converted by the driver to either of MMC_CAP_[4/8]_BIT_DATA
-capability.
-
-But there are other MMC_CAP_XXX values as well which the host
-controller driver needs to report to the upper mmc core layer. Some of
-these capabilities are determined by reading caps register of the host
-controller and converting them to equivalent MMC_CAP_XXX flags. But
-some of them are board dependent such as
-
-MMC_CAP_NEEDS_POLL,
-MMC_CAP_DISABLE,
-MMC_CAP_NONREMOVABLE,
-MMC_CAP_POWER_OFF_CARD and others.
-
-These flags which are tied to the characteristics of the board is
-usually supplied using platform data. The driver picks up these from
-platform data, adds its own set of CAP's and reports to the upper
-layer.
-
-When we do not have platform data (as in the case of dt), there could
-be two options to bind these CAP's. Either define custom bindings for
-these and then translate them in each host controller driver using
-them or provide direct bindings for MMC_CAP_xxx with a common function
-to parse them. I tend towards direct bindings for MMC_CAP_XXX because
-it can be used by any type of mmc/sd host controller and not just
-sdhci controller and provides common binding for all host controllers.
-
-Thanks for your comments.
-
-Regards,
-Thomas.
-
+> diff --git a/arch/arm/mach-s5pc100/dma.c b/arch/arm/mach-s5pc100/dma.c
+> index 065a087..8dfdc76 100644
+> --- a/arch/arm/mach-s5pc100/dma.c
+> +++ b/arch/arm/mach-s5pc100/dma.c
+> @@ -35,100 +35,42 @@
 >
-> --
-> nvpublic
->
+>  static u64 dma_dmamask = DMA_BIT_MASK(32);
 >
