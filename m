@@ -1,308 +1,156 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH v3] ARM: EXYNOS4: Add support for M-5MOLS camera on Nuri board
-Date: Wed, 12 Oct 2011 17:38:32 +0200
-Message-ID: <1318433912-2948-1-git-send-email-s.nawrocki@samsung.com>
-References: <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
+ irq space
+Date: Wed, 12 Oct 2011 11:10:41 -0500
+Message-ID: <4E95BC01.8090805@gmail.com>
+References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org> <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:35016 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752113Ab1JLPim (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:51885 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751958Ab1JLQKp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 11:38:42 -0400
-Received: from euspt2 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LSY00MI2M4GFL@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 16:38:40 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LSY00HNGM4F2Z@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Oct 2011 16:38:40 +0100 (BST)
-In-reply-to: <069701cc88dc$7a484100$6ed8c300$%kim@samsung.com>
+	Wed, 12 Oct 2011 12:10:45 -0400
+Received: by ggnv2 with SMTP id v2so823292ggn.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2011 09:10:44 -0700 (PDT)
+In-Reply-To: <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, s.nawrocki@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-Add voltage regulator and platform data definition for M-5MOLS sensor
-and MIPI-CSI receiver drivers. Add CAM power domain dependencies for
-FIMC device and set up camera port A GPIO. Configure I2C0 bus timings.
+On 10/10/2011 03:11 AM, Thomas Abraham wrote:
+> All of Samsung's s5p platforms have timer irqs statically mapped from linux
+> irq numbers 11 to 15. These timer irqs are moved to end of the statically
+> mapped linux irq space and the hardware irqs, which were statically mapped
+> starting from 32 is moved to start from 0. The NR_IRQS macro is consolidated
+> for all the s5p platforms in this process.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/mach-exynos4/include/mach/entry-macro.S |    1 -
+>  arch/arm/mach-exynos4/include/mach/irqs.h        |    3 +--
+>  arch/arm/mach-s5p64x0/include/mach/irqs.h        |    4 +---
+>  arch/arm/mach-s5pc100/include/mach/irqs.h        |    3 +--
+>  arch/arm/mach-s5pv210/include/mach/irqs.h        |    3 +--
+>  arch/arm/plat-samsung/include/plat/irqs.h        |    7 +++++--
+>  6 files changed, 9 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+> index 4c9adbd..5c4fbcc 100644
+> --- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
+> +++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+> @@ -72,7 +72,6 @@
+>  		cmpcc	\irqnr, \irqnr
+>  		cmpne	\irqnr, \tmp
+>  		cmpcs	\irqnr, \irqnr
+> -		addne	\irqnr, \irqnr, #32
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: HeungJun Kim <riverful.kim@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-Changes since v2:
- - removed static "s5p-fimc-md" platform device instance  
 
-Changes since v1:
- - whitespace cleanup	
- - removed unnecessary gpio_free()
----
- arch/arm/mach-exynos4/Kconfig     |    9 ++
- arch/arm/mach-exynos4/mach-nuri.c |  151 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 160 insertions(+), 0 deletions(-)
+With this change, can't you now use the common entry-macro-gic.S?
 
-diff --git a/arch/arm/mach-exynos4/Kconfig b/arch/arm/mach-exynos4/Kconfig
-index dd660eb..7c1d255 100644
---- a/arch/arm/mach-exynos4/Kconfig
-+++ b/arch/arm/mach-exynos4/Kconfig
-@@ -215,6 +215,7 @@ config MACH_UNIVERSAL_C210
- config MACH_NURI
- 	bool "Mobile NURI Board"
- 	select CPU_EXYNOS4210
-+	select S5P_GPIO_INT
- 	select S3C_DEV_WDT
- 	select S3C_DEV_RTC
- 	select S5P_DEV_FIMD0
-@@ -224,15 +225,23 @@ config MACH_NURI
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C5
-+	select S5P_DEV_CSIS0
-+	select S5P_DEV_FIMC0
-+	select S5P_DEV_FIMC1
-+	select S5P_DEV_FIMC2
-+	select S5P_DEV_FIMC3
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
-+	select S5P_SETUP_MIPIPHY
- 	select EXYNOS4_DEV_PD
-+	select EXYNOS4_SETUP_FIMC
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C5
- 	select EXYNOS4_SETUP_SDHCI
- 	select EXYNOS4_SETUP_USB_PHY
-+	select S5P_SETUP_MIPIPHY
- 	select SAMSUNG_DEV_PWM
- 	select SAMSUNG_DEV_ADC
- 	help
-diff --git a/arch/arm/mach-exynos4/mach-nuri.c b/arch/arm/mach-exynos4/mach-nuri.c
-index 20932ec..816a502 100644
---- a/arch/arm/mach-exynos4/mach-nuri.c
-+++ b/arch/arm/mach-exynos4/mach-nuri.c
-@@ -27,6 +27,9 @@
- #include <linux/pwm_backlight.h>
- 
- #include <video/platform_lcd.h>
-+#include <media/m5mols.h>
-+#include <media/s5p_fimc.h>
-+#include <media/v4l2-mediabus.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -45,6 +48,9 @@
- #include <plat/iic.h>
- #include <plat/mfc.h>
- #include <plat/pd.h>
-+#include <plat/fimc-core.h>
-+#include <plat/camport.h>
-+#include <plat/mipi_csis.h>
- 
- #include <mach/map.h>
- 
-@@ -65,6 +71,8 @@
- enum fixed_regulator_id {
- 	FIXED_REG_ID_MMC = 0,
- 	FIXED_REG_ID_MAX8903,
-+	FIXED_REG_ID_CAM_A28V,
-+	FIXED_REG_ID_CAM_12V,
- };
- 
- static struct s3c2410_uartcfg nuri_uartcfgs[] __initdata = {
-@@ -1110,10 +1118,140 @@ static void __init nuri_ehci_init(void)
- 	s5p_ehci_set_platdata(pdata);
- }
- 
-+/* CAMERA */
-+static struct regulator_consumer_supply cam_vdda_supply[] = {
-+	REGULATOR_SUPPLY("a_sensor", "0-001f"),
-+};
-+
-+static struct regulator_init_data cam_vdda_reg_init_data = {
-+	.constraints = { .valid_ops_mask = REGULATOR_CHANGE_STATUS },
-+	.num_consumer_supplies = ARRAY_SIZE(cam_vdda_supply),
-+	.consumer_supplies = cam_vdda_supply,
-+};
-+
-+static struct fixed_voltage_config cam_vdda_fixed_voltage_cfg = {
-+	.supply_name	= "CAM_IO_EN",
-+	.microvolts	= 2800000,
-+	.gpio		= EXYNOS4_GPE2(1), /* CAM_IO_EN */
-+	.enable_high	= 1,
-+	.init_data	= &cam_vdda_reg_init_data,
-+};
-+
-+static struct platform_device cam_vdda_fixed_rdev = {
-+	.name = "reg-fixed-voltage", .id = FIXED_REG_ID_CAM_A28V,
-+	.dev = { .platform_data	= &cam_vdda_fixed_voltage_cfg },
-+};
-+
-+static struct regulator_consumer_supply camera_8m_12v_supply =
-+	REGULATOR_SUPPLY("dig_12", "0-001f");
-+
-+static struct regulator_init_data cam_8m_12v_reg_init_data = {
-+	.num_consumer_supplies	= 1,
-+	.consumer_supplies	= &camera_8m_12v_supply,
-+	.constraints = {
-+		.valid_ops_mask = REGULATOR_CHANGE_STATUS
-+	},
-+};
-+
-+static struct fixed_voltage_config cam_8m_12v_fixed_voltage_cfg = {
-+	.supply_name	= "8M_1.2V",
-+	.microvolts	= 1200000,
-+	.gpio		= EXYNOS4_GPE2(5), /* 8M_1.2V_EN */
-+	.enable_high	= 1,
-+	.init_data	= &cam_8m_12v_reg_init_data,
-+};
-+
-+static struct platform_device cam_8m_12v_fixed_rdev = {
-+	.name = "reg-fixed-voltage", .id = FIXED_REG_ID_CAM_12V,
-+	.dev = { .platform_data = &cam_8m_12v_fixed_voltage_cfg },
-+};
-+
-+static struct s5p_platform_mipi_csis mipi_csis_platdata = {
-+	.clk_rate	= 166000000UL,
-+	.lanes		= 2,
-+	.alignment	= 32,
-+	.hs_settle	= 12,
-+	.phy_enable	= s5p_csis_phy_enable,
-+};
-+
-+#define GPIO_CAM_MEGA_RST	EXYNOS4_GPY3(7) /* ISP_RESET */
-+#define GPIO_CAM_8M_ISP_INT	EXYNOS4_GPL2(5)
-+
-+static struct m5mols_platform_data m5mols_platdata = {
-+	.gpio_reset = GPIO_CAM_MEGA_RST,
-+};
-+
-+static struct i2c_board_info m5mols_board_info = {
-+	I2C_BOARD_INFO("M5MOLS", 0x1F),
-+	.platform_data	= &m5mols_platdata,
-+};
-+
-+static struct s5p_fimc_isp_info nuri_camera_sensors[] = {
-+	{
-+		.flags		= V4L2_MBUS_PCLK_SAMPLE_FALLING |
-+				  V4L2_MBUS_VSYNC_ACTIVE_LOW,
-+		.bus_type	= FIMC_MIPI_CSI2,
-+		.board_info	= &m5mols_board_info,
-+		.clk_frequency	= 24000000UL,
-+		.csi_data_align	= 32,
-+	},
-+};
-+
-+static struct s5p_platform_fimc fimc_md_platdata = {
-+	.isp_info	= nuri_camera_sensors,
-+	.num_clients	= ARRAY_SIZE(nuri_camera_sensors),
-+};
-+
-+static struct gpio nuri_camera_gpios[] = {
-+	{ GPIO_CAM_8M_ISP_INT,	GPIOF_IN,           "8M_ISP_INT"  },
-+	{ GPIO_CAM_MEGA_RST,	GPIOF_OUT_INIT_LOW, "CAM_8M_NRST" },
-+};
-+
-+static void nuri_camera_init(void)
-+{
-+	s3c_set_platdata(&mipi_csis_platdata, sizeof(mipi_csis_platdata),
-+			 &s5p_device_mipi_csis0);
-+	s3c_set_platdata(&fimc_md_platdata,  sizeof(fimc_md_platdata),
-+			 &s5p_device_fimc_md);
-+
-+	if (gpio_request_array(nuri_camera_gpios,
-+			       ARRAY_SIZE(nuri_camera_gpios))) {
-+		pr_err("%s: GPIO request failed\n", __func__);
-+		return;
-+	}
-+
-+	m5mols_board_info.irq = s5p_register_gpio_interrupt(GPIO_CAM_8M_ISP_INT);
-+	if (!IS_ERR_VALUE(m5mols_board_info.irq))
-+		s3c_gpio_cfgpin(GPIO_CAM_8M_ISP_INT, S3C_GPIO_SFN(0xF));
-+	else
-+		pr_err("%s: Failed to configure 8M_ISP_INT GPIO\n", __func__);
-+
-+	/* Free GPIOs controlled directly by the sensor drivers. */
-+	gpio_free(GPIO_CAM_MEGA_RST);
-+
-+	if (exynos4_fimc_setup_gpio(S5P_CAMPORT_A)) {
-+		pr_err("%s: Camera port A setup failed\n", __func__);
-+		return;
-+	}
-+	/* Increase drive strength of the sensor clock output */
-+	s5p_gpio_set_drvstr(EXYNOS4_GPJ1(3), S5P_GPIO_DRVSTR_LV4);
-+}
-+
-+static struct s3c2410_platform_i2c nuri_i2c0_platdata __initdata = {
-+	.frequency	= 400000U,
-+	.sda_delay	= 200,
-+};
-+
- static struct platform_device *nuri_devices[] __initdata = {
- 	/* Samsung Platform Devices */
- 	&s3c_device_i2c5, /* PMIC should initialize first */
-+	&s3c_device_i2c0,
- 	&emmc_fixed_voltage,
-+	&s5p_device_mipi_csis0,
-+	&s5p_device_fimc0,
-+	&s5p_device_fimc1,
-+	&s5p_device_fimc2,
-+	&s5p_device_fimc3,
- 	&s5p_device_fimd0,
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc2,
-@@ -1130,6 +1268,8 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&s5p_device_mfc_r,
- 	&exynos4_device_pd[PD_MFC],
- 	&exynos4_device_pd[PD_LCD0],
-+	&exynos4_device_pd[PD_CAM],
-+	&s5p_device_fimc_md,
- 
- 	/* NURI Devices */
- 	&nuri_gpio_keys,
-@@ -1137,6 +1277,8 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&nuri_backlight_device,
- 	&max8903_fixed_reg_dev,
- 	&nuri_max8903_device,
-+	&cam_vdda_fixed_rdev,
-+	&cam_8m_12v_fixed_rdev,
- };
- 
- static void __init nuri_map_io(void)
-@@ -1157,6 +1299,7 @@ static void __init nuri_machine_init(void)
- 	nuri_tsp_init();
- 	nuri_power_init();
- 
-+	s3c_i2c0_set_platdata(&nuri_i2c0_platdata);
- 	i2c_register_board_info(1, i2c1_devs, ARRAY_SIZE(i2c1_devs));
- 	s3c_i2c3_set_platdata(&i2c3_data);
- 	i2c_register_board_info(3, i2c3_devs, ARRAY_SIZE(i2c3_devs));
-@@ -1168,6 +1311,8 @@ static void __init nuri_machine_init(void)
- 
- 	s5p_fimd0_set_platdata(&nuri_fb_pdata);
- 
-+	nuri_camera_init();
-+
- 	nuri_ehci_init();
- 	clk_xusbxti.rate = 24000000;
- 
-@@ -1175,6 +1320,12 @@ static void __init nuri_machine_init(void)
- 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
- 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
- 	s5p_device_fimd0.dev.parent = &exynos4_device_pd[PD_LCD0].dev;
-+
-+	s5p_device_fimc0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-+	s5p_device_fimc1.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-+	s5p_device_fimc2.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-+	s5p_device_fimc3.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-+	s5p_device_mipi_csis0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- }
- 
- MACHINE_START(NURI, "NURI")
--- 
-1.7.7
+
+>  		.endm
+>  
+> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+> index dfd4b7e..43087c3 100644
+> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
+> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+> @@ -163,7 +163,6 @@
+>  #define IRQ_GPIO2_NR_GROUPS	9
+>  #define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
+>  
+> -/* Set the default NR_IRQS */
+> -#define NR_IRQS			(IRQ_GPIO_END + 64)
+> +#define IRQ_TIMER_BASE		(IRQ_GPIO_END + 64)
+>  
+>  #endif /* __ASM_ARCH_IRQS_H */
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> index 53982db..bea73cc 100644
+> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> @@ -141,8 +141,6 @@
+>  
+>  #define IRQ_EINT_GROUP(grp, x)	(IRQ_EINT_GROUP##grp##_BASE + (x))
+>  
+> -/* Set the default NR_IRQS */
+> -
+> -#define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+> +#define IRQ_TIMER_BASE		(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+>  
+>  #endif /* __ASM_ARCH_IRQS_H */
+> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
+> index d2eb475..3a9d300 100644
+> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+> @@ -104,8 +104,7 @@
+>  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
+>  #define S5P_GPIOINT_GROUP_MAXNR	21
+>  
+> -/* Set the default NR_IRQS */
+> -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+> +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+>  
+>  /* Compatibility */
+>  #define IRQ_LCD_FIFO		IRQ_LCD0
+> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> index 5e0de3a..df3173a 100644
+> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> @@ -125,8 +125,7 @@
+>  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
+>  #define S5P_GPIOINT_GROUP_MAXNR	22
+>  
+> -/* Set the default NR_IRQS */
+> -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+> +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+>  
+>  /* Compatibility */
+>  #define IRQ_LCD_FIFO		IRQ_LCD0
+> diff --git a/arch/arm/plat-samsung/include/plat/irqs.h b/arch/arm/plat-samsung/include/plat/irqs.h
+> index 08d1a7e..b8918b3 100644
+> --- a/arch/arm/plat-samsung/include/plat/irqs.h
+> +++ b/arch/arm/plat-samsung/include/plat/irqs.h
+> @@ -22,7 +22,7 @@
+>   * mulitple of 32 to allow the common code to work
+>   */
+>  
+> -#define S5P_IRQ_OFFSET		(32)
+> +#define S5P_IRQ_OFFSET		(0)
+
+Just remove this.
+
+>  
+>  #define S5P_IRQ(x)		((x) + S5P_IRQ_OFFSET)
+>  
+> @@ -44,13 +44,14 @@
+>  #define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
+>  #define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
+>  
+> -#define S5P_TIMER_IRQ(x)	(11 + (x))
+> +#define S5P_TIMER_IRQ(x)	(IRQ_TIMER_BASE + (x))
+>  
+>  #define IRQ_TIMER0		S5P_TIMER_IRQ(0)
+>  #define IRQ_TIMER1		S5P_TIMER_IRQ(1)
+>  #define IRQ_TIMER2		S5P_TIMER_IRQ(2)
+>  #define IRQ_TIMER3		S5P_TIMER_IRQ(3)
+>  #define IRQ_TIMER4		S5P_TIMER_IRQ(4)
+> +#define IRQ_TIMER_COUNT		(5)
+>  
+>  #define IRQ_EINT(x)		((x) < 16 ? ((x) + S5P_EINT_BASE1) \
+>  					: ((x) - 16 + S5P_EINT_BASE2))
+> @@ -77,4 +78,6 @@
+>  #define S5P_IRQ_TYPE_EDGE_RISING	(0x03)
+>  #define S5P_IRQ_TYPE_EDGE_BOTH		(0x04)
+>  
+> +#define NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
+> +
+>  #endif /* __PLAT_SAMSUNG_IRQS_H */
+
+Really these timer irqs should be converted to irq domains and be
+dynamically allocated in the linux irq space, but this is at least a
+step in the right direction.
+
+Rob
