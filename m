@@ -1,214 +1,208 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V4 3/3] ARM: SAMSUNG: Add lookup of sdhci-s3c clocks using
- generic names
-Date: Wed, 12 Oct 2011 18:19:04 +0200
-Message-ID: <4E95BDF8.2080406@samsung.com>
-References: <1318412587-29987-1-git-send-email-rajeshwari.s@samsung.com>
- <1318412587-29987-4-git-send-email-rajeshwari.s@samsung.com>
- <4E956ADB.3060604@samsung.com>
- <CAPs=JDf2N1kh4BO9nPBb-J6k51e-ytntrNOvw_UOKtw-ktdycA@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
+ irq space
+Date: Wed, 12 Oct 2011 21:59:00 +0530
+Message-ID: <CAJuYYwR3ncPygrYj-x4a5+axxp_zVFGmuWtmMDkwR9aVTGuL-Q@mail.gmail.com>
+References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org>
+	<1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
+	<4E95BC01.8090805@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CAPs=JDf2N1kh4BO9nPBb-J6k51e-ytntrNOvw_UOKtw-ktdycA@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Rajeshwari Birje <rajeshwari.birje@gmail.com>
-Cc: Rajeshwari Shinde <rajeshwari.s@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:37013 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750780Ab1JLQ3B convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Oct 2011 12:29:01 -0400
+Received: by gyb13 with SMTP id 13so841243gyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2011 09:29:00 -0700 (PDT)
+In-Reply-To: <4E95BC01.8090805@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On 10/12/2011 02:36 PM, Rajeshwari Birje wrote:
-> On Wed, Oct 12, 2011 at 3:54 PM, Sylwester Nawrocki
-> <s.nawrocki@samsung.com> wrote:
->> Hi Rajeshwari,
+On 12 October 2011 21:40, Rob Herring <robherring2@gmail.com> wrote:
+> On 10/10/2011 03:11 AM, Thomas Abraham wrote:
+>> All of Samsung's s5p platforms have timer irqs statically mapped fro=
+m linux
+>> irq numbers 11 to 15. These timer irqs are moved to end of the stati=
+cally
+>> mapped linux irq space and the hardware irqs, which were statically =
+mapped
+>> starting from 32 is moved to start from 0. The NR_IRQS macro is cons=
+olidated
+>> for all the s5p platforms in this process.
 >>
->> On 10/12/2011 11:43 AM, Rajeshwari Shinde wrote:
->>> Add support for lookup of sdhci-s3c controller clocks using generic=
- names
->>> for s3c2416, s3c64xx, s5pc100, s5pv210 and exynos4 SoC's.
->>>
->>> Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
->>> ---
->>>  arch/arm/mach-exynos4/clock.c         |   88 ++++++++++-------
->>>  arch/arm/mach-s3c2416/clock.c         |   68 +++++++------
->>>  arch/arm/mach-s3c64xx/clock.c         |  126 +++++++++++++++------=
-----
->>>  arch/arm/mach-s5pc100/clock.c         |  130 ++++++++++++++++-----=
------
->>>  arch/arm/mach-s5pv210/clock.c         |  167 ++++++++++++++++++++-=
-------------
->>>  arch/arm/plat-s3c24xx/s3c2443-clock.c |   15 ++-
->>>  6 files changed, 359 insertions(+), 235 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4/=
-clock.c
->>> index 9f50e33..c6383b9 100644
->>> --- a/arch/arm/mach-exynos4/clock.c
->>> +++ b/arch/arm/mach-exynos4/clock.c
->>> @@ -1157,42 +1157,6 @@ static struct clksrc_clk clksrcs[] =3D {
->>>               .reg_div =3D { .reg =3D S5P_CLKDIV_MFC, .shift =3D 0,=
- .size =3D 4 },
-=2E..
->>> +static struct clksrc_clk clk_sclk_mmc0 =3D {
->>> +     .clk            =3D {
->>> +             .name           =3D "sclk_mmc",
->>> +             .devname        =3D "s3c-sdhci.0",
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>> =A0arch/arm/mach-exynos4/include/mach/entry-macro.S | =A0 =A01 -
+>> =A0arch/arm/mach-exynos4/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+3 +--
+>> =A0arch/arm/mach-s5p64x0/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+4 +---
+>> =A0arch/arm/mach-s5pc100/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+3 +--
+>> =A0arch/arm/mach-s5pv210/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+3 +--
+>> =A0arch/arm/plat-samsung/include/plat/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+7 +++++--
+>> =A06 files changed, 9 insertions(+), 12 deletions(-)
 >>
->> Would it make sense to drop this 'devname' field here and others
->> until sclk_mmc3 ....
->=20
-> *** The devname here distinguishes these clocks. So it should be okay
-> to have a devname for these clocks.
+>> diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch=
+/arm/mach-exynos4/include/mach/entry-macro.S
+>> index 4c9adbd..5c4fbcc 100644
+>> --- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
+>> +++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+>> @@ -72,7 +72,6 @@
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 cmpcc =A0 \irqnr, \irqnr
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 cmpne =A0 \irqnr, \tmp
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 cmpcs =A0 \irqnr, \irqnr
+>> - =A0 =A0 =A0 =A0 =A0 =A0 addne =A0 \irqnr, \irqnr, #32
+>
+>
+> With this change, can't you now use the common entry-macro-gic.S?
 
-I'm not sure what's Mr Kukjin's opinion on that, but I personally would=
- really
-like to see all the devname fields disappear from samsung clk data stru=
-ctures.
-Possibly if all involved people would keep that in mind we could achiev=
-e this
-over time.
 
->=20
->>
->>> +             .parent         =3D &clk_dout_mmc0.clk,
->>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
->>> +             .ctrlbit        =3D (1 << 0),
->>> +     },
->>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS1, .shift =3D 8, .size=
- =3D 8 },
->>> +};
->>> +
->>> +static struct clksrc_clk clk_sclk_mmc1 =3D {
->>> +     .clk            =3D {
->>> +             .name           =3D "sclk_mmc",
->>> +             .devname        =3D "s3c-sdhci.1",
->>
->>> +             .parent         =3D &clk_dout_mmc1.clk,
->>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
->>> +             .ctrlbit        =3D (1 << 4),
->>> +     },
->>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS1, .shift =3D 24, .siz=
-e =3D 8 },
->>> +};
->>> +
->>> +static struct clksrc_clk clk_sclk_mmc2 =3D {
->>> +     .clk            =3D {
->>> +             .name           =3D "sclk_mmc",
->>> +             .devname        =3D "s3c-sdhci.2",
->>
->>> +             .parent         =3D &clk_dout_mmc2.clk,
->>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
->>> +             .ctrlbit        =3D (1 << 8),
->>> +     },
->>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS2, .shift =3D 8, .size=
- =3D 8 },
->>> +};
->>> +
->>> +static struct clksrc_clk clk_sclk_mmc3 =3D {
->>> +     .clk            =3D {
->>> +             .name           =3D "sclk_mmc",
->>> +             .devname        =3D "s3c-sdhci.3",
->>
->>> +             .parent         =3D &clk_dout_mmc3.clk,
->>> +             .enable         =3D exynos4_clksrc_mask_fsys_ctrl,
->>> +             .ctrlbit        =3D (1 << 12),
->>> +     },
->>> +     .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS2, .shift =3D 24, .siz=
-e =3D 8 },
->>> +};
->>> +
->>>  /* Clock initialization code */
->>>  static struct clksrc_clk *sysclks[] =3D {
->>>       &clk_mout_apll,
->>> @@ -1289,6 +1297,10 @@ static struct clksrc_clk *clksrc_cdev[] =3D =
-{
->>>       &clk_sclk_uart1,
->>>       &clk_sclk_uart2,
->>>       &clk_sclk_uart3,
->>> +     &clk_sclk_mmc0,
->>> +     &clk_sclk_mmc1,
->>> +     &clk_sclk_mmc2,
->>> +     &clk_sclk_mmc3,
->>
->> ..then drop the above 4 lines...
->=20
-> **** The registration for these clocks are important. The
-> s3c_register_clksrc() function sets the .ops of this clock and also
-> its parent. So the registration cannot be dropped.
+The get_irqnr_preamble macro is quite different from that in
+entry-macro-gic.S file. Maybe it is possible to use the common
+entry-macro-gic.S file with some rework of exynos machine code.
 
-OK.
 
->=20
+>
+>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .endm
 >>
->>>  };
->>>
->>>  static struct clk_lookup exynos4_clk_lookup[] =3D {
->>> @@ -1296,6 +1308,10 @@ static struct clk_lookup exynos4_clk_lookup[=
-] =3D {
->>>       CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &clk_sclk_=
-uart1.clk),
->>>       CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &clk_sclk_=
-uart2.clk),
->>>       CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &clk_sclk_=
-uart3.clk),
->>> +     CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0=
-=2Eclk),
->>> +     CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1=
-=2Eclk),
->>> +     CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2=
-=2Eclk),
->>> +     CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3=
-=2Eclk),
+>> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/ma=
+ch-exynos4/include/mach/irqs.h
+>> index dfd4b7e..43087c3 100644
+>> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
+>> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+>> @@ -163,7 +163,6 @@
+>> =A0#define IRQ_GPIO2_NR_GROUPS =A09
+>> =A0#define IRQ_GPIO_END =A0 =A0 =A0 =A0 (S5P_GPIOINT_BASE + S5P_GPIO=
+INT_COUNT)
 >>
->> ..and add something like:
+>> -/* Set the default NR_IRQS */
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_GPI=
+O_END + 64)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_GPIO_END + =
+64)
 >>
->>  +      CLKDEV_INIT("s3c-sdhci.0", "sclk_mmc", &clk_sclk_mmc0.clk),
->>  +      CLKDEV_INIT("s3c-sdhci.1", "sclk_mmc", &clk_sclk_mmc1.clk),
->>  +      CLKDEV_INIT("s3c-sdhci.2", "sclk_mmc", &clk_sclk_mmc2.clk),
->>  +      CLKDEV_INIT("s3c-sdhci.3", "sclk_mmc", &clk_sclk_mmc3.clk),
+>> =A0#endif /* __ASM_ARCH_IRQS_H */
+>> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/ma=
+ch-s5p64x0/include/mach/irqs.h
+>> index 53982db..bea73cc 100644
+>> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
+>> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+>> @@ -141,8 +141,6 @@
 >>
->> ?
->=20
-> **** The driver uses a common name for the possible bus clock sources=
-,
-> that is =E2=80=9Cmmc_busclk=E2=80=9D. This keeps the clock lookup cod=
-e in the driver
-> simple. Also, there could be SoC=E2=80=99s which do no use sclk_mmc a=
-s the bus
-> clock name as per the user manual
+>> =A0#define IRQ_EINT_GROUP(grp, x) =A0 =A0 =A0 (IRQ_EINT_GROUP##grp##=
+_BASE + (x))
+>>
+>> -/* Set the default NR_IRQS */
+>> -
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_EIN=
+T_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_EINT_GROUP8=
+_BASE + IRQ_EINT_GROUP8_NR + 1)
+>>
+>> =A0#endif /* __ASM_ARCH_IRQS_H */
+>> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/ma=
+ch-s5pc100/include/mach/irqs.h
+>> index d2eb475..3a9d300 100644
+>> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
+>> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+>> @@ -104,8 +104,7 @@
+>> =A0#define S5P_GPIOINT_BASE =A0 =A0 (IRQ_EINT(31) + 1)
+>> =A0#define S5P_GPIOINT_GROUP_MAXNR =A0 =A0 =A021
+>>
+>> -/* Set the default NR_IRQS */
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_EIN=
+T(31) + S5P_GPIOINT_COUNT + 1)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_EINT(31) + =
+S5P_GPIOINT_COUNT + 1)
+>>
+>> =A0/* Compatibility */
+>> =A0#define IRQ_LCD_FIFO =A0 =A0 =A0 =A0 IRQ_LCD0
+>> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/ma=
+ch-s5pv210/include/mach/irqs.h
+>> index 5e0de3a..df3173a 100644
+>> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+>> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+>> @@ -125,8 +125,7 @@
+>> =A0#define S5P_GPIOINT_BASE =A0 =A0 (IRQ_EINT(31) + 1)
+>> =A0#define S5P_GPIOINT_GROUP_MAXNR =A0 =A0 =A022
+>>
+>> -/* Set the default NR_IRQS */
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_EIN=
+T(31) + S5P_GPIOINT_COUNT + 1)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_EINT(31) + =
+S5P_GPIOINT_COUNT + 1)
+>>
+>> =A0/* Compatibility */
+>> =A0#define IRQ_LCD_FIFO =A0 =A0 =A0 =A0 IRQ_LCD0
+>> diff --git a/arch/arm/plat-samsung/include/plat/irqs.h b/arch/arm/pl=
+at-samsung/include/plat/irqs.h
+>> index 08d1a7e..b8918b3 100644
+>> --- a/arch/arm/plat-samsung/include/plat/irqs.h
+>> +++ b/arch/arm/plat-samsung/include/plat/irqs.h
+>> @@ -22,7 +22,7 @@
+>> =A0 * mulitple of 32 to allow the common code to work
+>> =A0 */
+>>
+>> -#define S5P_IRQ_OFFSET =A0 =A0 =A0 =A0 =A0 =A0 =A0 (32)
+>> +#define S5P_IRQ_OFFSET =A0 =A0 =A0 =A0 =A0 =A0 =A0 (0)
+>
+> Just remove this.
 
-OK, I was aware of that. I didn't mean removing the "mmc_busclk.2" entr=
-ies,
-just adding another 4, which are created anyway by s3c_register_clksrc(=
-)
-function. But for now I think the patch is OK.
+Ok.
 
->=20
->=20
+>
 >>
->> Also I'm wondering why we're using different device names for clk_sc=
-lk_mmc0..3
->> clocks, i.e. exynos4-sdhci.? and s3c-sdhci.? ?
+>> =A0#define S5P_IRQ(x) =A0 =A0 =A0 =A0 =A0 ((x) + S5P_IRQ_OFFSET)
 >>
->> Does it all work on exynos ? I would expect the device name to be sa=
-me
->> across all the clock definitions, otherwise clk_get(dev, ..) will fa=
-il.
->=20
-> **** There was a patch submitted to rename the device name of sdhci
-> for Exynos to exynos4-sdhci. I will remove this change from this patc=
-h
-> and let that patch handle this change.
+>> @@ -44,13 +44,14 @@
+>> =A0#define S5P_IRQ_VIC2(x) =A0 =A0 =A0 =A0 =A0 =A0 =A0(S5P_VIC2_BASE=
+ + (x))
+>> =A0#define S5P_IRQ_VIC3(x) =A0 =A0 =A0 =A0 =A0 =A0 =A0(S5P_VIC3_BASE=
+ + (x))
+>>
+>> -#define S5P_TIMER_IRQ(x) =A0 =A0 (11 + (x))
+>> +#define S5P_TIMER_IRQ(x) =A0 =A0 (IRQ_TIMER_BASE + (x))
+>>
+>> =A0#define IRQ_TIMER0 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(0)
+>> =A0#define IRQ_TIMER1 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(1)
+>> =A0#define IRQ_TIMER2 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(2)
+>> =A0#define IRQ_TIMER3 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(3)
+>> =A0#define IRQ_TIMER4 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(4)
+>> +#define IRQ_TIMER_COUNT =A0 =A0 =A0 =A0 =A0 =A0 =A0(5)
+>>
+>> =A0#define IRQ_EINT(x) =A0 =A0 =A0 =A0 =A0((x) < 16 ? ((x) + S5P_EIN=
+T_BASE1) \
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 : ((x) - 16 + S5P_EINT_BASE2))
+>> @@ -77,4 +78,6 @@
+>> =A0#define S5P_IRQ_TYPE_EDGE_RISING =A0 =A0 (0x03)
+>> =A0#define S5P_IRQ_TYPE_EDGE_BOTH =A0 =A0 =A0 =A0 =A0 =A0 =A0 (0x04)
+>>
+>> +#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_TIM=
+ER_BASE + IRQ_TIMER_COUNT)
+>> +
+>> =A0#endif /* __PLAT_SAMSUNG_IRQS_H */
+>
+> Really these timer irqs should be converted to irq domains and be
+> dynamically allocated in the linux irq space, but this is at least a
+> step in the right direction.
 
-I wouldn't do that. IMHO it's better to keep this patch as is, to make =
-the final
-diff size lower.
-Perhaps it's even worth to consider doing the clock rename altogether i=
-n this patch.
-But it's of course up to you.
+Ok.
 
+Thanks for your comments.
 
 Regards,
---=20
-Sylwester Nawrocki
-Samsung Poland R&D Center
+Thomas.
+
+>
+> Rob
+>
