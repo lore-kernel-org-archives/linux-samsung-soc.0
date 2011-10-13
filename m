@@ -1,132 +1,72 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
- irq space
-Date: Wed, 12 Oct 2011 18:41:02 -0600
-Message-ID: <20111013004102.GH14042@ponder.secretlab.ca>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 2/3] ARM: Exynos4: Add ioremap interceptor for statically
+ remapped regions
+Date: Thu, 13 Oct 2011 08:58:11 +0530
+Message-ID: <CAJuYYwTpUX+zdRr5PO9SW+nUFW-BwsSwWkWXNRjw_TKy+vdEgw@mail.gmail.com>
 References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org>
- <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
- <4E95BC01.8090805@gmail.com>
+	<1318234289-22041-3-git-send-email-thomas.abraham@linaro.org>
+	<4E95BC8E.8010105@gmail.com>
+	<CAJuYYwSQgiZMEuzyqFvijy+sTLWqi=TqvM8cGe=W3bPOSBe0Hg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <4E95BC01.8090805-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:36312 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752239Ab1JMD2M convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Oct 2011 23:28:12 -0400
+Received: by ywb5 with SMTP id 5so713777ywb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2011 20:28:11 -0700 (PDT)
+In-Reply-To: <CAJuYYwSQgiZMEuzyqFvijy+sTLWqi=TqvM8cGe=W3bPOSBe0Hg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org, Nicolas Pitre <nicolas.pitre@linaro.org>
 
-On Wed, Oct 12, 2011 at 11:10:41AM -0500, Rob Herring wrote:
-> On 10/10/2011 03:11 AM, Thomas Abraham wrote:
-> > All of Samsung's s5p platforms have timer irqs statically mapped from linux
-> > irq numbers 11 to 15. These timer irqs are moved to end of the statically
-> > mapped linux irq space and the hardware irqs, which were statically mapped
-> > starting from 32 is moved to start from 0. The NR_IRQS macro is consolidated
-> > for all the s5p platforms in this process.
-> > 
-> > Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > ---
-> >  arch/arm/mach-exynos4/include/mach/entry-macro.S |    1 -
-> >  arch/arm/mach-exynos4/include/mach/irqs.h        |    3 +--
-> >  arch/arm/mach-s5p64x0/include/mach/irqs.h        |    4 +---
-> >  arch/arm/mach-s5pc100/include/mach/irqs.h        |    3 +--
-> >  arch/arm/mach-s5pv210/include/mach/irqs.h        |    3 +--
-> >  arch/arm/plat-samsung/include/plat/irqs.h        |    7 +++++--
-> >  6 files changed, 9 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-> > index 4c9adbd..5c4fbcc 100644
-> > --- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
-> > +++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-> > @@ -72,7 +72,6 @@
-> >  		cmpcc	\irqnr, \irqnr
-> >  		cmpne	\irqnr, \tmp
-> >  		cmpcs	\irqnr, \irqnr
-> > -		addne	\irqnr, \irqnr, #32
-> 
-> 
-> With this change, can't you now use the common entry-macro-gic.S?
-> 
-> 
-> >  		.endm
-> >  
-> > diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-> > index dfd4b7e..43087c3 100644
-> > --- a/arch/arm/mach-exynos4/include/mach/irqs.h
-> > +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-> > @@ -163,7 +163,6 @@
-> >  #define IRQ_GPIO2_NR_GROUPS	9
-> >  #define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
-> >  
-> > -/* Set the default NR_IRQS */
-> > -#define NR_IRQS			(IRQ_GPIO_END + 64)
-> > +#define IRQ_TIMER_BASE		(IRQ_GPIO_END + 64)
-> >  
-> >  #endif /* __ASM_ARCH_IRQS_H */
-> > diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> > index 53982db..bea73cc 100644
-> > --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> > +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> > @@ -141,8 +141,6 @@
-> >  
-> >  #define IRQ_EINT_GROUP(grp, x)	(IRQ_EINT_GROUP##grp##_BASE + (x))
-> >  
-> > -/* Set the default NR_IRQS */
-> > -
-> > -#define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
-> > +#define IRQ_TIMER_BASE		(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
-> >  
-> >  #endif /* __ASM_ARCH_IRQS_H */
-> > diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
-> > index d2eb475..3a9d300 100644
-> > --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
-> > +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
-> > @@ -104,8 +104,7 @@
-> >  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
-> >  #define S5P_GPIOINT_GROUP_MAXNR	21
-> >  
-> > -/* Set the default NR_IRQS */
-> > -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> > +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> >  
-> >  /* Compatibility */
-> >  #define IRQ_LCD_FIFO		IRQ_LCD0
-> > diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> > index 5e0de3a..df3173a 100644
-> > --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-> > +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> > @@ -125,8 +125,7 @@
-> >  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
-> >  #define S5P_GPIOINT_GROUP_MAXNR	22
-> >  
-> > -/* Set the default NR_IRQS */
-> > -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> > +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> >  
-> >  /* Compatibility */
-> >  #define IRQ_LCD_FIFO		IRQ_LCD0
-> > diff --git a/arch/arm/plat-samsung/include/plat/irqs.h b/arch/arm/plat-samsung/include/plat/irqs.h
-> > index 08d1a7e..b8918b3 100644
-> > --- a/arch/arm/plat-samsung/include/plat/irqs.h
-> > +++ b/arch/arm/plat-samsung/include/plat/irqs.h
-> > @@ -22,7 +22,7 @@
-> >   * mulitple of 32 to allow the common code to work
-> >   */
-> >  
-> > -#define S5P_IRQ_OFFSET		(32)
-> > +#define S5P_IRQ_OFFSET		(0)
-> 
-> Just remove this.
+On 12 October 2011 22:00, Thomas Abraham <thomas.abraham@linaro.org> wr=
+ote:
+> On 12 October 2011 21:43, Rob Herring <robherring2@gmail.com> wrote:
+>> On 10/10/2011 03:11 AM, Thomas Abraham wrote:
+>>> ioremap() request for statically remapped regions are intercepted a=
+nd the
+>>> statically assigned virtual address is returned. For requests for w=
+hich
+>>> there are no statically remapped regions, the requests are let thro=
+ugh.
+>>>
+>>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>>> ---
+>>> =A0arch/arm/mach-exynos4/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0 16 +++=
++++++++++++++
+>>> =A0arch/arm/mach-exynos4/include/mach/io.h | =A0 =A04 ++++
+>>> =A02 files changed, 20 insertions(+), 0 deletions(-)
+>>>
+>>
+>> You won't need this with Nico's vmalloc.h clean-up series. It does
+>> exactly this but generically for all platforms.
+>
+> Ok. Thanks for your suggestion. I will move to using Nico's patches.
 
-One comment on this; Make sure irqs mapping does *not* start at 0. 0 is not supposed to be used.
+=46rom Nico's reply to his pull request of vmalloc cleanup series, it
+looks like that pull request has been withdrawn (hope I am not missing
+anything here). Without Nico's series, and gic dt support for exynos4
+support requiring this patch, all other workarounds to replace this
+patch does not seem be correct.
 
-g.
+So is it acceptable to retain this patch and later rework/drop the
+exynos4 specific ioremap along with Nico's vmalloc patch series when
+it is merged.
+
+Thanks,
+Thomas.
+
+>
+> Regards,
+> Thomas.
+>
+>>
+>> Rob
+>>
+>
