@@ -1,38 +1,32 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V4 3/3] ARM: SAMSUNG: Add lookup of sdhci-s3c clocks	using
- generic names
-Date: Thu, 13 Oct 2011 11:40:33 +0200
-Message-ID: <4E96B211.1090908@samsung.com>
-References: <1318412587-29987-1-git-send-email-rajeshwari.s@samsung.com>
- <1318412587-29987-4-git-send-email-rajeshwari.s@samsung.com>
- <4E956ADB.3060604@samsung.com>
- <CAPs=JDf2N1kh4BO9nPBb-J6k51e-ytntrNOvw_UOKtw-ktdycA@mail.gmail.com>
- <4E95BDF8.2080406@samsung.com>
- <CAPs=JDeFyoCYnR-Xa_fdmBVHxfNGuVNfdHd-MZgYcPytprsmFg@mail.gmail.com>
- <4E969958.9020200@samsung.com> <20111013085521.GJ21648@n2100.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH V2 1/2] ARM: EXYNOS4: Add SPI support
+Date: Thu, 13 Oct 2011 11:02:06 +0100
+Message-ID: <20111013100206.GP21648@n2100.arm.linux.org.uk>
+References: <1318234084-19960-1-git-send-email-padma.v@samsung.com> <1318234084-19960-2-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <20111013085521.GJ21648@n2100.arm.linux.org.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Rajeshwari Shinde <rajeshwari.s@samsung.com>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55241 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752353Ab1JMKCX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Oct 2011 06:02:23 -0400
+Content-Disposition: inline
+In-Reply-To: <1318234084-19960-2-git-send-email-padma.v@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Padmavathi Venna <padma.v@samsung.com>
+Cc: padma.kvr@gmail.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, kgene.kim@samsung.com
 
-On 10/13/2011 10:55 AM, Russell King - ARM Linux wrote:
-> On Thu, Oct 13, 2011 at 09:55:04AM +0200, Sylwester Nawrocki wrote:
->> Yes, it allowed to add clkdev support with minimal changes required.
->>
->> But let's see what happens when the works on common struct clk for all
->> architectures are more or less completed and we convert Samsung platforms
->> to use it;)
-> 
-> The common struct clk shouldn't have much to do with the clkdev part of
-> it - clkdev just provides a method to associate a struct clk with the
-> drivers request.  The common struct clk doesn't change that.
+On Mon, Oct 10, 2011 at 01:38:04PM +0530, Padmavathi Venna wrote:
+> +void __init exynos4_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
+> +{
+> +	struct s3c64xx_spi_info *pd;
+> +
+> +	/* Reject invalid configuration */
+> +	if (!num_cs || src_clk_nr < 0
+> +			|| src_clk_nr > EXYNOS4_SPI_SRCCLK_SCLK) {
+> +		printk(KERN_ERR "%s: Invalid SPI configuration\n", __func__);
 
-Indeed. I was just wondering where we end up with the arch struct clk attribute
-which is specific to clkdev processes.
-It could just go into the hardware-specific data, although it doesn't sound
-like a perfectly right approach.
+Let's start using pr_err() rather than printk(KERN_ERR...) in ARM code
+please.
