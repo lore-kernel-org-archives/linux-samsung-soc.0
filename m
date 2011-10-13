@@ -1,248 +1,261 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH V8] mmc: core: Add Power Off Notify Feature eMMC 4.5
-Date: Thu, 13 Oct 2011 12:04:16 +0530
-Message-ID: <1318487656-8566-1-git-send-email-girish.shivananjappa@linaro.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>
+From: Rajeshwari Birje <rajeshwari.birje@gmail.com>
+Subject: Re: [PATCH V4 3/3] ARM: SAMSUNG: Add lookup of sdhci-s3c clocks using
+ generic names
+Date: Thu, 13 Oct 2011 12:46:19 +0530
+Message-ID: <CAPs=JDeFyoCYnR-Xa_fdmBVHxfNGuVNfdHd-MZgYcPytprsmFg@mail.gmail.com>
+References: <1318412587-29987-1-git-send-email-rajeshwari.s@samsung.com>
+	<1318412587-29987-4-git-send-email-rajeshwari.s@samsung.com>
+	<4E956ADB.3060604@samsung.com>
+	<CAPs=JDf2N1kh4BO9nPBb-J6k51e-ytntrNOvw_UOKtw-ktdycA@mail.gmail.com>
+	<4E95BDF8.2080406@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ww0-f42.google.com ([74.125.82.42]:47246 "EHLO
+	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751232Ab1JMHQX convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 13 Oct 2011 03:16:23 -0400
+In-Reply-To: <4E95BDF8.2080406@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Rajeshwari Shinde <rajeshwari.s@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-This patch adds the support for power off notify feature, available in 
-eMMC 4.5 devices. If the the host has support for this feature, then the
-mmc core will notify it to the device by setting the POWER_OFF_NOTIFICATION
-byte in the extended csd register with a value 1(POWER_ON).
+Hi Sylwester,
 
-For suspend mode short timeout is used, whereas for the normal poweroff long
-timeout is used.
-cc: Chris Ball <cjb@laptop.org>
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
----
-Changes in V8:
-	Updated with review comments of Chris Ball and rebased to 
-	chris-mmc/mmc-next branch.
-Changes in V7:
-	Rebased to chris-mmc/mmc-next branch. merged to patches 
-	to single patch.
-Changes in V6:
-	Fixes checkpatch errors. The patches are generated after
-	rebasing to chris's mmc-next branch.
-Changes in V5:
-	This patch version fixes the problem with power off
-	notify function, when called for the first time and
-	card is not yet initialised.
-Changes in V4:
-	Updated with review comments of Jeon
-Changes in V2:
-	Adds poweroff notification handling in suspend/normal.
+On Wed, Oct 12, 2011 at 9:49 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> On 10/12/2011 02:36 PM, Rajeshwari Birje wrote:
+>> On Wed, Oct 12, 2011 at 3:54 PM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>> Hi Rajeshwari,
+>>>
+>>> On 10/12/2011 11:43 AM, Rajeshwari Shinde wrote:
+>>>> Add support for lookup of sdhci-s3c controller clocks using generi=
+c names
+>>>> for s3c2416, s3c64xx, s5pc100, s5pv210 and exynos4 SoC's.
+>>>>
+>>>> Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
+>>>> ---
+>>>> =A0arch/arm/mach-exynos4/clock.c =A0 =A0 =A0 =A0 | =A0 88 ++++++++=
+++-------
+>>>> =A0arch/arm/mach-s3c2416/clock.c =A0 =A0 =A0 =A0 | =A0 68 +++++++-=
+-----
+>>>> =A0arch/arm/mach-s3c64xx/clock.c =A0 =A0 =A0 =A0 | =A0126 ++++++++=
++++++++----------
+>>>> =A0arch/arm/mach-s5pc100/clock.c =A0 =A0 =A0 =A0 | =A0130 ++++++++=
+++++++++----------
+>>>> =A0arch/arm/mach-s5pv210/clock.c =A0 =A0 =A0 =A0 | =A0167 ++++++++=
+++++++++++++-------------
+>>>> =A0arch/arm/plat-s3c24xx/s3c2443-clock.c | =A0 15 ++-
+>>>> =A06 files changed, 359 insertions(+), 235 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-exynos4/clock.c b/arch/arm/mach-exynos4=
+/clock.c
+>>>> index 9f50e33..c6383b9 100644
+>>>> --- a/arch/arm/mach-exynos4/clock.c
+>>>> +++ b/arch/arm/mach-exynos4/clock.c
+>>>> @@ -1157,42 +1157,6 @@ static struct clksrc_clk clksrcs[] =3D {
+>>>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .reg_div =3D { .reg =3D S5P_CLKDIV_MFC=
+, .shift =3D 0, .size =3D 4 },
+> ...
+>>>> +static struct clksrc_clk clk_sclk_mmc0 =3D {
+>>>> + =A0 =A0 .clk =A0 =A0 =A0 =A0 =A0 =A0=3D {
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_mmc"=
+,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "s3c-sdhci.0=
+",
+>>>
+>>> Would it make sense to drop this 'devname' field here and others
+>>> until sclk_mmc3 ....
+>>
+>> *** The devname here distinguishes these clocks. So it should be oka=
+y
+>> to have a devname for these clocks.
+>
+> I'm not sure what's Mr Kukjin's opinion on that, but I personally wou=
+ld really
+> like to see all the devname fields disappear from samsung clk data st=
+ructures.
+> Possibly if all involved people would keep that in mind we could achi=
+eve this
+> over time.
 
- drivers/mmc/core/core.c  |   36 ++++++++++++++++++++++++++++++++++++
- drivers/mmc/core/mmc.c   |   23 +++++++++++++++++++++--
- drivers/mmc/host/sdhci.c |    9 +++++++++
- include/linux/mmc/card.h |    6 ++++++
- include/linux/mmc/host.h |    6 ++++++
- include/linux/mmc/mmc.h  |    8 ++++++++
- 6 files changed, 86 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 61d7730..db368b2 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1212,11 +1212,45 @@ static void mmc_power_up(struct mmc_host *host)
- 
- void mmc_power_off(struct mmc_host *host)
+**** Devname field is still required for clocks like hsmmc for driver
+to work fine. Hence it would be tough to remove the devname
+completely.
+
+>
+>>
+>>>
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_dout_mm=
+c0.clk,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clks=
+rc_mask_fsys_ctrl,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 0),
+>>>> + =A0 =A0 },
+>>>> + =A0 =A0 .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS1, .shift =3D 8, =
+=2Esize =3D 8 },
+>>>> +};
+>>>> +
+>>>> +static struct clksrc_clk clk_sclk_mmc1 =3D {
+>>>> + =A0 =A0 .clk =A0 =A0 =A0 =A0 =A0 =A0=3D {
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_mmc"=
+,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "s3c-sdhci.1=
+",
+>>>
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_dout_mm=
+c1.clk,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clks=
+rc_mask_fsys_ctrl,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 4),
+>>>> + =A0 =A0 },
+>>>> + =A0 =A0 .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS1, .shift =3D 24,=
+ .size =3D 8 },
+>>>> +};
+>>>> +
+>>>> +static struct clksrc_clk clk_sclk_mmc2 =3D {
+>>>> + =A0 =A0 .clk =A0 =A0 =A0 =A0 =A0 =A0=3D {
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_mmc"=
+,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "s3c-sdhci.2=
+",
+>>>
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_dout_mm=
+c2.clk,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clks=
+rc_mask_fsys_ctrl,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 8),
+>>>> + =A0 =A0 },
+>>>> + =A0 =A0 .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS2, .shift =3D 8, =
+=2Esize =3D 8 },
+>>>> +};
+>>>> +
+>>>> +static struct clksrc_clk clk_sclk_mmc3 =3D {
+>>>> + =A0 =A0 .clk =A0 =A0 =A0 =A0 =A0 =A0=3D {
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "sclk_mmc"=
+,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "s3c-sdhci.3=
+",
+>>>
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &clk_dout_mm=
+c3.clk,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clks=
+rc_mask_fsys_ctrl,
+>>>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 12),
+>>>> + =A0 =A0 },
+>>>> + =A0 =A0 .reg_div =3D { .reg =3D S5P_CLKDIV_FSYS2, .shift =3D 24,=
+ .size =3D 8 },
+>>>> +};
+>>>> +
+>>>> =A0/* Clock initialization code */
+>>>> =A0static struct clksrc_clk *sysclks[] =3D {
+>>>> =A0 =A0 =A0 &clk_mout_apll,
+>>>> @@ -1289,6 +1297,10 @@ static struct clksrc_clk *clksrc_cdev[] =3D=
  {
-+	struct mmc_card *card;
-+	unsigned int notify_type;
-+	unsigned int timeout;
-+	int err;
-+
-+	BUG_ON(!host);
-+
- 	mmc_host_clk_hold(host);
- 
-+	card = host->card;
- 	host->ios.clock = 0;
- 	host->ios.vdd = 0;
- 
-+	if (card != NULL && mmc_card_mmc(card) &&
-+	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
-+
-+		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
-+			notify_type = EXT_CSD_POWER_OFF_SHORT;
-+			timeout = card->ext_csd.generic_cmd6_time;
-+			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
-+		} else {
-+			notify_type = EXT_CSD_POWER_OFF_LONG;
-+			timeout = card->ext_csd.power_off_longtime;
-+			card->poweroff_notify_state = MMC_POWEROFF_LONG;
-+		}
-+
-+		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-+				 EXT_CSD_POWER_OFF_NOTIFICATION,
-+				 notify_type, timeout);
-+
-+		if (err && err != -EBADMSG)
-+			pr_err("Device failed to respond within %d poweroff "
-+			       "time. Forcefully powering down the device\n",
-+			       timeout);
-+
-+		/* Set the card state to no notification after the poweroff */
-+		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
-+	}
-+
- 	/*
- 	 * Reset ocr mask to be the highest possible voltage supported for
- 	 * this mmc host. This value will be used at next power up.
-@@ -2208,6 +2242,7 @@ int mmc_pm_notify(struct notifier_block *notify_block,
- 
- 		spin_lock_irqsave(&host->lock, flags);
- 		host->rescan_disable = 1;
-+		host->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
- 		spin_unlock_irqrestore(&host->lock, flags);
- 		cancel_delayed_work_sync(&host->detect);
- 
-@@ -2231,6 +2266,7 @@ int mmc_pm_notify(struct notifier_block *notify_block,
- 
- 		spin_lock_irqsave(&host->lock, flags);
- 		host->rescan_disable = 0;
-+		host->power_notify_type = MMC_HOST_PW_NOTIFY_LONG;
- 		spin_unlock_irqrestore(&host->lock, flags);
- 		mmc_detect_change(host, 0);
- 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 4e869d3..f8ea938 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -458,10 +458,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
- 	else
- 		card->erased_byte = 0x0;
- 
--	if (card->ext_csd.rev >= 6)
-+	if (card->ext_csd.rev >= 6) {
- 		card->ext_csd.generic_cmd6_time = 10 *
- 			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
--	else
-+		card->ext_csd.power_off_longtime = 10 *
-+			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
-+	} else
- 		card->ext_csd.generic_cmd6_time = 0;
- 
- out:
-@@ -846,6 +848,23 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 	}
- 
- 	/*
-+	 * If the host supports the power_off_notify capability then
-+	 * set the notification byte in the ext_csd register of device
-+	 */
-+	if ((host->caps2 & MMC_CAP2_POWEROFF_NOTIFY) &&
-+	    (card->poweroff_notify_state == MMC_NO_POWER_NOTIFICATION)) {
-+		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-+				 EXT_CSD_POWER_OFF_NOTIFICATION,
-+				 EXT_CSD_POWER_ON,
-+				 card->ext_csd.generic_cmd6_time);
-+		if (err && err != -EBADMSG)
-+			goto free_card;
-+	}
-+
-+	if (!err)
-+		card->poweroff_notify_state = MMC_POWERED_ON;
-+
-+	/*
- 	 * Activate high speed (if supported)
- 	 */
- 	if ((card->ext_csd.hs_max_dtr != 0) &&
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 2cc3ffa..91fdaed 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -2739,6 +2739,15 @@ int sdhci_add_host(struct sdhci_host *host)
- 	if (caps[1] & SDHCI_DRIVER_TYPE_D)
- 		mmc->caps |= MMC_CAP_DRIVER_TYPE_D;
- 
-+	/*
-+	 * If Notify capability is enabled by the host, set notify to
-+	 * short power off notify timeout value.
-+	 */
-+	if (mmc->caps2 & MMC_CAP2_POWEROFF_NOTIFY)
-+		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
-+	else
-+		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_NONE;
-+
- 	/* Initial value for re-tuning timer count */
- 	host->tuning_count = (caps[1] & SDHCI_RETUNING_TIMER_COUNT_MASK) >>
- 			      SDHCI_RETUNING_TIMER_COUNT_SHIFT;
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 30d493c..fce88b3 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -54,6 +54,7 @@ struct mmc_ext_csd {
- 	unsigned int		part_time;		/* Units: ms */
- 	unsigned int		sa_timeout;		/* Units: 100ns */
- 	unsigned int		generic_cmd6_time;	/* Units: 10ms */
-+	unsigned int            power_off_longtime;     /* Units: ms */
- 	unsigned int		hs_max_dtr;
- 	unsigned int		sectors;
- 	unsigned int		card_type;
-@@ -209,6 +210,11 @@ struct mmc_card {
- #define MMC_QUIRK_BLK_NO_CMD23	(1<<7)		/* Avoid CMD23 for regular multiblock */
- #define MMC_QUIRK_BROKEN_BYTE_MODE_512 (1<<8)	/* Avoid sending 512 bytes in */
- 						/* byte mode */
-+	unsigned int    poweroff_notify_state;	/* eMMC4.5 notify feature */
-+#define MMC_NO_POWER_NOTIFICATION	0
-+#define MMC_POWERED_ON			1
-+#define MMC_POWEROFF_SHORT		2
-+#define MMC_POWEROFF_LONG		3
- 
- 	unsigned int		erase_size;	/* erase size in sectors */
-  	unsigned int		erase_shift;	/* if erase unit is power 2 */
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index aed5bc7..65c47fc 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -239,8 +239,14 @@ struct mmc_host {
- 	unsigned int		caps2;		/* More host capabilities */
- 
- #define MMC_CAP2_BOOTPART_NOACC	(1 << 0)	/* Boot partition no access */
-+#define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control. */
-+#define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff supported */
- 
- 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
-+	unsigned int        power_notify_type;
-+#define MMC_HOST_PW_NOTIFY_NONE		0
-+#define MMC_HOST_PW_NOTIFY_SHORT	1
-+#define MMC_HOST_PW_NOTIFY_LONG		2
- 
- #ifdef CONFIG_MMC_CLKGATE
- 	int			clk_requests;	/* internal reference counter */
-diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
-index cd63c2d..36ed258 100644
---- a/include/linux/mmc/mmc.h
-+++ b/include/linux/mmc/mmc.h
-@@ -271,6 +271,9 @@ struct _mmc_csd {
-  */
- 
- #define EXT_CSD_GP_SIZE_MULT		143	/* R/W */
-+#define EXT_CSD_FLUSH_CACHE		32	/* W */
-+#define EXT_CSD_CACHE_CTRL		33	/* R/W */
-+#define EXT_CSD_POWER_OFF_NOTIFICATION	34	/* R/W */
- #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
- #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
- #define EXT_CSD_RST_N_FUNCTION		162	/* R/W */
-@@ -346,6 +349,11 @@ struct _mmc_csd {
- #define EXT_CSD_RST_N_EN_MASK	0x3
- #define EXT_CSD_RST_N_ENABLED	1	/* RST_n is enabled on card */
- 
-+#define EXT_CSD_NO_POWER_NOTIFICATION	0
-+#define EXT_CSD_POWER_ON		1
-+#define EXT_CSD_POWER_OFF_SHORT		2
-+#define EXT_CSD_POWER_OFF_LONG		3
-+
- #define EXT_CSD_PWR_CL_8BIT_MASK	0xF0	/* 8 bit PWR CLS */
- #define EXT_CSD_PWR_CL_4BIT_MASK	0x0F	/* 8 bit PWR CLS */
- #define EXT_CSD_PWR_CL_8BIT_SHIFT	4
--- 
-1.7.1
+>>>> =A0 =A0 =A0 &clk_sclk_uart1,
+>>>> =A0 =A0 =A0 &clk_sclk_uart2,
+>>>> =A0 =A0 =A0 &clk_sclk_uart3,
+>>>> + =A0 =A0 &clk_sclk_mmc0,
+>>>> + =A0 =A0 &clk_sclk_mmc1,
+>>>> + =A0 =A0 &clk_sclk_mmc2,
+>>>> + =A0 =A0 &clk_sclk_mmc3,
+>>>
+>>> ..then drop the above 4 lines...
+>>
+>> **** The registration for these clocks are important. The
+>> s3c_register_clksrc() function sets the .ops of this clock and also
+>> its parent. So the registration cannot be dropped.
+>
+> OK.
+>
+>>
+>>>
+>>>> =A0};
+>>>>
+>>>> =A0static struct clk_lookup exynos4_clk_lookup[] =3D {
+>>>> @@ -1296,6 +1308,10 @@ static struct clk_lookup exynos4_clk_lookup=
+[] =3D {
+>>>> =A0 =A0 =A0 CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &cl=
+k_sclk_uart1.clk),
+>>>> =A0 =A0 =A0 CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &cl=
+k_sclk_uart2.clk),
+>>>> =A0 =A0 =A0 CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &cl=
+k_sclk_uart3.clk),
+>>>> + =A0 =A0 CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &clk_sclk=
+_mmc0.clk),
+>>>> + =A0 =A0 CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &clk_sclk=
+_mmc1.clk),
+>>>> + =A0 =A0 CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &clk_sclk=
+_mmc2.clk),
+>>>> + =A0 =A0 CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &clk_sclk=
+_mmc3.clk),
+>>>
+>>> ..and add something like:
+>>>
+>>> =A0+ =A0 =A0 =A0CLKDEV_INIT("s3c-sdhci.0", "sclk_mmc", &clk_sclk_mm=
+c0.clk),
+>>> =A0+ =A0 =A0 =A0CLKDEV_INIT("s3c-sdhci.1", "sclk_mmc", &clk_sclk_mm=
+c1.clk),
+>>> =A0+ =A0 =A0 =A0CLKDEV_INIT("s3c-sdhci.2", "sclk_mmc", &clk_sclk_mm=
+c2.clk),
+>>> =A0+ =A0 =A0 =A0CLKDEV_INIT("s3c-sdhci.3", "sclk_mmc", &clk_sclk_mm=
+c3.clk),
+>>>
+>>> ?
+>>
+>> **** The driver uses a common name for the possible bus clock source=
+s,
+>> that is =93mmc_busclk=94. This keeps the clock lookup code in the dr=
+iver
+>> simple. Also, there could be SoC=92s which do no use sclk_mmc as the=
+ bus
+>> clock name as per the user manual
+>
+> OK, I was aware of that. I didn't mean removing the "mmc_busclk.2" en=
+tries,
+> just adding another 4, which are created anyway by s3c_register_clksr=
+c()
+> function. But for now I think the patch is OK.
+>
+>>
+>>
+>>>
+>>> Also I'm wondering why we're using different device names for clk_s=
+clk_mmc0..3
+>>> clocks, i.e. exynos4-sdhci.? and s3c-sdhci.? ?
+>>>
+>>> Does it all work on exynos ? I would expect the device name to be s=
+ame
+>>> across all the clock definitions, otherwise clk_get(dev, ..) will f=
+ail.
+>>
+>> **** There was a patch submitted to rename the device name of sdhci
+>> for Exynos to exynos4-sdhci. I will remove this change from this pat=
+ch
+>> and let that patch handle this change.
+>
+> I wouldn't do that. IMHO it's better to keep this patch as is, to mak=
+e the final
+> diff size lower.
 
+**** Will modify the  exynos4-sdhci. to s3c-sdhci. and send the
+updated patch for review.
+
+> Perhaps it's even worth to consider doing the clock rename altogether=
+ in this patch.
+> But it's of course up to you.
+>
+>
+> Regards,
+> --
+> Sylwester Nawrocki
+> Samsung Poland R&D Center
+>
+
+Regards,
+Rajeshwari Shinde.
