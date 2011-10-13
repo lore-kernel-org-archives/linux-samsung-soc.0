@@ -1,184 +1,244 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] rtc: rtc-s3c: Add device tree support
-Date: Thu, 13 Oct 2011 13:34:55 -0600
-Message-ID: <20111013193455.GC18574@ponder.secretlab.ca>
-References: <1315064959-16930-1-git-send-email-thomas.abraham@linaro.org>
- <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com>
- <053801cc8803$43676230$ca362690$%kim@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH V8] mmc: core: Add Power Off Notify Feature eMMC 4.5
+Date: Thu, 13 Oct 2011 18:11:12 -0400
+Message-ID: <m2lisofsov.fsf@bob.laptop.org>
+References: <1318487656-8566-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:57993 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753053Ab1JMTfB (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Oct 2011 15:35:01 -0400
-Received: by pzk1 with SMTP id 1so3554655pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Oct 2011 12:35:00 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <053801cc8803$43676230$ca362690$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1318487656-8566-1-git-send-email-girish.shivananjappa@linaro.org>
+	(Girish K. S.'s message of "Thu, 13 Oct 2011 12:04:16 +0530")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, rtc-linux@googlegroups.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, a.zummo@towertech.it
 
-On Tue, Oct 11, 2011 at 07:48:07PM +0900, Kukjin Kim wrote:
-> Thomas Abraham wrote:
-> >=20
-> > On 3 September 2011 21:19, Thomas Abraham <thomas.abraham@linaro.or=
-g>
-> > wrote:
-> > > Add device tree based discovery support for Samsung's rtc control=
-ler.
-> > >
-> > > Cc: Ben Dooks <ben-linux@fluff.org>
-> > > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > > ---
-> > > =A0Documentation/devicetree/bindings/rtc/s3c-rtc.txt | =A0 20
-> > ++++++++++++++++++++
-> > > =A0drivers/rtc/rtc-s3c.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 | =A0 21
-> > ++++++++++++++++++++-
-> > > =A02 files changed, 40 insertions(+), 1 deletions(-)
-> > > =A0create mode 100644 Documentation/devicetree/bindings/rtc/s3c-r=
-tc.txt
-> >=20
-> > Ping. Any comments for this patch? If this looks fine, can this be
-> > considered for 3.2 merge via the Samsung kernel tree.
-> >=20
-> (Cc'ed Alessandro Zummo who is RTC Subsystem maintainer)
->=20
-> I'm ok with this, so if this can be got the ack from Grant and Alessa=
-ndro,
-> will take this.
+Hi Girish, just trivial changes below.
 
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
->=20
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> > b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> > > new file mode 100644
-> > > index 0000000..90ec45f
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/rtc/s3c-rtc.txt
-> > > @@ -0,0 +1,20 @@
-> > > +* Samsung's S3C Real Time Clock controller
-> > > +
-> > > +Required properties:
-> > > +- compatible: should be one of the following.
-> > > + =A0 =A0* "samsung,s3c2410-rtc" - for controllers compatible wit=
-h s3c2410
-> rtc.
-> > > + =A0 =A0* "samsung,s3c6410-rtc" - for controllers compatible wit=
-h s3c6410
-> rtc.
-> > > +- reg: physical base address of the controller and length of mem=
-ory
-> mapped
-> > > + =A0region.
-> > > +- interrupts: Two interrupt numbers to the cpu should be specifi=
-ed.
-> First
-> > > + =A0interrupt number is the rtc alarm interupt and second interr=
-upt
-> number
-> > > + =A0is the rtc tick interrupt. The number of cells representing =
-a
-> interrupt
-> > > + =A0depends on the parent interrupt controller.
-> > > +
-> > > +Example:
-> > > +
-> > > + =A0 =A0 =A0 rtc@10070000 {
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,s3c6410-rtc=
-";
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x10070000 0x100>;
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <44 0 45 0>;
-> > > + =A0 =A0 =A0 };
-> > > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> > > index 4e7c04e..29f928c 100644
-> > > --- a/drivers/rtc/rtc-s3c.c
-> > > +++ b/drivers/rtc/rtc-s3c.c
-> > > @@ -25,6 +25,7 @@
-> > > =A0#include <linux/clk.h>
-> > > =A0#include <linux/log2.h>
-> > > =A0#include <linux/slab.h>
-> > > +#include <linux/of.h>
-> > >
-> > > =A0#include <mach/hardware.h>
-> > > =A0#include <asm/uaccess.h>
-> > > @@ -481,7 +482,13 @@ static int __devinit s3c_rtc_probe(struct
-> > platform_device *pdev)
-> > > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err_nortc;
-> > > =A0 =A0 =A0 =A0}
-> > >
-> > > - =A0 =A0 =A0 s3c_rtc_cpu_type =3D platform_get_device_id(pdev)->=
-driver_data;
-> > > +#ifdef CONFIG_OF
-> > > + =A0 =A0 =A0 if (pdev->dev.of_node)
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D of_device_is_c=
-ompatible(pdev-
-> > >dev.of_node,
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "samsung,s3c6410-rt=
-c") ? TYPE_S3C64XX :
-> > TYPE_S3C2410;
-> > > + =A0 =A0 =A0 else
-> > > +#endif
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_rtc_cpu_type =3D
-> platform_get_device_id(pdev)->driver_data;
-> > >
-> > > =A0 =A0 =A0 =A0/* Check RTC Time */
-> > >
-> > > @@ -603,6 +610,17 @@ static int s3c_rtc_resume(struct platform_de=
-vice
-> *pdev)
-> > > =A0#define s3c_rtc_resume =A0NULL
-> > > =A0#endif
-> > >
-> > > +#ifdef CONFIG_OF
-> > > +static const struct of_device_id s3c_rtc_dt_match[] =3D {
-> > > +       { .compatible =3D "samsung,s3c2410-rtc" },
->      ^^^^^^^
-> > > +       { .compatible =3D "samsung,s3c6410-rtc" },
->      ^^^^^^^
-> > > +       {},
->      ^^^^^^^
-> should be Tab?
->=20
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
-> > > +#else
-> > > +#define s3c_rtc_dt_match NULL
-> > > +#endif
-> > > +
-> > > =A0static struct platform_device_id s3c_rtc_driver_ids[] =3D {
-> > > =A0 =A0 =A0 =A0{
-> > > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =A0 =A0 =A0 =A0 =3D "s3c=
-2410-rtc",
-> > > @@ -625,6 +643,7 @@ static struct platform_driver s3c_rtc_driver =
-=3D {
-> > > =A0 =A0 =A0 =A0.driver =A0 =A0 =A0 =A0 =3D {
-> > > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.name =A0 =3D "s3c-rtc",
-> > > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.owner =A0=3D THIS_MODULE,
-> > > +               .of_match_table =3D s3c_rtc_dt_match,
->      ^^^^^^^^^^^^^^^
-> Same as above...
->=20
-> But I know, Thomas' original patch has no problem...probably when pin=
-g,
-> happened above.
->=20
-> > > =A0 =A0 =A0 =A0},
-> > > =A0};
-> > >
-> > > --
->=20
-> Thanks.
->=20
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->=20
+Does anyone have a Tested-by: to add to the patch?
+
+On Thu, Oct 13 2011, Girish K S wrote:
+> This patch adds the support for power off notify feature, available in 
+> eMMC 4.5 devices. If the the host has support for this feature, then the
+> mmc core will notify it to the device by setting the POWER_OFF_NOTIFICATION
+> byte in the extended csd register with a value 1(POWER_ON).
+>
+> For suspend mode short timeout is used, whereas for the normal poweroff long
+> timeout is used.
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> ---
+> Changes in V8:
+> 	Updated with review comments of Chris Ball and rebased to 
+> 	chris-mmc/mmc-next branch.
+> Changes in V7:
+> 	Rebased to chris-mmc/mmc-next branch. merged to patches 
+> 	to single patch.
+> Changes in V6:
+> 	Fixes checkpatch errors. The patches are generated after
+> 	rebasing to chris's mmc-next branch.
+> Changes in V5:
+> 	This patch version fixes the problem with power off
+> 	notify function, when called for the first time and
+> 	card is not yet initialised.
+> Changes in V4:
+> 	Updated with review comments of Jeon
+> Changes in V2:
+> 	Adds poweroff notification handling in suspend/normal.
+>
+>  drivers/mmc/core/core.c  |   36 ++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/core/mmc.c   |   23 +++++++++++++++++++++--
+>  drivers/mmc/host/sdhci.c |    9 +++++++++
+>  include/linux/mmc/card.h |    6 ++++++
+>  include/linux/mmc/host.h |    6 ++++++
+>  include/linux/mmc/mmc.h  |    8 ++++++++
+>  6 files changed, 86 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index 61d7730..db368b2 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -1212,11 +1212,45 @@ static void mmc_power_up(struct mmc_host *host)
+>  
+>  void mmc_power_off(struct mmc_host *host)
+>  {
+> +	struct mmc_card *card;
+
+struct mmc_card *card = host->card;
+
+> +	unsigned int notify_type;
+> +	unsigned int timeout;
+> +	int err;
+> +
+> +	BUG_ON(!host);
+
+Not necessary.
+
+> +
+>  	mmc_host_clk_hold(host);
+>  
+> +	card = host->card;
+>  	host->ios.clock = 0;
+>  	host->ios.vdd = 0;
+>  
+> +	if (card != NULL && mmc_card_mmc(card) &&
+
+!= NULL is unnecessary.
+
+> +	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
+
+Extra set of parens unnecessary.
+
+> +
+> +		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
+> +			notify_type = EXT_CSD_POWER_OFF_SHORT;
+> +			timeout = card->ext_csd.generic_cmd6_time;
+> +			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
+> +		} else {
+> +			notify_type = EXT_CSD_POWER_OFF_LONG;
+> +			timeout = card->ext_csd.power_off_longtime;
+> +			card->poweroff_notify_state = MMC_POWEROFF_LONG;
+> +		}
+> +
+> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> +				 EXT_CSD_POWER_OFF_NOTIFICATION,
+> +				 notify_type, timeout);
+> +
+> +		if (err && err != -EBADMSG)
+> +			pr_err("Device failed to respond within %d poweroff "
+> +			       "time. Forcefully powering down the device\n",
+> +			       timeout);
+> +
+> +		/* Set the card state to no notification after the poweroff */
+> +		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
+> +	}
+> +
+>  	/*
+>  	 * Reset ocr mask to be the highest possible voltage supported for
+>  	 * this mmc host. This value will be used at next power up.
+> @@ -2208,6 +2242,7 @@ int mmc_pm_notify(struct notifier_block *notify_block,
+>  
+>  		spin_lock_irqsave(&host->lock, flags);
+>  		host->rescan_disable = 1;
+> +		host->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
+>  		spin_unlock_irqrestore(&host->lock, flags);
+>  		cancel_delayed_work_sync(&host->detect);
+>  
+> @@ -2231,6 +2266,7 @@ int mmc_pm_notify(struct notifier_block *notify_block,
+>  
+>  		spin_lock_irqsave(&host->lock, flags);
+>  		host->rescan_disable = 0;
+> +		host->power_notify_type = MMC_HOST_PW_NOTIFY_LONG;
+>  		spin_unlock_irqrestore(&host->lock, flags);
+>  		mmc_detect_change(host, 0);
+>  
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 4e869d3..f8ea938 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -458,10 +458,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+>  	else
+>  		card->erased_byte = 0x0;
+>  
+> -	if (card->ext_csd.rev >= 6)
+> +	if (card->ext_csd.rev >= 6) {
+>  		card->ext_csd.generic_cmd6_time = 10 *
+>  			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+> -	else
+> +		card->ext_csd.power_off_longtime = 10 *
+> +			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
+> +	} else
+>  		card->ext_csd.generic_cmd6_time = 0;
+>  
+>  out:
+> @@ -846,6 +848,23 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>  	}
+>  
+>  	/*
+> +	 * If the host supports the power_off_notify capability then
+> +	 * set the notification byte in the ext_csd register of device
+> +	 */
+> +	if ((host->caps2 & MMC_CAP2_POWEROFF_NOTIFY) &&
+> +	    (card->poweroff_notify_state == MMC_NO_POWER_NOTIFICATION)) {
+> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> +				 EXT_CSD_POWER_OFF_NOTIFICATION,
+> +				 EXT_CSD_POWER_ON,
+> +				 card->ext_csd.generic_cmd6_time);
+> +		if (err && err != -EBADMSG)
+> +			goto free_card;
+> +	}
+> +
+> +	if (!err)
+> +		card->poweroff_notify_state = MMC_POWERED_ON;
+> +
+> +	/*
+>  	 * Activate high speed (if supported)
+>  	 */
+>  	if ((card->ext_csd.hs_max_dtr != 0) &&
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 2cc3ffa..91fdaed 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2739,6 +2739,15 @@ int sdhci_add_host(struct sdhci_host *host)
+>  	if (caps[1] & SDHCI_DRIVER_TYPE_D)
+>  		mmc->caps |= MMC_CAP_DRIVER_TYPE_D;
+>  
+> +	/*
+> +	 * If Notify capability is enabled by the host, set notify to
+> +	 * short power off notify timeout value.
+> +	 */
+> +	if (mmc->caps2 & MMC_CAP2_POWEROFF_NOTIFY)
+> +		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
+> +	else
+> +		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_NONE;
+> +
+>  	/* Initial value for re-tuning timer count */
+>  	host->tuning_count = (caps[1] & SDHCI_RETUNING_TIMER_COUNT_MASK) >>
+>  			      SDHCI_RETUNING_TIMER_COUNT_SHIFT;
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index 30d493c..fce88b3 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -54,6 +54,7 @@ struct mmc_ext_csd {
+>  	unsigned int		part_time;		/* Units: ms */
+>  	unsigned int		sa_timeout;		/* Units: 100ns */
+>  	unsigned int		generic_cmd6_time;	/* Units: 10ms */
+> +	unsigned int            power_off_longtime;     /* Units: ms */
+>  	unsigned int		hs_max_dtr;
+>  	unsigned int		sectors;
+>  	unsigned int		card_type;
+> @@ -209,6 +210,11 @@ struct mmc_card {
+>  #define MMC_QUIRK_BLK_NO_CMD23	(1<<7)		/* Avoid CMD23 for regular multiblock */
+>  #define MMC_QUIRK_BROKEN_BYTE_MODE_512 (1<<8)	/* Avoid sending 512 bytes in */
+>  						/* byte mode */
+> +	unsigned int    poweroff_notify_state;	/* eMMC4.5 notify feature */
+> +#define MMC_NO_POWER_NOTIFICATION	0
+> +#define MMC_POWERED_ON			1
+> +#define MMC_POWEROFF_SHORT		2
+> +#define MMC_POWEROFF_LONG		3
+>  
+>  	unsigned int		erase_size;	/* erase size in sectors */
+>   	unsigned int		erase_shift;	/* if erase unit is power 2 */
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index aed5bc7..65c47fc 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -239,8 +239,14 @@ struct mmc_host {
+>  	unsigned int		caps2;		/* More host capabilities */
+>  
+>  #define MMC_CAP2_BOOTPART_NOACC	(1 << 0)	/* Boot partition no access */
+> +#define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control. */
+> +#define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff supported */
+>  
+>  	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+> +	unsigned int        power_notify_type;
+
+You can align "power_notify_type" alongside "pm_caps" here.
+
+Thanks,
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
