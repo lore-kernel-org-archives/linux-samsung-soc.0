@@ -1,16 +1,17 @@
 From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH 3/3] ARM: Exynos4: Add support for dt irq specifier to
- linux virq conversion
-Date: Wed, 12 Oct 2011 18:54:12 -0600
-Message-ID: <20111013005412.GI14042@ponder.secretlab.ca>
+Subject: Re: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
+ irq space
+Date: Wed, 12 Oct 2011 18:41:02 -0600
+Message-ID: <20111013004102.GH14042@ponder.secretlab.ca>
 References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org>
- <1318234289-22041-4-git-send-email-thomas.abraham@linaro.org>
+ <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
+ <4E95BC01.8090805@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1318234289-22041-4-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <4E95BC01.8090805-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
@@ -20,185 +21,112 @@ List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
 Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Mon, Oct 10, 2011 at 01:41:29PM +0530, Thomas Abraham wrote:
-> Add support for conversion of device tree interrupt specifier to linux
-> virq domain for GIC and Interrupt combiner controllers.
+On Wed, Oct 12, 2011 at 11:10:41AM -0500, Rob Herring wrote:
+> On 10/10/2011 03:11 AM, Thomas Abraham wrote:
+> > All of Samsung's s5p platforms have timer irqs statically mapped from linux
+> > irq numbers 11 to 15. These timer irqs are moved to end of the statically
+> > mapped linux irq space and the hardware irqs, which were statically mapped
+> > starting from 32 is moved to start from 0. The NR_IRQS macro is consolidated
+> > for all the s5p platforms in this process.
+> > 
+> > Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > ---
+> >  arch/arm/mach-exynos4/include/mach/entry-macro.S |    1 -
+> >  arch/arm/mach-exynos4/include/mach/irqs.h        |    3 +--
+> >  arch/arm/mach-s5p64x0/include/mach/irqs.h        |    4 +---
+> >  arch/arm/mach-s5pc100/include/mach/irqs.h        |    3 +--
+> >  arch/arm/mach-s5pv210/include/mach/irqs.h        |    3 +--
+> >  arch/arm/plat-samsung/include/plat/irqs.h        |    7 +++++--
+> >  6 files changed, 9 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+> > index 4c9adbd..5c4fbcc 100644
+> > --- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
+> > +++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+> > @@ -72,7 +72,6 @@
+> >  		cmpcc	\irqnr, \irqnr
+> >  		cmpne	\irqnr, \tmp
+> >  		cmpcs	\irqnr, \irqnr
+> > -		addne	\irqnr, \irqnr, #32
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
->  .../devicetree/bindings/irq/samsung-combiner.txt   |   24 ++++++++++
->  arch/arm/mach-exynos4/cpu.c                        |   20 ++++++++-
->  arch/arm/mach-exynos4/irq-combiner.c               |   45 ++++++++++++++++++++
->  3 files changed, 88 insertions(+), 1 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/irq/samsung-combiner.txt
 > 
-> diff --git a/Documentation/devicetree/bindings/irq/samsung-combiner.txt b/Documentation/devicetree/bindings/irq/samsung-combiner.txt
-> new file mode 100644
-> index 0000000..b7d5c30
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/irq/samsung-combiner.txt
-> @@ -0,0 +1,24 @@
-> +* Exynos4 Interrupt Combiner Controller
-> +
-> +Samsung's Exynos4 architecture includes a interrupt combiner which
-> +can combine interrupt sources as a group and provide a single
-> +interrupt request for the group. The interrupt request from each
-> +group are connected to a parent interrupt controller, which is GIC
-> +in case of Exynos4.
-> +
-> +Required properties:
-> +- compatible: should be "samsung,exynos4-combiner".
-> +- interrupt-cells: should be <2>. The meaning of the cells are
-> +    * First Cell: Combiner Group Number.
-> +    * Second Cell: Interrupt within the group.
-> +- reg: Base address and size of interrupt combiner registers.
-> +- interrupt-controller: Identifies the node as an interrupt controller.
-> +
-> +Example:
-> +
-> +	combiner: interrupt-controller@10440000 {
-> +		compatible = "samsung,exynos4-combiner";
-> +		#interrupt-cells = <2>;
-> +		interrupt-controller;
-> +		reg = <0x10440000 0x200>;
-> +	};
-> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
-> index 358624d..776e8d4 100644
-> --- a/arch/arm/mach-exynos4/cpu.c
-> +++ b/arch/arm/mach-exynos4/cpu.c
-> @@ -10,6 +10,8 @@
->  
->  #include <linux/sched.h>
->  #include <linux/sysdev.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
->  
->  #include <asm/mach/map.h>
->  #include <asm/mach/irq.h>
-> @@ -38,6 +40,8 @@ unsigned int gic_bank_offset __read_mostly;
->  extern int combiner_init(unsigned int combiner_nr, void __iomem *base,
->  			 unsigned int irq_start);
->  extern void combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq);
-> +extern void combiner_init_dt(struct device_node *node,
-> +				struct device_node *parent);
->  
->  /* Initial IO mappings */
->  static struct map_desc exynos4_iodesc[] __initdata = {
-> @@ -229,13 +233,27 @@ static void exynos4_gic_irq_fix_base(struct irq_data *d)
->  			    (gic_bank_offset * smp_processor_id());
->  }
->  
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id exynos4_dt_irq_match[] = {
-> +	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init, },
-> +	{ .compatible = "samsung,exynos4-combiner", .data = combiner_init_dt, },
-> +	{},
-> +};
-> +#endif
-> +
->  void __init exynos4_init_irq(void)
->  {
->  	int irq;
->  
->  	gic_bank_offset = soc_is_exynos4412() ? 0x4000 : 0x8000;
->  
-> -	gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
-> +#ifdef CONFIG_OF
-> +	if (of_have_populated_dt())
-> +		of_irq_init(exynos4_dt_irq_match);
-> +	else
-> +#endif
+> With this change, can't you now use the common entry-macro-gic.S?
+> 
+> 
+> >  		.endm
+> >  
+> > diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
+> > index dfd4b7e..43087c3 100644
+> > --- a/arch/arm/mach-exynos4/include/mach/irqs.h
+> > +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+> > @@ -163,7 +163,6 @@
+> >  #define IRQ_GPIO2_NR_GROUPS	9
+> >  #define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
+> >  
+> > -/* Set the default NR_IRQS */
+> > -#define NR_IRQS			(IRQ_GPIO_END + 64)
+> > +#define IRQ_TIMER_BASE		(IRQ_GPIO_END + 64)
+> >  
+> >  #endif /* __ASM_ARCH_IRQS_H */
+> > diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> > index 53982db..bea73cc 100644
+> > --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> > +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+> > @@ -141,8 +141,6 @@
+> >  
+> >  #define IRQ_EINT_GROUP(grp, x)	(IRQ_EINT_GROUP##grp##_BASE + (x))
+> >  
+> > -/* Set the default NR_IRQS */
+> > -
+> > -#define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+> > +#define IRQ_TIMER_BASE		(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+> >  
+> >  #endif /* __ASM_ARCH_IRQS_H */
+> > diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
+> > index d2eb475..3a9d300 100644
+> > --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
+> > +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+> > @@ -104,8 +104,7 @@
+> >  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
+> >  #define S5P_GPIOINT_GROUP_MAXNR	21
+> >  
+> > -/* Set the default NR_IRQS */
+> > -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+> > +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+> >  
+> >  /* Compatibility */
+> >  #define IRQ_LCD_FIFO		IRQ_LCD0
+> > diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> > index 5e0de3a..df3173a 100644
+> > --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+> > +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+> > @@ -125,8 +125,7 @@
+> >  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
+> >  #define S5P_GPIOINT_GROUP_MAXNR	22
+> >  
+> > -/* Set the default NR_IRQS */
+> > -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+> > +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
+> >  
+> >  /* Compatibility */
+> >  #define IRQ_LCD_FIFO		IRQ_LCD0
+> > diff --git a/arch/arm/plat-samsung/include/plat/irqs.h b/arch/arm/plat-samsung/include/plat/irqs.h
+> > index 08d1a7e..b8918b3 100644
+> > --- a/arch/arm/plat-samsung/include/plat/irqs.h
+> > +++ b/arch/arm/plat-samsung/include/plat/irqs.h
+> > @@ -22,7 +22,7 @@
+> >   * mulitple of 32 to allow the common code to work
+> >   */
+> >  
+> > -#define S5P_IRQ_OFFSET		(32)
+> > +#define S5P_IRQ_OFFSET		(0)
+> 
+> Just remove this.
 
-With the proper empty implementations of of_have_populated_dt() and
-of_irq_init(), the #ifdef block here should probably be removed.
-
-> +		gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
-> +
->  	gic_arch_extn.irq_eoi = exynos4_gic_irq_fix_base;
->  	gic_arch_extn.irq_unmask = exynos4_gic_irq_fix_base;
->  	gic_arch_extn.irq_mask = exynos4_gic_irq_fix_base;
-> diff --git a/arch/arm/mach-exynos4/irq-combiner.c b/arch/arm/mach-exynos4/irq-combiner.c
-> index 5a2758a..198bd0d 100644
-> --- a/arch/arm/mach-exynos4/irq-combiner.c
-> +++ b/arch/arm/mach-exynos4/irq-combiner.c
-> @@ -12,7 +12,12 @@
->   * published by the Free Software Foundation.
->  */
->  
-> +#include <linux/errno.h>
->  #include <linux/io.h>
-> +#include <linux/of.h>
-> +#include <linux/of_irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/slab.h>
->  
->  #include <asm/mach/irq.h>
->  
-> @@ -122,3 +127,43 @@ void __init combiner_init(unsigned int combiner_nr, void __iomem *base,
->  		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
->  	}
->  }
-> +
-> +#ifdef CONFIG_OF
-> +/* Translate dt irq specifier to linux virq for interrupt combiner controller */
-> +static int exynos4_irq_domain_combiner_dt_translate(struct irq_domain *d,
-> +			struct device_node *controller,
-> +			const u32 *intspec, unsigned int intsize,
-> +			unsigned long *out_hwirq, unsigned int *out_type)
-> +{
-> +	if (d->of_node != controller)
-> +		return -EINVAL;
-> +	if (intsize < 2)
-> +		return -EINVAL;
-> +
-> +	*out_hwirq = COMBINER_IRQ(intspec[0], intspec[1]);
-> +	*out_type = IRQ_TYPE_NONE;
-> +	return 0;
-> +}
-> +
-> +static struct irq_domain_ops exynos4_irq_domain_combiner_ops = {
-> +	.dt_translate = exynos4_irq_domain_combiner_dt_translate,
-> +};
-> +
-> +void __init combiner_init_dt(struct device_node *node,
-> +					struct device_node *parent)
-> +{
-> +	struct irq_domain *domain;
-> +
-> +	if (WARN(!node, "combiner_init_dt: invalid node in parameter\n"))
-> +		return;
-> +
-> +	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
-> +	if (domain) {
-> +		domain->of_node = node;
-> +		domain->ops = &exynos4_irq_domain_combiner_ops;
-> +		irq_domain_add(domain);
-> +	} else {
-> +		WARN_ON(1);
-> +	}
-
-I would normally expect this order for error handling :
-
-	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
-	if (!domain) {
-		WARN_ON(1);
-		return;
-	}
-
-	domain->of_node = node;
-	domain->ops = &exynos4_irq_domain_combiner_ops;
-	irq_domain_add(domain);
-
-But having said that, I don't think this is the right approach.
-combiner_init_dt I would expect to call combiner_init(), and the
-irq_domain should become part of the combiner_chip_data structure so
-that it can be used for mapping back and forth from linux and hqirq
-numbers.  (irq_data->hwirq and the mapping function).  Rolling the
-irq_domain into the irq controller private data structure is what was
-done for the GIC too.
+One comment on this; Make sure irqs mapping does *not* start at 0. 0 is not supposed to be used.
 
 g.
