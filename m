@@ -1,161 +1,204 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] gpio: exynos4: Add device tree support
-Date: Wed, 12 Oct 2011 19:01:01 -0600
-Message-ID: <20111013010101.GK14042@ponder.secretlab.ca>
-References: <1318320974-9879-1-git-send-email-thomas.abraham@linaro.org>
- <4E945C90.1050601@gmail.com>
- <CAJuYYwRwBxkAo2fMfVV9wtQ40XeROAnc-cGJK+cssjuh9px=qQ@mail.gmail.com>
- <4E946109.2000305@gmail.com>
- <CAJuYYwQWUjVf9Z5Rdw4fTK70=B1aw-5x_wjYm_fq+zHyQAWJvg@mail.gmail.com>
- <4E95AE26.8080702@gmail.com>
- <CAJuYYwRsM_aGkeG9v97jdsJgSQeokViuLGdF5TvqEkNZCAgFVA@mail.gmail.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 3/3] ARM: Exynos4: Add support for dt irq specifier to
+ linux virq conversion
+Date: Wed, 12 Oct 2011 18:54:12 -0600
+Message-ID: <20111013005412.GI14042@ponder.secretlab.ca>
+References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org>
+ <1318234289-22041-4-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:61126 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752412Ab1JMCZc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Oct 2011 22:25:32 -0400
-Received: by ggnv2 with SMTP id v2so1322045ggn.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Oct 2011 19:25:31 -0700 (PDT)
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAJuYYwRsM_aGkeG9v97jdsJgSQeokViuLGdF5TvqEkNZCAgFVA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1318234289-22041-4-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Rob Herring <robherring2@gmail.com>, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On Wed, Oct 12, 2011 at 09:45:25PM +0530, Thomas Abraham wrote:
-> On 12 October 2011 20:41, Rob Herring <robherring2@gmail.com> wrote:
-> > On 10/11/2011 11:06 AM, Thomas Abraham wrote:
-> >> On 11 October 2011 21:00, Rob Herring <robherring2@gmail.com> wrot=
-e:
-> >>> On 10/11/2011 10:19 AM, Thomas Abraham wrote:
-> >>>> Hi Rob,
-> >>>>
-> >>>> On 11 October 2011 20:41, Rob Herring <robherring2@gmail.com> wr=
-ote:
-> >>>>> Thomas,
-> >>>>>
-> >>>>> On 10/11/2011 03:16 AM, Thomas Abraham wrote:
-> >>>>>> As gpio chips get registered, a device tree node which represe=
-nts the
-> >>>>>> gpio chip is searched and attached to it. A translate function=
- is also
-> >>>>>> provided to convert the gpio specifier into actual platform se=
-ttings
-> >>>>>> for pin function selection, pull up/down and driver strength s=
-ettings.
-> >>>>>>
-> >>>>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> >>>>>> ---
-> >>>>>> This patch is based on the latest consolidated Samsung GPIO dr=
-iver available
-> >>>>>> in the following tree:
-> >>>>>> =A0 https://github.com/kgene/linux-samsung.git =A0branch: for-=
-next
-> >>>>>>
-> >>>>>> =A0.../devicetree/bindings/gpio/gpio-samsung.txt =A0 =A0 =A0| =
-=A0 30 +++++++++++
-> >>>>>> =A0drivers/gpio/gpio-samsung.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0| =A0 53 ++++++++++++++++++++
-> >>>>>> =A02 files changed, 83 insertions(+), 0 deletions(-)
-> >>>>>> =A0create mode 100644 Documentation/devicetree/bindings/gpio/g=
-pio-samsung.txt
-> >>>>>>
-> >>>>>> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsu=
-ng.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-> >>>>>> new file mode 100644
-> >>>>>> index 0000000..883faeb
-> >>>>>> --- /dev/null
-> >>>>>> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
-> >>>>>> @@ -0,0 +1,30 @@
-> >>>>>> +Samsung Exynos4 GPIO Controller
-> >>>>>> +
-> >>>>>> +Required properties:
-> >>>>>> +- compatible: Format of compatible property value should be
-> >>>>>> + =A0"samsung,exynos4-gpio-<controller_name>". Example: For GP=
-A0 controller, the
-> >>>>>> + =A0compatible property value should be "samsung,exynos4-gpio=
--gpa0".
-> >>>>>
-> >>>>> Isn't gpa0 an instance of the h/w, not a version?
-> >>>>
-> >>>> GPA0 is a instance of the gpio controller. There are several suc=
-h
-> >>>> instances and there could be differences in those instances such=
- as
-> >>>> the number of GPIO lines managed by that gpio controller instanc=
-e.
-> >>>>
-> >>>
-> >>> That doesn't seem like a reason to have different compatible stri=
-ngs.
-> >>> Does that affect the programming model of the controller? Unused =
-lines
-> >>> whether at the board level or SOC level shouldn't really matter.
-> >>
-> >>
-> >> No, that does not affect the programming of the controller. The re=
-ason
-> >> for the instance name extension in compatible string is to match t=
-he
-> >> gpio_chip with a gpio controller node. When matched, the of_node
-> >> pointer of the gpio_chip is set to point to that controller node.
-> >>
-> >> This might not be the best possible implementation but the device =
-tree
-> >> support code in this patch is dictated by the structure of the
-> >> existing gpio driver code. As you suggested previously, I will loo=
-k at
-> >> reworking the gpio driver a little later but for now, there was a =
-need
-> >> for working gpio dt solution to make progress on dt support for ot=
-her
-> >> controllers.
-> >
-> > Linux should provide clues about what's needed in a binding, but th=
-e
-> > binding should not be defined based on current Linux code. Doing th=
-e
-> > binding one way and changing it later is not a good plan.
->=20
-> Ok. When starting on this, two compatible values where used for the
-> gpio controllers, one was "samsung,exynos4-gpio" and another was
-> "samsung,exynos4-gpio-<ctrl_name>". And when the gpio dt support woul=
-d
-> mature, the second compatible value could be dropped. Non-linux
-> platforms could always use the generic "samsung,exynos4-gpio"
-> compatible value to match. I moved to using only
-> "samsung,exynos4-gpio-<ctrl_name>" just before sending this patch
-> because I was not sure of the right approach.
->=20
-> >
-> > I think you need to convert all users of gpio over as well so you c=
-an
-> > move to dynamic gpio_chip creation and gpio numbering. Or maybe you=
- can
-> > match based on base address? This is going to be a common problem a=
-s
-> > gpio is converted over to DT. Perhaps Grant or others have suggesti=
-ons
-> > on the approach to use.
->=20
-> Yes, I agree with you about the dynamic gpio_chip creation and gpio
-> numbering. Probably, I should have focussed more on this before movin=
-g
-> to dt support for other controllers.
->=20
-> But matching based on base address is still an option if that is
-> better than matching with compatible values as defined currently. The
-> 'struct samsung_gpio_chip' which encapsulates 'struct gpio_chip' has
-> information about the base address of the gpio controller. The match
-> of gpio device node with 'struct gpio_chip' can be quickly moved over
-> to base address matching. Would this be better than the current
-> approach?
+On Mon, Oct 10, 2011 at 01:41:29PM +0530, Thomas Abraham wrote:
+> Add support for conversion of device tree interrupt specifier to linux
+> virq domain for GIC and Interrupt combiner controllers.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+>  .../devicetree/bindings/irq/samsung-combiner.txt   |   24 ++++++++++
+>  arch/arm/mach-exynos4/cpu.c                        |   20 ++++++++-
+>  arch/arm/mach-exynos4/irq-combiner.c               |   45 ++++++++++++++++++++
+>  3 files changed, 88 insertions(+), 1 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/irq/samsung-combiner.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/irq/samsung-combiner.txt b/Documentation/devicetree/bindings/irq/samsung-combiner.txt
+> new file mode 100644
+> index 0000000..b7d5c30
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/irq/samsung-combiner.txt
+> @@ -0,0 +1,24 @@
+> +* Exynos4 Interrupt Combiner Controller
+> +
+> +Samsung's Exynos4 architecture includes a interrupt combiner which
+> +can combine interrupt sources as a group and provide a single
+> +interrupt request for the group. The interrupt request from each
+> +group are connected to a parent interrupt controller, which is GIC
+> +in case of Exynos4.
+> +
+> +Required properties:
+> +- compatible: should be "samsung,exynos4-combiner".
+> +- interrupt-cells: should be <2>. The meaning of the cells are
+> +    * First Cell: Combiner Group Number.
+> +    * Second Cell: Interrupt within the group.
+> +- reg: Base address and size of interrupt combiner registers.
+> +- interrupt-controller: Identifies the node as an interrupt controller.
+> +
+> +Example:
+> +
+> +	combiner: interrupt-controller@10440000 {
+> +		compatible = "samsung,exynos4-combiner";
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+> +		reg = <0x10440000 0x200>;
+> +	};
+> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+> index 358624d..776e8d4 100644
+> --- a/arch/arm/mach-exynos4/cpu.c
+> +++ b/arch/arm/mach-exynos4/cpu.c
+> @@ -10,6 +10,8 @@
+>  
+>  #include <linux/sched.h>
+>  #include <linux/sysdev.h>
+> +#include <linux/of.h>
+> +#include <linux/of_irq.h>
+>  
+>  #include <asm/mach/map.h>
+>  #include <asm/mach/irq.h>
+> @@ -38,6 +40,8 @@ unsigned int gic_bank_offset __read_mostly;
+>  extern int combiner_init(unsigned int combiner_nr, void __iomem *base,
+>  			 unsigned int irq_start);
+>  extern void combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq);
+> +extern void combiner_init_dt(struct device_node *node,
+> +				struct device_node *parent);
+>  
+>  /* Initial IO mappings */
+>  static struct map_desc exynos4_iodesc[] __initdata = {
+> @@ -229,13 +233,27 @@ static void exynos4_gic_irq_fix_base(struct irq_data *d)
+>  			    (gic_bank_offset * smp_processor_id());
+>  }
+>  
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id exynos4_dt_irq_match[] = {
+> +	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init, },
+> +	{ .compatible = "samsung,exynos4-combiner", .data = combiner_init_dt, },
+> +	{},
+> +};
+> +#endif
+> +
+>  void __init exynos4_init_irq(void)
+>  {
+>  	int irq;
+>  
+>  	gic_bank_offset = soc_is_exynos4412() ? 0x4000 : 0x8000;
+>  
+> -	gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+> +#ifdef CONFIG_OF
+> +	if (of_have_populated_dt())
+> +		of_irq_init(exynos4_dt_irq_match);
+> +	else
+> +#endif
 
-That's what I would do.
+With the proper empty implementations of of_have_populated_dt() and
+of_irq_init(), the #ifdef block here should probably be removed.
+
+> +		gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+> +
+>  	gic_arch_extn.irq_eoi = exynos4_gic_irq_fix_base;
+>  	gic_arch_extn.irq_unmask = exynos4_gic_irq_fix_base;
+>  	gic_arch_extn.irq_mask = exynos4_gic_irq_fix_base;
+> diff --git a/arch/arm/mach-exynos4/irq-combiner.c b/arch/arm/mach-exynos4/irq-combiner.c
+> index 5a2758a..198bd0d 100644
+> --- a/arch/arm/mach-exynos4/irq-combiner.c
+> +++ b/arch/arm/mach-exynos4/irq-combiner.c
+> @@ -12,7 +12,12 @@
+>   * published by the Free Software Foundation.
+>  */
+>  
+> +#include <linux/errno.h>
+>  #include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/slab.h>
+>  
+>  #include <asm/mach/irq.h>
+>  
+> @@ -122,3 +127,43 @@ void __init combiner_init(unsigned int combiner_nr, void __iomem *base,
+>  		set_irq_flags(i, IRQF_VALID | IRQF_PROBE);
+>  	}
+>  }
+> +
+> +#ifdef CONFIG_OF
+> +/* Translate dt irq specifier to linux virq for interrupt combiner controller */
+> +static int exynos4_irq_domain_combiner_dt_translate(struct irq_domain *d,
+> +			struct device_node *controller,
+> +			const u32 *intspec, unsigned int intsize,
+> +			unsigned long *out_hwirq, unsigned int *out_type)
+> +{
+> +	if (d->of_node != controller)
+> +		return -EINVAL;
+> +	if (intsize < 2)
+> +		return -EINVAL;
+> +
+> +	*out_hwirq = COMBINER_IRQ(intspec[0], intspec[1]);
+> +	*out_type = IRQ_TYPE_NONE;
+> +	return 0;
+> +}
+> +
+> +static struct irq_domain_ops exynos4_irq_domain_combiner_ops = {
+> +	.dt_translate = exynos4_irq_domain_combiner_dt_translate,
+> +};
+> +
+> +void __init combiner_init_dt(struct device_node *node,
+> +					struct device_node *parent)
+> +{
+> +	struct irq_domain *domain;
+> +
+> +	if (WARN(!node, "combiner_init_dt: invalid node in parameter\n"))
+> +		return;
+> +
+> +	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+> +	if (domain) {
+> +		domain->of_node = node;
+> +		domain->ops = &exynos4_irq_domain_combiner_ops;
+> +		irq_domain_add(domain);
+> +	} else {
+> +		WARN_ON(1);
+> +	}
+
+I would normally expect this order for error handling :
+
+	domain = kzalloc(sizeof(*domain), GFP_KERNEL);
+	if (!domain) {
+		WARN_ON(1);
+		return;
+	}
+
+	domain->of_node = node;
+	domain->ops = &exynos4_irq_domain_combiner_ops;
+	irq_domain_add(domain);
+
+But having said that, I don't think this is the right approach.
+combiner_init_dt I would expect to call combiner_init(), and the
+irq_domain should become part of the combiner_chip_data structure so
+that it can be used for mapping back and forth from linux and hqirq
+numbers.  (irq_data->hwirq and the mapping function).  Rolling the
+irq_domain into the irq controller private data structure is what was
+done for the GIC too.
 
 g.
