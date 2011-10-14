@@ -1,55 +1,79 @@
-From: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] ARM: Samsung: Add Exynos4 device tree enabled board
- file
-Date: Fri, 14 Oct 2011 07:22:15 -0500
-Message-ID: <4E982977.7000305@gmail.com>
-References: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
- <1318342396-26178-2-git-send-email-thomas.abraham@linaro.org>
- <20111013175110.GJ18574@ponder.secretlab.ca>
- <000201cc8a64$6775ae30$36610a90$%kim@samsung.com>
+From: "Roedel, Joerg" <Joerg.Roedel@amd.com>
+Subject: Re: [PATCH v5 2/2] iommu/exynos: Add iommu driver for Exynos
+ Platforms
+Date: Fri, 14 Oct 2011 16:17:14 +0200
+Message-ID: <20111014141714.GD2198@amd.com>
+References: <000501cc897f$fa0204f0$ee060ed0$%cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <000201cc8a64$6775ae30$36610a90$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from db3ehsobe001.messaging.microsoft.com ([213.199.154.139]:33111
+	"EHLO DB3EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751113Ab1JNORc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Oct 2011 10:17:32 -0400
+Content-Disposition: inline
+In-Reply-To: <000501cc897f$fa0204f0$ee060ed0$%cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: 'Linux ARM Kernel' <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ohad Ben-Cohen' <ohad@wizery.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, "younglak1004.kim@samsung.com" <younglak1004.kim@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-On 10/14/2011 06:28 AM, Kukjin Kim wrote:
+On Thu, Oct 13, 2011 at 04:13:23AM -0400, KyongHo Cho wrote:
+> +struct exynos_iommu_domain {
+> +       struct device *dev;
+> +       unsigned long *pgtable;
+> +       spinlock_t lock;
+> +       spinlock_t pgtablelock;
+> +};
+
+Can you please add comments to document what these spinlocks protect?
+
+> +static int exynos_iommu_attach_device(struct iommu_domain *domain,
+> +                                  struct device *dev)
+> +{
+> +       struct exynos_iommu_domain *priv = domain->priv;
+> +       int ret;
+> +
+> +       spin_lock(&priv->lock);
+> +
+> +       priv->dev = dev;
+> +
+> +       spin_unlock(&priv->lock);
+> +
+> +       ret = exynos_iommu_enable(domain);
+> +
+> +       return ret;
+> +}
+> +
+> +static void exynos_iommu_detach_device(struct iommu_domain *domain,
+> +                                   struct device *dev)
+> +{
+> +       struct exynos_iommu_domain *priv = domain->priv;
+> +
+> +       spin_lock(&priv->lock);
+> +
+> +       if (priv->dev == dev) {
+> +               priv->dev = NULL;
+> +
+> +               spin_unlock(&priv->lock);
+> +
+> +               exynos_iommu_disable(domain);
+> +       } else {
+> +               spin_unlock(&priv->lock);
+> +       }
+> +}
+
+That looks weird. As I read this code there is a 1-1 mapping between a
+device and a domain. This breaks semantics of the iommu-api where a
+domain can contain multiple devices.
 
 
->>> diff --git a/arch/arm/mach-exynos4/Kconfig
-> b/arch/arm/mach-exynos4/Kconfig
->>> index 0c5888a..39dc135 100644
->>> --- a/arch/arm/mach-exynos4/Kconfig
->>> +++ b/arch/arm/mach-exynos4/Kconfig
->>> @@ -304,6 +304,20 @@ config MACH_SMDK4412
->>>  	help
->>>  	  Machine support for Samsung SMDK4412
->>>
->>> +comment "Flattened Device Tree based board for Exynos4 based SoC"
->>> +
->>> +config MACH_EXYNOS4_DT
-> 
-> I'm not sure we can use 'MACH_EXYNOS4_DT' here because there are other
-> EXYNOS4 SoCs such as EXYNOS4212 and EXYNOS4412. So if this cannot support
-> other SoCs' boards, SMDK4212 and SMDK4412, we need to change the name.
-> 
-> And I wonder whether there is no problem with selecting this and other
-> boards.
+	Joerg
 
-I think this should be fine assuming most things are common. Generally,
-the differences can be handled by different DT's. The board compatible
-string can be used to handle differences.
+-- 
+AMD Operating System Research Center
 
-Rob
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo, Andrew Bowd
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
