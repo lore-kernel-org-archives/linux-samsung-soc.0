@@ -1,157 +1,173 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v5] mmc: core: Add default timeout value for CMD6.
-Date: Mon, 17 Oct 2011 10:16:58 +0900
-Message-ID: <4E9B820A.8040400@samsung.com>
-References: <1317811071-9111-1-git-send-email-tgih.jun@samsung.com>
- <000001cc8c5d$b9475a10$2bd60e30$%jun@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung cleanup-3 for v3.2
+Date: Mon, 17 Oct 2011 13:42:24 +0900
+Message-ID: <000401cc8c87$2ab684e0$80238ea0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:54376 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753284Ab1JQBRj (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48148 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751721Ab1JQEm1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 16 Oct 2011 21:17:39 -0400
-In-reply-to: <000001cc8c5d$b9475a10$2bd60e30$%jun@samsung.com>
+	Mon, 17 Oct 2011 00:42:27 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LT700CMQ10REMM0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Oct 2011 13:42:25 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LT7009L512O9T10@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 17 Oct 2011 13:42:24 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, jh80.chung@samsung.com
+To: arnd@arndb.de
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-Hi Mr.Jeon
+Hi Arnd,
 
-I known this patch is committed for mmc-next.
-Maybe you need to send only the patch for power-class.
+This is a 3rd cleanup request for v3.2 Samsung stuff which includes cleanup
+resources and platform devices into one plat-samsung directory. As I said
+during review in mailing list, this is needed to reduce plat- directories
+and help to keep easily platform devices.
 
-Thanks,
-Jaehoon Chung
+Please pull from:
+ git://github.com/kgene/linux-samsung.git next-samsung-cleanup-3
 
-On 10/17/2011 08:45 AM, Seungwon Jeon wrote:
+Since this moves a lot of files, I think you can pull this into your
+next/cleanup2 which will be merged late during upcoming merge window.
 
-> This mail is  a duplicate from our security machine.
-> V5 of related patch has already submitted.
-> Please ignore this resending.
-> I think that it was unfortunate.
-> 
-> Seungwon Jeon.
-> 
->> EXT_CSD[248] includes the default maximum timeout for CMD6.
->> This field is added at eMMC4.5 Spec. And it can be used for default
->> timeout except for some operations which don't define the timeout(i.e.
->> background operation, sanitize, flush cache) in eMMC4.5 Spec.
->>
->> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
->> ---
->>  drivers/mmc/core/mmc.c   |   18 +++++++++++++-----
->>  include/linux/mmc/card.h |    1 +
->>  include/linux/mmc/mmc.h  |    1 +
->>  3 files changed, 15 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> index c632b1f..c37b8d2 100644
->> --- a/drivers/mmc/core/mmc.c
->> +++ b/drivers/mmc/core/mmc.c
->> @@ -414,6 +414,12 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8
->> *ext_csd)
->>  	else
->>  		card->erased_byte = 0x0;
->>
->> +	if (card->ext_csd.rev >= 6)
->> +		card->ext_csd.generic_cmd6_time = 10 *
->> +			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
->> +	else
->> +		card->ext_csd.generic_cmd6_time = 0;
->> +
->>  out:
->>  	return err;
->>  }
->> @@ -607,7 +613,7 @@ static int mmc_select_powerclass(struct mmc_card *card,
->>  		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->>  				 EXT_CSD_POWER_CLASS,
->>  				 pwrclass_val,
->> -				 0);
->> +				 card->ext_csd.generic_cmd6_time);
->>  	}
->>
->>  	return err;
->> @@ -757,7 +763,8 @@ static int mmc_init_card(struct mmc_host *host, u32
->> ocr,
->>  	 */
->>  	if (card->ext_csd.enhanced_area_en) {
->>  		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->> -				 EXT_CSD_ERASE_GROUP_DEF, 1, 0);
->> +				 EXT_CSD_ERASE_GROUP_DEF, 1,
->> +				 card->ext_csd.generic_cmd6_time);
->>
->>  		if (err && err != -EBADMSG)
->>  			goto free_card;
->> @@ -800,7 +807,8 @@ static int mmc_init_card(struct mmc_host *host, u32
->> ocr,
->>  	if ((card->ext_csd.hs_max_dtr != 0) &&
->>  		(host->caps & MMC_CAP_MMC_HIGHSPEED)) {
->>  		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->> -				 EXT_CSD_HS_TIMING, 1, 0);
->> +				 EXT_CSD_HS_TIMING, 1,
->> +				 card->ext_csd.generic_cmd6_time);
->>  		if (err && err != -EBADMSG)
->>  			goto free_card;
->>
->> @@ -880,7 +888,7 @@ static int mmc_init_card(struct mmc_host *host, u32
->> ocr,
->>  			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->>  					 EXT_CSD_BUS_WIDTH,
->>  					 ext_csd_bits[idx][0],
->> -					 0);
->> +					 card->ext_csd.generic_cmd6_time);
->>  			if (!err) {
->>  				mmc_set_bus_width(card->host, bus_width);
->>
->> @@ -911,7 +919,7 @@ static int mmc_init_card(struct mmc_host *host, u32
->> ocr,
->>  			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
->>  					 EXT_CSD_BUS_WIDTH,
->>  					 ext_csd_bits[idx][1],
->> -					 0);
->> +					 card->ext_csd.generic_cmd6_time);
->>  		}
->>  		if (err) {
->>  			printk(KERN_WARNING "%s: switch to bus width %d ddr %d
->> "
->> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
->> index 5294ddf..d751ceb 100644
->> --- a/include/linux/mmc/card.h
->> +++ b/include/linux/mmc/card.h
->> @@ -53,6 +53,7 @@ struct mmc_ext_csd {
->>  	u8			rst_n_function;
->>  	unsigned int		part_time;		/* Units: ms */
->>  	unsigned int		sa_timeout;		/* Units: 100ns */
->> +	unsigned int		generic_cmd6_time;	/* Units: ms */
->>  	unsigned int		hs_max_dtr;
->>  	unsigned int		sectors;
->>  	unsigned int		card_type;
->> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
->> index 50af227..b26c9e4 100644
->> --- a/include/linux/mmc/mmc.h
->> +++ b/include/linux/mmc/mmc.h
->> @@ -304,6 +304,7 @@ struct _mmc_csd {
->>  #define EXT_CSD_PWR_CL_DDR_52_195	238	/* RO */
->>  #define EXT_CSD_PWR_CL_DDR_52_360	239	/* RO */
->>  #define EXT_CSD_POWER_OFF_LONG_TIME	247	/* RO */
->> +#define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
->>
->>  /*
->>   * EXT_CSD field definitions
->> --
->> 1.7.0.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 6b6844dd54e4196dd9818bc63b319f93c37a08be:
+
+  ARM: S5P64X0: Add Power Management support (2011-10-04 20:31:24 +0900)
+
+are available in the git repository at:
+ git://github.com/kgene/linux-samsung.git next-samsung-cleanup-3
+
+Kukjin Kim (5):
+      ARM: S3C24XX: To merge s3c24xx devs.c files to one devs.c
+      ARM: S3C64XX: To merge devs.c files to one devs.c
+      ARM: S5P: To merge devs.c files to one devs.c
+      ARM: SAMSUNG: Cleanup plat-samsung/devs.c and devs.h
+      ARM: SAMSUNG: Cleanup resources by using macro
+
+Sylwester Nawrocki (1):
+      ARM: SAMSUNG: Move fimc plat. device from board files to plat-samsung
+
+ arch/arm/mach-exynos4/include/mach/i2c-hdmiphy.h |   16 -
+ arch/arm/mach-exynos4/mach-universal_c210.c      |    5 -
+ arch/arm/mach-s3c2410/include/mach/fb.h          |   75 +--
+ arch/arm/mach-s3c2410/include/mach/irqs.h        |    4 +-
+ arch/arm/mach-s3c2410/include/mach/map.h         |    1 +
+ arch/arm/mach-s3c2410/mach-qt2410.c              |    1 +
+ arch/arm/mach-s3c2440/mach-rx1950.c              |    1 +
+ arch/arm/mach-s3c64xx/Makefile                   |    2 -
+ arch/arm/mach-s3c64xx/dev-onenand1.c             |   53 -
+ arch/arm/mach-s5pv210/include/mach/i2c-hdmiphy.h |   16 -
+ arch/arm/mach-s5pv210/mach-goni.c                |    5 -
+ arch/arm/plat-s3c24xx/Makefile                   |    2 +-
+ arch/arm/plat-s3c24xx/dev-uart.c                 |  100 ++
+ arch/arm/plat-s3c24xx/devs.c                     |  528 --------
+ arch/arm/plat-s5p/Makefile                       |   12 -
+ arch/arm/plat-s5p/dev-csis0.c                    |   34 -
+ arch/arm/plat-s5p/dev-csis1.c                    |   34 -
+ arch/arm/plat-s5p/dev-ehci.c                     |   57 -
+ arch/arm/plat-s5p/dev-fimc0.c                    |   43 -
+ arch/arm/plat-s5p/dev-fimc1.c                    |   43 -
+ arch/arm/plat-s5p/dev-fimc2.c                    |   43 -
+ arch/arm/plat-s5p/dev-fimc3.c                    |   43 -
+ arch/arm/plat-s5p/dev-fimd0.c                    |   67 -
+ arch/arm/plat-s5p/dev-i2c-hdmiphy.c              |   59 -
+ arch/arm/plat-s5p/dev-mfc.c                      |   50 -
+ arch/arm/plat-s5p/dev-onenand.c                  |   45 -
+ arch/arm/plat-s5p/dev-pmu.c                      |   36 -
+ arch/arm/plat-s5p/dev-tv.c                       |   98 --
+ arch/arm/plat-samsung/Makefile                   |   31 +-
+ arch/arm/plat-samsung/dev-adc.c                  |   46 -
+ arch/arm/plat-samsung/dev-asocdma.c              |   35 -
+ arch/arm/plat-samsung/dev-fb.c                   |   63 -
+ arch/arm/plat-samsung/dev-hsmmc.c                |   62 -
+ arch/arm/plat-samsung/dev-hsmmc1.c               |   62 -
+ arch/arm/plat-samsung/dev-hsmmc2.c               |   63 -
+ arch/arm/plat-samsung/dev-hsmmc3.c               |   66 -
+ arch/arm/plat-samsung/dev-hwmon.c                |   32 -
+ arch/arm/plat-samsung/dev-i2c0.c                 |   70 -
+ arch/arm/plat-samsung/dev-i2c1.c                 |   61 -
+ arch/arm/plat-samsung/dev-i2c2.c                 |   62 -
+ arch/arm/plat-samsung/dev-i2c3.c                 |   60 -
+ arch/arm/plat-samsung/dev-i2c4.c                 |   60 -
+ arch/arm/plat-samsung/dev-i2c5.c                 |   60 -
+ arch/arm/plat-samsung/dev-i2c6.c                 |   60 -
+ arch/arm/plat-samsung/dev-i2c7.c                 |   60 -
+ arch/arm/plat-samsung/dev-ide.c                  |   44 -
+ arch/arm/plat-samsung/dev-keypad.c               |   50 -
+ arch/arm/plat-samsung/dev-nand.c                 |  125 --
+ arch/arm/plat-samsung/dev-onenand.c              |   43 -
+ arch/arm/plat-samsung/dev-pwm.c                  |   53 -
+ arch/arm/plat-samsung/dev-rtc.c                  |   43 -
+ arch/arm/plat-samsung/dev-ts.c                   |   59 -
+ arch/arm/plat-samsung/dev-usb-hsotg.c            |   48 -
+ arch/arm/plat-samsung/dev-usb.c                  |   65 -
+ arch/arm/plat-samsung/dev-wdt.c                  |   40 -
+ arch/arm/plat-samsung/devs.c                     | 1463
+++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h        |  157 ++--
+ arch/arm/plat-samsung/include/plat/fb-s3c2410.h  |   72 ++
+ 58 files changed, 1716 insertions(+), 2972 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos4/include/mach/i2c-hdmiphy.h
+ delete mode 100644 arch/arm/mach-s3c64xx/dev-onenand1.c
+ delete mode 100644 arch/arm/mach-s5pv210/include/mach/i2c-hdmiphy.h
+ create mode 100644 arch/arm/plat-s3c24xx/dev-uart.c
+ delete mode 100644 arch/arm/plat-s3c24xx/devs.c
+ delete mode 100644 arch/arm/plat-s5p/dev-csis0.c
+ delete mode 100644 arch/arm/plat-s5p/dev-csis1.c
+ delete mode 100644 arch/arm/plat-s5p/dev-ehci.c
+ delete mode 100644 arch/arm/plat-s5p/dev-fimc0.c
+ delete mode 100644 arch/arm/plat-s5p/dev-fimc1.c
+ delete mode 100644 arch/arm/plat-s5p/dev-fimc2.c
+ delete mode 100644 arch/arm/plat-s5p/dev-fimc3.c
+ delete mode 100644 arch/arm/plat-s5p/dev-fimd0.c
+ delete mode 100644 arch/arm/plat-s5p/dev-i2c-hdmiphy.c
+ delete mode 100644 arch/arm/plat-s5p/dev-onenand.c
+ delete mode 100644 arch/arm/plat-s5p/dev-pmu.c
+ delete mode 100644 arch/arm/plat-s5p/dev-tv.c
+ delete mode 100644 arch/arm/plat-samsung/dev-adc.c
+ delete mode 100644 arch/arm/plat-samsung/dev-asocdma.c
+ delete mode 100644 arch/arm/plat-samsung/dev-fb.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc1.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc2.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hsmmc3.c
+ delete mode 100644 arch/arm/plat-samsung/dev-hwmon.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c0.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c1.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c2.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c3.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c4.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c5.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c6.c
+ delete mode 100644 arch/arm/plat-samsung/dev-i2c7.c
+ delete mode 100644 arch/arm/plat-samsung/dev-ide.c
+ delete mode 100644 arch/arm/plat-samsung/dev-keypad.c
+ delete mode 100644 arch/arm/plat-samsung/dev-nand.c
+ delete mode 100644 arch/arm/plat-samsung/dev-onenand.c
+ delete mode 100644 arch/arm/plat-samsung/dev-pwm.c
+ delete mode 100644 arch/arm/plat-samsung/dev-rtc.c
+ delete mode 100644 arch/arm/plat-samsung/dev-ts.c
+ delete mode 100644 arch/arm/plat-samsung/dev-usb-hsotg.c
+ delete mode 100644 arch/arm/plat-samsung/dev-usb.c
+ delete mode 100644 arch/arm/plat-samsung/dev-wdt.c
+ create mode 100644 arch/arm/plat-samsung/devs.c
+ create mode 100644 arch/arm/plat-samsung/include/plat/fb-s3c2410.h
