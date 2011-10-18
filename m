@@ -1,81 +1,34 @@
-From: Domenico Andreoli <cavokz@gmail.com>
-Subject: [PATCH] Fix s3c24xx build error if !CONFIG_PM
-Date: Tue, 18 Oct 2011 12:52:15 +0200
-Message-ID: <20111018105215.GA10230@glitch>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH V9] mmc: core: Add Power Off Notify Feature eMMC 4.5
+Date: Tue, 18 Oct 2011 08:53:44 -0400
+Message-ID: <m239eq5ulj.fsf@bob.laptop.org>
+References: <1318914301-30339-1-git-send-email-girish.shivananjappa@linaro.org>
+	<4E9D0B9F.1060303@samsung.com> <m2ehya6ecb.fsf@bob.laptop.org>
+	<CAGxe1ZHvRS9hek9-DSXZm1fkqPzUSVkWF5yEGXTC4K8usA31WQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:47805 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754132Ab1JRKwU (ORCPT
+Received: from void.printf.net ([89.145.121.20]:48444 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757711Ab1JRMxy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Oct 2011 06:52:20 -0400
-Received: by eye27 with SMTP id 27so412219eye.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Oct 2011 03:52:19 -0700 (PDT)
-Content-Disposition: inline
+	Tue, 18 Oct 2011 08:53:54 -0400
+In-Reply-To: <CAGxe1ZHvRS9hek9-DSXZm1fkqPzUSVkWF5yEGXTC4K8usA31WQ@mail.gmail.com>
+	(Girish K. S.'s message of "Tue, 18 Oct 2011 11:27:26 +0530")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>
 
-s3c2440.c fails to build if !CONFIG_PM because in such case
-s3c2410_pm_syscore_ops is not defined. Same error should happen also
-in s3c2410.c and s3c2442.c
+Hi,
 
-This patch fixes all of them.
+On Tue, Oct 18 2011, Girish K S wrote:
+>>  missing one thing.    unsigned int        power_notify_type; in include/linux/mmc/host.h
+> is not alligned to the above member, which was done in my latest patch
 
-Signed-off-by: Domenico Andreoli <cavokz@gmail.com>
+Fixed.  Thanks!
 
----
- arch/arm/mach-s3c2410/s3c2410.c |    2 ++
- arch/arm/mach-s3c2440/s3c2440.c |    2 ++
- arch/arm/mach-s3c2440/s3c2442.c |    2 ++
- 3 files changed, 6 insertions(+)
-
-Index: b/arch/arm/mach-s3c2410/s3c2410.c
-===================================================================
---- a/arch/arm/mach-s3c2410/s3c2410.c
-+++ b/arch/arm/mach-s3c2410/s3c2410.c
-@@ -170,8 +170,10 @@ int __init s3c2410_init(void)
- {
- 	printk("S3C2410: Initialising architecture\n");
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
-+#endif
- 
- 	return sysdev_register(&s3c2410_sysdev);
- }
-Index: b/arch/arm/mach-s3c2440/s3c2440.c
-===================================================================
---- a/arch/arm/mach-s3c2440/s3c2440.c
-+++ b/arch/arm/mach-s3c2440/s3c2440.c
-@@ -55,9 +55,11 @@ int __init s3c2440_init(void)
- 
- 	/* register suspend/resume handlers */
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
- 	register_syscore_ops(&s3c244x_pm_syscore_ops);
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
-+#endif
- 
- 	/* register our system device for everything else */
- 
-Index: b/arch/arm/mach-s3c2440/s3c2442.c
-===================================================================
---- a/arch/arm/mach-s3c2440/s3c2442.c
-+++ b/arch/arm/mach-s3c2440/s3c2442.c
-@@ -169,9 +169,11 @@ int __init s3c2442_init(void)
- {
- 	printk("S3C2442: Initialising architecture\n");
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
- 	register_syscore_ops(&s3c244x_pm_syscore_ops);
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
-+#endif
- 
- 	return sysdev_register(&s3c2442_sysdev);
- }
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
