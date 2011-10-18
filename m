@@ -1,169 +1,56 @@
-From: Changhwan Youn <chaos.youn@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
- irq	space
-Date: Tue, 18 Oct 2011 17:10:12 +0900
-Message-ID: <001001cc8d6d$5c48fa60$14daef20$%youn@samsung.com>
-References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org>
- <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH] ARM: Samsung: gpio-interrupts: fix offset calculation
+Date: Tue, 18 Oct 2011 12:16:22 +0200
+Message-ID: <1318932982-15745-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14062 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753243Ab1JRIKO (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:22880 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753973Ab1JRKQd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Oct 2011 04:10:14 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LT9009235CK7IM0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Oct 2011 17:10:13 +0900 (KST)
-Received: from DOCHAOSYOUN01 ([12.23.121.151])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LT9003V75D06OS1@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 18 Oct 2011 17:10:12 +0900 (KST)
-In-reply-to: <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Tue, 18 Oct 2011 06:16:33 -0400
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LT9004LAB7IUY30@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Oct 2011 11:16:30 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LT9006COB7HC2@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Oct 2011 11:16:30 +0100 (BST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
-Cc: grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Hi Thomas,
+Offsets of the irq controller registers were calculated correctly only
+for first GPIO bank. This patch fixes calculation of the register
+offsets for all GPIO banks.
 
-All UART_IRQ_RXD, TXD, ERR of Samsung's platforms are also statically
-mapped to linux irq numbers 16 to 31. These interrupts also need proper handling.
+Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/plat-s5p/irq-gpioint.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-Best regards,
-Changhwan Youn
-
-On 10/10/2011 03:11 AM, Thomas Abraham wrote:
-> All of Samsung's s5p platforms have timer irqs statically mapped from linux
-> irq numbers 11 to 15. These timer irqs are moved to end of the statically
-> mapped linux irq space and the hardware irqs, which were statically mapped
-> starting from 32 is moved to start from 0. The NR_IRQS macro is consolidated
-> for all the s5p platforms in this process.
-> 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  arch/arm/mach-exynos4/include/mach/entry-macro.S |    1 -
->  arch/arm/mach-exynos4/include/mach/irqs.h        |    3 +--
->  arch/arm/mach-s5p64x0/include/mach/irqs.h        |    4 +---
->  arch/arm/mach-s5pc100/include/mach/irqs.h        |    3 +--
->  arch/arm/mach-s5pv210/include/mach/irqs.h        |    3 +--
->  arch/arm/plat-samsung/include/plat/irqs.h        |    7 +++++--
->  6 files changed, 9 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch/arm/mach-
-> exynos4/include/mach/entry-macro.S
-> index 4c9adbd..5c4fbcc 100644
-> --- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
-> +++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
-> @@ -72,7 +72,6 @@
->  		cmpcc	\irqnr, \irqnr
->  		cmpne	\irqnr, \tmp
->  		cmpcs	\irqnr, \irqnr
-> -		addne	\irqnr, \irqnr, #32
-> 
->  		.endm
-> 
-> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/mach-exynos4/include/mach/irqs.h
-> index dfd4b7e..43087c3 100644
-> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
-> @@ -163,7 +163,6 @@
->  #define IRQ_GPIO2_NR_GROUPS	9
->  #define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
-> 
-> -/* Set the default NR_IRQS */
-> -#define NR_IRQS			(IRQ_GPIO_END + 64)
-> +#define IRQ_TIMER_BASE		(IRQ_GPIO_END + 64)
-> 
->  #endif /* __ASM_ARCH_IRQS_H */
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> index 53982db..bea73cc 100644
-> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
-> @@ -141,8 +141,6 @@
-> 
->  #define IRQ_EINT_GROUP(grp, x)	(IRQ_EINT_GROUP##grp##_BASE + (x))
-> 
-> -/* Set the default NR_IRQS */
-> -
-> -#define NR_IRQS			(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
-> +#define IRQ_TIMER_BASE		(IRQ_EINT_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
-> 
->  #endif /* __ASM_ARCH_IRQS_H */
-> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/mach-s5pc100/include/mach/irqs.h
-> index d2eb475..3a9d300 100644
-> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
-> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
-> @@ -104,8 +104,7 @@
->  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
->  #define S5P_GPIOINT_GROUP_MAXNR	21
-> 
-> -/* Set the default NR_IRQS */
-> -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> 
->  /* Compatibility */
->  #define IRQ_LCD_FIFO		IRQ_LCD0
-> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> index 5e0de3a..df3173a 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
-> @@ -125,8 +125,7 @@
->  #define S5P_GPIOINT_BASE	(IRQ_EINT(31) + 1)
->  #define S5P_GPIOINT_GROUP_MAXNR	22
-> 
-> -/* Set the default NR_IRQS */
-> -#define NR_IRQS			(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> +#define IRQ_TIMER_BASE		(IRQ_EINT(31) + S5P_GPIOINT_COUNT + 1)
-> 
->  /* Compatibility */
->  #define IRQ_LCD_FIFO		IRQ_LCD0
-> diff --git a/arch/arm/plat-samsung/include/plat/irqs.h b/arch/arm/plat-samsung/include/plat/irqs.h
-> index 08d1a7e..b8918b3 100644
-> --- a/arch/arm/plat-samsung/include/plat/irqs.h
-> +++ b/arch/arm/plat-samsung/include/plat/irqs.h
-> @@ -22,7 +22,7 @@
->   * mulitple of 32 to allow the common code to work
->   */
-> 
-> -#define S5P_IRQ_OFFSET		(32)
-> +#define S5P_IRQ_OFFSET		(0)
-> 
->  #define S5P_IRQ(x)		((x) + S5P_IRQ_OFFSET)
-> 
-> @@ -44,13 +44,14 @@
->  #define S5P_IRQ_VIC2(x)		(S5P_VIC2_BASE + (x))
->  #define S5P_IRQ_VIC3(x)		(S5P_VIC3_BASE + (x))
-> 
-> -#define S5P_TIMER_IRQ(x)	(11 + (x))
-> +#define S5P_TIMER_IRQ(x)	(IRQ_TIMER_BASE + (x))
-> 
->  #define IRQ_TIMER0		S5P_TIMER_IRQ(0)
->  #define IRQ_TIMER1		S5P_TIMER_IRQ(1)
->  #define IRQ_TIMER2		S5P_TIMER_IRQ(2)
->  #define IRQ_TIMER3		S5P_TIMER_IRQ(3)
->  #define IRQ_TIMER4		S5P_TIMER_IRQ(4)
-> +#define IRQ_TIMER_COUNT		(5)
-> 
->  #define IRQ_EINT(x)		((x) < 16 ? ((x) + S5P_EINT_BASE1) \
->  					: ((x) - 16 + S5P_EINT_BASE2))
-> @@ -77,4 +78,6 @@
->  #define S5P_IRQ_TYPE_EDGE_RISING	(0x03)
->  #define S5P_IRQ_TYPE_EDGE_BOTH		(0x04)
-> 
-> +#define NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
-> +
->  #endif /* __PLAT_SAMSUNG_IRQS_H */
-> --
-> 1.6.6.rc2
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-gpioint.c
+index a566523..1fdfaa4 100644
+--- a/arch/arm/plat-s5p/irq-gpioint.c
++++ b/arch/arm/plat-s5p/irq-gpioint.c
+@@ -163,9 +163,9 @@ static __init int s5p_gpioint_add(struct samsung_gpio_chip *chip)
+ 	ct->chip.irq_mask = irq_gc_mask_set_bit;
+ 	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+ 	ct->chip.irq_set_type = s5p_gpioint_set_type,
+-	ct->regs.ack = PEND_OFFSET + REG_OFFSET(chip->group);
+-	ct->regs.mask = MASK_OFFSET + REG_OFFSET(chip->group);
+-	ct->regs.type = CON_OFFSET + REG_OFFSET(chip->group);
++	ct->regs.ack = PEND_OFFSET + REG_OFFSET(group - bank->start);
++	ct->regs.mask = MASK_OFFSET + REG_OFFSET(group - bank->start);
++	ct->regs.type = CON_OFFSET + REG_OFFSET(group - bank->start);
+ 	irq_setup_generic_chip(gc, IRQ_MSK(chip->chip.ngpio),
+ 			       IRQ_GC_INIT_MASK_CACHE,
+ 			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+-- 
+1.7.1.569.g6f426
