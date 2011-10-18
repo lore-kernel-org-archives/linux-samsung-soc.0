@@ -1,112 +1,281 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH V8 RESEND] mmc: core: Add Power Off Notify Feature eMMC 4.5
-Date: Mon, 17 Oct 2011 20:30:09 +0530
-Message-ID: <CAGxe1ZFGF8vQVHUzx_zmFTPSwTYNXAyK3+yEiqtP7dswPTsS1A@mail.gmail.com>
-References: <1318862823-22909-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH V8] mmc: core: Add Power Off Notify Feature eMMC 4.5
+Date: Tue, 18 Oct 2011 09:40:35 +0900
+Message-ID: <000001cc8d2e$8d1afd30$a750f790$%jun@samsung.com>
+References: <1318487656-8566-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:38770 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752413Ab1JQPAL convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Oct 2011 11:00:11 -0400
-In-Reply-To: <1318862823-22909-1-git-send-email-girish.shivananjappa@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1318487656-8566-1-git-send-email-girish.shivananjappa@linaro.org>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Girish K S' <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, 'Jaehoon Chung' <jh80.chung@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>
 
-On 17 October 2011 20:17, Girish K S <girish.shivananjappa@linaro.org> =
-wrote:
-> This patch adds the support for power off notify feature, available i=
-n
-> eMMC 4.5 devices. If the the host has support for this feature, then =
-the
-> mmc core will notify it to the device by setting the POWER_OFF_NOTIFI=
-CATION
+Base code of V8 may be mixed.
+Please check below for next resending. It seems like unrelated.
+
+#define MMC_CAP2_CACHE_CTRL	(1 << 1)
+#define EXT_CSD_FLUSH_CACHE		32
+
+Best regards,
+Seungwon Jeon.
+
+Girish K S wrote:
+> This patch adds the support for power off notify feature, available in
+> eMMC 4.5 devices. If the the host has support for this feature, then the
+> mmc core will notify it to the device by setting the
+> POWER_OFF_NOTIFICATION
 > byte in the extended csd register with a value 1(POWER_ON).
->
-> For suspend mode short timeout is used, whereas for the normal powero=
-ff long
+> 
+> For suspend mode short timeout is used, whereas for the normal poweroff
+> long
 > timeout is used.
->
 > cc: Chris Ball <cjb@laptop.org>
 > Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
 > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 > ---
 > Changes in V8:
-> =A0 =A0 =A0 =A0Updated with review comments of Chris Ball and rebased=
- to
-> =A0 =A0 =A0 =A0chris-mmc/mmc-next branch.
+> 	Updated with review comments of Chris Ball and rebased to
+> 	chris-mmc/mmc-next branch.
 > Changes in V7:
-> =A0 =A0 =A0 =A0Rebased to chris-mmc/mmc-next branch. merged to patche=
-s
-> =A0 =A0 =A0 =A0to single patch.
+> 	Rebased to chris-mmc/mmc-next branch. merged to patches
+> 	to single patch.
 > Changes in V6:
-> =A0 =A0 =A0 =A0Fixes checkpatch errors. The patches are generated aft=
-er
-> =A0 =A0 =A0 =A0rebasing to chris's mmc-next branch.
+> 	Fixes checkpatch errors. The patches are generated after
+> 	rebasing to chris's mmc-next branch.
 > Changes in V5:
-> =A0 =A0 =A0 =A0This patch version fixes the problem with power off
-> =A0 =A0 =A0 =A0notify function, when called for the first time and
-> =A0 =A0 =A0 =A0card is not yet initialised.
+> 	This patch version fixes the problem with power off
+> 	notify function, when called for the first time and
+> 	card is not yet initialised.
 > Changes in V4:
-> =A0 =A0 =A0 =A0Updated with review comments of Jeon
+> 	Updated with review comments of Jeon
 > Changes in V2:
-> =A0 =A0 =A0 =A0Adds poweroff notification handling in suspend/normal.
->
->
-> =A0drivers/mmc/core/core.c =A0| =A0 =A06 ++----
-> =A0include/linux/mmc/host.h | =A0 =A02 +-
-> =A02 files changed, 3 insertions(+), 5 deletions(-)
->
+> 	Adds poweroff notification handling in suspend/normal.
+> 
+>  drivers/mmc/core/core.c  |   36 ++++++++++++++++++++++++++++++++++++
+>  drivers/mmc/core/mmc.c   |   23 +++++++++++++++++++++--
+>  drivers/mmc/host/sdhci.c |    9 +++++++++
+>  include/linux/mmc/card.h |    6 ++++++
+>  include/linux/mmc/host.h |    6 ++++++
+>  include/linux/mmc/mmc.h  |    8 ++++++++
+>  6 files changed, 86 insertions(+), 2 deletions(-)
+> 
 > diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index db368b2..b1eca96 100644
+> index 61d7730..db368b2 100644
 > --- a/drivers/mmc/core/core.c
 > +++ b/drivers/mmc/core/core.c
-> @@ -1217,16 +1217,14 @@ void mmc_power_off(struct mmc_host *host)
-> =A0 =A0 =A0 =A0unsigned int timeout;
-> =A0 =A0 =A0 =A0int err;
->
-> - =A0 =A0 =A0 BUG_ON(!host);
-> -
-> =A0 =A0 =A0 =A0mmc_host_clk_hold(host);
->
-> =A0 =A0 =A0 =A0card =3D host->card;
-> =A0 =A0 =A0 =A0host->ios.clock =3D 0;
-> =A0 =A0 =A0 =A0host->ios.vdd =3D 0;
->
-> - =A0 =A0 =A0 if (card !=3D NULL && mmc_card_mmc(card) &&
-> - =A0 =A0 =A0 =A0 =A0 (card->poweroff_notify_state =3D=3D MMC_POWERED=
-_ON)) {
-> + =A0 =A0 =A0 if (card && mmc_card_mmc(card) &&
-> + =A0 =A0 =A0 =A0 =A0 card->poweroff_notify_state =3D=3D MMC_POWERED_=
-ON) {
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (host->power_notify_type =3D=3D MMC=
-_HOST_PW_NOTIFY_SHORT) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0notify_type =3D EXT_CS=
-D_POWER_OFF_SHORT;
+> @@ -1212,11 +1212,45 @@ static void mmc_power_up(struct mmc_host *host)
+> 
+>  void mmc_power_off(struct mmc_host *host)
+>  {
+> +	struct mmc_card *card;
+> +	unsigned int notify_type;
+> +	unsigned int timeout;
+> +	int err;
+> +
+> +	BUG_ON(!host);
+> +
+>  	mmc_host_clk_hold(host);
+> 
+> +	card = host->card;
+>  	host->ios.clock = 0;
+>  	host->ios.vdd = 0;
+> 
+> +	if (card != NULL && mmc_card_mmc(card) &&
+> +	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
+> +
+> +		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
+> +			notify_type = EXT_CSD_POWER_OFF_SHORT;
+> +			timeout = card->ext_csd.generic_cmd6_time;
+> +			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
+> +		} else {
+> +			notify_type = EXT_CSD_POWER_OFF_LONG;
+> +			timeout = card->ext_csd.power_off_longtime;
+> +			card->poweroff_notify_state = MMC_POWEROFF_LONG;
+> +		}
+> +
+> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> +				 EXT_CSD_POWER_OFF_NOTIFICATION,
+> +				 notify_type, timeout);
+> +
+> +		if (err && err != -EBADMSG)
+> +			pr_err("Device failed to respond within %d poweroff "
+> +			       "time. Forcefully powering down the device\n",
+> +			       timeout);
+> +
+> +		/* Set the card state to no notification after the poweroff
+> */
+> +		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
+> +	}
+> +
+>  	/*
+>  	 * Reset ocr mask to be the highest possible voltage supported for
+>  	 * this mmc host. This value will be used at next power up.
+> @@ -2208,6 +2242,7 @@ int mmc_pm_notify(struct notifier_block
+> *notify_block,
+> 
+>  		spin_lock_irqsave(&host->lock, flags);
+>  		host->rescan_disable = 1;
+> +		host->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
+>  		spin_unlock_irqrestore(&host->lock, flags);
+>  		cancel_delayed_work_sync(&host->detect);
+> 
+> @@ -2231,6 +2266,7 @@ int mmc_pm_notify(struct notifier_block
+> *notify_block,
+> 
+>  		spin_lock_irqsave(&host->lock, flags);
+>  		host->rescan_disable = 0;
+> +		host->power_notify_type = MMC_HOST_PW_NOTIFY_LONG;
+>  		spin_unlock_irqrestore(&host->lock, flags);
+>  		mmc_detect_change(host, 0);
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 4e869d3..f8ea938 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -458,10 +458,12 @@ static int mmc_read_ext_csd(struct mmc_card *card,
+> u8 *ext_csd)
+>  	else
+>  		card->erased_byte = 0x0;
+> 
+> -	if (card->ext_csd.rev >= 6)
+> +	if (card->ext_csd.rev >= 6) {
+>  		card->ext_csd.generic_cmd6_time = 10 *
+>  			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+> -	else
+> +		card->ext_csd.power_off_longtime = 10 *
+> +			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
+> +	} else
+>  		card->ext_csd.generic_cmd6_time = 0;
+> 
+>  out:
+> @@ -846,6 +848,23 @@ static int mmc_init_card(struct mmc_host *host, u32
+> ocr,
+>  	}
+> 
+>  	/*
+> +	 * If the host supports the power_off_notify capability then
+> +	 * set the notification byte in the ext_csd register of device
+> +	 */
+> +	if ((host->caps2 & MMC_CAP2_POWEROFF_NOTIFY) &&
+> +	    (card->poweroff_notify_state == MMC_NO_POWER_NOTIFICATION)) {
+> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> +				 EXT_CSD_POWER_OFF_NOTIFICATION,
+> +				 EXT_CSD_POWER_ON,
+> +				 card->ext_csd.generic_cmd6_time);
+> +		if (err && err != -EBADMSG)
+> +			goto free_card;
+> +	}
+> +
+> +	if (!err)
+> +		card->poweroff_notify_state = MMC_POWERED_ON;
+> +
+> +	/*
+>  	 * Activate high speed (if supported)
+>  	 */
+>  	if ((card->ext_csd.hs_max_dtr != 0) &&
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 2cc3ffa..91fdaed 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2739,6 +2739,15 @@ int sdhci_add_host(struct sdhci_host *host)
+>  	if (caps[1] & SDHCI_DRIVER_TYPE_D)
+>  		mmc->caps |= MMC_CAP_DRIVER_TYPE_D;
+> 
+> +	/*
+> +	 * If Notify capability is enabled by the host, set notify to
+> +	 * short power off notify timeout value.
+> +	 */
+> +	if (mmc->caps2 & MMC_CAP2_POWEROFF_NOTIFY)
+> +		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_SHORT;
+> +	else
+> +		mmc->power_notify_type = MMC_HOST_PW_NOTIFY_NONE;
+> +
+>  	/* Initial value for re-tuning timer count */
+>  	host->tuning_count = (caps[1] & SDHCI_RETUNING_TIMER_COUNT_MASK) >>
+>  			      SDHCI_RETUNING_TIMER_COUNT_SHIFT;
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index 30d493c..fce88b3 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -54,6 +54,7 @@ struct mmc_ext_csd {
+>  	unsigned int		part_time;		/* Units: ms */
+>  	unsigned int		sa_timeout;		/* Units: 100ns */
+>  	unsigned int		generic_cmd6_time;	/* Units: 10ms */
+> +	unsigned int            power_off_longtime;     /* Units: ms */
+>  	unsigned int		hs_max_dtr;
+>  	unsigned int		sectors;
+>  	unsigned int		card_type;
+> @@ -209,6 +210,11 @@ struct mmc_card {
+>  #define MMC_QUIRK_BLK_NO_CMD23	(1<<7)		/* Avoid CMD23 for regular
+> multiblock */
+>  #define MMC_QUIRK_BROKEN_BYTE_MODE_512 (1<<8)	/* Avoid sending 512 bytes
+> in */
+>  						/* byte mode */
+> +	unsigned int    poweroff_notify_state;	/* eMMC4.5 notify feature
+> */
+> +#define MMC_NO_POWER_NOTIFICATION	0
+> +#define MMC_POWERED_ON			1
+> +#define MMC_POWEROFF_SHORT		2
+> +#define MMC_POWEROFF_LONG		3
+> 
+>  	unsigned int		erase_size;	/* erase size in sectors */
+>   	unsigned int		erase_shift;	/* if erase unit is power 2 */
 > diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-> index 65c47fc..a991ae7 100644
+> index aed5bc7..65c47fc 100644
 > --- a/include/linux/mmc/host.h
 > +++ b/include/linux/mmc/host.h
-> @@ -243,7 +243,7 @@ struct mmc_host {
-> =A0#define MMC_CAP2_POWEROFF_NOTIFY (1 << 2) =A0 =A0 =A0/* Notify pow=
-eroff supported */
->
-> =A0 =A0 =A0 =A0mmc_pm_flag_t =A0 =A0 =A0 =A0 =A0 pm_caps; =A0 =A0 =A0=
- =A0/* supported pm features */
-> - =A0 =A0 =A0 unsigned int =A0 =A0 =A0 =A0power_notify_type;
-> + =A0 =A0 =A0 unsigned int =A0 =A0 =A0 =A0 =A0 =A0power_notify_type;
-> =A0#define MMC_HOST_PW_NOTIFY_NONE =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00
-> =A0#define MMC_HOST_PW_NOTIFY_SHORT =A0 =A0 =A0 1
-> =A0#define MMC_HOST_PW_NOTIFY_LONG =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A02
+> @@ -239,8 +239,14 @@ struct mmc_host {
+>  	unsigned int		caps2;		/* More host capabilities */
+> 
+>  #define MMC_CAP2_BOOTPART_NOACC	(1 << 0)	/* Boot partition no access
+> */
+> +#define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control. */
+> +#define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff
+> supported */
+> 
+>  	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+> +	unsigned int        power_notify_type;
+> +#define MMC_HOST_PW_NOTIFY_NONE		0
+> +#define MMC_HOST_PW_NOTIFY_SHORT	1
+> +#define MMC_HOST_PW_NOTIFY_LONG		2
+> 
+>  #ifdef CONFIG_MMC_CLKGATE
+>  	int			clk_requests;	/* internal reference counter */
+> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+> index cd63c2d..36ed258 100644
+> --- a/include/linux/mmc/mmc.h
+> +++ b/include/linux/mmc/mmc.h
+> @@ -271,6 +271,9 @@ struct _mmc_csd {
+>   */
+> 
+>  #define EXT_CSD_GP_SIZE_MULT		143	/* R/W */
+> +#define EXT_CSD_FLUSH_CACHE		32	/* W */
+> +#define EXT_CSD_CACHE_CTRL		33	/* R/W */
+> +#define EXT_CSD_POWER_OFF_NOTIFICATION	34	/* R/W */
+>  #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+>  #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+>  #define EXT_CSD_RST_N_FUNCTION		162	/* R/W */
+> @@ -346,6 +349,11 @@ struct _mmc_csd {
+>  #define EXT_CSD_RST_N_EN_MASK	0x3
+>  #define EXT_CSD_RST_N_ENABLED	1	/* RST_n is enabled on card */
+> 
+> +#define EXT_CSD_NO_POWER_NOTIFICATION	0
+> +#define EXT_CSD_POWER_ON		1
+> +#define EXT_CSD_POWER_OFF_SHORT		2
+> +#define EXT_CSD_POWER_OFF_LONG		3
+> +
+>  #define EXT_CSD_PWR_CL_8BIT_MASK	0xF0	/* 8 bit PWR CLS */
+>  #define EXT_CSD_PWR_CL_4BIT_MASK	0x0F	/* 8 bit PWR CLS */
+>  #define EXT_CSD_PWR_CL_8BIT_SHIFT	4
 > --
-Ignore this patch. this just gives only the diff with previous patch.
-i will resend the complete patch
 > 1.7.1
->
->
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
