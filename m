@@ -1,50 +1,32 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH V9] mmc: core: Add Power Off Notify Feature eMMC 4.5
-Date: Tue, 18 Oct 2011 11:27:26 +0530
-Message-ID: <CAGxe1ZHvRS9hek9-DSXZm1fkqPzUSVkWF5yEGXTC4K8usA31WQ@mail.gmail.com>
-References: <1318914301-30339-1-git-send-email-girish.shivananjappa@linaro.org>
-	<4E9D0B9F.1060303@samsung.com>
-	<m2ehya6ecb.fsf@bob.laptop.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 0/2] mmc: sdhci-s3c: support wakeup during suspend
+Date: Tue, 18 Oct 2011 17:09:26 +0900
+Message-ID: <4E9D3436.3090109@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <m2ehya6ecb.fsf@bob.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:13992 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751498Ab1JRIKH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 18 Oct 2011 04:10:07 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, 'kgene kim' <kgene.kim@samsung.com>, Wonil Choi <wonil22.choi@samsung.com>
 
-On 18 October 2011 11:17, Chris Ball <cjb@laptop.org> wrote:
-> Hi,
->
-> On Tue, Oct 18 2011, Jaehoon Chung wrote:
->> Hi Girish.
->>
->> This patch is merged on mmc-next..did you know that?
->> And if deleted commit id bd3151f6c55c553bed2c0df72792841457b75bb5,
->> I will re-work for eMMC feature4.5.
->> git://git.infradead.org/users/kmpark/linux-2.6-samsung emmc4.5
->>
->> To Chris.
->> If you re-commit this patch, i also change "git pull request".
->> there are duplicated code in Notify patch, so i didn't add to cache =
-patch.
->
-> I think I've fixed everything up -- I merged your pull request, inclu=
-ded
-> Girish's new patch, and moved the #defines for the CACHE_CTRL patch o=
-ver
-> to that patch instead of the power class patch. =A0Would be great if =
-you
-> can double-check that the merge all looks okay to you.
->  missing one thing.    unsigned int        power_notify_type; in incl=
-ude/linux/mmc/host.h
-is not alligned to the above member, which was done in my latest patch
-> Thanks,
->
-> - Chris.
-> --
-> Chris Ball =A0 <cjb@laptop.org> =A0 <http://printf.net/>
-> One Laptop Per Child
->
+Add codes for enable wakeup on detecting card change(insert or remove).
+It is required to enable in case like MMC_UNSAFE_RESUME.
+
+Wonil Choi (2):
+  arm: samsung: add wakeup platdata
+  mmc: sdhci-s3c: add to enable wakeup for sd-card
+
+ arch/arm/plat-samsung/dev-hsmmc.c          |    1 +
+ arch/arm/plat-samsung/dev-hsmmc1.c         |    1 +
+ arch/arm/plat-samsung/dev-hsmmc2.c         |    1 +
+ arch/arm/plat-samsung/dev-hsmmc3.c         |    1 +
+ arch/arm/plat-samsung/include/plat/sdhci.h |    2 ++
+ drivers/mmc/host/sdhci-s3c.c               |   15 ++++++++++++++-
+ 6 files changed, 20 insertions(+), 1 deletions(-)
