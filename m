@@ -1,34 +1,41 @@
-From: Chris Ball <cjb@laptop.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
 Subject: Re: [PATCH V9] mmc: core: Add Power Off Notify Feature eMMC 4.5
-Date: Tue, 18 Oct 2011 08:53:44 -0400
-Message-ID: <m239eq5ulj.fsf@bob.laptop.org>
+Date: Wed, 19 Oct 2011 10:50:37 +0900
+Message-ID: <4E9E2CED.2060305@samsung.com>
 References: <1318914301-30339-1-git-send-email-girish.shivananjappa@linaro.org>
-	<4E9D0B9F.1060303@samsung.com> <m2ehya6ecb.fsf@bob.laptop.org>
-	<CAGxe1ZHvRS9hek9-DSXZm1fkqPzUSVkWF5yEGXTC4K8usA31WQ@mail.gmail.com>
+ <4E9D0B9F.1060303@samsung.com> <m2ehya6ecb.fsf@bob.laptop.org>
+ <CAGxe1ZHvRS9hek9-DSXZm1fkqPzUSVkWF5yEGXTC4K8usA31WQ@mail.gmail.com>
+ <m239eq5ulj.fsf@bob.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:48444 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757711Ab1JRMxy (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45205 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752232Ab1JSBvS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Oct 2011 08:53:54 -0400
-In-Reply-To: <CAGxe1ZHvRS9hek9-DSXZm1fkqPzUSVkWF5yEGXTC4K8usA31WQ@mail.gmail.com>
-	(Girish K. S.'s message of "Tue, 18 Oct 2011 11:27:26 +0530")
+	Tue, 18 Oct 2011 21:51:18 -0400
+In-reply-to: <m239eq5ulj.fsf@bob.laptop.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>
+To: Chris Ball <cjb@laptop.org>
+Cc: Girish K S <girish.shivananjappa@linaro.org>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Seungwon Jeon <tgih.jun@samsung.com>
 
-Hi,
+Hi Chris.
 
-On Tue, Oct 18 2011, Girish K S wrote:
->>  missing one thing.    unsigned int        power_notify_type; in include/linux/mmc/host.h
-> is not alligned to the above member, which was done in my latest patch
+Thank you for merged about eMMC4.5 feature.
 
-Fixed.  Thanks!
+Best regards,
+Jaehoon Chung
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+On 10/18/2011 09:53 PM, Chris Ball wrote:
+
+> Hi,
+> 
+> On Tue, Oct 18 2011, Girish K S wrote:
+>>>  missing one thing.    unsigned int        power_notify_type; in include/linux/mmc/host.h
+>> is not alligned to the above member, which was done in my latest patch
+> 
+> Fixed.  Thanks!
+> 
+> - Chris.
