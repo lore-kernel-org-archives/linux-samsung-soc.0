@@ -1,420 +1,899 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH V4] mmc: core: HS200 mode support for eMMC 4.5
-Date: Wed, 19 Oct 2011 10:38:53 +0530
-Message-ID: <1319000933-2098-1-git-send-email-girish.shivananjappa@linaro.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
+From: Padmavathi Venna <padma.v@samsung.com>
+Subject: [PATCH] ARM: davinci: Use CLKDEV_INIT for creating clk_lookup
+Date: Thu, 20 Oct 2011 17:14:28 +0530
+Message-ID: <1319111068-27669-1-git-send-email-padma.v@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:50532 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751789Ab1JTLiS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 20 Oct 2011 07:38:18 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LTD00GEW4BSR5U0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Oct 2011 20:38:17 +0900 (KST)
+Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LTD00MOB4BKLL10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Oct 2011 20:38:16 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: padma.v@samsung.com, padma.kvr@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org
+Cc: khilman@ti.com, nsekhar@ti.com
 
-This patch adds the support of the HS200 bus speed for eMMC 4.5 devices.
-The eMMC 4.5 devices have support for 200MHz bus speed.The mmc core and
-host modules have been touched to add support for this module.
+A common macro CLKDEV_INIT was added for creating clk_lookup
+instance in include/linux/clkdev.h. So replace CLK macro with
+CLKDEV_INIT.
 
-It is necessary to know the card type in the sdhci.c file to add support
-for eMMC tuning function. So card.h file is included to import the card
-data structure.
-
-cc: Chris Ball <cjb@laptop.org>
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
-Changes in v4:
-	Rebased onto chris-mmc/mmc-next branch. This patch is successfully 
-	applied on commit with id de022ed3fdc14808299b2fa66dbb1ed5ab921912.
-Changes in v3:
-	In the previous commits of chris-mmc/mmc-next branch, the patch with
-	commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) defines caps2 for
-	more capabilities. This patch version deletes the member ext_caps(created
-	in my earlier patch) from struct mmc_host and reuses already accepted
-	caps2 member.
-Changes in v2:
-	Rebased to latest chris-mmc/mmc-next branch. Resolved indentation
-	problems identified in review. This patch has to be applied before
-	the patch released for modifying the printk messages.
-Changes in v1:
-	Case statements in switch that produce same result have
-	been combined to reduce repeated assignments.
-	patch recreated after rebase to chris balls mmc-next branch.
+ arch/arm/mach-davinci/board-dm646x-evm.c |    5 +-
+ arch/arm/mach-davinci/clock.h            |    7 --
+ arch/arm/mach-davinci/da830.c            |  101 +++++++++++-----------
+ arch/arm/mach-davinci/da850.c            |   95 +++++++++++-----------
+ arch/arm/mach-davinci/dm355.c            |   87 ++++++++++----------
+ arch/arm/mach-davinci/dm365.c            |  113 +++++++++++++-------------
+ arch/arm/mach-davinci/dm644x.c           |   77 +++++++++---------
+ arch/arm/mach-davinci/dm646x.c           |   81 +++++++++---------
+ arch/arm/mach-davinci/tnetv107x.c        |  133 +++++++++++++++---------------
+ 9 files changed, 350 insertions(+), 349 deletions(-)
 
- drivers/mmc/core/bus.c    |    3 +-
- drivers/mmc/core/mmc.c    |   92 ++++++++++++++++++++++++++++++++++++++++----
- drivers/mmc/host/sdhci.c  |   36 +++++++++++++++---
- include/linux/mmc/card.h  |    3 +
- include/linux/mmc/host.h  |    6 +++
- include/linux/mmc/mmc.h   |    8 +++-
- include/linux/mmc/sdhci.h |    1 +
- 7 files changed, 132 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-index 46b6e84..2f82f6b 100644
---- a/drivers/mmc/core/bus.c
-+++ b/drivers/mmc/core/bus.c
-@@ -301,10 +301,11 @@ int mmc_add_card(struct mmc_card *card)
- 			mmc_card_ddr_mode(card) ? "DDR " : "",
- 			type);
- 	} else {
--		printk(KERN_INFO "%s: new %s%s%s card at address %04x\n",
-+		pr_info("%s: new %s%s%s%s card at address %04x\n",
- 			mmc_hostname(card->host),
- 			mmc_sd_card_uhs(card) ? "ultra high speed " :
- 			(mmc_card_highspeed(card) ? "high speed " : ""),
-+			(mmc_card_hs200(card) ? "HS200 " : ""),
- 			mmc_card_ddr_mode(card) ? "DDR " : "",
- 			type, card->rca);
- 	}
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index fb5bf01..d5fb9ca 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -285,6 +285,39 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
- 	}
- 	card->ext_csd.raw_card_type = ext_csd[EXT_CSD_CARD_TYPE];
- 	switch (ext_csd[EXT_CSD_CARD_TYPE] & EXT_CSD_CARD_TYPE_MASK) {
-+	case EXT_CSD_CARD_TYPE_SDR_200 |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_1_8V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_1_2V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_52 |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+		card->ext_csd.hs_max_dtr = 200000000;
-+		card->ext_csd.card_type = EXT_CSD_CARD_TYPE_SDR_200;
-+		break;
-+	case EXT_CSD_CARD_TYPE_SDR_1_2V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_1_2V | EXT_CSD_CARD_TYPE_DDR_1_8V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_1_2V | EXT_CSD_CARD_TYPE_DDR_1_2V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_1_2V | EXT_CSD_CARD_TYPE_DDR_52 |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+		card->ext_csd.hs_max_dtr = 200000000;
-+		card->ext_csd.card_type = EXT_CSD_CARD_TYPE_SDR_1_2V;
-+		break;
-+	case EXT_CSD_CARD_TYPE_SDR_1_8V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_1_8V | EXT_CSD_CARD_TYPE_DDR_1_8V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_1_8V | EXT_CSD_CARD_TYPE_DDR_1_2V |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+	case EXT_CSD_CARD_TYPE_SDR_1_8V | EXT_CSD_CARD_TYPE_DDR_52 |
-+	     EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
-+		card->ext_csd.hs_max_dtr = 200000000;
-+		card->ext_csd.card_type = EXT_CSD_CARD_TYPE_SDR_1_8V;
-+		break;
- 	case EXT_CSD_CARD_TYPE_DDR_52 | EXT_CSD_CARD_TYPE_52 |
- 	     EXT_CSD_CARD_TYPE_26:
- 		card->ext_csd.hs_max_dtr = 52000000;
-@@ -701,6 +734,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- {
- 	struct mmc_card *card;
- 	int err, ddr = 0;
-+	int hs_sdr = 0;
- 	u32 cid[4];
- 	unsigned int max_dtr;
- 	u32 rocr;
-@@ -892,11 +926,15 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 	/*
- 	 * Activate high speed (if supported)
- 	 */
--	if ((card->ext_csd.hs_max_dtr != 0) &&
--		(host->caps & MMC_CAP_MMC_HIGHSPEED)) {
--		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
--				 EXT_CSD_HS_TIMING, 1,
--				 card->ext_csd.generic_cmd6_time);
-+	if (card->ext_csd.hs_max_dtr != 0) {
-+		if ((card->ext_csd.hs_max_dtr > 52000000) &&
-+		    (host->caps2 & MMC_CAP2_HIGHSPEED_200))
-+			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-+					 EXT_CSD_HS_TIMING, 2, 0);
-+		else if	(host->caps & MMC_CAP_MMC_HIGHSPEED)
-+			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-+					 EXT_CSD_HS_TIMING, 1, 0);
-+
- 		if (err && err != -EBADMSG)
- 			goto free_card;
+diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
+index e574d7f..63951d0 100644
+--- a/arch/arm/mach-davinci/board-dm646x-evm.c
++++ b/arch/arm/mach-davinci/board-dm646x-evm.c
+@@ -24,6 +24,7 @@
+ #include <linux/i2c.h>
+ #include <linux/i2c/at24.h>
+ #include <linux/i2c/pcf857x.h>
++#include <linux/clkdev.h>
  
-@@ -905,7 +943,10 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 			       mmc_hostname(card->host));
- 			err = 0;
- 		} else {
--			mmc_card_set_highspeed(card);
-+			if (card->ext_csd.hs_max_dtr > 52000000)
-+				mmc_card_set_hs200(card);
-+			else
-+				mmc_card_set_highspeed(card);
- 			mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
- 		}
- 	}
-@@ -931,7 +972,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 	 */
- 	max_dtr = (unsigned int)-1;
+ #include <media/tvp514x.h>
  
--	if (mmc_card_highspeed(card)) {
-+	if (mmc_card_highspeed(card) || mmc_card_hs200(card)) {
- 		if (max_dtr > card->ext_csd.hs_max_dtr)
- 			max_dtr = card->ext_csd.hs_max_dtr;
- 	} else if (max_dtr > card->csd.max_dtr) {
-@@ -957,6 +998,22 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 	}
+@@ -704,8 +705,8 @@ static struct clk cdce_clk_in = {
+ };
  
- 	/*
-+	 * Indicate HS200 SDR mode (if supported).
-+	 */
-+	if (mmc_card_hs200(card)) {
-+		if ((card->ext_csd.card_type & EXT_CSD_CARD_TYPE_SDR_1_8V)
-+			&& ((host->caps2 & (MMC_CAP2_HS200_1_8V_SDR |
-+			     MMC_CAP2_HS200))
-+				== (MMC_CAP2_HS200_1_8V_SDR | MMC_CAP2_HS200)))
-+				hs_sdr = MMC_1_8V_SDR_MODE;
-+		else if ((card->ext_csd.card_type & EXT_CSD_CARD_TYPE_SDR_1_2V)
-+			 && ((host->caps2 & (MMC_CAP2_HS200_1_2V_SDR |
-+			      MMC_CAP2_HS200))
-+				== (MMC_CAP2_HS200_1_2V_SDR | MMC_CAP2_HS200)))
-+				hs_sdr = MMC_1_2V_SDR_MODE;
-+	}
-+
-+	/*
- 	 * Activate wide bus and DDR (if supported).
- 	 */
- 	if ((card->csd.mmca_vsn >= CSD_SPEC_VER_4) &&
-@@ -996,16 +1053,24 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 			if (!err) {
- 				mmc_set_bus_width(card->host, bus_width);
+ static struct clk_lookup cdce_clks[] = {
+-	CLK(NULL, "xin", &cdce_clk_in),
+-	CLK(NULL, NULL, NULL),
++	CLKDEV_INIT(NULL, "xin", &cdce_clk_in),
++	CLKDEV_INIT(NULL, NULL, NULL),
+ };
  
-+				if ((host->caps2 & MMC_CAP2_HS200) &&
-+				    card->host->ops->execute_tuning)
-+					err = card->host->ops->	\
-+					      execute_tuning(card->host);
-+
- 				/*
- 				 * If controller can't handle bus width test,
- 				 * compare ext_csd previously read in 1 bit mode
- 				 * against ext_csd at new bus width
- 				 */
--				if (!(host->caps & MMC_CAP_BUS_WIDTH_TEST))
-+				if (!(host->caps & MMC_CAP_BUS_WIDTH_TEST) &&
-+				    !err)
- 					err = mmc_compare_ext_csds(card,
- 						bus_width);
--				else
-+				else if (!err)
- 					err = mmc_bus_test(card, bus_width);
-+				else
-+					pr_warning("tuning execution failed\n");
- 				if (!err)
- 					break;
- 			}
-@@ -1054,6 +1119,15 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 			mmc_card_set_ddr_mode(card);
- 			mmc_set_timing(card->host, MMC_TIMING_UHS_DDR50);
- 			mmc_set_bus_width(card->host, bus_width);
-+		} else if (hs_sdr) {
-+			if (hs_sdr == EXT_CSD_CARD_TYPE_SDR_1_2V) {
-+				err = mmc_set_signal_voltage(host,
-+					MMC_SIGNAL_VOLTAGE_120, 0);
-+				if (err)
-+					goto err;
-+			}
-+			mmc_set_timing(card->host, MMC_TIMING_MMC_HS);
-+			mmc_set_bus_width(card->host, bus_width);
- 		}
- 	}
+ static void __init cdce_clk_init(void)
+diff --git a/arch/arm/mach-davinci/clock.h b/arch/arm/mach-davinci/clock.h
+index a705f36..df153d5 100644
+--- a/arch/arm/mach-davinci/clock.h
++++ b/arch/arm/mach-davinci/clock.h
+@@ -113,13 +113,6 @@ struct clk {
+ #define PSC_SWRSTDISABLE	BIT(6) /* Disable state is SwRstDisable */
+ #define PSC_FORCE		BIT(7) /* Force module state transtition */
  
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index a69d269..28fb747 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -27,6 +27,7 @@
+-#define CLK(dev, con, ck) 	\
+-	{			\
+-		.dev_id = dev,	\
+-		.con_id = con,	\
+-		.clk = ck,	\
+-	}			\
+-
+ int davinci_clk_init(struct clk_lookup *clocks);
+ int davinci_set_pllrate(struct pll_data *pll, unsigned int prediv,
+ 				unsigned int mult, unsigned int postdiv);
+diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
+index a6bf5dc..f2f359b 100644
+--- a/arch/arm/mach-davinci/da830.c
++++ b/arch/arm/mach-davinci/da830.c
+@@ -11,6 +11,7 @@
+ #include <linux/gpio.h>
+ #include <linux/init.h>
+ #include <linux/clk.h>
++#include <linux/clkdev.h>
  
- #include <linux/mmc/mmc.h>
- #include <linux/mmc/host.h>
-+#include <linux/mmc/card.h>
+ #include <asm/mach/map.h>
  
- #include "sdhci.h"
+@@ -374,56 +375,56 @@ static struct clk rmii_clk = {
+ };
  
-@@ -1016,7 +1017,8 @@ static void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
- 		flags |= SDHCI_CMD_INDEX;
+ static struct clk_lookup da830_clks[] = {
+-	CLK(NULL,		"ref",		&ref_clk),
+-	CLK(NULL,		"pll0",		&pll0_clk),
+-	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
+-	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
+-	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
+-	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
+-	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
+-	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
+-	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
+-	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
+-	CLK(NULL,		"timer0",	&timerp64_0_clk),
+-	CLK("watchdog",		NULL,		&timerp64_1_clk),
+-	CLK(NULL,		"arm_rom",	&arm_rom_clk),
+-	CLK(NULL,		"scr0_ss",	&scr0_ss_clk),
+-	CLK(NULL,		"scr1_ss",	&scr1_ss_clk),
+-	CLK(NULL,		"scr2_ss",	&scr2_ss_clk),
+-	CLK(NULL,		"dmax",		&dmax_clk),
+-	CLK(NULL,		"tpcc",		&tpcc_clk),
+-	CLK(NULL,		"tptc0",	&tptc0_clk),
+-	CLK(NULL,		"tptc1",	&tptc1_clk),
+-	CLK("davinci_mmc.0",	NULL,		&mmcsd_clk),
+-	CLK(NULL,		"uart0",	&uart0_clk),
+-	CLK(NULL,		"uart1",	&uart1_clk),
+-	CLK(NULL,		"uart2",	&uart2_clk),
+-	CLK("spi_davinci.0",	NULL,		&spi0_clk),
+-	CLK("spi_davinci.1",	NULL,		&spi1_clk),
+-	CLK(NULL,		"ecap0",	&ecap0_clk),
+-	CLK(NULL,		"ecap1",	&ecap1_clk),
+-	CLK(NULL,		"ecap2",	&ecap2_clk),
+-	CLK(NULL,		"pwm0",		&pwm0_clk),
+-	CLK(NULL,		"pwm1",		&pwm1_clk),
+-	CLK(NULL,		"pwm2",		&pwm2_clk),
+-	CLK("eqep.0",		NULL,		&eqep0_clk),
+-	CLK("eqep.1",		NULL,		&eqep1_clk),
+-	CLK("da8xx_lcdc.0",	NULL,		&lcdc_clk),
+-	CLK("davinci-mcasp.0",	NULL,		&mcasp0_clk),
+-	CLK("davinci-mcasp.1",	NULL,		&mcasp1_clk),
+-	CLK("davinci-mcasp.2",	NULL,		&mcasp2_clk),
+-	CLK(NULL,		"usb20",	&usb20_clk),
+-	CLK(NULL,		"aemif",	&aemif_clk),
+-	CLK(NULL,		"aintc",	&aintc_clk),
+-	CLK(NULL,		"secu_mgr",	&secu_mgr_clk),
+-	CLK("davinci_emac.1",	NULL,		&emac_clk),
+-	CLK(NULL,		"gpio",		&gpio_clk),
+-	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
+-	CLK(NULL,		"usb11",	&usb11_clk),
+-	CLK(NULL,		"emif3",	&emif3_clk),
+-	CLK(NULL,		"arm",		&arm_clk),
+-	CLK(NULL,		"rmii",		&rmii_clk),
+-	CLK(NULL,		NULL,		NULL),
++	CLKDEV_INIT(NULL,		"ref",		&ref_clk),
++	CLKDEV_INIT(NULL,		"pll0",		&pll0_clk),
++	CLKDEV_INIT(NULL,		"pll0_aux",	&pll0_aux_clk),
++	CLKDEV_INIT(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
++	CLKDEV_INIT(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
++	CLKDEV_INIT(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
++	CLKDEV_INIT(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
++	CLKDEV_INIT(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
++	CLKDEV_INIT(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
++	CLKDEV_INIT("i2c_davinci.1",	NULL,		&i2c0_clk),
++	CLKDEV_INIT(NULL,		"timer0",	&timerp64_0_clk),
++	CLKDEV_INIT("watchdog",		NULL,		&timerp64_1_clk),
++	CLKDEV_INIT(NULL,		"arm_rom",	&arm_rom_clk),
++	CLKDEV_INIT(NULL,		"scr0_ss",	&scr0_ss_clk),
++	CLKDEV_INIT(NULL,		"scr1_ss",	&scr1_ss_clk),
++	CLKDEV_INIT(NULL,		"scr2_ss",	&scr2_ss_clk),
++	CLKDEV_INIT(NULL,		"dmax",		&dmax_clk),
++	CLKDEV_INIT(NULL,		"tpcc",		&tpcc_clk),
++	CLKDEV_INIT(NULL,		"tptc0",	&tptc0_clk),
++	CLKDEV_INIT(NULL,		"tptc1",	&tptc1_clk),
++	CLKDEV_INIT("davinci_mmc.0",	NULL,		&mmcsd_clk),
++	CLKDEV_INIT(NULL,		"uart0",	&uart0_clk),
++	CLKDEV_INIT(NULL,		"uart1",	&uart1_clk),
++	CLKDEV_INIT(NULL,		"uart2",	&uart2_clk),
++	CLKDEV_INIT("spi_davinci.0",	NULL,		&spi0_clk),
++	CLKDEV_INIT("spi_davinci.1",	NULL,		&spi1_clk),
++	CLKDEV_INIT(NULL,		"ecap0",	&ecap0_clk),
++	CLKDEV_INIT(NULL,		"ecap1",	&ecap1_clk),
++	CLKDEV_INIT(NULL,		"ecap2",	&ecap2_clk),
++	CLKDEV_INIT(NULL,		"pwm0",		&pwm0_clk),
++	CLKDEV_INIT(NULL,		"pwm1",		&pwm1_clk),
++	CLKDEV_INIT(NULL,		"pwm2",		&pwm2_clk),
++	CLKDEV_INIT("eqep.0",		NULL,		&eqep0_clk),
++	CLKDEV_INIT("eqep.1",		NULL,		&eqep1_clk),
++	CLKDEV_INIT("da8xx_lcdc.0",	NULL,		&lcdc_clk),
++	CLKDEV_INIT("davinci-mcasp.0",	NULL,		&mcasp0_clk),
++	CLKDEV_INIT("davinci-mcasp.1",	NULL,		&mcasp1_clk),
++	CLKDEV_INIT("davinci-mcasp.2",	NULL,		&mcasp2_clk),
++	CLKDEV_INIT(NULL,		"usb20",	&usb20_clk),
++	CLKDEV_INIT(NULL,		"aemif",	&aemif_clk),
++	CLKDEV_INIT(NULL,		"aintc",	&aintc_clk),
++	CLKDEV_INIT(NULL,		"secu_mgr",	&secu_mgr_clk),
++	CLKDEV_INIT("davinci_emac.1",	NULL,		&emac_clk),
++	CLKDEV_INIT(NULL,		"gpio",		&gpio_clk),
++	CLKDEV_INIT("i2c_davinci.2",	NULL,		&i2c1_clk),
++	CLKDEV_INIT(NULL,		"usb11",	&usb11_clk),
++	CLKDEV_INIT(NULL,		"emif3",	&emif3_clk),
++	CLKDEV_INIT(NULL,		"arm",		&arm_clk),
++	CLKDEV_INIT(NULL,		"rmii",		&rmii_clk),
++	CLKDEV_INIT(NULL,		NULL,		NULL),
+ };
  
- 	/* CMD19 is special in that the Data Present Select should be set */
--	if (cmd->data || (cmd->opcode == MMC_SEND_TUNING_BLOCK))
-+	if (cmd->data || (cmd->opcode == MMC_SEND_TUNING_BLOCK) ||
-+	    (cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200))
- 		flags |= SDHCI_CMD_DATA;
+ /*
+diff --git a/arch/arm/mach-davinci/da850.c b/arch/arm/mach-davinci/da850.c
+index b047f87..1d6d511 100644
+--- a/arch/arm/mach-davinci/da850.c
++++ b/arch/arm/mach-davinci/da850.c
+@@ -17,6 +17,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/cpufreq.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/clkdev.h>
  
- 	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
-@@ -1684,10 +1686,13 @@ static int sdhci_execute_tuning(struct mmc_host *mmc)
- 	 * Host Controller needs tuning only in case of SDR104 mode
- 	 * and for SDR50 mode when Use Tuning for SDR50 is set in
- 	 * Capabilities register.
-+	 * If the Host Controller supports the HS200 mode then tuning
-+	 * function has to be executed.
- 	 */
- 	if (((ctrl & SDHCI_CTRL_UHS_MASK) == SDHCI_CTRL_UHS_SDR104) ||
- 	    (((ctrl & SDHCI_CTRL_UHS_MASK) == SDHCI_CTRL_UHS_SDR50) &&
--	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)))
-+	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)) ||
-+	    (host->flags & SDHCI_HS200_NEEDS_TUNING))
- 		ctrl |= SDHCI_CTRL_EXEC_TUNING;
- 	else {
- 		spin_unlock(&host->lock);
-@@ -1723,7 +1728,10 @@ static int sdhci_execute_tuning(struct mmc_host *mmc)
- 		if (!tuning_loop_counter && !timeout)
- 			break;
+ #include <asm/mach/map.h>
  
--		cmd.opcode = MMC_SEND_TUNING_BLOCK;
-+		if (mmc->card->type == MMC_TYPE_MMC)
-+			cmd.opcode = MMC_SEND_TUNING_BLOCK_HS200;
-+		else
-+			cmd.opcode = MMC_SEND_TUNING_BLOCK;
- 		cmd.arg = 0;
- 		cmd.flags = MMC_RSP_R1 | MMC_CMD_ADTC;
- 		cmd.retries = 0;
-@@ -1738,7 +1746,17 @@ static int sdhci_execute_tuning(struct mmc_host *mmc)
- 		 * block to the Host Controller. So we set the block size
- 		 * to 64 here.
- 		 */
--		sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 64), SDHCI_BLOCK_SIZE);
-+		if (mmc->card->type == MMC_TYPE_MMC) {
-+			if (mmc->ios.bus_width == MMC_BUS_WIDTH_8)
-+				sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 128),
-+					     SDHCI_BLOCK_SIZE);
-+			else if (mmc->ios.bus_width == MMC_BUS_WIDTH_4)
-+				sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 64),
-+					     SDHCI_BLOCK_SIZE);
-+		} else {
-+			sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 64),
-+				     SDHCI_BLOCK_SIZE);
-+		}
+@@ -384,53 +385,53 @@ static struct clk sata_clk = {
+ };
  
- 		/*
- 		 * The tuning block is sent by the card to the host controller.
-@@ -2121,12 +2139,14 @@ static void sdhci_show_adma_error(struct sdhci_host *host) { }
+ static struct clk_lookup da850_clks[] = {
+-	CLK(NULL,		"ref",		&ref_clk),
+-	CLK(NULL,		"pll0",		&pll0_clk),
+-	CLK(NULL,		"pll0_aux",	&pll0_aux_clk),
+-	CLK(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
+-	CLK(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
+-	CLK(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
+-	CLK(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
+-	CLK(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
+-	CLK(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
+-	CLK(NULL,		"pll1",		&pll1_clk),
+-	CLK(NULL,		"pll1_aux",	&pll1_aux_clk),
+-	CLK(NULL,		"pll1_sysclk2",	&pll1_sysclk2),
+-	CLK(NULL,		"pll1_sysclk3",	&pll1_sysclk3),
+-	CLK(NULL,		"pll1_sysclk4",	&pll1_sysclk4),
+-	CLK(NULL,		"pll1_sysclk5",	&pll1_sysclk5),
+-	CLK(NULL,		"pll1_sysclk6",	&pll1_sysclk6),
+-	CLK(NULL,		"pll1_sysclk7",	&pll1_sysclk7),
+-	CLK("i2c_davinci.1",	NULL,		&i2c0_clk),
+-	CLK(NULL,		"timer0",	&timerp64_0_clk),
+-	CLK("watchdog",		NULL,		&timerp64_1_clk),
+-	CLK(NULL,		"arm_rom",	&arm_rom_clk),
+-	CLK(NULL,		"tpcc0",	&tpcc0_clk),
+-	CLK(NULL,		"tptc0",	&tptc0_clk),
+-	CLK(NULL,		"tptc1",	&tptc1_clk),
+-	CLK(NULL,		"tpcc1",	&tpcc1_clk),
+-	CLK(NULL,		"tptc2",	&tptc2_clk),
+-	CLK(NULL,		"uart0",	&uart0_clk),
+-	CLK(NULL,		"uart1",	&uart1_clk),
+-	CLK(NULL,		"uart2",	&uart2_clk),
+-	CLK(NULL,		"aintc",	&aintc_clk),
+-	CLK(NULL,		"gpio",		&gpio_clk),
+-	CLK("i2c_davinci.2",	NULL,		&i2c1_clk),
+-	CLK(NULL,		"emif3",	&emif3_clk),
+-	CLK(NULL,		"arm",		&arm_clk),
+-	CLK(NULL,		"rmii",		&rmii_clk),
+-	CLK("davinci_emac.1",	NULL,		&emac_clk),
+-	CLK("davinci-mcasp.0",	NULL,		&mcasp_clk),
+-	CLK("da8xx_lcdc.0",	NULL,		&lcdc_clk),
+-	CLK("davinci_mmc.0",	NULL,		&mmcsd0_clk),
+-	CLK("davinci_mmc.1",	NULL,		&mmcsd1_clk),
+-	CLK(NULL,		"aemif",	&aemif_clk),
+-	CLK(NULL,		"usb11",	&usb11_clk),
+-	CLK(NULL,		"usb20",	&usb20_clk),
+-	CLK("spi_davinci.0",	NULL,		&spi0_clk),
+-	CLK("spi_davinci.1",	NULL,		&spi1_clk),
+-	CLK("ahci",		NULL,		&sata_clk),
+-	CLK(NULL,		NULL,		NULL),
++	CLKDEV_INIT(NULL,		"ref",		&ref_clk),
++	CLKDEV_INIT(NULL,		"pll0",		&pll0_clk),
++	CLKDEV_INIT(NULL,		"pll0_aux",	&pll0_aux_clk),
++	CLKDEV_INIT(NULL,		"pll0_sysclk2",	&pll0_sysclk2),
++	CLKDEV_INIT(NULL,		"pll0_sysclk3",	&pll0_sysclk3),
++	CLKDEV_INIT(NULL,		"pll0_sysclk4",	&pll0_sysclk4),
++	CLKDEV_INIT(NULL,		"pll0_sysclk5",	&pll0_sysclk5),
++	CLKDEV_INIT(NULL,		"pll0_sysclk6",	&pll0_sysclk6),
++	CLKDEV_INIT(NULL,		"pll0_sysclk7",	&pll0_sysclk7),
++	CLKDEV_INIT(NULL,		"pll1",		&pll1_clk),
++	CLKDEV_INIT(NULL,		"pll1_aux",	&pll1_aux_clk),
++	CLKDEV_INIT(NULL,		"pll1_sysclk2",	&pll1_sysclk2),
++	CLKDEV_INIT(NULL,		"pll1_sysclk3",	&pll1_sysclk3),
++	CLKDEV_INIT(NULL,		"pll1_sysclk4",	&pll1_sysclk4),
++	CLKDEV_INIT(NULL,		"pll1_sysclk5",	&pll1_sysclk5),
++	CLKDEV_INIT(NULL,		"pll1_sysclk6",	&pll1_sysclk6),
++	CLKDEV_INIT(NULL,		"pll1_sysclk7",	&pll1_sysclk7),
++	CLKDEV_INIT("i2c_davinci.1",	NULL,		&i2c0_clk),
++	CLKDEV_INIT(NULL,		"timer0",	&timerp64_0_clk),
++	CLKDEV_INIT("watchdog",		NULL,		&timerp64_1_clk),
++	CLKDEV_INIT(NULL,		"arm_rom",	&arm_rom_clk),
++	CLKDEV_INIT(NULL,		"tpcc0",	&tpcc0_clk),
++	CLKDEV_INIT(NULL,		"tptc0",	&tptc0_clk),
++	CLKDEV_INIT(NULL,		"tptc1",	&tptc1_clk),
++	CLKDEV_INIT(NULL,		"tpcc1",	&tpcc1_clk),
++	CLKDEV_INIT(NULL,		"tptc2",	&tptc2_clk),
++	CLKDEV_INIT(NULL,		"uart0",	&uart0_clk),
++	CLKDEV_INIT(NULL,		"uart1",	&uart1_clk),
++	CLKDEV_INIT(NULL,		"uart2",	&uart2_clk),
++	CLKDEV_INIT(NULL,		"aintc",	&aintc_clk),
++	CLKDEV_INIT(NULL,		"gpio",		&gpio_clk),
++	CLKDEV_INIT("i2c_davinci.2",	NULL,		&i2c1_clk),
++	CLKDEV_INIT(NULL,		"emif3",	&emif3_clk),
++	CLKDEV_INIT(NULL,		"arm",		&arm_clk),
++	CLKDEV_INIT(NULL,		"rmii",		&rmii_clk),
++	CLKDEV_INIT("davinci_emac.1",	NULL,		&emac_clk),
++	CLKDEV_INIT("davinci-mcasp.0",	NULL,		&mcasp_clk),
++	CLKDEV_INIT("da8xx_lcdc.0",	NULL,		&lcdc_clk),
++	CLKDEV_INIT("davinci_mmc.0",	NULL,		&mmcsd0_clk),
++	CLKDEV_INIT("davinci_mmc.1",	NULL,		&mmcsd1_clk),
++	CLKDEV_INIT(NULL,		"aemif",	&aemif_clk),
++	CLKDEV_INIT(NULL,		"usb11",	&usb11_clk),
++	CLKDEV_INIT(NULL,		"usb20",	&usb20_clk),
++	CLKDEV_INIT("spi_davinci.0",	NULL,		&spi0_clk),
++	CLKDEV_INIT("spi_davinci.1",	NULL,		&spi1_clk),
++	CLKDEV_INIT("ahci",		NULL,		&sata_clk),
++	CLKDEV_INIT(NULL,		NULL,		NULL),
+ };
  
- static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
- {
-+	u32 command;
- 	BUG_ON(intmask == 0);
+ /*
+diff --git a/arch/arm/mach-davinci/dm355.c b/arch/arm/mach-davinci/dm355.c
+index fe520d4..1df71e0 100644
+--- a/arch/arm/mach-davinci/dm355.c
++++ b/arch/arm/mach-davinci/dm355.c
+@@ -13,6 +13,7 @@
+ #include <linux/serial_8250.h>
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
++#include <linux/clkdev.h>
  
- 	/* CMD19 generates _only_ Buffer Read Ready interrupt */
- 	if (intmask & SDHCI_INT_DATA_AVAIL) {
--		if (SDHCI_GET_CMD(sdhci_readw(host, SDHCI_COMMAND)) ==
--		    MMC_SEND_TUNING_BLOCK) {
-+		command = SDHCI_GET_CMD(sdhci_readw(host, SDHCI_COMMAND));
-+		if ((command == MMC_SEND_TUNING_BLOCK) ||
-+		    (command == MMC_SEND_TUNING_BLOCK_HS200)) {
- 			host->tuning_done = 1;
- 			wake_up(&host->buf_ready_int);
- 			return;
-@@ -2731,6 +2751,10 @@ int sdhci_add_host(struct sdhci_host *host)
- 	if (caps[1] & SDHCI_USE_SDR50_TUNING)
- 		host->flags |= SDHCI_SDR50_NEEDS_TUNING;
+ #include <linux/spi/spi.h>
  
-+	/* Does the host needs tuning for HS200? */
-+	if (mmc->caps2 & MMC_CAP2_HS200)
-+		host->flags |= SDHCI_HS200_NEEDS_TUNING;
-+
- 	/* Driver Type(s) (A, C, D) supported by the host */
- 	if (caps[1] & SDHCI_DRIVER_TYPE_A)
- 		mmc->caps |= MMC_CAP_DRIVER_TYPE_A;
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 6e04e10..90af438 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -206,6 +206,7 @@ struct mmc_card {
- #define MMC_STATE_HIGHSPEED_DDR (1<<4)		/* card is in high speed mode */
- #define MMC_STATE_ULTRAHIGHSPEED (1<<5)		/* card is in ultra high speed mode */
- #define MMC_CARD_SDXC		(1<<6)		/* card is SDXC */
-+#define MMC_STATE_HIGHSPEED_200	(1<<7)	/* card is in HS200 mode */
- 	unsigned int		quirks; 	/* card quirks */
- #define MMC_QUIRK_LENIENT_FN0	(1<<0)		/* allow SDIO FN0 writes outside of the VS CCCR range */
- #define MMC_QUIRK_BLKSZ_FOR_BYTE_MODE (1<<1)	/* use func->cur_blksize */
-@@ -361,6 +362,7 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
- #define mmc_card_present(c)	((c)->state & MMC_STATE_PRESENT)
- #define mmc_card_readonly(c)	((c)->state & MMC_STATE_READONLY)
- #define mmc_card_highspeed(c)	((c)->state & MMC_STATE_HIGHSPEED)
-+#define mmc_card_hs200(c)	((c)->state & MMC_STATE_HIGHSPEED_200)
- #define mmc_card_blockaddr(c)	((c)->state & MMC_STATE_BLOCKADDR)
- #define mmc_card_ddr_mode(c)	((c)->state & MMC_STATE_HIGHSPEED_DDR)
- #define mmc_sd_card_uhs(c) ((c)->state & MMC_STATE_ULTRAHIGHSPEED)
-@@ -369,6 +371,7 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
- #define mmc_card_set_present(c)	((c)->state |= MMC_STATE_PRESENT)
- #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
- #define mmc_card_set_highspeed(c) ((c)->state |= MMC_STATE_HIGHSPEED)
-+#define mmc_card_set_hs200(c)	((c)->state |= MMC_STATE_HIGHSPEED_200)
- #define mmc_card_set_blockaddr(c) ((c)->state |= MMC_STATE_BLOCKADDR)
- #define mmc_card_set_ddr_mode(c) ((c)->state |= MMC_STATE_HIGHSPEED_DDR)
- #define mmc_sd_card_set_uhs(c) ((c)->state |= MMC_STATE_ULTRAHIGHSPEED)
-diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
-index 16e9338..dfcbd02 100644
---- a/include/linux/mmc/host.h
-+++ b/include/linux/mmc/host.h
-@@ -60,6 +60,8 @@ struct mmc_ios {
- #define MMC_SDR_MODE		0
- #define MMC_1_2V_DDR_MODE	1
- #define MMC_1_8V_DDR_MODE	2
-+#define MMC_1_2V_SDR_MODE	3
-+#define MMC_1_8V_SDR_MODE	4
+@@ -336,49 +337,49 @@ static struct clk usb_clk = {
+ };
  
- 	unsigned char	signal_voltage;		/* signalling voltage (1.8V or 3.3V) */
+ static struct clk_lookup dm355_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
+-	CLK(NULL, "vpss_dac", &vpss_dac_clk),
+-	CLK(NULL, "vpss_master", &vpss_master_clk),
+-	CLK(NULL, "vpss_slave", &vpss_slave_clk),
+-	CLK(NULL, "clkout1", &clkout1_clk),
+-	CLK(NULL, "clkout2", &clkout2_clk),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
+-	CLK(NULL, "clkout3", &clkout3_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "mjcp", &mjcp_clk),
+-	CLK(NULL, "uart0", &uart0_clk),
+-	CLK(NULL, "uart1", &uart1_clk),
+-	CLK(NULL, "uart2", &uart2_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK("davinci-mcbsp.0", NULL, &asp0_clk),
+-	CLK("davinci-mcbsp.1", NULL, &asp1_clk),
+-	CLK("davinci_mmc.0", NULL, &mmcsd0_clk),
+-	CLK("davinci_mmc.1", NULL, &mmcsd1_clk),
+-	CLK("spi_davinci.0", NULL, &spi0_clk),
+-	CLK("spi_davinci.1", NULL, &spi1_clk),
+-	CLK("spi_davinci.2", NULL, &spi2_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "pwm2", &pwm2_clk),
+-	CLK(NULL, "pwm3", &pwm3_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("watchdog", NULL, &timer2_clk),
+-	CLK(NULL, "timer3", &timer3_clk),
+-	CLK(NULL, "rto", &rto_clk),
+-	CLK(NULL, "usb", &usb_clk),
+-	CLK(NULL, NULL, NULL),
++	CLKDEV_INIT(NULL, "ref", &ref_clk),
++	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclk1", &pll1_sysclk1),
++	CLKDEV_INIT(NULL, "pll1_sysclk2", &pll1_sysclk2),
++	CLKDEV_INIT(NULL, "pll1_sysclk3", &pll1_sysclk3),
++	CLKDEV_INIT(NULL, "pll1_sysclk4", &pll1_sysclk4),
++	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
++	CLKDEV_INIT(NULL, "vpss_dac", &vpss_dac_clk),
++	CLKDEV_INIT(NULL, "vpss_master", &vpss_master_clk),
++	CLKDEV_INIT(NULL, "vpss_slave", &vpss_slave_clk),
++	CLKDEV_INIT(NULL, "clkout1", &clkout1_clk),
++	CLKDEV_INIT(NULL, "clkout2", &clkout2_clk),
++	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
++	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
++	CLKDEV_INIT(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
++	CLKDEV_INIT(NULL, "clkout3", &clkout3_clk),
++	CLKDEV_INIT(NULL, "arm", &arm_clk),
++	CLKDEV_INIT(NULL, "mjcp", &mjcp_clk),
++	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
++	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
++	CLKDEV_INIT(NULL, "uart2", &uart2_clk),
++	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
++	CLKDEV_INIT("davinci-mcbsp.0", NULL, &asp0_clk),
++	CLKDEV_INIT("davinci-mcbsp.1", NULL, &asp1_clk),
++	CLKDEV_INIT("davinci_mmc.0", NULL, &mmcsd0_clk),
++	CLKDEV_INIT("davinci_mmc.1", NULL, &mmcsd1_clk),
++	CLKDEV_INIT("spi_davinci.0", NULL, &spi0_clk),
++	CLKDEV_INIT("spi_davinci.1", NULL, &spi1_clk),
++	CLKDEV_INIT("spi_davinci.2", NULL, &spi2_clk),
++	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
++	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
++	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
++	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
++	CLKDEV_INIT(NULL, "pwm2", &pwm2_clk),
++	CLKDEV_INIT(NULL, "pwm3", &pwm3_clk),
++	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
++	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
++	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
++	CLKDEV_INIT(NULL, "timer3", &timer3_clk),
++	CLKDEV_INIT(NULL, "rto", &rto_clk),
++	CLKDEV_INIT(NULL, "usb", &usb_clk),
++	CLKDEV_INIT(NULL, NULL, NULL),
+ };
  
-@@ -241,6 +243,10 @@ struct mmc_host {
- #define MMC_CAP2_BOOTPART_NOACC	(1 << 0)	/* Boot partition no access */
- #define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control */
- #define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff supported */
-+#define MMC_CAP2_HS200		(1 << 3)	/* Host supports HS200 mode */
-+#define MMC_CAP2_HS200_1_8V_SDR	(1 << 4)	/* can support */
-+#define MMC_CAP2_HS200_1_2V_SDR	(1 << 5)	/* can support */
-+#define MMC_CAP2_HIGHSPEED_200	(1 << 6)	/* Can do MMC HS200 timing */
+ /*----------------------------------------------------------------------*/
+diff --git a/arch/arm/mach-davinci/dm365.c b/arch/arm/mach-davinci/dm365.c
+index 679e168..b0637b4 100644
+--- a/arch/arm/mach-davinci/dm365.c
++++ b/arch/arm/mach-davinci/dm365.c
+@@ -18,6 +18,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/spi/spi.h>
++#include <linux/clkdev.h>
  
- 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
- 	unsigned int        power_notify_type;
-diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
-index 0e71356..af4fa72 100644
---- a/include/linux/mmc/mmc.h
-+++ b/include/linux/mmc/mmc.h
-@@ -51,6 +51,7 @@
- #define MMC_READ_SINGLE_BLOCK    17   /* adtc [31:0] data addr   R1  */
- #define MMC_READ_MULTIPLE_BLOCK  18   /* adtc [31:0] data addr   R1  */
- #define MMC_SEND_TUNING_BLOCK    19   /* adtc                    R1  */
-+#define MMC_SEND_TUNING_BLOCK_HS200	21	/* adtc R1  */
+ #include <asm/mach/map.h>
  
-   /* class 3 */
- #define MMC_WRITE_DAT_UNTIL_STOP 20   /* adtc [31:0] data addr   R1  */
-@@ -333,13 +334,18 @@ struct _mmc_csd {
+@@ -406,62 +407,62 @@ static struct clk mjcp_clk = {
+ };
  
- #define EXT_CSD_CARD_TYPE_26	(1<<0)	/* Card can run at 26MHz */
- #define EXT_CSD_CARD_TYPE_52	(1<<1)	/* Card can run at 52MHz */
--#define EXT_CSD_CARD_TYPE_MASK	0xF	/* Mask out reserved bits */
-+#define EXT_CSD_CARD_TYPE_MASK	0x3F	/* Mask out reserved bits */
- #define EXT_CSD_CARD_TYPE_DDR_1_8V  (1<<2)   /* Card can run at 52MHz */
- 					     /* DDR mode @1.8V or 3V I/O */
- #define EXT_CSD_CARD_TYPE_DDR_1_2V  (1<<3)   /* Card can run at 52MHz */
- 					     /* DDR mode @1.2V I/O */
- #define EXT_CSD_CARD_TYPE_DDR_52       (EXT_CSD_CARD_TYPE_DDR_1_8V  \
- 					| EXT_CSD_CARD_TYPE_DDR_1_2V)
-+#define EXT_CSD_CARD_TYPE_SDR_1_8V	(1<<4)	/* Card can run at 200MHz */
-+#define EXT_CSD_CARD_TYPE_SDR_1_2V	(1<<5)	/* Card can run at 200MHz */
-+						/* SDR mode @1.2V I/O */
-+#define EXT_CSD_CARD_TYPE_SDR_200	(EXT_CSD_CARD_TYPE_SDR_1_8V	\
-+					| EXT_CSD_CARD_TYPE_SDR_1_2V)
+ static struct clk_lookup dm365_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
+-	CLK(NULL, "clkout0", &clkout0_clk),
+-	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk4", &pll1_sysclk4),
+-	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
+-	CLK(NULL, "pll1_sysclk6", &pll1_sysclk6),
+-	CLK(NULL, "pll1_sysclk7", &pll1_sysclk7),
+-	CLK(NULL, "pll1_sysclk8", &pll1_sysclk8),
+-	CLK(NULL, "pll1_sysclk9", &pll1_sysclk9),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_aux", &pll2_aux_clk),
+-	CLK(NULL, "clkout1", &clkout1_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
+-	CLK(NULL, "pll2_sysclk3", &pll2_sysclk3),
+-	CLK(NULL, "pll2_sysclk4", &pll2_sysclk4),
+-	CLK(NULL, "pll2_sysclk5", &pll2_sysclk5),
+-	CLK(NULL, "pll2_sysclk6", &pll2_sysclk6),
+-	CLK(NULL, "pll2_sysclk7", &pll2_sysclk7),
+-	CLK(NULL, "pll2_sysclk8", &pll2_sysclk8),
+-	CLK(NULL, "pll2_sysclk9", &pll2_sysclk9),
+-	CLK(NULL, "vpss_dac", &vpss_dac_clk),
+-	CLK(NULL, "vpss_master", &vpss_master_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "uart0", &uart0_clk),
+-	CLK(NULL, "uart1", &uart1_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK("davinci_mmc.0", NULL, &mmcsd0_clk),
+-	CLK("davinci_mmc.1", NULL, &mmcsd1_clk),
+-	CLK("spi_davinci.0", NULL, &spi0_clk),
+-	CLK("spi_davinci.1", NULL, &spi1_clk),
+-	CLK("spi_davinci.2", NULL, &spi2_clk),
+-	CLK("spi_davinci.3", NULL, &spi3_clk),
+-	CLK("spi_davinci.4", NULL, &spi4_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "pwm2", &pwm2_clk),
+-	CLK(NULL, "pwm3", &pwm3_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("watchdog", NULL, &timer2_clk),
+-	CLK(NULL, "timer3", &timer3_clk),
+-	CLK(NULL, "usb", &usb_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK("davinci_voicecodec", NULL, &voicecodec_clk),
+-	CLK("davinci-mcbsp", NULL, &asp0_clk),
+-	CLK(NULL, "rto", &rto_clk),
+-	CLK(NULL, "mjcp", &mjcp_clk),
+-	CLK(NULL, NULL, NULL),
++	CLKDEV_INIT(NULL, "ref", &ref_clk),
++	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
++	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
++	CLKDEV_INIT(NULL, "clkout0", &clkout0_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclk1", &pll1_sysclk1),
++	CLKDEV_INIT(NULL, "pll1_sysclk2", &pll1_sysclk2),
++	CLKDEV_INIT(NULL, "pll1_sysclk3", &pll1_sysclk3),
++	CLKDEV_INIT(NULL, "pll1_sysclk4", &pll1_sysclk4),
++	CLKDEV_INIT(NULL, "pll1_sysclk5", &pll1_sysclk5),
++	CLKDEV_INIT(NULL, "pll1_sysclk6", &pll1_sysclk6),
++	CLKDEV_INIT(NULL, "pll1_sysclk7", &pll1_sysclk7),
++	CLKDEV_INIT(NULL, "pll1_sysclk8", &pll1_sysclk8),
++	CLKDEV_INIT(NULL, "pll1_sysclk9", &pll1_sysclk9),
++	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
++	CLKDEV_INIT(NULL, "pll2_aux", &pll2_aux_clk),
++	CLKDEV_INIT(NULL, "clkout1", &clkout1_clk),
++	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
++	CLKDEV_INIT(NULL, "pll2_sysclk2", &pll2_sysclk2),
++	CLKDEV_INIT(NULL, "pll2_sysclk3", &pll2_sysclk3),
++	CLKDEV_INIT(NULL, "pll2_sysclk4", &pll2_sysclk4),
++	CLKDEV_INIT(NULL, "pll2_sysclk5", &pll2_sysclk5),
++	CLKDEV_INIT(NULL, "pll2_sysclk6", &pll2_sysclk6),
++	CLKDEV_INIT(NULL, "pll2_sysclk7", &pll2_sysclk7),
++	CLKDEV_INIT(NULL, "pll2_sysclk8", &pll2_sysclk8),
++	CLKDEV_INIT(NULL, "pll2_sysclk9", &pll2_sysclk9),
++	CLKDEV_INIT(NULL, "vpss_dac", &vpss_dac_clk),
++	CLKDEV_INIT(NULL, "vpss_master", &vpss_master_clk),
++	CLKDEV_INIT(NULL, "arm", &arm_clk),
++	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
++	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
++	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
++	CLKDEV_INIT("davinci_mmc.0", NULL, &mmcsd0_clk),
++	CLKDEV_INIT("davinci_mmc.1", NULL, &mmcsd1_clk),
++	CLKDEV_INIT("spi_davinci.0", NULL, &spi0_clk),
++	CLKDEV_INIT("spi_davinci.1", NULL, &spi1_clk),
++	CLKDEV_INIT("spi_davinci.2", NULL, &spi2_clk),
++	CLKDEV_INIT("spi_davinci.3", NULL, &spi3_clk),
++	CLKDEV_INIT("spi_davinci.4", NULL, &spi4_clk),
++	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
++	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
++	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
++	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
++	CLKDEV_INIT(NULL, "pwm2", &pwm2_clk),
++	CLKDEV_INIT(NULL, "pwm3", &pwm3_clk),
++	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
++	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
++	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
++	CLKDEV_INIT(NULL, "timer3", &timer3_clk),
++	CLKDEV_INIT(NULL, "usb", &usb_clk),
++	CLKDEV_INIT("davinci_emac.1", NULL, &emac_clk),
++	CLKDEV_INIT("davinci_voicecodec", NULL, &voicecodec_clk),
++	CLKDEV_INIT("davinci-mcbsp", NULL, &asp0_clk),
++	CLKDEV_INIT(NULL, "rto", &rto_clk),
++	CLKDEV_INIT(NULL, "mjcp", &mjcp_clk),
++	CLKDEV_INIT(NULL, NULL, NULL),
+ };
  
- #define EXT_CSD_BUS_WIDTH_1	0	/* Card is in 1 bit mode */
- #define EXT_CSD_BUS_WIDTH_4	1	/* Card is in 4 bit mode */
-diff --git a/include/linux/mmc/sdhci.h b/include/linux/mmc/sdhci.h
-index e4b6935..d9a2222 100644
---- a/include/linux/mmc/sdhci.h
-+++ b/include/linux/mmc/sdhci.h
-@@ -121,6 +121,7 @@ struct sdhci_host {
- #define SDHCI_AUTO_CMD23	(1<<7)	/* Auto CMD23 support */
- #define SDHCI_PV_ENABLED	(1<<8)	/* Preset value enabled */
- #define SDHCI_SDIO_IRQ_ENABLED	(1<<9)	/* SDIO irq enabled */
-+#define SDHCI_HS200_NEEDS_TUNING (1<<10)	/* HS200 needs tuning */
+ /*----------------------------------------------------------------------*/
+diff --git a/arch/arm/mach-davinci/dm644x.c b/arch/arm/mach-davinci/dm644x.c
+index 3470983..f61610e 100644
+--- a/arch/arm/mach-davinci/dm644x.c
++++ b/arch/arm/mach-davinci/dm644x.c
+@@ -12,6 +12,7 @@
+ #include <linux/clk.h>
+ #include <linux/serial_8250.h>
+ #include <linux/platform_device.h>
++#include <linux/clkdev.h>
  
- 	unsigned int version;	/* SDHCI spec. version */
+ #include <asm/mach/map.h>
  
+@@ -278,44 +279,44 @@ static struct clk timer2_clk = {
+ };
+ 
+ static struct clk_lookup dm644x_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk1", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk2", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk3", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk5", &pll1_sysclk5),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "pll2_sysclk2", &pll2_sysclk2),
+-	CLK(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
+-	CLK(NULL, "dsp", &dsp_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "vicp", &vicp_clk),
+-	CLK(NULL, "vpss_master", &vpss_master_clk),
+-	CLK(NULL, "vpss_slave", &vpss_slave_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "uart0", &uart0_clk),
+-	CLK(NULL, "uart1", &uart1_clk),
+-	CLK(NULL, "uart2", &uart2_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK("palm_bk3710", NULL, &ide_clk),
+-	CLK("davinci-mcbsp", NULL, &asp_clk),
+-	CLK("davinci_mmc.0", NULL, &mmcsd_clk),
+-	CLK(NULL, "spi", &spi_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK(NULL, "usb", &usb_clk),
+-	CLK(NULL, "vlynq", &vlynq_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "pwm2", &pwm2_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("watchdog", NULL, &timer2_clk),
+-	CLK(NULL, NULL, NULL),
++	CLKDEV_INIT(NULL, "ref", &ref_clk),
++	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclk1", &pll1_sysclk1),
++	CLKDEV_INIT(NULL, "pll1_sysclk2", &pll1_sysclk2),
++	CLKDEV_INIT(NULL, "pll1_sysclk3", &pll1_sysclk3),
++	CLKDEV_INIT(NULL, "pll1_sysclk5", &pll1_sysclk5),
++	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclkbp", &pll1_sysclkbp),
++	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
++	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
++	CLKDEV_INIT(NULL, "pll2_sysclk2", &pll2_sysclk2),
++	CLKDEV_INIT(NULL, "pll2_sysclkbp", &pll2_sysclkbp),
++	CLKDEV_INIT(NULL, "dsp", &dsp_clk),
++	CLKDEV_INIT(NULL, "arm", &arm_clk),
++	CLKDEV_INIT(NULL, "vicp", &vicp_clk),
++	CLKDEV_INIT(NULL, "vpss_master", &vpss_master_clk),
++	CLKDEV_INIT(NULL, "vpss_slave", &vpss_slave_clk),
++	CLKDEV_INIT(NULL, "arm", &arm_clk),
++	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
++	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
++	CLKDEV_INIT(NULL, "uart2", &uart2_clk),
++	CLKDEV_INIT("davinci_emac.1", NULL, &emac_clk),
++	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
++	CLKDEV_INIT("palm_bk3710", NULL, &ide_clk),
++	CLKDEV_INIT("davinci-mcbsp", NULL, &asp_clk),
++	CLKDEV_INIT("davinci_mmc.0", NULL, &mmcsd_clk),
++	CLKDEV_INIT(NULL, "spi", &spi_clk),
++	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
++	CLKDEV_INIT(NULL, "usb", &usb_clk),
++	CLKDEV_INIT(NULL, "vlynq", &vlynq_clk),
++	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
++	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
++	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
++	CLKDEV_INIT(NULL, "pwm2", &pwm2_clk),
++	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
++	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
++	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
++	CLKDEV_INIT(NULL, NULL, NULL),
+ };
+ 
+ static struct emac_platform_data dm644x_emac_pdata = {
+diff --git a/arch/arm/mach-davinci/dm646x.c b/arch/arm/mach-davinci/dm646x.c
+index 0b68ed5..ad9b71b 100644
+--- a/arch/arm/mach-davinci/dm646x.c
++++ b/arch/arm/mach-davinci/dm646x.c
+@@ -13,6 +13,7 @@
+ #include <linux/clk.h>
+ #include <linux/serial_8250.h>
+ #include <linux/platform_device.h>
++#include <linux/clkdev.h>
+ 
+ #include <asm/mach/map.h>
+ 
+@@ -316,46 +317,46 @@ static struct clk vpif1_clk = {
+ };
+ 
+ static struct clk_lookup dm646x_clks[] = {
+-	CLK(NULL, "ref", &ref_clk),
+-	CLK(NULL, "aux", &aux_clkin),
+-	CLK(NULL, "pll1", &pll1_clk),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk1),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk2),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk3),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk4),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk5),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk6),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk8),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclk9),
+-	CLK(NULL, "pll1_sysclk", &pll1_sysclkbp),
+-	CLK(NULL, "pll1_aux", &pll1_aux_clk),
+-	CLK(NULL, "pll2", &pll2_clk),
+-	CLK(NULL, "pll2_sysclk1", &pll2_sysclk1),
+-	CLK(NULL, "dsp", &dsp_clk),
+-	CLK(NULL, "arm", &arm_clk),
+-	CLK(NULL, "edma_cc", &edma_cc_clk),
+-	CLK(NULL, "edma_tc0", &edma_tc0_clk),
+-	CLK(NULL, "edma_tc1", &edma_tc1_clk),
+-	CLK(NULL, "edma_tc2", &edma_tc2_clk),
+-	CLK(NULL, "edma_tc3", &edma_tc3_clk),
+-	CLK(NULL, "uart0", &uart0_clk),
+-	CLK(NULL, "uart1", &uart1_clk),
+-	CLK(NULL, "uart2", &uart2_clk),
+-	CLK("i2c_davinci.1", NULL, &i2c_clk),
+-	CLK(NULL, "gpio", &gpio_clk),
+-	CLK("davinci-mcasp.0", NULL, &mcasp0_clk),
+-	CLK("davinci-mcasp.1", NULL, &mcasp1_clk),
+-	CLK(NULL, "aemif", &aemif_clk),
+-	CLK("davinci_emac.1", NULL, &emac_clk),
+-	CLK(NULL, "pwm0", &pwm0_clk),
+-	CLK(NULL, "pwm1", &pwm1_clk),
+-	CLK(NULL, "timer0", &timer0_clk),
+-	CLK(NULL, "timer1", &timer1_clk),
+-	CLK("watchdog", NULL, &timer2_clk),
+-	CLK("palm_bk3710", NULL, &ide_clk),
+-	CLK(NULL, "vpif0", &vpif0_clk),
+-	CLK(NULL, "vpif1", &vpif1_clk),
+-	CLK(NULL, NULL, NULL),
++	CLKDEV_INIT(NULL, "ref", &ref_clk),
++	CLKDEV_INIT(NULL, "aux", &aux_clkin),
++	CLKDEV_INIT(NULL, "pll1", &pll1_clk),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk1),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk2),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk3),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk4),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk5),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk6),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk8),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclk9),
++	CLKDEV_INIT(NULL, "pll1_sysclk", &pll1_sysclkbp),
++	CLKDEV_INIT(NULL, "pll1_aux", &pll1_aux_clk),
++	CLKDEV_INIT(NULL, "pll2", &pll2_clk),
++	CLKDEV_INIT(NULL, "pll2_sysclk1", &pll2_sysclk1),
++	CLKDEV_INIT(NULL, "dsp", &dsp_clk),
++	CLKDEV_INIT(NULL, "arm", &arm_clk),
++	CLKDEV_INIT(NULL, "edma_cc", &edma_cc_clk),
++	CLKDEV_INIT(NULL, "edma_tc0", &edma_tc0_clk),
++	CLKDEV_INIT(NULL, "edma_tc1", &edma_tc1_clk),
++	CLKDEV_INIT(NULL, "edma_tc2", &edma_tc2_clk),
++	CLKDEV_INIT(NULL, "edma_tc3", &edma_tc3_clk),
++	CLKDEV_INIT(NULL, "uart0", &uart0_clk),
++	CLKDEV_INIT(NULL, "uart1", &uart1_clk),
++	CLKDEV_INIT(NULL, "uart2", &uart2_clk),
++	CLKDEV_INIT("i2c_davinci.1", NULL, &i2c_clk),
++	CLKDEV_INIT(NULL, "gpio", &gpio_clk),
++	CLKDEV_INIT("davinci-mcasp.0", NULL, &mcasp0_clk),
++	CLKDEV_INIT("davinci-mcasp.1", NULL, &mcasp1_clk),
++	CLKDEV_INIT(NULL, "aemif", &aemif_clk),
++	CLKDEV_INIT("davinci_emac.1", NULL, &emac_clk),
++	CLKDEV_INIT(NULL, "pwm0", &pwm0_clk),
++	CLKDEV_INIT(NULL, "pwm1", &pwm1_clk),
++	CLKDEV_INIT(NULL, "timer0", &timer0_clk),
++	CLKDEV_INIT(NULL, "timer1", &timer1_clk),
++	CLKDEV_INIT("watchdog", NULL, &timer2_clk),
++	CLKDEV_INIT("palm_bk3710", NULL, &ide_clk),
++	CLKDEV_INIT(NULL, "vpif0", &vpif0_clk),
++	CLKDEV_INIT(NULL, "vpif1", &vpif1_clk),
++	CLKDEV_INIT(NULL, NULL, NULL),
+ };
+ 
+ static struct emac_platform_data dm646x_emac_pdata = {
+diff --git a/arch/arm/mach-davinci/tnetv107x.c b/arch/arm/mach-davinci/tnetv107x.c
+index 409bb86..c2f53f0 100644
+--- a/arch/arm/mach-davinci/tnetv107x.c
++++ b/arch/arm/mach-davinci/tnetv107x.c
+@@ -19,6 +19,7 @@
+ #include <linux/io.h>
+ #include <linux/err.h>
+ #include <linux/platform_device.h>
++#include <linux/clkdev.h>
+ 
+ #include <asm/mach/map.h>
+ 
+@@ -230,72 +231,72 @@ static struct clk clk_rng = { .name = "rng", .parent = &clk_pktsec };
+ static struct clk clk_pka = { .name = "pka", .parent = &clk_pktsec };
+ 
+ static struct clk_lookup clks[] = {
+-	CLK(NULL,		"pll_sys_clk",		&pll_sys_clk),
+-	CLK(NULL,		"pll_eth_clk",		&pll_eth_clk),
+-	CLK(NULL,		"pll_tdm_clk",		&pll_tdm_clk),
+-	CLK(NULL,		"sys_arm1176_clk",	&sys_arm1176_clk),
+-	CLK(NULL,		"sys_dsp_clk",		&sys_dsp_clk),
+-	CLK(NULL,		"sys_ddr_clk",		&sys_ddr_clk),
+-	CLK(NULL,		"sys_full_clk",		&sys_full_clk),
+-	CLK(NULL,		"sys_lcd_clk",		&sys_lcd_clk),
+-	CLK(NULL,		"sys_vlynq_ref_clk",	&sys_vlynq_ref_clk),
+-	CLK(NULL,		"sys_tsc_clk",		&sys_tsc_clk),
+-	CLK(NULL,		"sys_half_clk",		&sys_half_clk),
+-	CLK(NULL,		"eth_5mhz_clk",		&eth_5mhz_clk),
+-	CLK(NULL,		"eth_50mhz_clk",	&eth_50mhz_clk),
+-	CLK(NULL,		"eth_125mhz_clk",	&eth_125mhz_clk),
+-	CLK(NULL,		"eth_250mhz_clk",	&eth_250mhz_clk),
+-	CLK(NULL,		"eth_25mhz_clk",	&eth_25mhz_clk),
+-	CLK(NULL,		"tdm_0_clk",		&tdm_0_clk),
+-	CLK(NULL,		"tdm_extra_clk",	&tdm_extra_clk),
+-	CLK(NULL,		"tdm_1_clk",		&tdm_1_clk),
+-	CLK(NULL,		"clk_arm",		&clk_arm),
+-	CLK(NULL,		"clk_gem",		&clk_gem),
+-	CLK(NULL,		"clk_ddr2_phy",		&clk_ddr2_phy),
+-	CLK(NULL,		"clk_tpcc",		&clk_tpcc),
+-	CLK(NULL,		"clk_tptc0",		&clk_tptc0),
+-	CLK(NULL,		"clk_tptc1",		&clk_tptc1),
+-	CLK(NULL,		"clk_ram",		&clk_ram),
+-	CLK(NULL,		"clk_mbx_lite",		&clk_mbx_lite),
+-	CLK("tnetv107x-fb.0",	NULL,			&clk_lcd),
+-	CLK(NULL,		"clk_ethss",		&clk_ethss),
+-	CLK(NULL,		"aemif",		&clk_aemif),
+-	CLK(NULL,		"clk_chipcfg",		&clk_chipcfg),
+-	CLK("tnetv107x-ts.0",	NULL,			&clk_tsc),
+-	CLK(NULL,		"clk_rom",		&clk_rom),
+-	CLK(NULL,		"uart2",		&clk_uart2),
+-	CLK(NULL,		"clk_pktsec",		&clk_pktsec),
+-	CLK("tnetv107x-rng.0",	NULL,			&clk_rng),
+-	CLK("tnetv107x-pka.0",	NULL,			&clk_pka),
+-	CLK(NULL,		"clk_secctl",		&clk_secctl),
+-	CLK(NULL,		"clk_keymgr",		&clk_keymgr),
+-	CLK("tnetv107x-keypad.0", NULL,			&clk_keypad),
+-	CLK(NULL,		"clk_gpio",		&clk_gpio),
+-	CLK(NULL,		"clk_mdio",		&clk_mdio),
+-	CLK("davinci_mmc.0",	NULL,			&clk_sdio0),
+-	CLK(NULL,		"uart0",		&clk_uart0),
+-	CLK(NULL,		"uart1",		&clk_uart1),
+-	CLK(NULL,		"timer0",		&clk_timer0),
+-	CLK(NULL,		"timer1",		&clk_timer1),
+-	CLK("tnetv107x_wdt.0",	NULL,			&clk_wdt_arm),
+-	CLK(NULL,		"clk_wdt_dsp",		&clk_wdt_dsp),
+-	CLK("ti-ssp",		NULL,			&clk_ssp),
+-	CLK(NULL,		"clk_tdm0",		&clk_tdm0),
+-	CLK(NULL,		"clk_vlynq",		&clk_vlynq),
+-	CLK(NULL,		"clk_mcdma",		&clk_mcdma),
+-	CLK(NULL,		"clk_usbss",		&clk_usbss),
+-	CLK(NULL,		"clk_usb0",		&clk_usb0),
+-	CLK(NULL,		"clk_usb1",		&clk_usb1),
+-	CLK(NULL,		"clk_tdm1",		&clk_tdm1),
+-	CLK(NULL,		"clk_debugss",		&clk_debugss),
+-	CLK(NULL,		"clk_ethss_rgmii",	&clk_ethss_rgmii),
+-	CLK(NULL,		"clk_system",		&clk_system),
+-	CLK(NULL,		"clk_imcop",		&clk_imcop),
+-	CLK(NULL,		"clk_spare",		&clk_spare),
+-	CLK("davinci_mmc.1",	NULL,			&clk_sdio1),
+-	CLK(NULL,		"clk_ddr2_vrst",	&clk_ddr2_vrst),
+-	CLK(NULL,		"clk_ddr2_vctl_rst",	&clk_ddr2_vctl_rst),
+-	CLK(NULL,		NULL,			NULL),
++	CLKDEV_INIT(NULL,		"pll_sys_clk",		&pll_sys_clk),
++	CLKDEV_INIT(NULL,		"pll_eth_clk",		&pll_eth_clk),
++	CLKDEV_INIT(NULL,		"pll_tdm_clk",		&pll_tdm_clk),
++	CLKDEV_INIT(NULL,		"sys_arm1176_clk",	&sys_arm1176_clk),
++	CLKDEV_INIT(NULL,		"sys_dsp_clk",		&sys_dsp_clk),
++	CLKDEV_INIT(NULL,		"sys_ddr_clk",		&sys_ddr_clk),
++	CLKDEV_INIT(NULL,		"sys_full_clk",		&sys_full_clk),
++	CLKDEV_INIT(NULL,		"sys_lcd_clk",		&sys_lcd_clk),
++	CLKDEV_INIT(NULL,		"sys_vlynq_ref_clk",	&sys_vlynq_ref_clk),
++	CLKDEV_INIT(NULL,		"sys_tsc_clk",		&sys_tsc_clk),
++	CLKDEV_INIT(NULL,		"sys_half_clk",		&sys_half_clk),
++	CLKDEV_INIT(NULL,		"eth_5mhz_clk",		&eth_5mhz_clk),
++	CLKDEV_INIT(NULL,		"eth_50mhz_clk",	&eth_50mhz_clk),
++	CLKDEV_INIT(NULL,		"eth_125mhz_clk",	&eth_125mhz_clk),
++	CLKDEV_INIT(NULL,		"eth_250mhz_clk",	&eth_250mhz_clk),
++	CLKDEV_INIT(NULL,		"eth_25mhz_clk",	&eth_25mhz_clk),
++	CLKDEV_INIT(NULL,		"tdm_0_clk",		&tdm_0_clk),
++	CLKDEV_INIT(NULL,		"tdm_extra_clk",	&tdm_extra_clk),
++	CLKDEV_INIT(NULL,		"tdm_1_clk",		&tdm_1_clk),
++	CLKDEV_INIT(NULL,		"clk_arm",		&clk_arm),
++	CLKDEV_INIT(NULL,		"clk_gem",		&clk_gem),
++	CLKDEV_INIT(NULL,		"clk_ddr2_phy",		&clk_ddr2_phy),
++	CLKDEV_INIT(NULL,		"clk_tpcc",		&clk_tpcc),
++	CLKDEV_INIT(NULL,		"clk_tptc0",		&clk_tptc0),
++	CLKDEV_INIT(NULL,		"clk_tptc1",		&clk_tptc1),
++	CLKDEV_INIT(NULL,		"clk_ram",		&clk_ram),
++	CLKDEV_INIT(NULL,		"clk_mbx_lite",		&clk_mbx_lite),
++	CLKDEV_INIT("tnetv107x-fb.0",	NULL,			&clk_lcd),
++	CLKDEV_INIT(NULL,		"clk_ethss",		&clk_ethss),
++	CLKDEV_INIT(NULL,		"aemif",		&clk_aemif),
++	CLKDEV_INIT(NULL,		"clk_chipcfg",		&clk_chipcfg),
++	CLKDEV_INIT("tnetv107x-ts.0",	NULL,			&clk_tsc),
++	CLKDEV_INIT(NULL,		"clk_rom",		&clk_rom),
++	CLKDEV_INIT(NULL,		"uart2",		&clk_uart2),
++	CLKDEV_INIT(NULL,		"clk_pktsec",		&clk_pktsec),
++	CLKDEV_INIT("tnetv107x-rng.0",	NULL,			&clk_rng),
++	CLKDEV_INIT("tnetv107x-pka.0",	NULL,			&clk_pka),
++	CLKDEV_INIT(NULL,		"clk_secctl",		&clk_secctl),
++	CLKDEV_INIT(NULL,		"clk_keymgr",		&clk_keymgr),
++	CLKDEV_INIT("tnetv107x-keypad.0", NULL,			&clk_keypad),
++	CLKDEV_INIT(NULL,		"clk_gpio",		&clk_gpio),
++	CLKDEV_INIT(NULL,		"clk_mdio",		&clk_mdio),
++	CLKDEV_INIT("davinci_mmc.0",	NULL,			&clk_sdio0),
++	CLKDEV_INIT(NULL,		"uart0",		&clk_uart0),
++	CLKDEV_INIT(NULL,		"uart1",		&clk_uart1),
++	CLKDEV_INIT(NULL,		"timer0",		&clk_timer0),
++	CLKDEV_INIT(NULL,		"timer1",		&clk_timer1),
++	CLKDEV_INIT("tnetv107x_wdt.0",	NULL,			&clk_wdt_arm),
++	CLKDEV_INIT(NULL,		"clk_wdt_dsp",		&clk_wdt_dsp),
++	CLKDEV_INIT("ti-ssp",		NULL,			&clk_ssp),
++	CLKDEV_INIT(NULL,		"clk_tdm0",		&clk_tdm0),
++	CLKDEV_INIT(NULL,		"clk_vlynq",		&clk_vlynq),
++	CLKDEV_INIT(NULL,		"clk_mcdma",		&clk_mcdma),
++	CLKDEV_INIT(NULL,		"clk_usbss",		&clk_usbss),
++	CLKDEV_INIT(NULL,		"clk_usb0",		&clk_usb0),
++	CLKDEV_INIT(NULL,		"clk_usb1",		&clk_usb1),
++	CLKDEV_INIT(NULL,		"clk_tdm1",		&clk_tdm1),
++	CLKDEV_INIT(NULL,		"clk_debugss",		&clk_debugss),
++	CLKDEV_INIT(NULL,		"clk_ethss_rgmii",	&clk_ethss_rgmii),
++	CLKDEV_INIT(NULL,		"clk_system",		&clk_system),
++	CLKDEV_INIT(NULL,		"clk_imcop",		&clk_imcop),
++	CLKDEV_INIT(NULL,		"clk_spare",		&clk_spare),
++	CLKDEV_INIT("davinci_mmc.1",	NULL,			&clk_sdio1),
++	CLKDEV_INIT(NULL,		"clk_ddr2_vrst",	&clk_ddr2_vrst),
++	CLKDEV_INIT(NULL,		"clk_ddr2_vctl_rst",	&clk_ddr2_vctl_rst),
++	CLKDEV_INIT(NULL,		NULL,			NULL),
+ };
+ 
+ static const struct mux_config pins[] = {
 -- 
-1.7.1
-
+1.7.4.4
