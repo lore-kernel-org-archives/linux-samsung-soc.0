@@ -1,115 +1,212 @@
-From: Domenico Andreoli <cavokz@gmail.com>
-Subject: [PATCH v2] Fix s3c24xx build errors if !CONFIG_PM
-Date: Fri, 21 Oct 2011 15:50:23 +0200
-Message-ID: <20111021135023.GA30167@glitch>
-References: <20111018105215.GA10230@glitch>
- <016f01cc8fd5$0dbe40c0$293ac240$%kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
+ irq space
+Date: Fri, 21 Oct 2011 22:24:11 +0530
+Message-ID: <CAJuYYwSuwfnQ=Xp1MDQHC9wtJUZomYuTamWqp6Njnh7LA=V1QA@mail.gmail.com>
+References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org>
+	<1318234289-22041-2-git-send-email-thomas.abraham@linaro.org>
+	<001001cc8d6d$5c48fa60$14daef20$%youn@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:52029 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754363Ab1JUNu3 (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:53121 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753442Ab1JUQyN convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Oct 2011 09:50:29 -0400
-Received: by eye27 with SMTP id 27so3870685eye.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2011 06:50:28 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <016f01cc8fd5$0dbe40c0$293ac240$%kim@samsung.com>
+	Fri, 21 Oct 2011 12:54:13 -0400
+Received: by gyb13 with SMTP id 13so4032496gyb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Oct 2011 09:54:13 -0700 (PDT)
+In-Reply-To: <001001cc8d6d$5c48fa60$14daef20$%youn@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Changhwan Youn <chaos.youn@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
 
-From: Domenico Andreoli <cavokz@gmail.com>
+Hi Changhwan,
 
-v2:
-- register_syscore_ops(&s3c24xx_irq_syscore_ops) does not need to be
-  conditionally compiled out, it is already optimized out on !CONFIG_PM
-- fix also s3c2412 and s3c2416 affected by the same build issue
+On 18 October 2011 13:40, Changhwan Youn <chaos.youn@samsung.com> wrote=
+:
+> Hi Thomas,
+>
+> All UART_IRQ_RXD, TXD, ERR of Samsung's platforms are also statically
+> mapped to linux irq numbers 16 to 31. These interrupts also need prop=
+er handling.
 
-v1:
-s3c2440.c fails to build if !CONFIG_PM because in such case
-s3c2410_pm_syscore_ops is not defined. Same error should happen also
-in s3c2410.c and s3c2442.c
+A patchset has been submitted to consolidate the uart interrupt
+handling for Samsung platforms. The following is the link submitted
+for this patch series.
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg06035.=
+html
 
-Signed-off-by: Domenico Andreoli <cavokz@gmail.com>
+With this patchset, the linux irq space of 16 to 31 is freed. This
+patchset has been queued for merge for the 3.2 merge window.
 
----
- arch/arm/mach-s3c2410/s3c2410.c |    2 ++
- arch/arm/mach-s3c2412/s3c2412.c |    2 ++
- arch/arm/mach-s3c2416/s3c2416.c |    2 ++
- arch/arm/mach-s3c2440/s3c2440.c |    2 ++
- arch/arm/mach-s3c2440/s3c2442.c |    2 ++
- 5 files changed, 10 insertions(+)
+Thanks,
+Thomas.
 
-Index: b/arch/arm/mach-s3c2410/s3c2410.c
-===================================================================
---- a/arch/arm/mach-s3c2410/s3c2410.c
-+++ b/arch/arm/mach-s3c2410/s3c2410.c
-@@ -170,7 +170,9 @@ int __init s3c2410_init(void)
- {
- 	printk("S3C2410: Initialising architecture\n");
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
-+#endif
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
- 	return sysdev_register(&s3c2410_sysdev);
-Index: b/arch/arm/mach-s3c2412/s3c2412.c
-===================================================================
---- a/arch/arm/mach-s3c2412/s3c2412.c
-+++ b/arch/arm/mach-s3c2412/s3c2412.c
-@@ -245,7 +245,9 @@ int __init s3c2412_init(void)
- {
- 	printk("S3C2412: Initialising architecture\n");
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2412_pm_syscore_ops);
-+#endif
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
- 	return sysdev_register(&s3c2412_sysdev);
-Index: b/arch/arm/mach-s3c2416/s3c2416.c
-===================================================================
---- a/arch/arm/mach-s3c2416/s3c2416.c
-+++ b/arch/arm/mach-s3c2416/s3c2416.c
-@@ -97,7 +97,9 @@ int __init s3c2416_init(void)
- 
- 	s3c_fb_setname("s3c2443-fb");
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2416_pm_syscore_ops);
-+#endif
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
- 	return sysdev_register(&s3c2416_sysdev);
-Index: b/arch/arm/mach-s3c2440/s3c2440.c
-===================================================================
---- a/arch/arm/mach-s3c2440/s3c2440.c
-+++ b/arch/arm/mach-s3c2440/s3c2440.c
-@@ -55,7 +55,9 @@ int __init s3c2440_init(void)
- 
- 	/* register suspend/resume handlers */
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
-+#endif
- 	register_syscore_ops(&s3c244x_pm_syscore_ops);
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
-Index: b/arch/arm/mach-s3c2440/s3c2442.c
-===================================================================
---- a/arch/arm/mach-s3c2440/s3c2442.c
-+++ b/arch/arm/mach-s3c2440/s3c2442.c
-@@ -169,7 +169,9 @@ int __init s3c2442_init(void)
- {
- 	printk("S3C2442: Initialising architecture\n");
- 
-+#ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2410_pm_syscore_ops);
-+#endif
- 	register_syscore_ops(&s3c244x_pm_syscore_ops);
- 	register_syscore_ops(&s3c24xx_irq_syscore_ops);
- 
+>
+> Best regards,
+> Changhwan Youn
+>
+> On 10/10/2011 03:11 AM, Thomas Abraham wrote:
+>> All of Samsung's s5p platforms have timer irqs statically mapped fro=
+m linux
+>> irq numbers 11 to 15. These timer irqs are moved to end of the stati=
+cally
+>> mapped linux irq space and the hardware irqs, which were statically =
+mapped
+>> starting from 32 is moved to start from 0. The NR_IRQS macro is cons=
+olidated
+>> for all the s5p platforms in this process.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>> =A0arch/arm/mach-exynos4/include/mach/entry-macro.S | =A0 =A01 -
+>> =A0arch/arm/mach-exynos4/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+3 +--
+>> =A0arch/arm/mach-s5p64x0/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+4 +---
+>> =A0arch/arm/mach-s5pc100/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+3 +--
+>> =A0arch/arm/mach-s5pv210/include/mach/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+3 +--
+>> =A0arch/arm/plat-samsung/include/plat/irqs.h =A0 =A0 =A0 =A0| =A0 =A0=
+7 +++++--
+>> =A06 files changed, 9 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos4/include/mach/entry-macro.S b/arch=
+/arm/mach-
+>> exynos4/include/mach/entry-macro.S
+>> index 4c9adbd..5c4fbcc 100644
+>> --- a/arch/arm/mach-exynos4/include/mach/entry-macro.S
+>> +++ b/arch/arm/mach-exynos4/include/mach/entry-macro.S
+>> @@ -72,7 +72,6 @@
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 cmpcc =A0 \irqnr, \irqnr
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 cmpne =A0 \irqnr, \tmp
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 cmpcs =A0 \irqnr, \irqnr
+>> - =A0 =A0 =A0 =A0 =A0 =A0 addne =A0 \irqnr, \irqnr, #32
+>>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .endm
+>>
+>> diff --git a/arch/arm/mach-exynos4/include/mach/irqs.h b/arch/arm/ma=
+ch-exynos4/include/mach/irqs.h
+>> index dfd4b7e..43087c3 100644
+>> --- a/arch/arm/mach-exynos4/include/mach/irqs.h
+>> +++ b/arch/arm/mach-exynos4/include/mach/irqs.h
+>> @@ -163,7 +163,6 @@
+>> =A0#define IRQ_GPIO2_NR_GROUPS =A09
+>> =A0#define IRQ_GPIO_END =A0 =A0 =A0 =A0 (S5P_GPIOINT_BASE + S5P_GPIO=
+INT_COUNT)
+>>
+>> -/* Set the default NR_IRQS */
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_GPI=
+O_END + 64)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_GPIO_END + =
+64)
+>>
+>> =A0#endif /* __ASM_ARCH_IRQS_H */
+>> diff --git a/arch/arm/mach-s5p64x0/include/mach/irqs.h b/arch/arm/ma=
+ch-s5p64x0/include/mach/irqs.h
+>> index 53982db..bea73cc 100644
+>> --- a/arch/arm/mach-s5p64x0/include/mach/irqs.h
+>> +++ b/arch/arm/mach-s5p64x0/include/mach/irqs.h
+>> @@ -141,8 +141,6 @@
+>>
+>> =A0#define IRQ_EINT_GROUP(grp, x) =A0 =A0 =A0 (IRQ_EINT_GROUP##grp##=
+_BASE + (x))
+>>
+>> -/* Set the default NR_IRQS */
+>> -
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_EIN=
+T_GROUP8_BASE + IRQ_EINT_GROUP8_NR + 1)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_EINT_GROUP8=
+_BASE + IRQ_EINT_GROUP8_NR + 1)
+>>
+>> =A0#endif /* __ASM_ARCH_IRQS_H */
+>> diff --git a/arch/arm/mach-s5pc100/include/mach/irqs.h b/arch/arm/ma=
+ch-s5pc100/include/mach/irqs.h
+>> index d2eb475..3a9d300 100644
+>> --- a/arch/arm/mach-s5pc100/include/mach/irqs.h
+>> +++ b/arch/arm/mach-s5pc100/include/mach/irqs.h
+>> @@ -104,8 +104,7 @@
+>> =A0#define S5P_GPIOINT_BASE =A0 =A0 (IRQ_EINT(31) + 1)
+>> =A0#define S5P_GPIOINT_GROUP_MAXNR =A0 =A0 =A021
+>>
+>> -/* Set the default NR_IRQS */
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_EIN=
+T(31) + S5P_GPIOINT_COUNT + 1)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_EINT(31) + =
+S5P_GPIOINT_COUNT + 1)
+>>
+>> =A0/* Compatibility */
+>> =A0#define IRQ_LCD_FIFO =A0 =A0 =A0 =A0 IRQ_LCD0
+>> diff --git a/arch/arm/mach-s5pv210/include/mach/irqs.h b/arch/arm/ma=
+ch-s5pv210/include/mach/irqs.h
+>> index 5e0de3a..df3173a 100644
+>> --- a/arch/arm/mach-s5pv210/include/mach/irqs.h
+>> +++ b/arch/arm/mach-s5pv210/include/mach/irqs.h
+>> @@ -125,8 +125,7 @@
+>> =A0#define S5P_GPIOINT_BASE =A0 =A0 (IRQ_EINT(31) + 1)
+>> =A0#define S5P_GPIOINT_GROUP_MAXNR =A0 =A0 =A022
+>>
+>> -/* Set the default NR_IRQS */
+>> -#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_EIN=
+T(31) + S5P_GPIOINT_COUNT + 1)
+>> +#define IRQ_TIMER_BASE =A0 =A0 =A0 =A0 =A0 =A0 =A0 (IRQ_EINT(31) + =
+S5P_GPIOINT_COUNT + 1)
+>>
+>> =A0/* Compatibility */
+>> =A0#define IRQ_LCD_FIFO =A0 =A0 =A0 =A0 IRQ_LCD0
+>> diff --git a/arch/arm/plat-samsung/include/plat/irqs.h b/arch/arm/pl=
+at-samsung/include/plat/irqs.h
+>> index 08d1a7e..b8918b3 100644
+>> --- a/arch/arm/plat-samsung/include/plat/irqs.h
+>> +++ b/arch/arm/plat-samsung/include/plat/irqs.h
+>> @@ -22,7 +22,7 @@
+>> =A0 * mulitple of 32 to allow the common code to work
+>> =A0 */
+>>
+>> -#define S5P_IRQ_OFFSET =A0 =A0 =A0 =A0 =A0 =A0 =A0 (32)
+>> +#define S5P_IRQ_OFFSET =A0 =A0 =A0 =A0 =A0 =A0 =A0 (0)
+>>
+>> =A0#define S5P_IRQ(x) =A0 =A0 =A0 =A0 =A0 ((x) + S5P_IRQ_OFFSET)
+>>
+>> @@ -44,13 +44,14 @@
+>> =A0#define S5P_IRQ_VIC2(x) =A0 =A0 =A0 =A0 =A0 =A0 =A0(S5P_VIC2_BASE=
+ + (x))
+>> =A0#define S5P_IRQ_VIC3(x) =A0 =A0 =A0 =A0 =A0 =A0 =A0(S5P_VIC3_BASE=
+ + (x))
+>>
+>> -#define S5P_TIMER_IRQ(x) =A0 =A0 (11 + (x))
+>> +#define S5P_TIMER_IRQ(x) =A0 =A0 (IRQ_TIMER_BASE + (x))
+>>
+>> =A0#define IRQ_TIMER0 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(0)
+>> =A0#define IRQ_TIMER1 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(1)
+>> =A0#define IRQ_TIMER2 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(2)
+>> =A0#define IRQ_TIMER3 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(3)
+>> =A0#define IRQ_TIMER4 =A0 =A0 =A0 =A0 =A0 S5P_TIMER_IRQ(4)
+>> +#define IRQ_TIMER_COUNT =A0 =A0 =A0 =A0 =A0 =A0 =A0(5)
+>>
+>> =A0#define IRQ_EINT(x) =A0 =A0 =A0 =A0 =A0((x) < 16 ? ((x) + S5P_EIN=
+T_BASE1) \
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 : ((x) - 16 + S5P_EINT_BASE2))
+>> @@ -77,4 +78,6 @@
+>> =A0#define S5P_IRQ_TYPE_EDGE_RISING =A0 =A0 (0x03)
+>> =A0#define S5P_IRQ_TYPE_EDGE_BOTH =A0 =A0 =A0 =A0 =A0 =A0 =A0 (0x04)
+>>
+>> +#define NR_IRQS =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(IRQ_TIM=
+ER_BASE + IRQ_TIMER_COUNT)
+>> +
+>> =A0#endif /* __PLAT_SAMSUNG_IRQS_H */
+>> --
+>> 1.6.6.rc2
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+>
+>
