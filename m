@@ -1,93 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v5 0/2] Add device tree support for Samsung's keypad controller
- driver
-Date: Mon, 24 Oct 2011 15:00:40 +0200
-Message-ID: <4EA56178.60301@samsung.com>
-References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org> <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com>
+Subject: Re: [PATCH 0/2] ARM: Samsung: Add basic device tree support for Exynos4
+ boards
+Date: Mon, 24 Oct 2011 15:02:44 +0200
+Message-ID: <4EA561F4.5010606@samsung.com>
+References: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52128 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:52801 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932309Ab1JXNAo (ORCPT
+	with ESMTP id S932309Ab1JXNCt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 09:00:44 -0400
-In-Reply-To: <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com>
+	Mon, 24 Oct 2011 09:02:49 -0400
+Received: by bkbzt19 with SMTP id zt19so8166241bkb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2011 06:02:47 -0700 (PDT)
+In-Reply-To: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, grant.likely@secretlab.ca, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On 10/11/11 14:09, Kukjin Kim wrote:
-> Thomas Abraham wrote:
->>
->> Changes since v4:
->> - Tested with linux 3.1-rc9. No changes in code.
->>
->> Changes since v3:
->> - Addressed comments from Grant Likely.
->>    - Set num_rows and num_cols to zero in samsung_keypad_parse_dt function.
->>    - Fixed the wierd looking if-else block in samsung_keypad_probe
-> function.
->>
->> Changes since v2:
->> - Addressed comments from Grant Likely.
->>    - Renamed 'keypad,key-code' property name to 'linux,code'.
->>    - Fixed incorrect data types for all instances of of_property+read_u32.
->>    - linux,input-type binding was not added as suggested since the driver
->>      supports only EV_KEY event type.
->>
->> Changes since v1:
->> - Addressed comments from Dmitry Torokhov.
->>    - Type of controller is cached in driver's private data and the function
->>      that determines the type of the controller for each keypad scan is
->>      removed.
->>    - pdata allocated during probe is explicitly freed after probe completes
->>      without any error. In case of exit from probe due a error, no explicit
->>      deallocation of pdata memory is performed and it is left to devres to
->>      handle that.
->>    - The generic code to translate KEY(x,y,code) is retained in the driver
->>      itself. I am unsure of a right common place for it.
->>    - Driver continues with the probe even if one or more gpio configuration
->>      fails.
->>    - Patch 1 that adds a new config option is still retained in this
-> patchset.
->>
->>
->> This patchset adds device tree support for samsung's keypad controller
-> driver.
->> First patch adds a new config option to be used by device tree enabled
-> platforms
->> for selecting the samsung's keypad controller driver. The second patch
-> adds
->> device
->> tree support for the keypad driver.
->>
->>
->> Thomas Abraham (2):
->>    input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
->>    input: samsung-keypad: Add device tree support
->>
->>   .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
->>   drivers/input/keyboard/Kconfig                     |    9 +-
->>   drivers/input/keyboard/samsung-keypad.c            |  174
->> ++++++++++++++++++--
->>   3 files changed, 258 insertions(+), 13 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/input/samsung-
->> keypad.txt
+On 10/11/11 16:13, Thomas Abraham wrote:
+> This patchset adds a new basic device tree enabled machine/board file which is
+> based on the Samsung's Exynos4 family of SoC's. Also included in this patchset is the
+> dts file for Exynos4210 SoC, Samsung's SMDKV310 board and Insignal's Origen board.
 >
-> Looks ok to me,
-> Acked-by: Kukjin Kim<kgene.kim@samsung.com>
+> The Exynos4210 dts file includes support for IRQ, GPIO, WDT, RTC, UART, SDHCI, Keypad,
+> DMA and I2C controllers. As device tree coverage for Exynos4210 increases, additional
+> device nodes to represent the controllers should be added.
 >
-> Hi Dmitry,
-> If you're ok on this, please adding this in your tree for upcoming merge
-> window.
+> The device tree enabled machine file enables boot on two boards based on the
+> Exynos4210 SoC. This provides a starting point to add additional device tree support
+> on these boards, migrate other existing Exynos4 based boards to use device tree
+> and enable device tree based boot on new upcoming boards.
 >
-Dmitry,
+> This patchset has been tested on the following tree:
+>    https://github.com/kgene/linux-samsung.git   branch: for-next
+>
+> Thomas Abraham (2):
+>    ARM: Samsung: Add Exynos4 device tree enabled board file
+>    ARM: dts: Add intial dts file for Exynos4210 SoC, SMDKV310 and Origen board
+>
+>   .../devicetree/bindings/arm/insignal-boards.txt    |    8 +
+>   .../devicetree/bindings/arm/samsung-boards.txt     |    8 +
+>   arch/arm/boot/dts/exynos4210-origen.dts            |  137 +++++++
+>   arch/arm/boot/dts/exynos4210-smdkv310.dts          |  182 +++++++++
+>   arch/arm/boot/dts/exynos4210.dtsi                  |  403 ++++++++++++++++++++
+>   arch/arm/mach-exynos4/Kconfig                      |   14 +
+>   arch/arm/mach-exynos4/Makefile                     |    2 +
+>   arch/arm/mach-exynos4/mach-exynos4-dt.c            |   85 ++++
+>   8 files changed, 839 insertions(+), 0 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/arm/insignal-boards.txt
+>   create mode 100644 Documentation/devicetree/bindings/arm/samsung-boards.txt
+>   create mode 100644 arch/arm/boot/dts/exynos4210-origen.dts
+>   create mode 100644 arch/arm/boot/dts/exynos4210-smdkv310.dts
+>   create mode 100644 arch/arm/boot/dts/exynos4210.dtsi
+>   create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
 
-Any problem on this?
-
+Applied.
 Thanks.
 
 Best regards,
