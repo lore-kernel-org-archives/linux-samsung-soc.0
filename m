@@ -1,64 +1,171 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: Samsung: Move timer irq numbers to end of linux
- irq	space
-Date: Mon, 24 Oct 2011 10:09:09 +0200
-Message-ID: <4EA51D25.9060802@samsung.com>
-References: <1318234289-22041-1-git-send-email-thomas.abraham@linaro.org> <1318234289-22041-2-git-send-email-thomas.abraham@linaro.org> <001001cc8d6d$5c48fa60$14daef20$%youn@samsung.com> <017001cc8fd7$c27e4ee0$477aeca0$%kim@samsung.com> <20111021194517.GA3722@ponder.secretlab.ca>
+Subject: Re: [PATCH v2 0/9] serial: samsung: rework clock lookup and add device
+ tree support
+Date: Mon, 24 Oct 2011 10:27:47 +0200
+Message-ID: <4EA52183.3040206@samsung.com>
+References: <1318241285-23568-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52590 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753724Ab1JXIJQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 04:09:16 -0400
-Received: by bkbzt19 with SMTP id zt19so7875934bkb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2011 01:09:14 -0700 (PDT)
-In-Reply-To: <20111021194517.GA3722@ponder.secretlab.ca>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-Reply-To: <1318241285-23568-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-serial-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>, Greg KH <gregkh@suse.de>
+Cc: linux-serial@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, alan@linux.intel.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Changhwan Youn' <chaos.youn@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org, 'Nicolas Pitre' <nicolas.pitre@linaro.org>
 
-
-On 10/21/11 21:45, Grant Likely wrote:
-> On Fri, Oct 21, 2011 at 06:56:52PM +0900, Kukjin Kim wrote:
->> Changhwan Youn wrote:
->>>
->>> Hi Thomas,
->>>
->>> All UART_IRQ_RXD, TXD, ERR of Samsung's platforms are also statically
->>> mapped to linux irq numbers 16 to 31. These interrupts also need proper
->> handling.
->>>
->>> Best regards,
->>> Changhwan Youn
->>>
->>
->> Hi all,
->>
->> Hmm, I'd like to apply Thomas' device tree series for EXYNOS4 and Samsung
->> stuff for upcoming merge window but there are still some comments on some
->> stuff and that should be fixed before applying. In addition I need to keep
->> the ordering to apply them to avoid conflicts. But as you know, v3.1 is now
->> close at hand and we don't have enough time for it now :(
->>
->> I will leave tomorrow morning (KST) for KS. I will talk to Grant Likely
->> about this in Prague :)
+On 10/10/11 12:07, Thomas Abraham wrote:
+> Changes since v1:
+> - Included the missing dt bindings documentation in the last patch.
+> - Rebased and tested with linux 3.1-rc9 on linux-samsung-soc tree.
+> - Commit messages are modified to be elaborate.
+> - No changes in code.
 >
-> One of the goals I have for the hacking summit is to get as much of
-> the outstanding DT patches queued up and into linux-next.
 >
-OK.
+> This patchset reworks the lookup of parent clocks for baud rate generator in
+> the uart controller and adds support for device tree based discovery for the
+> uart controller.
+>
+> The Samsung uart driver was dependent on the clock names supplied in the
+> platform data. This dependency had to be first removed to add device tree based
+> discovery support for Samsung uart driver. In the process of reworking the clock
+> lookup logic, several changes had to be made which in turn made parts of the
+> driver redundant and such portions of the driver have been removed in this
+> patchset. As a result, all the SoC specific extensions have been deleted.
+>
+> Patch 1 modifies the driver to keep a copy of the location of the platform data
+> in the driver's private data. This makes device tree support addition
+> non-intrusive.
+>
+> Patch 2 moves the complicated clock divider handling for fclk source clock for
+> s3c2440 SoC into platform code. The fclk clock can be easily managed by
+> representing it as a clock in the platform code. fclk clock handling was
+> specific to s3c2440 and moving this out of the driver makes the rest of the
+> clock handling in the driver almost identical for all SoC's supported by the
+> driver.
+>
+> Patch 3 modifies the driver to lookup source clocks for baud rate generator
+> by using generic clock names. The generic clock name used by the driver is
+> 'clk_uart_baud' appended with the parent number of the clock. For instance,
+> the second parent clock source option for baud rate generator is named as
+> 'clk_uart_baud2'.
+>
+> The driver stops depending on the set_clock and get_clock callbacks in the
+> SoC specific extensions. Instead, the driver is modified to lookup parent
+> clock rates and decide/calculate the best parent clock source for the baud
+> rate generator (best clock would have the least delta when compared to buad
+> rate requested).
+>
+> In this process, four new members are added in the driver's private data
+> structure. The 'def_clk_sel' member is a platform set bit-value that specifies
+> the possible parents that the driver is allowed to use for baud rate clock.
+> A bit set at a particular bit position selects that parent clock source.
+> Example: If bit number 2 is set in 'def_clk_sel', then parent clock source '2'
+> can be a possible parent clock for baud rate generator. The 'num_clks'
+> is the number of possible parent clocks that the SoC supports. The
+> 'clksel_mask' and 'clksel_shift' members are used to operate on the parent clock
+> selection bit field int the uart controller's contol register.
+>
+> Patch 4 removes all uses and instances of 'struct s3c24xx_uart_clksrc'. This
+> structure was used to pass source clock 'names' between platform code, driver
+> and SoC specific extensions. By moving away from using platform specified clock
+> names in the driver, all uses and instances of 'struct s3c24xx_uart_clksrc'
+> is removed.
+>
+> Patch 5 removes all the SoC specific get_clksrc and set_clksrc callbacks. These
+> callbacks were using SoC specific clock names to communicate the clock to be
+> set or retrieved. These callbacks are removed as they are no longer required.
+>
+> Patch 6 reworks the uart clocks in platform code of all Samsung SoC's. The
+> driver would use generic clock names and this patch creates aliases to uart
+> clocks with generic clock names as the alias name.
+>
+> Patch 7 merges all the SoC specific port reset functions into one common port
+> reset function and moves the common function into the common Samsung uart
+> driver. All the SoC specific port reset functions perform the same operation
+> allowing all of them to be converged.
+>
+> Patch 8 collapses all the SoC specific probe functions and associated driver
+> private data into the Samsung common uart driver. With get_clksrc, set_clksrc
+> and reset_port functions removed from SoC specific extensions, all the remains
+> in those extensions is the probe function along with SoC specific driver data.
+> These are merged into the common Samsung uart driver and all the SoC specific
+> extensions are deleted.
+>
+> Patch 9 adds device tree based discovery support for the uart driver.
+>
+>
+> This patchset is based on the following tree
+> https://github.com/kgene/linux-samsung.git  branch: for-next
+>
+> with the following two patches applied
+> [PATCH] serial: samsung: Add unified interrupt handler for s3c64xx and later SoC's
+> [PATCH] ARM: SAMSUNG: Remove uart irq handling from plaform code
+>
+> and tested on the following boards.
+> SMDK2440, SMDK2416, SMDK6410, SMDK6440, SMDK6450, SMDKC100, SMDKV210, SMDKV310.
+>
+> This patchset has dependency on the following patchset:
+> [PATCH V2 0/2] Add a common macro for creating struct clk_lookup entries
+>
+>
+> Thomas Abraham (9):
+>    serial: samsung: Keep a copy of the location of platform data in driver's private data
+>    serial: samsung: move handling of fclk/n clock to platform code
+>    serial: samsung: switch to clkdev based clock lookup
+>    serial: samsung: remove struct 's3c24xx_uart_clksrc' and all uses of it
+>    serial: samsung: remove all uses of get_clksrc and set_clksrc
+>    arm: samsung: register uart clocks to clock lookup list
+>    serial: samsung: merge all SoC specific port reset functions
+>    serial: samsung: merge probe() function from all SoC specific extensions
+>    serial: samsung: add device tree support
+>
+>   .../devicetree/bindings/serial/samsung_uart.txt    |   14 +
+>   arch/arm/mach-exynos4/clock.c                      |  106 ++--
+>   arch/arm/mach-exynos4/init.c                       |   21 +-
+>   arch/arm/mach-s3c2410/mach-bast.c                  |   22 -
+>   arch/arm/mach-s3c2410/mach-vr1000.c                |   24 -
+>   arch/arm/mach-s3c2410/s3c2410.c                    |    6 +
+>   arch/arm/mach-s3c2412/clock.c                      |    7 +
+>   arch/arm/mach-s3c2440/clock.c                      |   44 ++
+>   arch/arm/mach-s3c2440/mach-anubis.c                |   22 +-
+>   arch/arm/mach-s3c2440/mach-at2440evb.c             |   22 +-
+>   arch/arm/mach-s3c2440/mach-osiris.c                |   24 +-
+>   arch/arm/mach-s3c2440/mach-rx1950.c                |   18 +-
+>   arch/arm/mach-s3c2440/mach-rx3715.c                |   19 +-
+>   arch/arm/mach-s3c64xx/clock.c                      |   37 +-
+>   arch/arm/mach-s5p64x0/clock-s5p6440.c              |   32 +-
+>   arch/arm/mach-s5p64x0/clock-s5p6450.c              |   32 +-
+>   arch/arm/mach-s5p64x0/init.c                       |   31 -
+>   arch/arm/mach-s5pc100/clock.c                      |   33 +-
+>   arch/arm/mach-s5pv210/clock.c                      |  107 ++--
+>   arch/arm/mach-s5pv210/init.c                       |   19 -
+>   arch/arm/plat-s3c24xx/s3c2443-clock.c              |   23 +-
+>   arch/arm/plat-samsung/include/plat/regs-serial.h   |   45 +-
+>   drivers/tty/serial/Kconfig                         |   45 +--
+>   drivers/tty/serial/Makefile                        |    5 -
+>   drivers/tty/serial/s3c2410.c                       |  115 ----
+>   drivers/tty/serial/s3c2412.c                       |  149 -----
+>   drivers/tty/serial/s3c2440.c                       |  178 ------
+>   drivers/tty/serial/s3c6400.c                       |  149 -----
+>   drivers/tty/serial/s5pv210.c                       |  158 -----
+>   drivers/tty/serial/samsung.c                       |  639 ++++++++++++--------
+>   drivers/tty/serial/samsung.h                       |   32 +-
+>   31 files changed, 752 insertions(+), 1426 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/serial/samsung_uart.txt
+>   delete mode 100644 drivers/tty/serial/s3c2410.c
+>   delete mode 100644 drivers/tty/serial/s3c2412.c
+>   delete mode 100644 drivers/tty/serial/s3c2440.c
+>   delete mode 100644 drivers/tty/serial/s3c6400.c
+>   delete mode 100644 drivers/tty/serial/s5pv210.c
 
-I talked to Grant at ARM Subarch Workshop.
+(Cc'ed Greg KH)
 
-I will apply Thomas' DT patches into Samsung tree and it will be sent to 
-upstream via arm-soc for upcoming merge window v3.2 and if any fixing is 
-required, we will do it during -rc.
+Looks good for me, and I need to get the ack from Greg before applying.
 
-Thomas, if any problems during apply, let you know.
+Greg, if you're ok, I'd like to send this series to upstream via Samsung 
+tree for supporting device tree because this touches a lot of arch/arm/ 
+Samsung stuff. If any problems, please let me know.
 
 Thanks.
 
