@@ -1,59 +1,92 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] rtc: rtc-s3c: Add device tree support
-Date: Mon, 24 Oct 2011 14:54:34 +0200
-Message-ID: <4EA5600A.3050801@samsung.com>
-References: <1315064959-16930-1-git-send-email-thomas.abraham@linaro.org> <CAJuYYwQdeD=DEFSBqTTJM_EQcc517LPDy4w-N+mbHdH8Eqh=Dg@mail.gmail.com> <053801cc8803$43676230$ca362690$%kim@samsung.com> <20111013193455.GC18574@ponder.secretlab.ca>
+Subject: Re: [PATCH v5 0/2] Add device tree support for Samsung's keypad controller
+ driver
+Date: Mon, 24 Oct 2011 15:00:40 +0200
+Message-ID: <4EA56178.60301@samsung.com>
+References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org> <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:40263 "EHLO
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:52128 "EHLO
 	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932298Ab1JXMyj (ORCPT
+	with ESMTP id S932309Ab1JXNAo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 08:54:39 -0400
-Received: by bkbzt19 with SMTP id zt19so8157606bkb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2011 05:54:38 -0700 (PDT)
-In-Reply-To: <20111013193455.GC18574@ponder.secretlab.ca>
+	Mon, 24 Oct 2011 09:00:44 -0400
+In-Reply-To: <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, rtc-linux@googlegroups.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, a.zummo@towertech.it
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, grant.likely@secretlab.ca, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
 
-On 10/13/11 21:34, Grant Likely wrote:
-> On Tue, Oct 11, 2011 at 07:48:07PM +0900, Kukjin Kim wrote:
->> Thomas Abraham wrote:
->>>
->>> On 3 September 2011 21:19, Thomas Abraham<thomas.abraham@linaro.org>
->>> wrote:
->>>> Add device tree based discovery support for Samsung's rtc controller.
->>>>
->>>> Cc: Ben Dooks<ben-linux@fluff.org>
->>>> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
->>>> ---
->>>>   Documentation/devicetree/bindings/rtc/s3c-rtc.txt |   20
->>> ++++++++++++++++++++
->>>>   drivers/rtc/rtc-s3c.c                             |   21
->>> ++++++++++++++++++++-
->>>>   2 files changed, 40 insertions(+), 1 deletions(-)
->>>>   create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.txt
->>>
->>> Ping. Any comments for this patch? If this looks fine, can this be
->>> considered for 3.2 merge via the Samsung kernel tree.
->>>
->> (Cc'ed Alessandro Zummo who is RTC Subsystem maintainer)
+On 10/11/11 14:09, Kukjin Kim wrote:
+> Thomas Abraham wrote:
 >>
->> I'm ok with this, so if this can be got the ack from Grant and Alessandro,
->> will take this.
+>> Changes since v4:
+>> - Tested with linux 3.1-rc9. No changes in code.
+>>
+>> Changes since v3:
+>> - Addressed comments from Grant Likely.
+>>    - Set num_rows and num_cols to zero in samsung_keypad_parse_dt function.
+>>    - Fixed the wierd looking if-else block in samsung_keypad_probe
+> function.
+>>
+>> Changes since v2:
+>> - Addressed comments from Grant Likely.
+>>    - Renamed 'keypad,key-code' property name to 'linux,code'.
+>>    - Fixed incorrect data types for all instances of of_property+read_u32.
+>>    - linux,input-type binding was not added as suggested since the driver
+>>      supports only EV_KEY event type.
+>>
+>> Changes since v1:
+>> - Addressed comments from Dmitry Torokhov.
+>>    - Type of controller is cached in driver's private data and the function
+>>      that determines the type of the controller for each keypad scan is
+>>      removed.
+>>    - pdata allocated during probe is explicitly freed after probe completes
+>>      without any error. In case of exit from probe due a error, no explicit
+>>      deallocation of pdata memory is performed and it is left to devres to
+>>      handle that.
+>>    - The generic code to translate KEY(x,y,code) is retained in the driver
+>>      itself. I am unsure of a right common place for it.
+>>    - Driver continues with the probe even if one or more gpio configuration
+>>      fails.
+>>    - Patch 1 that adds a new config option is still retained in this
+> patchset.
+>>
+>>
+>> This patchset adds device tree support for samsung's keypad controller
+> driver.
+>> First patch adds a new config option to be used by device tree enabled
+> platforms
+>> for selecting the samsung's keypad controller driver. The second patch
+> adds
+>> device
+>> tree support for the keypad driver.
+>>
+>>
+>> Thomas Abraham (2):
+>>    input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
+>>    input: samsung-keypad: Add device tree support
+>>
+>>   .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
+>>   drivers/input/keyboard/Kconfig                     |    9 +-
+>>   drivers/input/keyboard/samsung-keypad.c            |  174
+>> ++++++++++++++++++--
+>>   3 files changed, 258 insertions(+), 13 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/input/samsung-
+>> keypad.txt
 >
-> Acked-by: Grant Likely<grant.likely@secretlab.ca>
+> Looks ok to me,
+> Acked-by: Kukjin Kim<kgene.kim@samsung.com>
+>
+> Hi Dmitry,
+> If you're ok on this, please adding this in your tree for upcoming merge
+> window.
+>
+Dmitry,
 
-Hi Alessandro,
-
-Applied this in Samsung tree for supporting device tree for upcoming 3.2 
-merge window.
-
-If any problems, please let me know before sending to upstream.
+Any problem on this?
 
 Thanks.
 
