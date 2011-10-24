@@ -1,85 +1,111 @@
-From: Chris Ball <cjb@laptop.org>
+From: Girish K S <girish.shivananjappa@linaro.org>
 Subject: Re: [PATCH] mmc: core: Assemble the codes of related to eMMC4.5
-Date: Mon, 24 Oct 2011 07:09:15 -0400
-Message-ID: <m2obx64pes.fsf@bob.laptop.org>
+Date: Mon, 24 Oct 2011 17:02:51 +0530
+Message-ID: <CAGxe1ZGer3KyWtGKwAsKfcfOA87McG5tfeEn=V-E=oUbtRFJdg@mail.gmail.com>
 References: <001b01cc9238$156a65a0$403f30e0$%jun@samsung.com>
+	<m2obx64pes.fsf@bob.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:60975 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754980Ab1JXLJ2 (ORCPT
+Received: from mail-ww0-f42.google.com ([74.125.82.42]:42590 "EHLO
+	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755207Ab1JXLcx convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 07:09:28 -0400
-In-Reply-To: <001b01cc9238$156a65a0$403f30e0$%jun@samsung.com> (Seungwon
-	Jeon's message of "Mon, 24 Oct 2011 19:31:25 +0900")
+	Mon, 24 Oct 2011 07:32:53 -0400
+In-Reply-To: <m2obx64pes.fsf@bob.laptop.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+To: Chris Ball <cjb@laptop.org>
+Cc: Seungwon Jeon <tgih.jun@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-Hi Seungwon,
-
-On Mon, Oct 24 2011, Seungwon Jeon wrote:
-> Code cleanup. The codes of related to eMMC4.5 are scattered.
-> This patch removes a duplicate if-statement and assembles all.
+On 24 October 2011 16:39, Chris Ball <cjb@laptop.org> wrote:
+> Hi Seungwon,
 >
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
->  drivers/mmc/core/mmc.c |   20 +++++++++-----------
->  1 files changed, 9 insertions(+), 11 deletions(-)
+> On Mon, Oct 24 2011, Seungwon Jeon wrote:
+>> Code cleanup. The codes of related to eMMC4.5 are scattered.
+>> This patch removes a duplicate if-statement and assembles all.
+>>
+>> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>> ---
+>> =A0drivers/mmc/core/mmc.c | =A0 20 +++++++++-----------
+>> =A01 files changed, 9 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+>> index fb5bf01..3627044 100644
+>> --- a/drivers/mmc/core/mmc.c
+>> +++ b/drivers/mmc/core/mmc.c
+>> @@ -467,29 +467,27 @@ static int mmc_read_ext_csd(struct mmc_card *c=
+ard, u8 *ext_csd)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.rst_n_function =3D ext_csd=
+[EXT_CSD_RST_N_FUNCTION];
+>> =A0 =A0 =A0 }
+>>
+>> - =A0 =A0 /* eMMC v4.5 or later */
+>> - =A0 =A0 if (card->ext_csd.rev >=3D 6)
+>> - =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.feature_support |=3D MMC_DIS=
+CARD_FEATURE;
+>> -
+>> =A0 =A0 =A0 card->ext_csd.raw_erased_mem_count =3D ext_csd[EXT_CSD_E=
+RASED_MEM_CONT];
+>> =A0 =A0 =A0 if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->erased_byte =3D 0xFF;
+>> =A0 =A0 =A0 else
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->erased_byte =3D 0x0;
+>>
+>> + =A0 =A0 /* eMMC v4.5 or later */
+>> =A0 =A0 =A0 if (card->ext_csd.rev >=3D 6) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.feature_support |=3D MMC_DIS=
+CARD_FEATURE;
+>> +
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.generic_cmd6_time =3D 10 *
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_GENERIC_=
+CMD6_TIME];
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.power_off_longtime =3D 10 =
+*
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_POWER_OF=
+=46_LONG_TIME];
+>> - =A0 =A0 } else
+>> - =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.generic_cmd6_time =3D 0;
 >
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index fb5bf01..3627044 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -467,29 +467,27 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
->  		card->ext_csd.rst_n_function = ext_csd[EXT_CSD_RST_N_FUNCTION];
->  	}
+> Your patch removes this line completely. =A0Why is that? =A0You shoul=
+d
+> explain it in the commit message.
+By tracing the code what i understand is  mmc_read_ext_csd is called
+from mmc_card_init. In the init function the card instance is created.
+When the card instance is created kzalloc is used. This will
+initialize all the card structure members to 0.
+So the deleted line is implicit.
 >
-> -	/* eMMC v4.5 or later */
-> -	if (card->ext_csd.rev >= 6)
-> -		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
-> -
->  	card->ext_csd.raw_erased_mem_count = ext_csd[EXT_CSD_ERASED_MEM_CONT];
->  	if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
->  		card->erased_byte = 0xFF;
->  	else
->  		card->erased_byte = 0x0;
+>>
+>> - =A0 =A0 card->ext_csd.cache_size =3D
+>> - =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
+>> - =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
+>> - =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
+>> - =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.cache_size =3D
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE=
+ + 0] << 0 |
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE=
+ + 1] << 8 |
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE=
+ + 2] << 16 |
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ext_csd[EXT_CSD_CACHE_SIZE=
+ + 3] << 24;
+>> + =A0 =A0 }
+>>
+>> =A0out:
+>> =A0 =A0 =A0 return err;
 >
-> +	/* eMMC v4.5 or later */
->  	if (card->ext_csd.rev >= 6) {
-> +		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
-> +
->  		card->ext_csd.generic_cmd6_time = 10 *
->  			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
->  		card->ext_csd.power_off_longtime = 10 *
->  			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
-> -	} else
-> -		card->ext_csd.generic_cmd6_time = 0;
-
-Your patch removes this line completely.  Why is that?  You should
-explain it in the commit message.
-
+> The rest looks good, thanks,
 >
-> -	card->ext_csd.cache_size =
-> -		ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
-> -		ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
-> -		ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
-> -		ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
-> +		card->ext_csd.cache_size =
-> +			ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
-> +			ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
-> +			ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
-> +			ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
-> +	}
+> - Chris.
+> --
+> Chris Ball =A0 <cjb@laptop.org> =A0 <http://printf.net/>
+> One Laptop Per Child
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
->  out:
->  	return err;
-
-The rest looks good, thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
