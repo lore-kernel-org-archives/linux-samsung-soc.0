@@ -1,64 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/2] ARM: Samsung: Add basic device tree support for Exynos4
- boards
-Date: Mon, 24 Oct 2011 15:02:44 +0200
-Message-ID: <4EA561F4.5010606@samsung.com>
-References: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH V5 1/3] SDHCI: S3C: Use generic clock names for sdhci
+	bus clock options
+Date: Mon, 24 Oct 2011 17:16:49 +0200
+Message-ID: <4EA58161.30603@samsung.com>
+References: <1318588126-19167-1-git-send-email-rajeshwari.s@samsung.com>
+	<1318588126-19167-2-git-send-email-rajeshwari.s@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:52801 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932309Ab1JXNCt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 09:02:49 -0400
-Received: by bkbzt19 with SMTP id zt19so8166241bkb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Oct 2011 06:02:47 -0700 (PDT)
-In-Reply-To: <1318342396-26178-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1318588126-19167-2-git-send-email-rajeshwari.s@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rajeshwari Shinde <rajeshwari.s@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On 10/11/11 16:13, Thomas Abraham wrote:
-> This patchset adds a new basic device tree enabled machine/board file which is
-> based on the Samsung's Exynos4 family of SoC's. Also included in this patchset is the
-> dts file for Exynos4210 SoC, Samsung's SMDKV310 board and Insignal's Origen board.
+On 10/14/11 12:28, Rajeshwari Shinde wrote:
+> This patch modifies the driver to stop depending on the clock names
+> being passed from the platform and switch over to bus clock lookup
+> using generic clock names.
 >
-> The Exynos4210 dts file includes support for IRQ, GPIO, WDT, RTC, UART, SDHCI, Keypad,
-> DMA and I2C controllers. As device tree coverage for Exynos4210 increases, additional
-> device nodes to represent the controllers should be added.
+> Signed-off-by: Rajeshwari Shinde<rajeshwari.s@samsung.com>
+> ---
+>   drivers/mmc/host/sdhci-s3c.c |    6 ++----
+>   1 files changed, 2 insertions(+), 4 deletions(-)
 >
-> The device tree enabled machine file enables boot on two boards based on the
-> Exynos4210 SoC. This provides a starting point to add additional device tree support
-> on these boards, migrate other existing Exynos4 based boards to use device tree
-> and enable device tree based boot on new upcoming boards.
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 82709b6..a5fde87 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -435,14 +435,12 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
 >
-> This patchset has been tested on the following tree:
->    https://github.com/kgene/linux-samsung.git   branch: for-next
+>   	for (clks = 0, ptr = 0; ptr<  MAX_BUS_CLK; ptr++) {
+>   		struct clk *clk;
+> -		char *name = pdata->clocks[ptr];
+> +		char name[14];
 >
-> Thomas Abraham (2):
->    ARM: Samsung: Add Exynos4 device tree enabled board file
->    ARM: dts: Add intial dts file for Exynos4210 SoC, SMDKV310 and Origen board
+> -		if (name == NULL)
+> -			continue;
+> +		sprintf(name, "mmc_busclk.%d", ptr);
 >
->   .../devicetree/bindings/arm/insignal-boards.txt    |    8 +
->   .../devicetree/bindings/arm/samsung-boards.txt     |    8 +
->   arch/arm/boot/dts/exynos4210-origen.dts            |  137 +++++++
->   arch/arm/boot/dts/exynos4210-smdkv310.dts          |  182 +++++++++
->   arch/arm/boot/dts/exynos4210.dtsi                  |  403 ++++++++++++++++++++
->   arch/arm/mach-exynos4/Kconfig                      |   14 +
->   arch/arm/mach-exynos4/Makefile                     |    2 +
->   arch/arm/mach-exynos4/mach-exynos4-dt.c            |   85 ++++
->   8 files changed, 839 insertions(+), 0 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/arm/insignal-boards.txt
->   create mode 100644 Documentation/devicetree/bindings/arm/samsung-boards.txt
->   create mode 100644 arch/arm/boot/dts/exynos4210-origen.dts
->   create mode 100644 arch/arm/boot/dts/exynos4210-smdkv310.dts
->   create mode 100644 arch/arm/boot/dts/exynos4210.dtsi
->   create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
+>   		clk = clk_get(dev, name);
+>   		if (IS_ERR(clk)) {
+> -			dev_err(dev, "failed to get clock %s\n", name);
+>   			continue;
+>   		}
+>
 
-Applied.
+Looks ok for me.
+
+Chris, if you're ok on this, could you please add this in your tree for 
+this merge window? or if you want, I will apply this to Samsung tree 
+with other Rajeshwari's patches. I'm ok either...
+
 Thanks.
 
 Best regards,
