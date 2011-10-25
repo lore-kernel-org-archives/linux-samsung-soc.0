@@ -1,49 +1,75 @@
-From: Shunji Takeshi <test@menlh.go.id>
-Subject: For Your Interest:
-Date: Tue, 25 Oct 2011 07:36:23 +0700
-Message-ID: <20111025073623.13740qpncq7q0vbb@118.98.74.88>
-Reply-To: davtuw5244@aim.com
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH RESEND] mmc: core: Assemble the codes of related to eMMC4.5
+Date: Tue, 25 Oct 2011 09:43:12 +0900
+Message-ID: <002401cc92af$13358b30$39a0a190$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
- charset=ISO-8859-1;
- DelSp="Yes";
- format="flowed"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ns1.menlh.go.id ([124.81.90.116]:43203 "EHLO ns1.menlh.go.id"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1756114Ab1JYAkJ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:59955 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756130Ab1JYAnO convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 20:40:09 -0400
-Content-Disposition: inline
+	Mon, 24 Oct 2011 20:43:14 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 
-Business Enquiry.
+Code cleanup. The codes of related to eMMC4.5 are scattered.
+This patch removes one if-statement and assembles all. And it also
+removes variable initialization below else-statement. It is obvious
+for previous version but seems unnecessary. All members of card structure
+are already set to zero at card-init.
 
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ drivers/mmc/core/mmc.c |   20 +++++++++-----------
+ 1 files changed, 9 insertions(+), 11 deletions(-)
 
-Private Email: davtuw5244@aim.com
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 6354eb3..6354bac 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -467,29 +467,27 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 		card->ext_csd.rst_n_function = ext_csd[EXT_CSD_RST_N_FUNCTION];
+ 	}
 
-Hello,
+-	/* eMMC v4.5 or later */
+-	if (card->ext_csd.rev >= 6)
+-		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
+-
+ 	card->ext_csd.raw_erased_mem_count = ext_csd[EXT_CSD_ERASED_MEM_CONT];
+ 	if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
+ 		card->erased_byte = 0xFF;
+ 	else
+ 		card->erased_byte = 0x0;
 
-This is to invite you to an investment opportunity involving a  
-lucrative business proposal for a common interest to share with you.
++	/* eMMC v4.5 or later */
+ 	if (card->ext_csd.rev >= 6) {
++		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
++
+ 		card->ext_csd.generic_cmd6_time = 10 *
+ 			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
+ 		card->ext_csd.power_off_longtime = 10 *
+ 			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
+-	} else
+-		card->ext_csd.generic_cmd6_time = 0;
 
-I am Mr. Shunji Takeshi from Hong Kong. This is a deal which concerns  
-the transfer of a large sum of money. Everything about this  
-transaction shall be legally done without any problem. Please endeavor  
-to observe utmost discretion in all matters concerning this issue.
-If you are interested, mail back, through my private Email address,  
-written above,
+-	card->ext_csd.cache_size =
+-		ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
+-		ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
+-		ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
+-		ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
++		card->ext_csd.cache_size =
++			ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
++			ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
++			ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
++			ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
++	}
 
-I shall give you more informations about this proposal, as soon as I  
-receive your positive response.
-
-Kind Regards,
-
-Mr.Shunji Takeshi.
-
-
-
-----------------------------------------------------------------
-This message was sent using IMP, the Internet Messaging Program.
+ out:
+ 	return err;
+--
+1.7.0.4
