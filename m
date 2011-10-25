@@ -1,75 +1,69 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH RESEND] mmc: core: Assemble the codes of related to eMMC4.5
-Date: Tue, 25 Oct 2011 09:43:12 +0900
-Message-ID: <002401cc92af$13358b30$39a0a190$%jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Add clk enable/disable of pwm
+Date: Tue, 25 Oct 2011 10:21:41 +0900
+Message-ID: <1319505701-9784-1-git-send-email-jy0922.shim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59955 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756130Ab1JYAnO convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40806 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756155Ab1JYBVm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Oct 2011 20:43:14 -0400
-Content-language: ko
+	Mon, 24 Oct 2011 21:21:42 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LTL004O6L3FF2L0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Oct 2011 10:21:33 +0900 (KST)
+Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
+ by mmp2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0LTL00J70L3XSH90@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Oct 2011 10:21:33 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, kyungmin.park@samsung.com
 
-Code cleanup. The codes of related to eMMC4.5 are scattered.
-This patch removes one if-statement and assembles all. And it also
-removes variable initialization below else-statement. It is obvious
-for previous version but seems unnecessary. All members of card structure
-are already set to zero at card-init.
+PWM timers use pclk("timers" clk) as parent clk. If this pclk is the
+disabled state when PWM driver is probed, then it causes wrong read and
+write operation about registers of PWM.
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/mmc/core/mmc.c |   20 +++++++++-----------
- 1 files changed, 9 insertions(+), 11 deletions(-)
+ arch/arm/plat-samsung/pwm.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 6354eb3..6354bac 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -467,29 +467,27 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
- 		card->ext_csd.rst_n_function = ext_csd[EXT_CSD_RST_N_FUNCTION];
+diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.c
+index f37457c..dc1185d 100644
+--- a/arch/arm/plat-samsung/pwm.c
++++ b/arch/arm/plat-samsung/pwm.c
+@@ -299,6 +299,9 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 		goto err_clk_tin;
  	}
-
--	/* eMMC v4.5 or later */
--	if (card->ext_csd.rev >= 6)
--		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
--
- 	card->ext_csd.raw_erased_mem_count = ext_csd[EXT_CSD_ERASED_MEM_CONT];
- 	if (ext_csd[EXT_CSD_ERASED_MEM_CONT])
- 		card->erased_byte = 0xFF;
- 	else
- 		card->erased_byte = 0x0;
-
-+	/* eMMC v4.5 or later */
- 	if (card->ext_csd.rev >= 6) {
-+		card->ext_csd.feature_support |= MMC_DISCARD_FEATURE;
+ 
++	clk_enable(pwm->clk);
++	clk_enable(pwm->clk_div);
 +
- 		card->ext_csd.generic_cmd6_time = 10 *
- 			ext_csd[EXT_CSD_GENERIC_CMD6_TIME];
- 		card->ext_csd.power_off_longtime = 10 *
- 			ext_csd[EXT_CSD_POWER_OFF_LONG_TIME];
--	} else
--		card->ext_csd.generic_cmd6_time = 0;
-
--	card->ext_csd.cache_size =
--		ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
--		ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
--		ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
--		ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
-+		card->ext_csd.cache_size =
-+			ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
-+			ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
-+			ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
-+			ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
-+	}
-
- out:
- 	return err;
---
-1.7.0.4
+ 	local_irq_save(flags);
+ 
+ 	tcon = __raw_readl(S3C2410_TCON);
+@@ -326,6 +329,8 @@ static int s3c_pwm_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+  err_clk_tdiv:
++	clk_disable(pwm->clk_div);
++	clk_disable(pwm->clk);
+ 	clk_put(pwm->clk_div);
+ 
+  err_clk_tin:
+@@ -340,6 +345,8 @@ static int __devexit s3c_pwm_remove(struct platform_device *pdev)
+ {
+ 	struct pwm_device *pwm = platform_get_drvdata(pdev);
+ 
++	clk_disable(pwm->clk_div);
++	clk_disable(pwm->clk);
+ 	clk_put(pwm->clk_div);
+ 	clk_put(pwm->clk);
+ 	kfree(pwm);
+-- 
+1.7.5.4
