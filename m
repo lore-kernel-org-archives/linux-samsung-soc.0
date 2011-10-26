@@ -1,227 +1,118 @@
-From: Sascha Hauer <s.hauer@pengutronix.de>
-Subject: Re: [PATCH] ARM: mx5: Use CLKDEV_INIT for creating clk_lookup
- instance
-Date: Wed, 26 Oct 2011 09:47:05 +0200
-Message-ID: <20111026074705.GD2263@pengutronix.de>
-References: <1319111391-27820-1-git-send-email-padma.v@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Sangwook Lee <sangwook.lee@linaro.org>
+Subject: [PATCH] ARM: EXYNOS4: Enable Bluetooth on ORIGEN
+Date: Wed, 26 Oct 2011 13:48:00 +0100
+Message-ID: <1319633280-17799-1-git-send-email-sangwook.lee@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from metis.ext.pengutronix.de ([92.198.50.35]:49040 "EHLO
-	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754602Ab1JZHrS (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:35981 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932917Ab1JZMuG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Oct 2011 03:47:18 -0400
-Content-Disposition: inline
-In-Reply-To: <1319111391-27820-1-git-send-email-padma.v@samsung.com>
+	Wed, 26 Oct 2011 08:50:06 -0400
+Received: by faan17 with SMTP id n17so1493664faa.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Oct 2011 05:50:05 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: padma.kvr@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, amit.kucheria@canonical.com, kernel@pengutronix.de
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org, linaro-dev@lists.linaro.org, Sangwook Lee <sangwook.lee@linaro.org>
 
-On Thu, Oct 20, 2011 at 05:19:51PM +0530, Padmavathi Venna wrote:
-> A common macro CLKDEV_INIT was added for creating clk_lookup
-> instance in include/linux/clkdev.h. So replace _REGISTER_CLOCK
-> macro with CLKDEV_INIT.
+This patch enables Bluetooth support on ORIGEN board.
 
-The patches are fine this way. Let's wait until the trees from next are
-merged. It's not necessary to risk merge conflicts for this cleanup.
+Signed-off-by: Sangwook <sangwook.lee@linaro.org>
+---
+ arch/arm/mach-exynos4/mach-origen.c |   32 ++++++++++++++++++++++++++++++++
+ 1 files changed, 32 insertions(+), 0 deletions(-)
 
-Sascha
-
-> 
-> Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> Acked-by: Amit Kucheria <amit.kucheria@canonical.com>
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> ---
->  arch/arm/mach-mx5/clock-mx51-mx53.c |  149 +++++++++++++++++------------------
->  1 files changed, 71 insertions(+), 78 deletions(-)
-> 
-> diff --git a/arch/arm/mach-mx5/clock-mx51-mx53.c b/arch/arm/mach-mx5/clock-mx51-mx53.c
-> index 2b9bd1f..d198515 100644
-> --- a/arch/arm/mach-mx5/clock-mx51-mx53.c
-> +++ b/arch/arm/mach-mx5/clock-mx51-mx53.c
-> @@ -1422,97 +1422,90 @@ DEFINE_CLOCK(ipu_di1_clk, 0, MXC_CCM_CCGR6, MXC_CCM_CCGRx_CG6_OFFSET,
->  DEFINE_CLOCK(pata_clk, 0, MXC_CCM_CCGR4, MXC_CCM_CCGRx_CG0_OFFSET,
->  		NULL, NULL, &ipg_clk, &spba_clk);
->  
-> -#define _REGISTER_CLOCK(d, n, c) \
-> -       { \
-> -		.dev_id = d, \
-> -		.con_id = n, \
-> -		.clk = &c,   \
-> -       },
-> -
->  static struct clk_lookup mx51_lookups[] = {
->  	/* i.mx51 has the i.mx21 type uart */
-> -	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
-> -	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
-> -	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
-> -	_REGISTER_CLOCK(NULL, "gpt", gpt_clk)
-> +	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-> +	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-> +	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-> +	CLKDEV_INIT(NULL, "gpt", &gpt_clk),
->  	/* i.mx51 has the i.mx27 type fec */
-> -	_REGISTER_CLOCK("imx27-fec.0", NULL, fec_clk)
-> -	_REGISTER_CLOCK("mxc_pwm.0", "pwm", pwm1_clk)
-> -	_REGISTER_CLOCK("mxc_pwm.1", "pwm", pwm2_clk)
-> -	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
-> -	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
-> -	_REGISTER_CLOCK("imx-i2c.2", NULL, hsi2c_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.0", "usb", usboh3_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.0", "usb_ahb", usb_ahb_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.0", "usb_phy1", usb_phy1_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.1", "usb", usboh3_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.1", "usb_ahb", usb_ahb_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.2", "usb", usboh3_clk)
-> -	_REGISTER_CLOCK("mxc-ehci.2", "usb_ahb", usb_ahb_clk)
-> -	_REGISTER_CLOCK("fsl-usb2-udc", "usb", usboh3_clk)
-> -	_REGISTER_CLOCK("fsl-usb2-udc", "usb_ahb", ahb_clk)
-> -	_REGISTER_CLOCK("imx-keypad", NULL, dummy_clk)
-> -	_REGISTER_CLOCK("mxc_nand", NULL, nfc_clk)
-> -	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
-> -	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
-> -	_REGISTER_CLOCK("imx-ssi.2", NULL, ssi3_clk)
-> +	CLKDEV_INIT("imx27-fec.0", NULL, &fec_clk),
-> +	CLKDEV_INIT("mxc_pwm.0", "pwm", &pwm1_clk),
-> +	CLKDEV_INIT("mxc_pwm.1", "pwm", &pwm2_clk),
-> +	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-> +	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-> +	CLKDEV_INIT("imx-i2c.2", NULL, &hsi2c_clk),
-> +	CLKDEV_INIT("mxc-ehci.0", "usb", &usboh3_clk),
-> +	CLKDEV_INIT("mxc-ehci.0", "usb_ahb", &usb_ahb_clk),
-> +	CLKDEV_INIT("mxc-ehci.0", "usb_phy1", &usb_phy1_clk),
-> +	CLKDEV_INIT("mxc-ehci.1", "usb", &usboh3_clk),
-> +	CLKDEV_INIT("mxc-ehci.1", "usb_ahb", &usb_ahb_clk),
-> +	CLKDEV_INIT("mxc-ehci.2", "usb", &usboh3_clk),
-> +	CLKDEV_INIT("mxc-ehci.2", "usb_ahb", &usb_ahb_clk),
-> +	CLKDEV_INIT("fsl-usb2-udc", "usb", &usboh3_clk),
-> +	CLKDEV_INIT("fsl-usb2-udc", "usb_ahb", &ahb_clk),
-> +	CLKDEV_INIT("imx-keypad", NULL, &dummy_clk),
-> +	CLKDEV_INIT("mxc_nand", NULL, &nfc_clk),
-> +	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-> +	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-> +	CLKDEV_INIT("imx-ssi.2", NULL, &ssi3_clk),
->  	/* i.mx51 has the i.mx35 type sdma */
-> -	_REGISTER_CLOCK("imx35-sdma", NULL, sdma_clk)
-> -	_REGISTER_CLOCK(NULL, "ckih", ckih_clk)
-> -	_REGISTER_CLOCK(NULL, "ckih2", ckih2_clk)
-> -	_REGISTER_CLOCK(NULL, "gpt_32k", gpt_32k_clk)
-> -	_REGISTER_CLOCK("imx51-ecspi.0", NULL, ecspi1_clk)
-> -	_REGISTER_CLOCK("imx51-ecspi.1", NULL, ecspi2_clk)
-> +	CLKDEV_INIT("imx35-sdma", NULL, &sdma_clk),
-> +	CLKDEV_INIT(NULL, "ckih", &ckih_clk),
-> +	CLKDEV_INIT(NULL, "ckih2", &ckih2_clk),
-> +	CLKDEV_INIT(NULL, "gpt_32k", &gpt_32k_clk),
-> +	CLKDEV_INIT("imx51-ecspi.0", NULL, &ecspi1_clk),
-> +	CLKDEV_INIT("imx51-ecspi.1", NULL, &ecspi2_clk),
->  	/* i.mx51 has the i.mx35 type cspi */
-> -	_REGISTER_CLOCK("imx35-cspi.0", NULL, cspi_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx51.0", NULL, esdhc1_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx51.1", NULL, esdhc2_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx51.2", NULL, esdhc3_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx51.3", NULL, esdhc4_clk)
-> -	_REGISTER_CLOCK(NULL, "cpu_clk", cpu_clk)
-> -	_REGISTER_CLOCK(NULL, "iim_clk", iim_clk)
-> -	_REGISTER_CLOCK("imx2-wdt.0", NULL, dummy_clk)
-> -	_REGISTER_CLOCK("imx2-wdt.1", NULL, dummy_clk)
-> -	_REGISTER_CLOCK(NULL, "mipi_hsp", mipi_hsp_clk)
-> -	_REGISTER_CLOCK("imx-ipuv3", NULL, ipu_clk)
-> -	_REGISTER_CLOCK("imx-ipuv3", "di0", ipu_di0_clk)
-> -	_REGISTER_CLOCK("imx-ipuv3", "di1", ipu_di1_clk)
-> -	_REGISTER_CLOCK(NULL, "gpc_dvfs", gpc_dvfs_clk)
-> -	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
-> +	CLKDEV_INIT("imx35-cspi.0", NULL, &cspi_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx51.0", NULL, &esdhc1_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx51.1", NULL, &esdhc2_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx51.2", NULL, &esdhc3_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx51.3", NULL, &esdhc4_clk),
-> +	CLKDEV_INIT(NULL, "cpu_clk", &cpu_clk),
-> +	CLKDEV_INIT(NULL, "iim_clk", &iim_clk),
-> +	CLKDEV_INIT("imx2-wdt.0", NULL, &dummy_clk),
-> +	CLKDEV_INIT("imx2-wdt.1", NULL, &dummy_clk),
-> +	CLKDEV_INIT(NULL, "mipi_hsp", &mipi_hsp_clk),
-> +	CLKDEV_INIT("imx-ipuv3", NULL, &ipu_clk),
-> +	CLKDEV_INIT("imx-ipuv3", "di0", &ipu_di0_clk),
-> +	CLKDEV_INIT("imx-ipuv3", "di1", &ipu_di1_clk),
-> +	CLKDEV_INIT(NULL, "gpc_dvfs", &gpc_dvfs_clk),
-> +	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
->  };
->  
->  static struct clk_lookup mx53_lookups[] = {
->  	/* i.mx53 has the i.mx21 type uart */
-> -	_REGISTER_CLOCK("imx21-uart.0", NULL, uart1_clk)
-> -	_REGISTER_CLOCK("imx21-uart.1", NULL, uart2_clk)
-> -	_REGISTER_CLOCK("imx21-uart.2", NULL, uart3_clk)
-> -	_REGISTER_CLOCK("imx21-uart.3", NULL, uart4_clk)
-> -	_REGISTER_CLOCK("imx21-uart.4", NULL, uart5_clk)
-> -	_REGISTER_CLOCK(NULL, "gpt", gpt_clk)
-> +	CLKDEV_INIT("imx21-uart.0", NULL, &uart1_clk),
-> +	CLKDEV_INIT("imx21-uart.1", NULL, &uart2_clk),
-> +	CLKDEV_INIT("imx21-uart.2", NULL, &uart3_clk),
-> +	CLKDEV_INIT("imx21-uart.3", NULL, &uart4_clk),
-> +	CLKDEV_INIT("imx21-uart.4", NULL, &uart5_clk),
-> +	CLKDEV_INIT(NULL, "gpt", &gpt_clk),
->  	/* i.mx53 has the i.mx25 type fec */
-> -	_REGISTER_CLOCK("imx25-fec.0", NULL, fec_clk)
-> -	_REGISTER_CLOCK(NULL, "iim_clk", iim_clk)
-> -	_REGISTER_CLOCK("imx-i2c.0", NULL, i2c1_clk)
-> -	_REGISTER_CLOCK("imx-i2c.1", NULL, i2c2_clk)
-> -	_REGISTER_CLOCK("imx-i2c.2", NULL, i2c3_mx53_clk)
-> +	CLKDEV_INIT("imx25-fec.0", NULL, &fec_clk),
-> +	CLKDEV_INIT(NULL, "iim_clk", &iim_clk),
-> +	CLKDEV_INIT("imx-i2c.0", NULL, &i2c1_clk),
-> +	CLKDEV_INIT("imx-i2c.1", NULL, &i2c2_clk),
-> +	CLKDEV_INIT("imx-i2c.2", NULL, &i2c3_mx53_clk),
->  	/* i.mx53 has the i.mx51 type ecspi */
-> -	_REGISTER_CLOCK("imx51-ecspi.0", NULL, ecspi1_clk)
-> -	_REGISTER_CLOCK("imx51-ecspi.1", NULL, ecspi2_clk)
-> +	CLKDEV_INIT("imx51-ecspi.0", NULL, &ecspi1_clk),
-> +	CLKDEV_INIT("imx51-ecspi.1", NULL, &ecspi2_clk),
->  	/* i.mx53 has the i.mx25 type cspi */
-> -	_REGISTER_CLOCK("imx35-cspi.0", NULL, cspi_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx53.0", NULL, esdhc1_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx53.1", NULL, esdhc2_mx53_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx53.2", NULL, esdhc3_mx53_clk)
-> -	_REGISTER_CLOCK("sdhci-esdhc-imx53.3", NULL, esdhc4_mx53_clk)
-> -	_REGISTER_CLOCK("imx2-wdt.0", NULL, dummy_clk)
-> -	_REGISTER_CLOCK("imx2-wdt.1", NULL, dummy_clk)
-> +	CLKDEV_INIT("imx35-cspi.0", NULL, &cspi_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx53.0", NULL, &esdhc1_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx53.1", NULL, &esdhc2_mx53_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx53.2", NULL, &esdhc3_mx53_clk),
-> +	CLKDEV_INIT("sdhci-esdhc-imx53.3", NULL, &esdhc4_mx53_clk),
-> +	CLKDEV_INIT("imx2-wdt.0", NULL, &dummy_clk),
-> +	CLKDEV_INIT("imx2-wdt.1", NULL, &dummy_clk),
->  	/* i.mx53 has the i.mx35 type sdma */
-> -	_REGISTER_CLOCK("imx35-sdma", NULL, sdma_clk)
-> -	_REGISTER_CLOCK("imx-ssi.0", NULL, ssi1_clk)
-> -	_REGISTER_CLOCK("imx-ssi.1", NULL, ssi2_clk)
-> -	_REGISTER_CLOCK("imx-ssi.2", NULL, ssi3_clk)
-> -	_REGISTER_CLOCK("imx-keypad", NULL, dummy_clk)
-> -	_REGISTER_CLOCK("pata_imx", NULL, pata_clk)
-> +	CLKDEV_INIT("imx35-sdma", NULL, &sdma_clk),
-> +	CLKDEV_INIT("imx-ssi.0", NULL, &ssi1_clk),
-> +	CLKDEV_INIT("imx-ssi.1", NULL, &ssi2_clk),
-> +	CLKDEV_INIT("imx-ssi.2", NULL, &ssi3_clk),
-> +	CLKDEV_INIT("imx-keypad", NULL, &dummy_clk),
-> +	CLKDEV_INIT("pata_imx", NULL, &pata_clk),
->  };
->  
->  static void clk_tree_init(void)
-> -- 
-> 1.7.4.4
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-
+diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
+index f80b563..f8c50d7 100644
+--- a/arch/arm/mach-exynos4/mach-origen.c
++++ b/arch/arm/mach-exynos4/mach-origen.c
+@@ -20,6 +20,7 @@
+ #include <linux/regulator/machine.h>
+ #include <linux/mfd/max8997.h>
+ #include <linux/lcd.h>
++#include <linux/rfkill-gpio.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/mach-types.h>
+@@ -232,6 +233,7 @@ static struct regulator_init_data __initdata max8997_ldo9_data = {
+ 		.min_uV		= 2800000,
+ 		.max_uV		= 2800000,
+ 		.apply_uV	= 1,
++		.always_on	= 1,
+ 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+ 		.state_mem	= {
+ 			.disabled	= 1,
+@@ -275,6 +277,7 @@ static struct regulator_init_data __initdata max8997_ldo14_data = {
+ 		.min_uV		= 1800000,
+ 		.max_uV		= 1800000,
+ 		.apply_uV	= 1,
++		.always_on	= 1,
+ 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+ 		.state_mem	= {
+ 			.disabled	= 1,
+@@ -290,6 +293,7 @@ static struct regulator_init_data __initdata max8997_ldo17_data = {
+ 		.min_uV		= 3300000,
+ 		.max_uV		= 3300000,
+ 		.apply_uV	= 1,
++		.always_on	= 1,
+ 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+ 		.state_mem	= {
+ 			.disabled	= 1,
+@@ -588,6 +592,21 @@ static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
+ 	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
+ };
+ 
++/* Bluetooth rfkill gpio platform data */
++struct rfkill_gpio_platform_data origen_bt_pdata = {
++	.reset_gpio = EXYNOS4_GPX2(2),
++	.shutdown_gpio = -1,
++	.type = RFKILL_TYPE_BLUETOOTH,
++	.name = "origen-bt",
++};
++
++/* Bluetooth Platform device */
++static struct platform_device origen_device_bluetooth = {
++	.name = "rfkill_gpio",
++	.id = -1,
++	.dev.platform_data = &origen_bt_pdata,
++};
++
+ static struct platform_device *origen_devices[] __initdata = {
+ 	&s3c_device_hsmmc2,
+ 	&s3c_device_hsmmc0,
+@@ -615,6 +634,7 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&exynos4_device_pd[PD_MFC],
+ 	&origen_device_gpiokeys,
+ 	&origen_lcd_hv070wsa,
++	&origen_device_bluetooth,
+ };
+ 
+ /* LCD Backlight data */
+@@ -628,6 +648,16 @@ static struct platform_pwm_backlight_data origen_bl_data = {
+ 	.pwm_period_ns	= 1000,
+ };
+ 
++static void __init origen_bt_setup(void)
++{
++	gpio_request(EXYNOS4_GPA0(0), "GPIO BT_UART");
++	/* 4 UART Pins configuration */
++	s3c_gpio_cfgrange_nopull(EXYNOS4_GPA0(0), 4, S3C_GPIO_SFN(2));
++	/* Setup BT Reset, this gpio will be requesed by rfkill-gpio */
++	s3c_gpio_cfgpin(EXYNOS4_GPX2(2), S3C_GPIO_OUTPUT);
++	s3c_gpio_setpull(EXYNOS4_GPX2(2), S3C_GPIO_PULL_NONE);
++}
++
+ static void s5p_tv_setup(void)
+ {
+ 	/* Direct HPD to HDMI chip */
+@@ -687,6 +717,8 @@ static void __init origen_machine_init(void)
+ 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+ 
+ 	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
++
++	origen_bt_setup();
+ }
+ 
+ MACHINE_START(ORIGEN, "ORIGEN")
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+1.7.4.1
