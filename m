@@ -1,118 +1,43 @@
-From: Sangwook Lee <sangwook.lee@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Enable Bluetooth on ORIGEN
-Date: Wed, 26 Oct 2011 13:48:00 +0100
-Message-ID: <1319633280-17799-1-git-send-email-sangwook.lee@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:35981 "EHLO
-	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932917Ab1JZMuG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Oct 2011 08:50:06 -0400
-Received: by faan17 with SMTP id n17so1493664faa.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Oct 2011 05:50:05 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH RESEND V4] mmc: core: HS200 mode support for eMMC 4.5
+Date: Wed, 26 Oct 2011 15:53:15 -0400
+Message-ID: <m2sjmf4jis.fsf@bob.laptop.org>
+References: <1319605188-2909-1-git-send-email-girish.shivananjappa@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1319605188-2909-1-git-send-email-girish.shivananjappa@linaro.org>
+	(Girish K. S.'s message of "Wed, 26 Oct 2011 10:29:48 +0530")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, linaro-dev@lists.linaro.org, Sangwook Lee <sangwook.lee@linaro.org>
 
-This patch enables Bluetooth support on ORIGEN board.
+Hi Girish,
 
-Signed-off-by: Sangwook <sangwook.lee@linaro.org>
----
- arch/arm/mach-exynos4/mach-origen.c |   32 ++++++++++++++++++++++++++++++++
- 1 files changed, 32 insertions(+), 0 deletions(-)
+On Wed, Oct 26 2011, Girish K S wrote:
+> This patch adds the support of the HS200 bus speed for eMMC 4.5 devices.
+> The eMMC 4.5 devices have support for 200MHz bus speed.The mmc core and
+> host modules have been touched to add support for this module.
+>
+> It is necessary to know the card type in the sdhci.c file to add support
+> for eMMC tuning function. So card.h file is included to import the card
+> data structure.
+>
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
 
-diff --git a/arch/arm/mach-exynos4/mach-origen.c b/arch/arm/mach-exynos4/mach-origen.c
-index f80b563..f8c50d7 100644
---- a/arch/arm/mach-exynos4/mach-origen.c
-+++ b/arch/arm/mach-exynos4/mach-origen.c
-@@ -20,6 +20,7 @@
- #include <linux/regulator/machine.h>
- #include <linux/mfd/max8997.h>
- #include <linux/lcd.h>
-+#include <linux/rfkill-gpio.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
-@@ -232,6 +233,7 @@ static struct regulator_init_data __initdata max8997_ldo9_data = {
- 		.min_uV		= 2800000,
- 		.max_uV		= 2800000,
- 		.apply_uV	= 1,
-+		.always_on	= 1,
- 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
- 		.state_mem	= {
- 			.disabled	= 1,
-@@ -275,6 +277,7 @@ static struct regulator_init_data __initdata max8997_ldo14_data = {
- 		.min_uV		= 1800000,
- 		.max_uV		= 1800000,
- 		.apply_uV	= 1,
-+		.always_on	= 1,
- 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
- 		.state_mem	= {
- 			.disabled	= 1,
-@@ -290,6 +293,7 @@ static struct regulator_init_data __initdata max8997_ldo17_data = {
- 		.min_uV		= 3300000,
- 		.max_uV		= 3300000,
- 		.apply_uV	= 1,
-+		.always_on	= 1,
- 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
- 		.state_mem	= {
- 			.disabled	= 1,
-@@ -588,6 +592,21 @@ static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
- 	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
- };
- 
-+/* Bluetooth rfkill gpio platform data */
-+struct rfkill_gpio_platform_data origen_bt_pdata = {
-+	.reset_gpio = EXYNOS4_GPX2(2),
-+	.shutdown_gpio = -1,
-+	.type = RFKILL_TYPE_BLUETOOTH,
-+	.name = "origen-bt",
-+};
-+
-+/* Bluetooth Platform device */
-+static struct platform_device origen_device_bluetooth = {
-+	.name = "rfkill_gpio",
-+	.id = -1,
-+	.dev.platform_data = &origen_bt_pdata,
-+};
-+
- static struct platform_device *origen_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc0,
-@@ -615,6 +634,7 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&exynos4_device_pd[PD_MFC],
- 	&origen_device_gpiokeys,
- 	&origen_lcd_hv070wsa,
-+	&origen_device_bluetooth,
- };
- 
- /* LCD Backlight data */
-@@ -628,6 +648,16 @@ static struct platform_pwm_backlight_data origen_bl_data = {
- 	.pwm_period_ns	= 1000,
- };
- 
-+static void __init origen_bt_setup(void)
-+{
-+	gpio_request(EXYNOS4_GPA0(0), "GPIO BT_UART");
-+	/* 4 UART Pins configuration */
-+	s3c_gpio_cfgrange_nopull(EXYNOS4_GPA0(0), 4, S3C_GPIO_SFN(2));
-+	/* Setup BT Reset, this gpio will be requesed by rfkill-gpio */
-+	s3c_gpio_cfgpin(EXYNOS4_GPX2(2), S3C_GPIO_OUTPUT);
-+	s3c_gpio_setpull(EXYNOS4_GPX2(2), S3C_GPIO_PULL_NONE);
-+}
-+
- static void s5p_tv_setup(void)
- {
- 	/* Direct HPD to HDMI chip */
-@@ -687,6 +717,8 @@ static void __init origen_machine_init(void)
- 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
- 
- 	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
-+
-+	origen_bt_setup();
- }
- 
- MACHINE_START(ORIGEN, "ORIGEN")
+The long case statements and conditionals in this patch make it pretty
+dense/ugly -- can you think of a way to avoid doing this to the code?
+Also, it would be good to hear if anyone else has tested/is using this
+patch.
+
+Is having a new mmc_card_hs200() test desirable, compared to just
+reusing mmc_card_highspeed() and checking the ext_csd.card_type?
+
+Thanks,
+
+- Chris.
 -- 
-1.7.4.1
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
