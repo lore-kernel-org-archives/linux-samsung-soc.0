@@ -1,505 +1,690 @@
-From: Jongpill Lee <boyko.lee@samsung.com>
-Subject: [PATCH 3/3] ARM: EXYNOS: Support ASV for Exynos4210
-Date: Thu, 27 Oct 2011 10:12:18 +0900
-Message-ID: <1319677938-25732-4-git-send-email-boyko.lee@samsung.com>
-References: <1319677938-25732-1-git-send-email-boyko.lee@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH] mmc: core: Add packed command for eMMC4.5 device
+Date: Thu, 27 Oct 2011 19:54:01 +0900
+Message-ID: <1319712841-28579-1-git-send-email-tgih.jun@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:48639 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:54921 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753635Ab1J0BcI (ORCPT
+	with ESMTP id S1754083Ab1J0LRA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Oct 2011 21:32:08 -0400
-In-Reply-To: <1319677938-25732-1-git-send-email-boyko.lee@samsung.com>
+	Thu, 27 Oct 2011 07:17:00 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, Jongpill Lee <boyko.lee@samsung.com>
+To: linux-mmc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, dh.han@samsung.com, Seungwon Jeon <tgih.jun@samsung.com>
 
-This patch adds function for exynos4210's asv driver.
-On Exynos4210, we can get ASV result using by HPM and IDS value.
-And asv result is sent through INFORM2 register.
+This patch supports packed command feature of eMMC4.5 Spec.
+Several reads(or writes) can be grouped in packed command
+and all data of the individual commands can be sent in one
+transfer on the bus.
 
-Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
 ---
- arch/arm/mach-exynos4/Makefile                  |    2 +-
- arch/arm/mach-exynos4/asv-4210.c                |  338 +++++++++++++++++++++++
- arch/arm/mach-exynos4/asv.c                     |    8 +
- arch/arm/mach-exynos4/include/mach/asv.h        |    2 +
- arch/arm/mach-exynos4/include/mach/map.h        |    2 +
- arch/arm/mach-exynos4/include/mach/regs-clock.h |   18 ++
- arch/arm/mach-exynos4/include/mach/regs-iem.h   |   27 ++
- 7 files changed, 396 insertions(+), 1 deletions(-)
- create mode 100644 arch/arm/mach-exynos4/asv-4210.c
- create mode 100644 arch/arm/mach-exynos4/include/mach/regs-iem.h
+ drivers/mmc/card/block.c |  349 ++++++++++++++++++++++++++++++++++++++++++++--
+ drivers/mmc/card/queue.c |   48 ++++++-
+ drivers/mmc/card/queue.h |   12 ++
+ drivers/mmc/core/mmc.c   |   20 +++
+ include/linux/mmc/card.h |    3 +
+ include/linux/mmc/host.h |    1 +
+ include/linux/mmc/mmc.h  |   15 ++
+ 7 files changed, 434 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm/mach-exynos4/Makefile b/arch/arm/mach-exynos4/Makefile
-index 0f3affe..8627669 100644
---- a/arch/arm/mach-exynos4/Makefile
-+++ b/arch/arm/mach-exynos4/Makefile
-@@ -12,7 +12,7 @@ obj-				:=
- 
- # Core support for EXYNOS4 system
- 
--obj-$(CONFIG_ARCH_EXYNOS4)	+= cpu.o init.o clock.o irq-combiner.o asv.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= cpu.o init.o clock.o irq-combiner.o asv.o asv-4210.o
- obj-$(CONFIG_ARCH_EXYNOS4)	+= setup-i2c0.o irq-eint.o dma.o pmu.o
- obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
- obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
-diff --git a/arch/arm/mach-exynos4/asv-4210.c b/arch/arm/mach-exynos4/asv-4210.c
-new file mode 100644
-index 0000000..81a1c67
---- /dev/null
-+++ b/arch/arm/mach-exynos4/asv-4210.c
-@@ -0,0 +1,338 @@
-+/* linux/arch/arm/mach-exynos/asv-4210.c
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * EXYNOS4210 - ASV(Adaptive Supply Voltage) driver
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
+diff --git a/drivers/mmc/card/block.c b/drivers/mmc/card/block.c
+index 4fd5723..0258a81 100644
+--- a/drivers/mmc/card/block.c
++++ b/drivers/mmc/card/block.c
+@@ -45,6 +45,7 @@
+ #include <asm/uaccess.h>
+
+ #include "queue.h"
++#include "../core/mmc_ops.h"
+
+ MODULE_ALIAS("mmc:block");
+ #ifdef MODULE_PARAM_PREFIX
+@@ -59,6 +60,10 @@ MODULE_ALIAS("mmc:block");
+ #define INAND_CMD38_ARG_SECTRIM1 0x81
+ #define INAND_CMD38_ARG_SECTRIM2 0x88
+
++#define mmc_req_rel_wr(req)	(((req->cmd_flags & REQ_FUA) || \
++			(req->cmd_flags & REQ_META)) && \
++			(rq_data_dir(req) == WRITE))
 +
-+#include <linux/init.h>
-+#include <linux/types.h>
-+#include <linux/kernel.h>
-+#include <linux/err.h>
-+#include <linux/clk.h>
-+#include <linux/io.h>
-+
-+#include <plat/clock.h>
-+
-+#include <mach/regs-iem.h>
-+#include <mach/regs-clock.h>
-+#include <mach/asv.h>
-+
-+enum target_asv {
-+	EXYNOS4210_1200,
-+	EXYNOS4210_1400,
-+	EXYNOS4210_SINGLE_1200,
-+};
-+
-+struct asv_judge_table exynos4210_1200_limit[] = {
-+	/* HPM , IDS */
-+	{8 , 4},
-+	{11 , 8},
-+	{14 , 12},
-+	{18 , 17},
-+	{21 , 27},
-+	{23 , 45},
-+	{25 , 55},
-+};
-+
-+static struct asv_judge_table exynos4210_1400_limit[] = {
-+	/* HPM , IDS */
-+	{13 , 8},
-+	{17 , 12},
-+	{22 , 32},
-+	{26 , 52},
-+};
-+
-+static struct asv_judge_table exynos4210_single_1200_limit[] = {
-+	/* HPM , IDS */
-+	{8 , 4},
-+	{14 , 12},
-+	{21 , 27},
-+	{25 , 55},
-+};
-+
-+static int exynos4210_check_vdd_arm(void)
-+{
-+	/* It will be support */
-+	return 0;
-+}
-+
-+static int exynos4210_asv_pre_clock_init(void)
-+{
-+	struct clk *clk_hpm;
-+	struct clk *clk_copy;
-+	struct clk *clk_parent;
-+
-+	/* PWI clock setting */
-+	clk_copy = clk_get(NULL, "sclk_pwi");
-+	if (IS_ERR(clk_copy)) {
-+		pr_info("EXYNOS4210: ASV : SCLK_PWI clock get error\n");
-+		return -EINVAL;
-+	} else {
-+		clk_parent = clk_get(NULL, "xusbxti");
-+
-+		if (IS_ERR(clk_parent)) {
-+			pr_info("EXYNOS4210: ASV: MOUT_APLL clock get error\n");
-+			clk_put(clk_copy);
-+			return -EINVAL;
-+		}
-+		if (clk_set_parent(clk_copy, clk_parent))
-+			pr_info("EXYNOS4210: ASV: Unable to set parent %s of clock %s.\n",
-+					clk_parent->name, clk_copy->name);
-+
-+		clk_put(clk_parent);
-+	}
-+	clk_set_rate(clk_copy, 4800000);
-+
-+	clk_put(clk_copy);
-+
-+	/* HPM clock setting */
-+	clk_copy = clk_get(NULL, "dout_copy");
-+	if (IS_ERR(clk_copy)) {
-+		pr_info("EXYNOS4210: ASV: DOUT_COPY clock get error\n");
-+		return -EINVAL;
-+	} else {
-+		clk_parent = clk_get(NULL, "mout_mpll");
-+		if (IS_ERR(clk_parent)) {
-+			pr_info("EXYNOS4210: ASV: MOUT_APLL clock get error\n");
-+			clk_put(clk_copy);
-+			return -EINVAL;
-+		}
-+		if (clk_set_parent(clk_copy, clk_parent))
-+			pr_info("EXYNOS4210: ASV: Unable to set parent %s of clock %s.\n",
-+					clk_parent->name, clk_copy->name);
-+
-+		clk_put(clk_parent);
+ static DEFINE_MUTEX(block_mutex);
+
+ /*
+@@ -943,7 +948,8 @@ static int mmc_blk_err_check(struct mmc_card *card,
+ 	 * kind.  If it was a write, we may have transitioned to
+ 	 * program mode, which we have to wait for it to complete.
+ 	 */
+-	if (!mmc_host_is_spi(card->host) && rq_data_dir(req) != READ) {
++	if ((!mmc_host_is_spi(card->host) && rq_data_dir(req) != READ) ||
++			(mq_mrq->packed_cmd == MMC_PACKED_WR_HDR)) {
+ 		u32 status;
+ 		do {
+ 			int err = get_card_status(card, &status, 5);
+@@ -980,12 +986,67 @@ static int mmc_blk_err_check(struct mmc_card *card,
+ 	if (!brq->data.bytes_xfered)
+ 		return MMC_BLK_RETRY;
+
++	if (mq_mrq->packed_cmd != MMC_PACKED_NONE) {
++		if (unlikely(brq->data.blocks << 9 != brq->data.bytes_xfered))
++			return MMC_BLK_PARTIAL;
++		else
++			return MMC_BLK_SUCCESS;
 +	}
 +
-+	clk_set_rate(clk_copy, (400 * 1000 * 1000));
-+
-+	clk_put(clk_copy);
-+
-+	clk_hpm = clk_get(NULL, "sclk_hpm");
-+	if (IS_ERR(clk_hpm)) {
-+		pr_info("EXYNOS4210: ASV: Fail to get sclk_hpm\n");
-+		return -EINVAL;
-+	}
-+
-+	clk_set_rate(clk_hpm, (200 * 1000 * 1000));
-+
-+	clk_put(clk_hpm);
-+
-+	return 0;
-+}
-+
-+static int exynos4210_asv_pre_clock_setup(void)
+ 	if (blk_rq_bytes(req) != brq->data.bytes_xfered)
+ 		return MMC_BLK_PARTIAL;
+
+ 	return MMC_BLK_SUCCESS;
+ }
+
++static int mmc_blk_packed_err_check(struct mmc_card *card,
++			     struct mmc_async_req *areq)
 +{
-+	/* APLL_CON0 level register */
-+	__raw_writel(0x80FA0601, S5P_APLL_CON0L8);
-+	__raw_writel(0x80C80601, S5P_APLL_CON0L7);
-+	__raw_writel(0x80C80602, S5P_APLL_CON0L6);
-+	__raw_writel(0x80C80604, S5P_APLL_CON0L5);
-+	__raw_writel(0x80C80601, S5P_APLL_CON0L4);
-+	__raw_writel(0x80C80601, S5P_APLL_CON0L3);
-+	__raw_writel(0x80C80601, S5P_APLL_CON0L2);
-+	__raw_writel(0x80C80601, S5P_APLL_CON0L1);
++	struct mmc_queue_req *mq_mrq = container_of(areq, struct mmc_queue_req,
++						    mmc_active);
++	int err, check, status;
++	u8 ext_csd[512];
 +
-+	/* IEM Divider register */
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L8);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L7);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L6);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L5);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L4);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L3);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L2);
-+	__raw_writel(0x00500000, S5P_CLKDIV_IEM_L1);
++	check = mmc_blk_err_check(card, areq);
 +
-+	return 0;
-+}
++	if (check == MMC_BLK_SUCCESS)
++		return check;
 +
-+static int exynos4210_find_group(struct samsung_asv *asv_info,
-+			      enum target_asv exynos4_target)
-+{
-+	unsigned int ret = 0;
-+	unsigned int i;
++	if (check == MMC_BLK_PARTIAL) {
++		err = get_card_status(card, &status, 0);
++		if (err)
++			return MMC_BLK_ABORT;
 +
-+	if (exynos4_target == EXYNOS4210_1200) {
-+		ret = ARRAY_SIZE(exynos4210_1200_limit);
++		if (status & R1_EXP_EVENT) {
++			err = mmc_send_ext_csd(card, ext_csd);
++			if (err)
++				return MMC_BLK_ABORT;
 +
-+		for (i = 0; i < ARRAY_SIZE(exynos4210_1200_limit); i++) {
-+			if (asv_info->hpm_result <= exynos4210_1200_limit[i].hpm_limit ||
-+			   asv_info->ids_result <= exynos4210_1200_limit[i].ids_limit) {
-+				ret = i;
-+				break;
++			if ((ext_csd[EXT_CSD_EXP_EVENTS_STATUS + 0] &
++						EXT_CSD_PACKED_FAILURE) &&
++					(ext_csd[EXT_CSD_PACKED_CMD_STATUS] &
++					 EXT_CSD_PACKED_GENERIC_ERROR)) {
++				if (ext_csd[EXT_CSD_PACKED_CMD_STATUS] &
++						EXT_CSD_PACKED_INDEXED_ERROR) {
++					/* Make be 0-based */
++					mq_mrq->packed_fail_idx =
++						ext_csd[EXT_CSD_PACKED_FAILURE_INDEX] - 1;
++					return MMC_BLK_PARTIAL;
++				} else {
++					return MMC_BLK_RETRY;
++				}
 +			}
-+		}
-+	} else if (exynos4_target == EXYNOS4210_1400) {
-+		ret = ARRAY_SIZE(exynos4210_1400_limit);
-+
-+		for (i = 0; i < ARRAY_SIZE(exynos4210_1400_limit); i++) {
-+			if (asv_info->hpm_result <= exynos4210_1400_limit[i].hpm_limit ||
-+			   asv_info->ids_result <= exynos4210_1400_limit[i].ids_limit) {
-+				ret = i;
-+				break;
-+			}
-+		}
-+	} else if (exynos4_target == EXYNOS4210_SINGLE_1200) {
-+		ret = ARRAY_SIZE(exynos4210_single_1200_limit);
-+
-+		for (i = 0; i < ARRAY_SIZE(exynos4210_single_1200_limit); i++) {
-+			if (asv_info->hpm_result <= exynos4210_single_1200_limit[i].hpm_limit ||
-+			   asv_info->ids_result <= exynos4210_single_1200_limit[i].ids_limit) {
-+				ret = i;
-+				break;
-+			}
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+#define PACK_ID				8
-+#define PACK_MASK			0x3
-+
-+#define SUPPORT_1400MHZ			(1<<31)
-+#define SUPPORT_1200MHZ			(1<<30)
-+#define SUPPORT_1000MHZ			(1<<29)
-+
-+static int exynos4210_get_hpm(struct samsung_asv *asv_info)
-+{
-+	unsigned int i;
-+	unsigned int tmp;
-+	unsigned int hpm_delay = 0;
-+	void __iomem *iem_base;
-+
-+	iem_base = ioremap(EXYNOS4_PA_IEM, (128 * 1024));
-+
-+	if (!iem_base) {
-+		pr_info("EXYNOS: ioremap fail\n");
-+		return -EPERM;
-+	}
-+
-+	/* Clock setting to get asv value */
-+	if (!asv_info->pre_clock_init) {
-+		pr_info("EXYNOS: No Pre-setup function\n");
-+		goto err;
-+	} else {
-+		if (asv_info->pre_clock_init()) {
-+			pr_info("EXYNOS: pre_clock_init function fail");
-+			goto err;
 +		} else {
-+			/* HPM enable  */
-+			tmp = __raw_readl(iem_base + EXYNOS4_APC_CONTROL);
-+			tmp |= APC_HPM_EN;
-+			__raw_writel(tmp, (iem_base + EXYNOS4_APC_CONTROL));
-+
-+			asv_info->pre_clock_setup();
-+
-+			/* IEM enable */
-+			tmp = __raw_readl(iem_base + EXYNOS4_IECDPCCR);
-+			tmp |= IEC_EN;
-+			__raw_writel(tmp, (iem_base + EXYNOS4_IECDPCCR));
++			return MMC_BLK_RETRY;
 +		}
 +	}
 +
-+	/* Get HPM Delay value */
-+	for (i = 0; i < LOOP_CNT; i++) {
-+		tmp = __raw_readb(iem_base + EXYNOS4_APC_DBG_DLYCODE);
-+		hpm_delay += tmp;
-+	}
-+
-+	hpm_delay /= LOOP_CNT;
-+
-+	/* Store result of hpm value */
-+	asv_info->hpm_result = hpm_delay;
-+
-+	return 0;
-+
-+err:
-+	iounmap(iem_base);
-+
-+	return -EPERM;
++	if (check != MMC_BLK_ABORT)
++		return MMC_BLK_RETRY;
++	else
++		return MMC_BLK_ABORT;
 +}
 +
-+static int exynos4210_get_ids(struct samsung_asv *asv_info)
+ static void mmc_blk_rw_rq_prep(struct mmc_queue_req *mqrq,
+ 			       struct mmc_card *card,
+ 			       int disable_multi,
+@@ -1126,6 +1187,207 @@ static void mmc_blk_rw_rq_prep(struct mmc_queue_req *mqrq,
+ 	mmc_queue_bounce_pre(mqrq);
+ }
+
++static u8 mmc_blk_chk_packable(struct mmc_queue *mq, struct request *req)
 +{
-+	unsigned int pkg_id_val;
++	struct request_queue *q = mq->queue;
++	struct mmc_card *card = mq->card;
++	struct request *cur = req, *next = NULL;
++	struct mmc_blk_data *md = mq->data;
++	bool en_rel_wr = card->ext_csd.rel_param & EXT_CSD_WR_REL_PARAM_EN;
++	unsigned int req_sectors = 0, phys_segments = 0;
++	unsigned int max_blk_count, max_phys_segs;
++	u8 max_packed_rw = 0;
++	u8 reqs = 0;
 +
-+	if (!asv_info->ids_offset || !asv_info->ids_mask) {
-+		pr_info("EXYNOS4: No ids_offset or No ids_mask\n");
-+		return -EPERM;
++	if (!(md->flags & MMC_BLK_CMD23) &&
++			!card->ext_csd.packed_event_en)
++		goto no_packed;
++
++	if (rq_data_dir(cur) == READ)
++		max_packed_rw = card->ext_csd.max_packed_reads;
++	else
++		max_packed_rw = card->ext_csd.max_packed_writes;
++
++	if (max_packed_rw == 0)
++		goto no_packed;
++
++	if (mmc_req_rel_wr(cur) &&
++			(md->flags & MMC_BLK_REL_WR) &&
++			!en_rel_wr) {
++		goto no_packed;
 +	}
 +
-+	pkg_id_val = __raw_readl(S5P_VA_CHIPID + 0x4);
-+	asv_info->pkg_id = pkg_id_val;
-+	asv_info->ids_result = ((pkg_id_val >> asv_info->ids_offset) &
-+							asv_info->ids_mask);
++	max_blk_count = min(card->host->max_blk_count,
++			card->host->max_req_size >> 9);
++	max_phys_segs = queue_max_segments(q);
++	req_sectors += blk_rq_sectors(cur);
++	phys_segments += req->nr_phys_segments;
 +
-+	return 0;
++	if (rq_data_dir(cur) == WRITE) {
++		req_sectors++;
++		phys_segments++;
++	}
++
++	while (reqs < max_packed_rw - 1) {
++		next = blk_fetch_request(q);
++		if (!next)
++			break;
++
++		if (rq_data_dir(cur) != rq_data_dir(next)) {
++			blk_requeue_request(q, next);
++			break;
++		}
++
++		if (mmc_req_rel_wr(next) &&
++				(md->flags & MMC_BLK_REL_WR) &&
++				!en_rel_wr) {
++			blk_requeue_request(q, next);
++			break;
++		}
++
++		req_sectors += blk_rq_sectors(next);
++		if (req_sectors > max_blk_count) {
++			blk_requeue_request(q, next);
++			break;
++		}
++
++		phys_segments +=  next->nr_phys_segments;
++		if (phys_segments > max_phys_segs) {
++			blk_requeue_request(q, next);
++			break;
++		}
++
++		list_add_tail(&next->queuelist, &mq->mqrq_cur->packed_list);
++		cur = next;
++		reqs++;
++	}
++
++	if (reqs > 0) {
++		list_add(&req->queuelist, &mq->mqrq_cur->packed_list);
++		return (reqs + 1);
++	}
++
++no_packed:
++	mq->mqrq_cur->packed_cmd = MMC_PACKED_NONE;
++	return reqs;
 +}
 +
-+static int exynos4210_asv_store_result(struct samsung_asv *asv_info)
++static void mmc_blk_packed_hdr_wrq_prep(struct mmc_queue_req *mqrq,
++			       struct mmc_card *card,
++			       struct mmc_queue *mq,
++			       u8 reqs)
 +{
-+	unsigned int result_grp;
-+	char *support_freq;
-+	unsigned int exynos_idcode = 0x0;
++	struct mmc_blk_request *brq = &mqrq->brq;
++	struct request *req = mqrq->req;
++	struct request *prq;
++	struct mmc_blk_data *md = mq->data;
++	bool do_rel_wr;
++	u32 *packed_cmd_hdr = mqrq->packed_cmd_hdr;
++	u8 i =1;
 +
-+	exynos_idcode = __raw_readl(S5P_VA_CHIPID);
++	mqrq->packed_cmd = (rq_data_dir(req) == READ) ?
++		MMC_PACKED_WR_HDR : MMC_PACKED_WRITE;
++	mqrq->packed_blocks = 0;
++	mqrq->packed_fail_idx = -1;
 +
-+	/* Single chip is only support 1.2GHz */
-+	if (!((exynos_idcode >> PACK_ID) & PACK_MASK)) {
-+		result_grp = exynos4210_find_group(asv_info, EXYNOS4210_SINGLE_1200);
-+		result_grp |= SUPPORT_1200MHZ;
-+		support_freq = "1.2GHz";
++	memset(packed_cmd_hdr, 0, sizeof(mqrq->packed_cmd_hdr));
++	packed_cmd_hdr[0] = (reqs << 16) |
++		(((rq_data_dir(req) == READ) ? 0x01 : 0x02) << 8) | (0x01 << 0);
 +
-+		goto set_reg;
++	/*
++	 * Argument for each entry of packed group
++	 */
++	list_for_each_entry(prq, &mqrq->packed_list, queuelist) {
++		do_rel_wr = mmc_req_rel_wr(prq) && (md->flags & MMC_BLK_REL_WR);
++		/* Argument of CMD23*/
++		packed_cmd_hdr[(i * 2)] = (do_rel_wr ? (1 << 31) : 0) |
++			blk_rq_sectors(prq);
++		/* Argument of CMD18 or CMD25 */
++		packed_cmd_hdr[((i * 2)) + 1] = mmc_card_blockaddr(card) ?
++			blk_rq_pos(prq) : blk_rq_pos(prq) << 9;
++		mqrq->packed_blocks += blk_rq_sectors(prq);
++		i++;
 +	}
 +
-+	/* Check support freq */
-+	switch (asv_info->pkg_id & 0x7) {
-+	/* Support 1.2GHz */
-+	case 1:
-+	case 7:
-+		result_grp = exynos4210_find_group(asv_info, EXYNOS4210_1200);
-+		result_grp |= SUPPORT_1200MHZ;
-+		support_freq = "1.2GHz";
-+		break;
-+	/* Support 1.4GHz */
-+	case 5:
-+		result_grp = exynos4210_find_group(asv_info, EXYNOS4210_1400);
-+		result_grp |= SUPPORT_1200MHZ;
-+		support_freq = "1.4GHz";
-+		break;
-+	/* Defalut support 1.0GHz */
-+	default:
-+		result_grp = exynos4210_find_group(asv_info, EXYNOS4210_1200);
-+		result_grp |= SUPPORT_1000MHZ;
-+		support_freq = "1.0GHz";
-+		break;
-+	}
++	memset(brq, 0, sizeof(struct mmc_blk_request));
++	brq->mrq.cmd = &brq->cmd;
++	brq->mrq.data = &brq->data;
++	brq->mrq.sbc = &brq->sbc;
++	brq->mrq.stop = &brq->stop;
 +
-+set_reg:
-+	__raw_writel(result_grp, S5P_INFORM2);
++	brq->sbc.opcode = MMC_SET_BLOCK_COUNT;
++	brq->sbc.arg = (0 << 31) | (1 << 30) |
++		((rq_data_dir(req) == READ) ? 1 : mqrq->packed_blocks + 1);
++	brq->sbc.flags = MMC_RSP_R1 | MMC_CMD_AC;
 +
-+	pr_info("Support %s\n", support_freq);
-+	pr_info("ASV Group for This Exynos4210 is 0x%x\n", result_grp);
++	brq->cmd.opcode = MMC_WRITE_MULTIPLE_BLOCK;
++	brq->cmd.arg = blk_rq_pos(req);
++	if (!mmc_card_blockaddr(card))
++		brq->cmd.arg <<= 9;
++	brq->cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
 +
-+	return 0;
++	brq->data.blksz = 512;
++	/*
++	 * Write separately the packd command header only for packed read.
++	 * In case of packed write, header is sent with blocks of data.
++	 */
++	brq->data.blocks = (rq_data_dir(req) == READ) ?
++		1 : mqrq->packed_blocks + 1;
++	brq->data.flags |= MMC_DATA_WRITE;
++
++	brq->stop.opcode = MMC_STOP_TRANSMISSION;
++	brq->stop.arg = 0;
++	brq->stop.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
++
++	mmc_set_data_timeout(&brq->data, card);
++
++	brq->data.sg = mqrq->sg;
++	brq->data.sg_len = mmc_queue_map_sg(mq, mqrq);
++
++	mqrq->mmc_active.mrq = &brq->mrq;
++	mqrq->mmc_active.err_check = mmc_blk_packed_err_check;
++
++	mmc_queue_bounce_pre(mqrq);
 +}
 +
-+void exynos4210_asv_init(struct samsung_asv *asv_info)
++static void mmc_blk_packed_rrq_prep(struct mmc_queue_req *mqrq,
++			       struct mmc_card *card,
++			       struct mmc_queue *mq)
 +{
-+	pr_info("EXYNOS4210: Adaptive Support Voltage init\n");
++	struct mmc_blk_request *brq = &mqrq->brq;
++	struct request *req = mqrq->req;
 +
-+	asv_info->ids_offset = 24;
-+	asv_info->ids_mask = 0xFF;
++	mqrq->packed_cmd = MMC_PACKED_READ;
 +
-+	asv_info->get_ids = exynos4210_get_ids;
-+	asv_info->get_hpm = exynos4210_get_hpm;
-+	asv_info->check_vdd_arm = exynos4210_check_vdd_arm;
-+	asv_info->pre_clock_init = exynos4210_asv_pre_clock_init;
-+	asv_info->pre_clock_setup = exynos4210_asv_pre_clock_setup;
-+	asv_info->store_result = exynos4210_asv_store_result;
++	memset(brq, 0, sizeof(struct mmc_blk_request));
++	brq->mrq.cmd = &brq->cmd;
++	brq->mrq.data = &brq->data;
++	brq->mrq.stop = &brq->stop;
++
++	brq->cmd.opcode = MMC_READ_MULTIPLE_BLOCK;
++	brq->cmd.arg = blk_rq_pos(req);
++	if (!mmc_card_blockaddr(card))
++		brq->cmd.arg <<= 9;
++	brq->cmd.flags = MMC_RSP_SPI_R1 | MMC_RSP_R1 | MMC_CMD_ADTC;
++	brq->data.blksz = 512;
++	brq->data.blocks = mqrq->packed_blocks;
++	brq->data.flags |= MMC_DATA_READ;
++
++	brq->stop.opcode = MMC_STOP_TRANSMISSION;
++	brq->stop.arg = 0;
++	brq->stop.flags = MMC_RSP_SPI_R1B | MMC_RSP_R1B | MMC_CMD_AC;
++
++	mmc_set_data_timeout(&brq->data, card);
++
++	brq->data.sg = mqrq->sg;
++	brq->data.sg_len = mmc_queue_map_sg(mq, mqrq);
++
++	mqrq->mmc_active.mrq = &brq->mrq;
++	mqrq->mmc_active.err_check = mmc_blk_packed_err_check;
++
++	mmc_queue_bounce_pre(mqrq);
 +}
-diff --git a/arch/arm/mach-exynos4/asv.c b/arch/arm/mach-exynos4/asv.c
-index 498fac0..5acc8b1 100644
---- a/arch/arm/mach-exynos4/asv.c
-+++ b/arch/arm/mach-exynos4/asv.c
-@@ -17,6 +17,8 @@
- #include <linux/io.h>
- #include <linux/slab.h>
- 
-+#include <plat/cpu.h>
 +
- #include <mach/map.h>
- #include <mach/asv.h>
- 
-@@ -29,6 +31,12 @@ static int __init exynos_asv_init(void)
- 		goto out1;
- 
- 	/* I will add asv driver of exynos4 series to regist */
-+	if (soc_is_exynos4210())
-+		exynos4210_asv_init(exynos_asv);
-+	else {
-+		pr_info("EXYNOS: No MACH ASV driver\n");
-+		goto out2;
+ static int mmc_blk_cmd_err(struct mmc_blk_data *md, struct mmc_card *card,
+ 			   struct mmc_blk_request *brq, struct request *req,
+ 			   int ret)
+@@ -1163,15 +1425,33 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
+ 	int ret = 1, disable_multi = 0, retry = 0, type;
+ 	enum mmc_blk_status status;
+ 	struct mmc_queue_req *mq_rq;
+-	struct request *req;
++	struct request *req, *prq;
+ 	struct mmc_async_req *areq;
++	u8 reqs = 0;
+
+ 	if (!rqc && !mq->mqrq_prev->req)
+ 		return 0;
+
++	if (rqc)
++		reqs = mmc_blk_chk_packable(mq, rqc);
++
+ 	do {
+ 		if (rqc) {
+-			mmc_blk_rw_rq_prep(mq->mqrq_cur, card, 0, mq);
++			if (reqs >= 2) {
++				mmc_blk_packed_hdr_wrq_prep(mq->mqrq_cur, card, mq, reqs);
++				if (rq_data_dir(rqc) == READ) {
++					areq = &mq->mqrq_cur->mmc_active;
++					mmc_wait_for_req(card->host, areq->mrq);
++					status = mmc_blk_packed_err_check(card, areq);
++					if (status == MMC_BLK_SUCCESS) {
++						mmc_blk_packed_rrq_prep(mq->mqrq_cur, card, mq);
++					} else {
++						goto check_status;
++					}
++				}
++			} else {
++				mmc_blk_rw_rq_prep(mq->mqrq_cur, card, 0, mq);
++			}
+ 			areq = &mq->mqrq_cur->mmc_active;
+ 		} else
+ 			areq = NULL;
+@@ -1179,6 +1459,7 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
+ 		if (!areq)
+ 			return 0;
+
++check_status:
+ 		mq_rq = container_of(areq, struct mmc_queue_req, mmc_active);
+ 		brq = &mq_rq->brq;
+ 		req = mq_rq->req;
+@@ -1192,10 +1473,32 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
+ 			 * A block was successfully transferred.
+ 			 */
+ 			mmc_blk_reset_success(md, type);
+-			spin_lock_irq(&md->lock);
+-			ret = __blk_end_request(req, 0,
++
++			if (mq_rq->packed_cmd != MMC_PACKED_NONE) {
++				int idx = mq_rq->packed_fail_idx, i = 0;
++				while (!list_empty(&mq_rq->packed_list)) {
++					prq = list_entry_rq(mq_rq->packed_list.next);
++					if (idx == i) {
++						/* retry from error index */
++						reqs -= idx;
++						mq_rq->req = prq;
++						ret = 1;
++						break;
++					}
++					list_del_init(&prq->queuelist);
++					spin_lock_irq(&md->lock);
++					ret = __blk_end_request(prq, 0, blk_rq_bytes(prq));
++					spin_unlock_irq(&md->lock);
++					i++;
++				}
++				break;
++			} else {
++				spin_lock_irq(&md->lock);
++				ret = __blk_end_request(req, 0,
+ 						brq->data.bytes_xfered);
+-			spin_unlock_irq(&md->lock);
++				spin_unlock_irq(&md->lock);
++			}
++
+ 			/*
+ 			 * If the blk_end_request function returns non-zero even
+ 			 * though all data has been transferred and no errors
+@@ -1254,7 +1557,7 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
+ 			break;
+ 		}
+
+-		if (ret) {
++		if (ret && (mq_rq->packed_cmd == MMC_PACKED_NONE)) {
+ 			/*
+ 			 * In case of a incomplete request
+ 			 * prepare it again and resend.
+@@ -1267,13 +1570,37 @@ static int mmc_blk_issue_rw_rq(struct mmc_queue *mq, struct request *rqc)
+ 	return 1;
+
+  cmd_abort:
+-	spin_lock_irq(&md->lock);
+-	while (ret)
+-		ret = __blk_end_request(req, -EIO, blk_rq_cur_bytes(req));
+-	spin_unlock_irq(&md->lock);
++	if (mq_rq->packed_cmd != MMC_PACKED_NONE) {
++		spin_lock_irq(&md->lock);
++		while (ret)
++			ret = __blk_end_request(req, -EIO, blk_rq_cur_bytes(req));
++		spin_unlock_irq(&md->lock);
++	} else {
++		while (!list_empty(&mq_rq->packed_list)) {
++			prq = list_entry_rq(mq_rq->packed_list.next);
++			list_del_init(&prq->queuelist);
++			spin_lock_irq(&md->lock);
++			__blk_end_request(prq, -EIO, blk_rq_bytes(prq));
++			spin_unlock_irq(&md->lock);
++		}
 +	}
- 
- 	if (exynos_asv->check_vdd_arm) {
- 		if (exynos_asv->check_vdd_arm()) {
-diff --git a/arch/arm/mach-exynos4/include/mach/asv.h b/arch/arm/mach-exynos4/include/mach/asv.h
-index 038a872..f84a11d 100644
---- a/arch/arm/mach-exynos4/include/mach/asv.h
-+++ b/arch/arm/mach-exynos4/include/mach/asv.h
-@@ -39,4 +39,6 @@ struct samsung_asv {
- 	int (*store_result)(struct samsung_asv *asv_info);
+
+  start_new_req:
+ 	if (rqc) {
++		/*
++		 * If current request is packed, it need to put back.
++		 */
++		if (mq->mqrq_cur->packed_cmd != MMC_PACKED_NONE) {
++			while (!list_empty(&mq->mqrq_cur->packed_list)) {
++				prq = list_entry_rq(mq->mqrq_cur->packed_list.prev);
++				if (prq->queuelist.prev != &mq->mqrq_cur->packed_list) {
++					list_del_init(&prq->queuelist);
++					blk_requeue_request(mq->queue, prq);
++				} else {
++					list_del_init(&prq->queuelist);
++				}
++			}
++		}
+ 		mmc_blk_rw_rq_prep(mq->mqrq_cur, card, 0, mq);
+ 		mmc_start_req(card->host, &mq->mqrq_cur->mmc_active, NULL);
+ 	}
+diff --git a/drivers/mmc/card/queue.c b/drivers/mmc/card/queue.c
+index dcad59c..3a4542e 100644
+--- a/drivers/mmc/card/queue.c
++++ b/drivers/mmc/card/queue.c
+@@ -172,6 +172,8 @@ int mmc_init_queue(struct mmc_queue *mq, struct mmc_card *card,
+
+ 	memset(&mq->mqrq_cur, 0, sizeof(mq->mqrq_cur));
+ 	memset(&mq->mqrq_prev, 0, sizeof(mq->mqrq_prev));
++	INIT_LIST_HEAD(&mqrq_cur->packed_list);
++	INIT_LIST_HEAD(&mqrq_prev->packed_list);
+ 	mq->mqrq_cur = mqrq_cur;
+ 	mq->mqrq_prev = mqrq_prev;
+ 	mq->queue->queuedata = mq;
+@@ -372,6 +374,39 @@ void mmc_queue_resume(struct mmc_queue *mq)
+ 	}
+ }
+
++static unsigned int mmc_queue_packed_map_sg(struct mmc_queue *mq,
++				struct mmc_queue_req *mqrq,
++				struct scatterlist *sg)
++{
++	struct scatterlist *__sg;
++	unsigned int sg_len = 0;
++	struct request *req;
++	enum mmc_packed_cmd cmd;
++
++	cmd = mqrq->packed_cmd;
++
++	if (cmd == MMC_PACKED_WR_HDR || cmd == MMC_PACKED_WRITE) {
++		__sg =sg;
++		sg_set_buf(__sg, mqrq->packed_cmd_hdr,
++				sizeof(mqrq->packed_cmd_hdr));
++		sg_len++;
++		if (cmd == MMC_PACKED_WR_HDR) {
++			sg_mark_end(__sg);
++			return sg_len;
++		}
++		__sg->page_link &= ~0x02;
++	}
++
++	__sg = sg + sg_len;
++	list_for_each_entry(req, &mqrq->packed_list, queuelist) {
++		sg_len += blk_rq_map_sg(mq->queue, req, __sg);
++		__sg = sg + (sg_len - 1);
++		(__sg++)->page_link &= ~0x02;
++	}
++	sg_mark_end(sg + (sg_len - 1));
++	return sg_len;
++}
++
+ /*
+  * Prepare the sg list(s) to be handed of to the host driver
+  */
+@@ -382,12 +417,19 @@ unsigned int mmc_queue_map_sg(struct mmc_queue *mq, struct mmc_queue_req *mqrq)
+ 	struct scatterlist *sg;
+ 	int i;
+
+-	if (!mqrq->bounce_buf)
+-		return blk_rq_map_sg(mq->queue, mqrq->req, mqrq->sg);
++	if (!mqrq->bounce_buf) {
++		if (!list_empty(&mqrq->packed_list))
++			return mmc_queue_packed_map_sg(mq, mqrq, mqrq->sg);
++		else
++			return blk_rq_map_sg(mq->queue, mqrq->req, mqrq->sg);
++	}
+
+ 	BUG_ON(!mqrq->bounce_sg);
+
+-	sg_len = blk_rq_map_sg(mq->queue, mqrq->req, mqrq->bounce_sg);
++	if (!list_empty(&mqrq->packed_list))
++		sg_len = mmc_queue_packed_map_sg(mq, mqrq, mqrq->bounce_sg);
++	else
++		sg_len = blk_rq_map_sg(mq->queue, mqrq->req, mqrq->bounce_sg);
+
+ 	mqrq->bounce_sg_len = sg_len;
+
+diff --git a/drivers/mmc/card/queue.h b/drivers/mmc/card/queue.h
+index d2a1eb4..5d0131e 100644
+--- a/drivers/mmc/card/queue.h
++++ b/drivers/mmc/card/queue.h
+@@ -12,6 +12,13 @@ struct mmc_blk_request {
+ 	struct mmc_data		data;
  };
- 
-+extern void exynos4210_asv_init(struct samsung_asv *asv_info);
+
++enum mmc_packed_cmd {
++	MMC_PACKED_NONE = 0,
++	MMC_PACKED_WR_HDR,
++	MMC_PACKED_WRITE,
++	MMC_PACKED_READ,
++};
 +
- #endif /* __ASM_ARCH_ASV_H */
-diff --git a/arch/arm/mach-exynos4/include/mach/map.h b/arch/arm/mach-exynos4/include/mach/map.h
-index 918a979..81fa158 100644
---- a/arch/arm/mach-exynos4/include/mach/map.h
-+++ b/arch/arm/mach-exynos4/include/mach/map.h
-@@ -60,6 +60,8 @@
- 
- #define EXYNOS4_PA_COMBINER		0x10440000
- 
-+#define EXYNOS4_PA_IEM			0x10460000
+ struct mmc_queue_req {
+ 	struct request		*req;
+ 	struct mmc_blk_request	brq;
+@@ -20,6 +27,11 @@ struct mmc_queue_req {
+ 	struct scatterlist	*bounce_sg;
+ 	unsigned int		bounce_sg_len;
+ 	struct mmc_async_req	mmc_active;
++	struct list_head	packed_list;
++	u32			packed_cmd_hdr[128];
++	unsigned int		packed_blocks;
++	enum mmc_packed_cmd	packed_cmd;
++	int		packed_fail_idx;
+ };
+
+ struct mmc_queue {
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 3627044..eab01c1 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -487,6 +487,9 @@ static int mmc_read_ext_csd(struct mmc_card *card, u8 *ext_csd)
+ 			ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
+ 			ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
+ 			ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
 +
- #define EXYNOS4_PA_GIC_CPU		0x10480000
- #define EXYNOS4_PA_GIC_DIST		0x10490000
- 
-diff --git a/arch/arm/mach-exynos4/include/mach/regs-clock.h b/arch/arm/mach-exynos4/include/mach/regs-clock.h
-index 6c37ebe..23ee10f 100644
---- a/arch/arm/mach-exynos4/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos4/include/mach/regs-clock.h
-@@ -130,6 +130,24 @@
- #define S5P_CLKGATE_SCLKCPU		S5P_CLKREG(0x14800)
- #define S5P_CLKGATE_IP_CPU		S5P_CLKREG(0x14900)
- 
-+#define S5P_APLL_CON0L8			S5P_CLKREG(0x15100)
-+#define S5P_APLL_CON0L7			S5P_CLKREG(0x15104)
-+#define S5P_APLL_CON0L6			S5P_CLKREG(0x15108)
-+#define S5P_APLL_CON0L5			S5P_CLKREG(0x1510C)
-+#define S5P_APLL_CON0L4			S5P_CLKREG(0x15110)
-+#define S5P_APLL_CON0L3			S5P_CLKREG(0x15114)
-+#define S5P_APLL_CON0L2			S5P_CLKREG(0x15118)
-+#define S5P_APLL_CON0L1			S5P_CLKREG(0x1511C)
++		card->ext_csd.max_packed_writes = ext_csd[EXT_CSD_MAX_PACKED_WRITES];
++		card->ext_csd.max_packed_reads = ext_csd[EXT_CSD_MAX_PACKED_READS];
+ 	}
+
+ out:
+@@ -1072,6 +1075,23 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 		card->ext_csd.cache_ctrl = err ? 0 : 1;
+ 	}
+
++	if ((host->caps2 & MMC_CAP2_PACKED_CMD) &&
++			(card->ext_csd.max_packed_writes > 0) &&
++			(card->ext_csd.max_packed_reads > 0)) {
++		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++				EXT_CSD_EXP_EVENTS_CTRL,
++				EXT_CSD_PACKED_EVENT_EN,
++				card->ext_csd.generic_cmd6_time);
++		if (err && err != -EBADMSG)
++			goto free_card;
++		if (err) {
++			pr_warning("%s: Enabling packed event failed\n",
++					mmc_hostname(card->host));
++			err = 0;
++		} else
++			card->ext_csd.packed_event_en = 1;
++	}
 +
-+#define S5P_CLKDIV_IEM_L8		S5P_CLKREG(0x15300)
-+#define S5P_CLKDIV_IEM_L7		S5P_CLKREG(0x15304)
-+#define S5P_CLKDIV_IEM_L6		S5P_CLKREG(0x15308)
-+#define S5P_CLKDIV_IEM_L5		S5P_CLKREG(0x1530C)
-+#define S5P_CLKDIV_IEM_L4		S5P_CLKREG(0x15310)
-+#define S5P_CLKDIV_IEM_L3		S5P_CLKREG(0x15314)
-+#define S5P_CLKDIV_IEM_L2		S5P_CLKREG(0x15318)
-+#define S5P_CLKDIV_IEM_L1		S5P_CLKREG(0x1531C)
+ 	if (!oldcard)
+ 		host->card = card;
+
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 6e04e10..3ffd93f 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -52,6 +52,9 @@ struct mmc_ext_csd {
+ 	u8			part_config;
+ 	u8			cache_ctrl;
+ 	u8			rst_n_function;
++	u8			max_packed_writes;
++	u8			max_packed_reads;
++	u8			packed_event_en;
+ 	unsigned int		part_time;		/* Units: ms */
+ 	unsigned int		sa_timeout;		/* Units: 100ns */
+ 	unsigned int		generic_cmd6_time;	/* Units: 10ms */
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index a3ac9c4..d2e4210 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -242,6 +242,7 @@ struct mmc_host {
+ #define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control */
+ #define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff supported */
+ #define MMC_CAP2_NO_MULTI_READ	(1 << 3)	/* Multiblock reads don't work */
++#define MMC_CAP2_PACKED_CMD	(1 << 4)	/* Allow packed command */
+
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 	unsigned int        power_notify_type;
+diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
+index 0e71356..1988780 100644
+--- a/include/linux/mmc/mmc.h
++++ b/include/linux/mmc/mmc.h
+@@ -138,6 +138,7 @@ static inline bool mmc_op_multi(u32 opcode)
+ #define R1_CURRENT_STATE(x)	((x & 0x00001E00) >> 9)	/* sx, b (4 bits) */
+ #define R1_READY_FOR_DATA	(1 << 8)	/* sx, a */
+ #define R1_SWITCH_ERROR		(1 << 7)	/* sx, c */
++#define R1_EXP_EVENT		(1 << 6)	/* sr, a */
+ #define R1_APP_CMD		(1 << 5)	/* sr, c */
+
+ #define R1_STATE_IDLE	0
+@@ -273,6 +274,10 @@ struct _mmc_csd {
+ #define EXT_CSD_FLUSH_CACHE		32      /* W */
+ #define EXT_CSD_CACHE_CTRL		33      /* R/W */
+ #define EXT_CSD_POWER_OFF_NOTIFICATION	34	/* R/W */
++#define EXT_CSD_PACKED_FAILURE_INDEX	35	/* RO */
++#define EXT_CSD_PACKED_CMD_STATUS	36	/* RO */
++#define EXT_CSD_EXP_EVENTS_STATUS	54	/* RO, 2 bytes */
++#define EXT_CSD_EXP_EVENTS_CTRL	56	/* R/W, 2 bytes */
+ #define EXT_CSD_GP_SIZE_MULT		143	/* R/W */
+ #define EXT_CSD_PARTITION_ATTRIBUTE	156	/* R/W */
+ #define EXT_CSD_PARTITION_SUPPORT	160	/* RO */
+@@ -313,6 +318,8 @@ struct _mmc_csd {
+ #define EXT_CSD_POWER_OFF_LONG_TIME	247	/* RO */
+ #define EXT_CSD_GENERIC_CMD6_TIME	248	/* RO */
+ #define EXT_CSD_CACHE_SIZE		249	/* RO, 4 bytes */
++#define EXT_CSD_MAX_PACKED_WRITES	500	/* RO */
++#define EXT_CSD_MAX_PACKED_READS	501	/* RO */
+ #define EXT_CSD_HPI_FEATURES		503	/* RO */
+
+ /*
+@@ -364,6 +371,14 @@ struct _mmc_csd {
+ #define EXT_CSD_PWR_CL_4BIT_MASK	0x0F	/* 8 bit PWR CLS */
+ #define EXT_CSD_PWR_CL_8BIT_SHIFT	4
+ #define EXT_CSD_PWR_CL_4BIT_SHIFT	0
 +
- #define S5P_APLL_LOCKTIME		(0x1C20)	/* 300us */
- 
- #define S5P_APLLCON0_ENABLE_SHIFT	(31)
-diff --git a/arch/arm/mach-exynos4/include/mach/regs-iem.h b/arch/arm/mach-exynos4/include/mach/regs-iem.h
-new file mode 100644
-index 0000000..d9bf177
---- /dev/null
-+++ b/arch/arm/mach-exynos4/include/mach/regs-iem.h
-@@ -0,0 +1,27 @@
-+/* linux/arch/arm/mach-exynos/include/mach/regs-iem.h
-+ *
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * EXYNOS4 - IEM(INTELLIGENT ENERGY MANAGEMENT) register discription
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
++#define EXT_CSD_PACKED_EVENT_EN	(1<<3)
 +
-+#ifndef __ASM_ARCH_REGS_IEM_H
-+#define __ASM_ARCH_REGS_IEM_H __FILE__
++#define EXT_CSD_PACKED_FAILURE	(1<<3)
 +
-+/* Register for IEC  */
-+#define EXYNOS4_IECDPCCR		(0x00000)
++#define EXT_CSD_PACKED_GENERIC_ERROR	(1<<0)
++#define EXT_CSD_PACKED_INDEXED_ERROR	(1<<1)
 +
-+/* Register for APC */
-+#define EXYNOS4_APC_CONTROL		(0x10010)
-+#define EXYNOS4_APC_PREDLYSEL		(0x10024)
-+#define EXYNOS4_APC_DBG_DLYCODE		(0x100E0)
-+
-+#define APC_HPM_EN			(1 << 4)
-+#define IEC_EN				(1 << 0)
-+
-+#endif /* __ASM_ARCH_REGS_IEM_H */
--- 
-1.7.1
+ /*
+  * MMC_SWITCH access modes
+  */
+--
+1.7.2.3
