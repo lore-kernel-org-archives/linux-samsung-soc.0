@@ -1,60 +1,18 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH RESEND V4] mmc: core: HS200 mode support for eMMC 4.5
-Date: Fri, 28 Oct 2011 12:24:41 +0530
-Message-ID: <CAGxe1ZExwe9rmKcEpj=s4ixK7jdrGE=us-7Kax9HY1917PC9fg@mail.gmail.com>
-References: <1319605188-2909-1-git-send-email-girish.shivananjappa@linaro.org>
-	<m2sjmf4jis.fsf@bob.laptop.org>
+From: lisa hedstrand <lisa_hedstrand@indiatimes.com>
+Subject: Hello
+Date: Fri, 28 Oct 2011 16:36:40 +0530 (IST)
+Message-ID: <1769065423.933571319800000783.JavaMail.root@tilmb17.indiatimes.com>
+Reply-To: lisa hedstrand <lisahedstrand@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:59233 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752716Ab1J1Gyo convert rfc822-to-8bit (ORCPT
+Received: from trx4.indiatimes.com ([223.165.24.215]:51926 "EHLO
+	trx4.indiatimes.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752518Ab1J1LGg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Oct 2011 02:54:44 -0400
-In-Reply-To: <m2sjmf4jis.fsf@bob.laptop.org>
+	Fri, 28 Oct 2011 07:06:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 
-On 27 October 2011 01:23, Chris Ball <cjb@laptop.org> wrote:
-> Hi Girish,
->
-> On Wed, Oct 26 2011, Girish K S wrote:
->> This patch adds the support of the HS200 bus speed for eMMC 4.5 devi=
-ces.
->> The eMMC 4.5 devices have support for 200MHz bus speed.The mmc core =
-and
->> host modules have been touched to add support for this module.
->>
->> It is necessary to know the card type in the sdhci.c file to add sup=
-port
->> for eMMC tuning function. So card.h file is included to import the c=
-ard
->> data structure.
->>
->> cc: Chris Ball <cjb@laptop.org>
->> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
->
-> The long case statements and conditionals in this patch make it prett=
-y
-> dense/ugly -- can you think of a way to avoid doing this to the code?
-Definitely will workout.
-> Also, it would be good to hear if anyone else has tested/is using thi=
-s
-> patch.
->
-> Is having a new mmc_card_hs200() test desirable, compared to just
-> reusing mmc_card_highspeed() and checking the ext_csd.card_type?
-The specification classifies from 26 to 52MHz as high speed. And
-anything above it upto 200 as hs200. I added the macro for
-clarity and to be inclined to the specification.
-> Thanks,
->
-> - Chris.
-> --
-> Chris Ball =A0 <cjb@laptop.org> =A0 <http://printf.net/>
-> One Laptop Per Child
->
+My name is Miss Lisa Please accept my apology if my mode of contacting you will in any way offend you. I am compelled to contact you via this medium because i needed a friend from that part of the world. We will get to know each other in details if my proposition accepted. l am a student in UK but originally from USA.
