@@ -1,59 +1,78 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 3/3] ARM: EXYNOS: Support ASV for Exynos4210
-Date: Sat, 29 Oct 2011 09:38:12 +0100
-Message-ID: <20111029083812.GV19187@n2100.arm.linux.org.uk>
-References: <1319677938-25732-1-git-send-email-boyko.lee@samsung.com>
-	<1319677938-25732-4-git-send-email-boyko.lee@samsung.com>
+From: Rajeshwari Birje <rajeshwari.birje@gmail.com>
+Subject: Re: [PATCH V5 1/3] SDHCI: S3C: Use generic clock names for sdhci bus
+ clock options
+Date: Mon, 31 Oct 2011 09:52:41 +0530
+Message-ID: <CAPs=JDentx5BMfT4JYxSUpdQqKveAVMcJZk_TAatEwSoLDHUTA@mail.gmail.com>
+References: <1318588126-19167-1-git-send-email-rajeshwari.s@samsung.com>
+	<1318588126-19167-2-git-send-email-rajeshwari.s@samsung.com>
+	<m2obx34j81.fsf@bob.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1319677938-25732-4-git-send-email-boyko.lee@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
-	<mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jongpill Lee <boyko.lee@samsung.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <m2obx34j81.fsf@bob.laptop.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Rajeshwari Shinde <rajeshwari.s@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Thu, Oct 27, 2011 at 10:12:18AM +0900, Jongpill Lee wrote:
-> +static int exynos4210_asv_pre_clock_init(void)
-> +{
-> +	struct clk *clk_hpm;
-> +	struct clk *clk_copy;
-> +	struct clk *clk_parent;
-> +
-> +	/* PWI clock setting */
-> +	clk_copy = clk_get(NULL, "sclk_pwi");
-> +	if (IS_ERR(clk_copy)) {
-> +		pr_info("EXYNOS4210: ASV : SCLK_PWI clock get error\n");
-> +		return -EINVAL;
-> +	} else {
-> +		clk_parent = clk_get(NULL, "xusbxti");
-> +
-> +		if (IS_ERR(clk_parent)) {
-> +			pr_info("EXYNOS4210: ASV: MOUT_APLL clock get error\n");
-> +			clk_put(clk_copy);
-> +			return -EINVAL;
-> +		}
-> +		if (clk_set_parent(clk_copy, clk_parent))
-> +			pr_info("EXYNOS4210: ASV: Unable to set parent %s of clock %s.\n",
-> +					clk_parent->name, clk_copy->name);
-> +
-> +		clk_put(clk_parent);
-> +	}
-> +	clk_set_rate(clk_copy, 4800000);
-> +
-> +	clk_put(clk_copy);
+Hi Chris,
 
-This looks really weird - if something is using a clock, the reference
-to the struct clk is supposed to be held all the time that the clock is
-being used.  Plus there's nothing to enable the clock itself (so it's
-probably disabled).
+Thank you for your comment will modify and resend the patches.
+
+Regards,
+Rajeshwari Shinde.
+
+On Thu, Oct 27, 2011 at 1:29 AM, Chris Ball <cjb@laptop.org> wrote:
+> Hi Rajeshwari, Kukjin,
+>
+> On Fri, Oct 14 2011, Rajeshwari Shinde wrote:
+>> This patch modifies the driver to stop depending on the clock names
+>> being passed from the platform and switch over to bus clock lookup
+>> using generic clock names.
+>>
+>> Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
+>> ---
+>> =A0drivers/mmc/host/sdhci-s3c.c | =A0 =A06 ++----
+>> =A01 files changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s=
+3c.c
+>> index 82709b6..a5fde87 100644
+>> --- a/drivers/mmc/host/sdhci-s3c.c
+>> +++ b/drivers/mmc/host/sdhci-s3c.c
+>> @@ -435,14 +435,12 @@ static int __devinit sdhci_s3c_probe(struct pl=
+atform_device *pdev)
+>>
+>> =A0 =A0 =A0 for (clks =3D 0, ptr =3D 0; ptr < MAX_BUS_CLK; ptr++) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct clk *clk;
+>> - =A0 =A0 =A0 =A0 =A0 =A0 char *name =3D pdata->clocks[ptr];
+>> + =A0 =A0 =A0 =A0 =A0 =A0 char name[14];
+>>
+>> - =A0 =A0 =A0 =A0 =A0 =A0 if (name =3D=3D NULL)
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 continue;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 sprintf(name, "mmc_busclk.%d", ptr);
+>
+> Let's use snprintf() here instead -- it's better to have fewer uses o=
+f
+> sprintf() to audit.
+>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk =3D clk_get(dev, name);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (IS_ERR(clk)) {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "failed to ge=
+t clock %s\n", name);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 continue;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+>
+> Thanks,
+>
+> - Chris.
+> --
+> Chris Ball =A0 <cjb@laptop.org> =A0 <http://printf.net/>
+> One Laptop Per Child
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
