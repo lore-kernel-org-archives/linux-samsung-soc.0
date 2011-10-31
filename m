@@ -1,51 +1,28 @@
-From: Rajeshwari Shinde <rajeshwari.s@samsung.com>
-Subject: [PATCH V6] SDHCI: S3C: Use generic clock names for sdhci bus clock
- options
-Date: Mon, 31 Oct 2011 11:14:36 +0530
-Message-ID: <1320039876-21148-1-git-send-email-rajeshwari.s@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:61300 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752646Ab1JaFq4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 31 Oct 2011 01:46:56 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 0/2] mmc: samsung-soc: support the second capability
+Date: Mon, 31 Oct 2011 14:58:11 +0900
+Message-ID: <4EAE38F3.4090400@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-This patch modifies the driver to stop depending on the clock names
-being passed from the platform and switch over to bus clock lookup
-using generic clock names.
+This patch-set is added the platdata for the second capability.
+At latest, added the cap2 for capability in mmc-core.
+Samsung-SoC should use this field.
 
-V6 Changes:
-Changed sprintf to snprintf as suggested by Chris Ball.
+Jaehoon Chung (2):
+  sdhci: support the second capability for hsmmc.
+  sdhci-s3c: add platform data for the second capability
 
-Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
----
- drivers/mmc/host/sdhci-s3c.c |    7 ++-----
- 1 files changed, 2 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 82709b6..488223c 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -435,14 +435,11 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 
- 	for (clks = 0, ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		struct clk *clk;
--		char *name = pdata->clocks[ptr];
--
--		if (name == NULL)
--			continue;
-+		char name[14];
- 
-+		snprintf(name, 14, "mmc_busclk.%d", ptr);
- 		clk = clk_get(dev, name);
- 		if (IS_ERR(clk)) {
--			dev_err(dev, "failed to get clock %s\n", name);
- 			continue;
- 		}
- 
--- 
-1.7.4.4
+ arch/arm/plat-samsung/dev-hsmmc.c          |    2 ++
+ arch/arm/plat-samsung/dev-hsmmc1.c         |    2 ++
+ arch/arm/plat-samsung/dev-hsmmc2.c         |    2 ++
+ arch/arm/plat-samsung/dev-hsmmc3.c         |    2 ++
+ arch/arm/plat-samsung/include/plat/sdhci.h |    1 +
+ drivers/mmc/host/sdhci-s3c.c               |    2 ++
+ 6 files changed, 11 insertions(+), 0 deletions(-)
