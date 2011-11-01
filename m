@@ -1,135 +1,187 @@
-From: padma venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH 1/7] SPI: S3C64XX: Use bus clocks created using clkdev
-Date: Tue, 1 Nov 2011 13:11:52 +0530
-Message-ID: <CAAgF-Bf74OJu_OhkJ5vnMoak45ie3VfMxFRjJBO+Swx5o8edXA@mail.gmail.com>
-References: <1316778827-24694-1-git-send-email-padma.v@samsung.com>
-	<1316778827-24694-2-git-send-email-padma.v@samsung.com>
-	<20110923231233.GE24631@ponder.secretlab.ca>
-	<003301cc7ca3$3314dae0$993e90a0$%kim@samsung.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH v2] gpio/samsung: Add device tree support for Exynos4
+Date: Tue, 01 Nov 2011 09:22:26 +0100
+Message-ID: <4EAFAC42.5080607@gmail.com>
+References: <1320108227-2693-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:46431 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751539Ab1KAHlx convert rfc822-to-8bit (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:42786 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752297Ab1KAIWb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 1 Nov 2011 03:41:53 -0400
-Received: by wyh15 with SMTP id 15so142243wyh.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Nov 2011 00:41:52 -0700 (PDT)
-In-Reply-To: <003301cc7ca3$3314dae0$993e90a0$%kim@samsung.com>
+	Tue, 1 Nov 2011 04:22:31 -0400
+Received: by eye27 with SMTP id 27so6016414eye.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 01 Nov 2011 01:22:30 -0700 (PDT)
+In-Reply-To: <1320108227-2693-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, ben-linux@fluff.org, s.nawrocki@samsung.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Hi All,
+Hi Thomas,
 
-On Tue, Sep 27, 2011 at 4:52 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
->
-> Grant Likely wrote:
-> >
-> > On Fri, Sep 23, 2011 at 05:23:41PM +0530, Padmavathi Venna wrote:
-> > > This patch modifies the driver to stop depending on the
-> > > clock names being passed from platform and switch over
-> > > to lookup clocks generic names using clkdev
-> > >
-> > > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
-> >
-> > Looks okay to me.
-> >
-> > Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> >
-> > This series I imagine should go in via the arm-soc tree.
-> >
-> OK, if others ok to me, I will pick up this series so that it will be=
- sent
-> to upstream via arm-soc.
+thanks for your work on this.
 
-Ping.
-Any update on this.
+On 11/01/2011 01:43 AM, Thomas Abraham wrote:
+> As gpio chips get registered, a device tree node which represents the
+> gpio chip is searched and attached to it. A translate function is also
+> provided to convert the gpio specifier into actual platform settings
+> for pin function selection, pull up/down and driver strength settings.
+> 
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+> Acked-by: Grant Likely<grant.likely@secretlab.ca>
+> ---
+> Changes since v1:
+> - As suggested by Rob and Grant, the gpio controller node lookup is based
+>    on the base address of the gpio controller instead of the unique
+>    per-controller compatible property value.
+> 
+> This patch is based on the following tree and branch.
+> git://git.linaro.org/git/people/arnd/arm-soc.git  branch: for-next
+> 
+>   .../devicetree/bindings/gpio/gpio-samsung.txt      |   40 ++++++++++++
+>   drivers/gpio/gpio-samsung.c                        |   66 ++++++++++++++++++++
+>   2 files changed, 106 insertions(+), 0 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+> new file mode 100644
+> index 0000000..c143058
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+> @@ -0,0 +1,40 @@
+> +Samsung Exynos4 GPIO Controller
+> +
+> +Required properties:
+> +- compatible: Compatible property value should be "samsung,exynos4-gpio>".
+> +
+> +- reg: Physical base address of the controller and length of memory mapped
+> +  region.
+> +
+> +- #gpio-cells: Should be 4. The syntax of the gpio specifier used by client nodes
+> +  should be the following with values derived from the SoC user manual.
+> +<[phandle of the gpio controller node]
+> +      [pin number within the gpio controller]
+> +      [mux function]
+> +      [pull up/down]
+> +      [drive strength]>
+> +
+> +  Values for gpio specifier:
+> +  - Pin number: is a value between 0 to 7.
+> +  - Pull Up/Down: 0 - Pull Up/Down Disabled.
+> +                  1 - Pull Down Enabled.
+> +                  3 - Pull Up Enabled.
+> +  - Drive Strength: 0 - 1x,
+> +                    1 - 3x,
+> +                    2 - 2x,
+> +                    3 - 4x
 
-Thanks
-Padma
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> >
-> > > ---
-> > > =A0drivers/spi/spi-s3c64xx.c | =A0 14 +++++---------
-> > > =A01 files changed, 5 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.=
-c
-> > > index 019a716..dcf7e10 100644
-> > > --- a/drivers/spi/spi-s3c64xx.c
-> > > +++ b/drivers/spi/spi-s3c64xx.c
-> > > @@ -971,6 +971,7 @@ static int __init s3c64xx_spi_probe(struct
-> > platform_device *pdev)
-> > > =A0 =A0 struct s3c64xx_spi_info *sci;
-> > > =A0 =A0 struct spi_master *master;
-> > > =A0 =A0 int ret;
-> > > + =A0 char clk_name[16];
-> > >
-> > > =A0 =A0 if (pdev->id < 0) {
-> > > =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev,
-> > > @@ -984,11 +985,6 @@ static int __init s3c64xx_spi_probe(struct
-> > platform_device *pdev)
-> > > =A0 =A0 }
-> > >
-> > > =A0 =A0 sci =3D pdev->dev.platform_data;
-> > > - =A0 if (!sci->src_clk_name) {
-> > > - =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev,
-> > > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Board init must call s3c64=
-xx_spi_set_info()\n");
-> > > - =A0 =A0 =A0 =A0 =A0 return -EINVAL;
-> > > - =A0 }
-> > >
-> > > =A0 =A0 /* Check for availability of necessary resource */
-> > >
-> > > @@ -1073,17 +1069,17 @@ static int __init s3c64xx_spi_probe(struc=
-t
-> > platform_device *pdev)
-> > > =A0 =A0 =A0 =A0 =A0 =A0 goto err4;
-> > > =A0 =A0 }
-> > >
-> > > - =A0 sdd->src_clk =3D clk_get(&pdev->dev, sci->src_clk_name);
-> > > + =A0 sprintf(clk_name, "spi_busclk%d", sci->src_clk_nr);
-> > > + =A0 sdd->src_clk =3D clk_get(&pdev->dev, clk_name);
-> > > =A0 =A0 if (IS_ERR(sdd->src_clk)) {
-> > > =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev,
-> > > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Unable to acquire clock '%=
-s'\n",
-> sci->src_clk_name);
-> > > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Unable to acquire clock '%=
-s'\n", clk_name);
-> > > =A0 =A0 =A0 =A0 =A0 =A0 ret =3D PTR_ERR(sdd->src_clk);
-> > > =A0 =A0 =A0 =A0 =A0 =A0 goto err5;
-> > > =A0 =A0 }
-> > >
-> > > =A0 =A0 if (clk_enable(sdd->src_clk)) {
-> > > - =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Couldn't enable clock =
-'%s'\n",
-> > > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sci->src_clk_name);
-> > > + =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Couldn't enable clock =
-'%s'\n",
-> clk_name);
-> > > =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -EBUSY;
-> > > =A0 =A0 =A0 =A0 =A0 =A0 goto err6;
-> > > =A0 =A0 }
-> > > --
-> > > 1.7.4.4
-> > >
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+I wonder whether it's worth to have more regular mapping, i.e.
+*)	0 - 1x, 
+	1 - 2x, 
+	2 - 3x, 
+	3 - 4x
+
+It doesn't give as much advantage, and introduces an overhead of doing 
+an additional remapping. However I find current mapping of the DT specifier
+values to real driver strength slightly confusing. 
+Perhaps unlikely, the future SoCs could have different meaning of the
+register values.
+
+> +
+> +- gpio-controller: Specifies that the node is a gpio controller.
+> +- #address-cells: should be 1.
+> +- #size-cells: should be 1.
+> +
+> +Example:
+> +
+> +	gpa0: gpio-controller@11400000 {
+> +		#address-cells =<1>;
+> +		#size-cells =<1>;
+> +		compatible = "samsung,exynos4-gpio";
+> +		reg =<0x11400000 0x20>;
+> +		#gpio-cells =<4>;
+> +		gpio-controller;
+> +	};
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index 8662518..0140756 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -24,6 +24,9 @@
+>   #include<linux/interrupt.h>
+>   #include<linux/sysdev.h>
+>   #include<linux/ioport.h>
+> +#include<linux/of.h>
+> +#include<linux/slab.h>
+> +#include<linux/of_address.h>
+> 
+>   #include<asm/irq.h>
+> 
+> @@ -2374,6 +2377,63 @@ static struct samsung_gpio_chip exynos4_gpios_3[] = {
+>   #endif
+>   };
+> 
+> +#if defined(CONFIG_ARCH_EXYNOS4)&&  defined(CONFIG_OF)
+> +int exynos4_gpio_xlate(struct gpio_chip *gc, struct device_node *np,
+> +			 const void *gpio_spec, u32 *flags)
+> +{
+> +	const __be32 *gpio = gpio_spec;
+> +	const u32 n = be32_to_cpup(gpio);
+> +	unsigned int pin = gc->base + be32_to_cpu(gpio[0]);
+> +
+> +	if (gc->of_gpio_n_cells<  4) {
+> +		WARN_ON(1);
+> +		return -EINVAL;
+> +	}
+
+nit: Could be simplified to:
+
+	if (WARN_ON(gc->of_gpio_n_cells < 4))
+		return -EINVAL;
+
+> +
+> +	if (n>  gc->ngpio)
+> +		return -EINVAL;
+> +
+> +	s3c_gpio_cfgpin(pin, S3C_GPIO_SFN(be32_to_cpu(gpio[1])));
+> +	s3c_gpio_setpull(pin, be32_to_cpu(gpio[2]));
+> +	s5p_gpio_set_drvstr(pin, be32_to_cpu(gpio[3]));
+
+The above functions can fail and IMHO ignoring the return value here
+makes the system harder to debug. 
+
+Assuming GPIO drive strength specifier mapping *) the following code could
+do the remapping (not tested):
+
+	unsigned int tmp = be32_to_cpu(gpio[3]);
+	u32 drvstr = ((tmp >> 1) ^ tmp) & 1 ? ~tmp & 3 : tmp;
+	
+	s5p_gpio_set_drvstr(pin, drvstr);
+
+> +	return n;
+> +}
+> +
+> +static const struct of_device_id exynos4_gpio_dt_match[] __initdata = {
+> +	{ .compatible = "samsung,exynos4-gpio", },
+> +	{}
+> +};
+> +
+> +static __init void exynos4_gpiolib_attach_ofnode(struct samsung_gpio_chip *chip,
+> +						u64 base, u64 offset)
+> +{
+> +	struct gpio_chip *gc =&chip->chip;
+> +	u64 address;
+> +
+> +	if (!of_have_populated_dt())
+> +		return;
+> +
+> +	address = (chip->base) ? (base + ((u32)chip->base&  0xfff)) :
+> +			(base + offset);
+
+Could the extra parentheses be dropped ?
+
+--
+Regards,
+Sylwester
