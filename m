@@ -1,69 +1,79 @@
-From: Marc Zyngier <marc.zyngier@arm.com>
-Subject: Re: [PATCH 5/7] ARM: EXYNOS4: Add support external GIC
-Date: Wed, 02 Nov 2011 11:15:39 +0000
-Message-ID: <4EB1265B.4090907@arm.com>
-References: <1308555258-4322-1-git-send-email-chaos.youn@samsung.com> <1308555258-4322-6-git-send-email-chaos.youn@samsung.com> <4E8C61C4.9090709@arm.com> <00ec01cc83f1$81f84430$85e8cc90$%kim@samsung.com> <4E8D645D.4020601@arm.com> <4E8ECA1B.5010005@arm.com> <20111007151646.GA2398@mudshark.cambridge.arm.com> <4E92ECD1.2010303@arm.com> <00b901cc8810$8353e730$89fbb590$%youn@samsung.com> <4E944508.4050202@arm.com> <063801cc889e$22a12c20$67e38460$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V4 0/4] Add SPI clkdev support
+Date: Wed, 02 Nov 2011 20:23:17 +0900
+Message-ID: <004a01cc9951$d1eca790$75c5f6b0$%kim@samsung.com>
+References: <1320268004-4545-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:56670 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753060Ab1KBLPi convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:15454 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751655Ab1KBLXT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 07:15:38 -0400
-In-Reply-To: <063801cc889e$22a12c20$67e38460$%kim@samsung.com>
+	Wed, 2 Nov 2011 07:23:19 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LU100B0Z6AUHB20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:23:18 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LU100GF96AT5F80@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:23:18 +0900 (KST)
+In-reply-to: <1320268004-4545-1-git-send-email-padma.v@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Changhwan Youn' <chaos.youn@samsung.com>, Will Deacon <Will.Deacon@arm.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, "ben-linux@fluff.org" <ben-linux@fluff.org>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: 'Padmavathi Venna' <padma.v@samsung.com>, padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, linux@arm.linux.org.uk
 
-On 12/10/11 06:16, Kukjin Kim wrote:
-> Marc Zyngier wrote:
->>
->> Hi Changwan,
->>
->> On 11/10/11 13:22, Changhwan Youn wrote:
->>>> Kukjin, could you please comment on the presence of a common memory
->>>> region for the distributor? This seem quite odd...
->>>
->>> Some registers in Distributor are banked for PPI and SGI support (banked
->> interrupts).
->>> The register for pending and enable status of these interrupts are
->>> banked.
->>
->> Right, that explains it then.
->>
->>> Marc, I think the approach in your patch is much better than mine if it
-> doesn't hurt
->>> the performance of other platforms which use the common gic code.
->>
->> It probably doesn't hurt the general case too much (I expect a bit more
->> pressure on the d-cache because of the per-cpu stuff, but nothing to be
->> too worried about).
->>
->>> I'll re-work the exynos4 interrupt code based on your patch though
->>> I'm not sure that it's possible to be merged in merge window.
->>
->> My main concern at the moment is that mainline is broken as far as
->> EXYNOS4 is concerned (there's a race with the EOI hook), so that should
->> get fixed first.
->>
-> Hi Marc,
+Padmavathi Venna wrote:
 > 
-> OK. I agree with Will and your opinions and I think Changhwan can fix it as
-> per your suggestion, but he needs fixed/updated regarding gic codes to avoid
-> re-work and conflicts with others. So it would be better to us if he could
-> fix it after merging your patches even probably at the end of upcoming merge
-> window. I hope he can do it before v3.2-rc1.
+> This patchset modifies the existing clkdev to make SPI driver
+> independent of the clock names send from platform data. This
+> patches enables the SPI driver to request SPI bus clocks
+> using generic connection ID.
+> 
+> Link to V1:
+>         http://www.spinics.net/lists/arm-kernel/msg141671.html
+> 
+> V2 Changes:
+>         -Add newly introduced CLKDEV_INIT macro for creating clk_lookup
+>         structure as suggested by Russell King
+>         V2 patches series are:
+>         http://www.spinics.net/lists/arm-kernel/msg142733.html
+> 
+> V3 Changes:
+>         -Reworked the patches as per the following link. Patch series in
+>         the following link removed & and , from the macro declaration and
+added
+>         in the macro defination.
+>         http://www.spinics.net/lists/arm-kernel/msg143663.html
+> 
+> V4 Changes:
+> 	Rebased to next-samsung-dt.
+> 
+> Padmavathi Venna (4):
+>   ARM: S3C64XX: Add SPI clkdev support
+>   ARM: S5PC100: Add SPI clkdev support
+>   ARM: S5P64X0: Add SPI clkdev support
+>   ARM: S5PV210: Add SPI clkdev support
+> 
+>  arch/arm/mach-s3c64xx/clock.c         |   80 +++++++++++++--------
+>  arch/arm/mach-s5p64x0/clock-s5p6440.c |   61 ++++++++---------
+>  arch/arm/mach-s5p64x0/clock-s5p6450.c |   49 ++++++++-----
+>  arch/arm/mach-s5pc100/clock.c         |  124
++++++++++++++++++++----------
+> ----
+>  arch/arm/mach-s5pv210/clock.c         |   50 ++++++++-----
+>  5 files changed, 210 insertions(+), 154 deletions(-)
 
-Right. So this damned thing has made it to mainline in its full glory.
-Furthermore, the MCT code is also broken, as it uses the old PPI API
-(doesn't even compile).
+Applied.
+Thanks.
 
-Can we please fix this as soon as possible? I posted patches for both a
-while ago, with almost no reaction...
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
