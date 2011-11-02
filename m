@@ -1,60 +1,36 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix compile error due to kfree
-Date: Wed, 02 Nov 2011 20:57:20 +0900
-Message-ID: <004e01cc9956$93ad7f40$bb087dc0$%kim@samsung.com>
-References: <1319838312-8205-1-git-send-email-jhbird.choi@gmail.com>
+Subject: RE: [PATCH V6] SDHCI: S3C: Use generic clock names for sdhci bus clock
+ options
+Date: Wed, 02 Nov 2011 21:12:49 +0900
+Message-ID: <005301cc9958$bcf5aa10$36e0fe30$%kim@samsung.com>
+References: <1320039876-21148-1-git-send-email-rajeshwari.s@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23181 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752630Ab1KBL5W (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 07:57:22 -0400
-In-reply-to: <1319838312-8205-1-git-send-email-jhbird.choi@gmail.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1320039876-21148-1-git-send-email-rajeshwari.s@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Rajeshwari Shinde' <rajeshwari.s@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org
+Cc: linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jhbird.choi@gmail.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-jhbird.choi@gmail.com wrote:
+Rajeshwari Shinde wrote:
 > 
-> From: Jonghwan Choi <jhbird.choi@gmail.com>
+> This patch modifies the driver to stop depending on the clock names
+> being passed from the platform and switch over to bus clock lookup
+> using generic clock names.
 > 
-> Fix  implicit declaration of function 'kfree'
+> V6 Changes:
+> Changed sprintf to snprintf as suggested by Chris Ball.
 > 
-> Signed-off-by: Jonghwan Choi <jhbird.choi@gmail.com>
-> ---
->  arch/arm/plat-samsung/dev-backlight.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/dev-backlight.c
-b/arch/arm/plat-samsung/dev-
-> backlight.c
-> index 3cedd4c..2adbeae 100644
-> --- a/arch/arm/plat-samsung/dev-backlight.c
-> +++ b/arch/arm/plat-samsung/dev-backlight.c
-> @@ -14,6 +14,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/io.h>
->  #include <linux/pwm_backlight.h>
-> +#include <linux/slab.h>
-> 
->  #include <plat/devs.h>
->  #include <plat/gpio-cfg.h>
-> --
-> 1.7.0.4
+> Signed-off-by: Rajeshwari Shinde <rajeshwari.s@samsung.com>
 
-Yes, applied.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-But would be better if you could add description in detail......
+Hi Chirs,
 
-Fix following build error.
-    arch/arm/plat-samsung/dev-backlight.c: In function 'samsung_bl_set':
-    arch/arm/plat-samsung/dev-backlight.c:145: error: implicit declaration
-of function 'kfree'
+Could you please pick this up in your tree for this merge window?
 
 Thanks.
 
@@ -63,3 +39,33 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> ---
+>  drivers/mmc/host/sdhci-s3c.c |    7 ++-----
+>  1 files changed, 2 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 82709b6..488223c 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -435,14 +435,11 @@ static int __devinit sdhci_s3c_probe(struct
+> platform_device *pdev)
+> 
+>  	for (clks = 0, ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
+>  		struct clk *clk;
+> -		char *name = pdata->clocks[ptr];
+> -
+> -		if (name == NULL)
+> -			continue;
+> +		char name[14];
+> 
+> +		snprintf(name, 14, "mmc_busclk.%d", ptr);
+>  		clk = clk_get(dev, name);
+>  		if (IS_ERR(clk)) {
+> -			dev_err(dev, "failed to get clock %s\n", name);
+>  			continue;
+>  		}
+> 
+> --
+> 1.7.4.4
+
