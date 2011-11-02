@@ -1,183 +1,117 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 5/5] EXYNOS4210: Add support ASV feature
-Date: Wed, 02 Nov 2011 21:43:17 +0900
-Message-ID: <005801cc995c$fee5dd60$fcb19820$%kim@samsung.com>
+Subject: RE: Exynos4: Enable device tree support for GIC controller
+Date: Wed, 02 Nov 2011 21:44:54 +0900
+Message-ID: <005901cc995d$38ca44d0$aa5ece70$%kim@samsung.com>
+References: <1320109289-2730-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:32516 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755391Ab1KBMo4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 Nov 2011 08:44:56 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LU100FIN9YA0CV0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 21:44:55 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LU100N5LA2U2W90@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 21:44:55 +0900 (KST)
+In-reply-to: <1320109289-2730-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
-Sender: cpufreq-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org
-Cc: davej@redhat.com, 'Jaecheol Lee' <jc.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org
+Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
 
-From: Jaecheol Lee <jc.lee@samsung.com>
+Thomas Abraham wrote:
+> 
+> Changes since v1:
+> - Dropped device tree support for interrupt combiner controller from this
+patchset.
+>   Some rework in the interrupt combiner controller code is required to
+address
+>   the irq domain related comments from Grant Likely and hence those
+changes will
+>   be in another patchset.
+> - As suggested by Grant Likely, linux virq number 0 is left unused.
+> 
+> This patchset adds device tree support for GIC controller in Exynos4 SoC.
+> 
+> Patch 1 moves the statically mapped timer irqs 11 to 15 to the end of the
+> statically mapped linux irq space for Exynos4 platforms.
+> 
+> For Exynos4 platforms, the five hardware timer irqs are connected to GIC
+> at some hardware irq number (in exynos it is GIC_ID 69 to 73 for five
+timers).
+> When any of these hardware interrupt occurs, its interrupt handler calls
+> generic_handle_irq() with linux irq number 11/12/13/14/15 for timer
+0/1/2/3/4
+> as the parameter. The code that needs to be notified about the timer
+interrupts
+> would have already registered its handler for either of the interrupts 11
+to 15.
+> 
+> Instead of using linux irq number 11 to 15 to which consumers of timer
+interrupt
+> attach their handler, this interrupt range is moved to the end of linux
+irq
+> space used. So there will be no interrupts statically mapped between 0 to
+31.
+> 
+> The GIC hardware interrupts, which were previously statically mapped to
+> start from linux irq 32 are now moved to start from linux irq 0. In case
+of
+> exynos, GIC_ID[0] (which is SGI[0]) which was previously at linux irq 32,
+will
+> not be at linux irq 0. This was required to use Rob Herring's GIC OF
+bindings
+> patches for Exynos4.
+> 
+> Patch 2 adds a interceptor for all ioremap calls targeted towards any of
+the
+> statically remapped memory region. This was required because the GIC OF
+> binding's patchset ioremaps the GIC memory-mapped regions in the
+gic_of_init()
+> function. Without this patch, there would be two separate remap for GIC
+> controller, one statically remapped and the other dynamically remapped by
+the
+> gic_of_init() function. The patch will eventually be superseded by Nicolas
+> Pitre's vmalloc patch series.
+> 
+> Patch 3 adds device tree support for GIC controllers on Exynos4. For GIC
+> controller, this patch is based on Rob Herring's,
+> "[PATCH 0/3] GIC OF bindings" patchset.
+> 
+> This patchset is based on the following tree:
+> git://git.linaro.org/git/people/arnd/arm-soc.git   branch: for-next
+> 
+> Thomas Abraham (3):
+>   ARM: Exynos4: Move timer irq numbers to end of linux irq space
+>   ARM: Exynos4: Add ioremap interceptor for statically remapped regions
+>   ARM: Exynos4: Enable conversion of GIC dt irq specifier to linux virq
+> 
+>  arch/arm/mach-exynos4/cpu.c                      |   33
+> +++++++++++++++++++++-
+>  arch/arm/mach-exynos4/include/mach/entry-macro.S |    1 -
+>  arch/arm/mach-exynos4/include/mach/io.h          |    5 +++
+>  arch/arm/mach-exynos4/include/mach/irqs.h        |    8 +++--
+>  arch/arm/mach-s5p64x0/include/mach/irqs.h        |    2 +
+>  arch/arm/mach-s5pc100/include/mach/irqs.h        |    2 +
+>  arch/arm/mach-s5pv210/include/mach/irqs.h        |    2 +
+>  arch/arm/plat-samsung/include/plat/irqs.h        |    3 +-
+>  8 files changed, 50 insertions(+), 6 deletions(-)
 
-This patch adds support ASV on Exynos4210. Exynos4 CPUFREQ
-driver uses Adaptive Supply Voltage to configure voltage table.
+Looks ok to me, I replaced previous patches with this series.
 
-Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
----
- arch/arm/mach-exynos4/include/mach/cpufreq.h |    7 +++
- drivers/cpufreq/exynos4210-cpufreq.c         |   76
-+++++++++++++++++---------
- 2 files changed, 57 insertions(+), 26 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mach-exynos4/include/mach/cpufreq.h
-b/arch/arm/mach-exynos4/include/mach/cpufreq.h
-index 7e00931..16bb3e9 100644
---- a/arch/arm/mach-exynos4/include/mach/cpufreq.h
-+++ b/arch/arm/mach-exynos4/include/mach/cpufreq.h
-@@ -37,3 +37,10 @@ enum cpufreq_lock_ID {
- int exynos4_cpufreq_lock(unsigned int nId,
- 			enum cpufreq_level_request cpufreq_level);
- void exynos4_cpufreq_lock_free(unsigned int nId);
-+
-+#define SUPPORT_1400MHZ		(1 << 31)
-+#define SUPPORT_1200MHZ		(1 << 30)
-+#define SUPPORT_1000MHZ		(1 << 29)
-+
-+#define SUPPORT_FREQ_SHIFT	29
-+#define SUPPORT_FREQ_MASK	7
-diff --git a/drivers/cpufreq/exynos4210-cpufreq.c
-b/drivers/cpufreq/exynos4210-cpufreq.c
-index 30e1949..8dcd9b1 100644
---- a/drivers/cpufreq/exynos4210-cpufreq.c
-+++ b/drivers/cpufreq/exynos4210-cpufreq.c
-@@ -60,6 +60,8 @@ static struct cpufreq_frequency_table exynos4_freq_table[]
-= {
- 	{0, CPUFREQ_TABLE_END},
- };
- 
-+static unsigned int exynos4_volt_table[CPUFREQ_LEVEL_END];
-+
- /* This defines are for cpufreq lock */
- #define CPUFREQ_MIN_LEVEL	(CPUFREQ_LEVEL_END - 1)
- unsigned int cpufreq_lock_id;
-@@ -111,30 +113,6 @@ static unsigned int clkdiv_cpu1[CPUFREQ_LEVEL_END][2] =
-{
- 	{ 3, 0 },
- };
- 
--struct cpufreq_voltage_table {
--	unsigned int	index;		/* any */
--	unsigned int	arm_volt;	/* uV */
--};
--
--static struct cpufreq_voltage_table exynos4_volt_table[CPUFREQ_LEVEL_END] =
-{
--	{
--		.index		= L0,
--		.arm_volt	= 1350000,
--	}, {
--		.index		= L1,
--		.arm_volt	= 1300000,
--	}, {
--		.index		= L2,
--		.arm_volt	= 1200000,
--	}, {
--		.index		= L3,
--		.arm_volt	= 1100000,
--	}, {
--		.index		= L4,
--		.arm_volt	= 1050000,
--	},
--};
--
- static unsigned int exynos4_apll_pms_table[CPUFREQ_LEVEL_END] = {
- 	/* APLL FOUT L0: 1200MHz */
- 	((150 << 16) | (3 << 8) | 1),
-@@ -152,6 +130,26 @@ static unsigned int
-exynos4_apll_pms_table[CPUFREQ_LEVEL_END] = {
- 	((200 << 16) | (6 << 8) | 3),
- };
- 
-+/*
-+ * ASV group voltage table
-+ */
-+static const unsigned int asv_voltage[CPUFREQ_LEVEL_END][8] = {
-+	/*
-+	 *	   SS, A1, A2, B1, B2, C1, C2, D
-+	 * @1200 :
-+	 * @1000 :
-+	 * @800	 :	ASV_VOLTAGE_TABLE
-+	 * @500  :
-+	 * @200  :
-+	 */
-+	{ 1350000, 1350000, 1300000, 1275000, 1250000, 1225000, 1200000,
-1175000 },
-+	{ 1300000, 1250000, 1200000, 1175000, 1150000, 1125000, 1100000,
-1075000 },
-+	{ 1200000, 1150000, 1100000, 1075000, 1050000, 1025000, 1000000,
-975000 },
-+	{ 1100000, 1050000, 1000000, 975000, 975000, 950000, 925000, 925000
-},
-+	{ 1050000, 1000000, 975000, 950000, 950000, 925000, 925000, 925000
-},
-+
-+};
-+
- static int exynos4_verify_speed(struct cpufreq_policy *policy)
- {
- 	return cpufreq_frequency_table_verify(policy, exynos4_freq_table);
-@@ -312,7 +310,7 @@ static int exynos4_target(struct cpufreq_policy *policy,
- 	}
- 
- 	/* get the voltage value */
--	arm_volt = exynos4_volt_table[index].arm_volt;
-+	arm_volt = exynos4_volt_table[index];
- 
- 	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
- 
-@@ -392,7 +390,7 @@ int exynos4_cpufreq_lock(unsigned int id,
- 		cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
- 
- 		/* get the voltage value */
--		arm_volt = exynos4_volt_table[cpufreq_level].arm_volt;
-+		arm_volt = exynos4_volt_table[cpufreq_level];
- 		regulator_set_voltage(arm_regulator, arm_volt,
- 				arm_volt);
- 
-@@ -518,11 +516,37 @@ static struct cpufreq_driver exynos4_driver = {
- #endif
- };
- 
-+static void __init set_volt_table(void)
-+{
-+	unsigned int tmp, i, asv_group = 0;
-+
-+	tmp = __raw_readl(S5P_INFORM2);
-+
-+	switch (tmp  & (SUPPORT_FREQ_MASK << SUPPORT_FREQ_SHIFT)) {
-+	case SUPPORT_1200MHZ:
-+		asv_group = (tmp & 0xF);
-+		break;
-+	case SUPPORT_1400MHZ:
-+	case SUPPORT_1000MHZ:
-+	default:
-+		/* Not supported and assign typical ASV group */
-+		asv_group = 2;
-+		break;
-+	}
-+
-+	printk(KERN_INFO "DVFS: VDD_ARM Voltage table set with %d Group\n",
-asv_group);
-+
-+	for (i = 0 ; i < CPUFREQ_LEVEL_END ; i++)
-+		exynos4_volt_table[i] = asv_voltage[i][asv_group];
-+}
-+
- static int __init exynos4_cpufreq_init(void)
- {
- 	int i;
- 	unsigned int tmp;
- 
-+	set_volt_table();
-+
- 	cpu_clk = clk_get(NULL, "armclk");
- 	if (IS_ERR(cpu_clk))
- 		return PTR_ERR(cpu_clk);
--- 
-1.7.1
-
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
