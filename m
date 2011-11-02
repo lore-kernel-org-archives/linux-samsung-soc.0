@@ -1,150 +1,73 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [RESEND][PATCH 6/6] ARM: SAMSUNG: Remove SPI bus clocks from platform
- data
-Date: Wed, 02 Nov 2011 17:09:33 -0400
-Message-ID: <1320268173-4756-1-git-send-email-padma.v@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/7] SPI: S3C64XX: Use bus clocks created using clkdev
+Date: Wed, 02 Nov 2011 20:15:10 +0900
+Message-ID: <004901cc9950$af6b73f0$0e425bd0$%kim@samsung.com>
+References: <1316778827-24694-1-git-send-email-padma.v@samsung.com>
+ <1316778827-24694-2-git-send-email-padma.v@samsung.com>
+ <20110923231233.GE24631@ponder.secretlab.ca>
+ <003301cc7ca3$3314dae0$993e90a0$%kim@samsung.com>
+ <CAAgF-Bf74OJu_OhkJ5vnMoak45ie3VfMxFRjJBO+Swx5o8edXA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19054 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752630Ab1KBLO4 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:13498 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754177Ab1KBLPL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 07:14:56 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 2 Nov 2011 07:15:11 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LU1005OW5WSX3Z0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:14:52 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
+ 2010)) with ESMTP id <0LU1006WR5XAK620@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:15:10 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LU100GIX5WLN150@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:14:52 +0900 (KST)
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LU100GKJ5XAN150@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:15:10 +0900 (KST)
+In-reply-to: <CAAgF-Bf74OJu_OhkJ5vnMoak45ie3VfMxFRjJBO+Swx5o8edXA@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk
+To: 'padma venkat' <padma.kvr@gmail.com>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, ben-linux@fluff.org, s.nawrocki@samsung.com
 
-SPI bus clocks can be avoided passing through platform
-data as spi driver is getting the bus clock using the
-generic clock connection id registered via clkdev.
+padma venkat wrote:
+> 
+> Hi All,
+> 
+> On Tue, Sep 27, 2011 at 4:52 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> >
+> > Grant Likely wrote:
+> > >
+> > > On Fri, Sep 23, 2011 at 05:23:41PM +0530, Padmavathi Venna wrote:
+> > > > This patch modifies the driver to stop depending on the
+> > > > clock names being passed from platform and switch over
+> > > > to lookup clocks generic names using clkdev
+> > > >
+> > > > Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> > >
+> > > Looks okay to me.
+> > >
+> > > Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> > >
+> > > This series I imagine should go in via the arm-soc tree.
+> > >
+> > OK, if others ok to me, I will pick up this series so that it will be
+sent
+> > to upstream via arm-soc.
+> 
+> Ping.
+> Any update on this.
+> 
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/mach-s3c64xx/dev-spi.c                  |    7 -------
- arch/arm/mach-s5p64x0/dev-spi.c                  |    6 ------
- arch/arm/mach-s5pc100/dev-spi.c                  |    7 -------
- arch/arm/mach-s5pv210/dev-spi.c                  |    6 ------
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 --
- 5 files changed, 0 insertions(+), 28 deletions(-)
+As I said, you need to re-submit others now. Then I will pick this up with
+others.
 
-diff --git a/arch/arm/mach-s3c64xx/dev-spi.c b/arch/arm/mach-s3c64xx/dev-spi.c
-index 5e6b420..86fb130 100644
---- a/arch/arm/mach-s3c64xx/dev-spi.c
-+++ b/arch/arm/mach-s3c64xx/dev-spi.c
-@@ -23,12 +23,6 @@
- #include <plat/gpio-cfg.h>
- #include <plat/devs.h>
- 
--static char *spi_src_clks[] = {
--	[S3C64XX_SPI_SRCCLK_PCLK] = "pclk",
--	[S3C64XX_SPI_SRCCLK_SPIBUS] = "spi-bus",
--	[S3C64XX_SPI_SRCCLK_48M] = "spi_48m",
--};
--
- /* SPI Controller platform_devices */
- 
- /* Since we emulate multi-cs capability, we do not touch the GPC-3,7.
-@@ -175,5 +169,4 @@ void __init s3c64xx_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
- 
- 	pd->num_cs = num_cs;
- 	pd->src_clk_nr = src_clk_nr;
--	pd->src_clk_name = spi_src_clks[src_clk_nr];
- }
-diff --git a/arch/arm/mach-s5p64x0/dev-spi.c b/arch/arm/mach-s5p64x0/dev-spi.c
-index 1fd9c79..5b5d3c0 100644
---- a/arch/arm/mach-s5p64x0/dev-spi.c
-+++ b/arch/arm/mach-s5p64x0/dev-spi.c
-@@ -25,11 +25,6 @@
- #include <plat/s3c64xx-spi.h>
- #include <plat/gpio-cfg.h>
- 
--static char *s5p64x0_spi_src_clks[] = {
--	[S5P64X0_SPI_SRCCLK_PCLK] = "pclk",
--	[S5P64X0_SPI_SRCCLK_SCLK] = "sclk_spi",
--};
--
- /* SPI Controller platform_devices */
- 
- /* Since we emulate multi-cs capability, we do not touch the CS.
-@@ -220,5 +215,4 @@ void __init s5p64x0_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
- 
- 	pd->num_cs = num_cs;
- 	pd->src_clk_nr = src_clk_nr;
--	pd->src_clk_name = s5p64x0_spi_src_clks[src_clk_nr];
- }
-diff --git a/arch/arm/mach-s5pc100/dev-spi.c b/arch/arm/mach-s5pc100/dev-spi.c
-index e5d6c4d..155f50d 100644
---- a/arch/arm/mach-s5pc100/dev-spi.c
-+++ b/arch/arm/mach-s5pc100/dev-spi.c
-@@ -21,12 +21,6 @@
- #include <plat/gpio-cfg.h>
- #include <plat/irqs.h>
- 
--static char *spi_src_clks[] = {
--	[S5PC100_SPI_SRCCLK_PCLK] = "pclk",
--	[S5PC100_SPI_SRCCLK_48M] = "spi_48m",
--	[S5PC100_SPI_SRCCLK_SPIBUS] = "spi_bus",
--};
--
- /* SPI Controller platform_devices */
- 
- /* Since we emulate multi-cs capability, we do not touch the CS.
-@@ -223,5 +217,4 @@ void __init s5pc100_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
- 
- 	pd->num_cs = num_cs;
- 	pd->src_clk_nr = src_clk_nr;
--	pd->src_clk_name = spi_src_clks[src_clk_nr];
- }
-diff --git a/arch/arm/mach-s5pv210/dev-spi.c b/arch/arm/mach-s5pv210/dev-spi.c
-index eaf9a7b..39bef19 100644
---- a/arch/arm/mach-s5pv210/dev-spi.c
-+++ b/arch/arm/mach-s5pv210/dev-spi.c
-@@ -20,11 +20,6 @@
- #include <plat/s3c64xx-spi.h>
- #include <plat/gpio-cfg.h>
- 
--static char *spi_src_clks[] = {
--	[S5PV210_SPI_SRCCLK_PCLK] = "pclk",
--	[S5PV210_SPI_SRCCLK_SCLK] = "sclk_spi",
--};
--
- /* SPI Controller platform_devices */
- 
- /* Since we emulate multi-cs capability, we do not touch the CS.
-@@ -171,5 +166,4 @@ void __init s5pv210_spi_set_info(int cntrlr, int src_clk_nr, int num_cs)
- 
- 	pd->num_cs = num_cs;
- 	pd->src_clk_nr = src_clk_nr;
--	pd->src_clk_name = spi_src_clks[src_clk_nr];
- }
-diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-index 4c16fa3..c3d82a5 100644
---- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-+++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-@@ -31,7 +31,6 @@ struct s3c64xx_spi_csinfo {
- /**
-  * struct s3c64xx_spi_info - SPI Controller defining structure
-  * @src_clk_nr: Clock source index for the CLK_CFG[SPI_CLKSEL] field.
-- * @src_clk_name: Platform name of the corresponding clock.
-  * @clk_from_cmu: If the SPI clock/prescalar control block is present
-  *     by the platform's clock-management-unit and not in SPI controller.
-  * @num_cs: Number of CS this controller emulates.
-@@ -43,7 +42,6 @@ struct s3c64xx_spi_csinfo {
-  */
- struct s3c64xx_spi_info {
- 	int src_clk_nr;
--	char *src_clk_name;
- 	bool clk_from_cmu;
- 
- 	int num_cs;
--- 
-1.7.4.4
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
