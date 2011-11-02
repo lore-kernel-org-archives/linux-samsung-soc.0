@@ -1,303 +1,162 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/5] [CPUFREQ] EXYNOS4210: Remove code about bus on cpufreq
-Date: Wed, 02 Nov 2011 21:42:50 +0900
-Message-ID: <005401cc995c$ee9e3b50$cbdab1f0$%kim@samsung.com>
+Subject: [PATCH 2/5] EXYNOS4210: Update frequency table for cpu
+ divider
+Date: Wed, 02 Nov 2011 21:42:56 +0900
+Message-ID: <005501cc995c$f2426420$d6c72c60$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31895 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753213Ab1KBMmw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 08:42:52 -0400
+Return-path: <cpufreq-owner@vger.kernel.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: cpufreq-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org
 Cc: davej@redhat.com, 'Jongpill Lee' <boyko.lee@samsung.com>, 'SangWook Ju' <sw.ju@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Jongpill Lee <boyko.lee@samsung.com>
 
-This patch removes code for bus on cpufreq because the code
-for bus frequency changing moves to busfreq driver.
-So code about bus on cpufreq is not necessary.
+This patch is changes frequency table for cpu divider for stable frequency.
 
 Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
 Signed-off-by: SangWook Ju <sw.ju@samsung.com>
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- drivers/cpufreq/exynos4210-cpufreq.c |  174
-+---------------------------------
- 1 files changed, 1 insertions(+), 173 deletions(-)
+ drivers/cpufreq/exynos4210-cpufreq.c |   69
+++++++++++++++++++++--------------
+ 1 files changed, 41 insertions(+), 28 deletions(-)
 
 diff --git a/drivers/cpufreq/exynos4210-cpufreq.c
 b/drivers/cpufreq/exynos4210-cpufreq.c
-index b7c3a84..6ff3993 100644
+index 6ff3993..5ca9380 100644
 --- a/drivers/cpufreq/exynos4210-cpufreq.c
 +++ b/drivers/cpufreq/exynos4210-cpufreq.c
-@@ -31,16 +31,8 @@ static struct clk *mout_mpll;
- static struct clk *mout_apll;
- 
- static struct regulator *arm_regulator;
--static struct regulator *int_regulator;
- 
+@@ -35,14 +35,15 @@ static struct regulator *arm_regulator;
  static struct cpufreq_freqs freqs;
--static unsigned int memtype;
--
--enum exynos4_memory_type {
--	DDR2 = 4,
--	LPDDR2,
--	DDR3,
--};
  
  enum cpufreq_level_index {
- 	L0, L1, L2, L3, CPUFREQ_LEVEL_END,
-@@ -93,87 +85,24 @@ static unsigned int clkdiv_cpu1[CPUFREQ_LEVEL_END][2] =
+-	L0, L1, L2, L3, CPUFREQ_LEVEL_END,
++	L0, L1, L2, L3, L4, CPUFREQ_LEVEL_END,
+ };
+ 
+ static struct cpufreq_frequency_table exynos4_freq_table[] = {
+-	{L0, 1000*1000},
+-	{L1, 800*1000},
+-	{L2, 400*1000},
+-	{L3, 100*1000},
++	{L0, 1200*1000},
++	{L1, 1000*1000},
++	{L2, 800*1000},
++	{L3, 500*1000},
++	{L4, 200*1000},
+ 	{0, CPUFREQ_TABLE_END},
+ };
+ 
+@@ -53,17 +54,20 @@ static unsigned int clkdiv_cpu0[CPUFREQ_LEVEL_END][7] =
 {
+ 	 *		DIVATB, DIVPCLK_DBG, DIVAPLL }
+ 	 */
+ 
+-	/* ARM L0: 1000MHz */
+-	{ 0, 3, 7, 3, 3, 0, 1 },
++	/* ARM L0: 1200MHz */
++	{ 0, 3, 7, 3, 4, 1, 7 },
+ 
+-	/* ARM L1: 800MHz */
+-	{ 0, 3, 7, 3, 3, 0, 1 },
++	/* ARM L1: 1000MHz */
++	{ 0, 3, 7, 3, 4, 1, 7 },
+ 
+-	/* ARM L2: 400MHz */
+-	{ 0, 1, 3, 1, 3, 0, 1 },
++	/* ARM L2: 800MHz */
++	{ 0, 3, 7, 3, 3, 1, 7 },
+ 
+-	/* ARM L3: 100MHz */
+-	{ 0, 0, 1, 0, 3, 1, 1 },
++	/* ARM L3: 500MHz */
++	{ 0, 3, 7, 3, 3, 1, 7 },
++
++	/* ARM L4: 200MHz */
++	{ 0, 1, 3, 1, 3, 1, 0 },
+ };
+ 
+ static unsigned int clkdiv_cpu1[CPUFREQ_LEVEL_END][2] = {
+@@ -72,16 +76,19 @@ static unsigned int clkdiv_cpu1[CPUFREQ_LEVEL_END][2] =
+{
+ 	 * { DIVCOPY, DIVHPM }
+ 	 */
+ 
+-	 /* ARM L0: 1000MHz */
+-	{ 3, 0 },
++	/* ARM L0: 1200MHz */
++	{ 5, 0 },
++
++	/* ARM L1: 1000MHz */
++	{ 4, 0 },
+ 
+-	/* ARM L1: 800MHz */
++	/* ARM L2: 800MHz */
+ 	{ 3, 0 },
+ 
+-	/* ARM L2: 400MHz */
++	/* ARM L3: 500MHz */
+ 	{ 3, 0 },
+ 
+-	/* ARM L3: 100MHz */
++	/* ARM L4: 200MHz */
  	{ 3, 0 },
  };
  
--static unsigned int clkdiv_dmc0[CPUFREQ_LEVEL_END][8] = {
--	/*
--	 * Clock divider value for following
--	 * { DIVACP, DIVACP_PCLK, DIVDPHY, DIVDMC, DIVDMCD
--	 *		DIVDMCP, DIVCOPY2, DIVCORE_TIMERS }
--	 */
--
--	/* DMC L0: 400MHz */
--	{ 3, 1, 1, 1, 1, 1, 3, 1 },
--
--	/* DMC L1: 400MHz */
--	{ 3, 1, 1, 1, 1, 1, 3, 1 },
--
--	/* DMC L2: 266.7MHz */
--	{ 7, 1, 1, 2, 1, 1, 3, 1 },
--
--	/* DMC L3: 200MHz */
--	{ 7, 1, 1, 3, 1, 1, 3, 1 },
--};
--
--static unsigned int clkdiv_top[CPUFREQ_LEVEL_END][5] = {
--	/*
--	 * Clock divider value for following
--	 * { DIVACLK200, DIVACLK100, DIVACLK160, DIVACLK133, DIVONENAND }
--	 */
--
--	/* ACLK200 L0: 200MHz */
--	{ 3, 7, 4, 5, 1 },
--
--	/* ACLK200 L1: 200MHz */
--	{ 3, 7, 4, 5, 1 },
--
--	/* ACLK200 L2: 160MHz */
--	{ 4, 7, 5, 7, 1 },
--
--	/* ACLK200 L3: 133.3MHz */
--	{ 5, 7, 7, 7, 1 },
--};
--
--static unsigned int clkdiv_lr_bus[CPUFREQ_LEVEL_END][2] = {
--	/*
--	 * Clock divider value for following
--	 * { DIVGDL/R, DIVGPL/R }
--	 */
--
--	/* ACLK_GDL/R L0: 200MHz */
--	{ 3, 1 },
--
--	/* ACLK_GDL/R L1: 200MHz */
--	{ 3, 1 },
--
--	/* ACLK_GDL/R L2: 160MHz */
--	{ 4, 1 },
--
--	/* ACLK_GDL/R L3: 133.3MHz */
--	{ 5, 1 },
--};
--
- struct cpufreq_voltage_table {
- 	unsigned int	index;		/* any */
- 	unsigned int	arm_volt;	/* uV */
--	unsigned int	int_volt;
- };
- 
+@@ -93,31 +100,37 @@ struct cpufreq_voltage_table {
  static struct cpufreq_voltage_table exynos4_volt_table[CPUFREQ_LEVEL_END] =
 {
  	{
  		.index		= L0,
- 		.arm_volt	= 1200000,
--		.int_volt	= 1100000,
+-		.arm_volt	= 1200000,
++		.arm_volt	= 1350000,
  	}, {
  		.index		= L1,
- 		.arm_volt	= 1100000,
--		.int_volt	= 1100000,
+-		.arm_volt	= 1100000,
++		.arm_volt	= 1300000,
  	}, {
  		.index		= L2,
- 		.arm_volt	= 1000000,
--		.int_volt	= 1000000,
+-		.arm_volt	= 1000000,
++		.arm_volt	= 1200000,
  	}, {
  		.index		= L3,
- 		.arm_volt	= 900000,
--		.int_volt	= 1000000,
+-		.arm_volt	= 900000,
++		.arm_volt	= 1100000,
++	}, {
++		.index		= L4,
++		.arm_volt	= 1050000,
  	},
  };
  
-@@ -242,80 +171,6 @@ static void exynos4_set_clkdiv(unsigned int div_index)
- 	do {
- 		tmp = __raw_readl(S5P_CLKDIV_STATCPU1);
- 	} while (tmp & 0x11);
--
--	/* Change Divider - DMC0 */
--
--	tmp = __raw_readl(S5P_CLKDIV_DMC0);
--
--	tmp &= ~(S5P_CLKDIV_DMC0_ACP_MASK | S5P_CLKDIV_DMC0_ACPPCLK_MASK |
--		S5P_CLKDIV_DMC0_DPHY_MASK | S5P_CLKDIV_DMC0_DMC_MASK |
--		S5P_CLKDIV_DMC0_DMCD_MASK | S5P_CLKDIV_DMC0_DMCP_MASK |
--		S5P_CLKDIV_DMC0_COPY2_MASK | S5P_CLKDIV_DMC0_CORETI_MASK);
--
--	tmp |= ((clkdiv_dmc0[div_index][0] << S5P_CLKDIV_DMC0_ACP_SHIFT) |
--		(clkdiv_dmc0[div_index][1] << S5P_CLKDIV_DMC0_ACPPCLK_SHIFT)
-|
--		(clkdiv_dmc0[div_index][2] << S5P_CLKDIV_DMC0_DPHY_SHIFT) |
--		(clkdiv_dmc0[div_index][3] << S5P_CLKDIV_DMC0_DMC_SHIFT) |
--		(clkdiv_dmc0[div_index][4] << S5P_CLKDIV_DMC0_DMCD_SHIFT) |
--		(clkdiv_dmc0[div_index][5] << S5P_CLKDIV_DMC0_DMCP_SHIFT) |
--		(clkdiv_dmc0[div_index][6] << S5P_CLKDIV_DMC0_COPY2_SHIFT) |
--		(clkdiv_dmc0[div_index][7] <<
-S5P_CLKDIV_DMC0_CORETI_SHIFT));
--
--	__raw_writel(tmp, S5P_CLKDIV_DMC0);
--
--	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC0);
--	} while (tmp & 0x11111111);
--
--	/* Change Divider - TOP */
--
--	tmp = __raw_readl(S5P_CLKDIV_TOP);
--
--	tmp &= ~(S5P_CLKDIV_TOP_ACLK200_MASK | S5P_CLKDIV_TOP_ACLK100_MASK |
--		S5P_CLKDIV_TOP_ACLK160_MASK | S5P_CLKDIV_TOP_ACLK133_MASK |
--		S5P_CLKDIV_TOP_ONENAND_MASK);
--
--	tmp |= ((clkdiv_top[div_index][0] << S5P_CLKDIV_TOP_ACLK200_SHIFT) |
--		(clkdiv_top[div_index][1] << S5P_CLKDIV_TOP_ACLK100_SHIFT) |
--		(clkdiv_top[div_index][2] << S5P_CLKDIV_TOP_ACLK160_SHIFT) |
--		(clkdiv_top[div_index][3] << S5P_CLKDIV_TOP_ACLK133_SHIFT) |
--		(clkdiv_top[div_index][4] << S5P_CLKDIV_TOP_ONENAND_SHIFT));
--
--	__raw_writel(tmp, S5P_CLKDIV_TOP);
--
--	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_TOP);
--	} while (tmp & 0x11111);
--
--	/* Change Divider - LEFTBUS */
--
--	tmp = __raw_readl(S5P_CLKDIV_LEFTBUS);
--
--	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
--
--	tmp |= ((clkdiv_lr_bus[div_index][0] << S5P_CLKDIV_BUS_GDLR_SHIFT) |
--		(clkdiv_lr_bus[div_index][1] << S5P_CLKDIV_BUS_GPLR_SHIFT));
--
--	__raw_writel(tmp, S5P_CLKDIV_LEFTBUS);
--
--	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_LEFTBUS);
--	} while (tmp & 0x11);
--
--	/* Change Divider - RIGHTBUS */
--
--	tmp = __raw_readl(S5P_CLKDIV_RIGHTBUS);
--
--	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
--
--	tmp |= ((clkdiv_lr_bus[div_index][0] << S5P_CLKDIV_BUS_GDLR_SHIFT) |
--		(clkdiv_lr_bus[div_index][1] << S5P_CLKDIV_BUS_GPLR_SHIFT));
--
--	__raw_writel(tmp, S5P_CLKDIV_RIGHTBUS);
--
--	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_RIGHTBUS);
--	} while (tmp & 0x11);
- }
+ static unsigned int exynos4_apll_pms_table[CPUFREQ_LEVEL_END] = {
+-	/* APLL FOUT L0: 1000MHz */
++	/* APLL FOUT L0: 1200MHz */
++	((150 << 16) | (3 << 8) | 1),
++
++	/* APLL FOUT L1: 1000MHz */
+ 	((250 << 16) | (6 << 8) | 1),
  
- static void exynos4_set_apll(unsigned int index)
-@@ -404,7 +259,7 @@ static int exynos4_target(struct cpufreq_policy *policy,
- 			  unsigned int relation)
- {
- 	unsigned int index, old_index;
--	unsigned int arm_volt, int_volt;
-+	unsigned int arm_volt;
+-	/* APLL FOUT L1: 800MHz */
++	/* APLL FOUT L2: 800MHz */
+ 	((200 << 16) | (6 << 8) | 1),
  
- 	freqs.old = exynos4_getspeed(policy->cpu);
+-	/* APLL FOUT L2 : 400MHz */
+-	((200 << 16) | (6 << 8) | 2),
++	/* APLL FOUT L3: 500MHz */
++	((250 << 16) | (6 << 8) | 2),
  
-@@ -424,7 +279,6 @@ static int exynos4_target(struct cpufreq_policy *policy,
+-	/* APLL FOUT L3: 100MHz */
+-	((200 << 16) | (6 << 8) | 4),
++	/* APLL FOUT L4: 200MHz */
++	((200 << 16) | (6 << 8) | 3),
+ };
  
- 	/* get the voltage value */
- 	arm_volt = exynos4_volt_table[index].arm_volt;
--	int_volt = exynos4_volt_table[index].int_volt;
- 
- 	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
- 
-@@ -432,7 +286,6 @@ static int exynos4_target(struct cpufreq_policy *policy,
- 	if (freqs.new > freqs.old) {
- 		/* Voltage up */
- 		regulator_set_voltage(arm_regulator, arm_volt, arm_volt);
--		regulator_set_voltage(int_regulator, int_volt, int_volt);
- 	}
- 
- 	/* Clock Configuration Procedure */
-@@ -442,7 +295,6 @@ static int exynos4_target(struct cpufreq_policy *policy,
- 	if (freqs.new < freqs.old) {
- 		/* Voltage down */
- 		regulator_set_voltage(arm_regulator, arm_volt, arm_volt);
--		regulator_set_voltage(int_regulator, int_volt, int_volt);
- 	}
- 
- 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
-@@ -519,27 +371,6 @@ static int __init exynos4_cpufreq_init(void)
- 		goto out;
- 	}
- 
--	int_regulator = regulator_get(NULL, "vdd_int");
--	if (IS_ERR(int_regulator)) {
--		printk(KERN_ERR "failed to get resource %s\n", "vdd_int");
--		goto out;
--	}
--
--	/*
--	 * Check DRAM type.
--	 * Because DVFS level is different according to DRAM type.
--	 */
--	memtype = __raw_readl(S5P_VA_DMC0 + S5P_DMC0_MEMCON_OFFSET);
--	memtype = (memtype >> S5P_DMC0_MEMTYPE_SHIFT);
--	memtype &= S5P_DMC0_MEMTYPE_MASK;
--
--	if ((memtype < DDR2) && (memtype > DDR3)) {
--		printk(KERN_ERR "%s: wrong memtype= 0x%x\n", __func__,
-memtype);
--		goto out;
--	} else {
--		printk(KERN_DEBUG "%s: memtype= 0x%x\n", __func__, memtype);
--	}
--
- 	return cpufreq_register_driver(&exynos4_driver);
- 
- out:
-@@ -558,9 +389,6 @@ out:
- 	if (!IS_ERR(arm_regulator))
- 		regulator_put(arm_regulator);
- 
--	if (!IS_ERR(int_regulator))
--		regulator_put(int_regulator);
--
- 	printk(KERN_ERR "%s: failed initialization\n", __func__);
- 
- 	return -EINVAL;
+ static int exynos4_verify_speed(struct cpufreq_policy *policy)
 -- 
 1.7.1
+
