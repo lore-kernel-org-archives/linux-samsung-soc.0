@@ -1,75 +1,110 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V4 0/4] Add SPI clkdev support
-Date: Wed, 02 Nov 2011 20:23:17 +0900
-Message-ID: <004a01cc9951$d1eca790$75c5f6b0$%kim@samsung.com>
-References: <1320268004-4545-1-git-send-email-padma.v@samsung.com>
+Subject: RE: [PATCH v5 0/2] Add device tree support for Samsung's keypad
+ controller driver
+Date: Wed, 02 Nov 2011 20:27:52 +0900
+Message-ID: <004b01cc9952$75c87060$61595120$%kim@samsung.com>
+References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
+ <057501cc880e$af0a28a0$0d1e79e0$%kim@samsung.com> <4EA56178.60301@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15454 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751655Ab1KBLXT (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:26345 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753060Ab1KBL1y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 07:23:19 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LU100B0Z6AUHB20@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:23:18 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LU100GF96AT5F80@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 20:23:18 +0900 (KST)
-In-reply-to: <1320268004-4545-1-git-send-email-padma.v@samsung.com>
+	Wed, 2 Nov 2011 07:27:54 -0400
+In-reply-to: <4EA56178.60301@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Padmavathi Venna' <padma.v@samsung.com>, padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, linux@arm.linux.org.uk
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, grant.likely@secretlab.ca, linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
 
-Padmavathi Venna wrote:
+Kukjin Kim wrote:
 > 
-> This patchset modifies the existing clkdev to make SPI driver
-> independent of the clock names send from platform data. This
-> patches enables the SPI driver to request SPI bus clocks
-> using generic connection ID.
+> On 10/11/11 14:09, Kukjin Kim wrote:
+> > Thomas Abraham wrote:
+> >>
+> >> Changes since v4:
+> >> - Tested with linux 3.1-rc9. No changes in code.
+> >>
+> >> Changes since v3:
+> >> - Addressed comments from Grant Likely.
+> >>    - Set num_rows and num_cols to zero in samsung_keypad_parse_dt
+> function.
+> >>    - Fixed the wierd looking if-else block in samsung_keypad_probe
+> > function.
+> >>
+> >> Changes since v2:
+> >> - Addressed comments from Grant Likely.
+> >>    - Renamed 'keypad,key-code' property name to 'linux,code'.
+> >>    - Fixed incorrect data types for all instances of
+of_property+read_u32.
+> >>    - linux,input-type binding was not added as suggested since the
+driver
+> >>      supports only EV_KEY event type.
+> >>
+> >> Changes since v1:
+> >> - Addressed comments from Dmitry Torokhov.
+> >>    - Type of controller is cached in driver's private data and the
+function
+> >>      that determines the type of the controller for each keypad scan is
+> >>      removed.
+> >>    - pdata allocated during probe is explicitly freed after probe
+completes
+> >>      without any error. In case of exit from probe due a error, no
+explicit
+> >>      deallocation of pdata memory is performed and it is left to devres
+to
+> >>      handle that.
+> >>    - The generic code to translate KEY(x,y,code) is retained in the
+driver
+> >>      itself. I am unsure of a right common place for it.
+> >>    - Driver continues with the probe even if one or more gpio
+configuration
+> >>      fails.
+> >>    - Patch 1 that adds a new config option is still retained in this
+> > patchset.
+> >>
+> >>
+> >> This patchset adds device tree support for samsung's keypad controller
+> > driver.
+> >> First patch adds a new config option to be used by device tree enabled
+> > platforms
+> >> for selecting the samsung's keypad controller driver. The second patch
+> > adds
+> >> device
+> >> tree support for the keypad driver.
+> >>
+> >>
+> >> Thomas Abraham (2):
+> >>    input: samsung-keypad: Add HAVE_SAMSUNG_KEYPAD config option
+> >>    input: samsung-keypad: Add device tree support
+> >>
+> >>   .../devicetree/bindings/input/samsung-keypad.txt   |   88 ++++++++++
+> >>   drivers/input/keyboard/Kconfig                     |    9 +-
+> >>   drivers/input/keyboard/samsung-keypad.c            |  174
+> >> ++++++++++++++++++--
+> >>   3 files changed, 258 insertions(+), 13 deletions(-)
+> >>   create mode 100644 Documentation/devicetree/bindings/input/samsung-
+> >> keypad.txt
+> >
+> > Looks ok to me,
+> > Acked-by: Kukjin Kim<kgene.kim@samsung.com>
+> >
+> > Hi Dmitry,
+> > If you're ok on this, please adding this in your tree for upcoming merge
+> > window.
+> >
+> Dmitry,
 > 
-> Link to V1:
->         http://www.spinics.net/lists/arm-kernel/msg141671.html
+> Any problem on this?
 > 
-> V2 Changes:
->         -Add newly introduced CLKDEV_INIT macro for creating clk_lookup
->         structure as suggested by Russell King
->         V2 patches series are:
->         http://www.spinics.net/lists/arm-kernel/msg142733.html
-> 
-> V3 Changes:
->         -Reworked the patches as per the following link. Patch series in
->         the following link removed & and , from the macro declaration and
-added
->         in the macro defination.
->         http://www.spinics.net/lists/arm-kernel/msg143663.html
-> 
-> V4 Changes:
-> 	Rebased to next-samsung-dt.
-> 
-> Padmavathi Venna (4):
->   ARM: S3C64XX: Add SPI clkdev support
->   ARM: S5PC100: Add SPI clkdev support
->   ARM: S5P64X0: Add SPI clkdev support
->   ARM: S5PV210: Add SPI clkdev support
-> 
->  arch/arm/mach-s3c64xx/clock.c         |   80 +++++++++++++--------
->  arch/arm/mach-s5p64x0/clock-s5p6440.c |   61 ++++++++---------
->  arch/arm/mach-s5p64x0/clock-s5p6450.c |   49 ++++++++-----
->  arch/arm/mach-s5pc100/clock.c         |  124
-+++++++++++++++++++----------
-> ----
->  arch/arm/mach-s5pv210/clock.c         |   50 ++++++++-----
->  5 files changed, 210 insertions(+), 154 deletions(-)
+Hi Dmitry,
 
-Applied.
+I applied this in Samsung tree, if any problems, please let me know.
+
 Thanks.
 
 Best regards,
