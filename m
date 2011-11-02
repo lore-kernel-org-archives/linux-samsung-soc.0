@@ -1,97 +1,31 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/2] ARM: Samsung: Add basic device tree support for
- Exynos4 boards
-Date: Wed, 02 Nov 2011 21:45:06 +0900
-Message-ID: <005a01cc995d$3fe56bf0$bfb043d0$%kim@samsung.com>
-References: <1320109613-2811-1-git-send-email-thomas.abraham@linaro.org>
+Subject: RE: [PATCH 1/2] arm: samsung: support the second capability for hsmmc
+Date: Wed, 02 Nov 2011 21:55:37 +0900
+Message-ID: <006101cc995e$b7e33c80$27a9b580$%kim@samsung.com>
+References: <4EAE38F5.9060801@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:34392 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753088Ab1KBMpI (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43228 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752375Ab1KBMzj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 08:45:08 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LU100CDEA2XBLB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 21:45:07 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LU1001TNA36E210@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 02 Nov 2011 21:45:06 +0900 (KST)
-In-reply-to: <1320109613-2811-1-git-send-email-thomas.abraham@linaro.org>
+	Wed, 2 Nov 2011 08:55:39 -0400
+In-reply-to: <4EAE38F5.9060801@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org
-Cc: grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, 'linux-mmc' <linux-mmc@vger.kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Thomas Abraham wrote:
+Jaehoon Chung wrote:
 > 
-> Changes since v1:
-> - Removed unique per-controller compatible string value from gpio
-controller
-> nodes
->   to align with the updated device tree support for exynos4 gpio
-controller.
-> - Removed the interrupt combiner controller node.
 > 
-> This patchset adds a new basic device tree enabled machine/board file
-which is
-> based on the Samsung's Exynos4 family of SoC's. Also included in this
-patchset
-> is the
-> dts file for Exynos4210 SoC, Samsung's SMDKV310 board and Insignal's
-Origen
-> board.
-> 
-> The Exynos4210 dts file includes support for IRQ, GPIO, WDT, RTC, UART,
-SDHCI,
-> Keypad,
-> DMA and I2C controllers. As device tree coverage for Exynos4210 increases,
-> additional
-> device nodes to represent the controllers should be added.
-> 
-> The device tree enabled machine file enables boot on two boards based on
-the
-> Exynos4210 SoC. This provides a starting point to add additional device
-tree
-> support
-> on these boards, migrate other existing Exynos4 based boards to use device
-tree
-> and enable device tree based boot on new upcoming boards.
-> 
-> This patchset has been tested on the following tree:
-> git://git.linaro.org/git/people/arnd/arm-soc.git  branch: for-next
-> 
-> Thomas Abraham (2):
->   ARM: Samsung: Add Exynos4 device tree enabled board file
->   ARM: dts: Add intial dts file for Exynos4210 SoC, SMDKV310 and Origen
-board
-> 
->  .../devicetree/bindings/arm/insignal-boards.txt    |    8 +
->  .../devicetree/bindings/arm/samsung-boards.txt     |    8 +
->  arch/arm/boot/dts/exynos4210-origen.dts            |  137 +++++++
->  arch/arm/boot/dts/exynos4210-smdkv310.dts          |  182 +++++++++
->  arch/arm/boot/dts/exynos4210.dtsi                  |  397
-> ++++++++++++++++++++
->  arch/arm/mach-exynos4/Kconfig                      |   14 +
->  arch/arm/mach-exynos4/Makefile                     |    2 +
->  arch/arm/mach-exynos4/mach-exynos4-dt.c            |   85 +++++
->  8 files changed, 833 insertions(+), 0 deletions(-)
->  create mode 100644
-Documentation/devicetree/bindings/arm/insignal-boards.txt
->  create mode 100644
-Documentation/devicetree/bindings/arm/samsung-boards.txt
->  create mode 100644 arch/arm/boot/dts/exynos4210-origen.dts
->  create mode 100644 arch/arm/boot/dts/exynos4210-smdkv310.dts
->  create mode 100644 arch/arm/boot/dts/exynos4210.dtsi
->  create mode 100644 arch/arm/mach-exynos4/mach-exynos4-dt.c
-
-OK. replaced with this in next-samsung-dt branch.
+Well...
+Firstly, you need to add description here why this change is needed.
+Secondly, you need to check latest maintainer's tree, in this case, the
+dev-xxx.c are merged into plat-samsung/devs.c ago.
 
 Thanks.
 
@@ -100,3 +34,91 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-samsung/dev-hsmmc.c          |    2 ++
+>  arch/arm/plat-samsung/dev-hsmmc1.c         |    2 ++
+>  arch/arm/plat-samsung/dev-hsmmc2.c         |    2 ++
+>  arch/arm/plat-samsung/dev-hsmmc3.c         |    2 ++
+>  arch/arm/plat-samsung/include/plat/sdhci.h |    1 +
+>  5 files changed, 9 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/dev-hsmmc.c
+b/arch/arm/plat-samsung/dev-
+> hsmmc.c
+> index db7a65c..e6b0c58 100644
+> --- a/arch/arm/plat-samsung/dev-hsmmc.c
+> +++ b/arch/arm/plat-samsung/dev-hsmmc.c
+> @@ -74,6 +74,8 @@ void s3c_sdhci0_set_platdata(struct s3c_sdhci_platdata
+*pd)
+>  		set->cfg_card = pd->cfg_card;
+>  	if (pd->host_caps)
+>  		set->host_caps |= pd->host_caps;
+> +	if (pd->host_caps2)
+> +		set->host_caps2 |= pd->host_caps2;
+>  	if (pd->clk_type)
+>  		set->clk_type = pd->clk_type;
+>  }
+> diff --git a/arch/arm/plat-samsung/dev-hsmmc1.c
+b/arch/arm/plat-samsung/dev-
+> hsmmc1.c
+> index 2497321..79a5ff2 100644
+> --- a/arch/arm/plat-samsung/dev-hsmmc1.c
+> +++ b/arch/arm/plat-samsung/dev-hsmmc1.c
+> @@ -74,6 +74,8 @@ void s3c_sdhci1_set_platdata(struct s3c_sdhci_platdata
+*pd)
+>  		set->cfg_card = pd->cfg_card;
+>  	if (pd->host_caps)
+>  		set->host_caps |= pd->host_caps;
+> +	if (pd->host_caps2)
+> +		set->host_caps2 |= pd->host_caps2;
+>  	if (pd->clk_type)
+>  		set->clk_type = pd->clk_type;
+>  }
+> diff --git a/arch/arm/plat-samsung/dev-hsmmc2.c
+b/arch/arm/plat-samsung/dev-
+> hsmmc2.c
+> index f60aedb..a590d72 100644
+> --- a/arch/arm/plat-samsung/dev-hsmmc2.c
+> +++ b/arch/arm/plat-samsung/dev-hsmmc2.c
+> @@ -75,6 +75,8 @@ void s3c_sdhci2_set_platdata(struct s3c_sdhci_platdata
+*pd)
+>  		set->cfg_card = pd->cfg_card;
+>  	if (pd->host_caps)
+>  		set->host_caps |= pd->host_caps;
+> +	if (pd->host_caps2)
+> +		set->host_caps2 |= pd->host_caps2;
+>  	if (pd->clk_type)
+>  		set->clk_type = pd->clk_type;
+>  }
+> diff --git a/arch/arm/plat-samsung/dev-hsmmc3.c
+b/arch/arm/plat-samsung/dev-
+> hsmmc3.c
+> index ede776f..afa37c8 100644
+> --- a/arch/arm/plat-samsung/dev-hsmmc3.c
+> +++ b/arch/arm/plat-samsung/dev-hsmmc3.c
+> @@ -78,6 +78,8 @@ void s3c_sdhci3_set_platdata(struct s3c_sdhci_platdata
+*pd)
+>  		set->cfg_card = pd->cfg_card;
+>  	if (pd->host_caps)
+>  		set->host_caps |= pd->host_caps;
+> +	if (pd->host_caps2)
+> +		set->host_caps2 |= pd->host_caps2;
+>  	if (pd->clk_type)
+>  		set->clk_type = pd->clk_type;
+>  }
+> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-
+> samsung/include/plat/sdhci.h
+> index 058e096..7b48828 100644
+> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+> @@ -67,6 +67,7 @@ enum clk_types {
+>  struct s3c_sdhci_platdata {
+>  	unsigned int	max_width;
+>  	unsigned int	host_caps;
+> +	unsigned int	host_caps2;
+>  	enum cd_types	cd_type;
+>  	enum clk_types	clk_type;
+> 
