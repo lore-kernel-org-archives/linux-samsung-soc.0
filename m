@@ -1,208 +1,55 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Add clk enable/disable of pwm
-Date: Thu, 03 Nov 2011 19:20:36 +0900
-Message-ID: <4EB26AF4.8040601@samsung.com>
-References: <1319505701-9784-1-git-send-email-jy0922.shim@samsung.com>
- <012701cc99cc$300dca50$90295ef0$%kim@samsung.com>
- <4EB1FB58.9050503@samsung.com>
- <018e01cc99fc$bb4d5ec0$31e81c40$%kim@samsung.com>
- <4EB24886.8080002@samsung.com>
- <CAH9JG2XFALdd_JVSQW4rjCDCgLL9sgf_GVurVDoGJa-SwXmB5Q@mail.gmail.com>
- <CAH9JG2X9dXe2cG6qvqM6GuTuC6xc0wBYSsvba=zbbmQD7BqYXg@mail.gmail.com>
- <019301cc9a08$17c69d50$4753d7f0$%kim@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH 1/3 v3] ARM: EXYNOS4: Support for generic I/O power domains
+ on EXYNOS4210/4212
+Date: Thu, 03 Nov 2011 11:24:34 +0100
+Message-ID: <4EB26BE2.2060508@samsung.com>
+References: <4EA690EF.4000703@samsung.com>
+ <013301cc99cd$8d5a6a00$a80f3e00$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:10119 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750974Ab1KCKUT (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:13503 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752670Ab1KCKYh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Nov 2011 06:20:19 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LU200IPHY0G4AM0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Nov 2011 19:20:18 +0900 (KST)
-Received: from TNRNDGASPAPP1.tn.corp.samsungelectronics.net ([165.213.149.150])
- by mmp1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTPA id <0LU20036EY1URF50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 03 Nov 2011 19:20:18 +0900 (KST)
-In-reply-to: <019301cc9a08$17c69d50$4753d7f0$%kim@samsung.com>
+	Thu, 3 Nov 2011 06:24:37 -0400
+Received: from euspt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LU20039FY8ZOR@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Nov 2011 10:24:35 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LU200J40Y8Y5E@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 03 Nov 2011 10:24:35 +0000 (GMT)
+In-reply-to: <013301cc99cd$8d5a6a00$a80f3e00$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Cc: 'Chanwoo Choi' <cw00.choi@samsung.com>, 'Sylwester Nawrocki' <snjw23@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
 
-11/03/2011 06:08 PM, Kukjin Kim =EC=93=B4 =EA=B8=80:
-> Kyungmin Park wrote:
->> On 11/3/11, Kyungmin Park<kyungmin.park@samsung.com>  wrote:
->>> On 11/3/11, Joonyoung Shim<jy0922.shim@samsung.com>  wrote:
->>>> 11/03/2011 04:46 PM, Kukjin Kim =EC=93=B4 =EA=B8=80:
->>>>> Joonyoung Shim wrote:
->>>>>> 11/03/2011 10:59 AM, Kukjin Kim =EC=93=B4 =EA=B8=80:
->>>>>>> Joonyoung Shim wrote:
->>>>>>>> PWM timers use pclk("timers" clk) as parent clk. If this pclk =
-is the
->>>>>>>> disabled state when PWM driver is probed, then it causes wrong=
- read
->>>>>>>> and
->>>>>>>> write operation about registers of PWM.
->>>>>>>>
->>>>>>>> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
->>>>>>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->>>>>>>> ---
->>>>>>>>     arch/arm/plat-samsung/pwm.c |    7 +++++++
->>>>>>>>     1 files changed, 7 insertions(+), 0 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm/plat-samsung/pwm.c
->>>>>>>> b/arch/arm/plat-samsung/pwm.c
->>>>>>>> index f37457c..dc1185d 100644
->>>>>>>> --- a/arch/arm/plat-samsung/pwm.c
->>>>>>>> +++ b/arch/arm/plat-samsung/pwm.c
->>>>>>>> @@ -299,6 +299,9 @@ static int s3c_pwm_probe(struct platform_d=
-evice
->>>>>>>> *pdev)
->>>>>>>>     		goto err_clk_tin;
->>>>>>>>     	}
->>>>>>>>
->>>>>>>> +	clk_enable(pwm->clk);
->>>>>>>> +	clk_enable(pwm->clk_div);
->>>>>>>> +
->>>>>>>>     	local_irq_save(flags);
->>>>>>>>
->>>>>>>>     	tcon =3D __raw_readl(S3C2410_TCON);
->>>>>>>> @@ -326,6 +329,8 @@ static int s3c_pwm_probe(struct platform_d=
-evice
->>>>>>>> *pdev)
->>>>>>>>     	return 0;
->>>>>>>>
->>>>>>>>      err_clk_tdiv:
->>>>>>>> +	clk_disable(pwm->clk_div);
->>>>>>>> +	clk_disable(pwm->clk);
->>>>>>>>     	clk_put(pwm->clk_div);
->>>>>>>>
->>>>>>>>      err_clk_tin:
->>>>>>>> @@ -340,6 +345,8 @@ static int __devexit s3c_pwm_remove(struct
->>>>>>>> platform_device *pdev)
->>>>>>>>     {
->>>>>>>>     	struct pwm_device *pwm =3D platform_get_drvdata(pdev);
->>>>>>>>
->>>>>>>> +	clk_disable(pwm->clk_div);
->>>>>>>> +	clk_disable(pwm->clk);
->>>>>>>>     	clk_put(pwm->clk_div);
->>>>>>>>     	clk_put(pwm->clk);
->>>>>>>>     	kfree(pwm);
->>>>>>>> --
->>>>>>>> 1.7.5.4
->>>>>>> Well, I wonder when this is needed. I think it should be enable=
-d
->>>>>>> during
->>>>>>> kernel booting...
->>>>>> The exynos4 machine using just timer turns on "timer" clock in t=
-he
->>>>>> past,
->>>>>> but "timer" clock is disable state when boot since MCT is used. =
-MCT
->>>>>> doesn't control "timer" clock.
->>>>>>
->>>>>> I think pwm driver should control(enable/disable) using clocks
->>>>>> regardless of their parents clock.
->>>>>>
->>>>> I mean, why that is disabled when kernel boot...
->>>>>
->>>> Please see arch/arm/mach-exynos4/clock.c
->>>> There is "timers' clock in the clk init_clocks_off[].
->> One more, Don't assume some clocks are enabled at bootloader. user c=
-an
->> use any bootloader and any configuration.
->>
-> Kyungmin,
-> NO! I didn't. Just I thought your bootloader disables the clock and w=
-hy it is needed.
->
-> Anyway, Joonyoung,
-> How about following? And it seems enough...
-> --
-> diff --git a/arch/arm/plat-samsung/pwm-clock.c b/arch/arm/plat-samsun=
-g/pwm-clock.c
-> index a35ff3b..37a159b 100644
-> --- a/arch/arm/plat-samsung/pwm-clock.c
-> +++ b/arch/arm/plat-samsung/pwm-clock.c
-> @@ -449,6 +449,8 @@ __init void s3c_pwmclk_init(void)
->   		return;
->   	}
->
-> +	clk_enable(clk_timers);
-> +
->   	for (clk =3D 0; clk<  ARRAY_SIZE(clk_timer_scaler); clk++)
->   		clk_timer_scaler[clk].parent =3D clk_timers;
->  =20
+Hi Kgene,
 
-No, there is no the reason "timers" clock turns on always.
+On 11/03/2011 03:09 AM, Kukjin Kim wrote:
+> As I said, I don't think we should control/gate the clocks with regarding power domain. 
 
-> --
-> Or needs separate clk_enable like following?
->
-> diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.=
-c
-> index f37457c..7a77e36 100644
-> --- a/arch/arm/plat-samsung/pwm.c
-> +++ b/arch/arm/plat-samsung/pwm.c
-> @@ -292,6 +292,8 @@ static int s3c_pwm_probe(struct platform_device *=
-pdev)
->   		goto err_alloc;
->   	}
->
-> +	clk_enable(pwm->clk);
-> +
->   	pwm->clk_div =3D clk_get(dev, "pwm-tdiv");
->   	if (IS_ERR(pwm->clk_div)) {
->   		dev_err(dev, "failed to get pwm tdiv clk\n");
-> @@ -299,6 +301,8 @@ static int s3c_pwm_probe(struct platform_device *=
-pdev)
->   		goto err_clk_tin;
->   	}
->
-> +	clk_enable(pwm->clk_div);
-> +
->   	local_irq_save(flags);
->
->   	tcon =3D __raw_readl(S3C2410_TCON);
-> @@ -326,9 +330,11 @@ static int s3c_pwm_probe(struct platform_device =
-*pdev)
->   	return 0;
->
->   err_clk_tdiv:
-> +	clk_disable(pwm->clk_div);
->   	clk_put(pwm->clk_div);
->
->   err_clk_tin:
-> +	clk_disable(pwm->clk);
->   	clk_put(pwm->clk);
->
->   err_alloc:
-> --
+As far as I know there is a plan to let the drivers override start/stop_device callbacks,
+moreover the clock control can be disabled globally by not implementing start/stop_device
+callbacks or per device by not adding clkdev entities to the device clock list at runtime 
+PM core. So IMHO, there is/going to be enough flexibility.
 
-I don't care about this.
+> It should be controlled by each regarding device driver and in addition, as I know,
+> to handle block of clock is not recommended on EXYNOS4 now.
 
->
-> BTW, I think this is not really needed for this merge window because =
-the pwm.c is used for only s3c24xx and as you know, it doesn't matter b=
-ecause of arch/arm/plat-samsung/time.c. And if required, this can be fi=
-xed during -rc.
+What do you mean by this ? I couldn't find such information in any documentation.
+Shouldn't "clock gate block" registers be touched by boot loader and the kernel?
+Our boot loaders disable all clocks, and if the global clock gate is not enabled
+by the kernel there is no chance any multimedia device will work.
 
-It's the problem to assume that the related clocks turned on by other
-and the pwm is used for exynos4 also.
+Should the global clock block gate be always enabled then ? I'm afraid it is not
+optimal form power management POV.
 
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
+-- 
+Thanks,
+Sylwester
