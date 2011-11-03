@@ -1,58 +1,41 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH 1/5] [CPUFREQ] EXYNOS4210: Remove code about bus on cpufreq
-Date: Thu, 3 Nov 2011 14:40:21 +0900
-Message-ID: <CAJ0PZbSy+wQRb63_sAEWvXzagFUDLJ_bOUuywMDQENg6LzNb7g@mail.gmail.com>
-References: <005401cc995c$ee9e3b50$cbdab1f0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: [PATCH] DMA: PL330: Fix build warning
+Date: Thu,  3 Nov 2011 15:48:49 +0900
+Message-ID: <1320302929-4731-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:46089 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752040Ab1KCFkX convert rfc822-to-8bit (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:43003 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752190Ab1KCHJD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Nov 2011 01:40:23 -0400
-In-Reply-To: <005401cc995c$ee9e3b50$cbdab1f0$%kim@samsung.com>
+	Thu, 3 Nov 2011 03:09:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, Jongpill Lee <boyko.lee@samsung.com>, SangWook Ju <sw.ju@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Dan Williams <dan.j.williams@intel.com>, Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <rob.herring@calxeda.com>, Boojin Kim <boojin.kim@samsung.com>
 
-On Wed, Nov 2, 2011 at 9:42 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> From: Jongpill Lee <boyko.lee@samsung.com>
->
-> This patch removes code for bus on cpufreq because the code
-> for bus frequency changing moves to busfreq driver.
-> So code about bus on cpufreq is not necessary.
->
-> Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
-> Signed-off-by: SangWook Ju <sw.ju@samsung.com>
-> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =A0drivers/cpufreq/exynos4210-cpufreq.c | =A0174
-> +---------------------------------
-> =A01 files changed, 1 insertions(+), 173 deletions(-)
->
+This patch adds to fix the build warning as following.
 
-Cool!
+drivers/dma/pl330.c: In function 'pl330_probe':
+drivers/dma/pl330.c:859: warning: comparison of distinct pointer types lacks a cast
 
-Now, it's compatible with the Exynos4210 bus devfreq driver.
-Are you going to upstream the busfreq in the devfreq framework (at
-/drivers/devfreq/) or do you want me to submit the Exynos4210 bus
-devfreq driver that is currently on
-http://git.infradead.org/users/kmpark/linux-2.6-samsung/shortlog/refs/h=
-eads/devfreq
-(drivers/devfreq/exynos4210_memorybus.c)
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+---
+ drivers/dma/pl330.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-Devfreq is a framework to support DVFS feature for non-CPU devices,
-which is at 3.2-next tree.
-
-
-Cheers!
-MyungJoo
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 621134f..379d928 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -856,7 +856,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+ 	INIT_LIST_HEAD(&pd->channels);
+ 
+ 	/* Initialize channel parameters */
+-	num_chan = max(pdat ? pdat->nr_valid_peri : 0, (u8)pi->pcfg.num_chan);
++	num_chan = max(pdat ? (int)pdat->nr_valid_peri : 0,
++					(int)pi->pcfg.num_chan);
+ 	pdmac->peripherals = kzalloc(num_chan * sizeof(*pch), GFP_KERNEL);
+ 
+ 	for (i = 0; i < num_chan; i++) {
+-- 
+1.7.1
