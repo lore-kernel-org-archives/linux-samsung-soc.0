@@ -1,56 +1,88 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCHv2 2/2]  mmc: sdhci-s3c: add platform data for the second
- capability
-Date: Thu, 03 Nov 2011 11:35:59 +0900
-Message-ID: <4EB1FE0F.5020608@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@gmail.com>
+Subject: Re: [PATCH 5/5] EXYNOS4210: Add support ASV feature
+Date: Thu, 3 Nov 2011 14:11:14 +0900
+Message-ID: <CAJ0PZbQEHXpRdCkcAwNwtK7AmH=nxG+KjOcw91gwagAvFr_pxA@mail.gmail.com>
+References: <005801cc995c$fee5dd60$fcb19820$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17454 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752893Ab1KCCgR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 Nov 2011 22:36:17 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <005801cc995c$fee5dd60$fcb19820$%kim@samsung.com>
+Sender: cpufreq-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, Jaecheol Lee <jc.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc <linux-mmc@vger.kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>
 
-This patch is added host_caps2 in sdhci-s3c.c
-It's necessary that use the second capabilities.
-And removed the duplicated host_caps.
+Hello,
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
-Changelog v2:
-   - remove the duplicated host_caps.
+On Wed, Nov 2, 2011 at 9:43 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
+e:
+[]
+> +static void __init set_volt_table(void)
+> +{
+> + =A0 =A0 =A0 unsigned int tmp, i, asv_group =3D 0;
+> +
+> + =A0 =A0 =A0 tmp =3D __raw_readl(S5P_INFORM2);
 
- drivers/mmc/host/sdhci-s3c.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+As I've mentioned in the ASV patch thread, do we really need to use an
+INFORM register simply to save the id of supported voltage ranges?
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 3d00e72..6b8f8f6 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -521,9 +521,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	if (pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
- 		host->mmc->caps = MMC_CAP_NONREMOVABLE;
- 
--	if (pdata->host_caps)
--		host->mmc->caps |= pdata->host_caps;
--
- 	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
- 			 SDHCI_QUIRK_32BIT_DMA_SIZE);
- 
-@@ -544,6 +541,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	if (pdata->host_caps)
- 		host->mmc->caps |= pdata->host_caps;
- 
-+	if (pdata->host_caps2)
-+		host->mmc->caps2 |= pdata->host_caps2;
-+
- 	ret = sdhci_add_host(host);
- 	if (ret) {
- 		dev_err(dev, "sdhci_add_host() failed\n");
+Why aren't we using an extern variable here? For example, "extern int
+asv_group_id;" and define it at "asv.h" or somewhere else.
+
+At reboot, we are going to init ASV driver and will get the ASV value
+again; thus, we don't need to use such a preserving register anyway.
+At suspend/resume, the value in RAM does not disappear and the IPL
+does not care this value; thus, it is meaningless to use INFORM2 for
+this value.
+
+
+> +
+> + =A0 =A0 =A0 switch (tmp =A0& (SUPPORT_FREQ_MASK << SUPPORT_FREQ_SHI=
+=46T)) {
+> + =A0 =A0 =A0 case SUPPORT_1200MHZ:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 asv_group =3D (tmp & 0xF);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 case SUPPORT_1400MHZ:
+> + =A0 =A0 =A0 case SUPPORT_1000MHZ:
+> + =A0 =A0 =A0 default:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Not supported and assign typical ASV=
+ group */
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 asv_group =3D 2;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 printk(KERN_INFO "DVFS: VDD_ARM Voltage table set with =
+%d Group\n",
+> asv_group);
+> +
+> + =A0 =A0 =A0 for (i =3D 0 ; i < CPUFREQ_LEVEL_END ; i++)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 exynos4_volt_table[i] =3D asv_voltage[i=
+][asv_group];
+> +}
+> +
+> =A0static int __init exynos4_cpufreq_init(void)
+> =A0{
+> =A0 =A0 =A0 =A0int i;
+> =A0 =A0 =A0 =A0unsigned int tmp;
+>
+> + =A0 =A0 =A0 set_volt_table();
+> +
+> =A0 =A0 =A0 =A0cpu_clk =3D clk_get(NULL, "armclk");
+> =A0 =A0 =A0 =A0if (IS_ERR(cpu_clk))
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return PTR_ERR(cpu_clk);
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
+
+
+
+--=20
+MyungJoo Ham, Ph.D.
+Mobile Software Platform Lab, DMC Business, Samsung Electronics
