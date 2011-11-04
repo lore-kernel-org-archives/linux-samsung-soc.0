@@ -1,68 +1,49 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 5/6] mmc: Add OF bindings support for mmc host controller
- capabilities
-Date: Fri, 4 Nov 2011 12:57:17 -0700
-Message-ID: <20111104195717.GA3045@quad.lixom.net>
-References: <1320266163-15292-1-git-send-email-thomas.abraham@linaro.org>
- <1320266163-15292-6-git-send-email-thomas.abraham@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung devel-4 for v3.2
+Date: Sat, 5 Nov 2011 00:20:54 +0100
+Message-ID: <201111050020.55071.arnd@arndb.de>
+References: <027f01cc9ab6$2086eae0$6194c0a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:35635 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750882Ab1KDT45 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:60404 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751155Ab1KDXVD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Nov 2011 15:56:57 -0400
-Content-Disposition: inline
-In-Reply-To: <1320266163-15292-6-git-send-email-thomas.abraham@linaro.org>
+	Fri, 4 Nov 2011 19:21:03 -0400
+In-Reply-To: <027f01cc9ab6$2086eae0$6194c0a0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <rmk+kernel@arm.linux.org.uk>, ben-linux@fluff.org
 
-On Thu, Nov 03, 2011 at 02:06:02AM +0530, Thomas Abraham wrote:
-> Device nodes representing sd/mmc controllers in a device tree would include
-> mmc host controller capabilities. Add support for parsing of mmc host
-> controller capabilities included in device nodes.
+On Friday 04 November 2011, Kukjin Kim wrote:
+> As we talked in Prague, I'm sending 'pull request for v3.2' Samsung-devel4
+> which includes supporting EXYNOS4 DT, SPI clkdev and reorganization
+> arch/arm/mach-exynos and small things.
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  .../devicetree/bindings/mmc/linux-mmc-host.txt     |   13 ++++++++
->  drivers/mmc/core/host.c                            |   31 ++++++++++++++++++++
->  include/linux/mmc/host.h                           |    1 +
->  3 files changed, 45 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
+> Please pull from: 
+>   git://github.com/kgene/linux-samsung.git next-samsung-devel-4
 > 
-> diff --git a/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt b/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
-> new file mode 100644
-> index 0000000..714b2b1
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
-> @@ -0,0 +1,13 @@
-> +* Linux MMC Host Controller Capabilities
-> +
-> +The following bindings can be used in a device node to specify any board
-> +specific mmc host controller capabilities.
-> +
-> +- linux,mmc_cap_4_bit_data - Host can do 4-bit transfers
-> +- linux,mmc_cap_mmc_highspeed - Host can do MMC high-speed timing
-> +- linux,mmc_cap_sd_highspeed - Host can do SD high-speed timing
-> +- linux,mmc_cap_needs_poll - Host needs polling for card detection
-> +- linux,mmc_cap_8_bit_data - Host can do 8-bit transfer
-> +- linux,mmc_cap_disable - Host can be disabled and re-enabled to save power
-> +- linux,mmc_cap_nonremovable - Host is connected to nonremovable media
-> +- linux,mmc_cap_erase - Host allows erase/trim commands
+> As a note, the branch includes arm-soc/next/cleanup3 and arm-soc/next/devel2
+> based on mainline commit 994c0e99 ("Merge branch 'next/soc' of
+> git://git.linaro.org/people/arnd/arm-soc") because it is needed for this and
+> they include all of Samsung stuff for v3.2.
+> 
+> And I will be back to kernel.org after this merge window.
+> 
+> If any problems, please let me know.
 
-linux-prefixed properties are a big red flag. The device tree should describe
-the hardware, not what linux does with the hardware.
+I've looked through it, and I think I'll hold off for this merge window,
+especially given that I had enough trouble with the the other commits
+and that the submission is really late. Please realize that I have to
+push back on stuff that comes during the merge window.
 
-See previous comments about "support-8bit" for encoding exactly the same
-hardware capability in a linux-agnostic way. What the sdhci driver chooses to
-do with it is up to the driver, and in some cases it means it will set the
-capabilities flag.
+Please send the contents split up into separate branches (dt, spi, clkdev,
+rename, devel) for 3.3. I think it's ok if you want to send just the
+rename patch for 3.2 the way we had discussed earlier, because this kind
+of patch really makes sense at the end of the merge window.
 
-Same goes for the other properties. It should not go in as it is
-implemented in this patch, it needs to be fixed up.
-
-
--Olof
+	Arnd
