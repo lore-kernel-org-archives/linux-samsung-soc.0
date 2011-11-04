@@ -1,77 +1,214 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] ARM: EXYNOS4: Enable write full line for zeros mode
-Date: Fri, 4 Nov 2011 13:45:03 +0900
-Message-ID: <CAH9JG2XWPrrWWvnwmbbqixsN72P=Y87KBw3Skgsp_aiYx66XCg@mail.gmail.com>
-References: <1320373056-11718-1-git-send-email-boojin.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Add clk enable/disable of pwm
+Date: Fri, 04 Nov 2011 14:01:33 +0900
+Message-ID: <026c01cc9aae$d2bb0280$78310780$%kim@samsung.com>
+References: <1319505701-9784-1-git-send-email-jy0922.shim@samsung.com>
+ <012701cc99cc$300dca50$90295ef0$%kim@samsung.com>
+ <4EB1FB58.9050503@samsung.com>
+ <018e01cc99fc$bb4d5ec0$31e81c40$%kim@samsung.com>
+ <4EB24886.8080002@samsung.com>
+ <CAH9JG2XFALdd_JVSQW4rjCDCgLL9sgf_GVurVDoGJa-SwXmB5Q@mail.gmail.com>
+ <CAH9JG2X9dXe2cG6qvqM6GuTuC6xc0wBYSsvba=zbbmQD7BqYXg@mail.gmail.com>
+ <019301cc9a08$17c69d50$4753d7f0$%kim@samsung.com>
+ <4EB26AF4.8040601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:61798 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750810Ab1KDEpE (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:20675 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750881Ab1KDFBf convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Nov 2011 00:45:04 -0400
-Received: by ywf7 with SMTP id 7so2101828ywf.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 03 Nov 2011 21:45:04 -0700 (PDT)
-In-Reply-To: <1320373056-11718-1-git-send-email-boojin.kim@samsung.com>
+	Fri, 4 Nov 2011 01:01:35 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LU40020PDYCF3E0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 14:01:34 +0900 (KST)
+Received: from kgenekim ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LU4002P6DYLXY30@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 14:01:33 +0900 (KST)
+In-reply-to: <4EB26AF4.8040601@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hi,
+Joonyoung Shim wrote:
+>=20
+> 11/03/2011 06:08 PM, Kukjin Kim =EC=93=B4 =EA=B8=80:
+> > Kyungmin Park wrote:
+> >> On 11/3/11, Kyungmin Park<kyungmin.park@samsung.com>  wrote:
+> >>> On 11/3/11, Joonyoung Shim<jy0922.shim@samsung.com>  wrote:
+> >>>> 11/03/2011 04:46 PM, Kukjin Kim =EC=93=B4 =EA=B8=80:
+> >>>>> Joonyoung Shim wrote:
+> >>>>>> 11/03/2011 10:59 AM, Kukjin Kim =EC=93=B4 =EA=B8=80:
+> >>>>>>> Joonyoung Shim wrote:
+> >>>>>>>> PWM timers use pclk("timers" clk) as parent clk. If this pcl=
+k is the
+> >>>>>>>> disabled state when PWM driver is probed, then it causes wro=
+ng read
+> >>>>>>>> and
+> >>>>>>>> write operation about registers of PWM.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
+> >>>>>>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> >>>>>>>> ---
+> >>>>>>>>     arch/arm/plat-samsung/pwm.c |    7 +++++++
+> >>>>>>>>     1 files changed, 7 insertions(+), 0 deletions(-)
+> >>>>>>>>
+> >>>>>>>> diff --git a/arch/arm/plat-samsung/pwm.c
+> >>>>>>>> b/arch/arm/plat-samsung/pwm.c
+> >>>>>>>> index f37457c..dc1185d 100644
+> >>>>>>>> --- a/arch/arm/plat-samsung/pwm.c
+> >>>>>>>> +++ b/arch/arm/plat-samsung/pwm.c
+> >>>>>>>> @@ -299,6 +299,9 @@ static int s3c_pwm_probe(struct
+> platform_device
+> >>>>>>>> *pdev)
+> >>>>>>>>     		goto err_clk_tin;
+> >>>>>>>>     	}
+> >>>>>>>>
+> >>>>>>>> +	clk_enable(pwm->clk);
+> >>>>>>>> +	clk_enable(pwm->clk_div);
+> >>>>>>>> +
+> >>>>>>>>     	local_irq_save(flags);
+> >>>>>>>>
+> >>>>>>>>     	tcon =3D __raw_readl(S3C2410_TCON);
+> >>>>>>>> @@ -326,6 +329,8 @@ static int s3c_pwm_probe(struct
+> platform_device
+> >>>>>>>> *pdev)
+> >>>>>>>>     	return 0;
+> >>>>>>>>
+> >>>>>>>>      err_clk_tdiv:
+> >>>>>>>> +	clk_disable(pwm->clk_div);
+> >>>>>>>> +	clk_disable(pwm->clk);
+> >>>>>>>>     	clk_put(pwm->clk_div);
+> >>>>>>>>
+> >>>>>>>>      err_clk_tin:
+> >>>>>>>> @@ -340,6 +345,8 @@ static int __devexit s3c_pwm_remove(stru=
+ct
+> >>>>>>>> platform_device *pdev)
+> >>>>>>>>     {
+> >>>>>>>>     	struct pwm_device *pwm =3D platform_get_drvdata(pdev);
+> >>>>>>>>
+> >>>>>>>> +	clk_disable(pwm->clk_div);
+> >>>>>>>> +	clk_disable(pwm->clk);
+> >>>>>>>>     	clk_put(pwm->clk_div);
+> >>>>>>>>     	clk_put(pwm->clk);
+> >>>>>>>>     	kfree(pwm);
+> >>>>>>>> --
+> >>>>>>>> 1.7.5.4
+> >>>>>>> Well, I wonder when this is needed. I think it should be enab=
+led
+> >>>>>>> during
+> >>>>>>> kernel booting...
+> >>>>>> The exynos4 machine using just timer turns on "timer" clock in=
+ the
+> >>>>>> past,
+> >>>>>> but "timer" clock is disable state when boot since MCT is used=
+=2E MCT
+> >>>>>> doesn't control "timer" clock.
+> >>>>>>
+> >>>>>> I think pwm driver should control(enable/disable) using clocks
+> >>>>>> regardless of their parents clock.
+> >>>>>>
+> >>>>> I mean, why that is disabled when kernel boot...
+> >>>>>
+> >>>> Please see arch/arm/mach-exynos4/clock.c
+> >>>> There is "timers' clock in the clk init_clocks_off[].
+> >> One more, Don't assume some clocks are enabled at bootloader. user=
+ can
+> >> use any bootloader and any configuration.
+> >>
+> > Kyungmin,
+> > NO! I didn't. Just I thought your bootloader disables the clock and=
+ why it is
+> needed.
+> >
+> > Anyway, Joonyoung,
+> > How about following? And it seems enough...
+> > --
+> > diff --git a/arch/arm/plat-samsung/pwm-clock.c b/arch/arm/plat-sams=
+ung/pwm-
+> clock.c
+> > index a35ff3b..37a159b 100644
+> > --- a/arch/arm/plat-samsung/pwm-clock.c
+> > +++ b/arch/arm/plat-samsung/pwm-clock.c
+> > @@ -449,6 +449,8 @@ __init void s3c_pwmclk_init(void)
+> >   		return;
+> >   	}
+> >
+> > +	clk_enable(clk_timers);
+> > +
+> >   	for (clk =3D 0; clk<  ARRAY_SIZE(clk_timer_scaler); clk++)
+> >   		clk_timer_scaler[clk].parent =3D clk_timers;
+> >
+>=20
+> No, there is no the reason "timers" clock turns on always.
+>=20
+> > --
+> > Or needs separate clk_enable like following?
+> >
+> > diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pw=
+m.c
+> > index f37457c..7a77e36 100644
+> > --- a/arch/arm/plat-samsung/pwm.c
+> > +++ b/arch/arm/plat-samsung/pwm.c
+> > @@ -292,6 +292,8 @@ static int s3c_pwm_probe(struct platform_device=
+ *pdev)
+> >   		goto err_alloc;
+> >   	}
+> >
+> > +	clk_enable(pwm->clk);
+> > +
+> >   	pwm->clk_div =3D clk_get(dev, "pwm-tdiv");
+> >   	if (IS_ERR(pwm->clk_div)) {
+> >   		dev_err(dev, "failed to get pwm tdiv clk\n");
+> > @@ -299,6 +301,8 @@ static int s3c_pwm_probe(struct platform_device=
+ *pdev)
+> >   		goto err_clk_tin;
+> >   	}
+> >
+> > +	clk_enable(pwm->clk_div);
+> > +
+> >   	local_irq_save(flags);
+> >
+> >   	tcon =3D __raw_readl(S3C2410_TCON);
+> > @@ -326,9 +330,11 @@ static int s3c_pwm_probe(struct platform_devic=
+e *pdev)
+> >   	return 0;
+> >
+> >   err_clk_tdiv:
+> > +	clk_disable(pwm->clk_div);
+> >   	clk_put(pwm->clk_div);
+> >
+> >   err_clk_tin:
+> > +	clk_disable(pwm->clk);
+> >   	clk_put(pwm->clk);
+> >
+> >   err_alloc:
+> > --
+>=20
+> I don't care about this.
+>=20
+> >
+> > BTW, I think this is not really needed for this merge window becaus=
+e the pwm.c
+> is used for only s3c24xx and as you know, it doesn't matter because o=
+f
+> arch/arm/plat-samsung/time.c. And if required, this can be fixed duri=
+ng -rc.
+>=20
+> It's the problem to assume that the related clocks turned on by other
+> and the pwm is used for exynos4 also.
+>=20
+OK, I agree, applied.
+Thanks.
 
-On 11/4/11, Boojin Kim <boojin.kim@samsung.com> wrote:
-> This patch enables the 'write full line for zeros mode' feature of
-> cortex-A9.
-> The performance of memset() with zero is increased about 10% with this
-> patch.
-
-It seems CA9 common parts, does other SoC require same feature?
->
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> ---
->  arch/arm/mach-exynos4/platsmp.c |   18 ++++++++++++++++++
->  1 files changed, 18 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos4/platsmp.c
-> b/arch/arm/mach-exynos4/platsmp.c
-> index d5f0f29..edf7054 100644
-> --- a/arch/arm/mach-exynos4/platsmp.c
-> +++ b/arch/arm/mach-exynos4/platsmp.c
-> @@ -90,6 +90,16 @@ static void __cpuinit exynos4_gic_secondary_init(void)
->  	__raw_writel(1, cpu_base + GIC_CPU_CTRL);
->  }
->
-> +static void enable_foz(void)
-> +{
-> +	u32 val;
-> +	asm volatile(
-> +	"mrc   p15, 0, %0, c1, c0, 1\n"
-> +	"orr   %0, %0, #(1 << 3)\n"
-> +	"mcr   p15, 0, %0, c1, c0, 1"
-> +	: "=r" (val));
-> +}
-> +
->  void __cpuinit platform_secondary_init(unsigned int cpu)
->  {
->  	/*
-> @@ -106,6 +116,14 @@ void __cpuinit platform_secondary_init(unsigned int
-> cpu)
->  	write_pen_release(-1);
->
->  	/*
-> +	* Enable write full line for zeros mode
-> +	*/
-> +	if (soc_is_exynos4210() | soc_is_exynos4212() | soc_is_exynos4412()) {
-Now CA15 is not ready so this if statement is meaningless.
-> +		enable_foz();
-> +		smp_call_function((void (*)(void *))enable_foz, NULL, 0);
-> +	}
-> +
-> +	/*
->  	 * Synchronise with the boot thread.
->  	 */
->  	spin_lock(&boot_lock);
-Thank you,
-Kyungmin Park
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
