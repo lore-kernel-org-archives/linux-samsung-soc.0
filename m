@@ -1,82 +1,174 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 0/6]  SPI platform device consolidation
-Date: Fri, 04 Nov 2011 08:43:48 -0400
-Message-ID: <1320410634-10788-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH 2/6] ARM: S3C64XX: Modified files for SPI consolidation work
+Date: Fri, 04 Nov 2011 08:43:50 -0400
+Message-ID: <1320410634-10788-3-git-send-email-padma.v@samsung.com>
+References: <1320410634-10788-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:36201 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754572Ab1KDCtI (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:11266 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754639Ab1KDCtM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 3 Nov 2011 22:49:08 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Thu, 3 Nov 2011 22:49:12 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LU400HJO7TH67G0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 11:49:07 +0900 (KST)
+ 2010)) with ESMTP id <0LU400AX97TVSWF0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 11:49:12 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
  64bit (built Sep  7 2010)) with ESMTPA id <0LU400KKS7TNFZ50@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 11:49:07 +0900 (KST)
+ for linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 11:49:11 +0900 (KST)
+In-reply-to: <1320410634-10788-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: padma.kvr@gmail.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk, broonie@opensource.wolfsonmicro.com, ian@opensource.wolfsonmicro.com, dp@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com
 
-SPI platform devices are defined in respective machine folder of
-Samsung S3C64XX and S5P series SoCs.This patchset moves S3C64XX
-and S5P series of SPI platform devices to a common place plat-samsung.
-This patchset also creates SPI setup files for GPIO configurations and
-initializes the platform specific data in the corresponding machine file.
+As SPI platform devices are consolidated to plat-samsung, some
+corresponding changes are required in the respective machine folder.
+Setup files are added for SPI GPIO configurations.
+SPI platform specific data is initialized in the corresponding
+machine file.
 
-Padmavathi Venna (6):
-  ARM: SAMSUNG: Consolidation of SPI platform devices to    
-    plat-samsung
-  ARM: S3C64XX: Modified files for SPI consolidation work
-  ARM: S5PC100: Modified files for SPI consolidation work.
-  ARM: S5P64X0: Modified files for SPI consolidation work
-  ARM: S5PV210: Modified files for SPI consolidation work
-
-The following patch make the corresponding SPI changes required for
-Wolfson Cragganmore S3C6410 variant. This patch is only build tested.
-
-  ARM: S3C64XX: Modified according to SPI consolidation work.
-
- arch/arm/mach-s3c64xx/Kconfig                    |    8 +-
- arch/arm/mach-s3c64xx/Makefile                   |    2 +-
- arch/arm/mach-s3c64xx/dev-spi.c                  |  172 -----------------
+Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+---
+ arch/arm/mach-s3c64xx/Kconfig                    |    5 +++
+ arch/arm/mach-s3c64xx/Makefile                   |    1 +
  arch/arm/mach-s3c64xx/include/mach/map.h         |    2 +
- arch/arm/mach-s3c64xx/mach-crag6410.c            |    9 +
- arch/arm/mach-s3c64xx/mach-smdk6410.c            |   19 ++
- arch/arm/mach-s3c64xx/setup-spi.c                |   32 +++
- arch/arm/mach-s5p64x0/Kconfig                    |    7 +-
- arch/arm/mach-s5p64x0/Makefile                   |    2 +-
- arch/arm/mach-s5p64x0/dev-spi.c                  |  218 ---------------------
- arch/arm/mach-s5p64x0/include/mach/map.h         |    3 +
- arch/arm/mach-s5p64x0/mach-smdk6440.c            |   19 ++
- arch/arm/mach-s5p64x0/mach-smdk6450.c            |   19 ++
- arch/arm/mach-s5p64x0/setup-spi.c                |   42 ++++
- arch/arm/mach-s5pc100/Kconfig                    |    5 +
- arch/arm/mach-s5pc100/Makefile                   |    2 +-
- arch/arm/mach-s5pc100/dev-spi.c                  |  220 ----------------------
- arch/arm/mach-s5pc100/include/mach/map.h         |    3 +
- arch/arm/mach-s5pc100/mach-smdkc100.c            |   31 +++
- arch/arm/mach-s5pc100/setup-spi.c                |   43 +++++
- arch/arm/mach-s5pv210/Kconfig                    |    5 +
- arch/arm/mach-s5pv210/Makefile                   |    2 +-
- arch/arm/mach-s5pv210/dev-spi.c                  |  169 -----------------
- arch/arm/mach-s5pv210/include/mach/map.h         |    2 +
- arch/arm/mach-s5pv210/mach-smdkv210.c            |   21 ++
- arch/arm/mach-s5pv210/setup-spi.c                |   36 ++++
- arch/arm/plat-samsung/Kconfig                    |   14 ++-
- arch/arm/plat-samsung/devs.c                     |  112 +++++++++++
- arch/arm/plat-samsung/include/plat/devs.h        |    8 +-
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |   16 +-
- 30 files changed, 444 insertions(+), 799 deletions(-)
- delete mode 100644 arch/arm/mach-s3c64xx/dev-spi.c
+ arch/arm/mach-s3c64xx/mach-smdk6410.c            |   19 +++++++++++++
+ arch/arm/mach-s3c64xx/setup-spi.c                |   32 ++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    4 +++
+ 6 files changed, 63 insertions(+), 0 deletions(-)
  create mode 100644 arch/arm/mach-s3c64xx/setup-spi.c
- delete mode 100644 arch/arm/mach-s5p64x0/dev-spi.c
- create mode 100644 arch/arm/mach-s5p64x0/setup-spi.c
- delete mode 100644 arch/arm/mach-s5pc100/dev-spi.c
- create mode 100644 arch/arm/mach-s5pc100/setup-spi.c
- delete mode 100644 arch/arm/mach-s5pv210/dev-spi.c
- create mode 100644 arch/arm/mach-s5pv210/setup-spi.c
+
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 5552e04..4388186 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -77,6 +77,11 @@ config S3C64XX_SETUP_SDHCI_GPIO
+ 	help
+ 	  Common setup code for S3C64XX SDHCI GPIO configurations
+ 
++config S3C64XX_SETUP_SPI
++	bool
++	help
++	 Common setup code for SPI GPIO configurations
++
+ # S36400 Macchine support
+ 
+ config MACH_SMDK6400
+diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+index d1d0f09..d7d9bb5 100644
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@ -34,6 +34,7 @@ obj-$(CONFIG_S3C64XX_SETUP_IDE) += setup-ide.o
+ obj-$(CONFIG_S3C64XX_SETUP_KEYPAD) += setup-keypad.o
+ obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
+ obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
++obj-$(CONFIG_S3C64XX_SETUP_SPI) += setup-spi.o
+ 
+ # PM
+ 
+diff --git a/arch/arm/mach-s3c64xx/include/mach/map.h b/arch/arm/mach-s3c64xx/include/mach/map.h
+index 23a1d71..8e2097b 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/map.h
++++ b/arch/arm/mach-s3c64xx/include/mach/map.h
+@@ -115,6 +115,8 @@
+ #define S3C_PA_USB_HSOTG	S3C64XX_PA_USB_HSOTG
+ #define S3C_PA_RTC		S3C64XX_PA_RTC
+ #define S3C_PA_WDT		S3C64XX_PA_WATCHDOG
++#define S3C_PA_SPI0		S3C64XX_PA_SPI0
++#define S3C_PA_SPI1		S3C64XX_PA_SPI1
+ 
+ #define SAMSUNG_PA_ADC		S3C64XX_PA_ADC
+ #define SAMSUNG_PA_CFCON	S3C64XX_PA_CFCON
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index 8bc8edd..6f22db8 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -72,6 +72,7 @@
+ #include <plat/keypad.h>
+ #include <plat/backlight.h>
+ #include <plat/regs-fb-v4.h>
++#include <plat/s3c64xx-spi.h>
+ 
+ #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
+ #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
+@@ -262,6 +263,24 @@ static struct samsung_keypad_platdata smdk6410_keypad_data __initdata = {
+ 	.cols		= 8,
+ };
+ 
++#ifdef CONFIG_S3C64XX_DEV_SPI0
++static struct s3c64xx_spi_info smdk6410_spi0_pdata __initdata = {
++	.cfg_gpio	= s3c64xx_spi0_cfg_gpio,
++	.fifo_lvl_mask	= 0x7f,
++	.rx_lvl_offset	= 13,
++	.tx_st_done	= 21,
++};
++#endif
++
++#ifdef CONFIG_S3C64XX_DEV_SPI1
++static struct s3c64xx_spi_info smdk6410_spi1_pdata __initdata = {
++	.cfg_gpio	= s3c64xx_spi1_cfg_gpio,
++	.fifo_lvl_mask	= 0x7f,
++	.rx_lvl_offset	= 13,
++	.tx_st_done	= 21,
++};
++#endif
++
+ static struct map_desc smdk6410_iodesc[] = {};
+ 
+ static struct platform_device *smdk6410_devices[] __initdata = {
+diff --git a/arch/arm/mach-s3c64xx/setup-spi.c b/arch/arm/mach-s3c64xx/setup-spi.c
+new file mode 100644
+index 0000000..ff999d9
+--- /dev/null
++++ b/arch/arm/mach-s3c64xx/setup-spi.c
+@@ -0,0 +1,32 @@
++/* linux/arch/arm/mach-s3c64xx/setup-spi.c
++ *
++ * Copyright (C) 2011 Samsung Electronics Ltd.
++ *		http://www.samsung.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <linux/platform_device.h>
++
++#include <plat/gpio-cfg.h>
++
++#ifdef CONFIG_S3C64XX_DEV_SPI0
++int s3c64xx_spi0_cfg_gpio(struct platform_device *dev)
++{
++	s3c_gpio_cfgall_range(S3C64XX_GPC(0), 3,
++				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
++	return 0;
++}
++#endif
++
++#ifdef CONFIG_S3C64XX_DEV_SPI1
++int s3c64xx_spi1_cfg_gpio(struct platform_device *dev)
++{
++	s3c_gpio_cfgall_range(S3C64XX_GPC(4), 3,
++				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
++	return 0;
++}
++#endif
+diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+index 0dc37ad..da7f264 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
++++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+@@ -71,4 +71,8 @@ extern void s3c64xx_spi1_set_info(struct s3c64xx_spi_info *pd, int src_clk_nr,
+ 					int num_cs);
+ extern void s3c64xx_spi2_set_info(struct s3c64xx_spi_info *pd, int src_clk_nr,
+ 					int num_cs);
++
++/* defined by architecture to configure gpio */
++extern int s3c64xx_spi0_cfg_gpio(struct platform_device *dev);
++extern int s3c64xx_spi1_cfg_gpio(struct platform_device *dev);
+ #endif /* __S3C64XX_PLAT_SPI_H */
+-- 
+1.7.0.4
