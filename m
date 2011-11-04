@@ -1,210 +1,149 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Add clk enable/disable of pwm
-Date: Fri, 04 Nov 2011 14:01:33 +0900
-Message-ID: <026c01cc9aae$d2bb0280$78310780$%kim@samsung.com>
-References: <1319505701-9784-1-git-send-email-jy0922.shim@samsung.com>
- <012701cc99cc$300dca50$90295ef0$%kim@samsung.com>
- <4EB1FB58.9050503@samsung.com>
- <018e01cc99fc$bb4d5ec0$31e81c40$%kim@samsung.com>
- <4EB24886.8080002@samsung.com>
- <CAH9JG2XFALdd_JVSQW4rjCDCgLL9sgf_GVurVDoGJa-SwXmB5Q@mail.gmail.com>
- <CAH9JG2X9dXe2cG6qvqM6GuTuC6xc0wBYSsvba=zbbmQD7BqYXg@mail.gmail.com>
- <019301cc9a08$17c69d50$4753d7f0$%kim@samsung.com>
- <4EB26AF4.8040601@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Enable Bluetooth on ORIGEN
+Date: Fri, 04 Nov 2011 14:02:18 +0900
+Message-ID: <026e01cc9aae$ed900f10$c8b02d30$%kim@samsung.com>
+References: <1319633280-17799-1-git-send-email-sangwook.lee@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20675 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:21056 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab1KDFBf convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1750882Ab1KDFCT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Nov 2011 01:01:35 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+	Fri, 4 Nov 2011 01:02:19 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LU40020PDYCF3E0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 14:01:34 +0900 (KST)
+ 2010)) with ESMTP id <0LU40021HDYYF3E0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 14:02:18 +0900 (KST)
 Received: from kgenekim ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LU4002P6DYLXY30@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 14:01:33 +0900 (KST)
-In-reply-to: <4EB26AF4.8040601@samsung.com>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LU4003OIDZS5Q30@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 04 Nov 2011 14:02:18 +0900 (KST)
+In-reply-to: <1319633280-17799-1-git-send-email-sangwook.lee@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Sangwook Lee' <sangwook.lee@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org, linaro-dev@lists.linaro.org
 
-Joonyoung Shim wrote:
->=20
-> 11/03/2011 06:08 PM, Kukjin Kim =EC=93=B4 =EA=B8=80:
-> > Kyungmin Park wrote:
-> >> On 11/3/11, Kyungmin Park<kyungmin.park@samsung.com>  wrote:
-> >>> On 11/3/11, Joonyoung Shim<jy0922.shim@samsung.com>  wrote:
-> >>>> 11/03/2011 04:46 PM, Kukjin Kim =EC=93=B4 =EA=B8=80:
-> >>>>> Joonyoung Shim wrote:
-> >>>>>> 11/03/2011 10:59 AM, Kukjin Kim =EC=93=B4 =EA=B8=80:
-> >>>>>>> Joonyoung Shim wrote:
-> >>>>>>>> PWM timers use pclk("timers" clk) as parent clk. If this pcl=
-k is the
-> >>>>>>>> disabled state when PWM driver is probed, then it causes wro=
-ng read
-> >>>>>>>> and
-> >>>>>>>> write operation about registers of PWM.
-> >>>>>>>>
-> >>>>>>>> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
-> >>>>>>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> >>>>>>>> ---
-> >>>>>>>>     arch/arm/plat-samsung/pwm.c |    7 +++++++
-> >>>>>>>>     1 files changed, 7 insertions(+), 0 deletions(-)
-> >>>>>>>>
-> >>>>>>>> diff --git a/arch/arm/plat-samsung/pwm.c
-> >>>>>>>> b/arch/arm/plat-samsung/pwm.c
-> >>>>>>>> index f37457c..dc1185d 100644
-> >>>>>>>> --- a/arch/arm/plat-samsung/pwm.c
-> >>>>>>>> +++ b/arch/arm/plat-samsung/pwm.c
-> >>>>>>>> @@ -299,6 +299,9 @@ static int s3c_pwm_probe(struct
-> platform_device
-> >>>>>>>> *pdev)
-> >>>>>>>>     		goto err_clk_tin;
-> >>>>>>>>     	}
-> >>>>>>>>
-> >>>>>>>> +	clk_enable(pwm->clk);
-> >>>>>>>> +	clk_enable(pwm->clk_div);
-> >>>>>>>> +
-> >>>>>>>>     	local_irq_save(flags);
-> >>>>>>>>
-> >>>>>>>>     	tcon =3D __raw_readl(S3C2410_TCON);
-> >>>>>>>> @@ -326,6 +329,8 @@ static int s3c_pwm_probe(struct
-> platform_device
-> >>>>>>>> *pdev)
-> >>>>>>>>     	return 0;
-> >>>>>>>>
-> >>>>>>>>      err_clk_tdiv:
-> >>>>>>>> +	clk_disable(pwm->clk_div);
-> >>>>>>>> +	clk_disable(pwm->clk);
-> >>>>>>>>     	clk_put(pwm->clk_div);
-> >>>>>>>>
-> >>>>>>>>      err_clk_tin:
-> >>>>>>>> @@ -340,6 +345,8 @@ static int __devexit s3c_pwm_remove(stru=
-ct
-> >>>>>>>> platform_device *pdev)
-> >>>>>>>>     {
-> >>>>>>>>     	struct pwm_device *pwm =3D platform_get_drvdata(pdev);
-> >>>>>>>>
-> >>>>>>>> +	clk_disable(pwm->clk_div);
-> >>>>>>>> +	clk_disable(pwm->clk);
-> >>>>>>>>     	clk_put(pwm->clk_div);
-> >>>>>>>>     	clk_put(pwm->clk);
-> >>>>>>>>     	kfree(pwm);
-> >>>>>>>> --
-> >>>>>>>> 1.7.5.4
-> >>>>>>> Well, I wonder when this is needed. I think it should be enab=
-led
-> >>>>>>> during
-> >>>>>>> kernel booting...
-> >>>>>> The exynos4 machine using just timer turns on "timer" clock in=
- the
-> >>>>>> past,
-> >>>>>> but "timer" clock is disable state when boot since MCT is used=
-=2E MCT
-> >>>>>> doesn't control "timer" clock.
-> >>>>>>
-> >>>>>> I think pwm driver should control(enable/disable) using clocks
-> >>>>>> regardless of their parents clock.
-> >>>>>>
-> >>>>> I mean, why that is disabled when kernel boot...
-> >>>>>
-> >>>> Please see arch/arm/mach-exynos4/clock.c
-> >>>> There is "timers' clock in the clk init_clocks_off[].
-> >> One more, Don't assume some clocks are enabled at bootloader. user=
- can
-> >> use any bootloader and any configuration.
-> >>
-> > Kyungmin,
-> > NO! I didn't. Just I thought your bootloader disables the clock and=
- why it is
-> needed.
-> >
-> > Anyway, Joonyoung,
-> > How about following? And it seems enough...
-> > --
-> > diff --git a/arch/arm/plat-samsung/pwm-clock.c b/arch/arm/plat-sams=
-ung/pwm-
-> clock.c
-> > index a35ff3b..37a159b 100644
-> > --- a/arch/arm/plat-samsung/pwm-clock.c
-> > +++ b/arch/arm/plat-samsung/pwm-clock.c
-> > @@ -449,6 +449,8 @@ __init void s3c_pwmclk_init(void)
-> >   		return;
-> >   	}
-> >
-> > +	clk_enable(clk_timers);
-> > +
-> >   	for (clk =3D 0; clk<  ARRAY_SIZE(clk_timer_scaler); clk++)
-> >   		clk_timer_scaler[clk].parent =3D clk_timers;
-> >
->=20
-> No, there is no the reason "timers" clock turns on always.
->=20
-> > --
-> > Or needs separate clk_enable like following?
-> >
-> > diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pw=
-m.c
-> > index f37457c..7a77e36 100644
-> > --- a/arch/arm/plat-samsung/pwm.c
-> > +++ b/arch/arm/plat-samsung/pwm.c
-> > @@ -292,6 +292,8 @@ static int s3c_pwm_probe(struct platform_device=
- *pdev)
-> >   		goto err_alloc;
-> >   	}
-> >
-> > +	clk_enable(pwm->clk);
-> > +
-> >   	pwm->clk_div =3D clk_get(dev, "pwm-tdiv");
-> >   	if (IS_ERR(pwm->clk_div)) {
-> >   		dev_err(dev, "failed to get pwm tdiv clk\n");
-> > @@ -299,6 +301,8 @@ static int s3c_pwm_probe(struct platform_device=
- *pdev)
-> >   		goto err_clk_tin;
-> >   	}
-> >
-> > +	clk_enable(pwm->clk_div);
-> > +
-> >   	local_irq_save(flags);
-> >
-> >   	tcon =3D __raw_readl(S3C2410_TCON);
-> > @@ -326,9 +330,11 @@ static int s3c_pwm_probe(struct platform_devic=
-e *pdev)
-> >   	return 0;
-> >
-> >   err_clk_tdiv:
-> > +	clk_disable(pwm->clk_div);
-> >   	clk_put(pwm->clk_div);
-> >
-> >   err_clk_tin:
-> > +	clk_disable(pwm->clk);
-> >   	clk_put(pwm->clk);
-> >
-> >   err_alloc:
-> > --
->=20
-> I don't care about this.
->=20
-> >
-> > BTW, I think this is not really needed for this merge window becaus=
-e the pwm.c
-> is used for only s3c24xx and as you know, it doesn't matter because o=
-f
-> arch/arm/plat-samsung/time.c. And if required, this can be fixed duri=
-ng -rc.
->=20
-> It's the problem to assume that the related clocks turned on by other
-> and the pwm is used for exynos4 also.
->=20
-OK, I agree, applied.
+Sangwook Lee wrote:
+> 
+> This patch enables Bluetooth support on ORIGEN board.
+> 
+> Signed-off-by: Sangwook <sangwook.lee@linaro.org>
+> ---
+>  arch/arm/mach-exynos4/mach-origen.c |   32
+> ++++++++++++++++++++++++++++++++
+>  1 files changed, 32 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/mach-origen.c
+b/arch/arm/mach-exynos4/mach-
+> origen.c
+> index f80b563..f8c50d7 100644
+> --- a/arch/arm/mach-exynos4/mach-origen.c
+> +++ b/arch/arm/mach-exynos4/mach-origen.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/regulator/machine.h>
+>  #include <linux/mfd/max8997.h>
+>  #include <linux/lcd.h>
+> +#include <linux/rfkill-gpio.h>
+> 
+>  #include <asm/mach/arch.h>
+>  #include <asm/mach-types.h>
+> @@ -232,6 +233,7 @@ static struct regulator_init_data __initdata
+> max8997_ldo9_data = {
+>  		.min_uV		= 2800000,
+>  		.max_uV		= 2800000,
+>  		.apply_uV	= 1,
+> +		.always_on	= 1,
+>  		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  		.state_mem	= {
+>  			.disabled	= 1,
+> @@ -275,6 +277,7 @@ static struct regulator_init_data __initdata
+> max8997_ldo14_data = {
+>  		.min_uV		= 1800000,
+>  		.max_uV		= 1800000,
+>  		.apply_uV	= 1,
+> +		.always_on	= 1,
+>  		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  		.state_mem	= {
+>  			.disabled	= 1,
+> @@ -290,6 +293,7 @@ static struct regulator_init_data __initdata
+> max8997_ldo17_data = {
+>  		.min_uV		= 3300000,
+>  		.max_uV		= 3300000,
+>  		.apply_uV	= 1,
+> +		.always_on	= 1,
+>  		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+>  		.state_mem	= {
+>  			.disabled	= 1,
+> @@ -588,6 +592,21 @@ static struct s3c_fb_platdata origen_lcd_pdata
+__initdata
+> = {
+>  	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
+>  };
+> 
+> +/* Bluetooth rfkill gpio platform data */
+> +struct rfkill_gpio_platform_data origen_bt_pdata = {
+> +	.reset_gpio = EXYNOS4_GPX2(2),
+> +	.shutdown_gpio = -1,
+> +	.type = RFKILL_TYPE_BLUETOOTH,
+> +	.name = "origen-bt",
+> +};
+> +
+> +/* Bluetooth Platform device */
+> +static struct platform_device origen_device_bluetooth = {
+> +	.name = "rfkill_gpio",
+> +	.id = -1,
+> +	.dev.platform_data = &origen_bt_pdata,
+> +};
+> +
+>  static struct platform_device *origen_devices[] __initdata = {
+>  	&s3c_device_hsmmc2,
+>  	&s3c_device_hsmmc0,
+> @@ -615,6 +634,7 @@ static struct platform_device *origen_devices[]
+__initdata =
+> {
+>  	&exynos4_device_pd[PD_MFC],
+>  	&origen_device_gpiokeys,
+>  	&origen_lcd_hv070wsa,
+> +	&origen_device_bluetooth,
+>  };
+> 
+>  /* LCD Backlight data */
+> @@ -628,6 +648,16 @@ static struct platform_pwm_backlight_data
+> origen_bl_data = {
+>  	.pwm_period_ns	= 1000,
+>  };
+> 
+> +static void __init origen_bt_setup(void)
+> +{
+> +	gpio_request(EXYNOS4_GPA0(0), "GPIO BT_UART");
+> +	/* 4 UART Pins configuration */
+> +	s3c_gpio_cfgrange_nopull(EXYNOS4_GPA0(0), 4, S3C_GPIO_SFN(2));
+> +	/* Setup BT Reset, this gpio will be requesed by rfkill-gpio */
+> +	s3c_gpio_cfgpin(EXYNOS4_GPX2(2), S3C_GPIO_OUTPUT);
+> +	s3c_gpio_setpull(EXYNOS4_GPX2(2), S3C_GPIO_PULL_NONE);
+> +}
+> +
+>  static void s5p_tv_setup(void)
+>  {
+>  	/* Direct HPD to HDMI chip */
+> @@ -687,6 +717,8 @@ static void __init origen_machine_init(void)
+>  	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
+> 
+>  	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+> +
+> +	origen_bt_setup();
+>  }
+> 
+>  MACHINE_START(ORIGEN, "ORIGEN")
+> --
+> 1.7.4.1
+
+Applied.
 Thanks.
 
 Best regards,
