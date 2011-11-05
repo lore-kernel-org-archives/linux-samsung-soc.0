@@ -1,60 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 4/5] [CPUFREQ] EXYNOS4210: Add DVS lock feature for other
- driver
-Date: Sat, 05 Nov 2011 10:29:22 +0900
-Message-ID: <02e101cc9b5a$58a593f0$09f0bbd0$%kim@samsung.com>
-References: <005701cc995c$fc66d3a0$f5347ae0$%kim@samsung.com>
- <CAJ0PZbSoN-Zx16Kqh5bSAhV+rvwiZQBfwuGe9waH3HJZOg0mUA@mail.gmail.com>
+Subject: RE: [PATCH 1/5] EXYNOS4210: Remove code about bus on cpufreq
+Date: Sat, 05 Nov 2011 10:31:03 +0900
+Message-ID: <02e201cc9b5a$95421680$bfc64380$%kim@samsung.com>
+References: <005401cc995c$ee9e3b50$cbdab1f0$%kim@samsung.com>
+ <CAJ0PZbSy+wQRb63_sAEWvXzagFUDLJ_bOUuywMDQENg6LzNb7g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65452 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751413Ab1KEB3X (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Nov 2011 21:29:23 -0400
-In-reply-to: <CAJ0PZbSoN-Zx16Kqh5bSAhV+rvwiZQBfwuGe9waH3HJZOg0mUA@mail.gmail.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: <CAJ0PZbSy+wQRb63_sAEWvXzagFUDLJ_bOUuywMDQENg6LzNb7g@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: cpufreq-owner@vger.kernel.org
 To: 'MyungJoo Ham' <myungjoo.ham@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, 'Jongpill Lee' <boyko.lee@samsung.com>, 'SangWook Ju' <sw.ju@samsung.com>, 'Jonghwan Choi' <jhbird.choi@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, 'Jongpill Lee' <boyko.lee@samsung.com>, 'SangWook Ju' <sw.ju@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
 MyungJoo Ham wrote:
-> 
-> On Wed, Nov 2, 2011 at 9:43 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>=20
+> On Wed, Nov 2, 2011 at 9:42 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
 > > From: Jongpill Lee <boyko.lee@samsung.com>
 > >
-> > This patch adds DVS lock feature for other driver and pm/
-> > reboot notifier to enhance stability.
+> > This patch removes code for bus on cpufreq because the code
+> > for bus frequency changing moves to busfreq driver.
+> > So code about bus on cpufreq is not necessary.
 > >
-(snip)
-> 
-Same, following is from Jaecheol Lee.
-
-> Except for the case of PM (suspend/reset), it appears that this
-> feature is something that is meant to be supported by qos
-> (<linux/pm_qos.h>).
-> Couldn't we simply use the QoS feature to support locking frequency
-> above some specific levels? With QoS, I guess the implementation
-> becomes more general and straightforward.
-> Although we will probably need to use "CPU_DMA_LATENCY" for this case,
-> I think it isn't awefully difficult to use DMA-Latency as the metric.
-> 
-Our goal is removal of using this cpufreq lock, but now some device driver
-which is not fully optimized need to use this lock temporary. If there is no
-request of this API from device driver, we will remove this feature or
-support this feature with different manner as you mentioned.
-
-> One concern about this is that we are hereby enforcing all the related
-> device drivers stuck with Exynos4210 only unless others also use
-> "cpufreq_lock_ID" and its friends.
-
-We recommend this feature in only rare instances (performance issue). After
-resolving that problem, the device driver which is using lock should be
-modified with removing lock. Actually, there is no device driver that using
-lock now.
+> > Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+> > Signed-off-by: SangWook Ju <sw.ju@samsung.com>
+> > Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> > =A0drivers/cpufreq/exynos4210-cpufreq.c | =A0174
+> > +---------------------------------
+> > =A01 files changed, 1 insertions(+), 173 deletions(-)
+> >
+>=20
+> Cool!
+>=20
+> Now, it's compatible with the Exynos4210 bus devfreq driver.
+> Are you going to upstream the busfreq in the devfreq framework (at
+> /drivers/devfreq/) or do you want me to submit the Exynos4210 bus
+> devfreq driver that is currently on
+> http://git.infradead.org/users/kmpark/linux-2.6-
+> samsung/shortlog/refs/heads/devfreq
+> (drivers/devfreq/exynos4210_memorybus.c)
+>=20
+> Devfreq is a framework to support DVFS feature for non-CPU devices,
+> which is at 3.2-next tree.
+>=20
+I think, we need to talk about above so would be better to us if we cou=
+ld
+have a meeting.
 
 Thanks.
 
@@ -63,3 +59,4 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
