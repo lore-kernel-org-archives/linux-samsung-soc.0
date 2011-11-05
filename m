@@ -1,64 +1,60 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 5/5] [CPUFREQ] EXYNOS4210: Add support ASV feature
-Date: Sat, 05 Nov 2011 10:25:33 +0900
-Message-ID: <02e001cc9b59$d09ff400$71dfdc00$%kim@samsung.com>
-References: <005801cc995c$fee5dd60$fcb19820$%kim@samsung.com>
- <CAJ0PZbQEHXpRdCkcAwNwtK7AmH=nxG+KjOcw91gwagAvFr_pxA@mail.gmail.com>
+Subject: RE: [PATCH 4/5] [CPUFREQ] EXYNOS4210: Add DVS lock feature for other
+ driver
+Date: Sat, 05 Nov 2011 10:29:22 +0900
+Message-ID: <02e101cc9b5a$58a593f0$09f0bbd0$%kim@samsung.com>
+References: <005701cc995c$fc66d3a0$f5347ae0$%kim@samsung.com>
+ <CAJ0PZbSoN-Zx16Kqh5bSAhV+rvwiZQBfwuGe9waH3HJZOg0mUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:36460 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751413Ab1KEBZf convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:65452 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751413Ab1KEB3X (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 Nov 2011 21:25:35 -0400
-In-reply-to: <CAJ0PZbQEHXpRdCkcAwNwtK7AmH=nxG+KjOcw91gwagAvFr_pxA@mail.gmail.com>
+	Fri, 4 Nov 2011 21:29:23 -0400
+In-reply-to: <CAJ0PZbSoN-Zx16Kqh5bSAhV+rvwiZQBfwuGe9waH3HJZOg0mUA@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'MyungJoo Ham' <myungjoo.ham@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, 'Jaecheol Lee' <jc.lee@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, 'Jongpill Lee' <boyko.lee@samsung.com>, 'SangWook Ju' <sw.ju@samsung.com>, 'Jonghwan Choi' <jhbird.choi@samsung.com>, 'Jaecheol Lee' <jc.lee@samsung.com>
 
 MyungJoo Ham wrote:
->=20
-> Hello,
->=20
-Hi,
-
-I got the comments from Jaecheol Lee but his mail client has some probl=
-em so
-I'm sending instead.
-
-> On Wed, Nov 2, 2011 at 9:43 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> []
-> > +static void __init set_volt_table(void)
-> > +{
-> > + =A0 =A0 =A0 unsigned int tmp, i, asv_group =3D 0;
-> > +
-> > + =A0 =A0 =A0 tmp =3D __raw_readl(S5P_INFORM2);
->=20
-> As I've mentioned in the ASV patch thread, do we really need to use a=
-n
-> INFORM register simply to save the id of supported voltage ranges?
->=20
-> Why aren't we using an extern variable here? For example, "extern int
-> asv_group_id;" and define it at "asv.h" or somewhere else.
->=20
-> At reboot, we are going to init ASV driver and will get the ASV value
-> again; thus, we don't need to use such a preserving register anyway.
-> At suspend/resume, the value in RAM does not disappear and the IPL
-> does not care this value; thus, it is meaningless to use INFORM2 for
-> this value.
->=20
-ASV feature had been implemented in bootloader hence inform register wa=
-s
-used to return the result value to cpufreq driver. If there is no probl=
-em to
-use the inform register why don't you keep this manner.
-
+> 
+> On Wed, Nov 2, 2011 at 9:43 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > From: Jongpill Lee <boyko.lee@samsung.com>
+> >
+> > This patch adds DVS lock feature for other driver and pm/
+> > reboot notifier to enhance stability.
+> >
 (snip)
+> 
+Same, following is from Jaecheol Lee.
+
+> Except for the case of PM (suspend/reset), it appears that this
+> feature is something that is meant to be supported by qos
+> (<linux/pm_qos.h>).
+> Couldn't we simply use the QoS feature to support locking frequency
+> above some specific levels? With QoS, I guess the implementation
+> becomes more general and straightforward.
+> Although we will probably need to use "CPU_DMA_LATENCY" for this case,
+> I think it isn't awefully difficult to use DMA-Latency as the metric.
+> 
+Our goal is removal of using this cpufreq lock, but now some device driver
+which is not fully optimized need to use this lock temporary. If there is no
+request of this API from device driver, we will remove this feature or
+support this feature with different manner as you mentioned.
+
+> One concern about this is that we are hereby enforcing all the related
+> device drivers stuck with Exynos4210 only unless others also use
+> "cpufreq_lock_ID" and its friends.
+
+We recommend this feature in only rare instances (performance issue). After
+resolving that problem, the device driver which is using lock should be
+modified with removing lock. Actually, there is no device driver that using
+lock now.
 
 Thanks.
 
