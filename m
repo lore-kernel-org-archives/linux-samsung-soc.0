@@ -1,105 +1,101 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v2] ARM: pl330: Fix a race condition
-Date: Mon, 7 Nov 2011 16:33:33 +0530
-Message-ID: <CAJuYYwRBjKaLxN0nKE+XZCrEXe5fwmUFKVV-9AkKExpzg_ogtQ@mail.gmail.com>
-References: <4E8C5425.80303@arm.com>
-	<1317892206-3600-1-git-send-email-javi.merino@arm.com>
-	<CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com>
-	<4EB7B79A.2020004@arm.com>
+From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 5/6] mmc: Add OF bindings support for mmc host controller
+ capabilities
+Date: Mon, 7 Nov 2011 19:51:26 +0530
+Message-ID: <CAJuYYwThsY0gwG4D3bNC-VnifggT6Y4f0s3FVHebAXdubTb4Zg@mail.gmail.com>
+References: <1320266163-15292-1-git-send-email-thomas.abraham@linaro.org>
+ <1320266163-15292-6-git-send-email-thomas.abraham@linaro.org>
+ <20111104195717.GA3045@quad.lixom.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:40224 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753588Ab1KGLDd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 Nov 2011 06:03:33 -0500
-Received: by ywf7 with SMTP id 7so5142028ywf.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 07 Nov 2011 03:03:33 -0800 (PST)
-In-Reply-To: <4EB7B79A.2020004@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <20111104195717.GA3045-O5ziIzlqnXUVNXGz7ipsyg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Javi Merino <javi.merino@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, Jassi Brar <jassi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 7 November 2011 16:18, Javi Merino <javi.merino@arm.com> wrote:
-> On 05/11/11 19:05, Thomas Abraham wrote:
->> Hi Javi,
+On 5 November 2011 01:27, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Thu, Nov 03, 2011 at 02:06:02AM +0530, Thomas Abraham wrote:
+>> Device nodes representing sd/mmc controllers in a device tree would incl=
+ude
+>> mmc host controller capabilities. Add support for parsing of mmc host
+>> controller capabilities included in device nodes.
 >>
->> On 6 October 2011 05:10, Javi Merino <javi.merino@arm.com> wrote:
->>> If two requests have been submitted and one of them is running, if =
-you
->>> call pl330_chan_ctrl(ch_id, PL330_OP_START), there's a window of ti=
-me
->>> between the spin_lock_irqsave() and the _state() check in which the
->>> running transaction may finish. =A0In that case, we don't receive t=
-he
->>> interrupt (because they are disabled), but _start() sees that the D=
-MA
->>> is stopped, so it starts it. =A0The problem is that it sends the
->>> transaction that has just finished again, because pl330_update()
->>> hasn't mark it as done yet.
->>>
->>> This patch fixes this race condition by not calling _start() if the
->>> DMA is already executing transactions. =A0When interrupts are reena=
-bled,
->>> pl330_update() will call _start().
->>>
->>> Signed-off-by: Javi Merino <javi.merino@arm.com>
->>> Acked-by: Jassi Brar <jassi.brar@samsung.com>
->>> ---
->>> =A0arch/arm/common/pl330.c | =A0 =A02 +-
->>> =A01 files changed, 1 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/arch/arm/common/pl330.c b/arch/arm/common/pl330.c
->>> index 97912fa..7129cfb 100644
->>> --- a/arch/arm/common/pl330.c
->>> +++ b/arch/arm/common/pl330.c
->>> @@ -1546,7 +1546,7 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_c=
-han_op op)
->>>
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* Start the next */
->>> =A0 =A0 =A0 =A0case PL330_OP_START:
->>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!_start(thrd))
->>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!_thrd_active(thrd) && !_start(th=
-rd))
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ret =3D -EIO;
->>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
+>> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> ---
+>> =A0.../devicetree/bindings/mmc/linux-mmc-host.txt =A0 =A0 | =A0 13 +++++=
++++
+>> =A0drivers/mmc/core/host.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0| =A0 31 ++++++++++++++++++++
+>> =A0include/linux/mmc/host.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 | =A0 =A01 +
+>> =A03 files changed, 45 insertions(+), 0 deletions(-)
+>> =A0create mode 100644 Documentation/devicetree/bindings/mmc/linux-mmc-ho=
+st.txt
 >>
->> On Samsung's Exynos4 platform, while testing audio playback with i2s
->> interface, the above change causes the playback to freeze. The
->> _thrd_active(thrd) call always returns '1' and hence _start(thrd) is
->> not getting called.
+>> diff --git a/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt b/=
+Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
+>> new file mode 100644
+>> index 0000000..714b2b1
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
+>> @@ -0,0 +1,13 @@
+>> +* Linux MMC Host Controller Capabilities
+>> +
+>> +The following bindings can be used in a device node to specify any board
+>> +specific mmc host controller capabilities.
+>> +
+>> +- linux,mmc_cap_4_bit_data - Host can do 4-bit transfers
+>> +- linux,mmc_cap_mmc_highspeed - Host can do MMC high-speed timing
+>> +- linux,mmc_cap_sd_highspeed - Host can do SD high-speed timing
+>> +- linux,mmc_cap_needs_poll - Host needs polling for card detection
+>> +- linux,mmc_cap_8_bit_data - Host can do 8-bit transfer
+>> +- linux,mmc_cap_disable - Host can be disabled and re-enabled to save p=
+ower
+>> +- linux,mmc_cap_nonremovable - Host is connected to nonremovable media
+>> +- linux,mmc_cap_erase - Host allows erase/trim commands
 >
-> If _thrd_active(thrd) returns '1', that means there is an active
-> transfer still running or, if it has finished, you haven't called
-> pl330_update() to acknowledge that. =A0pl330_update() calls _start() =
-as
-> soon as it can.
->
-> drivers/dma/pl330.c registers the irq handler in pl330_probe(), so wh=
-en
-> the transaction finishes, pl330_update() should clear it and call
-> _start(). =A0If there is any outstanding transaction, it should start
-> straight away. If there isn't, it would mark the channel as free, so
-> _thrd_active() should return '0'. =A0If _thrd_active() is still '1', =
-then
-> something has gone wrong in the way.
->
-> Does this shed some light?
+> linux-prefixed properties are a big red flag. The device tree should desc=
+ribe
+> the hardware, not what linux does with the hardware.
 
-Thanks for the detailed explanation. I will check again on the lines
-you have mentioned above. Also, the i2s audio playback on exynos had
-been working prior to this change. So that might imply that
-pl330_update was working as you have mentioned. Anyway, I will check
-again.
+The vendor-prefixes documentation for device tree bindings includes
+'linux' as an option. And I was trying to encode the linux specific
+host controller capabilities using the above bindings.
 
-Thanks,
+>
+> See previous comments about "support-8bit" for encoding exactly the same
+> hardware capability in a linux-agnostic way. What the sdhci driver choose=
+s to
+> do with it is up to the driver, and in some cases it means it will set the
+> capabilities flag.
+>
+> Same goes for the other properties. It should not go in as it is
+> implemented in this patch, it needs to be fixed up.
+
+Ok. I will remove all these linux specific bindings and replace with a
+more generic ones. Bindings will be defined for all the linux defined
+host capabilities. Non-linux platforms can add additional bindings as
+required. A function to parse such properties from a controller device
+node could actually be shared among all the mmc/sd host controller
+drivers in linux. I will redo this patch and submit again.
+
+Thanks Olof for your review and comments.
+
+Regards,
 Thomas.
 
 >
-> Cheers,
-> Javi
 >
+> -Olof
 >
