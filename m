@@ -1,102 +1,77 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH 5/5] [CPUFREQ] EXYNOS4210: Add support ASV feature
-Date: Mon, 7 Nov 2011 13:23:11 +0900
-Message-ID: <CAJ0PZbQ2OLKwOtFA_d+u1jrnZ+aF5xT83OzVYv3w4iUuWTZBiA@mail.gmail.com>
-References: <005801cc995c$fee5dd60$fcb19820$%kim@samsung.com>
-	<CAJ0PZbQEHXpRdCkcAwNwtK7AmH=nxG+KjOcw91gwagAvFr_pxA@mail.gmail.com>
-	<02e001cc9b59$d09ff400$71dfdc00$%kim@samsung.com>
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH v2] ARM: pl330: Fix a race condition
+Date: Mon, 07 Nov 2011 10:48:58 +0000
+Message-ID: <4EB7B79A.2020004@arm.com>
+References: <4E8C5425.80303@arm.com>	<1317892206-3600-1-git-send-email-javi.merino@arm.com> <CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:44380 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751104Ab1KGEXN convert rfc822-to-8bit (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:46555 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753232Ab1KGKtF convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 6 Nov 2011 23:23:13 -0500
-In-Reply-To: <02e001cc9b59$d09ff400$71dfdc00$%kim@samsung.com>
+	Mon, 7 Nov 2011 05:49:05 -0500
+In-Reply-To: <CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, davej@redhat.com, Jaecheol Lee <jc.lee@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, Jassi Brar <jassi.brar@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Sat, Nov 5, 2011 at 10:25 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> MyungJoo Ham wrote:
+On 05/11/11 19:05, Thomas Abraham wrote:
+> Hi Javi,
+> 
+> On 6 October 2011 05:10, Javi Merino <javi.merino@arm.com> wrote:
+>> If two requests have been submitted and one of them is running, if you
+>> call pl330_chan_ctrl(ch_id, PL330_OP_START), there's a window of time
+>> between the spin_lock_irqsave() and the _state() check in which the
+>> running transaction may finish.  In that case, we don't receive the
+>> interrupt (because they are disabled), but _start() sees that the DMA
+>> is stopped, so it starts it.  The problem is that it sends the
+>> transaction that has just finished again, because pl330_update()
+>> hasn't mark it as done yet.
 >>
->> Hello,
+>> This patch fixes this race condition by not calling _start() if the
+>> DMA is already executing transactions.  When interrupts are reenabled,
+>> pl330_update() will call _start().
 >>
-> Hi,
->
-> I got the comments from Jaecheol Lee but his mail client has some pro=
-blem so
-> I'm sending instead.
->
->> On Wed, Nov 2, 2011 at 9:43 PM, Kukjin Kim <kgene.kim@samsung.com> w=
-rote:
->> []
->> > +static void __init set_volt_table(void)
->> > +{
->> > + =A0 =A0 =A0 unsigned int tmp, i, asv_group =3D 0;
->> > +
->> > + =A0 =A0 =A0 tmp =3D __raw_readl(S5P_INFORM2);
+>> Signed-off-by: Javi Merino <javi.merino@arm.com>
+>> Acked-by: Jassi Brar <jassi.brar@samsung.com>
+>> ---
+>>  arch/arm/common/pl330.c |    2 +-
+>>  1 files changed, 1 insertions(+), 1 deletions(-)
 >>
->> As I've mentioned in the ASV patch thread, do we really need to use =
-an
->> INFORM register simply to save the id of supported voltage ranges?
+>> diff --git a/arch/arm/common/pl330.c b/arch/arm/common/pl330.c
+>> index 97912fa..7129cfb 100644
+>> --- a/arch/arm/common/pl330.c
+>> +++ b/arch/arm/common/pl330.c
+>> @@ -1546,7 +1546,7 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op op)
 >>
->> Why aren't we using an extern variable here? For example, "extern in=
-t
->> asv_group_id;" and define it at "asv.h" or somewhere else.
->>
->> At reboot, we are going to init ASV driver and will get the ASV valu=
-e
->> again; thus, we don't need to use such a preserving register anyway.
->> At suspend/resume, the value in RAM does not disappear and the IPL
->> does not care this value; thus, it is meaningless to use INFORM2 for
->> this value.
->>
-> ASV feature had been implemented in bootloader hence inform register =
-was
-> used to return the result value to cpufreq driver. If there is no pro=
-blem to
-> use the inform register why don't you keep this manner.
+>>                /* Start the next */
+>>        case PL330_OP_START:
+>> -               if (!_start(thrd))
+>> +               if (!_thrd_active(thrd) && !_start(thrd))
+>>                        ret = -EIO;
+>>                break;
+> 
+> On Samsung's Exynos4 platform, while testing audio playback with i2s
+> interface, the above change causes the playback to freeze. The
+> _thrd_active(thrd) call always returns '1' and hence _start(thrd) is
+> not getting called.
 
-The concern is that
-1. INFORM2 is a hard-to-read special register, not a reader-friendly
-variable. A variable such as "extern int exynos4_asv_value" is much
-easier for readers.
-2. We are not using such a special-purpose bootloader and we can't
-sure which bootloader is being used often.
-3. Other device drivers will start using this ASV value (such as
-/drivers/devfreq/exynos4210-busfreq.c). Having such machine/bootloader
-specific register addresses in a device driver really doesn't look
-good. Also, we will be able to share the variable name for other SoCs
-depending on how we name it; Exynos4xxx or more.
+If _thrd_active(thrd) returns '1', that means there is an active
+transfer still running or, if it has finished, you haven't called
+pl330_update() to acknowledge that.  pl330_update() calls _start() as
+soon as it can.
 
+drivers/dma/pl330.c registers the irq handler in pl330_probe(), so when
+the transaction finishes, pl330_update() should clear it and call
+_start().  If there is any outstanding transaction, it should start
+straight away. If there isn't, it would mark the channel as free, so
+_thrd_active() should return '0'.  If _thrd_active() is still '1', then
+something has gone wrong in the way.
 
-Thank you.
+Does this shed some light?
 
-
-
-Cheers!
-MyungJoo
-
->
-> (snip)
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->
-
-
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+Cheers,
+Javi
