@@ -1,160 +1,172 @@
-From: Chanwoo Choi <cwchoi00@gmail.com>
-Subject: Re: [PATCH 1/3 v3] ARM: EXYNOS4: Support for generic I/O
- power domains on EXYNOS4210/4212
-Date: Tue, 8 Nov 2011 22:19:59 +0900
-Message-ID: <CAGTfZH0xOh=EDRhb3gxOZhV-KQZNY_-o=miBOEne_S5-YsQ_Vg@mail.gmail.com>
-References: <4EA690EF.4000703@samsung.com>
-	<013301cc99cd$8d5a6a00$a80f3e00$%kim@samsung.com>
-	<4EB26BE2.2060508@samsung.com>
-Reply-To: cw00.choi@samsung.com
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 5/6] mmc: Add OF bindings support for mmc host controller capabilities
+Date: Tue, 8 Nov 2011 20:49:14 +0530
+Message-ID: <CAJuYYwRPoNQ3WAGHf_F8wLckyiuCqGDuE_TvHtiTMvH5O5m41A@mail.gmail.com>
+References: <1320266163-15292-1-git-send-email-thomas.abraham@linaro.org>
+	<1320266163-15292-6-git-send-email-thomas.abraham@linaro.org>
+	<20111104195717.GA3045@quad.lixom.net>
+	<CAJuYYwThsY0gwG4D3bNC-VnifggT6Y4f0s3FVHebAXdubTb4Zg@mail.gmail.com>
+	<20111107211518.GB28491@ponder.secretlab.ca>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============8235363546724667571=="
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <4EB26BE2.2060508@samsung.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Sylwester Nawrocki <snjw23@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20111107211518.GB28491@ponder.secretlab.ca>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Olof Johansson <olof@lixom.net>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
---===============8235363546724667571==
-Content-Type: multipart/alternative; boundary=f46d041555f0398aea04b1390783
+Hi Grant,
 
---f46d041555f0398aea04b1390783
-Content-Type: text/plain; charset=ISO-8859-1
-
-Hi Kukjin Kim,
-
-Please reply about Sylwester Nawrocki and me.
-
-2011/11/3 Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-> Hi Kgene,
+On 8 November 2011 02:45, Grant Likely <grant.likely@secretlab.ca> wrot=
+e:
+> On Mon, Nov 07, 2011 at 07:51:26PM +0530, Thomas Abraham wrote:
+>> On 5 November 2011 01:27, Olof Johansson <olof@lixom.net> wrote:
+>> > On Thu, Nov 03, 2011 at 02:06:02AM +0530, Thomas Abraham wrote:
+>> >> Device nodes representing sd/mmc controllers in a device tree wou=
+ld include
+>> >> mmc host controller capabilities. Add support for parsing of mmc =
+host
+>> >> controller capabilities included in device nodes.
+>> >>
+>> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> >> ---
+>> >> =A0.../devicetree/bindings/mmc/linux-mmc-host.txt =A0 =A0 | =A0 1=
+3 ++++++++
+>> >> =A0drivers/mmc/core/host.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0| =A0 31 ++++++++++++++++++++
+>> >> =A0include/linux/mmc/host.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 | =A0 =A01 +
+>> >> =A03 files changed, 45 insertions(+), 0 deletions(-)
+>> >> =A0create mode 100644 Documentation/devicetree/bindings/mmc/linux=
+-mmc-host.txt
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/mmc/linux-mmc-host=
+=2Etxt b/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
+>> >> new file mode 100644
+>> >> index 0000000..714b2b1
+>> >> --- /dev/null
+>> >> +++ b/Documentation/devicetree/bindings/mmc/linux-mmc-host.txt
+>> >> @@ -0,0 +1,13 @@
+>> >> +* Linux MMC Host Controller Capabilities
+>> >> +
+>> >> +The following bindings can be used in a device node to specify a=
+ny board
+>> >> +specific mmc host controller capabilities.
+>> >> +
+>> >> +- linux,mmc_cap_4_bit_data - Host can do 4-bit transfers
+>> >> +- linux,mmc_cap_mmc_highspeed - Host can do MMC high-speed timin=
+g
+>> >> +- linux,mmc_cap_sd_highspeed - Host can do SD high-speed timing
+>> >> +- linux,mmc_cap_needs_poll - Host needs polling for card detecti=
+on
+>> >> +- linux,mmc_cap_8_bit_data - Host can do 8-bit transfer
+>> >> +- linux,mmc_cap_disable - Host can be disabled and re-enabled to=
+ save power
+>> >> +- linux,mmc_cap_nonremovable - Host is connected to nonremovable=
+ media
+>> >> +- linux,mmc_cap_erase - Host allows erase/trim commands
+>> >
+>> > linux-prefixed properties are a big red flag. The device tree shou=
+ld describe
+>> > the hardware, not what linux does with the hardware.
+>>
+>> The vendor-prefixes documentation for device tree bindings includes
+>> 'linux' as an option. And I was trying to encode the linux specific
+>> host controller capabilities using the above bindings.
+>>
+>> >
+>> > See previous comments about "support-8bit" for encoding exactly th=
+e same
+>> > hardware capability in a linux-agnostic way. What the sdhci driver=
+ chooses to
+>> > do with it is up to the driver, and in some cases it means it will=
+ set the
+>> > capabilities flag.
+>> >
+>> > Same goes for the other properties. It should not go in as it is
+>> > implemented in this patch, it needs to be fixed up.
+>>
+>> Ok. I will remove all these linux specific bindings and replace with=
+ a
+>> more generic ones. Bindings will be defined for all the linux define=
+d
+>> host capabilities. Non-linux platforms can add additional bindings a=
+s
+>> required. A function to parse such properties from a controller devi=
+ce
+>> node could actually be shared among all the mmc/sd host controller
+>> drivers in linux. I will redo this patch and submit again.
+>>
+>> Thanks Olof for your review and comments.
 >
-> On 11/03/2011 03:09 AM, Kukjin Kim wrote:
-> > As I said, I don't think we should control/gate the clocks with
-> regarding power domain.
+> This patch appears to be conceptually wrong. =A0Many of these propert=
+ies
+> are merely static capabilities of each individual device which the
+> driver should already have knowledge of, and be setting the capabilit=
+y
+> bits appropriately on its own.
 >
-> As far as I know there is a plan to let the drivers override
-> start/stop_device callbacks,
-> moreover the clock control can be disabled globally by not implementing
-> start/stop_device
-> callbacks or per device by not adding clkdev entities to the device clock
-> list at runtime
-> PM core. So IMHO, there is/going to be enough flexibility.
+> So, you /don't/ want to simply create a 1:1 list between the current
+> linux capability bits (which are subject to change) and the device
+> tree properties (which ideally must not be changed after they are
+> defined).
+
+okay.
+
 >
-> > It should be controlled by each regarding device driver and in addition,
-> as I know,
-> > to handle block of clock is not recommended on EXYNOS4 now.
+> What you need to do is figure out which properties are required to
+> describe the hardware about things that the driver wouldn't already
+> know. =A0For example, 'polling' is something the driver would already
+> know because it is an aspect of the specific device, but
+> 'nonremovable' is a physical characteristic of some boards. =A0'disab=
+le'
+> and the speed timings are also something I would expect the driver to
+> know about and what to set itself.
+
+The host capability 'polling' seems to be more of board dependent
+property than controller property. This property changes the way the
+host stack detects the presence of the card. Some boards might have
+broken card detection logic. So 'polling' cannot be generalized as a
+controller property. Each host controller instance in a SoC would have
+to be told if its card detection is broken. This is done currently
+using the platform data.
+
+Similarly, the host property 'disable' depends on the board. The
+controller would be capable of handling the 'disable' feature but on
+some boards, disabling to save power during idle times might not work
+since the device connected to that host might have issues by doing so.
+On a SoC with multiple host controllers, some controllers would want
+to use 'disable' feature and others might not. So, 'disable' would
+have to be board specific.
+
 >
-> What do you mean by this ? I couldn't find such information in any
-> documentation.
-> Shouldn't "clock gate block" registers be touched by boot loader and the
-> kernel?
-> Our boot loaders disable all clocks, and if the global clock gate is not
-> enabled
-> by the kernel there is no chance any multimedia device will work.
+> So, only define properties for things that the device-specific driver
+> cannot know for itself; or are the sort of parameters that a
+> multi-device driver is already using for differentiation (ie. appears
+> in pdata instead of directly set by the driver). =A0You should be abl=
+e
+> to justify the need for each property that gets defined.
+
+Okay. I agree with your viewpoint. I will try to redo this again.
+Unfortunately, host controller drivers have used platform data to feed
+host controller capabilities directly from platform code to the mmc
+stack. And more and more of such changes are still being made. I will
+attempt another version of this patch based on yours, Olof's and Rob's
+comments.
+
+Thanks Grant for your comments.
+
+Regards,
+Thomas.
+
 >
-> Should the global clock block gate be always enabled then ? I'm afraid it
-> is not
-> optimal form power management POV.
+> g.
 >
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
-To Kukjin Kim,
-
-> It should be controlled by each regarding device driver and in addition,
-as I know,
-> to handle block of clock is not recommended on EXYNOS4 now.
-
-As you said, should we separately control power and clock of power domain?
-or Have to turn on the clock of power domain always?
-I think that it is to happen unnecessary power consumption.
-If we have to maintain on state of power domain clock, please let me know
-guide about this.
-
-Also,
-For example, fimg2d and framebuffer use LCD0 power domain as parent device.I
-If fimg2d and framebuffer is disabled state due to not using their,
-I think that we should turn off the clock of LCD0 power domain to reduce
-power leakage.
-Which each regarding device driver control the clock of power domain?
-
-I will expect for your reply.
-
-Best regards,
-Chanwoo Choi
-
---f46d041555f0398aea04b1390783
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-Hi Kukjin Kim,<div><br></div><div>Please reply about=A0Sylwester Nawrocki a=
-nd me.<br><br><div class=3D"gmail_quote">2011/11/3 Sylwester Nawrocki <span=
- dir=3D"ltr">&lt;<a href=3D"mailto:s.nawrocki@samsung.com">s.nawrocki@samsu=
-ng.com</a>&gt;</span><br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex;">Hi Kgene,<br>
-<div class=3D"im"><br>
-On 11/03/2011 03:09 AM, Kukjin Kim wrote:<br>
-&gt; As I said, I don&#39;t think we should control/gate the clocks with re=
-garding power domain.<br>
-<br>
-</div>As far as I know there is a plan to let the drivers override start/st=
-op_device callbacks,<br>
-moreover the clock control can be disabled globally by not implementing sta=
-rt/stop_device<br>
-callbacks or per device by not adding clkdev entities to the device clock l=
-ist at runtime<br>
-PM core. So IMHO, there is/going to be enough flexibility.<br>
-<div class=3D"im"><br>
-&gt; It should be controlled by each regarding device driver and in additio=
-n, as I know,<br>
-&gt; to handle block of clock is not recommended on EXYNOS4 now.<br>
-<br>
-</div>What do you mean by this ? I couldn&#39;t find such information in an=
-y documentation.<br>
-Shouldn&#39;t &quot;clock gate block&quot; registers be touched by boot loa=
-der and the kernel?<br>
-Our boot loaders disable all clocks, and if the global clock gate is not en=
-abled<br>
-by the kernel there is no chance any multimedia device will work.<br>
-<br>
-Should the global clock block gate be always enabled then ? I&#39;m afraid =
-it is not<br>
-optimal form power management POV.<br>
-<font color=3D"#888888"><br></font></blockquote><div><br></div><div>To Kukj=
-in Kim,</div><div><br></div>&gt; It should be controlled by each regarding =
-device driver and in addition, as I know,<br><div>&gt; to handle block of c=
-lock is not recommended on EXYNOS4 now.</div>
-<div><br></div><div>As you said, should we separately control power and clo=
-ck of power domain?</div><div>or Have to turn on the clock of power domain =
-always?</div><div>I think that it is to happen unnecessary power consumptio=
-n.</div>
-<div>If we have to maintain=A0on state of power domain clock, please let me=
- know guide about this.</div><div><br></div><div>Also,=A0</div><div>For exa=
-mple, fimg2d and framebuffer use LCD0 power domain as parent device.I</div>
-<div>If fimg2d and framebuffer is disabled state due to not using their,</d=
-iv><div>I think that we should turn off the clock of LCD0 power domain to r=
-educe power leakage.</div><div>Which each regarding device driver control t=
-he clock of power domain?</div>
-<div><br></div><div>I will expect for your reply.</div><div><br></div><div>=
-Best regards,</div><div>Chanwoo Choi</div><div><br></div><div>=A0</div></di=
-v></div>
-
---f46d041555f0398aea04b1390783--
-
---===============8235363546724667571==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============8235363546724667571==--
