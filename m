@@ -1,118 +1,160 @@
-From: Sahitya Tummala <stummala@codeaurora.org>
-Subject: Re: [PATCH V9] mmc: core: Add Power Off Notify Feature eMMC 4.5
-Date: Tue, 08 Nov 2011 15:18:01 +0530
-Message-ID: <4EB8FAD1.7010606@codeaurora.org>
-References: <1318914301-30339-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Chanwoo Choi <cwchoi00@gmail.com>
+Subject: Re: [PATCH 1/3 v3] ARM: EXYNOS4: Support for generic I/O
+ power domains on EXYNOS4210/4212
+Date: Tue, 8 Nov 2011 22:19:59 +0900
+Message-ID: <CAGTfZH0xOh=EDRhb3gxOZhV-KQZNY_-o=miBOEne_S5-YsQ_Vg@mail.gmail.com>
+References: <4EA690EF.4000703@samsung.com>
+	<013301cc99cd$8d5a6a00$a80f3e00$%kim@samsung.com>
+	<4EB26BE2.2060508@samsung.com>
+Reply-To: cw00.choi@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wolverine02.qualcomm.com ([199.106.114.251]:26431 "EHLO
-	wolverine02.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751238Ab1KHJsG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Nov 2011 04:48:06 -0500
-In-Reply-To: <1318914301-30339-1-git-send-email-girish.shivananjappa@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============8235363546724667571=="
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <4EB26BE2.2060508@samsung.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Sylwester Nawrocki <snjw23@gmail.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>
 
-Hi Girish,
+--===============8235363546724667571==
+Content-Type: multipart/alternative; boundary=f46d041555f0398aea04b1390783
 
-On 10/18/2011 10:35 AM, Girish K S wrote:
-> This patch adds the support for power off notify feature, available in
-> eMMC 4.5 devices. If the the host has support for this feature, then the
-> mmc core will notify it to the device by setting the POWER_OFF_NOTIFICATION
-> byte in the extended csd register with a value 1(POWER_ON).
->
-> For suspend mode short timeout is used, whereas for the normal poweroff long
-> timeout is used.
->
-> cc: Chris Ball<cjb@laptop.org>
-> Signed-off-by: Girish K S<girish.shivananjappa@linaro.org>
-> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
-> ---
-> Changes in V9:
-> 	Removed the macros not related with the PowerOff notify feature.
-> 	The previous patch with commit id
-> 	bd3151f6c55c553bed2c0df72792841457b75bb5 should be deleted before
-> 	applying this patch.
-> Changes in V8:
-> 	Updated with review comments of Chris Ball and rebased to
-> 	chris-mmc/mmc-next branch.
-> Changes in V7:
-> 	Rebased to chris-mmc/mmc-next branch. merged to patches to single
-> 	patch.
-> Changes in V6:
-> 	Fixes checkpatch errors. The patches are generated after rebasing to
-> 	 chris's mmc-next branch.
-> Changes in V5:
-> 	This patch version fixes the problem with power off notify function,
-> 	 when called for the first time and card is not yet initialised.
-> Changes in V4:
-> 	Updated with review comments of Jeon
-> Changes in V2:
-> 	Adds poweroff notification handling in suspend/normal.
->
->   drivers/mmc/core/core.c  |   34 ++++++++++++++++++++++++++++++++++
->   drivers/mmc/core/mmc.c   |   23 +++++++++++++++++++++--
->   drivers/mmc/host/sdhci.c |    9 +++++++++
->   include/linux/mmc/card.h |    6 ++++++
->   include/linux/mmc/host.h |    5 +++++
->   include/linux/mmc/mmc.h  |    6 ++++++
->   6 files changed, 81 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 61d7730..b1eca96 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -1212,11 +1212,43 @@ static void mmc_power_up(struct mmc_host *host)
->
->   void mmc_power_off(struct mmc_host *host)
->   {
-> +	struct mmc_card *card;
-> +	unsigned int notify_type;
-> +	unsigned int timeout;
-> +	int err;
-> +
->   	mmc_host_clk_hold(host);
->
-> +	card = host->card;
->   	host->ios.clock = 0;
->   	host->ios.vdd = 0;
->
-> +	if (card&&  mmc_card_mmc(card)&&
-> +	    card->poweroff_notify_state == MMC_POWERED_ON) {
-> +
-> +		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
-> +			notify_type = EXT_CSD_POWER_OFF_SHORT;
-> +			timeout = card->ext_csd.generic_cmd6_time;
-> +			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
-> +		} else {
-> +			notify_type = EXT_CSD_POWER_OFF_LONG;
-> +			timeout = card->ext_csd.power_off_longtime;
-> +			card->poweroff_notify_state = MMC_POWEROFF_LONG;
-> +		}
-> +
-> +		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-> +				 EXT_CSD_POWER_OFF_NOTIFICATION,
-> +				 notify_type, timeout);
+--f46d041555f0398aea04b1390783
+Content-Type: text/plain; charset=ISO-8859-1
 
-During suspend, the device can already be in sleep state (CMD5) before 
-mmc_power_off()
-is called from mmc_suspend_host(). As per eMMC specification, when the 
-device is in sleep state,
-it can only respond to RESET commands (CMD0 with argument of either 
-0x00000000 or
-0xF0F0F0F0 or H/W reset) and awake command (CMD5).  So, how does this 
-switch going
-to happen (CMD6) if it is in sleep state?
+Hi Kukjin Kim,
 
-Thanks,
-Sahitya.
+Please reply about Sylwester Nawrocki and me.
 
---
-Sent by a consultant of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
-Forum.
+2011/11/3 Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+> Hi Kgene,
+>
+> On 11/03/2011 03:09 AM, Kukjin Kim wrote:
+> > As I said, I don't think we should control/gate the clocks with
+> regarding power domain.
+>
+> As far as I know there is a plan to let the drivers override
+> start/stop_device callbacks,
+> moreover the clock control can be disabled globally by not implementing
+> start/stop_device
+> callbacks or per device by not adding clkdev entities to the device clock
+> list at runtime
+> PM core. So IMHO, there is/going to be enough flexibility.
+>
+> > It should be controlled by each regarding device driver and in addition,
+> as I know,
+> > to handle block of clock is not recommended on EXYNOS4 now.
+>
+> What do you mean by this ? I couldn't find such information in any
+> documentation.
+> Shouldn't "clock gate block" registers be touched by boot loader and the
+> kernel?
+> Our boot loaders disable all clocks, and if the global clock gate is not
+> enabled
+> by the kernel there is no chance any multimedia device will work.
+>
+> Should the global clock block gate be always enabled then ? I'm afraid it
+> is not
+> optimal form power management POV.
+>
+>
+To Kukjin Kim,
+
+> It should be controlled by each regarding device driver and in addition,
+as I know,
+> to handle block of clock is not recommended on EXYNOS4 now.
+
+As you said, should we separately control power and clock of power domain?
+or Have to turn on the clock of power domain always?
+I think that it is to happen unnecessary power consumption.
+If we have to maintain on state of power domain clock, please let me know
+guide about this.
+
+Also,
+For example, fimg2d and framebuffer use LCD0 power domain as parent device.I
+If fimg2d and framebuffer is disabled state due to not using their,
+I think that we should turn off the clock of LCD0 power domain to reduce
+power leakage.
+Which each regarding device driver control the clock of power domain?
+
+I will expect for your reply.
+
+Best regards,
+Chanwoo Choi
+
+--f46d041555f0398aea04b1390783
+Content-Type: text/html; charset=ISO-8859-1
+Content-Transfer-Encoding: quoted-printable
+
+Hi Kukjin Kim,<div><br></div><div>Please reply about=A0Sylwester Nawrocki a=
+nd me.<br><br><div class=3D"gmail_quote">2011/11/3 Sylwester Nawrocki <span=
+ dir=3D"ltr">&lt;<a href=3D"mailto:s.nawrocki@samsung.com">s.nawrocki@samsu=
+ng.com</a>&gt;</span><br>
+<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
+x #ccc solid;padding-left:1ex;">Hi Kgene,<br>
+<div class=3D"im"><br>
+On 11/03/2011 03:09 AM, Kukjin Kim wrote:<br>
+&gt; As I said, I don&#39;t think we should control/gate the clocks with re=
+garding power domain.<br>
+<br>
+</div>As far as I know there is a plan to let the drivers override start/st=
+op_device callbacks,<br>
+moreover the clock control can be disabled globally by not implementing sta=
+rt/stop_device<br>
+callbacks or per device by not adding clkdev entities to the device clock l=
+ist at runtime<br>
+PM core. So IMHO, there is/going to be enough flexibility.<br>
+<div class=3D"im"><br>
+&gt; It should be controlled by each regarding device driver and in additio=
+n, as I know,<br>
+&gt; to handle block of clock is not recommended on EXYNOS4 now.<br>
+<br>
+</div>What do you mean by this ? I couldn&#39;t find such information in an=
+y documentation.<br>
+Shouldn&#39;t &quot;clock gate block&quot; registers be touched by boot loa=
+der and the kernel?<br>
+Our boot loaders disable all clocks, and if the global clock gate is not en=
+abled<br>
+by the kernel there is no chance any multimedia device will work.<br>
+<br>
+Should the global clock block gate be always enabled then ? I&#39;m afraid =
+it is not<br>
+optimal form power management POV.<br>
+<font color=3D"#888888"><br></font></blockquote><div><br></div><div>To Kukj=
+in Kim,</div><div><br></div>&gt; It should be controlled by each regarding =
+device driver and in addition, as I know,<br><div>&gt; to handle block of c=
+lock is not recommended on EXYNOS4 now.</div>
+<div><br></div><div>As you said, should we separately control power and clo=
+ck of power domain?</div><div>or Have to turn on the clock of power domain =
+always?</div><div>I think that it is to happen unnecessary power consumptio=
+n.</div>
+<div>If we have to maintain=A0on state of power domain clock, please let me=
+ know guide about this.</div><div><br></div><div>Also,=A0</div><div>For exa=
+mple, fimg2d and framebuffer use LCD0 power domain as parent device.I</div>
+<div>If fimg2d and framebuffer is disabled state due to not using their,</d=
+iv><div>I think that we should turn off the clock of LCD0 power domain to r=
+educe power leakage.</div><div>Which each regarding device driver control t=
+he clock of power domain?</div>
+<div><br></div><div>I will expect for your reply.</div><div><br></div><div>=
+Best regards,</div><div>Chanwoo Choi</div><div><br></div><div>=A0</div></di=
+v></div>
+
+--f46d041555f0398aea04b1390783--
+
+--===============8235363546724667571==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============8235363546724667571==--
