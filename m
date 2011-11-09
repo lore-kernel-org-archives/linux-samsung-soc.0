@@ -1,44 +1,39 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] ARM: S5PV210: Set 1000ns as PWM backlight period on SMDKV210
-Date: Wed,  9 Nov 2011 11:10:36 +0900
-Message-ID: <1320804636-19950-1-git-send-email-jg1.han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S5P: Fix export.h inclusion
+Date: Wed,  9 Nov 2011 14:55:49 +0900
+Message-ID: <1320818149-29106-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:54178 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:56038 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751141Ab1KICar (ORCPT
+	with ESMTP id S1752827Ab1KIGPs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Nov 2011 21:30:47 -0500
+	Wed, 9 Nov 2011 01:15:48 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Jingoo Han <jg1.han@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-The SMDK board uses LT3591 as backlight LED driver of LTE480WV LCD.
-According to the LT3591 datasheet, the switching frequency should
-be 1MHz. So, PWM period is calculated by following formula:
+Commit 32aaeffbd4a7 ("Merge branch 'modsplit-Oct31_2011'...") breaks
+build like following and this fixes it to add inclusion <linux/export.h>.
 
-PWM period = 1/switching frequency
-	   = 1/1MHz
-	   = 1000ns
+arch/arm/plat-s5p/sysmmu.c:302: error: 'THIS_MODULE' undeclared here (not in a function)
 
-Thus, the PWM backlight period should be 1000ns.
-
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/mach-smdkv210.c |    1 +
+ arch/arm/plat-s5p/sysmmu.c |    1 +
  1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index a9106c3..8662ef6 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -273,6 +273,7 @@ static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
+diff --git a/arch/arm/plat-s5p/sysmmu.c b/arch/arm/plat-s5p/sysmmu.c
+index e1cbc72..c8bec9c 100644
+--- a/arch/arm/plat-s5p/sysmmu.c
++++ b/arch/arm/plat-s5p/sysmmu.c
+@@ -11,6 +11,7 @@
+ #include <linux/io.h>
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
++#include <linux/export.h>
  
- static struct platform_pwm_backlight_data smdkv210_bl_data = {
- 	.pwm_id = 3,
-+	.pwm_period_ns = 1000,
- };
+ #include <asm/pgtable.h>
  
- static void __init smdkv210_map_io(void)
 -- 
 1.7.1
