@@ -1,91 +1,103 @@
-From: Jamie Iles <jamie@jamieiles.com>
-Subject: Re: [PATCHv4 07/13] ARM: s3c64xx: convert to MULTI_IRQ_HANDLER
-Date: Wed, 9 Nov 2011 14:55:37 +0000
-Message-ID: <20111109145537.GF4253@totoro>
-References: <1320369010-23428-1-git-send-email-jamie@jamieiles.com>
- <1320369010-23428-8-git-send-email-jamie@jamieiles.com>
- <CAJuYYwRPoFDUhtcVLT_rj4c9whJWVXyQ7tcaK3O_G3X9SYf-cw@mail.gmail.com>
- <20111109115406.GB4253@totoro>
- <4EBA9339.5010407@gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: Pet Peaves about Platform code, and arch_reset
+Date: Wed, 9 Nov 2011 13:46:52 -0800
+Message-ID: <20111109214652.GM31337@atomide.com>
+References: <20111106135250.GC15294@n2100.arm.linux.org.uk>
+ <20111108004550.GH31337@atomide.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:53550 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751399Ab1KIOzo (ORCPT
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:16375 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751617Ab1KIVq6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 Nov 2011 09:55:44 -0500
-Received: by wwh12 with SMTP id 12so793820wwh.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2011 06:55:43 -0800 (PST)
+	Wed, 9 Nov 2011 16:46:58 -0500
 Content-Disposition: inline
-In-Reply-To: <4EBA9339.5010407@gmail.com>
+In-Reply-To: <20111108004550.GH31337@atomide.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Jamie Iles <jamie@jamieiles.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, viresh.kumar@st.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, linus.walleij@stericsson.com, devicetree-discuss@lists.ozlabs.org, rmallon@gmail.com, hsweeten@visionengravers.com, rajeev-dlh.kumar@st.com, ben-linux@fluff.org, rubini@unipv.it, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 09, 2011 at 08:50:33AM -0600, Rob Herring wrote:
-> On 11/09/2011 05:54 AM, Jamie Iles wrote:
-> > On Wed, Nov 09, 2011 at 04:55:06PM +0530, Thomas Abraham wrote:
-> >> Hi Jamie,
-> >>
-> >> On 4 November 2011 06:40, Jamie Iles <jamie@jamieiles.com> wrote:
-> >>> Now that there is a generic IRQ handler for multiple VIC devices use it
-> >>> for s3c64xx to help building multi platform kernels.
-> >>>
-> >>> Cc: Ben Dooks <ben-linux@fluff.org>
-> >>> Signed-off-by: Jamie Iles <jamie@jamieiles.com>
-> >>> ---
-> >>>  arch/arm/Kconfig                                 |    1 +
-> >>>  arch/arm/mach-s3c64xx/include/mach/entry-macro.S |    7 ++++---
-> >>>  arch/arm/mach-s3c64xx/mach-anw6410.c             |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-crag6410.c            |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-hmt.c                 |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-mini6410.c            |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-ncp.c                 |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-real6410.c            |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-smartq5.c             |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-smartq7.c             |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-smdk6400.c            |    2 ++
-> >>>  arch/arm/mach-s3c64xx/mach-smdk6410.c            |    2 ++
-> >>>  12 files changed, 25 insertions(+), 3 deletions(-)
-> >>>
-> >>
-> >> I have tested this patch series on smdk6410 board (s3c64xx) using the
-> >> following repositorty and branch
-> >>
-> >> https://github.com/jamieiles/linux-2.6-ji.git  branch: vic-dt
-> >>
-> >> There is a crash while booting. Am I using the right tree and branch?
-> >> The following is the boot log. Is there any other config option to be
-> >> enabled?
+* Tony Lindgren <tony@atomide.com> [111107 16:11]:
+> * Russell King - ARM Linux <linux@arm.linux.org.uk> [111106 05:18]:
+> > Here's a list of my peaves about current platform code - which are
+> > causing me great issue when trying to clean up the arch_reset() stuff:
 > > 
-> > Hmm, could you please try with the patch below applied?
+> > 1. Lack of trailing ',' on structure initializers
+> >    This makes it much harder to add additional initializers at the end
+> >    of existing initializers, and increases the risks of conflicts being
+> >    caused due to more lines having to be modified.
 > > 
-> > Rob, I'm not sure if this is the best fix.  The alternatives I can think 
-> > of would be to always export irq_domain_simple_ops even if 
-> > !CONFIG_OF_IRQ but not set .dt_translate or provide a generic 
-> > irq_domain_null_ops.
+> > (This won't work directly because the tabs have been converted to space.
+> > The empty-looking [] contain a space plus a tab.)
+> > $ grep '[   ][      ]*\.[[:alnum:]_][[:alnum:]_]*[  ]*=[    ]*[[:alnum:]_{][[:alnum:]_|()}]*[^,]$' arch/arm -r|wc -l
+> > 768
+> > $ grep '[   ][      ]*\.[[:alnum:]_][[:alnum:]_]*[  ]*=[    ]*[[:alnum:]_{][[:alnum:]_|()}]*[^,]$' arch/arm/*omap* -r|wc -l
+> > 325
 > > 
-> > Jamie
+> >    Note that this is _far_ too big a problem - and trivial - to fix in
+> >    a set of silly churn generating patches - it's a problem to be fixed
+> >    as a part of _other_ changes to the files.
+> > 
+> >    But most importantly _stop_ introducing versions of this problem.
 > 
-> There is a simple fix:
-> 
-> @@ -74,7 +76,7 @@ struct irq_domain {
->  static inline unsigned int irq_domain_to_irq(struct irq_domain *d,
->                                              unsigned long hwirq)
->  {
-> -       if (d->ops->to_irq)
-> +       if (d->ops && d->ops->to_irq)
->                 return d->ops->to_irq(d, hwirq);
->         if (WARN_ON(hwirq < d->hwirq_base))
->                 return 0;
-> 
-> I'll prepare a patch and send to tglx.
+> Sounds like we need a spatch for this issue?
 
-I did wonder about that, but that means we do it differently for 
-ops->dt_translate (though that really should be there if it's required).
+I guess spatch would need some patching to deal with this.. I tried
+with something like:
 
-It works for me though!
+@r@
+identifier I, s, fld;
+position p0,p;
+expression E;
+@@
 
-Jamie
+struct I s =@p0 {
+...
+-       .fld@p = E,
++       .fld = E,
+...
+};
+
+That catches them, but adds an extra comma in the beginning :)
+
+--- a/ams-delta-fiq.c 2011-11-08 18:03:20.110707512 -0800
++++ b/ams-delta-fiq.c 2011-11-08 18:04:36.094948038 -0800
+@@ -25,7 +25,7 @@
+ #include <mach/ams-delta-fiq.h>
+ 
+ static struct fiq_handler fh = {
+-	.name	= "ams-delta-fiq"
++	,.name = "ams-delta-fiq",
+ };
+ 
+ /*
+
+And it also messes up the formatting for other structs..
+
+Anyways, I think I got most of these fixed for all ARM subarchitectures
+in a pile of 72 patches, the stats are: 
+
+486 files changed, 2296 insertions(+), 2296 deletions(-)
+
+This is something people can then use as a base to start chipping away at
+the problem. I'm thinking it may be possible to use this as a base for
+search and replacement type work and then hopefully git mergetool will
+pick the relevant changes when rebasing a working branch to the mainline.
+
+I can also post the patches here if people want, but sounds like we're
+not going to merge them as they are, but instead will slowly fix the
+issue in other related patches?
+
+I've pushed the patches into a git branch at:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap formatting:
+
+Web interface at:
+
+http://git.kernel.org/?p=linux/kernel/git/tmlind/linux-omap.git;a=shortlog;h=refs/heads/formatting
+
+Regards,
+
+Tony
