@@ -1,43 +1,44 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: S3C6410: Use device names for both I2C clocks
-Date: Tue, 8 Nov 2011 16:36:00 +0000
-Message-ID: <20111108163600.GF5632@opensource.wolfsonmicro.com>
-References: <1320768593-21010-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <CAJuYYwTM4M-dt6mMgOH2TLEbBx7CgmiNVaB2VqYN-YMLYHqaZg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] ARM: S5PV210: Set 1000ns as PWM backlight period on SMDKV210
+Date: Wed,  9 Nov 2011 11:10:36 +0900
+Message-ID: <1320804636-19950-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41166 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754242Ab1KHQgD (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:54178 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751141Ab1KICar (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 Nov 2011 11:36:03 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwTM4M-dt6mMgOH2TLEbBx7CgmiNVaB2VqYN-YMLYHqaZg@mail.gmail.com>
+	Tue, 8 Nov 2011 21:30:47 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: Jingoo Han <jg1.han@samsung.com>
 
-On Tue, Nov 08, 2011 at 09:57:56PM +0530, Thomas Abraham wrote:
-> On 8 November 2011 21:39, Mark Brown
+The SMDK board uses LT3591 as backlight LED driver of LTE480WV LCD.
+According to the LT3591 datasheet, the switching frequency should
+be 1MHz. So, PWM period is calculated by following formula:
 
-> > +#ifdef CONFIG_S3C_DEV_I2C1
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "s3c2440-=
-i2c.0",
-> > +#else
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "s3c2440-=
-i2c",
-> > +#endif
+PWM period = 1/switching frequency
+	   = 1/1MHz
+	   = 1000ns
 
-> The #ifdef around the id of the s3c_device_i2c0 structure in
-> arch/arm/plat-samsung/devs.c file can be removed and id can be fixed
-> as 0. And devname "s3c2440-i2c.0" can be assigned above without the
-> #ifdef. Will there be any issues in using .id as 0 even if there is
-> only one instance of i2c?
+Thus, the PWM backlight period should be 1000ns.
 
-That would be much nicer from my point of view but it's much more
-invasive as this device is used by a whole raft of other SoCs, not all
-of which have more than one I2C controller and I don't really feel like
-changing the idiom over the entire Samsung SoC family right now.
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/mach-s5pv210/mach-smdkv210.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+index a9106c3..8662ef6 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkv210.c
++++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+@@ -273,6 +273,7 @@ static struct samsung_bl_gpio_info smdkv210_bl_gpio_info = {
+ 
+ static struct platform_pwm_backlight_data smdkv210_bl_data = {
+ 	.pwm_id = 3,
++	.pwm_period_ns = 1000,
+ };
+ 
+ static void __init smdkv210_map_io(void)
+-- 
+1.7.1
