@@ -1,67 +1,50 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS: Add ASV feature for Exynos4 series
-Date: Thu, 10 Nov 2011 14:57:34 +0900
-Message-ID: <CAJ0PZbR9DEOud8j90n0M4UHQ=HA35NSzO0MHUzAxsOz4ViVCKA@mail.gmail.com>
-References: <1319677938-25732-1-git-send-email-boyko.lee@samsung.com>
-	<1319677938-25732-2-git-send-email-boyko.lee@samsung.com>
-	<4EAAF8EF.5010201@gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: s3c2440 / s3c2416 broken
+Date: Thu, 10 Nov 2011 08:59:01 +0100
+Message-ID: <201111100859.02647.heiko@sntech.de>
+References: <CAC=G6syKMJk+L+-_k+T37qHKzfpNz_TrYi-HTaufczLxJKEtkQ@mail.gmail.com> <CAC=G6swbDHZJ7fqu9LoYRiri6bg+M+VDZnG_-=ZfP9r=6YtVeg@mail.gmail.com> <CAJuYYwTQ-eCN1pTkgrthhUEdk5gr9oGGcO6MCKCWQAovsQVqcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:61190 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753074Ab1KJF5f convert rfc822-to-8bit (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:50771 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754905Ab1KJH7K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Nov 2011 00:57:35 -0500
-Received: by bke11 with SMTP id 11so1980016bke.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2011 21:57:34 -0800 (PST)
-In-Reply-To: <4EAAF8EF.5010201@gmail.com>
+	Thu, 10 Nov 2011 02:59:10 -0500
+In-Reply-To: <CAJuYYwTQ-eCN1pTkgrthhUEdk5gr9oGGcO6MCKCWQAovsQVqcg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <snjw23@gmail.com>
-Cc: Jongpill Lee <boyko.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, Paul Schilling <paul.s.schilling@gmail.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
 
-On Sat, Oct 29, 2011 at 3:48 AM, Sylwester Nawrocki <snjw23@gmail.com> =
+Hi Paul,
+
+Am Donnerstag, 10. November 2011, 01:14:59 schrieb Thomas Abraham:
+> On 10 November 2011 05:00, Paul Schilling <paul.s.schilling@gmail.com> 
 wrote:
->
-> You're putting whole driver under arch/arm/, I'm wondering whether th=
-e functionality
-> it provides could be handled by some generic framework, like cpufreq =
-or devfreq.
-> How this driver is different from cpufreq drivers ?
+> > Boot past init slow - stalled when using jffs2 also.
+> > 
+> > On Wed, Nov 9, 2011 at 4:12 PM, Paul Schilling
+> > 
+> > <paul.s.schilling@gmail.com> wrote:
+> >> Latest kernel 3.2.0-rc1 appears to break the following processors
+> >> s3c2440 and s3c2416
+> >> 
+> >> both appear to stall when init is executed on NFS.  Also I  lost HSMMC
+> >> on the s3c2416.
+> 
+> Could you post a boot log of the kernel on the s3c2440 and s3c2416 boards?
 
-I think there would be futher usage with ASV if IEM and proper PMICs
-are attaches; however, for now, ASV guides proper vddarm and vddint
-voltages for each freuquency.
+Also, is your out-of-tree kernel code available somewhere? [1]
 
-Both drivers in cpufreq(vddarm and arm core freq) and devfreq(vddint
-and memory/bus freq.. and GPU or MMC later?) should use the result
-value of ASV because they both alter voltages according to the ASV
-value.
-
-Thus, if this is going to be located in drivers/, it'd better be in
-elsewhere (drivers/misc? drivers/hwmon? ..???) and capable of
-providing values to other device drivers, at least to cpufreq and
-devfreq drivers.
+As my S3C2416 based platform didn't show any problems and has working hsmmc 
+with 3.2-rc1 it would be cool to be able to compare both and see if we differ 
+somehow.
 
 
-Cheers!
-MyungJoo
-
->
-> --
-> Thanks,
-> Sylwester
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
+Heiko
 
 
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+[1] Mine's at https://gitorious.org/oyo-hack/kernel/commits/topic/board/sg060
