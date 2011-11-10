@@ -1,579 +1,1629 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: s3c2440 / s3c2416 broken
-Date: Thu, 10 Nov 2011 21:54:13 +0530
-Message-ID: <CAJuYYwTriz5yhCCLxs+s4cJ-tqP3s8PE0fV3VhGvPYHvC3Bmvg@mail.gmail.com>
-References: <CAC=G6syKMJk+L+-_k+T37qHKzfpNz_TrYi-HTaufczLxJKEtkQ@mail.gmail.com>
-	<CAC=G6swbDHZJ7fqu9LoYRiri6bg+M+VDZnG_-=ZfP9r=6YtVeg@mail.gmail.com>
-	<CAJuYYwTQ-eCN1pTkgrthhUEdk5gr9oGGcO6MCKCWQAovsQVqcg@mail.gmail.com>
-	<201111100859.02647.heiko@sntech.de>
-	<CAC=G6szTvMLTPqzoVJ0LUe7xPV1gJmz4icBSvC868MJNY7B-Uw@mail.gmail.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: [PATCH] ARM: OMAP: Introduce local common.h files
+Date: Thu, 10 Nov 2011 12:17:19 -0800
+Message-ID: <20111110201719.GW31337@atomide.com>
+References: <20111106135250.GC15294@n2100.arm.linux.org.uk>
+ <20111108004550.GH31337@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:44834 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753170Ab1KJQYS convert rfc822-to-8bit (ORCPT
+Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:37395 "EHLO
+	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756531Ab1KJURa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Nov 2011 11:24:18 -0500
-Received: by ggnb2 with SMTP id b2so3143657ggn.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2011 08:24:18 -0800 (PST)
-In-Reply-To: <CAC=G6szTvMLTPqzoVJ0LUe7xPV1gJmz4icBSvC868MJNY7B-Uw@mail.gmail.com>
+	Thu, 10 Nov 2011 15:17:30 -0500
+Content-Disposition: inline
+In-Reply-To: <20111108004550.GH31337@atomide.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Paul Schilling <paul.s.schilling@gmail.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-Hi Paul,
+As suggested by Russell King - ARM Linux <linux@arm.linux.org.uk>,
+there's no need to keep local prototypes in non-local headers.
 
-On 10 November 2011 21:27, Paul Schilling <paul.s.schilling@gmail.com> =
-wrote:
-> Here is my boot log including some u-boot stuff. =A0The trace in my b=
-oot
-> log is concerning a
-> still broken GPIO bank M access that appears broken.
+Add mach-omap1/common.h and mach-omap2/common.h and move the
+local prototypes there from plat/common.h and mach/omap4-common.h.
 
-Thanks for the log. But I could find out the cause of this issue. I
-will check again tomorrow with linux-3.2.0-rc1 on smdk2416. Any luck
-when using ramdisk or any clue with git bisect?
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 
-Thanks,
-Thomas.
-
->
-> Thanks,
-> Paul Schilling
->
-> dm9000 i/o: 0x20000300, id: 0x90000a46
->
-> DM9000: running in 16 bit mode
->
-> MAC: 12:23:34:88:99:00
->
-> BOOTP broadcast 1
->
-> BOOTP broadcast 2
->
-> BOOTP broadcast 3
->
-> DHCP client bound to address 10.5.16.68
->
-> TFTP from server 10.5.16.63; our IP address is 10.5.16.68
->
-> Filename 'schilpa/uImage-dev.bin'.
->
-> Load address: 0xc0008000
->
-> Loading: * ##########################################################=
-#######
->
-> =A0 =A0 =A0 =A0 #####################################################=
-############
->
-> =A0 =A0 =A0 =A0 #####################################################=
-############
->
-> =A0 =A0 =A0 =A0 #####################################################=
-############
->
-> =A0 =A0 =A0 =A0 #####################################################=
-############
->
-> =A0 =A0 =A0 =A0 #####################################################=
-############
->
-> =A0 =A0 =A0 =A0 #####################################################=
-############
->
-> =A0 =A0 =A0 =A0 ##################################
->
-> done
->
-> Bytes transferred =3D 2501760 (0x262c80)
->
-> get_format
->
-> -------- 1 --------
->
-> ## Booting kernel from Legacy Image at c0008000 ...
->
-> =A0 Image Name: =A0 Linux-3.2.0-rc1+
->
-> =A0 Created: =A0 =A0 =A02011-11-09 =A023:23:05 UTC
->
-> =A0 Image Type: =A0 ARM Linux Kernel Image (uncompressed)
->
-> =A0 Data Size: =A0 =A02501696 Bytes =3D =A02.4 MB
->
-> =A0 Load Address: 30008000
->
-> =A0 Entry Point: =A030008000
->
-> =A0 Verifying Checksum ... OK
->
-> get_format
->
-> -------- 1 --------
->
-> =A0 Loading Kernel Image ... OK
->
-> OK
->
->
->
-> Starting kernel ...
->
->
->
-> Uncompressing Linux... done, booting the kernel.
->
-> Linux version 3.2.0-rc1+ (####) (gcc version 4.3.3 (GCC) ) #53 PREEMP=
-T
-> Wed Nov 9 17:23:00 CST 2011
->
-> CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=3D00053177
->
-> CPU: VIVT data cache, VIVT instruction cache
->
-> Machine: CONDOR2416
->
-> Memory policy: ECC disabled, Data cache writeback
->
-> CPU S3C2416/S3C2450 (id 0x32450003)
->
-> S3C24XX Clocks, Copyright 2004 Simtec Electronics
->
-> CPU: MPLL on 800.000 MHz, cpu 400.000 MHz, mem 133.333 MHz, pclk 66.6=
-66 MHz
->
-> CPU: EPLL on 96.000 MHz, usb-bus 48.000 MHz
->
-> On node 0 totalpages: 32768
->
-> free_area_init_node: node 0, pgdat c050955c, node_mem_map c053e000
->
-> =A0Normal zone: 384 pages used for memmap
->
-> =A0Normal zone: 0 pages reserved
->
-> =A0Normal zone: 32384 pages, LIFO batch:7
->
-> pcpu-alloc: s0 r0 d32768 u32768 alloc=3D1*32768
->
-> pcpu-alloc: [0] 0
->
-> Built 1 zonelists in Zone order, mobility grouping on. =A0Total pages=
-: 32384
->
-> Kernel command line: console=3DttySAC0,115200 loglevel=3D8
-> s3cfb=3Ddev:0,depth:16,xres:480,yres:272,vslen:60,hslen:17,left:41,ri=
-ght:68,upper:26,lower:6,pixclock:0
-> root=3D/dev/mtdblock4 rw rootfstype=3Djffs2 ethaddr=3D12:23:34:88:99:=
-00
->
-> PID hash table entries: 512 (order: -1, 2048 bytes)
->
-> Dentry cache hash table entries: 16384 (order: 4, 65536 bytes)
->
-> Inode-cache hash table entries: 8192 (order: 3, 32768 bytes)
->
-> Memory: 64MB 64MB =3D 128MB total
->
-> Memory: 124544k/124544k available, 6528k reserved, 0K highmem
->
-> Virtual kernel memory layout:
->
-> =A0 =A0vector =A0: 0xffff0000 - 0xffff1000 =A0 ( =A0 4 kB)
->
-> =A0 =A0fixmap =A0: 0xfff00000 - 0xfffe0000 =A0 ( 896 kB)
->
-> =A0 =A0vmalloc : 0xcc800000 - 0xf6000000 =A0 ( 664 MB)
->
-> =A0 =A0lowmem =A0: 0xc0000000 - 0xcc000000 =A0 ( 192 MB)
->
-> =A0 =A0modules : 0xbf000000 - 0xc0000000 =A0 ( =A016 MB)
->
-> =A0 =A0 =A0.text : 0xc0008000 - 0xc04992b8 =A0 (4677 kB)
->
-> =A0 =A0 =A0.init : 0xc049a000 - 0xc04dd000 =A0 ( 268 kB)
->
-> =A0 =A0 =A0.data : 0xc04de000 - 0xc0509c00 =A0 ( 175 kB)
->
-> =A0 =A0 =A0 .bss : 0xc0509c24 - 0xc053d764 =A0 ( 207 kB)
->
-> SLUB: Genslabs=3D13, HWalign=3D32, Order=3D0-3, MinObjects=3D0, CPUs=3D=
-1, Nodes=3D1
->
-> NR_IRQS:99
->
-> irq: clearing subpending status 00000003
->
-> irq: clearing subpending status 00000002
->
-> timer tcon=3D00500000, tcnt 2b66, tcfg 00000200,00000000, usec 000017=
-0a
->
-> Console: colour dummy device 80x30
->
-> Calibrating delay loop... 197.88 BogoMIPS (lpj=3D98944)
->
-> pid_max: default: 32768 minimum: 301
->
-> Mount-cache hash table entries: 512
->
-> CPU: Testing write buffer coherency: ok
->
-> pinctrl core: initialized pinctrl subsystem
->
-> NET: Registered protocol family 16
->
-> ------------[ cut here ]------------
->
-> WARNING: at arch/arm/mach-s3c2416/mach-condor2416.c:875
-> condor2416_machine_init+0xbc/0x700()
->
-> Modules linked in:
->
-> [<c000de08>] (unwind_backtrace+0x0/0xec) from [<c001f6e0>]
-> (warn_slowpath_common+0x48/0x60)
->
-> [<c001f6e0>] (warn_slowpath_common+0x48/0x60) from [<c001f714>]
-> (warn_slowpath_null+0x1c/0x24)
->
-> [<c001f714>] (warn_slowpath_null+0x1c/0x24) from [<c049ea9c>]
-> (condor2416_machine_init+0xbc/0x700)
->
-> [<c049ea9c>] (condor2416_machine_init+0xbc/0x700) from [<c049bd64>]
-> (customize_machine+0x20/0x30)
->
-> [<c049bd64>] (customize_machine+0x20/0x30) from [<c00087c0>]
-> (do_one_initcall+0xa4/0x16c)
->
-> [<c00087c0>] (do_one_initcall+0xa4/0x16c) from [<c049a21c>]
-> (kernel_init+0x7c/0x11c)
->
-> [<c049a21c>] (kernel_init+0x7c/0x11c) from [<c0009d94>]
-> (kernel_thread_exit+0x0/0x8)
->
-> ---[ end trace 1b75b31a2719ed1c ]---
->
-> s3c_fb_setup: option dev:0
->
-> s3c_fb_setup: option depth:16
->
-> s3c_fb_setup: option xres:480
->
-> s3c_fb_setup: option yres:272
->
-> s3c_fb_setup: option vslen:60
->
-> s3c_fb_setup: option hslen:17
->
-> s3c_fb_setup: option left:41
->
-> s3c_fb_setup: option right:68
->
-> s3c_fb_setup: option upper:26
->
-> s3c_fb_setup: option lower:6
->
-> s3c_fb_setup: option pixclock:0
->
-> Condor2416: =A0Start Set DM9K
->
-> S3C Power Management, Copyright 2004 Simtec Electronics
->
-> S3C2416: Initializing architecture
->
-> S3C2416: IRQ Support
->
-> S3C24XX DMA Driver, Copyright 2003-2006 Simtec Electronics
->
-> DMA channel 0 at cc804000, irq 88
->
-> DMA channel 1 at cc804100, irq 89
->
-> DMA channel 2 at cc804200, irq 90
->
-> DMA channel 3 at cc804300, irq 91
->
-> DMA channel 4 at cc804400, irq 92
->
-> DMA channel 5 at cc804500, irq 93
->
-> s3c24xx-pwm s3c24xx-pwm.0: tin at 33333333, tdiv at 33333333, tin=3Dd=
-ivclk, base 0
->
-> bio: create slab <bio-0> at 0
->
-> usbcore: registered new interface driver usbfs
->
-> usbcore: registered new interface driver hub
->
-> usbcore: registered new device driver usb
->
-> s3c-i2c s3c2410-i2c: slave address 0x10
->
-> s3c-i2c s3c2410-i2c: bus frequency set to 65 KHz
->
-> s3c-i2c s3c2410-i2c: i2c-0: S3C I2C adapter
->
-> Advanced Linux Sound Architecture Driver Version 1.0.24.
->
-> NET: Registered protocol family 2
->
-> IP route cache hash table entries: 1024 (order: 0, 4096 bytes)
->
-> TCP established hash table entries: 4096 (order: 3, 32768 bytes)
->
-> TCP bind hash table entries: 4096 (order: 2, 16384 bytes)
->
-> TCP: Hash tables configured (established 4096 bind 4096)
->
-> TCP reno registered
->
-> UDP hash table entries: 256 (order: 0, 4096 bytes)
->
-> UDP-Lite hash table entries: 256 (order: 0, 4096 bytes)
->
-> NET: Registered protocol family 1
->
-> RPC: Registered named UNIX socket transport module.
->
-> RPC: Registered udp transport module.
->
-> RPC: Registered tcp transport module.
->
-> RPC: Registered tcp NFSv4.1 backchannel transport module.
->
-> s3c-adc s3c24xx-adc: attached adc driver
->
-> VFS: Disk quotas dquot_6.5.2
->
-> Dquot-cache hash table entries: 1024 (order 0, 4096 bytes)
->
-> JFFS2 version 2.2. (NAND) (SUMMARY) =A0=A9 2001-2006 Red Hat, Inc.
->
-> msgmni has been set to 243
->
-> io scheduler noop registered
->
-> io scheduler deadline registered (default)
->
-> io scheduler cfq registered
->
-> Console: switching to colour frame buffer device 60x34
->
-> s3c-fb s3c-fb: window 0: fb
->
-> s3c2440-uart s3c2440-uart.0: port TX GPIO (-1)
->
-> s3c2440-uart s3c2440-uart.0: port TX GPIO (-1)
->
-> s3c2440-uart.0: ttySAC0 at MMIO 0x50000000 (irq =3D 70) is a S3C2440
->
-> console [ttySAC0] enabled
->
-> s3c2440-uart s3c2440-uart.1: port TX GPIO (13)
->
-> s3c2440-uart s3c2440-uart.1: port TX GPIO (12)
->
-> s3c2440-uart s3c2440-uart.1: Enable Hi Res Timer
->
-> s3c2440-uart s3c2440-uart.1: Port (1) 485 Enabled
->
-> s3c2440-uart.1: ttySAC1 at MMIO 0x50004000 (irq =3D 73) is a S3C2440
->
-> s3c2440-uart s3c2440-uart.1: Initialize TX(1) GPIO
->
-> s3c2440-uart s3c2440-uart.1: Initialize RX(1) GPIO
->
-> s3c2440-uart s3c2440-uart.2: port TX GPIO (42)
->
-> s3c2440-uart s3c2440-uart.2: port TX GPIO (41)
->
-> s3c2440-uart s3c2440-uart.2: Enable Hi Res Timer
->
-> s3c2440-uart s3c2440-uart.2: Port (2) 485 Enabled
->
-> s3c2440-uart.2: ttySAC2 at MMIO 0x50008000 (irq =3D 76) is a S3C2440
->
-> s3c2440-uart s3c2440-uart.2: Initialize TX(2) GPIO
->
-> s3c2440-uart s3c2440-uart.2: Initialize RX(2) GPIO
->
-> s3c2440-uart s3c2440-uart.3: port TX GPIO (-1)
->
-> s3c2440-uart s3c2440-uart.3: port TX GPIO (-1)
->
-> s3c2440-uart.3: ttySAC3 at MMIO 0x5000c000 (irq =3D 94) is a S3C2440
->
-> brd: module loaded
->
-> at24 0-0050: 512 byte 24c04 EEPROM, writable, 16 bytes/write
->
-> mtdoops: mtd device (mtddev=3Dname/number) must be supplied
->
-> S3C24XX NAND Driver, (c) 2004 Simtec Electronics
->
-> s3c24xx-nand s3c2412-nand: Tacls=3D3, 22ns Twrph0=3D8 60ns, Twrph1=3D=
-3 22ns
->
-> s3c24xx-nand s3c2412-nand: System booted from NAND
->
-> s3c24xx-nand s3c2412-nand: NAND soft ECC
->
-> NAND device: Manufacturer ID: 0xec, Chip ID: 0xda (Samsung NAND 256Mi=
-B
-> 3,3V 8-bit)
->
-> Scanning device for bad blocks
->
-> Bad eraseblock 0 at 0x000000000000
->
-> Bad eraseblock 1 at 0x000000020000
->
-> Bad eraseblock 864 at 0x000006c00000
->
-> Bad eraseblock 1304 at 0x00000a300000
->
-> Bad eraseblock 1336 at 0x00000a700000
->
-> Creating 5 MTD partitions on "NAND":
->
-> 0x000000000000-0x000000040000 : "u-boot"
->
-> 0x000000040000-0x000000060000 : "u-boot-env"
->
-> 0x000000060000-0x000000560000 : "kernel"
->
-> 0x000000560000-0x000000660000 : "log"
->
-> 0x000000660000-0x000010000000 : "root"
->
-> dm9000 Ethernet Driver, V1.31
->
-> eth0: dm9000a at cc85e300,cc860308 IRQ 53 MAC: 12:23:34:88:99:00 (pla=
-tform data)
->
-> ohci_hcd: USB 1.1 'Open' Host Controller (OHCI) Driver
->
-> s3c2410-ohci s3c2410-ohci: S3C24XX OHCI
->
-> s3c2410-ohci s3c2410-ohci: new USB bus registered, assigned bus numbe=
-r 1
->
-> s3c2410-ohci s3c2410-ohci: irq 42, io mem 0x49000000
->
-> hub 1-0:1.0: USB hub found
->
-> hub 1-0:1.0: 2 ports detected
->
-> usbcore: registered new interface driver libusual
->
-> mousedev: PS/2 mouse device common for all mice
->
-> input: matrix-keypad as /devices/platform/matrix-keypad/input/input0
->
-> S3C24XX RTC, (c) 2004,2006 Simtec Electronics
->
-> s3c-rtc s3c2410-rtc: rtc disabled, re-enabling
->
-> s3c-rtc s3c2410-rtc: rtc core: registered s3c as rtc0
->
-> i2c /dev entries driver
->
-> S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics
->
-> s3c2410-wdt s3c2410-wdt: watchdog inactive, reset disabled, irq enabl=
-ed
->
-> cpuidle: using governor ladder
->
-> sdhci: Secure Digital Host Controller Interface driver
->
-> sdhci: Copyright(c) Pierre Ossman
->
-> s3c-sdhci s3c-sdhci.1: clock source 0: hsmmc (133333333 Hz)
->
-> s3c-sdhci s3c-sdhci.1: clock source 1: hsmmc (133333333 Hz)
->
-> s3c-sdhci s3c-sdhci.1: clock source 2: hsmmc-if (96000000 Hz)
->
-> Registered led device: mmc0::
->
-> mmc0: SDHCI controller on samsung-hsmmc [s3c-sdhci.1] using ADMA
->
-> sdhci-pltfm: SDHCI platform and OF driver helper
->
-> Registered led device: led1
->
-> usbcore: registered new interface driver usbhid
->
-> usbhid: USB HID core driver
->
-> samsung_UDA134X SoC Audio driver
->
-> UDA134X SoC Audio Codec
->
-> asoc: uda134x-hifi <-> samsung-i2s.0 mapping ok
->
-> ALSA device list:
->
-> =A0#0: SAMSUNG_UDA134X
->
-> TCP cubic registered
->
-> NET: Registered protocol family 17
->
-> Registering the dns_resolver key type
->
-> s3c-rtc s3c2410-rtc: setting system clock to 2011-11-04 19:30:44 UTC
-> (1320435044)
->
-> usb 1-1: new full-speed USB device number 2 using s3c2410-ohci
->
-> VFS: Mounted root (jffs2 filesystem) on device 31:4.
->
-> Freeing init memory: 268K
->
-> On Thu, Nov 10, 2011 at 1:59 AM, Heiko St=FCbner <heiko@sntech.de> wr=
-ote:
->> Hi Paul,
->>
->> Am Donnerstag, 10. November 2011, 01:14:59 schrieb Thomas Abraham:
->>> On 10 November 2011 05:00, Paul Schilling <paul.s.schilling@gmail.c=
-om>
->> wrote:
->>> > Boot past init slow - stalled when using jffs2 also.
->>> >
->>> > On Wed, Nov 9, 2011 at 4:12 PM, Paul Schilling
->>> >
->>> > <paul.s.schilling@gmail.com> wrote:
->>> >> Latest kernel 3.2.0-rc1 appears to break the following processor=
-s
->>> >> s3c2440 and s3c2416
->>> >>
->>> >> both appear to stall when init is executed on NFS. =A0Also I =A0=
-lost HSMMC
->>> >> on the s3c2416.
->>>
->>> Could you post a boot log of the kernel on the s3c2440 and s3c2416 =
-boards?
->>
->> Also, is your out-of-tree kernel code available somewhere? [1]
->>
->> As my S3C2416 based platform didn't show any problems and has workin=
-g hsmmc
->> with 3.2-rc1 it would be cool to be able to compare both and see if =
-we differ
->> somehow.
->>
->>
->> Heiko
->>
->>
->> [1] Mine's at https://gitorious.org/oyo-hack/kernel/commits/topic/bo=
-ard/sg060
->>
->
+diff --git a/arch/arm/mach-omap1/board-ams-delta.c b/arch/arm/mach-omap1/board-ams-delta.c
+index 51bae31..1b37400 100644
+---
+Here's a patch that fixes the locality issues for MACHINE_START/END
+functions at least.
+--- a/arch/arm/mach-omap1/board-ams-delta.c
++++ b/arch/arm/mach-omap1/board-ams-delta.c
+@@ -35,7 +35,7 @@
+ #include <plat/mux.h>
+ #include <plat/usb.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <mach/camera.h>
+ 
+ #include <mach/ams-delta-fiq.h>
+diff --git a/arch/arm/mach-omap1/board-fsample.c b/arch/arm/mach-omap1/board-fsample.c
+index 2317827..b9c4c0f 100644
+--- a/arch/arm/mach-omap1/board-fsample.c
++++ b/arch/arm/mach-omap1/board-fsample.c
+@@ -32,7 +32,7 @@
+ #include <plat/flash.h>
+ #include <plat/fpga.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ 
+ /* fsample is pretty close to p2-sample */
+diff --git a/arch/arm/mach-omap1/board-generic.c b/arch/arm/mach-omap1/board-generic.c
+index dc5b75d..7f41d7a 100644
+--- a/arch/arm/mach-omap1/board-generic.c
++++ b/arch/arm/mach-omap1/board-generic.c
+@@ -25,7 +25,7 @@
+ #include <plat/mux.h>
+ #include <plat/usb.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ /* assume no Mini-AB port */
+ 
+diff --git a/arch/arm/mach-omap1/board-h2.c b/arch/arm/mach-omap1/board-h2.c
+index b334b14..7933b97 100644
+--- a/arch/arm/mach-omap1/board-h2.c
++++ b/arch/arm/mach-omap1/board-h2.c
+@@ -43,7 +43,7 @@
+ #include <plat/irda.h>
+ #include <plat/usb.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/flash.h>
+ 
+ #include "board-h2.h"
+diff --git a/arch/arm/mach-omap1/board-h3.c b/arch/arm/mach-omap1/board-h3.c
+index 74ebe72..04be2f8 100644
+--- a/arch/arm/mach-omap1/board-h3.c
++++ b/arch/arm/mach-omap1/board-h3.c
+@@ -45,7 +45,7 @@
+ #include <plat/usb.h>
+ #include <plat/keypad.h>
+ #include <plat/dma.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/flash.h>
+ 
+ #include "board-h3.h"
+diff --git a/arch/arm/mach-omap1/board-htcherald.c b/arch/arm/mach-omap1/board-htcherald.c
+index 3e91baa..46fcfeb 100644
+--- a/arch/arm/mach-omap1/board-htcherald.c
++++ b/arch/arm/mach-omap1/board-htcherald.c
+@@ -41,7 +41,7 @@
+ #include <asm/mach/arch.h>
+ 
+ #include <plat/omap7xx.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ #include <plat/keypad.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap1/board-innovator.c b/arch/arm/mach-omap1/board-innovator.c
+index 273153d..f99d11d 100644
+--- a/arch/arm/mach-omap1/board-innovator.c
++++ b/arch/arm/mach-omap1/board-innovator.c
+@@ -37,7 +37,7 @@
+ #include <plat/tc.h>
+ #include <plat/usb.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/mmc.h>
+ 
+ /* At OMAP1610 Innovator the Ethernet is directly connected to CS1 */
+diff --git a/arch/arm/mach-omap1/board-nokia770.c b/arch/arm/mach-omap1/board-nokia770.c
+index 6798b84..c643423 100644
+--- a/arch/arm/mach-omap1/board-nokia770.c
++++ b/arch/arm/mach-omap1/board-nokia770.c
+@@ -30,7 +30,7 @@
+ #include <plat/usb.h>
+ #include <plat/board.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/hwa742.h>
+ #include <plat/lcd_mipid.h>
+ #include <plat/mmc.h>
+diff --git a/arch/arm/mach-omap1/board-osk.c b/arch/arm/mach-omap1/board-osk.c
+index c385927..a409dfc 100644
+--- a/arch/arm/mach-omap1/board-osk.c
++++ b/arch/arm/mach-omap1/board-osk.c
+@@ -51,7 +51,7 @@
+ #include <plat/usb.h>
+ #include <plat/mux.h>
+ #include <plat/tc.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ /* At OMAP5912 OSK the Ethernet is directly connected to CS1 */
+ #define OMAP_OSK_ETHR_START		0x04800300
+diff --git a/arch/arm/mach-omap1/board-palmte.c b/arch/arm/mach-omap1/board-palmte.c
+index f9c44cb..105292d 100644
+--- a/arch/arm/mach-omap1/board-palmte.c
++++ b/arch/arm/mach-omap1/board-palmte.c
+@@ -41,7 +41,7 @@
+ #include <plat/board.h>
+ #include <plat/irda.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #define PALMTE_USBDETECT_GPIO	0
+ #define PALMTE_USB_OR_DC_GPIO	1
+diff --git a/arch/arm/mach-omap1/board-palmtt.c b/arch/arm/mach-omap1/board-palmtt.c
+index 11a9853..387a900 100644
+--- a/arch/arm/mach-omap1/board-palmtt.c
++++ b/arch/arm/mach-omap1/board-palmtt.c
+@@ -39,7 +39,7 @@
+ #include <plat/board.h>
+ #include <plat/irda.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include <linux/spi/spi.h>
+ #include <linux/spi/ads7846.h>
+diff --git a/arch/arm/mach-omap1/board-palmz71.c b/arch/arm/mach-omap1/board-palmz71.c
+index 4206157..df6d15e 100644
+--- a/arch/arm/mach-omap1/board-palmz71.c
++++ b/arch/arm/mach-omap1/board-palmz71.c
+@@ -41,7 +41,7 @@
+ #include <plat/board.h>
+ #include <plat/irda.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include <linux/spi/spi.h>
+ #include <linux/spi/ads7846.h>
+diff --git a/arch/arm/mach-omap1/board-perseus2.c b/arch/arm/mach-omap1/board-perseus2.c
+index 203ae07..57ecd7e 100644
+--- a/arch/arm/mach-omap1/board-perseus2.c
++++ b/arch/arm/mach-omap1/board-perseus2.c
+@@ -32,7 +32,7 @@
+ #include <plat/fpga.h>
+ #include <plat/flash.h>
+ #include <plat/keypad.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ 
+ static const unsigned int p2_keymap[] = {
+diff --git a/arch/arm/mach-omap1/board-sx1.c b/arch/arm/mach-omap1/board-sx1.c
+index 092a4c0..774ae39 100644
+--- a/arch/arm/mach-omap1/board-sx1.c
++++ b/arch/arm/mach-omap1/board-sx1.c
+@@ -40,7 +40,7 @@
+ #include <plat/usb.h>
+ #include <plat/tc.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/keypad.h>
+ #include <plat/board-sx1.h>
+ 
+diff --git a/arch/arm/mach-omap1/board-voiceblue.c b/arch/arm/mach-omap1/board-voiceblue.c
+index 61ed6cd..7721c14 100644
+--- a/arch/arm/mach-omap1/board-voiceblue.c
++++ b/arch/arm/mach-omap1/board-voiceblue.c
+@@ -34,7 +34,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board-voiceblue.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/flash.h>
+ #include <plat/mux.h>
+ #include <plat/tc.h>
+diff --git a/arch/arm/mach-omap1/common.h b/arch/arm/mach-omap1/common.h
+new file mode 100644
+index 0000000..52c4eda
+--- /dev/null
++++ b/arch/arm/mach-omap1/common.h
+@@ -0,0 +1,61 @@
++/*
++ *
++ * Header for code common to all OMAP1 machines.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2 of the License, or (at your
++ * option) any later version.
++ *
++ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
++ * NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
++ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
++ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * You should have received a copy of the  GNU General Public License along
++ * with this program; if not, write  to the Free Software Foundation, Inc.,
++ * 675 Mass Ave, Cambridge, MA 02139, USA.
++ */
++
++#ifndef __ARCH_ARM_MACH_OMAP1_COMMON_H
++#define __ARCH_ARM_MACH_OMAP1_COMMON_H
++
++#include <plat/common.h>
++
++#if defined(CONFIG_ARCH_OMAP730) || defined(CONFIG_ARCH_OMAP850)
++void omap7xx_map_io(void);
++#else
++static inline void omap7xx_map_io(void)
++{
++}
++#endif
++
++#ifdef CONFIG_ARCH_OMAP15XX
++void omap15xx_map_io(void);
++#else
++static inline void omap15xx_map_io(void)
++{
++}
++#endif
++
++#ifdef CONFIG_ARCH_OMAP16XX
++void omap16xx_map_io(void);
++#else
++static inline void omap16xx_map_io(void)
++{
++}
++#endif
++
++void omap1_init_early(void);
++void omap1_init_irq(void);
++
++extern struct sys_timer omap1_timer;
++extern bool omap_32k_timer_init(void);
++
++#endif /* __ARCH_ARM_MACH_OMAP1_COMMON_H */
+diff --git a/arch/arm/mach-omap1/devices.c b/arch/arm/mach-omap1/devices.c
+index 48ef988..9d47ca7 100644
+--- a/arch/arm/mach-omap1/devices.c
++++ b/arch/arm/mach-omap1/devices.c
+@@ -22,7 +22,7 @@
+ #include <mach/hardware.h>
+ #include <asm/mach/map.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/tc.h>
+ #include <plat/board.h>
+ #include <plat/mux.h>
+diff --git a/arch/arm/mach-omap1/time.c b/arch/arm/mach-omap1/time.c
+index a183777..485a21d 100644
+--- a/arch/arm/mach-omap1/time.c
++++ b/arch/arm/mach-omap1/time.c
+@@ -54,7 +54,7 @@
+ #include <asm/mach/irq.h>
+ #include <asm/mach/time.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #ifdef CONFIG_OMAP_MPU_TIMER
+ 
+diff --git a/arch/arm/mach-omap1/timer32k.c b/arch/arm/mach-omap1/timer32k.c
+index 96604a5..9a54ef4 100644
+--- a/arch/arm/mach-omap1/timer32k.c
++++ b/arch/arm/mach-omap1/timer32k.c
+@@ -52,7 +52,7 @@
+ #include <asm/irq.h>
+ #include <asm/mach/irq.h>
+ #include <asm/mach/time.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/dmtimer.h>
+ 
+ /*
+diff --git a/arch/arm/mach-omap2/board-2430sdp.c b/arch/arm/mach-omap2/board-2430sdp.c
+index d704f0a..a17a6c4 100644
+--- a/arch/arm/mach-omap2/board-2430sdp.c
++++ b/arch/arm/mach-omap2/board-2430sdp.c
+@@ -34,7 +34,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ #include <plat/usb.h>
+ #include <plat/gpmc-smc91x.h>
+diff --git a/arch/arm/mach-omap2/board-3430sdp.c b/arch/arm/mach-omap2/board-3430sdp.c
+index 77142c1..670919c 100644
+--- a/arch/arm/mach-omap2/board-3430sdp.c
++++ b/arch/arm/mach-omap2/board-3430sdp.c
+@@ -33,7 +33,7 @@
+ #include <plat/mcspi.h>
+ #include <plat/board.h>
+ #include <plat/usb.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/dma.h>
+ #include <plat/gpmc.h>
+ #include <video/omapdss.h>
+diff --git a/arch/arm/mach-omap2/board-3630sdp.c b/arch/arm/mach-omap2/board-3630sdp.c
+index f552305..63f4b4f 100644
+--- a/arch/arm/mach-omap2/board-3630sdp.c
++++ b/arch/arm/mach-omap2/board-3630sdp.c
+@@ -16,7 +16,7 @@
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ #include <plat/gpmc-smc91x.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-4430sdp.c b/arch/arm/mach-omap2/board-4430sdp.c
+index 5156468..cff2e32 100644
+--- a/arch/arm/mach-omap2/board-4430sdp.c
++++ b/arch/arm/mach-omap2/board-4430sdp.c
+@@ -27,13 +27,12 @@
+ #include <linux/leds_pwm.h>
+ 
+ #include <mach/hardware.h>
+-#include <mach/omap4-common.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/usb.h>
+ #include <plat/mmc.h>
+ #include <plat/omap4-keypad.h>
+diff --git a/arch/arm/mach-omap2/board-am3517crane.c b/arch/arm/mach-omap2/board-am3517crane.c
+index 7834536..2570475 100644
+--- a/arch/arm/mach-omap2/board-am3517crane.c
++++ b/arch/arm/mach-omap2/board-am3517crane.c
+@@ -27,7 +27,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/usb.h>
+ 
+ #include "mux.h"
+diff --git a/arch/arm/mach-omap2/board-am3517evm.c b/arch/arm/mach-omap2/board-am3517evm.c
+index d314f03..56ea011 100644
+--- a/arch/arm/mach-omap2/board-am3517evm.c
++++ b/arch/arm/mach-omap2/board-am3517evm.c
+@@ -32,7 +32,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/usb.h>
+ #include <video/omapdss.h>
+ #include <video/omap-panel-generic-dpi.h>
+diff --git a/arch/arm/mach-omap2/board-apollon.c b/arch/arm/mach-omap2/board-apollon.c
+index de8134b..9aea158 100644
+--- a/arch/arm/mach-omap2/board-apollon.c
++++ b/arch/arm/mach-omap2/board-apollon.c
+@@ -37,7 +37,7 @@
+ #include <plat/led.h>
+ #include <plat/usb.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ 
+ #include <video/omapdss.h>
+diff --git a/arch/arm/mach-omap2/board-cm-t35.c b/arch/arm/mach-omap2/board-cm-t35.c
+index bd1bcac..e1de33e 100644
+--- a/arch/arm/mach-omap2/board-cm-t35.c
++++ b/arch/arm/mach-omap2/board-cm-t35.c
+@@ -37,7 +37,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/nand.h>
+ #include <plat/gpmc.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-cm-t3517.c b/arch/arm/mach-omap2/board-cm-t3517.c
+index 3f4dc66..952df9b 100644
+--- a/arch/arm/mach-omap2/board-cm-t3517.c
++++ b/arch/arm/mach-omap2/board-cm-t3517.c
+@@ -39,7 +39,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/usb.h>
+ #include <plat/nand.h>
+ #include <plat/gpmc.h>
+diff --git a/arch/arm/mach-omap2/board-devkit8000.c b/arch/arm/mach-omap2/board-devkit8000.c
+index 90154e4..99e6e7a 100644
+--- a/arch/arm/mach-omap2/board-devkit8000.c
++++ b/arch/arm/mach-omap2/board-devkit8000.c
+@@ -41,7 +41,7 @@
+ #include <asm/mach/flash.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ #include <plat/nand.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-generic.c b/arch/arm/mach-omap2/board-generic.c
+index fb55fa3..a89d723 100644
+--- a/arch/arm/mach-omap2/board-generic.c
++++ b/arch/arm/mach-omap2/board-generic.c
+@@ -20,8 +20,7 @@
+ #include <asm/mach/arch.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
+-#include <mach/omap4-common.h>
++#include "common.h"
+ #include "common-board-devices.h"
+ 
+ /*
+diff --git a/arch/arm/mach-omap2/board-h4.c b/arch/arm/mach-omap2/board-h4.c
+index 8b351d9..199a174 100644
+--- a/arch/arm/mach-omap2/board-h4.c
++++ b/arch/arm/mach-omap2/board-h4.c
+@@ -34,7 +34,7 @@
+ 
+ #include <plat/usb.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/menelaus.h>
+ #include <plat/dma.h>
+ #include <plat/gpmc.h>
+diff --git a/arch/arm/mach-omap2/board-igep0020.c b/arch/arm/mach-omap2/board-igep0020.c
+index d0a3f78..6434bdc 100644
+--- a/arch/arm/mach-omap2/board-igep0020.c
++++ b/arch/arm/mach-omap2/board-igep0020.c
+@@ -28,7 +28,7 @@
+ #include <asm/mach/arch.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ #include <plat/usb.h>
+ #include <video/omapdss.h>
+diff --git a/arch/arm/mach-omap2/board-ldp.c b/arch/arm/mach-omap2/board-ldp.c
+index e179da0..e75102a 100644
+--- a/arch/arm/mach-omap2/board-ldp.c
++++ b/arch/arm/mach-omap2/board-ldp.c
+@@ -36,7 +36,7 @@
+ 
+ #include <plat/mcspi.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ #include <mach/board-zoom.h>
+ 
+diff --git a/arch/arm/mach-omap2/board-n8x0.c b/arch/arm/mach-omap2/board-n8x0.c
+index e9d5f4a..7368614 100644
+--- a/arch/arm/mach-omap2/board-n8x0.c
++++ b/arch/arm/mach-omap2/board-n8x0.c
+@@ -26,7 +26,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/menelaus.h>
+ #include <mach/irqs.h>
+ #include <plat/mcspi.h>
+diff --git a/arch/arm/mach-omap2/board-omap3beagle.c b/arch/arm/mach-omap2/board-omap3beagle.c
+index 4a71cb7..1843e14 100644
+--- a/arch/arm/mach-omap2/board-omap3beagle.c
++++ b/arch/arm/mach-omap2/board-omap3beagle.c
+@@ -40,7 +40,7 @@
+ #include <asm/mach/flash.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <video/omapdss.h>
+ #include <video/omap-panel-dvi.h>
+ #include <plat/gpmc.h>
+diff --git a/arch/arm/mach-omap2/board-omap3evm.c b/arch/arm/mach-omap2/board-omap3evm.c
+index ec00b2e..1653d18 100644
+--- a/arch/arm/mach-omap2/board-omap3evm.c
++++ b/arch/arm/mach-omap2/board-omap3evm.c
+@@ -43,7 +43,7 @@
+ 
+ #include <plat/board.h>
+ #include <plat/usb.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/mcspi.h>
+ #include <video/omapdss.h>
+ #include <video/omap-panel-dvi.h>
+diff --git a/arch/arm/mach-omap2/board-omap3logic.c b/arch/arm/mach-omap2/board-omap3logic.c
+index 7c0f193..1b2a776 100644
+--- a/arch/arm/mach-omap2/board-omap3logic.c
++++ b/arch/arm/mach-omap2/board-omap3logic.c
+@@ -40,7 +40,7 @@
+ 
+ #include <plat/mux.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc-smsc911x.h>
+ #include <plat/gpmc.h>
+ #include <plat/sdrc.h>
+diff --git a/arch/arm/mach-omap2/board-omap3pandora.c b/arch/arm/mach-omap2/board-omap3pandora.c
+index f7811f4..6297e81 100644
+--- a/arch/arm/mach-omap2/board-omap3pandora.c
++++ b/arch/arm/mach-omap2/board-omap3pandora.c
+@@ -41,7 +41,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <mach/hardware.h>
+ #include <plat/mcspi.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-omap3stalker.c b/arch/arm/mach-omap2/board-omap3stalker.c
+index ddb7d66..ab22647 100644
+--- a/arch/arm/mach-omap2/board-omap3stalker.c
++++ b/arch/arm/mach-omap2/board-omap3stalker.c
+@@ -35,7 +35,7 @@
+ #include <asm/mach/flash.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ #include <plat/nand.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-omap3touchbook.c b/arch/arm/mach-omap2/board-omap3touchbook.c
+index a2d0d19..2741a34 100644
+--- a/arch/arm/mach-omap2/board-omap3touchbook.c
++++ b/arch/arm/mach-omap2/board-omap3touchbook.c
+@@ -44,7 +44,7 @@
+ #include <asm/mach/flash.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/gpmc.h>
+ #include <plat/nand.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-omap4panda.c b/arch/arm/mach-omap2/board-omap4panda.c
+index a8c2c42..7722d4d 100644
+--- a/arch/arm/mach-omap2/board-omap4panda.c
++++ b/arch/arm/mach-omap2/board-omap4panda.c
+@@ -30,14 +30,13 @@
+ #include <linux/wl12xx.h>
+ 
+ #include <mach/hardware.h>
+-#include <mach/omap4-common.h>
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ #include <video/omapdss.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/usb.h>
+ #include <plat/mmc.h>
+ #include <video/omap-panel-dvi.h>
+diff --git a/arch/arm/mach-omap2/board-overo.c b/arch/arm/mach-omap2/board-overo.c
+index 4cf7aea..26c5cbb 100644
+--- a/arch/arm/mach-omap2/board-overo.c
++++ b/arch/arm/mach-omap2/board-overo.c
+@@ -43,7 +43,7 @@
+ #include <asm/mach/map.h>
+ 
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <video/omapdss.h>
+ #include <video/omap-panel-generic-dpi.h>
+ #include <video/omap-panel-dvi.h>
+diff --git a/arch/arm/mach-omap2/board-rm680.c b/arch/arm/mach-omap2/board-rm680.c
+index 616fb39..6ffb640 100644
+--- a/arch/arm/mach-omap2/board-rm680.c
++++ b/arch/arm/mach-omap2/board-rm680.c
+@@ -25,7 +25,7 @@
+ #include <plat/mmc.h>
+ #include <plat/usb.h>
+ #include <plat/gpmc.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/onenand.h>
+ 
+ #include "mux.h"
+diff --git a/arch/arm/mach-omap2/board-rx51-peripherals.c b/arch/arm/mach-omap2/board-rx51-peripherals.c
+index ba1aa07..bd18d69 100644
+--- a/arch/arm/mach-omap2/board-rx51-peripherals.c
++++ b/arch/arm/mach-omap2/board-rx51-peripherals.c
+@@ -27,7 +27,7 @@
+ 
+ #include <plat/mcspi.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/dma.h>
+ #include <plat/gpmc.h>
+ #include <plat/onenand.h>
+diff --git a/arch/arm/mach-omap2/board-rx51.c b/arch/arm/mach-omap2/board-rx51.c
+index 4af7c4b..8477313 100644
+--- a/arch/arm/mach-omap2/board-rx51.c
++++ b/arch/arm/mach-omap2/board-rx51.c
+@@ -25,7 +25,7 @@
+ 
+ #include <plat/mcspi.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/dma.h>
+ #include <plat/gpmc.h>
+ #include <plat/usb.h>
+diff --git a/arch/arm/mach-omap2/board-ti8168evm.c b/arch/arm/mach-omap2/board-ti8168evm.c
+index e6ee884..8402b39 100644
+--- a/arch/arm/mach-omap2/board-ti8168evm.c
++++ b/arch/arm/mach-omap2/board-ti8168evm.c
+@@ -22,7 +22,7 @@
+ 
+ #include <plat/irqs.h>
+ #include <plat/board.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ static struct omap_board_config_kernel ti8168_evm_config[] __initdata = {
+ };
+diff --git a/arch/arm/mach-omap2/board-zoom-peripherals.c b/arch/arm/mach-omap2/board-zoom-peripherals.c
+index 6d0aa4f..8d7ce11 100644
+--- a/arch/arm/mach-omap2/board-zoom-peripherals.c
++++ b/arch/arm/mach-omap2/board-zoom-peripherals.c
+@@ -24,7 +24,7 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/usb.h>
+ 
+ #include <mach/board-zoom.h>
+diff --git a/arch/arm/mach-omap2/board-zoom.c b/arch/arm/mach-omap2/board-zoom.c
+index be6684d..bd58f92 100644
+--- a/arch/arm/mach-omap2/board-zoom.c
++++ b/arch/arm/mach-omap2/board-zoom.c
+@@ -21,7 +21,7 @@
+ #include <asm/mach-types.h>
+ #include <asm/mach/arch.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ #include <plat/usb.h>
+ 
+diff --git a/arch/arm/mach-omap2/cm2xxx_3xxx.c b/arch/arm/mach-omap2/cm2xxx_3xxx.c
+index 38830d8..04d39cd 100644
+--- a/arch/arm/mach-omap2/cm2xxx_3xxx.c
++++ b/arch/arm/mach-omap2/cm2xxx_3xxx.c
+@@ -18,7 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "cm.h"
+ #include "cm2xxx_3xxx.h"
+diff --git a/arch/arm/mach-omap2/cm44xx.c b/arch/arm/mach-omap2/cm44xx.c
+index e96f53e..6a83630 100644
+--- a/arch/arm/mach-omap2/cm44xx.c
++++ b/arch/arm/mach-omap2/cm44xx.c
+@@ -18,7 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "cm.h"
+ #include "cm1_44xx.h"
+diff --git a/arch/arm/mach-omap2/cminst44xx.c b/arch/arm/mach-omap2/cminst44xx.c
+index eb2a472..6204dea 100644
+--- a/arch/arm/mach-omap2/cminst44xx.c
++++ b/arch/arm/mach-omap2/cminst44xx.c
+@@ -20,7 +20,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "cm.h"
+ #include "cm1_44xx.h"
+diff --git a/arch/arm/mach-omap2/common.c b/arch/arm/mach-omap2/common.c
+index 110e5b9..684b8a7 100644
+--- a/arch/arm/mach-omap2/common.c
++++ b/arch/arm/mach-omap2/common.c
+@@ -17,7 +17,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ #include <plat/mux.h>
+ 
+diff --git a/arch/arm/mach-omap2/common.h b/arch/arm/mach-omap2/common.h
+new file mode 100644
+index 0000000..950b39d
+--- /dev/null
++++ b/arch/arm/mach-omap2/common.h
+@@ -0,0 +1,185 @@
++/*
++ * Header for code common to all OMAP2+ machines.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2 of the License, or (at your
++ * option) any later version.
++ *
++ * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED
++ * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN
++ * NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
++ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
++ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
++ * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
++ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
++ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
++ * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
++ *
++ * You should have received a copy of the  GNU General Public License along
++ * with this program; if not, write  to the Free Software Foundation, Inc.,
++ * 675 Mass Ave, Cambridge, MA 02139, USA.
++ */
++
++#ifndef __ARCH_ARM_MACH_OMAP2PLUS_COMMON_H
++#define __ARCH_ARM_MACH_OMAP2PLUS_COMMON_H
++
++#include <linux/delay.h>
++#include <plat/common.h>
++
++#ifdef CONFIG_SOC_OMAP2420
++extern void omap242x_map_common_io(void);
++#else
++static inline void omap242x_map_common_io(void)
++{
++}
++#endif
++
++#ifdef CONFIG_SOC_OMAP2430
++extern void omap243x_map_common_io(void);
++#else
++static inline void omap243x_map_common_io(void)
++{
++}
++#endif
++
++#ifdef CONFIG_ARCH_OMAP3
++extern void omap34xx_map_common_io(void);
++#else
++static inline void omap34xx_map_common_io(void)
++{
++}
++#endif
++
++#ifdef CONFIG_SOC_OMAPTI816X
++extern void omapti816x_map_common_io(void);
++#else
++static inline void omapti816x_map_common_io(void)
++{
++}
++#endif
++
++#ifdef CONFIG_ARCH_OMAP4
++extern void omap44xx_map_common_io(void);
++#else
++static inline void omap44xx_map_common_io(void)
++{
++}
++#endif
++
++extern void omap2_init_common_infrastructure(void);
++
++extern struct sys_timer omap2_timer;
++extern struct sys_timer omap3_timer;
++extern struct sys_timer omap3_secure_timer;
++extern struct sys_timer omap4_timer;
++
++void omap2420_init_early(void);
++void omap2430_init_early(void);
++void omap3430_init_early(void);
++void omap35xx_init_early(void);
++void omap3630_init_early(void);
++void omap3_init_early(void);	/* Do not use this one */
++void am35xx_init_early(void);
++void ti816x_init_early(void);
++void omap4430_init_early(void);
++
++/*
++ * IO bases for various OMAP processors
++ * Except the tap base, rest all the io bases
++ * listed are physical addresses.
++ */
++struct omap_globals {
++	u32		class;		/* OMAP class to detect */
++	void __iomem	*tap;		/* Control module ID code */
++	void __iomem	*sdrc;           /* SDRAM Controller */
++	void __iomem	*sms;            /* SDRAM Memory Scheduler */
++	void __iomem	*ctrl;           /* System Control Module */
++	void __iomem	*ctrl_pad;	/* PAD Control Module */
++	void __iomem	*prm;            /* Power and Reset Management */
++	void __iomem	*cm;             /* Clock Management */
++	void __iomem	*cm2;
++};
++
++void omap2_set_globals_242x(void);
++void omap2_set_globals_243x(void);
++void omap2_set_globals_3xxx(void);
++void omap2_set_globals_443x(void);
++void omap2_set_globals_ti816x(void);
++
++/* These get called from omap2_set_globals_xxxx(), do not call these */
++void omap2_set_globals_tap(struct omap_globals *);
++void omap2_set_globals_sdrc(struct omap_globals *);
++void omap2_set_globals_control(struct omap_globals *);
++void omap2_set_globals_prcm(struct omap_globals *);
++
++void omap242x_map_io(void);
++void omap243x_map_io(void);
++void omap3_map_io(void);
++void omap4_map_io(void);
++
++/**
++ * omap_test_timeout - busy-loop, testing a condition
++ * @cond: condition to test until it evaluates to true
++ * @timeout: maximum number of microseconds in the timeout
++ * @index: loop index (integer)
++ *
++ * Loop waiting for @cond to become true or until at least @timeout
++ * microseconds have passed.  To use, define some integer @index in the
++ * calling code.  After running, if @index == @timeout, then the loop has
++ * timed out.
++ */
++#define omap_test_timeout(cond, timeout, index)			\
++({								\
++	for (index = 0; index < timeout; index++) {		\
++		if (cond)					\
++			break;					\
++		udelay(1);					\
++	}							\
++})
++
++extern struct device *omap2_get_mpuss_device(void);
++extern struct device *omap2_get_iva_device(void);
++extern struct device *omap2_get_l3_device(void);
++extern struct device *omap4_get_dsp_device(void);
++
++void omap2_init_irq(void);
++void omap3_init_irq(void);
++void ti816x_init_irq(void);
++extern int omap_irq_pending(void);
++void omap_intc_save_context(void);
++void omap_intc_restore_context(void);
++void omap3_intc_suspend(void);
++void omap3_intc_prepare_idle(void);
++void omap3_intc_resume_idle(void);
++
++/*
++ * wfi used in low power code. Directly opcode is used instead
++ * of instruction to avoid mulit-omap build break
++ */
++#ifdef CONFIG_THUMB2_KERNEL
++#define do_wfi() __asm__ __volatile__ ("wfi" : : : "memory")
++#else
++#define do_wfi()			\
++		__asm__ __volatile__ (".word	0xe320f003" : : : "memory")
++#endif
++
++#ifdef CONFIG_CACHE_L2X0
++extern void __iomem *l2cache_base;
++#endif
++
++extern void __iomem *gic_dist_base_addr;
++
++extern void __init gic_init_irq(void);
++extern void omap_smc1(u32 fn, u32 arg);
++
++#ifdef CONFIG_SMP
++/* Needed for secondary core boot */
++extern void omap_secondary_startup(void);
++extern u32 omap_modify_auxcoreboot0(u32 set_mask, u32 clear_mask);
++extern void omap_auxcoreboot_addr(u32 cpu_addr);
++extern u32 omap_read_auxcoreboot0(void);
++#endif
++
++#endif /* __ARCH_ARM_MACH_OMAP2PLUS_COMMON_H */
+diff --git a/arch/arm/mach-omap2/control.c b/arch/arm/mach-omap2/control.c
+index e34d27f..114c037 100644
+--- a/arch/arm/mach-omap2/control.c
++++ b/arch/arm/mach-omap2/control.c
+@@ -15,7 +15,7 @@
+ #include <linux/kernel.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/sdrc.h>
+ 
+ #include "cm-regbits-34xx.h"
+diff --git a/arch/arm/mach-omap2/i2c.c b/arch/arm/mach-omap2/i2c.c
+index ace9994..a12e224 100644
+--- a/arch/arm/mach-omap2/i2c.c
++++ b/arch/arm/mach-omap2/i2c.c
+@@ -21,7 +21,7 @@
+ 
+ #include <plat/cpu.h>
+ #include <plat/i2c.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/omap_hwmod.h>
+ 
+ #include "mux.h"
+diff --git a/arch/arm/mach-omap2/id.c b/arch/arm/mach-omap2/id.c
+index 7f47092..27ad722 100644
+--- a/arch/arm/mach-omap2/id.c
++++ b/arch/arm/mach-omap2/id.c
+@@ -21,7 +21,7 @@
+ 
+ #include <asm/cputype.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/cpu.h>
+ 
+ #include <mach/id.h>
+diff --git a/arch/arm/mach-omap2/include/mach/omap4-common.h b/arch/arm/mach-omap2/include/mach/omap4-common.h
+deleted file mode 100644
+index e4bd876..0000000
+--- a/arch/arm/mach-omap2/include/mach/omap4-common.h
++++ /dev/null
+@@ -1,43 +0,0 @@
+-/*
+- * omap4-common.h: OMAP4 specific common header file
+- *
+- * Copyright (C) 2010 Texas Instruments, Inc.
+- *
+- * Author:
+- *	Santosh Shilimkar <santosh.shilimkar@ti.com>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-#ifndef OMAP_ARCH_OMAP4_COMMON_H
+-#define OMAP_ARCH_OMAP4_COMMON_H
+-
+-/*
+- * wfi used in low power code. Directly opcode is used instead
+- * of instruction to avoid mulit-omap build break
+- */
+-#ifdef CONFIG_THUMB2_KERNEL
+-#define do_wfi() __asm__ __volatile__ ("wfi" : : : "memory")
+-#else
+-#define do_wfi()			\
+-		__asm__ __volatile__ (".word	0xe320f003" : : : "memory")
+-#endif
+-
+-#ifdef CONFIG_CACHE_L2X0
+-extern void __iomem *l2cache_base;
+-#endif
+-
+-extern void __iomem *gic_dist_base_addr;
+-
+-extern void __init gic_init_irq(void);
+-extern void omap_smc1(u32 fn, u32 arg);
+-
+-#ifdef CONFIG_SMP
+-/* Needed for secondary core boot */
+-extern void omap_secondary_startup(void);
+-extern u32 omap_modify_auxcoreboot0(u32 set_mask, u32 clear_mask);
+-extern void omap_auxcoreboot_addr(u32 cpu_addr);
+-extern u32 omap_read_auxcoreboot0(void);
+-#endif
+-#endif
+diff --git a/arch/arm/mach-omap2/io.c b/arch/arm/mach-omap2/io.c
+index 25d20ce..33f090c 100644
+--- a/arch/arm/mach-omap2/io.c
++++ b/arch/arm/mach-omap2/io.c
+@@ -35,7 +35,7 @@
+ #include "clock3xxx.h"
+ #include "clock44xx.h"
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/omap-pm.h>
+ #include "voltage.h"
+ #include "powerdomain.h"
+@@ -43,7 +43,7 @@
+ #include "clockdomain.h"
+ #include <plat/omap_hwmod.h>
+ #include <plat/multi.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ /*
+  * The machine specific code may provide the extra mapping besides the
+diff --git a/arch/arm/mach-omap2/omap-hotplug.c b/arch/arm/mach-omap2/omap-hotplug.c
+index 4976b93..e5a1c3f 100644
+--- a/arch/arm/mach-omap2/omap-hotplug.c
++++ b/arch/arm/mach-omap2/omap-hotplug.c
+@@ -19,7 +19,8 @@
+ #include <linux/smp.h>
+ 
+ #include <asm/cacheflush.h>
+-#include <mach/omap4-common.h>
++
++#include "common.h"
+ 
+ int platform_cpu_kill(unsigned int cpu)
+ {
+diff --git a/arch/arm/mach-omap2/omap-smp.c b/arch/arm/mach-omap2/omap-smp.c
+index 4412ddb..e99bc6c 100644
+--- a/arch/arm/mach-omap2/omap-smp.c
++++ b/arch/arm/mach-omap2/omap-smp.c
+@@ -24,7 +24,8 @@
+ #include <asm/hardware/gic.h>
+ #include <asm/smp_scu.h>
+ #include <mach/hardware.h>
+-#include <mach/omap4-common.h>
++
++#include "common.h"
+ 
+ /* SCU base address */
+ static void __iomem *scu_base;
+diff --git a/arch/arm/mach-omap2/omap4-common.c b/arch/arm/mach-omap2/omap4-common.c
+index 35ac3e5..f327d74 100644
+--- a/arch/arm/mach-omap2/omap4-common.c
++++ b/arch/arm/mach-omap2/omap4-common.c
+@@ -22,7 +22,8 @@
+ #include <plat/irqs.h>
+ 
+ #include <mach/hardware.h>
+-#include <mach/omap4-common.h>
++
++#include "common.h"
+ 
+ #ifdef CONFIG_CACHE_L2X0
+ void __iomem *l2cache_base;
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index 6b3088d..00fcd2c 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -137,7 +137,7 @@
+ #include <linux/mutex.h>
+ #include <linux/spinlock.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/cpu.h>
+ #include "clockdomain.h"
+ #include "powerdomain.h"
+diff --git a/arch/arm/mach-omap2/pm.c b/arch/arm/mach-omap2/pm.c
+index 1e79bdf..e7bee5c 100644
+--- a/arch/arm/mach-omap2/pm.c
++++ b/arch/arm/mach-omap2/pm.c
+@@ -18,7 +18,7 @@
+ 
+ #include <plat/omap-pm.h>
+ #include <plat/omap_device.h>
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "voltage.h"
+ #include "powerdomain.h"
+diff --git a/arch/arm/mach-omap2/pm24xx.c b/arch/arm/mach-omap2/pm24xx.c
+index cf0c216..ef8595c 100644
+--- a/arch/arm/mach-omap2/pm24xx.c
++++ b/arch/arm/mach-omap2/pm24xx.c
+@@ -42,6 +42,7 @@
+ #include <plat/dma.h>
+ #include <plat/board.h>
+ 
++#include "common.h"
+ #include "prm2xxx_3xxx.h"
+ #include "prm-regbits-24xx.h"
+ #include "cm2xxx_3xxx.h"
+diff --git a/arch/arm/mach-omap2/pm34xx.c b/arch/arm/mach-omap2/pm34xx.c
+index efa6649..fa637df 100644
+--- a/arch/arm/mach-omap2/pm34xx.c
++++ b/arch/arm/mach-omap2/pm34xx.c
+@@ -42,6 +42,7 @@
+ #include <plat/gpmc.h>
+ #include <plat/dma.h>
+ 
++#include "common.h"
+ #include "cm2xxx_3xxx.h"
+ #include "cm-regbits-34xx.h"
+ #include "prm-regbits-34xx.h"
+diff --git a/arch/arm/mach-omap2/pm44xx.c b/arch/arm/mach-omap2/pm44xx.c
+index 59a870b..8edb015 100644
+--- a/arch/arm/mach-omap2/pm44xx.c
++++ b/arch/arm/mach-omap2/pm44xx.c
+@@ -16,8 +16,8 @@
+ #include <linux/err.h>
+ #include <linux/slab.h>
+ 
++#include "common.h"
+ #include "powerdomain.h"
+-#include <mach/omap4-common.h>
+ 
+ struct power_state {
+ 	struct powerdomain *pwrdm;
+diff --git a/arch/arm/mach-omap2/prcm.c b/arch/arm/mach-omap2/prcm.c
+index 597e2da..c35e5ce 100644
+--- a/arch/arm/mach-omap2/prcm.c
++++ b/arch/arm/mach-omap2/prcm.c
+@@ -26,7 +26,7 @@
+ #include <linux/export.h>
+ 
+ #include <mach/system.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/prcm.h>
+ #include <plat/irqs.h>
+ 
+diff --git a/arch/arm/mach-omap2/prcm_mpu44xx.c b/arch/arm/mach-omap2/prcm_mpu44xx.c
+index 171fe17..ca669b5 100644
+--- a/arch/arm/mach-omap2/prcm_mpu44xx.c
++++ b/arch/arm/mach-omap2/prcm_mpu44xx.c
+@@ -15,7 +15,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prcm_mpu44xx.h"
+ #include "cm-regbits-44xx.h"
+diff --git a/arch/arm/mach-omap2/prm2xxx_3xxx.c b/arch/arm/mach-omap2/prm2xxx_3xxx.c
+index f02d87f..9a08ba3 100644
+--- a/arch/arm/mach-omap2/prm2xxx_3xxx.c
++++ b/arch/arm/mach-omap2/prm2xxx_3xxx.c
+@@ -16,7 +16,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/cpu.h>
+ #include <plat/prcm.h>
+ 
+diff --git a/arch/arm/mach-omap2/prm44xx.c b/arch/arm/mach-omap2/prm44xx.c
+index 495a31a..dd885ee 100644
+--- a/arch/arm/mach-omap2/prm44xx.c
++++ b/arch/arm/mach-omap2/prm44xx.c
+@@ -17,7 +17,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/cpu.h>
+ #include <plat/prcm.h>
+ 
+diff --git a/arch/arm/mach-omap2/prminst44xx.c b/arch/arm/mach-omap2/prminst44xx.c
+index 3a7bab1..f6de5bc 100644
+--- a/arch/arm/mach-omap2/prminst44xx.c
++++ b/arch/arm/mach-omap2/prminst44xx.c
+@@ -16,7 +16,7 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm44xx.h"
+ #include "prminst44xx.h"
+diff --git a/arch/arm/mach-omap2/sdram-nokia.c b/arch/arm/mach-omap2/sdram-nokia.c
+index 14caa22..ee3a8ad 100644
+--- a/arch/arm/mach-omap2/sdram-nokia.c
++++ b/arch/arm/mach-omap2/sdram-nokia.c
+@@ -18,7 +18,7 @@
+ #include <linux/io.h>
+ 
+ #include <plat/io.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/clock.h>
+ #include <plat/sdrc.h>
+ 
+diff --git a/arch/arm/mach-omap2/sdrc.c b/arch/arm/mach-omap2/sdrc.c
+index 8f27828..e3d345f 100644
+--- a/arch/arm/mach-omap2/sdrc.c
++++ b/arch/arm/mach-omap2/sdrc.c
+@@ -23,7 +23,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/clock.h>
+ #include <plat/sram.h>
+ 
+diff --git a/arch/arm/mach-omap2/sdrc2xxx.c b/arch/arm/mach-omap2/sdrc2xxx.c
+index ccdb010..791a63c 100644
+--- a/arch/arm/mach-omap2/sdrc2xxx.c
++++ b/arch/arm/mach-omap2/sdrc2xxx.c
+@@ -24,7 +24,7 @@
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/clock.h>
+ #include <plat/sram.h>
+ 
+diff --git a/arch/arm/mach-omap2/serial.c b/arch/arm/mach-omap2/serial.c
+index 9992dbf..42c3267 100644
+--- a/arch/arm/mach-omap2/serial.c
++++ b/arch/arm/mach-omap2/serial.c
+@@ -33,7 +33,7 @@
+ #include <plat/omap-serial.h>
+ #endif
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/board.h>
+ #include <plat/clock.h>
+ #include <plat/dma.h>
+diff --git a/arch/arm/mach-omap2/smartreflex.c b/arch/arm/mach-omap2/smartreflex.c
+index 6a4f683..919d827 100644
+--- a/arch/arm/mach-omap2/smartreflex.c
++++ b/arch/arm/mach-omap2/smartreflex.c
+@@ -26,7 +26,7 @@
+ #include <linux/slab.h>
+ #include <linux/pm_runtime.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "pm.h"
+ #include "smartreflex.h"
+diff --git a/arch/arm/mach-omap2/timer.c b/arch/arm/mach-omap2/timer.c
+index 037b0d7..9edcd52 100644
+--- a/arch/arm/mach-omap2/timer.c
++++ b/arch/arm/mach-omap2/timer.c
+@@ -41,7 +41,7 @@
+ #include <plat/dmtimer.h>
+ #include <asm/localtimer.h>
+ #include <asm/sched_clock.h>
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/omap_hwmod.h>
+ #include <plat/omap_device.h>
+ #include <plat/omap-pm.h>
+diff --git a/arch/arm/mach-omap2/vc3xxx_data.c b/arch/arm/mach-omap2/vc3xxx_data.c
+index cfe348e..a5ec7f8 100644
+--- a/arch/arm/mach-omap2/vc3xxx_data.c
++++ b/arch/arm/mach-omap2/vc3xxx_data.c
+@@ -18,7 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm-regbits-34xx.h"
+ #include "voltage.h"
+diff --git a/arch/arm/mach-omap2/vc44xx_data.c b/arch/arm/mach-omap2/vc44xx_data.c
+index 2740a96..d70b930 100644
+--- a/arch/arm/mach-omap2/vc44xx_data.c
++++ b/arch/arm/mach-omap2/vc44xx_data.c
+@@ -18,7 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm44xx.h"
+ #include "prm-regbits-44xx.h"
+diff --git a/arch/arm/mach-omap2/voltage.c b/arch/arm/mach-omap2/voltage.c
+index 1f8fdf7..8a36342 100644
+--- a/arch/arm/mach-omap2/voltage.c
++++ b/arch/arm/mach-omap2/voltage.c
+@@ -27,7 +27,7 @@
+ #include <linux/slab.h>
+ #include <linux/clk.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm-regbits-34xx.h"
+ #include "prm-regbits-44xx.h"
+diff --git a/arch/arm/mach-omap2/voltagedomains3xxx_data.c b/arch/arm/mach-omap2/voltagedomains3xxx_data.c
+index 071101d..474559d 100644
+--- a/arch/arm/mach-omap2/voltagedomains3xxx_data.c
++++ b/arch/arm/mach-omap2/voltagedomains3xxx_data.c
+@@ -18,7 +18,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ #include <plat/cpu.h>
+ 
+ #include "prm-regbits-34xx.h"
+diff --git a/arch/arm/mach-omap2/voltagedomains44xx_data.c b/arch/arm/mach-omap2/voltagedomains44xx_data.c
+index c4584e9..4e11d02 100644
+--- a/arch/arm/mach-omap2/voltagedomains44xx_data.c
++++ b/arch/arm/mach-omap2/voltagedomains44xx_data.c
+@@ -21,7 +21,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm-regbits-44xx.h"
+ #include "prm44xx.h"
+diff --git a/arch/arm/mach-omap2/vp.c b/arch/arm/mach-omap2/vp.c
+index 66bd700..807391d 100644
+--- a/arch/arm/mach-omap2/vp.c
++++ b/arch/arm/mach-omap2/vp.c
+@@ -1,7 +1,7 @@
+ #include <linux/kernel.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "voltage.h"
+ #include "vp.h"
+diff --git a/arch/arm/mach-omap2/vp3xxx_data.c b/arch/arm/mach-omap2/vp3xxx_data.c
+index 260c554..bd89f80 100644
+--- a/arch/arm/mach-omap2/vp3xxx_data.c
++++ b/arch/arm/mach-omap2/vp3xxx_data.c
+@@ -19,7 +19,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm-regbits-34xx.h"
+ #include "voltage.h"
+diff --git a/arch/arm/mach-omap2/vp44xx_data.c b/arch/arm/mach-omap2/vp44xx_data.c
+index b4e7704..8c031d1 100644
+--- a/arch/arm/mach-omap2/vp44xx_data.c
++++ b/arch/arm/mach-omap2/vp44xx_data.c
+@@ -19,7 +19,7 @@
+ #include <linux/err.h>
+ #include <linux/init.h>
+ 
+-#include <plat/common.h>
++#include "common.h"
+ 
+ #include "prm44xx.h"
+ #include "prm-regbits-44xx.h"
+diff --git a/arch/arm/plat-omap/include/plat/common.h b/arch/arm/plat-omap/include/plat/common.h
+index c50df48..346098f 100644
+--- a/arch/arm/plat-omap/include/plat/common.h
++++ b/arch/arm/plat-omap/include/plat/common.h
+@@ -27,94 +27,12 @@
+ #ifndef __ARCH_ARM_MACH_OMAP_COMMON_H
+ #define __ARCH_ARM_MACH_OMAP_COMMON_H
+ 
+-#include <linux/delay.h>
+-
+ #include <plat/i2c.h>
+ 
+-struct sys_timer;
+-
+-extern void omap_map_common_io(void);
+-extern struct sys_timer omap1_timer;
+-extern struct sys_timer omap2_timer;
+-extern struct sys_timer omap3_timer;
+-extern struct sys_timer omap3_secure_timer;
+-extern struct sys_timer omap4_timer;
+-extern bool omap_32k_timer_init(void);
+ extern int __init omap_init_clocksource_32k(void);
+ extern unsigned long long notrace omap_32k_sched_clock(void);
+ 
+ extern void omap_reserve(void);
+-
+-void omap2420_init_early(void);
+-void omap2430_init_early(void);
+-void omap3430_init_early(void);
+-void omap35xx_init_early(void);
+-void omap3630_init_early(void);
+-void omap3_init_early(void);	/* Do not use this one */
+-void am35xx_init_early(void);
+-void ti816x_init_early(void);
+-void omap4430_init_early(void);
+-
+ void omap_sram_init(void);
+ 
+-/*
+- * IO bases for various OMAP processors
+- * Except the tap base, rest all the io bases
+- * listed are physical addresses.
+- */
+-struct omap_globals {
+-	u32		class;		/* OMAP class to detect */
+-	void __iomem	*tap;		/* Control module ID code */
+-	void __iomem	*sdrc;           /* SDRAM Controller */
+-	void __iomem	*sms;            /* SDRAM Memory Scheduler */
+-	void __iomem	*ctrl;           /* System Control Module */
+-	void __iomem	*ctrl_pad;	/* PAD Control Module */
+-	void __iomem	*prm;            /* Power and Reset Management */
+-	void __iomem	*cm;             /* Clock Management */
+-	void __iomem	*cm2;
+-};
+-
+-void omap2_set_globals_242x(void);
+-void omap2_set_globals_243x(void);
+-void omap2_set_globals_3xxx(void);
+-void omap2_set_globals_443x(void);
+-void omap2_set_globals_ti816x(void);
+-
+-/* These get called from omap2_set_globals_xxxx(), do not call these */
+-void omap2_set_globals_tap(struct omap_globals *);
+-void omap2_set_globals_sdrc(struct omap_globals *);
+-void omap2_set_globals_control(struct omap_globals *);
+-void omap2_set_globals_prcm(struct omap_globals *);
+-
+-void omap242x_map_io(void);
+-void omap243x_map_io(void);
+-void omap3_map_io(void);
+-void omap4_map_io(void);
+-
+-
+-/**
+- * omap_test_timeout - busy-loop, testing a condition
+- * @cond: condition to test until it evaluates to true
+- * @timeout: maximum number of microseconds in the timeout
+- * @index: loop index (integer)
+- *
+- * Loop waiting for @cond to become true or until at least @timeout
+- * microseconds have passed.  To use, define some integer @index in the
+- * calling code.  After running, if @index == @timeout, then the loop has
+- * timed out.
+- */
+-#define omap_test_timeout(cond, timeout, index)			\
+-({								\
+-	for (index = 0; index < timeout; index++) {		\
+-		if (cond)					\
+-			break;					\
+-		udelay(1);					\
+-	}							\
+-})
+-
+-extern struct device *omap2_get_mpuss_device(void);
+-extern struct device *omap2_get_iva_device(void);
+-extern struct device *omap2_get_l3_device(void);
+-extern struct device *omap4_get_dsp_device(void);
+-
+ #endif /* __ARCH_ARM_MACH_OMAP_COMMON_H */
+diff --git a/arch/arm/plat-omap/include/plat/io.h b/arch/arm/plat-omap/include/plat/io.h
+index 7f2969e..62f4477 100644
+--- a/arch/arm/plat-omap/include/plat/io.h
++++ b/arch/arm/plat-omap/include/plat/io.h
+@@ -257,74 +257,6 @@ extern void omap_writew(u16 v, u32 pa);
+ extern void omap_writel(u32 v, u32 pa);
+ 
+ struct omap_sdrc_params;
+-
+-#if defined(CONFIG_ARCH_OMAP730) || defined(CONFIG_ARCH_OMAP850)
+-void omap7xx_map_io(void);
+-#else
+-static inline void omap_map_io(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_ARCH_OMAP15XX
+-void omap15xx_map_io(void);
+-#else
+-static inline void omap15xx_map_io(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_ARCH_OMAP16XX
+-void omap16xx_map_io(void);
+-#else
+-static inline void omap16xx_map_io(void)
+-{
+-}
+-#endif
+-
+-void omap1_init_early(void);
+-
+-#ifdef CONFIG_SOC_OMAP2420
+-extern void omap242x_map_common_io(void);
+-#else
+-static inline void omap242x_map_common_io(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_SOC_OMAP2430
+-extern void omap243x_map_common_io(void);
+-#else
+-static inline void omap243x_map_common_io(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_ARCH_OMAP3
+-extern void omap34xx_map_common_io(void);
+-#else
+-static inline void omap34xx_map_common_io(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_SOC_OMAPTI816X
+-extern void omapti816x_map_common_io(void);
+-#else
+-static inline void omapti816x_map_common_io(void)
+-{
+-}
+-#endif
+-
+-#ifdef CONFIG_ARCH_OMAP4
+-extern void omap44xx_map_common_io(void);
+-#else
+-static inline void omap44xx_map_common_io(void)
+-{
+-}
+-#endif
+-
+-extern void omap2_init_common_infrastructure(void);
+ extern void omap_sdrc_init(struct omap_sdrc_params *sdrc_cs0,
+ 				      struct omap_sdrc_params *sdrc_cs1);
+ 
+diff --git a/arch/arm/plat-omap/include/plat/irqs.h b/arch/arm/plat-omap/include/plat/irqs.h
+index 30e1071..d3a9fcd 100644
+--- a/arch/arm/plat-omap/include/plat/irqs.h
++++ b/arch/arm/plat-omap/include/plat/irqs.h
+@@ -438,16 +438,6 @@
+ 
+ #ifndef __ASSEMBLY__
+ extern void __iomem *omap_irq_base;
+-void omap1_init_irq(void);
+-void omap2_init_irq(void);
+-void omap3_init_irq(void);
+-void ti816x_init_irq(void);
+-extern int omap_irq_pending(void);
+-void omap_intc_save_context(void);
+-void omap_intc_restore_context(void);
+-void omap3_intc_suspend(void);
+-void omap3_intc_prepare_idle(void);
+-void omap3_intc_resume_idle(void);
+ #endif
+ 
+ #include <mach/hardware.h>
