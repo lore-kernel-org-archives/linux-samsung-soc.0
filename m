@@ -1,156 +1,67 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH V9] mmc: core: Add Power Off Notify Feature eMMC 4.5
-Date: Thu, 10 Nov 2011 11:24:02 +0530
-Message-ID: <CAGxe1ZHyZStX1_ZjRx+C3kMuLVhg3W2T8LM0zOoAQWeXVvFg3g@mail.gmail.com>
-References: <1318914301-30339-1-git-send-email-girish.shivananjappa@linaro.org>
-	<4EB8FAD1.7010606@codeaurora.org>
+From: MyungJoo Ham <myungjoo.ham@gmail.com>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS: Add ASV feature for Exynos4 series
+Date: Thu, 10 Nov 2011 14:57:34 +0900
+Message-ID: <CAJ0PZbR9DEOud8j90n0M4UHQ=HA35NSzO0MHUzAxsOz4ViVCKA@mail.gmail.com>
+References: <1319677938-25732-1-git-send-email-boyko.lee@samsung.com>
+	<1319677938-25732-2-git-send-email-boyko.lee@samsung.com>
+	<4EAAF8EF.5010201@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:60054 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752972Ab1KJFyF convert rfc822-to-8bit (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:61190 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753074Ab1KJF5f convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Nov 2011 00:54:05 -0500
-In-Reply-To: <4EB8FAD1.7010606@codeaurora.org>
+	Thu, 10 Nov 2011 00:57:35 -0500
+Received: by bke11 with SMTP id 11so1980016bke.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 Nov 2011 21:57:34 -0800 (PST)
+In-Reply-To: <4EAAF8EF.5010201@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sahitya Tummala <stummala@codeaurora.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>
+To: Sylwester Nawrocki <snjw23@gmail.com>
+Cc: Jongpill Lee <boyko.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 8 November 2011 15:18, Sahitya Tummala <stummala@codeaurora.org> wro=
-te:
-> Hi Girish,
+On Sat, Oct 29, 2011 at 3:48 AM, Sylwester Nawrocki <snjw23@gmail.com> =
+wrote:
 >
-> On 10/18/2011 10:35 AM, Girish K S wrote:
->>
->> This patch adds the support for power off notify feature, available =
-in
->> eMMC 4.5 devices. If the the host has support for this feature, then=
- the
->> mmc core will notify it to the device by setting the
->> POWER_OFF_NOTIFICATION
->> byte in the extended csd register with a value 1(POWER_ON).
->>
->> For suspend mode short timeout is used, whereas for the normal power=
-off
->> long
->> timeout is used.
->>
->> cc: Chris Ball<cjb@laptop.org>
->> Signed-off-by: Girish K S<girish.shivananjappa@linaro.org>
->> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
->> ---
->> Changes in V9:
->> =A0 =A0 =A0 =A0Removed the macros not related with the PowerOff noti=
-fy feature.
->> =A0 =A0 =A0 =A0The previous patch with commit id
->> =A0 =A0 =A0 =A0bd3151f6c55c553bed2c0df72792841457b75bb5 should be de=
-leted before
->> =A0 =A0 =A0 =A0applying this patch.
->> Changes in V8:
->> =A0 =A0 =A0 =A0Updated with review comments of Chris Ball and rebase=
-d to
->> =A0 =A0 =A0 =A0chris-mmc/mmc-next branch.
->> Changes in V7:
->> =A0 =A0 =A0 =A0Rebased to chris-mmc/mmc-next branch. merged to patch=
-es to single
->> =A0 =A0 =A0 =A0patch.
->> Changes in V6:
->> =A0 =A0 =A0 =A0Fixes checkpatch errors. The patches are generated af=
-ter rebasing
->> to
->> =A0 =A0 =A0 =A0 chris's mmc-next branch.
->> Changes in V5:
->> =A0 =A0 =A0 =A0This patch version fixes the problem with power off n=
-otify
->> function,
->> =A0 =A0 =A0 =A0 when called for the first time and card is not yet i=
-nitialised.
->> Changes in V4:
->> =A0 =A0 =A0 =A0Updated with review comments of Jeon
->> Changes in V2:
->> =A0 =A0 =A0 =A0Adds poweroff notification handling in suspend/normal=
-=2E
->>
->> =A0drivers/mmc/core/core.c =A0| =A0 34 +++++++++++++++++++++++++++++=
-+++++
->> =A0drivers/mmc/core/mmc.c =A0 | =A0 23 +++++++++++++++++++++--
->> =A0drivers/mmc/host/sdhci.c | =A0 =A09 +++++++++
->> =A0include/linux/mmc/card.h | =A0 =A06 ++++++
->> =A0include/linux/mmc/host.h | =A0 =A05 +++++
->> =A0include/linux/mmc/mmc.h =A0| =A0 =A06 ++++++
->> =A06 files changed, 81 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
->> index 61d7730..b1eca96 100644
->> --- a/drivers/mmc/core/core.c
->> +++ b/drivers/mmc/core/core.c
->> @@ -1212,11 +1212,43 @@ static void mmc_power_up(struct mmc_host *ho=
-st)
->>
->> =A0void mmc_power_off(struct mmc_host *host)
->> =A0{
->> + =A0 =A0 =A0 struct mmc_card *card;
->> + =A0 =A0 =A0 unsigned int notify_type;
->> + =A0 =A0 =A0 unsigned int timeout;
->> + =A0 =A0 =A0 int err;
->> +
->> =A0 =A0 =A0 =A0mmc_host_clk_hold(host);
->>
->> + =A0 =A0 =A0 card =3D host->card;
->> =A0 =A0 =A0 =A0host->ios.clock =3D 0;
->> =A0 =A0 =A0 =A0host->ios.vdd =3D 0;
->>
->> + =A0 =A0 =A0 if (card&& =A0mmc_card_mmc(card)&&
->> + =A0 =A0 =A0 =A0 =A0 card->poweroff_notify_state =3D=3D MMC_POWERED=
-_ON) {
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (host->power_notify_type =3D=3D MMC=
-_HOST_PW_NOTIFY_SHORT) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 notify_type =3D EXT_CS=
-D_POWER_OFF_SHORT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 timeout =3D card->ext_=
-csd.generic_cmd6_time;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->poweroff_notify_=
-state =3D MMC_POWEROFF_SHORT;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 notify_type =3D EXT_CS=
-D_POWER_OFF_LONG;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 timeout =3D card->ext_=
-csd.power_off_longtime;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->poweroff_notify_=
-state =3D MMC_POWEROFF_LONG;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_S=
-ET_NORMAL,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT=
-_CSD_POWER_OFF_NOTIFICATION,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0not=
-ify_type, timeout);
->
-> During suspend, the device can already be in sleep state (CMD5) befor=
-e
-> mmc_power_off()
-> is called from mmc_suspend_host(). As per eMMC specification, when th=
-e
-> device is in sleep state,
-> it can only respond to RESET commands (CMD0 with argument of either
-> 0x00000000 or
-> 0xF0F0F0F0 or H/W reset) and awake command (CMD5). =A0So, how does th=
-is switch
-> going
-> to happen (CMD6) if it is in sleep state?
-> Thanks Sahitya. Will handle the situation of sending the switch comma=
-nd  in mmc_suspend_host function before the device goes to sleep.
-> Thanks,
-> Sahitya.
+> You're putting whole driver under arch/arm/, I'm wondering whether th=
+e functionality
+> it provides could be handled by some generic framework, like cpufreq =
+or devfreq.
+> How this driver is different from cpufreq drivers ?
+
+I think there would be futher usage with ASV if IEM and proper PMICs
+are attaches; however, for now, ASV guides proper vddarm and vddint
+voltages for each freuquency.
+
+Both drivers in cpufreq(vddarm and arm core freq) and devfreq(vddint
+and memory/bus freq.. and GPU or MMC later?) should use the result
+value of ASV because they both alter voltages according to the ASV
+value.
+
+Thus, if this is going to be located in drivers/, it'd better be in
+elsewhere (drivers/misc? drivers/hwmon? ..???) and capable of
+providing values to other device drivers, at least to cpufreq and
+devfreq drivers.
+
+
+Cheers!
+MyungJoo
+
 >
 > --
-> Sent by a consultant of the Qualcomm Innovation Center, Inc.
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
-> Forum.
+> Thanks,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 >
->
+
+
+
+--=20
+MyungJoo Ham, Ph.D.
+Mobile Software Platform Lab, DMC Business, Samsung Electronics
