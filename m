@@ -1,140 +1,90 @@
-From: merez@codeaurora.org
-Subject: RE: [PATCH 2/2] mmc: core: Support packed command for eMMC4.5      
-     device
-Date: Thu, 10 Nov 2011 05:41:17 -0800 (PST)
-Message-ID: <620ec9ffa6bdbba9ae5f76998e36f8dc.squirrel@www.codeaurora.org>
+From: Jamie Iles <jamie@jamieiles.com>
+Subject: Re: [PATCHv4 07/13] ARM: s3c64xx: convert to MULTI_IRQ_HANDLER
+Date: Thu, 10 Nov 2011 14:53:18 +0000
+Message-ID: <20111110145318.GD16018@totoro>
+References: <1320369010-23428-1-git-send-email-jamie@jamieiles.com>
+ <1320369010-23428-8-git-send-email-jamie@jamieiles.com>
+ <CAJuYYwRPoFDUhtcVLT_rj4c9whJWVXyQ7tcaK3O_G3X9SYf-cw@mail.gmail.com>
+ <20111109115406.GB4253@totoro>
+ <CAJuYYwQK-V0AYcayUdXy+SCAyTYbH6vJrn=+m5LGy6PSxP0Vzg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: "'S, Venkatraman'" <svenkatr@ti.com>, linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:42249 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753979Ab1KJOxX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 Nov 2011 09:53:23 -0500
+Received: by wyh15 with SMTP id 15so2777603wyh.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2011 06:53:22 -0800 (PST)
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwQK-V0AYcayUdXy+SCAyTYbH6vJrn=+m5LGy6PSxP0Vzg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Jamie Iles <jamie@jamieiles.com>, Rob Herring <robherring2@gmail.com>, linux-arm-kernel@lists.infradead.org, viresh.kumar@st.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, linus.walleij@stericsson.com, devicetree-discuss@lists.ozlabs.org, rmallon@gmail.com, hsweeten@visionengravers.com, rajeev-dlh.kumar@st.com, ben-linux@fluff.org, rubini@unipv.it, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Thu, Nov 10, 2011 Maya Erez wrote:
-> S, Venkatraman <svenkatr@ti.com> wrote:
->> On Thu, Nov 3, 2011 at 7:23 AM, Seungwon Jeon <tgih.jun@samsung.com>
-wrote:
->> >> > +static u8 mmc_blk_chk_packable(struct mmc_queue *mq, struct
->> request *req)
+On Wed, Nov 09, 2011 at 06:00:20PM +0530, Thomas Abraham wrote:
+> On 9 November 2011 17:24, Jamie Iles <jamie@jamieiles.com> wrote:
+> > On Wed, Nov 09, 2011 at 04:55:06PM +0530, Thomas Abraham wrote:
+> >> Hi Jamie,
+> >>
+> >> On 4 November 2011 06:40, Jamie Iles <jamie@jamieiles.com> wrote:
+> >> > Now that there is a generic IRQ handler for multiple VIC devices=
+ use it
+> >> > for s3c64xx to help building multi platform kernels.
+> >> >
+> >> > Cc: Ben Dooks <ben-linux@fluff.org>
+> >> > Signed-off-by: Jamie Iles <jamie@jamieiles.com>
+> >> > ---
+> >> > =A0arch/arm/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 =A0 =A0 =A0 =A0 | =A0 =A01 +
+> >> > =A0arch/arm/mach-s3c64xx/include/mach/entry-macro.S | =A0 =A07 +=
++++---
+> >> > =A0arch/arm/mach-s3c64xx/mach-anw6410.c =A0 =A0 =A0 =A0 =A0 =A0 =
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-crag6410.c =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-hmt.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 | =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-mini6410.c =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-ncp.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
+=A0 | =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-real6410.c =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-smartq5.c =A0 =A0 =A0 =A0 =A0 =A0 =
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-smartq7.c =A0 =A0 =A0 =A0 =A0 =A0 =
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-smdk6400.c =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 ++
+> >> > =A0arch/arm/mach-s3c64xx/mach-smdk6410.c =A0 =A0 =A0 =A0 =A0 =A0=
+| =A0 =A02 ++
+> >> > =A012 files changed, 25 insertions(+), 3 deletions(-)
+> >> >
+> >>
+> >> I have tested this patch series on smdk6410 board (s3c64xx) using =
+the
+> >> following repositorty and branch
+> >>
+> >> https://github.com/jamieiles/linux-2.6-ji.git =A0branch: vic-dt
+> >>
+> >> There is a crash while booting. Am I using the right tree and bran=
+ch?
+> >> The following is the boot log. Is there any other config option to=
+ be
+> >> enabled?
+> >
+> > Hmm, could you please try with the patch below applied?
+[...]
+>=20
+> This patch solves the issue and both smdk6410 and smdkv210 works fine=
+=2E
 
-The function prepares the checkable list and not only checks if packing=
- is
-possible, therefore I think its name should change to reflect its real
-action.
+Brilliant, thanks Thomas.  Mind if I add a Tested-by from you providing=
+=20
+the fixup patch is applied first?
 
->> >> > + =A0 =A0 =A0 if (!(md->flags & MMC_BLK_CMD23) &&
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 !card->ext_csd.pa=
-cked_event_en)
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto no_packed;
-
-Having the condition with a && can lead to cases where CMD23 is not=20
-supported and we send packed commands. Therfore the condition should be
-changed to || or be splitted to 2 separate checks.
-Also, according to the standard the generic error flag in
-PACKED_COMMAND_STATUS is set in case of any error and having
-PACKED_EVENT_EN is only optional. Therefore, I don't think that setting
-the packed_event_en should be a mandatory condition for using packed
-coammnds.
-
->> >> > + =A0 =A0 =A0 if (mmc_req_rel_wr(cur) &&
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (md->flags & MMC_=
-BLK_REL_WR) &&
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 !en_rel_wr) {
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto no_packed;
->> >> > + =A0 =A0 =A0 }
-
-Can you please explain this condition and its purpose?
-
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 phys_segments +=3D =A0next->nr_ph=
-ys_segments;
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (phys_segments > max_phys_segs=
-) {
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 blk_requeue_reque=
-st(q, next);
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> >> I mentioned this before - if the next request is not packable and
->> requeued,
->> >> blk_fetch_request will retrieve it again and this while loop will
-never terminate.
->> >>
->> > If next request is not packable, it is requeued and 'break'
-terminates
->> this loop.
->> > So it not infinite.
->> Right !! But that doesn't help finding the commands that are packabl=
-e.
-Ideally, you'd need to pack all neighbouring requests into one packed
-command.
->> The way CFQ works, it is not necessary that the fetch would return a=
-ll
-outstanding
->> requests that are packable (unless you invoke a forced dispatch) It
-would be good to see some numbers on the number of pack hits /
-misses
->> that
->> you would encounter with this logic, on a typical usecase.
-> Is it considered only for CFQ scheduler? How about other I/O schedule=
-r?
-If all requests are drained from scheduler queue forcedly,
-> the number of candidate to be packed can be increased.
-> However we may lose the unique CFQ's strength and MMC D/D may take th=
-e
-CFQ's duty.
-> Basically, this patch accommodates the origin order requests from I/O
-scheduler.
->
-
-In order to better utilize the packed commands feature and achieve the
-best performance improvements I think that the command packing should b=
-e
-done in the block layer, according to the scheduler policy.
-That is, the scheduler should be aware of the capability of the device =
-to
-receive a request list and its constrains (such as maximum number of
-requests, max number of sectors etc) and use this information as a  fac=
-tor
-to its algorithm.
-This way you keep the decision making in the hands of the scheduler whi=
-le
-the MMC layer will only have to send this list as a packed command.
-
->> >> > + =A0 =A0 =A0 if (rqc)
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reqs =3D mmc_blk_chk_packable(mq,=
- rqc);
-
-It would be best to keep all the calls to blk_fetch_request in the same
-location. Therefore, I suggest to move the call to mmc_blk_chk_packable=
- to
-mmc/card/queue.c after the first request is fetched.
-
->> >> > =A0cmd_abort:
->> >> > - =A0 =A0 =A0 spin_lock_irq(&md->lock);
->> >> > - =A0 =A0 =A0 while (ret)
->> >> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D __blk_end_request(req, -E=
-IO,
->> blk_rq_cur_bytes(req));
->> >> > - =A0 =A0 =A0 spin_unlock_irq(&md->lock);
->> >> > + =A0 =A0 =A0 if (mq_rq->packed_cmd !=3D MMC_PACKED_NONE) {
-
-This should be the case for MMC_PACKED_NONE.
-
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 spin_lock_irq(&md->lock);
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 while (ret)
->> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D __blk_end=
-_request(req, -EIO,
->> blk_rq_cur_bytes(req));
-
-Do we need the while or should it be an if? In other cases where
-__blk_end_request is called there is no such while.
-
-Thanks,
-Maya Erez
-Consultant for Qualcomm Innovation Center, Inc.
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum
-
-
-
-
+Jamie
