@@ -1,211 +1,157 @@
-From: Amit Kachhap <amit.kachhap@linaro.org>
-Subject: Re: [PATCH V2 1/5] ARM: exynos4: Add support for AFTR mode cpuidle state
-Date: Fri, 11 Nov 2011 16:42:31 +0530
-Message-ID: <CAK44p20w1RN8APYLiAbxv_vK9p4UUUHM8zO_Xa2x06YVEE+a6g@mail.gmail.com>
-References: <1320992977-11589-1-git-send-email-amit.kachhap@linaro.org>
-	<1320992977-11589-2-git-send-email-amit.kachhap@linaro.org>
-	<20111111101753.GA6292@e102568-lin.cambridge.arm.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH 4/4] ARM: exynos4: remove useless code to save/restore
+ L2 and GIC state
+Date: Fri, 11 Nov 2011 12:41:50 +0100
+Message-ID: <4EBD09FE.7040805@gmail.com>
+References: <1320426228-21746-1-git-send-email-amit.kachhap@linaro.org>	<1320426228-21746-5-git-send-email-amit.kachhap@linaro.org>	<4EB421FE.407@samsung.com> <CAK44p21H0mGnWRhMx4VSW5FCg4ytY4hzAy4CE3bjFeGan5fxRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:62792 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751547Ab1KKLMc convert rfc822-to-8bit (ORCPT
+Received: from mail-wy0-f174.google.com ([74.125.82.174]:61567 "EHLO
+	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752620Ab1KKLl6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Nov 2011 06:12:32 -0500
-Received: by ggnb2 with SMTP id b2so4042327ggn.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2011 03:12:31 -0800 (PST)
-In-Reply-To: <20111111101753.GA6292@e102568-lin.cambridge.arm.com>
+	Fri, 11 Nov 2011 06:41:58 -0500
+Received: by wyh15 with SMTP id 15so3743972wyh.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2011 03:41:57 -0800 (PST)
+In-Reply-To: <CAK44p21H0mGnWRhMx4VSW5FCg4ytY4hzAy4CE3bjFeGan5fxRA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "patches@linaro.org" <patches@linaro.org>
+To: Amit Kachhap <amit.kachhap@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, kgene.kim@samsung.com, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
-On 11 November 2011 15:47, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com=
-> wrote:
-> Hi Amit,
->
-> On Fri, Nov 11, 2011 at 06:29:33AM +0000, Amit Daniel Kachhap wrote:
->> This patch adds support for AFTR(ARM OFF TOP RUNNING) mode in
->> cpuidle driver for EXYNOS4210. L2 cache keeps their data in this mod=
-e.
->> This patch adds the code to the latest interfaces to
->> save/restore CPU state inclusive of CPU PM notifiers, l2
->> resume and cpu_suspend/resume.
+On 11/11/2011 07:28 AM, Amit Kachhap wrote:
+> On 4 November 2011 23:03, Sylwester Nawrocki<s.nawrocki@samsung.com>  wrote:
+>> On 11/04/2011 06:03 PM, amit.kachhap@linaro.org wrote:
+>>> From: Amit Daniel Kachhap<amit.kachhap@linaro.org>
+>>>
+>>> Following the merge of CPU PM notifiers and L2 resume code, this patch
+>>> removes useless code to save and restore L2 and GIC registers.
+>>>
+>>> This is now automatically covered by suspend calls which integrated
+>>> CPU PM notifiers and new sleep code that allows to resume L2 before MMU
+>>> is turned on.
+>>>
+>>> Signed-off-by: Lorenzo Pieralisi<lorenzo.pieralisi@arm.com>
+>>> Signed-off-by: Amit Daniel Kachhap<amit.kachhap@linaro.org>
+>>> ---
+>>>   arch/arm/mach-exynos4/pm.c |   86 --------------------------------------------
+>>>   1 files changed, 0 insertions(+), 86 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
+>>> index 62e4f43..7499f14 100644
+>>> --- a/arch/arm/mach-exynos4/pm.c
+>>> +++ b/arch/arm/mach-exynos4/pm.c
+>>> @@ -63,77 +63,6 @@ static struct sleep_save exynos4_vpll_save[] = {
+>>>   };
+>>>
+>>>   static struct sleep_save exynos4_core_save[] = {
+>>> -     /* GIC side */
+>>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x000),
+>>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x004),
+>>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x008),
+>>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x00C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x014),
+>>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x018),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x000),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x004),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x100),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x104),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x108),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x300),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x304),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x308),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x400),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x404),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x408),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x40C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x410),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x414),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x418),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x41C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x420),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x424),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x428),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x42C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x430),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x434),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x438),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x43C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x440),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x444),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x448),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x44C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x450),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x454),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x458),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x45C),
+>>> -
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x800),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x804),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x808),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x80C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x810),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x814),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x818),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x81C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x820),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x824),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x828),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x82C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x830),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x834),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x838),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x83C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x840),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x844),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x848),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x84C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x850),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x854),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x858),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x85C),
+>>> -
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC00),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC04),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC08),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC0C),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC10),
+>>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC14),
 >>
->> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
->> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
->> ---
->> =A0arch/arm/mach-exynos/cpuidle.c =A0 =A0 =A0 =A0 =A0| =A0148 ++++++=
-++++++++++++++++++++++++-
->> =A0arch/arm/mach-exynos/include/mach/pmu.h | =A0 =A02 +
->> =A02 files changed, 146 insertions(+), 4 deletions(-)
 >>
->> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/c=
-puidle.c
->> index c6485d3..857ccc6 100644
->> --- a/arch/arm/mach-exynos/cpuidle.c
->> +++ b/arch/arm/mach-exynos/cpuidle.c
->> @@ -12,13 +12,31 @@
->> =A0#include <linux/module.h>
->> =A0#include <linux/init.h>
->> =A0#include <linux/cpuidle.h>
->> +#include <linux/cpu_pm.h>
->
-> Included but not used, why ? Is GIC state kept in AFTR ? Even if it
-> is, VFP state is certainly gone, so you must call the notifiers anywa=
-y.
->
->> =A0#include <linux/io.h>
->> -
->> +#include <linux/suspend.h>
->> +#include <linux/err.h>
->> =A0#include <asm/proc-fns.h>
->> +#include <asm/smp_scu.h>
->> +#include <asm/suspend.h>
->> +#include <asm/unified.h>
->> +#include <mach/regs-pmu.h>
->> +#include <mach/pmu.h>
->> +
->> +#include <plat/exynos4.h>
->> +#include <plat/cpu.h>
->> +
->> +#define REG_DIRECTGO_ADDR =A0 =A0(samsung_rev() =3D=3D EXYNOS4210_R=
-EV_1_1 ? \
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P_INFORM=
-7 : (S5P_VA_SYSRAM + 0x24))
->> +#define REG_DIRECTGO_FLAG =A0 =A0(samsung_rev() =3D=3D EXYNOS4210_R=
-EV_1_1 ? \
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P_INFORM=
-6 : (S5P_VA_SYSRAM + 0x20))
->>
->> =A0static int exynos4_enter_idle(struct cpuidle_device *dev,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct cpuidle_driver *d=
-rv,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 int index);
->> +static int exynos4_enter_lowpower(struct cpuidle_device *dev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct cpu=
-idle_driver *drv,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 int index)=
-;
->>
->> =A0static struct cpuidle_state exynos4_cpuidle_set[] =3D {
->> =A0 =A0 =A0 [0] =3D {
->> @@ -26,9 +44,17 @@ static struct cpuidle_state exynos4_cpuidle_set[]=
- =3D {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .exit_latency =A0 =A0 =A0 =A0 =A0 =3D 1,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .target_residency =A0 =A0 =A0 =3D 100000=
-,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D CPUIDLE_FLAG_TIME_VALID,
->> - =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=3D "IDLE",
->> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=3D "C0",
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .desc =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =3D "ARM clock gating(WFI)",
->> =A0 =A0 =A0 },
->> + =A0 =A0 [1] =3D {
->> + =A0 =A0 =A0 =A0 =A0 =A0 .enter =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D exynos4_enter_lowpower,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .exit_latency =A0 =A0 =A0 =A0 =A0 =3D 300,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .target_residency =A0 =A0 =A0 =3D 100000,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .flags =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-=3D CPUIDLE_FLAG_TIME_VALID,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=3D "C1",
->> + =A0 =A0 =A0 =A0 =A0 =A0 .desc =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=3D "ARM power down",
->> + =A0 =A0 },
->> =A0};
->>
->> =A0static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_devi=
-ce);
->> @@ -38,9 +64,95 @@ static struct cpuidle_driver exynos4_idle_driver =
-=3D {
->> =A0 =A0 =A0 .owner =A0 =A0 =A0 =A0 =A0=3D THIS_MODULE,
->> =A0};
->>
->> +/* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
->> +static void exynos4_set_wakeupmask(void)
->> +{
->> + =A0 =A0 __raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
->> +}
->> +
->> +static unsigned int g_pwr_ctrl, g_diag_reg;
->> +
->> +static void save_cpu_arch_register(void)
->> +{
->> + =A0 =A0 /*read power control register*/
->> + =A0 =A0 asm("mrc p15, 0, %0, c15, c0, 0" : "=3Dr"(g_pwr_ctrl) : : =
-"cc");
->> + =A0 =A0 /*read diagnostic register*/
->> + =A0 =A0 asm("mrc p15, 0, %0, c15, c0, 1" : "=3Dr"(g_diag_reg) : : =
-"cc");
->> + =A0 =A0 return;
->> +}
->> +
->> +static void restore_cpu_arch_register(void)
->> +{
->> + =A0 =A0 /*write power control register*/
->> + =A0 =A0 asm("mcr p15, 0, %0, c15, c0, 0" : : "r"(g_pwr_ctrl) : "cc=
-");
->> + =A0 =A0 /*write diagnostic register*/
->> + =A0 =A0 asm("mcr p15, 0, %0, c15, c0, 1" : : "r"(g_diag_reg) : "cc=
-");
->> + =A0 =A0 return;
->> +}
->> +
->> +static int idle_finisher(unsigned long flags)
->> +{
->> + =A0 =A0 cpu_do_idle();
->> + =A0 =A0 return 1;
->> +}
->> +
->> +static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 struct cpu=
-idle_driver *drv,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 int index)
->> +{
->> + =A0 =A0 struct timeval before, after;
->> + =A0 =A0 int idle_time;
->> + =A0 =A0 unsigned long tmp;
->> +
->> + =A0 =A0 local_irq_disable();
->> + =A0 =A0 do_gettimeofday(&before);
->> +
->> + =A0 =A0 exynos4_set_wakeupmask();
->> +
->> + =A0 =A0 /* Set value of power down register for aftr mode */
->> + =A0 =A0 exynos4_sys_powerdown_conf(SYS_AFTR);
->> +
->> + =A0 =A0 save_cpu_arch_register();
->> +
->
-> You must call the notifiers here, at least cpu_pm_enter();
+>> This list is not complete anyway, some peripheral devices interrupts do not
+>> work after resume from system suspend to RAM.
+>> Is there any code already handling GIC state during system suspend/resume cycles?
+>> Or you refer to some upcoming patches ?
+> 
+> In my next patch series I have left the GIC save/restore from platform code.
 
-Yes lorenzo, cpu_pm_enter may be needed although it does GIC_CPU
-save/restore which may not be needed.
-Thanks for the review.
+OK, although I thought someone is just going to fix the regression introduced with
+commit:
 
->
->> + =A0 =A0 /* Setting Central Sequence Register for power down mode *=
-/
->> + =A0 =A0 tmp =3D __raw_readl(S5P_CENTRAL_SEQ_CONFIGURATION);
->> + =A0 =A0 tmp &=3D ~S5P_CENTRAL_LOWPWR_CFG;
->> + =A0 =A0 __raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
->> +
->> + =A0 =A0 cpu_suspend(0, idle_finisher);
->> +
->> + =A0 =A0 scu_enable(S5P_VA_SCU);
->> +
->
-> Again, you need to resume (VFP, if GIC is kept) through notifiers her=
-e,
-> I do not understand why that code has been removed.
->
-> Lorenzo
->
->
+commit aab74d3e753649defa52ea43cbec1e91ebb4cc8e
+Author: Changhwan Youn <chaos.youn@samsung.com>
+Date:   Sat Jul 16 10:49:51 2011 +0900
+
+    ARM: EXYNOS4: Add support external GIC
+    
+    For full support of power modes, this patch adds implementation
+    external GIC on EXYNOS4.
+    
+    External GIC of Exynos4 cannot support register banking so
+    several interrupt related code for CPU1 should be different
+    from that of CPU0.
+    
+    Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
+    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+The external GIC has more registers and now not all of them are properly handled during
+system sleep/resume. I didn't get around yet to submit a proper solution for that.  
+I suspect per CPU distributor and CPU interface register files need to be saved/restored.
+I'm not an expert in the GIC internals though, I'm just wondering why can't GIC be left
+active during system sleep.
+
+--
+Regards,
+Sylwester
