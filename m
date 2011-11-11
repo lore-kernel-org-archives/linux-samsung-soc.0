@@ -1,60 +1,127 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH] ARM: OMAP: Introduce local common.h files
-Date: Thu, 10 Nov 2011 15:33:47 -0800
-Message-ID: <20111110233347.GZ31337@atomide.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: Pet Peaves about Platform code, and arch_reset
+Date: Fri, 11 Nov 2011 09:17:28 +0800
+Message-ID: <20111111011727.GA8700@S2100-06.ap.freescale.net>
 References: <20111106135250.GC15294@n2100.arm.linux.org.uk>
  <20111108004550.GH31337@atomide.com>
- <20111110201719.GW31337@atomide.com>
- <20111110202356.GQ15294@n2100.arm.linux.org.uk>
- <20111110215008.GX31337@atomide.com>
- <20111110222907.GR15294@n2100.arm.linux.org.uk>
+ <20111109214652.GM31337@atomide.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:21990 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752360Ab1KJXdx (ORCPT
+Received: from va3ehsobe004.messaging.microsoft.com ([216.32.180.14]:51621
+	"EHLO VA3EHSOBE004.bigfish.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756963Ab1KKBFv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 Nov 2011 18:33:53 -0500
+	Thu, 10 Nov 2011 20:05:51 -0500
 Content-Disposition: inline
-In-Reply-To: <20111110222907.GR15294@n2100.arm.linux.org.uk>
+In-Reply-To: <20111109214652.GM31337@atomide.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To: Tony Lindgren <tony@atomide.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-* Russell King - ARM Linux <linux@arm.linux.org.uk> [111110 13:54]:
-> On Thu, Nov 10, 2011 at 01:50:09PM -0800, Tony Lindgren wrote:
-> > * Russell King - ARM Linux <linux@arm.linux.org.uk> [111110 11:49]:
+On Wed, Nov 09, 2011 at 01:46:52PM -0800, Tony Lindgren wrote:
+> * Tony Lindgren <tony@atomide.com> [111107 16:11]:
+> > * Russell King - ARM Linux <linux@arm.linux.org.uk> [111106 05:18]:
+> > > Here's a list of my peaves about current platform code - which are
+> > > causing me great issue when trying to clean up the arch_reset() stuff:
+> > > 
+> > > 1. Lack of trailing ',' on structure initializers
+> > >    This makes it much harder to add additional initializers at the end
+> > >    of existing initializers, and increases the risks of conflicts being
+> > >    caused due to more lines having to be modified.
+> > > 
+> > > (This won't work directly because the tabs have been converted to space.
+> > > The empty-looking [] contain a space plus a tab.)
+> > > $ grep '[   ][      ]*\.[[:alnum:]_][[:alnum:]_]*[  ]*=[    ]*[[:alnum:]_{][[:alnum:]_|()}]*[^,]$' arch/arm -r|wc -l
+> > > 768
+> > > $ grep '[   ][      ]*\.[[:alnum:]_][[:alnum:]_]*[  ]*=[    ]*[[:alnum:]_{][[:alnum:]_|()}]*[^,]$' arch/arm/*omap* -r|wc -l
+> > > 325
+> > > 
+> > >    Note that this is _far_ too big a problem - and trivial - to fix in
+> > >    a set of silly churn generating patches - it's a problem to be fixed
+> > >    as a part of _other_ changes to the files.
+> > > 
+> > >    But most importantly _stop_ introducing versions of this problem.
 > > 
-> > OK, a stable branch is needed badly for this.. If possible please
-> > publish some minimal stable base branch as soon as you can as pretty
-> > much all omap patches need to be updated for this one.
+> > Sounds like we need a spatch for this issue?
 > 
-> I want to give it something between a week and two before closing the
-> window for acked-bys etc (amongst other reasons).
+> I guess spatch would need some patching to deal with this.. I tried
+> with something like:
+> 
+> @r@
+> identifier I, s, fld;
+> position p0,p;
+> expression E;
+> @@
+> 
+> struct I s =@p0 {
+> ...
+> -       .fld@p = E,
+> +       .fld = E,
+> ...
+> };
+> 
+> That catches them, but adds an extra comma in the beginning :)
+> 
+> --- a/ams-delta-fiq.c 2011-11-08 18:03:20.110707512 -0800
+> +++ b/ams-delta-fiq.c 2011-11-08 18:04:36.094948038 -0800
+> @@ -25,7 +25,7 @@
+>  #include <mach/ams-delta-fiq.h>
+>  
+>  static struct fiq_handler fh = {
+> -	.name	= "ams-delta-fiq"
+> +	,.name = "ams-delta-fiq",
+>  };
+>  
+>  /*
+> 
+> And it also messes up the formatting for other structs..
+> 
+> Anyways, I think I got most of these fixed for all ARM subarchitectures
+> in a pile of 72 patches, the stats are: 
+> 
+> 486 files changed, 2296 insertions(+), 2296 deletions(-)
+> 
+> This is something people can then use as a base to start chipping away at
+> the problem. I'm thinking it may be possible to use this as a base for
+> search and replacement type work and then hopefully git mergetool will
+> pick the relevant changes when rebasing a working branch to the mainline.
+> 
+> I can also post the patches here if people want, but sounds like we're
+> not going to merge them as they are, but instead will slowly fix the
+> issue in other related patches?
+> 
+> I've pushed the patches into a git branch at:
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap formatting:
+> 
+> Web interface at:
+> 
+> http://git.kernel.org/?p=linux/kernel/git/tmlind/linux-omap.git;a=shortlog;h=refs/heads/formatting
+> 
 
-OK
+For record, we may not want to do this for cases below, since we should
+never add entry after sentinel.
+
+ static const struct of_device_id imx53_iomuxc_of_match[] __initconst = {
+@@ -75,7 +75,7 @@ static const struct of_device_id imx53_iomuxc_of_match[] __initconst = {
+        { .compatible = "fsl,imx53-iomuxc-evk", .data = imx53_evk_common_init, },
+        { .compatible = "fsl,imx53-iomuxc-qsb", .data = imx53_qsb_common_init, },
+        { .compatible = "fsl,imx53-iomuxc-smd", .data = imx53_smd_common_init, },
+-       { /* sentinel */ }
++       { /* sentinel */ },
+ };
  
-> > > If you agree, could you put it in the patch system please?  Thanks.
-> > 
-> > Sounds good to me, it there now as patch 7159/1.
-> 
-> Thanks, merged that into the series.  The updated OMAP patch updated is
-> below, which has been moved to part 2.  Lastly, the final patch of part
-> 2 has been updated to delete the empty arch_reset(), so OMAP is now
-> entirely free of arch_reset() references.  This leaves a total of 12
-> references left to nobble.
+ static void __init imx53_dt_init(void)
+@@ -112,7 +112,7 @@ static const char *imx53_dt_board_compat[] __initdata = {
+        "fsl,imx53-evk",
+        "fsl,imx53-qsb",
+        "fsl,imx53-smd",
+-       NULL
++       NULL,
+ };
 
-Great, good to hear.
- 
-> 8<---
-> From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-> Subject: [PATCH] ARM: restart: omap: use new restart hook
-> 
-> Hook these platforms restart code into the new restart hook rather
-> than using arch_reset().
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-
-Acked-by: Tony Lindgren <tony@atomide.com>
+-- 
+Regards,
+Shawn
