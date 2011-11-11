@@ -1,157 +1,57 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 4/4] ARM: exynos4: remove useless code to save/restore
- L2 and GIC state
-Date: Fri, 11 Nov 2011 12:41:50 +0100
-Message-ID: <4EBD09FE.7040805@gmail.com>
-References: <1320426228-21746-1-git-send-email-amit.kachhap@linaro.org>	<1320426228-21746-5-git-send-email-amit.kachhap@linaro.org>	<4EB421FE.407@samsung.com> <CAK44p21H0mGnWRhMx4VSW5FCg4ytY4hzAy4CE3bjFeGan5fxRA@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@stericsson.com>
+Subject: Re: [PATCH] mmc: core: Fix setting power notify state variable for
+ non eMMC
+Date: Fri, 11 Nov 2011 14:32:44 +0100
+Message-ID: <4EBD23FC.3070203@stericsson.com>
+References: <1320403967-2940-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="iso-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wy0-f174.google.com ([74.125.82.174]:61567 "EHLO
-	mail-wy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752620Ab1KKLl6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Nov 2011 06:41:58 -0500
-Received: by wyh15 with SMTP id 15so3743972wyh.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 11 Nov 2011 03:41:57 -0800 (PST)
-In-Reply-To: <CAK44p21H0mGnWRhMx4VSW5FCg4ytY4hzAy4CE3bjFeGan5fxRA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1320403967-2940-1-git-send-email-girish.shivananjappa@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "cjb@laptop.org" <cjb@laptop.org>, "patches@linaro.org" <patches@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Kachhap <amit.kachhap@linaro.org>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, kgene.kim@samsung.com, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
-On 11/11/2011 07:28 AM, Amit Kachhap wrote:
-> On 4 November 2011 23:03, Sylwester Nawrocki<s.nawrocki@samsung.com>  wrote:
->> On 11/04/2011 06:03 PM, amit.kachhap@linaro.org wrote:
->>> From: Amit Daniel Kachhap<amit.kachhap@linaro.org>
->>>
->>> Following the merge of CPU PM notifiers and L2 resume code, this patch
->>> removes useless code to save and restore L2 and GIC registers.
->>>
->>> This is now automatically covered by suspend calls which integrated
->>> CPU PM notifiers and new sleep code that allows to resume L2 before MMU
->>> is turned on.
->>>
->>> Signed-off-by: Lorenzo Pieralisi<lorenzo.pieralisi@arm.com>
->>> Signed-off-by: Amit Daniel Kachhap<amit.kachhap@linaro.org>
->>> ---
->>>   arch/arm/mach-exynos4/pm.c |   86 --------------------------------------------
->>>   1 files changed, 0 insertions(+), 86 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos4/pm.c b/arch/arm/mach-exynos4/pm.c
->>> index 62e4f43..7499f14 100644
->>> --- a/arch/arm/mach-exynos4/pm.c
->>> +++ b/arch/arm/mach-exynos4/pm.c
->>> @@ -63,77 +63,6 @@ static struct sleep_save exynos4_vpll_save[] = {
->>>   };
->>>
->>>   static struct sleep_save exynos4_core_save[] = {
->>> -     /* GIC side */
->>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x000),
->>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x004),
->>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x008),
->>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x00C),
->>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x014),
->>> -     SAVE_ITEM(S5P_VA_GIC_CPU + 0x018),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x000),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x004),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x100),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x104),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x108),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x300),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x304),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x308),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x400),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x404),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x408),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x40C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x410),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x414),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x418),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x41C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x420),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x424),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x428),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x42C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x430),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x434),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x438),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x43C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x440),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x444),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x448),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x44C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x450),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x454),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x458),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x45C),
->>> -
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x800),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x804),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x808),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x80C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x810),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x814),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x818),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x81C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x820),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x824),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x828),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x82C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x830),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x834),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x838),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x83C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x840),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x844),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x848),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x84C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x850),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x854),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x858),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0x85C),
->>> -
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC00),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC04),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC08),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC0C),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC10),
->>> -     SAVE_ITEM(S5P_VA_GIC_DIST + 0xC14),
->>
->>
->> This list is not complete anyway, some peripheral devices interrupts do not
->> work after resume from system suspend to RAM.
->> Is there any code already handling GIC state during system suspend/resume cycles?
->> Or you refer to some upcoming patches ?
+Girish K S wrote:
+> This patch skips the setting of the power notify state variable
+> for non eMMC 4.5 devices. Also fixes the problem of omap_hsmmc
+> noisy/broken for suspend resume reported by kevin Hilman.
 > 
-> In my next patch series I have left the GIC save/restore from platform code.
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+>  drivers/mmc/core/mmc.c |   10 +++++++---
+>  1 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 3627044..4db73a9 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -882,10 +882,14 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+>  				 card->ext_csd.generic_cmd6_time);
+>  		if (err && err != -EBADMSG)
+>  			goto free_card;
+> -	}
+>  
+> -	if (!err)
+> -		card->poweroff_notify_state = MMC_POWERED_ON;
+> +		/*
+> +		 * The err can be -EBADMSG or 0,
+> +		 * so check for success and update the flag
+> +		 */
+> +		if (!err)
+> +			card->poweroff_notify_state = MMC_POWERED_ON;
+> +	}
+>  
+>  	/*
+>  	 * Activate high speed (if supported)
 
-OK, although I thought someone is just going to fix the regression introduced with
-commit:
 
-commit aab74d3e753649defa52ea43cbec1e91ebb4cc8e
-Author: Changhwan Youn <chaos.youn@samsung.com>
-Date:   Sat Jul 16 10:49:51 2011 +0900
+I encountered similar problems as for omap_hsmmc for the mmci driver 
+(although with some ST-Ericsson internal pm_runtime patches). This patch 
+fixed the problem. Great!
 
-    ARM: EXYNOS4: Add support external GIC
-    
-    For full support of power modes, this patch adds implementation
-    external GIC on EXYNOS4.
-    
-    External GIC of Exynos4 cannot support register banking so
-    several interrupt related code for CPU1 should be different
-    from that of CPU0.
-    
-    Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-    Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Acked-by: Ulf Hansson <ulf.hansson@stericsson.com>
 
-The external GIC has more registers and now not all of them are properly handled during
-system sleep/resume. I didn't get around yet to submit a proper solution for that.  
-I suspect per CPU distributor and CPU interface register files need to be saved/restored.
-I'm not an expert in the GIC internals though, I'm just wondering why can't GIC be left
-active during system sleep.
-
---
-Regards,
-Sylwester
