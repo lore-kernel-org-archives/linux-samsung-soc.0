@@ -1,146 +1,89 @@
-From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [PATCH V2 3/5] ARM: exynos4: add L2 early resume code
-Date: Fri, 11 Nov 2011 11:59:35 +0530
-Message-ID: <1320992977-11589-4-git-send-email-amit.kachhap@linaro.org>
-References: <1320992977-11589-1-git-send-email-amit.kachhap@linaro.org>
+From: Jae hoon Chung <jh80.chung@gmail.com>
+Subject: Re: [PATCHv2 1/2] arm: samsung: support the second capability for samsung-soc
+Date: Fri, 11 Nov 2011 15:35:11 +0900
+Message-ID: <CAELcNGTtooNi9PMiEmXayw-j62Aumc8+Zr=PajYeVWVmfA6J6Q@mail.gmail.com>
+References: <4EB1FE0E.5070902@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:53995 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753231Ab1KKGaf (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:43080 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751565Ab1KKGfN convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 11 Nov 2011 01:30:35 -0500
-Received: by mail-pz0-f42.google.com with SMTP id 36so3535636pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 Nov 2011 22:30:34 -0800 (PST)
-In-Reply-To: <1320992977-11589-1-git-send-email-amit.kachhap@linaro.org>
+	Fri, 11 Nov 2011 01:35:13 -0500
+In-Reply-To: <4EB1FE0E.5070902@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, amit.kachhap@linaro.org, patches@linaro.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
 
-This patch adds code to save L2 register configuration at boot, and to
-resume L2 before MMU is enabled in suspend and cpuidle resume paths.
+Hi kgene
 
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
----
- arch/arm/mach-exynos/cpu.c |   42 +++++++++++++++++++++++++++++++-----------
- arch/arm/plat-s5p/sleep.S  |   28 ++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+), 11 deletions(-)
+How about this patch? this patch must add the platform data.
 
-diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
-index 8e09f34..252e346 100644
---- a/arch/arm/mach-exynos/cpu.c
-+++ b/arch/arm/mach-exynos/cpu.c
-@@ -19,6 +19,7 @@
- #include <asm/proc-fns.h>
- #include <asm/hardware/cache-l2x0.h>
- #include <asm/hardware/gic.h>
-+#include <asm/cacheflush.h>
- 
- #include <plat/cpu.h>
- #include <plat/clock.h>
-@@ -34,6 +35,7 @@
- 
- #include <mach/regs-irq.h>
- #include <mach/regs-pmu.h>
-+#include <mach/pmu.h>
- 
- unsigned int gic_bank_offset __read_mostly;
- 
-@@ -297,20 +299,38 @@ core_initcall(exynos4_core_init);
- #ifdef CONFIG_CACHE_L2X0
- static int __init exynos4_l2x0_cache_init(void)
- {
--	/* TAG, Data Latency Control: 2cycle */
--	__raw_writel(0x110, S5P_VA_L2CC + L2X0_TAG_LATENCY_CTRL);
-+	if (!(__raw_readl(S5P_VA_L2CC + L2X0_CTRL) & 0x1)) {
-+		l2x0_saved_regs.phy_base = EXYNOS4_PA_L2CC;
-+		/* TAG, Data Latency Control: 2 cycles */
-+		l2x0_saved_regs.tag_latency = 0x110;
- 
--	if (soc_is_exynos4210())
--		__raw_writel(0x110, S5P_VA_L2CC + L2X0_DATA_LATENCY_CTRL);
--	else if (soc_is_exynos4212() || soc_is_exynos4412())
--		__raw_writel(0x120, S5P_VA_L2CC + L2X0_DATA_LATENCY_CTRL);
-+		if (soc_is_exynos4212() || soc_is_exynos4412())
-+			l2x0_saved_regs.data_latency = 0x120;
-+		else
-+			l2x0_saved_regs.data_latency = 0x110;
-+
-+		l2x0_saved_regs.prefetch_ctrl = 0x30000007;
-+		l2x0_saved_regs.pwr_ctrl =
-+			(L2X0_DYNAMIC_CLK_GATING_EN | L2X0_STNDBY_MODE_EN);
-+
-+		l2x0_regs_phys = virt_to_phys(&l2x0_saved_regs);
- 
--	/* L2X0 Prefetch Control */
--	__raw_writel(0x30000007, S5P_VA_L2CC + L2X0_PREFETCH_CTRL);
-+		__raw_writel(l2x0_saved_regs.tag_latency,
-+				S5P_VA_L2CC + L2X0_TAG_LATENCY_CTRL);
-+		__raw_writel(l2x0_saved_regs.data_latency,
-+				S5P_VA_L2CC + L2X0_DATA_LATENCY_CTRL);
- 
--	/* L2X0 Power Control */
--	__raw_writel(L2X0_DYNAMIC_CLK_GATING_EN | L2X0_STNDBY_MODE_EN,
--		     S5P_VA_L2CC + L2X0_POWER_CTRL);
-+		/* L2X0 Prefetch Control */
-+		__raw_writel(l2x0_saved_regs.prefetch_ctrl,
-+				S5P_VA_L2CC + L2X0_PREFETCH_CTRL);
-+
-+		/* L2X0 Power Control */
-+		__raw_writel(l2x0_saved_regs.pwr_ctrl,
-+				S5P_VA_L2CC + L2X0_POWER_CTRL);
-+
-+		clean_dcache_area(&l2x0_regs_phys, sizeof(unsigned long));
-+		clean_dcache_area(&l2x0_saved_regs, sizeof(struct l2x0_regs));
-+	}
- 
- 	l2x0_init(S5P_VA_L2CC, 0x7C470001, 0xC200ffff);
- 
-diff --git a/arch/arm/plat-s5p/sleep.S b/arch/arm/plat-s5p/sleep.S
-index c371ba2..40bd9bf 100644
---- a/arch/arm/plat-s5p/sleep.S
-+++ b/arch/arm/plat-s5p/sleep.S
-@@ -23,6 +23,8 @@
- */
- 
- #include <linux/linkage.h>
-+#include <asm/asm-offsets.h>
-+#include <asm/hardware/cache-l2x0.h>
- 
- 	.text
- 
-@@ -47,5 +49,31 @@
- 	.data
- 
- ENTRY(s3c_cpu_resume)
-+#ifdef CONFIG_CACHE_L2X0
-+	adr	r0, l2x0_regs_phys
-+	ldr	r0, [r0]
-+	ldr	r1, [r0, #L2X0_R_PHY_BASE]
-+	ldr	r2, [r1, #L2X0_CTRL]
-+	tst	r2, #0x1
-+	bne	resume_l2on
-+	ldr	r2, [r0, #L2X0_R_AUX_CTRL]
-+	str	r2, [r1, #L2X0_AUX_CTRL]
-+	ldr	r2, [r0, #L2X0_R_TAG_LATENCY]
-+	str	r2, [r1, #L2X0_TAG_LATENCY_CTRL]
-+	ldr	r2, [r0, #L2X0_R_DATA_LATENCY]
-+	str	r2, [r1, #L2X0_DATA_LATENCY_CTRL]
-+	ldr	r2, [r0, #L2X0_R_PREFETCH_CTRL]
-+	str	r2, [r1, #L2X0_PREFETCH_CTRL]
-+	ldr	r2, [r0, #L2X0_R_PWR_CTRL]
-+	str	r2, [r1, #L2X0_POWER_CTRL]
-+	mov	r2, #1
-+	str	r2, [r1, #L2X0_CTRL]
-+resume_l2on:
-+#endif
- 	b	cpu_resume
- ENDPROC(s3c_cpu_resume)
-+#ifdef CONFIG_CACHE_L2X0
-+	.globl l2x0_regs_phys
-+l2x0_regs_phys:
-+	.long	0
-+#endif
--- 
-1.7.1
+Thanks,
+Jaehoon Chung
+
+2011/11/3 Jaehoon Chung <jh80.chung@samsung.com>:
+> In mmc, there are capabilities and use the host_caps.
+> That capability is expressed with bit[0:31].
+> But now..already filled the bit[0:31]...
+> so we need to denote with the other capability field.
+> (if we want to use the cache, powerclass, etc for eMMC..this field is=
+ necessary)
+>
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Kyungmin Park <Kyungmin.park@samsung.com>
+> ---
+> Changelog v2:
+> =A0 - based-on samsung-soc's for-next tree.
+>
+> =A0arch/arm/plat-samsung/include/plat/sdhci.h | =A0 =A02 ++
+> =A0arch/arm/plat-samsung/platformdata.c =A0 =A0 =A0 | =A0 =A02 ++
+> =A02 files changed, 4 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/pl=
+at-samsung/include/plat/sdhci.h
+> index dcff7dd..bf33ea1 100644
+> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+> @@ -40,6 +40,7 @@ enum clk_types {
+> =A0* struct s3c_sdhci_platdata() - Platform device data for Samsung S=
+DHCI
+> =A0* @max_width: The maximum number of data bits supported.
+> =A0* @host_caps: Standard MMC host capabilities bit field.
+> + * @host_caps2: The Second Standard MMC host capabilities bit field.
+> =A0* @cd_type: Type of Card Detection method (see cd_types enum above=
+)
+> =A0* @clk_type: Type of clock divider method (see clk_types enum abov=
+e)
+> =A0* @ext_cd_init: Initialize external card detect subsystem. Called =
+on
+> @@ -63,6 +64,7 @@ enum clk_types {
+> =A0struct s3c_sdhci_platdata {
+> =A0 =A0 =A0 =A0unsigned int =A0 =A0max_width;
+> =A0 =A0 =A0 =A0unsigned int =A0 =A0host_caps;
+> + =A0 =A0 =A0 unsigned int =A0 =A0host_caps2;
+> =A0 =A0 =A0 =A0enum cd_types =A0 cd_type;
+> =A0 =A0 =A0 =A0enum clk_types =A0clk_type;
+>
+> diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-sam=
+sung/platformdata.c
+> index 4c9a207..5ffcf46 100644
+> --- a/arch/arm/plat-samsung/platformdata.c
+> +++ b/arch/arm/plat-samsung/platformdata.c
+> @@ -54,4 +54,6 @@ void s3c_sdhci_set_platdata(struct s3c_sdhci_platda=
+ta *pd,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0set->host_caps |=3D pd->host_caps;
+> =A0 =A0 =A0 =A0if (pd->clk_type)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0set->clk_type =3D pd->clk_type;
+> + =A0 =A0 =A0 if (pd->host_caps2)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 set->host_caps2 |=3D pd->host_caps2;
+> =A0}
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>
