@@ -1,115 +1,50 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
 Subject: Re: pinctrl discussions @ Linaro Connect, and also requesting GPIOs
-Date: Sat, 12 Nov 2011 20:13:09 +0530
-Message-ID: <CAJuYYwTg-4pvvTAngfH6CpDDxKS5PimUYF__kwMA2LJX_hO_Vw@mail.gmail.com>
+Date: Sat, 12 Nov 2011 20:17:29 +0530
+Message-ID: <CAJuYYwQJaRZQ+fEZBfujyuoVNBVf8167cbfnX6JqhvVzrJmrYQ@mail.gmail.com>
 References: <74CDBE0F657A3D45AFBB94109FB122FF17408051C2@HQMAIL01.nvidia.com>
 	<CACRpkdY8YXooD5ChHqQnERPPGhk7TgUvL=TodAPY8Jit9eS=fw@mail.gmail.com>
 	<74CDBE0F657A3D45AFBB94109FB122FF1740805421@HQMAIL01.nvidia.com>
 	<CACRpkdaArzSfUVgPo0vVEAUNKwZO7W5yhjJpeEQiFK20RQS2Ag@mail.gmail.com>
 	<CAJuYYwS465WW-Xp6gk5hzKArTZGzmc6nh+-XR=BPusGfTU=DXw@mail.gmail.com>
-	<CACRpkdbWjAa5dKEu5caXG8jS2c7Z9ZHtT80Gc2DZYNUTTy3HZw@mail.gmail.com>
+	<CACRpkda06ZvxABSjs3PvL2hE8-0uBNonH83=qZG+yS0fax69AA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:48779 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753820Ab1KLOnK convert rfc822-to-8bit (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:38699 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753866Ab1KLOr3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Nov 2011 09:43:10 -0500
-In-Reply-To: <CACRpkdbWjAa5dKEu5caXG8jS2c7Z9ZHtT80Gc2DZYNUTTy3HZw@mail.gmail.com>
+	Sat, 12 Nov 2011 09:47:29 -0500
+In-Reply-To: <CACRpkda06ZvxABSjs3PvL2hE8-0uBNonH83=qZG+yS0fax69AA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Linus Walleij <linus.walleij@linaro.org>
 Cc: Stephen Warren <swarren@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 12 November 2011 19:47, Linus Walleij <linus.walleij@linaro.org> wro=
-te:
+On 12 November 2011 19:49, Linus Walleij <linus.walleij@linaro.org> wrote:
 > On Sat, Nov 12, 2011 at 12:22 PM, Thomas Abraham
 > <thomas.abraham@linaro.org> wrote:
 >
->> Samsung SoC's use two pin functions out of 4/8/16 pin functions to
->> represent that a pin is used as a gpio. For instance, function 0 mea=
-ns
->> pin is used as a gpio input, and function 1 means pin is used as gpi=
-o
->> output. A pin cannot support both input and output mode at the same
->> time.
->>
->> The existing pinmux_[request|free]_gpio() functions can specify that=
- a
->> pin has to be set in gpio function mode, but lack the provision to
->> select input or output mode for the gpio.
+>> Another question, not related to the above. The gpio and pinctrl
+>> drivers would operate on the same physical memory space (pinmux and
+>> gpio is just a single controller). Both gpio and pinctrl driver would
+>> do a ioremap of this physical address space. I remember reading that
+>> ioremap of the same physical memory area twice is not correct. So any
+>> suggestions on how to handle this.
 >
-> OK then this needs fixing if this API is to persist.
->
->> The alternative approach of
->> using pin functions to select gpio-input or gpio-output will be used
->> for samsung pinmux drivers.
->>
->> This means the gpio_direction_[input|output] api's would remain unus=
-ed
->> on samsung platforms. And existing platforms already using this api
->> will have to be modified to use the pinmux api to select the directi=
-on
->> of the gpio pin. And the role of gpio_request will seem redundant wh=
-en
->> used along with pinmux_get().
->
-> This does not seem right. Why should it not use
-> gpio_direction_[input|output] to select whether the pin is used
-> for input or output like everyone else?
+> Yes, create one single driver in a single file that presents a pinctrl *and*
+> a gpiolib interface. Put the driver in drivers/pinctrl/pinctrl-foo.c.
+> That's the most natural design pattern methinks. Trying to artificially
+> break it apart in two driver files doesn't make sense.
 
-The gpio_direction_[input|output]() internally sets the pin function
-(by writing to pin function register) to either gpio input|output.
-Since the gpio calls should stop writing to the pin function registers
-(since we have pinmux driver now), there should be way for
-gpio_direction_[input|output]() to inform pinmux driver to set gpio in
-input|output mode.
+Yes, this seems better (and additional work). I will try it out.
+Meanwhile, I will post a simplistic exynos4 pinctrl driver patch, just
+to ensure it is headed in the right direction.
 
-But this cannot be achieved with existing pinctrl/pinmux api and so
-gpio_direction_[input|output]() will not be used and separate pin
-function for gpio input/output setup and used in the pinmux driver.
-
->
-> This will just lead to trouble with shared HW blocks where
-> one use gpio_direction_[input|output] to select the direction
-> while another one will use some pinctrl API.
-
-Yes, that is true. So gpio_direction_[input|output]() would not be
-used to setup the gpio direction anymore.
-
->
-> We need one of two things:
->
-> 1. pinmux_[request|free]_gpio() to pass direction to the
-> =A0core and driver, or
-
-This approach seems to be better.
-
->
-> 2. A use pattern like this:
-> =A0pmx =3D pinmux_get(dev, "gpio-1-in");
-> =A0/* Use as input */
-> =A0pinmux_put(pmx);
-> =A0pmx =3D pinmux_get(dev, "gpio-1-out");
-> =A0/* Use as output */
-> =A0etc
->
-> The latter seems hopeless to maintain. So the external call
-> pinmux_[request|free]_gpio() needs to be kept around,
-> and it needs to be called *internally* by GPIO drivers to set
-> up pins, so as to avoid hazzle.
->
-> In my opinion atleast...
-
-Yes. I agree with that.
+Thanks,
+Thomas.
 
 >
 > Linus Walleij
 >
-
-Thank you LinusW.
-
-Regards,
-Thomas.
