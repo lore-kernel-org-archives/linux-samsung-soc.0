@@ -1,109 +1,53 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS4: Add ASV feature for Exynos4 series
-Date: Sat, 12 Nov 2011 11:15:25 +0100
-Message-ID: <4EBE473D.4040408@gmail.com>
-References: <1320904083-19173-1-git-send-email-boyko.lee@samsung.com> <1320904083-19173-2-git-send-email-boyko.lee@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] ARM: SAMSUNG: Save/restore GPIO drive strength across suspend/resume
+Date: Sat, 12 Nov 2011 12:00:20 +0100
+Message-ID: <CACRpkdbC=w5vRvgLVpAcmcampt-baTydpLHBexak4RzxUcO32Q@mail.gmail.com>
+References: <1321074108-10025-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:42510 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751999Ab1KLKPa (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:40765 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752786Ab1KLLAV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Nov 2011 05:15:30 -0500
-Received: by bke11 with SMTP id 11so4070224bke.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 Nov 2011 02:15:28 -0800 (PST)
-In-Reply-To: <1320904083-19173-2-git-send-email-boyko.lee@samsung.com>
+	Sat, 12 Nov 2011 06:00:21 -0500
+In-Reply-To: <1321074108-10025-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jongpill Lee <boyko.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, boyko.lee@gmail.com
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org, Stephen Warren <swarren@nvidia.com>, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
 
-On 11/10/2011 06:48 AM, Jongpill Lee wrote:
-> This patch adds ASV feature for exynos4 series.
-> ASV(Adaptive support voltage) feature support to get spec of SoC.
-> And we can use to adjust voltage for operation SoC using by ASV result.
-> 
-> Signed-off-by: Jongpill Lee<boyko.lee@samsung.com>
-> ---
-...
-> diff --git a/arch/arm/mach-exynos4/asv.c b/arch/arm/mach-exynos4/asv.c
-> new file mode 100644
-> index 0000000..b13d182
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos4/asv.c
-> @@ -0,0 +1,66 @@
-> +/* linux/arch/arm/mach-exynos4/asv.c
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-> + *		http://www.samsung.com/
-> + *
-> + * EXYNOS4 - ASV(Adaptive Support Voltage) driver
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#include<linux/init.h>
-> +#include<linux/types.h>
-> +#include<linux/kernel.h>
-> +#include<linux/err.h>
-> +#include<linux/io.h>
-> +#include<linux/slab.h>
-> +
-> +#include<mach/map.h>
-> +#include<mach/asv.h>
-> +
-> +static struct samsung_asv *exynos_asv;
-> +
-> +static int __init exynos_asv_init(void)
-> +{
-> +	exynos_asv = kzalloc(sizeof(struct samsung_asv), GFP_KERNEL);
-> +	if (!exynos_asv)
-> +		return -ENOMEM;
-> +
-> +	/* I will add asv driver of exynos4 series to regist */
-> +
-> +	if (exynos_asv->check_vdd_arm) {
-> +		if (exynos_asv->check_vdd_arm())
-> +			goto out;
-> +	}
-> +
-> +	/* Get HPM Delay value */
-> +	if (exynos_asv->get_hpm) {
-> +		if (exynos_asv->get_hpm(exynos_asv))
-> +			goto out;
-> +	} else
-> +		goto out;
+On Sat, Nov 12, 2011 at 6:01 AM, Inderpal Singh
+<inderpal.singh@linaro.org> wrote:
 
-The 'else' statements should also be enclosed in brackets, according to the coding
-style rules. How about just doing: 
+> GPIO driver strength settings are not preserved across suspend/resume
+> for s5pc100, s5pv210 and Exynos platforms which has been the cause of
+> mmc/sd card read/write failures after resume. Fix this by saving and
+> restoring the GPIO driver strength register settings across suspend/resume.
+>
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 
-	if (!exynos_asv->get_hpm || exynos_asv->get_hpm(exynos_asv))
-		goto out;
-?
-> +
-> +	/* Get IDS ARM Value */
-> +	if (exynos_asv->get_ids) {
-> +		if (exynos_asv->get_ids(exynos_asv))
-> +			goto out;
-> +	} else
-> +		goto out;
-> +
-> +	if (exynos_asv->store_result) {
-> +		if (exynos_asv->store_result(exynos_asv))
-> +			goto out;
-> +	} else
-> +		goto out;
-> +
-> +	return 0;
-> +out:
-> +	pr_err("EXYNOS : Fail to initialize ASV\n");
-> +
-> +	kfree(exynos_asv);
-> +
-> +	return -EINVAL;
-> +}
-...
+On a related theme: I am thinking about how to support preserving
+drive strength (etc) across suspend/resume and deepsleep in the
+pincontrol subsystem.
+
+Currently I am playing with the idea to let pin groups have states,
+as the different configurations seem to be 90% or so about very
+specific sleep modes, so say:
+
+pinconf_set_group_state("mmcgroup", PINCONF_STATE_ACTIVE);
+pinconf_set_group_state("mmcgroup", PINCONF_STATE_SUSPENDED);
+pinconf_set_group_state("mmcgroup", PINCONF_STATE_SLEEP);
+
+This would then instruct each pin controller driver to configure
+each pin apropriately for the given state, and that cross-references
+to a table keeping track of the preset per-pin for each state.
+
+My intuitive idea is that letting the core keep track of the state of
+every pin and letting pin groups harness the settings for a group
+of pins is the proper approach to the problem.
+
+Do you think something like this will work for the S5P:s?
+
+Yours,
+Linus Walleij
