@@ -1,50 +1,47 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: pinctrl discussions @ Linaro Connect, and also requesting GPIOs
-Date: Sat, 12 Nov 2011 20:17:29 +0530
-Message-ID: <CAJuYYwQJaRZQ+fEZBfujyuoVNBVf8167cbfnX6JqhvVzrJmrYQ@mail.gmail.com>
-References: <74CDBE0F657A3D45AFBB94109FB122FF17408051C2@HQMAIL01.nvidia.com>
-	<CACRpkdY8YXooD5ChHqQnERPPGhk7TgUvL=TodAPY8Jit9eS=fw@mail.gmail.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF1740805421@HQMAIL01.nvidia.com>
-	<CACRpkdaArzSfUVgPo0vVEAUNKwZO7W5yhjJpeEQiFK20RQS2Ag@mail.gmail.com>
-	<CAJuYYwS465WW-Xp6gk5hzKArTZGzmc6nh+-XR=BPusGfTU=DXw@mail.gmail.com>
-	<CACRpkda06ZvxABSjs3PvL2hE8-0uBNonH83=qZG+yS0fax69AA@mail.gmail.com>
+From: merez@codeaurora.org
+Subject: Re: [PATCH 2/2] mmc: core: Support packed command for eMMC4.5      
+     device
+Date: Sun, 13 Nov 2011 05:04:26 -0800 (PST)
+Message-ID: <29dbe1d4d0e92bc4b4acf1ac2909f2df.squirrel@www.codeaurora.org>
+References: <620ec9ffa6bdbba9ae5f76998e36f8dc.squirrel@www.codeaurora.org>
+    <001001cca043$395dbfc0$ac193f40$%jun@samsung.com>
+    <CANfBPZ-Zn+R4GosEL-RJxh8gduAr8e+qN876uPwDkHfiEpdERw@mail.gmail.com>
+    <ea21d88d904af165cb911354e3f51ea6.squirrel@www.codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:38699 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753866Ab1KLOr3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 Nov 2011 09:47:29 -0500
-In-Reply-To: <CACRpkda06ZvxABSjs3PvL2hE8-0uBNonH83=qZG+yS0fax69AA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <ea21d88d904af165cb911354e3f51ea6.squirrel@www.codeaurora.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: "S, Venkatraman" <svenkatr@ti.com>, merez@codeaurora.org, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@nvidia.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 12 November 2011 19:49, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Sat, Nov 12, 2011 at 12:22 PM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->
->> Another question, not related to the above. The gpio and pinctrl
->> drivers would operate on the same physical memory space (pinmux and
->> gpio is just a single controller). Both gpio and pinctrl driver would
->> do a ioremap of this physical address space. I remember reading that
->> ioremap of the same physical memory area twice is not correct. So any
->> suggestions on how to handle this.
->
-> Yes, create one single driver in a single file that presents a pinctrl *and*
-> a gpiolib interface. Put the driver in drivers/pinctrl/pinctrl-foo.c.
-> That's the most natural design pattern methinks. Trying to artificially
-> break it apart in two driver files doesn't make sense.
-
-Yes, this seems better (and additional work). I will try it out.
-Meanwhile, I will post a simplistic exynos4 pinctrl driver patch, just
-to ensure it is headed in the right direction.
+>> On Fri, Nov 11, 2011 at 12:56 PM, Seungwon Jeon <tgih.jun@samsung.com>
+>> wrote:
+>>> Maya Erez wrote:
+>>>> On Thu, Nov 10, 2011 Maya Erez wrote:
+>>>> > S, Venkatraman <svenkatr@ti.com> wrote:
+>>>> >> On Thu, Nov 3, 2011 at 7:23 AM, Seungwon Jeon
+>>>> <tgih.jun@samsung.com>
+>>>> wrote:
+>>>> >> >> > +static u8 mmc_blk_chk_packable(struct mmc_queue *mq, struct
+>>>> >> request *req)
+>>>>
+>>>> The function prepares the checkable list and not only checks if
+>>>> packing
+>>>> is
+>>>> possible, therefore I think its name should change to reflect its real
+>>>> action
+>>> I labored at naming. Isn't it proper? :)
+>>> Do you have any recommendation?
+>>> group_pack_req?
+>>>
+How about mmc_blk_prep_packed_list?
 
 Thanks,
-Thomas.
+Maya Erez
+Consultant for Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum
 
->
-> Linus Walleij
->
+
