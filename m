@@ -1,123 +1,88 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [linux-pm] [PATCH 1/3 v3] ARM: EXYNOS4: Support for generic I/O
- power domains on EXYNOS4210/4212
-Date: Tue, 15 Nov 2011 18:32:20 +0900
-Message-ID: <CAH9JG2Vcp50_6ppkjrdsUu6mEkL4CMSKVySmJKyPhGaSjbxO=A@mail.gmail.com>
-References: <4EA690EF.4000703@samsung.com>
-	<013301cc99cd$8d5a6a00$a80f3e00$%kim@samsung.com>
-	<4EB26BE2.2060508@samsung.com>
-	<CAGTfZH0xOh=EDRhb3gxOZhV-KQZNY_-o=miBOEne_S5-YsQ_Vg@mail.gmail.com>
-	<005801cca378$0488d0e0$0d9a72a0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCHv2 1/2] arm: samsung: support the second capability for
+ samsung-soc
+Date: Tue, 15 Nov 2011 18:53:32 +0900
+Message-ID: <005b01cca37c$6f9f3a00$4eddae00$%kim@samsung.com>
+References: <4EB1FE0E.5070902@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:50652 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754093Ab1KOJcU (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:28866 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754581Ab1KOJxe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 04:32:20 -0500
-Received: by pzk36 with SMTP id 36so14947708pzk.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 Nov 2011 01:32:20 -0800 (PST)
-In-Reply-To: <005801cca378$0488d0e0$0d9a72a0$%kim@samsung.com>
+	Tue, 15 Nov 2011 04:53:34 -0500
+In-reply-to: <4EB1FE0E.5070902@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: cw00.choi@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Sylwester Nawrocki <snjw23@gmail.com>, linux-pm@lists.linux-foundation.org, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 11/15/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Chanwoo Choi wrote:
->> Hi Kukjin Kim,
->>
->> Please reply about Sylwester Nawrocki and me.
->> 2011/11/3 Sylwester Nawrocki <s.nawrocki@samsung.com>
->> Hi Kgene,
->>
->> On 11/03/2011 03:09 AM, Kukjin Kim wrote:
->> > As I said, I don't think we should control/gate the clocks with
-> regarding power domain.
->> As far as I know there is a plan to let the drivers override
-> start/stop_device callbacks,
->> moreover the clock control can be disabled globally by not implementing
-> start/stop_device
->> callbacks or per device by not adding clkdev entities to the device clock
-> list at runtime
->> PM core. So IMHO, there is/going to be enough flexibility.
->>
->> > It should be controlled by each regarding device driver and in addition,
-> as I know,
->> > to handle block of clock is not recommended on EXYNOS4 now.
->> What do you mean by this ? I couldn't find such information in any
-> documentation.
->> Shouldn't "clock gate block" registers be touched by boot loader and the
-> kernel?
->> Our boot loaders disable all clocks, and if the global clock gate is not
-> enabled
->> by the kernel there is no chance any multimedia device will work.
->>
->> Should the global clock block gate be always enabled then ? I'm afraid it
-> is not
->> optimal form power management POV.
->>
-> Sylwester, let me check again before replying.
->
->> To Kukjin Kim,
->>
-> Hi Chanwoo,
->
-> Firstly, please use text-typed e-mail when you reply.
->
->> > It should be controlled by each regarding device driver and in addition,
-> as I know,
->> > to handle block of clock is not recommended on EXYNOS4 now.
->>
->> As you said, should we separately control power and clock of power domain?
->
-> If you ask my opinion, yes, I mean when it is required, it would be
-> controlled independent.
+Jaehoon Chung wrote:
+> 
+> In mmc, there are capabilities and use the host_caps.
+> That capability is expressed with bit[0:31].
+> But now..already filled the bit[0:31]...
+> so we need to denote with the other capability field.
+> (if we want to use the cache, powerclass, etc for eMMC..this field is
+necessary)
+> 
+Hi,
 
-Okay. It's meaning-less, Until change his mind, just drop it. I hope
-you don't change this mind for long time.
+This description is better than previous.
+However, I wonder this is _really_ used for eMMC at sdhci-s3c.c driver.
 
-Thank you,
-Kyungmin Park
->
->> or Have to turn on the clock of power domain always?
->
-> I didn't say like that.
->
->> I think that it is to happen unnecessary power consumption.
->
-> I don't think, when the power of block/domain is downed, does it happen
-> _really_ meaningful power consumption?
->
->> If we have to maintain on state of power domain clock, please let me know
-> guide about this.
->>
->> Also,
->> For example, fimg2d and framebuffer use LCD0 power domain as parent
-> device.I
->> If fimg2d and framebuffer is disabled state due to not using their,
->> I think that we should turn off the clock of LCD0 power domain to reduce
-> power leakage.
->
-> I think, probably it doesn't matter. If any useful data, please let me know.
->
->> Which each regarding device driver control the clock of power domain?
->>
->> I will expect for your reply.
->>
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Kyungmin Park <Kyungmin.park@samsung.com>
+> ---
+> Changelog v2:
+>    - based-on samsung-soc's for-next tree.
+> 
+>  arch/arm/plat-samsung/include/plat/sdhci.h |    2 ++
+>  arch/arm/plat-samsung/platformdata.c       |    2 ++
+>  2 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-
+> samsung/include/plat/sdhci.h
+> index dcff7dd..bf33ea1 100644
+> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+> @@ -40,6 +40,7 @@ enum clk_types {
+>   * struct s3c_sdhci_platdata() - Platform device data for Samsung SDHCI
+>   * @max_width: The maximum number of data bits supported.
+>   * @host_caps: Standard MMC host capabilities bit field.
+> + * @host_caps2: The Second Standard MMC host capabilities bit field.
+>   * @cd_type: Type of Card Detection method (see cd_types enum above)
+>   * @clk_type: Type of clock divider method (see clk_types enum above)
+>   * @ext_cd_init: Initialize external card detect subsystem. Called on
+> @@ -63,6 +64,7 @@ enum clk_types {
+>  struct s3c_sdhci_platdata {
+>  	unsigned int	max_width;
+>  	unsigned int	host_caps;
+> +	unsigned int	host_caps2;
+>  	enum cd_types	cd_type;
+>  	enum clk_types	clk_type;
+> 
+> diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-
+> samsung/platformdata.c
+> index 4c9a207..5ffcf46 100644
+> --- a/arch/arm/plat-samsung/platformdata.c
+> +++ b/arch/arm/plat-samsung/platformdata.c
+> @@ -54,4 +54,6 @@ void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata
+*pd,
+>  		set->host_caps |= pd->host_caps;
+>  	if (pd->clk_type)
+>  		set->clk_type = pd->clk_type;
+> +	if (pd->host_caps2)
+> +		set->host_caps2 |= pd->host_caps2;
+>  }
