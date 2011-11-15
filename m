@@ -1,55 +1,106 @@
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
-Subject: [RESEND][PATCH] ARM: EXYNOS: Fixed undefined symbol compilation error.
-Date: Tue, 15 Nov 2011 15:45:02 +0530
-Message-ID: <1321352102-10021-1-git-send-email-pankaj.dubey@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42675 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753959Ab1KOKNY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 05:13:24 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LUP003185QA53V0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Nov 2011 19:13:23 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LUP00H465Q5AG70@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 15 Nov 2011 19:13:23 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCHv2 1/2] arm: samsung: support the second capability for
+ samsung-soc
+Date: Tue, 15 Nov 2011 19:18:38 +0900
+Message-ID: <4EC23C7E.1070503@samsung.com>
+References: <4EB1FE0E.5070902@samsung.com>
+ <005b01cca37c$6f9f3a00$4eddae00$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <005b01cca37c$6f9f3a00$4eddae00$%kim@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Many drivers will fail to compile if compiled as module due to
-undefined symbol exynos4_ioremap.
-Fix has been added by exporting the same in cpu.c file.
+Hi Kukjin
 
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
----
- arch/arm/mach-exynos/cpu.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+On 11/15/2011 06:53 PM, Kukjin Kim wrote:
 
-diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
-index 8e09f34..027f65471 100644
---- a/arch/arm/mach-exynos/cpu.c
-+++ b/arch/arm/mach-exynos/cpu.c
-@@ -8,6 +8,7 @@
-  * published by the Free Software Foundation.
- */
- 
-+#include <linux/module.h>
- #include <linux/sched.h>
- #include <linux/sysdev.h>
- #include <linux/of.h>
-@@ -164,6 +165,7 @@ void __iomem *exynos4_ioremap(unsigned long phy, size_t size, unsigned int type)
- 
- 	return __arm_ioremap(phy, size, type);
- }
-+EXPORT_SYMBOL(exynos4_ioremap);
- 
- static void exynos_idle(void)
- {
--- 
-1.7.4.1
+> Jaehoon Chung wrote:
+>>
+>> In mmc, there are capabilities and use the host_caps.
+>> That capability is expressed with bit[0:31].
+>> But now..already filled the bit[0:31]...
+>> so we need to denote with the other capability field.
+>> (if we want to use the cache, powerclass, etc for eMMC..this field is
+> necessary)
+>>
+> Hi,
+> 
+> This description is better than previous.
+> However, I wonder this is _really_ used for eMMC at sdhci-s3c.c driver.
+
+
+You means that samsung is using the other, right?
+If that is reason, i think that we need to add the second capability in future.
+Because, Second capability also need for SD/SDIO interface.
+(if need not to add the second capability, 
+how do you add more capabilities for SD/SDIO)
+
+Best Regards,
+Jaehoon Chung
+
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> Signed-off-by: Kyungmin Park <Kyungmin.park@samsung.com>
+>> ---
+>> Changelog v2:
+>>    - based-on samsung-soc's for-next tree.
+>>
+>>  arch/arm/plat-samsung/include/plat/sdhci.h |    2 ++
+>>  arch/arm/plat-samsung/platformdata.c       |    2 ++
+>>  2 files changed, 4 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-
+>> samsung/include/plat/sdhci.h
+>> index dcff7dd..bf33ea1 100644
+>> --- a/arch/arm/plat-samsung/include/plat/sdhci.h
+>> +++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+>> @@ -40,6 +40,7 @@ enum clk_types {
+>>   * struct s3c_sdhci_platdata() - Platform device data for Samsung SDHCI
+>>   * @max_width: The maximum number of data bits supported.
+>>   * @host_caps: Standard MMC host capabilities bit field.
+>> + * @host_caps2: The Second Standard MMC host capabilities bit field.
+>>   * @cd_type: Type of Card Detection method (see cd_types enum above)
+>>   * @clk_type: Type of clock divider method (see clk_types enum above)
+>>   * @ext_cd_init: Initialize external card detect subsystem. Called on
+>> @@ -63,6 +64,7 @@ enum clk_types {
+>>  struct s3c_sdhci_platdata {
+>>  	unsigned int	max_width;
+>>  	unsigned int	host_caps;
+>> +	unsigned int	host_caps2;
+>>  	enum cd_types	cd_type;
+>>  	enum clk_types	clk_type;
+>>
+>> diff --git a/arch/arm/plat-samsung/platformdata.c b/arch/arm/plat-
+>> samsung/platformdata.c
+>> index 4c9a207..5ffcf46 100644
+>> --- a/arch/arm/plat-samsung/platformdata.c
+>> +++ b/arch/arm/plat-samsung/platformdata.c
+>> @@ -54,4 +54,6 @@ void s3c_sdhci_set_platdata(struct s3c_sdhci_platdata
+> *pd,
+>>  		set->host_caps |= pd->host_caps;
+>>  	if (pd->clk_type)
+>>  		set->clk_type = pd->clk_type;
+>> +	if (pd->host_caps2)
+>> +		set->host_caps2 |= pd->host_caps2;
+>>  }
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
+
