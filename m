@@ -1,154 +1,45 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH] mmc: core: Fix power_off_notify during suspend
-Date: Tue, 15 Nov 2011 11:55:46 +0530
-Message-ID: <1321338346-10911-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH 0/3] Support Samsung S5P OHCI device and driver
+Date: Tue, 15 Nov 2011 06:49:58 +0000 (GMT)
+Message-ID: <1473398.119441321339796993.JavaMail.weblogic@epml28>
+Reply-To: jg1.han@samsung.com
+Mime-Version: 1.0
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f42.google.com ([209.85.210.42]:40168 "EHLO
-	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751993Ab1KOGZN (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62605 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753395Ab1KOGuH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 01:25:13 -0500
+	Tue, 15 Nov 2011 01:50:07 -0500
+Received: from epcpsbge1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LUO00483WB4NL20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 Nov 2011 15:49:58 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
+To: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@suse.de, stern@rowland.harvard.edu, kgene.kim@samsung.com
+Cc: yulgon.kim@samsung.com, jy0922.shim@samsung.com, jg1.han@samsung.com
 
-The eMMC 4.5 devices respond to only RESET and AWAKE command in the sleep
-state. Hence the mmc switch command to notify power off state should be sent
-before the device enters sleep state.
-
-This patch fixes the same.
-
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
----
- drivers/mmc/core/core.c |   81 ++++++++++++++++++++++++++++------------------
- drivers/mmc/core/mmc.c  |    2 +-
- 2 files changed, 50 insertions(+), 33 deletions(-)
-
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 74a012a..7ee2e07 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -1225,6 +1225,46 @@ void mmc_set_driver_type(struct mmc_host *host, unsigned int drv_type)
- 	mmc_host_clk_release(host);
- }
- 
-+static void mmc_poweroff_notify(struct mmc_host *host)
-+{
-+	struct mmc_card *card;
-+	unsigned int timeout;
-+	unsigned int notify_type = EXT_CSD_NO_POWER_NOTIFICATION;
-+	int err = 0;
-+
-+	card = host->card;
-+
-+	/*
-+	 * Send power notify command only if card
-+	 * is mmc and notify state is powered ON
-+	 */
-+	if (card && mmc_card_mmc(card) &&
-+	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
-+
-+		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
-+			notify_type = EXT_CSD_POWER_OFF_SHORT;
-+			timeout = card->ext_csd.generic_cmd6_time;
-+			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
-+		} else {
-+			notify_type = EXT_CSD_POWER_OFF_LONG;
-+			timeout = card->ext_csd.power_off_longtime;
-+			card->poweroff_notify_state = MMC_POWEROFF_LONG;
-+		}
-+
-+		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-+				 EXT_CSD_POWER_OFF_NOTIFICATION,
-+				 notify_type, timeout);
-+
-+		if (err && err != -EBADMSG)
-+			pr_err("Device failed to respond within %d poweroff "
-+			       "time. Forcefully powering down the device\n",
-+			       timeout);
-+
-+		/* Set the card state to no notification after the poweroff */
-+		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
-+	}
-+}
-+
- /*
-  * Apply power to the MMC stack.  This is a two-stage process.
-  * First, we enable power to the card without the clock running.
-@@ -1281,42 +1321,12 @@ static void mmc_power_up(struct mmc_host *host)
- 
- void mmc_power_off(struct mmc_host *host)
- {
--	struct mmc_card *card;
--	unsigned int notify_type;
--	unsigned int timeout;
--	int err;
--
- 	mmc_host_clk_hold(host);
- 
--	card = host->card;
- 	host->ios.clock = 0;
- 	host->ios.vdd = 0;
- 
--	if (card && mmc_card_mmc(card) &&
--	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
--
--		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
--			notify_type = EXT_CSD_POWER_OFF_SHORT;
--			timeout = card->ext_csd.generic_cmd6_time;
--			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
--		} else {
--			notify_type = EXT_CSD_POWER_OFF_LONG;
--			timeout = card->ext_csd.power_off_longtime;
--			card->poweroff_notify_state = MMC_POWEROFF_LONG;
--		}
--
--		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
--				 EXT_CSD_POWER_OFF_NOTIFICATION,
--				 notify_type, timeout);
--
--		if (err && err != -EBADMSG)
--			pr_err("Device failed to respond within %d poweroff "
--			       "time. Forcefully powering down the device\n",
--			       timeout);
--
--		/* Set the card state to no notification after the poweroff */
--		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
--	}
-+	mmc_poweroff_notify(host);
- 
- 	/*
- 	 * Reset ocr mask to be the highest possible voltage supported for
-@@ -2314,8 +2324,15 @@ int mmc_suspend_host(struct mmc_host *host)
- 		 * pre-claim the host.
- 		 */
- 		if (mmc_try_claim_host(host)) {
--			if (host->bus_ops->suspend)
-+			if (host->bus_ops->suspend) {
-+				/*
-+				 * For eMMC 4.5 device send notify command
-+				 * before sleep, because in sleep state eMMC 4.5
-+				 * devices respond to only RESET and AWAKE cmd
-+				 */
-+				mmc_poweroff_notify(host);
- 				err = host->bus_ops->suspend(host);
-+			}
- 			if (err == -ENOSYS || !host->bus_ops->resume) {
- 				/*
- 				 * We simply "remove" the card in this case.
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 4db73a9..a1223bd 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -875,7 +875,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
- 	 * set the notification byte in the ext_csd register of device
- 	 */
- 	if ((host->caps2 & MMC_CAP2_POWEROFF_NOTIFY) &&
--	    (card->poweroff_notify_state == MMC_NO_POWER_NOTIFICATION)) {
-+	    (card->ext_csd.rev >= 6)) {
- 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
- 				 EXT_CSD_POWER_OFF_NOTIFICATION,
- 				 EXT_CSD_POWER_ON,
--- 
-1.7.1
+SGVsbG8uDQoNClRoaXMgcGF0Y2ggc2VyaWVzIGFkZHMgVVNCIE9IQ0kgZGV2aWNlIGFuZCBpbml0
+aWFsIGRyaXZlciBmb3IgU2Ftc3VuZw0KUzVQIFNvQ3MgYW5kIGlzIGJhc2VkIGZyb20gTGludXgg
+My4yLXJjMS4gSSBoYXZlIHRlc3RlZCBvbiBTTURLVjMxMCBib2FyZA0KdXNpbmcgRVhZTk9TNC4N
+Cg0KVGhhbmtzLg0KDQpKaW5nb28gSGFuICg0KToNCiAgICAgICBBUk06IFNBTVNVTkc6IEFkZCBV
+U0IgT0hDSSBkZXZpY2UNCiAgICAgICBBUk06IEVYWU5PUzogQWRkIFVTQiBPSENJIHN1cHBvcnQg
+dG8gU01ES1YzMTAgYm9hcmQNCiAgICAgICBVU0I6IEFkZCBTNVAgT0hDSSBkaXZlcg0KDQogIGFy
+Y2gvYXJtL21hY2gtZXh5bm9zL0tjb25maWcgICAgICAgICB8ICAgIDEgKw0KICBhcmNoL2FybS9t
+YWNoLWV4eW5vcy9tYWNoLXNtZGt2MzEwLmMgfCAgIDEzICsrKysrKysrKysrKysNCiAgYXJjaC9h
+cm0vbWFjaC1leHlub3MvaW5jbHVkZS9tYWNoL21hcC5oICAgfCAgICAyICsNCiAgYXJjaC9hcm0v
+cGxhdC1zNXAvS2NvbmZpZyAgICAgICAgICAgICAgICAgfCAgICA1ICsrKysNCiAgYXJjaC9hcm0v
+cGxhdC1zYW1zdW5nL2RldnMuYyAgICAgICAgICAgICAgfCAgIDM0ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrDQogIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvZGV2cy5o
+IHwgICAgMSArDQogIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvb2hjaS5oIHwg
+ICAyMSArKysrKysrKysrKysrKysrKw0KICBkcml2ZXJzL3VzYi9LY29uZmlnICAgICAgICAgfCAg
+ICAxICsNCiAgZHJpdmVycy91c2IvaG9zdC9LY29uZmlnICAgIHwgICAgNiArDQogIGRyaXZlcnMv
+dXNiL2hvc3Qvb2hjaS1oY2QuYyB8ICAgIDUgKw0KICBkcml2ZXJzL3VzYi9ob3N0L29oY2ktczVw
+LmMgfCAgMjczICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiAg
+MTEgZmlsZXMgY2hhbmdlZCwgMzYyIGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pDQogIGNy
+ZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L29oY2ku
+aA0KICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy91c2IvaG9zdC9vaGNpLXM1cC5jDQoNCg==
