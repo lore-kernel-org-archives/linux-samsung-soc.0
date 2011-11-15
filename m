@@ -1,80 +1,126 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: inclusion export.h instead of module.h
-Date: Tue, 15 Nov 2011 16:02:39 +0900
-Message-ID: <1321340559-19827-1-git-send-email-kgene.kim@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v6 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
+Date: Tue, 15 Nov 2011 16:26:43 +0900
+Message-ID: <CAHQjnOPMxtQFn1LMsXg7JKeW-iGe87jTN_kA+6BK9MGeF=0qDw@mail.gmail.com>
+References: <1321333132-17662-1-git-send-email-pullip.cho@samsung.com>
+	<1321333132-17662-3-git-send-email-pullip.cho@samsung.com>
+	<CAH9JG2U1L1st_D+jp0Qm42HR8Ur7JpdYz6gFJSv+z_ZkGAQv8A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:42828 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752119Ab1KOHWg (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:39479 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753136Ab1KOH0o convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 02:22:36 -0500
+	Tue, 15 Nov 2011 02:26:44 -0500
+In-Reply-To: <CAH9JG2U1L1st_D+jp0Qm42HR8Ur7JpdYz6gFJSv+z_ZkGAQv8A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, YoungLak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Only for THIS_MODULE, the <linux/export.h> file should be added
-instead of <linux/module.h>.
+On Tue, Nov 15, 2011 at 3:05 PM, Kyungmin Park <kmpark@infradead.org> w=
+rote:
+>> +static bool set_sysmmu_active(struct sysmmu_drvdata *data)
+>> +{
+>> + =A0 =A0 /* return true if the System MMU was not active previously
+>> + =A0 =A0 =A0 =A0and it needs to be initialized */
+>> + =A0 =A0 data->activations++;
+>> + =A0 =A0 return data->activations =3D=3D 1;
+>> +}
+> If it calls the twice, then caller get the active failed return value=
+=2E
+> Are there no case to call the multiple activation?
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |    2 +-
- arch/arm/plat-s3c24xx/cpu-freq-debugfs.c     |    2 +-
- arch/arm/plat-samsung/pd.c                   |    2 +-
- arch/arm/plat-samsung/pwm.c                  |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
+Return value of set_sysmmu_active() does not mean that activation is su=
+ccessful
+but that System MMU H/W is needed to be initialized.
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index 6666856..f208154 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -8,7 +8,7 @@
-  * published by the Free Software Foundation.
-  */
- 
--#include <linux/module.h>
-+#include <linux/export.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
- 
-diff --git a/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c b/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c
-index a927666..c7adad0 100644
---- a/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c
-+++ b/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c
-@@ -12,7 +12,7 @@
- */
- 
- #include <linux/init.h>
--#include <linux/module.h>
-+#include <linux/export.h>
- #include <linux/interrupt.h>
- #include <linux/ioport.h>
- #include <linux/cpufreq.h>
-diff --git a/arch/arm/plat-samsung/pd.c b/arch/arm/plat-samsung/pd.c
-index efe1d56..312b510 100644
---- a/arch/arm/plat-samsung/pd.c
-+++ b/arch/arm/plat-samsung/pd.c
-@@ -11,7 +11,7 @@
- */
- 
- #include <linux/init.h>
--#include <linux/module.h>
-+#include <linux/export.h>
- #include <linux/platform_device.h>
- #include <linux/err.h>
- #include <linux/pm_runtime.h>
-diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.c
-index dc1185d..c559d84 100644
---- a/arch/arm/plat-samsung/pwm.c
-+++ b/arch/arm/plat-samsung/pwm.c
-@@ -11,7 +11,7 @@
-  * the Free Software Foundation; either version 2 of the License.
- */
- 
--#include <linux/module.h>
-+#include <linux/export.h>
- #include <linux/kernel.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
--- 
-1.7.1
+System MMU driver only initializes System MMU H/W when data->activation
+becomes 1 from 0 and deinitializes when it becomes 0 from 1.
+
+>> +void exynos_sysmmu_set_tablebase_pgd(struct device *owner, unsigned=
+ long
+>> pgd)
+>> +{
+>> + =A0 =A0 struct sysmmu_drvdata *data =3D NULL;
+>> +
+>> + =A0 =A0 while ((data =3D get_sysmmu_data(owner, data))) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned long flags;
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 read_lock_irqsave(&data->lock, flags);
+> It should be 'write_lock_irqsave'
+
+data->lock just protects contents of 'data' from race condition.
+It does not care about control registers of System MMU.
+Since no contents in 'data' is modified in this function,
+I think read_lock is more proper.
+
+However, suddenly, I think exynos_sysmmu_set_tablebase_pgd()
+must be removed because it modifies page table base
+that is already set with exynos_sysmmu_enable().
+
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 if (is_sysmmu_active(data)) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_block(data->sfrbase=
+);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 __sysmmu_set_ptbase(data->=
+sfrbase, pgd);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_unblock(data->sfrba=
+se);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_dbg(data->dev, "New pa=
+ge table base is %p\n",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (void *)pgd);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 } else {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_dbg(data->dev,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Disabled: Skipping settin=
+g page table base.\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 }
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 read_unlock_irqrestore(&data->lock, flags)=
+;
+> It should be 'write_unlock_irqrestore'
+
+Ditto.
+
+>> +void exynos_sysmmu_tlb_invalidate(struct device *owner)
+>> +{
+>> + =A0 =A0 struct sysmmu_drvdata *data =3D NULL;
+>> +
+>> + =A0 =A0 while ((data =3D get_sysmmu_data(owner, data))) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned long flags;
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 read_lock_irqsave(&data->lock, flags);
+> doesn't use the write_lock_irqsave here?
+
+Ditto.
+
+>> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain=
+)
+>> +{
+>> + =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
+>> + =A0 =A0 struct list_head *pos, *n;
+>> +
+>> + =A0 =A0 WARN_ON(!list_empty(&priv->clients));
+>> +
+>> + =A0 =A0 spin_lock(&priv->lock);
+>> +
+>> + =A0 =A0 list_for_each_safe(pos, n, &priv->clients) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 struct iommu_client *client;
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 client =3D list_entry(pos, struct iommu_cl=
+ient, node);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 exynos_sysmmu_disable(client->dev);
+> I think It occurs sleeping lock error message since it calls the
+> write_lock within spin_lock.
+
+Sorry, I don't understand why it makes problem.
+
+I also tested it with various devices.
+It is also not a condition of neither deadlock nor livelock.
+
+Thank you.
+
+KyongHo.
