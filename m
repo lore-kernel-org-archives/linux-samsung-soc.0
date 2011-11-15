@@ -1,36 +1,43 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] MAINTAINERS: Extend Samsung patterns to cover SPI
- and ASoC drivers
-Date: Tue, 15 Nov 2011 11:16:04 +0000
-Message-ID: <20111115111603.GC3077@opensource.wolfsonmicro.com>
-References: <1320923776-26626-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1320923776-26626-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <005701cca376$f6abbba0$e40332e0$%kim@samsung.com>
+From: merez@codeaurora.org
+Subject: RE: [PATCH 2/2] mmc: core: Support packed command for eMMC4.5
+     device
+Date: Tue, 15 Nov 2011 04:48:02 -0800 (PST)
+Message-ID: <faba552e7bd19ee5399c73c2b478a34d.squirrel@www.codeaurora.org>
+References: <620ec9ffa6bdbba9ae5f76998e36f8dc.squirrel@www.codeaurora.org>
+    <001001cca043$395dbfc0$ac193f40$%jun@samsung.com>
+    <CANfBPZ-Zn+R4GosEL-RJxh8gduAr8e+qN876uPwDkHfiEpdERw@mail.gmail.com>
+    <ea21d88d904af165cb911354e3f51ea6.squirrel@www.codeaurora.org>
+    <001e01cca2b2$3b449310$b1cdb930$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33237 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754959Ab1KOLQH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 06:16:07 -0500
-Content-Disposition: inline
-In-Reply-To: <005701cca376$f6abbba0$e40332e0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <001e01cca2b2$3b449310$b1cdb930$%jun@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: merez@codeaurora.org, "'S, Venkatraman'" <svenkatr@ti.com>, linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, grant.likely@secretlab.ca
 
-On Tue, Nov 15, 2011 at 06:14:22PM +0900, Kukjin Kim wrote:
-> Mark Brown wrote:
+>> >>> >> >> > + =A0 =A0 =A0 if (rqc)
+>> >>> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reqs =3D mmc_blk_chk_packa=
+ble(mq, rqc);
+>> >>>
+>> >>> It would be best to keep all the calls to blk_fetch_request in t=
+he
+>> same
+>> >>> location. Therefore, I suggest to move the call to
+>> mmc_blk_chk_packable
+>> >>> to
+>> >>> mmc/card/queue.c after the first request is fetched.
+>> >>
+>> >> At the first time, I considered that way.
+>> >> I'll do more, if possible.
+> I considered more.
+> I think that mmc_blk_chk_packable would rather be called only for r/w=
+ type
+> than all request type(e.g. discard, flush).
+>
+mmc_blk_chk_packable can check the cmd_flags of the request to verify i=
+t's
+not a flush/disacrad etc. In such cases will not pack.
 
-> > +F:	drivers/spi/spi-s3c*
-> > +F:	sound/soc/samsung/*
-
-> Hmm, I'm ok on this but needs Grant's opinion :)
-
-> (Cc'ed Grant Likely)
-
-Note that you can have multiple entries for a single file, people are
-supposed to use a bit of thought when working out who to mail - if you
-use something like get_maintainers it'll return all matching entries.
