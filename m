@@ -1,126 +1,133 @@
 From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v6 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
-Date: Tue, 15 Nov 2011 16:26:43 +0900
-Message-ID: <CAHQjnOPMxtQFn1LMsXg7JKeW-iGe87jTN_kA+6BK9MGeF=0qDw@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] ARM: EXYNOS: Change System MMU platform device definitions
+Date: Tue, 15 Nov 2011 16:48:42 +0900
+Message-ID: <CAHQjnOPrjc37tYc05OZqi5cJnQJn61OoqVAX6OvH=J4e6rL1Wg@mail.gmail.com>
 References: <1321333132-17662-1-git-send-email-pullip.cho@samsung.com>
-	<1321333132-17662-3-git-send-email-pullip.cho@samsung.com>
-	<CAH9JG2U1L1st_D+jp0Qm42HR8Ur7JpdYz6gFJSv+z_ZkGAQv8A@mail.gmail.com>
+	<1321333132-17662-2-git-send-email-pullip.cho@samsung.com>
+	<CAH9JG2UDZ92zFiiPQYxbNJgLqcqGv_D9dFNdqJa2o+BxiUzygg@mail.gmail.com>
+	<CAHQjnOOMq9icOWY-b1z0YaJKZcx-b=Kv9ZT9dnwHAjVM5=hCrQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-fx0-f46.google.com ([209.85.161.46]:39479 "EHLO
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:46416 "EHLO
 	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753136Ab1KOH0o convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751591Ab1KOHso convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 02:26:44 -0500
-In-Reply-To: <CAH9JG2U1L1st_D+jp0Qm42HR8Ur7JpdYz6gFJSv+z_ZkGAQv8A@mail.gmail.com>
+	Tue, 15 Nov 2011 02:48:44 -0500
+In-Reply-To: <CAHQjnOOMq9icOWY-b1z0YaJKZcx-b=Kv9ZT9dnwHAjVM5=hCrQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kyungmin Park <kmpark@infradead.org>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, YoungLak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, YoungLak Kim <younglak1004.kim@samsung.com>
 
-On Tue, Nov 15, 2011 at 3:05 PM, Kyungmin Park <kmpark@infradead.org> w=
+On Tue, Nov 15, 2011 at 3:12 PM, KyongHo Cho <pullip.cho@samsung.com> w=
 rote:
->> +static bool set_sysmmu_active(struct sysmmu_drvdata *data)
->> +{
->> + =A0 =A0 /* return true if the System MMU was not active previously
->> + =A0 =A0 =A0 =A0and it needs to be initialized */
->> + =A0 =A0 data->activations++;
->> + =A0 =A0 return data->activations =3D=3D 1;
->> +}
-> If it calls the twice, then caller get the active failed return value=
-=2E
-> Are there no case to call the multiple activation?
+> On Tue, Nov 15, 2011 at 2:37 PM, Kyungmin Park <kmpark@infradead.org>=
+ wrote:
+>>> @@ -988,6 +989,21 @@ static struct platform_device *universal_devic=
+es[]
+>>> __initdata =3D {
+>>> =A0 =A0 =A0 &cam_i_core_fixed_reg_dev,
+>>> =A0 =A0 =A0 &cam_s_if_fixed_reg_dev,
+>>> =A0 =A0 =A0 &s5p_device_fimc_md,
+>>> + =A0 =A0 &SYSMMU_PLATDEV(sss),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(jpeg),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(fimd1),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(2d),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(rot),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(mdma),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(tv),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(mfc_l),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(mfc_r),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(fimc0),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(fimc1),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(fimc2),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(fimc3),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(fimd0),
+>>> + =A0 =A0 &SYSMMU_PLATDEV(pcie),
+>> Platform device is optional for each board and pcie doesn't used at
+>> mobile board. Does it require to register all platform devices at
+>> board?
+>
+> Of course we make them selectable in menuconfig according
+Of course we make them
+Sorry
+> to the selection of their host devices. But the array definition will
+> contain lots of #ifdef.
+>
 
-Return value of set_sysmmu_active() does not mean that activation is su=
-ccessful
-but that System MMU H/W is needed to be initialized.
+Sorry. I omitted 'can' from "Of course we 'can' make them selectable"
 
-System MMU driver only initializes System MMU H/W when data->activation
-becomes 1 from 0 and deinitializes when it becomes 0 from 1.
-
->> +void exynos_sysmmu_set_tablebase_pgd(struct device *owner, unsigned=
- long
->> pgd)
->> +{
->> + =A0 =A0 struct sysmmu_drvdata *data =3D NULL;
->> +
->> + =A0 =A0 while ((data =3D get_sysmmu_data(owner, data))) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned long flags;
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 read_lock_irqsave(&data->lock, flags);
-> It should be 'write_lock_irqsave'
-
-data->lock just protects contents of 'data' from race condition.
-It does not care about control registers of System MMU.
-Since no contents in 'data' is modified in this function,
-I think read_lock is more proper.
-
-However, suddenly, I think exynos_sysmmu_set_tablebase_pgd()
-must be removed because it modifies page table base
-that is already set with exynos_sysmmu_enable().
-
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (is_sysmmu_active(data)) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_block(data->sfrbase=
-);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 __sysmmu_set_ptbase(data->=
-sfrbase, pgd);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_unblock(data->sfrba=
-se);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_dbg(data->dev, "New pa=
-ge table base is %p\n",
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (void *)pgd);
->> + =A0 =A0 =A0 =A0 =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_dbg(data->dev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "Disabled: Skipping settin=
-g page table base.\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 }
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 read_unlock_irqrestore(&data->lock, flags)=
-;
-> It should be 'write_unlock_irqrestore'
-
-Ditto.
-
->> +void exynos_sysmmu_tlb_invalidate(struct device *owner)
->> +{
->> + =A0 =A0 struct sysmmu_drvdata *data =3D NULL;
->> +
->> + =A0 =A0 while ((data =3D get_sysmmu_data(owner, data))) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned long flags;
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 read_lock_irqsave(&data->lock, flags);
-> doesn't use the write_lock_irqsave here?
-
-Ditto.
-
->> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain=
-)
->> +{
->> + =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
->> + =A0 =A0 struct list_head *pos, *n;
->> +
->> + =A0 =A0 WARN_ON(!list_empty(&priv->clients));
->> +
->> + =A0 =A0 spin_lock(&priv->lock);
->> +
->> + =A0 =A0 list_for_each_safe(pos, n, &priv->clients) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 struct iommu_client *client;
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 client =3D list_entry(pos, struct iommu_cl=
-ient, node);
->> + =A0 =A0 =A0 =A0 =A0 =A0 exynos_sysmmu_disable(client->dev);
-> I think It occurs sleeping lock error message since it calls the
-> write_lock within spin_lock.
-
-Sorry, I don't understand why it makes problem.
-
-I also tested it with various devices.
-It is also not a condition of neither deadlock nor livelock.
-
-Thank you.
-
-KyongHo.
+> And I defined System MMU dev for PCIe for future use
+> although it is useless in mobile devices.
+>
+>>>
+>>> +static void __init sysmmu_init(void)
+>>> +{
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc0, &exynos4_device_pd[PD_CA=
+M].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc1, &exynos4_device_pd[PD_CA=
+M].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc2, &exynos4_device_pd[PD_CA=
+M].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc3, &exynos4_device_pd[PD_CA=
+M].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(jpeg, &exynos4_device_pd[PD_CAM=
+].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(mfc_l, &exynos4_device_pd[PD_MF=
+C].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(mfc_r, &exynos4_device_pd[PD_MF=
+C].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimd0, &exynos4_device_pd[PD_LC=
+D0].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(rot, &exynos4_device_pd[PD_LCD0=
+].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(mdma, &exynos4_device_pd[PD_LCD=
+0].dev);
+>>> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(tv, &exynos4_device_pd[PD_TV].d=
+ev);
+>>> +
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc0).dev, &s5p_device_=
+fimc0.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc1).dev, &s5p_device_=
+fimc1.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc2).dev, &s5p_device_=
+fimc2.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc3).dev, &s5p_device_=
+fimc3.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(mfc_l).dev, &s5p_device_=
+mfc.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(mfc_r).dev, &s5p_device_=
+mfc.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimd0).dev, &s5p_device_=
+fimd0.dev);
+>>> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(tv).dev, &s5p_device_mix=
+er.dev);
+>>> +}
+>>> +
+>>> =A0static void __init universal_machine_init(void)
+>>> =A0{
+>>> =A0 =A0 =A0 universal_sdhci_init();
+>>> @@ -1040,6 +1080,8 @@ static void __init universal_machine_init(voi=
+d)
+>>>
+>>> =A0 =A0 =A0 universal_camera_init();
+>>>
+>>> + =A0 =A0 sysmmu_init();
+>> I think how do you implement the sysmm_init at cpu or common file? a=
+nd
+>> board select it to use iommu or not. no need to implement the almost
+>> same codes at each board.
+>>
+> It is not easy to move sysmmu_init() out from mach_*.c files because =
+System MMU
+> configuration is vary from boards and APs. It is just machine-specifi=
+c.
+>
+>> Otherwise looks good.
+>>
+> Thank you :)
+>
+> KyongHo.
+>
