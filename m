@@ -1,45 +1,156 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH 0/3] Support Samsung S5P OHCI device and driver
-Date: Tue, 15 Nov 2011 06:49:58 +0000 (GMT)
-Message-ID: <1473398.119441321339796993.JavaMail.weblogic@epml28>
-Reply-To: jg1.han@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Subject: [PATCH 1/3] ARM: SAMSUNG: Add USB OHCI device
+Date: Tue, 15 Nov 2011 15:31:41 +0900
+Message-ID: <1321338701-15531-1-git-send-email-jg1.han@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62605 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753395Ab1KOGuH (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42392 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751998Ab1KOGwh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 01:50:07 -0500
-Received: from epcpsbge1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LUO00483WB4NL20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Nov 2011 15:49:58 +0900 (KST)
-MIME-version: 1.0
+	Tue, 15 Nov 2011 01:52:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@suse.de, stern@rowland.harvard.edu, kgene.kim@samsung.com
-Cc: yulgon.kim@samsung.com, jy0922.shim@samsung.com, jg1.han@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Greg Kroah-Hartman <gregkh@suse.de>, Alan Stern <stern@rowland.harvard.edu>, Kukji
+Cc: Yulgon Kim <yulgon.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Jingoo Han <jg1.han@samsung.com>
 
-SGVsbG8uDQoNClRoaXMgcGF0Y2ggc2VyaWVzIGFkZHMgVVNCIE9IQ0kgZGV2aWNlIGFuZCBpbml0
-aWFsIGRyaXZlciBmb3IgU2Ftc3VuZw0KUzVQIFNvQ3MgYW5kIGlzIGJhc2VkIGZyb20gTGludXgg
-My4yLXJjMS4gSSBoYXZlIHRlc3RlZCBvbiBTTURLVjMxMCBib2FyZA0KdXNpbmcgRVhZTk9TNC4N
-Cg0KVGhhbmtzLg0KDQpKaW5nb28gSGFuICg0KToNCiAgICAgICBBUk06IFNBTVNVTkc6IEFkZCBV
-U0IgT0hDSSBkZXZpY2UNCiAgICAgICBBUk06IEVYWU5PUzogQWRkIFVTQiBPSENJIHN1cHBvcnQg
-dG8gU01ES1YzMTAgYm9hcmQNCiAgICAgICBVU0I6IEFkZCBTNVAgT0hDSSBkaXZlcg0KDQogIGFy
-Y2gvYXJtL21hY2gtZXh5bm9zL0tjb25maWcgICAgICAgICB8ICAgIDEgKw0KICBhcmNoL2FybS9t
-YWNoLWV4eW5vcy9tYWNoLXNtZGt2MzEwLmMgfCAgIDEzICsrKysrKysrKysrKysNCiAgYXJjaC9h
-cm0vbWFjaC1leHlub3MvaW5jbHVkZS9tYWNoL21hcC5oICAgfCAgICAyICsNCiAgYXJjaC9hcm0v
-cGxhdC1zNXAvS2NvbmZpZyAgICAgICAgICAgICAgICAgfCAgICA1ICsrKysNCiAgYXJjaC9hcm0v
-cGxhdC1zYW1zdW5nL2RldnMuYyAgICAgICAgICAgICAgfCAgIDM0ICsrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrDQogIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvZGV2cy5o
-IHwgICAgMSArDQogIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9pbmNsdWRlL3BsYXQvb2hjaS5oIHwg
-ICAyMSArKysrKysrKysrKysrKysrKw0KICBkcml2ZXJzL3VzYi9LY29uZmlnICAgICAgICAgfCAg
-ICAxICsNCiAgZHJpdmVycy91c2IvaG9zdC9LY29uZmlnICAgIHwgICAgNiArDQogIGRyaXZlcnMv
-dXNiL2hvc3Qvb2hjaS1oY2QuYyB8ICAgIDUgKw0KICBkcml2ZXJzL3VzYi9ob3N0L29oY2ktczVw
-LmMgfCAgMjczICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCiAg
-MTEgZmlsZXMgY2hhbmdlZCwgMzYyIGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pDQogIGNy
-ZWF0ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L29oY2ku
-aA0KICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy91c2IvaG9zdC9vaGNpLXM1cC5jDQoNCg==
+This patch adds USB ohci device definition for S5P SoCs.
+
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ arch/arm/mach-exynos/include/mach/map.h   |    2 +
+ arch/arm/plat-s5p/Kconfig                 |    5 ++++
+ arch/arm/plat-samsung/devs.c              |   34 +++++++++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ arch/arm/plat-samsung/include/plat/ohci.h |   21 +++++++++++++++++
+ 5 files changed, 63 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/ohci.h
+
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 058541d..2d07e39 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -107,6 +107,7 @@
+ #define EXYNOS4_PA_SROMC		0x12570000
+ 
+ #define EXYNOS4_PA_EHCI			0x12580000
++#define EXYNOS4_PA_OHCI			0x12590000
+ #define EXYNOS4_PA_HSPHY		0x125B0000
+ #define EXYNOS4_PA_MFC			0x13400000
+ 
+@@ -151,6 +152,7 @@
+ 
+ #define S5P_PA_CHIPID			EXYNOS4_PA_CHIPID
+ #define S5P_PA_EHCI			EXYNOS4_PA_EHCI
++#define S5P_PA_OHCI			EXYNOS4_PA_OHCI
+ #define S5P_PA_FIMC0			EXYNOS4_PA_FIMC0
+ #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
+ #define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
+diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
+index 9b9968f..a0bf611 100644
+--- a/arch/arm/plat-s5p/Kconfig
++++ b/arch/arm/plat-s5p/Kconfig
+@@ -119,6 +119,11 @@ config S5P_DEV_USB_EHCI
+ 	help
+ 	  Compile in platform device definition for USB EHCI
+ 
++config S5P_DEV_USB_OHCI
++	bool
++	help
++	  Compile in platform device definition for USB OHCI
++
+ config S5P_SETUP_MIPIPHY
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 4ca8b57..4245ed0 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -46,6 +46,7 @@
+ #include <plat/adc.h>
+ #include <plat/ata.h>
+ #include <plat/ehci.h>
++#include <plat/ohci.h>
+ #include <plat/fb.h>
+ #include <plat/fb-s3c2410.h>
+ #include <plat/hwmon.h>
+@@ -1401,6 +1402,39 @@ void __init s5p_ehci_set_platdata(struct s5p_ehci_platdata *pd)
+ }
+ #endif /* CONFIG_S5P_DEV_USB_EHCI */
+ 
++/* USB OHCI Host Controller */
++
++#ifdef CONFIG_S5P_DEV_USB_OHCI
++static struct resource s5p_ohci_resource[] = {
++	[0] = DEFINE_RES_MEM(S5P_PA_OHCI, SZ_256),
++	[1] = DEFINE_RES_IRQ(IRQ_USB_HOST),
++};
++
++struct platform_device s5p_device_ohci = {
++	.name		= "s5p-ohci",
++	.id		= -1,
++	.num_resources	= ARRAY_SIZE(s5p_ohci_resource),
++	.resource	= s5p_ohci_resource,
++	.dev		= {
++		.dma_mask		= &samsung_device_dma_mask,
++		.coherent_dma_mask	= DMA_BIT_MASK(32),
++	}
++};
++
++void __init s5p_ohci_set_platdata(struct s5p_ohci_platdata *pd)
++{
++	struct s5p_ohci_platdata *npd;
++
++	npd = s3c_set_platdata(pd, sizeof(struct s5p_ohci_platdata),
++			&s5p_device_ohci);
++
++	if (!npd->phy_init)
++		npd->phy_init = s5p_usb_phy_init;
++	if (!npd->phy_exit)
++		npd->phy_exit = s5p_usb_phy_exit;
++}
++#endif /* CONFIG_S5P_DEV_USB_OHCI */
++
+ /* USB HSOTG */
+ 
+ #ifdef CONFIG_S3C_DEV_USB_HSOTG
+diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
+index ab633c9..c02e84c 100644
+--- a/arch/arm/plat-samsung/include/plat/devs.h
++++ b/arch/arm/plat-samsung/include/plat/devs.h
+@@ -73,6 +73,7 @@ extern struct platform_device s3c_device_usb_hsudc;
+ extern struct platform_device s3c_device_wdt;
+ 
+ extern struct platform_device s5p_device_ehci;
++extern struct platform_device s5p_device_ohci;
+ extern struct platform_device s5p_device_fimc0;
+ extern struct platform_device s5p_device_fimc1;
+ extern struct platform_device s5p_device_fimc2;
+diff --git a/arch/arm/plat-samsung/include/plat/ohci.h b/arch/arm/plat-samsung/include/plat/ohci.h
+new file mode 100644
+index 0000000..da46f67
+--- /dev/null
++++ b/arch/arm/plat-samsung/include/plat/ohci.h
+@@ -0,0 +1,21 @@
++/*
++ * Copyright (C) 2011 Samsung Electronics Co.Ltd
++ *		http://www.samsung.com/
++ *
++ * This program is free software; you can redistribute  it and/or modify it
++ * under  the terms of  the GNU General  Public License as published by the
++ * Free Software Foundation;  either version 2 of the  License, or (at your
++ * option) any later version.
++ */
++
++#ifndef __PLAT_SAMSUNG_OHCI_H
++#define __PLAT_SAMSUNG_OHCI_H __FILE__
++
++struct s5p_ohci_platdata {
++	int (*phy_init)(struct platform_device *pdev, int type);
++	int (*phy_exit)(struct platform_device *pdev, int type);
++};
++
++extern void s5p_ohci_set_platdata(struct s5p_ohci_platdata *pd);
++
++#endif /* __PLAT_SAMSUNG_OHCI_H */
+-- 
+1.7.1
