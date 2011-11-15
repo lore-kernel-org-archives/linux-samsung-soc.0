@@ -1,71 +1,80 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] MAINTAINERS: Add linux-samsung-soc mailing list for
- Samsung
-Date: Tue, 15 Nov 2011 16:21:36 +0900
-Message-ID: <003801cca367$360b7020$a2225060$%kim@samsung.com>
-References: <1320923776-26626-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH] ARM: SAMSUNG: inclusion export.h instead of module.h
+Date: Tue, 15 Nov 2011 16:02:39 +0900
+Message-ID: <1321340559-19827-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49278 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752119Ab1KOHVi (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:42828 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752119Ab1KOHWg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 Nov 2011 02:21:38 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LUO004MMXOIV300@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 Nov 2011 16:21:37 +0900 (KST)
-Received: from kgenekim ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LUO00JWBXS0AD80@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 15 Nov 2011 16:21:37 +0900 (KST)
-In-reply-to: <1320923776-26626-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Content-language: ko
+	Tue, 15 Nov 2011 02:22:36 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, akpm@linux-foundation.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Mark Brown wrote:
-> 
-> There's a Samsung-specific mailing list but it's not advertised in
-> MAINTAINERS - add it to the overall architecture to make it more
-> discoverable.
-> 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Only for THIS_MODULE, the <linux/export.h> file should be added
+instead of <linux/module.h>.
 
-I'm okay on this,
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c |    2 +-
+ arch/arm/plat-s3c24xx/cpu-freq-debugfs.c     |    2 +-
+ arch/arm/plat-samsung/pd.c                   |    2 +-
+ arch/arm/plat-samsung/pwm.c                  |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-(Cc'ed Andrew Morton)
-Hi Andrew, could you please pick this up in your tree?
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> ---
->  MAINTAINERS |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c18b278..a21d4fb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1046,6 +1046,7 @@ ARM/SAMSUNG ARM ARCHITECTURES
->  M:	Ben Dooks <ben-linux@fluff.org>
->  M:	Kukjin Kim <kgene.kim@samsung.com>
->  L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-> +L:	linux-samsung-soc@vger.kernel.org
->  W:	http://www.fluff.org/ben/linux/
->  S:	Maintained
->  F:	arch/arm/plat-samsung/
-> --
-> 1.7.7.2
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 6666856..f208154 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -8,7 +8,7 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-#include <linux/module.h>
++#include <linux/export.h>
+ #include <linux/interrupt.h>
+ #include <linux/i2c.h>
+ 
+diff --git a/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c b/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c
+index a927666..c7adad0 100644
+--- a/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c
++++ b/arch/arm/plat-s3c24xx/cpu-freq-debugfs.c
+@@ -12,7 +12,7 @@
+ */
+ 
+ #include <linux/init.h>
+-#include <linux/module.h>
++#include <linux/export.h>
+ #include <linux/interrupt.h>
+ #include <linux/ioport.h>
+ #include <linux/cpufreq.h>
+diff --git a/arch/arm/plat-samsung/pd.c b/arch/arm/plat-samsung/pd.c
+index efe1d56..312b510 100644
+--- a/arch/arm/plat-samsung/pd.c
++++ b/arch/arm/plat-samsung/pd.c
+@@ -11,7 +11,7 @@
+ */
+ 
+ #include <linux/init.h>
+-#include <linux/module.h>
++#include <linux/export.h>
+ #include <linux/platform_device.h>
+ #include <linux/err.h>
+ #include <linux/pm_runtime.h>
+diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.c
+index dc1185d..c559d84 100644
+--- a/arch/arm/plat-samsung/pwm.c
++++ b/arch/arm/plat-samsung/pwm.c
+@@ -11,7 +11,7 @@
+  * the Free Software Foundation; either version 2 of the License.
+ */
+ 
+-#include <linux/module.h>
++#include <linux/export.h>
+ #include <linux/kernel.h>
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+-- 
+1.7.1
