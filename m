@@ -1,122 +1,154 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v6 1/2] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Tue, 15 Nov 2011 15:12:41 +0900
-Message-ID: <CAHQjnOOMq9icOWY-b1z0YaJKZcx-b=Kv9ZT9dnwHAjVM5=hCrQ@mail.gmail.com>
-References: <1321333132-17662-1-git-send-email-pullip.cho@samsung.com>
- <1321333132-17662-2-git-send-email-pullip.cho@samsung.com>
- <CAH9JG2UDZ92zFiiPQYxbNJgLqcqGv_D9dFNdqJa2o+BxiUzygg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAH9JG2UDZ92zFiiPQYxbNJgLqcqGv_D9dFNdqJa2o+BxiUzygg@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org, YoungLak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH] mmc: core: Fix power_off_notify during suspend
+Date: Tue, 15 Nov 2011 11:55:46 +0530
+Message-ID: <1321338346-10911-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f42.google.com ([209.85.210.42]:40168 "EHLO
+	mail-pz0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751993Ab1KOGZN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 15 Nov 2011 01:25:13 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-On Tue, Nov 15, 2011 at 2:37 PM, Kyungmin Park <kmpark@infradead.org> wrote:
->> @@ -988,6 +989,21 @@ static struct platform_device *universal_devices[]
->> __initdata =3D {
->> =A0 =A0 =A0 &cam_i_core_fixed_reg_dev,
->> =A0 =A0 =A0 &cam_s_if_fixed_reg_dev,
->> =A0 =A0 =A0 &s5p_device_fimc_md,
->> + =A0 =A0 &SYSMMU_PLATDEV(sss),
->> + =A0 =A0 &SYSMMU_PLATDEV(jpeg),
->> + =A0 =A0 &SYSMMU_PLATDEV(fimd1),
->> + =A0 =A0 &SYSMMU_PLATDEV(2d),
->> + =A0 =A0 &SYSMMU_PLATDEV(rot),
->> + =A0 =A0 &SYSMMU_PLATDEV(mdma),
->> + =A0 =A0 &SYSMMU_PLATDEV(tv),
->> + =A0 =A0 &SYSMMU_PLATDEV(mfc_l),
->> + =A0 =A0 &SYSMMU_PLATDEV(mfc_r),
->> + =A0 =A0 &SYSMMU_PLATDEV(fimc0),
->> + =A0 =A0 &SYSMMU_PLATDEV(fimc1),
->> + =A0 =A0 &SYSMMU_PLATDEV(fimc2),
->> + =A0 =A0 &SYSMMU_PLATDEV(fimc3),
->> + =A0 =A0 &SYSMMU_PLATDEV(fimd0),
->> + =A0 =A0 &SYSMMU_PLATDEV(pcie),
-> Platform device is optional for each board and pcie doesn't used at
-> mobile board. Does it require to register all platform devices at
-> board?
+The eMMC 4.5 devices respond to only RESET and AWAKE command in the sleep
+state. Hence the mmc switch command to notify power off state should be sent
+before the device enters sleep state.
 
-Of course we make them selectable in menuconfig according
-to the selection of their host devices. But the array definition will
-contain lots of #ifdef.
+This patch fixes the same.
 
-And I defined System MMU dev for PCIe for future use
-although it is useless in mobile devices.
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+ drivers/mmc/core/core.c |   81 ++++++++++++++++++++++++++++------------------
+ drivers/mmc/core/mmc.c  |    2 +-
+ 2 files changed, 50 insertions(+), 33 deletions(-)
 
->>
->> +static void __init sysmmu_init(void)
->> +{
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc0, &exynos4_device_pd[PD_CAM].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc1, &exynos4_device_pd[PD_CAM].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc2, &exynos4_device_pd[PD_CAM].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimc3, &exynos4_device_pd[PD_CAM].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(jpeg, &exynos4_device_pd[PD_CAM].dev=
-);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(mfc_l, &exynos4_device_pd[PD_MFC].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(mfc_r, &exynos4_device_pd[PD_MFC].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(fimd0, &exynos4_device_pd[PD_LCD0].d=
-ev);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(rot, &exynos4_device_pd[PD_LCD0].dev=
-);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(mdma, &exynos4_device_pd[PD_LCD0].de=
-v);
->> + =A0 =A0 ASSIGN_SYSMMU_POWERDOMAIN(tv, &exynos4_device_pd[PD_TV].dev);
->> +
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc0).dev, &s5p_device_fimc0=
-.dev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc1).dev, &s5p_device_fimc1=
-.dev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc2).dev, &s5p_device_fimc2=
-.dev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimc3).dev, &s5p_device_fimc3=
-.dev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(mfc_l).dev, &s5p_device_mfc.d=
-ev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(mfc_r).dev, &s5p_device_mfc.d=
-ev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(fimd0).dev, &s5p_device_fimd0=
-.dev);
->> + =A0 =A0 sysmmu_set_owner(&SYSMMU_PLATDEV(tv).dev, &s5p_device_mixer.de=
-v);
->> +}
->> +
->> =A0static void __init universal_machine_init(void)
->> =A0{
->> =A0 =A0 =A0 universal_sdhci_init();
->> @@ -1040,6 +1080,8 @@ static void __init universal_machine_init(void)
->>
->> =A0 =A0 =A0 universal_camera_init();
->>
->> + =A0 =A0 sysmmu_init();
-> I think how do you implement the sysmm_init at cpu or common file? and
-> board select it to use iommu or not. no need to implement the almost
-> same codes at each board.
->
-It is not easy to move sysmmu_init() out from mach_*.c files because System=
- MMU
-configuration is vary from boards and APs. It is just machine-specific.
-
-> Otherwise looks good.
->
-Thank you :)
-
-KyongHo.
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index 74a012a..7ee2e07 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1225,6 +1225,46 @@ void mmc_set_driver_type(struct mmc_host *host, unsigned int drv_type)
+ 	mmc_host_clk_release(host);
+ }
+ 
++static void mmc_poweroff_notify(struct mmc_host *host)
++{
++	struct mmc_card *card;
++	unsigned int timeout;
++	unsigned int notify_type = EXT_CSD_NO_POWER_NOTIFICATION;
++	int err = 0;
++
++	card = host->card;
++
++	/*
++	 * Send power notify command only if card
++	 * is mmc and notify state is powered ON
++	 */
++	if (card && mmc_card_mmc(card) &&
++	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
++
++		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
++			notify_type = EXT_CSD_POWER_OFF_SHORT;
++			timeout = card->ext_csd.generic_cmd6_time;
++			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
++		} else {
++			notify_type = EXT_CSD_POWER_OFF_LONG;
++			timeout = card->ext_csd.power_off_longtime;
++			card->poweroff_notify_state = MMC_POWEROFF_LONG;
++		}
++
++		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
++				 EXT_CSD_POWER_OFF_NOTIFICATION,
++				 notify_type, timeout);
++
++		if (err && err != -EBADMSG)
++			pr_err("Device failed to respond within %d poweroff "
++			       "time. Forcefully powering down the device\n",
++			       timeout);
++
++		/* Set the card state to no notification after the poweroff */
++		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
++	}
++}
++
+ /*
+  * Apply power to the MMC stack.  This is a two-stage process.
+  * First, we enable power to the card without the clock running.
+@@ -1281,42 +1321,12 @@ static void mmc_power_up(struct mmc_host *host)
+ 
+ void mmc_power_off(struct mmc_host *host)
+ {
+-	struct mmc_card *card;
+-	unsigned int notify_type;
+-	unsigned int timeout;
+-	int err;
+-
+ 	mmc_host_clk_hold(host);
+ 
+-	card = host->card;
+ 	host->ios.clock = 0;
+ 	host->ios.vdd = 0;
+ 
+-	if (card && mmc_card_mmc(card) &&
+-	    (card->poweroff_notify_state == MMC_POWERED_ON)) {
+-
+-		if (host->power_notify_type == MMC_HOST_PW_NOTIFY_SHORT) {
+-			notify_type = EXT_CSD_POWER_OFF_SHORT;
+-			timeout = card->ext_csd.generic_cmd6_time;
+-			card->poweroff_notify_state = MMC_POWEROFF_SHORT;
+-		} else {
+-			notify_type = EXT_CSD_POWER_OFF_LONG;
+-			timeout = card->ext_csd.power_off_longtime;
+-			card->poweroff_notify_state = MMC_POWEROFF_LONG;
+-		}
+-
+-		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-				 EXT_CSD_POWER_OFF_NOTIFICATION,
+-				 notify_type, timeout);
+-
+-		if (err && err != -EBADMSG)
+-			pr_err("Device failed to respond within %d poweroff "
+-			       "time. Forcefully powering down the device\n",
+-			       timeout);
+-
+-		/* Set the card state to no notification after the poweroff */
+-		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
+-	}
++	mmc_poweroff_notify(host);
+ 
+ 	/*
+ 	 * Reset ocr mask to be the highest possible voltage supported for
+@@ -2314,8 +2324,15 @@ int mmc_suspend_host(struct mmc_host *host)
+ 		 * pre-claim the host.
+ 		 */
+ 		if (mmc_try_claim_host(host)) {
+-			if (host->bus_ops->suspend)
++			if (host->bus_ops->suspend) {
++				/*
++				 * For eMMC 4.5 device send notify command
++				 * before sleep, because in sleep state eMMC 4.5
++				 * devices respond to only RESET and AWAKE cmd
++				 */
++				mmc_poweroff_notify(host);
+ 				err = host->bus_ops->suspend(host);
++			}
+ 			if (err == -ENOSYS || !host->bus_ops->resume) {
+ 				/*
+ 				 * We simply "remove" the card in this case.
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 4db73a9..a1223bd 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -875,7 +875,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	 * set the notification byte in the ext_csd register of device
+ 	 */
+ 	if ((host->caps2 & MMC_CAP2_POWEROFF_NOTIFY) &&
+-	    (card->poweroff_notify_state == MMC_NO_POWER_NOTIFICATION)) {
++	    (card->ext_csd.rev >= 6)) {
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+ 				 EXT_CSD_POWER_OFF_NOTIFICATION,
+ 				 EXT_CSD_POWER_ON,
+-- 
+1.7.1
