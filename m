@@ -1,386 +1,229 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH RESEND V4] mmc: core: HS200 mode support for eMMC 4.5
-Date: Thu, 17 Nov 2011 17:39:38 +0530
-Message-ID: <CAGxe1ZFC5jWmVCA0c-4GvavQ3dm6xtHMc6LhNF=B2s2W6r+8Pg@mail.gmail.com>
-References: <1319605188-2909-1-git-send-email-girish.shivananjappa@linaro.org>
-	<4EB8EACC.8030205@codeaurora.org>
-	<000701cca4ea$d0c5d3b0$72517b10$@org>
+From: merez@codeaurora.org
+Subject: RE: [PATCH 2/2] mmc: core: Support packed command for eMMC4.5
+     device
+Date: Thu, 17 Nov 2011 05:45:30 -0800 (PST)
+Message-ID: <bc8a36d67f74dfb0a516f5989849ccb8.squirrel@www.codeaurora.org>
+References: <620ec9ffa6bdbba9ae5f76998e36f8dc.squirrel@www.codeaurora.org>
+    <001001cca043$395dbfc0$ac193f40$%jun@samsung.com>
+    <CANfBPZ-Zn+R4GosEL-RJxh8gduAr8e+qN876uPwDkHfiEpdERw@mail.gmail.com>
+    <001d01cca2b1$f4921ff0$ddb65fd0$%jun@samsung.com>
+    <4108533d3f51753179703e04299ecab7.squirrel@www.codeaurora.org>
+    <004a01cca4cf$9081e840$b185b8c0$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:35007 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750769Ab1KQMJk convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Nov 2011 07:09:40 -0500
-In-Reply-To: <000701cca4ea$d0c5d3b0$72517b10$@org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <004a01cca4cf$9081e840$b185b8c0$%jun@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: merez@codeaurora.org, "'S, Venkatraman'" <svenkatr@ti.com>, linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Subhash Jadavani <subhashj@codeaurora.org>
-Cc: Sahitya Tummala <stummala@codeaurora.org>, linux-mmc@vger.kernel.org, cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 
-On 17 November 2011 11:06, Subhash Jadavani <subhashj@codeaurora.org> w=
-rote:
-> Hi Girish,
->
->> -----Original Message-----
->> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
->> owner@vger.kernel.org] On Behalf Of Sahitya Tummala
->> Sent: Tuesday, November 08, 2011 2:10 PM
->> To: Girish K S
->> Cc: linux-mmc@vger.kernel.org; cjb@laptop.org; patches@linaro.org;
->> linux-samsung-soc@vger.kernel.org
->> Subject: Re: [PATCH RESEND V4] mmc: core: HS200 mode support for eMM=
-C
->> 4.5
->>
->> Hi Girish,
->>
->> On 10/26/2011 10:29 AM, Girish K S wrote:
->> > This patch adds the support of the HS200 bus speed for eMMC 4.5
->> devices.
->> > The eMMC 4.5 devices have support for 200MHz bus speed.The mmc cor=
+> Maya Erez wrote:
+>> >> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 phys_segments +=3D =A0ne=
+xt->nr_phys_segments;
+>> >> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (phys_segments > max_=
+phys_segs) {
+>> >> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 blk_requ=
+eue_request(q, next);
+>> >> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> >> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+>> >> >> >> >> I mentioned this before - if the next request is not
+>> packable
+>> >> and
+>> >> >> >> requeued,
+>> >> >> >> >> blk_fetch_request will retrieve it again and this while =
+loop
+>> >> will
+>> >> >> never terminate.
+>> >> >> >> >>
+>> >> >> >> > If next request is not packable, it is requeued and 'brea=
+k'
+>> >> >> terminates
+>> >> >> >> this loop.
+>> >> >> >> > So it not infinite.
+>> >> >> >> Right !! But that doesn't help finding the commands that ar=
 e
+>> >> packable.
+>> >> >> Ideally, you'd need to pack all neighbouring requests into one
+>> packed
+>> >> >> command.
+>> >> >> >> The way CFQ works, it is not necessary that the fetch would
+>> return
+>> >> all
+>> >> >> outstanding
+>> >> >> >> requests that are packable (unless you invoke a forced
+>> dispatch)
+>> >> It
+>> >> >> would be good to see some numbers on the number of pack hits /
+>> >> >> misses
+>> >> >> >> that
+>> >> >> >> you would encounter with this logic, on a typical usecase.
+>> >> >> > Is it considered only for CFQ scheduler? How about other I/O
+>> >> scheduler?
+>> >> >> If all requests are drained from scheduler queue forcedly,
+>> >> >> > the number of candidate to be packed can be increased.
+>> >> >> > However we may lose the unique CFQ's strength and MMC D/D ma=
+y
+>> take
+>> >> the
+>> >> >> CFQ's duty.
+>> >> >> > Basically, this patch accommodates the origin order requests
+>> from
+>> >> I/O
+>> >> >> scheduler.
+>> >> >> >
+>> >> >>
+>> >> >> In order to better utilize the packed commands feature and ach=
+ieve
+>> >> the
+>> >> >> best performance improvements I think that the command packing
+>> should
+>> >> be
+>> >> >> done in the block layer, according to the scheduler policy.
+>> >> >> That is, the scheduler should be aware of the capability of th=
+e
+>> >> device to
+>> >> >> receive a request list and its constrains (such as maximum num=
+ber
+>> of
+>> >> >> requests, max number of sectors etc) and use this information =
+as a
+>> >> =A0factor
+>> >> >> to its algorithm.
+>> >> >> This way you keep the decision making in the hands of the
+>> scheduler
+>> >> while
+>> >> >> the MMC layer will only have to send this list as a packed
+>> command.
+>> >> >>
+>> >> > Yes, it would be another interesting approach.
+>> >> > Command packing you mentioned means gathering request among sam=
+e
+>> >> direction(read/write)?
+>> >> > Currently I/O scheduler may know device constrains which MMC dr=
+iver
+>> >> informs
+>> >> > with the exception of order information for packed command.
+>> >> > But I think the dependency of I/O scheduler may be able to come=
+ up.
+>> >> > How can MMC layer treat packed command with I/O scheduler which
+>> >> doesn't support this?
+>> >>
+>> >> The very act of packing presumes some sorting and re-ordering at =
+the
+>> >> I/O scheduler level.
+>> >> When no such sorting is done (ex. noop), MMC should resort to
+>> >> non-packed execution, respecting the system configuration choice.
+>> >>
+>> >> Looking deeper into this, I think a better approach would be to s=
+et
+>> >> the prep_rq_fn of the request_queue, with a custom mmc function t=
+hat
+>> >> decides if the requests are packable or not, and return a
+>> >> BLKPREP_DEFER for those that can't be packed.
+>> >
+>> > MMC layer anticipates the favorable requests for packing from I/O
+>> > scheduler.
+>> > Obviously request order from I/O scheduler might be poor for packi=
+ng
 >> and
->> > host modules have been touched to add support for this module.
+>> > requests can't be packed.
+>> > But that doesn't mean mmc layer need to wait a better pack-case.
+>> > BLKPREP_DEFER may give rise to I/O latency. Top of request will be
+>> > deferred next time.
+>> > If request can't be packed, it'd rather be sent at once than delay=
+ed
+>> > by returning a BLKPREP_DEFER for better responsiveness.
 >> >
->> > It is necessary to know the card type in the sdhci.c file to add
->> support
->> > for eMMC tuning function. So card.h file is included to import the
->> card
->> > data structure.
->> >
->> > cc: Chris Ball<cjb@laptop.org>
->> > Signed-off-by: Girish K S<girish.shivananjappa@linaro.org>
->> > ---
->> > Changes in v4:
->> > =A0 =A0 Rebased onto chris-mmc/mmc-next branch. This patch is
->> successfully
->> > =A0 =A0 applied on commit with id
->> de022ed3fdc14808299b2fa66dbb1ed5ab921912.
->> > Changes in v3:
->> > =A0 =A0 In the previous commits of chris-mmc/mmc-next branch, the =
-patch
->> with
->> > =A0 =A0 commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) defin=
-es
->> caps2 for
->> > =A0 =A0 more capabilities. This patch version deletes the member
->> ext_caps(created
->> > =A0 =A0 in my earlier patch) from struct mmc_host and reuses alrea=
-dy
->> accepted
->> > =A0 =A0 caps2 member.
->> > Changes in v2:
->> > =A0 =A0 Rebased to latest chris-mmc/mmc-next branch. Resolved inde=
-ntation
->> > =A0 =A0 problems identified in review. This patch has to be applie=
+>> > Thanks.
+>> > Seungwon Jeon.
+>> The decision whether a request is packable or not should not be made=
+ per
+>> request, therefore I don't see the need for using req_prep_fn. The M=
+MC
+>> layer can peek each request and decide if to pack it or not when
+>> preparing
+>> the packed list (as suggested in this patch). The scheduler changes =
+will
+>> improve the probability of getting a list that can be packed.
+>> My suggestion for the scheduler change is:
+>> The block layer will be notified of the packing limits via new queue
+>> limits (in blk-settings). We can make it generic to allow all kinds =
+of
+>> requests lists. Example for the new queue limits can be:
+>> Is_reqs_list_supported
+>> Max_num_of_read_reqs_in_list
+>> Max_num_of_write_reqs_in_list
+>> max_blk_cnt_in_list
+>> Is_list_interleaved (optional - to support read and write requests t=
+o be
+>> linked together, not the case for eMMC4.5)
+>> The scheduler, that will have all the required info in the queue lim=
+its,
+>> will be able to decide which requests can be in the same list and mo=
+ve
+>> all
+>> of them to the dispatch queue (in one elevator_dispatch_fn call).
+>
+> If probability of packing gets higher, it would be nice.
+> We need to think more.
+>>
+>> I see 2 options for preparing the list:
+>>
+>> Option 1. blk_fetch_request will prepare the list and return a list =
+of
+>> requests (will require a change in struct request to include the lis=
+t
+>> but
+>> can be more generic).
+>>
+>> Option 2. The MMC layer will prepare the list. After fetching one
+>> request
+>> the MMC layer can call blk_peek_request and check if the next reques=
+t is
+>> packable or not. By keeping all the calls to blk_peek_request under =
+the
+>> same queue lock we can guarantee to get the requests that the schedu=
+ler
+>> pushed to the dispatch queue (this requires mmc_blk_chk_packable to =
+move
+>> to block.c). If the request is packable the MMC layer will call
+>> blk_start_request to dequeue the request. This way there is no need =
+to
+>> re-queue the requests that cannot be packed.
+>>
+>> Going back to this patch - the usage of
+>> blk_peek_request+blk_start_request
+>> instead of blk_fetch_request can be done in mmc_blk_chk_packable in
+>> order
+>> to eliminate the need to requeue commands and loose performance.
+>
+> Do you think blk_requeue_request() is heavy work?
+> Currently queue_lock was missed using blk_fetch_request. It will be f=
+ixed.
+> Anyway, if we use a set of blk_peek_request+blk_start_request,
+> there is no necessity for requeuing the request.
+> But during preparing several request for the list, queue_lock will be=
+ held
+> in mmc layer.
+> Then queue_lock time of mmc layer might be more increased than before=
+=2E
+>
+> Thank you for suggestion.
+> Seungwon Jeon.
+>>
+Yes, I think that if we can avoid redundant dequeue and requeue it woul=
 d
->> before
->> > =A0 =A0 the patch released for modifying the printk messages.
->> > Changes in v1:
->> > =A0 =A0 Case statements in switch that produce same result have
->> > =A0 =A0 been combined to reduce repeated assignments.
->> > =A0 =A0 patch recreated after rebase to chris balls mmc-next branc=
-h.
->> >
->> > =A0 drivers/mmc/core/bus.c =A0 =A0| =A0 =A03 +-
->> > =A0 drivers/mmc/core/mmc.c =A0 =A0| =A0 92
->> ++++++++++++++++++++++++++++++++++++++++----
->> > =A0 drivers/mmc/host/sdhci.c =A0| =A0 36 +++++++++++++++---
->> > =A0 include/linux/mmc/card.h =A0| =A0 =A03 +
->> > =A0 include/linux/mmc/host.h =A0| =A0 =A06 +++
->> > =A0 include/linux/mmc/mmc.h =A0 | =A0 =A08 +++-
->> > =A0 include/linux/mmc/sdhci.h | =A0 =A01 +
->> > =A0 7 files changed, 132 insertions(+), 17 deletions(-)
->> >
->> > diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
->> > index 46b6e84..2f82f6b 100644
->> > --- a/drivers/mmc/core/bus.c
->> > +++ b/drivers/mmc/core/bus.c
->> > @@ -301,10 +301,11 @@ int mmc_add_card(struct mmc_card *card)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_ddr_mode(card) ? =
-"DDR " : "",
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 type);
->> > =A0 =A0 } else {
->> > - =A0 =A0 =A0 =A0 =A0 printk(KERN_INFO "%s: new %s%s%s card at add=
-ress %04x\n",
->> > + =A0 =A0 =A0 =A0 =A0 pr_info("%s: new %s%s%s%s card at address %0=
-4x\n",
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_hostname(card->host),
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_sd_card_uhs(card) ? "u=
-ltra high speed " :
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (mmc_card_highspeed(card) =
-? "high speed " : ""),
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (mmc_card_hs200(card) ? "HS2=
-00 " : ""),
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_ddr_mode(card) ? =
-"DDR " : "",
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 type, card->rca);
->> > =A0 =A0 }
->> > diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> > index 3627044..4db248c 100644
->> > --- a/drivers/mmc/core/mmc.c
->> > +++ b/drivers/mmc/core/mmc.c
->> > @@ -285,6 +285,39 @@ static int mmc_read_ext_csd(struct mmc_card
->> *card, u8 *ext_csd)
->> > =A0 =A0 }
->> > =A0 =A0 card->ext_csd.raw_card_type =3D ext_csd[EXT_CSD_CARD_TYPE]=
-;
->> > =A0 =A0 switch (ext_csd[EXT_CSD_CARD_TYPE]& =A0EXT_CSD_CARD_TYPE_M=
-ASK) {
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_200 |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_1_8V =
-|
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_1_2V =
-|
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_200 | EXT_CSD_CARD_TYPE_DDR_52 |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 200000000;
->> > + =A0 =A0 =A0 =A0 =A0 card->ext_csd.card_type =3D EXT_CSD_CARD_TYP=
-E_SDR_200;
->> > + =A0 =A0 =A0 =A0 =A0 break;
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V | EXT_CSD_CARD_TYPE_DDR_1_8V=
- |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V | EXT_CSD_CARD_TYPE_DDR_1_2V=
- |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V | EXT_CSD_CARD_TYPE_DDR_52 |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 200000000;
->> > + =A0 =A0 =A0 =A0 =A0 card->ext_csd.card_type =3D EXT_CSD_CARD_TYP=
-E_SDR_1_2V;
->> > + =A0 =A0 =A0 =A0 =A0 break;
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V | EXT_CSD_CARD_TYPE_DDR_1_8V=
- |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V | EXT_CSD_CARD_TYPE_DDR_1_2V=
- |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V | EXT_CSD_CARD_TYPE_DDR_52 |
->> > + =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_52 | EXT_CSD_CARD_TYPE_26:
->> > + =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 200000000;
->> > + =A0 =A0 =A0 =A0 =A0 card->ext_csd.card_type =3D EXT_CSD_CARD_TYP=
-E_SDR_1_8V;
->> > + =A0 =A0 =A0 =A0 =A0 break;
->> > =A0 =A0 case EXT_CSD_CARD_TYPE_DDR_52 | EXT_CSD_CARD_TYPE_52 |
->> > =A0 =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_26:
->> > =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 52000000;
->> > @@ -699,6 +732,7 @@ static int mmc_init_card(struct mmc_host *host=
-,
->> u32 ocr,
->> > =A0 {
->> > =A0 =A0 struct mmc_card *card;
->> > =A0 =A0 int err, ddr =3D 0;
->> > + =A0 int hs_sdr =3D 0;
->> > =A0 =A0 u32 cid[4];
->> > =A0 =A0 unsigned int max_dtr;
->> > =A0 =A0 u32 rocr;
->> > @@ -890,11 +924,15 @@ static int mmc_init_card(struct mmc_host *ho=
-st,
->> u32 ocr,
->> > =A0 =A0 /*
->> > =A0 =A0 =A0* Activate high speed (if supported)
->> > =A0 =A0 =A0*/
->> > - =A0 if ((card->ext_csd.hs_max_dtr !=3D 0)&&
->> > - =A0 =A0 =A0 =A0 =A0 (host->caps& =A0MMC_CAP_MMC_HIGHSPEED)) {
->> > - =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_SET_NOR=
-MAL,
->> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_CSD_H=
-S_TIMING, 1,
->> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card->ext=
-_csd.generic_cmd6_time);
->> > + =A0 if (card->ext_csd.hs_max_dtr !=3D 0) {
->> > + =A0 =A0 =A0 =A0 =A0 if ((card->ext_csd.hs_max_dtr> =A052000000)&=
-&
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (host->caps2& =A0MMC_CAP2_HIGHSPEED_=
-200))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT=
-_CSD_CMD_SET_NORMAL,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0EXT_CSD_HS_TIMING, 2, 0);
->> > + =A0 =A0 =A0 =A0 =A0 else if (host->caps& =A0MMC_CAP_MMC_HIGHSPEE=
-D)
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT=
-_CSD_CMD_SET_NORMAL,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0EXT_CSD_HS_TIMING, 1, 0);
->> > +
->> > =A0 =A0 =A0 =A0 =A0 =A0 if (err&& =A0err !=3D -EBADMSG)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto free_card;
->> >
->> > @@ -903,7 +941,10 @@ static int mmc_init_card(struct mmc_host *hos=
-t,
->> u32 ocr,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc_hostnam=
-e(card->host));
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D 0;
->> > =A0 =A0 =A0 =A0 =A0 =A0 } else {
->> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_set_highspeed(card)=
-;
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (card->ext_csd.hs_max_dtr=
-> =A052000000)
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_set=
-_hs200(card);
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_set=
-_highspeed(card);
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_timing(card->host,=
- MMC_TIMING_MMC_HS);
->> > =A0 =A0 =A0 =A0 =A0 =A0 }
->> > =A0 =A0 }
->> > @@ -929,7 +970,7 @@ static int mmc_init_card(struct mmc_host *host=
-,
->> u32 ocr,
->> > =A0 =A0 =A0*/
->> > =A0 =A0 max_dtr =3D (unsigned int)-1;
->> >
->> > - =A0 if (mmc_card_highspeed(card)) {
->> > + =A0 if (mmc_card_highspeed(card) || mmc_card_hs200(card)) {
->> > =A0 =A0 =A0 =A0 =A0 =A0 if (max_dtr> =A0card->ext_csd.hs_max_dtr)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 max_dtr =3D card->ext_csd.=
-hs_max_dtr;
->> > =A0 =A0 } else if (max_dtr> =A0card->csd.max_dtr) {
->> > @@ -955,6 +996,22 @@ static int mmc_init_card(struct mmc_host *hos=
-t,
->> u32 ocr,
->> > =A0 =A0 }
->> >
->> > =A0 =A0 /*
->> > + =A0 =A0* Indicate HS200 SDR mode (if supported).
->> > + =A0 =A0*/
->> > + =A0 if (mmc_card_hs200(card)) {
->> > + =A0 =A0 =A0 =A0 =A0 if ((card->ext_csd.card_type& =A0EXT_CSD_CAR=
-D_TYPE_SDR_1_8V)
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 && =A0((host->caps2& =A0(MMC=
-_CAP2_HS200_1_8V_SDR |
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0MMC_CAP2_HS200))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D=3D (MMC_=
-CAP2_HS200_1_8V_SDR |
-> MMC_CAP2_HS200)))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hs_sdr =3D M=
-MC_1_8V_SDR_MODE;
->> > + =A0 =A0 =A0 =A0 =A0 else if ((card->ext_csd.card_type&
->> EXT_CSD_CARD_TYPE_SDR_1_2V)
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 && =A0((host->caps2& =A0(MMC=
-_CAP2_HS200_1_2V_SDR |
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 MMC_CAP2_HS200))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D=3D (MMC_=
-CAP2_HS200_1_2V_SDR |
-> MMC_CAP2_HS200)))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 hs_sdr =3D M=
-MC_1_2V_SDR_MODE;
->> > + =A0 }
->> > +
->> > + =A0 /*
->> > =A0 =A0 =A0* Activate wide bus and DDR (if supported).
->> > =A0 =A0 =A0*/
->> > =A0 =A0 if ((card->csd.mmca_vsn>=3D CSD_SPEC_VER_4)&&
->> > @@ -994,16 +1051,24 @@ static int mmc_init_card(struct mmc_host
->> *host, u32 ocr,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!err) {
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_bu=
-s_width(card->host, bus_width);
->> >
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((host->c=
-aps2& =A0MMC_CAP2_HS200)&&
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 card=
-->host->ops->execute_tuning)
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 err =3D card->host->ops-> \
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 execute_tuning(card->host);
->> > +
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 /*
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* If co=
-ntroller can't handle bus width
-> test,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* compa=
-re ext_csd previously read in 1 bit
->> mode
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0* again=
-st ext_csd at new bus width
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
->> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!(host->=
-caps& =A0MMC_CAP_BUS_WIDTH_TEST))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!(host->=
-caps& =A0MMC_CAP_BUS_WIDTH_TEST)&&
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 !err=
-)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 err =3D mmc_compare_ext_csds(card,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 bus_width);
->> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (!er=
-r)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 err =3D mmc_bus_test(card, bus_width);
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 pr_warning("tuning execution
-> failed\n");
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!err)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 break;
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> > @@ -1052,6 +1117,15 @@ static int mmc_init_card(struct mmc_host
->> *host, u32 ocr,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_set_ddr_mode(card=
-);
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_timing(card->host,=
- MMC_TIMING_UHS_DDR50);
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_bus_width(card->ho=
-st, bus_width);
->> > + =A0 =A0 =A0 =A0 =A0 } else if (hs_sdr) {
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (hs_sdr =3D=3D EXT_CSD_CA=
-RD_TYPE_SDR_1_2V) {
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_=
-set_signal_voltage(host,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 MMC_SIGNAL_VOLTAGE_120, 0);
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err)
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 goto err;
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_timing(card->host, M=
-MC_TIMING_MMC_HS);
->> Can you define a new timing mode for HS200 instead of using the same
->> high speed
->> timing mode MMC_TIMING_MMC_HS? =A0The host driver might need to conf=
-igure
->> it's controller with a different timing mode for HS200 cards.
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_bus_width(card->host=
-, bus_width);
->> > =A0 =A0 =A0 =A0 =A0 =A0 }
->> > =A0 =A0 }
-> Any comment on using the new timing mode for HS200?
-> Will look into it tomorrow and let you know
-> Regards,
-> Subhash
->
->> Thanks,
->> Sahitya.
->>
->> --
->> Sent by a consultant of the Qualcomm Innovation Center, Inc.
->> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora
->> Forum.
->>
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc"=
- in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
->
->
+be better. Please note that the re-queue also requires locking the
+queue_lock.
+I agree that in case of preparing the packed list the queue_lock will b=
+e
+taken for a longer time but I don't see any way to avoid it.
+
+Thanks,
+Maya Erez
+Consultant for Qualcomm Innovation Center, Inc.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum
+
+
