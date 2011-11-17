@@ -1,98 +1,71 @@
-From: Amit Kachhap <amit.kachhap@linaro.org>
-Subject: Re: [PATCH 1/4] ARM: exynos4: Add support for AFTR mode cpuidle state
-Date: Thu, 17 Nov 2011 16:52:23 +0530
-Message-ID: <CAK44p20KprcRRhGg_-9zftsiFDNZEP11u4qYujOHcZwPcMH=HQ@mail.gmail.com>
-References: <1320426228-21746-1-git-send-email-amit.kachhap@linaro.org>
-	<1320426228-21746-2-git-send-email-amit.kachhap@linaro.org>
-	<CAJ0PZbTzFDvom3PoPXEvhC8JE_mV3wfYMspnQdRLO=-oz5wGkw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [RFC 1/3] pinctrl: add a driver for the OMAP pinmux
+Date: Thu, 17 Nov 2011 16:56:01 +0530
+Message-ID: <CAJuYYwSgzkDed5-R=PaBR_F6ssj_EhxLDfCREXUA=UaynkgZyg@mail.gmail.com>
+References: <1321274409-24643-1-git-send-email-rnayak@ti.com>
+	<1321274409-24643-2-git-send-email-rnayak@ti.com>
+	<20111114172312.GI31337@atomide.com>
+	<4EC1EB9D.1000503@ti.com>
+	<CACRpkdYuw+AfVtgfsbpkd=uvfWd8yE-n25EC0FDffhiGUS2MBw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:46107 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756471Ab1KQLWZ convert rfc822-to-8bit (ORCPT
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:37883 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753007Ab1KQL0C (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Nov 2011 06:22:25 -0500
-Received: by eye27 with SMTP id 27so1753923eye.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 Nov 2011 03:22:23 -0800 (PST)
-In-Reply-To: <CAJ0PZbTzFDvom3PoPXEvhC8JE_mV3wfYMspnQdRLO=-oz5wGkw@mail.gmail.com>
+	Thu, 17 Nov 2011 06:26:02 -0500
+In-Reply-To: <CACRpkdYuw+AfVtgfsbpkd=uvfWd8yE-n25EC0FDffhiGUS2MBw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, kgene.kim@samsung.com, Jaecheol Lee <jc.lee@samsung.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Rajendra Nayak <rnayak@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, linaro-dev@lists.linaro.org, linus.walleij@stericsson.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On 11 November 2011 13:03, MyungJoo Ham <myungjoo.ham@gmail.com> wrote:
-> On Sat, Nov 5, 2011 at 2:03 AM, =A0<amit.kachhap@linaro.org> wrote:
->> From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
->>
->> This patch adds support for AFTR(ARM OFF TOP RUNNING) mode in
->> cpuidle driver for EXYNOS4210. L2 cache keeps their data in this mod=
-e.
->> This patch ports the code to the latest interfaces to
->> save/restore CPU state inclusive of CPU PM notifiers, l2
->> resume and cpu_suspend/resume.
->>
->> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
->> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
->> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
->> ---
-> []
->> +#define REG_DIRECTGO_ADDR =A0 =A0 =A0(samsung_rev() =3D=3D EXYNOS42=
-10_REV_1_1 ? \
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P_IN=
-=46ORM7 : (S5P_VA_SYSRAM + 0x24))
->> +#define REG_DIRECTGO_FLAG =A0 =A0 =A0(samsung_rev() =3D=3D EXYNOS42=
-10_REV_1_1 ? \
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5P_IN=
-=46ORM6 : (S5P_VA_SYSRAM + 0x20))
->>
-> []
->> +
->> + =A0 =A0 =A0 __raw_writel(BSYM(virt_to_phys(s3c_cpu_resume)),
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0REG_DIRECTGO_ADDR);
->> + =A0 =A0 =A0 __raw_writel(0xfcba0d10, REG_DIRECTGO_FLAG);
->> +
->> =A0 =A0 =A0 =A0return 0;
+On 17 November 2011 13:38, Linus Walleij <linus.walleij@linaro.org> wrote:
+>> Linus,
+>> Is there a plan to move even the data that exists in the pinmux
+>> drivers today (including the function/pin-groups definition)
+>> eventually to DT? Or is it just the 'mapping' data to map
+>> devices to functions (that today is done from board files) which
+>> alone will be moved?
 >
-> Hello,
+> Not for the U300 driver, for the simple reason that it cannot
+> use device tree. So both methods of providing the data need
+> to be allowed - either as static data (the U300 driver does not
+> even have platform data, the pin data is encoded in the driver
+> itself since it's tied to U300 and not used for any other systems
+> or variants) or as device tree lookups.
 >
->
-> Why are you using INFORM6 and 7 registers in order to save resume
-> address and power-mode flags?
->
-> INFORM0 and 1 have been used in pm.c for the exactly same purpose.
-> Please use the same registers in cpuidle.c as well.
->
-> The same part in bootloader (IPL) can handle whether it's
-> suspend-to-RAM or AFTR and the both modes are mutually exclusive and
-> you only need one value for resume PC.
->
-> Therefore, you can keep the value at the same location, which is the
-> method we have been using.
-Hi,
+> That said I have no clue on how to make the DT bindings
+> FTM, patches and suggestions welcome.
 
-I tried using INFORM0 and INFORM1 in cpuidle and make it same as pm.c.
-But this doesnt work. Looks like my irom fused code checks for the
-wakeup source and needs INFORM7 and INFORM6 for non sleep wakeups. My
-cpu version is S5PV310AH--0AH1113(Origen board).
-I suggest adding support for both type of wakeups(directly from irom
-and through bootloader).
+For now, the Samsung GPIO, Pinconfig and Pinmux information is
+represented in device tree as listed below.
 
-Thanks,
-Amit D
->
-> Besides, the Exynos4210 chipmaker (S.LSI) has told that INFORM6 and 7
-> registers are used by in-chip code (iROM or iRAM).
->
->
-> Cheers!
-> MyungJoo
->
->
->
-> --
-> MyungJoo Ham, Ph.D.
-> Mobile Software Platform Lab, DMC Business, Samsung Electronics
->
+i2c@1C004000 {
+          compatible = "...";
+          reg = <0x... 0x..>;
+           gpios = <&gpa0 2 2 3 0>,
+                      <&gpa0 3 2 3 0>;
+          ...
+};
+
+The format of the gpio specifier is
+<[Pad Controller phandle] [pin number within the controller] [Pin Mux
+Function] [Pull Up/Down] [Drive Strength]>
+
+>From a perspective of writing a 'gpios' property for a device node,
+this is quite simple. Looking up the hardware manual of the SoC can
+provide all the values that should be used in the gpio specifier.
+
+The GPIO/PinCtrl driver can provide a translate function that picks up
+the values for the gpio specifier and writes the same value to the
+pad-controller registers. But, this a deviation from the existing
+pinctrl subsystem code which mainly relies on name of the pin-group
+and pin-function.
+
+Does this seem to be a feasible option for specifying
+gpio/pinconfig/pinmux dt bindings?
+
+Thanks.
+Thomas.
