@@ -1,316 +1,100 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V2] ARM: EXYNOS4: Add SPI support
-Date: Fri, 18 Nov 2011 09:40:07 -0500
-Message-ID: <1321627207-20045-1-git-send-email-padma.v@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for Samsung Exynos
+Date: Fri, 18 Nov 2011 18:47:28 +0900
+Message-ID: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:40979 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756545Ab1KREok (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:40921 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757204Ab1KRKIh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 Nov 2011 23:44:40 -0500
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LUU00EYSAHFKEL0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 Nov 2011 13:44:21 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LUU00MYDAHP7T10@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 18 Nov 2011 13:44:21 +0900 (KST)
+	Fri, 18 Nov 2011 05:08:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, padma.kvr@gmail.com, padma.v@samsung.com
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Add SPI setup files for GPIO configurations and platform data
-initialization.
-Add SPI clkdev support.
+Changes since v6:
+- Totally rewrite exynos_iommu_map() and exynos_iommu_unmap() according
+  to the change in iommu_map() and iommu_unmap().
+- Change special slab for Lv2 page table to kmalloc().
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/mach-exynos/Kconfig                   |    5 ++
- arch/arm/mach-exynos/Makefile                  |    1 +
- arch/arm/mach-exynos/clock.c                   |   73 ++++++++++++++----------
- arch/arm/mach-exynos/include/mach/irqs.h       |    3 +
- arch/arm/mach-exynos/include/mach/map.h        |    7 ++
- arch/arm/mach-exynos/include/mach/spi-clocks.h |   17 +++++
- arch/arm/mach-exynos/setup-spi.c               |   75 ++++++++++++++++++++++++
- 7 files changed, 151 insertions(+), 30 deletions(-)
- create mode 100644 arch/arm/mach-exynos/include/mach/spi-clocks.h
- create mode 100644 arch/arm/mach-exynos/setup-spi.c
+Changes since v5:
+- Relation between device and a domain become n:1 (Joerg's comment)
+- Implements iommu_commit().
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 0afcc3b..c925fec 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -148,6 +148,11 @@ config EXYNOS4_SETUP_USB_PHY
- 	help
- 	  Common setup code for USB PHY controller
- 
-+config EXYNOS4_SETUP_SPI
-+	bool
-+	help
-+	  Common setup code for SPI GPIO configurations.
-+
- # machine support
- 
- if ARCH_EXYNOS4
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 57e5296..979fdd3 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -60,3 +60,4 @@ obj-$(CONFIG_EXYNOS4_SETUP_I2C7)	+= setup-i2c7.o
- obj-$(CONFIG_EXYNOS4_SETUP_KEYPAD)	+= setup-keypad.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
- obj-$(CONFIG_EXYNOS4_SETUP_USB_PHY)	+= setup-usb-phy.o
-+obj-$(CONFIG_EXYNOS4_SETUP_SPI)		+= setup-spi.o
-diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-index 5d8d483..da50b1a 100644
---- a/arch/arm/mach-exynos/clock.c
-+++ b/arch/arm/mach-exynos/clock.c
-@@ -1111,36 +1111,6 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_div = { .reg = S5P_CLKDIV_LCD0, .shift = 0, .size = 4 },
- 	}, {
- 		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.0",
--			.enable		= exynos4_clksrc_mask_peril1_ctrl,
--			.ctrlbit	= (1 << 16),
--		},
--		.sources = &clkset_group,
--		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 16, .size = 4 },
--		.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 0, .size = 4 },
--	}, {
--		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.1",
--			.enable		= exynos4_clksrc_mask_peril1_ctrl,
--			.ctrlbit	= (1 << 20),
--		},
--		.sources = &clkset_group,
--		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 20, .size = 4 },
--		.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 16, .size = 4 },
--	}, {
--		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.2",
--			.enable		= exynos4_clksrc_mask_peril1_ctrl,
--			.ctrlbit	= (1 << 24),
--		},
--		.sources = &clkset_group,
--		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 24, .size = 4 },
--		.reg_div = { .reg = S5P_CLKDIV_PERIL2, .shift = 0, .size = 4 },
--	}, {
--		.clk		= {
- 			.name		= "sclk_fimg2d",
- 		},
- 		.sources = &clkset_mout_g2d,
-@@ -1257,6 +1227,42 @@ static struct clksrc_clk clk_sclk_mmc3 = {
- 	.reg_div = { .reg = S5P_CLKDIV_FSYS2, .shift = 24, .size = 8 },
- };
- 
-+static struct clksrc_clk clk_sclk_spi0 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.devname		= "s3c64xx-spi.0",
-+		.enable		= exynos4_clksrc_mask_peril1_ctrl,
-+		.ctrlbit		= (1 << 16),
-+	},
-+	.sources = &clkset_group,
-+	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 16, .size = 4 },
-+	.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 0, .size = 4 },
-+};
-+
-+static struct clksrc_clk clk_sclk_spi1 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.devname		= "s3c64xx-spi.1",
-+		.enable		= exynos4_clksrc_mask_peril1_ctrl,
-+		.ctrlbit		= (1 << 20),
-+	},
-+	.sources = &clkset_group,
-+	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 20, .size = 4 },
-+	.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 16, .size = 4 },
-+};
-+
-+static struct clksrc_clk clk_sclk_spi2 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.devname		= "s3c64xx-spi.2",
-+		.enable		= exynos4_clksrc_mask_peril1_ctrl,
-+		.ctrlbit		= (1 << 24),
-+	},
-+	.sources = &clkset_group,
-+	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 24, .size = 4 },
-+	.reg_div = { .reg = S5P_CLKDIV_PERIL2, .shift = 0, .size = 4 },
-+};
-+
- /* Clock initialization code */
- static struct clksrc_clk *sysclks[] = {
- 	&clk_mout_apll,
-@@ -1305,6 +1311,10 @@ static struct clksrc_clk *clksrc_cdev[] = {
- 	&clk_sclk_mmc1,
- 	&clk_sclk_mmc2,
- 	&clk_sclk_mmc3,
-+	&clk_sclk_spi0,
-+	&clk_sclk_spi1,
-+	&clk_sclk_spi2,
-+
- };
- 
- static struct clk_lookup exynos4_clk_lookup[] = {
-@@ -1318,6 +1328,9 @@ static struct clk_lookup exynos4_clk_lookup[] = {
- 	CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
- 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
- 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
-+	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &clk_sclk_spi0.clk),
-+	CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk0", &clk_sclk_spi1.clk),
-+	CLKDEV_INIT("s3c64xx-spi.2", "spi_busclk0", &clk_sclk_spi2.clk),
- };
- 
- static int xtal_rate;
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index 713dd52..f77bce0 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -72,6 +72,9 @@
- #define IRQ_IIC5		IRQ_SPI(63)
- #define IRQ_IIC6		IRQ_SPI(64)
- #define IRQ_IIC7		IRQ_SPI(65)
-+#define IRQ_SPI0		IRQ_SPI(66)
-+#define IRQ_SPI1		IRQ_SPI(67)
-+#define IRQ_SPI2		IRQ_SPI(68)
- 
- #define IRQ_USB_HOST		IRQ_SPI(70)
- #define IRQ_USB_HSOTG		IRQ_SPI(71)
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 058541d..e6ba01d 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -87,6 +87,10 @@
- #define EXYNOS4_PA_SYSMMU_TV		0x12E20000
- #define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
- #define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
-+#define EXYNOS4_PA_SPI0			0x13920000
-+#define EXYNOS4_PA_SPI1			0x13930000
-+#define EXYNOS4_PA_SPI2			0x13940000
-+
- 
- #define EXYNOS4_PA_GPIO1		0x11400000
- #define EXYNOS4_PA_GPIO2		0x11000000
-@@ -148,6 +152,9 @@
- #define S3C_PA_RTC			EXYNOS4_PA_RTC
- #define S3C_PA_WDT			EXYNOS4_PA_WATCHDOG
- #define S3C_PA_UART			EXYNOS4_PA_UART
-+#define S3C_PA_SPI0			EXYNOS4_PA_SPI0
-+#define S3C_PA_SPI1			EXYNOS4_PA_SPI1
-+#define S3C_PA_SPI2			EXYNOS4_PA_SPI2
- 
- #define S5P_PA_CHIPID			EXYNOS4_PA_CHIPID
- #define S5P_PA_EHCI			EXYNOS4_PA_EHCI
-diff --git a/arch/arm/mach-exynos/include/mach/spi-clocks.h b/arch/arm/mach-exynos/include/mach/spi-clocks.h
-new file mode 100644
-index 0000000..9774389
---- /dev/null
-+++ b/arch/arm/mach-exynos/include/mach/spi-clocks.h
-@@ -0,0 +1,17 @@
-+/* linux/arch/arm/mach-exynos4/include/mach/spi-clocks.h
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Co. Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_ARCH_SPI_CLKS_H
-+#define __ASM_ARCH_SPI_CLKS_H __FILE__
-+
-+/* Must source from SCLK_SPI */
-+#define EXYNOS4_SPI_SRCCLK_SCLK		0
-+
-+#endif /* __ASM_ARCH_SPI_CLKS_H */
-+
-diff --git a/arch/arm/mach-exynos/setup-spi.c b/arch/arm/mach-exynos/setup-spi.c
-new file mode 100644
-index 0000000..e264595
---- /dev/null
-+++ b/arch/arm/mach-exynos/setup-spi.c
-@@ -0,0 +1,75 @@
-+/* linux/arch/arm/mach-exynos4/setup-spi0.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *             http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+#include <plat/s3c64xx-spi.h>
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI0
-+struct s3c64xx_spi_info s3c64xx_spi0_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x1ff,
-+	.rx_lvl_offset	= 15,
-+	.high_speed	= 1,
-+	.clk_from_cmu	= true,
-+	.tx_st_done	= 25,
-+	.cntrlr_no	= 0,
-+};
-+
-+int s3c64xx_spi0_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPB(0), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(EXYNOS4_GPB(0), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI1
-+struct s3c64xx_spi_info s3c64xx_spi1_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x7f,
-+	.rx_lvl_offset	= 15,
-+	.high_speed	= 1,
-+	.clk_from_cmu	= true,
-+	.tx_st_done	= 25,
-+	.cntrlr_no	= 1,
-+};
-+
-+int s3c64xx_spi1_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPB(4), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(EXYNOS4_GPB(4), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI2
-+struct s3c64xx_spi_info s3c64xx_spi2_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x7f,
-+	.rx_lvl_offset	= 15,
-+	.high_speed	= 1,
-+	.clk_from_cmu	= true,
-+	.tx_st_done	= 25,
-+	.cntrlr_no	= 2,
-+};
-+
-+int s3c64xx_spi2_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPC1(1), S3C_GPIO_SFN(5));
-+	s3c_gpio_setpull(EXYNOS4_GPC1(1), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(EXYNOS4_GPC1(3), 2,
-+			      S3C_GPIO_SFN(5), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-+#endif
--- 
-1.7.1
+Changes since v4:
+- exynos_iommu_unmap()returns unmapped size in page order
+ (Ohad Ben-Cohen's comment)
+- Fixed typo error of resource names
+- Fixed missing #include<mach/sysmmu.h>
+ in arch/arm/mach-exynos4/mach-armlex4210.c
+
+Changes since v3:
+- Used DEFINE_RES_MEM and DEFINE_RES_IRQ macros
+ to define resources of System MMU (Russell King's comment)
+- Fixed removal of CONFIG_S5P_SLEEP definition
+ (Sylwester Nawrocki's comment)
+
+Changes since v2:
+- Add lock for System MMU private data.
+ And fixes the following problems pointed by Joerg Rodel:
+- Fix wrong argument to kmalloc() and get_free_pages()
+- Merged patches into 2 due to bisectability
+
+Changes since v1:
+Fixes of the following problems pointed by Russell King.:
+ - Missing unlocking a spinlock in exynos_iommu_attach_dev().
+ - atomic_t -> int in sysmmu_drvdata.activations
+ - sysmmu_platdata -> sysmmu_drvdata
+ - Change in error messages in irq handler
+ - Removed casting in format of error message
+ - omap_iommu_ops -> exynos_iommu_ops in the last patch
+
+Patch Summary:
+[PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device definitions
+[PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
+
+The first patche enhances System MMU platform device definition:
+ - Removed System MMU for MDMA0 in TOP block because it is not
+  used. Use MDMA2 in LCD block.
+ - Removed System MMU ID. Instead, a System MMU is bound to a device
+  that the System MMU is dedicated during machin initialization.
+  If a device driver wants to handle System MMU, it must bind its
+  device with System MMU with sysmmu_set_owner().
+ - clkdev
+
+The last patch implements IOMMU API:
+ - System MMU device driver is removed from arch/arm/plat-s5p
+  to move it to driver/iommu directory.
+ - Implements IOMMU API and System MMU driver that is moved from
+  arch/arm/plat-s5p.
+ - Implements fault handling that is suggested by Ohad.
+ - Used bus_set_iommu instead of register_iommu that is suggested
+  by Joerg.
+ - Implements iommu_commit().
+
+Diffstat:
+ arch/arm/mach-exynos/Kconfig                      |    2 +
+ arch/arm/mach-exynos/clock-exynos4210.c           |   16 +
+ arch/arm/mach-exynos/clock.c                      |   55 +-
+ arch/arm/mach-exynos/dev-sysmmu.c                 |  272 ++-----
+ arch/arm/mach-exynos/include/mach/dev-sysmmu.h    |   61 ++
+ arch/arm/mach-exynos/include/mach/exynos4-clock.h |    1 +
+ arch/arm/mach-exynos/include/mach/map.h           |    3 +-
+ arch/arm/mach-exynos/include/mach/regs-sysmmu.h   |   26 +-
+ arch/arm/mach-exynos/include/mach/sysmmu.h        |   46 -
+ arch/arm/mach-exynos/mach-armlex4210.c            |    1 -
+ arch/arm/mach-exynos/mach-nuri.c                  |   40 +
+ arch/arm/mach-exynos/mach-origen.c                |   42 +
+ arch/arm/mach-exynos/mach-smdk4x12.c              |    9 +
+ arch/arm/mach-exynos/mach-smdkv310.c              |   43 +-
+ arch/arm/mach-exynos/mach-universal_c210.c        |   42 +
+ arch/arm/plat-s5p/Kconfig                         |    8 -
+ arch/arm/plat-s5p/Makefile                        |    1 -
+ arch/arm/plat-s5p/sysmmu.c                        |  312 -------
+ arch/arm/plat-samsung/include/plat/devs.h         |    1 -
+ arch/arm/plat-samsung/include/plat/sysmmu.h       |   95 --
+ drivers/iommu/Kconfig                             |   12 +
+ drivers/iommu/Makefile                            |    1 +
+ drivers/iommu/exynos-iommu.c                      |  958 +++++++++++++++++++++
+ 23 files changed, 1327 insertions(+), 720 deletions(-)
