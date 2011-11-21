@@ -1,53 +1,88 @@
-From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Subject: Re: Re: [PATCH 0/3] Support Samsung S5P OHCI device and driver
-Date: Mon, 21 Nov 2011 09:23:44 -0800
-Message-ID: <20111121172344.GA4483@kroah.com>
-References: <33510089.42761321876635907.JavaMail.weblogic@epv6ml08>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [GIT PULL] Samsung fixes for v3.2
+Date: Tue, 22 Nov 2011 08:55:27 +0900
+Message-ID: <CAH9JG2XcUHUpU5OQyv4+Q9bzbqxsekF8yvUuK4Gb6EDBpQMucw@mail.gmail.com>
+References: <03e501cca837$d893e320$89bba960$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <33510089.42761321876635907.JavaMail.weblogic@epv6ml08>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gregkh-l3A5Bk7waGM@public.gmane.org" <gregkh-l3A5Bk7waGM@public.gmane.org>, "stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org" <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Yulgon Kim <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Shim Joonyoung <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:56677 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751373Ab1KUXz2 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 21 Nov 2011 18:55:28 -0500
+Received: by ywt32 with SMTP id 32so5294321ywt.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Nov 2011 15:55:27 -0800 (PST)
+In-Reply-To: <03e501cca837$d893e320$89bba960$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Marc Zyngier <Marc.Zyngier@arm.com>, =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
 
-On Mon, Nov 21, 2011 at 11:57:16AM +0000, Jingoo Han wrote:
-> > -----Original Message-----
-> > From: Greg KH [mailto:greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org]
-> > Sent: Friday, November 18, 2011 4:12 AM
-> > To: Jingoo Han
-> > Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
-> > linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; gregkh-l3A5Bk7waGM@public.gmane.org;
-> > stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org; kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org;
-> > jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-> > Subject: Re: [PATCH 0/3] Support Samsung S5P OHCI device and driver
-> > 
-> > On Tue, Nov 15, 2011 at 06:49:58AM +0000, Jingoo Han wrote:
-> > > Hello.
-> > >
-> > > This patch series adds USB OHCI device and initial driver for Samsung
-> > > S5P SoCs and is based from Linux 3.2-rc1. I have tested on SMDKV310
-> > board
-> > > using EXYNOS4.
-> > 
-> > This is to be sent through some arm tree, not the usb tree, right?
-> Right, 1st and 2nd patch are sent throught arm tree.
-> However, 3rd patch is sent through the usb tree.
+Hi,
+
+Don't you fix the mct compiler error if LOCAL_TIMERS are not defined?
+
+arch/arm/mach-exynos/mct.c: In function 'exynos4_timer_resources':
+arch/arm/mach-exynos/mct.c:451: error: 'exynos4_mct_tick_isr'
+undeclared (first use in this function)
+arch/arm/mach-exynos/mct.c:451: error: (Each undeclared identifier is
+reported only once
+arch/arm/mach-exynos/mct.c:451: error: for each function it appears in.)
+make[1]: *** [arch/arm/mach-exynos/mct.o] Error 1
+
+Thank you,
+Kyungmin Park
+
+On 11/21/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Hi Arnd,
+>
+> Please pull samsung-fixes for v3.2 from:
+>
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> samsung-fixes
+>
+> This includes fix of inclusion header.
+> If any problems, please let me know.
+>
 > Thanks.
-> [PATCH 1/3] ARM: SAMSUNG: Add USB OHCI device
-> [PATCH 2/3]  ARM: EXYNOS: Add USB OHCI support to SMDKV310 board
-> [PATCH 3/3] USB: Add S5P OHCI diver
-
-So the third patch does not depend on the first two?  If it does, that
-means I will get build errors in the USB tree when I apply that patch,
-right?
-
-If so, then all three should go through a single tree.
-
-greg k-h
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> The following changes since commit 1ea6b8f48918282bdca0b32a34095504ee65bab5:
+>
+>   Linux 3.2-rc1 (2011-11-07 16:16:02 -0800)
+>
+> are available in the git repository at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> samsung-fixes
+>
+> Axel Lin (1):
+>       ARM: SAMSUNG: include linux/types.h at gpio-cfg.h
+>
+> Kukjin Kim (2):
+>       ARM: S5P: Fix export.h inclusion
+>       ARM: SAMSUNG: inclusion export.h instead of module.h
+>
+> Kyungmin Park (1):
+>       ARM: EXYNOS: Fix compiler error with THIS_MODULE
+>
+>  arch/arm/mach-exynos/cpuidle.c                |    2 ++
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c  |    2 +-
+>  arch/arm/plat-s3c24xx/cpu-freq-debugfs.c      |    2 +-
+>  arch/arm/plat-s5p/sysmmu.c                    |    1 +
+>  arch/arm/plat-samsung/include/plat/gpio-cfg.h |    2 ++
+>  arch/arm/plat-samsung/pd.c                    |    2 +-
+>  arch/arm/plat-samsung/pwm.c                   |    2 +-
+>  7 files changed, 9 insertions(+), 4 deletions(-)
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
