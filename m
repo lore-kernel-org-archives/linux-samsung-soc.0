@@ -1,66 +1,120 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC 1/3] pinctrl: add a driver for the OMAP pinmux
-Date: Tue, 22 Nov 2011 13:05:43 +0100
-Message-ID: <CACRpkdax0GK=mNNao7FPc6JG0RwVywSEzGJPC_u73iJ_eOTgqQ@mail.gmail.com>
-References: <1321274409-24643-1-git-send-email-rnayak@ti.com>
-	<1321274409-24643-2-git-send-email-rnayak@ti.com>
-	<20111114172312.GI31337@atomide.com>
-	<4EC1EB9D.1000503@ti.com>
-	<CACRpkdYuw+AfVtgfsbpkd=uvfWd8yE-n25EC0FDffhiGUS2MBw@mail.gmail.com>
-	<CAJuYYwSgzkDed5-R=PaBR_F6ssj_EhxLDfCREXUA=UaynkgZyg@mail.gmail.com>
-	<CACRpkdbBQoOU8hyew6tXth3Ohrg5_rN7M+tbVsYFcOjgq73aCw@mail.gmail.com>
-	<CAJuYYwT_useS-8cH+qfDu5t7wh73yUuJAVXMjP5CXBS2VM3bag@mail.gmail.com>
+Subject: Re: [PATCH 1/8 v3] pinctrl: add a generic pin config interface
+Date: Tue, 22 Nov 2011 13:18:46 +0100
+Message-ID: <CACRpkdYwfW+wNxxJmFcXsR-u7nZndbGQA4Y-cQDrV-oOQ33b1A@mail.gmail.com>
+References: <1321904871-32278-1-git-send-email-linus.walleij@stericsson.com>
+	<CAJuYYwRFGn+Efu80yjszuBof5omN1RvKjz7efh8bwK2t-MUj+A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CAJuYYwT_useS-8cH+qfDu5t7wh73yUuJAVXMjP5CXBS2VM3bag@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Rajendra Nayak <rnayak@ti.com>, Tony Lindgren <tony@atomide.com>, linux-omap@vger.kernel.org, linaro-dev@lists.linaro.org, linus.walleij@stericsson.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:57540 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752271Ab1KVMSr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 22 Nov 2011 07:18:47 -0500
+In-Reply-To: <CAJuYYwRFGn+Efu80yjszuBof5omN1RvKjz7efh8bwK2t-MUj+A@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Linus Walleij <linus.walleij@stericsson.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@nvidia.com>, Grant Likely <grant.likely@secretlab.ca>, Barry Song <21cnbao@gmail.com>, Shawn Guo <shawn.guo@freescale.com>, Dong Aisheng <dong.aisheng@linaro.org>, Rajendra Nayak <rajendra.nayak@linaro.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 
-On Tue, Nov 22, 2011 at 12:09 PM, Thomas Abraham
+On Tue, Nov 22, 2011 at 11:52 AM, Thomas Abraham
 <thomas.abraham@linaro.org> wrote:
-> On 17 November 2011 19:27, Linus Walleij <linus.walleij@linaro.org> wrote:
->>
->> Maybe I'm mistaken about the device tree ambitions, but
->> I was sort of hoping that it would not contain too much
->> custom magic numbers that need to be cross-referenced
->> elsewhere ... or rather - the more understandable the device
->> tree is, the more we win.
+> On 22 November 2011 01:17, Linus Walleij <linus.walleij@stericsson.co=
+m> wrote:
+
+>>(...)
+>> @@ -61,6 +67,10 @@ struct pin_desc {
+>> =A0#ifdef CONFIG_PINMUX
+>> =A0 =A0 =A0 =A0const char *mux_function;
+>> =A0#endif
+>> +#ifdef CONFIG_PINCONF
+>> + =A0 =A0 =A0 struct mutex config_lock;
+>> + =A0 =A0 =A0 struct pin_config config;
 >
-> Device tree is expected to describe the hardware. So to
-> cross-reference the hardware manual to understand device tree should
-> be fine I guess. For instance, GPIO numbers in dts would be written as
-> a numeric number and not a enum or other format. And by looking up the
-> manual, we understand the actual details of the GPIO pin.
+> Some platforms (like exynos) can read back the current pin_config fro=
+m
+> the hardware registers. For such platforms, 'config' would consume
+> additional space which will not be used. Can 'config' be made a
+> pointer and memory for it allocated in 'pinctrl_register_one_pin' onl=
+y
+> if the pin-controller requires it. Maybe, 'struct pinctrl_desc' can
+> have a additional member to describe some of its characteristics such
+> as ability to read back pin configuration from registers.
+
+Yes. And I also do realize that most controllers at hand does not have
+this limitation. I had second thoughts about it yesterday, so I'll
+refactor this to assume that we can read back values from the
+hardware instead, if a hardware has the mentioned limitation it
+can do the caching in the driver instead. I can't quite remember
+why I did it this way anyway, stupid me :-(
+
+> EXPORT_SYMBOL(pin_config); here ?
+> EXPORT_SYMBOL(pin_config_group); here ?
+
+Yep added them.
+
+>> +enum pin_config_param {
+>> + =A0 =A0 =A0 PIN_CONFIG_BIAS_DISABLE,
+>> + =A0 =A0 =A0 PIN_CONFIG_BIAS_HIGH_IMPEDANCE,
+>> + =A0 =A0 =A0 PIN_CONFIG_BIAS_PULL_UP,
+>> + =A0 =A0 =A0 PIN_CONFIG_BIAS_PULL_DOWN,
+>> + =A0 =A0 =A0 PIN_CONFIG_BIAS_HIGH,
+>> + =A0 =A0 =A0 PIN_CONFIG_BIAS_GROUND,
+>> + =A0 =A0 =A0 PIN_CONFIG_DRIVE_PUSH_PULL,
+>> + =A0 =A0 =A0 PIN_CONFIG_DRIVE_OPEN_DRAIN,
+>> + =A0 =A0 =A0 PIN_CONFIG_DRIVE_OPEN_SOURCE,
+>> + =A0 =A0 =A0 PIN_CONFIG_DRIVE_OFF,
+>> + =A0 =A0 =A0 PIN_CONFIG_INPUT_SCHMITT,
+>> + =A0 =A0 =A0 PIN_CONFIG_INPUT_DEBOUNCE,
+>> + =A0 =A0 =A0 PIN_CONFIG_SLEW_RATE_RISING,
+>> + =A0 =A0 =A0 PIN_CONFIG_SLEW_RATE_FALLING,
+>> + =A0 =A0 =A0 PIN_CONFIG_POWER_SOURCE,
+>> + =A0 =A0 =A0 PIN_CONFIG_LOW_POWER_MODE,
+>> + =A0 =A0 =A0 PIN_CONFIG_WAKEUP,
+>> + =A0 =A0 =A0 PIN_CONFIG_END,
+>> +};
 >
-> If dt-compiler had a option to support #define like in C, the numbers
-> could have been made more easier to understand. Like, 3 to mean
-> GPIO_PULL_UP in Exynos dts file.
+> For all Samsung SoC's, PIN_CONFIG_BIAS_PULL_UP,
+> PIN_CONFIG_BIAS_PULL_DOWN and PIN_CONFIG_DRIVE_PUSH_PULL would be
+> sufficient. So the above list of config options is fine for all
+> Samsung platforms.
 
-OK I think I get it now, so DT bindings shall really NOT be read
-by any of the pinctrl core, it is *supposed* to be all driver-specific.
-Then it makes perfect sense to have it as it is.
+Thanks! That's what I needed to know.
 
-So for example in the pinctrl-coh901xxx.c example driver I have
-locally defined registers presets like:
+>> +extern int pin_config(struct pinctrl_dev *pctldev, int pin,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct pin_config_tu=
+ple *configs,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 unsigned num_configs);
+>
+>
+> Is the 'pin' number expected to be local to the pin-controller
+> represented by 'pctldev' ?
 
-#define U300_FLOATING_INPUT { \
-        .bias_mode = PIN_CONFIG_BIAS_HIGH_IMPEDANCE, \
-        .output = false, \
-}
+Yes, the entire subsystem is designed like that.
 
-#define U300_PULL_UP_INPUT { \
-        .bias_mode = PIN_CONFIG_BIAS_PULL_UP, \
-        .output = false, \
-}
+> =A0There can be multiple pin-controllers in a
+> system, so it would be easier if 'pin' parameter above is a
+> system-wide pin number, and the caller of 'pin_config' need not know
+> which pin-controller manages 'pin'. Ideally, 'pctldev' should not be
+> included in the parameter list.
 
-Then this type of stuff shall keep its custom format in the device
-tree, and the driver for coh901xxx reads that out.
+I did that in the initial pinctrl patch set and Grant NACK:ed it
+and requested that the pin controller pin space be local to each
+pin controller.
 
-Thanks for helping me understand this crucial assumption of how
-it works...
+The reason is that the global GPIO pin space is nothing but one
+big mess, it's arbitrarily roofed at ARCH_NR_GPIOS and what
+is that number in a single zImage for multiple platforms anyway?
+
+Global GPIO 15 in a multi-platform binary would mean totally
+different things depending on where it boots and strange numbers
+have to be encoded everywhere.
+
+Actually the plan is to kill the global number space from GPIO
+too, one day. So the GPIO maintainer would like GPIO to be
+like pinctrl not the other way around...
 
 Yours,
 Linus Walleij
