@@ -1,88 +1,54 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [GIT PULL] Samsung fixes for v3.2
-Date: Tue, 22 Nov 2011 08:55:27 +0900
-Message-ID: <CAH9JG2XcUHUpU5OQyv4+Q9bzbqxsekF8yvUuK4Gb6EDBpQMucw@mail.gmail.com>
-References: <03e501cca837$d893e320$89bba960$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH V3 0/6] ARM: exynos: Add l2 retention mode cpuidle state
+Date: Tue, 22 Nov 2011 15:05:26 +0530
+Message-ID: <1321954532-18724-1-git-send-email-amit.kachhap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:56677 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751373Ab1KUXz2 (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:62921 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752591Ab1KVJhW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 21 Nov 2011 18:55:28 -0500
-Received: by ywt32 with SMTP id 32so5294321ywt.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 21 Nov 2011 15:55:27 -0800 (PST)
-In-Reply-To: <03e501cca837$d893e320$89bba960$%kim@samsung.com>
+	Tue, 22 Nov 2011 04:37:22 -0500
+Received: by iage36 with SMTP id e36so8467334iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 Nov 2011 01:37:22 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Marc Zyngier <Marc.Zyngier@arm.com>, =?UTF-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, amit.kachhap@linaro.org, patches@linaro.org
 
-Hi,
+Changes since V2:
+*Implemented the suggestion of MyungJoo Ham and used INFORM0/1
+registers for resume for some board versions.
+*Added back save/restore through CPU PM notifiers as suggested by 
+Lorenzo Pieralisi. This is useful to restore vfp state.
+*some patch modularization (s5p/exynos) and proper commit logs.  
 
-Don't you fix the mct compiler error if LOCAL_TIMERS are not defined?
+Changes since V1:
+*rebased the whole patch against 3.2-rc1 tree
+*removed GIC save/restore in AFTR cpuidle state as it is external
+to cpu powerdomain
+*Added L2 setup code through device tree
+*Removed only l2 save/restore registers in sleep
 
-arch/arm/mach-exynos/mct.c: In function 'exynos4_timer_resources':
-arch/arm/mach-exynos/mct.c:451: error: 'exynos4_mct_tick_isr'
-undeclared (first use in this function)
-arch/arm/mach-exynos/mct.c:451: error: (Each undeclared identifier is
-reported only once
-arch/arm/mach-exynos/mct.c:451: error: for each function it appears in.)
-make[1]: *** [arch/arm/mach-exynos/mct.o] Error 1
+This Patch series adds support for AFTR mode cpuidle state based on
+patch (http://www.spinics.net/lists/arm-kernel/msg132243.html) earlier
+submitted by Jaecheol Lee <jc.lee@samsung.com>.
 
-Thank you,
-Kyungmin Park
+This patch uses CPU PM notifiers , common l2 save/restore and
+new cpu_suspend/resume interfaces and is based on the tip of
+for-next branch of samsung tree.
+(git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next).
 
-On 11/21/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Hi Arnd,
->
-> Please pull samsung-fixes for v3.2 from:
->
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> samsung-fixes
->
-> This includes fix of inclusion header.
-> If any problems, please let me know.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> The following changes since commit 1ea6b8f48918282bdca0b32a34095504ee65bab5:
->
->   Linux 3.2-rc1 (2011-11-07 16:16:02 -0800)
->
-> are available in the git repository at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> samsung-fixes
->
-> Axel Lin (1):
->       ARM: SAMSUNG: include linux/types.h at gpio-cfg.h
->
-> Kukjin Kim (2):
->       ARM: S5P: Fix export.h inclusion
->       ARM: SAMSUNG: inclusion export.h instead of module.h
->
-> Kyungmin Park (1):
->       ARM: EXYNOS: Fix compiler error with THIS_MODULE
->
->  arch/arm/mach-exynos/cpuidle.c                |    2 ++
->  arch/arm/mach-s3c64xx/mach-crag6410-module.c  |    2 +-
->  arch/arm/plat-s3c24xx/cpu-freq-debugfs.c      |    2 +-
->  arch/arm/plat-s5p/sysmmu.c                    |    1 +
->  arch/arm/plat-samsung/include/plat/gpio-cfg.h |    2 ++
->  arch/arm/plat-samsung/pd.c                    |    2 +-
->  arch/arm/plat-samsung/pwm.c                   |    2 +-
->  7 files changed, 9 insertions(+), 4 deletions(-)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Amit Daniel Kachhap (6):
+  ARM: exynos: Add support AFTR mode on EXYNOS4210
+  ARM: s5p: remove useless churn in sleep.S
+  ARM: exynos: save L2 settings during bootup
+  ARM: s5p: add L2 early resume code
+  ARM: exynos: remove useless code to save/restore L2
+  ARM: exynos: Enable l2 configuration through device tree
+
+ arch/arm/mach-exynos/cpu.c              |   60 +++++++++---
+ arch/arm/mach-exynos/cpuidle.c          |  152 ++++++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/include/mach/pmu.h |    2 +
+ arch/arm/mach-exynos/pm.c               |   15 ---
+ arch/arm/plat-s5p/sleep.S               |   32 ++++++-
+ 5 files changed, 226 insertions(+), 35 deletions(-)
