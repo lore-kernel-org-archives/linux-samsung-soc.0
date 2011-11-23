@@ -1,32 +1,97 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
-	Samsung Exynos
-Date: Wed, 23 Nov 2011 12:46:27 +0100
-Message-ID: <20111123114626.GH20535@8bytes.org>
-References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Koen Kooi <koen@dominion.thruhere.net>
+Subject: Re: [RFC 1/3] pinctrl: add a driver for the OMAP pinmux
+Date: Wed, 23 Nov 2011 16:21:20 +0100
+Message-ID: <DD2280C9-D4E2-41FF-BDE7-9119237B62C0@dominion.thruhere.net>
+References: <1321274409-24643-1-git-send-email-rnayak@ti.com> <1321274409-24643-2-git-send-email-rnayak@ti.com> <20111114172312.GI31337@atomide.com> <4EC1EB9D.1000503@ti.com> <CACRpkdYuw+AfVtgfsbpkd=uvfWd8yE-n25EC0FDffhiGUS2MBw@mail.gmail.com> <CAJuYYwSgzkDed5-R=PaBR_F6ssj_EhxLDfCREXUA=UaynkgZyg@mail.gmail.com> <CACRpkdbBQoOU8hyew6tXth3Ohrg5_rN7M+tbVsYFcOjgq73aCw@mail.gmail.com> <CAJuYYwT_useS-8cH+qfDu5t7wh73yUuJAVXMjP5CXBS2VM3bag@mail.gmail.com> <CACRpkdax0GK=mNNao7FPc6JG0RwVywSEzGJPC_u73iJ_eOTgqQ@mail.gmail.com> <20111122175409.GE31337@atomide.com>
+Mime-Version: 1.0 (Apple Message framework v1251.1)
+Content-Type: multipart/signed; boundary="Apple-Mail=_2FE185F8-CC75-4165-BC7A-C98DC4153127"; protocol="application/pgp-signature"; micalg=pgp-sha1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([88.198.83.132]:52352 "EHLO 8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753218Ab1KWLq2 (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:40034 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756275Ab1KWPV3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 Nov 2011 06:46:28 -0500
-Content-Disposition: inline
-In-Reply-To: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
+	Wed, 23 Nov 2011 10:21:29 -0500
+In-Reply-To: <20111122175409.GE31337@atomide.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-
-On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
-> Changes since v6:
-> - Totally rewrite exynos_iommu_map() and exynos_iommu_unmap() according
->   to the change in iommu_map() and iommu_unmap().
-> - Change special slab for Lv2 page table to kmalloc().
-
-Okay, the driver looks good to me now. If there are no further
-objections I am going to merge it for 3.3.
+To: Tony Lindgren <tony@atomide.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Thomas Abraham <thomas.abraham@linaro.org>, Rajendra Nayak <rnayak@ti.com>, linux-omap@vger.kernel.org, linaro-dev@lists.linaro.org, linus.walleij@stericsson.com, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, devicetree-discuss@lists.ozlabs.org
 
 
-	Joerg
+--Apple-Mail=_2FE185F8-CC75-4165-BC7A-C98DC4153127
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=us-ascii
+
+
+Op 22 nov. 2011, om 18:54 heeft Tony Lindgren het volgende geschreven:
+
+> * Linus Walleij <linus.walleij@linaro.org> [111122 03:30]:
+>> On Tue, Nov 22, 2011 at 12:09 PM, Thomas Abraham
+>> <thomas.abraham@linaro.org> wrote:
+>>> On 17 November 2011 19:27, Linus Walleij <linus.walleij@linaro.org> =
+wrote:
+>>>>=20
+>>>> Maybe I'm mistaken about the device tree ambitions, but
+>>>> I was sort of hoping that it would not contain too much
+>>>> custom magic numbers that need to be cross-referenced
+>>>> elsewhere ... or rather - the more understandable the device
+>>>> tree is, the more we win.
+>>>=20
+>>> Device tree is expected to describe the hardware. So to
+>>> cross-reference the hardware manual to understand device tree should
+>>> be fine I guess. For instance, GPIO numbers in dts would be written =
+as
+>>> a numeric number and not a enum or other format. And by looking up =
+the
+>>> manual, we understand the actual details of the GPIO pin.
+>>>=20
+>>> If dt-compiler had a option to support #define like in C, the =
+numbers
+>>> could have been made more easier to understand. Like, 3 to mean
+>>> GPIO_PULL_UP in Exynos dts file.
+>>=20
+>> OK I think I get it now, so DT bindings shall really NOT be read
+>> by any of the pinctrl core, it is *supposed* to be all =
+driver-specific.
+>> Then it makes perfect sense to have it as it is.
+>=20
+> Yes the driver nodes should describe in DT which pins to use:
+>=20
+>        serial@12340000 {
+>                compatible =3D "8250";
+>                reg =3D <0x12340000 0x40>;
+>                reg-shift =3D <2>;
+>                interrupts =3D < 10 >;
+> 		pins =3D "uart1_rx", "uart1_tx";
+>        };
+>=20
+> Note that we should use the actual signal names, not package specific
+> pad names. This way they have a high likelyhood to work for new =
+packages
+> too by just mapping the signals to the new package.
+
+How would this handle the situation where you can mux a signal to =
+multiple pins? IIRC omap3 and am335x can do funny stuff with the display =
+pins like being able to map the blue bits to different pinblocks.
+
+regards,
+
+Koen=
+
+--Apple-Mail=_2FE185F8-CC75-4165-BC7A-C98DC4153127
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP using GPGMail
+
+-----BEGIN PGP SIGNATURE-----
+
+iEYEARECAAYFAk7ND3MACgkQMkyGM64RGpEWvACfei0g0txvQG/njp471anVxrI/
+hrUAn1tC9yt9guGJXvoWywRoMoQBzsbv
+=cmyQ
+-----END PGP SIGNATURE-----
+
+--Apple-Mail=_2FE185F8-CC75-4165-BC7A-C98DC4153127--
