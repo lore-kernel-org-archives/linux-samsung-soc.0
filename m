@@ -1,51 +1,56 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC 1/3] pinctrl: add a driver for the OMAP pinmux
-Date: Thu, 24 Nov 2011 11:09:18 +0100
-Message-ID: <CACRpkdb5rbqEzFjuFw9iKeauaJ1rhGE7JnA34dnkogwh=DJ4Tw@mail.gmail.com>
-References: <1321274409-24643-1-git-send-email-rnayak@ti.com>
-	<1321274409-24643-2-git-send-email-rnayak@ti.com>
-	<20111114172312.GI31337@atomide.com> <4EC1EB9D.1000503@ti.com>
-	<CACRpkdYuw+AfVtgfsbpkd=uvfWd8yE-n25EC0FDffhiGUS2MBw@mail.gmail.com>
-	<CAJuYYwSgzkDed5-R=PaBR_F6ssj_EhxLDfCREXUA=UaynkgZyg@mail.gmail.com>
-	<CACRpkdbBQoOU8hyew6tXth3Ohrg5_rN7M+tbVsYFcOjgq73aCw@mail.gmail.com>
-	<CAJuYYwT_useS-8cH+qfDu5t7wh73yUuJAVXMjP5CXBS2VM3bag@mail.gmail.com>
-	<CACRpkdax0GK=mNNao7FPc6JG0RwVywSEzGJPC_u73iJ_eOTgqQ@mail.gmail.com>
-	<20111122175409.GE31337@atomide.com>
-	<74CDBE0F657A3D45AFBB94109FB122FF174F08C5B3@HQMAIL01.nvidia.com>
+From: =?ISO-8859-1?Q?Thomas_Lang=E5s?= <thomas.langaas@gmail.com>
+Subject: Trying 3.2.0-rc1 with brcmfmac (BCM4329) fails
+Date: Thu, 24 Nov 2011 14:00:03 +0100
+Message-ID: <CANN7TQmHw2USCbUjHAegHfBgNnax9rNNkQn9NoNAWuSXqLWydg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-In-Reply-To: <74CDBE0F657A3D45AFBB94109FB122FF174F08C5B3-C7FfzLzN0UxDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, "linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org" <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:39549 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755329Ab1KXNAE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 24 Nov 2011 08:00:04 -0500
+Received: by iage36 with SMTP id e36so2958287iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 Nov 2011 05:00:04 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On Wed, Nov 23, 2011 at 1:28 AM, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+Hi!
 
-> Describing the HW doesn't necessarily
-> mean that each device needs to describe what pinmux pins it uses; one
-> could quite easily have the pinmux describe what settings the various
-> pins should have and which drivers will use those pins. That would map
-> very well to the pinctrl subsystem's mapping table, and at least Tegra's
-> existing pinmux tables, which are both just a big array of settings which
-> end up getting provided to drivers.
+I'm trying to get the Exynos 4210 to work with the BCM4329 wifi
+module, using SDIO, and
+with the Android kernel for the Exynos, this works nicely, but with
+the current kernel (3.2.0-rc1)
+it doesn't.
 
-That sounds true. It's also something that is cleanly cut out as a very
-well defined and abstract piece of hardware information to live in the
-device tree and which would be useful for any OS using DT.
+After debugging (together with some devs. from Broadcom) it has been
+narrowed down to:
+[  267.175000] brcmf_sdioh_request_word: rw=1, func=1, addr=0x0bf98, nbytes=4
+[  267.175000] mmc1: starting CMD53 arg 957f3004 flags 000001b5
+[  267.175000] mmc1:     blksz 4 blocks 1 flags 00000100 tsac 1000 ms nsac 0
+[  267.175000] sdhci [sdhci_irq()]: *** mmc1 got interrupt: 0x00208003
+[  267.175000] before mmc_request_done
+[  267.175000] mmc1: req done (CMD53): 0: 00001000 00000000 00000000 00000000
+[  267.175000] mmc1:     0 bytes transferred: -84
+[  267.175000] after mmc_request_done
 
-I'd have to see the device trees and corresponding map bindings
-before I understand it fully though.
+The interrupt above is really weird because it is masked as both a
+command and data.
 
-Just my =800.01
-Linus Walleij
+Summary is as follows:
+* 3.2.0-rc1; CMD52 read/write and CMD53 read works.  CMD53 write fails
+* 2.6.35.7(android): CMD52 read/write and CMD53 read/write works.
+
+Since the brcmfmac driver doesn't exist in the android-kernel, I tried
+the bcmdhd-driver
+from the ICS-kernel (after talking to Broadcom devs), and it is the same.
+
+It seems like the error is in something else than the wifi-driver, and
+I'm out of ideas, so
+any help at all would be appreciated.
+
+In advance, thanks!
+
+-- 
+Thomas
