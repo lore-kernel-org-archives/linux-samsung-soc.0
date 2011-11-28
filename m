@@ -1,67 +1,153 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] ARM: S5PV210: Add USB OTG gadget device support to SMDKV210 board
-Date: Tue, 29 Nov 2011 12:47:35 +0900
-Message-ID: <1322538455-31748-1-git-send-email-jg1.han@samsung.com>
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Enable MDMA driver
+Date: Mon, 28 Nov 2011 16:51:28 +0900
+Message-ID: <1322466688-10272-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:35523 "EHLO
+Received: from ganesha.gnumonks.org ([213.95.27.120]:35526 "EHLO
 	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751082Ab1LALM1 (ORCPT
+	with ESMTP id S1752977Ab1LALM2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Dec 2011 06:12:27 -0500
+	Thu, 1 Dec 2011 06:12:28 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: Jingoo Han <jg1.han@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>
 
-This patch adds USB OTG gadget device support to SMDKV210 board,
-which can support USB high-speed gadget drivers.
+This patch adds MDMA platform data and enables MDMA for DMA memcpy operation
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 ---
- arch/arm/mach-s5pv210/Kconfig         |    1 +
- arch/arm/mach-s5pv210/mach-smdkv210.c |    4 ++++
- 2 files changed, 5 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/clock.c                   |    8 +++++
+ arch/arm/mach-exynos/dma.c                     |   35 ++++++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/irqs.h       |    2 +
+ arch/arm/mach-exynos/include/mach/map.h        |    3 +-
+ arch/arm/plat-samsung/include/plat/dma-pl330.h |    8 +++++
+ 5 files changed, 55 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 646057a..e42fbdd 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -137,6 +137,7 @@ config MACH_SMDKV210
- 	select S3C_DEV_I2C2
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select S3C_DEV_USB_HSOTG
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_IDE
-diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
-index a9106c3..a56ae9a 100644
---- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-@@ -46,6 +46,7 @@
- #include <plat/s5p-time.h>
- #include <plat/backlight.h>
- #include <plat/regs-fb-v4.h>
-+#include <plat/clock.h>
+diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
+index 5d8d483..28e2842 100644
+--- a/arch/arm/mach-exynos/clock.c
++++ b/arch/arm/mach-exynos/clock.c
+@@ -782,6 +782,13 @@ static struct clk clk_pdma1 = {
+ 	.ctrlbit	= (1 << 1),
+ };
  
- /* Following are default values for UCON, ULCON and UFCON UART registers */
- #define SMDKV210_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
-@@ -225,6 +226,7 @@ static struct platform_device *smdkv210_devices[] __initdata = {
- 	&s3c_device_rtc,
- 	&s3c_device_ts,
- 	&s3c_device_wdt,
-+	&s3c_device_usb_hsotg,
- 	&s5pv210_device_ac97,
- 	&s5pv210_device_iis0,
- 	&s5pv210_device_spdif,
-@@ -308,6 +310,8 @@ static void __init smdkv210_machine_init(void)
- 
- 	samsung_bl_set(&smdkv210_bl_gpio_info, &smdkv210_bl_data);
- 
-+	clk_xusbxti.rate = 24000000;
++static struct clk clk_mdma1 = {
++	.name		= "dma",
++	.devname	= "dma-pl330.2",
++	.enable		= exynos4_clk_ip_image_ctrl,
++	.ctrlbit	= ((1 << 8) | (1 << 5) | (1 << 2)),
++};
 +
- 	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
- }
+ struct clk *clkset_group_list[] = {
+ 	[0] = &clk_ext_xtal_mux,
+ 	[1] = &clk_xusbxti,
+@@ -1294,6 +1301,7 @@ static struct clksrc_clk *sysclks[] = {
+ static struct clk *clk_cdev[] = {
+ 	&clk_pdma0,
+ 	&clk_pdma1,
++	&clk_mdma1,
+ };
  
+ static struct clksrc_clk *clksrc_cdev[] = {
+diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
+index b10fcd2..e89329e 100644
+--- a/arch/arm/mach-exynos/dma.c
++++ b/arch/arm/mach-exynos/dma.c
+@@ -139,6 +139,38 @@ struct amba_device exynos4_device_pdma1 = {
+ 	.periphid = 0x00041330,
+ };
+ 
++u8 mdma_peri[] = {
++	DMACH_MTOM_0,
++	DMACH_MTOM_1,
++	DMACH_MTOM_2,
++	DMACH_MTOM_3,
++	DMACH_MTOM_4,
++	DMACH_MTOM_5,
++	DMACH_MTOM_6,
++	DMACH_MTOM_7,
++};
++
++struct dma_pl330_platdata exynos4_mdma_pdata = {
++	.nr_valid_peri = ARRAY_SIZE(mdma_peri),
++	.peri_id = mdma_peri,
++};
++
++struct amba_device exynos4_device_mdma = {
++	.dev = {
++		.init_name = "dma-pl330.2",
++		.dma_mask = &dma_dmamask,
++		.coherent_dma_mask = DMA_BIT_MASK(32),
++		.platform_data = &exynos4_mdma_pdata,
++	},
++	.res = {
++		.start = EXYNOS4_PA_MDMA1,
++		.end = EXYNOS4_PA_MDMA1 + SZ_4K,
++		.flags = IORESOURCE_MEM,
++	},
++	.irq = {IRQ_MDMA1, NO_IRQ},
++	.periphid = 0x00041330,
++};
++
+ static int __init exynos4_dma_init(void)
+ {
+ 	if (of_have_populated_dt())
+@@ -152,6 +184,9 @@ static int __init exynos4_dma_init(void)
+ 	dma_cap_set(DMA_CYCLIC, exynos4_pdma1_pdata.cap_mask);
+ 	amba_device_register(&exynos4_device_pdma1, &iomem_resource);
+ 
++	dma_cap_set(DMA_MEMCPY, exynos4_mdma_pdata.cap_mask);
++	amba_device_register(&exynos4_device_mdma, &iomem_resource);
++
+ 	return 0;
+ }
+ arch_initcall(exynos4_dma_init);
+diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+index 713dd52..f7d73b1 100644
+--- a/arch/arm/mach-exynos/include/mach/irqs.h
++++ b/arch/arm/mach-exynos/include/mach/irqs.h
+@@ -43,6 +43,8 @@
+ #define IRQ_EINT15		IRQ_SPI(31)
+ #define IRQ_EINT16_31		IRQ_SPI(32)
+ 
++#define IRQ_MDMA0		IRQ_SPI(33)
++#define IRQ_MDMA1		IRQ_SPI(34)
+ #define IRQ_PDMA0		IRQ_SPI(35)
+ #define IRQ_PDMA1		IRQ_SPI(36)
+ #define IRQ_TIMER0_VIC		IRQ_SPI(37)
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 058541d..03e2c99 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -67,7 +67,8 @@
+ #define EXYNOS4_PA_TWD			0x10500600
+ #define EXYNOS4_PA_L2CC			0x10502000
+ 
+-#define EXYNOS4_PA_MDMA			0x10810000
++#define EXYNOS4_PA_MDMA0		0x10810000
++#define EXYNOS4_PA_MDMA1		0x12840000
+ #define EXYNOS4_PA_PDMA0		0x12680000
+ #define EXYNOS4_PA_PDMA1		0x12690000
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+index c5eaad5..ecf23a8 100644
+--- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
++++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
+@@ -82,6 +82,14 @@ enum dma_ch {
+ 	DMACH_SLIMBUS4_TX,
+ 	DMACH_SLIMBUS5_RX,
+ 	DMACH_SLIMBUS5_TX,
++	DMACH_MTOM_0,
++	DMACH_MTOM_1,
++	DMACH_MTOM_2,
++	DMACH_MTOM_3,
++	DMACH_MTOM_4,
++	DMACH_MTOM_5,
++	DMACH_MTOM_6,
++	DMACH_MTOM_7,
+ 	/* END Marker, also used to denote a reserved channel */
+ 	DMACH_MAX,
+ };
 -- 
 1.7.1
