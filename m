@@ -1,148 +1,101 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH 2/2] mmc: core: Support packed command for eMMC4.5 device
-Date: Mon, 28 Nov 2011 17:52:54 +0900
-Message-ID: <000201ccadab$1e57b8a0$5b0729e0$%jun@samsung.com>
-References: <aad7cb35699550e89526a5fb083c520d.squirrel@www.codeaurora.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v2 2/3] ARM: Exynos4: Add ioremap interceptor for
+ statically remapped regions
+Date: Mon, 28 Nov 2011 12:07:29 +0100
+Message-ID: <002901ccadbd$eb7f6280$c27e2780$%szyprowski@samsung.com>
+References: <1320109289-2730-1-git-send-email-thomas.abraham@linaro.org>
+ <1320109289-2730-3-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <aad7cb35699550e89526a5fb083c520d.squirrel@www.codeaurora.org>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: merez@codeaurora.org
-Cc: "'S, Venkatraman'" <svenkatr@ti.com>, linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:12198 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752527Ab1K1LIm (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 28 Nov 2011 06:08:42 -0500
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0LVD00L4LAYHZM50@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Nov 2011 11:08:41 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LVD00824AYG2E@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 28 Nov 2011 11:08:40 +0000 (GMT)
+In-reply-to: <1320109289-2730-3-git-send-email-thomas.abraham@linaro.org>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org
+Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, arnd@arndb.de, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Maya Erez wrote:
-> >> >> On Wed, Nov 2, 2011 at 1:33 PM, Seungwon Jeon <tgih.jun@samsung=
-=2Ecom>
-> >> wrote:
-> >> >> > @@ -943,7 +950,8 @@ static int mmc_blk_err_check(struct mmc_c=
-ard
-> >> *card,
-> >> >> > =A0 =A0 =A0 =A0 * kind. =A0If it was a write, we may have tra=
-nsitioned to
-> =A0 =A0 =A0 * program mode, which we have to wait for it to complete.
-> =A0 =A0 =A0 */
-> >> >> > - =A0 =A0 =A0 if (!mmc_host_is_spi(card->host) && rq_data_dir=
-(req) !=3D
-> >> READ) {
-> >> >> > + =A0 =A0 =A0 if ((!mmc_host_is_spi(card->host) && rq_data_di=
-r(req) !=3D
-> >> READ) ||
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (mq_mrq->packed=
-_cmd =3D=3D MMC_PACKED_WR_HDR))
-> Since the header's direction is WRITE I don't think we also need to c=
-heck
-> if mq_mrq->packed_cmd =3D=3D MMC_PACKED_WR_HDR since it will be cover=
-ed by the
-> original condition.
-The header is written. But origin request is about read.
-That means rq_data_dir(req) is READ. So new condition is needed.
-> >> {
-> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0u32 status;
-> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0do {
-> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0int err =3D ge=
-t_card_status(card, &status,
-> 5);
-> A general question, not related specifically to packed commands - Do =
-you
-> know why the status is not checked to see which error we got?
-This status is for checking whether the card is ready for new data.
-> >> >> > @@ -980,12 +988,67 @@ static int mmc_blk_err_check(struct mmc=
-_card
-> >> *card,
-> >> >> > =A0 =A0 =A0 =A0if (!brq->data.bytes_xfered)
-> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return MMC_BLK_RETRY;
-> >> >> >
-> >> >> > + =A0 =A0 =A0 if (mq_mrq->packed_cmd !=3D MMC_PACKED_NONE) {
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (unlikely(brq->data.blocks <=
-< 9 !=3D
-> >> brq->data.bytes_xfered))
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return MMC_BLK_=
-PARTIAL;
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return MMC_BLK_=
-SUCCESS;
-> >> >> > + =A0 =A0 =A0 }
-> >> >> > +
-> >> >> > =A0 =A0 =A0 =A0if (blk_rq_bytes(req) !=3D brq->data.bytes_xfe=
-red)
-> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return MMC_BLK_PARTIAL;
-> >> >> >
-> >> >> > =A0 =A0 =A0 =A0return MMC_BLK_SUCCESS;
-> >> >> > =A0}
-> >> >> >
-> >> >> > +static int mmc_blk_packed_err_check(struct mmc_card *card, +
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct mmc_async_req *=
-areq)
-> >> >> > +{
-> >> >> > + =A0 =A0 =A0 struct mmc_queue_req *mq_mrq =3D container_of(a=
-req, struct
-> >> mmc_queue_req,
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_active); +
-> =A0 =A0 =A0 int err, check, status;
-> >> >> > + =A0 =A0 =A0 u8 ext_csd[512];
-> >> >> > +
-> >> >> > + =A0 =A0 =A0 check =3D mmc_blk_err_check(card, areq);
-> >> >> > +
-> >> >> > + =A0 =A0 =A0 if (check =3D=3D MMC_BLK_SUCCESS)
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return check;
-> I think we need to check the status for all cases and not only in cas=
-e of
-> MMC_BLK_PARTIAL. For example, in cases where the header was traferred
-> successfully but had logic errors (wrong number of sectors etc.)
-> mmc_blk_err_check will return MMC_BLK_SUCCESS although the packed com=
-mands
-> failed.
-Similarly, Sahitya Tummala is already mentioned this.
-Other error case will be checked in next version.
-The case you suggested is about read or write?
-Device may detect error and stop transferring the data.
-> >> >> > +
-> >> >> > + =A0 =A0 =A0 if (check =3D=3D MMC_BLK_PARTIAL) {
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D get_card_status(card, &=
-status, 0);
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err)
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return MMC_BLK_=
-ABORT;
-> >> >> > +
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (status & R1_EXP_EVENT) {
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_sen=
-d_ext_csd(card, ext_csd); +
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err)
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- return MMC_BLK_ABORT;
-> >> >> > +
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((ext_csd[EX=
-T_CSD_EXP_EVENTS_STATUS +
-> 0]
-> why do we need the + 0?
-It is explicit expression, no more, no less.
-Actually, there is no need.
-> >> &
-> >> >> > +
-> >> EXT_CSD_PACKED_INDEXED_ERROR) {
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 /* Make be 0-based */
-> The comment is not understood
-PACKED_FAILURE_INDEX starts from '1'
-It is converted to 0-base for use.
-> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 mq_mrq->packed_fail_idx =3D
+Hello,
+
+On Tuesday, November 01, 2011 2:01 AM Thomas Abraham wrote:
+
+> ioremap() request for statically remapped regions are intercepted and the
+> statically assigned virtual address is returned. For requests for which
+> there are no statically remapped regions, the requests are let through.
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/mach-exynos4/cpu.c             |   16 ++++++++++++++++
+>  arch/arm/mach-exynos4/include/mach/io.h |    5 +++++
+>  2 files changed, 21 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos4/cpu.c b/arch/arm/mach-exynos4/cpu.c
+> index 5b1765b..358624d 100644
+> --- a/arch/arm/mach-exynos4/cpu.c
+> +++ b/arch/arm/mach-exynos4/cpu.c
+> @@ -137,6 +137,22 @@ static struct map_desc exynos4_iodesc1[] __initdata = {
+>  	},
+>  };
+> 
+> +/*
+> + * For all ioremap requests of statically mapped regions, intercept ioremap and
+> + * return virtual address from the iodesc table.
+> + */
+> +void __iomem *exynos4_ioremap(unsigned long phy, size_t size, unsigned int type)
+> +{
+> +	struct map_desc *desc = exynos4_iodesc;
+> +	unsigned int idx;
 > +
-> Thanks,
-> Maya Erez
-> --
-> Seny by a Consultant for Qualcomm innovation center, Inc.
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum
->=20
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +	for (idx = 0; idx < ARRAY_SIZE(exynos4_iodesc); idx++, desc++)
+> +		if (desc->pfn == __phys_to_pfn(phy) && desc->type == type)
+> +			return (void __iomem *)desc->virtual;
 
+I've just noticed that this function make access to exynos4_iodesc array which is
+placed in initdata section. This might cause a lot of strange unpredictable issues,
+so this patch should probably remove __initdata annotations in iodesc arrays.
+
+> +
+> +	return __arm_ioremap(phy, size, type);
+> +}
+> +
+>  static void exynos4_idle(void)
+>  {
+>  	if (!need_resched())
+> diff --git a/arch/arm/mach-exynos4/include/mach/io.h b/arch/arm/mach-exynos4/include/mach/io.h
+> index d5478d2..c1b21d5 100644
+> --- a/arch/arm/mach-exynos4/include/mach/io.h
+> +++ b/arch/arm/mach-exynos4/include/mach/io.h
+> @@ -22,5 +22,10 @@
+>  #define __mem_pci(a)	(a)
+> 
+>  #define IO_SPACE_LIMIT (0xFFFFFFFF)
+> +#define __arch_ioremap	exynos4_ioremap
+> +#define __arch_iounmap	__iounmap
+> +
+> +void __iomem *exynos4_ioremap(unsigned long phy, size_t size,
+> +					unsigned int type);
+> 
+>  #endif /* __ASM_ARM_ARCH_IO_H */
+> --
+> 1.7.4.4
+> 
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
