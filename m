@@ -1,55 +1,73 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC][PATCH] Consolidate Samsung MAINTAINERS
-Date: Tue, 29 Nov 2011 10:06:45 +0100
-Message-ID: <201111291006.49821.heiko@sntech.de>
-References: <201110230012.15273.heiko@sntech.de> <201111041250.40613.heiko@sntech.de> <003501cca365$bdbd0e90$39372bb0$%kim@samsung.com>
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH v2] ARM: pl330: Fix a race condition
+Date: Tue, 29 Nov 2011 09:53:30 +0000
+Message-ID: <4ED4AB9A.3060807@arm.com>
+References: <4E8C5425.80303@arm.com> <1317892206-3600-1-git-send-email-javi.merino@arm.com> <CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com> <4EB7B79A.2020004@arm.com> <000c01ccada6$f83f5be0$e8be13a0$%kim@samsung.com> <4ED3B89E.7070903@arm.com> <000e01ccae48$d76a7ba0$863f72e0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:53801 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752621Ab1K2JHG convert rfc822-to-8bit (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:41539 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753026Ab1K2Jxg convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 29 Nov 2011 04:07:06 -0500
-In-Reply-To: <003501cca365$bdbd0e90$39372bb0$%kim@samsung.com>
+	Tue, 29 Nov 2011 04:53:36 -0500
+In-Reply-To: <000e01ccae48$d76a7ba0$863f72e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "vinod.koul@intel.com" <vinod.koul@intel.com>
 
-Am Dienstag, 15. November 2011, 08:11:05 schrieb Kukjin Kim:
-> Kukjin Kim wrote:
-> > Heiko St=FCbner wrote:
-> > > Am Sonntag 23 Oktober 2011, 00:12:14 schrieb Heiko St=FCbner:
-> > > > These days most Samsung stuff gets in the kernel through Kukjin=
- Kim.
-> > > > This patch changes MAINTAINERS to reflect this.
-> > > >=20
-> > > > By adding Kukjin Kim to the maintainers for S3C2410, S3C244x an=
-d
-> > > > S3C64xx alongside Ben Dooks the extra entries become identical =
-to the
-> > > > base ARM/SAMSUNG entry and can move into it.
-> > > >=20
-> > > > Also the S3C2416 gets a maintainer through the s3c24* wildcard =
-- as
-> > > > it did not have one until now.
-> > > >=20
-> > > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > > > ---
-> > >=20
-> > > ping?
-> >=20
-> > Hi Heiko,
-> >=20
-> > Basically I'm ok on this but need to get the agreement from Ben Doo=
-ks.
->=20
-> Hi Ben,
->=20
-> How do you think about this?
-> If you don't want this, please let me know.
-seems ok then :-)
+On 29/11/11 03:41, Boojin Kim wrote:
+> Javi Merino wrote:
+> 
+> 
+>>>
+>>>>> On Samsung's Exynos4 platform, while testing audio playback with
+>> i2s
+>>>>> interface, the above change causes the playback to freeze. The
+>>>>> _thrd_active(thrd) call always returns '1' and hence _start(thrd)
+>> is
+>>>>> not getting called.
+>>>>
+>>>> If _thrd_active(thrd) returns '1', that means there is an active
+>>>> transfer still running or, if it has finished, you haven't called
+>>>> pl330_update() to acknowledge that.  pl330_update() calls _start()
+>> as
+>>>> soon as it can.
+>>>>
+>>>> drivers/dma/pl330.c registers the irq handler in pl330_probe(), so
+>>>> when
+>>>> the transaction finishes, pl330_update() should clear it and call
+>>>> _start().  If there is any outstanding transaction, it should start
+>>>> straight away. If there isn't, it would mark the channel as free,
+>> so
+>>>> _thrd_active() should return '0'.  If _thrd_active() is still '1',
+>> then
+>>>> something has gone wrong in the way.
+>>>>
+>>>> Does this shed some light?
+>>>>
+>>>
+>>> Your patch makes the memcpy operation on dmatest.c and net DMA be
+>> frozen too
+>>> as well as Samsung audio playback.
+>>
+>> Is the IRQ correctly registered in drivers/dma/pl330.c:pl330_probe()?
+>> Do you get interrupts when the transfer finish?
+> Sure. IRQ works well.
 
-Heiko
+Ok, so can you check if pl330_update() is correctly marking the request
+as free?  Do you know if there is another request in the queue when that
+happens?
+
+Thomas, you said in a previous email that _thrd_active() always returned
+'1'.  Was that after a request in req[0] finished?
+  - If so, can you check that MARK_FREE was actually called for that
+    request in pl330_update()?
+  - If it was after a request in req[1] finished and there was a
+    request already waiting in req[0], can you debug why _start()
+    didn't activate it.
+
+Cheers,
+Javi
