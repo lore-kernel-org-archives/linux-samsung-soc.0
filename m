@@ -1,44 +1,50 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 3/3] ARM: EXYNOS: Invert VCLK polarity for framebuffer on Origen board
-Date: Thu,  1 Dec 2011 11:20:11 +0530
-Message-ID: <1322718611-20934-4-git-send-email-tushar.behera@linaro.org>
-References: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
+	Samsung Exynos
+Date: Thu, 01 Dec 2011 16:29:17 +0900
+Message-ID: <045b01ccaffa$ef48c430$cdda4c90$%kim@samsung.com>
+References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
+ <20111123114626.GH20535@8bytes.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:44545 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751095Ab1LAFwZ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:54003 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753218Ab1LAH3W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Dec 2011 00:52:25 -0500
-Received: by ghrr1 with SMTP id r1so1472203ghr.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 Nov 2011 21:52:25 -0800 (PST)
-In-Reply-To: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org>
+	Thu, 1 Dec 2011 02:29:22 -0500
+In-reply-to: <20111123114626.GH20535@8bytes.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
+To: 'Joerg Roedel' <joro@8bytes.org>, 'KyongHo Cho' <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-Framebuffer driver needs to fetch the video data during the rising
-edge of the VCLK. Otherwise, there are some glitches in the LCD
-display.
+Joerg Roedel wrote:
+> 
+> On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
+> > Changes since v6:
+> > - Totally rewrite exynos_iommu_map() and exynos_iommu_unmap() according
+> >   to the change in iommu_map() and iommu_unmap().
+> > - Change special slab for Lv2 page table to kmalloc().
+> 
+> Okay, the driver looks good to me now. If there are no further
+> objections I am going to merge it for 3.3.
+> 
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos/mach-origen.c |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+Hi Joerg,
 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index f56d027..38f0556 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -588,7 +588,8 @@ static struct s3c_fb_pd_win origen_fb_win0 = {
- static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
- 	.win[0]		= &origen_fb_win0,
- 	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
--	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC |
-+				VIDCON1_INV_VCLK,
- 	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
- };
- 
--- 
-1.7.4.1
+Sorry for late response, I came back just now from family travelling...
+
+Anyway, that touches many Samsung stuff so it would be better if you could
+create separate topic branch which can be merged into Samsung tree. And if
+required, please add my ack on them.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
