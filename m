@@ -1,55 +1,36 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] MAINTAINERS: Extend Samsung patterns to cover SPI and
- ASoC drivers
-Date: Thu, 01 Dec 2011 16:30:07 +0900
-Message-ID: <045e01ccaffb$0cb6cb20$26246160$%kim@samsung.com>
-References: <1320923776-26626-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1320923776-26626-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <005701cca376$f6abbba0$e40332e0$%kim@samsung.com>
- <20111115111603.GC3077@opensource.wolfsonmicro.com>
+Subject: RE: [PATCH 2/2] mmc: sdhci-s3c: Add pm_caps into SD/MMC host
+Date: Thu, 01 Dec 2011 16:30:28 +0900
+Message-ID: <046001ccaffb$1988f580$4c9ae080$%kim@samsung.com>
+References: <1320685522-17481-1-git-send-email-sangwook.lee@linaro.org>
+ <1320685522-17481-3-git-send-email-sangwook.lee@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16996 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:17298 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753333Ab1LAHaJ (ORCPT
+	with ESMTP id S1754341Ab1LAHa3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Dec 2011 02:30:09 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LVI00MGRKSMWXF0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Dec 2011 16:30:07 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LVI00LUOKU7DX70@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 01 Dec 2011 16:30:07 +0900 (KST)
-In-reply-to: <20111115111603.GC3077@opensource.wolfsonmicro.com>
+	Thu, 1 Dec 2011 02:30:29 -0500
+In-reply-to: <1320685522-17481-3-git-send-email-sangwook.lee@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, grant.likely@secretlab.ca
+To: 'Sangwook Lee' <sangwook.lee@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, ben-linux@fluff.org, linaro-dev@lists.linaro.org, patches@linaro.org, 'Sangwook Lee' <sangwook.lee@samsung.com>
 
-Mark Brown wrote:
+Sangwook Lee wrote:
 > 
-> On Tue, Nov 15, 2011 at 06:14:22PM +0900, Kukjin Kim wrote:
-> > Mark Brown wrote:
+> sdhci-s3c updates pm_caps from platform data for SDIO PM.
 > 
-> > > +F:	drivers/spi/spi-s3c*
-> > > +F:	sound/soc/samsung/*
-> 
-> > Hmm, I'm ok on this but needs Grant's opinion :)
-> 
-> > (Cc'ed Grant Likely)
-> 
-> Note that you can have multiple entries for a single file, people are
-> supposed to use a bit of thought when working out who to mail - if you
-> use something like get_maintainers it'll return all matching entries.
+> Signed-off-by: Sangwook Lee <sangwook.lee@samsung.com>
 
-OK, I agree.
-Will apply.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Hi Chris,
+
+Could you please pick this up in your tree for v3.3?
 
 Thanks.
 
@@ -58,3 +39,25 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> ---
+>  drivers/mmc/host/sdhci-s3c.c |    3 +++
+>  1 files changed, 3 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index fe886d6..f10dd52 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -518,6 +518,9 @@ static int __devinit sdhci_s3c_probe(struct
+> platform_device *pdev)
+>  	if (pdata->host_caps)
+>  		host->mmc->caps |= pdata->host_caps;
+> 
+> +	if (pdata->pm_caps)
+> +		host->mmc->pm_caps |= pdata->pm_caps;
+> +
+>  	host->quirks |= (SDHCI_QUIRK_32BIT_DMA_ADDR |
+>  			 SDHCI_QUIRK_32BIT_DMA_SIZE);
+> 
+> --
+> 1.7.4.1
