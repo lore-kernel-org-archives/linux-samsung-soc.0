@@ -1,45 +1,46 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 3/3] ARM: S3C64XX: Implement basic power domain support
-Date: Fri, 2 Dec 2011 00:56:05 +0000
-Message-ID: <20111202005604.GA31948@opensource.wolfsonmicro.com>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1322765339-29879-3-git-send-email-broonie@opensource.wolfsonmicro.com>
- <CAH9JG2WLO-wFT_QEv4qBeCcz-pE2CNoMqV8f8u3BKF8r+GSBvA@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: S5PV210: Add USB OTG gadget device support to SMDKV210
+ board
+Date: Fri, 02 Dec 2011 09:11:51 +0530
+Message-ID: <4ED848FF.9070103@linaro.org>
+References: <1322538455-31748-1-git-send-email-jg1.han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48974 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755987Ab1LBA4J (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:45864 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756485Ab1LBDlf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Dec 2011 19:56:09 -0500
-Content-Disposition: inline
-In-Reply-To: <CAH9JG2WLO-wFT_QEv4qBeCcz-pE2CNoMqV8f8u3BKF8r+GSBvA@mail.gmail.com>
+	Thu, 1 Dec 2011 22:41:35 -0500
+Received: by iage36 with SMTP id e36so3487702iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 01 Dec 2011 19:41:34 -0800 (PST)
+In-Reply-To: <1322538455-31748-1-git-send-email-jg1.han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, =?utf-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, =?utf-8?B?7ZWo66qF7KO8?= <myungjoo.ham@samsung.com>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 02, 2011 at 09:35:44AM +0900, Kyungmin Park wrote:
+Hi Jingoo,
 
-> I'm not sure what's the next step at s3c64xx for generic power domain.
-> Related with exysno4 series, it's helpful to read following threads.
-> http://68.183.106.108/lists/linux-pm/msg26291.html
+On Tuesday 29 November 2011 09:17 AM, Jingoo Han wrote:
+[ snip ]
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+[ snip ]
+> @@ -308,6 +310,8 @@ static void __init smdkv210_machine_init(void)
+>
+>   	samsung_bl_set(&smdkv210_bl_gpio_info,&smdkv210_bl_data);
+>
+> +	clk_xusbxti.rate = 24000000;
+> +
+Would it be a good idea to set the default rate of clk_xusbxti in 
+arch/arm/plat-s5p/clock.c and remove the explicit rate setting in all 
+the machine files?
 
-> "I don't think we should control/gate the clocks with regarding power
-> domain" from Mr. Kim
+Currently, the clock is also set in machine files for which ehci is enabled.
+>   	platform_add_devices(smdkv210_devices, ARRAY_SIZE(smdkv210_devices));
+>   }
+>
 
-I tend to agree with him that gating the clocks automatically using
-runtime PM would be nice as if nothing else it saves code in drivers.
-I'm not sure how easy it's going to be to transition to doing that in
-one jump, though - there's a lot of SoCs sharing IP right back to
-S3C24xx.
-
-Of course it should be fairly easy for most of the domains on s3c64xx
-right now as there's only one actual driver involved in mainline, we
-should just be gating almost all of the clocks concerned immediately
-after we boot (assuming they aren't gated by default, I'd need to check)
-and never touching them again anyway.  It'd only be the framebuffer
-clocks that'd need some work and for a first pass we could just mark the
-framebuffer domain as always on and get most of the win.  Sometimes lack
-of driver support is a good thing :)
+-- 
+Tushar Behera
