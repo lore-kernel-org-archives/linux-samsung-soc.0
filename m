@@ -1,52 +1,85 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
 Subject: Re: [PATCH 3/3] ARM: S3C64XX: Implement basic power domain support
-Date: Fri, 02 Dec 2011 20:06:17 +0100
-Message-ID: <1540677.QKv7YOdnN3@flatron>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <4008DCBCB90E409AA8C5E085EB54D2DB@Flatron> <20111202185743.GA27227@opensource.wolfsonmicro.com>
+Date: Fri, 02 Dec 2011 21:10:27 +0100
+Message-ID: <4ED930B3.3020200@gmail.com>
+References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <1322765339-29879-3-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:56466 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751260Ab1LBTG1 (ORCPT
+Received: from mail-bw0-f46.google.com ([209.85.214.46]:41096 "EHLO
+	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751395Ab1LBUKn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Dec 2011 14:06:27 -0500
-In-Reply-To: <20111202185743.GA27227@opensource.wolfsonmicro.com>
+	Fri, 2 Dec 2011 15:10:43 -0500
+In-Reply-To: <1322765339-29879-3-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>, Kyungmin Park <kmpark@infradead.org>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ??? <cw00.choi@samsung.com>, ??? <myungjoo.ham@samsung.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Friday 02 of December 2011 18:57:43 Mark Brown wrote:
-> On Fri, Dec 02, 2011 at 07:25:01PM +0100, Tomasz Figa wrote:
-> > Please do not forget that there might be some drivers not yet submited
-> > to mainline and mainline should not break them with an assumption that
-> > there are no such drivers.
-> > 
-> > For example, there is an on-going work on an open source OpenGL
-> > implementation for the GPU in S3C6410, known as OpenFIMG. Currently it
-> > uses a little kernel module for low level hardware management
-> > (interrupts, contexts, locking, power management), involving clock
-> > gating and runtime power management, but a DRM driver is planned.
+Hi Mark,
+
+good to see someone adding a proper power domain support for s3c64xx.
+
+On 12/01/2011 07:48 PM, Mark Brown wrote:
+> The S3C64xx SoCs contain a set of gateable power domains which can be
+> enabled and disabled at runtime in order to save power.  Use the generic
+> power domain code to implement support for these in software, enabling
+> runtime control of most domains:
 > 
-> As I said in the commit message for the patch you're following up on
-> I don't think that's a problem as it's pretty straightforward to add the
-> requisite hooks as part of adding the actual drivers.  The power domain
-> framework is really easy to use so it's not like it should cause real
-> effort, if you can figure out how to drive a 3D graphics engine adding a
-> device to a power domain shouldn't be too hard.
+>  - ETM (not supported in mainline).
+>  - Domain G: 3D acceleration (no mainline support).
+>  - Domain V: MFC (no mainline support).
+>  - Domain I: JPEG and camera interface (no mainline support).
+>  - Domain P: 2D acceleration, TV encoder and scaler (no mainline support)
+>  - Domain S: Security (no mainline support).
+>  - Domain F: LCD (driver already uses runtime PM), post processing and
+>    rotation (no mainline support).
 > 
-> There will need to be arch/arm changes to add the platform devices and
-> hook up the clocks anyway so it's not like this is creating a need for
-> modifications.  Indeed I'd suggest adding the arch/arm stuff as it gets
-> written anyway, even if the actual drivers are still a work in progress.
-> It's one less thing to carry out of tree and it means that updates like
-> this or like the clk API reworks that I'd expect to start appearing soon
-> will happen for free.
+> The IROM domain is marked as always enabled as we should arrange for it
+> to be enabled when we suspend which will need a bit more work.
+> 
+> Due to all the conditional device registration that the platform does
+> wrap s3c_pm_init() with s3c64xx_pm_init() which actually puts the device
+> into the power domain after the machines have registered, looking for
+> platform data to tell if the device was registered. Since currently only
+> Cragganmore actually sets up PM that is the only machine updated.
+> 
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> ---
+...
+> +
+> +static int s3c64xx_pd_on(struct generic_pm_domain *domain)
+> +{
+> +	struct s3c64xx_pm_domain *pd;
+> +	u32 val;
+> +	long retry = 1000000L;
+> +
+> +	pd = container_of(domain, struct s3c64xx_pm_domain, pd);
+> +
+> +	val = __raw_readl(S3C64XX_NORMAL_CFG);
+> +	val |= pd->ena;
+> +	__raw_writel(val, S3C64XX_NORMAL_CFG);
+> +
+> +	/* Not all domains provide power status readback */
+> +	if (pd->pwr_stat) {
+> +		while (retry--)
+> +			if (__raw_readl(S3C64XX_BLK_PWR_STAT) & pd->pwr_stat)
+> +				break;
 
-Yeah, I'm okay with that, I just noted that there is more support for S3C6410 
-available than just what is present in mainline.
+How about adding cpu_relax() in this busy wait loop ?
 
-Best regards,
-Tom
+> +		if (!retry) {
+> +			pr_err("Failed to start domain %s\n", pd->name);
+> +			return -EBUSY;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +}
+
+--
+
+Regards,
+Sylwester
