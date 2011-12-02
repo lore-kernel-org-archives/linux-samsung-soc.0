@@ -1,107 +1,91 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH 2/2] mmc: core: Support packed command for eMMC4.5 device
-Date: Fri, 02 Dec 2011 18:06:30 +0900
-Message-ID: <003201ccb0d1$ae9474c0$0bbd5e40$%jun@samsung.com>
-References: <aad7cb35699550e89526a5fb083c520d.squirrel@www.codeaurora.org>
- <000201ccadab$1e57b8a0$5b0729e0$%jun@samsung.com>
- <5573ef5046779298ee1555838015e0e3.squirrel@www.codeaurora.org>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
+Date: Fri, 2 Dec 2011 18:13:42 +0900
+Message-ID: <CAH9JG2Vkm7uuUAeUZT179=dTUdi9mWsVDvZzWGn0h_NJLrC+mA@mail.gmail.com>
+References: <1322730317-8171-1-git-send-email-myungjoo.ham@samsung.com>
+ <1322730317-8171-2-git-send-email-myungjoo.ham@samsung.com>
+ <04fb01ccb0d1$016ebdf0$044c39d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <5573ef5046779298ee1555838015e0e3.squirrel@www.codeaurora.org>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: merez@codeaurora.org
-Cc: "'S, Venkatraman'" <svenkatr@ti.com>, linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, dh.han@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <04fb01ccb0d1$016ebdf0$044c39d0$%kim@samsung.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kevin Hilman <khilman@ti.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, myungjoo.ham@gmail.com, MyungJoo Ham <myungjoo.ham@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Maya Erez wrote:
-> > Maya Erez wrote:
-> >> >> >> On Wed, Nov 2, 2011 at 1:33 PM, Seungwon Jeon
-> >> <tgih.jun@samsung.com>
-> >> >> wrote:
-> >> >> >> > @@ -980,12 +988,67 @@ static int mmc_blk_err_check(struct
-> >> mmc_card
-> >> >> *card,
-> >> >> >> > =A0 =A0 =A0 =A0if (!brq->data.bytes_xfered)
-> >> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return MMC_BLK_RETRY;
-> >> >> >> >
-> >> >> >> > + =A0 =A0 =A0 if (mq_mrq->packed_cmd !=3D MMC_PACKED_NONE)=
- {
-> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (unlikely(brq->data.block=
-s << 9 !=3D
-> >> >> brq->data.bytes_xfered))
-> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return MMC_B=
-LK_PARTIAL;
-> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
-> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return MMC_B=
-LK_SUCCESS;
-> >> >> >> > + =A0 =A0 =A0 }
-> >> >> >> > +
-> >> >> >> > =A0 =A0 =A0 =A0if (blk_rq_bytes(req) !=3D brq->data.bytes_=
-xfered)
-> >> >> >> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return MMC_BLK_PARTIAL;
-> >> >> >> >
-> >> >> >> > =A0 =A0 =A0 =A0return MMC_BLK_SUCCESS;
-> >> >> >> > =A0}
-> >> >> >> >
-> >> >> >> > +static int mmc_blk_packed_err_check(struct mmc_card *card=
-, +
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0struct mmc_async_re=
-q *areq)
-> >> >> >> > +{
-> >> >> >> > + =A0 =A0 =A0 struct mmc_queue_req *mq_mrq =3D container_o=
-f(areq, struct
-> >> >> mmc_queue_req,
-> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_active);
-> >> +
-> >> =A0 =A0 =A0 int err, check, status;
-> >> >> >> > + =A0 =A0 =A0 u8 ext_csd[512];
-> >> >> >> > +
-> >> >> >> > + =A0 =A0 =A0 check =3D mmc_blk_err_check(card, areq);
-> >> >> >> > +
-> >> >> >> > + =A0 =A0 =A0 if (check =3D=3D MMC_BLK_SUCCESS)
-> >> >> >> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return check;
-> >> I think we need to check the status for all cases and not only in =
-case
-> >> of
-> >> MMC_BLK_PARTIAL. For example, in cases where the header was trafer=
-red
-> >> successfully but had logic errors (wrong number of sectors etc.)
-> >> mmc_blk_err_check will return MMC_BLK_SUCCESS although the packed
-> >> commands
-> >> failed.
-> > Similarly, Sahitya Tummala is already mentioned this.
-> > Other error case will be checked in next version.
-> > The case you suggested is about read or write?
-> > Device may detect error and stop transferring the data.
-> Sahitya suggested to also check other error cases that mmc_blk_err_ch=
-eck
-> returns (such as MMC_BLK_CMD_ERR, MMC_BLK_ECC_ERR and MMC_BLK_DATA_ER=
-R).
-> I suggest to also check the exception bit in the status even if
-> mmc_blk_err_check returned success, since mmc_blk_err_check might not
-> catch all the packed commands failures. One example for such a failur=
-e is
-> when the header of read packed commands will have logical error.
-This part is modified in next version.
+On 12/2/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> MyungJoo Ham wrote:
+>>
+>> - Add DMC1
+>> - Enlarge address space for DMC from 4k to 64k so that PPMU registers
+>>   may be accessed.
+>>
+>> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/cpu.c              |    7 ++++++-
+>>  arch/arm/mach-exynos/include/mach/map.h |    1 +
+>>  2 files changed, 7 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
+>> index 90ec247..8bdcba9 100644
+>> --- a/arch/arm/mach-exynos/cpu.c
+>> +++ b/arch/arm/mach-exynos/cpu.c
+>> @@ -108,7 +108,12 @@ static struct map_desc exynos4_iodesc[] __initdata =
+>> {
+>>  	}, {
+>>  		.virtual	= (unsigned long)S5P_VA_DMC0,
+>>  		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC0),
+>> -		.length		= SZ_4K,
+>> +		.length		= SZ_64K,
+>> +		.type		= MT_DEVICE,
+>> +	}, {
+>> +		.virtual	= (unsigned long)S5P_VA_DMC1,
+>> +		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC1),
+>> +		.length		= SZ_64K,
+>>  		.type		= MT_DEVICE,
+>>  	}, {
+>>  		.virtual	= (unsigned long)S5P_VA_SROMC,
+>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-
+>> exynos/include/mach/map.h
+>> index 058541d..870a980 100644
+>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>> @@ -57,6 +57,7 @@
+>>  #define EXYNOS4_PA_KEYPAD		0x100A0000
+>>
+>>  #define EXYNOS4_PA_DMC0			0x10400000
+>> +#define EXYNOS4_PA_DMC1			0x10410000
+>
+> If required, so just '.length = SZ_128K'?...
+Doesn't it more confuse and difficult to use?
 
-Thanks,
-Seungwon Jeon.
+Even though there's not much definitions. it defines the offset concept.
+"arch/arm/mach-exynos/include/mach/regs-mem.h"
 
-> Thanks,
-> Maya
+BR,
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-> Seny by a Consultant for Qualcomm innovation center, Inc.
-> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum
->=20
->=20
->=20
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
-in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+>
