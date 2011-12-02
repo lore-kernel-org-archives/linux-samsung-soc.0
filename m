@@ -1,85 +1,34 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH 3/3] ARM: S3C64XX: Implement basic power domain support
-Date: Fri, 02 Dec 2011 21:10:27 +0100
-Message-ID: <4ED930B3.3020200@gmail.com>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <1322765339-29879-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+Date: Fri, 2 Dec 2011 21:07:06 +0000
+Message-ID: <20111202210706.GB15268@opensource.wolfsonmicro.com>
+References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <1322765339-29879-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <4ED930B3.3020200@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bw0-f46.google.com ([209.85.214.46]:41096 "EHLO
-	mail-bw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751395Ab1LBUKn (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56672 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755077Ab1LBVHK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Dec 2011 15:10:43 -0500
-In-Reply-To: <1322765339-29879-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Fri, 2 Dec 2011 16:07:10 -0500
+Content-Disposition: inline
+In-Reply-To: <4ED930B3.3020200@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Sylwester Nawrocki <snjw23@gmail.com>
 Cc: Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Mark,
+On Fri, Dec 02, 2011 at 09:10:27PM +0100, Sylwester Nawrocki wrote:
 
-good to see someone adding a proper power domain support for s3c64xx.
+> > +	/* Not all domains provide power status readback */
+> > +	if (pd->pwr_stat) {
+> > +		while (retry--)
+> > +			if (__raw_readl(S3C64XX_BLK_PWR_STAT) & pd->pwr_stat)
+> > +				break;
 
-On 12/01/2011 07:48 PM, Mark Brown wrote:
-> The S3C64xx SoCs contain a set of gateable power domains which can be
-> enabled and disabled at runtime in order to save power.  Use the generic
-> power domain code to implement support for these in software, enabling
-> runtime control of most domains:
-> 
->  - ETM (not supported in mainline).
->  - Domain G: 3D acceleration (no mainline support).
->  - Domain V: MFC (no mainline support).
->  - Domain I: JPEG and camera interface (no mainline support).
->  - Domain P: 2D acceleration, TV encoder and scaler (no mainline support)
->  - Domain S: Security (no mainline support).
->  - Domain F: LCD (driver already uses runtime PM), post processing and
->    rotation (no mainline support).
-> 
-> The IROM domain is marked as always enabled as we should arrange for it
-> to be enabled when we suspend which will need a bit more work.
-> 
-> Due to all the conditional device registration that the platform does
-> wrap s3c_pm_init() with s3c64xx_pm_init() which actually puts the device
-> into the power domain after the machines have registered, looking for
-> platform data to tell if the device was registered. Since currently only
-> Cragganmore actually sets up PM that is the only machine updated.
-> 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
-...
-> +
-> +static int s3c64xx_pd_on(struct generic_pm_domain *domain)
-> +{
-> +	struct s3c64xx_pm_domain *pd;
-> +	u32 val;
-> +	long retry = 1000000L;
-> +
-> +	pd = container_of(domain, struct s3c64xx_pm_domain, pd);
-> +
-> +	val = __raw_readl(S3C64XX_NORMAL_CFG);
-> +	val |= pd->ena;
-> +	__raw_writel(val, S3C64XX_NORMAL_CFG);
-> +
-> +	/* Not all domains provide power status readback */
-> +	if (pd->pwr_stat) {
-> +		while (retry--)
-> +			if (__raw_readl(S3C64XX_BLK_PWR_STAT) & pd->pwr_stat)
-> +				break;
+> How about adding cpu_relax() in this busy wait loop ?
 
-How about adding cpu_relax() in this busy wait loop ?
-
-> +		if (!retry) {
-> +			pr_err("Failed to start domain %s\n", pd->name);
-> +			return -EBUSY;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-
---
-
-Regards,
-Sylwester
+May as well, yes - I didn't actually measure how long it tends to take
+to do the spin but it's not going to hurt.
