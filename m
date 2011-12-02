@@ -1,68 +1,27 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/3] Moving xusbxti clock setting in clock.c file.
-Date: Fri, 02 Dec 2011 17:44:00 +0900
-Message-ID: <04f801ccb0ce$89b05cd0$9d111670$%kim@samsung.com>
-References: <1322807898-14825-1-git-send-email-pankaj.dubey@samsung.com>
+From: 'Joerg Roedel' <joro@8bytes.org>
+Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
+	Samsung Exynos
+Date: Fri, 2 Dec 2011 09:49:22 +0100
+Message-ID: <20111202084922.GM20535@8bytes.org>
+References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com> <20111123114626.GH20535@8bytes.org> <045b01ccaffa$ef48c430$cdda4c90$%kim@samsung.com> <20111201185821.GL20535@8bytes.org> <04f601ccb0ce$72590550$570b0ff0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37670 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753157Ab1LBIoC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Dec 2011 03:44:02 -0500
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LVK00KR9IX30Y00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 02 Dec 2011 17:44:00 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LVK002M4IXCE180@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 02 Dec 2011 17:44:00 +0900 (KST)
-In-reply-to: <1322807898-14825-1-git-send-email-pankaj.dubey@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <04f601ccb0ce$72590550$570b0ff0$%kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'KyongHo Cho' <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Pankaj Dubey' <pankaj.dubey@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org
 
-Pankaj Dubey wrote:
+On Fri, Dec 02, 2011 at 05:43:21PM +0900, Kukjin Kim wrote:
+> OK, I will merge iommu/exynos into Samsung tree after your creating that.
 > 
-> Since there is code duplication in different mach-board.c file it is
-> better
-> to set default clock rate of xusbxti clock in plat-s5p/clock.c file.
-> 
-> The patches are based on following commit on Kukjin's for-next branch.
-> 
-> Pankaj (1):
->   ARM: S5P: Set default rate of xusbxti clock
-> 
-> Pankaj Dubey (2):
->   ARM: EXYNOS: Removed code for setting clock rate of xusbxti
->   ARM: S5PV210: Removed code for setting clock rate of xusbxti
+> I can't look at iommu/exynos branch in your tree,
+> git://git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git.
 
-'Pankaj' and 'Pankaj Dubey'?
+That's because I havn't merged any exynos patches yet :) But I will
+create it soon an merge this driver.
 
-> 
->  arch/arm/mach-exynos/mach-nuri.c     |    1 -
->  arch/arm/mach-exynos/mach-origen.c   |    1 -
->  arch/arm/mach-exynos/mach-smdk4x12.c |    2 --
->  arch/arm/mach-exynos/mach-smdkv310.c |    1 -
->  arch/arm/mach-s5pv210/mach-goni.c    |    1 -
->  arch/arm/plat-s5p/clock.c            |    1 +
->  6 files changed, 1 insertions(+), 6 deletions(-)
-> 
-> --
-> 1.7.4.1
 
-No, the clock can be different for each board even though current value is
-same. So it should being at the  each board file.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+	Joerg
