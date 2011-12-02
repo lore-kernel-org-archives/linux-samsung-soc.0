@@ -1,186 +1,70 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Enable MDMA driver
-Date: Fri, 02 Dec 2011 17:59:49 +0900
-Message-ID: <04fa01ccb0d0$befbf050$3cf3d0f0$%kim@samsung.com>
-References: <1322466688-10272-1-git-send-email-boojin.kim@samsung.com>
+Subject: RE: [PATCH 1/4] ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
+Date: Fri, 02 Dec 2011 18:01:40 +0900
+Message-ID: <04fb01ccb0d1$016ebdf0$044c39d0$%kim@samsung.com>
+References: <1322730317-8171-1-git-send-email-myungjoo.ham@samsung.com>
+ <1322730317-8171-2-git-send-email-myungjoo.ham@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50926 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752273Ab1LBI7u (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13286 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752398Ab1LBJCD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Dec 2011 03:59:50 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LVK0084QJMS8W10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 02 Dec 2011 17:59:49 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LVK00CH2JNPYKC0@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 02 Dec 2011 17:59:49 +0900 (KST)
-In-reply-to: <1322466688-10272-1-git-send-email-boojin.kim@samsung.com>
+	Fri, 2 Dec 2011 04:02:03 -0500
+In-reply-to: <1322730317-8171-2-git-send-email-myungjoo.ham@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Boojin Kim' <boojin.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Kevin Hilman' <khilman@ti.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, myungjoo.ham@gmail.com
 
-
-> -----Original Message-----
-> From: Boojin Kim [mailto:boojin.kim@samsung.com]
-> Sent: Monday, November 28, 2011 4:51 PM
-> To: linux-arm-kernel@lists.infradead.org; linux-samsung-
-> soc@vger.kernel.org
-> Cc: Kukjin Kim; Boojin Kim
-> Subject: [PATCH] ARM: EXYNOS: Enable MDMA driver
+MyungJoo Ham wrote:
 > 
-> This patch adds MDMA platform data and enables MDMA for DMA memcpy
-> operation
+> - Add DMC1
+> - Enlarge address space for DMC from 4k to 64k so that PPMU registers
+>   may be accessed.
 > 
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/mach-exynos/clock.c                   |    8 +++++
->  arch/arm/mach-exynos/dma.c                     |   35
-++++++++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/irqs.h       |    2 +
->  arch/arm/mach-exynos/include/mach/map.h        |    3 +-
->  arch/arm/plat-samsung/include/plat/dma-pl330.h |    8 +++++
->  5 files changed, 55 insertions(+), 1 deletions(-)
+>  arch/arm/mach-exynos/cpu.c              |    7 ++++++-
+>  arch/arm/mach-exynos/include/mach/map.h |    1 +
+>  2 files changed, 7 insertions(+), 1 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-> index 5d8d483..28e2842 100644
-> --- a/arch/arm/mach-exynos/clock.c
-> +++ b/arch/arm/mach-exynos/clock.c
-> @@ -782,6 +782,13 @@ static struct clk clk_pdma1 = {
->  	.ctrlbit	= (1 << 1),
->  };
-> 
-> +static struct clk clk_mdma1 = {
-> +	.name		= "dma",
-> +	.devname	= "dma-pl330.2",
-> +	.enable		= exynos4_clk_ip_image_ctrl,
-> +	.ctrlbit	= ((1 << 8) | (1 << 5) | (1 << 2)),
-> +};
-> +
->  struct clk *clkset_group_list[] = {
->  	[0] = &clk_ext_xtal_mux,
->  	[1] = &clk_xusbxti,
-> @@ -1294,6 +1301,7 @@ static struct clksrc_clk *sysclks[] = {
->  static struct clk *clk_cdev[] = {
->  	&clk_pdma0,
->  	&clk_pdma1,
-> +	&clk_mdma1,
->  };
-> 
->  static struct clksrc_clk *clksrc_cdev[] = {
-> diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
-> index b10fcd2..e89329e 100644
-> --- a/arch/arm/mach-exynos/dma.c
-> +++ b/arch/arm/mach-exynos/dma.c
-> @@ -139,6 +139,38 @@ struct amba_device exynos4_device_pdma1 = {
->  	.periphid = 0x00041330,
->  };
-> 
-> +u8 mdma_peri[] = {
-> +	DMACH_MTOM_0,
-> +	DMACH_MTOM_1,
-> +	DMACH_MTOM_2,
-> +	DMACH_MTOM_3,
-> +	DMACH_MTOM_4,
-> +	DMACH_MTOM_5,
-> +	DMACH_MTOM_6,
-> +	DMACH_MTOM_7,
-> +};
-> +
-> +struct dma_pl330_platdata exynos4_mdma_pdata = {
-> +	.nr_valid_peri = ARRAY_SIZE(mdma_peri),
-> +	.peri_id = mdma_peri,
-> +};
-> +
-> +struct amba_device exynos4_device_mdma = {
-> +	.dev = {
-> +		.init_name = "dma-pl330.2",
-> +		.dma_mask = &dma_dmamask,
-> +		.coherent_dma_mask = DMA_BIT_MASK(32),
-> +		.platform_data = &exynos4_mdma_pdata,
-> +	},
-> +	.res = {
-> +		.start = EXYNOS4_PA_MDMA1,
-> +		.end = EXYNOS4_PA_MDMA1 + SZ_4K,
-> +		.flags = IORESOURCE_MEM,
-> +	},
-> +	.irq = {IRQ_MDMA1, NO_IRQ},
-> +	.periphid = 0x00041330,
-> +};
-> +
->  static int __init exynos4_dma_init(void)
->  {
->  	if (of_have_populated_dt())
-> @@ -152,6 +184,9 @@ static int __init exynos4_dma_init(void)
->  	dma_cap_set(DMA_CYCLIC, exynos4_pdma1_pdata.cap_mask);
->  	amba_device_register(&exynos4_device_pdma1, &iomem_resource);
-> 
-> +	dma_cap_set(DMA_MEMCPY, exynos4_mdma_pdata.cap_mask);
-> +	amba_device_register(&exynos4_device_mdma, &iomem_resource);
-> +
->  	return 0;
->  }
->  arch_initcall(exynos4_dma_init);
-> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-
-> exynos/include/mach/irqs.h
-> index 713dd52..f7d73b1 100644
-> --- a/arch/arm/mach-exynos/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
-> @@ -43,6 +43,8 @@
->  #define IRQ_EINT15		IRQ_SPI(31)
->  #define IRQ_EINT16_31		IRQ_SPI(32)
-> 
-> +#define IRQ_MDMA0		IRQ_SPI(33)
-> +#define IRQ_MDMA1		IRQ_SPI(34)
->  #define IRQ_PDMA0		IRQ_SPI(35)
->  #define IRQ_PDMA1		IRQ_SPI(36)
->  #define IRQ_TIMER0_VIC		IRQ_SPI(37)
+> diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
+> index 90ec247..8bdcba9 100644
+> --- a/arch/arm/mach-exynos/cpu.c
+> +++ b/arch/arm/mach-exynos/cpu.c
+> @@ -108,7 +108,12 @@ static struct map_desc exynos4_iodesc[] __initdata =
+> {
+>  	}, {
+>  		.virtual	= (unsigned long)S5P_VA_DMC0,
+>  		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC0),
+> -		.length		= SZ_4K,
+> +		.length		= SZ_64K,
+> +		.type		= MT_DEVICE,
+> +	}, {
+> +		.virtual	= (unsigned long)S5P_VA_DMC1,
+> +		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC1),
+> +		.length		= SZ_64K,
+>  		.type		= MT_DEVICE,
+>  	}, {
+>  		.virtual	= (unsigned long)S5P_VA_SROMC,
 > diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-
 > exynos/include/mach/map.h
-> index 058541d..03e2c99 100644
+> index 058541d..870a980 100644
 > --- a/arch/arm/mach-exynos/include/mach/map.h
 > +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -67,7 +67,8 @@
->  #define EXYNOS4_PA_TWD			0x10500600
->  #define EXYNOS4_PA_L2CC			0x10502000
+> @@ -57,6 +57,7 @@
+>  #define EXYNOS4_PA_KEYPAD		0x100A0000
 > 
-> -#define EXYNOS4_PA_MDMA			0x10810000
-> +#define EXYNOS4_PA_MDMA0		0x10810000
-> +#define EXYNOS4_PA_MDMA1		0x12840000
->  #define EXYNOS4_PA_PDMA0		0x12680000
->  #define EXYNOS4_PA_PDMA1		0x12690000
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> index c5eaad5..ecf23a8 100644
-> --- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> +++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-> @@ -82,6 +82,14 @@ enum dma_ch {
->  	DMACH_SLIMBUS4_TX,
->  	DMACH_SLIMBUS5_RX,
->  	DMACH_SLIMBUS5_TX,
-> +	DMACH_MTOM_0,
-> +	DMACH_MTOM_1,
-> +	DMACH_MTOM_2,
-> +	DMACH_MTOM_3,
-> +	DMACH_MTOM_4,
-> +	DMACH_MTOM_5,
-> +	DMACH_MTOM_6,
-> +	DMACH_MTOM_7,
->  	/* END Marker, also used to denote a reserved channel */
->  	DMACH_MAX,
->  };
-> --
-> 1.7.1
+>  #define EXYNOS4_PA_DMC0			0x10400000
+> +#define EXYNOS4_PA_DMC1			0x10410000
 
-Looks ok, will apply.
+If required, so just '.length = SZ_128K'?...
+
 Thanks.
 
 Best regards,
