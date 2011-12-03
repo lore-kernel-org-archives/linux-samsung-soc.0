@@ -1,60 +1,81 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/4] ARM Exynos4210-Nuri: remove compiler errors
-Date: Sat, 03 Dec 2011 18:26:14 +0900
-Message-ID: <000201ccb19d$9ab31070$d0193150$%kim@samsung.com>
+Subject: RE: [PATCH 1/4] ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
+Date: Sat, 03 Dec 2011 18:27:09 +0900
+Message-ID: <000301ccb19d$bb05e7d0$3111b770$%kim@samsung.com>
 References: <1322730317-8171-1-git-send-email-myungjoo.ham@samsung.com>
- <1322730317-8171-4-git-send-email-myungjoo.ham@samsung.com>
- <04f901ccb0d0$b94191b0$2bc4b510$%kim@samsung.com>
- <CAJ0PZbTKgqgg3SZN3KyVFzGDuSU8qjM5NjwNcM28mtmzfbS0Xw@mail.gmail.com>
+ <1322730317-8171-2-git-send-email-myungjoo.ham@samsung.com>
+ <04fb01ccb0d1$016ebdf0$044c39d0$%kim@samsung.com>
+ <CAH9JG2Vkm7uuUAeUZT179=dTUdi9mWsVDvZzWGn0h_NJLrC+mA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11153 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752891Ab1LCJ0Q (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:45036 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752891Ab1LCJ1K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Dec 2011 04:26:16 -0500
-In-reply-to: <CAJ0PZbTKgqgg3SZN3KyVFzGDuSU8qjM5NjwNcM28mtmzfbS0Xw@mail.gmail.com>
+	Sat, 3 Dec 2011 04:27:10 -0500
+In-reply-to: <CAH9JG2Vkm7uuUAeUZT179=dTUdi9mWsVDvZzWGn0h_NJLrC+mA@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@gmail.com
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Kevin Hilman' <khilman@ti.com>, 'Russell King' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Kyungmin Park' <kyungmin.park@samsung.com>
+Cc: 'MyungJoo Ham' <myungjoo.ham@samsung.com>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Kevin Hilman' <khilman@ti.com>, 'Russell King' <linux@arm.linux.org.uk>, myungjoo.ham@gmail.com
 
-MyungJoo Ham wrote:
+Kyungmin Park wrote:
 > 
-> On Fri, Dec 2, 2011 at 5:59 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > MyungJoo Hamm wrote:
+> On 12/2/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > MyungJoo Ham wrote:
 > >>
-> > What's the 'compiler errors'?
+> >> - Add DMC1
+> >> - Enlarge address space for DMC from 4k to 64k so that PPMU registers
+> >>   may be accessed.
+> >>
+> >> Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >> ---
+> >>  arch/arm/mach-exynos/cpu.c              |    7 ++++++-
+> >>  arch/arm/mach-exynos/include/mach/map.h |    1 +
+> >>  2 files changed, 7 insertions(+), 1 deletions(-)
+> >>
+> >> diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
+> >> index 90ec247..8bdcba9 100644
+> >> --- a/arch/arm/mach-exynos/cpu.c
+> >> +++ b/arch/arm/mach-exynos/cpu.c
+> >> @@ -108,7 +108,12 @@ static struct map_desc exynos4_iodesc[] __initdata
+> =
+> >> {
+> >>  	}, {
+> >>  		.virtual	= (unsigned long)S5P_VA_DMC0,
+> >>  		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC0),
+> >> -		.length		= SZ_4K,
+> >> +		.length		= SZ_64K,
+> >> +		.type		= MT_DEVICE,
+> >> +	}, {
+> >> +		.virtual	= (unsigned long)S5P_VA_DMC1,
+> >> +		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC1),
+> >> +		.length		= SZ_64K,
+> >>  		.type		= MT_DEVICE,
+> >>  	}, {
+> >>  		.virtual	= (unsigned long)S5P_VA_SROMC,
+> >> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-
+> >> exynos/include/mach/map.h
+> >> index 058541d..870a980 100644
+> >> --- a/arch/arm/mach-exynos/include/mach/map.h
+> >> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> >> @@ -57,6 +57,7 @@
+> >>  #define EXYNOS4_PA_KEYPAD		0x100A0000
+> >>
+> >>  #define EXYNOS4_PA_DMC0			0x10400000
+> >> +#define EXYNOS4_PA_DMC1			0x10410000
 > >
-> > And I don't know why this patch included in this series, maybe this
-> should
-> > be separated from this series?
+> > If required, so just '.length = SZ_128K'?...
+> Doesn't it more confuse and difficult to use?
 > 
-> The error is:
-> arch/arm/mach-exynos/mach-nuri.c: In function 'nuri_power_init':
-> arch/arm/mach-exynos/mach-nuri.c:1080:2: error: implicit declaration
-> of function 'irq_alloc_descs'
-
-Well, I couldn't find the 'irq_alloc_descs' at the
-arch/arm/mach-exynos/mach-nuri.c file in my tree and linux-next. Maybe you
-missed submitting some patches?
-
-And I don't know why inclusion of <linux/export.h> is needed for
-'irq_alloc_descs'...
-
-> It is due to the recent changes in some of the header files (they
-> removed some header inclusion from header fiiles).
+> Even though there's not much definitions. it defines the offset concept.
+> "arch/arm/mach-exynos/include/mach/regs-mem.h"
 > 
-I think, if this is required, this fix should be separated because the build
-error what you said will be happened without this series...
-
-> In this patchset, we are providing a test case (Exynos4210-Nuri) for
-> the device driver and we had to resolve the compiler error first.
-> 
-If so, yes, firstly that should be fixed...but now don't we need this?
+OK.
 
 Thanks.
 
