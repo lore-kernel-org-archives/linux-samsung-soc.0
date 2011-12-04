@@ -1,65 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH v2] ARM: mach-shmobile: Use common always on power domain governor
-Date: Sun,  4 Dec 2011 01:24:41 +0000
-Message-ID: <1322961881-31945-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <20111203110309.GA6043@opensource.wolfsonmicro.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 2/3] ARM: mach-shmobile: Use common always on power domain governor
+Date: Sun, 4 Dec 2011 20:53:14 +0100
+Message-ID: <201112042053.14351.rjw@sisk.pl>
+References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <201112032331.07336.rjw@sisk.pl> <20111204012239.GA31215@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:43622 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752479Ab1LDBYq (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:41037 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754636Ab1LDTuS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Dec 2011 20:24:46 -0500
-In-Reply-To: <20111203110309.GA6043@opensource.wolfsonmicro.com>
+	Sun, 4 Dec 2011 14:50:18 -0500
+In-Reply-To: <20111204012239.GA31215@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Saves a tiny amount of code.
+On Sunday, December 04, 2011, Mark Brown wrote:
+> On Sat, Dec 03, 2011 at 11:31:07PM +0100, Rafael J. Wysocki wrote:
+> > On Saturday, December 03, 2011, Mark Brown wrote:
+> 
+> > > The first patch in the series added the replacement as generic code,
+> > > this patch is deleting the shmobile specific implementation and using
+> > > the generic code instead.
+> 
+> > No, the first patch didn't add any replacements for the functions that the
+> > second patch removed.  At least I don't see the replacements in the first
+> > patch.
+> 
+> Oh, right.  It'd really help if you were more specific.  I'd probably
+> have realised earlier that you are probably talking about the stop_dev
+> and start_dev functions which appear to have got caught up in the mess
+> of a rebase somehow - I didn't intentionally remove them as their
+> absence from the patch description and the lack of any removal of
+> references to them should suggest.
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- arch/arm/mach-shmobile/pm-sh7372.c |   14 ++------------
- 1 files changed, 2 insertions(+), 12 deletions(-)
+Well, I mentioned these two functions specifically in my first reply to the
+patch message. :-)
 
-diff --git a/arch/arm/mach-shmobile/pm-sh7372.c b/arch/arm/mach-shmobile/pm-sh7372.c
-index adf1765..7d7cdfc 100644
---- a/arch/arm/mach-shmobile/pm-sh7372.c
-+++ b/arch/arm/mach-shmobile/pm-sh7372.c
-@@ -162,16 +162,6 @@ static bool pd_active_wakeup(struct device *dev)
- 	return active_wakeup ? active_wakeup(dev) : true;
- }
- 
--static bool sh7372_power_down_forbidden(struct dev_pm_domain *domain)
--{
--	return false;
--}
--
--struct dev_power_governor sh7372_always_on_gov = {
--	.power_down_ok = sh7372_power_down_forbidden,
--	.stop_ok = default_stop_ok,
--};
--
- static int sh7372_stop_dev(struct device *dev)
- {
- 	int (*stop)(struct device *dev);
-@@ -246,7 +236,7 @@ struct sh7372_pm_domain sh7372_d4 = {
- 
- struct sh7372_pm_domain sh7372_a4r = {
- 	.bit_shift = 5,
--	.gov = &sh7372_always_on_gov,
-+	.gov = &pm_domain_always_on_gov,
- 	.suspend = sh7372_a4r_suspend,
- 	.resume = sh7372_intcs_resume,
- 	.stay_on = true,
-@@ -262,7 +252,7 @@ struct sh7372_pm_domain sh7372_a3ri = {
- 
- struct sh7372_pm_domain sh7372_a3sp = {
- 	.bit_shift = 11,
--	.gov = &sh7372_always_on_gov,
-+	.gov = &pm_domain_always_on_gov,
- 	.no_debug = true,
- };
- 
--- 
-1.7.7.3
+Thanks,
+Rafael
