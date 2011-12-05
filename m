@@ -1,50 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] spi/s3c64xx: Implement runtime PM support
-Date: Mon, 5 Dec 2011 23:16:48 +0000
-Message-ID: <20111205231647.GA21083@opensource.wolfsonmicro.com>
-References: <1323103813-5325-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1323103813-5325-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <CACRpkdYPdV2_Hr8hO_CAhZ=MvqcBiNdgwySbATcPSfwFRvkARg@mail.gmail.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
+ Samsung Exynos
+Date: Tue, 6 Dec 2011 08:24:30 +0900
+Message-ID: <CAH9JG2VALcm-PreS7S2SZPPgEbid_6_VWJA0PHBEtY5KvaA3Og@mail.gmail.com>
+References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
+	<20111205154715.GE25178@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35992 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932508Ab1LEXQv (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:43774 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932508Ab1LEXYb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Dec 2011 18:16:51 -0500
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYPdV2_Hr8hO_CAhZ=MvqcBiNdgwySbATcPSfwFRvkARg@mail.gmail.com>
+	Mon, 5 Dec 2011 18:24:31 -0500
+In-Reply-To: <20111205154715.GE25178@amd.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: KyongHo Cho <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>
 
-On Mon, Dec 05, 2011 at 10:41:21PM +0100, Linus Walleij wrote:
+On 12/6/11, Joerg Roedel <joerg.roedel@amd.com> wrote:
+> On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
+>> Patch Summary:
+>> [PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device definitions
+>> [PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
+>
+> Okay, I merged it into arm/exynos, but it is not pushed yet. Actually
+> there were conflicts while merging, which I resolved. What I failed
+> to find is a config for Exynos that actually builds for upstream Linux.
+> Probably I havn't tried hard enough to find one... Can you provide a
+> kernel config that I can use for my testing and that builds a current
+> 3.2-rc4 kernel for Exynos?
+and I hope to see the real example how to use it with exynos platform.
 
-> Just wanted to mention that I had this discussion with Magnus Damm
-> about how they do this in shmobile: in there their central runtime PM
-> policy in arch/arm/mach-shmobile/pm_runtime.c adds in the
-> pm_clk_notifier from drivers/base/power/clock_ops.c to gate/ungate
-> the clocks centrally acting on bus notifiers without any per-driver
-> hooks like these.
+Now I can't find the interface between exynos platform and generic exynos iommu.
+BTW, how do you test it at mainline kernel?
 
-Yeah, I'm familiar with that - some other platforms were looking into a
-similar scheme I think.
+Thank you,
+Kyungmin Park
 
-> I clearly see that in this platform it's *not* going to work since
-> for this one driver atleast, there are two clocks, not just one,
-> that need to be managed for the device.
-
-Well, that's not something that's a blocker to central management - the
-core can always work with two clocks.  What's more of an issue is when
-devices need to work with their clocks independantly of the core, but
-that's not insurmountable.
-
-I do also think that if we do decide to move more platforms to central
-management it's going to be easier to first transition all their drivers
-to a repetitive style of clock management and then do a big factor out
-once the pattern is clearly visible.  It's a big undertaking for things
-like the Samsung family of processors where you've got a huge set of
-chips to work with going all the way back to s3c24xx so anything we can
-do to make it easier is going to be a win.
+>
+> Thanks,
+>
+> 	Joerg
+>
+> --
+> AMD Operating System Research Center
+>
+> Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+> General Managers: Alberto Bozzo, Andrew Bowd
+> Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr.
+> 43632
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
