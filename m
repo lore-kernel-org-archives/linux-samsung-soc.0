@@ -1,43 +1,78 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Mon, 5 Dec 2011 16:47:15 +0100
-Message-ID: <20111205154715.GE25178@amd.com>
-References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/2] spi/s3c64xx: Convert to dev_pm_ops
+Date: Mon,  5 Dec 2011 16:50:12 +0000
+Message-ID: <1323103813-5325-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from va3ehsobe003.messaging.microsoft.com ([216.32.180.13]:26553
-	"EHLO VA3EHSOBE003.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932421Ab1LEPrX (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40185 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932436Ab1LEQuR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Dec 2011 10:47:23 -0500
-Content-Disposition: inline
-In-Reply-To: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
+	Mon, 5 Dec 2011 11:50:17 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
-> Patch Summary:
-> [PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device definitions
-> [PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
+In preparation for the addition of runtime PM ops.
 
-Okay, I merged it into arm/exynos, but it is not pushed yet. Actually
-there were conflicts while merging, which I resolved. What I failed
-to find is a config for Exynos that actually builds for upstream Linux.
-Probably I havn't tried hard enough to find one... Can you provide a
-kernel config that I can use for my testing and that builds a current
-3.2-rc4 kernel for Exynos?
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ drivers/spi/spi-s3c64xx.c |   19 ++++++++++---------
+ 1 files changed, 10 insertions(+), 9 deletions(-)
 
-Thanks,
-
-	Joerg
-
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 9b16406..fef1c90 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1226,9 +1226,9 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ }
+ 
+ #ifdef CONFIG_PM
+-static int s3c64xx_spi_suspend(struct platform_device *pdev, pm_message_t state)
++static int s3c64xx_spi_suspend(struct device *dev)
+ {
+-	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
++	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	unsigned long flags;
+ 
+@@ -1248,9 +1248,10 @@ static int s3c64xx_spi_suspend(struct platform_device *pdev, pm_message_t state)
+ 	return 0;
+ }
+ 
+-static int s3c64xx_spi_resume(struct platform_device *pdev)
++static int s3c64xx_spi_resume(struct device *dev)
+ {
+-	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
++	struct platform_device *pdev = to_platform_device(dev);
++	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+ 	unsigned long flags;
+@@ -1269,19 +1270,19 @@ static int s3c64xx_spi_resume(struct platform_device *pdev)
+ 
+ 	return 0;
+ }
+-#else
+-#define s3c64xx_spi_suspend	NULL
+-#define s3c64xx_spi_resume	NULL
+ #endif /* CONFIG_PM */
+ 
++static struct dev_pm_ops s3c64xx_spi_pm = {
++	SET_SYSTEM_SLEEP_PM_OPS(s3c64xx_spi_suspend, s3c64xx_spi_resume)
++};
++
+ static struct platform_driver s3c64xx_spi_driver = {
+ 	.driver = {
+ 		.name	= "s3c64xx-spi",
+ 		.owner = THIS_MODULE,
++		.pm = &s3c64xx_spi_pm,
+ 	},
+ 	.remove = s3c64xx_spi_remove,
+-	.suspend = s3c64xx_spi_suspend,
+-	.resume = s3c64xx_spi_resume,
+ };
+ MODULE_ALIAS("platform:s3c64xx-spi");
+ 
 -- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+1.7.7.3
