@@ -1,62 +1,45 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/2] arm: exynos: allow platform-lcd driver to control lcd
- regulator source on origen
-Date: Mon, 5 Dec 2011 16:17:16 +0530
-Message-ID: <CAJuYYwRD9iop3k1ApcELgpk1R2rw0PX-nVLcstj35cVq9VKy7A@mail.gmail.com>
-References: <1323075148-29356-1-git-send-email-thomas.abraham@linaro.org>
-	<CAH9JG2XfNqCtxhfqiikuZKbvZnc2tZ2vGJ0FZuL=JcQirYJXTA@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] backlight: add regulator support for platform_lcd driver
+Date: Mon, 5 Dec 2011 10:52:02 +0000
+Message-ID: <20111205105201.GD11150@opensource.wolfsonmicro.com>
+References: <1323074921-29291-1-git-send-email-thomas.abraham@linaro.org>
+ <CAH9JG2XJ4TCEaN1rMRjMZNRn5Wx6jcTRC_DmyN4Qyf2zztWSsg@mail.gmail.com>
+ <CAJuYYwTT2jbbquZM=ZwK=Gh39ss=iG0WDCc3TYjzHLEgfeC1gA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:37389 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755836Ab1LEKrQ convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41241 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755825Ab1LEKwF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Dec 2011 05:47:16 -0500
-Received: by vbbfc26 with SMTP id fc26so3747275vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Dec 2011 02:47:16 -0800 (PST)
-In-Reply-To: <CAH9JG2XfNqCtxhfqiikuZKbvZnc2tZ2vGJ0FZuL=JcQirYJXTA@mail.gmail.com>
+	Mon, 5 Dec 2011 05:52:05 -0500
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwTT2jbbquZM=ZwK=Gh39ss=iG0WDCc3TYjzHLEgfeC1gA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, rpurdie@rpsys.net, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, patches@linaro.org, jhkim@insignal.co.kr, inderpal.singh@linaro.org, tushar.behera@linaro.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Kyungmin Park <kmpark@infradead.org>, rpurdie@rpsys.net, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, Linus Walleij <linus.walleij@linaro.org>, Rajendra Nayak <rnayak@ti.com>
 
-Dear Mr. Park,
+On Mon, Dec 05, 2011 at 04:06:17PM +0530, Thomas Abraham wrote:
+> On 5 December 2011 15:40, Kyungmin Park <kmpark@infradead.org> wrote:
 
-On 5 December 2011 15:44, Kyungmin Park <kmpark@infradead.org> wrote:
+> > Recent regulator discussion. it should be failed instead fall through
+> > gracefully.
 
-[...]
+> Ok. But in this case, there could be boards that do not use a
+> regulator for the lcd/display interface. Is it mandatory for fail if
+> regulator is not found. Sorry, I have not read through the regulator
+> discussion.
 
->> =A0static struct regulator_init_data __initdata max8997_ldo1_data =3D=
- {
->> @@ -379,11 +379,11 @@ static struct regulator_init_data __initdata
->> max8997_buck5_data =3D {
->> =A0static struct regulator_init_data __initdata max8997_buck7_data =3D=
- {
->> =A0 =A0 =A0 .constraints =A0 =A0=3D {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "VDD_LCD_3=
-=2E3V",
->> - =A0 =A0 =A0 =A0 =A0 =A0 .min_uV =A0 =A0 =A0 =A0 =3D 3300000,
->> - =A0 =A0 =A0 =A0 =A0 =A0 .max_uV =A0 =A0 =A0 =A0 =3D 3300000,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .min_uV =A0 =A0 =A0 =A0 =3D 750000,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .max_uV =A0 =A0 =A0 =A0 =3D 3900000,
-> It can support the voltage change at buck itself, but in board it's
-> fixed. I'm not sure it's correct usage at board file.
->
-> I think original code is better to understand and use it as name, it'=
-s
-> fixed v3.3 voltage.
+The boards should supply a fixed voltage regulator representing the
+supply (or use CONFIG_REGULATOR_DUMMY to substitute in a dummy regulator
+when not needed).  Sascha Hauer had some patches to add a flag that
+could be set to enable this mode on init rather than through Kconfig but
+they needed a bit of cleanup, not sure what the status is there.
 
-Yes, that is true. If the board cannot support any other voltage for
-buck7, there is no need to change min_uV and max_uV. I will revert it
-to the original values.
+> The constraint 'apply_uV' cannot be expressed with a device tree. So
+> there has be a mechanism to set the required output voltage for a
+> regulator.
 
-Thanks,
-Thomas.
-
->
-> Thank you,
-> Kyungmin Park
-
-[...]
+It's not an option to not have it with device tree - if there's a single
+voltage specified apply_uV is assumed.
