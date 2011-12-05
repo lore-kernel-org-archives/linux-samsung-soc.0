@@ -1,61 +1,70 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] backlight: add regulator support for platform_lcd driver
-Date: Mon, 5 Dec 2011 14:44:14 +0530
-Message-ID: <CAJuYYwTJOfCGUObv4+GakO8BN3N10=T6pH7MdCAiqtBrVGz1_Q@mail.gmail.com>
-References: <1323074921-29291-1-git-send-email-thomas.abraham@linaro.org>
-	<20111205085228.GF9900@legolas.emea.dhcp.ti.com>
+From: Kamil Debski <k.debski@samsung.com>
+Subject: RE: MFC V1.0 questions
+Date: Mon, 05 Dec 2011 10:47:18 +0100
+Message-ID: <ADF13DA15EB3FE4FBA487CCC7BEFDF3622550078C5@bssrvexch01>
+References: <CAA11ShCGVGFr=hOF=CDCRtQZ0kG+y-ZB3ymYAYUFszKh1BaDqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:42079 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752814Ab1LEJOP convert rfc822-to-8bit (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:15535 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754250Ab1LEJsD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Dec 2011 04:14:15 -0500
-In-Reply-To: <20111205085228.GF9900@legolas.emea.dhcp.ti.com>
+	Mon, 5 Dec 2011 04:48:03 -0500
+Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LVQ00M195W0X8@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Dec 2011 09:48:00 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LVQ00JJ75W0F4@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Dec 2011 09:48:00 +0000 (GMT)
+In-reply-to: <CAA11ShCGVGFr=hOF=CDCRtQZ0kG+y-ZB3ymYAYUFszKh1BaDqA@mail.gmail.com>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: rpurdie@rpsys.net, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Dron Gus <dron0gus@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Felipe,
-
-On 5 December 2011 14:22, Felipe Balbi <balbi@ti.com> wrote:
-
-[...]
-
->> + =A0 =A0 if (lcd_power) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (plcd->pdata->min_uV || plcd->pdata->ma=
-x_uV)
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (regulator_set_voltage(=
-lcd_regulator,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 plcd->pdat=
-a->min_uV, plcd->pdata->max_uV))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(p=
-lcd->us,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 "regulator voltage set failed\n");
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (regulator_enable(lcd_regulator))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(plcd->us, "failed=
- to enable regulator\n");
->> + =A0 =A0 } else {
->> + =A0 =A0 =A0 =A0 =A0 =A0 regulator_disable(lcd_regulator);
->> + =A0 =A0 }
->> +
->> + =A0 =A0 regulator_put(lcd_regulator);
->
-> I wonder why you ->get() and ->put() everytime here. Wouldn't it be
-> enough to ->get() on probe() and ->put() on remove() ??
-
-Thanks for the suggestion. It would be simpler if done in probe. I
-will redo this patch.
-
-Regards,
-Thomas.
-
->
-> --
-> balbi
->
+SGksDQoNCj4gRnJvbTogbGludXgtc2Ftc3VuZy1zb2Mtb3duZXJAdmdlci5rZXJuZWwub3JnIFtt
+YWlsdG86bGludXgtc2Ftc3VuZy1zb2MtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVo
+YWxmIE9mIERyb24gR3VzDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMTEgMTI6MTcNCj4NCj4gSGVs
+bG8NCj4NCj4gSSBhbSBpbnRlcmVzdGVkIGluIGEgY291cGxlIG9mIHF1ZXN0aW9ucyByZWxhdGVk
+IHRvIG1mdiB2MS4wLCB1c2VkIGluDQo+IHRoZSBzM2M2NDEwLg0KPiAxKSBEb2VzIGFueW9uZSB3
+b3JrIG9uIG1mYyB2MS4wIGRyaXZlciBmb3IgbWFpbmxpbmU/DQoNClRoZXJlIGlzIG5vIGRyaXZl
+ciBpbiB0aGUgbWFpbmxpbmUuIEhvd2V2ZXIgeW91IG1heSBmaW5kIGl0IGluIHNvbWUgcmVwb3MN
+Cm9uIHRoZSB3ZWIgaHR0cDovL3d3dy5nb29nbGUuY29tL3NlYXJjaD9xPXNhbXN1bmcra2VybmVs
+K21mYzEwK2RyaXZlcg0KdGhhdCBoYXZlIGFuIE1GQyAxLjAgZHJpdmVyIHByZXNlbnQuDQoNCj4g
+Mikgd2hldGhlciB0aGVyZSBpcyBhIG5ld2VyIGZpcm13YXJlIGZvciBNRkMgcHJvY2Vzc29yIG90
+aGVyIHRoYW4gdGhlIFYxMzc/DQoNCkkgaGF2ZSBubyBpZGVhLiBZb3UgbWF5IHdhbnQgdG8gY29u
+dGFjdCBTYW1zdW5nIExTSSBpbiB0aGlzIG1hdHRlcg0KaHR0cDovL3d3dy5zYW1zdW5nLmNvbS9n
+bG9iYWwvYnVzaW5lc3Mvc2VtaWNvbmR1Y3Rvci9mb290ZXIvRm9vdGVyX0NvbnRhY3RVcy5odG1s
+DQoNCj4gMykgaG93IG11Y2ggZGlmZmVyZW50IE1GQyB2ZXJzaW9uIDEuMCAoNjQxMCkgYW5kIDQu
+MCAocHYyMTApLiBTaG91bGQgSQ0KPiByZWx5IG9uIHRoZSBkcml2ZXIgZm9yIE1GQyB2NC4wLCB3
+aGVuIHdyaXRpbmcgYSBkcml2ZXIgZm9yIFYxLjA/DQoNClRoZXNlIE1GQyB2ZXJzaW9uIGFyZSB2
+ZXJ5IGRpZmZlcmVudC4gSW4gYWRkaXRpb24gdGhlcmUgYXJlIG1hbnkgZGlmZmVyZW5jZXMgYmV0
+d2Vlbg0KdmVyc2lvbiA0LjAgYW5kIDUuMCwgYWx0aG91Z2ggeW91IGNhbiBmaW5kIHNvbWUgc2lt
+aWxhcml0aWVzIGJldHdlZW4gNC4wIGFuZCA1LjAuDQoNCkZvciB2ZXJzaW9uIDUuMCB5b3UgY2Fu
+IGZpbmQgdGhlIGRyaXZlciBpbiBtYWlubGluZSBodHRwOi8vZ29vLmdsL2ZiQ0tGLg0KDQpJZiB5
+b3Ugd2FudCB0byB3cml0ZSB0aGUgZHJpdmVyIHRoZW4geW91IHNob3VsZCBjb25zaWRlciB1c2lu
+ZyB0aGUgVjRMMiBjb2RlYyBBUEkuDQoNCkJlc3Qgd2lzaGVzLA0KS2FtaWwgRGVic2tpDQoNCg0K
+VGhlIGFib3ZlIG1lc3NhZ2UgaXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgbmFtZWQgYWRkcmVz
+c2VlIGFuZCBtYXkgY29udGFpbiB0cmFkZSBzZWNyZXQsIGluZHVzdHJpYWwgdGVjaG5vbG9neSBv
+ciBwcml2aWxlZ2VkIGFuZCBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gb3RoZXJ3aXNlIHByb3Rl
+Y3RlZCB1bmRlciBhcHBsaWNhYmxlIGxhdy4gQW55IHVuYXV0aG9yaXplZCBkaXNzZW1pbmF0aW9u
+LCBkaXN0cmlidXRpb24sIGNvcHlpbmcgb3IgdXNlIG9mIHRoZSBpbmZvcm1hdGlvbiBjb250YWlu
+ZWQgaW4gdGhpcyBjb21tdW5pY2F0aW9uIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIElmIHlvdSBo
+YXZlIHJlY2VpdmVkIHRoaXMgY29tbXVuaWNhdGlvbiBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSBz
+ZW5kZXIgYnkgZW1haWwgYW5kIGRlbGV0ZSB0aGlzIGNvbW11bmljYXRpb24gaW1tZWRpYXRlbHku
+DQoNCg0KUG93ecW8c3phIHdpYWRvbW/Fm8SHIHByemV6bmFjem9uYSBqZXN0IHd5xYLEhWN6bmll
+IGRsYSBhZHJlc2F0YSBuaW5pZWpzemVqIHdpYWRvbW/Fm2NpIGkgbW/FvGUgemF3aWVyYcSHIGlu
+Zm9ybWFjamUgYsSZZMSFY2UgdGFqZW1uaWPEhSBoYW5kbG93xIUsIHRhamVtbmljxIUgcHJ6ZWRz
+acSZYmlvcnN0d2Egb3JheiBpbmZvcm1hY2plIG8gY2hhcmFrdGVyemUgcG91Zm55bSBjaHJvbmlv
+bmUgb2Jvd2nEhXp1asSFY3ltaSBwcnplcGlzYW1pIHByYXdhLiBKYWtpZWtvbHdpZWsgbmlldXBy
+YXduaW9uZSBpY2ggcm96cG93c3plY2huaWFuaWUsIGR5c3RyeWJ1Y2phLCBrb3Bpb3dhbmllIGx1
+YiB1xbx5Y2llIGluZm9ybWFjamkgemF3YXJ0eWNoIHcgcG93ecW8c3plaiB3aWFkb21vxZtjaSBq
+ZXN0IHphYnJvbmlvbmUuIEplxZtsaSBvdHJ6eW1hxYJlxZsgcG93ecW8c3rEhSB3aWFkb21vxZvE
+hyBvbXnFgmtvd28sIHVwcnplam1pZSBwcm9zesSZIHBvaW5mb3JtdWogbyB0eW0gZmFrY2llIGRy
+b2fEhSBtYWlsb3fEhSBuYWRhd2PEmSB0ZWogd2lhZG9tb8WbY2kgb3JheiBuaWV6d8WCb2N6bmll
+IHVzdcWEIHBvd3nFvHN6xIUgd2lhZG9tb8WbxIcgemUgc3dvamVnbyBrb21wdXRlcmEuDQo=
