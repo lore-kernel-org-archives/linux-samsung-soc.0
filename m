@@ -1,70 +1,121 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: RE: MFC V1.0 questions
-Date: Mon, 05 Dec 2011 10:47:18 +0100
-Message-ID: <ADF13DA15EB3FE4FBA487CCC7BEFDF3622550078C5@bssrvexch01>
-References: <CAA11ShCGVGFr=hOF=CDCRtQZ0kG+y-ZB3ymYAYUFszKh1BaDqA@mail.gmail.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] backlight: add regulator support for platform_lcd driver
+Date: Mon, 5 Dec 2011 19:10:03 +0900
+Message-ID: <CAH9JG2XJ4TCEaN1rMRjMZNRn5Wx6jcTRC_DmyN4Qyf2zztWSsg@mail.gmail.com>
+References: <1323074921-29291-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:15535 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754250Ab1LEJsD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Dec 2011 04:48:03 -0500
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LVQ00M195W0X8@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Dec 2011 09:48:00 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LVQ00JJ75W0F4@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 05 Dec 2011 09:48:00 +0000 (GMT)
-In-reply-to: <CAA11ShCGVGFr=hOF=CDCRtQZ0kG+y-ZB3ymYAYUFszKh1BaDqA@mail.gmail.com>
-Content-language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1323074921-29291-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: rpurdie@rpsys.net, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dron Gus <dron0gus@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-SGksDQoNCj4gRnJvbTogbGludXgtc2Ftc3VuZy1zb2Mtb3duZXJAdmdlci5rZXJuZWwub3JnIFtt
-YWlsdG86bGludXgtc2Ftc3VuZy1zb2MtDQo+IG93bmVyQHZnZXIua2VybmVsLm9yZ10gT24gQmVo
-YWxmIE9mIERyb24gR3VzDQo+IFNlbnQ6IDAyIERlY2VtYmVyIDIwMTEgMTI6MTcNCj4NCj4gSGVs
-bG8NCj4NCj4gSSBhbSBpbnRlcmVzdGVkIGluIGEgY291cGxlIG9mIHF1ZXN0aW9ucyByZWxhdGVk
-IHRvIG1mdiB2MS4wLCB1c2VkIGluDQo+IHRoZSBzM2M2NDEwLg0KPiAxKSBEb2VzIGFueW9uZSB3
-b3JrIG9uIG1mYyB2MS4wIGRyaXZlciBmb3IgbWFpbmxpbmU/DQoNClRoZXJlIGlzIG5vIGRyaXZl
-ciBpbiB0aGUgbWFpbmxpbmUuIEhvd2V2ZXIgeW91IG1heSBmaW5kIGl0IGluIHNvbWUgcmVwb3MN
-Cm9uIHRoZSB3ZWIgaHR0cDovL3d3dy5nb29nbGUuY29tL3NlYXJjaD9xPXNhbXN1bmcra2VybmVs
-K21mYzEwK2RyaXZlcg0KdGhhdCBoYXZlIGFuIE1GQyAxLjAgZHJpdmVyIHByZXNlbnQuDQoNCj4g
-Mikgd2hldGhlciB0aGVyZSBpcyBhIG5ld2VyIGZpcm13YXJlIGZvciBNRkMgcHJvY2Vzc29yIG90
-aGVyIHRoYW4gdGhlIFYxMzc/DQoNCkkgaGF2ZSBubyBpZGVhLiBZb3UgbWF5IHdhbnQgdG8gY29u
-dGFjdCBTYW1zdW5nIExTSSBpbiB0aGlzIG1hdHRlcg0KaHR0cDovL3d3dy5zYW1zdW5nLmNvbS9n
-bG9iYWwvYnVzaW5lc3Mvc2VtaWNvbmR1Y3Rvci9mb290ZXIvRm9vdGVyX0NvbnRhY3RVcy5odG1s
-DQoNCj4gMykgaG93IG11Y2ggZGlmZmVyZW50IE1GQyB2ZXJzaW9uIDEuMCAoNjQxMCkgYW5kIDQu
-MCAocHYyMTApLiBTaG91bGQgSQ0KPiByZWx5IG9uIHRoZSBkcml2ZXIgZm9yIE1GQyB2NC4wLCB3
-aGVuIHdyaXRpbmcgYSBkcml2ZXIgZm9yIFYxLjA/DQoNClRoZXNlIE1GQyB2ZXJzaW9uIGFyZSB2
-ZXJ5IGRpZmZlcmVudC4gSW4gYWRkaXRpb24gdGhlcmUgYXJlIG1hbnkgZGlmZmVyZW5jZXMgYmV0
-d2Vlbg0KdmVyc2lvbiA0LjAgYW5kIDUuMCwgYWx0aG91Z2ggeW91IGNhbiBmaW5kIHNvbWUgc2lt
-aWxhcml0aWVzIGJldHdlZW4gNC4wIGFuZCA1LjAuDQoNCkZvciB2ZXJzaW9uIDUuMCB5b3UgY2Fu
-IGZpbmQgdGhlIGRyaXZlciBpbiBtYWlubGluZSBodHRwOi8vZ29vLmdsL2ZiQ0tGLg0KDQpJZiB5
-b3Ugd2FudCB0byB3cml0ZSB0aGUgZHJpdmVyIHRoZW4geW91IHNob3VsZCBjb25zaWRlciB1c2lu
-ZyB0aGUgVjRMMiBjb2RlYyBBUEkuDQoNCkJlc3Qgd2lzaGVzLA0KS2FtaWwgRGVic2tpDQoNCg0K
-VGhlIGFib3ZlIG1lc3NhZ2UgaXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgbmFtZWQgYWRkcmVz
-c2VlIGFuZCBtYXkgY29udGFpbiB0cmFkZSBzZWNyZXQsIGluZHVzdHJpYWwgdGVjaG5vbG9neSBv
-ciBwcml2aWxlZ2VkIGFuZCBjb25maWRlbnRpYWwgaW5mb3JtYXRpb24gb3RoZXJ3aXNlIHByb3Rl
-Y3RlZCB1bmRlciBhcHBsaWNhYmxlIGxhdy4gQW55IHVuYXV0aG9yaXplZCBkaXNzZW1pbmF0aW9u
-LCBkaXN0cmlidXRpb24sIGNvcHlpbmcgb3IgdXNlIG9mIHRoZSBpbmZvcm1hdGlvbiBjb250YWlu
-ZWQgaW4gdGhpcyBjb21tdW5pY2F0aW9uIGlzIHN0cmljdGx5IHByb2hpYml0ZWQuIElmIHlvdSBo
-YXZlIHJlY2VpdmVkIHRoaXMgY29tbXVuaWNhdGlvbiBpbiBlcnJvciwgcGxlYXNlIG5vdGlmeSBz
-ZW5kZXIgYnkgZW1haWwgYW5kIGRlbGV0ZSB0aGlzIGNvbW11bmljYXRpb24gaW1tZWRpYXRlbHku
-DQoNCg0KUG93ecW8c3phIHdpYWRvbW/Fm8SHIHByemV6bmFjem9uYSBqZXN0IHd5xYLEhWN6bmll
-IGRsYSBhZHJlc2F0YSBuaW5pZWpzemVqIHdpYWRvbW/Fm2NpIGkgbW/FvGUgemF3aWVyYcSHIGlu
-Zm9ybWFjamUgYsSZZMSFY2UgdGFqZW1uaWPEhSBoYW5kbG93xIUsIHRhamVtbmljxIUgcHJ6ZWRz
-acSZYmlvcnN0d2Egb3JheiBpbmZvcm1hY2plIG8gY2hhcmFrdGVyemUgcG91Zm55bSBjaHJvbmlv
-bmUgb2Jvd2nEhXp1asSFY3ltaSBwcnplcGlzYW1pIHByYXdhLiBKYWtpZWtvbHdpZWsgbmlldXBy
-YXduaW9uZSBpY2ggcm96cG93c3plY2huaWFuaWUsIGR5c3RyeWJ1Y2phLCBrb3Bpb3dhbmllIGx1
-YiB1xbx5Y2llIGluZm9ybWFjamkgemF3YXJ0eWNoIHcgcG93ecW8c3plaiB3aWFkb21vxZtjaSBq
-ZXN0IHphYnJvbmlvbmUuIEplxZtsaSBvdHJ6eW1hxYJlxZsgcG93ecW8c3rEhSB3aWFkb21vxZvE
-hyBvbXnFgmtvd28sIHVwcnplam1pZSBwcm9zesSZIHBvaW5mb3JtdWogbyB0eW0gZmFrY2llIGRy
-b2fEhSBtYWlsb3fEhSBuYWRhd2PEmSB0ZWogd2lhZG9tb8WbY2kgb3JheiBuaWV6d8WCb2N6bmll
-IHVzdcWEIHBvd3nFvHN6xIUgd2lhZG9tb8WbxIcgemUgc3dvamVnbyBrb21wdXRlcmEuDQo=
+On 12/5/11, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> The power source to the lcd panel or the lcd interface such as lvds
+> transmitters could be controlled by a regulator supply. Add support
+> for enabling/disabling the regulator when switching power to lcd.
+>
+> Two new elements 'min_uV' and 'max_uV' in the platform data are added
+> to allow platform code to specifiy the desired output voltage from the
+> regulator.
+>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/video/backlight/platform_lcd.c |   29 +++++++++++++++++++++++++++++
+>  include/video/platform_lcd.h           |    7 +++++++
+>  2 files changed, 36 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/video/backlight/platform_lcd.c
+> b/drivers/video/backlight/platform_lcd.c
+> index 302330a..ffa8108 100644
+> --- a/drivers/video/backlight/platform_lcd.c
+> +++ b/drivers/video/backlight/platform_lcd.c
+> @@ -17,6 +17,8 @@
+>  #include <linux/backlight.h>
+>  #include <linux/lcd.h>
+>  #include <linux/slab.h>
+> +#include <linux/regulator/consumer.h>
+> +#include <linux/regulator/machine.h>
+>
+>  #include <video/platform_lcd.h>
+>
+> @@ -44,11 +46,38 @@ static int platform_lcd_get_power(struct lcd_device
+> *lcd)
+>  static int platform_lcd_set_power(struct lcd_device *lcd, int power)
+>  {
+>  	struct platform_lcd *plcd = to_our_lcd(lcd);
+> +	struct regulator *lcd_regulator;
+>  	int lcd_power = 1;
+>
+>  	if (power == FB_BLANK_POWERDOWN || plcd->suspended)
+>  		lcd_power = 0;
+>
+> +	/*
+> +	 * If power to lcd and/or lcd interface is controlled using a regulator,
+> +	 * enable or disable the regulator based in the power setting.
+> +	 */
+> +	lcd_regulator = regulator_get(plcd->us, "vcc_lcd");
+> +	if (IS_ERR(lcd_regulator)) {
+> +		dev_info(plcd->us, "could not get regulator\n");
+> +		goto set_power;
+> +	}
+
+Recent regulator discussion. it should be failed instead fall through
+gracefully.
+> +
+> +	if (lcd_power) {
+> +		if (plcd->pdata->min_uV || plcd->pdata->max_uV)
+> +			if (regulator_set_voltage(lcd_regulator,
+> +				plcd->pdata->min_uV, plcd->pdata->max_uV))
+> +				dev_info(plcd->us,
+> +					"regulator voltage set failed\n");
+Are there case to change the voltage? Doesn't it easy to set the
+voltage at board file? I mean don't need to setup at drivers?
+
+Thank you,
+Kyungmin Park
+> +
+> +		if (regulator_enable(lcd_regulator))
+> +			dev_info(plcd->us, "failed to enable regulator\n");
+> +	} else {
+> +		regulator_disable(lcd_regulator);
+> +	}
+> +
+> +	regulator_put(lcd_regulator);
+> +
+> +set_power:
+>  	plcd->pdata->set_power(plcd->pdata, lcd_power);
+>  	plcd->power = power;
+>
+> diff --git a/include/video/platform_lcd.h b/include/video/platform_lcd.h
+> index ad3bdfe..acd5d21 100644
+> --- a/include/video/platform_lcd.h
+> +++ b/include/video/platform_lcd.h
+> @@ -14,8 +14,15 @@
+>  struct plat_lcd_data;
+>  struct fb_info;
+>
+> +/**
+> + * struct plat_lcd_data - platform data for platform_lcd driver.
+> + * @min_uV: Minimum required voltage output from the regulator.
+> + * @max_uV: Maximum acceptable voltage output from the regulator.
+> + */
+>  struct plat_lcd_data {
+>  	void	(*set_power)(struct plat_lcd_data *, unsigned int power);
+>  	int	(*match_fb)(struct plat_lcd_data *, struct fb_info *);
+> +	int	min_uV;
+> +	int	max_uV;
+>  };
+>
+> --
+> 1.6.6.rc2
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
