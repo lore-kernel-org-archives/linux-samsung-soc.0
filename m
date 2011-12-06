@@ -1,65 +1,50 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 1/3] PM: Provide an always on power domain governor
-Date: Tue, 06 Dec 2011 13:04:53 +0100
-Message-ID: <008101ccb40f$4385c0d0$ca914270$%szyprowski@samsung.com>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <201112042156.59990.rjw@sisk.pl>
- <20111204231005.GA4255@opensource.wolfsonmicro.com>
- <201112050115.18489.rjw@sisk.pl>
- <20111205001500.GA10173@opensource.wolfsonmicro.com>
- <02d601ccb400$a19380e0$e4ba82a0$%kim@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
+ Samsung Exynos
+Date: Tue, 6 Dec 2011 21:13:18 +0900
+Message-ID: <CAHQjnOOCHO3eDiUft4WgS=8N5EheWas+n3MD9xxBKUoSjmNQSQ@mail.gmail.com>
+References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
+	<20111205154715.GE25178@amd.com>
+	<CAH9JG2VALcm-PreS7S2SZPPgEbid_6_VWJA0PHBEtY5KvaA3Og@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:57936 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933238Ab1LFME7 (ORCPT
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:52932 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S933368Ab1LFMNU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 07:04:59 -0500
-In-reply-to: <02d601ccb400$a19380e0$e4ba82a0$%kim@samsung.com>
-Content-language: pl
+	Tue, 6 Dec 2011 07:13:20 -0500
+In-Reply-To: <CAH9JG2VALcm-PreS7S2SZPPgEbid_6_VWJA0PHBEtY5KvaA3Og@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, "'Rafael J. Wysocki'" <rjw@sisk.pl>
-Cc: 'Paul Mundt' <lethal@linux-sh.org>, 'Magnus Damm' <magnus.damm@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hello,
+On Tue, Dec 6, 2011 at 8:24 AM, Kyungmin Park <kmpark@infradead.org> wrote:
+> On 12/6/11, Joerg Roedel <joerg.roedel@amd.com> wrote:
+>> On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
+>>> Patch Summary:
+>>> [PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device definitions
+>>> [PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
+>>
+>> Okay, I merged it into arm/exynos, but it is not pushed yet. Actually
+>> there were conflicts while merging, which I resolved. What I failed
+>> to find is a config for Exynos that actually builds for upstream Linux.
+>> Probably I havn't tried hard enough to find one... Can you provide a
+>> kernel config that I can use for my testing and that builds a current
+>> 3.2-rc4 kernel for Exynos?
+> and I hope to see the real example how to use it with exynos platform.
+>
+> Now I can't find the interface between exynos platform and generic exynos iommu.
+In "[PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device
+definitions" patch,
+you can find sysmmu_init().
+It stores associations between a system MMU and a peripheral device in
+platform data of platform device descriptor.
+If Exynos IOMMU driver finds the association while probing, then the
+driver can control the system MMU.
 
-On Tuesday, December 06, 2011 11:20 AM Kukjin Kim wrote:
- 
-> Mark Brown wrote:
-> >
-> > On Mon, Dec 05, 2011 at 01:15:18AM +0100, Rafael J. Wysocki wrote:
-> > > On Monday, December 05, 2011, Mark Brown wrote:
-> >
-> > > > It might make sense for it to go via the Samsung tree - the third
-> > patch
-> > > > depends on it and there's some other stuff going on with the s3c64xx
-> > > > power management - so let's see what Kukjin thinks is best.
-> >
-> > > OTOH, it will conflict with some patches I have in the works.
-> >
-> > Ah, OK - in that case I guess it's sensible if you apply it.  Ideally it
-> > could be on a separate branch so it could be cross-merged with other
-> > trees if there's a need later.
-> 
-> Hi Mark and Rafael,
-> 
-> Looks ok to me on this series and would be nice to me if Rafael could create
-> topic branch in his tree and apply this series with my ack for Samsung
-> stuff.
-> 
-> Rafael, please let me know the branch when you create it so that I can merge
-> it into Samsung tree to avoid other conflicts.
-
-What about similar patches for S5PV210/S5PC110 series and Exynos4? gen_pd based
-power domain code for Exynos4 have been rejected in favor of custom platform-device
-based power domain drivers. It would be much easier to have only one type of the
-drivers across different Samsung SoCs. This will also help to hide some differences
-between the series from the device drivers (clock gating, power management). 
- 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+> BTW, how do you test it at mainline kernel?
+>
+I merged IOMMU mainline branch to our kernel branch and tested it with
+our FIMC, MFC, JPEG, 2D.
