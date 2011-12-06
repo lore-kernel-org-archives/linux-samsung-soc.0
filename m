@@ -1,66 +1,142 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 1/2] DMA: PL330: Remove pm_runtime_xxx calls from pl330 probe/remove
-Date: Tue,  6 Dec 2011 16:15:54 +0530
-Message-ID: <1323168355-2764-2-git-send-email-tushar.behera@linaro.org>
-References: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, vinod.koul@intel.com, linaro-dev@lists.linaro.org, patches@linaro.org
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH resend2] s3c24xx: cpufreq: Fix compilation error when
+ CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
+Date: Tue, 06 Dec 2011 20:31:15 +0900
+Message-ID: <02ef01ccb40a$9078f2e0$b16ad8a0$%kim@samsung.com>
+References: <4EDD720B.5040607@solonet.org.ua>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47318 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754009Ab1LFLbR (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Dec 2011 06:31:17 -0500
+In-reply-to: <4EDD720B.5040607@solonet.org.ua>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Denis Kuzmenko' <linux@solonet.org.ua>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-amba_probe() now calls pm_runtime_get_noresume() and pm_runtime_enable()
-for the devices before the device probe is called. Hence we don't need
-to call pm_runtime_get_xxx and pm_runtime_enable() in device probe again.
-In the same way, since amba_remove() calls the respective pm_runtime
-functions, those functions need not be called from device remove.
+Denis Kuzmenko wrote:
+> 
+> Fix compilation error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
+> 
+> Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+> ---
+> 
+> Patch is against 3.2-rc3.
+> CONFIG_S3C2410_IOTIMING wasn't present in Kconfig but was referenced by
+> Makefile. Because of this the file s3c2410-iotiming.c was not ever
+> compiled
 
-This patch fixes following run time error with pl330 driver.
+Well, there is 'S3C2410_IOTIMING' at arch/arm/plat-s3c24xx/Kconfig and it
+had dependency of 'CONFIG_CPU_FREQ_S3C24XX'...
 
-dma-pl330 dma-pl330.0: Unbalanced pm_runtime_enable!
-dma-pl330 dma-pl330.0: failed to get runtime pm
+Thanks.
 
-Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- drivers/dma/pl330.c |   17 ++---------------
- 1 files changed, 2 insertions(+), 15 deletions(-)
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index a626e15..cd07121 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -834,17 +834,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	amba_set_drvdata(adev, pdmac);
- 
--#ifdef CONFIG_PM_RUNTIME
--	/* to use the runtime PM helper functions */
--	pm_runtime_enable(&adev->dev);
--
--	/* enable the power domain */
--	if (pm_runtime_get_sync(&adev->dev)) {
--		dev_err(&adev->dev, "failed to get runtime pm\n");
--		ret = -ENODEV;
--		goto probe_err1;
--	}
--#else
-+#ifndef CONFIG_PM_RUNTIME
- 	/* enable dma clk */
- 	clk_enable(pdmac->clk);
- #endif
-@@ -977,10 +967,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
- 	res = &adev->res;
- 	release_mem_region(res->start, resource_size(res));
- 
--#ifdef CONFIG_PM_RUNTIME
--	pm_runtime_put(&adev->dev);
--	pm_runtime_disable(&adev->dev);
--#else
-+#ifndef CONFIG_PM_RUNTIME
- 	clk_disable(pdmac->clk);
- #endif
- 
--- 
-1.7.4.1
+> and enabling CONFIG_CPU_FREQ_S3C24XX_DEBUGFS option caused undefined
+> reference to function s3c2410_iotiming_debugfs defined in that file.
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 44789ef..81d7025 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -2104,9 +2104,31 @@ config CPU_FREQ_S3C24XX_DEBUG
+>  	help
+>  	  Enable s3c_freq_dbg for the Samsung S3C CPUfreq core
+>  +config S3C2410_IOTIMING
+> +	bool "CPUfreq iotiming for Samsung S3C2410 series CPUs"
+> +	depends on ARCH_S3C2410 && CPU_FREQ && CPU_FREQ_S3C24XX &&
+> EXPERIMENTAL
+> +	help
+> +	  This enables the CPUfreq driver for the Samsung S3C24XX to change
+> +	  IO timing according to the CPU frequency.
+> +
+> +	  For details, take a look at <file:Documentation/cpu-freq>.
+> +
+> +	  If in doubt, say Y.
+> +
+> +config S3C2412_IOTIMING
+> +	bool "CPUfreq iotiming for Samsung S3C2412 series CPUs"
+> +	depends on ARCH_S3C2412 && CPU_FREQ && CPU_FREQ_S3C24XX &&
+> EXPERIMENTAL
+> +	help
+> +	  This enables the CPUfreq driver for the Samsung S3C2412 to change
+> +	  IO timing according to the CPU frequency.
+> +
+> +	  For details, take a look at <file:Documentation/cpu-freq>.
+> +
+> +	  If in doubt, say Y.
+> +
+>  config CPU_FREQ_S3C24XX_IODEBUG
+>  	bool "Debug CPUfreq Samsung driver IO timing"
+> -	depends on CPU_FREQ_S3C24XX
+> +	depends on CPU_FREQ_S3C24XX && (S3C2410_IOTIMING ||
+> S3C2412_IOTIMING)
+>  	help
+>  	  Enable s3c_freq_iodbg for the Samsung S3C CPUfreq core
+>  diff --git a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
+> b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
+> index dac4760..c465252 100644
+> --- a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
+> +++ b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
+> @@ -202,13 +202,23 @@ extern int s3c_plltab_register(struct
+> cpufreq_frequency_table *plls,
+>  extern struct s3c_cpufreq_config *s3c_cpufreq_getconfig(void);
+>  extern struct s3c_iotimings *s3c_cpufreq_getiotimings(void);
+>  -extern void s3c2410_iotiming_debugfs(struct seq_file *seq,
+> -				     struct s3c_cpufreq_config *cfg,
+> -				     union s3c_iobank *iob);
+> -
+> -extern void s3c2412_iotiming_debugfs(struct seq_file *seq,
+> -				     struct s3c_cpufreq_config *cfg,
+> -				     union s3c_iobank *iob);
+> +#ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
+> +	#ifdef CONFIG_S3C2410_IOTIMING
+> +	extern void s3c2410_iotiming_debugfs(struct seq_file *seq,
+> +					     struct s3c_cpufreq_config *cfg,
+> +					     union s3c_iobank *iob);
+> +	#else
+> +	#define s3c2410_iotiming_debugfs	NULL
+> +	#endif
+> +
+> +	#ifdef CONFIG_S3C2412_IOTIMING
+> +	extern void s3c2412_iotiming_debugfs(struct seq_file *seq,
+> +					     struct s3c_cpufreq_config *cfg,
+> +					     union s3c_iobank *iob);
+> +	#else
+> +	#define s3c2412_iotiming_debugfs	NULL
+> +	#endif
+> +#endif
+>   #ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
+>  #define s3c_cpufreq_debugfs_call(x) x
+> @@ -241,10 +251,7 @@ extern void s3c2410_iotiming_set(struct
+> s3c_cpufreq_config *cfg,
+>  #endif /* CONFIG_S3C2410_IOTIMING */
+>   /* S3C2412 compatible routines */
+> -
+> -extern int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
+> -				struct s3c_iotimings *timings);
+> -
+> +#ifdef CONFIG_S3C2412_IOTIMING
+>  extern int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
+>  				struct s3c_iotimings *timings);
+>  @@ -253,6 +260,11 @@ extern int s3c2412_iotiming_calc(struct
+> s3c_cpufreq_config *cfg,
+>   extern void s3c2412_iotiming_set(struct s3c_cpufreq_config *cfg,
+>  				 struct s3c_iotimings *iot);
+> +#else
+> +#define s3c2412_iotiming_calc NULL
+> +#define s3c2412_iotiming_get NULL
+> +#define s3c2412_iotiming_set NULL
+> +#endif
+>   #ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUG
+>  #define s3c_freq_dbg(x...) printk(KERN_INFO x)
