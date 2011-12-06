@@ -1,38 +1,42 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 0/2] Add PM_RUNTIME related fixes for PL330
-Date: Tue,  6 Dec 2011 16:15:53 +0530
-Message-ID: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:61550 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933092Ab1LFKtT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 05:49:19 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 2/2] ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
+Date: Tue,  6 Dec 2011 16:15:55 +0530
+Message-ID: <1323168355-2764-3-git-send-email-tushar.behera@linaro.org>
+References: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: kgene.kim@samsung.com, vinod.koul@intel.com, linaro-dev@lists.linaro.org, patches@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+Amba core assumes the pclk to be named as apb_pclk. During device probe,
+it tries to get that clock and enable that. When PM_RUNTIME is enabled,
+dma clock is not explicitly enabled in pl330_probe, which causes device
+probe to fail. Adding a clkdev entry for apb_pclk for mdma1 fixes the
+problem.
 
-When PM_RUNTIME is enabled, PL330 probe fails because of some
-mismatch in pm_runtime calls. This patchset fixes those issues.
+This patch fixes following runtime error.
 
-This patch is based on Kukjin's for-next branch and tested on
-EXYNOS4 based Origen board.
+dma-pl330 dma-pl330.2: PERIPH_ID 0x0, PCELL_ID 0x0 !
+dma-pl330: probe of dma-pl330.2 failed with error -22
 
-d3d936c "Merge branch 'samsung-fixes-2' into for-next"
-
-Tushar Behera (2):
-To Vinod Koul <vinod.koul@intel.com>:
-  DMA: PL330: Remove pm_runtime_xxx calls from pl330 probe/remove
-
-To Kukjin Kim <kgene.kim@samsung.com>:
-  ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
-
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
  arch/arm/mach-exynos/clock.c |    1 +
- drivers/dma/pl330.c          |   17 ++---------------
- 2 files changed, 3 insertions(+), 15 deletions(-)
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
+index 28e2842..eb33a7a 100644
+--- a/arch/arm/mach-exynos/clock.c
++++ b/arch/arm/mach-exynos/clock.c
+@@ -1326,6 +1326,7 @@ static struct clk_lookup exynos4_clk_lookup[] = {
+ 	CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
+ 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
+ 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
++	CLKDEV_INIT("dma-pl330.2", "apb_pclk", &clk_mdma1),
+ };
+ 
+ static int xtal_rate;
 -- 
 1.7.4.1
