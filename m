@@ -1,48 +1,54 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Tue, 6 Dec 2011 17:23:46 +0100
-Message-ID: <20111206162346.GP25178@amd.com>
-References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
- <20111205154715.GE25178@amd.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/3] PM: Provide an always on power domain governor
+Date: Tue, 6 Dec 2011 22:39:56 +0100
+Message-ID: <201112062239.57001.rjw@sisk.pl>
+References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <20111205001500.GA10173@opensource.wolfsonmicro.com> <02d601ccb400$a19380e0$e4ba82a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ch1ehsobe006.messaging.microsoft.com ([216.32.181.186]:4008
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751508Ab1LFQXz (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:45707 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754584Ab1LFVg7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 11:23:55 -0500
-Content-Disposition: inline
-In-Reply-To: <20111205154715.GE25178@amd.com>
+	Tue, 6 Dec 2011 16:36:59 -0500
+In-Reply-To: <02d601ccb400$a19380e0$e4ba82a0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Paul Mundt' <lethal@linux-sh.org>, 'Magnus Damm' <magnus.damm@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Mon, Dec 05, 2011 at 04:47:15PM +0100, Joerg Roedel wrote:
+On Tuesday, December 06, 2011, Kukjin Kim wrote:
+> Mark Brown wrote:
+> > 
+> > On Mon, Dec 05, 2011 at 01:15:18AM +0100, Rafael J. Wysocki wrote:
+> > > On Monday, December 05, 2011, Mark Brown wrote:
+> > 
+> > > > It might make sense for it to go via the Samsung tree - the third
+> > patch
+> > > > depends on it and there's some other stuff going on with the s3c64xx
+> > > > power management - so let's see what Kukjin thinks is best.
+> > 
+> > > OTOH, it will conflict with some patches I have in the works.
+> > 
+> > Ah, OK - in that case I guess it's sensible if you apply it.  Ideally it
+> > could be on a separate branch so it could be cross-merged with other
+> > trees if there's a need later.
+> 
+> Hi Mark and Rafael,
+> 
+> Looks ok to me on this series and would be nice to me if Rafael could create
+> topic branch in his tree and apply this series with my ack for Samsung
+> stuff.
+> 
+> Rafael, please let me know the branch when you create it so that I can merge
+> it into Samsung tree to avoid other conflicts.
 
-> Okay, I merged it into arm/exynos, but it is not pushed yet. Actually
-> there were conflicts while merging, which I resolved. What I failed
-> to find is a config for Exynos that actually builds for upstream Linux.
-> Probably I havn't tried hard enough to find one... Can you provide a
-> kernel config that I can use for my testing and that builds a current
-> 3.2-rc4 kernel for Exynos?
-
-Okay, since there are new objections and since I can't even reliably
-build test the driver I unmerged it again.
-Please fix the outstanding issues and rebase it against a recent upstream
-kernel so that the result can be compiled to a kernel-image.
-
+I need an ack from Magnus or Paul on the shmobile patch. When I get one, I'll
+put patches [1/3] and [2/3] (new version) into my linux-next branch and then
+(after a few days spent in linux-next) to the pm-domains branch.  I'll let you
+know when that happens.
 
 Thanks,
-
-	Joerg
-
-
--- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+Rafael
