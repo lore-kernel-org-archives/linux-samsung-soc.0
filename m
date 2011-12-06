@@ -1,54 +1,42 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 1/3] PM: Provide an always on power domain governor
-Date: Tue, 6 Dec 2011 22:39:56 +0100
-Message-ID: <201112062239.57001.rjw@sisk.pl>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <20111205001500.GA10173@opensource.wolfsonmicro.com> <02d601ccb400$a19380e0$e4ba82a0$%kim@samsung.com>
+From: Denis Kuzmenko <linux@solonet.org.ua>
+Subject: Re: [PATCH resend2] s3c24xx: cpufreq: Fix compilation error when
+ CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
+Date: Wed, 07 Dec 2011 01:26:51 +0200
+Message-ID: <4EDEA4BB.60807@solonet.org.ua>
+References: <4EDD720B.5040607@solonet.org.ua> <02ef01ccb40a$9078f2e0$b16ad8a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:45707 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754584Ab1LFVg7 (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:40225 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754392Ab1LFX35 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 16:36:59 -0500
-In-Reply-To: <02d601ccb400$a19380e0$e4ba82a0$%kim@samsung.com>
+	Tue, 6 Dec 2011 18:29:57 -0500
+In-Reply-To: <02ef01ccb40a$9078f2e0$b16ad8a0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Paul Mundt' <lethal@linux-sh.org>, 'Magnus Damm' <magnus.damm@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Tuesday, December 06, 2011, Kukjin Kim wrote:
-> Mark Brown wrote:
-> > 
-> > On Mon, Dec 05, 2011 at 01:15:18AM +0100, Rafael J. Wysocki wrote:
-> > > On Monday, December 05, 2011, Mark Brown wrote:
-> > 
-> > > > It might make sense for it to go via the Samsung tree - the third
-> > patch
-> > > > depends on it and there's some other stuff going on with the s3c64xx
-> > > > power management - so let's see what Kukjin thinks is best.
-> > 
-> > > OTOH, it will conflict with some patches I have in the works.
-> > 
-> > Ah, OK - in that case I guess it's sensible if you apply it.  Ideally it
-> > could be on a separate branch so it could be cross-merged with other
-> > trees if there's a need later.
+On 12/06/2011 01:31 PM, Kukjin Kim wrote:
+> Denis Kuzmenko wrote:
+>>
+>> Fix compilation error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
+>>
+>> Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+>> ---
+>>
+>> Patch is against 3.2-rc3.
+>> CONFIG_S3C2410_IOTIMING wasn't present in Kconfig but was referenced by
+>> Makefile. Because of this the file s3c2410-iotiming.c was not ever
+>> compiled
 > 
-> Hi Mark and Rafael,
+> Well, there is 'S3C2410_IOTIMING' at arch/arm/plat-s3c24xx/Kconfig and it
+> had dependency of 'CONFIG_CPU_FREQ_S3C24XX'...
 > 
-> Looks ok to me on this series and would be nice to me if Rafael could create
-> topic branch in his tree and apply this series with my ack for Samsung
-> stuff.
-> 
-> Rafael, please let me know the branch when you create it so that I can merge
-> it into Samsung tree to avoid other conflicts.
 
-I need an ack from Magnus or Paul on the shmobile patch. When I get one, I'll
-put patches [1/3] and [2/3] (new version) into my linux-next branch and then
-(after a few days spent in linux-next) to the pm-domains branch.  I'll let you
-know when that happens.
+Yeah, I've missed that, thank you. I'll make a new version.
 
-Thanks,
-Rafael
+-- 
+Best regards, Denis Kuzmenko.
