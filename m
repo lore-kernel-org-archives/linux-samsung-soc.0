@@ -1,60 +1,55 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Tue, 6 Dec 2011 08:24:30 +0900
-Message-ID: <CAH9JG2VALcm-PreS7S2SZPPgEbid_6_VWJA0PHBEtY5KvaA3Og@mail.gmail.com>
-References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
-	<20111205154715.GE25178@amd.com>
+From: Denis Kuzmenko <linux@solonet.org.ua>
+Subject: [PATCH resend3] arm: s3c24xx: Add new LCD (W35i) support for Mini2440
+ board
+Date: Tue, 06 Dec 2011 03:37:09 +0200
+Message-ID: <4EDD71C5.1090905@solonet.org.ua>
+References: <4EC588A8.3030907@solonet.org.ua>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:43774 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932508Ab1LEXYb (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:65148 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932809Ab1LFBj7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Dec 2011 18:24:31 -0500
-In-Reply-To: <20111205154715.GE25178@amd.com>
+	Mon, 5 Dec 2011 20:39:59 -0500
+In-Reply-To: <4EC588A8.3030907@solonet.org.ua>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joerg.roedel@amd.com>
-Cc: KyongHo Cho <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On 12/6/11, Joerg Roedel <joerg.roedel@amd.com> wrote:
-> On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
->> Patch Summary:
->> [PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device definitions
->> [PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
->
-> Okay, I merged it into arm/exynos, but it is not pushed yet. Actually
-> there were conflicts while merging, which I resolved. What I failed
-> to find is a config for Exynos that actually builds for upstream Linux.
-> Probably I havn't tried hard enough to find one... Can you provide a
-> kernel config that I can use for my testing and that builds a current
-> 3.2-rc4 kernel for Exynos?
-and I hope to see the real example how to use it with exynos platform.
+Add new LCD (W35i) support for Mini2440 board
 
-Now I can't find the interface between exynos platform and generic exynos iommu.
-BTW, how do you test it at mainline kernel?
+Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+---
 
-Thank you,
-Kyungmin Park
-
->
-> Thanks,
->
-> 	Joerg
->
-> --
-> AMD Operating System Research Center
->
-> Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-> General Managers: Alberto Bozzo, Andrew Bowd
-> Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr.
-> 43632
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-s3c2440/mach-mini2440.c
+b/arch/arm/mach-s3c2440/mach-mini2440.c
+index fc2dc0b..951eadd 100644
+--- a/arch/arm/mach-s3c2440/mach-mini2440.c
++++ b/arch/arm/mach-s3c2440/mach-mini2440.c
+@@ -167,6 +167,24 @@ static struct s3c2410fb_display mini2440_lcd_cfg[]
+__initdata = {
+ 		.lcdcon5	= (S3C2410_LCDCON5_FRM565 |
+ 				   S3C2410_LCDCON5_HWSWP),
+ 	},
++	/* mini2440 + 3.5" TFT (LCD-W35i, LQ035Q1DG06 type) + touchscreen*/
++	[3] = {
++		_LCD_DECLARE(
++			/* clock */
++			7,
++			/* xres, margin_right, margin_left, hsync */
++			320, 68, 66, 4,
++			/* yres, margin_top, margin_bottom, vsync */
++			240, 4, 4, 9,
++			/* refresh rate */
++			60),
++		.lcdcon5	= (S3C2410_LCDCON5_FRM565 |
++				   S3C2410_LCDCON5_INVVDEN |
++				   S3C2410_LCDCON5_INVVFRAME |
++				   S3C2410_LCDCON5_INVVLINE |
++				   S3C2410_LCDCON5_INVVCLK |
++				   S3C2410_LCDCON5_HWSWP),
++	},
+ };
+  /* todo - put into gpio header */
