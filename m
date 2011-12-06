@@ -1,59 +1,44 @@
-From: Kyungmin Park <kmpark@infradead.org>
+From: Joerg Roedel <joerg.roedel@amd.com>
 Subject: Re: [PATCH v7 0/2] iommu/exynos: Add IOMMU/System MMU driver for
  Samsung Exynos
-Date: Tue, 6 Dec 2011 21:47:21 +0900
-Message-ID: <CAH9JG2UyC651ddwiDLLUCyzgyLJx-_AVwd9+ea8dQuK1j_nJ=w@mail.gmail.com>
+Date: Tue, 6 Dec 2011 13:57:39 +0100
+Message-ID: <20111206125739.GK25178@amd.com>
 References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
-	<20111205154715.GE25178@amd.com>
-	<CAH9JG2VALcm-PreS7S2SZPPgEbid_6_VWJA0PHBEtY5KvaA3Og@mail.gmail.com>
-	<CAHQjnOOCHO3eDiUft4WgS=8N5EheWas+n3MD9xxBKUoSjmNQSQ@mail.gmail.com>
+ <20111205154715.GE25178@amd.com>
+ <CAH9JG2VALcm-PreS7S2SZPPgEbid_6_VWJA0PHBEtY5KvaA3Og@mail.gmail.com>
+ <CAHQjnOOCHO3eDiUft4WgS=8N5EheWas+n3MD9xxBKUoSjmNQSQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:51480 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933145Ab1LFMrW (ORCPT
+Received: from va3ehsobe001.messaging.microsoft.com ([216.32.180.11]:37331
+	"EHLO VA3EHSOBE008.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1752266Ab1LFM5u (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 07:47:22 -0500
+	Tue, 6 Dec 2011 07:57:50 -0500
+Content-Disposition: inline
 In-Reply-To: <CAHQjnOOCHO3eDiUft4WgS=8N5EheWas+n3MD9xxBKUoSjmNQSQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org, Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Dec 6, 2011 at 9:13 PM, KyongHo Cho <pullip.cho@samsung.com> wrote:
-> On Tue, Dec 6, 2011 at 8:24 AM, Kyungmin Park <kmpark@infradead.org> wrote:
->> On 12/6/11, Joerg Roedel <joerg.roedel@amd.com> wrote:
->>> On Fri, Nov 18, 2011 at 06:47:28PM +0900, KyongHo Cho wrote:
->>>> Patch Summary:
->>>> [PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device definitions
->>>> [PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
->>>
->>> Okay, I merged it into arm/exynos, but it is not pushed yet. Actually
->>> there were conflicts while merging, which I resolved. What I failed
->>> to find is a config for Exynos that actually builds for upstream Linux.
->>> Probably I havn't tried hard enough to find one... Can you provide a
->>> kernel config that I can use for my testing and that builds a current
->>> 3.2-rc4 kernel for Exynos?
->> and I hope to see the real example how to use it with exynos platform.
->>
->> Now I can't find the interface between exynos platform and generic exynos iommu.
-> In "[PATCH v7 1/2] ARM: EXYNOS: Change System MMU platform device
-> definitions" patch,
-> you can find sysmmu_init().
-> It stores associations between a system MMU and a peripheral device in
-> platform data of platform device descriptor.
-> If Exynos IOMMU driver finds the association while probing, then the
-> driver can control the system MMU.
-Maybe it's still call the function directly instead of using struct
-dev field as OMAP did.
-Even though generic DMA mapping IOMMU doesn't used, you can connect
-the iommu field at arch/arm/include/asm/device.h
-
-BR,
-Kyungmin Park
->
->> BTW, how do you test it at mainline kernel?
->>
+On Tue, Dec 06, 2011 at 09:13:18PM +0900, KyongHo Cho wrote:
+> > BTW, how do you test it at mainline kernel?
+> >
 > I merged IOMMU mainline branch to our kernel branch and tested it with
 > our FIMC, MFC, JPEG, 2D.
+
+This is not sufficient. Please do it the other way around, merge your
+outstanding changes into the mainline kernel (or for iommu topics my
+next branch) and test against that. This way it is easier to catch bugs
+in mainline.
+
+
+	Joerg
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo, Andrew Bowd
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
