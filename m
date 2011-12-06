@@ -1,359 +1,60 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH v2 3/3] USB: Add Samsung Exynos OHCI diver
-Date: Tue, 06 Dec 2011 15:32:59 +0900
-Message-ID: <001501ccb3e0$e5d46550$b17d2ff0$%han@samsung.com>
-References: <001101ccb3e0$7fe48270$7fad8750$%han@samsung.com>
+From: Dron Gus <dron0gus@gmail.com>
+Subject: Re: MFC V1.0 questions
+Date: Tue, 6 Dec 2011 10:31:25 +0300
+Message-ID: <CAA11ShBytXgQRr9rYbR-x1SyLGQuXrqc_wJTY0t1ou6gFmx+_w@mail.gmail.com>
+References: <CAA11ShCGVGFr=hOF=CDCRtQZ0kG+y-ZB3ymYAYUFszKh1BaDqA@mail.gmail.com>
+	<ADF13DA15EB3FE4FBA487CCC7BEFDF3622550078C5@bssrvexch01>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24542 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932822Ab1LFGdB (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:47867 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753070Ab1LFHb1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 01:33:01 -0500
-In-reply-to: <001101ccb3e0$7fe48270$7fad8750$%han@samsung.com>
-Content-language: ko
+	Tue, 6 Dec 2011 02:31:27 -0500
+Received: by faar15 with SMTP id r15so1397683faa.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Dec 2011 23:31:26 -0800 (PST)
+In-Reply-To: <ADF13DA15EB3FE4FBA487CCC7BEFDF3622550078C5@bssrvexch01>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@suse.de>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Yulgon Kim' <yulgon.kim@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Kamil Debski <k.debski@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-This patch adds USB OHCI driver for Samsung Exynos SoCs.
+Hi.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- drivers/usb/Kconfig            |    1 +
- drivers/usb/host/Kconfig       |    6 +
- drivers/usb/host/ohci-exynos.c |  274 ++++++++++++++++++++++++++++++++++++++++
- drivers/usb/host/ohci-hcd.c    |    5 +
- 4 files changed, 286 insertions(+), 0 deletions(-)
- create mode 100644 drivers/usb/host/ohci-exynos.c
+On Mon, Dec 5, 2011 at 1:47 PM, Kamil Debski <k.debski@samsung.com> wrote:
+> Hi,
+>
+>> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
+>> owner@vger.kernel.org] On Behalf Of Dron Gus
+>> Sent: 02 December 2011 12:17
+>>
+>> Hello
+>>
+>> I am interested in a couple of questions related to mfv v1.0, used in
+>> the s3c6410.
+>> 1) Does anyone work on mfc v1.0 driver for mainline?
+>
+> There is no driver in the mainline. However you may find it in some repos
+> on the web http://www.google.com/search?q=samsung+kernel+mfc10+driver
+> that have an MFC 1.0 driver present.
+Thank you. I saw this driver. But it does not use v4l2, so I think it
+makes no sense to port it "as is".
 
-diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
-index 791f11b..75823a1 100644
---- a/drivers/usb/Kconfig
-+++ b/drivers/usb/Kconfig
-@@ -48,6 +48,7 @@ config USB_ARCH_HAS_OHCI
- 	default y if ARCH_DAVINCI_DA8XX
- 	default y if ARCH_CNS3XXX
- 	default y if PLAT_SPEAR
-+	default y if ARCH_EXYNOS
- 	# PPC:
- 	default y if STB03xxx
- 	default y if PPC_MPC52xx
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 060e0e2..eea85dc 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -371,6 +371,12 @@ config USB_OHCI_SH
- 	  Enables support for the on-chip OHCI controller on the SuperH.
- 	  If you use the PCI OHCI controller, this option is not necessary.
- 
-+config USB_OHCI_EXYNOS
-+	boolean "OHCI support for Samsung EXYNOS SoC Series"
-+	depends on USB_OHCI_HCD && ARCH_EXYNOS
-+	help
-+	 Enable support for the Samsung Exynos SOC's on-chip OHCI controller.
-+
- config USB_CNS3XXX_OHCI
- 	bool "Cavium CNS3XXX OHCI Module"
- 	depends on USB_OHCI_HCD && ARCH_CNS3XXX
-diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-new file mode 100644
-index 0000000..55aa35a
---- /dev/null
-+++ b/drivers/usb/host/ohci-exynos.c
-@@ -0,0 +1,274 @@
-+/*
-+ * SAMSUNG EXYNOS USB HOST OHCI Controller
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Co.Ltd
-+ * Author: Jingoo Han <jg1.han@samsung.com>
-+ *
-+ * This program is free software; you can redistribute  it and/or modify it
-+ * under  the terms of  the GNU General  Public License as published by the
-+ * Free Software Foundation;  either version 2 of the  License, or (at your
-+ * option) any later version.
-+ *
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/platform_device.h>
-+#include <mach/ohci.h>
-+#include <plat/usb-phy.h>
-+
-+struct exynos_ohci_hcd {
-+	struct device *dev;
-+	struct usb_hcd *hcd;
-+	struct clk *clk;
-+};
-+
-+static int ohci_exynos_start(struct usb_hcd *hcd)
-+{
-+	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-+	int ret;
-+
-+	ohci_dbg(ohci, "ohci_exynos_start, ohci:%p", ohci);
-+
-+	ret = ohci_init(ohci);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ohci_run(ohci);
-+	if (ret < 0) {
-+		err("can't start %s", hcd->self.bus_name);
-+		ohci_stop(hcd);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct hc_driver exynos_ohci_hc_driver = {
-+	.description		= hcd_name,
-+	.product_desc		= "EXYNOS OHCI Host Controller",
-+	.hcd_priv_size		= sizeof(struct ohci_hcd),
-+
-+	.irq			= ohci_irq,
-+	.flags			= HCD_MEMORY|HCD_USB11,
-+
-+	.start			= ohci_exynos_start,
-+	.stop			= ohci_stop,
-+	.shutdown		= ohci_shutdown,
-+
-+	.get_frame_number	= ohci_get_frame,
-+
-+	.urb_enqueue		= ohci_urb_enqueue,
-+	.urb_dequeue		= ohci_urb_dequeue,
-+	.endpoint_disable	= ohci_endpoint_disable,
-+
-+	.hub_status_data	= ohci_hub_status_data,
-+	.hub_control		= ohci_hub_control,
-+#ifdef	CONFIG_PM
-+	.bus_suspend		= ohci_bus_suspend,
-+	.bus_resume		= ohci_bus_resume,
-+#endif
-+	.start_port_reset	= ohci_start_port_reset,
-+};
-+
-+static int __devinit exynos_ohci_probe(struct platform_device *pdev)
-+{
-+	struct exynos4_ohci_platdata *pdata;
-+	struct exynos_ohci_hcd *exynos_ohci;
-+	struct usb_hcd *hcd;
-+	struct ohci_hcd *ohci;
-+	struct resource *res;
-+	int irq;
-+	int err;
-+
-+	pdata = pdev->dev.platform_data;
-+	if (!pdata) {
-+		dev_err(&pdev->dev, "No platform data defined\n");
-+		return -EINVAL;
-+	}
-+
-+	exynos_ohci = kzalloc(sizeof(struct exynos_ohci_hcd), GFP_KERNEL);
-+	if (!exynos_ohci)
-+		return -ENOMEM;
-+
-+	exynos_ohci->dev = &pdev->dev;
-+
-+	hcd = usb_create_hcd(&exynos_ohci_hc_driver, &pdev->dev,
-+					dev_name(&pdev->dev));
-+	if (!hcd) {
-+		dev_err(&pdev->dev, "Unable to create HCD\n");
-+		err = -ENOMEM;
-+		goto fail_hcd;
-+	}
-+
-+	exynos_ohci->hcd = hcd;
-+	exynos_ohci->clk = clk_get(&pdev->dev, "usbhost");
-+
-+	if (IS_ERR(exynos_ohci->clk)) {
-+		dev_err(&pdev->dev, "Failed to get usbhost clock\n");
-+		err = PTR_ERR(exynos_ohci->clk);
-+		goto fail_clk;
-+	}
-+
-+	err = clk_enable(exynos_ohci->clk);
-+	if (err)
-+		goto fail_clken;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "Failed to get I/O memory\n");
-+		err = -ENXIO;
-+		goto fail_io;
-+	}
-+
-+	hcd->rsrc_start = res->start;
-+	hcd->rsrc_len = resource_size(res);
-+	hcd->regs = ioremap(res->start, resource_size(res));
-+	if (!hcd->regs) {
-+		dev_err(&pdev->dev, "Failed to remap I/O memory\n");
-+		err = -ENOMEM;
-+		goto fail_io;
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	if (!irq) {
-+		dev_err(&pdev->dev, "Failed to get IRQ\n");
-+		err = -ENODEV;
-+		goto fail;
-+	}
-+
-+	if (pdata->phy_init)
-+		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-+
-+	ohci = hcd_to_ohci(hcd);
-+	ohci_hcd_init(ohci);
-+
-+	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
-+	if (err) {
-+		dev_err(&pdev->dev, "Failed to add USB HCD\n");
-+		goto fail;
-+	}
-+
-+	platform_set_drvdata(pdev, exynos_ohci);
-+
-+	return 0;
-+
-+fail:
-+	iounmap(hcd->regs);
-+fail_io:
-+	clk_disable(exynos_ohci->clk);
-+fail_clken:
-+	clk_put(exynos_ohci->clk);
-+fail_clk:
-+	usb_put_hcd(hcd);
-+fail_hcd:
-+	kfree(exynos_ohci);
-+	return err;
-+}
-+
-+static int __devexit exynos_ohci_remove(struct platform_device *pdev)
-+{
-+	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
-+	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
-+	struct usb_hcd *hcd = exynos_ohci->hcd;
-+
-+	usb_remove_hcd(hcd);
-+
-+	if (pdata && pdata->phy_exit)
-+		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-+
-+	iounmap(hcd->regs);
-+
-+	clk_disable(exynos_ohci->clk);
-+	clk_put(exynos_ohci->clk);
-+
-+	usb_put_hcd(hcd);
-+	kfree(exynos_ohci);
-+
-+	return 0;
-+}
-+
-+static void exynos_ohci_shutdown(struct platform_device *pdev)
-+{
-+	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
-+	struct usb_hcd *hcd = exynos_ohci->hcd;
-+
-+	if (hcd->driver->shutdown)
-+		hcd->driver->shutdown(hcd);
-+}
-+
-+#ifdef CONFIG_PM
-+static int exynos_ohci_suspend(struct device *dev)
-+{
-+	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
-+	struct usb_hcd *hcd = exynos_ohci->hcd;
-+	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
-+	unsigned long flags;
-+	int rc = 0;
-+
-+	/*
-+	 * Root hub was already suspended. Disable irq emission and
-+	 * mark HW unaccessible, bail out if RH has been resumed. Use
-+	 * the spinlock to properly synchronize with possible pending
-+	 * RH suspend or resume activity.
-+	 *
-+	 * This is still racy as hcd->state is manipulated outside of
-+	 * any locks =P But that will be a different fix.
-+	 */
-+	spin_lock_irqsave(&ohci->lock, flags);
-+	if (hcd->state != HC_STATE_SUSPENDED && hcd->state != HC_STATE_HALT) {
-+		rc = -EINVAL;
-+		goto fail;
-+	}
-+
-+	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-+
-+	if (pdata && pdata->phy_exit)
-+		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-+fail:
-+	spin_unlock_irqrestore(&ohci->lock, flags);
-+
-+	return rc;
-+}
-+
-+static int exynos_ohci_resume(struct device *dev)
-+{
-+	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
-+	struct usb_hcd *hcd = exynos_ohci->hcd;
-+	struct platform_device *pdev = to_platform_device(dev);
-+	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
-+
-+	if (pdata && pdata->phy_init)
-+		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-+
-+	/* Mark hardware accessible again as we are out of D3 state by now */
-+	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-+
-+	ohci_finish_controller_resume(hcd);
-+
-+	return 0;
-+}
-+#else
-+#define exynos_ohci_suspend	NULL
-+#define exynos_ohci_resume	NULL
-+#endif
-+
-+static const struct dev_pm_ops exynos_ohci_pm_ops = {
-+	.suspend	= exynos_ohci_suspend,
-+	.resume		= exynos_ohci_resume,
-+};
-+
-+static struct platform_driver exynos_ohci_driver = {
-+	.probe		= exynos_ohci_probe,
-+	.remove		= __devexit_p(exynos_ohci_remove),
-+	.shutdown	= exynos_ohci_shutdown,
-+	.driver = {
-+		.name	= "exynos-ohci",
-+		.owner	= THIS_MODULE,
-+		.pm	= &exynos_ohci_pm_ops,
-+	}
-+};
-+
-+MODULE_ALIAS("platform:exynos-ohci");
-+MODULE_AUTHOR("Jingoo Han <jg1.han@samsung.com>");
-diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
-index b263919..a1006ff 100644
---- a/drivers/usb/host/ohci-hcd.c
-+++ b/drivers/usb/host/ohci-hcd.c
-@@ -1005,6 +1005,11 @@ MODULE_LICENSE ("GPL");
- #define PLATFORM_DRIVER		ohci_hcd_s3c2410_driver
- #endif
- 
-+#ifdef CONFIG_USB_OHCI_EXYNOS
-+#include "ohci-exynos.c"
-+#define PLATFORM_DRIVER		exynos_ohci_driver
-+#endif
-+
- #ifdef CONFIG_USB_OHCI_HCD_OMAP1
- #include "ohci-omap.c"
- #define OMAP1_PLATFORM_DRIVER	ohci_hcd_omap_driver
--- 
-1.7.1
+>> 2) whether there is a newer firmware for MFC processor other than the V137?
+>
+> I have no idea. You may want to contact Samsung LSI in this matter
+> http://www.samsung.com/global/business/semiconductor/footer/Footer_ContactUs.html
+Ok. I'll try.
+
+>> 3) how much different MFC version 1.0 (6410) and 4.0 (pv210). Should I
+>> rely on the driver for MFC v4.0, when writing a driver for V1.0?
+>
+> These MFC version are very different. In addition there are many differences between
+> version 4.0 and 5.0, although you can find some similarities between 4.0 and 5.0.
+>
+> For version 5.0 you can find the driver in mainline http://goo.gl/fbCKF.
+>
+> If you want to write the driver then you should consider using the V4L2 codec API.
+All right. The above driver, I'll use as a reference on working with
+hardware, driver for MFC v5.0 as a reference on working with V4L2 API.
