@@ -1,181 +1,83 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v7 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
-Date: Wed, 7 Dec 2011 17:12:04 +0900
-Message-ID: <CAHQjnOOpaoVAA8RWrYE5yy0eUN=rWLxZ9XEHZR8ajP_AUeOw8Q@mail.gmail.com>
-References: <1321609650-1329-1-git-send-email-pullip.cho@samsung.com>
-	<1321609650-1329-3-git-send-email-pullip.cho@samsung.com>
-	<007e01ccb40c$ed62bca0$c82835e0$%szyprowski@samsung.com>
-	<CAHQjnOM9N8zJmiNnHfrN00jbF8Wk5WwtsBsuPsC2Xv0g_O1tdA@mail.gmail.com>
-	<009c01ccb423$3d9e95c0$b8dbc140$%szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix build error without CONFIG_LOCAL_TIMERS
+Date: Wed, 07 Dec 2011 17:44:55 +0900
+Message-ID: <03f201ccb4bc$7e55b820$7b012860$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:61042 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751826Ab1LGIMH convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Dec 2011 03:12:07 -0500
-In-Reply-To: <009c01ccb423$3d9e95c0$b8dbc140$%szyprowski@samsung.com>
+Received: from mailout4.samsung.com ([203.254.224.34]:15491 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752721Ab1LGIo6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Dec 2011 03:44:58 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LVT00GNQS9IWVV0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:44:57 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LVT008SWSAVHMS0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:44:56 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Ohad Ben-Cohen <ohad@wizery.com>, linux-samsung-soc@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, Kukjin Kim <kgene.kim@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, chaos.youn@samsung.com, kgene.kim@samsung.com, 'Marc Zyngier' <marc.zyngier@arm.com>
 
-2011/12/6 Marek Szyprowski <m.szyprowski@samsung.com>:
-> Hello,
->
-> On Tuesday, December 06, 2011 1:21 PM KyongHo Cho wrote:
->
->> On Tue, Dec 6, 2011 at 8:48 PM, Marek Szyprowski
->> <m.szyprowski@samsung.com> wrote:
->> > Hello,
->> >
->> > I'm trying to integrate your SYSMMU driver with my DMA-mapping & I=
-OMMU
->> > API integration patches. I've noticed some issues, please see my c=
-omments below.
->> >
->> Thank you!
->>
->> > On Friday, November 18, 2011 10:48 AM KyongHo Cho wrote:
->> >
->> >> +
->> >> +static int exynos_sysmmu_probe(struct platform_device *pdev)
->> >> +{
->> >> + =A0 =A0 struct resource *res, *ioarea;
->> >> + =A0 =A0 int ret;
->> >> + =A0 =A0 int irq;
->> >> + =A0 =A0 struct device *dev;
->> >> + =A0 =A0 void *sfr;
->> >> + =A0 =A0 struct sysmmu_drvdata *data;
->> >> + =A0 =A0 char *emsg;
->> >> +
->> >> + =A0 =A0 dev =3D &pdev->dev;
->> >> +
->> >> + =A0 =A0 if (dev_get_platdata(dev) =3D=3D NULL) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 pr_debug("%s: No System MMU is assigned=
- for %s.%d.\n", __func__,
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pdev->n=
-ame, pdev->id);
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 data =3D kzalloc(sizeof(*data), GFP_KERNEL);
->> >> + =A0 =A0 if (!data) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "Not enough memory";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOMEM;
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_alloc;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 data->owner =3D dev_get_platdata(dev);
->> >> +
->> >> + =A0 =A0 ret =3D dev_set_drvdata(dev, data);
->> >> + =A0 =A0 if (ret) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "Unable to set driver data.";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_init;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> >> + =A0 =A0 if (!res) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "Failed probing system MMU: fa=
-iled to get resource.";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_init;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 ioarea =3D request_mem_region(res->start, resource_size=
-(res),
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_name(dev))=
-;
->> >> + =A0 =A0 if (ioarea =3D=3D NULL) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "failed to request memory regi=
-on.";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOMEM;
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_init;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 sfr =3D ioremap(res->start, resource_size(res));
->> >> + =A0 =A0 if (!sfr) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "failed to call ioremap().";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOENT;
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_ioremap;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 irq =3D platform_get_irq(pdev, 0);
->> >> + =A0 =A0 if (irq <=3D 0) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "failed to get irq resource.";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D irq;
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_irq;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 ret =3D request_irq(irq, exynos_sysmmu_irq, 0, dev_name=
-(dev), data);
->> >> + =A0 =A0 if (ret) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "failed to request irq.";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_irq;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 data->clk =3D clk_get(dev, "sysmmu");
->> >> + =A0 =A0 if (IS_ERR(data->clk)) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 emsg =3D "failed to get clock descripto=
-r";
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D PTR_ERR(data->clk);
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 goto err_clk;
->> >> + =A0 =A0 }
->> >> +
->> >> + =A0 =A0 data->dev =3D dev;
->> >> + =A0 =A0 data->sfrbase =3D sfr;
->> >> + =A0 =A0 __set_fault_handler(data, &default_fault_handler);
->> >> + =A0 =A0 rwlock_init(&data->lock);
->> >
->> > Here is a serious problem: __set_fault_handler takes data->lock wh=
-ich is initialized after
->> calling
->> > this function.
->> >
->>
->> Yeah, you're right. Thank you. I didn't notice it.
->> I will fix it.
->>
->> >> +
->> >> +static unsigned long *alloc_lv2entry(unsigned long *sent, unsign=
-ed long iova,
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 short *pgcounter)
->> >> +{
->> >> + =A0 =A0 if (lv1ent_fault(sent)) {
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned long *pent;
->> >> +
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 pent =3D kzalloc(1024, GFP_KERNEL);
->> >
->> > I would use GFP_ATOMIC here. iommu_map() function might be called =
-in atomic context, and
->> > GFP_KERNEL here causes kernel ops/warning.
->>
->> I wanted to avoid to allocate memory from emergency pool.
->> Do you think that it needs to allocate memory with GFP_ATOMIC flag?
->
-> Otherwise it will very hard to get it integrated with DMA mapping fra=
-mework. GFP_ATOMIC
-> memory is allocated straight from system free lists, which are refill=
-ed on the next
-> non-atomic allocation if the watermark level is low enough.
->
-> It will be best if iommu_map() can be extended with allocation flags =
-argument, so the
-> caller can decide if iommu driver can use GFP_ATOMIC or GFP_KERNEL de=
-pending on the context.
->
-Understood.
-I will change GFP_KERNEL to GFP_ATOMIC in the next patch.
-I think it is not good idea to make iommu_map() allocate 2nd level page=
- table
-from a specific physical memory pool.
+arch/arm/mach-exynos/mct.c: In function 'exynos4_timer_resources':
+arch/arm/mach-exynos/mct.c:450: error: 'exynos4_mct_tick_isr' undeclared (first use in this function)
+arch/arm/mach-exynos/mct.c:450: error: (Each undeclared identifier is reported only once
+arch/arm/mach-exynos/mct.c:450: error: for each function it appears in.)
+make[1]: *** [arch/arm/mach-exynos/mct.o] Error 1
 
-BTW, what about using GFP_KERNEL without __GFP_WAIT?
-Then, iommu_map() will fail if there is not enough memory.
+Reported-by: Kyungmin Park <kyungmin.park@samsung.com>
+Acked-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+---
+ arch/arm/mach-exynos/mct.c |    7 +++++--
+ 1 files changed, 5 insertions(+), 2 deletions(-)
 
-Thanks.
-
-KyongHo.
+diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+index 97343df..586c819 100644
+--- a/arch/arm/mach-exynos/mct.c
++++ b/arch/arm/mach-exynos/mct.c
+@@ -44,8 +44,6 @@ struct mct_clock_event_device {
+ 	char name[10];
+ };
+ 
+-static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
+-
+ static void exynos4_mct_write(unsigned int value, void *addr)
+ {
+ 	void __iomem *stat_addr;
+@@ -264,6 +262,9 @@ static void exynos4_clockevent_init(void)
+ }
+ 
+ #ifdef CONFIG_LOCAL_TIMERS
++
++static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
++
+ /* Clock event handling */
+ static void exynos4_mct_tick_stop(struct mct_clock_event_device *mevt)
+ {
+@@ -443,6 +444,7 @@ static void __init exynos4_timer_resources(void)
+ 
+ 	clk_rate = clk_get_rate(mct_clk);
+ 
++#ifdef CONFIG_LOCAL_TIMERS
+ 	if (mct_int_type == MCT_INT_PPI) {
+ 		int err;
+ 
+@@ -452,6 +454,7 @@ static void __init exynos4_timer_resources(void)
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+ 		     IRQ_MCT_LOCALTIMER, err);
+ 	}
++#endif /* CONFIG_LOCAL_TIMERS */
+ }
+ 
+ static void __init exynos4_timer_init(void)
+-- 
+1.7.1
