@@ -1,83 +1,109 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Fix build error without CONFIG_LOCAL_TIMERS
-Date: Wed, 07 Dec 2011 17:44:55 +0900
-Message-ID: <03f201ccb4bc$7e55b820$7b012860$%kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung fixes for v3.2
+Date: Wed, 07 Dec 2011 17:47:06 +0900
+Message-ID: <03f301ccb4bc$cc8b8a10$65a29e30$%kim@samsung.com>
+References: <03e501cca837$d893e320$89bba960$%kim@samsung.com>
+ <CAH9JG2XcUHUpU5OQyv4+Q9bzbqxsekF8yvUuK4Gb6EDBpQMucw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ks_c_5601-1987
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:15491 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752721Ab1LGIo6 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:59425 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753350Ab1LGIrI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Dec 2011 03:44:58 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Wed, 7 Dec 2011 03:47:08 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LVT00GNQS9IWVV0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:44:57 +0900 (KST)
+ 2010)) with ESMTP id <0LVT00IKDSDJPVV0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:47:06 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LVT008SWSAVHMS0@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:44:56 +0900 (KST)
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LVT00C02SEICBA0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:47:06 +0900 (KST)
+In-reply-to: <CAH9JG2XcUHUpU5OQyv4+Q9bzbqxsekF8yvUuK4Gb6EDBpQMucw@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, chaos.youn@samsung.com, kgene.kim@samsung.com, 'Marc Zyngier' <marc.zyngier@arm.com>
+To: 'Kyungmin Park' <kmpark@infradead.org>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Marc Zyngier' <Marc.Zyngier@arm.com>, =?ks_c_5601-1987?B?J8fUuO3B1ic=?= <myungjoo.ham@samsung.com>
 
-arch/arm/mach-exynos/mct.c: In function 'exynos4_timer_resources':
-arch/arm/mach-exynos/mct.c:450: error: 'exynos4_mct_tick_isr' undeclared (first use in this function)
-arch/arm/mach-exynos/mct.c:450: error: (Each undeclared identifier is reported only once
-arch/arm/mach-exynos/mct.c:450: error: for each function it appears in.)
-make[1]: *** [arch/arm/mach-exynos/mct.o] Error 1
+Kyungmin Park wrote:
+> 
+> Hi,
+> 
+> Don't you fix the mct compiler error if LOCAL_TIMERS are not defined?
+> 
+> arch/arm/mach-exynos/mct.c: In function 'exynos4_timer_resources':
+> arch/arm/mach-exynos/mct.c:451: error: 'exynos4_mct_tick_isr'
+> undeclared (first use in this function)
+> arch/arm/mach-exynos/mct.c:451: error: (Each undeclared identifier is
+> reported only once
+> arch/arm/mach-exynos/mct.c:451: error: for each function it appears in.)
+> make[1]: *** [arch/arm/mach-exynos/mct.o] Error 1
+> 
+Sorry for late response.
 
-Reported-by: Kyungmin Park <kyungmin.park@samsung.com>
-Acked-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
----
- arch/arm/mach-exynos/mct.c |    7 +++++--
- 1 files changed, 5 insertions(+), 2 deletions(-)
+I fixed this and that will be sent to upstream next time.
+Thanks for pointing out.
 
-diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index 97343df..586c819 100644
---- a/arch/arm/mach-exynos/mct.c
-+++ b/arch/arm/mach-exynos/mct.c
-@@ -44,8 +44,6 @@ struct mct_clock_event_device {
- 	char name[10];
- };
- 
--static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
--
- static void exynos4_mct_write(unsigned int value, void *addr)
- {
- 	void __iomem *stat_addr;
-@@ -264,6 +262,9 @@ static void exynos4_clockevent_init(void)
- }
- 
- #ifdef CONFIG_LOCAL_TIMERS
-+
-+static DEFINE_PER_CPU(struct mct_clock_event_device, percpu_mct_tick);
-+
- /* Clock event handling */
- static void exynos4_mct_tick_stop(struct mct_clock_event_device *mevt)
- {
-@@ -443,6 +444,7 @@ static void __init exynos4_timer_resources(void)
- 
- 	clk_rate = clk_get_rate(mct_clk);
- 
-+#ifdef CONFIG_LOCAL_TIMERS
- 	if (mct_int_type == MCT_INT_PPI) {
- 		int err;
- 
-@@ -452,6 +454,7 @@ static void __init exynos4_timer_resources(void)
- 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
- 		     IRQ_MCT_LOCALTIMER, err);
- 	}
-+#endif /* CONFIG_LOCAL_TIMERS */
- }
- 
- static void __init exynos4_timer_init(void)
--- 
-1.7.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+> On 11/21/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Hi Arnd,
+> >
+> > Please pull samsung-fixes for v3.2 from:
+> >
+> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > samsung-fixes
+> >
+> > This includes fix of inclusion header.
+> > If any problems, please let me know.
+> >
+> > Thanks.
+> >
+> > Best regards,
+> > Kgene.
+> > --
+> > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> > SW Solution Development Team, Samsung Electronics Co., Ltd.
+> >
+> > The following changes since commit 1ea6b8f48918282bdca0b32a34095504ee65bab5:
+> >
+> >   Linux 3.2-rc1 (2011-11-07 16:16:02 -0800)
+> >
+> > are available in the git repository at:
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > samsung-fixes
+> >
+> > Axel Lin (1):
+> >       ARM: SAMSUNG: include linux/types.h at gpio-cfg.h
+> >
+> > Kukjin Kim (2):
+> >       ARM: S5P: Fix export.h inclusion
+> >       ARM: SAMSUNG: inclusion export.h instead of module.h
+> >
+> > Kyungmin Park (1):
+> >       ARM: EXYNOS: Fix compiler error with THIS_MODULE
+> >
+> >  arch/arm/mach-exynos/cpuidle.c                |    2 ++
+> >  arch/arm/mach-s3c64xx/mach-crag6410-module.c  |    2 +-
+> >  arch/arm/plat-s3c24xx/cpu-freq-debugfs.c      |    2 +-
+> >  arch/arm/plat-s5p/sysmmu.c                    |    1 +
+> >  arch/arm/plat-samsung/include/plat/gpio-cfg.h |    2 ++
+> >  arch/arm/plat-samsung/pd.c                    |    2 +-
+> >  arch/arm/plat-samsung/pwm.c                   |    2 +-
+> >  7 files changed, 9 insertions(+), 4 deletions(-)
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> > in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> >
