@@ -1,38 +1,32 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 3/3] ARM: S3C64XX: Implement basic power domain support
-Date: Wed, 7 Dec 2011 22:44:02 +0100
-Message-ID: <201112072244.02299.rjw@sisk.pl>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <4ED930B3.3020200@gmail.com> <20111202210706.GB15268@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2 0/1] dmaengine/amba-pl08x: Add support for s3c64xx DMAC
+Date: Thu, 8 Dec 2011 00:43:32 +0100
+Message-ID: <CACRpkdZC8LOOLkWbrPbXN_nKaw-WvueusYDyrX48Q1Pcdwv3Aw@mail.gmail.com>
+References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:48104 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S932154Ab1LGVlE (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:35650 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751470Ab1LGXnc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Dec 2011 16:41:04 -0500
-In-Reply-To: <20111202210706.GB15268@opensource.wolfsonmicro.com>
+	Wed, 7 Dec 2011 18:43:32 -0500
+In-Reply-To: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Sylwester Nawrocki <snjw23@gmail.com>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Alim Akhtar <alim.akhtar@samsung.com>
+Cc: vinod.koul@intel.com, dan.j.williams@intel.com, viresh.kumar@st.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org
 
-On Friday, December 02, 2011, Mark Brown wrote:
-> On Fri, Dec 02, 2011 at 09:10:27PM +0100, Sylwester Nawrocki wrote:
-> 
-> > > +	/* Not all domains provide power status readback */
-> > > +	if (pd->pwr_stat) {
-> > > +		while (retry--)
-> > > +			if (__raw_readl(S3C64XX_BLK_PWR_STAT) & pd->pwr_stat)
-> > > +				break;
-> 
-> > How about adding cpu_relax() in this busy wait loop ?
-> 
-> May as well, yes - I didn't actually measure how long it tends to take
-> to do the spin but it's not going to hurt.
+On Wed, Sep 28, 2011 at 7:50 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
 
-Are you going to post an updated patch?
+> This patch modifies the amba-pl08x driver for s3c64xx.
+> The DMA controller of S3C64XX is a variant of PrimeCell pl080 DMAC.
+> S3C64xx contents extra register to hold the TransferSize.
 
-Rafael
+Alim what is happening with this patch series?
+
+I was really happy with the rate of progress we had and Viresh & I
+have given most feedback needed to complete this I think.
+
+Yours,
+Linus Walleij
