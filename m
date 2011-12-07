@@ -1,49 +1,84 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: RE: [PATCH 0/2] Add PM_RUNTIME related fixes for PL330
-Date: Wed, 07 Dec 2011 17:58:06 +0900
-Message-ID: <000301ccb4be$55cc4ca0$0164e5e0$%kim@samsung.com>
-References: <03ed01ccb4b3$714b7ce0$53e276a0$%kim@samsung.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <03ed01ccb4b3$714b7ce0$53e276a0$%kim@samsung.com>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: tushar.behera@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, vinod.koul@intel.com
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH v2] ARM: pl330: Fix a race condition
+Date: Wed, 07 Dec 2011 10:01:45 +0000
+Message-ID: <4EDF3989.3060108@arm.com>
+References: <4E8C5425.80303@arm.com> <1317892206-3600-1-git-send-email-javi.merino@arm.com> <CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com> <4EB7B79A.2020004@arm.com> <000c01ccada6$f83f5be0$e8be13a0$%kim@samsung.com> <4ED3B89E.7070903@arm.com> <000e01ccae48$d76a7ba0$863f72e0$%kim@samsung.com> <4ED4AB9A.3060807@arm.com> <CAJe_Zhem0yTOV4L-kJ91fQN++hFzCUgjOfxSnJR25PuYNTedVQ@mail.gmail.com> <03f001ccb4b5$3441f5c0$9cc5e140$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:54216 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752534Ab1LGKBx convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Dec 2011 05:01:53 -0500
+In-Reply-To: <03f001ccb4b5$3441f5c0$9cc5e140$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jassi Brar' <jaswinder.singh@linaro.org>, 'Boojin Kim' <boojin.kim@samsung.com>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-Tushar Behera [mailto:tushar.behera@linaro.org] wrote:
+On 07/12/11 07:52, Kukjin Kim wrote:
+> Jassi Brar wrote:
+>>
+>> On 29 November 2011 15:23, Javi Merino <javi.merino@arm.com> wrote:
+>>>>>>>> On Samsung's Exynos4 platform, while testing audio playback with
+>>>>> i2s
+>>>>>>>> interface, the above change causes the playback to freeze. The
+>>>>>>>> _thrd_active(thrd) call always returns '1' and hence _start(thrd)
+>>>>> is
+>>>>>>>> not getting called.
+>>>>>>>
+>>>>>>> If _thrd_active(thrd) returns '1', that means there is an active
+>>>>>>> transfer still running or, if it has finished, you haven't called
+>>>>>>> pl330_update() to acknowledge that.  pl330_update() calls _start()
+>>>>> as
+>>>>>>> soon as it can.
+>>>>>>>
+>>>>>>> drivers/dma/pl330.c registers the irq handler in pl330_probe(), so
+>>>>>>> when
+>>>>>>> the transaction finishes, pl330_update() should clear it and call
+>>>>>>> _start().  If there is any outstanding transaction, it should start
+>>>>>>> straight away. If there isn't, it would mark the channel as free,
+>>>>> so
+>>>>>>> _thrd_active() should return '0'.  If _thrd_active() is still '1',
+>>>>> then
+>>>>>>> something has gone wrong in the way.
+>>>>>>>
+>>>>>>> Does this shed some light?
+>>>>>>>
+>>>>>>
+>>>>>> Your patch makes the memcpy operation on dmatest.c and net DMA be
+>>>>> frozen too
+>>>>>> as well as Samsung audio playback.
+>>>>>
+>>>>> Is the IRQ correctly registered in drivers/dma/pl330.c:pl330_probe()?
+>>>>> Do you get interrupts when the transfer finish?
+>>>> Sure. IRQ works well.
+>>>
+>>> Ok, so can you check if pl330_update() is correctly marking the request
+>>> as free?  Do you know if there is another request in the queue when that
+>>> happens?
+>>>
+>>> Thomas, you said in a previous email that _thrd_active() always returned
+>>> '1'.  Was that after a request in req[0] finished?
+>>>  - If so, can you check that MARK_FREE was actually called for that
+>>>    request in pl330_update()?
+>>>  - If it was after a request in req[1] finished and there was a
+>>>    request already waiting in req[0], can you debug why _start()
+>>>    didn't activate it.
+>>>
+>> Javi, could you please check if you too get the memcpy failure with
+>> dmatest ?
+> 
+> (Please adding me in this thread)
+> 
+> Hi Javi,
+> How was going on the test? If any update, please let us know.
 
-> Sent: Tuesday, December 06, 2011 7:46 PM
-> To: linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
-> Cc: kgene.kim@samsung.com; vinod.koul@intel.com;
-> linaro-dev@lists.linaro.org; patches@linaro.org
-> Subject: [PATCH 0/2] Add PM_RUNTIME related fixes for PL330
->
-> Hi,
->
-> When PM_RUNTIME is enabled, PL330 probe fails because of some
-> mismatch in pm_runtime calls. This patchset fixes those issues.
->
-> This patch is based on Kukjin's for-next branch and tested on
-> EXYNOS4 based Origen board.
->
+I'm currently very busy at work, I'll run it as soon as I can.  This
+appears to happen only in exynos, can't anybody else help with the
+debugging?
 
-This patch works well when PM_RUNTIME is enabled.
-Looks good to me. Thanks.
-
-> d3d936c "Merge branch 'samsung-fixes-2' into for-next"
->
-> Tushar Behera (2):
-> To Vinod Koul <vinod.koul@intel.com>:
->   DMA: PL330: Remove pm_runtime_xxx calls from pl330 probe/remove
->
-> To Kukjin Kim <kgene.kim@samsung.com>:
->   ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
->
->  arch/arm/mach-exynos/clock.c |    1 +
->  drivers/dma/pl330.c          |   17 ++---------------
->  2 files changed, 3 insertions(+), 15 deletions(-)
->
-
-> --
-> 1.7.4.1
+Cheers,
+Javi
