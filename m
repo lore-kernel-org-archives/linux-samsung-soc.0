@@ -1,68 +1,49 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes-2 for v3.2
-Date: Wed, 07 Dec 2011 17:48:33 +0900
-Message-ID: <03f401ccb4bd$00421090$00c631b0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60313 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752902Ab1LGIse (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Dec 2011 03:48:34 -0500
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LVT00NSKSET3RU0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:48:33 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LVT007U9SGXA510@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 07 Dec 2011 17:48:33 +0900 (KST)
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH 0/2] Add PM_RUNTIME related fixes for PL330
+Date: Wed, 07 Dec 2011 17:58:06 +0900
+Message-ID: <000301ccb4be$55cc4ca0$0164e5e0$%kim@samsung.com>
+References: <03ed01ccb4b3$714b7ce0$53e276a0$%kim@samsung.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <03ed01ccb4b3$714b7ce0$53e276a0$%kim@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: tushar.behera@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, vinod.koul@intel.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, ben-linux@fluff.org, rmk+kernel@arm.linux.org.uk
 
-Hi Arnd,
+Tushar Behera [mailto:tushar.behera@linaro.org] wrote:
 
-Please pull samsung-fixes-2 for v3.2.
-It includes small fixes for S3C64XX and update the Samsung field of MAINTAINERS.
+> Sent: Tuesday, December 06, 2011 7:46 PM
+> To: linux-samsung-soc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Cc: kgene.kim@samsung.com; vinod.koul@intel.com;
+> linaro-dev@lists.linaro.org; patches@linaro.org
+> Subject: [PATCH 0/2] Add PM_RUNTIME related fixes for PL330
+>
+> Hi,
+>
+> When PM_RUNTIME is enabled, PL330 probe fails because of some
+> mismatch in pm_runtime calls. This patchset fixes those issues.
+>
+> This patch is based on Kukjin's for-next branch and tested on
+> EXYNOS4 based Origen board.
+>
 
-If any problems, please let me know.
+This patch works well when PM_RUNTIME is enabled.
+Looks good to me. Thanks.
 
-Thanks.
+> d3d936c "Merge branch 'samsung-fixes-2' into for-next"
+>
+> Tushar Behera (2):
+> To Vinod Koul <vinod.koul@intel.com>:
+>   DMA: PL330: Remove pm_runtime_xxx calls from pl330 probe/remove
+>
+> To Kukjin Kim <kgene.kim@samsung.com>:
+>   ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
+>
+>  arch/arm/mach-exynos/clock.c |    1 +
+>  drivers/dma/pl330.c          |   17 ++---------------
+>  2 files changed, 3 insertions(+), 15 deletions(-)
+>
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit 5611cc4572e889b62a7b4c72a413536bf6a9c416:
-
-  Linux 3.2-rc4 (2011-12-01 14:56:01 -0800)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git samsung-fixes-2
-
-Heiko Stuebner (1):
-      MAINTAINERS: Consolidate Samsung MAINTAINERS
-
-Kukjin Kim (1):
-      Merge branch 'next/topic-update-maintainer' into samsung-fixes-2
-
-Mark Brown (5):
-      MAINTAINERS: Add linux-samsung-soc mailing list for Samsung
-      MAINTAINERS: Extend Samsung patterns to cover SPI and ASoC drivers
-      ARM: S3C64XX: Remove extern from definition of framebuffer setup call
-      ARM: S3C64XX: Add linux/export.h to dev-spi.c
-      ARM: S3C64XX: Staticise s3c6400_sysclass
-
- MAINTAINERS                            |   27 +++++----------------------
- arch/arm/mach-s3c64xx/dev-spi.c        |    1 +
- arch/arm/mach-s3c64xx/s3c6400.c        |    2 +-
- arch/arm/mach-s3c64xx/setup-fb-24bpp.c |    2 +-
- 4 files changed, 8 insertions(+), 24 deletions(-)
+> --
+> 1.7.4.1
