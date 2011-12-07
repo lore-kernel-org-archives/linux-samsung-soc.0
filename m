@@ -1,107 +1,300 @@
-From: Denis Kuzmenko <linux@solonet.org.ua>
-Subject: [PATCH v2] s3c24xx: cpufreq: Fix compilation error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
- selected.
-Date: Wed, 07 Dec 2011 02:07:22 +0200
-Message-ID: <4EDEAE3A.9020203@solonet.org.ua>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/5] [CPUFREQ] EXYNOS4210: Remove code about bus on cpufreq
+Date: Wed, 07 Dec 2011 11:43:42 +0900
+Message-ID: <03b001ccb48a$088740f0$1995c2d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:64715 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754618Ab1LGAK2 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:29615 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754930Ab1LGCno (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Dec 2011 19:10:28 -0500
+	Tue, 6 Dec 2011 21:43:44 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davej@redhat.com, kgene.kim@samsung.com, jc.lee@samsung.com, boyko.lee@samsung.com
 
-Fix compilation error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
+From: Jaecheol Lee <jc.lee@samsung.com>
 
-Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+This patch removes code for bus on cpufreq because the code
+for bus frequency changing moves to busfreq driver.
+So code about bus on cpufreq is not necessary.
+
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
+ drivers/cpufreq/exynos4210-cpufreq.c |  174 +---------------------------------
+ 1 files changed, 1 insertions(+), 173 deletions(-)
 
-Patch is against 3.2-rc4.
-CONFIG_S3C2410_IOTIMING is not selected for MACH_MINI2440. Because of this the
-file s3c2410-iotiming.c is not ever compiled and enabling 
-CONFIG_CPU_FREQ_S3C24XX_DEBUGFS option caused undefined reference to function 
-s3c2410_iotiming_debugfs defined in that file. s3c2410_iotiming_debugfs defined
-as NULL for this case.
-
-Changelog:
-v1 -> v2
-New CONFIG_ symbols S3C241{0,2}_IOTIMING were removed as It was observed that 
-they already present but hidden from user.
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index e084b7e..133d005 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -2118,7 +2118,7 @@ config CPU_FREQ_S3C24XX_DEBUG
+diff --git a/drivers/cpufreq/exynos4210-cpufreq.c b/drivers/cpufreq/exynos4210-cpufreq.c
+index ab9741f..578956c 100644
+--- a/drivers/cpufreq/exynos4210-cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -33,21 +33,13 @@ static struct clk *mout_mpll;
+ static struct clk *mout_apll;
  
- config CPU_FREQ_S3C24XX_IODEBUG
- 	bool "Debug CPUfreq Samsung driver IO timing"
--	depends on CPU_FREQ_S3C24XX
-+	depends on CPU_FREQ_S3C24XX && (S3C2410_IOTIMING || S3C2412_IOTIMING)
- 	help
- 	  Enable s3c_freq_iodbg for the Samsung S3C CPUfreq core
+ static struct regulator *arm_regulator;
+-static struct regulator *int_regulator;
  
-diff --git a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-index dac4760..c465252 100644
---- a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-@@ -202,13 +202,23 @@ extern int s3c_plltab_register(struct cpufreq_frequency_table *plls,
- extern struct s3c_cpufreq_config *s3c_cpufreq_getconfig(void);
- extern struct s3c_iotimings *s3c_cpufreq_getiotimings(void);
+ static struct cpufreq_freqs freqs;
+-static unsigned int memtype;
  
--extern void s3c2410_iotiming_debugfs(struct seq_file *seq,
--				     struct s3c_cpufreq_config *cfg,
--				     union s3c_iobank *iob);
+ static unsigned int locking_frequency;
+ static bool frequency_locked;
+ static DEFINE_MUTEX(cpufreq_lock);
+ 
+-enum exynos4_memory_type {
+-	DDR2 = 4,
+-	LPDDR2,
+-	DDR3,
+-};
 -
--extern void s3c2412_iotiming_debugfs(struct seq_file *seq,
--				     struct s3c_cpufreq_config *cfg,
--				     union s3c_iobank *iob);
-+#ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
-+	#ifdef CONFIG_S3C2410_IOTIMING
-+	extern void s3c2410_iotiming_debugfs(struct seq_file *seq,
-+					     struct s3c_cpufreq_config *cfg,
-+					     union s3c_iobank *iob);
-+	#else
-+	#define s3c2410_iotiming_debugfs	NULL
-+	#endif
-+
-+	#ifdef CONFIG_S3C2412_IOTIMING
-+	extern void s3c2412_iotiming_debugfs(struct seq_file *seq,
-+					     struct s3c_cpufreq_config *cfg,
-+					     union s3c_iobank *iob);
-+	#else
-+	#define s3c2412_iotiming_debugfs	NULL
-+	#endif
-+#endif
+ enum cpufreq_level_index {
+ 	L0, L1, L2, L3, CPUFREQ_LEVEL_END,
+ };
+@@ -99,87 +91,24 @@ static unsigned int clkdiv_cpu1[CPUFREQ_LEVEL_END][2] = {
+ 	{ 3, 0 },
+ };
  
- #ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
- #define s3c_cpufreq_debugfs_call(x) x
-@@ -241,10 +251,7 @@ extern void s3c2410_iotiming_set(struct s3c_cpufreq_config *cfg,
- #endif /* CONFIG_S3C2410_IOTIMING */
- 
- /* S3C2412 compatible routines */
+-static unsigned int clkdiv_dmc0[CPUFREQ_LEVEL_END][8] = {
+-	/*
+-	 * Clock divider value for following
+-	 * { DIVACP, DIVACP_PCLK, DIVDPHY, DIVDMC, DIVDMCD
+-	 *		DIVDMCP, DIVCOPY2, DIVCORE_TIMERS }
+-	 */
 -
--extern int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
--				struct s3c_iotimings *timings);
+-	/* DMC L0: 400MHz */
+-	{ 3, 1, 1, 1, 1, 1, 3, 1 },
 -
-+#ifdef CONFIG_S3C2412_IOTIMING
- extern int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
- 				struct s3c_iotimings *timings);
+-	/* DMC L1: 400MHz */
+-	{ 3, 1, 1, 1, 1, 1, 3, 1 },
+-
+-	/* DMC L2: 266.7MHz */
+-	{ 7, 1, 1, 2, 1, 1, 3, 1 },
+-
+-	/* DMC L3: 200MHz */
+-	{ 7, 1, 1, 3, 1, 1, 3, 1 },
+-};
+-
+-static unsigned int clkdiv_top[CPUFREQ_LEVEL_END][5] = {
+-	/*
+-	 * Clock divider value for following
+-	 * { DIVACLK200, DIVACLK100, DIVACLK160, DIVACLK133, DIVONENAND }
+-	 */
+-
+-	/* ACLK200 L0: 200MHz */
+-	{ 3, 7, 4, 5, 1 },
+-
+-	/* ACLK200 L1: 200MHz */
+-	{ 3, 7, 4, 5, 1 },
+-
+-	/* ACLK200 L2: 160MHz */
+-	{ 4, 7, 5, 7, 1 },
+-
+-	/* ACLK200 L3: 133.3MHz */
+-	{ 5, 7, 7, 7, 1 },
+-};
+-
+-static unsigned int clkdiv_lr_bus[CPUFREQ_LEVEL_END][2] = {
+-	/*
+-	 * Clock divider value for following
+-	 * { DIVGDL/R, DIVGPL/R }
+-	 */
+-
+-	/* ACLK_GDL/R L0: 200MHz */
+-	{ 3, 1 },
+-
+-	/* ACLK_GDL/R L1: 200MHz */
+-	{ 3, 1 },
+-
+-	/* ACLK_GDL/R L2: 160MHz */
+-	{ 4, 1 },
+-
+-	/* ACLK_GDL/R L3: 133.3MHz */
+-	{ 5, 1 },
+-};
+-
+ struct cpufreq_voltage_table {
+ 	unsigned int	index;		/* any */
+ 	unsigned int	arm_volt;	/* uV */
+-	unsigned int	int_volt;
+ };
  
-@@ -253,6 +260,11 @@ extern int s3c2412_iotiming_calc(struct s3c_cpufreq_config *cfg,
+ static struct cpufreq_voltage_table exynos4_volt_table[CPUFREQ_LEVEL_END] = {
+ 	{
+ 		.index		= L0,
+ 		.arm_volt	= 1200000,
+-		.int_volt	= 1100000,
+ 	}, {
+ 		.index		= L1,
+ 		.arm_volt	= 1100000,
+-		.int_volt	= 1100000,
+ 	}, {
+ 		.index		= L2,
+ 		.arm_volt	= 1000000,
+-		.int_volt	= 1000000,
+ 	}, {
+ 		.index		= L3,
+ 		.arm_volt	= 900000,
+-		.int_volt	= 1000000,
+ 	},
+ };
  
- extern void s3c2412_iotiming_set(struct s3c_cpufreq_config *cfg,
- 				 struct s3c_iotimings *iot);
-+#else
-+#define s3c2412_iotiming_calc NULL
-+#define s3c2412_iotiming_get NULL
-+#define s3c2412_iotiming_set NULL
-+#endif
+@@ -248,80 +177,6 @@ static void exynos4_set_clkdiv(unsigned int div_index)
+ 	do {
+ 		tmp = __raw_readl(S5P_CLKDIV_STATCPU1);
+ 	} while (tmp & 0x11);
+-
+-	/* Change Divider - DMC0 */
+-
+-	tmp = __raw_readl(S5P_CLKDIV_DMC0);
+-
+-	tmp &= ~(S5P_CLKDIV_DMC0_ACP_MASK | S5P_CLKDIV_DMC0_ACPPCLK_MASK |
+-		S5P_CLKDIV_DMC0_DPHY_MASK | S5P_CLKDIV_DMC0_DMC_MASK |
+-		S5P_CLKDIV_DMC0_DMCD_MASK | S5P_CLKDIV_DMC0_DMCP_MASK |
+-		S5P_CLKDIV_DMC0_COPY2_MASK | S5P_CLKDIV_DMC0_CORETI_MASK);
+-
+-	tmp |= ((clkdiv_dmc0[div_index][0] << S5P_CLKDIV_DMC0_ACP_SHIFT) |
+-		(clkdiv_dmc0[div_index][1] << S5P_CLKDIV_DMC0_ACPPCLK_SHIFT) |
+-		(clkdiv_dmc0[div_index][2] << S5P_CLKDIV_DMC0_DPHY_SHIFT) |
+-		(clkdiv_dmc0[div_index][3] << S5P_CLKDIV_DMC0_DMC_SHIFT) |
+-		(clkdiv_dmc0[div_index][4] << S5P_CLKDIV_DMC0_DMCD_SHIFT) |
+-		(clkdiv_dmc0[div_index][5] << S5P_CLKDIV_DMC0_DMCP_SHIFT) |
+-		(clkdiv_dmc0[div_index][6] << S5P_CLKDIV_DMC0_COPY2_SHIFT) |
+-		(clkdiv_dmc0[div_index][7] << S5P_CLKDIV_DMC0_CORETI_SHIFT));
+-
+-	__raw_writel(tmp, S5P_CLKDIV_DMC0);
+-
+-	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC0);
+-	} while (tmp & 0x11111111);
+-
+-	/* Change Divider - TOP */
+-
+-	tmp = __raw_readl(S5P_CLKDIV_TOP);
+-
+-	tmp &= ~(S5P_CLKDIV_TOP_ACLK200_MASK | S5P_CLKDIV_TOP_ACLK100_MASK |
+-		S5P_CLKDIV_TOP_ACLK160_MASK | S5P_CLKDIV_TOP_ACLK133_MASK |
+-		S5P_CLKDIV_TOP_ONENAND_MASK);
+-
+-	tmp |= ((clkdiv_top[div_index][0] << S5P_CLKDIV_TOP_ACLK200_SHIFT) |
+-		(clkdiv_top[div_index][1] << S5P_CLKDIV_TOP_ACLK100_SHIFT) |
+-		(clkdiv_top[div_index][2] << S5P_CLKDIV_TOP_ACLK160_SHIFT) |
+-		(clkdiv_top[div_index][3] << S5P_CLKDIV_TOP_ACLK133_SHIFT) |
+-		(clkdiv_top[div_index][4] << S5P_CLKDIV_TOP_ONENAND_SHIFT));
+-
+-	__raw_writel(tmp, S5P_CLKDIV_TOP);
+-
+-	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_TOP);
+-	} while (tmp & 0x11111);
+-
+-	/* Change Divider - LEFTBUS */
+-
+-	tmp = __raw_readl(S5P_CLKDIV_LEFTBUS);
+-
+-	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
+-
+-	tmp |= ((clkdiv_lr_bus[div_index][0] << S5P_CLKDIV_BUS_GDLR_SHIFT) |
+-		(clkdiv_lr_bus[div_index][1] << S5P_CLKDIV_BUS_GPLR_SHIFT));
+-
+-	__raw_writel(tmp, S5P_CLKDIV_LEFTBUS);
+-
+-	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_LEFTBUS);
+-	} while (tmp & 0x11);
+-
+-	/* Change Divider - RIGHTBUS */
+-
+-	tmp = __raw_readl(S5P_CLKDIV_RIGHTBUS);
+-
+-	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
+-
+-	tmp |= ((clkdiv_lr_bus[div_index][0] << S5P_CLKDIV_BUS_GDLR_SHIFT) |
+-		(clkdiv_lr_bus[div_index][1] << S5P_CLKDIV_BUS_GPLR_SHIFT));
+-
+-	__raw_writel(tmp, S5P_CLKDIV_RIGHTBUS);
+-
+-	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_RIGHTBUS);
+-	} while (tmp & 0x11);
+ }
  
- #ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUG
- #define s3c_freq_dbg(x...) printk(KERN_INFO x)
+ static void exynos4_set_apll(unsigned int index)
+@@ -410,7 +265,7 @@ static int exynos4_target(struct cpufreq_policy *policy,
+ 			  unsigned int relation)
+ {
+ 	unsigned int index, old_index;
+-	unsigned int arm_volt, int_volt;
++	unsigned int arm_volt;
+ 	int err = -EINVAL;
+ 
+ 	freqs.old = exynos4_getspeed(policy->cpu);
+@@ -440,7 +295,6 @@ static int exynos4_target(struct cpufreq_policy *policy,
+ 
+ 	/* get the voltage value */
+ 	arm_volt = exynos4_volt_table[index].arm_volt;
+-	int_volt = exynos4_volt_table[index].int_volt;
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_PRECHANGE);
+ 
+@@ -448,7 +302,6 @@ static int exynos4_target(struct cpufreq_policy *policy,
+ 	if (freqs.new > freqs.old) {
+ 		/* Voltage up */
+ 		regulator_set_voltage(arm_regulator, arm_volt, arm_volt);
+-		regulator_set_voltage(int_regulator, int_volt, int_volt);
+ 	}
+ 
+ 	/* Clock Configuration Procedure */
+@@ -458,7 +311,6 @@ static int exynos4_target(struct cpufreq_policy *policy,
+ 	if (freqs.new < freqs.old) {
+ 		/* Voltage down */
+ 		regulator_set_voltage(arm_regulator, arm_volt, arm_volt);
+-		regulator_set_voltage(int_regulator, int_volt, int_volt);
+ 	}
+ 
+ 	cpufreq_notify_transition(&freqs, CPUFREQ_POSTCHANGE);
+@@ -636,27 +488,6 @@ static int __init exynos4_cpufreq_init(void)
+ 		goto out;
+ 	}
+ 
+-	int_regulator = regulator_get(NULL, "vdd_int");
+-	if (IS_ERR(int_regulator)) {
+-		printk(KERN_ERR "failed to get resource %s\n", "vdd_int");
+-		goto out;
+-	}
+-
+-	/*
+-	 * Check DRAM type.
+-	 * Because DVFS level is different according to DRAM type.
+-	 */
+-	memtype = __raw_readl(S5P_VA_DMC0 + S5P_DMC0_MEMCON_OFFSET);
+-	memtype = (memtype >> S5P_DMC0_MEMTYPE_SHIFT);
+-	memtype &= S5P_DMC0_MEMTYPE_MASK;
+-
+-	if ((memtype < DDR2) && (memtype > DDR3)) {
+-		printk(KERN_ERR "%s: wrong memtype= 0x%x\n", __func__, memtype);
+-		goto out;
+-	} else {
+-		printk(KERN_DEBUG "%s: memtype= 0x%x\n", __func__, memtype);
+-	}
+-
+ 	register_pm_notifier(&exynos4_cpufreq_nb);
+ 
+ 	return cpufreq_register_driver(&exynos4_driver);
+@@ -677,9 +508,6 @@ out:
+ 	if (!IS_ERR(arm_regulator))
+ 		regulator_put(arm_regulator);
+ 
+-	if (!IS_ERR(int_regulator))
+-		regulator_put(int_regulator);
+-
+ 	printk(KERN_ERR "%s: failed initialization\n", __func__);
+ 
+ 	return -EINVAL;
+-- 
+1.7.1
