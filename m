@@ -1,63 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
-Date: Thu, 08 Dec 2011 16:43:39 +0900
-Message-ID: <002301ccb57d$19f09b40$4dd1d1c0$%kim@samsung.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: RE: [PATCH 1/2] DMA: PL330: Remove pm_runtime_xxx calls from pl330
+ probe/remove
+Date: Thu, 08 Dec 2011 13:46:45 +0530
+Message-ID: <1323332205.1641.29.camel@vkoul-udesk3>
 References: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
- <1323168355-2764-3-git-send-email-tushar.behera@linaro.org>
+	 <1323168355-2764-2-git-send-email-tushar.behera@linaro.org>
+	 <1323329702.1641.26.camel@vkoul-udesk3>
+	 <002201ccb57d$056d2440$10476cc0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31716 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751696Ab1LHHnn (ORCPT
+Received: from mga14.intel.com ([143.182.124.37]:51373 "EHLO mga14.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752219Ab1LHISL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Dec 2011 02:43:43 -0500
-In-reply-to: <1323168355-2764-3-git-send-email-tushar.behera@linaro.org>
-Content-language: ko
+	Thu, 8 Dec 2011 03:18:11 -0500
+In-Reply-To: <002201ccb57d$056d2440$10476cc0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: vinod.koul@intel.com, linaro-dev@lists.linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Tushar Behera' <tushar.behera@linaro.org>, 'Boojin Kim' <boojin.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org
 
-Tushar Behera wrote:
+On Thu, 2011-12-08 at 16:43 +0900, Kukjin Kim wrote:
+> Vinod Koul wrote:
+> > 
+> > On Tue, 2011-12-06 at 16:15 +0530, Tushar Behera wrote:
+> > > amba_probe() now calls pm_runtime_get_noresume() and pm_runtime_enable()
+> > > for the devices before the device probe is called. Hence we don't need
+> > > to call pm_runtime_get_xxx and pm_runtime_enable() in device probe again.
+> > > In the same way, since amba_remove() calls the respective pm_runtime
+> > > functions, those functions need not be called from device remove.
+> > >
+> > > This patch fixes following run time error with pl330 driver.
+> > >
+> > > dma-pl330 dma-pl330.0: Unbalanced pm_runtime_enable!
+> > > dma-pl330 dma-pl330.0: failed to get runtime pm
+> > >
+> > > Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
+> > > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> > Looks fine to me. Do you want these to go thru slave-dma or samsung
+> > tree.
 > 
-> Amba core assumes the pclk to be named as apb_pclk. During device probe,
-> it tries to get that clock and enable that. When PM_RUNTIME is enabled,
-> dma clock is not explicitly enabled in pl330_probe, which causes device
-> probe to fail. Adding a clkdev entry for apb_pclk for mdma1 fixes the
-> problem.
+> Hi Vinod,
 > 
-> This patch fixes following runtime error.
-> 
-> dma-pl330 dma-pl330.2: PERIPH_ID 0x0, PCELL_ID 0x0 !
-> dma-pl330: probe of dma-pl330.2 failed with error -22
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
->  arch/arm/mach-exynos/clock.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-> index 28e2842..eb33a7a 100644
-> --- a/arch/arm/mach-exynos/clock.c
-> +++ b/arch/arm/mach-exynos/clock.c
-> @@ -1326,6 +1326,7 @@ static struct clk_lookup exynos4_clk_lookup[] = {
->  	CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
->  	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
->  	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
-> +	CLKDEV_INIT("dma-pl330.2", "apb_pclk", &clk_mdma1),
->  };
-> 
->  static int xtal_rate;
-> --
-> 1.7.4.1
+> I think, this patch can be sent to upstream via slave-dma tree and
+> second one via Samsung tree separately and you can add my and Boojin
+> Kim's ack(actually, she replied) on this when you apply.
+Okay, I have applied this one only
 
-Looks ok to me, will apply.
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+~Vinod
