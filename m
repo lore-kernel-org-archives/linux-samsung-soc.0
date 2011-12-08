@@ -1,32 +1,31 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 0/1] dmaengine/amba-pl08x: Add support for s3c64xx DMAC
-Date: Thu, 8 Dec 2011 00:43:32 +0100
-Message-ID: <CACRpkdZC8LOOLkWbrPbXN_nKaw-WvueusYDyrX48Q1Pcdwv3Aw@mail.gmail.com>
-References: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/3] PM: Provide an always on power domain governor
+Date: Thu, 8 Dec 2011 00:40:16 +0000
+Message-ID: <20111208004015.GA5748@opensource.wolfsonmicro.com>
+References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <201112062239.57001.rjw@sisk.pl> <20111207123459.GB18715@opensource.wolfsonmicro.com> <201112072228.02916.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:35650 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751470Ab1LGXnc (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53298 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756630Ab1LHAkS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Dec 2011 18:43:32 -0500
-In-Reply-To: <1317189007-23033-1-git-send-email-alim.akhtar@samsung.com>
+	Wed, 7 Dec 2011 19:40:18 -0500
+Content-Disposition: inline
+In-Reply-To: <201112072228.02916.rjw@sisk.pl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>
-Cc: vinod.koul@intel.com, dan.j.williams@intel.com, viresh.kumar@st.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Paul Mundt' <lethal@linux-sh.org>, 'Magnus Damm' <magnus.damm@gmail.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 28, 2011 at 7:50 AM, Alim Akhtar <alim.akhtar@samsung.com> wrote:
+On Wed, Dec 07, 2011 at 10:28:02PM +0100, Rafael J. Wysocki wrote:
+> On Wednesday, December 07, 2011, Mark Brown wrote:
 
-> This patch modifies the amba-pl08x driver for s3c64xx.
-> The DMA controller of S3C64XX is a variant of PrimeCell pl080 DMAC.
-> S3C64xx contents extra register to hold the TransferSize.
+> > Well, I guess you could put patch 1 and 3 in then add 2 if an ack is
+> > forthcoming for that - there's no direct dependency.
 
-Alim what is happening with this patch series?
+> It's been acked already, I'm going to pul all three patches into
+> linux-pm/linux-next later today.
 
-I was really happy with the rate of progress we had and Viresh & I
-have given most feedback needed to complete this I think.
-
-Yours,
-Linus Walleij
+Oh, OK - I didn't seem to get copied on any of the acks or at least I
+didn't see them.
