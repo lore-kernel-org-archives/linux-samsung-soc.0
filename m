@@ -1,63 +1,53 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 1/2] DMA: PL330: Remove pm_runtime_xxx calls from pl330 probe/remove
-Date: Thu, 8 Dec 2011 19:02:45 +0530
-Message-ID: <CAJe_Zhf5-x0+9nrjCyY1N60jyxYm1qoF3Agg0jb7Te-dP8z5gw@mail.gmail.com>
-References: <1323168355-2764-1-git-send-email-tushar.behera@linaro.org>
-	<1323168355-2764-2-git-send-email-tushar.behera@linaro.org>
-	<1323329702.1641.26.camel@vkoul-udesk3>
-	<002201ccb57d$056d2440$10476cc0$%kim@samsung.com>
-	<1323332205.1641.29.camel@vkoul-udesk3>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/2] Add device tree support for MAX8997
+Date: Thu, 08 Dec 2011 21:57:37 +0530
+Message-ID: <1323361659-11835-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:48492 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834Ab1LHNcq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:53210 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750988Ab1LHQ0U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Dec 2011 08:32:46 -0500
-In-Reply-To: <1323332205.1641.29.camel@vkoul-udesk3>
+	Thu, 8 Dec 2011 11:26:20 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, Boojin Kim <boojin.kim@samsung.com>, patches@linaro.org, linux-kernel@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 8 December 2011 13:46, Vinod Koul <vinod.koul@intel.com> wrote:
-> On Thu, 2011-12-08 at 16:43 +0900, Kukjin Kim wrote:
->> Vinod Koul wrote:
->> >
->> > On Tue, 2011-12-06 at 16:15 +0530, Tushar Behera wrote:
->> > > amba_probe() now calls pm_runtime_get_noresume() and pm_runtime_enable()
->> > > for the devices before the device probe is called. Hence we don't need
->> > > to call pm_runtime_get_xxx and pm_runtime_enable() in device probe again.
->> > > In the same way, since amba_remove() calls the respective pm_runtime
->> > > functions, those functions need not be called from device remove.
->> > >
->> > > This patch fixes following run time error with pl330 driver.
->> > >
->> > > dma-pl330 dma-pl330.0: Unbalanced pm_runtime_enable!
->> > > dma-pl330 dma-pl330.0: failed to get runtime pm
->> > >
->> > > Signed-off-by: Giridhar Maruthy <giridhar.maruthy@linaro.org>
->> > > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> > Looks fine to me. Do you want these to go thru slave-dma or samsung
->> > tree.
->>
->> Hi Vinod,
->>
->> I think, this patch can be sent to upstream via slave-dma tree and
->> second one via Samsung tree separately and you can add my and Boojin
->> Kim's ack(actually, she replied) on this when you apply.
->
-> Okay, I have applied this one only
->
-Guys, any reason to keep me, the author of the driver, out of loop ?
-I almost lost this patch, had it not for chance.
+MAX8997 is a multi-function device which includes support for regulators, rtc,
+battery charger and other sub-blocks. This patchset adds device tree support
+for the pmic (regulators) sub-block.
 
-Also, I noticed
-42bc9cf45939c2   'DMA: PL330: Add DMA_CYCLIC capability'
-while implements my correction, doesn't carry the ack
- http://www.spinics.net/lists/linux-samsung-soc/msg06386.html
+The first patch adds irq domain support for the interrupts supported by max8997
+mainly for removing the need to pass a irq_base from the platform code. The
+irq_base could not anyway be passed in case of device tree based instantiation.
 
-While, unlike some, I am not interested in claiming territory by pissing
-around acks, I would sure like to log my acks if I spent personal time
-maintaining the code I am supposed to be responsible for.
+The second patch adds device tree support for max8997. This patch modifies both
+mfd and regulator portions of the max8997 code. So does this patch have to be
+split into two, one for mfd and one for regulator?
+
+This patchset is based on the following tree.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git  for-next
+
+and depends on the following patchs.
+[1] All the regulator device tree related patches from
+    git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git topic/dt
+    (from commit 8f446e6fa1d506be2cb80f91c214f1705327c7f9).
+[2] Device tree support patches for wakeup interrupt sources on Exynos4.
+[3] [PATCH] irqdomain: export irq_domain._simple_op.s for !CONFIG_OF
+
+This patchset has been tested on Origen board.
+
+Thomas Abraham (2):
+  mfd: add irq domain support for max8997 interrupts
+  regulator: add device tree support for max8997
+
+ .../devicetree/bindings/regulator/max8997-pmic.txt |  122 +++++++++++++++++
+ arch/arm/mach-exynos/mach-nuri.c                   |    4 -
+ arch/arm/mach-exynos/mach-origen.c                 |    1 -
+ drivers/mfd/max8997-irq.c                          |   33 +++--
+ drivers/mfd/max8997.c                              |   71 ++++++++++-
+ drivers/regulator/max8997.c                        |  137 ++++++++++++++++++++
+ include/linux/mfd/max8997-private.h                |    4 +-
+ include/linux/mfd/max8997.h                        |    1 -
+ 8 files changed, 350 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/max8997-pmic.txt
