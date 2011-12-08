@@ -1,43 +1,48 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 3/3] ARM: S3C64XX: Implement basic power domain support
-Date: Thu, 8 Dec 2011 23:22:07 +0100
-Message-ID: <201112082322.07970.rjw@sisk.pl>
-References: <1322765339-29879-1-git-send-email-broonie@opensource.wolfsonmicro.com> <20111208010924.GC5748@opensource.wolfsonmicro.com> <201112082315.18197.rjw@sisk.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/2] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Thu, 8 Dec 2011 23:49:02 +0100
+Message-ID: <CACRpkdZZvbJaJ7O7V64msXR5GKHAJ4KCo-cezybVpsaGQa-b6A@mail.gmail.com>
+References: <002901ccb582$ba7e0a20$2f7a1e60$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:49714 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751845Ab1LHWTK (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:47152 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752079Ab1LHWtD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Dec 2011 17:19:10 -0500
-In-Reply-To: <201112082315.18197.rjw@sisk.pl>
+	Thu, 8 Dec 2011 17:49:03 -0500
+Received: by iakc1 with SMTP id c1so3207351iak.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Dec 2011 14:49:03 -0800 (PST)
+In-Reply-To: <002901ccb582$ba7e0a20$2f7a1e60$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Sylwester Nawrocki <snjw23@gmail.com>, Paul Mundt <lethal@linux-sh.org>, Magnus Damm <magnus.damm@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, jassisinghbrar@gmail.com, rmk+kernel@arm.linux.org.uk, Boojin Kim <boojin.kim@samsung.com>
 
-On Thursday, December 08, 2011, Rafael J. Wysocki wrote:
-> On Thursday, December 08, 2011, Mark Brown wrote:
-> > On Wed, Dec 07, 2011 at 10:44:02PM +0100, Rafael J. Wysocki wrote:
-> > > On Friday, December 02, 2011, Mark Brown wrote:
-> > 
-> > > > May as well, yes - I didn't actually measure how long it tends to take
-> > > > to do the spin but it's not going to hurt.
-> > 
-> > > Are you going to post an updated patch?
-> > 
-> > I've resent it but my development laptop is currently not internet
-> > connected so I'm not sure when it'll actually go out.
-> 
-> Hmm.  I can't find it in my e-mail archives.
-> 
-> Do you have any pointer to a web archive somewhere, where I can get the patch
-> from?
+On Thu, Dec 8, 2011 at 9:23 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Ah, I've just received it.
+> From: Boojin Kim <boojin.kim@samsung.com>
+>
+> Currently there were two part of DMAC PL330 driver for
+> support old styled s3c-pl330 which has been merged into
+> drivers/dma/pl330.c driver. Actually, there is no reason
+> to separate them now.
+>
+> Basically this patch merges arch/arm/common/pl330.c into
+> drivers/dma/pl330.c driver and removes useless exported
+> symbol, externed function and so on.
+>
+> The newer pl330 driver tested on SMDKV310 and SMDK4212 boards
+>
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Vinod Koul <vinod.koul@intel.com>
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Looks good to me,
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Thanks,
-Rafael
+Linus Walleij
