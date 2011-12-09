@@ -1,110 +1,45 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 4/4] ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices
-Date: Fri, 9 Dec 2011 10:51:38 +0100
-Message-ID: <201112091051.38916.heiko@sntech.de>
-References: <201112091046.26563.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] i2c-s3c2410: Fix return code of s3c24xx_i2c_parse_dt_gpio
+Date: Fri,  9 Dec 2011 15:33:55 +0530
+Message-ID: <1323425035-11298-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:33800 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753037Ab1LIJvp (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:40379 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750778Ab1LIKGa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 04:51:45 -0500
-In-Reply-To: <201112091046.26563.heiko@sntech.de>
+	Fri, 9 Dec 2011 05:06:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it
-Cc: rtc-linux@googlegroups.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, thomas.abraham@linaro.org
 
-As the S3C24xx SoCs use the same rtc device a renaming capability like in
-the adc driver is necessary.
+s3c24xx_i2c_parse_dt_gpio is called when cfg_gpio is not defined
+in the platform data of the i2c device. When DT is not enabled,
+the above function always returns -EINVAL. Since there can be
+some i2c devices which don't need to configure any gpio lines,
+the probe of such devices would fail here. Changing the default
+return value to success would fix this issue.
 
-This patch adds a s3c_rtc_setname function and names the rtc devices for
-S3C2443 and S3C2416 accordingly.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/mach-s3c2416/s3c2416.c               |    2 +
- arch/arm/mach-s3c2443/s3c2443.c               |    2 +
- arch/arm/plat-samsung/include/plat/rtc-core.h |   27 +++++++++++++++++++++++++
- 3 files changed, 31 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/include/plat/rtc-core.h
+This patch is rebased on Kukjin's for-next branch.
+d3d936c "Merge branch 'samsung-fixes-2' into for-next"
 
-diff --git a/arch/arm/mach-s3c2416/s3c2416.c b/arch/arm/mach-s3c2416/s3c2416.c
-index ee214bc..604cf98 100644
---- a/arch/arm/mach-s3c2416/s3c2416.c
-+++ b/arch/arm/mach-s3c2416/s3c2416.c
-@@ -61,6 +61,7 @@
- #include <plat/fb-core.h>
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
-+#include <plat/rtc-core.h>
+ drivers/i2c/busses/i2c-s3c2410.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 2754cef..b5caa42 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -786,7 +786,7 @@ static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
+ #else
+ static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
+ {
+-	return -EINVAL;
++	return 0;
+ }
  
- static struct map_desc s3c2416_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -99,6 +100,7 @@ int __init s3c2416_init(void)
- 	s3c_fb_setname("s3c2443-fb");
- 
- 	s3c_adc_setname("s3c2416-adc");
-+	s3c_rtc_setname("s3c2416-rtc");
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2416_pm_syscore_ops);
-diff --git a/arch/arm/mach-s3c2443/s3c2443.c b/arch/arm/mach-s3c2443/s3c2443.c
-index a22b771..9e6be20 100644
---- a/arch/arm/mach-s3c2443/s3c2443.c
-+++ b/arch/arm/mach-s3c2443/s3c2443.c
-@@ -42,6 +42,7 @@
- #include <plat/fb-core.h>
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
-+#include <plat/rtc-core.h>
- 
- static struct map_desc s3c2443_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -72,6 +73,7 @@ int __init s3c2443_init(void)
- 	s3c_fb_setname("s3c2443-fb");
- 
- 	s3c_adc_setname("s3c2443-adc");
-+	s3c_rtc_setname("s3c2443-rtc");
- 
- 	/* change WDT IRQ number */
- 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
-diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h b/arch/arm/plat-samsung/include/plat/rtc-core.h
-new file mode 100644
-index 0000000..21d8594
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/rtc-core.h
-@@ -0,0 +1,27 @@
-+/* linux/arch/arm/plat-samsung/include/plat/rtc-core.h
-+ *
-+ * Copyright (c) 2011 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * Samsung RTC Controller core functions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_PLAT_RTC_CORE_H
-+#define __ASM_PLAT_RTC_CORE_H __FILE__
-+
-+/* These functions are only for use with the core support code, such as
-+ * the cpu specific initialisation code
-+ */
-+
-+/* re-define device name depending on support. */
-+static inline void s3c_rtc_setname(char *name)
-+{
-+#if defined(CONFIG_SAMSUNG_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
-+	s3c_device_rtc.name = name;
-+#endif
-+}
-+
-+#endif /* __ASM_PLAT_RTC_CORE_H */
+ static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
 -- 
-1.7.5.4
+1.7.4.1
