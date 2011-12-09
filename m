@@ -1,41 +1,56 @@
-From: Sathishkumar Duraisamy <bewithsathish@gmail.com>
-Subject: Re: How to get High resolution time in s3c6410
-Date: Fri, 9 Dec 2011 10:59:52 +0530
-Message-ID: <CANJvwR_0LKEJAFkfwjsgeQKq9sars3f+1L58L9FyNuo+R9cgVA@mail.gmail.com>
-References: <CANJvwR_NCHs0KfmhRrV6pfo_PW3kFJmEHqhdi1QEUi8xhRHiNg@mail.gmail.com>
-	<20111209035600.GB25601@sirena.org.uk>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: mmc: dw_mmc: Add more capabilities field
+Date: Fri, 09 Dec 2011 14:49:46 +0900
+Message-ID: <00a801ccb636$5bbe2920$133a7b60$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:50109 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750792Ab1LIF3x (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:14547 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751373Ab1LIFty (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 00:29:53 -0500
-Received: by dadw7 with SMTP id w7so133707dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Dec 2011 21:29:52 -0800 (PST)
-In-Reply-To: <20111209035600.GB25601@sirena.org.uk>
+	Fri, 9 Dec 2011 00:49:54 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
+To: linux-mmc@vger.kernel.org
+Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 9, 2011 at 9:26 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, Dec 07, 2011 at 05:51:05PM +0530, Sathishkumar Duraisamy wrote:
->
->> Here I have to measure time elapsed between two events in
->> microseconds. Currently in my working kernel 2.6.36.2, there is no
->> support for high resolution timer and resolution of time is 10ms
->> (jiffies) . Can you please help me to get high resolution timer? Or Do
->> I have to use timer hardware ?
->
-> There''s an out of tree patch in the spica tree which adds a hrtimer
-> using the PWM hardware - see git://github.com/tom3q/spica-3.0
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c  |    6 ++++++
+ include/linux/mmc/dw_mmc.h |    1 +
+ 2 files changed, 7 insertions(+), 0 deletions(-)
 
-Thanks Mark Brown for timely help. I have been looking in this branch.
-
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 3aaeb08..366df6b 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1681,6 +1681,12 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 	else
+ 		mmc->caps = 0;
+ 
++	if (host->pdata->caps2)
++		mmc->caps2 = host->pdata->caps2;
++	else
++		mmc->caps2 = 0;
++
++
+ 	if (host->pdata->get_bus_wd)
+ 		if (host->pdata->get_bus_wd(slot->id) >= 4)
+ 			mmc->caps |= MMC_CAP_4_BIT_DATA;
+diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+index 6dc9b80..e8779c6 100644
+--- a/include/linux/mmc/dw_mmc.h
++++ b/include/linux/mmc/dw_mmc.h
+@@ -214,6 +214,7 @@ struct dw_mci_board {
+ 	unsigned int bus_hz; /* Bus speed */
+ 
+ 	unsigned int caps;	/* Capabilities */
++	unsigned int caps2;	/* More capabilities */
+ 	/*
+ 	 * Override fifo depth. If 0, autodetect it from the FIFOTH register,
+ 	 * but note that this may not be reliable after a bootloader has used
 -- 
-Regards,
-Sathishkumar D
-http://flowersopenlab.weebly.com/
+1.7.0.4
