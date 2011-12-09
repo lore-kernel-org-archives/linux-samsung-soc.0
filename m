@@ -1,71 +1,75 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH v2] ARM: S3C64XX: Implement basic power domain support
-Date: Fri, 9 Dec 2011 22:57:18 +0100
-Message-ID: <201112092257.18319.rjw@sisk.pl>
-References: <1323306483-27132-1-git-send-email-broonie@opensource.wolfsonmicro.com> <201112082355.11249.rjw@sisk.pl> <00a701ccb605$9ba84650$d2f8d2f0$%kim@samsung.com>
+From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Subject: Re: Re: [PATCH 0/3] Support Samsung S5P OHCI device and driver
+Date: Fri, 9 Dec 2011 15:58:07 -0800
+Message-ID: <20111209235807.GC6680@kroah.com>
+References: <33510089.42761321876635907.JavaMail.weblogic@epv6ml08>
+ <20111121172344.GA4483@kroah.com>
+ <046f01ccb011$6d111370$47333a50$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:51283 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750829Ab1LIVyT (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 16:54:19 -0500
-In-Reply-To: <00a701ccb605$9ba84650$d2f8d2f0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <046f01ccb011$6d111370$47333a50$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-l3A5Bk7waGM@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, 'Yulgon Kim' <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Shim Joonyoung' <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Friday, December 09, 2011, Kukjin Kim wrote:
+On Thu, Dec 01, 2011 at 07:10:17PM +0900, Kukjin Kim wrote:
+> Greg KH wrote:
+> > 
+> > On Mon, Nov 21, 2011 at 11:57:16AM +0000, Jingoo Han wrote:
+> > > > -----Original Message-----
+> > > > From: Greg KH [mailto:greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org]
+> > > > Sent: Friday, November 18, 2011 4:12 AM
+> > > > To: Jingoo Han
+> > > > Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org;
+> > > > linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; gregkh-l3A5Bk7waGM@public.gmane.org;
+> > > > stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org; kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org;
+> > yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org;
+> > > > jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+> > > > Subject: Re: [PATCH 0/3] Support Samsung S5P OHCI device and driver
+> > > >
+> > > > On Tue, Nov 15, 2011 at 06:49:58AM +0000, Jingoo Han wrote:
+> > > > > Hello.
+> > > > >
+> > > > > This patch series adds USB OHCI device and initial driver for
+> > Samsung
+> > > > > S5P SoCs and is based from Linux 3.2-rc1. I have tested on SMDKV310
+> > > > board
+> > > > > using EXYNOS4.
+> > > >
+> > > > This is to be sent through some arm tree, not the usb tree, right?
+> > > Right, 1st and 2nd patch are sent throught arm tree.
+> > > However, 3rd patch is sent through the usb tree.
+> > > Thanks.
+> > > [PATCH 1/3] ARM: SAMSUNG: Add USB OHCI device
+> > > [PATCH 2/3]  ARM: EXYNOS: Add USB OHCI support to SMDKV310 board
+> > > [PATCH 3/3] USB: Add S5P OHCI diver
+> > 
+> Hi Greg,
 > 
-> > -----Original Message-----
-> > From: Rafael J. Wysocki [mailto:rjw@sisk.pl]
-> > Sent: Friday, December 09, 2011 7:55 AM
-> > To: Mark Brown
-> > Cc: Kukjin Kim; linux-arm-kernel@lists.infradead.org; linux-samsung-
-> > soc@vger.kernel.org
-> > Subject: Re: [PATCH v2] ARM: S3C64XX: Implement basic power domain support
-> > 
-> > On Thursday, December 08, 2011, Mark Brown wrote:
-> > > The S3C64xx SoCs contain a set of gateable power domains which can be
-> > > enabled and disabled at runtime in order to save power.  Use the generic
-> > > power domain code to implement support for these in software, enabling
-> > > runtime control of most domains:
-> > >
-> > >  - ETM (not supported in mainline).
-> > >  - Domain G: 3D acceleration (no mainline support).
-> > >  - Domain V: MFC (no mainline support).
-> > >  - Domain I: JPEG and camera interface (no mainline support).
-> > >  - Domain P: 2D acceleration, TV encoder and scaler (no mainline
-> support)
-> > >  - Domain S: Security (no mainline support).
-> > >  - Domain F: LCD (driver already uses runtime PM), post processing and
-> > >    rotation (no mainline support).
-> > >
-> > > The IROM domain is marked as always enabled as we should arrange for it
-> > > to be enabled when we suspend which will need a bit more work.
-> > >
-> > > Due to all the conditional device registration that the platform does
-> > > wrap s3c_pm_init() with s3c64xx_pm_init() which actually puts the device
-> > > into the power domain after the machines have registered, looking for
-> > > platform data to tell if the device was registered. Since currently only
-> > > Cragganmore actually sets up PM that is the only machine updated.
-> > >
-> > > Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> > > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> > 
-> > Applied to linux-pm/linux-next.
-> > 
-> Hi Rafael,
+> Sorry for late response. I came back today from family vacation...
 > 
-> As I said, I need topic branch for merging into my tree to avoid conflicts,
-> but I couldn't find any branch for this.
+> Anyway,
+> 
+> > So the third patch does not depend on the first two?  If it does, that
+> > means I will get build errors in the USB tree when I apply that patch,
+> > right?
+> > 
+> > If so, then all three should go through a single tree.
+> > 
+> Yes, right. This series would be handled in same tree so that we can avoid
+> useless conflicts.
+> 
+> I commented small thing on 3rd patch. So I think, if you're ok on his
+> updated patch, it can be sent to upstream via Samsung tree. Or your tree
+> with my ack?
 
-And as I said, I'll put those patches into the pm-domains branch of my tree
-shortly (most likely later today), which I think is the topic branch you need.
+The samsung tree is fine to take these, thanks.
 
-Thanks,
-Rafael
+greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
