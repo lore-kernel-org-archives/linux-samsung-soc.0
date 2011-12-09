@@ -1,54 +1,45 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/2] regulator: add device tree support for max8997
-Date: Fri, 9 Dec 2011 12:55:33 +0530
-Message-ID: <CAJuYYwSS0-+=D3WbwYDowZQTrFq_s1XEM_gSkgXApstPeGNWkA@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] mfd: add irq domain support for max8997 interrupts
+Date: Fri, 9 Dec 2011 16:15:04 +0800
+Message-ID: <20111209081502.GH26952@opensource.wolfsonmicro.com>
 References: <1323361659-11835-1-git-send-email-thomas.abraham@linaro.org>
-	<1323361659-11835-2-git-send-email-thomas.abraham@linaro.org>
-	<1323361659-11835-3-git-send-email-thomas.abraham@linaro.org>
-	<20111209061720.GF26952@opensource.wolfsonmicro.com>
+ <1323361659-11835-2-git-send-email-thomas.abraham@linaro.org>
+ <20111209044109.GB26952@opensource.wolfsonmicro.com>
+ <CAJuYYwRicSWO=wCmBH5RWcBLX3uhpyxS2wojUS3ZAH9tN=R1Kg@mail.gmail.com>
+ <20111209060249.GD26952@opensource.wolfsonmicro.com>
+ <CAJuYYwSCuu8U2rF3RGAnczXgbh4Px7hMwUhHr=xrhPZ1jEs5DA@mail.gmail.com>
+ <20111209063912.GG26952@opensource.wolfsonmicro.com>
+ <CAJuYYwQ8B_EtuReRDJ8Tp-cCOV3jd_-y-9iLy0apRZV3zU6Jdw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:44941 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750965Ab1LIHZe convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41529 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750903Ab1LIIPU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 02:25:34 -0500
-In-Reply-To: <20111209061720.GF26952@opensource.wolfsonmicro.com>
+	Fri, 9 Dec 2011 03:15:20 -0500
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwQ8B_EtuReRDJ8Tp-cCOV3jd_-y-9iLy0apRZV3zU6Jdw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 9 December 2011 11:47, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Thu, Dec 08, 2011 at 09:57:39PM +0530, Thomas Abraham wrote:
->
->> +Required properties, if interrupts are delivered to host system:
->
-> These are just optional properties, really.
+On Fri, Dec 09, 2011 at 12:49:49PM +0530, Thomas Abraham wrote:
+> On 9 December 2011 12:09, Mark Brown
 
-Ok. Yeah, these can be classified as optional.
+> > How would you provide this interrupt to the device using it in a non-DT
+> > systemm without passing the irq_base into the device as platform data?
 
->
->> +- interrupt-parent: Specifies the phandle of the interrupt controll=
-er to which
->> + =A0the interrupts from max8997 are delivered to.
->> +- interrupts: Interrupt specifiers for two interrupt sources.
->> + =A0- First interrupt specifier is for 'irq1' interrupt.
->> + =A0- Second interrupt specifier is for 'alert' interrupt.
->
-> What if the two are connected to different interrupt controllers?
+> In non-DT system, the linux irq number that is used to register the
+> gpio interrupt notifier would belong to the irq domain of the host
+> interrupt controller (gic). For Exynos, the linux irq numbers that
+> belong to the gic irq domain are statically assigned to specific
+> interrupt notifiers and known to the entire system.
 
-I have not thought of that. I will try to find out how to write a
-device tree node for a device that delivers interrupts to separate
-interrupt controllers.
-
-Thanks,
-Thomas.
-
->
->> + =A0 =A0For LDO's:
->
-> Extra '.
+This seems like it's going to be a bit of a usability issue at best as
+users will have to figure out the relevant domain and the offset we end
+up with within it, and you appear to be making assumptions about the
+system you're running on here.  The way this has been handled for other
+drivers is by using irq_alloc_descs with platform data to provide a
+default, preserving the old behaviour on non-OF systems.
