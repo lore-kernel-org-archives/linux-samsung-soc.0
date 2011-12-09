@@ -1,52 +1,41 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/2] mfd: add irq domain support for max8997 interrupts
-Date: Fri, 9 Dec 2011 10:55:10 +0530
-Message-ID: <CAJuYYwRicSWO=wCmBH5RWcBLX3uhpyxS2wojUS3ZAH9tN=R1Kg@mail.gmail.com>
-References: <1323361659-11835-1-git-send-email-thomas.abraham@linaro.org>
-	<1323361659-11835-2-git-send-email-thomas.abraham@linaro.org>
-	<20111209044109.GB26952@opensource.wolfsonmicro.com>
+From: Sathishkumar Duraisamy <bewithsathish@gmail.com>
+Subject: Re: How to get High resolution time in s3c6410
+Date: Fri, 9 Dec 2011 10:59:52 +0530
+Message-ID: <CANJvwR_0LKEJAFkfwjsgeQKq9sars3f+1L58L9FyNuo+R9cgVA@mail.gmail.com>
+References: <CANJvwR_NCHs0KfmhRrV6pfo_PW3kFJmEHqhdi1QEUi8xhRHiNg@mail.gmail.com>
+	<20111209035600.GB25601@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:65067 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750785Ab1LIFZL (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:50109 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750792Ab1LIF3x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 00:25:11 -0500
-In-Reply-To: <20111209044109.GB26952@opensource.wolfsonmicro.com>
+	Fri, 9 Dec 2011 00:29:53 -0500
+Received: by dadw7 with SMTP id w7so133707dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Dec 2011 21:29:52 -0800 (PST)
+In-Reply-To: <20111209035600.GB25601@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-Hi Mark,
-
-On 9 December 2011 10:11, Mark Brown
+On Fri, Dec 9, 2011 at 9:26 AM, Mark Brown
 <broonie@opensource.wolfsonmicro.com> wrote:
-> On Thu, Dec 08, 2011 at 09:57:38PM +0530, Thomas Abraham wrote:
+> On Wed, Dec 07, 2011 at 05:51:05PM +0530, Sathishkumar Duraisamy wrote:
 >
-> You should be sending this to Samuel for review as it's a MFD patch.
-
-Ok. I will Cc Samuel for the v2 of this patchset.
-
+>> Here I have to measure time elapsed between two events in
+>> microseconds. Currently in my working kernel 2.6.36.2, there is no
+>> support for high resolution timer and resolution of time is 10ms
+>> (jiffies) . Can you please help me to get high resolution timer? Or Do
+>> I have to use timer hardware ?
 >
->> Add irq domain support for max8997 interrupts. All uses of irq_base in platform
->> data and max8997 driver private data are removed.
->
-> Removing irq_base from platform data isn't going to be helpful for
-> anyone using the driver on non-DT platforms as it's going to make it
-> impossible to find the interrupts.
+> There''s an out of tree patch in the spica tree which adds a hrtimer
+> using the PWM hardware - see git://github.com/tom3q/spica-3.0
 
-All the consumers of the max8997 interrupts are the drivers for the
-sub-blocks of max8997. These drivers have access to 'irq_domain'
-member of 'struct max8997_dev', From irq_domain, the sub-block driver
-can get the irq_base and add one of the 'enum max8997_irq' offset when
-registering for interrupt notifications.
+Thanks Mark Brown for timely help. I have been looking in this branch.
 
-So irq_base from platform data and all uses of it was removed. All
-max8997 sub-block drivers should use the irq_base of the irq_domain.
-
-Thanks for your review.
-
+-- 
 Regards,
-Thomas.
+Sathishkumar D
+http://flowersopenlab.weebly.com/
