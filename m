@@ -1,60 +1,52 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/2] regulator: add device tree support for max8997
-Date: Fri, 9 Dec 2011 10:47:03 +0530
-Message-ID: <CAJuYYwT5xrtxL8eajYDqb8dYWKDpe6RG7_BSk-ku9ecP+dfFvw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mfd: add irq domain support for max8997 interrupts
+Date: Fri, 9 Dec 2011 10:55:10 +0530
+Message-ID: <CAJuYYwRicSWO=wCmBH5RWcBLX3uhpyxS2wojUS3ZAH9tN=R1Kg@mail.gmail.com>
 References: <1323361659-11835-1-git-send-email-thomas.abraham@linaro.org>
 	<1323361659-11835-2-git-send-email-thomas.abraham@linaro.org>
-	<1323361659-11835-3-git-send-email-thomas.abraham@linaro.org>
-	<CAH9JG2WhH27O6VLZWro_cZ9-TgV+=kjvOM6UiAY=-4eAO1sChA@mail.gmail.com>
+	<20111209044109.GB26952@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:43158 "EHLO
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:65067 "EHLO
 	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750756Ab1LIFRF convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1750785Ab1LIFZL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 00:17:05 -0500
-In-Reply-To: <CAH9JG2WhH27O6VLZWro_cZ9-TgV+=kjvOM6UiAY=-4eAO1sChA@mail.gmail.com>
+	Fri, 9 Dec 2011 00:25:11 -0500
+In-Reply-To: <20111209044109.GB26952@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Dear Mr. Park,
+Hi Mark,
 
-On 9 December 2011 08:00, Kyungmin Park <kyungmin.park@samsung.com> wro=
-te:
-> On 12/9/11, Thomas Abraham <thomas.abraham@linaro.org> wrote:
->> Add device tree based discovery support for max8997.
->>
->> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Cc: Rajendra Nayak <rnayak@ti.com>
->> Cc: Rob Herring <rob.herring@calxeda.com>
->> Cc: Grant Likely <grant.likely@secretlab.ca>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-
-[...]
-
->> +#else
->> +static int *max8997_i2c_parse_dt_pdata(struct device *dev
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 struct max8997_platform_data **pdata)
-> It should be 'int' instead of 'int *'
+On 9 December 2011 10:11, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Thu, Dec 08, 2011 at 09:57:38PM +0530, Thomas Abraham wrote:
 >
-> It's helpful to compile without CONFIG_OF.
+> You should be sending this to Samuel for review as it's a MFD patch.
 
-I apologize for that. I compiled for exynos-dt first and then compiled
-for origen board (which does not select CONFIG_OF). When compiling for
-non-dt origen, I missed to notice that CONFIG_OF selection was left
-over from the previous exynos-dt compile.
+Ok. I will Cc Samuel for the v2 of this patchset.
 
-I have checked again without CONFIG_OF and found this issue as well as
-two other errors/warnings.
+>
+>> Add irq domain support for max8997 interrupts. All uses of irq_base in platform
+>> data and max8997 driver private data are removed.
+>
+> Removing irq_base from platform data isn't going to be helpful for
+> anyone using the driver on non-DT platforms as it's going to make it
+> impossible to find the interrupts.
 
-Thanks. This was very helpful.
+All the consumers of the max8997 interrupts are the drivers for the
+sub-blocks of max8997. These drivers have access to 'irq_domain'
+member of 'struct max8997_dev', From irq_domain, the sub-block driver
+can get the irq_base and add one of the 'enum max8997_irq' offset when
+registering for interrupt notifications.
+
+So irq_base from platform data and all uses of it was removed. All
+max8997 sub-block drivers should use the irq_base of the irq_domain.
+
+Thanks for your review.
 
 Regards,
 Thomas.
-
-[...]
