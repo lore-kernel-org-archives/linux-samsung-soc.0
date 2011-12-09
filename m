@@ -1,45 +1,82 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] i2c-s3c2410: Fix return code of s3c24xx_i2c_parse_dt_gpio
-Date: Fri,  9 Dec 2011 15:33:55 +0530
-Message-ID: <1323425035-11298-1-git-send-email-tushar.behera@linaro.org>
+From: James Hogan <james@albanarts.com>
+Subject: Re: mmc: dw_mmc: Add more capabilities field
+Date: Fri, 9 Dec 2011 10:41:06 +0000
+Message-ID: <CAAG0J99SSLm6r0NoqXCMmEvdpVnW-zwHdFhA-n=zEiagyGHuTQ@mail.gmail.com>
+References: <00a801ccb636$5bbe2920$133a7b60$%jun@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:40379 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750778Ab1LIKGa (ORCPT
+Received: from mail-ww0-f44.google.com ([74.125.82.44]:49427 "EHLO
+	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750844Ab1LIKlI convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 05:06:30 -0500
+	Fri, 9 Dec 2011 05:41:08 -0500
+In-Reply-To: <00a801ccb636$5bbe2920$133a7b60$%jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, thomas.abraham@linaro.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
 
-s3c24xx_i2c_parse_dt_gpio is called when cfg_gpio is not defined
-in the platform data of the i2c device. When DT is not enabled,
-the above function always returns -EINVAL. Since there can be
-some i2c devices which don't need to configure any gpio lines,
-the probe of such devices would fail here. Changing the default
-return value to success would fix this issue.
+On 9 December 2011 05:49, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-This patch is rebased on Kukjin's for-next branch.
-d3d936c "Merge branch 'samsung-fixes-2' into for-next"
+A commit message would be useful.
 
- drivers/i2c/busses/i2c-s3c2410.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> ---
+> =A0drivers/mmc/host/dw_mmc.c =A0| =A0 =A06 ++++++
+> =A0include/linux/mmc/dw_mmc.h | =A0 =A01 +
+> =A02 files changed, 7 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 3aaeb08..366df6b 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1681,6 +1681,12 @@ static int __init dw_mci_init_slot(struct dw_m=
+ci *host, unsigned int id)
+> =A0 =A0 =A0 =A0else
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc->caps =3D 0;
+>
+> + =A0 =A0 =A0 if (host->pdata->caps2)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc->caps2 =3D host->pdata->caps2;
+> + =A0 =A0 =A0 else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc->caps2 =3D 0;
+> +
+> +
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 2754cef..b5caa42 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -786,7 +786,7 @@ static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
- #else
- static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
- {
--	return -EINVAL;
-+	return 0;
- }
- 
- static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
--- 
-1.7.4.1
+There's really no need to check the value here, just copy it over.
+Same with the other caps field really.
+
+> =A0 =A0 =A0 =A0if (host->pdata->get_bus_wd)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (host->pdata->get_bus_wd(slot->id) =
+>=3D 4)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc->caps |=3D MMC_CAP=
+_4_BIT_DATA;
+> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+> index 6dc9b80..e8779c6 100644
+> --- a/include/linux/mmc/dw_mmc.h
+> +++ b/include/linux/mmc/dw_mmc.h
+> @@ -214,6 +214,7 @@ struct dw_mci_board {
+> =A0 =A0 =A0 =A0unsigned int bus_hz; /* Bus speed */
+>
+> =A0 =A0 =A0 =A0unsigned int caps; =A0 =A0 =A0/* Capabilities */
+> + =A0 =A0 =A0 unsigned int caps2; =A0 =A0 /* More capabilities */
+> =A0 =A0 =A0 =A0/*
+> =A0 =A0 =A0 =A0 * Override fifo depth. If 0, autodetect it from the F=
+IFOTH register,
+> =A0 =A0 =A0 =A0 * but note that this may not be reliable after a boot=
+loader has used
+> --
+> 1.7.0.4
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+
+other than that it looks fine to me.
+
+--=20
+James Hogan
