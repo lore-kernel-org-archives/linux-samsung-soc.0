@@ -1,29 +1,30 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: S5PV210: Set 1000ns as PWM backlight period on
- SMDKV210
-Date: Fri, 9 Dec 2011 03:54:01 +0000
-Message-ID: <20111209035401.GA25601@sirena.org.uk>
-References: <1320804636-19950-1-git-send-email-jg1.han@samsung.com>
- <03e701ccb4b0$d1279de0$7376d9a0$%kim@samsung.com>
+Subject: Re: How to get High resolution time in s3c6410
+Date: Fri, 9 Dec 2011 03:56:00 +0000
+Message-ID: <20111209035600.GB25601@sirena.org.uk>
+References: <CANJvwR_NCHs0KfmhRrV6pfo_PW3kFJmEHqhdi1QEUi8xhRHiNg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:59464 "EHLO
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:38796 "EHLO
 	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752379Ab1LIDyD (ORCPT
+	with ESMTP id S1751836Ab1LID4B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Dec 2011 22:54:03 -0500
+	Thu, 8 Dec 2011 22:56:01 -0500
 Content-Disposition: inline
-In-Reply-To: <03e701ccb4b0$d1279de0$7376d9a0$%kim@samsung.com>
+In-Reply-To: <CANJvwR_NCHs0KfmhRrV6pfo_PW3kFJmEHqhdi1QEUi8xhRHiNg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Jingoo Han' <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: Sathishkumar Duraisamy <bewithsathish@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Tomasz Figa <tomasz.figa@gmail.com>
 
-On Wed, Dec 07, 2011 at 04:21:20PM +0900, Kukjin Kim wrote:
+On Wed, Dec 07, 2011 at 05:51:05PM +0530, Sathishkumar Duraisamy wrote:
 
-> If switch frequency is 1kHz, the value of pwm_period_ns should be 1000000 at
-> mach-crag6410.c not 100000?
+> Here I have to measure time elapsed between two events in
+> microseconds. Currently in my working kernel 2.6.36.2, there is no
+> support for high resolution timer and resolution of time is 10ms
+> (jiffies) . Can you please help me to get high resolution timer? Or Do
+> I have to use timer hardware ?
 
-I guess so, please go ahead and make the change - we can always revert
-if it doesn't work.
+There''s an out of tree patch in the spica tree which adds a hrtimer
+using the PWM hardware - see git://github.com/tom3q/spica-3.0
