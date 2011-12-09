@@ -1,82 +1,76 @@
-From: James Hogan <james@albanarts.com>
-Subject: Re: mmc: dw_mmc: Add more capabilities field
-Date: Fri, 9 Dec 2011 10:41:06 +0000
-Message-ID: <CAAG0J99SSLm6r0NoqXCMmEvdpVnW-zwHdFhA-n=zEiagyGHuTQ@mail.gmail.com>
-References: <00a801ccb636$5bbe2920$133a7b60$%jun@samsung.com>
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH v2] ARM: pl330: Fix a race condition
+Date: Fri, 09 Dec 2011 11:58:40 +0000
+Message-ID: <4EE1F7F0.70107@arm.com>
+References: <4E8C5425.80303@arm.com> <1317892206-3600-1-git-send-email-javi.merino@arm.com> <CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com> <4EB7B79A.2020004@arm.com> <000c01ccada6$f83f5be0$e8be13a0$%kim@samsung.com> <4ED3B89E.7070903@arm.com> <000e01ccae48$d76a7ba0$863f72e0$%kim@samsung.com> <4ED4AB9A.3060807@arm.com> <CAJe_Zhem0yTOV4L-kJ91fQN++hFzCUgjOfxSnJR25PuYNTedVQ@mail.gmail.com> <03f001ccb4b5$3441f5c0$9cc5e140$%kim@samsung.com> <4EDF3989.3060108@arm.com> <4EDFD278.9090101@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:49427 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750844Ab1LIKlI convert rfc822-to-8bit (ORCPT
+Received: from service87.mimecast.com ([91.220.42.44]:47570 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751441Ab1LIL6y convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 05:41:08 -0500
-In-Reply-To: <00a801ccb636$5bbe2920$133a7b60$%jun@samsung.com>
+	Fri, 9 Dec 2011 06:58:54 -0500
+In-Reply-To: <4EDFD278.9090101@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jassi Brar' <jaswinder.singh@linaro.org>, 'Boojin Kim' <boojin.kim@samsung.com>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-On 9 December 2011 05:49, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+On 07/12/11 20:54, Javi Merino wrote:
+> On 07/12/11 10:01, Javi Merino wrote:
+>> On 07/12/11 07:52, Kukjin Kim wrote:
+>>> Jassi Brar wrote:
+>>>> On 29 November 2011 15:23, Javi Merino <javi.merino@arm.com> wrote:
+>>>>>>>>>> On Samsung's Exynos4 platform, while testing audio playback with
+>>>>>>> i2s
+>>>>>>>>>> interface, the above change causes the playback to freeze. The
+>>>>>>>>>> _thrd_active(thrd) call always returns '1' and hence _start(thrd)
+>>>>>>> is
+>>>>>>>>>> not getting called.
+>>>>>>>>>
+>>>>>>>> Your patch makes the memcpy operation on dmatest.c and net DMA be
+>>>>>>> frozen too
+>>>>>>>> as well as Samsung audio playback.
+>>>>>>>
+>>>> Javi, could you please check if you too get the memcpy failure with
+>>>> dmatest ?
+>>>
+> Ok, I think I've just reproduced it in my end with the kernel's dmatest
+> module.  After the first transaction it looks like the dma test wasn't
+> able to issue any more transactions.  I'll have a look at it tomorrow
+> and try to answer my own questions ;)
 
-A commit message would be useful.
+The problem is that pl330_submit_req() always puts the request in buffer 0 if
+both buffers are free.
 
-> ---
-> =A0drivers/mmc/host/dw_mmc.c =A0| =A0 =A06 ++++++
-> =A0include/linux/mmc/dw_mmc.h | =A0 =A01 +
-> =A02 files changed, 7 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 3aaeb08..366df6b 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1681,6 +1681,12 @@ static int __init dw_mci_init_slot(struct dw_m=
-ci *host, unsigned int id)
-> =A0 =A0 =A0 =A0else
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc->caps =3D 0;
->
-> + =A0 =A0 =A0 if (host->pdata->caps2)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc->caps2 =3D host->pdata->caps2;
-> + =A0 =A0 =A0 else
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc->caps2 =3D 0;
-> +
-> +
+If you submit a transaction, it finishes and there's nothing else to run,
+pl330_update() calls _start() but there is nothing to send.  This is all
+right.  Then, if another transaction is submitted, pl330_submit_req() will
+put it in buffer 0 again.  This time, the PC of the DMA is in the last
+instruction of buffer 0 (the DMAEND of the *previous* transaction that
+finished long ago) so _thrd_active() thinks that this buffer is active,
+which makes pl330_chan_ctrl() not start the transaction and hence, the DMA
+freezes.
 
-There's really no need to check the value here, just copy it over.
-Same with the other caps field really.
+I believe something like the following should fix it:
 
-> =A0 =A0 =A0 =A0if (host->pdata->get_bus_wd)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (host->pdata->get_bus_wd(slot->id) =
->=3D 4)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc->caps |=3D MMC_CAP=
-_4_BIT_DATA;
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index 6dc9b80..e8779c6 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -214,6 +214,7 @@ struct dw_mci_board {
-> =A0 =A0 =A0 =A0unsigned int bus_hz; /* Bus speed */
->
-> =A0 =A0 =A0 =A0unsigned int caps; =A0 =A0 =A0/* Capabilities */
-> + =A0 =A0 =A0 unsigned int caps2; =A0 =A0 /* More capabilities */
-> =A0 =A0 =A0 =A0/*
-> =A0 =A0 =A0 =A0 * Override fifo depth. If 0, autodetect it from the F=
-IFOTH register,
-> =A0 =A0 =A0 =A0 * but note that this may not be reliable after a boot=
-loader has used
-> --
-> 1.7.0.4
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+--- a/arch/arm/common/pl330.c
++++ b/arch/arm/common/pl330.c
+@@ -1301,7 +1301,7 @@ int pl330_submit_req(void *ch_id, struct pl330_req *r)
+ 		goto xfer_exit;
+ 	}
+ 
+-	idx = IS_FREE(&thrd->req[0]) ? 0 : 1;
++	idx = IS_FREE(&thrd->req[1 - thrd->lstenq]) ? 1 - thrd->lstenq : thrd->lstenq;
+ 
+ 	xs.ccr = ccr;
+ 	xs.r = r;
 
-other than that it looks fine to me.
 
---=20
-James Hogan
+I have only tested this with a single-channel single-thread dma test.
+I'll send a proper patch to the list once I've done more testing.
+
+Cheers,
+Javi
