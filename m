@@ -1,48 +1,48 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH v2 2/2] mmc: core: Add claiming a host during mmc_cache_ctrl
-Date: Fri, 09 Dec 2011 17:47:41 +0900
-Message-ID: <000201ccb64f$3673c490$a35b4db0$%jun@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/4] Implement RTC support for S3C2443/S3C2416/S3C2450
+Date: Fri, 9 Dec 2011 10:46:26 +0100
+Message-ID: <201112091046.26563.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50531 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751887Ab1LIIrm (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:53236 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751729Ab1LIJqs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 03:47:42 -0500
-Content-language: ko
+	Fri, 9 Dec 2011 04:46:48 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it, rtc-linux@googlegroups.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-While calling mmc_cache_ctrl() a host is not claimed. This patch
-adds the mmc_try_claim_host() for quick response in suspend.
+Similar to the ADC the RTC of S3C2443 and S3C2416/2450 has some slight
+variances when compared to the existing types.
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- drivers/mmc/core/core.c |    8 +++++++-
- 1 files changed, 7 insertions(+), 1 deletions(-)
+This series adds support for those SoCs.
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 83ac6e6..efdbf9d 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2359,7 +2359,13 @@ int mmc_suspend_host(struct mmc_host *host)
- 		cancel_delayed_work(&host->disable);
- 	cancel_delayed_work(&host->detect);
- 	mmc_flush_scheduled_work();
--	err = mmc_cache_ctrl(host, 0);
-+	if (mmc_try_claim_host(host)) {
-+		err = mmc_cache_ctrl(host, 0);
-+		mmc_do_release_host(host);
-+	} else {
-+		err = -EBUSY;
-+	}
-+
- 	if (err)
- 		goto out;
- 
+As with the ADC patches, these changes where tested on S3C2416 hardware.
+The S3C2443 quirks are a subset of those and are done according to the
+datasheet, but not tested on real hardware (as I do not own a S3C2443 device).
+
+I'm also not sure if my changes to the devicetree block in patch 2 are
+correct, so I would be really happy if someone could take a closer look
+at them.
+
+Heiko Stuebner (4):
+  ARM: SAMSUNG: cleanup of rtc register definitions
+  rtc-s3c: make room for more variants in devicetree block
+  rtc-s3c: add variants for S3C2443 and S3C2416
+  ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices
+
+ arch/arm/mach-s3c2416/s3c2416.c               |    2 +
+ arch/arm/mach-s3c2443/s3c2443.c               |    2 +
+ arch/arm/plat-samsung/include/plat/regs-rtc.h |   92 +++++++++++++++---------
+ arch/arm/plat-samsung/include/plat/rtc-core.h |   27 +++++++
+ drivers/rtc/rtc-s3c.c                         |   71 ++++++++++++++++---
+ 5 files changed, 149 insertions(+), 45 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/rtc-core.h
+
 -- 
-1.7.0.4
+1.7.5.4
