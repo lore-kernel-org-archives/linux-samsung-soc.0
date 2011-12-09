@@ -1,45 +1,33 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] mfd: add irq domain support for max8997 interrupts
-Date: Fri, 9 Dec 2011 16:15:04 +0800
-Message-ID: <20111209081502.GH26952@opensource.wolfsonmicro.com>
-References: <1323361659-11835-1-git-send-email-thomas.abraham@linaro.org>
- <1323361659-11835-2-git-send-email-thomas.abraham@linaro.org>
- <20111209044109.GB26952@opensource.wolfsonmicro.com>
- <CAJuYYwRicSWO=wCmBH5RWcBLX3uhpyxS2wojUS3ZAH9tN=R1Kg@mail.gmail.com>
- <20111209060249.GD26952@opensource.wolfsonmicro.com>
- <CAJuYYwSCuu8U2rF3RGAnczXgbh4Px7hMwUhHr=xrhPZ1jEs5DA@mail.gmail.com>
- <20111209063912.GG26952@opensource.wolfsonmicro.com>
- <CAJuYYwQ8B_EtuReRDJ8Tp-cCOV3jd_-y-9iLy0apRZV3zU6Jdw@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH v2 0/2] mmc: core: Fix cache control for eMMC4.5
+Date: Fri, 09 Dec 2011 17:46:43 +0900
+Message-ID: <000001ccb64f$13e3a760$3baaf620$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41529 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750903Ab1LIIPU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Dec 2011 03:15:20 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwQ8B_EtuReRDJ8Tp-cCOV3jd_-y-9iLy0apRZV3zU6Jdw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 09, 2011 at 12:49:49PM +0530, Thomas Abraham wrote:
-> On 9 December 2011 12:09, Mark Brown
+This patch-set fixed the cache control for eMMC4.5
 
-> > How would you provide this interrupt to the device using it in a non-DT
-> > systemm without passing the irq_base into the device as platform data?
+Changes in v2:
+    - clear the cache_ctrl flag for a failure(enabling cache)
 
-> In non-DT system, the linux irq number that is used to register the
-> gpio interrupt notifier would belong to the irq domain of the host
-> interrupt controller (gic). For Exynos, the linux irq numbers that
-> belong to the gic irq domain are statically assigned to specific
-> interrupt notifiers and known to the entire system.
+Seungwon Jeon (2):
+      mmc: core: Separate the timeout value for cache-ctrl
+      mmc: core: Add claiming a host during mmc_cache_ctrl
 
-This seems like it's going to be a bit of a usability issue at best as
-users will have to figure out the relevant domain and the offset we end
-up with within it, and you appear to be making assumptions about the
-system you're running on here.  The way this has been handled for other
-drivers is by using irq_alloc_descs with platform data to provide a
-default, preserving the old behaviour on non-OF systems.
+ drivers/mmc/core/core.c |   29 +++++++++++++++++++----------
+ drivers/mmc/core/mmc.c  |   13 +++++++++++--
+ 2 files changed, 30 insertions(+), 12 deletions(-)
+
+Best regards,
+Seungwon Jeon.
+--
+1.7.2.3
+
+
