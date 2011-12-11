@@ -1,57 +1,285 @@
-From: Javi Merino <javi.merino@arm.com>
-Subject: Re: [PATCH v2] ARM: pl330: Fix a race condition
-Date: Sun, 11 Dec 2011 17:42:41 +0000
-Message-ID: <4EE4EB91.6020508@arm.com>
-References: <4E8C5425.80303@arm.com>	<1317892206-3600-1-git-send-email-javi.merino@arm.com>	<CAJuYYwTXf-XU0fdGT0+sggN-MEY3v7UHkfjNkM4+QUW464J9Ew@mail.gmail.com>	<4EB7B79A.2020004@arm.com>	<000c01ccada6$f83f5be0$e8be13a0$%kim@samsung.com>	<4ED3B89E.7070903@arm.com>	<000e01ccae48$d76a7ba0$863f72e0$%kim@samsung.com>	<4ED4AB9A.3060807@arm.com>	<CAJe_Zhem0yTOV4L-kJ91fQN++hFzCUgjOfxSnJR25PuYNTedVQ@mail.gmail.com>	<03f001ccb4b5$3441f5c0$9cc5e140$%kim@samsung.com>	<4EDF3989.3060108@arm.com>	<4EDFD278.9090101@arm.com>	<4EE1F7F0.70107@arm.com>	<CAJe_Zhcj_j+r+T5N_BdS-ENds1SmJs7-Pfyf8vrFkB75BGBaYg@mail.gmail.com>	<4EE20FF1.5070702@arm.com>	<CABb+yY0f8xxAj+rFeZ4e61Sfk0+0bMsAiZ-H5AeY4cfCd_VE5g@mail.gmail.com>	<4EE220A7.5070101@arm.com>	<CABb+yY2-1B65-UqRofj72zVuZUUk5c6pkqNGs15ZLnkrVheRDQ@mail.gmail.com>
- 	<4EE26670.1060005@arm.com>	<CABb+yY1rt5RDdb1pfs0v4qfvZ=gsXGYFVwEn6Ns1OA+0TZXSjg@mail.gmail.com>	<4EE4C7B5.2070803@arm.com> <CAJe_ZhcF7nMvnWxfpSROtq=8SYqG1o1TyfWty79eGM0oqntNsg@mail.gmail.com>
-Mime-Version: 1.0
+From: "Javi Merino" <javi.merino@arm.com>
+Subject: [PATCH] ARM: PL330: Fix driver freeze
+Date: Sun, 11 Dec 2011 19:27:17 +0000
+Message-ID: <1323631637-9610-1-git-send-email-javi.merino@arm.com>
+References: <4EE4EB91.6020508@arm.com>
 Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:57748 "EHLO
+Received: from service87.mimecast.com ([91.220.42.44]:33138 "EHLO
 	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751492Ab1LKRms convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1752263Ab1LKT1o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Dec 2011 12:42:48 -0500
-In-Reply-To: <CAJe_ZhcF7nMvnWxfpSROtq=8SYqG1o1TyfWty79eGM0oqntNsg@mail.gmail.com>
+	Sun, 11 Dec 2011 14:27:44 -0500
+In-Reply-To: <4EE4EB91.6020508@arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jaswinder.singh@linaro.org>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>, "vinod.koul@intel.com" <vinod.koul@intel.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Thomas Abraham <thomas.abraham@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: jassisinghbrar@gmail.com, kgene.kim@samsung.com, boojin.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Javi Merino <javi.merino@arm.com>, Jassi Brar <jaswinder.singh@linaro.org>
 
-On 11/12/11 17:10, Jassi Brar wrote:
-> On 11 December 2011 20:39, Javi Merino <javi.merino@arm.com> wrote:
->>>>
->>>> What about properly tracking what we have sent to the DMA?  Something
->>>> like the following (warning *ugly* and untested code ahead, may eat your
->>>> kitten):
->>>>
->>> Yeah, this is like I said 'marker' method. Though we can clean it up a bit.
->>> 1) Pack req_running and lstenq together. Make lsteng return invalid value
->>> should there be no buff programmed, otherwise 0 or 1.
->>
->> This can lead to starvation.  If lstenq is -1 when the DMA hasn't been
->> programmed yet, in _trigger() you don't know which buffer is the
->> "oldest", so you may end up always starting the new buffer and
->> forgetting about the other one.  lstenq as it is right now prevents that.
->>
-> Sorry I don't understand. If lstenq is -1 that means there's no req programmed
-> so trigger need not do anything. I didn't say we don't need to do anything else.
+Add a req_running field to the pl330_thread to track which request (if
+any) has been submitted to the DMA.  This mechanism replaces the old
+one in which we tried to guess the same by looking at the PC of the
+DMA, which could prevent the driver from sending more requests if it
+didn't guess correctly.
 
-Currently lstenq tracks the last request that pl330_submit_req() has
-enqueued.  I think we should add a req_running (or any other name) that
-tracks what _trigger() has sent to the DMA.  If we pack them together we
-lose some information and I don't see a way of packing them safely.
+Signed-off-by: Javi Merino <javi.merino@arm.com>
+Cc: Jassi Brar <jaswinder.singh@linaro.org>
+---
+ arch/arm/common/pl330.c |  116 ++++++++++++++++++++-----------------------=
+----
+ 1 files changed, 49 insertions(+), 67 deletions(-)
 
-> Though it's just an idea I haven't implemented and it may not work out.
-
-I was trying to implement it and got stuck in _trigger() thinking "ok,
-so which buffer am I supposed to trigger now..."
-
-> Just please give it a try if you can. Thanks.
-
-I have a patch that seems to be working.  Let me test it a little bit
-more and I'll send it to the list.
-
-Cheers,
-Javi
+diff --git a/arch/arm/common/pl330.c b/arch/arm/common/pl330.c
+index f407a6b..8d8df74 100644
+--- a/arch/arm/common/pl330.c
++++ b/arch/arm/common/pl330.c
+@@ -221,17 +221,6 @@
+  */
+ #define MCODE_BUFF_PER_REQ=09256
+=20
+-/*
+- * Mark a _pl330_req as free.
+- * We do it by writing DMAEND as the first instruction
+- * because no valid request is going to have DMAEND as
+- * its first instruction to execute.
+- */
+-#define MARK_FREE(req)=09do { \
+-=09=09=09=09_emit_END(0, (req)->mc_cpu); \
+-=09=09=09=09(req)->mc_len =3D 0; \
+-=09=09=09} while (0)
+-
+ /* If the _pl330_req is available to the client */
+ #define IS_FREE(req)=09(*((u8 *)((req)->mc_cpu)) =3D=3D CMD_DMAEND)
+=20
+@@ -301,8 +290,10 @@ struct pl330_thread {
+ =09struct pl330_dmac *dmac;
+ =09/* Only two at a time */
+ =09struct _pl330_req req[2];
+-=09/* Index of the last submitted request */
++=09/* Index of the last enqueued request */
+ =09unsigned lstenq;
++=09/* Index of the last submitted request or -1 if the DMA is stopped */
++=09int req_running;
+ };
+=20
+ enum pl330_dmac_state {
+@@ -778,6 +769,22 @@ static inline void _execute_DBGINSN(struct pl330_threa=
+d *thrd,
+ =09writel(0, regs + DBGCMD);
+ }
+=20
++/*
++ * Mark a _pl330_req as free.
++ * We do it by writing DMAEND as the first instruction
++ * because no valid request is going to have DMAEND as
++ * its first instruction to execute.
++ */
++static void mark_free(struct pl330_thread *thrd, int idx)
++{
++=09struct _pl330_req *req =3D &thrd->req[idx];
++
++=09_emit_END(0, req->mc_cpu);
++=09req->mc_len =3D 0;
++
++=09thrd->req_running =3D -1;
++}
++
+ static inline u32 _state(struct pl330_thread *thrd)
+ {
+ =09void __iomem *regs =3D thrd->dmac->pinfo->base;
+@@ -836,31 +843,6 @@ static inline u32 _state(struct pl330_thread *thrd)
+ =09}
+ }
+=20
+-/* If the request 'req' of thread 'thrd' is currently active */
+-static inline bool _req_active(struct pl330_thread *thrd,
+-=09=09struct _pl330_req *req)
+-{
+-=09void __iomem *regs =3D thrd->dmac->pinfo->base;
+-=09u32 buf =3D req->mc_bus, pc =3D readl(regs + CPC(thrd->id));
+-
+-=09if (IS_FREE(req))
+-=09=09return false;
+-
+-=09return (pc >=3D buf && pc <=3D buf + req->mc_len) ? true : false;
+-}
+-
+-/* Returns 0 if the thread is inactive, ID of active req + 1 otherwise */
+-static inline unsigned _thrd_active(struct pl330_thread *thrd)
+-{
+-=09if (_req_active(thrd, &thrd->req[0]))
+-=09=09return 1; /* First req active */
+-
+-=09if (_req_active(thrd, &thrd->req[1]))
+-=09=09return 2; /* Second req active */
+-
+-=09return 0;
+-}
+-
+ static void _stop(struct pl330_thread *thrd)
+ {
+ =09void __iomem *regs =3D thrd->dmac->pinfo->base;
+@@ -892,17 +874,22 @@ static bool _trigger(struct pl330_thread *thrd)
+ =09struct _arg_GO go;
+ =09unsigned ns;
+ =09u8 insn[6] =3D {0, 0, 0, 0, 0, 0};
++=09int idx;
+=20
+ =09/* Return if already ACTIVE */
+ =09if (_state(thrd) !=3D PL330_STATE_STOPPED)
+ =09=09return true;
+=20
+-=09if (!IS_FREE(&thrd->req[1 - thrd->lstenq]))
+-=09=09req =3D &thrd->req[1 - thrd->lstenq];
+-=09else if (!IS_FREE(&thrd->req[thrd->lstenq]))
+-=09=09req =3D &thrd->req[thrd->lstenq];
+-=09else
+-=09=09req =3D NULL;
++=09idx =3D 1 - thrd->lstenq;
++=09if (!IS_FREE(&thrd->req[idx]))
++=09=09req =3D &thrd->req[idx];
++=09else {
++=09=09idx =3D thrd->lstenq;
++=09=09if (!IS_FREE(&thrd->req[idx]))
++=09=09=09req =3D &thrd->req[idx];
++=09=09else
++=09=09=09req =3D NULL;
++=09}
+=20
+ =09/* Return if no request */
+ =09if (!req || !req->r)
+@@ -933,6 +920,8 @@ static bool _trigger(struct pl330_thread *thrd)
+ =09/* Only manager can execute GO */
+ =09_execute_DBGINSN(thrd, insn, true);
+=20
++=09thrd->req_running =3D idx;
++
+ =09return true;
+ }
+=20
+@@ -1382,8 +1371,8 @@ static void pl330_dotask(unsigned long data)
+=20
+ =09=09=09thrd->req[0].r =3D NULL;
+ =09=09=09thrd->req[1].r =3D NULL;
+-=09=09=09MARK_FREE(&thrd->req[0]);
+-=09=09=09MARK_FREE(&thrd->req[1]);
++=09=09=09mark_free(thrd, 0);
++=09=09=09mark_free(thrd, 1);
+=20
+ =09=09=09/* Clear the reset flag */
+ =09=09=09pl330->dmac_tbd.reset_chan &=3D ~(1 << i);
+@@ -1461,14 +1450,12 @@ int pl330_update(const struct pl330_info *pi)
+=20
+ =09=09=09thrd =3D &pl330->channels[id];
+=20
+-=09=09=09active =3D _thrd_active(thrd);
+-=09=09=09if (!active) /* Aborted */
++=09=09=09active =3D thrd->req_running;
++=09=09=09if (active =3D=3D -1) /* Aborted */
+ =09=09=09=09continue;
+=20
+-=09=09=09active -=3D 1;
+-
+ =09=09=09rqdone =3D &thrd->req[active];
+-=09=09=09MARK_FREE(rqdone);
++=09=09=09mark_free(thrd, active);
+=20
+ =09=09=09/* Get going again ASAP */
+ =09=09=09_start(thrd);
+@@ -1509,7 +1496,7 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op o=
+p)
+ =09struct pl330_thread *thrd =3D ch_id;
+ =09struct pl330_dmac *pl330;
+ =09unsigned long flags;
+-=09int ret =3D 0, active;
++=09int ret =3D 0, active =3D thrd->req_running;
+=20
+ =09if (!thrd || thrd->free || thrd->dmac->state =3D=3D DYING)
+ =09=09return -EINVAL;
+@@ -1525,28 +1512,24 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op=
+ op)
+=20
+ =09=09thrd->req[0].r =3D NULL;
+ =09=09thrd->req[1].r =3D NULL;
+-=09=09MARK_FREE(&thrd->req[0]);
+-=09=09MARK_FREE(&thrd->req[1]);
++=09=09mark_free(thrd, 0);
++=09=09mark_free(thrd, 1);
+ =09=09break;
+=20
+ =09case PL330_OP_ABORT:
+-=09=09active =3D _thrd_active(thrd);
+-
+ =09=09/* Make sure the channel is stopped */
+ =09=09_stop(thrd);
+=20
+ =09=09/* ABORT is only for the active req */
+-=09=09if (!active)
++=09=09if (active =3D=3D -1)
+ =09=09=09break;
+=20
+-=09=09active--;
+-
+ =09=09thrd->req[active].r =3D NULL;
+-=09=09MARK_FREE(&thrd->req[active]);
++=09=09mark_free(thrd, active);
+=20
+ =09=09/* Start the next */
+ =09case PL330_OP_START:
+-=09=09if (!_thrd_active(thrd) && !_start(thrd))
++=09=09if ((active =3D=3D -1) && !_start(thrd))
+ =09=09=09ret =3D -EIO;
+ =09=09break;
+=20
+@@ -1587,14 +1570,13 @@ int pl330_chan_status(void *ch_id, struct pl330_cha=
+nstatus *pstatus)
+ =09else
+ =09=09pstatus->faulting =3D false;
+=20
+-=09active =3D _thrd_active(thrd);
++=09active =3D thrd->req_running;
+=20
+-=09if (!active) {
++=09if (active =3D=3D -1) {
+ =09=09/* Indicate that the thread is not running */
+ =09=09pstatus->top_req =3D NULL;
+ =09=09pstatus->wait_req =3D NULL;
+ =09} else {
+-=09=09active--;
+ =09=09pstatus->top_req =3D thrd->req[active].r;
+ =09=09pstatus->wait_req =3D !IS_FREE(&thrd->req[1 - active])
+ =09=09=09=09=09? thrd->req[1 - active].r : NULL;
+@@ -1659,9 +1641,9 @@ void *pl330_request_channel(const struct pl330_info *=
+pi)
+ =09=09=09=09thrd->free =3D false;
+ =09=09=09=09thrd->lstenq =3D 1;
+ =09=09=09=09thrd->req[0].r =3D NULL;
+-=09=09=09=09MARK_FREE(&thrd->req[0]);
++=09=09=09=09mark_free(thrd, 0);
+ =09=09=09=09thrd->req[1].r =3D NULL;
+-=09=09=09=09MARK_FREE(&thrd->req[1]);
++=09=09=09=09mark_free(thrd, 1);
+ =09=09=09=09break;
+ =09=09=09}
+ =09=09}
+@@ -1767,14 +1749,14 @@ static inline void _reset_thread(struct pl330_threa=
+d *thrd)
+ =09thrd->req[0].mc_bus =3D pl330->mcode_bus
+ =09=09=09=09+ (thrd->id * pi->mcbufsz);
+ =09thrd->req[0].r =3D NULL;
+-=09MARK_FREE(&thrd->req[0]);
++=09mark_free(thrd, 0);
+=20
+ =09thrd->req[1].mc_cpu =3D thrd->req[0].mc_cpu
+ =09=09=09=09+ pi->mcbufsz / 2;
+ =09thrd->req[1].mc_bus =3D thrd->req[0].mc_bus
+ =09=09=09=09+ pi->mcbufsz / 2;
+ =09thrd->req[1].r =3D NULL;
+-=09MARK_FREE(&thrd->req[1]);
++=09mark_free(thrd, 1);
+ }
+=20
+ static int dmac_alloc_threads(struct pl330_dmac *pl330)
+--=20
+1.7.0.4
