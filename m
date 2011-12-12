@@ -1,53 +1,123 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Add a callback 'notify_after' for PWM backlight
- control
-Date: Mon, 12 Dec 2011 11:39:33 +0900
-Message-ID: <004001ccb877$4830abb0$d8920310$%han@samsung.com>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [RESEND][PATCH] ARM: Exynos: Add irq domain and device tree support
+ for interrupt combiner
+Date: Sun, 11 Dec 2011 21:42:22 -0600
+Message-ID: <4EE5781E.2060702@gmail.com>
+References: <1323586114-24486-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:15702 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752756Ab1LLCjf (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:44491 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752943Ab1LLDmh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Dec 2011 21:39:35 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LW200AH9KPY0MC0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 12 Dec 2011 11:39:34 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.120.153])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LW200KA8KPXKQ40@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 12 Dec 2011 11:39:33 +0900 (KST)
-Content-language: ko
+	Sun, 11 Dec 2011 22:42:37 -0500
+Received: by ghbf1 with SMTP id f1so649326ghb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Dec 2011 19:42:36 -0800 (PST)
+In-Reply-To: <1323586114-24486-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Banajit Goswami' <banajit.g@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
 
-The callback 'notify_after' was added to struct platform_pwm_backlight_data
-provided by PWM backlight driver. Therefore, this patch adds a callback
-'notify_after' which can be called after pwm_enable, pwm_disable and pwm_config.
+On 12/11/2011 12:48 AM, Thomas Abraham wrote:
+> A common irq domain for the interrupts managed by the interrupt combiners is
+> setup. All the instances of irq combiner reference the common irq domain for
+> translating hardware interrupts to linux irq number.
+> 
+> In case of device tree based boot, a interrupt specifier translator is setup
+> that can translate interrupt specifiers for device nodes which use combiner
+> as their interrupt parent.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> Please ignore the previous post patch since that patch has a compilation error
+> when CONFIG_OF was not defined.
+> 
+> This patch is based on the following tree.
+> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+> 
+>  .../bindings/arm/samsung/interrupt-combiner.txt    |   27 +++++++++
+>  arch/arm/mach-exynos/cpu.c                         |   29 ++++++---
+>  arch/arm/mach-exynos/irq-combiner.c                |   62 +++++++++++++++++---
+>  3 files changed, 100 insertions(+), 18 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
+> new file mode 100644
+> index 0000000..6c960dc
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
+> @@ -0,0 +1,27 @@
+> +* Samsung Exynos Interrupt Combiner Controller
+> +
+> +Samsung's Exynos4 architecture includes a interrupt combiner which can combine
+> +interrupt sources as a group and provide a single interrupt request for the
+> +group. The interrupt request from each group are connected to a parent interrupt
+> +controller, such as GIC in case of Exynos4210.
+> +
+> +Required properties:
+> +- compatible: should be "samsung,exynos4210-combiner".
+> +- #interrupt-cells: should be <2>. The meaning of the cells are
+> +	* First Cell: Combiner Group Number.
+> +	* Second Cell: Interrupt number within the group.
+> +- reg: Base address and size of interrupt combiner registers.
+> +- interrupt-controller: Identifies the node as an interrupt controller.
+> +
+> +Optional properties:
+> +- interrupt-parent: pHandle of the parent interrupt controller, if not
+> +  inherited from the parent node.
+> +
+> +Example:
+> +
+> +	combiner:interrupt-controller@10440000 {
+> +		compatible = "samsung,exynos4120-combiner";
+> +		#interrupt-cells = <2>;
+> +		interrupt-controoler;
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
- arch/arm/plat-samsung/dev-backlight.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+s/controoler/controller/
 
-diff --git a/arch/arm/plat-samsung/dev-backlight.c b/arch/arm/plat-samsung/dev-backlight.c
-index e657305..90abd55 100644
---- a/arch/arm/plat-samsung/dev-backlight.c
-+++ b/arch/arm/plat-samsung/dev-backlight.c
-@@ -116,6 +116,8 @@ void samsung_bl_set(struct samsung_bl_gpio_info *gpio_info,
- 		samsung_bl_data->init = bl_data->init;
- 	if (bl_data->notify)
- 		samsung_bl_data->notify = bl_data->notify;
-+	if (bl_data->notify_after)
-+		samsung_bl_data->notify_after = bl_data->notify_after;
- 	if (bl_data->exit)
- 		samsung_bl_data->exit = bl_data->exit;
- 	if (bl_data->check_fb)
--- 
-1.7.1
+> +		reg = <0x10440000 0x1000>;
+> +	};
+
+[snip]
+
+> +
+> +int __init combiner_init_irq_domain(unsigned int irq_base, unsigned int nr_irq,
+
+Make irq_base signed.
+
+> +					struct device_node *np)
+> +{
+> +	struct irq_domain *domain = &combiner_irq_domain;
+> +
+> +	domain->irq_base = irq_alloc_descs(irq_base, irq_base, nr_irq, 0);
+
+This should be irq_alloc_descs(irq_base, 1,
+
+So that dynamic allocation can work when irq_base is -1.
+
+> +	if (domain->irq_base < 0) {
+> +		pr_err("failed to alloc irq descs, combiner init failed\n");
+> +		return -EBUSY;
+
+On failure, just warn and do:
+
+domain->irq_base = irq_base
+
+instead of returning unless all platforms using this are completely
+converted over to support dynamic Linux virq mapping.
+
+Also you should update your platforms' to set mdesc.nr_irq to
+NR_IRQS_LEGACY. And test with SPARSE_IRQ turned on.
+
+Rob
+
+> +	}
+> +	domain->nr_irq = nr_irq;
+> +	domain->ops = &combiner_irq_domain_ops;
+> +	domain->of_node = np;
+> +	irq_domain_add(domain);
+> +	return 0;
+> +}
