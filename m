@@ -1,266 +1,96 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power domain
- infrastructure
-Date: Mon, 12 Dec 2011 21:16:29 +0530
-Message-ID: <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>
- <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [RESEND][PATCH] ARM: Exynos: Add irq domain and device tree
+ support for interrupt combiner
+Date: Mon, 12 Dec 2011 21:32:10 +0530
+Message-ID: <CAJuYYwS=d92ra9-R0W0Q8nwv1aPfe192FcOb-5QM9ZnQAO_T3g@mail.gmail.com>
+References: <1323586114-24486-1-git-send-email-thomas.abraham@linaro.org>
+	<4EE5781E.2060702@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25728 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751026Ab1LLPpV (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:36408 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751712Ab1LLQCL convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Dec 2011 10:45:21 -0500
-In-reply-to: <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
+	Mon, 12 Dec 2011 11:02:11 -0500
+Received: by vbbfc26 with SMTP id fc26so3850195vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Dec 2011 08:02:10 -0800 (PST)
+In-Reply-To: <4EE5781E.2060702@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
 
-The generic power domain infrastructure is used to control the power domains
-available on Exynos4. For non-dt platforms, the power domains are statically
-instantiated. For dt platforms, the power domain nodes found in the device
-tree are instantiated.
+Hi Rob,
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Rob Herring <rob.herring@calxeda.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
-This patch is mainly derived from Mark Brown's work on generic power domain
-support for s3c64xx platforms. The existing exynos4 power domain implementation
-is not removed in this patch. The devices are not yet registered with the power
-domains for non-dt platforms.
+On 12 December 2011 09:12, Rob Herring <robherring2@gmail.com> wrote:
+>> +Example:
+>> +
+>> + =A0 =A0 combiner:interrupt-controller@10440000 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,exynos4120-combine=
+r";
+>> + =A0 =A0 =A0 =A0 =A0 =A0 #interrupt-cells =3D <2>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 interrupt-controoler;
+>
+> s/controoler/controller/
 
- arch/arm/mach-exynos/Kconfig |    1 +
- arch/arm/mach-exynos/pm.c    |  179 ++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 180 insertions(+), 0 deletions(-)
+Ok. I will fix this.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 0afcc3b..c1f77c7 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -29,6 +29,7 @@ config CPU_EXYNOS4210
- 	default y
- 	depends on ARCH_EXYNOS4
- 	select SAMSUNG_DMADEV
-+	select PM_GENERIC_DOMAINS
- 	select ARM_CPU_SUSPEND if PM
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 4093fea..a471ea6 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -20,6 +20,10 @@
- #include <linux/io.h>
- #include <linux/err.h>
- #include <linux/clk.h>
-+#include <linux/slab.h>
-+#include <linux/pm_domain.h>
-+#include <linux/delay.h>
-+#include <linux/of_address.h>
- 
- #include <asm/cacheflush.h>
- #include <asm/hardware/cache-l2x0.h>
-@@ -37,6 +41,13 @@
- #include <mach/pm-core.h>
- #include <mach/pmu.h>
- 
-+struct exynos4_pm_domain {
-+	void __iomem *base;
-+	char const *name;
-+	bool is_off;
-+	struct generic_pm_domain pd;
-+};
-+
- static struct sleep_save exynos4_set_clksrc[] = {
- 	{ .reg = S5P_CLKSRC_MASK_TOP			, .val = 0x00000001, },
- 	{ .reg = S5P_CLKSRC_MASK_CAM			, .val = 0x11111111, },
-@@ -285,12 +296,172 @@ static struct sysdev_driver exynos4_pm_driver = {
- 	.add		= exynos4_pm_add,
- };
- 
-+static int exynos4_pd_power_on(struct generic_pm_domain *domain)
-+{
-+	struct exynos4_pm_domain *pd;
-+	void __iomem *base;
-+	u32 timeout;
-+
-+	pd = container_of(domain, struct exynos4_pm_domain, pd);
-+	base = pd->base;
-+
-+	__raw_writel(S5P_INT_LOCAL_PWR_EN, base);
-+
-+	/* Wait max 1ms */
-+	timeout = 10;
-+	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)
-+					!= S5P_INT_LOCAL_PWR_EN) {
-+		if (!timeout) {
-+			pr_err("Power domain %s enable failed\n", domain->name);
-+			return -ETIMEDOUT;
-+		}
-+		timeout--;
-+		udelay(100);
-+	}
-+	return 0;
-+}
-+
-+static int exynos4_pd_power_off(struct generic_pm_domain *domain)
-+{
-+	struct exynos4_pm_domain *pd;
-+	void __iomem *base;
-+	u32 timeout;
-+
-+	pd = container_of(domain, struct exynos4_pm_domain, pd);
-+	base = pd->base;
-+
-+	__raw_writel(0, base);
-+
-+	/* Wait max 1ms */
-+	timeout = 10;
-+	while (__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN) {
-+		if (!timeout) {
-+			pr_err("Power domain %s disable failed\n", domain->name);
-+			return -ETIMEDOUT;
-+		}
-+		timeout--;
-+		udelay(100);
-+	}
-+	return 0;
-+}
-+
-+static struct exynos4_pm_domain exynos4_pd_mfc = {
-+	.base = (void __iomem *)S5P_PMU_MFC_CONF,
-+	.name = "pd-mfc",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain exynos4_pd_g3d = {
-+	.base = (void __iomem *)S5P_PMU_G3D_CONF,
-+	.name = "pd-g3d",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain exynos4_pd_lcd0 = {
-+	.base = (void __iomem *)S5P_PMU_LCD0_CONF,
-+	.name = "pd-lcd0",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain exynos4_pd_lcd1 = {
-+	.base = (void __iomem *)S5P_PMU_LCD1_CONF,
-+	.name = "pd-lcd1",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain exynos4_pd_tv = {
-+	.base = (void __iomem *)S5P_PMU_TV_CONF,
-+	.name = "pd-tv",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain exynos4_pd_cam = {
-+	.base = (void __iomem *)S5P_PMU_CAM_CONF,
-+	.name = "pd-cam",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain exynos4_pd_gps = {
-+	.base = (void __iomem *)S5P_PMU_GPS_CONF,
-+	.name = "pd-gps",
-+	.pd = {
-+		.power_off = exynos4_pd_power_off,
-+		.power_on = exynos4_pd_power_on,
-+	},
-+};
-+
-+static struct exynos4_pm_domain *exynos4_pm_domains[] = {
-+	&exynos4_pd_mfc,
-+	&exynos4_pd_g3d,
-+	&exynos4_pd_lcd0,
-+	&exynos4_pd_lcd1,
-+	&exynos4_pd_tv,
-+	&exynos4_pd_cam,
-+	&exynos4_pd_gps,
-+};
-+
-+static __init void exynos4_pm_init_power_domain(void)
-+{
-+	int idx;
-+	struct device_node *np;
-+
-+#ifdef CONFIG_OF
-+	if (!of_have_populated_dt())
-+		goto no_dt;
-+
-+	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
-+		struct exynos4_pm_domain *pd;
-+
-+		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
-+		if (!pd) {
-+			pr_err("exynos4_pm_init_power_domain: memalloc "
-+					"failed\n");
-+			return;
-+		}
-+
-+		if (of_get_property(np, "samsung,exynos4210-pd-off", NULL))
-+			pd->is_off = true;
-+		pd->name = np->name;
-+		pd->base = of_iomap(np, 0);
-+		pd->pd.power_off = exynos4_pd_power_off;
-+		pd->pd.power_on = exynos4_pd_power_on;
-+		pd->pd.of_node = np;
-+		pm_genpd_init(&pd->pd, NULL, false);
-+	}
-+	return;
-+#endif /* CONFIG_OF */
-+
-+no_dt:
-+	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++)
-+		pm_genpd_init(&exynos4_pm_domains[idx]->pd, NULL,
-+				exynos4_pm_domains[idx]->is_off);
-+}
-+
- static __init int exynos4_pm_drvinit(void)
- {
- 	struct clk *pll_base;
- 	unsigned int tmp;
- 
- 	s3c_pm_init();
-+	exynos4_pm_init_power_domain();
- 
- 	/* All wakeup disable */
- 
-@@ -406,3 +577,11 @@ static __init int exynos4_pm_syscore_init(void)
- 	return 0;
- }
- arch_initcall(exynos4_pm_syscore_init);
-+
-+
-+static __init int exynos4_pm_late_initcall(void)
-+{
-+	pm_genpd_poweroff_unused();
-+	return 0;
-+}
-+late_initcall(exynos4_pm_late_initcall);
--- 
-1.6.6.rc2
+>
+>> + =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x10440000 0x1000>;
+>> + =A0 =A0 };
+>
+> [snip]
+>
+>> +
+>> +int __init combiner_init_irq_domain(unsigned int irq_base, unsigned=
+ int nr_irq,
+>
+> Make irq_base signed.
+
+Ok.
+
+>
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 struct device_node *np)
+>> +{
+>> + =A0 =A0 struct irq_domain *domain =3D &combiner_irq_domain;
+>> +
+>> + =A0 =A0 domain->irq_base =3D irq_alloc_descs(irq_base, irq_base, n=
+r_irq, 0);
+>
+> This should be irq_alloc_descs(irq_base, 1,
+>
+> So that dynamic allocation can work when irq_base is -1.
+
+Ok. I will modify this.
+
+>
+>> + =A0 =A0 if (domain->irq_base < 0) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 pr_err("failed to alloc irq descs, combine=
+r init failed\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -EBUSY;
+>
+> On failure, just warn and do:
+>
+> domain->irq_base =3D irq_base
+>
+> instead of returning unless all platforms using this are completely
+> converted over to support dynamic Linux virq mapping.
+
+Ok.
+
+>
+> Also you should update your platforms' to set mdesc.nr_irq to
+> NR_IRQS_LEGACY. And test with SPARSE_IRQ turned on.
+
+Ok. I will test with NR_IRQS_LEGACY. Hope nothing breaks!
+
+Thank you Rob for you review and comments on this patch.
+
+Regards,
+Thomas.
+
+>
+> Rob
