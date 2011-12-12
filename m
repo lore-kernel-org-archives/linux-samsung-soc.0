@@ -1,50 +1,38 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [linux-next] make  s5p64x0_defconfig build error
-Date: Thu, 15 Dec 2011 05:00:05 +0000
-Message-ID: <20111215050005.GA24287@sirena.org.uk>
-References: <1323838630.18517.1.camel@phoenix>
- <20111214123244.GE7122@mudshark.cambridge.arm.com>
- <20111214191205.GF14542@n2100.arm.linux.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Configure ARM_NR_BANKS for EXYNOS4
+Date: Tue, 13 Dec 2011 08:55:06 +0900
+Message-ID: <1323734106-26673-1-git-send-email-boojin.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:56667 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750704Ab1LOFAN (ORCPT
+Received: from ganesha.gnumonks.org ([213.95.27.120]:54819 "EHLO
+	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750742Ab1LOFBl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Dec 2011 00:00:13 -0500
-Content-Disposition: inline
-In-Reply-To: <20111214191205.GF14542@n2100.arm.linux.org.uk>
+	Thu, 15 Dec 2011 00:01:41 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Axel Lin <axel.lin@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>
 
-On Wed, Dec 14, 2011 at 07:12:05PM +0000, Russell King - ARM Linux wrote:
-> On Wed, Dec 14, 2011 at 12:32:44PM +0000, Will Deacon wrote:
+This patch increases the number of bank for EXYNOS4 to support bigger than
+2GB memory on it.
 
-> >     ARM: restart: Temporary #error to persuade platform maintainers to take the restart changes seriously
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+---
+ arch/arm/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-> >     Force builds to fail to ensure that platform maintainers take the
-> >     restart changes seriously, and sort out fixing their code before the
-> >     next merge window.
-
-> Indeed, and note the date, and how long its taken for just one of the
-> platforms to be noticed.
-
-I noticed s3c64xx the day you added that change but just deleted the
-code so I could carry on working after my initial attempts to figure out
-what this was about took too long.
-
-> It seems to me that no one really cares about whether six of the seven
-> platforms which have the #error build or don't build, so I really think
-> there's a simple solution to this at the next merge window - delete any
-> platform which hasn't _at_ _least_ responded with a proposed patch to
-> this.
-
-Do you have any references to this stuff?  I did make some effort to
-understand what needed to be done but the patch doesn't mention which
-restart changes are needed and my grovelling around in git wasn't
-turning up enough context to tell me what was supposed to be happening
-instead.  Frankly I've no need for that code in my systems so if it's a
-problem I'd just throw the restart code away if it was that or breakage.
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 928cbcc..5c90dee 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -1127,7 +1127,7 @@ source arch/arm/mm/Kconfig
+ 
+ config ARM_NR_BANKS
+ 	int
+-	default 16 if ARCH_EP93XX
++	default 16 if ARCH_EP93XX || ARCH_EXYNOS4
+ 	default 8
+ 
+ config IWMMXT
+-- 
+1.7.1
