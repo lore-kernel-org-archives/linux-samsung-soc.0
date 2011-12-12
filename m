@@ -1,123 +1,40 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [RESEND][PATCH] ARM: Exynos: Add irq domain and device tree support
- for interrupt combiner
-Date: Sun, 11 Dec 2011 21:42:22 -0600
-Message-ID: <4EE5781E.2060702@gmail.com>
-References: <1323586114-24486-1-git-send-email-thomas.abraham@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/3] s5p-g2d: add G2D to mach-nuri
+Date: Mon, 12 Dec 2011 05:27:46 +0000
+Message-ID: <20111212052745.GA686@sirena.org.uk>
+References: <1323446682-25252-1-git-send-email-k.debski@samsung.com>
+ <1323446682-25252-3-git-send-email-k.debski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:44491 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752943Ab1LLDmh (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:53747 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751431Ab1LLF1r (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Dec 2011 22:42:37 -0500
-Received: by ghbf1 with SMTP id f1so649326ghb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 11 Dec 2011 19:42:36 -0800 (PST)
-In-Reply-To: <1323586114-24486-1-git-send-email-thomas.abraham@linaro.org>
+	Mon, 12 Dec 2011 00:27:47 -0500
+Content-Disposition: inline
+In-Reply-To: <1323446682-25252-3-git-send-email-k.debski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
+To: Kamil Debski <k.debski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
 
-On 12/11/2011 12:48 AM, Thomas Abraham wrote:
-> A common irq domain for the interrupts managed by the interrupt combiners is
-> setup. All the instances of irq combiner reference the common irq domain for
-> translating hardware interrupts to linux irq number.
-> 
-> In case of device tree based boot, a interrupt specifier translator is setup
-> that can translate interrupt specifiers for device nodes which use combiner
-> as their interrupt parent.
-> 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
-> Please ignore the previous post patch since that patch has a compilation error
-> when CONFIG_OF was not defined.
-> 
-> This patch is based on the following tree.
-> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
-> 
->  .../bindings/arm/samsung/interrupt-combiner.txt    |   27 +++++++++
->  arch/arm/mach-exynos/cpu.c                         |   29 ++++++---
->  arch/arm/mach-exynos/irq-combiner.c                |   62 +++++++++++++++++---
->  3 files changed, 100 insertions(+), 18 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-> new file mode 100644
-> index 0000000..6c960dc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-> @@ -0,0 +1,27 @@
-> +* Samsung Exynos Interrupt Combiner Controller
-> +
-> +Samsung's Exynos4 architecture includes a interrupt combiner which can combine
-> +interrupt sources as a group and provide a single interrupt request for the
-> +group. The interrupt request from each group are connected to a parent interrupt
-> +controller, such as GIC in case of Exynos4210.
-> +
-> +Required properties:
-> +- compatible: should be "samsung,exynos4210-combiner".
-> +- #interrupt-cells: should be <2>. The meaning of the cells are
-> +	* First Cell: Combiner Group Number.
-> +	* Second Cell: Interrupt number within the group.
-> +- reg: Base address and size of interrupt combiner registers.
-> +- interrupt-controller: Identifies the node as an interrupt controller.
-> +
-> +Optional properties:
-> +- interrupt-parent: pHandle of the parent interrupt controller, if not
-> +  inherited from the parent node.
-> +
-> +Example:
-> +
-> +	combiner:interrupt-controller@10440000 {
-> +		compatible = "samsung,exynos4120-combiner";
-> +		#interrupt-cells = <2>;
-> +		interrupt-controoler;
+On Fri, Dec 09, 2011 at 05:04:41PM +0100, Kamil Debski wrote:
 
-s/controoler/controller/
+> index 236bbe1..5251e91 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -1262,6 +1262,7 @@ static struct platform_device *nuri_devices[] __initdata = {
+>  	&s3c_device_i2c3,
+>  	&i2c9_gpio,
+>  	&s3c_device_adc,
+> +	&s5p_device_g2d,
 
-> +		reg = <0x10440000 0x1000>;
-> +	};
+For devices like g2d which are always part of the SoC and which don't
+require any external wiring on the board I was thinking we should just
+have the core code for the SoC register the device rather than including
+it in each board individually.  It'd save effort and ensure that people
+automatically get to use the feature.
 
-[snip]
-
-> +
-> +int __init combiner_init_irq_domain(unsigned int irq_base, unsigned int nr_irq,
-
-Make irq_base signed.
-
-> +					struct device_node *np)
-> +{
-> +	struct irq_domain *domain = &combiner_irq_domain;
-> +
-> +	domain->irq_base = irq_alloc_descs(irq_base, irq_base, nr_irq, 0);
-
-This should be irq_alloc_descs(irq_base, 1,
-
-So that dynamic allocation can work when irq_base is -1.
-
-> +	if (domain->irq_base < 0) {
-> +		pr_err("failed to alloc irq descs, combiner init failed\n");
-> +		return -EBUSY;
-
-On failure, just warn and do:
-
-domain->irq_base = irq_base
-
-instead of returning unless all platforms using this are completely
-converted over to support dynamic Linux virq mapping.
-
-Also you should update your platforms' to set mdesc.nr_irq to
-NR_IRQS_LEGACY. And test with SPARSE_IRQ turned on.
-
-Rob
-
-> +	}
-> +	domain->nr_irq = nr_irq;
-> +	domain->ops = &combiner_irq_domain_ops;
-> +	domain->of_node = np;
-> +	irq_domain_add(domain);
-> +	return 0;
-> +}
+The crypto accelerators are another example of this - it's not really
+board specific if they're useful.
