@@ -1,40 +1,44 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/3] s5p-g2d: add G2D to mach-nuri
-Date: Mon, 12 Dec 2011 05:27:46 +0000
-Message-ID: <20111212052745.GA686@sirena.org.uk>
-References: <1323446682-25252-1-git-send-email-k.debski@samsung.com>
- <1323446682-25252-3-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH] ARM: MM: Configure the number of banks
+Date: Mon, 12 Dec 2011 15:46:53 +0900
+Message-ID: <006901ccb899$d5c33930$8149ab90$%kim@samsung.com>
+References: <1323048539-9573-1-git-send-email-boojin.kim@samsung.com>
+ <20111211100325.GR14542@n2100.arm.linux.org.uk>
+ <20111211102443.GT14542@n2100.arm.linux.org.uk>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:53747 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751431Ab1LLF1r (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13315 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750931Ab1LLGrE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Dec 2011 00:27:47 -0500
-Content-Disposition: inline
-In-Reply-To: <1323446682-25252-3-git-send-email-k.debski@samsung.com>
+	Mon, 12 Dec 2011 01:47:04 -0500
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LW200138W5Q1PO0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 12 Dec 2011 15:46:54 +0900 (KST)
+Received: from DOBOOJINKIM03 ([12.23.120.72])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LW20088KW658Y20@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 12 Dec 2011 15:46:54 +0900 (KST)
+In-reply-to: <20111211102443.GT14542@n2100.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, kgene.kim@samsung.com
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Fri, Dec 09, 2011 at 05:04:41PM +0100, Kamil Debski wrote:
+Russell King wrote:
 
-> index 236bbe1..5251e91 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -1262,6 +1262,7 @@ static struct platform_device *nuri_devices[] __initdata = {
->  	&s3c_device_i2c3,
->  	&i2c9_gpio,
->  	&s3c_device_adc,
-> +	&s5p_device_g2d,
 
-For devices like g2d which are always part of the SoC and which don't
-require any external wiring on the board I was thinking we should just
-have the core code for the SoC register the device rather than including
-it in each board individually.  It'd save effort and ensure that people
-automatically get to use the feature.
+> >
+> >  source arch/arm/mm/Kconfig
+> >
+> > +config ARM_NR_BANKS
+> > +	int
+> > +	default 16 if ARCH_EP93XX
+>
+> I've now committed this patch - if you want to add exynos to this,
+> please send a patch to do just that.  Thanks.
 
-The crypto accelerators are another example of this - it's not really
-board specific if they're useful.
+It's good to me.
+Thank you for review !
