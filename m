@@ -1,41 +1,95 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/3] s5p-g2d: add G2D to mach-nuri
-Date: Mon, 12 Dec 2011 18:03:17 +0800
-Message-ID: <20111212100316.GB31568@opensource.wolfsonmicro.com>
-References: <1323446682-25252-1-git-send-email-k.debski@samsung.com>
- <1323446682-25252-3-git-send-email-k.debski@samsung.com>
- <20111212052745.GA686@sirena.org.uk>
- <CAH9JG2UBb0Dp3i9Hzwx36AykKS5wZd5fsaP3y-og8VVoGqfhtg@mail.gmail.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: mmc: dw_mmc: Add more capabilities field
+Date: Mon, 12 Dec 2011 19:55:41 +0900
+Message-ID: <000001ccb8bc$9770db60$c6529220$%jun@samsung.com>
+References: <00a801ccb636$5bbe2920$133a7b60$%jun@samsung.com>
+ <CAAG0J99SSLm6r0NoqXCMmEvdpVnW-zwHdFhA-n=zEiagyGHuTQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46483 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751497Ab1LLKDW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Dec 2011 05:03:22 -0500
-Content-Disposition: inline
-In-Reply-To: <CAH9JG2UBb0Dp3i9Hzwx36AykKS5wZd5fsaP3y-og8VVoGqfhtg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=Windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <CAAG0J99SSLm6r0NoqXCMmEvdpVnW-zwHdFhA-n=zEiagyGHuTQ@mail.gmail.com>
+Content-language: ko
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'James Hogan' <james@albanarts.com>
+Cc: linux-mmc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kamil Debski <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kgene.kim@samsung.com
 
-On Mon, Dec 12, 2011 at 06:27:30PM +0900, Kyungmin Park wrote:
-> On 12/12/11, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
+James Hogan wrote:
+> On 9 December 2011 05:49, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> > Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+>=20
+> A commit message would be useful.
+"This patch adds another capabilities field for MMC_CAPS2_XXX."
+Is a commit message disappeared?
+>=20
+> > ---
+> > =A0drivers/mmc/host/dw_mmc.c =A0| =A0 =A06 ++++++
+> > =A0include/linux/mmc/dw_mmc.h | =A0 =A01 +
+> > =A02 files changed, 7 insertions(+), 0 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> > index 3aaeb08..366df6b 100644
+> > --- a/drivers/mmc/host/dw_mmc.c
+> > +++ b/drivers/mmc/host/dw_mmc.c
+> > @@ -1681,6 +1681,12 @@ static int __init dw_mci_init_slot(struct dw=
+_mci *host, unsigned int id)
+> > =A0 =A0 =A0 =A0else
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc->caps =3D 0;
+> >
+> > + =A0 =A0 =A0 if (host->pdata->caps2)
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc->caps2 =3D host->pdata->caps2;
+> > + =A0 =A0 =A0 else
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc->caps2 =3D 0;
+> > +
+> > +
+>=20
+> There's really no need to check the value here, just copy it over.
+> Same with the other caps field really.
+Yes. No need to check.
+It would be added rather than be copied.
 
-> >> +	&s5p_device_g2d,
+Thanks,
+Seungwon Jeon.
+>=20
+> > =A0 =A0 =A0 =A0if (host->pdata->get_bus_wd)
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (host->pdata->get_bus_wd(slot->id=
+) >=3D 4)
+> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc->caps |=3D MMC_C=
+AP_4_BIT_DATA;
+> > diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.=
+h
+> > index 6dc9b80..e8779c6 100644
+> > --- a/include/linux/mmc/dw_mmc.h
+> > +++ b/include/linux/mmc/dw_mmc.h
+> > @@ -214,6 +214,7 @@ struct dw_mci_board {
+> > =A0 =A0 =A0 =A0unsigned int bus_hz; /* Bus speed */
+> >
+> > =A0 =A0 =A0 =A0unsigned int caps; =A0 =A0 =A0/* Capabilities */
+> > + =A0 =A0 =A0 unsigned int caps2; =A0 =A0 /* More capabilities */
+> > =A0 =A0 =A0 =A0/*
+> > =A0 =A0 =A0 =A0 * Override fifo depth. If 0, autodetect it from the=
+ FIFOTH register,
+> > =A0 =A0 =A0 =A0 * but note that this may not be reliable after a bo=
+otloader has used
+> > --
+> > 1.7.0.4
+> >
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-mmc=
+" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at =A0http://vger.kernel.org/majordomo-info.htm=
+l
+>=20
+> other than that it looks fine to me.
+>=20
+> --
+> James Hogan
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-> > For devices like g2d which are always part of the SoC and which don't
-> > require any external wiring on the board I was thinking we should just
-> > have the core code for the SoC register the device rather than including
-> > it in each board individually.  It'd save effort and ensure that people
-> > automatically get to use the feature.
-
-> I'm welcome to use these scheme. make a common.c and register it automatically.
-> but I'm not sure we're ready to use this scheme. and I hope to start
-> these work at smdk board instead of this patch.
-
-I'm not sure I understand why we would not be ready to do things like
-this?  I'd also expect that doing things in a board specific fashion
-might create issues with things being set up twice.
