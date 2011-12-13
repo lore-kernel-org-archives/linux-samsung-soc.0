@@ -1,102 +1,44 @@
-From: Boojin Kim <boojin.kim@samsung.com>
-Subject: [PATCH] DMA: PL330: Support MEMTOMEM transmit without barrier operation.
-Date: Tue, 13 Dec 2011 16:06:24 +0900
-Message-ID: <1323759984-30644-1-git-send-email-boojin.kim@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ganesha.gnumonks.org ([213.95.27.120]:54833 "EHLO
-	ganesha.gnumonks.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750757Ab1LOFBo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Dec 2011 00:01:44 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: [PATCH] iommu: Initialize domain->handler in iommu_domain_alloc()
+Date: Tue, 13 Dec 2011 16:14:26 +0900
+Message-ID: <1323760466-30333-1-git-send-email-pullip.cho@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Cc: Younglak Kim <younglak1004.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Kukjin Kim <kgene.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, KyongHo Cho <pullip.cho@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Boojin Kim <boojin.kim@samsung.com>
 
-PL330 r1p0 version fixed the lockup error being on r0p0.
-This patch supports the DMA transmit without barrier operation
-if the revision is the next of r0p0.
+Since it is not guaranteed that an iommu driver initializes in its
+domain_init() function, it must be initialized with NULL to prevent
+calling a function in an arbitrary location when iommu fault occurred.
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
 ---
- arch/arm/include/asm/hardware/pl330.h |    5 +++++
- drivers/dma/pl330.c                   |   26 +++++++++++++++++++++-----
- 2 files changed, 26 insertions(+), 5 deletions(-)
+ drivers/iommu/iommu.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/include/asm/hardware/pl330.h b/arch/arm/include/asm/hardware/pl330.h
-index ed38e32..1f4d7cb 100644
---- a/arch/arm/include/asm/hardware/pl330.h
-+++ b/arch/arm/include/asm/hardware/pl330.h
-@@ -144,6 +144,11 @@ enum pl330_reqtype {
- #define CRD		0xe14
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 7cc3c65..1afb896 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -148,6 +148,7 @@ struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+ 		return NULL;
  
- #define PERIPH_ID	0xfe0
-+#define PERIPH_REV_SHIFT	20
-+#define PERIPH_REV_MASK		0xf
-+#define PERIPH_REV_R0P0		0
-+#define PERIPH_REV_R1P0		1
-+#define PERIPH_REV_R1P1		2
- #define PCELL_ID	0xff0
+ 	domain->ops = bus->iommu_ops;
++	domain->handler = NULL;
  
- #define CR0_PERIPH_REQ_SET	(1 << 0)
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 3214ced..d87d884 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -129,6 +129,7 @@ struct pl330_reqcfg {
- 	enum pl330_dstcachectrl dcctl;
- 	enum pl330_srccachectrl scctl;
- 	enum pl330_byteswap swap;
-+	struct pl330_config *pcfg;
- };
- 
- /*
-@@ -438,6 +439,11 @@ static inline u32 get_id(struct pl330_info *pi, u32 off)
- 	return id;
- }
- 
-+static inline u32 get_revision(u32 periph_id)
-+{
-+	return (periph_id>>PERIPH_REV_SHIFT)&PERIPH_REV_MASK;
-+}
-+
- static inline u32 _emit_ADDH(unsigned dry_run, u8 buf[],
- 		enum pl330_dst da, u16 val)
- {
-@@ -1026,12 +1032,21 @@ static inline int _ldst_memtomem(unsigned dry_run, u8 buf[],
- 		const struct _xfer_spec *pxs, int cyc)
- {
- 	int off = 0;
-+	struct pl330_config *pcfg = pxs->r->cfg->pcfg;
- 
--	while (cyc--) {
--		off += _emit_LD(dry_run, &buf[off], ALWAYS);
--		off += _emit_RMB(dry_run, &buf[off]);
--		off += _emit_ST(dry_run, &buf[off], ALWAYS);
--		off += _emit_WMB(dry_run, &buf[off]);
-+	/* check lock-up free version */
-+	if (get_revision(pcfg->periph_id)  >= PERIPH_REV_R1P0) {
-+		while (cyc--) {
-+			off += _emit_LD(dry_run, &buf[off], ALWAYS);
-+			off += _emit_ST(dry_run, &buf[off], ALWAYS);
-+		}
-+	} else {
-+		while (cyc--) {
-+			off += _emit_LD(dry_run, &buf[off], ALWAYS);
-+			off += _emit_RMB(dry_run, &buf[off]);
-+			off += _emit_ST(dry_run, &buf[off], ALWAYS);
-+			off += _emit_WMB(dry_run, &buf[off]);
-+		}
- 	}
- 
- 	return off;
-@@ -2398,6 +2413,7 @@ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
- 	async_tx_ack(&desc->txd);
- 
- 	desc->req.peri = peri_id ? pch->chan.chan_id : 0;
-+	desc->rqcfg.pcfg = &pch->dmac->pif.pcfg;
- 
- 	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
- 
+ 	ret = domain->ops->domain_init(domain);
+ 	if (ret)
 -- 
 1.7.1
