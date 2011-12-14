@@ -1,39 +1,74 @@
-From: Anton Vorontsov <cbouatmailru@gmail.com>
-Subject: Re: [PATCH v4 REPOST 1/5] ARM: l2x0/pl310: Refactor Kconfig to be
- more maintainable
-Date: Wed, 14 Dec 2011 16:03:14 +0400
-Message-ID: <20111214120314.GA9841@oksana.dev.rtsoft.ru>
-References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
- <1323862781-3465-2-git-send-email-dave.martin@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1323862781-3465-2-git-send-email-dave.martin@linaro.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Dave Martin <dave.martin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, patches@linaro.org, Barry Song <baohua.song@csr.com>, Catalin Marinas <catalin.marinas@arm.com>, Colin Cross <ccross@google.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Paul Mundt <lethal@linux-sh.org>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Tony Lindgren <tony@atomide.com>, Will Deacon <will.deacon@arm.com>
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH V1] mmc: core: Add host capability check for power class
+Date: Wed, 14 Dec 2011 17:30:59 +0530
+Message-ID: <1323864059-26966-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, subhashj@codeaurora.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 14, 2011 at 11:39:37AM +0000, Dave Martin wrote:
-> Making CACHE_L2X0 depend on (huge list of MACH_ and ARCH_ configs)
-> is bothersome to maintain and likely to lead to merge conflicts.
-> 
-> This patch moves the knowledge of which platforms have a L2x0 or
-> PL310 cache controller to the individual machines.  To enable this,
-> a new MIGHT_HAVE_CACHE_L2X0 config option is introduced to allow
-> machines to indicate that they may have such a cache controller
-> independently of each other.
-> 
-> Boards/SoCs which cannot reliably operate without the L2 cache
-> controller support will need to select CACHE_L2X0 directly from
-> their own Kconfigs instead.  This applies to some TrustZone-enabled
-> boards where Linux runs in the Normal World, for example.
-> 
-> Signed-off-by: Dave Martin <dave.martin@linaro.org>
+This patch adds a check whether the host supports maximum current value
+obtained from the device's extended csd register for a selected interface
+voltage and frequency.
 
-For CNS3xxx bits:
+cc: Chris Ball <cjb@laptop.org>
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+Changes in v1:
+	reduced the number of comparisons as per Hein's suggestion
 
-Acked-by: Anton Vorontsov <cbouatmailru@gmail.com>
+ drivers/mmc/core/mmc.c   |   21 +++++++++++++++++++++
+ include/linux/mmc/card.h |    4 ++++
+ 2 files changed, 25 insertions(+), 0 deletions(-)
 
-Thanks!
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 006e932..e7f1902 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -688,6 +688,27 @@ static int mmc_select_powerclass(struct mmc_card *card,
+ 		pwrclass_val = (pwrclass_val & EXT_CSD_PWR_CL_4BIT_MASK) >>
+ 				EXT_CSD_PWR_CL_4BIT_SHIFT;
+ 
++	if (pwrclass_val >= MMC_MAX_CURRENT_800)
++		pwrclass_val = MMC_MAX_CURRENT_800;
++	else if (pwrclass_val >= MMC_MAX_CURRENT_600)
++		pwrclass_val = MMC_MAX_CURRENT_600;
++	else if (pwrclass_val >= MMC_MAX_CURRENT_400)
++		pwrclass_val = MMC_MAX_CURRENT_400;
++	else if (pwrclass_val >= MMC_MAX_CURRENT_200)
++		pwrclass_val = MMC_MAX_CURRENT_200;
++	else
++		pwrclass_val = MMC_MAX_CURRENT_200;
++
++	if ((pwrclass_val == MMC_MAX_CURRENT_800) &&
++	    !(card->host->caps & MMC_CAP_MAX_CURRENT_800))
++		pwrclass_val = MMC_MAX_CURRENT_600;
++	if ((pwrclass_val == MMC_MAX_CURRENT_600) &&
++	    !(card->host->caps & MMC_CAP_MAX_CURRENT_600))
++		pwrclass_val = MMC_MAX_CURRENT_400;
++	if ((pwrclass_val == MMC_MAX_CURRENT_400) &&
++	    !(card->host->caps & MMC_CAP_MAX_CURRENT_400))
++		pwrclass_val = MMC_MAX_CURRENT_200;
++
+ 	/* If the power class is different from the default value */
+ 	if (pwrclass_val > 0) {
+ 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index 9478a6b..c5e031a 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -195,6 +195,10 @@ struct mmc_part {
+ #define MMC_BLK_DATA_AREA_GP	(1<<2)
+ };
+ 
++#define MMC_MAX_CURRENT_200	(0)
++#define MMC_MAX_CURRENT_400	(7)
++#define MMC_MAX_CURRENT_600	(11)
++#define MMC_MAX_CURRENT_800	(13)
+ /*
+  * MMC device
+  */
+-- 
+1.7.1
+
