@@ -1,314 +1,154 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V3] ARM: EXYNOS4: Modified files for SPI consolidation work
-Date: Wed, 14 Dec 2011 10:17:16 -0500
-Message-ID: <1323875836-22594-1-git-send-email-padma.v@samsung.com>
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH V6] mmc: core: Add host capability check for power class
+Date: Wed, 14 Dec 2011 11:44:14 +0530
+Message-ID: <CAGxe1ZH4V-KbiU6aaT+v=o7OYyickj-LOycLvOKSj6ngXPvwjw@mail.gmail.com>
+References: <1323843295-25314-1-git-send-email-girish.shivananjappa@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54444 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751117Ab1LNFTn (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:53214 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750969Ab1LNGOP convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Dec 2011 00:19:43 -0500
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LW6004BJHGTEBK0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Dec 2011 14:19:42 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LW600ERYHGNIV80@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 14 Dec 2011 14:19:41 +0900 (KST)
+	Wed, 14 Dec 2011 01:14:15 -0500
+In-Reply-To: <1323843295-25314-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: padma.kvr@gmail.com, padma.v@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, subhashj@codeaurora.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
 
-As SPI platform devices are consolidated to plat-samsung, some
-corresponding changes are required in the respective machine folder.
-Setup files are added for SPI GPIO configurations and platform data
-initialization.
+Ignore this patch
 
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- arch/arm/mach-exynos/Kconfig                   |    5 ++
- arch/arm/mach-exynos/Makefile                  |    1 +
- arch/arm/mach-exynos/clock.c                   |   73 ++++++++++++++----------
- arch/arm/mach-exynos/include/mach/irqs.h       |    3 +
- arch/arm/mach-exynos/include/mach/map.h        |    7 ++
- arch/arm/mach-exynos/include/mach/spi-clocks.h |   17 ++++++
- arch/arm/mach-exynos/setup-spi.c               |   72 +++++++++++++++++++++++
- 7 files changed, 148 insertions(+), 30 deletions(-)
- create mode 100644 arch/arm/mach-exynos/include/mach/spi-clocks.h
- create mode 100644 arch/arm/mach-exynos/setup-spi.c
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 0afcc3b..c925fec 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -148,6 +148,11 @@ config EXYNOS4_SETUP_USB_PHY
- 	help
- 	  Common setup code for USB PHY controller
- 
-+config EXYNOS4_SETUP_SPI
-+	bool
-+	help
-+	  Common setup code for SPI GPIO configurations.
-+
- # machine support
- 
- if ARCH_EXYNOS4
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 57e5296..979fdd3 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -60,3 +60,4 @@ obj-$(CONFIG_EXYNOS4_SETUP_I2C7)	+= setup-i2c7.o
- obj-$(CONFIG_EXYNOS4_SETUP_KEYPAD)	+= setup-keypad.o
- obj-$(CONFIG_EXYNOS4_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
- obj-$(CONFIG_EXYNOS4_SETUP_USB_PHY)	+= setup-usb-phy.o
-+obj-$(CONFIG_EXYNOS4_SETUP_SPI)		+= setup-spi.o
-diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-index 28e2842..d3f41ce 100644
---- a/arch/arm/mach-exynos/clock.c
-+++ b/arch/arm/mach-exynos/clock.c
-@@ -1118,36 +1118,6 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_div = { .reg = S5P_CLKDIV_LCD0, .shift = 0, .size = 4 },
- 	}, {
- 		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.0",
--			.enable		= exynos4_clksrc_mask_peril1_ctrl,
--			.ctrlbit	= (1 << 16),
--		},
--		.sources = &clkset_group,
--		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 16, .size = 4 },
--		.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 0, .size = 4 },
--	}, {
--		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.1",
--			.enable		= exynos4_clksrc_mask_peril1_ctrl,
--			.ctrlbit	= (1 << 20),
--		},
--		.sources = &clkset_group,
--		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 20, .size = 4 },
--		.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 16, .size = 4 },
--	}, {
--		.clk		= {
--			.name		= "sclk_spi",
--			.devname	= "s3c64xx-spi.2",
--			.enable		= exynos4_clksrc_mask_peril1_ctrl,
--			.ctrlbit	= (1 << 24),
--		},
--		.sources = &clkset_group,
--		.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 24, .size = 4 },
--		.reg_div = { .reg = S5P_CLKDIV_PERIL2, .shift = 0, .size = 4 },
--	}, {
--		.clk		= {
- 			.name		= "sclk_fimg2d",
- 		},
- 		.sources = &clkset_mout_g2d,
-@@ -1264,6 +1234,42 @@ static struct clksrc_clk clk_sclk_mmc3 = {
- 	.reg_div = { .reg = S5P_CLKDIV_FSYS2, .shift = 24, .size = 8 },
- };
- 
-+static struct clksrc_clk clk_sclk_spi0 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.devname		= "s3c64xx-spi.0",
-+		.enable		= exynos4_clksrc_mask_peril1_ctrl,
-+		.ctrlbit		= (1 << 16),
-+	},
-+	.sources = &clkset_group,
-+	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 16, .size = 4 },
-+	.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 0, .size = 4 },
-+};
-+
-+static struct clksrc_clk clk_sclk_spi1 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.devname		= "s3c64xx-spi.1",
-+		.enable		= exynos4_clksrc_mask_peril1_ctrl,
-+		.ctrlbit		= (1 << 20),
-+	},
-+	.sources = &clkset_group,
-+	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 20, .size = 4 },
-+	.reg_div = { .reg = S5P_CLKDIV_PERIL1, .shift = 16, .size = 4 },
-+};
-+
-+static struct clksrc_clk clk_sclk_spi2 = {
-+	.clk		= {
-+		.name		= "sclk_spi",
-+		.devname		= "s3c64xx-spi.2",
-+		.enable		= exynos4_clksrc_mask_peril1_ctrl,
-+		.ctrlbit		= (1 << 24),
-+	},
-+	.sources = &clkset_group,
-+	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 24, .size = 4 },
-+	.reg_div = { .reg = S5P_CLKDIV_PERIL2, .shift = 0, .size = 4 },
-+};
-+
- /* Clock initialization code */
- static struct clksrc_clk *sysclks[] = {
- 	&clk_mout_apll,
-@@ -1313,6 +1319,10 @@ static struct clksrc_clk *clksrc_cdev[] = {
- 	&clk_sclk_mmc1,
- 	&clk_sclk_mmc2,
- 	&clk_sclk_mmc3,
-+	&clk_sclk_spi0,
-+	&clk_sclk_spi1,
-+	&clk_sclk_spi2,
-+
- };
- 
- static struct clk_lookup exynos4_clk_lookup[] = {
-@@ -1326,6 +1336,9 @@ static struct clk_lookup exynos4_clk_lookup[] = {
- 	CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
- 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
- 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
-+	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &clk_sclk_spi0.clk),
-+	CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk0", &clk_sclk_spi1.clk),
-+	CLKDEV_INIT("s3c64xx-spi.2", "spi_busclk0", &clk_sclk_spi2.clk),
- };
- 
- static int xtal_rate;
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index f7d73b1..1d401c9 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -74,6 +74,9 @@
- #define IRQ_IIC5		IRQ_SPI(63)
- #define IRQ_IIC6		IRQ_SPI(64)
- #define IRQ_IIC7		IRQ_SPI(65)
-+#define IRQ_SPI0		IRQ_SPI(66)
-+#define IRQ_SPI1		IRQ_SPI(67)
-+#define IRQ_SPI2		IRQ_SPI(68)
- 
- #define IRQ_USB_HOST		IRQ_SPI(70)
- #define IRQ_USB_HSOTG		IRQ_SPI(71)
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 03e2c99..64dca73 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -88,6 +88,10 @@
- #define EXYNOS4_PA_SYSMMU_TV		0x12E20000
- #define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
- #define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
-+#define EXYNOS4_PA_SPI0			0x13920000
-+#define EXYNOS4_PA_SPI1			0x13930000
-+#define EXYNOS4_PA_SPI2			0x13940000
-+
- 
- #define EXYNOS4_PA_GPIO1		0x11400000
- #define EXYNOS4_PA_GPIO2		0x11000000
-@@ -149,6 +153,9 @@
- #define S3C_PA_RTC			EXYNOS4_PA_RTC
- #define S3C_PA_WDT			EXYNOS4_PA_WATCHDOG
- #define S3C_PA_UART			EXYNOS4_PA_UART
-+#define S3C_PA_SPI0			EXYNOS4_PA_SPI0
-+#define S3C_PA_SPI1			EXYNOS4_PA_SPI1
-+#define S3C_PA_SPI2			EXYNOS4_PA_SPI2
- 
- #define S5P_PA_CHIPID			EXYNOS4_PA_CHIPID
- #define S5P_PA_EHCI			EXYNOS4_PA_EHCI
-diff --git a/arch/arm/mach-exynos/include/mach/spi-clocks.h b/arch/arm/mach-exynos/include/mach/spi-clocks.h
-new file mode 100644
-index 0000000..9774389
---- /dev/null
-+++ b/arch/arm/mach-exynos/include/mach/spi-clocks.h
-@@ -0,0 +1,17 @@
-+/* linux/arch/arm/mach-exynos4/include/mach/spi-clocks.h
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Co. Ltd.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __ASM_ARCH_SPI_CLKS_H
-+#define __ASM_ARCH_SPI_CLKS_H __FILE__
-+
-+/* Must source from SCLK_SPI */
-+#define EXYNOS4_SPI_SRCCLK_SCLK		0
-+
-+#endif /* __ASM_ARCH_SPI_CLKS_H */
-+
-diff --git a/arch/arm/mach-exynos/setup-spi.c b/arch/arm/mach-exynos/setup-spi.c
-new file mode 100644
-index 0000000..833ff40
---- /dev/null
-+++ b/arch/arm/mach-exynos/setup-spi.c
-@@ -0,0 +1,72 @@
-+/* linux/arch/arm/mach-exynos4/setup-spi.c
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *             http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+#include <plat/s3c64xx-spi.h>
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI0
-+struct s3c64xx_spi_info s3c64xx_spi0_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x1ff,
-+	.rx_lvl_offset	= 15,
-+	.high_speed	= 1,
-+	.clk_from_cmu	= true,
-+	.tx_st_done	= 25,
-+};
-+
-+int s3c64xx_spi0_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPB(0), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(EXYNOS4_GPB(0), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI1
-+struct s3c64xx_spi_info s3c64xx_spi1_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x7f,
-+	.rx_lvl_offset	= 15,
-+	.high_speed	= 1,
-+	.clk_from_cmu	= true,
-+	.tx_st_done	= 25,
-+};
-+
-+int s3c64xx_spi1_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPB(4), S3C_GPIO_SFN(2));
-+	s3c_gpio_setpull(EXYNOS4_GPB(4), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-+#endif
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI2
-+struct s3c64xx_spi_info s3c64xx_spi2_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x7f,
-+	.rx_lvl_offset	= 15,
-+	.high_speed	= 1,
-+	.clk_from_cmu	= true,
-+	.tx_st_done	= 25,
-+};
-+
-+int s3c64xx_spi2_cfg_gpio(struct platform_device *dev)
-+{
-+	s3c_gpio_cfgpin(EXYNOS4_GPC1(1), S3C_GPIO_SFN(5));
-+	s3c_gpio_setpull(EXYNOS4_GPC1(1), S3C_GPIO_PULL_UP);
-+	s3c_gpio_cfgall_range(EXYNOS4_GPC1(3), 2,
-+			      S3C_GPIO_SFN(5), S3C_GPIO_PULL_UP);
-+	return 0;
-+}
-+#endif
--- 
-1.7.0.4
+On 14 December 2011 11:44, Girish K S <girish.shivananjappa@linaro.org>=
+ wrote:
+> This patch adds a check whether the host supports maximum current val=
+ue
+> obtained from the device's extended csd register for a selected inter=
+face
+> voltage and frequency.
+>
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+> Changes in v6:
+> =A0 =A0 =A0 =A0Added the check whehter the host supports the max curr=
+ent value
+> =A0 =A0 =A0 =A0read from the extended csd register.
+>
+> Changes in v5:
+> =A0 =A0 =A0 Replace break statement with appropriate return error val=
+ue in
+> =A0 =A0 =A0 drivers/mmc/core/mmc.c for unsupported voltage range.
+>
+> Changes in v4:
+> =A0 =A0 =A0 updated with review comments.
+>
+> Changes in v3:
+> =A0 =A0 =A0 updated with review comments made by chris ball. patch ge=
+nerated
+> =A0 =A0 =A0 by rebasing to chris balls mmc-next branch.
+>
+> Changes in v2:
+> =A0 =A0 =A0 This patch version removes some checkpatch error
+>
+> Changes in v1:
+> =A0 =A0 =A0 This version modifies the power_class_select function pro=
+totype.
+> =A0 =A0 =A0 During device enumeration, when the host tries to read th=
+e extended
+> =A0 =A0 =A0 csd register after switching to higher bus width, the rea=
+d fails at
+> =A0 =A0 =A0 higher bus width. So the power_class_select function is m=
+odified to
+> =A0 =A0 =A0 reuse the extended csd register values read with 1 bit bu=
+s width.
+>
+> =A0drivers/mmc/core/mmc.c =A0 | =A0 27 +++++++++++++++++++++++++++
+> =A0include/linux/mmc/card.h | =A0 =A04 ++++
+> =A02 files changed, 31 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 006e932..30d1cbc 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -688,6 +688,33 @@ static int mmc_select_powerclass(struct mmc_card=
+ *card,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pwrclass_val =3D (pwrclass_val & EXT_C=
+SD_PWR_CL_4BIT_MASK) >>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_CS=
+D_PWR_CL_4BIT_SHIFT;
+>
+> + =A0 =A0 =A0 if (card->host->caps & MMC_CAP_MAX_CURRENT_800) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_8=
+00)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_800;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURR=
+ENT_600)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_600;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURR=
+ENT_400)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_400;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURR=
+ENT_200)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_200;
+> + =A0 =A0 =A0 } else if (card->host->caps & MMC_CAP_MAX_CURRENT_600) =
+{
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_6=
+00)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_600;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURR=
+ENT_400)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_400;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURR=
+ENT_200)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_200;
+> + =A0 =A0 =A0 } else if (card->host->caps & MMC_CAP_MAX_CURRENT_400) =
+{
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_4=
+00)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_400;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURR=
+ENT_200)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_200;
+> + =A0 =A0 =A0 } else if (card->host->caps & MMC_CAP_MAX_CURRENT_200) =
+{
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_2=
+00)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MA=
+X_CURRENT_200;
+> + =A0 =A0 =A0 } else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_200;
+> +
+> =A0 =A0 =A0 =A0/* If the power class is different from the default va=
+lue */
+> =A0 =A0 =A0 =A0if (pwrclass_val > 0) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_CSD_CMD_S=
+ET_NORMAL,
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index 9478a6b..c5e031a 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -195,6 +195,10 @@ struct mmc_part {
+> =A0#define MMC_BLK_DATA_AREA_GP =A0 (1<<2)
+> =A0};
+>
+> +#define MMC_MAX_CURRENT_200 =A0 =A0(0)
+> +#define MMC_MAX_CURRENT_400 =A0 =A0(7)
+> +#define MMC_MAX_CURRENT_600 =A0 =A0(11)
+> +#define MMC_MAX_CURRENT_800 =A0 =A0(13)
+> =A0/*
+> =A0* MMC device
+> =A0*/
+> --
+> 1.7.1
+>
