@@ -1,79 +1,102 @@
-From: Dave Martin <dave.martin@linaro.org>
-Subject: Re: [PATCH v4 REPOST 5/5] imx6q: Remove unconditional dependency on
- l2x0 L2 cache support
-Date: Wed, 14 Dec 2011 15:01:19 +0000
-Message-ID: <20111214150119.GD2568@linaro.org>
-References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
- <1323862781-3465-6-git-send-email-dave.martin@linaro.org>
- <20111214132622.GA1520@S2100-06.ap.freescale.net>
- <20111214140500.GA1700@richard-laptop>
+From: "Subhash Jadavani" <subhashj@codeaurora.org>
+Subject: RE: [PATCH V1] mmc: core: Add host capability check for power class
+Date: Wed, 14 Dec 2011 20:46:28 +0530
+Message-ID: <000001ccba73$5c36ea90$14a4bfb0$@org>
+References: <1323864059-26966-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain;
+	charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20111214140500.GA1700@richard-laptop>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Richard Zhao <richard.zhao@linaro.org>
-Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <avorontsov@mvista.com>, Will Deacon <will.deacon@arm.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Shawn Guo <shawn.guo@freescale.com>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@google.com>, Paul Mundt <lethal@linux-sh.org>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:5887 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751511Ab1LNPQc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 14 Dec 2011 10:16:32 -0500
+In-Reply-To: <1323864059-26966-1-git-send-email-girish.shivananjappa@linaro.org>
+Content-Language: en-us
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Girish K S' <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>
 
-On Wed, Dec 14, 2011 at 10:05:04PM +0800, Richard Zhao wrote:
-> On Wed, Dec 14, 2011 at 09:26:24PM +0800, Shawn Guo wrote:
-> > Hi Dave,
-> > 
-> > Sorry for that I did not look into previous post to point it out.
-> > 
-> > On Wed, Dec 14, 2011 at 11:39:41AM +0000, Dave Martin wrote:
-> > > The i.MX6 Quad SoC will work without the l2x0 L2 cache controller
-> > > support built into the kernel, so this patch removes the dependency
-> > > on CACHE_L2X0 and selects MIGHT_HAVE_CACHE_L2X0 instead.
-> > > 
-> > > This makes the l2x0 support optional, so that it can be turned off
-> > > when desired for debugging purposes etc.
-> > > 
-> > > Thanks to Shawn Guo for this suggestion. [1]
-> > > 
-> > > Signed-off-by: Dave Martin <dave.martin@linaro.org>
-> > > 
-> > > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/074602.html
-> > > ---
-> > >  arch/arm/mach-imx/Kconfig |    2 +-
-> > >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-> > > index 29a3d61..1fb93f2 100644
-> > > --- a/arch/arm/mach-imx/Kconfig
-> > > +++ b/arch/arm/mach-imx/Kconfig
-> > > @@ -609,13 +609,13 @@ comment "i.MX6 family:"
-> > >  config SOC_IMX6Q
-> > >  	bool "i.MX6 Quad support"
-> > >  	select ARM_GIC
-> > > -	select CACHE_L2X0
-> > >  	select CPU_V7
-> > >  	select HAVE_ARM_SCU
-> > >  	select HAVE_IMX_GPC
-> > >  	select HAVE_IMX_MMDC
-> > >  	select HAVE_IMX_SRC
-> > >  	select HAVE_SMP
-> > > +	select MIGHT_HAVE_CACHE_L2X0
-> > 
-> > The option SOC_IMX6Q is only available when ARCH_IMX_V6_V7 is selected.
-> > Since MIGHT_HAVE_CACHE_L2X0 has been selected by ARCH_IMX_V6_V7 in
-> > patch #1, this line seems redundant here.
-> Would it be better keep this one and remove patch #1 one? imx5 doesn't have
-> l2x0.
 
-Do you mean to remove MIGHT_HAVE_CACHE_L2X0 from ARCH_IMX_V6_V7, and select
-it only from SOC_IMX6Q?
 
-Cheers
----Dave
+> -----Original Message-----
+> From: Girish K S [mailto:girish.shivananjappa@linaro.org]
+> Sent: Wednesday, December 14, 2011 5:31 PM
+> To: linux-mmc@vger.kernel.org
+> Cc: patches@linaro.org; linux-samsung-soc@vger.kernel.org;
+> subhashj@codeaurora.org; Girish K S; Chris Ball
+> Subject: [PATCH V1] mmc: core: Add host capability check for power
+> class
+> 
+> This patch adds a check whether the host supports maximum current value
+> obtained from the device's extended csd register for a selected
+> interface
+> voltage and frequency.
+> 
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+> Changes in v1:
+> 	reduced the number of comparisons as per Hein's suggestion
+> 
+>  drivers/mmc/core/mmc.c   |   21 +++++++++++++++++++++
+>  include/linux/mmc/card.h |    4 ++++
+>  2 files changed, 25 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 006e932..e7f1902 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -688,6 +688,27 @@ static int mmc_select_powerclass(struct mmc_card
+> *card,
+>  		pwrclass_val = (pwrclass_val & EXT_CSD_PWR_CL_4BIT_MASK) >>
+>  				EXT_CSD_PWR_CL_4BIT_SHIFT;
+> 
+> +	if (pwrclass_val >= MMC_MAX_CURRENT_800)
+> +		pwrclass_val = MMC_MAX_CURRENT_800;
+> +	else if (pwrclass_val >= MMC_MAX_CURRENT_600)
+> +		pwrclass_val = MMC_MAX_CURRENT_600;
+> +	else if (pwrclass_val >= MMC_MAX_CURRENT_400)
+> +		pwrclass_val = MMC_MAX_CURRENT_400;
+> +	else if (pwrclass_val >= MMC_MAX_CURRENT_200)
+> +		pwrclass_val = MMC_MAX_CURRENT_200;
+> +	else
+> +		pwrclass_val = MMC_MAX_CURRENT_200;
+
+Last else if and else can be combined as they are assigning the same value
+to pwrclass_val.
+
+> +
+> +	if ((pwrclass_val == MMC_MAX_CURRENT_800) &&
+> +	    !(card->host->caps & MMC_CAP_MAX_CURRENT_800))
+> +		pwrclass_val = MMC_MAX_CURRENT_600;
+> +	if ((pwrclass_val == MMC_MAX_CURRENT_600) &&
+> +	    !(card->host->caps & MMC_CAP_MAX_CURRENT_600))
+> +		pwrclass_val = MMC_MAX_CURRENT_400;
+> +	if ((pwrclass_val == MMC_MAX_CURRENT_400) &&
+> +	    !(card->host->caps & MMC_CAP_MAX_CURRENT_400))
+> +		pwrclass_val = MMC_MAX_CURRENT_200;
+> +
+>  	/* If the power class is different from the default value */
+>  	if (pwrclass_val > 0) {
+>  		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index 9478a6b..c5e031a 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -195,6 +195,10 @@ struct mmc_part {
+>  #define MMC_BLK_DATA_AREA_GP	(1<<2)
+>  };
+> 
+> +#define MMC_MAX_CURRENT_200	(0)
+> +#define MMC_MAX_CURRENT_400	(7)
+> +#define MMC_MAX_CURRENT_600	(11)
+> +#define MMC_MAX_CURRENT_800	(13)
+>  /*
+>   * MMC device
+>   */
+> --
+> 1.7.1
