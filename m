@@ -1,74 +1,41 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH V1] mmc: core: Add host capability check for power class
-Date: Wed, 14 Dec 2011 17:30:59 +0530
-Message-ID: <1323864059-26966-1-git-send-email-girish.shivananjappa@linaro.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, subhashj@codeaurora.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [linux-next] make  s5p64x0_defconfig build error
+Date: Wed, 14 Dec 2011 12:32:44 +0000
+Message-ID: <20111214123244.GE7122@mudshark.cambridge.arm.com>
+References: <1323838630.18517.1.camel@phoenix>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1323838630.18517.1.camel@phoenix>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Axel Lin <axel.lin@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Russell King <rmk+kernel@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds a check whether the host supports maximum current value
-obtained from the device's extended csd register for a selected interface
-voltage and frequency.
+On Wed, Dec 14, 2011 at 04:57:10AM +0000, Axel Lin wrote:
+> I got below build error on linux-next 20111213.
+> 
+>   CC      arch/arm/kernel/process.o
+> In file included from arch/arm/mach-s5p64x0/include/mach/system.h:16,
+>                  from arch/arm/kernel/process.c:64:
+> arch/arm/plat-samsung/include/plat/system-reset.h:19:2: error: #error Fix me up
+> make[1]: *** [arch/arm/kernel/process.o] Error 1
+> make: *** [arch/arm/kernel] Error 2
 
-cc: Chris Ball <cjb@laptop.org>
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
----
-Changes in v1:
-	reduced the number of comparisons as per Hein's suggestion
+The clue is in the commit message:
 
- drivers/mmc/core/mmc.c   |   21 +++++++++++++++++++++
- include/linux/mmc/card.h |    4 ++++
- 2 files changed, 25 insertions(+), 0 deletions(-)
+commit d0f7e2beabe6a116152ccc31959b6654b6ef0071
+Author: Russell King <rmk+kernel@arm.linux.org.uk>
+Date:   Tue Dec 6 12:57:02 2011 +0000
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 006e932..e7f1902 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -688,6 +688,27 @@ static int mmc_select_powerclass(struct mmc_card *card,
- 		pwrclass_val = (pwrclass_val & EXT_CSD_PWR_CL_4BIT_MASK) >>
- 				EXT_CSD_PWR_CL_4BIT_SHIFT;
- 
-+	if (pwrclass_val >= MMC_MAX_CURRENT_800)
-+		pwrclass_val = MMC_MAX_CURRENT_800;
-+	else if (pwrclass_val >= MMC_MAX_CURRENT_600)
-+		pwrclass_val = MMC_MAX_CURRENT_600;
-+	else if (pwrclass_val >= MMC_MAX_CURRENT_400)
-+		pwrclass_val = MMC_MAX_CURRENT_400;
-+	else if (pwrclass_val >= MMC_MAX_CURRENT_200)
-+		pwrclass_val = MMC_MAX_CURRENT_200;
-+	else
-+		pwrclass_val = MMC_MAX_CURRENT_200;
-+
-+	if ((pwrclass_val == MMC_MAX_CURRENT_800) &&
-+	    !(card->host->caps & MMC_CAP_MAX_CURRENT_800))
-+		pwrclass_val = MMC_MAX_CURRENT_600;
-+	if ((pwrclass_val == MMC_MAX_CURRENT_600) &&
-+	    !(card->host->caps & MMC_CAP_MAX_CURRENT_600))
-+		pwrclass_val = MMC_MAX_CURRENT_400;
-+	if ((pwrclass_val == MMC_MAX_CURRENT_400) &&
-+	    !(card->host->caps & MMC_CAP_MAX_CURRENT_400))
-+		pwrclass_val = MMC_MAX_CURRENT_200;
-+
- 	/* If the power class is different from the default value */
- 	if (pwrclass_val > 0) {
- 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 9478a6b..c5e031a 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -195,6 +195,10 @@ struct mmc_part {
- #define MMC_BLK_DATA_AREA_GP	(1<<2)
- };
- 
-+#define MMC_MAX_CURRENT_200	(0)
-+#define MMC_MAX_CURRENT_400	(7)
-+#define MMC_MAX_CURRENT_600	(11)
-+#define MMC_MAX_CURRENT_800	(13)
- /*
-  * MMC device
-  */
--- 
-1.7.1
+    ARM: restart: Temporary #error to persuade platform maintainers to take the restart changes seriously
 
+    Force builds to fail to ensure that platform maintainers take the
+    restart changes seriously, and sort out fixing their code before the
+    next merge window.
+
+    Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+
+
+Will
