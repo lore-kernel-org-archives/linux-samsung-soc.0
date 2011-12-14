@@ -1,43 +1,35 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v4 REPOST 3/5] omap4: Unconditionally require l2x0 L2
- cache controller support
-Date: Wed, 14 Dec 2011 13:48:27 -0800
-Message-ID: <20111214214827.GM32251@atomide.com>
-References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
- <1323862781-3465-4-git-send-email-dave.martin@linaro.org>
- <20111214181425.GB32251@atomide.com>
- <20111214183030.GB9331@linaro.org>
- <20111214183952.GG32251@atomide.com>
- <4EE90EB5.9070502@gmail.com>
+From: Denis Kuzmenko <linux@solonet.org.ua>
+Subject: Re: [linux-next] make  s5p64x0_defconfig build error
+Date: Thu, 15 Dec 2011 01:30:13 +0200
+Message-ID: <4EE93185.9030502@solonet.org.ua>
+References: <1323838630.18517.1.camel@phoenix> <20111214123244.GE7122@mudshark.cambridge.arm.com> <20111214191205.GF14542@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:14179 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757464Ab1LNVsr (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:52944 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755612Ab1LNXcN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Dec 2011 16:48:47 -0500
-Content-Disposition: inline
-In-Reply-To: <4EE90EB5.9070502@gmail.com>
+	Wed, 14 Dec 2011 18:32:13 -0500
+In-Reply-To: <20111214191205.GF14542@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Dave Martin <dave.martin@linaro.org>, linux-arm-kernel@lists.infradead.org, patches@linaro.org, Anton Vorontsov <avorontsov@mvista.com>, Barry Song <baohua.song@csr.com>, Catalin Marinas <catalin.marinas@arm.com>, Colin Cross <ccross@google.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Paul Mundt <lethal@linux-sh.org>, Pawel Moll <pawel.moll@arm.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Will Deacon <will.deacon@arm.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>, Axel Lin <axel.lin@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-* Rob Herring <robherring2@gmail.com> [111214 12:30]:
-> 
-> On 12/14/2011 12:39 PM, Tony Lindgren wrote:
-> > 
-> > I think we should keep L2 configurable for omaps until we have some
-> > way of getting the configuration dynamically or from device tree.
-> >  
-> 
-> This already exists with l2x0_of_init. OMAP just needs to start using
-> it. It will initialize the l2 if present in the DT and skip it if not
-> present.
+On 12/14/2011 09:12 PM, Russell King - ARM Linux wrote:
+> On Wed, Dec 14, 2011 at 12:32:44PM +0000, Will Deacon wrote:
+>> On Wed, Dec 14, 2011 at 04:57:10AM +0000, Axel Lin wrote:
+> So... unless things change, we can expect Gemini, almost all Samsung
+> stuff, shmobile, vt8500, and Telechips TCC8k to be at least broken at
+> the next merge window.
 
-That's great, that will allow doing the right thing with setting
-up how to enable and disable it :) Considering that, this patch
-should be OK to apply:
+Mini2440 march (s3c24xx platform) is not broken in v3.2-rc5. Does that
+mean that s3c24xx is untouched by this issue or this means that I should
+use linux-next?
+If this problem is related to s3c24xx I'm ready to do my best for saving
+that platform from being removed.
 
-Acked-by: Tony Lindgren <tony@atomide.com>
+-- 
+Best regards, Denis Kuzmenko.
