@@ -1,24 +1,23 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH V3 6/6] ARM: S3C64XX: Modified according to SPI consolidation
- work.
-Date: Wed, 14 Dec 2011 10:16:03 -0500
-Message-ID: <1323875763-21197-7-git-send-email-padma.v@samsung.com>
+Subject: [PATCH V3 5/6] ARM: S5PV210: Modified files for SPI consolidation work
+Date: Wed, 14 Dec 2011 10:16:02 -0500
+Message-ID: <1323875763-21197-6-git-send-email-padma.v@samsung.com>
 References: <1323875763-21197-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout3.samsung.com ([203.254.224.33]:39989 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751956Ab1LNFSy (ORCPT
+	with ESMTP id S1751858Ab1LNFSy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Wed, 14 Dec 2011 00:18:54 -0500
 Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LW600K4BHDWKTG0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 14 Dec 2011 14:18:44 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 14 Dec 2011 14:18:42 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
  64bit (built Sep  7 2010)) with ESMTPA id <0LW600ED3HELIV80@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 14 Dec 2011 14:18:44 +0900 (KST)
+ for linux-samsung-soc@vger.kernel.org; Wed, 14 Dec 2011 14:18:41 +0900 (KST)
 In-reply-to: <1323875763-21197-1-git-send-email-padma.v@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -26,33 +25,113 @@ To: padma.kvr@gmail.com, padma.v@samsung.com, linux-arm-kernel@lists.infradead.o
 Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux@arm.linux.org.uk, broonie@opensource.wolfsonmicro.com
 
 As SPI platform devices are consolidated to plat-samsung, some
-corresponding changes are required in the s3c6410 varient SoCs.
+corresponding changes are required in the respective machine folder.
+Added SPI Setup file for GPIO configurations and platform data
+initialization.
 
 Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- arch/arm/mach-s3c64xx/Kconfig |    3 ++-
- 1 files changed, 2 insertions(+), 1 deletions(-)
+ arch/arm/mach-s5pv210/Kconfig            |    5 +++
+ arch/arm/mach-s5pv210/Makefile           |    1 +
+ arch/arm/mach-s5pv210/include/mach/map.h |    2 +
+ arch/arm/mach-s5pv210/setup-spi.c        |   51 ++++++++++++++++++++++++++++++
+ 4 files changed, 59 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/setup-spi.c
 
-diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-index dea62bf..e9dae91 100644
---- a/arch/arm/mach-s3c64xx/Kconfig
-+++ b/arch/arm/mach-s3c64xx/Kconfig
-@@ -281,6 +281,7 @@ config MACH_WLF_CRAGG_6410
- 	select S3C64XX_SETUP_IDE
- 	select S3C64XX_SETUP_FB_24BPP
- 	select S3C64XX_SETUP_KEYPAD
-+	select S3C64XX_SETUP_SPI
- 	select SAMSUNG_DEV_ADC
- 	select SAMSUNG_DEV_KEYPAD
- 	select S3C_DEV_USB_HOST
-@@ -291,7 +292,7 @@ config MACH_WLF_CRAGG_6410
- 	select S3C_DEV_I2C1
- 	select S3C_DEV_WDT
- 	select S3C_DEV_RTC
--	select S3C64XX_DEV_SPI
-+	select S3C64XX_DEV_SPI0
- 	select SAMSUNG_GPIO_EXTRA128
- 	select I2C
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 646057a..2cdc42e 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -60,6 +60,11 @@ config S5PV210_SETUP_FIMC
  	help
+ 	  Common setup code for the camera interfaces.
+ 
++config S5PV210_SETUP_SPI
++	bool
++	help
++	  Common setup code for SPI GPIO configurations.
++
+ menu "S5PC110 Machines"
+ 
+ config MACH_AQUILA
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index 7eb8677..471df5d 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -35,3 +35,4 @@ obj-$(CONFIG_S5PV210_SETUP_I2C2) 	+= setup-i2c2.o
+ obj-$(CONFIG_S5PV210_SETUP_IDE)		+= setup-ide.o
+ obj-$(CONFIG_S5PV210_SETUP_KEYPAD)	+= setup-keypad.o
+ obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
++obj-$(CONFIG_S5PV210_SETUP_SPI)		+= setup-spi.o
+diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach-s5pv210/include/mach/map.h
+index 7ff609f..89c34b8 100644
+--- a/arch/arm/mach-s5pv210/include/mach/map.h
++++ b/arch/arm/mach-s5pv210/include/mach/map.h
+@@ -109,6 +109,8 @@
+ #define S3C_PA_RTC			S5PV210_PA_RTC
+ #define S3C_PA_USB_HSOTG		S5PV210_PA_HSOTG
+ #define S3C_PA_WDT			S5PV210_PA_WATCHDOG
++#define S3C_PA_SPI0			S5PV210_PA_SPI0
++#define S3C_PA_SPI1			S5PV210_PA_SPI1
+ 
+ #define S5P_PA_CHIPID			S5PV210_PA_CHIPID
+ #define S5P_PA_FIMC0			S5PV210_PA_FIMC0
+diff --git a/arch/arm/mach-s5pv210/setup-spi.c b/arch/arm/mach-s5pv210/setup-spi.c
+new file mode 100644
+index 0000000..f43c504
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/setup-spi.c
+@@ -0,0 +1,51 @@
++/* linux/arch/arm/mach-s5pv210/setup-spi.c
++ *
++ * Copyright (C) 2011 Samsung Electronics Ltd.
++ *		http://www.samsung.com/
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/gpio.h>
++#include <linux/platform_device.h>
++
++#include <plat/gpio-cfg.h>
++#include <plat/s3c64xx-spi.h>
++
++#ifdef CONFIG_S3C64XX_DEV_SPI0
++struct s3c64xx_spi_info s3c64xx_spi0_pdata = {
++	.fifo_lvl_mask	= 0x1ff,
++	.rx_lvl_offset	= 15,
++	.high_speed	= 1,
++	.tx_st_done	= 25,
++};
++
++int s3c64xx_spi0_cfg_gpio(struct platform_device *dev)
++{
++	s3c_gpio_cfgpin(S5PV210_GPB(0), S3C_GPIO_SFN(2));
++	s3c_gpio_setpull(S5PV210_GPB(0), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgall_range(S5PV210_GPB(2), 2,
++				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
++	return 0;
++}
++#endif
++
++#ifdef CONFIG_S3C64XX_DEV_SPI1
++struct s3c64xx_spi_info s3c64xx_spi1_pdata = {
++	.fifo_lvl_mask	= 0x7f,
++	.rx_lvl_offset	= 15,
++	.high_speed	= 1,
++	.tx_st_done	= 25,
++};
++
++int s3c64xx_spi1_cfg_gpio(struct platform_device *dev)
++{
++	s3c_gpio_cfgpin(S5PV210_GPB(4), S3C_GPIO_SFN(2));
++	s3c_gpio_setpull(S5PV210_GPB(4), S3C_GPIO_PULL_UP);
++	s3c_gpio_cfgall_range(S5PV210_GPB(6), 2,
++				S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
++	return 0;
++}
++#endif
 -- 
 1.7.0.4
