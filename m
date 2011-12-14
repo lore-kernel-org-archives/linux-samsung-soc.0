@@ -1,99 +1,63 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v4 REPOST 3/5] omap4: Unconditionally require l2x0 L2
- cache controller support
-Date: Wed, 14 Dec 2011 10:39:53 -0800
-Message-ID: <20111214183952.GG32251@atomide.com>
-References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
- <1323862781-3465-4-git-send-email-dave.martin@linaro.org>
- <20111214181425.GB32251@atomide.com>
- <20111214183030.GB9331@linaro.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [linux-next] make  s5p64x0_defconfig build error
+Date: Wed, 14 Dec 2011 19:12:05 +0000
+Message-ID: <20111214191205.GF14542@n2100.arm.linux.org.uk>
+References: <1323838630.18517.1.camel@phoenix> <20111214123244.GE7122@mudshark.cambridge.arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20111214183030.GB9331@linaro.org>
-Sender: linux-sh-owner@vger.kernel.org
-To: Dave Martin <dave.martin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, patches@linaro.org, Anton Vorontsov <avorontsov@mvista.com>, Barry Song <baohua.song@csr.com>, Catalin Marinas <catalin.marinas@arm.com>, Colin Cross <ccross@google.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Paul Mundt <lethal@linux-sh.org>, Pawel Moll <pawel.moll@arm.com>, Rob Herring <rob.herring@calxeda.com>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>, Will Deacon <will.deacon@arm.com>
+In-Reply-To: <20111214123244.GE7122@mudshark.cambridge.arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: Axel Lin <axel.lin@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-* Dave Martin <dave.martin@linaro.org> [111214 09:58]:
-> On Wed, Dec 14, 2011 at 10:14:25AM -0800, Tony Lindgren wrote:
-> > * Dave Martin <dave.martin@linaro.org> [111214 03:08]:
-> > > If running in the Normal World on a TrustZone-enabled SoC, Linux
-> > > does not have complete control over the L2 cache controller
-> > > configuration.  The kernel cannot work reliably on such platforms
-> > > without the l2x0 cache support code built in.
+On Wed, Dec 14, 2011 at 12:32:44PM +0000, Will Deacon wrote:
+> On Wed, Dec 14, 2011 at 04:57:10AM +0000, Axel Lin wrote:
+> > I got below build error on linux-next 20111213.
 > > 
-> > There are HS and GP omaps (High Security and General Purpose).
-> > GP omaps do have full control of the L2. Also HS omaps most likely
-> > provide control over enabling and disabling L2 depending how the
-> > secure code is implemented.
-> > 
-> > BTW, the real problem is that because the secure code is implemented
-> > in various ways, we don't really have any handling for it in Linux.
-> > 
-> > The SMI instruction numbers don't seem to be standardized at all,
-> > and can mean different things on different boards, even different
-> > board versions :(
-> > 
-> > Sounds like devicetree is the only safe way to deal with the L2
-> > control options.
-> > 
-> > Regards,
-> > 
-> > Tony
-> > 
-> >  
-> > > This patch unconditionally enables l2x0 support for the OMAP4 SoCs.
-> > > 
-> > > Thanks to Rob Herring for this suggestion. [1]
-> > > 
-> > > Signed-off-by: Dave Martin <dave.martin@linaro.org>
-> > > 
-> > > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/074495.html
-> > > ---
-> > >  arch/arm/mach-omap2/Kconfig |    2 +-
-> > >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/mach-omap2/Kconfig b/arch/arm/mach-omap2/Kconfig
-> > > index bb1b670..94e568a 100644
-> > > --- a/arch/arm/mach-omap2/Kconfig
-> > > +++ b/arch/arm/mach-omap2/Kconfig
-> > > @@ -41,11 +41,11 @@ config ARCH_OMAP4
-> > >  	bool "TI OMAP4"
-> > >  	default y
-> > >  	depends on ARCH_OMAP2PLUS
-> > > +	select CACHE_L2X0
-> > >  	select CPU_V7
-> > >  	select ARM_GIC
-> > >  	select HAVE_SMP
-> > >  	select LOCAL_TIMERS if SMP
-> > > -	select MIGHT_HAVE_CACHE_L2X0
-> > >  	select PL310_ERRATA_588369
-> > >  	select PL310_ERRATA_727915
-> > >  	select ARM_ERRATA_720789
-> > > -- 
-> > > 1.7.4.1
-> > > 
+> >   CC      arch/arm/kernel/process.o
+> > In file included from arch/arm/mach-s5p64x0/include/mach/system.h:16,
+> >                  from arch/arm/kernel/process.c:64:
+> > arch/arm/plat-samsung/include/plat/system-reset.h:19:2: error: #error Fix me up
+> > make[1]: *** [arch/arm/kernel/process.o] Error 1
+> > make: *** [arch/arm/kernel] Error 2
 > 
-> To clarify, are you suggesting we retain this patch, or not?
+> The clue is in the commit message:
+> 
+> commit d0f7e2beabe6a116152ccc31959b6654b6ef0071
+> Author: Russell King <rmk+kernel@arm.linux.org.uk>
+> Date:   Tue Dec 6 12:57:02 2011 +0000
+> 
+>     ARM: restart: Temporary #error to persuade platform maintainers to take the restart changes seriously
+> 
+>     Force builds to fail to ensure that platform maintainers take the
+>     restart changes seriously, and sort out fixing their code before the
+>     next merge window.
+> 
+>     Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 
-I think we should keep L2 configurable for omaps until we have some
-way of getting the configuration dynamically or from device tree.
- 
-> (If we only know what l2x0 support will be needed once the dts is
-> parsed at runtime, there could be an argument for keeping the
-> select CACHE_L2X0 here -- unless we have specific kconfigs for
-> the different security variants of omap.)
+Indeed, and note the date, and how long its taken for just one of the
+platforms to be noticed.
 
-Well we can detect if it's an HS omap, but we may not know what
-SMI it uses for enabling and disabling L2.. That can depend on
-the board version.
+It seems to me that no one really cares about whether six of the seven
+platforms which have the #error build or don't build, so I really think
+there's a simple solution to this at the next merge window - delete any
+platform which hasn't _at_ _least_ responded with a proposed patch to
+this.
 
-Is there some problem keeping MIGHT_HAVE_CACHE_L2X0? This is
-pretty important from debugging cache issues point of view.
+The platform maintainers have had _enough_ notice of this - by not
+responding, they're quite simply an obstacle to further consolidation,
+and we're not going to go through months of waiting for their response
+time and time again.
 
-Regards,
+I've posted the patches to the mailing list, I've copied them asking
+for help, I've chased them several times, and now they have a #error
+to deal with.  If none of this gets their attention (it seems it
+doesn't), then frankly their platform is unmaintained, it will be
+broken at the next merge window, and therefore _should_ be deleted.
 
-Tony
+So... unless things change, we can expect Gemini, almost all Samsung
+stuff, shmobile, vt8500, and Telechips TCC8k to be at least broken at
+the next merge window.
