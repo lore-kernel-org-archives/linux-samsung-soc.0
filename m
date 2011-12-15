@@ -1,25 +1,25 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 1/2] DMA: PL330: Merge PL330 driver into drivers/dma/
-Date: Thu, 15 Dec 2011 10:08:46 +0900
-Message-ID: <028d01ccbac6$19083140$4b1893c0$%kim@samsung.com>
+Subject: [PATCH V2 RE-SEND 1/2] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Thu, 15 Dec 2011 10:14:54 +0900
+Message-ID: <028e01ccbac6$f3d6e6e0$db84b4a0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31531 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751076Ab1LOBIw (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53135 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754667Ab1LOBO6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Dec 2011 20:08:52 -0500
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Wed, 14 Dec 2011 20:14:58 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LW8009N00IKY2A0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Dec 2011 10:08:50 +0900 (KST)
+ 2010)) with ESMTP id <0LW800FLN0RHCIH0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Dec 2011 10:14:56 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LW8006MK0IMLM50@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 15 Dec 2011 10:08:49 +0900 (KST)
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LW800DAX0SUXJ00@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 15 Dec 2011 10:14:56 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -46,18 +46,18 @@ Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 Acked-by: Linus Walleij <linus.walleij@linaro.org>
 ---
+Please kindly ignore previous submitting, '[PATCH V2 1/2]...'
+
 Change since V1:
 - Address comments from Jassi Brar:
 Change the ordering of definitions and declarations
 
  arch/arm/common/Kconfig               |    3 -
  arch/arm/common/Makefile              |    1 -
- arch/arm/common/pl330.c               | 1971
----------------------------------
+ arch/arm/common/pl330.c               | 1971 ---------------------------------
  arch/arm/include/asm/hardware/pl330.h |  333 +++---
  drivers/dma/Kconfig                   |    1 -
- drivers/dma/pl330.c                   | 1892
-+++++++++++++++++++++++++++++++
+ drivers/dma/pl330.c                   | 1892 +++++++++++++++++++++++++++++++
  6 files changed, 2074 insertions(+), 2127 deletions(-)
  delete mode 100644 arch/arm/common/pl330.c
 
@@ -524,8 +524,7 @@ index f407a6b..0000000
 -	return SZ_DMAFLUSHP;
 -}
 -
--static inline u32 _emit_LD(unsigned dry_run, u8 buf[],	enum pl330_cond
-cond)
+-static inline u32 _emit_LD(unsigned dry_run, u8 buf[],	enum pl330_cond cond)
 -{
 -	if (dry_run)
 -		return SZ_DMALD;
@@ -578,8 +577,7 @@ cond)
 -	cnt--; /* DMAC increments by 1 internally */
 -	buf[1] = cnt;
 -
--	PL330_DBGCMD_DUMP(SZ_DMALP, "\tDMALP_%c %u\n", loop ? '1' : '0',
-cnt);
+-	PL330_DBGCMD_DUMP(SZ_DMALP, "\tDMALP_%c %u\n", loop ? '1' : '0', cnt);
 -
 -	return SZ_DMALP;
 -}
@@ -692,8 +690,7 @@ cnt);
 -	return SZ_DMASEV;
 -}
 -
--static inline u32 _emit_ST(unsigned dry_run, u8 buf[], enum pl330_cond
-cond)
+-static inline u32 _emit_ST(unsigned dry_run, u8 buf[], enum pl330_cond cond)
 -{
 -	if (dry_run)
 -		return SZ_DMAST;
@@ -785,8 +782,7 @@ cond)
 -	buf[1] = peri;
 -
 -	PL330_DBGCMD_DUMP(SZ_DMAWFP, "\tDMAWFP%c %u\n",
--		cond == SINGLE ? 'S' : (cond == BURST ? 'B' : 'P'), peri >>
-3);
+-		cond == SINGLE ? 'S' : (cond == BURST ? 'B' : 'P'), peri >> 3);
 -
 -	return SZ_DMAWFP;
 -}
@@ -1018,8 +1014,7 @@ cond)
 -
 -	/* See 'Abort Sources' point-4 at Page 2-25 */
 -	if (_manager_ns(thrd) && !ns)
--		dev_info(thrd->dmac->pinfo->dev, "%s:%d Recipe for
-ABORT!\n",
+-		dev_info(thrd->dmac->pinfo->dev, "%s:%d Recipe for ABORT!\n",
 -			__func__, __LINE__);
 -
 -	go.chan = thrd->id;
@@ -1573,8 +1568,7 @@ ABORT!\n",
 -			/* Get going again ASAP */
 -			_start(thrd);
 -
--			/* For now, just make a list of callbacks to be done
-*/
+-			/* For now, just make a list of callbacks to be done */
 -			list_add_tail(&rqdone->rqd, &pl330->req_done);
 -		}
 -	}
@@ -1931,8 +1925,7 @@ ABORT!\n",
 -
 -	ret = dmac_alloc_threads(pl330);
 -	if (ret) {
--		dev_err(pi->dev, "%s:%d Can't to create channels for
-DMAC!\n",
+-		dev_err(pi->dev, "%s:%d Can't to create channels for DMAC!\n",
 -			__func__, __LINE__);
 -		dma_free_coherent(pi->dev,
 -				chans * pi->mcbufsz,
@@ -2071,8 +2064,7 @@ DMAC!\n",
 -	pi->pl330_data = NULL;
 -}
 -EXPORT_SYMBOL(pl330_del);
-diff --git a/arch/arm/include/asm/hardware/pl330.h
-b/arch/arm/include/asm/hardware/pl330.h
+diff --git a/arch/arm/include/asm/hardware/pl330.h b/arch/arm/include/asm/hardware/pl330.h
 index 575fa81..ed38e32 100644
 --- a/arch/arm/include/asm/hardware/pl330.h
 +++ b/arch/arm/include/asm/hardware/pl330.h
@@ -2242,8 +2234,7 @@ index 575fa81..ed38e32 100644
 -extern int pl330_update(const struct pl330_info *pi);
 -extern void pl330_release_channel(void *ch_id);
 -extern void *pl330_request_channel(const struct pl330_info *pi);
--extern int pl330_chan_status(void *ch_id, struct pl330_chanstatus
-*pstatus);
+-extern int pl330_chan_status(void *ch_id, struct pl330_chanstatus *pstatus);
 -extern int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op op);
 -extern int pl330_submit_req(void *ch_id, struct pl330_req *r);
 +/* Register and Bit field Definitions */
@@ -2835,8 +2826,7 @@ index a626e15..3aa38cb 100644
 +	return SZ_DMAFLUSHP;
 +}
 +
-+static inline u32 _emit_LD(unsigned dry_run, u8 buf[],	enum pl330_cond
-cond)
++static inline u32 _emit_LD(unsigned dry_run, u8 buf[],	enum pl330_cond cond)
 +{
 +	if (dry_run)
 +		return SZ_DMALD;
@@ -2889,8 +2879,7 @@ cond)
 +	cnt--; /* DMAC increments by 1 internally */
 +	buf[1] = cnt;
 +
-+	PL330_DBGCMD_DUMP(SZ_DMALP, "\tDMALP_%c %u\n", loop ? '1' : '0',
-cnt);
++	PL330_DBGCMD_DUMP(SZ_DMALP, "\tDMALP_%c %u\n", loop ? '1' : '0', cnt);
 +
 +	return SZ_DMALP;
 +}
@@ -3003,8 +2992,7 @@ cnt);
 +	return SZ_DMASEV;
 +}
 +
-+static inline u32 _emit_ST(unsigned dry_run, u8 buf[], enum pl330_cond
-cond)
++static inline u32 _emit_ST(unsigned dry_run, u8 buf[], enum pl330_cond cond)
 +{
 +	if (dry_run)
 +		return SZ_DMAST;
@@ -3096,8 +3084,7 @@ cond)
 +	buf[1] = peri;
 +
 +	PL330_DBGCMD_DUMP(SZ_DMAWFP, "\tDMAWFP%c %u\n",
-+		cond == SINGLE ? 'S' : (cond == BURST ? 'B' : 'P'), peri >>
-3);
++		cond == SINGLE ? 'S' : (cond == BURST ? 'B' : 'P'), peri >> 3);
 +
 +	return SZ_DMAWFP;
 +}
@@ -3329,8 +3316,7 @@ cond)
 +
 +	/* See 'Abort Sources' point-4 at Page 2-25 */
 +	if (_manager_ns(thrd) && !ns)
-+		dev_info(thrd->dmac->pinfo->dev, "%s:%d Recipe for
-ABORT!\n",
++		dev_info(thrd->dmac->pinfo->dev, "%s:%d Recipe for ABORT!\n",
 +			__func__, __LINE__);
 +
 +	go.chan = thrd->id;
@@ -3883,8 +3869,7 @@ ABORT!\n",
 +			/* Get going again ASAP */
 +			_start(thrd);
 +
-+			/* For now, just make a list of callbacks to be done
-*/
++			/* For now, just make a list of callbacks to be done */
 +			list_add_tail(&rqdone->rqd, &pl330->req_done);
 +		}
 +	}
@@ -4230,8 +4215,7 @@ ABORT!\n",
 +
 +	ret = dmac_alloc_threads(pl330);
 +	if (ret) {
-+		dev_err(pi->dev, "%s:%d Can't to create channels for
-DMAC!\n",
++		dev_err(pi->dev, "%s:%d Can't to create channels for DMAC!\n",
 +			__func__, __LINE__);
 +		dma_free_coherent(pi->dev,
 +				chans * pi->mcbufsz,
