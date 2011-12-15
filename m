@@ -1,112 +1,34 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH V2] mmc: core: Add host capability check for power class
-Date: Thu, 15 Dec 2011 11:46:29 +0530
-Message-ID: <CAGxe1ZGWASraSms-zyzQSA587WpjHFNab9OG7QH27EwzJq+rkA@mail.gmail.com>
-References: <1323921517-31241-1-git-send-email-girish.shivananjappa@linaro.org>
-	<CADGdYn5MYLD4ReuBZuF7QCkJo34aDhGsDpDWX_S3DuKNk9J85Q@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [linux-next] make s5p64x0_defconfig build error
+Date: Thu, 15 Dec 2011 09:09:25 +0100
+Message-ID: <201112150909.26229.heiko@sntech.de>
+References: <1323838630.18517.1.camel@phoenix> <028901ccbab8$c2c43890$484ca9b0$%kim@samsung.com> <CAF+7xWn80ZsgBNS80f0JYUXx2KN3VGM-Y2EOba7OLMwMGNfbKg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CADGdYn5MYLD4ReuBZuF7QCkJo34aDhGsDpDWX_S3DuKNk9J85Q@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: amit kachhap <amit.kachhap@linaro.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, subhashj@codeaurora.org, Chris Ball <cjb@laptop.org>
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAF+7xWn80ZsgBNS80f0JYUXx2KN3VGM-Y2EOba7OLMwMGNfbKg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: axel.lin@gmail.com
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 15 December 2011 11:33, amit kachhap <amit.kachhap@linaro.org> wrote=
-:
-> On Thu, Dec 15, 2011 at 9:28 AM, Girish K S
-> <girish.shivananjappa@linaro.org> wrote:
->> This patch adds a check whether the host supports maximum current va=
-lue
->> obtained from the device's extended csd register for a selected inte=
-rface
->> voltage and frequency.
->>
->> cc: Chris Ball <cjb@laptop.org>
->> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
->> ---
->> Changes in v2:
->> =A0 =A0 =A0 =A0deleted a unnecessary if else condition identified by=
- subhash J
->> Changes in v1:
->> =A0 =A0 =A0 reduced the number of comparisons as per Hein's suggesti=
-on
->>
->> =A0drivers/mmc/core/mmc.c =A0 | =A0 19 +++++++++++++++++++
->> =A0include/linux/mmc/card.h | =A0 =A04 ++++
->> =A02 files changed, 23 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> index 006e932..b9ef777 100644
->> --- a/drivers/mmc/core/mmc.c
->> +++ b/drivers/mmc/core/mmc.c
->> @@ -688,6 +688,25 @@ static int mmc_select_powerclass(struct mmc_car=
-d *card,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pwrclass_val =3D (pwrclass_val & EXT_=
-CSD_PWR_CL_4BIT_MASK) >>
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_PWR_CL_4BIT_SHIFT;
->>
->> + =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_800)
-> Hi girish,
->
-> These checks can be made like ,
-> if (pwrclass_val > MMC_MAX_CURRENT_800)
-> =A0 =A0 =A0 =A0pwrclass_val =3D MMC_MAX_CURRENT_800;
-> Applicable in all below conditional checks.
+Am Donnerstag, 15. Dezember 2011, 00:54:58 schrieb Axel Lin:
+> Hi Kukjin,
+> 
+> > Axel and Will, thanks for pointing out.
+> > 
+> > Oops, I couldn't have much time to follow up :(
+> > But let me look at that in this weekend and I know, it can be escaped
+> > before merge window :)
+> 
+> I also found the same build errors by:
+> make s5pc100_defconfig
+> make s5pv210_defconfig
+> make exynos4_defconfig
 
-I feel that should be OK. Since there will be no significant
-improvement or side effects with the current implementation.
+make s3c2410_defconfig
+also produces the build errors
 
->
-> Thanks,
-> Amit D
->
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_800;
->> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_600)
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_600;
->> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_400)
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_400;
->> + =A0 =A0 =A0 else
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_200;
->> +
->> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_800) &&
->> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_800))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_600;
->> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_600) &&
->> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_600))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_400;
->> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_400) &&
->> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_400))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_200;
->> +
->> =A0 =A0 =A0 =A0/* If the power class is different from the default v=
-alue */
->> =A0 =A0 =A0 =A0if (pwrclass_val > 0) {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_CSD_CMD_=
-SET_NORMAL,
->> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
->> index 9478a6b..c5e031a 100644
->> --- a/include/linux/mmc/card.h
->> +++ b/include/linux/mmc/card.h
->> @@ -195,6 +195,10 @@ struct mmc_part {
->> =A0#define MMC_BLK_DATA_AREA_GP =A0 (1<<2)
->> =A0};
->>
->> +#define MMC_MAX_CURRENT_200 =A0 =A0(0)
->> +#define MMC_MAX_CURRENT_400 =A0 =A0(7)
->> +#define MMC_MAX_CURRENT_600 =A0 =A0(11)
->> +#define MMC_MAX_CURRENT_800 =A0 =A0(13)
->> =A0/*
->> =A0* MMC device
->> =A0*/
->> --
->> 1.7.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-sams=
-ung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+Heiko
