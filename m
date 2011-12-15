@@ -1,285 +1,35 @@
-From: Javi Merino <javi.merino@arm.com>
-Subject: Re: [PATCH] ARM: PL330: Fix driver freeze
-Date: Thu, 15 Dec 2011 17:48:48 +0000
-Message-ID: <4EEA3300.9000402@arm.com>
-References: <4EE4EB91.6020508@arm.com> <1323631637-9610-1-git-send-email-javi.merino@arm.com>
+From: David Brown <davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH v4 REPOST 2/5] ARM: SMP: Refactor Kconfig to be more
+ maintainable
+Date: Thu, 15 Dec 2011 10:14:50 -0800
+Message-ID: <20111215181450.GA22330@codeaurora.org>
+References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
+ <1323862781-3465-3-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=WINDOWS-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from service87.mimecast.com ([91.220.42.44]:51352 "EHLO
-	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751544Ab1LORs4 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Dec 2011 12:48:56 -0500
-In-Reply-To: <1323631637-9610-1-git-send-email-javi.merino@arm.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1323862781-3465-3-git-send-email-dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Anton Vorontsov <avorontsov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Paul Mundt <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, John Linn <john.linn-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: Javi Merino <Javi.Merino@arm.com>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "boojin.kim@samsung.com" <boojin.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>
 
-On 11/12/11 19:27, Javi Merino wrote:
-> Add a req_running field to the pl330_thread to track which request (if
-> any) has been submitted to the DMA.  This mechanism replaces the old
-> one in which we tried to guess the same by looking at the PC of the
-> DMA, which could prevent the driver from sending more requests if it
-> didn't guess correctly.
+On Wed, Dec 14, 2011 at 11:39:38AM +0000, Dave Martin wrote:
+> Making SMP depend on (huge list of MACH_ and ARCH_ configs) is
+> bothersome to maintain and likely to lead to merge conflicts.
 > 
-> Signed-off-by: Javi Merino <javi.merino@arm.com>
-> Cc: Jassi Brar <jaswinder.singh@linaro.org>
-> ---
->  arch/arm/common/pl330.c |  116 ++++++++++++++++++++---------------------------
->  1 files changed, 49 insertions(+), 67 deletions(-)
-> 
-> diff --git a/arch/arm/common/pl330.c b/arch/arm/common/pl330.c
-> index f407a6b..8d8df74 100644
-> --- a/arch/arm/common/pl330.c
-> +++ b/arch/arm/common/pl330.c
-> @@ -221,17 +221,6 @@
->   */
->  #define MCODE_BUFF_PER_REQ	256
->  
-> -/*
-> - * Mark a _pl330_req as free.
-> - * We do it by writing DMAEND as the first instruction
-> - * because no valid request is going to have DMAEND as
-> - * its first instruction to execute.
-> - */
-> -#define MARK_FREE(req)	do { \
-> -				_emit_END(0, (req)->mc_cpu); \
-> -				(req)->mc_len = 0; \
-> -			} while (0)
-> -
->  /* If the _pl330_req is available to the client */
->  #define IS_FREE(req)	(*((u8 *)((req)->mc_cpu)) == CMD_DMAEND)
->  
-> @@ -301,8 +290,10 @@ struct pl330_thread {
->  	struct pl330_dmac *dmac;
->  	/* Only two at a time */
->  	struct _pl330_req req[2];
-> -	/* Index of the last submitted request */
-> +	/* Index of the last enqueued request */
->  	unsigned lstenq;
-> +	/* Index of the last submitted request or -1 if the DMA is stopped */
-> +	int req_running;
->  };
->  
->  enum pl330_dmac_state {
-> @@ -778,6 +769,22 @@ static inline void _execute_DBGINSN(struct pl330_thread *thrd,
->  	writel(0, regs + DBGCMD);
->  }
->  
-> +/*
-> + * Mark a _pl330_req as free.
-> + * We do it by writing DMAEND as the first instruction
-> + * because no valid request is going to have DMAEND as
-> + * its first instruction to execute.
-> + */
-> +static void mark_free(struct pl330_thread *thrd, int idx)
-> +{
-> +	struct _pl330_req *req = &thrd->req[idx];
-> +
-> +	_emit_END(0, req->mc_cpu);
-> +	req->mc_len = 0;
-> +
-> +	thrd->req_running = -1;
-> +}
-> +
->  static inline u32 _state(struct pl330_thread *thrd)
->  {
->  	void __iomem *regs = thrd->dmac->pinfo->base;
-> @@ -836,31 +843,6 @@ static inline u32 _state(struct pl330_thread *thrd)
->  	}
->  }
->  
-> -/* If the request 'req' of thread 'thrd' is currently active */
-> -static inline bool _req_active(struct pl330_thread *thrd,
-> -		struct _pl330_req *req)
-> -{
-> -	void __iomem *regs = thrd->dmac->pinfo->base;
-> -	u32 buf = req->mc_bus, pc = readl(regs + CPC(thrd->id));
-> -
-> -	if (IS_FREE(req))
-> -		return false;
-> -
-> -	return (pc >= buf && pc <= buf + req->mc_len) ? true : false;
-> -}
-> -
-> -/* Returns 0 if the thread is inactive, ID of active req + 1 otherwise */
-> -static inline unsigned _thrd_active(struct pl330_thread *thrd)
-> -{
-> -	if (_req_active(thrd, &thrd->req[0]))
-> -		return 1; /* First req active */
-> -
-> -	if (_req_active(thrd, &thrd->req[1]))
-> -		return 2; /* Second req active */
-> -
-> -	return 0;
-> -}
-> -
->  static void _stop(struct pl330_thread *thrd)
->  {
->  	void __iomem *regs = thrd->dmac->pinfo->base;
-> @@ -892,17 +874,22 @@ static bool _trigger(struct pl330_thread *thrd)
->  	struct _arg_GO go;
->  	unsigned ns;
->  	u8 insn[6] = {0, 0, 0, 0, 0, 0};
-> +	int idx;
->  
->  	/* Return if already ACTIVE */
->  	if (_state(thrd) != PL330_STATE_STOPPED)
->  		return true;
->  
-> -	if (!IS_FREE(&thrd->req[1 - thrd->lstenq]))
-> -		req = &thrd->req[1 - thrd->lstenq];
-> -	else if (!IS_FREE(&thrd->req[thrd->lstenq]))
-> -		req = &thrd->req[thrd->lstenq];
-> -	else
-> -		req = NULL;
-> +	idx = 1 - thrd->lstenq;
-> +	if (!IS_FREE(&thrd->req[idx]))
-> +		req = &thrd->req[idx];
-> +	else {
-> +		idx = thrd->lstenq;
-> +		if (!IS_FREE(&thrd->req[idx]))
-> +			req = &thrd->req[idx];
-> +		else
-> +			req = NULL;
-> +	}
->  
->  	/* Return if no request */
->  	if (!req || !req->r)
-> @@ -933,6 +920,8 @@ static bool _trigger(struct pl330_thread *thrd)
->  	/* Only manager can execute GO */
->  	_execute_DBGINSN(thrd, insn, true);
->  
-> +	thrd->req_running = idx;
-> +
->  	return true;
->  }
->  
-> @@ -1382,8 +1371,8 @@ static void pl330_dotask(unsigned long data)
->  
->  			thrd->req[0].r = NULL;
->  			thrd->req[1].r = NULL;
-> -			MARK_FREE(&thrd->req[0]);
-> -			MARK_FREE(&thrd->req[1]);
-> +			mark_free(thrd, 0);
-> +			mark_free(thrd, 1);
->  
->  			/* Clear the reset flag */
->  			pl330->dmac_tbd.reset_chan &= ~(1 << i);
-> @@ -1461,14 +1450,12 @@ int pl330_update(const struct pl330_info *pi)
->  
->  			thrd = &pl330->channels[id];
->  
-> -			active = _thrd_active(thrd);
-> -			if (!active) /* Aborted */
-> +			active = thrd->req_running;
-> +			if (active == -1) /* Aborted */
->  				continue;
->  
-> -			active -= 1;
-> -
->  			rqdone = &thrd->req[active];
-> -			MARK_FREE(rqdone);
-> +			mark_free(thrd, active);
->  
->  			/* Get going again ASAP */
->  			_start(thrd);
-> @@ -1509,7 +1496,7 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op op)
->  	struct pl330_thread *thrd = ch_id;
->  	struct pl330_dmac *pl330;
->  	unsigned long flags;
-> -	int ret = 0, active;
-> +	int ret = 0, active = thrd->req_running;
->  
->  	if (!thrd || thrd->free || thrd->dmac->state == DYING)
->  		return -EINVAL;
-> @@ -1525,28 +1512,24 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op op)
->  
->  		thrd->req[0].r = NULL;
->  		thrd->req[1].r = NULL;
-> -		MARK_FREE(&thrd->req[0]);
-> -		MARK_FREE(&thrd->req[1]);
-> +		mark_free(thrd, 0);
-> +		mark_free(thrd, 1);
->  		break;
->  
->  	case PL330_OP_ABORT:
-> -		active = _thrd_active(thrd);
-> -
->  		/* Make sure the channel is stopped */
->  		_stop(thrd);
->  
->  		/* ABORT is only for the active req */
-> -		if (!active)
-> +		if (active == -1)
->  			break;
->  
-> -		active--;
-> -
->  		thrd->req[active].r = NULL;
-> -		MARK_FREE(&thrd->req[active]);
-> +		mark_free(thrd, active);
->  
->  		/* Start the next */
->  	case PL330_OP_START:
-> -		if (!_thrd_active(thrd) && !_start(thrd))
-> +		if ((active == -1) && !_start(thrd))
->  			ret = -EIO;
->  		break;
->  
-> @@ -1587,14 +1570,13 @@ int pl330_chan_status(void *ch_id, struct pl330_chanstatus *pstatus)
->  	else
->  		pstatus->faulting = false;
->  
-> -	active = _thrd_active(thrd);
-> +	active = thrd->req_running;
->  
-> -	if (!active) {
-> +	if (active == -1) {
->  		/* Indicate that the thread is not running */
->  		pstatus->top_req = NULL;
->  		pstatus->wait_req = NULL;
->  	} else {
-> -		active--;
->  		pstatus->top_req = thrd->req[active].r;
->  		pstatus->wait_req = !IS_FREE(&thrd->req[1 - active])
->  					? thrd->req[1 - active].r : NULL;
-> @@ -1659,9 +1641,9 @@ void *pl330_request_channel(const struct pl330_info *pi)
->  				thrd->free = false;
->  				thrd->lstenq = 1;
->  				thrd->req[0].r = NULL;
-> -				MARK_FREE(&thrd->req[0]);
-> +				mark_free(thrd, 0);
->  				thrd->req[1].r = NULL;
-> -				MARK_FREE(&thrd->req[1]);
-> +				mark_free(thrd, 1);
->  				break;
->  			}
->  		}
-> @@ -1767,14 +1749,14 @@ static inline void _reset_thread(struct pl330_thread *thrd)
->  	thrd->req[0].mc_bus = pl330->mcode_bus
->  				+ (thrd->id * pi->mcbufsz);
->  	thrd->req[0].r = NULL;
-> -	MARK_FREE(&thrd->req[0]);
-> +	mark_free(thrd, 0);
->  
->  	thrd->req[1].mc_cpu = thrd->req[0].mc_cpu
->  				+ pi->mcbufsz / 2;
->  	thrd->req[1].mc_bus = thrd->req[0].mc_bus
->  				+ pi->mcbufsz / 2;
->  	thrd->req[1].r = NULL;
-> -	MARK_FREE(&thrd->req[1]);
-> +	mark_free(thrd, 1);
->  }
->  
->  static int dmac_alloc_threads(struct pl330_dmac *pl330)
+> This patch moves the knowledge of which platforms are SMP-capable
+> to the individual machines.  To enable this, a new HAVE_SMP config
+> option is introduced to allow machines to indicate that they can
+> run in a SMP configuration.
 
-I've done some testing and I haven't been able to break it.  Can
-somebody please test this patch with the workload that failed (audio in
-exynos I believe)?
+There still seem to be several people and lists from the
+get_maintainer.pl output that are missing.  Russell should be
+included, as well as the MSM maintainers and that list.
 
-Thanks,
-Javi
+David
+
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
