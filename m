@@ -1,50 +1,71 @@
-From: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v5 4/5] highbank: Unconditionally require l2x0 L2 cache controller support
-Date: Thu, 15 Dec 2011 15:53:53 +0000
-Message-ID: <1323964434-6764-5-git-send-email-dave.martin@linaro.org>
-References: <1323964434-6764-1-git-send-email-dave.martin@linaro.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1323964434-6764-1-git-send-email-dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Anton Vorontsov <avorontsov-Igf4POYTYCDQT0dZR+AlfA@public.gmane.org>, Barry Song <baohua.song-kQvG35nSl+M@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Colin Cross <ccross-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Haojian Zhuang <haojian.zhuang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>, John Linn <john.linn-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Mundt <lethal-M7jkjyW5wf5g9hUCZPvPmw@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+From: "Subhash Jadavani" <subhashj@codeaurora.org>
+Subject: RE: [PATCH] mmc: core: Fix voltage select in DDR mode
+Date: Thu, 15 Dec 2011 22:36:30 +0530
+Message-ID: <000001ccbb4b$e65ce250$b316a6f0$@org>
+References: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
+Content-Language: en-us
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Girish K S' <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, 'Philip Rakity' <prakity@marvell.com>, 'Arindam Nath' <arindam.nath@amd.com>, 'Chris Ball' <cjb@laptop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-If running in the Normal World on a TrustZone-enabled SoC, Linux
-does not have complete control over the L2 cache controller
-configuration.  The kernel cannot work reliably on such platforms
-without the l2x0 cache support code built in.
 
-This patch unconditionally enables l2x0 support for the Highbank
-SoC.
 
-Thanks to Rob Herring for this suggestion.  [1]
+> -----Original Message-----
+> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
+> owner@vger.kernel.org] On Behalf Of Girish K S
+> Sent: Thursday, December 15, 2011 5:28 PM
+> To: linux-mmc@vger.kernel.org
+> Cc: patches@linaro.org; linux-samsung-soc@vger.kernel.org; Girish K S;
+> Philip Rakity; Arindam Nath; Chris Ball
+> Subject: [PATCH] mmc: core: Fix voltage select in DDR mode
+> 
+> This patch fixes the wrong comparison before setting the interface
+> voltage in DDR mode.
+> 
+> The assignment to the variable ddr before comaprison is either
+> ddr = MMC_1_2V_DDR_MODE; or ddr == MMC_1_8V_DDR_MODE. But the
+> comparison
+> is done wth the extended csd value if (ddr ==
+> EXT_CSD_CARD_TYPE_DDR_1_2V)
+> 
+> cc: Philip Rakity <prakity@marvell.com>
+> cc: Arindam Nath <arindam.nath@amd.com>
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+>  drivers/mmc/core/mmc.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 006e932..f0a9f1f 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -1058,7 +1058,7 @@ static int mmc_init_card(struct mmc_host *host,
+> u32 ocr,
+>  			 *
+>  			 * WARNING: eMMC rules are NOT the same as SD DDR
+>  			 */
+> -			if (ddr == EXT_CSD_CARD_TYPE_DDR_1_2V) {
+> +			if (ddr == MMC_1_2V_DDR_MODE) {
 
-[1] http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/074495.html
+Looks fine. 
+Acked-by: Subhash Jadavani <subhashj@codeaurora.org>
 
-Signed-off-by: Dave Martin <dave.martin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+>  				err = mmc_set_signal_voltage(host,
+>  					MMC_SIGNAL_VOLTAGE_120, 0);
+>  				if (err)
+> --
+> 1.7.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index eca82f9..1792146 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -340,12 +340,12 @@ config ARCH_HIGHBANK
- 	select ARM_AMBA
- 	select ARM_GIC
- 	select ARM_TIMER_SP804
-+	select CACHE_L2X0
- 	select CLKDEV_LOOKUP
- 	select CPU_V7
- 	select GENERIC_CLOCKEVENTS
- 	select HAVE_ARM_SCU
- 	select HAVE_SMP
--	select MIGHT_HAVE_CACHE_L2X0
- 	select USE_OF
- 	help
- 	  Support for the Calxeda Highbank SoC based boards.
--- 
-1.7.4.1
