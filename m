@@ -1,71 +1,285 @@
-From: "Subhash Jadavani" <subhashj@codeaurora.org>
-Subject: RE: [PATCH] mmc: core: Fix voltage select in DDR mode
-Date: Thu, 15 Dec 2011 22:36:30 +0530
-Message-ID: <000001ccbb4b$e65ce250$b316a6f0$@org>
-References: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Javi Merino <javi.merino@arm.com>
+Subject: Re: [PATCH] ARM: PL330: Fix driver freeze
+Date: Thu, 15 Dec 2011 17:48:48 +0000
+Message-ID: <4EEA3300.9000402@arm.com>
+References: <4EE4EB91.6020508@arm.com> <1323631637-9610-1-git-send-email-javi.merino@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
-Content-Language: en-us
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Girish K S' <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org
-Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, 'Philip Rakity' <prakity@marvell.com>, 'Arindam Nath' <arindam.nath@amd.com>, 'Chris Ball' <cjb@laptop.org>
+Content-Type: text/plain; charset=WINDOWS-1252
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from service87.mimecast.com ([91.220.42.44]:51352 "EHLO
+	service87.mimecast.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751544Ab1LORs4 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Dec 2011 12:48:56 -0500
+In-Reply-To: <1323631637-9610-1-git-send-email-javi.merino@arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Cc: Javi Merino <Javi.Merino@arm.com>, "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "boojin.kim@samsung.com" <boojin.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Jassi Brar <jaswinder.singh@linaro.org>
 
-
-
-> -----Original Message-----
-> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
-> owner@vger.kernel.org] On Behalf Of Girish K S
-> Sent: Thursday, December 15, 2011 5:28 PM
-> To: linux-mmc@vger.kernel.org
-> Cc: patches@linaro.org; linux-samsung-soc@vger.kernel.org; Girish K S;
-> Philip Rakity; Arindam Nath; Chris Ball
-> Subject: [PATCH] mmc: core: Fix voltage select in DDR mode
+On 11/12/11 19:27, Javi Merino wrote:
+> Add a req_running field to the pl330_thread to track which request (if
+> any) has been submitted to the DMA.  This mechanism replaces the old
+> one in which we tried to guess the same by looking at the PC of the
+> DMA, which could prevent the driver from sending more requests if it
+> didn't guess correctly.
 > 
-> This patch fixes the wrong comparison before setting the interface
-> voltage in DDR mode.
-> 
-> The assignment to the variable ddr before comaprison is either
-> ddr = MMC_1_2V_DDR_MODE; or ddr == MMC_1_8V_DDR_MODE. But the
-> comparison
-> is done wth the extended csd value if (ddr ==
-> EXT_CSD_CARD_TYPE_DDR_1_2V)
-> 
-> cc: Philip Rakity <prakity@marvell.com>
-> cc: Arindam Nath <arindam.nath@amd.com>
-> cc: Chris Ball <cjb@laptop.org>
-> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> Signed-off-by: Javi Merino <javi.merino@arm.com>
+> Cc: Jassi Brar <jaswinder.singh@linaro.org>
 > ---
->  drivers/mmc/core/mmc.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
+>  arch/arm/common/pl330.c |  116 ++++++++++++++++++++---------------------------
+>  1 files changed, 49 insertions(+), 67 deletions(-)
 > 
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index 006e932..f0a9f1f 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1058,7 +1058,7 @@ static int mmc_init_card(struct mmc_host *host,
-> u32 ocr,
->  			 *
->  			 * WARNING: eMMC rules are NOT the same as SD DDR
->  			 */
-> -			if (ddr == EXT_CSD_CARD_TYPE_DDR_1_2V) {
-> +			if (ddr == MMC_1_2V_DDR_MODE) {
+> diff --git a/arch/arm/common/pl330.c b/arch/arm/common/pl330.c
+> index f407a6b..8d8df74 100644
+> --- a/arch/arm/common/pl330.c
+> +++ b/arch/arm/common/pl330.c
+> @@ -221,17 +221,6 @@
+>   */
+>  #define MCODE_BUFF_PER_REQ	256
+>  
+> -/*
+> - * Mark a _pl330_req as free.
+> - * We do it by writing DMAEND as the first instruction
+> - * because no valid request is going to have DMAEND as
+> - * its first instruction to execute.
+> - */
+> -#define MARK_FREE(req)	do { \
+> -				_emit_END(0, (req)->mc_cpu); \
+> -				(req)->mc_len = 0; \
+> -			} while (0)
+> -
+>  /* If the _pl330_req is available to the client */
+>  #define IS_FREE(req)	(*((u8 *)((req)->mc_cpu)) == CMD_DMAEND)
+>  
+> @@ -301,8 +290,10 @@ struct pl330_thread {
+>  	struct pl330_dmac *dmac;
+>  	/* Only two at a time */
+>  	struct _pl330_req req[2];
+> -	/* Index of the last submitted request */
+> +	/* Index of the last enqueued request */
+>  	unsigned lstenq;
+> +	/* Index of the last submitted request or -1 if the DMA is stopped */
+> +	int req_running;
+>  };
+>  
+>  enum pl330_dmac_state {
+> @@ -778,6 +769,22 @@ static inline void _execute_DBGINSN(struct pl330_thread *thrd,
+>  	writel(0, regs + DBGCMD);
+>  }
+>  
+> +/*
+> + * Mark a _pl330_req as free.
+> + * We do it by writing DMAEND as the first instruction
+> + * because no valid request is going to have DMAEND as
+> + * its first instruction to execute.
+> + */
+> +static void mark_free(struct pl330_thread *thrd, int idx)
+> +{
+> +	struct _pl330_req *req = &thrd->req[idx];
+> +
+> +	_emit_END(0, req->mc_cpu);
+> +	req->mc_len = 0;
+> +
+> +	thrd->req_running = -1;
+> +}
+> +
+>  static inline u32 _state(struct pl330_thread *thrd)
+>  {
+>  	void __iomem *regs = thrd->dmac->pinfo->base;
+> @@ -836,31 +843,6 @@ static inline u32 _state(struct pl330_thread *thrd)
+>  	}
+>  }
+>  
+> -/* If the request 'req' of thread 'thrd' is currently active */
+> -static inline bool _req_active(struct pl330_thread *thrd,
+> -		struct _pl330_req *req)
+> -{
+> -	void __iomem *regs = thrd->dmac->pinfo->base;
+> -	u32 buf = req->mc_bus, pc = readl(regs + CPC(thrd->id));
+> -
+> -	if (IS_FREE(req))
+> -		return false;
+> -
+> -	return (pc >= buf && pc <= buf + req->mc_len) ? true : false;
+> -}
+> -
+> -/* Returns 0 if the thread is inactive, ID of active req + 1 otherwise */
+> -static inline unsigned _thrd_active(struct pl330_thread *thrd)
+> -{
+> -	if (_req_active(thrd, &thrd->req[0]))
+> -		return 1; /* First req active */
+> -
+> -	if (_req_active(thrd, &thrd->req[1]))
+> -		return 2; /* Second req active */
+> -
+> -	return 0;
+> -}
+> -
+>  static void _stop(struct pl330_thread *thrd)
+>  {
+>  	void __iomem *regs = thrd->dmac->pinfo->base;
+> @@ -892,17 +874,22 @@ static bool _trigger(struct pl330_thread *thrd)
+>  	struct _arg_GO go;
+>  	unsigned ns;
+>  	u8 insn[6] = {0, 0, 0, 0, 0, 0};
+> +	int idx;
+>  
+>  	/* Return if already ACTIVE */
+>  	if (_state(thrd) != PL330_STATE_STOPPED)
+>  		return true;
+>  
+> -	if (!IS_FREE(&thrd->req[1 - thrd->lstenq]))
+> -		req = &thrd->req[1 - thrd->lstenq];
+> -	else if (!IS_FREE(&thrd->req[thrd->lstenq]))
+> -		req = &thrd->req[thrd->lstenq];
+> -	else
+> -		req = NULL;
+> +	idx = 1 - thrd->lstenq;
+> +	if (!IS_FREE(&thrd->req[idx]))
+> +		req = &thrd->req[idx];
+> +	else {
+> +		idx = thrd->lstenq;
+> +		if (!IS_FREE(&thrd->req[idx]))
+> +			req = &thrd->req[idx];
+> +		else
+> +			req = NULL;
+> +	}
+>  
+>  	/* Return if no request */
+>  	if (!req || !req->r)
+> @@ -933,6 +920,8 @@ static bool _trigger(struct pl330_thread *thrd)
+>  	/* Only manager can execute GO */
+>  	_execute_DBGINSN(thrd, insn, true);
+>  
+> +	thrd->req_running = idx;
+> +
+>  	return true;
+>  }
+>  
+> @@ -1382,8 +1371,8 @@ static void pl330_dotask(unsigned long data)
+>  
+>  			thrd->req[0].r = NULL;
+>  			thrd->req[1].r = NULL;
+> -			MARK_FREE(&thrd->req[0]);
+> -			MARK_FREE(&thrd->req[1]);
+> +			mark_free(thrd, 0);
+> +			mark_free(thrd, 1);
+>  
+>  			/* Clear the reset flag */
+>  			pl330->dmac_tbd.reset_chan &= ~(1 << i);
+> @@ -1461,14 +1450,12 @@ int pl330_update(const struct pl330_info *pi)
+>  
+>  			thrd = &pl330->channels[id];
+>  
+> -			active = _thrd_active(thrd);
+> -			if (!active) /* Aborted */
+> +			active = thrd->req_running;
+> +			if (active == -1) /* Aborted */
+>  				continue;
+>  
+> -			active -= 1;
+> -
+>  			rqdone = &thrd->req[active];
+> -			MARK_FREE(rqdone);
+> +			mark_free(thrd, active);
+>  
+>  			/* Get going again ASAP */
+>  			_start(thrd);
+> @@ -1509,7 +1496,7 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op op)
+>  	struct pl330_thread *thrd = ch_id;
+>  	struct pl330_dmac *pl330;
+>  	unsigned long flags;
+> -	int ret = 0, active;
+> +	int ret = 0, active = thrd->req_running;
+>  
+>  	if (!thrd || thrd->free || thrd->dmac->state == DYING)
+>  		return -EINVAL;
+> @@ -1525,28 +1512,24 @@ int pl330_chan_ctrl(void *ch_id, enum pl330_chan_op op)
+>  
+>  		thrd->req[0].r = NULL;
+>  		thrd->req[1].r = NULL;
+> -		MARK_FREE(&thrd->req[0]);
+> -		MARK_FREE(&thrd->req[1]);
+> +		mark_free(thrd, 0);
+> +		mark_free(thrd, 1);
+>  		break;
+>  
+>  	case PL330_OP_ABORT:
+> -		active = _thrd_active(thrd);
+> -
+>  		/* Make sure the channel is stopped */
+>  		_stop(thrd);
+>  
+>  		/* ABORT is only for the active req */
+> -		if (!active)
+> +		if (active == -1)
+>  			break;
+>  
+> -		active--;
+> -
+>  		thrd->req[active].r = NULL;
+> -		MARK_FREE(&thrd->req[active]);
+> +		mark_free(thrd, active);
+>  
+>  		/* Start the next */
+>  	case PL330_OP_START:
+> -		if (!_thrd_active(thrd) && !_start(thrd))
+> +		if ((active == -1) && !_start(thrd))
+>  			ret = -EIO;
+>  		break;
+>  
+> @@ -1587,14 +1570,13 @@ int pl330_chan_status(void *ch_id, struct pl330_chanstatus *pstatus)
+>  	else
+>  		pstatus->faulting = false;
+>  
+> -	active = _thrd_active(thrd);
+> +	active = thrd->req_running;
+>  
+> -	if (!active) {
+> +	if (active == -1) {
+>  		/* Indicate that the thread is not running */
+>  		pstatus->top_req = NULL;
+>  		pstatus->wait_req = NULL;
+>  	} else {
+> -		active--;
+>  		pstatus->top_req = thrd->req[active].r;
+>  		pstatus->wait_req = !IS_FREE(&thrd->req[1 - active])
+>  					? thrd->req[1 - active].r : NULL;
+> @@ -1659,9 +1641,9 @@ void *pl330_request_channel(const struct pl330_info *pi)
+>  				thrd->free = false;
+>  				thrd->lstenq = 1;
+>  				thrd->req[0].r = NULL;
+> -				MARK_FREE(&thrd->req[0]);
+> +				mark_free(thrd, 0);
+>  				thrd->req[1].r = NULL;
+> -				MARK_FREE(&thrd->req[1]);
+> +				mark_free(thrd, 1);
+>  				break;
+>  			}
+>  		}
+> @@ -1767,14 +1749,14 @@ static inline void _reset_thread(struct pl330_thread *thrd)
+>  	thrd->req[0].mc_bus = pl330->mcode_bus
+>  				+ (thrd->id * pi->mcbufsz);
+>  	thrd->req[0].r = NULL;
+> -	MARK_FREE(&thrd->req[0]);
+> +	mark_free(thrd, 0);
+>  
+>  	thrd->req[1].mc_cpu = thrd->req[0].mc_cpu
+>  				+ pi->mcbufsz / 2;
+>  	thrd->req[1].mc_bus = thrd->req[0].mc_bus
+>  				+ pi->mcbufsz / 2;
+>  	thrd->req[1].r = NULL;
+> -	MARK_FREE(&thrd->req[1]);
+> +	mark_free(thrd, 1);
+>  }
+>  
+>  static int dmac_alloc_threads(struct pl330_dmac *pl330)
 
-Looks fine. 
-Acked-by: Subhash Jadavani <subhashj@codeaurora.org>
+I've done some testing and I haven't been able to break it.  Can
+somebody please test this patch with the workload that failed (audio in
+exynos I believe)?
 
->  				err = mmc_set_signal_voltage(host,
->  					MMC_SIGNAL_VOLTAGE_120, 0);
->  				if (err)
-> --
-> 1.7.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
+Thanks,
+Javi
