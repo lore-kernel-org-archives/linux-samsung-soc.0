@@ -1,124 +1,93 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] DMA: PL330: Support MEMTOMEM transmit w/o RMB, WMB
-Date: Thu, 15 Dec 2011 10:22:20 +0900
-Message-ID: <028f01ccbac7$fdb83d70$f928b850$%kim@samsung.com>
+From: Shawn Guo <shawn.guo@freescale.com>
+Subject: Re: [PATCH v4 REPOST 5/5] imx6q: Remove unconditional dependency on
+ l2x0 L2 cache support
+Date: Thu, 15 Dec 2011 09:46:20 +0800
+Message-ID: <20111215014619.GB3259@S2101-09.ap.freescale.net>
+References: <1323862781-3465-1-git-send-email-dave.martin@linaro.org>
+ <1323862781-3465-6-git-send-email-dave.martin@linaro.org>
+ <20111214132622.GA1520@S2100-06.ap.freescale.net>
+ <20111214140500.GA1700@richard-laptop>
+ <20111214150119.GD2568@linaro.org>
+ <20111215010219.GP28768@b20223-02.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48876 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755535Ab1LOBWX (ORCPT
+Received: from va3ehsobe004.messaging.microsoft.com ([216.32.180.14]:35835
+	"EHLO VA3EHSOBE004.bigfish.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755628Ab1LOBhv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Dec 2011 20:22:23 -0500
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LW800CEH15AOOD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Dec 2011 10:22:22 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LW8006FO1586090@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 15 Dec 2011 10:22:22 +0900 (KST)
-Content-language: ko
+	Wed, 14 Dec 2011 20:37:51 -0500
+Content-Disposition: inline
+In-Reply-To: <20111215010219.GP28768@b20223-02.ap.freescale.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Linus Walleij' <linus.walleij@linaro.org>, rmk+kernel@arm.linux.org.uk, 'Boojin Kim' <boojin.kim@samsung.com>, kgene.kim@samsung.com, jassisinghbrar@gmail.com
+To: Richard Zhao <richard.zhao@freescale.com>
+Cc: Dave Martin <dave.martin@linaro.org>, Richard Zhao <richard.zhao@linaro.org>, linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <avorontsov@mvista.com>, Will Deacon <will.deacon@arm.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Colin Cross <ccross@google.com>, Paul Mundt <lethal@linux-sh.org>, Sascha Hauer <kernel@pengutronix.de>, Shawn Guo <shawn.guo@linaro.org>
 
-From: Boojin Kim <boojin.kim@samsung.com>
+On Thu, Dec 15, 2011 at 09:02:20AM +0800, Richard Zhao wrote:
+> On Wed, Dec 14, 2011 at 03:01:19PM +0000, Dave Martin wrote:
+> > On Wed, Dec 14, 2011 at 10:05:04PM +0800, Richard Zhao wrote:
+> > > On Wed, Dec 14, 2011 at 09:26:24PM +0800, Shawn Guo wrote:
+> > > > Hi Dave,
+> > > > 
+> > > > Sorry for that I did not look into previous post to point it out.
+> > > > 
+> > > > On Wed, Dec 14, 2011 at 11:39:41AM +0000, Dave Martin wrote:
+> > > > > The i.MX6 Quad SoC will work without the l2x0 L2 cache controller
+> > > > > support built into the kernel, so this patch removes the dependency
+> > > > > on CACHE_L2X0 and selects MIGHT_HAVE_CACHE_L2X0 instead.
+> > > > > 
+> > > > > This makes the l2x0 support optional, so that it can be turned off
+> > > > > when desired for debugging purposes etc.
+> > > > > 
+> > > > > Thanks to Shawn Guo for this suggestion. [1]
+> > > > > 
+> > > > > Signed-off-by: Dave Martin <dave.martin@linaro.org>
+> > > > > 
+> > > > > [1] http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/074602.html
+> > > > > ---
+> > > > >  arch/arm/mach-imx/Kconfig |    2 +-
+> > > > >  1 files changed, 1 insertions(+), 1 deletions(-)
+> > > > > 
+> > > > > diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
+> > > > > index 29a3d61..1fb93f2 100644
+> > > > > --- a/arch/arm/mach-imx/Kconfig
+> > > > > +++ b/arch/arm/mach-imx/Kconfig
+> > > > > @@ -609,13 +609,13 @@ comment "i.MX6 family:"
+> > > > >  config SOC_IMX6Q
+> > > > >  	bool "i.MX6 Quad support"
+> > > > >  	select ARM_GIC
+> > > > > -	select CACHE_L2X0
+> > > > >  	select CPU_V7
+> > > > >  	select HAVE_ARM_SCU
+> > > > >  	select HAVE_IMX_GPC
+> > > > >  	select HAVE_IMX_MMDC
+> > > > >  	select HAVE_IMX_SRC
+> > > > >  	select HAVE_SMP
+> > > > > +	select MIGHT_HAVE_CACHE_L2X0
+> > > > 
+> > > > The option SOC_IMX6Q is only available when ARCH_IMX_V6_V7 is selected.
+> > > > Since MIGHT_HAVE_CACHE_L2X0 has been selected by ARCH_IMX_V6_V7 in
+> > > > patch #1, this line seems redundant here.
+> > > Would it be better keep this one and remove patch #1 one? imx5 doesn't have
+> > > l2x0.
+> > 
+> > Do you mean to remove MIGHT_HAVE_CACHE_L2X0 from ARCH_IMX_V6_V7, and select
+> > it only from SOC_IMX6Q?
+> Yes, I think it's more precise. Shawn?
+> 
+No.
 
-The DMAC PL330 r1p0 version fixed the lockup error being on r0p0.
-This patch supports the DMA transmission without memory barrier
-operation when the revision of DMAC PL330 is the next of r0p0.
+* imx5 hardware does have L2, and it's just not set up in the kernel
+  (I do not know why).
+* Currently, ARCH_IMX_V6_V7 only covers imx3 and imx6, and both are
+  calling l2x0 init function to set L2 up.
+* When we merge mach-mx5 into mach-imx to have ARCH_IMX_V6_V7 cover
+  imx3, imx5 and imx6, there is no reason for us to not set L2 up for
+  imx5 too.
 
-Cc: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: Vinod Koul <vinod.koul@intel.com>
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-NOTE:
-- I'm not sure the position of pl330.h header is proper...
+So MIGHT_HAVE_CACHE_L2X0 really should be selected by ARCH_IMX_V6_V7.
 
- arch/arm/include/asm/hardware/pl330.h |    5 +++++
- drivers/dma/pl330.c                   |   26 +++++++++++++++++++++-----
- 2 files changed, 26 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/include/asm/hardware/pl330.h b/arch/arm/include/asm/hardware/pl330.h
-index ed38e32..1f4d7cb 100644
---- a/arch/arm/include/asm/hardware/pl330.h
-+++ b/arch/arm/include/asm/hardware/pl330.h
-@@ -144,6 +144,11 @@ enum pl330_reqtype {
- #define CRD		0xe14
- 
- #define PERIPH_ID	0xfe0
-+#define PERIPH_REV_SHIFT	20
-+#define PERIPH_REV_MASK		0xf
-+#define PERIPH_REV_R0P0		0
-+#define PERIPH_REV_R1P0		1
-+#define PERIPH_REV_R1P1		2
- #define PCELL_ID	0xff0
- 
- #define CR0_PERIPH_REQ_SET	(1 << 0)
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 3214ced..d87d884 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -129,6 +129,7 @@ struct pl330_reqcfg {
- 	enum pl330_dstcachectrl dcctl;
- 	enum pl330_srccachectrl scctl;
- 	enum pl330_byteswap swap;
-+	struct pl330_config *pcfg;
- };
- 
- /*
-@@ -438,6 +439,11 @@ static inline u32 get_id(struct pl330_info *pi, u32 off)
- 	return id;
- }
- 
-+static inline u32 get_revision(u32 periph_id)
-+{
-+	return (periph_id >> PERIPH_REV_SHIFT) & PERIPH_REV_MASK;
-+}
-+
- static inline u32 _emit_ADDH(unsigned dry_run, u8 buf[],
- 		enum pl330_dst da, u16 val)
- {
-@@ -1026,12 +1032,21 @@ static inline int _ldst_memtomem(unsigned dry_run, u8 buf[],
- 		const struct _xfer_spec *pxs, int cyc)
- {
- 	int off = 0;
-+	struct pl330_config *pcfg = pxs->r->cfg->pcfg;
- 
--	while (cyc--) {
--		off += _emit_LD(dry_run, &buf[off], ALWAYS);
--		off += _emit_RMB(dry_run, &buf[off]);
--		off += _emit_ST(dry_run, &buf[off], ALWAYS);
--		off += _emit_WMB(dry_run, &buf[off]);
-+	/* check lock-up free version */
-+	if (get_revision(pcfg->periph_id) >= PERIPH_REV_R1P0) {
-+		while (cyc--) {
-+			off += _emit_LD(dry_run, &buf[off], ALWAYS);
-+			off += _emit_ST(dry_run, &buf[off], ALWAYS);
-+		}
-+	} else {
-+		while (cyc--) {
-+			off += _emit_LD(dry_run, &buf[off], ALWAYS);
-+			off += _emit_RMB(dry_run, &buf[off]);
-+			off += _emit_ST(dry_run, &buf[off], ALWAYS);
-+			off += _emit_WMB(dry_run, &buf[off]);
-+		}
- 	}
- 
- 	return off;
-@@ -2398,6 +2413,7 @@ static struct dma_pl330_desc *pl330_get_desc(struct dma_pl330_chan *pch)
- 	async_tx_ack(&desc->txd);
- 
- 	desc->req.peri = peri_id ? pch->chan.chan_id : 0;
-+	desc->rqcfg.pcfg = &pch->dmac->pif.pcfg;
- 
- 	dma_async_tx_descriptor_init(&desc->txd, &pch->chan);
- 
 -- 
-1.7.1
+Regards,
+Shawn
