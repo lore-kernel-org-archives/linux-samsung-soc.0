@@ -1,47 +1,113 @@
-From: Joerg Roedel <joro@8bytes.org>
-Subject: Re: [PATCH] iommu: Initialize domain->handler in
-	iommu_domain_alloc()
-Date: Thu, 15 Dec 2011 09:10:56 +0100
-Message-ID: <20111215081056.GC4475@8bytes.org>
-References: <1323760466-30333-1-git-send-email-pullip.cho@samsung.com>
+From: Saugata Das <saugata.das@linaro.org>
+Subject: Re: [PATCH V2] mmc: core: Add host capability check for power class
+Date: Thu, 15 Dec 2011 15:34:31 +0530
+Message-ID: <CAKLKtzc4HDmqStQhn_J6GZxdZ0vE_vb7=+xq+oEHqp6QxYDxsg@mail.gmail.com>
+References: <1323921517-31241-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from 8bytes.org ([88.198.83.132]:34658 "EHLO 8bytes.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752340Ab1LOIK5 (ORCPT
+Received: from mail-fx0-f46.google.com ([209.85.161.46]:63636 "EHLO
+	mail-fx0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752667Ab1LOKEd convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Dec 2011 03:10:57 -0500
-Content-Disposition: inline
-In-Reply-To: <1323760466-30333-1-git-send-email-pullip.cho@samsung.com>
+	Thu, 15 Dec 2011 05:04:33 -0500
+In-Reply-To: <1323921517-31241-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Younglak Kim <younglak1004.kim@samsung.com>
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, subhashj@codeaurora.org, Chris Ball <cjb@laptop.org>
 
-On Tue, Dec 13, 2011 at 04:14:26PM +0900, KyongHo Cho wrote:
-> Since it is not guaranteed that an iommu driver initializes in its
-> domain_init() function, it must be initialized with NULL to prevent
-> calling a function in an arbitrary location when iommu fault occurred.
-> 
-> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+On 15 December 2011 09:28, Girish K S <girish.shivananjappa@linaro.org>=
+ wrote:
+> This patch adds a check whether the host supports maximum current val=
+ue
+> obtained from the device's extended csd register for a selected inter=
+face
+> voltage and frequency.
+>
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
 > ---
->  drivers/iommu/iommu.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-> index 7cc3c65..1afb896 100644
-> --- a/drivers/iommu/iommu.c
-> +++ b/drivers/iommu/iommu.c
-> @@ -148,6 +148,7 @@ struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
->  		return NULL;
->  
->  	domain->ops = bus->iommu_ops;
-> +	domain->handler = NULL;
+> Changes in v2:
+> =A0 =A0 =A0 =A0deleted a unnecessary if else condition identified by =
+subhash J
+> Changes in v1:
+> =A0 =A0 =A0 reduced the number of comparisons as per Hein's suggestio=
+n
+>
+> =A0drivers/mmc/core/mmc.c =A0 | =A0 19 +++++++++++++++++++
+> =A0include/linux/mmc/card.h | =A0 =A04 ++++
+> =A02 files changed, 23 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 006e932..b9ef777 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -688,6 +688,25 @@ static int mmc_select_powerclass(struct mmc_card=
+ *card,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pwrclass_val =3D (pwrclass_val & EXT_C=
+SD_PWR_CL_4BIT_MASK) >>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_CS=
+D_PWR_CL_4BIT_SHIFT;
+>
+> + =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_800)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_800;
+> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_600)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_600;
+> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_400)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_400;
+> + =A0 =A0 =A0 else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_200;
+> +
+> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_800) &&
+> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_800))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_600;
+> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_600) &&
+> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_600))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_400;
+> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_400) &&
+> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_400))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_200;
+> +
+> =A0 =A0 =A0 =A0/* If the power class is different from the default va=
+lue */
+> =A0 =A0 =A0 =A0if (pwrclass_val > 0) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_CSD_CMD_S=
+ET_NORMAL,
 
-Good catch. But it is better to change the kmalloc in the function to
-kzalloc. This will implicitly initialize all future members correctly.
+It is not allowed to set the POWER_CLASS with any value other than
+what is mentioned in the PWR_CL_ff_vvv or PWR_CL_DDR_ff_vvv  for the
+corresponding frequency, voltage. That is, if PWR_CL_200_195 is 14 and
+we want to operate at HS200 then the only value allowed for
+POWER_CLASS is 14. So, we need to check the PWR_CL numbers and choose
+the operating mode (HS200/DDR50/..) based on the platform capability
+to support the current consumption and set the corresponding
+POWER_CLASS value.
 
-Thanks,
+Please refer to section 6.6.5 of the 4.5 spec.
 
-	Joerg
+
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index 9478a6b..c5e031a 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -195,6 +195,10 @@ struct mmc_part {
+> =A0#define MMC_BLK_DATA_AREA_GP =A0 (1<<2)
+> =A0};
+>
+> +#define MMC_MAX_CURRENT_200 =A0 =A0(0)
+> +#define MMC_MAX_CURRENT_400 =A0 =A0(7)
+> +#define MMC_MAX_CURRENT_600 =A0 =A0(11)
+> +#define MMC_MAX_CURRENT_800 =A0 =A0(13)
+> =A0/*
+> =A0* MMC device
+> =A0*/
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
