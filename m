@@ -1,34 +1,47 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [linux-next] make s5p64x0_defconfig build error
-Date: Thu, 15 Dec 2011 09:09:25 +0100
-Message-ID: <201112150909.26229.heiko@sntech.de>
-References: <1323838630.18517.1.camel@phoenix> <028901ccbab8$c2c43890$484ca9b0$%kim@samsung.com> <CAF+7xWn80ZsgBNS80f0JYUXx2KN3VGM-Y2EOba7OLMwMGNfbKg@mail.gmail.com>
+From: Joerg Roedel <joro@8bytes.org>
+Subject: Re: [PATCH] iommu: Initialize domain->handler in
+	iommu_domain_alloc()
+Date: Thu, 15 Dec 2011 09:10:56 +0100
+Message-ID: <20111215081056.GC4475@8bytes.org>
+References: <1323760466-30333-1-git-send-email-pullip.cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAF+7xWn80ZsgBNS80f0JYUXx2KN3VGM-Y2EOba7OLMwMGNfbKg@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: axel.lin@gmail.com
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8bytes.org ([88.198.83.132]:34658 "EHLO 8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752340Ab1LOIK5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Dec 2011 03:10:57 -0500
+Content-Disposition: inline
+In-Reply-To: <1323760466-30333-1-git-send-email-pullip.cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Sanghyun Lee <sanghyun75.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Younglak Kim <younglak1004.kim@samsung.com>
 
-Am Donnerstag, 15. Dezember 2011, 00:54:58 schrieb Axel Lin:
-> Hi Kukjin,
+On Tue, Dec 13, 2011 at 04:14:26PM +0900, KyongHo Cho wrote:
+> Since it is not guaranteed that an iommu driver initializes in its
+> domain_init() function, it must be initialized with NULL to prevent
+> calling a function in an arbitrary location when iommu fault occurred.
 > 
-> > Axel and Will, thanks for pointing out.
-> > 
-> > Oops, I couldn't have much time to follow up :(
-> > But let me look at that in this weekend and I know, it can be escaped
-> > before merge window :)
+> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+> ---
+>  drivers/iommu/iommu.c |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
 > 
-> I also found the same build errors by:
-> make s5pc100_defconfig
-> make s5pv210_defconfig
-> make exynos4_defconfig
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 7cc3c65..1afb896 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -148,6 +148,7 @@ struct iommu_domain *iommu_domain_alloc(struct bus_type *bus)
+>  		return NULL;
+>  
+>  	domain->ops = bus->iommu_ops;
+> +	domain->handler = NULL;
 
-make s3c2410_defconfig
-also produces the build errors
+Good catch. But it is better to change the kmalloc in the function to
+kzalloc. This will implicitly initialize all future members correctly.
 
-Heiko
+Thanks,
+
+	Joerg
