@@ -1,74 +1,50 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: [PATCH V2] mmc: core: Add host capability check for power class
-Date: Thu, 15 Dec 2011 09:28:37 +0530
-Message-ID: <1323921517-31241-1-git-send-email-girish.shivananjappa@linaro.org>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, subhashj@codeaurora.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [linux-next] make  s5p64x0_defconfig build error
+Date: Thu, 15 Dec 2011 05:00:05 +0000
+Message-ID: <20111215050005.GA24287@sirena.org.uk>
+References: <1323838630.18517.1.camel@phoenix>
+ <20111214123244.GE7122@mudshark.cambridge.arm.com>
+ <20111214191205.GF14542@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:56667 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704Ab1LOFAN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Dec 2011 00:00:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20111214191205.GF14542@n2100.arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Will Deacon <will.deacon@arm.com>, Kukjin Kim <kgene.kim@samsung.com>, Axel Lin <axel.lin@gmail.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-This patch adds a check whether the host supports maximum current value
-obtained from the device's extended csd register for a selected interface
-voltage and frequency.
+On Wed, Dec 14, 2011 at 07:12:05PM +0000, Russell King - ARM Linux wrote:
+> On Wed, Dec 14, 2011 at 12:32:44PM +0000, Will Deacon wrote:
 
-cc: Chris Ball <cjb@laptop.org>
-Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
----
-Changes in v2:
-	deleted a unnecessary if else condition identified by subhash J
-Changes in v1:
-       reduced the number of comparisons as per Hein's suggestion
+> >     ARM: restart: Temporary #error to persuade platform maintainers to take the restart changes seriously
 
- drivers/mmc/core/mmc.c   |   19 +++++++++++++++++++
- include/linux/mmc/card.h |    4 ++++
- 2 files changed, 23 insertions(+), 0 deletions(-)
+> >     Force builds to fail to ensure that platform maintainers take the
+> >     restart changes seriously, and sort out fixing their code before the
+> >     next merge window.
 
-diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-index 006e932..b9ef777 100644
---- a/drivers/mmc/core/mmc.c
-+++ b/drivers/mmc/core/mmc.c
-@@ -688,6 +688,25 @@ static int mmc_select_powerclass(struct mmc_card *card,
- 		pwrclass_val = (pwrclass_val & EXT_CSD_PWR_CL_4BIT_MASK) >>
- 				EXT_CSD_PWR_CL_4BIT_SHIFT;
- 
-+	if (pwrclass_val >= MMC_MAX_CURRENT_800)
-+		pwrclass_val = MMC_MAX_CURRENT_800;
-+	else if (pwrclass_val >= MMC_MAX_CURRENT_600)
-+		pwrclass_val = MMC_MAX_CURRENT_600;
-+	else if (pwrclass_val >= MMC_MAX_CURRENT_400)
-+		pwrclass_val = MMC_MAX_CURRENT_400;
-+	else
-+		pwrclass_val = MMC_MAX_CURRENT_200;
-+
-+	if ((pwrclass_val == MMC_MAX_CURRENT_800) &&
-+	    !(card->host->caps & MMC_CAP_MAX_CURRENT_800))
-+		pwrclass_val = MMC_MAX_CURRENT_600;
-+	if ((pwrclass_val == MMC_MAX_CURRENT_600) &&
-+	    !(card->host->caps & MMC_CAP_MAX_CURRENT_600))
-+		pwrclass_val = MMC_MAX_CURRENT_400;
-+	if ((pwrclass_val == MMC_MAX_CURRENT_400) &&
-+	    !(card->host->caps & MMC_CAP_MAX_CURRENT_400))
-+		pwrclass_val = MMC_MAX_CURRENT_200;
-+
- 	/* If the power class is different from the default value */
- 	if (pwrclass_val > 0) {
- 		err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-index 9478a6b..c5e031a 100644
---- a/include/linux/mmc/card.h
-+++ b/include/linux/mmc/card.h
-@@ -195,6 +195,10 @@ struct mmc_part {
- #define MMC_BLK_DATA_AREA_GP	(1<<2)
- };
- 
-+#define MMC_MAX_CURRENT_200	(0)
-+#define MMC_MAX_CURRENT_400	(7)
-+#define MMC_MAX_CURRENT_600	(11)
-+#define MMC_MAX_CURRENT_800	(13)
- /*
-  * MMC device
-  */
--- 
-1.7.1
+> Indeed, and note the date, and how long its taken for just one of the
+> platforms to be noticed.
 
+I noticed s3c64xx the day you added that change but just deleted the
+code so I could carry on working after my initial attempts to figure out
+what this was about took too long.
+
+> It seems to me that no one really cares about whether six of the seven
+> platforms which have the #error build or don't build, so I really think
+> there's a simple solution to this at the next merge window - delete any
+> platform which hasn't _at_ _least_ responded with a proposed patch to
+> this.
+
+Do you have any references to this stuff?  I did make some effort to
+understand what needed to be done but the patch doesn't mention which
+restart changes are needed and my grovelling around in git wasn't
+turning up enough context to tell me what was supposed to be happening
+instead.  Frankly I've no need for that code in my systems so if it's a
+problem I'd just throw the restart code away if it was that or breakage.
