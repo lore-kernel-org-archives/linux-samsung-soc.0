@@ -1,66 +1,77 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung devel-1 for v3.3
-Date: Fri, 16 Dec 2011 15:22:42 +0000
-Message-ID: <201112161522.42721.arnd@arndb.de>
-References: <014a01ccbbc6$7b036300$710a2900$%kim@samsung.com>
+From: Dave Martin <dave.martin@linaro.org>
+Subject: [PATCH v5 REPOST 0/5] Refactor common Kconfigs for easier maintenance
+Date: Fri, 16 Dec 2011 16:35:27 +0000
+Message-ID: <1324053332-6431-1-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:51450 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755763Ab1LPPW4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Dec 2011 10:22:56 -0500
-In-Reply-To: <014a01ccbbc6$7b036300$710a2900$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Will Deacon <will.deacon@arm.com>, Daniel Walker <dwalker@fifo99.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, David Brown <davidb@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, linux-arm-msm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Fabio Estevam <fabio.estevam@freescale.com>, Colin Cross <ccross@google.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Nicolas Pitre <nico@linaro.org>
 
-On Friday 16 December 2011, Kukjin Kim wrote:
-> Please pull next-samsung-devel for v3.3.
-> It includes DT support for EXYNOS, update Cragganmore board and SPI clkdev
-> support. As a note, out of arch/arm/samsung stuff got the ack from regarding
-> maintainers and actually, it has been included in linux-next for long time
-> so I think, it has no problem for v3.3.
-> 
-> One more, I need to follow up Russell and some arm consolidation work and
-> one plat-samsung directory and apply some patches in my mail-box ;) It will
-> be sent to you soon.
-> 
-> If any problems, please let me know.
+[Expanding the CC list again so that affected people get a final
+chance to comment -- David Brown pointed out that a few people/
+ists were still missing.  This is otherwise a repost of v5 with
+no changes.  Apologies to anyone who has already read this series.]
 
-The patches look really good for the most part, but I'd rather not take
-them like this because you have put so many different things into a single
-branch. Your branch is much larger than any of the others that are currently
-queued in arm-soc.
+Common Kconfig options which depend on a long list of board- and
+SoC- specific Kconfigs can be cumbersome to maintain, leading to
+annoying merge conflicts (although rather trivial ones).
 
-Can you split it up into separate branches for dt, board and clkdev and
-driver changes or something along those lines?
-A number of changes in here also seem to qualify as cleanups,
-so they might better be held in a branch for that.
+This series factors out the dependencies of CACHE_L2X0 and SMP so
+that the knowledge about when these can be enabled is moved to the
+relevant board/SoC Kconfig files instead.  New
+MIGHT_HAVE_CACHE_L2X0 and HAVE_SMP options are defined to mediate
+the dependencies.
 
-I also found one commit that I think should not be there: 25767e69 "ARM:
-EXYNOS: Add ioremap interceptor for statically remapped regions" from
-Thomas Abraham. As far as I know, the work that Nico did on the vmalloc_end
-elimination will conflict with this patch and solve the problem in a better
-way.
+This series has been substantially reworked compared with the
+previous post, and is now in two parts:
 
-I have now pulled in everything up to 39cb263ecc "ARM: S3C64XX: Hook up
-VDDINT on Cragganmore" into a samsung/board branch and merged that into
-the next/board branch, because that was easy to do without rebasing.
+  * The first two patches simply refactor the way the Kconfig
+    options for CACHE_L2X0 and SMP are implemented, without
+    making any other changes.
 
-The rest should be fairly easy to split up into the branches I mentioned
-if you don't mind rebasing them (best leaving them on v3.2-rc1 though).
-Without rebasing, it would get a bit trickier but we could easily make
-39ae3685 "ARM: dts: Add intial dts file for EXYNOS4210 SoC, SMDKV310 and
-ORIGEN" the samsung/dt branch and revert the ioremap interceptor on top
-of that. The samsung/clkdev branch probably should depend on the samsung/dt
-branch anyway, so it can remain on top without getting rebased.
+  * The final three patches apply functional changes suggested by
+    the contributors to this series, to make the config
+    dependencies more correct for some specific boards.
 
-I can probably fix this all up (this time) in the way I want it, or let you
-take care of it and send me new pull requests, whichever you prefer.
 
-	Arnd
+Thanks to Rob Herring, Shawn Guo and Russell King for their
+contributions to this series.  Thanks also to David Brown for
+pointing out the lack of a comprehensive CC list.
+
+
+I have briefly build-tested on some of the affected boards, but any
+further reviews or Tested-Bys would be much appreciated.
+
+
+Dave Martin (5):
+  ARM: l2x0/pl310: Refactor Kconfig to be more maintainable
+  ARM: SMP: Refactor Kconfig to be more maintainable
+  omap4: Unconditionally require l2x0 L2 cache controller support
+  highbank: Unconditionally require l2x0 L2 cache controller support
+  imx6q: Remove unconditional dependency on l2x0 L2 cache support
+
+ arch/arm/Kconfig               |   26 ++++++++++++++++++++++----
+ arch/arm/mach-exynos/Kconfig   |    2 ++
+ arch/arm/mach-imx/Kconfig      |    2 +-
+ arch/arm/mach-msm/Kconfig      |    1 +
+ arch/arm/mach-omap2/Kconfig    |    2 ++
+ arch/arm/mach-realview/Kconfig |    9 +++++++++
+ arch/arm/mach-vexpress/Kconfig |    2 ++
+ arch/arm/mm/Kconfig            |   23 ++++++++++++++++-------
+ arch/arm/plat-mxc/Kconfig      |    1 +
+ 9 files changed, 56 insertions(+), 12 deletions(-)
+
+-- 
+1.7.4.1
