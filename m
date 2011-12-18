@@ -1,22 +1,22 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 Subject: Re: [PATCH 3/7] s3c-hsudc: add a remove function
-Date: Sun, 18 Dec 2011 10:42:15 +0100
-Message-ID: <201112181042.15550.heiko@sntech.de>
+Date: Sun, 18 Dec 2011 14:44:39 +0100
+Message-ID: <201112181444.39812.heiko@sntech.de>
 References: <201112172023.05519.heiko@sntech.de> <201112172026.34215.heiko@sntech.de> <20111218081048.GS14542@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:33312 "EHLO
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:37827 "EHLO
 	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751335Ab1LRJm1 convert rfc822-to-8bit
+	by vger.kernel.org with ESMTP id S1751615Ab1LRNov convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Dec 2011 04:42:27 -0500
+	Sun, 18 Dec 2011 08:44:51 -0500
 In-Reply-To: <20111218081048.GS14542@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Greg KH <greg@kroah.com>, Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>, Greg KH <greg@kroah.com>, Felipe Balbi <balbi@ti.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
 
 Am Sonntag 18 Dezember 2011, 09:10:48 schrieb Russell King - ARM Linux:
 > On Sat, Dec 17, 2011 at 08:26:33PM +0100, Heiko St=FCbner wrote:
@@ -32,9 +32,39 @@ e
 > Until the struct device lifetime gets fixed, you must not allow the m=
 odule
 > nor the data structure containing the struct device to be freed.
-so essentially, this patch and the release stuff in 5/7 must go.
 
-Thanks for pointing out this problem.
+I understand where this problem comes from (the release method is poten=
+tially=20
+gone with the module before it is called) but after more reading, I hav=
+e a=20
+hard time believing that a lot of the other gadget drivers would be wro=
+ng as=20
+well. Some of them since 2009 or possibly earlier.
+
+Gadgets with embedded release methods: langwell_udc, goku_udc, fsl_qe_u=
+dc (and=20
+fsl_udc_core), amd5536udc, net2280, pch_udc, cil13xxx_udc, dummy_hcd,=20
+omap_udc, net2272, mc_udc_core
+
+Gadgets which use the release method from its pdev->dev but also free t=
+he=20
+struct with the gadget in their remove method: r8a66597-udc, m66592-udc=
+,=20
+fusb300_udc. (possibly before the release function is called)
+
+On the other hand, the gets and puts of the udc->gadget.dev should be p=
+aired=20
+correctly and it's only an intermediate device between the udc and the =
+gadget=20
+driver, so that the call to device_unregister in the remove method shou=
+ld put=20
+the refcount to 0 and thus init the cleanup (including the call to rele=
+ase)=20
+before the module is removed.
+
+So, I am very confused :-).
+
+Heiko
 
 
 > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
