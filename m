@@ -1,91 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL] Samsung devel-1 for v3.3
-Date: Mon, 19 Dec 2011 00:57:00 +0900
-Message-ID: <4EEE0D4C.3000400@samsung.com>
-References: <014a01ccbbc6$7b036300$710a2900$%kim@samsung.com> <201112161522.42721.arnd@arndb.de>
+Subject: Re: [PATCH v5 REPOST 1/5] ARM: l2x0/pl310: Refactor Kconfig to be
+ more maintainable
+Date: Mon, 19 Dec 2011 00:57:25 +0900
+Message-ID: <4EEE0D65.1050700@samsung.com>
+References: <1324053332-6431-1-git-send-email-dave.martin@linaro.org>
+ <1324053332-6431-2-git-send-email-dave.martin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:52627 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751085Ab1LRP5J (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Dec 2011 10:57:09 -0500
-Received: by iaeh11 with SMTP id h11so7157103iae.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 18 Dec 2011 07:57:09 -0800 (PST)
-In-Reply-To: <201112161522.42721.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1324053332-6431-2-git-send-email-dave.martin@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Dave Martin <dave.martin@linaro.org>
+Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Anton Vorontsov <cbouatmailru@gmail.com>, Will Deacon <will.deacon@arm.com>, Daniel Walker <dwalker@fifo99.com>, John Linn <john.linn@xilinx.com>, Kukjin Kim <kgene.kim@samsung.com>, Magnus Damm <magnus.damm@gmail.com>, Haojian Zhuang <haojian.zhuang@marvell.com>, =?ISO-8859-1?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, David Brown <davidb@codeaurora.org>, Pawel Moll <pawel.moll@arm.com>, patches@linaro.org, linux-arm-msm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Fabio Estevam <fabio.estevam@freescale.>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, Nicolas Pitre <nico@linaro.org>
 
-On 12/17/11 00:22, Arnd Bergmann wrote:
-> On Friday 16 December 2011, Kukjin Kim wrote:
->> Please pull next-samsung-devel for v3.3.
->> It includes DT support for EXYNOS, update Cragganmore board and SPI clkdev
->> support. As a note, out of arch/arm/samsung stuff got the ack from regarding
->> maintainers and actually, it has been included in linux-next for long time
->> so I think, it has no problem for v3.3.
->>
->> One more, I need to follow up Russell and some arm consolidation work and
->> one plat-samsung directory and apply some patches in my mail-box ;) It will
->> be sent to you soon.
->>
->> If any problems, please let me know.
+On 12/17/11 01:35, Dave Martin wrote:
+> Making CACHE_L2X0 depend on (huge list of MACH_ and ARCH_ configs)
+> is bothersome to maintain and likely to lead to merge conflicts.
 >
-> The patches look really good for the most part, but I'd rather not take
-> them like this because you have put so many different things into a single
-> branch. Your branch is much larger than any of the others that are currently
-> queued in arm-soc.
+> This patch moves the knowledge of which platforms have a L2x0 or
+> PL310 cache controller to the individual machines.  To enable this,
+> a new MIGHT_HAVE_CACHE_L2X0 config option is introduced to allow
+> machines to indicate that they may have such a cache controller
+> independently of each other.
 >
-> Can you split it up into separate branches for dt, board and clkdev and
-> driver changes or something along those lines?
-
-Sure, I will re-send 'pull request' with separated topic branches.
-
-> A number of changes in here also seem to qualify as cleanups,
-> so they might better be held in a branch for that.
-
-I'm not sure which commits are cleanups what you said, but let me sort 
-them out again when I re-send.
-
+> Boards/SoCs which cannot reliably operate without the L2 cache
+> controller support will need to select CACHE_L2X0 directly from
+> their own Kconfigs instead.  This applies to some TrustZone-enabled
+> boards where Linux runs in the Normal World, for example.
 >
-> I also found one commit that I think should not be there: 25767e69 "ARM:
-> EXYNOS: Add ioremap interceptor for statically remapped regions" from
-> Thomas Abraham. As far as I know, the work that Nico did on the vmalloc_end
-> elimination will conflict with this patch and solve the problem in a better
-> way.
+> Signed-off-by: Dave Martin<dave.martin@linaro.org>
+> Acked-by: Anton Vorontsov<cbouatmailru@gmail.com>
+>          (for cns3xxx)
+> Acked-by: Tony Lindgren<tony@atomide.com>
+>          (for omap)
+> Acked-by: Shawn Guo<shawn.guo@linaro.org>
+>          (for imx)
 
-Yes, you're right. There are discussions about Nicolas' patch when it 
-was submitted and since it was not available at that time, it has been 
-added into my tree before 3.2 merge window. Anyway, let me sort it out.
+for exynos:
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
->
-> I have now pulled in everything up to 39cb263ecc "ARM: S3C64XX: Hook up
-> VDDINT on Cragganmore" into a samsung/board branch and merged that into
-> the next/board branch, because that was easy to do without rebasing.
+> ---
+>   arch/arm/Kconfig               |    8 ++++++++
+>   arch/arm/mach-exynos/Kconfig   |    1 +
+>   arch/arm/mach-omap2/Kconfig    |    1 +
+>   arch/arm/mach-realview/Kconfig |    5 +++++
+>   arch/arm/mach-vexpress/Kconfig |    1 +
+>   arch/arm/mm/Kconfig            |   23 ++++++++++++++++-------
+>   arch/arm/plat-mxc/Kconfig      |    1 +
+>   7 files changed, 33 insertions(+), 7 deletions(-)
 
-Well, I think it should be included in next/devel branch, because they 
-are developing of Cragganmore boards not adding new board which is the 
-purpose of next/board branch what you said. But if you want it, I will.
-
->
-> The rest should be fairly easy to split up into the branches I mentioned
-> if you don't mind rebasing them (best leaving them on v3.2-rc1 though).
-> Without rebasing, it would get a bit trickier but we could easily make
-> 39ae3685 "ARM: dts: Add intial dts file for EXYNOS4210 SoC, SMDKV310 and
-> ORIGEN" the samsung/dt branch and revert the ioremap interceptor on top
-> of that. The samsung/clkdev branch probably should depend on the samsung/dt
-> branch anyway, so it can remain on top without getting rebased.
-
-Okay, I will.
-
->
-> I can probably fix this all up (this time) in the way I want it, or let you
-> take care of it and send me new pull requests, whichever you prefer.
-
-Let me sort our my branches soon :)
+(snip)
 
 Thanks.
 
