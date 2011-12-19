@@ -1,47 +1,81 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 7/8] s3c-hsudc: use release_mem_region instead of release_resource
-Date: Mon, 19 Dec 2011 19:42:52 +0100
-Message-ID: <201112191942.52629.heiko@sntech.de>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH 8/8] s3c-hsudc: remove the_controller global
+Date: Mon, 19 Dec 2011 19:43:35 +0100
+Message-ID: <201112191943.35591.heiko@sntech.de>
 References: <201112191938.22254.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:49338 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752062Ab1LSSnA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Dec 2011 13:43:00 -0500
-In-Reply-To: <201112191938.22254.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <201112191938.22254.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>
 
-As the memory region is requested through request_mem_region
-use the correct paired method to release it in the error path
-and don't go "beneath the API" as pointed out by Russel King.
+Instead use container_of to retrieve the s3c_hsudc from the
+struct usb_gadget pointer.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 ---
- drivers/usb/gadget/s3c-hsudc.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/s3c-hsudc.c |   11 ++++++-----
+ 1 files changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/usb/gadget/s3c-hsudc.c b/drivers/usb/gadget/s3c-hsudc.c
-index c8ac13a..8e69758 100644
+index 8e69758..23cac9d 100644
 --- a/drivers/usb/gadget/s3c-hsudc.c
 +++ b/drivers/usb/gadget/s3c-hsudc.c
-@@ -1376,9 +1376,7 @@ err_irq:
- 	iounmap(hsudc->regs);
+@@ -161,7 +161,6 @@ struct s3c_hsudc {
+ #define ep_index(_ep)		((_ep)->bEndpointAddress & \
+ 					USB_ENDPOINT_NUMBER_MASK)
  
- err_remap:
--	release_resource(hsudc->mem_rsrc);
--	kfree(hsudc->mem_rsrc);
--
-+	release_mem_region(res->start, resource_size(res));
- err_res:
- 	if (hsudc->transceiver)
- 		otg_put_transceiver(hsudc->transceiver);
+-static struct s3c_hsudc *the_controller;
+ static const char driver_name[] = "s3c-udc";
+ static const char ep0name[] = "ep0-control";
+ 
+@@ -1141,7 +1140,8 @@ static irqreturn_t s3c_hsudc_irq(int irq, void *_dev)
+ static int s3c_hsudc_start(struct usb_gadget *gadget,
+ 		struct usb_gadget_driver *driver)
+ {
+-	struct s3c_hsudc *hsudc = the_controller;
++	struct s3c_hsudc *hsudc =
++			container_of(gadget, struct s3c_hsudc, gadget);
+ 	int ret;
+ 
+ 	if (!driver
+@@ -1195,7 +1195,8 @@ err_supplies:
+ static int s3c_hsudc_stop(struct usb_gadget *gadget,
+ 		struct usb_gadget_driver *driver)
+ {
+-	struct s3c_hsudc *hsudc = the_controller;
++	struct s3c_hsudc *hsudc =
++			container_of(gadget, struct s3c_hsudc, gadget);
+ 	unsigned long flags;
+ 
+ 	if (!hsudc)
+@@ -1238,7 +1239,8 @@ static int s3c_hsudc_gadget_getframe(struct usb_gadget *gadget)
+ 
+ static int s3c_hsudc_vbus_draw(struct usb_gadget *gadget, unsigned mA)
+ {
+-	struct s3c_hsudc *hsudc = the_controller;
++	struct s3c_hsudc *hsudc =
++			container_of(gadget, struct s3c_hsudc, gadget);
+ 
+ 	if (!hsudc)
+ 		return -ENODEV;
+@@ -1272,7 +1274,6 @@ static int __devinit s3c_hsudc_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 	}
+ 
+-	the_controller = hsudc;
+ 	platform_set_drvdata(pdev, dev);
+ 	hsudc->dev = dev;
+ 	hsudc->pd = pdev->dev.platform_data;
 -- 
 1.7.2.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
