@@ -1,781 +1,1430 @@
-From: "Subhash Jadavani" <subhashj@codeaurora.org>
-Subject: RE: [PATCH V6 1/2] mmc: core: HS200 mode support for eMMC 4.5
-Date: Mon, 19 Dec 2011 16:23:43 +0530
-Message-ID: <000301ccbe3c$7bbbc440$73334cc0$@org>
-References: <1324276594-16412-1-git-send-email-girish.shivananjappa@linaro.org>	<1324276594-16412-2-git-send-email-girish.shivananjappa@linaro.org>	<000001ccbe36$67435880$35ca0980$@org> <CAGxe1ZHmnsN19vuTAGah53UQSHdGp-4oaQKY9LoWShhrznZs+w@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S3C64XX: Added common.c and common.h for S3C64XX SoCs
+Date: Mon, 19 Dec 2011 20:40:39 +0900
+Message-ID: <03d701ccbe43$08464150$18d2c3f0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from wolverine01.qualcomm.com ([199.106.114.254]:19691 "EHLO
-	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751691Ab1LSKxs convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:52646 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752318Ab1LSLkp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Dec 2011 05:53:48 -0500
-In-Reply-To: <CAGxe1ZHmnsN19vuTAGah53UQSHdGp-4oaQKY9LoWShhrznZs+w@mail.gmail.com>
-Content-Language: en-us
+	Mon, 19 Dec 2011 06:40:45 -0500
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWG000MM8FQ7SR0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 19 Dec 2011 20:40:44 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWG00I0Z8FR6K90@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 19 Dec 2011 20:40:42 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Girish K S' <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, 'Chris Ball' <cjb@laptop.org>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, rmk+kernel@arm.linux.org.uk, kgene.kim@samsung.com
 
+This patch adds common.c and common.h which are used only
+in the arch/arm/mach-s3c64xx directory. The common.c file
+includes cpu.c, irq.c and irq-eint.c which are used commonly
+on S3C64XX SoCs and the common.h file includes plat/s3c6400.h
+and plat/s3c6410.h files.
 
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s3c64xx/Makefile               |   63 ++---
+ arch/arm/mach-s3c64xx/clock.c                |    4 +-
+ arch/arm/mach-s3c64xx/common.c               |  375 ++++++++++++++++++++++++++
+ arch/arm/mach-s3c64xx/common.h               |   55 ++++
+ arch/arm/mach-s3c64xx/cpu.c                  |  161 -----------
+ arch/arm/mach-s3c64xx/irq-eint.c             |  213 ---------------
+ arch/arm/mach-s3c64xx/irq.c                  |   47 ----
+ arch/arm/mach-s3c64xx/mach-anw6410.c         |    3 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c        |    3 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c             |    3 +-
+ arch/arm/mach-s3c64xx/mach-mini6410.c        |    3 +-
+ arch/arm/mach-s3c64xx/mach-ncp.c             |    3 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c        |    3 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c          |    2 +
+ arch/arm/mach-s3c64xx/mach-smartq5.c         |    2 +-
+ arch/arm/mach-s3c64xx/mach-smartq7.c         |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6400.c        |    3 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c        |    3 +-
+ arch/arm/mach-s3c64xx/s3c6400.c              |    5 +-
+ arch/arm/mach-s3c64xx/s3c6410.c              |    6 +-
+ arch/arm/plat-samsung/include/plat/cpu.h     |    4 -
+ arch/arm/plat-samsung/include/plat/s3c6400.h |   36 ---
+ arch/arm/plat-samsung/include/plat/s3c6410.h |   29 --
+ 23 files changed, 487 insertions(+), 541 deletions(-)
+ create mode 100644 arch/arm/mach-s3c64xx/common.c
+ create mode 100644 arch/arm/mach-s3c64xx/common.h
+ delete mode 100644 arch/arm/mach-s3c64xx/cpu.c
+ delete mode 100644 arch/arm/mach-s3c64xx/irq-eint.c
+ delete mode 100644 arch/arm/mach-s3c64xx/irq.c
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c6400.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s3c6410.h
 
-> -----Original Message-----
-> From: Girish K S [mailto:girish.shivananjappa@linaro.org]
-> Sent: Monday, December 19, 2011 4:20 PM
-> To: Subhash Jadavani
-> Cc: linux-mmc@vger.kernel.org; patches@linaro.org; linux-samsung-
-> soc@vger.kernel.org; Chris Ball
-> Subject: Re: [PATCH V6 1/2] mmc: core: HS200 mode support for eMMC 4.=
-5
->=20
-> On 19 December 2011 15:40, Subhash Jadavani <subhashj@codeaurora.org>
-> wrote:
-> > Hi Girish,
-> >
-> > Overall this patch looks good. I have only 2 minor comments inline
-> below.
-> >
-> > Regards,
-> > Subhash
-> >
-> >
-> >> -----Original Message-----
-> >> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
-> >> owner@vger.kernel.org] On Behalf Of Girish K S
-> >> Sent: Monday, December 19, 2011 12:07 PM
-> >> To: linux-mmc@vger.kernel.org
-> >> Cc: patches@linaro.org; linux-samsung-soc@vger.kernel.org; Girish =
-K
-> S;
-> >> Chris Ball
-> >> Subject: [PATCH V6 1/2] mmc: core: HS200 mode support for eMMC 4.5
-> >>
-> >> This patch adds the support of the HS200 bus speed for eMMC 4.5
-> >> devices.
-> >> The eMMC 4.5 devices have support for 200MHz bus speed. The functi=
-on
-> >> prototype of the tuning function is modified to handle the tuning
-> >> command
-> >> number which is different in sd and mmc case.
-> >>
-> >> cc: Chris Ball <cjb@laptop.org>
-> >> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-> >> ---
-> >> =A0drivers/mmc/core/bus.c =A0 =A0 | =A0 =A03 +-
-> >> =A0drivers/mmc/core/debugfs.c | =A0 =A03 +
-> >> =A0drivers/mmc/core/mmc.c =A0 =A0 | =A0147
-> >> +++++++++++++++++++++++++++++++++++++++++---
-> >> =A0drivers/mmc/core/sd.c =A0 =A0 =A0| =A0 =A03 +-
-> >> =A0drivers/mmc/core/sdio.c =A0 =A0| =A0 =A04 +-
-> >> =A0include/linux/mmc/card.h =A0 | =A0 =A03 +
-> >> =A0include/linux/mmc/mmc.h =A0 =A0| =A0 66 +++++++++++++++++++-
-> >> =A07 files changed, 216 insertions(+), 13 deletions(-)
-> >>
-> >> diff --git a/drivers/mmc/core/bus.c b/drivers/mmc/core/bus.c
-> >> index f8a228a..5d011a3 100644
-> >> --- a/drivers/mmc/core/bus.c
-> >> +++ b/drivers/mmc/core/bus.c
-> >> @@ -303,10 +303,11 @@ int mmc_add_card(struct mmc_card *card)
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_ddr_mode(card=
-) ? "DDR " : "",
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 type);
-> >> =A0 =A0 =A0 } else {
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 printk(KERN_INFO "%s: new %s%s%s card at=
- address
-> %04x\n",
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 pr_info("%s: new %s%s%s%s card at addres=
-s %04x\n",
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_hostname(card->hos=
-t),
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_uhs(card) ? "=
-ultra high speed " :
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (mmc_card_highspeed(ca=
-rd) ? "high speed " :
-> ""),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (mmc_card_hs200(card) ? =
-"HS200 " : ""),
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_ddr_mode(card=
-) ? "DDR " : "",
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 type, card->rca);
-> >> =A0 =A0 =A0 }
-> >> diff --git a/drivers/mmc/core/debugfs.c b/drivers/mmc/core/debugfs=
-=2Ec
-> >> index 027615d..9ab5b17 100644
-> >> --- a/drivers/mmc/core/debugfs.c
-> >> +++ b/drivers/mmc/core/debugfs.c
-> >> @@ -135,6 +135,9 @@ static int mmc_ios_show(struct seq_file *s, vo=
-id
-> >> *data)
-> >> =A0 =A0 =A0 case MMC_TIMING_UHS_DDR50:
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 str =3D "sd uhs DDR50";
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
-> >> + =A0 =A0 case MMC_TIMING_MMC_HS200:
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 str =3D "mmc high-speed SDR200";
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 break;
-> >> =A0 =A0 =A0 default:
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 str =3D "invalid";
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
-> >> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> >> index f0a9f1f..d5d93de 100644
-> >> --- a/drivers/mmc/core/mmc.c
-> >> +++ b/drivers/mmc/core/mmc.c
-> >> @@ -286,6 +286,27 @@ static int mmc_read_ext_csd(struct mmc_card
-> *card,
-> >> u8 *ext_csd)
-> >> =A0 =A0 =A0 }
-> >> =A0 =A0 =A0 card->ext_csd.raw_card_type =3D ext_csd[EXT_CSD_CARD_T=
-YPE];
-> >> =A0 =A0 =A0 switch (ext_csd[EXT_CSD_CARD_TYPE] & EXT_CSD_CARD_TYPE=
-_MASK) {
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_ALL:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_ALL_DDR_1_8V:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_ALL_DDR_1_2V:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_ALL_DDR_52:
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 200000000;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.card_type =3D EXT_CSD_CARD=
-_TYPE_SDR_200;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 break;
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V_ALL:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V_DDR_1_8V:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V_DDR_1_2V:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_2V_DDR_52:
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 200000000;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.card_type =3D EXT_CSD_CARD=
-_TYPE_SDR_1_2V;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 break;
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V_ALL:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V_DDR_1_8V:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V_DDR_1_2V:
-> >> + =A0 =A0 case EXT_CSD_CARD_TYPE_SDR_1_8V_DDR_52:
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 200000000;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.card_type =3D EXT_CSD_CARD=
-_TYPE_SDR_1_8V;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 break;
-> >> =A0 =A0 =A0 case EXT_CSD_CARD_TYPE_DDR_52 | EXT_CSD_CARD_TYPE_52 |
-> >> =A0 =A0 =A0 =A0 =A0 =A0EXT_CSD_CARD_TYPE_26:
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->ext_csd.hs_max_dtr =3D 52000000;
-> >> @@ -700,6 +721,52 @@ static int mmc_select_powerclass(struct
-> mmc_card
-> >> *card,
-> >> =A0}
-> >>
-> >> =A0/*
-> >> + * Selects the desired buswidth and switch to the HS200 mode
-> >> + * if bus width set without error
-> >> + */
-> >> +static int mmc_select_hs200(struct mmc_card *card)
-> >> +{
-> >> + =A0 =A0 int err =3D 0;
-> >> + =A0 =A0 struct mmc_host *host;
-> >> + =A0 =A0 u32 bus_width =3D MMC_BUS_WIDTH_4;
-> >> +
-> >> + =A0 =A0 BUG_ON(!card);
-> >> +
-> >> + =A0 =A0 host =3D card->host;
-> >> +
-> >> + =A0 =A0 /*
-> >> + =A0 =A0 =A0* Host is capable of 8bit transfer, then switch
-> >> + =A0 =A0 =A0* the device to work in 8bit transfer mode. If the
-> >> + =A0 =A0 =A0* mmc switch command returns error then switch to
-> >> + =A0 =A0 =A0* 4bit transfer mode. On success set the correspondin=
-g
-> >> + =A0 =A0 =A0* bus width on the host.
-> >> + =A0 =A0 =A0*/
-> >> + =A0 =A0 if (host->caps & MMC_CAP_8_BIT_DATA) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_SET=
-_NORMAL,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_BUS_WIDTH,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_BUS_WIDTH_8,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card-=
->ext_csd.generic_cmd6_time);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 bus_width =3D MMC_BUS_WIDTH_8;
-> >> + =A0 =A0 }
-> >> +
-> >> + =A0 =A0 /* If the 8bit mode fails switch to 4 bit mode */
-> >> + =A0 =A0 if (err)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_SET=
-_NORMAL,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_BUS_WIDTH,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_BUS_WIDTH_4,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card-=
->ext_csd.generic_cmd6_time);
-> >
-> > Don't you need to set the bus_width =3D MMC_BUS_WIDTH_4 after sendi=
-ng
-> the
-> > switch?
-> > Let's say if the host->caps says it support the 8-bit mode but
-> mmc_switch()
-> > fails but your bus_width will still be MMC_BUS_WIDTH_8. Now you try
-> to set
-> > the bus width to 4-bit which will succeed but bus_width variable is
-> not
-> > initialize to 4-bit yet.
->=20
-> Thanks just missed it.
->=20
-> >
-> >
-> >
-> >> +
-> >> + =A0 =A0 /* switch to HS200 mode if bus width set successfully */
-> >> + =A0 =A0 if (!err) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_bus_width(card->host, bus_width)=
-;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_SET=
-_NORMAL,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_HS_TIMING, 2, 0);
-> >> + =A0 =A0 }
-> >> +
-> >> + =A0 =A0 return err;
-> >> +}
-> >> +
-> >> +/*
-> >> =A0 * Handle the detection and initialisation of a card.
-> >> =A0 *
-> >> =A0 * In the case of a resume, "oldcard" will contain the card
-> >> @@ -905,11 +972,15 @@ static int mmc_init_card(struct mmc_host
-> *host,
-> >> u32 ocr,
-> >> =A0 =A0 =A0 /*
-> >> =A0 =A0 =A0 =A0* Activate high speed (if supported)
-> >> =A0 =A0 =A0 =A0*/
-> >> - =A0 =A0 if ((card->ext_csd.hs_max_dtr !=3D 0) &&
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 (host->caps & MMC_CAP_MMC_HIGHSPEED)) {
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card, EXT_CSD_CMD_SET=
-_NORMAL,
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0EXT_C=
-SD_HS_TIMING, 1,
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0card-=
->ext_csd.generic_cmd6_time);
-> >> + =A0 =A0 if (card->ext_csd.hs_max_dtr !=3D 0) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D 0;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 if ((card->ext_csd.hs_max_dtr > 52000000=
-) &&
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (host->caps2 & MMC_CAP2_HS200))
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_select_hs200=
-(card);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 else if (host->caps & MMC_CAP_MMC_HIGHSP=
-EED)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_switch(card,=
- EXT_CSD_CMD_SET_NORMAL,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0EXT_CSD_HS_TIMING, 1, 0);
-> >> +
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err && err !=3D -EBADMSG)
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto free_card;
-> >>
-> >> @@ -918,8 +989,15 @@ static int mmc_init_card(struct mmc_host *hos=
-t,
-> >> u32 ocr,
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0mmc_hos=
-tname(card->host));
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D 0;
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else {
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card_set_highspeed(c=
-ard);
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_timing(card->hos=
-t, MMC_TIMING_MMC_HS);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if ((card->ext_csd.hs_ma=
-x_dtr > 52000000) &&
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (host->caps2 & M=
-MC_CAP2_HS200)) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card=
-_set_hs200(card);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_=
-timing(card->host,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0MMC_TIMING_MMC_HS200);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 } else {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_card=
-_set_highspeed(card);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_=
-timing(card->host,
-> > MMC_TIMING_MMC_HS);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> =A0 =A0 =A0 }
-> >>
-> >> @@ -944,7 +1022,7 @@ static int mmc_init_card(struct mmc_host *hos=
-t,
-> >> u32 ocr,
-> >> =A0 =A0 =A0 =A0*/
-> >> =A0 =A0 =A0 max_dtr =3D (unsigned int)-1;
-> >>
-> >> - =A0 =A0 if (mmc_card_highspeed(card)) {
-> >> + =A0 =A0 if (mmc_card_highspeed(card) || mmc_card_hs200(card)) {
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (max_dtr > card->ext_csd.hs_max_dtr=
-)
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 max_dtr =3D card->ext_=
-csd.hs_max_dtr;
-> >> =A0 =A0 =A0 } else if (max_dtr > card->csd.max_dtr) {
-> >> @@ -970,9 +1048,60 @@ static int mmc_init_card(struct mmc_host
-> *host,
-> >> u32 ocr,
-> >> =A0 =A0 =A0 }
-> >>
-> >> =A0 =A0 =A0 /*
-> >> + =A0 =A0 =A0* Indicate HS200 SDR mode (if supported).
-> >> + =A0 =A0 =A0*/
-> >> + =A0 =A0 if (mmc_card_hs200(card)) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 u32 ext_csd_bits;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 u32 bus_width =3D card->host->ios.bus_wi=
-dth;
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 /*
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* For devices supporting HS200 mode, =
-the bus width
-> has
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* to be set before executing the tuni=
-ng function. If
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* set before tuning, then device will=
- respond with
-> CRC
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* errors for responses on CMD line. S=
-o for HS200 the
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* sequence will be
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* 1. set bus width 4bit / 8 bit (1 bi=
-t not supported)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* 2. switch to HS200 mode
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* 3. set the clock to > 52Mhz <=3D200=
-MHz and
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0* 4. execute tuning for HS200
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0*/
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 if ((host->caps2 & MMC_CAP2_HS200) &&
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 card->host->ops->execute_tuning)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D card->host->ops-=
->execute_tuning(card-
-> >host,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 MMC_SEND_TUNING_BLOCK_HS200);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 if (err) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_warning("tuning execu=
-tion failed\n");
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 ext_csd_bits =3D (bus_width =3D=3D MMC_B=
-US_WIDTH_8) ?
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 EXT_CSD_BUS_WIDTH_8 :
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 EXT_CSD_BUS_WIDTH_4;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_select_powerclass(card, ext_=
-csd_bits,
-> ext_csd);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 if (err) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_err("%s: power class =
-selection to bus
-> width"
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"%d faile=
-d\n", mmc_hostname(card-
-> >host),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A01 << bus_=
-width);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 if ((card->ext_csd.card_type &
-> EXT_CSD_CARD_TYPE_SDR_1_2V)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 && (host->caps2 & MMC_CA=
-P2_HS200_1_2V_SDR)) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D mmc_set_signal_v=
-oltage(host,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 MMC_SIGN=
-AL_VOLTAGE_120, 0);
-> >
-> > Shouldn't this voltage switch be done in mmc_select_hs200() before
-> selecting
-> > the bus width and timings?
->=20
-> Will it affect the functionality?. Since it it IO voltage I think it
-> can be done here. And I am setting the Host specific timing and
-> buswidth again.
-> is ur intention to avoid setting timing and buswidth again?
-
-Actually both. execute_tuning should be run with actual I/O voltage in =
-which
-card is going to run. But here you are first running the execute_tuning=
-()
-may be at 3.3v/1.8v then changing the I/O voltage which I guess doesn't=
- look
-correct.
-
-SD3.01 specification has specifically mentioned that first the I/O volt=
-age
-switch should happen and then only execute_tuning() should happen. So i=
-t's
-better to check if the eMMC4.5 spec. also implies this restriction anyw=
-here
-or not.
-
->=20
-> >
-> >
-> >
-> >
-> >
-> >> +
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (err)
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err=
-;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_timing(card->hos=
-t,
-> MMC_TIMING_MMC_HS200);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 mmc_set_bus_width(card->=
-host, bus_width);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 }
-> >> + =A0 =A0 }
-> >> +
-> >> + =A0 =A0 /*
-> >> =A0 =A0 =A0 =A0* Activate wide bus and DDR (if supported).
-> >> =A0 =A0 =A0 =A0*/
-> >> - =A0 =A0 if ((card->csd.mmca_vsn >=3D CSD_SPEC_VER_4) &&
-> >> + =A0 =A0 if (!mmc_card_hs200(card) &&
-> >> + =A0 =A0 =A0 =A0 (card->csd.mmca_vsn >=3D CSD_SPEC_VER_3) &&
-> >> =A0 =A0 =A0 =A0 =A0 (host->caps & (MMC_CAP_4_BIT_DATA | MMC_CAP_8_=
-BIT_DATA)))
-> {
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 static unsigned ext_csd_bits[][2] =3D =
-{
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 { EXT_CSD_BUS_WIDTH_8,=
- EXT_CSD_DDR_BUS_WIDTH_8
-> },
-> >> diff --git a/drivers/mmc/core/sd.c b/drivers/mmc/core/sd.c
-> >> index 6f27d35..a775131 100644
-> >> --- a/drivers/mmc/core/sd.c
-> >> +++ b/drivers/mmc/core/sd.c
-> >> @@ -661,7 +661,8 @@ static int mmc_sd_init_uhs_card(struct mmc_car=
-d
-> >> *card)
-> >>
-> >> =A0 =A0 =A0 /* SPI mode doesn't define CMD19 */
-> >> =A0 =A0 =A0 if (!mmc_host_is_spi(card->host) && card->host->ops-
-> >> >execute_tuning)
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 err =3D card->host->ops->execute_tuning(=
-card->host);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D card->host->ops->execute_tuning(=
-card->host,
-> =A0 \
-> >> +
-> > MMC_SEND_TUNING_BLOCK);
-> >>
-> >> =A0out:
-> >> =A0 =A0 =A0 kfree(status);
-> >> diff --git a/drivers/mmc/core/sdio.c b/drivers/mmc/core/sdio.c
-> >> index b77f770..bd7bacc 100644
-> >> --- a/drivers/mmc/core/sdio.c
-> >> +++ b/drivers/mmc/core/sdio.c
-> >> @@ -14,6 +14,7 @@
-> >>
-> >> =A0#include <linux/mmc/host.h>
-> >> =A0#include <linux/mmc/card.h>
-> >> +#include <linux/mmc/mmc.h>
-> >> =A0#include <linux/mmc/sdio.h>
-> >> =A0#include <linux/mmc/sdio_func.h>
-> >> =A0#include <linux/mmc/sdio_ids.h>
-> >> @@ -556,7 +557,8 @@ static int mmc_sdio_init_uhs_card(struct
-> mmc_card
-> >> *card)
-> >>
-> >> =A0 =A0 =A0 /* Initialize and start re-tuning timer */
-> >> =A0 =A0 =A0 if (!mmc_host_is_spi(card->host) && card->host->ops-
-> >> >execute_tuning)
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 err =3D card->host->ops->execute_tuning(=
-card->host);
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D card->host->ops->execute_tuning(=
-card->host,
-> >> +
-> > MMC_SEND_TUNING_BLOCK);
-> >>
-> >> =A0out:
-> >>
-> >> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
-> >> index 9478a6b..9f22ba5 100644
-> >> --- a/include/linux/mmc/card.h
-> >> +++ b/include/linux/mmc/card.h
-> >> @@ -216,6 +216,7 @@ struct mmc_card {
-> >> =A0#define MMC_STATE_ULTRAHIGHSPEED (1<<5) =A0 =A0 =A0 =A0 =A0 =A0=
- =A0/* card is in
-> ultra
-> >> high speed mode */
-> >> =A0#define MMC_CARD_SDXC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(1<<6) =A0=
- =A0 =A0 =A0 =A0/* card is
-> SDXC */
-> >> =A0#define MMC_CARD_REMOVED =A0 =A0 (1<<7) =A0 =A0 =A0 =A0 =A0/* c=
-ard has been
-> >> removed */
-> >> +#define MMC_STATE_HIGHSPEED_200 =A0 =A0 =A0(1<<8) =A0 =A0 =A0 =A0=
- =A0/* card is in
-> >> HS200 mode */
-> >> =A0 =A0 =A0 unsigned int =A0 =A0 =A0 =A0 =A0 =A0quirks; =A0 =A0 =A0=
- =A0 /* card quirks */
-> >> =A0#define MMC_QUIRK_LENIENT_FN0 =A0 =A0 =A0 =A0(1<<0) =A0 =A0 =A0=
- =A0 =A0/* allow SDIO
-> FN0
-> >> writes outside of the VS CCCR range */
-> >> =A0#define MMC_QUIRK_BLKSZ_FOR_BYTE_MODE (1<<1) /* use func-
-> >> >cur_blksize */
-> >> @@ -374,6 +375,7 @@ static inline void __maybe_unused
-> >> remove_quirk(struct mmc_card *card, int data)
-> >> =A0#define mmc_card_present(c) =A0((c)->state & MMC_STATE_PRESENT)
-> >> =A0#define mmc_card_readonly(c) ((c)->state & MMC_STATE_READONLY)
-> >> =A0#define mmc_card_highspeed(c) =A0 =A0 =A0 =A0((c)->state &
-> MMC_STATE_HIGHSPEED)
-> >> +#define mmc_card_hs200(c) =A0 =A0((c)->state & MMC_STATE_HIGHSPEE=
-D_200)
-> >> =A0#define mmc_card_blockaddr(c) =A0 =A0 =A0 =A0((c)->state &
-> MMC_STATE_BLOCKADDR)
-> >> =A0#define mmc_card_ddr_mode(c) ((c)->state & MMC_STATE_HIGHSPEED_=
-DDR)
-> >> =A0#define mmc_card_uhs(c) =A0 =A0 =A0 =A0 =A0 =A0 =A0((c)->state =
-&
-> >> MMC_STATE_ULTRAHIGHSPEED)
-> >> @@ -384,6 +386,7 @@ static inline void __maybe_unused
-> >> remove_quirk(struct mmc_card *card, int data)
-> >> =A0#define mmc_card_set_present(c) =A0 =A0 =A0((c)->state |=3D
-> MMC_STATE_PRESENT)
-> >> =A0#define mmc_card_set_readonly(c) ((c)->state |=3D MMC_STATE_REA=
-DONLY)
-> >> =A0#define mmc_card_set_highspeed(c) ((c)->state |=3D
-> MMC_STATE_HIGHSPEED)
-> >> +#define mmc_card_set_hs200(c) =A0 =A0 =A0 =A0((c)->state |=3D
-> >> MMC_STATE_HIGHSPEED_200)
-> >> =A0#define mmc_card_set_blockaddr(c) ((c)->state |=3D
-> MMC_STATE_BLOCKADDR)
-> >> =A0#define mmc_card_set_ddr_mode(c) ((c)->state |=3D
-> >> MMC_STATE_HIGHSPEED_DDR)
-> >> =A0#define mmc_card_set_uhs(c) ((c)->state |=3D
-> MMC_STATE_ULTRAHIGHSPEED)
-> >> diff --git a/include/linux/mmc/mmc.h b/include/linux/mmc/mmc.h
-> >> index 665548e..2c8cc69 100644
-> >> --- a/include/linux/mmc/mmc.h
-> >> +++ b/include/linux/mmc/mmc.h
-> >> @@ -51,6 +51,7 @@
-> >> =A0#define MMC_READ_SINGLE_BLOCK =A0 =A017 =A0 /* adtc [31:0] data=
- addr =A0 R1
-> >> */
-> >> =A0#define MMC_READ_MULTIPLE_BLOCK =A018 =A0 /* adtc [31:0] data a=
-ddr =A0 R1
-> >> */
-> >> =A0#define MMC_SEND_TUNING_BLOCK =A0 =A019 =A0 /* adtc =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0R1
-> >> */
-> >> +#define MMC_SEND_TUNING_BLOCK_HS200 =A021 =A0 =A0 =A0/* adtc R1 =A0=
-*/
-> >>
-> >> =A0 =A0/* class 3 */
-> >> =A0#define MMC_WRITE_DAT_UNTIL_STOP 20 =A0 /* adtc [31:0] data add=
-r =A0 R1
-> >> */
-> >> @@ -339,13 +340,76 @@ struct _mmc_csd {
-> >>
-> >> =A0#define EXT_CSD_CARD_TYPE_26 (1<<0) =A0/* Card can run at 26MHz=
- */
-> >> =A0#define EXT_CSD_CARD_TYPE_52 (1<<1) =A0/* Card can run at 52MHz=
- */
-> >> -#define EXT_CSD_CARD_TYPE_MASK =A0 =A0 =A0 0xF =A0 =A0 /* Mask ou=
-t reserved
-> bits */
-> >> +#define EXT_CSD_CARD_TYPE_MASK =A0 =A0 =A0 0x3F =A0 =A0/* Mask ou=
-t reserved
-> bits */
-> >> =A0#define EXT_CSD_CARD_TYPE_DDR_1_8V =A0(1<<2) =A0 /* Card can ru=
-n at
-> 52MHz
-> >> */
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0/* DDR mode @1.8V or 3V
-> I/O */
-> >> =A0#define EXT_CSD_CARD_TYPE_DDR_1_2V =A0(1<<3) =A0 /* Card can ru=
-n at
-> 52MHz
-> >> */
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0/* DDR mode @1.2V I/O */
-> >> =A0#define EXT_CSD_CARD_TYPE_DDR_52 =A0 =A0 =A0 (EXT_CSD_CARD_TYPE=
-_DDR_1_8V
-> =A0\
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 | EXT_CSD_CARD_TYPE_DDR_1_2V)
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_8V =A0 (1<<4) =A0/* Card can run =
-at
-> >> 200MHz */
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_2V =A0 (1<<5) =A0/* Card can run =
-at
-> >> 200MHz */
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 /* SDR mode @1.2V I/O
-> */
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_200 =A0 =A0(EXT_CSD_CARD_TYPE_SDR_1=
-_8V
-> =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_SDR_1_2V)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_ALL =A0 =A0(EXT_CSD_CARD_TYPE_SDR_2=
-00
-> =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_52
-> =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define =A0 =A0 =A0EXT_CSD_CARD_TYPE_SDR_1_2V_ALL
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_2V =A0 =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_52
-> =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define =A0 =A0 =A0EXT_CSD_CARD_TYPE_SDR_1_8V_ALL
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_8V =A0 =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_52
-> =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 | EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_2V_DDR_1_8V
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_2V =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_1_8V
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_8V_DDR_1_8V
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_8V =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_1_8V
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_2V_DDR_1_2V
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_2V =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_1_2V
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_8V_DDR_1_2V
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_8V =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_1_2V
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_2V_DDR_52
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_2V =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_1_8V_DDR_52
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_1_8V =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_ALL_DDR_1_8V
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_200 =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_1_8V
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_ALL_DDR_1_2V
-> >> =A0 =A0 =A0 (EXT_CSD_CARD_TYPE_SDR_200 =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_1_2V
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >> +
-> >> +#define EXT_CSD_CARD_TYPE_SDR_ALL_DDR_52
-> (EXT_CSD_CARD_TYPE_SDR_200
-> >> \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_DDR_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 | EXT_CSD_CARD_TYPE_52
-> > \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 |
-> EXT_CSD_CARD_TYPE_26)
-> >>
-> >> =A0#define EXT_CSD_BUS_WIDTH_1 =A00 =A0 =A0 =A0 /* Card is in 1 bi=
-t mode */
-> >> =A0#define EXT_CSD_BUS_WIDTH_4 =A01 =A0 =A0 =A0 /* Card is in 4 bi=
-t mode */
-> >> --
-> >> 1.7.1
-> >>
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-mm=
-c"
-> in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at =A0http://vger.kernel.org/majordomo-info.ht=
-ml
-> >
+diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
+index e32093c..8c27bc6 100644
+--- a/arch/arm/mach-s3c64xx/Makefile
++++ b/arch/arm/mach-s3c64xx/Makefile
+@@ -10,53 +10,48 @@ obj-m				:=
+ obj-n				:=
+ obj-				:=
+ 
+-# Core files
+-obj-y				+= cpu.o
+-obj-y				+= clock.o
++# Core
+ 
+-# Core support for S3C6400 system
++obj-y				+= common.o clock.o
++
++# Core support
+ 
+ obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
+ obj-$(CONFIG_CPU_S3C6410)	+= s3c6410.o
+ 
+-obj-y				+= irq.o
+-obj-y				+= irq-eint.o
++# PM
++
++obj-$(CONFIG_PM)		+= pm.o irq-pm.o sleep.o
+ 
+ # DMA support
+ 
+ obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
+ 
+-# Device setup
++# Device support
+ 
+-obj-$(CONFIG_S3C64XX_SETUP_I2C0) += setup-i2c0.o
+-obj-$(CONFIG_S3C64XX_SETUP_I2C1) += setup-i2c1.o
+-obj-$(CONFIG_S3C64XX_SETUP_IDE) += setup-ide.o
+-obj-$(CONFIG_S3C64XX_SETUP_KEYPAD) += setup-keypad.o
+-obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
+-obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
++obj-y				+= dev-uart.o
++obj-y				+= dev-audio.o
++obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
+ 
+-# PM
++# Device setup
+ 
+-obj-$(CONFIG_PM)		+= pm.o
+-obj-$(CONFIG_PM)		+= sleep.o
+-obj-$(CONFIG_PM)		+= irq-pm.o
++obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
++obj-$(CONFIG_S3C64XX_SETUP_I2C0)	+= setup-i2c0.o
++obj-$(CONFIG_S3C64XX_SETUP_I2C1)	+= setup-i2c1.o
++obj-$(CONFIG_S3C64XX_SETUP_IDE)		+= setup-ide.o
++obj-$(CONFIG_S3C64XX_SETUP_KEYPAD)	+= setup-keypad.o
++obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+ 
+ # Machine support
+ 
+-obj-$(CONFIG_MACH_ANW6410)	+= mach-anw6410.o
+-obj-$(CONFIG_MACH_SMDK6400)	+= mach-smdk6400.o
+-obj-$(CONFIG_MACH_SMDK6410)	+= mach-smdk6410.o
+-obj-$(CONFIG_MACH_REAL6410)     += mach-real6410.o
+-obj-$(CONFIG_MACH_MINI6410)     += mach-mini6410.o
+-obj-$(CONFIG_MACH_NCP)		+= mach-ncp.o
+-obj-$(CONFIG_MACH_HMT)		+= mach-hmt.o
+-obj-$(CONFIG_MACH_SMARTQ)	+= mach-smartq.o
+-obj-$(CONFIG_MACH_SMARTQ5)	+= mach-smartq5.o
+-obj-$(CONFIG_MACH_SMARTQ7)	+= mach-smartq7.o
+-obj-$(CONFIG_MACH_WLF_CRAGG_6410) += mach-crag6410.o mach-crag6410-module.o
+-
+-# device support
+-
+-obj-y				+= dev-uart.o
+-obj-y				+= dev-audio.o
+-obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
++obj-$(CONFIG_MACH_ANW6410)		+= mach-anw6410.o
++obj-$(CONFIG_MACH_HMT)			+= mach-hmt.o
++obj-$(CONFIG_MACH_MINI6410)		+= mach-mini6410.o
++obj-$(CONFIG_MACH_NCP)			+= mach-ncp.o
++obj-$(CONFIG_MACH_REAL6410)		+= mach-real6410.o
++obj-$(CONFIG_MACH_SMARTQ)		+= mach-smartq.o
++obj-$(CONFIG_MACH_SMARTQ5)		+= mach-smartq5.o
++obj-$(CONFIG_MACH_SMARTQ7)		+= mach-smartq7.o
++obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
++obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
++obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-crag6410-module.o
+diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+index bff0f10..b58274f 100644
+--- a/arch/arm/mach-s3c64xx/clock.c
++++ b/arch/arm/mach-s3c64xx/clock.c
+@@ -760,7 +760,7 @@ static struct clk_lookup s3c64xx_clk_lookup[] = {
+ 
+ #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
+ 
+-void __init_or_cpufreq s3c6400_setup_clocks(void)
++void __init_or_cpufreq s3c64xx_setup_clocks(void)
+ {
+ 	struct clk *xtal_clk;
+ 	unsigned long xtal;
+@@ -859,7 +859,7 @@ static struct clk *clks[] __initdata = {
+  * as ARMCLK as well as the necessary parent clocks.
+  *
+  * This call does not setup the clocks, which is left to the
+- * s3c6400_setup_clocks() call which may be needed by the cpufreq
++ * s3c64xx_setup_clocks() call which may be needed by the cpufreq
+  * or resume code to re-set the clocks if the bootloader has changed
+  * them.
+  */
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+new file mode 100644
+index 0000000..8ae5b16
+--- /dev/null
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -0,0 +1,375 @@
++/*
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Copyright 2008 Openmoko, Inc.
++ * Copyright 2008 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *	http://armlinux.simtec.co.uk/
++ *
++ * Common Codes for S3C64XX machines
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/kernel.h>
++#include <linux/init.h>
++#include <linux/module.h>
++#include <linux/interrupt.h>
++#include <linux/ioport.h>
++#include <linux/sysdev.h>
++#include <linux/serial_core.h>
++#include <linux/platform_device.h>
++#include <linux/io.h>
++#include <linux/dma-mapping.h>
++#include <linux/irq.h>
++#include <linux/gpio.h>
++
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/hardware/vic.h>
++
++#include <mach/map.h>
++#include <mach/hardware.h>
++#include <mach/regs-gpio.h>
++
++#include <plat/cpu.h>
++#include <plat/clock.h>
++#include <plat/devs.h>
++#include <plat/pm.h>
++#include <plat/gpio-cfg.h>
++#include <plat/irq-uart.h>
++#include <plat/irq-vic-timer.h>
++#include <plat/regs-irqtype.h>
++#include <plat/regs-serial.h>
++
++#include "common.h"
++
++/* uart registration process */
++
++void __init s3c64xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++{
++	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
++}
++
++/* table of supported CPUs */
++
++static const char name_s3c6400[] = "S3C6400";
++static const char name_s3c6410[] = "S3C6410";
++
++static struct cpu_table cpu_ids[] __initdata = {
++	{
++		.idcode		= S3C6400_CPU_ID,
++		.idmask		= S3C64XX_CPU_MASK,
++		.map_io		= s3c6400_map_io,
++		.init_clocks	= s3c6400_init_clocks,
++		.init_uarts	= s3c64xx_init_uarts,
++		.init		= s3c6400_init,
++		.name		= name_s3c6400,
++	}, {
++		.idcode		= S3C6410_CPU_ID,
++		.idmask		= S3C64XX_CPU_MASK,
++		.map_io		= s3c6410_map_io,
++		.init_clocks	= s3c6410_init_clocks,
++		.init_uarts	= s3c64xx_init_uarts,
++		.init		= s3c6410_init,
++		.name		= name_s3c6410,
++	},
++};
++
++/* minimal IO mapping */
++
++/* see notes on uart map in arch/arm/mach-s3c64xx/include/mach/debug-macro.S */
++#define UART_OFFS (S3C_PA_UART & 0xfffff)
++
++static struct map_desc s3c_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S3C_VA_SYS,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_SYSCON),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_MEM,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_SROM),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)(S3C_VA_UART + UART_OFFS),
++		.pfn		= __phys_to_pfn(S3C_PA_UART),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)VA_VIC0,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC0),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)VA_VIC1,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC1),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_TIMER,
++		.pfn		= __phys_to_pfn(S3C_PA_TIMER),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C64XX_VA_GPIO,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_GPIO),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C64XX_VA_MODEM,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_MODEM),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_WATCHDOG),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
++		.pfn		= __phys_to_pfn(S3C64XX_PA_USB_HSPHY),
++		.length		= SZ_1K,
++		.type		= MT_DEVICE,
++	},
++};
++
++struct sysdev_class s3c64xx_sysclass = {
++	.name	= "s3c64xx-core",
++};
++
++static struct sys_device s3c64xx_sysdev = {
++	.cls	= &s3c64xx_sysclass,
++};
++
++/* read cpu identification code */
++
++void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
++{
++	/* initialise the io descriptors we need for initialisation */
++	iotable_init(s3c_iodesc, ARRAY_SIZE(s3c_iodesc));
++	iotable_init(mach_desc, size);
++	init_consistent_dma_size(SZ_8M);
++
++	/* detect cpu id */
++	s3c64xx_init_cpu();
++
++	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++}
++
++static __init int s3c64xx_sysdev_init(void)
++{
++	sysdev_class_register(&s3c64xx_sysclass);
++	return sysdev_register(&s3c64xx_sysdev);
++}
++core_initcall(s3c64xx_sysdev_init);
++
++/*
++ * setup the sources the vic should advertise resume
++ * for, even though it is not doing the wake
++ * (set_irq_wake needs to be valid)
++ */
++#define IRQ_VIC0_RESUME (1 << (IRQ_RTC_TIC - IRQ_VIC0_BASE))
++#define IRQ_VIC1_RESUME (1 << (IRQ_RTC_ALARM - IRQ_VIC1_BASE) |	\
++			 1 << (IRQ_PENDN - IRQ_VIC1_BASE) |	\
++			 1 << (IRQ_HSMMC0 - IRQ_VIC1_BASE) |	\
++			 1 << (IRQ_HSMMC1 - IRQ_VIC1_BASE) |	\
++			 1 << (IRQ_HSMMC2 - IRQ_VIC1_BASE))
++
++void __init s3c64xx_init_irq(u32 vic0_valid, u32 vic1_valid)
++{
++	printk(KERN_DEBUG "%s: initialising interrupts\n", __func__);
++
++	/* initialise the pair of VICs */
++	vic_init(VA_VIC0, IRQ_VIC0_BASE, vic0_valid, IRQ_VIC0_RESUME);
++	vic_init(VA_VIC1, IRQ_VIC1_BASE, vic1_valid, IRQ_VIC1_RESUME);
++
++	/* add the timer sub-irqs */
++	s3c_init_vic_timer_irq(5, IRQ_TIMER0);
++}
++
++#define eint_offset(irq)	((irq) - IRQ_EINT(0))
++#define eint_irq_to_bit(irq)	((u32)(1 << eint_offset(irq)))
++
++static inline void s3c_irq_eint_mask(struct irq_data *data)
++{
++	u32 mask;
++
++	mask = __raw_readl(S3C64XX_EINT0MASK);
++	mask |= (u32)data->chip_data;
++	__raw_writel(mask, S3C64XX_EINT0MASK);
++}
++
++static void s3c_irq_eint_unmask(struct irq_data *data)
++{
++	u32 mask;
++
++	mask = __raw_readl(S3C64XX_EINT0MASK);
++	mask &= ~((u32)data->chip_data);
++	__raw_writel(mask, S3C64XX_EINT0MASK);
++}
++
++static inline void s3c_irq_eint_ack(struct irq_data *data)
++{
++	__raw_writel((u32)data->chip_data, S3C64XX_EINT0PEND);
++}
++
++static void s3c_irq_eint_maskack(struct irq_data *data)
++{
++	/* compiler should in-line these */
++	s3c_irq_eint_mask(data);
++	s3c_irq_eint_ack(data);
++}
++
++static int s3c_irq_eint_set_type(struct irq_data *data, unsigned int type)
++{
++	int offs = eint_offset(data->irq);
++	int pin, pin_val;
++	int shift;
++	u32 ctrl, mask;
++	u32 newvalue = 0;
++	void __iomem *reg;
++
++	if (offs > 27)
++		return -EINVAL;
++
++	if (offs <= 15)
++		reg = S3C64XX_EINT0CON0;
++	else
++		reg = S3C64XX_EINT0CON1;
++
++	switch (type) {
++	case IRQ_TYPE_NONE:
++		printk(KERN_WARNING "No edge setting!\n");
++		break;
++
++	case IRQ_TYPE_EDGE_RISING:
++		newvalue = S3C2410_EXTINT_RISEEDGE;
++		break;
++
++	case IRQ_TYPE_EDGE_FALLING:
++		newvalue = S3C2410_EXTINT_FALLEDGE;
++		break;
++
++	case IRQ_TYPE_EDGE_BOTH:
++		newvalue = S3C2410_EXTINT_BOTHEDGE;
++		break;
++
++	case IRQ_TYPE_LEVEL_LOW:
++		newvalue = S3C2410_EXTINT_LOWLEV;
++		break;
++
++	case IRQ_TYPE_LEVEL_HIGH:
++		newvalue = S3C2410_EXTINT_HILEV;
++		break;
++
++	default:
++		printk(KERN_ERR "No such irq type %d", type);
++		return -1;
++	}
++
++	if (offs <= 15)
++		shift = (offs / 2) * 4;
++	else
++		shift = ((offs - 16) / 2) * 4;
++	mask = 0x7 << shift;
++
++	ctrl = __raw_readl(reg);
++	ctrl &= ~mask;
++	ctrl |= newvalue << shift;
++	__raw_writel(ctrl, reg);
++
++	/* set the GPIO pin appropriately */
++
++	if (offs < 16) {
++		pin = S3C64XX_GPN(offs);
++		pin_val = S3C_GPIO_SFN(2);
++	} else if (offs < 23) {
++		pin = S3C64XX_GPL(offs + 8 - 16);
++		pin_val = S3C_GPIO_SFN(3);
++	} else {
++		pin = S3C64XX_GPM(offs - 23);
++		pin_val = S3C_GPIO_SFN(3);
++	}
++
++	s3c_gpio_cfgpin(pin, pin_val);
++
++	return 0;
++}
++
++static struct irq_chip s3c_irq_eint = {
++	.name		= "s3c-eint",
++	.irq_mask	= s3c_irq_eint_mask,
++	.irq_unmask	= s3c_irq_eint_unmask,
++	.irq_mask_ack	= s3c_irq_eint_maskack,
++	.irq_ack	= s3c_irq_eint_ack,
++	.irq_set_type	= s3c_irq_eint_set_type,
++	.irq_set_wake	= s3c_irqext_wake,
++};
++
++/* s3c_irq_demux_eint
++ *
++ * This function demuxes the IRQ from the group0 external interrupts,
++ * from IRQ_EINT(0) to IRQ_EINT(27). It is designed to be inlined into
++ * the specific handlers s3c_irq_demux_eintX_Y.
++ */
++static inline void s3c_irq_demux_eint(unsigned int start, unsigned int end)
++{
++	u32 status = __raw_readl(S3C64XX_EINT0PEND);
++	u32 mask = __raw_readl(S3C64XX_EINT0MASK);
++	unsigned int irq;
++
++	status &= ~mask;
++	status >>= start;
++	status &= (1 << (end - start + 1)) - 1;
++
++	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
++		if (status & 1)
++			generic_handle_irq(irq);
++
++		status >>= 1;
++	}
++}
++
++static void s3c_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
++{
++	s3c_irq_demux_eint(0, 3);
++}
++
++static void s3c_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
++{
++	s3c_irq_demux_eint(4, 11);
++}
++
++static void s3c_irq_demux_eint12_19(unsigned int irq, struct irq_desc *desc)
++{
++	s3c_irq_demux_eint(12, 19);
++}
++
++static void s3c_irq_demux_eint20_27(unsigned int irq, struct irq_desc *desc)
++{
++	s3c_irq_demux_eint(20, 27);
++}
++
++static int __init s3c64xx_init_irq_eint(void)
++{
++	int irq;
++
++	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(27); irq++) {
++		irq_set_chip_and_handler(irq, &s3c_irq_eint, handle_level_irq);
++		irq_set_chip_data(irq, (void *)eint_irq_to_bit(irq));
++		set_irq_flags(irq, IRQF_VALID);
++	}
++
++	irq_set_chained_handler(IRQ_EINT0_3, s3c_irq_demux_eint0_3);
++	irq_set_chained_handler(IRQ_EINT4_11, s3c_irq_demux_eint4_11);
++	irq_set_chained_handler(IRQ_EINT12_19, s3c_irq_demux_eint12_19);
++	irq_set_chained_handler(IRQ_EINT20_27, s3c_irq_demux_eint20_27);
++
++	return 0;
++}
++arch_initcall(s3c64xx_init_irq_eint);
+diff --git a/arch/arm/mach-s3c64xx/common.h b/arch/arm/mach-s3c64xx/common.h
+new file mode 100644
+index 0000000..9f523a2
+--- /dev/null
++++ b/arch/arm/mach-s3c64xx/common.h
+@@ -0,0 +1,55 @@
++/*
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Copyright 2008 Openmoko, Inc.
++ * Copyright 2008 Simtec Electronics
++ *	Ben Dooks <ben@simtec.co.uk>
++ *	http://armlinux.simtec.co.uk/
++ *
++ * Common Header for S3C64XX machines
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __ARCH_ARM_MACH_S3C64XX_COMMON_H
++#define __ARCH_ARM_MACH_S3C64XX_COMMON_H
++
++void s3c64xx_init_irq(u32 vic0, u32 vic1);
++void s3c64xx_init_io(struct map_desc *mach_desc, int size);
++
++void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
++void s3c64xx_setup_clocks(void);
++
++extern struct syscore_ops s3c64xx_irq_syscore_ops;
++extern struct sysdev_class s3c64xx_sysclass;
++
++#ifdef CONFIG_CPU_S3C6400
++
++extern  int s3c6400_init(void);
++extern void s3c6400_init_irq(void);
++extern void s3c6400_map_io(void);
++extern void s3c6400_init_clocks(int xtal);
++
++#else
++#define s3c6400_init_clocks NULL
++#define s3c6400_map_io NULL
++#define s3c6400_init NULL
++#endif
++
++#ifdef CONFIG_CPU_S3C6410
++
++extern  int s3c6410_init(void);
++extern void s3c6410_init_irq(void);
++extern void s3c6410_map_io(void);
++extern void s3c6410_init_clocks(int xtal);
++
++#else
++#define s3c6410_init_clocks NULL
++#define s3c6410_map_io NULL
++#define s3c6410_init NULL
++#endif
++
++#endif /* __ARCH_ARM_MACH_S3C64XX_COMMON_H */
+diff --git a/arch/arm/mach-s3c64xx/cpu.c b/arch/arm/mach-s3c64xx/cpu.c
+deleted file mode 100644
+index de085b7..0000000
+--- a/arch/arm/mach-s3c64xx/cpu.c
++++ /dev/null
+@@ -1,161 +0,0 @@
+-/* linux/arch/arm/plat-s3c64xx/cpu.c
+- *
+- * Copyright 2008 Openmoko, Inc.
+- * Copyright 2008 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * S3C64XX CPU Support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/interrupt.h>
+-#include <linux/ioport.h>
+-#include <linux/sysdev.h>
+-#include <linux/serial_core.h>
+-#include <linux/platform_device.h>
+-#include <linux/io.h>
+-#include <linux/dma-mapping.h>
+-
+-#include <mach/hardware.h>
+-#include <mach/map.h>
+-
+-#include <asm/mach/arch.h>
+-#include <asm/mach/map.h>
+-
+-#include <plat/regs-serial.h>
+-
+-#include <plat/cpu.h>
+-#include <plat/devs.h>
+-#include <plat/clock.h>
+-
+-#include <plat/s3c6400.h>
+-#include <plat/s3c6410.h>
+-
+-/* table of supported CPUs */
+-
+-static const char name_s3c6400[] = "S3C6400";
+-static const char name_s3c6410[] = "S3C6410";
+-
+-static struct cpu_table cpu_ids[] __initdata = {
+-	{
+-		.idcode		= S3C6400_CPU_ID,
+-		.idmask		= S3C64XX_CPU_MASK,
+-		.map_io		= s3c6400_map_io,
+-		.init_clocks	= s3c6400_init_clocks,
+-		.init_uarts	= s3c6400_init_uarts,
+-		.init		= s3c6400_init,
+-		.name		= name_s3c6400,
+-	}, {
+-		.idcode		= S3C6410_CPU_ID,
+-		.idmask		= S3C64XX_CPU_MASK,
+-		.map_io		= s3c6410_map_io,
+-		.init_clocks	= s3c6410_init_clocks,
+-		.init_uarts	= s3c6410_init_uarts,
+-		.init		= s3c6410_init,
+-		.name		= name_s3c6410,
+-	},
+-};
+-
+-/* minimal IO mapping */
+-
+-/* see notes on uart map in arch/arm/mach-s3c6400/include/mach/debug-macro.S */
+-#define UART_OFFS (S3C_PA_UART & 0xfffff)
+-
+-static struct map_desc s3c_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S3C_VA_SYS,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_SYSCON),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C_VA_MEM,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_SROM),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)(S3C_VA_UART + UART_OFFS),
+-		.pfn		= __phys_to_pfn(S3C_PA_UART),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)VA_VIC0,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC0),
+-		.length		= SZ_16K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)VA_VIC1,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC1),
+-		.length		= SZ_16K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C_VA_TIMER,
+-		.pfn		= __phys_to_pfn(S3C_PA_TIMER),
+-		.length		= SZ_16K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C64XX_VA_GPIO,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_GPIO),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C64XX_VA_MODEM,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_MODEM),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_WATCHDOG),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
+-		.pfn		= __phys_to_pfn(S3C64XX_PA_USB_HSPHY),
+-		.length		= SZ_1K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-
+-struct sysdev_class s3c64xx_sysclass = {
+-	.name	= "s3c64xx-core",
+-};
+-
+-static struct sys_device s3c64xx_sysdev = {
+-	.cls	= &s3c64xx_sysclass,
+-};
+-
+-/* uart registration process */
+-
+-void __init s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+-{
+-	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
+-}
+-
+-/* read cpu identification code */
+-
+-void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+-{
+-	/* initialise the io descriptors we need for initialisation */
+-	iotable_init(s3c_iodesc, ARRAY_SIZE(s3c_iodesc));
+-	iotable_init(mach_desc, size);
+-	init_consistent_dma_size(SZ_8M);
+-
+-	/* detect cpu id */
+-	s3c64xx_init_cpu();
+-
+-	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
+-}
+-
+-static __init int s3c64xx_sysdev_init(void)
+-{
+-	sysdev_class_register(&s3c64xx_sysclass);
+-	return sysdev_register(&s3c64xx_sysdev);
+-}
+-
+-core_initcall(s3c64xx_sysdev_init);
+diff --git a/arch/arm/mach-s3c64xx/irq-eint.c b/arch/arm/mach-s3c64xx/irq-eint.c
+deleted file mode 100644
+index 4d203be..0000000
+--- a/arch/arm/mach-s3c64xx/irq-eint.c
++++ /dev/null
+@@ -1,213 +0,0 @@
+-/* arch/arm/plat-s3c64xx/irq-eint.c
+- *
+- * Copyright 2008 Openmoko, Inc.
+- * Copyright 2008 Simtec Electronics
+- *      Ben Dooks <ben@simtec.co.uk>
+- *      http://armlinux.simtec.co.uk/
+- *
+- * S3C64XX - Interrupt handling for IRQ_EINT(x)
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/interrupt.h>
+-#include <linux/sysdev.h>
+-#include <linux/gpio.h>
+-#include <linux/irq.h>
+-#include <linux/io.h>
+-
+-#include <asm/hardware/vic.h>
+-
+-#include <plat/regs-irqtype.h>
+-#include <mach/regs-gpio.h>
+-#include <plat/gpio-cfg.h>
+-
+-#include <mach/map.h>
+-#include <plat/cpu.h>
+-#include <plat/pm.h>
+-
+-#define eint_offset(irq)	((irq) - IRQ_EINT(0))
+-#define eint_irq_to_bit(irq)	((u32)(1 << eint_offset(irq)))
+-
+-static inline void s3c_irq_eint_mask(struct irq_data *data)
+-{
+-	u32 mask;
+-
+-	mask = __raw_readl(S3C64XX_EINT0MASK);
+-	mask |= (u32)data->chip_data;
+-	__raw_writel(mask, S3C64XX_EINT0MASK);
+-}
+-
+-static void s3c_irq_eint_unmask(struct irq_data *data)
+-{
+-	u32 mask;
+-
+-	mask = __raw_readl(S3C64XX_EINT0MASK);
+-	mask &= ~((u32)data->chip_data);
+-	__raw_writel(mask, S3C64XX_EINT0MASK);
+-}
+-
+-static inline void s3c_irq_eint_ack(struct irq_data *data)
+-{
+-	__raw_writel((u32)data->chip_data, S3C64XX_EINT0PEND);
+-}
+-
+-static void s3c_irq_eint_maskack(struct irq_data *data)
+-{
+-	/* compiler should in-line these */
+-	s3c_irq_eint_mask(data);
+-	s3c_irq_eint_ack(data);
+-}
+-
+-static int s3c_irq_eint_set_type(struct irq_data *data, unsigned int type)
+-{
+-	int offs = eint_offset(data->irq);
+-	int pin, pin_val;
+-	int shift;
+-	u32 ctrl, mask;
+-	u32 newvalue = 0;
+-	void __iomem *reg;
+-
+-	if (offs > 27)
+-		return -EINVAL;
+-
+-	if (offs <= 15)
+-		reg = S3C64XX_EINT0CON0;
+-	else
+-		reg = S3C64XX_EINT0CON1;
+-
+-	switch (type) {
+-	case IRQ_TYPE_NONE:
+-		printk(KERN_WARNING "No edge setting!\n");
+-		break;
+-
+-	case IRQ_TYPE_EDGE_RISING:
+-		newvalue = S3C2410_EXTINT_RISEEDGE;
+-		break;
+-
+-	case IRQ_TYPE_EDGE_FALLING:
+-		newvalue = S3C2410_EXTINT_FALLEDGE;
+-		break;
+-
+-	case IRQ_TYPE_EDGE_BOTH:
+-		newvalue = S3C2410_EXTINT_BOTHEDGE;
+-		break;
+-
+-	case IRQ_TYPE_LEVEL_LOW:
+-		newvalue = S3C2410_EXTINT_LOWLEV;
+-		break;
+-
+-	case IRQ_TYPE_LEVEL_HIGH:
+-		newvalue = S3C2410_EXTINT_HILEV;
+-		break;
+-
+-	default:
+-		printk(KERN_ERR "No such irq type %d", type);
+-		return -1;
+-	}
+-
+-	if (offs <= 15)
+-		shift = (offs / 2) * 4;
+-	else
+-		shift = ((offs - 16) / 2) * 4;
+-	mask = 0x7 << shift;
+-
+-	ctrl = __raw_readl(reg);
+-	ctrl &= ~mask;
+-	ctrl |= newvalue << shift;
+-	__raw_writel(ctrl, reg);
+-
+-	/* set the GPIO pin appropriately */
+-
+-	if (offs < 16) {
+-		pin = S3C64XX_GPN(offs);
+-		pin_val = S3C_GPIO_SFN(2);
+-	} else if (offs < 23) {
+-		pin = S3C64XX_GPL(offs + 8 - 16);
+-		pin_val = S3C_GPIO_SFN(3);
+-	} else {
+-		pin = S3C64XX_GPM(offs - 23);
+-		pin_val = S3C_GPIO_SFN(3);
+-	}
+-
+-	s3c_gpio_cfgpin(pin, pin_val);
+-
+-	return 0;
+-}
+-
+-static struct irq_chip s3c_irq_eint = {
+-	.name		= "s3c-eint",
+-	.irq_mask	= s3c_irq_eint_mask,
+-	.irq_unmask	= s3c_irq_eint_unmask,
+-	.irq_mask_ack	= s3c_irq_eint_maskack,
+-	.irq_ack	= s3c_irq_eint_ack,
+-	.irq_set_type	= s3c_irq_eint_set_type,
+-	.irq_set_wake	= s3c_irqext_wake,
+-};
+-
+-/* s3c_irq_demux_eint
+- *
+- * This function demuxes the IRQ from the group0 external interrupts,
+- * from IRQ_EINT(0) to IRQ_EINT(27). It is designed to be inlined into
+- * the specific handlers s3c_irq_demux_eintX_Y.
+- */
+-static inline void s3c_irq_demux_eint(unsigned int start, unsigned int end)
+-{
+-	u32 status = __raw_readl(S3C64XX_EINT0PEND);
+-	u32 mask = __raw_readl(S3C64XX_EINT0MASK);
+-	unsigned int irq;
+-
+-	status &= ~mask;
+-	status >>= start;
+-	status &= (1 << (end - start + 1)) - 1;
+-
+-	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
+-		if (status & 1)
+-			generic_handle_irq(irq);
+-
+-		status >>= 1;
+-	}
+-}
+-
+-static void s3c_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
+-{
+-	s3c_irq_demux_eint(0, 3);
+-}
+-
+-static void s3c_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
+-{
+-	s3c_irq_demux_eint(4, 11);
+-}
+-
+-static void s3c_irq_demux_eint12_19(unsigned int irq, struct irq_desc *desc)
+-{
+-	s3c_irq_demux_eint(12, 19);
+-}
+-
+-static void s3c_irq_demux_eint20_27(unsigned int irq, struct irq_desc *desc)
+-{
+-	s3c_irq_demux_eint(20, 27);
+-}
+-
+-static int __init s3c64xx_init_irq_eint(void)
+-{
+-	int irq;
+-
+-	for (irq = IRQ_EINT(0); irq <= IRQ_EINT(27); irq++) {
+-		irq_set_chip_and_handler(irq, &s3c_irq_eint, handle_level_irq);
+-		irq_set_chip_data(irq, (void *)eint_irq_to_bit(irq));
+-		set_irq_flags(irq, IRQF_VALID);
+-	}
+-
+-	irq_set_chained_handler(IRQ_EINT0_3, s3c_irq_demux_eint0_3);
+-	irq_set_chained_handler(IRQ_EINT4_11, s3c_irq_demux_eint4_11);
+-	irq_set_chained_handler(IRQ_EINT12_19, s3c_irq_demux_eint12_19);
+-	irq_set_chained_handler(IRQ_EINT20_27, s3c_irq_demux_eint20_27);
+-
+-	return 0;
+-}
+-
+-arch_initcall(s3c64xx_init_irq_eint);
+diff --git a/arch/arm/mach-s3c64xx/irq.c b/arch/arm/mach-s3c64xx/irq.c
+deleted file mode 100644
+index b07357e..0000000
+--- a/arch/arm/mach-s3c64xx/irq.c
++++ /dev/null
+@@ -1,47 +0,0 @@
+-/* arch/arm/plat-s3c64xx/irq.c
+- *
+- * Copyright 2008 Openmoko, Inc.
+- * Copyright 2008 Simtec Electronics
+- *      Ben Dooks <ben@simtec.co.uk>
+- *      http://armlinux.simtec.co.uk/
+- *
+- * S3C64XX - Interrupt handling
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- */
+-
+-#include <linux/kernel.h>
+-#include <linux/interrupt.h>
+-#include <linux/serial_core.h>
+-#include <linux/irq.h>
+-#include <linux/io.h>
+-
+-#include <asm/hardware/vic.h>
+-
+-#include <mach/map.h>
+-#include <plat/irq-vic-timer.h>
+-#include <plat/irq-uart.h>
+-#include <plat/cpu.h>
+-
+-/* setup the sources the vic should advertise resume for, even though it
+- * is not doing the wake (set_irq_wake needs to be valid) */
+-#define IRQ_VIC0_RESUME (1 << (IRQ_RTC_TIC - IRQ_VIC0_BASE))
+-#define IRQ_VIC1_RESUME (1 << (IRQ_RTC_ALARM - IRQ_VIC1_BASE) |	\
+-			 1 << (IRQ_PENDN - IRQ_VIC1_BASE) |	\
+-			 1 << (IRQ_HSMMC0 - IRQ_VIC1_BASE) |	\
+-			 1 << (IRQ_HSMMC1 - IRQ_VIC1_BASE) |	\
+-			 1 << (IRQ_HSMMC2 - IRQ_VIC1_BASE))
+-
+-void __init s3c64xx_init_irq(u32 vic0_valid, u32 vic1_valid)
+-{
+-	printk(KERN_DEBUG "%s: initialising interrupts\n", __func__);
+-
+-	/* initialise the pair of VICs */
+-	vic_init(VA_VIC0, IRQ_VIC0_BASE, vic0_valid, IRQ_VIC0_RESUME);
+-	vic_init(VA_VIC1, IRQ_VIC1_BASE, vic1_valid, IRQ_VIC1_RESUME);
+-
+-	/* add the timer sub-irqs */
+-	s3c_init_vic_timer_irq(5, IRQ_TIMER0);
+-}
+diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
+index 8eba88e..4949bcd 100644
+--- a/arch/arm/mach-s3c64xx/mach-anw6410.c
++++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
+@@ -45,13 +45,14 @@
+ #include <plat/fb.h>
+ #include <plat/regs-fb-v4.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-modem.h>
+ 
++#include "common.h"
++
+ /* DM9000 */
+ #define ANW6410_PA_DM9000	(0x18000000)
+ 
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+index 42d3d64..4c71a51 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+@@ -52,7 +52,6 @@
+ 
+ #include <mach/regs-gpio-memport.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/regs-serial.h>
+ #include <plat/regs-fb-v4.h>
+ #include <plat/fb.h>
+@@ -68,6 +67,8 @@
+ #include <plat/iic.h>
+ #include <plat/pm.h>
+ 
++#include "common.h"
++
+ /* serial port setup */
+ 
+ #define UCON (S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK)
+diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
+index 952f75f..b6231d5 100644
+--- a/arch/arm/mach-s3c64xx/mach-hmt.c
++++ b/arch/arm/mach-s3c64xx/mach-hmt.c
+@@ -37,12 +37,13 @@
+ #include <plat/fb.h>
+ #include <plat/nand.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/regs-fb-v4.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT
+ #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE)
+ #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
+diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+index 1bc85c3..ed02e7e 100644
+--- a/arch/arm/mach-s3c64xx/mach-mini6410.c
++++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+@@ -33,7 +33,6 @@
+ #include <mach/regs-modem.h>
+ #include <mach/regs-srom.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/adc.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+@@ -45,6 +44,8 @@
+ 
+ #include <video/platform_lcd.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT
+ #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
+ #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
+diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
+index cb13cba..3e2391a 100644
+--- a/arch/arm/mach-s3c64xx/mach-ncp.c
++++ b/arch/arm/mach-s3c64xx/mach-ncp.c
+@@ -39,12 +39,13 @@
+ #include <plat/iic.h>
+ #include <plat/fb.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/regs-fb-v4.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT
+ #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE
+ #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
+diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
+index 87281e4..0456143 100644
+--- a/arch/arm/mach-s3c64xx/mach-real6410.c
++++ b/arch/arm/mach-s3c64xx/mach-real6410.c
+@@ -34,7 +34,6 @@
+ #include <mach/regs-modem.h>
+ #include <mach/regs-srom.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/adc.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+@@ -46,6 +45,8 @@
+ 
+ #include <video/platform_lcd.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT
+ #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
+ #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
+diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
+index cb1ebeb..ce31db1 100644
+--- a/arch/arm/mach-s3c64xx/mach-smartq.c
++++ b/arch/arm/mach-s3c64xx/mach-smartq.c
+@@ -40,6 +40,8 @@
+ 
+ #include <video/platform_lcd.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT
+ #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE)
+ #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
+diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
+index 94c831d..2044a9f 100644
+--- a/arch/arm/mach-s3c64xx/mach-smartq5.c
++++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
+@@ -23,13 +23,13 @@
+ #include <mach/map.h>
+ #include <mach/regs-gpio.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/regs-fb-v4.h>
+ 
++#include "common.h"
+ #include "mach-smartq.h"
+ 
+ static struct gpio_led smartq5_leds[] = {
+diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
+index f112547..eaf24a3 100644
+--- a/arch/arm/mach-s3c64xx/mach-smartq7.c
++++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
+@@ -23,13 +23,13 @@
+ #include <mach/map.h>
+ #include <mach/regs-gpio.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/regs-fb-v4.h>
+ 
++#include "common.h"
+ #include "mach-smartq.h"
+ 
+ static struct gpio_led smartq7_leds[] = {
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
+index 73450c2..bda5e0b 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
+@@ -31,12 +31,13 @@
+ 
+ #include <plat/regs-serial.h>
+ 
+-#include <plat/s3c6400.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/iic.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
+ #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
+ #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index 8bc8edd..91087da 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -63,7 +63,6 @@
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
+ 
+-#include <plat/s3c6410.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+@@ -73,6 +72,8 @@
+ #include <plat/backlight.h>
+ #include <plat/regs-fb-v4.h>
+ 
++#include "common.h"
++
+ #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
+ #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
+ #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
+diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
+index 51c00f2..b1e1571 100644
+--- a/arch/arm/mach-s3c64xx/s3c6400.c
++++ b/arch/arm/mach-s3c64xx/s3c6400.c
+@@ -38,7 +38,8 @@
+ #include <plat/sdhci.h>
+ #include <plat/iic-core.h>
+ #include <plat/onenand-core.h>
+-#include <plat/s3c6400.h>
++
++#include "common.h"
+ 
+ void __init s3c6400_map_io(void)
+ {
+@@ -60,7 +61,7 @@ void __init s3c6400_map_io(void)
+ void __init s3c6400_init_clocks(int xtal)
+ {
+ 	s3c64xx_register_clocks(xtal, S3C6400_CLKDIV0_ARM_MASK);
+-	s3c6400_setup_clocks();
++	s3c64xx_setup_clocks();
+ }
+ 
+ void __init s3c6400_init_irq(void)
+diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
+index 4117003..fba71bd 100644
+--- a/arch/arm/mach-s3c64xx/s3c6410.c
++++ b/arch/arm/mach-s3c64xx/s3c6410.c
+@@ -41,8 +41,8 @@
+ #include <plat/adc-core.h>
+ #include <plat/iic-core.h>
+ #include <plat/onenand-core.h>
+-#include <plat/s3c6400.h>
+-#include <plat/s3c6410.h>
++
++#include "common.h"
+ 
+ void __init s3c6410_map_io(void)
+ {
+@@ -66,7 +66,7 @@ void __init s3c6410_init_clocks(int xtal)
+ {
+ 	printk(KERN_DEBUG "%s: initialising clocks\n", __func__);
+ 	s3c64xx_register_clocks(xtal, S3C6410_CLKDIV0_ARM_MASK);
+-	s3c6400_setup_clocks();
++	s3c64xx_setup_clocks();
+ }
+ 
+ void __init s3c6410_init_irq(void)
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 40fd7b6..abbdadb 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -152,11 +152,9 @@ extern void s3c_init_cpu(unsigned long idcode,
+ /* core initialisation functions */
+ 
+ extern void s3c24xx_init_irq(void);
+-extern void s3c64xx_init_irq(u32 vic0, u32 vic1);
+ extern void s5p_init_irq(u32 *vic, u32 num_vic);
+ 
+ extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
+-extern void s3c64xx_init_io(struct map_desc *mach_desc, int size);
+ extern void s5p_init_io(struct map_desc *mach_desc,
+ 			int size, void __iomem *cpuid_addr);
+ 
+@@ -183,7 +181,6 @@ extern struct syscore_ops s3c2410_pm_syscore_ops;
+ extern struct syscore_ops s3c2412_pm_syscore_ops;
+ extern struct syscore_ops s3c2416_pm_syscore_ops;
+ extern struct syscore_ops s3c244x_pm_syscore_ops;
+-extern struct syscore_ops s3c64xx_irq_syscore_ops;
+ 
+ /* system device classes */
+ 
+@@ -195,7 +192,6 @@ extern struct sysdev_class s3c2440_sysclass;
+ extern struct sysdev_class s3c2442_sysclass;
+ extern struct sysdev_class s3c2443_sysclass;
+ extern struct sysdev_class s3c6410_sysclass;
+-extern struct sysdev_class s3c64xx_sysclass;
+ extern struct sysdev_class s5p64x0_sysclass;
+ extern struct sysdev_class s5pv210_sysclass;
+ extern struct sysdev_class exynos4_sysclass;
+diff --git a/arch/arm/plat-samsung/include/plat/s3c6400.h b/arch/arm/plat-samsung/include/plat/s3c6400.h
+deleted file mode 100644
+index 37d428a..0000000
+--- a/arch/arm/plat-samsung/include/plat/s3c6400.h
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/* linux/arch/arm/plat-samsung/include/plat/s3c6400.h
+- *
+- * Copyright 2008 Openmoko, Inc.
+- * Copyright 2008 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * Header file for s3c6400 cpu support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-/* Common init code for S3C6400 related SoCs */
+-
+-extern void s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
+-extern void s3c6400_setup_clocks(void);
+-
+-extern void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
+-
+-#ifdef CONFIG_CPU_S3C6400
+-
+-extern  int s3c6400_init(void);
+-extern void s3c6400_init_irq(void);
+-extern void s3c6400_map_io(void);
+-extern void s3c6400_init_clocks(int xtal);
+-
+-#define s3c6400_init_uarts s3c6400_common_init_uarts
+-
+-#else
+-#define s3c6400_init_clocks NULL
+-#define s3c6400_init_uarts NULL
+-#define s3c6400_map_io NULL
+-#define s3c6400_init NULL
+-#endif
+diff --git a/arch/arm/plat-samsung/include/plat/s3c6410.h b/arch/arm/plat-samsung/include/plat/s3c6410.h
+deleted file mode 100644
+index 20a6675..0000000
+--- a/arch/arm/plat-samsung/include/plat/s3c6410.h
++++ /dev/null
+@@ -1,29 +0,0 @@
+-/* linux/arch/arm/plat-samsung/include/plat/s3c6410.h
+- *
+- * Copyright 2008 Openmoko,  Inc.
+- * Copyright 2008 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	http://armlinux.simtec.co.uk/
+- *
+- * Header file for s3c6410 cpu support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifdef CONFIG_CPU_S3C6410
+-
+-extern  int s3c6410_init(void);
+-extern void s3c6410_init_irq(void);
+-extern void s3c6410_map_io(void);
+-extern void s3c6410_init_clocks(int xtal);
+-
+-#define s3c6410_init_uarts s3c6400_common_init_uarts
+-
+-#else
+-#define s3c6410_init_clocks NULL
+-#define s3c6410_init_uarts NULL
+-#define s3c6410_map_io NULL
+-#define s3c6410_init NULL
+-#endif
+-- 
+1.7.1
