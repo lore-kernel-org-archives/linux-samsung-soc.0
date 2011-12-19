@@ -1,67 +1,254 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: restart: S3C64XX: use new restart hook
-Date: Mon, 19 Dec 2011 23:37:59 +0900
-Message-ID: <4EEF4C47.6040408@samsung.com>
-References: <03dc01ccbe45$80633d30$8129b790$%kim@samsung.com> <20111219135530.GG14542@n2100.arm.linux.org.uk>
+From: Philip Rakity <prakity@marvell.com>
+Subject: Re: [PATCH V6 2/2] mmc: host: Adds support for eMMC 4.5 HS200 mode
+Date: Mon, 19 Dec 2011 08:54:34 -0800
+Message-ID: <808294D9-162C-4BC6-8581-54711A338BFD@marvell.com>
+References: <1324276594-16412-1-git-send-email-girish.shivananjappa@linaro.org>
+ <1324276594-16412-3-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:41163 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753249Ab1LSOiG (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Dec 2011 09:38:06 -0500
-Received: by iaeh11 with SMTP id h11so8630364iae.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Dec 2011 06:38:05 -0800 (PST)
-In-Reply-To: <20111219135530.GG14542@n2100.arm.linux.org.uk>
+Received: from na3sys009aog105.obsmtp.com ([74.125.149.75]:54738 "EHLO
+	na3sys009aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752288Ab1LSQ7j convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Dec 2011 11:59:39 -0500
+In-Reply-To: <1324276594-16412-3-git-send-email-girish.shivananjappa@linaro.org>
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Ball <cjb@laptop.org>
 
-On 12/19/11 22:55, Russell King - ARM Linux wrote:
-> On Mon, Dec 19, 2011 at 08:58:20PM +0900, Kukjin Kim wrote:
->> Hook these platforms restart code into the new restart hook rather
->> than using arch_reset().
->>
->> Cc: Ben Dooks<ben-linux@fluff.org>
->> Cc: Russell King<rmk+kernel@arm.linux.org.uk>
->> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->
-> It would be _much_ better if you could prepare a set of patches against
-> my devel-stable which adds this support (as has been done for others.)
->
-OK, I will and other Samsung stuff such as s3c24xx, s5p and exynos will 
-be implemented together against your devel-stable.
 
-> I can merge it into my restart branch, and update the commit which removes
-> arch_reset() itself, and the commit which adds the #error.  We can then
-> avoid bisect breakage.
->
-OK.
+HI,
 
-Thanks.
+minor comments below.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Philip
 
->> ---
->>   arch/arm/mach-s3c64xx/common.c                     |   10 ++++++++++
->>   arch/arm/mach-s3c64xx/common.h                     |    2 ++
->>   arch/arm/mach-s3c64xx/include/mach/system.h        |   12 ------------
->>   arch/arm/mach-s3c64xx/mach-anw6410.c               |    1 +
->>   arch/arm/mach-s3c64xx/mach-crag6410.c              |    1 +
->>   arch/arm/mach-s3c64xx/mach-hmt.c                   |    1 +
->>   arch/arm/mach-s3c64xx/mach-mini6410.c              |    1 +
->>   arch/arm/mach-s3c64xx/mach-ncp.c                   |    1 +
->>   arch/arm/mach-s3c64xx/mach-real6410.c              |    1 +
->>   arch/arm/mach-s3c64xx/mach-smartq5.c               |    1 +
->>   arch/arm/mach-s3c64xx/mach-smartq7.c               |    1 +
->>   arch/arm/mach-s3c64xx/mach-smdk6400.c              |    1 +
->>   arch/arm/mach-s3c64xx/mach-smdk6410.c              |    1 +
->>   .../arm/plat-samsung/include/plat/watchdog-reset.h |    1 +
->>   14 files changed, 23 insertions(+), 12 deletions(-)
+On Dec 18, 2011, at 10:36 PM, Girish K S wrote:
+
+> This patch adds support for the HS200 mode on the host side.
+> Also enables the tuning feature required when the HS200 mode
+> is selected.
+> 
+> cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+> drivers/mmc/host/sdhci.c  |   43 +++++++++++++++++++++++++++++++++----------
+> drivers/mmc/host/sdhci.h  |    1 +
+> include/linux/mmc/host.h  |   11 ++++++++++-
+> include/linux/mmc/sdhci.h |    1 +
+> 4 files changed, 45 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index ab6018f..049d51d 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -49,7 +49,7 @@ static void sdhci_finish_data(struct sdhci_host *);
+> 
+> static void sdhci_send_command(struct sdhci_host *, struct mmc_command *);
+> static void sdhci_finish_command(struct sdhci_host *);
+> -static int sdhci_execute_tuning(struct mmc_host *mmc);
+> +static int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode);
+> static void sdhci_tuning_timer(unsigned long data);
+> 
+> #ifdef CONFIG_PM_RUNTIME
+> @@ -1016,7 +1016,8 @@ static void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+> 		flags |= SDHCI_CMD_INDEX;
+> 
+> 	/* CMD19 is special in that the Data Present Select should be set */
+> -	if (cmd->data || (cmd->opcode == MMC_SEND_TUNING_BLOCK))
+> +	if (cmd->data || (cmd->opcode == MMC_SEND_TUNING_BLOCK) ||
+> +	    (cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200))
+> 		flags |= SDHCI_CMD_DATA;
+> 
+> 	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+> @@ -1287,7 +1288,7 @@ static void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+> 		if ((host->flags & SDHCI_NEEDS_RETUNING) &&
+> 		    !(present_state & (SDHCI_DOING_WRITE | SDHCI_DOING_READ))) {
+> 			spin_unlock_irqrestore(&host->lock, flags);
+> -			sdhci_execute_tuning(mmc);
+> +			sdhci_execute_tuning(mmc, mrq->cmd->opcode);
+> 			spin_lock_irqsave(&host->lock, flags);
+> 
+> 			/* Restore original mmc_request structure */
+> @@ -1375,7 +1376,8 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+> 		    (ios->timing == MMC_TIMING_UHS_SDR104) ||
+> 		    (ios->timing == MMC_TIMING_UHS_DDR50) ||
+> 		    (ios->timing == MMC_TIMING_UHS_SDR25) ||
+> -		    (ios->timing == MMC_TIMING_UHS_SDR12))
+> +		    (ios->timing == MMC_TIMING_UHS_SDR12) ||
+> +		    (ios->timing == MMC_TIMING_MMC_HS200))
+> 			ctrl |= SDHCI_CTRL_HISPD;
+
+move to first test so speed ordering is maintained.
+> 
+> 		ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+> @@ -1435,6 +1437,8 @@ static void sdhci_do_set_ios(struct sdhci_host *host, struct mmc_ios *ios)
+> 				ctrl_2 |= SDHCI_CTRL_UHS_SDR104;
+> 			else if (ios->timing == MMC_TIMING_UHS_DDR50)
+> 				ctrl_2 |= SDHCI_CTRL_UHS_DDR50;
+> +			else if (ios->timing == MMC_TIMING_MMC_HS200)
+> +				ctrl_2 |= SDHCI_CTRL_HS_SDR200;
+> 			sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
+> 		}
+
+same as above
+
+> 
+> @@ -1673,7 +1677,7 @@ static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+> 	return err;
+> }
+> 
+> -static int sdhci_execute_tuning(struct mmc_host *mmc)
+> +static int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode)
+> {
+
+Can one deduce the type of tuning needed by the speed ?   is the opcode really needed?
+
+> 	struct sdhci_host *host;
+> 	u16 ctrl;
+> @@ -1694,10 +1698,13 @@ static int sdhci_execute_tuning(struct mmc_host *mmc)
+> 	 * Host Controller needs tuning only in case of SDR104 mode
+> 	 * and for SDR50 mode when Use Tuning for SDR50 is set in
+> 	 * Capabilities register.
+> +	 * If the Host Controller supports the HS200 mode then tuning
+> +	 * function has to be executed.
+> 	 */
+> 	if (((ctrl & SDHCI_CTRL_UHS_MASK) == SDHCI_CTRL_UHS_SDR104) ||
+> 	    (((ctrl & SDHCI_CTRL_UHS_MASK) == SDHCI_CTRL_UHS_SDR50) &&
+> -	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)))
+> +	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)) ||
+> +	    (host->flags & SDHCI_HS200_NEEDS_TUNING))
+> 		ctrl |= SDHCI_CTRL_EXEC_TUNING;
+> 	else {
+> 		spin_unlock(&host->lock);
+> @@ -1733,7 +1740,7 @@ static int sdhci_execute_tuning(struct mmc_host *mmc)
+> 		if (!tuning_loop_counter && !timeout)
+> 			break;
+> 
+> -		cmd.opcode = MMC_SEND_TUNING_BLOCK;
+> +		cmd.opcode = opcode;
+> 		cmd.arg = 0;
+> 		cmd.flags = MMC_RSP_R1 | MMC_CMD_ADTC;
+> 		cmd.retries = 0;
+> @@ -1748,7 +1755,17 @@ static int sdhci_execute_tuning(struct mmc_host *mmc)
+> 		 * block to the Host Controller. So we set the block size
+> 		 * to 64 here.
+> 		 */
+> -		sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 64), SDHCI_BLOCK_SIZE);
+> +		if (cmd.opcode == MMC_SEND_TUNING_BLOCK_HS200) {
+> +			if (mmc->ios.bus_width == MMC_BUS_WIDTH_8)
+> +				sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 128),
+> +					     SDHCI_BLOCK_SIZE);
+> +			else if (mmc->ios.bus_width == MMC_BUS_WIDTH_4)
+> +				sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 64),
+> +					     SDHCI_BLOCK_SIZE);
+> +		} else {
+> +			sdhci_writew(host, SDHCI_MAKE_BLKSZ(7, 64),
+> +				     SDHCI_BLOCK_SIZE);
+> +		}
+> 
+> 		/*
+> 		 * The tuning block is sent by the card to the host controller.
+> @@ -2131,12 +2148,14 @@ static void sdhci_show_adma_error(struct sdhci_host *host) { }
+> 
+> static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
+> {
+> +	u32 command;
+> 	BUG_ON(intmask == 0);
+> 
+> 	/* CMD19 generates _only_ Buffer Read Ready interrupt */
+> 	if (intmask & SDHCI_INT_DATA_AVAIL) {
+> -		if (SDHCI_GET_CMD(sdhci_readw(host, SDHCI_COMMAND)) ==
+> -		    MMC_SEND_TUNING_BLOCK) {
+> +		command = SDHCI_GET_CMD(sdhci_readw(host, SDHCI_COMMAND));
+> +		if ((command == MMC_SEND_TUNING_BLOCK) ||
+> +		    (command == MMC_SEND_TUNING_BLOCK_HS200)) {
+> 			host->tuning_done = 1;
+> 			wake_up(&host->buf_ready_int);
+> 			return;
+> @@ -2741,6 +2760,10 @@ int sdhci_add_host(struct sdhci_host *host)
+> 	if (caps[1] & SDHCI_USE_SDR50_TUNING)
+> 		host->flags |= SDHCI_SDR50_NEEDS_TUNING;
+> 
+> +	/* Does the host needs tuning for HS200? */
+> +	if (mmc->caps2 & MMC_CAP2_HS200)
+> +		host->flags |= SDHCI_HS200_NEEDS_TUNING;
+> +
+> 	/* Driver Type(s) (A, C, D) supported by the host */
+> 	if (caps[1] & SDHCI_DRIVER_TYPE_A)
+> 		mmc->caps |= MMC_CAP_DRIVER_TYPE_A;
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index a04d4d0..46fd2ac 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -158,6 +158,7 @@
+> #define   SDHCI_CTRL_UHS_SDR50		0x0002
+> #define   SDHCI_CTRL_UHS_SDR104		0x0003
+> #define   SDHCI_CTRL_UHS_DDR50		0x0004
+> +#define   SDHCI_CTRL_HS_SDR200		0x0005 /*reserved value in SDIO spec */
+> #define  SDHCI_CTRL_VDD_180		0x0008
+> #define  SDHCI_CTRL_DRV_TYPE_MASK	0x0030
+> #define   SDHCI_CTRL_DRV_TYPE_B		0x0000
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 9a03d03..606c8c3 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -56,10 +56,13 @@ struct mmc_ios {
+> #define MMC_TIMING_UHS_SDR50	3
+> #define MMC_TIMING_UHS_SDR104	4
+> #define MMC_TIMING_UHS_DDR50	5
+> +#define MMC_TIMING_MMC_HS200	6
+> 
+> #define MMC_SDR_MODE		0
+> #define MMC_1_2V_DDR_MODE	1
+> #define MMC_1_8V_DDR_MODE	2
+> +#define MMC_1_2V_SDR_MODE	3
+> +#define MMC_1_8V_SDR_MODE	4
+> 
+> 	unsigned char	signal_voltage;		/* signalling voltage (1.8V or 3.3V) */
+> 
+> @@ -148,7 +151,9 @@ struct mmc_host_ops {
+> 	void	(*init_card)(struct mmc_host *host, struct mmc_card *card);
+> 
+> 	int	(*start_signal_voltage_switch)(struct mmc_host *host, struct mmc_ios *ios);
+> -	int	(*execute_tuning)(struct mmc_host *host);
+> +
+> +	/* The tuning command opcode value is different for SD and eMMC cards */
+> +	int	(*execute_tuning)(struct mmc_host *host, u32 opcode);
+> 	void	(*enable_preset_value)(struct mmc_host *host, bool enable);
+> 	int	(*select_drive_strength)(unsigned int max_dtr, int host_drv, int card_drv);
+> 	void	(*hw_reset)(struct mmc_host *host);
+> @@ -242,6 +247,10 @@ struct mmc_host {
+> #define MMC_CAP2_CACHE_CTRL	(1 << 1)	/* Allow cache control */
+> #define MMC_CAP2_POWEROFF_NOTIFY (1 << 2)	/* Notify poweroff supported */
+> #define MMC_CAP2_NO_MULTI_READ	(1 << 3)	/* Multiblock reads don't work */
+> +#define MMC_CAP2_HS200_1_8V_SDR	(1 << 4)	/* can support */
+> +#define MMC_CAP2_HS200_1_2V_SDR	(1 << 5)	/* can support */
+> +#define MMC_CAP2_HS200		(MMC_CAP2_HS200_1_8V_SDR | \
+> +				 MMC_CAP2_HS200_1_2V_SDR)
+> 
+> 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+> 	unsigned int        power_notify_type;
+> diff --git a/include/linux/mmc/sdhci.h b/include/linux/mmc/sdhci.h
+> index e4b6935..d9a2222 100644
+> --- a/include/linux/mmc/sdhci.h
+> +++ b/include/linux/mmc/sdhci.h
+> @@ -121,6 +121,7 @@ struct sdhci_host {
+> #define SDHCI_AUTO_CMD23	(1<<7)	/* Auto CMD23 support */
+> #define SDHCI_PV_ENABLED	(1<<8)	/* Preset value enabled */
+> #define SDHCI_SDIO_IRQ_ENABLED	(1<<9)	/* SDIO irq enabled */
+> +#define SDHCI_HS200_NEEDS_TUNING (1<<10)	/* HS200 needs tuning */
+> 
+> 	unsigned int version;	/* SDHCI spec. version */
+> 
+> -- 
+> 1.7.1
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
