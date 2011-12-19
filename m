@@ -1,87 +1,65 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] ARM: restart: move SWRST based S3C platforms to machine_desc hook
-Date: Mon, 19 Dec 2011 13:58:25 +0100
-Message-ID: <201112191358.26307.heiko@sntech.de>
-References: <03dc01ccbe45$80633d30$8129b790$%kim@samsung.com> <201112191325.56090.heiko@sntech.de> <03de01ccbe4b$a8a5bb00$f9f13100$%kim@samsung.com>
+Subject: [PATCH v3 0/7] s3c-hsudc: regulator handling and a lot of fixes
+Date: Mon, 19 Dec 2011 14:23:21 +0100
+Message-ID: <201112191423.21461.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:35893 "EHLO
+Received: from h1778886.stratoserver.net ([85.214.133.74]:44027 "EHLO
 	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752211Ab1LSM6e convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1752270Ab1LSNXh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Dec 2011 07:58:34 -0500
-In-Reply-To: <03de01ccbe4b$a8a5bb00$f9f13100$%kim@samsung.com>
+	Mon, 19 Dec 2011 08:23:37 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>, rmk+kernel@arm.linux.org.uk
+To: Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-Am Montag, 19. Dezember 2011, 13:42:24 schrieb Kukjin Kim:
-> Heiko St=FCbner wrote:
-> > S3C2412/S3C2416/S3C2443 use a special register to signal the reset =
-to
-> > the processor and used therefore the s3c24xx_reset_hook mechanism i=
-n the
-> > s3c24xx-specific arch reset.
-> >=20
-> > This patch introduces restart functions for these architectures,
-> > moves the board files to them and removes the s3c24xx_reset_hook
-> > infrastructure, as all users are gone.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> > @Kgene: This is my first cleanup step, done before your s3c64xx mai=
-l
-> > arrived,
-> > which transforms the 2412,2416 and 2443 arches which use the specia=
-l
-> > SWRST register to do the reset. Just if it helps :-)
->=20
-> Heiko, thanks.
->=20
-> I'm looking at S5P SoCs now and of course this helps. And if possible=
-, let
-> me do it with this.
->
-> As a note, we need to implement local header file before using new re=
-start
-> hook and I'm thinking which one is better to us between all s3c24xx S=
-oCs'
-> common or each mach-s3c24xx's one.
-=46or the three arches in the patch I put the function declaration into
-s3c2412.h/s3c2416.h/s3c2443.h . They all use a SWRST register, but its
-position and the value needed to be written to it differs for each SoC,=
- so
-they need to be separate like in the patch.
-So these three arches do not seem to need a new header and seem to be o=
-k
-with this patch.
+In his response to the first submission Felipe Balbi asked to also move
+the driver to the new udc_start and udc_stop functions and to make an
+effort to reduce dependencies on archictecture code.
+
+v3 of the series does not try to provide a remove function, due to the
+possible lifetime problem of gadget.dev found by Russel King.
+
+The first patch reduces the number of arch dependencies by one by moving
+the platform data struct to a header unter include/linux/usb.
+
+The fourth and fifth patches implement the move to udc_start / udc_stop
+
+And the sixt patch finally allows the s3c-hsudc driver to control its
+supplying regulators as intended in the first place.
+
+The regulator calls can use the regulators unconditionally and let
+necessary "stubbing and mapping" happen through the regulator framework,
+according to for example
+http://marc.info/?l=linux-netdev&m=131914562120725&w=2
+meaning there is no need to gracefully fail if a regulator is not present.
 
 
-The other two S3C24xx-arches (s3c2410 and s3c2440) all use arch_wdt_res=
-et
-to do the reset, so I thought about declaring a=20
+Each patch was compile-tested individually, the series applies cleanly
+against linux-next from 2011-12-16.
 
-void s3c24xx_default_restart(char mode, const char *cmd)
-{
-	if (mode =3D=3D 's') {
-		soft_restart(0);
-	}
+Real-life testing happened on S3C2416 hardware.
 
-	arch_wdt_reset();
+Heiko Stuebner (7):
+  s3c-hsudc: move platform_data struct to global header
+  s3c-hsudc: add __devinit to probe function
+  s3c-hsudc: add missing otg_put_transceiver in probe
+  s3c-hsudc: move device registration to probe
+  s3c-hsudc: use udc_start and udc_stop functions
+  s3c-hsudc: Add regulator handling
+  s3c-hsudc: use release_mem_region instead of release_resource
 
-	/* we'll take a jump through zero as a poor second */
-	soft_restart(0);
-}
+ arch/arm/mach-s3c2416/mach-smdk2416.c    |    1 +
+ arch/arm/plat-samsung/devs.c             |    1 +
+ arch/arm/plat-samsung/include/plat/udc.h |   15 +----
+ drivers/usb/gadget/s3c-hsudc.c           |  109 +++++++++++++++++-------------
+ include/linux/usb/s3c-hsudc.h            |   34 +++++++++
+ 5 files changed, 100 insertions(+), 60 deletions(-)
+ create mode 100644 include/linux/usb/s3c-hsudc.h
 
-for these.
-
-I thought about putting it into plat-s3c24xx/cpu.c and its extern
-declaration into plat-samsung/include/plat/cpu.h, but I'm not really su=
-re
-if this would be the correct location.
-
-
-Heiko
+-- 
+1.7.5.4
