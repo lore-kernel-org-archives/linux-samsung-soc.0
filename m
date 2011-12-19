@@ -1,84 +1,68 @@
-From: Philip Rakity <prakity@marvell.com>
-Subject: Re: [PATCH] mmc: core: Fix voltage select in DDR mode
-Date: Mon, 19 Dec 2011 09:19:33 -0800
-Message-ID: <4B285605-295A-4C43-A60D-777C5D6EA4CB@marvell.com>
-References: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
- <000001ccbb4b$e65ce250$b316a6f0$@org>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: [PATCH v4 0/8] s3c-hsudc: regulator handling and a lot of fixes
+Date: Mon, 19 Dec 2011 19:38:21 +0100
+Message-ID: <201112191938.22254.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog121.obsmtp.com ([74.125.149.145]:34301 "EHLO
-	na3sys009aog121.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752217Ab1LSRWn convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Dec 2011 12:22:43 -0500
-In-Reply-To: <000001ccbb4b$e65ce250$b316a6f0$@org>
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Subhash Jadavani <subhashj@codeaurora.org>
-Cc: Girish K S <girish.shivananjappa@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Arindam Nath <arindam.nath@amd.com>, Chris Ball <cjb@laptop.org>
+
+In his response to the first submission Felipe Balbi asked to also move
+the driver to the new udc_start and udc_stop functions and to make an
+effort to reduce dependencies on archictecture code.
+
+v3 of the series does not try to provide a remove function, due to the
+possible lifetime problem of gadget.dev found by Russel King.
+
+v4 also gets rid of the the_controller global and uses container_of instead
+and moves the platform-data header to include/linux/platform_data.
+
+The first patch reduces the number of arch dependencies by one by moving
+the platform data struct to a header unter include/linux/usb.
+
+The fourth and fifth patches implement the move to udc_start / udc_stop
+
+And the sixt patch finally allows the s3c-hsudc driver to control its
+supplying regulators as intended in the first place.
+
+The regulator calls can use the regulators unconditionally and let
+necessary "stubbing and mapping" happen through the regulator framework,
+according to for example
+http://marc.info/?l=linux-netdev&m=131914562120725&w=2
+meaning there is no need to gracefully fail if a regulator is not present.
 
 
-On Dec 15, 2011, at 9:06 AM, Subhash Jadavani wrote:
+Each patch was compile-tested individually, the series applies cleanly
+against linux-next from 2011-12-16.
 
-> 
-> 
->> -----Original Message-----
->> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
->> owner@vger.kernel.org] On Behalf Of Girish K S
->> Sent: Thursday, December 15, 2011 5:28 PM
->> To: linux-mmc@vger.kernel.org
->> Cc: patches@linaro.org; linux-samsung-soc@vger.kernel.org; Girish K S;
->> Philip Rakity; Arindam Nath; Chris Ball
->> Subject: [PATCH] mmc: core: Fix voltage select in DDR mode
->> 
->> This patch fixes the wrong comparison before setting the interface
->> voltage in DDR mode.
->> 
->> The assignment to the variable ddr before comaprison is either
->> ddr = MMC_1_2V_DDR_MODE; or ddr == MMC_1_8V_DDR_MODE. But the
->> comparison
->> is done wth the extended csd value if (ddr ==
->> EXT_CSD_CARD_TYPE_DDR_1_2V)
->> 
->> cc: Philip Rakity <prakity@marvell.com>
->> cc: Arindam Nath <arindam.nath@amd.com>
->> cc: Chris Ball <cjb@laptop.org>
->> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
->> ---
->> drivers/mmc/core/mmc.c |    2 +-
->> 1 files changed, 1 insertions(+), 1 deletions(-)
->> 
->> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> index 006e932..f0a9f1f 100644
->> --- a/drivers/mmc/core/mmc.c
->> +++ b/drivers/mmc/core/mmc.c
->> @@ -1058,7 +1058,7 @@ static int mmc_init_card(struct mmc_host *host,
->> u32 ocr,
->> 			 *
->> 			 * WARNING: eMMC rules are NOT the same as SD DDR
->> 			 */
->> -			if (ddr == EXT_CSD_CARD_TYPE_DDR_1_2V) {
->> +			if (ddr == MMC_1_2V_DDR_MODE) {
-> 
-> Looks fine. 
-> Acked-by: Subhash Jadavani <subhashj@codeaurora.org>
+Real-life testing happened on S3C2416 hardware.
+Heiko Stuebner (8):
+  s3c-hsudc: move platform_data struct to global header
+  s3c-hsudc: add __devinit to probe function
+  s3c-hsudc: add missing otg_put_transceiver in probe
+  s3c-hsudc: move device registration to probe
+  s3c-hsudc: use udc_start and udc_stop functions
+  s3c-hsudc: Add regulator handling
+  s3c-hsudc: use release_mem_region instead of release_resource
+  s3c-hsudc: remove the_controller global
 
-Acked-by: Philip Rakity <prakity@marvell.com>
+ arch/arm/mach-s3c2416/mach-smdk2416.c    |    1 +
+ arch/arm/plat-samsung/devs.c             |    1 +
+ arch/arm/plat-samsung/include/plat/udc.h |   15 +----
+ drivers/usb/gadget/s3c-hsudc.c           |  120 +++++++++++++++++-------------
+ include/linux/platform_data/s3c-hsudc.h  |   34 +++++++++
+ 5 files changed, 106 insertions(+), 65 deletions(-)
+ create mode 100644 include/linux/platform_data/s3c-hsudc.h
 
-NOTE:  standard sdhci controller (version 3.0) does not support 1.2v signaling.
+-- 
+1.7.2.3
 
-> 
->> 				err = mmc_set_signal_voltage(host,
->> 					MMC_SIGNAL_VOLTAGE_120, 0);
->> 				if (err)
->> --
->> 1.7.1
->> 
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
