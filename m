@@ -1,16 +1,16 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 01/12] ARM: S3C64XX: introduce arch/arm/mach-s3c64xx/common.[ch]
-Date: Tue, 20 Dec 2011 21:48:25 +0900
-Message-ID: <1324385316-6052-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 03/12] ARM: S5P64X0: introduce arch/arm/mach-s5p64x0/common.[ch]
+Date: Tue, 20 Dec 2011 21:48:27 +0900
+Message-ID: <1324385316-6052-4-git-send-email-kgene.kim@samsung.com>
 References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-iy0-f174.google.com ([209.85.210.174]:60442 "EHLO
 	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751224Ab1LTMsx (ORCPT
+	with ESMTP id S1751264Ab1LTMtD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Dec 2011 07:48:53 -0500
+	Tue, 20 Dec 2011 07:49:03 -0500
 Received: by mail-iy0-f174.google.com with SMTP id h11so10232596iae.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Dec 2011 04:48:53 -0800 (PST)
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Dec 2011 04:49:03 -0800 (PST)
 In-Reply-To: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -18,617 +18,952 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: Kukjin Kim <kgene.kim@samsung.com>, rmk+kernel@arm.linux.org.uk, ben-linux@fluff.org
 
 This patch introduces common.[ch] which are used only in the
-arch/arm/mach-s3c64xx/ directory. The common.c file merges
-the cpu.c, irq.c and irq-eint.c which are used commonly on
-S3C64XX SoCs and the common.h file replaces with plat/s3c6400.h
-and plat/s3c6410.h files.
+arch/arm/mach-s5p64x0/ directory. The common.c file merges
+the cpu.c, init.c and irq-eint.c files which are used commonly
+on S5P64X0 SoCs and the common.h local header file replaces
+with plat/s5p6440.h and plat/s5p6450.h files.
 
 Cc: Ben Dooks <ben-linux@fluff.org>
 Cc: Russell King <rmk+kernel@arm.linux.org.uk>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c64xx/Makefile                 |   65 ++++-----
- arch/arm/mach-s3c64xx/clock.c                  |    4 +-
- arch/arm/mach-s3c64xx/{irq-eint.c => common.c} |  182 ++++++++++++++++++++++--
- arch/arm/mach-s3c64xx/common.h                 |   55 +++++++
- arch/arm/mach-s3c64xx/cpu.c                    |  161 ---------------------
- arch/arm/mach-s3c64xx/irq.c                    |   47 ------
- arch/arm/mach-s3c64xx/mach-anw6410.c           |    3 +-
- arch/arm/mach-s3c64xx/mach-crag6410.c          |    3 +-
- arch/arm/mach-s3c64xx/mach-hmt.c               |    3 +-
- arch/arm/mach-s3c64xx/mach-mini6410.c          |    3 +-
- arch/arm/mach-s3c64xx/mach-ncp.c               |    3 +-
- arch/arm/mach-s3c64xx/mach-real6410.c          |    3 +-
- arch/arm/mach-s3c64xx/mach-smartq.c            |    2 +
- arch/arm/mach-s3c64xx/mach-smartq5.c           |    2 +-
- arch/arm/mach-s3c64xx/mach-smartq7.c           |    2 +-
- arch/arm/mach-s3c64xx/mach-smdk6400.c          |    3 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c          |    3 +-
- arch/arm/mach-s3c64xx/s3c6400.c                |    5 +-
- arch/arm/mach-s3c64xx/s3c6410.c                |    6 +-
- arch/arm/plat-samsung/include/plat/cpu.h       |    4 -
- arch/arm/plat-samsung/include/plat/s3c6400.h   |   36 -----
- arch/arm/plat-samsung/include/plat/s3c6410.h   |   29 ----
- 22 files changed, 285 insertions(+), 339 deletions(-)
- rename arch/arm/mach-s3c64xx/{irq-eint.c => common.c} (51%)
- create mode 100644 arch/arm/mach-s3c64xx/common.h
- delete mode 100644 arch/arm/mach-s3c64xx/cpu.c
- delete mode 100644 arch/arm/mach-s3c64xx/irq.c
- delete mode 100644 arch/arm/plat-samsung/include/plat/s3c6400.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/s3c6410.h
+ arch/arm/mach-s5p64x0/Makefile               |    9 +-
+ arch/arm/mach-s5p64x0/clock-s5p6440.c        |    3 +-
+ arch/arm/mach-s5p64x0/clock-s5p6450.c        |    3 +-
+ arch/arm/mach-s5p64x0/clock.c                |    4 +-
+ arch/arm/mach-s5p64x0/common.c               |  459 ++++++++++++++++++++++++++
+ arch/arm/mach-s5p64x0/common.h               |   55 +++
+ arch/arm/mach-s5p64x0/cpu.c                  |  215 ------------
+ arch/arm/mach-s5p64x0/init.c                 |   73 ----
+ arch/arm/mach-s5p64x0/irq-eint.c             |  155 ---------
+ arch/arm/mach-s5p64x0/mach-smdk6440.c        |    5 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c        |    5 +-
+ arch/arm/plat-s5p/cpu.c                      |   20 --
+ arch/arm/plat-samsung/include/plat/s5p6440.h |   36 --
+ arch/arm/plat-samsung/include/plat/s5p6450.h |   36 --
+ 14 files changed, 532 insertions(+), 546 deletions(-)
+ create mode 100644 arch/arm/mach-s5p64x0/common.c
+ create mode 100644 arch/arm/mach-s5p64x0/common.h
+ delete mode 100644 arch/arm/mach-s5p64x0/cpu.c
+ delete mode 100644 arch/arm/mach-s5p64x0/init.c
+ delete mode 100644 arch/arm/mach-s5p64x0/irq-eint.c
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s5p6440.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/s5p6450.h
 
-diff --git a/arch/arm/mach-s3c64xx/Makefile b/arch/arm/mach-s3c64xx/Makefile
-index cfc0b99..f37016c 100644
---- a/arch/arm/mach-s3c64xx/Makefile
-+++ b/arch/arm/mach-s3c64xx/Makefile
-@@ -10,54 +10,49 @@ obj-m				:=
+diff --git a/arch/arm/mach-s5p64x0/Makefile b/arch/arm/mach-s5p64x0/Makefile
+index a1324d8..d3f7409 100644
+--- a/arch/arm/mach-s5p64x0/Makefile
++++ b/arch/arm/mach-s5p64x0/Makefile
+@@ -10,14 +10,16 @@ obj-m				:=
  obj-n				:=
  obj-				:=
  
--# Core files
--obj-y				+= cpu.o
--obj-y				+= clock.o
+-# Core support for S5P64X0 system
 +# Core
  
--# Core support for S3C6400 system
+-obj-$(CONFIG_ARCH_S5P64X0)	+= cpu.o init.o clock.o dma.o
+-obj-$(CONFIG_ARCH_S5P64X0)	+= setup-i2c0.o irq-eint.o
 +obj-y				+= common.o clock.o
+ obj-$(CONFIG_CPU_S5P6440)	+= clock-s5p6440.o
+ obj-$(CONFIG_CPU_S5P6450)	+= clock-s5p6450.o
 +
-+# Core support
+ obj-$(CONFIG_PM)		+= pm.o irq-pm.o
  
- obj-$(CONFIG_CPU_S3C6400)	+= s3c6400.o
- obj-$(CONFIG_CPU_S3C6410)	+= s3c6410.o
- 
--obj-y				+= irq.o
--obj-y				+= irq-eint.o
-+# PM
++obj-y				+= dma.o
 +
-+obj-$(CONFIG_PM)		+= pm.o irq-pm.o sleep.o
+ # machine support
  
- # DMA support
+ obj-$(CONFIG_MACH_SMDK6440)	+= mach-smdk6440.o
+@@ -28,5 +30,6 @@ obj-$(CONFIG_MACH_SMDK6450)	+= mach-smdk6450.o
+ obj-y				+= dev-audio.o
+ obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
  
- obj-$(CONFIG_S3C64XX_DMA)	+= dma.o
- 
--# Device setup
-+# Device support
- 
--obj-$(CONFIG_S3C64XX_SETUP_I2C0) += setup-i2c0.o
--obj-$(CONFIG_S3C64XX_SETUP_I2C1) += setup-i2c1.o
--obj-$(CONFIG_S3C64XX_SETUP_IDE) += setup-ide.o
--obj-$(CONFIG_S3C64XX_SETUP_KEYPAD) += setup-keypad.o
--obj-$(CONFIG_S3C64XX_SETUP_SDHCI) += setup-sdhci.o
--obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP) += setup-fb-24bpp.o
--obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO) += setup-sdhci-gpio.o
-+obj-y				+= dev-uart.o
-+obj-y				+= dev-audio.o
-+obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
- 
--# PM
-+# Device setup
- 
--obj-$(CONFIG_PM)		+= pm.o
--obj-$(CONFIG_PM)		+= sleep.o
--obj-$(CONFIG_PM)		+= irq-pm.o
-+obj-$(CONFIG_S3C64XX_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
-+obj-$(CONFIG_S3C64XX_SETUP_I2C0)	+= setup-i2c0.o
-+obj-$(CONFIG_S3C64XX_SETUP_I2C1)	+= setup-i2c1.o
-+obj-$(CONFIG_S3C64XX_SETUP_IDE)		+= setup-ide.o
-+obj-$(CONFIG_S3C64XX_SETUP_KEYPAD)	+= setup-keypad.o
-+obj-$(CONFIG_S3C64XX_SETUP_SDHCI)	+= setup-sdhci.o
-+obj-$(CONFIG_S3C64XX_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
- 
- # Machine support
- 
--obj-$(CONFIG_MACH_ANW6410)	+= mach-anw6410.o
--obj-$(CONFIG_MACH_SMDK6400)	+= mach-smdk6400.o
--obj-$(CONFIG_MACH_SMDK6410)	+= mach-smdk6410.o
--obj-$(CONFIG_MACH_REAL6410)     += mach-real6410.o
--obj-$(CONFIG_MACH_MINI6410)     += mach-mini6410.o
--obj-$(CONFIG_MACH_NCP)		+= mach-ncp.o
--obj-$(CONFIG_MACH_HMT)		+= mach-hmt.o
--obj-$(CONFIG_MACH_SMARTQ)	+= mach-smartq.o
--obj-$(CONFIG_MACH_SMARTQ5)	+= mach-smartq5.o
--obj-$(CONFIG_MACH_SMARTQ7)	+= mach-smartq7.o
--obj-$(CONFIG_MACH_WLF_CRAGG_6410) += mach-crag6410.o mach-crag6410-module.o
--
--# device support
--
--obj-y				+= dev-uart.o
--obj-y				+= dev-audio.o
--obj-$(CONFIG_S3C64XX_DEV_SPI)	+= dev-spi.o
-+obj-$(CONFIG_MACH_ANW6410)		+= mach-anw6410.o
-+obj-$(CONFIG_MACH_HMT)			+= mach-hmt.o
-+obj-$(CONFIG_MACH_MINI6410)		+= mach-mini6410.o
-+obj-$(CONFIG_MACH_NCP)			+= mach-ncp.o
-+obj-$(CONFIG_MACH_REAL6410)		+= mach-real6410.o
-+obj-$(CONFIG_MACH_SMARTQ)		+= mach-smartq.o
-+obj-$(CONFIG_MACH_SMARTQ5)		+= mach-smartq5.o
-+obj-$(CONFIG_MACH_SMARTQ7)		+= mach-smartq7.o
-+obj-$(CONFIG_MACH_SMDK6400)		+= mach-smdk6400.o
-+obj-$(CONFIG_MACH_SMDK6410)		+= mach-smdk6410.o
-+obj-$(CONFIG_MACH_WLF_CRAGG_6410)	+= mach-crag6410.o mach-crag6410-module.o
-diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
-index 39c238d..625219b 100644
---- a/arch/arm/mach-s3c64xx/clock.c
-+++ b/arch/arm/mach-s3c64xx/clock.c
-@@ -705,7 +705,7 @@ static struct clksrc_clk *init_parents[] = {
- 
- #define GET_DIV(clk, field) ((((clk) & field##_MASK) >> field##_SHIFT) + 1)
- 
--void __init_or_cpufreq s3c6400_setup_clocks(void)
-+void __init_or_cpufreq s3c64xx_setup_clocks(void)
- {
- 	struct clk *xtal_clk;
- 	unsigned long xtal;
-@@ -804,7 +804,7 @@ static struct clk *clks[] __initdata = {
-  * as ARMCLK as well as the necessary parent clocks.
-  *
-  * This call does not setup the clocks, which is left to the
-- * s3c6400_setup_clocks() call which may be needed by the cpufreq
-+ * s3c64xx_setup_clocks() call which may be needed by the cpufreq
-  * or resume code to re-set the clocks if the bootloader has changed
-  * them.
-  */
-diff --git a/arch/arm/mach-s3c64xx/irq-eint.c b/arch/arm/mach-s3c64xx/common.c
-similarity index 51%
-rename from arch/arm/mach-s3c64xx/irq-eint.c
-rename to arch/arm/mach-s3c64xx/common.c
-index 4d203be..8ae5b16 100644
---- a/arch/arm/mach-s3c64xx/irq-eint.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -1,11 +1,13 @@
--/* arch/arm/plat-s3c64xx/irq-eint.c
-+/*
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-  *
-  * Copyright 2008 Openmoko, Inc.
-  * Copyright 2008 Simtec Electronics
-- *      Ben Dooks <ben@simtec.co.uk>
-- *      http://armlinux.simtec.co.uk/
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *	http://armlinux.simtec.co.uk/
-  *
-- * S3C64XX - Interrupt handling for IRQ_EINT(x)
-+ * Common Codes for S3C64XX machines
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-@@ -13,21 +15,182 @@
-  */
- 
- #include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
- #include <linux/interrupt.h>
-+#include <linux/ioport.h>
- #include <linux/sysdev.h>
--#include <linux/gpio.h>
--#include <linux/irq.h>
-+#include <linux/serial_core.h>
-+#include <linux/platform_device.h>
- #include <linux/io.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/irq.h>
-+#include <linux/gpio.h>
- 
-+#include <asm/mach/arch.h>
-+#include <asm/mach/map.h>
- #include <asm/hardware/vic.h>
- 
--#include <plat/regs-irqtype.h>
-+#include <mach/map.h>
-+#include <mach/hardware.h>
- #include <mach/regs-gpio.h>
--#include <plat/gpio-cfg.h>
- 
--#include <mach/map.h>
- #include <plat/cpu.h>
-+#include <plat/clock.h>
-+#include <plat/devs.h>
- #include <plat/pm.h>
-+#include <plat/gpio-cfg.h>
-+#include <plat/irq-uart.h>
-+#include <plat/irq-vic-timer.h>
-+#include <plat/regs-irqtype.h>
-+#include <plat/regs-serial.h>
++obj-y					+= setup-i2c0.o
+ obj-$(CONFIG_S5P64X0_SETUP_I2C1)	+= setup-i2c1.o
+ obj-$(CONFIG_S5P64X0_SETUP_FB_24BPP)	+= setup-fb-24bpp.o
+diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+index c54c65d..dd2b8da 100644
+--- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
++++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+@@ -31,7 +31,8 @@
+ #include <plat/pll.h>
+ #include <plat/s5p-clock.h>
+ #include <plat/clock-clksrc.h>
+-#include <plat/s5p6440.h>
 +
 +#include "common.h"
-+
-+/* uart registration process */
-+
-+void __init s3c64xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
-+{
-+	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
-+}
-+
-+/* table of supported CPUs */
-+
-+static const char name_s3c6400[] = "S3C6400";
-+static const char name_s3c6410[] = "S3C6410";
-+
-+static struct cpu_table cpu_ids[] __initdata = {
-+	{
-+		.idcode		= S3C6400_CPU_ID,
-+		.idmask		= S3C64XX_CPU_MASK,
-+		.map_io		= s3c6400_map_io,
-+		.init_clocks	= s3c6400_init_clocks,
-+		.init_uarts	= s3c64xx_init_uarts,
-+		.init		= s3c6400_init,
-+		.name		= name_s3c6400,
-+	}, {
-+		.idcode		= S3C6410_CPU_ID,
-+		.idmask		= S3C64XX_CPU_MASK,
-+		.map_io		= s3c6410_map_io,
-+		.init_clocks	= s3c6410_init_clocks,
-+		.init_uarts	= s3c64xx_init_uarts,
-+		.init		= s3c6410_init,
-+		.name		= name_s3c6410,
-+	},
-+};
-+
-+/* minimal IO mapping */
-+
-+/* see notes on uart map in arch/arm/mach-s3c64xx/include/mach/debug-macro.S */
-+#define UART_OFFS (S3C_PA_UART & 0xfffff)
-+
-+static struct map_desc s3c_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S3C_VA_SYS,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_SYSCON),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_MEM,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_SROM),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)(S3C_VA_UART + UART_OFFS),
-+		.pfn		= __phys_to_pfn(S3C_PA_UART),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC0,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC0),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)VA_VIC1,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC1),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_TIMER,
-+		.pfn		= __phys_to_pfn(S3C_PA_TIMER),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C64XX_VA_GPIO,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_GPIO),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C64XX_VA_MODEM,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_MODEM),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_WATCHDOG),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
-+		.pfn		= __phys_to_pfn(S3C64XX_PA_USB_HSPHY),
-+		.length		= SZ_1K,
-+		.type		= MT_DEVICE,
-+	},
-+};
-+
-+struct sysdev_class s3c64xx_sysclass = {
-+	.name	= "s3c64xx-core",
-+};
-+
-+static struct sys_device s3c64xx_sysdev = {
-+	.cls	= &s3c64xx_sysclass,
-+};
-+
-+/* read cpu identification code */
-+
-+void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
-+{
-+	/* initialise the io descriptors we need for initialisation */
-+	iotable_init(s3c_iodesc, ARRAY_SIZE(s3c_iodesc));
-+	iotable_init(mach_desc, size);
-+	init_consistent_dma_size(SZ_8M);
-+
-+	/* detect cpu id */
-+	s3c64xx_init_cpu();
-+
-+	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
-+}
-+
-+static __init int s3c64xx_sysdev_init(void)
-+{
-+	sysdev_class_register(&s3c64xx_sysclass);
-+	return sysdev_register(&s3c64xx_sysdev);
-+}
-+core_initcall(s3c64xx_sysdev_init);
-+
-+/*
-+ * setup the sources the vic should advertise resume
-+ * for, even though it is not doing the wake
-+ * (set_irq_wake needs to be valid)
-+ */
-+#define IRQ_VIC0_RESUME (1 << (IRQ_RTC_TIC - IRQ_VIC0_BASE))
-+#define IRQ_VIC1_RESUME (1 << (IRQ_RTC_ALARM - IRQ_VIC1_BASE) |	\
-+			 1 << (IRQ_PENDN - IRQ_VIC1_BASE) |	\
-+			 1 << (IRQ_HSMMC0 - IRQ_VIC1_BASE) |	\
-+			 1 << (IRQ_HSMMC1 - IRQ_VIC1_BASE) |	\
-+			 1 << (IRQ_HSMMC2 - IRQ_VIC1_BASE))
-+
-+void __init s3c64xx_init_irq(u32 vic0_valid, u32 vic1_valid)
-+{
-+	printk(KERN_DEBUG "%s: initialising interrupts\n", __func__);
-+
-+	/* initialise the pair of VICs */
-+	vic_init(VA_VIC0, IRQ_VIC0_BASE, vic0_valid, IRQ_VIC0_RESUME);
-+	vic_init(VA_VIC1, IRQ_VIC1_BASE, vic1_valid, IRQ_VIC1_RESUME);
-+
-+	/* add the timer sub-irqs */
-+	s3c_init_vic_timer_irq(5, IRQ_TIMER0);
-+}
  
- #define eint_offset(irq)	((irq) - IRQ_EINT(0))
- #define eint_irq_to_bit(irq)	((u32)(1 << eint_offset(irq)))
-@@ -209,5 +372,4 @@ static int __init s3c64xx_init_irq_eint(void)
+ static u32 epll_div[][5] = {
+ 	{ 36000000,	0,	48, 1, 4 },
+diff --git a/arch/arm/mach-s5p64x0/clock-s5p6450.c b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+index 2d04abf..328a224 100644
+--- a/arch/arm/mach-s5p64x0/clock-s5p6450.c
++++ b/arch/arm/mach-s5p64x0/clock-s5p6450.c
+@@ -31,7 +31,8 @@
+ #include <plat/pll.h>
+ #include <plat/s5p-clock.h>
+ #include <plat/clock-clksrc.h>
+-#include <plat/s5p6450.h>
++
++#include "common.h"
  
- 	return 0;
- }
--
- arch_initcall(s3c64xx_init_irq_eint);
-diff --git a/arch/arm/mach-s3c64xx/common.h b/arch/arm/mach-s3c64xx/common.h
+ static struct clksrc_clk clk_mout_dpll = {
+ 	.clk	= {
+diff --git a/arch/arm/mach-s5p64x0/clock.c b/arch/arm/mach-s5p64x0/clock.c
+index b52c6e2..b289b72 100644
+--- a/arch/arm/mach-s5p64x0/clock.c
++++ b/arch/arm/mach-s5p64x0/clock.c
+@@ -30,8 +30,8 @@
+ #include <plat/pll.h>
+ #include <plat/s5p-clock.h>
+ #include <plat/clock-clksrc.h>
+-#include <plat/s5p6440.h>
+-#include <plat/s5p6450.h>
++
++#include "common.h"
+ 
+ struct clksrc_clk clk_mout_apll = {
+ 	.clk	= {
+diff --git a/arch/arm/mach-s5p64x0/common.c b/arch/arm/mach-s5p64x0/common.c
 new file mode 100644
-index 0000000..9f523a2
+index 0000000..af02dc3
 --- /dev/null
-+++ b/arch/arm/mach-s3c64xx/common.h
-@@ -0,0 +1,55 @@
++++ b/arch/arm/mach-s5p64x0/common.c
+@@ -0,0 +1,459 @@
 +/*
-+ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2009-2011 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com
 + *
-+ * Copyright 2008 Openmoko, Inc.
-+ * Copyright 2008 Simtec Electronics
-+ *	Ben Dooks <ben@simtec.co.uk>
-+ *	http://armlinux.simtec.co.uk/
-+ *
-+ * Common Header for S3C64XX machines
++ * Common Codes for S5P64X0 machines
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + */
 +
-+#ifndef __ARCH_ARM_MACH_S3C64XX_COMMON_H
-+#define __ARCH_ARM_MACH_S3C64XX_COMMON_H
++#include <linux/kernel.h>
++#include <linux/types.h>
++#include <linux/interrupt.h>
++#include <linux/list.h>
++#include <linux/timer.h>
++#include <linux/init.h>
++#include <linux/clk.h>
++#include <linux/io.h>
++#include <linux/sysdev.h>
++#include <linux/serial_core.h>
++#include <linux/platform_device.h>
++#include <linux/sched.h>
++#include <linux/dma-mapping.h>
++#include <linux/gpio.h>
++#include <linux/irq.h>
 +
-+void s3c64xx_init_irq(u32 vic0, u32 vic1);
-+void s3c64xx_init_io(struct map_desc *mach_desc, int size);
++#include <asm/irq.h>
++#include <asm/proc-fns.h>
++#include <asm/mach/arch.h>
++#include <asm/mach/map.h>
++#include <asm/mach/irq.h>
 +
-+void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
-+void s3c64xx_setup_clocks(void);
++#include <mach/map.h>
++#include <mach/hardware.h>
++#include <mach/regs-clock.h>
++#include <mach/regs-gpio.h>
 +
-+extern struct syscore_ops s3c64xx_irq_syscore_ops;
-+extern struct sysdev_class s3c64xx_sysclass;
++#include <plat/cpu.h>
++#include <plat/clock.h>
++#include <plat/devs.h>
++#include <plat/pm.h>
++#include <plat/adc-core.h>
++#include <plat/fb-core.h>
++#include <plat/gpio-cfg.h>
++#include <plat/regs-irqtype.h>
++#include <plat/regs-serial.h>
 +
-+#ifdef CONFIG_CPU_S3C6400
++#include "common.h"
 +
-+extern  int s3c6400_init(void);
-+extern void s3c6400_init_irq(void);
-+extern void s3c6400_map_io(void);
-+extern void s3c6400_init_clocks(int xtal);
++static const char name_s5p6440[] = "S5P6440";
++static const char name_s5p6450[] = "S5P6450";
++
++static struct cpu_table cpu_ids[] __initdata = {
++	{
++		.idcode		= S5P6440_CPU_ID,
++		.idmask		= S5P64XX_CPU_MASK,
++		.map_io		= s5p6440_map_io,
++		.init_clocks	= s5p6440_init_clocks,
++		.init_uarts	= s5p6440_init_uarts,
++		.init		= s5p64x0_init,
++		.name		= name_s5p6440,
++	}, {
++		.idcode		= S5P6450_CPU_ID,
++		.idmask		= S5P64XX_CPU_MASK,
++		.map_io		= s5p6450_map_io,
++		.init_clocks	= s5p6450_init_clocks,
++		.init_uarts	= s5p6450_init_uarts,
++		.init		= s5p64x0_init,
++		.name		= name_s5p6450,
++	},
++};
++
++/* Initial IO mappings */
++
++static struct map_desc s5p64x0_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S5P_VA_CHIPID,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_CHIPID),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_SYS,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_SYSCON),
++		.length		= SZ_64K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_TIMER,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_TIMER),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_WDT),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_SROMC,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_SROMC),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S5P_VA_GPIO,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_GPIO),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)VA_VIC0,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_VIC0),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)VA_VIC1,
++		.pfn		= __phys_to_pfn(S5P64X0_PA_VIC1),
++		.length		= SZ_16K,
++		.type		= MT_DEVICE,
++	},
++};
++
++static struct map_desc s5p6440_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S3C_VA_UART,
++		.pfn		= __phys_to_pfn(S5P6440_PA_UART(0)),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	},
++};
++
++static struct map_desc s5p6450_iodesc[] __initdata = {
++	{
++		.virtual	= (unsigned long)S3C_VA_UART,
++		.pfn		= __phys_to_pfn(S5P6450_PA_UART(0)),
++		.length		= SZ_512K,
++		.type		= MT_DEVICE,
++	}, {
++		.virtual	= (unsigned long)S3C_VA_UART + SZ_512K,
++		.pfn		= __phys_to_pfn(S5P6450_PA_UART(5)),
++		.length		= SZ_4K,
++		.type		= MT_DEVICE,
++	},
++};
++
++static void s5p64x0_idle(void)
++{
++	unsigned long val;
++
++	if (!need_resched()) {
++		val = __raw_readl(S5P64X0_PWR_CFG);
++		val &= ~(0x3 << 5);
++		val |= (0x1 << 5);
++		__raw_writel(val, S5P64X0_PWR_CFG);
++
++		cpu_do_idle();
++	}
++	local_irq_enable();
++}
++
++/*
++ * s5p64x0_map_io
++ *
++ * register the standard CPU IO areas
++ */
++
++void __init s5p64x0_init_io(struct map_desc *mach_desc, int size)
++{
++	/* initialize the io descriptors we need for initialization */
++	iotable_init(s5p64x0_iodesc, ARRAY_SIZE(s5p64x0_iodesc));
++	if (mach_desc)
++		iotable_init(mach_desc, size);
++
++	/* detect cpu id and rev. */
++	s5p_init_cpu(S5P64X0_SYS_ID);
++
++	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
++}
++
++void __init s5p6440_map_io(void)
++{
++	/* initialize any device information early */
++	s3c_adc_setname("s3c64xx-adc");
++	s3c_fb_setname("s5p64x0-fb");
++
++	iotable_init(s5p6440_iodesc, ARRAY_SIZE(s5p6440_iodesc));
++	init_consistent_dma_size(SZ_8M);
++}
++
++void __init s5p6450_map_io(void)
++{
++	/* initialize any device information early */
++	s3c_adc_setname("s3c64xx-adc");
++	s3c_fb_setname("s5p64x0-fb");
++
++	iotable_init(s5p6450_iodesc, ARRAY_SIZE(s5p6450_iodesc));
++	init_consistent_dma_size(SZ_8M);
++}
++
++/*
++ * s5p64x0_init_clocks
++ *
++ * register and setup the CPU clocks
++ */
++
++void __init s5p6440_init_clocks(int xtal)
++{
++	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
++
++	s3c24xx_register_baseclocks(xtal);
++	s5p_register_clocks(xtal);
++	s5p6440_register_clocks();
++	s5p6440_setup_clocks();
++}
++
++void __init s5p6450_init_clocks(int xtal)
++{
++	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
++
++	s3c24xx_register_baseclocks(xtal);
++	s5p_register_clocks(xtal);
++	s5p6450_register_clocks();
++	s5p6450_setup_clocks();
++}
++
++/*
++ * s5p64x0_init_irq
++ *
++ * register the CPU interrupts
++ */
++
++void __init s5p6440_init_irq(void)
++{
++	/* S5P6440 supports 2 VIC */
++	u32 vic[2];
++
++	/*
++	 * VIC0 is missing IRQ_VIC0[3, 4, 8, 10, (12-22)]
++	 * VIC1 is missing IRQ VIC1[1, 3, 4, 10, 11, 12, 14, 15, 22]
++	 */
++	vic[0] = 0xff800ae7;
++	vic[1] = 0xffbf23e5;
++
++	s5p_init_irq(vic, ARRAY_SIZE(vic));
++}
++
++void __init s5p6450_init_irq(void)
++{
++	/* S5P6450 supports only 2 VIC */
++	u32 vic[2];
++
++	/*
++	 * VIC0 is missing IRQ_VIC0[(13-15), (21-22)]
++	 * VIC1 is missing IRQ VIC1[12, 14, 23]
++	 */
++	vic[0] = 0xff9f1fff;
++	vic[1] = 0xff7fafff;
++
++	s5p_init_irq(vic, ARRAY_SIZE(vic));
++}
++
++struct sysdev_class s5p64x0_sysclass = {
++	.name	= "s5p64x0-core",
++};
++
++static struct sys_device s5p64x0_sysdev = {
++	.cls	= &s5p64x0_sysclass,
++};
++
++static int __init s5p64x0_core_init(void)
++{
++	return sysdev_class_register(&s5p64x0_sysclass);
++}
++core_initcall(s5p64x0_core_init);
++
++int __init s5p64x0_init(void)
++{
++	printk(KERN_INFO "S5P64X0(S5P6440/S5P6450): Initializing architecture\n");
++
++	/* set idle function */
++	pm_idle = s5p64x0_idle;
++
++	return sysdev_register(&s5p64x0_sysdev);
++}
++
++static struct s3c24xx_uart_clksrc s5p64x0_serial_clocks[] = {
++	[0] = {
++		.name		= "pclk_low",
++		.divisor	= 1,
++		.min_baud	= 0,
++		.max_baud	= 0,
++	},
++	[1] = {
++		.name		= "uclk1",
++		.divisor	= 1,
++		.min_baud	= 0,
++		.max_baud	= 0,
++	},
++};
++
++/* uart registration process */
++
++void __init s5p64x0_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++{
++	struct s3c2410_uartcfg *tcfg = cfg;
++	u32 ucnt;
++
++	for (ucnt = 0; ucnt < no; ucnt++, tcfg++) {
++		if (!tcfg->clocks) {
++			tcfg->clocks = s5p64x0_serial_clocks;
++			tcfg->clocks_size = ARRAY_SIZE(s5p64x0_serial_clocks);
++		}
++	}
++}
++
++void __init s5p6440_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++{
++	int uart;
++
++	for (uart = 0; uart < no; uart++) {
++		s5p_uart_resources[uart].resources->start = S5P6440_PA_UART(uart);
++		s5p_uart_resources[uart].resources->end = S5P6440_PA_UART(uart) + S5P_SZ_UART;
++	}
++
++	s5p64x0_common_init_uarts(cfg, no);
++	s3c24xx_init_uartdevs("s3c6400-uart", s5p_uart_resources, cfg, no);
++}
++
++void __init s5p6450_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++{
++	s5p64x0_common_init_uarts(cfg, no);
++	s3c24xx_init_uartdevs("s3c6400-uart", s5p_uart_resources, cfg, no);
++}
++
++#define eint_offset(irq)	((irq) - IRQ_EINT(0))
++
++static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigned int type)
++{
++	int offs = eint_offset(data->irq);
++	int shift;
++	u32 ctrl, mask;
++	u32 newvalue = 0;
++
++	if (offs > 15)
++		return -EINVAL;
++
++	switch (type) {
++	case IRQ_TYPE_NONE:
++		printk(KERN_WARNING "No edge setting!\n");
++		break;
++	case IRQ_TYPE_EDGE_RISING:
++		newvalue = S3C2410_EXTINT_RISEEDGE;
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		newvalue = S3C2410_EXTINT_FALLEDGE;
++		break;
++	case IRQ_TYPE_EDGE_BOTH:
++		newvalue = S3C2410_EXTINT_BOTHEDGE;
++		break;
++	case IRQ_TYPE_LEVEL_LOW:
++		newvalue = S3C2410_EXTINT_LOWLEV;
++		break;
++	case IRQ_TYPE_LEVEL_HIGH:
++		newvalue = S3C2410_EXTINT_HILEV;
++		break;
++	default:
++		printk(KERN_ERR "No such irq type %d", type);
++		return -EINVAL;
++	}
++
++	shift = (offs / 2) * 4;
++	mask = 0x7 << shift;
++
++	ctrl = __raw_readl(S5P64X0_EINT0CON0) & ~mask;
++	ctrl |= newvalue << shift;
++	__raw_writel(ctrl, S5P64X0_EINT0CON0);
++
++	/* Configure the GPIO pin for 6450 or 6440 based on CPU ID */
++	if (soc_is_s5p6450())
++		s3c_gpio_cfgpin(S5P6450_GPN(offs), S3C_GPIO_SFN(2));
++	else
++		s3c_gpio_cfgpin(S5P6440_GPN(offs), S3C_GPIO_SFN(2));
++
++	return 0;
++}
++
++/*
++ * s5p64x0_irq_demux_eint
++ *
++ * This function demuxes the IRQ from the group0 external interrupts,
++ * from IRQ_EINT(0) to IRQ_EINT(15). It is designed to be inlined into
++ * the specific handlers s5p64x0_irq_demux_eintX_Y.
++ */
++static inline void s5p64x0_irq_demux_eint(unsigned int start, unsigned int end)
++{
++	u32 status = __raw_readl(S5P64X0_EINT0PEND);
++	u32 mask = __raw_readl(S5P64X0_EINT0MASK);
++	unsigned int irq;
++
++	status &= ~mask;
++	status >>= start;
++	status &= (1 << (end - start + 1)) - 1;
++
++	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
++		if (status & 1)
++			generic_handle_irq(irq);
++		status >>= 1;
++	}
++}
++
++static void s5p64x0_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
++{
++	s5p64x0_irq_demux_eint(0, 3);
++}
++
++static void s5p64x0_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
++{
++	s5p64x0_irq_demux_eint(4, 11);
++}
++
++static void s5p64x0_irq_demux_eint12_15(unsigned int irq,
++					struct irq_desc *desc)
++{
++	s5p64x0_irq_demux_eint(12, 15);
++}
++
++static int s5p64x0_alloc_gc(void)
++{
++	struct irq_chip_generic *gc;
++	struct irq_chip_type *ct;
++
++	gc = irq_alloc_generic_chip("s5p64x0-eint", 1, S5P_IRQ_EINT_BASE,
++				    S5P_VA_GPIO, handle_level_irq);
++	if (!gc) {
++		printk(KERN_ERR "%s: irq_alloc_generic_chip for group 0"
++			"external interrupts failed\n", __func__);
++		return -EINVAL;
++	}
++
++	ct = gc->chip_types;
++	ct->chip.irq_ack = irq_gc_ack_set_bit;
++	ct->chip.irq_mask = irq_gc_mask_set_bit;
++	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
++	ct->chip.irq_set_type = s5p64x0_irq_eint_set_type;
++	ct->chip.irq_set_wake = s3c_irqext_wake;
++	ct->regs.ack = EINT0PEND_OFFSET;
++	ct->regs.mask = EINT0MASK_OFFSET;
++	irq_setup_generic_chip(gc, IRQ_MSK(16), IRQ_GC_INIT_MASK_CACHE,
++			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
++	return 0;
++}
++
++static int __init s5p64x0_init_irq_eint(void)
++{
++	int ret = s5p64x0_alloc_gc();
++	irq_set_chained_handler(IRQ_EINT0_3, s5p64x0_irq_demux_eint0_3);
++	irq_set_chained_handler(IRQ_EINT4_11, s5p64x0_irq_demux_eint4_11);
++	irq_set_chained_handler(IRQ_EINT12_15, s5p64x0_irq_demux_eint12_15);
++
++	return ret;
++}
++arch_initcall(s5p64x0_init_irq_eint);
+diff --git a/arch/arm/mach-s5p64x0/common.h b/arch/arm/mach-s5p64x0/common.h
+new file mode 100644
+index 0000000..8a1eca5
+--- /dev/null
++++ b/arch/arm/mach-s5p64x0/common.h
+@@ -0,0 +1,55 @@
++/*
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Common Header for S5P64X0 machines
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __ARCH_ARM_MACH_S5P64X0_COMMON_H
++#define __ARCH_ARM_MACH_S5P64X0_COMMON_H
++
++void s5p6440_init_irq(void);
++void s5p6450_init_irq(void);
++void s5p64x0_init_io(struct map_desc *mach_desc, int size);
++
++void s5p6440_register_clocks(void);
++void s5p6440_setup_clocks(void);
++
++void s5p6450_register_clocks(void);
++void s5p6450_setup_clocks(void);
++
++#ifdef CONFIG_CPU_S5P6440
++
++extern  int s5p64x0_init(void);
++extern void s5p6440_map_io(void);
++extern void s5p6440_init_clocks(int xtal);
++
++extern void s5p6440_init_uarts(struct s3c2410_uartcfg *cfg, int no);
 +
 +#else
-+#define s3c6400_init_clocks NULL
-+#define s3c6400_map_io NULL
-+#define s3c6400_init NULL
++#define s5p6440_init_clocks NULL
++#define s5p6440_init_uarts NULL
++#define s5p6440_map_io NULL
++#define s5p64x0_init NULL
 +#endif
 +
-+#ifdef CONFIG_CPU_S3C6410
++#ifdef CONFIG_CPU_S5P6450
 +
-+extern  int s3c6410_init(void);
-+extern void s3c6410_init_irq(void);
-+extern void s3c6410_map_io(void);
-+extern void s3c6410_init_clocks(int xtal);
++extern  int s5p64x0_init(void);
++extern void s5p6450_map_io(void);
++extern void s5p6450_init_clocks(int xtal);
++
++extern void s5p6450_init_uarts(struct s3c2410_uartcfg *cfg, int no);
 +
 +#else
-+#define s3c6410_init_clocks NULL
-+#define s3c6410_map_io NULL
-+#define s3c6410_init NULL
++#define s5p6450_init_clocks NULL
++#define s5p6450_init_uarts NULL
++#define s5p6450_map_io NULL
++#define s5p64x0_init NULL
 +#endif
 +
-+#endif /* __ARCH_ARM_MACH_S3C64XX_COMMON_H */
-diff --git a/arch/arm/mach-s3c64xx/cpu.c b/arch/arm/mach-s3c64xx/cpu.c
++#endif /* __ARCH_ARM_MACH_S5P64X0_COMMON_H */
+diff --git a/arch/arm/mach-s5p64x0/cpu.c b/arch/arm/mach-s5p64x0/cpu.c
 deleted file mode 100644
-index de085b7..0000000
---- a/arch/arm/mach-s3c64xx/cpu.c
+index ecab40c..0000000
+--- a/arch/arm/mach-s5p64x0/cpu.c
 +++ /dev/null
-@@ -1,161 +0,0 @@
--/* linux/arch/arm/plat-s3c64xx/cpu.c
+@@ -1,215 +0,0 @@
+-/* linux/arch/arm/mach-s5p64x0/cpu.c
 - *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *	http://armlinux.simtec.co.uk/
-- *
-- * S3C64XX CPU Support
+- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--#include <linux/init.h>
--#include <linux/module.h>
+-#include <linux/kernel.h>
+-#include <linux/types.h>
 -#include <linux/interrupt.h>
--#include <linux/ioport.h>
+-#include <linux/list.h>
+-#include <linux/timer.h>
+-#include <linux/init.h>
+-#include <linux/clk.h>
+-#include <linux/io.h>
 -#include <linux/sysdev.h>
 -#include <linux/serial_core.h>
 -#include <linux/platform_device.h>
--#include <linux/io.h>
+-#include <linux/sched.h>
 -#include <linux/dma-mapping.h>
--
--#include <mach/hardware.h>
--#include <mach/map.h>
 -
 -#include <asm/mach/arch.h>
 -#include <asm/mach/map.h>
+-#include <asm/mach/irq.h>
+-#include <asm/proc-fns.h>
+-#include <asm/irq.h>
+-
+-#include <mach/hardware.h>
+-#include <mach/map.h>
+-#include <mach/regs-clock.h>
 -
 -#include <plat/regs-serial.h>
--
 -#include <plat/cpu.h>
 -#include <plat/devs.h>
 -#include <plat/clock.h>
+-#include <plat/s5p6440.h>
+-#include <plat/s5p6450.h>
+-#include <plat/adc-core.h>
+-#include <plat/fb-core.h>
 -
--#include <plat/s3c6400.h>
--#include <plat/s3c6410.h>
+-/* Initial IO mappings */
 -
--/* table of supported CPUs */
--
--static const char name_s3c6400[] = "S3C6400";
--static const char name_s3c6410[] = "S3C6410";
--
--static struct cpu_table cpu_ids[] __initdata = {
+-static struct map_desc s5p64x0_iodesc[] __initdata = {
 -	{
--		.idcode		= S3C6400_CPU_ID,
--		.idmask		= S3C64XX_CPU_MASK,
--		.map_io		= s3c6400_map_io,
--		.init_clocks	= s3c6400_init_clocks,
--		.init_uarts	= s3c6400_init_uarts,
--		.init		= s3c6400_init,
--		.name		= name_s3c6400,
--	}, {
--		.idcode		= S3C6410_CPU_ID,
--		.idmask		= S3C64XX_CPU_MASK,
--		.map_io		= s3c6410_map_io,
--		.init_clocks	= s3c6410_init_clocks,
--		.init_uarts	= s3c6410_init_uarts,
--		.init		= s3c6410_init,
--		.name		= name_s3c6410,
--	},
--};
--
--/* minimal IO mapping */
--
--/* see notes on uart map in arch/arm/mach-s3c6400/include/mach/debug-macro.S */
--#define UART_OFFS (S3C_PA_UART & 0xfffff)
--
--static struct map_desc s3c_iodesc[] __initdata = {
--	{
--		.virtual	= (unsigned long)S3C_VA_SYS,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_SYSCON),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S3C_VA_MEM,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_SROM),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)(S3C_VA_UART + UART_OFFS),
--		.pfn		= __phys_to_pfn(S3C_PA_UART),
+-		.virtual	= (unsigned long)S5P_VA_GPIO,
+-		.pfn		= __phys_to_pfn(S5P64X0_PA_GPIO),
 -		.length		= SZ_4K,
 -		.type		= MT_DEVICE,
 -	}, {
 -		.virtual	= (unsigned long)VA_VIC0,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC0),
+-		.pfn		= __phys_to_pfn(S5P64X0_PA_VIC0),
 -		.length		= SZ_16K,
 -		.type		= MT_DEVICE,
 -	}, {
 -		.virtual	= (unsigned long)VA_VIC1,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_VIC1),
+-		.pfn		= __phys_to_pfn(S5P64X0_PA_VIC1),
 -		.length		= SZ_16K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S3C_VA_TIMER,
--		.pfn		= __phys_to_pfn(S3C_PA_TIMER),
--		.length		= SZ_16K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S3C64XX_VA_GPIO,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_GPIO),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S3C64XX_VA_MODEM,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_MODEM),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_WATCHDOG),
--		.length		= SZ_4K,
--		.type		= MT_DEVICE,
--	}, {
--		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
--		.pfn		= __phys_to_pfn(S3C64XX_PA_USB_HSPHY),
--		.length		= SZ_1K,
 -		.type		= MT_DEVICE,
 -	},
 -};
 -
--
--struct sysdev_class s3c64xx_sysclass = {
--	.name	= "s3c64xx-core",
+-static struct map_desc s5p6440_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S3C_VA_UART,
+-		.pfn		= __phys_to_pfn(S5P6440_PA_UART(0)),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
 -};
 -
--static struct sys_device s3c64xx_sysdev = {
--	.cls	= &s3c64xx_sysclass,
+-static struct map_desc s5p6450_iodesc[] __initdata = {
+-	{
+-		.virtual	= (unsigned long)S3C_VA_UART,
+-		.pfn		= __phys_to_pfn(S5P6450_PA_UART(0)),
+-		.length		= SZ_512K,
+-		.type		= MT_DEVICE,
+-	}, {
+-		.virtual	= (unsigned long)S3C_VA_UART + SZ_512K,
+-		.pfn		= __phys_to_pfn(S5P6450_PA_UART(5)),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	},
+-};
+-
+-static void s5p64x0_idle(void)
+-{
+-	unsigned long val;
+-
+-	if (!need_resched()) {
+-		val = __raw_readl(S5P64X0_PWR_CFG);
+-		val &= ~(0x3 << 5);
+-		val |= (0x1 << 5);
+-		__raw_writel(val, S5P64X0_PWR_CFG);
+-
+-		cpu_do_idle();
+-	}
+-	local_irq_enable();
+-}
+-
+-/*
+- * s5p64x0_map_io
+- *
+- * register the standard CPU IO areas
+- */
+-
+-void __init s5p6440_map_io(void)
+-{
+-	/* initialize any device information early */
+-	s3c_adc_setname("s3c64xx-adc");
+-	s3c_fb_setname("s5p64x0-fb");
+-
+-	iotable_init(s5p64x0_iodesc, ARRAY_SIZE(s5p64x0_iodesc));
+-	iotable_init(s5p6440_iodesc, ARRAY_SIZE(s5p6440_iodesc));
+-	init_consistent_dma_size(SZ_8M);
+-}
+-
+-void __init s5p6450_map_io(void)
+-{
+-	/* initialize any device information early */
+-	s3c_adc_setname("s3c64xx-adc");
+-	s3c_fb_setname("s5p64x0-fb");
+-
+-	iotable_init(s5p64x0_iodesc, ARRAY_SIZE(s5p64x0_iodesc));
+-	iotable_init(s5p6450_iodesc, ARRAY_SIZE(s5p6450_iodesc));
+-	init_consistent_dma_size(SZ_8M);
+-}
+-
+-/*
+- * s5p64x0_init_clocks
+- *
+- * register and setup the CPU clocks
+- */
+-
+-void __init s5p6440_init_clocks(int xtal)
+-{
+-	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+-
+-	s3c24xx_register_baseclocks(xtal);
+-	s5p_register_clocks(xtal);
+-	s5p6440_register_clocks();
+-	s5p6440_setup_clocks();
+-}
+-
+-void __init s5p6450_init_clocks(int xtal)
+-{
+-	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+-
+-	s3c24xx_register_baseclocks(xtal);
+-	s5p_register_clocks(xtal);
+-	s5p6450_register_clocks();
+-	s5p6450_setup_clocks();
+-}
+-
+-/*
+- * s5p64x0_init_irq
+- *
+- * register the CPU interrupts
+- */
+-
+-void __init s5p6440_init_irq(void)
+-{
+-	/* S5P6440 supports 2 VIC */
+-	u32 vic[2];
+-
+-	/*
+-	 * VIC0 is missing IRQ_VIC0[3, 4, 8, 10, (12-22)]
+-	 * VIC1 is missing IRQ VIC1[1, 3, 4, 10, 11, 12, 14, 15, 22]
+-	 */
+-	vic[0] = 0xff800ae7;
+-	vic[1] = 0xffbf23e5;
+-
+-	s5p_init_irq(vic, ARRAY_SIZE(vic));
+-}
+-
+-void __init s5p6450_init_irq(void)
+-{
+-	/* S5P6450 supports only 2 VIC */
+-	u32 vic[2];
+-
+-	/*
+-	 * VIC0 is missing IRQ_VIC0[(13-15), (21-22)]
+-	 * VIC1 is missing IRQ VIC1[12, 14, 23]
+-	 */
+-	vic[0] = 0xff9f1fff;
+-	vic[1] = 0xff7fafff;
+-
+-	s5p_init_irq(vic, ARRAY_SIZE(vic));
+-}
+-
+-struct sysdev_class s5p64x0_sysclass = {
+-	.name	= "s5p64x0-core",
+-};
+-
+-static struct sys_device s5p64x0_sysdev = {
+-	.cls	= &s5p64x0_sysclass,
+-};
+-
+-static int __init s5p64x0_core_init(void)
+-{
+-	return sysdev_class_register(&s5p64x0_sysclass);
+-}
+-core_initcall(s5p64x0_core_init);
+-
+-int __init s5p64x0_init(void)
+-{
+-	printk(KERN_INFO "S5P64X0(S5P6440/S5P6450): Initializing architecture\n");
+-
+-	/* set idle function */
+-	pm_idle = s5p64x0_idle;
+-
+-	return sysdev_register(&s5p64x0_sysdev);
+-}
+diff --git a/arch/arm/mach-s5p64x0/init.c b/arch/arm/mach-s5p64x0/init.c
+deleted file mode 100644
+index 79833ca..0000000
+--- a/arch/arm/mach-s5p64x0/init.c
++++ /dev/null
+@@ -1,73 +0,0 @@
+-/* linux/arch/arm/mach-s5p64x0/init.c
+- *
+- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * S5P64X0 - Init support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/kernel.h>
+-#include <linux/types.h>
+-#include <linux/init.h>
+-#include <linux/serial_core.h>
+-
+-#include <mach/map.h>
+-
+-#include <plat/cpu.h>
+-#include <plat/devs.h>
+-#include <plat/s5p6440.h>
+-#include <plat/s5p6450.h>
+-#include <plat/regs-serial.h>
+-
+-static struct s3c24xx_uart_clksrc s5p64x0_serial_clocks[] = {
+-	[0] = {
+-		.name		= "pclk_low",
+-		.divisor	= 1,
+-		.min_baud	= 0,
+-		.max_baud	= 0,
+-	},
+-	[1] = {
+-		.name		= "uclk1",
+-		.divisor	= 1,
+-		.min_baud	= 0,
+-		.max_baud	= 0,
+-	},
 -};
 -
 -/* uart registration process */
 -
--void __init s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+-void __init s5p64x0_common_init_uarts(struct s3c2410_uartcfg *cfg, int no)
 -{
--	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
+-	struct s3c2410_uartcfg *tcfg = cfg;
+-	u32 ucnt;
+-
+-	for (ucnt = 0; ucnt < no; ucnt++, tcfg++) {
+-		if (!tcfg->clocks) {
+-			tcfg->clocks = s5p64x0_serial_clocks;
+-			tcfg->clocks_size = ARRAY_SIZE(s5p64x0_serial_clocks);
+-		}
+-	}
 -}
 -
--/* read cpu identification code */
--
--void __init s3c64xx_init_io(struct map_desc *mach_desc, int size)
+-void __init s5p6440_init_uarts(struct s3c2410_uartcfg *cfg, int no)
 -{
--	/* initialise the io descriptors we need for initialisation */
--	iotable_init(s3c_iodesc, ARRAY_SIZE(s3c_iodesc));
--	iotable_init(mach_desc, size);
--	init_consistent_dma_size(SZ_8M);
+-	int uart;
 -
--	/* detect cpu id */
--	s3c64xx_init_cpu();
+-	for (uart = 0; uart < no; uart++) {
+-		s5p_uart_resources[uart].resources->start = S5P6440_PA_UART(uart);
+-		s5p_uart_resources[uart].resources->end = S5P6440_PA_UART(uart) + S5P_SZ_UART;
+-	}
 -
--	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
+-	s5p64x0_common_init_uarts(cfg, no);
+-	s3c24xx_init_uartdevs("s3c6400-uart", s5p_uart_resources, cfg, no);
 -}
 -
--static __init int s3c64xx_sysdev_init(void)
+-void __init s5p6450_init_uarts(struct s3c2410_uartcfg *cfg, int no)
 -{
--	sysdev_class_register(&s3c64xx_sysclass);
--	return sysdev_register(&s3c64xx_sysdev);
+-	s5p64x0_common_init_uarts(cfg, no);
+-	s3c24xx_init_uartdevs("s3c6400-uart", s5p_uart_resources, cfg, no);
 -}
--
--core_initcall(s3c64xx_sysdev_init);
-diff --git a/arch/arm/mach-s3c64xx/irq.c b/arch/arm/mach-s3c64xx/irq.c
+diff --git a/arch/arm/mach-s5p64x0/irq-eint.c b/arch/arm/mach-s5p64x0/irq-eint.c
 deleted file mode 100644
-index b07357e..0000000
---- a/arch/arm/mach-s3c64xx/irq.c
+index 275dc74..0000000
+--- a/arch/arm/mach-s5p64x0/irq-eint.c
 +++ /dev/null
-@@ -1,47 +0,0 @@
--/* arch/arm/plat-s3c64xx/irq.c
+@@ -1,155 +0,0 @@
+-/* arch/arm/mach-s5p64x0/irq-eint.c
 - *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *      Ben Dooks <ben@simtec.co.uk>
-- *      http://armlinux.simtec.co.uk/
+- * Copyright (c) 2011 Samsung Electronics Co., Ltd
+- *		http://www.samsung.com/
 - *
-- * S3C64XX - Interrupt handling
+- * Based on linux/arch/arm/mach-s3c64xx/irq-eint.c
+- *
+- * S5P64X0 - Interrupt handling for External Interrupts.
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
@@ -636,405 +971,333 @@ index b07357e..0000000
 - */
 -
 -#include <linux/kernel.h>
--#include <linux/interrupt.h>
--#include <linux/serial_core.h>
+-#include <linux/gpio.h>
 -#include <linux/irq.h>
 -#include <linux/io.h>
 -
--#include <asm/hardware/vic.h>
--
--#include <mach/map.h>
--#include <plat/irq-vic-timer.h>
--#include <plat/irq-uart.h>
 -#include <plat/cpu.h>
+-#include <plat/regs-irqtype.h>
+-#include <plat/gpio-cfg.h>
+-#include <plat/pm.h>
 -
--/* setup the sources the vic should advertise resume for, even though it
-- * is not doing the wake (set_irq_wake needs to be valid) */
--#define IRQ_VIC0_RESUME (1 << (IRQ_RTC_TIC - IRQ_VIC0_BASE))
--#define IRQ_VIC1_RESUME (1 << (IRQ_RTC_ALARM - IRQ_VIC1_BASE) |	\
--			 1 << (IRQ_PENDN - IRQ_VIC1_BASE) |	\
--			 1 << (IRQ_HSMMC0 - IRQ_VIC1_BASE) |	\
--			 1 << (IRQ_HSMMC1 - IRQ_VIC1_BASE) |	\
--			 1 << (IRQ_HSMMC2 - IRQ_VIC1_BASE))
+-#include <mach/regs-gpio.h>
+-#include <mach/regs-clock.h>
 -
--void __init s3c64xx_init_irq(u32 vic0_valid, u32 vic1_valid)
+-#define eint_offset(irq)	((irq) - IRQ_EINT(0))
+-
+-static int s5p64x0_irq_eint_set_type(struct irq_data *data, unsigned int type)
 -{
--	printk(KERN_DEBUG "%s: initialising interrupts\n", __func__);
+-	int offs = eint_offset(data->irq);
+-	int shift;
+-	u32 ctrl, mask;
+-	u32 newvalue = 0;
 -
--	/* initialise the pair of VICs */
--	vic_init(VA_VIC0, IRQ_VIC0_BASE, vic0_valid, IRQ_VIC0_RESUME);
--	vic_init(VA_VIC1, IRQ_VIC1_BASE, vic1_valid, IRQ_VIC1_RESUME);
+-	if (offs > 15)
+-		return -EINVAL;
 -
--	/* add the timer sub-irqs */
--	s3c_init_vic_timer_irq(5, IRQ_TIMER0);
+-	switch (type) {
+-	case IRQ_TYPE_NONE:
+-		printk(KERN_WARNING "No edge setting!\n");
+-		break;
+-	case IRQ_TYPE_EDGE_RISING:
+-		newvalue = S3C2410_EXTINT_RISEEDGE;
+-		break;
+-	case IRQ_TYPE_EDGE_FALLING:
+-		newvalue = S3C2410_EXTINT_FALLEDGE;
+-		break;
+-	case IRQ_TYPE_EDGE_BOTH:
+-		newvalue = S3C2410_EXTINT_BOTHEDGE;
+-		break;
+-	case IRQ_TYPE_LEVEL_LOW:
+-		newvalue = S3C2410_EXTINT_LOWLEV;
+-		break;
+-	case IRQ_TYPE_LEVEL_HIGH:
+-		newvalue = S3C2410_EXTINT_HILEV;
+-		break;
+-	default:
+-		printk(KERN_ERR "No such irq type %d", type);
+-		return -EINVAL;
+-	}
+-
+-	shift = (offs / 2) * 4;
+-	mask = 0x7 << shift;
+-
+-	ctrl = __raw_readl(S5P64X0_EINT0CON0) & ~mask;
+-	ctrl |= newvalue << shift;
+-	__raw_writel(ctrl, S5P64X0_EINT0CON0);
+-
+-	/* Configure the GPIO pin for 6450 or 6440 based on CPU ID */
+-	if (soc_is_s5p6450())
+-		s3c_gpio_cfgpin(S5P6450_GPN(offs), S3C_GPIO_SFN(2));
+-	else
+-		s3c_gpio_cfgpin(S5P6440_GPN(offs), S3C_GPIO_SFN(2));
+-
+-	return 0;
 -}
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index 2bbc14d..bad1d0d 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -46,13 +46,14 @@
- #include <plat/fb.h>
- #include <plat/regs-fb-v4.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <mach/regs-gpio.h>
- #include <mach/regs-modem.h>
- 
-+#include "common.h"
-+
- /* DM9000 */
- #define ANW6410_PA_DM9000	(0x18000000)
- 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 988ac2e..b7350b0 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -51,7 +51,6 @@
- 
- #include <mach/regs-gpio-memport.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/regs-serial.h>
- #include <plat/regs-fb-v4.h>
- #include <plat/fb.h>
-@@ -67,6 +66,8 @@
- #include <plat/iic.h>
- #include <plat/pm.h>
- 
-+#include "common.h"
-+
- /* serial port setup */
- 
- #define UCON (S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK)
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index c5955f3..df38602 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -38,12 +38,13 @@
- #include <plat/fb.h>
- #include <plat/nand.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/regs-fb-v4.h>
- 
-+#include "common.h"
-+
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE)
- #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 4415c85..72ebe5d 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -34,7 +34,6 @@
- #include <mach/regs-modem.h>
- #include <mach/regs-srom.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/adc.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-@@ -46,6 +45,8 @@
- 
- #include <video/platform_lcd.h>
- 
-+#include "common.h"
-+
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
- #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 9b2c610..8bec707 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -40,12 +40,13 @@
- #include <plat/iic.h>
- #include <plat/fb.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/regs-fb-v4.h>
- 
-+#include "common.h"
-+
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE
- #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index dbab49f..853c41e 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -35,7 +35,6 @@
- #include <mach/regs-modem.h>
- #include <mach/regs-srom.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/adc.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
-@@ -47,6 +46,8 @@
- 
- #include <video/platform_lcd.h>
- 
-+#include "common.h"
-+
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB)
- #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index cb1ebeb..ce31db1 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -40,6 +40,8 @@
- 
- #include <video/platform_lcd.h>
- 
-+#include "common.h"
-+
- #define UCON S3C2410_UCON_DEFAULT
- #define ULCON (S3C2410_LCON_CS8 | S3C2410_LCON_PNONE)
- #define UFCON (S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE)
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 0539452..2804526 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -24,13 +24,13 @@
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/fb.h>
- #include <plat/gpio-cfg.h>
- #include <plat/regs-fb-v4.h>
- 
-+#include "common.h"
- #include "mach-smartq.h"
- 
- static struct gpio_led smartq5_leds[] = {
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
-index a58d1ba..a0f9d1a 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq7.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
-@@ -24,13 +24,13 @@
- #include <mach/map.h>
- #include <mach/regs-gpio.h>
- 
--#include <plat/s3c6410.h>
- #include <plat/cpu.h>
- #include <plat/devs.h>
- #include <plat/fb.h>
- #include <plat/gpio-cfg.h>
- #include <plat/regs-fb-v4.h>
- 
-+#include "common.h"
- #include "mach-smartq.h"
- 
- static struct gpio_led smartq7_leds[] = {
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index be28a59..57a7eaa 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -32,12 +32,13 @@
+-
+-/*
+- * s5p64x0_irq_demux_eint
+- *
+- * This function demuxes the IRQ from the group0 external interrupts,
+- * from IRQ_EINT(0) to IRQ_EINT(15). It is designed to be inlined into
+- * the specific handlers s5p64x0_irq_demux_eintX_Y.
+- */
+-static inline void s5p64x0_irq_demux_eint(unsigned int start, unsigned int end)
+-{
+-	u32 status = __raw_readl(S5P64X0_EINT0PEND);
+-	u32 mask = __raw_readl(S5P64X0_EINT0MASK);
+-	unsigned int irq;
+-
+-	status &= ~mask;
+-	status >>= start;
+-	status &= (1 << (end - start + 1)) - 1;
+-
+-	for (irq = IRQ_EINT(start); irq <= IRQ_EINT(end); irq++) {
+-		if (status & 1)
+-			generic_handle_irq(irq);
+-		status >>= 1;
+-	}
+-}
+-
+-static void s5p64x0_irq_demux_eint0_3(unsigned int irq, struct irq_desc *desc)
+-{
+-	s5p64x0_irq_demux_eint(0, 3);
+-}
+-
+-static void s5p64x0_irq_demux_eint4_11(unsigned int irq, struct irq_desc *desc)
+-{
+-	s5p64x0_irq_demux_eint(4, 11);
+-}
+-
+-static void s5p64x0_irq_demux_eint12_15(unsigned int irq,
+-					struct irq_desc *desc)
+-{
+-	s5p64x0_irq_demux_eint(12, 15);
+-}
+-
+-static int s5p64x0_alloc_gc(void)
+-{
+-	struct irq_chip_generic *gc;
+-	struct irq_chip_type *ct;
+-
+-	gc = irq_alloc_generic_chip("s5p64x0-eint", 1, S5P_IRQ_EINT_BASE,
+-				    S5P_VA_GPIO, handle_level_irq);
+-	if (!gc) {
+-		printk(KERN_ERR "%s: irq_alloc_generic_chip for group 0"
+-			"external interrupts failed\n", __func__);
+-		return -EINVAL;
+-	}
+-
+-	ct = gc->chip_types;
+-	ct->chip.irq_ack = irq_gc_ack_set_bit;
+-	ct->chip.irq_mask = irq_gc_mask_set_bit;
+-	ct->chip.irq_unmask = irq_gc_mask_clr_bit;
+-	ct->chip.irq_set_type = s5p64x0_irq_eint_set_type;
+-	ct->chip.irq_set_wake = s3c_irqext_wake;
+-	ct->regs.ack = EINT0PEND_OFFSET;
+-	ct->regs.mask = EINT0MASK_OFFSET;
+-	irq_setup_generic_chip(gc, IRQ_MSK(16), IRQ_GC_INIT_MASK_CACHE,
+-			       IRQ_NOREQUEST | IRQ_NOPROBE, 0);
+-	return 0;
+-}
+-
+-static int __init s5p64x0_init_irq_eint(void)
+-{
+-	int ret = s5p64x0_alloc_gc();
+-	irq_set_chained_handler(IRQ_EINT0_3, s5p64x0_irq_demux_eint0_3);
+-	irq_set_chained_handler(IRQ_EINT4_11, s5p64x0_irq_demux_eint4_11);
+-	irq_set_chained_handler(IRQ_EINT12_15, s5p64x0_irq_demux_eint12_15);
+-
+-	return ret;
+-}
+-arch_initcall(s5p64x0_init_irq_eint);
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+index c272c3f..74f3f02 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+@@ -41,7 +41,6 @@
  
  #include <plat/regs-serial.h>
- 
--#include <plat/s3c6400.h>
- #include <plat/clock.h>
- #include <plat/devs.h>
- #include <plat/cpu.h>
- #include <plat/iic.h>
- 
-+#include "common.h"
-+
- #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
- #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
- #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 0830915..cba6714 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -64,7 +64,6 @@
- #include <plat/fb.h>
  #include <plat/gpio-cfg.h>
- 
--#include <plat/s3c6410.h>
+-#include <plat/s5p6440.h>
  #include <plat/clock.h>
  #include <plat/devs.h>
  #include <plat/cpu.h>
-@@ -74,6 +73,8 @@
- #include <plat/backlight.h>
- #include <plat/regs-fb-v4.h>
+@@ -54,6 +53,8 @@
+ #include <plat/fb.h>
+ #include <plat/regs-fb.h>
  
 +#include "common.h"
 +
- #define UCON S3C2410_UCON_DEFAULT | S3C2410_UCON_UCLK
- #define ULCON S3C2410_LCON_CS8 | S3C2410_LCON_PNONE | S3C2410_LCON_STOPB
- #define UFCON S3C2410_UFCON_RXTRIG8 | S3C2410_UFCON_FIFOMODE
-diff --git a/arch/arm/mach-s3c64xx/s3c6400.c b/arch/arm/mach-s3c64xx/s3c6400.c
-index 7a3bc32..3336658 100644
---- a/arch/arm/mach-s3c64xx/s3c6400.c
-+++ b/arch/arm/mach-s3c64xx/s3c6400.c
-@@ -38,7 +38,8 @@
- #include <plat/sdhci.h>
- #include <plat/iic-core.h>
- #include <plat/onenand-core.h>
--#include <plat/s3c6400.h>
-+
+ #define SMDK6440_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+ 				S3C2410_UCON_RXILEVEL |		\
+ 				S3C2410_UCON_TXIRQMODE |	\
+@@ -202,7 +203,7 @@ static struct platform_pwm_backlight_data smdk6440_bl_data = {
+ 
+ static void __init smdk6440_map_io(void)
+ {
+-	s5p_init_io(NULL, 0, S5P64X0_SYS_ID);
++	s5p64x0_init_io(NULL, 0);
+ 	s3c24xx_init_clocks(12000000);
+ 	s3c24xx_init_uarts(smdk6440_uartcfgs, ARRAY_SIZE(smdk6440_uartcfgs));
+ 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+index 7a47009..193ed2d 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+@@ -41,7 +41,6 @@
+ 
+ #include <plat/regs-serial.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/s5p6450.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+@@ -54,6 +53,8 @@
+ #include <plat/fb.h>
+ #include <plat/regs-fb.h>
+ 
 +#include "common.h"
- 
- void __init s3c6400_map_io(void)
- {
-@@ -60,7 +61,7 @@ void __init s3c6400_map_io(void)
- void __init s3c6400_init_clocks(int xtal)
- {
- 	s3c64xx_register_clocks(xtal, S3C6400_CLKDIV0_ARM_MASK);
--	s3c6400_setup_clocks();
-+	s3c64xx_setup_clocks();
- }
- 
- void __init s3c6400_init_irq(void)
-diff --git a/arch/arm/mach-s3c64xx/s3c6410.c b/arch/arm/mach-s3c64xx/s3c6410.c
-index 4117003..fba71bd 100644
---- a/arch/arm/mach-s3c64xx/s3c6410.c
-+++ b/arch/arm/mach-s3c64xx/s3c6410.c
-@@ -41,8 +41,8 @@
- #include <plat/adc-core.h>
- #include <plat/iic-core.h>
- #include <plat/onenand-core.h>
--#include <plat/s3c6400.h>
--#include <plat/s3c6410.h>
 +
-+#include "common.h"
+ #define SMDK6450_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
+ 				S3C2410_UCON_RXILEVEL |		\
+ 				S3C2410_UCON_TXIRQMODE |	\
+@@ -222,7 +223,7 @@ static struct platform_pwm_backlight_data smdk6450_bl_data = {
  
- void __init s3c6410_map_io(void)
+ static void __init smdk6450_map_io(void)
  {
-@@ -66,7 +66,7 @@ void __init s3c6410_init_clocks(int xtal)
- {
- 	printk(KERN_DEBUG "%s: initialising clocks\n", __func__);
- 	s3c64xx_register_clocks(xtal, S3C6410_CLKDIV0_ARM_MASK);
--	s3c6400_setup_clocks();
-+	s3c64xx_setup_clocks();
- }
+-	s5p_init_io(NULL, 0, S5P64X0_SYS_ID);
++	s5p64x0_init_io(NULL, 0);
+ 	s3c24xx_init_clocks(19200000);
+ 	s3c24xx_init_uarts(smdk6450_uartcfgs, ARRAY_SIZE(smdk6450_uartcfgs));
+ 	s5p_set_timer_source(S5P_PWM3, S5P_PWM4);
+diff --git a/arch/arm/plat-s5p/cpu.c b/arch/arm/plat-s5p/cpu.c
+index a56959e..2fb9a9c 100644
+--- a/arch/arm/plat-s5p/cpu.c
++++ b/arch/arm/plat-s5p/cpu.c
+@@ -20,16 +20,12 @@
+ #include <mach/regs-clock.h>
  
- void __init s3c6410_init_irq(void)
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 40fd7b6..abbdadb 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -152,11 +152,9 @@ extern void s3c_init_cpu(unsigned long idcode,
- /* core initialisation functions */
+ #include <plat/cpu.h>
+-#include <plat/s5p6440.h>
+-#include <plat/s5p6450.h>
+ #include <plat/s5pc100.h>
+ #include <plat/s5pv210.h>
+ #include <plat/exynos4.h>
  
- extern void s3c24xx_init_irq(void);
--extern void s3c64xx_init_irq(u32 vic0, u32 vic1);
- extern void s5p_init_irq(u32 *vic, u32 num_vic);
+ /* table of supported CPUs */
  
- extern void s3c24xx_init_io(struct map_desc *mach_desc, int size);
--extern void s3c64xx_init_io(struct map_desc *mach_desc, int size);
- extern void s5p_init_io(struct map_desc *mach_desc,
- 			int size, void __iomem *cpuid_addr);
+-static const char name_s5p6440[] = "S5P6440";
+-static const char name_s5p6450[] = "S5P6450";
+ static const char name_s5pc100[] = "S5PC100";
+ static const char name_s5pv210[] = "S5PV210/S5PC110";
+ static const char name_exynos4210[] = "EXYNOS4210";
+@@ -38,22 +34,6 @@ static const char name_exynos4412[] = "EXYNOS4412";
  
-@@ -183,7 +181,6 @@ extern struct syscore_ops s3c2410_pm_syscore_ops;
- extern struct syscore_ops s3c2412_pm_syscore_ops;
- extern struct syscore_ops s3c2416_pm_syscore_ops;
- extern struct syscore_ops s3c244x_pm_syscore_ops;
--extern struct syscore_ops s3c64xx_irq_syscore_ops;
- 
- /* system device classes */
- 
-@@ -195,7 +192,6 @@ extern struct sysdev_class s3c2440_sysclass;
- extern struct sysdev_class s3c2442_sysclass;
- extern struct sysdev_class s3c2443_sysclass;
- extern struct sysdev_class s3c6410_sysclass;
--extern struct sysdev_class s3c64xx_sysclass;
- extern struct sysdev_class s5p64x0_sysclass;
- extern struct sysdev_class s5pv210_sysclass;
- extern struct sysdev_class exynos4_sysclass;
-diff --git a/arch/arm/plat-samsung/include/plat/s3c6400.h b/arch/arm/plat-samsung/include/plat/s3c6400.h
+ static struct cpu_table cpu_ids[] __initdata = {
+ 	{
+-		.idcode		= S5P6440_CPU_ID,
+-		.idmask		= S5P64XX_CPU_MASK,
+-		.map_io		= s5p6440_map_io,
+-		.init_clocks	= s5p6440_init_clocks,
+-		.init_uarts	= s5p6440_init_uarts,
+-		.init		= s5p64x0_init,
+-		.name		= name_s5p6440,
+-	}, {
+-		.idcode		= S5P6450_CPU_ID,
+-		.idmask		= S5P64XX_CPU_MASK,
+-		.map_io		= s5p6450_map_io,
+-		.init_clocks	= s5p6450_init_clocks,
+-		.init_uarts	= s5p6450_init_uarts,
+-		.init		= s5p64x0_init,
+-		.name		= name_s5p6450,
+-	}, {
+ 		.idcode		= S5PC100_CPU_ID,
+ 		.idmask		= S5PC100_CPU_MASK,
+ 		.map_io		= s5pc100_map_io,
+diff --git a/arch/arm/plat-samsung/include/plat/s5p6440.h b/arch/arm/plat-samsung/include/plat/s5p6440.h
 deleted file mode 100644
-index 37d428a..0000000
---- a/arch/arm/plat-samsung/include/plat/s3c6400.h
+index bf85ebb..0000000
+--- a/arch/arm/plat-samsung/include/plat/s5p6440.h
 +++ /dev/null
 @@ -1,36 +0,0 @@
--/* linux/arch/arm/plat-samsung/include/plat/s3c6400.h
+-/* linux/arch/arm/plat-samsung/include/plat/s5p6440.h
 - *
-- * Copyright 2008 Openmoko, Inc.
-- * Copyright 2008 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *	http://armlinux.simtec.co.uk/
+- * Copyright (c) 2009 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com/
 - *
-- * Header file for s3c6400 cpu support
+- * Header file for s5p6440 cpu support
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--/* Common init code for S3C6400 related SoCs */
+- /* Common init code for S5P6440 related SoCs */
 -
--extern void s3c6400_common_init_uarts(struct s3c2410_uartcfg *cfg, int no);
--extern void s3c6400_setup_clocks(void);
+-extern void s5p6440_register_clocks(void);
+-extern void s5p6440_setup_clocks(void);
 -
--extern void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
+-#ifdef CONFIG_CPU_S5P6440
 -
--#ifdef CONFIG_CPU_S3C6400
+-extern  int s5p64x0_init(void);
+-extern void s5p6440_init_irq(void);
+-extern void s5p6440_map_io(void);
+-extern void s5p6440_init_clocks(int xtal);
 -
--extern  int s3c6400_init(void);
--extern void s3c6400_init_irq(void);
--extern void s3c6400_map_io(void);
--extern void s3c6400_init_clocks(int xtal);
--
--#define s3c6400_init_uarts s3c6400_common_init_uarts
+-extern void s5p6440_init_uarts(struct s3c2410_uartcfg *cfg, int no);
 -
 -#else
--#define s3c6400_init_clocks NULL
--#define s3c6400_init_uarts NULL
--#define s3c6400_map_io NULL
--#define s3c6400_init NULL
+-#define s5p6440_init_clocks NULL
+-#define s5p6440_init_uarts NULL
+-#define s5p6440_map_io NULL
+-#define s5p64x0_init NULL
 -#endif
-diff --git a/arch/arm/plat-samsung/include/plat/s3c6410.h b/arch/arm/plat-samsung/include/plat/s3c6410.h
+-
+-/* S5P6440 timer */
+-
+-extern struct sys_timer s5p6440_timer;
+diff --git a/arch/arm/plat-samsung/include/plat/s5p6450.h b/arch/arm/plat-samsung/include/plat/s5p6450.h
 deleted file mode 100644
-index 20a6675..0000000
---- a/arch/arm/plat-samsung/include/plat/s3c6410.h
+index da25f9a..0000000
+--- a/arch/arm/plat-samsung/include/plat/s5p6450.h
 +++ /dev/null
-@@ -1,29 +0,0 @@
--/* linux/arch/arm/plat-samsung/include/plat/s3c6410.h
+@@ -1,36 +0,0 @@
+-/* linux/arch/arm/plat-samsung/include/plat/s5p6450.h
 - *
-- * Copyright 2008 Openmoko,  Inc.
-- * Copyright 2008 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *	http://armlinux.simtec.co.uk/
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
 - *
-- * Header file for s3c6410 cpu support
+- * Header file for s5p6450 cpu support
 - *
 - * This program is free software; you can redistribute it and/or modify
 - * it under the terms of the GNU General Public License version 2 as
 - * published by the Free Software Foundation.
 -*/
 -
--#ifdef CONFIG_CPU_S3C6410
+-/* Common init code for S5P6450 related SoCs */
 -
--extern  int s3c6410_init(void);
--extern void s3c6410_init_irq(void);
--extern void s3c6410_map_io(void);
--extern void s3c6410_init_clocks(int xtal);
+-extern void s5p6450_register_clocks(void);
+-extern void s5p6450_setup_clocks(void);
 -
--#define s3c6410_init_uarts s3c6400_common_init_uarts
+-#ifdef CONFIG_CPU_S5P6450
+-
+-extern  int s5p64x0_init(void);
+-extern void s5p6450_init_irq(void);
+-extern void s5p6450_map_io(void);
+-extern void s5p6450_init_clocks(int xtal);
+-
+-extern void s5p6450_init_uarts(struct s3c2410_uartcfg *cfg, int no);
 -
 -#else
--#define s3c6410_init_clocks NULL
--#define s3c6410_init_uarts NULL
--#define s3c6410_map_io NULL
--#define s3c6410_init NULL
+-#define s5p6450_init_clocks NULL
+-#define s5p6450_init_uarts NULL
+-#define s5p6450_map_io NULL
+-#define s5p64x0_init NULL
 -#endif
+-
+-/* S5P6450 timer */
+-
+-extern struct sys_timer s5p6450_timer;
 -- 
 1.7.4.4
