@@ -1,81 +1,49 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: [PATCH 8/8] s3c-hsudc: remove the_controller global
-Date: Mon, 19 Dec 2011 19:43:35 +0100
-Message-ID: <201112191943.35591.heiko@sntech.de>
-References: <201112191938.22254.heiko@sntech.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/3] s5p-g2d: add G2D to mach-nuri
+Date: Tue, 20 Dec 2011 01:13:40 +0000
+Message-ID: <20111220011340.GR2860@opensource.wolfsonmicro.com>
+References: <1323446682-25252-1-git-send-email-k.debski@samsung.com>
+ <1323446682-25252-3-git-send-email-k.debski@samsung.com>
+ <20111212052745.GA686@sirena.org.uk>
+ <CAH9JG2UBb0Dp3i9Hzwx36AykKS5wZd5fsaP3y-og8VVoGqfhtg@mail.gmail.com>
+ <20111212100316.GB31568@opensource.wolfsonmicro.com>
+ <CAH9JG2XLiFqGyjohtLBT9U6jfwnP4xfuoNMEA=ds_2-gBs2Ong@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <201112191938.22254.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60025 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752124Ab1LTBNo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Dec 2011 20:13:44 -0500
+Content-Disposition: inline
+In-Reply-To: <CAH9JG2XLiFqGyjohtLBT9U6jfwnP4xfuoNMEA=ds_2-gBs2Ong@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: Kamil Debski <k.debski@samsung.com>, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kgene.kim@samsung.com
 
-Instead use container_of to retrieve the s3c_hsudc from the
-struct usb_gadget pointer.
+On Mon, Dec 12, 2011 at 11:32:28PM +0900, Kyungmin Park wrote:
+> On Mon, Dec 12, 2011 at 7:03 PM, Mark Brown
 
-Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
----
- drivers/usb/gadget/s3c-hsudc.c |   11 ++++++-----
- 1 files changed, 6 insertions(+), 5 deletions(-)
+> > I'm not sure I understand why we would not be ready to do things li=
+ke
+> > this? =A0I'd also expect that doing things in a board specific fash=
+ion
+> > might create issues with things being set up twice.
 
-diff --git a/drivers/usb/gadget/s3c-hsudc.c b/drivers/usb/gadget/s3c-hsudc.c
-index 8e69758..23cac9d 100644
---- a/drivers/usb/gadget/s3c-hsudc.c
-+++ b/drivers/usb/gadget/s3c-hsudc.c
-@@ -161,7 +161,6 @@ struct s3c_hsudc {
- #define ep_index(_ep)		((_ep)->bEndpointAddress & \
- 					USB_ENDPOINT_NUMBER_MASK)
- 
--static struct s3c_hsudc *the_controller;
- static const char driver_name[] = "s3c-udc";
- static const char ep0name[] = "ep0-control";
- 
-@@ -1141,7 +1140,8 @@ static irqreturn_t s3c_hsudc_irq(int irq, void *_dev)
- static int s3c_hsudc_start(struct usb_gadget *gadget,
- 		struct usb_gadget_driver *driver)
- {
--	struct s3c_hsudc *hsudc = the_controller;
-+	struct s3c_hsudc *hsudc =
-+			container_of(gadget, struct s3c_hsudc, gadget);
- 	int ret;
- 
- 	if (!driver
-@@ -1195,7 +1195,8 @@ err_supplies:
- static int s3c_hsudc_stop(struct usb_gadget *gadget,
- 		struct usb_gadget_driver *driver)
- {
--	struct s3c_hsudc *hsudc = the_controller;
-+	struct s3c_hsudc *hsudc =
-+			container_of(gadget, struct s3c_hsudc, gadget);
- 	unsigned long flags;
- 
- 	if (!hsudc)
-@@ -1238,7 +1239,8 @@ static int s3c_hsudc_gadget_getframe(struct usb_gadget *gadget)
- 
- static int s3c_hsudc_vbus_draw(struct usb_gadget *gadget, unsigned mA)
- {
--	struct s3c_hsudc *hsudc = the_controller;
-+	struct s3c_hsudc *hsudc =
-+			container_of(gadget, struct s3c_hsudc, gadget);
- 
- 	if (!hsudc)
- 		return -ENODEV;
-@@ -1272,7 +1274,6 @@ static int __devinit s3c_hsudc_probe(struct platform_device *pdev)
- 		return -ENOMEM;
- 	}
- 
--	the_controller = hsudc;
- 	platform_set_drvdata(pdev, dev);
- 	hsudc->dev = dev;
- 	hsudc->pd = pdev->dev.platform_data;
--- 
-1.7.2.3
+> Please see the below,
+> https://lkml.org/lkml/2011/11/15/16
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Even though I can't agree with his opinions. There are other voice li=
+ke this.
+
+> I also want to common registration and select at each board.
+
+So, I looked at the discussion there and I'm not sure I'm buying what's
+being said; it seems to be as much a fear of change and a lack of
+awareness of modern infrastructure as anything else.  It seems to me
+that this is a case where we should just be turning round and saying
+that the default position ought to be the other way around, if things
+need to be done per board there should be a strong reason for it.
