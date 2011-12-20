@@ -1,28 +1,27 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 6/7] s3c-hsudc: Add regulator handling
-Date: Tue, 20 Dec 2011 15:04:56 +0000
-Message-ID: <20111220150456.GF29727@sirena.org.uk>
-References: <201112191423.21461.heiko@sntech.de>
- <201112191427.07682.heiko@sntech.de>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [PATCH 7/8] s3c-hsudc: use release_mem_region instead of
+	release_resource
+Date: Tue, 20 Dec 2011 20:10:49 +0000
+Message-ID: <20111220201049.GB2577@n2100.arm.linux.org.uk>
+References: <201112191938.22254.heiko@sntech.de> <201112191942.52629.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:49251 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752408Ab1LTPFC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Dec 2011 10:05:02 -0500
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <201112191427.07682.heiko@sntech.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <201112191942.52629.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Cc: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko St?bner <heiko@sntech.de>
-Cc: Felipe Balbi <balbi@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Dec 19, 2011 at 02:27:07PM +0100, Heiko St?bner wrote:
-> The udc has three supplies: vdda (3.3V), vddi (1.2V) and vddosc (1.8-3.3V).
-> Turn these on and off on start and stop calls.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Mon, Dec 19, 2011 at 07:42:52PM +0100, Heiko St=FCbner wrote:
+> As the memory region is requested through request_mem_region
+> use the correct paired method to release it in the error path
+> and don't go "beneath the API" as pointed out by Russel King.
 
-Reviewed-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Please correct the spelling, thanks.
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
