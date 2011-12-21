@@ -1,114 +1,88 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Add USB OHCI support to ORIGEN board
-Date: Wed, 21 Dec 2011 18:16:38 +0900
-Message-ID: <00a201ccbfc1$3ed0dad0$bc729070$%han@samsung.com>
-References: <1324457752-26056-1-git-send-email-tushar.behera@linaro.org>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 2/4] rtc-s3c: make room for more variants in devicetree block
+Date: Wed, 21 Dec 2011 10:16:51 +0100
+Message-ID: <201112211016.51956.heiko@sntech.de>
+References: <201112211014.30695.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:59297 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752553Ab1LUJQk (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:38511 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752363Ab1LUJRB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Dec 2011 04:16:40 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWJ003GVR3JZTQ0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 18:16:39 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.120.153])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ00EVZR3RU550@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 18:16:39 +0900 (KST)
-In-reply-to: <1324457752-26056-1-git-send-email-tushar.behera@linaro.org>
-Content-language: ko
+	Wed, 21 Dec 2011 04:17:01 -0500
+In-Reply-To: <201112211014.30695.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rtc-linux@googlegroups.com
 
-Hi, Tushar.
+Use the data field of of_device_id to hold the type for
+s3c_cpu_type.
 
-Tushar Behera wrote:
-> -----Original Message-----
-> Subject: [PATCH] ARM: EXYNOS: Add USB OHCI support to ORIGEN board
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> Signed-off-by: Angus Ainslie <angus.ainslie@linaro.org>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/rtc/rtc-s3c.c |   31 ++++++++++++++++++++++---------
+ 1 files changed, 22 insertions(+), 9 deletions(-)
 
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-
-Thanks.
-
-Best regards,
-Jingoo Han
-> ---
-> 
-> This patch are based Kukjin's for-next branch and OHCI related
-> patches from Jingoo Han.
-> [PATCH v2 0/3] Support Samsung Exynos OHCI device and driver
-> 
->  arch/arm/mach-exynos/Kconfig       |    1 +
->  arch/arm/mach-exynos/mach-origen.c |   13 +++++++++++++
->  2 files changed, 14 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index bd1bb9f1..0da2ced 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -304,6 +304,7 @@ config MACH_ORIGEN
->  	select SAMSUNG_DEV_PWM
->  	select EXYNOS4_DEV_DMA
->  	select EXYNOS4_DEV_PD
-> +	select EXYNOS4_DEV_USB_OHCI
->  	select EXYNOS4_SETUP_FIMD0
->  	select EXYNOS4_SETUP_SDHCI
->  	select EXYNOS4_SETUP_USB_PHY
-> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-> index f56d027..a0116036 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -42,6 +42,7 @@
->  #include <plat/fb.h>
->  #include <plat/mfc.h>
-> 
-> +#include <mach/ohci.h>
->  #include <mach/map.h>
-> 
->  /* Following are default values for UCON, ULCON and UFCON UART registers */
-> @@ -487,6 +488,16 @@ static void __init origen_ehci_init(void)
->  	s5p_ehci_set_platdata(pdata);
->  }
-> 
-> +/* USB OHCI */
-> +static struct exynos4_ohci_platdata origen_ohci_pdata;
-> +
-> +static void __init origen_ohci_init(void)
-> +{
-> +	struct exynos4_ohci_platdata *pdata = &origen_ohci_pdata;
-> +
-> +	exynos4_ohci_set_platdata(pdata);
-> +}
-> +
->  static struct gpio_keys_button origen_gpio_keys_table[] = {
->  	{
->  		.code			= KEY_MENU,
-> @@ -627,6 +638,7 @@ static struct platform_device *origen_devices[] __initdata = {
->  	&s5p_device_mfc_l,
->  	&s5p_device_mfc_r,
->  	&s5p_device_mixer,
-> +	&exynos4_device_ohci,
->  	&exynos4_device_pd[PD_LCD0],
->  	&exynos4_device_pd[PD_TV],
->  	&exynos4_device_pd[PD_G3D],
-> @@ -702,6 +714,7 @@ static void __init origen_machine_init(void)
->  	s3c_sdhci0_set_platdata(&origen_hsmmc0_pdata);
-> 
->  	origen_ehci_init();
-> +	origen_ohci_init();
->  	clk_xusbxti.rate = 24000000;
-> 
->  	s5p_tv_setup();
-> --
-> 1.7.4.1
+diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+index 175067a..2885b25 100644
+--- a/drivers/rtc/rtc-s3c.c
++++ b/drivers/rtc/rtc-s3c.c
+@@ -428,6 +428,20 @@ static int __devexit s3c_rtc_remove(struct platform_device *dev)
+ 	return 0;
+ }
+ 
++static const struct of_device_id s3c_rtc_dt_match[];
++
++static inline int s3c_rtc_get_driver_data(struct platform_device *pdev)
++{
++#ifdef CONFIG_OF
++	if (pdev->dev.of_node) {
++		const struct of_device_id *match;
++		match = of_match_node(s3c_rtc_dt_match, pdev->dev.of_node);
++		return match->data;
++	}
++#endif
++	return platform_get_device_id(pdev)->driver_data;
++}
++
+ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ {
+ 	struct rtc_device *rtc;
+@@ -508,13 +522,7 @@ static int __devinit s3c_rtc_probe(struct platform_device *pdev)
+ 		goto err_nortc;
+ 	}
+ 
+-#ifdef CONFIG_OF
+-	if (pdev->dev.of_node)
+-		s3c_rtc_cpu_type = of_device_is_compatible(pdev->dev.of_node,
+-			"samsung,s3c6410-rtc") ? TYPE_S3C64XX : TYPE_S3C2410;
+-	else
+-#endif
+-		s3c_rtc_cpu_type = platform_get_device_id(pdev)->driver_data;
++	s3c_rtc_cpu_type = s3c_rtc_get_driver_data(pdev);
+ 
+ 	/* Check RTC Time */
+ 
+@@ -638,8 +646,13 @@ static int s3c_rtc_resume(struct platform_device *pdev)
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id s3c_rtc_dt_match[] = {
+-	{ .compatible = "samsung,s3c2410-rtc" },
+-	{ .compatible = "samsung,s3c6410-rtc" },
++	{
++		.compatible = "samsung,s3c2410-rtc"
++		.data = TYPE_S3C2410,
++	}, {
++		.compatible = "samsung,s3c6410-rtc"
++		.data = TYPE_S3C64XX,
++	},
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
+-- 
+1.7.5.4
