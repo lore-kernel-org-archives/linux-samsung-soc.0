@@ -1,27 +1,27 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Use gpio_request_one
-Date: Wed, 21 Dec 2011 13:18:06 +0900
-Message-ID: <061f01ccbf97$8a4eaac0$9eec0040$%kim@samsung.com>
-References: <003d01ccb876$ccffa720$66fef560$%han@samsung.com>
+Subject: RE: [PATCH] ARM: S5PV210: Use gpio_request_one
+Date: Wed, 21 Dec 2011 13:25:47 +0900
+Message-ID: <062001ccbf98$9d3433c0$d79c9b40$%kim@samsung.com>
+References: <003f01ccb876$e4f86ec0$aee94c40$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:27628 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751138Ab1LUESK (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18556 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751727Ab1LUEZu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Dec 2011 23:18:10 -0500
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Tue, 20 Dec 2011 23:25:50 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWJ00ETQDA87A90@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 13:18:08 +0900 (KST)
+ 2010)) with ESMTP id <0LWJ00L8PDM8WB60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 13:25:50 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ001BZDA6H480@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 13:18:08 +0900 (KST)
-In-reply-to: <003d01ccb876$ccffa720$66fef560$%han@samsung.com>
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ00JSNDMZMDF1@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 13:25:49 +0900 (KST)
+In-reply-to: <003f01ccb876$e4f86ec0$aee94c40$%han@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -35,43 +35,95 @@ Jingoo Han wrote:
 > 
 > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
->  arch/arm/mach-exynos/mach-nuri.c           |    4 +---
->  arch/arm/mach-exynos/mach-smdkv310.c       |    4 +---
->  arch/arm/mach-exynos/mach-universal_c210.c |   10 +++-------
->  3 files changed, 5 insertions(+), 13 deletions(-)
+>  arch/arm/mach-s5pv210/mach-aquila.c   |    3 +--
+>  arch/arm/mach-s5pv210/mach-goni.c     |    6 ++----
+>  arch/arm/mach-s5pv210/mach-smdkv210.c |   10 +++-------
+>  3 files changed, 6 insertions(+), 13 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
-> nuri.c
-> index 236bbe1..c96de1f 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -249,9 +249,7 @@ static int nuri_bl_init(struct device *dev)
+> diff --git a/arch/arm/mach-s5pv210/mach-aquila.c b/arch/arm/mach-
+> s5pv210/mach-aquila.c
+> index 5811a96..404ac7a 100644
+> --- a/arch/arm/mach-s5pv210/mach-aquila.c
+> +++ b/arch/arm/mach-s5pv210/mach-aquila.c
+> @@ -595,8 +595,7 @@ static struct s3c_sdhci_platdata aquila_hsmmc2_data
+> __initdata = {
+> 
+>  static void aquila_setup_sdhci(void)
 >  {
->  	int ret, gpio = EXYNOS4_GPE2(3);
+> -	gpio_request(AQUILA_EXT_FLASH_EN, "FLASH_EN");
+> -	gpio_direction_output(AQUILA_EXT_FLASH_EN, 1);
+> +	gpio_request_one(AQUILA_EXT_FLASH_EN, GPIOF_OUT_INIT_HIGH,
+> "FLASH_EN");
 > 
-> -	ret = gpio_request(gpio, "LCD_LDO_EN");
-> -	if (!ret)
-> -		gpio_direction_output(gpio, 0);
-> +	ret = gpio_request_one(gpio, GPIOF_OUT_INIT_LOW, "LCD_LD0_EN");
+>  	s3c_sdhci0_set_platdata(&aquila_hsmmc0_data);
+>  	s3c_sdhci1_set_platdata(&aquila_hsmmc1_data);
+> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-
+> s5pv210/mach-goni.c
+> index 15edcae..e2754e9 100644
+> --- a/arch/arm/mach-s5pv210/mach-goni.c
+> +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> @@ -227,8 +227,7 @@ static void __init goni_radio_init(void)
+>  	i2c1_devs[0].irq = gpio_to_irq(gpio);
 > 
-Looks good, but following is better?
+>  	gpio = S5PV210_GPJ2(5);			/* XMSMDATA_5 */
+> -	gpio_request(gpio, "FM_RST");
+> -	gpio_direction_output(gpio, 1);
+> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "FM_RST");
+>  }
+> 
+>  /* TSP */
+> @@ -264,8 +263,7 @@ static void __init goni_tsp_init(void)
+>  	int gpio;
+> 
+>  	gpio = S5PV210_GPJ1(3);		/* XMSMADDR_11 */
+> -	gpio_request(gpio, "TSP_LDO_ON");
+> -	gpio_direction_output(gpio, 1);
+> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "TSP_LDO_ON");
+>  	gpio_export(gpio, 0);
+> 
+>  	gpio = S5PV210_GPJ0(5);		/* XMSMADDR_5 */
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
+> s5pv210/mach-smdkv210.c
+> index a9106c3..10a4ec6 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> @@ -153,15 +153,12 @@ static void smdkv210_lte480wv_set_power(struct
+> plat_lcd_data *pd,
+>  {
+>  	if (power) {
+>  #if !defined(CONFIG_BACKLIGHT_PWM)
+> -		gpio_request(S5PV210_GPD0(3), "GPD0");
+> -		gpio_direction_output(S5PV210_GPD0(3), 1);
+> +		gpio_request_one(S5PV210_GPD0(3), GPIOF_OUT_INIT_HIGH,
+> "GPD0");
+>  		gpio_free(S5PV210_GPD0(3));
+>  #endif
+> 
+>  		/* fire nRESET on power up */
+> -		gpio_request(S5PV210_GPH0(6), "GPH0");
+> -
+> -		gpio_direction_output(S5PV210_GPH0(6), 1);
+> +		gpio_request_one(S5PV210_GPH0(6), GPIOF_OUT_INIT_HIGH,
+> "GPH0");
+> 
+>  		gpio_set_value(S5PV210_GPH0(6), 0);
+>  		mdelay(10);
+> @@ -172,8 +169,7 @@ static void smdkv210_lte480wv_set_power(struct
+> plat_lcd_data *pd,
+>  		gpio_free(S5PV210_GPH0(6));
+>  	} else {
+>  #if !defined(CONFIG_BACKLIGHT_PWM)
+> -		gpio_request(S5PV210_GPD0(3), "GPD0");
+> -		gpio_direction_output(S5PV210_GPD0(3), 0);
+> +		gpio_request_one(S5PV210_GPD0(3), GPIOF_OUT_INIT_LOW,
+> "GPD0");
+>  		gpio_free(S5PV210_GPD0(3));
+>  #endif
+>  	}
+> --
+> 1.7.1
 
- static int nuri_bl_init(struct device *dev)
- {
--       int ret, gpio = EXYNOS4_GPE2(3);
--
--       ret = gpio_request(gpio, "LCD_LDO_EN");
--       if (!ret)
--               gpio_direction_output(gpio, 0);
--
--       return ret;
-+       return gpio_request_one(EXYNOS4_GPE2(3), GPIOF_OUT_INIT_LOW,
-"LCD_LDO_EN");
- }
-
-Others, ok to me.
-Could you please re-send?
-
+Looks ok to me, will apply.
 Thanks.
 
 Best regards,
@@ -79,62 +131,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
->  	return ret;
->  }
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
-> exynos/mach-smdkv310.c
-> index cec2afa..cbf31bd 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -129,9 +129,7 @@ static void lcd_lte480wv_set_power(struct
-> plat_lcd_data *pd,
->  		gpio_free(EXYNOS4_GPD0(1));
->  #endif
->  		/* fire nRESET on power up */
-> -		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> -
-> -		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-> +		gpio_request_one(EXYNOS4_GPX0(6), GPIOF_OUT_INIT_HIGH,
-> "GPX0");
->  		mdelay(100);
-> 
->  		gpio_set_value(EXYNOS4_GPX0(6), 0);
-> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
-> exynos/mach-universal_c210.c
-> index a2a177f..0a04cd6 100644
-> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> @@ -608,8 +608,7 @@ static void __init universal_tsp_init(void)
-> 
->  	/* TSP_LDO_ON: XMDMADDR_11 */
->  	gpio = EXYNOS4_GPE2(3);
-> -	gpio_request(gpio, "TSP_LDO_ON");
-> -	gpio_direction_output(gpio, 1);
-> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "TSP_LDO_ON");
->  	gpio_export(gpio, 0);
-> 
->  	/* TSP_INT: XMDMADDR_7 */
-> @@ -669,8 +668,7 @@ static void __init universal_touchkey_init(void)
->  	i2c_gpio12_devs[0].irq = gpio_to_irq(gpio);
-> 
->  	gpio = EXYNOS4_GPE3(3);			/* XMDMDATA_3 */
-> -	gpio_request(gpio, "3_TOUCH_EN");
-> -	gpio_direction_output(gpio, 1);
-> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "3_TOUCH_EN");
->  }
-> 
->  static struct s3c2410_platform_i2c universal_i2c0_platdata __initdata = {
-> @@ -1000,9 +998,7 @@ static void __init universal_map_io(void)
->  void s5p_tv_setup(void)
->  {
->  	/* direct HPD to HDMI chip */
-> -	gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
-> -
-> -	gpio_direction_input(EXYNOS4_GPX3(7));
-> +	gpio_request_one(EXYNOS4_GPX3(7), GPIOF_IN, "hpd-plug");
->  	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
->  	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
-> 
-> --
-> 1.7.1
