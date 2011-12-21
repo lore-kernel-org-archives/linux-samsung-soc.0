@@ -1,445 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 02/12] ARM: restart: S3C64XX: use new restart hook
-Date: Wed, 21 Dec 2011 10:45:12 +0900
-Message-ID: <05e101ccbf82$2e480fb0$8ad82f10$%kim@samsung.com>
-References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com>
- <1324385316-6052-3-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/8] s3c-hsudc: move platform_data struct to global header
+Date: Wed, 21 Dec 2011 13:06:14 +0900
+Message-ID: <061801ccbf95$e1df4580$a59dd080$%kim@samsung.com>
+References: <201112191938.22254.heiko@sntech.de>
+ <201112191939.16542.heiko@sntech.de>
+ <20111220112458.GG31842@legolas.emea.dhcp.ti.com>
+ <201112201236.37581.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:14726 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753012Ab1LUBpO (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:8807 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751097Ab1LUEGT convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Dec 2011 20:45:14 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWJ00EF16767A30@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 10:45:13 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ00MHC67C3750@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 10:45:13 +0900 (KST)
-In-reply-to: <1324385316-6052-3-git-send-email-kgene.kim@samsung.com>
+	Tue, 20 Dec 2011 23:06:19 -0500
+In-reply-to: <201112201236.37581.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rmk+kernel@arm.linux.org.uk, ben-linux@fluff.org
+To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, balbi@ti.com
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>
 
-Kukjin Kim wrote:
-> 
-> Hook these platforms restart code into the new restart hook rather
-> than using arch_reset().
-> 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-s3c64xx/common.c                     |   10 ++++++++++
->  arch/arm/mach-s3c64xx/common.h                     |    2 ++
->  arch/arm/mach-s3c64xx/include/mach/system.h        |   11 -----------
->  arch/arm/mach-s3c64xx/mach-anw6410.c               |    1 +
->  arch/arm/mach-s3c64xx/mach-crag6410.c              |    1 +
->  arch/arm/mach-s3c64xx/mach-hmt.c                   |    1 +
->  arch/arm/mach-s3c64xx/mach-mini6410.c              |    1 +
->  arch/arm/mach-s3c64xx/mach-ncp.c                   |    1 +
->  arch/arm/mach-s3c64xx/mach-real6410.c              |    1 +
->  arch/arm/mach-s3c64xx/mach-smartq5.c               |    1 +
->  arch/arm/mach-s3c64xx/mach-smartq7.c               |    1 +
->  arch/arm/mach-s3c64xx/mach-smdk6400.c              |    1 +
->  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    1 +
->  .../arm/plat-samsung/include/plat/watchdog-reset.h |    1 +
->  14 files changed, 23 insertions(+), 11 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-> index 8ae5b16..35182ba 100644
-> --- a/arch/arm/mach-s3c64xx/common.c
-> +++ b/arch/arm/mach-s3c64xx/common.c
-> @@ -44,6 +44,7 @@
->  #include <plat/irq-vic-timer.h>
->  #include <plat/regs-irqtype.h>
->  #include <plat/regs-serial.h>
-> +#include <plat/watchdog-reset.h>
-> 
->  #include "common.h"
-> 
-> @@ -373,3 +374,12 @@ static int __init s3c64xx_init_irq_eint(void)
->  	return 0;
->  }
->  arch_initcall(s3c64xx_init_irq_eint);
-> +
-> +void s3c64xx_restart(char mode, const char *cmd)
-> +{
-> +	if (mode != 's')
-> +		arch_wdt_reset();
-> +
-> +	/* if all else fails, or mode was for soft, jump to 0 */
-> +	soft_restart(0);
-> +}
-> diff --git a/arch/arm/mach-s3c64xx/common.h b/arch/arm/mach-s3c64xx/common.h
-> index 9f523a2..8dc8ab6 100644
-> --- a/arch/arm/mach-s3c64xx/common.h
-> +++ b/arch/arm/mach-s3c64xx/common.h
-> @@ -23,6 +23,8 @@ void s3c64xx_init_io(struct map_desc *mach_desc, int size);
->  void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
->  void s3c64xx_setup_clocks(void);
-> 
-> +void s3c64xx_restart(char mode, const char *cmd);
-> +
->  extern struct syscore_ops s3c64xx_irq_syscore_ops;
->  extern struct sysdev_class s3c64xx_sysclass;
-> 
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/system.h b/arch/arm/mach-s3c64xx/include/mach/system.h
-> index d8ca578..353ed43 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/system.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/system.h
-> @@ -11,20 +11,9 @@
->  #ifndef __ASM_ARCH_SYSTEM_H
->  #define __ASM_ARCH_SYSTEM_H __FILE__
-> 
-> -#include <plat/watchdog-reset.h>
-> -
->  static void arch_idle(void)
->  {
->  	/* nothing here yet */
->  }
-> 
-> -static void arch_reset(char mode, const char *cmd)
-> -{
-> -	if (mode != 's')
-> -		arch_wdt_reset();
-> -
-> -	/* if all else fails, or mode was for soft, jump to 0 */
-> -	soft_restart(0);
-> -}
-> -
->  #endif /* __ASM_ARCH_IRQ_H */
-> diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-> index bad1d0d..b86f277 100644
-> --- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-> @@ -242,4 +242,5 @@ MACHINE_START(ANW6410, "A&W6410")
->  	.map_io		= anw6410_map_io,
->  	.init_machine	= anw6410_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> index b7350b0..f1c848a 100644
-> --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> @@ -717,4 +717,5 @@ MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
->  	.map_io		= crag6410_map_io,
->  	.init_machine	= crag6410_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-> index df38602..521e07b 100644
-> --- a/arch/arm/mach-s3c64xx/mach-hmt.c
-> +++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-> @@ -273,4 +273,5 @@ MACHINE_START(HMT, "Airgoo-HMT")
->  	.map_io		= hmt_map_io,
->  	.init_machine	= hmt_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-> index 72ebe5d..c34c2ab 100644
-> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-> @@ -351,4 +351,5 @@ MACHINE_START(MINI6410, "MINI6410")
->  	.map_io		= mini6410_map_io,
->  	.init_machine	= mini6410_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-> index 8bec707..0efa2ba 100644
-> --- a/arch/arm/mach-s3c64xx/mach-ncp.c
-> +++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-> @@ -105,4 +105,5 @@ MACHINE_START(NCP, "NCP")
->  	.map_io		= ncp_map_io,
->  	.init_machine	= ncp_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-> index 853c41e..be2a9a2 100644
-> --- a/arch/arm/mach-s3c64xx/mach-real6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-> @@ -332,4 +332,5 @@ MACHINE_START(REAL6410, "REAL6410")
->  	.map_io		= real6410_map_io,
->  	.init_machine	= real6410_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
-> index 2804526..3f42431 100644
-> --- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-> +++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-> @@ -153,4 +153,5 @@ MACHINE_START(SMARTQ5, "SmartQ 5")
->  	.map_io		= smartq_map_io,
->  	.init_machine	= smartq5_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
-> index a0f9d1a..e5c09b6 100644
-> --- a/arch/arm/mach-s3c64xx/mach-smartq7.c
-> +++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
-> @@ -169,4 +169,5 @@ MACHINE_START(SMARTQ7, "SmartQ 7")
->  	.map_io		= smartq_map_io,
->  	.init_machine	= smartq7_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-> index 57a7eaa..5f09653 100644
-> --- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-> +++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-> @@ -94,4 +94,5 @@ MACHINE_START(SMDK6400, "SMDK6400")
->  	.map_io		= smdk6400_map_io,
->  	.init_machine	= smdk6400_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> index cba6714..ca6fc20 100644
-> --- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-> @@ -706,4 +706,5 @@ MACHINE_START(SMDK6410, "SMDK6410")
->  	.map_io		= smdk6410_map_io,
->  	.init_machine	= smdk6410_machine_init,
->  	.timer		= &s3c24xx_timer,
-> +	.restart	= s3c64xx_restart,
->  MACHINE_END
-> diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h b/arch/arm/plat-
-> samsung/include/plat/watchdog-reset.h
-> index 40dbb2b..f19aff1 100644
-> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> @@ -17,6 +17,7 @@
->  #include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> +#include <linux/delay.h>
-> 
->  static inline void arch_wdt_reset(void)
->  {
-> --
-> 1.7.4.4
+Heiko St=FCbner wrote:
+>=20
+> Am Dienstag, 20. Dezember 2011, 12:25:00 schrieb Felipe Balbi:
+> > Hi,
+> >
+> > On Mon, Dec 19, 2011 at 07:39:15PM +0100, Heiko St=FCbner wrote:
+> > > Gadget drivers should be compilable on all architectures.
+> > > This patch removes one dependency on architecture-specific code.
+> > >
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > > ---
+> > >
+> > >  arch/arm/mach-s3c2416/mach-smdk2416.c    |    1 +
+> > >  arch/arm/plat-samsung/devs.c             |    1 +
+> > >  arch/arm/plat-samsung/include/plat/udc.h |   15 +------------
+> >
+> > I would like to have ack from Ben and/or Kukjin before applying thi=
+s
+> > one. Ben are you ok with this patch ?
+> I think Kukjin does more acking if this stuff currently, so hopefully=
+ he will
+> see this mail.
+>=20
 
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH V2 12/12] ARM: restart: S3C64XX: use new restart hook
+Hi Felipe,
 
-Hook these platforms restart code into the new restart hook rather
-than using arch_reset().
-
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Changes since v1:
- - added inclusion of <plat/system-reset.h> which can be used
-   commonly on Samsung SoCs.
-
- arch/arm/mach-s3c64xx/common.c                     |   10 ++++++++++
- arch/arm/mach-s3c64xx/common.h                     |    2 ++
- arch/arm/mach-s3c64xx/include/mach/system.h        |   11 +----------
- arch/arm/mach-s3c64xx/mach-anw6410.c               |    1 +
- arch/arm/mach-s3c64xx/mach-crag6410.c              |    1 +
- arch/arm/mach-s3c64xx/mach-hmt.c                   |    1 +
- arch/arm/mach-s3c64xx/mach-mini6410.c              |    1 +
- arch/arm/mach-s3c64xx/mach-ncp.c                   |    1 +
- arch/arm/mach-s3c64xx/mach-real6410.c              |    1 +
- arch/arm/mach-s3c64xx/mach-smartq5.c               |    1 +
- arch/arm/mach-s3c64xx/mach-smartq7.c               |    1 +
- arch/arm/mach-s3c64xx/mach-smdk6400.c              |    1 +
- arch/arm/mach-s3c64xx/mach-smdk6410.c              |    1 +
- .../arm/plat-samsung/include/plat/watchdog-reset.h |    1 +
- 14 files changed, 24 insertions(+), 10 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
-index 8ae5b16..35182ba 100644
---- a/arch/arm/mach-s3c64xx/common.c
-+++ b/arch/arm/mach-s3c64xx/common.c
-@@ -44,6 +44,7 @@
- #include <plat/irq-vic-timer.h>
- #include <plat/regs-irqtype.h>
- #include <plat/regs-serial.h>
-+#include <plat/watchdog-reset.h>
- 
- #include "common.h"
- 
-@@ -373,3 +374,12 @@ static int __init s3c64xx_init_irq_eint(void)
- 	return 0;
- }
- arch_initcall(s3c64xx_init_irq_eint);
-+
-+void s3c64xx_restart(char mode, const char *cmd)
-+{
-+	if (mode != 's')
-+		arch_wdt_reset();
-+
-+	/* if all else fails, or mode was for soft, jump to 0 */
-+	soft_restart(0);
-+}
-diff --git a/arch/arm/mach-s3c64xx/common.h b/arch/arm/mach-s3c64xx/common.h
-index 9f523a2..8dc8ab6 100644
---- a/arch/arm/mach-s3c64xx/common.h
-+++ b/arch/arm/mach-s3c64xx/common.h
-@@ -23,6 +23,8 @@ void s3c64xx_init_io(struct map_desc *mach_desc, int size);
- void s3c64xx_register_clocks(unsigned long xtal, unsigned armclk_limit);
- void s3c64xx_setup_clocks(void);
- 
-+void s3c64xx_restart(char mode, const char *cmd);
-+
- extern struct syscore_ops s3c64xx_irq_syscore_ops;
- extern struct sysdev_class s3c64xx_sysclass;
- 
-diff --git a/arch/arm/mach-s3c64xx/include/mach/system.h b/arch/arm/mach-s3c64xx/include/mach/system.h
-index d8ca578..5f5b2d8 100644
---- a/arch/arm/mach-s3c64xx/include/mach/system.h
-+++ b/arch/arm/mach-s3c64xx/include/mach/system.h
-@@ -11,20 +11,11 @@
- #ifndef __ASM_ARCH_SYSTEM_H
- #define __ASM_ARCH_SYSTEM_H __FILE__
- 
--#include <plat/watchdog-reset.h>
-+#include <plat/system-reset.h>
- 
- static void arch_idle(void)
- {
- 	/* nothing here yet */
- }
- 
--static void arch_reset(char mode, const char *cmd)
--{
--	if (mode != 's')
--		arch_wdt_reset();
--
--	/* if all else fails, or mode was for soft, jump to 0 */
--	soft_restart(0);
--}
--
- #endif /* __ASM_ARCH_IRQ_H */
-diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
-index bad1d0d..b86f277 100644
---- a/arch/arm/mach-s3c64xx/mach-anw6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
-@@ -242,4 +242,5 @@ MACHINE_START(ANW6410, "A&W6410")
- 	.map_io		= anw6410_map_io,
- 	.init_machine	= anw6410_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index b7350b0..f1c848a 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -717,4 +717,5 @@ MACHINE_START(WLF_CRAGG_6410, "Wolfson Cragganmore 6410")
- 	.map_io		= crag6410_map_io,
- 	.init_machine	= crag6410_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
-index df38602..521e07b 100644
---- a/arch/arm/mach-s3c64xx/mach-hmt.c
-+++ b/arch/arm/mach-s3c64xx/mach-hmt.c
-@@ -273,4 +273,5 @@ MACHINE_START(HMT, "Airgoo-HMT")
- 	.map_io		= hmt_map_io,
- 	.init_machine	= hmt_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
-index 72ebe5d..c34c2ab 100644
---- a/arch/arm/mach-s3c64xx/mach-mini6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
-@@ -351,4 +351,5 @@ MACHINE_START(MINI6410, "MINI6410")
- 	.map_io		= mini6410_map_io,
- 	.init_machine	= mini6410_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
-index 8bec707..0efa2ba 100644
---- a/arch/arm/mach-s3c64xx/mach-ncp.c
-+++ b/arch/arm/mach-s3c64xx/mach-ncp.c
-@@ -105,4 +105,5 @@ MACHINE_START(NCP, "NCP")
- 	.map_io		= ncp_map_io,
- 	.init_machine	= ncp_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
-index 853c41e..be2a9a2 100644
---- a/arch/arm/mach-s3c64xx/mach-real6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-real6410.c
-@@ -332,4 +332,5 @@ MACHINE_START(REAL6410, "REAL6410")
- 	.map_io		= real6410_map_io,
- 	.init_machine	= real6410_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq5.c b/arch/arm/mach-s3c64xx/mach-smartq5.c
-index 2804526..3f42431 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq5.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq5.c
-@@ -153,4 +153,5 @@ MACHINE_START(SMARTQ5, "SmartQ 5")
- 	.map_io		= smartq_map_io,
- 	.init_machine	= smartq5_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq7.c b/arch/arm/mach-s3c64xx/mach-smartq7.c
-index a0f9d1a..e5c09b6 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq7.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq7.c
-@@ -169,4 +169,5 @@ MACHINE_START(SMARTQ7, "SmartQ 7")
- 	.map_io		= smartq_map_io,
- 	.init_machine	= smartq7_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-index 57a7eaa..5f09653 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
-@@ -94,4 +94,5 @@ MACHINE_START(SMDK6400, "SMDK6400")
- 	.map_io		= smdk6400_map_io,
- 	.init_machine	= smdk6400_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index cba6714..ca6fc20 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -706,4 +706,5 @@ MACHINE_START(SMDK6410, "SMDK6410")
- 	.map_io		= smdk6410_map_io,
- 	.init_machine	= smdk6410_machine_init,
- 	.timer		= &s3c24xx_timer,
-+	.restart	= s3c64xx_restart,
- MACHINE_END
-diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-index 40dbb2b..f19aff1 100644
---- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-+++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-@@ -17,6 +17,7 @@
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/io.h>
-+#include <linux/delay.h>
- 
- static inline void arch_wdt_reset(void)
- {
--- 
+Looks ok to me, you can go ahead with my ack.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Thanks.
 
