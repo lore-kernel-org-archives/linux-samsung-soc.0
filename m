@@ -1,47 +1,125 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv2 resend] Fix compilation error when
- CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
-Date: Wed, 21 Dec 2011 16:04:40 +0900
-Message-ID: <064501ccbfae$cf1e5cb0$6d5b1610$%kim@samsung.com>
-References: <4EE7BE5F.8020108@solonet.org.ua>
+Subject: RE: [PATCH V2] ARM: EXYNOS: Use gpio_request_one
+Date: Wed, 21 Dec 2011 16:05:21 +0900
+Message-ID: <064601ccbfae$e77e71a0$b67b54e0$%kim@samsung.com>
+References: <009e01ccbfa1$84eb6140$8ec223c0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54526 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:54973 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752277Ab1LUHEn (ORCPT
+	with ESMTP id S1752454Ab1LUHFj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Dec 2011 02:04:43 -0500
-In-reply-to: <4EE7BE5F.8020108@solonet.org.ua>
+	Wed, 21 Dec 2011 02:05:39 -0500
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWJ00FR8KZPRGH0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 16:05:21 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ002HKL0X9471@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 16:05:21 +0900 (KST)
+In-reply-to: <009e01ccbfa1$84eb6140$8ec223c0$%han@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Denis Kuzmenko' <linux@solonet.org.ua>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
+To: 'Jingoo Han' <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-Denis Kuzmenko wrote:
+Jingoo Han wrote:
 > 
-> Fix compilation error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
+> By using gpio_request_one it is possible to set the direction
+> and initial value in one shot. Thus, using gpio_request_one can
+> make the code simpler.
 > 
-> Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 > ---
+>  arch/arm/mach-exynos/mach-nuri.c           |    9 ++-------
+>  arch/arm/mach-exynos/mach-smdkv310.c       |    4 +---
+>  arch/arm/mach-exynos/mach-universal_c210.c |   10 +++-------
+>  3 files changed, 6 insertions(+), 17 deletions(-)
 > 
-> Patch is against 3.2-rc4.
-> CONFIG_S3C2410_IOTIMING is not selected for MACH_MINI2440. Because of this
-> the
-> file s3c2410-iotiming.c is not ever compiled and enabling
-> CONFIG_CPU_FREQ_S3C24XX_DEBUGFS option caused undefined reference to
-> function
-> s3c2410_iotiming_debugfs defined in that file. s3c2410_iotiming_debugfs
-> defined
-> as NULL for this case.
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
+> nuri.c
+> index 236bbe1..205dfed 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -247,13 +247,8 @@ static void nuri_lcd_power_on(struct plat_lcd_data
+> *pd, unsigned int power)
 > 
-Hi Denis,
+>  static int nuri_bl_init(struct device *dev)
+>  {
+> -	int ret, gpio = EXYNOS4_GPE2(3);
+> -
+> -	ret = gpio_request(gpio, "LCD_LDO_EN");
+> -	if (!ret)
+> -		gpio_direction_output(gpio, 0);
+> -
+> -	return ret;
+> +	return gpio_request_one(EXYNOS4_GPE2(3), GPIOF_OUT_INIT_LOW,
+> +				"LCD_LD0_EN");
+>  }
+> 
+>  static int nuri_bl_notify(struct device *dev, int brightness)
+> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
+> exynos/mach-smdkv310.c
+> index cec2afa..cbf31bd 100644
+> --- a/arch/arm/mach-exynos/mach-smdkv310.c
+> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
+> @@ -129,9 +129,7 @@ static void lcd_lte480wv_set_power(struct
+> plat_lcd_data *pd,
+>  		gpio_free(EXYNOS4_GPD0(1));
+>  #endif
+>  		/* fire nRESET on power up */
+> -		gpio_request(EXYNOS4_GPX0(6), "GPX0");
+> -
+> -		gpio_direction_output(EXYNOS4_GPX0(6), 1);
+> +		gpio_request_one(EXYNOS4_GPX0(6), GPIOF_OUT_INIT_HIGH,
+> "GPX0");
+>  		mdelay(100);
+> 
+>  		gpio_set_value(EXYNOS4_GPX0(6), 0);
+> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
+> exynos/mach-universal_c210.c
+> index a2a177f..0a04cd6 100644
+> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+> @@ -608,8 +608,7 @@ static void __init universal_tsp_init(void)
+> 
+>  	/* TSP_LDO_ON: XMDMADDR_11 */
+>  	gpio = EXYNOS4_GPE2(3);
+> -	gpio_request(gpio, "TSP_LDO_ON");
+> -	gpio_direction_output(gpio, 1);
+> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "TSP_LDO_ON");
+>  	gpio_export(gpio, 0);
+> 
+>  	/* TSP_INT: XMDMADDR_7 */
+> @@ -669,8 +668,7 @@ static void __init universal_touchkey_init(void)
+>  	i2c_gpio12_devs[0].irq = gpio_to_irq(gpio);
+> 
+>  	gpio = EXYNOS4_GPE3(3);			/* XMDMDATA_3 */
+> -	gpio_request(gpio, "3_TOUCH_EN");
+> -	gpio_direction_output(gpio, 1);
+> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "3_TOUCH_EN");
+>  }
+> 
+>  static struct s3c2410_platform_i2c universal_i2c0_platdata __initdata = {
+> @@ -1000,9 +998,7 @@ static void __init universal_map_io(void)
+>  void s5p_tv_setup(void)
+>  {
+>  	/* direct HPD to HDMI chip */
+> -	gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
+> -
+> -	gpio_direction_input(EXYNOS4_GPX3(7));
+> +	gpio_request_one(EXYNOS4_GPX3(7), GPIOF_IN, "hpd-plug");
+>  	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
+>  	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
+> 
+> --
+> 1.7.1
 
-Well, there is no error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected in my
-case and s3c2410-iotiming.c is built...when is it happened? I just selected
-every regarding configuration in kernel menuconfig...
-
+OK, will apply.
 Thanks.
 
 Best regards,
@@ -49,88 +127,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> Changelog:
-> v1 -> v2
-> New CONFIG_ symbols S3C241{0,2}_IOTIMING were removed as It was observed
-> that
-> they already present but hidden from user.
-> 
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index e084b7e..133d005 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -2118,7 +2118,7 @@ config CPU_FREQ_S3C24XX_DEBUG
-> 
->  config CPU_FREQ_S3C24XX_IODEBUG
->  	bool "Debug CPUfreq Samsung driver IO timing"
-> -	depends on CPU_FREQ_S3C24XX
-> +	depends on CPU_FREQ_S3C24XX && (S3C2410_IOTIMING ||
-> S3C2412_IOTIMING)
->  	help
->  	  Enable s3c_freq_iodbg for the Samsung S3C CPUfreq core
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-> b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-> index dac4760..c465252 100644
-> --- a/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-> +++ b/arch/arm/plat-samsung/include/plat/cpu-freq-core.h
-> @@ -202,13 +202,23 @@ extern int s3c_plltab_register(struct
-> cpufreq_frequency_table *plls,
->  extern struct s3c_cpufreq_config *s3c_cpufreq_getconfig(void);
->  extern struct s3c_iotimings *s3c_cpufreq_getiotimings(void);
-> 
-> -extern void s3c2410_iotiming_debugfs(struct seq_file *seq,
-> -				     struct s3c_cpufreq_config *cfg,
-> -				     union s3c_iobank *iob);
-> -
-> -extern void s3c2412_iotiming_debugfs(struct seq_file *seq,
-> -				     struct s3c_cpufreq_config *cfg,
-> -				     union s3c_iobank *iob);
-> +#ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
-> +	#ifdef CONFIG_S3C2410_IOTIMING
-> +	extern void s3c2410_iotiming_debugfs(struct seq_file *seq,
-> +					     struct s3c_cpufreq_config *cfg,
-> +					     union s3c_iobank *iob);
-> +	#else
-> +	#define s3c2410_iotiming_debugfs	NULL
-> +	#endif
-> +
-> +	#ifdef CONFIG_S3C2412_IOTIMING
-> +	extern void s3c2412_iotiming_debugfs(struct seq_file *seq,
-> +					     struct s3c_cpufreq_config *cfg,
-> +					     union s3c_iobank *iob);
-> +	#else
-> +	#define s3c2412_iotiming_debugfs	NULL
-> +	#endif
-> +#endif
-> 
->  #ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUGFS
->  #define s3c_cpufreq_debugfs_call(x) x
-> @@ -241,10 +251,7 @@ extern void s3c2410_iotiming_set(struct
-> s3c_cpufreq_config *cfg,
->  #endif /* CONFIG_S3C2410_IOTIMING */
-> 
->  /* S3C2412 compatible routines */
-> -
-> -extern int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
-> -				struct s3c_iotimings *timings);
-> -
-> +#ifdef CONFIG_S3C2412_IOTIMING
->  extern int s3c2412_iotiming_get(struct s3c_cpufreq_config *cfg,
->  				struct s3c_iotimings *timings);
-> 
-> @@ -253,6 +260,11 @@ extern int s3c2412_iotiming_calc(struct
-> s3c_cpufreq_config *cfg,
-> 
->  extern void s3c2412_iotiming_set(struct s3c_cpufreq_config *cfg,
->  				 struct s3c_iotimings *iot);
-> +#else
-> +#define s3c2412_iotiming_calc NULL
-> +#define s3c2412_iotiming_get NULL
-> +#define s3c2412_iotiming_set NULL
-> +#endif
-> 
->  #ifdef CONFIG_CPU_FREQ_S3C24XX_DEBUG
->  #define s3c_freq_dbg(x...) printk(KERN_INFO x)
