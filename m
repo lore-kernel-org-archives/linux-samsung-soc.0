@@ -1,125 +1,154 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2] ARM: EXYNOS: Use gpio_request_one
-Date: Wed, 21 Dec 2011 16:05:21 +0900
-Message-ID: <064601ccbfae$e77e71a0$b67b54e0$%kim@samsung.com>
-References: <009e01ccbfa1$84eb6140$8ec223c0$%han@samsung.com>
+Subject: RE: [PATCH 1/4] ARM: SAMSUNG: cleanup of rtc register definitions
+Date: Wed, 21 Dec 2011 16:19:53 +0900
+Message-ID: <064701ccbfb0$ef40ea60$cdc2bf20$%kim@samsung.com>
+References: <201112121543.42299.heiko@sntech.de>
+ <201112121545.15211.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54973 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:62693 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752454Ab1LUHFj (ORCPT
+	with ESMTP id S1750733Ab1LUHT5 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Dec 2011 02:05:39 -0500
+	Wed, 21 Dec 2011 02:19:57 -0500
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWJ00FR8KZPRGH0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 16:05:21 +0900 (KST)
+ 2010)) with ESMTP id <0LWJ00E7BLOP7AI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 16:19:55 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ002HKL0X9471@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 16:05:21 +0900 (KST)
-In-reply-to: <009e01ccbfa1$84eb6140$8ec223c0$%han@samsung.com>
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWJ009YKLP5Y670@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 21 Dec 2011 16:19:55 +0900 (KST)
+In-reply-to: <201112121545.15211.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org
+To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, ben-linux@fluff.org, a.zummo@towertech.it
+Cc: rtc-linux@googlegroups.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Jingoo Han wrote:
-> 
-> By using gpio_request_one it is possible to set the direction
-> and initial value in one shot. Thus, using gpio_request_one can
-> make the code simpler.
-> 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Heiko St=FCbner wrote:
+>=20
+> regs-rtc.h uses a mixture of tabs and spaces and also (x<<y)
+> to format bits. So, before adding new stuff clean up the formatting
+> and also add spaces to the bit definitions (i.e. (x << y) )
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->  arch/arm/mach-exynos/mach-nuri.c           |    9 ++-------
->  arch/arm/mach-exynos/mach-smdkv310.c       |    4 +---
->  arch/arm/mach-exynos/mach-universal_c210.c |   10 +++-------
->  3 files changed, 6 insertions(+), 17 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
-> nuri.c
-> index 236bbe1..205dfed 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -247,13 +247,8 @@ static void nuri_lcd_power_on(struct plat_lcd_data
-> *pd, unsigned int power)
-> 
->  static int nuri_bl_init(struct device *dev)
->  {
-> -	int ret, gpio = EXYNOS4_GPE2(3);
+>  arch/arm/plat-samsung/include/plat/regs-rtc.h |   66
+++++++++++++---------
+> ----
+>  1 files changed, 32 insertions(+), 34 deletions(-)
+>=20
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-rtc.h
+> b/arch/arm/plat-samsung/include/plat/regs-rtc.h
+> index 30b7cc1..d9d9bdc 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-rtc.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-rtc.h
+> @@ -18,51 +18,49 @@
+>  #define S3C2410_INTP_ALM	(1 << 1)
+>  #define S3C2410_INTP_TIC	(1 << 0)
+>=20
+> -#define S3C2410_RTCCON	      S3C2410_RTCREG(0x40)
+> -#define S3C2410_RTCCON_RTCEN  (1<<0)
+> -#define S3C2410_RTCCON_CLKSEL (1<<1)
+> -#define S3C2410_RTCCON_CNTSEL (1<<2)
+> -#define S3C2410_RTCCON_CLKRST (1<<3)
+> -#define S3C64XX_RTCCON_TICEN  (1<<8)
+> +#define S3C2410_RTCCON		S3C2410_RTCREG(0x40)
+> +#define S3C2410_RTCCON_RTCEN	(1 << 0)
+> +#define S3C2410_RTCCON_CLKSEL	(1 << 1)
+> +#define S3C2410_RTCCON_CNTSEL	(1 << 2)
+> +#define S3C2410_RTCCON_CLKRST	(1 << 3)
+> +#define S3C64XX_RTCCON_TICEN	(1 << 8)
+>=20
+> -#define S3C64XX_RTCCON_TICMSK (0xF<<7)
+> -#define S3C64XX_RTCCON_TICSHT (7)
+> +#define S3C64XX_RTCCON_TICMSK	(0xF << 7)
+> +#define S3C64XX_RTCCON_TICSHT	(7)
+>=20
+> -#define S3C2410_TICNT	      S3C2410_RTCREG(0x44)
+> -#define S3C2410_TICNT_ENABLE  (1<<7)
+> +#define S3C2410_TICNT		S3C2410_RTCREG(0x44)
+> +#define S3C2410_TICNT_ENABLE	(1 << 7)
+>=20
+> -#define S3C2410_RTCALM	      S3C2410_RTCREG(0x50)
+> -#define S3C2410_RTCALM_ALMEN  (1<<6)
+> -#define S3C2410_RTCALM_YEAREN (1<<5)
+> -#define S3C2410_RTCALM_MONEN  (1<<4)
+> -#define S3C2410_RTCALM_DAYEN  (1<<3)
+> -#define S3C2410_RTCALM_HOUREN (1<<2)
+> -#define S3C2410_RTCALM_MINEN  (1<<1)
+> -#define S3C2410_RTCALM_SECEN  (1<<0)
+> +#define S3C2410_RTCALM		S3C2410_RTCREG(0x50)
+> +#define S3C2410_RTCALM_ALMEN	(1 << 6)
+> +#define S3C2410_RTCALM_YEAREN	(1 << 5)
+> +#define S3C2410_RTCALM_MONEN	(1 << 4)
+> +#define S3C2410_RTCALM_DAYEN	(1 << 3)
+> +#define S3C2410_RTCALM_HOUREN	(1 << 2)
+> +#define S3C2410_RTCALM_MINEN	(1 << 1)
+> +#define S3C2410_RTCALM_SECEN	(1 << 0)
+>=20
+>  #define S3C2410_RTCALM_ALL \
+>    S3C2410_RTCALM_ALMEN | S3C2410_RTCALM_YEAREN | S3C2410_RTCALM_MONE=
+N |\
+>    S3C2410_RTCALM_DAYEN | S3C2410_RTCALM_HOUREN | S3C2410_RTCALM_MINE=
+N |\
+>    S3C2410_RTCALM_SECEN
+>=20
+> +#define S3C2410_ALMSEC		S3C2410_RTCREG(0x54)
+> +#define S3C2410_ALMMIN		S3C2410_RTCREG(0x58)
+> +#define S3C2410_ALMHOUR		S3C2410_RTCREG(0x5c)
+>=20
+> -#define S3C2410_ALMSEC	      S3C2410_RTCREG(0x54)
+> -#define S3C2410_ALMMIN	      S3C2410_RTCREG(0x58)
+> -#define S3C2410_ALMHOUR	      S3C2410_RTCREG(0x5c)
+> +#define S3C2410_ALMDATE		S3C2410_RTCREG(0x60)
+> +#define S3C2410_ALMMON		S3C2410_RTCREG(0x64)
+> +#define S3C2410_ALMYEAR		S3C2410_RTCREG(0x68)
+>=20
+> -#define S3C2410_ALMDATE	      S3C2410_RTCREG(0x60)
+> -#define S3C2410_ALMMON	      S3C2410_RTCREG(0x64)
+> -#define S3C2410_ALMYEAR	      S3C2410_RTCREG(0x68)
 > -
-> -	ret = gpio_request(gpio, "LCD_LDO_EN");
-> -	if (!ret)
-> -		gpio_direction_output(gpio, 0);
+> -#define S3C2410_RTCRST	      S3C2410_RTCREG(0x6c)
 > -
-> -	return ret;
-> +	return gpio_request_one(EXYNOS4_GPE2(3), GPIOF_OUT_INIT_LOW,
-> +				"LCD_LD0_EN");
->  }
-> 
->  static int nuri_bl_notify(struct device *dev, int brightness)
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
-> exynos/mach-smdkv310.c
-> index cec2afa..cbf31bd 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -129,9 +129,7 @@ static void lcd_lte480wv_set_power(struct
-> plat_lcd_data *pd,
->  		gpio_free(EXYNOS4_GPD0(1));
->  #endif
->  		/* fire nRESET on power up */
-> -		gpio_request(EXYNOS4_GPX0(6), "GPX0");
-> -
-> -		gpio_direction_output(EXYNOS4_GPX0(6), 1);
-> +		gpio_request_one(EXYNOS4_GPX0(6), GPIOF_OUT_INIT_HIGH,
-> "GPX0");
->  		mdelay(100);
-> 
->  		gpio_set_value(EXYNOS4_GPX0(6), 0);
-> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
-> exynos/mach-universal_c210.c
-> index a2a177f..0a04cd6 100644
-> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> @@ -608,8 +608,7 @@ static void __init universal_tsp_init(void)
-> 
->  	/* TSP_LDO_ON: XMDMADDR_11 */
->  	gpio = EXYNOS4_GPE2(3);
-> -	gpio_request(gpio, "TSP_LDO_ON");
-> -	gpio_direction_output(gpio, 1);
-> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "TSP_LDO_ON");
->  	gpio_export(gpio, 0);
-> 
->  	/* TSP_INT: XMDMADDR_7 */
-> @@ -669,8 +668,7 @@ static void __init universal_touchkey_init(void)
->  	i2c_gpio12_devs[0].irq = gpio_to_irq(gpio);
-> 
->  	gpio = EXYNOS4_GPE3(3);			/* XMDMDATA_3 */
-> -	gpio_request(gpio, "3_TOUCH_EN");
-> -	gpio_direction_output(gpio, 1);
-> +	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "3_TOUCH_EN");
->  }
-> 
->  static struct s3c2410_platform_i2c universal_i2c0_platdata __initdata = {
-> @@ -1000,9 +998,7 @@ static void __init universal_map_io(void)
->  void s5p_tv_setup(void)
->  {
->  	/* direct HPD to HDMI chip */
-> -	gpio_request(EXYNOS4_GPX3(7), "hpd-plug");
-> -
-> -	gpio_direction_input(EXYNOS4_GPX3(7));
-> +	gpio_request_one(EXYNOS4_GPX3(7), GPIOF_IN, "hpd-plug");
->  	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
->  	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
-> 
+> -#define S3C2410_RTCSEC	      S3C2410_RTCREG(0x70)
+> -#define S3C2410_RTCMIN	      S3C2410_RTCREG(0x74)
+> -#define S3C2410_RTCHOUR	      S3C2410_RTCREG(0x78)
+> -#define S3C2410_RTCDATE	      S3C2410_RTCREG(0x7c)
+> -#define S3C2410_RTCDAY	      S3C2410_RTCREG(0x80)
+> -#define S3C2410_RTCMON	      S3C2410_RTCREG(0x84)
+> -#define S3C2410_RTCYEAR	      S3C2410_RTCREG(0x88)
+> +#define S3C2410_RTCRST		S3C2410_RTCREG(0x6c)
+>=20
+> +#define S3C2410_RTCSEC		S3C2410_RTCREG(0x70)
+> +#define S3C2410_RTCMIN		S3C2410_RTCREG(0x74)
+> +#define S3C2410_RTCHOUR		S3C2410_RTCREG(0x78)
+> +#define S3C2410_RTCDATE		S3C2410_RTCREG(0x7c)
+> +#define S3C2410_RTCDAY		S3C2410_RTCREG(0x80)
+> +#define S3C2410_RTCMON		S3C2410_RTCREG(0x84)
+> +#define S3C2410_RTCYEAR		S3C2410_RTCREG(0x88)
+>=20
+>  #endif /* __ASM_ARCH_REGS_RTC_H */
 > --
-> 1.7.1
+> 1.7.5.4
 
-OK, will apply.
+Looks good to me, but how about cleanup useless definitions together li=
+ke
+following?
+
+Actually, S3C2410_RTCCON_CLKSEL, S3C64XX_RTCCON_TICMSK,
+S3C64XX_RTCCON_TICSHT, S3C2410_RTCALM_ALL, S3C2410_RTCRST and S3C2410_R=
+TCDAY
+are not used.
+
+And I'm not sure we really need to define the S3C2410_RTCREG(x), but th=
+is
+can be sorted out next time with similar others.
+
 Thanks.
 
 Best regards,
