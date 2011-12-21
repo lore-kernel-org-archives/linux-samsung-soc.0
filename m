@@ -1,218 +1,103 @@
-From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [RFC PATCH 3/3] ARM: exynos4: Add thermal sensor driver
-	platform device support
-Date: Wed, 21 Dec 2011 17:29:58 +0530
-Message-ID: <1324468798-20423-4-git-send-email-amit.kachhap@linaro.org>
-References: <1324468798-20423-1-git-send-email-amit.kachhap@linaro.org>
+From: Greg KH <greg@kroah.com>
+Subject: Re: Re: [PATCH 0/3] Support Samsung S5P OHCI device and driver
+Date: Wed, 21 Dec 2011 10:57:35 -0800
+Message-ID: <20111221185735.GA6609@kroah.com>
+References: <33510089.42761321876635907.JavaMail.weblogic@epv6ml08>
+ <20111121172344.GA4483@kroah.com>
+ <046f01ccb011$6d111370$47333a50$%kim@samsung.com>
+ <20111209235807.GC6680@kroah.com>
+ <062501ccbf9a$601f3af0$205db0d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <1324468798-20423-1-git-send-email-amit.kachhap@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from out2.smtp.messagingengine.com ([66.111.4.26]:58586 "EHLO
+	out2.smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754106Ab1LUS6R (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Dec 2011 13:58:17 -0500
+Received: from compute3.internal (compute3.nyi.mail.srv.osa [10.202.2.43])
+	by gateway1.nyi.mail.srv.osa (Postfix) with ESMTP id 9162921574
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Dec 2011 13:58:16 -0500 (EST)
+Content-Disposition: inline
+In-Reply-To: <062501ccbf9a$601f3af0$205db0d0$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jingoo Han' <jg1.han@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, gregkh@suse.de, stern@rowland.harvard.edu, 'Yulgon Kim' <yulgon.kim@samsung.com>, 'Shim Joonyoung' <jy0922.shim@samsung.com>
 
-This patch adds necessary source definations needed for TMU driver and
-the platform device support.
+On Wed, Dec 21, 2011 at 01:38:24PM +0900, Kukjin Kim wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Greg KH [mailto:greg@kroah.com]
+> > Sent: Saturday, December 10, 2011 8:58 AM
+> > To: Kukjin Kim
+> > Cc: 'Jingoo Han'; linux-arm-kernel@lists.infradead.org; linux-
+> > usb@vger.kernel.org; linux-samsung-soc@vger.kernel.org; gregkh@suse.de;
+> > stern@rowland.harvard.edu; 'Yulgon Kim'; 'Shim Joonyoung'
+> > Subject: Re: Re: [PATCH 0/3] Support Samsung S5P OHCI device and driver
+> > 
+> > On Thu, Dec 01, 2011 at 07:10:17PM +0900, Kukjin Kim wrote:
+> > > Greg KH wrote:
+> > > >
+> > > > On Mon, Nov 21, 2011 at 11:57:16AM +0000, Jingoo Han wrote:
+> > > > > > -----Original Message-----
+> > > > > > From: Greg KH [mailto:greg@kroah.com]
+> > > > > > Sent: Friday, November 18, 2011 4:12 AM
+> > > > > > To: Jingoo Han
+> > > > > > Cc: linux-arm-kernel@lists.infradead.org; linux-
+> > usb@vger.kernel.org;
+> > > > > > linux-samsung-soc@vger.kernel.org; gregkh@suse.de;
+> > > > > > stern@rowland.harvard.edu; kgene.kim@samsung.com;
+> > > > yulgon.kim@samsung.com;
+> > > > > > jy0922.shim@samsung.com
+> > > > > > Subject: Re: [PATCH 0/3] Support Samsung S5P OHCI device and
+> > driver
+> > > > > >
+> > > > > > On Tue, Nov 15, 2011 at 06:49:58AM +0000, Jingoo Han wrote:
+> > > > > > > Hello.
+> > > > > > >
+> > > > > > > This patch series adds USB OHCI device and initial driver for
+> > > > Samsung
+> > > > > > > S5P SoCs and is based from Linux 3.2-rc1. I have tested on
+> > SMDKV310
+> > > > > > board
+> > > > > > > using EXYNOS4.
+> > > > > >
+> > > > > > This is to be sent through some arm tree, not the usb tree, right?
+> > > > > Right, 1st and 2nd patch are sent throught arm tree.
+> > > > > However, 3rd patch is sent through the usb tree.
+> > > > > Thanks.
+> > > > > [PATCH 1/3] ARM: SAMSUNG: Add USB OHCI device
+> > > > > [PATCH 2/3]  ARM: EXYNOS: Add USB OHCI support to SMDKV310 board
+> > > > > [PATCH 3/3] USB: Add S5P OHCI diver
+> > > >
+> > > Hi Greg,
+> > >
+> > > Sorry for late response. I came back today from family vacation...
+> > >
+> > > Anyway,
+> > >
+> > > > So the third patch does not depend on the first two?  If it does, that
+> > > > means I will get build errors in the USB tree when I apply that patch,
+> > > > right?
+> > > >
+> > > > If so, then all three should go through a single tree.
+> > > >
+> > > Yes, right. This series would be handled in same tree so that we can
+> > avoid
+> > > useless conflicts.
+> > >
+> > > I commented small thing on 3rd patch. So I think, if you're ok on his
+> > > updated patch, it can be sent to upstream via Samsung tree. Or your tree
+> > > with my ack?
+> > 
+> > The samsung tree is fine to take these, thanks.
+> > 
+> Hi Greg,
+> 
+> OK, let me pick this up in my tree...so, when I apply, may I can have a ack
+> from you on 3rd patch?
 
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
----
- arch/arm/mach-exynos/Kconfig              |   12 +++++
- arch/arm/mach-exynos/Makefile             |    1 +
- arch/arm/mach-exynos/clock.c              |    4 ++
- arch/arm/mach-exynos/dev-tmu.c            |   64 +++++++++++++++++++++++++++++
- arch/arm/mach-exynos/include/mach/irqs.h  |    2 +
- arch/arm/mach-exynos/include/mach/map.h   |    1 +
- arch/arm/mach-exynos/mach-origen.c        |    1 +
- arch/arm/plat-samsung/include/plat/devs.h |    1 +
- 8 files changed, 86 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos/dev-tmu.c
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 724ec0f..cfc6119 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -82,6 +82,17 @@ config EXYNOS4_DEV_DWMCI
- 	help
- 	  Compile in platform device definitions for DWMCI
- 
-+config EXYNOS4_DEV_TMU
-+	bool "Exynos4 tmu device support"
-+	default n
-+	depends on ARCH_EXYNOS4
-+	---help---
-+	  Compile in platform device definitions for TMU. This macro also
-+	  enables compilation hwmon base TMU driver and also allows compilation
-+	  of the platform device files. The platform data in this case is trip
-+	  temperature and some tmu h/w configurations related parameter.
-+
-+
- config EXYNOS4_SETUP_I2C1
- 	bool
- 	help
-@@ -288,6 +299,7 @@ config MACH_ORIGEN
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_DEV_PD
-+	select EXYNOS4_DEV_TMU
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_SDHCI
- 	select EXYNOS4_SETUP_USB_PHY
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 59069a3..d2493e8 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
- obj-$(CONFIG_EXYNOS4_DEV_PD)		+= dev-pd.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
- obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
-+obj-$(CONFIG_EXYNOS4_DEV_TMU)           += dev-tmu.o
- 
- obj-$(CONFIG_EXYNOS4_SETUP_FIMC)	+= setup-fimc.o
- obj-$(CONFIG_EXYNOS4_SETUP_FIMD0)	+= setup-fimd0.o
-diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-index 2894f0a..edecc5e 100644
---- a/arch/arm/mach-exynos/clock.c
-+++ b/arch/arm/mach-exynos/clock.c
-@@ -567,6 +567,10 @@ static struct clk init_clocks_off[] = {
- 		.enable		= exynos4_clk_ip_peril_ctrl,
- 		.ctrlbit	= (1 << 15),
- 	}, {
-+		.name		= "tmu_apbif",
-+		.enable		= exynos4_clk_ip_perir_ctrl,
-+		.ctrlbit	= (1 << 17),
-+	}, {
- 		.name		= "keypad",
- 		.enable		= exynos4_clk_ip_perir_ctrl,
- 		.ctrlbit	= (1 << 16),
-diff --git a/arch/arm/mach-exynos/dev-tmu.c b/arch/arm/mach-exynos/dev-tmu.c
-new file mode 100644
-index 0000000..2e98912
---- /dev/null
-+++ b/arch/arm/mach-exynos/dev-tmu.c
-@@ -0,0 +1,64 @@
-+/* linux/arch/arm/mach-exynos4/dev-tmu.c
-+ *
-+ * Copyright 2011 by SAMSUNG
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/string.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/platform_data/exynos4_tmu.h>
-+#include <asm/irq.h>
-+
-+#include <mach/irqs.h>
-+#include <mach/map.h>
-+#include <plat/devs.h>
-+
-+static struct resource exynos4_tmu_resource[] = {
-+	[0] = {
-+		.start	= EXYNOS4_PA_TMU,
-+		.end	= EXYNOS4_PA_TMU + 0xFFFF - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_TMU_TRIG0,
-+		.end	= IRQ_TMU_TRIG0,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+static struct exynos4_tmu_platform_data default_tmu_data = {
-+	.threshold = 80,
-+	.trigger_levels[0] = 2,
-+	.trigger_levels[1] = 5,
-+	.trigger_levels[2] = 20,
-+	.trigger_levels[3] = 30,
-+	.trigger_level0_en = 1,
-+	.trigger_level1_en = 1,
-+	.trigger_level2_en = 1,
-+	.trigger_level3_en = 1,
-+	.gain = 15,
-+	.reference_voltage = 7,
-+	.cal_type = TYPE_ONE_POINT_TRIMMING,
-+	.freq_tab[0] = {
-+		.freq_clip_pctg[0] = 30,
-+		},
-+	.freq_tab[1] = {
-+		.freq_clip_pctg[0] = 99,
-+		},
-+	.freq_tab_count = 2,
-+};
-+
-+struct platform_device exynos4_device_tmu = {
-+	.name		= "exynos4-tmu",
-+	.id		= -1,
-+	.num_resources	= ARRAY_SIZE(exynos4_tmu_resource),
-+	.resource	= exynos4_tmu_resource,
-+	.dev	= {
-+		.platform_data	= &default_tmu_data,
-+	},
-+};
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index dfd4b7e..d66a24b 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -125,6 +125,8 @@
- #define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
- #define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
- 
-+#define IRQ_TMU_TRIG0		COMBINER_IRQ(2, 4)
-+#define IRQ_TMU_TRIG1		COMBINER_IRQ(3, 4)
- #define IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
- #define IRQ_SYSMMU_SSS_0	COMBINER_IRQ(4, 1)
- #define IRQ_SYSMMU_FIMC0_0	COMBINER_IRQ(4, 2)
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 058541d..0d79b88 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -66,6 +66,7 @@
- #define EXYNOS4_PA_COREPERI		0x10500000
- #define EXYNOS4_PA_TWD			0x10500600
- #define EXYNOS4_PA_L2CC			0x10502000
-+#define EXYNOS4_PA_TMU			0x100C0000
- 
- #define EXYNOS4_PA_MDMA			0x10810000
- #define EXYNOS4_PA_PDMA0		0x12680000
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index f80b563..699140a 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -615,6 +615,7 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&exynos4_device_pd[PD_MFC],
- 	&origen_device_gpiokeys,
- 	&origen_lcd_hv070wsa,
-+	&exynos4_device_tmu,
- };
- 
- /* LCD Backlight data */
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index ab633c9..74cbf0d 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -135,6 +135,7 @@ extern struct platform_device exynos4_device_pcm2;
- extern struct platform_device exynos4_device_pd[];
- extern struct platform_device exynos4_device_spdif;
- extern struct platform_device exynos4_device_sysmmu;
-+extern struct platform_device exynos4_device_tmu;
- 
- extern struct platform_device samsung_asoc_dma;
- extern struct platform_device samsung_asoc_idma;
--- 
-1.7.1
+Yes, feel free to add:
+	Acked-by: Greg Kroah-Hartman <gregkh@suse.de>
