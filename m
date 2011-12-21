@@ -1,60 +1,59 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/8] s3c-hsudc: move platform_data struct to global header
-Date: Wed, 21 Dec 2011 13:06:14 +0900
-Message-ID: <061801ccbf95$e1df4580$a59dd080$%kim@samsung.com>
-References: <201112191938.22254.heiko@sntech.de>
- <201112191939.16542.heiko@sntech.de>
- <20111220112458.GG31842@legolas.emea.dhcp.ti.com>
- <201112201236.37581.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH V7 0/2] HS200 Mode support for device and host
+Date: Wed, 21 Dec 2011 09:42:57 +0530
+Message-ID: <1324440779-27843-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:8807 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751097Ab1LUEGT convert rfc822-to-8bit (ORCPT
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:36037 "EHLO
+	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752320Ab1LUEHs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Dec 2011 23:06:19 -0500
-In-reply-to: <201112201236.37581.heiko@sntech.de>
-Content-language: ko
+	Tue, 20 Dec 2011 23:07:48 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, balbi@ti.com
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Linux USB Mailing List' <linux-usb@vger.kernel.org>
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-Heiko St=FCbner wrote:
->=20
-> Am Dienstag, 20. Dezember 2011, 12:25:00 schrieb Felipe Balbi:
-> > Hi,
-> >
-> > On Mon, Dec 19, 2011 at 07:39:15PM +0100, Heiko St=FCbner wrote:
-> > > Gadget drivers should be compilable on all architectures.
-> > > This patch removes one dependency on architecture-specific code.
-> > >
-> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > > ---
-> > >
-> > >  arch/arm/mach-s3c2416/mach-smdk2416.c    |    1 +
-> > >  arch/arm/plat-samsung/devs.c             |    1 +
-> > >  arch/arm/plat-samsung/include/plat/udc.h |   15 +------------
-> >
-> > I would like to have ack from Ben and/or Kukjin before applying thi=
-s
-> > one. Ben are you ok with this patch ?
-> I think Kukjin does more acking if this stuff currently, so hopefully=
- he will
-> see this mail.
->=20
+changes in v7:
+	Updated with review comments for minor changes in host conditional
+	handling. added the handling for 4 bit bus width. 
+Changes in v6:
+       split the patch into 2 and classified them as a patch for device
+       and host. Modified to include the review comments.
+Changes in v5:
+       Reduced the case statements for better code readability. Removed
+       unused macro definitions. Modified the tuning function prototype
+       and definition to support tuning for both SD and eMMC cards.
+Changes in v4:
+       Rebased onto chris-mmc/mmc-next branch. This patch is successfully
+       applied on commit with id de022ed3fdc14808299b2fa66dbb1ed5ab921912.
+Changes in v3:
+       In the previous commits of chris-mmc/mmc-next branch, the patch with
+       commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) defines caps2 for
+       more capabilities. This patch version deletes the member ext_caps(created
+       in my earlier patch) from struct mmc_host and reuses already accepted
+       caps2 member.
+Changes in v2:
+       Rebased to latest chris-mmc/mmc-next branch. Resolved indentation
+       problems identified in review. This patch has to be applied before
+       the patch released for modifying the printk messages.
+Changes in v1:
+       Case statements in switch that produce same result have
+       been combined to reduce repeated assignments.
+       patch recreated after rebase to chris balls mmc-next branch.
 
-Hi Felipe,
+Girish K S (2):
+  mmc: core: HS200 mode support for eMMC 4.5
+  mmc: host: Adds support for eMMC 4.5 HS200 mode
 
-Looks ok to me, you can go ahead with my ack.
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+ drivers/mmc/core/bus.c     |    3 +-
+ drivers/mmc/core/debugfs.c |    3 +
+ drivers/mmc/core/mmc.c     |  142 +++++++++++++++++++++++++++++++++++++++++---
+ drivers/mmc/core/sd.c      |    3 +-
+ drivers/mmc/core/sdio.c    |    4 +-
+ drivers/mmc/host/sdhci.c   |   45 +++++++++++----
+ drivers/mmc/host/sdhci.h   |    1 +
+ include/linux/mmc/card.h   |    3 +
+ include/linux/mmc/host.h   |   11 +++-
+ include/linux/mmc/mmc.h    |   66 ++++++++++++++++++++-
+ include/linux/mmc/sdhci.h  |    1 +
+ 11 files changed, 257 insertions(+), 25 deletions(-)
