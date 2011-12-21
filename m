@@ -1,110 +1,59 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 4/4] ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices
-Date: Wed, 21 Dec 2011 10:18:11 +0100
-Message-ID: <201112211018.11413.heiko@sntech.de>
-References: <201112211014.30695.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [RESEND PATCH V7 0/2] HS200 Mode support for device and host
+Date: Wed, 21 Dec 2011 15:10:20 +0530
+Message-ID: <1324460422-21986-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:38898 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752553Ab1LUJSW (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:36877 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751495Ab1LUJfG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Dec 2011 04:18:22 -0500
-In-Reply-To: <201112211014.30695.heiko@sntech.de>
+	Wed, 21 Dec 2011 04:35:06 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rtc-linux@googlegroups.com
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-As the S3C24xx SoCs use the same rtc device a renaming capability like in
-the adc driver is necessary.
+changes in v7:
+	Updated with review comments for minor changes in host conditional
+	handling. added the handling for 4 bit bus width. 
+Changes in v6:
+       split the patch into 2 and classified them as a patch for device
+       and host. Modified to include the review comments.
+Changes in v5:
+       Reduced the case statements for better code readability. Removed
+       unused macro definitions. Modified the tuning function prototype
+       and definition to support tuning for both SD and eMMC cards.
+Changes in v4:
+       Rebased onto chris-mmc/mmc-next branch. This patch is successfully
+       applied on commit with id de022ed3fdc14808299b2fa66dbb1ed5ab921912.
+Changes in v3:
+       In the previous commits of chris-mmc/mmc-next branch, the patch with
+       commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) defines caps2 for
+       more capabilities. This patch version deletes the member ext_caps(created
+       in my earlier patch) from struct mmc_host and reuses already accepted
+       caps2 member.
+Changes in v2:
+       Rebased to latest chris-mmc/mmc-next branch. Resolved indentation
+       problems identified in review. This patch has to be applied before
+       the patch released for modifying the printk messages.
+Changes in v1:
+       Case statements in switch that produce same result have
+       been combined to reduce repeated assignments.
+       patch recreated after rebase to chris balls mmc-next branch.
 
-This patch adds a s3c_rtc_setname function and names the rtc devices for
-S3C2443 and S3C2416 accordingly.
+Girish K S (2):
+  mmc: core: HS200 mode support for eMMC 4.5
+  mmc: host: Adds support for eMMC 4.5 HS200 mode
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c2416/s3c2416.c               |    2 +
- arch/arm/mach-s3c2443/s3c2443.c               |    2 +
- arch/arm/plat-samsung/include/plat/rtc-core.h |   27 +++++++++++++++++++++++++
- 3 files changed, 31 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/include/plat/rtc-core.h
-
-diff --git a/arch/arm/mach-s3c2416/s3c2416.c b/arch/arm/mach-s3c2416/s3c2416.c
-index ee214bc..604cf98 100644
---- a/arch/arm/mach-s3c2416/s3c2416.c
-+++ b/arch/arm/mach-s3c2416/s3c2416.c
-@@ -61,6 +61,7 @@
- #include <plat/fb-core.h>
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
-+#include <plat/rtc-core.h>
- 
- static struct map_desc s3c2416_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -99,6 +100,7 @@ int __init s3c2416_init(void)
- 	s3c_fb_setname("s3c2443-fb");
- 
- 	s3c_adc_setname("s3c2416-adc");
-+	s3c_rtc_setname("s3c2416-rtc");
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2416_pm_syscore_ops);
-diff --git a/arch/arm/mach-s3c2443/s3c2443.c b/arch/arm/mach-s3c2443/s3c2443.c
-index a22b771..9e6be20 100644
---- a/arch/arm/mach-s3c2443/s3c2443.c
-+++ b/arch/arm/mach-s3c2443/s3c2443.c
-@@ -42,6 +42,7 @@
- #include <plat/fb-core.h>
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
-+#include <plat/rtc-core.h>
- 
- static struct map_desc s3c2443_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -72,6 +73,7 @@ int __init s3c2443_init(void)
- 	s3c_fb_setname("s3c2443-fb");
- 
- 	s3c_adc_setname("s3c2443-adc");
-+	s3c_rtc_setname("s3c2443-rtc");
- 
- 	/* change WDT IRQ number */
- 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
-diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h b/arch/arm/plat-samsung/include/plat/rtc-core.h
-new file mode 100644
-index 0000000..21d8594
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/rtc-core.h
-@@ -0,0 +1,27 @@
-+/* linux/arch/arm/plat-samsung/include/plat/rtc-core.h
-+ *
-+ * Copyright (c) 2011 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * Samsung RTC Controller core functions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_PLAT_RTC_CORE_H
-+#define __ASM_PLAT_RTC_CORE_H __FILE__
-+
-+/* These functions are only for use with the core support code, such as
-+ * the cpu specific initialisation code
-+ */
-+
-+/* re-define device name depending on support. */
-+static inline void s3c_rtc_setname(char *name)
-+{
-+#if defined(CONFIG_SAMSUNG_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
-+	s3c_device_rtc.name = name;
-+#endif
-+}
-+
-+#endif /* __ASM_PLAT_RTC_CORE_H */
--- 
-1.7.5.4
+ drivers/mmc/core/bus.c     |    3 +-
+ drivers/mmc/core/debugfs.c |    3 +
+ drivers/mmc/core/mmc.c     |  148 +++++++++++++++++++++++++++++++++++++++++---
+ drivers/mmc/core/sd.c      |    3 +-
+ drivers/mmc/core/sdio.c    |    4 +-
+ drivers/mmc/host/sdhci.c   |   45 ++++++++++---
+ drivers/mmc/host/sdhci.h   |    1 +
+ include/linux/mmc/card.h   |    3 +
+ include/linux/mmc/host.h   |   11 +++-
+ include/linux/mmc/mmc.h    |   66 +++++++++++++++++++-
+ include/linux/mmc/sdhci.h  |    1 +
+ 11 files changed, 263 insertions(+), 25 deletions(-)
