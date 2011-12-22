@@ -1,80 +1,57 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCHv2 resend] Fix compilation error when
- CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
-Date: Thu, 22 Dec 2011 10:44:04 +0900
-Message-ID: <073601ccc04b$2fcff5e0$8f6fe1a0$%kim@samsung.com>
-References: <4EE7BE5F.8020108@solonet.org.ua>
- <064501ccbfae$cf1e5cb0$6d5b1610$%kim@samsung.com>
- <4EF23852.1050304@solonet.org.ua>
- <06fa01ccc02c$828b6810$87a23830$%kim@samsung.com>
- <4EF27C76.3020805@solonet.org.ua>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH v2] mmc: dw_mmc: Add second capability field
+Date: Thu, 22 Dec 2011 18:01:12 +0900
+Message-ID: <006801ccc088$40cf1460$c26d3d20$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:55586 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752016Ab1LVBoI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Dec 2011 20:44:08 -0500
-In-reply-to: <4EF27C76.3020805@solonet.org.ua>
+Return-path: <linux-mmc-owner@vger.kernel.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, 'James Hogan' <james@albanarts.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Denis Kuzmenko' <linux@solonet.org.ua>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
 
-Denis Kuzmenko wrote:
-> 
-> On 12/22/2011 12:04 AM, Kukjin Kim wrote:
-> > Denis Kuzmenko wrote:
-> >>
-> >> On 12/21/2011 09:04 AM, Kukjin Kim wrote:
-> >>> Denis Kuzmenko wrote:
-> >>>>
-> >>>> Fix compilation error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected.
-> >>>>
-> >>>> Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
-> >>>> ---
-> >>>>
-> >>>> Patch is against 3.2-rc4.
-> >>>> CONFIG_S3C2410_IOTIMING is not selected for MACH_MINI2440. Because of
-> >> this
-> >>>> the
-> >>>> file s3c2410-iotiming.c is not ever compiled and enabling
-> >>>> CONFIG_CPU_FREQ_S3C24XX_DEBUGFS option caused undefined reference to
-> >>>> function
-> >>>> s3c2410_iotiming_debugfs defined in that file.
-> s3c2410_iotiming_debugfs
-> >>>> defined
-> >>>> as NULL for this case.
-> >>>>
-> >>> Hi Denis,
-> >>>
-> >>> Well, there is no error when CONFIG_CPU_FREQ_S3C24XX_DEBUGFS selected
-> in
-> >> my
-> >>> case and s3c2410-iotiming.c is built...when is it happened? I just
-> >> selected
-> >>> every regarding configuration in kernel menuconfig...
-> >>
-> >> Please, try attached config (it's still failing in v3.2-rc6).
-> >>
-> > Hi Denis,
-> >
-> > Yes, when s3c2410 stuff is not selected, it happened.
-> > Look at me soon and thanks.
-> Hi, Kukjin,
-> 
-> Sorry, can you please explain as I can't understand. Especially second
-> sentence.
-> 
-Oops, mis-typing. Let me look at that with your patch :)
+This patch adds caps2 filed for second capability in dw_mmc.
+It corresponds with MMC_CAPS2_XXX. And this patch removes the
+unnecessary condition statement for assigning caps.
 
-Thanks.
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c  |    6 ++----
+ include/linux/mmc/dw_mmc.h |    1 +
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 3aaeb08..3f5a77a 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1676,10 +1676,8 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 	if (host->pdata->setpower)
+ 		host->pdata->setpower(id, 0);
+ 
+-	if (host->pdata->caps)
+-		mmc->caps = host->pdata->caps;
+-	else
+-		mmc->caps = 0;
++	mmc->caps |= host->pdata->caps;
++	mmc->caps2 |= host->pdata->caps2;
+ 
+ 	if (host->pdata->get_bus_wd)
+ 		if (host->pdata->get_bus_wd(slot->id) >= 4)
+diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+index 6dc9b80..e8779c6 100644
+--- a/include/linux/mmc/dw_mmc.h
++++ b/include/linux/mmc/dw_mmc.h
+@@ -214,6 +214,7 @@ struct dw_mci_board {
+ 	unsigned int bus_hz; /* Bus speed */
+ 
+ 	unsigned int caps;	/* Capabilities */
++	unsigned int caps2;	/* More capabilities */
+ 	/*
+ 	 * Override fifo depth. If 0, autodetect it from the FIFOTH register,
+ 	 * but note that this may not be reliable after a bootloader has used
+-- 
+1.7.0.4
+
+
