@@ -1,37 +1,44 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: DMA: PL330: Merge PL330 drivers
-Date: Fri, 23 Dec 2011 21:11:03 +0530
-Message-ID: <1324654863.1633.3.camel@vkoul-udesk3>
-References: <1323306645-4003-1-git-send-email-boojin.kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/2] ARM: SAMSUNG: Guard against multiple inclusion of plat/dma.h
+Date: Fri, 23 Dec 2011 16:23:33 +0000
+Message-ID: <1324657414-27991-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga09.intel.com ([134.134.136.24]:7427 "EHLO mga09.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752901Ab1LWPlA (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53470 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754072Ab1LWQXk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Dec 2011 10:41:00 -0500
-In-Reply-To: <1323306645-4003-1-git-send-email-boojin.kim@samsung.com>
+	Fri, 23 Dec 2011 11:23:40 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Thu, 2011-12-08 at 10:10 +0900, Boojin Kim wrote:
-> In-Reply-To: 
-> 
-> PL330 driver is divided into 2 parts.
-> First is the PL330 API driver that located on driver/dma/.
-> Second is the low-level PL330 driver that is located on arch/arm/common/.
-> But, It's not needed anymore to divided PL330 driver into 2 parts
-> Low-level PL330 driver is only used for PL330 API driver on driver/dma
-> because samsung specific S3C-PL330 driver was gone.
-> So, This patch merges 'arch/arm/common/pl330' into 'driver/dma/pl330.c'.
-> 
-> [PATCH 1/2] DMA: PL330: Merge PL330 drivers
-> [PATCH 2/2] DMA: PL330: Remove an unused function
-You should try git --cover-letter for this :)
+Otherwise it'll generate errors if included twice.
 
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ arch/arm/plat-samsung/include/plat/dma.h |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-samsung/include/plat/dma.h
+index b906112..baa05ed 100644
+--- a/arch/arm/plat-samsung/include/plat/dma.h
++++ b/arch/arm/plat-samsung/include/plat/dma.h
+@@ -10,6 +10,9 @@
+  * published by the Free Software Foundation.
+ */
+ 
++#ifndef __PLAT_DMA_H
++#define __PLAT_DMA_H
++
+ #include <linux/dma-mapping.h>
+ 
+ enum s3c2410_dma_buffresult {
+@@ -124,3 +127,5 @@ extern int s3c2410_dma_set_buffdone_fn(enum dma_ch, s3c2410_dma_cbfn_t rtn);
+ 
+ 
+ #include <plat/dma-ops.h>
++
++#endif
 -- 
-~Vinod
+1.7.7.3
