@@ -1,90 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: Pull Requeset: Exynos4 Register Address Update for Devfreq Drivers.
-Date: Sat, 24 Dec 2011 10:58:58 +0900
-Message-ID: <088b01ccc1df$994d0090$cbe701b0$%kim@samsung.com>
-References: <CAJ0PZbQ1=+BTs0Emi78kfOWD5d90+ND5Jc_SJ9T4BcGMXyny9A@mail.gmail.com>
+Subject: RE: EXYNOS: Make EXYNOS common cpufreq driver
+Date: Sat, 24 Dec 2011 11:20:08 +0900
+Message-ID: <089201ccc1e2$8edf99d0$ac9ecd70$%kim@samsung.com>
+References: <03b301ccb48a$1fc93bb0$5f5bb310$%kim@samsung.com>
+ <20111209153925.GA21045@redhat.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:37117 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754673Ab1LXB7B (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Dec 2011 20:59:01 -0500
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWO00EP3QUA5060@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 10:58:59 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWO0073TQU9PO70@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 10:58:59 +0900 (KST)
-In-reply-to: <CAJ0PZbQ1=+BTs0Emi78kfOWD5d90+ND5Jc_SJ9T4BcGMXyny9A@mail.gmail.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-reply-to: 
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: cpufreq-owner@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Dave Jones' <davej@redhat.com>
+Cc: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jc.lee@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'MyungJoo Ham' <myungjoo.ham@gmail.com>
-Cc: 'Linux Samsung SoC' <linux-samsung-soc@vger.kernel.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-MyungJoo Ham wrote:
+Kukjin Kim wrote:
 > 
-> Hello,
+> Dave Jones wrote:
+> >
+> > On Wed, Dec 07, 2011 at 11:44:21AM +0900, Kukjin Kim wrote:
+> >  > From: Jaecheol Lee <jc.lee@samsung.com>
+> >  >
+> >  > To support various EXYNOS series SoCs commonly,
+> >  > added exynos common structure.
+> >  > exynos-cpufreq.c => EXYNOS series common cpufreq driver
+> >  > exynos4210-cpufreq.c => EXYNOS4210 support cpufreq driver
+> >  >
+> >  > Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+> >  > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> >
+> > Please rediff this one and resend. It doesn't apply on top of the other
+> > patches..
+> >
+> > Applying: [CPUFREQ] EXYNOS4210: Remove code about bus on cpufreq
+> > Applying: [CPUFREQ] EXYNOS4210: Update frequency table for cpu divider
+> > Applying: [CPUFREQ] EXYNOS4210: cpufreq code is changed for stable
+> working
+> > Applying: [CPUFREQ] EXYNOS: Make EXYNOS common cpufreq driver
+> > error: patch failed: drivers/cpufreq/Makefile:42
+> > error: drivers/cpufreq/Makefile: patch does not apply
+> > Patch failed at 0005 [CPUFREQ] EXYNOS: Make EXYNOS common cpufreq driver
+> > When you have resolved this problem run "git am --resolved".
+> > If you would prefer to skip this patch, instead run "git am --skip".
+> > To restore the original branch and stop patching run "git am --abort".
+> >
+> > I'll push out what I have applied so far to cpufreq.next
+> >
+> Hi Dave
 > 
-Hi,
+> You can find updated 4th patch at below.
+> I rebased it on your latest cpufreq/next branch.
+> And the 5th patch has no problem to apply.
+> 
+Hi Dave,
 
-> Please pull the patches for Exynos4 SoCs that support devfreq device
-> drivers for Exynos4210/4212/4412.
-> 
-> The patches are:
-> ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
-> ARM: EXYNOS4: Add clock register addresses for Exynos4x12 bus devfreq
-> driver
-> ARM Exynos4210-Nuri: support Exynos4210-bus Devfreq driver.
-> 
-> Gitweb: http://git.infradead.org/users/kmpark/linux-
-> samsung/shortlog/refs/heads/devfreq-for-samsung
-> Git Repository: git://git.infradead.org/users/kmpark/linux-samsung
-> Branch: devfreq-for-samsung
-> 
-> The following changes since commit
-> 390f998509bf049019df0b078c0a6606e0d57fb4:
-> 
-> Merge: e34d6b4 6f6c2aa
-> Author: Linus Torvalds <torvalds@linux-foundation.org>
-> Date:   Sun Dec 18 14:28:31 2011 -0800
-> 
->   Merge git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-rc-fixes-
-> 2.6
-> (2011-12-18 14:28:31 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.infradead.org/users/kmpark/linux-samsung.git devfreq-for-
-> samsung
-> 
-> MyungJoo Ham (3):
->       ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
->       ARM: EXYNOS4: Add clock register addresses for Exynos4x12 bus
-> devfreq driver
->       ARM Exynos4210-Nuri: support Exynos4210-bus Devfreq driver.
-> 
->  arch/arm/mach-exynos/cpu.c                     |    7 +++-
->  arch/arm/mach-exynos/include/mach/map.h        |    1 +
->  arch/arm/mach-exynos/include/mach/regs-clock.h |   42
-> ++++++++++++++++++++++++
->  arch/arm/mach-exynos/mach-nuri.c               |   11 ++++--
->  4 files changed, 57 insertions(+), 4 deletions(-)
-> 
-> 
-As I commented, looks ok to me and will apply patches not pull and since I
-didn't get your answer to ask 'topic branch is required for this', I didn't
-yet.
+I couldn't find 4th and 5th patches in your cpufreq yet.
+If any problem, please let me know.
 
-As a note, if there is no reason to create based on not -rc, just use -rc.
-
-Merry Christmas.
+Merry Christmas!
 Thanks.
 
 Best regards,
@@ -92,3 +66,20 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> If any problem, please let me know.
+> 
+> As a note, since my git send-email has problem, re-submitted them on
+> Sunday.
+> Please kindly ignore that.
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+(snip)
+
