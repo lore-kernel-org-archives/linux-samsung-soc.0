@@ -1,48 +1,90 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Add USB OHCI support to ORIGEN board
-Date: Sat, 24 Dec 2011 10:48:06 +0900
-Message-ID: <088a01ccc1de$14c66ab0$3e534010$%kim@samsung.com>
-References: <1324457752-26056-1-git-send-email-tushar.behera@linaro.org>
- <00a201ccbfc1$3ed0dad0$bc729070$%han@samsung.com>
+Subject: RE: Pull Requeset: Exynos4 Register Address Update for Devfreq Drivers.
+Date: Sat, 24 Dec 2011 10:58:58 +0900
+Message-ID: <088b01ccc1df$994d0090$cbe701b0$%kim@samsung.com>
+References: <CAJ0PZbQ1=+BTs0Emi78kfOWD5d90+ND5Jc_SJ9T4BcGMXyny9A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35424 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:37117 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753620Ab1LXBsH (ORCPT
+	with ESMTP id S1754673Ab1LXB7B (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Dec 2011 20:48:07 -0500
+	Fri, 23 Dec 2011 20:59:01 -0500
 Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
  by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWO00AP8QBWB660@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 10:48:06 +0900 (KST)
+ 2010)) with ESMTP id <0LWO00EP3QUA5060@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 10:58:59 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWO009PAQC68H00@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 10:48:06 +0900 (KST)
-In-reply-to: <00a201ccbfc1$3ed0dad0$bc729070$%han@samsung.com>
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWO0073TQU9PO70@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 10:58:59 +0900 (KST)
+In-reply-to: <CAJ0PZbQ1=+BTs0Emi78kfOWD5d90+ND5Jc_SJ9T4BcGMXyny9A@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org
+To: 'MyungJoo Ham' <myungjoo.ham@gmail.com>
+Cc: 'Linux Samsung SoC' <linux-samsung-soc@vger.kernel.org>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Jingoo Han wrote:
+MyungJoo Ham wrote:
 > 
-> Hi, Tushar.
+> Hello,
 > 
-> Tushar Behera wrote:
-> > -----Original Message-----
-> > Subject: [PATCH] ARM: EXYNOS: Add USB OHCI support to ORIGEN board
-> >
-> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> > Signed-off-by: Angus Ainslie <angus.ainslie@linaro.org>
+Hi,
+
+> Please pull the patches for Exynos4 SoCs that support devfreq device
+> drivers for Exynos4210/4212/4412.
 > 
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
+> The patches are:
+> ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
+> ARM: EXYNOS4: Add clock register addresses for Exynos4x12 bus devfreq
+> driver
+> ARM Exynos4210-Nuri: support Exynos4210-bus Devfreq driver.
 > 
-OK, will apply.
+> Gitweb: http://git.infradead.org/users/kmpark/linux-
+> samsung/shortlog/refs/heads/devfreq-for-samsung
+> Git Repository: git://git.infradead.org/users/kmpark/linux-samsung
+> Branch: devfreq-for-samsung
+> 
+> The following changes since commit
+> 390f998509bf049019df0b078c0a6606e0d57fb4:
+> 
+> Merge: e34d6b4 6f6c2aa
+> Author: Linus Torvalds <torvalds@linux-foundation.org>
+> Date:   Sun Dec 18 14:28:31 2011 -0800
+> 
+>   Merge git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi-rc-fixes-
+> 2.6
+> (2011-12-18 14:28:31 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.infradead.org/users/kmpark/linux-samsung.git devfreq-for-
+> samsung
+> 
+> MyungJoo Ham (3):
+>       ARM: EXYNOS4: Add DMC1, allow PPMU access for DMC.
+>       ARM: EXYNOS4: Add clock register addresses for Exynos4x12 bus
+> devfreq driver
+>       ARM Exynos4210-Nuri: support Exynos4210-bus Devfreq driver.
+> 
+>  arch/arm/mach-exynos/cpu.c                     |    7 +++-
+>  arch/arm/mach-exynos/include/mach/map.h        |    1 +
+>  arch/arm/mach-exynos/include/mach/regs-clock.h |   42
+> ++++++++++++++++++++++++
+>  arch/arm/mach-exynos/mach-nuri.c               |   11 ++++--
+>  4 files changed, 57 insertions(+), 4 deletions(-)
+> 
+> 
+As I commented, looks ok to me and will apply patches not pull and since I
+didn't get your answer to ask 'topic branch is required for this', I didn't
+yet.
+
+As a note, if there is no reason to create based on not -rc, just use -rc.
+
+Merry Christmas.
 Thanks.
 
 Best regards,
@@ -50,81 +92,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> Thanks.
-> 
-> Best regards,
-> Jingoo Han
-> > ---
-> >
-> > This patch are based Kukjin's for-next branch and OHCI related
-> > patches from Jingoo Han.
-> > [PATCH v2 0/3] Support Samsung Exynos OHCI device and driver
-> >
-> >  arch/arm/mach-exynos/Kconfig       |    1 +
-> >  arch/arm/mach-exynos/mach-origen.c |   13 +++++++++++++
-> >  2 files changed, 14 insertions(+), 0 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> > index bd1bb9f1..0da2ced 100644
-> > --- a/arch/arm/mach-exynos/Kconfig
-> > +++ b/arch/arm/mach-exynos/Kconfig
-> > @@ -304,6 +304,7 @@ config MACH_ORIGEN
-> >  	select SAMSUNG_DEV_PWM
-> >  	select EXYNOS4_DEV_DMA
-> >  	select EXYNOS4_DEV_PD
-> > +	select EXYNOS4_DEV_USB_OHCI
-> >  	select EXYNOS4_SETUP_FIMD0
-> >  	select EXYNOS4_SETUP_SDHCI
-> >  	select EXYNOS4_SETUP_USB_PHY
-> > diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
-> exynos/mach-origen.c
-> > index f56d027..a0116036 100644
-> > --- a/arch/arm/mach-exynos/mach-origen.c
-> > +++ b/arch/arm/mach-exynos/mach-origen.c
-> > @@ -42,6 +42,7 @@
-> >  #include <plat/fb.h>
-> >  #include <plat/mfc.h>
-> >
-> > +#include <mach/ohci.h>
-> >  #include <mach/map.h>
-> >
-> >  /* Following are default values for UCON, ULCON and UFCON UART
-> registers */
-> > @@ -487,6 +488,16 @@ static void __init origen_ehci_init(void)
-> >  	s5p_ehci_set_platdata(pdata);
-> >  }
-> >
-> > +/* USB OHCI */
-> > +static struct exynos4_ohci_platdata origen_ohci_pdata;
-> > +
-> > +static void __init origen_ohci_init(void)
-> > +{
-> > +	struct exynos4_ohci_platdata *pdata = &origen_ohci_pdata;
-> > +
-> > +	exynos4_ohci_set_platdata(pdata);
-> > +}
-> > +
-> >  static struct gpio_keys_button origen_gpio_keys_table[] = {
-> >  	{
-> >  		.code			= KEY_MENU,
-> > @@ -627,6 +638,7 @@ static struct platform_device *origen_devices[]
-> __initdata = {
-> >  	&s5p_device_mfc_l,
-> >  	&s5p_device_mfc_r,
-> >  	&s5p_device_mixer,
-> > +	&exynos4_device_ohci,
-> >  	&exynos4_device_pd[PD_LCD0],
-> >  	&exynos4_device_pd[PD_TV],
-> >  	&exynos4_device_pd[PD_G3D],
-> > @@ -702,6 +714,7 @@ static void __init origen_machine_init(void)
-> >  	s3c_sdhci0_set_platdata(&origen_hsmmc0_pdata);
-> >
-> >  	origen_ehci_init();
-> > +	origen_ohci_init();
-> >  	clk_xusbxti.rate = 24000000;
-> >
-> >  	s5p_tv_setup();
-> > --
-> > 1.7.4.1
