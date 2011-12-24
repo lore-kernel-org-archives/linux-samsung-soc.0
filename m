@@ -1,98 +1,166 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 09/12] ARM: EXYNOS: introduce
-	arch/arm/mach-exynos/common.[ch]
-Date: Fri, 23 Dec 2011 19:19:35 +0000
-Message-ID: <20111223191935.GS2577@n2100.arm.linux.org.uk>
-References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com> <1324385316-6052-10-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung devel-dt for v3.3
+Date: Sat, 24 Dec 2011 09:48:39 +0900
+Message-ID: <087d01ccc1d5$c6aa8300$53ff8900$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:41084 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752841Ab1LWTTu (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:38497 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752992Ab1LXAsn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Dec 2011 14:19:50 -0500
-Content-Disposition: inline
-In-Reply-To: <1324385316-6052-10-git-send-email-kgene.kim@samsung.com>
+	Fri, 23 Dec 2011 19:48:43 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWO005UYNL55N40@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 09:48:41 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWO0031JNL3QS50@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 24 Dec 2011 09:48:41 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Nicolas Pitre <nico@fluxnic.net>
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Tue, Dec 20, 2011 at 09:48:33PM +0900, Kukjin Kim wrote:
-> This patch introduces common.[ch] which are used only in the
-> arch/arm/mach-exynos/ directory. The common.c file merges
-> the cpu.c, init.c, irq-combiner.c and irq-eint.c files which
-> are used commonly on EXYNOS SoCs and the common.h file replaces
-> with plat/exynos4.h file.
-> 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Hi Arnd and Olof,
 
-It looks like there's some changes made to exynos stuff between -rc1
-(which my immutable restart-cleanup branch is based upon) and the base
-for this patch which makes it hard to apply:
+Please pull the samsung-devel-dt for v3.3.
+It includes support DT for Samsung EXYNOS4. 
 
-Patching 7249/1...
-git apply --whitespace=fix -p1 --index --check > /tmp/pdb.2292 2>&1 exited with
-non-zero status: 256
-error: patch failed: arch/arm/mach-exynos/cpu.c:1
-error: arch/arm/mach-exynos/cpu.c: patch does not apply
+Thanks.
 
-Trying with GNU patch gives:
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-Patching 7249/1...
-patch -p1 -f -EF0 -N --dry-run > /tmp/pdb.2298 2>&1 exited with non-zero status: 256
-patching file arch/arm/mach-exynos/Makefile
-patching file arch/arm/mach-exynos/clock-exynos4210.c
-patching file arch/arm/mach-exynos/clock-exynos4212.c
-patching file arch/arm/mach-exynos/clock.c
-patching file arch/arm/mach-exynos/common.c
-patching file arch/arm/mach-exynos/common.h
-patching file arch/arm/mach-exynos/cpu.c
-Hunk #1 FAILED at 1.
-File arch/arm/mach-exynos/cpu.c is not empty after patch, as expected
-1 out of 1 hunk FAILED -- saving rejects to file arch/arm/mach-exynos/cpu.c.rej
-patching file arch/arm/mach-exynos/include/mach/map.h
-patching file arch/arm/mach-exynos/init.c
-patching file arch/arm/mach-exynos/irq-combiner.c
-patching file arch/arm/mach-exynos/irq-eint.c
-patching file arch/arm/mach-exynos/mach-armlex4210.c
-Hunk #1 succeeded at 20 (offset -1 lines).
-Hunk #2 succeeded at 27 (offset -1 lines).
-Hunk #3 succeeded at 188 (offset -1 lines).
-patching file arch/arm/mach-exynos/mach-nuri.c
-Hunk #1 succeeded at 37 (offset -1 lines).
-Hunk #2 succeeded at 53 (offset -1 lines).
-Hunk #3 succeeded at 1284 (offset -1 lines).
-patching file arch/arm/mach-exynos/mach-origen.c
-Hunk #1 succeeded at 28 (offset -1 lines).
-Hunk #2 succeeded at 42 (offset -1 lines).
-Hunk #3 succeeded at 639 (offset -1 lines).
-patching file arch/arm/mach-exynos/mach-smdk4x12.c
-Hunk #1 succeeded at 27 (offset -1 lines).
-Hunk #2 succeeded at 35 (offset -1 lines).
-Hunk #3 succeeded at 250 (offset -1 lines).
-patching file arch/arm/mach-exynos/mach-smdkv310.c
-Hunk #1 succeeded at 27 (offset -1 lines).
-Hunk #2 succeeded at 42 (offset -1 lines).
-Hunk #3 succeeded at 333 (offset -1 lines).
-patching file arch/arm/mach-exynos/mach-universal_c210.c
-Hunk #1 succeeded at 27 (offset -1 lines).
-Hunk #2 succeeded at 46 (offset -1 lines).
-Hunk #3 succeeded at 993 (offset -1 lines).
-patching file arch/arm/plat-s5p/Makefile
-patching file arch/arm/plat-s5p/cpu.c
-patching file arch/arm/plat-samsung/include/plat/cpu.h
-patching file arch/arm/plat-samsung/include/plat/exynos4.h
+The following changes since commit 384703b8e6cd4c8ef08512e596024e028c91c339:
 
-So I can't apply this, and this in turn means I can't provide Nicolas with
-a tree this evening for his arch_idle changes.
+  Linux 3.2-rc6 (2011-12-16 18:36:26 -0800)
 
-Given the proximity to Christmas, and I'm _not_ planning to work from this
-evening until after the new year, things will now have to just sit and wait
-until after the festive period.
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next-samsung-devel-dt1
 
-I'll push out what I have been able to merge later this evening, but it
-will not include the exynos patches.
+Mark Brown (1):
+      serial: samsung: Fix build for non-Exynos4210 devices
+
+Thomas Abraham (26):
+      ARM: SAMSUNG: Move timer irq numbers to end of linux irq space
+      ARM: EXYNOS: Enable conversion of GIC dt irq specifier to linux virq
+      gpio/samsung: Add device tree support for EXYNOS4
+      serial: samsung: Keep a copy of the location of platform data in
+driver's private data
+      ARM: S3C2440: move handling of fclk/n clock to platform code
+      serial: samsung: switch to clkdev based clock lookup
+      ARM: SAMSUNG: remove struct 's3c24xx_uart_clksrc' and all uses of it
+      serial: samsung: remove all uses of get_clksrc and set_clksrc
+      ARM: SAMSUNG: register uart clocks to clock lookup list
+      serial: samsung: merge all SoC specific port reset functions
+      serial: samsung: merge probe() function from all SoC specific
+extensions
+      serial: samsung: add device tree support
+      DMA: PL330: move filter function into driver
+      DMA: PL330: Infer transfer direction from transfer request instead of
+platform data
+      ARM: EXYNOS: Modify platform data for pl330 driver
+      DMA: PL330: Add device tree support
+      ARM: SAMSUNG: Add device tree support for pl330 dma engine wrappers
+      ARM: EXYNOS: Limit usage of pl330 device instance to non-dt build
+      ARM: EXYNOS: Add a alias for pdma clocks
+      ARM: S5P64x0: Modify platform data for pl330 driver
+      ARM: S5PC100: Modify platform data for pl330 driver
+      ARM: S5PV210: Modify platform data for pl330 driver
+      input: samsung-keypad: Add device tree support
+      rtc: rtc-s3c: Add device tree support
+      ARM: EXYNOS: Add Exynos4 device tree enabled board file
+      ARM: dts: Add intial dts file for EXYNOS4210 SoC, SMDKV310 and ORIGEN
+
+ .../devicetree/bindings/arm/insignal-boards.txt    |    8 +
+ .../devicetree/bindings/arm/samsung-boards.txt     |    8 +
+ .../devicetree/bindings/dma/arm-pl330.txt          |   30 +
+ .../devicetree/bindings/gpio/gpio-samsung.txt      |   40 ++
+ .../devicetree/bindings/input/samsung-keypad.txt   |   88 +++
+ Documentation/devicetree/bindings/rtc/s3c-rtc.txt  |   20 +
+ .../devicetree/bindings/serial/samsung_uart.txt    |   14 +
+ arch/arm/boot/dts/exynos4210-origen.dts            |  137 +++++
+ arch/arm/boot/dts/exynos4210-smdkv310.dts          |  182 ++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |  397 ++++++++++++
+ arch/arm/mach-exynos/Kconfig                       |   24 +
+ arch/arm/mach-exynos/Makefile                      |    5 +-
+ arch/arm/mach-exynos/clock.c                       |  141 +++--
+ arch/arm/mach-exynos/cpu.c                         |   17 +-
+ arch/arm/mach-exynos/dma.c                         |  229 ++-----
+ arch/arm/mach-exynos/include/mach/entry-macro.S    |    1 -
+ arch/arm/mach-exynos/include/mach/irqs.h           |    8 +-
+ arch/arm/mach-exynos/init.c                        |   21 +-
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |   85 +++
+ arch/arm/mach-s3c2410/mach-bast.c                  |   22 -
+ arch/arm/mach-s3c2410/mach-vr1000.c                |   24 -
+ arch/arm/mach-s3c2410/s3c2410.c                    |    6 +
+ arch/arm/mach-s3c2412/clock.c                      |    7 +
+ arch/arm/mach-s3c2440/clock.c                      |   44 ++
+ arch/arm/mach-s3c2440/mach-anubis.c                |   22 +-
+ arch/arm/mach-s3c2440/mach-at2440evb.c             |   22 +-
+ arch/arm/mach-s3c2440/mach-osiris.c                |   24 +-
+ arch/arm/mach-s3c2440/mach-rx1950.c                |   18 +-
+ arch/arm/mach-s3c2440/mach-rx3715.c                |   19 +-
+ arch/arm/mach-s3c64xx/clock.c                      |   37 +-
+ arch/arm/mach-s5p64x0/clock-s5p6440.c              |   32 +-
+ arch/arm/mach-s5p64x0/clock-s5p6450.c              |   32 +-
+ arch/arm/mach-s5p64x0/dma.c                        |  227 ++-----
+ arch/arm/mach-s5p64x0/include/mach/irqs.h          |    2 +
+ arch/arm/mach-s5p64x0/init.c                       |   31 -
+ arch/arm/mach-s5pc100/clock.c                      |   33 +-
+ arch/arm/mach-s5pc100/dma.c                        |  247 +++------
+ arch/arm/mach-s5pc100/include/mach/irqs.h          |    2 +
+ arch/arm/mach-s5pv210/clock.c                      |  107 ++--
+ arch/arm/mach-s5pv210/dma.c                        |  241 +++------
+ arch/arm/mach-s5pv210/include/mach/irqs.h          |    2 +
+ arch/arm/mach-s5pv210/init.c                       |   19 -
+ arch/arm/plat-s3c24xx/s3c2443-clock.c              |   23 +-
+ arch/arm/plat-samsung/dma-ops.c                    |   15 +-
+ arch/arm/plat-samsung/include/plat/dma-ops.h       |    1 +
+ arch/arm/plat-samsung/include/plat/dma-pl330.h     |    3 +-
+ arch/arm/plat-samsung/include/plat/irqs.h          |    3 +-
+ arch/arm/plat-samsung/include/plat/regs-serial.h   |   45 +-
+ drivers/dma/pl330.c                                |   99 ++--
+ drivers/gpio/gpio-samsung.c                        |   72 +++
+ drivers/input/keyboard/samsung-keypad.c            |  174 +++++-
+ drivers/rtc/rtc-s3c.c                              |   21 +-
+ drivers/tty/serial/Kconfig                         |   45 +--
+ drivers/tty/serial/Makefile                        |    5 -
+ drivers/tty/serial/s3c2410.c                       |  115 ----
+ drivers/tty/serial/s3c2412.c                       |  149 -----
+ drivers/tty/serial/s3c2440.c                       |  178 ------
+ drivers/tty/serial/s3c6400.c                       |  149 -----
+ drivers/tty/serial/s5pv210.c                       |  158 -----
+ drivers/tty/serial/samsung.c                       |  639
+++++++++++++--------
+ drivers/tty/serial/samsung.h                       |   32 +-
+ include/linux/amba/pl330.h                         |   15 +-
+ 62 files changed, 2423 insertions(+), 2193 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/arm/insignal-boards.txt
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung-boards.txt
+ create mode 100644 Documentation/devicetree/bindings/dma/arm-pl330.txt
+ create mode 100644 Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+ create mode 100644
+Documentation/devicetree/bindings/input/samsung-keypad.txt
+ create mode 100644 Documentation/devicetree/bindings/rtc/s3c-rtc.txt
+ create mode 100644
+Documentation/devicetree/bindings/serial/samsung_uart.txt
+ create mode 100644 arch/arm/boot/dts/exynos4210-origen.dts
+ create mode 100644 arch/arm/boot/dts/exynos4210-smdkv310.dts
+ create mode 100644 arch/arm/boot/dts/exynos4210.dtsi
+ create mode 100644 arch/arm/mach-exynos/mach-exynos4-dt.c
+ delete mode 100644 drivers/tty/serial/s3c2410.c
+ delete mode 100644 drivers/tty/serial/s3c2412.c
+ delete mode 100644 drivers/tty/serial/s3c2440.c
+ delete mode 100644 drivers/tty/serial/s3c6400.c
+ delete mode 100644 drivers/tty/serial/s5pv210.c
