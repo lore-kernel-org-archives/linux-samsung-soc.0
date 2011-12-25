@@ -1,35 +1,54 @@
 From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: core: Fix voltage select in DDR mode
-Date: Sat, 24 Dec 2011 21:24:11 -0500
-Message-ID: <m27h1lz8vo.fsf@bob.laptop.org>
-References: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH v2] mmc: dw_mmc: Add second capability field
+Date: Sat, 24 Dec 2011 21:37:20 -0500
+Message-ID: <m2ty4pxtpb.fsf@bob.laptop.org>
+References: <006801ccc088$40cf1460$c26d3d20$%jun@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1323950262-2160-1-git-send-email-girish.shivananjappa@linaro.org>
-	(Girish K. S.'s message of "Thu, 15 Dec 2011 17:27:42 +0530")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Philip Rakity <prakity@marvell.com>, Arindam Nath <arindam.nath@amd.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:50187 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754186Ab1LYCh3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 24 Dec 2011 21:37:29 -0500
+In-Reply-To: <006801ccc088$40cf1460$c26d3d20$%jun@samsung.com> (Seungwon
+	Jeon's message of "Thu, 22 Dec 2011 18:01:12 +0900")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'James Hogan' <james@albanarts.com>
 
-Hi Girish,
+Hi,
 
-On Thu, Dec 15 2011, Girish K S wrote:
-> This patch fixes the wrong comparison before setting the interface
-> voltage in DDR mode.
+On Thu, Dec 22 2011, Seungwon Jeon wrote:
+> This patch adds caps2 filed for second capability in dw_mmc.
+> It corresponds with MMC_CAPS2_XXX. And this patch removes the
+> unnecessary condition statement for assigning caps.
 >
-> The assignment to the variable ddr before comaprison is either
-> ddr = MMC_1_2V_DDR_MODE; or ddr == MMC_1_8V_DDR_MODE. But the comparison
-> is done wth the extended csd value if (ddr == EXT_CSD_CARD_TYPE_DDR_1_2V)
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+>  drivers/mmc/host/dw_mmc.c  |    6 ++----
+>  include/linux/mmc/dw_mmc.h |    1 +
+>  2 files changed, 3 insertions(+), 4 deletions(-)
 >
-> cc: Philip Rakity <prakity@marvell.com>
-> cc: Arindam Nath <arindam.nath@amd.com>
-> cc: Chris Ball <cjb@laptop.org>
-> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 3aaeb08..3f5a77a 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1676,10 +1676,8 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>  	if (host->pdata->setpower)
+>  		host->pdata->setpower(id, 0);
+>  
+> -	if (host->pdata->caps)
+> -		mmc->caps = host->pdata->caps;
+> -	else
+> -		mmc->caps = 0;
+> +	mmc->caps |= host->pdata->caps;
+> +	mmc->caps2 |= host->pdata->caps2;
 
-Pushed to mmc-next for 3.3 with ACKs from Philip and Subhash and a
-stable@ tag, thanks.  (It's too late for 3.2.)
+Ah, I replied earlier without having seen this patch.  I still prefer
+the version I proposed, which doesn't dereference host->pdata->caps{,2}
+without testing it first.
 
 - Chris.
 -- 
