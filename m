@@ -1,55 +1,79 @@
-From: Angus Gratton <gus@projectgus.com>
-Subject: Re: PATCH: ARM: S5PV210: Add USB EHCI support for SMDKV210 board
-Date: Sat, 24 Dec 2011 17:08:47 +1100
-Message-ID: <1324706927.26918.33.camel@gorgon.lan>
-References: <1324693303.26918.27.camel@gorgon.lan>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] mmc: dw_mmc: Add more capabilities field
+Date: Sat, 24 Dec 2011 21:07:31 -0500
+Message-ID: <m2obuxz9ng.fsf@bob.laptop.org>
+References: <00a901ccb637$35e66590$a1b330b0$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caiajhbdcbef.dreamhost.com ([208.97.132.145]:53634 "EHLO
-	homiemail-a29.g.dreamhost.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1752277Ab1LXGI6 (ORCPT
+Received: from void.printf.net ([89.145.121.20]:46361 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752875Ab1LYCHm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Dec 2011 01:08:58 -0500
-Received: from homiemail-a29.g.dreamhost.com (localhost [127.0.0.1])
-	by homiemail-a29.g.dreamhost.com (Postfix) with ESMTP id C3122674058
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Dec 2011 22:08:55 -0800 (PST)
-Received: from [192.168.9.58] (ppp121-45-209-218.lns20.cbr1.internode.on.net [121.45.209.218])
-	(using SSLv3 with cipher AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: gus@projectgus.com)
-	by homiemail-a29.g.dreamhost.com (Postfix) with ESMTPSA id 3278E674057
-	for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Dec 2011 22:08:55 -0800 (PST)
-In-Reply-To: <1324693303.26918.27.camel@gorgon.lan>
+	Sat, 24 Dec 2011 21:07:42 -0500
+In-Reply-To: <00a901ccb637$35e66590$a1b330b0$%jun@samsung.com> (Seungwon
+	Jeon's message of "Fri, 09 Dec 2011 14:55:52 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 
-On Sat, 2011-12-24 at 13:21 +1100, Angus Gratton wrote:
-> Signed-off-by: Angus Gratton <gus@projectgus.com>
-> 
+Hi,
+
+On Fri, Dec 09 2011, Seungwon Jeon wrote:
+> This patch adds another capabilities field for MMC_CAPS2_XXX.
+>
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
 > ---
-> (This is my first kernel patch submission, so apologies in advance for
-> any mistakes.)
-> 
-> Support is adapted from in EHCI in an older kernel & from the current
-> mach-exynos EHCI support. I've tried to duplicate the mach-exynos code
-> layout.
-> 
-> I don't actually have an SMDKV210 board to test on, this is tested on a
-> SMDKV210-derived product called a Flexiview FV-1. I believe this should
-> work on SMDKV210, and probably other S5PV210 boards, though.
+>  drivers/mmc/host/dw_mmc.c  |    6 ++++++
+>  include/linux/mmc/dw_mmc.h |    1 +
+>  2 files changed, 7 insertions(+), 0 deletions(-)
+>
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 3aaeb08..366df6b 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1681,6 +1681,12 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>  	else
+>  		mmc->caps = 0;
+>  
+> +	if (host->pdata->caps2)
+> +		mmc->caps2 = host->pdata->caps2;
+> +	else
+> +		mmc->caps2 = 0;
+> +
+> +
 
-Eck, sorry I might have sent this patch a bit early. Please disregard
-for now.
+I think the else clause is unnecessary here (and above), so I'll suggest
+merging this patch to mmc-next for 3.3 and also adding:
 
-On my hardware USB devices initially come up happily, but sustained
-reads or writes eventually cause unexpected device resets and errors.
+From: Chris Ball <cjb@laptop.org>
+Subject: [PATCH] mmc: dw_mmc: Remove unnecessary else clauses.
 
-This doesn't happen with $vendorblobkernel so I must be doing something
-wrong. Will keep trying.
+Signed-off-by: Chris Ball <cjb@laptop.org>
 
-Sorry again,
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 69e5889..9b839fa 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1678,14 +1678,9 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 
+ 	if (host->pdata->caps)
+ 		mmc->caps = host->pdata->caps;
+-	else
+-		mmc->caps = 0;
+ 
+ 	if (host->pdata->caps2)
+ 		mmc->caps2 = host->pdata->caps2;
+-	else
+-		mmc->caps2 = 0;
+-
+ 
+ 	if (host->pdata->get_bus_wd)
+ 		if (host->pdata->get_bus_wd(slot->id) >= 4)
 
-Angus
+Thanks,
+
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
