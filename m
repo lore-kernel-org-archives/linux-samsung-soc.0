@@ -1,56 +1,40 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH v2] mmc: dw_mmc: Add second capability field
-Date: Sat, 24 Dec 2011 21:37:20 -0500
-Message-ID: <m2ty4pxtpb.fsf@bob.laptop.org>
-References: <006801ccc088$40cf1460$c26d3d20$%jun@samsung.com>
+From: "postcodesloetrij-  Bonus" <Postinfo@luckymail.com>
+Subject: End of year bonus!!
+Date: Sun, 25 Dec 2011 14:55:33 -0700
+Message-ID: <0bb7cee5361d32f4a30bf4aa2b0d9925.squirrel__15506.6281943165$1324851218$gmane$org@macmail.lakotanetwork.com>
+Reply-To: Postinfo@luckymail.com
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:50187 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754186Ab1LYCh3 (ORCPT
+Received: from filter3.e-filtering.net ([64.251.173.164]:41175 "EHLO
+	filter3.e-filtering.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753312Ab1LYWMy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Dec 2011 21:37:29 -0500
-In-Reply-To: <006801ccc088$40cf1460$c26d3d20$%jun@samsung.com> (Seungwon
-	Jeon's message of "Thu, 22 Dec 2011 18:01:12 +0900")
+	Sun, 25 Dec 2011 17:12:54 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Seungwon Jeon <tgih.jun@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'James Hogan' <james@albanarts.com>
 
-Hi,
+postcodesloetrij-  Bonus !!
 
-On Thu, Dec 22 2011, Seungwon Jeon wrote:
-> This patch adds caps2 filed for second capability in dw_mmc.
-> It corresponds with MMC_CAPS2_XXX. And this patch removes the
-> unnecessary condition statement for assigning caps.
->
-> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
-> ---
->  drivers/mmc/host/dw_mmc.c  |    6 ++----
->  include/linux/mmc/dw_mmc.h |    1 +
->  2 files changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 3aaeb08..3f5a77a 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1676,10 +1676,8 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
->  	if (host->pdata->setpower)
->  		host->pdata->setpower(id, 0);
->  
-> -	if (host->pdata->caps)
-> -		mmc->caps = host->pdata->caps;
-> -	else
-> -		mmc->caps = 0;
-> +	mmc->caps |= host->pdata->caps;
-> +	mmc->caps2 |= host->pdata->caps2;
+Promotion advertisement !!: we are please to inform you that the
+Postcode-lottery yearly award award promotion program held 25th Dec  2011,
+have pronounce your e-mail address as the luckily winner of a total sum:
+of ?100,000(One Hundred Thousand Euros
+Only)
 
-Ah, I replied earlier without having seen this patch.  I still prefer
-the version I proposed, which doesn't dereference host->pdata->caps{,2}
-without testing it first.
+Please email via BV Post-lottery Solicitors Fund Verification Department
+with your Serial-No:LE-0031#55330 for your claim,
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Office/Email:Postinfo@luckymail.com
+Tell:+31-645-764-338/Netherlands
+
+This program is organize to promote the postcode lottery company award
+yearly, and we are strictly and skeptical regard your winning information
+that  is why you are advice to forward your serial number the claim
+department only and without any dis-closer to any person /friends for
+security reason
+
+Sincerely,
+Mrs:Hase Van Willems
+Promotion Coordinator.
