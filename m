@@ -1,38 +1,143 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
- domain infrastructure
-Date: Mon, 26 Dec 2011 19:06:17 +0000
-Message-ID: <20111226190616.GL8722@opensource.wolfsonmicro.com>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>
- <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
- <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/2] PM / Domains: Add OF support
+Date: Mon, 26 Dec 2011 20:13:19 +0100
+Message-ID: <201112262013.19995.rjw@sisk.pl>
+References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:44248 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752261Ab1LZTGV (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:40880 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752244Ab1LZTKM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Dec 2011 14:06:21 -0500
-Content-Disposition: inline
-In-Reply-To: <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>
+	Mon, 26 Dec 2011 14:10:12 -0500
+In-Reply-To: <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, patches@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
 
-On Mon, Dec 12, 2011 at 09:16:29PM +0530, Thomas Abraham wrote:
+Hi,
 
-> +	/* Wait max 1ms */
-> +	timeout = 10;
-> +	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)
-> +					!= S5P_INT_LOCAL_PWR_EN) {
-> +		if (!timeout) {
-> +			pr_err("Power domain %s enable failed\n", domain->name);
-> +			return -ETIMEDOUT;
+On Monday, December 12, 2011, Thomas Abraham wrote:
+> A device node pointer is added to generic pm domain structure to associate
+> the domain with a node in the device tree.
+
+That sounds fine except for one thing: PM domains are not devices, so adding
+"device node" pointers to them is kind of confusing.  Perhaps there should be
+something like struct dt_node, representing a more general device tree node?
+
+> The platform code parses the
+> device tree to find available nodes representing the generic power domain,
+> instantiates the available domains and initializes them by calling
+> pm_genpd_init().
+> 
+> Nodes representing the devices include a phandle of the power domain to
+> which it belongs. As these devices get instantiated, the driver code
+> checkes for availability of a power domain phandle, converts the phandle
+> to a device node and uses the new pm_genpd_of_add_device() api to
+> associate the device with a power domain.
+> 
+> pm_genpd_of_add_device() runs through its list of registered power domains
+> and matches the OF node of the domain with the one specified as the
+> parameter. If a match is found, the device is associated with the matched
+> domain.
+> 
+> Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> Cc: Rob Herring <rob.herring@calxeda.com>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/base/power/domain.c |   14 +++++++++++++-
+>  include/linux/pm_domain.h   |   13 +++++++++++--
+>  2 files changed, 24 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 92e6a90..e895dc9 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1118,14 +1118,26 @@ static void pm_genpd_complete(struct device *dev)
+>   * @td: Set of PM QoS timing parameters to attach to the device.
+>   */
+>  int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+> -			  struct gpd_timing_data *td)
+> +			  struct gpd_timing_data *td, struct device_node *node)
+>  {
+>  	struct generic_pm_domain_data *gpd_data;
+> +	struct generic_pm_domain *gpd = NULL;
+>  	struct pm_domain_data *pdd;
+>  	int ret = 0;
+>  
+>  	dev_dbg(dev, "%s()\n", __func__);
+>  
+> +	mutex_lock(&gpd_list_lock);
+> +	if (node) {
+> +		list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
+> +			if (gpd->of_node == node) {
+> +				genpd = gpd;
+> +				break;
+> +			}
 > +		}
-> +		timeout--;
-> +		udelay(100);
 > +	}
+> +	mutex_unlock(&gpd_list_lock);
 
-Might be worth putting a cpu_relax() in there just to be a bit nicer?
+It looks like you might add a wrapper around the original
+__pm_genpd_add_device() instead of modifying __pm_genpd_add_device()
+itself.  That would be a bit cleaner, as your new function is always
+called with at least one NULL arg.
+
+> +
+>  	if (IS_ERR_OR_NULL(genpd) || IS_ERR_OR_NULL(dev))
+>  		return -EINVAL;
+>  
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index a03a0ad..2ce7cc4 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -11,6 +11,7 @@
+>  
+>  #include <linux/device.h>
+>  #include <linux/err.h>
+> +#include <linux/of.h>
+>  
+>  enum gpd_status {
+>  	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
+> @@ -70,6 +71,7 @@ struct generic_pm_domain {
+>  	s64 break_even_ns;	/* Power break even for the entire domain. */
+>  	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
+>  	ktime_t power_off_time;
+> +	struct device_node *of_node; /* Node in device tree */
+
+That should be initialized by the caller of pm_genpd_init(), right?
+
+>  };
+>  
+>  static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
+> @@ -115,12 +117,19 @@ extern struct dev_power_governor simple_qos_governor;
+>  extern struct generic_pm_domain *dev_to_genpd(struct device *dev);
+>  extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+>  				 struct device *dev,
+> -				 struct gpd_timing_data *td);
+> +				 struct gpd_timing_data *td,
+> +				 struct device_node *gpd_node);
+>  
+>  static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
+>  				      struct device *dev)
+>  {
+> -	return __pm_genpd_add_device(genpd, dev, NULL);
+> +	return __pm_genpd_add_device(genpd, dev, NULL, NULL);
+> +}
+> +
+> +static inline int pm_genpd_of_add_device(struct device_node *gpd_node,
+> +					 struct device *dev)
+> +{
+> +	return __pm_genpd_add_device(NULL, dev, NULL, gpd_node);
+>  }
+>  
+>  extern int pm_genpd_remove_device(struct generic_pm_domain *genpd,
+> 
+
+Thanks,
+Rafael
