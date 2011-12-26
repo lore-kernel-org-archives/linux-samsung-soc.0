@@ -1,49 +1,33 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH v2 RESEND 2/2] mmc: core: Add claiming a host during
- mmc_cache_ctrl
-Date: Mon, 26 Dec 2011 18:03:05 +0900
-Message-ID: <000901ccc3ad$2deff1c0$89cfd540$%jun@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK C110 and V210 boards
+Date: Mon, 26 Dec 2011 15:30:09 +0530
+Message-ID: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22392 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753955Ab1LZJDG (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:44766 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753955Ab1LZKDd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Dec 2011 04:03:06 -0500
-Content-language: ko
+	Mon, 26 Dec 2011 05:03:33 -0500
+Received: by iaeh11 with SMTP id h11so18667483iae.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Dec 2011 02:03:32 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: sachin.kamat@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
-While calling mmc_cache_ctrl() a host is not claimed. This patch
-adds the mmc_try_claim_host() for quick response in suspend.
+This patch series adds support for MFC and FIMC on SMDK C110 and V210 boards.
+It is based on Kukjin Kim's latest for-next branch.
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- drivers/mmc/core/core.c |    8 +++++++-
- 1 files changed, 7 insertions(+), 1 deletions(-)
+Sachin Kamat (4):
+  ARM: S5PV210: Enable MFC on SMDKV210
+  ARM: S5PV210: Enable MFC on SMDKC110
+  ARM: S5PV210: Enable FIMC on SMDKV210
+  ARM: S5PV210: Enable FIMC on SMDKC110
 
-diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-index 83ac6e6..efdbf9d 100644
---- a/drivers/mmc/core/core.c
-+++ b/drivers/mmc/core/core.c
-@@ -2359,7 +2359,13 @@ int mmc_suspend_host(struct mmc_host *host)
- 		cancel_delayed_work(&host->disable);
- 	cancel_delayed_work(&host->detect);
- 	mmc_flush_scheduled_work();
--	err = mmc_cache_ctrl(host, 0);
-+	if (mmc_try_claim_host(host)) {
-+		err = mmc_cache_ctrl(host, 0);
-+		mmc_do_release_host(host);
-+	} else {
-+		err = -EBUSY;
-+	}
-+
- 	if (err)
- 		goto out;
- 
+ arch/arm/mach-s5pv210/Kconfig         |    8 ++++++++
+ arch/arm/mach-s5pv210/mach-smdkc110.c |   14 ++++++++++++++
+ arch/arm/mach-s5pv210/mach-smdkv210.c |   13 +++++++++++++
+ 3 files changed, 35 insertions(+), 0 deletions(-)
+
 -- 
-1.7.0.4
+1.7.4.1
