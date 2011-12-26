@@ -1,57 +1,29 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 4/4] ARM: S5PV210: Enable FIMC on SMDKC110
-Date: Mon, 26 Dec 2011 15:30:13 +0530
-Message-ID: <1324893613-5469-5-git-send-email-sachin.kamat@linaro.org>
-References: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] PM / Domains: Add OF support
+Date: Mon, 26 Dec 2011 11:29:32 +0000
+Message-ID: <20111226112931.GE8722@opensource.wolfsonmicro.com>
+References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>
+ <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:44766 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753955Ab1LZKDp (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37291 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754488Ab1LZL3f (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Dec 2011 05:03:45 -0500
-Received: by mail-iy0-f174.google.com with SMTP id h11so18667483iae.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Dec 2011 02:03:44 -0800 (PST)
-In-Reply-To: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 26 Dec 2011 06:29:35 -0500
+Content-Disposition: inline
+In-Reply-To: <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: sachin.kamat@linaro.org, kgene.kim@samsung.com, patches@linaro.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, patches@linaro.org
 
-This patch adds support for FIMC 0, 1 & 2 on SMDKC110 board.
+On Mon, Dec 12, 2011 at 09:16:28PM +0530, Thomas Abraham wrote:
+> A device node pointer is added to generic pm domain structure to associate
+> the domain with a node in the device tree. The platform code parses the
+> device tree to find available nodes representing the generic power domain,
+> instantiates the available domains and initializes them by calling
+> pm_genpd_init().
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-s5pv210/Kconfig         |    3 +++
- arch/arm/mach-s5pv210/mach-smdkc110.c |    3 +++
- 2 files changed, 6 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 66e1b3d..eb31498 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -113,6 +113,9 @@ config MACH_SMDKC110
- 	select S3C_DEV_I2C2
- 	select S3C_DEV_RTC
- 	select S3C_DEV_WDT
-+	select S5P_DEV_FIMC0
-+	select S5P_DEV_FIMC1
-+	select S5P_DEV_FIMC2
- 	select S5P_DEV_MFC
- 	select SAMSUNG_DEV_IDE
- 	select S5PV210_SETUP_I2C1
-diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
-index 0087c7b..59757b6 100644
---- a/arch/arm/mach-s5pv210/mach-smdkc110.c
-+++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
-@@ -93,6 +93,9 @@ static struct platform_device *smdkc110_devices[] __initdata = {
- 	&s3c_device_i2c2,
- 	&s3c_device_rtc,
- 	&s3c_device_wdt,
-+	&s5p_device_fimc0,
-+	&s5p_device_fimc1,
-+	&s5p_device_fimc2,
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
--- 
-1.7.4.1
+This sounds useful but the binding needs to be documented properly.
