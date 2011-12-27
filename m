@@ -1,48 +1,109 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 1/2] PM / Domains: Add OF support
-Date: Mon, 26 Dec 2011 21:44:41 +0100
-Message-ID: <201112262144.42211.rjw@sisk.pl>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <201112262013.19995.rjw@sisk.pl> <20111226192424.GN8722@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Adds Samsung TRATS board support
+Date: Tue, 27 Dec 2011 09:37:55 +0900
+Message-ID: <08e201ccc42f$c67e3a50$537aaef0$%kim@samsung.com>
+References: <1324624169-16102-1-git-send-email-riverful.kim@samsung.com>
+ <088901ccc1dd$deea1e00$9cbe5a00$%kim@samsung.com>
+ <CAH9JG2WEcA1BwWq+uovrax5bWvuXaYsGky8D9txymXta7GY8TQ@mail.gmail.com>
+ <000d01ccc381$59fbe660$0df3b320$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:40951 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753247Ab1LZUlb (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:30102 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753112Ab1L0Ah5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Dec 2011 15:41:31 -0500
-In-Reply-To: <20111226192424.GN8722@opensource.wolfsonmicro.com>
+	Mon, 26 Dec 2011 19:37:57 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWU008OX718QK70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 09:37:56 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWU004YR7335280@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 09:37:56 +0900 (KST)
+In-reply-to: <000d01ccc381$59fbe660$0df3b320$%kim@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, patches@linaro.org
+To: "'HeungJun, Kim'" <riverful.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, 'arm-linux' <linux-arm-kernel@lists.infradead.org>
 
-On Monday, December 26, 2011, Mark Brown wrote:
-> On Mon, Dec 26, 2011 at 08:13:19PM +0100, Rafael J. Wysocki wrote:
-> > On Monday, December 12, 2011, Thomas Abraham wrote:
+HeungJun, Kim wrote:
 > 
-> > > A device node pointer is added to generic pm domain structure to associate
-> > > the domain with a node in the device tree.
+> Hi Kukjun Kim,
 > 
-> > That sounds fine except for one thing: PM domains are not devices, so adding
-> > "device node" pointers to them is kind of confusing.  Perhaps there should be
-> > something like struct dt_node, representing a more general device tree node?
+> > -----Original Message-----
+> > From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-
+> kernel-
+> > bounces@lists.infradead.org] On Behalf Of Kyungmin Park
+> > Sent: Monday, December 26, 2011 8:56 AM
+> > To: Kukjin Kim
+> > Cc: HeungJun, Kim; linux-samsung-soc@vger.kernel.org; arm-linux
+> > Subject: Re: [PATCH] ARM: EXYNOS: Adds Samsung TRATS board support
+> >
+> > On 12/24/11, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > > HeungJun, Kim wrote:
+> > >>
+> > >> This patch adds Samsung Mobile TRATS board support.
+> > >>
+> > >> Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+> > >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > >> ---
+> > >>  arch/arm/mach-exynos/Kconfig       |   11 ++
+> > >>  arch/arm/mach-exynos/Makefile      |    1 +
+> > >>  arch/arm/mach-exynos/board-trats.c |  340
+> > >> ++++++++++++++++++++++++++++++++++++
+> > >>  3 files changed, 352 insertions(+), 0 deletions(-)
+> > >>  create mode 100644 arch/arm/mach-exynos/board-trats.c
+> > >>
+> > >
+> > > If this is for v3.3, unfortunately, it's a little late to add board
+> file and
+> > > since many things have changed I don't want to cause the conflicts
+> with
+> > > others now.
+> > >
+> > > BTW, why is the name board-xxx not mach-xxx like others?
+> >
+> > It's mentioned several times,
+> > How do you talk with other when talk about the smdk?
+> > "I'm using the smdk machine and it's based on smdk machine?"
+> > As board is more proper word and it's easy to know when find the board
+> > at source code.
+> > So hope to use the board if it's not big deal.
+> If you don't mind, I want to let you know additional information.
 > 
-> There's struct of_node which is exactly that, though practically
-> speaking you need a device if you're going to bind automatically to
-> something from the device tree in a sensible fashion and there is actual
-> hardware under there so a device does make some sense.
+> I also agree with Mr.Park.
 > 
-> This is in part compatibility with the existing Exynos code which uses
-> devices to probe the domains for non-DT systems.
+> Generally in the robot field, the term "machine" means the total things
+> including the machinery part and even the brain "board", and the machine
+> is more bigger concept.
+> Probably, in the other field, this confusion will be occurred
+> when they see the linux kernel source first.
+> So, I think these terms might be necessary to distinguish.
+> 
 
-Well, that's not a general case, though.
+Well, I don't think so. I'd like to ask why you _do_ think the meaning of
+machine is bigger than board. General robot field?...Nobody knows machine
+does not mean board in the arch/arm/ kernel.
 
-It doesn't feel approporiate to use a "device node" pointer for something
-that's not based on struct device, at least not a generic level, so I wonder
-if there's a different way.
+If we use the meaning what you said the contrary is rather to be supposed.
+The confusion can be caused.
+And how about machine_is_xxx() and CONFIG_MACH_XXX for board?
 
-Thanks,
-Rafael
+...
+
+Anyway, the board-xxx.c file can be used for it later but as I said, if
+required, we need to change it all at once in samsung stuff not just for
+TRATS board.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
