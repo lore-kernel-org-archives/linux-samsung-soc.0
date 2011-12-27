@@ -1,57 +1,55 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK C110 and
- V210 boards
-Date: Tue, 27 Dec 2011 11:39:33 +0530
-Message-ID: <CAK9yfHyXazVh3weycF-FCHYtH==m4J-YtwnZfsAdfeAB9mBnkQ@mail.gmail.com>
-References: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] ARM: Exynos: Remove duplicated SROMC static memory mapping
+Date: Tue, 27 Dec 2011 11:42:23 +0530
+Message-ID: <1324966343-7560-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f53.google.com ([209.85.216.53]:58972 "EHLO
-	mail-qw0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750847Ab1L0GJe convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:24674 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751044Ab1L0GKY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Dec 2011 01:09:34 -0500
-Received: by qadb15 with SMTP id b15so7568160qad.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 26 Dec 2011 22:09:34 -0800 (PST)
-In-Reply-To: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 27 Dec 2011 01:10:24 -0500
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWU00BCZMH80AK0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 15:10:22 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWU00IU1MH3CM50@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 15:10:22 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Hi Kukjin,
+SROMC static memory mapping is included in the common s5p initialization
+code. Hence, remove the duplicated SROMC static memory mapping for Exynos.
 
-Please pick up the MFC patches (patches 1 & 2) from this series. I
-will post a separate patch series for FIMC related changes.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+This was identified while testing Nicolas Pitre's vmalloc.h removal
+patch series for Exynos. The duplicated static memory mapping caused
+the detection of overlapped memory region (in vm_area_add_early) which
+resulted in boot failure.	
 
-Regards
-Sachin
+ arch/arm/mach-exynos/cpu.c |    5 -----
+ 1 files changed, 0 insertions(+), 5 deletions(-)
 
-On 26 December 2011 15:30, Sachin Kamat <sachin.kamat@linaro.org> wrote=
-:
-> This patch series adds support for MFC and FIMC on SMDK C110 and V210=
- boards.
-> It is based on Kukjin Kim's latest for-next branch.
->
-> Sachin Kamat (4):
-> =A0ARM: S5PV210: Enable MFC on SMDKV210
-> =A0ARM: S5PV210: Enable MFC on SMDKC110
-> =A0ARM: S5PV210: Enable FIMC on SMDKV210
-> =A0ARM: S5PV210: Enable FIMC on SMDKC110
->
-> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 | =A0 =A08 ++++++++
-> =A0arch/arm/mach-s5pv210/mach-smdkc110.c | =A0 14 ++++++++++++++
-> =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 13 +++++++++++++
-> =A03 files changed, 35 insertions(+), 0 deletions(-)
->
-> --
-> 1.7.4.1
->
-
-
-
---=20
-With warm regards,
-Sachin
+diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
+index 1213027..574f4b9 100644
+--- a/arch/arm/mach-exynos/cpu.c
++++ b/arch/arm/mach-exynos/cpu.c
+@@ -118,11 +118,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+ 		.length		= SZ_64K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+-		.virtual	= (unsigned long)S5P_VA_SROMC,
+-		.pfn		= __phys_to_pfn(EXYNOS4_PA_SROMC),
+-		.length		= SZ_4K,
+-		.type		= MT_DEVICE,
+-	}, {
+ 		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
+ 		.pfn		= __phys_to_pfn(EXYNOS4_PA_HSPHY),
+ 		.length		= SZ_4K,
+-- 
+1.6.6.rc2
