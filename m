@@ -1,35 +1,36 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung devel-mmc-spi for v3.3
-Date: Tue, 27 Dec 2011 18:42:14 +0900
-Message-ID: <000801ccc47b$d474fd00$7d5ef700$%kim@samsung.com>
+Subject: [GIT PULL] Samsung devel-ohci for v3.3
+Date: Tue, 27 Dec 2011 18:48:05 +0900
+Message-ID: <000901ccc47c$a1d0db70$e5729250$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28864 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751455Ab1L0JmY (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22842 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752920Ab1L0JsI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Dec 2011 04:42:24 -0500
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Tue, 27 Dec 2011 04:48:08 -0500
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWU0032SWAMZ4I0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 18:42:23 +0900 (KST)
+ 2010)) with ESMTP id <0LWU00HILWJ67500@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 18:48:07 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWU00ERHWAKZV10@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 18:42:22 +0900 (KST)
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWU0031FWK58D70@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 18:48:07 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Greg KH' <gregkh@suse.de>
 
 Hi Arnd and Olof,
 
-Please pull the Samsung-devel-mmc-spi for v3.3.
-It depends on Samsung-cleanup-spi4 branch as well.
+Please pull the samsung-devel-ohci for v3.3.
+The USB stuff got the ack from Greh and he agreed to send to upstream via
+samsung tree.
 
 If any problems, please let me know.
 
@@ -41,41 +42,37 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-The following changes since commit 7d38af51d587ad953eef786a6922bcd1482cae5c:
+The following changes since commit 384703b8e6cd4c8ef08512e596024e028c91c339:
 
-  ARM: S3C64XX: Modified according to SPI consolidation work (2011-12-23
-10:50:03 +0900)
+  Linux 3.2-rc6 (2011-12-16 18:36:26 -0800)
 
 are available in the git repository at:
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next-samsung-devel-mmc-spi5
+next-samsung-devel-ohci
 
-Padmavathi Venna (1):
-      ARM: EXYNOS: Modified files for SPI consolidation work
+Jingoo Han (3):
+      ARM: EXYNOS: Add USB OHCI device
+      ARM: EXYNOS: Add USB OHCI support to SMDKV310 board
+      USB: Add Samsung Exynos OHCI diver
 
-Rajeshwari Shinde (3):
-      ARM: S5P64X0: Add HSMMC setup for host Controller
-      ARM: S5P64X0: Add lookup of sdhci-s3c clocks using generic names
-      ARM: S5P64X0: Enable SDHCI support
+Tushar Behera (1):
+      ARM: EXYNOS: Add USB OHCI support to ORIGEN board
 
- arch/arm/mach-exynos/Kconfig                   |    5 +
- arch/arm/mach-exynos/Makefile                  |    1 +
- arch/arm/mach-exynos/clock.c                   |   73 ++++++++++-------
- arch/arm/mach-exynos/include/mach/irqs.h       |    3 +
- arch/arm/mach-exynos/include/mach/map.h        |    7 ++
- arch/arm/mach-exynos/include/mach/spi-clocks.h |   16 ++++
- arch/arm/mach-exynos/setup-spi.c               |   72 ++++++++++++++++
- arch/arm/mach-s5p64x0/Kconfig                  |   24 ++++++
- arch/arm/mach-s5p64x0/Makefile                 |    1 +
- arch/arm/mach-s5p64x0/clock-s5p6440.c          |   72 ++++++++++-------
- arch/arm/mach-s5p64x0/clock-s5p6450.c          |   72 ++++++++++-------
- arch/arm/mach-s5p64x0/cpu.c                    |    9 ++
- arch/arm/mach-s5p64x0/mach-smdk6440.c          |   25 ++++++
- arch/arm/mach-s5p64x0/mach-smdk6450.c          |   26 ++++++-
- arch/arm/mach-s5p64x0/setup-sdhci-gpio.c       |  104
-++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/sdhci.h     |   44 ++++++++++
- 16 files changed, 463 insertions(+), 91 deletions(-)
- create mode 100644 arch/arm/mach-exynos/include/mach/spi-clocks.h
- create mode 100644 arch/arm/mach-exynos/setup-spi.c
- create mode 100644 arch/arm/mach-s5p64x0/setup-sdhci-gpio.c
+ arch/arm/mach-exynos/Kconfig              |    7 +
+ arch/arm/mach-exynos/Makefile             |    1 +
+ arch/arm/mach-exynos/dev-ohci.c           |   52 ++++++
+ arch/arm/mach-exynos/include/mach/map.h   |    1 +
+ arch/arm/mach-exynos/include/mach/ohci.h  |   21 +++
+ arch/arm/mach-exynos/mach-origen.c        |   13 ++
+ arch/arm/mach-exynos/mach-smdkv310.c      |   13 ++
+ arch/arm/mach-exynos/setup-usb-phy.c      |   15 ++
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ drivers/usb/Kconfig                       |    1 +
+ drivers/usb/host/Kconfig                  |    6 +
+ drivers/usb/host/ohci-exynos.c            |  274
++++++++++++++++++++++++++++++
+ drivers/usb/host/ohci-hcd.c               |    5 +
+ 13 files changed, 410 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/dev-ohci.c
+ create mode 100644 arch/arm/mach-exynos/include/mach/ohci.h
+ create mode 100644 drivers/usb/host/ohci-exynos.c
