@@ -1,40 +1,50 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
- domain infrastructure
-Date: Tue, 27 Dec 2011 23:16:12 +0100
-Message-ID: <4EFA43AC.8030900@gmail.com>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org> <20111226190616.GL8722@opensource.wolfsonmicro.com>
+From: Alessandro Zummo <a.zummo@towertech.it>
+Subject: Re: [rtc-linux] Re: [PATCH v2 0/4] Implement RTC support for
+ S3C2443/S3C2416/S3C2450
+Date: Tue, 27 Dec 2011 23:49:57 +0100
+Message-ID: <20111227234957.3bc1d3c3@linux.lan.towertech.it>
+References: <201112121543.42299.heiko@sntech.de>
+	<064801ccbfb1$c5d48e60$517dab20$%kim@samsung.com>
+	<201112210922.12300.heiko@sntech.de>
+	<20111223114300.GA13175@sirena.org.uk>
+	<20111226020119.2c57a26e@linux.lan.towertech.it>
+	<08e301ccc430$beb4dc60$3c1e9520$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:41643 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751376Ab1L0WQR (ORCPT
+Received: from elettra.colt-to.towertech.it ([213.215.222.70]:53387 "EHLO
+	smtp.towertech.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752083Ab1L0WuD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Dec 2011 17:16:17 -0500
-In-Reply-To: <20111226190616.GL8722@opensource.wolfsonmicro.com>
+	Tue, 27 Dec 2011 17:50:03 -0500
+In-Reply-To: <08e301ccc430$beb4dc60$3c1e9520$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, patches@linaro.org
+To: rtc-linux@googlegroups.com
+Cc: kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, 'Heiko St?bner' <heiko@sntech.de>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 12/26/2011 08:06 PM, Mark Brown wrote:
-> On Mon, Dec 12, 2011 at 09:16:29PM +0530, Thomas Abraham wrote:
-> 
->> +	/* Wait max 1ms */
->> +	timeout = 10;
->> +	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)
->> +					!= S5P_INT_LOCAL_PWR_EN) {
->> +		if (!timeout) {
->> +			pr_err("Power domain %s enable failed\n", domain->name);
->> +			return -ETIMEDOUT;
->> +		}
->> +		timeout--;
->> +		udelay(100);
->> +	}
-> 
-> Might be worth putting a cpu_relax() in there just to be a bit nicer?
+On Tue, 27 Dec 2011 09:44:52 +0900
+Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-There is a quite significant delay within the loop, thus it might make more
-sense to replace udelay() with usleep_range() instead.
+> Please check next-samsung-devel-rtc branch in my tree,
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> 
+> And if you're ok to send to upstream via samsung tree, please let me know so
+> that I can add your ack on rtc patches. Of course, if any problems, let me
+> revert them and they should be re-worked.
+
+ Checked. Please send it via samsung tree. I can only visually check the 
+ code but don't really know if it works and I guess you are in a better
+ position to know ;)
+
+ Acked-by: Alessandro Zummo <a.zummo@towertech.it>
+
+-- 
+
+ Best regards,
+
+ Alessandro Zummo,
+  Tower Technologies - Torino, Italy
+
+  http://www.towertech.it
