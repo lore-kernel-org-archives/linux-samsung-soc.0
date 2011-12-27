@@ -1,65 +1,40 @@
-From: Kamil Debski <k.debski@samsung.com>
-Subject: [PATCH 2/3] s5p-g2d: add G2D to mach-nuri
-Date: Tue, 27 Dec 2011 14:21:27 +0100
-Message-ID: <1324992088-12037-3-git-send-email-k.debski@samsung.com>
-References: <1324992088-12037-1-git-send-email-k.debski@samsung.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
+ domain infrastructure
+Date: Tue, 27 Dec 2011 23:16:12 +0100
+Message-ID: <4EFA43AC.8030900@gmail.com>
+References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org> <20111226190616.GL8722@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:29472 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753544Ab1L0NVj (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:41643 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751376Ab1L0WQR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Dec 2011 08:21:39 -0500
-Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LWV000R36G1AE40@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 13:21:37 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LWV00I056G1ZL@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Dec 2011 13:21:37 +0000 (GMT)
-In-reply-to: <1324992088-12037-1-git-send-email-k.debski@samsung.com>
+	Tue, 27 Dec 2011 17:16:17 -0500
+In-Reply-To: <20111226190616.GL8722@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: m.szyprowski@samsung.com, kyungmin.park@samsung.com, k.debski@samsung.com, jaeryul.oh@samsung.com, jtp.park@samsung.com, kgene.kim@samsung.com, sachin.kamat@linaro.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, patches@linaro.org
 
-G2D is a 2D graphics accelerator engine present in the s5p family
-of Samsung SoCs. It is capable of bitblt and raster operations on
-images having dimensions of up to 8000x8000.
+On 12/26/2011 08:06 PM, Mark Brown wrote:
+> On Mon, Dec 12, 2011 at 09:16:29PM +0530, Thomas Abraham wrote:
+> 
+>> +	/* Wait max 1ms */
+>> +	timeout = 10;
+>> +	while ((__raw_readl(base + 0x4) & S5P_INT_LOCAL_PWR_EN)
+>> +					!= S5P_INT_LOCAL_PWR_EN) {
+>> +		if (!timeout) {
+>> +			pr_err("Power domain %s enable failed\n", domain->name);
+>> +			return -ETIMEDOUT;
+>> +		}
+>> +		timeout--;
+>> +		udelay(100);
+>> +	}
+> 
+> Might be worth putting a cpu_relax() in there just to be a bit nicer?
 
-Signed-off-by: Kamil Debski <k.debski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/Kconfig     |    1 +
- arch/arm/mach-exynos/mach-nuri.c |    1 +
- 2 files changed, 2 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 4e36e8f..3bd0eec 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -271,6 +271,7 @@ config MACH_NURI
- 	select S5P_DEV_FIMC1
- 	select S5P_DEV_FIMC2
- 	select S5P_DEV_FIMC3
-+	select S5P_DEV_G2D
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
- 	select S5P_SETUP_MIPIPHY
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 4df7d3e..3df8bf4 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -1261,6 +1261,7 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&s3c_device_i2c3,
- 	&i2c9_gpio,
- 	&s3c_device_adc,
-+	&s5p_device_g2d,
- 	&s3c_device_rtc,
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
--- 
-1.7.0.4
+There is a quite significant delay within the loop, thus it might make more
+sense to replace udelay() with usleep_range() instead.
