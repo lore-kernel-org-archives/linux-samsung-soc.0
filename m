@@ -1,79 +1,73 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v5 2/2] input: samsung-keypad: Add device tree support
-Date: Tue, 27 Dec 2011 23:28:38 -0800
-Message-ID: <CAOesGMic39gaYt9rsyebBJDS=cKAmmOP1BdunzAEiL+wcf0HKQ@mail.gmail.com>
-References: <1318264197-6698-1-git-send-email-thomas.abraham@linaro.org>
-	<1318264197-6698-3-git-send-email-thomas.abraham@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: Exynos: Remove duplicated SROMC static memory mapping
+Date: Wed, 28 Dec 2011 16:59:16 +0900
+Message-ID: <01e301ccc536$989e5180$c9daf480$%kim@samsung.com>
+References: <1324966343-7560-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:35971 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751258Ab1L1H2i convert rfc822-to-8bit (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45336 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750716Ab1L1H7U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 02:28:38 -0500
-In-Reply-To: <1318264197-6698-3-git-send-email-thomas.abraham@linaro.org>
+	Wed, 28 Dec 2011 02:59:20 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWW009SDM6OQ8O0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 28 Dec 2011 16:59:19 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWW00GB1M6SCU40@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 28 Dec 2011 16:59:19 +0900 (KST)
+In-reply-to: <1324966343-7560-1-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, dmitry.torokhov@gmail.com, grant.likely@secretlab.ca, linux-input@vger.kernel.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jy0922.shim@samsung.com, dh09.lee@samsung.com, patches@linaro.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 
-Hi,
+Thomas Abraham wrote:
+> 
+> SROMC static memory mapping is included in the common s5p initialization
+> code. Hence, remove the duplicated SROMC static memory mapping for Exynos.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> This was identified while testing Nicolas Pitre's vmalloc.h removal
+> patch series for Exynos. The duplicated static memory mapping caused
+> the detection of overlapped memory region (in vm_area_add_early) which
+> resulted in boot failure.
+> 
+>  arch/arm/mach-exynos/cpu.c |    5 -----
+>  1 files changed, 0 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/cpu.c b/arch/arm/mach-exynos/cpu.c
+> index 1213027..574f4b9 100644
+> --- a/arch/arm/mach-exynos/cpu.c
+> +++ b/arch/arm/mach-exynos/cpu.c
+> @@ -118,11 +118,6 @@ static struct map_desc exynos4_iodesc[] __initdata =
+> {
+>  		.length		= SZ_64K,
+>  		.type		= MT_DEVICE,
+>  	}, {
+> -		.virtual	= (unsigned long)S5P_VA_SROMC,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_SROMC),
+> -		.length		= SZ_4K,
+> -		.type		= MT_DEVICE,
+> -	}, {
+>  		.virtual	= (unsigned long)S3C_VA_USB_HSPHY,
+>  		.pfn		= __phys_to_pfn(EXYNOS4_PA_HSPHY),
+>  		.length		= SZ_4K,
+> --
+> 1.6.6.rc2
 
-I came across this searching for other proposed device tree bindings
-based on what I wanted to do for Tegra.
+Oops, OK. Let me send this before v3.2.
+Thanks.
 
-Comments below.
-
-On Mon, Oct 10, 2011 at 9:29 AM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-
-> +- Keys represented as child nodes: Each key connected to the keypad
-> + =A0controller is represented as a child node to the keypad controll=
-er
-> + =A0device node and should include the following properties.
-> + =A0- keypad,row: the row number to which the key is connected.
-> + =A0- keypad,column: the column number to which the key is connected=
-=2E
-> + =A0- linux,code: the key-code to be reported when the key is presse=
-d
-> + =A0 =A0and released.
-
-[...]
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 key_1 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 keypad,row =3D <0>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 keypad,column =3D <3>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 linux,code =3D <2>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 key_2 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 keypad,row =3D <0>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 keypad,column =3D <4>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 linux,code =3D <3>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
-> +
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 key_3 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 keypad,row =3D <0>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 keypad,column =3D <5>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 linux,code =3D <4>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
-
-
-The above is good if all you want to specify is a few keys. If you
-want a full keyboard specification, it gets very verbose.
-
-I would prefer a simpler binding, something along the lines of:
-
-linux,keymap =3D < row col code ... >;
-
-Where it's just an array of the above, so your example would be:
-linux,keymap =3D < 0 3 2
-                 0 4 3
-                 0 5 4 >;
-
-Same amount of data, it would be more or less as easy to read but a
-_much_ more compact representation when you need to provide 100+ keys.
-
-
--Olof
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
