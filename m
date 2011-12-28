@@ -1,70 +1,51 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 0/3] Samsung S5P platform modification required for G2D driver
-Date: Wed, 28 Dec 2011 15:17:13 +0530
-Message-ID: <CAK9yfHy2rwStKyXgr=Uf1bAToWi-ZmFvuBph64H7VCqHMJD93Q@mail.gmail.com>
-References: <1324992088-12037-1-git-send-email-k.debski@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH] ARM: EXYNOS: Enable G2D on Origen
+Date: Wed, 28 Dec 2011 16:09:34 +0530
+Message-ID: <1325068774-26334-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f46.google.com ([209.85.216.46]:60880 "EHLO
-	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752190Ab1L1JrO (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:61508 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753504Ab1L1KnA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 04:47:14 -0500
-Received: by qadc12 with SMTP id c12so7147351qad.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Dec 2011 01:47:13 -0800 (PST)
-In-Reply-To: <1324992088-12037-1-git-send-email-k.debski@samsung.com>
+	Wed, 28 Dec 2011 05:43:00 -0500
+Received: by iaeh11 with SMTP id h11so21856152iae.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Dec 2011 02:42:59 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kamil Debski <k.debski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, jaeryul.oh@samsung.com, jtp.park@samsung.com, kgene.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, k.debski@samsung.com, sachin.kamat@linaro.org
 
-Hi Kamil,
+This patch enables G2D support on Origen board.
 
-Your previous patch set has already been merged into [1].
-Thus this has the G2D selected under SMDKV310 instead of NURI in the
-KConfig file.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/Kconfig       |    1 +
+ arch/arm/mach-exynos/mach-origen.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-
-[1] http://git.kernel.org/?p=linux/kernel/git/kgene/linux-samsung.git;a=shortlog;h=refs/heads/for-next
-
-
-Regards
-Sachin
-
-On 27/12/2011, Kamil Debski <k.debski@samsung.com> wrote:
-> Hi,
->
-> This series of patches contains necessary platform modification required by
-> the
-> G2D driver. G2D is a 2D-graphics acceleration engine present in the S5PC110
-> and
-> Exynos4 Samsung SoCs.
->
-> I have fixed the errors pointed out by Kukjin Kim an Sachin Kamat. (Thanks!)
-> Also the patches have been rebased to the newest kgene/for-next branch.
->
-> Best wishes,
-> Kamil Debski
->
-> Kamil Debski (3):
->   s5p-g2d: add G2D to plat-s5p and mach-exynos4
->   s5p-g2d: add G2D to mach-nuri
->   s5p-g2d: add G2D to mach-universal
->
->  arch/arm/mach-exynos/Kconfig               |    2 ++
->  arch/arm/mach-exynos/include/mach/map.h    |    3 +++
->  arch/arm/mach-exynos/mach-nuri.c           |    1 +
->  arch/arm/mach-exynos/mach-universal_c210.c |    1 +
->  arch/arm/plat-s5p/Kconfig                  |    5 +++++
->  arch/arm/plat-samsung/devs.c               |   28
-> ++++++++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/devs.h  |    1 +
->  7 files changed, 41 insertions(+), 0 deletions(-)
->
->
-
-
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index e931924..febfd53 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -303,6 +303,7 @@ config MACH_ORIGEN
+ 	select S5P_DEV_FIMC2
+ 	select S5P_DEV_FIMC3
+ 	select S5P_DEV_FIMD0
++	select S5P_DEV_G2D
+ 	select S5P_DEV_I2C_HDMIPHY
+ 	select S5P_DEV_MFC
+ 	select S5P_DEV_TV
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index a0116036..0ec2a63 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -632,6 +632,7 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&s5p_device_fimc2,
+ 	&s5p_device_fimc3,
+ 	&s5p_device_fimd0,
++	&s5p_device_g2d,
+ 	&s5p_device_hdmi,
+ 	&s5p_device_i2c_hdmiphy,
+ 	&s5p_device_mfc,
 -- 
-With warm regards,
-Sachin
+1.7.4.1
