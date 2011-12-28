@@ -1,59 +1,53 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
- domain infrastructure
-Date: Wed, 28 Dec 2011 12:09:07 +0100
-Message-ID: <4EFAF8D3.9050204@gmail.com>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>	<1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>	<1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>	<4EFA5154.9060606@gmail.com> <CAJuYYwTPqCdgzK+bcikNiowHxq33yAuf6B695ZZfCp2pYooxEw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] ARM: S3C64XX: Remove unconditional power domain disables
+Date: Wed, 28 Dec 2011 11:25:46 +0000
+Message-ID: <1325071546-28711-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f42.google.com ([74.125.82.42]:60548 "EHLO
-	mail-ww0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753615Ab1L1LJO (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38700 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753648Ab1L1LZu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 06:09:14 -0500
-In-Reply-To: <CAJuYYwTPqCdgzK+bcikNiowHxq33yAuf6B695ZZfCp2pYooxEw@mail.gmail.com>
+	Wed, 28 Dec 2011 06:25:50 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Hi Thomas,
+Now that we have software runtime power management support this code is
+redundant.
 
-On 12/28/2011 06:25 AM, Thomas Abraham wrote:
->>> +
->>> +static struct exynos4_pm_domain exynos4_pd_gps = {
->>> +     .base = (void __iomem *)S5P_PMU_GPS_CONF,
->>> +     .name = "pd-gps",
->>> +     .pd = {
->>> +             .power_off = exynos4_pd_power_off,
->>> +             .power_on = exynos4_pd_power_on,
->>> +     },
->>> +};
->>
->> I'm not sure if arch/arm/mach-exynos/pm.c is the right place to add this.
->> IMHO it would be much better to put PD in separate file, pm-runtime.c
->> or something like this.
-> 
-> Ok. I will move this to a new file pm-runtime.c.
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ arch/arm/mach-s3c64xx/pm.c |   13 -------------
+ 1 files changed, 0 insertions(+), 13 deletions(-)
 
-Thanks.
-
->> Can we assume various exynos versions will have same S5P_PMU_*_CONF
->> addresses? For old s3c64xx SoCs such assumption could be valid but I'm
->> a bit uncertain about Exynos series.
-> 
-> The addresses could be different, but it can be mapped to a
-> S5P_PMU_*_CONF. Maybe I did not understand your question here.
-
-I meant that for handling the newer SoCs (e.g. exynos5) at runtime we might need
-to create new power domain definitions. That's why I suggested new file
-for runtime PM. mach-shmobile has even separate compilation unit per SoC,
-with register definitions put directly in C file. I'm not sure we need separate
-pm-exynos4.c, pm-exynos5.c... For now your patch looks good.
-
---
-
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-s3c64xx/pm.c b/arch/arm/mach-s3c64xx/pm.c
+index 055dac9..7d3e81b 100644
+--- a/arch/arm/mach-s3c64xx/pm.c
++++ b/arch/arm/mach-s3c64xx/pm.c
+@@ -346,23 +346,10 @@ int __init s3c64xx_pm_init(void)
+ 
+ static __init int s3c64xx_pm_initcall(void)
+ {
+-	u32 val;
+-
+ 	pm_cpu_prep = s3c64xx_pm_prepare;
+ 	pm_cpu_sleep = s3c64xx_cpu_suspend;
+ 	pm_uart_udivslot = 1;
+ 
+-	/*
+-	 * Unconditionally disable power domains that contain only
+-	 * blocks which have no mainline driver support.
+-	 */
+-	val = __raw_readl(S3C64XX_NORMAL_CFG);
+-	val &= ~(S3C64XX_NORMALCFG_DOMAIN_G_ON |
+-		 S3C64XX_NORMALCFG_DOMAIN_V_ON |
+-		 S3C64XX_NORMALCFG_DOMAIN_I_ON |
+-		 S3C64XX_NORMALCFG_DOMAIN_P_ON);
+-	__raw_writel(val, S3C64XX_NORMAL_CFG);
+-
+ #ifdef CONFIG_S3C_PM_DEBUG_LED_SMDK
+ 	gpio_request(S3C64XX_GPN(12), "DEBUG_LED0");
+ 	gpio_request(S3C64XX_GPN(13), "DEBUG_LED1");
+-- 
+1.7.7.3
