@@ -1,40 +1,112 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: S3C64XX: Fix build of Cragganmore after SPI changes
-Date: Wed, 28 Dec 2011 12:05:36 +0000
-Message-ID: <1325073936-10936-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
+ domain infrastructure
+Date: Wed, 28 Dec 2011 19:58:11 +0100
+Message-ID: <4EFB66C3.4040504@gmail.com>
+References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org> <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39754 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753722Ab1L1MFv (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:35716 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754119Ab1L1S6Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 07:05:51 -0500
+	Wed, 28 Dec 2011 13:58:16 -0500
+In-Reply-To: <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
 
-Commit 875a59 (ARM: SAMSUNG: Consolidation of SPI platform devices to
-plat-samsung) replaced the function s3c64xx_spi_set_info() with
-s3c64xx_spiN_set_platdata() but did not update all the machines, with
-Cragganmore being left. Fix that.
+Hi Thomas,
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- arch/arm/mach-s3c64xx/mach-crag6410.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+On 12/12/2011 04:46 PM, Thomas Abraham wrote:
+> The generic power domain infrastructure is used to control the power domains
+> available on Exynos4. For non-dt platforms, the power domains are statically
+> instantiated. For dt platforms, the power domain nodes found in the device
+> tree are instantiated.
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Rob Herring <rob.herring@calxeda.com>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> This patch is mainly derived from Mark Brown's work on generic power domain
+> support for s3c64xx platforms. The existing exynos4 power domain implementation
+> is not removed in this patch. The devices are not yet registered with the power
+> domains for non-dt platforms.
+> 
+>  arch/arm/mach-exynos/Kconfig |    1 +
+>  arch/arm/mach-exynos/pm.c    |  179 ++++++++++++++++++++++++++++++++++++++++++
+>  2 files changed, 180 insertions(+), 0 deletions(-)
+> 
+[...]
+> +
+> +static struct exynos4_pm_domain exynos4_pd_gps = {
+> +	.base = (void __iomem *)S5P_PMU_GPS_CONF,
+> +	.name = "pd-gps",
+> +	.pd = {
+> +		.power_off = exynos4_pd_power_off,
+> +		.power_on = exynos4_pd_power_on,
+> +	},
+> +};
+> +
+> +static struct exynos4_pm_domain *exynos4_pm_domains[] = {
+> +	&exynos4_pd_mfc,
+> +	&exynos4_pd_g3d,
+> +	&exynos4_pd_lcd0,
+> +	&exynos4_pd_lcd1,
+> +	&exynos4_pd_tv,
+> +	&exynos4_pd_cam,
+> +	&exynos4_pd_gps,
+> +};
+> +
+> +static __init void exynos4_pm_init_power_domain(void)
+> +{
+> +	int idx;
+> +	struct device_node *np;
+> +
+> +#ifdef CONFIG_OF
+> +	if (!of_have_populated_dt())
+> +		goto no_dt;
+> +
+> +	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+> +		struct exynos4_pm_domain *pd;
+> +
+> +		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+> +		if (!pd) {
+> +			pr_err("exynos4_pm_init_power_domain: memalloc "
+> +					"failed\n");
+> +			return;
+> +		}
+> +
+> +		if (of_get_property(np, "samsung,exynos4210-pd-off", NULL))
+> +			pd->is_off = true;
+> +		pd->name = np->name;
+> +		pd->base = of_iomap(np, 0);
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 3600998..b77331e 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -736,7 +736,7 @@ static void __init crag6410_machine_init(void)
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
- 	samsung_keypad_set_platdata(&crag6410_keypad_data);
--        s3c64xx_spi_set_info(0, 0, 1);
-+	s3c64xx_spi0_set_platdata(NULL, 0, 1);
- 
- 	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
- 
--- 
-1.7.7.3
+Sorry, I haven't reviewed your patch carefully enough. So for dt platforms
+pd->base is initialized from "reg" property, directly from each power domain's
+DT node. Only the static power domain instantiation for non-dt platforms would
+possibly need some code modifications when new SoCs are added.
+
+Would be nice to have a relevant patch for *.dts files in this series too. :)
+
+> +		pd->pd.power_off = exynos4_pd_power_off;
+> +		pd->pd.power_on = exynos4_pd_power_on;
+> +		pd->pd.of_node = np;
+> +		pm_genpd_init(&pd->pd, NULL, false);
+> +	}
+> +	return;
+> +#endif /* CONFIG_OF */
+> +
+> +no_dt:
+> +	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++)
+> +		pm_genpd_init(&exynos4_pm_domains[idx]->pd, NULL,
+> +				exynos4_pm_domains[idx]->is_off);
+> +}
+
+--
+Thanks,
+Sylwester
