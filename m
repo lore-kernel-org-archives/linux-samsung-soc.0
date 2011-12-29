@@ -1,40 +1,30 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 3/3] ARM: EXYNOS: Add missing FIMC media device to Origen
-Date: Thu, 29 Dec 2011 11:59:36 +0530
-Message-ID: <1325140176-2309-4-git-send-email-sachin.kamat@linaro.org>
-References: <1325140176-2309-1-git-send-email-sachin.kamat@linaro.org>
+From: Vasily <anarsoul@gmail.com>
+Subject: Re: [PATCH v4] s3c/s3c24xx: arm: leds: Make s3c24xx LEDS driver use
+ gpiolib. Fix error disabling pull during probe.
+Date: Thu, 29 Dec 2011 12:06:00 +0300
+Message-ID: <CA+E=qVdfwXMdcN6ENeermvdoq42W3=-WvLGqRSBSxRCt=zafwQ@mail.gmail.com>
+References: <4EE7E0E7.1020802@solonet.org.ua>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:34272 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751333Ab1L2Gdn (ORCPT
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:51532 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751829Ab1L2JGW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Dec 2011 01:33:43 -0500
-Received: by mail-iy0-f174.google.com with SMTP id h11so23180375iae.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Dec 2011 22:33:43 -0800 (PST)
-In-Reply-To: <1325140176-2309-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 29 Dec 2011 04:06:22 -0500
+In-Reply-To: <4EE7E0E7.1020802@solonet.org.ua>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, snjw23@gmail.com
+To: Denis Kuzmenko <linux@solonet.org.ua>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Joe Perches <joe@perches.com>
 
-FIMC media device (md) registers all required video nodes.
+2011/12/14 Denis Kuzmenko <linux@solonet.org.ua>:
+> Make s3c24xx LEDS driver use gpiolib. Fix error disabling pull during probe.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/mach-origen.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+So, what's the difference between s3c24xx_led and leds-gpio drivers now?
+Maybe it worth to convert s3c24xx_led users to leds-gpio and drop
+s3c24xx-led completely?
+I see no reason to keep two almost identical drivers in tree.
 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index a0116036..d691146 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -631,6 +631,7 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&s5p_device_fimc1,
- 	&s5p_device_fimc2,
- 	&s5p_device_fimc3,
-+	&s5p_device_fimc_md,
- 	&s5p_device_fimd0,
- 	&s5p_device_hdmi,
- 	&s5p_device_i2c_hdmiphy,
--- 
-1.7.4.1
+Regards,
+Vasily
