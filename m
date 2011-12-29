@@ -1,40 +1,68 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v4] s3c/s3c24xx: arm: leds: Make s3c24xx LEDS driver
- use gpiolib. Fix error disabling pull during probe.
-Date: Thu, 29 Dec 2011 01:56:40 +0000
-Message-ID: <20111229015640.GB4839@sirena.org.uk>
-References: <4EE7E0E7.1020802@solonet.org.ua>
- <063a01ccbfac$498513c0$dc8f3b40$%kim@samsung.com>
- <4EFB851F.9080805@solonet.org.ua>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [rtc-linux] Re: [PATCH v2 0/4] Implement RTC support for
+ S3C2443/S3C2416/S3C2450
+Date: Thu, 29 Dec 2011 12:28:51 +0900
+Message-ID: <028401ccc5d9$fbef97a0$f3cec6e0$%kim@samsung.com>
+References: <201112121543.42299.heiko@sntech.de>
+ <064801ccbfb1$c5d48e60$517dab20$%kim@samsung.com>
+ <201112210922.12300.heiko@sntech.de> <20111223114300.GA13175@sirena.org.uk>
+ <20111226020119.2c57a26e@linux.lan.towertech.it>
+ <08e301ccc430$beb4dc60$3c1e9520$%kim@samsung.com>
+ <20111227234957.3bc1d3c3@linux.lan.towertech.it>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:40793 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754670Ab1L2B4r (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:40563 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336Ab1L2D2y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 20:56:47 -0500
-Content-Disposition: inline
-In-Reply-To: <4EFB851F.9080805@solonet.org.ua>
+	Wed, 28 Dec 2011 22:28:54 -0500
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWY0004S4BYSQB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 12:28:53 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWY00CIZ4C3NH30@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 12:28:53 +0900 (KST)
+In-reply-to: <20111227234957.3bc1d3c3@linux.lan.towertech.it>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Denis Kuzmenko <linux@solonet.org.ua>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Linus Walleij' <linus.walleij@linaro.org>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Joe Perches' <joe@perches.com>
+To: 'Alessandro Zummo' <a.zummo@towertech.it>, rtc-linux@googlegroups.com
+Cc: broonie@opensource.wolfsonmicro.com, 'Heiko St?bner' <heiko@sntech.de>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Wed, Dec 28, 2011 at 11:07:43PM +0200, Denis Kuzmenko wrote:
-> On 12/21/2011 08:46 AM, Kukjin Kim wrote:
-> > Denis Kuzmenko wrote:
+Alessandro Zummo wrote:
+> 
+> On Tue, 27 Dec 2011 09:44:52 +0900
+> Kukjin Kim <kgene.kim@samsung.com> wrote:
+> 
+> > Please check next-samsung-devel-rtc branch in my tree,
+> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >
+> > And if you're ok to send to upstream via samsung tree, please let me
+> know so
+> > that I can add your ack on rtc patches. Of course, if any problems, let
+> me
+> > revert them and they should be re-worked.
+> 
+>  Checked. Please send it via samsung tree. I can only visually check the
+>  code but don't really know if it works and I guess you are in a better
+>  position to know ;)
+> 
+>  Acked-by: Alessandro Zummo <a.zummo@towertech.it>
+> 
+Hi Alessandro,
 
-> >> Make s3c24xx LEDS driver use gpiolib. Fix error disabling pull during
-> >> probe.
+Thanks for your ack.
+This series will be sent to upstream via arm-soc tree.
 
-> >> Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+Happy New Year 2012 :)
 
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-> > Richard, I think, this should be handled in your tree.
-
-> ping Richard
-
-Take a look at the git logs - Richard hasn't been actively maintaining a
-tree for the LEDs for some time now.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
