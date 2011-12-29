@@ -1,92 +1,56 @@
-From: "HeungJun, Kim" <riverful.kim@samsung.com>
-Subject: RE: [PATCH V1] ARM: EXYNOS: Adds Samsung TRATS board support
-Date: Thu, 29 Dec 2011 13:03:50 +0900
-Message-ID: <000f01ccc5de$df5987e0$9e0c97a0$%kim@samsung.com>
-References: <1324966676-5714-1-git-send-email-riverful.kim@samsung.com>
- <028701ccc5da$31491fc0$93db5f40$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: S5PV210: Enable FIMC on SMDKC110
+Date: Thu, 29 Dec 2011 09:53:07 +0530
+Message-ID: <1325132587-30543-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:57273 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752077Ab1L2EDv (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:34006 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750785Ab1L2E1K (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 23:03:51 -0500
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWY0050F5Y3YG60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 13:03:50 +0900 (KST)
-Received: from NORIVERFULK04 ([165.213.219.118])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWY00F8T5YE2070@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 13:03:50 +0900 (KST)
-In-reply-to: <028701ccc5da$31491fc0$93db5f40$%kim@samsung.com>
-Content-language: ko
+	Wed, 28 Dec 2011 23:27:10 -0500
+Received: by iaeh11 with SMTP id h11so23034184iae.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Dec 2011 20:27:10 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Hi Kukjin Kim,
+This patch enables FIMC 0,1,2 and media device (md) on SMDKC110 board.
 
-> -----Original Message-----
-> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-kernel-
-> bounces@lists.infradead.org] On Behalf Of Kukjin Kim
-> Sent: Thursday, December 29, 2011 12:30 PM
-> To: 'HeungJun, Kim'
-> Cc: kyungmin.park@samsung.com; linux-samsung-soc@vger.kernel.org; linux-arm-
-> kernel@lists.infradead.org
-> Subject: RE: [PATCH V1] ARM: EXYNOS: Adds Samsung TRATS board support
-> 
-> HeungJun, Kim wrote:
-> >
-> > This patch adds Samsung Mobile TRATS board support.
-> >
-> > The changes against V0:
-> >   1) Modify Makefile & boardfile name: from "board-trats.c" to "mach-
-> > trats.c"
-> >   2) Fix name of mmc's fixed regulator: remove "inverted"
-> >   3) Fix directory name on GPL comments: from "exynos4" to "exynos"
-> >
-> > Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/Kconfig      |   11 ++
-> >  arch/arm/mach-exynos/Makefile     |    1 +
-> >  arch/arm/mach-exynos/mach-trats.c |  340
-> > +++++++++++++++++++++++++++++++++++++
-> >  3 files changed, 352 insertions(+), 0 deletions(-)
-> >  create mode 100644 arch/arm/mach-exynos/mach-trats.c
-> >
-> Hi HeungJun,
-> 
-> Thanks for your re-submit.
-> 
-> Hmm, maybe this is v2 not v1?
-> 
-> Anyway, as I said, this conflicts with other ARM consolidation works. So
-> please wait until after the merge window for this patch.
-> 
-> Happy New Year.
-This probably my mistake. v2 is right.
-And it's no problem to be merge next windows. I'll wait.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-s5pv210/Kconfig         |    3 +++
+ arch/arm/mach-s5pv210/mach-smdkc110.c |    4 ++++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
 
-Happy new year, too!
-
-Thanks and Regards,
-Heungjun Kim
-
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 2cdc42e..afceaa9 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -118,6 +118,9 @@ config MACH_SMDKC110
+ 	select S3C_DEV_I2C2
+ 	select S3C_DEV_RTC
+ 	select S3C_DEV_WDT
++	select S5P_DEV_FIMC0
++	select S5P_DEV_FIMC1
++	select S5P_DEV_FIMC2
+ 	select SAMSUNG_DEV_IDE
+ 	select S5PV210_SETUP_I2C1
+ 	select S5PV210_SETUP_I2C2
+diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
+index f7266bb..cd823e5 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkc110.c
++++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
+@@ -92,6 +92,10 @@ static struct platform_device *smdkc110_devices[] __initdata = {
+ 	&s3c_device_i2c2,
+ 	&s3c_device_rtc,
+ 	&s3c_device_wdt,
++	&s5p_device_fimc0,
++	&s5p_device_fimc1,
++	&s5p_device_fimc2,
++	&s5p_device_fimc_md,
+ };
+ 
+ static struct i2c_board_info smdkc110_i2c_devs0[] __initdata = {
+-- 
+1.7.4.1
