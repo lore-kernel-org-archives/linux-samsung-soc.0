@@ -1,145 +1,92 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: S3C64XX: Support GPIO LEDs on Cragganmore
-Date: Thu, 29 Dec 2011 13:01:59 +0900
-Message-ID: <029401ccc5de$9d39bc40$d7ad34c0$%kim@samsung.com>
-References: <1325121813-2066-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1325121813-2066-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: "HeungJun, Kim" <riverful.kim@samsung.com>
+Subject: RE: [PATCH V1] ARM: EXYNOS: Adds Samsung TRATS board support
+Date: Thu, 29 Dec 2011 13:03:50 +0900
+Message-ID: <000f01ccc5de$df5987e0$9e0c97a0$%kim@samsung.com>
+References: <1324966676-5714-1-git-send-email-riverful.kim@samsung.com>
+ <028701ccc5da$31491fc0$93db5f40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56484 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:57273 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752077Ab1L2ECA (ORCPT
+	with ESMTP id S1752077Ab1L2EDv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Dec 2011 23:02:00 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+	Wed, 28 Dec 2011 23:03:51 -0500
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
  by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LWY007XD5V7IN50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 13:02:00 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LWY00E965VBLG00@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 13:01:59 +0900 (KST)
-In-reply-to: <1325121813-2066-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+ 2010)) with ESMTP id <0LWY0050F5Y3YG60@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 13:03:50 +0900 (KST)
+Received: from NORIVERFULK04 ([165.213.219.118])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWY00F8T5YE2070@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 13:03:50 +0900 (KST)
+In-reply-to: <028701ccc5da$31491fc0$93db5f40$%kim@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Mark Brown wrote:
+Hi Kukjin Kim,
+
+> -----Original Message-----
+> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-kernel-
+> bounces@lists.infradead.org] On Behalf Of Kukjin Kim
+> Sent: Thursday, December 29, 2011 12:30 PM
+> To: 'HeungJun, Kim'
+> Cc: kyungmin.park@samsung.com; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org
+> Subject: RE: [PATCH V1] ARM: EXYNOS: Adds Samsung TRATS board support
 > 
-> Cragganmore has a bank of 8 LEDs connected to the memory mapped GPIO
-> bank, mostly intended for low level diagnostics. Register these with
-> the LED subsystem for runtime use.
+> HeungJun, Kim wrote:
+> >
+> > This patch adds Samsung Mobile TRATS board support.
+> >
+> > The changes against V0:
+> >   1) Modify Makefile & boardfile name: from "board-trats.c" to "mach-
+> > trats.c"
+> >   2) Fix name of mmc's fixed regulator: remove "inverted"
+> >   3) Fix directory name on GPL comments: from "exynos4" to "exynos"
+> >
+> > Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/Kconfig      |   11 ++
+> >  arch/arm/mach-exynos/Makefile     |    1 +
+> >  arch/arm/mach-exynos/mach-trats.c |  340
+> > +++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 352 insertions(+), 0 deletions(-)
+> >  create mode 100644 arch/arm/mach-exynos/mach-trats.c
+> >
+> Hi HeungJun,
 > 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
->  arch/arm/mach-s3c64xx/Kconfig         |    1 +
->  arch/arm/mach-s3c64xx/mach-crag6410.c |   51
-> +++++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+), 0 deletions(-)
+> Thanks for your re-submit.
 > 
-> diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
-> index dd20c66..dc45123 100644
-> --- a/arch/arm/mach-s3c64xx/Kconfig
-> +++ b/arch/arm/mach-s3c64xx/Kconfig
-> @@ -296,5 +296,6 @@ config MACH_WLF_CRAGG_6410
->  	select S3C64XX_DEV_SPI0
->  	select SAMSUNG_GPIO_EXTRA128
->  	select I2C
-> +	select LEDS_GPIO_REGISTER
->  	help
->  	  Machine support for the Wolfson Cragganmore S3C6410 variant.
-> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-
-> s3c64xx/mach-crag6410.c
-> index d0308f0..139d16e 100644
-> --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> @@ -19,6 +19,7 @@
->  #include <linux/io.h>
->  #include <linux/init.h>
->  #include <linux/gpio.h>
-> +#include <linux/leds.h>
->  #include <linux/delay.h>
->  #include <linux/mmc/host.h>
->  #include <linux/regulator/machine.h>
-> @@ -710,6 +711,54 @@ static struct s3c_sdhci_platdata
-> crag6410_hsmmc0_pdata = {
->  	.host_caps		= MMC_CAP_POWER_OFF_CARD,
->  };
+> Hmm, maybe this is v2 not v1?
 > 
-> +static const struct gpio_led gpio_leds[] = {
-> +	{
-> +		.name = "d13:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 0,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d14:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 1,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d15:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 2,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d16:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 3,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d17:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 4,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d18:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 5,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d19:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 6,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +	{
-> +		.name = "d20:green:",
-> +		.gpio = MMGPIO_GPIO_BASE + 7,
-> +		.default_state = LEDS_GPIO_DEFSTATE_ON,
-> +	},
-> +};
-> +
-> +static const struct gpio_led_platform_data gpio_leds_pdata = {
-> +	.leds = gpio_leds,
-> +	.num_leds = ARRAY_SIZE(gpio_leds),
-> +};
-> +
->  static void __init crag6410_machine_init(void)
->  {
->  	/* Open drain IRQs need pullups */
-> @@ -743,6 +792,8 @@ static void __init crag6410_machine_init(void)
+> Anyway, as I said, this conflicts with other ARM consolidation works. So
+> please wait until after the merge window for this patch.
 > 
->  	platform_add_devices(crag6410_devices,
-> ARRAY_SIZE(crag6410_devices));
+> Happy New Year.
+This probably my mistake. v2 is right.
+And it's no problem to be merge next windows. I'll wait.
+
+Happy new year, too!
+
+Thanks and Regards,
+Heungjun Kim
+
 > 
-> +	gpio_led_register_device(-1, &gpio_leds_pdata);
-> +
->  	regulator_has_full_constraints();
-> 
->  	s3c64xx_pm_init();
+> Best regards,
+> Kgene.
 > --
-> 1.7.7.3
-
-OK, will apply.
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
