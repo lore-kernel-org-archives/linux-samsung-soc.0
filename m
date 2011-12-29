@@ -1,30 +1,28 @@
-From: Vasily <anarsoul@gmail.com>
-Subject: Re: [PATCH v4] s3c/s3c24xx: arm: leds: Make s3c24xx LEDS driver use
- gpiolib. Fix error disabling pull during probe.
-Date: Thu, 29 Dec 2011 12:06:00 +0300
-Message-ID: <CA+E=qVdfwXMdcN6ENeermvdoq42W3=-WvLGqRSBSxRCt=zafwQ@mail.gmail.com>
-References: <4EE7E0E7.1020802@solonet.org.ua>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: S3C64XX: Fix interrupt configuration for PCA935x on
+ Cragganmore
+Date: Thu, 29 Dec 2011 10:32:37 +0000
+Message-ID: <20111229103237.GB2909@opensource.wolfsonmicro.com>
+References: <1325121979-3609-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <028d01ccc5db$0e453cb0$2acfb610$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:51532 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751829Ab1L2JGW (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46654 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752930Ab1L2Kcl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Dec 2011 04:06:22 -0500
-In-Reply-To: <4EE7E0E7.1020802@solonet.org.ua>
+	Thu, 29 Dec 2011 05:32:41 -0500
+Content-Disposition: inline
+In-Reply-To: <028d01ccc5db$0e453cb0$2acfb610$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Denis Kuzmenko <linux@solonet.org.ua>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Richard Purdie <rpurdie@rpsys.net>, Joe Perches <joe@perches.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-2011/12/14 Denis Kuzmenko <linux@solonet.org.ua>:
-> Make s3c24xx LEDS driver use gpiolib. Fix error disabling pull during probe.
+On Thu, Dec 29, 2011 at 12:36:31PM +0900, Kukjin Kim wrote:
 
-So, what's the difference between s3c24xx_led and leds-gpio drivers now?
-Maybe it worth to convert s3c24xx_led users to leds-gpio and drop
-s3c24xx-led completely?
-I see no reason to keep two almost identical drivers in tree.
+> OK, so do you want to apply this before v3.2?
 
-Regards,
-Vasily
+The problem is mostly cosmetic as the chip isn't actually used by
+current cosmetics so no need to try to get it into 3.2.
