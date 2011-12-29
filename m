@@ -1,54 +1,63 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4] s3c/s3c24xx: arm: leds: Make s3c24xx LEDS driver use
- gpiolib. Fix error disabling pull during probe.
-Date: Thu, 29 Dec 2011 12:29:36 +0900
-Message-ID: <028601ccc5da$1734a410$459dec30$%kim@samsung.com>
-References: <4EE7E0E7.1020802@solonet.org.ua>
- <063a01ccbfac$498513c0$dc8f3b40$%kim@samsung.com>
- <4EFB851F.9080805@solonet.org.ua> <20111229015640.GB4839@sirena.org.uk>
+Subject: RE: [PATCH V1] ARM: EXYNOS: Adds Samsung TRATS board support
+Date: Thu, 29 Dec 2011 12:30:20 +0900
+Message-ID: <028701ccc5da$31491fc0$93db5f40$%kim@samsung.com>
+References: <1324966676-5714-1-git-send-email-riverful.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <20111229015640.GB4839@sirena.org.uk>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:9825 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751336Ab1L2DaW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Dec 2011 22:30:22 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LWY00H7E4EJ5K80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 12:30:20 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LWY00BAY4EKWA70@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 29 Dec 2011 12:30:20 +0900 (KST)
+In-reply-to: <1324966676-5714-1-git-send-email-riverful.kim@samsung.com>
 Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Denis Kuzmenko' <linux@solonet.org.ua>
-Cc: linux-samsung-soc@vger.kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Joe Perches' <joe@perches.com>, linux-arm-kernel@lists.infradead.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "'HeungJun, Kim'" <riverful.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com
 
-Mark Brown wrote:
+HeungJun, Kim wrote:
 > 
-> On Wed, Dec 28, 2011 at 11:07:43PM +0200, Denis Kuzmenko wrote:
-> > On 12/21/2011 08:46 AM, Kukjin Kim wrote:
-> > > Denis Kuzmenko wrote:
+> This patch adds Samsung Mobile TRATS board support.
 > 
-> > >> Make s3c24xx LEDS driver use gpiolib. Fix error disabling pull during
-> > >> probe.
+> The changes against V0:
+>   1) Modify Makefile & boardfile name: from "board-trats.c" to "mach-
+> trats.c"
+>   2) Fix name of mmc's fixed regulator: remove "inverted"
+>   3) Fix directory name on GPL comments: from "exynos4" to "exynos"
 > 
-> > >> Signed-off-by: Denis Kuzmenko <linux@solonet.org.ua>
+> Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig      |   11 ++
+>  arch/arm/mach-exynos/Makefile     |    1 +
+>  arch/arm/mach-exynos/mach-trats.c |  340
+> +++++++++++++++++++++++++++++++++++++
+>  3 files changed, 352 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-exynos/mach-trats.c
 > 
-> > > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> > > Richard, I think, this should be handled in your tree.
-> 
-> > ping Richard
-> 
-> Take a look at the git logs - Richard hasn't been actively maintaining a
-> tree for the LEDs for some time now.
+Hi HeungJun,
 
-Hmm, ok. If we can't get his response before release 3.2, I will try to send
-this via samsung tree.
+Thanks for your re-submit.
 
-Thanks all.
+Hmm, maybe this is v2 not v1?
+
+Anyway, as I said, this conflicts with other ARM consolidation works. So
+please wait until after the merge window for this patch.
+
+Happy New Year.
 
 Best regards,
 Kgene.
