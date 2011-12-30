@@ -1,31 +1,53 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] ARM: S3C64XX: Fix the memory mapped GPIOs on
- Cragganmore
-Date: Fri, 30 Dec 2011 02:03:24 +0000
-Message-ID: <20111230020323.GE9737@opensource.wolfsonmicro.com>
-References: <1325121813-2066-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <029301ccc5de$58557970$09006c50$%kim@samsung.com>
- <20111229103412.GC2909@opensource.wolfsonmicro.com>
- <02cc01ccc696$c741e400$55c5ac00$%kim@samsung.com>
+From: Dron Gus <dron0gus@gmail.com>
+Subject: Re: [RFC] cpufreq: Add S3C2416/S3C2450 cpufreq driver
+Date: Fri, 30 Dec 2011 10:48:30 +0300
+Message-ID: <CAA11ShBk=HFt6qaZex+VK=DfZtTvrf9bhyLKW0Gk2g_E5D44PA@mail.gmail.com>
+References: <201112292058.07448.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38409 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752032Ab1L3CD0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 29 Dec 2011 21:03:26 -0500
-Content-Disposition: inline
-In-Reply-To: <02cc01ccc696$c741e400$55c5ac00$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <cpufreq-owner@vger.kernel.org>
+In-Reply-To: <201112292058.07448.heiko@sntech.de>
+Sender: cpufreq-owner@vger.kernel.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: davej@redhat.com, Kukjin Kim <kgene.kim@samsung.com>, cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Dec 30, 2011 at 11:00:17AM +0900, Kukjin Kim wrote:
+Hi.
 
-> Yeah, it's  a little bit...so I'm sorting it out with others for next time
-> :)
+On Thu, Dec 29, 2011 at 11:58 PM, Heiko St=FCbner <heiko@sntech.de> wro=
+te:
+=2E..
+> +static int __init s3c2416_cpufreq_driver_init(struct cpufreq_policy =
+*policy)
+=2E..
+> + =A0 =A0 =A0 s3c_freq->armdiv =3D clk_get(NULL, "armdiv");
+> + =A0 =A0 =A0 if (IS_ERR(s3c_freq->armdiv)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_err("cpufreq: Unable to obtain ARMDI=
+V: %ld\n",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0PTR_ERR(s3c_freq->armdiv=
+));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return PTR_ERR(s3c_freq->armdiv);
+> + =A0 =A0 =A0 }
+> +
+> + =A0 =A0 =A0 s3c_freq->hclk =3D clk_get(NULL, "hclk");
+> + =A0 =A0 =A0 if (IS_ERR(s3c_freq->hclk)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_warn("cpufreq: Unable to obtain HCLK=
+: %ld\n",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0PTR_ERR(s3c_freq->hclk))=
+;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_freq->hclk =3D NULL; /*we can live =
+without hclk */
+> + =A0 =A0 =A0 }
+clk_put allready obtained "armdiv"?
 
-If you leave it for long enough I'll probably get round to doing it
-myself.
+> +
+> + =A0 =A0 =A0 s3c_freq->armclk =3D clk_get(NULL, "armclk");
+> + =A0 =A0 =A0 if (IS_ERR(s3c_freq->armclk)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_err("cpufreq: Unable to obtain ARMCL=
+K: %ld\n",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0PTR_ERR(s3c_freq->armclk=
+));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return PTR_ERR(s3c_freq->armclk);
+> + =A0 =A0 =A0 }
+Same for "hclk" and "armclk"?
