@@ -1,45 +1,53 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 12/12] ARM: restart: S3C24XX: use new restart hook
-Date: Mon, 2 Jan 2012 13:39:07 +0000
-Message-ID: <20120102133906.GP4300@opensource.wolfsonmicro.com>
-References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com>
- <201201021414.17551.heiko@sntech.de>
- <20120102132631.GC18443@sirena.org.uk>
- <201201021433.57356.heiko@sntech.de>
+From: Joerg Roedel <joerg.roedel@amd.com>
+Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
+ Samsung Exynos
+Date: Mon, 2 Jan 2012 14:42:29 +0100
+Message-ID: <20120102134229.GZ29877@amd.com>
+References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:48949 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751084Ab2ABNjK (ORCPT
+Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:22194 "EHLO
+	TX2EHSOBE009.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
+	by vger.kernel.org with ESMTP id S1751084Ab2ABNmf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 08:39:10 -0500
+	Mon, 2 Jan 2012 08:42:35 -0500
 Content-Disposition: inline
-In-Reply-To: <201201021433.57356.heiko@sntech.de>
+In-Reply-To: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-On Mon, Jan 02, 2012 at 02:33:57PM +0100, Heiko St=FCbner wrote:
-> Am Montag, 2. Januar 2012, 14:26:31 schrieb Mark Brown:
-> > On Mon, Jan 02, 2012 at 02:14:16PM +0100, Heiko St?bner wrote:
+Hi,
 
-> > > Therefore I'm introducing a new s3c2443-pm-common.c. Question now=
- is,
-> > > should this move directly to plat-samsung?
+On Thu, Dec 29, 2011 at 09:24:18PM +0900, KyongHo Cho wrote:
+> Changes since v7:
+> - Rebased with the recent commits of the following git branches
+>   * git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/next
+>   * git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git/for-next
+> - Changed magic numbers into macros
+> - Setting owner of a System MMU in 'iommu' field of dev_archdata
+> - Verbose message in the default fault handler
+> - Some bug fixes.
 
-> > If it's s3c2443 specific I'd expect it'd end up in the relevant mac=
-h
-> > directory?
+I still get 
 
-> nope, it's specific to 2443, 2416 and 2450. These three SoCs seem to =
-share a=20
-> lot of features and it seems other common code (i.e. plat-s3c24xx/s3c=
-2443-
-> clock.c) has got its name from the first SoC that had this feature (t=
-he=20
-> S3C2443 in 2007).
+  LD      .tmp_vmlinux1
+/data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no machine record defined
+/data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no machine record defined
+/data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no machine record defined
+make[1]: *** [.tmp_vmlinux1] Error 1
 
-Oh, right - that's not terribly clear but I guess.
+when trying to compile ARM/Exynos with 3.2-rc7. Am I doing something
+wrong or is this not expected to work?
+
+
+	Joerg
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo, Andrew Bowd
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
