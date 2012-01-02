@@ -1,45 +1,65 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device tree
- support
-Date: Mon, 02 Jan 2012 11:24:31 +0530
-Message-ID: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:61180 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750812Ab2ABFvn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 00:51:43 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [RFC][PATCH 3/4] ARM: Exynos: Remove platform data of platform-lcd
+ driver
+Date: Mon, 02 Jan 2012 11:24:34 +0530
+Message-ID: <1325483675-21908-4-git-send-email-thomas.abraham@linaro.org>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+ <1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
+ <1325483675-21908-3-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <1325483675-21908-3-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The platform-lcd driver depends on platform-specific callbacks to setup the
-lcd panel. These callbacks are supplied using driver's platform data. But
-for adding device tree support for platform-lcd driver, providing such
-callbacks is not possible (without using auxdata).
+Remove the platform data for platform-lcd driver and add platform data for
+Hydis hv070wsa lcd panel.
 
-Since the callbacks are usually lcd panel specific, it is possible to include
-the lcd panel specific setup and control functionality in the platform-lcd
-driver itself, thereby eliminating the need for supplying platform specific
-callbacks to the driver. The platform-lcd driver can include support for
-multiple lcd panels.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/mach-exynos/mach-origen.c |   25 ++++---------------------
+ 1 files changed, 4 insertions(+), 21 deletions(-)
 
-This patchset removes the need for platform data for platform-lcd driver and
-adds support which can be used to implement lcd panel specific functionality
-in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
-to the platform-lcd driver which is then used on the Exynos4 based Origen board.
-This currently breaks build for other users of platform-lcd driver. Those can be
-fixed if this approach is acceptable.
-
-Thomas Abraham (4):
-  lcd: platform-lcd: Eliminate need for platform data
-  lcd: platform-lcd: Add support for Hydis hv070wsa lcd panel
-  ARM: Exynos: Remove platform data of platform-lcd driver
-  lcd: platform-lcd: Add device tree support
-
- arch/arm/mach-exynos/mach-origen.c     |   25 +-----
- drivers/video/backlight/Kconfig        |    6 ++
- drivers/video/backlight/platform_lcd.c |  128 ++++++++++++++++++++++++++++---
- include/video/platform_lcd.h           |   11 +--
- 4 files changed, 129 insertions(+), 41 deletions(-)
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 23fc5cb..0f08113 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -554,31 +554,14 @@ static struct platform_device origen_device_gpiokeys = {
+ 	},
+ };
+ 
+-static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
+-{
+-	int ret;
+-
+-	if (power)
+-		ret = gpio_request_one(EXYNOS4_GPE3(4),
+-					GPIOF_OUT_INIT_HIGH, "GPE3_4");
+-	else
+-		ret = gpio_request_one(EXYNOS4_GPE3(4),
+-					GPIOF_OUT_INIT_LOW, "GPE3_4");
+-
+-	gpio_free(EXYNOS4_GPE3(4));
+-
+-	if (ret)
+-		pr_err("failed to request gpio for LCD power: %d\n", ret);
+-}
+-
+-static struct plat_lcd_data origen_lcd_hv070wsa_data = {
+-	.set_power = lcd_hv070wsa_set_power,
++static struct plat_lcd_hydis_hv070wsa_pdata hv070wsa_pdata = {
++	.gpio		= EXYNOS4_GPE3(4),
+ };
+ 
+ static struct platform_device origen_lcd_hv070wsa = {
+-	.name			= "platform-lcd",
++	.name			= "hv070wsa",
+ 	.dev.parent		= &s5p_device_fimd0.dev,
+-	.dev.platform_data	= &origen_lcd_hv070wsa_data,
++	.dev.platform_data	= &hv070wsa_pdata,
+ };
+ 
+ static struct s3c_fb_pd_win origen_fb_win0 = {
+-- 
+1.6.6.rc2
