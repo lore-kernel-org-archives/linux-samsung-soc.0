@@ -1,41 +1,61 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [RFC][PATCH 1/4] lcd: platform-lcd: Eliminate need for platform
- data
-Date: Mon, 2 Jan 2012 11:59:59 +0000
-Message-ID: <20120102115959.GG2899@opensource.wolfsonmicro.com>
-References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
- <1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 12/12] ARM: restart: S3C24XX: use new restart hook
+Date: Mon, 2 Jan 2012 14:14:16 +0100
+Message-ID: <201201021414.17551.heiko@sntech.de>
+References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com> <201112201418.07935.heiko@sntech.de> <4EF08F02.9010604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain; charset=iso-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38706 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752316Ab2ABMAE (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:53042 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751386Ab2ABNO1 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 07:00:04 -0500
-Content-Disposition: inline
-In-Reply-To: <1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
+	Mon, 2 Jan 2012 08:14:27 -0500
+In-Reply-To: <4EF08F02.9010604@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Mon, Jan 02, 2012 at 11:24:32AM +0530, Thomas Abraham wrote:
+Hi Kgene,
 
-> @@ -10,12 +10,3 @@
->   * published by the Free Software Foundation.
->   *
->  */
-> -
-> -struct plat_lcd_data;
-> -struct fb_info;
-> -
-> -struct plat_lcd_data {
-> -	void	(*set_power)(struct plat_lcd_data *, unsigned int power);
-> -	int	(*match_fb)(struct plat_lcd_data *, struct fb_info *);
-> -};
+Am Dienstag, 20. Dezember 2011, 14:34:58 schrieb Kukjin Kim:
+> On 12/20/11 22:18, Heiko St=FCbner wrote:
+> > Am Dienstag, 20. Dezember 2011, 13:48:36 schrieb Kukjin Kim:
+> >> Hook these platforms restart code into the new restart hook rather
+> >> than using arch_reset().
+> >> And adds local header file, common.h in arch/arm/mach-s3c2410/ and
+> >> arch/arm/mach-s3c2440/ directories.
+> >>=20
+> >> Cc: Ben Dooks<ben-linux@fluff.org>
+> >> Cc: Russell King<rmk+kernel@arm.linux.org.uk>
+> >> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> >=20
+> > just for my understanding would it not also be possible to move the
+> > function prototype to plat-samsung/include/plat/s3c2410.h and s3c24=
+4x.h?
+>=20
+> Yeah, we have many choices about that and I will sort out the
+> mach-s3c24.. directories to mach-s3c24xx or just mach-s3c...
+>=20
+> > Or should these files vanish in the long run?
+>=20
+> Yes, as per Russell's suggestion, I think we don't need that and as a
+> note, I'm working on removing plat-s3c24xx and plat-s5p, just keeping
+> one plat-samsung.
 
-This is going to break all existing users as it will stop them compiling
-- they'd either need to be converted en masse to the new style as part
-of the commit doing this or the driver would need to support both
-platform data and new style configuration simultaneously.
+I'm currently working on introducing a power-domain for the usb-phy of =
+the=20
+S3C2443/S3C2416/S3C2450. This is one step mimicing the work of Mark Bro=
+wn to=20
+get better idle handling later on, and also again reduces the number of=
+=20
+architecture-calls the hsudc driver does, as requested by Felipe Balbi.
+
+Therefore I'm introducing a new s3c2443-pm-common.c. Question now is, s=
+hould=20
+this move directly to plat-samsung?
+
+Thanks
+Heiko
