@@ -1,46 +1,44 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung devel-dma for v3.3
-Date: Mon, 02 Jan 2012 09:45:59 +0900
-Message-ID: <037401ccc8e7$e5671380$b0353a80$%kim@samsung.com>
+Subject: [GIT PULL] Samsung devel-rtc for v3.3
+Date: Mon, 02 Jan 2012 09:54:03 +0900
+Message-ID: <037601ccc8e9$07e2c8e0$17a85aa0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11731 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:15146 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751328Ab2ABAqE (ORCPT
+	with ESMTP id S1751328Ab2ABAyK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Jan 2012 19:46:04 -0500
+	Sun, 1 Jan 2012 19:54:10 -0500
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LX5001T7BGEZM50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 02 Jan 2012 09:46:01 +0900 (KST)
+ 2010)) with ESMTP id <0LX500FVQBU1HQ60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 02 Jan 2012 09:54:09 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.114])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LX500GVQBGN2R70@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Mon, 02 Jan 2012 09:46:01 +0900 (KST)
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LX500GPKBU3TR30@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Mon, 02 Jan 2012 09:54:08 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "'Koul, Vinod'" <vinod.koul@intel.com>, boojin.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Alessandro Zummo' <a.zummo@towertech.it>
 
 Hi Arnd and Olof,
 
-Please pull Samsung devel-dma for v3.3 from following:
+Please pull Samsung devel-rtc for v3.3 from following.
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next-samsung-devel-dma
+next-samsung-devel-rtc
 
-Its major feature is including merge of pl330 driver into drivers/dma/ and
-got the ack from Vinod Koul and Linus Walleij and some dma development for
-Samsung stuff.
+It is including support rtc for S3C2443 and S3C2416 and got the ack from
+Alessandro Zummo.
 
-As a note, since having dependency with Vinod's slave-dma/next (dma tree)
-and next-samsung-dt1 branch which has been sent to you for arm-soc/next/dt,
-that has been provided based on slave-dma/next tree and next-samsung-dt1.
+Since next-samsung-dt1 branch touch drivers/rtc, it has been made based on
+next-samsung-dt1 branch.
 
-If any problems, please let me know.
+If any problems please let me know.
 
 Thanks.
 
@@ -50,38 +48,26 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-The following changes since commit 6ff1a8bd0b37cf0f44a13d37b1f754abec84e61c:
+The following changes since commit 0561ceabd0f13871900d116278fe9268aeb714d1:
 
-  Merge branch 'next-samsung-devel-dt1' into for-vkoul-samsung-dma
-(2011-12-26 18:49:31 +0900)
+  ARM: dts: Add intial dts file for EXYNOS4210 SoC, SMDKV310 and ORIGEN
+(2011-12-23 10:07:12 +0900)
 
 are available in the git repository at:
-
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next-samsung-devel-dma
+next-samsung-devel-rtc
 
-Boojin Kim (5):
-      DMA: PL330: Merge PL330 driver into drivers/dma/
-      DMA: PL330: Removes useless function
-      DMA: PL330: Support MEMTOMEM transmit w/o RMB, WMB
-      ARM: EXYNOS: Enable MDMA driver
-      ARM: EXYNOS: Support DMA for EXYNOS4X12 SoCs
+Heiko Stuebner (4):
+      ARM: SAMSUNG: cleanup of rtc register definitions
+      rtc-s3c: make room for more variants in devicetree block
+      rtc-s3c: add variants for S3C2443 and S3C2416
+      ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices
 
-Tushar Behera (1):
-      ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
-
- arch/arm/common/Kconfig                        |    3 -
- arch/arm/common/Makefile                       |    1 -
- arch/arm/common/pl330.c                        | 1971
-------------------------
- arch/arm/include/asm/hardware/pl330.h          |  338 +++--
- arch/arm/mach-exynos/clock.c                   |    9 +
- arch/arm/mach-exynos/dma.c                     |  130 ++-
- arch/arm/mach-exynos/include/mach/irqs.h       |    2 +
- arch/arm/mach-exynos/include/mach/map.h        |    3 +-
- arch/arm/plat-samsung/include/plat/dma-pl330.h |   16 +
- drivers/dma/Kconfig                            |    1 -
- drivers/dma/pl330.c                            | 1861
-++++++++++++++++++++++
- 11 files changed, 2199 insertions(+), 2136 deletions(-)
- delete mode 100644 arch/arm/common/pl330.c
+ arch/arm/mach-s3c2416/s3c2416.c               |    2 +
+ arch/arm/mach-s3c2443/s3c2443.c               |    2 +
+ arch/arm/plat-samsung/include/plat/regs-rtc.h |   81
++++++++++++++------------
+ arch/arm/plat-samsung/include/plat/rtc-core.h |   27 ++++++++
+ drivers/rtc/rtc-s3c.c                         |   71 ++++++++++++++++++----
+ 5 files changed, 131 insertions(+), 52 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/rtc-core.h
