@@ -1,33 +1,65 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [RFC][PATCH 1/4] lcd: platform-lcd: Eliminate need for
-	platform data
-Date: Mon, 2 Jan 2012 18:13:15 +0000
-Message-ID: <20120102181313.GA27875@opensource.wolfsonmicro.com>
-References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org> <1325483675-21908-2-git-send-email-thomas.abraham@linaro.org> <20120102115959.GG2899@opensource.wolfsonmicro.com> <CAJuYYwQrfp6R=kSzXr6y0unDk9FtNxoy3Lt5QabdNMg9Qux=bg@mail.gmail.com>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
+ domain infrastructure
+Date: Mon, 02 Jan 2012 23:19:41 +0100
+Message-ID: <4F022D7D.3060802@gmail.com>
+References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>	<1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>	<1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>	<4EFB66C3.4040504@gmail.com> <CAJuYYwQbTJTRdsa9WpQuCtSTYacbrcP3CVBFaAYHP1jLPky10A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:45023 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753076Ab2ABSNS (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:39045 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753004Ab2ABWTr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 13:13:18 -0500
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwQrfp6R=kSzXr6y0unDk9FtNxoy3Lt5QabdNMg9Qux=bg@mail.gmail.com>
+	Mon, 2 Jan 2012 17:19:47 -0500
+In-Reply-To: <CAJuYYwQbTJTRdsa9WpQuCtSTYacbrcP3CVBFaAYHP1jLPky10A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
 
-On Mon, Jan 02, 2012 at 11:21:46PM +0530, Thomas Abraham wrote:
+Hi Thomas,
 
-> Your point on maintaining support for both old and new formats is
-> helpful. But I am not sure if maintaining support for both formats is
-> the right thing to do. As most of the ARM platforms will switch to
-> using dt, maybe converting all of them to new format would be better.
-> I will try doing this and prepare a patch.
+thank you for clarifying.
 
-There's more architectures than ARM supported in Linux and only a
-minority of them are using device tree at the minute.  Unless every
-architecture switches over platform data based users will still need to
-be supported.
+On 01/02/2012 03:14 AM, Thomas Abraham wrote:
+> 
+> The following is a snippet from the dts file used for testing.
+> 
+>    [...]
+> 
+>    lcd0:power-domain-lcd0 {
+>             compatible = "samsung,exynos4210-pd";
+>             reg = <0x10023C00 0x10>;
+>    };
+> 
+>    [...]
+> 
+>    fimd0:display-controller {
+>             compatible = "samsung,exynos4-fimd";
+>             [...]
+>             pd = <&lcd0>;
+>    };
+> 
+> The fimd (display controller) driver would then do the following.
+> 
+> parp = of_get_property(pdev->dev.of_node, "pd", NULL);
+> pd_np = of_find_node_by_phandle(be32_to_cpup(parp));
+> pm_genpd_of_add_device(pd_np, &pdev->dev);
+
+Sounds interesting. Currently it's platform code that adds devices to
+a corresponding power domain. But doing it at drivers might be more
+convenient for avoiding device/driver/power domain registration
+synchronization issues, especially that knowledge about power domain
+existence may be contained directly in DT description, not needing
+drivers to carry platform specific data.
+
+BTW, I have a feeling that "samsung" is a bit longish prefix for the bindings.
+Didn't you initially consider "sec" for instance ? Probably it is already
+too late for changing that though.
+
+> The lookup is based on the node pointer of the power domain.
+
+Thanks,
+Sylwester
