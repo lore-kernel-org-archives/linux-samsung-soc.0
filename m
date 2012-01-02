@@ -1,56 +1,111 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: [PATCH] mmc: dw_mmc: Clear the DDR mode for non-DDR
-Date: Mon, 02 Jan 2012 16:00:02 +0900
-Message-ID: <000b01ccc91c$26cf0330$746d0990$%jun@samsung.com>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [RFC][PATCH 4/4] lcd: platform-lcd: Add device tree support
+Date: Mon, 2 Jan 2012 00:34:06 -0700
+Message-ID: <20120102073406.GG13015@ponder.secretlab.ca>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+ <1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
+ <1325483675-21908-3-git-send-email-thomas.abraham@linaro.org>
+ <1325483675-21908-4-git-send-email-thomas.abraham@linaro.org>
+ <1325483675-21908-5-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37047 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751151Ab2ABHAF (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:52561 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751187Ab2ABHeL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 02:00:05 -0500
-References: 
-In-reply-to: 
-Content-language: ko
+	Mon, 2 Jan 2012 02:34:11 -0500
+Content-Disposition: inline
+In-Reply-To: <1325483675-21908-5-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-UHS_REG should be cleared for non-DDR mode. But currently there is
-no way to clear DDR mode, if it is already set once. This patch adds
-clearing DDR mode for non-DDD mode.
+On Mon, Jan 02, 2012 at 11:24:35AM +0530, Thomas Abraham wrote:
+> Add device tree based initialization for Hydis hv070wsa lcd panel.
+> 
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/video/backlight/platform_lcd.c |   33 ++++++++++++++++++++++++++++++++
+>  1 files changed, 33 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/video/backlight/platform_lcd.c b/drivers/video/backlight/platform_lcd.c
+> index feb4fd0..ebdddfd 100644
+> --- a/drivers/video/backlight/platform_lcd.c
+> +++ b/drivers/video/backlight/platform_lcd.c
+> @@ -18,6 +18,8 @@
+>  #include <linux/lcd.h>
+>  #include <linux/slab.h>
+>  #include <linux/gpio.h>
+> +#include <linux/of.h>
+> +#include <linux/of_gpio.h>
+>  
+>  #include <video/platform_lcd.h>
+>  
+> @@ -81,9 +83,18 @@ static struct lcd_ops platform_lcd_ops = {
+>  	.check_fb	= platform_lcd_match,
+>  };
+>  
+> +static const struct of_device_id platform_lcd_dt_match[];
+> +
+>  static inline struct plat_lcd_driver_data *platform_lcd_get_driver_data(
+>  			struct platform_device *pdev)
+>  {
+> +#ifdef CONFIG_OF
+> +	if (pdev->dev.of_node) {
+> +		const struct of_device_id *match;
+> +		match = of_match_node(platform_lcd_dt_match, pdev->dev.of_node);
+> +		return (struct plat_lcd_driver_data *)match->data;
 
-Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
----
- drivers/mmc/host/dw_mmc.c |   11 +++++++----
- 1 files changed, 7 insertions(+), 4 deletions(-)
+.data is already void*; the cast should not be necessary.
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index c583b94..94e2238 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -707,12 +707,15 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 		break;
- 	}
- 
-+	regs = mci_readl(slot->host, UHS_REG);
-+
- 	/* DDR mode set */
--	if (ios->timing == MMC_TIMING_UHS_DDR50) {
--		regs = mci_readl(slot->host, UHS_REG);
-+	if (ios->timing == MMC_TIMING_UHS_DDR50)
- 		regs |= (0x1 << slot->id) << 16;
--		mci_writel(slot->host, UHS_REG, regs);
--	}
-+	else
-+		regs &= ~(0x1 << slot->id) << 16;
-+
-+	mci_writel(slot->host, UHS_REG, regs);
- 
- 	if (ios->clock) {
- 		/*
--- 
-1.7.0.4
+> +	}
+> +#endif
+>  	return (struct plat_lcd_driver_data *)
+>  			platform_get_device_id(pdev)->driver_data;
+>  }
+> @@ -167,6 +178,19 @@ static int lcd_hv070wsa_init(struct platform_lcd *plcd)
+>  	struct plat_lcd_hydis_hv070wsa_pdata *pdata = plcd->lcd_pdata;
+>  	int err;
+>  
+> +#ifdef CONFIG_OF
+> +	if (of_have_populated_dt()) {
+> +		plcd->lcd_pdata = devm_kzalloc(plcd->us,
+> +						sizeof(*pdata), GFP_KERNEL);
+> +		if (!plcd->lcd_pdata) {
+> +			dev_err(plcd->us, "mem alloc for pdata failed\n");
+> +			return -ENOMEM;
+> +		}
+> +		pdata = plcd->lcd_pdata;
+> +		pdata->gpio = of_get_gpio(plcd->us->of_node, 0);
+> +	}
+> +#endif
+> +
+>  	if (!pdata) {
+>  		dev_err(plcd->us, "no platform data\n");
+>  		return -EINVAL;
+> @@ -214,10 +238,19 @@ static struct platform_device_id platform_lcd_driver_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(platform, platform_lcd_driver_ids);
+>  
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id platform_lcd_dt_match[] = {
+> +	{ .compatible = "hydis,hv070wsa", .data = (void *)HV070WSA_DRV_DATA},
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, platform_lcd_dt_match);
+> +#endif
+> +
+>  static struct platform_driver platform_lcd_driver = {
+>  	.driver		= {
+>  		.name	= "platform-lcd",
+>  		.owner	= THIS_MODULE,
+> +		.of_match_table = of_match_ptr(platform_lcd_dt_match),
+>  	},
+>  	.probe		= platform_lcd_probe,
+>  	.remove		= __devexit_p(platform_lcd_remove),
+> -- 
+> 1.6.6.rc2
+> 
