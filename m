@@ -1,53 +1,53 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
 Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
  Samsung Exynos
-Date: Mon, 2 Jan 2012 14:42:29 +0100
-Message-ID: <20120102134229.GZ29877@amd.com>
+Date: Tue, 3 Jan 2012 00:21:30 +0900
+Message-ID: <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
 References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
+	<20120102134229.GZ29877@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from tx2ehsobe004.messaging.microsoft.com ([65.55.88.14]:22194 "EHLO
-	TX2EHSOBE009.bigfish.com" rhost-flags-OK-OK-OK-FAIL)
-	by vger.kernel.org with ESMTP id S1751084Ab2ABNmf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 08:42:35 -0500
-Content-Disposition: inline
-In-Reply-To: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20120102134229.GZ29877@amd.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-Hi,
+Hi
+On Mon, Jan 2, 2012 at 10:42 PM, Joerg Roedel <joerg.roedel@amd.com> wr=
+ote:
+> Hi,
+>
+> On Thu, Dec 29, 2011 at 09:24:18PM +0900, KyongHo Cho wrote:
+>> Changes since v7:
+>> - Rebased with the recent commits of the following git branches
+>> =A0 * git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/next
+>> =A0 * git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.gi=
+t/for-next
+>> - Changed magic numbers into macros
+>> - Setting owner of a System MMU in 'iommu' field of dev_archdata
+>> - Verbose message in the default fault handler
+>> - Some bug fixes.
+>
+> I still get
+>
+> =A0LD =A0 =A0 =A0.tmp_vmlinux1
+> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknow=
+n-linux-gnueabi-ld: no machine record defined
+> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknow=
+n-linux-gnueabi-ld: no machine record defined
+> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknow=
+n-linux-gnueabi-ld: no machine record defined
+> make[1]: *** [.tmp_vmlinux1] Error 1
+>
+> when trying to compile ARM/Exynos with 3.2-rc7. Am I doing something
+> wrong or is this not expected to work?
+>
+Do you?
+Ok. I will check my configuration with linux-next git.
 
-On Thu, Dec 29, 2011 at 09:24:18PM +0900, KyongHo Cho wrote:
-> Changes since v7:
-> - Rebased with the recent commits of the following git branches
->   * git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/next
->   * git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git/for-next
-> - Changed magic numbers into macros
-> - Setting owner of a System MMU in 'iommu' field of dev_archdata
-> - Verbose message in the default fault handler
-> - Some bug fixes.
+Thank you.
 
-I still get 
-
-  LD      .tmp_vmlinux1
-/data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no machine record defined
-/data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no machine record defined
-/data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no machine record defined
-make[1]: *** [.tmp_vmlinux1] Error 1
-
-when trying to compile ARM/Exynos with 3.2-rc7. Am I doing something
-wrong or is this not expected to work?
-
-
-	Joerg
-
--- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+KyongHo
