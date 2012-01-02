@@ -1,37 +1,56 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 1/2] PM / Domains: Add OF support
-Date: Sun, 1 Jan 2012 23:59:56 -0700
-Message-ID: <20120102065956.GA13015@ponder.secretlab.ca>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>
- <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
- <201112262013.19995.rjw@sisk.pl>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: [PATCH] mmc: dw_mmc: Clear the DDR mode for non-DDR
+Date: Mon, 02 Jan 2012 16:00:02 +0900
+Message-ID: <000b01ccc91c$26cf0330$746d0990$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:62334 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750812Ab2ABHAA (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:37047 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751151Ab2ABHAF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 02:00:00 -0500
-Content-Disposition: inline
-In-Reply-To: <201112262013.19995.rjw@sisk.pl>
+	Mon, 2 Jan 2012 02:00:05 -0500
+References: 
+In-reply-to: 
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
+To: linux-mmc@vger.kernel.org
+Cc: 'Chris Ball' <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
 
-On Mon, Dec 26, 2011 at 08:13:19PM +0100, Rafael J. Wysocki wrote:
-> Hi,
-> 
-> On Monday, December 12, 2011, Thomas Abraham wrote:
-> > A device node pointer is added to generic pm domain structure to associate
-> > the domain with a node in the device tree.
-> 
-> That sounds fine except for one thing: PM domains are not devices, so adding
-> "device node" pointers to them is kind of confusing.  Perhaps there should be
-> something like struct dt_node, representing a more general device tree node?
+UHS_REG should be cleared for non-DDR mode. But currently there is
+no way to clear DDR mode, if it is already set once. This patch adds
+clearing DDR mode for non-DDD mode.
 
-struct device_node has nothing to do with struct device.  device_node is a
-generic device tree node.  Thomas' approach is fine.
+Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c |   11 +++++++----
+ 1 files changed, 7 insertions(+), 4 deletions(-)
 
-g.
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index c583b94..94e2238 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -707,12 +707,15 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 		break;
+ 	}
+ 
++	regs = mci_readl(slot->host, UHS_REG);
++
+ 	/* DDR mode set */
+-	if (ios->timing == MMC_TIMING_UHS_DDR50) {
+-		regs = mci_readl(slot->host, UHS_REG);
++	if (ios->timing == MMC_TIMING_UHS_DDR50)
+ 		regs |= (0x1 << slot->id) << 16;
+-		mci_writel(slot->host, UHS_REG, regs);
+-	}
++	else
++		regs &= ~(0x1 << slot->id) << 16;
++
++	mci_writel(slot->host, UHS_REG, regs);
+ 
+ 	if (ios->clock) {
+ 		/*
+-- 
+1.7.0.4
