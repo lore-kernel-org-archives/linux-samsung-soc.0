@@ -1,156 +1,51 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [RFC][PATCH 2/4] lcd: platform-lcd: Add support for Hydis
- hv070wsa lcd panel
-Date: Mon, 2 Jan 2012 17:02:13 +0900
-Message-ID: <CAH9JG2WjhSsqxPFj+DQrOKXzbHPhm1ddNYE2AeukS7u9c_LA-g@mail.gmail.com>
-References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
-	<1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
-	<1325483675-21908-3-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1325483675-21908-3-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Enable G2D on SMDKV310
+Date: Mon,  2 Jan 2012 13:55:11 +0530
+Message-ID: <1325492711-15012-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:60782 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751454Ab2ABI2v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Jan 2012 03:28:51 -0500
+Received: by iaeh11 with SMTP id h11so28947991iae.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jan 2012 00:28:50 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: sachin.kamat@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
-Hi,
+This patch enables G2D support on SMDKV310 board.
 
-It's not clear to add the panel data at platform_lcd. It's board
-specific and it's used the gpio only.
-So no need to specific it like HYDIS_HV070WSA. just define
-PLATFORM_LCD_GPIO or similar.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/Kconfig         |    1 +
+ arch/arm/mach-exynos/mach-smdkv310.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-How do you think?
-
-Thank you,
-Kyungmin Park
-
-On 1/2/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> Add Hydis hv070wsa lcd panel setup and control support in platform-lcd
-> driver.
->
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/video/backlight/Kconfig        |    6 ++++
->  drivers/video/backlight/platform_lcd.c |   49
-> ++++++++++++++++++++++++++++++++
->  include/video/platform_lcd.h           |    6 ++++
->  3 files changed, 61 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/video/backlight/Kconfig
-> b/drivers/video/backlight/Kconfig
-> index 278aeaa..ef4e9a7 100644
-> --- a/drivers/video/backlight/Kconfig
-> +++ b/drivers/video/backlight/Kconfig
-> @@ -86,6 +86,12 @@ config LCD_PLATFORM
->  	  This driver provides a platform-device registered LCD power
->  	  control interface.
->
-> +config LCD_HYDIS_HV070WSA
-> +	tristate "Hydis HV070WSA LCD"
-> +	depends on LCD_PLATFORM
-> +	help
-> +	  Enable support for Hydis HV070WSA lcd panel
-> +
->  config LCD_TOSA
->  	tristate "Sharp SL-6000 LCD Driver"
->  	depends on SPI && MACH_TOSA
-> diff --git a/drivers/video/backlight/platform_lcd.c
-> b/drivers/video/backlight/platform_lcd.c
-> index 707c81f..feb4fd0 100644
-> --- a/drivers/video/backlight/platform_lcd.c
-> +++ b/drivers/video/backlight/platform_lcd.c
-> @@ -17,6 +17,7 @@
->  #include <linux/backlight.h>
->  #include <linux/lcd.h>
->  #include <linux/slab.h>
-> +#include <linux/gpio.h>
->
->  #include <video/platform_lcd.h>
->
-> @@ -160,10 +161,58 @@ static int platform_lcd_resume(struct platform_device
-> *pdev)
->  #define platform_lcd_resume NULL
->  #endif
->
-> +#ifdef CONFIG_LCD_HYDIS_HV070WSA
-> +static int lcd_hv070wsa_init(struct platform_lcd *plcd)
-> +{
-> +	struct plat_lcd_hydis_hv070wsa_pdata *pdata = plcd->lcd_pdata;
-> +	int err;
-> +
-> +	if (!pdata) {
-> +		dev_err(plcd->us, "no platform data\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	err = gpio_request(pdata->gpio, "HV070WSA_GPIO");
-> +	if (err) {
-> +		dev_err(plcd->us, "gpio request failed for %d\n", pdata->gpio);
-> +		return err;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void lcd_hv070wsa_deinit(struct platform_lcd *plcd)
-> +{
-> +	struct plat_lcd_hydis_hv070wsa_pdata *pdata = plcd->lcd_pdata;
-> +
-> +	gpio_free(pdata->gpio);
-> +}
-> +
-> +static void lcd_hv070wsa_set_power(struct platform_lcd *plcd, unsigned int
-> pwr)
-> +{
-> +	struct plat_lcd_hydis_hv070wsa_pdata *pdata = plcd->lcd_pdata;
-> +
-> +	gpio_direction_output(pdata->gpio, pwr);
-> +}
-> +
-> +static struct plat_lcd_driver_data hv070wsa_driver_data = {
-> +	.lcd_init	= lcd_hv070wsa_init,
-> +	.lcd_deinit	= lcd_hv070wsa_deinit,
-> +	.set_power	= lcd_hv070wsa_set_power,
-> +};
-> +#define HV070WSA_DRV_DATA ((kernel_ulong_t)&hv070wsa_driver_data)
-> +#else
-> +#define HV070WSA_DRV_DATA (kernel_ulong_t)NULL
-> +#endif /* CONFIG_LCD_HYDIS_HV070WSA */
->
->  static struct platform_device_id platform_lcd_driver_ids[] = {
-> +	{
-> +		.name		= "hv070wsa",
-> +		.driver_data	= HV070WSA_DRV_DATA,
-> +	},
->  	{ },
->  };
-> +MODULE_DEVICE_TABLE(platform, platform_lcd_driver_ids);
->
->  static struct platform_driver platform_lcd_driver = {
->  	.driver		= {
-> diff --git a/include/video/platform_lcd.h b/include/video/platform_lcd.h
-> index 8e6081a..d2fa188 100644
-> --- a/include/video/platform_lcd.h
-> +++ b/include/video/platform_lcd.h
-> @@ -10,3 +10,9 @@
->   * published by the Free Software Foundation.
->   *
->  */
-> +
-> +#ifdef CONFIG_LCD_HYDIS_HV070WSA
-> +struct plat_lcd_hydis_hv070wsa_pdata {
-> +	unsigned int		gpio;
-> +};
-> +#endif
-> --
-> 1.6.6.rc2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index bd4600e..a673d0d 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -183,6 +183,7 @@ config MACH_SMDKV310
+ 	select S5P_DEV_FIMC1
+ 	select S5P_DEV_FIMC2
+ 	select S5P_DEV_FIMC3
++	select S5P_DEV_G2D
+ 	select S5P_DEV_I2C_HDMIPHY
+ 	select S5P_DEV_MFC
+ 	select S5P_DEV_TV
+diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
+index b2c5557..8a5c23b 100644
+--- a/arch/arm/mach-exynos/mach-smdkv310.c
++++ b/arch/arm/mach-exynos/mach-smdkv310.c
+@@ -270,6 +270,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
+ 	&s5p_device_fimc1,
+ 	&s5p_device_fimc2,
+ 	&s5p_device_fimc3,
++	&s5p_device_g2d,
+ 	&exynos4_device_ac97,
+ 	&exynos4_device_i2s0,
+ 	&exynos4_device_ohci,
+-- 
+1.7.4.1
