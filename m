@@ -1,39 +1,78 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Mon, 2 Jan 2012 17:35:05 +0100
-Message-ID: <20120102163504.GC29877@amd.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
- <20120102134229.GZ29877@amd.com>
- <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device tree support
+Date: Mon, 2 Jan 2012 23:01:54 +0530
+Message-ID: <CAJuYYwTGWHCpEnE5w8b7mmg_oaFiygQSSey7ra+nR+Q9_Bi_tA@mail.gmail.com>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+	<CAOesGMirAda7rzZcM74fat0qV8giy3Qniqh4z_oA9OSzMAOwHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from am1ehsobe002.messaging.microsoft.com ([213.199.154.205]:14380
-	"EHLO AM1EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752743Ab2ABQf0 (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:63372 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752944Ab2ABRbz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 11:35:26 -0500
-Content-Disposition: inline
-In-Reply-To: <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
+	Mon, 2 Jan 2012 12:31:55 -0500
+In-Reply-To: <CAOesGMirAda7rzZcM74fat0qV8giy3Qniqh4z_oA9OSzMAOwHg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: KyongHo Cho <pullip.cho@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-On Tue, Jan 03, 2012 at 12:21:30AM +0900, KyongHo Cho wrote:
+Hi Olof,
 
-> Ok. I will check my configuration with linux-next git.
+On 2 January 2012 12:18, Olof Johansson <olof@lixom.net> wrote:
+> Hi,
+>
+> On Sun, Jan 1, 2012 at 9:54 PM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+>> The platform-lcd driver depends on platform-specific callbacks to setup the
+>> lcd panel. These callbacks are supplied using driver's platform data. But
+>> for adding device tree support for platform-lcd driver, providing such
+>> callbacks is not possible (without using auxdata).
+>>
+>> Since the callbacks are usually lcd panel specific, it is possible to include
+>> the lcd panel specific setup and control functionality in the platform-lcd
+>> driver itself, thereby eliminating the need for supplying platform specific
+>> callbacks to the driver. The platform-lcd driver can include support for
+>> multiple lcd panels.
+>>
+>> This patchset removes the need for platform data for platform-lcd driver and
+>> adds support which can be used to implement lcd panel specific functionality
+>> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
+>> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
+>> This currently breaks build for other users of platform-lcd driver. Those can be
+>> fixed if this approach is acceptable.
+>
+> I think it would be a better idea to provide a generic binding for the
+> simple LCD panels that just need one or two power GPIOs to be turned
+> on (some tend to need one to activate and one for power control --
+> second might in some cases be handled through a regulator I suppose).
+> I'm sure there will be exceptions to this; panels that have quirks or
+> requirements on various things that will either require an expanded
+> binding, or custom probe functions.
 
-Btw, after working around the #error problem and fixing another
-compile-error the same problem still appears with linux-next.
+A majority of the existing users of the platform-lcd driver are using
+a single gpio to enable or disable the display. As you mentioned, a
+generic binding can be added for such lcd panels. There are other
+implementations that use one or more gpios but requires toggling those
+gpios in a panel specific way (usually with some delay). Such
+implementations will require custom panel support included in the
+platfrom-lcd driver. I will prepare a patch for these cases.
 
+>
+> Especially in the case you are providing -- that lcd driver is only
+> using a single gpio, and it would be much more valuable to have a
+> trivial binding for this that uses shared code for this. Otherwise
+> every single simple panel will need to be added over time.
 
-	Joerg
+Yes. I agree. It is better to have a common binding and there are many
+panels that can use this generic binding. I will make these changes.
 
--- 
-AMD Operating System Research Center
+Thanks for your review.
 
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+Regards,
+Thomas.
+
+>
+>
+> -Olof
