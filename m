@@ -1,70 +1,29 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
-	Samsung Exynos
-Date: Tue, 3 Jan 2012 09:55:27 +0000
-Message-ID: <20120103095527.GI2914@n2100.arm.linux.org.uk>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com> <20120102134229.GZ29877@amd.com> <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com> <20120102155820.GB29877@amd.com>
+From: Will Newton <will.newton@gmail.com>
+Subject: Re: [PATCH] mmc: dw_mmc: Clear the DDR mode for non-DDR
+Date: Tue, 3 Jan 2012 10:29:57 +0000
+Message-ID: <CAFbHwiSH_eSYofo07Rk4H21nQ+0KSQ8zgmimEZz0anEga8rYgA@mail.gmail.com>
+References: <000b01ccc91c$26cf0330$746d0990$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55841 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751185Ab2ACJzl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 04:55:41 -0500
-Content-Disposition: inline
-In-Reply-To: <20120102155820.GB29877@amd.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <000b01ccc91c$26cf0330$746d0990$%jun@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joerg.roedel@amd.com>
-Cc: KyongHo Cho <pullip.cho@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, Younglak Kim <younglak1004.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Jan 02, 2012 at 04:58:20PM +0100, Joerg Roedel wrote:
-> On Tue, Jan 03, 2012 at 12:21:30AM +0900, KyongHo Cho wrote:
-> > > I still get
-> > >
-> > > =A0LD =A0 =A0 =A0.tmp_vmlinux1
-> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-un=
-known-linux-gnueabi-ld: no machine record defined
-> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-un=
-known-linux-gnueabi-ld: no machine record defined
-> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-un=
-known-linux-gnueabi-ld: no machine record defined
-> > > make[1]: *** [.tmp_vmlinux1] Error 1
-> > >
-> > > when trying to compile ARM/Exynos with 3.2-rc7. Am I doing someth=
-ing
-> > > wrong or is this not expected to work?
-> > >
-> > Do you?
-> > Ok. I will check my configuration with linux-next git.
->=20
-> Compiling my exynos-config with linux-next gives me:
->=20
->   CC      arch/arm/kernel/process.o
-> In file included from /data/lemmy/linux.trees.git/arch/arm/mach-exyno=
-s/include/mach/system.h:16:0,
->                  from /data/lemmy/linux.trees.git/arch/arm/kernel/pro=
-cess.c:64:
-> /data/lemmy/linux.trees.git/arch/arm/plat-samsung/include/plat/system=
--reset.h:19:2: error: #error Fix me up
->=20
-> I better not ask the question how such an #error statement can come
-> through to linux-next.
+On Mon, Jan 2, 2012 at 7:00 AM, Seungwon Jeon <tgih.jun@samsung.com> wr=
+ote:
+> UHS_REG should be cleared for non-DDR mode. But currently there is
+> no way to clear DDR mode, if it is already set once. This patch adds
+> clearing DDR mode for non-DDD mode.
+>
+> Signed-off-by: Seungwon Jeon <tgih.jun@samsung.com>
+> ---
+> =A0drivers/mmc/host/dw_mmc.c | =A0 11 +++++++----
+> =A01 files changed, 7 insertions(+), 4 deletions(-)
 
-It comes through when I stick it in my tree because of a month of askin=
-g
-for help to fix something and getting zero response from the maintainer=
-s.
+Looks ok to me, although I don't have any DDR capable hardware to test.
 
-It's a way to flag to them that they're doing something wrong - and in
-fact something is broken, and that that brokenness will happen at the
-next merge window unless they get off their butt and do something about
-it.
-
-Patches have been around, but I've had problems merging them, and the
-replacement patches have now appeared after I started my Christmas
-vacation.  As I've just returned, it's going to be a couple of days
-before the #error gets removed (assuming the replacement patches apply.=
-)
+Acked-by: Will Newton <will.newton@imgtec.com>
