@@ -1,89 +1,88 @@
-From: amit kachhap <amit.kachhap@linaro.org>
-Subject: Re: [PATCH V4 0/5] ARM: exynos: Add l2 retention mode cpuidle state
-Date: Tue, 3 Jan 2012 11:52:26 +0530
-Message-ID: <CADGdYn7ZU5xiDvOLMR4wVHEWtF-2p86jNZFCOXMV6PrZXuLWbQ@mail.gmail.com>
-References: <1323083172-14096-1-git-send-email-amit.kachhap@linaro.org>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
+ Samsung Exynos
+Date: Tue, 3 Jan 2012 17:15:45 +0900
+Message-ID: <CAHQjnOP6==YL-XE17LRnBymLsFDOiS52HKo4mfGMQUMmqU=xbg@mail.gmail.com>
+References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
+	<20120102134229.GZ29877@amd.com>
+	<CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
+	<20120102155820.GB29877@amd.com>
+	<005a01ccc9b3$6b6a2870$423e7950$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:43096 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750818Ab2ACGW0 convert rfc822-to-8bit
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:48140 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752106Ab2ACIPr convert rfc822-to-8bit
 	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 01:22:26 -0500
-Received: by obcwo16 with SMTP id wo16so12146587obc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jan 2012 22:22:26 -0800 (PST)
-In-Reply-To: <1323083172-14096-1-git-send-email-amit.kachhap@linaro.org>
+	Tue, 3 Jan 2012 03:15:47 -0500
+In-Reply-To: <005a01ccc9b3$6b6a2870$423e7950$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, amit.kachhap@linaro.org, patches@linaro.org, linaro-dev@lists.linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Joerg Roedel <joerg.roedel@amd.com>, linux-samsung-soc@vger.kernel.org, Subash Patel <subash.ramaswamy@linaro.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Hi Mr kim,
+On Tue, Jan 3, 2012 at 10:02 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Joerg Roedel wrote:
+>>
+>> On Tue, Jan 03, 2012 at 12:21:30AM +0900, KyongHo Cho wrote:
+>> > > I still get
+>> > >
+>> > > =A0LD =A0 =A0 =A0.tmp_vmlinux1
+>> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-
+>> unknown-linux-gnueabi-ld: no machine record defined
+>> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-
+>> unknown-linux-gnueabi-ld: no machine record defined
+>> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-
+>> unknown-linux-gnueabi-ld: no machine record defined
+>> > > make[1]: *** [.tmp_vmlinux1] Error 1
+>> > >
+>> > > when trying to compile ARM/Exynos with 3.2-rc7. Am I doing somet=
+hing
+>> > > wrong or is this not expected to work?
+>> > >
+>> > Do you?
+>> > Ok. I will check my configuration with linux-next git.
+>>
+>> Compiling my exynos-config with linux-next gives me:
+>>
+>> =A0 CC =A0 =A0 =A0arch/arm/kernel/process.o
+>> In file included from /data/lemmy/linux.trees.git/arch/arm/mach-
+>> exynos/include/mach/system.h:16:0,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0from
+> /data/lemmy/linux.trees.git/arch/arm/kernel/process.c:64:
+>> /data/lemmy/linux.trees.git/arch/arm/plat-samsung/include/plat/syste=
+m-
+>> reset.h:19:2: error: #error Fix me up
+>>
+>> I better not ask the question how such an #error statement can come
+>> through to linux-next. But what I can say is that I will not merge
+>> your code until you guys make sure that your upstream platform code =
+has
+>> enough quality so that it at least compiles.
+>>
+> Hi Joerg,
+>
+> I already knew that, Russell added it so that I can take the ARM rest=
+art
+> changes seriously.
+>
+> Since I pushed exynos restart patches to Russell's patch system so pl=
+ease
+> kindly ignore it.
+>
+>> I attach the config I used for my compile-test.
+>>
+> OK, let me check and if any updates, let you know.
+>
 
-All the comments have been addressed for the Exynos cpu idle patchset.
-The updated patchset was posted about one month back and there have
-been no further comments on the patchset since then.
+Hi.
 
-As this patchset seems to be stable now, do you think these these
-patches can merged in this 3.3 merge window? Kindly let me know your
-opinion.
+Thank you Kukjin.
+I am also going to check about the problem.
 
-Thanks,
-Amit Daniel
+Regards,
 
-On Mon, Dec 5, 2011 at 4:36 PM, Amit Daniel Kachhap
-<amit.kachhap@linaro.org> wrote:
-> Changes since V3:
-> *Implemented Russell feedback and moved sleep magic 4byte memory befo=
-re
-> s3c_cpu_resume to data section.
->
-> Changes since V2:
-> *Implemented the suggestion of MyungJoo Ham and used INFORM0/1
-> registers for resume for some board versions.
-> *Added back save/restore through CPU PM notifiers as suggested by
-> Lorenzo Pieralisi. This is useful to restore vfp state.
-> *some patch modularization (s5p/exynos) and proper commit logs.
->
-> Changes since V1:
-> *rebased the whole patch against 3.2-rc1 tree
-> *removed GIC save/restore in AFTR cpuidle state as it is external
-> to cpu powerdomain
-> *Added L2 setup code through device tree
-> *Removed only l2 save/restore registers in sleep
->
-> This Patch series adds support for AFTR mode cpuidle state based on
-> patch (http://www.spinics.net/lists/arm-kernel/msg132243.html) earlie=
-r
-> submitted by Jaecheol Lee <jc.lee@samsung.com>.
->
-> This patch uses CPU PM notifiers , common l2 save/restore and
-> new cpu_suspend/resume interfaces and is based on the tip of
-> for-next branch of samsung tree.
-> (git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.gi=
-t for-next).
->
-> Amit Daniel Kachhap (5):
-> =A0ARM: exynos: Add support AFTR mode on EXYNOS4210
-> =A0ARM: exynos: save L2 settings during bootup
-> =A0ARM: s5p: add L2 early resume code
-> =A0ARM: exynos: remove useless code to save/restore L2
-> =A0ARM: exynos: Enable l2 configuration through device tree
->
-> =A0arch/arm/mach-exynos/cpu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 60 +++=
-++++++---
-> =A0arch/arm/mach-exynos/cpuidle.c =A0 =A0 =A0 =A0 =A0| =A0152 +++++++=
-+++++++++++++++++++++++-
-> =A0arch/arm/mach-exynos/include/mach/pmu.h | =A0 =A02 +
-> =A0arch/arm/mach-exynos/pm.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 15 ---
-> =A0arch/arm/plat-s5p/sleep.S =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 44 +++=
-+++++-
-> =A05 files changed, 233 insertions(+), 40 deletions(-)
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+KyongHo.
