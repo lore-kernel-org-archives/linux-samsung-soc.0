@@ -1,50 +1,70 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: EXYNOS: Adds Samsung TRATS board support
-Date: Tue, 3 Jan 2012 09:50:16 +0000
-Message-ID: <20120103095015.GH2914@n2100.arm.linux.org.uk>
-References: <1324624169-16102-1-git-send-email-riverful.kim@samsung.com> <088901ccc1dd$deea1e00$9cbe5a00$%kim@samsung.com> <CAH9JG2WEcA1BwWq+uovrax5bWvuXaYsGky8D9txymXta7GY8TQ@mail.gmail.com> <000d01ccc381$59fbe660$0df3b320$%kim@samsung.com>
+Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
+	Samsung Exynos
+Date: Tue, 3 Jan 2012 09:55:27 +0000
+Message-ID: <20120103095527.GI2914@n2100.arm.linux.org.uk>
+References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com> <20120102134229.GZ29877@amd.com> <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com> <20120102155820.GB29877@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54584 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:55841 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752045Ab2ACJuZ (ORCPT
+	with ESMTP id S1751185Ab2ACJzl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 04:50:25 -0500
+	Tue, 3 Jan 2012 04:55:41 -0500
 Content-Disposition: inline
-In-Reply-To: <000d01ccc381$59fbe660$0df3b320$%kim@samsung.com>
+In-Reply-To: <20120102155820.GB29877@amd.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "HeungJun, Kim" <riverful.kim@samsung.com>
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'arm-linux' <linux-arm-kernel@lists.infradead.org>
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: KyongHo Cho <pullip.cho@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, Younglak Kim <younglak1004.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Mon, Dec 26, 2011 at 12:49:21PM +0900, HeungJun, Kim wrote:
-> If you don't mind, I want to let you know additional information.
-> 
-> I also agree with Mr.Park.
-> 
-> Generally in the robot field, the term "machine" means the total things
-> including the machinery part and even the brain "board", and the machine
-> is more bigger concept.
+On Mon, Jan 02, 2012 at 04:58:20PM +0100, Joerg Roedel wrote:
+> On Tue, Jan 03, 2012 at 12:21:30AM +0900, KyongHo Cho wrote:
+> > > I still get
+> > >
+> > > =A0LD =A0 =A0 =A0.tmp_vmlinux1
+> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-un=
+known-linux-gnueabi-ld: no machine record defined
+> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-un=
+known-linux-gnueabi-ld: no machine record defined
+> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-un=
+known-linux-gnueabi-ld: no machine record defined
+> > > make[1]: *** [.tmp_vmlinux1] Error 1
+> > >
+> > > when trying to compile ARM/Exynos with 3.2-rc7. Am I doing someth=
+ing
+> > > wrong or is this not expected to work?
+> > >
+> > Do you?
+> > Ok. I will check my configuration with linux-next git.
+>=20
+> Compiling my exynos-config with linux-next gives me:
+>=20
+>   CC      arch/arm/kernel/process.o
+> In file included from /data/lemmy/linux.trees.git/arch/arm/mach-exyno=
+s/include/mach/system.h:16:0,
+>                  from /data/lemmy/linux.trees.git/arch/arm/kernel/pro=
+cess.c:64:
+> /data/lemmy/linux.trees.git/arch/arm/plat-samsung/include/plat/system=
+-reset.h:19:2: error: #error Fix me up
+>=20
+> I better not ask the question how such an #error statement can come
+> through to linux-next.
 
-Some platforms which the kernel runs on are not a 'board' but a set of
-boards: a motherboard and a separate CPU card.  So to call these a
-'board' is wrong too.
+It comes through when I stick it in my tree because of a month of askin=
+g
+for help to fix something and getting zero response from the maintainer=
+s.
 
-Welcome to the problem: there is not one single term which satisfies
-everyone.  The solution: a compromise.
+It's a way to flag to them that they're doing something wrong - and in
+fact something is broken, and that that brokenness will happen at the
+next merge window unless they get off their butt and do something about
+it.
 
-The compromise that has been chosen for the ARM kernel is to call this
-stuff 'machines' or 'platforms' - and the exynos stuff has decided to
-call it 'machines'.  (Some people have decided to use 'board' in their
-directories, which is fine _provided_ there is consistency within that
-directory.)
-
-That's actually the _most_ important thing: consistency.  So if a
-maintainer has decided to use one way in their directory, that's the
-way which rules for that directory.  So, please, get over it - and
-don't start a brand new naming scheme in a directory just because you
-don't agree with the maintainers opinion.
-
-So, please name the board mach-trats.c as requested by Kukjin (who is
-the maintainer for exynos.)
+Patches have been around, but I've had problems merging them, and the
+replacement patches have now appeared after I started my Christmas
+vacation.  As I've just returned, it's going to be a couple of days
+before the #error gets removed (assuming the replacement patches apply.=
+)
