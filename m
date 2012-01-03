@@ -1,49 +1,45 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [RFC][PATCH 1/4] lcd: platform-lcd: Eliminate need for platform data
-Date: Tue, 3 Jan 2012 13:56:58 +0530
-Message-ID: <CAJuYYwSAsPYibZsgdHQzMba-wCymRxqqcmtZSZi7A_AzTJv5tg@mail.gmail.com>
+From: Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device
+ tree support
+Date: Tue, 03 Jan 2012 10:06:22 +0100
+Message-ID: <4F02C50E.9030904@metafoo.de>
 References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
-	<1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
-	<20120102115959.GG2899@opensource.wolfsonmicro.com>
-	<CAJuYYwQrfp6R=kSzXr6y0unDk9FtNxoy3Lt5QabdNMg9Qux=bg@mail.gmail.com>
-	<20120102181313.GA27875@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:39680 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751992Ab2ACI07 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 03:26:59 -0500
-In-Reply-To: <20120102181313.GA27875@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-On 2 January 2012 23:43, Mark Brown <broonie@opensource.wolfsonmicro.co=
-m> wrote:
-> On Mon, Jan 02, 2012 at 11:21:46PM +0530, Thomas Abraham wrote:
->
->> Your point on maintaining support for both old and new formats is
->> helpful. But I am not sure if maintaining support for both formats i=
-s
->> the right thing to do. As most of the ARM platforms will switch to
->> using dt, maybe converting all of them to new format would be better=
-=2E
->> I will try doing this and prepare a patch.
->
-> There's more architectures than ARM supported in Linux and only a
-> minority of them are using device tree at the minute. =A0Unless every
-> architecture switches over platform data based users will still need =
-to
-> be supported.
+On 01/02/2012 06:54 AM, Thomas Abraham wrote:
+> The platform-lcd driver depends on platform-specific callbacks to setup the
+> lcd panel. These callbacks are supplied using driver's platform data. But
+> for adding device tree support for platform-lcd driver, providing such
+> callbacks is not possible (without using auxdata).
+> 
+> Since the callbacks are usually lcd panel specific, it is possible to include
+> the lcd panel specific setup and control functionality in the platform-lcd
+> driver itself, thereby eliminating the need for supplying platform specific
+> callbacks to the driver. The platform-lcd driver can include support for
+> multiple lcd panels.
+> 
+> This patchset removes the need for platform data for platform-lcd driver and
+> adds support which can be used to implement lcd panel specific functionality
+> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
+> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
+> This currently breaks build for other users of platform-lcd driver. Those can be
+> fixed if this approach is acceptable.
 
-I will try to retain the old platform data style also since there are
-support for lcd panels in mainline that use 2 or more gpios in a panel
-specific way. And it would be difficult to fold them into a generic
-lcd type for lcd power control.
+The whole approach looks rather backwards to me. The exact purpose of the
+platform_lcd driver is to redirect the lcd driver callbacks to board code.
+So by removing this support you not only break all the existing driver but
+also create a driver which does nothing. Then you add another layer of
+abstraction to implement custom drivers in this driver. A better approach in
+my opinion is to simply implement these drivers as first level LCD drivers.
+So leave the platform-lcd driver as it is and just add a gpio (or maybe
+regulator) lcd driver instead.
 
-Thanks,
-Thomas.
+- Lars
