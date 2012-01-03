@@ -1,123 +1,44 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung devel-dma for v3.3
-Date: Tue, 3 Jan 2012 21:11:59 +0000
-Message-ID: <201201032111.59603.arnd@arndb.de>
-References: <037401ccc8e7$e5671380$b0353a80$%kim@samsung.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH 1/2] PM / Domains: Add OF support
+Date: Tue, 3 Jan 2012 23:28:44 +0100
+Message-ID: <201201032328.45288.rjw@sisk.pl>
+References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <201112262013.19995.rjw@sisk.pl> <20120102065956.GA13015@ponder.secretlab.ca>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:62576 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752637Ab2ACVMJ (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:47108 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751566Ab2ACWZ0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 16:12:09 -0500
-In-Reply-To: <037401ccc8e7$e5671380$b0353a80$%kim@samsung.com>
+	Tue, 3 Jan 2012 17:25:26 -0500
+In-Reply-To: <20120102065956.GA13015@ponder.secretlab.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "'Koul, Vinod'" <vinod.koul@intel.com>, boojin.kim@samsung.com, Sascha Hauer <s.hauer@pengutronix.de>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, patches@linaro.org
 
-On Monday 02 January 2012, Kukjin Kim wrote:
-> Hi Arnd and Olof,
+On Monday, January 02, 2012, Grant Likely wrote:
+> On Mon, Dec 26, 2011 at 08:13:19PM +0100, Rafael J. Wysocki wrote:
+> > Hi,
+> > 
+> > On Monday, December 12, 2011, Thomas Abraham wrote:
+> > > A device node pointer is added to generic pm domain structure to associate
+> > > the domain with a node in the device tree.
+> > 
+> > That sounds fine except for one thing: PM domains are not devices, so adding
+> > "device node" pointers to them is kind of confusing.  Perhaps there should be
+> > something like struct dt_node, representing a more general device tree node?
 > 
-> Please pull Samsung devel-dma for v3.3 from following:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> next-samsung-devel-dma
-> 
-> Its major feature is including merge of pl330 driver into drivers/dma/ and
-> got the ack from Vinod Koul and Linus Walleij and some dma development for
-> Samsung stuff.
-> 
-> As a note, since having dependency with Vinod's slave-dma/next (dma tree)
-> and next-samsung-dt1 branch which has been sent to you for arm-soc/next/dt,
-> that has been provided based on slave-dma/next tree and next-samsung-dt1.
-> 
-> If any problems, please let me know.
+> struct device_node has nothing to do with struct device.  device_node is a
+> generic device tree node.
 
-Pulled into a new next/drivers2 branch so I can send the other drivers
-early but delay this until the dma-slave branch is merged, if necessary.
+So the name is kind of confusing. :-)
 
-There were some conflicts between imx changes that went into the dma-slave
-tree and those that went into arm-soc. Sascha, Shawn: can you have a look
-to make sure the resolution below is correct?
+> Thomas' approach is fine.
+
+Well, I guess so.
 
 Thanks,
-
-	Arnd
-
-diff --cc arch/arm/mach-exynos/clock.c
-index da50b1a,5185a25..62e260e
---- a/arch/arm/mach-exynos/clock.c
-+++ b/arch/arm/mach-exynos/clock.c
-@@@ -1322,15 -1308,9 +1330,16 @@@ static struct clk_lookup exynos4_clk_lo
-        CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &clk_sclk_uart1.clk),
-        CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &clk_sclk_uart2.clk),
-        CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &clk_sclk_uart3.clk),
- +      CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
- +      CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
- +      CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
- +      CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
-        CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
-        CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
-+       CLKDEV_INIT("dma-pl330.2", "apb_pclk", &clk_mdma1),
- +      CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &clk_sclk_spi0.clk),
- +      CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk0", &clk_sclk_spi1.clk),
- +      CLKDEV_INIT("s3c64xx-spi.2", "spi_busclk0", &clk_sclk_spi2.clk),
-  };
-  
-  static int xtal_rate;
-diff --cc drivers/dma/mxs-dma.c
-index fc903c0,493af2f..b06cd4c
---- a/drivers/dma/mxs-dma.c
-+++ b/drivers/dma/mxs-dma.c
-@@@ -578,9 -554,9 +554,9 @@@ static int __init mxs_dma_init(struct m
-  {
-        int ret;
-  
- -      ret = clk_enable(mxs_dma->clk);
- +      ret = clk_prepare_enable(mxs_dma->clk);
-        if (ret)
--               goto err_out;
-+               return ret;
-  
-        ret = mxs_reset_block(mxs_dma->base);
-        if (ret)
-@@@ -604,11 -580,8 +580,8 @@@
-        writel(MXS_DMA_CHANNELS_MASK << MXS_DMA_CHANNELS,
-                mxs_dma->base + HW_APBHX_CTRL1 + MXS_SET_ADDR);
-  
--       clk_disable_unprepare(mxs_dma->clk);
-- 
--       return 0;
-- 
-  err_out:
- -      clk_disable(mxs_dma->clk);
-++      clk_disable_unprepare(mxs_dma->clk);
-        return ret;
-  }
---- a/drivers/dma/Kconfig
-+++ b/drivers/dma/Kconfig
-@@ -124,7 +124,7 @@ config MV_XOR
- 
- config MX3_IPU
-        bool "MX3x Image Processing Unit support"
--       depends on SOC_IMX31 ||<C2><A0>SOC_IMX35
-+       depends on ARCH_MXC
-        select DMA_ENGINE
-        default y
- 	       help
-@@ -194,33 +201,32 @@ config PL330_DMA
- config IMX_SDMA
-        tristate "i.MX SDMA support"
--       depends on ARCH_MX25 || SOC_IMX31 ||<C2><A0>SOC_IMX35 || ARCH_MX5
-+       depends on ARCH_MXC
-        select DMA_ENGINE
-        help
-          Support the i.MX SDMA engine. This engine is integrated into
--         Freescale i.MX25/31/35/51 chips.
-+         Freescale i.MX25/31/35/51/53 chips.
- 
- config IMX_DMA
-        tristate "i.MX DMA support"
+Rafael
