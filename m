@@ -1,45 +1,60 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device
- tree support
-Date: Tue, 03 Jan 2012 10:06:22 +0100
-Message-ID: <4F02C50E.9030904@metafoo.de>
-References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
+ Samsung Exynos
+Date: Tue, 03 Jan 2012 10:37:29 +0100
+Message-ID: <00dc01ccc9fb$4fcb7590$ef6260b0$%szyprowski@samsung.com>
+References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
+ <20120102134229.GZ29877@amd.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:19722 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751627Ab2ACJhf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jan 2012 04:37:35 -0500
+In-reply-to: <20120102134229.GZ29877@amd.com>
+Content-language: pl
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Joerg Roedel' <joerg.roedel@amd.com>, 'KyongHo Cho' <pullip.cho@samsung.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 01/02/2012 06:54 AM, Thomas Abraham wrote:
-> The platform-lcd driver depends on platform-specific callbacks to setup the
-> lcd panel. These callbacks are supplied using driver's platform data. But
-> for adding device tree support for platform-lcd driver, providing such
-> callbacks is not possible (without using auxdata).
+Hello,
+
+On Monday, January 02, 2012 2:42 PM Joerg Roedel wrote:
+
+> On Thu, Dec 29, 2011 at 09:24:18PM +0900, KyongHo Cho wrote:
+> > Changes since v7:
+> > - Rebased with the recent commits of the following git branches
+> >   * git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/next
+> >   * git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git/for-next
+> > - Changed magic numbers into macros
+> > - Setting owner of a System MMU in 'iommu' field of dev_archdata
+> > - Verbose message in the default fault handler
+> > - Some bug fixes.
 > 
-> Since the callbacks are usually lcd panel specific, it is possible to include
-> the lcd panel specific setup and control functionality in the platform-lcd
-> driver itself, thereby eliminating the need for supplying platform specific
-> callbacks to the driver. The platform-lcd driver can include support for
-> multiple lcd panels.
+> I still get
 > 
-> This patchset removes the need for platform data for platform-lcd driver and
-> adds support which can be used to implement lcd panel specific functionality
-> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
-> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
-> This currently breaks build for other users of platform-lcd driver. Those can be
-> fixed if this approach is acceptable.
+>   LD      .tmp_vmlinux1
+> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no
+> machine record defined
+> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no
+> machine record defined
+> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no
+> machine record defined
+> make[1]: *** [.tmp_vmlinux1] Error 1
+> 
+> when trying to compile ARM/Exynos with 3.2-rc7. Am I doing something
+> wrong or is this not expected to work?
 
-The whole approach looks rather backwards to me. The exact purpose of the
-platform_lcd driver is to redirect the lcd driver callbacks to board code.
-So by removing this support you not only break all the existing driver but
-also create a driver which does nothing. Then you add another layer of
-abstraction to implement custom drivers in this driver. A better approach in
-my opinion is to simply implement these drivers as first level LCD drivers.
-So leave the platform-lcd driver as it is and just add a gpio (or maybe
-regulator) lcd driver instead.
+Yes, there is something a bit wrong with your kernel configuration. You get this error if 
+there is no board selected to be compiled-in. Please go to kernel configuration and select
+"System Type -> SAMSUNG EXYNOS SoCs Suppport". Then select some hardware board to be 
+compiled in, for example SMDKV310, SMDKC210 and "Mobile NURI board".
 
-- Lars
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
