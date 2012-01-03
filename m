@@ -1,156 +1,75 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Subject: Re: [lm-sensors] [RFC PATCH 2/3] thermal: exynos4: Register the tmu
- sensor with the thermal interface layer
-Date: Tue, 3 Jan 2012 14:25:53 -0800
-Message-ID: <1325629553.26706.11.camel@groeck-laptop>
-References: <1324468798-20423-1-git-send-email-amit.kachhap@linaro.org>
-	 <1324468798-20423-3-git-send-email-amit.kachhap@linaro.org>
-Reply-To: guenter.roeck@ericsson.com
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung cleanup for v3.3
+Date: Wed, 04 Jan 2012 08:30:03 +0900
+Message-ID: <018701ccca6f$9e6f80f0$db4e82d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1324468798-20423-3-git-send-email-amit.kachhap@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:62466 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753680Ab2ACXaI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jan 2012 18:30:08 -0500
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LX800IJMX9NPOJ0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 04 Jan 2012 08:30:05 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LX800HWGXA3SM10@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 04 Jan 2012 08:30:05 +0900 (KST)
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Wed, 2011-12-21 at 06:59 -0500, Amit Daniel Kachhap wrote:
-> Export and register information from the hwmon tmu sensor to the samsung
-> exynos kernel thermal framework where different cooling devices and thermal
-> zone are binded. The exported information is based according to the data
-> structure thermal_sensor_conf present in exynos_thermal.h. HWMON sysfs
-> functions are currently left although all of them are present in generic
-> linux thermal layer.
-> Also the platform data structure is modified to pass frequency cooling
-> in percentages for each thermal level.
-> 
-Hi Amit,
+Hi Arnd,
 
-wouldn't it make more sense to merge the code as necessary from
-hwmon/exynos4_tmu.c into the new thermal/exynos_thermal.c, and drop
-hwmon/exynos4_tmu.c entirely ?
+Please pull Samsung cleanup for v3.3 from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next-samsung-cleanup-samsung
 
-With that, you should get the hwmon entries for free, and we would not
-have to maintain two drivers with overlapping functionality.
+There are cleanups for Samsung stuff and there is no dependency with other
+branches.
 
-Thanks,
-Guenter
+Sorry for late, I thought sent 'pull request' this :( if any problems,
+please let me know.
 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> ---
->  drivers/hwmon/exynos4_tmu.c               |   34 ++++++++++++++++++++++++++--
->  include/linux/platform_data/exynos4_tmu.h |    7 ++++++
->  2 files changed, 38 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/hwmon/exynos4_tmu.c b/drivers/hwmon/exynos4_tmu.c
-> index f2359a0..6912a7f 100644
-> --- a/drivers/hwmon/exynos4_tmu.c
-> +++ b/drivers/hwmon/exynos4_tmu.c
-> @@ -37,6 +37,9 @@
->  #include <linux/hwmon-sysfs.h>
->  
->  #include <linux/platform_data/exynos4_tmu.h>
-> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
-> +#include <linux/exynos_thermal.h>
-> +#endif
->  
->  #define EXYNOS4_TMU_REG_TRIMINFO	0x0
->  #define EXYNOS4_TMU_REG_CONTROL		0x20
-> @@ -248,10 +251,13 @@ static void exynos4_tmu_work(struct work_struct *work)
->  
->  	kobject_uevent(&data->hwmon_dev->kobj, KOBJ_CHANGE);
->  
-> -	enable_irq(data->irq);
->  
->  	clk_disable(data->clk);
->  	mutex_unlock(&data->lock);
-> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
-> +	exynos4_report_trigger();
-> +#endif
-> +	enable_irq(data->irq);
->  }
->  
->  static irqreturn_t exynos4_tmu_irq(int irq, void *id)
-> @@ -345,6 +351,14 @@ static const struct attribute_group exynos4_tmu_attr_group = {
->  	.attrs = exynos4_tmu_attributes,
->  };
->  
-> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
-> +static struct thermal_sensor_conf exynos4_sensor_conf = {
-> +	.name			= "exynos4-therm",
-> +	.read_temperature	= (int (*)(void *))exynos4_tmu_read,
-> +};
-> +#endif
-> +/*CONFIG_SAMSUNG_THERMAL_INTERFACE*/
-> +
->  static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
->  {
->  	struct exynos4_tmu_data *data;
-> @@ -432,9 +446,20 @@ static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
->  	}
->  
->  	exynos4_tmu_control(pdev, true);
-> -
-> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
-> +	(&exynos4_sensor_conf)->private_data = data;
-> +	(&exynos4_sensor_conf)->sensor_data = pdata;
-> +	ret = exynos4_register_thermal(&exynos4_sensor_conf);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register thermal interface\n");
-> +		goto err_hwmon_device;
-> +	}
-> +#endif
->  	return 0;
-> -
-> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
-> +err_hwmon_device:
-> +	hwmon_device_unregister(data->hwmon_dev);
-> +#endif
->  err_create_group:
->  	sysfs_remove_group(&pdev->dev.kobj, &exynos4_tmu_attr_group);
->  err_clk:
-> @@ -458,6 +483,9 @@ static int __devexit exynos4_tmu_remove(struct platform_device *pdev)
->  
->  	exynos4_tmu_control(pdev, false);
->  
-> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
-> +	exynos4_unregister_thermal();
-> +#endif
->  	hwmon_device_unregister(data->hwmon_dev);
->  	sysfs_remove_group(&pdev->dev.kobj, &exynos4_tmu_attr_group);
->  
-> diff --git a/include/linux/platform_data/exynos4_tmu.h b/include/linux/platform_data/exynos4_tmu.h
-> index 39e038c..642c508 100644
-> --- a/include/linux/platform_data/exynos4_tmu.h
-> +++ b/include/linux/platform_data/exynos4_tmu.h
-> @@ -21,6 +21,7 @@
->  
->  #ifndef _LINUX_EXYNOS4_TMU_H
->  #define _LINUX_EXYNOS4_TMU_H
-> +#include <linux/cpu_cooling.h>
->  
->  enum calibration_type {
->  	TYPE_ONE_POINT_TRIMMING,
-> @@ -64,6 +65,9 @@ enum calibration_type {
->   *	in the positive-TC generator block
->   *	0 <= reference_voltage <= 31
->   * @cal_type: calibration type for temperature
-> + * @freq_pctg_table: Table representing frequency reduction percentage.
-> + * @freq_tab_count: Count of the above table as frequency reduction may
-> + *	applicable to only some of the trigger levels.
->   *
->   * This structure is required for configuration of exynos4_tmu driver.
->   */
-> @@ -79,5 +83,8 @@ struct exynos4_tmu_platform_data {
->  	u8 reference_voltage;
->  
->  	enum calibration_type cal_type;
-> +
-> +	struct freq_pctg_table freq_tab[4];
-> +	unsigned int freq_tab_count;
->  };
->  #endif /* _LINUX_EXYNOS4_TMU_H */
+Thanks.
 
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
+The following changes since commit 1ea6b8f48918282bdca0b32a34095504ee65bab5:
+
+  Linux 3.2-rc1 (2011-11-07 16:16:02 -0800)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next-samsung-cleanup-samsung
+
+Jingoo Han (2):
+      ARM: S5PV210: Use gpio_request_one
+      ARM: EXYNOS: Use gpio_request_one
+
+Shawn Guo (1):
+      ARM: EXYNOS: remove exynos4_scu_enable()
+
+Thomas Meyer (1):
+      ARM: SAMSUNG: Use kmemdup rather than duplicating its implementation
+
+ arch/arm/mach-exynos/mach-nuri.c           |    9 ++-------
+ arch/arm/mach-exynos/mach-smdkv310.c       |    4 +---
+ arch/arm/mach-exynos/mach-universal_c210.c |   10 +++-------
+ arch/arm/mach-exynos/pm.c                  |   24 ++----------------------
+ arch/arm/mach-s5pv210/mach-aquila.c        |    3 +--
+ arch/arm/mach-s5pv210/mach-goni.c          |    6 ++----
+ arch/arm/mach-s5pv210/mach-smdkv210.c      |   10 +++-------
+ arch/arm/plat-s3c24xx/dma.c                |    3 +--
+ 8 files changed, 15 insertions(+), 54 deletions(-)
