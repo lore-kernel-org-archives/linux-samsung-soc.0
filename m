@@ -1,60 +1,69 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Tue, 03 Jan 2012 10:37:29 +0100
-Message-ID: <00dc01ccc9fb$4fcb7590$ef6260b0$%szyprowski@samsung.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
- <20120102134229.GZ29877@amd.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] S3C: fix order of MACH_S3C* checks on GPIO count define
+Date: Tue, 3 Jan 2012 09:43:56 +0000
+Message-ID: <20120103094356.GG2914@n2100.arm.linux.org.uk>
+References: <1325164036-15638-1-git-send-email-dron0gus@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:19722 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751627Ab2ACJhf (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:57832 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751185Ab2ACJoV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 04:37:35 -0500
-In-reply-to: <20120102134229.GZ29877@amd.com>
-Content-language: pl
+	Tue, 3 Jan 2012 04:44:21 -0500
+Content-Disposition: inline
+In-Reply-To: <1325164036-15638-1-git-send-email-dron0gus@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joerg Roedel' <joerg.roedel@amd.com>, 'KyongHo Cho' <pullip.cho@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Gusakov Andrey <dron0gus@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Gusakov Andrey <dron_gus@mail.ru>, linux-arm-kernel@lists.infradead.org
 
-Hello,
+On Thu, Dec 29, 2011 at 05:07:14PM +0400, Gusakov Andrey wrote:
+> Differnt S3C24XX SoC have different number of GPIO. When building
+> kernel for many S3C24XX SoCs GPIO number defined to minimun possible.
+> This patch reordef ifdef's to define GPIO number to muximum possible.
 
-On Monday, January 02, 2012 2:42 PM Joerg Roedel wrote:
+This is error prome.  Please come up with a better solution to this.
 
-> On Thu, Dec 29, 2011 at 09:24:18PM +0900, KyongHo Cho wrote:
-> > Changes since v7:
-> > - Rebased with the recent commits of the following git branches
-> >   * git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/next
-> >   * git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git/for-next
-> > - Changed magic numbers into macros
-> > - Setting owner of a System MMU in 'iommu' field of dev_archdata
-> > - Verbose message in the default fault handler
-> > - Some bug fixes.
-> 
-> I still get
-> 
->   LD      .tmp_vmlinux1
-> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no
-> machine record defined
-> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no
-> machine record defined
-> /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-unknown-linux-gnueabi-ld: no
-> machine record defined
-> make[1]: *** [.tmp_vmlinux1] Error 1
-> 
-> when trying to compile ARM/Exynos with 3.2-rc7. Am I doing something
-> wrong or is this not expected to work?
+> -#ifdef CONFIG_CPU_S3C244X
+> -#define ARCH_NR_GPIOS	(32 * 9 + CONFIG_S3C24XX_GPIO_EXTRA)
+> -#elif defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+> +#if defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+>  #define ARCH_NR_GPIOS	(32 * 12 + CONFIG_S3C24XX_GPIO_EXTRA)
+> +#elif defined(CONFIG_CPU_S3C244X)
+> +#define ARCH_NR_GPIOS	(32 * 9 + CONFIG_S3C24XX_GPIO_EXTRA)
+>  #else
+>  #define ARCH_NR_GPIOS	(256 + CONFIG_S3C24XX_GPIO_EXTRA)
+>  #endif
 
-Yes, there is something a bit wrong with your kernel configuration. You get this error if 
-there is no board selected to be compiled-in. Please go to kernel configuration and select
-"System Type -> SAMSUNG EXYNOS SoCs Suppport". Then select some hardware board to be 
-compiled in, for example SMDKV310, SMDKC210 and "Mobile NURI board".
+Maybe something like:
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+#define S3C2443_NR_GPIOS	(32 * 12)
+#define S3C2416_NR_GPIOS	(32 * 12)
+#define S3C244X_NR_GPIOS	(32 * 9)
+
+#define SAMSUNG_NR_GPIOS	(256)
+#if defined (CONFIG_CPU_S3C244X) && S3C244X_NR_GPIOS > SAMSUNG_NR_GPIOS
+#undef SAMSUNG_NR_GPIOS
+#define SAMSUNG_NR_GPIOS	S3C244X_NR_GPIOS
+#endif
+#if defined (CONFIG_CPU_S3C2416) && S3C2416_NR_GPIOS > SAMSUNG_NR_GPIOS
+#undef SAMSUNG_NR_GPIOS
+#define SAMSUNG_NR_GPIOS	S3C2416_NR_GPIOS
+#endif
+#if defined (CONFIG_CPU_S3C2443) && S3C2443_NR_GPIOS > SAMSUNG_NR_GPIOS
+#undef SAMSUNG_NR_GPIOS
+#define SAMSUNG_NR_GPIOS	S3C2443_NR_GPIOS
+#endif
+
+#define ARCH_NR_GPIOS		(SAMSUNG_NR_GPIOS + CONFIG_S3C24XX_GPIO_EXTRA)
+
+or maybe just solve this in Kconfig - we already have this:
+
+config ARCH_NR_GPIO
+        int
+        default 1024 if ARCH_SHMOBILE || ARCH_TEGRA
+        default 350 if ARCH_U8500
+        default 0
+
+to set ARCH_NR_GPIO in generic code.
