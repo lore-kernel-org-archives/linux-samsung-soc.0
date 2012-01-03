@@ -1,79 +1,72 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Tue, 03 Jan 2012 10:02:52 +0900
-Message-ID: <005a01ccc9b3$6b6a2870$423e7950$%kim@samsung.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
- <20120102134229.GZ29877@amd.com>
- <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
- <20120102155820.GB29877@amd.com>
+Subject: RE: [PATCH 12/12] ARM: restart: S3C24XX: use new restart hook
+Date: Tue, 03 Jan 2012 15:08:54 +0900
+Message-ID: <00e201ccc9de$2ca008f0$85e01ad0$%kim@samsung.com>
+References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com>
+ <201201021414.17551.heiko@sntech.de> <20120102132631.GC18443@sirena.org.uk>
+ <201201021433.57356.heiko@sntech.de>
+ <20120102133906.GP4300@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27349 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752109Ab2ACBDB convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:45834 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750821Ab2ACGI7 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jan 2012 20:03:01 -0500
-In-reply-to: <20120102155820.GB29877@amd.com>
+	Tue, 3 Jan 2012 01:08:59 -0500
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LX700KDLL24YK30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 15:08:58 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LX700JXSL2U3LI1@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 15:08:57 +0900 (KST)
+In-reply-to: <20120102133906.GP4300@opensource.wolfsonmicro.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Joerg Roedel' <joerg.roedel@amd.com>, 'KyongHo Cho' <pullip.cho@samsung.com>
-Cc: 'Subash Patel' <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Joerg Roedel wrote:
+Mark Brown wrote:
 >=20
-> On Tue, Jan 03, 2012 at 12:21:30AM +0900, KyongHo Cho wrote:
-> > > I still get
-> > >
-> > > =A0LD =A0 =A0 =A0.tmp_vmlinux1
-> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-
-> unknown-linux-gnueabi-ld: no machine record defined
-> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-
-> unknown-linux-gnueabi-ld: no machine record defined
-> > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-
-> unknown-linux-gnueabi-ld: no machine record defined
-> > > make[1]: *** [.tmp_vmlinux1] Error 1
-> > >
-> > > when trying to compile ARM/Exynos with 3.2-rc7. Am I doing someth=
-ing
-> > > wrong or is this not expected to work?
-> > >
-> > Do you?
-> > Ok. I will check my configuration with linux-next git.
+> On Mon, Jan 02, 2012 at 02:33:57PM +0100, Heiko St=FCbner wrote:
+> > Am Montag, 2. Januar 2012, 14:26:31 schrieb Mark Brown:
+> > > On Mon, Jan 02, 2012 at 02:14:16PM +0100, Heiko St?bner wrote:
 >=20
-> Compiling my exynos-config with linux-next gives me:
+> > > > Therefore I'm introducing a new s3c2443-pm-common.c. Question n=
+ow
+is,
+> > > > should this move directly to plat-samsung?
 >=20
->   CC      arch/arm/kernel/process.o
-> In file included from /data/lemmy/linux.trees.git/arch/arm/mach-
-> exynos/include/mach/system.h:16:0,
->                  from
-/data/lemmy/linux.trees.git/arch/arm/kernel/process.c:64:
-> /data/lemmy/linux.trees.git/arch/arm/plat-samsung/include/plat/system=
--
-> reset.h:19:2: error: #error Fix me up
+> > > If it's s3c2443 specific I'd expect it'd end up in the relevant m=
+ach
+> > > directory?
 >=20
-> I better not ask the question how such an #error statement can come
-> through to linux-next. But what I can say is that I will not merge
-> your code until you guys make sure that your upstream platform code h=
-as
-> enough quality so that it at least compiles.
+> > nope, it's specific to 2443, 2416 and 2450. These three SoCs seem t=
+o
+> share a
+> > lot of features and it seems other common code (i.e. plat-
+> s3c24xx/s3c2443-
+> > clock.c) has got its name from the first SoC that had this feature =
+(the
+> > S3C2443 in 2007).
 >=20
-Hi Joerg,
+> Oh, right - that's not terribly clear but I guess.
 
-I already knew that, Russell added it so that I can take the ARM restar=
-t
-changes seriously.
+Heiko, I think your file can be placed in plat-s3c24xx/ now and if requ=
+ired,
+I will move them into plat-samsung or just mach-s3c24xx. I mean I'm sor=
+ting
+out the mach-s3c2410/, mach-s3c2412/, mach-s3c2416/, mach-s3c2440/ and
+mach-s3c2443 directories too.
 
-Since I pushed exynos restart patches to Russell's patch system so plea=
-se
-kindly ignore it.
-
-> I attach the config I used for my compile-test.
->=20
-OK, let me check and if any updates, let you know.
+As a note, the working of one plat-samsung will be finished next time f=
+or
+v3.4.
 
 Happy New Year.
 Thanks.
