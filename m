@@ -1,54 +1,111 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V4 0/5] ARM: exynos: Add l2 retention mode cpuidle state
-Date: Tue, 03 Jan 2012 22:22:09 +0900
-Message-ID: <014a01ccca1a$b25495b0$16fdc110$%kim@samsung.com>
-References: <1323083172-14096-1-git-send-email-amit.kachhap@linaro.org>
- <CADGdYn7ZU5xiDvOLMR4wVHEWtF-2p86jNZFCOXMV6PrZXuLWbQ@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device tree support
+Date: Tue, 3 Jan 2012 22:37:01 +0530
+Message-ID: <CAJuYYwQJcW83EznpWmmZTCjSL9Ka1nztHx=4cpz2yzuhEyPtjQ@mail.gmail.com>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+	<4F02C50E.9030904@metafoo.de>
+	<CAJuYYwR8hnxJSfaXo4=RWCZ1HQZ1PHci+jY3K5b9ktWXryN0vA@mail.gmail.com>
+	<4F02F3FD.4010306@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38451 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752759Ab2ACNWM (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:55981 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754123Ab2ACRHC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 08:22:12 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LX800AVY54YU6K0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 22:22:11 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LX80066F54XF230@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 22:22:11 +0900 (KST)
-In-reply-to: <CADGdYn7ZU5xiDvOLMR4wVHEWtF-2p86jNZFCOXMV6PrZXuLWbQ@mail.gmail.com>
-Content-language: ko
+	Tue, 3 Jan 2012 12:07:02 -0500
+In-Reply-To: <4F02F3FD.4010306@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'amit kachhap' <amit.kachhap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, linaro-dev@lists.linaro.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-amit kachhap wrote:
-> 
-> Hi Mr kim,
-> 
-> All the comments have been addressed for the Exynos cpu idle patchset.
-> The updated patchset was posted about one month back and there have
-> been no further comments on the patchset since then.
-> 
-> As this patchset seems to be stable now, do you think these these
-> patches can merged in this 3.3 merge window? Kindly let me know your
-> opinion.
-> 
+On 3 January 2012 17:56, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> On 01/03/2012 12:54 PM, Thomas Abraham wrote:
+>> Hi Lars,
+>>
+>> On 3 January 2012 14:36, Lars-Peter Clausen <lars@metafoo.de> wrote:
+>>> On 01/02/2012 06:54 AM, Thomas Abraham wrote:
+>>>> The platform-lcd driver depends on platform-specific callbacks to setup the
+>>>> lcd panel. These callbacks are supplied using driver's platform data. But
+>>>> for adding device tree support for platform-lcd driver, providing such
+>>>> callbacks is not possible (without using auxdata).
+>>>>
+>>>> Since the callbacks are usually lcd panel specific, it is possible to include
+>>>> the lcd panel specific setup and control functionality in the platform-lcd
+>>>> driver itself, thereby eliminating the need for supplying platform specific
+>>>> callbacks to the driver. The platform-lcd driver can include support for
+>>>> multiple lcd panels.
+>>>>
+>>>> This patchset removes the need for platform data for platform-lcd driver and
+>>>> adds support which can be used to implement lcd panel specific functionality
+>>>> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
+>>>> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
+>>>> This currently breaks build for other users of platform-lcd driver. Those can be
+>>>> fixed if this approach is acceptable.
+>>>
+>>> The whole approach looks rather backwards to me. The exact purpose of the
+>>> platform_lcd driver is to redirect the lcd driver callbacks to board code.
+>>> So by removing this support you not only break all the existing driver but
+>>> also create a driver which does nothing. Then you add another layer of
+>>> abstraction to implement custom drivers in this driver. A better approach in
+>>> my opinion is to simply implement these drivers as first level LCD drivers.
+>>> So leave the platform-lcd driver as it is and just add a gpio (or maybe
+>>> regulator) lcd driver instead.
+>>
+>> The existing platform-lcd driver mostly depends on the platform
+>> callbacks for lcd panel power controls. Looking at the current users
+>> of platform-lcd driver, a majority of the users of platform-lcd driver
+>> use a gpio to enable/disable the display/power. The gpio is controlled
+>> by the platform callbacks which the platform-lcd driver calls.
+>>
+>> Hence, it is possible to extend the platform-lcd driver to include the
+>> functionality of managing the gpio for lcd control. The platform code
+>> is only expected to provide a gpio number to the platform-lcd driver.
+>> This allows consolidation of the all the different platform callbacks
+>> that use a gpio for simple enable/disable of the lcd display.
+>>
+>> But there are other users of platform-lcd that do lot more than just
+>> control a single gpio. For such cases, it is possible to reuse the
+>> existing infrastructure of platform-lcd driver and extend it to handle
+>> such lcd panel specific functionality.
+>>
+>> The main advantages that I see here is the consolidation of platform
+>> specific callbacks into the driver which inturn allows adding device
+>> tree support without depending on platform data which have pointers to
+>> platform specific functions. In the next version of this patchset, it
+>> will be ensured that no platform breaks due to this change.
+>
+> Consolidation of the different implementations which use a GPIO to control
+> the LCD state is a good idea. But as I wrote above in this series you added
+> more or less another layer of abstraction. Namely introducing the
+> platform-lcd driver as a intermediate layer between the actual driver and
+> the LCD framework. But the layer is so thin that all it does is to call the
+> plat_lcd_driver_data callback from the lcd_ops callback. There is really no
+> point in doing this since you can setup the lcd_ops callbacks directly. Also
+> following your approach we would end up with a bunch of unrelated LCD
+> drivers in the platform-lcd driver module. The platform-lcd driver is so
+> generic that basically any LCD driver could be implemented on-top of it, but
+> this does not mean it has to.
 
-This conflicts with local common.[ch] working for ARM restart. Please wait
-until after the merge window for this patches.
+Yes, this will lead to including support for multiple lcd panels in
+the platform-lcd driver. But, we get to reuse most of the
+infrastruture in the platform-lcd driver such as module init/cleanup,
+suspend/resume, probe and lcd driver registration. There is a plan to
+include regulator support in the platform-lcd driver as well. If we go
+for independent drivers for all existing users of platform-lcd driver,
+then this common code in platform-lcd driver will have to be
+duplicated in multiple new drivers.
 
-Thanks.
+What would be your suggestion considering this. Actually, I don't
+clearly understand the technical/maintainability reasons which do not
+favour including support for multiple types of simple lcd panels in
+the platform-lcd driver.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> As said before, writing a plain LCD driver which implements the GPIO
+> handling and leaving the platform-lcd driver as it is, is in my opinion a
+> better approach.
+
+Thanks,
+Thomas.
