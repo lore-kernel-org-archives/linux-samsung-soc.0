@@ -1,67 +1,82 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 02/12] ARM: restart: S3C64XX: use new restart hook
-Date: Tue, 3 Jan 2012 11:51:02 +0000
-Message-ID: <20120103115102.GO2914@n2100.arm.linux.org.uk>
-References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com> <1324385316-6052-3-git-send-email-kgene.kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device tree support
+Date: Tue, 3 Jan 2012 17:24:07 +0530
+Message-ID: <CAJuYYwR8hnxJSfaXo4=RWCZ1HQZ1PHci+jY3K5b9ktWXryN0vA@mail.gmail.com>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+	<4F02C50E.9030904@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:40408 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752286Ab2ACLvT (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:40033 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752286Ab2ACLyI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 06:51:19 -0500
-Content-Disposition: inline
-In-Reply-To: <1324385316-6052-3-git-send-email-kgene.kim@samsung.com>
+	Tue, 3 Jan 2012 06:54:08 -0500
+In-Reply-To: <4F02C50E.9030904@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-On Tue, Dec 20, 2011 at 09:48:26PM +0900, Kukjin Kim wrote:
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/system.h b/arch/arm/mach-s3c64xx/include/mach/system.h
-> index d8ca578..353ed43 100644
-> --- a/arch/arm/mach-s3c64xx/include/mach/system.h
-> +++ b/arch/arm/mach-s3c64xx/include/mach/system.h
-> @@ -11,20 +11,9 @@
->  #ifndef __ASM_ARCH_SYSTEM_H
->  #define __ASM_ARCH_SYSTEM_H __FILE__
->  
-> -#include <plat/watchdog-reset.h>
-> -
->  static void arch_idle(void)
->  {
->  	/* nothing here yet */
->  }
->  
-> -static void arch_reset(char mode, const char *cmd)
-> -{
-> -	if (mode != 's')
-> -		arch_wdt_reset();
-> -
-> -	/* if all else fails, or mode was for soft, jump to 0 */
-> -	soft_restart(0);
-> -}
-> -
+Hi Lars,
 
-I just noticed this: if this comes before "ARM: restart: remove the now
-empty arch_reset()" (which it has to) then this will induce a build
-error.
+On 3 January 2012 14:36, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> On 01/02/2012 06:54 AM, Thomas Abraham wrote:
+>> The platform-lcd driver depends on platform-specific callbacks to setup the
+>> lcd panel. These callbacks are supplied using driver's platform data. But
+>> for adding device tree support for platform-lcd driver, providing such
+>> callbacks is not possible (without using auxdata).
+>>
+>> Since the callbacks are usually lcd panel specific, it is possible to include
+>> the lcd panel specific setup and control functionality in the platform-lcd
+>> driver itself, thereby eliminating the need for supplying platform specific
+>> callbacks to the driver. The platform-lcd driver can include support for
+>> multiple lcd panels.
+>>
+>> This patchset removes the need for platform data for platform-lcd driver and
+>> adds support which can be used to implement lcd panel specific functionality
+>> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
+>> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
+>> This currently breaks build for other users of platform-lcd driver. Those can be
+>> fixed if this approach is acceptable.
+>
+> The whole approach looks rather backwards to me. The exact purpose of the
+> platform_lcd driver is to redirect the lcd driver callbacks to board code.
+> So by removing this support you not only break all the existing driver but
+> also create a driver which does nothing. Then you add another layer of
+> abstraction to implement custom drivers in this driver. A better approach in
+> my opinion is to simply implement these drivers as first level LCD drivers.
+> So leave the platform-lcd driver as it is and just add a gpio (or maybe
+> regulator) lcd driver instead.
 
-If you have added all the necessary .restart hooks, then this patch should
-remove the _contents_ of arch_reset() but leave the function there.  The
-"ARM: restart: remove the now empty arch_reset()" is the earliest point
-at which arch_reset() can be safely removed from any platform (and that
-can only happen _after_ platforms we care about have been converted.)
+The existing platform-lcd driver mostly depends on the platform
+callbacks for lcd panel power controls. Looking at the current users
+of platform-lcd driver, a majority of the users of platform-lcd driver
+use a gpio to enable/disable the display/power. The gpio is controlled
+by the platform callbacks which the platform-lcd driver calls.
 
-The dependency chain is:
+Hence, it is possible to extend the platform-lcd driver to include the
+functionality of managing the gpio for lcd control. The platform code
+is only expected to provide a gpio number to the platform-lcd driver.
+This allows consolidation of the all the different platform callbacks
+that use a gpio for simple enable/disable of the lcd display.
 
-1. Base restart changes + restart cleanups.
-2. Platforms adding their .restart hooks, emptying arch_reset() as they're
-   fully converted.
-Then, once all platforms we care about are converted:
-3. Removal of code calling arch_reset().
-4. Removal of all empty arch_reset() functions and any header files left
-   empty at this point.
+But there are other users of platform-lcd that do lot more than just
+control a single gpio. For such cases, it is possible to reuse the
+existing infrastructure of platform-lcd driver and extend it to handle
+such lcd panel specific functionality.
 
-So, a patch combining (2) and (4) really doesn't work.
+The main advantages that I see here is the consolidation of platform
+specific callbacks into the driver which inturn allows adding device
+tree support without depending on platform data which have pointers to
+platform specific functions. In the next version of this patchset, it
+will be ensured that no platform breaks due to this change.
+
+Would such a approach be useful and acceptable? Thanks for your
+feedback and comments.
+
+Regards,
+Thomas.
+
+>
+> - Lars
