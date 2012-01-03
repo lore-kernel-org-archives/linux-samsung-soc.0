@@ -1,82 +1,99 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device tree support
-Date: Tue, 3 Jan 2012 17:24:07 +0530
-Message-ID: <CAJuYYwR8hnxJSfaXo4=RWCZ1HQZ1PHci+jY3K5b9ktWXryN0vA@mail.gmail.com>
-References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
-	<4F02C50E.9030904@metafoo.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 09/12] ARM: EXYNOS: introduce
+	arch/arm/mach-exynos/common.[ch]
+Date: Tue, 03 Jan 2012 20:54:17 +0900
+Message-ID: <013b01ccca0e$6c06ce40$44146ac0$%kim@samsung.com>
+References: <1324385316-6052-1-git-send-email-kgene.kim@samsung.com>
+ <1324385316-6052-10-git-send-email-kgene.kim@samsung.com>
+ <20111223191935.GS2577@n2100.arm.linux.org.uk>
+ <088101ccc1d8$d2023b00$7606b100$%kim@samsung.com>
+ <08f401ccc469$9a93a800$cfbaf800$%kim@samsung.com>
+ <20120103104120.GK2914@n2100.arm.linux.org.uk>
+ <012601ccca05$57d732b0$07859810$%kim@samsung.com>
+ <20120103105425.GL2914@n2100.arm.linux.org.uk>
+ <012801ccca07$037a24a0$0a6e6de0$%kim@samsung.com>
+ <20120103112003.GN2914@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:40033 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752286Ab2ACLyI (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9870 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752286Ab2ACLyU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 06:54:08 -0500
-In-Reply-To: <4F02C50E.9030904@metafoo.de>
+	Tue, 3 Jan 2012 06:54:20 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LX800L5J12GPCH0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 20:54:19 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LX80042012HLW50@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 20:54:19 +0900 (KST)
+In-reply-to: <20120103112003.GN2914@n2100.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: 'Nicolas Pitre' <nico@fluxnic.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hi Lars,
+Russell King - ARM Linux wrote:
+> 
+> On Tue, Jan 03, 2012 at 08:01:15PM +0900, Kukjin Kim wrote:
+> > If any problems, please kindly let me know.
+> 
+> Right, this looks better.  I'm now left with one remaining bit:
+> 
+> arch/arm/mach-exynos/include/mach/system.h:#include <plat/system-reset.h>
+> arch/arm/plat-s3c24xx/cpu.c:#include <plat/system-reset.h>
+> arch/arm/mach-s3c64xx/include/mach/system.h:#include <plat/system-reset.h>
+> arch/arm/mach-s3c2410/include/mach/system.h:#include <plat/system-reset.h>
+> 
 
-On 3 January 2012 14:36, Lars-Peter Clausen <lars@metafoo.de> wrote:
-> On 01/02/2012 06:54 AM, Thomas Abraham wrote:
->> The platform-lcd driver depends on platform-specific callbacks to setup the
->> lcd panel. These callbacks are supplied using driver's platform data. But
->> for adding device tree support for platform-lcd driver, providing such
->> callbacks is not possible (without using auxdata).
->>
->> Since the callbacks are usually lcd panel specific, it is possible to include
->> the lcd panel specific setup and control functionality in the platform-lcd
->> driver itself, thereby eliminating the need for supplying platform specific
->> callbacks to the driver. The platform-lcd driver can include support for
->> multiple lcd panels.
->>
->> This patchset removes the need for platform data for platform-lcd driver and
->> adds support which can be used to implement lcd panel specific functionality
->> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
->> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
->> This currently breaks build for other users of platform-lcd driver. Those can be
->> fixed if this approach is acceptable.
->
-> The whole approach looks rather backwards to me. The exact purpose of the
-> platform_lcd driver is to redirect the lcd driver callbacks to board code.
-> So by removing this support you not only break all the existing driver but
-> also create a driver which does nothing. Then you add another layer of
-> abstraction to implement custom drivers in this driver. A better approach in
-> my opinion is to simply implement these drivers as first level LCD drivers.
-> So leave the platform-lcd driver as it is and just add a gpio (or maybe
-> regulator) lcd driver instead.
+And,
 
-The existing platform-lcd driver mostly depends on the platform
-callbacks for lcd panel power controls. Looking at the current users
-of platform-lcd driver, a majority of the users of platform-lcd driver
-use a gpio to enable/disable the display/power. The gpio is controlled
-by the platform callbacks which the platform-lcd driver calls.
+arch/arm/mach-s5p64x0/include/mach/system.h:#include <plat/system-reset.h>
+arch/arm/mach-s5pc100/include/mach/system.h:#include <plat/system-reset.h>
+arch/arm/mach-s5pv210/include/mach/system.h:#include <plat/system-reset.h>
 
-Hence, it is possible to extend the platform-lcd driver to include the
-functionality of managing the gpio for lcd control. The platform code
-is only expected to provide a gpio number to the platform-lcd driver.
-This allows consolidation of the all the different platform callbacks
-that use a gpio for simple enable/disable of the lcd display.
+> and:
+> 
+> arch/arm/plat-samsung/include/plat/system-reset.h:
+> ...
+> #include <plat/watchdog-reset.h>
+> 
+> static void arch_reset(char mode, const char *cmd)
+> {
+>         arch_wdt_reset();
+> }
+> 
+> I assume that with all the patches I now have merged, arch_reset()
+> should never be called on any Samsung platform, and so the include of
+> plat/watchdog-reset.h and call of arch_wdt_reset() can be removed in
+> my "ARM: restart: plat-samsung: remove plat/reset.h and s5p_reset_hook"
+> patch?
+> 
+Yes, if we don't need arch_reset() anymore, we can remove them in your
+patch.
 
-But there are other users of platform-lcd that do lot more than just
-control a single gpio. For such cases, it is possible to reuse the
-existing infrastructure of platform-lcd driver and extend it to handle
-such lcd panel specific functionality.
+But I'm not sure, because happened following build error. Russell, don't we
+need arch_reset()?
 
-The main advantages that I see here is the consolidation of platform
-specific callbacks into the driver which inturn allows adding device
-tree support without depending on platform data which have pointers to
-platform specific functions. In the next version of this patchset, it
-will be ensured that no platform breaks due to this change.
+arch/arm/kernel/process.c: In function 'arm_machine_restart':
+arch/arm/kernel/process.c:127: error: implicit declaration of function
+'arch_reset'
 
-Would such a approach be useful and acceptable? Thanks for your
-feedback and comments.
+> What about arch/arm/plat-s3c24xx/cpu.c's include of system-reset.h?
+> Does that need to be replaced with watchdog-reset.h?
+> 
+> That then leads to "ARM: restart: remove the now empty arch_reset()"
+> removing system-reset.h and all includes of that file?
 
-Regards,
-Thomas.
+Thanks.
 
->
-> - Lars
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
