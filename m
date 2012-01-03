@@ -1,119 +1,123 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device
- tree support
-Date: Tue, 03 Jan 2012 19:36:48 +0100
-Message-ID: <4F034AC0.5080900@metafoo.de>
-References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>	<4F02C50E.9030904@metafoo.de>	<CAJuYYwR8hnxJSfaXo4=RWCZ1HQZ1PHci+jY3K5b9ktWXryN0vA@mail.gmail.com>	<4F02F3FD.4010306@metafoo.de> <CAJuYYwQJcW83EznpWmmZTCjSL9Ka1nztHx=4cpz2yzuhEyPtjQ@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung devel-dma for v3.3
+Date: Tue, 3 Jan 2012 21:11:59 +0000
+Message-ID: <201201032111.59603.arnd@arndb.de>
+References: <037401ccc8e7$e5671380$b0353a80$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJuYYwQJcW83EznpWmmZTCjSL9Ka1nztHx=4cpz2yzuhEyPtjQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from moutng.kundenserver.de ([212.227.126.187]:62576 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752637Ab2ACVMJ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jan 2012 16:12:09 -0500
+In-Reply-To: <037401ccc8e7$e5671380$b0353a80$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "'Koul, Vinod'" <vinod.koul@intel.com>, boojin.kim@samsung.com, Sascha Hauer <s.hauer@pengutronix.de>, "shawn.guo@linaro.org" <shawn.guo@linaro.org>
 
-On 01/03/2012 06:07 PM, Thomas Abraham wrote:
-> On 3 January 2012 17:56, Lars-Peter Clausen <lars@metafoo.de> wrote:
->> On 01/03/2012 12:54 PM, Thomas Abraham wrote:
->>> Hi Lars,
->>>
->>> On 3 January 2012 14:36, Lars-Peter Clausen <lars@metafoo.de> wrote:
->>>> On 01/02/2012 06:54 AM, Thomas Abraham wrote:
->>>>> The platform-lcd driver depends on platform-specific callbacks to setup the
->>>>> lcd panel. These callbacks are supplied using driver's platform data. But
->>>>> for adding device tree support for platform-lcd driver, providing such
->>>>> callbacks is not possible (without using auxdata).
->>>>>
->>>>> Since the callbacks are usually lcd panel specific, it is possible to include
->>>>> the lcd panel specific setup and control functionality in the platform-lcd
->>>>> driver itself, thereby eliminating the need for supplying platform specific
->>>>> callbacks to the driver. The platform-lcd driver can include support for
->>>>> multiple lcd panels.
->>>>>
->>>>> This patchset removes the need for platform data for platform-lcd driver and
->>>>> adds support which can be used to implement lcd panel specific functionality
->>>>> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
->>>>> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
->>>>> This currently breaks build for other users of platform-lcd driver. Those can be
->>>>> fixed if this approach is acceptable.
->>>>
->>>> The whole approach looks rather backwards to me. The exact purpose of the
->>>> platform_lcd driver is to redirect the lcd driver callbacks to board code.
->>>> So by removing this support you not only break all the existing driver but
->>>> also create a driver which does nothing. Then you add another layer of
->>>> abstraction to implement custom drivers in this driver. A better approach in
->>>> my opinion is to simply implement these drivers as first level LCD drivers.
->>>> So leave the platform-lcd driver as it is and just add a gpio (or maybe
->>>> regulator) lcd driver instead.
->>>
->>> The existing platform-lcd driver mostly depends on the platform
->>> callbacks for lcd panel power controls. Looking at the current users
->>> of platform-lcd driver, a majority of the users of platform-lcd driver
->>> use a gpio to enable/disable the display/power. The gpio is controlled
->>> by the platform callbacks which the platform-lcd driver calls.
->>>
->>> Hence, it is possible to extend the platform-lcd driver to include the
->>> functionality of managing the gpio for lcd control. The platform code
->>> is only expected to provide a gpio number to the platform-lcd driver.
->>> This allows consolidation of the all the different platform callbacks
->>> that use a gpio for simple enable/disable of the lcd display.
->>>
->>> But there are other users of platform-lcd that do lot more than just
->>> control a single gpio. For such cases, it is possible to reuse the
->>> existing infrastructure of platform-lcd driver and extend it to handle
->>> such lcd panel specific functionality.
->>>
->>> The main advantages that I see here is the consolidation of platform
->>> specific callbacks into the driver which inturn allows adding device
->>> tree support without depending on platform data which have pointers to
->>> platform specific functions. In the next version of this patchset, it
->>> will be ensured that no platform breaks due to this change.
->>
->> Consolidation of the different implementations which use a GPIO to control
->> the LCD state is a good idea. But as I wrote above in this series you added
->> more or less another layer of abstraction. Namely introducing the
->> platform-lcd driver as a intermediate layer between the actual driver and
->> the LCD framework. But the layer is so thin that all it does is to call the
->> plat_lcd_driver_data callback from the lcd_ops callback. There is really no
->> point in doing this since you can setup the lcd_ops callbacks directly. Also
->> following your approach we would end up with a bunch of unrelated LCD
->> drivers in the platform-lcd driver module. The platform-lcd driver is so
->> generic that basically any LCD driver could be implemented on-top of it, but
->> this does not mean it has to.
+On Monday 02 January 2012, Kukjin Kim wrote:
+> Hi Arnd and Olof,
 > 
-> Yes, this will lead to including support for multiple lcd panels in
-> the platform-lcd driver. But, we get to reuse most of the
-> infrastruture in the platform-lcd driver such as module init/cleanup,
-> suspend/resume, probe and lcd driver registration. There is a plan to
-> include regulator support in the platform-lcd driver as well. If we go
-> for independent drivers for all existing users of platform-lcd driver,
-> then this common code in platform-lcd driver will have to be
-> duplicated in multiple new drivers.
-
-Most of the infrastructure code is driver boiler-plate code. And you'll add
-about the same amount of code due to your additional layer redirection. You'll
-still have a probe and remove function per driver. You'll have to define a set
-of plat_lcd_driver_data per driver. You'll have all these ugly ifdefs.
-
-An exception is the suspend/resume handling. But this does not look like it is
-something which is specific to simple displays, more "complex" ones or
-non-platform driver lcd drivers might want to use a similar scheme. A good idea
-would be to add support for this to the LCD framework. Similar to the backlight
-frameworks BL_CORE_SUSPENDRESUME.
-
+> Please pull Samsung devel-dma for v3.3 from following:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> next-samsung-devel-dma
 > 
-> What would be your suggestion considering this. Actually, I don't
-> clearly understand the technical/maintainability reasons which do not
-> favour including support for multiple types of simple lcd panels in
-> the platform-lcd driver.
+> Its major feature is including merge of pl330 driver into drivers/dma/ and
+> got the ack from Vinod Koul and Linus Walleij and some dma development for
+> Samsung stuff.
+> 
+> As a note, since having dependency with Vinod's slave-dma/next (dma tree)
+> and next-samsung-dt1 branch which has been sent to you for arm-soc/next/dt,
+> that has been provided based on slave-dma/next tree and next-samsung-dt1.
+> 
+> If any problems, please let me know.
 
-To me it seems very unidiomatic to put multiple drivers into the same driver.
-E.g. where will we draw the line, which kind of device is simple enough so
-support for this device should be embedded in the plaform-lcd driver. Once you
-have support for multiple types of simple lcd panels in one driver things will
-start to get messy. Image how the driver will look like if it has support for
-say 5 or 10 different types of simple lcd panels.
+Pulled into a new next/drivers2 branch so I can send the other drivers
+early but delay this until the dma-slave branch is merged, if necessary.
 
-- Lars
+There were some conflicts between imx changes that went into the dma-slave
+tree and those that went into arm-soc. Sascha, Shawn: can you have a look
+to make sure the resolution below is correct?
+
+Thanks,
+
+	Arnd
+
+diff --cc arch/arm/mach-exynos/clock.c
+index da50b1a,5185a25..62e260e
+--- a/arch/arm/mach-exynos/clock.c
++++ b/arch/arm/mach-exynos/clock.c
+@@@ -1322,15 -1308,9 +1330,16 @@@ static struct clk_lookup exynos4_clk_lo
+        CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &clk_sclk_uart1.clk),
+        CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &clk_sclk_uart2.clk),
+        CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &clk_sclk_uart3.clk),
+ +      CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
+ +      CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
+ +      CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
+ +      CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
+        CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
+        CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
++       CLKDEV_INIT("dma-pl330.2", "apb_pclk", &clk_mdma1),
+ +      CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &clk_sclk_spi0.clk),
+ +      CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk0", &clk_sclk_spi1.clk),
+ +      CLKDEV_INIT("s3c64xx-spi.2", "spi_busclk0", &clk_sclk_spi2.clk),
+  };
+  
+  static int xtal_rate;
+diff --cc drivers/dma/mxs-dma.c
+index fc903c0,493af2f..b06cd4c
+--- a/drivers/dma/mxs-dma.c
++++ b/drivers/dma/mxs-dma.c
+@@@ -578,9 -554,9 +554,9 @@@ static int __init mxs_dma_init(struct m
+  {
+        int ret;
+  
+ -      ret = clk_enable(mxs_dma->clk);
+ +      ret = clk_prepare_enable(mxs_dma->clk);
+        if (ret)
+-               goto err_out;
++               return ret;
+  
+        ret = mxs_reset_block(mxs_dma->base);
+        if (ret)
+@@@ -604,11 -580,8 +580,8 @@@
+        writel(MXS_DMA_CHANNELS_MASK << MXS_DMA_CHANNELS,
+                mxs_dma->base + HW_APBHX_CTRL1 + MXS_SET_ADDR);
+  
+-       clk_disable_unprepare(mxs_dma->clk);
+- 
+-       return 0;
+- 
+  err_out:
+ -      clk_disable(mxs_dma->clk);
+++      clk_disable_unprepare(mxs_dma->clk);
+        return ret;
+  }
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -124,7 +124,7 @@ config MV_XOR
+ 
+ config MX3_IPU
+        bool "MX3x Image Processing Unit support"
+-       depends on SOC_IMX31 ||<C2><A0>SOC_IMX35
++       depends on ARCH_MXC
+        select DMA_ENGINE
+        default y
+ 	       help
+@@ -194,33 +201,32 @@ config PL330_DMA
+ config IMX_SDMA
+        tristate "i.MX SDMA support"
+-       depends on ARCH_MX25 || SOC_IMX31 ||<C2><A0>SOC_IMX35 || ARCH_MX5
++       depends on ARCH_MXC
+        select DMA_ENGINE
+        help
+          Support the i.MX SDMA engine. This engine is integrated into
+-         Freescale i.MX25/31/35/51 chips.
++         Freescale i.MX25/31/35/51/53 chips.
+ 
+ config IMX_DMA
+        tristate "i.MX DMA support"
