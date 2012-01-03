@@ -1,117 +1,156 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH 1/2] PM / Domains: Add OF support
-Date: Tue, 3 Jan 2012 23:30:58 +0100
-Message-ID: <201201032330.58602.rjw@sisk.pl>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org> <201112282317.54291.rjw@sisk.pl> <CAJuYYwQp7gfuovd8kKEe_D+ACyq4OafxZRW_G=U_9zCMOy+prA@mail.gmail.com>
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: Re: [lm-sensors] [RFC PATCH 2/3] thermal: exynos4: Register the tmu
+ sensor with the thermal interface layer
+Date: Tue, 3 Jan 2012 14:25:53 -0800
+Message-ID: <1325629553.26706.11.camel@groeck-laptop>
+References: <1324468798-20423-1-git-send-email-amit.kachhap@linaro.org>
+	 <1324468798-20423-3-git-send-email-amit.kachhap@linaro.org>
+Reply-To: guenter.roeck@ericsson.com
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:47129 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751618Ab2ACW1j (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 17:27:39 -0500
-In-Reply-To: <CAJuYYwQp7gfuovd8kKEe_D+ACyq4OafxZRW_G=U_9zCMOy+prA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-Reply-To: <1324468798-20423-3-git-send-email-amit.kachhap@linaro.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, patches@linaro.org
 
-On Monday, January 02, 2012, Thomas Abraham wrote:
-> Hi Rafael,
+On Wed, 2011-12-21 at 06:59 -0500, Amit Daniel Kachhap wrote:
+> Export and register information from the hwmon tmu sensor to the samsung
+> exynos kernel thermal framework where different cooling devices and thermal
+> zone are binded. The exported information is based according to the data
+> structure thermal_sensor_conf present in exynos_thermal.h. HWMON sysfs
+> functions are currently left although all of them are present in generic
+> linux thermal layer.
+> Also the platform data structure is modified to pass frequency cooling
+> in percentages for each thermal level.
 > 
-> On 29 December 2011 03:47, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> > On Wednesday, December 28, 2011, Thomas Abraham wrote:
-> >> Hi Mark, Rafael,
-> >
-> > Hi,
-> >
-> >> On 27 December 2011 02:14, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> >> > On Monday, December 26, 2011, Mark Brown wrote:
-> >> >> On Mon, Dec 26, 2011 at 08:13:19PM +0100, Rafael J. Wysocki wrote:
-> >> >> > On Monday, December 12, 2011, Thomas Abraham wrote:
-> >> >>
-> >> >> > > A device node pointer is added to generic pm domain structure to associate
-> >> >> > > the domain with a node in the device tree.
-> >> >>
-> >> >> > That sounds fine except for one thing: PM domains are not devices, so adding
-> >> >> > "device node" pointers to them is kind of confusing.  Perhaps there should be
-> >> >> > something like struct dt_node, representing a more general device tree node?
-> >> >>
-> >> >> There's struct of_node which is exactly that, though practically
-> >> >> speaking you need a device if you're going to bind automatically to
-> >> >> something from the device tree in a sensible fashion and there is actual
-> >> >> hardware under there so a device does make some sense.
-> >>
-> >> In patch 2/2 of this series, the platform code looks for nodes in
-> >> device tree that represent a power domain. When a power domain node is
-> >> found, a generic power domain is instantiated with pm_genpd_init()
-> >> using the information available from the node in device tree. There is
-> >> no automatic binding required in this case. The power domain node does
-> >> represent a hardware that manages the power domain.
-> >
-> > Good.  So would it be possible to use struct of_node instead of
-> > struct device_node in struct generic_pm_domain?
-> 
-> Sorry, I used 'struct of_node' and 'struct device_node'
-> interchangeably in my reply. All the nodes in a device tree are
-> represented by 'struct device_node'.
-> 
-> >
-> >> >>
-> >> >> This is in part compatibility with the existing Exynos code which uses
-> >> >> devices to probe the domains for non-DT systems.
-> >> >
-> >> > Well, that's not a general case, though.
-> >> >
-> >> > It doesn't feel approporiate to use a "device node" pointer for something
-> >> > that's not based on struct device, at least not a generic level, so I wonder
-> >> > if there's a different way.
-> >>
-> >> A device node pointer or of_node pointer is a simple pointer to a
-> >> instance of a node in device tree. All nodes in a device tree need not
-> >> represent a corresponding 'struct device'. A node in device tree can
-> >> described a hardware feature such as a power domain supported in the
-> >> hardware.
-> >
-> > Sure.
-> >
-> >> The addition of device tree support for generic power domains in this
-> >> patchset is generic for all platforms. The platform code instantiates
-> >> generic power domains from device tree with the of_node pointer
-> >> assigned to 'struct generic_pm_domain'. Then, in
-> >> __pm_genpd_add_device(), given a of_node pointer (to gen_pd), it is
-> >> possible to find a matching power domain to select.
-> >
-> > My point was that adding the struct device_node pointer to
-> > struct generic_pm_domain didn't look good, because that structure didn't
-> > represent a device in general.  While I understand that it may be regarded
-> > as a "device object" on some platforms, there are platforms that don't
-> > regard PM domains as devices.  For this reason (and only for this reason)
-> > it appears to be more appropriate to use a more generic device tree node
-> > type for struct generic_pm_domain.
-> 
-> If a platform uses some hardware controls (register read/writes) to
-> enable/disable/control power domain, then it can be represented in the
-> device tree. But such a node need not represent a 'struct device'.
-> Other nodes in the device tree can then reference the power domain
-> node.
-> 
-> If a platform does not have any hardware knobs for controlling power
-> domains, then probably it will not be represented in the device tree.
-> But I am not sure of this case.
-> 
-> The 'struct device_node' is a representation of a instance of a device
-> tree node. It can represent nodes that are not devices. Hence, it can
-> be used to represent a power domain in a device tree and also included
-> in the 'struct generic_pm_domain'.
+Hi Amit,
 
-OK, so please address my second comment regarding the $subject patch,
-i.e. that you might add a wrapper around the original
-__pm_genpd_add_device() instead of modifying __pm_genpd_add_device()
-itself.
+wouldn't it make more sense to merge the code as necessary from
+hwmon/exynos4_tmu.c into the new thermal/exynos_thermal.c, and drop
+hwmon/exynos4_tmu.c entirely ?
+
+With that, you should get the hwmon entries for free, and we would not
+have to maintain two drivers with overlapping functionality.
 
 Thanks,
-Rafael
+Guenter
+
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> ---
+>  drivers/hwmon/exynos4_tmu.c               |   34 ++++++++++++++++++++++++++--
+>  include/linux/platform_data/exynos4_tmu.h |    7 ++++++
+>  2 files changed, 38 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/hwmon/exynos4_tmu.c b/drivers/hwmon/exynos4_tmu.c
+> index f2359a0..6912a7f 100644
+> --- a/drivers/hwmon/exynos4_tmu.c
+> +++ b/drivers/hwmon/exynos4_tmu.c
+> @@ -37,6 +37,9 @@
+>  #include <linux/hwmon-sysfs.h>
+>  
+>  #include <linux/platform_data/exynos4_tmu.h>
+> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
+> +#include <linux/exynos_thermal.h>
+> +#endif
+>  
+>  #define EXYNOS4_TMU_REG_TRIMINFO	0x0
+>  #define EXYNOS4_TMU_REG_CONTROL		0x20
+> @@ -248,10 +251,13 @@ static void exynos4_tmu_work(struct work_struct *work)
+>  
+>  	kobject_uevent(&data->hwmon_dev->kobj, KOBJ_CHANGE);
+>  
+> -	enable_irq(data->irq);
+>  
+>  	clk_disable(data->clk);
+>  	mutex_unlock(&data->lock);
+> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
+> +	exynos4_report_trigger();
+> +#endif
+> +	enable_irq(data->irq);
+>  }
+>  
+>  static irqreturn_t exynos4_tmu_irq(int irq, void *id)
+> @@ -345,6 +351,14 @@ static const struct attribute_group exynos4_tmu_attr_group = {
+>  	.attrs = exynos4_tmu_attributes,
+>  };
+>  
+> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
+> +static struct thermal_sensor_conf exynos4_sensor_conf = {
+> +	.name			= "exynos4-therm",
+> +	.read_temperature	= (int (*)(void *))exynos4_tmu_read,
+> +};
+> +#endif
+> +/*CONFIG_SAMSUNG_THERMAL_INTERFACE*/
+> +
+>  static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
+>  {
+>  	struct exynos4_tmu_data *data;
+> @@ -432,9 +446,20 @@ static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
+>  	}
+>  
+>  	exynos4_tmu_control(pdev, true);
+> -
+> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
+> +	(&exynos4_sensor_conf)->private_data = data;
+> +	(&exynos4_sensor_conf)->sensor_data = pdata;
+> +	ret = exynos4_register_thermal(&exynos4_sensor_conf);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to register thermal interface\n");
+> +		goto err_hwmon_device;
+> +	}
+> +#endif
+>  	return 0;
+> -
+> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
+> +err_hwmon_device:
+> +	hwmon_device_unregister(data->hwmon_dev);
+> +#endif
+>  err_create_group:
+>  	sysfs_remove_group(&pdev->dev.kobj, &exynos4_tmu_attr_group);
+>  err_clk:
+> @@ -458,6 +483,9 @@ static int __devexit exynos4_tmu_remove(struct platform_device *pdev)
+>  
+>  	exynos4_tmu_control(pdev, false);
+>  
+> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
+> +	exynos4_unregister_thermal();
+> +#endif
+>  	hwmon_device_unregister(data->hwmon_dev);
+>  	sysfs_remove_group(&pdev->dev.kobj, &exynos4_tmu_attr_group);
+>  
+> diff --git a/include/linux/platform_data/exynos4_tmu.h b/include/linux/platform_data/exynos4_tmu.h
+> index 39e038c..642c508 100644
+> --- a/include/linux/platform_data/exynos4_tmu.h
+> +++ b/include/linux/platform_data/exynos4_tmu.h
+> @@ -21,6 +21,7 @@
+>  
+>  #ifndef _LINUX_EXYNOS4_TMU_H
+>  #define _LINUX_EXYNOS4_TMU_H
+> +#include <linux/cpu_cooling.h>
+>  
+>  enum calibration_type {
+>  	TYPE_ONE_POINT_TRIMMING,
+> @@ -64,6 +65,9 @@ enum calibration_type {
+>   *	in the positive-TC generator block
+>   *	0 <= reference_voltage <= 31
+>   * @cal_type: calibration type for temperature
+> + * @freq_pctg_table: Table representing frequency reduction percentage.
+> + * @freq_tab_count: Count of the above table as frequency reduction may
+> + *	applicable to only some of the trigger levels.
+>   *
+>   * This structure is required for configuration of exynos4_tmu driver.
+>   */
+> @@ -79,5 +83,8 @@ struct exynos4_tmu_platform_data {
+>  	u8 reference_voltage;
+>  
+>  	enum calibration_type cal_type;
+> +
+> +	struct freq_pctg_table freq_tab[4];
+> +	unsigned int freq_tab_count;
+>  };
+>  #endif /* _LINUX_EXYNOS4_TMU_H */
+
+
