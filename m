@@ -1,87 +1,49 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: Exynos: Hook up power domains to generic power
- domain infrastructure
-Date: Tue, 3 Jan 2012 13:53:28 +0530
-Message-ID: <CAJuYYwSGYnyq+hEbgpyvFoAB9LWWLhD2URaWsCC4vMyZwRQVbg@mail.gmail.com>
-References: <1323704789-23923-1-git-send-email-thomas.abraham@linaro.org>
- <1323704789-23923-2-git-send-email-thomas.abraham@linaro.org>
- <1323704789-23923-3-git-send-email-thomas.abraham@linaro.org>
- <4EFB66C3.4040504@gmail.com>
- <CAJuYYwQbTJTRdsa9WpQuCtSTYacbrcP3CVBFaAYHP1jLPky10A@mail.gmail.com>
- <4F022D7D.3060802@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [RFC][PATCH 1/4] lcd: platform-lcd: Eliminate need for platform data
+Date: Tue, 3 Jan 2012 13:56:58 +0530
+Message-ID: <CAJuYYwSAsPYibZsgdHQzMba-wCymRxqqcmtZSZi7A_AzTJv5tg@mail.gmail.com>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+	<1325483675-21908-2-git-send-email-thomas.abraham@linaro.org>
+	<20120102115959.GG2899@opensource.wolfsonmicro.com>
+	<CAJuYYwQrfp6R=kSzXr6y0unDk9FtNxoy3Lt5QabdNMg9Qux=bg@mail.gmail.com>
+	<20120102181313.GA27875@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <4F022D7D.3060802-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Sylwester Nawrocki <snjw23-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, rjw-KKrjLPT3xs0@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:39680 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751992Ab2ACI07 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Jan 2012 03:26:59 -0500
+In-Reply-To: <20120102181313.GA27875@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-Hi Sylwester,
+On 2 January 2012 23:43, Mark Brown <broonie@opensource.wolfsonmicro.co=
+m> wrote:
+> On Mon, Jan 02, 2012 at 11:21:46PM +0530, Thomas Abraham wrote:
+>
+>> Your point on maintaining support for both old and new formats is
+>> helpful. But I am not sure if maintaining support for both formats i=
+s
+>> the right thing to do. As most of the ARM platforms will switch to
+>> using dt, maybe converting all of them to new format would be better=
+=2E
+>> I will try doing this and prepare a patch.
+>
+> There's more architectures than ARM supported in Linux and only a
+> minority of them are using device tree at the minute. =A0Unless every
+> architecture switches over platform data based users will still need =
+to
+> be supported.
 
-On 3 January 2012 03:49, Sylwester Nawrocki <snjw23-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Thomas,
->
-> thank you for clarifying.
->
-> On 01/02/2012 03:14 AM, Thomas Abraham wrote:
->>
->> The following is a snippet from the dts file used for testing.
->>
->> =A0 =A0[...]
->>
->> =A0 =A0lcd0:power-domain-lcd0 {
->> =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,exynos4210-pd";
->> =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x10023C00 0x10>;
->> =A0 =A0};
->>
->> =A0 =A0[...]
->>
->> =A0 =A0fimd0:display-controller {
->> =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "samsung,exynos4-fimd";
->> =A0 =A0 =A0 =A0 =A0 =A0 [...]
->> =A0 =A0 =A0 =A0 =A0 =A0 pd =3D <&lcd0>;
->> =A0 =A0};
->>
->> The fimd (display controller) driver would then do the following.
->>
->> parp =3D of_get_property(pdev->dev.of_node, "pd", NULL);
->> pd_np =3D of_find_node_by_phandle(be32_to_cpup(parp));
->> pm_genpd_of_add_device(pd_np, &pdev->dev);
->
-> Sounds interesting. Currently it's platform code that adds devices to
-> a corresponding power domain. But doing it at drivers might be more
-> convenient for avoiding device/driver/power domain registration
-> synchronization issues, especially that knowledge about power domain
-> existence may be contained directly in DT description, not needing
-> drivers to carry platform specific data.
->
-> BTW, I have a feeling that "samsung" is a bit longish prefix for the bind=
-ings.
-> Didn't you initially consider "sec" for instance ? Probably it is already
-> too late for changing that though.
-
-I had not thought of "sec". I agree that "sec" would have been better
-as it is shorter and represents bindings specific to Samsung
-Electronics. But it is not intuitive at the same time. If there is
-greater consensus on using "sec", we could try and request for a
-change but looks difficult to get through.
+I will try to retain the old platform data style also since there are
+support for lcd panels in mainline that use 2 or more gpios in a panel
+specific way. And it would be difficult to fold them into a generic
+lcd type for lcd power control.
 
 Thanks,
 Thomas.
-
->
->> The lookup is based on the node pointer of the power domain.
->
-> Thanks,
-> Sylwester
