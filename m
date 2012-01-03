@@ -1,51 +1,54 @@
-From: 'Joerg Roedel' <joerg.roedel@amd.com>
-Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Tue, 3 Jan 2012 14:10:48 +0100
-Message-ID: <20120103131048.GD29877@amd.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
- <20120102134229.GZ29877@amd.com>
- <00dc01ccc9fb$4fcb7590$ef6260b0$%szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V4 0/5] ARM: exynos: Add l2 retention mode cpuidle state
+Date: Tue, 03 Jan 2012 22:22:09 +0900
+Message-ID: <014a01ccca1a$b25495b0$16fdc110$%kim@samsung.com>
+References: <1323083172-14096-1-git-send-email-amit.kachhap@linaro.org>
+ <CADGdYn7ZU5xiDvOLMR4wVHEWtF-2p86jNZFCOXMV6PrZXuLWbQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from am1ehsobe002.messaging.microsoft.com ([213.199.154.205]:30020
-	"EHLO AM1EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752181Ab2ACNLP (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:38451 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752759Ab2ACNWM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 08:11:15 -0500
-Content-Disposition: inline
-In-Reply-To: <00dc01ccc9fb$4fcb7590$ef6260b0$%szyprowski@samsung.com>
+	Tue, 3 Jan 2012 08:22:12 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LX800AVY54YU6K0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 22:22:11 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LX80066F54XF230@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 03 Jan 2012 22:22:11 +0900 (KST)
+In-reply-to: <CADGdYn7ZU5xiDvOLMR4wVHEWtF-2p86jNZFCOXMV6PrZXuLWbQ@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'KyongHo Cho' <pullip.cho@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: 'amit kachhap' <amit.kachhap@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org, linaro-dev@lists.linaro.org
 
-Hi Marek,
+amit kachhap wrote:
+> 
+> Hi Mr kim,
+> 
+> All the comments have been addressed for the Exynos cpu idle patchset.
+> The updated patchset was posted about one month back and there have
+> been no further comments on the patchset since then.
+> 
+> As this patchset seems to be stable now, do you think these these
+> patches can merged in this 3.3 merge window? Kindly let me know your
+> opinion.
+> 
 
-On Tue, Jan 03, 2012 at 10:37:29AM +0100, Marek Szyprowski wrote:
-> Yes, there is something a bit wrong with your kernel configuration. You get this error if 
-> there is no board selected to be compiled-in. Please go to kernel configuration and select
-> "System Type -> SAMSUNG EXYNOS SoCs Suppport". Then select some hardware board to be 
-> compiled in, for example SMDKV310, SMDKC210 and "Mobile NURI board".
+This conflicts with local common.[ch] working for ARM restart. Please wait
+until after the merge window for this patches.
 
-thanks for this info. I selected a board and compile of linux-next now
-fails with:
+Thanks.
 
-  LD      .tmp_vmlinux1
-arch/arm/mach-exynos/built-in.o: In function `exynos4_pm_resume':
-/data/lemmy/linux.trees.git/arch/arm/mach-exynos/pm.c:385: undefined reference to `scu_enable'
-make[1]: *** [.tmp_vmlinux1] Error 1
-
-This is because scu_enable() is only available with CONFIG_SMP=y which
-is not set for Exynos.
-
-
-	Joerg
-
--- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
