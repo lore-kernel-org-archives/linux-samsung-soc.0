@@ -1,140 +1,142 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung devel for v3.3
-Date: Wed, 04 Jan 2012 08:33:50 +0900
-Message-ID: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [RFC][PATCH 0/4] lcd: platform-lcd: Add lcd panel and device tree support
+Date: Wed, 4 Jan 2012 11:43:48 +0530
+Message-ID: <CAJuYYwTjFRR-YS4sh0Pn62fH3uRMT3cJO8EoFDSzoHAFObDysw@mail.gmail.com>
+References: <1325483675-21908-1-git-send-email-thomas.abraham@linaro.org>
+	<4F02C50E.9030904@metafoo.de>
+	<CAJuYYwR8hnxJSfaXo4=RWCZ1HQZ1PHci+jY3K5b9ktWXryN0vA@mail.gmail.com>
+	<4F02F3FD.4010306@metafoo.de>
+	<CAJuYYwQJcW83EznpWmmZTCjSL9Ka1nztHx=4cpz2yzuhEyPtjQ@mail.gmail.com>
+	<4F034AC0.5080900@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16852 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754403Ab2ACXdw (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:47616 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752609Ab2ADGNt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jan 2012 18:33:52 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LX800B02XFYHA30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 04 Jan 2012 08:33:51 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LX800CC6XGEH3A0@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 04 Jan 2012 08:33:50 +0900 (KST)
-Content-language: ko
+	Wed, 4 Jan 2012 01:13:49 -0500
+In-Reply-To: <4F034AC0.5080900@metafoo.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-Hi Arnd,
+Hi Lars,
 
-Please pull Samsung devel for v3.3 from:
- git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next-samsung-devel-samsung
+On 4 January 2012 00:06, Lars-Peter Clausen <lars@metafoo.de> wrote:
+> On 01/03/2012 06:07 PM, Thomas Abraham wrote:
+>> On 3 January 2012 17:56, Lars-Peter Clausen <lars@metafoo.de> wrote:
+>>> On 01/03/2012 12:54 PM, Thomas Abraham wrote:
+>>>> Hi Lars,
+>>>>
+>>>> On 3 January 2012 14:36, Lars-Peter Clausen <lars@metafoo.de> wrote:
+>>>>> On 01/02/2012 06:54 AM, Thomas Abraham wrote:
+>>>>>> The platform-lcd driver depends on platform-specific callbacks to setup the
+>>>>>> lcd panel. These callbacks are supplied using driver's platform data. But
+>>>>>> for adding device tree support for platform-lcd driver, providing such
+>>>>>> callbacks is not possible (without using auxdata).
+>>>>>>
+>>>>>> Since the callbacks are usually lcd panel specific, it is possible to include
+>>>>>> the lcd panel specific setup and control functionality in the platform-lcd
+>>>>>> driver itself, thereby eliminating the need for supplying platform specific
+>>>>>> callbacks to the driver. The platform-lcd driver can include support for
+>>>>>> multiple lcd panels.
+>>>>>>
+>>>>>> This patchset removes the need for platform data for platform-lcd driver and
+>>>>>> adds support which can be used to implement lcd panel specific functionality
+>>>>>> in the driver. As an example, the support for Hydis hv070wsa lcd panel is added
+>>>>>> to the platform-lcd driver which is then used on the Exynos4 based Origen board.
+>>>>>> This currently breaks build for other users of platform-lcd driver. Those can be
+>>>>>> fixed if this approach is acceptable.
+>>>>>
+>>>>> The whole approach looks rather backwards to me. The exact purpose of the
+>>>>> platform_lcd driver is to redirect the lcd driver callbacks to board code.
+>>>>> So by removing this support you not only break all the existing driver but
+>>>>> also create a driver which does nothing. Then you add another layer of
+>>>>> abstraction to implement custom drivers in this driver. A better approach in
+>>>>> my opinion is to simply implement these drivers as first level LCD drivers.
+>>>>> So leave the platform-lcd driver as it is and just add a gpio (or maybe
+>>>>> regulator) lcd driver instead.
+>>>>
+>>>> The existing platform-lcd driver mostly depends on the platform
+>>>> callbacks for lcd panel power controls. Looking at the current users
+>>>> of platform-lcd driver, a majority of the users of platform-lcd driver
+>>>> use a gpio to enable/disable the display/power. The gpio is controlled
+>>>> by the platform callbacks which the platform-lcd driver calls.
+>>>>
+>>>> Hence, it is possible to extend the platform-lcd driver to include the
+>>>> functionality of managing the gpio for lcd control. The platform code
+>>>> is only expected to provide a gpio number to the platform-lcd driver.
+>>>> This allows consolidation of the all the different platform callbacks
+>>>> that use a gpio for simple enable/disable of the lcd display.
+>>>>
+>>>> But there are other users of platform-lcd that do lot more than just
+>>>> control a single gpio. For such cases, it is possible to reuse the
+>>>> existing infrastructure of platform-lcd driver and extend it to handle
+>>>> such lcd panel specific functionality.
+>>>>
+>>>> The main advantages that I see here is the consolidation of platform
+>>>> specific callbacks into the driver which inturn allows adding device
+>>>> tree support without depending on platform data which have pointers to
+>>>> platform specific functions. In the next version of this patchset, it
+>>>> will be ensured that no platform breaks due to this change.
+>>>
+>>> Consolidation of the different implementations which use a GPIO to control
+>>> the LCD state is a good idea. But as I wrote above in this series you added
+>>> more or less another layer of abstraction. Namely introducing the
+>>> platform-lcd driver as a intermediate layer between the actual driver and
+>>> the LCD framework. But the layer is so thin that all it does is to call the
+>>> plat_lcd_driver_data callback from the lcd_ops callback. There is really no
+>>> point in doing this since you can setup the lcd_ops callbacks directly. Also
+>>> following your approach we would end up with a bunch of unrelated LCD
+>>> drivers in the platform-lcd driver module. The platform-lcd driver is so
+>>> generic that basically any LCD driver could be implemented on-top of it, but
+>>> this does not mean it has to.
+>>
+>> Yes, this will lead to including support for multiple lcd panels in
+>> the platform-lcd driver. But, we get to reuse most of the
+>> infrastruture in the platform-lcd driver such as module init/cleanup,
+>> suspend/resume, probe and lcd driver registration. There is a plan to
+>> include regulator support in the platform-lcd driver as well. If we go
+>> for independent drivers for all existing users of platform-lcd driver,
+>> then this common code in platform-lcd driver will have to be
+>> duplicated in multiple new drivers.
+>
+> Most of the infrastructure code is driver boiler-plate code. And you'll add
+> about the same amount of code due to your additional layer redirection. You'll
+> still have a probe and remove function per driver. You'll have to define a set
+> of plat_lcd_driver_data per driver. You'll have all these ugly ifdefs.
+>
+> An exception is the suspend/resume handling. But this does not look like it is
+> something which is specific to simple displays, more "complex" ones or
+> non-platform driver lcd drivers might want to use a similar scheme. A good idea
+> would be to add support for this to the LCD framework. Similar to the backlight
+> frameworks BL_CORE_SUSPENDRESUME.
+>
+>>
+>> What would be your suggestion considering this. Actually, I don't
+>> clearly understand the technical/maintainability reasons which do not
+>> favour including support for multiple types of simple lcd panels in
+>> the platform-lcd driver.
+>
+> To me it seems very unidiomatic to put multiple drivers into the same driver.
+> E.g. where will we draw the line, which kind of device is simple enough so
+> support for this device should be embedded in the plaform-lcd driver. Once you
+> have support for multiple types of simple lcd panels in one driver things will
+> start to get messy. Image how the driver will look like if it has support for
+> say 5 or 10 different types of simple lcd panels.
 
-It is including s3c64xx cpuidle and development for Cragganmore, ORIGEN and
-some boards.
+Ok, I understand your point now. A new lcd driver will be written
+mostly derived from platform-lcd driver (minus the platform specific
+callbacks in platform data) that can manage power control for lcd
+panels which can be controlled by a single gpio. Also, regulator and
+device tree support will be added to this driver. Thanks for your
+comments.
 
-If any problems, please let me know.
+Regards,
+Thomas.
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit 5f0a6e2d503896062f641639dacfe5055c2f593b:
-
-  Linux 3.2-rc7 (2011-12-23 21:51:06 -0800)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next-samsung-devel-samsung
-
-Denis Kuzmenko (1):
-      ARM: S3C2440: Add new LCD (W35i) support for Mini2440 board
-
-Jingoo Han (1):
-      ARM: SAMSUNG: Add a callback 'notify_after' for PWM backlight control
-
-Kamil Debski (3):
-      ARM: SAMSUNG: add G2D to plat-s5p and mach-exynos
-      ARM: EXYNOS: add G2D to mach-nuri
-      ARM: EXYNOS: add G2D to mach-universal
-
-Mark Brown (26):
-      ARM: S3C64XX: Update for conversion to SAMSUNG_GPIO_EXTRA
-      ARM: SAMSUNG: Fix GPIO space reservation for S3C64xx platforms
-      ARM: S3C64XX: Correct reservation of GPIOs for CPU module on
-Cragganmore
-      ARM: S3C64XX: Raise the frequency of the second I2C bus on Cragganmore
-      ARM: S3C64XX: Use software initiated powerdown for Cragganmore
-      ARM: S3C64XX: Configure WM1250 EV1 GPIOs on Cragganmore
-      ARM: S3C64XX: Improve logging of unknown Cragganmore module types
-      ARM: S3C64XX: Run Tobermory interrupts in the default mode
-      ARM: S3C64XX: Hook up platform data for Kilchomin module on
-Cragganmore
-      ARM: S3C64XX: Hook up Littlemill audio card on Cragganmore
-      ARM: S3C64XX: Power gate unused domains
-      ARM: S3C64XX: Hook up VDDINT on Cragganmore
-      ARM: S3C64XX: Add basic cpuidle driver
-      ARM: S3C64XX: Gate some more clocks by default
-      ARM: SAMSUNG: Guard against multiple inclusion of plat/dma.h
-      ARM: SAMSUNG: dma-ops.h needs mach/dma.h
-      ARM: S3C64XX: Remove unconditional power domain disables
-      ARM: S3C64XX: Remove hsmmc1 from Cragganmore
-      ARM: SAMSUNG: Declare struct platform_device in plat/s3c64xx-spi.h
-      ARM: S3C64XX: Fix the memory mapped GPIOs on Cragganmore
-      ARM: S3C64XX: Support GPIO LEDs on Cragganmore
-      ARM: S3C64XX: Reduce residency requirement for cpuidle WFI mode
-      ARM: S3C64XX: Fix interrupt configuration for PCA935x on Cragganmore
-      ARM: S3C64XX: Fix build of Cragganmore after SPI changes
-      ARM: S3C64XX: Enable power management for disk on Cragganmore
-      ARM: S3C64XX: Enable power management for WiFi on Cragganmore
-
-MyungJoo Ham (3):
-      ARM: EXYNOS: Add DMC1 and allow PPMU access for DMC
-      ARM: EXYNOS: Add clock register addresses for EXYNOS4X12 bus devfreq
-driver
-      ARM: EXYNOS: Add support EXYNOS4210-bus Devfreq driver on Nuri board
-
-Sachin Kamat (1):
-      ARM: EXYNOS: Enable G2D on ORIGEN
-
-Sangwook Lee (1):
-      ARM: EXYNOS: Enable Bluetooth on ORIGEN
-
-Tushar Behera (1):
-      ARM: EXYNOS: Invert VCLK polarity for framebuffer on ORIGEN
-
- arch/arm/mach-exynos/Kconfig                     |    3 +
- arch/arm/mach-exynos/cpu.c                       |    7 +-
- arch/arm/mach-exynos/include/mach/map.h          |    4 +
- arch/arm/mach-exynos/include/mach/regs-clock.h   |   42 +++++++++
- arch/arm/mach-exynos/mach-nuri.c                 |   12 ++-
- arch/arm/mach-exynos/mach-origen.c               |   38 ++++++++-
- arch/arm/mach-exynos/mach-universal_c210.c       |    1 +
- arch/arm/mach-s3c2440/mach-mini2440.c            |   18 ++++
- arch/arm/mach-s3c64xx/Kconfig                    |    7 +-
- arch/arm/mach-s3c64xx/Makefile                   |    1 +
- arch/arm/mach-s3c64xx/clock.c                    |   21 ++--
- arch/arm/mach-s3c64xx/cpuidle.c                  |   91 ++++++++++++++++++
- arch/arm/mach-s3c64xx/include/mach/crag6410.h    |    7 +-
- arch/arm/mach-s3c64xx/include/mach/gpio.h        |    2 +-
- arch/arm/mach-s3c64xx/include/mach/irqs.h        |    2 +-
- arch/arm/mach-s3c64xx/mach-crag6410-module.c     |   56 +++++++++++-
- arch/arm/mach-s3c64xx/mach-crag6410.c            |  107
-+++++++++++++++++++---
- arch/arm/mach-s3c64xx/pm.c                       |    2 +
- arch/arm/plat-s5p/Kconfig                        |    5 +
- arch/arm/plat-samsung/Kconfig                    |    8 ++
- arch/arm/plat-samsung/dev-backlight.c            |    2 +
- arch/arm/plat-samsung/devs.c                     |   28 ++++++
- arch/arm/plat-samsung/include/plat/devs.h        |    1 +
- arch/arm/plat-samsung/include/plat/dma-ops.h     |    1 +
- arch/arm/plat-samsung/include/plat/dma.h         |    6 +-
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 +
- 26 files changed, 434 insertions(+), 40 deletions(-)
- create mode 100644 arch/arm/mach-s3c64xx/cpuidle.c
+>
+> - Lars
+>
