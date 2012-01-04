@@ -1,57 +1,64 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 6/6] mmc: sdhci-s3c: Add device tree support
-Date: Wed, 04 Jan 2012 16:37:25 +0100
-Message-ID: <4F047235.2090503@samsung.com>
-References: <1320266163-15292-1-git-send-email-thomas.abraham@linaro.org>
- <1320266163-15292-7-git-send-email-thomas.abraham@linaro.org>
- <20111107211726.GC28491@ponder.secretlab.ca>
- <CAJuYYwSfC5t6xs-TDT2wBOj1RbQYSpH0wjo9uBcYf7bGyi0t9g@mail.gmail.com>
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: RE: [linux-pm] [lm-sensors] [RFC PATCH 2/3] thermal: exynos4:
+ Register the tmu sensor with the thermal interface layer
+Date: Wed, 4 Jan 2012 08:20:36 -0800
+Message-ID: <1325694036.26706.27.camel@groeck-laptop>
+References: <1324468798-20423-1-git-send-email-amit.kachhap@linaro.org>
+	 <1324468798-20423-3-git-send-email-amit.kachhap@linaro.org>
+	 <1325629553.26706.11.camel@groeck-laptop>
+	 <CAK44p20XeLVkJyox2SsDqyy=RYgEQNpyGGypwTMPXpueQT1T3g@mail.gmail.com>
+	 <4D68720C2E767A4AA6A8796D42C8EB5901B976@BGSMSX101.gar.corp.intel.com>
+Reply-To: guenter.roeck@ericsson.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:39013 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755334Ab2ADPh2 (ORCPT
+Received: from imr4.ericy.com ([198.24.6.9]:59341 "EHLO imr4.ericy.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1756103Ab2ADQWb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Jan 2012 10:37:28 -0500
-In-reply-to: <CAJuYYwSfC5t6xs-TDT2wBOj1RbQYSpH0wjo9uBcYf7bGyi0t9g@mail.gmail.com>
+	Wed, 4 Jan 2012 11:22:31 -0500
+In-Reply-To: <4D68720C2E767A4AA6A8796D42C8EB5901B976@BGSMSX101.gar.corp.intel.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, kgene.kim@samsung.com
-Cc: Grant Likely <grant.likely@secretlab.ca>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: "R, Durgadoss" <durgadoss.r@intel.com>
+Cc: Amit Kachhap <amit.kachhap@linaro.org>, Donggeun Kim <dg77.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>
 
-Hi Kgene, Thomas
-
-On 11/08/2011 04:23 PM, Thomas Abraham wrote:
-> Hi Grant,
+On Wed, 2012-01-04 at 05:23 -0500, R, Durgadoss wrote:
+> Hi Amit Daniel,
 > 
-> On 8 November 2011 02:47, Grant Likely <grant.likely@secretlab.ca> wrote:
->> On Thu, Nov 03, 2011 at 02:06:03AM +0530, Thomas Abraham wrote:
->>> Add device tree based discovery support for Samsung's sdhci controller
->>>
->>> Cc: Ben Dooks <ben-linux@fluff.org>
->>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>> ---
->>> +Example:
->>> +     sdhci@12530000 {
->>> +             compatible = "samsung,exynos4210-sdhci";
->>> +             reg = <0x12530000 0x100>;
->>> +             interrupts = <139>;
->>> +             samsung,sdhci-bus-width = <4>;
->>> +             linux,mmc_cap_4_bit_data;
->>
->> Following on from my reply on patch 5, this is an example of exactly
->> what I'm talking about.  This node both sets bus-width to '4', and
->> sets the 4_bit_data flag.  Don't you think that the driver would be
->> smart enough to set the 4_bit_data flag when the bus width was set to
->> 4?
+> > Hi Guenter,
+> > 
+> > The main idea of this work is to leave the current userspace based
+> > notification scheme and add the kernel based cooling scheme on top of
+> > it. Anyway, It is a good idea to move the file hwmon/exynos4_tmu.c as
 > 
-> Yes, that is true. I will modify the driver based on your comments and
-> resubmit this patch.
+> But, What I feel is, kernel based cooling scheme will work only for
+> Controlling 'CPU' frequency. But in SoC's there are other devices that
+> Contribute to Thermal. For example, GPU, Display, Battery (during charging)
+> etc.. In this case, we need a user space to control these devices. So, in a
+> way, the user space notification mechanism is a unified solution for
+> throttling all devices and keeps the kernel code light weight.
+> 
+> I am also curious to know why the existing mechanism did not work for you ?
+> 
+That is one question. 
 
-Are we going to have those patches in 3.3-rc1 or only in 3.4 ?
+For me, the main concern is that the proposed implementation creates
+duplicate hwmon entries for the same device, which is simply messy. If
+both the kernel thermal mechanism and the userspace mechanism are
+needed, I think it would make more sense to use a thermal driver and
+have that thermal driver generate the necessary userspace events.
 
---
-Regards,
-Sylwester
+Thanks,
+Guenter
+
+> Thanks,
+> Durga
+> 
+> > this creates 2 hwmon entries.
+> > Adding CC: Donggeun Kim to know his opinion.
+> > 
+> > Thanks,
+> > Amit Daniel
+> [snip.]
