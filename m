@@ -1,111 +1,86 @@
-From: Heiko =?windows-1252?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 4/4] ARM: S3C2443/S3C2416: add s3c_rtc_setname and rename rtc devices
-Date: Wed, 4 Jan 2012 15:17:30 +0100
-Message-ID: <201201041517.30523.heiko@sntech.de>
-References: <201112211014.30695.heiko@sntech.de> <201201041512.55126.heiko@sntech.de> <201201041514.57688.heiko@sntech.de>
+From: Joerg Roedel <joerg.roedel@amd.com>
+Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
+ Samsung Exynos
+Date: Wed, 4 Jan 2012 16:01:01 +0100
+Message-ID: <20120104150101.GA3492@amd.com>
+References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
+ <20120102134229.GZ29877@amd.com>
+ <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
+ <20120102155820.GB29877@amd.com>
+ <20120103095527.GI2914@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:55237 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755776Ab2ADORo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Jan 2012 09:17:44 -0500
-In-Reply-To: <201201041514.57688.heiko@sntech.de>
+Received: from db3ehsobe001.messaging.microsoft.com ([213.199.154.139]:49660
+	"EHLO DB3EHSOBE001.bigfish.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755835Ab2ADPBN convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Jan 2012 10:01:13 -0500
+Content-Disposition: inline
+In-Reply-To: <20120103095527.GI2914@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, ben-linux@fluff.org, a.zummo@towertech.it, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rtc-linux@googlegroups.com
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: KyongHo Cho <pullip.cho@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, Younglak Kim <younglak1004.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-As the S3C24xx SoCs use the same rtc device a renaming capability like in
-the adc driver is necessary.
+On Tue, Jan 03, 2012 at 09:55:27AM +0000, Russell King - ARM Linux wrot=
+e:
+> On Mon, Jan 02, 2012 at 04:58:20PM +0100, Joerg Roedel wrote:
+> > On Tue, Jan 03, 2012 at 12:21:30AM +0900, KyongHo Cho wrote:
+> > > > I still get
+> > > >
+> > > > =A0LD =A0 =A0 =A0.tmp_vmlinux1
+> > > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-=
+unknown-linux-gnueabi-ld: no machine record defined
+> > > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-=
+unknown-linux-gnueabi-ld: no machine record defined
+> > > > /data/cross/gcc-4.6.0-nolibc/arm-unknown-linux-gnueabi/bin/arm-=
+unknown-linux-gnueabi-ld: no machine record defined
+> > > > make[1]: *** [.tmp_vmlinux1] Error 1
+> > > >
+> > > > when trying to compile ARM/Exynos with 3.2-rc7. Am I doing some=
+thing
+> > > > wrong or is this not expected to work?
+> > > >
+> > > Do you?
+> > > Ok. I will check my configuration with linux-next git.
+> >=20
+> > Compiling my exynos-config with linux-next gives me:
+> >=20
+> >   CC      arch/arm/kernel/process.o
+> > In file included from /data/lemmy/linux.trees.git/arch/arm/mach-exy=
+nos/include/mach/system.h:16:0,
+> >                  from /data/lemmy/linux.trees.git/arch/arm/kernel/p=
+rocess.c:64:
+> > /data/lemmy/linux.trees.git/arch/arm/plat-samsung/include/plat/syst=
+em-reset.h:19:2: error: #error Fix me up
+> >=20
+> > I better not ask the question how such an #error statement can come
+> > through to linux-next.
+>=20
+> It comes through when I stick it in my tree because of a month of ask=
+ing
+> for help to fix something and getting zero response from the maintain=
+ers.
+>=20
+> It's a way to flag to them that they're doing something wrong - and i=
+n
+> fact something is broken, and that that brokenness will happen at the
+> next merge window unless they get off their butt and do something abo=
+ut
+> it.
 
-This patch adds a s3c_rtc_setname function and names the rtc devices for
-S3C2443 and S3C2416 accordingly.
+Okay, fine with me if it really will be fixed in 3.3-rc1 :)
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s3c2416/s3c2416.c               |    2 +
- arch/arm/mach-s3c2443/s3c2443.c               |    2 +
- arch/arm/plat-samsung/include/plat/rtc-core.h |   27 +++++++++++++++++++++++++
- 3 files changed, 31 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/include/plat/rtc-core.h
+Thanks,
 
-diff --git a/arch/arm/mach-s3c2416/s3c2416.c b/arch/arm/mach-s3c2416/s3c2416.c
-index ee214bc..604cf98 100644
---- a/arch/arm/mach-s3c2416/s3c2416.c
-+++ b/arch/arm/mach-s3c2416/s3c2416.c
-@@ -61,6 +61,7 @@
- #include <plat/fb-core.h>
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
-+#include <plat/rtc-core.h>
- 
- static struct map_desc s3c2416_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -99,6 +100,7 @@ int __init s3c2416_init(void)
- 	s3c_fb_setname("s3c2443-fb");
- 
- 	s3c_adc_setname("s3c2416-adc");
-+	s3c_rtc_setname("s3c2416-rtc");
- 
- #ifdef CONFIG_PM
- 	register_syscore_ops(&s3c2416_pm_syscore_ops);
-diff --git a/arch/arm/mach-s3c2443/s3c2443.c b/arch/arm/mach-s3c2443/s3c2443.c
-index a22b771..9e6be20 100644
---- a/arch/arm/mach-s3c2443/s3c2443.c
-+++ b/arch/arm/mach-s3c2443/s3c2443.c
-@@ -42,6 +42,7 @@
- #include <plat/fb-core.h>
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
-+#include <plat/rtc-core.h>
- 
- static struct map_desc s3c2443_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -72,6 +73,7 @@ int __init s3c2443_init(void)
- 	s3c_fb_setname("s3c2443-fb");
- 
- 	s3c_adc_setname("s3c2443-adc");
-+	s3c_rtc_setname("s3c2443-rtc");
- 
- 	/* change WDT IRQ number */
- 	s3c_device_wdt.resource[1].start = IRQ_S3C2443_WDT;
-diff --git a/arch/arm/plat-samsung/include/plat/rtc-core.h b/arch/arm/plat-samsung/include/plat/rtc-core.h
-new file mode 100644
-index 0000000..21d8594
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/rtc-core.h
-@@ -0,0 +1,27 @@
-+/* linux/arch/arm/plat-samsung/include/plat/rtc-core.h
-+ *
-+ * Copyright (c) 2011 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * Samsung RTC Controller core functions
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+#ifndef __ASM_PLAT_RTC_CORE_H
-+#define __ASM_PLAT_RTC_CORE_H __FILE__
-+
-+/* These functions are only for use with the core support code, such as
-+ * the cpu specific initialisation code
-+ */
-+
-+/* re-define device name depending on support. */
-+static inline void s3c_rtc_setname(char *name)
-+{
-+#if defined(CONFIG_SAMSUNG_DEV_RTC) || defined(CONFIG_PLAT_S3C24XX)
-+	s3c_device_rtc.name = name;
-+#endif
-+}
-+
-+#endif /* __ASM_PLAT_RTC_CORE_H */
--- 
-1.7.5.4
+	Joerg
+
+--=20
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo, Andrew Bowd
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr.=
+ 43632
