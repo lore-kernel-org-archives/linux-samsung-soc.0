@@ -1,204 +1,74 @@
-From: Donggeun Kim <dg77.kim@samsung.com>
-Subject: Re: [lm-sensors] [RFC PATCH 2/3] thermal: exynos4: Register the tmu
- sensor with the thermal interface layer
-Date: Thu, 05 Jan 2012 14:57:35 +0900
-Message-ID: <4F053BCF.7030600@samsung.com>
-References: <1324468798-20423-1-git-send-email-amit.kachhap@linaro.org>
- <1324468798-20423-3-git-send-email-amit.kachhap@linaro.org>
- <1325629553.26706.11.camel@groeck-laptop>
- <CAK44p20XeLVkJyox2SsDqyy=RYgEQNpyGGypwTMPXpueQT1T3g@mail.gmail.com>
+From: Amit Kachhap <amit.kachhap@linaro.org>
+Subject: Re: [PATCH V5 5/5] ARM: exynos: Enable l2 configuration through
+ device tree
+Date: Thu, 5 Jan 2012 11:56:44 +0530
+Message-ID: <CAK44p206AS_F_2JJx2CXfzQmFZVPYhAUTSA9GgofTovg7v294A@mail.gmail.com>
+References: <1325737525-12869-1-git-send-email-amit.kachhap@linaro.org>
+	<1325737525-12869-6-git-send-email-amit.kachhap@linaro.org>
+	<CAOesGMjb5no9o0kwiVm87XM8Q5QsMWdXhAypCmJMi7npy1fnSA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-reply-to: <CAK44p20XeLVkJyox2SsDqyy=RYgEQNpyGGypwTMPXpueQT1T3g@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Kachhap <amit.kachhap@linaro.org>
-Cc: guenter.roeck@ericsson.com, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qw0-f53.google.com ([209.85.216.53]:58229 "EHLO
+	mail-qw0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327Ab2AEG0p convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 5 Jan 2012 01:26:45 -0500
+Received: by qadb15 with SMTP id b15so172891qad.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 04 Jan 2012 22:26:45 -0800 (PST)
+In-Reply-To: <CAOesGMjb5no9o0kwiVm87XM8Q5QsMWdXhAypCmJMi7npy1fnSA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-Actually, the TMU driver is closely related to thermal layer.
-I think it's okay to move it to the thermal.
+On 5 January 2012 10:06, Olof Johansson <olof@lixom.net> wrote:
+> On Wed, Jan 4, 2012 at 8:25 PM, Amit Daniel Kachhap
+> <amit.kachhap@linaro.org> wrote:
+>> This patch enables calling generic l2 setup functions if device tree=
+ is used.
+>>
+>> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+>> ---
+>> =A0arch/arm/mach-exynos/common.c | =A0 14 ++++++++++++--
+>> =A01 files changed, 12 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/co=
+mmon.c
+>> index f8bb808..e91b92d 100644
+>> --- a/arch/arm/mach-exynos/common.c
+>> +++ b/arch/arm/mach-exynos/common.c
+>> @@ -47,6 +47,8 @@
+>> =A0#include <plat/regs-serial.h>
+>>
+>> =A0#include "common.h"
+>> +#define L2_AUX_VAL 0x7C470001
+>> +#define L2_AUX_MASK 0xC200ffff
+>>
+>> =A0static const char name_exynos4210[] =3D "EXYNOS4210";
+>> =A0static const char name_exynos4212[] =3D "EXYNOS4212";
+>> @@ -453,6 +455,15 @@ core_initcall(exynos4_core_init);
+>> =A0#ifdef CONFIG_CACHE_L2X0
+>> =A0static int __init exynos4_l2x0_cache_init(void)
+>> =A0{
+>> +#ifdef CONFIG_OF
+>> + =A0 =A0 =A0 int ret;
+>> + =A0 =A0 =A0 ret =3D l2x0_of_init(L2_AUX_VAL, L2_AUX_MASK);
+>> + =A0 =A0 =A0 if (!ret) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 l2x0_regs_phys =3D virt_to_phys(&l2x0_=
+saved_regs);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clean_dcache_area(&l2x0_regs_phys, siz=
+eof(unsigned long));
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+>> + =A0 =A0 =A0 }
+>> +#endif
+>
+> No need for ifdef here, if CONFIG_OF is off, then there's a static
+> inline version of l2x_of_init() that will return -ENODEV.
 
-Thanks.
--Donggeun
+Will accept your suggestion. Thanks
 
-On 2012=EB=85=84 01=EC=9B=94 04=EC=9D=BC 19:14, Amit Kachhap wrote:
-> Hi Guenter,
->=20
-> The main idea of this work is to leave the current userspace based
-> notification scheme and add the kernel based cooling scheme on top of
-> it. Anyway, It is a good idea to move the file hwmon/exynos4_tmu.c as
-> this creates 2 hwmon entries.
-> Adding CC: Donggeun Kim to know his opinion.
->=20
-> Thanks,
-> Amit Daniel
->=20
-> On 4 January 2012 03:55, Guenter Roeck <guenter.roeck@ericsson.com> w=
-rote:
->> On Wed, 2011-12-21 at 06:59 -0500, Amit Daniel Kachhap wrote:
->>> Export and register information from the hwmon tmu sensor to the sa=
-msung
->>> exynos kernel thermal framework where different cooling devices and=
- thermal
->>> zone are binded. The exported information is based according to the=
- data
->>> structure thermal_sensor_conf present in exynos_thermal.h. HWMON sy=
-sfs
->>> functions are currently left although all of them are present in ge=
-neric
->>> linux thermal layer.
->>> Also the platform data structure is modified to pass frequency cool=
-ing
->>> in percentages for each thermal level.
->>>
->> Hi Amit,
->>
->> wouldn't it make more sense to merge the code as necessary from
->> hwmon/exynos4_tmu.c into the new thermal/exynos_thermal.c, and drop
->> hwmon/exynos4_tmu.c entirely ?
->>
->> With that, you should get the hwmon entries for free, and we would n=
-ot
->> have to maintain two drivers with overlapping functionality.
->>
->> Thanks,
->> Guenter
->>
->>> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
->>> ---
->>>  drivers/hwmon/exynos4_tmu.c               |   34 +++++++++++++++++=
-+++++++++--
->>>  include/linux/platform_data/exynos4_tmu.h |    7 ++++++
->>>  2 files changed, 38 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/drivers/hwmon/exynos4_tmu.c b/drivers/hwmon/exynos4_tm=
-u.c
->>> index f2359a0..6912a7f 100644
->>> --- a/drivers/hwmon/exynos4_tmu.c
->>> +++ b/drivers/hwmon/exynos4_tmu.c
->>> @@ -37,6 +37,9 @@
->>>  #include <linux/hwmon-sysfs.h>
->>>
->>>  #include <linux/platform_data/exynos4_tmu.h>
->>> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
->>> +#include <linux/exynos_thermal.h>
->>> +#endif
->>>
->>>  #define EXYNOS4_TMU_REG_TRIMINFO     0x0
->>>  #define EXYNOS4_TMU_REG_CONTROL              0x20
->>> @@ -248,10 +251,13 @@ static void exynos4_tmu_work(struct work_stru=
-ct *work)
->>>
->>>       kobject_uevent(&data->hwmon_dev->kobj, KOBJ_CHANGE);
->>>
->>> -     enable_irq(data->irq);
->>>
->>>       clk_disable(data->clk);
->>>       mutex_unlock(&data->lock);
->>> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
->>> +     exynos4_report_trigger();
->>> +#endif
->>> +     enable_irq(data->irq);
->>>  }
->>>
->>>  static irqreturn_t exynos4_tmu_irq(int irq, void *id)
->>> @@ -345,6 +351,14 @@ static const struct attribute_group exynos4_tm=
-u_attr_group =3D {
->>>       .attrs =3D exynos4_tmu_attributes,
->>>  };
->>>
->>> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
->>> +static struct thermal_sensor_conf exynos4_sensor_conf =3D {
->>> +     .name                   =3D "exynos4-therm",
->>> +     .read_temperature       =3D (int (*)(void *))exynos4_tmu_read=
-,
->>> +};
->>> +#endif
->>> +/*CONFIG_SAMSUNG_THERMAL_INTERFACE*/
->>> +
->>>  static int __devinit exynos4_tmu_probe(struct platform_device *pde=
-v)
->>>  {
->>>       struct exynos4_tmu_data *data;
->>> @@ -432,9 +446,20 @@ static int __devinit exynos4_tmu_probe(struct =
-platform_device *pdev)
->>>       }
->>>
->>>       exynos4_tmu_control(pdev, true);
->>> -
->>> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
->>> +     (&exynos4_sensor_conf)->private_data =3D data;
->>> +     (&exynos4_sensor_conf)->sensor_data =3D pdata;
->>> +     ret =3D exynos4_register_thermal(&exynos4_sensor_conf);
->>> +     if (ret) {
->>> +             dev_err(&pdev->dev, "Failed to register thermal inter=
-face\n");
->>> +             goto err_hwmon_device;
->>> +     }
->>> +#endif
->>>       return 0;
->>> -
->>> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
->>> +err_hwmon_device:
->>> +     hwmon_device_unregister(data->hwmon_dev);
->>> +#endif
->>>  err_create_group:
->>>       sysfs_remove_group(&pdev->dev.kobj, &exynos4_tmu_attr_group);
->>>  err_clk:
->>> @@ -458,6 +483,9 @@ static int __devexit exynos4_tmu_remove(struct =
-platform_device *pdev)
->>>
->>>       exynos4_tmu_control(pdev, false);
->>>
->>> +#ifdef CONFIG_SAMSUNG_THERMAL_INTERFACE
->>> +     exynos4_unregister_thermal();
->>> +#endif
->>>       hwmon_device_unregister(data->hwmon_dev);
->>>       sysfs_remove_group(&pdev->dev.kobj, &exynos4_tmu_attr_group);
->>>
->>> diff --git a/include/linux/platform_data/exynos4_tmu.h b/include/li=
-nux/platform_data/exynos4_tmu.h
->>> index 39e038c..642c508 100644
->>> --- a/include/linux/platform_data/exynos4_tmu.h
->>> +++ b/include/linux/platform_data/exynos4_tmu.h
->>> @@ -21,6 +21,7 @@
->>>
->>>  #ifndef _LINUX_EXYNOS4_TMU_H
->>>  #define _LINUX_EXYNOS4_TMU_H
->>> +#include <linux/cpu_cooling.h>
->>>
->>>  enum calibration_type {
->>>       TYPE_ONE_POINT_TRIMMING,
->>> @@ -64,6 +65,9 @@ enum calibration_type {
->>>   *   in the positive-TC generator block
->>>   *   0 <=3D reference_voltage <=3D 31
->>>   * @cal_type: calibration type for temperature
->>> + * @freq_pctg_table: Table representing frequency reduction percen=
-tage.
->>> + * @freq_tab_count: Count of the above table as frequency reductio=
-n may
->>> + *   applicable to only some of the trigger levels.
->>>   *
->>>   * This structure is required for configuration of exynos4_tmu dri=
-ver.
->>>   */
->>> @@ -79,5 +83,8 @@ struct exynos4_tmu_platform_data {
->>>       u8 reference_voltage;
->>>
->>>       enum calibration_type cal_type;
->>> +
->>> +     struct freq_pctg_table freq_tab[4];
->>> +     unsigned int freq_tab_count;
->>>  };
->>>  #endif /* _LINUX_EXYNOS4_TMU_H */
->>
->>
->=20
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>
+> -Olof
