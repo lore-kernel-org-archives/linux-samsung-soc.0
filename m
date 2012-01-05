@@ -1,57 +1,59 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Thu, 5 Jan 2012 12:47:32 +0100
-Message-ID: <20120105114732.GA7166@amd.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
- <20120102134229.GZ29877@amd.com>
- <CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
- <20120102155820.GB29877@amd.com>
- <20120103095527.GI2914@n2100.arm.linux.org.uk>
- <20120104150101.GA3492@amd.com>
- <20120104212620.GG11810@n2100.arm.linux.org.uk>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v2 1/2] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Thu, 5 Jan 2012 14:54:25 +0000
+Message-ID: <20120105145425.GW11810@n2100.arm.linux.org.uk>
+References: <1323654668-32504-1-git-send-email-boojin.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from am1ehsobe002.messaging.microsoft.com ([213.199.154.205]:33540
-	"EHLO AM1EHSOBE002.bigfish.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755921Ab2AELrn (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:45401 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932577Ab2AEOym (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jan 2012 06:47:43 -0500
+	Thu, 5 Jan 2012 09:54:42 -0500
 Content-Disposition: inline
-In-Reply-To: <20120104212620.GG11810@n2100.arm.linux.org.uk>
+In-Reply-To: <1323654668-32504-1-git-send-email-boojin.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: KyongHo Cho <pullip.cho@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, Younglak Kim <younglak1004.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Vinod Koul <vinod.koul@intel.com>, Kukjin Kim <kgene.kim@samsung.com>, Jassi Brar <jassisinghbrar@gmail.com>
 
-On Wed, Jan 04, 2012 at 09:26:20PM +0000, Russell King - ARM Linux wrote:
-> On Wed, Jan 04, 2012 at 04:01:01PM +0100, Joerg Roedel wrote:
-> > On Tue, Jan 03, 2012 at 09:55:27AM +0000, Russell King - ARM Linux wrote:
-> > > It comes through when I stick it in my tree because of a month of asking
-> > > for help to fix something and getting zero response from the maintainers.
-> > > 
-> > > It's a way to flag to them that they're doing something wrong - and in
-> > > fact something is broken, and that that brokenness will happen at the
-> > > next merge window unless they get off their butt and do something about
-> > > it.
-> > 
-> > Okay, fine with me if it really will be fixed in 3.3-rc1 :)
+On Mon, Dec 12, 2011 at 10:51:08AM +0900, Boojin Kim wrote:
+> Currently there were two part of DMAC PL330 driver for
+> support old styled s3c-pl330 which has been merged into
+> drivers/dma/pl330.c driver. Actually, there is no reason
+> to separate them now.
 > 
-> I can do better than that - and report that it's fixed now.  It should
-> show up in linux-next sometime after Stephen pulls this evening.  The
-> #error did its job in this case, and ensured that it got fixed!
+> Basically this patch merges arch/arm/common/pl330.c into
+> drivers/dma/pl330.c driver and removes useless exported
+> symbol, externed function and so on.
+> 
+> The newer pl330 driver tested on SMDKV310 and SMDK4212 boards
+> 
+> Cc: Jassi Brar <jassisinghbrar@gmail.com>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Cc: Vinod Koul <vinod.koul@intel.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> Change since V1:
+> Modify the order of definitions/declarations according to linux coding rules.
+> ---
+>  arch/arm/common/Kconfig               |    3 -
+>  arch/arm/common/Makefile              |    1 -
+>  arch/arm/common/pl330.c               | 1971 ---------------------------------
+>  arch/arm/include/asm/hardware/pl330.h |  333 +++---
+>  drivers/dma/Kconfig                   |    1 -
+>  drivers/dma/pl330.c                   | 1892 +++++++++++++++++++++++++++++++
+>  6 files changed, 2074 insertions(+), 2127 deletions(-)
+>  delete mode 100644 arch/arm/common/pl330.c
 
-Great. So it looks like I can finally compile-test Exynos and merge
-their IOMMU driver after the merge window :)
+Now that the PL330 code is entirely out of arch/arm, the header should no
+longer be in asm/hardware/pl330.h.
 
-Thanks,
+Definitions private to the driver should be in drivers/dma/pl330.c or a
+header file co-located.  Other definitions for interfaces to that driver
+(eg, platform data) should be in include/linux/amba.
 
-	Joerg
-
--- 
-AMD Operating System Research Center
-
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo, Andrew Bowd
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+That can be the subject of a follow-up patch if this is already finalized.
