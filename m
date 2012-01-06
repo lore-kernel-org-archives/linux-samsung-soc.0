@@ -1,88 +1,63 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH] backlight: lcd: add driver for raster-type lcd's with gpio
- controlled panel reset
-Date: Fri, 06 Jan 2012 11:16:06 +0900
-Message-ID: <001401cccc19$25b52920$711f7b60$%han@samsung.com>
-References: <1325778146-27056-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH V9 0/2] HS200 Mode support for device and host
+Date: Fri,  6 Jan 2012 09:56:37 +0530
+Message-ID: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:42022 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751582Ab2AFCQI (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:54579 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758249Ab2AFE0s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jan 2012 21:16:08 -0500
-In-reply-to: <1325778146-27056-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Thu, 5 Jan 2012 23:26:48 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, lars@metafoo.de, patches@linaro.org
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-Hi, Thomas.
-> -----Original Message-----
-> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
-> Sent: Friday, January 06, 2012 12:42 AM
-> Subject: [PATCH] backlight: lcd: add driver for raster-type lcd's with gpio controlled panel reset
-> 
-> Add a lcd panel driver for simple raster-type lcd's which uses a gpio
-> controlled panel reset. The driver controls the nRESET line of the panel
-> using a gpio connected from the host system. The Vcc supply to the panel
-> is (optionally) controlled using a voltage regulator. This driver excludes
-> support for lcd panels that use a serial command interface or direct
-> memory mapped IO interface.
-> 
-> Suggested-by: Lars-Peter Clausen <lars@metafoo.de>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  .../devicetree/bindings/lcd/lcd-pwrctrl.txt        |   39 ++++
->  drivers/video/backlight/Kconfig                    |    7 +
->  drivers/video/backlight/Makefile                   |    1 +
->  drivers/video/backlight/lcd_pwrctrl.c              |  231 ++++++++++++++++++++
->  include/video/lcd_pwrctrl.h                        |   30 +++
->  5 files changed, 308 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/lcd/lcd-pwrctrl.txt
->  create mode 100644 drivers/video/backlight/lcd_pwrctrl.c
->  create mode 100644 include/video/lcd_pwrctrl.h
-> 
-> [...]
-> --- a/drivers/video/backlight/Makefile
-> +++ b/drivers/video/backlight/Makefile
-> @@ -8,6 +8,7 @@ obj-$(CONFIG_LCD_LMS283GF05)	   += lms283gf05.o
->  obj-$(CONFIG_LCD_LTV350QV)	   += ltv350qv.o
->  obj-$(CONFIG_LCD_ILI9320)	   += ili9320.o
->  obj-$(CONFIG_LCD_PLATFORM)	   += platform_lcd.o
-> +obj-$(CONFIG_LCD_PWRCTRL) 	   += lcd_pwrctrl.o
-Can you remove unnecessary space?
-Please use <tab><space><space><space> instead of <space><tab><space><space><space>
-between PWRCTRL) and += lcd_.
-> [...]
-> +static struct platform_driver lcd_pwrctrl_driver = {
-> +	.driver		= {
-> +		.name	= "lcd-pwrctrl",
-> +		.owner	= THIS_MODULE,
-> +		.of_match_table	= of_match_ptr(lcd_pwrctrl_match),
-> +	},
-> +	.probe		= lcd_pwrctrl_probe,
-> +	.remove		= lcd_pwrctrl_remove,
-> +	.suspend	= lcd_pwrctrl_suspend,
-> +	.resume		= lcd_pwrctrl_resume,
-Please use 'struct dev_pm_ops'.
-> +};
-> +
-> +static int __init lcd_pwrctrl_init(void)
-> +{
-> +	return platform_driver_register(&lcd_pwrctrl_driver);
-> +}
-> +
-> +static void __exit lcd_pwrctrl_cleanup(void)
-> +{
-> +	platform_driver_unregister(&lcd_pwrctrl_driver);
-> +}
-> +
-> +module_init(lcd_pwrctrl_init);
-> +module_exit(lcd_pwrctrl_cleanup);
-Use module_platform_driver(lcd_pwrctrl_driver).
-It can make the code simpler.
-> [...]
+changes in v9:
+	Updated the changes suggested by Chris for kernel coding comaptibility 
+changes in v8:
+	Updated the changes suggested by Philip for bus mode test. 
+changes in v7:
+	Updated with review comments for minor changes in host conditional
+	handling. added the handling for 4 bit bus width. 
+Changes in v6:
+	split the patch into 2 and classified them as a patch for device
+	and host. Modified to include the review comments.
+Changes in v5:
+	Reduced the case statements for better code readability. Removed
+	unused macro definitions. Modified the tuning function prototype
+	and definition to support tuning for both SD and eMMC cards.
+Changes in v4:
+	Rebased onto chris-mmc/mmc-next branch. This patch is successfully
+	applied on commit with id de022ed3fdc14808299b2fa66dbb1ed5ab921912.
+Changes in v3:
+	In the previous commits of chris-mmc/mmc-next branch, the patch with
+	commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) defines caps2 for
+	more capabilities. This patch version deletes the member ext_caps
+	(created in my earlier patch) from struct mmc_host and reuses already
+	accepted caps2 member.
+Changes in v2:
+	Rebased to latest chris-mmc/mmc-next branch. Resolved indentation
+	problems identified in review. This patch has to be applied before
+	the patch released for modifying the printk messages.
+Changes in v1:
+	Case statements in switch that produce same result have been combined
+	to reduce repeated assignments. patch recreated after rebase to chris
+	Balls mmc-next branch.
+
+Girish K S (2):
+  mmc: core: HS200 mode support for eMMC 4.5
+  mmc: host: Adds support for eMMC 4.5 HS200 mode
+
+ drivers/mmc/core/bus.c     |    3 +-
+ drivers/mmc/core/debugfs.c |    3 +
+ drivers/mmc/core/mmc.c     |  162 +++++++++++++++++++++++++++++++++++++++++---
+ drivers/mmc/core/sd.c      |    3 +-
+ drivers/mmc/core/sdio.c    |    4 +-
+ drivers/mmc/host/sdhci.c   |   45 +++++++++---
+ drivers/mmc/host/sdhci.h   |    1 +
+ include/linux/mmc/card.h   |    3 +
+ include/linux/mmc/host.h   |   11 +++-
+ include/linux/mmc/mmc.h    |   66 ++++++++++++++++++-
+ include/linux/mmc/sdhci.h  |    1 +
+ 11 files changed, 277 insertions(+), 25 deletions(-)
