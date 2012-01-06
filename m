@@ -1,62 +1,68 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] backlight: lcd: add driver for raster-type lcd's with
- gpio controlled panel reset
-Date: Thu, 5 Jan 2012 22:49:30 -0800
-Message-ID: <20120106064929.GB3496@opensource.wolfsonmicro.com>
-References: <1325778146-27056-1-git-send-email-thomas.abraham@linaro.org>
- <4F05F509.6020405@metafoo.de>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung devel-rtc for v3.3
+Date: Fri, 6 Jan 2012 12:27:17 -0800
+Message-ID: <CAOesGMhV5agC1LFgZ3jrDXy=Hcj2-TtydfnKsVAXoSHSBKEu=g@mail.gmail.com>
+References: <037601ccc8e9$07e2c8e0$17a85aa0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59657 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751201Ab2AFGtk (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:64075 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932638Ab2AFU1T convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Jan 2012 01:49:40 -0500
-Content-Disposition: inline
-In-Reply-To: <4F05F509.6020405@metafoo.de>
+	Fri, 6 Jan 2012 15:27:19 -0500
+Received: by werm1 with SMTP id m1so1384737wer.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jan 2012 12:27:17 -0800 (PST)
+In-Reply-To: <037601ccc8e9$07e2c8e0$17a85aa0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lars-Peter Clausen <lars@metafoo.de>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>
 
-On Thu, Jan 05, 2012 at 08:07:53PM +0100, Lars-Peter Clausen wrote:
+Hi,
 
-> > +- lcd,pwrctrl-min-uV: If a regulator controls the Vcc voltage of the lcd panel,
-> > +  this property specifies the minimum voltage the regulator should supply.
-> > +  The value of this property should in in micro-volts.
-> > +- lcd,pwrctrl-max-uV: If a regulator controls the Vcc voltage of the lcd panel,
-> > +  this property specifies the maximum voltage the regulator should limit to
-> > +  on the Vcc line. The value of this property should in in micro-volts.
+On Sun, Jan 1, 2012 at 4:54 PM, Kukjin Kim <kgene.kim@samsung.com> wrot=
+e:
+> Hi Arnd and Olof,
+>
+> Please pull Samsung devel-rtc for v3.3 from following.
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
+git
+> next-samsung-devel-rtc
+>
+> It is including support rtc for S3C2443 and S3C2416 and got the ack f=
+rom
+> Alessandro Zummo.
+>
+> Since next-samsung-dt1 branch touch drivers/rtc, it has been made bas=
+ed on
+> next-samsung-dt1 branch.
+>
+> If any problems please let me know.
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> The following changes since commit 0561ceabd0f13871900d116278fe9268ae=
+b714d1:
+>
+> =A0ARM: dts: Add intial dts file for EXYNOS4210 SoC, SMDKV310 and ORI=
+GEN
+> (2011-12-23 10:07:12 +0900)
+>
+> are available in the git repository at:
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
+git
+> next-samsung-devel-rtc
 
-> The min and max voltage should rather be specified through the regulator
-> constraints.
+Just following up with email since I didn't see one:
 
-In principle it should be specified in both places to account for shared
-supplies though for all practical purposes for an LCD panel I can't see
-multiple users sharing the same regulator and varying the voltage at
-runtime.
+Looks like Arnd pulled this into next/drivers2 already. Thanks!
 
-> > +	if (lcd_enable) {
-> > +		if ((pd->min_uV || pd->max_uV) &&
-> > +			regulator_set_voltage(lp->regulator,
-> > +						pd->min_uV, pd->max_uV))
-> > +				dev_info(lp->dev,
-> > +					"regulator voltage set failed\n");
-> > +		if (regulator_enable(lp->regulator))
-> > +			dev_info(lp->dev, "failed to enable regulator\n");
-> > +	} else {
-> > +		regulator_disable(lp->regulator);
-> > +	}
-
-> I think you have to make sure that the regulator enable and disable calls are
-> balanced.
-
-Yes.
-
-> > +#ifdef CONFIG_OF
-
-> I think you can remove all the CONFIG_OF ifdefs, the of API should stub itself out.
-
-It's reasonably idiomatic to do this if the parsing code is in a
-separate function.
+-Olof
