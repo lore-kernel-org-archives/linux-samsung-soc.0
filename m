@@ -1,62 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S3C24XX: Fix build error for missing <mach/system-reset.h>
-Date: Sat, 07 Jan 2012 20:47:47 +0900
-Message-ID: <010101cccd32$2cf0cfe0$86d26fa0$%kim@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix build error for missing
+	<mach/system-reset.h>
+Date: Sat, 7 Jan 2012 11:59:14 +0000
+Message-ID: <20120107115914.GE13857@n2100.arm.linux.org.uk>
+References: <010101cccd32$2cf0cfe0$86d26fa0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39213 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751327Ab2AGLru (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50709 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327Ab2AGL72 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jan 2012 06:47:50 -0500
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LXF00BFLFFP85C0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 07 Jan 2012 20:47:49 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LXF00CHLFFN0600@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 07 Jan 2012 20:47:49 +0900 (KST)
-Content-language: ko
+	Sat, 7 Jan 2012 06:59:28 -0500
+Content-Disposition: inline
+In-Reply-To: <010101cccd32$2cf0cfe0$86d26fa0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rmk+kernel@arm.linux.org.uk, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Since the arch/arm/mach-s3c2410/include/mach/system-reset.h has
-been removed by commit f88b8979 ("ARM: restart: remove the now
-empty arch_reset()"), so the inclusion of <mach/system-reset.h>
-should be removed at the plat-s3c24xx/cpu.c file.
+On Sat, Jan 07, 2012 at 08:47:47PM +0900, Kukjin Kim wrote:
+> Since the arch/arm/mach-s3c2410/include/mach/system-reset.h has
+> been removed by commit f88b8979 ("ARM: restart: remove the now
+> empty arch_reset()"), so the inclusion of <mach/system-reset.h>
+> should be removed at the plat-s3c24xx/cpu.c file.
+> 
+> The build error happens like following:
+>   arch/arm/plat-s3c24xx/cpu.c:41: fatal error: mach/system-reset.h: No such file or directory
+> 
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> Russell,
+> 
+> I think, you missed removing this in your patch.
 
-The build error happens like following:
-  arch/arm/plat-s3c24xx/cpu.c:41: fatal error: mach/system-reset.h: No such file or directory
+This rather proves the point that the way Samsung stuff is organized is
+just too complicated to be properly understood.  Yes, it's getting better
+as a result of some of the points I raised, but I feel its still too
+opaque for anyone except those who know it intimiately to get to grips
+with it properly, and follow how the code is organized through all those
+plat-* and mach-* directories.
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Russell,
+> If you have patches to send to Linus for this merge window,
+> could you please send this together? Or...?
 
-I think, you missed removing this in your patch.
-If you have patches to send to Linus for this merge window,
-could you please send this together? Or...?
-
- arch/arm/plat-s3c24xx/cpu.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/plat-s3c24xx/cpu.c b/arch/arm/plat-s3c24xx/cpu.c
-index 1121df1..21f1fda 100644
---- a/arch/arm/plat-s3c24xx/cpu.c
-+++ b/arch/arm/plat-s3c24xx/cpu.c
-@@ -38,8 +38,6 @@
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- 
--#include <mach/system-reset.h>
--
- #include <mach/regs-gpio.h>
- #include <plat/regs-serial.h>
- 
--- 
-1.7.1
+Please put it in the patch system and I'll queue it up.  Thanks.
