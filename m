@@ -1,76 +1,285 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C24XX: Fix build error for missing
-	<mach/system-reset.h>
-Date: Sat, 07 Jan 2012 21:23:48 +0900
-Message-ID: <010c01cccd37$357ea790$a07bf6b0$%kim@samsung.com>
-References: <010101cccd32$2cf0cfe0$86d26fa0$%kim@samsung.com>
- <20120107115914.GE13857@n2100.arm.linux.org.uk>
+From: Sylwester Nawrocki <snjw23@gmail.com>
+Subject: Re: [PATCH v2 2/2] ARM: Exynos: Hook up power domains to generic
+ power domain infrastructure
+Date: Sat, 07 Jan 2012 15:44:30 +0100
+Message-ID: <4F085A4E.3010200@gmail.com>
+References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org> <1325931055-14486-3-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:56465 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751890Ab2AGMXw (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:55025 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751111Ab2AGOom (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jan 2012 07:23:52 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LXF0072YH3N7800@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 07 Jan 2012 21:23:51 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LXF00B52H3PTQ80@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 07 Jan 2012 21:23:50 +0900 (KST)
-In-reply-to: <20120107115914.GE13857@n2100.arm.linux.org.uk>
-Content-language: ko
+	Sat, 7 Jan 2012 09:44:42 -0500
+In-Reply-To: <1325931055-14486-3-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, rob.herring@calxeda.com, rjw@sisk.pl, kyungmin.park@samsung.com, s.nawrocki@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Russell King - ARM Linux wrote:
+Hi Thomas,
+
+thank you for working on this. I have a few comments below..
+
+On 01/07/2012 11:10 AM, Thomas Abraham wrote:
+> Add support for generic power domain for Exynos4 platforms and remove the
+> Samsung specific power domain control for Exynos4.
 > 
-> On Sat, Jan 07, 2012 at 08:47:47PM +0900, Kukjin Kim wrote:
-> > Since the arch/arm/mach-s3c2410/include/mach/system-reset.h has
-> > been removed by commit f88b8979 ("ARM: restart: remove the now
-> > empty arch_reset()"), so the inclusion of <mach/system-reset.h>
-> > should be removed at the plat-s3c24xx/cpu.c file.
-> >
-> > The build error happens like following:
-> >   arch/arm/plat-s3c24xx/cpu.c:41: fatal error: mach/system-reset.h: No
-> such file or directory
-> >
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> > ---
-> > Russell,
-> >
-> > I think, you missed removing this in your patch.
+> The generic power domain infrastructure is used to control the power domains
+> available on Exynos4. For non-dt platforms, the power domains are statically
+> instantiated. For dt platforms, the power domain nodes found in the device
+> tree are instantiated.
 > 
-> This rather proves the point that the way Samsung stuff is organized is
-> just too complicated to be properly understood.  Yes, it's getting better
-
-Yes, I agree ;) and in my opinion, it was hard to merge samsung stuff for
-this merge window because some changes are in arm tree and some in arm-soc
-tree. In addition, driver-core tree. Anyway, I had to do earlier both :)
-
-> as a result of some of the points I raised, but I feel its still too
-> opaque for anyone except those who know it intimiately to get to grips
-> with it properly, and follow how the code is organized through all those
-> plat-* and mach-* directories.
+> Cc: Rafael J. Wysocki<rjw@sisk.pl>
+> Cc: Kukjin Kim<kgene.kim@samsung.com>
+> Cc: Kyungmin Park<kyungmin.park@samsung.com>
+> Cc: Rob Herring<rob.herring@calxeda.com>
+> Cc: Grant Likely<grant.likely@secretlab.ca>
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+> ---
+> This patch is mainly derived from Mark Brown's work on generic power domain
+> support for s3c64xx platforms.
 > 
-> > If you have patches to send to Linus for this merge window,
-> > could you please send this together? Or...?
+>   arch/arm/mach-exynos/Kconfig               |   10 +--
+>   arch/arm/mach-exynos/Makefile              |    2 +-
+>   arch/arm/mach-exynos/dev-pd.c              |  139 ---------------------
+>   arch/arm/mach-exynos/mach-nuri.c           |   11 --
+>   arch/arm/mach-exynos/mach-origen.c         |   14 --
+>   arch/arm/mach-exynos/mach-smdkv310.c       |   12 --
+>   arch/arm/mach-exynos/mach-universal_c210.c |   17 ---
+>   arch/arm/mach-exynos/pm_domains.c          |  183 ++++++++++++++++++++++++++++
+>   8 files changed, 185 insertions(+), 203 deletions(-)
+>   delete mode 100644 arch/arm/mach-exynos/dev-pd.c
+>   create mode 100644 arch/arm/mach-exynos/pm_domains.c
 > 
-> Please put it in the patch system and I'll queue it up.  Thanks.
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index e931924..5dec134 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -32,6 +32,7 @@ config CPU_EXYNOS4210
+>   	select ARM_CPU_SUSPEND if PM
+>   	select S5P_PM if PM
+>   	select S5P_SLEEP if PM
+> +	select PM_GENERIC_DOMAINS
+>   	help
+>   	  Enable EXYNOS4210 CPU support
+> 
+...
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> new file mode 100644
+> index 0000000..95a7c55
+> --- /dev/null
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -0,0 +1,183 @@
+> +/*
+> + * Exynos4 Generic power domain support.
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
 
-OK, I did just now.
+2012 ?
 
-Thanks.
+> + *		http://www.samsung.com
+> + *
+> + * Implementation of Exynos4 specific power domain control which is used in
+> + * conjunction with runtime-pm. Support for both device-tree and non-device-tree
+> + * based power domain support is included.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> +*/
+> +
+> +#include<linux/io.h>
+> +#include<linux/err.h>
+> +#include<linux/slab.h>
+> +#include<linux/pm_domain.h>
+> +#include<linux/delay.h>
+> +#include<linux/of_address.h>
+> +
+> +#include<mach/regs-pmu.h>
+> +#include<plat/devs.h>
+> +
+> +/*
+> + * Exynos4 specific wrapper around the generic power domain
+> + */
+> +struct exynos4_pm_domain {
+> +	void __iomem *base;
+> +	char const *name;
+> +	bool is_off;
+> +	struct generic_pm_domain pd;
+> +};
+> +
+> +static int exynos4_pd_power(struct generic_pm_domain *domain, bool power_on)
+> +{
+> +	struct exynos4_pm_domain *pd;
+> +	void __iomem *base;
+> +	u32 timeout, pwr;
+> +	char *op;
+> +
+> +	pd = container_of(domain, struct exynos4_pm_domain, pd);
+> +	base = pd->base;
+> +
+> +	pwr = (power_on) ? S5P_INT_LOCAL_PWR_EN : 0;
 
-Best regards,
-Kgene.
+Is there any value in parentheses around 'power_on' ? 
+
+> +	__raw_writel(pwr, base);
+> +
+> +	/* Wait max 1ms */
+> +	timeout = 10;
+> +
+> +	while ((__raw_readl(base + 0x4)&  S5P_INT_LOCAL_PWR_EN)	!= pwr) {
+> +		if (!timeout) {
+> +			op = (power_on) ? "enable" : "disable";
+> +			pr_err("Power domain %s %s failed\n", op, domain->name);
+
+How about just:
+       pr_err("%s power domain state change (%d) failed\n",
+              domain->name, power_on);
+?
+> +			return -ETIMEDOUT;
+> +		}
+> +		timeout--;
+> +		cpu_relax();
+
+Does cpu_relax() make any difference here ?
+
+> +		usleep_range(80, 100);
+> +	}
+> +	return 0;
+> +}
+> +
+> +static int exynos4_pd_power_on(struct generic_pm_domain *domain)
+> +{
+> +	return exynos4_pd_power(domain, true);
+> +}
+> +
+> +static int exynos4_pd_power_off(struct generic_pm_domain *domain)
+> +{
+> +	return exynos4_pd_power(domain, false);
+> +}
+> +
+> +
+> +#define EXYNOS4_GPD(PD, BASE, NAME)			\
+> +static struct exynos4_pm_domain PD = {			\
+> +	.base = (void __iomem *)BASE,			\
+> +	.name = NAME,					\
+> +	.pd = {						\
+> +		.power_off = exynos4_pd_power_off,	\
+> +		.power_on = exynos4_pd_power_on,	\
+> +	},						\
+> +}
+> +
+> +EXYNOS4_GPD(exynos4_pd_mfc, S5P_PMU_MFC_CONF, "pd-mfc");
+> +EXYNOS4_GPD(exynos4_pd_g3d, S5P_PMU_G3D_CONF, "pd-g3d");
+> +EXYNOS4_GPD(exynos4_pd_lcd0, S5P_PMU_LCD0_CONF, "pd-lcd0");
+> +EXYNOS4_GPD(exynos4_pd_lcd1, S5P_PMU_LCD1_CONF, "pd-lcd1");
+> +EXYNOS4_GPD(exynos4_pd_tv, S5P_PMU_TV_CONF, "pd-tv");
+> +EXYNOS4_GPD(exynos4_pd_cam, S5P_PMU_CAM_CONF, "pd-cam");
+> +EXYNOS4_GPD(exynos4_pd_gps, S5P_PMU_GPS_CONF, "pd-gps");
+> +
+> +static struct exynos4_pm_domain *exynos4_pm_domains[] = {
+> +	&exynos4_pd_mfc,
+> +	&exynos4_pd_g3d,
+> +	&exynos4_pd_lcd0,
+> +	&exynos4_pd_lcd1,
+> +	&exynos4_pd_tv,
+> +	&exynos4_pd_cam,
+> +	&exynos4_pd_gps,
+> +};
+> +
+> +static __init int exynos4_pm_init_power_domain(void)
+> +{
+> +	int idx;
+> +	struct device_node *np;
+> +
+> +#ifdef CONFIG_OF
+> +	if (!of_have_populated_dt())
+> +		goto no_dt;
+> +
+> +	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+> +		struct exynos4_pm_domain *pd;
+> +
+> +		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+> +		if (!pd) {
+> +			pr_err("exynos4_pm_init_power_domain: failed to "
+> +					"allocate memory for domain\n");
+
+nit: what about:
+			pr_err("%s: failed to allocate memory for domain\n",
+				__func__);
+?
+> +			return -ENOMEM;
+> +		}
+> +
+> +		if (of_get_property(np, "samsung,exynos4210-pd-off", NULL))
+> +			pd->is_off = true;
+> +		pd->name = np->name;
+> +		pd->base = of_iomap(np, 0);
+> +		pd->pd.power_off = exynos4_pd_power_off;
+> +		pd->pd.power_on = exynos4_pd_power_on;
+> +		pd->pd.of_node = np;
+> +		pm_genpd_init(&pd->pd, NULL, false);
+> +	}
+> +	return 0;
+> +#endif /* CONFIG_OF */
+> +
+> + no_dt:
+> +	for (idx = 0; idx<  ARRAY_SIZE(exynos4_pm_domains); idx++)
+> +		pm_genpd_init(&exynos4_pm_domains[idx]->pd, NULL,
+> +				exynos4_pm_domains[idx]->is_off);
+> +
+> +#ifdef CONFIG_S5P_DEV_FIMD0
+> +	if (pm_genpd_add_device(&exynos4_pd_lcd0.pd,&s5p_device_fimd0.dev))
+> +		pr_info("error in adding fimd0 to lcd0 power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_TV
+> +	if (pm_genpd_add_device(&exynos4_pd_tv.pd,&s5p_device_hdmi.dev))
+> +		pr_info("error in adding hdmi to tv power domain\n");
+> +	if (pm_genpd_add_device(&exynos4_pd_tv.pd,&s5p_device_mixer.dev))
+> +		pr_info("error in adding mixer to tv power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_MFC
+> +	if (pm_genpd_add_device(&exynos4_pd_mfc.pd,&s5p_device_mfc.dev))
+> +		pr_info("error in adding mfc to mfc power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_FIMC0
+> +	if (pm_genpd_add_device(&exynos4_pd_cam.pd,&s5p_device_fimc0.dev))
+> +		pr_info("error in adding fimc0 to cam power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_FIMC1
+> +	if (pm_genpd_add_device(&exynos4_pd_cam.pd,&s5p_device_fimc1.dev))
+> +		pr_info("error in adding fimc1 to cam power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_FIMC2
+> +	if (pm_genpd_add_device(&exynos4_pd_cam.pd,&s5p_device_fimc2.dev))
+> +		pr_info("error in adding fimc2 to cam power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_FIMC3
+> +	if (pm_genpd_add_device(&exynos4_pd_cam.pd,&s5p_device_fimc3.dev))
+> +		pr_info("error in adding fimc3 to cam power domain\n");
+> +#endif
+> +#ifdef CONFIG_S5P_DEV_CSIS0
+> +	if (pm_genpd_add_device(&exynos4_pd_cam.pd,&s5p_device_mipi_csis0.dev))
+> +		pr_info("error in adding csis0 to cam power domain\n");
+> +#endif
+
+Could you add CSIS1 as well ? Some boards will be using both MIPI-CSI receivers.
+
+> +	return 0;
+> +}
+> +arch_initcall(exynos4_pm_init_power_domain);
+> +
+> +static __init int exynos4_pm_late_initcall(void)
+> +{
+> +	pm_genpd_poweroff_unused();
+> +	return 0;
+> +}
+> +late_initcall(exynos4_pm_late_initcall);
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+Regards,
+Sylwester
