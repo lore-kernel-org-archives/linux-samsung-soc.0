@@ -1,62 +1,60 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung cleanup for v3.3
-Date: Sat, 07 Jan 2012 19:06:01 +0900
-Message-ID: <00f401cccd23$f5cbb7e0$e16327a0$%kim@samsung.com>
-References: <018701ccca6f$9e6f80f0$db4e82d0$%kim@samsung.com>
- <CAOesGMj6thhs5zoq3y+OK+g4o1X9CBvaMKPLONFgGPrQ=AueeQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v2 0/2] ARM: Exynos: Adapt to generic power domain
+Date: Sat, 07 Jan 2012 15:40:53 +0530
+Message-ID: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27836 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751006Ab2AGKGD convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60823 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751697Ab2AGKGf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jan 2012 05:06:03 -0500
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LXF002WDAOZOTB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 07 Jan 2012 19:06:02 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LXF00HAYAQ11930@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 07 Jan 2012 19:06:01 +0900 (KST)
-In-reply-to: <CAOesGMj6thhs5zoq3y+OK+g4o1X9CBvaMKPLONFgGPrQ=AueeQ@mail.gmail.com>
-Content-language: ko
+	Sat, 7 Jan 2012 05:06:35 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-Olof Johansson wrote:
->=20
-> Hi,
->=20
-> On Tue, Jan 3, 2012 at 3:30 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> > Hi Arnd,
-> >
-> > Please pull Samsung cleanup for v3.3 from:
-> > =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsun=
-g.git
-> > next-samsung-cleanup-samsung
-> >
-> > There are cleanups for Samsung stuff and there is no dependency wit=
-h
-> other
-> > branches.
-> >
-> > Sorry for late, I thought sent 'pull request' this :( if any proble=
-ms,
-> > please let me know.
->=20
-> Thanks, pulled into samsung/cleanup and next/cleanup2.
->=20
-OK, Thanks.
+Changes since v1:
+- Added a OF wrapper around __pm_genpd_add_device as suggested by Rafael.
+- Added cpu_relax and usleep_range during waits for power domain to be
+  enabled/disabled.
+- Added static registrations of devices to power domains for non-dt
+  platforms.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+The power domains available on Exynos4 are made controllable using the generic
+power domain infrastructure. The Samsung specific power domain control code
+for Exynos4 is removed. Support for both DT and non-DT Exynos platforms is
+added.
+
+The first patch adds device tree support for generic power domain. A device
+node is added to the generic power domain strucure that represents a power
+domain node in the device tree. Other device nodes in the device tree can
+include a property with a phandle of the power domain node which will enable
+that device to be associated with a power domain.
+
+The second patch registers available power domains to generic power domain
+framework with support for both dt and non-dt platforms. The Samsung specific
+power domain control support is removed.
+
+The patchset is based on the following tree
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+
+with all patches merged from
+http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+
+Thomas Abraham (2):
+  PM / Domains: Add OF support
+  ARM: Exynos: Hook up power domains to generic power domain infrastructure
+
+ arch/arm/mach-exynos/Kconfig               |   10 +--
+ arch/arm/mach-exynos/Makefile              |    2 +-
+ arch/arm/mach-exynos/dev-pd.c              |  139 ---------------------
+ arch/arm/mach-exynos/mach-nuri.c           |   11 --
+ arch/arm/mach-exynos/mach-origen.c         |   14 --
+ arch/arm/mach-exynos/mach-smdkv310.c       |   12 --
+ arch/arm/mach-exynos/mach-universal_c210.c |   17 ---
+ arch/arm/mach-exynos/pm_domains.c          |  183 ++++++++++++++++++++++++++++
+ drivers/base/power/domain.c                |   32 +++++
+ include/linux/pm_domain.h                  |   12 ++
+ 10 files changed, 229 insertions(+), 203 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/dev-pd.c
+ create mode 100644 arch/arm/mach-exynos/pm_domains.c
