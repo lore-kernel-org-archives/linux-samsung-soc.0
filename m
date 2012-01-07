@@ -1,95 +1,104 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] backlight: lcd: add driver for raster-type lcd's with
- gpio controlled panel reset
-Date: Sat, 7 Jan 2012 16:34:34 +0530
-Message-ID: <CAJuYYwRxuZAm_JpLw1fN2ypnFc6TocH6veRmCeuqENvZHSz3kg@mail.gmail.com>
-References: <1325778146-27056-1-git-send-email-thomas.abraham@linaro.org>
-	<4F05F509.6020405@metafoo.de>
-	<20120106064929.GB3496@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH RE-SEND 2/2] [CPUFREQ] EXYNOS: Removed useless headers and codes
+Date: Sat, 07 Jan 2012 20:18:39 +0900
+Message-ID: <00f701cccd2e$1b019520$5104bf60$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:43621 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751289Ab2AGLEf convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:13602 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751327Ab2AGLSm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jan 2012 06:04:35 -0500
-In-Reply-To: <20120106064929.GB3496@opensource.wolfsonmicro.com>
+	Sat, 7 Jan 2012 06:18:42 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
+To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Dave Jones' <davej@redhat.com>, jc.lee@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Hi Mark,
+From: Jaecheol Lee <jc.lee@samsung.com>
 
-On 6 January 2012 12:19, Mark Brown <broonie@opensource.wolfsonmicro.co=
-m> wrote:
-> On Thu, Jan 05, 2012 at 08:07:53PM +0100, Lars-Peter Clausen wrote:
->
->> > +- lcd,pwrctrl-min-uV: If a regulator controls the Vcc voltage of =
-the lcd panel,
->> > + =A0this property specifies the minimum voltage the regulator sho=
-uld supply.
->> > + =A0The value of this property should in in micro-volts.
->> > +- lcd,pwrctrl-max-uV: If a regulator controls the Vcc voltage of =
-the lcd panel,
->> > + =A0this property specifies the maximum voltage the regulator sho=
-uld limit to
->> > + =A0on the Vcc line. The value of this property should in in micr=
-o-volts.
->
->> The min and max voltage should rather be specified through the regul=
-ator
->> constraints.
->
-> In principle it should be specified in both places to account for sha=
-red
-> supplies though for all practical purposes for an LCD panel I can't s=
-ee
-> multiple users sharing the same regulator and varying the voltage at
-> runtime.
+This patch removes no referencing header files and cleaned up
+useless code.
 
-It is assumed here that the boot loader as not set the output voltage
-of the regulator that supports variable voltage ranges. So these
-values help in setting up the regulator for LCD display.
+Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/cpufreq/exynos-cpufreq.c     |    8 +-------
+ drivers/cpufreq/exynos4210-cpufreq.c |   14 +-------------
+ 2 files changed, 2 insertions(+), 20 deletions(-)
 
->
->> > + =A0 if (lcd_enable) {
->> > + =A0 =A0 =A0 =A0 =A0 if ((pd->min_uV || pd->max_uV) &&
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 regulator_set_voltage(lp->re=
-gulator,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 pd->min_uV, pd->max_uV))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(lp-=
->dev,
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 "regulator voltage set failed\n");
->> > + =A0 =A0 =A0 =A0 =A0 if (regulator_enable(lp->regulator))
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(lp->dev, "failed to=
- enable regulator\n");
->> > + =A0 } else {
->> > + =A0 =A0 =A0 =A0 =A0 regulator_disable(lp->regulator);
->> > + =A0 }
->
->> I think you have to make sure that the regulator enable and disable =
-calls are
->> balanced.
->
-> Yes.
-
-Ok. I will fix this.
-
->
->> > +#ifdef CONFIG_OF
->
->> I think you can remove all the CONFIG_OF ifdefs, the of API should s=
-tub itself out.
->
-> It's reasonably idiomatic to do this if the parsing code is in a
-> separate function.
-
-Thanks for your review Mark.
-
-Regards,
-Thomas.
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 24e4dd4..5467879 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -9,7 +9,6 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/types.h>
+ #include <linux/kernel.h>
+ #include <linux/err.h>
+ #include <linux/clk.h>
+@@ -18,15 +17,10 @@
+ #include <linux/regulator/consumer.h>
+ #include <linux/cpufreq.h>
+ #include <linux/suspend.h>
+-#include <linux/reboot.h>
+ 
+-#include <mach/map.h>
+-#include <mach/regs-clock.h>
+-#include <mach/regs-mem.h>
+ #include <mach/cpufreq.h>
+ 
+-#include <plat/clock.h>
+-#include <plat/pm.h>
++#include <plat/cpu.h>
+ 
+ static struct exynos_dvfs_info *exynos_info;
+ 
+diff --git a/drivers/cpufreq/exynos4210-cpufreq.c b/drivers/cpufreq/exynos4210-cpufreq.c
+index 6bc4ada..065da5b 100644
+--- a/drivers/cpufreq/exynos4210-cpufreq.c
++++ b/drivers/cpufreq/exynos4210-cpufreq.c
+@@ -9,25 +9,17 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-#include <linux/types.h>
++#include <linux/module.h>
+ #include <linux/kernel.h>
+ #include <linux/err.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
+ #include <linux/slab.h>
+-#include <linux/regulator/consumer.h>
+ #include <linux/cpufreq.h>
+-#include <linux/notifier.h>
+-#include <linux/suspend.h>
+ 
+-#include <mach/map.h>
+ #include <mach/regs-clock.h>
+-#include <mach/regs-mem.h>
+ #include <mach/cpufreq.h>
+ 
+-#include <plat/clock.h>
+-#include <plat/pm.h>
+-
+ #define CPUFREQ_LEVEL_END	L5
+ 
+ static int max_support_idx = L0;
+@@ -38,10 +30,6 @@ static struct clk *moutcore;
+ static struct clk *mout_mpll;
+ static struct clk *mout_apll;
+ 
+-static struct regulator *arm_regulator;
+-
+-static struct cpufreq_freqs freqs;
+-
+ struct cpufreq_clkdiv {
+ 	unsigned int index;
+ 	unsigned int clkdiv;
+-- 
+1.7.1
