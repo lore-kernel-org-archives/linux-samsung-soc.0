@@ -1,46 +1,96 @@
-From: Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH] backlight: lcd: add driver for raster-type lcd's with
- gpio controlled panel reset
-Date: Sat, 07 Jan 2012 19:32:12 +0100
-Message-ID: <4F088FAC.3000200@metafoo.de>
-References: <1325778146-27056-1-git-send-email-thomas.abraham@linaro.org> <20120107182319.GA13181@n2100.arm.linux.org.uk>
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH V9 0/2] HS200 Mode support for device and host
+Date: Sun, 8 Jan 2012 11:20:24 +0530
+Message-ID: <CAGxe1ZEXi+WBh34EEX1jifF=3GnddodJGNhA2rLFxHWcmMRP0w@mail.gmail.com>
+References: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailhost.informatik.uni-hamburg.de ([134.100.9.70]:47739 "EHLO
-	mailhost.informatik.uni-hamburg.de" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752680Ab2AGSdb (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:46467 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751390Ab2AHFuZ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jan 2012 13:33:31 -0500
-In-Reply-To: <20120107182319.GA13181@n2100.arm.linux.org.uk>
+	Sun, 8 Jan 2012 00:50:25 -0500
+In-Reply-To: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, kwangwoo.lee@gmail.com, patches@linaro.org, jg1.han@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, cbou@mail.ru, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, rpurdie@rpsys.net, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, augulis.darius@gmail.com
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-On 01/07/2012 07:23 PM, Russell King - ARM Linux wrote:
-> On Thu, Jan 05, 2012 at 09:12:26PM +0530, Thomas Abraham wrote:
->> Add a lcd panel driver for simple raster-type lcd's which uses a gpio
->> controlled panel reset. The driver controls the nRESET line of the panel
->> using a gpio connected from the host system. The Vcc supply to the panel
->> is (optionally) controlled using a voltage regulator. This driver excludes
->> support for lcd panels that use a serial command interface or direct
->> memory mapped IO interface.
-> 
-> I'm trying to work out what kind of LCD panel this is for.  I assume
-> not the panels which would be connected to a SoC, which have a parallel
-> interface to a frame buffer device (LCD controller)?
-> 
-> If this is for these kinds of LCD panels, how are you handling the
-> timing required for active panels - some of which must not be powered
-> up without the LCD controller first being setup and enabled, and must
-> be powered down before the LCD controller is disabled.
-> 
-> I've seen this requirement with panels connected to ARM Ltd's development
-> boards, and also some SoCs.
+HI Chris,
+Please have a look at this patch series and add it in your next branch
+if everything seems to be Ok
 
-This is handled by the LCD framework. Or at least should be, see this patchset
-http://www.spinics.net/lists/linux-fbdev/msg04503.html
+regards
+Girish K S
 
-- Lars
+On 6 January 2012 09:56, Girish K S <girish.shivananjappa@linaro.org> w=
+rote:
+> changes in v9:
+> =A0 =A0 =A0 =A0Updated the changes suggested by Chris for kernel codi=
+ng comaptibility
+> changes in v8:
+> =A0 =A0 =A0 =A0Updated the changes suggested by Philip for bus mode t=
+est.
+> changes in v7:
+> =A0 =A0 =A0 =A0Updated with review comments for minor changes in host=
+ conditional
+> =A0 =A0 =A0 =A0handling. added the handling for 4 bit bus width.
+> Changes in v6:
+> =A0 =A0 =A0 =A0split the patch into 2 and classified them as a patch =
+for device
+> =A0 =A0 =A0 =A0and host. Modified to include the review comments.
+> Changes in v5:
+> =A0 =A0 =A0 =A0Reduced the case statements for better code readabilit=
+y. Removed
+> =A0 =A0 =A0 =A0unused macro definitions. Modified the tuning function=
+ prototype
+> =A0 =A0 =A0 =A0and definition to support tuning for both SD and eMMC =
+cards.
+> Changes in v4:
+> =A0 =A0 =A0 =A0Rebased onto chris-mmc/mmc-next branch. This patch is =
+successfully
+> =A0 =A0 =A0 =A0applied on commit with id de022ed3fdc14808299b2fa66dbb=
+1ed5ab921912.
+> Changes in v3:
+> =A0 =A0 =A0 =A0In the previous commits of chris-mmc/mmc-next branch, =
+the patch with
+> =A0 =A0 =A0 =A0commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) d=
+efines caps2 for
+> =A0 =A0 =A0 =A0more capabilities. This patch version deletes the memb=
+er ext_caps
+> =A0 =A0 =A0 =A0(created in my earlier patch) from struct mmc_host and=
+ reuses already
+> =A0 =A0 =A0 =A0accepted caps2 member.
+> Changes in v2:
+> =A0 =A0 =A0 =A0Rebased to latest chris-mmc/mmc-next branch. Resolved =
+indentation
+> =A0 =A0 =A0 =A0problems identified in review. This patch has to be ap=
+plied before
+> =A0 =A0 =A0 =A0the patch released for modifying the printk messages.
+> Changes in v1:
+> =A0 =A0 =A0 =A0Case statements in switch that produce same result hav=
+e been combined
+> =A0 =A0 =A0 =A0to reduce repeated assignments. patch recreated after =
+rebase to chris
+> =A0 =A0 =A0 =A0Balls mmc-next branch.
+>
+> Girish K S (2):
+> =A0mmc: core: HS200 mode support for eMMC 4.5
+> =A0mmc: host: Adds support for eMMC 4.5 HS200 mode
+>
+> =A0drivers/mmc/core/bus.c =A0 =A0 | =A0 =A03 +-
+> =A0drivers/mmc/core/debugfs.c | =A0 =A03 +
+> =A0drivers/mmc/core/mmc.c =A0 =A0 | =A0162 ++++++++++++++++++++++++++=
++++++++++++++++---
+> =A0drivers/mmc/core/sd.c =A0 =A0 =A0| =A0 =A03 +-
+> =A0drivers/mmc/core/sdio.c =A0 =A0| =A0 =A04 +-
+> =A0drivers/mmc/host/sdhci.c =A0 | =A0 45 +++++++++---
+> =A0drivers/mmc/host/sdhci.h =A0 | =A0 =A01 +
+> =A0include/linux/mmc/card.h =A0 | =A0 =A03 +
+> =A0include/linux/mmc/host.h =A0 | =A0 11 +++-
+> =A0include/linux/mmc/mmc.h =A0 =A0| =A0 66 ++++++++++++++++++-
+> =A0include/linux/mmc/sdhci.h =A0| =A0 =A01 +
+> =A011 files changed, 277 insertions(+), 25 deletions(-)
+>
