@@ -1,34 +1,48 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Sun, 8 Jan 2012 20:49:53 +0000
-Message-ID: <20120108204953.GA20043@sirena.org.uk>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
- <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/3] s3c-hsudc powerdomain using generic power domains
+Date: Sun, 8 Jan 2012 21:56:43 +0100
+Message-ID: <201201082156.44142.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:37100 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754272Ab2AHUuA (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:44700 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754492Ab2AHU44 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jan 2012 15:50:00 -0500
-Content-Disposition: inline
-In-Reply-To: <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
+	Sun, 8 Jan 2012 15:56:56 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Felipe Balbi <balbi@ti.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-On Fri, Jan 06, 2012 at 01:58:29PM -0800, Olof Johansson wrote:
+The S3C2443/S3C2416/S3C2450 contain a power domain for the usb phy.
+Up until now the s3c-hsudc was writing directly to the PWRCFG register
+in the (un)init_phy functions to control it.
 
-> > Please pull Samsung devel for v3.3 from:
-> > ?git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > next-samsung-devel-samsung
+This patchset introduces a power domain for the usbphy and hooks the
+hsudc-device to it. The new runtime_pm calls then handle the enabling
+and disabling of the power domain on udc start and stop.
 
-> Thanks. I've pulled this into late/devel, based on earlier email from
-> Arnd we might end up sending this in towards the end of the merge
-> window, but there's also a chance it will wait for 3.4.
+As a result another arch dependency is gone from the driver.
 
-That'd be extremely disappointing, especially given that there's some
-bug fixes in there for updates going in this merge window without which
-mainline is going to have problems on s3c64xx (mostly the GPIO stuff).
+This set applies cleanly to linux-next from 2012-01-06 and is
+tested on S3C2416 hardware.
+
+Heiko Stuebner (3):
+  s3c-hsudc: Use helper functions instead of generic container_of
+  s3c-hsudc: add basic runtime_pm calls
+  S3C2443: add power domain for usb phy
+
+ arch/arm/mach-s3c2416/Kconfig             |    1 +
+ arch/arm/mach-s3c2443/Kconfig             |    1 +
+ arch/arm/plat-s3c24xx/Kconfig             |    7 +++
+ arch/arm/plat-s3c24xx/Makefile            |    1 +
+ arch/arm/plat-s3c24xx/s3c2443-pm-common.c |   65 +++++++++++++++++++++++++++++
+ drivers/usb/gadget/s3c-hsudc.c            |   25 ++++++-----
+ 6 files changed, 89 insertions(+), 11 deletions(-)
+ create mode 100644 arch/arm/plat-s3c24xx/s3c2443-pm-common.c
+
+-- 
+1.7.2.3
