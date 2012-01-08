@@ -1,144 +1,51 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH v2 1/2] PM / Domains: Add OF support
-Date: Sun, 8 Jan 2012 22:23:18 +0100
-Message-ID: <201201082223.18603.rjw@sisk.pl>
-References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org> <1325931055-14486-2-git-send-email-thomas.abraham@linaro.org>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/2] S3C24XX: remove some spi left overs
+Date: Sun, 8 Jan 2012 22:22:11 +0100
+Message-ID: <201201082222.11305.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="iso-8859-2"
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:53220 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754492Ab2AHVT6 (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:36675 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754492Ab2AHVWQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jan 2012 16:19:58 -0500
-In-Reply-To: <1325931055-14486-2-git-send-email-thomas.abraham@linaro.org>
+	Sun, 8 Jan 2012 16:22:16 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
 
-On Saturday, January 07, 2012, Thomas Abraham wrote:
-> A device node pointer is added to generic pm domain structure to associate
-> the domain with a node in the device tree. The platform code parses the
-> device tree to find available nodes representing the generic power domain,
-> instantiates the available domains and initializes them by calling
-> pm_genpd_init().
-> 
-> Nodes representing the devices include a phandle of the power domain to
-> which it belongs. As these devices get instantiated, the driver code
-> checkes for availability of a power domain phandle, converts the phandle
-> to a device node and uses the new pm_genpd_of_add_device() api to
-> associate the device with a power domain.
-> 
-> pm_genpd_of_add_device() runs through its list of registered power domains
-> and matches the OF node of the domain with the one specified as the
-> parameter. If a match is found, the device is associated with the matched
-> domain.
-> 
-> Cc: Rafael J. Wysocki <rjw@sisk.pl>
-> Cc: Rob Herring <rob.herring@calxeda.com>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+This series removes unused setup-code of the s3c24xx spi driver.
 
-I can take this patch for 3.4, but your [2/2] depends on it, so I'm not
-sure how to handle that.  If you want me to take the other patch too,
-it'll need ACKs from the Exynos maintaniers.
+It has no current in kernel users and also no development activity trying
+to change this. I also checked the upstream git of the only board including
+the spi.h file (the gta02 at http://git.openmoko.org). The setup calls
+are also not used there.
 
-Thanks,
-Rafael
+I recall a thread some time back talking about removing the spi-s3c24xx
+driver altogether, but as current linux-next still carries the driver
+I'm not sure what became of it. So this series does the next smaller thing.
 
 
-> ---
->  drivers/base/power/domain.c |   32 ++++++++++++++++++++++++++++++++
->  include/linux/pm_domain.h   |   12 ++++++++++++
->  2 files changed, 44 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 92e6a90..9ee1f7b 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1171,6 +1171,38 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->  }
->  
->  /**
-> + * __pm_genpd_of_add_device - Add a device to an I/O PM domain.
-> + * @genpd_node: Device tree node pointer representing a PM domain to which the
-> + *   the device is added to.
-> + * @dev: Device to be added.
-> + * @td: Set of PM QoS timing parameters to attach to the device.
-> + */
-> +int __pm_genpd_of_add_device(struct device_node *genpd_node, struct device *dev,
-> +			     struct gpd_timing_data *td)
-> +{
-> +	struct generic_pm_domain *genpd = NULL, *gpd;
-> +
-> +	dev_dbg(dev, "%s()\n", __func__);
-> +
-> +	if (IS_ERR_OR_NULL(genpd_node) || IS_ERR_OR_NULL(dev))
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&gpd_list_lock);
-> +	list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
-> +		if (gpd->of_node == genpd_node) {
-> +			genpd = gpd;
-> +			break;
-> +		}
-> +	}
-> +	mutex_unlock(&gpd_list_lock);
-> +
-> +	if (!genpd)
-> +		return -EINVAL;
-> +
-> +	return __pm_genpd_add_device(genpd, dev, td);
-> +}
-> +
-> +/**
->   * pm_genpd_remove_device - Remove a device from an I/O PM domain.
->   * @genpd: PM domain to remove the device from.
->   * @dev: Device to be removed.
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index a03a0ad..e3ff875 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -11,6 +11,7 @@
->  
->  #include <linux/device.h>
->  #include <linux/err.h>
-> +#include <linux/of.h>
->  
->  enum gpd_status {
->  	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
-> @@ -70,6 +71,7 @@ struct generic_pm_domain {
->  	s64 break_even_ns;	/* Power break even for the entire domain. */
->  	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
->  	ktime_t power_off_time;
-> +	struct device_node *of_node; /* Node in device tree */
->  };
->  
->  static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
-> @@ -117,12 +119,22 @@ extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
->  				 struct device *dev,
->  				 struct gpd_timing_data *td);
->  
-> +extern int __pm_genpd_of_add_device(struct device_node *genpd_node,
-> +				    struct device *dev,
-> +				    struct gpd_timing_data *td);
-> +
->  static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
->  				      struct device *dev)
->  {
->  	return __pm_genpd_add_device(genpd, dev, NULL);
->  }
->  
-> +static inline int pm_genpd_of_add_device(struct device_node *genpd_node,
-> +					 struct device *dev)
-> +{
-> +	return __pm_genpd_of_add_device(genpd_node, dev, NULL);
-> +}
-> +
->  extern int pm_genpd_remove_device(struct generic_pm_domain *genpd,
->  				  struct device *dev);
->  extern int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
-> 
+Heiko Stuebner (2):
+  S3C24XX: remove unused spi gpio setup functions
+  S3C24XX: move spi-s3c24xx platdata out of mach
+
+ arch/arm/mach-s3c2410/include/mach/spi.h     |   38 --------------------------
+ arch/arm/mach-s3c2440/mach-gta02.c           |    2 +-
+ arch/arm/plat-s3c24xx/Kconfig                |   20 -------------
+ arch/arm/plat-s3c24xx/Makefile               |    6 ----
+ arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c |   36 ------------------------
+ arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c   |   38 --------------------------
+ arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c    |   36 ------------------------
+ drivers/spi/spi-s3c24xx.c                    |    2 +-
+ 8 files changed, 2 insertions(+), 176 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c2410/include/mach/spi.h
+ delete mode 100644 arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c
+ delete mode 100644 arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c
+ delete mode 100644 arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c
+
+-- 
+1.7.2.3
