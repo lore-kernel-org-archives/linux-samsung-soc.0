@@ -1,98 +1,34 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH V9 2/2] mmc: host: Adds support for eMMC 4.5 HS200 mode
-Date: Sun, 08 Jan 2012 15:37:37 -0500
-Message-ID: <m239bqvsku.fsf@bob.laptop.org>
-References: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
-	<1325823999-21770-3-git-send-email-girish.shivananjappa@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] Samsung devel for v3.3
+Date: Sun, 8 Jan 2012 20:49:53 +0000
+Message-ID: <20120108204953.GA20043@sirena.org.uk>
+References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
+ <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:37797 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754383Ab2AHUho convert rfc822-to-8bit (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:37100 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754272Ab2AHUuA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jan 2012 15:37:44 -0500
-In-Reply-To: <1325823999-21770-3-git-send-email-girish.shivananjappa@linaro.org>
-	(Girish K. S.'s message of "Fri, 6 Jan 2012 09:56:39 +0530")
+	Sun, 8 Jan 2012 15:50:00 -0500
+Content-Disposition: inline
+In-Reply-To: <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Hi,
+On Fri, Jan 06, 2012 at 01:58:29PM -0800, Olof Johansson wrote:
 
-On Thu, Jan 05 2012, Girish K S wrote:
-> @@ -1703,10 +1707,13 @@ static int sdhci_execute_tuning(struct mmc_ho=
-st *mmc)
->  	 * Host Controller needs tuning only in case of SDR104 mode
->  	 * and for SDR50 mode when Use Tuning for SDR50 is set in
->  	 * Capabilities register.
-> +	 * If the Host Controller supports the HS200 mode then tuning
-> +	 * function has to be executed.
->  	 */
->  	if (((ctrl & SDHCI_CTRL_UHS_MASK) =3D=3D SDHCI_CTRL_UHS_SDR104) ||
->  	    (((ctrl & SDHCI_CTRL_UHS_MASK) =3D=3D SDHCI_CTRL_UHS_SDR50) &&
-> -	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)))
-> +	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)) ||
-> +	    (host->flags & SDHCI_HS200_NEEDS_TUNING))
->  		ctrl |=3D SDHCI_CTRL_EXEC_TUNING;
->  	else {
->  		spin_unlock(&host->lock);
+> > Please pull Samsung devel for v3.3 from:
+> > ?git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > next-samsung-devel-samsung
 
-Actually, this generates a warning:
+> Thanks. I've pulled this into late/devel, based on earlier email from
+> Arnd we might end up sending this in towards the end of the merge
+> window, but there's also a chance it will wait for 3.4.
 
-/home/cjb/git/mmc/drivers/mmc/host/sdhci.c: In function =E2=80=98sdhci_=
-execute_tuning=E2=80=99:
-/home/cjb/git/mmc/drivers/mmc/host/sdhci.c:1716:7: warning: suggest par=
-entheses around =E2=80=98&&=E2=80=99 within =E2=80=98||=E2=80=99 [-Wpar=
-entheses]
-
-=2E. as well as being hard to follow.  Shall we split it up as below in=
-stead?
-
-diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
-index 64febf2..5627354 100644
---- a/drivers/mmc/host/sdhci.c
-+++ b/drivers/mmc/host/sdhci.c
-@@ -1694,6 +1694,7 @@ static int sdhci_execute_tuning(struct mmc_host *=
-mmc, u32 opcode)
- 	int tuning_loop_counter =3D MAX_TUNING_LOOP;
- 	unsigned long timeout;
- 	int err =3D 0;
-+	bool requires_tuning_nonuhs;
-=20
- 	host =3D mmc_priv(mmc);
-=20
-@@ -1704,16 +1705,19 @@ static int sdhci_execute_tuning(struct mmc_host=
- *mmc, u32 opcode)
- 	ctrl =3D sdhci_readw(host, SDHCI_HOST_CONTROL2);
-=20
- 	/*
--	 * Host Controller needs tuning only in case of SDR104 mode
--	 * and for SDR50 mode when Use Tuning for SDR50 is set in
-+	 * The Host Controller needs tuning only in case of SDR104 mode
-+	 * and for SDR50 mode when Use Tuning for SDR50 is set in the
- 	 * Capabilities register.
--	 * If the Host Controller supports the HS200 mode then tuning
--	 * function has to be executed.
-+	 * If the Host Controller supports the HS200 mode then the
-+	 * tuning function has to be executed.
- 	 */
--	if ((ctrl & SDHCI_CTRL_UHS_MASK =3D=3D SDHCI_CTRL_UHS_SDR104) ||
--	    ((ctrl & SDHCI_CTRL_UHS_MASK =3D=3D SDHCI_CTRL_UHS_SDR50) &&
--	     host->flags & SDHCI_SDR50_NEEDS_TUNING ||
-+	if (((ctrl & SDHCI_CTRL_UHS_MASK) =3D=3D SDHCI_CTRL_UHS_SDR50) &&
-+	    (host->flags & SDHCI_SDR50_NEEDS_TUNING ||
- 	     host->flags & SDHCI_HS200_NEEDS_TUNING))
-+		requires_tuning_nonuhs =3D true;
-+
-+	if (((ctrl & SDHCI_CTRL_UHS_MASK) =3D=3D SDHCI_CTRL_UHS_SDR104) ||
-+	    requires_tuning_nonuhs)
- 		ctrl |=3D SDHCI_CTRL_EXEC_TUNING;
- 	else {
- 		spin_unlock(&host->lock);
-
---=20
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+That'd be extremely disappointing, especially given that there's some
+bug fixes in there for updates going in this merge window without which
+mainline is going to have problems on s3c64xx (mostly the GPIO stuff).
