@@ -1,96 +1,101 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH V9 0/2] HS200 Mode support for device and host
-Date: Sun, 8 Jan 2012 11:20:24 +0530
-Message-ID: <CAGxe1ZEXi+WBh34EEX1jifF=3GnddodJGNhA2rLFxHWcmMRP0w@mail.gmail.com>
-References: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Gusakov Andrey <dron0gus@gmail.com>
+Subject: [PATCH v2] S3C: fix ARCH_NR_GPIOS define for S3C2XXX SoCs
+Date: Sun,  8 Jan 2012 19:04:09 +0400
+Message-ID: <1326035049-1931-1-git-send-email-dron0gus@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:46467 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751390Ab2AHFuZ convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jan 2012 00:50:25 -0500
-In-Reply-To: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Gusakov Andrey <dron0gus@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 
-HI Chris,
-Please have a look at this patch series and add it in your next branch
-if everything seems to be Ok
+Differnt S3C24XX SoC have different number of GPIO. When building
+kernel for many S3C24XX SoCs GPIO number defined to minimun possible.
+This patch fix it and define GPIO number to muximum possible for SoCs
+compiled in.
 
-regards
-Girish K S
+Signed-off-by: Gusakov Andrey <dron0gus@gmail.com>
+---
+ arch/arm/mach-s3c2410/include/mach/gpio-nrs.h |    6 ++++
+ arch/arm/mach-s3c2410/include/mach/gpio.h     |   38 +++++++++++++------------
+ 2 files changed, 26 insertions(+), 18 deletions(-)
 
-On 6 January 2012 09:56, Girish K S <girish.shivananjappa@linaro.org> w=
-rote:
-> changes in v9:
-> =A0 =A0 =A0 =A0Updated the changes suggested by Chris for kernel codi=
-ng comaptibility
-> changes in v8:
-> =A0 =A0 =A0 =A0Updated the changes suggested by Philip for bus mode t=
-est.
-> changes in v7:
-> =A0 =A0 =A0 =A0Updated with review comments for minor changes in host=
- conditional
-> =A0 =A0 =A0 =A0handling. added the handling for 4 bit bus width.
-> Changes in v6:
-> =A0 =A0 =A0 =A0split the patch into 2 and classified them as a patch =
-for device
-> =A0 =A0 =A0 =A0and host. Modified to include the review comments.
-> Changes in v5:
-> =A0 =A0 =A0 =A0Reduced the case statements for better code readabilit=
-y. Removed
-> =A0 =A0 =A0 =A0unused macro definitions. Modified the tuning function=
- prototype
-> =A0 =A0 =A0 =A0and definition to support tuning for both SD and eMMC =
-cards.
-> Changes in v4:
-> =A0 =A0 =A0 =A0Rebased onto chris-mmc/mmc-next branch. This patch is =
-successfully
-> =A0 =A0 =A0 =A0applied on commit with id de022ed3fdc14808299b2fa66dbb=
-1ed5ab921912.
-> Changes in v3:
-> =A0 =A0 =A0 =A0In the previous commits of chris-mmc/mmc-next branch, =
-the patch with
-> =A0 =A0 =A0 =A0commit id (c0f22a2c92e357e7cb3988b0b13034d70b7461f9) d=
-efines caps2 for
-> =A0 =A0 =A0 =A0more capabilities. This patch version deletes the memb=
-er ext_caps
-> =A0 =A0 =A0 =A0(created in my earlier patch) from struct mmc_host and=
- reuses already
-> =A0 =A0 =A0 =A0accepted caps2 member.
-> Changes in v2:
-> =A0 =A0 =A0 =A0Rebased to latest chris-mmc/mmc-next branch. Resolved =
-indentation
-> =A0 =A0 =A0 =A0problems identified in review. This patch has to be ap=
-plied before
-> =A0 =A0 =A0 =A0the patch released for modifying the printk messages.
-> Changes in v1:
-> =A0 =A0 =A0 =A0Case statements in switch that produce same result hav=
-e been combined
-> =A0 =A0 =A0 =A0to reduce repeated assignments. patch recreated after =
-rebase to chris
-> =A0 =A0 =A0 =A0Balls mmc-next branch.
->
-> Girish K S (2):
-> =A0mmc: core: HS200 mode support for eMMC 4.5
-> =A0mmc: host: Adds support for eMMC 4.5 HS200 mode
->
-> =A0drivers/mmc/core/bus.c =A0 =A0 | =A0 =A03 +-
-> =A0drivers/mmc/core/debugfs.c | =A0 =A03 +
-> =A0drivers/mmc/core/mmc.c =A0 =A0 | =A0162 ++++++++++++++++++++++++++=
-+++++++++++++++---
-> =A0drivers/mmc/core/sd.c =A0 =A0 =A0| =A0 =A03 +-
-> =A0drivers/mmc/core/sdio.c =A0 =A0| =A0 =A04 +-
-> =A0drivers/mmc/host/sdhci.c =A0 | =A0 45 +++++++++---
-> =A0drivers/mmc/host/sdhci.h =A0 | =A0 =A01 +
-> =A0include/linux/mmc/card.h =A0 | =A0 =A03 +
-> =A0include/linux/mmc/host.h =A0 | =A0 11 +++-
-> =A0include/linux/mmc/mmc.h =A0 =A0| =A0 66 ++++++++++++++++++-
-> =A0include/linux/mmc/sdhci.h =A0| =A0 =A01 +
-> =A011 files changed, 277 insertions(+), 25 deletions(-)
->
+diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+index 019ea86..3e52d92 100644
+--- a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
++++ b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
+@@ -52,6 +52,12 @@
+ #define S3C2410_GPIO_L_NR	(32)	/* technically 15. */
+ #define S3C2410_GPIO_M_NR	(32)	/* technically 2. */
+ 
++/* Total GPIO count */
++#define S3C2443_NR_GPIOS	(32 * 12)
++#define S3C2416_NR_GPIOS	(32 * 12)
++#define S3C244X_NR_GPIOS	(32 * 9)
++#define S3C241X_NR_GPIOS	(32 * 8)
++
+ #if CONFIG_S3C_GPIO_SPACE != 0
+ #error CONFIG_S3C_GPIO_SPACE cannot be nonzero at the moment
+ #endif
+diff --git a/arch/arm/mach-s3c2410/include/mach/gpio.h b/arch/arm/mach-s3c2410/include/mach/gpio.h
+index 6fac70f..3ab7f89 100644
+--- a/arch/arm/mach-s3c2410/include/mach/gpio.h
++++ b/arch/arm/mach-s3c2410/include/mach/gpio.h
+@@ -11,25 +11,27 @@
+  * published by the Free Software Foundation.
+ */
+ 
+-/* some boards require extra gpio capacity to support external
+- * devices that need GPIO.
+- */
+-
+-#ifdef CONFIG_CPU_S3C244X
+-#define ARCH_NR_GPIOS	(32 * 9 + CONFIG_S3C24XX_GPIO_EXTRA)
+-#elif defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+-#define ARCH_NR_GPIOS	(32 * 12 + CONFIG_S3C24XX_GPIO_EXTRA)
+-#else
+-#define ARCH_NR_GPIOS	(256 + CONFIG_S3C24XX_GPIO_EXTRA)
+-#endif
+-
+ #include <mach/gpio-nrs.h>
+ #include <mach/gpio-fns.h>
+ 
+-#ifdef CONFIG_CPU_S3C244X
+-#define S3C_GPIO_END	(S3C2410_GPJ(0) + 32)
+-#elif defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+-#define S3C_GPIO_END	(S3C2410_GPM(0) + 32)
+-#else
+-#define S3C_GPIO_END	(S3C2410_GPH(0) + 32)
++#define SAMSUNG_NR_GPIOS	S3C241X_NR_GPIOS
++#if defined(CONFIG_CPU_S3C244X) && S3C244X_NR_GPIOS > SAMSUNG_NR_GPIOS
++#undef SAMSUNG_NR_GPIOS
++#define SAMSUNG_NR_GPIOS	S3C244X_NR_GPIOS
++#endif
++#if defined(CONFIG_CPU_S3C2416) && S3C2416_NR_GPIOS > SAMSUNG_NR_GPIOS
++#undef SAMSUNG_NR_GPIOS
++#define SAMSUNG_NR_GPIOS	S3C2416_NR_GPIOS
+ #endif
++#if defined(CONFIG_CPU_S3C2443) && S3C2443_NR_GPIOS > SAMSUNG_NR_GPIOS
++#undef SAMSUNG_NR_GPIOS
++#define SAMSUNG_NR_GPIOS	S3C2443_NR_GPIOS
++#endif
++
++#define S3C_GPIO_END		SAMSUNG_NR_GPIOS
++
++/* some boards require extra gpio capacity to support external
++ * devices that need GPIO.
++ */
++
++#define ARCH_NR_GPIOS		(SAMSUNG_NR_GPIOS + CONFIG_S3C24XX_GPIO_EXTRA)
+-- 
+1.7.0.4
