@@ -1,101 +1,101 @@
-From: Gusakov Andrey <dron0gus@gmail.com>
-Subject: [PATCH v2] S3C: fix ARCH_NR_GPIOS define for S3C2XXX SoCs
-Date: Sun,  8 Jan 2012 19:04:09 +0400
-Message-ID: <1326035049-1931-1-git-send-email-dron0gus@gmail.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH V9 0/2] HS200 Mode support for device and host
+Date: Sun, 08 Jan 2012 15:17:52 -0500
+Message-ID: <m27h12vthr.fsf@bob.laptop.org>
+References: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Gusakov Andrey <dron0gus@gmail.com>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:55403 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754499Ab2AHUSF (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 8 Jan 2012 15:18:05 -0500
+In-Reply-To: <1325823999-21770-1-git-send-email-girish.shivananjappa@linaro.org>
+	(Girish K. S.'s message of "Fri, 6 Jan 2012 09:56:37 +0530")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 
-Differnt S3C24XX SoC have different number of GPIO. When building
-kernel for many S3C24XX SoCs GPIO number defined to minimun possible.
-This patch fix it and define GPIO number to muximum possible for SoCs
-compiled in.
+Hi Girish,
 
-Signed-off-by: Gusakov Andrey <dron0gus@gmail.com>
----
- arch/arm/mach-s3c2410/include/mach/gpio-nrs.h |    6 ++++
- arch/arm/mach-s3c2410/include/mach/gpio.h     |   38 +++++++++++++------------
- 2 files changed, 26 insertions(+), 18 deletions(-)
+On Thu, Jan 05 2012, Girish K S wrote:
+> Girish K S (2):
+>   mmc: core: HS200 mode support for eMMC 4.5
+>   mmc: host: Adds support for eMMC 4.5 HS200 mode
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
-index 019ea86..3e52d92 100644
---- a/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
-+++ b/arch/arm/mach-s3c2410/include/mach/gpio-nrs.h
-@@ -52,6 +52,12 @@
- #define S3C2410_GPIO_L_NR	(32)	/* technically 15. */
- #define S3C2410_GPIO_M_NR	(32)	/* technically 2. */
+Thanks, pushed to mmc-next with the following corrections to 2/2:
+
+diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+index 4be50ea..64febf2 100644
+--- a/drivers/mmc/host/sdhci.c
++++ b/drivers/mmc/host/sdhci.c
+@@ -1014,8 +1014,8 @@ static void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+ 		flags |= SDHCI_CMD_INDEX;
  
-+/* Total GPIO count */
-+#define S3C2443_NR_GPIOS	(32 * 12)
-+#define S3C2416_NR_GPIOS	(32 * 12)
-+#define S3C244X_NR_GPIOS	(32 * 9)
-+#define S3C241X_NR_GPIOS	(32 * 8)
-+
- #if CONFIG_S3C_GPIO_SPACE != 0
- #error CONFIG_S3C_GPIO_SPACE cannot be nonzero at the moment
- #endif
-diff --git a/arch/arm/mach-s3c2410/include/mach/gpio.h b/arch/arm/mach-s3c2410/include/mach/gpio.h
-index 6fac70f..3ab7f89 100644
---- a/arch/arm/mach-s3c2410/include/mach/gpio.h
-+++ b/arch/arm/mach-s3c2410/include/mach/gpio.h
-@@ -11,25 +11,27 @@
-  * published by the Free Software Foundation.
- */
+ 	/* CMD19 is special in that the Data Present Select should be set */
+-	if (cmd->data || (cmd->opcode == MMC_SEND_TUNING_BLOCK) ||
+-	    (cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200))
++	if (cmd->data || cmd->opcode == MMC_SEND_TUNING_BLOCK ||
++	    cmd->opcode == MMC_SEND_TUNING_BLOCK_HS200)
+ 		flags |= SDHCI_CMD_DATA;
  
--/* some boards require extra gpio capacity to support external
-- * devices that need GPIO.
-- */
--
--#ifdef CONFIG_CPU_S3C244X
--#define ARCH_NR_GPIOS	(32 * 9 + CONFIG_S3C24XX_GPIO_EXTRA)
--#elif defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
--#define ARCH_NR_GPIOS	(32 * 12 + CONFIG_S3C24XX_GPIO_EXTRA)
--#else
--#define ARCH_NR_GPIOS	(256 + CONFIG_S3C24XX_GPIO_EXTRA)
--#endif
--
- #include <mach/gpio-nrs.h>
- #include <mach/gpio-fns.h>
+ 	sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+@@ -1710,10 +1710,10 @@ static int sdhci_execute_tuning(struct mmc_host *mmc, u32 opcode)
+ 	 * If the Host Controller supports the HS200 mode then tuning
+ 	 * function has to be executed.
+ 	 */
+-	if (((ctrl & SDHCI_CTRL_UHS_MASK) == SDHCI_CTRL_UHS_SDR104) ||
+-	    (((ctrl & SDHCI_CTRL_UHS_MASK) == SDHCI_CTRL_UHS_SDR50) &&
+-	    (host->flags & SDHCI_SDR50_NEEDS_TUNING)) ||
+-	    (host->flags & SDHCI_HS200_NEEDS_TUNING))
++	if ((ctrl & SDHCI_CTRL_UHS_MASK == SDHCI_CTRL_UHS_SDR104) ||
++	    ((ctrl & SDHCI_CTRL_UHS_MASK == SDHCI_CTRL_UHS_SDR50) &&
++	     host->flags & SDHCI_SDR50_NEEDS_TUNING ||
++	     host->flags & SDHCI_HS200_NEEDS_TUNING))
+ 		ctrl |= SDHCI_CTRL_EXEC_TUNING;
+ 	else {
+ 		spin_unlock(&host->lock);
+@@ -2163,8 +2163,8 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
+ 	/* CMD19 generates _only_ Buffer Read Ready interrupt */
+ 	if (intmask & SDHCI_INT_DATA_AVAIL) {
+ 		command = SDHCI_GET_CMD(sdhci_readw(host, SDHCI_COMMAND));
+-		if ((command == MMC_SEND_TUNING_BLOCK) ||
+-		    (command == MMC_SEND_TUNING_BLOCK_HS200)) {
++		if (command == MMC_SEND_TUNING_BLOCK) ||
++		    command == MMC_SEND_TUNING_BLOCK_HS200) {
+ 			host->tuning_done = 1;
+ 			wake_up(&host->buf_ready_int);
+ 			return;
+@@ -2765,11 +2765,11 @@ int sdhci_add_host(struct sdhci_host *host)
+ 	if (caps[1] & SDHCI_SUPPORT_DDR50)
+ 		mmc->caps |= MMC_CAP_UHS_DDR50;
  
--#ifdef CONFIG_CPU_S3C244X
--#define S3C_GPIO_END	(S3C2410_GPJ(0) + 32)
--#elif defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
--#define S3C_GPIO_END	(S3C2410_GPM(0) + 32)
--#else
--#define S3C_GPIO_END	(S3C2410_GPH(0) + 32)
-+#define SAMSUNG_NR_GPIOS	S3C241X_NR_GPIOS
-+#if defined(CONFIG_CPU_S3C244X) && S3C244X_NR_GPIOS > SAMSUNG_NR_GPIOS
-+#undef SAMSUNG_NR_GPIOS
-+#define SAMSUNG_NR_GPIOS	S3C244X_NR_GPIOS
-+#endif
-+#if defined(CONFIG_CPU_S3C2416) && S3C2416_NR_GPIOS > SAMSUNG_NR_GPIOS
-+#undef SAMSUNG_NR_GPIOS
-+#define SAMSUNG_NR_GPIOS	S3C2416_NR_GPIOS
- #endif
-+#if defined(CONFIG_CPU_S3C2443) && S3C2443_NR_GPIOS > SAMSUNG_NR_GPIOS
-+#undef SAMSUNG_NR_GPIOS
-+#define SAMSUNG_NR_GPIOS	S3C2443_NR_GPIOS
-+#endif
-+
-+#define S3C_GPIO_END		SAMSUNG_NR_GPIOS
-+
-+/* some boards require extra gpio capacity to support external
-+ * devices that need GPIO.
-+ */
-+
-+#define ARCH_NR_GPIOS		(SAMSUNG_NR_GPIOS + CONFIG_S3C24XX_GPIO_EXTRA)
+-	/* Does the host needs tuning for SDR50? */
++	/* Does the host need tuning for SDR50? */
+ 	if (caps[1] & SDHCI_USE_SDR50_TUNING)
+ 		host->flags |= SDHCI_SDR50_NEEDS_TUNING;
+ 
+-	/* Does the host needs tuning for HS200? */
++	/* Does the host need tuning for HS200? */
+ 	if (mmc->caps2 & MMC_CAP2_HS200)
+ 		host->flags |= SDHCI_HS200_NEEDS_TUNING;
+ 
+diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+index 46fd2ac..ad265b9 100644
+--- a/drivers/mmc/host/sdhci.h
++++ b/drivers/mmc/host/sdhci.h
+@@ -158,7 +158,7 @@
+ #define   SDHCI_CTRL_UHS_SDR50		0x0002
+ #define   SDHCI_CTRL_UHS_SDR104		0x0003
+ #define   SDHCI_CTRL_UHS_DDR50		0x0004
+-#define   SDHCI_CTRL_HS_SDR200		0x0005 /*reserved value in SDIO spec */
++#define   SDHCI_CTRL_HS_SDR200		0x0005 /* reserved value in SDIO spec */
+ #define  SDHCI_CTRL_VDD_180		0x0008
+ #define  SDHCI_CTRL_DRV_TYPE_MASK	0x0030
+ #define   SDHCI_CTRL_DRV_TYPE_B		0x0000
+
 -- 
-1.7.0.4
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
