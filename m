@@ -1,47 +1,100 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Sun, 8 Jan 2012 17:21:02 -0800
-Message-ID: <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
-	<CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
-	<20120108204953.GA20043@sirena.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Fix build error which was from common.c and old
+ cpu.c
+Date: Mon, 09 Jan 2012 10:27:27 +0900
+Message-ID: <01a001ccce6d$d9f3ea60$8ddbbf20$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:40111 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755092Ab2AIBVD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jan 2012 20:21:03 -0500
-Received: by ggdk6 with SMTP id k6so1371749ggd.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Jan 2012 17:21:02 -0800 (PST)
-In-Reply-To: <20120108204953.GA20043@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-language: ko
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: rmk+kernel@arm.linux.org.uk, 'Marc Zyngier' <marc.zyngier@arm.com>, 'Axel Lin' <axel.lin@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On Sun, Jan 8, 2012 at 12:49 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Fri, Jan 06, 2012 at 01:58:29PM -0800, Olof Johansson wrote:
->
->> > Please pull Samsung devel for v3.3 from:
->> > ?git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
->> > next-samsung-devel-samsung
->
->> Thanks. I've pulled this into late/devel, based on earlier email from
->> Arnd we might end up sending this in towards the end of the merge
->> window, but there's also a chance it will wait for 3.4.
->
-> That'd be extremely disappointing, especially given that there's some
-> bug fixes in there for updates going in this merge window without which
-> mainline is going to have problems on s3c64xx (mostly the GPIO stuff).
+This fixes build error and wrong merge conflicts.
+arch/arm/mach-exynos/common.c: In function 'exynos4_gic_irq_fix_base':
+arch/arm/mach-exynos/common.c:393: error: dereferencing pointer to incomplete type
+arch/arm/mach-exynos/common.c:396: error: dereferencing pointer to incomplete type
 
-Of course bug fixes should go in.
+Following A and B have been created from different base and the build
+error was casued in the process of merging and should be fixed in this
+merge window.
 
-Mark, Kukjin, can either of you split out the fixes in a separate branch?
+A. commit db0d4db ("ARM: gic: allow GIC to support non-banked setups"),
+  commit 4e44d2c ("ARM: exynos4: convert to CONFIG_MULTI_IRQ_HANDLER")
+  and commit 69676c3 ("ARM: exynos4: Fix build error due to
+  'gic_bank_offset' undeclared")
 
+B. commit cc511b8 ("ARM: 7257/1: EXYNOS: introduce arch/arm/mach-exynos/
+  common.[ch]") introduced common.[ch]")
 
-Thanks,
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Axel Lin <axel.lin@gmail.com>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+Hi Russell,
 
--Olof
+This should be fixed, I'm sending this to patch system.
+If you're ok with this, please pick it up for this merge window.
+
+Thanks.
+
+ arch/arm/mach-exynos/common.c |   20 +++-----------------
+ 1 files changed, 3 insertions(+), 17 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index b6ac6ee..647c843 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -19,6 +19,7 @@
+ #include <linux/serial_core.h>
+ 
+ #include <asm/proc-fns.h>
++#include <asm/exception.h>
+ #include <asm/hardware/cache-l2x0.h>
+ #include <asm/hardware/gic.h>
+ #include <asm/mach/map.h>
+@@ -43,8 +44,6 @@
+ 
+ #include "common.h"
+ 
+-unsigned int gic_bank_offset __read_mostly;
+-
+ static const char name_exynos4210[] = "EXYNOS4210";
+ static const char name_exynos4212[] = "EXYNOS4212";
+ static const char name_exynos4412[] = "EXYNOS4412";
+@@ -386,27 +385,14 @@ static void __init combiner_init(unsigned int combiner_nr, void __iomem *base,
+ 	}
+ }
+ 
+-static void exynos4_gic_irq_fix_base(struct irq_data *d)
+-{
+-	struct gic_chip_data *gic_data = irq_data_get_irq_chip_data(d);
+-
+-	gic_data->cpu_base = S5P_VA_GIC_CPU +
+-			    (gic_bank_offset * smp_processor_id());
+-
+-	gic_data->dist_base = S5P_VA_GIC_DIST +
+-			    (gic_bank_offset * smp_processor_id());
+-}
+-
+ void __init exynos4_init_irq(void)
+ {
+ 	int irq;
++	unsigned int gic_bank_offset;
+ 
+ 	gic_bank_offset = soc_is_exynos4412() ? 0x4000 : 0x8000;
+ 
+-	gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+-	gic_arch_extn.irq_eoi = exynos4_gic_irq_fix_base;
+-	gic_arch_extn.irq_unmask = exynos4_gic_irq_fix_base;
+-	gic_arch_extn.irq_mask = exynos4_gic_irq_fix_base;
++	gic_init_bases(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU, gic_bank_offset);
+ 
+ 	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
+ 
+-- 
+1.7.1
