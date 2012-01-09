@@ -1,67 +1,48 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Mon, 9 Jan 2012 09:32:12 +0900
-Message-ID: <CAHQjnOPB=APDXvDosWbEfas0-CKmBf-ATivfkOFOGYP9iGdbtw@mail.gmail.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
-	<20120102134229.GZ29877@amd.com>
-	<CAHQjnON3XYZ9cAK0kqsY4QzMzESD1wOzxt-fiQCq3TJfDObFiw@mail.gmail.com>
-	<20120102155820.GB29877@amd.com>
-	<20120103095527.GI2914@n2100.arm.linux.org.uk>
-	<20120104150101.GA3492@amd.com>
-	<20120104212620.GG11810@n2100.arm.linux.org.uk>
-	<20120105114732.GA7166@amd.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Build error at drivers/base/power/domain_governor.c when PM_RUNTIME is
+ not set
+Date: Mon, 09 Jan 2012 09:43:06 +0900
+Message-ID: <018a01ccce67$a6eee850$f4ccb8f0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:43811 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754876Ab2AIAcP convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 8 Jan 2012 19:32:15 -0500
-In-Reply-To: <20120105114732.GA7166@amd.com>
+Received: from mailout3.samsung.com ([203.254.224.33]:9406 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755006Ab2AIAnN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 8 Jan 2012 19:43:13 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joerg.roedel@amd.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: rjw@sisk.pl
+Cc: linux-kernel@vger.kernel.org, 'Linus' <torvalds@linux-foundation.org>, linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 5, 2012 at 8:47 PM, Joerg Roedel <joerg.roedel@amd.com> wro=
-te:
-> On Wed, Jan 04, 2012 at 09:26:20PM +0000, Russell King - ARM Linux wr=
-ote:
->> On Wed, Jan 04, 2012 at 04:01:01PM +0100, Joerg Roedel wrote:
->> > On Tue, Jan 03, 2012 at 09:55:27AM +0000, Russell King - ARM Linux=
- wrote:
->> > > It comes through when I stick it in my tree because of a month o=
-f asking
->> > > for help to fix something and getting zero response from the mai=
-ntainers.
->> > >
->> > > It's a way to flag to them that they're doing something wrong - =
-and in
->> > > fact something is broken, and that that brokenness will happen a=
-t the
->> > > next merge window unless they get off their butt and do somethin=
-g about
->> > > it.
->> >
->> > Okay, fine with me if it really will be fixed in 3.3-rc1 :)
->>
->> I can do better than that - and report that it's fixed now. =A0It sh=
-ould
->> show up in linux-next sometime after Stephen pulls this evening. =A0=
-The
->> #error did its job in this case, and ensured that it got fixed!
->
-> Great. So it looks like I can finally compile-test Exynos and merge
-> their IOMMU driver after the merge window :)
->
+Hi Rafael,
 
-Thanks to you, Marek and Russell for helps to compile the driver.
+This is just reporting of build error.
 
-I've learned many things from you.
+Current mainline happens build error at drivers/base/power/domain_governor.c
+file like following when CONFIG_PM_RUNTIME is not set. For example, it
+happens with s3c6400_defconfig now.
 
-Regards,
+drivers/base/power/domain_governor.c: In function 'default_stop_ok':
+drivers/base/power/domain_governor.c:25: error: 'struct dev_pm_info' has no
+member named 'max_time_suspended_ns'
+drivers/base/power/domain_governor.c:29: error: 'struct dev_pm_info' has no
+member named 'max_time_suspended_ns'
+drivers/base/power/domain_governor.c: In function 'default_power_down_ok':
+drivers/base/power/domain_governor.c:94: error: 'struct dev_pm_info' has no
+member named 'max_time_suspended_ns'
+drivers/base/power/domain_governor.c:98: error: 'struct dev_pm_info' has no
+member named 'max_time_suspended_ns'
+drivers/base/power/domain_governor.c:100: error: 'struct dev_pm_info' has no
+member named 'suspend_time'
 
-KyongHo.
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
