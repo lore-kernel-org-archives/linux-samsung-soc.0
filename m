@@ -1,51 +1,56 @@
 From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix build error which was from common.c
-	and old cpu.c
-Date: Mon, 9 Jan 2012 09:41:15 +0000
-Message-ID: <20120109094115.GF21765@n2100.arm.linux.org.uk>
-References: <01a001ccce6d$d9f3ea60$8ddbbf20$%kim@samsung.com>
+Subject: Re: [GIT PULL] Samsung devel for v3.3
+Date: Mon, 9 Jan 2012 09:58:39 +0000
+Message-ID: <20120109095839.GH21765@n2100.arm.linux.org.uk>
+References: <018801ccca70$25f01260$71d03720$%kim@samsung.com> <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com> <20120108204953.GA20043@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54333 "EHLO
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:44630 "EHLO
 	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751153Ab2AIJli (ORCPT
+	with ESMTP id S1751686Ab2AIJ6v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jan 2012 04:41:38 -0500
+	Mon, 9 Jan 2012 04:58:51 -0500
 Content-Disposition: inline
-In-Reply-To: <01a001ccce6d$d9f3ea60$8ddbbf20$%kim@samsung.com>
+In-Reply-To: <20120108204953.GA20043@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Marc Zyngier' <marc.zyngier@arm.com>, 'Axel Lin' <axel.lin@gmail.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
 
-On Mon, Jan 09, 2012 at 10:27:27AM +0900, Kukjin Kim wrote:
-> This fixes build error and wrong merge conflicts.
-> arch/arm/mach-exynos/common.c: In function 'exynos4_gic_irq_fix_base':
-> arch/arm/mach-exynos/common.c:393: error: dereferencing pointer to incomplete type
-> arch/arm/mach-exynos/common.c:396: error: dereferencing pointer to incomplete type
+On Sun, Jan 08, 2012 at 08:49:53PM +0000, Mark Brown wrote:
+> On Fri, Jan 06, 2012 at 01:58:29PM -0800, Olof Johansson wrote:
 > 
-> Following A and B have been created from different base and the build
-> error was casued in the process of merging and should be fixed in this
-> merge window.
+> > > Please pull Samsung devel for v3.3 from:
+> > > ?git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > > next-samsung-devel-samsung
 > 
-> A. commit db0d4db ("ARM: gic: allow GIC to support non-banked setups"),
->   commit 4e44d2c ("ARM: exynos4: convert to CONFIG_MULTI_IRQ_HANDLER")
->   and commit 69676c3 ("ARM: exynos4: Fix build error due to
->   'gic_bank_offset' undeclared")
+> > Thanks. I've pulled this into late/devel, based on earlier email from
+> > Arnd we might end up sending this in towards the end of the merge
+> > window, but there's also a chance it will wait for 3.4.
 > 
-> B. commit cc511b8 ("ARM: 7257/1: EXYNOS: introduce arch/arm/mach-exynos/
->   common.[ch]") introduced common.[ch]")
+> That'd be extremely disappointing, especially given that there's some
+> bug fixes in there for updates going in this merge window without which
+> mainline is going to have problems on s3c64xx (mostly the GPIO stuff).
 
-Well, git isn't that good at telling you what conflicts on a delete/modify
-conflict - all it does is leave you the modified file in the tree and
-expect you to know what changes were made to it between the version which
-was deleted, and the modified version.
+Here we go again with sucky work practices.
 
-The various git diff combinations really don't help you either - all you
-get told by git is that the file is 'unmerged' and that's it.
+This sucky behaviour has been around for a long time, I've long since
+given up complaining about it as it's exactly like talking to a bloody
+brick wall.  People just continue mixing development and fixes together.
 
-I'd say these are the kind of merges which are always going to be full of
-errors - and I doubt there's anything which can really be done to stop
-them being so (unless git starts marking the file with merge conflict
-markers for those changes I describe above.)
+They then wonder why their fixes don't make it into mainline in a timely
+fashion.
+
+Maybe delaying the whole lot will make people change their behaviour:
+it's a behaviour that needs to change at the submitters end.  There's
+nothing which Olof or Arnd can reasonably do to expedite the fixes.
+
+So, please direct your complaints to the submitter for not having a
+work practice which ensures that fixes receive a higher submission
+priority.
+
+Note: Linus _has_ taken a copy of linux-next (read the 3.2 release email),
+and _is_ checking whether development stuff was in linux-next prior to
+the merge window opening.  It would be very unwise to send new development
+which wasn't already there.
