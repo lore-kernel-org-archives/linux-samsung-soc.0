@@ -1,100 +1,50 @@
-From: Jeongtae Park <jtp.park@samsung.com>
-Subject: RE: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK C110 and
- V210 boards
-Date: Tue, 10 Jan 2012 08:18:53 +0900
-Message-ID: <01c301cccf25$0db1fdd0$2915f970$%park@samsung.com>
-References: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
- <CAK9yfHyXazVh3weycF-FCHYtH==m4J-YtwnZfsAdfeAB9mBnkQ@mail.gmail.com>
- <028b01ccc5da$d0cbeeb0$7263cc10$%kim@samsung.com>
-Reply-To: jtp.park@samsung.com
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] Samsung devel for v3.3
+Date: Mon, 9 Jan 2012 23:24:56 +0000
+Message-ID: <20120109232456.GI30766@opensource.wolfsonmicro.com>
+References: <018801ccca70$25f01260$71d03720$%kim@samsung.com> <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com> <20120108204953.GA20043@sirena.org.uk> <20120109095839.GH21765@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55007 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932953Ab2AIXS4 convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53859 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932131Ab2AIXY7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jan 2012 18:18:56 -0500
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LXK003MA0RISNC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2012 08:18:54 +0900 (KST)
-Received: from jtppark ([12.23.121.105])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LXK003DB0RHZR40@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2012 08:18:53 +0900 (KST)
-In-reply-to: <028b01ccc5da$d0cbeeb0$7263cc10$%kim@samsung.com>
-Content-language: ko
+	Mon, 9 Jan 2012 18:24:59 -0500
+Content-Disposition: inline
+In-Reply-To: <20120109095839.GH21765@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, sachin.kamat@linaro.org, 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: 'Kamil Debski' <k.debski@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Olof Johansson <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
 
-Hi Sachin,
+On Mon, Jan 09, 2012 at 09:58:39AM +0000, Russell King - ARM Linux wrote:
+> On Sun, Jan 08, 2012 at 08:49:53PM +0000, Mark Brown wrote:
 
-thanks for the patch.
-There is no issue for MFC.
+> > That'd be extremely disappointing, especially given that there's some
+> > bug fixes in there for updates going in this merge window without which
+> > mainline is going to have problems on s3c64xx (mostly the GPIO stuff).
 
-Best regards,
-/jtpark
+> Here we go again with sucky work practices.
 
-> -----Original Message-----
-> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
-> Sent: Thursday, December 29, 2011 12:35 PM
-> To: 'Sachin Kamat'; linux-samsung-soc@vger.kernel.org
-> Cc: jtp.park@samsung.com
-> Subject: RE: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK C1=
-10 and V210 boards
->=20
-> Sachin Kamat wrote:
-> >
-> > Hi Kukjin,
-> >
-> > Please pick up the MFC patches (patches 1 & 2) from this series. I
-> > will post a separate patch series for FIMC related changes.
-> >
-> (Cc'ed Jeongtae Park)
->=20
-> Jeongtae, let me know your opinion on this MFC enabling patches.
->=20
-> Thanks.
->=20
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->=20
-> > Regards
-> > Sachin
-> >
-> > On 26 December 2011 15:30, Sachin Kamat <sachin.kamat@linaro.org> w=
-rote:
-> > > This patch series adds support for MFC and FIMC on SMDK C110 and =
-V210
-> > boards.
-> > > It is based on Kukjin Kim's latest for-next branch.
-> > >
-> > > Sachin Kamat (4):
-> > > =A0ARM: S5PV210: Enable MFC on SMDKV210
-> > > =A0ARM: S5PV210: Enable MFC on SMDKC110
-> > > =A0ARM: S5PV210: Enable FIMC on SMDKV210
-> > > =A0ARM: S5PV210: Enable FIMC on SMDKC110
-> > >
-> > > =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 | =A0 =A08 +++++=
-+++
-> > > =A0arch/arm/mach-s5pv210/mach-smdkc110.c | =A0 14 ++++++++++++++
-> > > =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 13 +++++++++++++
-> > > =A03 files changed, 35 insertions(+), 0 deletions(-)
-> > >
-> > > --
-> > > 1.7.4.1
-> > >
-> >
-> >
-> >
-> > --
-> > With warm regards,
-> > Sachin
+> This sucky behaviour has been around for a long time, I've long since
+> given up complaining about it as it's exactly like talking to a bloody
+> brick wall.  People just continue mixing development and fixes together.
+
+Actually in this case the issue is slightly different - the fixes are
+mostly fixes for issues introduced by other development going in during
+this merge window, what's gone wrong is that they've been applied to a
+different branch to that which had the problem.  Still an issue of
+course, just a different one.
+
+That said there's also an issue if pure development gets delayed - it
+makes it harder to do further work based on top of the work that got
+delayed, especially if any cross tree issues come into play.
+
+> Note: Linus _has_ taken a copy of linux-next (read the 3.2 release email),
+> and _is_ checking whether development stuff was in linux-next prior to
+> the merge window opening.  It would be very unwise to send new development
+> which wasn't already there.
+
+That's not an issue here, all the stuff that's being discussed is in
+-next but not sent to the arm-soc tree.
