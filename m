@@ -1,48 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] DMA: PL330: Fix calculating burst_size
-Date: Mon, 09 Jan 2012 16:11:20 +0900
-Message-ID: <002901ccce9d$e4d84db0$ae88e910$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [GIT PULL] Samsung devel for v3.3
+Date: Mon, 9 Jan 2012 00:26:41 -0800
+Message-ID: <20120109082640.GI22134@opensource.wolfsonmicro.com>
+References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
+ <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
+ <20120108204953.GA20043@sirena.org.uk>
+ <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60838 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754247Ab2AIHL0 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33695 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753476Ab2AII1P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jan 2012 02:11:26 -0500
-Content-language: ko
+	Mon, 9 Jan 2012 03:27:15 -0500
+Content-Disposition: inline
+In-Reply-To: <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Boojin Kim' <boojin.kim@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-From: Boojin Kim <boojin.kim@samsung.com>
+On Sun, Jan 08, 2012 at 05:21:02PM -0800, Olof Johansson wrote:
 
-The burst size of PL330 DMAC should be aligned with source
-address, destination address and size. If not, PL330 DMAC
-HW generates transmit or data mismatch error. This patch
-adds the condition that checks the align of source and
-destination address for burst size.
+> Mark, Kukjin, can either of you split out the fixes in a separate branch?
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/dma/pl330.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+Here's some of them, there were a few others I'm aware of that depended
+on feature updates.  Ideally we'd actually get all the changes that have
+been in -next in.
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index d87d884..c3f7fcb 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -2553,7 +2553,7 @@ pl330_prep_dma_memcpy(struct dma_chan *chan, dma_addr_t dst,
- 	burst = pi->pcfg.data_bus_width / 8;
- 
- 	while (burst > 1) {
--		if (!(len % burst))
-+		if (!(len % burst) && !(dst % burst) && !(src % burst))
- 			break;
- 		burst /= 2;
- 	}
--- 
-1.7.1
+The following changes since commit 5f0a6e2d503896062f641639dacfe5055c2f593b:
+
+  Linux 3.2-rc7 (2011-12-23 21:51:06 -0800)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git fixes/samsung
+
+Mark Brown (5):
+      ARM: SAMSUNG: Fix GPIO space reservation for S3C64xx platforms
+      ARM: S3C64XX: Correct reservation of GPIOs for CPU module on Cragganmore
+      ARM: SAMSUNG: Guard against multiple inclusion of plat/dma.h
+      ARM: SAMSUNG: dma-ops.h needs mach/dma.h
+      ARM: SAMSUNG: Declare struct platform_device in plat/s3c64xx-spi.h
+
+ arch/arm/mach-s3c64xx/Kconfig                    |    6 +++---
+ arch/arm/mach-s3c64xx/include/mach/crag6410.h    |    3 ++-
+ arch/arm/mach-s3c64xx/mach-crag6410.c            |    2 +-
+ arch/arm/plat-samsung/Kconfig                    |    8 ++++++++
+ arch/arm/plat-samsung/include/plat/dma-ops.h     |    1 +
+ arch/arm/plat-samsung/include/plat/dma.h         |    6 +++++-
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 ++
+ 7 files changed, 22 insertions(+), 6 deletions(-)
