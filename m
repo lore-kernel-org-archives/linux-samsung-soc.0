@@ -1,53 +1,51 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Mon, 9 Jan 2012 00:26:41 -0800
-Message-ID: <20120109082640.GI22134@opensource.wolfsonmicro.com>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
- <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
- <20120108204953.GA20043@sirena.org.uk>
- <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix build error which was from common.c
+	and old cpu.c
+Date: Mon, 9 Jan 2012 09:41:15 +0000
+Message-ID: <20120109094115.GF21765@n2100.arm.linux.org.uk>
+References: <01a001ccce6d$d9f3ea60$8ddbbf20$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33695 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753476Ab2AII1P (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:54333 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751153Ab2AIJli (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Jan 2012 03:27:15 -0500
+	Mon, 9 Jan 2012 04:41:38 -0500
 Content-Disposition: inline
-In-Reply-To: <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
+In-Reply-To: <01a001ccce6d$d9f3ea60$8ddbbf20$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Marc Zyngier' <marc.zyngier@arm.com>, 'Axel Lin' <axel.lin@gmail.com>
 
-On Sun, Jan 08, 2012 at 05:21:02PM -0800, Olof Johansson wrote:
+On Mon, Jan 09, 2012 at 10:27:27AM +0900, Kukjin Kim wrote:
+> This fixes build error and wrong merge conflicts.
+> arch/arm/mach-exynos/common.c: In function 'exynos4_gic_irq_fix_base':
+> arch/arm/mach-exynos/common.c:393: error: dereferencing pointer to incomplete type
+> arch/arm/mach-exynos/common.c:396: error: dereferencing pointer to incomplete type
+> 
+> Following A and B have been created from different base and the build
+> error was casued in the process of merging and should be fixed in this
+> merge window.
+> 
+> A. commit db0d4db ("ARM: gic: allow GIC to support non-banked setups"),
+>   commit 4e44d2c ("ARM: exynos4: convert to CONFIG_MULTI_IRQ_HANDLER")
+>   and commit 69676c3 ("ARM: exynos4: Fix build error due to
+>   'gic_bank_offset' undeclared")
+> 
+> B. commit cc511b8 ("ARM: 7257/1: EXYNOS: introduce arch/arm/mach-exynos/
+>   common.[ch]") introduced common.[ch]")
 
-> Mark, Kukjin, can either of you split out the fixes in a separate branch?
+Well, git isn't that good at telling you what conflicts on a delete/modify
+conflict - all it does is leave you the modified file in the tree and
+expect you to know what changes were made to it between the version which
+was deleted, and the modified version.
 
-Here's some of them, there were a few others I'm aware of that depended
-on feature updates.  Ideally we'd actually get all the changes that have
-been in -next in.
+The various git diff combinations really don't help you either - all you
+get told by git is that the file is 'unmerged' and that's it.
 
-The following changes since commit 5f0a6e2d503896062f641639dacfe5055c2f593b:
-
-  Linux 3.2-rc7 (2011-12-23 21:51:06 -0800)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git fixes/samsung
-
-Mark Brown (5):
-      ARM: SAMSUNG: Fix GPIO space reservation for S3C64xx platforms
-      ARM: S3C64XX: Correct reservation of GPIOs for CPU module on Cragganmore
-      ARM: SAMSUNG: Guard against multiple inclusion of plat/dma.h
-      ARM: SAMSUNG: dma-ops.h needs mach/dma.h
-      ARM: SAMSUNG: Declare struct platform_device in plat/s3c64xx-spi.h
-
- arch/arm/mach-s3c64xx/Kconfig                    |    6 +++---
- arch/arm/mach-s3c64xx/include/mach/crag6410.h    |    3 ++-
- arch/arm/mach-s3c64xx/mach-crag6410.c            |    2 +-
- arch/arm/plat-samsung/Kconfig                    |    8 ++++++++
- arch/arm/plat-samsung/include/plat/dma-ops.h     |    1 +
- arch/arm/plat-samsung/include/plat/dma.h         |    6 +++++-
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 ++
- 7 files changed, 22 insertions(+), 6 deletions(-)
+I'd say these are the kind of merges which are always going to be full of
+errors - and I doubt there's anything which can really be done to stop
+them being so (unless git starts marking the file with merge conflict
+markers for those changes I describe above.)
