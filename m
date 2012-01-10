@@ -1,71 +1,64 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 0/8 v4] ARM: DMA-mapping framework redesign
-Date: Tue, 10 Jan 2012 09:42:37 +0100
-Message-ID: <012601cccf73$ce09a8f0$6a1cfad0$%szyprowski@samsung.com>
-References: <1323448798-18184-1-git-send-email-m.szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [GIT PULL] Samsung devel for v3.3
+Date: Tue, 10 Jan 2012 09:06:35 +0000
+Message-ID: <20120110090635.GT21765@n2100.arm.linux.org.uk>
+References: <018801ccca70$25f01260$71d03720$%kim@samsung.com> <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com> <01a301ccce6f$9bb51790$d31f46b0$%kim@samsung.com> <201201091556.34817.arnd@arndb.de> <20120109161152.GA2974@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-arch-owner@vger.kernel.org>
-In-reply-to: <1323448798-18184-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: pl
-Sender: linux-arch-owner@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Joerg Roedel' <joro@8bytes.org>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Shariq Hasnain' <shariq.hasnain@linaro.org>, 'Chunsang Jeong' <chunsang.jeong@linaro.org>, 'Krishna Reddy' <vdumpa@nvidia.com>, 'KyongHo Cho' <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Benjamin Herrenschmidt' <benh@kernel.crashing.org>, 'Kukjin Kim' <kgene.kim@samsung.com>'KyongHo Cho' <pullip.cho@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:43190 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755057Ab2AJJGx (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Jan 2012 04:06:53 -0500
+Content-Disposition: inline
+In-Reply-To: <20120109161152.GA2974@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Hello,
+On Mon, Jan 09, 2012 at 08:11:54AM -0800, Mark Brown wrote:
+> On Mon, Jan 09, 2012 at 03:56:34PM +0000, Arnd Bergmann wrote:
+> 
+> > Of course we will take all bug fixes. Just rebase the rest on top of 3.3-rc1
+> > and we can take it right away for 3.4.
+> 
+> I've sent a pull request earlier in the thread for the main ones I'm
+> aware of (which are mostly fixes for things introduced in this cycle) -
+> the others I'm aware of are all specific to Cragganmore and given that
+> we can't get any of the features for that merged the fixes aren't going
+> to have any practical effect until we can manage to get the feature
+> stuff merged so it's not really worth the effort.
+> 
+> This really is very disappointing.
 
-To help everyone in testing and adapting our patches for his hardware 
-platform I've rebased our patches onto the latest v3.2 Linux kernel and
-prepared a few GIT branches in our public repository. These branches
-contain our memory management related patches posted in the following
-threads:
+No it isn't.
 
-"[PATCHv18 0/11] Contiguous Memory Allocator":
-http://www.spinics.net/lists/linux-mm/msg28125.html
-later called CMAv18,
+What is really disappointing is the lack of responsive maintainers for the
+Samsung stuff.  It took _two_ bloody months to get the Samsung platforms
+sorted for the restart changes in spite of reminding, and a last minute
+rush over the course of a couple of days (one _in_ the merge window) to
+get it properly merged into my tree.
 
-"[PATCH 00/14] DMA-mapping framework redesign preparation":
-http://www.spinics.net/lists/linux-sh/msg09777.html
-and
-"[PATCH 0/8 v4] ARM: DMA-mapping framework redesign":
-http://www.spinics.net/lists/arm-kernel/msg151147.html
-with the following update:
-http://www.spinics.net/lists/arm-kernel/msg154889.html
-later called DMAv5.
+The only reason something happened was because I stuck a #error into
+the Samsung code in linux-next and people started reporting that Samsung
+had broken.
 
-These branches are available in our public GIT repository:
+This is not the worst of it - Nicolas took _three_ months to get a response
+from the shmobile maintainers.  I never got a response from the shmobile
+maintainers for the restart changes - so congratulations to the shmobile
+maintainers, shmobile is now broken.
 
-git://git.infradead.org/users/kmpark/linux-samsung
-http://git.infradead.org/users/kmpark/linux-samsung/
+The alternative was basically Samsung ending up like shmobile is today.
+Maybe that's what should have happened to save folk like Arnd such a
+horrible job now.
 
-The following branches are available:
+So, I support Arnd's view: the Samsung stuff is just too late.  Even the
+restart updates (which is what has caused this) were too late.  Anything
+which causes new merge conflicts in the Samsung code is not acceptable at
+this point, even if it's a 'fix' patch.  We've wasted far too much time
+trying to get Samsung stuff sorted far too late in the cycle.
 
-1) 3.2-cma-v18
-Vanilla Linux v3.2 with fixed CMA v18 patches (first patch replaced
-with the one from v17 to fix SMP issues, see the respective thread).
-
-2) 3.2-dma-v5
-Vanilla Linux v3.2 + iommu/next (IOMMU maintainer's patches) branch
-with DMA-preparation and DMA-mapping framework redesign patches.
-
-3) 3.2-cma-v18-dma-v5
-Previous two branches merged together (DMA-mapping on top of CMA)
-
-4) 3.2-cma-v18-dma-v5-exynos
-Previous branch rebased on top of iommu/next + kgene/for-next (Samsung
-SoC platform maintainer's patches) with new Exynos4 IOMMU driver by 
-KyongHo Cho and relevant glue code.
-
-5) 3.2-dma-v5-exynos
-Branch from point 2 rebased on top of iommu/next + kgene/for-next 
-(Samsung SoC maintainer's patches) with new Exynos4 IOMMU driver by 
-KyongHo Cho and relevant glue code.
-
-I hope everyone will find a branch that suits his needs. :)
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+Let this be an object lesson in what happens if you leave stuff until the
+last minute.
