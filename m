@@ -1,37 +1,26 @@
-From: Nicolas Pitre <nico@fluxnic.net>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Tue, 10 Jan 2012 14:00:30 -0500 (EST)
-Message-ID: <alpine.LFD.2.02.1201101359370.2722@xanadu.home>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
- <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
- <01a301ccce6f$9bb51790$d31f46b0$%kim@samsung.com>
- <201201091556.34817.arnd@arndb.de>
- <20120109161152.GA2974@opensource.wolfsonmicro.com>
- <20120110090635.GT21765@n2100.arm.linux.org.uk>
- <20120110183123.GD7164@opensource.wolfsonmicro.com>
- <alpine.LFD.2.02.1201101341040.2722@xanadu.home>
- <20120110184643.GF7164@opensource.wolfsonmicro.com>
+Date: Tue, 10 Jan 2012 20:13:54 +0000
+Message-ID: <201201102013.54958.arnd@arndb.de>
+References: <018801ccca70$25f01260$71d03720$%kim@samsung.com> <alpine.LFD.2.02.1201101341040.2722@xanadu.home> <20120110184643.GF7164@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; CHARSET=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from relais.videotron.ca ([24.201.245.36]:49311 "EHLO
-	relais.videotron.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756558Ab2AJTAt (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:64911 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756854Ab2AJUOW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jan 2012 14:00:49 -0500
-Received: from xanadu.home ([66.130.28.92]) by VL-VM-MR005.ip.videotron.ca
- (Oracle Communications Messaging Exchange Server 7u4-22.01 64bit (built Apr 21
- 2011)) with ESMTP id <0LXL00LNDJGI6600@VL-VM-MR005.ip.videotron.ca> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Jan 2012 14:00:19 -0500 (EST)
-In-reply-to: <20120110184643.GF7164@opensource.wolfsonmicro.com>
+	Tue, 10 Jan 2012 15:14:22 -0500
+In-Reply-To: <20120110184643.GF7164@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
+Cc: Nicolas Pitre <nico@fluxnic.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org
 
-On Tue, 10 Jan 2012, Mark Brown wrote:
-
+On Tuesday 10 January 2012, Mark Brown wrote:
+> 
 > On Tue, Jan 10, 2012 at 01:44:54PM -0500, Nicolas Pitre wrote:
 > > On Tue, 10 Jan 2012, Mark Brown wrote:
 > 
@@ -46,7 +35,26 @@ On Tue, 10 Jan 2012, Mark Brown wrote:
 > be sorted out at the maintainer level.  I'm guessing there's not really
 > much that contributors can do here?
 
-Maybe if enough contributor pressure builds up something will change...
+I think you did everything as good as you could, we just need to routinely
+call for everyone to submit stuff in time. A number of maintainers sent stuff
+after Christmas (which I expected to start the merge window) and were mostly
+lucky because Linus gave us an extra 10 days to sort things out.
 
+The most reliable way improve things is pressure from upstream. We used to
+have a lot of problems with omap until Linus complained loudly and the omap
+merges are working completely flawless now process-wise. In the last few
+releases I pushed back on substandard at91 patches and that also turned out
+really well for 3.3. This time, the samsung and pxa patches were sticking
+out as being worse than the others, so that's where the pushback went and
+I'm sure it will work better in the future. PXA made it in in the
+end, samsung also did for the most part but not entirely and you were
+unfortunate to be the contributor of the patches that missed out.
 
-Nicolas
+Note that we're also constantly raising the bar with our expectations here,
+and we have to, in order to keep up with increasing complexity and
+increasing numbers of patches getting submitted. I think overall we're
+doing fine, and occasionally letting good patches get delayed by one
+release is the price we have to pay, even when it hurts an individual
+contributor.
+
+	Arnd
