@@ -1,39 +1,35 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] video: s3c-fb: Add device tree support
-Date: Wed, 11 Jan 2012 17:40:48 +0000
-Message-ID: <20120111174048.GC24213@opensource.wolfsonmicro.com>
-References: <1326139307-25112-1-git-send-email-thomas.abraham@linaro.org> <20120110045219.GA5433@sirena.org.uk> <CAJuYYwRSO9OuiLNddOa+KLSkGwOAp3yHcrQZXSk_k2+oxtEDPQ@mail.gmail.com>
+Subject: Re: [PATCH] backlight: lcd: add driver for raster-type lcd's with
+	gpio controlled panel reset
+Date: Wed, 11 Jan 2012 17:45:41 +0000
+Message-ID: <20120111174540.GE24213@opensource.wolfsonmicro.com>
+References: <1325778146-27056-1-git-send-email-thomas.abraham@linaro.org> <4F05F509.6020405@metafoo.de> <20120106064929.GB3496@opensource.wolfsonmicro.com> <CAJuYYwRxuZAm_JpLw1fN2ypnFc6TocH6veRmCeuqENvZHSz3kg@mail.gmail.com> <20120107172826.GA355@opensource.wolfsonmicro.com> <CAJuYYwSuDzUWgnSJHO0vwjYH7zscC9=j_=JuOUuJy9shHpPUuA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59283 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53816 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755902Ab2AKRku (ORCPT
+	by vger.kernel.org with ESMTP id S1757900Ab2AKRpm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jan 2012 12:40:50 -0500
+	Wed, 11 Jan 2012 12:45:42 -0500
 Content-Disposition: inline
-In-Reply-To: <CAJuYYwRSO9OuiLNddOa+KLSkGwOAp3yHcrQZXSk_k2+oxtEDPQ@mail.gmail.com>
+In-Reply-To: <CAJuYYwSuDzUWgnSJHO0vwjYH7zscC9=j_=JuOUuJy9shHpPUuA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, FlorianSchandinat@gmx.de, jg1.han@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, patches@linaro.org, linux-arm-kernel@lists.infradead.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, patches@linaro.org
 
-On Wed, Jan 11, 2012 at 04:34:28PM +0530, Thomas Abraham wrote:
-> On 10 January 2012 10:22, Mark Brown
+On Wed, Jan 11, 2012 at 04:21:57PM +0530, Thomas Abraham wrote:
 
-> > This isn't terribly informative for the user - which GPIOs and in w=
-hat
-> > order are they specified? =A0Looking at the code it looks like pin =
-mux
-> > configuration so just some wording saying it's a list of pins to be=
- used
-> > for the framebuffer function.
+> In the case of Exynos4 based Origen board, buck7 of max8997 supplies
+> power to the lcd panel. buck7 is capable of supplying power at
+> different voltage levels but for Origen board, it is required to
+> supply only 3.3V. The constraints for buck7 can specify 'apply_uV' and
+> this will ensure that buck7 is configured to supply 3.3V.
 
-> Ok. I will modify the sentence to mean that it is list of gpios used
-> by framebuffer controller for data/timing interface with the lcd
-> panel. Thanks for your review.
+> But 'apply_uV' seems to be not ideal for regulators that supply power
+> to lcd panels. It would be better to power lcd panels only when video
+> data has to be displayed.
 
-You probably want to mention that it's for pin muxing, the reason I
-didn't get what it meant on first read was that normally GPIO means
-specifically the sort of stuff handled by gpiolib.
+What makes you say this?  Enabling and disabling a regulator are
+entirely orthogonal to setting the regulator voltage.
