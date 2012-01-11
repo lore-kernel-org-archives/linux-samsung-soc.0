@@ -1,58 +1,69 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung devel for v3.3
-Date: Wed, 11 Jan 2012 15:39:47 +0900
-Message-ID: <021a01ccd02b$d00b14a0$70213de0$%kim@samsung.com>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
- <alpine.LFD.2.02.1201101341040.2722@xanadu.home>
- <20120110184643.GF7164@opensource.wolfsonmicro.com>
- <201201102013.54958.arnd@arndb.de>
- <20120110223712.GL7164@opensource.wolfsonmicro.com>
- <CAOesGMhDS+7O7LFB9CsbCeZs18S9r6YV-SeWF6hHXfRFVMNWhA@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH] video: s3c-fb: Add device tree support
+Date: Wed, 11 Jan 2012 18:16:54 +0900
+Message-ID: <004401ccd041$c2f66100$48e32300$%han@samsung.com>
+References: <1326139307-25112-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:34920 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751847Ab2AKGjv (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:65043 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754816Ab2AKJQ5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jan 2012 01:39:51 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LXM00CDIFUB7I60@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jan 2012 15:39:50 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LXM00DAJFUB4ZJ1@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 11 Jan 2012 15:39:49 +0900 (KST)
-In-reply-to: <CAOesGMhDS+7O7LFB9CsbCeZs18S9r6YV-SeWF6hHXfRFVMNWhA@mail.gmail.com>
+	Wed, 11 Jan 2012 04:16:57 -0500
+In-reply-to: <1326139307-25112-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Nicolas Pitre' <nico@fluxnic.net>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: FlorianSchandinat@gmx.de, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Olof Johansson wrote:
+Hi, Thomas.
+
+> -----Original Message-----
+> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+> Sent: Tuesday, January 10, 2012 5:02 AM
+> To: linux-fbdev@vger.kernel.org; devicetree-discuss@lists.ozlabs.org
+> Cc: FlorianSchandinat@gmx.de; grant.likely@secretlab.ca; rob.herring@calxeda.com; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com;
+> jg1.han@samsung.com; patches@linaro.org
+> Subject: [PATCH] video: s3c-fb: Add device tree support
 > 
-
-[...]
-
-> What I would do myself is that if I hadn't seen the patches land in
-> the topmost staging tree by -rc6 or -rc7, I would ping the owner of
-> the tree that the patches are sitting in to make sure they go up.
-
-Would be helpful to us.
-
-> Hopefully this kind of thing will be a rare scenario.
+> Add device tree based discovery support for Samsung's display controller.
 > 
-Yes, and Samsung's topic branch will be sent to arm-soc as soon as possible
-when it's ready from me.
-
-Thanks.
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: Rob Herring <rob.herring@calxeda.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  .../devicetree/bindings/fb/samsung-fb.txt          |  103 ++++++++++
+>  drivers/video/s3c-fb.c                             |  209 +++++++++++++++++++-
+>  2 files changed, 304 insertions(+), 8 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/fb/samsung-fb.txt
+> 
+> [...]
+>
+> +- samsung,fimd-bpp: Specifies the bits per pixel. Two values should be
+> +  specified in the following order.
+> +    - max-bpp: maximum required bpp for the overlay.
+> +    - default-bpp: bpp supported by the overlay.
+> [...]
+> +		fimd-overlay0 {
+> +			samsung,fimd-htiming = <64 16 48 1024>;
+> +			samsung,fimd-vtiming = <64 16 3 600>;
+> +			samsung,fimd-bpp = <24 32>;
+> +		};
+> +
+> +		fimd-overlay1 {
+> +			samsung,fimd-htiming = <64 16 48 200>;
+> +			samsung,fimd-vtiming = <64 16 3 100>;
+> +			samsung,fimd-bpp = <16 32>;
+> +		};
+> +	};
+In the above 'samsung-fb.txt', the order is defined as max-bpp and default-bpp.
+However, <24 32> and <16 32> seems to be wrong.
+It should be <32 24> and <32 16>, respectively.
+Max bpp would be 32bpp in s3c-fb.
 
 Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Jingoo Han
