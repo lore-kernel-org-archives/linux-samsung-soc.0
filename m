@@ -1,103 +1,74 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Tue, 10 Jan 2012 16:11:26 -0800
-Message-ID: <CAOesGMhDS+7O7LFB9CsbCeZs18S9r6YV-SeWF6hHXfRFVMNWhA@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung devel for v3.3
+Date: Wed, 11 Jan 2012 15:20:17 +0900
+Message-ID: <021901ccd029$167f4da0$437de8e0$%kim@samsung.com>
 References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
-	<alpine.LFD.2.02.1201101341040.2722@xanadu.home>
-	<20120110184643.GF7164@opensource.wolfsonmicro.com>
-	<201201102013.54958.arnd@arndb.de>
-	<20120110223712.GL7164@opensource.wolfsonmicro.com>
+ <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
+ <01a301ccce6f$9bb51790$d31f46b0$%kim@samsung.com>
+ <201201091556.34817.arnd@arndb.de>
+ <20120109161152.GA2974@opensource.wolfsonmicro.com>
+ <20120110090635.GT21765@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ww0-f44.google.com ([74.125.82.44]:38863 "EHLO
-	mail-ww0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751780Ab2AKAL1 convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63019 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753145Ab2AKGUW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jan 2012 19:11:27 -0500
-Received: by wgbdr10 with SMTP id dr10so185977wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Jan 2012 16:11:26 -0800 (PST)
-In-Reply-To: <20120110223712.GL7164@opensource.wolfsonmicro.com>
+	Wed, 11 Jan 2012 01:20:22 -0500
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LXM0064MEXU6D90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jan 2012 15:20:20 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.114])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LXM00EL4EXTXGE0@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 11 Jan 2012 15:20:20 +0900 (KST)
+In-reply-to: <20120110090635.GT21765@n2100.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Nicolas Pitre <nico@fluxnic.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Jan 10, 2012 at 2:37 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Tue, Jan 10, 2012 at 08:13:54PM +0000, Arnd Bergmann wrote:
->> On Tuesday 10 January 2012, Mark Brown wrote:
->
->> > That sounds like it'd be helpful overall but it's something that h=
-as to
->> > be sorted out at the maintainer level. =A0I'm guessing there's not=
- really
->> > much that contributors can do here?
->
->> I think you did everything as good as you could, we just need to rou=
-tinely
->> call for everyone to submit stuff in time. A number of maintainers s=
-ent stuff
->> after Christmas (which I expected to start the merge window) and wer=
-e mostly
->> lucky because Linus gave us an extra 10 days to sort things out.
->
-> I guess it would also be useful to have some way to compare what's in
-> -next with what's in the arm-soc tree and chase people if that diff g=
-ets
-> big. =A0I do also wonder if it's worth letting people push stuff to y=
-ou
-> more aggressively - right now you seem to be asking people to batch
-> things up and I wonder if that's making it a it easier for things to =
-end
-> up dropping on the floor if a time based routine isn't working well f=
-or
-> people.
+Russell King - ARM Linux wrote:
+> 
+> On Mon, Jan 09, 2012 at 08:11:54AM -0800, Mark Brown wrote:
 
-I actually did just this today based on this discussion, and I'll do
-it through the next staging cycle to keep a track of the "arm backlog"
-of how much is sitting in maintainer trees vs what has already been
-merged into Russell's tree or arm-soc. We can include these stats in
-next rounds "last call for patches" email to help catch forgotten
-branches.
+[...]
 
-I merged rmk's for-next branch with the arm-soc one, merged that on
-top of mainline and diffed arch/arm with what is in linux-next.
+> > This really is very disappointing.
+> 
+> No it isn't.
+> 
+> What is really disappointing is the lack of responsive maintainers for the
+> Samsung stuff.  It took _two_ bloody months to get the Samsung platforms
+> sorted for the restart changes in spite of reminding, and a last minute
+> rush over the course of a couple of days (one _in_ the merge window) to
+> get it properly merged into my tree.
+> 
+Yeah, I had to do earlier and it's true that many conflicts caused from my
+late ARM restart working for Samsung stuff.
 
-Right now, plus or minus some sloppy merge conflict resolutions on my
-part, the statistics are:
+[...]
 
-git diff --stat next/master -- arch/arm
-[..]
- 113 files changed, 670 insertions(+), 810 deletions(-)
+> So, I support Arnd's view: the Samsung stuff is just too late.  Even the
+> restart updates (which is what has caused this) were too late.  Anything
+> which causes new merge conflicts in the Samsung code is not acceptable at
+> this point, even if it's a 'fix' patch.  We've wasted far too much time
+> trying to get Samsung stuff sorted far too late in the cycle.
+> 
+> Let this be an object lesson in what happens if you leave stuff until the
+> last minute.
 
-(this diffstat does not include late/* branches since they got
-included in the arm-soc side of the diff)
+I will do more carefully next time and of course not too late.
 
-Most of these are rightfully still there; some changes are going
-through other trees such as some PCI changes, ASoC, PM, a few fixes
-that haven't been sent up to arm-soc yet, etc.  A couple of patches
-seem to have been queued in for-3.4 branches a bit early (Stephen
-doesn't generally want people to start queueing new stuff until the
-merge window is over), but that's just a couple of them.
+Thanks.
 
-So, it looks like there's no major backlog left for any specific vendor=
- subtree.
-
->> end, samsung also did for the most part but not entirely and you wer=
-e
->> unfortunate to be the contributor of the patches that missed out.
->
-> It's not just me, I'm just vocal and perhaps more to the point spend =
-a
-> reasonable amount of time chasing stuff into various trees so want to
-> figure out if I need to change what I'm doing with that.
-
-What I would do myself is that if I hadn't seen the patches land in
-the topmost staging tree by -rc6 or -rc7, I would ping the owner of
-the tree that the patches are sitting in to make sure they go up.
-Hopefully this kind of thing will be a rare scenario.
-
-
--Olof
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
