@@ -1,51 +1,95 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 0/5] S3C24XX: unclutter clock init, mostly for S3C2443
-Date: Thu, 12 Jan 2012 16:09:23 +0100
-Message-ID: <201201121609.24110.heiko@sntech.de>
+Subject: [PATCH 2/5] S3C2443/S3C2416: add get_rate for clk_h
+Date: Thu, 12 Jan 2012 16:10:45 +0100
+Message-ID: <201201121610.45402.heiko@sntech.de>
+References: <201201121609.24110.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
-  charset="us-ascii"
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:55927 "EHLO
+Received: from h1778886.stratoserver.net ([85.214.133.74]:56238 "EHLO
 	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753718Ab2ALPJm (ORCPT
+	with ESMTP id S1753656Ab2ALPKx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jan 2012 10:09:42 -0500
+	Thu, 12 Jan 2012 10:10:53 -0500
+In-Reply-To: <201201121609.24110.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This series tries to unclutter the clock init of S3C2443 and onward a bit.
-Most clock-information can be read via generic code and doesn't need
-special code for reading the raste of the h and p clock.
+Currently the rate of clk_h is calculated once and set through the
+s3c24xx_setup_clocks call. As the clk_h is a child of the prediv
+we can evaluate its divider and calculate the rate in get_rate.
 
-I'm not 100% sure on the sanity of the fifth patch, which removes the
-plat-s3c24xx/clock.c, as it duplicates a little bit of code into the
-s3c2412 machine directory but would remove another nearly meaningless
-file from plat-s3c24xx.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/plat-s3c24xx/s3c2443-clock.c |   31 ++++++++++++++++++++++---------
+ 1 files changed, 22 insertions(+), 9 deletions(-)
 
-This series applies cleanly against current linux-next.
-
-Heiko Stuebner (5):
-  S3C2443/S3C2416: remove XXX_setup_clocks methods
-  S3C2443/S3C2416: add get_rate for clk_h
-  S3C2443/S3C2416: add get_rate for clk_p
-  S3C2443/S3C2416: remove call to s3c24xx_setup_clocks
-  S3C24XX: remove plat-s3c24xx/clock.c
-
- arch/arm/mach-s3c2412/clock.c              |    1 +
- arch/arm/mach-s3c2412/s3c2412.c            |    7 ++-
- arch/arm/mach-s3c2416/clock.c              |    6 --
- arch/arm/mach-s3c2443/clock.c              |    7 ---
- arch/arm/plat-s3c24xx/Makefile             |    1 -
- arch/arm/plat-s3c24xx/clock.c              |   59 ------------------------
- arch/arm/plat-s3c24xx/s3c2410-clock.c      |   15 ++++++
- arch/arm/plat-s3c24xx/s3c2443-clock.c      |   69 +++++++++++++++++++---------
- arch/arm/plat-samsung/include/plat/clock.h |    1 -
- 9 files changed, 69 insertions(+), 97 deletions(-)
- delete mode 100644 arch/arm/plat-s3c24xx/clock.c
-
+diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/plat-s3c24xx/s3c2443-clock.c
+index 95e6819..8b9ee8b 100644
+--- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
++++ b/arch/arm/plat-s3c24xx/s3c2443-clock.c
+@@ -160,6 +160,25 @@ static struct clk clk_prediv = {
+ 	},
+ };
+ 
++/* hclk divider
++ *
++ * divides the prediv and provides the hclk.
++ */
++
++static unsigned long s3c2443_hclkdiv_getrate(struct clk *clk)
++{
++	unsigned long rate = clk_get_rate(clk->parent);
++	unsigned long clkdiv0 = __raw_readl(S3C2443_CLKDIV0);
++
++	clkdiv0 &= S3C2443_CLKDIV0_HCLKDIV_MASK;
++
++	return rate / (clkdiv0 + 1);
++}
++
++static struct clk_ops clk_h_ops = {
++	.get_rate	= s3c2443_hclkdiv_getrate,
++};
++
+ /* armdiv
+  *
+  * this clock is sourced from msysclk and can have a number of
+@@ -516,13 +535,6 @@ static struct clk hsmmc1_clk = {
+ 	.ctrlbit	= S3C2443_HCLKCON_HSMMC,
+ };
+ 
+-static inline unsigned long s3c2443_get_hdiv(unsigned long clkcon0)
+-{
+-	clkcon0 &= S3C2443_CLKDIV0_HCLKDIV_MASK;
+-
+-	return clkcon0 + 1;
+-}
+-
+ /* EPLLCON compatible enough to get on/off information */
+ 
+ void __init_or_cpufreq s3c2443_common_setup_clocks(pll_fn get_mpll)
+@@ -546,8 +558,7 @@ void __init_or_cpufreq s3c2443_common_setup_clocks(pll_fn get_mpll)
+ 	clk_msysclk.clk.rate = pll;
+ 
+ 	fclk = clk_get_rate(&clk_armdiv);
+-	hclk = s3c2443_prediv_getrate(&clk_prediv);
+-	hclk /= s3c2443_get_hdiv(clkdiv0);
++	hclk = clk_get_rate(&clk_h);
+ 	pclk = hclk / ((clkdiv0 & S3C2443_CLKDIV0_HALF_PCLK) ? 2 : 1);
+ 
+ 	s3c24xx_setup_clocks(fclk, hclk, pclk);
+@@ -613,6 +624,8 @@ void __init s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
+ 
+ 	/* s3c2443 parents h and p clocks from prediv */
+ 	clk_h.parent = &clk_prediv;
++	clk_h.ops = &clk_h_ops;
++
+ 	clk_p.parent = &clk_prediv;
+ 
+ 	clk_usb_bus.parent = &clk_usb_bus_host.clk;
 -- 
 1.7.5.4
