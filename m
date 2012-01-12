@@ -1,231 +1,410 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
-Date: Thu, 12 Jan 2012 16:09:46 +0530
-Message-ID: <CAJuYYwQ2-my0JNSxJgei0Q8c7f3606xzDSHNgL_t+XypzehXoA@mail.gmail.com>
-References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
-	<1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
-	<CAJ0PZbSVKiyuZAxJ7-c6T2eM4Lmyj4KDDmx5JBSbwDRxME68Tw@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH] arm: Fix missing api-change from subsys_interface change
+Date: Thu, 12 Jan 2012 14:30:48 +0100
+Message-ID: <201201121430.49448.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:56678 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752171Ab2ALKjr convert rfc822-to-8bit (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:53460 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753346Ab2ALNbT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jan 2012 05:39:47 -0500
-In-Reply-To: <CAJ0PZbSVKiyuZAxJ7-c6T2eM4Lmyj4KDDmx5JBSbwDRxME68Tw@mail.gmail.com>
+	Thu, 12 Jan 2012 08:31:19 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@gmail.com
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
+To: Greg Kroah-Hartman <gregkh@suse.de>, Kay Sievers <kay.sievers@vrfy.org>, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Dear Mr. Ham,
+Commit 4a858cfc9a (arm: convert sysdev_class to a regular subsystem)
+converted the samsung sysdevs into subsys_interface instances.
 
-On 12 January 2012 15:19, MyungJoo Ham <myungjoo.ham@samsung.com> wrote=
-:
-> On Thu, Jan 12, 2012 at 4:35 PM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->> Add device tree based discovery support for max8997.
->>
->> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Cc: Rajendra Nayak <rnayak@ti.com>
->> Cc: Rob Herring <rob.herring@calxeda.com>
->> Cc: Grant Likely <grant.likely@secretlab.ca>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> =A0.../devicetree/bindings/regulator/max8997-pmic.txt | =A0120 +++++=
-+++++++++++
->> =A0drivers/mfd/max8997.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0| =A0 72 ++++++++++-
->> =A0drivers/regulator/max8997.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0143 +++++++++++++++++++-
->> =A0include/linux/mfd/max8997.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0 =A01 +
->> =A04 files changed, 334 insertions(+), 2 deletions(-)
->> =A0create mode 100644 Documentation/devicetree/bindings/regulator/ma=
-x8997-pmic.txt
->>
->> diff --git a/Documentation/devicetree/bindings/regulator/max8997-pmi=
-c.txt b/Documentation/devicetree/bindings/regulator/max8997-pmic.txt
->> new file mode 100644
->> index 0000000..0c4559d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/regulator/max8997-pmic.txt
->> @@ -0,0 +1,120 @@
->> +* Maxim MAX8997 Voltage and Current Regulator
->> +
->> +The Maxim MAX8997 is a multi-function device which includes volatag=
-e and
->> +current regulators, rtc, charger controller and other sub-blocks. I=
-t is
->> +interfaced to the host controller using a i2c interface. Each sub-b=
-lock is
->> +addressed by the host system using different i2c slave address. Thi=
-s document
->> +describes the bindings for 'pmic' sub-block of max8997.
->> +
->> +Required properties:
->> +- compatible: Should be "maxim,max8997-pmic".
->> +- reg: Specifies the i2c slave address of the pmic block. It should=
- be 0x66.
->> +
->> +Optional properties:
->> +- interrupt-parent: Specifies the phandle of the interrupt controll=
-er to which
->> + =A0the interrupts from max8997 are delivered to.
->> +- interrupts: Interrupt specifiers for two interrupt sources.
->> + =A0- First interrupt specifier is for 'irq1' interrupt.
->> + =A0- Second interrupt specifier is for 'alert' interrupt.
->> +- max8997,pmic-buck1-uses-gpio-dvs: 'buck1' can be controlled by gp=
-io dvs.
->> +- max8997,pmic-buck2-uses-gpio-dvs: 'buck2' can be controlled by gp=
-io dvs.
->> +- max8997,pmic-buck5-uses-gpio-dvs: 'buck5' can be controlled by gp=
-io dvs.
->> +
->> +Additional properties required if either of the optional properties=
- are used:
->> +- max8997,pmic-ignore-gpiodvs-side-effect: When GPIO-DVS mode is us=
-ed for
->> + =A0multiple bucks, changing the voltage value of one of the bucks =
-may affect
->> + =A0that of another buck, which is the side effect of the change (s=
-et_voltage).
->> + =A0Use this property to ignore such side effects and change the vo=
-ltage.
->> +
->> +- max8997,pmic-buck125-default-dvs-idx: Default voltage setting sel=
-ected from
->> + =A0the possible 8 options selectable by the dvs gpios. The value o=
-f this
->> + =A0property should be between 0 and 7. If not specified or if out =
-of range, the
->> + =A0default value of this property is set to 0.
->> +
->> +- max8997,pmic-buck125-dvs-gpios: GPIO specifiers for three host gp=
-io's used
->> + =A0for dvs. The format of the gpio specifier depends in the gpio c=
-ontroller.
->> +
->> +- max8997,pmic-buck1-dvs-voltage: A set of 8 voltage values in micr=
-o-volt (uV)
->> + =A0units for buck1 when changing voltage using gpio dvs.
->> +
->> +- max8997,pmic-buck2-dvs-voltage: A set of 8 voltage values in micr=
-o-volt (uV)
->> + =A0units for buck2 when changing voltage using gpio dvs.
->> +
->> +- max8997,pmic-buck5-dvs-voltage: A set of 8 voltage values in micr=
-o-volt (uV)
->> + =A0units for buck5 when changing voltage using gpio dvs.
->> +
->
-> These three values are _not_ optional.
->
-> If they are omitted and at least one of buck1/2/5 is supplying
-> critical power to the system, which they do in Exynos boards, system
-> will not boot properly.
->
-> In order to work properly, at least the first element of each array
-> should have a proper value (preferrably the maximum safety voltage if
-> this gpio-dvs feature is not used) if others are filled with zeros.
->
-> If GPIO-DVS mode is enabled, all the 8 elements of each array should
-> be filled with proper values.
+While the original add-function only had a (struct sys_device *)
+parameter, the dev_add from subsys_interface needs
+	(struct device *, struct subsys_interface *)
+leading to "initialized from incompatible pointer type" warnings.
 
-Thanks for this information. I was not aware of that. I assumed that
-if GPIO DVS is not used for BUCK 1/2/5, then there is no need to
-supply the DVS voltage options. I will modify this accordingly.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+The patch applies cleanly against the current driver-core git,
+hopefully it's the right tree.
 
->
->
-> []
->> diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997=
-=2Ec
->> index d26e864..053d0b7 100644
->> --- a/drivers/regulator/max8997.c
->> +++ b/drivers/regulator/max8997.c
-> []
->> @@ -32,6 +33,7 @@
->> =A0struct max8997_data {
->> =A0 =A0 =A0 =A0struct device *dev;
->> @@ -958,6 +960,138 @@ static struct regulator_desc regulators[] =3D =
-{
->> =A0 =A0 =A0 =A0},
->> =A0};
->>
->> +#if CONFIG_OF
->
-> #ifdef?
+ arch/arm/mach-exynos/pm.c                    |    2 +-
+ arch/arm/mach-s3c2410/cpu-freq.c             |    8 +++++---
+ arch/arm/mach-s3c2410/dma.c                  |    5 +++--
+ arch/arm/mach-s3c2410/pll.c                  |    2 +-
+ arch/arm/mach-s3c2410/pm.c                   |    2 +-
+ arch/arm/mach-s3c2412/cpu-freq.c             |    3 ++-
+ arch/arm/mach-s3c2412/dma.c                  |    3 ++-
+ arch/arm/mach-s3c2412/irq.c                  |    2 +-
+ arch/arm/mach-s3c2412/pm.c                   |    2 +-
+ arch/arm/mach-s3c2416/irq.c                  |    3 ++-
+ arch/arm/mach-s3c2416/pm.c                   |    2 +-
+ arch/arm/mach-s3c2440/clock.c                |    2 +-
+ arch/arm/mach-s3c2440/dma.c                  |    3 ++-
+ arch/arm/mach-s3c2440/irq.c                  |    2 +-
+ arch/arm/mach-s3c2440/s3c2440-cpufreq.c      |    3 ++-
+ arch/arm/mach-s3c2440/s3c2440-pll-12000000.c |    2 +-
+ arch/arm/mach-s3c2440/s3c2440-pll-16934400.c |    3 ++-
+ arch/arm/mach-s3c2440/s3c2442.c              |    2 +-
+ arch/arm/mach-s3c2440/s3c244x-clock.c        |    2 +-
+ arch/arm/mach-s3c2440/s3c244x-irq.c          |    2 +-
+ arch/arm/mach-s3c2443/dma.c                  |    3 ++-
+ arch/arm/mach-s3c2443/irq.c                  |    3 ++-
+ arch/arm/mach-s5p64x0/pm.c                   |    2 +-
+ arch/arm/mach-s5pv210/pm.c                   |    2 +-
+ 24 files changed, 38 insertions(+), 27 deletions(-)
 
-Yes, I will fix this.
-
->
-> []
->> +static int max8997_pmic_dt_parse_pdata(struct max8997_dev *iodev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 struct max8997_platform_data *pdata)
->> +{
-> []
->> + =A0 =A0 =A0 if (pdata->buck1_gpiodvs) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (of_property_read_u32_array(pmic_np=
-,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "max89=
-97,pmic-buck1-dvs-voltage",
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pdata-=
->buck1_voltage, 8)) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(iodev->dev, "b=
-uck1 voltages not specified\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> + =A0 =A0 =A0 }
->> +
->> + =A0 =A0 =A0 if (pdata->buck2_gpiodvs) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (of_property_read_u32_array(pmic_np=
-,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "max89=
-97,pmic-buck2-dvs-voltage",
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pdata-=
->buck2_voltage, 8)) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(iodev->dev, "b=
-uck2 voltages not specified\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> + =A0 =A0 =A0 }
->> +
->> + =A0 =A0 =A0 if (pdata->buck5_gpiodvs) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (of_property_read_u32_array(pmic_np=
-,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "max89=
-97,pmic-buck5-dvs-voltage",
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pdata-=
->buck5_voltage, 8)) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(iodev->dev, "b=
-uck5 voltages not specified\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
->> + =A0 =A0 =A0 }
->
-> As mentioned above, these array should be loaded to probe function
-> even if buck?_gpiodvs is false.
-
-Ok.
-
-Thanks for reviewing this patch.
-
-Regards,
-Thomas.
-
->
-> []
->
->
->
-> Cheers!
-> MyungJoo
->
->
-> --
-> MyungJoo Ham, Ph.D.
-> Mobile Software Platform Lab, DMC Business, Samsung Electronics
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index a4f61a4..21beb91 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -206,7 +206,7 @@ static void exynos4_pm_prepare(void)
+ 
+ }
+ 
+-static int exynos4_pm_add(struct device *dev)
++static int exynos4_pm_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	pm_cpu_prep = exynos4_pm_prepare;
+ 	pm_cpu_sleep = exynos4_cpu_suspend;
+diff --git a/arch/arm/mach-s3c2410/cpu-freq.c b/arch/arm/mach-s3c2410/cpu-freq.c
+index 7dc6c46..5404535 100644
+--- a/arch/arm/mach-s3c2410/cpu-freq.c
++++ b/arch/arm/mach-s3c2410/cpu-freq.c
+@@ -115,7 +115,8 @@ static struct s3c_cpufreq_info s3c2410_cpufreq_info = {
+ 	.debug_io_show	= s3c_cpufreq_debugfs_call(s3c2410_iotiming_debugfs),
+ };
+ 
+-static int s3c2410_cpufreq_add(struct device *dev)
++static int s3c2410_cpufreq_add(struct device *dev,
++			       struct subsys_interface *sif)
+ {
+ 	return s3c_cpufreq_register(&s3c2410_cpufreq_info);
+ }
+@@ -133,7 +134,8 @@ static int __init s3c2410_cpufreq_init(void)
+ 
+ arch_initcall(s3c2410_cpufreq_init);
+ 
+-static int s3c2410a_cpufreq_add(struct device *dev)
++static int s3c2410a_cpufreq_add(struct device *dev,
++				struct subsys_interface *sif)
+ {
+ 	/* alter the maximum freq settings for S3C2410A. If a board knows
+ 	 * it only has a maximum of 200, then it should register its own
+@@ -144,7 +146,7 @@ static int s3c2410a_cpufreq_add(struct device *dev)
+ 	s3c2410_cpufreq_info.max.pclk =  66500000;
+ 	s3c2410_cpufreq_info.name = "s3c2410a";
+ 
+-	return s3c2410_cpufreq_add(dev);
++	return s3c2410_cpufreq_add(dev, sif);
+ }
+ 
+ static struct subsys_interface s3c2410a_cpufreq_interface = {
+diff --git a/arch/arm/mach-s3c2410/dma.c b/arch/arm/mach-s3c2410/dma.c
+index 2afd000..4803338 100644
+--- a/arch/arm/mach-s3c2410/dma.c
++++ b/arch/arm/mach-s3c2410/dma.c
+@@ -132,7 +132,8 @@ static struct s3c24xx_dma_order __initdata s3c2410_dma_order = {
+ 	},
+ };
+ 
+-static int __init s3c2410_dma_add(struct device *dev)
++static int __init s3c2410_dma_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	s3c2410_dma_init();
+ 	s3c24xx_dma_order_set(&s3c2410_dma_order);
+@@ -148,7 +149,7 @@ static struct subsys_interface s3c2410_dma_interface = {
+ 
+ static int __init s3c2410_dma_drvinit(void)
+ {
+-	return subsys_interface_register(&s3c2410_interface);
++	return subsys_interface_register(&s3c2410_dma_interface);
+ }
+ 
+ arch_initcall(s3c2410_dma_drvinit);
+diff --git a/arch/arm/mach-s3c2410/pll.c b/arch/arm/mach-s3c2410/pll.c
+index c07438b..e0b3b34 100644
+--- a/arch/arm/mach-s3c2410/pll.c
++++ b/arch/arm/mach-s3c2410/pll.c
+@@ -66,7 +66,7 @@ static struct cpufreq_frequency_table pll_vals_12MHz[] = {
+     { .frequency = 270000000, .index = PLLVAL(127, 1, 1),  },
+ };
+ 
+-static int s3c2410_plls_add(struct device *dev)
++static int s3c2410_plls_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	return s3c_plltab_register(pll_vals_12MHz, ARRAY_SIZE(pll_vals_12MHz));
+ }
+diff --git a/arch/arm/mach-s3c2410/pm.c b/arch/arm/mach-s3c2410/pm.c
+index fda5385..03f706d 100644
+--- a/arch/arm/mach-s3c2410/pm.c
++++ b/arch/arm/mach-s3c2410/pm.c
+@@ -111,7 +111,7 @@ struct syscore_ops s3c2410_pm_syscore_ops = {
+ 	.resume		= s3c2410_pm_resume,
+ };
+ 
+-static int s3c2410_pm_add(struct device *dev)
++static int s3c2410_pm_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	pm_cpu_prep = s3c2410_pm_prepare;
+ 	pm_cpu_sleep = s3c2410_cpu_suspend;
+diff --git a/arch/arm/mach-s3c2412/cpu-freq.c b/arch/arm/mach-s3c2412/cpu-freq.c
+index d8664b7..125be7d 100644
+--- a/arch/arm/mach-s3c2412/cpu-freq.c
++++ b/arch/arm/mach-s3c2412/cpu-freq.c
+@@ -194,7 +194,8 @@ static struct s3c_cpufreq_info s3c2412_cpufreq_info = {
+ 	.debug_io_show  = s3c_cpufreq_debugfs_call(s3c2412_iotiming_debugfs),
+ };
+ 
+-static int s3c2412_cpufreq_add(struct device *dev)
++static int s3c2412_cpufreq_add(struct device *dev,
++			       struct subsys_interface *sif)
+ {
+ 	unsigned long fclk_rate;
+ 
+diff --git a/arch/arm/mach-s3c2412/dma.c b/arch/arm/mach-s3c2412/dma.c
+index 142acd3..38472ac 100644
+--- a/arch/arm/mach-s3c2412/dma.c
++++ b/arch/arm/mach-s3c2412/dma.c
+@@ -159,7 +159,8 @@ static struct s3c24xx_dma_selection __initdata s3c2412_dma_sel = {
+ 	.map_size	= ARRAY_SIZE(s3c2412_dma_mappings),
+ };
+ 
+-static int __init s3c2412_dma_add(struct device *dev)
++static int __init s3c2412_dma_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	s3c2410_dma_init();
+ 	return s3c24xx_dma_init_map(&s3c2412_dma_sel);
+diff --git a/arch/arm/mach-s3c2412/irq.c b/arch/arm/mach-s3c2412/irq.c
+index a8a46c1..e65619d 100644
+--- a/arch/arm/mach-s3c2412/irq.c
++++ b/arch/arm/mach-s3c2412/irq.c
+@@ -170,7 +170,7 @@ static int s3c2412_irq_rtc_wake(struct irq_data *data, unsigned int state)
+ 
+ static struct irq_chip s3c2412_irq_rtc_chip;
+ 
+-static int s3c2412_irq_add(struct device *dev)
++static int s3c2412_irq_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	unsigned int irqno;
+ 
+diff --git a/arch/arm/mach-s3c2412/pm.c b/arch/arm/mach-s3c2412/pm.c
+index d1adfa6..d045885 100644
+--- a/arch/arm/mach-s3c2412/pm.c
++++ b/arch/arm/mach-s3c2412/pm.c
+@@ -56,7 +56,7 @@ static void s3c2412_pm_prepare(void)
+ {
+ }
+ 
+-static int s3c2412_pm_add(struct device *dev)
++static int s3c2412_pm_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	pm_cpu_prep = s3c2412_pm_prepare;
+ 	pm_cpu_sleep = s3c2412_cpu_suspend;
+diff --git a/arch/arm/mach-s3c2416/irq.c b/arch/arm/mach-s3c2416/irq.c
+index 36df761..fd49f35 100644
+--- a/arch/arm/mach-s3c2416/irq.c
++++ b/arch/arm/mach-s3c2416/irq.c
+@@ -213,7 +213,8 @@ static int __init s3c2416_add_sub(unsigned int base,
+ 	return 0;
+ }
+ 
+-static int __init s3c2416_irq_add(struct device *dev)
++static int __init s3c2416_irq_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	printk(KERN_INFO "S3C2416: IRQ Support\n");
+ 
+diff --git a/arch/arm/mach-s3c2416/pm.c b/arch/arm/mach-s3c2416/pm.c
+index 3bdb15a..1bd4817 100644
+--- a/arch/arm/mach-s3c2416/pm.c
++++ b/arch/arm/mach-s3c2416/pm.c
+@@ -48,7 +48,7 @@ static void s3c2416_pm_prepare(void)
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), S3C2412_INFORM1);
+ }
+ 
+-static int s3c2416_pm_add(struct device *dev)
++static int s3c2416_pm_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	pm_cpu_prep = s3c2416_pm_prepare;
+ 	pm_cpu_sleep = s3c2416_cpu_suspend;
+diff --git a/arch/arm/mach-s3c2440/clock.c b/arch/arm/mach-s3c2440/clock.c
+index bedbc87..414364e 100644
+--- a/arch/arm/mach-s3c2440/clock.c
++++ b/arch/arm/mach-s3c2440/clock.c
+@@ -149,7 +149,7 @@ static struct clk_lookup s3c2440_clk_lookup[] = {
+ 	.ctrlbit	= S3C2440_CLKCON_CAMERA,
+ };
+ 
+-static int s3c2440_clk_add(struct device *dev)
++static int s3c2440_clk_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	struct clk *clock_upll;
+ 	struct clk *clock_h;
+diff --git a/arch/arm/mach-s3c2440/dma.c b/arch/arm/mach-s3c2440/dma.c
+index 15b1ddf..5f0a0c8 100644
+--- a/arch/arm/mach-s3c2440/dma.c
++++ b/arch/arm/mach-s3c2440/dma.c
+@@ -174,7 +174,8 @@ static struct s3c24xx_dma_order __initdata s3c2440_dma_order = {
+ 	},
+ };
+ 
+-static int __init s3c2440_dma_add(struct device *dev)
++static int __init s3c2440_dma_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	s3c2410_dma_init();
+ 	s3c24xx_dma_order_set(&s3c2440_dma_order);
+diff --git a/arch/arm/mach-s3c2440/irq.c b/arch/arm/mach-s3c2440/irq.c
+index 4fee9bc..4a18cde 100644
+--- a/arch/arm/mach-s3c2440/irq.c
++++ b/arch/arm/mach-s3c2440/irq.c
+@@ -92,7 +92,7 @@ static struct irq_chip s3c_irq_wdtac97 = {
+ 	.irq_ack	= s3c_irq_wdtac97_ack,
+ };
+ 
+-static int s3c2440_irq_add(struct device *dev)
++static int s3c2440_irq_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	unsigned int irqno;
+ 
+diff --git a/arch/arm/mach-s3c2440/s3c2440-cpufreq.c b/arch/arm/mach-s3c2440/s3c2440-cpufreq.c
+index cf75966..6177676 100644
+--- a/arch/arm/mach-s3c2440/s3c2440-cpufreq.c
++++ b/arch/arm/mach-s3c2440/s3c2440-cpufreq.c
+@@ -270,7 +270,8 @@ struct s3c_cpufreq_info s3c2440_cpufreq_info = {
+ 	.debug_io_show  = s3c_cpufreq_debugfs_call(s3c2410_iotiming_debugfs),
+ };
+ 
+-static int s3c2440_cpufreq_add(struct device *dev)
++static int s3c2440_cpufreq_add(struct device *dev,
++			       struct subsys_interface *sif)
+ {
+ 	xtal = s3c_cpufreq_clk_get(NULL, "xtal");
+ 	hclk = s3c_cpufreq_clk_get(NULL, "hclk");
+diff --git a/arch/arm/mach-s3c2440/s3c2440-pll-12000000.c b/arch/arm/mach-s3c2440/s3c2440-pll-12000000.c
+index b5368ae..551fb43 100644
+--- a/arch/arm/mach-s3c2440/s3c2440-pll-12000000.c
++++ b/arch/arm/mach-s3c2440/s3c2440-pll-12000000.c
+@@ -51,7 +51,7 @@ static struct cpufreq_frequency_table s3c2440_plls_12[] __initdata = {
+ 	{ .frequency = 400000000,	.index = PLLVAL(0x5c, 1, 1),  }, 	/* FVco 800.000000 */
+ };
+ 
+-static int s3c2440_plls12_add(struct device *dev)
++static int s3c2440_plls12_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	struct clk *xtal_clk;
+ 	unsigned long xtal;
+diff --git a/arch/arm/mach-s3c2440/s3c2440-pll-16934400.c b/arch/arm/mach-s3c2440/s3c2440-pll-16934400.c
+index 42f2b5c..3f15bcf 100644
+--- a/arch/arm/mach-s3c2440/s3c2440-pll-16934400.c
++++ b/arch/arm/mach-s3c2440/s3c2440-pll-16934400.c
+@@ -79,7 +79,8 @@ static struct cpufreq_frequency_table s3c2440_plls_169344[] __initdata = {
+ 	{ .frequency = 402192000,	.index = PLLVAL(87, 2, 1), 	}, 	/* FVco 804.384000 */
+ };
+ 
+-static int s3c2440_plls169344_add(struct device *dev)
++static int s3c2440_plls169344_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	struct clk *xtal_clk;
+ 	unsigned long xtal;
+diff --git a/arch/arm/mach-s3c2440/s3c2442.c b/arch/arm/mach-s3c2440/s3c2442.c
+index 8004e04..22cb7c9 100644
+--- a/arch/arm/mach-s3c2440/s3c2442.c
++++ b/arch/arm/mach-s3c2440/s3c2442.c
+@@ -122,7 +122,7 @@ static struct clk s3c2442_clk_cam_upll = {
+ 	},
+ };
+ 
+-static int s3c2442_clk_add(struct device *dev)
++static int s3c2442_clk_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	struct clk *clock_upll;
+ 	struct clk *clock_h;
+diff --git a/arch/arm/mach-s3c2440/s3c244x-clock.c b/arch/arm/mach-s3c2440/s3c244x-clock.c
+index b3fdbdd..6d9b688 100644
+--- a/arch/arm/mach-s3c2440/s3c244x-clock.c
++++ b/arch/arm/mach-s3c2440/s3c244x-clock.c
+@@ -72,7 +72,7 @@ static struct clk clk_arm = {
+ 	},
+ };
+ 
+-static int s3c244x_clk_add(struct device *dev)
++static int s3c244x_clk_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	unsigned long camdivn = __raw_readl(S3C2440_CAMDIVN);
+ 	unsigned long clkdivn;
+diff --git a/arch/arm/mach-s3c2440/s3c244x-irq.c b/arch/arm/mach-s3c2440/s3c244x-irq.c
+index 74d3dcf..5fe8e58 100644
+--- a/arch/arm/mach-s3c2440/s3c244x-irq.c
++++ b/arch/arm/mach-s3c2440/s3c244x-irq.c
+@@ -91,7 +91,7 @@ static struct irq_chip s3c_irq_cam = {
+ 	.irq_ack	= s3c_irq_cam_ack,
+ };
+ 
+-static int s3c244x_irq_add(struct device *dev)
++static int s3c244x_irq_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	unsigned int irqno;
+ 
+diff --git a/arch/arm/mach-s3c2443/dma.c b/arch/arm/mach-s3c2443/dma.c
+index de6b4a2..1422451 100644
+--- a/arch/arm/mach-s3c2443/dma.c
++++ b/arch/arm/mach-s3c2443/dma.c
+@@ -135,7 +135,8 @@ static struct s3c24xx_dma_selection __initdata s3c2443_dma_sel = {
+ 	.map_size	= ARRAY_SIZE(s3c2443_dma_mappings),
+ };
+ 
+-static int __init s3c2443_dma_add(struct device *dev)
++static int __init s3c2443_dma_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	s3c24xx_dma_init(6, IRQ_S3C2443_DMA0, 0x100);
+ 	return s3c24xx_dma_init_map(&s3c2443_dma_sel);
+diff --git a/arch/arm/mach-s3c2443/irq.c b/arch/arm/mach-s3c2443/irq.c
+index 35e4ff2..ac2829f 100644
+--- a/arch/arm/mach-s3c2443/irq.c
++++ b/arch/arm/mach-s3c2443/irq.c
+@@ -241,7 +241,8 @@ static int __init s3c2443_add_sub(unsigned int base,
+ 	return 0;
+ }
+ 
+-static int __init s3c2443_irq_add(struct device *dev)
++static int __init s3c2443_irq_add(struct device *dev,
++				  struct subsys_interface *sif)
+ {
+ 	printk("S3C2443: IRQ Support\n");
+ 
+diff --git a/arch/arm/mach-s5p64x0/pm.c b/arch/arm/mach-s5p64x0/pm.c
+index 23f9b22..9cba18b 100644
+--- a/arch/arm/mach-s5p64x0/pm.c
++++ b/arch/arm/mach-s5p64x0/pm.c
+@@ -160,7 +160,7 @@ static void s5p64x0_pm_prepare(void)
+ 
+ }
+ 
+-static int s5p64x0_pm_add(struct device *dev)
++static int s5p64x0_pm_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	pm_cpu_prep = s5p64x0_pm_prepare;
+ 	pm_cpu_sleep = s5p64x0_cpu_suspend;
+diff --git a/arch/arm/mach-s5pv210/pm.c b/arch/arm/mach-s5pv210/pm.c
+index 677c71c..736bfb1 100644
+--- a/arch/arm/mach-s5pv210/pm.c
++++ b/arch/arm/mach-s5pv210/pm.c
+@@ -133,7 +133,7 @@ static void s5pv210_pm_prepare(void)
+ 	s3c_pm_do_save(s5pv210_core_save, ARRAY_SIZE(s5pv210_core_save));
+ }
+ 
+-static int s5pv210_pm_add(struct device *dev)
++static int s5pv210_pm_add(struct device *dev, struct subsys_interface *sif)
+ {
+ 	pm_cpu_prep = s5pv210_pm_prepare;
+ 	pm_cpu_sleep = s5pv210_cpu_suspend;
+-- 
+1.7.5.4
