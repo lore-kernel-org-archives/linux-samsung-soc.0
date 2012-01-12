@@ -1,90 +1,95 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 1/5] S3C2443/S3C2416: remove XXX_setup_clocks methods
-Date: Thu, 12 Jan 2012 16:10:15 +0100
-Message-ID: <201201121610.15670.heiko@sntech.de>
+Subject: [PATCH 3/5] S3C2443/S3C2416: add get_rate for clk_p
+Date: Thu, 12 Jan 2012 16:11:07 +0100
+Message-ID: <201201121611.08240.heiko@sntech.de>
 References: <201201121609.24110.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from h1778886.stratoserver.net ([85.214.133.74]:56371 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753831Ab2ALPLV (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Jan 2012 10:11:21 -0500
 In-Reply-To: <201201121609.24110.heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-s3c2443_common_setup_clocks is always called through
-s3c2443_common_init_clocks, so there is no need to call it separately.
-On the S3C2443 it was also called twice.
+Currently the rate of clk_p is calculated once and set through the
+s3c24xx_setup_clocks call. As the clk_p is a child of clk_h we can
+evaluate its divider and calculate the rate in get_rate.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/mach-s3c2416/clock.c              |    6 ------
- arch/arm/mach-s3c2443/clock.c              |    7 -------
- arch/arm/plat-samsung/include/plat/clock.h |    1 -
- 3 files changed, 0 insertions(+), 14 deletions(-)
+ arch/arm/plat-s3c24xx/s3c2443-clock.c |   28 ++++++++++++++++++++++++----
+ 1 files changed, 24 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
-index 59f54d1..e01490d 100644
---- a/arch/arm/mach-s3c2416/clock.c
-+++ b/arch/arm/mach-s3c2416/clock.c
-@@ -132,12 +132,6 @@ static struct clk hsmmc0_clk = {
- 	.ctrlbit	= S3C2416_HCLKCON_HSMMC0,
+diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/plat-s3c24xx/s3c2443-clock.c
+index 8b9ee8b..bf86dd1 100644
+--- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
++++ b/arch/arm/plat-s3c24xx/s3c2443-clock.c
+@@ -179,6 +179,25 @@ static struct clk_ops clk_h_ops = {
+ 	.get_rate	= s3c2443_hclkdiv_getrate,
  };
  
--void __init_or_cpufreq s3c2416_setup_clocks(void)
--{
--	s3c2443_common_setup_clocks(s3c2416_get_pll);
--}
--
--
- static struct clksrc_clk *clksrcs[] __initdata = {
- 	&hsspi_eplldiv,
- 	&hsspi_mux,
-diff --git a/arch/arm/mach-s3c2443/clock.c b/arch/arm/mach-s3c2443/clock.c
-index 6dde269..efb3ac3 100644
---- a/arch/arm/mach-s3c2443/clock.c
-+++ b/arch/arm/mach-s3c2443/clock.c
-@@ -179,11 +179,6 @@ static struct clk *clks[] __initdata = {
- 	&clk_hsmmc,
- };
- 
--void __init_or_cpufreq s3c2443_setup_clocks(void)
--{
--	s3c2443_common_setup_clocks(s3c2443_get_mpll);
--}
--
- void __init s3c2443_init_clocks(int xtal)
++/* pclk divider
++ *
++ * divides the hclk and provides the pclk.
++ */
++
++static unsigned long s3c2443_pclkdiv_getrate(struct clk *clk)
++{
++	unsigned long rate = clk_get_rate(clk->parent);
++	unsigned long clkdiv0 = __raw_readl(S3C2443_CLKDIV0);
++
++	clkdiv0 = ((clkdiv0 & S3C2443_CLKDIV0_HALF_PCLK) ? 1 : 0);
++
++	return rate / (clkdiv0 + 1);
++}
++
++static struct clk_ops clk_p_ops = {
++	.get_rate	= s3c2443_pclkdiv_getrate,
++};
++
+ /* armdiv
+  *
+  * this clock is sourced from msysclk and can have a number of
+@@ -541,7 +560,6 @@ void __init_or_cpufreq s3c2443_common_setup_clocks(pll_fn get_mpll)
  {
  	unsigned long epllcon = __raw_readl(S3C2443_EPLLCON);
-@@ -196,8 +191,6 @@ void __init s3c2443_init_clocks(int xtal)
- 				   armdiv, ARRAY_SIZE(armdiv),
- 				   S3C2443_CLKDIV0_ARMDIV_MASK);
+ 	unsigned long mpllcon = __raw_readl(S3C2443_MPLLCON);
+-	unsigned long clkdiv0 = __raw_readl(S3C2443_CLKDIV0);
+ 	struct clk *xtal_clk;
+ 	unsigned long xtal;
+ 	unsigned long pll;
+@@ -559,7 +577,7 @@ void __init_or_cpufreq s3c2443_common_setup_clocks(pll_fn get_mpll)
  
--	s3c2443_setup_clocks();
--
- 	s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
+ 	fclk = clk_get_rate(&clk_armdiv);
+ 	hclk = clk_get_rate(&clk_h);
+-	pclk = hclk / ((clkdiv0 & S3C2443_CLKDIV0_HALF_PCLK) ? 2 : 1);
++	pclk = clk_get_rate(&clk_p);
  
- 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-index 73c66d4..58b42f6 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -114,7 +114,6 @@ extern void s3c24xx_setup_clocks(unsigned long fclk,
- extern void s3c2410_setup_clocks(void);
- extern void s3c2412_setup_clocks(void);
- extern void s3c244x_setup_clocks(void);
--extern void s3c2443_setup_clocks(void);
+ 	s3c24xx_setup_clocks(fclk, hclk, pclk);
  
- /* S3C64XX specific functions and clocks */
+@@ -622,11 +640,13 @@ void __init s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
+ 	nr_armdiv = nr_divs;
+ 	armdivmask = divmask;
  
+-	/* s3c2443 parents h and p clocks from prediv */
++	/* s3c2443 parents h clock from prediv */
+ 	clk_h.parent = &clk_prediv;
+ 	clk_h.ops = &clk_h_ops;
+ 
+-	clk_p.parent = &clk_prediv;
++	/* and p clock from h clock */
++	clk_p.parent = &clk_h;
++	clk_p.ops = &clk_p_ops;
+ 
+ 	clk_usb_bus.parent = &clk_usb_bus_host.clk;
+ 	clk_epll.parent = &clk_epllref.clk;
 -- 
 1.7.5.4
