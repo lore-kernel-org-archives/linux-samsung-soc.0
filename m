@@ -1,93 +1,67 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 2/2] ARM: Exynos: Use lcd power control driver for lcd panel
-Date: Thu, 12 Jan 2012 13:13:31 +0530
-Message-ID: <1326354211-27064-3-git-send-email-thomas.abraham@linaro.org>
-References: <1326354211-27064-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v3 0/2] ARM: Exynos: Adapt to generic power domain
+Date: Thu, 12 Jan 2012 13:20:07 +0530
+Message-ID: <1326354609-27181-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30021 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751804Ab2ALHi3 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:23004 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752642Ab2ALHoy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jan 2012 02:38:29 -0500
-In-reply-to: <1326354211-27064-1-git-send-email-thomas.abraham@linaro.org>
+	Thu, 12 Jan 2012 02:44:54 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: rpurdie@rpsys.net, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, cbou@mail.ru, kwangwoo.lee@gmail.com, augulis.darius@gmail.com, ben-linux@fluff.org, lars@metafoo.de, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-The Hydis hv070wsa lcd panel used with the Origen board uses a gpio
-for reset and the Vcc supply to the panel can be controlled using
-a voltage regulator. Switch to using the lcd power control driver
-for controlling the power to the lcd panel.
+Changes since v2:
+- Added CSIS1 to cam power domain.
+- Changed some of the Exynos4 prefix to Exynos.
+* no changes in first patch.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/mach-exynos/mach-origen.c |   29 ++++++-----------------------
- 1 files changed, 6 insertions(+), 23 deletions(-)
+Changes since v1:
+- Added a OF wrapper around __pm_genpd_add_device as suggested by Rafael.
+- Added cpu_relax and usleep_range during waits for power domain to be
+  enabled/disabled.
+- Added static registrations of devices to power domains for non-dt
+  platforms.
 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 23fc5cb..f12b7e2 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -25,7 +25,7 @@
- #include <asm/mach/arch.h>
- #include <asm/mach-types.h>
- 
--#include <video/platform_lcd.h>
-+#include <video/lcd_pwrctrl.h>
- 
- #include <plat/regs-serial.h>
- #include <plat/regs-fb-v4.h>
-@@ -127,7 +127,7 @@ static struct regulator_consumer_supply __initdata buck3_consumer[] = {
- 	REGULATOR_SUPPLY("vdd_g3d", "mali_drm"), /* G3D */
- };
- static struct regulator_consumer_supply __initdata buck7_consumer[] = {
--	REGULATOR_SUPPLY("vcc", "platform-lcd"), /* LCD */
-+	REGULATOR_SUPPLY("vcc-lcd", "lcd-pwrctrl.0"), /* LCD */
- };
- 
- static struct regulator_init_data __initdata max8997_ldo1_data = {
-@@ -382,7 +382,7 @@ static struct regulator_init_data __initdata max8997_buck7_data = {
- 		.name		= "VDD_LCD_3.3V",
- 		.min_uV		= 3300000,
- 		.max_uV		= 3300000,
--		.boot_on	= 1,
-+		.boot_on	= 0,
- 		.apply_uV	= 1,
- 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
- 		.state_mem	= {
-@@ -554,29 +554,12 @@ static struct platform_device origen_device_gpiokeys = {
- 	},
- };
- 
--static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
--{
--	int ret;
--
--	if (power)
--		ret = gpio_request_one(EXYNOS4_GPE3(4),
--					GPIOF_OUT_INIT_HIGH, "GPE3_4");
--	else
--		ret = gpio_request_one(EXYNOS4_GPE3(4),
--					GPIOF_OUT_INIT_LOW, "GPE3_4");
--
--	gpio_free(EXYNOS4_GPE3(4));
--
--	if (ret)
--		pr_err("failed to request gpio for LCD power: %d\n", ret);
--}
--
--static struct plat_lcd_data origen_lcd_hv070wsa_data = {
--	.set_power = lcd_hv070wsa_set_power,
-+static struct lcd_pwrctrl_data origen_lcd_hv070wsa_data = {
-+	.gpio	= EXYNOS4_GPE3(4),
- };
- 
- static struct platform_device origen_lcd_hv070wsa = {
--	.name			= "platform-lcd",
-+	.name			= "lcd-pwrctrl",
- 	.dev.parent		= &s5p_device_fimd0.dev,
- 	.dev.platform_data	= &origen_lcd_hv070wsa_data,
- };
--- 
-1.6.6.rc2
+The power domains available on Exynos4 are made controllable using the generic
+power domain infrastructure. The Samsung specific power domain control code
+for Exynos4 is removed. Support for both DT and non-DT Exynos platforms is
+added.
+
+The first patch adds device tree support for generic power domain. A device
+node is added to the generic power domain strucure that represents a power
+domain node in the device tree. Other device nodes in the device tree can
+include a property with a phandle of the power domain node which will enable
+that device to be associated with a power domain.
+
+The second patch registers available power domains to generic power domain
+framework with support for both dt and non-dt platforms. The Samsung specific
+power domain control support is removed.
+
+The patchset is based on the following tree
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
+
+with all patches merged from
+http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+
+Thomas Abraham (2):
+  PM / Domains: Add OF support
+  ARM: Exynos: Hook up power domains to generic power domain infrastructure
+
+ .../bindings/arm/exynos/power_domain.txt           |   21 ++
+ arch/arm/mach-exynos/Kconfig                       |   10 +-
+ arch/arm/mach-exynos/Makefile                      |    2 +-
+ arch/arm/mach-exynos/dev-pd.c                      |  139 --------------
+ arch/arm/mach-exynos/mach-nuri.c                   |   11 -
+ arch/arm/mach-exynos/mach-origen.c                 |   14 --
+ arch/arm/mach-exynos/mach-smdkv310.c               |   12 --
+ arch/arm/mach-exynos/mach-universal_c210.c         |   17 --
+ arch/arm/mach-exynos/pm_domains.c                  |  195 ++++++++++++++++++++
+ drivers/base/power/domain.c                        |   32 ++++
+ include/linux/pm_domain.h                          |   12 ++
+ 11 files changed, 262 insertions(+), 203 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+ delete mode 100644 arch/arm/mach-exynos/dev-pd.c
+ create mode 100644 arch/arm/mach-exynos/pm_domains.c
