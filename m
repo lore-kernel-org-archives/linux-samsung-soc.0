@@ -1,67 +1,131 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 0/2] ARM: Exynos: Adapt to generic power domain
-Date: Thu, 12 Jan 2012 13:20:07 +0530
-Message-ID: <1326354609-27181-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v3 1/2] PM / Domains: Add OF support
+Date: Thu, 12 Jan 2012 13:20:08 +0530
+Message-ID: <1326354609-27181-2-git-send-email-thomas.abraham@linaro.org>
+References: <1326354609-27181-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:23004 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:23045 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752642Ab2ALHoy (ORCPT
+	with ESMTP id S1752642Ab2ALHo4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jan 2012 02:44:54 -0500
+	Thu, 12 Jan 2012 02:44:56 -0500
+In-reply-to: <1326354609-27181-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
 Cc: rjw@sisk.pl, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-Changes since v2:
-- Added CSIS1 to cam power domain.
-- Changed some of the Exynos4 prefix to Exynos.
-* no changes in first patch.
+A device node pointer is added to generic pm domain structure to associate
+the domain with a node in the device tree. The platform code parses the
+device tree to find available nodes representing the generic power domain,
+instantiates the available domains and initializes them by calling
+pm_genpd_init().
 
-Changes since v1:
-- Added a OF wrapper around __pm_genpd_add_device as suggested by Rafael.
-- Added cpu_relax and usleep_range during waits for power domain to be
-  enabled/disabled.
-- Added static registrations of devices to power domains for non-dt
-  platforms.
+Nodes representing the devices include a phandle of the power domain to
+which it belongs. As these devices get instantiated, the driver code
+checkes for availability of a power domain phandle, converts the phandle
+to a device node and uses the new pm_genpd_of_add_device() api to
+associate the device with a power domain.
 
-The power domains available on Exynos4 are made controllable using the generic
-power domain infrastructure. The Samsung specific power domain control code
-for Exynos4 is removed. Support for both DT and non-DT Exynos platforms is
-added.
+pm_genpd_of_add_device() runs through its list of registered power domains
+and matches the OF node of the domain with the one specified as the
+parameter. If a match is found, the device is associated with the matched
+domain.
 
-The first patch adds device tree support for generic power domain. A device
-node is added to the generic power domain strucure that represents a power
-domain node in the device tree. Other device nodes in the device tree can
-include a property with a phandle of the power domain node which will enable
-that device to be associated with a power domain.
+Cc: Rafael J. Wysocki <rjw@sisk.pl>
+Cc: Rob Herring <rob.herring@calxeda.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/base/power/domain.c |   32 ++++++++++++++++++++++++++++++++
+ include/linux/pm_domain.h   |   12 ++++++++++++
+ 2 files changed, 44 insertions(+), 0 deletions(-)
 
-The second patch registers available power domains to generic power domain
-framework with support for both dt and non-dt platforms. The Samsung specific
-power domain control support is removed.
-
-The patchset is based on the following tree
-http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-next
-
-with all patches merged from
-http://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
-
-Thomas Abraham (2):
-  PM / Domains: Add OF support
-  ARM: Exynos: Hook up power domains to generic power domain infrastructure
-
- .../bindings/arm/exynos/power_domain.txt           |   21 ++
- arch/arm/mach-exynos/Kconfig                       |   10 +-
- arch/arm/mach-exynos/Makefile                      |    2 +-
- arch/arm/mach-exynos/dev-pd.c                      |  139 --------------
- arch/arm/mach-exynos/mach-nuri.c                   |   11 -
- arch/arm/mach-exynos/mach-origen.c                 |   14 --
- arch/arm/mach-exynos/mach-smdkv310.c               |   12 --
- arch/arm/mach-exynos/mach-universal_c210.c         |   17 --
- arch/arm/mach-exynos/pm_domains.c                  |  195 ++++++++++++++++++++
- drivers/base/power/domain.c                        |   32 ++++
- include/linux/pm_domain.h                          |   12 ++
- 11 files changed, 262 insertions(+), 203 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/exynos/power_domain.txt
- delete mode 100644 arch/arm/mach-exynos/dev-pd.c
- create mode 100644 arch/arm/mach-exynos/pm_domains.c
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index 92e6a90..9ee1f7b 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1171,6 +1171,38 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
+ }
+ 
+ /**
++ * __pm_genpd_of_add_device - Add a device to an I/O PM domain.
++ * @genpd_node: Device tree node pointer representing a PM domain to which the
++ *   the device is added to.
++ * @dev: Device to be added.
++ * @td: Set of PM QoS timing parameters to attach to the device.
++ */
++int __pm_genpd_of_add_device(struct device_node *genpd_node, struct device *dev,
++			     struct gpd_timing_data *td)
++{
++	struct generic_pm_domain *genpd = NULL, *gpd;
++
++	dev_dbg(dev, "%s()\n", __func__);
++
++	if (IS_ERR_OR_NULL(genpd_node) || IS_ERR_OR_NULL(dev))
++		return -EINVAL;
++
++	mutex_lock(&gpd_list_lock);
++	list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
++		if (gpd->of_node == genpd_node) {
++			genpd = gpd;
++			break;
++		}
++	}
++	mutex_unlock(&gpd_list_lock);
++
++	if (!genpd)
++		return -EINVAL;
++
++	return __pm_genpd_add_device(genpd, dev, td);
++}
++
++/**
+  * pm_genpd_remove_device - Remove a device from an I/O PM domain.
+  * @genpd: PM domain to remove the device from.
+  * @dev: Device to be removed.
+diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+index a03a0ad..e3ff875 100644
+--- a/include/linux/pm_domain.h
++++ b/include/linux/pm_domain.h
+@@ -11,6 +11,7 @@
+ 
+ #include <linux/device.h>
+ #include <linux/err.h>
++#include <linux/of.h>
+ 
+ enum gpd_status {
+ 	GPD_STATE_ACTIVE = 0,	/* PM domain is active */
+@@ -70,6 +71,7 @@ struct generic_pm_domain {
+ 	s64 break_even_ns;	/* Power break even for the entire domain. */
+ 	s64 max_off_time_ns;	/* Maximum allowed "suspended" time. */
+ 	ktime_t power_off_time;
++	struct device_node *of_node; /* Node in device tree */
+ };
+ 
+ static inline struct generic_pm_domain *pd_to_genpd(struct dev_pm_domain *pd)
+@@ -117,12 +119,22 @@ extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+ 				 struct device *dev,
+ 				 struct gpd_timing_data *td);
+ 
++extern int __pm_genpd_of_add_device(struct device_node *genpd_node,
++				    struct device *dev,
++				    struct gpd_timing_data *td);
++
+ static inline int pm_genpd_add_device(struct generic_pm_domain *genpd,
+ 				      struct device *dev)
+ {
+ 	return __pm_genpd_add_device(genpd, dev, NULL);
+ }
+ 
++static inline int pm_genpd_of_add_device(struct device_node *genpd_node,
++					 struct device *dev)
++{
++	return __pm_genpd_of_add_device(genpd_node, dev, NULL);
++}
++
+ extern int pm_genpd_remove_device(struct generic_pm_domain *genpd,
+ 				  struct device *dev);
+ extern int pm_genpd_add_subdomain(struct generic_pm_domain *genpd,
+-- 
+1.6.6.rc2
