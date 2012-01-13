@@ -1,41 +1,42 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] watchdog: fix error in probe() of s3c2410_wdt (reset
-	at booting)
-Date: Fri, 13 Jan 2012 11:11:17 +0000
-Message-ID: <20120113111117.GT1068@n2100.arm.linux.org.uk>
-References: <1326431663-4638-1-git-send-email-myungjoo.ham@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Gusakov Andrey <dron0gus@gmail.com>
+Subject: [PATCH] S3C24XX DMA resume regression fix
+Date: Fri, 13 Jan 2012 17:47:24 +0400
+Message-ID: <1326462444-10567-1-git-send-email-dron0gus@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:37025 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757922Ab2AMLLm (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:50827 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753052Ab2AMNs7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jan 2012 06:11:42 -0500
-Content-Disposition: inline
-In-Reply-To: <1326431663-4638-1-git-send-email-myungjoo.ham@samsung.com>
+	Fri, 13 Jan 2012 08:48:59 -0500
+Received: by bkvi17 with SMTP id i17so2044373bkv.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jan 2012 05:48:57 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: linux-watchdog@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, myungjoo.ham@gmail.com, Wim Van Sebroeck <wim@iguana.be>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Gusakov Andrey <dron0gus@gmail.com>
 
-On Fri, Jan 13, 2012 at 02:14:23PM +0900, MyungJoo Ham wrote:
-> Probe function of s3c2410 watchdog calls request_irq before initializing
-> required value (wdt_count). This incurs resetting watchdog counter value
-> and watchdog-reboot during booting up.
-> 
-> This patch addresses such an issue by calling request_irq later.
-> 
-> Error handling in probe function and calling oder in remove function are
-> also revised accordingly.
+In commit bb072c3cf21d1c9a5a2eeb5a00679ee7bf39675b suspend/resume
+hooks were added. s3c2410_dma_suspend suspends channels from 0 to
+dma_channels. s3c2410_dma_resume resumes channels in reverse
+order. So pointer should be decremented insted of being incremented.
 
-On the other hand, this patch violates the general principle that you set
-the device up _before_ you publish it to userspace.
+Signed-off-by: Gusakov Andrey <dron0gus@gmail.com>
+---
+ arch/arm/plat-s3c24xx/dma.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-In the case where you add the watchdog device, but then the subsequent
-request_irq() fails, there is a window where the watchdog device could
-be opened and started.  You then fall out through the error paths, and
-the module could be removed.
-
-Don't do this.  Always setup the device first.  Then publish it.  Never
-the other way around.
+diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+index 57abec9..16510d5 100644
+--- a/arch/arm/plat-s3c24xx/dma.c
++++ b/arch/arm/plat-s3c24xx/dma.c
+@@ -1249,7 +1249,7 @@ static void s3c2410_dma_resume(void)
+ 	struct s3c2410_dma_chan *cp = s3c2410_chans + dma_channels - 1;
+ 	int channel;
+ 
+-	for (channel = dma_channels - 1; channel >= 0; cp++, channel--)
++	for (channel = dma_channels - 1; channel >= 0; cp--, channel--)
+ 		s3c2410_dma_resume_chan(cp);
+ }
+ 
+-- 
+1.7.0.4
