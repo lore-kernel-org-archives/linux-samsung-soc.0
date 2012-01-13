@@ -1,66 +1,117 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] arm: Fix missing api-change from subsys_interface change
-Date: Fri, 13 Jan 2012 10:05:08 +0900
-Message-ID: <033301ccd18f$64ac8c60$2e05a520$%kim@samsung.com>
-References: <201201121430.49448.heiko@sntech.de>
- <20120112160605.GA10831@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+Subject: [PATCH] watchdog: fix error in probe() of s3c2410_wdt (reset at
+ booting)
+Date: Fri, 13 Jan 2012 14:14:23 +0900
+Message-ID: <1326431663-4638-1-git-send-email-myungjoo.ham@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:12417 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:18895 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756308Ab2AMBFM convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1750699Ab2AMFNr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jan 2012 20:05:12 -0500
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LXP007GQPNRLXF0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jan 2012 10:05:10 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.114])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LXP00KCUPOKBVF0@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 13 Jan 2012 10:05:10 +0900 (KST)
-In-reply-to: <20120112160605.GA10831@suse.de>
-Content-language: ko
+	Fri, 13 Jan 2012 00:13:47 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Greg KH' <gregkh@suse.de>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: 'Kay Sievers' <kay.sievers@vrfy.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-watchdog@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Wim Van Sebroeck <wim@iguana.be>, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, kyungmin.park@samsung.com, myungjoo.ham@gmail.com
 
-Greg KH wrote:
->=20
-> On Thu, Jan 12, 2012 at 02:30:48PM +0100, Heiko St=FCbner wrote:
-> > Commit 4a858cfc9a (arm: convert sysdev_class to a regular subsystem=
-)
-> > converted the samsung sysdevs into subsys_interface instances.
-> >
-> > While the original add-function only had a (struct sys_device *)
-> > parameter, the dev_add from subsys_interface needs
-> > 	(struct device *, struct subsys_interface *)
-> > leading to "initialized from incompatible pointer type" warnings.
-> >
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> > The patch applies cleanly against the current driver-core git,
-> > hopefully it's the right tree.
->=20
-> Thanks for fixing this up, sorry for getting it wrong.
->=20
-> This should be done against the Samsung arm git tree, and go in throu=
-gh
-> that one.  The driver-core git tree is equal to Linus's tree of a few
-> days ago, there are no driver-core patches in it at the moment.
->=20
-> Kukjin, can you take these?
->=20
-Sure, let me pick this up in my fixes.
+Probe function of s3c2410 watchdog calls request_irq before initializing
+required value (wdt_count). This incurs resetting watchdog counter value
+and watchdog-reboot during booting up.
 
-Thanks.
+This patch addresses such an issue by calling request_irq later.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Error handling in probe function and calling oder in remove function are
+also revised accordingly.
+
+Reported-by: Chanwoo Park <cw00.choi@samsung.com>
+Signed-off-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/watchdog/s3c2410_wdt.c |   29 +++++++++++++++--------------
+ 1 files changed, 15 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index a79e384..07bd768 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -342,22 +342,17 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 		goto err_map;
+ 	}
+ 
+-	ret = request_irq(wdt_irq->start, s3c2410wdt_irq, 0, pdev->name, pdev);
+-	if (ret != 0) {
+-		dev_err(dev, "failed to install irq (%d)\n", ret);
+-		goto err_map;
+-	}
+-
+ 	wdt_clock = clk_get(&pdev->dev, "watchdog");
+ 	if (IS_ERR(wdt_clock)) {
+ 		dev_err(dev, "failed to find watchdog clock source\n");
+ 		ret = PTR_ERR(wdt_clock);
+-		goto err_irq;
++		goto err_map;
+ 	}
+ 
+ 	clk_enable(wdt_clock);
+ 
+-	if (s3c2410wdt_cpufreq_register() < 0) {
++	ret = s3c2410wdt_cpufreq_register();
++	if (ret < 0) {
+ 		printk(KERN_ERR PFX "failed to register cpufreq\n");
+ 		goto err_clk;
+ 	}
+@@ -395,6 +390,12 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 		s3c2410wdt_stop(&s3c2410_wdd);
+ 	}
+ 
++	ret = request_irq(wdt_irq->start, s3c2410wdt_irq, 0, pdev->name, pdev);
++	if (ret != 0) {
++		dev_err(dev, "failed to install irq (%d)\n", ret);
++		goto err_reg;
++	}
++
+ 	/* print out a statement of readiness */
+ 
+ 	wtcon = readl(wdt_base + S3C2410_WTCON);
+@@ -406,6 +407,9 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++ err_reg:
++	watchdog_unregister_device(&s3c2410_wdd);
++
+  err_cpufreq:
+ 	s3c2410wdt_cpufreq_deregister();
+ 
+@@ -413,9 +417,6 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 	clk_disable(wdt_clock);
+ 	clk_put(wdt_clock);
+ 
+- err_irq:
+-	free_irq(wdt_irq->start, pdev);
+-
+  err_map:
+ 	iounmap(wdt_base);
+ 
+@@ -428,6 +429,9 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 
+ static int __devexit s3c2410wdt_remove(struct platform_device *dev)
+ {
++	free_irq(wdt_irq->start, dev);
++	wdt_irq = NULL;
++
+ 	watchdog_unregister_device(&s3c2410_wdd);
+ 
+ 	s3c2410wdt_cpufreq_deregister();
+@@ -436,9 +440,6 @@ static int __devexit s3c2410wdt_remove(struct platform_device *dev)
+ 	clk_put(wdt_clock);
+ 	wdt_clock = NULL;
+ 
+-	free_irq(wdt_irq->start, dev);
+-	wdt_irq = NULL;
+-
+ 	iounmap(wdt_base);
+ 
+ 	release_mem_region(wdt_mem->start, resource_size(wdt_mem));
+-- 
+1.7.4.1
