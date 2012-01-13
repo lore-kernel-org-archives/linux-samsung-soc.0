@@ -1,46 +1,62 @@
-From: Greg KH <gregkh@suse.de>
-Subject: Re: [PATCH] arm: Fix missing api-change from subsys_interface change
-Date: Thu, 12 Jan 2012 08:06:05 -0800
-Message-ID: <20120112160605.GA10831@suse.de>
-References: <201201121430.49448.heiko@sntech.de>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: Build error at drivers/base/power/domain_governor.c when PM_RUNTIME is not set
+Date: Fri, 13 Jan 2012 01:00:36 +0100
+Message-ID: <201201130100.37008.rjw@sisk.pl>
+References: <018a01ccce67$a6eee850$f4ccb8f0$%kim@samsung.com> <201201092314.20561.rjw@sisk.pl> <02b301ccd0ff$02b8dfd0$082a9f70$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cantor2.suse.de ([195.135.220.15]:39697 "EHLO mx2.suse.de"
+Received: from ogre.sisk.pl ([217.79.144.158]:60132 "EHLO ogre.sisk.pl"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754132Ab2ALQHB (ORCPT
+	id S1756173Ab2ALX5L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jan 2012 11:07:01 -0500
-Content-Disposition: inline
-In-Reply-To: <201201121430.49448.heiko@sntech.de>
+	Thu, 12 Jan 2012 18:57:11 -0500
+In-Reply-To: <02b301ccd0ff$02b8dfd0$082a9f70$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Kay Sievers <kay.sievers@vrfy.org>, Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-kernel@vger.kernel.org, 'Linus' <torvalds@linux-foundation.org>, linux-samsung-soc@vger.kernel.org
 
-On Thu, Jan 12, 2012 at 02:30:48PM +0100, Heiko St=FCbner wrote:
-> Commit 4a858cfc9a (arm: convert sysdev_class to a regular subsystem)
-> converted the samsung sysdevs into subsys_interface instances.
->=20
-> While the original add-function only had a (struct sys_device *)
-> parameter, the dev_add from subsys_interface needs
-> 	(struct device *, struct subsys_interface *)
-> leading to "initialized from incompatible pointer type" warnings.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> The patch applies cleanly against the current driver-core git,
-> hopefully it's the right tree.
+On Thursday, January 12, 2012, Kukjin Kim wrote:
+> Rafael J. Wysocki wrote:
+> > 
+> > On Monday, January 09, 2012, Kukjin Kim wrote:
+> > > Hi Rafael,
+> > >
+> > > This is just reporting of build error.
+> > >
+> > > Current mainline happens build error at
+> > drivers/base/power/domain_governor.c
+> > > file like following when CONFIG_PM_RUNTIME is not set. For example, it
+> > > happens with s3c6400_defconfig now.
+> > >
+> > > drivers/base/power/domain_governor.c: In function 'default_stop_ok':
+> > > drivers/base/power/domain_governor.c:25: error: 'struct dev_pm_info' has
+> > no
+> > > member named 'max_time_suspended_ns'
+> > > drivers/base/power/domain_governor.c:29: error: 'struct dev_pm_info' has
+> > no
+> > > member named 'max_time_suspended_ns'
+> > > drivers/base/power/domain_governor.c: In function
+> > 'default_power_down_ok':
+> > > drivers/base/power/domain_governor.c:94: error: 'struct dev_pm_info' has
+> > no
+> > > member named 'max_time_suspended_ns'
+> > > drivers/base/power/domain_governor.c:98: error: 'struct dev_pm_info' has
+> > no
+> > > member named 'max_time_suspended_ns'
+> > > drivers/base/power/domain_governor.c:100: error: 'struct dev_pm_info'
+> > has no
+> > > member named 'suspend_time'
+> > 
+> > The appended patch fixes the problem for me, can you please test it?
+> > 
+> Hi Rafael,
+> 
+> Looks ok to me :)
 
-Thanks for fixing this up, sorry for getting it wrong.
+Cool, thanks!
 
-This should be done against the Samsung arm git tree, and go in through
-that one.  The driver-core git tree is equal to Linus's tree of a few
-days ago, there are no driver-core patches in it at the moment.
-
-Kukjin, can you take these?
-
-thanks,
-
-greg k-h
+Rafael
