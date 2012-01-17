@@ -1,45 +1,71 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Tue, 17 Jan 2012 10:53:15 +0000
-Message-ID: <20120117105315.GB2944@opensource.wolfsonmicro.com>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
- <CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
- <20120108204953.GA20043@sirena.org.uk>
- <CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
- <20120109082640.GI22134@opensource.wolfsonmicro.com>
- <CAOesGMiU+-wfxsfha7GTO3s7dHysP65gcrbJsLWhBpZNT9O+UQ@mail.gmail.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH v2 1/2] PM / Domains: Add OF support
+Date: Tue, 17 Jan 2012 21:45:35 +0100
+Message-ID: <201201172145.35407.rjw@sisk.pl>
+References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org> <201201082223.18603.rjw@sisk.pl> <001e01ccd4e8$d04b03a0$70e10ae0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56928 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752960Ab2AQKxR (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:38663 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751504Ab2AQUmG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jan 2012 05:53:17 -0500
-Content-Disposition: inline
-In-Reply-To: <CAOesGMiU+-wfxsfha7GTO3s7dHysP65gcrbJsLWhBpZNT9O+UQ@mail.gmail.com>
+	Tue, 17 Jan 2012 15:42:06 -0500
+In-Reply-To: <001e01ccd4e8$d04b03a0$70e10ae0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-On Mon, Jan 16, 2012 at 10:40:17PM -0800, Olof Johansson wrote:
+On Tuesday, January 17, 2012, Kukjin Kim wrote:
+> Rafael J. Wysocki wrote:
+> > 
+> > On Saturday, January 07, 2012, Thomas Abraham wrote:
+> > > A device node pointer is added to generic pm domain structure to
+> > associate
+> > > the domain with a node in the device tree. The platform code parses the
+> > > device tree to find available nodes representing the generic power
+> > domain,
+> > > instantiates the available domains and initializes them by calling
+> > > pm_genpd_init().
+> > >
+> > > Nodes representing the devices include a phandle of the power domain to
+> > > which it belongs. As these devices get instantiated, the driver code
+> > > checkes for availability of a power domain phandle, converts the phandle
+> > > to a device node and uses the new pm_genpd_of_add_device() api to
+> > > associate the device with a power domain.
+> > >
+> > > pm_genpd_of_add_device() runs through its list of registered power
+> > domains
+> > > and matches the OF node of the domain with the one specified as the
+> > > parameter. If a match is found, the device is associated with the
+> > matched
+> > > domain.
+> > >
+> > > Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> > > Cc: Rob Herring <rob.herring@calxeda.com>
+> > > Cc: Grant Likely <grant.likely@secretlab.ca>
+> > > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > 
+> > I can take this patch for 3.4, but your [2/2] depends on it, so I'm not
+> > sure how to handle that.  If you want me to take the other patch too,
+> > it'll need ACKs from the Exynos maintaniers.
+> > 
+> Hi Rafael,
+> 
+> Basically, looks ok to me.
+> 
+> But it would be good if [v3 2/2] patch of this series (this patch) could be
+> applied in samsung tree to avoid conflicts as it modifies many files. I
+> don't want to make a trouble when sending my tree to upstream. Of course, as
+> you said, this have a dependency with [v2 1/2]. So if you're ok, let me
+> create topic branch will have both(1/2 and 2/2) to merge in your tree.
+> 
+> How do you think?
 
-> The above two don't seem to have been in the branch that was sent by
-> Kukjin, it had:
+That would work for me too.
 
->       ARM: EXYNOS: Invert VCLK polarity for framebuffer on ORIGEN
->       ARM: S3C64XX: Fix interrupt configuration for PCA935x on Cragganmore
->       ARM: S3C64XX: Fix the memory mapped GPIOs on Cragganmore
->       ARM: S3C64XX: Remove hsmmc1 from Cragganmore
->       ARM: S3C64XX: Remove unconditional power domain disables
->       ARM: SAMSUNG: Declare struct platform_device in plat/s3c64xx-spi.h
->       ARM: SAMSUNG: dma-ops.h needs mach/dma.h
->       ARM: SAMSUNG: Guard against multiple inclusion of plat/dma.h
-
-> I've pulled the branch from him.
-
-I applied all the fixes I was sitting on that were in -next only at the
-time I looked; stuff like this is part of the reason why I tend to avoid
-topic branches unless they're likely to get merged in multiple places,
-too much bookkeeping.
+Thanks,
+Rafael
