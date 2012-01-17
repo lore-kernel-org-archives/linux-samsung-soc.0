@@ -1,77 +1,75 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung devel for v3.3
-Date: Mon, 16 Jan 2012 22:40:17 -0800
-Message-ID: <CAOesGMiU+-wfxsfha7GTO3s7dHysP65gcrbJsLWhBpZNT9O+UQ@mail.gmail.com>
-References: <018801ccca70$25f01260$71d03720$%kim@samsung.com>
-	<CAOesGMhLE3wxM=F9OkHT-bQpsVp8Uc6eE8Uk+WN9pLuz5BRLBw@mail.gmail.com>
-	<20120108204953.GA20043@sirena.org.uk>
-	<CAOesGMjn5uQEWbxrJryC+jOf=3SYbAnPY4A71NUZKFBi=a0QjA@mail.gmail.com>
-	<20120109082640.GI22134@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 1/2] PM / Domains: Add OF support
+Date: Tue, 17 Jan 2012 16:22:47 +0900
+Message-ID: <001e01ccd4e8$d04b03a0$70e10ae0$%kim@samsung.com>
+References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org>
+ <1325931055-14486-2-git-send-email-thomas.abraham@linaro.org>
+ <201201082223.18603.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:50249 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751851Ab2AQGkS convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10699 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751459Ab2AQHWv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jan 2012 01:40:18 -0500
-Received: by yenm6 with SMTP id m6so17315yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jan 2012 22:40:17 -0800 (PST)
-In-Reply-To: <20120109082640.GI22134@opensource.wolfsonmicro.com>
+	Tue, 17 Jan 2012 02:22:51 -0500
+In-reply-to: <201201082223.18603.rjw@sisk.pl>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-Hi,
+Rafael J. Wysocki wrote:
+> 
+> On Saturday, January 07, 2012, Thomas Abraham wrote:
+> > A device node pointer is added to generic pm domain structure to
+> associate
+> > the domain with a node in the device tree. The platform code parses the
+> > device tree to find available nodes representing the generic power
+> domain,
+> > instantiates the available domains and initializes them by calling
+> > pm_genpd_init().
+> >
+> > Nodes representing the devices include a phandle of the power domain to
+> > which it belongs. As these devices get instantiated, the driver code
+> > checkes for availability of a power domain phandle, converts the phandle
+> > to a device node and uses the new pm_genpd_of_add_device() api to
+> > associate the device with a power domain.
+> >
+> > pm_genpd_of_add_device() runs through its list of registered power
+> domains
+> > and matches the OF node of the domain with the one specified as the
+> > parameter. If a match is found, the device is associated with the
+> matched
+> > domain.
+> >
+> > Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> > Cc: Rob Herring <rob.herring@calxeda.com>
+> > Cc: Grant Likely <grant.likely@secretlab.ca>
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> 
+> I can take this patch for 3.4, but your [2/2] depends on it, so I'm not
+> sure how to handle that.  If you want me to take the other patch too,
+> it'll need ACKs from the Exynos maintaniers.
+> 
+Hi Rafael,
 
-On Mon, Jan 9, 2012 at 12:26 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Sun, Jan 08, 2012 at 05:21:02PM -0800, Olof Johansson wrote:
->
->> Mark, Kukjin, can either of you split out the fixes in a separate br=
-anch?
->
-> Here's some of them, there were a few others I'm aware of that depend=
-ed
-> on feature updates. =A0Ideally we'd actually get all the changes that=
- have
-> been in -next in.
->
-> The following changes since commit 5f0a6e2d503896062f641639dacfe5055c=
-2f593b:
->
-> =A0Linux 3.2-rc7 (2011-12-23 21:51:06 -0800)
->
-> are available in the git repository at:
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git fix=
-es/samsung
->
-> Mark Brown (5):
-> =A0 =A0 =A0ARM: SAMSUNG: Fix GPIO space reservation for S3C64xx platf=
-orms
-> =A0 =A0 =A0ARM: S3C64XX: Correct reservation of GPIOs for CPU module =
-on Cragganmore
+Basically, looks ok to me.
 
-The above two don't seem to have been in the branch that was sent by
-Kukjin, it had:
+But it would be good if [v3 2/2] patch of this series (this patch) could be
+applied in samsung tree to avoid conflicts as it modifies many files. I
+don't want to make a trouble when sending my tree to upstream. Of course, as
+you said, this have a dependency with [v2 1/2]. So if you're ok, let me
+create topic branch will have both(1/2 and 2/2) to merge in your tree.
 
-      ARM: EXYNOS: Invert VCLK polarity for framebuffer on ORIGEN
-      ARM: S3C64XX: Fix interrupt configuration for PCA935x on Cragganm=
-ore
-      ARM: S3C64XX: Fix the memory mapped GPIOs on Cragganmore
-      ARM: S3C64XX: Remove hsmmc1 from Cragganmore
-      ARM: S3C64XX: Remove unconditional power domain disables
-      ARM: SAMSUNG: Declare struct platform_device in plat/s3c64xx-spi.=
-h
-      ARM: SAMSUNG: dma-ops.h needs mach/dma.h
-      ARM: SAMSUNG: Guard against multiple inclusion of plat/dma.h
+How do you think?
 
-I've pulled the branch from him.
+Thanks.
 
-Kukjin, please consider picking up the missing two patches above and
-send another pull request with those and any other needed fixes.
-
-
--Olof
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
