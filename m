@@ -1,32 +1,43 @@
-From: "Mr.Vincent Cheng Hoi." <info@yahoo.com>
-Subject: (unknown)
-Date: Wed, 18 Jan 2012 18:12:02 +0200
-Message-ID: <20120118181202.17234bwiz0tfkm04__10173.3632888228$1326929104$gmane$org@mail.physics.auth.gr>
-Reply-To: choi_chu15@yahoo.co.jp
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset=ISO-8859-7;
-	DelSp="Yes";
-	format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from glass04.physics.auth.gr ([155.207.123.174]:61014 "EHLO
-	glass01.physics.auth.gr" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-	with ESMTP id S1752638Ab2ARXY5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jan 2012 18:24:57 -0500
-Subject: 
-Content-Disposition: inline
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH] mmc: core: Fix Low speed mmc card detection failure
+Date: Thu, 19 Jan 2012 08:56:19 +0530
+Message-ID: <1326943579-30952-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+This patch fixes the failure of low speed mmc card detection
 
-Good day,
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+ drivers/mmc/core/mmc.c |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
 
-I am Mr.Vincent Cheng Hoi Chuen, GBS, JP Chairman of the Hong Kong and  
-Shanghai Banking Corporation Limited. I have a business proposal of  
-USD $22,500,000.00. Your earliest response to this letter will be  
-appreciated.
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index dc03291..2bc586b 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1020,7 +1020,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 			err = mmc_select_hs200(card);
+ 		else if	(host->caps & MMC_CAP_MMC_HIGHSPEED)
+ 			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+-					 EXT_CSD_HS_TIMING, 1, 0);
++					 EXT_CSD_HS_TIMING, 1,
++					 card->ext_csd.generic_cmd6_time);
+ 
+ 		if (err && err != -EBADMSG)
+ 			goto free_card;
+@@ -1130,7 +1131,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
+ 	 * Activate wide bus and DDR (if supported).
+ 	 */
+ 	if (!mmc_card_hs200(card) &&
+-	    (card->csd.mmca_vsn >= CSD_SPEC_VER_3) &&
++	    (card->csd.mmca_vsn >= CSD_SPEC_VER_4) &&
+ 	    (host->caps & (MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA))) {
+ 		static unsigned ext_csd_bits[][2] = {
+ 			{ EXT_CSD_BUS_WIDTH_8, EXT_CSD_DDR_BUS_WIDTH_8 },
+-- 
+1.7.1
 
-Best Regards,
-Mr.Vincent Cheng Hoi.
