@@ -1,50 +1,47 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 05/31] ARM: amba: mxs: convert to use amba_device_alloc
-Date: Fri, 20 Jan 2012 12:39:23 +0000
-Message-ID: <20120120123923.GP16726@n2100.arm.linux.org.uk>
-References: <20120120092207.GD1068@n2100.arm.linux.org.uk>
- <E1RoAhZ-0005EY-BZ@rmk-PC.arm.linux.org.uk>
- <20120120122535.GA25917@S2101-09.ap.freescale.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <20120120122535.GA25917@S2101-09.ap.freescale.net>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Shawn Guo <shawn.guo@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, Sascha Hauer <kernel@pengutronix.de>, STEricsson <STEricsson_nomadik_linux@list.st.com>, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Gusakov Andrey <dron0gus@gmail.com>
+Subject: [PATCH v2] S3C24XX DMA resume regression fix
+Date: Fri, 20 Jan 2012 17:13:04 +0400
+Message-ID: <1327065184-9805-1-git-send-email-dron0gus@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:48200 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751808Ab2ATNNX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jan 2012 08:13:23 -0500
+Received: by bkas6 with SMTP id s6so421811bka.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jan 2012 05:13:22 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, Sergei Shtylyov <sshtylyov@ru.mvista.com>, Sergey Lapin <slapin@ossfans.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Gusakov Andrey <dron0gus@gmail.com>
 
-On Fri, Jan 20, 2012 at 08:25:39PM +0800, Shawn Guo wrote:
-> On Fri, Jan 20, 2012 at 09:24:05AM +0000, Russell King - ARM Linux wrote:
-> > Convert MXS to use the new amba_device_alloc APIs.
-> > 
-> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> > ---
-> >  arch/arm/mach-mxs/devices.c |    8 +++++---
-> >  1 files changed, 5 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/arch/arm/mach-mxs/devices.c b/arch/arm/mach-mxs/devices.c
-> > index fe3e847..052d8dd 100644
-> > --- a/arch/arm/mach-mxs/devices.c
-> > +++ b/arch/arm/mach-mxs/devices.c
-> > @@ -77,16 +77,18 @@ struct platform_device *__init mxs_add_platform_device_dmamask(
-> >  
-> >  int __init mxs_add_amba_device(const struct amba_device *dev)
-> >  {
-> > -	struct amba_device *adev = kmalloc(sizeof(*adev), GFP_KERNEL);
-> > +	struct amba_device *adev = amba_device_alloc(dev->init_name,
-> 
-> The 'dev->init_name' needs to be 'dev->dev.init_name'.  Otherwise, we
-> see the compile error below.
+In commit bb072c3cf21d1c9a5a2eeb5a00679ee7bf39675b
+(Use struct syscore_ops for "core" power management)
+suspend/resume hooks for each DMA channels were replaced with
+hooks that suspend/resume all channels. s3c2410_dma_suspend
+suspends channels from 0 to dma_channels. s3c2410_dma_resume
+resumes channels in reverse order. So pointer should be
+decremented insted of being incremented.
 
-Good catch, fixed, and ack added, thanks.
+Signed-off-by: Gusakov Andrey <dron0gus@gmail.com>
+---
+ arch/arm/plat-s3c24xx/dma.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+v2: updated commit message with original commit summary
+
+diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+index 57abec9..16510d5 100644
+--- a/arch/arm/plat-s3c24xx/dma.c
++++ b/arch/arm/plat-s3c24xx/dma.c
+@@ -1249,7 +1249,7 @@ static void s3c2410_dma_resume(void)
+ 	struct s3c2410_dma_chan *cp = s3c2410_chans + dma_channels - 1;
+ 	int channel;
+ 
+-	for (channel = dma_channels - 1; channel >= 0; cp++, channel--)
++	for (channel = dma_channels - 1; channel >= 0; cp--, channel--)
+ 		s3c2410_dma_resume_chan(cp);
+ }
+ 
+-- 
+1.7.0.4
