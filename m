@@ -1,116 +1,101 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Add alias name of 'fimd' clock for 'lcd' clock
-Date: Fri, 20 Jan 2012 09:53:46 +0900
-Message-ID: <CAH9JG2UGvc42AzCSPSKwNT1UrnPy8RG7Snoe+vULoAMW1GQckA@mail.gmail.com>
-References: <000101ccd693$71185b60$53491220$%han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Remove build warning without enabling PM
+Date: Fri, 20 Jan 2012 14:16:27 +0900
+Message-ID: <00a901ccd732$ac2515f0$046f41d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:32966 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752485Ab2ATAxr (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:18766 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751052Ab2ATFQj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jan 2012 19:53:47 -0500
-Received: by qcsf13 with SMTP id f13so24659qcs.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jan 2012 16:53:46 -0800 (PST)
-In-Reply-To: <000101ccd693$71185b60$53491220$%han@samsung.com>
+	Fri, 20 Jan 2012 00:16:39 -0500
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LY200DMFZZMCWN0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jan 2012 14:16:37 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LY20072QZZKY5X0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 20 Jan 2012 14:16:37 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>, Evgeny Voevodin <e.voevodin@samsung.com>, Tushar Behera <tushar.behera@linaro.org>
+To: linux-samsung-soc@vger.kernel.org
 
-On 1/19/12, Jingoo Han <jg1.han@samsung.com> wrote:
-> This patch adds alias name of 'fimd' clock for 'lcd' clock. While 'lcd'
-> clock is used for s3c-fb driver, 'fimd' clock is defined for Exynos fimd
-> ip. Therefore, 'fimd' clock can be called by using clk_add_alias().
-Hi,
+Fixed following build warning with exynos4_defconfig.
+arch/arm/mach-exynos/clock.c:33: warning: 'exynos4_clock_save' defined but not used
+arch/arm/mach-exynos/clock-exynos4210.c:35: warning: 'exynos4210_clock_save' defined but not used
+arch/arm/mach-exynos/clock-exynos4212.c:35: warning: 'exynos4212_clock_save' defined but not used
 
-Doesn't it better to add common.c?
-Are there any reason to add each board files?
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
 
-Thank you,
-Kyungmin Park
->
-> Cc: Jonghwan Choi <jhbird.choi@samsung.com>
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/mach-exynos/mach-nuri.c           |    2 ++
->  arch/arm/mach-exynos/mach-origen.c         |    2 ++
->  arch/arm/mach-exynos/mach-smdkv310.c       |    2 ++
->  arch/arm/mach-exynos/mach-universal_c210.c |    3 +++
->  4 files changed, 9 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c
-> b/arch/arm/mach-exynos/mach-nuri.c
-> index 3df8bf4..06c22e0 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -1310,6 +1310,8 @@ static void __init nuri_machine_init(void)
->  	i2c9_devs[I2C9_MAX17042].irq = gpio_to_irq(EXYNOS4_GPX2(3));
->  	i2c_register_board_info(9, i2c9_devs, ARRAY_SIZE(i2c9_devs));
->
-> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd", &s5p_device_fimd0.dev);
->  	s5p_fimd0_set_platdata(&nuri_fb_pdata);
->
->  	nuri_camera_init();
-> diff --git a/arch/arm/mach-exynos/mach-origen.c
-> b/arch/arm/mach-exynos/mach-origen.c
-> index b453464..7cea0be 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -722,6 +722,8 @@ static void __init origen_machine_init(void)
->  	s5p_tv_setup();
->  	s5p_i2c_hdmiphy_set_platdata(NULL);
->
-> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd", &s5p_device_fimd0.dev);
->  	s5p_fimd0_set_platdata(&origen_lcd_pdata);
->
->  	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c
-> b/arch/arm/mach-exynos/mach-smdkv310.c
-> index bf2094e..eccd96d 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -370,6 +370,8 @@ static void __init smdkv310_machine_init(void)
->  	samsung_keypad_set_platdata(&smdkv310_keypad_data);
->
->  	samsung_bl_set(&smdkv310_bl_gpio_info, &smdkv310_bl_data);
-> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd", &s5p_device_fimd0.dev);
->  	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
->
->  	smdkv310_ehci_init();
-> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
-> b/arch/arm/mach-exynos/mach-universal_c210.c
-> index c38e18d..fe554f1 100644
-> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> @@ -31,6 +31,7 @@
->  #include <plat/cpu.h>
->  #include <plat/devs.h>
->  #include <plat/iic.h>
-> +#include <plat/clock.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/fb.h>
->  #include <plat/mfc.h>
-> @@ -1029,6 +1030,8 @@ static void __init universal_machine_init(void)
->  	s5p_i2c_hdmiphy_set_platdata(NULL);
->  	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
->
-> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd", &s5p_device_fimd0.dev);
->  	s5p_fimd0_set_platdata(&universal_lcd_pdata);
->
->  	universal_touchkey_init();
-> --
-> 1.7.1
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+ arch/arm/mach-exynos/clock-exynos4210.c |    2 ++
+ arch/arm/mach-exynos/clock-exynos4212.c |    2 ++
+ arch/arm/mach-exynos/clock.c            |    2 ++
+ 3 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/clock-exynos4210.c b/arch/arm/mach-exynos/clock-exynos4210.c
+index a5823a7..13312cc 100644
+--- a/arch/arm/mach-exynos/clock-exynos4210.c
++++ b/arch/arm/mach-exynos/clock-exynos4210.c
+@@ -32,6 +32,7 @@
+ 
+ #include "common.h"
+ 
++#ifdef CONFIG_PM_SLEEP
+ static struct sleep_save exynos4210_clock_save[] = {
+ 	SAVE_ITEM(S5P_CLKSRC_IMAGE),
+ 	SAVE_ITEM(S5P_CLKSRC_LCD1),
+@@ -42,6 +43,7 @@ static struct sleep_save exynos4210_clock_save[] = {
+ 	SAVE_ITEM(S5P_CLKGATE_IP_LCD1),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_PERIR_4210),
+ };
++#endif
+ 
+ static struct clksrc_clk *sysclks[] = {
+ 	/* nothing here yet */
+diff --git a/arch/arm/mach-exynos/clock-exynos4212.c b/arch/arm/mach-exynos/clock-exynos4212.c
+index 26a668b..48af285 100644
+--- a/arch/arm/mach-exynos/clock-exynos4212.c
++++ b/arch/arm/mach-exynos/clock-exynos4212.c
+@@ -32,12 +32,14 @@
+ 
+ #include "common.h"
+ 
++#ifdef CONFIG_PM_SLEEP
+ static struct sleep_save exynos4212_clock_save[] = {
+ 	SAVE_ITEM(S5P_CLKSRC_IMAGE),
+ 	SAVE_ITEM(S5P_CLKDIV_IMAGE),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_IMAGE_4212),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_PERIR_4212),
+ };
++#endif
+ 
+ static struct clk *clk_src_mpll_user_list[] = {
+ 	[0] = &clk_fin_mpll,
+diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
+index 5a8c42e..187287a 100644
+--- a/arch/arm/mach-exynos/clock.c
++++ b/arch/arm/mach-exynos/clock.c
+@@ -30,6 +30,7 @@
+ 
+ #include "common.h"
+ 
++#ifdef CONFIG_PM_SLEEP
+ static struct sleep_save exynos4_clock_save[] = {
+ 	SAVE_ITEM(S5P_CLKDIV_LEFTBUS),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_LEFTBUS),
+@@ -93,6 +94,7 @@ static struct sleep_save exynos4_clock_save[] = {
+ 	SAVE_ITEM(S5P_CLKGATE_SCLKCPU),
+ 	SAVE_ITEM(S5P_CLKGATE_IP_CPU),
+ };
++#endif
+ 
+ struct clk clk_sclk_hdmi27m = {
+ 	.name		= "sclk_hdmi27m",
+-- 
+1.7.1
