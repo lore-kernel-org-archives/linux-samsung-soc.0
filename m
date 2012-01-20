@@ -1,41 +1,72 @@
-From: Sergey Lapin <slapin@ossfans.org>
-Subject: Re: [PATCH] S3C24XX DMA resume regression fix
-Date: Fri, 20 Jan 2012 06:49:02 -0500
-Message-ID: <20120120114902.GB22732@build.ihdev.net>
-References: <1326462444-10567-1-git-send-email-dron0gus@gmail.com>
- <4F11F911.7030609@ru.mvista.com>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH 05/31] ARM: amba: mxs: convert to use amba_device_alloc
+Date: Fri, 20 Jan 2012 20:25:39 +0800
+Message-ID: <20120120122535.GA25917@S2101-09.ap.freescale.net>
+References: <20120120092207.GD1068@n2100.arm.linux.org.uk>
+ <E1RoAhZ-0005EY-BZ@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from slapinbuild.ihdev.net ([46.4.202.25]:43023 "EHLO
-	build.ossfans.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751733Ab2ATLzp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jan 2012 06:55:45 -0500
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4F11F911.7030609@ru.mvista.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <E1RoAhZ-0005EY-BZ@rmk-PC.arm.linux.org.uk>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, STEricsson <STEricsson_nomadik_linux@list.st.com>, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sergei Shtylyov <sshtylyov@ru.mvista.com>
-Cc: Gusakov Andrey <dron0gus@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-On Sun, Jan 15, 2012 at 01:52:17AM +0400, Sergei Shtylyov wrote:
-> Hello.
-> 
-> On 13-01-2012 17:47, Gusakov Andrey wrote:
-> 
-> >In commit bb072c3cf21d1c9a5a2eeb5a00679ee7bf39675b suspend/resume
-> 
->    Please also specify that commit's summary in parens.
+On Fri, Jan 20, 2012 at 09:24:05AM +0000, Russell King - ARM Linux wrot=
+e:
+> Convert MXS to use the new amba_device_alloc APIs.
+>=20
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+>  arch/arm/mach-mxs/devices.c |    8 +++++---
+>  1 files changed, 5 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-mxs/devices.c b/arch/arm/mach-mxs/devices.=
+c
+> index fe3e847..052d8dd 100644
+> --- a/arch/arm/mach-mxs/devices.c
+> +++ b/arch/arm/mach-mxs/devices.c
+> @@ -77,16 +77,18 @@ struct platform_device *__init mxs_add_platform_d=
+evice_dmamask(
+> =20
+>  int __init mxs_add_amba_device(const struct amba_device *dev)
+>  {
+> -	struct amba_device *adev =3D kmalloc(sizeof(*adev), GFP_KERNEL);
+> +	struct amba_device *adev =3D amba_device_alloc(dev->init_name,
 
-Could you please point me in direction of patch submission
-guide where that is explained.
+The 'dev->init_name' needs to be 'dev->dev.init_name'.  Otherwise, we
+see the compile error below.
 
-The commit message summary is
-ARM / Samsung: Use struct syscore_ops for "core" power management
+  CC      arch/arm/mach-mxs/devices.o
+arch/arm/mach-mxs/devices.c: In function =E2=80=98mxs_add_amba_device=E2=
+=80=99:
+arch/arm/mach-mxs/devices.c:80:50: error: =E2=80=98const struct amba_de=
+vice=E2=80=99 has no member named =E2=80=98init_name=E2=80=99
 
-But that is not revert of that commit, so I don't really
-see a point. This is bug fix which fixes resume code path.
+Other than that,
 
-Thanks a lot,
-S.
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
+
+Regards,
+Shawn
+
+> +		dev->res.start, resource_size(&dev->res));
+> =20
+>  	if (!adev) {
+>  		pr_err("%s: failed to allocate memory", __func__);
+>  		return -ENOMEM;
+>  	}
+> =20
+> -	*adev =3D *dev;
+> +	adev->irq[0] =3D dev->irq[0];
+> +	adev->irq[1] =3D dev->irq[1];
+> =20
+> -	return amba_device_register(adev, &iomem_resource);
+> +	return amba_device_add(adev, &iomem_resource);
+>  }
+> =20
+>  struct device mxs_apbh_bus =3D {
+> --=20
