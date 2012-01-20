@@ -1,42 +1,41 @@
-From: Mitsyanko Igor <i.mitsyanko@samsung.com>
-Subject: EXYNOS4: Atmel mXT touchscreen device on NURI board fails to initialise
-Date: Fri, 20 Jan 2012 14:18:17 +0400
-Message-ID: <4F193F69.5060603@samsung.com>
-Reply-To: i.mitsyanko@samsung.com
+From: Sergey Lapin <slapin@ossfans.org>
+Subject: Re: [PATCH] S3C24XX DMA resume regression fix
+Date: Fri, 20 Jan 2012 06:49:02 -0500
+Message-ID: <20120120114902.GB22732@build.ihdev.net>
+References: <1326462444-10567-1-git-send-email-dron0gus@gmail.com>
+ <4F11F911.7030609@ru.mvista.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:53880 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752469Ab2ATKSU (ORCPT
+Received: from slapinbuild.ihdev.net ([46.4.202.25]:43023 "EHLO
+	build.ossfans.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751733Ab2ATLzp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jan 2012 05:18:20 -0500
-Received: from euspt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LY300ALRDYI7J30@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jan 2012 10:18:18 +0000 (GMT)
-Received: from [106.109.8.162] by spt1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTPA id <0LY300KX2DYHZX@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jan 2012 10:18:18 +0000 (GMT)
+	Fri, 20 Jan 2012 06:55:45 -0500
+Content-Disposition: inline
+In-Reply-To: <4F11F911.7030609@ru.mvista.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jy0922.shim@samsung.com, kyungmin.park@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, Dmitry Solodkiy <d.solodkiy@samsung.com>
+To: Sergei Shtylyov <sshtylyov@ru.mvista.com>
+Cc: Gusakov Andrey <dron0gus@gmail.com>, "Rafael J. Wysocki" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-Good day.
+On Sun, Jan 15, 2012 at 01:52:17AM +0400, Sergei Shtylyov wrote:
+> Hello.
+> 
+> On 13-01-2012 17:47, Gusakov Andrey wrote:
+> 
+> >In commit bb072c3cf21d1c9a5a2eeb5a00679ee7bf39675b suspend/resume
+> 
+>    Please also specify that commit's summary in parens.
 
-It looks like Atmel MXT initialisation code on nuri board is broken. I 
-don't have a datasheet for this touchscreen, but from what I can see in 
-atmel mxt driver code(drivers/input/touchscreen/atmel_mxt_ts.c), I make 
-assumption that MXT must have a mandatory MXT_GEN_MESSAGE_T5 object. But 
-in structure mxt_init_vals (arch/arm/mach-exynos/mach-nuri.c) there are 
-no configuration data for this object. So mxt_probe() function in Atmel 
-MXT driver fails during mxt_make_highchg() when it tries to read 
-registers of GEN_MESSAGE_T5 object.
+Could you please point me in direction of patch submission
+guide where that is explained.
 
--- 
-Mitsyanko Igor
-ASWG, Moscow R&D center, Samsung Electronics
-email:i.mitsyanko@samsung.com
+The commit message summary is
+ARM / Samsung: Use struct syscore_ops for "core" power management
+
+But that is not revert of that commit, so I don't really
+see a point. This is bug fix which fixes resume code path.
+
+Thanks a lot,
+S.
