@@ -1,70 +1,50 @@
-From: Srinidhi KASAGAR <srinidhi.kasagar@stericsson.com>
-Subject: Re: [PATCH 03/31] ARM: amba: ux500: convert to use
- amba_device_alloc
-Date: Sat, 21 Jan 2012 21:51:58 +0530
-Message-ID: <20120121162157.GB26323@bnru02>
-References: <20120120092207.GD1068@n2100.arm.linux.org.uk>
- <E1RoAgu-0005EQ-Fo@rmk-PC.arm.linux.org.uk>
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/3] spi/s3c64xx: Log error interrupts
+Date: Sat, 21 Jan 2012 17:42:30 +0100
+Message-ID: <4F1AEAF6.3000004@gmail.com>
+References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
+	<1327152265-10789-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	<4F1AD954.9030303@gmail.com>
+	<20120121152947.GD10751@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eu1sys200aog116.obsmtp.com ([207.126.144.141]:47664 "EHLO
-	eu1sys200aog116.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751356Ab2AUQWZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jan 2012 11:22:25 -0500
-Content-Disposition: inline
-In-Reply-To: <E1RoAgu-0005EQ-Fo@rmk-PC.arm.linux.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <20120121152947.GD10751-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, STEricsson_nomadik_linux@list.st.com, linus.walleij@stericsson.com
 
-On Fri, Jan 20, 2012 at 10:23:24 +0100, Russell King - ARM Linux wrote:
-> Convert ux500 to use the new amba_device_alloc APIs.
+On 01/21/2012 04:29 PM, Mark Brown wrote:
+> On Sat, Jan 21, 2012 at 04:27:16PM +0100, Sylwester Nawrocki wrote:
+>> On 01/21/2012 02:24 PM, Mark Brown wrote:
 > 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+>>> -	int ret;
+>>> +	int ret, irq;
+>>> +	char clk_name[16];
+> 
+>> clk_name seems to be unused, otherwise looks good.
+> 
+> That's git cherry-pick being too clever for me when I pulled this out of
+> my -next branch for Grant.  clk_name is used in -next by some updates
+> which I guess Kukjin is carrying, I hadn't noticed they weren't in the
+> SPI tree.  I don't know if it's better to just leave things as they are
+> for now given that it'll all come out in the merge window?
 
-Acked-by: srinidhi kasagar <srinidhi.kasagar@stericsson.com>
+Indeed, the orphaned variable is already sitting in -next. I guess it
+can be handled during merge.
 
-> ---
->  arch/arm/mach-ux500/devices-common.c |   12 +++---------
->  1 files changed, 3 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/arm/mach-ux500/devices-common.c b/arch/arm/mach-ux500/devices-common.c
-> index c563e54..e8c34fa 100644
-> --- a/arch/arm/mach-ux500/devices-common.c
-> +++ b/arch/arm/mach-ux500/devices-common.c
-> @@ -26,16 +26,10 @@ dbx500_add_amba_device(const char *name, resource_size_t base,
->  	struct amba_device *dev;
->  	int ret;
->  
-> -	dev = kzalloc(sizeof *dev, GFP_KERNEL);
-> +	dev = amba_device_alloc(name, base, SZ_4K);
->  	if (!dev)
->  		return ERR_PTR(-ENOMEM);
->  
-> -	dev->dev.init_name = name;
-> -
-> -	dev->res.start = base;
-> -	dev->res.end = base + SZ_4K - 1;
-> -	dev->res.flags = IORESOURCE_MEM;
-> -
->  	dev->dma_mask = DMA_BIT_MASK(32);
->  	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
->  
-> @@ -46,9 +40,9 @@ dbx500_add_amba_device(const char *name, resource_size_t base,
->  
->  	dev->dev.platform_data = pdata;
->  
-> -	ret = amba_device_register(dev, &iomem_resource);
-> +	ret = amba_device_add(dev, &iomem_resource);
->  	if (ret) {
-> -		kfree(dev);
-> +		amba_device_put(dev);
->  		return ERR_PTR(ret);
->  	}
->  
-> -- 
-> 1.7.4.4
-> 
+------------------------------------------------------------------------------
+Try before you buy = See our experts in action!
+The most comprehensive online learning library for Microsoft developers
+is just $99.99! Visual Studio, SharePoint, SQL - plus HTML5, CSS3, MVC3,
+Metro Style Apps, more. Free future releases when you subscribe now!
+http://p.sf.net/sfu/learndevnow-dev2
