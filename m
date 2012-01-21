@@ -1,50 +1,52 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: [PATCH 1/2] i2c-s3c2410: Convert to devm_kzalloc()
-Date: Sat, 21 Jan 2012 13:28:46 +0000
-Message-ID: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+From: Bill Gatliff <bgat@billgatliff.com>
+Subject: Re: [PATCH 3/3] spi/s3c64xx: Implement runtime PM support
+Date: Sat, 21 Jan 2012 14:41:59 +0100
+Message-ID: <CADkCAuuR4NRV-VhZEyBTns3bBKVjtGupk2dv_UjM0gf3dvNMmg@mail.gmail.com>
+References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
+	<1327152265-10789-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	<1327152265-10789-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:63821 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751503Ab2AUNl7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 21 Jan 2012 08:41:59 -0500
+Received: by iacb35 with SMTP id b35so1069673iac.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jan 2012 05:41:59 -0800 (PST)
+In-Reply-To: <1327152265-10789-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
 
-Saves remembering to call kfree(). There's some kfree()s used by the
-resource still, these will be removed in 3.3 using the newly added
-devm_request_and_ioremap().
+Guys:
 
-Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
----
- drivers/i2c/busses/i2c-s3c2410.c |    4 +---
- 1 files changed, 1 insertions(+), 3 deletions(-)
+On Sat, Jan 21, 2012 at 2:24 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> Enable and disable the clocks to the SPI controller using runtime PM. This
+> serves the dual purpose of reducing power consumption a little and letting
+> the core know when the device is idle.
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 4c17180..e6f982b 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -890,7 +890,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	i2c = kzalloc(sizeof(struct s3c24xx_i2c), GFP_KERNEL);
-+	i2c = devm_kzalloc(&pdev->dev, sizeof(struct s3c24xx_i2c), GFP_KERNEL);
- 	if (!i2c) {
- 		dev_err(&pdev->dev, "no memory for state\n");
- 		return -ENOMEM;
-@@ -1035,7 +1035,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 	clk_put(i2c->clk);
- 
-  err_noclk:
--	kfree(i2c);
- 	return ret;
- }
- 
-@@ -1061,7 +1060,6 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- 	release_resource(i2c->ioarea);
- 	s3c24xx_i2c_dt_gpio_free(i2c);
- 	kfree(i2c->ioarea);
--	kfree(i2c);
- 
- 	return 0;
- }
+What about using autosuspend instead?  If a client is doing a lot of
+closely-spaced SPI transactions on a relatively flat device tree,
+might the resulting runtime suspend/resume overhead between each
+transaction become noticeable?
+
+I'm doing runtime PM on several drivers myself, and that question
+keeps coming up a lot.  Especially for devices that are more
+complicated to suspend/resume than this one.  But even without the
+device-specific overhead, I'm wondering how structure-walking that
+goes on behind the pm_runtime() calls might tip the balance of PM
+gains the opposite way from what we are seeking.
+
+Not a critique of your patch series per se, but you probably have some
+thoughts on all of this too--- and I would love to hear them while
+they are still fresh. :)
+
+
+b.g.
 -- 
-1.7.7.3
+Bill Gatliff
+bgat@billgatliff.com
