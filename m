@@ -1,57 +1,31 @@
-From: Grant Likely <grant.likely@secretlab.ca>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH 0/3] spi/s3c64xx diagnostic and PM updates
-Date: Sat, 21 Jan 2012 07:27:23 -0700
-Message-ID: <CACxGe6t_h9=U=TpK57XvLUKixmZRwovr_JionXBE39mSrTVHRQ@mail.gmail.com>
+Date: Sat, 21 Jan 2012 15:13:41 +0000
+Message-ID: <20120121151341.GB20505@sirena.org.uk>
 References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
+ <CACxGe6t_h9=U=TpK57XvLUKixmZRwovr_JionXBE39mSrTVHRQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:49047 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751696Ab2AUO1o convert rfc822-to-8bit (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:36465 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751632Ab2AUPNo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jan 2012 09:27:44 -0500
-Received: by pbaa10 with SMTP id a10so851652pba.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 21 Jan 2012 06:27:44 -0800 (PST)
-In-Reply-To: <20120121132329.GA10751@opensource.wolfsonmicro.com>
+	Sat, 21 Jan 2012 10:13:44 -0500
+Content-Disposition: inline
+In-Reply-To: <CACxGe6t_h9=U=TpK57XvLUKixmZRwovr_JionXBE39mSrTVHRQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Grant Likely <grant.likely@secretlab.ca>
 Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-On Sat, Jan 21, 2012 at 6:23 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> The following changes since commit 805a6af8dba5dfdd35ec35dc52ec012240=
-0b2610:
->
-> =A0Linux 3.2 (2012-01-04 15:55:44 -0800)
->
-> are available in the git repository at:
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git spi=
-/s3c64xx
+On Sat, Jan 21, 2012 at 07:27:23AM -0700, Grant Likely wrote:
 
-Pushed out to git://git.secretlab.ca/git/linux-2.6.git spi/merge.
-I'll ask Linus to pull in a couple of days after it has hit
-linux-next.
+> Pushed out to git://git.secretlab.ca/git/linux-2.6.git spi/merge.
+> I'll ask Linus to pull in a couple of days after it has hit
+> linux-next.
 
-g.
-
->
-> They've all been posted several times before but seem to have got
-> dropped on the floor somewhere along the line.
->
-> Mark Brown (3):
-> =A0 =A0 =A0spi/s3c64xx: Log error interrupts
-> =A0 =A0 =A0spi/s3c64xx: Convert to dev_pm_ops
-> =A0 =A0 =A0spi/s3c64xx: Implement runtime PM support
->
-> =A0drivers/spi/spi-s3c64xx.c | =A0115 +++++++++++++++++++++++++++++++=
-+++++++++----
-> =A01 files changed, 104 insertions(+), 11 deletions(-)
-
-
-
---=20
-Grant Likely, B.Sc., P.Eng.
-Secret Lab Technologies Ltd.
+Thanks.  Obviously it'd be nice to get it into 3.3 but I don't see a
+huge rush and it did miss the merge window - it doesn't fix any bugs
+and without a bunch of other work in cpuidle that's not been done yet
+the power gains from the runtime PM are vanishingly small.
