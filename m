@@ -1,38 +1,35 @@
-From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] i2c-s3c2410: Convert to devm_kzalloc()
-Date: Sat, 21 Jan 2012 17:10:22 +0100
-Message-ID: <4F1AE36E.3070403@gmail.com>
-References: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Srinidhi KASAGAR <srinidhi.kasagar@stericsson.com>
+Subject: Re: [PATCH 07/31] ARM: amba: ux500: get rid of NO_IRQ
+Date: Sat, 21 Jan 2012 21:49:55 +0530
+Message-ID: <20120121161954.GA26323@bnru02>
+References: <20120120092207.GD1068@n2100.arm.linux.org.uk>
+ <E1RoAiE-0005Eh-7i@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1327152527-11364-1-git-send-email-broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <E1RoAiE-0005Eh-7i@rmk-PC.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, STEricsson_nomadik_linux@list.st.com, linus.walleij@stericsson.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 01/21/2012 02:28 PM, Mark Brown wrote:
-> Saves remembering to call kfree(). There's some kfree()s used by the
-> resource still, these will be removed in 3.3 using the newly added
-> devm_request_and_ioremap().
+On Fri, Jan 20, 2012 at 10:24:46 +0100, Russell King - ARM Linux wrote:
+> irq 0 now means no irq, so get rid of this unnecessary initializer.
 > 
-> Signed-off-by: Mark Brown Mark Brown<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 > ---
->   drivers/i2c/busses/i2c-s3c2410.c |    4 +---
->   1 files changed, 1 insertions(+), 3 deletions(-)
+>  arch/arm/mach-ux500/devices-common.c |    1 -
+>  1 files changed, 0 insertions(+), 1 deletions(-)
 > 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-> index 4c17180..e6f982b 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -890,7 +890,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
->   		}
->   	}
-> 
-> -	i2c = kzalloc(sizeof(struct s3c24xx_i2c), GFP_KERNEL);
-> +	i2c = devm_kzalloc(&pdev->dev, sizeof(struct s3c24xx_i2c), GFP_KERNEL);
+> diff --git a/arch/arm/mach-ux500/devices-common.c b/arch/arm/mach-ux500/devices-common.c
+> index e8c34fa..898a645 100644
+> --- a/arch/arm/mach-ux500/devices-common.c
+> +++ b/arch/arm/mach-ux500/devices-common.c
+> @@ -34,7 +34,6 @@ dbx500_add_amba_device(const char *name, resource_size_t base,
+>  	dev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+>  
+>  	dev->irq[0] = irq;
+> -	dev->irq[1] = NO_IRQ;
 
-Just in case you are resending the patch for any other reason, it might be worth
-to change to sizeof(*i2c) for consistency.
+Acked-by: srinidhi kasagar <srinidhi.kasagar@stericsson.com> 
