@@ -1,24 +1,34 @@
-From: Alessandro Rubini <rubini@unipv.it>
-Subject: Re: [PATCH 29/31] ARM: amba: nomadik: use common amba device
- initializers
-Date: Fri, 20 Jan 2012 23:33:47 +0100
-Message-ID: <20120120223347.GA9523@mail.gnudd.com>
-References: <E1RoApP-0005GE-D8@rmk-PC.arm.linux.org.uk>
-  <20120120092207.GD1068@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH] ARM: move CP15 definitions to separate header file
+Date: Sat, 21 Jan 2012 09:26:03 +0900
+Message-ID: <00fd01ccd7d3$4287f760$c797e620$%kim@samsung.com>
+References: <E1RoBJw-0005UP-By@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1RoApP-0005GE-D8@rmk-PC.arm.linux.org.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux@arm.linux.org.uk
-Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, STEricsson_nomadik_linux@list.st.com, linus.walleij@stericsson.com
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <E1RoBJw-0005UP-By-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Content-language: ko
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: 'Colin Cross' <ccross-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, 'Olof Johansson' <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, 'Stephen Warren' <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-> +static AMBA_APB_DEVICE(uart0, "uart0", 0, NOMADIK_UART0_BASE,
-> +	{ IRQ_UART0 }, NULL);
+Russell King wrote:
+> 
+> Avoid namespace conflicts with drivers over the CP15 definitions by
+> moving CP15 related prototypes and definitions to a private header
+> file.
+> 
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 
-Acked-by: Alessandro Rubini <rubini@unipv.it>
+For exynos:
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
-thanks
-/alessandro
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
