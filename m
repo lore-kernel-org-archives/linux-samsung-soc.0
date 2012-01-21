@@ -1,132 +1,82 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 3/3] spi/s3c64xx: Implement runtime PM support
-Date: Sat, 21 Jan 2012 13:24:25 +0000
-Message-ID: <1327152265-10789-3-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
- <1327152265-10789-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34371 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751659Ab2AUNYt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jan 2012 08:24:49 -0500
-In-Reply-To: <1327152265-10789-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: [PATCH 2/2] i2c-s3c2410: Add stub runtime power management
+Date: Sat, 21 Jan 2012 13:28:47 +0000
+Message-ID: <1327152527-11364-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+References: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1327152527-11364-1-git-send-email-broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
-Cc: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Enable and disable the clocks to the SPI controller using runtime PM. This
-serves the dual purpose of reducing power consumption a little and letting
-the core know when the device is idle.
+Add stub runtime_pm calls which go through the flow of enabling and
+disabling but don't actually do anything with the device itself as
+there's nothing useful we can do. This provides the core PM framework
+with information about when the device is idle, enabling chip wide
+power savings.
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Acked-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 ---
- drivers/spi/spi-s3c64xx.c |   39 +++++++++++++++++++++++++++++++++++++++
- 1 files changed, 39 insertions(+), 0 deletions(-)
+ drivers/i2c/busses/i2c-s3c2410.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 56dbdf1..b0b843b 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -25,6 +25,7 @@
- #include <linux/clk.h>
- #include <linux/dma-mapping.h>
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index e6f982b..737f721 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -31,6 +31,7 @@
+ #include <linux/errno.h>
+ #include <linux/err.h>
  #include <linux/platform_device.h>
 +#include <linux/pm_runtime.h>
- #include <linux/spi/spi.h>
+ #include <linux/clk.h>
+ #include <linux/cpufreq.h>
+ #include <linux/slab.h>
+@@ -564,6 +565,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 	int retry;
+ 	int ret;
  
- #include <mach/dma.h>
-@@ -782,6 +783,8 @@ static void s3c64xx_spi_work(struct work_struct *work)
- 	while (!acquire_dma(sdd))
- 		msleep(10);
++	pm_runtime_get_sync(&adap->dev);
+ 	clk_enable(i2c->clk);
  
-+	pm_runtime_get_sync(&sdd->pdev->dev);
-+
- 	spin_lock_irqsave(&sdd->lock, flags);
+ 	for (retry = 0; retry < adap->retries; retry++) {
+@@ -572,6 +574,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
  
- 	while (!list_empty(&sdd->queue)
-@@ -810,6 +813,8 @@ static void s3c64xx_spi_work(struct work_struct *work)
- 	/* Free DMA channels */
- 	sdd->ops->release(sdd->rx_dma.ch, &s3c64xx_spi_dma_client);
- 	sdd->ops->release(sdd->tx_dma.ch, &s3c64xx_spi_dma_client);
-+
-+	pm_runtime_put(&sdd->pdev->dev);
+ 		if (ret != -EAGAIN) {
+ 			clk_disable(i2c->clk);
++			pm_runtime_put_sync(&adap->dev);
+ 			return ret;
+ 		}
+ 
+@@ -581,6 +584,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+ 	}
+ 
+ 	clk_disable(i2c->clk);
++	pm_runtime_put_sync(&adap->dev);
+ 	return -EREMOTEIO;
  }
  
- static int s3c64xx_spi_transfer(struct spi_device *spi,
-@@ -892,6 +897,8 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 		goto setup_exit;
- 	}
- 
-+	pm_runtime_get_sync(&sdd->pdev->dev);
-+
- 	/* Check if we can provide the requested rate */
- 	if (!sci->clk_from_cmu) {
- 		u32 psr, speed;
-@@ -924,6 +931,8 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
- 			err = -EINVAL;
- 	}
- 
-+	pm_runtime_put(&sdd->pdev->dev);
-+
- setup_exit:
- 
- 	/* setup() returns with device de-selected */
-@@ -1164,6 +1173,8 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
- 					mem_res->end, mem_res->start,
- 					sdd->rx_dma.dmach, sdd->tx_dma.dmach);
+@@ -1013,6 +1017,9 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	of_i2c_register_devices(&i2c->adap);
+ 	platform_set_drvdata(pdev, i2c);
  
 +	pm_runtime_enable(&pdev->dev);
++	pm_runtime_enable(&i2c->adap.dev);
 +
+ 	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+ 	clk_disable(i2c->clk);
  	return 0;
+@@ -1047,6 +1054,9 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ {
+ 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
  
- err9:
-@@ -1197,6 +1208,8 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 	struct resource	*mem_res;
- 	unsigned long flags;
- 
++	pm_runtime_disable(&i2c->adap.dev);
 +	pm_runtime_disable(&pdev->dev);
 +
- 	spin_lock_irqsave(&sdd->lock, flags);
- 	sdd->state |= SUSPND;
- 	spin_unlock_irqrestore(&sdd->lock, flags);
-@@ -1277,8 +1290,34 @@ static int s3c64xx_spi_resume(struct device *dev)
- }
- #endif /* CONFIG_PM */
+ 	s3c24xx_i2c_deregister_cpufreq(i2c);
  
-+#ifdef CONFIG_PM_RUNTIME
-+static int s3c64xx_spi_runtime_suspend(struct device *dev)
-+{
-+	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
-+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
-+
-+	clk_disable(sdd->clk);
-+	clk_disable(sdd->src_clk);
-+
-+	return 0;
-+}
-+
-+static int s3c64xx_spi_runtime_resume(struct device *dev)
-+{
-+	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
-+	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
-+
-+	clk_enable(sdd->src_clk);
-+	clk_enable(sdd->clk);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM_RUNTIME */
-+
- static const struct dev_pm_ops s3c64xx_spi_pm = {
- 	SET_SYSTEM_SLEEP_PM_OPS(s3c64xx_spi_suspend, s3c64xx_spi_resume)
-+	SET_RUNTIME_PM_OPS(s3c64xx_spi_runtime_suspend,
-+			   s3c64xx_spi_runtime_resume, NULL)
- };
- 
- static struct platform_driver s3c64xx_spi_driver = {
+ 	i2c_del_adapter(&i2c->adap);
 -- 
 1.7.7.3
