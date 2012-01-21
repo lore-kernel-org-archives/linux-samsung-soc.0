@@ -1,115 +1,173 @@
-From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 00/31] Clean up amba/primecell bus support
-Date: Sat, 21 Jan 2012 09:59:57 +0900
-Message-ID: <010301ccd7d7$fec781d0$fc568570$%kim@samsung.com>
-References: <20120120092207.GD1068@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH 1/7] ARM: EXYNOS: use static declaration when it is not used in
+ other files
+Date: Sat, 21 Jan 2012 13:35:59 +0900
+Message-ID: <010901ccd7f6$2c71e490$8555adb0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <20120120092207.GD1068-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47176 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756249Ab2AUEgE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jan 2012 23:36:04 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LY40099XSS1NA50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 21 Jan 2012 13:36:01 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LY400E3QSRZPC90@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 21 Jan 2012 13:36:01 +0900 (KST)
 Content-language: ko
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'STEricsson' <STEricsson_nomadik_linux-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>
-Cc: 'Viresh Kumar' <viresh.kumar-qxv4g6HH51o@public.gmane.org>, 'Rajeev Kumar' <rajeev-dlh.kumar-qxv4g6HH51o@public.gmane.org>, 'Linus Walleij' <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, 'Scott Branden' <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, 'Srinidhi Kasagar' <srinidhi.kasagar-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, 'Ryan Mallon' <rmallon-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'Rob Herring' <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, 'Hartley Sweeten' <hsweeten-3FF4nKcrg1dE2c76skzGb0EOCMrvLtNR@public.gmane.org>, 'Jiandong Zheng' <jdzheng-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, 'Chris Ball' <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, 'Sascha Hauer' <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, 'Alessandro Rubini' <rubini-9wsNiZum9E8@public.gmane.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rmk+kernel@arm.linux.org.uk, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Russell King - ARM Linux wrote:
-> 
-> This patch set cleans up the AMBA/Primecell bus support.  Contained
-> within this set are:
-> 
-> 1. Patches 1-5 - Allocation APIs
->    It seems several places in the kernel want to allocate and register
->    amba_device structures.  Let's make this official, and common code.
->    So we introduce amba_device_alloc(), amba_device_add(), and
->    amba_device_put() APIs, which provide the necessary support safely
->    for this.
-> 
->    Convert the DT, ux500, Integrator/AP and mxs code to use these APIs
->    rather than their private version.
-> 
-> 2. Patches 6-17 - NO_IRQ cleanup
->    Making IRQ number 0 mean 'no irq' for the AMBA drivers and bus layer.
->    We get rid of NO_IRQ initializers in this across various platforms,
->    and make the bus layer warn if '-1' is passed in a device as an IRQ.
->    This prevents new occurances of NO_IRQ initializers for this bus type
->    going by unspotted.
-> 
-> 3. Patches 18-31 - static initializers
->    Provide a standardized set of initializers for statically declared
->    AMBA devices.  We provide two - one for the simpler APB devices,
->    and one for AHB devices.  The major difference between these two is
->    the setting of the DMA mask - APB peripherals do not have DMA
->    capability themselves.
-> 
-> While updating (3), I came across new additions in Spear3xx and the
-> Samsung directories which added AMBA devices, which are declared
-> globally.  The Spear3xx devices are used in other files, so that's
-> fine.
-> 
-> Samsung devices don't seem to be - and that needs fixing (did someone
-> not run checkpatch or sparse on these changes?)  Please send fixes.
-> 
-Yeah, you're right. They in Samsung directories are not used anywhere else. So statically declaration can be used.
-As a note, I always run checkpatch but sparse before applying but unfortunately, checkpatch didn't complain about that.
 
-Let me check where fixes are needed in Samsung directories then send it.
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/clock-exynos4210.c    |    2 +-
+ arch/arm/mach-exynos/clock-exynos4212.c    |    2 +-
+ arch/arm/mach-exynos/clock.c               |    2 +-
+ arch/arm/mach-exynos/common.c              |    2 +-
+ arch/arm/mach-exynos/dma.c                 |   12 ++++++------
+ arch/arm/mach-exynos/mach-origen.c         |    2 +-
+ arch/arm/mach-exynos/mach-universal_c210.c |    2 +-
+ 7 files changed, 12 insertions(+), 12 deletions(-)
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> Acks for these patches are welcome.
-> 
->  arch/arm/mach-bcmring/core.c                   |   23 +-----
->  arch/arm/mach-ep93xx/core.c                    |   46 ++---------
->  arch/arm/mach-exynos/dma.c                     |   38 ++-------
->  arch/arm/mach-integrator/core.c                |   70 +++-------------
->  arch/arm/mach-integrator/impd1.c               |    9 +--
->  arch/arm/mach-integrator/integrator_cp.c       |   49 ++---------
->  arch/arm/mach-lpc32xx/phy3250.c                |   32 +------
->  arch/arm/mach-mxs/devices.c                    |    8 +-
->  arch/arm/mach-mxs/devices/amba-duart.c         |    2 +-
->  arch/arm/mach-netx/fb.c                        |   13 +---
->  arch/arm/mach-nomadik/board-nhk8815.c          |   17 +---
->  arch/arm/mach-nomadik/cpu-8815.c               |    9 +--
->  arch/arm/mach-omap2/emu.c                      |   26 +------
->  arch/arm/mach-realview/core.h                  |   20 +----
->  arch/arm/mach-realview/realview_eb.c           |   78 +++++++++---------
->  arch/arm/mach-realview/realview_pb1176.c       |   78 +++++++++---------
->  arch/arm/mach-realview/realview_pb11mp.c       |   78 +++++++++---------
->  arch/arm/mach-realview/realview_pba8.c         |   78 +++++++++---------
->  arch/arm/mach-realview/realview_pbx.c          |   78 +++++++++---------
->  arch/arm/mach-s5p64x0/dma.c                    |   22 +----
->  arch/arm/mach-s5pc100/dma.c                    |   38 ++-------
->  arch/arm/mach-s5pv210/dma.c                    |   38 ++-------
->  arch/arm/mach-spear3xx/spear300.c              |   14 +---
->  arch/arm/mach-spear3xx/spear3xx.c              |   27 +-----
->  arch/arm/mach-spear6xx/spear6xx.c              |   10 +-
->  arch/arm/mach-u300/core.c                      |   85 ++++----------------
->  arch/arm/mach-ux500/devices-common.c           |   13 +--
->  arch/arm/mach-versatile/core.c                 |   70 ++++++++--------
->  arch/arm/mach-versatile/core.h                 |   20 +----
->  arch/arm/mach-versatile/versatile_pb.c         |   18 ++--
->  arch/arm/mach-vexpress/core.h                  |   17 ----
->  arch/arm/mach-vexpress/ct-ca9x4.c              |    8 +-
->  arch/arm/mach-vexpress/include/mach/ct-ca9x4.h |    2 +-
->  arch/arm/mach-vexpress/v2m.c                   |   20 ++--
->  drivers/amba/bus.c                             |  105 ++++++++++++++++++------
->  drivers/mmc/host/mmci.c                        |    2 +-
->  drivers/of/platform.c                          |    6 +-
->  include/linux/amba/bus.h                       |   36 ++++++++
->  38 files changed, 488 insertions(+), 815 deletions(-)
+diff --git a/arch/arm/mach-exynos/clock-exynos4210.c b/arch/arm/mach-exynos/clock-exynos4210.c
+index a5823a7..25ea400 100644
+--- a/arch/arm/mach-exynos/clock-exynos4210.c
++++ b/arch/arm/mach-exynos/clock-exynos4210.c
+@@ -115,7 +115,7 @@ static void exynos4210_clock_resume(void)
+ #define exynos4210_clock_resume NULL
+ #endif
+ 
+-struct syscore_ops exynos4210_clock_syscore_ops = {
++static struct syscore_ops exynos4210_clock_syscore_ops = {
+ 	.suspend	= exynos4210_clock_suspend,
+ 	.resume		= exynos4210_clock_resume,
+ };
+diff --git a/arch/arm/mach-exynos/clock-exynos4212.c b/arch/arm/mach-exynos/clock-exynos4212.c
+index 26a668b..b133f86 100644
+--- a/arch/arm/mach-exynos/clock-exynos4212.c
++++ b/arch/arm/mach-exynos/clock-exynos4212.c
+@@ -87,7 +87,7 @@ static void exynos4212_clock_resume(void)
+ #define exynos4212_clock_resume NULL
+ #endif
+ 
+-struct syscore_ops exynos4212_clock_syscore_ops = {
++static struct syscore_ops exynos4212_clock_syscore_ops = {
+ 	.suspend	= exynos4212_clock_suspend,
+ 	.resume		= exynos4212_clock_resume,
+ };
+diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
+index 5a8c42e..c07c6d4 100644
+--- a/arch/arm/mach-exynos/clock.c
++++ b/arch/arm/mach-exynos/clock.c
+@@ -1524,7 +1524,7 @@ static void exynos4_clock_resume(void)
+ #define exynos4_clock_resume NULL
+ #endif
+ 
+-struct syscore_ops exynos4_clock_syscore_ops = {
++static struct syscore_ops exynos4_clock_syscore_ops = {
+ 	.suspend	= exynos4_clock_suspend,
+ 	.resume		= exynos4_clock_resume,
+ };
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index c59e188..b7f4b59 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -673,7 +673,7 @@ static void exynos4_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-int __init exynos4_init_irq_eint(void)
++static int __init exynos4_init_irq_eint(void)
+ {
+ 	int irq;
+ 
+diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
+index b10fcd2..8dec3db 100644
+--- a/arch/arm/mach-exynos/dma.c
++++ b/arch/arm/mach-exynos/dma.c
+@@ -36,7 +36,7 @@
+ 
+ static u64 dma_dmamask = DMA_BIT_MASK(32);
+ 
+-u8 pdma0_peri[] = {
++static u8 pdma0_peri[] = {
+ 	DMACH_PCM0_RX,
+ 	DMACH_PCM0_TX,
+ 	DMACH_PCM2_RX,
+@@ -69,12 +69,12 @@ u8 pdma0_peri[] = {
+ 	DMACH_AC97_PCMOUT,
+ };
+ 
+-struct dma_pl330_platdata exynos4_pdma0_pdata = {
++static struct dma_pl330_platdata exynos4_pdma0_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(pdma0_peri),
+ 	.peri_id = pdma0_peri,
+ };
+ 
+-struct amba_device exynos4_device_pdma0 = {
++static struct amba_device exynos4_device_pdma0 = {
+ 	.dev = {
+ 		.init_name = "dma-pl330.0",
+ 		.dma_mask = &dma_dmamask,
+@@ -90,7 +90,7 @@ struct amba_device exynos4_device_pdma0 = {
+ 	.periphid = 0x00041330,
+ };
+ 
+-u8 pdma1_peri[] = {
++static u8 pdma1_peri[] = {
+ 	DMACH_PCM0_RX,
+ 	DMACH_PCM0_TX,
+ 	DMACH_PCM1_RX,
+@@ -118,12 +118,12 @@ u8 pdma1_peri[] = {
+ 	DMACH_SLIMBUS5_TX,
+ };
+ 
+-struct dma_pl330_platdata exynos4_pdma1_pdata = {
++static struct dma_pl330_platdata exynos4_pdma1_pdata = {
+ 	.nr_valid_peri = ARRAY_SIZE(pdma1_peri),
+ 	.peri_id = pdma1_peri,
+ };
+ 
+-struct amba_device exynos4_device_pdma1 = {
++static struct amba_device exynos4_device_pdma1 = {
+ 	.dev = {
+ 		.init_name = "dma-pl330.1",
+ 		.dma_mask = &dma_dmamask,
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 0679b8a..3ec3ccf 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -412,7 +412,7 @@ static struct max8997_regulator_data __initdata origen_max8997_regulators[] = {
+ 	{ MAX8997_BUCK7,	&max8997_buck7_data },
+ };
+ 
+-struct max8997_platform_data __initdata origen_max8997_pdata = {
++static struct max8997_platform_data __initdata origen_max8997_pdata = {
+ 	.num_regulators = ARRAY_SIZE(origen_max8997_regulators),
+ 	.regulators	= origen_max8997_regulators,
+ 
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 37ac93e..29c8e18 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -997,7 +997,7 @@ static void __init universal_map_io(void)
+ 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
+ }
+ 
+-void s5p_tv_setup(void)
++static void s5p_tv_setup(void)
+ {
+ 	/* direct HPD to HDMI chip */
+ 	gpio_request_one(EXYNOS4_GPX3(7), GPIOF_IN, "hpd-plug");
+-- 
+1.7.1
