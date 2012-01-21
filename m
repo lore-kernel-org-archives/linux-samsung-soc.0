@@ -1,39 +1,92 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH 2/2] i2c-s3c2410: Add stub runtime power management
-Date: Sat, 21 Jan 2012 22:23:53 +0100
-Message-ID: <201201212223.54801.heiko@sntech.de>
-References: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com> <20120121183155.GE10751@opensource.wolfsonmicro.com> <4F1B2235.4000009@gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] i2c-s3c2410: Add stub runtime power management
+Date: Sat, 21 Jan 2012 22:25:20 +0100
+Message-ID: <4F1B2D40.70202@gmail.com>
+References: <1327171600-5489-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4F1B2235.4000009-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1327171600-5489-1-git-send-email-broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jean Delvare <khali-PUYAD+kWke1g9hUCZPvPmw@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Am Samstag 21 Januar 2012, 21:38:13 schrieb Sylwester Nawrocki:
-> On 01/21/2012 07:31 PM, Mark Brown wrote:
-> > On Sat, Jan 21, 2012 at 04:52:58PM +0100, Sylwester Nawrocki wrote:
-> >> On 01/21/2012 02:28 PM, Mark Brown wrote:
-> > that the rather serious problems with getting I2C patches applied I'd
-> > rather do as little as possible in individual patches.
-> > 
-> > It would also introduce a regression for systems that don't use runtime
-> > PM (probably most s3c24xx ones).
+On 01/21/2012 07:46 PM, Mark Brown wrote:
+> Add stub runtime_pm calls which go through the flow of enabling and
+> disabling but don't actually do anything with the device itself as
+> there's nothing useful we can do. This provides the core PM framework
+> with information about when the device is idle, enabling chip wide
+> power savings.
+
+Sorry, unless I'm missing something, currently there is no clock or
+power domain drivers for the I2C controllers in any SoC versions this
+driver is used with. So it seems like this patch introduces just 
+an overhead of pm_runtime calls, in addition to clk_enable/disable. 
+
+I can't see what the PM core would use the information about device's
+power state for. Is there really anything else, regarding I2C controllers
+power management, than can be done except individual devices' clock 
+gating ?
+
+> Signed-off-by: Mark Brown<broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+> Acked-by: Heiko Stuebner<heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+> ---
+>   drivers/i2c/busses/i2c-s3c2410.c |    8 ++++++++
+>   1 files changed, 8 insertions(+), 0 deletions(-)
 > 
-> Indeed, I'd forgotten about this fact for a while. I suspect the Run-time
-> PM core functionality could be enabled on those platform, allowing to make
-> the common driver dependant on PM_RUNTIME. Not sure if that's acceptable
-> for the smaller SoCs though. It rather sounds more like lots of trouble
-> for little benefits. Maybe it's desirable to do that at some point anyway.
-
-At least S3C2416/S3C2450 and S3C2412 (i.e. the ARMv5 SoCs) might profit from 
-it, as they also support the idle modes (stop modes) that Mark is targetting 
-with his patches in the long run.
-
-Not sure about the 2410, 2440 and 2443 currently
-
-Heiko
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+> index e6f982b..3d80bab 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -31,6 +31,7 @@
+>   #include<linux/errno.h>
+>   #include<linux/err.h>
+>   #include<linux/platform_device.h>
+> +#include<linux/pm_runtime.h>
+>   #include<linux/clk.h>
+>   #include<linux/cpufreq.h>
+>   #include<linux/slab.h>
+> @@ -564,6 +565,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+>   	int retry;
+>   	int ret;
+> 
+> +	pm_runtime_get_sync(&adap->dev);
+>   	clk_enable(i2c->clk);
+> 
+>   	for (retry = 0; retry<  adap->retries; retry++) {
+> @@ -572,6 +574,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+> 
+>   		if (ret != -EAGAIN) {
+>   			clk_disable(i2c->clk);
+> +			pm_runtime_put(&adap->dev);
+>   			return ret;
+>   		}
+> 
+> @@ -581,6 +584,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *adap,
+>   	}
+> 
+>   	clk_disable(i2c->clk);
+> +	pm_runtime_put(&adap->dev);
+>   	return -EREMOTEIO;
+>   }
+> 
+> @@ -1013,6 +1017,8 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+>   	of_i2c_register_devices(&i2c->adap);
+>   	platform_set_drvdata(pdev, i2c);
+> 
+> +	pm_runtime_enable(&pdev->dev);
+> +
+>   	dev_info(&pdev->dev, "%s: S3C I2C adapter\n", dev_name(&i2c->adap.dev));
+>   	clk_disable(i2c->clk);
+>   	return 0;
+> @@ -1047,6 +1053,8 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+>   {
+>   	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+> 
+> +	pm_runtime_disable(&pdev->dev);
+> +
+>   	s3c24xx_i2c_deregister_cpufreq(i2c);
+> 
+>   	i2c_del_adapter(&i2c->adap);
