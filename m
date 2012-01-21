@@ -1,110 +1,35 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 7/7] ARM: SAMSUNG: use static declaration when it is not used
- in other files
-Date: Sat, 21 Jan 2012 13:36:42 +0900
-Message-ID: <010f01ccd7f6$4627c580$d2775080$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 0/3] spi/s3c64xx diagnostic and PM updates
+Date: Sat, 21 Jan 2012 13:23:29 +0000
+Message-ID: <20120121132329.GA10751@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47482 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756801Ab2AUEgn (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34360 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751437Ab2AUNXd (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jan 2012 23:36:43 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LY400KBYSSVNA40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 21 Jan 2012 13:36:42 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LY400L6VST64A30@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 21 Jan 2012 13:36:42 +0900 (KST)
-Content-language: ko
+	Sat, 21 Jan 2012 08:23:33 -0500
+Content-Disposition: inline
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rmk+kernel@arm.linux.org.uk, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
+The following changes since commit 805a6af8dba5dfdd35ec35dc52ec0122400b2610:
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/plat-s5p/irq-eint.c    |    2 +-
- arch/arm/plat-s5p/irq-gpioint.c |    2 +-
- arch/arm/plat-samsung/devs.c    |   13 +------------
- arch/arm/plat-samsung/dma-ops.c |    2 +-
- 4 files changed, 4 insertions(+), 15 deletions(-)
+  Linux 3.2 (2012-01-04 15:55:44 -0800)
 
-diff --git a/arch/arm/plat-s5p/irq-eint.c b/arch/arm/plat-s5p/irq-eint.c
-index c496b35..139c050 100644
---- a/arch/arm/plat-s5p/irq-eint.c
-+++ b/arch/arm/plat-s5p/irq-eint.c
-@@ -200,7 +200,7 @@ static struct irq_chip s5p_irq_vic_eint = {
- #endif
- };
- 
--int __init s5p_init_irq_eint(void)
-+static int __init s5p_init_irq_eint(void)
- {
- 	int irq;
- 
-diff --git a/arch/arm/plat-s5p/irq-gpioint.c b/arch/arm/plat-s5p/irq-gpioint.c
-index 1fdfaa4..82c7311 100644
---- a/arch/arm/plat-s5p/irq-gpioint.c
-+++ b/arch/arm/plat-s5p/irq-gpioint.c
-@@ -41,7 +41,7 @@ struct s5p_gpioint_bank {
- 	void			(*handler)(unsigned int, struct irq_desc *);
- };
- 
--LIST_HEAD(banks);
-+static LIST_HEAD(banks);
- 
- static int s5p_gpioint_set_type(struct irq_data *d, unsigned int type)
- {
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 32a6e39..eddb0eb 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -742,17 +742,6 @@ struct platform_device s3c_device_iis = {
- };
- #endif /* CONFIG_PLAT_S3C24XX */
- 
--#ifdef CONFIG_CPU_S3C2440
--struct platform_device s3c2412_device_iis = {
--	.name		= "s3c2412-iis",
--	.id		= -1,
--	.dev		= {
--		.dma_mask		= &samsung_device_dma_mask,
--		.coherent_dma_mask	= DMA_BIT_MASK(32),
--	}
--};
--#endif /* CONFIG_CPU_S3C2440 */
--
- /* IDE CFCON */
- 
- #ifdef CONFIG_SAMSUNG_DEV_IDE
-@@ -1076,7 +1065,7 @@ static struct resource s5p_pmu_resource[] = {
- 	DEFINE_RES_IRQ(IRQ_PMU)
- };
- 
--struct platform_device s5p_device_pmu = {
-+static struct platform_device s5p_device_pmu = {
- 	.name		= "arm-pmu",
- 	.id		= ARM_PMU_DEVICE_CPU,
- 	.num_resources	= ARRAY_SIZE(s5p_pmu_resource),
-diff --git a/arch/arm/plat-samsung/dma-ops.c b/arch/arm/plat-samsung/dma-ops.c
-index 0747c77..301d9c3 100644
---- a/arch/arm/plat-samsung/dma-ops.c
-+++ b/arch/arm/plat-samsung/dma-ops.c
-@@ -116,7 +116,7 @@ static inline int samsung_dmadev_flush(unsigned ch)
- 	return dmaengine_terminate_all((struct dma_chan *)ch);
- }
- 
--struct samsung_dma_ops dmadev_ops = {
-+static struct samsung_dma_ops dmadev_ops = {
- 	.request	= samsung_dmadev_request,
- 	.release	= samsung_dmadev_release,
- 	.prepare	= samsung_dmadev_prepare,
--- 
-1.7.1
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/broonie/misc.git spi/s3c64xx
+
+They've all been posted several times before but seem to have got
+dropped on the floor somewhere along the line.
+
+Mark Brown (3):
+      spi/s3c64xx: Log error interrupts
+      spi/s3c64xx: Convert to dev_pm_ops
+      spi/s3c64xx: Implement runtime PM support
+
+ drivers/spi/spi-s3c64xx.c |  115 ++++++++++++++++++++++++++++++++++++++++----
+ 1 files changed, 104 insertions(+), 11 deletions(-)
