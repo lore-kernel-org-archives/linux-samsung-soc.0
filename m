@@ -1,44 +1,53 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
-Date: Mon, 23 Jan 2012 19:33:00 +0000
-Message-ID: <20120123193259.GC26409@opensource.wolfsonmicro.com>
-References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
- <1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
- <4F1D9DDE.2070106@samsung.com>
- <20120123182056.GA26409@opensource.wolfsonmicro.com>
- <4F1DB34C.4030103@gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] i2c-s3c2410: Add stub runtime power management
+Date: Mon, 23 Jan 2012 21:19:31 +0100
+Message-ID: <4F1DC0D3.4070408@gmail.com>
+References: <1327171600-5489-1-git-send-email-broonie@opensource.wolfsonmicro.com> <4F1C082D.2080005@gmail.com> <20120122152234.GA2915@opensource.wolfsonmicro.com> <4F1C45C6.1040003@gmail.com> <CADkCAusScak6gH4BBowrOpveGG=eDjZdj+X8vF4D5+yi8gv5PA@mail.gmail.com> <4F1C4BF4.5040409@gmail.com> <20120122213952.GA29022@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59468 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753647Ab2AWTdC (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:57102 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754155Ab2AWUTj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jan 2012 14:33:02 -0500
-Content-Disposition: inline
-In-Reply-To: <4F1DB34C.4030103@gmail.com>
+	Mon, 23 Jan 2012 15:19:39 -0500
+In-Reply-To: <20120122213952.GA29022@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <lmctlx@gmail.com>
-Cc: Karol Lewandowski <k.lewandowsk@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Bill Gatliff <bgat@billgatliff.com>, Wolfram Sang <w.sang@pengutronix.de>, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, linux-pm@lists.linux-foundation.org
 
-On Mon, Jan 23, 2012 at 08:21:48PM +0100, Karol Lewandowski wrote:
-> On 01/23/2012 07:20 PM, Mark Brown wrote:
+On 01/22/2012 10:39 PM, Mark Brown wrote:
+> On Sun, Jan 22, 2012 at 06:48:36PM +0100, Sylwester Nawrocki wrote:
+>> On 01/22/2012 06:27 PM, Bill Gatliff wrote:
+> 
+>>> I for one would rather see in-kernel drivers that require it, and then
+> 
+>> In fact we have to deal with the opposite now, as some existing drivers
+>> have been used for multiple generations of SoC, where almost unchanged
+>> device IPs are deployed. Those drivers were originally written for the
+>> simplest SoCs.
+> 
+> TBH I think most of the devices for which people are running these days
+> will be able to get some win from the system wide stuff - the WFI modes
+> aren't exactly the latest thing in hardware terms, it's just been a long
+> road to getting them supported.  Infrastructure like Mark's PM QoS work
+> and Raphael's PM domains work has really helped a lot here.
 
-> >Documentation/SubmittingPatches please...
+Indeed, now that I checked some earliest SoC TRMs even the simplest systems
+have some sort of intermediate Idle states.
 
-> I should have stated explicitly that purpose of this patch (I should
-> have called it sniplet) was to show my point only.
+>>> patches in mailing lists that show how to un-require it.  Make it more
+>>> painful to avoid PM_RUNTIME, and less painful to use it.
+> 
+>> Yeah, makes a lot of sense. With new code there is no issue, only the code
+>> with long history is sort of troublesome.
+> 
+> It's mostly a transition management issue I think.  When I repost I'll
+> add an additional patch on top which moves the clock gating into the
+> runtime PM callbacks, that way the decision on that doesn't block the
+> system wide work.
 
-> IMHO it's still up to debate how above problem should be solved.
-
-It looks like a reasonable solution to me, and it wouldn't conflict with
-any better solution that does come along.
-
-> I'm not entirely sure that we really need things like e.g. "EN32KHz
-> AP" in DT (nor in platform data, for that matter).  I would like to
-> see Thomas' opinion first.
-
-The 32kHz crystals are a bit of an odd case, really those should be
-handled by the clock API but obviously that's stalled and has been for
-quite some time.
+Sounds like a great resolution to the problem, thanks for considering it.
+And sorry for disturbing. Let's see what's Kukjin's opinion on that.
