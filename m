@@ -1,34 +1,33 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
-Date: Mon, 23 Jan 2012 18:20:56 +0000
-Message-ID: <20120123182056.GA26409@opensource.wolfsonmicro.com>
-References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
- <1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
- <4F1D9DDE.2070106@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 13/31] ARM: amba: nomadik: get rid of NO_IRQ initializers
+Date: Mon, 23 Jan 2012 20:02:01 +0100
+Message-ID: <CACRpkdZ9KC2R0SZ7-h7CV01uOhj1dphwggy1ErDV3dhh7OCpqw@mail.gmail.com>
+References: <20120120092207.GD1068@n2100.arm.linux.org.uk>
+	<E1RoAkC-0005F9-GQ@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49674 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750923Ab2AWSU7 (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:39274 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753414Ab2AWTCC convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jan 2012 13:20:59 -0500
-Content-Disposition: inline
-In-Reply-To: <4F1D9DDE.2070106@samsung.com>
+	Mon, 23 Jan 2012 14:02:02 -0500
+In-Reply-To: <E1RoAkC-0005F9-GQ@rmk-PC.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, STEricsson <STEricsson_nomadik_linux@list.st.com>, Alessandro Rubini <rubini@unipv.it>, Linus Walleij <linus.walleij@stericsson.com>
 
-On Mon, Jan 23, 2012 at 06:50:22PM +0100, Karol Lewandowski wrote:
+On Fri, Jan 20, 2012 at 10:26 AM, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
 
-> Aren't these fixed? i.e. - is it really needed to configure these
-> either by platform data or DT at all?
-> 
-> 
-> [1]
-> 
-> From 5cfba526210bc596c7d14e33fea93648baa0a227 Mon Sep 17 00:00:00 2001
-> From: Karol Lewandowski <k.lewandowsk@samsung.com>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
+> =A0arch/arm/mach-nomadik/board-nhk8815.c | =A0 =A04 ++--
+> =A01 files changed, 2 insertions(+), 2 deletions(-)
 
-Documentation/SubmittingPatches please...
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+Thanks Russell,
+Linus Walleij
