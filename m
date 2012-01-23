@@ -1,39 +1,87 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: ARM/ARM-SoC plans for v3.4 merge window
-Date: Mon, 23 Jan 2012 11:49:02 +0000
-Message-ID: <20120123114902.GY1068@n2100.arm.linux.org.uk>
+From: 'Joerg Roedel' <joro@8bytes.org>
+Subject: Re: [PATCH v8 2/2] iommu/exynos: Add iommu driver for Exynos
+	Platforms
+Date: Mon, 23 Jan 2012 15:27:06 +0100
+Message-ID: <20120123142706.GA6269@8bytes.org>
+References: <001001ccc625$0afa7ee0$20ef7ca0$%cho@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-omap-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from 8bytes.org ([88.198.83.132]:46011 "EHLO 8bytes.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752317Ab2AWO1I (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 23 Jan 2012 09:27:08 -0500
 Content-Disposition: inline
-Sender: linux-omap-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-tegra@vger.kernel.org
+In-Reply-To: <001001ccc625$0afa7ee0$20ef7ca0$%cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>
 
-This is an outline of the plan for this cycle, up to the next merge
-window, agreed between Olof and myself.
+Hi,
 
-As Nicolas' idle changes weren't merged before the last merge window
-opened, we have decided that Nicolas will resubmit his changes after
--rc1 (in other words, now) and they will be merged into both the
-arm-soc and my trees.
+please also get and inclue Acks from the Exynos maintainer for the next
+post.
+Since I have a compiling config for exynos now I will merge the patches
+when you have the Acks and addressed or explained the issues I pointed
+out below.
 
-I have at least one other patch which has a high 'will cause horrible
-conficts' rating (the debug option rearrangement patch), so I'll be
-including that for the arm-soc tree as well.
+On Thu, Dec 29, 2011 at 09:26:08PM +0900, KyongHo Cho wrote:
+> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain)
+> +{
+> +	struct exynos_iommu_domain *priv = domain->priv;
+> +	struct list_head *pos, *n;
+> +	unsigned long flags;
+> +	int i;
+> +
+> +	WARN_ON(!list_empty(&priv->clients));
 
-However, what this does mean is that Arnd, Olof, and myself will be
-in for up to three months of merge hell unless people take account of
-these changes.
+This isn't really a problem. We allow destroying a domain with devices
+attached. So this WARN_ON is not necessary.
 
-Therefore, our plan is to publish this as a baseline, and we'd really
-appreciate any development submitted after that baseline has been
-established is based upon those changes and does not conflict with
-them.  That may mean you have to pull these changes into your tree
-and merge them into your development work (and fix up any conflicts
-there yourself.)
+> +static int exynos_iommu_map(struct iommu_domain *domain, unsigned long iova,
+> +			 phys_addr_t paddr, size_t size, int prot)
+> +{
+> +	struct exynos_iommu_domain *priv = domain->priv;
+> +	unsigned long *entry;
+> +	unsigned long flags;
+> +	int ret = -ENOMEM;
+> +
+> +	BUG_ON(priv->pgtable == NULL);
+> +
+> +	spin_lock_irqsave(&priv->pgtablelock, flags);
+> +
+> +	entry = section_entry(priv->pgtable, iova);
+> +
+> +	if (size >= SECT_SIZE) {
+> +		ret = lv1set_section(entry, paddr, size >> SECT_ORDER,
+> +					&priv->lv2entcnt[lv1ent_offset(iova)]);
 
-Once you've taken these changes into your tree, you must not rebase or
-modify them.  Changing those commits will cause all hell to break loose,
-and we'll have to refuse merging your tree (otherwise we'll be in Linus'
-sights for a roasting at gas mark 2 million.)
+This looks like you are partially re-implementing behavior of generic
+code because you are mapping multiple sections at once. The generic map
+code already splits up the address range correctly, so no need to do
+this in the driver (unless there is some benefit in the hardware, like
+an IOTLB entry that can cover multiple sections or something similar).
+
+> +static size_t exynos_iommu_unmap(struct iommu_domain *domain,
+> +					       unsigned long iova, size_t size)
+> +{
+> +	struct exynos_iommu_domain *priv = domain->priv;
+> +	struct iommu_client *client;
+> +	unsigned long flags;
+> +
+> +	BUG_ON(priv->pgtable == NULL);
+> +
+> +	spin_lock_irqsave(&priv->pgtablelock, flags);
+> +
+> +	while (size != 0) {
+> +		int i, nent, order;
+> +		unsigned long *pent, *sent;
+
+Same with this while-loop. This looks like it re-implements behavior
+from the generic code.
+
+Regards,
+
+	Joerg
