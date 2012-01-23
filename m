@@ -1,55 +1,39 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] ARM: Exynos4: fix non-SMP builds
-Date: Mon, 23 Jan 2012 10:41:28 +0100
-Message-ID: <1327311688-5856-1-git-send-email-m.szyprowski@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: ARM/ARM-SoC plans for v3.4 merge window
+Date: Mon, 23 Jan 2012 11:49:02 +0000
+Message-ID: <20120123114902.GY1068@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37469 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752227Ab2AWJlr (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jan 2012 04:41:47 -0500
-Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LY800B1HW9L2A@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 23 Jan 2012 09:41:45 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LY800LXXW9JEB@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 23 Jan 2012 09:41:45 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-omap-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-tegra@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch fixes the following build issue, which happens only if SMP
-has been disabled:
+This is an outline of the plan for this cycle, up to the next merge
+window, agreed between Olof and myself.
 
-arch/arm/mach-exynos/built-in.o: In function `exynos4_pm_resume':
-arch/arm/mach-exynos/pm.c:387: undefined reference to `scu_enable'
+As Nicolas' idle changes weren't merged before the last merge window
+opened, we have decided that Nicolas will resubmit his changes after
+-rc1 (in other words, now) and they will be merged into both the
+arm-soc and my trees.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/pm.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+I have at least one other patch which has a high 'will cause horrible
+conficts' rating (the debug option rearrangement patch), so I'll be
+including that for the arm-soc tree as well.
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 9a13af5..7a737c6 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -388,7 +388,9 @@ static void exynos4_pm_resume(void)
- 
- 	exynos4_restore_pll();
- 
-+#ifdef CONFIG_SMP
- 	scu_enable(S5P_VA_SCU);
-+#endif
- 
- #ifdef CONFIG_CACHE_L2X0
- 	s3c_pm_do_restore_core(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
--- 
-1.7.1.569.g6f426
+However, what this does mean is that Arnd, Olof, and myself will be
+in for up to three months of merge hell unless people take account of
+these changes.
+
+Therefore, our plan is to publish this as a baseline, and we'd really
+appreciate any development submitted after that baseline has been
+established is based upon those changes and does not conflict with
+them.  That may mean you have to pull these changes into your tree
+and merge them into your development work (and fix up any conflicts
+there yourself.)
+
+Once you've taken these changes into your tree, you must not rebase or
+modify them.  Changing those commits will cause all hell to break loose,
+and we'll have to refuse merging your tree (otherwise we'll be in Linus'
+sights for a roasting at gas mark 2 million.)
