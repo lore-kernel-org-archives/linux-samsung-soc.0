@@ -1,64 +1,41 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 3/3] S3C2443: add power domain for usb phy
-Date: Tue, 24 Jan 2012 11:31:01 +0100
-Message-ID: <201201241131.01437.heiko@sntech.de>
-References: <201201082156.44142.heiko@sntech.de> <201201241113.00387.heiko@sntech.de> <20120124101510.GH27414@legolas.emea.dhcp.ti.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
+Date: Tue, 24 Jan 2012 10:56:45 +0000
+Message-ID: <20120124105645.GE19798@mudshark.cambridge.arm.com>
+References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
+ <20120124095009.GS16726@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:53727 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754007Ab2AXKbP convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jan 2012 05:31:15 -0500
-In-Reply-To: <20120124101510.GH27414@legolas.emea.dhcp.ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-sh-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120124095009.GS16726@n2100.arm.linux.org.uk>
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com, Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, Linux USB Mailing List <linux-usb@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Am Dienstag, 24. Januar 2012, 11:15:11 schrieb Felipe Balbi:
-> On Tue, Jan 24, 2012 at 11:13:00AM +0100, Heiko St=FCbner wrote:
-> > sorry for mail spam :-)
-> >=20
-> > Am Dienstag, 24. Januar 2012, 10:51:31 schrieb Felipe Balbi:
-> > > On Tue, Jan 24, 2012 at 10:50:14AM +0100, Heiko St=FCbner wrote:
-> > > > Hi Felipe,
-> > > >=20
-> > > > Am Dienstag, 24. Januar 2012, 10:38:32 schrieb Felipe Balbi:
-> > > > > Hi,
-> > > > >=20
-> > > > > On Sun, Jan 08, 2012 at 09:59:02PM +0100, Heiko St=FCbner wro=
-te:
-> > > > > > The phy-power-handling is common to S3C2443/2416/2450, so
-> > > > > > introduce a s3c2443-pm-common.c to handle this for all of t=
-hem.
-> > > > > >=20
-> > > > > > This makes it possible to remove the raw write to the
-> > > > > > PWRCFG-register from the s3c-hsudc driver.
-> > > > > >=20
-> > > > > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > > > >=20
-> > > > > I believe this doesn't really depend on previous patches (??)=
- In
-> > > > > that
-> > > >=20
-> > > > > case, it can be carried with s3c's tree:
-> > > > it does depend on the previous patch [2/3], as the device power
-> > > > domain is controlled through the runtime-pm subsystem whose cal=
-ls
-> > > > were added in it.
-> > >=20
-> > > then I will need proper acks to carry this patch.
-> >=20
-> > another possibility would be to have patch 2 and 3 get in through t=
-he
-> > samsung tree, as the majority of the change lies on this side (i.e.
-> > introducing a new file in plat-s3c24xx)
->=20
-> yet another one, would be to defer patch 3/3 by one merge window ;-)
+Hi Russell,
 
-also fine by me ;-)
+On Tue, Jan 24, 2012 at 09:50:09AM +0000, Russell King - ARM Linux wrote:
+> Right, although it's out there - but I'd like to get the AMBA changes
+> into it which are already conflicting the Samsung development.  So I'm
+> going to hold off officially asking for people to include the baseline
+> until this evening.  At that point, I will shut down my 'amba' branch
+> and transfer that over; that means I won't be accepting any further
+> acks etc for that work.
+> 
+> If you haven't acked changes in the amba branch (eg, to Versatile,
+> Realview etc) then it'll soon be too late...
 
-But let's see first what Kgene says.
+I took a look at your amba branch, but all I can see in there is:
+
+6cfa627 ARM: 7079/1: spi: Fix builderror in spi-pl022.c
+1c3be36 PM: add runtime PM support to MMCI
+92b97f0 PM: add runtime PM support to core Primecell driver
+
+which don't seem to touch Versatile or Realview. Am I looking in the wrong
+place?
+
+Cheers,
+
+Will
