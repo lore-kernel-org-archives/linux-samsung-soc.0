@@ -1,64 +1,39 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 0/4] Pending S3C64xx updates
-Date: Tue, 24 Jan 2012 21:31:27 +0000
-Message-ID: <20120124213127.GH1135@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rV8arf8D5Dod9UkK"
+Subject: [PATCH 1/4] ARM: S3C64XX: Make s3c64xx_init_uarts() static
+Date: Tue, 24 Jan 2012 21:31:43 +0000
+Message-ID: <1327440706-31915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+References: <20120124213127.GH1135@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50361 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50899 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756710Ab2AXVba (ORCPT
+	by vger.kernel.org with ESMTP id S1756710Ab2AXVbv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jan 2012 16:31:30 -0500
-Content-Disposition: inline
+	Tue, 24 Jan 2012 16:31:51 -0500
+In-Reply-To: <20120124213127.GH1135@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
+Now that it's in common.c it's not used in multiple source files.
 
---rV8arf8D5Dod9UkK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ arch/arm/mach-s3c64xx/common.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-This patch series is a collection of s3c64xx updates I've had hanging
-round in my tree for varying lengths of time that it'd be good to get
-merged.  There's no particularly relationship between them except that
-they're all for s3c64xx.
-
-Mark Brown (4):
-      ARM: S3C64XX: Make s3c64xx_init_uarts() static
-      ARM: S3C64XX: Define some additional always off clocks
-      ARM: S3C6410: Use device names for both I2C clocks
-      ARM: S3C64XX: Add hookup for Tomatin module on Cragganmore
-
- arch/arm/mach-s3c64xx/clock.c                |  106 ++++++++++++++++++++++++++
- arch/arm/mach-s3c64xx/common.c               |    2 +-
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |   27 ++++++-
- arch/arm/mach-s3c64xx/mach-crag6410.c        |   11 +++-
- 4 files changed, 143 insertions(+), 3 deletions(-)
-
---rV8arf8D5Dod9UkK
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPHyMoAAoJEBus8iNuMP3dpp4P/3R1UHoNaH4GFwA1IJXARixk
-eycZdBocuOmXtYuSI5xfVmiWZB6PLILe3kDtEjpO+r3DQfUlWx0cmLqDtLkOY1Oe
-uvgJ/obz6C4gaZiqcN8GY44qvFsVcAfA8O7T3ypnb23w4dIrEi26/FukANqVWObX
-A1v+fcFydkFnOa+q49rPwwnUkLzP3LlPZItQrjxcCiMzlaDAdGzh0hkBXTzINkDb
-XvRx2DSV2fOTYMqSmEHK8b2nMiv7sm9GiNWfTV8pa5atnhas8FTGEMQwgeqLm7Uo
-0w0LTA1nhBc0OZK6sUb15aHkMvbHCS2aCVaVw1yDdgAkRbgkrBrNsqOZ+esrOBV5
-vYHNC3OPyCVBkiEMGLMjGCOGXi4XS/8O7lKpn3j0ZhW+9ov2bGk25Ab1VaPgyQ0d
-9rlt8zas8KCkDQHJJVOIuUgecm4aCKKsOENZdc4k4Jui1QfqCUsLfaGSDTxr9nue
-dHJWwfZrD4+0lw4W7NutoR+6SaIwZYKycQT7o2lOLKVBStFiURn+nKq/PVZwf7C4
-1Hhbe++eAn4i3xRwOS43vYUc13eNvN2QHv2vGtRlNeeB5g8JO/FVV0xDrgoxsFPB
-d242WJQZVClpurvvAYAV9G4M6T2OgfAsIKpfbVVj3uMmCIYp8Kq0ZUOeGCWfP6Pu
-jgJsj2+sw/yvQhVAmqTZ
-=+k3W
------END PGP SIGNATURE-----
-
---rV8arf8D5Dod9UkK--
+diff --git a/arch/arm/mach-s3c64xx/common.c b/arch/arm/mach-s3c64xx/common.c
+index 4a7394d..bee7dcd 100644
+--- a/arch/arm/mach-s3c64xx/common.c
++++ b/arch/arm/mach-s3c64xx/common.c
+@@ -49,7 +49,7 @@
+ 
+ /* uart registration process */
+ 
+-void __init s3c64xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++static void __init s3c64xx_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+ {
+ 	s3c24xx_init_uartdevs("s3c6400-uart", s3c64xx_uart_resources, cfg, no);
+ }
+-- 
+1.7.9.rc1
