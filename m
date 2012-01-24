@@ -1,137 +1,60 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 4/4] ARM: S3C64XX: Add hookup for Tomatin module on Cragganmore
-Date: Tue, 24 Jan 2012 21:31:46 +0000
-Message-ID: <1327440706-31915-4-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <20120124213127.GH1135@opensource.wolfsonmicro.com>
- <1327440706-31915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50908 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756710Ab2AXVbw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jan 2012 16:31:52 -0500
-In-Reply-To: <1327440706-31915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 21/31] ARM: amba: realview: get rid of private platform
+	amba_device initializer
+Date: Tue, 24 Jan 2012 21:45:31 +0000
+Message-ID: <20120124214531.GB8517@n2100.arm.linux.org.uk>
+References: <20120120092207.GD1068@n2100.arm.linux.org.uk> <E1RoAmo-0005Ff-DW@rmk-PC.arm.linux.org.uk> <20120124160044.GM19798@mudshark.cambridge.arm.com> <20120124162328.GA8517@n2100.arm.linux.org.uk> <20120124172600.GO19798@mudshark.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120124172600.GO19798@mudshark.cambridge.arm.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Will Deacon <will.deacon@arm.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, STEricsson <STEricsson_nomadik_linux@list.st.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-The Tomatin module carries a WM0010 audio DSP. Provide basic hookup for
-this, though additional platform data will be needed to fully integrate
-with the driver.
+On Tue, Jan 24, 2012 at 05:26:00PM +0000, Will Deacon wrote:
+> Right. I took a quick look at the TRM for the PB1176, and I think we do have
+> an interrupt for GPIO0, it's just on the other GIC. This patch should do the
+> trick, but I'm not sure what I can do to tickle the GPIO stuff anyway:
+> 
+> 
+> diff --git a/arch/arm/mach-realview/include/mach/irqs-pb1176.h b/arch/arm/mach-realview/include/mach/irqs-pb1176.h
+> index 5c3c625..708f841 100644
+> --- a/arch/arm/mach-realview/include/mach/irqs-pb1176.h
+> +++ b/arch/arm/mach-realview/include/mach/irqs-pb1176.h
+> @@ -40,6 +40,7 @@
+>  #define IRQ_DC1176_L2CC                (IRQ_DC1176_GIC_START + 13)
+>  #define IRQ_DC1176_RTC         (IRQ_DC1176_GIC_START + 14)
+>  #define IRQ_DC1176_CLCD                (IRQ_DC1176_GIC_START + 15)     /* CLCD controller */
+> +#define IRQ_DC1176_GPIO0       (IRQ_DC1176_GIC_START + 16)
+>  #define IRQ_DC1176_SSP         (IRQ_DC1176_GIC_START + 17)     /* SSP port */
+>  #define IRQ_DC1176_UART0       (IRQ_DC1176_GIC_START + 18)     /* UART 0 on development chip */
+>  #define IRQ_DC1176_UART1       (IRQ_DC1176_GIC_START + 19)     /* UART 1 on development chip */
+> @@ -73,7 +74,6 @@
+>  #define IRQ_PB1176_DMAC                (IRQ_PB1176_GIC_START + 24)     /* DMA controller */
+>  #define IRQ_PB1176_RTC         (IRQ_PB1176_GIC_START + 25)     /* Real Time Clock */
+>  
+> -#define IRQ_PB1176_GPIO0       -1
+>  #define IRQ_PB1176_SCTL                -1
+>  
+>  #define NR_GIC_PB1176          2
+> diff --git a/arch/arm/mach-realview/realview_pb1176.c b/arch/arm/mach-realview/realview_pb1176.c
+> index 1b6e60c..b1d7caf 100644
+> --- a/arch/arm/mach-realview/realview_pb1176.c
+> +++ b/arch/arm/mach-realview/realview_pb1176.c
+> @@ -143,7 +143,7 @@ static struct pl022_ssp_controller ssp0_plat_data = {
+>  #define PB1176_CLCD_IRQ        { IRQ_DC1176_CLCD }
+>  #define SCTL_IRQ       { }
+>  #define PB1176_WATCHDOG_IRQ    { IRQ_DC1176_WATCHDOG }
+> -#define PB1176_GPIO0_IRQ       { IRQ_PB1176_GPIO0 }
+> +#define PB1176_GPIO0_IRQ       { IRQ_DC1176_GPIO0 }
+>  #define GPIO1_IRQ      { IRQ_PB1176_GPIO1 }
+>  #define PB1176_RTC_IRQ { IRQ_DC1176_RTC }
+>  #define SCI_IRQ                { IRQ_PB1176_SCI }
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |   27 +++++++++++++++++++++++++-
- arch/arm/mach-s3c64xx/mach-crag6410.c        |   11 +++++++++-
- 2 files changed, 36 insertions(+), 2 deletions(-)
+I guess we should believe the TRM on this - can you put this in the patch
+system please?
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index cd3c97e..b4ed351 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -11,6 +11,7 @@
- #include <linux/export.h>
- #include <linux/interrupt.h>
- #include <linux/i2c.h>
-+#include <linux/spi/spi.h>
- 
- #include <linux/mfd/wm831x/irq.h>
- #include <linux/mfd/wm831x/gpio.h>
-@@ -21,8 +22,25 @@
- #include <sound/wm8962.h>
- #include <sound/wm9081.h>
- 
-+#include <plat/s3c64xx-spi.h>
-+
- #include <mach/crag6410.h>
- 
-+static struct s3c64xx_spi_csinfo wm0010_spi_csinfo = {
-+	.set_level = gpio_set_value,
-+	.line = S3C64XX_GPC(3),
-+};
-+
-+static struct spi_board_info wm1253_devs[] = {
-+	[0] = {
-+		.modalias	= "wm0010",
-+		.bus_num	= 0,
-+		.chip_select	= 0,
-+		.mode		= SPI_MODE_0,
-+		.controller_data = &wm0010_spi_csinfo,
-+	},
-+};
-+
- static struct wm5100_pdata wm5100_pdata = {
- 	.ldo_ena = S3C64XX_GPN(7),
- 	.irq_flags = IRQF_TRIGGER_HIGH,
-@@ -158,6 +176,8 @@ static __devinitdata const struct {
- 	const char *name;
- 	const struct i2c_board_info *i2c_devs;
- 	int num_i2c_devs;
-+	const struct spi_board_info *spi_devs;
-+	int num_spi_devs;
- } gf_mods[] = {
- 	{ .id = 0x01, .name = "1250-EV1 Springbank" },
- 	{ .id = 0x02, .name = "1251-EV1 Jura" },
-@@ -165,7 +185,8 @@ static __devinitdata const struct {
- 	{ .id = 0x11, .name = "6249-EV2 Glenfarclas", },
- 	{ .id = 0x21, .name = "1275-EV1 Mortlach" },
- 	{ .id = 0x25, .name = "1274-EV1 Glencadam" },
--	{ .id = 0x31, .name = "1253-EV1 Tomatin", },
-+	{ .id = 0x31, .name = "1253-EV1 Tomatin",
-+	  .spi_devs = wm1253_devs, .num_spi_devs = ARRAY_SIZE(wm1253_devs) },
- 	{ .id = 0x39, .name = "1254-EV1 Dallas Dhu",
- 	  .i2c_devs = wm1254_devs, .num_i2c_devs = ARRAY_SIZE(wm1254_devs) },
- 	{ .id = 0x3a, .name = "1259-EV1 Tobermory",
-@@ -197,12 +218,16 @@ static __devinit int wlf_gf_module_probe(struct i2c_client *i2c,
- 	if (i < ARRAY_SIZE(gf_mods)) {
- 		dev_info(&i2c->dev, "%s revision %d\n",
- 			 gf_mods[i].name, rev + 1);
-+
- 		for (j = 0; j < gf_mods[i].num_i2c_devs; j++) {
- 			if (!i2c_new_device(i2c->adapter,
- 					    &(gf_mods[i].i2c_devs[j])))
- 				dev_err(&i2c->dev,
- 					"Failed to register dev: %d\n", ret);
- 		}
-+
-+		spi_register_board_info(gf_mods[i].spi_devs,
-+					gf_mods[i].num_spi_devs);
- 	} else {
- 		dev_warn(&i2c->dev, "Unknown module ID 0x%x revision %d\n",
- 			 id, rev + 1);
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 5b43a57..cdbc8cb 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -581,11 +581,19 @@ static struct s3c2410_platform_i2c i2c0_pdata = {
- 	.frequency = 400000,
- };
- 
-+static struct regulator_consumer_supply pvdd_1v2_consumers[] __initdata = {
-+	REGULATOR_SUPPLY("DCVDD", "spi0.0"),
-+	REGULATOR_SUPPLY("AVDD", "spi0.0"),
-+};
-+
- static struct regulator_init_data pvdd_1v2 __initdata = {
- 	.constraints = {
- 		.name = "PVDD_1V2",
--		.always_on = 1,
-+		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
- 	},
-+
-+	.consumer_supplies = pvdd_1v2_consumers,
-+	.num_consumer_supplies = ARRAY_SIZE(pvdd_1v2_consumers),
- };
- 
- static struct regulator_consumer_supply pvdd_1v8_consumers[] __initdata = {
-@@ -599,6 +607,7 @@ static struct regulator_consumer_supply pvdd_1v8_consumers[] __initdata = {
- 	REGULATOR_SUPPLY("AVDD2", "1-001a"),
- 	REGULATOR_SUPPLY("DCVDD", "1-001a"),
- 	REGULATOR_SUPPLY("AVDD", "1-001a"),
-+	REGULATOR_SUPPLY("DBVDD", "spi0.0"),
- };
- 
- static struct regulator_init_data pvdd_1v8 __initdata = {
--- 
-1.7.9.rc1
+Thanks.
