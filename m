@@ -1,33 +1,42 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] max8997: Avoid spaces in regulator names
-Date: Tue, 24 Jan 2012 20:02:46 +0000
-Message-ID: <20120124200246.GA1135@opensource.wolfsonmicro.com>
-References: <1327404672-5459-1-git-send-email-k.lewandowsk@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Subject: [PATCH] ARM: S3C64XX: Use IN4 DC measurement mode on Tobermory
+Date: Tue, 24 Jan 2012 21:19:24 +0000
+Message-ID: <1327439964-28533-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46495 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53181 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755698Ab2AXUCt (ORCPT
+	by vger.kernel.org with ESMTP id S1755844Ab2AXVT1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jan 2012 15:02:49 -0500
-Content-Disposition: inline
-In-Reply-To: <1327404672-5459-1-git-send-email-k.lewandowsk@samsung.com>
+	Tue, 24 Jan 2012 16:19:27 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: myungjoo.ham@smasung.com, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, rnayak@ti.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, Thomas Abraham <thomas.abraham@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-On Tue, Jan 24, 2012 at 12:31:11PM +0100, Karol Lewandowski wrote:
-> max8997-pmic instantiated from device tree uses names, not numerical
-> ids to distinguish between outputs.
-> 
-> Replace spaces with underscores in said names to make it possible to
-> describe these outputs as regulators in DTS.
+The WM8962 on Tobermory has one of the IN4 inputs connected for DC
+measurement. Tell the driver it can optimise for this mode.
 
-I went ahead and applied this since even if there's a better solution
-out there this will work for now and the worst it's going to do is make
-the log messages a bit less pretty.
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
 
-Please when sending patches try to use subjects appropriate for the
-subsystem - in this case a regulator: prefix.
+This feature is going to be merged via ASoC in 3.4 - is it OK if I apply
+this patch to the ASoC tree too?  It's a one liner, I'd be astonished if
+it were to generate any conflicts.
+
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 509307d..317f866 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -128,6 +128,7 @@ static struct wm8962_pdata wm8962_pdata __initdata = {
+ 		0x8000 | WM8962_GPIO_FN_DMICDAT,
+ 		WM8962_GPIO_FN_IRQ,    /* Open drain mode */
+ 	},
++	.in4_dc_measure = true,
+ };
+ 
+ static struct wm9081_pdata wm9081_pdata __initdata = {
+-- 
+1.7.9.rc1
