@@ -1,13 +1,13 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/4] ARM: S3C64XX: Define some additional always off clocks
-Date: Tue, 24 Jan 2012 21:31:44 +0000
-Message-ID: <1327440706-31915-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 3/4] ARM: S3C6410: Use device names for both I2C clocks
+Date: Tue, 24 Jan 2012 21:31:45 +0000
+Message-ID: <1327440706-31915-3-git-send-email-broonie@opensource.wolfsonmicro.com>
 References: <20120124213127.GH1135@opensource.wolfsonmicro.com>
  <1327440706-31915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50903 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50904 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757391Ab2AXVbv (ORCPT
+	by vger.kernel.org with ESMTP id S1757505Ab2AXVbv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 24 Jan 2012 16:31:51 -0500
 In-Reply-To: <1327440706-31915-1-git-send-email-broonie@opensource.wolfsonmicro.com>
@@ -16,130 +16,36 @@ List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Add entries to clocks_off for some additional clocks which are not
-currently used by any mainline drivers. They default on at power up
-but are never actually used so
+When the S3C64xx CPUs were converted to clkdev mappings were added for the
+I2C controllers on them. On S3C6410 a device name is specified for I2C
+controller 1 but not for controller 0 which makes the code less robust as
+we'll falsely return the clock for controller 0 if there's an error in the
+request for controller 1.
 
-If these blocks are actually supported some of these bindings would need
-to be redone properly, for example hooking up to the muxes that use them,
-but that can be done incrementally.
+Improve things by registering a device name for controller 0 as well. Due
+to the fact that we change the numbering for controller 0 depending on if
+we've registered controller 1 this requires an ifdef to choose the name.
 
 Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
- arch/arm/mach-s3c64xx/clock.c |  101 +++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 101 insertions(+), 0 deletions(-)
+ arch/arm/mach-s3c64xx/clock.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
-index b58274f..63f2c8a 100644
+index 63f2c8a..52f079a 100644
 --- a/arch/arm/mach-s3c64xx/clock.c
 +++ b/arch/arm/mach-s3c64xx/clock.c
-@@ -220,6 +220,107 @@ static struct clk init_clocks_off[] = {
- 		.parent		= &clk_h,
- 		.enable		= s3c64xx_hclk_ctrl,
- 		.ctrlbit	= S3C_CLKCON_HCLK_DMA1,
-+	}, {
-+		.name		= "3dse",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_3DSE,
-+	}, {
-+		.name		= "hclk_secur",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_SECUR,
-+	}, {
-+		.name		= "sdma1",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_SDMA1,
-+	}, {
-+		.name		= "sdma0",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_SDMA0,
-+	}, {
-+		.name		= "hclk_jpeg",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_JPEG,
-+	}, {
-+		.name		= "camif",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_CAMIF,
-+	}, {
-+		.name		= "hclk_scaler",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_SCALER,
-+	}, {
-+		.name		= "2d",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_2D,
-+	}, {
-+		.name		= "tv",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_TV,
-+	}, {
-+		.name		= "post0",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_POST0,
-+	}, {
-+		.name		= "rot",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_ROT,
-+	}, {
-+		.name		= "hclk_mfc",
-+		.parent		= &clk_h,
-+		.enable		= s3c64xx_hclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_HCLK_MFC,
-+	}, {
-+		.name		= "pclk_mfc",
-+		.parent		= &clk_p,
-+		.enable		= s3c64xx_pclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_PCLK_MFC,
-+	}, {
-+		.name		= "dac27",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_DAC27,
-+	}, {
-+		.name		= "tv27",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_TV27,
-+	}, {
-+		.name		= "scaler27",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_SCALER27,
-+	}, {
-+		.name		= "sclk_scaler",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_SCALER,
-+	}, {
-+		.name		= "post0_27",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_POST0_27,
-+	}, {
-+		.name		= "secur",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_SECUR,
-+	}, {
-+		.name		= "sclk_mfc",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_MFC,
-+	}, {
-+		.name		= "cam",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_CAM,
-+	}, {
-+		.name		= "sclk_jpeg",
-+		.enable		= s3c64xx_sclk_ctrl,
-+		.ctrlbit	= S3C_CLKCON_SCLK_JPEG,
- 	},
- };
- 
+@@ -138,6 +138,11 @@ static struct clk init_clocks_off[] = {
+ 		.ctrlbit	= S3C_CLKCON_PCLK_TSADC,
+ 	}, {
+ 		.name		= "i2c",
++#ifdef CONFIG_S3C_DEV_I2C1
++		.devname        = "s3c2440-i2c.0",
++#else
++		.devname	= "s3c2440-i2c",
++#endif
+ 		.parent		= &clk_p,
+ 		.enable		= s3c64xx_pclk_ctrl,
+ 		.ctrlbit	= S3C_CLKCON_PCLK_IIC,
 -- 
 1.7.9.rc1
