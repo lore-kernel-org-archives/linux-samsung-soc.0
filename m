@@ -1,72 +1,41 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: [PATCH] max8997: Avoid spaces in regulator names
-Date: Tue, 24 Jan 2012 12:31:11 +0100
-Message-ID: <1327404672-5459-1-git-send-email-k.lewandowsk@samsung.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
+Date: Tue, 24 Jan 2012 11:45:43 +0000
+Message-ID: <20120124114543.GG19798@mudshark.cambridge.arm.com>
+References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
+ <20120124095009.GS16726@n2100.arm.linux.org.uk>
+ <20120124105645.GE19798@mudshark.cambridge.arm.com>
+ <20120124112745.GT16726@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:64744 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750713Ab2AXLcU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jan 2012 06:32:20 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20120124112745.GT16726@n2100.arm.linux.org.uk>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: myungjoo.ham@smasung.com
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, rnayak@ti.com, m.szyprowski@samsung.com, s.nawrocki@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-max8997-pmic instantiated from device tree uses names, not numerical
-ids to distinguish between outputs.
+On Tue, Jan 24, 2012 at 11:27:45AM +0000, Russell King - ARM Linux wrote:
+> On Tue, Jan 24, 2012 at 10:56:45AM +0000, Will Deacon wrote:
+> > I took a look at your amba branch, but all I can see in there is:
+> > 
+> > 6cfa627 ARM: 7079/1: spi: Fix builderror in spi-pl022.c
+> > 1c3be36 PM: add runtime PM support to MMCI
+> > 92b97f0 PM: add runtime PM support to core Primecell driver
+> > 
+> > which don't seem to touch Versatile or Realview. Am I looking in the wrong
+> > place?
+> 
+> Erm, I don't think you're looking at the right branch - especially as
+> all the commits start "ARM: amba:".  They were sent out to the mailing
+> list on 20th Jan as a set of 31 patches (latest first):
 
-Replace spaces with underscores in said names to make it possible to
-describe these outputs as regulators in DTS.
+[...]
 
-Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
----
- drivers/regulator/max8997.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Indeed, the amba branch I was looking at no longer exists on your server and
+a git prune removed it. I'll take a look at the guys in devel-3.3 instead.
 
-diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.c
-index 053d0b7..4b572eb 100644
---- a/drivers/regulator/max8997.c
-+++ b/drivers/regulator/max8997.c
-@@ -910,13 +910,13 @@ static struct regulator_desc regulators[] = {
- 	},
- 	regulator_desc_buck(7),
- 	{
--		.name	= "EN32KHz AP",
-+		.name	= "EN32KHz_AP",
- 		.id	= MAX8997_EN32KHZ_AP,
- 		.ops	= &max8997_fixedvolt_ops,
- 		.type	= REGULATOR_VOLTAGE,
- 		.owner	= THIS_MODULE,
- 	}, {
--		.name	= "EN32KHz CP",
-+		.name	= "EN32KHz_CP",
- 		.id	= MAX8997_EN32KHZ_CP,
- 		.ops	= &max8997_fixedvolt_ops,
- 		.type	= REGULATOR_VOLTAGE,
-@@ -940,7 +940,7 @@ static struct regulator_desc regulators[] = {
- 		.type	= REGULATOR_VOLTAGE,
- 		.owner	 = THIS_MODULE,
- 	}, {
--		.name	= "CHARGER CV",
-+		.name	= "CHARGER_CV",
- 		.id	= MAX8997_CHARGER_CV,
- 		.ops	= &max8997_fixedstate_ops,
- 		.type	= REGULATOR_VOLTAGE,
-@@ -952,7 +952,7 @@ static struct regulator_desc regulators[] = {
- 		.type	= REGULATOR_CURRENT,
- 		.owner	 = THIS_MODULE,
- 	}, {
--		.name	= "CHARGER TOPOFF",
-+		.name	= "CHARGER_TOPOFF",
- 		.id	= MAX8997_CHARGER_TOPOFF,
- 		.ops	= &max8997_charger_fixedstate_ops,
- 		.type	= REGULATOR_CURRENT,
--- 
-1.7.8.3
+Thanks,
+
+Will
