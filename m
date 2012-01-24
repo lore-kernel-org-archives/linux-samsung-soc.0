@@ -1,41 +1,69 @@
-From: Will Deacon <will.deacon@arm.com>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Tue, 24 Jan 2012 11:45:43 +0000
-Message-ID: <20120124114543.GG19798@mudshark.cambridge.arm.com>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
- <20120124095009.GS16726@n2100.arm.linux.org.uk>
- <20120124105645.GE19798@mudshark.cambridge.arm.com>
- <20120124112745.GT16726@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: Exynos4: fix non-SMP builds
+Date: Tue, 24 Jan 2012 21:41:20 +0900
+Message-ID: <02f201ccda95$796e8450$6c4b8cf0$%kim@samsung.com>
+References: <1327311688-5856-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120124112745.GT16726@n2100.arm.linux.org.uk>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>, "davinci-linux-open-source@linux.davincidsp.com" <davinci-linux-open-source@linux.davincidsp.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Catalin Marinas <Catalin.Marinas@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:36776 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753247Ab2AXMl0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 24 Jan 2012 07:41:26 -0500
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LYA00AJYZ8T2G40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jan 2012 21:41:24 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYA00K6YZ8WHXB0@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 24 Jan 2012 21:41:22 +0900 (KST)
+In-reply-to: <1327311688-5856-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Tue, Jan 24, 2012 at 11:27:45AM +0000, Russell King - ARM Linux wrote:
-> On Tue, Jan 24, 2012 at 10:56:45AM +0000, Will Deacon wrote:
-> > I took a look at your amba branch, but all I can see in there is:
-> > 
-> > 6cfa627 ARM: 7079/1: spi: Fix builderror in spi-pl022.c
-> > 1c3be36 PM: add runtime PM support to MMCI
-> > 92b97f0 PM: add runtime PM support to core Primecell driver
-> > 
-> > which don't seem to touch Versatile or Realview. Am I looking in the wrong
-> > place?
+Marek Szyprowski wrote:
 > 
-> Erm, I don't think you're looking at the right branch - especially as
-> all the commits start "ARM: amba:".  They were sent out to the mailing
-> list on 20th Jan as a set of 31 patches (latest first):
+> This patch fixes the following build issue, which happens only if SMP
+> has been disabled:
+> 
+> arch/arm/mach-exynos/built-in.o: In function `exynos4_pm_resume':
+> arch/arm/mach-exynos/pm.c:387: undefined reference to `scu_enable'
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c |    2 ++
+>  1 files changed, 2 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 9a13af5..7a737c6 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -388,7 +388,9 @@ static void exynos4_pm_resume(void)
+> 
+>  	exynos4_restore_pll();
+> 
+> +#ifdef CONFIG_SMP
+>  	scu_enable(S5P_VA_SCU);
+> +#endif
+> 
+>  #ifdef CONFIG_CACHE_L2X0
+>  	s3c_pm_do_restore_core(exynos4_l2cc_save, ARRAY_SIZE(exynos4_l2cc_save));
+> --
+> 1.7.1.569.g6f426
 
-[...]
+OK, will apply.
+Thanks.
 
-Indeed, the amba branch I was looking at no longer exists on your server and
-a git prune removed it. I'll take a look at the guys in devel-3.3 instead.
-
-Thanks,
-
-Will
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
