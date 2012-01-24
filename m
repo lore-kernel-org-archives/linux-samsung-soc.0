@@ -1,42 +1,34 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: S3C64XX: Use IN4 DC measurement mode on Tobermory
-Date: Tue, 24 Jan 2012 21:19:24 +0000
-Message-ID: <1327439964-28533-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@stericsson.com>
+Subject: Re: [PATCH 21/31] ARM: amba: realview: get rid of private platform
+ amba_device initializer
+Date: Tue, 24 Jan 2012 22:23:11 +0100
+Message-ID: <4F1F213F.9070106@stericsson.com>
+References: <20120120092207.GD1068@n2100.arm.linux.org.uk> <E1RoAmo-0005Ff-DW@rmk-PC.arm.linux.org.uk> <20120124160044.GM19798@mudshark.cambridge.arm.com> <20120124162328.GA8517@n2100.arm.linux.org.uk> <20120124172600.GO19798@mudshark.cambridge.arm.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53181 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755844Ab2AXVT1 (ORCPT
+Received: from eu1sys200aog111.obsmtp.com ([207.126.144.131]:39355 "EHLO
+	eu1sys200aog111.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756653Ab2AXVXk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jan 2012 16:19:27 -0500
+	Tue, 24 Jan 2012 16:23:40 -0500
+In-Reply-To: <20120124172600.GO19798@mudshark.cambridge.arm.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Will Deacon <will.deacon@arm.com>
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, STEricsson_nomadik_linux <STEricsson_nomadik_linux@list.st.com>
 
-The WM8962 on Tobermory has one of the IN4 inputs connected for DC
-measurement. Tell the driver it can optimise for this mode.
+On 01/24/2012 06:26 PM, Will Deacon wrote:
+>
+> Right. I took a quick look at the TRM for the PB1176, and I think we do have
+> an interrupt for GPIO0, it's just on the other GIC. This patch should do the
+> trick, but I'm not sure what I can do to tickle the GPIO stuff anyway:
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
+For a simple test just insert/remove the MMC card and see it
+add/remove the card (appear in console, and /proc/interrupts)
 
-This feature is going to be merged via ASoC in 3.4 - is it OK if I apply
-this patch to the ASoC tree too?  It's a one liner, I'd be astonished if
-it were to generate any conflicts.
+Or do you mean tickle GPIO0? That is more tricky I think...
 
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-index 509307d..317f866 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
-@@ -128,6 +128,7 @@ static struct wm8962_pdata wm8962_pdata __initdata = {
- 		0x8000 | WM8962_GPIO_FN_DMICDAT,
- 		WM8962_GPIO_FN_IRQ,    /* Open drain mode */
- 	},
-+	.in4_dc_measure = true,
- };
- 
- static struct wm9081_pdata wm9081_pdata __initdata = {
--- 
-1.7.9.rc1
+Yours,
+Linus Walleij
