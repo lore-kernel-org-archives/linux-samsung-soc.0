@@ -1,70 +1,53 @@
-From: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 3/3] S3C2443: add power domain for usb phy
-Date: Tue, 24 Jan 2012 11:38:32 +0200
-Message-ID: <20120124093831.GT27414@legolas.emea.dhcp.ti.com>
-References: <201201082156.44142.heiko@sntech.de>
- <201201082159.02368.heiko@sntech.de>
-Reply-To: balbi-l0cyMroinI0@public.gmane.org
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
+Date: Tue, 24 Jan 2012 09:50:09 +0000
+Message-ID: <20120124095009.GS16726@n2100.arm.linux.org.uk>
+References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7Ha3rcGc4ZVRbLT1"
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-omap-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <201201082159.02368.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, Linux USB Mailing List <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <20120123114902.GY1068@n2100.arm.linux.org.uk>
+Sender: linux-omap-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-tegra@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Mon, Jan 23, 2012 at 11:49:02AM +0000, Russell King - ARM Linux wrote:
+> This is an outline of the plan for this cycle, up to the next merge
+> window, agreed between Olof and myself.
+> 
+> As Nicolas' idle changes weren't merged before the last merge window
+> opened, we have decided that Nicolas will resubmit his changes after
+> -rc1 (in other words, now) and they will be merged into both the
+> arm-soc and my trees.
+> 
+> I have at least one other patch which has a high 'will cause horrible
+> conficts' rating (the debug option rearrangement patch), so I'll be
+> including that for the arm-soc tree as well.
+> 
+> However, what this does mean is that Arnd, Olof, and myself will be
+> in for up to three months of merge hell unless people take account of
+> these changes.
+> 
+> Therefore, our plan is to publish this as a baseline, and we'd really
+> appreciate any development submitted after that baseline has been
+> established is based upon those changes and does not conflict with
+> them.  That may mean you have to pull these changes into your tree
+> and merge them into your development work (and fix up any conflicts
+> there yourself.)
+> 
+> Once you've taken these changes into your tree, you must not rebase or
+> modify them.  Changing those commits will cause all hell to break loose,
+> and we'll have to refuse merging your tree (otherwise we'll be in Linus'
+> sights for a roasting at gas mark 2 million.)
 
---7Ha3rcGc4ZVRbLT1
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Right, although it's out there - but I'd like to get the AMBA changes
+into it which are already conflicting the Samsung development.  So I'm
+going to hold off officially asking for people to include the baseline
+until this evening.  At that point, I will shut down my 'amba' branch
+and transfer that over; that means I won't be accepting any further
+acks etc for that work.
 
-Hi,
-
-On Sun, Jan 08, 2012 at 09:59:02PM +0100, Heiko St=FCbner wrote:
-> The phy-power-handling is common to S3C2443/2416/2450, so introduce a
-> s3c2443-pm-common.c to handle this for all of them.
->=20
-> This makes it possible to remove the raw write to the PWRCFG-register
-> from the s3c-hsudc driver.
->=20
-> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-
-I believe this doesn't really depend on previous patches (??) In that
-case, it can be carried with s3c's tree:
-
-Acked-by: Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
-
---=20
-balbi
-
---7Ha3rcGc4ZVRbLT1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPHnwXAAoJEIaOsuA1yqREWcwQAKXMOzKpoXOQFhUGt3kpwvBU
-60DGk//WF1Kk0XQJXut/Z8IUiNy5ONrxhNtZmKkXzEFxt8q6Rg+PqdUmMX7DyjFA
-tFyP8S/OxNOWcXmTfwPDisiK8iQ/pSt4ejA+Ac89zshFbxhv2W1xMrL5F2/Ys9eB
-woFFVZIyLi7B3Tb2Q0iDUmzDg4FwpeguSC+P8AR4qHV1zvr5C6KMuUjjVAYgpYTB
-k1GLGGYDOOzMOrgos+YdS9rkj53CgmKfmdtOYJ5H29n+7knCVVID680KZIrNOYj5
-E55X97ou1B1mGSB5N+wLVPN9TwBMGOEVn5Hp4JSE/Tpoxk/eN5ysfAhBdEqR+SSn
-37tfJzt0EgZgTUAeHtcffqA2Pebfdz+OUSXCd5MkYnWenKwYwlJsxp4TpnsrFuRv
-Y2Akz0Uekc8ivU3JVT50gFUIE+vFdihcHoakTCL0rT7/jVoNTXyzP8SauqGgWp/u
-l6mSgHyQqVAZZdXs2JUeLivYybpZ5B0LF32HOHNJ0yNlpOY+mgeQSdAKLhjAY2PC
-h4kxCxIgRb77qzjAYijuRg1ksz7gY02kz/rG6WW9qZnfo/5axv13zHCLx3fqhVkh
-PQqloqEP7PPAqtsqNd6X5lobDxstyKxnakj7GbkS0LPnmfisbAXUU6MGSk8V7K5M
-4M9oaqqUwpmwSkjfuOkq
-=PdMT
------END PGP SIGNATURE-----
-
---7Ha3rcGc4ZVRbLT1--
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+If you haven't acked changes in the amba branch (eg, to Versatile,
+Realview etc) then it'll soon be too late...
