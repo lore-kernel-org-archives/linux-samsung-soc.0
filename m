@@ -1,72 +1,171 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
-Date: Wed, 25 Jan 2012 13:02:29 +0100
-Message-ID: <4F1FEF55.8030604@samsung.com>
-References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
- <1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
- <4F1FD1A5.1060305@samsung.com>
- <20120125112602.GB2991@opensource.wolfsonmicro.com>
+From: Hiroshi Doyu <hdoyu@nvidia.com>
+Subject: Re: [PATCH 8/8] ARM: dma-mapping: add support for IOMMU mapper
+Date: Wed, 25 Jan 2012 14:47:27 +0200
+Message-ID: <20120125144727.2722b4a1fb8017dd3633d7ad@nvidia.com>
+References: <1323448798-18184-1-git-send-email-m.szyprowski@samsung.com>
+	<1323448798-18184-9-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:64059 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751889Ab2AYMC3 (ORCPT
+Received: from hqemgate04.nvidia.com ([216.228.121.35]:4054 "EHLO
+	hqemgate04.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751575Ab2AYMre (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jan 2012 07:02:29 -0500
-In-reply-to: <20120125112602.GB2991@opensource.wolfsonmicro.com>
+	Wed, 25 Jan 2012 07:47:34 -0500
+In-Reply-To: <1323448798-18184-9-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>, Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, Shariq Hasnain <shariq.hasnain@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Krishna Reddy <vdumpa@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, KyongHo Cho <pullip.cho@samsung.com>, Chunsang Jeong <chunsang.jeong@linaro.org>
 
-On 25.01.2012 12:26, Mark Brown wrote:
-> On Wed, Jan 25, 2012 at 10:55:49AM +0100, Karol Lewandowski wrote:
->> On 12.01.2012 08:35, Thomas Abraham wrote:
->>> Add device tree based discovery support for max8997.
->>
->>> +	pdata->regulators = rdata;
->>> +	for_each_child_of_node(regulators_np, reg_np) {
->>> +		for (i = 0; i<   ARRAY_SIZE(regulators); i++)
->>> +			if (!of_node_cmp(reg_np->name, regulators[i].name))
->>> +				break;
->>> +		rdata->id = i;
->>> +		rdata->initdata = of_get_regulator_init_data(
->>> +						iodev->dev, reg_np);
+Hi Marek,
+
+On Fri, 9 Dec 2011 17:39:58 +0100
+Marek Szyprowski <m.szyprowski@samsung.com> wrote:
+
+> This patch add a complete implementation of DMA-mapping API for
+> devices that have IOMMU support. All DMA-mapping calls are supported.
 >
->> One more thing - of_get_regulator_init_data() will set apply_uV to 1
->> so we need to reset it for BUCK6, which doesn't provide
->> set_voltage() ops, like:
+> This patch contains some of the code kindly provided by Krishna Reddy
+> <vdumpa@nvidia.com> and Andrzej Pietrasiewicz <andrzej.p@samsung.com>
 >
->> 	if (rdata->initdata&&  regulators[i].id == MAX8997_BUCK6)
->> 		rdata->initdata->constraints.apply_uV = 0;
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 >
-> So, over in the other thready you were referring to mailing list posts
-> you made in the past few moments as examples of past issues.  Please at
-> least mention that there hasn't been any actual discussion when doing
-> this...
+> Add initial proof of concept implementation of DMA-mapping API for
+> devices that have IOMMU support. Right now only dma_alloc_coherent,
+> dma_free_coherent and dma_mmap_coherent functions are supported.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/Kconfig                 |    8 +
+>  arch/arm/include/asm/device.h    |    3 +
+>  arch/arm/include/asm/dma-iommu.h |   36 +++
+>  arch/arm/mm/dma-mapping.c        |  637 +++++++++++++++++++++++++++++++++++++-
+>  arch/arm/mm/vmregion.h           |    2 +-
+>  5 files changed, 671 insertions(+), 15 deletions(-)
+>  create mode 100644 arch/arm/include/asm/dma-iommu.h
+>
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 8827c9b..87416fc 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -42,6 +42,14 @@ config ARM
+>  config ARM_HAS_SG_CHAIN
+>         bool
+>
+> +config NEED_SG_DMA_LENGTH
+> +       bool
+> +
+> +config ARM_DMA_USE_IOMMU
+> +       select NEED_SG_DMA_LENGTH
+> +       select ARM_HAS_SG_CHAIN
+> +       bool
+> +
+>  config HAVE_PWM
+>         bool
+>
+> diff --git a/arch/arm/include/asm/device.h b/arch/arm/include/asm/device.h
+> index 6e2cb0e..b69c0d3 100644
+> --- a/arch/arm/include/asm/device.h
+> +++ b/arch/arm/include/asm/device.h
+> @@ -14,6 +14,9 @@ struct dev_archdata {
+>  #ifdef CONFIG_IOMMU_API
+>         void *iommu; /* private IOMMU data */
+>  #endif
+> +#ifdef CONFIG_ARM_DMA_USE_IOMMU
+> +       struct dma_iommu_mapping        *mapping;
+> +#endif
+>  };
+>
+>  struct omap_device;
+> diff --git a/arch/arm/include/asm/dma-iommu.h b/arch/arm/include/asm/dma-iommu.h
+> new file mode 100644
+> index 0000000..6668b41
+> --- /dev/null
+> +++ b/arch/arm/include/asm/dma-iommu.h
+> @@ -0,0 +1,36 @@
+> +#ifndef ASMARM_DMA_IOMMU_H
+> +#define ASMARM_DMA_IOMMU_H
+> +
+> +#ifdef __KERNEL__
+> +
+> +#include <linux/mm_types.h>
+> +#include <linux/scatterlist.h>
+> +#include <linux/dma-debug.h>
+> +#include <linux/kmemcheck.h>
+> +
+> +#include <asm/memory.h>
+> +
+> +struct dma_iommu_mapping {
+> +       /* iommu specific data */
+> +       struct iommu_domain     *domain;
+> +
+> +       void                    *bitmap;
+> +       size_t                  bits;
+> +       unsigned int            order;
+> +       dma_addr_t              base;
+> +
+> +       spinlock_t              lock;
+> +       struct kref             kref;
+> +};
+> +
+> +struct dma_iommu_mapping *
+> +arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
+> +                        int order);
+> +
+> +void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping);
+> +
+> +int arm_iommu_attach_device(struct device *dev,
+> +                                       struct dma_iommu_mapping *mapping);
+> +
+> +#endif /* __KERNEL__ */
+> +#endif
+> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+> index 4845c09..7ac5a95 100644
+> --- a/arch/arm/mm/dma-mapping.c
+> +++ b/arch/arm/mm/dma-mapping.c
+> @@ -27,6 +27,9 @@
+>  #include <asm/sizes.h>
+>  #include <asm/mach/arch.h>
+>
+> +#include <linux/iommu.h>
+> +#include <asm/dma-iommu.h>
+> +
+>  #include "mm.h"
+>
+>  /*
+.....
+> +
+> +static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
+> +               size_t size, enum dma_data_direction dir,
+> +               struct dma_attrs *attrs)
+> +{
+> +       struct dma_iommu_mapping *mapping = dev->archdata.mapping;
+> +       dma_addr_t iova = handle & PAGE_MASK;
+> +       struct page *page = phys_to_page(iommu_iova_to_phys(mapping->domain, iova));
+> +       int offset = handle & ~PAGE_MASK;
+> +
+> +       if (!iova)
+> +               return;
+> +
+> +       if (!arch_is_coherent())
+> +               __dma_page_dev_to_cpu(page, offset, size, dir);
+> +
+> +       iommu_unmap(mapping->domain, iova, size);
 
-Sorry if this caused confusion.  I'll be more cautious next time.
+Is __free_iova() needed here as below?
 
-> I don't see a problem here, if the device can't set the voltage then
-> setting constraints to allow the voltage to be changed is silly and the
-> user just shouldn't do that.
+	Modified arch/arm/mm/dma-mapping.c
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index 9aa1675..66830b2 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1212,6 +1212,7 @@ static void arm_iommu_unmap_page(struct device *dev, dma_addr_t handle,
+		__dma_page_dev_to_cpu(page, offset, size, dir);
 
-Agreed.  I've assumed that old platform code done right thing when it 
-set buck6 voltage constraints [1].
-
-However, I still find it little problematic that dt and non-dt versions 
-behave differently when given the same set of parameters (previously 
-apply_uV wasn't the default and required explicit flag).
-
-
-Thomas, would you mind adding small note to pmic's bindings 
-documentation stating that Buck6 is basically on/off switch? (Thus, no 
-voltage should nor can be specified).
-
-[1] http://lxr.linux.no/linux+v3.2.1/arch/arm/mach-exynos/mach-nuri.c#L802
-
-Regards,
--- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+	iommu_unmap(mapping->domain, iova, size);
++       __free_iova(mapping, iova, size);
+ }
