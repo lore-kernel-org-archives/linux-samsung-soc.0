@@ -1,60 +1,43 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 21/31] ARM: amba: realview: get rid of private platform
-	amba_device initializer
-Date: Tue, 24 Jan 2012 21:45:31 +0000
-Message-ID: <20120124214531.GB8517@n2100.arm.linux.org.uk>
-References: <20120120092207.GD1068@n2100.arm.linux.org.uk> <E1RoAmo-0005Ff-DW@rmk-PC.arm.linux.org.uk> <20120124160044.GM19798@mudshark.cambridge.arm.com> <20120124162328.GA8517@n2100.arm.linux.org.uk> <20120124172600.GO19798@mudshark.cambridge.arm.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] EXYNOS: Initialize locking_frequency with initial frequency
+Date: Wed, 25 Jan 2012 10:15:13 +0530
+Message-ID: <1327466713-29101-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20120124172600.GO19798@mudshark.cambridge.arm.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, STEricsson <STEricsson_nomadik_linux@list.st.com>
+Return-path: <cpufreq-owner@vger.kernel.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davej@redhat.com, jc.lee@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tue, Jan 24, 2012 at 05:26:00PM +0000, Will Deacon wrote:
-> Right. I took a quick look at the TRM for the PB1176, and I think we do have
-> an interrupt for GPIO0, it's just on the other GIC. This patch should do the
-> trick, but I'm not sure what I can do to tickle the GPIO stuff anyway:
-> 
-> 
-> diff --git a/arch/arm/mach-realview/include/mach/irqs-pb1176.h b/arch/arm/mach-realview/include/mach/irqs-pb1176.h
-> index 5c3c625..708f841 100644
-> --- a/arch/arm/mach-realview/include/mach/irqs-pb1176.h
-> +++ b/arch/arm/mach-realview/include/mach/irqs-pb1176.h
-> @@ -40,6 +40,7 @@
->  #define IRQ_DC1176_L2CC                (IRQ_DC1176_GIC_START + 13)
->  #define IRQ_DC1176_RTC         (IRQ_DC1176_GIC_START + 14)
->  #define IRQ_DC1176_CLCD                (IRQ_DC1176_GIC_START + 15)     /* CLCD controller */
-> +#define IRQ_DC1176_GPIO0       (IRQ_DC1176_GIC_START + 16)
->  #define IRQ_DC1176_SSP         (IRQ_DC1176_GIC_START + 17)     /* SSP port */
->  #define IRQ_DC1176_UART0       (IRQ_DC1176_GIC_START + 18)     /* UART 0 on development chip */
->  #define IRQ_DC1176_UART1       (IRQ_DC1176_GIC_START + 19)     /* UART 1 on development chip */
-> @@ -73,7 +74,6 @@
->  #define IRQ_PB1176_DMAC                (IRQ_PB1176_GIC_START + 24)     /* DMA controller */
->  #define IRQ_PB1176_RTC         (IRQ_PB1176_GIC_START + 25)     /* Real Time Clock */
->  
-> -#define IRQ_PB1176_GPIO0       -1
->  #define IRQ_PB1176_SCTL                -1
->  
->  #define NR_GIC_PB1176          2
-> diff --git a/arch/arm/mach-realview/realview_pb1176.c b/arch/arm/mach-realview/realview_pb1176.c
-> index 1b6e60c..b1d7caf 100644
-> --- a/arch/arm/mach-realview/realview_pb1176.c
-> +++ b/arch/arm/mach-realview/realview_pb1176.c
-> @@ -143,7 +143,7 @@ static struct pl022_ssp_controller ssp0_plat_data = {
->  #define PB1176_CLCD_IRQ        { IRQ_DC1176_CLCD }
->  #define SCTL_IRQ       { }
->  #define PB1176_WATCHDOG_IRQ    { IRQ_DC1176_WATCHDOG }
-> -#define PB1176_GPIO0_IRQ       { IRQ_PB1176_GPIO0 }
-> +#define PB1176_GPIO0_IRQ       { IRQ_DC1176_GPIO0 }
->  #define GPIO1_IRQ      { IRQ_PB1176_GPIO1 }
->  #define PB1176_RTC_IRQ { IRQ_DC1176_RTC }
->  #define SCI_IRQ                { IRQ_PB1176_SCI }
+As per definition, locking_frequency is the initial frequency which is
+set by boot-loader. Hence the value is updated with the initial value
+during boot time init call.
 
-I guess we should believe the TRM on this - can you put this in the patch
-system please?
+This code was present in exynos210-cpufreq.c before this consolidation
+patch.
+- a125a17fa61a ([CPUFREQ] EXYNOS: Make EXYNOS common cpufreq driver).
 
-Thanks.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+The patch is based on v3.3-rc1.
+
+ drivers/cpufreq/exynos-cpufreq.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
+
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+index 5467879..7cfb516 100644
+--- a/drivers/cpufreq/exynos-cpufreq.c
++++ b/drivers/cpufreq/exynos-cpufreq.c
+@@ -210,6 +210,8 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 
+ 	cpufreq_frequency_table_get_attr(exynos_info->freq_table, policy->cpu);
+ 
++	locking_frequency = exynos_getspeed(0);
++
+ 	/* set the transition latency value */
+ 	policy->cpuinfo.transition_latency = 100000;
+ 
+-- 
+1.7.4.1
+
