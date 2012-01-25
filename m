@@ -1,124 +1,69 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 8/8 RESEND] ARM: dma-mapping: add support for IOMMU
-	mapper
-Date: Wed, 25 Jan 2012 12:59:16 +0000
-Message-ID: <20120125125916.GE1068@n2100.arm.linux.org.uk>
-References: <1323448798-18184-9-git-send-email-m.szyprowski@samsung.com> <1326124161-2220-1-git-send-email-m.szyprowski@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
+Date: Wed, 25 Jan 2012 13:32:54 +0000
+Message-ID: <20120125133254.GJ3687@opensource.wolfsonmicro.com>
+References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
+ <1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
+ <4F1FD1A5.1060305@samsung.com>
+ <20120125112602.GB2991@opensource.wolfsonmicro.com>
+ <4F1FEF55.8030604@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="7AwgMNpd3VkAVXjS"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40915 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752664Ab2AYNc5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jan 2012 08:32:57 -0500
 Content-Disposition: inline
-In-Reply-To: <1326124161-2220-1-git-send-email-m.szyprowski@samsung.com>
-Sender: owner-linux-mm@kvack.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, Shariq Hasnain <shariq.hasnain@linaro.org>, Chunsang Jeong <chunsang.jeong@linaro.org>, Krishna Reddy <vdumpa@nvidia.com>, KyongHo Cho <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
+In-Reply-To: <4F1FEF55.8030604@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
 
-On Mon, Jan 09, 2012 at 04:49:21PM +0100, Marek Szyprowski wrote:
-> This patch add a complete implementation of DMA-mapping API for
-> devices that have IOMMU support. All DMA-mapping calls are supported.
-> 
-> This patch contains some of the code kindly provided by Krishna Reddy
-> <vdumpa@nvidia.com> and Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> ---
-> 
-> Hello,
-> 
-> This is the corrected version of the previous patch from the "[PATCH 0/8
-> v4] ARM: DMA-mapping framework redesign" thread which can be found here:
-> http://www.spinics.net/lists/linux-mm/msg27382.html
-> 
-> Previous version had very nasty bug which causes memory trashing if
-> DMA-mapping managed to allocate pages larger than 4KiB. The problem was
-> in __iommu_alloc_buffer() function which did not check how many pages
-> has been left to allocate.
 
-This patch seems to be incomplete.
+--7AwgMNpd3VkAVXjS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If the standard DMA API is used (the one which exists in current kernels)
-and NEED_SG_DMA_LENGTH is enabled, then where do we set the DMA length
-in the scatterlist?
+On Wed, Jan 25, 2012 at 01:02:29PM +0100, Karol Lewandowski wrote:
+> On 25.01.2012 12:26, Mark Brown wrote:
 
-> diff --git a/arch/arm/include/asm/dma-iommu.h b/arch/arm/include/asm/dma-iommu.h
-> new file mode 100644
-> index 0000000..6668b41
-> --- /dev/null
-> +++ b/arch/arm/include/asm/dma-iommu.h
-> @@ -0,0 +1,36 @@
-> +#ifndef ASMARM_DMA_IOMMU_H
-> +#define ASMARM_DMA_IOMMU_H
-> +
-> +#ifdef __KERNEL__
-> +
-> +#include <linux/mm_types.h>
-> +#include <linux/scatterlist.h>
-> +#include <linux/dma-debug.h>
-> +#include <linux/kmemcheck.h>
-> +
-> +#include <asm/memory.h>
+> However, I still find it little problematic that dt and non-dt
+> versions behave differently when given the same set of parameters
+> (previously apply_uV wasn't the default and required explicit flag).
 
-I can't see anything in here which needs asm/memory.h - if files which
-include this need it, please include it in there so we can see why it's
-needed.
+Well, they're different things.  Device tree isn't Linux specific at
+all.
 
-> +
-> +struct dma_iommu_mapping {
-> +	/* iommu specific data */
-> +	struct iommu_domain	*domain;
-> +
-> +	void			*bitmap;
-> +	size_t			bits;
-> +	unsigned int		order;
-> +	dma_addr_t		base;
-> +
-> +	spinlock_t		lock;
-> +	struct kref		kref;
-> +};
-> +
-> +struct dma_iommu_mapping *
-> +arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
-> +			 int order);
-> +
-> +void arm_iommu_release_mapping(struct dma_iommu_mapping *mapping);
-> +
-> +int arm_iommu_attach_device(struct device *dev,
-> +					struct dma_iommu_mapping *mapping);
-> +
-> +#endif /* __KERNEL__ */
-> +#endif
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 4845c09..2287b01 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -27,6 +27,9 @@
->  #include <asm/sizes.h>
->  #include <asm/mach/arch.h>
->  
-> +#include <linux/iommu.h>
+> Thomas, would you mind adding small note to pmic's bindings
+> documentation stating that Buck6 is basically on/off switch? (Thus,
+> no voltage should nor can be specified).
 
-linux/ includes should be grouped together.
+At some point you end up copying the entire datasheet in there...
 
-> diff --git a/arch/arm/mm/vmregion.h b/arch/arm/mm/vmregion.h
-> index 15e9f04..6bbc402 100644
-> --- a/arch/arm/mm/vmregion.h
-> +++ b/arch/arm/mm/vmregion.h
-> @@ -17,7 +17,7 @@ struct arm_vmregion {
->  	struct list_head	vm_list;
->  	unsigned long		vm_start;
->  	unsigned long		vm_end;
-> -	struct page		*vm_pages;
-> +	void			*priv;
+--7AwgMNpd3VkAVXjS
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-I want to think about that - I may wish to export the vm_pages via
-the new dma-mappings file to provide additional information.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+iQIcBAEBAgAGBQJPIASAAAoJEBus8iNuMP3duZIQAIj4npNcHRTsEkmDHvqVnblH
+9A7kYgnjVQM7o1mf6sbTIIvS21HnT8tFKhFFf+SHB80rSmyPOluLhfnRx3BzYHgF
+cSPLn9+4ePlhhDBHpWlhIiawkPR0g1SFveZKb8Qcxvap7W2MpKn2ngoCksrMvaSd
+IYRZXcI2Zk6B9BbXFPFYYbUkCESEzdOLWA45RO72zvyUr1TLXO/9Dpx8x70Z9dUG
+9+GdjmFsVqs2NkXAHfS/RN91xR38mYdXR9yhY66xYP+mRGjOb0uWai2PZBGYR6xv
+7d86fDLkgTFcz+ZowEKsrDdJKcLbgYeqkiYjZhGHOfJnZ3w9+0Xfku4ydsm5J9In
+HasRPGUGYT8GM59WfjKjarrYSyqD7BwnadfPs5aQkMIB8ODer0n+9VauP8d7ui6e
++DHLP7swB2hctxxWKn61t2rdde5HayIuEBjGO0qBFs3WDTPP6KfLuQf+G4equNXE
+BEDSuclI0aQYmuSNZy4m618vfZkgx7Hjmsiup4esqxPXXaXTCE2nX2TssSh2qxT2
+J7YiHDXYYKeX9ln9xTGRvupCbiCcaRSnLZbYt1PHT2cVb9fFX72WkSpA/TKUrpAG
+887aniqXpwkgv7U9FDcYFNGX5+V5h7QvW5fpdFBiSiPn7vjml0nm6vhX/KIeLo6i
+ZGcbm6A/HYkCwK9I6RRx
+=ErFS
+-----END PGP SIGNATURE-----
+
+--7AwgMNpd3VkAVXjS--
