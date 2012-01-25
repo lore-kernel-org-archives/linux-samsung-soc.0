@@ -1,69 +1,48 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
-Date: Wed, 25 Jan 2012 13:32:54 +0000
-Message-ID: <20120125133254.GJ3687@opensource.wolfsonmicro.com>
-References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
- <1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
- <4F1FD1A5.1060305@samsung.com>
- <20120125112602.GB2991@opensource.wolfsonmicro.com>
- <4F1FEF55.8030604@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 0/6] ARM: SAMSUNG: Board updates and minor fixes
+Date: Wed, 25 Jan 2012 15:23:21 +0100
+Message-ID: <1327501407-1927-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7AwgMNpd3VkAVXjS"
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40915 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752664Ab2AYNc5 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:62684 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751029Ab2AYOXx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jan 2012 08:32:57 -0500
-Content-Disposition: inline
-In-Reply-To: <4F1FEF55.8030604@samsung.com>
+	Wed, 25 Jan 2012 09:23:53 -0500
+Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LYC00A3SYNQG9@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jan 2012 14:23:51 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LYC0038PYNQDN@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jan 2012 14:23:50 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
+To: kgene.kim@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+The following patch series adds S5K6AAFX sensor support on Nuri and 
+UNIVERSAL_C210 boards. It also includes minor correction for the I2C
+controller setup and the M-5MOLS sensor. 
 
 
---7AwgMNpd3VkAVXjS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Sylwester Nawrocki (6):
+  ARM: SAMSUNG: Increase virtual framebuffer size on Universal C210 board
+  ARM: SAMSUNG: Add support for S5K6AAFX image sensor on Universal C210 board
+  ARM: SAMSUNG: Add support for S5K6AAFX camera on Nuri board
+  ARM: SAMSUNG: Correct framebuffer window size on Nuri board
+  ARM: SAMSUNG: Correct M-5MOLS sensor clock frequency on Nuri board
+  ARM: SAMSUNG: Fix platform data setup for I2C adapter 0
 
-On Wed, Jan 25, 2012 at 01:02:29PM +0100, Karol Lewandowski wrote:
-> On 25.01.2012 12:26, Mark Brown wrote:
+ arch/arm/mach-exynos/Kconfig               |    2 +
+ arch/arm/mach-exynos/mach-nuri.c           |   73 ++++++++++++++++++++++++--
+ arch/arm/mach-exynos/mach-universal_c210.c |   78 ++++++++++++++++++++++++++--
+ arch/arm/plat-samsung/devs.c               |    4 +-
+ 4 files changed, 147 insertions(+), 10 deletions(-)
 
-> However, I still find it little problematic that dt and non-dt
-> versions behave differently when given the same set of parameters
-> (previously apply_uV wasn't the default and required explicit flag).
-
-Well, they're different things.  Device tree isn't Linux specific at
-all.
-
-> Thomas, would you mind adding small note to pmic's bindings
-> documentation stating that Buck6 is basically on/off switch? (Thus,
-> no voltage should nor can be specified).
-
-At some point you end up copying the entire datasheet in there...
-
---7AwgMNpd3VkAVXjS
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPIASAAAoJEBus8iNuMP3duZIQAIj4npNcHRTsEkmDHvqVnblH
-9A7kYgnjVQM7o1mf6sbTIIvS21HnT8tFKhFFf+SHB80rSmyPOluLhfnRx3BzYHgF
-cSPLn9+4ePlhhDBHpWlhIiawkPR0g1SFveZKb8Qcxvap7W2MpKn2ngoCksrMvaSd
-IYRZXcI2Zk6B9BbXFPFYYbUkCESEzdOLWA45RO72zvyUr1TLXO/9Dpx8x70Z9dUG
-9+GdjmFsVqs2NkXAHfS/RN91xR38mYdXR9yhY66xYP+mRGjOb0uWai2PZBGYR6xv
-7d86fDLkgTFcz+ZowEKsrDdJKcLbgYeqkiYjZhGHOfJnZ3w9+0Xfku4ydsm5J9In
-HasRPGUGYT8GM59WfjKjarrYSyqD7BwnadfPs5aQkMIB8ODer0n+9VauP8d7ui6e
-+DHLP7swB2hctxxWKn61t2rdde5HayIuEBjGO0qBFs3WDTPP6KfLuQf+G4equNXE
-BEDSuclI0aQYmuSNZy4m618vfZkgx7Hjmsiup4esqxPXXaXTCE2nX2TssSh2qxT2
-J7YiHDXYYKeX9ln9xTGRvupCbiCcaRSnLZbYt1PHT2cVb9fFX72WkSpA/TKUrpAG
-887aniqXpwkgv7U9FDcYFNGX5+V5h7QvW5fpdFBiSiPn7vjml0nm6vhX/KIeLo6i
-ZGcbm6A/HYkCwK9I6RRx
-=ErFS
------END PGP SIGNATURE-----
-
---7AwgMNpd3VkAVXjS--
+-- 
+1.7.8.3
