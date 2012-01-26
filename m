@@ -1,77 +1,71 @@
-From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: [PATCH 2/2] ARM: Exynos4: fix TV support on Universal_C210 board
-Date: Thu, 26 Jan 2012 18:13:31 +0100
-Message-ID: <1327598012-30467-3-git-send-email-t.stanislaws@samsung.com>
-References: <1327598012-30467-1-git-send-email-t.stanislaws@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 21/31] ARM: amba: realview: get rid of private platform
+	amba_device initializer
+Date: Thu, 26 Jan 2012 17:25:27 +0000
+Message-ID: <20120126172527.GA12731@n2100.arm.linux.org.uk>
+References: <20120120092207.GD1068@n2100.arm.linux.org.uk> <E1RoAmo-0005Ff-DW@rmk-PC.arm.linux.org.uk> <20120124160044.GM19798@mudshark.cambridge.arm.com> <20120124162328.GA8517@n2100.arm.linux.org.uk> <20120124172600.GO19798@mudshark.cambridge.arm.com> <20120124214531.GB8517@n2100.arm.linux.org.uk> <20120125095800.GC21709@mudshark.cambridge.arm.com> <20120125102202.GU16726@n2100.arm.linux.org.uk> <20120125103906.GE21709@mudshark.cambridge.arm.com> <20120125110647.GV16726@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:61419 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752753Ab2AZRNm (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:49176 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751445Ab2AZRZm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jan 2012 12:13:42 -0500
-Received: from euspt2 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LYF0066D16SIG80@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jan 2012 17:13:40 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LYF00IST16S42@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jan 2012 17:13:40 +0000 (GMT)
-In-reply-to: <1327598012-30467-1-git-send-email-t.stanislaws@samsung.com>
+	Thu, 26 Jan 2012 12:25:42 -0500
+Content-Disposition: inline
+In-Reply-To: <20120125110647.GV16726@n2100.arm.linux.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, m.szyprowski@samsung.com, t.stanislaws@samsung.com, kyungmin.park@samsung.com
+To: Will Deacon <will.deacon@arm.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, STEricsson <STEricsson_nomadik_linux@list.st.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 
-This patch adds support for HDMI platform data.
+On Wed, Jan 25, 2012 at 11:06:47AM +0000, Russell King - ARM Linux wrote:
+> Right, so with the stack of amba patches on top, it looks like this,
+> which to me looks sane.  I haven't build-tested it though.
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/mach-universal_c210.c |   14 ++++++++++++++
- 1 files changed, 14 insertions(+), 0 deletions(-)
+Will,
 
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 37ac93e..bec57c0 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -45,6 +45,8 @@
- 
- #include <media/v4l2-mediabus.h>
- #include <media/s5p_fimc.h>
-+#include <media/s5p_hdmi.h>
-+
- #include <media/m5mols.h>
- 
- #include "common.h"
-@@ -997,6 +999,15 @@ static void __init universal_map_io(void)
- 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
- }
- 
-+static struct i2c_board_info s5p_hdmiphy_info = {
-+	I2C_BOARD_INFO("hdmiphy", 0x70 >> 1),
-+};
-+
-+static struct s5p_hdmi_platform_data s5p_hdmi_pdata = {
-+	.hdmiphy_info = &s5p_hdmiphy_info,
-+	.hdmiphy_bus = 8,
-+};
-+
- void s5p_tv_setup(void)
- {
- 	/* direct HPD to HDMI chip */
-@@ -1004,6 +1015,9 @@ void s5p_tv_setup(void)
- 	s3c_gpio_cfgpin(EXYNOS4_GPX3(7), S3C_GPIO_SFN(0x3));
- 	s3c_gpio_setpull(EXYNOS4_GPX3(7), S3C_GPIO_PULL_NONE);
- 
-+	/* setting platform data */
-+	s5p_device_hdmi.dev.platform_data = &s5p_hdmi_pdata;
-+
- 	/* setup dependencies between TV devices */
- 	s5p_device_hdmi.dev.parent = &exynos4_device_pd[PD_TV].dev;
- 	s5p_device_mixer.dev.parent = &exynos4_device_pd[PD_TV].dev;
--- 
-1.7.5.4
+Did you see this?  Any comment?
+
+Thanks.
+
+> 
+> diff --git a/arch/arm/mach-realview/include/mach/irqs-pb1176.h b/arch/arm/mach-realview/include/mach/irqs-pb1176.h
+> index 5c3c625..708f841 100644
+> --- a/arch/arm/mach-realview/include/mach/irqs-pb1176.h
+> +++ b/arch/arm/mach-realview/include/mach/irqs-pb1176.h
+> @@ -40,6 +40,7 @@
+>  #define IRQ_DC1176_L2CC		(IRQ_DC1176_GIC_START + 13)
+>  #define IRQ_DC1176_RTC		(IRQ_DC1176_GIC_START + 14)
+>  #define IRQ_DC1176_CLCD		(IRQ_DC1176_GIC_START + 15)	/* CLCD controller */
+> +#define IRQ_DC1176_GPIO0	(IRQ_DC1176_GIC_START + 16)
+>  #define IRQ_DC1176_SSP		(IRQ_DC1176_GIC_START + 17)	/* SSP port */
+>  #define IRQ_DC1176_UART0	(IRQ_DC1176_GIC_START + 18)	/* UART 0 on development chip */
+>  #define IRQ_DC1176_UART1	(IRQ_DC1176_GIC_START + 19)	/* UART 1 on development chip */
+> @@ -73,7 +74,6 @@
+>  #define IRQ_PB1176_DMAC		(IRQ_PB1176_GIC_START + 24)	/* DMA controller */
+>  #define IRQ_PB1176_RTC		(IRQ_PB1176_GIC_START + 25)	/* Real Time Clock */
+>  
+> -#define IRQ_PB1176_GPIO0	-1
+>  #define IRQ_PB1176_SCTL		-1
+>  
+>  #define NR_GIC_PB1176		2
+> diff --git a/arch/arm/mach-realview/realview_pb1176.c b/arch/arm/mach-realview/realview_pb1176.c
+> index 1b6e60c..b1d7caf 100644
+> --- a/arch/arm/mach-realview/realview_pb1176.c
+> +++ b/arch/arm/mach-realview/realview_pb1176.c
+> @@ -143,7 +143,7 @@ static struct pl022_ssp_controller ssp0_plat_data = {
+>  #define PB1176_CLCD_IRQ	{ IRQ_DC1176_CLCD }
+>  #define SCTL_IRQ	{ }
+>  #define PB1176_WATCHDOG_IRQ	{ IRQ_DC1176_WATCHDOG }
+> -#define PB1176_GPIO0_IRQ	{ IRQ_PB1176_GPIO0 }
+> +#define PB1176_GPIO0_IRQ	{ IRQ_DC1176_GPIO0 }
+>  #define GPIO1_IRQ	{ IRQ_PB1176_GPIO1 }
+>  #define PB1176_RTC_IRQ	{ IRQ_DC1176_RTC }
+>  #define SCI_IRQ		{ IRQ_PB1176_SCI }
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
