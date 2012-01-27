@@ -1,60 +1,60 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: S5PV210: Fix the name of exynos4_clk_hdmiphy_ctrl() for
- S5PV210
-Date: Fri, 27 Jan 2012 15:28:09 +0900
-Message-ID: <01aa01ccdcbc$d6e36190$84aa24b0$%kim@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] arm: Fix missing api-change from subsys_interface change
+Date: Fri, 27 Jan 2012 09:10:33 +0100
+Message-ID: <201201270910.34247.heiko@sntech.de>
+References: <201201121430.49448.heiko@sntech.de> <20120112160605.GA10831@suse.de> <033301ccd18f$64ac8c60$2e05a520$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:56965 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751371Ab2A0G2O (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:46209 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751257Ab2A0IK4 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jan 2012 01:28:14 -0500
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LYG006M11YZDQ50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 15:28:12 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LYG00MCS1YXL9Z1@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 15:28:12 +0900 (KST)
-Content-language: ko
+	Fri, 27 Jan 2012 03:10:56 -0500
+In-Reply-To: <033301ccd18f$64ac8c60$2e05a520$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Greg KH' <gregkh@suse.de>, 'Kay Sievers' <kay.sievers@vrfy.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+Am Freitag, 13. Januar 2012, 02:05:08 schrieb Kukjin Kim:
+> Greg KH wrote:
+> > On Thu, Jan 12, 2012 at 02:30:48PM +0100, Heiko St=FCbner wrote:
+> > > Commit 4a858cfc9a (arm: convert sysdev_class to a regular subsyst=
+em)
+> > > converted the samsung sysdevs into subsys_interface instances.
+> > >=20
+> > > While the original add-function only had a (struct sys_device *)
+> > > parameter, the dev_add from subsys_interface needs
+> > >=20
+> > > 	(struct device *, struct subsys_interface *)
+> > >=20
+> > > leading to "initialized from incompatible pointer type" warnings.
+> > >=20
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > > ---
+> > > The patch applies cleanly against the current driver-core git,
+> > > hopefully it's the right tree.
+> >=20
+> > Thanks for fixing this up, sorry for getting it wrong.
+> >=20
+> > This should be done against the Samsung arm git tree, and go in thr=
+ough
+> > that one.  The driver-core git tree is equal to Linus's tree of a f=
+ew
+> > days ago, there are no driver-core patches in it at the moment.
+> >=20
+> > Kukjin, can you take these?
+>=20
+> Sure, let me pick this up in my fixes.
 
-Should be s5pv210_clk_hdmiphy_ctrl() in mach-s5pv210/.
+Hi Kgene,
 
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/mach-s5pv210/clock.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+ping :-)
 
-diff --git a/arch/arm/mach-s5pv210/clock.c b/arch/arm/mach-s5pv210/clock.c
-index c78dfdd..b9ec0c3 100644
---- a/arch/arm/mach-s5pv210/clock.c
-+++ b/arch/arm/mach-s5pv210/clock.c
-@@ -175,7 +175,7 @@ static int s5pv210_clk_mask1_ctrl(struct clk *clk, int enable)
- 	return s5p_gatectrl(S5P_CLK_SRC_MASK1, clk, enable);
- }
- 
--static int exynos4_clk_hdmiphy_ctrl(struct clk *clk, int enable)
-+static int s5pv210_clk_hdmiphy_ctrl(struct clk *clk, int enable)
- {
- 	return s5p_gatectrl(S5P_HDMI_PHY_CONTROL, clk, enable);
- }
-@@ -372,7 +372,7 @@ static struct clk init_clocks_off[] = {
- 	}, {
- 		.name		= "hdmiphy",
- 		.devname	= "s5pv210-hdmi",
--		.enable		= exynos4_clk_hdmiphy_ctrl,
-+		.enable		= s5pv210_clk_hdmiphy_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
- 		.name		= "dacphy",
--- 
-1.7.1
+I checked the hopefully correct branch v3.3-samsung-fixes and the patch=
+ is not=20
+in there.
+
+Heiko
