@@ -1,58 +1,38 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v8 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
-Date: Fri, 27 Jan 2012 11:13:32 +0900
-Message-ID: <017b01ccdc99$44a12420$cde36c60$%kim@samsung.com>
-References: <001001ccc625$0afa7ee0$20ef7ca0$%cho@samsung.com>
- <20120123142706.GA6269@8bytes.org>
- <CAHQjnOMyoOH2cFjjGSzMvefZTQGROmQgaA8S0MmxnKGHWyQhyA@mail.gmail.com>
+Subject: RE: [PATCH 02/13] ARM: SAMSUNG: allow the configuration of KERNEL HZ
+ in plat-samsung
+Date: Fri, 27 Jan 2012 11:15:33 +0900
+Message-ID: <017c01ccdc99$8d027fc0$a7077f40$%kim@samsung.com>
+References: <016f01ccdc95$30279500$9076bf00$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63512 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751524Ab2A0CNg convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:43791 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751589Ab2A0CPf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jan 2012 21:13:36 -0500
-In-reply-to: <CAHQjnOMyoOH2cFjjGSzMvefZTQGROmQgaA8S0MmxnKGHWyQhyA@mail.gmail.com>
+	Thu, 26 Jan 2012 21:15:35 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LYF00E5GQ9VG180@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 11:15:34 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYF006PRQ9X9F00@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 11:15:33 +0900 (KST)
+In-reply-to: <016f01ccdc95$30279500$9076bf00$%kim@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'KyongHo Cho' <pullip.cho@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>
-Cc: 'Subash Patel' <subash.ramaswamy@linaro.org>, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rmk+kernel@arm.linux.org.uk
 
-KyongHo Cho wrote:
->=20
-> Hi,
-> On Mon, Jan 23, 2012 at 11:27 PM, Joerg Roedel <joro@8bytes.org> wrot=
-e:
-> > Hi,
-> >
-> > please also get and inclue Acks from the Exynos maintainer for the =
-next
-> > post.
-> > Since I have a compiling config for exynos now I will merge the pat=
-ches
-> > when you have the Acks and addressed or explained the issues I poin=
-ted
-> > out below.
-> >
-> Thanks for review!
-> I will include the Acks in the next patchset.
-
-If his updated patch is ok to me, let me reply then.
-
-As a note, I'm preparing for new EXYNOS SoC and so some exynos stuff su=
-ch as
-clock can be modified. So would be better if KyongHo could update regar=
-ding
-arch/arm/ part based on that. Maybe in the beginning of Feb.?
-
-Joerg, as I said, I need a topic branch for this to avoid conflict and =
-I
-think, now you can provide it for samsung tree.
-
-If any problems, please let me know.
+Kukjin Kim wrote:
+> 
+> 
+Please kindly ignore the patch number[02/13] in subject.
 
 Thanks.
 
@@ -62,110 +42,45 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-> I will post the next patchset with corrections by the day after tomor=
-row.
->=20
-> And sorry for late reply.
-> I had holidays for the new year's day based on Lunar system.
->=20
-> > On Thu, Dec 29, 2011 at 09:26:08PM +0900, KyongHo Cho wrote:
-> >> +static void exynos_iommu_domain_destroy(struct iommu_domain *doma=
-in)
-> >> +{
-> >> + =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
-> >> + =A0 =A0 struct list_head *pos, *n;
-> >> + =A0 =A0 unsigned long flags;
-> >> + =A0 =A0 int i;
-> >> +
-> >> + =A0 =A0 WARN_ON(!list_empty(&priv->clients));
-> >
-> > This isn't really a problem. We allow destroying a domain with devi=
-ces
-> > attached. So this WARN_ON is not necessary.
-> >
-> OK.
-> BTW, Isn't it a problem when a device driver does not know that its
-> iommu domain is destroyed?
-> Can we regards that it is the faulty use of iommu API?
->=20
-> >> +static int exynos_iommu_map(struct iommu_domain *domain, unsigned=
- long
-> iova,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0phys_addr_t paddr, si=
-ze_t size, int prot)
-> >> +{
-> >> + =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
-> >> + =A0 =A0 unsigned long *entry;
-> >> + =A0 =A0 unsigned long flags;
-> >> + =A0 =A0 int ret =3D -ENOMEM;
-> >> +
-> >> + =A0 =A0 BUG_ON(priv->pgtable =3D=3D NULL);
-> >> +
-> >> + =A0 =A0 spin_lock_irqsave(&priv->pgtablelock, flags);
-> >> +
-> >> + =A0 =A0 entry =3D section_entry(priv->pgtable, iova);
-> >> +
-> >> + =A0 =A0 if (size >=3D SECT_SIZE) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 ret =3D lv1set_section(entry, paddr, siz=
-e >> SECT_ORDER,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 &priv-
-> >lv2entcnt[lv1ent_offset(iova)]);
-> >
-> > This looks like you are partially re-implementing behavior of gener=
-ic
-> > code because you are mapping multiple sections at once. The generic=
- map
-> > code already splits up the address range correctly, so no need to d=
-o
-> > this in the driver (unless there is some benefit in the hardware, l=
-ike
-> > an IOTLB entry that can cover multiple sections or something simila=
-r).
-> >
-> Yes, I wanted to avoid repeated function call by iommu_map().
-> s5p_iommu_map() maps once for the same page size since it is efficien=
-t
-> and simple.
-> That's why this driver initializes domain->pgsize_bitmap with 0xFFFFF=
-000
-> even though our IOMMU driver just supports 3 different page sizes
-> including 4KB, 64KB and 1MB.
->=20
-> Do you think it is better for s5p_iommu_map() to map just one page at
-once?
->=20
-> >> +static size_t exynos_iommu_unmap(struct iommu_domain *domain,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0unsigned long iova, size_t
-size)
-> >> +{
-> >> + =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
-> >> + =A0 =A0 struct iommu_client *client;
-> >> + =A0 =A0 unsigned long flags;
-> >> +
-> >> + =A0 =A0 BUG_ON(priv->pgtable =3D=3D NULL);
-> >> +
-> >> + =A0 =A0 spin_lock_irqsave(&priv->pgtablelock, flags);
-> >> +
-> >> + =A0 =A0 while (size !=3D 0) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 int i, nent, order;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned long *pent, *sent;
-> >
-> > Same with this while-loop. This looks like it re-implements behavio=
-r
-> > from the generic code.
-> >
-> If a region to unmap consists of tens of pages
-> there is no way to avoid flushing IOTLB repeatedly.
->=20
-> Out iommu driver doesn't need to flush IOTLB more than once for a
-> region to unmap.
->=20
-> Do you think the driver is better to unmaps just one page at once
-> though flushing IOTLB repeatedly?
->=20
->=20
-> Thank you.
->=20
->   KyongHo
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/Kconfig              |    4 ++--
+>  arch/arm/plat-samsung/Kconfig |    7 +++++++
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 24626b0..f9d7c47 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -1590,8 +1590,8 @@ source kernel/Kconfig.preempt
+> 
+>  config HZ
+>  	int
+> -	default 200 if ARCH_EBSA110 || ARCH_S3C2410 || ARCH_S5P64X0 || \
+> -		ARCH_S5PV210 || ARCH_EXYNOS4
+> +	default 200 if ARCH_EBSA110
+> +	default SAMSUNG_TIMER_HZ if PLAT_SAMSUNG
+>  	default OMAP_32K_TIMER_HZ if ARCH_OMAP && OMAP_32K_TIMER
+>  	default AT91_TIMER_HZ if ARCH_AT91
+>  	default SHMOBILE_TIMER_HZ if ARCH_SHMOBILE
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 6a2abe6..0a23b52 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -50,6 +50,13 @@ config S3C_LOWLEVEL_UART_PORT
+>  	  this configuration should be between zero and two. The port
+>  	  must have been initialised by the boot-loader before use.
+> 
+> +config SAMSUNG_TIMER_HZ
+> +	int "Kernel HZ for Samsung Platform"
+> +	range 32 1024
+> +	default "200"
+> +	help
+> +	  Allows the configuration of the timer frequency for Samsung SoCs.
+> +
+>  # clock options
+> 
+>  config SAMSUNG_CLKSRC
+> --
+> 1.7.1
