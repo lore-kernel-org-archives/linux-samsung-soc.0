@@ -1,79 +1,63 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] S3C24XX: remove some spi left overs
-Date: Fri, 27 Jan 2012 17:15:32 +0900
-Message-ID: <01b201ccdccb$d6923680$83b6a380$%kim@samsung.com>
-References: <201201082222.11305.heiko@sntech.de>
+Subject: RE: [PATCH] ARM: EXYNOS: Fix
+ "warning: initialization from incompatible pointer type"
+Date: Fri, 27 Jan 2012 17:15:49 +0900
+Message-ID: <01b301ccdccb$e0caca40$a2605ec0$%kim@samsung.com>
+References: <1325984332-32146-1-git-send-email-jhbird.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56167 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:56349 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750984Ab2A0IPd convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1752187Ab2A0IPu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jan 2012 03:15:33 -0500
+	Fri, 27 Jan 2012 03:15:50 -0500
 Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0LYG000Y26VJS2M0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 17:15:32 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 17:15:49 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LYG007DU6XW7800@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 17:15:32 +0900 (KST)
-In-reply-to: <201201082222.11305.heiko@sntech.de>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYG006Z06YDZ430@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Fri, 27 Jan 2012 17:15:49 +0900 (KST)
+In-reply-to: <1325984332-32146-1-git-send-email-jhbird.choi@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Grant Likely' <grant.likely@secretlab.ca>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net
+To: jhbird.choi@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Russell King' <linux@arm.linux.org.uk>
 
-Heiko St=FCbner wrote:
->=20
-> This series removes unused setup-code of the s3c24xx spi driver.
->=20
-> It has no current in kernel users and also no development activity tr=
-ying
-> to change this. I also checked the upstream git of the only board inc=
-luding
-> the spi.h file (the gta02 at http://git.openmoko.org). The setup call=
-s
-> are also not used there.
->=20
-> I recall a thread some time back talking about removing the spi-s3c24=
-xx
-> driver altogether, but as current linux-next still carries the driver
-> I'm not sure what became of it. So this series does the next smaller =
-thing.
->=20
->=20
-> Heiko Stuebner (2):
->   S3C24XX: remove unused spi gpio setup functions
->   S3C24XX: move spi-s3c24xx platdata out of mach
->=20
->  arch/arm/mach-s3c2410/include/mach/spi.h     |   38 ----------------=
-----------
->  arch/arm/mach-s3c2440/mach-gta02.c           |    2 +-
->  arch/arm/plat-s3c24xx/Kconfig                |   20 -------------
->  arch/arm/plat-s3c24xx/Makefile               |    6 ----
->  arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c |   36 ----------------=
---------
->  arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c   |   38 ----------------=
-----------
->  arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c    |   36 ----------------=
---------
->  drivers/spi/spi-s3c24xx.c                    |    2 +-
->  8 files changed, 2 insertions(+), 176 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c2410/include/mach/spi.h
->  delete mode 100644 arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c
->  delete mode 100644 arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c
->  delete mode 100644 arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c
->=20
+jhbird.choi@samsung.com wrote:
+> 
+> From: Jonghwan Choi <jhbird.choi@samsung.com>
+> 
+> Fix the wrong function prototype.
+> 
+> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm.c |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index c4f792d..db33f47 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -205,7 +205,7 @@ static void exynos4_pm_prepare(void)
+> 
+>  }
+> 
+> -static int exynos4_pm_add(struct device *dev)
+> +static int exynos4_pm_add(struct device *dev, struct subsys_interface *sif)
+>  {
+>  	pm_cpu_prep = exynos4_pm_prepare;
+>  	pm_cpu_sleep = exynos4_cpu_suspend;
 > --
-> 1.7.2.3
+> 1.7.1
 
-Looks good :)
-Applied in my cleanup-s3c24xx, thanks.
+Applied.
+Thanks.
 
 Best regards,
 Kgene.
