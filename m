@@ -1,70 +1,62 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 2/2] regulator: add device tree support for max8997
-Date: Fri, 27 Jan 2012 11:19:33 +0000
-Message-ID: <20120127111932.GC32008@opensource.wolfsonmicro.com>
-References: <1326353738-26864-1-git-send-email-thomas.abraham@linaro.org>
- <1326353738-26864-3-git-send-email-thomas.abraham@linaro.org>
- <4F1FD1A5.1060305@samsung.com>
- <20120125112602.GB2991@opensource.wolfsonmicro.com>
- <4F1FEF55.8030604@samsung.com>
- <20120125133254.GJ3687@opensource.wolfsonmicro.com>
- <4F217100.6020105@samsung.com>
- <20120126161744.GB19703@opensource.wolfsonmicro.com>
- <4F227530.3050708@samsung.com>
+Subject: Re: [PATCH 0/4] Pending S3C64xx updates
+Date: Fri, 27 Jan 2012 11:27:51 +0000
+Message-ID: <20120127112751.GF32008@opensource.wolfsonmicro.com>
+References: <20120124213127.GH1135@opensource.wolfsonmicro.com>
+ <016501ccdc93$ae158190$0a4084b0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+	protocol="application/pgp-signature"; boundary="EP0wieDxd4TSJjHq"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:54593 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40939 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752580Ab2A0LTf (ORCPT
+	by vger.kernel.org with ESMTP id S1752386Ab2A0L1x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Jan 2012 06:19:35 -0500
+	Fri, 27 Jan 2012 06:27:53 -0500
 Content-Disposition: inline
-In-Reply-To: <4F227530.3050708@samsung.com>
+In-Reply-To: <016501ccdc93$ae158190$0a4084b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, rpurdie@rpsys.net, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---3MwIy2ne0vdjdPXF
+--EP0wieDxd4TSJjHq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Jan 27, 2012 at 10:58:08AM +0100, Karol Lewandowski wrote:
-> >>On 25.01.2012 12:22, Mark Brown wrote:
+On Fri, Jan 27, 2012 at 10:33:24AM +0900, Kukjin Kim wrote:
+> Mark Brown wrote:
 
-> >I'm sorry, this makes no sense.  Setting a value in the constraints is
-> >not going to have any impact on the value reported by the driver, it
-> >never has.
+> >       ARM: S3C64XX: Define some additional always off clocks
 
-> ... with the exception of fixed regulator, that is. This is from
-> where I got my flawed understanding.
+> Hmm, I know there were discussions about this with Tomasz Figa and I was
+> waiting for his submitting. But now this looks ok to me so will apply this.
 
-Note also that this only happens for device tree - with platform data
-there's separate platform data for the voltage.
+The discussion there was around there being other out of tree drivers
+that might at some point want to use these clocks - I don't think there
+was any doubt that for current mainline this change makes sense.
 
---3MwIy2ne0vdjdPXF
+--EP0wieDxd4TSJjHq
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.11 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPIog6AAoJEBus8iNuMP3dIuIP/1PTCWySiFL1vi3384t6pLRz
-bjCA6tcbkzDX6MoawnaJd/Utq+iaJPAfx6VopJHLmyDAkFRVBzolpQtR+ZrXFUoq
-fFyWOGlCGnXlOHiKn1Wkjc+UwYDGiJasFckRMpiLF6Gn6r735n2617K1OIAFpykv
-Nuy+snPfFTNLa9c53sJAytxKpgcQkPjuUxhCipYSwIcGxdxttEt2ZDBpSYi12qzj
-T1Htc3mzmoeb+obczrmODFmvv+q0y8jjKQv8MnLBSd3Xbl+pmb0ejuySRRmc0Twz
-R3uFmvA3HGjEQm800PckcXPLm9NZd2Qaag9AyQo/atJDwjU/o5tuqWZFc8NaBIRw
-cT+3Eze7N+eXXFT+4NSrMhxnChCBcTBnw37gw6aON1jbiyWoj/G106MGPiGWFKOZ
-PcHo6TOBjd3MMsoqjjyisi/GB7dbm6q+rSeNPnmuJXi6ZhqcXMw5Fo5kH7t35l7E
-4KwV9cVjmLlTIp8QzfaxR/us3zornoV8zCMGdYS9PEqil26Xbe4UbShzSpuLIHUJ
-7vuB2c+IvqhKluHaP28+P7HrRoYQayjVzMa9ukMpWDwMvMOAWL9CIWR5FQlc5iYY
-AxHz3uxlUULuDS+5cCrdv6zwDld1DoEcXDQ/3llRIuhRMQDeJ0ngKjbDbo8iIBNe
-TJT8bQns7+/BgadVbyWc
-=aqBe
+iQIcBAEBAgAGBQJPIoorAAoJEBus8iNuMP3d/MMP/3YSHbyVotZS1urX5EiZ0zN8
+9A7gx7JzulV73PmmELGU0QHQwoMqTl9+ALdlF3nkBLjZa7AEWmodpK2AxqXLEQEp
+IhrrKZJyJ2DToHU2eFuMi0aXR90utCkaiFgUU/fZV1RdUX8CqTcKU9W9itNYSLuB
+VoOezlW5muZjc+1Wj9uE8E0hXSu0eSsTvyliv/vPlDgvC5wpXWAquomq8U1I/C+a
+HA2dcw2fb5pi9FPpxFDsoI9uuP8wLke3+3AfN++Rn3xwzlNJDpu6AuuFVc/aC3/e
+cWEeuq5HfgI46wpuvr2Dg7WVWWzU/frSq0uwgfRmi5Hdg3cl8H5Nv4N8v/P0ErLH
+6/OPrOFkO5wYn6kdno8VSHqUc8udBLEVk4ZP/JxKkA0zrnNIlto8A37T36sEDyjn
+PVSG+pJmqbXXV8bmIUfUp7Dw+Y49r612V2BXY5fB5aItwTz6RaG4yI6b18CjtRHi
+Z0hvIVurQsfs6/Cl954bzZm6bcGmhdn6y+JqSG+uobbuRoQvfuDD/T7XhZ1oXw5r
+hll9FNtrXPd8gU8JYbAdKlCFh/FKsXX9QuuzWOF+FpufwA4f2XXPm4h8AJyEnuln
+nuuHiNhQ2GMDWggEnwO8+J4DPrgSxJ5/IqTj4NS//KQcR/zrDiJkdt8PxSiJEwWs
+k3bHll//Rgcw3We5BTO4
+=w7jX
 -----END PGP SIGNATURE-----
 
---3MwIy2ne0vdjdPXF--
+--EP0wieDxd4TSJjHq--
