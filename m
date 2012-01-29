@@ -1,72 +1,69 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH 1/2] i2c-s3c2410: Convert to devm_kzalloc()
-Date: Sun, 29 Jan 2012 13:14:39 +0800
-Message-ID: <CAGsJ_4x285CE0aDB4J2iKN7uyc4afxSTZ=i-Mrmc7DfsiNUEQA@mail.gmail.com>
-References: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/3] spi/s3c64xx: Log error interrupts
+Date: Sun, 29 Jan 2012 21:40:29 +0000
+Message-ID: <20120129214028.GC2994@opensource.wolfsonmicro.com>
+References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
+ <1327152265-10789-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <CAM=Q2ctA6o0wW4LMW=Jpe7HPGbm4S-UySURToXrC1r4kOe08Rg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:61006 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1749667Ab2A2FPA convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37917 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753653Ab2A2Vkc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 29 Jan 2012 00:15:00 -0500
-In-Reply-To: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Sun, 29 Jan 2012 16:40:32 -0500
+Content-Disposition: inline
+In-Reply-To: <CAM=Q2ctA6o0wW4LMW=Jpe7HPGbm4S-UySURToXrC1r4kOe08Rg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Jean Delvare <khali@linux-fr.org>, Wolfram Sang <w.sang@pengutronix.de>, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
 
-2012/1/21 Mark Brown <broonie@opensource.wolfsonmicro.com>:
-> Saves remembering to call kfree(). There's some kfree()s used by the
-> resource still, these will be removed in 3.3 using the newly added
-> devm_request_and_ioremap().
->
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Reviewed-by: Barry Song <Baohua.Song@csr.com>
+--+HP7ph2BbKc20aGI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> ---
-> =C2=A0drivers/i2c/busses/i2c-s3c2410.c | =C2=A0 =C2=A04 +---
-> =C2=A01 files changed, 1 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
-c-s3c2410.c
-> index 4c17180..e6f982b 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -890,7 +890,7 @@ static int s3c24xx_i2c_probe(struct platform_devi=
-ce *pdev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
->
-> - =C2=A0 =C2=A0 =C2=A0 i2c =3D kzalloc(sizeof(struct s3c24xx_i2c), GF=
-P_KERNEL);
-> + =C2=A0 =C2=A0 =C2=A0 i2c =3D devm_kzalloc(&pdev->dev, sizeof(struct=
- s3c24xx_i2c), GFP_KERNEL);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!i2c) {
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(&pdev-=
->dev, "no memory for state\n");
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM=
-;
-> @@ -1035,7 +1035,6 @@ static int s3c24xx_i2c_probe(struct platform_de=
-vice *pdev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0clk_put(i2c->clk);
->
-> =C2=A0err_noclk:
-> - =C2=A0 =C2=A0 =C2=A0 kfree(i2c);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
-> =C2=A0}
->
-> @@ -1061,7 +1060,6 @@ static int s3c24xx_i2c_remove(struct platform_d=
-evice *pdev)
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0release_resource(i2c->ioarea);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c24xx_i2c_dt_gpio_free(i2c);
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(i2c->ioarea);
-> - =C2=A0 =C2=A0 =C2=A0 kfree(i2c);
->
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;
-> =C2=A0}
-> --
-> 1.7.7.3
+On Sat, Jan 28, 2012 at 10:30:36PM +0530, Shubhrajyoti Datta wrote:
+
+Please delete irrelevant context from your replies.
+
+> > +	ret = request_irq(irq, s3c64xx_spi_irq, 0, "spi-s3c64xx", sdd);
+
+> Could we have a threaded irq instead and there are prints and that may get
+> executed in interrupt context.
+
+So, clearly we *could*.  However I think that's not going to be as
+helpful.  These errors are never supposed to happen (and if they do
+indicate a fairly serious problem) so the performance impact shouldn't
+be our primary concern and if they do happen then my suspicion is that
+the timing information will be very important.  I expect that knowing
+exactly when the error occurred is likely to help diagnose what caused
+it by virtue of knowing what other things were going on in the system at
+that time.
+
+--+HP7ph2BbKc20aGI
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPJbzAAAoJEBus8iNuMP3dZgoP/36JVgKolsarycqj0Pl3ixkp
+7CIsQVxAHp1bJMucxfce3yYMBzWstGTKdMwOY9Lqa4+V8vLtQ9d7y9VBSAG4jf/l
+mCpgi0lzwhTgQ1vMWjXR9RH4OmEGkayfwgxtVQuG+qLDqG/fTy6a1D8Y+GSSRGsH
+ZsAA4jHSCmQwPxcAWQM+DHh/KGT4N2iwY7WJnpF0OfwvVkElRf5Q6uGuhxz7SJTX
+YB1coc2Ac+81axchtz5Xwcn10xeDbOqLREORJ5f0lRXj9urxWT/UGe58lADhCB74
+V23cBWlLs03YHVaniLV5V31ICwzLgrjSeNzo9/biIDfx/RYA6hP4N1nbXQFzDt0N
+imChZoVt30uC7iL7LpxEZBlqDld2mp38So4CcCQkgdlsNNtlKEQZaV4Cxj2RHtF3
+SrGOmzW+ISaJXLBfHSiwvWqE1udcQCK6juQjpfs82WVcm0sCKlYXrDCNK7seyZZt
+jqnf0gIar13kBFlXsZO0Pv6A0l3TpAeMOx80xumolfJDYYm8jcLaz9NNQpGg9LUv
+oll5nG94UciZoMcab/mCDbhVTHWWiAuNnPnXvN3wJVsgrck2i8dJCY5zRvtApHEI
+mhJGavatSYqWB7cb9QiFP2vIM/zH9HMHmSPOnInyDhrx4aYzjh+OpUyrT7hH+tpU
+0suZegCJmOul55kglH4V
+=diPj
+-----END PGP SIGNATURE-----
+
+--+HP7ph2BbKc20aGI--
