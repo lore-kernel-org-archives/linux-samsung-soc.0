@@ -1,52 +1,72 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Sat, 28 Jan 2012 15:57:43 -0800
-Message-ID: <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
-	<20120124095009.GS16726@n2100.arm.linux.org.uk>
-	<20120126212319.GE11941@n2100.arm.linux.org.uk>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH 1/2] i2c-s3c2410: Convert to devm_kzalloc()
+Date: Sun, 29 Jan 2012 13:14:39 +0800
+Message-ID: <CAGsJ_4x285CE0aDB4J2iKN7uyc4afxSTZ=i-Mrmc7DfsiNUEQA@mail.gmail.com>
+References: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <20120126212319.GE11941@n2100.arm.linux.org.uk>
-Sender: linux-omap-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, davinci-linux-open-source@linux.davincidsp.com, linux-tegra@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:61006 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1749667Ab2A2FPA convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 29 Jan 2012 00:15:00 -0500
+In-Reply-To: <1327152527-11364-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Jean Delvare <khali@linux-fr.org>, Wolfram Sang <w.sang@pengutronix.de>, Ben Dooks <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 
-Hi,
-
-
-On Thu, Jan 26, 2012 at 1:23 PM, Russell King - ARM Linux
-<linux@arm.linux.org.uk> wrote:
-
-
-> And we're now there. =A0So...
+2012/1/21 Mark Brown <broonie@opensource.wolfsonmicro.com>:
+> Saves remembering to call kfree(). There's some kfree()s used by the
+> resource still, these will be removed in 3.3 using the newly added
+> devm_request_and_ioremap().
 >
-> Arnd, Olaf,
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+
+Reviewed-by: Barry Song <Baohua.Song@csr.com>
+
+> ---
+> =C2=A0drivers/i2c/busses/i2c-s3c2410.c | =C2=A0 =C2=A04 +---
+> =C2=A01 files changed, 1 insertions(+), 3 deletions(-)
 >
-> Please incorporate the latest ARM (for-armsoc branch) changes, which =
-can be found at:
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
+c-s3c2410.c
+> index 4c17180..e6f982b 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -890,7 +890,7 @@ static int s3c24xx_i2c_probe(struct platform_devi=
+ce *pdev)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0}
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0}
 >
-> =A0 =A0 =A0 =A0git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cu=
-r/linux-arm.git for-armsoc
+> - =C2=A0 =C2=A0 =C2=A0 i2c =3D kzalloc(sizeof(struct s3c24xx_i2c), GF=
+P_KERNEL);
+> + =C2=A0 =C2=A0 =C2=A0 i2c =3D devm_kzalloc(&pdev->dev, sizeof(struct=
+ s3c24xx_i2c), GFP_KERNEL);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0if (!i2c) {
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0dev_err(&pdev-=
+>dev, "no memory for state\n");
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0return -ENOMEM=
+;
+> @@ -1035,7 +1035,6 @@ static int s3c24xx_i2c_probe(struct platform_de=
+vice *pdev)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0clk_put(i2c->clk);
 >
-> with SHA1 dcf81c1af839b77b44404453ecae6e5ac5a75f05.
-
-Thanks. I have added this as depends/rmk/for-armsoc in the arm-soc repo=
-=2E
-
-Any next/ branch we start will have this as the base of said branch,
-so any vendor branches must either already be developed against this
-stable branch, or merge on top of this with minimal conflicts.
-
-
-Thanks!
-
--Olof
---
-To unsubscribe from this list: send the line "unsubscribe linux-omap" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> =C2=A0err_noclk:
+> - =C2=A0 =C2=A0 =C2=A0 kfree(i2c);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0return ret;
+> =C2=A0}
+>
+> @@ -1061,7 +1060,6 @@ static int s3c24xx_i2c_remove(struct platform_d=
+evice *pdev)
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0release_resource(i2c->ioarea);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0s3c24xx_i2c_dt_gpio_free(i2c);
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0kfree(i2c->ioarea);
+> - =C2=A0 =C2=A0 =C2=A0 kfree(i2c);
+>
+> =C2=A0 =C2=A0 =C2=A0 =C2=A0return 0;
+> =C2=A0}
+> --
+> 1.7.7.3
