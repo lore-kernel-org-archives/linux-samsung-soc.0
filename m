@@ -1,59 +1,49 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: EXYNOS/S5PV210: Add missing FIMC media device
-Date: Mon, 30 Jan 2012 10:48:49 +0530
-Message-ID: <CAK9yfHwNrSLJYmWdoUaRzPqMAue_wSL428_pJZLj5WkOcCqUrA@mail.gmail.com>
-References: <1325140176-2309-1-git-send-email-sachin.kamat@linaro.org>
+From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 6/6] mmc: sdhci-s3c: Add device tree support
+Date: Mon, 30 Jan 2012 10:51:11 +0100
+Message-ID: <201201301051.22396.heiko@sntech.de>
+References: <1320266163-15292-1-git-send-email-thomas.abraham@linaro.org> <1320266163-15292-7-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qw0-f53.google.com ([209.85.216.53]:55042 "EHLO
-	mail-qw0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751169Ab2A3FSu convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jan 2012 00:18:50 -0500
-Received: by qafk1 with SMTP id k1so1550685qaf.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 29 Jan 2012 21:18:49 -0800 (PST)
-In-Reply-To: <1325140176-2309-1-git-send-email-sachin.kamat@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1320266163-15292-7-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
 
-Hi Kukjin,
+Am Mittwoch, 2. November 2011, 21:36:03 schrieb Thomas Abraham:
 
-Please let me know your comments about this series as well as other
-=46IMC and G2D enablement patches submitted by me.
+Hi Thomas,
 
-Regards
-Sachin
-
-On 29 December 2011 11:59, Sachin Kamat <sachin.kamat@linaro.org> wrote=
-:
-> FIMC media device (md) registers all required video nodes.
-> This is required for functioning of FIMC devices.
->
-> Thanks to Sylwester Nawrocki for pointing this out.
->
-> This patchset is based on the latest for-next branch of Kukjin Kim's =
-tree.
->
-> Sachin Kamat (3):
-> =A0ARM: S5PV210: Add missing FIMC media device to Aquila
-> =A0ARM: EXYNOS: Add missing FIMC media device to SMDKV310
-> =A0ARM: EXYNOS: Add missing FIMC media device to Origen
->
-> =A0arch/arm/mach-exynos/mach-origen.c =A0 | =A0 =A01 +
-> =A0arch/arm/mach-exynos/mach-smdkv310.c | =A0 =A01 +
-> =A0arch/arm/mach-s5pv210/mach-aquila.c =A0| =A0 =A01 +
-> =A03 files changed, 3 insertions(+), 0 deletions(-)
->
-> --
-> 1.7.4.1
->
+in patch 1/6:
+> +static struct platform_device_id sdhci_s3c_driver_ids[] = {
+> +       {
+> +               .name           = "s3c-sdhci",
+> +               .driver_data    = (kernel_ulong_t)NULL,
+> +       },
+> +       {
+> +               .name           = "exynos4-sdhci",
+> +               .driver_data    = EXYNOS4_SDHCI_DRV_DATA,
+> +       },
+> +};
+> +MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
 
 
+and in patch 6/6:
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id sdhci_s3c_dt_match[] = {
+> +	{ .compatible = "samsung,s3c6410-sdhci", },
+> +	{ .compatible = "samsung,exynos4210-sdhci",
+> +		.data = &exynos4_sdhci_drv_data },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
 
---=20
-With warm regards,
-Sachin
+wouldn't it be better to keep the naming consistent between of and non-of?
+I.e. s3c-sdhci vs. s3c6410-sdhci. Since the driver is used for all S3C SoCs 
+containing hsmmc controllers I think s3c-sdhci would be preferable here.
+
+Heiko
