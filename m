@@ -1,40 +1,174 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 0/3] spi/s3c64xx diagnostic and PM updates
-Date: Mon, 30 Jan 2012 08:37:07 -0700
-Message-ID: <20120130153707.GL28397@ponder.secretlab.ca>
-References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
- <CACxGe6t_h9=U=TpK57XvLUKixmZRwovr_JionXBE39mSrTVHRQ@mail.gmail.com>
- <20120121151341.GB20505@sirena.org.uk>
+From: Wim Van Sebroeck <wim@iguana.be>
+Subject: Re: [PATCH] watchdog: fix error in probe() of s3c2410_wdt (reset
+	at booting)
+Date: Mon, 30 Jan 2012 20:01:07 +0100
+Message-ID: <20120130190106.GA29850@infomag.iguana.be>
+References: <1326431663-4638-1-git-send-email-myungjoo.ham@samsung.com> <20120113111117.GT1068@n2100.arm.linux.org.uk> <20120113214555.GA19495@infomag.iguana.be> <CAJ0PZbSpL0-LNHfU7TTM06tPi1B4VgCp=oyPA06qAjp8PoPT2w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:36618 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753564Ab2A3PhL (ORCPT
+Received: from mailrelay008.isp.belgacom.be ([195.238.6.174]:26584 "EHLO
+	mailrelay008.isp.belgacom.be" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753489Ab2A3TBJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jan 2012 10:37:11 -0500
-Received: by vcbgb30 with SMTP id gb30so2762900vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2012 07:37:11 -0800 (PST)
+	Mon, 30 Jan 2012 14:01:09 -0500
 Content-Disposition: inline
-In-Reply-To: <20120121151341.GB20505@sirena.org.uk>
+In-Reply-To: <CAJ0PZbSpL0-LNHfU7TTM06tPi1B4VgCp=oyPA06qAjp8PoPT2w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+To: myungjoo.ham@gmail.com
+Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-watchdog@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
-On Sat, Jan 21, 2012 at 03:13:41PM +0000, Mark Brown wrote:
-> On Sat, Jan 21, 2012 at 07:27:23AM -0700, Grant Likely wrote:
+Hi,
+
+> Yes, if we set wdt_count value properly before request_irq, it's fine.
 > 
-> > Pushed out to git://git.secretlab.ca/git/linux-2.6.git spi/merge.
-> > I'll ask Linus to pull in a couple of days after it has hit
-> > linux-next.
-> 
-> Thanks.  Obviously it'd be nice to get it into 3.3 but I don't see a
-> huge rush and it did miss the merge window - it doesn't fix any bugs
-> and without a bunch of other work in cpuidle that's not been done yet
-> the power gains from the runtime PM are vanishingly small.
+> Anyway, as registering the device (watchdog_register_device()) may be
+> done after request_irq without any problem, moving request_irq right
+> before it, not after it should be fine.
 
-Okay, I've moved it over to spi/next instead.  It will be ready for the
-v3.4 merge window.
+So what that be attached patch then? Could you also test this patch?
 
-g.
+Kind regards,
+Wim.
+---
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 4bc3744..404172f 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -312,18 +312,26 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 	dev = &pdev->dev;
+ 	wdt_dev = &pdev->dev;
+ 
+-	/* get the memory region for the watchdog timer */
+-
+ 	wdt_mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (wdt_mem == NULL) {
+ 		dev_err(dev, "no memory resource specified\n");
+ 		return -ENOENT;
+ 	}
+ 
++	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++	if (wdt_irq == NULL) {
++		dev_err(dev, "no irq resource specified\n");
++		ret = -ENOENT;
++		goto err;
++	}
++
++	/* get the memory region for the watchdog timer */
++
+ 	size = resource_size(wdt_mem);
+ 	if (!request_mem_region(wdt_mem->start, size, pdev->name)) {
+ 		dev_err(dev, "failed to get memory region\n");
+-		return -EBUSY;
++		ret = -EBUSY;
++		goto err;
+ 	}
+ 
+ 	wdt_base = ioremap(wdt_mem->start, size);
+@@ -335,29 +343,17 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 
+ 	DBG("probe: mapped wdt_base=%p\n", wdt_base);
+ 
+-	wdt_irq = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+-	if (wdt_irq == NULL) {
+-		dev_err(dev, "no irq resource specified\n");
+-		ret = -ENOENT;
+-		goto err_map;
+-	}
+-
+-	ret = request_irq(wdt_irq->start, s3c2410wdt_irq, 0, pdev->name, pdev);
+-	if (ret != 0) {
+-		dev_err(dev, "failed to install irq (%d)\n", ret);
+-		goto err_map;
+-	}
+-
+ 	wdt_clock = clk_get(&pdev->dev, "watchdog");
+ 	if (IS_ERR(wdt_clock)) {
+ 		dev_err(dev, "failed to find watchdog clock source\n");
+ 		ret = PTR_ERR(wdt_clock);
+-		goto err_irq;
++		goto err_map;
+ 	}
+ 
+ 	clk_enable(wdt_clock);
+ 
+-	if (s3c2410wdt_cpufreq_register() < 0) {
++	ret = s3c2410wdt_cpufreq_register();
++	if (ret < 0) {
+ 		printk(KERN_ERR PFX "failed to register cpufreq\n");
+ 		goto err_clk;
+ 	}
+@@ -378,12 +374,18 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 							"cannot start\n");
+ 	}
+ 
++	ret = request_irq(wdt_irq->start, s3c2410wdt_irq, 0, pdev->name, pdev);
++	if (ret != 0) {
++		dev_err(dev, "failed to install irq (%d)\n", ret);
++		goto err_cpufreq;
++	}
++
+ 	watchdog_set_nowayout(&s3c2410_wdd, nowayout);
+ 
+ 	ret = watchdog_register_device(&s3c2410_wdd);
+ 	if (ret) {
+ 		dev_err(dev, "cannot register watchdog (%d)\n", ret);
+-		goto err_cpufreq;
++		goto err_irq;
+ 	}
+ 
+ 	if (tmr_atboot && started == 0) {
+@@ -408,23 +410,26 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
++ err_irq:
++	free_irq(wdt_irq->start, pdev);
++
+  err_cpufreq:
+ 	s3c2410wdt_cpufreq_deregister();
+ 
+  err_clk:
+ 	clk_disable(wdt_clock);
+ 	clk_put(wdt_clock);
+-
+- err_irq:
+-	free_irq(wdt_irq->start, pdev);
++	wdt_clock = NULL;
+ 
+  err_map:
+ 	iounmap(wdt_base);
+ 
+  err_req:
+ 	release_mem_region(wdt_mem->start, size);
+-	wdt_mem = NULL;
+ 
++ err:
++	wdt_irq = NULL;
++	wdt_mem = NULL;
+ 	return ret;
+ }
+ 
+@@ -432,18 +437,18 @@ static int __devexit s3c2410wdt_remove(struct platform_device *dev)
+ {
+ 	watchdog_unregister_device(&s3c2410_wdd);
+ 
++	free_irq(wdt_irq->start, dev);
++
+ 	s3c2410wdt_cpufreq_deregister();
+ 
+ 	clk_disable(wdt_clock);
+ 	clk_put(wdt_clock);
+ 	wdt_clock = NULL;
+ 
+-	free_irq(wdt_irq->start, dev);
+-	wdt_irq = NULL;
+-
+ 	iounmap(wdt_base);
+ 
+ 	release_mem_region(wdt_mem->start, resource_size(wdt_mem));
++	wdt_irq = NULL;
+ 	wdt_mem = NULL;
+ 	return 0;
+ }
