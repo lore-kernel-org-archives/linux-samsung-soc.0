@@ -1,54 +1,71 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] cpufreq: Add S3C2416/S3C2450 cpufreq driver
-Date: Mon, 30 Jan 2012 21:21:41 +0100
-Message-ID: <201201302121.42020.heiko@sntech.de>
-References: <201201142209.58453.heiko@sntech.de>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 6/6] mmc: sdhci-s3c: Add device tree support
+Date: Mon, 30 Jan 2012 12:01:14 -0700
+Message-ID: <20120130190114.GR28397@ponder.secretlab.ca>
+References: <1320266163-15292-1-git-send-email-thomas.abraham@linaro.org>
+ <1320266163-15292-7-git-send-email-thomas.abraham@linaro.org>
+ <201201301051.22396.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
+Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:56680 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753699Ab2A3UVv convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jan 2012 15:21:51 -0500
-In-Reply-To: <201201142209.58453.heiko@sntech.de>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:39044 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753609Ab2A3V2s (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Jan 2012 16:28:48 -0500
+Content-Disposition: inline
+In-Reply-To: <201201301051.22396.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dave Jones <davej@redhat.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, cpufreq@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Dron Gus <dron0gus@gmail.com>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Am Samstag 14 Januar 2012, 22:09:57 schrieb Heiko St=FCbner:
-> The S3C2416/S3C2450 SoCs support two sources for the armclk.
+On Mon, Jan 30, 2012 at 10:51:11AM +0100, Heiko St=FCbner wrote:
+> Am Mittwoch, 2. November 2011, 21:36:03 schrieb Thomas Abraham:
 >=20
-> The first source is the so called armdiv which divides the msysclk do=
-wn
-> to provide necessary cpu rates. In this mode the core voltage must be
-> always at 1.3V. The frequency from the armdiv is not allowed to be
-> lower than the hclk frequency.
+> Hi Thomas,
 >=20
-> In the second mode the armclk can be sourced directly from the hclk i=
-n
-> the so called "dynamic voltags scaling" (dvs) mode. Here the armdiv
-> isn't used at all. Also in this mode the core voltage may be lowered.
-> Existing hardware and tests with it suggest 1.0V as sufficient.
+> in patch 1/6:
+> > +static struct platform_device_id sdhci_s3c_driver_ids[] =3D {
+> > +       {
+> > +               .name           =3D "s3c-sdhci",
+> > +               .driver_data    =3D (kernel_ulong_t)NULL,
+> > +       },
+> > +       {
+> > +               .name           =3D "exynos4-sdhci",
+> > +               .driver_data    =3D EXYNOS4_SDHCI_DRV_DATA,
+> > +       },
+> > +};
+> > +MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
 >=20
-> When changing the clock source to the armdiv from the hclk, the SoC
-> shows stability issues if the new frequency is higher than the curren=
-t
-> hclk frequency. Hence the driver always forces the armdiv to the hclk
-> frequency before the source change and lets the cpufreq issue another
-> set_target call for higher frequencies.
 >=20
-> To mark the hclk frequency as lower as the corresponding armdiv
-> frequency it is set 1MHz below the real frequency. This lets the cpuf=
-req
-> framework change between 133MHz based on hclk and 133MHz based on arm=
-div
-> at will.
+> and in patch 6/6:
+> > +#ifdef CONFIG_OF
+> > +static const struct of_device_id sdhci_s3c_dt_match[] =3D {
+> > +	{ .compatible =3D "samsung,s3c6410-sdhci", },
+> > +	{ .compatible =3D "samsung,exynos4210-sdhci",
+> > +		.data =3D &exynos4_sdhci_drv_data },
+> > +	{},
+> > +};
+> > +MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
 >=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-ping?
+> wouldn't it be better to keep the naming consistent between of and no=
+n-of?
+> I.e. s3c-sdhci vs. s3c6410-sdhci. Since the driver is used for all S3=
+C SoCs=20
+> containing hsmmc controllers I think s3c-sdhci would be preferable he=
+re.
 
-Thanks
-Heiko
+History has shown that future devices aren't always compatible with ear=
+lier
+ones.  Compatible strings are expected to be specific to an exact devic=
+e to
+reduce the possibility of new hardware breaking assumptions.
+
+Instead, new hardware can either claim compatibility with older
+compatible strings (the compatible property in the DT is a list), or
+can have the new string added to the match table in the driver;
+whichever option makes the most sense.
+
+g.
