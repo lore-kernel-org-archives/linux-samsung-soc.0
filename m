@@ -1,59 +1,60 @@
-From: Nicolas Ferre <nicolas.ferre@atmel.com>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Mon, 30 Jan 2012 11:08:19 +0100
-Message-ID: <4F266C13.5080302@atmel.com>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk> <20120124095009.GS16726@n2100.arm.linux.org.uk> <20120126212319.GE11941@n2100.arm.linux.org.uk> <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v8 2/2] iommu/exynos: Add iommu driver for Exynos Platforms
+Date: Mon, 30 Jan 2012 19:34:45 +0900
+Message-ID: <CAHQjnOPi=+iQLkeZ49mSPj4Sq97QGFAjP4NYcugjMQ_3dPuyVw@mail.gmail.com>
+References: <001001ccc625$0afa7ee0$20ef7ca0$%cho@samsung.com>
+	<20120123142706.GA6269@8bytes.org>
+	<CAHQjnOMyoOH2cFjjGSzMvefZTQGROmQgaA8S0MmxnKGHWyQhyA@mail.gmail.com>
+	<017b01ccdc99$44a12420$cde36c60$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-omap-owner@vger.kernel.org>
-In-Reply-To: <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
-Sender: linux-omap-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: davinci-linux-open-source@linux.davincidsp.com, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, Stephen Rothwell <sfr@canb.auug.org.au>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:50044 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751202Ab2A3Keq (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Jan 2012 05:34:46 -0500
+In-Reply-To: <017b01ccdc99$44a12420$cde36c60$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Joerg Roedel <joro@8bytes.org>, linux-samsung-soc@vger.kernel.org, Subash Patel <subash.ramaswamy@linaro.org>, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Younglak Kim <younglak1004.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On 01/29/2012 12:57 AM, Olof Johansson :
-> Hi,
-> 
-> 
-> On Thu, Jan 26, 2012 at 1:23 PM, Russell King - ARM Linux
-> <linux@arm.linux.org.uk> wrote:
-> 
-> 
->> And we're now there.  So...
+On Fri, Jan 27, 2012 at 11:13 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> KyongHo Cho wrote:
 >>
->> Arnd, Olaf,
->>
->> Please incorporate the latest ARM (for-armsoc branch) changes, which can be found at:
->>
->>        git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-arm.git for-armsoc
->>
->> with SHA1 dcf81c1af839b77b44404453ecae6e5ac5a75f05.
-> 
-> Thanks. I have added this as depends/rmk/for-armsoc in the arm-soc repo.
-> 
-> Any next/ branch we start will have this as the base of said branch,
-> so any vendor branches must either already be developed against this
-> stable branch, or merge on top of this with minimal conflicts.
+>> Hi,
+>> On Mon, Jan 23, 2012 at 11:27 PM, Joerg Roedel <joro@8bytes.org> wrote:
+>> > Hi,
+>> >
+>> > please also get and inclue Acks from the Exynos maintainer for the next
+>> > post.
+>> > Since I have a compiling config for exynos now I will merge the patches
+>> > when you have the Acks and addressed or explained the issues I pointed
+>> > out below.
+>> >
+>> Thanks for review!
+>> I will include the Acks in the next patchset.
+>
+> If his updated patch is ok to me, let me reply then.
+>
+> As a note, I'm preparing for new EXYNOS SoC and so some exynos stuff such as
+> clock can be modified. So would be better if KyongHo could update regarding
+> arch/arm/ part based on that. Maybe in the beginning of Feb.?
+>
+Thanks.
 
-Ok, great.
+I will post new patchset when Kukjin completes his job about EXYNOS SoC
+because my patchset changes clock definitions of EXYNOS tree.
 
-I just let you know that there is a conflict between the current Linus'
-tree (with recently updated at91 fixes) and this rmk/for-armsoc branch.
+> Joerg, as I said, I need a topic branch for this to avoid conflict and I
+> think, now you can provide it for samsung tree.
+>
+> If any problems, please let me know.
+>
+> Thanks.
+>
 
-I can give you the resolution of this conflict easily but I would like
-to know which way I execute the merge:
+Thank you.
 
-I use this rmk/for-armsoc as a baseline and merge the fixes already in
-Linus' tree on top of it or the other way around?
-
-Maybe it is preferable that I wait for 3.3-rc2 and merge rmk/for-armsoc
-on top of it. This result can be the base of our AT91 work for 3.4
-preparation.
-
-Your thought?
-
-Best regards,
--- 
-Nicolas Ferre
+  KyongHo.
