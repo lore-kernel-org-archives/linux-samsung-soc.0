@@ -1,221 +1,88 @@
-From: MyungJoo Ham <myungjoo.ham@gmail.com>
-Subject: Re: [PATCH] watchdog: fix error in probe() of s3c2410_wdt (reset at booting)
-Date: Tue, 31 Jan 2012 14:30:00 +0900
-Message-ID: <CAJ0PZbShsR74ZDdM5665+M0bcDg0O7TNuqzqAC7s_oehG=2xOQ@mail.gmail.com>
-References: <1326431663-4638-1-git-send-email-myungjoo.ham@samsung.com>
-	<20120113111117.GT1068@n2100.arm.linux.org.uk>
-	<20120113214555.GA19495@infomag.iguana.be>
-	<CAJ0PZbSpL0-LNHfU7TTM06tPi1B4VgCp=oyPA06qAjp8PoPT2w@mail.gmail.com>
-	<20120130190106.GA29850@infomag.iguana.be>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 1/2] PM / Domains: Add OF support
+Date: Tue, 31 Jan 2012 14:53:05 +0900
+Message-ID: <041e01ccdfdc$9a4257a0$cec706e0$%kim@samsung.com>
+References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org>
+ <201201082223.18603.rjw@sisk.pl>
+ <001e01ccd4e8$d04b03a0$70e10ae0$%kim@samsung.com>
+ <201201172145.35407.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:34982 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751658Ab2AaFaB convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62588 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751616Ab2AaFxL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 00:30:01 -0500
-In-Reply-To: <20120130190106.GA29850@infomag.iguana.be>
+	Tue, 31 Jan 2012 00:53:11 -0500
+In-reply-to: <201201172145.35407.rjw@sisk.pl>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: Russell King - ARM Linux <linux@arm.linux.org.uk>, linux-watchdog@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+To: "'Rafael J. Wysocki'" <rjw@sisk.pl>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-On Tue, Jan 31, 2012 at 4:01 AM, Wim Van Sebroeck <wim@iguana.be> wrote=
-:
-> Hi,
->
->> Yes, if we set wdt_count value properly before request_irq, it's fin=
-e.
->>
->> Anyway, as registering the device (watchdog_register_device()) may b=
-e
->> done after request_irq without any problem, moving request_irq right
->> before it, not after it should be fine.
->
-> So what that be attached patch then? Could you also test this patch?
+Rafael J. Wysocki wrote:
+> 
+> On Tuesday, January 17, 2012, Kukjin Kim wrote:
+> > Rafael J. Wysocki wrote:
+> > >
+> > > On Saturday, January 07, 2012, Thomas Abraham wrote:
+> > > > A device node pointer is added to generic pm domain structure to
+> > > associate
+> > > > the domain with a node in the device tree. The platform code parses the
+> > > > device tree to find available nodes representing the generic power
+> > > domain,
+> > > > instantiates the available domains and initializes them by calling
+> > > > pm_genpd_init().
+> > > >
+> > > > Nodes representing the devices include a phandle of the power domain to
+> > > > which it belongs. As these devices get instantiated, the driver code
+> > > > checkes for availability of a power domain phandle, converts the phandle
+> > > > to a device node and uses the new pm_genpd_of_add_device() api to
+> > > > associate the device with a power domain.
+> > > >
+> > > > pm_genpd_of_add_device() runs through its list of registered power
+> > > domains
+> > > > and matches the OF node of the domain with the one specified as the
+> > > > parameter. If a match is found, the device is associated with the
+> > > matched
+> > > > domain.
+> > > >
+> > > > Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> > > > Cc: Rob Herring <rob.herring@calxeda.com>
+> > > > Cc: Grant Likely <grant.likely@secretlab.ca>
+> > > > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > >
+> > > I can take this patch for 3.4, but your [2/2] depends on it, so I'm not
+> > > sure how to handle that.  If you want me to take the other patch too,
+> > > it'll need ACKs from the Exynos maintaniers.
+> > >
+> > Hi Rafael,
+> >
+> > Basically, looks ok to me.
+> >
+> > But it would be good if [v3 2/2] patch of this series (this patch) could be
+> > applied in samsung tree to avoid conflicts as it modifies many files. I
+> > don't want to make a trouble when sending my tree to upstream. Of course, as
+> > you said, this have a dependency with [v2 1/2]. So if you're ok, let me
+> > create topic branch will have both(1/2 and 2/2) to merge in your tree.
+> >
+> > How do you think?
+> 
+> That would work for me too.
+> 
+Hi Rafael,
 
-This patch looks fine and works. It's tested in Exynos4 machine.
+I created topic branch for you with your ack.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v3.4-for-rafael
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
-
+Please merge that in your tree and if any problems, please kindly let me know.
 
 Thanks.
 
-Cheers!
-MyungJoo.
-
->
-> Kind regards,
-> Wim.
-> ---
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c241=
-0_wdt.c
-> index 4bc3744..404172f 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -312,18 +312,26 @@ static int __devinit s3c2410wdt_probe(struct pl=
-atform_device *pdev)
-> =A0 =A0 =A0 =A0dev =3D &pdev->dev;
-> =A0 =A0 =A0 =A0wdt_dev =3D &pdev->dev;
->
-> - =A0 =A0 =A0 /* get the memory region for the watchdog timer */
-> -
-> =A0 =A0 =A0 =A0wdt_mem =3D platform_get_resource(pdev, IORESOURCE_MEM=
-, 0);
-> =A0 =A0 =A0 =A0if (wdt_mem =3D=3D NULL) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(dev, "no memory resource speci=
-fied\n");
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -ENOENT;
-> =A0 =A0 =A0 =A0}
->
-> + =A0 =A0 =A0 wdt_irq =3D platform_get_resource(pdev, IORESOURCE_IRQ,=
- 0);
-> + =A0 =A0 =A0 if (wdt_irq =3D=3D NULL) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "no irq resource specified=
-\n");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOENT;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err;
-> + =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 /* get the memory region for the watchdog timer */
-> +
-> =A0 =A0 =A0 =A0size =3D resource_size(wdt_mem);
-> =A0 =A0 =A0 =A0if (!request_mem_region(wdt_mem->start, size, pdev->na=
-me)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(dev, "failed to get memory reg=
-ion\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -EBUSY;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -EBUSY;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0wdt_base =3D ioremap(wdt_mem->start, size);
-> @@ -335,29 +343,17 @@ static int __devinit s3c2410wdt_probe(struct pl=
-atform_device *pdev)
->
-> =A0 =A0 =A0 =A0DBG("probe: mapped wdt_base=3D%p\n", wdt_base);
->
-> - =A0 =A0 =A0 wdt_irq =3D platform_get_resource(pdev, IORESOURCE_IRQ,=
- 0);
-> - =A0 =A0 =A0 if (wdt_irq =3D=3D NULL) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "no irq resource specified=
-\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENOENT;
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_map;
-> - =A0 =A0 =A0 }
-> -
-> - =A0 =A0 =A0 ret =3D request_irq(wdt_irq->start, s3c2410wdt_irq, 0, =
-pdev->name, pdev);
-> - =A0 =A0 =A0 if (ret !=3D 0) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "failed to install irq (%d=
-)\n", ret);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_map;
-> - =A0 =A0 =A0 }
-> -
-> =A0 =A0 =A0 =A0wdt_clock =3D clk_get(&pdev->dev, "watchdog");
-> =A0 =A0 =A0 =A0if (IS_ERR(wdt_clock)) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(dev, "failed to find watchdog =
-clock source\n");
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0ret =3D PTR_ERR(wdt_clock);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_irq;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_map;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0clk_enable(wdt_clock);
->
-> - =A0 =A0 =A0 if (s3c2410wdt_cpufreq_register() < 0) {
-> + =A0 =A0 =A0 ret =3D s3c2410wdt_cpufreq_register();
-> + =A0 =A0 =A0 if (ret < 0) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0printk(KERN_ERR PFX "failed to registe=
-r cpufreq\n");
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err_clk;
-> =A0 =A0 =A0 =A0}
-> @@ -378,12 +374,18 @@ static int __devinit s3c2410wdt_probe(struct pl=
-atform_device *pdev)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"cannot start\n");
-> =A0 =A0 =A0 =A0}
->
-> + =A0 =A0 =A0 ret =3D request_irq(wdt_irq->start, s3c2410wdt_irq, 0, =
-pdev->name, pdev);
-> + =A0 =A0 =A0 if (ret !=3D 0) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(dev, "failed to install irq (%d=
-)\n", ret);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_cpufreq;
-> + =A0 =A0 =A0 }
-> +
-> =A0 =A0 =A0 =A0watchdog_set_nowayout(&s3c2410_wdd, nowayout);
->
-> =A0 =A0 =A0 =A0ret =3D watchdog_register_device(&s3c2410_wdd);
-> =A0 =A0 =A0 =A0if (ret) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(dev, "cannot register watchdog=
- (%d)\n", ret);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_cpufreq;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_irq;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0if (tmr_atboot && started =3D=3D 0) {
-> @@ -408,23 +410,26 @@ static int __devinit s3c2410wdt_probe(struct pl=
-atform_device *pdev)
->
-> =A0 =A0 =A0 =A0return 0;
->
-> + err_irq:
-> + =A0 =A0 =A0 free_irq(wdt_irq->start, pdev);
-> +
-> =A0err_cpufreq:
-> =A0 =A0 =A0 =A0s3c2410wdt_cpufreq_deregister();
->
-> =A0err_clk:
-> =A0 =A0 =A0 =A0clk_disable(wdt_clock);
-> =A0 =A0 =A0 =A0clk_put(wdt_clock);
-> -
-> - err_irq:
-> - =A0 =A0 =A0 free_irq(wdt_irq->start, pdev);
-> + =A0 =A0 =A0 wdt_clock =3D NULL;
->
-> =A0err_map:
-> =A0 =A0 =A0 =A0iounmap(wdt_base);
->
-> =A0err_req:
-> =A0 =A0 =A0 =A0release_mem_region(wdt_mem->start, size);
-> - =A0 =A0 =A0 wdt_mem =3D NULL;
->
-> + err:
-> + =A0 =A0 =A0 wdt_irq =3D NULL;
-> + =A0 =A0 =A0 wdt_mem =3D NULL;
-> =A0 =A0 =A0 =A0return ret;
-> =A0}
->
-> @@ -432,18 +437,18 @@ static int __devexit s3c2410wdt_remove(struct p=
-latform_device *dev)
-> =A0{
-> =A0 =A0 =A0 =A0watchdog_unregister_device(&s3c2410_wdd);
->
-> + =A0 =A0 =A0 free_irq(wdt_irq->start, dev);
-> +
-> =A0 =A0 =A0 =A0s3c2410wdt_cpufreq_deregister();
->
-> =A0 =A0 =A0 =A0clk_disable(wdt_clock);
-> =A0 =A0 =A0 =A0clk_put(wdt_clock);
-> =A0 =A0 =A0 =A0wdt_clock =3D NULL;
->
-> - =A0 =A0 =A0 free_irq(wdt_irq->start, dev);
-> - =A0 =A0 =A0 wdt_irq =3D NULL;
-> -
-> =A0 =A0 =A0 =A0iounmap(wdt_base);
->
-> =A0 =A0 =A0 =A0release_mem_region(wdt_mem->start, resource_size(wdt_m=
-em));
-> + =A0 =A0 =A0 wdt_irq =3D NULL;
-> =A0 =A0 =A0 =A0wdt_mem =3D NULL;
-> =A0 =A0 =A0 =A0return 0;
-> =A0}
-
-
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
