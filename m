@@ -1,422 +1,138 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/3] PM / devfreq: update the name of EXYNOS clock register
-Date: Tue, 31 Jan 2012 13:49:25 +0900
-Message-ID: <1327985365-7070-4-git-send-email-kgene.kim@samsung.com>
-References: <1327985365-7070-1-git-send-email-kgene.kim@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK C110 and
+ V210 boards
+Date: Tue, 31 Jan 2012 10:45:01 +0530
+Message-ID: <CAK9yfHzPnSgs-=nPXFnJSXF6mv0Mf1w=1KXRK=gMfgnx10tVGw@mail.gmail.com>
+References: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
+	<CAK9yfHyXazVh3weycF-FCHYtH==m4J-YtwnZfsAdfeAB9mBnkQ@mail.gmail.com>
+	<028b01ccc5da$d0cbeeb0$7263cc10$%kim@samsung.com>
+	<01c301cccf25$0db1fdd0$2915f970$%park@samsung.com>
+	<CAK9yfHyVA__KtLzjh5ksvtmCJnbp0K23ytpjZQkTrtKQt3gVrg@mail.gmail.com>
+	<4F276B5A.7060604@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:54003 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754004Ab2AaEtw (ORCPT
+Received: from mail-qw0-f53.google.com ([209.85.216.53]:61751 "EHLO
+	mail-qw0-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751126Ab2AaFPB convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jan 2012 23:49:52 -0500
-Received: by mail-pw0-f46.google.com with SMTP id u11so279758pbd.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2012 20:49:52 -0800 (PST)
-In-Reply-To: <1327985365-7070-1-git-send-email-kgene.kim@samsung.com>
+	Tue, 31 Jan 2012 00:15:01 -0500
+Received: by qafk1 with SMTP id k1so2231173qaf.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2012 21:15:01 -0800 (PST)
+In-Reply-To: <4F276B5A.7060604@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: jtp.park@samsung.com, linux-samsung-soc@vger.kernel.org
 
-According to replacing the name of EXYNOS clock registers,
-this patch updates exynos4_bus.c file where it is used.
+Hi Kukjin,
 
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-Cc: Kyungmin Park <kyungmin.park@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/devfreq/exynos4_bus.c |  224 ++++++++++++++++++++--------------------
- 1 files changed, 112 insertions(+), 112 deletions(-)
 
-diff --git a/drivers/devfreq/exynos4_bus.c b/drivers/devfreq/exynos4_bus.c
-index 6460577..565aa98 100644
---- a/drivers/devfreq/exynos4_bus.c
-+++ b/drivers/devfreq/exynos4_bus.c
-@@ -311,51 +311,51 @@ static int exynos4210_set_busclk(struct busfreq_data *data, struct opp *opp)
- 	/* Change Divider - DMC0 */
- 	tmp = data->dmc_divtable[index];
- 
--	__raw_writel(tmp, S5P_CLKDIV_DMC0);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_DMC0);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC0);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_DMC0);
- 	} while (tmp & 0x11111111);
- 
- 	/* Change Divider - TOP */
- 	tmp = data->top_divtable[index];
- 
--	__raw_writel(tmp, S5P_CLKDIV_TOP);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_TOP);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_TOP);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_TOP);
- 	} while (tmp & 0x11111);
- 
- 	/* Change Divider - LEFTBUS */
--	tmp = __raw_readl(S5P_CLKDIV_LEFTBUS);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_LEFTBUS);
- 
--	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
- 
- 	tmp |= ((exynos4210_clkdiv_lr_bus[index][0] <<
--				S5P_CLKDIV_BUS_GDLR_SHIFT) |
-+				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
- 		(exynos4210_clkdiv_lr_bus[index][1] <<
--				S5P_CLKDIV_BUS_GPLR_SHIFT));
-+				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_LEFTBUS);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_LEFTBUS);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_LEFTBUS);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_LEFTBUS);
- 	} while (tmp & 0x11);
- 
- 	/* Change Divider - RIGHTBUS */
--	tmp = __raw_readl(S5P_CLKDIV_RIGHTBUS);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_RIGHTBUS);
- 
--	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
- 
- 	tmp |= ((exynos4210_clkdiv_lr_bus[index][0] <<
--				S5P_CLKDIV_BUS_GDLR_SHIFT) |
-+				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
- 		(exynos4210_clkdiv_lr_bus[index][1] <<
--				S5P_CLKDIV_BUS_GPLR_SHIFT));
-+				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_RIGHTBUS);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_RIGHTBUS);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_RIGHTBUS);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_RIGHTBUS);
- 	} while (tmp & 0x11);
- 
- 	return 0;
-@@ -376,137 +376,137 @@ static int exynos4x12_set_busclk(struct busfreq_data *data, struct opp *opp)
- 	/* Change Divider - DMC0 */
- 	tmp = data->dmc_divtable[index];
- 
--	__raw_writel(tmp, S5P_CLKDIV_DMC0);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_DMC0);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC0);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_DMC0);
- 	} while (tmp & 0x11111111);
- 
- 	/* Change Divider - DMC1 */
--	tmp = __raw_readl(S5P_CLKDIV_DMC1);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_DMC1);
- 
--	tmp &= ~(S5P_CLKDIV_DMC1_G2D_ACP_MASK |
--		S5P_CLKDIV_DMC1_C2C_MASK |
--		S5P_CLKDIV_DMC1_C2CACLK_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_DMC1_G2D_ACP_MASK |
-+		EXYNOS4_CLKDIV_DMC1_C2C_MASK |
-+		EXYNOS4_CLKDIV_DMC1_C2CACLK_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_dmc1[index][0] <<
--				S5P_CLKDIV_DMC1_G2D_ACP_SHIFT) |
-+				EXYNOS4_CLKDIV_DMC1_G2D_ACP_SHIFT) |
- 		(exynos4x12_clkdiv_dmc1[index][1] <<
--				S5P_CLKDIV_DMC1_C2C_SHIFT) |
-+				EXYNOS4_CLKDIV_DMC1_C2C_SHIFT) |
- 		(exynos4x12_clkdiv_dmc1[index][2] <<
--				S5P_CLKDIV_DMC1_C2CACLK_SHIFT));
-+				EXYNOS4_CLKDIV_DMC1_C2CACLK_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_DMC1);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_DMC1);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC1);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_DMC1);
- 	} while (tmp & 0x111111);
- 
- 	/* Change Divider - TOP */
--	tmp = __raw_readl(S5P_CLKDIV_TOP);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_TOP);
- 
--	tmp &= ~(S5P_CLKDIV_TOP_ACLK266_GPS_MASK |
--		S5P_CLKDIV_TOP_ACLK100_MASK |
--		S5P_CLKDIV_TOP_ACLK160_MASK |
--		S5P_CLKDIV_TOP_ACLK133_MASK |
--		S5P_CLKDIV_TOP_ONENAND_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_TOP_ACLK266_GPS_MASK |
-+		EXYNOS4_CLKDIV_TOP_ACLK100_MASK |
-+		EXYNOS4_CLKDIV_TOP_ACLK160_MASK |
-+		EXYNOS4_CLKDIV_TOP_ACLK133_MASK |
-+		EXYNOS4_CLKDIV_TOP_ONENAND_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_top[index][0] <<
--				S5P_CLKDIV_TOP_ACLK266_GPS_SHIFT) |
-+				EXYNOS4_CLKDIV_TOP_ACLK266_GPS_SHIFT) |
- 		(exynos4x12_clkdiv_top[index][1] <<
--				S5P_CLKDIV_TOP_ACLK100_SHIFT) |
-+				EXYNOS4_CLKDIV_TOP_ACLK100_SHIFT) |
- 		(exynos4x12_clkdiv_top[index][2] <<
--				S5P_CLKDIV_TOP_ACLK160_SHIFT) |
-+				EXYNOS4_CLKDIV_TOP_ACLK160_SHIFT) |
- 		(exynos4x12_clkdiv_top[index][3] <<
--				S5P_CLKDIV_TOP_ACLK133_SHIFT) |
-+				EXYNOS4_CLKDIV_TOP_ACLK133_SHIFT) |
- 		(exynos4x12_clkdiv_top[index][4] <<
--				S5P_CLKDIV_TOP_ONENAND_SHIFT));
-+				EXYNOS4_CLKDIV_TOP_ONENAND_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_TOP);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_TOP);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_TOP);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_TOP);
- 	} while (tmp & 0x11111);
- 
- 	/* Change Divider - LEFTBUS */
--	tmp = __raw_readl(S5P_CLKDIV_LEFTBUS);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_LEFTBUS);
- 
--	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_lr_bus[index][0] <<
--				S5P_CLKDIV_BUS_GDLR_SHIFT) |
-+				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
- 		(exynos4x12_clkdiv_lr_bus[index][1] <<
--				S5P_CLKDIV_BUS_GPLR_SHIFT));
-+				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_LEFTBUS);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_LEFTBUS);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_LEFTBUS);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_LEFTBUS);
- 	} while (tmp & 0x11);
- 
- 	/* Change Divider - RIGHTBUS */
--	tmp = __raw_readl(S5P_CLKDIV_RIGHTBUS);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_RIGHTBUS);
- 
--	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_lr_bus[index][0] <<
--				S5P_CLKDIV_BUS_GDLR_SHIFT) |
-+				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
- 		(exynos4x12_clkdiv_lr_bus[index][1] <<
--				S5P_CLKDIV_BUS_GPLR_SHIFT));
-+				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_RIGHTBUS);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_RIGHTBUS);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_RIGHTBUS);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_RIGHTBUS);
- 	} while (tmp & 0x11);
- 
- 	/* Change Divider - MFC */
--	tmp = __raw_readl(S5P_CLKDIV_MFC);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_MFC);
- 
--	tmp &= ~(S5P_CLKDIV_MFC_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_MFC_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_sclkip[index][0] <<
--				S5P_CLKDIV_MFC_SHIFT));
-+				EXYNOS4_CLKDIV_MFC_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_MFC);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_MFC);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_MFC);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_MFC);
- 	} while (tmp & 0x1);
- 
- 	/* Change Divider - JPEG */
--	tmp = __raw_readl(S5P_CLKDIV_CAM1);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_CAM1);
- 
--	tmp &= ~(S5P_CLKDIV_CAM1_JPEG_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_CAM1_JPEG_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_sclkip[index][1] <<
--				S5P_CLKDIV_CAM1_JPEG_SHIFT));
-+				EXYNOS4_CLKDIV_CAM1_JPEG_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_CAM1);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_CAM1);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_CAM1);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_CAM1);
- 	} while (tmp & 0x1);
- 
- 	/* Change Divider - FIMC0~3 */
--	tmp = __raw_readl(S5P_CLKDIV_CAM);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_CAM);
- 
--	tmp &= ~(S5P_CLKDIV_CAM_FIMC0_MASK | S5P_CLKDIV_CAM_FIMC1_MASK |
--		S5P_CLKDIV_CAM_FIMC2_MASK | S5P_CLKDIV_CAM_FIMC3_MASK);
-+	tmp &= ~(EXYNOS4_CLKDIV_CAM_FIMC0_MASK | EXYNOS4_CLKDIV_CAM_FIMC1_MASK |
-+		EXYNOS4_CLKDIV_CAM_FIMC2_MASK | EXYNOS4_CLKDIV_CAM_FIMC3_MASK);
- 
- 	tmp |= ((exynos4x12_clkdiv_sclkip[index][2] <<
--				S5P_CLKDIV_CAM_FIMC0_SHIFT) |
-+				EXYNOS4_CLKDIV_CAM_FIMC0_SHIFT) |
- 		(exynos4x12_clkdiv_sclkip[index][2] <<
--				S5P_CLKDIV_CAM_FIMC1_SHIFT) |
-+				EXYNOS4_CLKDIV_CAM_FIMC1_SHIFT) |
- 		(exynos4x12_clkdiv_sclkip[index][2] <<
--				S5P_CLKDIV_CAM_FIMC2_SHIFT) |
-+				EXYNOS4_CLKDIV_CAM_FIMC2_SHIFT) |
- 		(exynos4x12_clkdiv_sclkip[index][2] <<
--				S5P_CLKDIV_CAM_FIMC3_SHIFT));
-+				EXYNOS4_CLKDIV_CAM_FIMC3_SHIFT));
- 
--	__raw_writel(tmp, S5P_CLKDIV_CAM);
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_CAM);
- 
- 	do {
--		tmp = __raw_readl(S5P_CLKDIV_STAT_CAM1);
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_CAM1);
- 	} while (tmp & 0x1111);
- 
- 	return 0;
-@@ -760,55 +760,55 @@ static int exynos4210_init_tables(struct busfreq_data *data)
- 	int mgrp;
- 	int i, err = 0;
- 
--	tmp = __raw_readl(S5P_CLKDIV_DMC0);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_DMC0);
- 	for (i = LV_0; i < EX4210_LV_NUM; i++) {
--		tmp &= ~(S5P_CLKDIV_DMC0_ACP_MASK |
--			S5P_CLKDIV_DMC0_ACPPCLK_MASK |
--			S5P_CLKDIV_DMC0_DPHY_MASK |
--			S5P_CLKDIV_DMC0_DMC_MASK |
--			S5P_CLKDIV_DMC0_DMCD_MASK |
--			S5P_CLKDIV_DMC0_DMCP_MASK |
--			S5P_CLKDIV_DMC0_COPY2_MASK |
--			S5P_CLKDIV_DMC0_CORETI_MASK);
-+		tmp &= ~(EXYNOS4_CLKDIV_DMC0_ACP_MASK |
-+			EXYNOS4_CLKDIV_DMC0_ACPPCLK_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DPHY_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DMC_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DMCD_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DMCP_MASK |
-+			EXYNOS4_CLKDIV_DMC0_COPY2_MASK |
-+			EXYNOS4_CLKDIV_DMC0_CORETI_MASK);
- 
- 		tmp |= ((exynos4210_clkdiv_dmc0[i][0] <<
--					S5P_CLKDIV_DMC0_ACP_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_ACP_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][1] <<
--					S5P_CLKDIV_DMC0_ACPPCLK_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_ACPPCLK_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][2] <<
--					S5P_CLKDIV_DMC0_DPHY_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DPHY_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][3] <<
--					S5P_CLKDIV_DMC0_DMC_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DMC_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][4] <<
--					S5P_CLKDIV_DMC0_DMCD_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DMCD_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][5] <<
--					S5P_CLKDIV_DMC0_DMCP_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DMCP_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][6] <<
--					S5P_CLKDIV_DMC0_COPY2_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_COPY2_SHIFT) |
- 			(exynos4210_clkdiv_dmc0[i][7] <<
--					S5P_CLKDIV_DMC0_CORETI_SHIFT));
-+					EXYNOS4_CLKDIV_DMC0_CORETI_SHIFT));
- 
- 		data->dmc_divtable[i] = tmp;
- 	}
- 
--	tmp = __raw_readl(S5P_CLKDIV_TOP);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_TOP);
- 	for (i = LV_0; i <  EX4210_LV_NUM; i++) {
--		tmp &= ~(S5P_CLKDIV_TOP_ACLK200_MASK |
--			S5P_CLKDIV_TOP_ACLK100_MASK |
--			S5P_CLKDIV_TOP_ACLK160_MASK |
--			S5P_CLKDIV_TOP_ACLK133_MASK |
--			S5P_CLKDIV_TOP_ONENAND_MASK);
-+		tmp &= ~(EXYNOS4_CLKDIV_TOP_ACLK200_MASK |
-+			EXYNOS4_CLKDIV_TOP_ACLK100_MASK |
-+			EXYNOS4_CLKDIV_TOP_ACLK160_MASK |
-+			EXYNOS4_CLKDIV_TOP_ACLK133_MASK |
-+			EXYNOS4_CLKDIV_TOP_ONENAND_MASK);
- 
- 		tmp |= ((exynos4210_clkdiv_top[i][0] <<
--					S5P_CLKDIV_TOP_ACLK200_SHIFT) |
-+					EXYNOS4_CLKDIV_TOP_ACLK200_SHIFT) |
- 			(exynos4210_clkdiv_top[i][1] <<
--					S5P_CLKDIV_TOP_ACLK100_SHIFT) |
-+					EXYNOS4_CLKDIV_TOP_ACLK100_SHIFT) |
- 			(exynos4210_clkdiv_top[i][2] <<
--					S5P_CLKDIV_TOP_ACLK160_SHIFT) |
-+					EXYNOS4_CLKDIV_TOP_ACLK160_SHIFT) |
- 			(exynos4210_clkdiv_top[i][3] <<
--					S5P_CLKDIV_TOP_ACLK133_SHIFT) |
-+					EXYNOS4_CLKDIV_TOP_ACLK133_SHIFT) |
- 			(exynos4210_clkdiv_top[i][4] <<
--					S5P_CLKDIV_TOP_ONENAND_SHIFT));
-+					EXYNOS4_CLKDIV_TOP_ONENAND_SHIFT));
- 
- 		data->top_divtable[i] = tmp;
- 	}
-@@ -872,28 +872,28 @@ static int exynos4x12_init_tables(struct busfreq_data *data)
- 	tmp |= DMC_PAUSE_ENABLE;
- 	__raw_writel(tmp, S5P_DMC_PAUSE_CTRL);
- 
--	tmp = __raw_readl(S5P_CLKDIV_DMC0);
-+	tmp = __raw_readl(EXYNOS4_CLKDIV_DMC0);
- 
- 	for (i = 0; i <  EX4x12_LV_NUM; i++) {
--		tmp &= ~(S5P_CLKDIV_DMC0_ACP_MASK |
--			S5P_CLKDIV_DMC0_ACPPCLK_MASK |
--			S5P_CLKDIV_DMC0_DPHY_MASK |
--			S5P_CLKDIV_DMC0_DMC_MASK |
--			S5P_CLKDIV_DMC0_DMCD_MASK |
--			S5P_CLKDIV_DMC0_DMCP_MASK);
-+		tmp &= ~(EXYNOS4_CLKDIV_DMC0_ACP_MASK |
-+			EXYNOS4_CLKDIV_DMC0_ACPPCLK_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DPHY_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DMC_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DMCD_MASK |
-+			EXYNOS4_CLKDIV_DMC0_DMCP_MASK);
- 
- 		tmp |= ((exynos4x12_clkdiv_dmc0[i][0] <<
--					S5P_CLKDIV_DMC0_ACP_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_ACP_SHIFT) |
- 			(exynos4x12_clkdiv_dmc0[i][1] <<
--					S5P_CLKDIV_DMC0_ACPPCLK_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_ACPPCLK_SHIFT) |
- 			(exynos4x12_clkdiv_dmc0[i][2] <<
--					S5P_CLKDIV_DMC0_DPHY_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DPHY_SHIFT) |
- 			(exynos4x12_clkdiv_dmc0[i][3] <<
--					S5P_CLKDIV_DMC0_DMC_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DMC_SHIFT) |
- 			(exynos4x12_clkdiv_dmc0[i][4] <<
--					S5P_CLKDIV_DMC0_DMCD_SHIFT) |
-+					EXYNOS4_CLKDIV_DMC0_DMCD_SHIFT) |
- 			(exynos4x12_clkdiv_dmc0[i][5] <<
--					S5P_CLKDIV_DMC0_DMCP_SHIFT));
-+					EXYNOS4_CLKDIV_DMC0_DMCP_SHIFT));
- 
- 		data->dmc_divtable[i] = tmp;
- 	}
--- 
-1.7.4.4
+On 31 January 2012 09:47, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 01/30/12 14:15, Sachin Kamat wrote:
+>>
+>> Hi Kukjin,
+>>
+>> Ping.
+>>
+> Hi Sachin,
+>
+> I looked at your reply on Sylwester's comments, PATCH 3/4.
+> I'd like to apply all of this series after your re-submitting.
+
+
+I have already re-submitted patches 3 and 4 incorporating Sylwester's c=
+omments.
+
+Please let me know if you want me to send them once again.
+
+Regards
+Sachin
+
+>
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>>
+>> On 10 January 2012 04:48, Jeongtae Park<jtp.park@samsung.com> =A0wro=
+te:
+>>>
+>>> Hi Sachin,
+>>>
+>>> thanks for the patch.
+>>> There is no issue for MFC.
+>>>
+>>> Best regards,
+>>> /jtpark
+>>>
+>>>> -----Original Message-----
+>>>> From: Kukjin Kim [mailto:kgene.kim@samsung.com]
+>>>> Sent: Thursday, December 29, 2011 12:35 PM
+>>>> To: 'Sachin Kamat'; linux-samsung-soc@vger.kernel.org
+>>>> Cc: jtp.park@samsung.com
+>>>> Subject: RE: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK=
+ C110
+>>>> and V210 boards
+>>>>
+>>>> Sachin Kamat wrote:
+>>>>>
+>>>>>
+>>>>> Hi Kukjin,
+>>>>>
+>>>>> Please pick up the MFC patches (patches 1& =A02) from this series=
+=2E I
+>>>>>
+>>>>> will post a separate patch series for FIMC related changes.
+>>>>>
+>>>> (Cc'ed Jeongtae Park)
+>>>>
+>>>> Jeongtae, let me know your opinion on this MFC enabling patches.
+>>>>
+>>>> Thanks.
+>>>>
+>>>> Best regards,
+>>>> Kgene.
+>>>> --
+>>>> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
+>>>> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>>>>
+>>>>> Regards
+>>>>> Sachin
+>>>>>
+>>>>> On 26 December 2011 15:30, Sachin Kamat<sachin.kamat@linaro.org>
+>>>>> =A0wrote:
+>>>>>>
+>>>>>> This patch series adds support for MFC and FIMC on SMDK C110 and=
+ V210
+>>>>>
+>>>>> boards.
+>>>>>>
+>>>>>> It is based on Kukjin Kim's latest for-next branch.
+>>>>>>
+>>>>>> Sachin Kamat (4):
+>>>>>> =A0ARM: S5PV210: Enable MFC on SMDKV210
+>>>>>> =A0ARM: S5PV210: Enable MFC on SMDKC110
+>>>>>> =A0ARM: S5PV210: Enable FIMC on SMDKV210
+>>>>>> =A0ARM: S5PV210: Enable FIMC on SMDKC110
+>>>>>>
+>>>>>> =A0arch/arm/mach-s5pv210/Kconfig =A0 =A0 =A0 =A0 | =A0 =A08 ++++=
+++++
+>>>>>> =A0arch/arm/mach-s5pv210/mach-smdkc110.c | =A0 14 ++++++++++++++
+>>>>>> =A0arch/arm/mach-s5pv210/mach-smdkv210.c | =A0 13 +++++++++++++
+>>>>>> =A03 files changed, 35 insertions(+), 0 deletions(-)
+>>>>>>
+>>>>>> --
+>>>>>> 1.7.4.1
+
+
+
+--=20
+With warm regards,
+Sachin
