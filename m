@@ -1,64 +1,92 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] S3C24XX DMA resume regression fix
-Date: Tue, 31 Jan 2012 20:27:23 +0900
-Message-ID: <04a201cce00b$4d6aaac0$e8400040$%kim@samsung.com>
-References: <1327065184-9805-1-git-send-email-dron0gus@gmail.com>
- <20120127122537.GF2056@build.ihdev.net>
+Subject: [PATCH] ARM: smp: allow get the core count from L2 control on A15
+Date: Tue, 31 Jan 2012 21:11:10 +0900
+Message-ID: <04be01cce011$6b3b3550$41b19ff0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:31196 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753167Ab2AaL1g (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62946 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753024Ab2AaMLN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 06:27:36 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Tue, 31 Jan 2012 07:11:13 -0500
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LYN001F6UGTIE30@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 20:27:26 +0900 (KST)
+ 2010)) with ESMTP id <0LYN00163WIOFP20@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 21:11:12 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LYN00D2PUHN6A60@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 20:27:25 +0900 (KST)
-In-reply-to: <20120127122537.GF2056@build.ihdev.net>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYN00DOPWIMJ180@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 21:11:12 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sergey Lapin' <slapin@ossfans.org>, 'Gusakov Andrey' <dron0gus@gmail.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Sergei Shtylyov' <sshtylyov@ru.mvista.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rmk+kernel@arm.linux.org.uk
 
-Sergey Lapin wrote:
-> 
-> On Fri, Jan 20, 2012 at 05:13:04PM +0400, Gusakov Andrey wrote:
-> > In commit bb072c3cf21d1c9a5a2eeb5a00679ee7bf39675b
 
-Just the first 12 hex digits of the commit id is enough now as Linus said?
+Actually, the number of A15 CPU core gets from L2 control
+register not SCU configuration.
 
-Thanks.
+Suggested-by: Changhwan Youn <chaos.youn@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+---
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Hi Russell,
 
-> > (Use struct syscore_ops for "core" power management)
-> > suspend/resume hooks for each DMA channels were replaced with
-> > hooks that suspend/resume all channels. s3c2410_dma_suspend
-> > suspends channels from 0 to dma_channels. s3c2410_dma_resume
-> > resumes channels in reverse order. So pointer should be
-> > decremented insted of being incremented.
-> Any news regarding this patch?
-> >
-> > Signed-off-by: Gusakov Andrey <dron0gus@gmail.com>
-> > ---
-> >  arch/arm/plat-s3c24xx/dma.c |    2 +-
-> >  1 files changed, 1 insertions(+), 1 deletions(-)
-> >
-> > v2: updated commit message with original commit summary
-> >
-> 
-> All the best,
-> S.
+As you know, the method of A15 core counting is different with A9.
+So the function will be required on that but I'm not sure where the
+function should be added at.
+
+ arch/arm/include/asm/smp.h |    5 +++++
+ arch/arm/kernel/smp.c      |   16 ++++++++++++++++
+ 2 files changed, 21 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/include/asm/smp.h b/arch/arm/include/asm/smp.h
+index 1e5717a..b67084f 100644
+--- a/arch/arm/include/asm/smp.h
++++ b/arch/arm/include/asm/smp.h
+@@ -71,6 +71,11 @@ extern void platform_secondary_init(unsigned int cpu);
+ extern void platform_smp_prepare_cpus(unsigned int);
+ 
+ /*
++ * Get the number of CPU cores from the L2 control register on A15
++ */
++extern unsigned long a15_get_core_count(void);
++
++/*
+  * Logical CPU mapping.
+  */
+ extern int __cpu_logical_map[NR_CPUS];
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 57db122..be4d31d 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -233,6 +233,22 @@ void __ref cpu_die(void)
+ }
+ #endif /* CONFIG_HOTPLUG_CPU */
+ 
++/*
++ * Get the number of CPU cores from the L2 control register on A15
++ */
++unsigned long a15_get_core_count(void)
++{
++	unsigned long val;
++
++	/* Read L2 control register */
++	asm volatile("mrc p15, 1, %0, c9, c0, 2" : "=r"(val));
++
++	/* [25:24] of L2 control register means core count - 1 */
++	val = ((val >> 24) & 0x3) + 1;
++
++	return val;
++}
++
+ int __cpu_logical_map[NR_CPUS];
+ 
+ void __init smp_setup_processor_id(void)
+-- 
+1.7.1
