@@ -1,69 +1,106 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] ARM: S5PV210: Add G2D to mach-s5pv210
-Date: Tue, 31 Jan 2012 11:24:56 +0530
-Message-ID: <CAK9yfHxjFz1Z+dn+g2wpv23wd3aW5dpx=QUXHs8Gf5zs0VJ_Hw@mail.gmail.com>
-References: <1325496717-11115-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-2 for v3.3
+Date: Tue, 31 Jan 2012 15:10:37 +0900
+Message-ID: <041f01ccdfdf$0cb76b70$26264250$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:54240 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752344Ab2AaFy5 convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:27689 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751848Ab2AaGKm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 00:54:57 -0500
-Received: by qcqw6 with SMTP id w6so117706qcq.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2012 21:54:56 -0800 (PST)
-In-Reply-To: <1325496717-11115-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 31 Jan 2012 01:10:42 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LYN002Z4FTMLSL0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 15:10:39 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYN00M7CFTO7FY0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 15:10:38 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Ping Kukjin...
+Hi Arnd, Olof,
 
+Please pull 2nd Samsung fixes for v3.3, from following:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v3.3-samsung-fixes-2
 
-On 2 January 2012 15:01, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
-> =A0arch/arm/mach-s5pv210/include/mach/map.h | =A0 =A03 +++
-> =A01 files changed, 3 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-s5pv210/include/mach/map.h b/arch/arm/mach=
--s5pv210/include/mach/map.h
-> index 89c34b8..721df50 100644
-> --- a/arch/arm/mach-s5pv210/include/mach/map.h
-> +++ b/arch/arm/mach-s5pv210/include/mach/map.h
-> @@ -80,6 +80,8 @@
->
-> =A0#define S5PV210_PA_FB =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A00xF800000=
-0
->
-> +#define S5PV210_PA_G2D =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0xFA000000
-> +
-> =A0#define S5PV210_PA_MDMA =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A00xFA200000
-> =A0#define S5PV210_PA_PDMA0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0xE0900000
-> =A0#define S5PV210_PA_PDMA1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 0xE0A00000
-> @@ -119,6 +121,7 @@
-> =A0#define S5P_PA_MIPI_CSIS0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S5PV210_PA_MI=
-PI_CSIS
-> =A0#define S5P_PA_MFC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210=
-_PA_MFC
-> =A0#define S5P_PA_IIC_HDMIPHY =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_PA_IIC_=
-HDMIPHY
-> +#define S5P_PA_G2D =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210_P=
-A_G2D
->
-> =A0#define S5P_PA_SDO =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S5PV210=
-_PA_SDO
-> =A0#define S5P_PA_VP =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0S5PV2=
-10_PA_VP
-> --
-> 1.7.4.1
->
+If any problems, please kindly let me know.
 
+Thanks.
 
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
---=20
-With warm regards,
-Sachin
+The following changes since commit dcd6c92267155e70a94b3927bce681ce74b80d1f:
+
+  Linux 3.3-rc1 (2012-01-19 15:04:48 -0800)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v3.3-samsung-fixes-2
+
+Heiko Stuebner (1):
+      ARM: SAMSUNG: Fix missing api-change from subsys_interface change
+
+Jonghwan Choi (1):
+      ARM: EXYNOS: Fix "warning: initialization from incompatible pointer type"
+
+Kukjin Kim (2):
+      ARM: EXYNOS: Remove build warning without enabling PM
+      ARM: S5PV210: Fix the name of exynos4_clk_hdmiphy_ctrl() for S5PV210
+
+Marek Szyprowski (1):
+      ARM: EXYNOS: fix non-SMP builds for EXYNOS4
+
+Mark Brown (2):
+      ARM: S3C64XX: Make s3c64xx_init_uarts() static
+      ARM: S3C6410: Use device names for both I2C clocks
+
+Sylwester Nawrocki (3):
+      ARM: SAMSUNG: Fix platform data setup for I2C adapter 0
+      ARM: EXYNOS: Correct framebuffer window size on Nuri board
+      ARM: EXYNOS: Correct M-5MOLS sensor clock frequency on Universal C210 board
+
+ arch/arm/mach-exynos/clock-exynos4210.c      |    2 ++
+ arch/arm/mach-exynos/clock-exynos4212.c      |    2 ++
+ arch/arm/mach-exynos/clock.c                 |    2 ++
+ arch/arm/mach-exynos/mach-nuri.c             |    8 ++++----
+ arch/arm/mach-exynos/mach-universal_c210.c   |    2 +-
+ arch/arm/mach-exynos/pm.c                    |    4 +++-
+ arch/arm/mach-s3c2410/cpu-freq.c             |    8 +++++---
+ arch/arm/mach-s3c2410/dma.c                  |    5 +++--
+ arch/arm/mach-s3c2410/pll.c                  |    2 +-
+ arch/arm/mach-s3c2410/pm.c                   |    2 +-
+ arch/arm/mach-s3c2412/cpu-freq.c             |    3 ++-
+ arch/arm/mach-s3c2412/dma.c                  |    3 ++-
+ arch/arm/mach-s3c2412/irq.c                  |    2 +-
+ arch/arm/mach-s3c2412/pm.c                   |    2 +-
+ arch/arm/mach-s3c2416/irq.c                  |    3 ++-
+ arch/arm/mach-s3c2416/pm.c                   |    2 +-
+ arch/arm/mach-s3c2440/clock.c                |    2 +-
+ arch/arm/mach-s3c2440/dma.c                  |    3 ++-
+ arch/arm/mach-s3c2440/irq.c                  |    2 +-
+ arch/arm/mach-s3c2440/s3c2440-cpufreq.c      |    3 ++-
+ arch/arm/mach-s3c2440/s3c2440-pll-12000000.c |    2 +-
+ arch/arm/mach-s3c2440/s3c2440-pll-16934400.c |    3 ++-
+ arch/arm/mach-s3c2440/s3c2442.c              |    2 +-
+ arch/arm/mach-s3c2440/s3c244x-clock.c        |    2 +-
+ arch/arm/mach-s3c2440/s3c244x-irq.c          |    2 +-
+ arch/arm/mach-s3c2443/dma.c                  |    3 ++-
+ arch/arm/mach-s3c2443/irq.c                  |    3 ++-
+ arch/arm/mach-s3c64xx/clock.c                |    5 +++++
+ arch/arm/mach-s3c64xx/common.c               |    2 +-
+ arch/arm/mach-s5p64x0/pm.c                   |    2 +-
+ arch/arm/mach-s5pv210/clock.c                |    4 ++--
+ arch/arm/mach-s5pv210/pm.c                   |    2 +-
+ arch/arm/plat-samsung/devs.c                 |    4 +++-
+ 33 files changed, 62 insertions(+), 36 deletions(-)
