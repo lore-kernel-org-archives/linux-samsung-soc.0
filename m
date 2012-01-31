@@ -1,209 +1,177 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCH] ARM: Exynos: JPEG board definition and device register
-Date: Tue, 31 Jan 2012 11:09:32 +0100
-Message-ID: <1328004572-469-1-git-send-email-andrzej.p@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH] mmc: core: Fix PowerOff Notify suspend/resume
+Date: Tue, 31 Jan 2012 15:44:03 +0530
+Message-ID: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:19780 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752695Ab2AaKJt (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:62676 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752925Ab2AaKOa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 05:09:49 -0500
-Received: from euspt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LYN00EUEQWBZ230@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 10:09:47 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LYN00HGGQWAOF@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 10:09:46 +0000 (GMT)
+	Tue, 31 Jan 2012 05:14:30 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-mmc@vger.kernel.org
+Cc: patches@linaro.org, linux-samsung-soc@vger.kernel.org, saugata.das@linaro.org, Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
 
-Dear All,
+Modified the mmc_poweroff to resume before sending the
+poweroff notification command. In sleep mode only AWAKE
+and RESET commands are allowed, so before sending the
+poweroff notification command resume from sleep mode and
+then send the notification command.
 
-This patch adds board definition code and device registration code
-for JPEG IP found in Exynos4 SoC.
+POwerOff Notify is tested on a Synopsis Designware Host
+Controller(eMMC 4.5). The suspend to RAM and resume works fine.
 
+This patch is successfully applied on the Chris's mmc-next
+branch
 
-Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+cc: Chris Ball <cjb@laptop.org>
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+Tested-by: Girish K S <girish.shivananjappa@linaro.org>
 ---
- arch/arm/mach-exynos/Kconfig               |    2 ++
- arch/arm/mach-exynos/clock.c               |    5 +++++
- arch/arm/mach-exynos/include/mach/map.h    |    3 +++
- arch/arm/mach-exynos/mach-nuri.c           |    2 ++
- arch/arm/mach-exynos/mach-universal_c210.c |    2 ++
- arch/arm/plat-s5p/Kconfig                  |    5 +++++
- arch/arm/plat-samsung/devs.c               |   26 ++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h  |    1 +
- 8 files changed, 46 insertions(+), 0 deletions(-)
+ drivers/mmc/core/core.c  |   28 ++++++++++++++++++++--------
+ drivers/mmc/core/mmc.c   |   17 ++++++++++++-----
+ include/linux/mmc/card.h |    4 ++++
+ 3 files changed, 36 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index bd4600e..d8ab22f 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -232,6 +232,7 @@ config MACH_UNIVERSAL_C210
- 	select S5P_DEV_FIMC3
- 	select S5P_DEV_G2D
- 	select S5P_DEV_CSIS0
-+	select S5P_DEV_JPEG
- 	select S5P_DEV_FIMD0
- 	select S3C_DEV_HSMMC
- 	select S3C_DEV_HSMMC2
-@@ -270,6 +271,7 @@ config MACH_NURI
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C5
- 	select S5P_DEV_CSIS0
-+	select S5P_DEV_JPEG
- 	select S5P_DEV_FIMC0
- 	select S5P_DEV_FIMC1
- 	select S5P_DEV_FIMC2
-diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-index 5a8c42e..e5d446a 100644
---- a/arch/arm/mach-exynos/clock.c
-+++ b/arch/arm/mach-exynos/clock.c
-@@ -470,6 +470,11 @@ static struct clk init_clocks_off[] = {
- 		.enable		= exynos4_clk_ip_cam_ctrl,
- 		.ctrlbit	= (1 << 5),
- 	}, {
-+		.name           = "jpeg",
-+		.id             = 0,
-+		.enable         = exynos4_clk_ip_cam_ctrl,
-+		.ctrlbit        = (1 << 6),
-+	}, {
- 		.name		= "fimc",
- 		.devname	= "exynos4-fimc.0",
- 		.enable		= exynos4_clk_ip_cam_ctrl,
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 7df9e74..5a9e656 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -31,6 +31,8 @@
- #define EXYNOS4_PA_FIMC2		0x11820000
- #define EXYNOS4_PA_FIMC3		0x11830000
+diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+index bec0bf2..14ec575 100644
+--- a/drivers/mmc/core/core.c
++++ b/drivers/mmc/core/core.c
+@@ -1239,7 +1239,8 @@ static void mmc_poweroff_notify(struct mmc_host *host)
+ 	int err = 0;
  
-+#define EXYNOS4_PA_JPEG			0x11840000
+ 	card = host->card;
+-
++	mmc_claim_host(host);
 +
- #define EXYNOS4_PA_G2D			0x12800000
+ 	/*
+ 	 * Send power notify command only if card
+ 	 * is mmc and notify state is powered ON
+@@ -1269,6 +1270,7 @@ static void mmc_poweroff_notify(struct mmc_host *host)
+ 		/* Set the card state to no notification after the poweroff */
+ 		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
+ 	}
++	mmc_release_host(host);
+ }
  
- #define EXYNOS4_PA_I2S0			0x03830000
-@@ -164,6 +166,7 @@
- #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
- #define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
- #define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
-+#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
- #define S5P_PA_G2D			EXYNOS4_PA_G2D
- #define S5P_PA_FIMD0			EXYNOS4_PA_FIMD0
- #define S5P_PA_HDMI			EXYNOS4_PA_HDMI
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 165c876..adeb166 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -1260,6 +1260,7 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&i2c9_gpio,
- 	&s3c_device_adc,
- 	&s5p_device_g2d,
-+	&s5p_device_jpeg,
- 	&s3c_device_rtc,
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
-@@ -1319,6 +1320,7 @@ static void __init nuri_machine_init(void)
- 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
- 	s5p_device_fimd0.dev.parent = &exynos4_device_pd[PD_LCD0].dev;
+ /*
+@@ -1327,12 +1329,28 @@ static void mmc_power_up(struct mmc_host *host)
  
-+	s5p_device_jpeg.dev.parent =  &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc1.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc2.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index dd75101..4c6dd86 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -980,6 +980,7 @@ static struct platform_device *universal_devices[] __initdata = {
- 	&universal_gpio_keys,
- 	&s5p_device_onenand,
- 	&s5p_device_fimd0,
-+	&s5p_device_jpeg,
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
-@@ -1045,6 +1046,7 @@ static void __init universal_machine_init(void)
- 	s5p_device_mfc.dev.parent = &exynos4_device_pd[PD_MFC].dev;
- 	s5p_device_fimd0.dev.parent = &exynos4_device_pd[PD_LCD0].dev;
+ void mmc_power_off(struct mmc_host *host)
+ {
++	int err = 0;
+ 	mmc_host_clk_hold(host);
  
-+	s5p_device_jpeg.dev.parent =  &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc0.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc1.dev.parent = &exynos4_device_pd[PD_CAM].dev;
- 	s5p_device_fimc2.dev.parent = &exynos4_device_pd[PD_CAM].dev;
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index e7fec78..7a30869 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -80,6 +80,11 @@ config S5P_DEV_FIMC3
- 	help
- 	  Compile in platform device definitions for FIMC controller 3
+ 	host->ios.clock = 0;
+ 	host->ios.vdd = 0;
  
-+config S5P_DEV_JPEG
-+	bool
-+	help
-+	  Compile in platform device definitions for JPEG codec
+-	mmc_poweroff_notify(host);
++	/*
++	 * For eMMC 4.5 device send AWAKE command before
++	 * POWER_OFF_NOTIFY command, because in sleep state
++	 * eMMC 4.5 devices respond to only RESET and AWAKE cmd
++	 */
++	if (host->card && mmc_card_is_sleep(host->card) &&
++	    host->bus_ops->resume) {
++		err = host->bus_ops->resume(host);
 +
- config S5P_DEV_G2D
- 	bool
- 	help
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 145580a..5590190 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -295,6 +295,32 @@ struct platform_device s5p_device_g2d = {
- };
- #endif /* CONFIG_S5P_DEV_G2D */
++		if (!err)
++			mmc_poweroff_notify(host);
++		else
++			pr_warning("%s: error %d during resume "
++				   "(continue with poweroff sequence)\n",
++				   mmc_hostname(host), err);
++	}
  
-+#ifdef CONFIG_S5P_DEV_JPEG
-+static struct resource s5p_jpeg_resource[] = {
-+	[0] = {
-+		.start	= S5P_PA_JPEG,
-+		.end	= S5P_PA_JPEG + SZ_4K - 1,
-+		.flags	= IORESOURCE_MEM,
-+	},
-+	[1] = {
-+		.start	= IRQ_JPEG,
-+		.end	= IRQ_JPEG,
-+		.flags	= IORESOURCE_IRQ,
-+	},
-+};
-+
-+struct platform_device s5p_device_jpeg = {
-+	.name		= "s5p-jpeg",
-+	.id		= 0,
-+	.num_resources	= ARRAY_SIZE(s5p_jpeg_resource),
-+	.resource	= s5p_jpeg_resource,
-+	.dev		= {
-+		.dma_mask		= &samsung_device_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+	},
-+};
-+#endif /*  CONFIG_S5P_DEV_JPEG */
-+
- /* FIMD0 */
+ 	/*
+ 	 * Reset ocr mask to be the highest possible voltage supported for
+@@ -2386,12 +2404,6 @@ int mmc_suspend_host(struct mmc_host *host)
+ 		 */
+ 		if (mmc_try_claim_host(host)) {
+ 			if (host->bus_ops->suspend) {
+-				/*
+-				 * For eMMC 4.5 device send notify command
+-				 * before sleep, because in sleep state eMMC 4.5
+-				 * devices respond to only RESET and AWAKE cmd
+-				 */
+-				mmc_poweroff_notify(host);
+ 				err = host->bus_ops->suspend(host);
+ 			}
+ 			mmc_do_release_host(host);
+diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+index 2bc586b..c3f09a2 100644
+--- a/drivers/mmc/core/mmc.c
++++ b/drivers/mmc/core/mmc.c
+@@ -1330,11 +1330,13 @@ static int mmc_suspend(struct mmc_host *host)
+ 	BUG_ON(!host->card);
  
- #ifdef CONFIG_S5P_DEV_FIMD0
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index bb45848..5e7972d 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -79,6 +79,7 @@ extern struct platform_device s5p_device_fimc1;
- extern struct platform_device s5p_device_fimc2;
- extern struct platform_device s5p_device_fimc3;
- extern struct platform_device s5p_device_fimc_md;
-+extern struct platform_device s5p_device_jpeg;
- extern struct platform_device s5p_device_g2d;
- extern struct platform_device s5p_device_fimd0;
- extern struct platform_device s5p_device_hdmi;
+ 	mmc_claim_host(host);
+-	if (mmc_card_can_sleep(host))
++	if (mmc_card_can_sleep(host)) {
+ 		err = mmc_card_sleep(host);
+-	else if (!mmc_host_is_spi(host))
++		if (!err)
++			mmc_card_set_sleep(host->card);
++	} else if (!mmc_host_is_spi(host))
+ 		mmc_deselect_cards(host);
+-	host->card->state &= ~MMC_STATE_HIGHSPEED;
++	host->card->state &= ~(MMC_STATE_HIGHSPEED | MMC_STATE_HIGHSPEED_200);
+ 	mmc_release_host(host);
+ 
+ 	return err;
+@@ -1354,7 +1356,11 @@ static int mmc_resume(struct mmc_host *host)
+ 	BUG_ON(!host->card);
+ 
+ 	mmc_claim_host(host);
+-	err = mmc_init_card(host, host->ocr, host->card);
++	if (mmc_card_is_sleep(host->card)) {
++		err = mmc_card_awake(host);
++		mmc_card_clr_sleep(host->card);
++	} else
++		err = mmc_init_card(host, host->ocr, host->card);
+ 	mmc_release_host(host);
+ 
+ 	return err;
+@@ -1364,7 +1370,8 @@ static int mmc_power_restore(struct mmc_host *host)
+ {
+ 	int ret;
+ 
+-	host->card->state &= ~MMC_STATE_HIGHSPEED;
++	host->card->state &= ~(MMC_STATE_HIGHSPEED | MMC_STATE_HIGHSPEED_200);
++	mmc_card_clr_sleep(host->card);
+ 	mmc_claim_host(host);
+ 	ret = mmc_init_card(host, host->ocr, host->card);
+ 	mmc_release_host(host);
+diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+index f9a0663..1a1ca71 100644
+--- a/include/linux/mmc/card.h
++++ b/include/linux/mmc/card.h
+@@ -219,6 +219,7 @@ struct mmc_card {
+ #define MMC_CARD_SDXC		(1<<6)		/* card is SDXC */
+ #define MMC_CARD_REMOVED	(1<<7)		/* card has been removed */
+ #define MMC_STATE_HIGHSPEED_200	(1<<8)		/* card is in HS200 mode */
++#define MMC_STATE_SLEEP		(1<<9)		/* card is in sleep state */
+ 	unsigned int		quirks; 	/* card quirks */
+ #define MMC_QUIRK_LENIENT_FN0	(1<<0)		/* allow SDIO FN0 writes outside of the VS CCCR range */
+ #define MMC_QUIRK_BLKSZ_FOR_BYTE_MODE (1<<1)	/* use func->cur_blksize */
+@@ -384,6 +385,7 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
+ #define mmc_sd_card_uhs(c)	((c)->state & MMC_STATE_ULTRAHIGHSPEED)
+ #define mmc_card_ext_capacity(c) ((c)->state & MMC_CARD_SDXC)
+ #define mmc_card_removed(c)	((c) && ((c)->state & MMC_CARD_REMOVED))
++#define mmc_card_is_sleep(c)	((c)->state & MMC_STATE_SLEEP)
+ 
+ #define mmc_card_set_present(c)	((c)->state |= MMC_STATE_PRESENT)
+ #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
+@@ -395,7 +397,9 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
+ #define mmc_sd_card_set_uhs(c) ((c)->state |= MMC_STATE_ULTRAHIGHSPEED)
+ #define mmc_card_set_ext_capacity(c) ((c)->state |= MMC_CARD_SDXC)
+ #define mmc_card_set_removed(c) ((c)->state |= MMC_CARD_REMOVED)
++#define mmc_card_set_sleep(c)	((c)->state |= MMC_STATE_SLEEP)
+ 
++#define mmc_card_clr_sleep(c)	((c)->state &= ~MMC_STATE_SLEEP)
+ /*
+  * Quirk add/remove for MMC products.
+  */
 -- 
-1.7.0.4
+1.7.1
