@@ -1,55 +1,40 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 2/2] S3C24XX: move spi-s3c24xx platdata out of mach
-Date: Tue, 31 Jan 2012 20:20:44 +0900
-Message-ID: <04a101cce00a$5fcee0b0$1f6ca210$%kim@samsung.com>
-References: <201201082222.11305.heiko@sntech.de>
- <01b201ccdccb$d6923680$83b6a380$%kim@samsung.com>
- <201201271040.08945.heiko@sntech.de>
+Subject: RE: [PATCH v2] S3C24XX DMA resume regression fix
+Date: Tue, 31 Jan 2012 20:27:23 +0900
+Message-ID: <04a201cce00b$4d6aaac0$e8400040$%kim@samsung.com>
+References: <1327065184-9805-1-git-send-email-dron0gus@gmail.com>
+ <20120127122537.GF2056@build.ihdev.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50219 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753785Ab2AaLUv convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:31196 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753167Ab2AaL1g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 06:20:51 -0500
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Tue, 31 Jan 2012 06:27:36 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LYN00118U68FP10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 20:20:47 +0900 (KST)
+ 2010)) with ESMTP id <0LYN001F6UGTIE30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 20:27:26 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LYN00DGYU6K6A50@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 20:20:46 +0900 (KST)
-In-reply-to: <201201271040.08945.heiko@sntech.de>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYN00D2PUHN6A60@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 20:27:25 +0900 (KST)
+In-reply-to: <20120127122537.GF2056@build.ihdev.net>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net
+To: 'Sergey Lapin' <slapin@ossfans.org>, 'Gusakov Andrey' <dron0gus@gmail.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, 'Sergei Shtylyov' <sshtylyov@ru.mvista.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Heiko St=FCbner wrote:
->=20
-> spi.h now only contains the definition of the platform data structure
-> for the driver in spi-s3c24xx.c . Therefore it does not need to stay
-> in include/mach but can instead live in linux/spi/s3c24xx.h .
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> Sorry for messing up, but it seems I forgot to readd the moved spi he=
-ader
-> in the original submission of the second patch, which I noticed just =
-now.
-> As your cleanup-s3c24xx branch is not pushed out yet, could you pleas=
-e
-> replace it with this one, which adds the forgotten file.
->=20
-OK, I replaced with this. And I'm not sure Grant is ok on this.
+Sergey Lapin wrote:
+> 
+> On Fri, Jan 20, 2012 at 05:13:04PM +0400, Gusakov Andrey wrote:
+> > In commit bb072c3cf21d1c9a5a2eeb5a00679ee7bf39675b
 
-Grant, this looks ok to me and I'd like to apply this in samsung tree.
-So if any problem to send this via samsung tree, please let me know.
+Just the first 12 hex digits of the commit id is enough now as Linus said?
 
 Thanks.
 
@@ -59,123 +44,21 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
->  arch/arm/mach-s3c2410/include/mach/spi.h |   27
---------------------------
-> -
->  arch/arm/mach-s3c2440/mach-gta02.c       |    2 +-
->  drivers/spi/spi-s3c24xx.c                |    2 +-
->  include/linux/spi/s3c24xx.h              |   26
-++++++++++++++++++++++++++
->  4 files changed, 28 insertions(+), 29 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c2410/include/mach/spi.h
->  create mode 100644 include/linux/spi/s3c24xx.h
->=20
-> diff --git a/arch/arm/mach-s3c2410/include/mach/spi.h b/arch/arm/mach=
--
-> s3c2410/include/mach/spi.h
-> deleted file mode 100644
-> index 2a686c0..0000000
-> --- a/arch/arm/mach-s3c2410/include/mach/spi.h
-> +++ /dev/null
-> @@ -1,27 +0,0 @@
-> -/* arch/arm/mach-s3c2410/include/mach/spi.h
-> - *
-> - * Copyright (c) 2006 Simtec Electronics
-> - *	Ben Dooks <ben@simtec.co.uk>
-> - *
-> - * S3C2410 - SPI Controller platform_device info
-> - *
-> - * This program is free software; you can redistribute it and/or mod=
-ify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#ifndef __ASM_ARCH_SPI_H
-> -#define __ASM_ARCH_SPI_H __FILE__
-> -
-> -struct s3c2410_spi_info {
-> -	int			 pin_cs;	/* simple gpio cs */
-> -	unsigned int		 num_cs;	/* total chipselects */
-> -	int			 bus_num;       /* bus number to use. */
-> -
-> -	unsigned int		 use_fiq:1;	/* use fiq */
-> -
-> -	void (*gpio_setup)(struct s3c2410_spi_info *spi, int enable);
-> -	void (*set_cs)(struct s3c2410_spi_info *spi, int cs, int pol);
-> -};
-> -
-> -#endif /* __ASM_ARCH_SPI_H */
-> diff --git a/arch/arm/mach-s3c2440/mach-gta02.c b/arch/arm/mach-
-> s3c2440/mach-gta02.c
-> index 5859e60..cf270f5 100644
-> --- a/arch/arm/mach-s3c2440/mach-gta02.c
-> +++ b/arch/arm/mach-s3c2440/mach-gta02.c
-> @@ -38,6 +38,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/serial_core.h>
->  #include <linux/spi/spi.h>
-> +#include <linux/spi/s3c24xx.h>
->=20
->  #include <linux/mmc/host.h>
->=20
-> @@ -73,7 +74,6 @@
->  #include <mach/regs-gpioj.h>
->  #include <mach/fb.h>
->=20
-> -#include <mach/spi.h>
->  #include <plat/usb-control.h>
->  #include <mach/regs-mem.h>
->  #include <mach/hardware.h>
-> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
-> index fc06453..8ee7d79 100644
-> --- a/drivers/spi/spi-s3c24xx.c
-> +++ b/drivers/spi/spi-s3c24xx.c
-> @@ -24,10 +24,10 @@
->=20
->  #include <linux/spi/spi.h>
->  #include <linux/spi/spi_bitbang.h>
-> +#include <linux/spi/s3c24xx.h>
->  #include <linux/module.h>
->=20
->  #include <plat/regs-spi.h>
-> -#include <mach/spi.h>
->=20
->  #include <plat/fiq.h>
->  #include <asm/fiq.h>
-> diff --git a/include/linux/spi/s3c24xx.h b/include/linux/spi/s3c24xx.=
-h
-> new file mode 100644
-> index 0000000..c23b923
-> --- /dev/null
-> +++ b/include/linux/spi/s3c24xx.h
-> @@ -0,0 +1,26 @@
-> +/*
-> + * Copyright (c) 2006 Simtec Electronics
-> + *	Ben Dooks <ben@simtec.co.uk>
-> + *
-> + * S3C2410 - SPI Controller platform_device info
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __LINUX_SPI_S3C24XX_H
-> +#define __LINUX_SPI_S3C24XX_H __FILE__
-> +
-> +struct s3c2410_spi_info {
-> +	int			 pin_cs;	/* simple gpio cs */
-> +	unsigned int		 num_cs;	/* total chipselects */
-> +	int			 bus_num;       /* bus number to use. */
-> +
-> +	unsigned int		 use_fiq:1;	/* use fiq */
-> +
-> +	void (*gpio_setup)(struct s3c2410_spi_info *spi, int enable);
-> +	void (*set_cs)(struct s3c2410_spi_info *spi, int cs, int pol);
-> +};
-> +
-> +#endif /* __LINUX_SPI_S3C24XX_H */
-> --
-> 1.7.5.4
+> > (Use struct syscore_ops for "core" power management)
+> > suspend/resume hooks for each DMA channels were replaced with
+> > hooks that suspend/resume all channels. s3c2410_dma_suspend
+> > suspends channels from 0 to dma_channels. s3c2410_dma_resume
+> > resumes channels in reverse order. So pointer should be
+> > decremented insted of being incremented.
+> Any news regarding this patch?
+> >
+> > Signed-off-by: Gusakov Andrey <dron0gus@gmail.com>
+> > ---
+> >  arch/arm/plat-s3c24xx/dma.c |    2 +-
+> >  1 files changed, 1 insertions(+), 1 deletions(-)
+> >
+> > v2: updated commit message with original commit summary
+> >
+> 
+> All the best,
+> S.
