@@ -1,71 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: smp: allow get the core count from L2 control on
- A15
-Date: Tue, 31 Jan 2012 23:40:41 +0900
-Message-ID: <4F27FD69.7060207@samsung.com>
-References: <04be01cce011$6b3b3550$41b19ff0$%kim@samsung.com> <20120131141313.GA31004@mudshark.cambridge.arm.com> <4F27F8E8.1030703@samsung.com> <20120131143247.GB31004@mudshark.cambridge.arm.com>
+Subject: Re: [PATCH 1/2] ARM: Exynos4: Make exynos4-dt compile again
+Date: Tue, 31 Jan 2012 23:43:03 +0900
+Message-ID: <4F27FDF7.8070008@samsung.com>
+References: <1328006193-13902-1-git-send-email-k.lewandowsk@samsung.com> <1328006193-13902-2-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:49691 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754661Ab2AaOku (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:47056 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752783Ab2AaOnJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 09:40:50 -0500
-Received: by dadp15 with SMTP id p15so3529dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Jan 2012 06:40:49 -0800 (PST)
-In-Reply-To: <20120131143247.GB31004@mudshark.cambridge.arm.com>
+	Tue, 31 Jan 2012 09:43:09 -0500
+In-Reply-To: <1328006193-13902-2-git-send-email-k.lewandowsk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Deacon <will.deacon@arm.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "rmk+kernel@arm.linux.org.uk" <rmk+kernel@arm.linux.org.uk>
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, marc.zyngier@arm.com, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-On 01/31/12 23:32, Will Deacon wrote:
-> On Tue, Jan 31, 2012 at 02:21:28PM +0000, Kukjin Kim wrote:
->> On 01/31/12 23:13, Will Deacon wrote:
->>>
->>> This doesn't belong in smp.c but, more importantly, this doesn't work for
->>> multi-cluster configurations at all. Since all A15 implementations will be
->>> on new platforms, the code will be device-tree only and so we should use
->>
->> Why not? As I know, current arm kernel ARMv7 arch can support A15
->> without device-tree. And you know, the core number should be counted by
->> L2 control register. no?
+On 01/31/12 19:36, Karol Lewandowski wrote:
+> Commit cc511b8d84d8 ("ARM: 7257/1: EXYNOS: introduce
+> arch/arm/mach-exynos/common.[ch]") replaced plat/exynos4.h with
+> common.h, requiring all boards to be adjusted appropriately.
 >
-> I'll answer these in order:
-
-Hmm, let
+> This commit fixes exynos4-dt.c, missed out in original patch.
 >
-> 1.) The code doesn't belong in smp.c because it's specific to the A15
-
-Yes, agree. So I just commented in my patch, I'm not sure where it 
-should be added at.
-
-> 2.) The architecture code may well support A15, but since there are no
->      platforms in mainline that support A15 yet, then all new platforms will
->      need to be DT-based. That means we can rely on the DT to provide this
->      information.
-
-Well, I will submit EXYNOS5 which has two A15 cores today and I don't 
-know why it should be supported only with DT, EXYNOS5 DT supporting will 
-be submitted though.
-
-> 3.) The L2 control register only tells you how many cores are hanging off
->      that particular L2. This will be wrong for multi-cluster systems since
->      it will only identify a subset of the cores.
-
-OK, let me check it.
-
+> Signed-off-by: Karol Lewandowski<k.lewandowsk@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> Cc: Thomas Abraham<thomas.abraham@linaro.org>
+> Cc: Kukjin Kim<kgene.kim@samsung.com>
+> ---
+>   arch/arm/mach-exynos/mach-exynos4-dt.c |    5 +++--
+>   1 files changed, 3 insertions(+), 2 deletions(-)
 >
->>> I believe Lorenzo posted some patches which you could look at.
->>>
->> OK, Would be better.
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> index 85fa027..98e79c9 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -19,7 +19,8 @@
 >
-> Yes, I think it's the only way to solve this problem without adding an
-> architected method for enumerating the CPU topology.
+>   #include<plat/cpu.h>
+>   #include<plat/regs-serial.h>
+> -#include<plat/exynos4.h>
+> +
+> +#include "common.h"
 >
-I'm not sure it is the only way...
+>   /*
+>    * The following lookup table is used to override device names when devices
+> @@ -60,7 +61,7 @@ static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
+>
+>   static void __init exynos4210_dt_map_io(void)
+>   {
+> -	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+> +	exynos_init_io(NULL, 0);
+>   	s3c24xx_init_clocks(24000000);
+>   }
+>
+Looks ok to me, will apply.
 
 Thanks.
 
