@@ -1,16 +1,16 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 7/9] ARM: EXYNOS: temporary add interrupt definitions
-Date: Wed,  1 Feb 2012 00:39:12 +0900
-Message-ID: <1328024354-4277-8-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 9/9] ARM: EXYNOS: temporary fixup regarding get_core_count()
+Date: Wed,  1 Feb 2012 00:39:14 +0900
+Message-ID: <1328024354-4277-10-git-send-email-kgene.kim@samsung.com>
 References: <1328024354-4277-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-pw0-f46.google.com ([209.85.160.46]:38938 "EHLO
 	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754714Ab2AaPj7 (ORCPT
+	with ESMTP id S1754714Ab2AaPkG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 10:39:59 -0500
+	Tue, 31 Jan 2012 10:40:06 -0500
 Received: by mail-pw0-f46.google.com with SMTP id u11so258976pbd.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Jan 2012 07:39:59 -0800 (PST)
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Jan 2012 07:40:06 -0800 (PST)
 In-Reply-To: <1328024354-4277-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,264 +19,35 @@ Cc: rmk+kernel@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net, Kukjin Kim <kgen
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/irqs.h |  239 ++++++++++++++++++++++++++++++
- 1 files changed, 239 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/platsmp.c |    9 ++++++---
+ 1 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index f77bce0..acf998f 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -25,6 +25,8 @@
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 683aec7..dfb4630 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -165,7 +165,10 @@ void __init smp_init_cpus(void)
+ 	void __iomem *scu_base = scu_base_addr();
+ 	unsigned int i, ncores;
  
- #define IRQ_SPI(x)		(x+32)
+-	ncores = scu_base ? scu_get_core_count(scu_base) : 1;
++	if (soc_is_exynos5250())
++		ncores = 2;
++	else
++		ncores = scu_base ? scu_get_core_count(scu_base) : 1;
  
-+#ifdef CONFIG_ARCH_EXYNOS4
-+
- #define IRQ_EINT0		IRQ_SPI(16)
- #define IRQ_EINT1		IRQ_SPI(17)
- #define IRQ_EINT2		IRQ_SPI(18)
-@@ -170,5 +172,242 @@
+ 	/* sanity check */
+ 	if (ncores > nr_cpu_ids) {
+@@ -182,8 +185,8 @@ void __init smp_init_cpus(void)
  
- /* Set the default NR_IRQS */
- #define NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
-+#endif
-+
-+#ifdef CONFIG_ARCH_EXYNOS5
-+#define IRQ_EINT16_31		IRQ_SPI(32)
-+#define IRQ_MDMA0		IRQ_SPI(33)
-+#define IRQ_PDMA0		IRQ_SPI(34)
-+#define IRQ_PDMA1		IRQ_SPI(35)
-+#define IRQ_TIMER0_VIC		IRQ_SPI(36)
-+#define IRQ_TIMER1_VIC		IRQ_SPI(37)
-+#define IRQ_TIMER2_VIC		IRQ_SPI(38)
-+#define IRQ_TIMER3_VIC		IRQ_SPI(39)
-+#define IRQ_TIMER4_VIC		IRQ_SPI(40)
-+#define IRQ_RTIC		IRQ_SPI(41)
-+#define IRQ_WDT			IRQ_SPI(42)
-+#define IRQ_RTC_ALARM		IRQ_SPI(43)
-+#define IRQ_RTC_TIC		IRQ_SPI(44)
-+#define IRQ_GPIO_XB		IRQ_SPI(45)
-+#define IRQ_GPIO_XA		IRQ_SPI(46)
-+#define IRQ_GPIO		IRQ_SPI(47)
-+#define IRQ_IEM_IEC		IRQ_SPI(48)
-+#define IRQ_IEM_APC		IRQ_SPI(49)
-+#define IRQ_GPIO_C2C		IRQ_SPI(50)
-+#define IRQ_UART0		IRQ_SPI(51)
-+#define IRQ_UART1		IRQ_SPI(52)
-+#define IRQ_UART2		IRQ_SPI(53)
-+#define IRQ_UART3		IRQ_SPI(54)
-+#define IRQ_UART4		IRQ_SPI(55)
-+#define IRQ_IIC			IRQ_SPI(56)
-+#define IRQ_IIC1		IRQ_SPI(57)
-+#define IRQ_IIC2		IRQ_SPI(58)
-+#define IRQ_IIC3		IRQ_SPI(59)
-+#define IRQ_IIC4		IRQ_SPI(60)	/* IRQ_USI0 */
-+#define IRQ_IIC5		IRQ_SPI(61)	/* IRQ_USI1 */
-+#define IRQ_IIC6		IRQ_SPI(62)	/* IRQ_USI2 */
-+#define IRQ_IIC7		IRQ_SPI(63)	/* IRQ_USI3 */
-+#define IRQ_IIC_HDMIPHY		IRQ_SPI(64)
-+#define IRQ_TMU			IRQ_SPI(65)
-+#define IRQ_FIQ_0		IRQ_SPI(66)
-+#define IRQ_FIQ_1		IRQ_SPI(67)
-+#define IRQ_SPI0		IRQ_SPI(68)
-+#define IRQ_SPI1		IRQ_SPI(69)
-+#define IRQ_SPI2		IRQ_SPI(70)
-+#define IRQ_USB_HOST		IRQ_SPI(71)
-+#define IRQ_USB3_DRD		IRQ_SPI(72)
-+#define IRQ_MIPI_HSI		IRQ_SPI(73)
-+#define IRQ_USB_HSOTG		IRQ_SPI(74)
-+#define IRQ_HSMMC0		IRQ_SPI(75)
-+#define IRQ_HSMMC1		IRQ_SPI(76)
-+#define IRQ_HSMMC2		IRQ_SPI(77)
-+#define IRQ_HSMMC3		IRQ_SPI(78)	/* Removed at Adonis */
-+#define IRQ_MIPICSI0		IRQ_SPI(79)
-+#define IRQ_MIPICSI1		IRQ_SPI(80)
-+#define IRQ_EFNFCON_DMA_ABORT	IRQ_SPI(81)	/* IRQ_MIPI0_DSI_4LANE */
-+#define IRQ_MIPIDSI0		IRQ_SPI(82)
-+#define IRQ_MONOCNT		IRQ_SPI(83)	/* Used to only Adonis */
-+#define IRQ_ROTATOR		IRQ_SPI(84)
-+#define IRQ_GSC0		IRQ_SPI(85)
-+#define IRQ_GSC1		IRQ_SPI(86)
-+#define IRQ_GSC2		IRQ_SPI(87)
-+#define IRQ_GSC3		IRQ_SPI(88)
-+#define IRQ_JPEG		IRQ_SPI(89)
-+#define IRQ_EFNFCON_DMA		IRQ_SPI(90)	/* IRQ_GSC4 */
-+#define IRQ_2D			IRQ_SPI(91)
-+#define IRQ_SFMC0		IRQ_SPI(92)
-+#define IRQ_SFMC1		IRQ_SPI(93)
-+#define IRQ_MIXER		IRQ_SPI(94)
-+#define IRQ_HDMI		IRQ_SPI(95)
-+#define IRQ_MFC			IRQ_SPI(96)
-+#define IRQ_AUDIO_SS		IRQ_SPI(97)
-+#define IRQ_I2S0		IRQ_SPI(98)
-+#define IRQ_I2S1		IRQ_SPI(99)
-+#define IRQ_I2S2		IRQ_SPI(100)
-+#define IRQ_AC97		IRQ_SPI(101)
-+#define IRQ_PCM0		IRQ_SPI(102)
-+#define IRQ_PCM1		IRQ_SPI(103)
-+#define IRQ_PCM2		IRQ_SPI(104)
-+#define IRQ_SPDIF		IRQ_SPI(105)
-+#define IRQ_ADC0		IRQ_SPI(106)
-+
-+#define IRQ_SATA_PHY		IRQ_SPI(108)	/* Removed at Adonis */
-+#define IRQ_SATA_PMEMREQ	IRQ_SPI(109)	/* Removed at Adonis */
-+#define IRQ_CAM_C		IRQ_SPI(110)	/* Removed at Adonis */
-+#define IRQ_EAGLE_PMU		IRQ_SPI(111)	/* CHECK : duplicated */
-+#define IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
-+#define IRQ_DP1_INTP1		IRQ_SPI(113)
-+#define IRQ_CEC			IRQ_SPI(114)
-+#define IRQ_SATA		IRQ_SPI(115)	/* IRQ_MAU_I2S0 */
-+#define IRQ_NFCON		IRQ_SPI(116)	/* IRQ_MAU_PCM0 */
-+#define GPU_IRQ_NUMBER		IRQ_SPI(117)
-+#define JOP_IRQ_NUMBER		IRQ_SPI(118)	/* Removed at Adonis */
-+#define MMU_IRQ_NUMBER		IRQ_SPI(119)	/* Removed at Adonis */
-+/* Added at Adonis
-+#define IRQ_MCT_L0		IRQ_SPI(120)
-+#define IRQ_MCT_L1		IRQ_SPI(121)
-+#define IRQ_MCT_L2		IRQ_SPI(122)
-+#define IRQ_MCT_L3		IRQ_SPI(123)
-+*/
-+#define IRQ_MMC44		IRQ_SPI(123)	/* Removed at Adonis */
-+#define IRQ_MDMA1		IRQ_SPI(124)
-+#define IRQ_FIMC_LITE0		IRQ_SPI(125)
-+#define IRQ_FIMC_LITE1		IRQ_SPI(126)
-+#define IRQ_RP_TIMER		IRQ_SPI(127)
-+
-+#define MAX_IRQ_IN_COMBINER	8
-+#define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
-+#define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
-+
-+#define IRQ_PMU			COMBINER_IRQ(1, 2)
-+#define IRQ_PMU_CPU1		COMBINER_IRQ(1, 6)
-+
-+#define IRQ_SYSMMU_GSC0_0	COMBINER_IRQ(2, 0)
-+#define IRQ_SYSMMU_GSC0_1	COMBINER_IRQ(2, 1)
-+#define IRQ_SYSMMU_GSC1_0	COMBINER_IRQ(2, 2)
-+#define IRQ_SYSMMU_GSC1_1	COMBINER_IRQ(2, 3)
-+#define IRQ_SYSMMU_GSC2_0	COMBINER_IRQ(2, 4)
-+#define IRQ_SYSMMU_GSC2_1	COMBINER_IRQ(2, 5)
-+#define IRQ_SYSMMU_GSC3_0	COMBINER_IRQ(2, 6)
-+#define IRQ_SYSMMU_GSC3_1	COMBINER_IRQ(2, 7)
-+
-+/* Added at Adonis
-+#define IRQ_SYSMMU_LITE2_0	COMBINER_IRQ(3, 0)
-+#define IRQ_SYSMMU_LITE2_1	COMBINER_IRQ(3, 1)
-+*/
-+#define IRQ_SYSMMU_FIMD1_0	COMBINER_IRQ(3, 2)
-+#define IRQ_SYSMMU_FIMD1_1	COMBINER_IRQ(3, 3)
-+#define IRQ_SYSMMU_LITE0_0	COMBINER_IRQ(3, 4)
-+#define IRQ_SYSMMU_LITE0_1	COMBINER_IRQ(3, 5)
-+#define IRQ_SYSMMU_SCALERPISP_0	COMBINER_IRQ(3, 6)
-+#define IRQ_SYSMMU_SCALERPISP_1	COMBINER_IRQ(3, 7)
-+
-+#define IRQ_SYSMMU_ROTATOR_0	COMBINER_IRQ(4, 0)
-+#define IRQ_SYSMMU_ROTATOR_1	COMBINER_IRQ(4, 1)
-+#define IRQ_SYSMMU_JPEG_0	COMBINER_IRQ(4, 2)
-+#define IRQ_SYSMMU_JPEG_1	COMBINER_IRQ(4, 3)
-+
-+#define IRQ_SYSMMU_FD_0		COMBINER_IRQ(5, 0)
-+#define IRQ_SYSMMU_FD_1		COMBINER_IRQ(5, 1)
-+#define IRQ_SYSMMU_SCALERCISP_0	COMBINER_IRQ(5, 2)
-+#define IRQ_SYSMMU_SCALERCISP_1	COMBINER_IRQ(5, 3)
-+#define IRQ_SYSMMU_MCUISP_0	COMBINER_IRQ(5, 4)
-+#define IRQ_SYSMMU_MCUISP_1	COMBINER_IRQ(5, 5)
-+#define IRQ_SYSMMU_3DNR_0	COMBINER_IRQ(5, 6)
-+#define IRQ_SYSMMU_3DNR_1	COMBINER_IRQ(5, 7)
-+
-+#define IRQ_SYSMMU_ARM_0	COMBINER_IRQ(6, 0)
-+#define IRQ_SYSMMU_ARM_1	COMBINER_IRQ(6, 1)
-+#define IRQ_SYSMMU_MFC_L_0	COMBINER_IRQ(6, 2)
-+#define IRQ_SYSMMU_MFC_L_1	COMBINER_IRQ(6, 3)
-+#define IRQ_SYSMMU_RTIC_0	COMBINER_IRQ(6, 4)
-+#define IRQ_SYSMMU_RTIC_1	COMBINER_IRQ(6, 5)
-+#define IRQ_SYSMMU_SSS_0	COMBINER_IRQ(6, 6)
-+#define IRQ_SYSMMU_SSS_1	COMBINER_IRQ(6, 7)
-+
-+#define IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(7, 0)
-+#define IRQ_SYSMMU_MDMA0_1	COMBINER_IRQ(7, 1)
-+#define IRQ_SYSMMU_MDMA1_0	COMBINER_IRQ(7, 2)
-+#define IRQ_SYSMMU_MDMA1_1	COMBINER_IRQ(7, 3)
-+#define IRQ_SYSMMU_TV_0		COMBINER_IRQ(7, 4)
-+#define IRQ_SYSMMU_TV_1		COMBINER_IRQ(7, 5)
-+#define IRQ_SYSMMU_GPSX_0	COMBINER_IRQ(7, 6)
-+#define IRQ_SYSMMU_GPSX_1	COMBINER_IRQ(7, 7)
-+
-+#define IRQ_SYSMMU_MFC_R_0	COMBINER_IRQ(8, 5)
-+#define IRQ_SYSMMU_MFC_R_1	COMBINER_IRQ(8, 6)
-+
-+#define IRQ_SYSMMU_DIS1_0	COMBINER_IRQ(9, 4)
-+#define IRQ_SYSMMU_DIS1_1	COMBINER_IRQ(9, 5)
-+
-+#define IRQ_DP			COMBINER_IRQ(10, 3)
-+#define IRQ_SYSMMU_DIS0_0	COMBINER_IRQ(10, 4)
-+#define IRQ_SYSMMU_DIS0_1	COMBINER_IRQ(10, 5)
-+#define IRQ_SYSMMU_ISP_0	COMBINER_IRQ(10, 6)
-+#define IRQ_SYSMMU_ISP_1	COMBINER_IRQ(10, 7)
-+
-+#define IRQ_SYSMMU_ODC_0	COMBINER_IRQ(11, 0)
-+#define IRQ_SYSMMU_ODC_1	COMBINER_IRQ(11, 1)
-+#define IRQ_SYSMMU_DRC_0	COMBINER_IRQ(11, 6)
-+#define IRQ_SYSMMU_DRC_1	COMBINER_IRQ(11, 7)
-+
-+#define IRQ_FIMD1_FIFO		COMBINER_IRQ(18, 4)
-+#define IRQ_FIMD1_VSYNC		COMBINER_IRQ(18, 5)
-+#define IRQ_FIMD1_SYSTEM	COMBINER_IRQ(18, 6)
-+
-+#define IRQ_EINT0		COMBINER_IRQ(23, 0)
-+#define IRQ_MCT_L0		COMBINER_IRQ(23, 1)
-+#define IRQ_MCT_L1		COMBINER_IRQ(23, 2)
-+#define IRQ_MCT_G0		COMBINER_IRQ(23, 3)
-+#define IRQ_MCT_G1		COMBINER_IRQ(23, 4)
-+#define IRQ_MCT_G2		COMBINER_IRQ(23, 5)
-+#define IRQ_MCT_G3		COMBINER_IRQ(23, 6)
-+
-+#define IRQ_EINT1		COMBINER_IRQ(24, 0)
-+#define IRQ_SYSMMU_LITE1_0	COMBINER_IRQ(24, 1)
-+#define IRQ_SYSMMU_LITE1_1	COMBINER_IRQ(24, 2)
-+#define IRQ_SYSMMU_2D_0		COMBINER_IRQ(24, 5)
-+#define IRQ_SYSMMU_2D_1		COMBINER_IRQ(24, 6)
-+
-+#define IRQ_EINT2		COMBINER_IRQ(25, 0)
-+#define IRQ_EINT3		COMBINER_IRQ(25, 1)
-+
-+#define IRQ_EINT4		COMBINER_IRQ(26, 0)
-+#define IRQ_EINT5		COMBINER_IRQ(26, 1)
-+
-+#define IRQ_EINT6		COMBINER_IRQ(27, 0)
-+#define IRQ_EINT7		COMBINER_IRQ(27, 1)
-+
-+#define IRQ_EINT8		COMBINER_IRQ(28, 0)
-+#define IRQ_EINT9		COMBINER_IRQ(28, 1)
-+
-+#define IRQ_EINT10		COMBINER_IRQ(29, 0)
-+#define IRQ_EINT11		COMBINER_IRQ(29, 1)
-+
-+#define IRQ_EINT12		COMBINER_IRQ(30, 0)
-+#define IRQ_EINT13		COMBINER_IRQ(30, 1)
-+
-+#define IRQ_EINT14		COMBINER_IRQ(31, 0)
-+#define IRQ_EINT15		COMBINER_IRQ(31, 1)
-+
-+#define MAX_COMBINER_NR		32
-+
-+#define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
-+
-+#define S5P_EINT_BASE1		(S5P_IRQ_EINT_BASE + 0)
-+#define S5P_EINT_BASE2		(S5P_IRQ_EINT_BASE + 16)
-+
-+/* optional GPIO interrupts */
-+#define S5P_GPIOINT_BASE	(S5P_IRQ_EINT_BASE + 32)
-+#define IRQ_GPIO1_NR_GROUPS	13
-+#define IRQ_GPIO2_NR_GROUPS	18
-+#define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
-+
-+#define IRQ_TIMER_BASE		(IRQ_GPIO_END + 64)
-+
-+/* Set the default NR_IRQS */
-+#define NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
-+
-+#endif
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
+-
+-	scu_enable(scu_base_addr());
++	if (!soc_is_exynos5250())
++		scu_enable(scu_base_addr());
  
- #endif /* __ASM_ARCH_IRQS_H */
+ 	/*
+ 	 * Write the address of secondary startup into the
 -- 
 1.7.4.4
