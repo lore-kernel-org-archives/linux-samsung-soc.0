@@ -1,54 +1,64 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 0/2] EXYNOS4_DT fixes for 3.3-rc1+ kernels
-Date: Tue, 31 Jan 2012 20:18:05 +0530
-Message-ID: <CAJuYYwQepKi+TG1tOaZ=X9WEi3cwbwsoofuZBSqSiBb4LA_YoA@mail.gmail.com>
-References: <1328006193-13902-1-git-send-email-k.lewandowsk@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: Exynos4: Add cpu-offset property in gic device tree
+ node
+Date: Tue, 31 Jan 2012 23:52:19 +0900
+Message-ID: <4F280023.8070003@samsung.com>
+References: <1328021425-4233-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:61658 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753280Ab2AaOsG convert rfc822-to-8bit (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:63258 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754560Ab2AaOw1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 09:48:06 -0500
-In-Reply-To: <1328006193-13902-1-git-send-email-k.lewandowsk@samsung.com>
+	Tue, 31 Jan 2012 09:52:27 -0500
+Received: by dadp15 with SMTP id p15so11985dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Jan 2012 06:52:26 -0800 (PST)
+In-Reply-To: <1328021425-4233-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, marc.zyngier@arm.com, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-Hi Karol,
+On 01/31/12 23:50, Thomas Abraham wrote:
+> Commit 'ARM: gic: allow GIC to support non-banked setups' (db0d4db22a78d31c)
 
-On 31 January 2012 16:06, Karol Lewandowski <k.lewandowsk@samsung.com> =
-wrote:
-> Device Tree-based Exynos4 machine prepared by Thomas Abraham and
-> included in 3.3-rc1 hasn't been adjusted to changes that have happene=
-d
-> to mach-exynos during 3.3 merge window.
->
-> Following patch series fixes one build and one boot error making it
-> possible to boot system with SMP disabled.
->
-> SMP support is still broken for unknown reason, though.
->
-> [ To use it it's also required to cherry-pick "ARM: EXYNOS: fix
-> =A0non-SMP builds for EXYNOS4" already found in kgene's
-> =A0linux-samsung.git (branch v3.3-samsung-fixes-2) ]
->
->
-> Karol Lewandowski (2):
-> =A0ARM: Exynos4: Make exynos4-dt compile again
-> =A0ARM: Exynos4: Convert exynos4-dt to CONFIG_MULTI_IRQ_HANDLER
->
-> =A0arch/arm/mach-exynos/mach-exynos4-dt.c | =A0 =A07 +++++--
-> =A01 files changed, 5 insertions(+), 2 deletions(-)
+I think, following format is more general.
+commit id ("subject")
 
-Thanks for these patches and identifying the issue.
+Please see, below.
+http://lkml.org/lkml/2010/6/1/498
 
-Regards,
-Thomas.
+Thanks.
 
-> --
-> 1.7.8.3
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> requires a cpu-offset property to be specified for non-banked gic controllers,
+> which is the case for Exynos4.
+>
+> Reported-by: Karol Lewandowski<k.lewandowski@samsung.com>
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+> ---
+> This patch solves the issue of boot failure with SMP enabled kernel for
+> Exynos4 device tree enabled machine.
+>
+>   arch/arm/boot/dts/exynos4210.dtsi |    1 +
+>   1 files changed, 1 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 63d7578..a1dd2ee 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -29,6 +29,7 @@
+>   		compatible = "arm,cortex-a9-gic";
+>   		#interrupt-cells =<3>;
+>   		interrupt-controller;
+> +		cpu-offset =<0x8000>;
+>   		reg =<0x10490000 0x1000>,<0x10480000 0x100>;
+>   	};
 >
