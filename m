@@ -1,57 +1,41 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] serial: samsung: Add support serial for EXYNOS4212 and
- EXYNOS4412
-Date: Tue, 31 Jan 2012 23:59:55 +0900
-Message-ID: <4F2801EB.9040405@samsung.com>
-References: <042101ccdfe1$11ec0d60$35c42820$%kim@samsung.com> <4F278C02.7040008@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2] serial: samsung: Add support for EXYNOS4212 and EXYNOS4412
+Date: Wed,  1 Feb 2012 00:11:23 +0900
+Message-ID: <1328022683-2789-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:61031 "EHLO
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:48376 "EHLO
 	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753368Ab2AaPAF (ORCPT
+	with ESMTP id S1752193Ab2AaPLx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 10:00:05 -0500
-In-Reply-To: <4F278C02.7040008@gmail.com>
+	Tue, 31 Jan 2012 10:11:53 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Namhyung Kim <namhyung@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Greg KH' <gregkh@suse.de>
+To: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Greg Kroah-Hartman <gregkh@suse.de>, stable <stable@vger.kernel.org>
 
-On 01/31/12 15:36, Namhyung Kim wrote:
-> Hello,
->
-> 2012-01-31 3:25 PM, Kukjin Kim wrote:
->> Kukjin Kim wrote:
->>>
->>>
->>> This should be added for EXYNOS4212 and EXYNOS4412 SoCs.
->>>
->>> Cc: Thomas Abraham<thomas.abraham@linaro.org>
->>> Cc: Greg Kroah-Hartman<gregkh@suse.de>
->>> Cc: stable@kerne.org
->>
->> Oops, should be 'Cc: stable@kernel.org'
->>
->
-> No, it should be 'Cc: stable@vger.kernel.org' :)
-> Please see below:
->
-> https://lkml.org/lkml/2012/1/9/418
->
-Thanks for your pointing out.
+This should be added for EXYNOS4212 and EXYNOS4412 SoCs.
 
-I thought, seems there were discussions about this and I thought again 
-the result is that we should use 'Cc: stabel@kernel.org' instead of 'Cc: 
-stable@vger.kernel.org'...
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@suse.de>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ drivers/tty/serial/samsung.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-And according to the url, simply 'Cc: stable <stable@vger.kernel.org>'?
-
-Anyway, thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index f96f37b..ce632da 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1593,7 +1593,8 @@ static struct s3c24xx_serial_drv_data s5pv210_serial_drv_data = {
+ #define S5PV210_SERIAL_DRV_DATA	(kernel_ulong_t)NULL
+ #endif
+ 
+-#ifdef CONFIG_CPU_EXYNOS4210
++#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212) || \
++	defined(CONFIG_SOC_EXYNOS4412)
+ static struct s3c24xx_serial_drv_data exynos4210_serial_drv_data = {
+ 	.info = &(struct s3c24xx_uart_info) {
+ 		.name		= "Samsung Exynos4 UART",
+-- 
+1.7.4.4
