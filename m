@@ -1,67 +1,54 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH] mmc: core: Fix Low speed mmc card detection failure
-Date: Tue, 31 Jan 2012 09:08:34 +0530
-Message-ID: <CAGxe1ZHmnKAOpSy9X=vSYOPupQNwv2MDUE_DVT+pOYXGPch8qA@mail.gmail.com>
-References: <1326943579-30952-1-git-send-email-girish.shivananjappa@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 0/6] ARM: SAMSUNG: Board updates and minor fixes
+Date: Tue, 31 Jan 2012 13:07:56 +0900
+Message-ID: <4F27691C.9010001@samsung.com>
+References: <1327501407-1927-1-git-send-email-s.nawrocki@samsung.com> <016901ccdc93$c79a8e80$56cfab80$%kim@samsung.com> <4F226D7E.1090408@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1326943579-30952-1-git-send-email-girish.shivananjappa@linaro.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Girish K S <girish.shivananjappa@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:59375 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754255Ab2AaEIE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 30 Jan 2012 23:08:04 -0500
+Received: by dadi2 with SMTP id i2so4143785dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Jan 2012 20:08:03 -0800 (PST)
+In-Reply-To: <4F226D7E.1090408@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com
 
-Hi Chris,
-can you consider this patch in your next branch.
+On 01/27/12 18:25, Sylwester Nawrocki wrote:
+> On 01/27/2012 02:34 AM, Kukjin Kim wrote:
+>> OK, looks good to me, will apply in my v3.3-samsung-fixes-2 for 6/6 and
+>> next/board-samsung for others.
+>
+> Thank you, it would be good to also get patches 4/6, 5/6,
+>
+> ARM: SAMSUNG: Correct M-5MOLS sensor clock frequency on Nuri board
+> ARM: SAMSUNG: Correct framebuffer window size on Nuri board
+>
+> in for 3.3 as well. But if it's too much trouble please just queue them
+> for 3.4.
+>
+Looks OK, I updated.
 
-regards
-Girish K S
+>> And I'm not sure some board updates are for fix now so if required, please
+>> let me know.
+>>
+>> Plus, I looked at some wrong alignment(tab and white space?) in your
+>> patches, so if you don't mind, let me fix it when I apply.
+>
+> Hmm, I thought I've double checked those things, but anyway sorry
+> for overlooking. And please feel free correct if required.
+>
 
-On 19 January 2012 08:56, Girish K S <girish.shivananjappa@linaro.org> =
-wrote:
-> This patch fixes the failure of low speed mmc card detection
->
-> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-> ---
-> =A0drivers/mmc/core/mmc.c | =A0 =A05 +++--
-> =A01 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index dc03291..2bc586b 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1020,7 +1020,8 @@ static int mmc_init_card(struct mmc_host *host,=
- u32 ocr,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_select_hs2=
-00(card);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else if (host->caps & MMC_CAP_MMC_HIGH=
-SPEED)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(car=
-d, EXT_CSD_CMD_SET_NORMAL,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0EXT_CSD_HS_TIMING, 1, 0);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0EXT_CSD_HS_TIMING, 1,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0card->ext_csd.generic_cmd6_time);
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (err && err !=3D -EBADMSG)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto free_card;
-> @@ -1130,7 +1131,7 @@ static int mmc_init_card(struct mmc_host *host,=
- u32 ocr,
-> =A0 =A0 =A0 =A0 * Activate wide bus and DDR (if supported).
-> =A0 =A0 =A0 =A0 */
-> =A0 =A0 =A0 =A0if (!mmc_card_hs200(card) &&
-> - =A0 =A0 =A0 =A0 =A0 (card->csd.mmca_vsn >=3D CSD_SPEC_VER_3) &&
-> + =A0 =A0 =A0 =A0 =A0 (card->csd.mmca_vsn >=3D CSD_SPEC_VER_4) &&
-> =A0 =A0 =A0 =A0 =A0 =A0(host->caps & (MMC_CAP_4_BIT_DATA | MMC_CAP_8_=
-BIT_DATA))) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0static unsigned ext_csd_bits[][2] =3D =
-{
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0{ EXT_CSD_BUS_WIDTH_8,=
- EXT_CSD_DDR_BUS_WIDTH_8 },
-> --
-> 1.7.1
->
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
