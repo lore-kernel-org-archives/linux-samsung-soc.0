@@ -1,92 +1,83 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: smp: allow get the core count from L2 control on A15
-Date: Tue, 31 Jan 2012 21:11:10 +0900
-Message-ID: <04be01cce011$6b3b3550$41b19ff0$%kim@samsung.com>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH] ARM: smp: allow get the core count from L2 control on A15
+Date: Tue, 31 Jan 2012 14:13:13 +0000
+Message-ID: <20120131141313.GA31004@mudshark.cambridge.arm.com>
+References: <04be01cce011$6b3b3550$41b19ff0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62946 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753024Ab2AaMLN (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:46958 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753320Ab2AaOOD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 07:11:13 -0500
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LYN00163WIOFP20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 21:11:12 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LYN00DOPWIMJ180@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 21:11:12 +0900 (KST)
-Content-language: ko
+	Tue, 31 Jan 2012 09:14:03 -0500
+Content-Disposition: inline
+In-Reply-To: <04be01cce011$6b3b3550$41b19ff0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: rmk+kernel@arm.linux.org.uk
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "rmk+kernel@arm.linux.org.uk" <rmk+kernel@arm.linux.org.uk>
 
+Hi Kukjin,
 
-Actually, the number of A15 CPU core gets from L2 control
-register not SCU configuration.
+On Tue, Jan 31, 2012 at 12:11:10PM +0000, Kukjin Kim wrote:
+> 
+> Actually, the number of A15 CPU core gets from L2 control
+> register not SCU configuration.
+> 
+> Suggested-by: Changhwan Youn <chaos.youn@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> ---
 
-Suggested-by: Changhwan Youn <chaos.youn@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
----
+NAK.
 
-Hi Russell,
+> diff --git a/arch/arm/include/asm/smp.h b/arch/arm/include/asm/smp.h
+> index 1e5717a..b67084f 100644
+> --- a/arch/arm/include/asm/smp.h
+> +++ b/arch/arm/include/asm/smp.h
+> @@ -71,6 +71,11 @@ extern void platform_secondary_init(unsigned int cpu);
+>  extern void platform_smp_prepare_cpus(unsigned int);
+>  
+>  /*
+> + * Get the number of CPU cores from the L2 control register on A15
+> + */
+> +extern unsigned long a15_get_core_count(void);
+> +
+> +/*
+>   * Logical CPU mapping.
+>   */
+>  extern int __cpu_logical_map[NR_CPUS];
+> diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+> index 57db122..be4d31d 100644
+> --- a/arch/arm/kernel/smp.c
+> +++ b/arch/arm/kernel/smp.c
+> @@ -233,6 +233,22 @@ void __ref cpu_die(void)
+>  }
+>  #endif /* CONFIG_HOTPLUG_CPU */
+>  
+> +/*
+> + * Get the number of CPU cores from the L2 control register on A15
+> + */
+> +unsigned long a15_get_core_count(void)
+> +{
+> +	unsigned long val;
+> +
+> +	/* Read L2 control register */
+> +	asm volatile("mrc p15, 1, %0, c9, c0, 2" : "=r"(val));
+> +
+> +	/* [25:24] of L2 control register means core count - 1 */
+> +	val = ((val >> 24) & 0x3) + 1;
+> +
+> +	return val;
+> +}
 
-As you know, the method of A15 core counting is different with A9.
-So the function will be required on that but I'm not sure where the
-function should be added at.
+This doesn't belong in smp.c but, more importantly, this doesn't work for
+multi-cluster configurations at all. Since all A15 implementations will be
+on new platforms, the code will be device-tree only and so we should use
+that to determine the CPU topology as, unfortunately, there is no architected
+way of doing this.
 
- arch/arm/include/asm/smp.h |    5 +++++
- arch/arm/kernel/smp.c      |   16 ++++++++++++++++
- 2 files changed, 21 insertions(+), 0 deletions(-)
+I believe Lorenzo posted some patches which you could look at.
 
-diff --git a/arch/arm/include/asm/smp.h b/arch/arm/include/asm/smp.h
-index 1e5717a..b67084f 100644
---- a/arch/arm/include/asm/smp.h
-+++ b/arch/arm/include/asm/smp.h
-@@ -71,6 +71,11 @@ extern void platform_secondary_init(unsigned int cpu);
- extern void platform_smp_prepare_cpus(unsigned int);
- 
- /*
-+ * Get the number of CPU cores from the L2 control register on A15
-+ */
-+extern unsigned long a15_get_core_count(void);
-+
-+/*
-  * Logical CPU mapping.
-  */
- extern int __cpu_logical_map[NR_CPUS];
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index 57db122..be4d31d 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -233,6 +233,22 @@ void __ref cpu_die(void)
- }
- #endif /* CONFIG_HOTPLUG_CPU */
- 
-+/*
-+ * Get the number of CPU cores from the L2 control register on A15
-+ */
-+unsigned long a15_get_core_count(void)
-+{
-+	unsigned long val;
-+
-+	/* Read L2 control register */
-+	asm volatile("mrc p15, 1, %0, c9, c0, 2" : "=r"(val));
-+
-+	/* [25:24] of L2 control register means core count - 1 */
-+	val = ((val >> 24) & 0x3) + 1;
-+
-+	return val;
-+}
-+
- int __cpu_logical_map[NR_CPUS];
- 
- void __init smp_setup_processor_id(void)
--- 
-1.7.1
+Will
