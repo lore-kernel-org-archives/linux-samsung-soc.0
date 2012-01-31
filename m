@@ -1,259 +1,48 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: add support GPIO for EXYNOS5250
-Date: Tue, 31 Jan 2012 17:34:02 +0100
-Message-ID: <4F2817FA.5020407@samsung.com>
-References: <1328025040-4751-1-git-send-email-kgene.kim@samsung.com>
- <1328025040-4751-2-git-send-email-kgene.kim@samsung.com>
+From: Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: Re: [PATCH v2] ARM: Exynos4: Add cpu-offset property in gic device
+ tree node
+Date: Tue, 31 Jan 2012 17:41:52 +0100
+Message-ID: <4F2819D0.7090002@samsung.com>
+References: <1328023789-4672-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:32720 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753727Ab2AaQeG (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:36916 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753840Ab2AaQlj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jan 2012 11:34:06 -0500
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
+	Tue, 31 Jan 2012 11:41:39 -0500
+Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LYO00CTS8ORA4@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 16:34:03 +0000 (GMT)
+ with ESMTP id <0LYO00J3191DK5@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 16:41:37 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LYO0027D8OQIP@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 16:34:03 +0000 (GMT)
-In-reply-to: <1328025040-4751-2-git-send-email-kgene.kim@samsung.com>
+ 2004)) with ESMTPA id <0LYO00FX691DVE@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 31 Jan 2012 16:41:37 +0000 (GMT)
+In-reply-to: <1328023789-4672-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Sangsu Park <sangsu4u.park@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-Hi Kukjin,
+On 31.01.2012 16:29, Thomas Abraham wrote:
+> Commit db0d4db22a78 ('ARM: gic: allow GIC to support non-banked setups)
+> requires a cpu-offset property to be specified for non-banked gic
+> controllers, which is the case for Exynos4.
+>
+> Reported-by: Karol Lewandowski<k.lewandowski@samsung.com>
 
-I have few comments below...
+( Minor note - my email address lacks 'i' at the end, i.e. it's
+   k.lewandowsk@ :)
 
-On 01/31/2012 04:50 PM, Kukjin Kim wrote:
-> From: Sangsu Park <sangsu4u.park@samsung.com>
-> 
-> This patch adds follwing.
-
-s/follwing/following.
-
-nit: AFAIK it's a good habit not to start a commit description
-with "This patch.."
-
-> - IO-map for EXYNOS5250 GPIO support
-> - EXYNOS5250 GPIO bank size/number definitions
-> - memory map definition for S5P GPIO4
-> 
-> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
 > ---
->  arch/arm/mach-exynos/common.c                |   20 +++
->  arch/arm/mach-exynos/include/mach/gpio.h     |  221 ++++++++++++++++++++------
->  arch/arm/mach-exynos/include/mach/map.h      |    4 +
->  arch/arm/plat-samsung/include/plat/map-s5p.h |    1 +
->  4 files changed, 199 insertions(+), 47 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 6ab3c5a..225acc7 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -271,6 +271,26 @@ static struct map_desc exynos5_iodesc[] __initdata = {
->  		.pfn		= __phys_to_pfn(EXYNOS5_PA_GIC_DIST),
->  		.length		= SZ_64K,
->  		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_GPIO1,
-> +		.pfn		= __phys_to_pfn(EXYNOS5_PA_GPIO1),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_GPIO2,
-> +		.pfn		= __phys_to_pfn(EXYNOS5_PA_GPIO2),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_GPIO3,
-> +		.pfn		= __phys_to_pfn(EXYNOS5_PA_GPIO3),
-> +		.length		= SZ_4K,
-> +		.type		= MT_DEVICE,
-> +	}, {
-> +		.virtual	= (unsigned long)S5P_VA_GPIO4,
-> +		.pfn		= __phys_to_pfn(EXYNOS5_PA_GPIO4),
-> +		.length		= SZ_256,
-> +		.type		= MT_DEVICE,
->  	},
->  };
->  
-> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-exynos/include/mach/gpio.h
-> index 80523ca..a9c3944 100644
-> --- a/arch/arm/mach-exynos/include/mach/gpio.h
-> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
-> @@ -13,8 +13,11 @@
->  #ifndef __ASM_ARCH_GPIO_H
->  #define __ASM_ARCH_GPIO_H __FILE__
->  
-> -/* Practically, GPIO banks up to GPZ are the configurable gpio banks */
-> +/* MACRO for EXYNOS GPIO numbering */
-> +#define EXYNOS_GPIO_NEXT(__gpio) \
-> +	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
->  
-> +/* EXYNOS4 serise */
->  /* GPIO bank sizes */
->  #define EXYNOS4_GPIO_A0_NR	(8)
->  #define EXYNOS4_GPIO_A1_NR	(6)
-> @@ -55,51 +58,47 @@
->  #define EXYNOS4_GPIO_Z_NR	(7)
->  
->  /* GPIO bank numbers */
-> -
-> -#define EXYNOS4_GPIO_NEXT(__gpio) \
-> -	((__gpio##_START) + (__gpio##_NR) + CONFIG_S3C_GPIO_SPACE + 1)
-> -
-> -enum s5p_gpio_number {
-> +enum exynos4_gpio_number {
->  	EXYNOS4_GPIO_A0_START	= 0,
-> -	EXYNOS4_GPIO_A1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_A0),
-> -	EXYNOS4_GPIO_B_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_A1),
-> -	EXYNOS4_GPIO_C0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_B),
-> -	EXYNOS4_GPIO_C1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_C0),
-> -	EXYNOS4_GPIO_D0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_C1),
-> -	EXYNOS4_GPIO_D1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_D0),
-> -	EXYNOS4_GPIO_E0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_D1),
-> -	EXYNOS4_GPIO_E1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_E0),
-> -	EXYNOS4_GPIO_E2_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_E1),
-> -	EXYNOS4_GPIO_E3_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_E2),
-> -	EXYNOS4_GPIO_E4_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_E3),
-> -	EXYNOS4_GPIO_F0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_E4),
-> -	EXYNOS4_GPIO_F1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_F0),
-> -	EXYNOS4_GPIO_F2_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_F1),
-> -	EXYNOS4_GPIO_F3_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_F2),
-> -	EXYNOS4_GPIO_J0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_F3),
-> -	EXYNOS4_GPIO_J1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_J0),
-> -	EXYNOS4_GPIO_K0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_J1),
-> -	EXYNOS4_GPIO_K1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_K0),
-> -	EXYNOS4_GPIO_K2_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_K1),
-> -	EXYNOS4_GPIO_K3_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_K2),
-> -	EXYNOS4_GPIO_L0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_K3),
-> -	EXYNOS4_GPIO_L1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_L0),
-> -	EXYNOS4_GPIO_L2_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_L1),
-> -	EXYNOS4_GPIO_X0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_L2),
-> -	EXYNOS4_GPIO_X1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_X0),
-> -	EXYNOS4_GPIO_X2_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_X1),
-> -	EXYNOS4_GPIO_X3_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_X2),
-> -	EXYNOS4_GPIO_Y0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_X3),
-> -	EXYNOS4_GPIO_Y1_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y0),
-> -	EXYNOS4_GPIO_Y2_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y1),
-> -	EXYNOS4_GPIO_Y3_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y2),
-> -	EXYNOS4_GPIO_Y4_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y3),
-> -	EXYNOS4_GPIO_Y5_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y4),
-> -	EXYNOS4_GPIO_Y6_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y5),
-> -	EXYNOS4_GPIO_Z_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Y6),
-> +	EXYNOS4_GPIO_A1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_A0),
-> +	EXYNOS4_GPIO_B_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_A1),
-> +	EXYNOS4_GPIO_C0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_B),
-> +	EXYNOS4_GPIO_C1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C0),
-> +	EXYNOS4_GPIO_D0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C1),
-> +	EXYNOS4_GPIO_D1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D0),
-> +	EXYNOS4_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
-> +	EXYNOS4_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E0),
-> +	EXYNOS4_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E1),
-> +	EXYNOS4_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E2),
-> +	EXYNOS4_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E3),
-> +	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E4),
-> +	EXYNOS4_GPIO_F1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F0),
-> +	EXYNOS4_GPIO_F2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F1),
-> +	EXYNOS4_GPIO_F3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F2),
-> +	EXYNOS4_GPIO_J0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F3),
-> +	EXYNOS4_GPIO_J1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_J0),
-> +	EXYNOS4_GPIO_K0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_J1),
-> +	EXYNOS4_GPIO_K1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_K0),
-> +	EXYNOS4_GPIO_K2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_K1),
-> +	EXYNOS4_GPIO_K3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_K2),
-> +	EXYNOS4_GPIO_L0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_K3),
-> +	EXYNOS4_GPIO_L1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_L0),
-> +	EXYNOS4_GPIO_L2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_L1),
-> +	EXYNOS4_GPIO_X0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_L2),
-> +	EXYNOS4_GPIO_X1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_X0),
-> +	EXYNOS4_GPIO_X2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_X1),
-> +	EXYNOS4_GPIO_X3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_X2),
-> +	EXYNOS4_GPIO_Y0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_X3),
-> +	EXYNOS4_GPIO_Y1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y0),
-> +	EXYNOS4_GPIO_Y2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y1),
-> +	EXYNOS4_GPIO_Y3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y2),
-> +	EXYNOS4_GPIO_Y4_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y3),
-> +	EXYNOS4_GPIO_Y5_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y4),
-> +	EXYNOS4_GPIO_Y6_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y5),
-> +	EXYNOS4_GPIO_Z_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y6),
->  };
+> This patch solves the issue of boot failure with SMP enabled kernel for
+> Exynos4 device tree enabled machine.
 
-Are you planning to add support for exynos4212/exynos4412 as well
-anytime soon ? I've done some work towards this and I'd like to
-avoid duplicating efforts.
+Tested-by: Karol Lewandowski <k.lewandowsk@samsung.com>
 
-> -/* EXYNOS4 GPIO number definitions */
-> +/* GPIO number definitions */
->  #define EXYNOS4_GPA0(_nr)	(EXYNOS4_GPIO_A0_START + (_nr))
->  #define EXYNOS4_GPA1(_nr)	(EXYNOS4_GPIO_A1_START + (_nr))
->  #define EXYNOS4_GPB(_nr)	(EXYNOS4_GPIO_B_START + (_nr))
-> @@ -140,10 +139,138 @@ enum s5p_gpio_number {
->  
->  /* the end of the EXYNOS4 specific gpios */
->  #define EXYNOS4_GPIO_END	(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) + 1)
-> -#define S3C_GPIO_END		EXYNOS4_GPIO_END
->  
-> -/* define the number of gpios we need to the one after the GPZ() range */
-> -#define ARCH_NR_GPIOS		(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) +	\
-> -				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
-> +/* EXYNOS5 serise */
-> +/* GPIO bank sizes */
-> +#define EXYNOS5_GPIO_A0_NR	(8)
-
-nit: It's been always a mystery to me, what are the parentheses around the
-numbers helpful for ? IMHO even if there is more things like this in
-the file it might be better to skip extra parentheses here.
-
-> +#define EXYNOS5_GPIO_A1_NR	(6)
-> +#define EXYNOS5_GPIO_A2_NR	(8)
-> +#define EXYNOS5_GPIO_B0_NR	(5)
-> +#define EXYNOS5_GPIO_B1_NR	(5)
-> +#define EXYNOS5_GPIO_B2_NR	(4)
-> +#define EXYNOS5_GPIO_B3_NR	(4)
-> +#define EXYNOS5_GPIO_C0_NR	(7)
-> +#define EXYNOS5_GPIO_C1_NR	(7)
-> +#define EXYNOS5_GPIO_C2_NR	(7)
-> +#define EXYNOS5_GPIO_C3_NR	(7)
-> +#define EXYNOS5_GPIO_D0_NR	(8)
-> +#define EXYNOS5_GPIO_D1_NR	(8)
-> +#define EXYNOS5_GPIO_Y0_NR	(6)
-> +#define EXYNOS5_GPIO_Y1_NR	(4)
-> +#define EXYNOS5_GPIO_Y2_NR	(6)
-> +#define EXYNOS5_GPIO_Y3_NR	(8)
-> +#define EXYNOS5_GPIO_Y4_NR	(8)
-> +#define EXYNOS5_GPIO_Y5_NR	(8)
-> +#define EXYNOS5_GPIO_Y6_NR	(8)
-> +#define EXYNOS5_GPIO_X0_NR	(8)
-> +#define EXYNOS5_GPIO_X1_NR	(8)
-> +#define EXYNOS5_GPIO_X2_NR	(8)
-> +#define EXYNOS5_GPIO_X3_NR	(8)
-> +#define EXYNOS5_GPIO_E0_NR	(8)
-> +#define EXYNOS5_GPIO_E1_NR	(2)
-> +#define EXYNOS5_GPIO_F0_NR	(4)
-> +#define EXYNOS5_GPIO_F1_NR	(4)
-> +#define EXYNOS5_GPIO_G0_NR	(8)
-> +#define EXYNOS5_GPIO_G1_NR	(8)
-> +#define EXYNOS5_GPIO_G2_NR	(2)
-> +#define EXYNOS5_GPIO_H0_NR	(4)
-> +#define EXYNOS5_GPIO_H1_NR	(8)
-> +#define EXYNOS5_GPIO_V0_NR	(8)
-> +#define EXYNOS5_GPIO_V1_NR	(8)
-> +#define EXYNOS5_GPIO_V2_NR	(8)
-> +#define EXYNOS5_GPIO_V3_NR	(8)
-> +#define EXYNOS5_GPIO_V4_NR	(2)
-> +#define EXYNOS5_GPIO_Z_NR	(7)
-
-Thanks,
--- 
-Sylwester Nawrocki
-Samsung Poland R&D Center
+Thanks!
