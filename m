@@ -1,71 +1,83 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: Re: [PATCH] gpio: samsung: adapt to changes in gpio specifier
- translator function declaration
-Date: Wed, 01 Feb 2012 19:26:04 +0100
-Message-ID: <4F2983BC.40207@samsung.com>
-References: <1328101352-22274-1-git-send-email-thomas.abraham@linaro.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH v2 1/2] PM / Domains: Add OF support
+Date: Wed, 1 Feb 2012 22:32:32 +0100
+Message-ID: <201202012232.32282.rjw@sisk.pl>
+References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org> <201201172145.35407.rjw@sisk.pl> <041e01ccdfdc$9a4257a0$cec706e0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:36243 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751560Ab2BASZs (ORCPT
+Received: from ogre.sisk.pl ([217.79.144.158]:60855 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757470Ab2BAV2x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Feb 2012 13:25:48 -0500
-Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0LYQ00F8N8IYRP90@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Feb 2012 18:25:46 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LYQ00K348IYCN@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Feb 2012 18:25:46 +0000 (GMT)
-In-reply-to: <1328101352-22274-1-git-send-email-thomas.abraham@linaro.org>
+	Wed, 1 Feb 2012 16:28:53 -0500
+In-Reply-To: <041e01ccdfdc$9a4257a0$cec706e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, tushar.behera@linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-On 01.02.2012 14:02, Thomas Abraham wrote:
-> Commit 15c9a0acc3f7 (of: create of_phandle_args to simplify return of phandle
-> parsing data) modifies the parameter list of of_xlate function pointer declaration
-> in gpio_chip. Adapt the gpio specifier translate function for this change.
->
-> Reported-by: Tushar Behera<tushar.behera@linaro.org>
-> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+On Tuesday, January 31, 2012, Kukjin Kim wrote:
+> Rafael J. Wysocki wrote:
+> > 
+> > On Tuesday, January 17, 2012, Kukjin Kim wrote:
+> > > Rafael J. Wysocki wrote:
+> > > >
+> > > > On Saturday, January 07, 2012, Thomas Abraham wrote:
+> > > > > A device node pointer is added to generic pm domain structure to
+> > > > associate
+> > > > > the domain with a node in the device tree. The platform code parses the
+> > > > > device tree to find available nodes representing the generic power
+> > > > domain,
+> > > > > instantiates the available domains and initializes them by calling
+> > > > > pm_genpd_init().
+> > > > >
+> > > > > Nodes representing the devices include a phandle of the power domain to
+> > > > > which it belongs. As these devices get instantiated, the driver code
+> > > > > checkes for availability of a power domain phandle, converts the phandle
+> > > > > to a device node and uses the new pm_genpd_of_add_device() api to
+> > > > > associate the device with a power domain.
+> > > > >
+> > > > > pm_genpd_of_add_device() runs through its list of registered power
+> > > > domains
+> > > > > and matches the OF node of the domain with the one specified as the
+> > > > > parameter. If a match is found, the device is associated with the
+> > > > matched
+> > > > > domain.
+> > > > >
+> > > > > Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> > > > > Cc: Rob Herring <rob.herring@calxeda.com>
+> > > > > Cc: Grant Likely <grant.likely@secretlab.ca>
+> > > > > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > > >
+> > > > I can take this patch for 3.4, but your [2/2] depends on it, so I'm not
+> > > > sure how to handle that.  If you want me to take the other patch too,
+> > > > it'll need ACKs from the Exynos maintaniers.
+> > > >
+> > > Hi Rafael,
+> > >
+> > > Basically, looks ok to me.
+> > >
+> > > But it would be good if [v3 2/2] patch of this series (this patch) could be
+> > > applied in samsung tree to avoid conflicts as it modifies many files. I
+> > > don't want to make a trouble when sending my tree to upstream. Of course, as
+> > > you said, this have a dependency with [v2 1/2]. So if you're ok, let me
+> > > create topic branch will have both(1/2 and 2/2) to merge in your tree.
+> > >
+> > > How do you think?
+> > 
+> > That would work for me too.
+> > 
+> Hi Rafael,
+> 
+> I created topic branch for you with your ack.
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v3.4-for-rafael
+> 
+> Please merge that in your tree and if any problems, please kindly let me know.
 
-Tested-by: Karol Lewandowski <k.lewandowsk@samsung.com>
+Merged into linux-pm/pm-domains and into linux-pm/linux-next and pushed back.
 
-Fixes following Oops in i2c-s3c24xx.
-
-Thanks
-
-
-<1>Unable to handle kernel NULL pointer dereference at virtual address 
-00000000
-<1>pgd = c0004000
-<1>[00000000] *pgd=00000000
-<0>Internal error: Oops: 5 [#1] PREEMPT SMP
-<d>Modules linked in:
-CPU: 0    Tainted: G        W     (3.3.0-rc1+ #20)
-PC is at exynos4_gpio_xlate+0x18/0xe8
-LR is at of_get_named_gpio_flags+0xd0/0x190
-pc : [<c025dd60>]    lr : [<c03423a0>]    psr: 60000013
-sp : e9047d88  ip : e9047da8  fp : e9047da4
-r10: 00000000  r9 : 00000000  r8 : c05ecf4c
-r7 : c0864ca8  r6 : 00000000  r5 : e9047db0  r4 : c025dd48
-r3 : 00000004  r2 : 00000000  r1 : e9047db0  r0 : c05ecf4c
-Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-Control: 10c53c7d  Table: 4000404a  DAC: 00000015
-<0>Process swapper/0 (pid: 1, stack limit = 0xe90462f0)
-<0>Stack: (0xe9047d88 to 0xe9048000)
-...
-[<c025dd60>] (exynos4_gpio_xlate+0x18/0xe8) from [<c03423a0>] 
-(of_get_named_gpio_flags+0xd0/0x190)
-[<c03423a0>] (of_get_named_gpio_flags+0xd0/0x190) from [<c02e77cc>] 
-(s3c24xx_i2c_init+0x264/0x430)
-[<c02e77cc>] (s3c24xx_i2c_init+0x264/0x430) from [<c02e7c24>] 
-(s3c24xx_i2c_probe+0x1c8/0x4ac)
-[<c02e7c24>] (s3c24xx_i2c_probe+0x1c8/0x4ac) from [<c02a4320>] 
-(platform_drv_probe+0x28/0x2c)
+Thanks,
+Rafael
