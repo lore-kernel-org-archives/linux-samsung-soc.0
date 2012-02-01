@@ -1,48 +1,62 @@
-From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Subject: [PATCHv3 0/3] ARM: Exynos: JPEG board definition and device register
-Date: Wed, 01 Feb 2012 12:19:22 +0100
-Message-ID: <1328095165-31628-1-git-send-email-andrzej.p@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH V5 1/5] ARM: exynos: Add support AFTR mode on EXYNOS4210
+Date: Wed, 01 Feb 2012 17:07:30 +0530
+Message-ID: <4F2923FA.8080301@linaro.org>
+References: <1325737525-12869-1-git-send-email-amit.kachhap@linaro.org> <1325737525-12869-2-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:33452 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753473Ab2BALTb (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:61082 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753786Ab2BALhf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Feb 2012 06:19:31 -0500
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LYP0011UOSHGZ@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Feb 2012 11:19:29 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LYP00EKVOSGA2@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Feb 2012 11:19:29 +0000 (GMT)
+	Wed, 1 Feb 2012 06:37:35 -0500
+Received: by iacb35 with SMTP id b35so1389751iac.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Feb 2012 03:37:35 -0800 (PST)
+In-Reply-To: <1325737525-12869-2-git-send-email-amit.kachhap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-Dear All,
+Hi Amit,
 
-This patch series adds board definition code and device registration code
-for JPEG IP found in Exynos4 SoC on universal_c210 and nuri boards.
+On 01/05/2012 09:55 AM, Amit Daniel Kachhap wrote:
+> This patch adds support AFTR(ARM OFF TOP RUNNING) mode in
+> cpuidle driver. L2 cache keeps their data in this mode.
+> This patch ports the code to the latest interfaces to
+> save/restore CPU state inclusive of CPU PM notifiers, l2
+> resume and cpu_suspend/resume.
+> 
+> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> ---
+>  arch/arm/mach-exynos/cpuidle.c          |  149 ++++++++++++++++++++++++++++++-
+>  arch/arm/mach-exynos/include/mach/pmu.h |    2 +
+>  2 files changed, 148 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
 
-It includes changes after Tushar's review - thanks, Tushar.
+-- snip --
 
-Andrzej Pietrasiewicz (3):
-  ARM: Exynos: JPEG board definition
-  ARM: Exynos: Register JPEG on universal_c210
-  ARM: Exynos: Register JPEG on nuri
+> +static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+> +				struct cpuidle_driver *drv,
+> +				int index)
+> +{
 
- arch/arm/mach-exynos/Kconfig               |    2 ++
- arch/arm/mach-exynos/clock.c               |    5 +++++
- arch/arm/mach-exynos/include/mach/map.h    |    3 +++
- arch/arm/mach-exynos/mach-nuri.c           |    2 ++
- arch/arm/mach-exynos/mach-universal_c210.c |    2 ++
- arch/arm/plat-s5p/Kconfig                  |    5 +++++
- arch/arm/plat-samsung/devs.c               |   18 ++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h  |    1 +
- 8 files changed, 38 insertions(+), 0 deletions(-)
+-- snip --
+
+> +
+> +	scu_enable(S5P_VA_SCU);
+
+#ifdef CONFIG_SMP
+	scu_enable(S5P_VA_SCU);
+#endif
+
+This is required when compiling without SMP support.
+
+
+-- 
+Tushar Behera
