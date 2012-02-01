@@ -1,66 +1,60 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 9/9] ARM: EXYNOS: temporary fixup regarding get_core_count()
-Date: Wed, 1 Feb 2012 14:58:13 +0900
-Message-ID: <CAH9JG2Us-Edqjq2FryX_wdHOkutdGdTzeCWMD2RjqNFCn=P9hA@mail.gmail.com>
-References: <1328024354-4277-1-git-send-email-kgene.kim@samsung.com>
-	<1328024354-4277-10-git-send-email-kgene.kim@samsung.com>
+From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
+Subject: Re: [PATCH 1/3] spi/s3c64xx: Log error interrupts
+Date: Wed, 1 Feb 2012 11:50:34 +0530
+Message-ID: <CAM=Q2cvR5=PFLS92C5rtHQgXxent+mb4s3ZPiL7sb3WcO1hr3A@mail.gmail.com>
+References: <20120121132329.GA10751@opensource.wolfsonmicro.com>
+	<1327152265-10789-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	<CAM=Q2ctA6o0wW4LMW=Jpe7HPGbm4S-UySURToXrC1r4kOe08Rg@mail.gmail.com>
+	<20120129214028.GC2994@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:62401 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753271Ab2BAF6O (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:48735 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751322Ab2BAGUe convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Feb 2012 00:58:14 -0500
-Received: by obcva7 with SMTP id va7so852916obc.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Jan 2012 21:58:13 -0800 (PST)
-In-Reply-To: <1328024354-4277-10-git-send-email-kgene.kim@samsung.com>
+	Wed, 1 Feb 2012 01:20:34 -0500
+Received: by vcge1 with SMTP id e1so748955vcg.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 31 Jan 2012 22:20:34 -0800 (PST)
+In-Reply-To: <20120129214028.GC2994@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
 
-On 2/1/12, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  arch/arm/mach-exynos/platsmp.c |    9 ++++++---
->  1 files changed, 6 insertions(+), 3 deletions(-)
+Hi Mark,
+
+On Mon, Jan 30, 2012 at 3:10 AM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Sat, Jan 28, 2012 at 10:30:36PM +0530, Shubhrajyoti Datta wrote:
 >
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index 683aec7..dfb4630 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -165,7 +165,10 @@ void __init smp_init_cpus(void)
->  	void __iomem *scu_base = scu_base_addr();
->  	unsigned int i, ncores;
+> Please delete irrelevant context from your replies.
 >
-> -	ncores = scu_base ? scu_get_core_count(scu_base) : 1;
-> +	if (soc_is_exynos5250())
-> +		ncores = 2;
-I saw the related mail thread, I wonder then how to handle this at
-other A15 board? Device Tree?
-> +	else
-> +		ncores = scu_base ? scu_get_core_count(scu_base) : 1;
+>> > + =A0 ret =3D request_irq(irq, s3c64xx_spi_irq, 0, "spi-s3c64xx", =
+sdd);
 >
->  	/* sanity check */
->  	if (ncores > nr_cpu_ids) {
-> @@ -182,8 +185,8 @@ void __init smp_init_cpus(void)
+>> Could we have a threaded irq instead and there are prints and that m=
+ay get
+>> executed in interrupt context.
 >
->  void __init platform_smp_prepare_cpus(unsigned int max_cpus)
->  {
-> -
-> -	scu_enable(scu_base_addr());
-> +	if (!soc_is_exynos5250())
-> +		scu_enable(scu_base_addr());
->
->  	/*
->  	 * Write the address of secondary startup into the
-> --
-> 1.7.4.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> So, clearly we *could*. =A0However I think that's not going to be as
+> helpful. =A0These errors are never supposed to happen (and if they do
+> indicate a fairly serious problem) so the performance impact shouldn'=
+t
+> be our primary concern and if they do happen then my suspicion is tha=
+t
+> the timing information will be very important. =A0I expect that knowi=
+ng
+> exactly when the error occurred is likely to help diagnose what cause=
+d
+> it by virtue of knowing what other things were going on in the system=
+ at
+> that time.
+I agree .
+
+My only concern was that incase someone wants to add prints in the irq
+that may be handy.
+However as you rightly pointed that timing is surely to be more of a co=
+ncern.
+Thanks for the explanation.
