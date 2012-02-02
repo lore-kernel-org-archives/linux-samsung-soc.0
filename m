@@ -1,83 +1,36 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH v2 1/2] PM / Domains: Add OF support
-Date: Wed, 1 Feb 2012 22:32:32 +0100
-Message-ID: <201202012232.32282.rjw@sisk.pl>
-References: <1325931055-14486-1-git-send-email-thomas.abraham@linaro.org> <201201172145.35407.rjw@sisk.pl> <041e01ccdfdc$9a4257a0$cec706e0$%kim@samsung.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH] gpio: samsung: adapt to changes in gpio specifier
+ translator function declaration
+Date: Wed, 1 Feb 2012 17:05:16 -0700
+Message-ID: <20120202000516.GA15343@ponder.secretlab.ca>
+References: <1328101352-22274-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([217.79.144.158]:60855 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757470Ab2BAV2x (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Feb 2012 16:28:53 -0500
-In-Reply-To: <041e01ccdfdc$9a4257a0$cec706e0$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1328101352-22274-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, s.nawrocki@samsung.com, patches@linaro.org
 
-On Tuesday, January 31, 2012, Kukjin Kim wrote:
-> Rafael J. Wysocki wrote:
-> > 
-> > On Tuesday, January 17, 2012, Kukjin Kim wrote:
-> > > Rafael J. Wysocki wrote:
-> > > >
-> > > > On Saturday, January 07, 2012, Thomas Abraham wrote:
-> > > > > A device node pointer is added to generic pm domain structure to
-> > > > associate
-> > > > > the domain with a node in the device tree. The platform code parses the
-> > > > > device tree to find available nodes representing the generic power
-> > > > domain,
-> > > > > instantiates the available domains and initializes them by calling
-> > > > > pm_genpd_init().
-> > > > >
-> > > > > Nodes representing the devices include a phandle of the power domain to
-> > > > > which it belongs. As these devices get instantiated, the driver code
-> > > > > checkes for availability of a power domain phandle, converts the phandle
-> > > > > to a device node and uses the new pm_genpd_of_add_device() api to
-> > > > > associate the device with a power domain.
-> > > > >
-> > > > > pm_genpd_of_add_device() runs through its list of registered power
-> > > > domains
-> > > > > and matches the OF node of the domain with the one specified as the
-> > > > > parameter. If a match is found, the device is associated with the
-> > > > matched
-> > > > > domain.
-> > > > >
-> > > > > Cc: Rafael J. Wysocki <rjw@sisk.pl>
-> > > > > Cc: Rob Herring <rob.herring@calxeda.com>
-> > > > > Cc: Grant Likely <grant.likely@secretlab.ca>
-> > > > > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > > >
-> > > > I can take this patch for 3.4, but your [2/2] depends on it, so I'm not
-> > > > sure how to handle that.  If you want me to take the other patch too,
-> > > > it'll need ACKs from the Exynos maintaniers.
-> > > >
-> > > Hi Rafael,
-> > >
-> > > Basically, looks ok to me.
-> > >
-> > > But it would be good if [v3 2/2] patch of this series (this patch) could be
-> > > applied in samsung tree to avoid conflicts as it modifies many files. I
-> > > don't want to make a trouble when sending my tree to upstream. Of course, as
-> > > you said, this have a dependency with [v2 1/2]. So if you're ok, let me
-> > > create topic branch will have both(1/2 and 2/2) to merge in your tree.
-> > >
-> > > How do you think?
-> > 
-> > That would work for me too.
-> > 
-> Hi Rafael,
+On Wed, Feb 01, 2012 at 06:32:32PM +0530, Thomas Abraham wrote:
+> Commit 15c9a0acc3f7 (of: create of_phandle_args to simplify return of phandle
+> parsing data) modifies the parameter list of of_xlate function pointer declaration
+> in gpio_chip. Adapt the gpio specifier translate function for this change.
 > 
-> I created topic branch for you with your ack.
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git v3.4-for-rafael
-> 
-> Please merge that in your tree and if any problems, please kindly let me know.
+> Reported-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Merged into linux-pm/pm-domains and into linux-pm/linux-next and pushed back.
+Applied, thanks.
 
-Thanks,
-Rafael
+g.
