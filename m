@@ -1,129 +1,80 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH RFC idle 2/3] arm: Avoid invoking RCU when CPU is idle
-Date: Thu, 2 Feb 2012 09:43:37 -0800
-Message-ID: <20120202174337.GS2518@linux.vnet.ibm.com>
-References: <20120202004253.GA10946@linux.vnet.ibm.com>
- <1328143404-11038-1-git-send-email-paulmck@linux.vnet.ibm.com>
- <1328143404-11038-2-git-send-email-paulmck@linux.vnet.ibm.com>
- <alpine.LFD.2.02.1202012234050.2759@xanadu.home>
- <20120202044439.GD2435@linux.vnet.ibm.com>
- <alpine.LFD.2.02.1202021159560.2759@xanadu.home>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: add support GPIO for EXYNOS5250
+Date: Thu, 2 Feb 2012 11:22:14 -0700
+Message-ID: <20120202182214.GN15343@ponder.secretlab.ca>
+References: <1328025040-4751-1-git-send-email-kgene.kim@samsung.com>
+ <1328025040-4751-2-git-send-email-kgene.kim@samsung.com>
+ <4F2817FA.5020407@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:59516 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755982Ab2BBSWQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 2 Feb 2012 13:22:16 -0500
+Received: by dadp15 with SMTP id p15so2050023dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 02 Feb 2012 10:22:16 -0800 (PST)
 Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.02.1202021159560.2759@xanadu.home>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc: mathieu.desnoyers@polymtl.ca, peterz@infradead.org, fweisbec@gmail.com, Nicolas Ferre <nicolas.ferre@atmel.com>, dhowells@redhat.com, Lennert Buytenhek <kernel@wantstofly.org>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, eric.dumazet@gmail.com, H Hartley Sweeten <hsweeten@visionengravers.com>, Magnus Damm <magnus.damm@gmail.com>, Will Deacon <will.deacon@arm.com>, Tony Lindgren <tony@atomide.com>, dipankar@in.ibm.com, darren@dvhart.com, mingo@elte.hu, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Len Brown <len.brown@intel.com>, Amit Kucheria <amit.kucheria@canonical.com>, patches@linaro.org, Sekhar Nori <nsekhar@ti.com>, josh@joshtriplett.org, rostedt@goodmis.org, niv@us.ibm.com, linux-samsung-soc@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, Barry Song <baohua.song@csr.com>, tglx@linutro
+In-Reply-To: <4F2817FA.5020407@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangsu Park <sangsu4u.park@samsung.com>
 
-On Thu, Feb 02, 2012 at 12:13:00PM -0500, Nicolas Pitre wrote:
-> On Wed, 1 Feb 2012, Paul E. McKenney wrote:
+On Tue, Jan 31, 2012 at 05:34:02PM +0100, Sylwester Nawrocki wrote:
+> Hi Kukjin,
 > 
-> > On Wed, Feb 01, 2012 at 10:49:22PM -0500, Nicolas Pitre wrote:
-> > > On Wed, 1 Feb 2012, Paul E. McKenney wrote:
-> > > 
-> > > > From: "Paul E. McKenney" <paul.mckenney@linaro.org>
-> > > > 
-> > > > The idle loop is a quiscent state for RCU, which means that RCU ignores
-> > > > CPUs that have told RCU that they are idle via rcu_idle_enter().
-> > > > There are nevertheless quite a few places where idle CPUs use RCU, most
-> > > > commonly indirectly via tracing.  This patch fixes these problems for ARM.
-> > > > 
-> > > > Many of these bugs have been in the kernel for quite some time, but
-> > > > Frederic's recent change now gives warnings.
-> > > > 
-> > > > This patch takes the straightforward approach of pushing the
-> > > > rcu_idle_enter()/rcu_idle_exit() pair further down into the core of the
-> > > > idle loop.
-> > > 
-> > > NAK.
-> > > 
-> > > 1) This is going to conflict with a patch series I've pushed to RMK 
-> > >    already.  You can see its result in linux-next.
-> > > 
-> > > 2) The purpose of (1) is to do precisely the very opposite i.e. move as 
-> > >    much common knowledge as possible up the idle call paths and leave 
-> > >    the platform specific quirks as bare as possible, if any.
-> > > 
-> > > So I'd much prefer if this change was constrained to be inside 
-> > > cpu_idle(), or at least in its close vicinity.
-> > 
-> > OK.  Then the tracing in the inner idle loop needs to go.  Other
-> > restructuring might be required as well. 
+> I have few comments below...
 > 
-> Let me expand a bit more on the "if any" in my #2 above.  Most ARM 
-> sub-architectures don't have any special idle drivers and they simply 
-> rely on the default cpu_do_idle call.  What this proposed patch is doing 
-> is to move the rcu_idle_enter()/rcu_idle_exit() pair down into the few 
-> subarchs with an existing cpu-idle callback.  This means in practice 
-> that rcu_idle_enter()/rcu_idle_exit() wouldn't be called at all anymore 
-> on most ARM targets.  Is that appropriate?
-
-Now that you put it that way, it does seem to have severe disadvantages.
-Good thing I tagged the patches as RFC.  ;-)
-
-Annoying, that.  I was hoping to get this fixed on an arch-by-arch basis.
-Looks like it might have to be a global change requiring global agreement. :-(
-
-> > The long and short of it is that you absolutely cannot use RCU between 
-> > the time you invoke rcu_idle_enter() and the time you invoke 
-> > rcu_idle_exit().  The ARM idle code currently does just that and 
-> > therefore must change.
+> On 01/31/2012 04:50 PM, Kukjin Kim wrote:
+> > From: Sangsu Park <sangsu4u.park@samsung.com>
 > > 
-> > Whatever change you choose that causes the code to meet that constraint
-> > is met is fine by me.
-> > 
-> > But that constraint absolutely must be met.
+> > This patch adds follwing.
 > 
-> I would have to know more about what the rcu_idle_*() calls imply before 
-> suggesting an alternative.
+> s/follwing/following.
+> 
+> nit: AFAIK it's a good habit not to start a commit description
+> with "This patch.."
+> 
 
-After a call to rcu_idle_enter(), RCU ignores the CPU completely until the
-next call to rcu_idle_exit().  This means that in the interval between
-rcu_idle_enter() and rcu_idle_exit(), you can say rcu_read_lock() all
-you want, but your data structures will get absolutely no RCU protection.
-This will result in random memory corruption, and for all I know might
-already be resultin in random memory corruption.  So a fix is required.
+"This patch..." descriptions are just fine.  I write a lot of patches that
+way, but I do expect description of not just what a patch does, but why the
+patch is necessary.
 
-So why does RCU need to ignore idle CPUs?  Because otherwise, RCU needs
-to periodically wake them up to check their status.  Waking them up
-periodically defeats CONFIG_NO_HZ's attempts to conserve power.  Avoiding
-waking them up and avoiding ignoring them extended RCU grace periods,
-eventually OOMing the systems.
+> > -/* EXYNOS4 GPIO number definitions */
+> > +/* GPIO number definitions */
+> >  #define EXYNOS4_GPA0(_nr)	(EXYNOS4_GPIO_A0_START + (_nr))
+> >  #define EXYNOS4_GPA1(_nr)	(EXYNOS4_GPIO_A1_START + (_nr))
+> >  #define EXYNOS4_GPB(_nr)	(EXYNOS4_GPIO_B_START + (_nr))
+> > @@ -140,10 +139,138 @@ enum s5p_gpio_number {
+> >  
+> >  /* the end of the EXYNOS4 specific gpios */
+> >  #define EXYNOS4_GPIO_END	(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) + 1)
+> > -#define S3C_GPIO_END		EXYNOS4_GPIO_END
+> >  
+> > -/* define the number of gpios we need to the one after the GPZ() range */
+> > -#define ARCH_NR_GPIOS		(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) +	\
+> > -				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
+> > +/* EXYNOS5 serise */
+> > +/* GPIO bank sizes */
+> > +#define EXYNOS5_GPIO_A0_NR	(8)
+> 
+> nit: It's been always a mystery to me, what are the parentheses around the
+> numbers helpful for ? IMHO even if there is more things like this in
+> the file it might be better to skip extra parentheses here.
 
-Why this new imposition?  It is not new.  It has always been illegal to
-use RCU in the idle loop from the beginning.  But people happily ignored
-that restriction, partly because it is not always immediately obvious
-what is using RCU.  Event tracing does, but unless you know that...
+It protects against the preprocessor combining a macro with other code in
+unpredictable ways.  For example:
 
-So we added diagnostics to check for illegal uses of RCU in the idle
-loop, and also separated rcu_idle_enter() and rcu_idle_exit() from
-tick_nohz_stop_sched_tick(), so that things like idle notifiers can work.
-The diagnostics promptly located all sorts of problems, including these.
+#define SIZE  10 + 20
+int i = SIZE * 5;
 
-The two options I see are:
+Without the parenthesis the result of i is 110, when the programmer would
+expect 150.
 
-1.	Rip tracing out of the inner idle loops and everything that
-	they invoke.
+For single integers like these, the parenthesis aren't actually necessary, but
+I given that for every other #define it is good practice, I don't object to
+seeing them on single integers also.
 
-2.	Push rcu_idle_enter() and rcu_idle_exit() further down into
-	the idle loops.  As you say, -all- of them.
-
-My patch set was an attempt at #2, but clearly a very poorly conceived
-attempt.  But I had to start somewhere.
-
-Other ideas?
-
-							Thanx, Paul
+g.
