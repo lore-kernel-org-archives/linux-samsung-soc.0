@@ -1,34 +1,103 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 02/13] ARM: SAMSUNG: allow the configuration of KERNEL
-	HZ in plat-samsung
-Date: Fri, 3 Feb 2012 16:13:43 +0000
-Message-ID: <20120203161343.GN889@n2100.arm.linux.org.uk>
-References: <016f01ccdc95$30279500$9076bf00$%kim@samsung.com>
+From: Kevin Hilman <khilman@ti.com>
+Subject: Re: [PATCH RFC idle 2/3] arm: Avoid invoking RCU when CPU is idle
+Date: Fri, 03 Feb 2012 10:41:01 -0800
+Message-ID: <87k4437oaq.fsf@ti.com>
+References: <20120202004253.GA10946@linux.vnet.ibm.com>
+ <1328143404-11038-1-git-send-email-paulmck@linux.vnet.ibm.com>
+ <1328143404-11038-2-git-send-email-paulmck@linux.vnet.ibm.com>
+ <alpine.LFD.2.02.1202012234050.2759@xanadu.home>
+ <20120202044439.GD2435@linux.vnet.ibm.com>
+ <alpine.LFD.2.02.1202021159560.2759@xanadu.home>
+ <20120202174337.GS2518@linux.vnet.ibm.com>
+ <alpine.LFD.2.02.1202021257340.2759@xanadu.home>
+ <20120202190708.GE2518@linux.vnet.ibm.com> <87obtgc1xx.fsf@ti.com>
+ <4F2B1307.5010207@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:41200 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753719Ab2BCQN5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Feb 2012 11:13:57 -0500
-Content-Disposition: inline
-In-Reply-To: <016f01ccdc95$30279500$9076bf00$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <4F2B1307.5010207@gmail.com> (Rob Herring's message of "Thu, 02
+ Feb 2012 16:49:43 -0600")
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, mathieu.desnoyers@polymtl.ca, peterz@infradead.org, fweisbec@gmail.com, Nicolas Ferre <nicolas.ferre@atmel.com>, dhowells@redhat.com, Lennert Buytenhek <kernel@wantstofly.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, eric.dumazet@gmail.com, H Hartley Sweeten <hsweeten@visionengravers.com>, Magnus Damm <magnus.damm@gmail.com>, Tony Lindgren <tony@atomide.com>, dipankar@in.ibm.com, darren@dvhart.com, mingo@elte.hu, paulmck@linux.vnet.ibm.com, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Len Brown <len.brown@intel.com>, Amit Kucheria <amit.kucheria@canonical.com>, patches@linaro.org, Will Deacon <will.deacon@arm.com>, josh@joshtriplett.org, Sekhar Nori <nsekhar@ti.com>, niv@us.ibm.com, linux-samsung-soc@vger.kernel.org, rostedt@goodmis.org, Barry Song <baohua.song@csr.com>, tglx@linut
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Fri, Jan 27, 2012 at 10:44:20AM +0900, Kukjin Kim wrote:
-> 
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Rob Herring <robherring2@gmail.com> writes:
 
-This patch really needs some kind of explanation.  It's far from obvious
-from the casual reader why moving from a fixed value of 200Hz for the
-kernel tick rate to a range from 32 to 1024 would be legal.
+> On 02/02/2012 04:20 PM, Kevin Hilman wrote:
+>> "Paul E. McKenney" <paulmck@linux.vnet.ibm.com> writes:
+>> 
+>> [...]
+>> 
+>>>>> The two options I see are:
+>>>>>
+>>>>> 1.	Rip tracing out of the inner idle loops and everything that
+>>>>> 	they invoke.
+>>>>
+>>>> What I suggested above.  But as I said I know sh*t about that tracing 
+>>>> implementation so that's an easy suggestion for me to make.
+>>>
+>>> Works for me as well.  ;-)
+>> 
+>> While I must admit not having a better suggestion, I for one would vote
+>> strongly against removing tracing from the idle path.
+>> 
+>> Being a PM developer and maintainer, much of the code I work on and
+>> maintain happens to be run in the bowels of the idle path.  Not having
+>> the ability to trace this code would be a major step backwards IMO.
+>
+> How is it a step backwards if it is already broken. 
 
-If 100Hz was possible before, and that's the architecture default, why
-was 200Hz chosen instead?
+Well, I didn't know it was broken. ;) And, as Paul mentioned, this has
+been broken for a long time. Apparently it's been working well enough
+for nobody to notice until recently.
 
-And is 99Hz and 101Hz allowable?
+> Obviously you haven't actually used any tracing here because it
+> doesn't work right with things as is.
+
+It's been working well enough for me to debug several idle path problems
+with tracing.  Admittedly, this has been primarily on UP systems, but
+I've recently started using the tracing on SMP as well.  (however, due
+to "coupled" low-power states on OMAP, large parts of the idle path are
+effectively UP since one CPU0 has to wait for CPU1 to hit a low-power
+state before it can.)
+
+> What exactly do you want to trace at this level. By the point you are in
+> this code, the path is somewhat known and problems you have are likely
+> h/w issues. 
+
+Not really. 
+
+There is still quite a bit of software between the decision to enter
+idle and the hardware taking over.  On OMAP for example, we have power
+domains, clock domains and clocks that are managed during idle, and
+these layers contain tracepoints.
+
+Add to that the runtime PM management of some devices that are coupled
+to the CPU (because they share a power domain, etc).  Runtime PM
+contains tracepoints.
+
+Add to that possible voltage scaling during idle using regulators.
+Regulator framework has tracepoints.
+
+That can lead to quite a bit of tracing info *after* the decision to
+enter idle.
+
+> If you are trying to go thru a very precise sequence of
+> saving cpu state and flushing caches, you don't want calls out to
+> tracing code that could very easily change the behavior.
+
+I'm more worried about the power domain and voltage domain transitions
+(or lack thereof) when trying to debug why a particular low-power state
+was not hit.
+
+Kevin
