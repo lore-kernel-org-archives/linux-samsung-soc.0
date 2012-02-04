@@ -1,52 +1,193 @@
-From: Kyoungil Kim <ki0351.kim@samsung.com>
-Subject: [PATCH] spi: Add spi-s3c64xx driver dependency on ARCH_EXYNOS
-Date: Sat, 04 Feb 2012 16:54:40 +0900
-Message-ID: <000301cce312$40336bd0$c09a4370$%kim@samsung.com>
+From: Kisang Lee <kisang80.lee@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: Add files about definition of C2C
+Date: Sat, 04 Feb 2012 17:13:00 +0900
+Message-ID: <000501cce314$cf9fcff0$6edf6fd0$%lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39849 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751839Ab2BDHyn (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:36192 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751839Ab2BDINO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 4 Feb 2012 02:54:43 -0500
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Sat, 4 Feb 2012 03:13:14 -0500
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LYU0072UZ9NNDE0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 04 Feb 2012 16:54:41 +0900 (KST)
+ 2010)) with ESMTP id <0LYV00A9705NOJA0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 04 Feb 2012 17:13:01 +0900 (KST)
 Received: from DOKI0351KIM04 ([12.23.119.96])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LYU001HCZB5O240@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 04 Feb 2012 16:54:41 +0900 (KST)
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LYV002LO05OTG00@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 04 Feb 2012 17:13:01 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: grant.likely@secretlab.ca, =?ks_c_5601-1987?B?J7HosObAzyc=?= <ki0351.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Greg Kroah-Hartman' <greg@kroah.com>, 'Kisang Lee' <kisang80.lee@samsung.com>
 
-EXYNOS4 and EXYNOS5 commonly use the spi-s3c64xx driver.
-So ARCH_EXYNOS covering ARCH_EXYNOS4 and ARCH_EXYNOS5
-is better.
+Cc: Arnd Bergmann <arnd <at> arndb.de>
+Cc: Greg Kroah-Hartman <greg <at> kroah.com>
 
-Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+Following files are added for C2C driver
+c2c.h : Definition of C2C platform data and mode
+regs-c2c.h : Definition of C2C registers
+
+Signed-off-by: Kisang Lee <kisang80.lee@samsung.com>
 ---
- drivers/spi/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos/include/mach/c2c.h      |   65 +++++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/regs-c2c.h |   71 ++++++++++++++++++++++++++
+ 2 files changed, 136 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/include/mach/c2c.h
+ create mode 100644 arch/arm/mach-exynos/include/mach/regs-c2c.h
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index a9f8faf..8293658 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -299,7 +299,7 @@ config SPI_S3C24XX_FIQ
- 
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
--	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS4)
-+	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
+diff --git a/arch/arm/mach-exynos/include/mach/c2c.h b/arch/arm/mach-exynos/include/mach/c2c.h
+new file mode 100644
+index 0000000..c3d6131
+--- /dev/null
++++ b/arch/arm/mach-exynos/include/mach/c2c.h
+@@ -0,0 +1,65 @@
++/* linux/arch/arm/mach-exynos/include/mach/c2c.h
++ *
++ * Copyright 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com/
++ *
++ * Platform header file for Samsung C2C Interface driver
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++#ifndef __ASM_PLAT_C2C_H
++#define __ASM_PLAT_C2C_H __FILE__
++
++#define C2C_SHAREDMEM_BASE 0x60000000
++
++enum c2c_opp_mode {
++	C2C_OPP0 = 0,
++	C2C_OPP25 = 1,
++	C2C_OPP50 = 2,
++	C2C_OPP100 = 3,
++};
++
++enum c2c_buswidth {
++	C2C_BUSWIDTH_8 = 0,
++	C2C_BUSWIDTH_10 = 1,
++	C2C_BUSWIDTH_16 = 2,
++};
++
++enum c2c_shrdmem_size {
++	C2C_MEMSIZE_4 = 0,
++	C2C_MEMSIZE_8 = 1,
++	C2C_MEMSIZE_16 = 2,
++	C2C_MEMSIZE_32 = 3,
++	C2C_MEMSIZE_64 = 4,
++	C2C_MEMSIZE_128 = 5,
++	C2C_MEMSIZE_256 = 6,
++	C2C_MEMSIZE_512 = 7,
++};
++
++struct exynos_c2c_platdata {
++	void (*setup_gpio)(enum c2c_buswidth rx_width,
++			enum c2c_buswidth tx_width);
++
++	u32 shdmem_addr;
++	enum c2c_shrdmem_size shdmem_size;
++
++	void __iomem *ap_sscm_addr;
++	void __iomem *cp_sscm_addr;
++
++	enum c2c_buswidth rx_width;
++	enum c2c_buswidth tx_width;
++	u32 clk_opp100;	/* clock of OPP100 mode */
++	u32 clk_opp50;	/* clock of OPP50 mode */
++	u32 clk_opp25;	/* clock of OPP25 */
++	enum c2c_opp_mode default_opp_mode;
++
++	void __iomem *c2c_sysreg;	/* System Register address for C2C */
++	char *c2c_clk;
++};
++
++extern void exynos_c2c_set_platdata(struct exynos_c2c_platdata *pd);
++extern void exynos_c2c_cfg_gpio(enum c2c_buswidth rx_width,
++				enum c2c_buswidth tx_width);
++#endif /*__ASM_PLAT_C2C_H */
+diff --git a/arch/arm/mach-exynos/include/mach/regs-c2c.h b/arch/arm/mach-exynos/include/mach/regs-c2c.h
+new file mode 100644
+index 0000000..0c3d005
+--- /dev/null
++++ b/arch/arm/mach-exynos/include/mach/regs-c2c.h
+@@ -0,0 +1,71 @@
++/* linux/arch/arm/mach-exynos/include/mach/regs-c2c.h
++ *
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ * http://www.samsung.com/
++ *
++ * Register definition file for Samsung C2C
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++#ifndef __ASM_ARM_REGS_S5P_C2C_H
++#define __ASM_ARM_REGS_S5P_C2C_H
++
++/***************************************************************/
++/* C2C Registers part				*/
++/***************************************************************/
++#define EXYNOS_C2C_REVISION		0x0
++#define EXYNOS_C2C_SYSCONFIG		0x4
++#define EXYNOS_C2C_SYSSTATUS		0x8
++#define EXYNOS_C2C_PORTCONFIG		0xc
++#define EXYNOS_C2C_MIRRORMODE		0x10
++#define EXYNOS_C2C_IRQ_RAW_STAT0	0x14
++#define EXYNOS_C2C_IRQ_RAW_STAT1	0x18
++#define EXYNOS_C2C_IRQ_EN_STAT0	0x1c
++#define EXYNOS_C2C_IRQ_EN_STAT1	0x20
++#define EXYNOS_C2C_IRQ_EN_SET0		0x24
++#define EXYNOS_C2C_IRQ_EN_SET1		0x28
++#define EXYNOS_C2C_IRQ_EN_CLEAR0	0x2c
++#define EXYNOS_C2C_IRQ_EN_CLEAR1	0x30
++#define EXYNOS_C2C_IRQ_EOI		0x34
++
++#define EXYNOS_C2C_FCLK_FREQ		0x40
++#define EXYNOS_C2C_RX_MAX_FREQ		0x44
++#define EXYNOS_C2C_TX_MAX_FREQ		0x48
++#define EXYNOS_C2C_RX_MAX_FREQ_ACK	0x4c
++#define EXYNOS_C2C_WAKE_REQ		0x50
++#define EXYNOS_C2C_WAKE_ACK		0x54
++#define EXYNOS_C2C_STANDBY		0x60
++#define EXYNOS_C2C_STANDBY_IN		0x64
++#define EXYNOS_C2C_WAIT		0x68
++#define EXYNOS_C2C_GENI_CONTROL	0x70
++#define EXYNOS_C2C_GENI_MASK		0x74
++#define EXYNOS_C2C_GENO_STATUS		0x80
++
++#define EXYNOS_C2C_GENO_INT		0x84
++#define EXYNOS_C2C_GENO_LEVEL		0x88
++
++/***************************************************************/
++/* C2C Bit definition part					*/
++/***************************************************************/
++/* SYSREG Bit definition */
++#define C2C_SYSREG_CG		(31) /* C2C Clock Gating [31] */
++#define C2C_SYSREG_MO		(30) /* Master On [30] */
++#define C2C_SYSREG_FCLK		(20) /* Default Functional Clock Freq [29:20] */
++#define C2C_SYSREG_TXW		(18) /* Default Tx Width [19:18] */
++#define C2C_SYSREG_RXW		(16) /* Default Rx Width [17:16] */
++#define C2C_SYSREG_RST		(15) /* Reset [15] */
++#define C2C_SYSREG_MD		(14) /* Master On [14] */
++#define C2C_SYSREG_RTRST	(13) /* Reset retention registers [13] */
++#define C2C_SYSREG_BASE_ADDR	(3)  /* DRAM Base Address [12:3] */
++#define C2C_SYSREG_DRAM_SIZE	(0)  /* DRAM Size [2:0] */
++
++#define C2C_GENIO_LATENCY_INT	(26)
++#define C2C_GENIO_OPP_INT	(27)
++#define C2C_GENIO_OPP_MODE0	(28)
++#define C2C_GENIO_OPP_MODE1	(29)
++#define C2C_GENIO_LATENCY0	(30)
++#define C2C_GENIO_LATENCY1	(31)
++#endif /* __ASM_ARM_REGS_S5P_C2C_H */
 -- 
 1.7.1
