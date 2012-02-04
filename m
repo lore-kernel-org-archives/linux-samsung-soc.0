@@ -1,130 +1,62 @@
 From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add files about definition of C2C
-Date: Sat, 04 Feb 2012 14:11:13 +0100
-Message-ID: <4F2D2E71.1030105@gmail.com>
-References: <000501cce314$cf9fcff0$6edf6fd0$%lee@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: add support GPIO for EXYNOS5250
+Date: Sat, 04 Feb 2012 14:46:53 +0100
+Message-ID: <4F2D36CD.3070204@gmail.com>
+References: <1328025040-4751-1-git-send-email-kgene.kim@samsung.com> <1328025040-4751-2-git-send-email-kgene.kim@samsung.com> <4F2817FA.5020407@samsung.com> <20120202182214.GN15343@ponder.secretlab.ca>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:57702 "EHLO
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:46090 "EHLO
 	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753278Ab2BDNLS (ORCPT
+	with ESMTP id S1752375Ab2BDNr2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 4 Feb 2012 08:11:18 -0500
-Received: by eekc14 with SMTP id c14so1500143eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Feb 2012 05:11:16 -0800 (PST)
-In-Reply-To: <000501cce314$cf9fcff0$6edf6fd0$%lee@samsung.com>
+	Sat, 4 Feb 2012 08:47:28 -0500
+Received: by eekc14 with SMTP id c14so1508250eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 04 Feb 2012 05:47:27 -0800 (PST)
+In-Reply-To: <20120202182214.GN15343@ponder.secretlab.ca>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kisang Lee <kisang80.lee@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Greg Kroah-Hartman' <greg@kroah.com>
+To: Grant Likely <grant.likely@secretlab.ca>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangsu Park <sangsu4u.park@samsung.com>
 
-Hi,
-
-On 02/04/2012 09:13 AM, Kisang Lee wrote:
-> Cc: Arnd Bergmann<arnd<at>  arndb.de>
-> Cc: Greg Kroah-Hartman<greg<at>  kroah.com>
+On 02/02/2012 07:22 PM, Grant Likely wrote:
+>>>   /* the end of the EXYNOS4 specific gpios */
+>>>   #define EXYNOS4_GPIO_END	(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) + 1)
+>>> -#define S3C_GPIO_END		EXYNOS4_GPIO_END
+>>>
+>>> -/* define the number of gpios we need to the one after the GPZ() range */
+>>> -#define ARCH_NR_GPIOS		(EXYNOS4_GPZ(EXYNOS4_GPIO_Z_NR) +	\
+>>> -				 CONFIG_SAMSUNG_GPIO_EXTRA + 1)
+>>> +/* EXYNOS5 serise */
+>>> +/* GPIO bank sizes */
+>>> +#define EXYNOS5_GPIO_A0_NR	(8)
+>>
+>> nit: It's been always a mystery to me, what are the parentheses around the
+>> numbers helpful for ? IMHO even if there is more things like this in
+>> the file it might be better to skip extra parentheses here.
 > 
-> Following files are added for C2C driver
-> c2c.h : Definition of C2C platform data and mode
-> regs-c2c.h : Definition of C2C registers
->
-> Signed-off-by: Kisang Lee<kisang80.lee@samsung.com>
-> ---
->   arch/arm/mach-exynos/include/mach/c2c.h      |   65 +++++++++++++++++++++++
->   arch/arm/mach-exynos/include/mach/regs-c2c.h |   71 ++++++++++++++++++++++++++
->   2 files changed, 136 insertions(+), 0 deletions(-)
->   create mode 100644 arch/arm/mach-exynos/include/mach/c2c.h
->   create mode 100644 arch/arm/mach-exynos/include/mach/regs-c2c.h
+> It protects against the preprocessor combining a macro with other code in
+> unpredictable ways.  For example:
 > 
-...
-> diff --git a/arch/arm/mach-exynos/include/mach/regs-c2c.h b/arch/arm/mach-exynos/include/mach/regs-c2c.h
-> new file mode 100644
-> index 0000000..0c3d005
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos/include/mach/regs-c2c.h
-> @@ -0,0 +1,71 @@
-> +/* linux/arch/arm/mach-exynos/include/mach/regs-c2c.h
-> + *
-> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> #define SIZE  10 + 20
+> int i = SIZE * 5;
+> 
+> Without the parenthesis the result of i is 110, when the programmer would
+> expect 150.
 
-2012 ?
+Right, I guess it's a fundamental requirement most people are aware about. 
+Nevertheless my point were only single integers.
 
-> + * http://www.samsung.com/
-> + *
-> + * Register definition file for Samsung C2C
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +#ifndef __ASM_ARM_REGS_S5P_C2C_H
-> +#define __ASM_ARM_REGS_S5P_C2C_H
-> +
-> +/***************************************************************/
-> +/* C2C Registers part				*/
-> +/***************************************************************/
-> +#define EXYNOS_C2C_REVISION		0x0
-> +#define EXYNOS_C2C_SYSCONFIG		0x4
-> +#define EXYNOS_C2C_SYSSTATUS		0x8
-> +#define EXYNOS_C2C_PORTCONFIG		0xc
-> +#define EXYNOS_C2C_MIRRORMODE		0x10
-> +#define EXYNOS_C2C_IRQ_RAW_STAT0	0x14
-> +#define EXYNOS_C2C_IRQ_RAW_STAT1	0x18
-> +#define EXYNOS_C2C_IRQ_EN_STAT0	0x1c
-> +#define EXYNOS_C2C_IRQ_EN_STAT1	0x20
-> +#define EXYNOS_C2C_IRQ_EN_SET0		0x24
-> +#define EXYNOS_C2C_IRQ_EN_SET1		0x28
-> +#define EXYNOS_C2C_IRQ_EN_CLEAR0	0x2c
-> +#define EXYNOS_C2C_IRQ_EN_CLEAR1	0x30
-> +#define EXYNOS_C2C_IRQ_EOI		0x34
-> +
-> +#define EXYNOS_C2C_FCLK_FREQ		0x40
-> +#define EXYNOS_C2C_RX_MAX_FREQ		0x44
-> +#define EXYNOS_C2C_TX_MAX_FREQ		0x48
-> +#define EXYNOS_C2C_RX_MAX_FREQ_ACK	0x4c
-> +#define EXYNOS_C2C_WAKE_REQ		0x50
-> +#define EXYNOS_C2C_WAKE_ACK		0x54
-> +#define EXYNOS_C2C_STANDBY		0x60
-> +#define EXYNOS_C2C_STANDBY_IN		0x64
-> +#define EXYNOS_C2C_WAIT		0x68
-> +#define EXYNOS_C2C_GENI_CONTROL	0x70
-> +#define EXYNOS_C2C_GENI_MASK		0x74
-> +#define EXYNOS_C2C_GENO_STATUS		0x80
-> +
-> +#define EXYNOS_C2C_GENO_INT		0x84
-> +#define EXYNOS_C2C_GENO_LEVEL		0x88
-> +
-> +/***************************************************************/
-> +/* C2C Bit definition part					*/
-> +/***************************************************************/
-> +/* SYSREG Bit definition */
-> +#define C2C_SYSREG_CG		(31) /* C2C Clock Gating [31] */
-> +#define C2C_SYSREG_MO		(30) /* Master On [30] */
-> +#define C2C_SYSREG_FCLK		(20) /* Default Functional Clock Freq [29:20] */
-> +#define C2C_SYSREG_TXW		(18) /* Default Tx Width [19:18] */
-> +#define C2C_SYSREG_RXW		(16) /* Default Rx Width [17:16] */
-> +#define C2C_SYSREG_RST		(15) /* Reset [15] */
-> +#define C2C_SYSREG_MD		(14) /* Master On [14] */
-> +#define C2C_SYSREG_RTRST	(13) /* Reset retention registers [13] */
-> +#define C2C_SYSREG_BASE_ADDR	(3)  /* DRAM Base Address [12:3] */
-> +#define C2C_SYSREG_DRAM_SIZE	(0)  /* DRAM Size [2:0] */
-> +
-> +#define C2C_GENIO_LATENCY_INT	(26)
-> +#define C2C_GENIO_OPP_INT	(27)
-> +#define C2C_GENIO_OPP_MODE0	(28)
-> +#define C2C_GENIO_OPP_MODE1	(29)
-> +#define C2C_GENIO_LATENCY0	(30)
-> +#define C2C_GENIO_LATENCY1	(31)
+> For single integers like these, the parenthesis aren't actually necessary, but
+> I given that for every other #define it is good practice, I don't object to
+> seeing them on single integers also.
 
-Could we have the parentheses around numbers removed ? They don't seem
-to be useful for anything.
-
-> +#endif /* __ASM_ARM_REGS_S5P_C2C_H */
+I respect that but I have a different opinion. :-) Those parentheses have 
+always been bugging me, they decrease readability for virtually no benefit. 
+They're more an aesthetic issue though so I wouldn't argue more about it. 
+Just will try to get used, and I'll avoid them where possible. :-)
 
 --
-
-Thanks,
+Regards,
 Sylwester
