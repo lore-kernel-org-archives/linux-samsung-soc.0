@@ -1,53 +1,38 @@
 From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: core: Fix Low speed mmc card detection failure
-Date: Sat, 04 Feb 2012 17:33:54 -0500
-Message-ID: <m2r4ya9qjx.fsf@bob.laptop.org>
-References: <1326943579-30952-1-git-send-email-girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH] mmc: core: Fix PowerOff Notify suspend/resume
+Date: Sat, 04 Feb 2012 21:03:52 -0500
+Message-ID: <m239aq829j.fsf@bob.laptop.org>
+References: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1326943579-30952-1-git-send-email-girish.shivananjappa@linaro.org>
-	(Girish K. S.'s message of "Thu, 19 Jan 2012 08:56:19 +0530")
+In-Reply-To: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
+	(Girish K. S.'s message of "Tue, 31 Jan 2012 15:44:03 +0530")
 Sender: linux-mmc-owner@vger.kernel.org
 To: Girish K S <girish.shivananjappa@linaro.org>
-Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, saugata.das@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
 Hi,
 
-On Wed, Jan 18 2012, Girish K S wrote:
-> This patch fixes the failure of low speed mmc card detection
+On Tue, Jan 31 2012, Girish K S wrote:
+> Modified the mmc_poweroff to resume before sending the
+> poweroff notification command. In sleep mode only AWAKE
+> and RESET commands are allowed, so before sending the
+> poweroff notification command resume from sleep mode and
+> then send the notification command.
 >
+> POwerOff Notify is tested on a Synopsis Designware Host
+> Controller(eMMC 4.5). The suspend to RAM and resume works fine.
+>
+> This patch is successfully applied on the Chris's mmc-next
+> branch
+>
+> cc: Chris Ball <cjb@laptop.org>
 > Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
-> ---
->  drivers/mmc/core/mmc.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
-> index dc03291..2bc586b 100644
-> --- a/drivers/mmc/core/mmc.c
-> +++ b/drivers/mmc/core/mmc.c
-> @@ -1020,7 +1020,8 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
->  			err = mmc_select_hs200(card);
->  		else if	(host->caps & MMC_CAP_MMC_HIGHSPEED)
->  			err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
-> -					 EXT_CSD_HS_TIMING, 1, 0);
-> +					 EXT_CSD_HS_TIMING, 1,
-> +					 card->ext_csd.generic_cmd6_time);
->  
->  		if (err && err != -EBADMSG)
->  			goto free_card;
-> @@ -1130,7 +1131,7 @@ static int mmc_init_card(struct mmc_host *host, u32 ocr,
->  	 * Activate wide bus and DDR (if supported).
->  	 */
->  	if (!mmc_card_hs200(card) &&
-> -	    (card->csd.mmca_vsn >= CSD_SPEC_VER_3) &&
-> +	    (card->csd.mmca_vsn >= CSD_SPEC_VER_4) &&
->  	    (host->caps & (MMC_CAP_4_BIT_DATA | MMC_CAP_8_BIT_DATA))) {
->  		static unsigned ext_csd_bits[][2] = {
->  			{ EXT_CSD_BUS_WIDTH_8, EXT_CSD_DDR_BUS_WIDTH_8 },
+> Tested-by: Girish K S <girish.shivananjappa@linaro.org>
 
-Thanks, pushed to mmc-next for 3.3.
+Thanks, pushed to mmc-next for 3.3 with Saugata's Reviewed-by.
 
 - Chris.
 -- 
