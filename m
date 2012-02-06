@@ -1,71 +1,51 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH v3 2/2]  mmc: sdhci-s3c: add platform data for the second capability
-Date: Mon, 06 Feb 2012 06:19:33 -0500
-Message-ID: <m239ao5hve.fsf@bob.laptop.org>
-References: <4F2F86DA.6030106@samsung.com>
+From: Greg KH <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/3] USB: SET SEL request definition
+Date: Mon, 6 Feb 2012 06:53:37 -0800
+Message-ID: <20120206145337.GB26982@kroah.com>
+References: <001001cce4a7$143300e0$3c9902a0$%tikhomirov@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:49621 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753420Ab2BFLTt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Feb 2012 06:19:49 -0500
-In-Reply-To: <4F2F86DA.6030106@samsung.com> (Jaehoon Chung's message of "Mon,
-	06 Feb 2012 16:52:58 +0900")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <001001cce4a7$143300e0$3c9902a0$%tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anton Tikhomirov <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Greg Kroah-Hartman' <gregkh-l3A5Bk7waGM@public.gmane.org>, 'Felipe Balbi' <balbi-l0cyMroinI0@public.gmane.org>, 'Yulgon Kim' <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>, Girish K S <girish.shivananjappa@linaro.org>
 
-Hi,
+On Mon, Feb 06, 2012 at 05:12:33PM +0900, Anton Tikhomirov wrote:
+> Cc: Kukjin Kim <kgene.kim <at> samsung.com>
+> Cc: Greg Kroah-Hartman <gregkh <at> suse.de>
+> Cc: Felipe Balbi <balbi <at> ti.com>
 
-On Mon, Feb 06 2012, Jaehoon Chung wrote:
-> This patch is added host_caps2 in sdhci-s3c.c
-> It's necessary that use the second capabilities.
-> And removed the duplicated host_caps.
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+What is that mess?  It belongs, with real email addresses, below your
+signed-off-by line, if at all.
+
+> Adds SET SEL standard request definition as defined by ch9
+> of the USB3.0 specification.
+> 
+> Signed-off-by: Anton Tikhomirov <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 > ---
-> Changelog v3:
-> 	- based-on latest mmc-next tree
-> Changelog v2:
-> 	- remove the duplicated host_caps.
->
->  drivers/mmc/host/sdhci-s3c.c |    6 +++---
->  1 files changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index d065e37..46b9782 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -521,9 +521,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  	if (pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
->  		host->mmc->caps = MMC_CAP_NONREMOVABLE;
+>  include/linux/usb/ch9.h |    1 +
+>  1 files changed, 1 insertions(+), 0 deletions(-)
+> 
+> diff --git a/include/linux/usb/ch9.h b/include/linux/usb/ch9.h
+> index 61b2905..76ff771 100644
+> --- a/include/linux/usb/ch9.h
+> +++ b/include/linux/usb/ch9.h
+> @@ -88,6 +88,7 @@
+>  #define USB_REQ_GET_INTERFACE		0x0A
+>  #define USB_REQ_SET_INTERFACE		0x0B
+>  #define USB_REQ_SYNCH_FRAME		0x0C
+> +#define USB_REQ_SET_SEL			0x30
 >  
-> -	if (pdata->host_caps)
-> -		host->mmc->caps |= pdata->host_caps;
-> -
->  	if (pdata->pm_caps)
->  		host->mmc->pm_caps |= pdata->pm_caps;
->  
-> @@ -547,6 +544,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->  	if (pdata->host_caps)
->  		host->mmc->caps |= pdata->host_caps;
->  
-> +	if (pdata->host_caps2)
-> +		host->mmc->caps2 |= pdata->host_caps2;
-> +
->  	ret = sdhci_add_host(host);
->  	if (ret) {
->  		dev_err(dev, "sdhci_add_host() failed\n");
+>  #define USB_REQ_SET_ENCRYPTION		0x0D	/* Wireless USB */
+>  #define USB_REQ_GET_ENCRYPTION		0x0E
 
-In case you'd rather merge both of these via the samsung-soc tree:
+Why did you insert this out of order?
 
-Acked-by: Chris Ball <cjb@laptop.org>
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+greg "please note my email address change as well" k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
