@@ -1,38 +1,121 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes-2 for v3.3
-Date: Mon, 6 Feb 2012 08:32:24 -0800
-Message-ID: <CAOesGMhYRma+36=R3PJTcB1jg9udGbzpC7uf100XZhs74K+3dQ@mail.gmail.com>
-References: <041f01ccdfdf$0cb76b70$26264250$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/2] misc: c2c: Add C2C(Chip to Chip) device driver for
+ EXYNOS
+Date: Mon, 6 Feb 2012 17:39:50 +0000
+Message-ID: <20120206173950.GA17927@sirena.org.uk>
+References: <000601cce315$18c82510$4a586f30$%lee@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:55654 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754513Ab2BFQc0 convert rfc822-to-8bit (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:47393 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751130Ab2BFRjx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Feb 2012 11:32:26 -0500
-Received: by yenm8 with SMTP id m8so2521914yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Feb 2012 08:32:26 -0800 (PST)
-In-Reply-To: <041f01ccdfdf$0cb76b70$26264250$%kim@samsung.com>
+	Mon, 6 Feb 2012 12:39:53 -0500
+Content-Disposition: inline
+In-Reply-To: <000601cce315$18c82510$4a586f30$%lee@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kisang Lee <kisang80.lee@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Greg Kroah-Hartman' <greg@kroah.com>
 
-Hi,
+On Sat, Feb 04, 2012 at 05:15:03PM +0900, Kisang Lee wrote:
+> Cc: Arnd Bergmann <arnd <at> arndb.de>
+> Cc: Greg Kroah-Hartman <greg <at> kroah.com>
+> 
+> Signed-off-by: Kisang Lee <kisang80.lee@samsung.com>
 
-On Mon, Jan 30, 2012 at 10:10 PM, Kukjin Kim <kgene.kim@samsung.com> wr=
-ote:
-> Hi Arnd, Olof,
->
-> Please pull 2nd Samsung fixes for v3.3, from following:
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
-git v3.3-samsung-fixes-2
->
-> If any problems, please kindly let me know.
+What is a chip to chip driver?  It looks like there is some overlap with
+the remoteproc work that Ohad Ben-Cohen has been doing, or I think there
+was also some work for communicating with things like basebands?
+Perhaps even UIO?
 
-Thanks, pulled. Sorry for the delay; overlooked it for the last batch.
+> +		if (opp_val == C2C_OPP100)
+> +			req_clk = c2c_con.clk_opp100;
+> +		else if (opp_val == C2C_OPP50)
+> +			req_clk = c2c_con.clk_opp50;
+> +		else if (opp_val == C2C_OPP25)
+> +			req_clk = c2c_con.clk_opp25;
 
+This looks like a switch statement.
 
--Olof
+> +		dev_info(c2c_con.c2c_dev, "Get C2C sclk rate : %ld\n",
+> +					clk_get_rate(c2c_con.c2c_sclk));
+> +		dev_info(c2c_con.c2c_dev, "Get C2C aclk rate : %ld\n",
+> +					clk_get_rate(c2c_con.c2c_aclk));
+> +		break;
+> +	default:
+> +		dev_info(c2c_con.c2c_dev, "---C2C Operation Number---\n");
+> +		dev_info(c2c_con.c2c_dev, "1. C2C Reset\n");
+> +		dev_info(c2c_con.c2c_dev, "2. Set OPP25\n");
+> +		dev_info(c2c_con.c2c_dev, "3. Set OPP50\n");
+> +		dev_info(c2c_con.c2c_dev, "4. Set OPP100\n");
+
+These log messages probably shouldn't be in.
+
+> +static irqreturn_t c2c_sscm0_irq(int irq, void *data)
+> +{
+> +	/* Nothing here yet */
+> +	return IRQ_HANDLED;
+> +}
+
+This doesn't look terribly clever - if the interrupt has been asserted
+and we don't do anything to handle it won't we end up spinning for ever
+with repeated calls to the interrupt handler?
+
+> +		if (opp_val == C2C_OPP100)
+> +			req_clk = c2c_con.clk_opp100;
+> +		else if (opp_val == C2C_OPP50)
+> +			req_clk = c2c_con.clk_opp50;
+> +		else if (opp_val == C2C_OPP25)
+> +			req_clk = c2c_con.clk_opp25;
+
+This and the surrounding code looks a lot like the code I commented on
+above - shouldn't this be factored out into a single function called
+from both places?
+
+> +	/* resource for AP's SSCM region */
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!res) {
+> +		dev_err(&pdev->dev, "no memory resource defined(AP's SSCM)\n");
+> +		return -ENOENT;
+> +	}
+
+devm_requets_and_ioremap() perhaps?
+
+> +#ifdef CONFIG_PM
+> +static int samsung_c2c_suspend(struct platform_device *dev, pm_message_t pm)
+> +{
+> +	/* Nothing here yet */
+> +	return 0;
+> +}
+> +
+> +static int samsung_c2c_resume(struct platform_device *dev)
+> +{
+> +	/* Nothing here yet */
+> +	return 0;
+> +}
+> +#else
+> +#define samsung_c2c_suspend NULL
+> +#define samsung_c2c_resume NULL
+> +#endif
+
+No need to include this if it doesn't do anything.
+
+> +static struct platform_driver samsung_c2c_driver = {
+> +	.probe		= samsung_c2c_probe,
+> +	.remove		= __devexit_p(samsung_c2c_remove),
+> +	.suspend	= samsung_c2c_suspend,
+> +	.resume		= samsung_c2c_resume,
+
+If you were including pm operations they should be in the pm_ops rather
+than using the platform-specific variants - this makes it easier to do
+things like runtime PM later.
+
+> +static int __init samsung_c2c_init(void)
+> +{
+> +	return platform_driver_register(&samsung_c2c_driver);
+> +}
+> +module_init(samsung_c2c_init);
+
+module_platform_driver().
