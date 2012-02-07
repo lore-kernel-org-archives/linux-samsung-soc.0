@@ -1,330 +1,69 @@
-From: Santosh Y <santoshsy@gmail.com>
-Subject: Re: [PATCH 1/4] [SCSI] ufshcd: UFS Host controller driver
-Date: Tue, 7 Feb 2012 20:40:10 +0530
-Message-ID: <CALMYJDuXWT4=JEC=PrC9j+csb0mL8-P7zrZV1C4qdkZLg0HPEw@mail.gmail.com>
-References: <1328158649-4137-1-git-send-email-vinholikatti@gmail.com>
- <1328158649-4137-2-git-send-email-vinholikatti@gmail.com> <20120207071636.GE3707@legolas.emea.dhcp.ti.com>
+From: 'Greg Kroah-Hartman' <greg-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/3] USB: SET SEL request definition
+Date: Tue, 7 Feb 2012 08:21:02 -0800
+Message-ID: <20120207162102.GC6460@kroah.com>
+References: <001301cce564$cfa2e030$6ee8a090$%tikhomirov@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:57907 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752117Ab2BGPKd convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Feb 2012 10:10:33 -0500
-In-Reply-To: <20120207071636.GE3707@legolas.emea.dhcp.ti.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <001301cce564$cfa2e030$6ee8a090$%tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Anton Tikhomirov <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Felipe Balbi' <balbi-l0cyMroinI0@public.gmane.org>, 'Yulgon Kim' <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyoungil Kim' <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>, James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, saugata.das@linaro.org, arnd@arndb.de, venkat@linaro.org, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com
 
-On Tue, Feb 7, 2012 at 12:46 PM, Felipe Balbi <balbi@ti.com> wrote:
+On Tue, Feb 07, 2012 at 03:50:42PM +0900, Anton Tikhomirov wrote:
 > Hi,
->
-> On Thu, Feb 02, 2012 at 10:27:26AM +0530, Vinayak Holikatti wrote:
->> +/**
->> + * ufshcd_uic_cc_handler - handle UIC command completion
->> + * @work: pointer to a work queue structure
->> + *
->> + * Returns 0 on success, non-zero value on failure
->> + */
->> +static void ufshcd_uic_cc_handler (struct work_struct *work)
->> +{
->> + =A0 =A0 struct ufs_hba *hba;
->> +
->> + =A0 =A0 hba =3D container_of(work, struct ufs_hba, uic_workq);
->> +
->> + =A0 =A0 if ((UIC_CMD_DME_LINK_STARTUP =3D=3D hba->active_uic_cmd.c=
-ommand) &&
->
-> this is so annoying. Please invert all these constructs:
->
-> if ((hcd->active_uic_cmd.command =3D=3D UIC_CMD_DME_LINK_STARTUP) ...=
-=2E
-> and so on.
->
-ok, I'll change it.
+> 
+> Greg KH wrote:
+> > On Mon, Feb 06, 2012 at 05:12:33PM +0900, Anton Tikhomirov wrote:
+> > > Cc: Kukjin Kim <kgene.kim <at> samsung.com>
+> > > Cc: Greg Kroah-Hartman <gregkh <at> suse.de>
+> > > Cc: Felipe Balbi <balbi <at> ti.com>
+> > 
+> > What is that mess?  It belongs, with real email addresses, below your
+> > signed-off-by line, if at all.
+> > 
+> > > Adds SET SEL standard request definition as defined by ch9
+> > > of the USB3.0 specification.
+> > >
+> > > Signed-off-by: Anton Tikhomirov <av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> > > ---
+> > >  include/linux/usb/ch9.h |    1 +
+> > >  1 files changed, 1 insertions(+), 0 deletions(-)
+> > >
+> > > diff --git a/include/linux/usb/ch9.h b/include/linux/usb/ch9.h
+> > > index 61b2905..76ff771 100644
+> > > --- a/include/linux/usb/ch9.h
+> > > +++ b/include/linux/usb/ch9.h
+> > > @@ -88,6 +88,7 @@
+> > >  #define USB_REQ_GET_INTERFACE		0x0A
+> > >  #define USB_REQ_SET_INTERFACE		0x0B
+> > >  #define USB_REQ_SYNCH_FRAME		0x0C
+> > > +#define USB_REQ_SET_SEL			0x30
+> > >
+> > >  #define USB_REQ_SET_ENCRYPTION		0x0D	/* Wireless USB */
+> > >  #define USB_REQ_GET_ENCRYPTION		0x0E
+> > 
+> > Why did you insert this out of order?
+> > 
+> > greg "please note my email address change as well" k-h
+> 
+> 'Set SEL' is a standard device request according to USB3.0 spec.
+> Wireless USB requests are not mentioned in USB3.0 spec (and moreover
+> are not in ch9 of it).
 
->> + =A0 =A0 =A0 =A0 !(ufshcd_get_uic_cmd_result(hba))) {
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (ufshcd_make_hba_operational(hba))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&hba->pdev->dev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 "cc: hba n=
-ot operational state\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 return;
->> + =A0 =A0 }
->> +}
->> +
->> +/**
->> + * ufshcd_sl_intr - Interrupt service routine
->> + * @hba: per adapter instance
->> + * @intr_status: contains interrupts generated by the controller
->> + */
->> +static void ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
->> +{
->> + =A0 =A0 if (intr_status & UIC_COMMAND_COMPL)
->> + =A0 =A0 =A0 =A0 =A0 =A0 schedule_work(&hba->uic_workq);
->> +}
->> +
->> +/**
->> + * ufshcd_intr - Main interrupt service routine
->> + * @irq: irq number
->> + * @__hba: pointer to adapter instance
->> + *
->> + * Returns IRQ_HANDLED - If interrupt is valid
->> + * =A0 =A0 =A0 =A0 =A0 IRQ_NONE - If invalid interrupt
->> + */
->> +static irqreturn_t ufshcd_intr(int irq, void *__hba)
->> +{
->> + =A0 =A0 unsigned long flags;
->> + =A0 =A0 u32 intr_status;
->> + =A0 =A0 irqreturn_t retval =3D IRQ_NONE;
->> + =A0 =A0 struct ufs_hba *hba =3D __hba;
->> +
->> + =A0 =A0 spin_lock_irqsave(hba->host->host_lock, flags);
->> + =A0 =A0 intr_status =3D readl(UFSHCD_MMIO_BASE + REG_INTERRUPT_STA=
-TUS);
->> +
->> + =A0 =A0 if (intr_status) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 ufshcd_sl_intr(hba, intr_status);
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 /* If UFSHCI 1.0 then clear interrupt stat=
-us register */
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (UFSHCI_VERSION_10 =3D=3D hba->ufs_vers=
-ion)
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 writel(intr_status,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0(UFSHCD_MMI=
-O_BASE + REG_INTERRUPT_STATUS));
->> + =A0 =A0 =A0 =A0 =A0 =A0 retval =3D IRQ_HANDLED;
->> + =A0 =A0 }
->> + =A0 =A0 spin_unlock_irqrestore(hba->host->host_lock, flags);
->> + =A0 =A0 return retval;
->> +}
->> +
->> +static struct scsi_host_template ufshcd_driver_template =3D {
->> + =A0 =A0 .module =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D THIS_MODULE,
->> + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =3D UFSHCD,
->> + =A0 =A0 .proc_name =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D UFSHCD,
->> + =A0 =A0 .this_id =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=3D -1,
->> +};
->> +
->> +/**
->> + * ufshcd_shutdown - main funciton to put the controller in reset s=
-tate
->> + * @pdev: pointer to PCI device handle
->> + */
->> +static void ufshcd_shutdown(struct pci_dev *pdev)
->> +{
->> + =A0 =A0 ufshcd_hba_stop((struct ufs_hba *)pci_get_drvdata(pdev));
->> +}
->> +
->> +#ifdef CONFIG_PM
->> +/**
->> + * ufshcd_suspend - suspend power management function
->> + * @pdev: pointer to PCI device handle
->> + * @state: power state
->> + *
->> + * Returns -ENOSYS
->> + */
->> +static int ufshcd_suspend(struct pci_dev *pdev, pm_message_t state)
->> +{
->> + =A0 =A0 return -ENOSYS;
->> +}
->> +
->> +/**
->> + * ufshcd_resume - resume power management function
->> + * @pdev: pointer to PCI device handle
->> + *
->> + * Returns -ENOSYS
->> + */
->> +static int ufshcd_resume(struct pci_dev *pdev)
->> +{
->> + =A0 =A0 return -ENOSYS;
->> +}
->> +#endif /* CONFIG_PM */
->> +
->> +/**
->> + * ufshcd_hba_free - free allocated memory for
->> + * =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 host memory space data struc=
-tures
->> + * @hba: per adapter instance
->> + */
->> +static void ufshcd_hba_free(struct ufs_hba *hba)
->> +{
->> + =A0 =A0 iounmap(UFSHCD_MMIO_BASE);
->> + =A0 =A0 ufshcd_free_hba_memory(hba);
->> + =A0 =A0 pci_release_regions(hba->pdev);
->> +}
->> +
->> +/**
->> + * ufshcd_remove - deallocate PCI/SCSI host and host memory space
->> + * =A0 =A0 =A0 =A0 =A0 data structure memory
->> + * @pdev - pointer to PCI handle
->> + */
->> +static void ufshcd_remove(struct pci_dev *pdev)
->> +{
->> + =A0 =A0 struct ufs_hba *hba =3D pci_get_drvdata(pdev);
->> +
->> + =A0 =A0 /* disable interrupts */
->> + =A0 =A0 ufshcd_int_config(hba, UFSHCD_INT_DISABLE);
->> + =A0 =A0 free_irq(pdev->irq, hba);
->> +
->> + =A0 =A0 ufshcd_hba_stop(hba);
->> + =A0 =A0 ufshcd_hba_free(hba);
->> +
->> + =A0 =A0 scsi_remove_host(hba->host);
->> + =A0 =A0 scsi_host_put(hba->host);
->> + =A0 =A0 pci_set_drvdata(pdev, NULL);
->> + =A0 =A0 pci_clear_master(pdev);
->> + =A0 =A0 pci_disable_device(pdev);
->> +}
->> +
->> +/**
->> + * ufshcd_set_dma_mask - Set dma addressing
->> + * @pdev: PCI device struct
->> + *
->> + * Returns 0 for success, non-zero for failure
->> + */
->> +static int ufshcd_set_dma_mask(struct pci_dev *pdev)
->> +{
->> + =A0 =A0 int err;
->> +
->> + =A0 =A0 do {
->> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D pci_set_dma_mask(pdev, DMA_BIT_MAS=
-K(64));
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (!err) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D pci_set_consistent=
-_dma_mask(pdev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 DMA_BIT_MASK(64));
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
->> + =A0 =A0 =A0 =A0 =A0 =A0 }
->> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D pci_set_dma_mask(pdev, DMA_BIT_MAS=
-K(32));
->> + =A0 =A0 =A0 =A0 =A0 =A0 if (!err)
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D pci_set_consistent=
-_dma_mask(pdev,
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 DMA_BIT_MASK(32));
->> + =A0 =A0 } while (0);
->> +
->> + =A0 =A0 return err;
->> +}
->> +
->> +/**
->> + * ufshcd_probe - probe routine of the driver
->> + * @pdev: pointer to PCI device handle
->> + * @id: PCI device id
->> + *
->> + * Returns 0 on success, non-zero value on failure
->> + */
->> +static int __devinit
->> +ufshcd_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->> +{
->> + =A0 =A0 struct Scsi_Host *host;
->> + =A0 =A0 struct ufs_hba *hba;
->> + =A0 =A0 int ufs_hba_len;
->> + =A0 =A0 int err;
->> +
->> + =A0 =A0 ufs_hba_len =3D sizeof(struct ufs_hba);
->> + =A0 =A0 err =3D pci_enable_device(pdev);
->> + =A0 =A0 if (err) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "pci_enable_device fai=
-led\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_error;
->> + =A0 =A0 }
->> +
->> + =A0 =A0 pci_set_master(pdev);
->> +
->> + =A0 =A0 host =3D scsi_host_alloc(&ufshcd_driver_template, ufs_hba_=
-len);
->> + =A0 =A0 if (!host) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "scsi_host_alloc faile=
-d\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D -ENOMEM;
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_disable;
->> + =A0 =A0 }
->> + =A0 =A0 hba =3D (struct ufs_hba *)host->hostdata;
->> +
->> + =A0 =A0 err =3D pci_request_regions(pdev, UFSHCD);
->> + =A0 =A0 if (err < 0) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "request regions faile=
-d\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_disable;
->> + =A0 =A0 }
->> +
->> + =A0 =A0 hba->mmio_base =3D pci_ioremap_bar(pdev, 0);
->> + =A0 =A0 if (!hba->mmio_base) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "memory map failed\n")=
-;
->> + =A0 =A0 =A0 =A0 =A0 =A0 err =3D -ENOMEM;
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_release_regions;
->> + =A0 =A0 }
->> +
->> + =A0 =A0 err =3D ufshcd_set_dma_mask(pdev);
->> + =A0 =A0 if (err) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "set dma mask failed\n=
-");
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_iounmap;
->> + =A0 =A0 }
->> +
->> + =A0 =A0 hba->host =3D host;
->> + =A0 =A0 hba->pdev =3D pdev;
->> +
->> + =A0 =A0 /* Read capabilities registers */
->> + =A0 =A0 ufshcd_hba_capabilities(hba);
->> +
->> + =A0 =A0 /* Get UFS version supported by the controller */
->> + =A0 =A0 hba->ufs_version =3D ufshcd_get_ufs_version(hba);
->> +
->> + =A0 =A0 /* Allocate memory for host memory space */
->> + =A0 =A0 err =3D ufshcd_memory_alloc(hba);
->> + =A0 =A0 if (err) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "Memory allocation fai=
-led\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_iounmap;
->> + =A0 =A0 }
->> +
->> + =A0 =A0 /* Configure LRB */
->> + =A0 =A0 ufshcd_host_memory_configure(hba);
->> +
->> + =A0 =A0 host->can_queue =3D hba->nutrs;
->> + =A0 =A0 host->max_id =3D UFSHCD_MAX_ID;
->> + =A0 =A0 host->max_lun =3D UFSHCD_MAX_LUNS;
->> + =A0 =A0 host->max_channel =3D UFSHCD_MAX_CHANNEL;
->> + =A0 =A0 host->unique_id =3D host->host_no;
->> +
->> + =A0 =A0 /* Initialize work queues */
->> + =A0 =A0 INIT_WORK(&hba->uic_workq, ufshcd_uic_cc_handler);
->> +
->> + =A0 =A0 /* IRQ registration */
->> + =A0 =A0 err =3D request_irq(pdev->irq, ufshcd_intr, IRQF_SHARED, U=
-=46SHCD, hba);
->
-> make this a threaded IRQ and remove your workqueues and tasklets.
->
+Their requests are part of the wireless USB spec, a different document.
 
-ok, I'll look into it.
+> So I put the definition to an appropriate group in my opinion.  If you
+> insist I will move the definition below Wireless USB group with a
+> space between.
 
->> + =A0 =A0 if (err) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&pdev->dev, "request irq failed\n"=
-);
->> + =A0 =A0 =A0 =A0 =A0 =A0 goto out_lrb_free;
->> + =A0 =A0 }
->> +
->> + =A0 =A0 pci_set_drvdata(pdev, hba);
->
-> would also be cool if you would abstract PCI out of this driver, so i=
-t's
-> easier to be re-used. See how I did it with drivers/usb/dwc3/core.c
-> drivers/usb/dwc3/dwc3-pci.c and drivers/usb/dwc3/dwc3-omap.c
->
+Putting them in order would make more sense, thanks.
 
-ok, we'll send it as a separate patch.
-
-> --
-> balbi
-
-Thanks,
-~Santosh
+greg k-h
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
