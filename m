@@ -1,79 +1,55 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v3 2/2]  mmc: sdhci-s3c: add platform data for the second
- capability
-Date: Tue, 07 Feb 2012 08:41:26 +0900
-Message-ID: <4F306526.4070606@samsung.com>
-References: <4F2F86DA.6030106@samsung.com> <m239ao5hve.fsf@bob.laptop.org>
+From: Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH][RFC] tracing/rcu: Add trace_##name##__rcuidle() static
+ tracepoint for inside rcu_idle_exit() sections
+Date: Mon, 06 Feb 2012 19:36:28 -0500
+Message-ID: <1328574988.2200.54.camel@gandalf.stny.rr.com>
+References: <20120202190708.GE2518@linux.vnet.ibm.com>
+ <87obtgc1xx.fsf@ti.com> <4F2B1307.5010207@gmail.com>
+ <1328223819.5882.133.camel@gandalf.stny.rr.com>
+ <20120202232736.GL2518@linux.vnet.ibm.com>
+ <1328237131.5882.135.camel@gandalf.stny.rr.com>
+ <20120203060458.GF2380@linux.vnet.ibm.com>
+ <1328295309.5882.178.camel@gandalf.stny.rr.com>
+ <20120203194005.GK2382@linux.vnet.ibm.com>
+ <1328563113.2200.39.camel@gandalf.stny.rr.com>
+ <20120206220502.GA21340@leaf>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52490 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754529Ab2BFXlf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Feb 2012 18:41:35 -0500
-In-reply-to: <m239ao5hve.fsf@bob.laptop.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20120206220502.GA21340@leaf>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Josh Triplett <josh@joshtriplett.org>
+Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, mathieu.desnoyers@polymtl.ca, peterz@infradead.org, fweisbec@gmail.com, Nicolas Ferre <nicolas.ferre@atmel.com>, dhowells@redhat.com, Lennert Buytenhek <kernel@wantstofly.org>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, eric.dumazet@gmail.com, "Paul E. McKenney" <paul.mckenney@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Tony Lindgren <tony@atomide.com>, dipankar@in.ibm.com, darren@dvhart.com, mingo@elte.hu, paulmck@linux.vnet.ibm.com, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Len Brown <len.brown@intel.com>, Amit Kucheria <amit.kucheria@canonical.com>, patches@linaro.org, Will Deacon <will.deacon@arm.com>, Sekhar Nori <nsekhar@ti.com>, niv@us.ibm.com, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, tglx@linutronix.delinux-
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>, Girish K S <girish.shivananjappa@linaro.org>
 
-Hi Kukjin..
-
-I want to merge these patchset with Chris's ACK at Samsung-SoC tree
-Samsung-SoC need to set MMC_CAP2_BROKEN_VOLTAGE..So this patch is need.
-
-Best Regards,
-Jaehoon Chung
-
-On 02/06/2012 08:19 PM, Chris Ball wrote:
-
-> Hi,
+On Mon, 2012-02-06 at 14:05 -0800, Josh Triplett wrote:
+> >   */
+> > -#define __DO_TRACE(tp, proto, args, cond)				\
+> > +#define __DO_TRACE(tp, proto, args, cond, pre, post)			\
+> >  	do {								\
+> >  		struct tracepoint_func *it_func_ptr;			\
+> >  		void *it_func;						\
+> > @@ -123,6 +123,7 @@ static inline void tracepoint_synchroniz
+> >  		if (!(cond))						\
+> >  			return;						\
+> >  		rcu_read_lock_sched_notrace();				\
+> > +		pre;							\
+> >  		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
 > 
-> On Mon, Feb 06 2012, Jaehoon Chung wrote:
->> This patch is added host_caps2 in sdhci-s3c.c
->> It's necessary that use the second capabilities.
->> And removed the duplicated host_caps.
->>
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->> Changelog v3:
->> 	- based-on latest mmc-next tree
->> Changelog v2:
->> 	- remove the duplicated host_caps.
->>
->>  drivers/mmc/host/sdhci-s3c.c |    6 +++---
->>  1 files changed, 3 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
->> index d065e37..46b9782 100644
->> --- a/drivers/mmc/host/sdhci-s3c.c
->> +++ b/drivers/mmc/host/sdhci-s3c.c
->> @@ -521,9 +521,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->>  	if (pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
->>  		host->mmc->caps = MMC_CAP_NONREMOVABLE;
->>  
->> -	if (pdata->host_caps)
->> -		host->mmc->caps |= pdata->host_caps;
->> -
->>  	if (pdata->pm_caps)
->>  		host->mmc->pm_caps |= pdata->pm_caps;
->>  
->> @@ -547,6 +544,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->>  	if (pdata->host_caps)
->>  		host->mmc->caps |= pdata->host_caps;
->>  
->> +	if (pdata->host_caps2)
->> +		host->mmc->caps2 |= pdata->host_caps2;
->> +
->>  	ret = sdhci_add_host(host);
->>  	if (ret) {
->>  		dev_err(dev, "sdhci_add_host() failed\n");
-> 
-> In case you'd rather merge both of these via the samsung-soc tree:
-> 
-> Acked-by: Chris Ball <cjb@laptop.org>
-> 
-> - Chris.
+> This results in calling rcu_idle_exit after rcu_read_lock; it needs to
+> occur before.
+
+Bah! Good catch. The fumes of my furnace must have been sending out some
+strong narcotics. Yeah yeah, that's the reason for this mistake, and
+I'll stand by it!
+
+-- Steve
