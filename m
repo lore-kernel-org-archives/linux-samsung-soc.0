@@ -1,200 +1,325 @@
-From: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: Re: [PATCH][RFC] tracing/rcu: Add trace_##name##__rcuidle() static
- tracepoint for inside rcu_idle_exit() sections
-Date: Mon, 6 Feb 2012 15:38:05 -0800
-Message-ID: <20120206233804.GM5941@linux.vnet.ibm.com>
-References: <20120202190708.GE2518@linux.vnet.ibm.com> <87obtgc1xx.fsf@ti.com>
- <4F2B1307.5010207@gmail.com>
- <1328223819.5882.133.camel@gandalf.stny.rr.com>
- <20120202232736.GL2518@linux.vnet.ibm.com>
- <1328237131.5882.135.camel@gandalf.stny.rr.com>
- <20120203060458.GF2380@linux.vnet.ibm.com>
- <1328295309.5882.178.camel@gandalf.stny.rr.com>
- <20120203194005.GK2382@linux.vnet.ibm.com>
- <1328563113.2200.39.camel@gandalf.stny.rr.com>
-Reply-To: paulmck@linux.vnet.ibm.com
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH 1/4] [SCSI] ufshcd: UFS Host controller driver
+Date: Tue, 7 Feb 2012 09:16:39 +0200
+Message-ID: <20120207071636.GE3707@legolas.emea.dhcp.ti.com>
+References: <1328158649-4137-1-git-send-email-vinholikatti@gmail.com>
+ <1328158649-4137-2-git-send-email-vinholikatti@gmail.com>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="udcq9yAoWb9A4FsZ"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from na3sys009aog101.obsmtp.com ([74.125.149.67]:37407 "EHLO
+	na3sys009aog101.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752447Ab2BGHQr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 7 Feb 2012 02:16:47 -0500
 Content-Disposition: inline
-In-Reply-To: <1328563113.2200.39.camel@gandalf.stny.rr.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Nicolas Pitre <nicolas.pitre@linaro.org>, mathieu.desnoyers@polymtl.ca, peterz@infradead.org, fweisbec@gmail.com, Nicolas Ferre <nicolas.ferre@atmel.com>, dhowells@redhat.com, Lennert Buytenhek <kernel@wantstofly.org>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, eric.dumazet@gmail.com, "Paul E. McKenney" <paul.mckenney@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Tony Lindgren <tony@atomide.com>, dipankar@in.ibm.com, darren@dvhart.com, mingo@elte.hu, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Len Brown <len.brown@intel.com>, Amit Kucheria <amit.kucheria@canonical.com>, patches@linaro.org, Will Deacon <will.deacon@arm.com>, josh@joshtriplett.org, Sekhar Nori <nsekhar@ti.com>, niv@us.ibm.com, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, tglx@linutronix.de, linux-omap@v
+In-Reply-To: <1328158649-4137-2-git-send-email-vinholikatti@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: James.Bottomley@HansenPartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, saugata.das@linaro.org, arnd@arndb.de, venkat@linaro.org, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
 
-On Mon, Feb 06, 2012 at 04:18:33PM -0500, Steven Rostedt wrote:
-> As I have said, I may find a better solution than to create a
-> TRACE_EVENT_IDLE(), and I believe I have :-)
-> 
-> A added a new static inline function that lets *any* tracepoint be used
-> inside a rcu_idle_exit() section. And this also solves the problem where
-> the same tracepoint may be used inside a rcu_idle_exit() section as well
-> as outside of one.
-> 
-> I added a new tracepoint function with a "_rcuidle" extension. All
-> tracepoints can be used with either the normal "trace_foobar()"
-> function, or the "trace_foobar_rcuidle()" function when inside a
-> rcu_idle_exit() section.
-> 
-> Ideally, this patch would be broken up into two commits. The first would
-> change the tracepoint.h to introduce the new trace_foobar_rcuidle()
-> static inline, and the second patch would change the power tracepoints
-> to use this tracepoint function. For the RFC, I'm keeping it as a single
-> patch.
-> 
-> Another nice aspect about this patch is that "static inline"s are not
-> compiled into text when not used. So only the tracepoints that actually
-> use the _rcuidle() version will have them defined in the actual text
-> that is booted.
-> 
-> -- Steve
 
-Aside from the "pre;" below needing to precede rcu_read_lock_sched_notrace()
-as Josh noted, this looks reasonable to me.
+--udcq9yAoWb9A4FsZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-							Thanx, Paul
+Hi,
 
-> Signed-off-by: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Index: linux-trace.git/include/linux/tracepoint.h
-> ===================================================================
-> --- linux-trace.git.orig/include/linux/tracepoint.h
-> +++ linux-trace.git/include/linux/tracepoint.h
-> @@ -114,7 +114,7 @@ static inline void tracepoint_synchroniz
->   * as "(void *, void)". The DECLARE_TRACE_NOARGS() will pass in just
->   * "void *data", where as the DECLARE_TRACE() will pass in "void *data, proto".
->   */
-> -#define __DO_TRACE(tp, proto, args, cond)				\
-> +#define __DO_TRACE(tp, proto, args, cond, pre, post)			\
->  	do {								\
->  		struct tracepoint_func *it_func_ptr;			\
->  		void *it_func;						\
-> @@ -123,6 +123,7 @@ static inline void tracepoint_synchroniz
->  		if (!(cond))						\
->  			return;						\
->  		rcu_read_lock_sched_notrace();				\
-> +		pre;							\
->  		it_func_ptr = rcu_dereference_sched((tp)->funcs);	\
->  		if (it_func_ptr) {					\
->  			do {						\
-> @@ -132,6 +133,7 @@ static inline void tracepoint_synchroniz
->  			} while ((++it_func_ptr)->func);		\
->  		}							\
->  		rcu_read_unlock_sched_notrace();			\
-> +		post;							\
->  	} while (0)
-> 
->  /*
-> @@ -139,7 +141,7 @@ static inline void tracepoint_synchroniz
->   * not add unwanted padding between the beginning of the section and the
->   * structure. Force alignment to the same alignment as the section start.
->   */
-> -#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args)	\
-> +#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
->  	extern struct tracepoint __tracepoint_##name;			\
->  	static inline void trace_##name(proto)				\
->  	{								\
-> @@ -147,7 +149,17 @@ static inline void tracepoint_synchroniz
->  			__DO_TRACE(&__tracepoint_##name,		\
->  				TP_PROTO(data_proto),			\
->  				TP_ARGS(data_args),			\
-> -				TP_CONDITION(cond));			\
-> +				TP_CONDITION(cond),,);			\
-> +	}								\
-> +	static inline void trace_##name##_rcuidle(proto)		\
-> +	{								\
-> +		if (static_branch(&__tracepoint_##name.key))		\
-> +			__DO_TRACE(&__tracepoint_##name,		\
-> +				TP_PROTO(data_proto),			\
-> +				TP_ARGS(data_args),			\
-> +				TP_CONDITION(cond),			\
-> +				rcu_idle_exit(),			\
-> +				rcu_idle_enter());			\
->  	}								\
->  	static inline int						\
->  	register_trace_##name(void (*probe)(data_proto), void *data)	\
-> @@ -190,7 +202,7 @@ static inline void tracepoint_synchroniz
->  	EXPORT_SYMBOL(__tracepoint_##name)
-> 
->  #else /* !CONFIG_TRACEPOINTS */
-> -#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args)	\
-> +#define __DECLARE_TRACE(name, proto, args, cond, data_proto, data_args) \
->  	static inline void trace_##name(proto)				\
->  	{ }								\
->  	static inline int						\
-> Index: linux-trace.git/arch/x86/kernel/process.c
-> ===================================================================
-> --- linux-trace.git.orig/arch/x86/kernel/process.c
-> +++ linux-trace.git/arch/x86/kernel/process.c
-> @@ -377,8 +377,8 @@ static inline int hlt_use_halt(void)
->  void default_idle(void)
->  {
->  	if (hlt_use_halt()) {
-> -		trace_power_start(POWER_CSTATE, 1, smp_processor_id());
-> -		trace_cpu_idle(1, smp_processor_id());
-> +		trace_power_start_rcuidle(POWER_CSTATE, 1, smp_processor_id());
-> +		trace_cpu_idle_rcuidle(1, smp_processor_id());
->  		current_thread_info()->status &= ~TS_POLLING;
->  		/*
->  		 * TS_POLLING-cleared state must be visible before we
-> @@ -391,7 +391,7 @@ void default_idle(void)
->  		else
->  			local_irq_enable();
->  		current_thread_info()->status |= TS_POLLING;
-> -		trace_power_end(smp_processor_id());
-> +		trace_power_end_rcuidle(smp_processor_id());
->  		trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
->  	} else {
->  		local_irq_enable();
-> @@ -450,8 +450,8 @@ EXPORT_SYMBOL_GPL(cpu_idle_wait);
->  static void mwait_idle(void)
->  {
->  	if (!need_resched()) {
-> -		trace_power_start(POWER_CSTATE, 1, smp_processor_id());
-> -		trace_cpu_idle(1, smp_processor_id());
-> +		trace_power_start_rcuidle(POWER_CSTATE, 1, smp_processor_id());
-> +		trace_cpu_idle_rcuidle(1, smp_processor_id());
->  		if (this_cpu_has(X86_FEATURE_CLFLUSH_MONITOR))
->  			clflush((void *)&current_thread_info()->flags);
-> 
-> @@ -461,8 +461,8 @@ static void mwait_idle(void)
->  			__sti_mwait(0, 0);
->  		else
->  			local_irq_enable();
-> -		trace_power_end(smp_processor_id());
-> -		trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
-> +		trace_power_end_rcuidle(smp_processor_id());
-> +		trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
->  	} else
->  		local_irq_enable();
->  }
-> @@ -474,13 +474,13 @@ static void mwait_idle(void)
->   */
->  static void poll_idle(void)
->  {
-> -	trace_power_start(POWER_CSTATE, 0, smp_processor_id());
-> -	trace_cpu_idle(0, smp_processor_id());
-> +	trace_power_start_rcuidle(POWER_CSTATE, 0, smp_processor_id());
-> +	trace_cpu_idle_rcuidle(0, smp_processor_id());
->  	local_irq_enable();
->  	while (!need_resched())
->  		cpu_relax();
-> -	trace_power_end(smp_processor_id());
-> -	trace_cpu_idle(PWR_EVENT_EXIT, smp_processor_id());
-> +	trace_power_end_rcuidle(smp_processor_id());
-> +	trace_cpu_idle_rcuidle(PWR_EVENT_EXIT, smp_processor_id());
->  }
-> 
->  /*
-> 
-> 
+On Thu, Feb 02, 2012 at 10:27:26AM +0530, Vinayak Holikatti wrote:
+> +/**
+> + * ufshcd_uic_cc_handler - handle UIC command completion
+> + * @work: pointer to a work queue structure
+> + *
+> + * Returns 0 on success, non-zero value on failure
+> + */
+> +static void ufshcd_uic_cc_handler (struct work_struct *work)
+> +{
+> +	struct ufs_hba *hba;
+> +
+> +	hba =3D container_of(work, struct ufs_hba, uic_workq);
+> +
+> +	if ((UIC_CMD_DME_LINK_STARTUP =3D=3D hba->active_uic_cmd.command) &&
+
+this is so annoying. Please invert all these constructs:
+
+if ((hcd->active_uic_cmd.command =3D=3D UIC_CMD_DME_LINK_STARTUP) ....
+and so on.
+
+> +	    !(ufshcd_get_uic_cmd_result(hba))) {
+> +
+> +		if (ufshcd_make_hba_operational(hba))
+> +			dev_err(&hba->pdev->dev,
+> +				"cc: hba not operational state\n");
+> +		return;
+> +	}
+> +}
+> +
+> +/**
+> + * ufshcd_sl_intr - Interrupt service routine
+> + * @hba: per adapter instance
+> + * @intr_status: contains interrupts generated by the controller
+> + */
+> +static void ufshcd_sl_intr(struct ufs_hba *hba, u32 intr_status)
+> +{
+> +	if (intr_status & UIC_COMMAND_COMPL)
+> +		schedule_work(&hba->uic_workq);
+> +}
+> +
+> +/**
+> + * ufshcd_intr - Main interrupt service routine
+> + * @irq: irq number
+> + * @__hba: pointer to adapter instance
+> + *
+> + * Returns IRQ_HANDLED - If interrupt is valid
+> + *		IRQ_NONE - If invalid interrupt
+> + */
+> +static irqreturn_t ufshcd_intr(int irq, void *__hba)
+> +{
+> +	unsigned long flags;
+> +	u32 intr_status;
+> +	irqreturn_t retval =3D IRQ_NONE;
+> +	struct ufs_hba *hba =3D __hba;
+> +
+> +	spin_lock_irqsave(hba->host->host_lock, flags);
+> +	intr_status =3D readl(UFSHCD_MMIO_BASE + REG_INTERRUPT_STATUS);
+> +
+> +	if (intr_status) {
+> +		ufshcd_sl_intr(hba, intr_status);
+> +
+> +		/* If UFSHCI 1.0 then clear interrupt status register */
+> +		if (UFSHCI_VERSION_10 =3D=3D hba->ufs_version)
+> +			writel(intr_status,
+> +			       (UFSHCD_MMIO_BASE + REG_INTERRUPT_STATUS));
+> +		retval =3D IRQ_HANDLED;
+> +	}
+> +	spin_unlock_irqrestore(hba->host->host_lock, flags);
+> +	return retval;
+> +}
+> +
+> +static struct scsi_host_template ufshcd_driver_template =3D {
+> +	.module			=3D THIS_MODULE,
+> +	.name			=3D UFSHCD,
+> +	.proc_name		=3D UFSHCD,
+> +	.this_id		=3D -1,
+> +};
+> +
+> +/**
+> + * ufshcd_shutdown - main funciton to put the controller in reset state
+> + * @pdev: pointer to PCI device handle
+> + */
+> +static void ufshcd_shutdown(struct pci_dev *pdev)
+> +{
+> +	ufshcd_hba_stop((struct ufs_hba *)pci_get_drvdata(pdev));
+> +}
+> +
+> +#ifdef CONFIG_PM
+> +/**
+> + * ufshcd_suspend - suspend power management function
+> + * @pdev: pointer to PCI device handle
+> + * @state: power state
+> + *
+> + * Returns -ENOSYS
+> + */
+> +static int ufshcd_suspend(struct pci_dev *pdev, pm_message_t state)
+> +{
+> +	return -ENOSYS;
+> +}
+> +
+> +/**
+> + * ufshcd_resume - resume power management function
+> + * @pdev: pointer to PCI device handle
+> + *
+> + * Returns -ENOSYS
+> + */
+> +static int ufshcd_resume(struct pci_dev *pdev)
+> +{
+> +	return -ENOSYS;
+> +}
+> +#endif /* CONFIG_PM */
+> +
+> +/**
+> + * ufshcd_hba_free - free allocated memory for
+> + *			host memory space data structures
+> + * @hba: per adapter instance
+> + */
+> +static void ufshcd_hba_free(struct ufs_hba *hba)
+> +{
+> +	iounmap(UFSHCD_MMIO_BASE);
+> +	ufshcd_free_hba_memory(hba);
+> +	pci_release_regions(hba->pdev);
+> +}
+> +
+> +/**
+> + * ufshcd_remove - deallocate PCI/SCSI host and host memory space
+> + *		data structure memory
+> + * @pdev - pointer to PCI handle
+> + */
+> +static void ufshcd_remove(struct pci_dev *pdev)
+> +{
+> +	struct ufs_hba *hba =3D pci_get_drvdata(pdev);
+> +
+> +	/* disable interrupts */
+> +	ufshcd_int_config(hba, UFSHCD_INT_DISABLE);
+> +	free_irq(pdev->irq, hba);
+> +
+> +	ufshcd_hba_stop(hba);
+> +	ufshcd_hba_free(hba);
+> +
+> +	scsi_remove_host(hba->host);
+> +	scsi_host_put(hba->host);
+> +	pci_set_drvdata(pdev, NULL);
+> +	pci_clear_master(pdev);
+> +	pci_disable_device(pdev);
+> +}
+> +
+> +/**
+> + * ufshcd_set_dma_mask - Set dma addressing
+> + * @pdev: PCI device struct
+> + *
+> + * Returns 0 for success, non-zero for failure
+> + */
+> +static int ufshcd_set_dma_mask(struct pci_dev *pdev)
+> +{
+> +	int err;
+> +
+> +	do {
+> +		err =3D pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
+> +		if (!err) {
+> +			err =3D pci_set_consistent_dma_mask(pdev,
+> +							  DMA_BIT_MASK(64));
+> +			break;
+> +		}
+> +		err =3D pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
+> +		if (!err)
+> +			err =3D pci_set_consistent_dma_mask(pdev,
+> +							  DMA_BIT_MASK(32));
+> +	} while (0);
+> +
+> +	return err;
+> +}
+> +
+> +/**
+> + * ufshcd_probe - probe routine of the driver
+> + * @pdev: pointer to PCI device handle
+> + * @id: PCI device id
+> + *
+> + * Returns 0 on success, non-zero value on failure
+> + */
+> +static int __devinit
+> +ufshcd_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> +{
+> +	struct Scsi_Host *host;
+> +	struct ufs_hba *hba;
+> +	int ufs_hba_len;
+> +	int err;
+> +
+> +	ufs_hba_len =3D sizeof(struct ufs_hba);
+> +	err =3D pci_enable_device(pdev);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "pci_enable_device failed\n");
+> +		goto out_error;
+> +	}
+> +
+> +	pci_set_master(pdev);
+> +
+> +	host =3D scsi_host_alloc(&ufshcd_driver_template, ufs_hba_len);
+> +	if (!host) {
+> +		dev_err(&pdev->dev, "scsi_host_alloc failed\n");
+> +		err =3D -ENOMEM;
+> +		goto out_disable;
+> +	}
+> +	hba =3D (struct ufs_hba *)host->hostdata;
+> +
+> +	err =3D pci_request_regions(pdev, UFSHCD);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "request regions failed\n");
+> +		goto out_disable;
+> +	}
+> +
+> +	hba->mmio_base =3D pci_ioremap_bar(pdev, 0);
+> +	if (!hba->mmio_base) {
+> +		dev_err(&pdev->dev, "memory map failed\n");
+> +		err =3D -ENOMEM;
+> +		goto out_release_regions;
+> +	}
+> +
+> +	err =3D ufshcd_set_dma_mask(pdev);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "set dma mask failed\n");
+> +		goto out_iounmap;
+> +	}
+> +
+> +	hba->host =3D host;
+> +	hba->pdev =3D pdev;
+> +
+> +	/* Read capabilities registers */
+> +	ufshcd_hba_capabilities(hba);
+> +
+> +	/* Get UFS version supported by the controller */
+> +	hba->ufs_version =3D ufshcd_get_ufs_version(hba);
+> +
+> +	/* Allocate memory for host memory space */
+> +	err =3D ufshcd_memory_alloc(hba);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "Memory allocation failed\n");
+> +		goto out_iounmap;
+> +	}
+> +
+> +	/* Configure LRB */
+> +	ufshcd_host_memory_configure(hba);
+> +
+> +	host->can_queue =3D hba->nutrs;
+> +	host->max_id =3D UFSHCD_MAX_ID;
+> +	host->max_lun =3D UFSHCD_MAX_LUNS;
+> +	host->max_channel =3D UFSHCD_MAX_CHANNEL;
+> +	host->unique_id =3D host->host_no;
+> +
+> +	/* Initialize work queues */
+> +	INIT_WORK(&hba->uic_workq, ufshcd_uic_cc_handler);
+> +
+> +	/* IRQ registration */
+> +	err =3D request_irq(pdev->irq, ufshcd_intr, IRQF_SHARED, UFSHCD, hba);
+
+make this a threaded IRQ and remove your workqueues and tasklets.
+
+> +	if (err) {
+> +		dev_err(&pdev->dev, "request irq failed\n");
+> +		goto out_lrb_free;
+> +	}
+> +
+> +	pci_set_drvdata(pdev, hba);
+
+would also be cool if you would abstract PCI out of this driver, so it's
+easier to be re-used. See how I did it with drivers/usb/dwc3/core.c
+drivers/usb/dwc3/dwc3-pci.c and drivers/usb/dwc3/dwc3-omap.c
+
+--=20
+balbi
+
+--udcq9yAoWb9A4FsZ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPMM/UAAoJEIaOsuA1yqREtvsQAKMVpk7QG2NWngWqe4Hn4SLL
+F9ScNIGbvVrAxq3TxXNf2cgGKxz9J4yw3uk86rVGseCY5JEu7qGQLUjYHDNyyaxL
+v/NrvflcwVNBzRrSedyDNoJZXxfd2Af/Zu43LG/YD8Noz/SBBIe/CRzecWpSpV8+
+U9hTfxnq9VhhsspKBg0qQSyzu9JrOFSAggpbhfNfxWJRc24ef0lAitgPYIzpINP3
+5scEv4pBdvm3ukjaNZ4Rp5VqWeZ2Y6ZIkAM9OaGVnQYo2TRIMWc9tgZhOSI/7goK
+MWo4MDx84L/MwGFWP0RqU1fjtRk44E2BDzPAKvq8VPwxAP85JnoX+yrdiE7PV5EZ
+phiBNTRHFF8+3WI49jNn0NHWHbrxhMl5JYc3btpsu3kNfp0Al6/1OglumU2EJEfn
+dbZDC7YHeLPugQSNNX9h0Ex85AHpPxZJc0eG3gYGrrkSXOHWtPk+MsrFENuD1xq0
+2wm3DZewscmY2QOl+UkMfCDHp91SQdHg3NnU43U3iIchUDRWp0HbD/irJbszqn23
+f8jR+XF/YMCnlDfCcMbs8RQMdVQGD41UyhDX8Z+uDAsqUoasNMQgSr5Ls5pxLgKQ
+v87BjbGFgdiypjmg6THsCh0Sz3id6A/RcWREdWZV2F1Yn/XsuYbSesJeJkMKJtsW
+hXyTp2+oRen0aQbztY1S
+=ylPE
+-----END PGP SIGNATURE-----
+
+--udcq9yAoWb9A4FsZ--
