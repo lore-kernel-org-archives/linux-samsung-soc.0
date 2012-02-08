@@ -1,112 +1,102 @@
-From: Huang Changming-R66093 <r66093@freescale.com>
-Subject: RE: [PATCH v3 2/2]  mmc: sdhci-s3c: add platform data for the
- second capability
-Date: Wed, 8 Feb 2012 03:39:54 +0000
-Message-ID: <110EED8CC96DFC488B7E717A2027A27C01E31E@039-SN1MPN1-002.039d.mgd.msft.net>
-References: <4F2F86DA.6030106@samsung.com> <m239ao5hve.fsf@bob.laptop.org>
- <110EED8CC96DFC488B7E717A2027A27C01E2A7@039-SN1MPN1-002.039d.mgd.msft.net>
+From: Kyoungil Kim <ki0351.kim@samsung.com>
+Subject: [PATCH] spi: Add the use of DMA config operation
+Date: Wed, 08 Feb 2012 15:52:33 +0900
+Message-ID: <000401cce62e$3c0cd5e0$b42681a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ch1ehsobe005.messaging.microsoft.com ([216.32.181.185]:49155
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752217Ab2BHDj6 convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Feb 2012 22:39:58 -0500
-In-Reply-To: <110EED8CC96DFC488B7E717A2027A27C01E2A7@039-SN1MPN1-002.039d.mgd.msft.net>
-Content-Language: en-US
+Received: from mailout1.samsung.com ([203.254.224.24]:40001 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755470Ab2BHGwo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Feb 2012 01:52:44 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZ200ENMB2JYH60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 15:52:34 +0900 (KST)
+Received: from DOKI0351KIM04 ([12.23.119.96])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ200K87B3L72B0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 15:52:33 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Huang Changming-R66093 <r66093@freescale.com>, Chris Ball <cjb@laptop.org>, Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>, Girish K S <girish.shivananjappa@linaro.org>
+To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>
 
-Sorry, please discard my previous reply.
+Config operation is separated from request operation in DMA common operation.
+Because spi driver can change the DMA config for every message.
+So this patch is using the separated DMA config operation.
 
-> -----Original Message-----
-> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
-> owner@vger.kernel.org] On Behalf Of Huang Changming-R66093
-> Sent: Wednesday, February 08, 2012 11:32 AM
-> To: Chris Ball; Jaehoon Chung
-> Cc: linux-mmc; linux-samsung-soc@vger.kernel.org; Kyungmin Park; 'kgene
-> kim'; Girish K S
-> Subject: RE: [PATCH v3 2/2] mmc: sdhci-s3c: add platform data for the
-> second capability
-> 
-> Hi, Chris,
-> I have reworked it and send it to the maillist, please review it.
-> 
-> 
-> > -----Original Message-----
-> > From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
-> > owner@vger.kernel.org] On Behalf Of Chris Ball
-> > Sent: Monday, February 06, 2012 7:20 PM
-> > To: Jaehoon Chung
-> > Cc: linux-mmc; linux-samsung-soc@vger.kernel.org; Kyungmin Park;
-> > 'kgene kim'; Girish K S
-> > Subject: Re: [PATCH v3 2/2] mmc: sdhci-s3c: add platform data for the
-> > second capability
-> >
-> > Hi,
-> >
-> > On Mon, Feb 06 2012, Jaehoon Chung wrote:
-> > > This patch is added host_caps2 in sdhci-s3c.c It's necessary that
-> > > use the second capabilities.
-> > > And removed the duplicated host_caps.
-> > >
-> > > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > > Changelog v3:
-> > > 	- based-on latest mmc-next tree
-> > > Changelog v2:
-> > > 	- remove the duplicated host_caps.
-> > >
-> > >  drivers/mmc/host/sdhci-s3c.c |    6 +++---
-> > >  1 files changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/mmc/host/sdhci-s3c.c
-> > > b/drivers/mmc/host/sdhci-s3c.c index d065e37..46b9782 100644
-> > > --- a/drivers/mmc/host/sdhci-s3c.c
-> > > +++ b/drivers/mmc/host/sdhci-s3c.c
-> > > @@ -521,9 +521,6 @@ static int __devinit sdhci_s3c_probe(struct
-> > platform_device *pdev)
-> > >  	if (pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
-> > >  		host->mmc->caps = MMC_CAP_NONREMOVABLE;
-> > >
-> > > -	if (pdata->host_caps)
-> > > -		host->mmc->caps |= pdata->host_caps;
-> > > -
-> > >  	if (pdata->pm_caps)
-> > >  		host->mmc->pm_caps |= pdata->pm_caps;
-> > >
-> > > @@ -547,6 +544,9 @@ static int __devinit sdhci_s3c_probe(struct
-> > platform_device *pdev)
-> > >  	if (pdata->host_caps)
-> > >  		host->mmc->caps |= pdata->host_caps;
-> > >
-> > > +	if (pdata->host_caps2)
-> > > +		host->mmc->caps2 |= pdata->host_caps2;
-> > > +
-> > >  	ret = sdhci_add_host(host);
-> > >  	if (ret) {
-> > >  		dev_err(dev, "sdhci_add_host() failed\n");
-> >
-> > In case you'd rather merge both of these via the samsung-soc tree:
-> >
-> > Acked-by: Chris Ball <cjb@laptop.org>
-> >
-> > - Chris.
-> > --
-> > Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-> > One Laptop Per Child
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-mmc"
-> > in the body of a message to majordomo@vger.kernel.org More majordomo
-> > info at http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org More majordomo info at
-> http://vger.kernel.org/majordomo-info.html
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c |   35 +++++++++++++++++++++--------------
+ 1 files changed, 21 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index dcf7e10..f3b7f6a 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -265,15 +265,27 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
+ 					unsigned len, dma_addr_t buf)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd;
+-	struct samsung_dma_prep_info info;
++	struct samsung_dma_prep info;
++	struct samsung_dma_config config;
+ 
+-	if (dma->direction == DMA_FROM_DEVICE)
++	if (dma->direction == DMA_FROM_DEVICE) {
+ 		sdd = container_of((void *)dma,
+ 			struct s3c64xx_spi_driver_data, rx_dma);
+-	else
++
++		config.direction = sdd->rx_dma.direction;
++		config.fifo = sdd->sfr_start + S3C64XX_SPI_RX_DATA;
++		config.width = sdd->cur_bpw / 8;
++		sdd->ops->config(sdd->rx_dma.ch, &config);
++	} else {
+ 		sdd = container_of((void *)dma,
+ 			struct s3c64xx_spi_driver_data, tx_dma);
+ 
++		config.direction =  sdd->tx_dma.direction;
++		config.fifo = sdd->sfr_start + S3C64XX_SPI_TX_DATA;
++		config.width = sdd->cur_bpw / 8;
++		sdd->ops->config(sdd->tx_dma.ch, &config);
++	}
++
+ 	info.cap = DMA_SLAVE;
+ 	info.len = len;
+ 	info.fp = s3c64xx_spi_dmacb;
+@@ -287,20 +299,15 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
+ 
+ static int acquire_dma(struct s3c64xx_spi_driver_data *sdd)
+ {
+-	struct samsung_dma_info info;
++	struct samsung_dma_req req;
+ 
+ 	sdd->ops = samsung_dma_get_ops();
+ 
+-	info.cap = DMA_SLAVE;
+-	info.client = &s3c64xx_spi_dma_client;
+-	info.width = sdd->cur_bpw / 8;
+-
+-	info.direction = sdd->rx_dma.direction;
+-	info.fifo = sdd->sfr_start + S3C64XX_SPI_RX_DATA;
+-	sdd->rx_dma.ch = sdd->ops->request(sdd->rx_dma.dmach, &info);
+-	info.direction =  sdd->tx_dma.direction;
+-	info.fifo = sdd->sfr_start + S3C64XX_SPI_TX_DATA;
+-	sdd->tx_dma.ch = sdd->ops->request(sdd->tx_dma.dmach, &info);
++	req.cap = DMA_SLAVE;
++	req.client = &s3c64xx_spi_dma_client;
++
++	sdd->rx_dma.ch = sdd->ops->request(sdd->rx_dma.dmach, &req);
++	sdd->tx_dma.ch = sdd->ops->request(sdd->tx_dma.dmach, &req);
+ 
+ 	return 1;
+ }
+-- 
+1.7.1
