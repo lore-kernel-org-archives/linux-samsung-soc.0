@@ -1,80 +1,47 @@
-From: Kyoungil Kim <ki0351.kim@samsung.com>
-Subject: [PATCH] spi: Compatibility with direction which is used in samsung DMA
- operation
-Date: Wed, 08 Feb 2012 15:54:40 +0900
-Message-ID: <000501cce62e$87b4d100$971e7300$%kim@samsung.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v2 1/2] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Wed, 8 Feb 2012 08:46:49 +0000
+Message-ID: <20120208084649.GF889@n2100.arm.linux.org.uk>
+References: <1323654668-32504-1-git-send-email-boojin.kim@samsung.com> <20120105145425.GW11810@n2100.arm.linux.org.uk> <003101cce5fe$734b9990$59e2ccb0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43338 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756350Ab2BHGym (ORCPT
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50865 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756556Ab2BHIrI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Feb 2012 01:54:42 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ200FOZB72HD40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 15:54:40 +0900 (KST)
-Received: from DOKI0351KIM04 ([12.23.119.96])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ200LWDB74DO20@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 15:54:40 +0900 (KST)
-Content-language: ko
+	Wed, 8 Feb 2012 03:47:08 -0500
+Content-Disposition: inline
+In-Reply-To: <003101cce5fe$734b9990$59e2ccb0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>
+To: Boojin Kim <boojin.kim@samsung.com>
+Cc: 'Vinod Koul' <vinod.koul@intel.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jassi Brar' <jassisinghbrar@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
----
- drivers/spi/spi-s3c64xx.c |   10 +++++-----
- 1 files changed, 5 insertions(+), 5 deletions(-)
+On Wed, Feb 08, 2012 at 10:10:30AM +0900, Boojin Kim wrote:
+> Russell King - ARM Linux wrote:
+> >
+> > Now that the PL330 code is entirely out of arch/arm, the header should no
+> > longer be in asm/hardware/pl330.h.
+> >
+> > Definitions private to the driver should be in drivers/dma/pl330.c or a
+> > header file co-located.  Other definitions for interfaces to that driver
+> > (eg, platform data) should be in include/linux/amba.
+> >
+> > That can be the subject of a follow-up patch if this is already finalized.
+> >
+> Sorry to late response. I believed my reply was sent. But, It maybe be not.
+> Anyway.. get to the point.
+> Pl08x also has asm/hardware/pl080.h to include hw specific information.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index f3b7f6a..1972377 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -239,7 +239,7 @@ static void s3c64xx_spi_dmacb(void *data)
- 	struct s3c64xx_spi_dma_data *dma = data;
- 	unsigned long flags;
- 
--	if (dma->direction == DMA_FROM_DEVICE)
-+	if (dma->direction == DMA_DEV_TO_MEM)
- 		sdd = container_of(data,
- 			struct s3c64xx_spi_driver_data, rx_dma);
- 	else
-@@ -248,7 +248,7 @@ static void s3c64xx_spi_dmacb(void *data)
- 
- 	spin_lock_irqsave(&sdd->lock, flags);
- 
--	if (dma->direction == DMA_FROM_DEVICE) {
-+	if (dma->direction == DMA_DEV_TO_MEM) {
- 		sdd->state &= ~RXBUSY;
- 		if (!(sdd->state & TXBUSY))
- 			complete(&sdd->xfer_completion);
-@@ -268,7 +268,7 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
- 	struct samsung_dma_prep info;
- 	struct samsung_dma_config config;
- 
--	if (dma->direction == DMA_FROM_DEVICE) {
-+	if (dma->direction == DMA_DEV_TO_MEM) {
- 		sdd = container_of((void *)dma,
- 			struct s3c64xx_spi_driver_data, rx_dma);
- 
-@@ -1028,9 +1028,9 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
- 	sdd->pdev = pdev;
- 	sdd->sfr_start = mem_res->start;
- 	sdd->tx_dma.dmach = dmatx_res->start;
--	sdd->tx_dma.direction = DMA_TO_DEVICE;
-+	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
- 	sdd->rx_dma.dmach = dmarx_res->start;
--	sdd->rx_dma.direction = DMA_FROM_DEVICE;
-+	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
- 
- 	sdd->cur_bpw = 8;
- 
--- 
-1.7.1
+History basically.
+
+> It seems to be same purpose with asm/hardware/pl330.h
+> Do you mean both asm/hardware/pl080.h and asm/hardware/pl330.h should be
+> moved to include/linux/amba?
+
+No.  asm/hardware/pl330.h Should go into drivers/dma if nothing but the
+PL330 DMA driver in there needs it.
+
+Same for pl080.h but as your patches isn't touching that, then that's not
+something that should be done separately.
