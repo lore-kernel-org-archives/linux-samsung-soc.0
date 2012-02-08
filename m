@@ -1,73 +1,72 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] spi: Add the use of DMA config operation
-Date: Wed, 08 Feb 2012 11:05:33 +0100
-Message-ID: <4F3248ED.8030408@samsung.com>
+From: Kyoungil Kim <ki0351.kim@samsung.com>
+Subject: RE: [PATCH] spi: Add the use of DMA config operation
+Date: Wed, 08 Feb 2012 19:34:28 +0900
+Message-ID: <000101cce64d$3c778d80$b566a880$%kim@samsung.com>
 References: <000401cce62e$3c0cd5e0$b42681a0$%kim@samsung.com>
+ <4F3248ED.8030408@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:26298 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751199Ab2BHKFg (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:39870 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755241Ab2BHKea (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Feb 2012 05:05:36 -0500
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LZ200DCPK1AKI@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 10:05:34 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LZ200AK6K1AZM@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 10:05:34 +0000 (GMT)
-In-reply-to: <000401cce62e$3c0cd5e0$b42681a0$%kim@samsung.com>
+	Wed, 8 Feb 2012 05:34:30 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZ200HE3LDADGD0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 19:34:29 +0900 (KST)
+Received: from DOKI0351KIM04 ([12.23.119.96])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ20070OLDGKM00@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 19:34:28 +0900 (KST)
+In-reply-to: <4F3248ED.8030408@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyoungil Kim <ki0351.kim@samsung.com>
-Cc: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
 
 Hi,
 
-On 02/08/2012 07:52 AM, Kyoungil Kim wrote:
-> Config operation is separated from request operation in DMA common op=
-eration.
-> Because spi driver can change the DMA config for every message.
-> So this patch is using the separated DMA config operation.
->=20
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
-> ---
->  drivers/spi/spi-s3c64xx.c |   35 +++++++++++++++++++++--------------
->  1 files changed, 21 insertions(+), 14 deletions(-)
+Sylwester Nawrocki wrote:
+> Hi,
+> 
+> On 02/08/2012 07:52 AM, Kyoungil Kim wrote:
+> > Config operation is separated from request operation in DMA common operation.
+> > Because spi driver can change the DMA config for every message.
+> > So this patch is using the separated DMA config operation.
+> >
+> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+> > Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+> > ---
+> >  drivers/spi/spi-s3c64xx.c |   35 +++++++++++++++++++++--------------
+> >  1 files changed, 21 insertions(+), 14 deletions(-)
+> 
+> I'm getting following compilation errors with this patch:
+> 
+>   CC      drivers/spi/spi-s3c64xx.o
+> drivers/spi/spi-s3c64xx.c: In function 'prepare_dma':
+> drivers/spi/spi-s3c64xx.c:268: error: storage size of 'info' isn't known
+> drivers/spi/spi-s3c64xx.c:269: error: storage size of 'config' isn't known
+> drivers/spi/spi-s3c64xx.c:278: error: 'struct samsung_dma_ops' has no member
+> named 'config'
+> drivers/spi/spi-s3c64xx.c:286: error: 'struct samsung_dma_ops' has no member
+> named 'config'
+> drivers/spi/spi-s3c64xx.c:269: warning: unused variable 'config'
+> drivers/spi/spi-s3c64xx.c:268: warning: unused variable 'info'
+> drivers/spi/spi-s3c64xx.c: In function 'acquire_dma':
+> drivers/spi/spi-s3c64xx.c:302: error: storage size of 'req' isn't known
+> drivers/spi/spi-s3c64xx.c:302: warning: unused variable 'req'
+> 
+> Which tree has it been created off of ?
+> 
+> It seems there are some patches not yet in mainline that it depends on.
 
-I'm getting following compilation errors with this patch:
+I'm sorry, I thought that the dependant patch was already in mainline.
+I'll re-send it with dependant patch.
 
-  CC      drivers/spi/spi-s3c64xx.o
-drivers/spi/spi-s3c64xx.c: In function =91prepare_dma=92:
-drivers/spi/spi-s3c64xx.c:268: error: storage size of =91info=92 isn=92=
-t known
-drivers/spi/spi-s3c64xx.c:269: error: storage size of =91config=92 isn=92=
-t known
-drivers/spi/spi-s3c64xx.c:278: error: =91struct samsung_dma_ops=92 has =
-no member
-named =91config=92
-drivers/spi/spi-s3c64xx.c:286: error: =91struct samsung_dma_ops=92 has =
-no member
-named =91config=92
-drivers/spi/spi-s3c64xx.c:269: warning: unused variable =91config=92
-drivers/spi/spi-s3c64xx.c:268: warning: unused variable =91info=92
-drivers/spi/spi-s3c64xx.c: In function =91acquire_dma=92:
-drivers/spi/spi-s3c64xx.c:302: error: storage size of =91req=92 isn=92t=
- known
-drivers/spi/spi-s3c64xx.c:302: warning: unused variable =91req=92
-
-Which tree has it been created off of ?
-
-It seems there are some patches not yet in mainline that it depends on.
-
-
-Thanks,
---=20
-Sylwester Nawrocki
-Samsung Poland R&D Center
+Thank you.
+Best Regards.
