@@ -1,72 +1,76 @@
-From: Kyoungil Kim <ki0351.kim@samsung.com>
-Subject: RE: [PATCH] spi: Add the use of DMA config operation
-Date: Wed, 08 Feb 2012 19:34:28 +0900
-Message-ID: <000101cce64d$3c778d80$b566a880$%kim@samsung.com>
-References: <000401cce62e$3c0cd5e0$b42681a0$%kim@samsung.com>
- <4F3248ED.8030408@samsung.com>
+From: Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org>
+Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
+Date: Wed, 08 Feb 2012 12:52:51 +0100
+Message-ID: <4F326213.3030500@atmel.com>
+References: <20120123114902.GY1068@n2100.arm.linux.org.uk> <20120124095009.GS16726@n2100.arm.linux.org.uk> <20120126212319.GE11941@n2100.arm.linux.org.uk> <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com> <4F266C13.5080302@atmel.com> <CAOesGMh1wHpaDmYY6_oCu_u0s4fmTfKMLiPaa9bHh9YaiDJozw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:39870 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755241Ab2BHKea (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Feb 2012 05:34:30 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ200HE3LDADGD0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 19:34:29 +0900 (KST)
-Received: from DOKI0351KIM04 ([12.23.119.96])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ20070OLDGKM00@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Wed, 08 Feb 2012 19:34:28 +0900 (KST)
-In-reply-to: <4F3248ED.8030408@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAOesGMh1wHpaDmYY6_oCu_u0s4fmTfKMLiPaa9bHh9YaiDJozw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, davinci-linux-open-source-VycZQUHpC/PFrsHnngEfi1aTQe2KTcn/@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Stephen Rothwell <sfr-3FnU+UHB4dNDw9hX6IcOSA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
 
-Hi,
-
-Sylwester Nawrocki wrote:
+On 02/08/2012 02:18 AM, Olof Johansson :
 > Hi,
 > 
-> On 02/08/2012 07:52 AM, Kyoungil Kim wrote:
-> > Config operation is separated from request operation in DMA common operation.
-> > Because spi driver can change the DMA config for every message.
-> > So this patch is using the separated DMA config operation.
-> >
-> > Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> > Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
-> > ---
-> >  drivers/spi/spi-s3c64xx.c |   35 +++++++++++++++++++++--------------
-> >  1 files changed, 21 insertions(+), 14 deletions(-)
+> On Mon, Jan 30, 2012 at 2:08 AM, Nicolas Ferre <nicolas.ferre-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org> wrote:
+>> On 01/29/2012 12:57 AM, Olof Johansson :
+>>> Hi,
+>>>
+>>>
+>>> On Thu, Jan 26, 2012 at 1:23 PM, Russell King - ARM Linux
+>>> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>>>
+>>>
+>>>> And we're now there.  So...
+>>>>
+>>>> Arnd, Olaf,
+>>>>
+>>>> Please incorporate the latest ARM (for-armsoc branch) changes, which can be found at:
+>>>>
+>>>>        git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cur/linux-arm.git for-armsoc
+>>>>
+>>>> with SHA1 dcf81c1af839b77b44404453ecae6e5ac5a75f05.
+>>>
+>>> Thanks. I have added this as depends/rmk/for-armsoc in the arm-soc repo.
+>>>
+>>> Any next/ branch we start will have this as the base of said branch,
+>>> so any vendor branches must either already be developed against this
+>>> stable branch, or merge on top of this with minimal conflicts.
+>>
+>> Ok, great.
+>>
+>> I just let you know that there is a conflict between the current Linus'
+>> tree (with recently updated at91 fixes) and this rmk/for-armsoc branch.
+>>
+>> I can give you the resolution of this conflict easily but I would like
+>> to know which way I execute the merge:
+>>
+>> I use this rmk/for-armsoc as a baseline and merge the fixes already in
+>> Linus' tree on top of it or the other way around?
+>>
+>> Maybe it is preferable that I wait for 3.3-rc2 and merge rmk/for-armsoc
+>> on top of it. This result can be the base of our AT91 work for 3.4
+>> preparation.
+>>
+>> Your thought?
 > 
-> I'm getting following compilation errors with this patch:
+> I missed replying to this email until now when I started looking at
+> picking up branches for the 3.4 staging, sorry for the delay.
 > 
->   CC      drivers/spi/spi-s3c64xx.o
-> drivers/spi/spi-s3c64xx.c: In function 'prepare_dma':
-> drivers/spi/spi-s3c64xx.c:268: error: storage size of 'info' isn't known
-> drivers/spi/spi-s3c64xx.c:269: error: storage size of 'config' isn't known
-> drivers/spi/spi-s3c64xx.c:278: error: 'struct samsung_dma_ops' has no member
-> named 'config'
-> drivers/spi/spi-s3c64xx.c:286: error: 'struct samsung_dma_ops' has no member
-> named 'config'
-> drivers/spi/spi-s3c64xx.c:269: warning: unused variable 'config'
-> drivers/spi/spi-s3c64xx.c:268: warning: unused variable 'info'
-> drivers/spi/spi-s3c64xx.c: In function 'acquire_dma':
-> drivers/spi/spi-s3c64xx.c:302: error: storage size of 'req' isn't known
-> drivers/spi/spi-s3c64xx.c:302: warning: unused variable 'req'
-> 
-> Which tree has it been created off of ?
-> 
-> It seems there are some patches not yet in mainline that it depends on.
+> Russell, would you prefer merging in v3.3-rc2 into your branch so I
+> can pull the exact same resolution from there, or should we do it
+> locally in arm-soc? It probably makes sense for you to do it so
+> there's no more conflicts from there on out for dependent branches.
 
-I'm sorry, I thought that the dependant patch was already in mainline.
-I'll re-send it with dependant patch.
+Olof,
 
-Thank you.
-Best Regards.
+For your information the conflict resolution is already present in
+linux-next (and in my 3.4 preparation branches actually).
+
+Best regards,
+-- 
+Nicolas Ferre
