@@ -1,79 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 2/2]  mmc: sdhci-s3c: add platform data for the second
- capability
-Date: Thu, 09 Feb 2012 19:23:10 +0900
-Message-ID: <067b01cce714$d2b71dc0$78255940$%kim@samsung.com>
-References: <4F2F86DA.6030106@samsung.com> <m239ao5hve.fsf@bob.laptop.org>
+Subject: RE: [PATCH v2] ARM: Exynos4: Add cpu-offset property in gic device
+ tree node
+Date: Thu, 09 Feb 2012 19:23:25 +0900
+Message-ID: <067c01cce714$db77de90$92679bb0$%kim@samsung.com>
+References: <1328023789-4672-1-git-send-email-thomas.abraham@linaro.org>
+ <4F2819D0.7090002@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:30907 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757634Ab2BIKXN (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64893 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757672Ab2BIKXY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Feb 2012 05:23:13 -0500
-In-reply-to: <m239ao5hve.fsf@bob.laptop.org>
+	Thu, 9 Feb 2012 05:23:24 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZ40055RFINMNZ0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 19:23:23 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ400E2HFIZRRL0@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 19:23:23 +0900 (KST)
+In-reply-to: <4F2819D0.7090002@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chris Ball' <cjb@laptop.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>
-Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Girish K S' <girish.shivananjappa@linaro.org>
+To: 'Karol Lewandowski' <k.lewandowsk@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Chris Ball wrote:
+Karol Lewandowski wrote:
 > 
-> Hi,
-> 
-Hi,
-
-> On Mon, Feb 06 2012, Jaehoon Chung wrote:
-> > This patch is added host_caps2 in sdhci-s3c.c
-> > It's necessary that use the second capabilities.
-> > And removed the duplicated host_caps.
+> On 31.01.2012 16:29, Thomas Abraham wrote:
+> > Commit db0d4db22a78 ('ARM: gic: allow GIC to support non-banked setups)
+> > requires a cpu-offset property to be specified for non-banked gic
+> > controllers, which is the case for Exynos4.
 > >
-> > Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > Reported-by: Karol Lewandowski<k.lewandowski@samsung.com>
+> 
+> ( Minor note - my email address lacks 'i' at the end, i.e. it's
+>    k.lewandowsk@ :)
+> 
+> > Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
 > > ---
-> > Changelog v3:
-> > 	- based-on latest mmc-next tree
-> > Changelog v2:
-> > 	- remove the duplicated host_caps.
-> >
-> >  drivers/mmc/host/sdhci-s3c.c |    6 +++---
-> >  1 files changed, 3 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> > index d065e37..46b9782 100644
-> > --- a/drivers/mmc/host/sdhci-s3c.c
-> > +++ b/drivers/mmc/host/sdhci-s3c.c
-> > @@ -521,9 +521,6 @@ static int __devinit sdhci_s3c_probe(struct
-> platform_device *pdev)
-> >  	if (pdata->cd_type == S3C_SDHCI_CD_PERMANENT)
-> >  		host->mmc->caps = MMC_CAP_NONREMOVABLE;
-> >
-> > -	if (pdata->host_caps)
-> > -		host->mmc->caps |= pdata->host_caps;
-> > -
-> >  	if (pdata->pm_caps)
-> >  		host->mmc->pm_caps |= pdata->pm_caps;
-> >
-> > @@ -547,6 +544,9 @@ static int __devinit sdhci_s3c_probe(struct
-> platform_device *pdev)
-> >  	if (pdata->host_caps)
-> >  		host->mmc->caps |= pdata->host_caps;
-> >
-> > +	if (pdata->host_caps2)
-> > +		host->mmc->caps2 |= pdata->host_caps2;
-> > +
-> >  	ret = sdhci_add_host(host);
-> >  	if (ret) {
-> >  		dev_err(dev, "sdhci_add_host() failed\n");
+> > This patch solves the issue of boot failure with SMP enabled kernel for
+> > Exynos4 device tree enabled machine.
 > 
-> In case you'd rather merge both of these via the samsung-soc tree:
+> Tested-by: Karol Lewandowski <k.lewandowsk@samsung.com>
 > 
-> Acked-by: Chris Ball <cjb@laptop.org>
-> 
-OK, will apply this series with Chris' ack in samsung tree.
+Applied with fixing Karol's e-mail address.
 
 Thanks.
 
