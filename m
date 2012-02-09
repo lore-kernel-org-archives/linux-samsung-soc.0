@@ -1,104 +1,160 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: ARM/ARM-SoC plans for v3.4 merge window
-Date: Wed, 8 Feb 2012 17:19:21 -0800
-Message-ID: <CAOesGMjm+irNw-kHStLf_H3QyJHa04ProG6i0Zyum1iy7TJxpA@mail.gmail.com>
-References: <20120123114902.GY1068@n2100.arm.linux.org.uk>
- <20120124095009.GS16726@n2100.arm.linux.org.uk>
- <20120126212319.GE11941@n2100.arm.linux.org.uk>
- <CAOesGMh45HSb4mRMc7q53xhmj_kMFvdVJhNnY7cY6gHi=_KynQ@mail.gmail.com>
- <4F266C13.5080302@atmel.com>
- <CAOesGMh1wHpaDmYY6_oCu_u0s4fmTfKMLiPaa9bHh9YaiDJozw@mail.gmail.com>
- <4F326213.3030500@atmel.com>
+From: Namjae Jeon <linkinjeon@gmail.com>
+Subject: Re: [PATCH 0/4] [SCSI] ufshcd: UFS Host Controller Driver
+Date: Thu, 9 Feb 2012 13:34:18 +0900
+Message-ID: <CAKYAXd83xkxyPNYJf-fBf+oZ8h3GTuRd_8POe6m61t6_AW-mQg@mail.gmail.com>
+References: <1328158649-4137-1-git-send-email-vinholikatti@gmail.com>
+	<CAKYAXd_sRKCfw_rNrRD8yKKQEP_8Zee+E5rZW0G1NuuCA4HcNA@mail.gmail.com>
+	<CAKYAXd_msUdB2UbMvxqn751nuN5R=T6W5sjLDMxqEOR6KTX38w@mail.gmail.com>
+	<CALMYJDvy58ohVSjeQC2e=rccyKe2S=628q9YBFtpAm7v1HHO3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <4F326213.3030500@atmel.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: davinci-linux-open-source@linux.davincidsp.com, Russell King - ARM Linux <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-scsi-owner@vger.kernel.org>
+In-Reply-To: <CALMYJDvy58ohVSjeQC2e=rccyKe2S=628q9YBFtpAm7v1HHO3Q@mail.gmail.com>
+Sender: linux-scsi-owner@vger.kernel.org
+To: Santosh Y <santoshsy@gmail.com>
+Cc: Vinayak Holikatti <vinholikatti@gmail.com>, James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, saugata.das@linaro.org, arnd@arndb.de, venkat@linaro.org, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Feb 8, 2012 at 3:52 AM, Nicolas Ferre <nicolas.ferre@atmel.com> wro=
-te:
-> On 02/08/2012 02:18 AM, Olof Johansson :
->> Hi,
->>
->> On Mon, Jan 30, 2012 at 2:08 AM, Nicolas Ferre <nicolas.ferre@atmel.com>=
- wrote:
->>> On 01/29/2012 12:57 AM, Olof Johansson :
->>>> Hi,
+2012/2/6 Santosh Y <santoshsy@gmail.com>:
+> On Mon, Feb 6, 2012 at 4:15 AM, Namjae Jeon <linkinjeon@gmail.com> wr=
+ote:
+>> 2012/2/5 Namjae Jeon <linkinjeon@gmail.com>:
+>>> 2012/2/2 Vinayak Holikatti <vinholikatti@gmail.com>:
+>>>> From: Santosh Yaraganavi <santoshsy@gmail.com>
 >>>>
+>>>> UFS is designed to be the most advanced specification for
+>>>> both embedded and removable flash memory-based storage in mobile d=
+evices
+>>>> such as smart phones and tablet computers. =C2=A0The UFS standard =
+represents
+>>>> an evolutionary progression of JEDEC standards in this field, and =
+has been
+>>>> specifically tailored for mobile applications and computing system=
+s requiring
+>>>> high performance and low power consumption. =C2=A0The initial data=
+ throughput for
+>>>> UFS will be ~300 megabytes per second (MB/s), and the standard als=
+o supports
+>>>> command queuing features to raise random read/write speeds.
 >>>>
->>>> On Thu, Jan 26, 2012 at 1:23 PM, Russell King - ARM Linux
->>>> <linux@arm.linux.org.uk> wrote:
+>>>> To achieve the highest performance and most power efficient data
+>>>> transport, UFS uses the leading industry interface standards to fo=
+rm its
+>>>> Interconnect Layer: MIPI=C2=AE Alliance=E2=80=99s M-PHY and UniPro=
+SM =C2=A0specifications.
+>>>> UniPro is a comprehensive specification meant to act as a universa=
+l
+>>>> chip-to-chip protocol, providing a common tunnel for other protoco=
+ls.
+>>>> The M-PHY interface is designed as the primary physical interface =
+(PHY layer)
+>>>> for the UniPro specification, and is a high speed serial interface=
+ targeting
+>>>> up to 2.9 gigabits per second (Gbps) per lane with up-scalability =
+to 5.8Gbps
+>>>> per lane.
 >>>>
+>>>> MIPI=E2=80=99s M-PHY and UniPro specifications are optimized for m=
+obile applications,
+>>>> and are designed from the ground up for efficient power management=
+ in mobile
+>>>> devices, including enabling efficient transitions between the acti=
+ve and power
+>>>> save modes. Combined with a low active power level and a near-zero=
+ idle power
+>>>> level, UFS offers the promise for significant reductions in device=
+ power
+>>>> consumption.
 >>>>
->>>>> And we're now there. =A0So...
->>>>>
->>>>> Arnd, Olaf,
->>>>>
->>>>> Please incorporate the latest ARM (for-armsoc branch) changes, which =
-can be found at:
->>>>>
->>>>> =A0 =A0 =A0 =A0git://ftp.arm.linux.org.uk/pub/linux/arm/kernel/git-cu=
-r/linux-arm.git for-armsoc
->>>>>
->>>>> with SHA1 dcf81c1af839b77b44404453ecae6e5ac5a75f05.
+>>>> The UFS standard adopts the well-known SCSI Architecture Model and=
+ command
+>>>> protocols supporting multiple commands with command queuing featur=
+es and
+>>>> enabling a multi-thread programming paradigm. This differs from co=
+nventional
+>>>> flash-based memory cards and embedded flash solutions which proces=
+s one
+>>>> command at a time, limiting random read/write access performance.
+>>>> In addition, a forthcoming complementary UFS Host Controller Inter=
+face (HCI)
+>>>> specification will allow system designers greater flexibility by s=
+implifying
+>>>> the involvement of the host processor in the operation of the flas=
+h storage
+>>>> subsystem. The UFS HCI specification and the adoption of SCSI will=
+ provide
+>>>> a well-known software programming model and enable wider market ad=
+option.
 >>>>
->>>> Thanks. I have added this as depends/rmk/for-armsoc in the arm-soc rep=
-o.
+>>>> This patchset contains PCIe based UFS host controller driver which=
+ complies
+>>>> to UFSHCI 1.0 and 1.1. The driver is based on Linux SCSI framework=
+=2E
+>>>> The driver is tested with UFS Host controller(FPGA) and UFS device=
+(FPGA).
 >>>>
->>>> Any next/ branch we start will have this as the base of said branch,
->>>> so any vendor branches must either already be developed against this
->>>> stable branch, or merge on top of this with minimal conflicts.
->>>
->>> Ok, great.
->>>
->>> I just let you know that there is a conflict between the current Linus'
->>> tree (with recently updated at91 fixes) and this rmk/for-armsoc branch.
->>>
->>> I can give you the resolution of this conflict easily but I would like
->>> to know which way I execute the merge:
->>>
->>> I use this rmk/for-armsoc as a baseline and merge the fixes already in
->>> Linus' tree on top of it or the other way around?
->>>
->>> Maybe it is preferable that I wait for 3.3-rc2 and merge rmk/for-armsoc
->>> on top of it. This result can be the base of our AT91 work for 3.4
->>> preparation.
->>>
->>> Your thought?
->>
->> I missed replying to this email until now when I started looking at
->> picking up branches for the 3.4 staging, sorry for the delay.
->>
->> Russell, would you prefer merging in v3.3-rc2 into your branch so I
->> can pull the exact same resolution from there, or should we do it
->> locally in arm-soc? It probably makes sense for you to do it so
->> there's no more conflicts from there on out for dependent branches.
+>>>> This patch set is successfully applied on kernel version 3.3-rc2.
+>>>>
+>>>> Santosh Yaraganavi (4):
+>>>> =C2=A0[SCSI] ufshcd: UFS Host controller driver
+>>>> =C2=A0[SCSI] ufshcd: UFS UTP Transfer requests handling
+>>>> =C2=A0[SCSI] ufshcd: UFSHCI error handling
+>>>> =C2=A0[SCSI] ufshcd: SCSI error handling
+>>>>
+>>>> =C2=A0drivers/scsi/Kconfig =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A01 +
+>>>> =C2=A0drivers/scsi/Makefile =C2=A0 =C2=A0 | =C2=A0 =C2=A01 +
+>>>> =C2=A0drivers/scsi/ufs/Kconfig =C2=A0| =C2=A0 49 ++
+>>>> =C2=A0drivers/scsi/ufs/Makefile | =C2=A0 =C2=A02 +
+>>>> =C2=A0drivers/scsi/ufs/ufs.h =C2=A0 =C2=A0| =C2=A0203 +++++
+>>>> =C2=A0drivers/scsi/ufs/ufshcd.c | 1954 +++++++++++++++++++++++++++=
+++++++++++++++++++
+>>>> =C2=A0drivers/scsi/ufs/ufshci.h | =C2=A0360 +++++++++
+>>>> =C2=A07 files changed, 2570 insertions(+), 0 deletions(-)
+>>>> =C2=A0create mode 100644 drivers/scsi/ufs/Kconfig
+>>>> =C2=A0create mode 100644 drivers/scsi/ufs/Makefile
+>>>> =C2=A0create mode 100644 drivers/scsi/ufs/ufs.h
+>>>> =C2=A0create mode 100644 drivers/scsi/ufs/ufshcd.c
+>>>> =C2=A0create mode 100644 drivers/scsi/ufs/ufshci.h
+>>>>
+>>>> --
+>>>> 1.7.5.4
+>>> Hi.
+>>> I have been waiting for ufs contribution.
+>>> Unfortunately I don't have real target supported ufs(maybe only you
+>>> have it). I can not debug and run this code, So just review only co=
+de
+>>> with specification.
+>>>>
+>> Hi. Santosh.
+>> Would you share performance measurement result (read/write seq,ran) =
+?
+>> Thanks.
 >
-> Olof,
+> Hi Namjae,
 >
-> For your information the conflict resolution is already present in
-> linux-next (and in my 3.4 preparation branches actually).
-
-Yeah, it's just convenient if it's resolved once in the base branch
-instead of every time we pull in something based on it.
-
-I've pulled in and resolved the conflict with v3.3-rc2 into
-depends/rmk/for-armsoc now so it should be covered for anyone basing
-new branches off of it.
-
-
-Thanks,
-
--Olof
+> Currently UFS Driver is being tested on on UFS Controller FPGA and UF=
+S
+> Device FPGA. So currently the main concentration is on functionality.
+> Performance on FPGA will not be the correct measurement.
+Hi. Santosh.
+If possible, I hope that you share performance to us when you post new
+patch next time.
+And Personally I am expecting good random I/O speed on UFS.
+Thanks.
+>
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-ke=
+rnel" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info=
+=2Ehtml
+>>>> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
+>
+> --
+> ~Santosh
+--
+To unsubscribe from this list: send the line "unsubscribe linux-scsi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
