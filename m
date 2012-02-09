@@ -1,51 +1,60 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: EXYNOS: Enable MDMA driver
-Date: Thu, 09 Feb 2012 20:42:02 +0900
-Message-ID: <06a101cce71f$d747c870$85d75950$%kim@samsung.com>
-References: <1328025437-5396-1-git-send-email-kgene.kim@samsung.com>
- <1328025437-5396-2-git-send-email-kgene.kim@samsung.com>
- <4F28A8BD.9000601@linaro.org>
+Subject: RE: [PATCH 1/2] ARM: EXYNOS: add support GPIO for EXYNOS5250
+Date: Thu, 09 Feb 2012 20:44:22 +0900
+Message-ID: <06ad01cce720$2acadf50$80609df0$%kim@samsung.com>
+References: <1328025040-4751-1-git-send-email-kgene.kim@samsung.com>
+ <1328025040-4751-2-git-send-email-kgene.kim@samsung.com>
+ <20120131224043.GD8338@n2100.arm.linux.org.uk>
+ <20120202182726.GO15343@ponder.secretlab.ca>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:54823 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756388Ab2BILmD (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37175 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753291Ab2BILoW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Feb 2012 06:42:03 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Thu, 9 Feb 2012 06:44:22 -0500
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ4004E3J60U6V0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 20:42:00 +0900 (KST)
+ 2010)) with ESMTP id <0LZ400JIRJ9WE6W0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 20:44:21 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ400M2CJ608N10@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 20:42:00 +0900 (KST)
-In-reply-to: <4F28A8BD.9000601@linaro.org>
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ400DZ3J9W4F20@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 20:44:20 +0900 (KST)
+In-reply-to: <20120202182726.GO15343@ponder.secretlab.ca>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Boojin Kim' <boojin.kim@samsung.com>
+To: 'Grant Likely' <grant.likely@secretlab.ca>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: 'Sangsu Park' <sangsu4u.park@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Tushar Behera wrote:
+Grant Likely wrote:
 > 
-> On 01/31/2012 09:27 PM, Kukjin Kim wrote:
-> > From: Boojin Kim <boojin.kim@samsung.com>
+> On Tue, Jan 31, 2012 at 10:40:43PM +0000, Russell King - ARM Linux wrote:
+> > On Wed, Feb 01, 2012 at 12:50:39AM +0900, Kukjin Kim wrote:
+> > > From: Sangsu Park <sangsu4u.park@samsung.com>
+> > >
+> > > This patch adds follwing.
+> > > - IO-map for EXYNOS5250 GPIO support
+> > > - EXYNOS5250 GPIO bank size/number definitions
+> > > - memory map definition for S5P GPIO4
+> > >
+> > > Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
+> > > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > >
-> > This patch adds MDMA platform data and enables
-> > MDMA for DMA memcpy operation for EXYNOS SoCs.
-
-[...]
-
-> > +static struct clk exynos4_clk_mdma1 = {
+> > Do you actually need these static mapping definitions?  The samsung
+> > gpiolib initialization is called from a core_initcall(), and at this
+> > time ioremap() is fully capable of working.
 > 
-> exynos4_clk_mdma ?
+> Indeed.  Please get rid of the S5P_VA_GPIO* macros and use ioremap to
+> set up the registers mappings.  I understand that the existing code
+> already does that, but I don't want to see any more added.  Also, it
+> is easy to fix by adding the ioremap calls to samsung_gpio_init()
 > 
-Boojin, could you please explain why you used 'exynos4_clk_mdma1' instead of
-just mdma here?
+Yes, I agree. Will be updated with ioremap().
 
 Thanks.
 
