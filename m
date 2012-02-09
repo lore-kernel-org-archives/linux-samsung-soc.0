@@ -1,44 +1,58 @@
-From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
-Subject: Re: Re: [PATCH] EXYNOS: Initialize locking_frequency with
- initial frequency
-Date: Thu, 09 Feb 2012 05:35:09 +0000 (GMT)
-Message-ID: <22312902.436411328765708629.JavaMail.weblogic@epml10>
-Reply-To: myungjoo.ham@samsung.com
+From: srikanth <ts.srikanth@samsung.com>
+Subject: [PATCH 1/3] ARM: EXYNOS: SATA clock config update
+Date: Thu, 09 Feb 2012 15:24:54 +0900
+Message-ID: <004701cce6f3$899a3d50$9cceb7f0$%srikanth@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
-Return-path: <cpufreq-owner@vger.kernel.org>
-MIME-version: 1.0
-Sender: cpufreq-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: "davej@redhat.com" <davej@redhat.com>, =?euc-kr?Q?=C0=CC=C0=E7=C3=B6?= <jc.lee@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:51303 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750819Ab2BIGY4 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Feb 2012 01:24:56 -0500
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZ400JJK4HHNNM0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 15:24:55 +0900 (KST)
+Received: from DOTSSRIKANT01 ([12.23.118.165])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ4007KE4HICC10@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 15:24:54 +0900 (KST)
+Content-language: en-gb
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk
 
-PiBPbiAwMi8wMS8yMDEyIDA0OjM4IFBNLCBUdXNoYXIgQmVoZXJhIHdyb3RlOg0KPiA+IE9uIDAx
-LzI1LzIwMTIgMTA6MTUgQU0sIFR1c2hhciBCZWhlcmEgd3JvdGU6DQo+ID4+IEFzIHBlciBkZWZp
-bml0aW9uLCBsb2NraW5nX2ZyZXF1ZW5jeSBpcyB0aGUgaW5pdGlhbCBmcmVxdWVuY3kgd2hpY2gg
-aXMNCj4gPj4gc2V0IGJ5IGJvb3QtbG9hZGVyLiBIZW5jZSB0aGUgdmFsdWUgaXMgdXBkYXRlZCB3
-aXRoIHRoZSBpbml0aWFsIHZhbHVlDQo+ID4+IGR1cmluZyBib290IHRpbWUgaW5pdCBjYWxsLg0K
-PiA+Pg0KPiA+PiBUaGlzIGNvZGUgd2FzIHByZXNlbnQgaW4gZXh5bm9zMjEwLWNwdWZyZXEuYyBi
-ZWZvcmUgdGhpcyBjb25zb2xpZGF0aW9uDQo+ID4+IHBhdGNoLg0KPiA+PiAtIGExMjVhMTdmYTYx
-YSAoW0NQVUZSRVFdIEVYWU5PUzogTWFrZSBFWFlOT1MgY29tbW9uIGNwdWZyZXEgZHJpdmVyKS4N
-Cj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogVHVzaGFyIEJlaGVyYSA8dHVzaGFyLmJlaGVyYUBs
-aW5hcm8ub3JnPg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBJbmRlcnBhbCBTaW5naCA8aW5kZXJwYWwu
-c2luZ2hAbGluYXJvLm9yZz4NCg0KQWNrZWQtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFt
-QHNhbXN1bmcuY29tPg0KDQo+ID4+IC0tLQ0KPiA+PiBUaGUgcGF0Y2ggaXMgYmFzZWQgb24gdjMu
-My1yYzEuDQo+ID4+DQo+ID4+ICBkcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNwdWZyZXEuYyB8ICAg
-IDIgKysNCj4gPj4gIDEgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9u
-cygtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVmcmVxL2V4eW5vcy1jcHVm
-cmVxLmMgYi9kcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNwdWZyZXEuYw0KPiA+PiBpbmRleCA1NDY3
-ODc5Li43Y2ZiNTE2IDEwMDY0NA0KPiA+PiAtLS0gYS9kcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNw
-dWZyZXEuYw0KPiA+PiArKysgYi9kcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNwdWZyZXEuYw0KPiA+
-PiBAQCAtMjEwLDYgKzIxMCw4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2NwdWZyZXFfY3B1X2luaXQo
-c3RydWN0IGNwdWZyZXFfcG9saWN5ICpwb2xpY3kpDQo+ID4+ICANCj4gPj4gIAljcHVmcmVxX2Zy
-ZXF1ZW5jeV90YWJsZV9nZXRfYXR0cihleHlub3NfaW5mby0+ZnJlcV90YWJsZSwgcG9saWN5LT5j
-cHUpOw0KPiA+PiAgDQo+ID4+ICsJbG9ja2luZ19mcmVxdWVuY3kgPSBleHlub3NfZ2V0c3BlZWQo
-MCk7DQo+ID4+ICsNCj4gPj4gIAkvKiBzZXQgdGhlIHRyYW5zaXRpb24gbGF0ZW5jeSB2YWx1ZSAq
-Lw0KPiA+PiAgCXBvbGljeS0+Y3B1aW5mby50cmFuc2l0aW9uX2xhdGVuY3kgPSAxMDAwMDA7DQo+
-ID4+ICANCj4gPiANCj4gPiANCj4gDQo+IA0KPiAtLSANCj4gVHVzaGFyIEJlaGVyYQ0KPiANCj4g
-ICAgICAgICAgDQo=
+SATA clock configuration update.
 
+Signed-off-by: Srikanth TS <ts.srikanth@samsung.com>
+---
+ arch/arm/mach-exynos/clock-exynos5.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index b0c4478..739a4d6 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -902,6 +902,16 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+ 		.reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 24, .size = 3 },
+ 	}, {
+ 		.clk	= {
++			.name		= "sclk_sata",
++			.devname	= "ahci",
++			.enable		= exynos5_clk_ip_fsys_ctrl,
++			.ctrlbit	= (1 << 24),
++		},
++		.sources = &exynos5_clkset_aclk,
++		.reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 24, .size = 1 },
++		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 20, .size = 4 },
++	}, {
++		.clk	= {
+ 			.name		= "sclk_gscl_wrap",
+ 			.devname	= "s5p-mipi-csis.0",
+ 			.enable		= exynos5_clksrc_mask_gscl_ctrl,
+-- 
+1.7.1
