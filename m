@@ -1,56 +1,96 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] ARM: Exynos4: Add cpu-offset property in gic device
- tree node
-Date: Thu, 09 Feb 2012 19:23:25 +0900
-Message-ID: <067c01cce714$db77de90$92679bb0$%kim@samsung.com>
-References: <1328023789-4672-1-git-send-email-thomas.abraham@linaro.org>
- <4F2819D0.7090002@samsung.com>
+Subject: RE: [PATCH] ARM: Exynos4: Bring exynos4-dt up to date
+Date: Thu, 09 Feb 2012 19:23:32 +0900
+Message-ID: <067d01cce714$dfa3fc10$9eebf430$%kim@samsung.com>
+References: <1328028434-30139-1-git-send-email-k.lewandowsk@samsung.com>
+ <1328028434-30139-2-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64893 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:64916 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757672Ab2BIKXY (ORCPT
+	with ESMTP id S1757794Ab2BIKXb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Feb 2012 05:23:24 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ40055RFINMNZ0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 19:23:23 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ400E2HFIZRRL0@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 19:23:23 +0900 (KST)
-In-reply-to: <4F2819D0.7090002@samsung.com>
+	Thu, 9 Feb 2012 05:23:31 -0500
+In-reply-to: <1328028434-30139-2-git-send-email-k.lewandowsk@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Karol Lewandowski' <k.lewandowsk@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: 'Karol Lewandowski' <k.lewandowsk@samsung.com>, thomas.abraham@linaro.org
+Cc: m.szyprowski@samsung.com, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kyungmin.park@samsung.com
 
 Karol Lewandowski wrote:
 > 
-> On 31.01.2012 16:29, Thomas Abraham wrote:
-> > Commit db0d4db22a78 ('ARM: gic: allow GIC to support non-banked setups)
-> > requires a cpu-offset property to be specified for non-banked gic
-> > controllers, which is the case for Exynos4.
-> >
-> > Reported-by: Karol Lewandowski<k.lewandowski@samsung.com>
+> This commit brings exynos4-dt in line with recent changes to
+> mach-exynos tree, specifically:
 > 
-> ( Minor note - my email address lacks 'i' at the end, i.e. it's
->    k.lewandowsk@ :)
+>  - Fixes build break related to replacing plat/exynos4.h with common.h
+>    in commit cc511b8d84d8 ("ARM: 7257/1: EXYNOS: introduce
+>    arch/arm/mach-exynos/common.[ch]")
 > 
-> > Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
-> > ---
-> > This patch solves the issue of boot failure with SMP enabled kernel for
-> > Exynos4 device tree enabled machine.
+>  - Converts machine to use CONFIG_MULTI_IRQ_HANDLER as done for other
+>    machines in commit 4e44d2cb95bd ("ARM: exynos4: convert to
+>    CONFIG_MULTI_IRQ_HANDLER") converted all exynos boards but
+>    exynos4-dt.c.
 > 
-> Tested-by: Karol Lewandowski <k.lewandowsk@samsung.com>
+>  - Adds restart specifier as done for other machines in commit
+>    9eb4859564d6 ("ARM: 7262/1: restart: EXYNOS: use new restart hook")
 > 
-Applied with fixing Karol's e-mail address.
+> Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  arch/arm/mach-exynos/mach-exynos4-dt.c |    8 ++++++--
+>  1 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-
+> exynos/mach-exynos4-dt.c
+> index 85fa027..e6b02fd 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -15,11 +15,13 @@
+>  #include <linux/serial_core.h>
+> 
+>  #include <asm/mach/arch.h>
+> +#include <asm/hardware/gic.h>
+>  #include <mach/map.h>
+> 
+>  #include <plat/cpu.h>
+>  #include <plat/regs-serial.h>
+> -#include <plat/exynos4.h>
+> +
+> +#include "common.h"
+> 
+>  /*
+>   * The following lookup table is used to override device names when
+> devices
+> @@ -60,7 +62,7 @@ static const struct of_dev_auxdata
+> exynos4210_auxdata_lookup[] __initconst = {
+> 
+>  static void __init exynos4210_dt_map_io(void)
+>  {
+> -	s5p_init_io(NULL, 0, S5P_VA_CHIPID);
+> +	exynos_init_io(NULL, 0);
+>  	s3c24xx_init_clocks(24000000);
+>  }
+> 
+> @@ -79,7 +81,9 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4
+> (Flattened Device Tree)")
+>  	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+>  	.init_irq	= exynos4_init_irq,
+>  	.map_io		= exynos4210_dt_map_io,
+> +	.handle_irq	= gic_handle_irq,
+>  	.init_machine	= exynos4210_dt_machine_init,
+>  	.timer		= &exynos4_timer,
+>  	.dt_compat	= exynos4210_dt_compat,
+> +	.restart        = exynos4_restart,
+>  MACHINE_END
+> --
+> 1.7.8.3
 
+OK, applied.
 Thanks.
 
 Best regards,
