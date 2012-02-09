@@ -1,68 +1,104 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/4] ARM: S5PV210: Enable FIMC and MFC on SMDK C110 and
- V210 boards
-Date: Thu, 09 Feb 2012 22:27:04 +0900
-Message-ID: <003201cce72e$8399fa40$8acdeec0$%kim@samsung.com>
-References: <1324893613-5469-1-git-send-email-sachin.kamat@linaro.org>
- <CAK9yfHyXazVh3weycF-FCHYtH==m4J-YtwnZfsAdfeAB9mBnkQ@mail.gmail.com>
- <028b01ccc5da$d0cbeeb0$7263cc10$%kim@samsung.com>
- <01c301cccf25$0db1fdd0$2915f970$%park@samsung.com>
- <CAK9yfHyVA__KtLzjh5ksvtmCJnbp0K23ytpjZQkTrtKQt3gVrg@mail.gmail.com>
- <4F276B5A.7060604@samsung.com>
- <CAK9yfHzPnSgs-=nPXFnJSXF6mv0Mf1w=1KXRK=gMfgnx10tVGw@mail.gmail.com>
+Subject: RE: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device
+ tree support
+Date: Thu, 09 Feb 2012 22:42:56 +0900
+Message-ID: <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:57669 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752165Ab2BIN1I (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:63159 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757630Ab2BINnA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Feb 2012 08:27:08 -0500
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ40016FO16LT00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 22:27:07 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ400FFOO147H30@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 22:27:06 +0900 (KST)
-In-reply-to: <CAK9yfHzPnSgs-=nPXFnJSXF6mv0Mf1w=1KXRK=gMfgnx10tVGw@mail.gmail.com>
+	Thu, 9 Feb 2012 08:43:00 -0500
+In-reply-to: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: jtp.park@samsung.com, linux-samsung-soc@vger.kernel.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
 
-Sachin Kamat wrote:
+Thomas Abraham wrote:
 > 
-> Hi Kukjin,
+> This patchset removes all uses of 'clk_type' member from the platform data
+> of sdhci-s3c driver and adds device tree support for sdhci-s3c driver.
 > 
+> In this patchset, all uses of 'clk_type' member from the platform data are
+> removed from the sdhci-s3c driver and platform code. The clk_type is a SoC
+> specific information and not a board/machine specific information. Hence,
+> this
+> information can be more aptly represented using SoC specific driver data
+> in the
+> sdhci-s3c driver.
+> 
+> Hence all uses of 'clk_type' member in sdhci-s3c driver's platform data is
+> removed. In place of that, the sdhci host qurik
+> 'SDHCI_QUIRK_NONSTANDARD_CLOCK'
+> is used to handle controllers that do not have a standard sdclk division
+> (like those in the exynos4 SoC's).
+> 
+> This is a pre-requisite for adding device tree support for sdhci-s3c
+> driver.
+> While migrating towards device tree support, retreving 'clk_type'
+> information
+> from device tree information does not seem correct and hence it has been
+> added
+> as SoC specific driver data. All this is handled in patches 1 to 3.
+> 
+> Patch 4 to 6 add device tree support for sdhci-s3c driver. The fourth
+> patch
+> derives the maximum transfer width host capability from the max_width
+> member
+> in platform data. The fifth patch modifies the sdhci-s3c driver to
+> mainatain
+> a local copy of the platform data, which makes it easier to add device
+> tree
+> support for the driver. The last patch adds device tree based discovery
+> for
+> the sdhci-s3c driver.
+> 
+> This patchset is based on the following tree.
+>   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> [for-next]
+> 
+> Thomas Abraham (6):
+>   mmc: sdhci-s3c: Remove usage of clk_type member in platform data
+>   arm: exynos4: use 'exynos4-sdhci' as device name for sdhci controllers
+>   arm: samsung: remove all uses of clk_type member in sdhci platform data
+>   mmc: sdhci-s3c: derive transfer width host capability from max_width in
+> platform data
+>   mmc: sdhci-s3c: Keep a copy of platform data and use it
+>   mmc: sdhci-s3c: Add device tree support
+> 
+>  .../devicetree/bindings/mmc/samsung-sdhci.txt      |   70 ++++++
+>  arch/arm/mach-exynos/clock.c                       |   24 +-
+>  arch/arm/mach-exynos/common.c                      |    5 +
+>  arch/arm/mach-exynos/mach-armlex4210.c             |    3 -
+>  arch/arm/mach-exynos/mach-nuri.c                   |    3 -
+>  arch/arm/mach-exynos/mach-origen.c                 |    2 -
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 -
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    4 -
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    2 -
+>  arch/arm/plat-samsung/devs.c                       |    4 -
+>  arch/arm/plat-samsung/include/plat/sdhci.h         |   35 +++-
+>  arch/arm/plat-samsung/platformdata.c               |    2 -
+>  drivers/mmc/host/sdhci-s3c.c                       |  235
++++++++++++++++++++-
+>  13 files changed, 341 insertions(+), 50 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/samsung-
+> sdhci.txt
+
 Hi,
-> 
-> On 31 January 2012 09:47, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > On 01/30/12 14:15, Sachin Kamat wrote:
-> >>
-> >> Hi Kukjin,
-> >>
-> >> Ping.
-> >>
-> > Hi Sachin,
-> >
-> > I looked at your reply on Sylwester's comments, PATCH 3/4.
-> > I'd like to apply all of this series after your re-submitting.
-> 
-> 
-> I have already re-submitted patches 3 and 4 incorporating Sylwester's
-> comments.
-> 
-Would be helpful to me if you could add the mark of version in the re-submit
-patch.
 
-> Please let me know if you want me to send them once again.
-> 
-Yes, please.
+Looks ok to me and I'd like to pick this series in samsung tree with Chris'
+ack.
+
+Chris, is it ok? If you need to merge this in your tree, please let me know.
+I will provide topic branch for it.
+
+If any problems, please let me know.
 
 Thanks.
 
