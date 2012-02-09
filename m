@@ -1,109 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device
- tree support
-Date: Thu, 09 Feb 2012 22:42:56 +0900
-Message-ID: <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCHv3 1/3] ARM: Exynos: JPEG board definition
+Date: Thu, 09 Feb 2012 15:46:23 +0100
+Message-ID: <008101cce739$9839f8f0$c8adead0$%szyprowski@samsung.com>
+References: <1328095165-31628-1-git-send-email-andrzej.p@samsung.com>
+ <1328095165-31628-2-git-send-email-andrzej.p@samsung.com>
+ <001601cce726$3dee9080$b9cbb180$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63159 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757630Ab2BINnA (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:28347 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757653Ab2BIOqa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Feb 2012 08:43:00 -0500
-In-reply-to: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Thu, 9 Feb 2012 09:46:30 -0500
+Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LZ4002NLRPGKN@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 14:46:28 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LZ400DWQRPG11@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 14:46:28 +0000 (GMT)
+In-reply-to: <001601cce726$3dee9080$b9cbb180$%kim@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Thomas Abraham wrote:
-> 
-> This patchset removes all uses of 'clk_type' member from the platform data
-> of sdhci-s3c driver and adds device tree support for sdhci-s3c driver.
-> 
-> In this patchset, all uses of 'clk_type' member from the platform data are
-> removed from the sdhci-s3c driver and platform code. The clk_type is a SoC
-> specific information and not a board/machine specific information. Hence,
-> this
-> information can be more aptly represented using SoC specific driver data
-> in the
-> sdhci-s3c driver.
-> 
-> Hence all uses of 'clk_type' member in sdhci-s3c driver's platform data is
-> removed. In place of that, the sdhci host qurik
-> 'SDHCI_QUIRK_NONSTANDARD_CLOCK'
-> is used to handle controllers that do not have a standard sdclk division
-> (like those in the exynos4 SoC's).
-> 
-> This is a pre-requisite for adding device tree support for sdhci-s3c
-> driver.
-> While migrating towards device tree support, retreving 'clk_type'
-> information
-> from device tree information does not seem correct and hence it has been
-> added
-> as SoC specific driver data. All this is handled in patches 1 to 3.
-> 
-> Patch 4 to 6 add device tree support for sdhci-s3c driver. The fourth
-> patch
-> derives the maximum transfer width host capability from the max_width
-> member
-> in platform data. The fifth patch modifies the sdhci-s3c driver to
-> mainatain
-> a local copy of the platform data, which makes it easier to add device
-> tree
-> support for the driver. The last patch adds device tree based discovery
-> for
-> the sdhci-s3c driver.
-> 
-> This patchset is based on the following tree.
->   http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> [for-next]
-> 
-> Thomas Abraham (6):
->   mmc: sdhci-s3c: Remove usage of clk_type member in platform data
->   arm: exynos4: use 'exynos4-sdhci' as device name for sdhci controllers
->   arm: samsung: remove all uses of clk_type member in sdhci platform data
->   mmc: sdhci-s3c: derive transfer width host capability from max_width in
-> platform data
->   mmc: sdhci-s3c: Keep a copy of platform data and use it
->   mmc: sdhci-s3c: Add device tree support
-> 
->  .../devicetree/bindings/mmc/samsung-sdhci.txt      |   70 ++++++
->  arch/arm/mach-exynos/clock.c                       |   24 +-
->  arch/arm/mach-exynos/common.c                      |    5 +
->  arch/arm/mach-exynos/mach-armlex4210.c             |    3 -
->  arch/arm/mach-exynos/mach-nuri.c                   |    3 -
->  arch/arm/mach-exynos/mach-origen.c                 |    2 -
->  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 -
->  arch/arm/mach-exynos/mach-smdkv310.c               |    4 -
->  arch/arm/mach-exynos/mach-universal_c210.c         |    2 -
->  arch/arm/plat-samsung/devs.c                       |    4 -
->  arch/arm/plat-samsung/include/plat/sdhci.h         |   35 +++-
->  arch/arm/plat-samsung/platformdata.c               |    2 -
->  drivers/mmc/host/sdhci-s3c.c                       |  235
-+++++++++++++++++++-
->  13 files changed, 341 insertions(+), 50 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/samsung-
-> sdhci.txt
+Hello,
 
-Hi,
+On Thursday, February 09, 2012 1:28 PM Kukjin Kim wrote:
 
-Looks ok to me and I'd like to pick this series in samsung tree with Chris'
-ack.
+> > ARM: Exynos: JPEG board definition
+> >
+> 
+> [...]
+> 
+> >
+> > +#define EXYNOS4_PA_JPEG			0x11840000
+> > +
+> >  #define EXYNOS4_PA_G2D			0x12800000
+> >
+> >  #define EXYNOS4_PA_I2S0			0x03830000
+> > @@ -164,6 +166,7 @@
+> >  #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
+> >  #define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
+> >  #define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
+> > +#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
+> 
+> I'm not sure we _really_ need to re-define for JPEG.
+> Why not just use EXYNOS4_PA_JPEG?
 
-Chris, is it ok? If you need to merge this in your tree, please let me know.
-I will provide topic branch for it.
+The s5p-jpeg driver can be also used on S5PV210 so this approach seems 
+to be fine, the patch only lacks definitions for the S5PV210 series.
 
-If any problems, please let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
