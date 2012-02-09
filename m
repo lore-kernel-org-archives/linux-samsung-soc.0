@@ -1,160 +1,62 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [PATCH 0/4] [SCSI] ufshcd: UFS Host Controller Driver
-Date: Thu, 9 Feb 2012 13:34:18 +0900
-Message-ID: <CAKYAXd83xkxyPNYJf-fBf+oZ8h3GTuRd_8POe6m61t6_AW-mQg@mail.gmail.com>
-References: <1328158649-4137-1-git-send-email-vinholikatti@gmail.com>
-	<CAKYAXd_sRKCfw_rNrRD8yKKQEP_8Zee+E5rZW0G1NuuCA4HcNA@mail.gmail.com>
-	<CAKYAXd_msUdB2UbMvxqn751nuN5R=T6W5sjLDMxqEOR6KTX38w@mail.gmail.com>
-	<CALMYJDvy58ohVSjeQC2e=rccyKe2S=628q9YBFtpAm7v1HHO3Q@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] [CPUFREQ] EXYNOS: Initialize locking_frequency with initial
+ frequency
+Date: Thu, 09 Feb 2012 10:12:50 +0530
+Message-ID: <4F334ECA.5000507@linaro.org>
+References: <1327466713-29101-1-git-send-email-tushar.behera@linaro.org> <4F291D44.4040502@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-scsi-owner@vger.kernel.org>
-In-Reply-To: <CALMYJDvy58ohVSjeQC2e=rccyKe2S=628q9YBFtpAm7v1HHO3Q@mail.gmail.com>
-Sender: linux-scsi-owner@vger.kernel.org
-To: Santosh Y <santoshsy@gmail.com>
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>, James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, saugata.das@linaro.org, arnd@arndb.de, venkat@linaro.org, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:62133 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756693Ab2BIEm4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Feb 2012 23:42:56 -0500
+In-Reply-To: <4F291D44.4040502@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: davej@redhat.com, jc.lee@samsung.com, myungjoo.ham@samsung.com
 
-2012/2/6 Santosh Y <santoshsy@gmail.com>:
-> On Mon, Feb 6, 2012 at 4:15 AM, Namjae Jeon <linkinjeon@gmail.com> wr=
-ote:
->> 2012/2/5 Namjae Jeon <linkinjeon@gmail.com>:
->>> 2012/2/2 Vinayak Holikatti <vinholikatti@gmail.com>:
->>>> From: Santosh Yaraganavi <santoshsy@gmail.com>
->>>>
->>>> UFS is designed to be the most advanced specification for
->>>> both embedded and removable flash memory-based storage in mobile d=
-evices
->>>> such as smart phones and tablet computers. =C2=A0The UFS standard =
-represents
->>>> an evolutionary progression of JEDEC standards in this field, and =
-has been
->>>> specifically tailored for mobile applications and computing system=
-s requiring
->>>> high performance and low power consumption. =C2=A0The initial data=
- throughput for
->>>> UFS will be ~300 megabytes per second (MB/s), and the standard als=
-o supports
->>>> command queuing features to raise random read/write speeds.
->>>>
->>>> To achieve the highest performance and most power efficient data
->>>> transport, UFS uses the leading industry interface standards to fo=
-rm its
->>>> Interconnect Layer: MIPI=C2=AE Alliance=E2=80=99s M-PHY and UniPro=
-SM =C2=A0specifications.
->>>> UniPro is a comprehensive specification meant to act as a universa=
-l
->>>> chip-to-chip protocol, providing a common tunnel for other protoco=
-ls.
->>>> The M-PHY interface is designed as the primary physical interface =
-(PHY layer)
->>>> for the UniPro specification, and is a high speed serial interface=
- targeting
->>>> up to 2.9 gigabits per second (Gbps) per lane with up-scalability =
-to 5.8Gbps
->>>> per lane.
->>>>
->>>> MIPI=E2=80=99s M-PHY and UniPro specifications are optimized for m=
-obile applications,
->>>> and are designed from the ground up for efficient power management=
- in mobile
->>>> devices, including enabling efficient transitions between the acti=
-ve and power
->>>> save modes. Combined with a low active power level and a near-zero=
- idle power
->>>> level, UFS offers the promise for significant reductions in device=
- power
->>>> consumption.
->>>>
->>>> The UFS standard adopts the well-known SCSI Architecture Model and=
- command
->>>> protocols supporting multiple commands with command queuing featur=
-es and
->>>> enabling a multi-thread programming paradigm. This differs from co=
-nventional
->>>> flash-based memory cards and embedded flash solutions which proces=
-s one
->>>> command at a time, limiting random read/write access performance.
->>>> In addition, a forthcoming complementary UFS Host Controller Inter=
-face (HCI)
->>>> specification will allow system designers greater flexibility by s=
-implifying
->>>> the involvement of the host processor in the operation of the flas=
-h storage
->>>> subsystem. The UFS HCI specification and the adoption of SCSI will=
- provide
->>>> a well-known software programming model and enable wider market ad=
-option.
->>>>
->>>> This patchset contains PCIe based UFS host controller driver which=
- complies
->>>> to UFSHCI 1.0 and 1.1. The driver is based on Linux SCSI framework=
-=2E
->>>> The driver is tested with UFS Host controller(FPGA) and UFS device=
-(FPGA).
->>>>
->>>> This patch set is successfully applied on kernel version 3.3-rc2.
->>>>
->>>> Santosh Yaraganavi (4):
->>>> =C2=A0[SCSI] ufshcd: UFS Host controller driver
->>>> =C2=A0[SCSI] ufshcd: UFS UTP Transfer requests handling
->>>> =C2=A0[SCSI] ufshcd: UFSHCI error handling
->>>> =C2=A0[SCSI] ufshcd: SCSI error handling
->>>>
->>>> =C2=A0drivers/scsi/Kconfig =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A01 +
->>>> =C2=A0drivers/scsi/Makefile =C2=A0 =C2=A0 | =C2=A0 =C2=A01 +
->>>> =C2=A0drivers/scsi/ufs/Kconfig =C2=A0| =C2=A0 49 ++
->>>> =C2=A0drivers/scsi/ufs/Makefile | =C2=A0 =C2=A02 +
->>>> =C2=A0drivers/scsi/ufs/ufs.h =C2=A0 =C2=A0| =C2=A0203 +++++
->>>> =C2=A0drivers/scsi/ufs/ufshcd.c | 1954 +++++++++++++++++++++++++++=
-++++++++++++++++++
->>>> =C2=A0drivers/scsi/ufs/ufshci.h | =C2=A0360 +++++++++
->>>> =C2=A07 files changed, 2570 insertions(+), 0 deletions(-)
->>>> =C2=A0create mode 100644 drivers/scsi/ufs/Kconfig
->>>> =C2=A0create mode 100644 drivers/scsi/ufs/Makefile
->>>> =C2=A0create mode 100644 drivers/scsi/ufs/ufs.h
->>>> =C2=A0create mode 100644 drivers/scsi/ufs/ufshcd.c
->>>> =C2=A0create mode 100644 drivers/scsi/ufs/ufshci.h
->>>>
->>>> --
->>>> 1.7.5.4
->>> Hi.
->>> I have been waiting for ufs contribution.
->>> Unfortunately I don't have real target supported ufs(maybe only you
->>> have it). I can not debug and run this code, So just review only co=
-de
->>> with specification.
->>>>
->> Hi. Santosh.
->> Would you share performance measurement result (read/write seq,ran) =
-?
->> Thanks.
->
-> Hi Namjae,
->
-> Currently UFS Driver is being tested on on UFS Controller FPGA and UF=
-S
-> Device FPGA. So currently the main concentration is on functionality.
-> Performance on FPGA will not be the correct measurement.
-Hi. Santosh.
-If possible, I hope that you share performance to us when you post new
-patch next time.
-And Personally I am expecting good random I/O speed on UFS.
-Thanks.
->
->>>> --
->>>> To unsubscribe from this list: send the line "unsubscribe linux-ke=
-rnel" in
->>>> the body of a message to majordomo@vger.kernel.org
->>>> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info=
-=2Ehtml
->>>> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
->
-> --
-> ~Santosh
---
-To unsubscribe from this list: send the line "unsubscribe linux-scsi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Ping
+
+On 02/01/2012 04:38 PM, Tushar Behera wrote:
+> Ping
+> 
+> On 01/25/2012 10:15 AM, Tushar Behera wrote:
+>> As per definition, locking_frequency is the initial frequency which is
+>> set by boot-loader. Hence the value is updated with the initial value
+>> during boot time init call.
+>>
+>> This code was present in exynos210-cpufreq.c before this consolidation
+>> patch.
+>> - a125a17fa61a ([CPUFREQ] EXYNOS: Make EXYNOS common cpufreq driver).
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+>> ---
+>> The patch is based on v3.3-rc1.
+>>
+>>  drivers/cpufreq/exynos-cpufreq.c |    2 ++
+>>  1 files changed, 2 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+>> index 5467879..7cfb516 100644
+>> --- a/drivers/cpufreq/exynos-cpufreq.c
+>> +++ b/drivers/cpufreq/exynos-cpufreq.c
+>> @@ -210,6 +210,8 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+>>  
+>>  	cpufreq_frequency_table_get_attr(exynos_info->freq_table, policy->cpu);
+>>  
+>> +	locking_frequency = exynos_getspeed(0);
+>> +
+>>  	/* set the transition latency value */
+>>  	policy->cpuinfo.transition_latency = 100000;
+>>  
+> 
+> 
+
+
+-- 
+Tushar Behera
