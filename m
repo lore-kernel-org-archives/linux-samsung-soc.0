@@ -1,63 +1,50 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCHv3 1/3] ARM: Exynos: JPEG board definition
-Date: Thu, 09 Feb 2012 15:46:23 +0100
-Message-ID: <008101cce739$9839f8f0$c8adead0$%szyprowski@samsung.com>
-References: <1328095165-31628-1-git-send-email-andrzej.p@samsung.com>
- <1328095165-31628-2-git-send-email-andrzej.p@samsung.com>
- <001601cce726$3dee9080$b9cbb180$%kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Adds Samsung TRATS board support
+Date: Thu, 9 Feb 2012 10:58:04 -0800
+Message-ID: <CAJuYYwRn7Luhj0223-i9u3ETutb8qgFUY7FEBq-ZOUi74DouMA@mail.gmail.com>
+References: <1324624169-16102-1-git-send-email-riverful.kim@samsung.com>
+	<1327652483-15655-1-git-send-email-riverful.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:28347 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757653Ab2BIOqa (ORCPT
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:64067 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758256Ab2BIS6G convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Feb 2012 09:46:30 -0500
-Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0LZ4002NLRPGKN@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 14:46:28 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0LZ400DWQRPG11@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 09 Feb 2012 14:46:28 +0000 (GMT)
-In-reply-to: <001601cce726$3dee9080$b9cbb180$%kim@samsung.com>
-Content-language: pl
+	Thu, 9 Feb 2012 13:58:06 -0500
+Received: by vbjk17 with SMTP id k17so1284685vbj.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Feb 2012 10:58:04 -0800 (PST)
+In-Reply-To: <1327652483-15655-1-git-send-email-riverful.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: "HeungJun, Kim" <riverful.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hello,
+Dear Mr. HeungJun Kim,
 
-On Thursday, February 09, 2012 1:28 PM Kukjin Kim wrote:
+On 27 January 2012 00:21, HeungJun, Kim <riverful.kim@samsung.com> wrot=
+e:
+> This patch adds Samsung Mobile TRATS board support.
+>
+> Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> =A0arch/arm/mach-exynos/Kconfig =A0 =A0 =A0| =A0 11 ++
+> =A0arch/arm/mach-exynos/Makefile =A0 =A0 | =A0 =A01 +
+> =A0arch/arm/mach-exynos/mach-trats.c | =A0344 +++++++++++++++++++++++=
+++++++++++++++
+> =A03 files changed, 356 insertions(+), 0 deletions(-)
+> =A0create mode 100644 arch/arm/mach-exynos/mach-trats.c
 
-> > ARM: Exynos: JPEG board definition
-> >
-> 
-> [...]
-> 
-> >
-> > +#define EXYNOS4_PA_JPEG			0x11840000
-> > +
-> >  #define EXYNOS4_PA_G2D			0x12800000
-> >
-> >  #define EXYNOS4_PA_I2S0			0x03830000
-> > @@ -164,6 +166,7 @@
-> >  #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
-> >  #define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
-> >  #define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
-> > +#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
-> 
-> I'm not sure we _really_ need to re-define for JPEG.
-> Why not just use EXYNOS4_PA_JPEG?
+The exynos4 dt-enabled board file can support most of the features
+added in this board file. The other option that could be considered
+here would be to add DT support for this board file, and use AUX_DATA
+to supply platform data for drivers that do not have dt support yet.
+It would be better to use dt support for new board support that we
+add.
 
-The s5p-jpeg driver can be also used on S5PV210 so this approach seems 
-to be fine, the patch only lacks definitions for the S5PV210 series.
+Thanks,
+Thomas.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+(snip)
