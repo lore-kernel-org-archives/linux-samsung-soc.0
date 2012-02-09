@@ -1,62 +1,44 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] [CPUFREQ] EXYNOS: Initialize locking_frequency with initial
- frequency
-Date: Thu, 09 Feb 2012 10:12:50 +0530
-Message-ID: <4F334ECA.5000507@linaro.org>
-References: <1327466713-29101-1-git-send-email-tushar.behera@linaro.org> <4F291D44.4040502@linaro.org>
+From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
+Subject: Re: Re: [PATCH] EXYNOS: Initialize locking_frequency with
+ initial frequency
+Date: Thu, 09 Feb 2012 05:35:09 +0000 (GMT)
+Message-ID: <22312902.436411328765708629.JavaMail.weblogic@epml10>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:62133 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756693Ab2BIEm4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Feb 2012 23:42:56 -0500
-In-Reply-To: <4F291D44.4040502@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
+Return-path: <cpufreq-owner@vger.kernel.org>
+MIME-version: 1.0
+Sender: cpufreq-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>, "cpufreq@vger.kernel.org" <cpufreq@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "davej@redhat.com" <davej@redhat.com>, =?euc-kr?Q?=C0=CC=C0=E7=C3=B6?= <jc.lee@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: davej@redhat.com, jc.lee@samsung.com, myungjoo.ham@samsung.com
 
-Ping
-
-On 02/01/2012 04:38 PM, Tushar Behera wrote:
-> Ping
-> 
-> On 01/25/2012 10:15 AM, Tushar Behera wrote:
->> As per definition, locking_frequency is the initial frequency which is
->> set by boot-loader. Hence the value is updated with the initial value
->> during boot time init call.
->>
->> This code was present in exynos210-cpufreq.c before this consolidation
->> patch.
->> - a125a17fa61a ([CPUFREQ] EXYNOS: Make EXYNOS common cpufreq driver).
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
->> ---
->> The patch is based on v3.3-rc1.
->>
->>  drivers/cpufreq/exynos-cpufreq.c |    2 ++
->>  1 files changed, 2 insertions(+), 0 deletions(-)
->>
->> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
->> index 5467879..7cfb516 100644
->> --- a/drivers/cpufreq/exynos-cpufreq.c
->> +++ b/drivers/cpufreq/exynos-cpufreq.c
->> @@ -210,6 +210,8 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
->>  
->>  	cpufreq_frequency_table_get_attr(exynos_info->freq_table, policy->cpu);
->>  
->> +	locking_frequency = exynos_getspeed(0);
->> +
->>  	/* set the transition latency value */
->>  	policy->cpuinfo.transition_latency = 100000;
->>  
-> 
-> 
+PiBPbiAwMi8wMS8yMDEyIDA0OjM4IFBNLCBUdXNoYXIgQmVoZXJhIHdyb3RlOg0KPiA+IE9uIDAx
+LzI1LzIwMTIgMTA6MTUgQU0sIFR1c2hhciBCZWhlcmEgd3JvdGU6DQo+ID4+IEFzIHBlciBkZWZp
+bml0aW9uLCBsb2NraW5nX2ZyZXF1ZW5jeSBpcyB0aGUgaW5pdGlhbCBmcmVxdWVuY3kgd2hpY2gg
+aXMNCj4gPj4gc2V0IGJ5IGJvb3QtbG9hZGVyLiBIZW5jZSB0aGUgdmFsdWUgaXMgdXBkYXRlZCB3
+aXRoIHRoZSBpbml0aWFsIHZhbHVlDQo+ID4+IGR1cmluZyBib290IHRpbWUgaW5pdCBjYWxsLg0K
+PiA+Pg0KPiA+PiBUaGlzIGNvZGUgd2FzIHByZXNlbnQgaW4gZXh5bm9zMjEwLWNwdWZyZXEuYyBi
+ZWZvcmUgdGhpcyBjb25zb2xpZGF0aW9uDQo+ID4+IHBhdGNoLg0KPiA+PiAtIGExMjVhMTdmYTYx
+YSAoW0NQVUZSRVFdIEVYWU5PUzogTWFrZSBFWFlOT1MgY29tbW9uIGNwdWZyZXEgZHJpdmVyKS4N
+Cj4gPj4NCj4gPj4gU2lnbmVkLW9mZi1ieTogVHVzaGFyIEJlaGVyYSA8dHVzaGFyLmJlaGVyYUBs
+aW5hcm8ub3JnPg0KPiA+PiBTaWduZWQtb2ZmLWJ5OiBJbmRlcnBhbCBTaW5naCA8aW5kZXJwYWwu
+c2luZ2hAbGluYXJvLm9yZz4NCg0KQWNrZWQtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFt
+QHNhbXN1bmcuY29tPg0KDQo+ID4+IC0tLQ0KPiA+PiBUaGUgcGF0Y2ggaXMgYmFzZWQgb24gdjMu
+My1yYzEuDQo+ID4+DQo+ID4+ICBkcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNwdWZyZXEuYyB8ICAg
+IDIgKysNCj4gPj4gIDEgZmlsZXMgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAwIGRlbGV0aW9u
+cygtKQ0KPiA+Pg0KPiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jcHVmcmVxL2V4eW5vcy1jcHVm
+cmVxLmMgYi9kcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNwdWZyZXEuYw0KPiA+PiBpbmRleCA1NDY3
+ODc5Li43Y2ZiNTE2IDEwMDY0NA0KPiA+PiAtLS0gYS9kcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNw
+dWZyZXEuYw0KPiA+PiArKysgYi9kcml2ZXJzL2NwdWZyZXEvZXh5bm9zLWNwdWZyZXEuYw0KPiA+
+PiBAQCAtMjEwLDYgKzIxMCw4IEBAIHN0YXRpYyBpbnQgZXh5bm9zX2NwdWZyZXFfY3B1X2luaXQo
+c3RydWN0IGNwdWZyZXFfcG9saWN5ICpwb2xpY3kpDQo+ID4+ICANCj4gPj4gIAljcHVmcmVxX2Zy
+ZXF1ZW5jeV90YWJsZV9nZXRfYXR0cihleHlub3NfaW5mby0+ZnJlcV90YWJsZSwgcG9saWN5LT5j
+cHUpOw0KPiA+PiAgDQo+ID4+ICsJbG9ja2luZ19mcmVxdWVuY3kgPSBleHlub3NfZ2V0c3BlZWQo
+MCk7DQo+ID4+ICsNCj4gPj4gIAkvKiBzZXQgdGhlIHRyYW5zaXRpb24gbGF0ZW5jeSB2YWx1ZSAq
+Lw0KPiA+PiAgCXBvbGljeS0+Y3B1aW5mby50cmFuc2l0aW9uX2xhdGVuY3kgPSAxMDAwMDA7DQo+
+ID4+ICANCj4gPiANCj4gPiANCj4gDQo+IA0KPiAtLSANCj4gVHVzaGFyIEJlaGVyYQ0KPiANCj4g
+ICAgICAgICAgDQo=
 
 
--- 
-Tushar Behera
