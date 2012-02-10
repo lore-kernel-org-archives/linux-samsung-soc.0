@@ -1,153 +1,60 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Add alias name of 'fimd' clock for 'lcd' clock
-Date: Fri, 10 Feb 2012 16:17:17 +0900
-Message-ID: <000e01cce7c4$05316030$0f942090$%han@samsung.com>
-References: <000101ccd693$71185b60$53491220$%han@samsung.com>
- <CAH9JG2UGvc42AzCSPSKwNT1UrnPy8RG7Snoe+vULoAMW1GQckA@mail.gmail.com>
- <4F34BA65.7030108@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Adds Samsung TRATS board support
+Date: Fri, 10 Feb 2012 17:01:27 +0900
+Message-ID: <CAH9JG2VLxmsafu09RmU5GPXnQUMnJo8XZSQcKTkBD2ZpnZ6yPQ@mail.gmail.com>
+References: <1324624169-16102-1-git-send-email-riverful.kim@samsung.com>
+	<1327652483-15655-1-git-send-email-riverful.kim@samsung.com>
+	<CAJuYYwRn7Luhj0223-i9u3ETutb8qgFUY7FEBq-ZOUi74DouMA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:11789 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753098Ab2BJHRS (ORCPT
+Received: from mail-qw0-f46.google.com ([209.85.216.46]:60520 "EHLO
+	mail-qw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753546Ab2BJIB2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Feb 2012 02:17:18 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ60090O1JM64K0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Feb 2012 16:17:16 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.119.56])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ600CJJ1KS2470@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 10 Feb 2012 16:17:16 +0900 (KST)
-In-reply-to: <4F34BA65.7030108@samsung.com>
-Content-language: ko
+	Fri, 10 Feb 2012 03:01:28 -0500
+Received: by qadc10 with SMTP id c10so128648qad.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2012 00:01:27 -0800 (PST)
+In-Reply-To: <CAJuYYwRn7Luhj0223-i9u3ETutb8qgFUY7FEBq-ZOUi74DouMA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Evgeny Voevodin' <e.voevodin@samsung.com>, 'Kyungmin Park' <kmpark@infradead.org>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Dmitry Solodkiy' <d.solodkiy@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: "HeungJun, Kim" <riverful.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
++ Karol for DT support later
 
-Hi, Evgeny Voevodin.
-> -----Original Message-----
-> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-owner@vger.kernel.org] On Behalf
-> Of Evgeny Voevodin
-> Sent: Friday, February 10, 2012 3:34 PM
-> To: Kyungmin Park
-> Cc: Jingoo Han; Kukjin Kim; linux-samsung-soc@vger.kernel.org; Jonghwan Choi; Tushar Behera; Dmitry
-> Solodkiy
-> Subject: Re: [PATCH] ARM: EXYNOS: Add alias name of 'fimd' clock for 'lcd' clock
-> 
-> On 01/20/2012 04:53 AM, Kyungmin Park wrote:
-> > On 1/19/12, Jingoo Han<jg1.han@samsung.com>  wrote:
-> >> This patch adds alias name of 'fimd' clock for 'lcd' clock. While 'lcd'
-> >> clock is used for s3c-fb driver, 'fimd' clock is defined for Exynos fimd
-> >> ip. Therefore, 'fimd' clock can be called by using clk_add_alias().
-> > Hi,
-> >
-> > Doesn't it better to add common.c?
-> > Are there any reason to add each board files?
-> >
-> > Thank you,
-> > Kyungmin Park
-> >> Cc: Jonghwan Choi<jhbird.choi@samsung.com>
-> >> Signed-off-by: Jingoo Han<jg1.han@samsung.com>
-> >> ---
-> >>   arch/arm/mach-exynos/mach-nuri.c           |    2 ++
-> >>   arch/arm/mach-exynos/mach-origen.c         |    2 ++
-> >>   arch/arm/mach-exynos/mach-smdkv310.c       |    2 ++
-> >>   arch/arm/mach-exynos/mach-universal_c210.c |    3 +++
-> >>   4 files changed, 9 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/mach-nuri.c
-> >> b/arch/arm/mach-exynos/mach-nuri.c
-> >> index 3df8bf4..06c22e0 100644
-> >> --- a/arch/arm/mach-exynos/mach-nuri.c
-> >> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> >> @@ -1310,6 +1310,8 @@ static void __init nuri_machine_init(void)
-> >>   	i2c9_devs[I2C9_MAX17042].irq = gpio_to_irq(EXYNOS4_GPX2(3));
-> >>   	i2c_register_board_info(9, i2c9_devs, ARRAY_SIZE(i2c9_devs));
-> >>
-> >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> >>   	s5p_fimd0_set_platdata(&nuri_fb_pdata);
-> >>
-> >>   	nuri_camera_init();
-> >> diff --git a/arch/arm/mach-exynos/mach-origen.c
-> >> b/arch/arm/mach-exynos/mach-origen.c
-> >> index b453464..7cea0be 100644
-> >> --- a/arch/arm/mach-exynos/mach-origen.c
-> >> +++ b/arch/arm/mach-exynos/mach-origen.c
-> >> @@ -722,6 +722,8 @@ static void __init origen_machine_init(void)
-> >>   	s5p_tv_setup();
-> >>   	s5p_i2c_hdmiphy_set_platdata(NULL);
-> >>
-> >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> >>   	s5p_fimd0_set_platdata(&origen_lcd_pdata);
-> >>
-> >>   	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
-> >> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c
-> >> b/arch/arm/mach-exynos/mach-smdkv310.c
-> >> index bf2094e..eccd96d 100644
-> >> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> >> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> >> @@ -370,6 +370,8 @@ static void __init smdkv310_machine_init(void)
-> >>   	samsung_keypad_set_platdata(&smdkv310_keypad_data);
-> >>
-> >>   	samsung_bl_set(&smdkv310_bl_gpio_info,&smdkv310_bl_data);
-> >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> >>   	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
-> >>
-> >>   	smdkv310_ehci_init();
-> >> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
-> >> b/arch/arm/mach-exynos/mach-universal_c210.c
-> >> index c38e18d..fe554f1 100644
-> >> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> >> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> >> @@ -31,6 +31,7 @@
-> >>   #include<plat/cpu.h>
-> >>   #include<plat/devs.h>
-> >>   #include<plat/iic.h>
-> >> +#include<plat/clock.h>
-> >>   #include<plat/gpio-cfg.h>
-> >>   #include<plat/fb.h>
-> >>   #include<plat/mfc.h>
-> >> @@ -1029,6 +1030,8 @@ static void __init universal_machine_init(void)
-> >>   	s5p_i2c_hdmiphy_set_platdata(NULL);
-> >>   	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
-> >>
-> >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> >>   	s5p_fimd0_set_platdata(&universal_lcd_pdata);
-> >>
-> >>   	universal_touchkey_init();
-> >> --
-> >> 1.7.1
-> >>
-> >>
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> >> in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >>
-> 
-> Still no appropriate support of frame buffer in the kernel...
-OK, I will send the new patch.
-> 
+On Fri, Feb 10, 2012 at 3:58 AM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
+> Dear Mr. HeungJun Kim,
+>
+> On 27 January 2012 00:21, HeungJun, Kim <riverful.kim@samsung.com> wr=
+ote:
+>> This patch adds Samsung Mobile TRATS board support.
+>>
+>> Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>> =A0arch/arm/mach-exynos/Kconfig =A0 =A0 =A0| =A0 11 ++
+>> =A0arch/arm/mach-exynos/Makefile =A0 =A0 | =A0 =A01 +
+>> =A0arch/arm/mach-exynos/mach-trats.c | =A0344 ++++++++++++++++++++++=
++++++++++++++++
+>> =A03 files changed, 356 insertions(+), 0 deletions(-)
+>> =A0create mode 100644 arch/arm/mach-exynos/mach-trats.c
+>
+> The exynos4 dt-enabled board file can support most of the features
+> added in this board file. The other option that could be considered
+> here would be to add DT support for this board file, and use AUX_DATA
+> to supply platform data for drivers that do not have dt support yet.
+> It would be better to use dt support for new board support that we
+> add.
+>
+> Thanks,
+> Thomas.
+>
+> (snip)
 > --
-> Kind regards,
-> Evgeny Voevodin,
-> Leading Software Engineer,
-> ASWG, Moscow R&D center, Samsung Electronics
-> e-mail: e.voevodin@samsung.com
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc" in
 > the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
