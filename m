@@ -1,16 +1,22 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] EXYNOS4X12: Add support cpufreq for EXYNOS4X12
-Date: Fri, 10 Feb 2012 21:15:11 +0900
-Message-ID: <013201cce7ed$a2ef9f20$e8cedd60$%kim@samsung.com>
+Subject: [PATCH RE-SEND] [CPUFREQ] EXYNOS4X12: Add support cpufreq for
+ EXYNOS4X12
+Date: Fri, 10 Feb 2012 21:19:48 +0900
+Message-ID: <013701cce7ee$48531960$d8f94c20$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <cpufreq-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:50822 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754694Ab2BJMTw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Feb 2012 07:19:52 -0500
 Content-language: ko
-Sender: cpufreq-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 Cc: 'Dave Jones' <davej@redhat.com>, jc.lee@samsung.com
-List-Id: linux-samsung-soc@vger.kernel.org
 
 From: Jaecheol Lee <jc.lee@samsung.com>
 
@@ -22,18 +28,19 @@ Cortex-A9 cores) SoCs.
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
+Dave, please kindly ignore previous exynos4x12 cpufreq patch
+which has a line wrapped problem.
+
  arch/arm/mach-exynos/include/mach/cpufreq.h    |    1 +
  arch/arm/mach-exynos/include/mach/regs-clock.h |    9 +
  drivers/cpufreq/Kconfig.arm                    |    7 +
  drivers/cpufreq/Makefile                       |    1 +
  drivers/cpufreq/exynos-cpufreq.c               |    2 +
- drivers/cpufreq/exynos4x12-cpufreq.c           |  539
-++++++++++++++++++++++++
+ drivers/cpufreq/exynos4x12-cpufreq.c           |  539 ++++++++++++++++++++++++
  6 files changed, 559 insertions(+), 0 deletions(-)
  create mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
 
-diff --git a/arch/arm/mach-exynos/include/mach/cpufreq.h
-b/arch/arm/mach-exynos/include/mach/cpufreq.h
+diff --git a/arch/arm/mach-exynos/include/mach/cpufreq.h b/arch/arm/mach-exynos/include/mach/cpufreq.h
 index 3df27f2..96ac0cb 100644
 --- a/arch/arm/mach-exynos/include/mach/cpufreq.h
 +++ b/arch/arm/mach-exynos/include/mach/cpufreq.h
@@ -42,34 +49,26 @@ index 3df27f2..96ac0cb 100644
  
  extern int exynos4210_cpufreq_init(struct exynos_dvfs_info *);
 +extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h
-b/arch/arm/mach-exynos/include/mach/regs-clock.h
+diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
 index 113836b..1c57fa8 100644
 --- a/arch/arm/mach-exynos/include/mach/regs-clock.h
 +++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
 @@ -160,6 +160,15 @@
- #define EXYNOS4_CLKDIV_CPU0_PCLKDBG_MASK	(0x7 <<
-EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT)
+ #define EXYNOS4_CLKDIV_CPU0_PCLKDBG_MASK	(0x7 << EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT)
  #define EXYNOS4_CLKDIV_CPU0_APLL_SHIFT		(24)
- #define EXYNOS4_CLKDIV_CPU0_APLL_MASK		(0x7 <<
-EXYNOS4_CLKDIV_CPU0_APLL_SHIFT)
+ #define EXYNOS4_CLKDIV_CPU0_APLL_MASK		(0x7 << EXYNOS4_CLKDIV_CPU0_APLL_SHIFT)
 +#define EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT		28
-+#define EXYNOS4_CLKDIV_CPU0_CORE2_MASK		(0x7 <<
-EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT)
++#define EXYNOS4_CLKDIV_CPU0_CORE2_MASK		(0x7 << EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT)
 +
 +#define EXYNOS4_CLKDIV_CPU1_COPY_SHIFT		0
-+#define EXYNOS4_CLKDIV_CPU1_COPY_MASK		(0x7 <<
-EXYNOS4_CLKDIV_CPU1_COPY_SHIFT)
++#define EXYNOS4_CLKDIV_CPU1_COPY_MASK		(0x7 << EXYNOS4_CLKDIV_CPU1_COPY_SHIFT)
 +#define EXYNOS4_CLKDIV_CPU1_HPM_SHIFT		4
-+#define EXYNOS4_CLKDIV_CPU1_HPM_MASK		(0x7 <<
-EXYNOS4_CLKDIV_CPU1_HPM_SHIFT)
++#define EXYNOS4_CLKDIV_CPU1_HPM_MASK		(0x7 << EXYNOS4_CLKDIV_CPU1_HPM_SHIFT)
 +#define EXYNOS4_CLKDIV_CPU1_CORES_SHIFT		8
-+#define EXYNOS4_CLKDIV_CPU1_CORES_MASK		(0x7 <<
-EXYNOS4_CLKDIV_CPU1_CORES_SHIFT)
++#define EXYNOS4_CLKDIV_CPU1_CORES_MASK		(0x7 << EXYNOS4_CLKDIV_CPU1_CORES_SHIFT)
  
  #define EXYNOS4_CLKDIV_DMC0_ACP_SHIFT		(0)
- #define EXYNOS4_CLKDIV_DMC0_ACP_MASK		(0x7 <<
-EXYNOS4_CLKDIV_DMC0_ACP_SHIFT)
+ #define EXYNOS4_CLKDIV_DMC0_ACP_MASK		(0x7 << EXYNOS4_CLKDIV_DMC0_ACP_SHIFT)
 diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
 index e0664fe..062c6a0 100644
 --- a/drivers/cpufreq/Kconfig.arm
@@ -103,11 +102,8 @@ index ac000fa..7b21c68 100644
 +obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+= exynos4x12-cpufreq.o
  obj-$(CONFIG_ARCH_OMAP2PLUS)            += omap-cpufreq.o
  
- 
-############################################################################
-######
-diff --git a/drivers/cpufreq/exynos-cpufreq.c
-b/drivers/cpufreq/exynos-cpufreq.c
+ ##################################################################################
+diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
 index 5467879..ccc3145 100644
 --- a/drivers/cpufreq/exynos-cpufreq.c
 +++ b/drivers/cpufreq/exynos-cpufreq.c
@@ -120,8 +116,7 @@ index 5467879..ccc3145 100644
  	else
  		pr_err("%s: CPU type not found\n", __func__);
  
-diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c
-b/drivers/cpufreq/exynos4x12-cpufreq.c
+diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c b/drivers/cpufreq/exynos4x12-cpufreq.c
 new file mode 100644
 index 0000000..5ddba2e
 --- /dev/null
@@ -599,39 +594,24 @@ index 0000000..5ddba2e
 +			EXYNOS4_CLKDIV_CPU0_APLL_MASK);
 +
 +		if (soc_is_exynos4212()) {
-+			tmp |= ((clkdiv_cpu0_4212[i][0] <<
-EXYNOS4_CLKDIV_CPU0_CORE_SHIFT) |
-+				(clkdiv_cpu0_4212[i][1] <<
-EXYNOS4_CLKDIV_CPU0_COREM0_SHIFT) |
-+				(clkdiv_cpu0_4212[i][2] <<
-EXYNOS4_CLKDIV_CPU0_COREM1_SHIFT) |
-+				(clkdiv_cpu0_4212[i][3] <<
-EXYNOS4_CLKDIV_CPU0_PERIPH_SHIFT) |
-+				(clkdiv_cpu0_4212[i][4] <<
-EXYNOS4_CLKDIV_CPU0_ATB_SHIFT) |
-+				(clkdiv_cpu0_4212[i][5] <<
-EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT) |
-+				(clkdiv_cpu0_4212[i][6] <<
-EXYNOS4_CLKDIV_CPU0_APLL_SHIFT));
++			tmp |= ((clkdiv_cpu0_4212[i][0] << EXYNOS4_CLKDIV_CPU0_CORE_SHIFT) |
++				(clkdiv_cpu0_4212[i][1] << EXYNOS4_CLKDIV_CPU0_COREM0_SHIFT) |
++				(clkdiv_cpu0_4212[i][2] << EXYNOS4_CLKDIV_CPU0_COREM1_SHIFT) |
++				(clkdiv_cpu0_4212[i][3] << EXYNOS4_CLKDIV_CPU0_PERIPH_SHIFT) |
++				(clkdiv_cpu0_4212[i][4] << EXYNOS4_CLKDIV_CPU0_ATB_SHIFT) |
++				(clkdiv_cpu0_4212[i][5] << EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT) |
++				(clkdiv_cpu0_4212[i][6] << EXYNOS4_CLKDIV_CPU0_APLL_SHIFT));
 +		} else {
 +			tmp &= ~EXYNOS4_CLKDIV_CPU0_CORE2_MASK;
 +
-+			tmp |= ((clkdiv_cpu0_4412[i][0] <<
-EXYNOS4_CLKDIV_CPU0_CORE_SHIFT) |
-+				(clkdiv_cpu0_4412[i][1] <<
-EXYNOS4_CLKDIV_CPU0_COREM0_SHIFT) |
-+				(clkdiv_cpu0_4412[i][2] <<
-EXYNOS4_CLKDIV_CPU0_COREM1_SHIFT) |
-+				(clkdiv_cpu0_4412[i][3] <<
-EXYNOS4_CLKDIV_CPU0_PERIPH_SHIFT) |
-+				(clkdiv_cpu0_4412[i][4] <<
-EXYNOS4_CLKDIV_CPU0_ATB_SHIFT) |
-+				(clkdiv_cpu0_4412[i][5] <<
-EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT) |
-+				(clkdiv_cpu0_4412[i][6] <<
-EXYNOS4_CLKDIV_CPU0_APLL_SHIFT) |
-+				(clkdiv_cpu0_4412[i][7] <<
-EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT));
++			tmp |= ((clkdiv_cpu0_4412[i][0] << EXYNOS4_CLKDIV_CPU0_CORE_SHIFT) |
++				(clkdiv_cpu0_4412[i][1] << EXYNOS4_CLKDIV_CPU0_COREM0_SHIFT) |
++				(clkdiv_cpu0_4412[i][2] << EXYNOS4_CLKDIV_CPU0_COREM1_SHIFT) |
++				(clkdiv_cpu0_4412[i][3] << EXYNOS4_CLKDIV_CPU0_PERIPH_SHIFT) |
++				(clkdiv_cpu0_4412[i][4] << EXYNOS4_CLKDIV_CPU0_ATB_SHIFT) |
++				(clkdiv_cpu0_4412[i][5] << EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT) |
++				(clkdiv_cpu0_4412[i][6] << EXYNOS4_CLKDIV_CPU0_APLL_SHIFT) |
++				(clkdiv_cpu0_4412[i][7] << EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT));
 +		}
 +
 +		exynos4x12_clkdiv_table[i].clkdiv = tmp;
@@ -641,20 +621,15 @@ EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT));
 +		if (soc_is_exynos4212()) {
 +			tmp &= ~(EXYNOS4_CLKDIV_CPU1_COPY_MASK |
 +				EXYNOS4_CLKDIV_CPU1_HPM_MASK);
-+			tmp |= ((clkdiv_cpu1_4212[i][0] <<
-EXYNOS4_CLKDIV_CPU1_COPY_SHIFT) |
-+				(clkdiv_cpu1_4212[i][1] <<
-EXYNOS4_CLKDIV_CPU1_HPM_SHIFT));
++			tmp |= ((clkdiv_cpu1_4212[i][0] << EXYNOS4_CLKDIV_CPU1_COPY_SHIFT) |
++				(clkdiv_cpu1_4212[i][1] << EXYNOS4_CLKDIV_CPU1_HPM_SHIFT));
 +		} else {
 +			tmp &= ~(EXYNOS4_CLKDIV_CPU1_COPY_MASK |
 +				EXYNOS4_CLKDIV_CPU1_HPM_MASK |
 +				EXYNOS4_CLKDIV_CPU1_CORES_MASK);
-+			tmp |= ((clkdiv_cpu1_4412[i][0] <<
-EXYNOS4_CLKDIV_CPU1_COPY_SHIFT) |
-+				(clkdiv_cpu1_4412[i][1] <<
-EXYNOS4_CLKDIV_CPU1_HPM_SHIFT) |
-+				(clkdiv_cpu1_4412[i][2] <<
-EXYNOS4_CLKDIV_CPU1_CORES_SHIFT));
++			tmp |= ((clkdiv_cpu1_4412[i][0] << EXYNOS4_CLKDIV_CPU1_COPY_SHIFT) |
++				(clkdiv_cpu1_4412[i][1] << EXYNOS4_CLKDIV_CPU1_HPM_SHIFT) |
++				(clkdiv_cpu1_4412[i][2] << EXYNOS4_CLKDIV_CPU1_CORES_SHIFT));
 +		}
 +		exynos4x12_clkdiv_table[i].clkdiv1 = tmp;
 +	}
@@ -688,4 +663,3 @@ EXYNOS4_CLKDIV_CPU1_CORES_SHIFT));
 +EXPORT_SYMBOL(exynos4x12_cpufreq_init);
 -- 
 1.7.1
-
