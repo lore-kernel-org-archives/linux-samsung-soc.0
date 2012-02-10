@@ -1,221 +1,98 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCHv6 1/7] ARM: dma-mapping: remove offset parameter to prepare for
-	generic dma_ops
-Date: Fri, 10 Feb 2012 19:58:38 +0100
-Message-ID: <1328900324-20946-2-git-send-email-m.szyprowski@samsung.com>
-References: <1328900324-20946-1-git-send-email-m.szyprowski@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Adds Samsung TRATS board support
+Date: Fri, 10 Feb 2012 11:00:47 -0800
+Message-ID: <CAJuYYwQJp0N2bptjbnHFubyg2YUROkUqiy_OaTaRfyvrvehD5g@mail.gmail.com>
+References: <1324624169-16102-1-git-send-email-riverful.kim@samsung.com>
+	<1327652483-15655-1-git-send-email-riverful.kim@samsung.com>
+	<CAJuYYwRn7Luhj0223-i9u3ETutb8qgFUY7FEBq-ZOUi74DouMA@mail.gmail.com>
+	<CAH9JG2VLxmsafu09RmU5GPXnQUMnJo8XZSQcKTkBD2ZpnZ6yPQ@mail.gmail.com>
+	<4F3559E7.7060904@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <1328900324-20946-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Shariq Hasnain <shariq.hasnain-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Chunsang Jeong <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:33309 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759815Ab2BJTAt convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 10 Feb 2012 14:00:49 -0500
+Received: by vcge1 with SMTP id e1so2026124vcg.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 10 Feb 2012 11:00:49 -0800 (PST)
+In-Reply-To: <4F3559E7.7060904@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: Kyungmin Park <kmpark@infradead.org>, "HeungJun, Kim" <riverful.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, Marek Szyprowski <m.szyprowski@samsung.com>
 
-This patch removes the need for offset parameter in dma bounce
-functions. This is required to let dma-mapping framework on ARM
-architecture use common, generic dma-mapping helpers.
+Hi Karol,
 
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/common/dmabounce.c        |   13 +++++--
- arch/arm/include/asm/dma-mapping.h |   67 +++++++++++++++++------------------
- arch/arm/mm/dma-mapping.c          |    4 +-
- 3 files changed, 45 insertions(+), 39 deletions(-)
+On 10 February 2012 09:54, Karol Lewandowski <k.lewandowsk@samsung.com>=
+ wrote:
+> On 10.02.2012 09:01, Kyungmin Park wrote:
+>
+>> + Karol for DT support later
+>>
+>> On Fri, Feb 10, 2012 at 3:58 AM, Thomas Abraham
+>> <thomas.abraham@linaro.org> wrote:
+>>> Dear Mr. HeungJun Kim,
+>>>
+>>> On 27 January 2012 00:21, HeungJun, Kim <riverful.kim@samsung.com> =
+wrote:
+>>>> This patch adds Samsung Mobile TRATS board support.
+>>>>
+>>>> Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+>>>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>>>> ---
+>>>> =A0arch/arm/mach-exynos/Kconfig =A0 =A0 =A0| =A0 11 ++
+>>>> =A0arch/arm/mach-exynos/Makefile =A0 =A0 | =A0 =A01 +
+>>>> =A0arch/arm/mach-exynos/mach-trats.c | =A0344 ++++++++++++++++++++=
++++++++++++++++++
+>>>> =A03 files changed, 356 insertions(+), 0 deletions(-)
+>>>> =A0create mode 100644 arch/arm/mach-exynos/mach-trats.c
+>>>
+>>> The exynos4 dt-enabled board file can support most of the features
+>>> added in this board file. The other option that could be considered
+>>> here would be to add DT support for this board file, and use AUX_DA=
+TA
+>>> to supply platform data for drivers that do not have dt support yet=
+=2E
+>>> It would be better to use dt support for new board support that we
+>>> add.
+>
+>
+> Thanks to Thomas' work TRATS can be booted today using exynos4-dt.
+> However, we are still missing some bits needed to make it fully funct=
+ional:
+>
+> =A0- sdhci-s3c patchset[1] is needed for eMMC support
+>
+> =A0 http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/9216
+>
+> =A0- irq-eint[2] and max8997-pmic[3] for regulators
+>
+> =A0 [2] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/819=
+7
+> =A0 [3] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/886=
+5
+>
+> These patches (created entirely by Thomas) would allow me to write
+> description (dts) that should cover what mach-trats.c did.
+>
+> However, due to ongoing irqdomain and related changes I assume this
+> might take a while.
+>
+> Thomas, may I ask about your plans wrt to irqdomains and wakeup/eints
+> (this [2] patchset)?
 
-diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
-index 595ecd29..46b4b8d 100644
---- a/arch/arm/common/dmabounce.c
-+++ b/arch/arm/common/dmabounce.c
-@@ -173,7 +173,8 @@ find_safe_buffer(struct dmabounce_device_info *device_info, dma_addr_t safe_dma_
- 	read_lock_irqsave(&device_info->lock, flags);
- 
- 	list_for_each_entry(b, &device_info->safe_buffers, node)
--		if (b->safe_dma_addr == safe_dma_addr) {
-+		if (b->safe_dma_addr <= safe_dma_addr &&
-+		    b->safe_dma_addr + b->size > safe_dma_addr) {
- 			rb = b;
- 			break;
- 		}
-@@ -362,9 +363,10 @@ void __dma_unmap_page(struct device *dev, dma_addr_t dma_addr, size_t size,
- EXPORT_SYMBOL(__dma_unmap_page);
- 
- int dmabounce_sync_for_cpu(struct device *dev, dma_addr_t addr,
--		unsigned long off, size_t sz, enum dma_data_direction dir)
-+		size_t sz, enum dma_data_direction dir)
- {
- 	struct safe_buffer *buf;
-+	unsigned long off;
- 
- 	dev_dbg(dev, "%s(dma=%#x,off=%#lx,sz=%zx,dir=%x)\n",
- 		__func__, addr, off, sz, dir);
-@@ -373,6 +375,8 @@ int dmabounce_sync_for_cpu(struct device *dev, dma_addr_t addr,
- 	if (!buf)
- 		return 1;
- 
-+	off = addr - buf->safe_dma_addr;
-+
- 	BUG_ON(buf->direction != dir);
- 
- 	dev_dbg(dev, "%s: unsafe buffer %p (dma=%#x) mapped to %p (dma=%#x)\n",
-@@ -391,9 +395,10 @@ int dmabounce_sync_for_cpu(struct device *dev, dma_addr_t addr,
- EXPORT_SYMBOL(dmabounce_sync_for_cpu);
- 
- int dmabounce_sync_for_device(struct device *dev, dma_addr_t addr,
--		unsigned long off, size_t sz, enum dma_data_direction dir)
-+		size_t sz, enum dma_data_direction dir)
- {
- 	struct safe_buffer *buf;
-+	unsigned long off;
- 
- 	dev_dbg(dev, "%s(dma=%#x,off=%#lx,sz=%zx,dir=%x)\n",
- 		__func__, addr, off, sz, dir);
-@@ -402,6 +407,8 @@ int dmabounce_sync_for_device(struct device *dev, dma_addr_t addr,
- 	if (!buf)
- 		return 1;
- 
-+	off = addr - buf->safe_dma_addr;
-+
- 	BUG_ON(buf->direction != dir);
- 
- 	dev_dbg(dev, "%s: unsafe buffer %p (dma=%#x) mapped to %p (dma=%#x)\n",
-diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
-index cb3b7c9..6bc056c 100644
---- a/arch/arm/include/asm/dma-mapping.h
-+++ b/arch/arm/include/asm/dma-mapping.h
-@@ -264,19 +264,17 @@ extern void __dma_unmap_page(struct device *, dma_addr_t, size_t,
- /*
-  * Private functions
-  */
--int dmabounce_sync_for_cpu(struct device *, dma_addr_t, unsigned long,
--		size_t, enum dma_data_direction);
--int dmabounce_sync_for_device(struct device *, dma_addr_t, unsigned long,
--		size_t, enum dma_data_direction);
-+int dmabounce_sync_for_cpu(struct device *, dma_addr_t, size_t, enum dma_data_direction);
-+int dmabounce_sync_for_device(struct device *, dma_addr_t, size_t, enum dma_data_direction);
- #else
- static inline int dmabounce_sync_for_cpu(struct device *d, dma_addr_t addr,
--	unsigned long offset, size_t size, enum dma_data_direction dir)
-+	size_t size, enum dma_data_direction dir)
- {
- 	return 1;
- }
- 
- static inline int dmabounce_sync_for_device(struct device *d, dma_addr_t addr,
--	unsigned long offset, size_t size, enum dma_data_direction dir)
-+	size_t size, enum dma_data_direction dir)
- {
- 	return 1;
- }
-@@ -399,6 +397,33 @@ static inline void dma_unmap_page(struct device *dev, dma_addr_t handle,
- 	__dma_unmap_page(dev, handle, size, dir);
- }
- 
-+
-+static inline void dma_sync_single_for_cpu(struct device *dev,
-+		dma_addr_t handle, size_t size, enum dma_data_direction dir)
-+{
-+	BUG_ON(!valid_dma_direction(dir));
-+
-+	debug_dma_sync_single_for_cpu(dev, handle, size, dir);
-+
-+	if (!dmabounce_sync_for_cpu(dev, handle, size, dir))
-+		return;
-+
-+	__dma_single_dev_to_cpu(dma_to_virt(dev, handle), size, dir);
-+}
-+
-+static inline void dma_sync_single_for_device(struct device *dev,
-+		dma_addr_t handle, size_t size, enum dma_data_direction dir)
-+{
-+	BUG_ON(!valid_dma_direction(dir));
-+
-+	debug_dma_sync_single_for_device(dev, handle, size, dir);
-+
-+	if (!dmabounce_sync_for_device(dev, handle, size, dir))
-+		return;
-+
-+	__dma_single_cpu_to_dev(dma_to_virt(dev, handle), size, dir);
-+}
-+
- /**
-  * dma_sync_single_range_for_cpu
-  * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
-@@ -421,40 +446,14 @@ static inline void dma_sync_single_range_for_cpu(struct device *dev,
- 		dma_addr_t handle, unsigned long offset, size_t size,
- 		enum dma_data_direction dir)
- {
--	BUG_ON(!valid_dma_direction(dir));
--
--	debug_dma_sync_single_for_cpu(dev, handle + offset, size, dir);
--
--	if (!dmabounce_sync_for_cpu(dev, handle, offset, size, dir))
--		return;
--
--	__dma_single_dev_to_cpu(dma_to_virt(dev, handle) + offset, size, dir);
-+	dma_sync_single_for_cpu(dev, handle + offset, size, dir);
- }
- 
- static inline void dma_sync_single_range_for_device(struct device *dev,
- 		dma_addr_t handle, unsigned long offset, size_t size,
- 		enum dma_data_direction dir)
- {
--	BUG_ON(!valid_dma_direction(dir));
--
--	debug_dma_sync_single_for_device(dev, handle + offset, size, dir);
--
--	if (!dmabounce_sync_for_device(dev, handle, offset, size, dir))
--		return;
--
--	__dma_single_cpu_to_dev(dma_to_virt(dev, handle) + offset, size, dir);
--}
--
--static inline void dma_sync_single_for_cpu(struct device *dev,
--		dma_addr_t handle, size_t size, enum dma_data_direction dir)
--{
--	dma_sync_single_range_for_cpu(dev, handle, 0, size, dir);
--}
--
--static inline void dma_sync_single_for_device(struct device *dev,
--		dma_addr_t handle, size_t size, enum dma_data_direction dir)
--{
--	dma_sync_single_range_for_device(dev, handle, 0, size, dir);
-+	dma_sync_single_for_device(dev, handle + offset, size, dir);
- }
- 
- /*
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 1aa664a..a5ab8bf 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -654,7 +654,7 @@ void dma_sync_sg_for_cpu(struct device *dev, struct scatterlist *sg,
- 	int i;
- 
- 	for_each_sg(sg, s, nents, i) {
--		if (!dmabounce_sync_for_cpu(dev, sg_dma_address(s), 0,
-+		if (!dmabounce_sync_for_cpu(dev, sg_dma_address(s),
- 					    sg_dma_len(s), dir))
- 			continue;
- 
-@@ -680,7 +680,7 @@ void dma_sync_sg_for_device(struct device *dev, struct scatterlist *sg,
- 	int i;
- 
- 	for_each_sg(sg, s, nents, i) {
--		if (!dmabounce_sync_for_device(dev, sg_dma_address(s), 0,
-+		if (!dmabounce_sync_for_device(dev, sg_dma_address(s),
- 					sg_dma_len(s), dir))
- 			continue;
- 
--- 
-1.7.1.569.g6f426
+I am in the process of converting max8997, wake-interrupts and
+interrupt combiner to the updated irqdomains support posted by Grant
+Likely. I will be working on the updated patches for this in the next
+week.
+
+Thanks,
+Thomas.
+
+>
+> Regards,
+> --
+> Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
