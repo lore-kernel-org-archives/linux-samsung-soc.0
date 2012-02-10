@@ -1,171 +1,69 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Add alias name of 'fimd' clock for 'lcd' clock
-Date: Fri, 10 Feb 2012 19:34:45 +0900
-Message-ID: <001801cce7df$9b1d8c70$d158a550$%han@samsung.com>
-References: <000101ccd693$71185b60$53491220$%han@samsung.com>
- <CAH9JG2UGvc42AzCSPSKwNT1UrnPy8RG7Snoe+vULoAMW1GQckA@mail.gmail.com>
- <4F34BA65.7030108@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH 0/6] ARM: EXYNOS: USB OTG support for Universal C210
+Date: Fri, 10 Feb 2012 11:35:40 +0100
+Message-ID: <1328870146-20312-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59155 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758839Ab2BJKeq (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:33219 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758839Ab2BJKfw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Feb 2012 05:34:46 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ6009T7APF5ZT0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 10 Feb 2012 19:34:44 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.119.56])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ6007R6APWY460@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Fri, 10 Feb 2012 19:34:44 +0900 (KST)
-In-reply-to: 
-Content-language: ko
+	Fri, 10 Feb 2012 05:35:52 -0500
+Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LZ6006MWARRVA@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Feb 2012 10:35:51 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LZ6000ZOARRHB@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 10 Feb 2012 10:35:51 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Evgeny Voevodin' <e.voevodin@samsung.com>, 'Kyungmin Park' <kmpark@infradead.org>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Jonghwan Choi' <jhbird.choi@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Dmitry Solodkiy' <d.solodkiy@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
 
+Those patches add support for S3C-HSOTG driver for Universal C210 on the
+platform part.
 
-> -----Original Message-----
-> From: Jingoo Han [mailto:jg1.han@samsung.com]
-> Sent: Friday, February 10, 2012 4:17 PM
-> To: 'Evgeny Voevodin'; 'Kyungmin Park'
-> Cc: 'Kukjin Kim'; 'linux-samsung-soc@vger.kernel.org'; 'Jonghwan Choi'; 'Tushar Behera'; 'Dmitry
-> Solodkiy'
-> Subject: RE: [PATCH] ARM: EXYNOS: Add alias name of 'fimd' clock for 'lcd' clock
-> 
-> 
-> Hi, Evgeny Voevodin.
-> > -----Original Message-----
-> > From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-owner@vger.kernel.org] On
-> Behalf
-> > Of Evgeny Voevodin
-> > Sent: Friday, February 10, 2012 3:34 PM
-> > To: Kyungmin Park
-> > Cc: Jingoo Han; Kukjin Kim; linux-samsung-soc@vger.kernel.org; Jonghwan Choi; Tushar Behera; Dmitry
-> > Solodkiy
-> > Subject: Re: [PATCH] ARM: EXYNOS: Add alias name of 'fimd' clock for 'lcd' clock
-> >
-> > On 01/20/2012 04:53 AM, Kyungmin Park wrote:
-> > > On 1/19/12, Jingoo Han<jg1.han@samsung.com>  wrote:
-> > >> This patch adds alias name of 'fimd' clock for 'lcd' clock. While 'lcd'
-> > >> clock is used for s3c-fb driver, 'fimd' clock is defined for Exynos fimd
-> > >> ip. Therefore, 'fimd' clock can be called by using clk_add_alias().
-> > > Hi,
-> > >
-> > > Doesn't it better to add common.c?
-> > > Are there any reason to add each board files?
-> > >
-> > > Thank you,
-> > > Kyungmin Park
-> > >> Cc: Jonghwan Choi<jhbird.choi@samsung.com>
-> > >> Signed-off-by: Jingoo Han<jg1.han@samsung.com>
-> > >> ---
-> > >>   arch/arm/mach-exynos/mach-nuri.c           |    2 ++
-> > >>   arch/arm/mach-exynos/mach-origen.c         |    2 ++
-> > >>   arch/arm/mach-exynos/mach-smdkv310.c       |    2 ++
-> > >>   arch/arm/mach-exynos/mach-universal_c210.c |    3 +++
-> > >>   4 files changed, 9 insertions(+), 0 deletions(-)
-> > >>
-> > >> diff --git a/arch/arm/mach-exynos/mach-nuri.c
-> > >> b/arch/arm/mach-exynos/mach-nuri.c
-> > >> index 3df8bf4..06c22e0 100644
-> > >> --- a/arch/arm/mach-exynos/mach-nuri.c
-> > >> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> > >> @@ -1310,6 +1310,8 @@ static void __init nuri_machine_init(void)
-> > >>   	i2c9_devs[I2C9_MAX17042].irq = gpio_to_irq(EXYNOS4_GPX2(3));
-> > >>   	i2c_register_board_info(9, i2c9_devs, ARRAY_SIZE(i2c9_devs));
-> > >>
-> > >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> > >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> > >>   	s5p_fimd0_set_platdata(&nuri_fb_pdata);
-> > >>
-> > >>   	nuri_camera_init();
-> > >> diff --git a/arch/arm/mach-exynos/mach-origen.c
-> > >> b/arch/arm/mach-exynos/mach-origen.c
-> > >> index b453464..7cea0be 100644
-> > >> --- a/arch/arm/mach-exynos/mach-origen.c
-> > >> +++ b/arch/arm/mach-exynos/mach-origen.c
-> > >> @@ -722,6 +722,8 @@ static void __init origen_machine_init(void)
-> > >>   	s5p_tv_setup();
-> > >>   	s5p_i2c_hdmiphy_set_platdata(NULL);
-> > >>
-> > >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> > >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> > >>   	s5p_fimd0_set_platdata(&origen_lcd_pdata);
-> > >>
-> > >>   	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
-> > >> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c
-> > >> b/arch/arm/mach-exynos/mach-smdkv310.c
-> > >> index bf2094e..eccd96d 100644
-> > >> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> > >> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> > >> @@ -370,6 +370,8 @@ static void __init smdkv310_machine_init(void)
-> > >>   	samsung_keypad_set_platdata(&smdkv310_keypad_data);
-> > >>
-> > >>   	samsung_bl_set(&smdkv310_bl_gpio_info,&smdkv310_bl_data);
-> > >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> > >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> > >>   	s5p_fimd0_set_platdata(&smdkv310_lcd0_pdata);
-> > >>
-> > >>   	smdkv310_ehci_init();
-> > >> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
-> > >> b/arch/arm/mach-exynos/mach-universal_c210.c
-> > >> index c38e18d..fe554f1 100644
-> > >> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> > >> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> > >> @@ -31,6 +31,7 @@
-> > >>   #include<plat/cpu.h>
-> > >>   #include<plat/devs.h>
-> > >>   #include<plat/iic.h>
-> > >> +#include<plat/clock.h>
-> > >>   #include<plat/gpio-cfg.h>
-> > >>   #include<plat/fb.h>
-> > >>   #include<plat/mfc.h>
-> > >> @@ -1029,6 +1030,8 @@ static void __init universal_machine_init(void)
-> > >>   	s5p_i2c_hdmiphy_set_platdata(NULL);
-> > >>   	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
-> > >>
-> > >> +	dev_set_name(&s5p_device_fimd0.dev, "exynos4-fb.0");
-> > >> +	clk_add_alias("lcd", "exynos4-fb.0", "fimd",&s5p_device_fimd0.dev);
-> > >>   	s5p_fimd0_set_platdata(&universal_lcd_pdata);
-> > >>
-> > >>   	universal_touchkey_init();
-> > >> --
-> > >> 1.7.1
-> > >>
-> > >>
-> > >> --
-> > >> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> > >> in
-> > >> the body of a message to majordomo@vger.kernel.org
-> > >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > >>
-> >
-> > Still no appropriate support of frame buffer in the kernel...
-> OK, I will send the new patch.
-I cannot find good place in common.c.
-If someone has idea, please let me know good place in common.c.
+Patches done by Joonyoung Shim have been included to this patch series, since
+those patches are necessary for further fixes. Unfortunately they haven't been 
+included to mainline yet.
 
-Or, Tushar's patch would be better.
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg07795.html
-I test this patch, it resolve the lcd clock problem, too.
+Joonyoung Shim (4):
+  ARM: S3C64XX: Add usb otg phy control
+  ARM: SAMSUNG: Fix memory size for hsotg
+  ARM: EXYNOS: Add usb otg phy control for EXYNOS4210
+  ARM: EXYNOS: Add hsotg device for NURI board
 
-Thanks.
-> >
-> > --
-> > Kind regards,
-> > Evgeny Voevodin,
-> > Leading Software Engineer,
-> > ASWG, Moscow R&D center, Samsung Electronics
-> > e-mail: e.voevodin@samsung.com
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Lukasz Majewski (2):
+  ARM: EXYNOS: select EXYNOS4_SETUP_USB_PHY at Universal_C210
+  ARM: EXYNOS: USB OTG support for Universal C210
+
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/include/mach/map.h            |    2 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h       |    3 +
+ arch/arm/mach-exynos/mach-nuri.c                   |    9 ++-
+ arch/arm/mach-exynos/mach-universal_c210.c         |    5 +
+ arch/arm/mach-exynos/setup-usb-phy.c               |   95 ++++++++++++++-----
+ arch/arm/mach-s3c64xx/Kconfig                      |    8 ++
+ arch/arm/mach-s3c64xx/Makefile                     |    1 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    4 +
+ arch/arm/mach-s3c64xx/mach-smartq.c                |    3 +
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |    4 +
+ arch/arm/mach-s3c64xx/setup-usb-phy.c              |   90 ++++++++++++++++++
+ arch/arm/plat-samsung/devs.c                       |   16 +++-
+ .../plat-samsung/include/plat/regs-usb-hsotg-phy.h |    7 +-
+ arch/arm/plat-samsung/include/plat/udc-hs.h        |    5 +
+ 15 files changed, 223 insertions(+), 30 deletions(-)
+ create mode 100644 arch/arm/mach-s3c64xx/setup-usb-phy.c
+
+---
+Dependences:
+- (original Joonyoung Shim patches - before rebase):
+http://comments.gmane.org/gmane.linux.usb.general/56341
+
+-- 
+1.7.2.3
