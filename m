@@ -1,17 +1,16 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH RE-SEND] [CPUFREQ] EXYNOS4X12: Add support cpufreq for
- EXYNOS4X12
-Date: Fri, 10 Feb 2012 21:19:48 +0900
-Message-ID: <013701cce7ee$48531960$d8f94c20$%kim@samsung.com>
+Subject: [PATCH] [CPUFREQ] EXYNOS5250: Add support cpufreq for EXYNOS5250
+Date: Fri, 10 Feb 2012 21:20:47 +0900
+Message-ID: <013801cce7ee$6b60cb00$42226100$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50822 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754694Ab2BJMTw (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57984 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754694Ab2BJMUt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Feb 2012 07:19:52 -0500
+	Fri, 10 Feb 2012 07:20:49 -0500
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -20,113 +19,112 @@ Cc: 'Dave Jones' <davej@redhat.com>, jc.lee@samsung.com
 
 From: Jaecheol Lee <jc.lee@samsung.com>
 
-This patch adds support cpufreq for EXYNOS4X12 SoCs. Basically,
-the exynos-cpufreq.c is used commonly and exynos4x12-cpufreq.c
-is used for EXYNOS4212(two Cortex-A9 cores) and EXYNOS4412(four
-Cortex-A9 cores) SoCs.
+This patch adds support cpufreq for EXYNOS5250 SoC. Basically,
+the exynos-cpufreq.c is used commonly and exynos5250-cpufreq.c
+is used for EXYNOS5250(two Cortex-A15 cores) SoC.
 
 Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
-Dave, please kindly ignore previous exynos4x12 cpufreq patch
-which has a line wrapped problem.
+NOTE: This should be applied after EXYNOS4X12 cpufreq support patch.
 
  arch/arm/mach-exynos/include/mach/cpufreq.h    |    1 +
- arch/arm/mach-exynos/include/mach/regs-clock.h |    9 +
+ arch/arm/mach-exynos/include/mach/regs-clock.h |    7 +
  drivers/cpufreq/Kconfig.arm                    |    7 +
  drivers/cpufreq/Makefile                       |    1 +
  drivers/cpufreq/exynos-cpufreq.c               |    2 +
- drivers/cpufreq/exynos4x12-cpufreq.c           |  539 ++++++++++++++++++++++++
- 6 files changed, 559 insertions(+), 0 deletions(-)
- create mode 100644 drivers/cpufreq/exynos4x12-cpufreq.c
+ drivers/cpufreq/exynos5250-cpufreq.c           |  352 ++++++++++++++++++++++++
+ 6 files changed, 370 insertions(+), 0 deletions(-)
+ create mode 100644 drivers/cpufreq/exynos5250-cpufreq.c
 
 diff --git a/arch/arm/mach-exynos/include/mach/cpufreq.h b/arch/arm/mach-exynos/include/mach/cpufreq.h
-index 3df27f2..96ac0cb 100644
+index 96ac0cb..7517c3f 100644
 --- a/arch/arm/mach-exynos/include/mach/cpufreq.h
 +++ b/arch/arm/mach-exynos/include/mach/cpufreq.h
-@@ -32,3 +32,4 @@ struct exynos_dvfs_info {
- };
+@@ -33,3 +33,4 @@ struct exynos_dvfs_info {
  
  extern int exynos4210_cpufreq_init(struct exynos_dvfs_info *);
-+extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
+ extern int exynos4x12_cpufreq_init(struct exynos_dvfs_info *);
++extern int exynos5250_cpufreq_init(struct exynos_dvfs_info *);
 diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-index 113836b..1c57fa8 100644
+index 1c57fa8..d859958 100644
 --- a/arch/arm/mach-exynos/include/mach/regs-clock.h
 +++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-@@ -160,6 +160,15 @@
- #define EXYNOS4_CLKDIV_CPU0_PCLKDBG_MASK	(0x7 << EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT)
- #define EXYNOS4_CLKDIV_CPU0_APLL_SHIFT		(24)
- #define EXYNOS4_CLKDIV_CPU0_APLL_MASK		(0x7 << EXYNOS4_CLKDIV_CPU0_APLL_SHIFT)
-+#define EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT		28
-+#define EXYNOS4_CLKDIV_CPU0_CORE2_MASK		(0x7 << EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT)
-+
-+#define EXYNOS4_CLKDIV_CPU1_COPY_SHIFT		0
-+#define EXYNOS4_CLKDIV_CPU1_COPY_MASK		(0x7 << EXYNOS4_CLKDIV_CPU1_COPY_SHIFT)
-+#define EXYNOS4_CLKDIV_CPU1_HPM_SHIFT		4
-+#define EXYNOS4_CLKDIV_CPU1_HPM_MASK		(0x7 << EXYNOS4_CLKDIV_CPU1_HPM_SHIFT)
-+#define EXYNOS4_CLKDIV_CPU1_CORES_SHIFT		8
-+#define EXYNOS4_CLKDIV_CPU1_CORES_MASK		(0x7 << EXYNOS4_CLKDIV_CPU1_CORES_SHIFT)
+@@ -212,9 +212,16 @@
  
- #define EXYNOS4_CLKDIV_DMC0_ACP_SHIFT		(0)
- #define EXYNOS4_CLKDIV_DMC0_ACP_MASK		(0x7 << EXYNOS4_CLKDIV_DMC0_ACP_SHIFT)
+ /* For EXYNOS5250 */
+ 
++#define EXYNOS5_APLL_LOCK			EXYNOS_CLKREG(0x00000)
+ #define EXYNOS5_APLL_CON0			EXYNOS_CLKREG(0x00100)
++#define EXYNOS5_APLL_CON1			EXYNOS_CLKREG(0x00104)
+ #define EXYNOS5_CLKSRC_CPU			EXYNOS_CLKREG(0x00200)
++#define EXYNOS5_CLKMUX_STATCPU			EXYNOS_CLKREG(0x00400)
+ #define EXYNOS5_CLKDIV_CPU0			EXYNOS_CLKREG(0x00500)
++#define EXYNOS5_CLKDIV_CPU1			EXYNOS_CLKREG(0x00504)
++#define EXYNOS5_CLKDIV_STATCPU0			EXYNOS_CLKREG(0x00600)
++#define EXYNOS5_CLKDIV_STATCPU1			EXYNOS_CLKREG(0x00604)
++
+ #define EXYNOS5_MPLL_CON0			EXYNOS_CLKREG(0x04100)
+ #define EXYNOS5_CLKSRC_CORE1			EXYNOS_CLKREG(0x04204)
+ 
 diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index e0664fe..062c6a0 100644
+index 062c6a0..ac9d04e 100644
 --- a/drivers/cpufreq/Kconfig.arm
 +++ b/drivers/cpufreq/Kconfig.arm
-@@ -25,6 +25,7 @@ config ARM_EXYNOS_CPUFREQ
- 	bool "SAMSUNG EXYNOS SoCs"
+@@ -26,6 +26,7 @@ config ARM_EXYNOS_CPUFREQ
  	depends on ARCH_EXYNOS
  	select ARM_EXYNOS4210_CPUFREQ if CPU_EXYNOS4210
-+	select ARM_EXYNOS4X12_CPUFREQ if (SOC_EXYNOS4212 || SOC_EXYNOS4412)
+ 	select ARM_EXYNOS4X12_CPUFREQ if (SOC_EXYNOS4212 || SOC_EXYNOS4412)
++	select ARM_EXYNOS5250_CPUFREQ if SOC_EXYNOS5250
  	default y
  	help
  	  This adds the CPUFreq driver common part for Samsung
-@@ -37,3 +38,9 @@ config ARM_EXYNOS4210_CPUFREQ
+@@ -44,3 +45,9 @@ config ARM_EXYNOS4X12_CPUFREQ
  	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS4210
- 	  SoC (S5PV310 or S5PC210).
+ 	  This adds the CPUFreq driver for Samsung EXYNOS4X12
+ 	  SoC (EXYNOS4212 or EXYNOS4412).
 +
-+config ARM_EXYNOS4X12_CPUFREQ
-+	bool "Samsung EXYNOS4X12"
++config ARM_EXYNOS5250_CPUFREQ
++	bool "Samsung EXYNOS5250"
 +	help
-+	  This adds the CPUFreq driver for Samsung EXYNOS4X12
-+	  SoC (EXYNOS4212 or EXYNOS4412).
++	  This adds the CPUFreq driver for Samsung EXYNOS5250
++	  SoC.
 diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-index ac000fa..7b21c68 100644
+index 7b21c68..606559d 100644
 --- a/drivers/cpufreq/Makefile
 +++ b/drivers/cpufreq/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_ARM_S3C64XX_CPUFREQ)	+= s3c64xx-cpufreq.o
- obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
+@@ -45,6 +45,7 @@ obj-$(CONFIG_ARM_S5PV210_CPUFREQ)	+= s5pv210-cpufreq.o
  obj-$(CONFIG_ARM_EXYNOS_CPUFREQ)	+= exynos-cpufreq.o
  obj-$(CONFIG_ARM_EXYNOS4210_CPUFREQ)	+= exynos4210-cpufreq.o
-+obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+= exynos4x12-cpufreq.o
+ obj-$(CONFIG_ARM_EXYNOS4X12_CPUFREQ)	+= exynos4x12-cpufreq.o
++obj-$(CONFIG_ARM_EXYNOS5250_CPUFREQ)	+= exynos5250-cpufreq.o
  obj-$(CONFIG_ARCH_OMAP2PLUS)            += omap-cpufreq.o
  
  ##################################################################################
 diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
-index 5467879..ccc3145 100644
+index ccc3145..e73b5ae 100644
 --- a/drivers/cpufreq/exynos-cpufreq.c
 +++ b/drivers/cpufreq/exynos-cpufreq.c
-@@ -252,6 +252,8 @@ static int __init exynos_cpufreq_init(void)
- 
- 	if (soc_is_exynos4210())
+@@ -254,6 +254,8 @@ static int __init exynos_cpufreq_init(void)
  		ret = exynos4210_cpufreq_init(exynos_info);
-+	else if (soc_is_exynos4212() || soc_is_exynos4412())
-+		ret = exynos4x12_cpufreq_init(exynos_info);
+ 	else if (soc_is_exynos4212() || soc_is_exynos4412())
+ 		ret = exynos4x12_cpufreq_init(exynos_info);
++	else if (soc_is_exynos5250())
++		ret = exynos5250_cpufreq_init(exynos_info);
  	else
  		pr_err("%s: CPU type not found\n", __func__);
  
-diff --git a/drivers/cpufreq/exynos4x12-cpufreq.c b/drivers/cpufreq/exynos4x12-cpufreq.c
+diff --git a/drivers/cpufreq/exynos5250-cpufreq.c b/drivers/cpufreq/exynos5250-cpufreq.c
 new file mode 100644
-index 0000000..5ddba2e
+index 0000000..cb62433
 --- /dev/null
-+++ b/drivers/cpufreq/exynos4x12-cpufreq.c
-@@ -0,0 +1,539 @@
++++ b/drivers/cpufreq/exynos5250-cpufreq.c
+@@ -0,0 +1,352 @@
 +/*
 + * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
 + *		http://www.samsung.com
 + *
-+ * EXYNOS4X12 - CPU frequency scaling support
++ * EXYNOS5250 - CPU frequency scaling support
 + *
 + * This program is free software; you can redistribute it and/or modify
 + * it under the terms of the GNU General Public License version 2 as
@@ -141,14 +139,14 @@ index 0000000..5ddba2e
 +#include <linux/slab.h>
 +#include <linux/cpufreq.h>
 +
++#include <mach/map.h>
 +#include <mach/regs-clock.h>
 +#include <mach/cpufreq.h>
 +
-+#define CPUFREQ_LEVEL_END	(L13 + 1)
++#define CPUFREQ_LEVEL_END	(L15 + 1)
 +
 +static int max_support_idx;
 +static int min_support_idx = (CPUFREQ_LEVEL_END - 1);
-+
 +static struct clk *cpu_clk;
 +static struct clk *moutcore;
 +static struct clk *mout_mpll;
@@ -160,299 +158,129 @@ index 0000000..5ddba2e
 +	unsigned int	clkdiv1;
 +};
 +
-+static unsigned int exynos4x12_volt_table[CPUFREQ_LEVEL_END];
++static unsigned int exynos5250_volt_table[CPUFREQ_LEVEL_END];
 +
-+static struct cpufreq_frequency_table exynos4x12_freq_table[] = {
-+	{L0, 1500*1000},
-+	{L1, 1400*1000},
-+	{L2, 1300*1000},
-+	{L3, 1200*1000},
-+	{L4, 1100*1000},
-+	{L5, 1000*1000},
-+	{L6,  900*1000},
-+	{L7,  800*1000},
-+	{L8,  700*1000},
-+	{L9,  600*1000},
-+	{L10, 500*1000},
-+	{L11, 400*1000},
-+	{L12, 300*1000},
-+	{L13, 200*1000},
++static struct cpufreq_frequency_table exynos5250_freq_table[] = {
++	{L0, 1700*1000},
++	{L1, 1600*1000},
++	{L2, 1500*1000},
++	{L3, 1400*1000},
++	{L4, 1300*1000},
++	{L5, 1200*1000},
++	{L6, 1100*1000},
++	{L7, 1000*1000},
++	{L8, 900*1000},
++	{L9, 800*1000},
++	{L10, 700*1000},
++	{L11, 600*1000},
++	{L12, 500*1000},
++	{L13, 400*1000},
++	{L14, 300*1000},
++	{L15, 200*1000},
 +	{0, CPUFREQ_TABLE_END},
 +};
 +
-+static struct cpufreq_clkdiv exynos4x12_clkdiv_table[CPUFREQ_LEVEL_END];
++static struct cpufreq_clkdiv exynos5250_clkdiv_table[CPUFREQ_LEVEL_END];
 +
-+static unsigned int clkdiv_cpu0_4212[CPUFREQ_LEVEL_END][8] = {
++static unsigned int clkdiv_cpu0_5250[CPUFREQ_LEVEL_END][8] = {
 +	/*
 +	 * Clock divider value for following
-+	 * { DIVCORE, DIVCOREM0, DIVCOREM1, DIVPERIPH,
-+	 *		DIVATB, DIVPCLK_DBG, DIVAPLL, DIVCORE2 }
++	 * { ARM, CPUD, ACP, PERIPH, ATB, PCLK_DBG, APLL, ARM2 }
 +	 */
-+	/* ARM L0: 1500Mhz */
-+	{ 0, 3, 7, 0, 6, 1, 2, 0 },
-+
-+	/* ARM L1: 1400Mhz */
-+	{ 0, 3, 7, 0, 6, 1, 2, 0 },
-+
-+	/* ARM L2: 1300Mhz */
-+	{ 0, 3, 7, 0, 5, 1, 2, 0 },
-+
-+	/* ARM L3: 1200Mhz */
-+	{ 0, 3, 7, 0, 5, 1, 2, 0 },
-+
-+	/* ARM L4: 1100MHz */
-+	{ 0, 3, 6, 0, 4, 1, 2, 0 },
-+
-+	/* ARM L5: 1000MHz */
-+	{ 0, 2, 5, 0, 4, 1, 1, 0 },
-+
-+	/* ARM L6: 900MHz */
-+	{ 0, 2, 5, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L7: 800MHz */
-+	{ 0, 2, 5, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L8: 700MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L9: 600MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L10: 500MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L11: 400MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L12: 300MHz */
-+	{ 0, 2, 4, 0, 2, 1, 1, 0 },
-+
-+	/* ARM L13: 200MHz */
-+	{ 0, 1, 3, 0, 1, 1, 1, 0 },
++	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1700Mhz - N/A */
++	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1600Mhz - N/A */
++	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1500Mhz - N/A */
++	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1400Mhz */
++	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1300Mhz */
++	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1200Mhz */
++	{ 0, 2, 7, 7, 5, 1, 2, 0 },	/* 1100MHz */
++	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 1000MHz */
++	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 900MHz */
++	{ 0, 2, 7, 7, 3, 1, 1, 0 },	/* 800MHz */
++	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 700MHz */
++	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 600MHz */
++	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 500MHz */
++	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 400MHz */
++	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 300MHz */
++	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 200MHz */
 +};
 +
-+static unsigned int clkdiv_cpu0_4412[CPUFREQ_LEVEL_END][8] = {
-+	/*
-+	 * Clock divider value for following
-+	 * { DIVCORE, DIVCOREM0, DIVCOREM1, DIVPERIPH,
-+	 *		DIVATB, DIVPCLK_DBG, DIVAPLL, DIVCORE2 }
-+	 */
-+	/* ARM L0: 1500Mhz */
-+	{ 0, 3, 7, 0, 6, 1, 2, 0 },
-+
-+	/* ARM L1: 1400Mhz */
-+	{ 0, 3, 7, 0, 6, 1, 2, 0 },
-+
-+	/* ARM L2: 1300Mhz */
-+	{ 0, 3, 7, 0, 5, 1, 2, 0 },
-+
-+	/* ARM L3: 1200Mhz */
-+	{ 0, 3, 7, 0, 5, 1, 2, 0 },
-+
-+	/* ARM L4: 1100MHz */
-+	{ 0, 3, 6, 0, 4, 1, 2, 0 },
-+
-+	/* ARM L5: 1000MHz */
-+	{ 0, 2, 5, 0, 4, 1, 1, 0 },
-+
-+	/* ARM L6: 900MHz */
-+	{ 0, 2, 5, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L7: 800MHz */
-+	{ 0, 2, 5, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L8: 700MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L9: 600MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L10: 500MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L11: 400MHz */
-+	{ 0, 2, 4, 0, 3, 1, 1, 0 },
-+
-+	/* ARM L12: 300MHz */
-+	{ 0, 2, 4, 0, 2, 1, 1, 0 },
-+
-+	/* ARM L13: 200MHz */
-+	{ 0, 1, 3, 0, 1, 1, 1, 0 },
-+};
-+
-+static unsigned int clkdiv_cpu1_4212[CPUFREQ_LEVEL_END][2] = {
++static unsigned int clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
 +	/* Clock divider value for following
-+	 * { DIVCOPY, DIVHPM }
++	 * { COPY, HPM }
 +	 */
-+	/* ARM L0: 1500MHz */
-+	{ 6, 0 },
-+
-+	/* ARM L1: 1400MHz */
-+	{ 6, 0 },
-+
-+	/* ARM L2: 1300MHz */
-+	{ 5, 0 },
-+
-+	/* ARM L3: 1200MHz */
-+	{ 5, 0 },
-+
-+	/* ARM L4: 1100MHz */
-+	{ 4, 0 },
-+
-+	/* ARM L5: 1000MHz */
-+	{ 4, 0 },
-+
-+	/* ARM L6: 900MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L7: 800MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L8: 700MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L9: 600MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L10: 500MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L11: 400MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L12: 300MHz */
-+	{ 3, 0 },
-+
-+	/* ARM L13: 200MHz */
-+	{ 3, 0 },
++	{ 0, 2 },	/* 1700Mhz - N/A */
++	{ 0, 2 },	/* 1600Mhz - N/A */
++	{ 0, 2 },	/* 1500Mhz - N/A */
++	{ 0, 2 },	/* 1400Mhz */
++	{ 0, 2 },	/* 1300Mhz */
++	{ 0, 2 },	/* 1200Mhz */
++	{ 0, 2 },	/* 1100MHz */
++	{ 0, 2 },	/* 1000MHz */
++	{ 0, 2 },	/* 900MHz */
++	{ 0, 2 },	/* 800MHz */
++	{ 0, 2 },	/* 700MHz */
++	{ 0, 2 },	/* 600MHz */
++	{ 0, 2 },	/* 500MHz */
++	{ 0, 2 },	/* 400MHz */
++	{ 0, 2 },	/* 300MHz */
++	{ 0, 2 },	/* 200MHz */
 +};
 +
-+static unsigned int clkdiv_cpu1_4412[CPUFREQ_LEVEL_END][3] = {
-+	/* Clock divider value for following
-+	 * { DIVCOPY, DIVHPM, DIVCORES }
-+	 */
-+	/* ARM L0: 1500MHz */
-+	{ 6, 0, 7 },
-+
-+	/* ARM L1: 1400MHz */
-+	{ 6, 0, 6 },
-+
-+	/* ARM L2: 1300MHz */
-+	{ 5, 0, 6 },
-+
-+	/* ARM L3: 1200MHz */
-+	{ 5, 0, 5 },
-+
-+	/* ARM L4: 1100MHz */
-+	{ 4, 0, 5 },
-+
-+	/* ARM L5: 1000MHz */
-+	{ 4, 0, 4 },
-+
-+	/* ARM L6: 900MHz */
-+	{ 3, 0, 4 },
-+
-+	/* ARM L7: 800MHz */
-+	{ 3, 0, 3 },
-+
-+	/* ARM L8: 700MHz */
-+	{ 3, 0, 3 },
-+
-+	/* ARM L9: 600MHz */
-+	{ 3, 0, 2 },
-+
-+	/* ARM L10: 500MHz */
-+	{ 3, 0, 2 },
-+
-+	/* ARM L11: 400MHz */
-+	{ 3, 0, 1 },
-+
-+	/* ARM L12: 300MHz */
-+	{ 3, 0, 1 },
-+
-+	/* ARM L13: 200MHz */
-+	{ 3, 0, 0 },
++static unsigned int exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
++	(0),				/* 1700Mhz - N/A */
++	(0),				/* 1600Mhz - N/A */
++	(0),				/* 1500Mhz - N/A */
++	(0),				/* 1400Mhz */
++	((325 << 16) | (6 << 8) | 0),	/* 1300Mhz */
++	((200 << 16) | (4 << 8) | 0),	/* 1200Mhz */
++	((275 << 16) | (6 << 8) | 0),	/* 1100MHz */
++	((125 << 16) | (3 << 8) | 0),	/* 1000MHz */
++	((150 << 16) | (4 << 8) | 0),	/* 900MHz */
++	((100 << 16) | (3 << 8) | 0),	/* 800MHz */
++	((175 << 16) | (3 << 8) | 1),	/* 700MHz */
++	((200 << 16) | (4 << 8) | 1),	/* 600MHz */
++	((125 << 16) | (3 << 8) | 1),	/* 500MHz */
++	((100 << 16) | (3 << 8) | 1),	/* 400MHz */
++	((200 << 16) | (4 << 8) | 2),	/* 300MHz */
++	((100 << 16) | (3 << 8) | 2),	/* 200MHz */
 +};
 +
-+static unsigned int exynos4x12_apll_pms_table[CPUFREQ_LEVEL_END] = {
-+	/* APLL FOUT L0: 1500MHz */
-+	((250 << 16) | (4 << 8) | (0x0)),
-+
-+	/* APLL FOUT L1: 1400MHz */
-+	((175 << 16) | (3 << 8) | (0x0)),
-+
-+	/* APLL FOUT L2: 1300MHz */
-+	((325 << 16) | (6 << 8) | (0x0)),
-+
-+	/* APLL FOUT L3: 1200MHz */
-+	((200 << 16) | (4 << 8) | (0x0)),
-+
-+	/* APLL FOUT L4: 1100MHz */
-+	((275 << 16) | (6 << 8) | (0x0)),
-+
-+	/* APLL FOUT L5: 1000MHz */
-+	((125 << 16) | (3 << 8) | (0x0)),
-+
-+	/* APLL FOUT L6: 900MHz */
-+	((150 << 16) | (4 << 8) | (0x0)),
-+
-+	/* APLL FOUT L7: 800MHz */
-+	((100 << 16) | (3 << 8) | (0x0)),
-+
-+	/* APLL FOUT L8: 700MHz */
-+	((175 << 16) | (3 << 8) | (0x1)),
-+
-+	/* APLL FOUT L9: 600MHz */
-+	((200 << 16) | (4 << 8) | (0x1)),
-+
-+	/* APLL FOUT L10: 500MHz */
-+	((125 << 16) | (3 << 8) | (0x1)),
-+
-+	/* APLL FOUT L11 400MHz */
-+	((100 << 16) | (3 << 8) | (0x1)),
-+
-+	/* APLL FOUT L12: 300MHz */
-+	((200 << 16) | (4 << 8) | (0x2)),
-+
-+	/* APLL FOUT L13: 200MHz */
-+	((100 << 16) | (3 << 8) | (0x2)),
++/*
++ * ASV group voltage table
++ */
++static const unsigned int asv_voltage_5250[CPUFREQ_LEVEL_END] = {
++	0, 0, 0, 0, 0, 0, 0,	/* 1700Mhz ~ 1100Mhz Not supported */
++	1175000, 1125000, 1075000, 1050000, 1000000,
++	950000, 925000, 925000, 900000
 +};
 +
-+static const unsigned int asv_voltage_4x12[CPUFREQ_LEVEL_END] = {
-+	1350000, 1287500, 1250000, 1187500, 1137500, 1087500, 1037500,
-+	1000000,  987500,  975000,  950000,  925000,  900000,  900000
-+};
-+
-+static void exynos4x12_set_clkdiv(unsigned int div_index)
++static void set_clkdiv(unsigned int div_index)
 +{
 +	unsigned int tmp;
-+	unsigned int stat_cpu1;
 +
 +	/* Change Divider - CPU0 */
 +
-+	tmp = exynos4x12_clkdiv_table[div_index].clkdiv;
++	tmp = exynos5250_clkdiv_table[div_index].clkdiv;
 +
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU);
++	__raw_writel(tmp, EXYNOS5_CLKDIV_CPU0);
 +
 +	do {
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STATCPU);
++		tmp = __raw_readl(EXYNOS5_CLKDIV_STATCPU0);
 +	} while (tmp & 0x11111111);
 +
 +	/* Change Divider - CPU1 */
-+	tmp = exynos4x12_clkdiv_table[div_index].clkdiv1;
++	tmp = exynos5250_clkdiv_table[div_index].clkdiv1;
 +
-+	__raw_writel(tmp, EXYNOS4_CLKDIV_CPU1);
-+	if (soc_is_exynos4212())
-+		stat_cpu1 = 0x11;
-+	else
-+		stat_cpu1 = 0x111;
++	__raw_writel(tmp, EXYNOS5_CLKDIV_CPU1);
 +
 +	do {
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_STATCPU1);
-+	} while (tmp & stat_cpu1);
++		tmp = __raw_readl(EXYNOS5_CLKDIV_STATCPU1);
++	} while (tmp & 0x11);
 +}
 +
-+static void exynos4x12_set_apll(unsigned int index)
++static void set_apll(unsigned int new_index,
++			     unsigned int old_index)
 +{
 +	unsigned int tmp, pdiv;
 +
@@ -461,81 +289,81 @@ index 0000000..5ddba2e
 +	clk_set_parent(moutcore, mout_mpll);
 +
 +	do {
-+		tmp = (__raw_readl(EXYNOS4_CLKMUX_STATCPU)
-+			>> EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT);
++		tmp = (__raw_readl(EXYNOS5_CLKMUX_STATCPU) >> 16);
 +		tmp &= 0x7;
 +	} while (tmp != 0x2);
 +
 +	/* 2. Set APLL Lock time */
-+	pdiv = ((exynos4x12_apll_pms_table[index] >> 8) & 0x3f);
++	pdiv = ((exynos5_apll_pms_table[new_index] >> 8) & 0x3f);
 +
-+	__raw_writel((pdiv * 250), EXYNOS4_APLL_LOCK);
++	__raw_writel((pdiv * 250), EXYNOS5_APLL_LOCK);
 +
 +	/* 3. Change PLL PMS values */
-+	tmp = __raw_readl(EXYNOS4_APLL_CON0);
++	tmp = __raw_readl(EXYNOS5_APLL_CON0);
 +	tmp &= ~((0x3ff << 16) | (0x3f << 8) | (0x7 << 0));
-+	tmp |= exynos4x12_apll_pms_table[index];
-+	__raw_writel(tmp, EXYNOS4_APLL_CON0);
++	tmp |= exynos5_apll_pms_table[new_index];
++	__raw_writel(tmp, EXYNOS5_APLL_CON0);
 +
 +	/* 4. wait_lock_time */
 +	do {
-+		tmp = __raw_readl(EXYNOS4_APLL_CON0);
-+	} while (!(tmp & (0x1 << EXYNOS4_APLLCON0_LOCKED_SHIFT)));
++		tmp = __raw_readl(EXYNOS5_APLL_CON0);
++	} while (!(tmp & (0x1 << 29)));
 +
 +	/* 5. MUX_CORE_SEL = APLL */
 +	clk_set_parent(moutcore, mout_apll);
 +
 +	do {
-+		tmp = __raw_readl(EXYNOS4_CLKMUX_STATCPU);
-+		tmp &= EXYNOS4_CLKMUX_STATCPU_MUXCORE_MASK;
-+	} while (tmp != (0x1 << EXYNOS4_CLKSRC_CPU_MUXCORE_SHIFT));
++		tmp = __raw_readl(EXYNOS5_CLKMUX_STATCPU);
++		tmp &= (0x7 << 16);
++	} while (tmp != (0x1 << 16));
++
 +}
 +
-+bool exynos4x12_pms_change(unsigned int old_index, unsigned int new_index)
++bool exynos5250_pms_change(unsigned int old_index, unsigned int new_index)
 +{
-+	unsigned int old_pm = (exynos4x12_apll_pms_table[old_index] >> 8);
-+	unsigned int new_pm = (exynos4x12_apll_pms_table[new_index] >> 8);
++	unsigned int old_pm = (exynos5_apll_pms_table[old_index] >> 8);
++	unsigned int new_pm = (exynos5_apll_pms_table[new_index] >> 8);
 +
 +	return (old_pm == new_pm) ? 0 : 1;
 +}
 +
-+static void exynos4x12_set_frequency(unsigned int old_index,
++static void exynos5250_set_frequency(unsigned int old_index,
 +				  unsigned int new_index)
 +{
 +	unsigned int tmp;
 +
 +	if (old_index > new_index) {
-+		if (!exynos4x12_pms_change(old_index, new_index)) {
++		if (!exynos5250_pms_change(old_index, new_index)) {
 +			/* 1. Change the system clock divider values */
-+			exynos4x12_set_clkdiv(new_index);
++			set_clkdiv(new_index);
 +			/* 2. Change just s value in apll m,p,s value */
-+			tmp = __raw_readl(EXYNOS4_APLL_CON0);
++			tmp = __raw_readl(EXYNOS5_APLL_CON0);
 +			tmp &= ~(0x7 << 0);
-+			tmp |= (exynos4x12_apll_pms_table[new_index] & 0x7);
-+			__raw_writel(tmp, EXYNOS4_APLL_CON0);
++			tmp |= (exynos5_apll_pms_table[new_index] & 0x7);
++			__raw_writel(tmp, EXYNOS5_APLL_CON0);
 +
 +		} else {
 +			/* Clock Configuration Procedure */
 +			/* 1. Change the system clock divider values */
-+			exynos4x12_set_clkdiv(new_index);
++			set_clkdiv(new_index);
 +			/* 2. Change the apll m,p,s value */
-+			exynos4x12_set_apll(new_index);
++			set_apll(new_index, old_index);
 +		}
 +	} else if (old_index < new_index) {
-+		if (!exynos4x12_pms_change(old_index, new_index)) {
++		if (!exynos5250_pms_change(old_index, new_index)) {
 +			/* 1. Change just s value in apll m,p,s value */
-+			tmp = __raw_readl(EXYNOS4_APLL_CON0);
++			tmp = __raw_readl(EXYNOS5_APLL_CON0);
 +			tmp &= ~(0x7 << 0);
-+			tmp |= (exynos4x12_apll_pms_table[new_index] & 0x7);
-+			__raw_writel(tmp, EXYNOS4_APLL_CON0);
++			tmp |= (exynos5_apll_pms_table[new_index] & 0x7);
++			__raw_writel(tmp, EXYNOS5_APLL_CON0);
 +			/* 2. Change the system clock divider values */
-+			exynos4x12_set_clkdiv(new_index);
++			set_clkdiv(new_index);
 +		} else {
 +			/* Clock Configuration Procedure */
 +			/* 1. Change the apll m,p,s value */
-+			exynos4x12_set_apll(new_index);
++			set_apll(new_index, old_index);
 +			/* 2. Change the system clock divider values */
-+			exynos4x12_set_clkdiv(new_index);
++			set_clkdiv(new_index);
 +		}
 +	}
 +}
@@ -544,16 +372,21 @@ index 0000000..5ddba2e
 +{
 +	unsigned int i;
 +
-+	max_support_idx = L1;
++	exynos5250_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
++	exynos5250_freq_table[L1].frequency = CPUFREQ_ENTRY_INVALID;
++	exynos5250_freq_table[L2].frequency = CPUFREQ_ENTRY_INVALID;
++	exynos5250_freq_table[L3].frequency = CPUFREQ_ENTRY_INVALID;
++	exynos5250_freq_table[L4].frequency = CPUFREQ_ENTRY_INVALID;
++	exynos5250_freq_table[L5].frequency = CPUFREQ_ENTRY_INVALID;
++	exynos5250_freq_table[L6].frequency = CPUFREQ_ENTRY_INVALID;
 +
-+	/* Not supported */
-+	exynos4x12_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
++	max_support_idx = L7;
 +
 +	for (i = 0 ; i < CPUFREQ_LEVEL_END ; i++)
-+		exynos4x12_volt_table[i] = asv_voltage_4x12[i];
++		exynos5250_volt_table[i] = asv_voltage_5250[i];
 +}
 +
-+int exynos4x12_cpufreq_init(struct exynos_dvfs_info *info)
++int exynos5250_cpufreq_init(struct exynos_dvfs_info *info)
 +{
 +	int i;
 +	unsigned int tmp;
@@ -565,7 +398,7 @@ index 0000000..5ddba2e
 +	if (IS_ERR(cpu_clk))
 +		return PTR_ERR(cpu_clk);
 +
-+	moutcore = clk_get(NULL, "moutcore");
++	moutcore = clk_get(NULL, "mout_cpu");
 +	if (IS_ERR(moutcore))
 +		goto err_moutcore;
 +
@@ -579,71 +412,49 @@ index 0000000..5ddba2e
 +	if (IS_ERR(mout_apll))
 +		goto err_mout_apll;
 +
-+	for (i = L0; i <  CPUFREQ_LEVEL_END; i++) {
++	for (i = L0; i < CPUFREQ_LEVEL_END; i++) {
 +
-+		exynos4x12_clkdiv_table[i].index = i;
++		exynos5250_clkdiv_table[i].index = i;
 +
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_CPU);
++		tmp = __raw_readl(EXYNOS5_CLKDIV_CPU0);
 +
-+		tmp &= ~(EXYNOS4_CLKDIV_CPU0_CORE_MASK |
-+			EXYNOS4_CLKDIV_CPU0_COREM0_MASK |
-+			EXYNOS4_CLKDIV_CPU0_COREM1_MASK |
-+			EXYNOS4_CLKDIV_CPU0_PERIPH_MASK |
-+			EXYNOS4_CLKDIV_CPU0_ATB_MASK |
-+			EXYNOS4_CLKDIV_CPU0_PCLKDBG_MASK |
-+			EXYNOS4_CLKDIV_CPU0_APLL_MASK);
++		tmp &= ~((0x7 << 0) | (0x7 << 4) | (0x7 << 8) |
++			(0x7 << 12) | (0x7 << 16) | (0x7 << 20) |
++			(0x7 << 24) | (0x7 << 28));
 +
-+		if (soc_is_exynos4212()) {
-+			tmp |= ((clkdiv_cpu0_4212[i][0] << EXYNOS4_CLKDIV_CPU0_CORE_SHIFT) |
-+				(clkdiv_cpu0_4212[i][1] << EXYNOS4_CLKDIV_CPU0_COREM0_SHIFT) |
-+				(clkdiv_cpu0_4212[i][2] << EXYNOS4_CLKDIV_CPU0_COREM1_SHIFT) |
-+				(clkdiv_cpu0_4212[i][3] << EXYNOS4_CLKDIV_CPU0_PERIPH_SHIFT) |
-+				(clkdiv_cpu0_4212[i][4] << EXYNOS4_CLKDIV_CPU0_ATB_SHIFT) |
-+				(clkdiv_cpu0_4212[i][5] << EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT) |
-+				(clkdiv_cpu0_4212[i][6] << EXYNOS4_CLKDIV_CPU0_APLL_SHIFT));
-+		} else {
-+			tmp &= ~EXYNOS4_CLKDIV_CPU0_CORE2_MASK;
++		tmp |= ((clkdiv_cpu0_5250[i][0] << 0) |
++			(clkdiv_cpu0_5250[i][1] << 4) |
++			(clkdiv_cpu0_5250[i][2] << 8) |
++			(clkdiv_cpu0_5250[i][3] << 12) |
++			(clkdiv_cpu0_5250[i][4] << 16) |
++			(clkdiv_cpu0_5250[i][5] << 20) |
++			(clkdiv_cpu0_5250[i][6] << 24) |
++			(clkdiv_cpu0_5250[i][7] << 28));
 +
-+			tmp |= ((clkdiv_cpu0_4412[i][0] << EXYNOS4_CLKDIV_CPU0_CORE_SHIFT) |
-+				(clkdiv_cpu0_4412[i][1] << EXYNOS4_CLKDIV_CPU0_COREM0_SHIFT) |
-+				(clkdiv_cpu0_4412[i][2] << EXYNOS4_CLKDIV_CPU0_COREM1_SHIFT) |
-+				(clkdiv_cpu0_4412[i][3] << EXYNOS4_CLKDIV_CPU0_PERIPH_SHIFT) |
-+				(clkdiv_cpu0_4412[i][4] << EXYNOS4_CLKDIV_CPU0_ATB_SHIFT) |
-+				(clkdiv_cpu0_4412[i][5] << EXYNOS4_CLKDIV_CPU0_PCLKDBG_SHIFT) |
-+				(clkdiv_cpu0_4412[i][6] << EXYNOS4_CLKDIV_CPU0_APLL_SHIFT) |
-+				(clkdiv_cpu0_4412[i][7] << EXYNOS4_CLKDIV_CPU0_CORE2_SHIFT));
-+		}
++		exynos5250_clkdiv_table[i].clkdiv = tmp;
 +
-+		exynos4x12_clkdiv_table[i].clkdiv = tmp;
++		tmp = __raw_readl(EXYNOS5_CLKDIV_CPU1);
 +
-+		tmp = __raw_readl(EXYNOS4_CLKDIV_CPU1);
++		tmp &= ~((0x7 << 0) | (0x7 << 4));
 +
-+		if (soc_is_exynos4212()) {
-+			tmp &= ~(EXYNOS4_CLKDIV_CPU1_COPY_MASK |
-+				EXYNOS4_CLKDIV_CPU1_HPM_MASK);
-+			tmp |= ((clkdiv_cpu1_4212[i][0] << EXYNOS4_CLKDIV_CPU1_COPY_SHIFT) |
-+				(clkdiv_cpu1_4212[i][1] << EXYNOS4_CLKDIV_CPU1_HPM_SHIFT));
-+		} else {
-+			tmp &= ~(EXYNOS4_CLKDIV_CPU1_COPY_MASK |
-+				EXYNOS4_CLKDIV_CPU1_HPM_MASK |
-+				EXYNOS4_CLKDIV_CPU1_CORES_MASK);
-+			tmp |= ((clkdiv_cpu1_4412[i][0] << EXYNOS4_CLKDIV_CPU1_COPY_SHIFT) |
-+				(clkdiv_cpu1_4412[i][1] << EXYNOS4_CLKDIV_CPU1_HPM_SHIFT) |
-+				(clkdiv_cpu1_4412[i][2] << EXYNOS4_CLKDIV_CPU1_CORES_SHIFT));
-+		}
-+		exynos4x12_clkdiv_table[i].clkdiv1 = tmp;
++		tmp |= ((clkdiv_cpu1_5250[i][0] << 0) |
++			(clkdiv_cpu1_5250[i][1] << 4));
++
++		exynos5250_clkdiv_table[i].clkdiv1 = tmp;
 +	}
 +
 +	info->mpll_freq_khz = rate;
-+	info->pm_lock_idx = L5;
-+	info->pll_safe_idx = L7;
++	/* 1000Mhz */
++	info->pm_lock_idx = L7;
++	/* 800Mhz */
++	info->pll_safe_idx = L9;
 +	info->max_support_idx = max_support_idx;
 +	info->min_support_idx = min_support_idx;
 +	info->cpu_clk = cpu_clk;
-+	info->volt_table = exynos4x12_volt_table;
-+	info->freq_table = exynos4x12_freq_table;
-+	info->set_freq = exynos4x12_set_frequency;
-+	info->need_apll_change = exynos4x12_pms_change;
++	info->volt_table = exynos5250_volt_table;
++	info->freq_table = exynos5250_freq_table;
++	info->set_freq = exynos5250_set_frequency;
++	info->need_apll_change = exynos5250_pms_change;
 +
 +	return 0;
 +
@@ -657,9 +468,9 @@ index 0000000..5ddba2e
 +	if (!IS_ERR(cpu_clk))
 +		clk_put(cpu_clk);
 +
-+	pr_debug("%s: failed initialization\n", __func__);
++	pr_err("%s: failed initialization\n", __func__);
 +	return -EINVAL;
 +}
-+EXPORT_SYMBOL(exynos4x12_cpufreq_init);
++EXPORT_SYMBOL(exynos5250_cpufreq_init);
 -- 
 1.7.1
