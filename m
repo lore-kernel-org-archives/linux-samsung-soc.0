@@ -1,25 +1,25 @@
 From: Huisung Kang <hs1218.kang@samsung.com>
-Subject: [PATCH 1/2] ARM: EXYNOS: Support I2C{4/5} for EXYNOS{4212/4412} SoC
-Date: Sat, 11 Feb 2012 15:14:40 +0900
-Message-ID: <018c01cce884$707ed870$517c8950$@samsung.com>
+Subject: [PATCH 2/2] ARM: EXYNOS: Support I2C for EXYNOS5250 SoC
+Date: Sat, 11 Feb 2012 15:16:15 +0900
+Message-ID: <018d01cce884$a90ed370$fb2c7a50$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44006 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751193Ab2BKGOm (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:41710 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751193Ab2BKGQR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Feb 2012 01:14:42 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Sat, 11 Feb 2012 01:16:17 -0500
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ700DE3TC5XWB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 15:14:40 +0900 (KST)
+ 2010)) with ESMTP id <0LZ700BMHTF0BOB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 15:16:15 +0900 (KST)
 Received: from NOHS1218KAN01 ([12.23.118.150])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ700DHOTCGOZ60@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 15:14:40 +0900 (KST)
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ700819TF3JV40@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 15:16:15 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -27,63 +27,239 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com
 
 
-Fixup gpio configuration related to i2c4/i2c5 for exynos{4212/4412}
-as below table.
-------------------------------------
-|    SoC     |   i2c4   |   i2c5   |
-----------------------------------
-| exynos4210 | GPB(2,3) | GPB(6,7) |
-----------------------------------
-| exynos4x12 | GPB(0,1) | GPB(2,3) |
-------------------------------------
-
 Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 ---
- arch/arm/mach-exynos/setup-i2c4.c |   10 ++++++++--
- arch/arm/mach-exynos/setup-i2c5.c |    9 +++++++--
- 2 files changed, 15 insertions(+), 4 deletions(-)
+ arch/arm/mach-exynos/setup-i2c0.c |    4 ++--
+ arch/arm/mach-exynos/setup-i2c1.c |   13 +++++++++----
+ arch/arm/mach-exynos/setup-i2c2.c |   13 +++++++++----
+ arch/arm/mach-exynos/setup-i2c3.c |   13 +++++++++----
+ arch/arm/mach-exynos/setup-i2c4.c |   10 ++++++----
+ arch/arm/mach-exynos/setup-i2c5.c |    9 ++++++---
+ arch/arm/mach-exynos/setup-i2c6.c |   13 +++++++++----
+ arch/arm/mach-exynos/setup-i2c7.c |   13 +++++++++----
+ 8 files changed, 59 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/setup-i2c4.c b/arch/arm/mach-exynos/setup-i2c4.c
-index 9f3c048..9df73e8 100644
---- a/arch/arm/mach-exynos/setup-i2c4.c
-+++ b/arch/arm/mach-exynos/setup-i2c4.c
-@@ -15,9 +15,15 @@ struct platform_device; /* don't need the contents */
- #include <linux/gpio.h>
- #include <plat/iic.h>
- #include <plat/gpio-cfg.h>
-+#include <plat/cpu.h>
- 
- void s3c_i2c4_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c0.c b/arch/arm/mach-exynos/setup-i2c0.c
+index 3244f3e..850b99f 100644
+--- a/arch/arm/mach-exynos/setup-i2c0.c
++++ b/arch/arm/mach-exynos/setup-i2c0.c
+@@ -23,8 +23,8 @@ struct platform_device; /* don't need the contents */
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
  {
--	s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
--			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
-+	if (soc_is_exynos4210())
-+		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
-+				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
-+	else
-+		s3c_gpio_cfgall_range(EXYNOS4_GPB(0), 2,
-+				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
-+
- }
-diff --git a/arch/arm/mach-exynos/setup-i2c5.c b/arch/arm/mach-exynos/setup-i2c5.c
-index 77e1a1e..2380d10 100644
---- a/arch/arm/mach-exynos/setup-i2c5.c
-+++ b/arch/arm/mach-exynos/setup-i2c5.c
+ 	if (soc_is_exynos5250())
+-		;
+-		/* will be implemented with gpio function */
++		s3c_gpio_cfgall_range(EXYNOS5_GPB3(0), 2,
++				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+ 	else
+ 		s3c_gpio_cfgall_range(EXYNOS4_GPD1(0), 2,
+ 				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+diff --git a/arch/arm/mach-exynos/setup-i2c1.c b/arch/arm/mach-exynos/setup-i2c1.c
+index fd7235a..4982ee8 100644
+--- a/arch/arm/mach-exynos/setup-i2c1.c
++++ b/arch/arm/mach-exynos/setup-i2c1.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c1.c
++ * linux/arch/arm/mach-exynos/setup-i2c1.c
+  *
+- * Copyright (C) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C1 GPIO configuration.
+  *
 @@ -15,9 +15,14 @@ struct platform_device; /* don't need the contents */
  #include <linux/gpio.h>
  #include <plat/iic.h>
  #include <plat/gpio-cfg.h>
 +#include <plat/cpu.h>
  
- void s3c_i2c5_cfg_gpio(struct platform_device *dev)
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
  {
--	s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
+-	s3c_gpio_cfgall_range(EXYNOS4_GPD1(2), 2,
+-			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
++	if (soc_is_exynos5250())
++		s3c_gpio_cfgall_range(EXYNOS5_GPB3(2), 2,
++				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS4_GPD1(2), 2,
++				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c2.c b/arch/arm/mach-exynos/setup-i2c2.c
+index 2694b19..77aa1b6 100644
+--- a/arch/arm/mach-exynos/setup-i2c2.c
++++ b/arch/arm/mach-exynos/setup-i2c2.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c2.c
++ * linux/arch/arm/mach-exynos/setup-i2c2.c
+  *
+- * Copyright (c) 2009-2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2009-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C2 GPIO configuration.
+  *
+@@ -15,9 +15,14 @@ struct platform_device; /* don't need the contents */
+ #include <linux/gpio.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/cpu.h>
+ 
+ void s3c_i2c2_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgall_range(EXYNOS4_GPA0(6), 2,
 -			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
-+	if (soc_is_exynos4210())
-+		s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
++	if (soc_is_exynos5250())
++		s3c_gpio_cfgall_range(EXYNOS5_GPA0(6), 2,
 +				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
 +	else
-+		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
++		s3c_gpio_cfgall_range(EXYNOS4_GPA0(6), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c3.c b/arch/arm/mach-exynos/setup-i2c3.c
+index 379bd30..d4129dc 100644
+--- a/arch/arm/mach-exynos/setup-i2c3.c
++++ b/arch/arm/mach-exynos/setup-i2c3.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c3.c
++ * linux/arch/arm/mach-exynos/setup-i2c3.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C3 GPIO configuration.
+  *
+@@ -15,9 +15,14 @@ struct platform_device; /* don't need the contents */
+ #include <linux/gpio.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/cpu.h>
+ 
+ void s3c_i2c3_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgall_range(EXYNOS4_GPA1(2), 2,
+-			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	if (soc_is_exynos5250())
++		s3c_gpio_cfgall_range(EXYNOS5_GPA1(2), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS4_GPA1(2), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c4.c b/arch/arm/mach-exynos/setup-i2c4.c
+index 9df73e8..cd5e16a 100644
+--- a/arch/arm/mach-exynos/setup-i2c4.c
++++ b/arch/arm/mach-exynos/setup-i2c4.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c4.c
++ * linux/arch/arm/mach-exynos/setup-i2c4.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C4 GPIO configuration.
+  *
+@@ -22,8 +22,10 @@ void s3c_i2c4_cfg_gpio(struct platform_device *dev)
+ 	if (soc_is_exynos4210())
+ 		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
+ 				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+-	else
++	else if (soc_is_exynos4212() || soc_is_exynos4412())
+ 		s3c_gpio_cfgall_range(EXYNOS4_GPB(0), 2,
+ 				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+-
++	else
++		s3c_gpio_cfgall_range(EXYNOS5_GPA2(0), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c5.c b/arch/arm/mach-exynos/setup-i2c5.c
+index 2380d10..e9e2553 100644
+--- a/arch/arm/mach-exynos/setup-i2c5.c
++++ b/arch/arm/mach-exynos/setup-i2c5.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c5.c
++ * linux/arch/arm/mach-exynos/setup-i2c5.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C5 GPIO configuration.
+  *
+@@ -22,7 +22,10 @@ void s3c_i2c5_cfg_gpio(struct platform_device *dev)
+ 	if (soc_is_exynos4210())
+ 		s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
+ 				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+-	else
++	else if (soc_is_exynos4212() || soc_is_exynos4412())
+ 		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
+ 				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS5_GPA2(2), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c6.c b/arch/arm/mach-exynos/setup-i2c6.c
+index 284d12b..8a680de 100644
+--- a/arch/arm/mach-exynos/setup-i2c6.c
++++ b/arch/arm/mach-exynos/setup-i2c6.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c6.c
++ * linux/arch/arm/mach-exynos/setup-i2c6.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C6 GPIO configuration.
+  *
+@@ -15,9 +15,14 @@ struct platform_device; /* don't need the contents */
+ #include <linux/gpio.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/cpu.h>
+ 
+ void s3c_i2c6_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgall_range(EXYNOS4_GPC1(3), 2,
+-			      S3C_GPIO_SFN(4), S3C_GPIO_PULL_UP);
++	if (soc_is_exynos5250())
++		s3c_gpio_cfgall_range(EXYNOS5_GPB1(3), 2,
++				      S3C_GPIO_SFN(4), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS4_GPC1(3), 2,
++				      S3C_GPIO_SFN(4), S3C_GPIO_PULL_UP);
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c7.c b/arch/arm/mach-exynos/setup-i2c7.c
+index b7611ee..2082d43 100644
+--- a/arch/arm/mach-exynos/setup-i2c7.c
++++ b/arch/arm/mach-exynos/setup-i2c7.c
+@@ -1,7 +1,7 @@
+ /*
+- * linux/arch/arm/mach-exynos4/setup-i2c7.c
++ * linux/arch/arm/mach-exynos/setup-i2c7.c
+  *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *
+  * I2C7 GPIO configuration.
+  *
+@@ -15,9 +15,14 @@ struct platform_device; /* don't need the contents */
+ #include <linux/gpio.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/cpu.h>
+ 
+ void s3c_i2c7_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgall_range(EXYNOS4_GPD0(2), 2,
+-			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	if (soc_is_exynos5250())
++		s3c_gpio_cfgall_range(EXYNOS5_GPB2(2), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS4_GPD0(2), 2,
 +				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
  }
 -- 
