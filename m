@@ -1,40 +1,39 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung EXYNOS pm domains for devel
-Date: Sat, 11 Feb 2012 16:50:41 +0000
-Message-ID: <201202111650.41617.arnd@arndb.de>
-References: <010a01cce7e2$438f6d40$caae47c0$%kim@samsung.com> <201202102334.29545.arnd@arndb.de> <201202110042.39803.rjw@sisk.pl>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v2 00/11] ARM: EXYNOS: add suppport for EXYNOS5250 SoC
+Date: Sun, 12 Feb 2012 02:34:34 +0900
+Message-ID: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:61056 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751259Ab2BKQux (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:33537 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753713Ab2BKRfL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Feb 2012 11:50:53 -0500
-In-Reply-To: <201202110042.39803.rjw@sisk.pl>
+	Sat, 11 Feb 2012 12:35:11 -0500
+Received: by pbcun15 with SMTP id un15so3340620pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 11 Feb 2012 09:35:11 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: rmk+kernel@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net
 
-On Friday 10 February 2012, Rafael J. Wysocki wrote:
-> > Rafael, do you want to keep the option of rebasing the patches that you
-> > got from Kukjin?
-> 
-> No, I'm not going to rebase them.
+This patch adds support EXYNOS5250 SoC which has two A15 cores
+can be used on mobile / tablet devices.
 
-Ok, very good!
+Changes since v1:
+- address comments from mailing list
+- update the option accordingly common.[ch]
+- update clock part
+- get rid of static mapping for uart
+- add device tree enabled board file(mach-exynos5-dt.c)
+- add initial dts file for EXYNOS5250(SoC), SMDK5250(Board)
 
-> > If your workflow requires that, I can't take them, but
-> > if you can guarantee that the branch you have pulled them into is stable,
-> > I would prefer to pull it into a branch of arm-soc so that we can have
-> > other branches based on that where needed to avoid conflicts.
-> 
-> OK, the relevant branch is linux-pm/pm-domains and it won't be rebased.
-> Please feel free to pull from it.
-
-Thanks,
-
-	Arnd
+[PATCH v2 01/11] ARM: EXYNOS: to declare static for mach-exynos/common.c
+[PATCH v2 02/11] ARM: EXYNOS: use exynos_init_uarts() instead of exynos4_init_uarts()
+[PATCH v2 03/11] ARM: EXYNOS: add clock part for EXYNOS5250 SoC
+[PATCH v2 04/11] ARM: EXYNOS: add interrupt definitions for EXYNOS5250
+[PATCH v2 05/11] ARM: EXYNOS: add initial setup-i2c0 for EXYNOS5
+[PATCH v2 06/11] ARM: EXYNOS: add support uart for EXYNOS4 and EXYNOS5
+[PATCH v2 07/11] ARM: EXYNOS: add support get_core_count() for EXYNOS5250
+[PATCH v2 08/11] ARM: EXYNOS: add support for ARCH_EXYNOS5 and EXYNOS5250
+[PATCH v2 09/11] ARM: EXYNOS: add support device tree enabled board file for EXYNOS5
+[PATCH v2 10/11] ARM: dts: add initial dts file for EXYNOS5250, SMDK5250
+[PATCH v2 11/11] ARM: EXYNOS: temporary add board file for SMDK5250
