@@ -1,60 +1,40 @@
-From: Huisung Kang <hs1218.kang@samsung.com>
-Subject: [PATCH 2/2] ARM: SAMSUNG: Fix PMU platform device for EXYNOS SoC
-Date: Sat, 11 Feb 2012 16:04:00 +0900
-Message-ID: <019001cce88b$54f3e530$fedbaf90$@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung EXYNOS pm domains for devel
+Date: Sat, 11 Feb 2012 16:50:41 +0000
+Message-ID: <201202111650.41617.arnd@arndb.de>
+References: <010a01cce7e2$438f6d40$caae47c0$%kim@samsung.com> <201202102334.29545.arnd@arndb.de> <201202110042.39803.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53834 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752486Ab2BKHEC (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.9]:61056 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751259Ab2BKQux (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Feb 2012 02:04:02 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ7009O1VMOQ3C0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 16:04:01 +0900 (KST)
-Received: from NOHS1218KAN01 ([12.23.118.150])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ700AUFVMOW130@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 16:04:01 +0900 (KST)
-Content-language: ko
+	Sat, 11 Feb 2012 11:50:53 -0500
+In-Reply-To: <201202110042.39803.rjw@sisk.pl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
+On Friday 10 February 2012, Rafael J. Wysocki wrote:
+> > Rafael, do you want to keep the option of rebasing the patches that you
+> > got from Kukjin?
+> 
+> No, I'm not going to rebase them.
 
-Exynos4210, Exynos4212 has 2 core and Exynos4412 has 4 core and
-each core has its own PMU IRQ. Configure these PMU IRQs for
-performance monitor unit.
+Ok, very good!
 
-Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
----
- arch/arm/plat-samsung/devs.c |    9 ++++++++-
- 1 files changed, 8 insertions(+), 1 deletions(-)
+> > If your workflow requires that, I can't take them, but
+> > if you can guarantee that the branch you have pulled them into is stable,
+> > I would prefer to pull it into a branch of arm-soc so that we can have
+> > other branches based on that where needed to avoid conflicts.
+> 
+> OK, the relevant branch is linux-pm/pm-domains and it won't be rebased.
+> Please feel free to pull from it.
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 32a6e39..3e38dc4 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -1073,7 +1073,14 @@ struct platform_device s5p_device_onenand = {
- 
- #ifdef CONFIG_PLAT_S5P
- static struct resource s5p_pmu_resource[] = {
--	DEFINE_RES_IRQ(IRQ_PMU)
-+	[0] = DEFINE_RES_IRQ(IRQ_PMU),
-+#if CONFIG_NR_CPUS > 1
-+	[1] = DEFINE_RES_IRQ(IRQ_PMU_CPU1),
-+#endif
-+#if CONFIG_NR_CPUS > 2
-+	[2] = DEFINE_RES_IRQ(IRQ_PMU_CPU2),
-+	[3] = DEFINE_RES_IRQ(IRQ_PMU_CPU3),
-+#endif
- };
- 
- struct platform_device s5p_device_pmu = {
--- 
-1.7.1
+Thanks,
+
+	Arnd
