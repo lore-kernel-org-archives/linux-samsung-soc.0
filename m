@@ -1,26 +1,26 @@
 From: Huisung Kang <hs1218.kang@samsung.com>
-Subject: [PATCH] ARM: SAMSUNG: Fixup prevent bug related to 'Unchecked return
- value'
-Date: Sat, 11 Feb 2012 16:01:46 +0900
-Message-ID: <018e01cce88b$0501bd40$0f0537c0$@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: Fix PMU IRQs for EXYNOS4 CPU's Performance
+ Monitor Unit
+Date: Sat, 11 Feb 2012 16:02:54 +0900
+Message-ID: <018f01cce88b$2d34e080$879ea180$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31861 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:32050 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752486Ab2BKHBs (ORCPT
+	with ESMTP id S1752486Ab2BKHCz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Feb 2012 02:01:48 -0500
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+	Sat, 11 Feb 2012 02:02:55 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZ700E01VIUETC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 16:01:47 +0900 (KST)
+ 2010)) with ESMTP id <0LZ700DRNVKOX3B0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 16:02:54 +0900 (KST)
 Received: from NOHS1218KAN01 ([12.23.118.150])
  by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZ700EOSVIYZA30@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 16:01:46 +0900 (KST)
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ700F12VKUNK10@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 16:02:54 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -28,34 +28,44 @@ To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: kgene.kim@samsung.com
 
 
-[prevent bug]
-In s5p_pmu_init(): Value returned from a function is not checked for
-erros before being used.
-
 Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 ---
- arch/arm/plat-samsung/devs.c |    9 ++++++++-
+ arch/arm/mach-exynos/include/mach/irqs.h |    9 ++++++++-
  1 files changed, 8 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 3e38dc4..3e6e1f2 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -1092,7 +1092,14 @@ struct platform_device s5p_device_pmu = {
+diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+index 874e224..f82d2cc 100644
+--- a/arch/arm/mach-exynos/include/mach/irqs.h
++++ b/arch/arm/mach-exynos/include/mach/irqs.h
+@@ -120,7 +120,7 @@
+ #define IRQ_ADC1		IRQ_SPI(107)
+ #define IRQ_PEN1		IRQ_SPI(108)
+ #define IRQ_KEYPAD		IRQ_SPI(109)
+-#define IRQ_PMU			IRQ_SPI(110)
++
+ #define IRQ_GPS			IRQ_SPI(111)
+ #define IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
+ #define IRQ_SLIMBUS		IRQ_SPI(113)
+@@ -132,6 +132,10 @@
+ #define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
+ #define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
  
- static int __init s5p_pmu_init(void)
- {
--	platform_device_register(&s5p_device_pmu);
-+	int ret;
++#define IRQ_PMU_CPU0		COMBINER_IRQ(2, 2)
++#define IRQ_PMU			IRQ_PMU_CPU0
++#define IRQ_PMU_CPU1		COMBINER_IRQ(3, 2)
 +
-+	ret = platform_device_register(&s5p_device_pmu);
-+	if (ret) {
-+		pr_warning("s5p_pmu_init: pmu device not registered.\n");
-+		return ret;
-+	}
+ #define IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
+ #define IRQ_SYSMMU_SSS_0	COMBINER_IRQ(4, 1)
+ #define IRQ_SYSMMU_FIMC0_0	COMBINER_IRQ(4, 2)
+@@ -154,6 +158,9 @@
+ #define IRQ_FIMD0_VSYNC		COMBINER_IRQ(11, 1)
+ #define IRQ_FIMD0_SYSTEM	COMBINER_IRQ(11, 2)
+ 
++#define IRQ_PMU_CPU2		COMBINER_IRQ(18, 2)
++#define IRQ_PMU_CPU3		COMBINER_IRQ(19, 2)
 +
- 	return 0;
- }
- arch_initcall(s5p_pmu_init);
+ #define MAX_COMBINER_NR		16
+ 
+ #define IRQ_ADC			IRQ_ADC0
 -- 
 1.7.1
