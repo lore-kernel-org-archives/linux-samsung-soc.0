@@ -1,47 +1,90 @@
 From: Huisung Kang <hs1218.kang@samsung.com>
-Subject: [PATCH] i2c-s3c2410: move resume state flag to end of resume
-Date: Sat, 11 Feb 2012 12:22:21 +0900
-Message-ID: <018401cce86c$5df94130$19ebc390$@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYNOS: Support I2C{4/5} for EXYNOS{4212/4412} SoC
+Date: Sat, 11 Feb 2012 15:14:40 +0900
+Message-ID: <018c01cce884$707ed870$517c8950$@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:14955 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:44006 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753976Ab2BKDWX (ORCPT
+	with ESMTP id S1751193Ab2BKGOm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Feb 2012 22:22:23 -0500
+	Sat, 11 Feb 2012 01:14:42 -0500
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZ700DE3TC5XWB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 15:14:40 +0900 (KST)
+Received: from NOHS1218KAN01 ([12.23.118.150])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZ700DHOTCGOZ60@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 11 Feb 2012 15:14:40 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-i2c@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-From: Kisoo Yu <ksoo.yu@samsung.com>
 
-need to set flag after finishing its work
+Fixup gpio configuration related to i2c4/i2c5 for exynos{4212/4412}
+as below table.
+------------------------------------
+|    SoC     |   i2c4   |   i2c5   |
+----------------------------------
+| exynos4210 | GPB(2,3) | GPB(6,7) |
+----------------------------------
+| exynos4x12 | GPB(0,1) | GPB(2,3) |
+------------------------------------
 
-Signed-off-by: Kisoo Yu <ksoo.yu@samsung.com>
 Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
 ---
- drivers/i2c/busses/i2c-s3c2410.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos/setup-i2c4.c |   10 ++++++++--
+ arch/arm/mach-exynos/setup-i2c5.c |    9 +++++++--
+ 2 files changed, 15 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 4c17180..7d6d2b7 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1082,10 +1082,10 @@ static int s3c24xx_i2c_resume(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct s3c24xx_i2c *i2c = platform_get_drvdata(pdev);
+diff --git a/arch/arm/mach-exynos/setup-i2c4.c b/arch/arm/mach-exynos/setup-i2c4.c
+index 9f3c048..9df73e8 100644
+--- a/arch/arm/mach-exynos/setup-i2c4.c
++++ b/arch/arm/mach-exynos/setup-i2c4.c
+@@ -15,9 +15,15 @@ struct platform_device; /* don't need the contents */
+ #include <linux/gpio.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/cpu.h>
  
--	i2c->suspended = 0;
- 	clk_enable(i2c->clk);
- 	s3c24xx_i2c_init(i2c);
- 	clk_disable(i2c->clk);
-+	i2c->suspended = 0;
+ void s3c_i2c4_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
+-			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	if (soc_is_exynos4210())
++		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS4_GPB(0), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++
+ }
+diff --git a/arch/arm/mach-exynos/setup-i2c5.c b/arch/arm/mach-exynos/setup-i2c5.c
+index 77e1a1e..2380d10 100644
+--- a/arch/arm/mach-exynos/setup-i2c5.c
++++ b/arch/arm/mach-exynos/setup-i2c5.c
+@@ -15,9 +15,14 @@ struct platform_device; /* don't need the contents */
+ #include <linux/gpio.h>
+ #include <plat/iic.h>
+ #include <plat/gpio-cfg.h>
++#include <plat/cpu.h>
  
- 	return 0;
+ void s3c_i2c5_cfg_gpio(struct platform_device *dev)
+ {
+-	s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
+-			      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	if (soc_is_exynos4210())
++		s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
++	else
++		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
++				      S3C_GPIO_SFN(3), S3C_GPIO_PULL_UP);
  }
 -- 
 1.7.1
