@@ -1,33 +1,35 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 03/11] ARM: EXYNOS: add clock part for EXYNOS5250 SoC
-Date: Sat, 11 Feb 2012 20:14:30 +0000
-Message-ID: <20120211201430.GB24564@sirena.org.uk>
-References: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>
- <1328981685-8602-4-git-send-email-kgene.kim@samsung.com>
- <201202112007.08672.arnd@arndb.de>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device tree support
+Date: Sat, 11 Feb 2012 16:37:31 -0500
+Message-ID: <m2aa4pkq5g.fsf@bob.laptop.org>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+	<003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:35963 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751691Ab2BKUOl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Feb 2012 15:14:41 -0500
-Content-Disposition: inline
-In-Reply-To: <201202112007.08672.arnd@arndb.de>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com> (Kukjin Kim's
+	message of "Thu, 09 Feb 2012 22:42:56 +0900")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mike Turquette <mturquette@ti.com>, Kyungmin Park <kmpark@infradead.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk, olof@lixom.net
 
-On Sat, Feb 11, 2012 at 08:07:08PM +0000, Arnd Bergmann wrote:
+Hi,
 
-> what the risk is in changing exynos4 at the same time. It would
-> be great if we can have all exynos use the common struct clk in 3.4,
-> but I'm also happy if we just get exynos5 to do it that way from the
-> beginning and move exynos4 over in 3.5 after you have had a chance
-> to make sure everything still works.
+On Thu, Feb 09 2012, Kukjin Kim wrote:
+> Looks ok to me and I'd like to pick this series in samsung tree with Chris'
+> ack.
+>
+> Chris, is it ok? If you need to merge this in your tree, please let me know.
+> I will provide topic branch for it.
+>
+> If any problems, please let me know.
 
-Are we likely to get the common struct clk in 3.4?  It's all been
-extremely quiet on that front except for complaints about the lack of
-progress.
+I don't have a very strong opinion, but I think it's probably better to
+go via the mmc tree since the patch is so large and hence the chance of
+conflict before merging is high.  Thanks,
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
