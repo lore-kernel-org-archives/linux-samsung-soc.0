@@ -1,35 +1,39 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device tree support
-Date: Sat, 11 Feb 2012 16:37:31 -0500
-Message-ID: <m2aa4pkq5g.fsf@bob.laptop.org>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
-	<003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com> (Kukjin Kim's
-	message of "Thu, 09 Feb 2012 22:42:56 +0900")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
+From: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+Subject: [PATCH] ARM: s3c2440:  fix undefined reference to `s3c2440_restart' for machine gta02
+Date: Sun, 12 Feb 2012 14:05:29 +0100
+Message-ID: <1329051929-8303-1-git-send-email-GNUtoo@no-log.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp203.alice.it ([82.57.200.99]:37329 "EHLO smtp203.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753415Ab2BLNFf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 12 Feb 2012 08:05:35 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
 
-Hi,
+Without that fix we have(when compiling for the gta02 machine):
+    LD      .tmp_vmlinux1
+  arch/arm/mach-s3c2440/built-in.o:(.arch.info.init+0x3c): undefined reference to `s3c2440_restart'
+  make: *** [.tmp_vmlinux1] Error 1
 
-On Thu, Feb 09 2012, Kukjin Kim wrote:
-> Looks ok to me and I'd like to pick this series in samsung tree with Chris'
-> ack.
->
-> Chris, is it ok? If you need to merge this in your tree, please let me know.
-> I will provide topic branch for it.
->
-> If any problems, please let me know.
+Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+---
+ arch/arm/mach-s3c2440/Kconfig |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-I don't have a very strong opinion, but I think it's probably better to
-go via the mmc tree since the patch is so large and hence the chance of
-conflict before merging is high.  Thanks,
-
-- Chris.
+diff --git a/arch/arm/mach-s3c2440/Kconfig b/arch/arm/mach-s3c2440/Kconfig
+index 914e620..d8c8ad7 100644
+--- a/arch/arm/mach-s3c2440/Kconfig
++++ b/arch/arm/mach-s3c2440/Kconfig
+@@ -89,6 +89,7 @@ config MACH_ANUBIS
+ config MACH_NEO1973_GTA02
+ 	bool "Openmoko GTA02 / Freerunner phone"
+ 	select CPU_S3C2442
++	select CPU_S3C2440
+ 	select MFD_PCF50633
+ 	select PCF50633_GPIO
+ 	select I2C
 -- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+1.7.4.1
