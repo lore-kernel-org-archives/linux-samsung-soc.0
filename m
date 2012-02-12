@@ -1,112 +1,26 @@
-From: Julien Pichon <pichon.jln@gmail.com>
-Subject: [PATCH] Add poll_get_char & poll_put_char to uart_ops for the
- samsung UARTS.
-Date: Sun, 12 Feb 2012 19:22:01 +0100
-Message-ID: <20120212182201.GA17975@debian>
+From: "Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
+Subject: Re: [PATCH] ARM: S3C24XX: Fix restart on S3C2442
+Date: Sun, 12 Feb 2012 19:57:10 +0100
+Message-ID: <201202121957.10472.GNUtoo@no-log.org>
+References: <1329051929-8303-1-git-send-email-GNUtoo@no-log.org> <201202121457.18632.heiko@sntech.de> <201202121459.54568.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f174.google.com ([209.85.212.174]:47749 "EHLO
-	mail-wi0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753376Ab2BLSWD (ORCPT
+Received: from smtp201.alice.it ([82.57.200.97]:53520 "EHLO smtp201.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755725Ab2BLTD2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 12 Feb 2012 13:22:03 -0500
-Received: by wics10 with SMTP id s10so3033934wic.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Feb 2012 10:22:01 -0800 (PST)
-Content-Disposition: inline
+	Sun, 12 Feb 2012 14:03:28 -0500
+In-Reply-To: <201202121459.54568.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-(please CC me in your replies as I am not suscribed to the ML)
+Thanks a lot for the patch.
+It compiles fine.
+Now time for me to look at runtime boot issues for my gta02.
 
-The following patch allows users to use KGDB over serial console on
-board based on Samsung SOC. It has been tested on a mini2440.
-
-Signed-off-by: Julien Pichon <pichon.jln@gmail.com>
----
- drivers/tty/serial/samsung.c |   50 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 50 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index f96f37b..9f703ca 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -877,11 +877,24 @@ s3c24xx_serial_verify_port(struct uart_port *port, struct serial_struct *ser)
- 
- static struct console s3c24xx_serial_console;
- 
-+static int __init s3c24xx_serial_console_init(void)
-+{
-+	register_console(&s3c24xx_serial_console);
-+	return 0;
-+}
-+console_initcall(s3c24xx_serial_console_init);
-+
- #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
- #else
- #define S3C24XX_SERIAL_CONSOLE NULL
- #endif
- 
-+#ifdef CONFIG_CONSOLE_POLL
-+static int s3c24xx_serial_get_poll_char(struct uart_port *port);
-+static void s3c24xx_serial_put_poll_char(struct uart_port *port,
-+			 unsigned char c);
-+#endif
-+
- static struct uart_ops s3c24xx_serial_ops = {
- 	.pm		= s3c24xx_serial_pm,
- 	.tx_empty	= s3c24xx_serial_tx_empty,
-@@ -900,6 +913,10 @@ static struct uart_ops s3c24xx_serial_ops = {
- 	.request_port	= s3c24xx_serial_request_port,
- 	.config_port	= s3c24xx_serial_config_port,
- 	.verify_port	= s3c24xx_serial_verify_port,
-+#ifdef CONFIG_CONSOLE_POLL
-+	.poll_get_char = s3c24xx_serial_get_poll_char,
-+	.poll_put_char = s3c24xx_serial_put_poll_char,
-+#endif
- };
- 
- static struct uart_driver s3c24xx_uart_drv = {
-@@ -1311,6 +1328,39 @@ s3c24xx_serial_console_txrdy(struct uart_port *port, unsigned int ufcon)
- 	return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 : 0;
- }
- 
-+#ifdef CONFIG_CONSOLE_POLL
-+/*
-+ * Console polling routines for writing and reading from the uart while
-+ * in an interrupt or debug context.
-+ */
-+
-+static int s3c24xx_serial_get_poll_char(struct uart_port *port)
-+{
-+	struct s3c24xx_uart_port *ourport = to_ourport(port);
-+	unsigned int ufstat, count;
-+
-+	do {
-+		ufstat = rd_regl(port, S3C2410_UFSTAT);
-+		count = s3c24xx_serial_rx_fifocnt(ourport, ufstat);
-+		if (!count)
-+			cpu_relax();
-+	} while (!count);
-+
-+	return rd_regb(port, S3C2410_URXH);
-+}
-+
-+static void s3c24xx_serial_put_poll_char(struct uart_port *port,
-+		unsigned char c)
-+{
-+	unsigned int ufcon = rd_regl(cons_uart, S3C2410_UFCON);
-+
-+	while (!s3c24xx_serial_console_txrdy(port, ufcon))
-+		cpu_relax();
-+	wr_regb(cons_uart, S3C2410_UTXH, c);
-+}
-+
-+#endif /* CONFIG_CONSOLE_POLL */
-+
- static void
- s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
- {
--- 
-1.7.2.5
+Denis.
