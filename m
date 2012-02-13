@@ -1,41 +1,26 @@
-From: Dave Jones <davej@redhat.com>
-Subject: Re: [PATCH] EXYNOS: Initialize locking_frequency with
- initial frequency
-Date: Mon, 13 Feb 2012 09:35:55 -0500
-Message-ID: <20120213143555.GA1793@redhat.com>
-References: <1327466713-29101-1-git-send-email-tushar.behera@linaro.org>
- <4F291D44.4040502@linaro.org>
- <4F334ECA.5000507@linaro.org>
- <4F38DDF0.6030609@linaro.org>
+From: Krishna Reddy <vdumpa@nvidia.com>
+Subject: RE: [PATCHv6 7/7] ARM: dma-mapping: add support for IOMMU mapper
+Date: Mon, 13 Feb 2012 10:18:25 -0800
+Message-ID: <401E54CE964CD94BAE1EB4A729C7087E378E42AD6E@HQMAIL04.nvidia.com>
+References: <1328900324-20946-1-git-send-email-m.szyprowski@samsung.com>
+ <1328900324-20946-8-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <cpufreq-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <4F38DDF0.6030609@linaro.org>
-Sender: cpufreq-owner@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jc.lee@samsung.com, myungjoo.ham@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from hqemgate03.nvidia.com ([216.228.121.140]:8806 "EHLO
+	hqemgate03.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755662Ab2BMSSz convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Feb 2012 13:18:55 -0500
+In-Reply-To: <1328900324-20946-8-git-send-email-m.szyprowski@samsung.com>
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Shariq Hasnain <shariq.hasnain@linaro.org>, Chunsang Jeong <chunsang.jeong@linaro.org>, KyongHo Cho <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>
 
-On Mon, Feb 13, 2012 at 03:24:56PM +0530, Tushar Behera wrote:
+scripts/checkpatch.pl need to be run on your patches. Out of 7 patches,
+6 patches(except patch 5) have coding standard violations.
 
- > >>> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
- > >>> index 5467879..7cfb516 100644
- > >>> --- a/drivers/cpufreq/exynos-cpufreq.c
- > >>> +++ b/drivers/cpufreq/exynos-cpufreq.c
- > >>> @@ -210,6 +210,8 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
- > >>>  
- > >>>  	cpufreq_frequency_table_get_attr(exynos_info->freq_table, policy->cpu);
- > >>>  
- > >>> +	locking_frequency = exynos_getspeed(0);
- > >>> +
- > >>>  	/* set the transition latency value */
- > >>>  	policy->cpuinfo.transition_latency = 100000;
- > 
- > Any concerns with this patch?
-
-it's in my queue for applying to -next. I'll clear everything out today.
-
-	Dave
-
- 
+-KR
