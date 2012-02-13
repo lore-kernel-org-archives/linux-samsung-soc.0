@@ -1,50 +1,68 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] samsung devel-rtc for v3.4
-Date: Mon, 13 Feb 2012 06:02:15 +0000
-Message-ID: <201202130602.15615.arnd@arndb.de>
-References: <4F36AEDE.6060506@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 6/6] ARM: EXYNOS: USB OTG support for Universal C210
+Date: Mon, 13 Feb 2012 12:27:01 +0530
+Message-ID: <4F38B43D.4080504@linaro.org>
+References: <1328870146-20312-1-git-send-email-l.majewski@samsung.com> <1328870146-20312-7-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:56268 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750875Ab2BMGCa (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:54080 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751637Ab2BMG5G (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Feb 2012 01:02:30 -0500
-In-Reply-To: <4F36AEDE.6060506@samsung.com>
+	Mon, 13 Feb 2012 01:57:06 -0500
+Received: by iacb35 with SMTP id b35so3893679iac.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 12 Feb 2012 22:57:06 -0800 (PST)
+In-Reply-To: <1328870146-20312-7-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Saturday 11 February 2012, Kukjin Kim wrote:
-> Please pull samsung rtc developing which has been missed to upstream.
-> I rebased it Olof said and there is no conflicts with
-> arm-soc/depends/rmk/for-armsoc.
+On 02/10/2012 04:05 PM, Lukasz Majewski wrote:
+> This patch adds platform data for using S3C-HSOTG driver at
+> Universal_C210 target.
 > 
-> If any problem, please kindly let me know.
+> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/mach-universal_c210.c |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
 > 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> The following changes since commit 62aa2b537c6f5957afd98e29f96897419ed5ebab:
-> 
->    Linux 3.3-rc2 (2012-01-31 13:31:54 -0800)
-> 
-> are available in the git repository at:
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> v3.4-next/devel-samsung-rtc
-> 
+> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+> index dd75101..3aaac61 100644
+> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+> @@ -40,6 +40,7 @@
+>  #include <plat/fimc-core.h>
+>  #include <plat/camport.h>
+>  #include <plat/mipi_csis.h>
+> +#include <plat/udc-hs.h>
+>  
+>  #include <mach/map.h>
+>  
+> @@ -927,6 +928,9 @@ static struct gpio universal_camera_gpios[] = {
+>  	{ GPIO_CAM_MEGA_nRST,	GPIOF_OUT_INIT_LOW,  "CAM_8M_NRST" },
+>  };
+>  
+> +/* USB OTG */
+> +static struct s3c_hsotg_plat universal_hsotg_pdata;
+> +
+>  static void universal_camera_init(void)
+>  {
+>  	s3c_set_platdata(&mipi_csis_platdata, sizeof(mipi_csis_platdata),
+> @@ -1037,6 +1041,7 @@ static void __init universal_machine_init(void)
+>  	i2c_register_board_info(I2C_GPIO_BUS_12, i2c_gpio12_devs,
+>  			ARRAY_SIZE(i2c_gpio12_devs));
+>  
+> +	s3c_hsotg_set_platdata(&universal_hsotg_pdata);
+>  	universal_camera_init();
+>  
+>  	/* Last */
 
-Pulled into next/drivers.
+Are you not missing the device entry for &s3c_device_usb_hsotg?
 
-Thanks!
 
-	Arnd
+-- 
+Tushar Behera
