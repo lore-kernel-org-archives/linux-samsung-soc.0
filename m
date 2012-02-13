@@ -1,56 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 3/3] i2c-s3c2410: Refactor ifdefs for PM_SLEEP
-Date: Mon, 13 Feb 2012 15:05:04 -0800
-Message-ID: <1329174304-12228-3-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <1329174304-12228-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:56928 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754591Ab2BMXFK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Feb 2012 18:05:10 -0500
-In-Reply-To: <1329174304-12228-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Ben Dooks <ben-i2c-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Subject: Re: [PATCH] i2c-s3c2410: Add stub runtime power management
+Date: Mon, 13 Feb 2012 23:31:39 +0000
+Message-ID: <20120213233139.GJ2999@freya.fluff.org>
+References: <1327171600-5489-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <4F1C082D.2080005@gmail.com>
+ <20120122152234.GA2915@opensource.wolfsonmicro.com>
+ <4F1C45C6.1040003@gmail.com>
+ <CADkCAusScak6gH4BBowrOpveGG=eDjZdj+X8vF4D5+yi8gv5PA@mail.gmail.com>
+ <4F1C4BF4.5040409@gmail.com>
+ <20120122213952.GA29022@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20120122213952.GA29022-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Gatliff <bgat-uPd5UNENI//N9NzbbXoYwQ@public.gmane.org>, Wolfram Sang <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>, khali@linux-fr.org, w.sang@pengutronix.de
-Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Use the PM_SLEEP ifdef for system suspend and resume. This is partly
-in preparation for adding runtime operations and partly because a user
-may in theory choose to enable runtime suspend but not system suspend.
+On Sun, Jan 22, 2012 at 09:39:53PM +0000, Mark Brown wrote:
+> On Sun, Jan 22, 2012 at 06:48:36PM +0100, Sylwester Nawrocki wrote:
+> > On 01/22/2012 06:27 PM, Bill Gatliff wrote:
+> 
+> > > I for one would rather see in-kernel drivers that require it, and then
+> 
+> > In fact we have to deal with the opposite now, as some existing drivers
+> > have been used for multiple generations of SoC, where almost unchanged
+> > device IPs are deployed. Those drivers were originally written for the
+> > simplest SoCs.
+> 
+> TBH I think most of the devices for which people are running these days
+> will be able to get some win from the system wide stuff - the WFI modes
+> aren't exactly the latest thing in hardware terms, it's just been a long
+> road to getting them supported.  Infrastructure like Mark's PM QoS work
+> and Raphael's PM domains work has really helped a lot here.
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- drivers/i2c/busses/i2c-s3c2410.c |    6 +++++-
- 1 files changed, 5 insertions(+), 1 deletions(-)
+The WFI stuff's been around for ages, and is generally just the core that
+is affected. The deep sleep options might be useful, so I don't see any
+reason not to do this. I also approve that it might allow people to shut
+down I2C units they're not using at the time to save power.
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 1cb06c58..5d8e802 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -1073,7 +1073,7 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
-+#ifdef CONFIG_PM_SLEEP
- static int s3c24xx_i2c_suspend_noirq(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
-@@ -1096,10 +1096,14 @@ static int s3c24xx_i2c_resume(struct device *dev)
- 
- 	return 0;
- }
-+#endif
- 
-+#ifdef CONFIG_PM
- static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops = {
-+#ifdef CONFIG_PM_SLEEP
- 	.suspend_noirq = s3c24xx_i2c_suspend_noirq,
- 	.resume = s3c24xx_i2c_resume,
-+#endif
- };
- 
- #define S3C24XX_DEV_PM_OPS (&s3c24xx_i2c_dev_pm_ops)
 -- 
-1.7.9.rc1
+Ben
