@@ -1,42 +1,41 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] ARM: S3C24XX: Fix restart on S3C2442
-Date: Mon, 13 Feb 2012 13:58:23 +0100
-Message-ID: <201202131358.23652.heiko@sntech.de>
-References: <1329051929-8303-1-git-send-email-GNUtoo@no-log.org> <201202121957.10472.GNUtoo@no-log.org> <201202131329.37465.GNUtoo@no-log.org>
+From: Dave Jones <davej@redhat.com>
+Subject: Re: [PATCH] EXYNOS: Initialize locking_frequency with
+ initial frequency
+Date: Mon, 13 Feb 2012 09:35:55 -0500
+Message-ID: <20120213143555.GA1793@redhat.com>
+References: <1327466713-29101-1-git-send-email-tushar.behera@linaro.org>
+ <4F291D44.4040502@linaro.org>
+ <4F334ECA.5000507@linaro.org>
+ <4F38DDF0.6030609@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:56645 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752314Ab2BMM6i (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Feb 2012 07:58:38 -0500
-In-Reply-To: <201202131329.37465.GNUtoo@no-log.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <cpufreq-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F38DDF0.6030609@linaro.org>
+Sender: cpufreq-owner@vger.kernel.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: cpufreq@vger.kernel.org, linux-samsung-soc@vger.kernel.org, jc.lee@samsung.com, myungjoo.ham@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Denis,
+On Mon, Feb 13, 2012 at 03:24:56PM +0530, Tushar Behera wrote:
 
-Am Montag, 13. Februar 2012, 13:29:37 schrieb Denis 'GNUtoo' Carikli:
-> >Thanks a lot for the patch.
-> >It compiles fine.
-> >Now time for me to look at runtime boot issues for my gta02.
-> 
-> I've now tested at runtime, here's the boot log:
+ > >>> diff --git a/drivers/cpufreq/exynos-cpufreq.c b/drivers/cpufreq/exynos-cpufreq.c
+ > >>> index 5467879..7cfb516 100644
+ > >>> --- a/drivers/cpufreq/exynos-cpufreq.c
+ > >>> +++ b/drivers/cpufreq/exynos-cpufreq.c
+ > >>> @@ -210,6 +210,8 @@ static int exynos_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ > >>>  
+ > >>>  	cpufreq_frequency_table_get_attr(exynos_info->freq_table, policy->cpu);
+ > >>>  
+ > >>> +	locking_frequency = exynos_getspeed(0);
+ > >>> +
+ > >>>  	/* set the transition latency value */
+ > >>>  	policy->cpuinfo.transition_latency = 100000;
+ > 
+ > Any concerns with this patch?
 
-[snipped boot log]
+it's in my queue for applying to -next. I'll clear everything out today.
 
-> It is now waiting for the rootfs that isn't there(since /dev/mmcblk0p1
-> depend on a driver that is not mainline and that I only applied the patch
-> to test on top of the master branch of linux-next).
-> 
-> Tested-by: Denis 'GNUtoo' Carikli" <GNUtoo@no-log.org>
+	Dave
 
-thanks for testing, and for still working on the Freerunner. At some point I'd 
-probably like to revive mine :-)
-
-Heiko
+ 
