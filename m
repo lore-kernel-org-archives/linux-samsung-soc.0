@@ -1,219 +1,302 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v2 3/3] ARM: EXYNOS: add support DMA for EXYNOS4X12 SoC
-Date: Thu, 16 Feb 2012 07:31:33 +0900
-Message-ID: <1329345093-16180-4-git-send-email-kgene.kim@samsung.com>
-References: <1329345093-16180-1-git-send-email-kgene.kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] spi/s3c64xx: Convert to using core message queue
+Date: Wed, 15 Feb 2012 14:48:32 -0800
+Message-ID: <1329346112-1647-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:58456 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753103Ab2BOWb4 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40672 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751412Ab2BOWsj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Feb 2012 17:31:56 -0500
-Received: by mail-pw0-f46.google.com with SMTP id un15so1798945pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2012 14:31:56 -0800 (PST)
-In-Reply-To: <1329345093-16180-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 15 Feb 2012 17:48:39 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Boojin Kim <boojin.kim@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
+Cc: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-From: Boojin Kim <boojin.kim@samsung.com>
+Convert the s3c64xx driver to using the new message queue factored out of
+the pl022 driver by Linus Walleij, saving us a nice block of code and
+getting the benefits of improvements implemented in the core.
 
-Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
- arch/arm/mach-exynos/Kconfig                   |    3 +
- arch/arm/mach-exynos/dma.c                     |   95 ++++++++++++++++++++++--
- arch/arm/plat-samsung/include/plat/dma-pl330.h |    8 ++
- 3 files changed, 98 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 5d602f6..5e0a456 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -41,6 +41,7 @@ config SOC_EXYNOS4212
- 	bool "SAMSUNG EXYNOS4212"
- 	default y
- 	depends on ARCH_EXYNOS4
-+	select SAMSUNG_DMADEV
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	help
-@@ -50,6 +51,7 @@ config SOC_EXYNOS4412
- 	bool "SAMSUNG EXYNOS4412"
- 	default y
- 	depends on ARCH_EXYNOS4
-+	select SAMSUNG_DMADEV
- 	help
- 	  Enable EXYNOS4412 SoC support
+Only lightly tested thus far.  Linus, it'd be really nice if you could
+add this to your patch queue for this feature until it's merged by
+Grant.
+
+ drivers/spi/spi-s3c64xx.c |  125 ++++++++-------------------------------------
+ 1 files changed, 22 insertions(+), 103 deletions(-)
+
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index b899af66..1174d80 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -128,8 +128,6 @@
  
-@@ -333,6 +335,7 @@ config MACH_SMDK4212
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_KEYPAD
- 	select SAMSUNG_DEV_PWM
-+	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
- 	select EXYNOS4_SETUP_I2C7
-diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
-index 17a2f90..13607c4 100644
---- a/arch/arm/mach-exynos/dma.c
-+++ b/arch/arm/mach-exynos/dma.c
-@@ -29,6 +29,7 @@
- #include <asm/irq.h>
- #include <plat/devs.h>
- #include <plat/irqs.h>
-+#include <plat/cpu.h>
+ #define msecs_to_loops(t) (loops_per_jiffy / 1000 * HZ * t)
  
- #include <mach/map.h>
- #include <mach/irqs.h>
-@@ -36,7 +37,7 @@
+-#define SUSPND    (1<<0)
+-#define SPIBUSY   (1<<1)
+ #define RXBUSY    (1<<2)
+ #define TXBUSY    (1<<3)
  
- static u64 dma_dmamask = DMA_BIT_MASK(32);
+@@ -144,10 +142,8 @@ struct s3c64xx_spi_dma_data {
+  * @clk: Pointer to the spi clock.
+  * @src_clk: Pointer to the clock used to generate SPI signals.
+  * @master: Pointer to the SPI Protocol master.
+- * @workqueue: Work queue for the SPI xfer requests.
+  * @cntrlr_info: Platform specific data for the controller this driver manages.
+  * @tgl_spi: Pointer to the last CS left untoggled by the cs_change hint.
+- * @work: Work
+  * @queue: To log SPI xfer requests.
+  * @lock: Controller specific lock.
+  * @state: Set of FLAGS to indicate status.
+@@ -167,10 +163,8 @@ struct s3c64xx_spi_driver_data {
+ 	struct clk                      *src_clk;
+ 	struct platform_device          *pdev;
+ 	struct spi_master               *master;
+-	struct workqueue_struct	        *workqueue;
+ 	struct s3c64xx_spi_info  *cntrlr_info;
+ 	struct spi_device               *tgl_spi;
+-	struct work_struct              work;
+ 	struct list_head                queue;
+ 	spinlock_t                      lock;
+ 	unsigned long                   sfr_start;
+@@ -637,9 +631,10 @@ static void s3c64xx_spi_unmap_mssg(struct s3c64xx_spi_driver_data *sdd,
+ 	}
+ }
  
--static u8 pdma0_peri[] = {
-+static u8 exynos4210_pdma0_peri[] = {
- 	DMACH_PCM0_RX,
- 	DMACH_PCM0_TX,
- 	DMACH_PCM2_RX,
-@@ -69,15 +70,47 @@ static u8 pdma0_peri[] = {
- 	DMACH_AC97_PCMOUT,
- };
+-static void handle_msg(struct s3c64xx_spi_driver_data *sdd,
+-					struct spi_message *msg)
++static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
++					    struct spi_message *msg)
+ {
++	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+ 	struct spi_device *spi = msg->spi;
+ 	struct s3c64xx_spi_csinfo *cs = spi->controller_data;
+@@ -771,13 +766,15 @@ out:
  
--static struct dma_pl330_platdata exynos4_pdma0_pdata = {
--	.nr_valid_peri = ARRAY_SIZE(pdma0_peri),
--	.peri_id = pdma0_peri,
-+static u8 exynos4212_pdma0_peri[] = {
-+	DMACH_PCM0_RX,
-+	DMACH_PCM0_TX,
-+	DMACH_PCM2_RX,
-+	DMACH_PCM2_TX,
-+	DMACH_MIPI_HSI0,
-+	DMACH_MIPI_HSI1,
-+	DMACH_SPI0_RX,
-+	DMACH_SPI0_TX,
-+	DMACH_SPI2_RX,
-+	DMACH_SPI2_TX,
-+	DMACH_I2S0S_TX,
-+	DMACH_I2S0_RX,
-+	DMACH_I2S0_TX,
-+	DMACH_I2S2_RX,
-+	DMACH_I2S2_TX,
-+	DMACH_UART0_RX,
-+	DMACH_UART0_TX,
-+	DMACH_UART2_RX,
-+	DMACH_UART2_TX,
-+	DMACH_UART4_RX,
-+	DMACH_UART4_TX,
-+	DMACH_SLIMBUS0_RX,
-+	DMACH_SLIMBUS0_TX,
-+	DMACH_SLIMBUS2_RX,
-+	DMACH_SLIMBUS2_TX,
-+	DMACH_SLIMBUS4_RX,
-+	DMACH_SLIMBUS4_TX,
-+	DMACH_AC97_MICIN,
-+	DMACH_AC97_PCMIN,
-+	DMACH_AC97_PCMOUT,
-+	DMACH_MIPI_HSI4,
-+	DMACH_MIPI_HSI5,
- };
- 
-+struct dma_pl330_platdata exynos4_pdma0_pdata;
+ 	if (msg->complete)
+ 		msg->complete(msg->context);
 +
- static AMBA_AHB_DEVICE(exynos4_pdma0, "dma-pl330.0", 0x00041330,
- 	EXYNOS4_PA_PDMA0, {IRQ_PDMA0}, &exynos4_pdma0_pdata);
- 
--static u8 pdma1_peri[] = {
-+static u8 exynos4210_pdma1_peri[] = {
- 	DMACH_PCM0_RX,
- 	DMACH_PCM0_TX,
- 	DMACH_PCM1_RX,
-@@ -105,11 +138,41 @@ static u8 pdma1_peri[] = {
- 	DMACH_SLIMBUS5_TX,
- };
- 
--static struct dma_pl330_platdata exynos4_pdma1_pdata = {
--	.nr_valid_peri = ARRAY_SIZE(pdma1_peri),
--	.peri_id = pdma1_peri,
-+static u8 exynos4212_pdma1_peri[] = {
-+	DMACH_PCM0_RX,
-+	DMACH_PCM0_TX,
-+	DMACH_PCM1_RX,
-+	DMACH_PCM1_TX,
-+	DMACH_MIPI_HSI2,
-+	DMACH_MIPI_HSI3,
-+	DMACH_SPI1_RX,
-+	DMACH_SPI1_TX,
-+	DMACH_I2S0S_TX,
-+	DMACH_I2S0_RX,
-+	DMACH_I2S0_TX,
-+	DMACH_I2S1_RX,
-+	DMACH_I2S1_TX,
-+	DMACH_UART0_RX,
-+	DMACH_UART0_TX,
-+	DMACH_UART1_RX,
-+	DMACH_UART1_TX,
-+	DMACH_UART3_RX,
-+	DMACH_UART3_TX,
-+	DMACH_SLIMBUS1_RX,
-+	DMACH_SLIMBUS1_TX,
-+	DMACH_SLIMBUS3_RX,
-+	DMACH_SLIMBUS3_TX,
-+	DMACH_SLIMBUS5_RX,
-+	DMACH_SLIMBUS5_TX,
-+	DMACH_SLIMBUS0AUX_RX,
-+	DMACH_SLIMBUS0AUX_TX,
-+	DMACH_SPDIF,
-+	DMACH_MIPI_HSI6,
-+	DMACH_MIPI_HSI7,
- };
- 
-+static struct dma_pl330_platdata exynos4_pdma1_pdata;
++	spi_finalize_current_message(master);
 +
- static AMBA_AHB_DEVICE(exynos4_pdma1,  "dma-pl330.1", 0x00041330,
- 	EXYNOS4_PA_PDMA1, {IRQ_PDMA1}, &exynos4_pdma1_pdata);
++	return 0;
+ }
  
-@@ -137,6 +200,22 @@ static int __init exynos4_dma_init(void)
- 	if (of_have_populated_dt())
- 		return 0;
+-static void s3c64xx_spi_work(struct work_struct *work)
++static int s3c64xx_spi_prepare_transfer(struct spi_master *spi)
+ {
+-	struct s3c64xx_spi_driver_data *sdd = container_of(work,
+-					struct s3c64xx_spi_driver_data, work);
+-	unsigned long flags;
++	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
  
-+	if (soc_is_exynos4210()) {
-+		exynos4_pdma0_pdata.nr_valid_peri =
-+			ARRAY_SIZE(exynos4210_pdma0_peri);
-+		exynos4_pdma0_pdata.peri_id = exynos4210_pdma0_peri;
-+		exynos4_pdma1_pdata.nr_valid_peri =
-+			ARRAY_SIZE(exynos4210_pdma1_peri);
-+		exynos4_pdma1_pdata.peri_id = exynos4210_pdma1_peri;
-+	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
-+		exynos4_pdma0_pdata.nr_valid_peri =
-+			ARRAY_SIZE(exynos4212_pdma0_peri);
-+		exynos4_pdma0_pdata.peri_id = exynos4212_pdma0_peri;
-+		exynos4_pdma1_pdata.nr_valid_peri =
-+			ARRAY_SIZE(exynos4212_pdma1_peri);
-+		exynos4_pdma1_pdata.peri_id = exynos4212_pdma1_peri;
-+	}
-+
- 	dma_cap_set(DMA_SLAVE, exynos4_pdma0_pdata.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, exynos4_pdma0_pdata.cap_mask);
- 	amba_device_register(&exynos4_pdma0_device, &iomem_resource);
-diff --git a/arch/arm/plat-samsung/include/plat/dma-pl330.h b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-index ecf23a8..0670f37 100644
---- a/arch/arm/plat-samsung/include/plat/dma-pl330.h
-+++ b/arch/arm/plat-samsung/include/plat/dma-pl330.h
-@@ -82,6 +82,14 @@ enum dma_ch {
- 	DMACH_SLIMBUS4_TX,
- 	DMACH_SLIMBUS5_RX,
- 	DMACH_SLIMBUS5_TX,
-+	DMACH_MIPI_HSI0,
-+	DMACH_MIPI_HSI1,
-+	DMACH_MIPI_HSI2,
-+	DMACH_MIPI_HSI3,
-+	DMACH_MIPI_HSI4,
-+	DMACH_MIPI_HSI5,
-+	DMACH_MIPI_HSI6,
-+	DMACH_MIPI_HSI7,
- 	DMACH_MTOM_0,
- 	DMACH_MTOM_1,
- 	DMACH_MTOM_2,
+ 	/* Acquire DMA channels */
+ 	while (!acquire_dma(sdd))
+@@ -785,61 +782,18 @@ static void s3c64xx_spi_work(struct work_struct *work)
+ 
+ 	pm_runtime_get_sync(&sdd->pdev->dev);
+ 
+-	spin_lock_irqsave(&sdd->lock, flags);
+-
+-	while (!list_empty(&sdd->queue)
+-				&& !(sdd->state & SUSPND)) {
+-
+-		struct spi_message *msg;
+-
+-		msg = container_of(sdd->queue.next, struct spi_message, queue);
+-
+-		list_del_init(&msg->queue);
+-
+-		/* Set Xfer busy flag */
+-		sdd->state |= SPIBUSY;
+-
+-		spin_unlock_irqrestore(&sdd->lock, flags);
+-
+-		handle_msg(sdd, msg);
+-
+-		spin_lock_irqsave(&sdd->lock, flags);
+-
+-		sdd->state &= ~SPIBUSY;
+-	}
++	return 0;
++}
+ 
+-	spin_unlock_irqrestore(&sdd->lock, flags);
++static int s3c64xx_spi_unprepare_transfer(struct spi_master *spi)
++{
++	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(spi);
+ 
+ 	/* Free DMA channels */
+ 	sdd->ops->release(sdd->rx_dma.ch, &s3c64xx_spi_dma_client);
+ 	sdd->ops->release(sdd->tx_dma.ch, &s3c64xx_spi_dma_client);
+ 
+ 	pm_runtime_put(&sdd->pdev->dev);
+-}
+-
+-static int s3c64xx_spi_transfer(struct spi_device *spi,
+-						struct spi_message *msg)
+-{
+-	struct s3c64xx_spi_driver_data *sdd;
+-	unsigned long flags;
+-
+-	sdd = spi_master_get_devdata(spi->master);
+-
+-	spin_lock_irqsave(&sdd->lock, flags);
+-
+-	if (sdd->state & SUSPND) {
+-		spin_unlock_irqrestore(&sdd->lock, flags);
+-		return -ESHUTDOWN;
+-	}
+-
+-	msg->status = -EINPROGRESS;
+-	msg->actual_length = 0;
+-
+-	list_add_tail(&msg->queue, &sdd->queue);
+-
+-	queue_work(sdd->workqueue, &sdd->work);
+-
+-	spin_unlock_irqrestore(&sdd->lock, flags);
+ 
+ 	return 0;
+ }
+@@ -879,13 +833,6 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 		}
+ 	}
+ 
+-	if (sdd->state & SUSPND) {
+-		spin_unlock_irqrestore(&sdd->lock, flags);
+-		dev_err(&spi->dev,
+-			"setup: SPI-%d not active!\n", spi->master->bus_num);
+-		return -ESHUTDOWN;
+-	}
+-
+ 	spin_unlock_irqrestore(&sdd->lock, flags);
+ 
+ 	if (spi->bits_per_word != 8
+@@ -1073,7 +1020,9 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 
+ 	master->bus_num = pdev->id;
+ 	master->setup = s3c64xx_spi_setup;
+-	master->transfer = s3c64xx_spi_transfer;
++	master->prepare_transfer_hardware = s3c64xx_spi_prepare_transfer;
++	master->transfer_one_message = s3c64xx_spi_transfer_one_message;
++	master->unprepare_transfer_hardware = s3c64xx_spi_unprepare_transfer;
+ 	master->num_chipselect = sci->num_cs;
+ 	master->dma_alignment = 8;
+ 	/* the spi->mode bits understood by this driver: */
+@@ -1128,27 +1077,18 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 		goto err6;
+ 	}
+ 
+-	sdd->workqueue = create_singlethread_workqueue(
+-						dev_name(master->dev.parent));
+-	if (sdd->workqueue == NULL) {
+-		dev_err(&pdev->dev, "Unable to create workqueue\n");
+-		ret = -ENOMEM;
+-		goto err7;
+-	}
+-
+ 	/* Setup Deufult Mode */
+ 	s3c64xx_spi_hwinit(sdd, pdev->id);
+ 
+ 	spin_lock_init(&sdd->lock);
+ 	init_completion(&sdd->xfer_completion);
+-	INIT_WORK(&sdd->work, s3c64xx_spi_work);
+ 	INIT_LIST_HEAD(&sdd->queue);
+ 
+ 	ret = request_irq(irq, s3c64xx_spi_irq, 0, "spi-s3c64xx", sdd);
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "Failed to request IRQ %d: %d\n",
+ 			irq, ret);
+-		goto err8;
++		goto err7;
+ 	}
+ 
+ 	writel(S3C64XX_SPI_INT_RX_OVERRUN_EN | S3C64XX_SPI_INT_RX_UNDERRUN_EN |
+@@ -1158,7 +1098,7 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 	if (spi_register_master(master)) {
+ 		dev_err(&pdev->dev, "cannot register SPI master\n");
+ 		ret = -EBUSY;
+-		goto err9;
++		goto err8;
+ 	}
+ 
+ 	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d "
+@@ -1172,10 +1112,8 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 
+ 	return 0;
+ 
+-err9:
+-	free_irq(irq, sdd);
+ err8:
+-	destroy_workqueue(sdd->workqueue);
++	free_irq(irq, sdd);
+ err7:
+ 	clk_disable(sdd->src_clk);
+ err6:
+@@ -1201,25 +1139,15 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	struct resource	*mem_res;
+-	unsigned long flags;
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
+-	spin_lock_irqsave(&sdd->lock, flags);
+-	sdd->state |= SUSPND;
+-	spin_unlock_irqrestore(&sdd->lock, flags);
+-
+-	while (sdd->state & SPIBUSY)
+-		msleep(10);
+-
+ 	spi_unregister_master(master);
+ 
+ 	writel(0, sdd->regs + S3C64XX_SPI_INT_EN);
+ 
+ 	free_irq(platform_get_irq(pdev, 0), sdd);
+ 
+-	destroy_workqueue(sdd->workqueue);
+-
+ 	clk_disable(sdd->src_clk);
+ 	clk_put(sdd->src_clk);
+ 
+@@ -1243,14 +1171,8 @@ static int s3c64xx_spi_suspend(struct device *dev)
+ {
+ 	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&sdd->lock, flags);
+-	sdd->state |= SUSPND;
+-	spin_unlock_irqrestore(&sdd->lock, flags);
+ 
+-	while (sdd->state & SPIBUSY)
+-		msleep(10);
++	spi_master_suspend(master);
+ 
+ 	/* Disable the clock */
+ 	clk_disable(sdd->src_clk);
+@@ -1267,7 +1189,6 @@ static int s3c64xx_spi_resume(struct device *dev)
+ 	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+ 	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+-	unsigned long flags;
+ 
+ 	sci->cfg_gpio(pdev);
+ 
+@@ -1277,9 +1198,7 @@ static int s3c64xx_spi_resume(struct device *dev)
+ 
+ 	s3c64xx_spi_hwinit(sdd, pdev->id);
+ 
+-	spin_lock_irqsave(&sdd->lock, flags);
+-	sdd->state &= ~SUSPND;
+-	spin_unlock_irqrestore(&sdd->lock, flags);
++	spi_master_resume(master);
+ 
+ 	return 0;
+ }
 -- 
-1.7.4.4
+1.7.9.rc1
