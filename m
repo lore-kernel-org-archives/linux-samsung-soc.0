@@ -1,16 +1,16 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 01/12] ARM: S3C24XX: remove unused spi gpio setup functions
-Date: Thu, 16 Feb 2012 07:55:35 +0900
-Message-ID: <1329346545-16373-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 04/12] ARM: S3C24XX: move common S3C2443 clock definitions to clock.h
+Date: Thu, 16 Feb 2012 07:55:38 +0900
+Message-ID: <1329346545-16373-5-git-send-email-kgene.kim@samsung.com>
 References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:60162 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751472Ab2BOW4A (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:48957 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756009Ab2BOW4I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Feb 2012 17:56:00 -0500
-Received: by mail-pz0-f46.google.com with SMTP id d14so1335535dae.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2012 14:56:00 -0800 (PST)
+	Wed, 15 Feb 2012 17:56:08 -0500
+Received: by pbcun15 with SMTP id un15so1817088pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2012 14:56:08 -0800 (PST)
 In-Reply-To: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,224 +19,107 @@ Cc: ben-linux@fluff.org, Heiko Stuebner <heiko@sntech.de>, Kukjin Kim <kgene.kim
 
 From: Heiko Stuebner <heiko@sntech.de>
 
-A grep through the kernel source revealed that neither the
-config-options nor the defined functions are used anywhere
-in the kernel.
+plat-samsung/clock.h currently keeps all the SoC specific clock
+declarations except the ones for S3C2443/S3C2416 which were kept in
+s3c2443.h.
 
-There was also no activity in this regard through the last kernel
-releases, so it seems this situation will not change in the future.
-
-Therefore this patch removes this seemingly dead code.
+This patch moves them out of s3c2443.h to get rid of the header
+completely later on.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-s3c2410/include/mach/spi.h     |   11 -------
- arch/arm/plat-s3c24xx/Kconfig                |   20 -------------
- arch/arm/plat-s3c24xx/Makefile               |    6 ----
- arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c |   36 ------------------------
- arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c   |   38 --------------------------
- arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c    |   36 ------------------------
- 6 files changed, 0 insertions(+), 147 deletions(-)
- delete mode 100644 arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c
- delete mode 100644 arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c
- delete mode 100644 arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c
+ arch/arm/mach-s3c2416/clock.c                |    1 -
+ arch/arm/plat-s3c24xx/s3c2443-clock.c        |    1 -
+ arch/arm/plat-samsung/include/plat/clock.h   |   17 +++++++++++++++++
+ arch/arm/plat-samsung/include/plat/s3c2443.h |   19 -------------------
+ 4 files changed, 17 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/mach-s3c2410/include/mach/spi.h b/arch/arm/mach-s3c2410/include/mach/spi.h
-index 4d95883..2a686c0 100644
---- a/arch/arm/mach-s3c2410/include/mach/spi.h
-+++ b/arch/arm/mach-s3c2410/include/mach/spi.h
-@@ -24,15 +24,4 @@ struct s3c2410_spi_info {
- 	void (*set_cs)(struct s3c2410_spi_info *spi, int cs, int pol);
- };
+diff --git a/arch/arm/mach-s3c2416/clock.c b/arch/arm/mach-s3c2416/clock.c
+index 59f54d1..5e36905 100644
+--- a/arch/arm/mach-s3c2416/clock.c
++++ b/arch/arm/mach-s3c2416/clock.c
+@@ -15,7 +15,6 @@
+ #include <linux/clk.h>
  
--/* Standard setup / suspend routines for SPI GPIO pins. */
--
--extern void s3c24xx_spi_gpiocfg_bus0_gpe11_12_13(struct s3c2410_spi_info *spi,
--						 int enable);
--
--extern void s3c24xx_spi_gpiocfg_bus1_gpg5_6_7(struct s3c2410_spi_info *spi,
--					      int enable);
--
--extern void s3c24xx_spi_gpiocfg_bus1_gpd8_9_10(struct s3c2410_spi_info *spi,
--					       int enable);
--
- #endif /* __ASM_ARCH_SPI_H */
-diff --git a/arch/arm/plat-s3c24xx/Kconfig b/arch/arm/plat-s3c24xx/Kconfig
-index d8973ac..6b1d918 100644
---- a/arch/arm/plat-s3c24xx/Kconfig
-+++ b/arch/arm/plat-s3c24xx/Kconfig
-@@ -98,26 +98,6 @@ config S3C2410_DMA_DEBUG
- 	  Enable debugging output for the DMA code. This option sends info
- 	  to the kernel log, at priority KERN_DEBUG.
+ #include <plat/s3c2416.h>
+-#include <plat/s3c2443.h>
+ #include <plat/clock.h>
+ #include <plat/clock-clksrc.h>
+ #include <plat/cpu.h>
+diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/plat-s3c24xx/s3c2443-clock.c
+index 95e6819..3633060 100644
+--- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
++++ b/arch/arm/plat-s3c24xx/s3c2443-clock.c
+@@ -12,7 +12,6 @@
  
--# SPI default pin configuration code
--
--config S3C24XX_SPI_BUS0_GPE11_GPE12_GPE13
--	bool
--	help
--	  SPI GPIO configuration code for BUS0 when connected to
--	  GPE11, GPE12 and GPE13.
--
--config S3C24XX_SPI_BUS1_GPG5_GPG6_GPG7
--	bool
--	help
--	  SPI GPIO configuration code for BUS 1 when connected to
--	  GPG5, GPG6 and GPG7.
--
--config S3C24XX_SPI_BUS1_GPD8_GPD9_GPD10
--	bool
--	help
--	  SPI GPIO configuration code for BUS 1 when connected to
--	  GPD8, GPD9 and GPD10.
--
- # common code for s3c24xx based machines, such as the SMDKs.
+ #include <mach/regs-s3c2443-clock.h>
  
- # cpu frequency items common between s3c2410 and s3c2440/s3c2442
-diff --git a/arch/arm/plat-s3c24xx/Makefile b/arch/arm/plat-s3c24xx/Makefile
-index b2b0112..7cefd7f 100644
---- a/arch/arm/plat-s3c24xx/Makefile
-+++ b/arch/arm/plat-s3c24xx/Makefile
-@@ -38,12 +38,6 @@ obj-$(CONFIG_S3C2410_CPUFREQ_UTILS) += s3c2410-cpufreq-utils.o
- obj-$(CONFIG_ARCH_S3C2410)	+= setup-i2c.o
- obj-$(CONFIG_S3C2410_SETUP_TS)	+= setup-ts.o
+-#include <plat/s3c2443.h>
+ #include <plat/clock.h>
+ #include <plat/clock-clksrc.h>
+ #include <plat/cpu.h>
+diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+index 73c66d4..42bbe3d 100644
+--- a/arch/arm/plat-samsung/include/plat/clock.h
++++ b/arch/arm/plat-samsung/include/plat/clock.h
+@@ -79,6 +79,10 @@ extern struct clk clk_epll;
+ extern struct clk clk_xtal;
+ extern struct clk clk_ext;
  
--# SPI gpio central GPIO functions
--
--obj-$(CONFIG_S3C24XX_SPI_BUS0_GPE11_GPE12_GPE13) += spi-bus0-gpe11_12_13.o
--obj-$(CONFIG_S3C24XX_SPI_BUS1_GPG5_GPG6_GPG7)    += spi-bus1-gpg5_6_7.o
--obj-$(CONFIG_S3C24XX_SPI_BUS1_GPD8_GPD9_GPD10)	 += spi-bus1-gpd8_9_10.o
--
- # machine common support
++/* S3C2443/S3C2416 specific clocks */
++extern struct clksrc_clk clk_epllref;
++extern struct clksrc_clk clk_esysclk;
++
+ /* S3C64XX specific clocks */
+ extern struct clk clk_h2;
+ extern struct clk clk_27m;
+@@ -116,6 +120,19 @@ extern void s3c2412_setup_clocks(void);
+ extern void s3c244x_setup_clocks(void);
+ extern void s3c2443_setup_clocks(void);
  
- obj-$(CONFIG_MACH_SMDK)		+= common-smdk.o
-diff --git a/arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c b/arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c
-deleted file mode 100644
-index 704175b..0000000
---- a/arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c
-+++ /dev/null
-@@ -1,36 +0,0 @@
--/* linux/arch/arm/plat-s3c24xx/spi-bus0-gpe11_12_13.c
-- *
-- * Copyright (c) 2008 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C24XX SPI - gpio configuration for bus 0 on gpe11,12,13
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License.
--*/
++/* S3C2443/S3C2416 specific clock functions */
++
++typedef unsigned int (*pll_fn)(unsigned int reg, unsigned int base);
++
++extern void s3c2443_common_setup_clocks(pll_fn get_mpll);
++extern void s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
++				       unsigned int *divs, int nr_divs,
++				       int divmask);
++
++extern int s3c2443_clkcon_enable_h(struct clk *clk, int enable);
++extern int s3c2443_clkcon_enable_p(struct clk *clk, int enable);
++extern int s3c2443_clkcon_enable_s(struct clk *clk, int enable);
++
+ /* S3C64XX specific functions and clocks */
+ 
+ extern int s3c64xx_sclk_ctrl(struct clk *clk, int enable);
+diff --git a/arch/arm/plat-samsung/include/plat/s3c2443.h b/arch/arm/plat-samsung/include/plat/s3c2443.h
+index ffaecb9..a5b794f 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c2443.h
++++ b/arch/arm/plat-samsung/include/plat/s3c2443.h
+@@ -32,22 +32,3 @@ extern void s3c2443_restart(char mode, const char *cmd);
+ #define s3c2443_init NULL
+ #define s3c2443_restart NULL
+ #endif
 -
--#include <linux/kernel.h>
--#include <linux/gpio.h>
+-/* common code used by s3c2443 and others.
+- * note, not to be used outside of arch/arm/mach-s3c* */
 -
--#include <mach/spi.h>
--#include <mach/regs-gpio.h>
+-struct clk;	/* some files don't need clk.h otherwise */
 -
--void s3c24xx_spi_gpiocfg_bus0_gpe11_12_13(struct s3c2410_spi_info *spi,
--					  int enable)
--{
--	if (enable) {
--		s3c_gpio_cfgpin(S3C2410_GPE(13), S3C2410_GPE13_SPICLK0);
--		s3c_gpio_cfgpin(S3C2410_GPE(12), S3C2410_GPE12_SPIMOSI0);
--		s3c_gpio_cfgpin(S3C2410_GPE(11), S3C2410_GPE11_SPIMISO0);
--		s3c2410_gpio_pullup(S3C2410_GPE(11), 0);
--		s3c2410_gpio_pullup(S3C2410_GPE(13), 0);
--	} else {
--		s3c_gpio_cfgpin(S3C2410_GPE(13), S3C2410_GPIO_INPUT);
--		s3c_gpio_cfgpin(S3C2410_GPE(11), S3C2410_GPIO_INPUT);
--		s3c_gpio_setpull(S3C2410_GPE(11), S3C_GPIO_PULL_NONE);
--		s3c_gpio_setpull(S3C2410_GPE(12), S3C_GPIO_PULL_NONE);
--		s3c_gpio_setpull(S3C2410_GPE(13), S3C_GPIO_PULL_NONE);
--	}
--}
-diff --git a/arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c b/arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c
-deleted file mode 100644
-index 72457af..0000000
---- a/arch/arm/plat-s3c24xx/spi-bus1-gpd8_9_10.c
-+++ /dev/null
-@@ -1,38 +0,0 @@
--/* linux/arch/arm/plat-s3c24xx/spi-bus0-gpd8_9_10.c
-- *
-- * Copyright (c) 2008 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C24XX SPI - gpio configuration for bus 1 on gpd8,9,10
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License.
--*/
+-typedef unsigned int (*pll_fn)(unsigned int reg, unsigned int base);
 -
--#include <linux/kernel.h>
--#include <linux/gpio.h>
+-extern void s3c2443_common_setup_clocks(pll_fn get_mpll);
+-extern void s3c2443_common_init_clocks(int xtal, pll_fn get_mpll,
+-				       unsigned int *divs, int nr_divs,
+-				       int divmask);
 -
--#include <mach/spi.h>
--#include <mach/regs-gpio.h>
+-extern int s3c2443_clkcon_enable_h(struct clk *clk, int enable);
+-extern int s3c2443_clkcon_enable_p(struct clk *clk, int enable);
+-extern int s3c2443_clkcon_enable_s(struct clk *clk, int enable);
 -
--void s3c24xx_spi_gpiocfg_bus1_gpd8_9_10(struct s3c2410_spi_info *spi,
--					int enable)
--{
--
--	printk(KERN_INFO "%s(%d)\n", __func__, enable);
--	if (enable) {
--		s3c_gpio_cfgpin(S3C2410_GPD(10), S3C2440_GPD10_SPICLK1);
--		s3c_gpio_cfgpin(S3C2410_GPD(9), S3C2440_GPD9_SPIMOSI1);
--		s3c_gpio_cfgpin(S3C2410_GPD(8), S3C2440_GPD8_SPIMISO1);
--		s3c2410_gpio_pullup(S3C2410_GPD(10), 0);
--		s3c2410_gpio_pullup(S3C2410_GPD(9), 0);
--	} else {
--		s3c_gpio_cfgpin(S3C2410_GPD(8), S3C2410_GPIO_INPUT);
--		s3c_gpio_cfgpin(S3C2410_GPD(9), S3C2410_GPIO_INPUT);
--		s3c_gpio_setpull(S3C2410_GPD(10), S3C_GPIO_PULL_NONE);
--		s3c_gpio_setpull(S3C2410_GPD(9), S3C_GPIO_PULL_NONE);
--		s3c_gpio_setpull(S3C2410_GPD(8), S3C_GPIO_PULL_NONE);
--	}
--}
-diff --git a/arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c b/arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c
-deleted file mode 100644
-index c3972b6..0000000
---- a/arch/arm/plat-s3c24xx/spi-bus1-gpg5_6_7.c
-+++ /dev/null
-@@ -1,36 +0,0 @@
--/* linux/arch/arm/plat-s3c24xx/spi-bus0-gpg5_6_7.c
-- *
-- * Copyright (c) 2008 Simtec Electronics
-- *	http://armlinux.simtec.co.uk/
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C24XX SPI - gpio configuration for bus 1 on gpg5,6,7
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License.
--*/
--
--#include <linux/kernel.h>
--#include <linux/gpio.h>
--
--#include <mach/spi.h>
--#include <mach/regs-gpio.h>
--
--void s3c24xx_spi_gpiocfg_bus1_gpg5_6_7(struct s3c2410_spi_info *spi,
--				       int enable)
--{
--	if (enable) {
--		s3c_gpio_cfgpin(S3C2410_GPG(7), S3C2410_GPG7_SPICLK1);
--		s3c_gpio_cfgpin(S3C2410_GPG(6), S3C2410_GPG6_SPIMOSI1);
--		s3c_gpio_cfgpin(S3C2410_GPG(5), S3C2410_GPG5_SPIMISO1);
--		s3c2410_gpio_pullup(S3C2410_GPG(5), 0);
--		s3c2410_gpio_pullup(S3C2410_GPG(6), 0);
--	} else {
--		s3c_gpio_cfgpin(S3C2410_GPG(7), S3C2410_GPIO_INPUT);
--		s3c_gpio_cfgpin(S3C2410_GPG(5), S3C2410_GPIO_INPUT);
--		s3c_gpio_setpull(S3C2410_GPG(5), S3C_GPIO_PULL_NONE);
--		s3c_gpio_setpull(S3C2410_GPG(6), S3C_GPIO_PULL_NONE);
--		s3c_gpio_setpull(S3C2410_GPG(7), S3C_GPIO_PULL_NONE);
--	}
--}
+-extern struct clksrc_clk clk_epllref;
+-extern struct clksrc_clk clk_esysclk;
 -- 
 1.7.4.4
