@@ -1,38 +1,45 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: S3C64XX: Supply platform data for SPI on Cragganmore
-Date: Wed, 15 Feb 2012 14:49:07 -0800
-Message-ID: <1329346147-1776-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] spi/s3c64xx: Convert to using core message queue
+Date: Wed, 15 Feb 2012 23:51:54 +0100
+Message-ID: <CACRpkdYTEUKv60qwRMyxYnmP6kb+BvsqUkzB=2as_1TH4+XJcw@mail.gmail.com>
+References: <1329346112-1647-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40676 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751412Ab2BOWtL (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:55398 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751472Ab2BOWvy convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Feb 2012 17:49:11 -0500
+	Wed, 15 Feb 2012 17:51:54 -0500
+Received: by iacb35 with SMTP id b35so2054962iac.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2012 14:51:54 -0800 (PST)
+In-Reply-To: <1329346112-1647-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
 
-Having to specify the platform data explicitly like this even though it
-is provided as a default doesn't feel entirely elegant but there we are.
+On Wed, Feb 15, 2012 at 11:48 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- arch/arm/mach-s3c64xx/mach-crag6410.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+> Convert the s3c64xx driver to using the new message queue factored ou=
+t of
+> the pl022 driver by Linus Walleij, saving us a nice block of code and
+> getting the benefits of improvements implemented in the core.
+>
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index d5a7982..c05e070 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -790,7 +790,7 @@ static void __init crag6410_machine_init(void)
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
- 	samsung_keypad_set_platdata(&crag6410_keypad_data);
--	s3c64xx_spi0_set_platdata(NULL, 0, 1);
-+	s3c64xx_spi0_set_platdata(&s3c64xx_spi0_pdata, 0, 1);
- 
- 	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
- 
--- 
-1.7.9.rc1
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+
+> Only lightly tested thus far. =A0Linus, it'd be really nice if you co=
+uld
+> add this to your patch queue for this feature until it's merged by
+> Grant.
+
+I just pinged Grant on the main (v2) patch, if there are issues to
+be resolved I will carry this patch in the series, if Grant is happy
+with v2 we can just push this on top I guess...
+
+Thanks,
+Linus Walleij
