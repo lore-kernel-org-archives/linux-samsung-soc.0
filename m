@@ -1,65 +1,38 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Enable G2D on SMDKV310
-Date: Thu, 16 Feb 2012 22:06:54 +0900
-Message-ID: <4F3CFF6E.9010404@samsung.com>
-References: <1325492711-15012-1-git-send-email-sachin.kamat@linaro.org>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device tree support
+Date: Thu, 16 Feb 2012 08:08:33 -0500
+Message-ID: <m239abgc32.fsf@bob.laptop.org>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+	<003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
+	<m2aa4pkq5g.fsf@bob.laptop.org> <4F3CFEED.6060206@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f66.google.com ([209.85.160.66]:45302 "EHLO
-	mail-pw0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751513Ab2BPNH5 (ORCPT
+Received: from void.printf.net ([89.145.121.20]:58911 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751487Ab2BPNJT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Feb 2012 08:07:57 -0500
-Received: by pbcwz12 with SMTP id wz12so1371313pbc.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2012 05:07:57 -0800 (PST)
-In-Reply-To: <1325492711-15012-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 16 Feb 2012 08:09:19 -0500
+In-Reply-To: <4F3CFEED.6060206@samsung.com> (Kukjin Kim's message of "Thu, 16
+	Feb 2012 22:04:45 +0900")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
 
-On 01/02/12 17:25, Sachin Kamat wrote:
-> This patch enables G2D support on SMDKV310 board.
+Hi,
+
+On Thu, Feb 16 2012, Kukjin Kim wrote:
+> I mean if I or you create topic branch for this whole series, can be
+> merged into both tree for avoiding conflicts with further working. Of
+> course, the topic branch don't have to rebase after merging into each
+> tree.
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
->   arch/arm/mach-exynos/Kconfig         |    1 +
->   arch/arm/mach-exynos/mach-smdkv310.c |    1 +
->   2 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index bd4600e..a673d0d 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -183,6 +183,7 @@ config MACH_SMDKV310
->   	select S5P_DEV_FIMC1
->   	select S5P_DEV_FIMC2
->   	select S5P_DEV_FIMC3
-> +	select S5P_DEV_G2D
->   	select S5P_DEV_I2C_HDMIPHY
->   	select S5P_DEV_MFC
->   	select S5P_DEV_TV
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-> index b2c5557..8a5c23b 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -270,6 +270,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
->   	&s5p_device_fimc1,
->   	&s5p_device_fimc2,
->   	&s5p_device_fimc3,
-> +	&s5p_device_g2d,
->   	&exynos4_device_ac97,
->   	&exynos4_device_i2s0,
->   	&exynos4_device_ohci,
+> If you're ok on this and my opinion, let me create the topic branch.
 
-Looks ok, will apply.
+Okay, sure.  Thanks,
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
