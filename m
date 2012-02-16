@@ -1,39 +1,46 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 4/4] ARM: SAMSUNG: move the mmc platdata header file to
- linux/mmc/
-Date: Thu, 16 Feb 2012 21:56:32 +0900
-Message-ID: <4F3CFD00.6020909@samsung.com>
-References: <4F39EB0D.90905@samsung.com>
+Subject: Re: [PATCH-RESEND 0/4] ARM: S5PV210: Enable FIMC & MFC on SMDKC110
+ & V210 boards
+Date: Thu, 16 Feb 2012 22:00:45 +0900
+Message-ID: <4F3CFDFD.1000804@samsung.com>
+References: <1329110331-12746-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:55099 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751323Ab2BPM4j (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:55864 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751728Ab2BPNAv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Feb 2012 07:56:39 -0500
-In-Reply-To: <4F39EB0D.90905@samsung.com>
+	Thu, 16 Feb 2012 08:00:51 -0500
+Received: by pbcun15 with SMTP id un15so2485785pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2012 05:00:51 -0800 (PST)
+In-Reply-To: <1329110331-12746-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 02/14/12 14:03, Jaehoon Chung wrote:
+On 02/13/12 14:18, Sachin Kamat wrote:
+> Re-sending the patch series rebased onto next/board-samsung branch of
+> Kukjin Kim's tree:
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 >
-> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
-> Signed-off-by: Kyungmin-park<kyungmin.park@samsung.com>
-> ---
->   arch/arm/plat-samsung/include/plat/sdhci.h |   59 +-------------------
->   include/linux/mmc/sdhci-s3c.h              |   84 ++++++++++++++++++++++++++++
->   2 files changed, 85 insertions(+), 58 deletions(-)
->   create mode 100644 include/linux/mmc/sdhci-s3c.h
+> Sachin Kamat (4):
+>    ARM: S5PV210: Enable MFC on SMDKV210
+>    ARM: S5PV210: Enable MFC on SMDKC110
+>    ARM: S5PV210: Enable FIMC on SMDKV210
+>    ARM: S5PV210: Enable FIMC on SMDKC110
 >
-Hi,
+>   arch/arm/mach-s5pv210/Kconfig         |    8 ++++++++
+>   arch/arm/mach-s5pv210/mach-smdkc110.c |   14 ++++++++++++++
+>   arch/arm/mach-s5pv210/mach-smdkv210.c |   14 ++++++++++++++
+>   3 files changed, 36 insertions(+), 0 deletions(-)
+>
 
-I don't agree with this.
-Basically, the components(struct s3c_sdhci_platdata and some enums) you 
-moved here are just for platform data on each board in arch/arm/.
+Hi Sachin,
+
+Looks good to me, will apply this whole series.
 
 Thanks.
 
