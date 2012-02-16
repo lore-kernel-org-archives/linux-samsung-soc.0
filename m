@@ -1,58 +1,73 @@
-From: Jae hoon Chung <jh80.chung@gmail.com>
-Subject: Re: [PATCH 3/4] mmc: sdhci-s3c: use the sdhci-s3c.h instead of regs-sdhci.h
-Date: Thu, 16 Feb 2012 23:54:47 +0900
-Message-ID: <CAELcNGSF=63EbKbjBY8Su+g24Lfw5hOaK2=T=e=RN_QikmbR9w@mail.gmail.com>
-References: <4F39EB0C.1080003@samsung.com>
-	<4F3CFB62.5030604@samsung.com>
+From: Sangwook Lee <sangwook.lee@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Add WLAN init on ORIGEN
+Date: Thu, 16 Feb 2012 14:55:18 +0000
+Message-ID: <1329404118-19198-1-git-send-email-sangwook.lee@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <4F3CFB62.5030604@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:62744 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751708Ab2BPO51 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 16 Feb 2012 09:57:27 -0500
+Received: by lagu2 with SMTP id u2so2506084lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2012 06:57:25 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org, Sangwook Lee <sangwook.lee@linaro.org>
 
-2012/2/16 Kukjin Kim <kgene.kim@samsung.com>:
-> On 02/14/12 14:03, Jaehoon Chung wrote:
->>
->> Use the sdhci-s3c.h
->>
-> This patch should be merged into 2nd patch which is including change =
-the
-> name to S3C_SDHCI_xxx from S3C64Xx_SDHCI_xxx. BTW, I'm not sure the n=
-ame
-> should/can be changed because as you know S3C64XX_ means this can be =
-used
-> after S3C64XX or just for S3C64XX, so need to check data sheet of SDH=
-CI part
-> for S3C24XX and S3C64XX and later.
-Hi Mr. Kukjin.
+Add WLAN init code on Origen for both hw2.1.1 and hw2.0 in AR6003
 
-I know that use only S3C64XX_ or S3C24XX.
-But i think no problem that change to S3C_SDHCI_xxx form S3C64XX_SDHCI_=
-xxx.
-Because now that's meaningless...Though use the S3C64XX_SDHCI_xxx or S3=
-C24xxx_,
-finally that also use in sdhci-s3c.c.
+Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+---
+ arch/arm/mach-exynos/mach-origen.c |   21 +++++++++++++++++++++
+ 1 files changed, 21 insertions(+), 0 deletions(-)
 
-What means that distinguish between S3C_SDHCI and S3C64xx_SDHCI?
-
-Best Regards,
-Jaehoon Chung
-
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index e1d87b9..d570667 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -21,6 +21,7 @@
+ #include <linux/mfd/max8997.h>
+ #include <linux/lcd.h>
+ #include <linux/rfkill-gpio.h>
++#include <linux/delay.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -676,6 +677,25 @@ static void __init origen_bt_setup(void)
+ 	s3c_gpio_setpull(EXYNOS4_GPX2(2), S3C_GPIO_PULL_NONE);
+ }
+ 
++static void __init origen_wlan_setup(void)
++{
++	int err;
++
++	err = gpio_request_one(EXYNOS4_GPX2(4),
++			GPIOF_OUT_INIT_LOW, "GPX2_4");
++	if (err) {
++		pr_warning("ORIGEN: Failed to obtain WIFI GPIOs\n");
++		return;
++	}
++	s3c_gpio_cfgpin(EXYNOS4_GPX2(4), S3C_GPIO_OUTPUT);
++	s3c_gpio_setpull(EXYNOS4_GPX2(4),
++			S3C_GPIO_PULL_NONE);
++	/* VDD33,I/O Supply must be done */
++	gpio_set_value(EXYNOS4_GPX2(4), 0);
++	udelay(30);     /*AR6003 speicic value Tb */
++	gpio_direction_output(EXYNOS4_GPX2(4), 1);
++}
++
+ static void s5p_tv_setup(void)
+ {
+ 	/* Direct HPD to HDMI chip */
+@@ -738,6 +758,7 @@ static void __init origen_machine_init(void)
+ 	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+ 
+ 	origen_bt_setup();
++	origen_wlan_setup();
+ }
+ 
+ MACHINE_START(ORIGEN, "ORIGEN")
+-- 
+1.7.4.1
