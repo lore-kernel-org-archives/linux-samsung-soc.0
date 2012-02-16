@@ -1,228 +1,97 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 11/12] ARM: S3C2443: move mach-s3c2443/* into mach-s3c24xx/
-Date: Thu, 16 Feb 2012 07:55:45 +0900
-Message-ID: <1329346545-16373-12-git-send-email-kgene.kim@samsung.com>
-References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 03/11] ARM: EXYNOS: add clock part for EXYNOS5250 SoC
+Date: Thu, 16 Feb 2012 12:42:58 +0900
+Message-ID: <052801ccec5d$137aa460$3a6fed20$%kim@samsung.com>
+References: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>
+ <201202112007.08672.arnd@arndb.de> <20120211201430.GB24564@sirena.org.uk>
+ <201202130547.48530.arnd@arndb.de>
+ <20120213110453.GA13673@n2100.arm.linux.org.uk>
+ <20120213205444.GH11077@ponder.secretlab.ca>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:48957 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751319Ab2BOW4b (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:43907 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756360Ab2BPDnF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Feb 2012 17:56:31 -0500
-Received: by mail-pw0-f46.google.com with SMTP id un15so1817088pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Feb 2012 14:56:31 -0800 (PST)
-In-Reply-To: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 15 Feb 2012 22:43:05 -0500
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZG00LSAVNRI8G0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 16 Feb 2012 12:43:03 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZG00I5KVNM3Q80@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 16 Feb 2012 12:43:02 +0900 (KST)
+In-reply-to: <20120213205444.GH11077@ponder.secretlab.ca>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <rmk+kernel@arm.linux.org.uk>
+To: 'Grant Likely' <grant.likely@secretlab.ca>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, 'Kyungmin Park' <kmpark@infradead.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, olof@lixom.net, linux-arm-kernel@lists.infradead.org, 'Mike Turquette' <mturquette@ti.com>, jhbird.choi@samsung.com
 
-This patch moves S3C2443 stuff into mach-s3c24xx/ directory
-so that we can merge the s3c24 series' directories to the
-just one mach-s3c24xx/ directory.
+Grant Likely wrote:
+> 
+> On Mon, Feb 13, 2012 at 11:04:53AM +0000, Russell King - ARM Linux wrote:
+> > On Mon, Feb 13, 2012 at 05:47:48AM +0000, Arnd Bergmann wrote:
+> > > On Saturday 11 February 2012, Mark Brown wrote:
+> > > > On Sat, Feb 11, 2012 at 08:07:08PM +0000, Arnd Bergmann wrote:
+> > > > > what the risk is in changing exynos4 at the same time. It would
+> > > > > be great if we can have all exynos use the common struct clk in 3.4,
+> > > > > but I'm also happy if we just get exynos5 to do it that way from the
+> > > > > beginning and move exynos4 over in 3.5 after you have had a chance
+> > > > > to make sure everything still works.
+> > > >
+> > > > Are we likely to get the common struct clk in 3.4?  It's all been
+> > > > extremely quiet on that front except for complaints about the lack of
+> > > > progress.
+> > >
+> > > Yes, we discussed it during the subarch maintainers meeting at Linaro
+> > > Connect last week and it looks like we're finally going forward on
+> > > this now. Maybe Grant or Mike are better at explaining the current
+> > > status regarding the clk implementation and bindings.
+> >
+> > That would be good for those who weren't there to be updated with what
+> > was discussed.
+> 
+> The decision was essentially Mike would repost his series ASAP with a view
+> to getting it queued up for v3.4.  I think he is also going to get it into
+> linux-next so at least it gets testing, even if the ultimate decision is to
+> wait for v3.5.
+> 
+Hmm...so I'm not sure if some exynos5250 products use v3.4, it can use common struct clk for mass production?
 
-Cc: Ben Dooks <ben-linux@fluff.org>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/Kconfig                                   |    1 -
- arch/arm/Makefile                                  |    2 +-
- arch/arm/mach-s3c2443/Kconfig                      |   32 --------------------
- arch/arm/mach-s3c2443/Makefile                     |   20 ------------
- arch/arm/mach-s3c24xx/Kconfig                      |   29 ++++++++++++++++++
- arch/arm/mach-s3c24xx/Makefile                     |    5 +++
- .../clock.c => mach-s3c24xx/clock-s3c2443.c}       |    0
- .../dma.c => mach-s3c24xx/dma-s3c2443.c}           |    0
- .../irq.c => mach-s3c24xx/irq-s3c2443.c}           |    0
- .../{mach-s3c2443 => mach-s3c24xx}/mach-smdk2443.c |    0
- arch/arm/{mach-s3c2443 => mach-s3c24xx}/s3c2443.c  |    0
- 11 files changed, 35 insertions(+), 54 deletions(-)
- delete mode 100644 arch/arm/mach-s3c2443/Kconfig
- delete mode 100644 arch/arm/mach-s3c2443/Makefile
- rename arch/arm/{mach-s3c2443/clock.c => mach-s3c24xx/clock-s3c2443.c} (100%)
- rename arch/arm/{mach-s3c2443/dma.c => mach-s3c24xx/dma-s3c2443.c} (100%)
- rename arch/arm/{mach-s3c2443/irq.c => mach-s3c24xx/irq-s3c2443.c} (100%)
- rename arch/arm/{mach-s3c2443 => mach-s3c24xx}/mach-smdk2443.c (100%)
- rename arch/arm/{mach-s3c2443 => mach-s3c24xx}/s3c2443.c (100%)
+If not, I think, this should be kept on v3.4 then it can be changed to use common struct clk from v3.5.
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f8044e9..22d6db3 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -1072,7 +1072,6 @@ if ARCH_S3C24XX
- source "arch/arm/mach-s3c2412/Kconfig"
- source "arch/arm/mach-s3c2416/Kconfig"
- source "arch/arm/mach-s3c2440/Kconfig"
--source "arch/arm/mach-s3c2443/Kconfig"
- endif
- 
- if ARCH_S3C64XX
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 59d9df4..f3f6d97 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -175,7 +175,7 @@ machine-$(CONFIG_ARCH_PRIMA2)		:= prima2
- machine-$(CONFIG_ARCH_PXA)		:= pxa
- machine-$(CONFIG_ARCH_REALVIEW)		:= realview
- machine-$(CONFIG_ARCH_RPC)		:= rpc
--machine-$(CONFIG_ARCH_S3C24XX)		:= s3c24xx s3c2412 s3c2416 s3c2440 s3c2443
-+machine-$(CONFIG_ARCH_S3C24XX)		:= s3c24xx s3c2412 s3c2416 s3c2440
- machine-$(CONFIG_ARCH_S3C64XX)		:= s3c64xx
- machine-$(CONFIG_ARCH_S5P64X0)		:= s5p64x0
- machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
-diff --git a/arch/arm/mach-s3c2443/Kconfig b/arch/arm/mach-s3c2443/Kconfig
-deleted file mode 100644
-index 793a0fe..0000000
---- a/arch/arm/mach-s3c2443/Kconfig
-+++ /dev/null
-@@ -1,32 +0,0 @@
--# Copyright 2007 Simtec Electronics
--#
--# Licensed under GPLv2
--
--config CPU_S3C2443
--	bool
--	depends on ARCH_S3C24XX
--	select CPU_ARM920T
--	select S3C2443_DMA if S3C2410_DMA
--	select CPU_LLSERIAL_S3C2440
--	select SAMSUNG_CLKSRC
--	select S3C2443_CLOCK
--	help
--	  Support for the S3C2443 SoC from the S3C24XX line
--
--config S3C2443_DMA
--	bool
--	depends on CPU_S3C2443
--	help
--	  Internal config node for S3C2443 DMA support
--
--menu "S3C2443 Machines"
--
--config MACH_SMDK2443
--	bool "SMDK2443"
--	select CPU_S3C2443
--	select MACH_SMDK
--	select S3C_DEV_HSMMC1
--	help
--	  Say Y here if you are using an SMDK2443
--
--endmenu
-diff --git a/arch/arm/mach-s3c2443/Makefile b/arch/arm/mach-s3c2443/Makefile
-deleted file mode 100644
-index d1843c9..0000000
---- a/arch/arm/mach-s3c2443/Makefile
-+++ /dev/null
-@@ -1,20 +0,0 @@
--# arch/arm/mach-s3c2443/Makefile
--#
--# Copyright 2007 Simtec Electronics
--#
--# Licensed under GPLv2
--
--obj-y				:=
--obj-m				:=
--obj-n				:=
--obj-				:=
--
--obj-$(CONFIG_CPU_S3C2443)	+= s3c2443.o
--obj-$(CONFIG_CPU_S3C2443)	+= irq.o
--obj-$(CONFIG_CPU_S3C2443)	+= clock.o
--
--obj-$(CONFIG_S3C2443_DMA)	+= dma.o
--
--# Machine support
--
--obj-$(CONFIG_MACH_SMDK2443)	+= mach-smdk2443.o
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index aa295f8..e537577 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -70,6 +70,17 @@ config CPU_S3C244X
- 	def_bool y
- 	depends on CPU_S3C2440 || CPU_S3C2442
- 
-+config CPU_S3C2443
-+	bool "SAMSUNG S3C2443"
-+	depends on ARCH_S3C24XX
-+	select CPU_ARM920T
-+	select CPU_LLSERIAL_S3C2440
-+	select SAMSUNG_CLKSRC
-+	select S3C2443_CLOCK
-+	select S3C2443_DMA if S3C24XX_DMA
-+	help
-+	  Support for the S3C2443 SoC from the S3C24XX line
-+
- if CPU_S3C2410
- 
- config S3C2410_DMA
-@@ -459,6 +470,24 @@ config SMDK2440_CPU2442
- 
- endif	# CPU_S3C2440
- 
-+if CPU_S3C2443
-+
-+config S3C2443_DMA
-+	bool
-+	help
-+	  Internal config node for S3C2443 DMA support
-+
-+comment "S3C2443 Boards"
-+
-+config MACH_SMDK2443
-+	bool "SMDK2443"
-+	select MACH_SMDK
-+	select S3C_DEV_HSMMC1
-+	help
-+	  Say Y here if you are using an SMDK2443
-+
-+endif	# CPU_S3C2443
-+
- endmenu	# SAMSUNG S3C24XX SoCs Support
- 
- endif	# ARCH_S3C24XX
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index f458cf2..08b44a3 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -31,6 +31,9 @@ obj-$(CONFIG_CPU_S3C2442)	+= s3c2442.o
- obj-$(CONFIG_CPU_S3C244X)	+= s3c244x.o irq-s3c244x.o clock-s3c244x.o
- obj-$(CONFIG_S3C2440_DMA)	+= dma-s3c2440.o
- 
-+obj-$(CONFIG_CPU_S3C2443)	+= s3c2443.o irq-s3c2443.o clock-s3c2443.o
-+obj-$(CONFIG_S3C2443_DMA)	+= dma-s3c2443.o
-+
- #
- # machine support
- # following is ordered alphabetically by option text.
-@@ -66,6 +69,8 @@ obj-$(CONFIG_ARCH_S3C2440)		+= mach-smdk2440.o
- obj-$(CONFIG_MACH_NEO1973_GTA02)	+= mach-gta02.o
- obj-$(CONFIG_MACH_RX1950)		+= mach-rx1950.o
- 
-+obj-$(CONFIG_MACH_SMDK2443)		+= mach-smdk2443.o
-+
- # common bits of machine support
- 
- obj-$(CONFIG_SIMTEC_NOR)		+= nor-simtec.o
-diff --git a/arch/arm/mach-s3c2443/clock.c b/arch/arm/mach-s3c24xx/clock-s3c2443.c
-similarity index 100%
-rename from arch/arm/mach-s3c2443/clock.c
-rename to arch/arm/mach-s3c24xx/clock-s3c2443.c
-diff --git a/arch/arm/mach-s3c2443/dma.c b/arch/arm/mach-s3c24xx/dma-s3c2443.c
-similarity index 100%
-rename from arch/arm/mach-s3c2443/dma.c
-rename to arch/arm/mach-s3c24xx/dma-s3c2443.c
-diff --git a/arch/arm/mach-s3c2443/irq.c b/arch/arm/mach-s3c24xx/irq-s3c2443.c
-similarity index 100%
-rename from arch/arm/mach-s3c2443/irq.c
-rename to arch/arm/mach-s3c24xx/irq-s3c2443.c
-diff --git a/arch/arm/mach-s3c2443/mach-smdk2443.c b/arch/arm/mach-s3c24xx/mach-smdk2443.c
-similarity index 100%
-rename from arch/arm/mach-s3c2443/mach-smdk2443.c
-rename to arch/arm/mach-s3c24xx/mach-smdk2443.c
-diff --git a/arch/arm/mach-s3c2443/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
-similarity index 100%
-rename from arch/arm/mach-s3c2443/s3c2443.c
-rename to arch/arm/mach-s3c24xx/s3c2443.c
--- 
-1.7.4.4
+> I'm going to rebase my clk series on top of his patches rather that trying
+
+OK, sounds good to me.
+
+> to merge my temporary versatile-only code.  If his series isn't ready to go
+> in, I can still probably merge parts of the DT clock bindings anyway, but I'll
+> need to do some cherry picking to do so.
+> 
+If any branch is ready for it, please let me know.
+
+> The rough notes can be found here:
+> 
+> https://blueprints.launchpad.net/linux-linaro/+spec/linaro-kernel-q112-maintainer-summit-1
+> 
+Thanks for your sharing.
+
+OK, I and my team will follow up 'common struct clk' for exynos5250 and it will be done maybe next week. And since I need to
+implement other features for exynos5250 now, firstly let me use this and test this series in linux-next in a day.
+
+Of course, if any updates, let you know.
+
+Ah, one more, would be better to us if arm-soc tree could provide the topic branch for 'common struct clk' working as a base.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
