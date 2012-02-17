@@ -1,75 +1,79 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2 04/11] ARM: EXYNOS: add interrupt definitions for EXYNOS5250
-Date: Thu, 16 Feb 2012 16:10:13 -0800
-Message-ID: <CAOesGMhmcnt6LPb9O+3420VgG=PiCnOjzZA3JqsA=4OdHN-R-g@mail.gmail.com>
-References: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>
-	<1328981685-8602-5-git-send-email-kgene.kim@samsung.com>
+From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
+Subject: Re: [PATCH 3/3] i2c-s3c2410: Refactor ifdefs for PM_SLEEP
+Date: Fri, 17 Feb 2012 17:49:40 +0530
+Message-ID: <CAM=Q2cuo3BPK3ZEm-ad_0k_tOsiB3rc=sRjdrKgYu7UGCy1yoQ@mail.gmail.com>
+References: <1329174304-12228-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	<1329174304-12228-3-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:54361 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753981Ab2BQAKO convert rfc822-to-8bit (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:62097 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751298Ab2BQMTl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Feb 2012 19:10:14 -0500
-Received: by yenm8 with SMTP id m8so1612960yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Feb 2012 16:10:13 -0800 (PST)
-In-Reply-To: <1328981685-8602-5-git-send-email-kgene.kim@samsung.com>
+	Fri, 17 Feb 2012 07:19:41 -0500
+In-Reply-To: <1329174304-12228-3-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk, arnd@arndb.de
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, khali@linux-fr.org, w.sang@pengutronix.de, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 
-Hi,
-
-On Sat, Feb 11, 2012 at 9:34 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> This patch adds the interrupt definitions for EXYNOS5250 at
-> <mach/irqs.h> file. Basically, now it is needed for EXYNOS5250
-> interrupt and will be updated for single zImage next time.
+On Tue, Feb 14, 2012 at 4:35 AM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> Use the PM_SLEEP ifdef for system suspend and resume. This is partly
+> in preparation for adding runtime operations and partly because a use=
+r
+> may in theory choose to enable runtime suspend but not system suspend=
+=2E
 >
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Yes also rand defconfig may see some warns.
+
+Looks good to me
+Reviewed-by: Shubhrajyoti D <shubhrajyoti@ti.com>
+
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 > ---
-> =A0arch/arm/mach-exynos/include/mach/irqs.h | =A0236 ++++++++++++++++=
-+++++++++++++-
-> =A01 files changed, 232 insertions(+), 4 deletions(-)
+> =A0drivers/i2c/busses/i2c-s3c2410.c | =A0 =A06 +++++-
+> =A01 files changed, 5 insertions(+), 1 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach=
--exynos/include/mach/irqs.h
-> index f77bce0..0dab1b1 100644
-> --- a/arch/arm/mach-exynos/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
-> @@ -1,9 +1,8 @@
-> -/* linux/arch/arm/mach-exynos4/include/mach/irqs.h
-> - *
-> - * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-> +/*
-> + * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
-> =A0* =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
-> =A0*
-> - * EXYNOS4 - IRQ definitions
-> + * EXYNOS - IRQ definitions
-> =A0*
-> =A0* This program is free software; you can redistribute it and/or mo=
-dify
-> =A0* it under the terms of the GNU General Public License version 2 a=
-s
-> @@ -25,6 +24,8 @@
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
+c-s3c2410.c
+> index 1cb06c58..5d8e802 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -1073,7 +1073,7 @@ static int s3c24xx_i2c_remove(struct platform_d=
+evice *pdev)
+> =A0 =A0 =A0 =A0return 0;
+> =A0}
 >
-> =A0#define IRQ_SPI(x) =A0 =A0 =A0 =A0 =A0 =A0 (x+32)
+> -#ifdef CONFIG_PM
+> +#ifdef CONFIG_PM_SLEEP
+> =A0static int s3c24xx_i2c_suspend_noirq(struct device *dev)
+> =A0{
+> =A0 =A0 =A0 =A0struct platform_device *pdev =3D to_platform_device(de=
+v);
+> @@ -1096,10 +1096,14 @@ static int s3c24xx_i2c_resume(struct device *=
+dev)
 >
-> +#ifdef CONFIG_ARCH_EXYNOS4
-> +
-
-irqs.h seems to be one of the major files that causes conflicts if a
-combined EXYNOS4+5 kernel is built (after editing Kconfig to allow
-both). Can you please try to come up with a way to allow both of them
-to coexist instead of making them exclusive?
-
-
--Olof
-
-
-
--Olof
+> =A0 =A0 =A0 =A0return 0;
+> =A0}
+> +#endif
+>
+> +#ifdef CONFIG_PM
+> =A0static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops =3D {
+> +#ifdef CONFIG_PM_SLEEP
+> =A0 =A0 =A0 =A0.suspend_noirq =3D s3c24xx_i2c_suspend_noirq,
+> =A0 =A0 =A0 =A0.resume =3D s3c24xx_i2c_resume,
+> +#endif
+> =A0};
+>
+> =A0#define S3C24XX_DEV_PM_OPS (&s3c24xx_i2c_dev_pm_ops)
+> --
+> 1.7.9.rc1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-i2c" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
