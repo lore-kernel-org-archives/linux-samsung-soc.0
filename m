@@ -1,79 +1,59 @@
-From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
-Subject: Re: [PATCH 3/3] i2c-s3c2410: Refactor ifdefs for PM_SLEEP
-Date: Fri, 17 Feb 2012 17:49:40 +0530
-Message-ID: <CAM=Q2cuo3BPK3ZEm-ad_0k_tOsiB3rc=sRjdrKgYu7UGCy1yoQ@mail.gmail.com>
-References: <1329174304-12228-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-	<1329174304-12228-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: [PATCH 06/12] ARM: S3C24XX: change the ARCH_S3C2410 to ARCH_S3C24XX
+Date: Sun, 19 Feb 2012 22:53:40 +0000
+Message-ID: <4F417D74.7020108@gmx.de>
+References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com> <1329346545-16373-7-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:62097 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751298Ab2BQMTl convert rfc822-to-8bit (ORCPT
+Received: from mailout-de.gmx.net ([213.165.64.23]:51577 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1754026Ab2BSWyD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Feb 2012 07:19:41 -0500
-In-Reply-To: <1329174304-12228-3-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Sun, 19 Feb 2012 17:54:03 -0500
+In-Reply-To: <1329346545-16373-7-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, khali@linux-fr.org, w.sang@pengutronix.de, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Chris Ball <cjb@laptop.org>, David Woodhouse <dwmw2@infradead.org>, Alessandro Zummo <a.zummo@towertech.it>, Grant Likely <grant.likely@secretlab.ca>, Greg Kroah-Hartman <gregkh@suse.de>, Felipe Balbi <balbi@ti.com>, Wim Van Sebroeck <wim@iguana.be>, Sangbeom Kim <sbkim73@samsung.com>, Liam Girdwood <lrg@ti.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Russell King <rmk+kernel@arm.linux.org.uk>
 
-On Tue, Feb 14, 2012 at 4:35 AM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> Use the PM_SLEEP ifdef for system suspend and resume. This is partly
-> in preparation for adding runtime operations and partly because a use=
-r
-> may in theory choose to enable runtime suspend but not system suspend=
-=2E
->
-Yes also rand defconfig may see some warns.
+Hi,
 
-Looks good to me
-Reviewed-by: Shubhrajyoti D <shubhrajyoti@ti.com>
+On 02/15/2012 10:55 PM, Kukjin Kim wrote:
+> This patch changes the ARCH name to "ARCH_S3C24XX" for Samsung
+> S3C2410, S3C2412, S3C2413, S3C2416, S3C2440, S3C2442, S3C2443,
+> and S3C2450 SoCs so that we can merge the mach-xxx directories
+> and plat-s3c24xx dir. to just one mach-s3c24xx for them.
 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Great.
+
+> I think this should be sent to upstream via samsung tree because
+> this touches many samsung stuff.
+
+Okay, feel free to do so.
+
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Chris Ball <cjb@laptop.org>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: Greg Kroah-Hartman <gregkh@suse.de>
+> Cc: Felipe Balbi <balbi@ti.com>
+> Cc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+
+for the framebuffer (video) part:
+Acked-by: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+
+> Cc: Wim Van Sebroeck <wim@iguana.be>
+> Cc: Sangbeom Kim <sbkim73@samsung.com>
+> Cc: Liam Girdwood <lrg@ti.com>
+> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 > ---
-> =A0drivers/i2c/busses/i2c-s3c2410.c | =A0 =A06 +++++-
-> =A01 files changed, 5 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
-c-s3c2410.c
-> index 1cb06c58..5d8e802 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -1073,7 +1073,7 @@ static int s3c24xx_i2c_remove(struct platform_d=
-evice *pdev)
-> =A0 =A0 =A0 =A0return 0;
-> =A0}
->
-> -#ifdef CONFIG_PM
-> +#ifdef CONFIG_PM_SLEEP
-> =A0static int s3c24xx_i2c_suspend_noirq(struct device *dev)
-> =A0{
-> =A0 =A0 =A0 =A0struct platform_device *pdev =3D to_platform_device(de=
-v);
-> @@ -1096,10 +1096,14 @@ static int s3c24xx_i2c_resume(struct device *=
-dev)
->
-> =A0 =A0 =A0 =A0return 0;
-> =A0}
-> +#endif
->
-> +#ifdef CONFIG_PM
-> =A0static const struct dev_pm_ops s3c24xx_i2c_dev_pm_ops =3D {
-> +#ifdef CONFIG_PM_SLEEP
-> =A0 =A0 =A0 =A0.suspend_noirq =3D s3c24xx_i2c_suspend_noirq,
-> =A0 =A0 =A0 =A0.resume =3D s3c24xx_i2c_resume,
-> +#endif
-> =A0};
->
-> =A0#define S3C24XX_DEV_PM_OPS (&s3c24xx_i2c_dev_pm_ops)
-> --
-> 1.7.9.rc1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-i2c" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+
+Best regards,
+
+Florian Tobias Schandinat
