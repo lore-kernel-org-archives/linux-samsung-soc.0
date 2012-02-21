@@ -1,197 +1,67 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v4 2/2] ARM: Exynos: Add device tree support for interrupt
- combiner
-Date: Tue, 21 Feb 2012 10:03:26 +0530
-Message-ID: <1329798806-32482-3-git-send-email-thomas.abraham@linaro.org>
-References: <1329798806-32482-1-git-send-email-thomas.abraham@linaro.org>
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH V6 0/5] ARM: exynos4210: Add l2 retention mode cpuidle state
+Date: Tue, 21 Feb 2012 11:49:45 +0530
+Message-ID: <1329805190-8874-1-git-send-email-amit.kachhap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:34706 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751800Ab2BUE1W (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:39469 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751425Ab2BUGVk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 20 Feb 2012 23:27:22 -0500
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZQ00GP76YOHW50@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 13:27:06 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZQ009HB70R0J20@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 13:27:05 +0900 (KST)
-In-reply-to: <1329798806-32482-1-git-send-email-thomas.abraham@linaro.org>
+	Tue, 21 Feb 2012 01:21:40 -0500
+Received: by pbcun15 with SMTP id un15so7028310pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Feb 2012 22:21:40 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, amit.kachhap@linaro.org, patches@linaro.org
 
-Add device tree based instantiation of the interrupt combiner controller.
+Changes since V5:
+*Rebased the patchset against kernel 3.3-rc4
+*Added correct flag for exynos4210 evt1 based board
+*Removed CONFIG_OF from l2 cache configuration as suggested by 
+ Olof Johansson <olof@lixom.net>
 
-Cc: Grant Likely <grant.likely@secretlab.ca>
-Cc: Rob Herring <rob.herring@calxeda.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- .../bindings/arm/samsung/interrupt-combiner.txt    |   48 ++++++++++++++++++
- arch/arm/mach-exynos/common.c                      |   53 ++++++++++++++++++-
- 2 files changed, 98 insertions(+), 3 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
+Changes since V4:
+*Rebased the patchset against for-next of samsung kernel tree.
+*Added Tushar suggestion of putting a check if L2 cache dt node not found.
+*Added Inder suggestion of removing the BUG_ON check in cpuidle driver.
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-new file mode 100644
-index 0000000..2a57211
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-@@ -0,0 +1,48 @@
-+* Samsung Exynos Interrupt Combiner Controller
-+
-+Samsung's Exynos4 architecture includes a interrupt combiner controller which
-+can combine interrupt sources as a group and provide a single interrupt request
-+for the group. The interrupt request from each group are connected to a parent
-+interrupt controller, such as GIC in case of Exynos4210.
-+
-+The interrupt combiner controller consists of multiple combiners. Upto eight
-+interrupt sources can be connected to a combiner. The combiner outputs one
-+combined interrupt for its eight interrupt sources. The combined interrupt
-+is usually connected to a parent interrupt controller.
-+
-+A single node in the device tree is used to describe the interrupt combiner
-+controller module (which includes multiple combiners). A combiner in the
-+interrupt controller module shares config/control registers with other
-+combiners. For example, a 32-bit interrupt enable/disable config register
-+can accommodate upto 4 interrupt combiners (with each combiner supporting
-+upto 8 interrupt sources).
-+
-+Required properties:
-+- compatible: should be "samsung,exynos4210-combiner".
-+- interrupt-controller: Identifies the node as an interrupt controller.
-+- #interrupt-cells: should be <2>. The meaning of the cells are
-+	* First Cell: Combiner Group Number.
-+	* Second Cell: Interrupt number within the group.
-+- reg: Base address and size of interrupt combiner registers.
-+- interrupts: The list of interrupts generated by the combiners which are then
-+    connected to a parent interrupt controller. The format of the interrupt
-+    specifier depends in the interrupt parent controller.
-+
-+Optional properties:
-+- interrupt-parent: pHandle of the parent interrupt controller, if not
-+  inherited from the parent node.
-+
-+Example:
-+
-+	The following is a an example from the Exynos4210 SoC dtsi file.
-+
-+	combiner:interrupt-controller@10440000 {
-+		compatible = "samsung,exynos4210-combiner";
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		reg = <0x10440000 0x1000>;
-+		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
-+	};
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 0c06fa6..ac5ac0e 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -21,6 +21,7 @@
- #include <linux/of_irq.h>
- #include <linux/export.h>
- #include <linux/irqdomain.h>
-+#include <linux/of_address.h>
- 
- #include <asm/proc-fns.h>
- #include <asm/exception.h>
-@@ -372,6 +373,30 @@ static void __init combiner_init_one(unsigned int combiner_nr,
- 		     base + COMBINER_ENABLE_CLEAR);
- }
- 
-+#ifdef CONFIG_OF
-+static int combiner_irq_domain_xlate(struct irq_domain *d,
-+		struct device_node *controller, const u32 *intspec,
-+		unsigned int intsize, unsigned long *out_hwirq,
-+		unsigned int *out_type)
-+{
-+	if (d->of_node != controller)
-+		return -EINVAL;
-+	if (intsize < 2)
-+		return -EINVAL;
-+	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
-+	*out_type = 0;
-+	return 0;
-+}
-+#else
-+static int combiner_irq_domain_xlate(struct irq_domain *d,
-+		struct device_node *controller, const u32 *intspec,
-+		unsigned int intsize, unsigned long *out_hwirq,
-+		unsigned int *out_type)
-+{
-+	return -EINVAL;
-+}
-+#endif
-+
- static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 					irq_hw_number_t hw)
- {
-@@ -382,12 +407,13 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
- }
- 
- static struct irq_domain_ops combiner_irq_domain_ops = {
-+	.xlate = combiner_irq_domain_xlate,
- 	.map = combiner_irq_domain_map,
- };
- 
- void __init combiner_init(void __iomem *combiner_base, struct device_node *np)
- {
--	int i, irq_base;
-+	int i, irq, irq_base;
- 	int nr_irq = MAX_COMBINER_NR * MAX_IRQ_IN_COMBINER;
- 
- 	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
-@@ -406,13 +432,33 @@ void __init combiner_init(void __iomem *combiner_base, struct device_node *np)
- 
- 	for (i = 0; i < MAX_COMBINER_NR; i++) {
- 		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
--		combiner_cascade_irq(i, IRQ_SPI(i));
-+#ifdef CONFIG_OF
-+		irq = np ? irq_of_parse_and_map(np, i) : IRQ_SPI(i);
-+#else
-+		irq = IRQ_SPI(i);
-+#endif
-+		combiner_cascade_irq(i, irq);
- 	}
- }
- 
- #ifdef CONFIG_OF
-+void __init combiner_of_init(struct device_node *np, struct device_node *parent)
-+{
-+	void __iomem *combiner_base;
-+
-+	combiner_base = of_iomap(np, 0);
-+	if (!combiner_base) {
-+		pr_err("combiner_of_init: failed to map combiner registers\n");
-+		return;
-+	}
-+
-+	combiner_init(combiner_base, np);
-+}
-+
- static const struct of_device_id exynos4_dt_irq_match[] = {
- 	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init, },
-+	{ .compatible = "samsung,exynos4210-combiner",
-+			.data = combiner_of_init, },
- 	{},
- };
- #endif
-@@ -430,7 +476,8 @@ void __init exynos4_init_irq(void)
- 		of_irq_init(exynos4_dt_irq_match);
- #endif
- 
--	combiner_init(S5P_VA_COMBINER_BASE, NULL);
-+	if (!of_have_populated_dt())
-+		combiner_init(S5P_VA_COMBINER_BASE, NULL);
- 
- 	/*
- 	 * The parameters of s5p_init_irq() are for VIC init.
--- 
-1.6.6.rc2
+Changes since V3:
+*Implemented Russell feedback and moved sleep magic 4byte memory before 
+s3c_cpu_resume to data section.
+
+Changes since V2:
+*Implemented the suggestion of MyungJoo Ham and used INFORM0/1
+registers for resume for some board versions.
+*Added back save/restore through CPU PM notifiers as suggested by 
+Lorenzo Pieralisi. This is useful to restore vfp state.
+*some patch modularization (s5p/exynos) and proper commit logs.  
+
+Changes since V1:
+*rebased the whole patch against 3.2-rc1 tree
+*removed GIC save/restore in AFTR cpuidle state as it is external
+to cpu powerdomain
+*Added L2 setup code through device tree
+*Removed only l2 save/restore registers in sleep
+
+This Patch series adds support for AFTR mode cpuidle state based on
+patch (http://www.spinics.net/lists/arm-kernel/msg132243.html) earlier
+submitted by Jaecheol Lee <jc.lee@samsung.com>.
+
+This patch uses CPU PM notifiers , common l2 save/restore and
+new cpu_suspend/resume interfaces and is based on the tip of
+master branch of kernel.org tree(v3.3-rc4)
+
+Amit Daniel Kachhap (5):
+  ARM: exynos: Add support AFTR mode on EXYNOS4210
+  ARM: s5p: add L2 early resume code
+  ARM: exynos: save L2 settings during bootup
+  ARM: exynos: remove useless code to save/restore L2
+  ARM: exynos: Enable l2 configuration through device tree
+
+ arch/arm/mach-exynos/common.c           |   53 +++++++++---
+ arch/arm/mach-exynos/cpuidle.c          |  147 ++++++++++++++++++++++++++++++-
+ arch/arm/mach-exynos/include/mach/pmu.h |    2 +
+ arch/arm/mach-exynos/pm.c               |   15 ---
+ arch/arm/plat-s5p/sleep.S               |   44 ++++++++--
+ 5 files changed, 225 insertions(+), 36 deletions(-)
