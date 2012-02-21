@@ -1,64 +1,64 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH V6 1/5] ARM: exynos: Add support AFTR mode on EXYNOS4210
-Date: Tue, 21 Feb 2012 12:19:29 +0530
-Message-ID: <4F433E79.2090309@linaro.org>
-References: <1329805190-8874-1-git-send-email-amit.kachhap@linaro.org> <1329805190-8874-2-git-send-email-amit.kachhap@linaro.org>
+From: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Subject: [PATCH 1/2] ARM: Exynos: Register JPEG on universal_c210
+Date: Tue, 21 Feb 2012 11:04:47 +0100
+Message-ID: <1329818688-27337-2-git-send-email-andrzej.p@samsung.com>
+References: <1329818688-27337-1-git-send-email-andrzej.p@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:64623 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751183Ab2BUGte (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:45421 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753086Ab2BUKE5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Feb 2012 01:49:34 -0500
-Received: by pbcun15 with SMTP id un15so7052673pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 20 Feb 2012 22:49:34 -0800 (PST)
-In-Reply-To: <1329805190-8874-2-git-send-email-amit.kachhap@linaro.org>
+	Tue, 21 Feb 2012 05:04:57 -0500
+Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0LZQ00NWCMO70F@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 10:04:55 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0LZQ000ALMO73R@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 10:04:55 +0000 (GMT)
+In-reply-to: <1329818688-27337-1-git-send-email-andrzej.p@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Amit,
+ARM: Exynos: Register JPEG on universal_c210
 
-On 02/21/2012 11:49 AM, Amit Daniel Kachhap wrote:
-> This patch adds support AFTR(ARM OFF TOP RUNNING) mode in
-> cpuidle driver. L2 cache keeps their data in this mode.
-> This patch ports the code to the latest interfaces to
-> save/restore CPU state inclusive of CPU PM notifiers, l2
-> resume and cpu_suspend/resume.
-> 
-> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> ---
->  arch/arm/mach-exynos/cpuidle.c          |  147 ++++++++++++++++++++++++++++++-
->  arch/arm/mach-exynos/include/mach/pmu.h |    2 +
->  2 files changed, 146 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+Signed-off-by: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig               |    1 +
+ arch/arm/mach-exynos/mach-universal_c210.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-[ snip ]
-
-> +static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
-> +				struct cpuidle_driver *drv,
-> +				int index)
-> +{
-
-[ snip ]
-
-> +	scu_enable(S5P_VA_SCU);
-
-#ifdef CONFIG_SMP
-	scu_enable(S5P_VA_SCU);
-#endif
-
-Without this, if SMP is not enabled, I am getting following build error.
-
-arch/arm/mach-exynos/built-in.o: In function `exynos4_enter_core0_aftr':
-arch/arm/mach-exynos/cpuidle.c:131: undefined reference to `scu_enable'
-
-
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index cf29c35..23b6971 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -235,6 +235,7 @@ config MACH_UNIVERSAL_C210
+ 	select S5P_DEV_FIMC3
+ 	select S5P_DEV_G2D
+ 	select S5P_DEV_CSIS0
++	select S5P_DEV_JPEG
+ 	select S5P_DEV_FIMD0
+ 	select S3C_DEV_HSMMC
+ 	select S3C_DEV_HSMMC2
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 220de1c..c525f42 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -981,6 +981,7 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&universal_gpio_keys,
+ 	&s5p_device_onenand,
+ 	&s5p_device_fimd0,
++	&s5p_device_jpeg,
+ 	&s5p_device_mfc,
+ 	&s5p_device_mfc_l,
+ 	&s5p_device_mfc_r,
 -- 
-Tushar Behera
+1.7.0.4
