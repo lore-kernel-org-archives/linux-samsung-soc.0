@@ -1,94 +1,122 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
-Date: Tue, 21 Feb 2012 20:25:05 +0900
-Message-ID: <00b401ccf08b$75b35870$611a0950$%kim@samsung.com>
-References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>
+From: Sangwook Lee <sangwook.lee@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Add WLAN init on ORIGEN
+Date: Tue, 21 Feb 2012 11:25:19 +0000
+Message-ID: <CADPsn1Yt18GGTd0woHa9RLaYMEDwWiD2UpPfhDOkYzw2bT7hFg@mail.gmail.com>
+References: <1329404118-19198-1-git-send-email-sangwook.lee@linaro.org>
+	<4F3D6363.9010703@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:23632 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753766Ab2BULZH (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:52366 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751567Ab2BULZU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Feb 2012 06:25:07 -0500
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZQ00GBNQDSHYP0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:25:06 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZQ0095DQDTH580@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:25:06 +0900 (KST)
-In-reply-to: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>
-Content-language: ko
+	Tue, 21 Feb 2012 06:25:20 -0500
+Received: by daed14 with SMTP id d14so6790170dae.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Feb 2012 03:25:19 -0800 (PST)
+In-Reply-To: <4F3D6363.9010703@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Vinod Koul' <vinod.koul@intel.com>, 'Boojin Kim' <boojin.kim@samsung.com>, 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
+To: Sylwester Nawrocki <snjw23@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-Kukjin Kim wrote:
-> 
-> From: Boojin Kim <boojin.kim@samsung.com>
-> 
-> Currently there were two part of DMAC PL330 driver for
-> support old styled s3c-pl330 which has been merged into
-> drivers/dma/pl330.c driver. Actually, there is no reason
-> to separate them now.
-> 
-> Basically this patch merges arch/arm/common/pl330.c into
-> drivers/dma/pl330.c driver and removes useless exported
-> symbol, externed function and so on.
-> 
-> The newer pl330 driver tested on SMDKV310 and SMDK4212 boards
-> 
-> Cc: Jassi Brar <jassisinghbrar@gmail.com>
-> Cc: Russell King <rmk+kernel@arm.linux.org.uk>
+On 16 February 2012 20:13, Sylwester Nawrocki <snjw23@gmail.com> wrote:
+> Hi Sangwook,
+>
+>
+> On 02/16/2012 03:55 PM, Sangwook Lee wrote:
+>>
+>> Add WLAN init code on Origen for both hw2.1.1 and hw2.0 in AR6003
+>>
+>> Signed-off-by: Sangwook Lee<sangwook.lee@linaro.org>
+>> ---
+>> =A0arch/arm/mach-exynos/mach-origen.c | =A0 21 +++++++++++++++++++++
+>> =A01 files changed, 21 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/mach-origen.c
+>> b/arch/arm/mach-exynos/mach-origen.c
+>> index e1d87b9..d570667 100644
+>> --- a/arch/arm/mach-exynos/mach-origen.c
+>> +++ b/arch/arm/mach-exynos/mach-origen.c
+>> @@ -21,6 +21,7 @@
+>> =A0#include<linux/mfd/max8997.h>
+>> =A0#include<linux/lcd.h>
+>> =A0#include<linux/rfkill-gpio.h>
+>> +#include<linux/delay.h>
+>>
+>> =A0#include<asm/mach/arch.h>
+>> =A0#include<asm/hardware/gic.h>
+>> @@ -676,6 +677,25 @@ static void __init origen_bt_setup(void)
+>> =A0 =A0 =A0 =A0s3c_gpio_setpull(EXYNOS4_GPX2(2), S3C_GPIO_PULL_NONE)=
+;
+>> =A0}
+>>
+>> +static void __init origen_wlan_setup(void)
+>> +{
+>> + =A0 =A0 =A0 int err;
+>> +
+>> + =A0 =A0 =A0 err =3D gpio_request_one(EXYNOS4_GPX2(4),
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 GPIOF_OUT_INIT_LOW, "G=
+PX2_4");
+>> + =A0 =A0 =A0 if (err) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pr_warning("ORIGEN: Failed to obtain W=
+IFI GPIOs\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return;
+>> + =A0 =A0 =A0 }
+>> + =A0 =A0 =A0 s3c_gpio_cfgpin(EXYNOS4_GPX2(4), S3C_GPIO_OUTPUT);
+>
+>
+> The pin is already configured as output in gpio_request_one(), doesn'=
+t
+> it work without this line ?
+>
+>> + =A0 =A0 =A0 s3c_gpio_setpull(EXYNOS4_GPX2(4),
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 S3C_GPIO_PULL_NONE);
+>
+>
+> No need to break the line.
+>
+>
+>> + =A0 =A0 =A0 /* VDD33,I/O Supply must be done */
+>
+>
+> Is it to reset the module by cycling its power supply ?
+>
+>> + =A0 =A0 =A0 gpio_set_value(EXYNOS4_GPX2(4), 0);
+>
+>
+> Isn't EXYNOS4_GPX2(4) set to low state (0) already at this point,
+> since you used GPIOF_OUT_INIT_LOW flags ?
+>
+>
+>> + =A0 =A0 =A0 udelay(30); =A0 =A0 /*AR6003 speicic value Tb */
+>
+>
+> s/speicic/specific ?
+>
 
-Hi Russell,
+Thanks, good point!
 
-This addressed comments from you about moving 'asm/hardware/pl330.h' into
-'drivers/dma/', there is nowhere it is used except drivers/dma/.
 
-If you have any objection on this, please let me know.
+>> + =A0 =A0 =A0 gpio_direction_output(EXYNOS4_GPX2(4), 1);
+>
+>
+> Isn't gpio_set_value() enough here ?
+>
+>> +}
+>
+>
+> I couldn't identify EXYNOS4_GPX2(4) GPIO on the board's schematics
+> (I didn't try too hard though), AFAIU it controls a voltage regulator=
+=2E
 
-As we talked last time, if you're ok on this let me send 'pull request' this
-series to you and Vinod. I think this should be sent to rmk tree and dma
-tree together.
+It is not the voltage regulator but reset pin to the external chip
 
-As a note, this is in 'v3.4-for-vkoul-v2' of linux-samsung.git now.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Vinod Koul <vinod.koul@intel.com>
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> Changes since v2:
-> - Address comments from Russell King
->   the 'asm/hardware/pl330.h' is moved to 'drivers/dma/pl330.h'
->   which is used only in drivers/dma/
-> 
->  arch/arm/common/Kconfig               |    3 -
->  arch/arm/common/Makefile              |    1 -
->  arch/arm/common/pl330.c               | 1959
---------------------------------
-> -
->  arch/arm/include/asm/hardware/pl330.h |  217 ----
->  drivers/dma/Kconfig                   |    1 -
->  drivers/dma/pl330.c                   | 1892
-+++++++++++++++++++++++++++++++-
->  drivers/dma/pl330.h                   |  251 +++++
->  include/linux/amba/pl330.h            |    1 -
->  8 files changed, 2142 insertions(+), 2183 deletions(-)
->  delete mode 100644 arch/arm/common/pl330.c
->  delete mode 100644 arch/arm/include/asm/hardware/pl330.h
->  create mode 100644 drivers/dma/pl330.h
+> I guess, it doesn't make sense to define a fixed voltage regulator
+> for "VDD3,I/O" supply, since it is not controlled from anywhere else
+> than the board code ?
+>
+> --
+> Regards,
+> Sylwester
