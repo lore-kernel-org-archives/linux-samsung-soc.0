@@ -1,50 +1,99 @@
-From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 09/12] ARM: S3C2416: move mach-s3c2416/* into mach-s3c24xx/
-Date: Tue, 21 Feb 2012 11:42:58 +0100
-Message-ID: <201202211142.59542.heiko@sntech.de>
-References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com> <1329346545-16373-10-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V6 0/5] ARM: exynos4210: Add l2 retention mode cpuidle state
+Date: Tue, 21 Feb 2012 20:11:48 +0900
+Message-ID: <00b101ccf089$9af75cf0$d0e616d0$%kim@samsung.com>
+References: <1329805190-8874-1-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:53718 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753235Ab2BUKnO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:19842 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755132Ab2BULLv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Feb 2012 05:43:14 -0500
-In-Reply-To: <1329346545-16373-10-git-send-email-kgene.kim@samsung.com>
+	Tue, 21 Feb 2012 06:11:51 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZQ00G6XPRHHWP0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:11:49 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZQ00AS0PRO4P00@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:11:49 +0900 (KST)
+In-reply-to: <1329805190-8874-1-git-send-email-amit.kachhap@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: 'Amit Daniel Kachhap' <amit.kachhap@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, patches@linaro.org, jc.lee@samsung.com, rob.lee@linaro.org
 
-Hi Kgene,
-
-Am Mittwoch, 15. Februar 2012, 23:55:43 schrieb Kukjin Kim:
-> This patch moves S3C2416 stuff into mach-s3c24xx/ directory
-> so that we can merge the s3c24 series' directories to the
-> just one mach-s3c24xx/ directory.
+Amit Daniel Kachhap wrote:
 > 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-the patch is missing something like the following to prevent an error because 
-"built-in.o" in mach-s3c2416 cannot be found:
+> Changes since V5:
+> *Rebased the patchset against kernel 3.3-rc4
+> *Added correct flag for exynos4210 evt1 based board
+> *Removed CONFIG_OF from l2 cache configuration as suggested by
+>  Olof Johansson <olof@lixom.net>
+> 
+> Changes since V4:
+> *Rebased the patchset against for-next of samsung kernel tree.
+> *Added Tushar suggestion of putting a check if L2 cache dt node not found.
+> *Added Inder suggestion of removing the BUG_ON check in cpuidle driver.
+> 
+> Changes since V3:
+> *Implemented Russell feedback and moved sleep magic 4byte memory before
+> s3c_cpu_resume to data section.
+> 
+> Changes since V2:
+> *Implemented the suggestion of MyungJoo Ham and used INFORM0/1
+> registers for resume for some board versions.
+> *Added back save/restore through CPU PM notifiers as suggested by
+> Lorenzo Pieralisi. This is useful to restore vfp state.
+> *some patch modularization (s5p/exynos) and proper commit logs.
+> 
+> Changes since V1:
+> *rebased the whole patch against 3.2-rc1 tree
+> *removed GIC save/restore in AFTR cpuidle state as it is external
+> to cpu powerdomain
+> *Added L2 setup code through device tree
+> *Removed only l2 save/restore registers in sleep
+> 
+> This Patch series adds support for AFTR mode cpuidle state based on
+> patch (http://www.spinics.net/lists/arm-kernel/msg132243.html) earlier
+> submitted by Jaecheol Lee <jc.lee@samsung.com>.
+> 
+> This patch uses CPU PM notifiers , common l2 save/restore and
+> new cpu_suspend/resume interfaces and is based on the tip of
+> master branch of kernel.org tree(v3.3-rc4)
+> 
+> Amit Daniel Kachhap (5):
+>   ARM: exynos: Add support AFTR mode on EXYNOS4210
+>   ARM: s5p: add L2 early resume code
+>   ARM: exynos: save L2 settings during bootup
+>   ARM: exynos: remove useless code to save/restore L2
+>   ARM: exynos: Enable l2 configuration through device tree
+> 
+>  arch/arm/mach-exynos/common.c           |   53 +++++++++---
+>  arch/arm/mach-exynos/cpuidle.c          |  147
+> ++++++++++++++++++++++++++++++-
+>  arch/arm/mach-exynos/include/mach/pmu.h |    2 +
+>  arch/arm/mach-exynos/pm.c               |   15 ---
+>  arch/arm/plat-s5p/sleep.S               |   44 ++++++++--
+>  5 files changed, 225 insertions(+), 36 deletions(-)
 
+Cc'ed Jaecheol Lee and Rob Lee.
 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index f3f6d97..2e46fe9 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -175,7 +175,7 @@ machine-$(CONFIG_ARCH_PRIMA2)               := prima2
- machine-$(CONFIG_ARCH_PXA)             := pxa
- machine-$(CONFIG_ARCH_REALVIEW)                := realview
- machine-$(CONFIG_ARCH_RPC)             := rpc
--machine-$(CONFIG_ARCH_S3C24XX)         := s3c24xx s3c2412 s3c2416 s3c2440
-+machine-$(CONFIG_ARCH_S3C24XX)         := s3c24xx s3c2412 s3c2440
- machine-$(CONFIG_ARCH_S3C64XX)         := s3c64xx
- machine-$(CONFIG_ARCH_S5P64X0)         := s5p64x0
- machine-$(CONFIG_ARCH_S5PC100)         := s5pc100
+OK, looks ok to me and I got the report this works fine on SMDKV310 from
+Jaecheol Lee.
 
+I will apply this whole series for v3.4, but I'm not sure how conflicts will
+happen with common cpuidle. Let me check it.
 
-Heiko
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
