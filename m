@@ -1,81 +1,59 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V6 1/5] ARM: exynos: Add support AFTR mode on EXYNOS4210
-Date: Tue, 21 Feb 2012 20:12:02 +0900
-Message-ID: <00b201ccf089$a2f039e0$e8d0ada0$%kim@samsung.com>
-References: <1329805190-8874-1-git-send-email-amit.kachhap@linaro.org>
- <1329805190-8874-2-git-send-email-amit.kachhap@linaro.org>
- <4F433E79.2090309@linaro.org>
+Subject: RE: [PATCH 09/12] ARM: S3C2416: move mach-s3c2416/* into mach-s3c24xx/
+Date: Tue, 21 Feb 2012 20:14:46 +0900
+Message-ID: <00b301ccf08a$04fcef20$0ef6cd60$%kim@samsung.com>
+References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
+ <1329346545-16373-10-git-send-email-kgene.kim@samsung.com>
+ <201202211142.59542.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27677 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:28479 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753971Ab2BULMO (ORCPT
+	with ESMTP id S1751339Ab2BULOr convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Feb 2012 06:12:14 -0500
+	Tue, 21 Feb 2012 06:14:47 -0500
 Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZQ00K56PRWYXQ0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:12:02 +0900 (KST)
+ 2010)) with ESMTP id <0LZQ00K8MPWMYXQ0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:14:46 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZQ001YRPS2E930@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:12:02 +0900 (KST)
-In-reply-to: <4F433E79.2090309@linaro.org>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZQ0012ZPWME940@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 21 Feb 2012 20:14:46 +0900 (KST)
+In-reply-to: <201202211142.59542.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, 'Amit Daniel Kachhap' <amit.kachhap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Tushar Behera wrote:
-> 
-> Hi Amit,
-> 
-> On 02/21/2012 11:49 AM, Amit Daniel Kachhap wrote:
-> > This patch adds support AFTR(ARM OFF TOP RUNNING) mode in
-> > cpuidle driver. L2 cache keeps their data in this mode.
-> > This patch ports the code to the latest interfaces to
-> > save/restore CPU state inclusive of CPU PM notifiers, l2
-> > resume and cpu_suspend/resume.
-> >
-> > Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> > Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> > Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> > ---
-> >  arch/arm/mach-exynos/cpuidle.c          |  147
-> ++++++++++++++++++++++++++++++-
-> >  arch/arm/mach-exynos/include/mach/pmu.h |    2 +
-> >  2 files changed, 146 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-
-> exynos/cpuidle.c
-> 
-> [ snip ]
-> 
-> > +static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
-> > +				struct cpuidle_driver *drv,
-> > +				int index)
-> > +{
-> 
-> [ snip ]
-> 
-> > +	scu_enable(S5P_VA_SCU);
-> 
-> #ifdef CONFIG_SMP
-> 	scu_enable(S5P_VA_SCU);
-> #endif
-> 
-> Without this, if SMP is not enabled, I am getting following build error.
-> 
-> arch/arm/mach-exynos/built-in.o: In function `exynos4_enter_core0_aftr':
-> arch/arm/mach-exynos/cpuidle.c:131: undefined reference to `scu_enable'
-> 
-Thanks for your pointing out.
+Heiko St=FCbner wrote:
+>=20
+> Hi Kgene,
+>=20
+Hi,
 
-Let me fix it as per your comment when I apply this patch.
+> Am Mittwoch, 15. Februar 2012, 23:55:43 schrieb Kukjin Kim:
+> > This patch moves S3C2416 stuff into mach-s3c24xx/ directory
+> > so that we can merge the s3c24 series' directories to the
+> > just one mach-s3c24xx/ directory.
+> >
+> > Cc: Ben Dooks <ben-linux@fluff.org>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> the patch is missing something like the following to prevent an error
+> because
+> "built-in.o" in mach-s3c2416 cannot be found:
+>=20
+Yes, you're right and it is due to dummy file in mach-s3c2416/.
+
+I think, it can be solved after done of moving remained files to regard=
+ing
+directory such as drivers/cpufreq/.
+
+As a note, you can see it before this weekend :)
 
 Thanks.
 
