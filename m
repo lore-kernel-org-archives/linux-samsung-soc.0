@@ -1,29 +1,59 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add
- device tree support
-Date: Wed, 22 Feb 2012 12:58:23 +0000
-Message-ID: <20120222125823.GA14463@sirena.org.uk>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
- <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
- <m2aa4pkq5g.fsf@bob.laptop.org>
- <4F3CFEED.6060206@samsung.com>
- <m239abgc32.fsf@bob.laptop.org>
- <00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com>
- <m2vcn0496y.fsf@bob.laptop.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Thu, 23 Feb 2012 01:51:48 +0900
+Message-ID: <4F451D24.1040009@samsung.com>
+References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>	 <CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com>	 <00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com>	 <CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com>	 <011c01ccf107$5624d020$026e7060$%kim@samsung.com>	 <CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com> <1329906421.24656.93.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <m2vcn0496y.fsf@bob.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:62398 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754653Ab2BVQv6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Feb 2012 11:51:58 -0500
+Received: by daed14 with SMTP id d14so207655dae.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 08:51:58 -0800 (PST)
+In-Reply-To: <1329906421.24656.93.camel@vkoul-udesk3>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-On Tue, Feb 21, 2012 at 08:17:41AM -0500, Chris Ball wrote:
+On 02/22/12 19:27, Vinod Koul wrote:
+> On Wed, 2012-02-22 at 08:01 +0530, Jassi Brar wrote:
+>> On Wed, Feb 22, 2012 at 7:41 AM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+> Sadly, what a mess!!!
+>
+[...]
+>
+> And Kukjin, It wont hurt by giving credit to your former colleagues, by
+> doing something like:
+> http://permalink.gmane.org/gmane.linux.alsa.devel/94905
+>
+Looks better and for this, let me use it like following as per your 
+suggestion. And she agreed to use just company name Copyright.
+...
+*
+* Copyright (c) 2012 Samsung Electronics Co., Ltd.
+* 		http://www.samsung.com
+*
+* Copyright (C) 2010 Samsung Electronics Co. Ltd.
+*	Jaswinder Singh <jassi.brar@samsung.com>
+*
+* Based on:
+* 	arch/arm/common/pl330.c, arch/arm/include/asm/hardware/pl330.h
+*	Copyright (C) 2010 Samsung Electronics Co Ltd.
+*		Jaswinder Singh <jassi.brar@samsung.com>
+*
+...
 
-> Pushed to mmc-next, thanks.  (I'm expecting that you'll do the merge
-> to Linus.)
+And sorry for the annoying noise :(
 
-I've been sending patches adding runtime PM support to this driver for a
-while with no response - are there any issues with those?
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
