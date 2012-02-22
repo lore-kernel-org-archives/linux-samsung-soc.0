@@ -1,48 +1,65 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 1/2] ARM: S3C24XX: Move s3c2443-clock.c to mach-s3c24xx
-Date: Wed, 22 Feb 2012 18:28:52 +0100
-Message-ID: <201202221828.53363.heiko@sntech.de>
-References: <201202212221.41744.heiko@sntech.de> <201202212226.01189.heiko@sntech.de> <201202221718.01137.arnd@arndb.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Thu, 23 Feb 2012 02:29:58 +0900
+Message-ID: <4F452616.30806@samsung.com>
+References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>	<CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com>	<00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com>	<CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com>	<011c01ccf107$5624d020$026e7060$%kim@samsung.com>	<CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com>	<1329906421.24656.93.camel@vkoul-udesk3>	<4F451D24.1040009@samsung.com> <CABb+yY0Zy3Xx4OZTobo2y-J4NXokGCV47PdPyKs+aOnqtng7pQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:41841 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752209Ab2BVR3C convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Feb 2012 12:29:02 -0500
-In-Reply-To: <201202221718.01137.arnd@arndb.de>
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:47628 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752209Ab2BVRaG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Feb 2012 12:30:06 -0500
+Received: by pbcun15 with SMTP id un15so384509pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 09:30:05 -0800 (PST)
+In-Reply-To: <CABb+yY0Zy3Xx4OZTobo2y-J4NXokGCV47PdPyKs+aOnqtng7pQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-Am Mittwoch 22 Februar 2012, 18:18:00 schrieb Arnd Bergmann:
-> On Tuesday 21 February 2012, Heiko St=FCbner wrote:
-> > S3C-SoCs starting with the S3C2443 can share a lot of functionality=
-=2E
-> > The file can collect more common code of these SocS later on and
-> > therefore gets a new name to reflect this future purpose.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >=20
-> >  arch/arm/mach-s3c24xx/Kconfig          |   14 +-
-> >  arch/arm/mach-s3c24xx/Makefile         |    4 +
-> >  arch/arm/mach-s3c24xx/common-s3c2443.c |  644
-> >  ++++++++++++++++++++++++++++++++ arch/arm/plat-s3c24xx/Kconfig    =
-    =20
-> >  |    6 -
-> >  arch/arm/plat-s3c24xx/Makefile         |    1 -
-> >  arch/arm/plat-s3c24xx/s3c2443-clock.c  |  635
-> >  -------------------------------
->=20
-> No objections on the patch, but please use 'git format-patch -M' when
-> moving files so that we can see which parts have changed in the proce=
-ss.
-the results of -M look really nice, thanks for the hint and I will try =
-to=20
-remember it :-)
+On 02/23/12 02:20, Jassi Brar wrote:
+> On Wed, Feb 22, 2012 at 10:21 PM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>
+>> * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+>> *               http://www.samsung.com
+>> *
+>> * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+>> *       Jaswinder Singh<jassi.brar@samsung.com>
+>> *
+> The following is more appropriate
+>
+> -  * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+> + * Copyright (C) 2010 - 2012 Samsung Electronics Co. Ltd.
+>     *       Jaswinder Singh<jassi.brar@samsung.com>
+>
+Well, as I know, I don't have to change/update original your copyright. 
+If required, you should do it, next time.
 
-Heiko
+>
+>> * Based on:
+>> *       arch/arm/common/pl330.c, arch/arm/include/asm/hardware/pl330.h
+>> *       Copyright (C) 2010 Samsung Electronics Co Ltd.
+>>
+> Doesn't make any sense because arch/arm/common/pl330.c
+> and arch/arm/include/asm/hardware/pl330.h wouldn't exist anymore,
+> and the changelog already provides that info.
+
+OK, will not add above 'based on'.
+
+I think you can agree following. Let's finish this talking.
+
+* Copyright (c) 2012 Samsung Electronics Co., Ltd.
+*		http://www.samsung.com
+*
+and 'original copyright'...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
