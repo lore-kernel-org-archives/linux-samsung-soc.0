@@ -1,46 +1,30 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
+From: Jassi Brar <jaswinder.singh@linaro.org>
 Subject: Re: [PATCH 1/2] ARM: S3C24XX: Move s3c2443-clock.c to mach-s3c24xx
-Date: Thu, 23 Feb 2012 02:42:58 +0900
-Message-ID: <4F452922.3060600@samsung.com>
-References: <201202212221.41744.heiko@sntech.de> <201202212226.01189.heiko@sntech.de> <201202221718.01137.arnd@arndb.de> <201202221828.53363.heiko@sntech.de>
+Date: Wed, 22 Feb 2012 23:21:13 +0530
+Message-ID: <CAJe_ZheGxcM+FsHv6hQ59hVTbes22D=5zBFsEiDzwd+wN1pK2g@mail.gmail.com>
+References: <201202212221.41744.heiko@sntech.de>
+	<201202212226.01189.heiko@sntech.de>
+	<201202221718.01137.arnd@arndb.de>
+	<201202221828.53363.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:35209 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753266Ab2BVRnE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Feb 2012 12:43:04 -0500
-Received: by daed14 with SMTP id d14so258091dae.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 09:43:03 -0800 (PST)
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:52175 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753119Ab2BVRvP convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Feb 2012 12:51:15 -0500
+Received: by lagu2 with SMTP id u2so327960lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 09:51:14 -0800 (PST)
 In-Reply-To: <201202221828.53363.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
 
-On 02/23/12 02:28, Heiko St=FCbner wrote:
-> Am Mittwoch 22 Februar 2012, 18:18:00 schrieb Arnd Bergmann:
->> On Tuesday 21 February 2012, Heiko St=FCbner wrote:
->>> S3C-SoCs starting with the S3C2443 can share a lot of functionality=
-=2E
->>> The file can collect more common code of these SocS later on and
->>> therefore gets a new name to reflect this future purpose.
->>>
->>> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
->>> ---
->>>
->>>   arch/arm/mach-s3c24xx/Kconfig          |   14 +-
->>>   arch/arm/mach-s3c24xx/Makefile         |    4 +
->>>   arch/arm/mach-s3c24xx/common-s3c2443.c |  644
->>>   ++++++++++++++++++++++++++++++++ arch/arm/plat-s3c24xx/Kconfig
->>>   |    6 -
->>>   arch/arm/plat-s3c24xx/Makefile         |    1 -
->>>   arch/arm/plat-s3c24xx/s3c2443-clock.c  |  635
->>>   -------------------------------
->>
+On 22 February 2012 22:58, Heiko St=FCbner <heiko@sntech.de> wrote:
+>
 >> No objections on the patch, but please use 'git format-patch -M' whe=
 n
 >> moving files so that we can see which parts have changed in the proc=
@@ -49,16 +33,7 @@ ess.
 y to
 > remember it :-)
 >
-Or for that, you can add following at .gitconfig file
+The -M option is as easy to forget as it is useful.
+I wonder if that could be made the default with format-patch ?
 
-[diff]
-	renames =3D true
-	renameLimit =3D 50000
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-j
