@@ -1,39 +1,88 @@
-From: Jassi Brar <jaswinder.singh@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: S3C24XX: Move s3c2443-clock.c to mach-s3c24xx
-Date: Wed, 22 Feb 2012 23:21:13 +0530
-Message-ID: <CAJe_ZheGxcM+FsHv6hQ59hVTbes22D=5zBFsEiDzwd+wN1pK2g@mail.gmail.com>
-References: <201202212221.41744.heiko@sntech.de>
-	<201202212226.01189.heiko@sntech.de>
-	<201202221718.01137.arnd@arndb.de>
-	<201202221828.53363.heiko@sntech.de>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
+Date: Wed, 22 Feb 2012 19:31:58 +0000
+Message-ID: <20120222193158.GA7041@n2100.arm.linux.org.uk>
+References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com> <CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com> <00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com> <CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com> <011c01ccf107$5624d020$026e7060$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:52175 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753119Ab2BVRvP convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Feb 2012 12:51:15 -0500
-Received: by lagu2 with SMTP id u2so327960lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 09:51:14 -0800 (PST)
-In-Reply-To: <201202221828.53363.heiko@sntech.de>
+Received: from caramon.arm.linux.org.uk ([78.32.30.218]:51507 "EHLO
+	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751995Ab2BVTcU (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Feb 2012 14:32:20 -0500
+Content-Disposition: inline
+In-Reply-To: <011c01ccf107$5624d020$026e7060$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jassi Brar' <jassisinghbrar@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Linus Walleij' <linus.walleij@linaro.org>, 'Vinod Koul' <vinod.koul@intel.com>, 'Boojin Kim' <boojin.kim@samsung.com>
 
-On 22 February 2012 22:58, Heiko St=FCbner <heiko@sntech.de> wrote:
->
->> No objections on the patch, but please use 'git format-patch -M' whe=
-n
->> moving files so that we can see which parts have changed in the proc=
-ess.
-> the results of -M look really nice, thanks for the hint and I will tr=
-y to
-> remember it :-)
->
-The -M option is as easy to forget as it is useful.
-I wonder if that could be made the default with format-patch ?
+On Wed, Feb 22, 2012 at 11:11:49AM +0900, Kukjin Kim wrote:
+> Unfortunately, I couldn't find his name for dma/pl330.c from my side and
+> if required, he can do it later. Why should I do?
+> 
+> I'm very unhappy with this talking and I think, there is no more useful
+> talking with you. I'd like to know opinions from Russell King(ARM
+> maintainer) or Vinod Koul (DMA maintainer) for this.
 
--j
+Let's take a step back, and see how things are in mainline at the
+moment.
+
+1. arch/arm/common/pl330.c and drivers/dma/pl330.c have this header:
+ * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+ *      Jaswinder Singh <jassi.brar@samsung.com>
+
+That, to me, means that Samsung hold the copyrights, and Jaswinder Singh
+was the author of it.  Jaswinder has no copyright on the code.  That's
+pretty standard if you're employed by a company (and some employment
+contracts even assert that any idea you have, even outside work time,
+becomes the property of the company you are working for... but that's
+a different matter.)
+
+2. The authorship on the lines in these files are:
+$ git blame arch/arm/common/pl330.c | cut -b 11-26 |sort | uniq -c
+   1892 Jassi Brar      
+     66 Javi Merino     
+      2 Lucas De Marchi 
+$ git blame drivers/dma/pl330.c | cut -b 11-26 |sort | uniq -c
+    185 Boojin Kim
+      2 Dave Martin
+    795 Jassi Brar
+      8 Rob Herring
+      1 Russell King
+     53 Thomas Abraham
+      2 Tushar Behera
+      7 Vinod Koul
+
+So, quite clearly, most of the driver code was written by Jassi, presumably
+while under the employment of Samsung.  Note that Boojin has contributed
+more lines of code than Javi.
+
+3. The new header on the combined file has this:
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *             http://www.samsung.com
++ * Boojin Kim <boojin.kim@samsung.com>
+  *
+  * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+  *     Jaswinder Singh <jassi.brar@samsung.com>
+
+Given that this driver is merely taking arch/arm/common/pl330.c and
+merging it into drivers/dma/pl330.c, it's not fair to add that if all
+that's happened is code has been moved around, because it makes it look
+like Boojin Kim is taking credit just for moving code.
+
+What would be fair is to add the first _two_ lines indicating that
+Samsung maintains the copyright to 2012.
+
+However, it would *not* be unreasonable to add Boojin Kim to
+drivers/dma/pl330.c as a separate patch _before_ or _after_ this patch,
+and I think that would be more warranted than adding Javi Merino as an
+author based on the above stats.
+
+I think Boojin Kim is quite justified in having a mention at the top of
+the file - but as a separate patch.  And Samsung are quite justified in
+updating their copyright.
+
+So, I think the problem is how this has been done.  Separate the two
+changes and let's move on.
