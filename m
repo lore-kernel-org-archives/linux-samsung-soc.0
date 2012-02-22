@@ -1,58 +1,70 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
-Date: Wed, 22 Feb 2012 16:42:08 +0530
-Message-ID: <CABb+yY0ZxTBCrk1TebV9P6ETqafqVWJwkedTn__kz8TSj4AmhQ@mail.gmail.com>
-References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>
-	<CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com>
-	<00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com>
-	<CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com>
-	<011c01ccf107$5624d020$026e7060$%kim@samsung.com>
-	<CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com>
-	<1329906421.24656.93.camel@vkoul-udesk3>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v3 3/4] ARM: Exynos4: Remove arch_initcall for wakeup interrupt
+ initialization
+Date: Wed, 22 Feb 2012 17:44:17 +0530
+Message-ID: <1329912858-32750-4-git-send-email-thomas.abraham@linaro.org>
+References: <1329912858-32750-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:47163 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752755Ab2BVLMK (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:29415 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753312Ab2BVMII (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Feb 2012 06:12:10 -0500
-Received: by bkcjm19 with SMTP id jm19so6125959bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 03:12:08 -0800 (PST)
-In-Reply-To: <1329906421.24656.93.camel@vkoul-udesk3>
+	Wed, 22 Feb 2012 07:08:08 -0500
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0LZS001Z0N0P8LB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 22 Feb 2012 21:08:07 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0LZS00GJLN166U60@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Wed, 22 Feb 2012 21:08:07 +0900 (KST)
+In-reply-to: <1329912858-32750-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
 
-On Wed, Feb 22, 2012 at 3:57 PM, Vinod Koul <vinod.koul@intel.com> wrote:
->
-> Sadly, what a mess!!!
->
-> Jassi, you don't own the copyright, your company did, as they employed
-> you to do the job. So both your and Kukjin are not correct in claiming
-> the copyright!!
->
-Read the thread again.
-Nobody is claiming the copyright, it rests with Samsung as before.
+The of_irq_init function would be setup to invoke the exynos4_init_irq_eint
+function when booting using device tree. The arch_initcall for
+exynos4_init_irq_eint would duplicate its invocation in that case. Hence,
+arch_initcall for exynos4_init_irq_eint is removed and this function is invoked
+from the exynos4_init_irq for non-dt case.
 
-Kukjin thinks merging two files is a serious enough change to
-warrant co-authorship, which I disagree.
-(The line below 'Copyright' tells the author, and its email, of the file).
+Moreover, with single kernel image build, the exynos4_init_irq_eint has no checks
+to ensure that it is running on a exynos4 platform. So it would be appropriate
+to invoke it from exynos4_init_irq.
 
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/mach-exynos/common.c |    4 +++-
+ 1 files changed, 3 insertions(+), 1 deletions(-)
 
-> Jassi, your claim on being author is certainly right and you name should
-> be there as MODULE_AUTHOR.
->
-Please check, it is there indeed.
-
-
-> Also, If you had a Authors line added and that was removed, then I would
-> have agreed with you.
->
-Equally objectionable is any tom, dick or harry claiming co-authorship
-of a code(f3.c) that is almost an equivalent of  'cat f1.c f2.c > f3.c'
-
-I am equally pissed off by the fact that Kukjin/Boojin sneaked in the
-co-authorship in this revision while carrying over the Acked-by's from
-previous revision as if it has already been approved by others.
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index ed50185..888e703 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -81,6 +81,8 @@ static struct cpu_table cpu_ids[] __initdata = {
+ 	},
+ };
+ 
++static int exynos4_init_irq_eint(void);
++
+ /* Initial IO mappings */
+ 
+ static struct map_desc exynos_iodesc[] __initdata = {
+@@ -485,6 +487,7 @@ void __init exynos4_init_irq(void)
+ 	 * uses GIC instead of VIC.
+ 	 */
+ 	s5p_init_irq(NULL, 0);
++	exynos4_init_irq_eint();
+ }
+ 
+ struct bus_type exynos4_subsys = {
+@@ -775,4 +778,3 @@ static int __init exynos4_init_irq_eint(void)
+ 	irq_set_handler_data(IRQ_EINT16_31, &eint_data);
+ 	return 0;
+ }
+-arch_initcall(exynos4_init_irq_eint);
+-- 
+1.6.6.rc2
