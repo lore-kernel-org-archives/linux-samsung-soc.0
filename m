@@ -1,45 +1,58 @@
-From: Vinod Koul <vinod.koul@intel.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
 Subject: Re: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
-Date: Wed, 22 Feb 2012 15:57:01 +0530
-Message-ID: <1329906421.24656.93.camel@vkoul-udesk3>
+Date: Wed, 22 Feb 2012 16:42:08 +0530
+Message-ID: <CABb+yY0ZxTBCrk1TebV9P6ETqafqVWJwkedTn__kz8TSj4AmhQ@mail.gmail.com>
 References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>
-	 <CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com>
-	 <00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com>
-	 <CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com>
-	 <011c01ccf107$5624d020$026e7060$%kim@samsung.com>
-	 <CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com>
+	<CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com>
+	<00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com>
+	<CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com>
+	<011c01ccf107$5624d020$026e7060$%kim@samsung.com>
+	<CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com>
+	<1329906421.24656.93.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:2397 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750783Ab2BVKZg (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:47163 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752755Ab2BVLMK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Feb 2012 05:25:36 -0500
-In-Reply-To: <CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com>
+	Wed, 22 Feb 2012 06:12:10 -0500
+Received: by bkcjm19 with SMTP id jm19so6125959bkc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 22 Feb 2012 03:12:08 -0800 (PST)
+In-Reply-To: <1329906421.24656.93.camel@vkoul-udesk3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
+To: Vinod Koul <vinod.koul@intel.com>
 Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
 
-On Wed, 2012-02-22 at 08:01 +0530, Jassi Brar wrote:
-> On Wed, Feb 22, 2012 at 7:41 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-Sadly, what a mess!!!
+On Wed, Feb 22, 2012 at 3:57 PM, Vinod Koul <vinod.koul@intel.com> wrote:
+>
+> Sadly, what a mess!!!
+>
+> Jassi, you don't own the copyright, your company did, as they employed
+> you to do the job. So both your and Kukjin are not correct in claiming
+> the copyright!!
+>
+Read the thread again.
+Nobody is claiming the copyright, it rests with Samsung as before.
 
-Jassi, you don't own the copyright, your company did, as they employed
-you to do the job. So both your and Kukjin are not correct in claiming
-the copyright!!
-
-Jassi, your claim on being author is certainly right and you name should
-be there as MODULE_AUTHOR.
-Also, If you had a Authors line added and that was removed, then I would
-have agreed with you.
-
-And Kukjin, It wont hurt by giving credit to your former colleagues, by
-doing something like:
-http://permalink.gmane.org/gmane.linux.alsa.devel/94905
+Kukjin thinks merging two files is a serious enough change to
+warrant co-authorship, which I disagree.
+(The line below 'Copyright' tells the author, and its email, of the file).
 
 
--- 
-~Vinod
+> Jassi, your claim on being author is certainly right and you name should
+> be there as MODULE_AUTHOR.
+>
+Please check, it is there indeed.
+
+
+> Also, If you had a Authors line added and that was removed, then I would
+> have agreed with you.
+>
+Equally objectionable is any tom, dick or harry claiming co-authorship
+of a code(f3.c) that is almost an equivalent of  'cat f1.c f2.c > f3.c'
+
+I am equally pissed off by the fact that Kukjin/Boojin sneaked in the
+co-authorship in this revision while carrying over the Acked-by's from
+previous revision as if it has already been approved by others.
