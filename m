@@ -1,69 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] DMA: PL330: Merge PL330 driver into drivers/dma/
-Date: Thu, 23 Feb 2012 09:46:55 +0900
-Message-ID: <020101ccf1c4$a43e4490$ecbacdb0$%kim@samsung.com>
-References: <1329341243-14314-1-git-send-email-kgene.kim@samsung.com>
- <CABb+yY1E0_ZhTv8QvRAfgUvc=2Vz+ioYbsEczknP5dKcL2ZCbw@mail.gmail.com>
- <00f401ccf0f8$0db84ec0$2928ec40$%kim@samsung.com>
- <CABb+yY0j0j7Qw4MCwP_F+DKzmpdmZ3x0QC2Ktj2qmGnL=Ocx0Q@mail.gmail.com>
- <011c01ccf107$5624d020$026e7060$%kim@samsung.com>
- <CABb+yY1aeZ9=2GiHni3bZuRjW66Mxz7K0M753Lc-6UdxaVpBzA@mail.gmail.com>
- <1329906421.24656.93.camel@vkoul-udesk3> <4F451D24.1040009@samsung.com>
- <CABb+yY0Zy3Xx4OZTobo2y-J4NXokGCV47PdPyKs+aOnqtng7pQ@mail.gmail.com>
- <20120222193526.GC7041@n2100.arm.linux.org.uk>
- <CABb+yY2rhyRC=srq+4eKc5g_Yne0o3yqX0hV9wxH3NqohbFqHg@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: S5P-TV: Warning for regulator unbalanced disables
+Date: Thu, 23 Feb 2012 10:12:41 +0530
+Message-ID: <4F45C3C1.8030507@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:8382 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753306Ab2BWAq6 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Feb 2012 19:46:58 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0LZT002NTM69VQI0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Feb 2012 09:46:57 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0LZT00KGMM671BG0@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 23 Feb 2012 09:46:56 +0900 (KST)
-In-reply-to: <CABb+yY2rhyRC=srq+4eKc5g_Yne0o3yqX0hV9wxH3NqohbFqHg@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jassi Brar' <jassisinghbrar@gmail.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
-Cc: 'Vinod Koul' <vinod.koul@intel.com>, linux-samsung-soc@vger.kernel.org, 'Boojin Kim' <boojin.kim@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>, linux-arm-kernel@lists.infradead.org
 
-Jassi Brar wrote:
-> 
+Hi,
 
-Thank you for suggestions.
+After implementing genpd framework for EXYNOS4, (Ref commit 91cfbd4
+"ARM: EXYNOS: Hook up power domains to generic power domain
+infrastructure" in Kukjin's for-next branch), we are getting following
+warning from s5p-hdmi driver.
 
-[...]
+The test was done on Origen board with code based on 3.3-rc4 and
+Kukjin's for-next branch. [1]
 
-> 
-> > What would be fair is to add the first _two_ lines indicating that
-> > Samsung maintains the copyright to 2012.
-> >
-> OK, but that may not be scalable considering next year too someone
-> could want to update the copyright to 2013 and so on.
-> So I suggested simply change 2010 to 2010-2012 in the existing notice.
-> 
-It's time to finish this.
+------------[ cut here ]------------
+WARNING: at drivers/regulator/core.c:1503 _regulator_disable+0xf8/0x164()
+unbalanced disables for VMIPI_1.1V
+Modules linked in:
+regulator_init_complete: VDD_G3D_1.1V: incomplete constraints, leaving on
+[<c0014624>] (unwind_backtrace+0x0/0xf8) from [<c00232fc>]
+(warn_slowpath_common+0x54/0x64)
+[<c00232fc>] (warn_slowpath_common+0x54/0x64) from [<c00233a0>]
+(warn_slowpath_fmt+0x30/0x40)
+[<c00233a0>] (warn_slowpath_fmt+0x30/0x40) from [<c01ab9b8>]
+(_regulator_disable+0xf8/0x164)
+[<c01ab9b8>] (_regulator_disable+0xf8/0x164) from [<c01aba40>]
+(regulator_disable+0x1c/0x48)
+[<c01aba40>] (regulator_disable+0x1c/0x48) from [<c01abcf4>]
+(regulator_bulk_disable+0x24/0x8c)
+regulator_init_complete: VADC_3.3V: incomplete constraints, leaving on
+[<c01abcf4>] (regulator_bulk_disable+0x24/0x8c) from [<c028d874>]
+(hdmi_runtime_suspend+0x28/0x30)
+[<c028d874>] (hdmi_runtime_suspend+0x28/0x30) from [<c01edac4>]
+(pm_genpd_default_save_state+0x48/0x5c)
+[<c01edac4>] (pm_genpd_default_save_state+0x48/0x5c) from [<c01eeed4>]
+(pm_genpd_poweroff+0x224/0x3f0)
+[<c01eeed4>] (pm_genpd_poweroff+0x224/0x3f0) from [<c01ef190>]
+(genpd_power_off_work_fn+0x1c/0x28)
+[<c01ef190>] (genpd_power_off_work_fn+0x1c/0x28) from [<c0036ac0>]
+(process_one_work+0x118/0x3b0)
+regulator_init_complete: VMIPI_1.8V: incomplete constraints, leaving on
+[<c0036ac0>] (process_one_work+0x118/0x3b0) from [<c0039424>]
+(worker_thread+0x18c/0x3a0)
+[<c0039424>] (worker_thread+0x18c/0x3a0) from [<c003d734>]
+(kthread+0x8c/0x90)
+[<c003d734>] (kthread+0x8c/0x90) from [<c000f278>]
+(kernel_thread_exit+0x0/0x8)
+---[ end trace 9e20783f432f4c81 ]---
 
-As I said, I will just add Samsung maintains the copyright to 2012 as per Russell King suggested.
+[1] git://git.linaro.org/people/tushar/linux-linaro-samsung.git
+(test/hdmi-pd)
 
-Then, if the name of Boojin is required there, she will send it next time.
-
-Again, I don't touch original copyright written by Jassi, because I don't have any right to do it with this patch.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Tushar Behera
