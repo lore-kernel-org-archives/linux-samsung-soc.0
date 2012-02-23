@@ -1,168 +1,67 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH v2] ARM: S3C24XX: Move s3c2443-clock.c to mach-s3c24xx
-Date: Thu, 23 Feb 2012 15:35:59 +0100
-Message-ID: <201202231536.00015.heiko@sntech.de>
-References: <201202212221.41744.heiko@sntech.de> <201202221718.01137.arnd@arndb.de> <201202221828.53363.heiko@sntech.de>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: S5P-TV: Warning for regulator unbalanced disables
+Date: Thu, 23 Feb 2012 15:38:57 +0100
+Message-ID: <ADF13DA15EB3FE4FBA487CCC7BEFDF362702C855C8@bssrvexch01>
+References: <4F45C3C1.8030507@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from h1778886.stratoserver.net ([85.214.133.74]:54760 "EHLO
-	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753084Ab2BWOgM (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:10678 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755766Ab2BWOh7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Feb 2012 09:36:12 -0500
-In-Reply-To: <201202221828.53363.heiko@sntech.de>
+	Thu, 23 Feb 2012 09:37:59 -0500
+In-reply-to: <4F45C3C1.8030507@linaro.org>
+Content-language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Ben Dooks' <ben-linux@fluff.org>
+To: Tushar Behera <tushar.behera@linaro.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>, =?utf-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>
 
-S3C-SoCs starting with the S3C2443 can share a lot of functionality.
-The file can collect more common code of these SocS later on and
-therefore gets a new name to reflect this future purpose.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-for completenes sake, the patch with -M format
-
- arch/arm/mach-s3c24xx/Kconfig                      |   14 ++++++++++++--
- arch/arm/mach-s3c24xx/Makefile                     |    4 ++++
- .../common-s3c2443.c}                              |   17 +++++++++++++----
- arch/arm/plat-s3c24xx/Kconfig                      |    6 ------
- arch/arm/plat-s3c24xx/Makefile                     |    1 -
- 5 files changed, 29 insertions(+), 13 deletions(-)
- rename arch/arm/{plat-s3c24xx/s3c2443-clock.c => mach-s3c24xx/common-s3c2443.c} (95%)
-
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index e537577..506d55b 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -41,7 +41,7 @@ config CPU_S3C2416
- 	select CPU_ARM926T
- 	select CPU_LLSERIAL_S3C2440
- 	select SAMSUNG_CLKSRC
--	select S3C2443_CLOCK
-+	select S3C2443_COMMON
- 	select S3C2416_DMA if S3C24XX_DMA
- 	select S3C2416_PM if PM
- 	help
-@@ -76,7 +76,7 @@ config CPU_S3C2443
- 	select CPU_ARM920T
- 	select CPU_LLSERIAL_S3C2440
- 	select SAMSUNG_CLKSRC
--	select S3C2443_CLOCK
-+	select S3C2443_COMMON
- 	select S3C2443_DMA if S3C24XX_DMA
- 	help
- 	  Support for the S3C2443 SoC from the S3C24XX line
-@@ -470,6 +470,16 @@ config SMDK2440_CPU2442
- 
- endif	# CPU_S3C2440
- 
-+if CPU_S3C2443 || CPU_S3C2416
-+
-+config S3C2443_COMMON
-+	bool
-+	help
-+	  Common code for the S3C2443 and similar processors, which includes
-+	  the S3C2416 and S3C2450.
-+
-+endif	# CPU_S3C2443 || CPU_S3C2416
-+
- if CPU_S3C2443
- 
- config S3C2443_DMA
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 08b44a3..876e5e5 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -34,6 +34,10 @@ obj-$(CONFIG_S3C2440_DMA)	+= dma-s3c2440.o
- obj-$(CONFIG_CPU_S3C2443)	+= s3c2443.o irq-s3c2443.o clock-s3c2443.o
- obj-$(CONFIG_S3C2443_DMA)	+= dma-s3c2443.o
- 
-+# common code
-+
-+obj-$(CONFIG_S3C2443_COMMON)	+= common-s3c2443.o
-+
- #
- # machine support
- # following is ordered alphabetically by option text.
-diff --git a/arch/arm/plat-s3c24xx/s3c2443-clock.c b/arch/arm/mach-s3c24xx/common-s3c2443.c
-similarity index 95%
-rename from arch/arm/plat-s3c24xx/s3c2443-clock.c
-rename to arch/arm/mach-s3c24xx/common-s3c2443.c
-index 3633060..2745616 100644
---- a/arch/arm/plat-s3c24xx/s3c2443-clock.c
-+++ b/arch/arm/mach-s3c24xx/common-s3c2443.c
-@@ -1,9 +1,18 @@
--/* linux/arch/arm/plat-s3c24xx/s3c2443-clock.c
-+/*
-+ * Common code for SoCs starting with the S3C2443
-  *
-  * Copyright (c) 2007, 2010 Simtec Electronics
-  *	Ben Dooks <ben@simtec.co.uk>
-  *
-- * S3C2443 Clock control suport - common code
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-  */
- 
- #include <linux/init.h>
-@@ -552,7 +561,7 @@ void __init_or_cpufreq s3c2443_common_setup_clocks(pll_fn get_mpll)
- 	s3c24xx_setup_clocks(fclk, hclk, pclk);
- 
- 	printk("CPU: MPLL %s %ld.%03ld MHz, cpu %ld.%03ld MHz, mem %ld.%03ld MHz, pclk %ld.%03ld MHz\n",
--	       (mpllcon & S3C2443_PLLCON_OFF) ? "off":"on",
-+	       (mpllcon & S3C2443_PLLCON_OFF) ? "off" : "on",
- 	       print_mhz(pll), print_mhz(fclk),
- 	       print_mhz(hclk), print_mhz(pclk));
- 
-@@ -567,7 +576,7 @@ void __init_or_cpufreq s3c2443_common_setup_clocks(pll_fn get_mpll)
- 	}
- 
- 	printk("CPU: EPLL %s %ld.%03ld MHz, usb-bus %ld.%03ld MHz\n",
--	       (epllcon & S3C2443_PLLCON_OFF) ? "off":"on",
-+	       (epllcon & S3C2443_PLLCON_OFF) ? "off" : "on",
- 	       print_mhz(clk_get_rate(&clk_epll)),
- 	       print_mhz(clk_get_rate(&clk_usb_bus)));
- }
-diff --git a/arch/arm/plat-s3c24xx/Kconfig b/arch/arm/plat-s3c24xx/Kconfig
-index 0c183fd..74f76e0 100644
---- a/arch/arm/plat-s3c24xx/Kconfig
-+++ b/arch/arm/plat-s3c24xx/Kconfig
-@@ -44,12 +44,6 @@ config S3C2410_CLOCK
- 	  Clock code for the S3C2410, and similar processors which
- 	  is currently includes the S3C2410, S3C2440, S3C2442.
- 
--config S3C2443_CLOCK
--	bool
--	help
--	  Clock code for the S3C2443 and similar processors, which includes
--	  the S3C2416 and S3C2450.
--
- config S3C24XX_DCLK
- 	bool
- 	help
-diff --git a/arch/arm/plat-s3c24xx/Makefile b/arch/arm/plat-s3c24xx/Makefile
-index bce27ca..a7e8843 100644
---- a/arch/arm/plat-s3c24xx/Makefile
-+++ b/arch/arm/plat-s3c24xx/Makefile
-@@ -28,7 +28,6 @@ obj-$(CONFIG_PM)		+= pm.o
- obj-$(CONFIG_PM)		+= irq-pm.o
- obj-$(CONFIG_PM)		+= sleep.o
- obj-$(CONFIG_S3C2410_CLOCK)	+= s3c2410-clock.o
--obj-$(CONFIG_S3C2443_CLOCK)	+= s3c2443-clock.o
- obj-$(CONFIG_S3C24XX_DMA)	+= dma.o
- obj-$(CONFIG_S3C2410_IOTIMING)	+= s3c2410-iotiming.o
- obj-$(CONFIG_S3C2412_IOTIMING)	+= s3c2412-iotiming.o
--- 
-1.7.5.4
+SGkgVHVzaGFyLA0KDQpPbiBUaHVyc2RheSwgRmVicnVhcnkgMjMsIDIwMTIgNTo0MyBBTSBZb3Ug
+d3JvdGU6DQoNCj4gQWZ0ZXIgaW1wbGVtZW50aW5nIGdlbnBkIGZyYW1ld29yayBmb3IgRVhZTk9T
+NCwgKFJlZiBjb21taXQgOTFjZmJkNA0KPiAiQVJNOiBFWFlOT1M6IEhvb2sgdXAgcG93ZXIgZG9t
+YWlucyB0byBnZW5lcmljIHBvd2VyIGRvbWFpbg0KPiBpbmZyYXN0cnVjdHVyZSIgaW4gS3Vramlu
+J3MgZm9yLW5leHQgYnJhbmNoKSwgd2UgYXJlIGdldHRpbmcgZm9sbG93aW5nDQo+IHdhcm5pbmcg
+ZnJvbSBzNXAtaGRtaSBkcml2ZXIuDQo+DQo+IFRoZSB0ZXN0IHdhcyBkb25lIG9uIE9yaWdlbiBi
+b2FyZCB3aXRoIGNvZGUgYmFzZWQgb24gMy4zLXJjNCBhbmQNCj4gS3VramluJ3MgZm9yLW5leHQg
+YnJhbmNoLiBbMV0NCj4NCj4gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+
+IFdBUk5JTkc6IGF0IGRyaXZlcnMvcmVndWxhdG9yL2NvcmUuYzoxNTAzIF9yZWd1bGF0b3JfZGlz
+YWJsZSsweGY4LzB4MTY0KCkNCg0KKHNuaXBwZWQpDQoNClRoYW5rcyBmb3IgdGhlIHJlcG9ydC4g
+V2Uga25vdyBhYm91dCB0aGlzIGlzc3VlLiBJdCBpcyBub3QgcmVhbGx5IHJlbGF0ZWQgdG8NCnJl
+Z3VsYXRvcnMgbm9yIHM1cC10diBkcml2ZXIuIFRoZXJlIGlzIHNvbWV0aGluZyBicm9rZW4gKG9y
+IG1pc3VzZWQpIGluIHRoZQ0KZ2VuX3BkIGRyaXZlciBhbmQgaXRzIGltcGxlbWVudGF0aW9uIGZv
+ciBFeHlzbm80IGh3LiBJZiB5b3UgZGlnIGEgYml0IGludG8NCnRoZSBwcm9ibGVtIFlvdSBjYW4g
+b2JzZXJ2ZSB0aGUgZm9sbG93aW5nIGNhbGwgc2VxdWVuY2Ugb24gZGV2aWNlIHByb2JlOg0KDQpl
+eHlub3M0X2dlbnBkX2VuYWJsZSgpDQpzNXBfdHZfcnVudGltZV9kaXNhYmxlKCkNCmV4eW5vczRf
+Z2VucGRfZGlzYWJsZSgpDQoNClNvIHRoZSBjYWxsIHRvIHM1cF90dl9ydW50aW1lX2Rpc2FibGUg
+aXMgbm90IGJhbGFuY2VkIHdpdGggczVwX3R2X3J1bnRpbWVfcmVzdW1lKCkNCndoYXQgY2F1c2Vz
+IHRoZSBlcnJvciB5b3UgaGF2ZSBwb3N0ZWQuIEl0IGxvb2tzIHRoYXQgcnVudGltZSBwdyBmcmFt
+ZXdvcmsgbWFrZXMNCnNvbWUgd3JvbmcgYXNzdW1wdGlvbnMgYWJvdXQgdGhlIHN0YXRlIG9mIHRo
+ZSBkZXZpY2Ugb25jZSBwb3dlciBkb21haW4gaGFzIGJlZW4NCnJlZ2lzdGVyZWQuDQoNClRoZSBz
+YW1lIHByb2JsZW0gYXBwZWFycyBmb3IgczVwLWZpbWMgYW5kIHM1cC1tZmMsIGFsdGhvdWdoIGl0
+IGlzIG5vdCBvYnNlcnZlZA0KYXMga2VybmVsIGVycm9yLCBidXQgdGhlc2UgZGV2aWNlcyBhbHNv
+IHN1ZmZlcnMgZnJvbSBpdCAtIHRoZWlyIGNsb2NrcyBnZXQgZGlzYWJsZWQNCm9uZSB0aW1lIHRv
+byBtdWNoIHNvIHRoZXkgZG8gbm90IG9wZXJhdGUgY29ycmVjdGx5Lg0KDQpXZSBhcmUgaW52ZXN0
+aWdhdGluZyB0aGlzIGlzc3VlIGZ1cnRoZXIuDQoNCkJlc3QgcmVnYXJkcw0KLS0NCk1hcmVrIFN6
+eXByb3dza2kNClNhbXN1bmcgUG9sYW5kIFImRCBDZW50ZXINCg0KDQpUaGUgYWJvdmUgbWVzc2Fn
+ZSBpcyBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSBuYW1lZCBhZGRyZXNzZWUgYW5kIG1heSBjb250
+YWluIHRyYWRlIHNlY3JldCwgaW5kdXN0cmlhbCB0ZWNobm9sb2d5IG9yIHByaXZpbGVnZWQgYW5k
+IGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBvdGhlcndpc2UgcHJvdGVjdGVkIHVuZGVyIGFwcGxp
+Y2FibGUgbGF3LiBBbnkgdW5hdXRob3JpemVkIGRpc3NlbWluYXRpb24sIGRpc3RyaWJ1dGlvbiwg
+Y29weWluZyBvciB1c2Ugb2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5lZCBpbiB0aGlzIGNvbW11
+bmljYXRpb24gaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhp
+cyBjb21tdW5pY2F0aW9uIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHNlbmRlciBieSBlbWFpbCBh
+bmQgZGVsZXRlIHRoaXMgY29tbXVuaWNhdGlvbiBpbW1lZGlhdGVseS4NCg0KDQpQb3d5xbxzemEg
+d2lhZG9tb8WbxIcgcHJ6ZXpuYWN6b25hIGplc3Qgd3nFgsSFY3puaWUgZGxhIGFkcmVzYXRhIG5p
+bmllanN6ZWogd2lhZG9tb8WbY2kgaSBtb8W8ZSB6YXdpZXJhxIcgaW5mb3JtYWNqZSBixJlkxIVj
+ZSB0YWplbW5pY8SFIGhhbmRsb3fEhSwgdGFqZW1uaWPEhSBwcnplZHNpxJliaW9yc3R3YSBvcmF6
+IGluZm9ybWFjamUgbyBjaGFyYWt0ZXJ6ZSBwb3VmbnltIGNocm9uaW9uZSBvYm93acSFenVqxIVj
+eW1pIHByemVwaXNhbWkgcHJhd2EuIEpha2lla29sd2llayBuaWV1cHJhd25pb25lIGljaCByb3pw
+b3dzemVjaG5pYW5pZSwgZHlzdHJ5YnVjamEsIGtvcGlvd2FuaWUgbHViIHXFvHljaWUgaW5mb3Jt
+YWNqaSB6YXdhcnR5Y2ggdyBwb3d5xbxzemVqIHdpYWRvbW/Fm2NpIGplc3QgemFicm9uaW9uZS4g
+SmXFm2xpIG90cnp5bWHFgmXFmyBwb3d5xbxzesSFIHdpYWRvbW/Fm8SHIG9tecWCa293bywgdXBy
+emVqbWllIHByb3N6xJkgcG9pbmZvcm11aiBvIHR5bSBmYWtjaWUgZHJvZ8SFIG1haWxvd8SFIG5h
+ZGF3Y8SZIHRlaiB3aWFkb21vxZtjaSBvcmF6IG5pZXp3xYJvY3puaWUgdXN1xYQgcG93ecW8c3rE
+hSB3aWFkb21vxZvEhyB6ZSBzd29qZWdvIGtvbXB1dGVyYS4NCg==
