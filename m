@@ -1,63 +1,67 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: S5P-TV: Warning for regulator unbalanced disables
-Date: Thu, 23 Feb 2012 10:12:41 +0530
-Message-ID: <4F45C3C1.8030507@linaro.org>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: change the name from s3c-sdhci to exynos4-sdhci
+Date: Thu, 23 Feb 2012 14:48:51 +0900
+Message-ID: <4F45D343.6020409@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:45329 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751380Ab2BWFs5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Feb 2012 00:48:57 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, 'kgene kim' <kgene.kim@samsung.com>, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, thomas.abraham@linaro.org
 
-Hi,
+Thomas Arbrahams's patchset have changed the device name in sdhci-s3c.c
+(mmc: sdhci-s3c: Rework platform data and add device tree support)
+But didn't change the regulator_consumer name.
+So maybe didn't initialize the mmc/sd card for exynos4.
 
-After implementing genpd framework for EXYNOS4, (Ref commit 91cfbd4
-"ARM: EXYNOS: Hook up power domains to generic power domain
-infrastructure" in Kukjin's for-next branch), we are getting following
-warning from s5p-hdmi driver.
+This patch is fixed that (based-on linux-samsung for-next branch)
 
-The test was done on Origen board with code based on 3.3-rc4 and
-Kukjin's for-next branch. [1]
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/mach-nuri.c           |    4 ++--
+ arch/arm/mach-exynos/mach-universal_c210.c |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-------------[ cut here ]------------
-WARNING: at drivers/regulator/core.c:1503 _regulator_disable+0xf8/0x164()
-unbalanced disables for VMIPI_1.1V
-Modules linked in:
-regulator_init_complete: VDD_G3D_1.1V: incomplete constraints, leaving on
-[<c0014624>] (unwind_backtrace+0x0/0xf8) from [<c00232fc>]
-(warn_slowpath_common+0x54/0x64)
-[<c00232fc>] (warn_slowpath_common+0x54/0x64) from [<c00233a0>]
-(warn_slowpath_fmt+0x30/0x40)
-[<c00233a0>] (warn_slowpath_fmt+0x30/0x40) from [<c01ab9b8>]
-(_regulator_disable+0xf8/0x164)
-[<c01ab9b8>] (_regulator_disable+0xf8/0x164) from [<c01aba40>]
-(regulator_disable+0x1c/0x48)
-[<c01aba40>] (regulator_disable+0x1c/0x48) from [<c01abcf4>]
-(regulator_bulk_disable+0x24/0x8c)
-regulator_init_complete: VADC_3.3V: incomplete constraints, leaving on
-[<c01abcf4>] (regulator_bulk_disable+0x24/0x8c) from [<c028d874>]
-(hdmi_runtime_suspend+0x28/0x30)
-[<c028d874>] (hdmi_runtime_suspend+0x28/0x30) from [<c01edac4>]
-(pm_genpd_default_save_state+0x48/0x5c)
-[<c01edac4>] (pm_genpd_default_save_state+0x48/0x5c) from [<c01eeed4>]
-(pm_genpd_poweroff+0x224/0x3f0)
-[<c01eeed4>] (pm_genpd_poweroff+0x224/0x3f0) from [<c01ef190>]
-(genpd_power_off_work_fn+0x1c/0x28)
-[<c01ef190>] (genpd_power_off_work_fn+0x1c/0x28) from [<c0036ac0>]
-(process_one_work+0x118/0x3b0)
-regulator_init_complete: VMIPI_1.8V: incomplete constraints, leaving on
-[<c0036ac0>] (process_one_work+0x118/0x3b0) from [<c0039424>]
-(worker_thread+0x18c/0x3a0)
-[<c0039424>] (worker_thread+0x18c/0x3a0) from [<c003d734>]
-(kthread+0x8c/0x90)
-[<c003d734>] (kthread+0x8c/0x90) from [<c000f278>]
-(kernel_thread_exit+0x0/0x8)
----[ end trace 9e20783f432f4c81 ]---
-
-[1] git://git.linaro.org/people/tushar/linux-linaro-samsung.git
-(test/hdmi-pd)
-
--- 
-Tushar Behera
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index a6b9162..251dd7a 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -116,7 +116,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
+ };
+ 
+ static struct regulator_consumer_supply emmc_supplies[] = {
+-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
++	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+ 	REGULATOR_SUPPLY("vmmc", "dw_mmc"),
+ };
+ 
+@@ -415,7 +415,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo12_[] = {
+ 	REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
+ };
+ static struct regulator_consumer_supply __initdata max8997_ldo13_[] = {
+-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
++	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.2"), /* TFLASH */
+ };
+ static struct regulator_consumer_supply __initdata max8997_ldo14_[] = {
+ 	REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 6017a21..320cb1d 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -749,7 +749,7 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data __initdata = {
+ };
+ 
+ static struct regulator_consumer_supply mmc0_supplies[] = {
+-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
++	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+ };
+ 
+ static struct regulator_init_data mmc0_fixed_voltage_init_data = {
