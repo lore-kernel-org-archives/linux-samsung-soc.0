@@ -1,362 +1,163 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 2/4] ARM: SAMSUNG: move the header file to driver directory
-Date: Fri, 24 Feb 2012 14:40:44 +0530
-Message-ID: <CAJuYYwQfSJn4z-1O6WsQf74Cg6heZx1yUSg+EQFJfZi3pubWkA@mail.gmail.com>
-References: <4F39EB0B.5030205@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCHv6 7/7] ARM: dma-mapping: add support for IOMMU mapper
+Date: Fri, 24 Feb 2012 10:35:55 +0100
+Message-ID: <00f301ccf2d7$b5b68570$21239050$%szyprowski@samsung.com>
+References: <1328900324-20946-1-git-send-email-m.szyprowski@samsung.com>
+	<1328900324-20946-8-git-send-email-m.szyprowski@samsung.com>
+	<401E54CE964CD94BAE1EB4A729C7087E378E42AE18@HQMAIL04.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:56116 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754939Ab2BXJKp convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Feb 2012 04:10:45 -0500
-Received: by vbjk17 with SMTP id k17so1418417vbj.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 24 Feb 2012 01:10:44 -0800 (PST)
-In-Reply-To: <4F39EB0B.5030205@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <401E54CE964CD94BAE1EB4A729C7087E378E42AE18-wAPRp6hVlRhDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+Content-language: pl
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Krishna Reddy' <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: 'Shariq Hasnain' <shariq.hasnain-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, 'Benjamin Herrenschmidt' <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, 'KyongHo Cho' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Chunsang Jeong' <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
 
-Dear Mr. Chung,
+Hello,
 
-On 14 February 2012 10:33, Jaehoon Chung <jh80.chung@samsung.com> wrote=
-:
-> The header-file is moved to drivers/mmc/host from plat.
->
-> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> =A0arch/arm/mach-exynos/setup-sdhci-gpio.c =A0 =A0 =A0 =A0 | =A0 =A01=
- -
-> =A0arch/arm/mach-s5pc100/setup-sdhci-gpio.c =A0 =A0 =A0 =A0| =A0 =A01=
- -
-> =A0arch/arm/mach-s5pv210/setup-sdhci-gpio.c =A0 =A0 =A0 =A0| =A0 =A01=
- -
-> =A0arch/arm/plat-samsung/include/plat/regs-sdhci.h | =A0 87 ---------=
--------------
-> =A0drivers/mmc/host/sdhci-s3c.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 89 +++++++++++++++++++++++
-> =A05 files changed, 89 insertions(+), 90 deletions(-)
-> =A0delete mode 100644 arch/arm/plat-samsung/include/plat/regs-sdhci.h
-> =A0create mode 100644 drivers/mmc/host/sdhci-s3c.h
->
-> diff --git a/arch/arm/mach-exynos/setup-sdhci-gpio.c b/arch/arm/mach-=
-exynos/setup-sdhci-gpio.c
-> index e8d08bf..cda3714 100644
-> --- a/arch/arm/mach-exynos/setup-sdhci-gpio.c
-> +++ b/arch/arm/mach-exynos/setup-sdhci-gpio.c
-> @@ -20,7 +20,6 @@
-> =A0#include <linux/mmc/card.h>
->
-> =A0#include <plat/gpio-cfg.h>
-> -#include <plat/regs-sdhci.h>
-> =A0#include <plat/sdhci.h>
->
-> =A0void exynos4_setup_sdhci0_cfg_gpio(struct platform_device *dev, in=
-t width)
-> diff --git a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c b/arch/arm/mach=
--s5pc100/setup-sdhci-gpio.c
-> index 03c02d0..6010c03 100644
-> --- a/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-> +++ b/arch/arm/mach-s5pc100/setup-sdhci-gpio.c
-> @@ -19,7 +19,6 @@
-> =A0#include <linux/mmc/card.h>
->
-> =A0#include <plat/gpio-cfg.h>
-> -#include <plat/regs-sdhci.h>
-> =A0#include <plat/sdhci.h>
->
-> =A0void s5pc100_setup_sdhci0_cfg_gpio(struct platform_device *dev, in=
-t width)
-> diff --git a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c b/arch/arm/mach=
--s5pv210/setup-sdhci-gpio.c
-> index 3e3ac05..0512ada 100644
-> --- a/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-> +++ b/arch/arm/mach-s5pv210/setup-sdhci-gpio.c
-> @@ -20,7 +20,6 @@
-> =A0#include <linux/mmc/card.h>
->
-> =A0#include <plat/gpio-cfg.h>
-> -#include <plat/regs-sdhci.h>
-> =A0#include <plat/sdhci.h>
->
-> =A0void s5pv210_setup_sdhci0_cfg_gpio(struct platform_device *dev, in=
-t width)
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-sdhci.h b/arch/a=
-rm/plat-samsung/include/plat/regs-sdhci.h
-> deleted file mode 100644
-> index e34049a..0000000
-> --- a/arch/arm/plat-samsung/include/plat/regs-sdhci.h
-> +++ /dev/null
-> @@ -1,87 +0,0 @@
-> -/* linux/arch/arm/plat-s3c/include/plat/regs-sdhci.h
-> - *
-> - * Copyright 2008 Openmoko, Inc.
-> - * Copyright 2008 Simtec Electronics
-> - * =A0 =A0 http://armlinux.simtec.co.uk/
-> - * =A0 =A0 Ben Dooks <ben@simtec.co.uk>
-> - *
-> - * S3C Platform - SDHCI (HSMMC) register definitions
-> - *
-> - * This program is free software; you can redistribute it and/or mod=
-ify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#ifndef __PLAT_S3C_SDHCI_REGS_H
-> -#define __PLAT_S3C_SDHCI_REGS_H __FILE__
-> -
-> -#define S3C_SDHCI_CONTROL2 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (=
-0x80)
-> -#define S3C_SDHCI_CONTROL3 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (=
-0x84)
-> -#define S3C64XX_SDHCI_CONTROL4 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (0x8C=
-)
-> -
-> -#define S3C64XX_SDHCI_CTRL2_ENSTAASYNCCLR =A0 =A0 =A0(1 << 31)
-> -#define S3C64XX_SDHCI_CTRL2_ENCMDCNFMSK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0(1 << 30)
-> -#define S3C_SDHCI_CTRL2_CDINVRXD3 =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 2=
-9)
-> -#define S3C_SDHCI_CTRL2_SLCARDOUT =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 2=
-8)
-> -
-> -#define S3C_SDHCI_CTRL2_FLTCLKSEL_MASK =A0 =A0 =A0 =A0 (0xf << 24)
-> -#define S3C_SDHCI_CTRL2_FLTCLKSEL_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0(24)
-> -#define S3C_SDHCI_CTRL2_FLTCLKSEL(_x) =A0 =A0 =A0 =A0 =A0((_x) << 24=
-)
-> -
-> -#define S3C_SDHCI_CTRL2_LVLDAT_MASK =A0 =A0 =A0 =A0 =A0 =A0(0xff << =
-16)
-> -#define S3C_SDHCI_CTRL2_LVLDAT_SHIFT =A0 =A0 =A0 =A0 =A0 (16)
-> -#define S3C_SDHCI_CTRL2_LVLDAT(_x) =A0 =A0 =A0 =A0 =A0 =A0 ((_x) << =
-16)
-> -
-> -#define S3C_SDHCI_CTRL2_ENFBCLKTX =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 1=
-5)
-> -#define S3C_SDHCI_CTRL2_ENFBCLKRX =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 1=
-4)
-> -#define S3C_SDHCI_CTRL2_SDCDSEL =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1 << 13)
-> -#define S3C_SDHCI_CTRL2_SDSIGPC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1 << 12)
-> -#define S3C_SDHCI_CTRL2_ENBUSYCHKTXSTART =A0 =A0 =A0 (1 << 11)
-> -
-> -#define S3C_SDHCI_CTRL2_DFCNT_MASK =A0 =A0 =A0 =A0 =A0 =A0 (0x3 << 9=
-)
-> -#define S3C_SDHCI_CTRL2_DFCNT_SHIFT =A0 =A0 =A0 =A0 =A0 =A0(9)
-> -#define S3C_SDHCI_CTRL2_DFCNT_NONE =A0 =A0 =A0 =A0 =A0 =A0 (0x0 << 9=
-)
-> -#define S3C_SDHCI_CTRL2_DFCNT_4SDCLK =A0 =A0 =A0 =A0 =A0 (0x1 << 9)
-> -#define S3C_SDHCI_CTRL2_DFCNT_16SDCLK =A0 =A0 =A0 =A0 =A0(0x2 << 9)
-> -#define S3C_SDHCI_CTRL2_DFCNT_64SDCLK =A0 =A0 =A0 =A0 =A0(0x3 << 9)
-> -
-> -#define S3C_SDHCI_CTRL2_ENCLKOUTHOLD =A0 =A0 =A0 =A0 =A0 (1 << 8)
-> -#define S3C_SDHCI_CTRL2_RWAITMODE =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 7=
-)
-> -#define S3C_SDHCI_CTRL2_DISBUFRD =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << 6=
-)
-> -#define S3C_SDHCI_CTRL2_SELBASECLK_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0(0x3 << 4)
-> -#define S3C_SDHCI_CTRL2_SELBASECLK_SHIFT =A0 =A0 =A0 (4)
-> -#define S3C_SDHCI_CTRL2_PWRSYNC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1 << 3)
-> -#define S3C_SDHCI_CTRL2_ENCLKOUTMSKCON =A0 =A0 =A0 =A0 (1 << 1)
-> -#define S3C_SDHCI_CTRL2_HWINITFIN =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 0=
-)
-> -
-> -#define S3C_SDHCI_CTRL3_FCSEL3 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 31)
-> -#define S3C_SDHCI_CTRL3_FCSEL2 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 23)
-> -#define S3C_SDHCI_CTRL3_FCSEL1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 15)
-> -#define S3C_SDHCI_CTRL3_FCSEL0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 7)
-> -
-> -#define S3C_SDHCI_CTRL3_FIA3_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 24)
-> -#define S3C_SDHCI_CTRL3_FIA3_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (24)
-> -#define S3C_SDHCI_CTRL3_FIA3(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 24)
-> -
-> -#define S3C_SDHCI_CTRL3_FIA2_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 16)
-> -#define S3C_SDHCI_CTRL3_FIA2_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (16)
-> -#define S3C_SDHCI_CTRL3_FIA2(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 16)
-> -
-> -#define S3C_SDHCI_CTRL3_FIA1_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 8)
-> -#define S3C_SDHCI_CTRL3_FIA1_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (8)
-> -#define S3C_SDHCI_CTRL3_FIA1(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 8)
-> -
-> -#define S3C_SDHCI_CTRL3_FIA0_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 0)
-> -#define S3C_SDHCI_CTRL3_FIA0_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (0)
-> -#define S3C_SDHCI_CTRL3_FIA0(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 0)
-> -
-> -#define S3C64XX_SDHCI_CONTROL4_DRIVE_MASK =A0 =A0 =A0(0x3 << 16)
-> -#define S3C64XX_SDHCI_CONTROL4_DRIVE_SHIFT =A0 =A0 (16)
-> -#define S3C64XX_SDHCI_CONTROL4_DRIVE_2mA =A0 =A0 =A0 (0x0 << 16)
-> -#define S3C64XX_SDHCI_CONTROL4_DRIVE_4mA =A0 =A0 =A0 (0x1 << 16)
-> -#define S3C64XX_SDHCI_CONTROL4_DRIVE_7mA =A0 =A0 =A0 (0x2 << 16)
-> -#define S3C64XX_SDHCI_CONTROL4_DRIVE_9mA =A0 =A0 =A0 (0x3 << 16)
-> -
-> -#define S3C64XX_SDHCI_CONTROL4_BUSY =A0 =A0 =A0 =A0 =A0 =A0(1)
-> -
-> -#endif /* __PLAT_S3C_SDHCI_REGS_H */
-> diff --git a/drivers/mmc/host/sdhci-s3c.h b/drivers/mmc/host/sdhci-s3=
-c.h
-> new file mode 100644
-> index 0000000..e233b15
-> --- /dev/null
-> +++ b/drivers/mmc/host/sdhci-s3c.h
-> @@ -0,0 +1,89 @@
-> +/*
-> + * SDHCI Samsung controller driver generics for OF and pltfm.
-> + *
-> + * Copyright 2008 Openmoko, Inc.
-> + * Copyright 2008 Simtec Electronics
-> + * =A0 =A0 http://armlinux.simtec.co.uk/
-> + * =A0 =A0 Ben Dooks <ben@simtec.co.uk>
-> + *
-> + * S3C Platform - SDHCI (HSMMC) register definitions
-> + *
-> + * This program is free software; you can redistribute it and/or mod=
-ify
-> + * it under the terms of the GNU General Public License as published=
- by
-> + * the Free Software Foundation; either version 2 of the License.
-> + */
-> +
-> +#ifndef __DRIVERS_MMC_S3C_SDHCI_H
-> +#define __DRIVERS_MMC_S3C_SDHCI_H
-> +
-> +#define S3C_SDHCI_CONTROL2 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (=
-0x80)
-> +#define S3C_SDHCI_CONTROL3 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (=
-0x84)
-> +#define S3C_SDHCI_CONTROL4 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (=
-0x8C)
-> +
-> +#define S3C_SDHCI_CTRL2_ENSTAASYNCCLR =A0 =A0 =A0 =A0 =A0(1 << 31)
-> +#define S3C_SDHCI_CTRL2_ENCMDCNFMSK =A0 =A0 =A0 =A0 =A0 =A0(1 << 30)
-> +#define S3C_SDHCI_CTRL2_CDINVRXD3 =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 2=
-9)
-> +#define S3C_SDHCI_CTRL2_SLCARDOUT =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 2=
-8)
-> +
-> +#define S3C_SDHCI_CTRL2_FLTCLKSEL_MASK =A0 =A0 =A0 =A0 (0xf << 24)
-> +#define S3C_SDHCI_CTRL2_FLTCLKSEL_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0(24)
-> +#define S3C_SDHCI_CTRL2_FLTCLKSEL(_x) =A0 =A0 =A0 =A0 =A0((_x) << 24=
-)
-> +
-> +#define S3C_SDHCI_CTRL2_LVLDAT_MASK =A0 =A0 =A0 =A0 =A0 =A0(0xff << =
-16)
-> +#define S3C_SDHCI_CTRL2_LVLDAT_SHIFT =A0 =A0 =A0 =A0 =A0 (16)
-> +#define S3C_SDHCI_CTRL2_LVLDAT(_x) =A0 =A0 =A0 =A0 =A0 =A0 ((_x) << =
-16)
-> +
-> +#define S3C_SDHCI_CTRL2_ENFBCLKTX =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 1=
-5)
-> +#define S3C_SDHCI_CTRL2_ENFBCLKRX =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 1=
-4)
-> +#define S3C_SDHCI_CTRL2_SDCDSEL =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1 << 13)
-> +#define S3C_SDHCI_CTRL2_SDSIGPC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1 << 12)
-> +#define S3C_SDHCI_CTRL2_ENBUSYCHKTXSTART =A0 =A0 =A0 (1 << 11)
-> +
-> +#define S3C_SDHCI_CTRL2_DFCNT_MASK =A0 =A0 =A0 =A0 =A0 =A0 (0x3 << 9=
-)
-> +#define S3C_SDHCI_CTRL2_DFCNT_SHIFT =A0 =A0 =A0 =A0 =A0 =A0(9)
-> +#define S3C_SDHCI_CTRL2_DFCNT_NONE =A0 =A0 =A0 =A0 =A0 =A0 (0x0 << 9=
-)
-> +#define S3C_SDHCI_CTRL2_DFCNT_4SDCLK =A0 =A0 =A0 =A0 =A0 (0x1 << 9)
-> +#define S3C_SDHCI_CTRL2_DFCNT_16SDCLK =A0 =A0 =A0 =A0 =A0(0x2 << 9)
-> +#define S3C_SDHCI_CTRL2_DFCNT_64SDCLK =A0 =A0 =A0 =A0 =A0(0x3 << 9)
-> +
-> +#define S3C_SDHCI_CTRL2_ENCLKOUTHOLD =A0 =A0 =A0 =A0 =A0 (1 << 8)
-> +#define S3C_SDHCI_CTRL2_RWAITMODE =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 7=
-)
-> +#define S3C_SDHCI_CTRL2_DISBUFRD =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 << 6=
-)
-> +#define S3C_SDHCI_CTRL2_SELBASECLK_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0(0x3 << 4)
-> +#define S3C_SDHCI_CTRL2_SELBASECLK_SHIFT =A0 =A0 =A0 (4)
-> +#define S3C_SDHCI_CTRL2_PWRSYNC =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1 << 3)
-> +#define S3C_SDHCI_CTRL2_ENCLKOUTMSKCON =A0 =A0 =A0 =A0 (1 << 1)
-> +#define S3C_SDHCI_CTRL2_HWINITFIN =A0 =A0 =A0 =A0 =A0 =A0 =A0(1 << 0=
-)
-> +
-> +#define S3C_SDHCI_CTRL3_FCSEL3 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 31)
-> +#define S3C_SDHCI_CTRL3_FCSEL2 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 23)
-> +#define S3C_SDHCI_CTRL3_FCSEL1 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 15)
-> +#define S3C_SDHCI_CTRL3_FCSEL0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (1 <<=
- 7)
-> +
-> +#define S3C_SDHCI_CTRL3_FIA3_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 24)
-> +#define S3C_SDHCI_CTRL3_FIA3_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (24)
-> +#define S3C_SDHCI_CTRL3_FIA3(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 24)
-> +
-> +#define S3C_SDHCI_CTRL3_FIA2_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 16)
-> +#define S3C_SDHCI_CTRL3_FIA2_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (16)
-> +#define S3C_SDHCI_CTRL3_FIA2(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 16)
-> +
-> +#define S3C_SDHCI_CTRL3_FIA1_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 8)
-> +#define S3C_SDHCI_CTRL3_FIA1_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (8)
-> +#define S3C_SDHCI_CTRL3_FIA1(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 8)
-> +
-> +#define S3C_SDHCI_CTRL3_FIA0_MASK =A0 =A0 =A0 =A0 =A0 =A0 =A0(0x7f <=
-< 0)
-> +#define S3C_SDHCI_CTRL3_FIA0_SHIFT =A0 =A0 =A0 =A0 =A0 =A0 (0)
-> +#define S3C_SDHCI_CTRL3_FIA0(_x) =A0 =A0 =A0 =A0 =A0 =A0 =A0 ((_x) <=
-< 0)
-> +
-> +#define S3C_SDHCI_CONTROL4_DRIVE_MASK =A0 =A0 =A0 =A0 =A0(0x3 << 16)
-> +#define S3C_SDHCI_CONTROL4_DRIVE_SHIFT =A0 =A0 =A0 =A0 (16)
-> +#define S3C_SDHCI_CONTROL4_DRIVE_2mA =A0 =A0 =A0 =A0 =A0 (0x0 << 16)
-> +#define S3C_SDHCI_CONTROL4_DRIVE_4mA =A0 =A0 =A0 =A0 =A0 (0x1 << 16)
-> +#define S3C_SDHCI_CONTROL4_DRIVE_7mA =A0 =A0 =A0 =A0 =A0 (0x2 << 16)
-> +#define S3C_SDHCI_CONTROL4_DRIVE_9mA =A0 =A0 =A0 =A0 =A0 (0x3 << 16)
+On Monday, February 13, 2012 8:59 PM Krishna Reddy wrote:
 
-The CONTROL4 register is available from s3c6410 onwards. The sdhci
-controller in s3c24xx (such as s3c2416) do not have the CONTROL4
-register. I understand that renaming S3C64XX... to S3C should be fine
-but the information that it is applicable from S3C64XX onwards only is
-lost. Is this rename mandatory? I do not have any preference here, but
-I guess we could just leave it as S3C64XX.
+> The implementation looks nice overall. Have few comments.
+> 
+> > +static struct page **__iommu_alloc_buffer(struct device *dev, size_t
+> > +size, gfp_t gfp) {
+> > +     struct page **pages;
+> > +     int count = size >> PAGE_SHIFT;
+> > +     int i=0;
+> > +
+> > +     pages = kzalloc(count * sizeof(struct page*), gfp);
+> > +     if (!pages)
+> > +             return NULL;
+> 
+> kzalloc can fail for any size bigger than PAGE_SIZE, if the system memory is
+> fully fragmented.
+> If there is a request for size bigger than 4MB, then the pages pointer array won't
+> Fit in one page and kzalloc may fail. we should use vzalloc()/vfree()
+> when pages pointer array size needed is bigger than PAGE_SIZE.
 
-Thanks,
-Thomas.
+Right, thanks for spotting this. I will fix this in the next version.
 
-> +
-> +#define S3C_SDHCI_CONTROL4_BUSY =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0(1)
-> +
-> +#endif /* __DRIVERS_MMC_S3C_SDHCI_H */
-> +
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+> > +static inline dma_addr_t __alloc_iova(struct dma_iommu_mapping
+> > *mapping,
+> > +                                   size_t size)
+> > +{
+> > +     unsigned int order = get_order(size);
+> > +     unsigned int align = 0;
+> > +     unsigned int count, start;
+> > +     unsigned long flags;
+> > +
+> > +     count = ((PAGE_ALIGN(size) >> PAGE_SHIFT) +
+> > +              (1 << mapping->order) - 1) >> mapping->order;
+> > +
+> > +     if (order > mapping->order)
+> > +             align = (1 << (order - mapping->order)) - 1;
+> > +
+> > +     spin_lock_irqsave(&mapping->lock, flags);
+> > +     start = bitmap_find_next_zero_area(mapping->bitmap, mapping-
+> > >bits, 0,
+> > +                                        count, align);
+> 
+> Do we need "align" here? Why is it trying to align the memory request to
+> size of memory requested? When mapping->order is zero and if the size
+> requested is 4MB, order becomes 10.  align is set to 1023.
+>  bitmap_find_next_zero_area looks searching for free area from index, which
+> is multiple of 1024. Why we can't we say align mask  as 0 and let it allocate from
+> next free index? Doesn't mapping->order take care of min alignment needed for dev?
+
+Aligning IO address to the nearest power of 2 of the buffer size matches the behavior 
+of the other kernel allocators. alloc_pages does exactly the same thing - the physical 
+addresses are aligned to the power of 2. Some driver also depend on this feature and 
+allocate arbitrary buffer sizes to get memory aligned to certain values. This is 
+considered as a feature not a side effect of the internal buddy allocator 
+implementation.
+
+Keeping IO addresses aligned also enables use of pages larger than 4KiB for the IOMMU
+mappings if the physical memory got allocated in larger chunk (one can use 64KiB 
+mappings only if IO address and physical memory address are 64KiB aligned).
+
+> > +static dma_addr_t __iommu_create_mapping(struct device *dev, struct
+> > +page **pages, size_t size) {
+> > +     struct dma_iommu_mapping *mapping = dev->archdata.mapping;
+> > +     unsigned int count = PAGE_ALIGN(size) >> PAGE_SHIFT;
+> > +     dma_addr_t dma_addr, iova;
+> > +     int i, ret = ~0;
+> > +
+> > +     dma_addr = __alloc_iova(mapping, size);
+> > +     if (dma_addr == ~0)
+> > +             goto fail;
+> > +
+> > +     iova = dma_addr;
+> > +     for (i=0; i<count; ) {
+> > +             unsigned int phys = page_to_phys(pages[i]);
+> > +             int j = i + 1;
+> > +
+> > +             while (j < count) {
+> > +                     if (page_to_phys(pages[j]) != phys + (j - i) *
+> > PAGE_SIZE)
+> > +                             break;
+> > +                     j++;
+> > +             }
+> > +
+> > +             ret = iommu_map(mapping->domain, iova, phys, (j - i) *
+> > PAGE_SIZE, 0);
+> > +             if (ret < 0)
+> > +                     goto fail;
+> > +             iova += (j - i) * PAGE_SIZE;
+> > +             i = j;
+> > +     }
+> > +
+> > +     return dma_addr;
+> > +fail:
+> > +     return ~0;
+> > +}
+> 
+> iommu_map failure should release the iova space allocated using __alloc_iova.
+
+Right, thanks for spotting the bug.
+
+> 
+> > +static dma_addr_t arm_iommu_map_page(struct device *dev, struct page
+> > *page,
+> > +          unsigned long offset, size_t size, enum dma_data_direction dir,
+> > +          struct dma_attrs *attrs)
+> > +{
+> > +     struct dma_iommu_mapping *mapping = dev->archdata.mapping;
+> > +     dma_addr_t dma_addr, iova;
+> > +     unsigned int phys;
+> > +     int ret, len = PAGE_ALIGN(size + offset);
+> > +
+> > +     if (!arch_is_coherent())
+> > +             __dma_page_cpu_to_dev(page, offset, size, dir);
+> > +
+> > +     dma_addr = iova = __alloc_iova(mapping, len);
+> > +     if (iova == ~0)
+> > +             goto fail;
+> > +
+> > +     dma_addr += offset;
+> > +     phys = page_to_phys(page);
+> > +     ret = iommu_map(mapping->domain, iova, phys, size, 0);
+> > +     if (ret < 0)
+> > +             goto fail;
+> > +
+> > +     return dma_addr;
+> > +fail:
+> > +     return ~0;
+> > +}
+> 
+> iommu_map failure should release the iova space allocated using __alloc_iova.
+ 
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
