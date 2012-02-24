@@ -1,67 +1,135 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: S5P-TV: Warning for regulator unbalanced disables
-Date: Thu, 23 Feb 2012 15:38:57 +0100
-Message-ID: <ADF13DA15EB3FE4FBA487CCC7BEFDF362702C855C8@bssrvexch01>
-References: <4F45C3C1.8030507@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+From: Santosh Y <santoshsy@gmail.com>
+Subject: [PATCH v2 0/5] [SCSI] ufshcd: UFS Host Controller Driver
+Date: Fri, 24 Feb 2012 12:49:00 +0530
+Message-ID: <1330067945-9128-1-git-send-email-santoshsy@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:10678 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755766Ab2BWOh7 (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:49653 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752708Ab2BXHTt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Feb 2012 09:37:59 -0500
-In-reply-to: <4F45C3C1.8030507@linaro.org>
-Content-language: en-US
+	Fri, 24 Feb 2012 02:19:49 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Tomasz Stanislawski <t.stanislaws@samsung.com>, =?utf-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>
+To: James.Bottomley@hansenpartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, yejin.moon@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, stephen.doel@linaro.org, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
 
-SGkgVHVzaGFyLA0KDQpPbiBUaHVyc2RheSwgRmVicnVhcnkgMjMsIDIwMTIgNTo0MyBBTSBZb3Ug
-d3JvdGU6DQoNCj4gQWZ0ZXIgaW1wbGVtZW50aW5nIGdlbnBkIGZyYW1ld29yayBmb3IgRVhZTk9T
-NCwgKFJlZiBjb21taXQgOTFjZmJkNA0KPiAiQVJNOiBFWFlOT1M6IEhvb2sgdXAgcG93ZXIgZG9t
-YWlucyB0byBnZW5lcmljIHBvd2VyIGRvbWFpbg0KPiBpbmZyYXN0cnVjdHVyZSIgaW4gS3Vramlu
-J3MgZm9yLW5leHQgYnJhbmNoKSwgd2UgYXJlIGdldHRpbmcgZm9sbG93aW5nDQo+IHdhcm5pbmcg
-ZnJvbSBzNXAtaGRtaSBkcml2ZXIuDQo+DQo+IFRoZSB0ZXN0IHdhcyBkb25lIG9uIE9yaWdlbiBi
-b2FyZCB3aXRoIGNvZGUgYmFzZWQgb24gMy4zLXJjNCBhbmQNCj4gS3VramluJ3MgZm9yLW5leHQg
-YnJhbmNoLiBbMV0NCj4NCj4gLS0tLS0tLS0tLS0tWyBjdXQgaGVyZSBdLS0tLS0tLS0tLS0tDQo+
-IFdBUk5JTkc6IGF0IGRyaXZlcnMvcmVndWxhdG9yL2NvcmUuYzoxNTAzIF9yZWd1bGF0b3JfZGlz
-YWJsZSsweGY4LzB4MTY0KCkNCg0KKHNuaXBwZWQpDQoNClRoYW5rcyBmb3IgdGhlIHJlcG9ydC4g
-V2Uga25vdyBhYm91dCB0aGlzIGlzc3VlLiBJdCBpcyBub3QgcmVhbGx5IHJlbGF0ZWQgdG8NCnJl
-Z3VsYXRvcnMgbm9yIHM1cC10diBkcml2ZXIuIFRoZXJlIGlzIHNvbWV0aGluZyBicm9rZW4gKG9y
-IG1pc3VzZWQpIGluIHRoZQ0KZ2VuX3BkIGRyaXZlciBhbmQgaXRzIGltcGxlbWVudGF0aW9uIGZv
-ciBFeHlzbm80IGh3LiBJZiB5b3UgZGlnIGEgYml0IGludG8NCnRoZSBwcm9ibGVtIFlvdSBjYW4g
-b2JzZXJ2ZSB0aGUgZm9sbG93aW5nIGNhbGwgc2VxdWVuY2Ugb24gZGV2aWNlIHByb2JlOg0KDQpl
-eHlub3M0X2dlbnBkX2VuYWJsZSgpDQpzNXBfdHZfcnVudGltZV9kaXNhYmxlKCkNCmV4eW5vczRf
-Z2VucGRfZGlzYWJsZSgpDQoNClNvIHRoZSBjYWxsIHRvIHM1cF90dl9ydW50aW1lX2Rpc2FibGUg
-aXMgbm90IGJhbGFuY2VkIHdpdGggczVwX3R2X3J1bnRpbWVfcmVzdW1lKCkNCndoYXQgY2F1c2Vz
-IHRoZSBlcnJvciB5b3UgaGF2ZSBwb3N0ZWQuIEl0IGxvb2tzIHRoYXQgcnVudGltZSBwdyBmcmFt
-ZXdvcmsgbWFrZXMNCnNvbWUgd3JvbmcgYXNzdW1wdGlvbnMgYWJvdXQgdGhlIHN0YXRlIG9mIHRo
-ZSBkZXZpY2Ugb25jZSBwb3dlciBkb21haW4gaGFzIGJlZW4NCnJlZ2lzdGVyZWQuDQoNClRoZSBz
-YW1lIHByb2JsZW0gYXBwZWFycyBmb3IgczVwLWZpbWMgYW5kIHM1cC1tZmMsIGFsdGhvdWdoIGl0
-IGlzIG5vdCBvYnNlcnZlZA0KYXMga2VybmVsIGVycm9yLCBidXQgdGhlc2UgZGV2aWNlcyBhbHNv
-IHN1ZmZlcnMgZnJvbSBpdCAtIHRoZWlyIGNsb2NrcyBnZXQgZGlzYWJsZWQNCm9uZSB0aW1lIHRv
-byBtdWNoIHNvIHRoZXkgZG8gbm90IG9wZXJhdGUgY29ycmVjdGx5Lg0KDQpXZSBhcmUgaW52ZXN0
-aWdhdGluZyB0aGlzIGlzc3VlIGZ1cnRoZXIuDQoNCkJlc3QgcmVnYXJkcw0KLS0NCk1hcmVrIFN6
-eXByb3dza2kNClNhbXN1bmcgUG9sYW5kIFImRCBDZW50ZXINCg0KDQpUaGUgYWJvdmUgbWVzc2Fn
-ZSBpcyBpbnRlbmRlZCBzb2xlbHkgZm9yIHRoZSBuYW1lZCBhZGRyZXNzZWUgYW5kIG1heSBjb250
-YWluIHRyYWRlIHNlY3JldCwgaW5kdXN0cmlhbCB0ZWNobm9sb2d5IG9yIHByaXZpbGVnZWQgYW5k
-IGNvbmZpZGVudGlhbCBpbmZvcm1hdGlvbiBvdGhlcndpc2UgcHJvdGVjdGVkIHVuZGVyIGFwcGxp
-Y2FibGUgbGF3LiBBbnkgdW5hdXRob3JpemVkIGRpc3NlbWluYXRpb24sIGRpc3RyaWJ1dGlvbiwg
-Y29weWluZyBvciB1c2Ugb2YgdGhlIGluZm9ybWF0aW9uIGNvbnRhaW5lZCBpbiB0aGlzIGNvbW11
-bmljYXRpb24gaXMgc3RyaWN0bHkgcHJvaGliaXRlZC4gSWYgeW91IGhhdmUgcmVjZWl2ZWQgdGhp
-cyBjb21tdW5pY2F0aW9uIGluIGVycm9yLCBwbGVhc2Ugbm90aWZ5IHNlbmRlciBieSBlbWFpbCBh
-bmQgZGVsZXRlIHRoaXMgY29tbXVuaWNhdGlvbiBpbW1lZGlhdGVseS4NCg0KDQpQb3d5xbxzemEg
-d2lhZG9tb8WbxIcgcHJ6ZXpuYWN6b25hIGplc3Qgd3nFgsSFY3puaWUgZGxhIGFkcmVzYXRhIG5p
-bmllanN6ZWogd2lhZG9tb8WbY2kgaSBtb8W8ZSB6YXdpZXJhxIcgaW5mb3JtYWNqZSBixJlkxIVj
-ZSB0YWplbW5pY8SFIGhhbmRsb3fEhSwgdGFqZW1uaWPEhSBwcnplZHNpxJliaW9yc3R3YSBvcmF6
-IGluZm9ybWFjamUgbyBjaGFyYWt0ZXJ6ZSBwb3VmbnltIGNocm9uaW9uZSBvYm93acSFenVqxIVj
-eW1pIHByemVwaXNhbWkgcHJhd2EuIEpha2lla29sd2llayBuaWV1cHJhd25pb25lIGljaCByb3pw
-b3dzemVjaG5pYW5pZSwgZHlzdHJ5YnVjamEsIGtvcGlvd2FuaWUgbHViIHXFvHljaWUgaW5mb3Jt
-YWNqaSB6YXdhcnR5Y2ggdyBwb3d5xbxzemVqIHdpYWRvbW/Fm2NpIGplc3QgemFicm9uaW9uZS4g
-SmXFm2xpIG90cnp5bWHFgmXFmyBwb3d5xbxzesSFIHdpYWRvbW/Fm8SHIG9tecWCa293bywgdXBy
-emVqbWllIHByb3N6xJkgcG9pbmZvcm11aiBvIHR5bSBmYWtjaWUgZHJvZ8SFIG1haWxvd8SFIG5h
-ZGF3Y8SZIHRlaiB3aWFkb21vxZtjaSBvcmF6IG5pZXp3xYJvY3puaWUgdXN1xYQgcG93ecW8c3rE
-hSB3aWFkb21vxZvEhyB6ZSBzd29qZWdvIGtvbXB1dGVyYS4NCg==
+From: Santosh Yaraganavi <santoshsy@gmail.com>
+
+UFS:
+Universal Flash Storage is a storage specification for flash devices.
+It is aimed to provide a universal storage interface for both
+embedded and removable flash memory based storage in mobile
+devices such as smart phones and tablet computers. The specification
+is defined by JEDEC Solid State Technology Association. UFS is based
+on MIPI M-PHY physical layer standard. UFS uses MIPI M-PHY as the
+physical layer and MIPI Unipro as the link layer.
+
+The main goals of UFS is to provide,
+ - Optimized performance:
+   For UFS version 1.0 and 1.1 the target performance is as follows,
+   Support for Gear1 is mandatory (rate A: 1248Mbps, rate B: 1457.6Mbps)
+   Support for Gear2 is optional (rate A: 2496Mbps, rate B: 2915.2Mbps)
+   Future version of the standard,
+   Gear3 (rate A: 4992Mbps, rate B: 5830.4Mbps)
+ - Low power consumption
+ - High random IOPs and low latency
+
+UFS Architecture Overview:
+UFS has a layered communication architecture which is based on SCSI
+SAM-5 architectural model.
+
+UFS communication architecture consists of following layers,
+
+* Application Layer: It is composed of UFS command set layer(UCS),
+  Task Manager and Device manager. The UFS interface is designed to be
+  protocol agnostic, however SCSI has been selected as a baseline
+  protocol for versions 1.0 and 1.1 of UFS protocol  layer.
+  UFS supports subset of SCSI commands defined by SPC-4 and SBC-3.
+  - UCS: It handles SCSI commands supported by UFS specification.
+  - Task manager: It handles task management functions defined by the
+    UFS which are meant for command queue control.
+  - Device manager: It handles device level operations and device
+    configuration operations. Device level operations mainly involve
+    device power management operations and commands to Interconnect
+    layers. Device level configurations involve handling of query
+    requests which are used to modify and retrieve configuration
+    information of the device.
+
+* UFS Transport Protocol(UTP) layer: UTP layer provides services for
+  the higher layers through Service Access Points. UTP defines 3
+  service access points for higher layers.
+  - UDM_SAP: Device manager service access point is exposed to device
+    manager for device level operations. These device level operations
+    are done through query requests.
+  - UTP_CMD_SAP: Command service access point is exposed to UFS command
+    set layer(UCS) to transport commands.
+  - UTP_TM_SAP: Task management service access point is exposed to task
+    manager to transport task management functions.
+  UTP transports messages through UFS protocol information unit(UPIU).
+
+* UFS Interconnect Layer(UIC): This is the lowest layer of UFS layered
+  architecture. It handles connection between UFS host and UFS device.
+  UIC consists of MIPI UniPro and MIPI M-PHY. UIC provides 2 service
+  access points to upper layer,
+  - UIC_SAP: To transport UPIU between UFS host and UFS device.
+  - UIO_SAP: To issue commands to Unipro layers.
+
+UFSHCD:
+The UFS host controller driver is based on Linux SCSI Framework.
+UFSHCD is a low level device driver which acts as an interface between
+SCSI Midlayer and PCIe based UFS host controllers.
+
+The current UFSHCD implementation supports following functionality,
+ - UFS controller initialization: The initialization module brings UFS
+   host controller to active state and prepares the controller to
+   transfer commands/response between UFSHCD and UFS device.
+ - UTP Transfer requests: Transfer request handling module of UFSHCD
+   receives SCSI commands from SCSI Midlayer, forms UPIUs and issues
+   the UPIUs to UFS Host controller. Also, the module decodes responses
+   received from UFS host controller in the form of UPIUs and intimates
+   the SCSI Midlayer of the status of the command.
+ - UFS error handling: Error handling module handles Host controller
+   fatal errors, Device fatal errors and UIC interconnect layer related
+   errors.
+ - SCSI Error handling: This is done through UFSHCD SCSI error handling
+   routines registered with SCSI Midlayer. Examples of some of the error
+   handling commands issues by SCSI Midlayer are Abort task, Lun reset
+   and host reset. UFSHCD Routines to perform these tasks are registered
+   with SCSI Midlayer through .eh_abort_handler, .eh_device_reset_handler
+   and .eh_host_reset_handler.
+
+In this version of UFSHCD Query requests and power management
+functionality are not implemented.
+
+This patchset is successfully applied on 3.3-rc4
+
+UFS Specifications can be found at,
+UFS - http://www.jedec.org/sites/default/files/docs/JESD220.pdf
+UFSHCI - http://www.jedec.org/sites/default/files/docs/JESD223.pdf
+
+Santosh Yaraganavi (5):
+  [SCSI] ufshcd: UFS Host controller driver
+  [SCSI] ufshcd: UFS UTP Transfer requests handling
+  [SCSI] ufshcd: UFSHCI error handling
+  [SCSI] ufshcd: SCSI error handling
+  Documentation: UFS Host Controller Driver
+
+ Documentation/scsi/00-INDEX |    2 +
+ Documentation/scsi/ufs.txt  |   89 ++
+ drivers/scsi/Kconfig        |    1 +
+ drivers/scsi/Makefile       |    1 +
+ drivers/scsi/ufs/Kconfig    |   49 ++
+ drivers/scsi/ufs/Makefile   |    2 +
+ drivers/scsi/ufs/ufs.h      |  207 +++++
+ drivers/scsi/ufs/ufshcd.c   | 1985 +++++++++++++++++++++++++++++++++++++++++++
+ drivers/scsi/ufs/ufshci.h   |  376 ++++++++
+ 9 files changed, 2712 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/scsi/ufs.txt
+ create mode 100644 drivers/scsi/ufs/Kconfig
+ create mode 100644 drivers/scsi/ufs/Makefile
+ create mode 100644 drivers/scsi/ufs/ufs.h
+ create mode 100644 drivers/scsi/ufs/ufshcd.c
+ create mode 100644 drivers/scsi/ufs/ufshci.h
+
+-- 
+1.7.5.4
