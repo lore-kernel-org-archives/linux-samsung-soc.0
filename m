@@ -1,25 +1,25 @@
 From: Jaehoon Chung <jh80.chung@samsung.com>
 Subject: Re: [PATCH 2/4] ARM: SAMSUNG: move the header file to driver directory
-Date: Fri, 24 Feb 2012 19:15:42 +0900
-Message-ID: <4F47634E.8080609@samsung.com>
+Date: Fri, 24 Feb 2012 19:30:01 +0900
+Message-ID: <4F4766A9.3040809@samsung.com>
 References: <4F39EB0B.5030205@samsung.com>
- <CAJuYYwSFc4cwAvw72yeA4aWp4Nzvaj+ptWB1OUAJquDzn4SfcA@mail.gmail.com>
+ <CAJuYYwQfSJn4z-1O6WsQf74Cg6heZx1yUSg+EQFJfZi3pubWkA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:27897 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753977Ab2BXKPt (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64959 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752722Ab2BXKaI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Feb 2012 05:15:49 -0500
-In-reply-to: <CAJuYYwSFc4cwAvw72yeA4aWp4Nzvaj+ptWB1OUAJquDzn4SfcA@mail.gmail.com>
+	Fri, 24 Feb 2012 05:30:08 -0500
+In-reply-to: <CAJuYYwQfSJn4z-1O6WsQf74Cg6heZx1yUSg+EQFJfZi3pubWkA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
 
-On 02/24/2012 06:48 PM, Thomas Abraham wrote:
+On 02/24/2012 06:10 PM, Thomas Abraham wrote:
 
 > Dear Mr. Chung,
 > 
@@ -257,17 +257,21 @@ On 02/24/2012 06:48 PM, Thomas Abraham wrote:
 >> +#define S3C_SDHCI_CONTROL4_DRIVE_4mA           (0x1 << 16)
 >> +#define S3C_SDHCI_CONTROL4_DRIVE_7mA           (0x2 << 16)
 >> +#define S3C_SDHCI_CONTROL4_DRIVE_9mA           (0x3 << 16)
->> +
->> +#define S3C_SDHCI_CONTROL4_BUSY                        (1)
->> +
->> +#endif /* __DRIVERS_MMC_S3C_SDHCI_H */
 > 
-> Can the contents of this file be merged into the sdhci-s3c driver
-> file. These macros seems be used only in the driver.
+> The CONTROL4 register is available from s3c6410 onwards. The sdhci
+> controller in s3c24xx (such as s3c2416) do not have the CONTROL4
+> register. I understand that renaming S3C64XX... to S3C should be fine
+> but the information that it is applicable from S3C64XX onwards only is
+> lost. Is this rename mandatory? I do not have any preference here, but
+> I guess we could just leave it as S3C64XX.
 
-Right. these is used only in sdhci-s3c. 
-This file can be merged into sdhci-s3c driver.
-But there are too many macros. so created the sdhci-s3c.h for cleanable.
+Right..But CONTROL4 register didn't present only in s3c24xx.
+(just reserved). 
+I think that can control in device driver whether s3c24xx or not.
+And also in CONTROL2 register, SELBASECLK bit didn't be used up to exynos4.
+But everything used S3C_SDHCI_XXX. so i have changed them.
+I didn't prefer anything, too.
+Are there any reason that leave that information?
 
 Best Regards,
 Jaehoon Chung
@@ -275,6 +279,16 @@ Jaehoon Chung
 > 
 > Thanks,
 > Thomas.
+> 
+>> +
+>> +#define S3C_SDHCI_CONTROL4_BUSY                        (1)
+>> +
+>> +#endif /* __DRIVERS_MMC_S3C_SDHCI_H */
+>> +
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
 > the body of a message to majordomo@vger.kernel.org
