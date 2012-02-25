@@ -1,77 +1,126 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH v8 0/2] ommu/exynos: Add IOMMU/System MMU driver for
- Samsung Exynos
-Date: Sat, 25 Feb 2012 01:08:36 +0900
-Message-ID: <CAHQjnOPE5X=dn+8D348OruLqoYNGZwZk3eLtLRSERce-eTzXDg@mail.gmail.com>
-References: <000e01ccc624$c9349310$5b9db930$%cho@samsung.com>
-	<014601ccf2fa$a25c8560$e7159020$%szyprowski@samsung.com>
+From: Pichon Julien <pichon.jln@gmail.com>
+Subject: Re: [PATCH] Add poll_get_char & poll_put_char to uart_ops for the
+ samsung UARTS.
+Date: Sat, 25 Feb 2012 12:05:56 +0100
+Message-ID: <CAHQa92Vjwh3gtME2u19EZz57My3H7R=fQK4CoJR9s_ktpsy_Ww@mail.gmail.com>
+References: <20120212182201.GA17975@debian>
+	<CAHQa92X=9kiVhxCspcAR+dK-NbFqaUW2xTCjjDOAHGfDx_yMBQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:36860 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757035Ab2BXQIh convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 24 Feb 2012 11:08:37 -0500
-In-Reply-To: <014601ccf2fa$a25c8560$e7159020$%szyprowski@samsung.com>
+Received: from mail-vw0-f46.google.com ([209.85.212.46]:52724 "EHLO
+	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755674Ab2BYLF5 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 25 Feb 2012 06:05:57 -0500
+Received: by vbbff1 with SMTP id ff1so2840vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 25 Feb 2012 03:05:56 -0800 (PST)
+In-Reply-To: <CAHQa92X=9kiVhxCspcAR+dK-NbFqaUW2xTCjjDOAHGfDx_yMBQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Younglak Kim <younglak1004.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com
 
-Hi Marek.
-
-On Fri, Feb 24, 2012 at 10:45 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hi,
+> (please CC me in your replies as I am not suscribed to the ML)
 >
-> On Thursday, December 29, 2011 1:24 PM KyongHo Cho wrote:
+> The following patch allows users to use KGDB over serial console on
+> board based on Samsung SOC. It has been tested on a mini2440.
 >
->> Changes since v7:
->> - Rebased with the recent commits of the following git branches
->> =A0 * git.kernel.org/pub/scm/linux/kernel/git/joro/iommu.git/next
->> =A0 * git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.gi=
-t/for-next
->> - Changed magic numbers into macros
->> - Setting owner of a System MMU in 'iommu' field of dev_archdata
->> - Verbose message in the default fault handler
->> - Some bug fixes.
+> Signed-off-by: Julien Pichon <pichon.jln@gmail.com>
+> ---
+> =A0drivers/tty/serial/samsung.c | =A0 50 ++++++++++++++++++++++++++++=
+++++++++++++++
+> =A01 files changed, 50 insertions(+), 0 deletions(-)
 >
-> (snipped)
+> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
+g.c
+> index f96f37b..9f703ca 100644
+> --- a/drivers/tty/serial/samsung.c
+> +++ b/drivers/tty/serial/samsung.c
+> @@ -877,11 +877,24 @@ s3c24xx_serial_verify_port(struct uart_port *po=
+rt, struct serial_struct *ser)
 >
-> The time is flying away and v3.4 merge windows will open soon. Do you=
- plan to
-> send an updated version of the SYSMMU driver anytime soon? It will be=
- really
-> nice to have it finally merged to v3.4.
+> =A0static struct console s3c24xx_serial_console;
 >
-
-Thank you for asking.
-
-I prepared a new patchset and it is ready for submitting.
-It includes several bugfixes and Exynos5 support.
-
-The last patche submitted has a bug when the following situation:
-   1. Allocating a 2nd level page table to map 4KB or 64KB on a virtual=
- region
-   2. Unmapped all entries in the 2nd level page table.
-   3. Mapping to the same region with 1MB page.
-   Then iommu_map() will return -EADDRINUSE due to incorrect counting
-   free entries in 2nd level page table.
-
-The next patch will be submitted by 2/28.
-
-BTW Marek, I want to know why MFC driver defines separate platform devi=
-ces
-for left and right buses.
-The next IOMMU driver defines just one platform device for a H/W device=
-=2E
-Thus, it defines just one SYSMMU_MFC platform device, for example.
-(the previous one defines 2 platform devices for SYSMMU_MFC)
-However, it is easy to separate the single platform device to multiple
-platform devices.
-
-Regards,
-
-Cho KyongHo.
+> +static int __init s3c24xx_serial_console_init(void)
+> +{
+> + =A0 =A0 register_console(&s3c24xx_serial_console);
+> + =A0 =A0 return 0;
+> +}
+> +console_initcall(s3c24xx_serial_console_init);
+> +
+> =A0#define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
+> =A0#else
+> =A0#define S3C24XX_SERIAL_CONSOLE NULL
+> =A0#endif
+>
+> +#ifdef CONFIG_CONSOLE_POLL
+> +static int s3c24xx_serial_get_poll_char(struct uart_port *port);
+> +static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0unsigned char c);
+> +#endif
+> +
+> =A0static struct uart_ops s3c24xx_serial_ops =3D {
+> =A0 =A0 =A0 .pm =A0 =A0 =A0 =A0 =A0 =A0 =3D s3c24xx_serial_pm,
+> =A0 =A0 =A0 .tx_empty =A0 =A0 =A0 =3D s3c24xx_serial_tx_empty,
+> @@ -900,6 +913,10 @@ static struct uart_ops s3c24xx_serial_ops =3D {
+> =A0 =A0 =A0 .request_port =A0 =3D s3c24xx_serial_request_port,
+> =A0 =A0 =A0 .config_port =A0 =A0=3D s3c24xx_serial_config_port,
+> =A0 =A0 =A0 .verify_port =A0 =A0=3D s3c24xx_serial_verify_port,
+> +#ifdef CONFIG_CONSOLE_POLL
+> + =A0 =A0 .poll_get_char =3D s3c24xx_serial_get_poll_char,
+> + =A0 =A0 .poll_put_char =3D s3c24xx_serial_put_poll_char,
+> +#endif
+> =A0};
+>
+> =A0static struct uart_driver s3c24xx_uart_drv =3D {
+> @@ -1311,6 +1328,39 @@ s3c24xx_serial_console_txrdy(struct uart_port =
+*port, unsigned int ufcon)
+> =A0 =A0 =A0 return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 : 0;
+> =A0}
+>
+> +#ifdef CONFIG_CONSOLE_POLL
+> +/*
+> + * Console polling routines for writing and reading from the uart wh=
+ile
+> + * in an interrupt or debug context.
+> + */
+> +
+> +static int s3c24xx_serial_get_poll_char(struct uart_port *port)
+> +{
+> + =A0 =A0 struct s3c24xx_uart_port *ourport =3D to_ourport(port);
+> + =A0 =A0 unsigned int ufstat, count;
+> +
+> + =A0 =A0 do {
+> + =A0 =A0 =A0 =A0 =A0 =A0 ufstat =3D rd_regl(port, S3C2410_UFSTAT);
+> + =A0 =A0 =A0 =A0 =A0 =A0 count =3D s3c24xx_serial_rx_fifocnt(ourport=
+, ufstat);
+> + =A0 =A0 =A0 =A0 =A0 =A0 if (!count)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_relax();
+> + =A0 =A0 } while (!count);
+> +
+> + =A0 =A0 return rd_regb(port, S3C2410_URXH);
+> +}
+> +
+> +static void s3c24xx_serial_put_poll_char(struct uart_port *port,
+> + =A0 =A0 =A0 =A0 =A0 =A0 unsigned char c)
+> +{
+> + =A0 =A0 unsigned int ufcon =3D rd_regl(cons_uart, S3C2410_UFCON);
+> +
+> + =A0 =A0 while (!s3c24xx_serial_console_txrdy(port, ufcon))
+> + =A0 =A0 =A0 =A0 =A0 =A0 cpu_relax();
+> + =A0 =A0 wr_regb(cons_uart, S3C2410_UTXH, c);
+> +}
+> +
+> +#endif /* CONFIG_CONSOLE_POLL */
+> +
+> =A0static void
+> =A0s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
+> =A0{
+> --
+> 1.7.2.5
+>
+>
+(CC maintainers)
+Someone has time to review this patch ?
