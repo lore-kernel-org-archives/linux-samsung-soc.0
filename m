@@ -1,130 +1,188 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] Add poll_get_char & poll_put_char to uart_ops for the
- samsung UARTS.
-Date: Sat, 25 Feb 2012 12:27:41 +0100
-Message-ID: <201202251227.42284.heiko@sntech.de>
-References: <20120212182201.GA17975@debian>
- <CAHQa92X=9kiVhxCspcAR+dK-NbFqaUW2xTCjjDOAHGfDx_yMBQ@mail.gmail.com>
- <CAHQa92Vjwh3gtME2u19EZz57My3H7R=fQK4CoJR9s_ktpsy_Ww@mail.gmail.com>
+From: Namjae Jeon <linkinjeon@gmail.com>
+Subject: Re: [PATCH v2 0/5] [SCSI] ufshcd: UFS Host Controller Driver
+Date: Sat, 25 Feb 2012 17:09:28 +0530
+Message-ID: <CAKYAXd-N1bO6ru2Xt91oNi7Dw7SW-G6kcqv7=RKfSLNf5SJweA@mail.gmail.com>
+References: <1330067945-9128-1-git-send-email-santoshsy@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAHQa92Vjwh3gtME2u19EZz57My3H7R=fQK4CoJR9s_ktpsy_Ww@mail.gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Pichon Julien <pichon.jln@gmail.com>
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-we0-f174.google.com ([74.125.82.174]:35606 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756453Ab2BYLja convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 25 Feb 2012 06:39:30 -0500
+In-Reply-To: <1330067945-9128-1-git-send-email-santoshsy@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Santosh Y <santoshsy@gmail.com>
+Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, yejin.moon@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, stephen.doel@linaro.org, sreekumar.c@samsung.com
 
-Am Samstag 25 Februar 2012, 12:05:56 schrieb Pichon Julien:
-> > (please CC me in your replies as I am not suscribed to the ML)
-> > 
-> > The following patch allows users to use KGDB over serial console on
-> > board based on Samsung SOC. It has been tested on a mini2440.
-> > 
-> > Signed-off-by: Julien Pichon <pichon.jln@gmail.com>
-> > ---
-> >  drivers/tty/serial/samsung.c |   50
-> > ++++++++++++++++++++++++++++++++++++++++++ 1 files changed, 50
-> > insertions(+), 0 deletions(-)
-> > 
-> > diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> > index f96f37b..9f703ca 100644
-> > --- a/drivers/tty/serial/samsung.c
-> > +++ b/drivers/tty/serial/samsung.c
-> > @@ -877,11 +877,24 @@ s3c24xx_serial_verify_port(struct uart_port *port,
-> > struct serial_struct *ser)
-> > 
-> >  static struct console s3c24xx_serial_console;
-> > 
-> > +static int __init s3c24xx_serial_console_init(void)
-> > +{
-> > +     register_console(&s3c24xx_serial_console);
-> > +     return 0;
-> > +}
-> > +console_initcall(s3c24xx_serial_console_init);
-> > +
-> >  #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
-> >  #else
-> >  #define S3C24XX_SERIAL_CONSOLE NULL
-> >  #endif
-> > 
-> > +#ifdef CONFIG_CONSOLE_POLL
-> > +static int s3c24xx_serial_get_poll_char(struct uart_port *port);
-> > +static void s3c24xx_serial_put_poll_char(struct uart_port *port,
-> > +                      unsigned char c);
-> > +#endif
-> > +
-> >  static struct uart_ops s3c24xx_serial_ops = {
-> >       .pm             = s3c24xx_serial_pm,
-> >       .tx_empty       = s3c24xx_serial_tx_empty,
-> > @@ -900,6 +913,10 @@ static struct uart_ops s3c24xx_serial_ops = {
-> >       .request_port   = s3c24xx_serial_request_port,
-> >       .config_port    = s3c24xx_serial_config_port,
-> >       .verify_port    = s3c24xx_serial_verify_port,
-> > +#ifdef CONFIG_CONSOLE_POLL
-> > +     .poll_get_char = s3c24xx_serial_get_poll_char,
-> > +     .poll_put_char = s3c24xx_serial_put_poll_char,
-> > +#endif
-> >  };
-> > 
-> >  static struct uart_driver s3c24xx_uart_drv = {
-> > @@ -1311,6 +1328,39 @@ s3c24xx_serial_console_txrdy(struct uart_port
-> > *port, unsigned int ufcon) return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 :
-> > 0;
-> >  }
-> > 
-> > +#ifdef CONFIG_CONSOLE_POLL
-> > +/*
-> > + * Console polling routines for writing and reading from the uart while
-> > + * in an interrupt or debug context.
-> > + */
-> > +
-> > +static int s3c24xx_serial_get_poll_char(struct uart_port *port)
-> > +{
-> > +     struct s3c24xx_uart_port *ourport = to_ourport(port);
-> > +     unsigned int ufstat, count;
-> > +
-> > +     do {
-> > +             ufstat = rd_regl(port, S3C2410_UFSTAT);
-> > +             count = s3c24xx_serial_rx_fifocnt(ourport, ufstat);
-> > +             if (!count)
-> > +                     cpu_relax();
-> > +     } while (!count);
-> > +
-> > +     return rd_regb(port, S3C2410_URXH);
-> > +}
-> > +
-> > +static void s3c24xx_serial_put_poll_char(struct uart_port *port,
-> > +             unsigned char c)
-> > +{
-> > +     unsigned int ufcon = rd_regl(cons_uart, S3C2410_UFCON);
-> > +
-> > +     while (!s3c24xx_serial_console_txrdy(port, ufcon))
-> > +             cpu_relax();
-> > +     wr_regb(cons_uart, S3C2410_UTXH, c);
-> > +}
-> > +
-> > +#endif /* CONFIG_CONSOLE_POLL */
-> > +
-> >  static void
-> >  s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
-> >  {
-> > --
-> > 1.7.2.5
-> 
-> (CC maintainers)
-> Someone has time to review this patch ?
+Hi. Santosh.
 
-It might be goot to included the linux-arm-kernel list to get a wider 
-audience. I always felt, that the samsung ml isn't read by many.
+The whole patch-set looks good to me.
 
-Heiko
+Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
+
+2012/2/24 Santosh Y <santoshsy@gmail.com>:
+> From: Santosh Yaraganavi <santoshsy@gmail.com>
+>
+> UFS:
+> Universal Flash Storage is a storage specification for flash devices.
+> It is aimed to provide a universal storage interface for both
+> embedded and removable flash memory based storage in mobile
+> devices such as smart phones and tablet computers. The specification
+> is defined by JEDEC Solid State Technology Association. UFS is based
+> on MIPI M-PHY physical layer standard. UFS uses MIPI M-PHY as the
+> physical layer and MIPI Unipro as the link layer.
+>
+> The main goals of UFS is to provide,
+> =C2=A0- Optimized performance:
+> =C2=A0 For UFS version 1.0 and 1.1 the target performance is as follo=
+ws,
+> =C2=A0 Support for Gear1 is mandatory (rate A: 1248Mbps, rate B: 1457=
+=2E6Mbps)
+> =C2=A0 Support for Gear2 is optional (rate A: 2496Mbps, rate B: 2915.=
+2Mbps)
+> =C2=A0 Future version of the standard,
+> =C2=A0 Gear3 (rate A: 4992Mbps, rate B: 5830.4Mbps)
+> =C2=A0- Low power consumption
+> =C2=A0- High random IOPs and low latency
+>
+> UFS Architecture Overview:
+> UFS has a layered communication architecture which is based on SCSI
+> SAM-5 architectural model.
+>
+> UFS communication architecture consists of following layers,
+>
+> * Application Layer: It is composed of UFS command set layer(UCS),
+> =C2=A0Task Manager and Device manager. The UFS interface is designed =
+to be
+> =C2=A0protocol agnostic, however SCSI has been selected as a baseline
+> =C2=A0protocol for versions 1.0 and 1.1 of UFS protocol =C2=A0layer.
+> =C2=A0UFS supports subset of SCSI commands defined by SPC-4 and SBC-3=
+=2E
+> =C2=A0- UCS: It handles SCSI commands supported by UFS specification.
+> =C2=A0- Task manager: It handles task management functions defined by=
+ the
+> =C2=A0 =C2=A0UFS which are meant for command queue control.
+> =C2=A0- Device manager: It handles device level operations and device
+> =C2=A0 =C2=A0configuration operations. Device level operations mainly=
+ involve
+> =C2=A0 =C2=A0device power management operations and commands to Inter=
+connect
+> =C2=A0 =C2=A0layers. Device level configurations involve handling of =
+query
+> =C2=A0 =C2=A0requests which are used to modify and retrieve configura=
+tion
+> =C2=A0 =C2=A0information of the device.
+>
+> * UFS Transport Protocol(UTP) layer: UTP layer provides services for
+> =C2=A0the higher layers through Service Access Points. UTP defines 3
+> =C2=A0service access points for higher layers.
+> =C2=A0- UDM_SAP: Device manager service access point is exposed to de=
+vice
+> =C2=A0 =C2=A0manager for device level operations. These device level =
+operations
+> =C2=A0 =C2=A0are done through query requests.
+> =C2=A0- UTP_CMD_SAP: Command service access point is exposed to UFS c=
+ommand
+> =C2=A0 =C2=A0set layer(UCS) to transport commands.
+> =C2=A0- UTP_TM_SAP: Task management service access point is exposed t=
+o task
+> =C2=A0 =C2=A0manager to transport task management functions.
+> =C2=A0UTP transports messages through UFS protocol information unit(U=
+PIU).
+>
+> * UFS Interconnect Layer(UIC): This is the lowest layer of UFS layere=
+d
+> =C2=A0architecture. It handles connection between UFS host and UFS de=
+vice.
+> =C2=A0UIC consists of MIPI UniPro and MIPI M-PHY. UIC provides 2 serv=
+ice
+> =C2=A0access points to upper layer,
+> =C2=A0- UIC_SAP: To transport UPIU between UFS host and UFS device.
+> =C2=A0- UIO_SAP: To issue commands to Unipro layers.
+>
+> UFSHCD:
+> The UFS host controller driver is based on Linux SCSI Framework.
+> UFSHCD is a low level device driver which acts as an interface betwee=
+n
+> SCSI Midlayer and PCIe based UFS host controllers.
+>
+> The current UFSHCD implementation supports following functionality,
+> =C2=A0- UFS controller initialization: The initialization module brin=
+gs UFS
+> =C2=A0 host controller to active state and prepares the controller to
+> =C2=A0 transfer commands/response between UFSHCD and UFS device.
+> =C2=A0- UTP Transfer requests: Transfer request handling module of UF=
+SHCD
+> =C2=A0 receives SCSI commands from SCSI Midlayer, forms UPIUs and iss=
+ues
+> =C2=A0 the UPIUs to UFS Host controller. Also, the module decodes res=
+ponses
+> =C2=A0 received from UFS host controller in the form of UPIUs and int=
+imates
+> =C2=A0 the SCSI Midlayer of the status of the command.
+> =C2=A0- UFS error handling: Error handling module handles Host contro=
+ller
+> =C2=A0 fatal errors, Device fatal errors and UIC interconnect layer r=
+elated
+> =C2=A0 errors.
+> =C2=A0- SCSI Error handling: This is done through UFSHCD SCSI error h=
+andling
+> =C2=A0 routines registered with SCSI Midlayer. Examples of some of th=
+e error
+> =C2=A0 handling commands issues by SCSI Midlayer are Abort task, Lun =
+reset
+> =C2=A0 and host reset. UFSHCD Routines to perform these tasks are reg=
+istered
+> =C2=A0 with SCSI Midlayer through .eh_abort_handler, .eh_device_reset=
+_handler
+> =C2=A0 and .eh_host_reset_handler.
+>
+> In this version of UFSHCD Query requests and power management
+> functionality are not implemented.
+>
+> This patchset is successfully applied on 3.3-rc4
+>
+> UFS Specifications can be found at,
+> UFS - http://www.jedec.org/sites/default/files/docs/JESD220.pdf
+> UFSHCI - http://www.jedec.org/sites/default/files/docs/JESD223.pdf
+>
+> Santosh Yaraganavi (5):
+> =C2=A0[SCSI] ufshcd: UFS Host controller driver
+> =C2=A0[SCSI] ufshcd: UFS UTP Transfer requests handling
+> =C2=A0[SCSI] ufshcd: UFSHCI error handling
+> =C2=A0[SCSI] ufshcd: SCSI error handling
+> =C2=A0Documentation: UFS Host Controller Driver
+>
+> =C2=A0Documentation/scsi/00-INDEX | =C2=A0 =C2=A02 +
+> =C2=A0Documentation/scsi/ufs.txt =C2=A0| =C2=A0 89 ++
+> =C2=A0drivers/scsi/Kconfig =C2=A0 =C2=A0 =C2=A0 =C2=A0| =C2=A0 =C2=A0=
+1 +
+> =C2=A0drivers/scsi/Makefile =C2=A0 =C2=A0 =C2=A0 | =C2=A0 =C2=A01 +
+> =C2=A0drivers/scsi/ufs/Kconfig =C2=A0 =C2=A0| =C2=A0 49 ++
+> =C2=A0drivers/scsi/ufs/Makefile =C2=A0 | =C2=A0 =C2=A02 +
+> =C2=A0drivers/scsi/ufs/ufs.h =C2=A0 =C2=A0 =C2=A0| =C2=A0207 +++++
+> =C2=A0drivers/scsi/ufs/ufshcd.c =C2=A0 | 1985 +++++++++++++++++++++++=
+++++++++++++++++++++
+> =C2=A0drivers/scsi/ufs/ufshci.h =C2=A0 | =C2=A0376 ++++++++
+> =C2=A09 files changed, 2712 insertions(+), 0 deletions(-)
+> =C2=A0create mode 100644 Documentation/scsi/ufs.txt
+> =C2=A0create mode 100644 drivers/scsi/ufs/Kconfig
+> =C2=A0create mode 100644 drivers/scsi/ufs/Makefile
+> =C2=A0create mode 100644 drivers/scsi/ufs/ufs.h
+> =C2=A0create mode 100644 drivers/scsi/ufs/ufshcd.c
+> =C2=A0create mode 100644 drivers/scsi/ufs/ufshci.h
+>
+> --
+> 1.7.5.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =C2=A0http://vger.kernel.org/majordomo-info.ht=
+ml
+> Please read the FAQ at =C2=A0http://www.tux.org/lkml/
