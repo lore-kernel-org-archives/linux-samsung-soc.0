@@ -1,62 +1,182 @@
-From: Santosh Y <santoshsy@gmail.com>
-Subject: Re: [PATCH v2 4/5] [SCSI] ufshcd: SCSI error handling
-Date: Mon, 27 Feb 2012 11:52:09 +0530
-Message-ID: <CALMYJDtxKw_doL=nwJiyE4sGFXcwrdAUCR4KbmAmwPvgK+78pw@mail.gmail.com>
-References: <1330067945-9128-1-git-send-email-santoshsy@gmail.com>
- <1330067945-9128-5-git-send-email-santoshsy@gmail.com> <CAJd=RBAVfG1J66VVrCNAiaoMEJ3O7MZOU21g-T_CkyF10WJa8w@mail.gmail.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH v2 4/4] ARM: SAMSUNG: move the mmc platdata header file to
+ linux/mmc/
+Date: Mon, 27 Feb 2012 16:58:12 +0900
+Message-ID: <4F4B3794.1010401@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAJd=RBAVfG1J66VVrCNAiaoMEJ3O7MZOU21g-T_CkyF10WJa8w@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Hillf Danton <dhillf@gmail.com>
-Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, yeji@jasper.es
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:47338 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752797Ab2B0H6S (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Feb 2012 02:58:18 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-mmc <linux-mmc@vger.kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, 'kgene kim' <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
 
-On Sun, Feb 26, 2012 at 10:16 AM, Hillf Danton <dhillf@gmail.com> wrote=
-:
-> On Fri, Feb 24, 2012 at 3:19 PM, Santosh Y <santoshsy@gmail.com> wrot=
-e:
->> +/**
->> + * ufshcd_is_tmq_full - checks if the task management slots are ful=
-l
->> + * @hba: per adapter instance
->> + *
->> + * Returns maximum number of task management request slots in case =
-of
->> + * task management queue full or returns the free slot number
->> + */
->> +static inline int ufshcd_is_tmq_full(struct ufs_hba *hba)
->
-> This helper function is named to be misleading, little to do with
-> its functionality as full is checked at callsite.
 
-ok, thanks, I'll change it.
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/sdhci.h |   53 +-----------------
+ include/linux/mmc/sdhci-s3c.h              |   84 ++++++++++++++++++++++++++++
+ 2 files changed, 85 insertions(+), 52 deletions(-)
+ create mode 100644 include/linux/mmc/sdhci-s3c.h
 
->
-> -hd
->
->> +{
->> + =A0 =A0 =A0 return find_first_zero_bit(&hba->outstanding_tasks, hb=
-a->nutmrs);
->> +}
->> +
-> [...]
->> + =A0 =A0 =A0 host =3D hba->host;
->> +
->> + =A0 =A0 =A0 spin_lock_irqsave(host->host_lock, flags);
->> +
->> + =A0 =A0 =A0 /* If task management queue is full */
->> + =A0 =A0 =A0 free_slot =3D ufshcd_is_tmq_full(hba);
->> + =A0 =A0 =A0 if (free_slot >=3D hba->nutmrs) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 spin_unlock_irqrestore(host->host_lock=
-, flags);
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(&hba->pdev->dev, "Task managem=
-ent queue full\n");
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 err =3D FAILED;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto out;
->> + =A0 =A0 =A0 }
-
---=20
-~Santosh
+diff --git a/arch/arm/plat-samsung/include/plat/sdhci.h b/arch/arm/plat-samsung/include/plat/sdhci.h
+index 95a6e19..f2d4f60 100644
+--- a/arch/arm/plat-samsung/include/plat/sdhci.h
++++ b/arch/arm/plat-samsung/include/plat/sdhci.h
+@@ -19,58 +19,7 @@
+ #define __PLAT_S3C_SDHCI_H __FILE__
+ 
+ #include <plat/devs.h>
+-
+-struct platform_device;
+-struct mmc_host;
+-struct mmc_card;
+-struct mmc_ios;
+-
+-enum cd_types {
+-	S3C_SDHCI_CD_INTERNAL,	/* use mmc internal CD line */
+-	S3C_SDHCI_CD_EXTERNAL,	/* use external callback */
+-	S3C_SDHCI_CD_GPIO,	/* use external gpio pin for CD line */
+-	S3C_SDHCI_CD_NONE,	/* no CD line, use polling to detect card */
+-	S3C_SDHCI_CD_PERMANENT,	/* no CD line, card permanently wired to host */
+-};
+-
+-/**
+- * struct s3c_sdhci_platdata() - Platform device data for Samsung SDHCI
+- * @max_width: The maximum number of data bits supported.
+- * @host_caps: Standard MMC host capabilities bit field.
+- * @cd_type: Type of Card Detection method (see cd_types enum above)
+- * @ext_cd_init: Initialize external card detect subsystem. Called on
+- *		 sdhci-s3c driver probe when cd_type == S3C_SDHCI_CD_EXTERNAL.
+- *		 notify_func argument is a callback to the sdhci-s3c driver
+- *		 that triggers the card detection event. Callback arguments:
+- *		 dev is pointer to platform device of the host controller,
+- *		 state is new state of the card (0 - removed, 1 - inserted).
+- * @ext_cd_cleanup: Cleanup external card detect subsystem. Called on
+- *		 sdhci-s3c driver remove when cd_type == S3C_SDHCI_CD_EXTERNAL.
+- *		 notify_func argument is the same callback as for ext_cd_init.
+- * @ext_cd_gpio: gpio pin used for external CD line, valid only if
+- *		 cd_type == S3C_SDHCI_CD_GPIO
+- * @ext_cd_gpio_invert: invert values for external CD gpio line
+- * @cfg_gpio: Configure the GPIO for a specific card bit-width
+- *
+- * Initialisation data specific to either the machine or the platform
+- * for the device driver to use or call-back when configuring gpio or
+- * card speed information.
+-*/
+-struct s3c_sdhci_platdata {
+-	unsigned int	max_width;
+-	unsigned int	host_caps;
+-	unsigned int	pm_caps;
+-	enum cd_types	cd_type;
+-
+-	int		ext_cd_gpio;
+-	bool		ext_cd_gpio_invert;
+-	int	(*ext_cd_init)(void (*notify_func)(struct platform_device *,
+-						   int state));
+-	int	(*ext_cd_cleanup)(void (*notify_func)(struct platform_device *,
+-						      int state));
+-
+-	void	(*cfg_gpio)(struct platform_device *dev, int width);
+-};
++#include <linux/mmc/sdhci-s3c.h>
+ 
+ /* s3c_sdhci_set_platdata() - common helper for setting SDHCI platform data
+  * @pd: The default platform data for this device.
+diff --git a/include/linux/mmc/sdhci-s3c.h b/include/linux/mmc/sdhci-s3c.h
+new file mode 100644
+index 0000000..7dafaa4
+--- /dev/null
++++ b/include/linux/mmc/sdhci-s3c.h
+@@ -0,0 +1,84 @@
++/*
++ * include/linux/mmc/sdhci-s3c.h
++ *
++ * SDHCI declarations specific to Samsung platform
++ * Copyright (c) 2011 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Copyright 2008 Openmoko, Inc.
++ * Copyright 2008 Simtec Electronics
++ *	http://armlinux.simtec.co.uk/
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * This file is licensed under the terms of the GNU General Public
++ * License version 2. This program is licensed "as is" without any
++ * warranty of any kind, whether express or implied.
++ */
++
++#ifndef LINUX_MMC_SDHCI_S3C_H
++#define LINUX_MMC_SDHCI_S3C_H
++
++#include <linux/platform_device.h>
++
++struct platform_device;
++struct mmc_host;
++struct mmc_card;
++struct mmc_ios;
++enum cd_types {
++	S3C_SDHCI_CD_INTERNAL,	/* use mmc internal CD line */
++	S3C_SDHCI_CD_EXTERNAL,	/* use external callback */
++	S3C_SDHCI_CD_GPIO,	/* use external gpio pin for CD line */
++	S3C_SDHCI_CD_NONE,	/* no CD line, use polling to detect card */
++	S3C_SDHCI_CD_PERMANENT,	/* no CD line, card permanently wired to host */
++};
++
++enum clk_types {
++	S3C_SDHCI_CLK_DIV_INTERNAL,	/* use mmc internal clock divider */
++	S3C_SDHCI_CLK_DIV_EXTERNAL,	/* use external clock divider */
++};
++
++/**
++ * struct s3c_sdhci_platdata() - Platform device data for Samsung SDHCI
++ * @max_width: The maximum number of data bits supported.
++ * @host_caps: Standard MMC host capabilities bit field.
++ * @cd_type: Type of Card Detection method (see cd_types enum above)
++ * @clk_type: Type of clock divider method (see clk_types enum above)
++ * @ext_cd_init: Initialize external card detect subsystem. Called on
++ *		 sdhci-s3c driver probe when cd_type == S3C_SDHCI_CD_EXTERNAL.
++ *		 notify_func argument is a callback to the sdhci-s3c driver
++ *		 that triggers the card detection event. Callback arguments:
++ *		 dev is pointer to platform device of the host controller,
++ *		 state is new state of the card (0 - removed, 1 - inserted).
++ * @ext_cd_cleanup: Cleanup external card detect subsystem. Called on
++ *		 sdhci-s3c driver remove when cd_type == S3C_SDHCI_CD_EXTERNAL.
++ *		 notify_func argument is the same callback as for ext_cd_init.
++ * @ext_cd_gpio: gpio pin used for external CD line, valid only if
++ *		 cd_type == S3C_SDHCI_CD_GPIO
++ * @ext_cd_gpio_invert: invert values for external CD gpio line
++ * @cfg_gpio: Configure the GPIO for a specific card bit-width
++ *
++ * Initialisation data specific to either the machine or the platform
++ * for the device driver to use or call-back when configuring gpio or
++ * card speed information.
++*/
++struct s3c_sdhci_platdata {
++	unsigned int	max_width;
++	unsigned int	host_caps;
++	unsigned int	host_caps2;
++	unsigned int	pm_caps;
++	enum cd_types	cd_type;
++	enum clk_types	clk_type;
++
++	char		**clocks;	/* set of clock sources */
++
++	int		ext_cd_gpio;
++	bool		ext_cd_gpio_invert;
++	int	(*ext_cd_init)(void (*notify_func)(struct platform_device *,
++						   int state));
++	int	(*ext_cd_cleanup)(void (*notify_func)(struct platform_device *,
++						      int state));
++
++	void	(*cfg_gpio)(struct platform_device *dev, int width);
++};
++
++#endif /* LINUX_MMC_SDHCI_S3C_H */
