@@ -1,64 +1,46 @@
 From: Heiko =?iso-8859-15?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH] Move S3C2412_PM_SLEEP to common platform code
-Date: Tue, 28 Feb 2012 22:34:16 +0100
-Message-ID: <201202282234.17056.heiko@sntech.de>
-References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com> <1329346545-16373-9-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH 00/12] ARM: S3C24XX: create mach-s3c24xx/ for S3C24XX SoCs - WIP
+Date: Tue, 28 Feb 2012 22:39:16 +0100
+Message-ID: <201202282239.17107.heiko@sntech.de>
+References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:52902 "EHLO
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:33453 "EHLO
 	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756205Ab2B1Ve0 (ORCPT
+	by vger.kernel.org with ESMTP id S1752846Ab2B1VjW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Feb 2012 16:34:26 -0500
-In-Reply-To: <1329346545-16373-9-git-send-email-kgene.kim@samsung.com>
+	Tue, 28 Feb 2012 16:39:22 -0500
+In-Reply-To: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-S3C2412_PM_SLEEP is also used by the S3C2416, so move it out of the
-if CPU_S3C2412 block to the common platform code to prevent warnings
-when S3C2416_PM is selected but not CPU_S3C2412.
+Am Mittwoch 15 Februar 2012, 23:55:34 schrieb Kukjin Kim:
+> This patch aims to make a one mach- directory for S3C24XX SoCs
+> and now not finished yet such as moving cpufreq and merging
+> plat-s3c24xx/. I think it will be done maybe in a week.
+> 
+> [PATCH 01/12] ARM: S3C24XX: remove unused spi gpio setup functions
+> [PATCH 02/12] ARM: S3C24XX: move spi-s3c24xx platdata out of mach
+> [PATCH 03/12] ARM: S3C24XX: Remove extern declaration of clk_msysclk
+> [PATCH 04/12] ARM: S3C24XX: move common S3C2443 clock definitions to
+> [PATCH 05/12] ARM: S3C2410: move s3c2410_baseclk_add to clock.h
+> [PATCH 06/12] ARM: S3C24XX: change the ARCH_S3C2410 to ARCH_S3C24XX
+> [PATCH 07/12] ARM: S3C2410: move mach-s3c2410/* into mach-s3c24xx/
+> [PATCH 08/12] ARM: S3C2412: move mach-s3c2412/* into mach-s3c24xx/
+> [PATCH 09/12] ARM: S3C2416: move mach-s3c2416/* into mach-s3c24xx/
+> [PATCH 10/12] ARM: S3C2440: move mach-s3c2440/* into mach-s3c24xx/
+> [PATCH 11/12] ARM: S3C2443: move mach-s3c2443/* into mach-s3c24xx/
+could we move this forward please? :-)
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-this should probably be folded into the S3C2412 move patch
+As indicated by Olof's mail for tegra, we are near the 3.4 merge window and as 
+is known everything must be in linux-next beforehand.
 
- arch/arm/mach-s3c24xx/Kconfig |   12 ++++++------
- 1 files changed, 6 insertions(+), 6 deletions(-)
+In my opinion it should also be possible to postpone the plat-s3c24xx cleanup 
+for now and just bring this set on the road to reach 3.4.
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 599e025..158958c 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -83,6 +83,12 @@ config CPU_S3C2443
- 
- comment "S3C24XX base platform code"
- 
-+config S3C2412_PM_SLEEP
-+	bool
-+	help
-+	  Internal config node to apply sleep for S3C2412 power management.
-+	  Can be selected by another SoCs with similar sleep procedure.
-+
- config S3C24XX_DMA
- 	bool "S3C2410 DMA support"
- 	depends on ARCH_S3C24XX
-@@ -253,12 +259,6 @@ config S3C2412_PM
- 	help
- 	  Internal config node to apply S3C2412 power management
- 
--config S3C2412_PM_SLEEP
--	bool
--	help
--	  Internal config node to apply sleep for S3C2412 power management.
--	  Can be selected by another SoCs with similar sleep procedure.
--
- comment "S3C2412 Boards"
- 
- #
--- 
-1.7.2.3
+Heiko
