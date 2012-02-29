@@ -1,95 +1,85 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
-Date: Wed, 29 Feb 2012 10:02:50 +0100
-Message-ID: <4F4DE9BA.7010102@samsung.com>
-References: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org>
- <1322718611-20934-3-git-send-email-tushar.behera@linaro.org>
+Subject: Re: [PATCH v9 1/2] ARM: EXYNOS: Change System MMU platform device
+ definitions
+Date: Wed, 29 Feb 2012 10:42:07 +0100
+Message-ID: <4F4DF2EF.1090505@samsung.com>
+References: <001901ccf5e3$6a363320$3ea29960$%cho@samsung.com>
+ <CAH9JG2Uvh=_GWFWyBrE-hfGTvrwvs6n37bmKaHbCovJ++EeJ7g@mail.gmail.com>
+ <CAHQjnOO1aADVQWxNt-J3nb0bgJvc2dfk+6qTWKWx7w+-LUVSmw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:13050 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753983Ab2B2JCw (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:32718 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965136Ab2B2JmL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 04:02:52 -0500
-Received: from euspt2 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0M05007B2D4RGA@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Feb 2012 09:02:51 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M0500GBOD4QRN@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Feb 2012 09:02:51 +0000 (GMT)
-In-reply-to: <1322718611-20934-3-git-send-email-tushar.behera@linaro.org>
+	Wed, 29 Feb 2012 04:42:11 -0500
+In-reply-to: <CAHQjnOO1aADVQWxNt-J3nb0bgJvc2dfk+6qTWKWx7w+-LUVSmw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, patches@linaro.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Subash Patel <subash.ramaswamy@linaro.org>, Younglak Kim <younglak1004.kim@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi Tushar,
+Hello,
 
-On 12/01/2011 06:50 AM, Tushar Behera wrote:
-> The framebuffer driver needs the clock named 'lcd' as its bus
-> clock but the equivalent clock on Exynos4 is named as 'fimd'.
-> Hence, create a clkdev lookup entry with the name 'lcd' that
-> references the 'fimd' clock.
+On 02/29/2012 01:25 AM, KyongHo Cho wrote:
+>>>  static int exynos4_clk_hdmiphy_ctrl(struct clk *clk, int enable)
+>>>  {
+>>>       return s5p_gatectrl(S5P_HDMI_PHY_CONTROL, clk, enable);
+>>> @@ -679,61 +684,55 @@ static struct clk exynos4_init_clocks_off[] = {
+>>>               .enable         = exynos4_clk_ip_peril_ctrl,
+>>>               .ctrlbit        = (1 << 14),
+>>>       }, {
+>>> -             .name           = "SYSMMU_MDMA",
+>>> +             .name           = SYSMMU_CLOCK_NAME,
+>>> +             .devname        = SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
+>>> +             .enable         = exynos4_clk_ip_mfc_ctrl,
+>>> +             .ctrlbit        = (1 << 1),
+>>> +     }, {
+>>> +             .name           = SYSMMU_CLOCK_NAME,
+>>> +             .devname        = SYSMMU_CLOCK_DEVNAME(mfc_r, 1),
+>>> +             .enable         = exynos4_clk_ip_mfc_ctrl,
+>>> +             .ctrlbit        = (1 << 2),
+>>> +     }, {
+>>> +             .name           = SYSMMU_CLOCK_NAME,
+>>> +             .devname        = SYSMMU_CLOCK_DEVNAME(tv, 2),
+>>> +             .enable         = exynos4_clk_ip_tv_ctrl,
+>>> +             .ctrlbit        = (1 << 4),
+>>> +     }, {
+>>> +             .name           = SYSMMU_CLOCK_NAME,
+>>> +             .devname        = SYSMMU_CLOCK_DEVNAME(jpeg, 3),
+>>> +             .enable         = exynos4_clk_ip_cam_ctrl,
+>>> +             .ctrlbit        = (1 << 11),
+>>> +     }, {
+>>> +             .name           = SYSMMU_CLOCK_NAME,
+>>> +             .devname        = SYSMMU_CLOCK_DEVNAME(rot, 4),
+>>>               .enable         = exynos4_clk_ip_image_ctrl,
+>>> -             .ctrlbit        = (1 << 5),
+>>> +             .ctrlbit        = (1 << 4),
+>>>       }, {
+>>> -             .name           = "SYSMMU_FIMC0",
+>>> +             .name           = SYSMMU_CLOCK_NAME,
+>>> +             .devname        = SYSMMU_CLOCK_DEVNAME(gsc0, 5),
+>> It's exynos4 series clock and don't have gsc name. I don't know LSI
+>> decides to use gsc instead of fimc for both exynos4 and exynos5. but
+>> there's no name gsc at Spec..
 > 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> gsc0 is just a name of the platform device of FIMC0 in Exynos4.
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+I think it's not right what you're saying. Gscalers first appeared only
+in exynos5 (at least according to all specifications I have) and you already
+have the corresponding change for clock-exynos5.c. FIMCs in exynos 4210, 4212
+and 4412 are almost not changed, so please don't rename like this, which is 
+confusing. If you need common clkdev entries for the exynos4 and exynos5 
+devices, then the "devname"s above might need to be removed and required 
+clock entries should be created through the CLKDEV_INIT() macro.
 
-> ---
->  arch/arm/mach-exynos/clock.c |   14 +++++++++-----
->  1 files changed, 9 insertions(+), 5 deletions(-)
+> It is also used for GSclaler0 in Exynos5.
+> I wanted to reduce waste of platform device definitions that do not exist
+> in an application processor.
 > 
-> diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-> index 5d8d483..607ec28 100644
-> --- a/arch/arm/mach-exynos/clock.c
-> +++ b/arch/arm/mach-exynos/clock.c
-> @@ -489,11 +489,6 @@ static struct clk init_clocks_off[] = {
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 3),
->  	}, {
-> -		.name		= "fimd",
-> -		.devname	= "exynos4-fb.0",
-> -		.enable		= exynos4_clk_ip_lcd0_ctrl,
-> -		.ctrlbit	= (1 << 0),
-> -	}, {
->  		.name		= "hsmmc",
->  		.devname	= "s3c-sdhci.0",
->  		.parent		= &clk_aclk_133.clk,
-> @@ -782,6 +777,13 @@ static struct clk clk_pdma1 = {
->  	.ctrlbit	= (1 << 1),
->  };
->  
-> +static struct clk clk_fimd0 = {
-> +	.name		= "fimd",
-> +	.devname	= "exynos4-fb.0",
-> +	.enable		= exynos4_clk_ip_lcd0_ctrl,
-> +	.ctrlbit	= (1 << 0),
-> +};
-> +
->  struct clk *clkset_group_list[] = {
->  	[0] = &clk_ext_xtal_mux,
->  	[1] = &clk_xusbxti,
-> @@ -1294,6 +1296,7 @@ static struct clksrc_clk *sysclks[] = {
->  static struct clk *clk_cdev[] = {
->  	&clk_pdma0,
->  	&clk_pdma1,
-> +	&clk_fimd0,
->  };
->  
->  static struct clksrc_clk *clksrc_cdev[] = {
-> @@ -1318,6 +1321,7 @@ static struct clk_lookup exynos4_clk_lookup[] = {
->  	CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
->  	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
->  	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
-> +	CLKDEV_INIT("exynos4-fb.0", "lcd", &clk_fimd0),
->  };
->  
->  static int xtal_rate;
+> If it looks confused, I will find another way.
 
 Thanks,
 -- 
