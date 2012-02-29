@@ -1,73 +1,61 @@
-From: Sangwook Lee <sangwook.lee@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add EHCI AHB burst function
-Date: Wed, 29 Feb 2012 14:27:54 +0000
-Message-ID: <4F4E35EA.8050605@linaro.org>
-References: <1330519283-4722-1-git-send-email-sangwook.lee@linaro.org>	<1330519283-4722-2-git-send-email-sangwook.lee@linaro.org> <CAJuYYwTW6rBiSJdeFYMui96t6nszjADW4t+14XakRkc=_4DbBA@mail.gmail.com>
+From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 1/2] ARM: EXYNOS: Add USB HOST register definitions
+Date: Wed, 29 Feb 2012 23:39:35 +0900
+Message-ID: <000101ccf6ef$f4efbab0$decf3010$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:37277 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757837Ab2B2O2B (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 09:28:01 -0500
-Received: by bkcik5 with SMTP id ik5so2350002bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Feb 2012 06:27:59 -0800 (PST)
-In-Reply-To: <CAJuYYwTW6rBiSJdeFYMui96t6nszjADW4t+14XakRkc=_4DbBA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-language: ko
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Sangwook Lee' <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Joonyoung Shim' <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, gregkh@suse.de, kgene.kim@samsung.com, stern@rowland.harvard.edu, jg1.han@samsung.com, jy0922.shim@samsung.com, patches@linaro.org, linaro-dev@lists.linaro.org, linux@arm.linux.org.uk
+
+This patch adds USB HOST register definitions. The definition for
+EHCI INSNREG00 regiser and corresponding bit field definitions are
+added.
+
+Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ arch/arm/mach-exynos/include/mach/regs-usb-host.h |   23 +++++++++++++++++++++
+ 1 files changed, 23 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-host.h
+
+diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-host.h b/arch/arm/mach-exynos/include/mach/regs-usb-host.h
+new file mode 100644
+index 0000000..1a60f27
+--- /dev/null
++++ b/arch/arm/mach-exynos/include/mach/regs-usb-host.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics Co.Ltd
++ *		http://www.samsung.com
++ *
++ * EXYNOS - USB HOST register definitions
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __REGS_USB_HOST_H
++#define __REGS_USB_HOST_H __FILE__
++
++#define EHCI_INSNREG00(base)		(base + 0x90)
++#define EHCI_ENA_INCR16			(0x1 << 25)
++#define EHCI_ENA_INCR8			(0x1 << 24)
++#define EHCI_ENA_INCR4			(0x1 << 23)
++#define EHCI_ENA_INCRX_ALIGN		(0x1 << 22)
++#define EHCI_ENABLE_DMA_INCR		(EHCI_ENA_INCR16 | EHCI_ENA_INCR8| \
++					 EHCI_ENA_INCR4 | EHCI_ENA_INCRX_ALIGN)
++
++#endif /* __REGS_USB_HOST_H */
+-- 
+1.7.1
 
 
-
-On 29/02/12 13:01, Thomas Abraham wrote:
-> Hi Sangwook,
->
-> On 29 February 2012 18:11, Sangwook Lee<sangwook.lee@linaro.org>  wrote:
->> Enable burst transfer from AHB for EHCI.
->> This fixes data transfer of USB Ethernet with EHCI.
->> Without this patch, scp hardly works.
->>
->> Signed-off-by: Sangwook Lee<sangwook.lee@linaro.org>
->> ---
->>   arch/arm/mach-exynos/setup-usb-phy.c      |    6 ++++++
->>   arch/arm/plat-samsung/devs.c              |    2 ++
->>   arch/arm/plat-samsung/include/plat/ehci.h |   19 +++++++++++++++++++
->>   3 files changed, 27 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
->> index 41743d2..5a20460 100644
->> --- a/arch/arm/mach-exynos/setup-usb-phy.c
->> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
->> @@ -18,6 +18,7 @@
->>   #include<mach/regs-usb-phy.h>
->>   #include<plat/cpu.h>
->>   #include<plat/usb-phy.h>
->> +#include<plat/ehci.h>
->>
->>   static atomic_t host_usage;
->>
->> @@ -149,3 +150,8 @@ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
->>
->>         return -EINVAL;
->>   }
->> +
->> +void s5p_ehci_burst_enable(struct platform_device *pdev, void __iomem *base)
->> +{
->> +       writel(EHCI_INSNREG00_ENABLE_BURST, base + EHCI_INSNREG00);
->> +}
->
-> This functionality can be added in ehci-s5p itself and avoid adding a
-> new platform callback in platform data. If this is specific to exynos,
-> driver data could be added in ehci-s5p to indicate platforms that need
-> this to be enabled.
-
-it makes sense.
-
->
-> Thanks,
-> Thomas.
->
-> [...]
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
