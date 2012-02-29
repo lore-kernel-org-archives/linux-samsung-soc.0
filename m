@@ -1,66 +1,40 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/2] USB: ehci-s5p: add DMA burst support
-Date: Wed, 29 Feb 2012 23:44:22 +0900
-Message-ID: <000201ccf6f0$a0498b20$e0dca160$%han@samsung.com>
+From: Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: [PATCH 0/3] [media] s5p-tv: Add initial DT-support to s5p-tv's
+ subdevices
+Date: Wed, 29 Feb 2012 15:51:44 +0100
+Message-ID: <1330527107-21222-1-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-language: ko
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Sangwook Lee' <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Joonyoung Shim' <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:41393 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756086Ab2B2OwN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Feb 2012 09:52:13 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: t.stanislaws@samsung.com
+Cc: m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, Karol Lewandowski <k.lewandowsk@samsung.com>
 
-DMA burst support is added to improve performance in EHCI data
-transfer. The USB EHCI controller on Exynos SoCs can use INCR16,
-INCR8, and INCR4 mode. These modes of INSNREG00 register should
-be set in order to enable DMA burst transfer. This feature is
-also related to AHB spec.
+This patchset adds initial device tree support to drivers used by
+s5p-tv on Exynos4.
 
-Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Sangwook Lee <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- drivers/usb/host/ehci-s5p.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+DT support for s5p-tv driver itself would benefit from changes to v4l
+core (missing OF helper functions) and thus, will be sent later in
+separate patchset.
 
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 293f741..465861b 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
- #include <plat/ehci.h>
- #include <plat/usb-phy.h>
-+#include <mach/regs-usb-host.h>
- 
- struct s5p_ehci_hcd {
- 	struct device *dev;
-@@ -128,6 +129,9 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
- 	ehci->regs = hcd->regs +
- 		HC_LENGTH(ehci, readl(&ehci->caps->hc_capbase));
- 
-+	/* DMA burst Enable */
-+	writel(EHCI_ENABLE_DMA_INCR, EHCI_INSNREG00(hcd->regs));
-+
- 	dbg_hcs_params(ehci, "reset");
- 	dbg_hcc_params(ehci, "reset");
- 
-@@ -234,6 +238,9 @@ static int s5p_ehci_resume(struct device *dev)
- 	if (pdata && pdata->phy_init)
- 		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
- 
-+	/* DMA burst Enable */
-+	writel(EHCI_ENABLE_DMA_INCR, EHCI_INSNREG00(hcd->regs));
-+
- 	if (time_before(jiffies, ehci->next_statechange))
- 		msleep(100);
- 
+Karol Lewandowski (3):
+  [media] s5p-tv: Add initial DT-support for sii9234
+  [media] s5p-tv: Add initial DT-support for HDMIPHY
+  [media] s5p-tv: Add initial DT-support for TV mixer
+
+ Documentation/devicetree/bindings/i2c/sii9234.txt |   14 ++++++++++++++
+ drivers/media/video/s5p-tv/hdmiphy_drv.c          |   10 ++++++++++
+ drivers/media/video/s5p-tv/mixer_drv.c            |    9 +++++++++
+ drivers/media/video/s5p-tv/sii9234_drv.c          |   20 +++++++++++++++++++-
+ 4 files changed, 52 insertions(+), 1 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/i2c/sii9234.txt
+
 -- 
-1.7.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.8.3
