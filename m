@@ -1,55 +1,36 @@
-From: Sangwook Lee <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+From: Sangwook Lee <sangwook.lee@linaro.org>
 Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add EHCI AHB burst function
-Date: Wed, 29 Feb 2012 14:21:32 +0000
-Message-ID: <4F4E346C.3020400@linaro.org>
-References: <1330519283-4722-1-git-send-email-sangwook.lee@linaro.org> <1330519283-4722-2-git-send-email-sangwook.lee@linaro.org> <000701ccf6e5$63bb6170$2b322450$%han@samsung.com>
+Date: Wed, 29 Feb 2012 14:27:54 +0000
+Message-ID: <4F4E35EA.8050605@linaro.org>
+References: <1330519283-4722-1-git-send-email-sangwook.lee@linaro.org>	<1330519283-4722-2-git-send-email-sangwook.lee@linaro.org> <CAJuYYwTW6rBiSJdeFYMui96t6nszjADW4t+14XakRkc=_4DbBA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <000701ccf6e5$63bb6170$2b322450$%han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, gregkh-l3A5Bk7waGM@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:37277 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757837Ab2B2O2B (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Feb 2012 09:28:01 -0500
+Received: by bkcik5 with SMTP id ik5so2350002bkc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Feb 2012 06:27:59 -0800 (PST)
+In-Reply-To: <CAJuYYwTW6rBiSJdeFYMui96t6nszjADW4t+14XakRkc=_4DbBA@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, gregkh@suse.de, kgene.kim@samsung.com, stern@rowland.harvard.edu, jg1.han@samsung.com, jy0922.shim@samsung.com, patches@linaro.org, linaro-dev@lists.linaro.org, linux@arm.linux.org.uk
 
-Hi Jingoo
 
-On 29/02/12 13:23, Jingoo Han wrote:
-> Hi, Sangwook.
->
-> I know what you want to add.
-> I'll send new patch which can enable EHCI burst mode.
 
-Great !
-
-Thanks
-Sangwook
-
-> This new patch will not use platform data callback and different machine directory
-> file to include EHCI INSNREG00 definitions.
-> Also, comment will be modified properly.
+On 29/02/12 13:01, Thomas Abraham wrote:
+> Hi Sangwook,
 >
->
-> Thank you.
->
-> Best regards,
-> Jingoo Han.
->
->> -----Original Message-----
->> From: Sangwook Lee [mailto:sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org]
->> Sent: Wednesday, February 29, 2012 9:41 PM
->> To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
->> Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org; gregkh-l3A5Bk7waGM@public.gmane.org; kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org;
->> jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org; linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org;
->> linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org; Sangwook Lee
->> Subject: [PATCH 1/2] ARM: EXYNOS: Add EHCI AHB burst function
->>
+> On 29 February 2012 18:11, Sangwook Lee<sangwook.lee@linaro.org>  wrote:
 >> Enable burst transfer from AHB for EHCI.
 >> This fixes data transfer of USB Ethernet with EHCI.
 >> Without this patch, scp hardly works.
 >>
->> Signed-off-by: Sangwook Lee<sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>> Signed-off-by: Sangwook Lee<sangwook.lee@linaro.org>
 >> ---
 >>   arch/arm/mach-exynos/setup-usb-phy.c      |    6 ++++++
 >>   arch/arm/plat-samsung/devs.c              |    2 ++
@@ -70,62 +51,23 @@ Sangwook
 >>
 >> @@ -149,3 +150,8 @@ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
 >>
->>   	return -EINVAL;
+>>         return -EINVAL;
 >>   }
 >> +
 >> +void s5p_ehci_burst_enable(struct platform_device *pdev, void __iomem *base)
 >> +{
->> +	writel(EHCI_INSNREG00_ENABLE_BURST, base + EHCI_INSNREG00);
+>> +       writel(EHCI_INSNREG00_ENABLE_BURST, base + EHCI_INSNREG00);
 >> +}
->> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
->> index f10768e..8fd1bd3 100644
->> --- a/arch/arm/plat-samsung/devs.c
->> +++ b/arch/arm/plat-samsung/devs.c
->> @@ -1402,6 +1402,8 @@ void __init s5p_ehci_set_platdata(struct s5p_ehci_platdata *pd)
->>   		npd->phy_init = s5p_usb_phy_init;
->>   	if (!npd->phy_exit)
->>   		npd->phy_exit = s5p_usb_phy_exit;
->> +	if (!npd->burst_enable)
->> +		npd->burst_enable = s5p_ehci_burst_enable;
->>   }
->>   #endif /* CONFIG_S5P_DEV_USB_EHCI */
->>
->> diff --git a/arch/arm/plat-samsung/include/plat/ehci.h b/arch/arm/plat-samsung/include/plat/ehci.h
->> index 5f28cae..9c866b7 100644
->> --- a/arch/arm/plat-samsung/include/plat/ehci.h
->> +++ b/arch/arm/plat-samsung/include/plat/ehci.h
->> @@ -14,8 +14,27 @@
->>   struct s5p_ehci_platdata {
->>   	int (*phy_init)(struct platform_device *pdev, int type);
->>   	int (*phy_exit)(struct platform_device *pdev, int type);
->> +	void (*burst_enable)(struct platform_device *pdev, void __iomem *base);
->>   };
->>
->>   extern void s5p_ehci_set_platdata(struct s5p_ehci_platdata *pd);
->> +extern void s5p_ehci_burst_enable(struct platform_device *pdev,
->> +	void __iomem *base);
->> +
->> +/* EHCI EXYNOS specific register */
->> +#define EHCI_INSNREG00			0x90
->> +
->> +/*
->> + * EHCI INSNREG00 Specific fields
->> + * Enable AHB master to use burst transfer from 4 to 16
->> + */
->> +#define EHCI_INSNREG00_ENABLE_INCR16	(1<<  25)
->> +#define EHCI_INSNREG00_ENABLE_INCR8	(1<<  24)
->> +#define EHCI_INSNREG00_ENABLE_INCR4	(1<<  23)
->> +/* Force AHB master to start burst transfer only for 4,8,16 alignment */
->> +#define EHCI_INSNREG00_ENABLE_INCRX_ALIGN (1<<  22)
->> +#define EHCI_INSNREG00_ENABLE_BURST	\
->> +	(EHCI_INSNREG00_ENABLE_INCR16 | EHCI_INSNREG00_ENABLE_INCR8 |	\
->> +	EHCI_INSNREG00_ENABLE_INCR4 | EHCI_INSNREG00_ENABLE_INCRX_ALIGN)
->>
->>   #endif /* __PLAT_SAMSUNG_EHCI_H */
->> --
->> 1.7.4.1
 >
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> This functionality can be added in ehci-s5p itself and avoid adding a
+> new platform callback in platform data. If this is specific to exynos,
+> driver data could be added in ehci-s5p to indicate platforms that need
+> this to be enabled.
+
+it makes sense.
+
+>
+> Thanks,
+> Thomas.
+>
+> [...]
