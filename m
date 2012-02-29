@@ -1,105 +1,48 @@
 From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: [PATCH 1/3] [media] s5p-tv: Add initial DT-support for sii9234
-Date: Wed, 29 Feb 2012 15:51:45 +0100
-Message-ID: <1330527107-21222-2-git-send-email-k.lewandowsk@samsung.com>
+Subject: [PATCH 3/3] [media] s5p-tv: Add initial DT-support for TV mixer
+Date: Wed, 29 Feb 2012 15:51:47 +0100
+Message-ID: <1330527107-21222-4-git-send-email-k.lewandowsk@samsung.com>
 References: <1330527107-21222-1-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:63782 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758099Ab2B2OwP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 09:52:15 -0500
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1330527107-21222-1-git-send-email-k.lewandowsk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: t.stanislaws@samsung.com
-Cc: m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, Karol Lewandowski <k.lewandowsk@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+Cc: m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, Karol Lewandowski <k.lewandowsk@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Make it possible to instantiate sii9234, HDMI's MHL, from regular
-device tree description.
-
-Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- Documentation/devicetree/bindings/i2c/sii9234.txt |   14 ++++++++++++++
- drivers/media/video/s5p-tv/sii9234_drv.c          |   20 +++++++++++++++++++-
- 2 files changed, 33 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/i2c/sii9234.txt
+ drivers/media/video/s5p-tv/mixer_drv.c |    9 +++++++++
+ 1 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/i2c/sii9234.txt b/Documentation/devicetree/bindings/i2c/sii9234.txt
-new file mode 100644
-index 0000000..7bb7636
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/sii9234.txt
-@@ -0,0 +1,14 @@
-+* SII 9234
-+
-+Required properties :
-+ - compatible : "sii,9234"
-+ - reg        : i2c device address
-+ - gpio-reset : gpio line used to reset IC
-+
-+Example:
-+
-+	mhl@39 {
-+		compatible = "sii,9234";
-+		reg = <0x39>;
-+		gpio-reset = <&gpf3 4 0 0 0>;
-+	};
-diff --git a/drivers/media/video/s5p-tv/sii9234_drv.c b/drivers/media/video/s5p-tv/sii9234_drv.c
-index 0f31ecc..0a1511a 100644
---- a/drivers/media/video/s5p-tv/sii9234_drv.c
-+++ b/drivers/media/video/s5p-tv/sii9234_drv.c
-@@ -22,6 +22,8 @@
- #include <linux/pm_runtime.h>
- #include <linux/regulator/machine.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
-+#include <linux/of_gpio.h>
- 
- #include <mach/gpio.h>
- #include <plat/gpio-cfg.h>
-@@ -338,7 +340,15 @@ static int __devinit sii9234_probe(struct i2c_client *client,
- 		goto fail_ctx;
- 	}
- 
--	ctx->gpio_n_reset = pdata->gpio_n_reset;
-+	if (dev->of_node) {
-+		ctx->gpio_n_reset = of_get_named_gpio(dev->of_node, "gpio-reset", 0);
-+		if (ctx->gpio_n_reset < 0) {
-+			ret = -ENODEV;
-+			goto fail_power;
-+		}
-+	} else
-+		ctx->gpio_n_reset = pdata->gpio_n_reset;
-+
- 	ret = gpio_request(ctx->gpio_n_reset, "MHL_RST");
- 	if (ret) {
- 		dev_err(dev, "failed to acquire MHL_RST gpio\n");
-@@ -401,6 +411,13 @@ static int __devexit sii9234_remove(struct i2c_client *client)
+diff --git a/drivers/media/video/s5p-tv/mixer_drv.c b/drivers/media/video/s5p-tv/mixer_drv.c
+index a2c0c25..6bf4a9e 100644
+--- a/drivers/media/video/s5p-tv/mixer_drv.c
++++ b/drivers/media/video/s5p-tv/mixer_drv.c
+@@ -448,6 +448,14 @@ static int __devexit mxr_remove(struct platform_device *pdev)
  	return 0;
  }
  
 +#ifdef CONFIG_OF
-+static const struct of_device_id sii9234_dt_match[] = {
-+	{ .compatible = "sii,9234" },
++static const struct of_device_id mxr_dt_match[] = {
++	{ .compatible = "samsung,exynos4210-tvmixer" },
 +	{ },
 +};
-+MODULE_DEVICE_TABLE(of, sii9234_dt_match);
++MODULE_DEVICE_TABLE(of, mxr_dt_match);
 +#endif
++
+ static struct platform_driver mxr_driver __refdata = {
+ 	.probe = mxr_probe,
+ 	.remove = __devexit_p(mxr_remove),
+@@ -455,6 +463,7 @@ static struct platform_driver mxr_driver __refdata = {
+ 		.name = MXR_DRIVER_NAME,
+ 		.owner = THIS_MODULE,
+ 		.pm = &mxr_pm_ops,
++		.of_match_table = of_match_ptr(mxr_dt_match),
+ 	}
+ };
  
- static const struct i2c_device_id sii9234_id[] = {
- 	{ "SII9234", 0 },
-@@ -413,6 +430,7 @@ static struct i2c_driver sii9234_driver = {
- 		.name	= "sii9234",
- 		.owner	= THIS_MODULE,
- 		.pm = &sii9234_pm_ops,
-+		.of_match_table = of_match_ptr(sii9234_dt_match),
- 	},
- 	.probe		= sii9234_probe,
- 	.remove		= __devexit_p(sii9234_remove),
 -- 
 1.7.8.3
