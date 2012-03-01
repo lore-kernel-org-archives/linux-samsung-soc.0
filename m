@@ -1,75 +1,78 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add USB HOST register definitions
-Date: Thu, 01 Mar 2012 09:00:10 +0530
-Message-ID: <4F4EED42.2010700@linaro.org>
-References: <000101ccf6ef$f4efbab0$decf3010$%han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 00/12] ARM: S3C24XX: create mach-s3c24xx/ for S3C24XX SoCs
+ - WIP
+Date: Thu, 01 Mar 2012 12:51:49 +0900
+Message-ID: <076601ccf75e$a19450a0$e4bcf1e0$%kim@samsung.com>
+References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
+ <201202282239.17107.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:43505 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756962Ab2CADaV (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:27498 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757055Ab2CADvx convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 22:30:21 -0500
-Received: by dado14 with SMTP id o14so252329dad.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Feb 2012 19:30:21 -0800 (PST)
-In-Reply-To: <000101ccf6ef$f4efbab0$decf3010$%han@samsung.com>
+	Wed, 29 Feb 2012 22:51:53 -0500
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0M0600LIXTEFDC90@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 12:51:51 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M0600BKBTEDDZ10@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 12:51:51 +0900 (KST)
+In-reply-to: <201202282239.17107.heiko@sntech.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-usb@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sangwook Lee' <sangwook.lee@linaro.org>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, patches@linaro.org, linaro-dev@lists.linaro.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-On 02/29/2012 08:09 PM, Jingoo Han wrote:
-> This patch adds USB HOST register definitions. The definition for
-> EHCI INSNREG00 regiser and corresponding bit field definitions are
-> added.
-> 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-> ---
->  arch/arm/mach-exynos/include/mach/regs-usb-host.h |   23 +++++++++++++++++++++
->  1 files changed, 23 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-host.h
-> 
-> diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-host.h b/arch/arm/mach-exynos/include/mach/regs-usb-host.h
-> new file mode 100644
-> index 0000000..1a60f27
-> --- /dev/null
-> +++ b/arch/arm/mach-exynos/include/mach/regs-usb-host.h
-> @@ -0,0 +1,23 @@
-> +/*
-> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
-> + *		http://www.samsung.com
-> + *
-> + * EXYNOS - USB HOST register definitions
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef __REGS_USB_HOST_H
-> +#define __REGS_USB_HOST_H __FILE__
-> +
-> +#define EHCI_INSNREG00(base)		(base + 0x90)
-> +#define EHCI_ENA_INCR16			(0x1 << 25)
-> +#define EHCI_ENA_INCR8			(0x1 << 24)
-> +#define EHCI_ENA_INCR4			(0x1 << 23)
-> +#define EHCI_ENA_INCRX_ALIGN		(0x1 << 22)
-> +#define EHCI_ENABLE_DMA_INCR		(EHCI_ENA_INCR16 | EHCI_ENA_INCR8| \
-> +					 EHCI_ENA_INCR4 | EHCI_ENA_INCRX_ALIGN)
-> +
-As per the definition of bit-fields in other registers, it would be good
-to prepend the complete register name before the bit-field defines.
+Heiko St=FCbner wrote:
+>=20
+> Am Mittwoch 15 Februar 2012, 23:55:34 schrieb Kukjin Kim:
+> > This patch aims to make a one mach- directory for S3C24XX SoCs
+> > and now not finished yet such as moving cpufreq and merging
+> > plat-s3c24xx/. I think it will be done maybe in a week.
+> >
+> > [PATCH 01/12] ARM: S3C24XX: remove unused spi gpio setup functions
+> > [PATCH 02/12] ARM: S3C24XX: move spi-s3c24xx platdata out of mach
+> > [PATCH 03/12] ARM: S3C24XX: Remove extern declaration of clk_msyscl=
+k
+> > [PATCH 04/12] ARM: S3C24XX: move common S3C2443 clock definitions t=
+o
+> > [PATCH 05/12] ARM: S3C2410: move s3c2410_baseclk_add to clock.h
+> > [PATCH 06/12] ARM: S3C24XX: change the ARCH_S3C2410 to ARCH_S3C24XX
+> > [PATCH 07/12] ARM: S3C2410: move mach-s3c2410/* into mach-s3c24xx/
+> > [PATCH 08/12] ARM: S3C2412: move mach-s3c2412/* into mach-s3c24xx/
+> > [PATCH 09/12] ARM: S3C2416: move mach-s3c2416/* into mach-s3c24xx/
+> > [PATCH 10/12] ARM: S3C2440: move mach-s3c2440/* into mach-s3c24xx/
+> > [PATCH 11/12] ARM: S3C2443: move mach-s3c2443/* into mach-s3c24xx/
+> could we move this forward please? :-)
+>=20
+> As indicated by Olof's mail for tegra, we are near the 3.4 merge wind=
+ow
+> and as
+> is known everything must be in linux-next beforehand.
+>=20
+> In my opinion it should also be possible to postpone the plat-s3c24xx
+> cleanup
+> for now and just bring this set on the road to reach 3.4.
+>=20
+OK, I agree and let me move this into my -next, I think plat-s3c24xx cl=
+eanup
+can be done soon though.
 
-EHCI_INSNREG00_ENA_INCR16 ...
+As a note, I will send this to arm-soc tree after couple of days for te=
+sting
+this in linux-next.
 
-Considering the similarity of this patchset with the earlier patchset
-from Sangwook, IMO, it would be appropriate to give him due credit in
-both these patches.
+Thanks.
 
-> +#endif /* __REGS_USB_HOST_H */
-
-
--- 
-Tushar Behera
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
