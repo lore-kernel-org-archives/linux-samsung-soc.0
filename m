@@ -1,152 +1,81 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: Re: [PATCH 1/3] [media] s5p-tv: Add initial DT-support for sii9234
-Date: Thu, 01 Mar 2012 16:11:16 +0100
-Message-ID: <4F4F9194.5010705@samsung.com>
-References: <1330527107-21222-1-git-send-email-k.lewandowsk@samsung.com>
- <1330527107-21222-2-git-send-email-k.lewandowsk@samsung.com>
- <CAJuYYwRSgHLyWSaAyxAWwdSzUHXRmGTirgi_Wvcsfd89kWDx0g@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH v2 1/2] ARM: EXYNOS: Add USB HOST register definitions
+Date: Thu, 1 Mar 2012 16:24:03 +0100
+Message-ID: <201203011624.04551.heiko@sntech.de>
+References: <000701ccf76d$8316b0a0$894411e0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:20155 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1031255Ab2CAPLT (ORCPT
+Received: from h1778886.stratoserver.net ([85.214.133.74]:51891 "EHLO
+	h1778886.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S966209Ab2CAPYO convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Mar 2012 10:11:19 -0500
-In-reply-to: <CAJuYYwRSgHLyWSaAyxAWwdSzUHXRmGTirgi_Wvcsfd89kWDx0g@mail.gmail.com>
+	Thu, 1 Mar 2012 10:24:14 -0500
+In-Reply-To: <000701ccf76d$8316b0a0$894411e0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: t.stanislaws@samsung.com, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Jingoo Han <jg1.han@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, linaro-dev@lists.linaro.org, 'Joonyoung Shim' <jy0922.shim@samsung.com>, patches@linaro.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Sangwook Lee' <sangwook.lee@linaro.org>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On 01.03.2012 04:09, Thomas Abraham wrote:
+Am Donnerstag, 1. M=E4rz 2012, 06:38:20 schrieb Jingoo Han:
+> This patch adds USB HOST register definitions. The definition for
+> EHCI INSNREG00 regiser and corresponding bit field definitions are
+> added.
+>=20
+> Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+> v2: change the definition name from EHCI_ENA_xxx to EHCI_INSNREG00_EN=
+A_xxx.
+>=20
+> arch/arm/mach-exynos/include/mach/regs-usb-host.h |   24
+> +++++++++++++++++++++ 1 files changed, 24 insertions(+), 0 deletions(=
+-)
+>  create mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-host.h
+Isn't the general idea to depopulate the mach directories and make driv=
+ers=20
+buildable across architectures?
 
-> Hi Karol,
-
-
-Hi!
-
-
-> On 29 February 2012 20:21, Karol Lewandowski <k.lewandowsk@samsung.com> wrote:
->> Make it possible to instantiate sii9234, HDMI's MHL, from regular
->> device tree description.
->>
->> Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  Documentation/devicetree/bindings/i2c/sii9234.txt |   14 ++++++++++++++
->>  drivers/media/video/s5p-tv/sii9234_drv.c          |   20 +++++++++++++++++++-
->>  2 files changed, 33 insertions(+), 1 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/i2c/sii9234.txt
->>
->> diff --git a/Documentation/devicetree/bindings/i2c/sii9234.txt b/Documentation/devicetree/bindings/i2c/sii9234.txt
->> new file mode 100644
->> index 0000000..7bb7636
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/i2c/sii9234.txt
->> @@ -0,0 +1,14 @@
->> +* SII 9234
->> +
-> 
-> A minimal description about this device would be helpful here.
-> 
->> +Required properties :
->> + - compatible : "sii,9234"
-> 
-> To be more informative, can this be changed to "sil,mhl-9234".
+The definitions are only used in drivers/usb/host/ehci-s5p.c [in the se=
+cond=20
+patch], so there should be no need to add another arch-header and they =
+could=20
+simply be included in the driver itself or if necessary a=20
+drivers/usb/host/ehci-s5p.h .
 
 
-Thanks for pointing this out - I'll fix compat string and add description.
+Heiko
 
-> 
->> + - reg        : i2c device address
->> + - gpio-reset : gpio line used to reset IC
->> +
->> +Example:
->> +
->> +       mhl@39 {
->> +               compatible = "sii,9234";
->> +               reg = <0x39>;
->> +               gpio-reset = <&gpf3 4 0 0 0>;
->> +       };
->> diff --git a/drivers/media/video/s5p-tv/sii9234_drv.c b/drivers/media/video/s5p-tv/sii9234_drv.c
->> index 0f31ecc..0a1511a 100644
->> --- a/drivers/media/video/s5p-tv/sii9234_drv.c
->> +++ b/drivers/media/video/s5p-tv/sii9234_drv.c
->> @@ -22,6 +22,8 @@
->>  #include <linux/pm_runtime.h>
->>  #include <linux/regulator/machine.h>
->>  #include <linux/slab.h>
->> +#include <linux/of.h>
->> +#include <linux/of_gpio.h>
->>
->>  #include <mach/gpio.h>
->>  #include <plat/gpio-cfg.h>
->> @@ -338,7 +340,15 @@ static int __devinit sii9234_probe(struct i2c_client *client,
->>                goto fail_ctx;
->>        }
->>
->> -       ctx->gpio_n_reset = pdata->gpio_n_reset;
->> +       if (dev->of_node) {
->> +               ctx->gpio_n_reset = of_get_named_gpio(dev->of_node, "gpio-reset", 0);
->> +               if (ctx->gpio_n_reset < 0) {
-> 
-> if (gpio_is_valid(ctx->gpio_n_reset)) can be used here.
-
-
-Will fix, I wasn't aware of this either.
-
-> 
->> +                       ret = -ENODEV;
->> +                       goto fail_power;
->> +               }
->> +       } else
->> +               ctx->gpio_n_reset = pdata->gpio_n_reset;
-> 
-> linux coding style suggests to have braces for 'else' branch when
-> braces are used for the 'if' branch.
-
-
-Ok.
-
-> 
->> +
->>        ret = gpio_request(ctx->gpio_n_reset, "MHL_RST");
->>        if (ret) {
->>                dev_err(dev, "failed to acquire MHL_RST gpio\n");
->> @@ -401,6 +411,13 @@ static int __devexit sii9234_remove(struct i2c_client *client)
->>        return 0;
->>  }
->>
->> +#ifdef CONFIG_OF
->> +static const struct of_device_id sii9234_dt_match[] = {
->> +       { .compatible = "sii,9234" },
->> +       { },
->> +};
->> +MODULE_DEVICE_TABLE(of, sii9234_dt_match);
->> +#endif
->>
->>  static const struct i2c_device_id sii9234_id[] = {
->>        { "SII9234", 0 },
->> @@ -413,6 +430,7 @@ static struct i2c_driver sii9234_driver = {
->>                .name   = "sii9234",
->>                .owner  = THIS_MODULE,
->>                .pm = &sii9234_pm_ops,
->> +               .of_match_table = of_match_ptr(sii9234_dt_match),
->>        },
->>        .probe          = sii9234_probe,
->>        .remove         = __devexit_p(sii9234_remove),
->> --
->> 1.7.8.3
->>
-> 
-> Thanks,
-> Thomas.
-
-
-Thanks for reviewing this!
-
-Regards,
--- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-host.h
+> b/arch/arm/mach-exynos/include/mach/regs-usb-host.h new file mode 100=
+644
+> index 0000000..572b7d4
+> --- /dev/null
+> +++ b/arch/arm/mach-exynos/include/mach/regs-usb-host.h
+> @@ -0,0 +1,24 @@
+> +/*
+> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> + *		http://www.samsung.com
+> + *
+> + * EXYNOS - USB HOST register definitions
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __REGS_USB_HOST_H
+> +#define __REGS_USB_HOST_H __FILE__
+> +
+> +#define EHCI_INSNREG00(base)			(base + 0x90)
+> +#define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
+> +#define EHCI_INSNREG00_ENA_INCR8		(0x1 << 24)
+> +#define EHCI_INSNREG00_ENA_INCR4		(0x1 << 23)
+> +#define EHCI_INSNREG00_ENA_INCRX_ALIGN		(0x1 << 22)
+> +#define EHCI_INSNREG00_ENABLE_DMA_BURST	\
+> +	(EHCI_INSNREG00_ENA_INCR16 | EHCI_INSNREG00_ENA_INCR8 |	\
+> +	 EHCI_INSNREG00_ENA_INCR4 | EHCI_INSNREG00_ENA_INCRX_ALIGN)
+> +
+> +#endif /* __REGS_USB_HOST_H */
