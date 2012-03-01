@@ -1,67 +1,83 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
-Date: Thu, 01 Mar 2012 13:06:27 +0900
-Message-ID: <076b01ccf760$ad072730$07157590$%kim@samsung.com>
-References: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org>
- <1322718611-20934-3-git-send-email-tushar.behera@linaro.org>
- <001701ccf6cc$a83727d0$f8a57770$%han@samsung.com>
+Subject: RE: [PATCH] Move S3C2412_PM_SLEEP to common platform code
+Date: Thu, 01 Mar 2012 13:10:30 +0900
+Message-ID: <076c01ccf761$3d92a1d0$b8b7e570$%kim@samsung.com>
+References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
+ <1329346545-16373-9-git-send-email-kgene.kim@samsung.com>
+ <201202282234.17056.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:9539 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754991Ab2CAEGa (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:37744 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754991Ab2CAEKc convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 23:06:30 -0500
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 29 Feb 2012 23:10:32 -0500
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M060087JU2Q8MB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:06:29 +0900 (KST)
+ 2010)) with ESMTP id <0M0600IL8U98K560@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:10:31 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M0600AXGU2RCA60@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:06:28 +0900 (KST)
-In-reply-to: <001701ccf6cc$a83727d0$f8a57770$%han@samsung.com>
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M0600ACKU9ICA70@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:10:31 +0900 (KST)
+In-reply-to: <201202282234.17056.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: linaro-dev@lists.linaro.org, patches@linaro.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
 
-Jingoo Han wrote:
-> 
-> Hi Tushar,
-> 
+Heiko St=FCbner wrote:
+>=20
+> S3C2412_PM_SLEEP is also used by the S3C2416, so move it out of the
+> if CPU_S3C2412 block to the common platform code to prevent warnings
+> when S3C2416_PM is selected but not CPU_S3C2412.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> this should probably be folded into the S3C2412 move patch
+>=20
+>  arch/arm/mach-s3c24xx/Kconfig |   12 ++++++------
+>  1 files changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kc=
+onfig
+> index 599e025..158958c 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -83,6 +83,12 @@ config CPU_S3C2443
+>=20
+>  comment "S3C24XX base platform code"
+>=20
+> +config S3C2412_PM_SLEEP
+> +	bool
+> +	help
+> +	  Internal config node to apply sleep for S3C2412 power management.
+> +	  Can be selected by another SoCs with similar sleep procedure.
+> +
+>  config S3C24XX_DMA
+>  	bool "S3C2410 DMA support"
+>  	depends on ARCH_S3C24XX
+> @@ -253,12 +259,6 @@ config S3C2412_PM
+>  	help
+>  	  Internal config node to apply S3C2412 power management
+>=20
+> -config S3C2412_PM_SLEEP
+> -	bool
+> -	help
+> -	  Internal config node to apply sleep for S3C2412 power management.
+> -	  Can be selected by another SoCs with similar sleep procedure.
+> -
+>  comment "S3C2412 Boards"
+>=20
+>  #
+> --
+> 1.7.2.3
 
-(please don't top-post)
-
-> > -----Original Message-----
-> > From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-
-> owner@vger.kernel.org] On Behalf
-> > Of Tushar Behera
-> > Sent: Thursday, December 01, 2011 2:50 PM
-> > To: linux-samsung-soc@vger.kernel.org
-> > Cc: kgene.kim@samsung.com; linaro-dev@lists.linaro.org;
-> patches@linaro.org
-> > Subject: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
-> >
-> > The framebuffer driver needs the clock named 'lcd' as its bus
-> > clock but the equivalent clock on Exynos4 is named as 'fimd'.
-> > Hence, create a clkdev lookup entry with the name 'lcd' that
-> > references the 'fimd' clock.
-> >
-> > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> 
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
-> 
-
-OK, I will apply this with Sylwester's 'reviewed-by' I looked at  before.
-
-BTW, Tushar, what's the [1/3] and [3/3] in this series? If they are still
-needed now, could you please re-send? Maybe I missed.
-
+Looks good to me and will apply.
 Thanks.
 
 Best regards,
