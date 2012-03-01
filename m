@@ -1,68 +1,78 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 2/2] USB: ehci-s5p: add DMA burst support
-Date: Thu, 01 Mar 2012 14:40:03 +0900
-Message-ID: <000801ccf76d$c01e2a00$405a7e00$%han@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 2/3] ARM: Exynos: fix SDHCI device names in regulator
+ definitions
+Date: Thu, 01 Mar 2012 09:40:20 +0100
+Message-ID: <1330591221-31458-3-git-send-email-m.szyprowski@samsung.com>
+References: <1330591221-31458-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-language: ko
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: 'Greg Kroah-Hartman' <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, 'Sangwook Lee' <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Alan Stern' <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, 'Joonyoung Shim' <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:36006 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932184Ab2CAIlH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 1 Mar 2012 03:41:07 -0500
+Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0M07004KQ6SFM350@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 08:41:03 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M0700EHX6SFRQ@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 08:41:03 +0000 (GMT)
+In-reply-to: <1330591221-31458-1-git-send-email-m.szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-DMA burst support is added to improve performance in EHCI data
-transfer. The USB EHCI controller on Exynos SoCs can use INCR16,
-INCR8, and INCR4 mode. These modes of INSNREG00 register should
-be set in order to enable DMA burst transfer. This feature is
-also related to AHB spec.
+Patch 189eb7407 "ARM: EXYNOS: use 'exynos4-sdhci' as device name for sdhci
+controllers" changed the names of the SDHCI devices, but the author forgot
+to update the definitions for the regulator subsystem. This patch fixes
+this issue.
 
-Signed-off-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Sangwook Lee <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
-v2: change the definition name from EHCI_ENA_xxx to EHCI_INSNREG00_ENA_xxx.
+ arch/arm/mach-exynos/mach-nuri.c           |    4 ++--
+ arch/arm/mach-exynos/mach-universal_c210.c |    2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-drivers/usb/host/ehci-s5p.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
-
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 293f741..b337f72 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -16,6 +16,7 @@
- #include <linux/platform_device.h>
- #include <plat/ehci.h>
- #include <plat/usb-phy.h>
-+#include <mach/regs-usb-host.h>
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 8c0479f..dd26581 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -117,7 +117,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
+ };
  
- struct s5p_ehci_hcd {
- 	struct device *dev;
-@@ -128,6 +129,9 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
- 	ehci->regs = hcd->regs +
- 		HC_LENGTH(ehci, readl(&ehci->caps->hc_capbase));
+ static struct regulator_consumer_supply emmc_supplies[] = {
+-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
++	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+ 	REGULATOR_SUPPLY("vmmc", "dw_mmc"),
+ };
  
-+	/* DMA burst Enable */
-+	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
-+
- 	dbg_hcs_params(ehci, "reset");
- 	dbg_hcc_params(ehci, "reset");
+@@ -417,7 +417,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo12_[] = {
+ 	REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
+ };
+ static struct regulator_consumer_supply __initdata max8997_ldo13_[] = {
+-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
++	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.2"), /* TFLASH */
+ };
+ static struct regulator_consumer_supply __initdata max8997_ldo14_[] = {
+ 	REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 908624c..7cd738c 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -750,7 +750,7 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data __initdata = {
+ };
  
-@@ -234,6 +238,9 @@ static int s5p_ehci_resume(struct device *dev)
- 	if (pdata && pdata->phy_init)
- 		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+ static struct regulator_consumer_supply mmc0_supplies[] = {
+-	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
++	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+ };
  
-+	/* DMA burst Enable */
-+	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
-+
- 	if (time_before(jiffies, ehci->next_statechange))
- 		msleep(100);
- 
+ static struct regulator_init_data mmc0_fixed_voltage_init_data = {
 -- 
-1.7.1
-
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+1.7.1.569.g6f426
