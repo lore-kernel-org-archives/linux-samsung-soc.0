@@ -1,67 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/6] ARM: SAMSUNG: Fix memory size for hsotg
-Date: Thu, 01 Mar 2012 13:40:22 +0900
-Message-ID: <077101ccf765$69bea0c0$3d3be240$%kim@samsung.com>
-References: <1328870146-20312-1-git-send-email-l.majewski@samsung.com>
- <1328870146-20312-3-git-send-email-l.majewski@samsung.com>
+Subject: RE: [PATCH v3] S3C24XX DMA resume regression fix
+Date: Thu, 01 Mar 2012 13:55:12 +0900
+Message-ID: <077201ccf767$7c6d1ec0$75475c40$%kim@samsung.com>
+References: <1330087227-10450-1-git-send-email-dron0gus@gmail.com>
+ <201202241417.24652.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:44597 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756607Ab2CAEkX (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:44801 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752255Ab2CAEzR convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 23:40:23 -0500
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Wed, 29 Feb 2012 23:55:17 -0500
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M0600BRQVN9AZA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:40:22 +0900 (KST)
+ 2010)) with ESMTP id <0M06002YDWBUYF80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:55:13 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M0600DMWVNA3C20@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:40:22 +0900 (KST)
-In-reply-to: <1328870146-20312-3-git-send-email-l.majewski@samsung.com>
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M060016DWC0V040@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:55:13 +0900 (KST)
+In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Lukasz Majewski' <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org
-Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Gusakov Andrey' <dron0gus@gmail.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Lukasz Majewski wrote:
-> 
-> From: Joonyoung Shim <jy0922.shim@samsung.com>
-> 
-> The device link core registers for hsotg is base + 0000h ~ base +
-> 11000h.
-> 
-> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> [Rebased on the newest git/kgene/linux-samsung #for-next]
-> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-> ---
->  arch/arm/plat-samsung/devs.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 21168ea..7ca0875 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -1436,7 +1436,7 @@ void __init s5p_ehci_set_platdata(struct
-> s5p_ehci_platdata *pd)
-> 
->  #ifdef CONFIG_S3C_DEV_USB_HSOTG
->  static struct resource s3c_usb_hsotg_resources[] = {
-> -	[0] = DEFINE_RES_MEM(S3C_PA_USB_HSOTG, SZ_16K),
-> +	[0] = DEFINE_RES_MEM(S3C_PA_USB_HSOTG, SZ_128K),
->  	[1] = DEFINE_RES_IRQ(IRQ_OTG),
->  };
-> 
-> --
-> 1.7.2.3
+Kukjin Kim wrote:
+>=20
+> Heiko St=FCbner wrote:
+> >
+> > Am Freitag, 24. Februar 2012, 13:40:27 schrieb Gusakov Andrey:
 
-OK, will apply.
+It's preferred that "ARM: S3C24XX: ..." in title.
+
+> > > s3c2410_dma_suspend suspends channels from 0 to dma_channels.
+> > > s3c2410_dma_resume resumes channels in reverse order. So
+> > > pointer should be decremented insted of being incremented.
+
+=2E..decremented instead of...?
+
+BTW, where is sign? Since it's very important, needs Gusakov's reply or
+re-sending with his sign.
+
 Thanks.
 
 Best regards,
@@ -69,3 +53,43 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+> > > ---
+> > >  arch/arm/plat-s3c24xx/dma.c |    2 +-
+> > >  1 files changed, 1 insertions(+), 1 deletions(-)
+> > >
+> > > diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/=
+dma.c
+> > > index 57abec9..16510d5 100644
+> > > --- a/arch/arm/plat-s3c24xx/dma.c
+> > > +++ b/arch/arm/plat-s3c24xx/dma.c
+> > > @@ -1249,7 +1249,7 @@ static void s3c2410_dma_resume(void)
+> > >  	struct s3c2410_dma_chan *cp =3D s3c2410_chans + dma_channels - =
+1;
+> > >  	int channel;
+> > >
+> > > -	for (channel =3D dma_channels - 1; channel >=3D 0; cp++, channe=
+l--)
+> > > +	for (channel =3D dma_channels - 1; channel >=3D 0; cp--, channe=
+l--)
+> > >  		s3c2410_dma_resume_chan(cp);
+> > >  }
+> >
+> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> >
+> > it's interesting, that this is broken since april 2011, so I guess =
+it's
+> > time
+> > to fix it :-)
+>=20
+> Yes, absolutely. Will apply and send this with other fixes before 3.3
+> release.
+>=20
+> Thanks.
+>=20
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
