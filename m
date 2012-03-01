@@ -1,95 +1,90 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3] S3C24XX DMA resume regression fix
-Date: Thu, 01 Mar 2012 13:55:12 +0900
-Message-ID: <077201ccf767$7c6d1ec0$75475c40$%kim@samsung.com>
-References: <1330087227-10450-1-git-send-email-dron0gus@gmail.com>
- <201202241417.24652.heiko@sntech.de>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: EXYNOS: Add USB HOST register definitions
+Date: Thu, 01 Mar 2012 14:15:04 +0900
+Message-ID: <000601ccf76a$479d58b0$d6d80a10$%han@samsung.com>
+References: <000101ccf6ef$f4efbab0$decf3010$%han@samsung.com>
+ <4F4EED42.2010700@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44801 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752255Ab2CAEzR convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:53855 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751055Ab2CAFPO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 23:55:17 -0500
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M06002YDWBUYF80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:55:13 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M060016DWC0V040@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:55:13 +0900 (KST)
-In-reply-to: 
+	Thu, 1 Mar 2012 00:15:14 -0500
+In-reply-to: <4F4EED42.2010700@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Gusakov Andrey' <dron0gus@gmail.com>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Tushar Behera' <tushar.behera@linaro.org>
+Cc: linux-usb@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Sangwook Lee' <sangwook.lee@linaro.org>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>, patches@linaro.org, linaro-dev@lists.linaro.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-Kukjin Kim wrote:
->=20
-> Heiko St=FCbner wrote:
+
+
+> -----Original Message-----
+> From: Tushar Behera [mailto:tushar.behera@linaro.org]
+> Sent: Thursday, March 01, 2012 12:30 PM
+> To: Jingoo Han
+> Cc: linux-usb@vger.kernel.org; 'Greg Kroah-Hartman'; linux-samsung-soc@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; 'Sangwook Lee'; 'Alan Stern'; 'Joonyoung Shim'; 'Kukjin Kim';
+> patches@linaro.org; linaro-dev@lists.linaro.org; 'Thomas Abraham'
+> Subject: Re: [PATCH 1/2] ARM: EXYNOS: Add USB HOST register definitions
+> 
+> On 02/29/2012 08:09 PM, Jingoo Han wrote:
+> > This patch adds USB HOST register definitions. The definition for
+> > EHCI INSNREG00 regiser and corresponding bit field definitions are
+> > added.
 > >
-> > Am Freitag, 24. Februar 2012, 13:40:27 schrieb Gusakov Andrey:
-
-It's preferred that "ARM: S3C24XX: ..." in title.
-
-> > > s3c2410_dma_suspend suspends channels from 0 to dma_channels.
-> > > s3c2410_dma_resume resumes channels in reverse order. So
-> > > pointer should be decremented insted of being incremented.
-
-=2E..decremented instead of...?
-
-BTW, where is sign? Since it's very important, needs Gusakov's reply or
-re-sending with his sign.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> > > ---
-> > >  arch/arm/plat-s3c24xx/dma.c |    2 +-
-> > >  1 files changed, 1 insertions(+), 1 deletions(-)
-> > >
-> > > diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/=
-dma.c
-> > > index 57abec9..16510d5 100644
-> > > --- a/arch/arm/plat-s3c24xx/dma.c
-> > > +++ b/arch/arm/plat-s3c24xx/dma.c
-> > > @@ -1249,7 +1249,7 @@ static void s3c2410_dma_resume(void)
-> > >  	struct s3c2410_dma_chan *cp =3D s3c2410_chans + dma_channels - =
-1;
-> > >  	int channel;
-> > >
-> > > -	for (channel =3D dma_channels - 1; channel >=3D 0; cp++, channe=
-l--)
-> > > +	for (channel =3D dma_channels - 1; channel >=3D 0; cp--, channe=
-l--)
-> > >  		s3c2410_dma_resume_chan(cp);
-> > >  }
+> > Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> > ---
+> >  arch/arm/mach-exynos/include/mach/regs-usb-host.h |   23 +++++++++++++++++++++
+> >  1 files changed, 23 insertions(+), 0 deletions(-)
+> >  create mode 100644 arch/arm/mach-exynos/include/mach/regs-usb-host.h
 > >
-> > Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> >
-> > it's interesting, that this is broken since april 2011, so I guess =
-it's
-> > time
-> > to fix it :-)
->=20
-> Yes, absolutely. Will apply and send this with other fixes before 3.3
-> release.
->=20
-> Thanks.
->=20
-> Best regards,
-> Kgene.
+> > diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-host.h b/arch/arm/mach-
+> exynos/include/mach/regs-usb-host.h
+> > new file mode 100644
+> > index 0000000..1a60f27
+> > --- /dev/null
+> > +++ b/arch/arm/mach-exynos/include/mach/regs-usb-host.h
+> > @@ -0,0 +1,23 @@
+> > +/*
+> > + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> > + *		http://www.samsung.com
+> > + *
+> > + * EXYNOS - USB HOST register definitions
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + */
+> > +
+> > +#ifndef __REGS_USB_HOST_H
+> > +#define __REGS_USB_HOST_H __FILE__
+> > +
+> > +#define EHCI_INSNREG00(base)		(base + 0x90)
+> > +#define EHCI_ENA_INCR16			(0x1 << 25)
+> > +#define EHCI_ENA_INCR8			(0x1 << 24)
+> > +#define EHCI_ENA_INCR4			(0x1 << 23)
+> > +#define EHCI_ENA_INCRX_ALIGN		(0x1 << 22)
+> > +#define EHCI_ENABLE_DMA_INCR		(EHCI_ENA_INCR16 | EHCI_ENA_INCR8| \
+> > +					 EHCI_ENA_INCR4 | EHCI_ENA_INCRX_ALIGN)
+> > +
+> As per the definition of bit-fields in other registers, it would be good
+> to prepend the complete register name before the bit-field defines.
+> 
+> EHCI_INSNREG00_ENA_INCR16 ...
+OK, I will change the definitions from EHCI_ENA_xxx to EHCI_INSNREG00_ENA_xxx.
+
+> 
+> Considering the similarity of this patchset with the earlier patchset
+> from Sangwook, IMO, it would be appropriate to give him due credit in
+> both these patches.
+OK, I will give Sangwook Signed-off.
+
+> > > +#endif /* __REGS_USB_HOST_H */
+> 
+> 
 > --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Tushar Behera
