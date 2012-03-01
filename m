@@ -1,53 +1,46 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 09/12] ARM: S3C2416: move mach-s3c2416/* into mach-s3c24xx/
-Date: Thu, 01 Mar 2012 13:11:55 +0900
-Message-ID: <076d01ccf761$709e6960$51db3c20$%kim@samsung.com>
-References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
- <1329346545-16373-10-git-send-email-kgene.kim@samsung.com>
- <201202282218.09602.heiko@sntech.de>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 0/4] ARM: SAMSUNG: JPEG support on Exynos and S5PV210
+Date: Thu,  1 Mar 2012 09:35:48 +0530
+Message-ID: <1330574752-14088-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37038 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754991Ab2CAEL5 convert rfc822-to-8bit (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:56907 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755583Ab2CAEMU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 23:11:57 -0500
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M0600H34UBPNWA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:11:56 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M06001VAUBV9X20@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:11:56 +0900 (KST)
-In-reply-to: <201202282218.09602.heiko@sntech.de>
-Content-language: ko
+	Wed, 29 Feb 2012 23:12:20 -0500
+Received: by pbcup15 with SMTP id up15so386443pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Feb 2012 20:12:20 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?iso-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Heiko St=FCbner wrote:
->=20
-> Am Mittwoch 15 Februar 2012, 23:55:43 schrieb Kukjin Kim:
-> > This patch moves S3C2416 stuff into mach-s3c24xx/ directory
-> > so that we can merge the s3c24 series' directories to the
-> > just one mach-s3c24xx/ directory.
-> >
-> > Cc: Ben Dooks <ben-linux@fluff.org>
-> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->=20
-> On S3C2416 hardware
->=20
-> Tested-by: Heiko Stuebner <heiko@sntech.de>
->=20
-Thank you for your testing and will amend this commit.
+This patch series adds JPEG platform support to S5PV210 and board support to 
+SMDKV210, SMDKV310 and Origen. 
+This series is based on Kukjin Kim's for-next branch.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+This series depends on the following patches:
+
+http://www.spinics.net/lists/linux-samsung-soc/msg09163.html
+http://www.spinics.net/lists/linux-samsung-soc/msg09475.html
+http://www.spinics.net/lists/linux-samsung-soc/msg09554.html
+
+
+Sachin Kamat (4):
+  ARM: EXYNOS: Enable JPEG on SMDKV310
+  ARM: EXYNOS: Enable JPEG on Origen
+  ARM: S5PV210: Add JPEG board definition
+  ARM: S5PV210: Enable JPEG on SMDKV210
+
+ arch/arm/mach-exynos/Kconfig             |    2 ++
+ arch/arm/mach-exynos/mach-origen.c       |    1 +
+ arch/arm/mach-exynos/mach-smdkv310.c     |    1 +
+ arch/arm/mach-s5pv210/Kconfig            |    1 +
+ arch/arm/mach-s5pv210/clock.c            |    5 +++++
+ arch/arm/mach-s5pv210/include/mach/map.h |    4 ++++
+ arch/arm/mach-s5pv210/mach-smdkv210.c    |    1 +
+ 7 files changed, 15 insertions(+), 0 deletions(-)
+
+-- 
+1.7.4.1
