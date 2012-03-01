@@ -1,297 +1,152 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH v9 1/2] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Thu, 01 Mar 2012 15:57:18 +0100
-Message-ID: <011401ccf7bb$98d51c30$ca7f5490$%szyprowski@samsung.com>
-References: <001901ccf5e3$6a363320$3ea29960$%cho@samsung.com>
- <CAH9JG2Uvh=_GWFWyBrE-hfGTvrwvs6n37bmKaHbCovJ++EeJ7g@mail.gmail.com>
- <CAHQjnOO1aADVQWxNt-J3nb0bgJvc2dfk+6qTWKWx7w+-LUVSmw@mail.gmail.com>
+From: Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: Re: [PATCH 1/3] [media] s5p-tv: Add initial DT-support for sii9234
+Date: Thu, 01 Mar 2012 16:11:16 +0100
+Message-ID: <4F4F9194.5010705@samsung.com>
+References: <1330527107-21222-1-git-send-email-k.lewandowsk@samsung.com>
+ <1330527107-21222-2-git-send-email-k.lewandowsk@samsung.com>
+ <CAJuYYwRSgHLyWSaAyxAWwdSzUHXRmGTirgi_Wvcsfd89kWDx0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17586 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753475Ab2CAO4T convert rfc822-to-8bit (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:20155 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031255Ab2CAPLT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 1 Mar 2012 09:56:19 -0500
-In-reply-to: <CAHQjnOO1aADVQWxNt-J3nb0bgJvc2dfk+6qTWKWx7w+-LUVSmw@mail.gmail.com>
-Content-language: pl
+	Thu, 1 Mar 2012 10:11:19 -0500
+In-reply-to: <CAJuYYwRSgHLyWSaAyxAWwdSzUHXRmGTirgi_Wvcsfd89kWDx0g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'KyongHo Cho' <pullip.cho@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Joerg Roedel' <joro@8bytes.org>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: t.stanislaws@samsung.com, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hello,
+On 01.03.2012 04:09, Thomas Abraham wrote:
 
-On Wednesday, February 29, 2012 1:26 AM KyongHo Cho wrote:
+> Hi Karol,
 
-=20
-> On Tue, Feb 28, 2012 at 4:20 PM, Kyungmin Park
-> <kyungmin.park@samsung.com> wrote:
-> > Hi,
-> >
-> > On 2/28/12, KyongHo Cho <pullip.cho@samsung.com> wrote:
-> >> Handling System MMUs with an identifier is not flexible to manage
-> >> System MMU platform devices because of the following reasons:
-> >> 1. A device driver which needs to handle System MMU must know the =
-ID.
-> >> 2. A System MMU may not present in some implementations of Exynos =
-family.
-> >> 3. Handling System MMU with IOMMU API does not require an ID.
-> >>
-> >> This patch is the result of removing ID of System MMUs.
-> >> Instead, a device driver that needs to handle its System MMU must
-> >> use IOMMU API while its descriptor of platform device is given.
-> >>
-> >> This patch also includes the following enhancements:
-> >> - A System MMU device becomes a child if its power domain device.
-> >> - clkdev
-> >>
-> >> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
-> >> ---
-> >> =A0arch/arm/mach-exynos/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0| =A0 11 +-
-> >> =A0arch/arm/mach-exynos/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A02 +-
-> >> =A0arch/arm/mach-exynos/clock-exynos4.c =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- 79 ++--
-> >> =A0arch/arm/mach-exynos/clock-exynos4.h =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A02 +
-> >> =A0arch/arm/mach-exynos/clock-exynos4210.c =A0 =A0 =A0 =A0 | =A0 1=
-1 +
-> >> =A0arch/arm/mach-exynos/clock-exynos4212.c =A0 =A0 =A0 =A0 | =A0 2=
-8 ++-
-> >> =A0arch/arm/mach-exynos/clock-exynos5.c =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- 90 +++++
-> >> =A0arch/arm/mach-exynos/dev-sysmmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 |=
- =A0451
-> >> ++++++++++++-----------
-> >> =A0arch/arm/mach-exynos/include/mach/irqs.h =A0 =A0 =A0 =A0| =A017=
-9 +++++-----
-> >> =A0arch/arm/mach-exynos/include/mach/map.h =A0 =A0 =A0 =A0 | =A0 3=
-8 ++
-> >> =A0arch/arm/mach-exynos/include/mach/regs-clock.h =A0| =A0 =A05 +
-> >> =A0arch/arm/mach-exynos/include/mach/regs-sysmmu.h | =A0 28 --
-> >> =A0arch/arm/mach-exynos/include/mach/sysmmu.h =A0 =A0 =A0| =A0 84 =
-+++--
-> >> =A0arch/arm/mach-exynos/mach-armlex4210.c =A0 =A0 =A0 =A0 =A0| =A0=
- =A01 -
-> >> =A0arch/arm/mach-exynos/mach-smdkv310.c =A0 =A0 =A0 =A0 =A0 =A0| =A0=
- =A01 -
-> >> =A0arch/arm/plat-s5p/sysmmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0| =A0 13 +-
-> >> =A0arch/arm/plat-samsung/include/plat/devs.h =A0 =A0 =A0 | =A0 =A0=
-1 -
-> >> =A017 files changed, 618 insertions(+), 406 deletions(-)
-> > It's too big to cover these changes. Can you make it more small cha=
-nges.
-> > 1. Remove existing ones since no user at this time.
-> > 2. Add new define and data structures.
-> > 3. Support new system mmu features based on generic iommu.
-> >
->=20
-> Your suggestion sounds good. Thank you.
->=20
-> >> =A0static int exynos4_clk_hdmiphy_ctrl(struct clk *clk, int enable=
-)
-> >> =A0{
-> >> =A0 =A0 =A0 return s5p_gatectrl(S5P_HDMI_PHY_CONTROL, clk, enable)=
-;
-> >> @@ -679,61 +684,55 @@ static struct clk exynos4_init_clocks_off[] =
-=3D {
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_cl=
-k_ip_peril_ctrl,
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 14),
-> >> =A0 =A0 =A0 }, {
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "SYSMMU_MD=
-MA",
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D SYSMMU_CLO=
-CK_NAME,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D SYSMMU_CLOCK=
-_DEVNAME(mfc_l, 0),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_=
-ip_mfc_ctrl,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 1),
-> >> + =A0 =A0 }, {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D SYSMMU_CLO=
-CK_NAME,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D SYSMMU_CLOCK=
-_DEVNAME(mfc_r, 1),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_=
-ip_mfc_ctrl,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 2),
-> >> + =A0 =A0 }, {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D SYSMMU_CLO=
-CK_NAME,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D SYSMMU_CLOCK=
-_DEVNAME(tv, 2),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_=
-ip_tv_ctrl,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 4),
-> >> + =A0 =A0 }, {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D SYSMMU_CLO=
-CK_NAME,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D SYSMMU_CLOCK=
-_DEVNAME(jpeg, 3),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_=
-ip_cam_ctrl,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 11),
-> >> + =A0 =A0 }, {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D SYSMMU_CLO=
-CK_NAME,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D SYSMMU_CLOCK=
-_DEVNAME(rot, 4),
-> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_cl=
-k_ip_image_ctrl,
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 5),
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 4),
-> >> =A0 =A0 =A0 }, {
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "SYSMMU_FI=
-MC0",
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D SYSMMU_CLO=
-CK_NAME,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D SYSMMU_CLOCK=
-_DEVNAME(gsc0, 5),
-> > It's exynos4 series clock and don't have gsc name. I don't know LSI
-> > decides to use gsc instead of fimc for both exynos4 and exynos5. bu=
-t
-> > there's no name gsc at Spec..
->=20
-> gsc0 is just a name of the platform device of FIMC0 in Exynos4.
-> It is also used for GSclaler0 in Exynos5.
-> I wanted to reduce waste of platform device definitions that do not e=
-xist
-> in an application processor.
->=20
-> If it looks confused, I will find another way.
-> >> +#define SYSMMU_RESOURCE_NAME(core, ipname) sysmmures_##core##_##i=
-pname
-> >> +
-> >> +#define SYSMMU_RESOURCE(core, ipname) =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 static struct resource SYSMMU_RESOURCE_NAME(core, ipname=
-)[] __initdata =3D
-> >> +
-> >> +#define DEFINE_SYSMMU_RESOURCE(core, mem, irq) =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 DEFINE_RES_MEM_NAMED(core##_PA_SYSMMU_##mem, SZ_4K, #mem=
-), =A0 =A0 =A0\
-> >> + =A0 =A0 DEFINE_RES_IRQ_NAMED(core##_IRQ_SYSMMU_##irq##_0, #mem)
-> >> +
-> >> +#define SYSMMU_RESOURCE_DEFINE(core, ipname, mem, irq) =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 SYSMMU_RESOURCE(core, ipname) { =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 DEFINE_SYSMMU_RESOURCE(core, mem, irq) =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 }
-> >>
-> >> -struct platform_device exynos4_device_sysmmu =3D {
-> >> - =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "s5p-sysmmu",
-> >> - =A0 =A0 .id =A0 =A0 =A0 =A0 =A0 =A0 =3D 32,
-> >> - =A0 =A0 .num_resources =A0=3D ARRAY_SIZE(exynos4_sysmmu_resource=
-),
-> >> - =A0 =A0 .resource =A0 =A0 =A0 =3D exynos4_sysmmu_resource,
-> >> +struct sysmmu_resource_map {
-> >> + =A0 =A0 struct platform_device *pdev;
-> >> + =A0 =A0 struct resource *res;
-> >> + =A0 =A0 u32 rnum;
-> >> + =A0 =A0 struct device *pdd;
-> >> + =A0 =A0 char *clocknames;
-> >> =A0};
-> >> -EXPORT_SYMBOL(exynos4_device_sysmmu);
-> >>
-> >> -static struct clk *sysmmu_clk[S5P_SYSMMU_TOTAL_IPNUM];
-> >> -void sysmmu_clk_init(struct device *dev, sysmmu_ips ips)
-> >> -{
-> >> - =A0 =A0 sysmmu_clk[ips] =3D clk_get(dev, sysmmu_ips_name[ips]);
-> >> - =A0 =A0 if (IS_ERR(sysmmu_clk[ips]))
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 sysmmu_clk[ips] =3D NULL;
-> >> - =A0 =A0 else
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 clk_put(sysmmu_clk[ips]);
-> >> +#define SYSMMU_RESOURCE_MAPPING(core, ipname, resname) { =A0 =A0 =
-=A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 .pdev =3D &SYSMMU_PLATDEV(ipname), =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .res =3D SYSMMU_RESOURCE_NAME(EXYNOS##core, resname), =A0=
- =A0 =A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 .rnum =3D ARRAY_SIZE(SYSMMU_RESOURCE_NAME(EXYNOS##core, =
-resname)),\
-> >> + =A0 =A0 .clocknames =3D SYSMMU_CLOCK_NAME, =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> =A0}
-> >>
-> >> -void sysmmu_clk_enable(sysmmu_ips ips)
-> >> -{
-> >> - =A0 =A0 if (sysmmu_clk[ips])
-> >> - =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(sysmmu_clk[ips]);
-> >> +#define SYSMMU_RESOURCE_MAPPING_MC(core, ipname, resname, pdata) =
-{ =A0 \
-> >> + =A0 =A0 .pdev =3D &SYSMMU_PLATDEV(ipname), =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .res =3D SYSMMU_RESOURCE_NAME(EXYNOS##core, resname), =A0=
- =A0 =A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 .rnum =3D ARRAY_SIZE(SYSMMU_RESOURCE_NAME(EXYNOS##core, =
-resname)),\
-> >> + =A0 =A0 .clocknames =3D SYSMMU_CLOCK_NAME "," SYSMMU_CLOCK_NAME2=
-, =A0 =A0 =A0 =A0 \
-> >> +}
-> >> +
-> >> +#ifdef CONFIG_EXYNOS_DEV_PD
-> >> +#define SYSMMU_RESOURCE_MAPPING_PD(core, ipname, resname, pd) { =A0=
- =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .pdev =3D &SYSMMU_PLATDEV(ipname), =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .res =3D &SYSMMU_RESOURCE_NAME(EXYNOS##core, resname), =A0=
- =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .rnum =3D ARRAY_SIZE(SYSMMU_RESOURCE_NAME(EXYNOS##core, =
-resname)),\
-> >> + =A0 =A0 .clocknames =3D SYSMMU_CLOCK_NAME, =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .pdd =3D &exynos##core##_device_pd[pd].dev, =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> >> +}
-> >> +
-> >> +#define SYSMMU_RESOURCE_MAPPING_MCPD(core, ipname, resname, pd, p=
-data) {\
-> >> + =A0 =A0 .pdev =3D &SYSMMU_PLATDEV(ipname), =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .res =3D &SYSMMU_RESOURCE_NAME(EXYNOS##core, resname), =A0=
- =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 .rnum =3D ARRAY_SIZE(SYSMMU_RESOURCE_NAME(EXYNOS##core, =
-resname)),\
-> >> + =A0 =A0 .clocknames =3D SYSMMU_CLOCK_NAME "," SYSMMU_CLOCK_NAME2=
-, =A0 =A0 =A0 =A0 \
-> >> + =A0 =A0 .pdd =3D &exynos##core##_device_pd[pd].dev, =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 \
-> >> =A0}
-> >> +#else
-> >> +#define SYSMMU_RESOURCE_MAPPING_PD(core, ipname, resname, pd) =A0=
- =A0 =A0 =A0 =A0 =A0 =A0 =A0\
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 SYSMMU_RESOURCE_MAPPING(core, ipname, re=
-sname)
-> >> +#define SYSMMU_RESOURCE_MAPPING_MCPD(core, ipname, resname, pd, p=
-data) =A0 =A0 =A0 \
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 SYSMMU_RESOURCE_MAPPING_MC(core, ipname,=
- resname, pdata)
-> >> +
-> >> +#endif /* CONFIG_EXYNOS_DEV_PD */
-> >> +
-> >> +#ifdef CONFIG_ARCH_EXYNOS4
-> > Below definitions are almost __initdata. So don't need to use ARCH_=
-EXYNOS4.
-> > and another reason is that it can detect the duplicated entry if it=
-'s
-> > used both exynos4 and exynos5.
 
-=46IMC devices use s5p-fimc name in the mainline kernel. The driver is =
-already there so
-there, so please don't change it. 4 more lines with proper 'fimc' name =
-will not cause
-any problems.
+Hi!
 
-Best regards
---=20
-Marek Szyprowski
-Samsung Poland R&D Center
+
+> On 29 February 2012 20:21, Karol Lewandowski <k.lewandowsk@samsung.com> wrote:
+>> Make it possible to instantiate sii9234, HDMI's MHL, from regular
+>> device tree description.
+>>
+>> Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  Documentation/devicetree/bindings/i2c/sii9234.txt |   14 ++++++++++++++
+>>  drivers/media/video/s5p-tv/sii9234_drv.c          |   20 +++++++++++++++++++-
+>>  2 files changed, 33 insertions(+), 1 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/i2c/sii9234.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/i2c/sii9234.txt b/Documentation/devicetree/bindings/i2c/sii9234.txt
+>> new file mode 100644
+>> index 0000000..7bb7636
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/i2c/sii9234.txt
+>> @@ -0,0 +1,14 @@
+>> +* SII 9234
+>> +
+> 
+> A minimal description about this device would be helpful here.
+> 
+>> +Required properties :
+>> + - compatible : "sii,9234"
+> 
+> To be more informative, can this be changed to "sil,mhl-9234".
+
+
+Thanks for pointing this out - I'll fix compat string and add description.
+
+> 
+>> + - reg        : i2c device address
+>> + - gpio-reset : gpio line used to reset IC
+>> +
+>> +Example:
+>> +
+>> +       mhl@39 {
+>> +               compatible = "sii,9234";
+>> +               reg = <0x39>;
+>> +               gpio-reset = <&gpf3 4 0 0 0>;
+>> +       };
+>> diff --git a/drivers/media/video/s5p-tv/sii9234_drv.c b/drivers/media/video/s5p-tv/sii9234_drv.c
+>> index 0f31ecc..0a1511a 100644
+>> --- a/drivers/media/video/s5p-tv/sii9234_drv.c
+>> +++ b/drivers/media/video/s5p-tv/sii9234_drv.c
+>> @@ -22,6 +22,8 @@
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/regulator/machine.h>
+>>  #include <linux/slab.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_gpio.h>
+>>
+>>  #include <mach/gpio.h>
+>>  #include <plat/gpio-cfg.h>
+>> @@ -338,7 +340,15 @@ static int __devinit sii9234_probe(struct i2c_client *client,
+>>                goto fail_ctx;
+>>        }
+>>
+>> -       ctx->gpio_n_reset = pdata->gpio_n_reset;
+>> +       if (dev->of_node) {
+>> +               ctx->gpio_n_reset = of_get_named_gpio(dev->of_node, "gpio-reset", 0);
+>> +               if (ctx->gpio_n_reset < 0) {
+> 
+> if (gpio_is_valid(ctx->gpio_n_reset)) can be used here.
+
+
+Will fix, I wasn't aware of this either.
+
+> 
+>> +                       ret = -ENODEV;
+>> +                       goto fail_power;
+>> +               }
+>> +       } else
+>> +               ctx->gpio_n_reset = pdata->gpio_n_reset;
+> 
+> linux coding style suggests to have braces for 'else' branch when
+> braces are used for the 'if' branch.
+
+
+Ok.
+
+> 
+>> +
+>>        ret = gpio_request(ctx->gpio_n_reset, "MHL_RST");
+>>        if (ret) {
+>>                dev_err(dev, "failed to acquire MHL_RST gpio\n");
+>> @@ -401,6 +411,13 @@ static int __devexit sii9234_remove(struct i2c_client *client)
+>>        return 0;
+>>  }
+>>
+>> +#ifdef CONFIG_OF
+>> +static const struct of_device_id sii9234_dt_match[] = {
+>> +       { .compatible = "sii,9234" },
+>> +       { },
+>> +};
+>> +MODULE_DEVICE_TABLE(of, sii9234_dt_match);
+>> +#endif
+>>
+>>  static const struct i2c_device_id sii9234_id[] = {
+>>        { "SII9234", 0 },
+>> @@ -413,6 +430,7 @@ static struct i2c_driver sii9234_driver = {
+>>                .name   = "sii9234",
+>>                .owner  = THIS_MODULE,
+>>                .pm = &sii9234_pm_ops,
+>> +               .of_match_table = of_match_ptr(sii9234_dt_match),
+>>        },
+>>        .probe          = sii9234_probe,
+>>        .remove         = __devexit_p(sii9234_remove),
+>> --
+>> 1.7.8.3
+>>
+> 
+> Thanks,
+> Thomas.
+
+
+Thanks for reviewing this!
+
+Regards,
+-- 
+Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
