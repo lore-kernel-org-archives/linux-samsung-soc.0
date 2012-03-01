@@ -1,29 +1,29 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] Move S3C2412_PM_SLEEP to common platform code
-Date: Thu, 01 Mar 2012 13:10:30 +0900
-Message-ID: <076c01ccf761$3d92a1d0$b8b7e570$%kim@samsung.com>
+Subject: RE: [PATCH 09/12] ARM: S3C2416: move mach-s3c2416/* into mach-s3c24xx/
+Date: Thu, 01 Mar 2012 13:11:55 +0900
+Message-ID: <076d01ccf761$709e6960$51db3c20$%kim@samsung.com>
 References: <1329346545-16373-1-git-send-email-kgene.kim@samsung.com>
- <1329346545-16373-9-git-send-email-kgene.kim@samsung.com>
- <201202282234.17056.heiko@sntech.de>
+ <1329346545-16373-10-git-send-email-kgene.kim@samsung.com>
+ <201202282218.09602.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37744 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754991Ab2CAEKc convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37038 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754991Ab2CAEL5 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Feb 2012 23:10:32 -0500
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Wed, 29 Feb 2012 23:11:57 -0500
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M0600IL8U98K560@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:10:31 +0900 (KST)
+ 2010)) with ESMTP id <0M0600H34UBPNWA0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:11:56 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M0600ACKU9ICA70@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:10:31 +0900 (KST)
-In-reply-to: <201202282234.17056.heiko@sntech.de>
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M06001VAUBV9X20@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Thu, 01 Mar 2012 13:11:56 +0900 (KST)
+In-reply-to: <201202282218.09602.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,53 +32,19 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben
 
 Heiko St=FCbner wrote:
 >=20
-> S3C2412_PM_SLEEP is also used by the S3C2416, so move it out of the
-> if CPU_S3C2412 block to the common platform code to prevent warnings
-> when S3C2416_PM is selected but not CPU_S3C2412.
+> Am Mittwoch 15 Februar 2012, 23:55:43 schrieb Kukjin Kim:
+> > This patch moves S3C2416 stuff into mach-s3c24xx/ directory
+> > so that we can merge the s3c24 series' directories to the
+> > just one mach-s3c24xx/ directory.
+> >
+> > Cc: Ben Dooks <ben-linux@fluff.org>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 >=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
-> this should probably be folded into the S3C2412 move patch
+> On S3C2416 hardware
 >=20
->  arch/arm/mach-s3c24xx/Kconfig |   12 ++++++------
->  1 files changed, 6 insertions(+), 6 deletions(-)
+> Tested-by: Heiko Stuebner <heiko@sntech.de>
 >=20
-> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kc=
-onfig
-> index 599e025..158958c 100644
-> --- a/arch/arm/mach-s3c24xx/Kconfig
-> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> @@ -83,6 +83,12 @@ config CPU_S3C2443
->=20
->  comment "S3C24XX base platform code"
->=20
-> +config S3C2412_PM_SLEEP
-> +	bool
-> +	help
-> +	  Internal config node to apply sleep for S3C2412 power management.
-> +	  Can be selected by another SoCs with similar sleep procedure.
-> +
->  config S3C24XX_DMA
->  	bool "S3C2410 DMA support"
->  	depends on ARCH_S3C24XX
-> @@ -253,12 +259,6 @@ config S3C2412_PM
->  	help
->  	  Internal config node to apply S3C2412 power management
->=20
-> -config S3C2412_PM_SLEEP
-> -	bool
-> -	help
-> -	  Internal config node to apply sleep for S3C2412 power management.
-> -	  Can be selected by another SoCs with similar sleep procedure.
-> -
->  comment "S3C2412 Boards"
->=20
->  #
-> --
-> 1.7.2.3
-
-Looks good to me and will apply.
-Thanks.
+Thank you for your testing and will amend this commit.
 
 Best regards,
 Kgene.
