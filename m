@@ -1,83 +1,54 @@
-From: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
-Date: Thu, 01 Mar 2012 09:47:09 +0530
-Message-ID: <4F4EF845.7050803@linaro.org>
-References: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org>
-	<1322718611-20934-3-git-send-email-tushar.behera@linaro.org>
-	<001701ccf6cc$a83727d0$f8a57770$%han@samsung.com>
-	<076b01ccf760$ad072730$07157590$%kim@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 2/4] ARM: EXYNOS: Enable JPEG on Origen
+Date: Thu,  1 Mar 2012 09:35:50 +0530
+Message-ID: <1330574752-14088-3-git-send-email-sachin.kamat@linaro.org>
+References: <1330574752-14088-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-In-Reply-To: <076b01ccf760$ad072730$07157590$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, 'Sylwester Nawrocki' <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:63053 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754146Ab2CAESM (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 29 Feb 2012 23:18:12 -0500
+Received: by pbcup15 with SMTP id up15so391477pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Feb 2012 20:18:12 -0800 (PST)
+In-Reply-To: <1330574752-14088-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Hi Kukjin,
+Enables JPEG support on Origen board.
 
-On 03/01/2012 09:36 AM, Kukjin Kim wrote:
-> Jingoo Han wrote:
->>
->> Hi Tushar,
->>
-> 
-> (please don't top-post)
-> 
->>> -----Original Message-----
->>> From: linux-samsung-soc-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org [mailto:linux-samsung-soc-
->> owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org] On Behalf
->>> Of Tushar Behera
->>> Sent: Thursday, December 01, 2011 2:50 PM
->>> To: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>> Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org; linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org;
->> patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
->>> Subject: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
->>>
->>> The framebuffer driver needs the clock named 'lcd' as its bus
->>> clock but the equivalent clock on Exynos4 is named as 'fimd'.
->>> Hence, create a clkdev lookup entry with the name 'lcd' that
->>> references the 'fimd' clock.
->>>
->>> Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->>
->> Acked-by: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
->>
-> 
-> OK, I will apply this with Sylwester's 'reviewed-by' I looked at  before.
-> 
-Thanks. Do you want me rebase this patch on your latest for-next and resend?
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/Kconfig       |    1 +
+ arch/arm/mach-exynos/mach-origen.c |    1 +
+ 2 files changed, 2 insertions(+), 0 deletions(-)
 
-> BTW, Tushar, what's the [1/3] and [3/3] in this series? If they are still
-> needed now, could you please re-send? Maybe I missed.
-> 
-"[PATCH 1/3] ARM: EXYNOS: Increase DMA pool allocator size for framebuffer"
-	- It should be dropped.
-
-"[PATCH 3/3] ARM: EXYNOS: Invert VCLK polarity for framebuffer on Origen
-board"
-	- It has already been applied.
-
-
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-
-
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 8757124..41eead3 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -305,6 +305,7 @@ config MACH_ORIGEN
+ 	select S5P_DEV_FIMD0
+ 	select S5P_DEV_G2D
+ 	select S5P_DEV_I2C_HDMIPHY
++	select S5P_DEV_JPEG
+ 	select S5P_DEV_MFC
+ 	select S5P_DEV_TV
+ 	select S5P_DEV_USB_EHCI
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 02c242e..827cb99 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -637,6 +637,7 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&s5p_device_g2d,
+ 	&s5p_device_hdmi,
+ 	&s5p_device_i2c_hdmiphy,
++	&s5p_device_jpeg,
+ 	&s5p_device_mfc,
+ 	&s5p_device_mfc_l,
+ 	&s5p_device_mfc_r,
 -- 
-Tushar Behera
+1.7.4.1
