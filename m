@@ -1,47 +1,54 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device tree support
-Date: Fri, 02 Mar 2012 15:40:05 -0500
-Message-ID: <m2ty26n3dm.fsf@bob.laptop.org>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
-	<003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
-	<m2aa4pkq5g.fsf@bob.laptop.org> <4F3CFEED.6060206@samsung.com>
-	<m239abgc32.fsf@bob.laptop.org>
-	<00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com>
-	<m2vcn0496y.fsf@bob.laptop.org> <20120222125823.GA14463@sirena.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH v3] ARM: S3C24XX DMA resume regression fix
+Date: Sat, 03 Mar 2012 08:57:27 +0900
+Message-ID: <4F515E67.20500@samsung.com>
+References: <077201ccf767c6d1ec05475c40$%kim@samsung.com> <1330610031-2237-1-git-send-email-dron0gus@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:38957 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1030589Ab2CBUlC (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:58471 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965617Ab2CBX5g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Mar 2012 15:41:02 -0500
-In-Reply-To: <20120222125823.GA14463@sirena.org.uk> (Mark Brown's message of
-	"Wed, 22 Feb 2012 12:58:23 +0000")
+	Fri, 2 Mar 2012 18:57:36 -0500
+Received: by dajr28 with SMTP id r28so2536374daj.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 02 Mar 2012 15:57:36 -0800 (PST)
+In-Reply-To: <1330610031-2237-1-git-send-email-dron0gus@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org
+To: Gusakov Andrey <dron0gus@gmail.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
 
-Hi,
-
-On Wed, Feb 22 2012, Mark Brown wrote:
-> On Tue, Feb 21, 2012 at 08:17:41AM -0500, Chris Ball wrote:
+On 03/01/12 22:53, Gusakov Andrey wrote:
+> s3c2410_dma_suspend suspends channels from 0 to dma_channels.
+> s3c2410_dma_resume resumes channels in reverse order. So
+> pointer should be decremented instead of being incremented.
 >
->> Pushed to mmc-next, thanks.  (I'm expecting that you'll do the merge
->> to Linus.)
+> Signed-off-by: Gusakov Andrey<dron0gus@gmail.com>
+> Reviewed-by: Heiko Stuebner<heiko@sntech.de>
+> ---
+>   arch/arm/plat-s3c24xx/dma.c |    2 +-
+>   1 files changed, 1 insertions(+), 1 deletions(-)
 >
-> I've been sending patches adding runtime PM support to this driver for a
-> while with no response - are there any issues with those?
+> diff --git a/arch/arm/plat-s3c24xx/dma.c b/arch/arm/plat-s3c24xx/dma.c
+> index 57abec9..16510d5 100644
+> --- a/arch/arm/plat-s3c24xx/dma.c
+> +++ b/arch/arm/plat-s3c24xx/dma.c
+> @@ -1249,7 +1249,7 @@ static void s3c2410_dma_resume(void)
+>   	struct s3c2410_dma_chan *cp = s3c2410_chans + dma_channels - 1;
+>   	int channel;
+>
+> -	for (channel = dma_channels - 1; channel>= 0; cp++, channel--)
+> +	for (channel = dma_channels - 1; channel>= 0; cp--, channel--)
+>   		s3c2410_dma_resume_chan(cp);
+>   }
+>
 
-I don't have s3c hardware, so I've been waiting for a Tested-by or ACK
-from someone who does -- Kukjin, any objection if I take this into
-mmc-next with a plan to merge it, to provoke some testing?  Is it
-possible for you to test/review the patch?
+Applied, thanks.
 
-Thanks,
-
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
