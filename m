@@ -1,63 +1,89 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 1/2] mmc: sdhci-s3c: Use CONFIG_PM_SLEEP to ifdef system suspend
-Date: Sat,  3 Mar 2012 00:46:41 +0000
-Message-ID: <1330735602-22409-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <4F51697C.40408@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:41509 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751644Ab2CCAqq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 2 Mar 2012 19:46:46 -0500
-In-Reply-To: <4F51697C.40408@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH 0/4] thermal: exynos: Add kernel thermal support
+	for exynos platform
+Date: Sat,  3 Mar 2012 16:36:03 +0530
+Message-ID: <1330772767-16120-1-git-send-email-amit.kachhap@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Chris Ball <cjb@laptop.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-This matches current best practice as one can have runtime PM enabled
-without system sleep and CONFIG_PM is defined for both.
+Changes since RFC:
+*Moved the Temperature sensor driver from driver/hwmon/ to driver/mfd
+ as discussed with Guenter Roeck <guenter.roeck@ericsson.com> and 
+ Donggeun Kim <dg77.kim@samsung.com> (https://lkml.org/lkml/2012/1/5/7)
+*Some changes according to the changes in common cpu cooling APIs
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- drivers/mmc/host/sdhci-s3c.c |    9 +++++----
- 1 files changed, 5 insertions(+), 4 deletions(-)
+All the patchset based on Kernel version 3.3-rc5 and uses the cpufreq
+cooling registration APIs implemented in earlier patchset 
+https://lkml.org/lkml/2012/2/22/123
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index ea0767e..46152d6 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -22,6 +22,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_gpio.h>
-+#include <linux/pm.h>
- 
- #include <linux/mmc/host.h>
- 
-@@ -807,8 +808,7 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
--#ifdef CONFIG_PM
--
-+#ifdef CONFIG_PM_SLEEP
- static int sdhci_s3c_suspend(struct device *dev)
- {
- 	struct sdhci_host *host = dev_get_drvdata(dev);
-@@ -822,10 +822,11 @@ static int sdhci_s3c_resume(struct device *dev)
- 
- 	return sdhci_resume_host(host);
- }
-+#endif
- 
-+#ifdef CONFIG_PM
- static const struct dev_pm_ops sdhci_s3c_pmops = {
--	.suspend	= sdhci_s3c_suspend,
--	.resume		= sdhci_s3c_resume,
-+	SET_SYSTEM_SLEEP_PM_OPS(sdhci_s3c_suspend, sdhci_s3c_resume)
- };
- 
- #define SDHCI_S3C_PMOPS (&sdhci_s3c_pmops)
--- 
-1.7.9.1
+The code added in this patchset adds a thermal interface layer for samsung
+exynos platforms. This layer is registered from the temperature sensor driver 
+and recieves/monitor the temperature from the sensor and informs the
+generic thermal layer to take the necessary cooling action. Currently, this
+layer can be used to create only one thermal zone and hence only one
+temperature sensor can register. The future goal is to make this handle
+multiple thermal zones.
+
+Some modifications are done in the temperature sensor driver to export the
+information needed for the thermal interface to register with the core linux
+thermal framework and with the cpu frequency based cooling devices.
+
+A simple data/control flow diagrams to illustrate this,
+
+Core Linux thermal <------->  Exynos thermal  <-------- Temperature Sensor
+	  |                             |
+	 \|/                            |
+  Cpufreq cooling device <-----
+
+
+Amit Daniel Kachhap (4):
+  thermal: exynos: Add thermal interface support for linux thermal
+    layer
+  hwmon: exynos4: Move thermal sensor driver to driver/mfd directory
+  thermal: exynos4: Register the tmu sensor with the thermal interface
+    layer
+  ARM: exynos4: Add thermal sensor driver platform device support
+
+ Documentation/hwmon/exynos4_tmu           |   81 -----
+ Documentation/mfd/exynos4_tmu             |   52 +++
+ arch/arm/mach-exynos/Kconfig              |   11 +
+ arch/arm/mach-exynos/Makefile             |    1 +
+ arch/arm/mach-exynos/clock.c              |    4 +
+ arch/arm/mach-exynos/dev-tmu.c            |   64 ++++
+ arch/arm/mach-exynos/include/mach/irqs.h  |    2 +
+ arch/arm/mach-exynos/include/mach/map.h   |    1 +
+ arch/arm/mach-exynos/mach-origen.c        |    1 +
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ drivers/hwmon/Kconfig                     |   10 -
+ drivers/hwmon/Makefile                    |    1 -
+ drivers/hwmon/exynos4_tmu.c               |  514 -----------------------------
+ drivers/mfd/Kconfig                       |   10 +
+ drivers/mfd/Makefile                      |    1 +
+ drivers/mfd/exynos4_tmu.c                 |  443 +++++++++++++++++++++++++
+ drivers/thermal/Kconfig                   |    8 +
+ drivers/thermal/Makefile                  |    1 +
+ drivers/thermal/exynos_thermal.c          |  272 +++++++++++++++
+ include/linux/exynos_thermal.h            |   72 ++++
+ include/linux/platform_data/exynos4_tmu.h |    7 +
+ 21 files changed, 951 insertions(+), 606 deletions(-)
+ delete mode 100644 Documentation/hwmon/exynos4_tmu
+ create mode 100644 Documentation/mfd/exynos4_tmu
+ create mode 100644 arch/arm/mach-exynos/dev-tmu.c
+ delete mode 100644 drivers/hwmon/exynos4_tmu.c
+ create mode 100644 drivers/mfd/exynos4_tmu.c
+ create mode 100644 drivers/thermal/exynos_thermal.c
+ create mode 100644 include/linux/exynos_thermal.h
