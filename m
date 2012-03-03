@@ -1,29 +1,44 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform
- data
-Date: Sat, 3 Mar 2012 16:30:01 +0000
-Message-ID: <20120303163000.GA1495@sirena.org.uk>
-References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH 2/4] hwmon: exynos4: Move thermal sensor
+ driver to driver/mfd directory
+Date: Sat, 3 Mar 2012 16:44:10 +0000
+Message-ID: <20120303164410.GB1495@sirena.org.uk>
+References: <1330772767-16120-1-git-send-email-amit.kachhap@linaro.org>
+	<1330772767-16120-3-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cassiel.sirena.org.uk ([80.68.93.111]:34414 "EHLO
-	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752781Ab2CCQaD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Mar 2012 11:30:03 -0500
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
 Content-Disposition: inline
-In-Reply-To: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+In-Reply-To: <1330772767-16120-3-git-send-email-amit.kachhap@linaro.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, patches@linaro.org
 
-On Sat, Mar 03, 2012 at 09:20:05PM +0530, Thomas Abraham wrote:
-> This patchset rearranges the elements in the platform data of the s3c-fb
-> driver with the intent of adding device tree support to the driver in
-> subsequent patches.
+On Sat, Mar 03, 2012 at 04:36:05PM +0530, Amit Daniel Kachhap wrote:
+> This movement is needed because the hwmon entries and corresponding
+> sysfs interface is a duplicate of utilities already provided by
+> driver/thermal/thermal_sys.c. The goal is to place it in mfd folder
+> and add necessary calls to get the temperature information.
 
-It seems somewhat surprising that none of these updates touch any
-platform data for any existing machines - are no machines using any of
-the features being updated?
+> --- a/Documentation/hwmon/exynos4_tmu
+> +++ /dev/null
+
+Moving this seems to be a failure, the device is exposing a hwmon
+interface even if you've moved the code to mfd (though it doesn't
+actually look like a multi-function device at all as far as I can see -
+usually a MFD would have a bunch of unrelated functionality while this
+has one function used by two subsystems).
+
+If anything it looks like the ADC driver ought to be moved into IIO with
+either generic or Exynos specific function drivers layered on top of it
+in hwmon and thermal making use of the values that are read.
