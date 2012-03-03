@@ -1,55 +1,256 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform data
-Date: Sat, 03 Mar 2012 21:20:05 +0530
-Message-ID: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 1/3] video: s3c-fb: move video interface timing out of window
+ setup data
+Date: Sat, 03 Mar 2012 21:20:06 +0530
+Message-ID: <1330789808-8253-2-git-send-email-thomas.abraham@linaro.org>
+References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.samsung.com ([203.254.224.34]:49016 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750870Ab2CCPpk (ORCPT
+	with ESMTP id S1750968Ab2CCPpl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Mar 2012 10:45:40 -0500
+	Sat, 3 Mar 2012 10:45:41 -0500
+In-reply-to: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org
 Cc: FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, patches@linaro.org
 
-This patchset rearranges the elements in the platform data of the s3c-fb
-driver with the intent of adding device tree support to the driver in
-subsequent patches.
+The video interface timing is independent of the window setup data.
+The resolution of the window can be smaller than that of the lcd
+panel to which the video data is output.
 
-The first patch moves the video timing information from the individual window
-setup data into the platform specific configuration section in the platform
-data. The video timing is independent of the window setup. The resolution of
-the window could be smaller than that of the lcd panel attached. So the video
-timing data is removed from window configuration data.
+So move the video timing data from the per-window setup data to the
+platform specific section in the platform data. This also removes
+the restriction that atleast one window should have the same
+resolution as that of the panel attached.
 
-The second patch removes the need for the 'default_win' element in the
-platform data. This element was used to decide whether the video data
-output from the controller should be enabled or disabled when the window
-specified by 'default_win' is enabled or disabled. With the first patch
-removing the need for atleast one window to be of the same resolution as
-that of the lcd panel, it is now possible to decide when to enable/disable
-the video data output based on the state of each window. If any of the
-window is active, the lcd data output is enabled. Otherwise, the lcd data
-output is disabled. Hence, the 'default_win' parameter from the platform
-data can be removed, which anyways cannot be specified when using
-device tree.
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/plat-samsung/include/plat/fb.h |    9 ++-
+ drivers/video/s3c-fb.c                  |  106 +++++++++++++++++--------------
+ 2 files changed, 63 insertions(+), 52 deletions(-)
 
-The third patch reworks the platform data of the display controller based
-on the changes introduced in the first two patches.
-
-The patchset does not include the rework of platform data of all the other
-boards which have platform data for the s3c-fb driver. I am posting this
-patchset to know if the the changes are conceptually correct. If the first
-two patches are acceptable, I will resubmit this patchset with changes to
-the platform data for all boards which have s3c-fb platform data.
-
-Thomas Abraham (3):
-  video: s3c-fb: move video interface timing out of window setup data
-  video: s3c-fb: remove 'default_win' element from platform data
-  ARM: Exynos: Rework platform data for lcd controller for Origen board
-
- arch/arm/mach-exynos/mach-origen.c      |   24 ++++---
- arch/arm/plat-samsung/include/plat/fb.h |   11 ++-
- drivers/video/s3c-fb.c                  |  128 ++++++++++++++----------------
- 3 files changed, 80 insertions(+), 83 deletions(-)
+diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
+index 0fedf47..39d6bd7 100644
+--- a/arch/arm/plat-samsung/include/plat/fb.h
++++ b/arch/arm/plat-samsung/include/plat/fb.h
+@@ -24,15 +24,16 @@
+ 
+ /**
+  * struct s3c_fb_pd_win - per window setup data
+- * @win_mode: The display parameters to initialise (not for window 0)
++ * @xres     : The window X size.
++ * @yres     : The window Y size.
+  * @virtual_x: The virtual X size.
+  * @virtual_y: The virtual Y size.
+  */
+ struct s3c_fb_pd_win {
+-	struct fb_videomode	win_mode;
+-
+ 	unsigned short		default_bpp;
+ 	unsigned short		max_bpp;
++	unsigned short		xres;
++	unsigned short		yres;
+ 	unsigned short		virtual_x;
+ 	unsigned short		virtual_y;
+ };
+@@ -45,6 +46,7 @@ struct s3c_fb_pd_win {
+  * @default_win: default window layer number to be used for UI layer.
+  * @vidcon0: The base vidcon0 values to control the panel data format.
+  * @vidcon1: The base vidcon1 values to control the panel data output.
++ * @vtiming: Video timing when connected to a RGB type panel.
+  * @win: The setup data for each hardware window, or NULL for unused.
+  * @display_mode: The LCD output display mode.
+  *
+@@ -58,6 +60,7 @@ struct s3c_fb_platdata {
+ 	void	(*setup_gpio)(void);
+ 
+ 	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
++	struct fb_videomode     *vtiming;
+ 
+ 	u32			 default_win;
+ 
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 1fb7ddf..8e05d4d 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -495,7 +495,6 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 	u32 alpha = 0;
+ 	u32 data;
+ 	u32 pagewidth;
+-	int clkdiv;
+ 
+ 	dev_dbg(sfb->dev, "setting framebuffer parameters\n");
+ 
+@@ -532,46 +531,9 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 	/* disable the window whilst we update it */
+ 	writel(0, regs + WINCON(win_no));
+ 
+-	/* use platform specified window as the basis for the lcd timings */
+-
+-	if (win_no == sfb->pdata->default_win) {
+-		clkdiv = s3c_fb_calc_pixclk(sfb, var->pixclock);
+-
+-		data = sfb->pdata->vidcon0;
+-		data &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
+-
+-		if (clkdiv > 1)
+-			data |= VIDCON0_CLKVAL_F(clkdiv-1) | VIDCON0_CLKDIR;
+-		else
+-			data &= ~VIDCON0_CLKDIR;	/* 1:1 clock */
+-
+-		/* write the timing data to the panel */
+-
+-		if (sfb->variant.is_2443)
+-			data |= (1 << 5);
+-
+-		writel(data, regs + VIDCON0);
+-
++	if (win_no == sfb->pdata->default_win)
+ 		s3c_fb_enable(sfb, 1);
+ 
+-		data = VIDTCON0_VBPD(var->upper_margin - 1) |
+-		       VIDTCON0_VFPD(var->lower_margin - 1) |
+-		       VIDTCON0_VSPW(var->vsync_len - 1);
+-
+-		writel(data, regs + sfb->variant.vidtcon);
+-
+-		data = VIDTCON1_HBPD(var->left_margin - 1) |
+-		       VIDTCON1_HFPD(var->right_margin - 1) |
+-		       VIDTCON1_HSPW(var->hsync_len - 1);
+-
+-		/* VIDTCON1 */
+-		writel(data, regs + sfb->variant.vidtcon + 4);
+-
+-		data = VIDTCON2_LINEVAL(var->yres - 1) |
+-		       VIDTCON2_HOZVAL(var->xres - 1);
+-		writel(data, regs + sfb->variant.vidtcon + 8);
+-	}
+-
+ 	/* write the buffer address */
+ 
+ 	/* start and end registers stride is 8 */
+@@ -1136,11 +1098,11 @@ static int __devinit s3c_fb_alloc_memory(struct s3c_fb *sfb,
+ 
+ 	dev_dbg(sfb->dev, "allocating memory for display\n");
+ 
+-	real_size = windata->win_mode.xres * windata->win_mode.yres;
++	real_size = windata->xres * windata->yres;
+ 	virt_size = windata->virtual_x * windata->virtual_y;
+ 
+ 	dev_dbg(sfb->dev, "real_size=%u (%u.%u), virt_size=%u (%u.%u)\n",
+-		real_size, windata->win_mode.xres, windata->win_mode.yres,
++		real_size, windata->xres, windata->yres,
+ 		virt_size, windata->virtual_x, windata->virtual_y);
+ 
+ 	size = (real_size > virt_size) ? real_size : virt_size;
+@@ -1222,7 +1184,7 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ 				      struct s3c_fb_win **res)
+ {
+ 	struct fb_var_screeninfo *var;
+-	struct fb_videomode *initmode;
++	struct fb_videomode initmode;
+ 	struct s3c_fb_pd_win *windata;
+ 	struct s3c_fb_win *win;
+ 	struct fb_info *fbinfo;
+@@ -1243,11 +1205,11 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ 	}
+ 
+ 	windata = sfb->pdata->win[win_no];
+-	initmode = &windata->win_mode;
++	initmode = *sfb->pdata->vtiming;
+ 
+ 	WARN_ON(windata->max_bpp == 0);
+-	WARN_ON(windata->win_mode.xres == 0);
+-	WARN_ON(windata->win_mode.yres == 0);
++	WARN_ON(windata->xres == 0);
++	WARN_ON(windata->yres == 0);
+ 
+ 	win = fbinfo->par;
+ 	*res = win;
+@@ -1286,7 +1248,9 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ 	}
+ 
+ 	/* setup the initial video mode from the window */
+-	fb_videomode_to_var(&fbinfo->var, initmode);
++	initmode.xres = windata->xres;
++	initmode.yres = windata->yres;
++	fb_videomode_to_var(&fbinfo->var, &initmode);
+ 
+ 	fbinfo->fix.type	= FB_TYPE_PACKED_PIXELS;
+ 	fbinfo->fix.accel	= FB_ACCEL_NONE;
+@@ -1331,6 +1295,51 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
+ }
+ 
+ /**
++ * s3c_fb_set_rgb_timing() - set video timing for rgb interface.
++ * @sfb: The base resources for the hardware.
++ *
++ * Set horizontal and vertical lcd rgb interface timing.
++ */
++static void s3c_fb_set_rgb_timing(struct s3c_fb *sfb)
++{
++	struct fb_videomode *vmode = sfb->pdata->vtiming;
++	void __iomem *regs = sfb->regs;
++	int clkdiv;
++	u32 data;
++
++	if (!vmode->pixclock)
++		s3c_fb_missing_pixclock(vmode);
++
++	clkdiv = s3c_fb_calc_pixclk(sfb, vmode->pixclock);
++
++	data = sfb->pdata->vidcon0;
++	data &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
++
++	if (clkdiv > 1)
++		data |= VIDCON0_CLKVAL_F(clkdiv-1) | VIDCON0_CLKDIR;
++	else
++		data &= ~VIDCON0_CLKDIR;	/* 1:1 clock */
++
++	if (sfb->variant.is_2443)
++		data |= (1 << 5);
++	writel(data, regs + VIDCON0);
++
++	data = VIDTCON0_VBPD(vmode->upper_margin - 1) |
++	       VIDTCON0_VFPD(vmode->lower_margin - 1) |
++	       VIDTCON0_VSPW(vmode->vsync_len - 1);
++	writel(data, regs + sfb->variant.vidtcon);
++
++	data = VIDTCON1_HBPD(vmode->left_margin - 1) |
++	       VIDTCON1_HFPD(vmode->right_margin - 1) |
++	       VIDTCON1_HSPW(vmode->hsync_len - 1);
++	writel(data, regs + sfb->variant.vidtcon + 4);
++
++	data = VIDTCON2_LINEVAL(vmode->yres - 1) |
++	       VIDTCON2_HOZVAL(vmode->xres - 1);
++	writel(data, regs + sfb->variant.vidtcon + 8);
++}
++
++/**
+  * s3c_fb_clear_win() - clear hardware window registers.
+  * @sfb: The base resources for the hardware.
+  * @win: The window to process.
+@@ -1473,15 +1482,14 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 		writel(0xffffff, regs + WKEYCON1);
+ 	}
+ 
++	s3c_fb_set_rgb_timing(sfb);
++
+ 	/* we have the register setup, start allocating framebuffers */
+ 
+ 	for (win = 0; win < fbdrv->variant.nr_windows; win++) {
+ 		if (!pd->win[win])
+ 			continue;
+ 
+-		if (!pd->win[win]->win_mode.pixclock)
+-			s3c_fb_missing_pixclock(&pd->win[win]->win_mode);
+-
+ 		ret = s3c_fb_probe_win(sfb, win, fbdrv->win[win],
+ 				       &sfb->windows[win]);
+ 		if (ret < 0) {
+-- 
+1.6.6.rc2
