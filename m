@@ -1,66 +1,47 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform
- data
-Date: Sat, 3 Mar 2012 16:49:08 +0000
-Message-ID: <20120303164908.GD3071@opensource.wolfsonmicro.com>
-References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
- <20120303163000.GA1495@sirena.org.uk>
- <CAJuYYwRnB=6S6DmtMrX-S_LF9ayjFSHT=p5J8S1YyGMZkpaG9w@mail.gmail.com>
+From: Guenter Roeck <guenter.roeck@ericsson.com>
+Subject: Re: [lm-sensors] [linux-pm] [PATCH 2/4] hwmon: exynos4: Move thermal
+ sensor driver to driver/mfd directory
+Date: Sat, 3 Mar 2012 10:04:02 -0800
+Message-ID: <20120303180402.GA30062@ericsson.com>
+References: <1330772767-16120-1-git-send-email-amit.kachhap@linaro.org>
+ <1330772767-16120-3-git-send-email-amit.kachhap@linaro.org>
+ <20120303164410.GB1495@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lc9FT7cWel8HagAv"
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53223 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752618Ab2CCQtL (ORCPT
+Received: from imr4.ericy.com ([198.24.6.9]:40436 "EHLO imr4.ericy.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752434Ab2CCSGU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Mar 2012 11:49:11 -0500
+	Sat, 3 Mar 2012 13:06:20 -0500
 Content-Disposition: inline
-In-Reply-To: <CAJuYYwRnB=6S6DmtMrX-S_LF9ayjFSHT=p5J8S1YyGMZkpaG9w@mail.gmail.com>
+In-Reply-To: <20120303164410.GB1495@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, patches@linaro.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Amit Daniel Kachhap <amit.kachhap@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>
 
+On Sat, Mar 03, 2012 at 11:44:10AM -0500, Mark Brown wrote:
+> On Sat, Mar 03, 2012 at 04:36:05PM +0530, Amit Daniel Kachhap wrote:
+> > This movement is needed because the hwmon entries and corresponding
+> > sysfs interface is a duplicate of utilities already provided by
+> > driver/thermal/thermal_sys.c. The goal is to place it in mfd folder
+> > and add necessary calls to get the temperature information.
+> 
+> > --- a/Documentation/hwmon/exynos4_tmu
+> > +++ /dev/null
+> 
+> Moving this seems to be a failure, the device is exposing a hwmon
+> interface even if you've moved the code to mfd (though it doesn't
+> actually look like a multi-function device at all as far as I can see -
+> usually a MFD would have a bunch of unrelated functionality while this
+> has one function used by two subsystems).
+> 
+> If anything it looks like the ADC driver ought to be moved into IIO with
+> either generic or Exynos specific function drivers layered on top of it
+> in hwmon and thermal making use of the values that are read.
+> 
+I would agree. Or maybe move it all to thermal, since thermal devices register
+the hwmon subsystem.
 
---lc9FT7cWel8HagAv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Sat, Mar 03, 2012 at 10:15:32PM +0530, Thomas Abraham wrote:
-
-> The third patch in this series includes platform data updates for the
-> Exynos4210 based Origen board. If the first two patches in this series
-> are acceptable, I will submit another version of this patchset which
-> would include updates to all existing machines that have platform data
-> for s3c-fb driver. I did not want to modify all the existing machines
-> without being sure of the acceptance of the first two patches.
-
-OK, it'd have been good to highlight that more strongly so that the
-patches don't just get applied if they look OK - you did mention it but
-it was buried quite far down in the cover letter and would be very easy
-to miss.
-
---lc9FT7cWel8HagAv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPUktFAAoJEBus8iNuMP3dFVEQAJeC2YySx3proYkfMvk+0xmN
-8gOXr7FubJpOKV4BrxBkCBhn+Gv7gMv6I2PLupl8Q+FhwaxaItFZXNZrD1ckVl7t
-EdFnNE3V2bLHUWERIU29gGBY+7UUDBCQjw0YMy5UB0OnvYn1ooM7rJ5/RNVnzdxS
-Tuu3P2Y5ly4kcXf4gv8El1ASsnHlUiQnVVWxMpvE6GYi+dU8g8feqGIfFh5vQbnc
-jTaO+uil7KwOzQqRzW54WcfZ3WM5DgiA0et7enKhcYQX06oDOCBsFsX/4Io0b6ZG
-qynSvkhJmhwrCijlr5UeDUD4Ur59oosKSLJyzmm+Ea15UOVNnj6PYtfhOcersVVi
-YAHMyYq8TktFtxa/6PlEQJGiC0DzfJH0UH5Ak1bb2+w6uUWJ+oC+sLK3cvLO261e
-XCJkwi9Xr0Evkfor2BYFVvczjeGqOQDAIIF8AeN4rbHXNNPhAuq07Pnx2Eeuvqs7
-6pYOb3OTrET8FLyhavcGtFECNMFD3JBR1HP0/l3CtzSNYOXHkxIKxJP6YCZAQjwo
-q2Iv/Y/N2V+DaatzY61NuOFQOhWJUsYZ1rBXxw4LyUo7gQihMzXppqVWOz8/AkEG
-XYXnJVz3lxrvKgAf5rUj6y7zPYSzUPK0R1roiEii1794U9/GNw9sH4YAlKbjn0qX
-xU4KzotMyMTzuZdyx0ku
-=frTt
------END PGP SIGNATURE-----
-
---lc9FT7cWel8HagAv--
+Guenter
