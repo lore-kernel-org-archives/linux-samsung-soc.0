@@ -1,47 +1,43 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Subject: Re: [lm-sensors] [linux-pm] [PATCH 2/4] hwmon: exynos4: Move thermal
- sensor driver to driver/mfd directory
-Date: Sat, 3 Mar 2012 10:04:02 -0800
-Message-ID: <20120303180402.GA30062@ericsson.com>
-References: <1330772767-16120-1-git-send-email-amit.kachhap@linaro.org>
- <1330772767-16120-3-git-send-email-amit.kachhap@linaro.org>
- <20120303164410.GB1495@sirena.org.uk>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/4] Use clock functions also for clk_h and clk_p on S3C2443/2416
+Date: Sat, 3 Mar 2012 22:14:36 +0100
+Message-ID: <201203032214.36820.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from imr4.ericy.com ([198.24.6.9]:40436 "EHLO imr4.ericy.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752434Ab2CCSGU (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:49422 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751846Ab2CCVOu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Mar 2012 13:06:20 -0500
-Content-Disposition: inline
-In-Reply-To: <20120303164410.GB1495@sirena.org.uk>
+	Sat, 3 Mar 2012 16:14:50 -0500
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Amit Daniel Kachhap <amit.kachhap@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Sat, Mar 03, 2012 at 11:44:10AM -0500, Mark Brown wrote:
-> On Sat, Mar 03, 2012 at 04:36:05PM +0530, Amit Daniel Kachhap wrote:
-> > This movement is needed because the hwmon entries and corresponding
-> > sysfs interface is a duplicate of utilities already provided by
-> > driver/thermal/thermal_sys.c. The goal is to place it in mfd folder
-> > and add necessary calls to get the temperature information.
-> 
-> > --- a/Documentation/hwmon/exynos4_tmu
-> > +++ /dev/null
-> 
-> Moving this seems to be a failure, the device is exposing a hwmon
-> interface even if you've moved the code to mfd (though it doesn't
-> actually look like a multi-function device at all as far as I can see -
-> usually a MFD would have a bunch of unrelated functionality while this
-> has one function used by two subsystems).
-> 
-> If anything it looks like the ADC driver ought to be moved into IIO with
-> either generic or Exynos specific function drivers layered on top of it
-> in hwmon and thermal making use of the values that are read.
-> 
-I would agree. Or maybe move it all to thermal, since thermal devices register
-the hwmon subsystem.
+This series modifies the clock init in common-s3c2443 to use the
+struct clk operations also for clk_p and clk_h whose values were until
+now set statically in s3c24xx_setup_clocks - a function more suited to
+the earlier S3C-SoCs.
 
-Guenter
+In the end it makes the code (hopefully) easier to read, as strange
+divisions through register values get replaced by simply clk_get_rate
+calls.
+
+To apply on top of the current s3c24xx consolidation.
+
+Heiko Stuebner (4):
+  ARM: S3C24XX: remove XXX_setup_clocks method from S3C2443
+  ARM: S3C24XX: add get_rate for clk_h on S3C2416/2443
+  ARM: S3C24XX: add get_rate for clk_p on S3C2416/2443
+  ARM: S3C24XX: remove call to s3c24xx_setup_clocks
+
+ arch/arm/mach-s3c24xx/clock-s3c2443.c      |    7 ---
+ arch/arm/mach-s3c24xx/common-s3c2443.c     |   70 +++++++++++++++++++---------
+ arch/arm/plat-samsung/include/plat/clock.h |    1 -
+ 3 files changed, 48 insertions(+), 30 deletions(-)
+
+-- 
+1.7.2.3
