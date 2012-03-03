@@ -1,32 +1,55 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Subject: Re: [lm-sensors] [PATCH 3/4] thermal: exynos4: Register the tmu
- sensor with the thermal interface layer
-Date: Sat, 3 Mar 2012 06:55:38 -0800
-Message-ID: <20120303145538.GB29335@ericsson.com>
-References: <1330772767-16120-1-git-send-email-amit.kachhap@linaro.org>
- <1330772767-16120-4-git-send-email-amit.kachhap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1330772767-16120-4-git-send-email-amit.kachhap@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "patches@linaro.org" <patches@linaro.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "eduardo.valentin@ti.com" <eduardo.valentin@ti.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "lenb@kernel.org" <lenb@kernel.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform data
+Date: Sat, 03 Mar 2012 21:20:05 +0530
+Message-ID: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:49016 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750870Ab2CCPpk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 3 Mar 2012 10:45:40 -0500
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
+Cc: FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, patches@linaro.org
 
-On Sat, Mar 03, 2012 at 06:06:06AM -0500, Amit Daniel Kachhap wrote:
-> Export and register information from the tmu temperature sensor to the samsung
-> exynos kernel thermal framework where different cooling devices and thermal
-> zone are binded. The exported information is based according to the data
-> structure thermal_sensor_conf present in exynos_thermal.h. HWMON sysfs
-> functions are removed as all of them are present in generic linux thermal layer.
-> 
-> Also the platform data structure is modified to pass frequency cooling
-> in percentages for each thermal level.
-> 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+This patchset rearranges the elements in the platform data of the s3c-fb
+driver with the intent of adding device tree support to the driver in
+subsequent patches.
 
-Ah, that is what I meant. I don't think it makes sense to have this as separate patch.
+The first patch moves the video timing information from the individual window
+setup data into the platform specific configuration section in the platform
+data. The video timing is independent of the window setup. The resolution of
+the window could be smaller than that of the lcd panel attached. So the video
+timing data is removed from window configuration data.
 
-Guenter
+The second patch removes the need for the 'default_win' element in the
+platform data. This element was used to decide whether the video data
+output from the controller should be enabled or disabled when the window
+specified by 'default_win' is enabled or disabled. With the first patch
+removing the need for atleast one window to be of the same resolution as
+that of the lcd panel, it is now possible to decide when to enable/disable
+the video data output based on the state of each window. If any of the
+window is active, the lcd data output is enabled. Otherwise, the lcd data
+output is disabled. Hence, the 'default_win' parameter from the platform
+data can be removed, which anyways cannot be specified when using
+device tree.
+
+The third patch reworks the platform data of the display controller based
+on the changes introduced in the first two patches.
+
+The patchset does not include the rework of platform data of all the other
+boards which have platform data for the s3c-fb driver. I am posting this
+patchset to know if the the changes are conceptually correct. If the first
+two patches are acceptable, I will resubmit this patchset with changes to
+the platform data for all boards which have s3c-fb platform data.
+
+Thomas Abraham (3):
+  video: s3c-fb: move video interface timing out of window setup data
+  video: s3c-fb: remove 'default_win' element from platform data
+  ARM: Exynos: Rework platform data for lcd controller for Origen board
+
+ arch/arm/mach-exynos/mach-origen.c      |   24 ++++---
+ arch/arm/plat-samsung/include/plat/fb.h |   11 ++-
+ drivers/video/s3c-fb.c                  |  128 ++++++++++++++----------------
+ 3 files changed, 80 insertions(+), 83 deletions(-)
