@@ -1,43 +1,72 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 0/4] Use clock functions also for clk_h and clk_p on S3C2443/2416
-Date: Sat, 3 Mar 2012 22:14:36 +0100
-Message-ID: <201203032214.36820.heiko@sntech.de>
+Subject: [PATCH 1/4] ARM: S3C24XX: remove XXX_setup_clocks method from S3C2443
+Date: Sat, 3 Mar 2012 22:15:27 +0100
+Message-ID: <201203032215.27901.heiko@sntech.de>
+References: <201203032214.36820.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:49422 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751846Ab2CCVOu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 3 Mar 2012 16:14:50 -0500
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <201203032214.36820.heiko@sntech.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
-This series modifies the clock init in common-s3c2443 to use the
-struct clk operations also for clk_p and clk_h whose values were until
-now set statically in s3c24xx_setup_clocks - a function more suited to
-the earlier S3C-SoCs.
+s3c2443_common_setup_clocks is always called through
+s3c2443_common_init_clocks, so there is no need to call it separately.
+It was also called twice through this separate call.
 
-In the end it makes the code (hopefully) easier to read, as strange
-divisions through register values get replaced by simply clk_get_rate
-calls.
-
-To apply on top of the current s3c24xx consolidation.
-
-Heiko Stuebner (4):
-  ARM: S3C24XX: remove XXX_setup_clocks method from S3C2443
-  ARM: S3C24XX: add get_rate for clk_h on S3C2416/2443
-  ARM: S3C24XX: add get_rate for clk_p on S3C2416/2443
-  ARM: S3C24XX: remove call to s3c24xx_setup_clocks
-
- arch/arm/mach-s3c24xx/clock-s3c2443.c      |    7 ---
- arch/arm/mach-s3c24xx/common-s3c2443.c     |   70 +++++++++++++++++++---------
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/mach-s3c24xx/clock-s3c2443.c      |    7 -------
  arch/arm/plat-samsung/include/plat/clock.h |    1 -
- 3 files changed, 48 insertions(+), 30 deletions(-)
+ 2 files changed, 0 insertions(+), 8 deletions(-)
 
+diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+index 6dde269..efb3ac3 100644
+--- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
++++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+@@ -179,11 +179,6 @@ static struct clk *clks[] __initdata = {
+ 	&clk_hsmmc,
+ };
+ 
+-void __init_or_cpufreq s3c2443_setup_clocks(void)
+-{
+-	s3c2443_common_setup_clocks(s3c2443_get_mpll);
+-}
+-
+ void __init s3c2443_init_clocks(int xtal)
+ {
+ 	unsigned long epllcon = __raw_readl(S3C2443_EPLLCON);
+@@ -196,8 +191,6 @@ void __init s3c2443_init_clocks(int xtal)
+ 				   armdiv, ARRAY_SIZE(armdiv),
+ 				   S3C2443_CLKDIV0_ARMDIV_MASK);
+ 
+-	s3c2443_setup_clocks();
+-
+ 	s3c24xx_register_clocks(clks, ARRAY_SIZE(clks));
+ 
+ 	for (ptr = 0; ptr < ARRAY_SIZE(clksrcs); ptr++)
+diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
+index 3b5a9dc..a62753d 100644
+--- a/arch/arm/plat-samsung/include/plat/clock.h
++++ b/arch/arm/plat-samsung/include/plat/clock.h
+@@ -118,7 +118,6 @@ extern void s3c24xx_setup_clocks(unsigned long fclk,
+ extern void s3c2410_setup_clocks(void);
+ extern void s3c2412_setup_clocks(void);
+ extern void s3c244x_setup_clocks(void);
+-extern void s3c2443_setup_clocks(void);
+ 
+ /* S3C2410 specific clock functions */
+ 
 -- 
 1.7.2.3
