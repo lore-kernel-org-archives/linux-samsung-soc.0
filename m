@@ -1,107 +1,50 @@
 From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 5/6] ARM: S3C24XX: Add HSSPI setup callback for s3c64xx-spi driver
-Date: Sun, 4 Mar 2012 19:06:19 +0100
-Message-ID: <201203041906.20249.heiko@sntech.de>
+Subject: [PATCH 6/6] spi/s3c64xx: Allow usage for ARCH_S3C24XX
+Date: Sun, 4 Mar 2012 19:09:10 +0100
+Message-ID: <201203041909.10400.heiko@sntech.de>
 References: <201203041902.38318.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:59845 "EHLO
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:59916 "EHLO
 	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754476Ab2CDSGZ (ORCPT
+	by vger.kernel.org with ESMTP id S1754518Ab2CDSJR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Mar 2012 13:06:25 -0500
+	Sun, 4 Mar 2012 13:09:17 -0500
 In-Reply-To: <201203041902.38318.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, spi-devel-general@lists.sourceforge.net
 
-This lets the s3c64xx-spi driver know the specifics of the controller-
-variant and also setups the gpios and the misccr bit.
+Newer SoCs from the S3C24XX line, namely S3C2416/2443/2450 contain
+hsspi-controllers compatible with the s3c64xx type.
 
-This setup is valid for all S3C24XX SoCs containing a HSSPI controller
-(i.e. S3C2416/2450 and S3C2443)
+The previous patches enabled platform support for it, so make the
+driver also usable for the S3C24xx architecture.
 
 Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 ---
- arch/arm/mach-s3c24xx/Kconfig     |    5 ++++
- arch/arm/mach-s3c24xx/Makefile    |    1 +
- arch/arm/mach-s3c24xx/setup-spi.c |   39 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 45 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-s3c24xx/setup-spi.c
+As it is part of a series this probably needs an ack from Grant Likely
+and should be merged via the samsung tree.
 
-diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-index 5ebd150..bc6758a 100644
---- a/arch/arm/mach-s3c24xx/Kconfig
-+++ b/arch/arm/mach-s3c24xx/Kconfig
-@@ -484,6 +484,11 @@ config S3C2443_DMA
+ drivers/spi/Kconfig |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+index ac92194..e411364 100644
+--- a/drivers/spi/Kconfig
++++ b/drivers/spi/Kconfig
+@@ -299,7 +299,7 @@ config SPI_S3C24XX_FIQ
+ 
+ config SPI_S3C64XX
+ 	tristate "Samsung S3C64XX series type SPI"
+-	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
++	depends on (ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
+ 	select S3C64XX_DMA if ARCH_S3C64XX
  	help
- 	  Internal config node for S3C2443 DMA support
- 
-+config S3C2443_SETUP_SPI
-+	bool
-+	help
-+	  Common setup code for SPI GPIO configurations
-+
- endif	# CPU_S3C2443 || CPU_S3C2416
- 
- if CPU_S3C2443
-diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
-index 1909d66..0f5d2dd 100644
---- a/arch/arm/mach-s3c24xx/Makefile
-+++ b/arch/arm/mach-s3c24xx/Makefile
-@@ -87,3 +87,4 @@ obj-$(CONFIG_MACH_OSIRIS_DVS)		+= mach-osiris-dvs.o
- # device setup
- 
- obj-$(CONFIG_S3C2416_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
-+obj-$(CONFIG_S3C2443_SETUP_SPI)		+= setup-spi.o
-diff --git a/arch/arm/mach-s3c24xx/setup-spi.c b/arch/arm/mach-s3c24xx/setup-spi.c
-new file mode 100644
-index 0000000..5712c85
---- /dev/null
-+++ b/arch/arm/mach-s3c24xx/setup-spi.c
-@@ -0,0 +1,39 @@
-+/*
-+ * HS-SPI device setup for S3C2443/S3C2416
-+ *
-+ * Copyright (C) 2011 Samsung Electronics Ltd.
-+ *		http://www.samsung.com/
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/gpio.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/gpio-cfg.h>
-+#include <plat/s3c64xx-spi.h>
-+
-+#include <mach/hardware.h>
-+#include <mach/regs-gpio.h>
-+
-+#ifdef CONFIG_S3C64XX_DEV_SPI0
-+struct s3c64xx_spi_info s3c64xx_spi0_pdata __initdata = {
-+	.fifo_lvl_mask	= 0x7f,
-+	.rx_lvl_offset	= 13,
-+	.tx_st_done	= 21,
-+	.high_speed	= 1,
-+};
-+
-+int s3c64xx_spi0_cfg_gpio(struct platform_device *pdev)
-+{
-+	/* enable hsspi bit in misccr */
-+	s3c2410_modify_misccr(S3C2416_MISCCR_HSSPI_EN2, 1);
-+
-+	s3c_gpio_cfgall_range(S3C2410_GPE(11), 3,
-+			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
-+
-+	return 0;
-+}
-+#endif
+ 	  SPI driver for Samsung S3C64XX and newer SoCs.
 -- 
 1.7.2.3
