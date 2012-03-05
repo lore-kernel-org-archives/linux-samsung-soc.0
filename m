@@ -1,62 +1,66 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform data
-Date: Mon, 5 Mar 2012 13:42:42 +0530
-Message-ID: <CAJuYYwS0RMhx-YSip+-yZcw9H0bDPHMufhdCbUROAW3mQBiCgg@mail.gmail.com>
-References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
-	<006f01ccfaa1$b6ff11f0$24fd35d0$%han@samsung.com>
+From: Amit Kachhap <amit.kachhap@linaro.org>
+Subject: Re: [PATCH 2/4] hwmon: exynos4: Move thermal sensor driver to
+ driver/mfd directory
+Date: Mon, 5 Mar 2012 14:14:31 +0530
+Message-ID: <CAK44p217-ah2HPot65nctZ7+r+A_EiOXPKq8y33NbBM1scrXgQ@mail.gmail.com>
+References: <1330772767-16120-1-git-send-email-amit.kachhap@linaro.org>
+	<1330772767-16120-3-git-send-email-amit.kachhap@linaro.org>
+	<4F520CCE.1030409@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:35336 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755989Ab2CEIMn (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 5 Mar 2012 03:12:43 -0500
-Received: by vcqp1 with SMTP id p1so3145226vcq.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Mar 2012 00:12:42 -0800 (PST)
-In-Reply-To: <006f01ccfaa1$b6ff11f0$24fd35d0$%han@samsung.com>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:47683 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751093Ab2CEIod convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Mar 2012 03:44:33 -0500
+Received: by lahj13 with SMTP id j13so4352828lah.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Mar 2012 00:44:31 -0800 (PST)
+In-Reply-To: <4F520CCE.1030409@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
+To: Sylwester Nawrocki <snjw23@gmail.com>
+Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, mjg59@srcf.ucam.org, linux-acpi@vger.kernel.org, lenb@kernel.org, linaro-dev@lists.linaro.org, lm-sensors@lm-sensors.org, eduardo.valentin@ti.com, durgadoss.r@intel.com, patches@linaro.org
 
-On 5 March 2012 12:59, Jingoo Han <jg1.han@samsung.com> wrote:
->
->
->> -----Original Message-----
->> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
->> Sent: Sunday, March 04, 2012 12:50 AM
->> To: linux-fbdev@vger.kernel.org
->> Cc: FlorianSchandinat@gmx.de; linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com;
->> jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org
->> Subject: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform data
+On 3 March 2012 17:51, Sylwester Nawrocki <snjw23@gmail.com> wrote:
+> On 03/03/2012 12:06 PM, Amit Daniel Kachhap wrote:
 >>
->> This patchset rearranges the elements in the platform data of the s3c-fb
->> driver with the intent of adding device tree support to the driver in
->> subsequent patches.
+>> This movement is needed because the hwmon entries and corresponding
+>> sysfs interface is a duplicate of utilities already provided by
+>> driver/thermal/thermal_sys.c. The goal is to place it in mfd folder
+>> and add necessary calls to get the temperature information.
 >>
->> The first patch moves the video timing information from the individual window
->> setup data into the platform specific configuration section in the platform
->> data. The video timing is independent of the window setup. The resolution of
->> the window could be smaller than that of the lcd panel attached. So the video
->> timing data is removed from window configuration data.
+>> Signed-off-by: Amit Daniel Kachhap<amit.kachhap@linaro.org>
+>> Signed-off-by: Donggeun Kim<dg77.kim@samsung.com>
+>> ---
+>> =A0Documentation/hwmon/exynos4_tmu | =A0 81 ------
+>> =A0Documentation/mfd/exynos4_tmu =A0 | =A0 81 ++++++
+>> =A0drivers/hwmon/Kconfig =A0 =A0 =A0 =A0 =A0 | =A0 10 -
+>> =A0drivers/hwmon/Makefile =A0 =A0 =A0 =A0 =A0| =A0 =A01 -
+>> =A0drivers/hwmon/exynos4_tmu.c =A0 =A0 | =A0514
+>> ---------------------------------------
+>> =A0drivers/mfd/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 | =A0 10 +
+>> =A0drivers/mfd/Makefile =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A01 +
+>> =A0drivers/mfd/exynos4_tmu.c =A0 =A0 =A0 | =A0514
+>> +++++++++++++++++++++++++++++++++++++++
+>> =A08 files changed, 606 insertions(+), 606 deletions(-)
+>> =A0delete mode 100644 Documentation/hwmon/exynos4_tmu
+>> =A0create mode 100644 Documentation/mfd/exynos4_tmu
+>> =A0delete mode 100644 drivers/hwmon/exynos4_tmu.c
+>> =A0create mode 100644 drivers/mfd/exynos4_tmu.c
 >
-> Hi, Thomas.
 >
-> OK, I know what you have done.
-> Actually, it was my long concern.
->
-> Current s3c-fb driver needs lcd panel resolutions, since each window's
-> xres, yres values can be changed by fb driver or user application.
-> Therefore, additional 'costant' lcd panel resolutions are necessary in order to
-> set timing values.
->
-> I'll review your patch.
-> Thank you.
+> Please consider adding -M option to git format-patch next time, which
+> would make the patch smaller and would let to see clearly what's move=
+d
+> and what has changed.
 
-Thanks. Please let me know if you have any comments.
+Sure , will keep it in mind.
 
-Regards,
-Thomas.
+Thanks
 
-[...]
+>
+> --
+> Thanks,
+> Sylwester
