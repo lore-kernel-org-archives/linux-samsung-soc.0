@@ -1,114 +1,53 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Mon, 05 Mar 2012 17:07:02 +0100
-Message-ID: <000001ccfaea$00c16f70$02444e50$%szyprowski@samsung.com>
-References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com>
-	<1330527862-16234-10-git-send-email-m.szyprowski@samsung.com>
-	<20120305134721.0ab0d0e6de56fa30250059b1@nvidia.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [RESEND 4/4] onenand: samsung: Enable support OneNAND support at
+ Samsung's Exynos4210
+Date: Mon, 05 Mar 2012 17:41:31 +0100
+Message-ID: <1330965691-10301-5-git-send-email-l.majewski@samsung.com>
+References: <1320914477-27885-1-git-send-email-l.majewski@samsung.com>
+ <1330965691-10301-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <20120305134721.0ab0d0e6de56fa30250059b1-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Content-language: pl
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: 'Hiroshi Doyu' <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Shariq Hasnain' <shariq.hasnain-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Arnd Bergmann' <arnd-r2nGTMty4D4@public.gmane.org>, 'Benjamin Herrenschmidt' <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, 'Chunsang Jeong' <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Krishna Reddy' <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, 'Russell King - ARM Linux' <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'KyongHo Cho' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:17341 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751806Ab2CEQlh (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 5 Mar 2012 11:41:37 -0500
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0M0F00JZD7PC8P00@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Mar 2012 16:41:36 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M0F00DCR7PBSP@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 05 Mar 2012 16:41:36 +0000 (GMT)
+In-reply-to: <1330965691-10301-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Scott Wood <scottwood@freescale.com>, Minkyu Kang <mk7.kang@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hello,
+Enable OneNAND support for Exynos4210 (C210 universal).
 
-On Monday, March 05, 2012 12:47 PM Hiroshi Doyu wrote:
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Minkyu Kang <mk7.kang@samsung.com>
+---
+ include/configs/s5pc210_universal.h |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
 
-> On Wed, 29 Feb 2012 16:04:22 +0100
-> Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> 
-> > This patch add a complete implementation of DMA-mapping API for
-> > devices that have IOMMU support. All DMA-mapping calls are supported.
-> >
-> > This patch contains some of the code kindly provided by Krishna Reddy
-> > <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> and Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Reviewed-by: Konrad Rzeszutek Wilk <konrad.wilk-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-> > ---
-
-(snipped)
-
-> > +/**
-> > + * arm_iommu_create_mapping
-> > + * @bus: pointer to the bus holding the client device (for IOMMU calls)
-> > + * @base: start address of the valid IO address space
-> > + * @size: size of the valid IO address space
-> > + * @order: accuracy of the IO addresses allocations
-> > + *
-> > + * Creates a mapping structure which holds information about used/unused
-> > + * IO address ranges, which is required to perform memory allocation and
-> > + * mapping with IOMMU aware functions.
-> > + *
-> > + * The client device need to be attached to the mapping with
-> > + * arm_iommu_attach_device function.
-> > + */
-> > +struct dma_iommu_mapping *
-> > +arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
-> > +                        int order)
-> > +{
-> > +       unsigned int count = (size >> PAGE_SHIFT) - order;
-> > +       unsigned int bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
-> > +       struct dma_iommu_mapping *mapping;
-> > +       int err = -ENOMEM;
-> > +
-> > +       mapping = kzalloc(sizeof(struct dma_iommu_mapping), GFP_KERNEL);
-> > +       if (!mapping)
-> > +               goto err;
-> > +
-> > +       mapping->bitmap = kzalloc(bitmap_size, GFP_KERNEL);
-> > +       if (!mapping->bitmap)
-> > +               goto err2;
-> > +
-> > +       mapping->base = base;
-> > +       mapping->bits = bitmap_size;
-> 
-> Shouldn't the above be as below?
-> 
-> From 093c77ac6f19899679f2f2447a9d2c684eab7b2e Mon Sep 17 00:00:00 2001
-> From: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Date: Mon, 5 Mar 2012 13:04:38 +0200
-> Subject: [PATCH 1/1] dma-mapping: Fix mapping->bits size
-> 
-> Amount of bits should be mutiplied by BITS_PER_BITE.
-> 
-> Signed-off-by: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mm/dma-mapping.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index e55f425..5ec7747 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -1495,7 +1495,7 @@ arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t
-> size,
->  		goto err2;
-> 
->  	mapping->base = base;
-> -	mapping->bits = bitmap_size;
-> +	mapping->bits = BITS_PER_BYTE * bitmap_size;
->  	mapping->order = order;
->  	spin_lock_init(&mapping->lock);
-
-You are right, thanks for spotting this issue!
-
-Best regards
+diff --git a/include/configs/s5pc210_universal.h b/include/configs/s5pc210_universal.h
+index 8286680..1301275 100644
+--- a/include/configs/s5pc210_universal.h
++++ b/include/configs/s5pc210_universal.h
+@@ -233,6 +233,7 @@
+ #define CONFIG_SYS_MONITOR_LEN		(256 << 10)	/* Reserve 2 sectors */
+ 
+ #define CONFIG_USE_ONENAND_BOARD_INIT
++#define CONFIG_SAMSUNG_ONENAND
+ #define CONFIG_SYS_ONENAND_BASE		0x0C000000
+ 
+ #define CONFIG_ENV_IS_IN_MMC		1
 -- 
-Marek Szyprowski
-Samsung Poland R&D Center
+1.7.2.3
