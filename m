@@ -1,76 +1,88 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH v3] USB: ehci-s5p: add DMA burst support
-Date: Mon, 05 Mar 2012 10:40:14 +0900
-Message-ID: <006101ccfa70$e94e5d90$bbeb18b0$%han@samsung.com>
+Subject: RE: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform data
+Date: Mon, 05 Mar 2012 16:29:35 +0900
+Message-ID: <006f01ccfaa1$b6ff11f0$24fd35d0$%han@samsung.com>
+References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:60231 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756141Ab2CEBkQ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:29687 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754882Ab2CEH3h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 4 Mar 2012 20:40:16 -0500
+	Mon, 5 Mar 2012 02:29:37 -0500
+In-reply-to: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, 'Sangwook Lee' <sangwook.lee@linaro.org>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, patches@linaro.org, linaro-dev@lists.linaro.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org
+Cc: FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-DMA burst support is added to improve performance in EHCI data
-transfer. The USB EHCI controller on Exynos SoCs can use INCR16,
-INCR8, and INCR4 mode. These modes of INSNREG00 register should
-be set in order to enable DMA burst transfer. This feature is
-also related to AHB spec.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
----
-v3: move the register definitions to ehci-s5p.c
-v2: change the definition name from EHCI_ENA_xxx to EHCI_INSNREG00_ENA_xxx.
 
- drivers/usb/host/ehci-s5p.c |   15 +++++++++++++++
- 1 files changed, 15 insertions(+), 0 deletions(-)
+> -----Original Message-----
+> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+> Sent: Sunday, March 04, 2012 12:50 AM
+> To: linux-fbdev@vger.kernel.org
+> Cc: FlorianSchandinat@gmx.de; linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com;
+> jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org
+> Subject: [PATCH 0/3] video: s3c-fb: Rearrange the elements in platform data
+> 
+> This patchset rearranges the elements in the platform data of the s3c-fb
+> driver with the intent of adding device tree support to the driver in
+> subsequent patches.
+> 
+> The first patch moves the video timing information from the individual window
+> setup data into the platform specific configuration section in the platform
+> data. The video timing is independent of the window setup. The resolution of
+> the window could be smaller than that of the lcd panel attached. So the video
+> timing data is removed from window configuration data.
 
-diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-index 293f741..f098e2a 100644
---- a/drivers/usb/host/ehci-s5p.c
-+++ b/drivers/usb/host/ehci-s5p.c
-@@ -17,6 +17,15 @@
- #include <plat/ehci.h>
- #include <plat/usb-phy.h>
- 
-+#define EHCI_INSNREG00(base)			(base + 0x90)
-+#define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
-+#define EHCI_INSNREG00_ENA_INCR8		(0x1 << 24)
-+#define EHCI_INSNREG00_ENA_INCR4		(0x1 << 23)
-+#define EHCI_INSNREG00_ENA_INCRX_ALIGN		(0x1 << 22)
-+#define EHCI_INSNREG00_ENABLE_DMA_BURST	\
-+	(EHCI_INSNREG00_ENA_INCR16 | EHCI_INSNREG00_ENA_INCR8 |	\
-+	 EHCI_INSNREG00_ENA_INCR4 | EHCI_INSNREG00_ENA_INCRX_ALIGN)
-+
- struct s5p_ehci_hcd {
- 	struct device *dev;
- 	struct usb_hcd *hcd;
-@@ -128,6 +137,9 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
- 	ehci->regs = hcd->regs +
- 		HC_LENGTH(ehci, readl(&ehci->caps->hc_capbase));
- 
-+	/* DMA burst Enable */
-+	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
-+
- 	dbg_hcs_params(ehci, "reset");
- 	dbg_hcc_params(ehci, "reset");
- 
-@@ -234,6 +246,9 @@ static int s5p_ehci_resume(struct device *dev)
- 	if (pdata && pdata->phy_init)
- 		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
- 
-+	/* DMA burst Enable */
-+	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
-+
- 	if (time_before(jiffies, ehci->next_statechange))
- 		msleep(100);
- 
--- 
-1.7.1
+Hi, Thomas.
+
+OK, I know what you have done.
+Actually, it was my long concern.
+
+Current s3c-fb driver needs lcd panel resolutions, since each window's
+xres, yres values can be changed by fb driver or user application.
+Therefore, additional 'costant' lcd panel resolutions are necessary in order to
+set timing values.
+
+I'll review your patch.
+Thank you.
+
+Best regards,
+Jingoo Han
+
+> 
+> The second patch removes the need for the 'default_win' element in the
+> platform data. This element was used to decide whether the video data
+> output from the controller should be enabled or disabled when the window
+> specified by 'default_win' is enabled or disabled. With the first patch
+> removing the need for atleast one window to be of the same resolution as
+> that of the lcd panel, it is now possible to decide when to enable/disable
+> the video data output based on the state of each window. If any of the
+> window is active, the lcd data output is enabled. Otherwise, the lcd data
+> output is disabled. Hence, the 'default_win' parameter from the platform
+> data can be removed, which anyways cannot be specified when using
+> device tree.
+> 
+> The third patch reworks the platform data of the display controller based
+> on the changes introduced in the first two patches.
+> 
+> The patchset does not include the rework of platform data of all the other
+> boards which have platform data for the s3c-fb driver. I am posting this
+> patchset to know if the the changes are conceptually correct. If the first
+> two patches are acceptable, I will resubmit this patchset with changes to
+> the platform data for all boards which have s3c-fb platform data.
+> 
+> Thomas Abraham (3):
+>   video: s3c-fb: move video interface timing out of window setup data
+>   video: s3c-fb: remove 'default_win' element from platform data
+>   ARM: Exynos: Rework platform data for lcd controller for Origen board
+> 
+>  arch/arm/mach-exynos/mach-origen.c      |   24 ++++---
+>  arch/arm/plat-samsung/include/plat/fb.h |   11 ++-
+>  drivers/video/s3c-fb.c                  |  128 ++++++++++++++----------------
+>  3 files changed, 80 insertions(+), 83 deletions(-)
