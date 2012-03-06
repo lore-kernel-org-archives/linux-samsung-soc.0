@@ -1,73 +1,217 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: Re: [RESEND 0/4] onenand: OneNAND board dependent probe and fixes for
- Samsung targets
-Date: Tue, 06 Mar 2012 07:48:20 +0100
-Message-ID: <20120306074820.3494a776@lmajewski.digital.local>
-References: <1320914477-27885-1-git-send-email-l.majewski@samsung.com>
- <1330965691-10301-1-git-send-email-l.majewski@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH V2 RESEND] video: s3c-fb: Add support EXYNOS5 FIMD
+Date: Tue, 06 Mar 2012 15:53:41 +0900
+Message-ID: <002201ccfb65$ddcb0400$99610c00$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:51389 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752776Ab2CFGs3 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:46540 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750871Ab2CFGxn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 01:48:29 -0500
-Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M0G00JZIAWRMC40@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Mar 2012 06:48:27 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M0G00C2VAWRGC@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 06 Mar 2012 06:48:27 +0000 (GMT)
-Received: from lmajewski.digital.local (unknown [106.116.37.166])
-	by linux.samsung.com (Postfix) with ESMTP id E0AE9270056	for
- <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 07:56:05 +0100 (CET)
-In-reply-to: <1330965691-10301-1-git-send-email-l.majewski@samsung.com>
+	Tue, 6 Mar 2012 01:53:43 -0500
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>
+Cc: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Mon, 05 Mar 2012 17:41:27 +0100
-Lukasz Majewski <l.majewski@samsung.com> wrote:
+This patch adds s3c_fb_driverdata s3c_fb_data_exynos5 for EXYNOS5
+and adds extended timing control setting.
 
-> This patch sets add board dependent onenand probes.
-> 
-> Several fixes for GONI and Exynos4210 (C210_universal) targets have
-> been added.
-> 
-> Tested at:
-> 	Samsung S5PC110 GONI
->         Samsung Exynos4210 (S5PC210 Universal)
-> 
-> Lukasz Majewski (4):
->   onenand:samsung Target dependent OneNAND chip probe function
->   onenand:samsung OneNAND chip probe functions added for GONI and
->     Exynos4210
->   onenand: Replace ONENAND_IS_MLC() test with ONENAND_HAS_4KB()
->   onenand: samsung: Enable support OneNAND support at Samsung's
->     Exynos4210
-> 
->  board/samsung/goni/onenand.c           |    1 +
->  board/samsung/universal_c210/onenand.c |    2 +
->  drivers/mtd/onenand/onenand_base.c     |   88
-> +++++++++++++++++++++++--------
-> drivers/mtd/onenand/samsung.c          |   10 ++++
-> include/configs/s5pc210_universal.h    |    1 +
-> include/linux/mtd/onenand.h            |    5 ++
-> include/linux/mtd/samsung_onenand.h    |    2 + 7 files changed, 86
-> insertions(+), 23 deletions(-)
-> 
+EXYNOS5 FIMD needs extended setting for video timing control.
+Additional bits are added to VIDTCON2, VIDWxxADD2, VIDOSDxA and
+VIDOSDxB registers in order to set timing value for lager resolution.
 
-I'm very sorry, but this is a wrong mailing list.
-It was meant to go to u-boot mailing list, not linux-samsung-soc :-)
+Also, address offset of VIDTCONx registers is changed from 0x0
+to 0x20000, thus variable type should be changed to int type
+to handle the address offset of VIDTCONx registers for EXYNOS5 FIMD.
 
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+v2: fix commit message from VIDCONx to VIDTCONx.
+
+ arch/arm/plat-samsung/include/plat/regs-fb.h |   24 ++++++++----
+ drivers/video/s3c-fb.c                       |   52 +++++++++++++++++++++++--
+ 2 files changed, 63 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+index bbb16e0..9a78012 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+@@ -167,15 +167,17 @@
+ #define VIDTCON1_HSPW(_x)			((_x) << 0)
+ 
+ #define VIDTCON2				(0x18)
++#define VIDTCON2_LINEVAL_E(_x)			((((_x) & 0x800) >> 11) << 23)
+ #define VIDTCON2_LINEVAL_MASK			(0x7ff << 11)
+ #define VIDTCON2_LINEVAL_SHIFT			(11)
+ #define VIDTCON2_LINEVAL_LIMIT			(0x7ff)
+-#define VIDTCON2_LINEVAL(_x)			((_x) << 11)
++#define VIDTCON2_LINEVAL(_x)			(((_x) & 0x7ff) << 11)
+ 
++#define VIDTCON2_HOZVAL_E(_x)			((((_x) & 0x800) >> 11) << 22)
+ #define VIDTCON2_HOZVAL_MASK			(0x7ff << 0)
+ #define VIDTCON2_HOZVAL_SHIFT			(0)
+ #define VIDTCON2_HOZVAL_LIMIT			(0x7ff)
+-#define VIDTCON2_HOZVAL(_x)			((_x) << 0)
++#define VIDTCON2_HOZVAL(_x)			(((_x) & 0x7ff) << 0)
+ 
+ /* WINCONx */
+ 
+@@ -231,25 +233,29 @@
+ /* Local input channels (windows 0-2) */
+ #define SHADOWCON_CHx_LOCAL_ENABLE(_win)	(1 << (5 + (_win)))
+ 
++#define VIDOSDxA_TOPLEFT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
+ #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
+ #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
+ #define VIDOSDxA_TOPLEFT_X_LIMIT		(0x7ff)
+-#define VIDOSDxA_TOPLEFT_X(_x)			((_x) << 11)
++#define VIDOSDxA_TOPLEFT_X(_x)			(((_x) & 0x7ff) << 11)
+ 
++#define VIDOSDxA_TOPLEFT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
+ #define VIDOSDxA_TOPLEFT_Y_MASK			(0x7ff << 0)
+ #define VIDOSDxA_TOPLEFT_Y_SHIFT		(0)
+ #define VIDOSDxA_TOPLEFT_Y_LIMIT		(0x7ff)
+-#define VIDOSDxA_TOPLEFT_Y(_x)			((_x) << 0)
++#define VIDOSDxA_TOPLEFT_Y(_x)			(((_x) & 0x7ff) << 0)
+ 
++#define VIDOSDxB_BOTRIGHT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
+ #define VIDOSDxB_BOTRIGHT_X_MASK		(0x7ff << 11)
+ #define VIDOSDxB_BOTRIGHT_X_SHIFT		(11)
+ #define VIDOSDxB_BOTRIGHT_X_LIMIT		(0x7ff)
+-#define VIDOSDxB_BOTRIGHT_X(_x)			((_x) << 11)
++#define VIDOSDxB_BOTRIGHT_X(_x)			(((_x) & 0x7ff) << 11)
+ 
++#define VIDOSDxB_BOTRIGHT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
+ #define VIDOSDxB_BOTRIGHT_Y_MASK		(0x7ff << 0)
+ #define VIDOSDxB_BOTRIGHT_Y_SHIFT		(0)
+ #define VIDOSDxB_BOTRIGHT_Y_LIMIT		(0x7ff)
+-#define VIDOSDxB_BOTRIGHT_Y(_x)			((_x) << 0)
++#define VIDOSDxB_BOTRIGHT_Y(_x)			(((_x) & 0x7ff) << 0)
+ 
+ /* For VIDOSD[1..4]C */
+ #define VIDISD14C_ALPHA0_R(_x)			((_x) << 20)
+@@ -281,15 +287,17 @@
+ #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
+ #define VIDW_BUF_SIZE(_buff)			(0x100 + ((_buff) * 4))
+ 
++#define VIDW_BUF_SIZE_OFFSET_E(_x)		((((_x) & 0x2000) >> 13) << 27)
+ #define VIDW_BUF_SIZE_OFFSET_MASK		(0x1fff << 13)
+ #define VIDW_BUF_SIZE_OFFSET_SHIFT		(13)
+ #define VIDW_BUF_SIZE_OFFSET_LIMIT		(0x1fff)
+-#define VIDW_BUF_SIZE_OFFSET(_x)		((_x) << 13)
++#define VIDW_BUF_SIZE_OFFSET(_x)		(((_x) & 0x1fff) << 13)
+ 
++#define VIDW_BUF_SIZE_PAGEWIDTH_E(_x)		((((_x) & 0x2000) >> 13) << 26)
+ #define VIDW_BUF_SIZE_PAGEWIDTH_MASK		(0x1fff << 0)
+ #define VIDW_BUF_SIZE_PAGEWIDTH_SHIFT		(0)
+ #define VIDW_BUF_SIZE_PAGEWIDTH_LIMIT		(0x1fff)
+-#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		((_x) << 0)
++#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		(((_x) & 0x1fff) << 0)
+ 
+ /* Interrupt controls and status */
+ 
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 1fb7ddf..f310516 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -89,7 +89,7 @@ struct s3c_fb;
+ struct s3c_fb_variant {
+ 	unsigned int	is_2443:1;
+ 	unsigned short	nr_windows;
+-	unsigned short	vidtcon;
++	unsigned int	vidtcon;
+ 	unsigned short	wincon;
+ 	unsigned short	winmap;
+ 	unsigned short	keycon;
+@@ -568,7 +568,9 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 		writel(data, regs + sfb->variant.vidtcon + 4);
+ 
+ 		data = VIDTCON2_LINEVAL(var->yres - 1) |
+-		       VIDTCON2_HOZVAL(var->xres - 1);
++		       VIDTCON2_HOZVAL(var->xres - 1) |
++		       VIDTCON2_LINEVAL_E(var->yres - 1) |
++		       VIDTCON2_HOZVAL_E(var->xres - 1);
+ 		writel(data, regs + sfb->variant.vidtcon + 8);
+ 	}
+ 
+@@ -584,17 +586,23 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 
+ 	pagewidth = (var->xres * var->bits_per_pixel) >> 3;
+ 	data = VIDW_BUF_SIZE_OFFSET(info->fix.line_length - pagewidth) |
+-	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth);
++	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth) |
++	       VIDW_BUF_SIZE_OFFSET_E(info->fix.line_length - pagewidth) |
++	       VIDW_BUF_SIZE_PAGEWIDTH_E(pagewidth);
+ 	writel(data, regs + sfb->variant.buf_size + (win_no * 4));
+ 
+ 	/* write 'OSD' registers to control position of framebuffer */
+ 
+-	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0);
++	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0) |
++	       VIDOSDxA_TOPLEFT_X_E(0) | VIDOSDxA_TOPLEFT_Y_E(0);
+ 	writel(data, regs + VIDOSD_A(win_no, sfb->variant));
+ 
+ 	data = VIDOSDxB_BOTRIGHT_X(s3c_fb_align_word(var->bits_per_pixel,
+ 						     var->xres - 1)) |
+-	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1);
++	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1) |
++	       VIDOSDxB_BOTRIGHT_X_E(s3c_fb_align_word(var->bits_per_pixel,
++						     var->xres - 1)) |
++	       VIDOSDxB_BOTRIGHT_Y_E(var->yres - 1);
+ 
+ 	writel(data, regs + VIDOSD_B(win_no, sfb->variant));
+ 
+@@ -1903,6 +1911,37 @@ static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
+ 	.win[4]	= &s3c_fb_data_s5p_wins[4],
+ };
+ 
++static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
++	.variant = {
++		.nr_windows	= 5,
++		.vidtcon	= VIDTCON0,
++		.wincon		= WINCON(0),
++		.winmap		= WINxMAP(0),
++		.keycon		= WKEYCON,
++		.osd		= VIDOSD_BASE,
++		.osd_stride	= 16,
++		.buf_start	= VIDW_BUF_START(0),
++		.buf_size	= VIDW_BUF_SIZE(0),
++		.buf_end	= VIDW_BUF_END(0),
++
++		.palette = {
++			[0] = 0x2400,
++			[1] = 0x2800,
++			[2] = 0x2c00,
++			[3] = 0x3000,
++			[4] = 0x3400,
++		},
++		.has_shadowcon	= 1,
++		.has_blendcon	= 1,
++		.has_fixvclk	= 1,
++	},
++	.win[0]	= &s3c_fb_data_s5p_wins[0],
++	.win[1]	= &s3c_fb_data_s5p_wins[1],
++	.win[2]	= &s3c_fb_data_s5p_wins[2],
++	.win[3]	= &s3c_fb_data_s5p_wins[3],
++	.win[4]	= &s3c_fb_data_s5p_wins[4],
++};
++
+ /* S3C2443/S3C2416 style hardware */
+ static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+ 	.variant = {
+@@ -1981,6 +2020,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+ 		.name		= "exynos4-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
+ 	}, {
++		.name		= "exynos5-fb",
++		.driver_data	= (unsigned long)&s3c_fb_data_exynos5,
++	}, {
+ 		.name		= "s3c2443-fb",
+ 		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
+ 	}, {
 -- 
-Best regards,
-
-Lukasz Majewski
-
-Samsung Poland R&D Center
-Platform Group
+1.7.1
