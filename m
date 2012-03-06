@@ -1,53 +1,293 @@
-From: Jae hoon Chung <jh80.chung@gmail.com>
-Subject: Re: [PATCH v3 0/4] mmc: sdhci-s3c: use the sdhci-pltfm.c and move the
- header file
-Date: Tue, 6 Mar 2012 23:40:08 +0900
-Message-ID: <CAELcNGS6UynrJPRk1KtEJT3Rm6Jb5_scLm4KKca+dJ1ZYDOVbg@mail.gmail.com>
-References: <4F55ABF0.1060801@samsung.com>
-	<20120306130054.GA9890@sirena.org.uk>
-	<201203061415.18836.heiko@sntech.de>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: EXYNOS: Hook up power domains to generic power
+ domain infrastructure (part 2)
+Date: Tue, 06 Mar 2012 16:11:52 +0100
+Message-ID: <201203061611.52908.b.zolnierkie@samsung.com>
+References: <1330505255-25587-1-git-send-email-b.zolnierkie@samsung.com>
+ <1330505255-25587-2-git-send-email-b.zolnierkie@samsung.com>
+ <076701ccf75f$8c217b20$a4647160$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:35260 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030750Ab2CFOkJ convert rfc822-to-8bit (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:44245 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030900Ab2CFPM3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 09:40:09 -0500
-In-Reply-To: <201203061415.18836.heiko@sntech.de>
+	Tue, 6 Mar 2012 10:12:29 -0500
+In-reply-to: <076701ccf75f$8c217b20$a4647160$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, rjw@sisk.pl, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-2012/3/6 Heiko St=FCbner <heiko@sntech.de>:
-> Am Dienstag, 6. M=E4rz 2012, 14:00:54 schrieb Mark Brown:
->> On Tue, Mar 06, 2012 at 03:17:20PM +0900, Jaehoon Chung wrote:
->> > This patchset is the purpose for using sdhci-pltfm.c and
->> > removing the arch dependency.
->> > The sdhci-s3c has too heavy arch dependency.
->> > For example, if work for sdhci-s3c.c at mmc-tree, sometime need to=
- change
->> > sdhci.h for Samsung-Soc.
->>
->> This series will break S3C64xx, you've not touched it at all in the
->> update but it uses the same SDHCI controller.
->
-> This problem will probably also surface for the S3C2416 which also us=
-es the
-> same SDHCI controller.
+On Thursday 01 March 2012 04:58:23 Kukjin Kim wrote:
+> Bartlomiej Zolnierkiewicz wrote:
+> > 
+> > * Add support of enabling/disabling modules in S5P_CLKGATE_BLOCK register.
+> 
+> NO. I remember, we talked about this before and I'm still thinking it should
+> be handled independently.
 
-i didn't know why will break  on them. Could you explain to me?
-Are there codes which affect S3C64XX and S3C24XX?
-If i miss out something, let me know.
+OK, here is only the cleanup part.  Unfortunately I couldn't find
+the previous discussion regarding S5P_CLKGATE_BLOCK register handling
+on the public mailing lists so could you please describe how it
+should be done properly?
 
-Best Regards,
-Jaehoon Chung
->
-> Heiko
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung Poland R&D Center
+
+
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Remove leftovers of the Samsung specific power domain control
+
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Rob Herring <rob.herring@calxeda.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Cc: Rafael J. Wysocki <rjw@sisk.pl>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+
+ arch/arm/mach-exynos/mach-nuri.c           |    1 
+ arch/arm/mach-exynos/mach-origen.c         |    1 
+ arch/arm/mach-exynos/mach-smdkv310.c       |    1 
+ arch/arm/mach-exynos/mach-universal_c210.c |    1 
+ arch/arm/plat-samsung/Kconfig              |    8 --
+ arch/arm/plat-samsung/Makefile             |    4 -
+ arch/arm/plat-samsung/include/plat/devs.h  |    1 
+ arch/arm/plat-samsung/include/plat/pd.h    |   30 ---------
+ arch/arm/plat-samsung/pd.c                 |   95 -----------------------------
+ 9 files changed, 142 deletions(-)
+
+Index: linux-sprc/arch/arm/mach-exynos/mach-nuri.c
+===================================================================
+--- linux-sprc.orig/arch/arm/mach-exynos/mach-nuri.c	2012-03-06 15:59:13.432481942 +0100
++++ linux-sprc/arch/arm/mach-exynos/mach-nuri.c	2012-03-06 15:59:22.528481940 +0100
+@@ -48,7 +48,6 @@
+ #include <plat/gpio-cfg.h>
+ #include <plat/iic.h>
+ #include <plat/mfc.h>
+-#include <plat/pd.h>
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+ #include <plat/mipi_csis.h>
+Index: linux-sprc/arch/arm/mach-exynos/mach-origen.c
+===================================================================
+--- linux-sprc.orig/arch/arm/mach-exynos/mach-origen.c	2012-03-06 15:59:13.432481942 +0100
++++ linux-sprc/arch/arm/mach-exynos/mach-origen.c	2012-03-06 15:59:22.528481940 +0100
+@@ -38,7 +38,6 @@
+ #include <plat/clock.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+-#include <plat/pd.h>
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+ 
+Index: linux-sprc/arch/arm/mach-exynos/mach-smdkv310.c
+===================================================================
+--- linux-sprc.orig/arch/arm/mach-exynos/mach-smdkv310.c	2012-03-06 15:59:13.432481942 +0100
++++ linux-sprc/arch/arm/mach-exynos/mach-smdkv310.c	2012-03-06 15:59:22.532481931 +0100
+@@ -34,7 +34,6 @@
+ #include <plat/keypad.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
+-#include <plat/pd.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ #include <plat/mfc.h>
+Index: linux-sprc/arch/arm/mach-exynos/mach-universal_c210.c
+===================================================================
+--- linux-sprc.orig/arch/arm/mach-exynos/mach-universal_c210.c	2012-03-06 15:59:13.432481942 +0100
++++ linux-sprc/arch/arm/mach-exynos/mach-universal_c210.c	2012-03-06 15:59:22.532481931 +0100
+@@ -35,7 +35,6 @@
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+ #include <plat/sdhci.h>
+-#include <plat/pd.h>
+ #include <plat/regs-fb-v4.h>
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+Index: linux-sprc/arch/arm/plat-samsung/Kconfig
+===================================================================
+--- linux-sprc.orig/arch/arm/plat-samsung/Kconfig	2012-03-06 15:57:57.092481952 +0100
++++ linux-sprc/arch/arm/plat-samsung/Kconfig	2012-03-06 15:59:22.532481931 +0100
+@@ -350,14 +350,6 @@
+ 	  and above. This code allows a set of interrupt to wakeup-mask
+ 	  mappings. See <plat/wakeup-mask.h>
+ 
+-comment "Power Domain"
+-
+-config SAMSUNG_PD
+-	bool "Samsung Power Domain"
+-	depends on PM_RUNTIME
+-	help
+-	  Say Y here if you want to control Power Domain by Runtime PM.
+-
+ config DEBUG_S3C_UART
+ 	depends on PLAT_SAMSUNG
+ 	int
+Index: linux-sprc/arch/arm/plat-samsung/Makefile
+===================================================================
+--- linux-sprc.orig/arch/arm/plat-samsung/Makefile	2012-03-06 15:57:57.092481952 +0100
++++ linux-sprc/arch/arm/plat-samsung/Makefile	2012-03-06 15:59:22.532481931 +0100
+@@ -47,10 +47,6 @@
+ 
+ obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
+ 
+-# PD support
+-
+-obj-$(CONFIG_SAMSUNG_PD)	+= pd.o
+-
+ # PWM support
+ 
+ obj-$(CONFIG_HAVE_PWM)		+= pwm.o
+Index: linux-sprc/arch/arm/plat-samsung/include/plat/devs.h
+===================================================================
+--- linux-sprc.orig/arch/arm/plat-samsung/include/plat/devs.h	2012-03-06 15:59:13.444481941 +0100
++++ linux-sprc/arch/arm/plat-samsung/include/plat/devs.h	2012-03-06 15:59:22.532481931 +0100
+@@ -128,7 +128,6 @@
+ extern struct platform_device exynos4_device_pcm0;
+ extern struct platform_device exynos4_device_pcm1;
+ extern struct platform_device exynos4_device_pcm2;
+-extern struct platform_device exynos4_device_pd[];
+ extern struct platform_device exynos4_device_spdif;
+ extern struct platform_device exynos4_device_sysmmu;
+ 
+Index: linux-sprc/arch/arm/plat-samsung/include/plat/pd.h
+===================================================================
+--- linux-sprc.orig/arch/arm/plat-samsung/include/plat/pd.h	2012-03-06 15:59:13.444481941 +0100
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,30 +0,0 @@
+-/* linux/arch/arm/plat-samsung/include/plat/pd.h
+- *
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM_PLAT_SAMSUNG_PD_H
+-#define __ASM_PLAT_SAMSUNG_PD_H __FILE__
+-
+-struct samsung_pd_info {
+-	int (*enable)(struct device *dev);
+-	int (*disable)(struct device *dev);
+-	void __iomem *base;
+-};
+-
+-enum exynos4_pd_block {
+-	PD_MFC,
+-	PD_G3D,
+-	PD_LCD0,
+-	PD_LCD1,
+-	PD_TV,
+-	PD_CAM,
+-	PD_GPS
+-};
+-
+-#endif /* __ASM_PLAT_SAMSUNG_PD_H */
+Index: linux-sprc/arch/arm/plat-samsung/pd.c
+===================================================================
+--- linux-sprc.orig/arch/arm/plat-samsung/pd.c	2012-03-06 15:57:57.000000000 +0100
++++ /dev/null	1970-01-01 00:00:00.000000000 +0000
+@@ -1,95 +0,0 @@
+-/* linux/arch/arm/plat-samsung/pd.c
+- *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Samsung Power domain support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/init.h>
+-#include <linux/export.h>
+-#include <linux/platform_device.h>
+-#include <linux/err.h>
+-#include <linux/pm_runtime.h>
+-
+-#include <plat/pd.h>
+-
+-static int samsung_pd_probe(struct platform_device *pdev)
+-{
+-	struct samsung_pd_info *pdata = pdev->dev.platform_data;
+-	struct device *dev = &pdev->dev;
+-
+-	if (!pdata) {
+-		dev_err(dev, "no device data specified\n");
+-		return -ENOENT;
+-	}
+-
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-
+-	dev_info(dev, "power domain registered\n");
+-	return 0;
+-}
+-
+-static int __devexit samsung_pd_remove(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-
+-	pm_runtime_disable(dev);
+-	return 0;
+-}
+-
+-static int samsung_pd_runtime_suspend(struct device *dev)
+-{
+-	struct samsung_pd_info *pdata = dev->platform_data;
+-	int ret = 0;
+-
+-	if (pdata->disable)
+-		ret = pdata->disable(dev);
+-
+-	dev_dbg(dev, "suspended\n");
+-	return ret;
+-}
+-
+-static int samsung_pd_runtime_resume(struct device *dev)
+-{
+-	struct samsung_pd_info *pdata = dev->platform_data;
+-	int ret = 0;
+-
+-	if (pdata->enable)
+-		ret = pdata->enable(dev);
+-
+-	dev_dbg(dev, "resumed\n");
+-	return ret;
+-}
+-
+-static const struct dev_pm_ops samsung_pd_pm_ops = {
+-	.runtime_suspend	= samsung_pd_runtime_suspend,
+-	.runtime_resume		= samsung_pd_runtime_resume,
+-};
+-
+-static struct platform_driver samsung_pd_driver = {
+-	.driver		= {
+-		.name		= "samsung-pd",
+-		.owner		= THIS_MODULE,
+-		.pm		= &samsung_pd_pm_ops,
+-	},
+-	.probe		= samsung_pd_probe,
+-	.remove		= __devexit_p(samsung_pd_remove),
+-};
+-
+-static int __init samsung_pd_init(void)
+-{
+-	int ret;
+-
+-	ret = platform_driver_register(&samsung_pd_driver);
+-	if (ret)
+-		printk(KERN_ERR "%s: failed to add PD driver\n", __func__);
+-
+-	return ret;
+-}
+-arch_initcall(samsung_pd_init);
