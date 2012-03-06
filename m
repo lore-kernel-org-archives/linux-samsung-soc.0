@@ -1,217 +1,338 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH V2 RESEND] video: s3c-fb: Add support EXYNOS5 FIMD
-Date: Tue, 06 Mar 2012 15:53:41 +0900
-Message-ID: <002201ccfb65$ddcb0400$99610c00$%han@samsung.com>
+Subject: RE: [PATCH 1/3] video: s3c-fb: move video interface timing out of
+ window setup data
+Date: Tue, 06 Mar 2012 16:26:59 +0900
+Message-ID: <002501ccfb6a$84a765d0$8df63170$%han@samsung.com>
+References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
+ <1330789808-8253-2-git-send-email-thomas.abraham@linaro.org>
+ <001f01ccfb53$f034ef00$d09ecd00$%han@samsung.com>
+ <CAJuYYwToJDXujqjLcY_2cN0M-K0yGzzOcDaFeh+OT_Qx9pPCEQ@mail.gmail.com>
+ <002101ccfb61$710d2c70$53278550$%han@samsung.com>
+ <CAJuYYwRAGQw=b0P1XePqPPXi=v5KXPQqoEJsvOpGbu7FtMnLNw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:46540 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:9870 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750871Ab2CFGxn (ORCPT
+	with ESMTP id S1756782Ab2CFH1B convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 01:53:43 -0500
+	Tue, 6 Mar 2012 02:27:01 -0500
+In-reply-to: <CAJuYYwRAGQw=b0P1XePqPPXi=v5KXPQqoEJsvOpGbu7FtMnLNw@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-fbdev@vger.kernel.org, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-This patch adds s3c_fb_driverdata s3c_fb_data_exynos5 for EXYNOS5
-and adds extended timing control setting.
+> -----Original Message-----
+> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+> Sent: Tuesday, March 06, 2012 3:35 PM
+> To: Jingoo Han
+> Cc: linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-sams=
+ung-soc@vger.kernel.org;
+> kgene.kim@samsung.com; ben-linux@fluff.org; patches@linaro.org
+> Subject: Re: [PATCH 1/3] video: s3c-fb: move video interface timing o=
+ut of window setup data
+>=20
+> On 6 March 2012 11:52, Jingoo Han <jg1.han@samsung.com> wrote:
+>=20
+> >> -----Original Message-----
+> >> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+> >> Sent: Tuesday, March 06, 2012 2:26 PM
+> >> To: Jingoo Han
+> >> Cc: linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-s=
+amsung-soc@vger.kernel.org;
+> >> kgene.kim@samsung.com; ben-linux@fluff.org; patches@linaro.org
+> >> Subject: Re: [PATCH 1/3] video: s3c-fb: move video interface timin=
+g out of window setup data
+> >>
+> >> On 6 March 2012 10:15, Jingoo Han <jg1.han@samsung.com> wrote:
+> >>
+> >> >> -----Original Message-----
+> >> >> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+> >> >> Sent: Sunday, March 04, 2012 12:50 AM
+> >> >> To: linux-fbdev@vger.kernel.org
+> >> >> Cc: FlorianSchandinat@gmx.de; linux-samsung-soc@vger.kernel.org=
+; kgene.kim@samsung.com;
+> >> >> jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org
+> >> >> Subject: [PATCH 1/3] video: s3c-fb: move video interface timing=
+ out of window setup data
+> >> >>
+> >> >> The video interface timing is independent of the window setup d=
+ata.
+> >> >> The resolution of the window can be smaller than that of the lc=
+d
+> >> >> panel to which the video data is output.
+> >> >>
+> >> >> So move the video timing data from the per-window setup data to=
+ the
+> >> >> platform specific section in the platform data. This also remov=
+es
+> >> >> the restriction that atleast one window should have the same
+> >> >> resolution as that of the panel attached.
+> >> >>
+> >> >> Cc: Ben Dooks <ben-linux@fluff.org>
+> >> >> Cc: Jingoo Han <jg1.han@samsung.com>
+> >> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> >> >> ---
+> >> >> =A0arch/arm/plat-samsung/include/plat/fb.h | =A0 =A09 ++-
+> >> >> =A0drivers/video/s3c-fb.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =
+=A0106 +++++++++++++++++--------------
+> >> >> =A02 files changed, 63 insertions(+), 52 deletions(-)
+> >> >>
+> >> >> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm=
+/plat-samsung/include/plat/fb.h
+> >> >> index 0fedf47..39d6bd7 100644
+> >> >> --- a/arch/arm/plat-samsung/include/plat/fb.h
+> >> >> +++ b/arch/arm/plat-samsung/include/plat/fb.h
+> >> >> @@ -24,15 +24,16 @@
+> >> >>
+> >> >> =A0/**
+> >> >> =A0 * struct s3c_fb_pd_win - per window setup data
+> >> >> - * @win_mode: The display parameters to initialise (not for wi=
+ndow 0)
+> >> >> + * @xres =A0 =A0 : The window X size.
+> >> >> + * @yres =A0 =A0 : The window Y size.
+> >> >> =A0 * @virtual_x: The virtual X size.
+> >> >> =A0 * @virtual_y: The virtual Y size.
+> >> >> =A0 */
+> >> >> =A0struct s3c_fb_pd_win {
+> >> >> - =A0 =A0 struct fb_videomode =A0 =A0 win_mode;
+> >> >> -
+> >> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0default_bpp;
+> >> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0max_bpp;
+> >> >> + =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0xres;
+> >> >> + =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0yres;
+> >> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0virtual_x;
+> >> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0virtual_y;
+> >> >> =A0};
+> >> >> @@ -45,6 +46,7 @@ struct s3c_fb_pd_win {
+> >> >> =A0 * @default_win: default window layer number to be used for =
+UI layer.
+> >> >> =A0 * @vidcon0: The base vidcon0 values to control the panel da=
+ta format.
+> >> >> =A0 * @vidcon1: The base vidcon1 values to control the panel da=
+ta output.
+> >> >> + * @vtiming: Video timing when connected to a RGB type panel.
+> >> >
+> >> > fb_videomode can be set, even if it is not RGB type panel.
+> >> > In my opinion, it would be better.
+> >> > + * @vtiming: The video timing values to set the interface timin=
+g of the panel.
+> >>
+> >> The other interface that is supported is the i80 interface. Can th=
+ese
+> >> timing values be used for i80 interface as well ?
+> >
+> > No, you're right. The i80 is not supported.
+> > Please ignore my comment.
+> >
+> >>
+> >> >
+> >> >> =A0 * @win: The setup data for each hardware window, or NULL fo=
+r unused.
+> >> >> =A0 * @display_mode: The LCD output display mode.
+> >> >> =A0 *
+> >> >> @@ -58,6 +60,7 @@ struct s3c_fb_platdata {
+> >> >> =A0 =A0 =A0 void =A0 =A0(*setup_gpio)(void);
+> >> >>
+> >> >> =A0 =A0 =A0 struct s3c_fb_pd_win =A0 =A0*win[S3C_FB_MAX_WIN];
+> >> >> + =A0 =A0 struct fb_videomode =A0 =A0 *vtiming;
+> >> >>
+> >> >> =A0 =A0 =A0 u32 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0defa=
+ult_win;
+> >> >>
+> >> >> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> >> >> index 1fb7ddf..8e05d4d 100644
+> >> >> --- a/drivers/video/s3c-fb.c
+> >> >> +++ b/drivers/video/s3c-fb.c
+> >> >> @@ -495,7 +495,6 @@ static int s3c_fb_set_par(struct fb_info *i=
+nfo)
+> >> >> =A0 =A0 =A0 u32 alpha =3D 0;
+> >> >> =A0 =A0 =A0 u32 data;
+> >> >> =A0 =A0 =A0 u32 pagewidth;
+> >> >> - =A0 =A0 int clkdiv;
+> >> >>
+> >> >> =A0 =A0 =A0 dev_dbg(sfb->dev, "setting framebuffer parameters\n=
+");
+> >> >>
+> >> >> @@ -532,46 +531,9 @@ static int s3c_fb_set_par(struct fb_info *=
+info)
+> >> >> =A0 =A0 =A0 /* disable the window whilst we update it */
+> >> >> =A0 =A0 =A0 writel(0, regs + WINCON(win_no));
+> >> >>
+> >> >> - =A0 =A0 /* use platform specified window as the basis for the=
+ lcd timings */
+> >> >> -
+> >> >> - =A0 =A0 if (win_no =3D=3D sfb->pdata->default_win) {
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 clkdiv =3D s3c_fb_calc_pixclk(sfb, va=
+r->pixclock);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D sfb->pdata->vidcon0;
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 data &=3D ~(VIDCON0_CLKVAL_F_MASK | V=
+IDCON0_CLKDIR);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 if (clkdiv > 1)
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data |=3D VIDCON0_CLK=
+VAL_F(clkdiv-1) | VIDCON0_CLKDIR;
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 else
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data &=3D ~VIDCON0_CL=
+KDIR; =A0 =A0 =A0 =A0/* 1:1 clock */
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 /* write the timing data to the panel=
+ */
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 if (sfb->variant.is_2443)
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data |=3D (1 << 5);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + VIDCON0);
+> >> >> -
+> >> >> + =A0 =A0 if (win_no =3D=3D sfb->pdata->default_win)
+> >> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_fb_enable(sfb, 1);
+> >> >>
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDTCON0_VBPD(var->upper_mar=
+gin - 1) |
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON0_VFPD(var->low=
+er_margin - 1) |
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON0_VSPW(var->vsy=
+nc_len - 1);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + sfb->variant.vidt=
+con);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDTCON1_HBPD(var->left_marg=
+in - 1) |
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON1_HFPD(var->rig=
+ht_margin - 1) |
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON1_HSPW(var->hsy=
+nc_len - 1);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 /* VIDTCON1 */
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + sfb->variant.vidt=
+con + 4);
+> >> >> -
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDTCON2_LINEVAL(var->yres -=
+ 1) |
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON2_HOZVAL(var->x=
+res - 1);
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + sfb->variant.vidt=
+con + 8);
+> >> >> - =A0 =A0 }
+> >> >> -
+> >> >
+> >> > It looks good.
+> >> > VIDTCON registers don't need to be written whenever s3c_fb_set_p=
+ar is called.
+> >> >
+> >> >> =A0 =A0 =A0 /* write the buffer address */
+> >> >>
+> >> >> =A0 =A0 =A0 /* start and end registers stride is 8 */
+> >> >> @@ -1136,11 +1098,11 @@ static int __devinit s3c_fb_alloc_memor=
+y(struct s3c_fb *sfb,
+> >> >>
+> >> >> =A0 =A0 =A0 dev_dbg(sfb->dev, "allocating memory for display\n"=
+);
+> >> >>
+> >> >> - =A0 =A0 real_size =3D windata->win_mode.xres * windata->win_m=
+ode.yres;
+> >> >> + =A0 =A0 real_size =3D windata->xres * windata->yres;
+> >> >> =A0 =A0 =A0 virt_size =3D windata->virtual_x * windata->virtual=
+_y;
+> >> >>
+> >> >> =A0 =A0 =A0 dev_dbg(sfb->dev, "real_size=3D%u (%u.%u), virt_siz=
+e=3D%u (%u.%u)\n",
+> >> >> - =A0 =A0 =A0 =A0 =A0 =A0 real_size, windata->win_mode.xres, wi=
+ndata->win_mode.yres,
+> >> >> + =A0 =A0 =A0 =A0 =A0 =A0 real_size, windata->xres, windata->yr=
+es,
+> >> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 virt_size, windata->virtual_x, wind=
+ata->virtual_y);
+> >> >>
+> >> >> =A0 =A0 =A0 size =3D (real_size > virt_size) ? real_size : virt=
+_size;
+> >> >> @@ -1222,7 +1184,7 @@ static int __devinit s3c_fb_probe_win(str=
+uct s3c_fb *sfb, unsigned int
+> win_no,
+> >> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 struct s3c_fb_win **res)
+> >> >> =A0{
+> >> >> =A0 =A0 =A0 struct fb_var_screeninfo *var;
+> >> >> - =A0 =A0 struct fb_videomode *initmode;
+> >> >> + =A0 =A0 struct fb_videomode initmode;
+> >> >
+> >> > *initmode cannot be used???
+> >> > Can you tell me why pointer type should be changed?
+> >> >
+> >>
+> >> The initmode is used to pass video timing to the fb_videomode_to_v=
+ar()
+> >> function. Each window setup data in platform data included video
+> >> timing information. Since, the video timing data is now moved out =
+of
+> >> per-window data, the xres and yres values have to be setup based o=
+n
+> >> the window for which the fb_videomode_to_var() is called. Hence, t=
+he
+> >> common timing values is first copied into initmode and then the wi=
+ndow
+> >> specific xres and yres are set. If initmode is a maintained as a
+> >> pointer (to the video timing data in platform data), then any xres=
+ and
+> >> yres update to initmode would overwrite the 'constant' video timin=
+g.
+> >
+> > My point is that variable type 'initmode' can be not changed by usi=
+ng pointer type as follows:
+> >
+> > @@ -1243,11 +1243,11 @@ static int __devinit s3c_fb_probe_win(struc=
+t s3c_fb *sfb, unsigned int win_no,
+> > =A0 =A0 =A0 =A0}
+> >
+> > =A0 =A0 =A0 =A0windata =3D sfb->pdata->win[win_no];
+> > - =A0 =A0 =A0 initmode =3D &windata->win_mode;
+> > + =A0 =A0 =A0 initmode =3D sfb->pdata->vtiming;
+>=20
+> In this case, initmode is not pointing to the 'constant' lcd panel
+> timing values.
+>=20
+> >
+> > =A0 =A0 =A0 =A0WARN_ON(windata->max_bpp =3D=3D 0);
+> > - =A0 =A0 =A0 WARN_ON(windata->win_mode.xres =3D=3D 0);
+> > - =A0 =A0 =A0 WARN_ON(windata->win_mode.yres =3D=3D 0);
+> > + =A0 =A0 =A0 WARN_ON(windata->xres =3D=3D 0);
+> > + =A0 =A0 =A0 WARN_ON(windata->yres =3D=3D 0);
+> >
+> > =A0 =A0 =A0 =A0win =3D fbinfo->par;
+> > =A0 =A0 =A0 =A0*res =3D win;
+> > @@ -1286,6 +1286,8 @@ static int __devinit s3c_fb_probe_win(struct =
+s3c_fb *sfb, unsigned int win_no,
+> > =A0 =A0 =A0 =A0}
+> >
+> > =A0 =A0 =A0 =A0/* setup the initial video mode from the window */
+> > + =A0 =A0 =A0 initmode->xres =3D windata->xres;
+> > + =A0 =A0 =A0 initmode->yres =3D windata->yres;
+>=20
+> And then here, the xres and yres of the 'constant' lcd panel timing
+> value will be changed.
+>=20
+> But, we don't want to change the actual lcd panel timing value. That
+> is the reason to first copy the lcd panel timing value into a local
+> copy and then update the xres and yres and then pass this local copy
+> of the timing value to fb_videomode_to_var() function.
 
-EXYNOS5 FIMD needs extended setting for video timing control.
-Additional bits are added to VIDTCON2, VIDWxxADD2, VIDOSDxA and
-VIDOSDxB registers in order to set timing value for lager resolution.
+OK. I see. You're right.
 
-Also, address offset of VIDTCONx registers is changed from 0x0
-to 0x20000, thus variable type should be changed to int type
-to handle the address offset of VIDTCONx registers for EXYNOS5 FIMD.
+If you add add it in the resume path in the resume path,
+you can use my acked-by to this 1st patch.
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-v2: fix commit message from VIDCONx to VIDTCONx.
+Thank you for sending the patch.
 
- arch/arm/plat-samsung/include/plat/regs-fb.h |   24 ++++++++----
- drivers/video/s3c-fb.c                       |   52 +++++++++++++++++++++++--
- 2 files changed, 63 insertions(+), 13 deletions(-)
+Best regards,
+Jingoo Han
 
-diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-index bbb16e0..9a78012 100644
---- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-+++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-@@ -167,15 +167,17 @@
- #define VIDTCON1_HSPW(_x)			((_x) << 0)
- 
- #define VIDTCON2				(0x18)
-+#define VIDTCON2_LINEVAL_E(_x)			((((_x) & 0x800) >> 11) << 23)
- #define VIDTCON2_LINEVAL_MASK			(0x7ff << 11)
- #define VIDTCON2_LINEVAL_SHIFT			(11)
- #define VIDTCON2_LINEVAL_LIMIT			(0x7ff)
--#define VIDTCON2_LINEVAL(_x)			((_x) << 11)
-+#define VIDTCON2_LINEVAL(_x)			(((_x) & 0x7ff) << 11)
- 
-+#define VIDTCON2_HOZVAL_E(_x)			((((_x) & 0x800) >> 11) << 22)
- #define VIDTCON2_HOZVAL_MASK			(0x7ff << 0)
- #define VIDTCON2_HOZVAL_SHIFT			(0)
- #define VIDTCON2_HOZVAL_LIMIT			(0x7ff)
--#define VIDTCON2_HOZVAL(_x)			((_x) << 0)
-+#define VIDTCON2_HOZVAL(_x)			(((_x) & 0x7ff) << 0)
- 
- /* WINCONx */
- 
-@@ -231,25 +233,29 @@
- /* Local input channels (windows 0-2) */
- #define SHADOWCON_CHx_LOCAL_ENABLE(_win)	(1 << (5 + (_win)))
- 
-+#define VIDOSDxA_TOPLEFT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
- #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
- #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
- #define VIDOSDxA_TOPLEFT_X_LIMIT		(0x7ff)
--#define VIDOSDxA_TOPLEFT_X(_x)			((_x) << 11)
-+#define VIDOSDxA_TOPLEFT_X(_x)			(((_x) & 0x7ff) << 11)
- 
-+#define VIDOSDxA_TOPLEFT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
- #define VIDOSDxA_TOPLEFT_Y_MASK			(0x7ff << 0)
- #define VIDOSDxA_TOPLEFT_Y_SHIFT		(0)
- #define VIDOSDxA_TOPLEFT_Y_LIMIT		(0x7ff)
--#define VIDOSDxA_TOPLEFT_Y(_x)			((_x) << 0)
-+#define VIDOSDxA_TOPLEFT_Y(_x)			(((_x) & 0x7ff) << 0)
- 
-+#define VIDOSDxB_BOTRIGHT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
- #define VIDOSDxB_BOTRIGHT_X_MASK		(0x7ff << 11)
- #define VIDOSDxB_BOTRIGHT_X_SHIFT		(11)
- #define VIDOSDxB_BOTRIGHT_X_LIMIT		(0x7ff)
--#define VIDOSDxB_BOTRIGHT_X(_x)			((_x) << 11)
-+#define VIDOSDxB_BOTRIGHT_X(_x)			(((_x) & 0x7ff) << 11)
- 
-+#define VIDOSDxB_BOTRIGHT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
- #define VIDOSDxB_BOTRIGHT_Y_MASK		(0x7ff << 0)
- #define VIDOSDxB_BOTRIGHT_Y_SHIFT		(0)
- #define VIDOSDxB_BOTRIGHT_Y_LIMIT		(0x7ff)
--#define VIDOSDxB_BOTRIGHT_Y(_x)			((_x) << 0)
-+#define VIDOSDxB_BOTRIGHT_Y(_x)			(((_x) & 0x7ff) << 0)
- 
- /* For VIDOSD[1..4]C */
- #define VIDISD14C_ALPHA0_R(_x)			((_x) << 20)
-@@ -281,15 +287,17 @@
- #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
- #define VIDW_BUF_SIZE(_buff)			(0x100 + ((_buff) * 4))
- 
-+#define VIDW_BUF_SIZE_OFFSET_E(_x)		((((_x) & 0x2000) >> 13) << 27)
- #define VIDW_BUF_SIZE_OFFSET_MASK		(0x1fff << 13)
- #define VIDW_BUF_SIZE_OFFSET_SHIFT		(13)
- #define VIDW_BUF_SIZE_OFFSET_LIMIT		(0x1fff)
--#define VIDW_BUF_SIZE_OFFSET(_x)		((_x) << 13)
-+#define VIDW_BUF_SIZE_OFFSET(_x)		(((_x) & 0x1fff) << 13)
- 
-+#define VIDW_BUF_SIZE_PAGEWIDTH_E(_x)		((((_x) & 0x2000) >> 13) << 26)
- #define VIDW_BUF_SIZE_PAGEWIDTH_MASK		(0x1fff << 0)
- #define VIDW_BUF_SIZE_PAGEWIDTH_SHIFT		(0)
- #define VIDW_BUF_SIZE_PAGEWIDTH_LIMIT		(0x1fff)
--#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		((_x) << 0)
-+#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		(((_x) & 0x1fff) << 0)
- 
- /* Interrupt controls and status */
- 
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 1fb7ddf..f310516 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -89,7 +89,7 @@ struct s3c_fb;
- struct s3c_fb_variant {
- 	unsigned int	is_2443:1;
- 	unsigned short	nr_windows;
--	unsigned short	vidtcon;
-+	unsigned int	vidtcon;
- 	unsigned short	wincon;
- 	unsigned short	winmap;
- 	unsigned short	keycon;
-@@ -568,7 +568,9 @@ static int s3c_fb_set_par(struct fb_info *info)
- 		writel(data, regs + sfb->variant.vidtcon + 4);
- 
- 		data = VIDTCON2_LINEVAL(var->yres - 1) |
--		       VIDTCON2_HOZVAL(var->xres - 1);
-+		       VIDTCON2_HOZVAL(var->xres - 1) |
-+		       VIDTCON2_LINEVAL_E(var->yres - 1) |
-+		       VIDTCON2_HOZVAL_E(var->xres - 1);
- 		writel(data, regs + sfb->variant.vidtcon + 8);
- 	}
- 
-@@ -584,17 +586,23 @@ static int s3c_fb_set_par(struct fb_info *info)
- 
- 	pagewidth = (var->xres * var->bits_per_pixel) >> 3;
- 	data = VIDW_BUF_SIZE_OFFSET(info->fix.line_length - pagewidth) |
--	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth);
-+	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth) |
-+	       VIDW_BUF_SIZE_OFFSET_E(info->fix.line_length - pagewidth) |
-+	       VIDW_BUF_SIZE_PAGEWIDTH_E(pagewidth);
- 	writel(data, regs + sfb->variant.buf_size + (win_no * 4));
- 
- 	/* write 'OSD' registers to control position of framebuffer */
- 
--	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0);
-+	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0) |
-+	       VIDOSDxA_TOPLEFT_X_E(0) | VIDOSDxA_TOPLEFT_Y_E(0);
- 	writel(data, regs + VIDOSD_A(win_no, sfb->variant));
- 
- 	data = VIDOSDxB_BOTRIGHT_X(s3c_fb_align_word(var->bits_per_pixel,
- 						     var->xres - 1)) |
--	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1);
-+	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1) |
-+	       VIDOSDxB_BOTRIGHT_X_E(s3c_fb_align_word(var->bits_per_pixel,
-+						     var->xres - 1)) |
-+	       VIDOSDxB_BOTRIGHT_Y_E(var->yres - 1);
- 
- 	writel(data, regs + VIDOSD_B(win_no, sfb->variant));
- 
-@@ -1903,6 +1911,37 @@ static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
- 	.win[4]	= &s3c_fb_data_s5p_wins[4],
- };
- 
-+static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
-+	.variant = {
-+		.nr_windows	= 5,
-+		.vidtcon	= VIDTCON0,
-+		.wincon		= WINCON(0),
-+		.winmap		= WINxMAP(0),
-+		.keycon		= WKEYCON,
-+		.osd		= VIDOSD_BASE,
-+		.osd_stride	= 16,
-+		.buf_start	= VIDW_BUF_START(0),
-+		.buf_size	= VIDW_BUF_SIZE(0),
-+		.buf_end	= VIDW_BUF_END(0),
-+
-+		.palette = {
-+			[0] = 0x2400,
-+			[1] = 0x2800,
-+			[2] = 0x2c00,
-+			[3] = 0x3000,
-+			[4] = 0x3400,
-+		},
-+		.has_shadowcon	= 1,
-+		.has_blendcon	= 1,
-+		.has_fixvclk	= 1,
-+	},
-+	.win[0]	= &s3c_fb_data_s5p_wins[0],
-+	.win[1]	= &s3c_fb_data_s5p_wins[1],
-+	.win[2]	= &s3c_fb_data_s5p_wins[2],
-+	.win[3]	= &s3c_fb_data_s5p_wins[3],
-+	.win[4]	= &s3c_fb_data_s5p_wins[4],
-+};
-+
- /* S3C2443/S3C2416 style hardware */
- static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
- 	.variant = {
-@@ -1981,6 +2020,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
- 		.name		= "exynos4-fb",
- 		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
- 	}, {
-+		.name		= "exynos5-fb",
-+		.driver_data	= (unsigned long)&s3c_fb_data_exynos5,
-+	}, {
- 		.name		= "s3c2443-fb",
- 		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
- 	}, {
--- 
-1.7.1
+>=20
+> Thanks,
+> Thomas.
+>=20
+> [...]
