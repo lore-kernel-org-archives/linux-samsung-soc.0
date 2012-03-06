@@ -1,49 +1,73 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 2/2] mmc: sdhci-s3c: Enable runtime power management
-Date: Tue, 06 Mar 2012 15:40:07 +0900
-Message-ID: <4F55B147.6010304@samsung.com>
-References: <4F51697C.40408@samsung.com>
- <1330735602-22409-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1330735602-22409-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <4F549A0A.5020402@samsung.com>
- <20120305115209.GA3224@opensource.wolfsonmicro.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [RESEND 0/4] onenand: OneNAND board dependent probe and fixes for
+ Samsung targets
+Date: Tue, 06 Mar 2012 07:48:20 +0100
+Message-ID: <20120306074820.3494a776@lmajewski.digital.local>
+References: <1320914477-27885-1-git-send-email-l.majewski@samsung.com>
+ <1330965691-10301-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <20120305115209.GA3224@opensource.wolfsonmicro.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:51389 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752776Ab2CFGs3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 6 Mar 2012 01:48:29 -0500
+Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0M0G00JZIAWRMC40@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Mar 2012 06:48:27 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M0G00C2VAWRGC@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 06 Mar 2012 06:48:27 +0000 (GMT)
+Received: from lmajewski.digital.local (unknown [106.116.37.166])
+	by linux.samsung.com (Postfix) with ESMTP id E0AE9270056	for
+ <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 07:56:05 +0100 (CET)
+In-reply-to: <1330965691-10301-1-git-send-email-l.majewski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
- 
-On 03/05/2012 08:52 PM, Mark Brown wrote:
+On Mon, 05 Mar 2012 17:41:27 +0100
+Lukasz Majewski <l.majewski@samsung.com> wrote:
 
-> On Mon, Mar 05, 2012 at 07:48:42PM +0900, Jaehoon Chung wrote:
->> On 03/03/2012 09:46 AM, Mark Brown wrote:
+> This patch sets add board dependent onenand probes.
 > 
->>> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> Several fixes for GONI and Exynos4210 (C210_universal) targets have
+> been added.
 > 
->> Could you explain why use 50ms? 
+> Tested at:
+> 	Samsung S5PC110 GONI
+>         Samsung Exynos4210 (S5PC210 Universal)
 > 
-> It's essentially a random number, some other devices use the same one.
-> We're just trying to avoid suspending between back to back requests.
+> Lukasz Majewski (4):
+>   onenand:samsung Target dependent OneNAND chip probe function
+>   onenand:samsung OneNAND chip probe functions added for GONI and
+>     Exynos4210
+>   onenand: Replace ONENAND_IS_MLC() test with ONENAND_HAS_4KB()
+>   onenand: samsung: Enable support OneNAND support at Samsung's
+>     Exynos4210
 > 
->>> +	pm_runtime_use_autosuspend(&pdev->dev);
->>> +	pm_suspend_ignore_children(&pdev->dev, 1);
+>  board/samsung/goni/onenand.c           |    1 +
+>  board/samsung/universal_c210/onenand.c |    2 +
+>  drivers/mtd/onenand/onenand_base.c     |   88
+> +++++++++++++++++++++++--------
+> drivers/mtd/onenand/samsung.c          |   10 ++++
+> include/configs/s5pc210_universal.h    |    1 +
+> include/linux/mtd/onenand.h            |    5 ++
+> include/linux/mtd/samsung_onenand.h    |    2 + 7 files changed, 86
+> insertions(+), 23 deletions(-)
 > 
->> Is there reason that ignore_children use to set the true?
-> 
-> So that we can suspend the host without having to have the MMC card
-> suspended (the host suspend is not visible to the card).
-> 
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
+I'm very sorry, but this is a wrong mailing list.
+It was meant to go to u-boot mailing list, not linux-samsung-soc :-)
 
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung Poland R&D Center
+Platform Group
