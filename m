@@ -1,125 +1,85 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH 2/3] video: s3c-fb: remove 'default_win' element from
- platform data
-Date: Tue, 06 Mar 2012 19:05:32 +0900
-Message-ID: <002801ccfb80$aac11cf0$004356d0$%han@samsung.com>
-References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
- <1330789808-8253-3-git-send-email-thomas.abraham@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: Exynos: fix SDHCI device names in regulator
+ definitions
+Date: Tue, 06 Mar 2012 02:06:28 -0800
+Message-ID: <4F55E1A4.5050909@samsung.com>
+References: <1330591221-31458-1-git-send-email-m.szyprowski@samsung.com> <1330591221-31458-3-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:41722 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756807Ab2CFKFe (ORCPT
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:47755 "EHLO
+	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758448Ab2CFKGc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 05:05:34 -0500
-In-reply-to: <1330789808-8253-3-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Tue, 6 Mar 2012 05:06:32 -0500
+Received: by pbcun15 with SMTP id un15so3898883pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 02:06:32 -0800 (PST)
+In-Reply-To: <1330591221-31458-3-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org
-Cc: FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>
 
-> -----Original Message-----
-> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
-> Sent: Sunday, March 04, 2012 12:50 AM
-> To: linux-fbdev@vger.kernel.org
-> Cc: FlorianSchandinat@gmx.de; linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com;
-> jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org
-> Subject: [PATCH 2/3] video: s3c-fb: remove 'default_win' element from platform data
-> 
-> The decision to enable or disable the data output to the lcd panel from
-> the controller need not be based on the value of 'default_win' element
-> in the platform data. Instead, the data output to the panel is enabled
-> if any of the windows are active, else data output is disabled.
-> 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Jingoo Han <jg1.han@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+On 03/01/12 00:40, Marek Szyprowski wrote:
+> Patch 189eb7407 "ARM: EXYNOS: use 'exynos4-sdhci' as device name for sdhci
+> controllers" changed the names of the SDHCI devices, but the author forgot
+> to update the definitions for the regulator subsystem. This patch fixes
+> this issue.
+>
+> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
 > ---
->  arch/arm/plat-samsung/include/plat/fb.h |    2 --
->  drivers/video/s3c-fb.c                  |   24 ++++--------------------
->  2 files changed, 4 insertions(+), 22 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-> index 39d6bd7..536002f 100644
-> --- a/arch/arm/plat-samsung/include/plat/fb.h
-> +++ b/arch/arm/plat-samsung/include/plat/fb.h
-> @@ -62,8 +62,6 @@ struct s3c_fb_platdata {
->  	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
->  	struct fb_videomode     *vtiming;
-> 
-> -	u32			 default_win;
-> -
->  	u32			 vidcon0;
->  	u32			 vidcon1;
->  };
-> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-> index 8e05d4d..8baba31 100644
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -531,7 +531,7 @@ static int s3c_fb_set_par(struct fb_info *info)
->  	/* disable the window whilst we update it */
->  	writel(0, regs + WINCON(win_no));
-> 
-> -	if (win_no == sfb->pdata->default_win)
-> +	if (!sfb->output_on)
->  		s3c_fb_enable(sfb, 1);
-> 
->  	/* write the buffer address */
-> @@ -792,7 +792,7 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
->  	struct s3c_fb_win *win = info->par;
->  	struct s3c_fb *sfb = win->parent;
->  	unsigned int index = win->index;
-> -	u32 wincon;
-> +	u32 wincon, output_on = sfb->output_on;
+>   arch/arm/mach-exynos/mach-nuri.c           |    4 ++--
+>   arch/arm/mach-exynos/mach-universal_c210.c |    2 +-
+>   2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+> index 8c0479f..dd26581 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -117,7 +117,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
+>   };
+>
+>   static struct regulator_consumer_supply emmc_supplies[] = {
+> -	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+> +	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+>   	REGULATOR_SUPPLY("vmmc", "dw_mmc"),
+>   };
+>
+> @@ -417,7 +417,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo12_[] = {
+>   	REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
+>   };
+>   static struct regulator_consumer_supply __initdata max8997_ldo13_[] = {
+> -	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
+> +	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.2"), /* TFLASH */
+>   };
+>   static struct regulator_consumer_supply __initdata max8997_ldo14_[] = {
+>   	REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
+> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+> index 908624c..7cd738c 100644
+> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+> @@ -750,7 +750,7 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data __initdata = {
+>   };
+>
+>   static struct regulator_consumer_supply mmc0_supplies[] = {
+> -	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+> +	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+>   };
+>
+>   static struct regulator_init_data mmc0_fixed_voltage_init_data = {
 
-Can you add new line as below? It's more readable.
-+	u32 output_on = sfb->output_on;
-Sorry for nitpicking.
+(Cc'ed Jaehoon Chung)
 
-> 
->  	dev_dbg(sfb->dev, "blank mode %d\n", blank_mode);
-> 
-> @@ -838,27 +838,11 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
->  	 * it is highly likely that we also do not need to output
->  	 * anything.
->  	 */
-> -
-> -	/* We could do something like the following code, but the current
-> -	 * system of using framebuffer events means that we cannot make
-> -	 * the distinction between just window 0 being inactive and all
-> -	 * the windows being down.
-> -	 *
-> -	 * s3c_fb_enable(sfb, sfb->enabled ? 1 : 0);
-> -	*/
-> -
-> -	/* we're stuck with this until we can do something about overriding
-> -	 * the power control using the blanking event for a single fb.
-> -	 */
-> -	if (index == sfb->pdata->default_win) {
-> -		shadow_protect_win(win, 1);
-> -		s3c_fb_enable(sfb, blank_mode != FB_BLANK_POWERDOWN ? 1 : 0);
-> -		shadow_protect_win(win, 0);
-> -	}
-> +	s3c_fb_enable(sfb, sfb->enabled ? 1 : 0);
+Oops, I looked at same patch from Jaehoon Chung just now and it could 
+be. However, including same Signed-off-by from Kyungmin Park, it seems 
+wrong. What's happened in your side?
 
-However, shadow_protect_win() is necessary as belows.
-Because shadow registers such as VIDCON0 should be protectd
-whenever the registers are updated. The s3c_fb_enable() updates
-VIDCON0.
-+	shadow_protect_win(win, 1);
-+	s3c_fb_enable(sfb, sfb->enabled ? 1 : 0);
-+	shadow_protect_win(win, 0);
+Thanks.
 
-> 
->  	pm_runtime_put_sync(sfb->dev);
-> 
-> -	return 0;
-> +	return output_on == sfb->output_on;
->  }
-> 
->  /**
-> --
-> 1.6.6.rc2
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
