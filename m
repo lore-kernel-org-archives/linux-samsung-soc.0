@@ -1,31 +1,110 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL] Samsung fixes-4 for v3.3
-Date: Tue, 06 Mar 2012 02:47:08 -0800
-Message-ID: <4F55EB2C.6090807@samsung.com>
-References: <4F55E6D1.4080703@samsung.com>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: Exynos: fix SDHCI device names in regulator definitions
+Date: Tue, 6 Mar 2012 20:02:13 +0900
+Message-ID: <CAH9JG2X48GmMAa3TGKBVfnFsA=52zHzBcMC83Tmy97eAd40Big@mail.gmail.com>
+References: <1330591221-31458-1-git-send-email-m.szyprowski@samsung.com>
+	<1330591221-31458-3-git-send-email-m.szyprowski@samsung.com>
+	<4F55E1A4.5050909@samsung.com>
+	<CAH9JG2WRnFhpQpec_TKT0+qKx50A1-ukSdLticUX8is8awTLvg@mail.gmail.com>
+	<4F55E50A.2060908@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:54224 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758949Ab2CFKrM (ORCPT
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:37240 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S964997Ab2CFLCO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 05:47:12 -0500
-Received: by pbcun15 with SMTP id un15so3932446pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 02:47:12 -0800 (PST)
-In-Reply-To: <4F55E6D1.4080703@samsung.com>
+	Tue, 6 Mar 2012 06:02:14 -0500
+Received: by qcqw6 with SMTP id w6so2322872qcq.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 03:02:13 -0800 (PST)
+In-Reply-To: <4F55E50A.2060908@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Chris Ball <cjb@laptop.org>
 
-On 03/06/12 02:28, Kukjin Kim wrote:
-> Hi Arnd, Olof
+On 3/6/12, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 03/06/12 02:13, Kyungmin Park wrote:
+>> On 3/6/12, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>> On 03/01/12 00:40, Marek Szyprowski wrote:
+>>>> Patch 189eb7407 "ARM: EXYNOS: use 'exynos4-sdhci' as device name for
+>>>> sdhci
+>>>> controllers" changed the names of the SDHCI devices, but the author
+>>>> forgot
+>>>> to update the definitions for the regulator subsystem. This patch fixes
+>>>> this issue.
+>>>>
+>>>> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+>>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>>>> ---
+>>>>    arch/arm/mach-exynos/mach-nuri.c           |    4 ++--
+>>>>    arch/arm/mach-exynos/mach-universal_c210.c |    2 +-
+>>>>    2 files changed, 3 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm/mach-exynos/mach-nuri.c
+>>>> b/arch/arm/mach-exynos/mach-nuri.c
+>>>> index 8c0479f..dd26581 100644
+>>>> --- a/arch/arm/mach-exynos/mach-nuri.c
+>>>> +++ b/arch/arm/mach-exynos/mach-nuri.c
+>>>> @@ -117,7 +117,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data
+>>>> __initdata = {
+>>>>    };
+>>>>
+>>>>    static struct regulator_consumer_supply emmc_supplies[] = {
+>>>> -	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+>>>> +	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+>>>>    	REGULATOR_SUPPLY("vmmc", "dw_mmc"),
+>>>>    };
+>>>>
+>>>> @@ -417,7 +417,7 @@ static struct regulator_consumer_supply __initdata
+>>>> max8997_ldo12_[] = {
+>>>>    	REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
+>>>>    };
+>>>>    static struct regulator_consumer_supply __initdata max8997_ldo13_[] =
+>>>> {
+>>>> -	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
+>>>> +	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.2"), /* TFLASH */
+>>>>    };
+>>>>    static struct regulator_consumer_supply __initdata max8997_ldo14_[] =
+>>>> {
+>>>>    	REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
+>>>> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
+>>>> b/arch/arm/mach-exynos/mach-universal_c210.c
+>>>> index 908624c..7cd738c 100644
+>>>> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+>>>> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+>>>> @@ -750,7 +750,7 @@ static struct s3c_sdhci_platdata
+>>>> universal_hsmmc0_data
+>>>> __initdata = {
+>>>>    };
+>>>>
+>>>>    static struct regulator_consumer_supply mmc0_supplies[] = {
+>>>> -	REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+>>>> +	REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+>>>>    };
+>>>>
+>>>>    static struct regulator_init_data mmc0_fixed_voltage_init_data = {
+>>>
+>>> (Cc'ed Jaehoon Chung)
+>>>
+>>> Oops, I looked at same patch from Jaehoon Chung just now and it could
+>>> be. However, including same Signed-off-by from Kyungmin Park, it seems
+>>> wrong. What's happened in your side?
+>>
+>> As your delayed work, we did the same thing from both side.
+>>
+> NO! As I remember, there was same case from your side before. My concern
+> is still how your sign can be added in duplication same patches but
+> other author?
 >
-> Please pull Samsung fixes for v3.3.
+>> Most of all, exynos4-sdhci patchset should contains these change also.
+>> as wrong merge, it breaks all sdhci support at least exynos4 series.
 >
-> If any problems, please kindly let me know.
+> Wrong merge? what's that?
+That's problem. you don't know what you did. Did you test the
+exynos4-sdhci patchset from Thomas?
+
+and think why this patch is required.
 >
 > Thanks.
 >
@@ -34,55 +113,9 @@ On 03/06/12 02:28, Kukjin Kim wrote:
 > --
 > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 > SW Solution Development Team, Samsung Electronics Co., Ltd.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
-> The following changes since commit
-> 6b21d18ed50c7d145220b0724ea7f2613abf0f95:
->
-> Linux 3.3-rc5 (2012-02-25 12:18:16 -0800)
->
-> are available in the git repository at:
->
-> ssh://gitolite@ra.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.3-samsung-fixes-4
-
-Oops, should be...
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-
->
-> Bartlomiej Zolnierkiewicz (1):
-> ARM: EXYNOS: fix touchscreen IRQ setup on Universal C210 board
->
-> Gusakov Andrey (1):
-> ARM: S3C24XX: DMA resume regression fix
->
-> Heiko Stuebner (1):
-> ARM: S3C24XX: Fix restart on S3C2442
->
-> Joonyoung Shim (1):
-> ARM: SAMSUNG: Fix memory size for hsotg
->
-> arch/arm/mach-exynos/mach-universal_c210.c | 2 ++
-> arch/arm/mach-s3c2440/common.h | 2 +-
-> arch/arm/mach-s3c2440/mach-anubis.c | 2 +-
-> arch/arm/mach-s3c2440/mach-at2440evb.c | 2 +-
-> arch/arm/mach-s3c2440/mach-gta02.c | 2 +-
-> arch/arm/mach-s3c2440/mach-mini2440.c | 2 +-
-> arch/arm/mach-s3c2440/mach-nexcoder.c | 2 +-
-> arch/arm/mach-s3c2440/mach-osiris.c | 2 +-
-> arch/arm/mach-s3c2440/mach-rx1950.c | 2 +-
-> arch/arm/mach-s3c2440/mach-rx3715.c | 2 +-
-> arch/arm/mach-s3c2440/mach-smdk2440.c | 2 +-
-> arch/arm/mach-s3c2440/s3c2440.c | 13 -------------
-> arch/arm/mach-s3c2440/s3c244x.c | 11 +++++++++++
-> arch/arm/plat-s3c24xx/dma.c | 2 +-
-> arch/arm/plat-samsung/devs.c | 2 +-
-> 15 files changed, 25 insertions(+), 25 deletions(-)
-
--- 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
