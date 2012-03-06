@@ -1,309 +1,49 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/3] video: s3c-fb: move video interface timing out of
- window setup data
-Date: Tue, 6 Mar 2012 12:05:03 +0530
-Message-ID: <CAJuYYwRAGQw=b0P1XePqPPXi=v5KXPQqoEJsvOpGbu7FtMnLNw@mail.gmail.com>
-References: <1330789808-8253-1-git-send-email-thomas.abraham@linaro.org>
-	<1330789808-8253-2-git-send-email-thomas.abraham@linaro.org>
-	<001f01ccfb53$f034ef00$d09ecd00$%han@samsung.com>
-	<CAJuYYwToJDXujqjLcY_2cN0M-K0yGzzOcDaFeh+OT_Qx9pPCEQ@mail.gmail.com>
-	<002101ccfb61$710d2c70$53278550$%han@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH 2/2] mmc: sdhci-s3c: Enable runtime power management
+Date: Tue, 06 Mar 2012 15:40:07 +0900
+Message-ID: <4F55B147.6010304@samsung.com>
+References: <4F51697C.40408@samsung.com>
+ <1330735602-22409-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <1330735602-22409-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <4F549A0A.5020402@samsung.com>
+ <20120305115209.GA3224@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vw0-f46.google.com ([209.85.212.46]:45249 "EHLO
-	mail-vw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750789Ab2CFGfF convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 01:35:05 -0500
-Received: by vbbff1 with SMTP id ff1so4196419vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 05 Mar 2012 22:35:03 -0800 (PST)
-In-Reply-To: <002101ccfb61$710d2c70$53278550$%han@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <20120305115209.GA3224@opensource.wolfsonmicro.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, linux-mmc@vger.kernel.org, Chris Ball <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
 
-On 6 March 2012 11:52, Jingoo Han <jg1.han@samsung.com> wrote:
+Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+ 
+On 03/05/2012 08:52 PM, Mark Brown wrote:
 
->> -----Original Message-----
->> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
->> Sent: Tuesday, March 06, 2012 2:26 PM
->> To: Jingoo Han
->> Cc: linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-sam=
-sung-soc@vger.kernel.org;
->> kgene.kim@samsung.com; ben-linux@fluff.org; patches@linaro.org
->> Subject: Re: [PATCH 1/3] video: s3c-fb: move video interface timing =
-out of window setup data
->>
->> On 6 March 2012 10:15, Jingoo Han <jg1.han@samsung.com> wrote:
->>
->> >> -----Original Message-----
->> >> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
->> >> Sent: Sunday, March 04, 2012 12:50 AM
->> >> To: linux-fbdev@vger.kernel.org
->> >> Cc: FlorianSchandinat@gmx.de; linux-samsung-soc@vger.kernel.org; =
-kgene.kim@samsung.com;
->> >> jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org
->> >> Subject: [PATCH 1/3] video: s3c-fb: move video interface timing o=
-ut of window setup data
->> >>
->> >> The video interface timing is independent of the window setup dat=
-a.
->> >> The resolution of the window can be smaller than that of the lcd
->> >> panel to which the video data is output.
->> >>
->> >> So move the video timing data from the per-window setup data to t=
-he
->> >> platform specific section in the platform data. This also removes
->> >> the restriction that atleast one window should have the same
->> >> resolution as that of the panel attached.
->> >>
->> >> Cc: Ben Dooks <ben-linux@fluff.org>
->> >> Cc: Jingoo Han <jg1.han@samsung.com>
->> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> >> ---
->> >> =A0arch/arm/plat-samsung/include/plat/fb.h | =A0 =A09 ++-
->> >> =A0drivers/video/s3c-fb.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0=
-106 +++++++++++++++++--------------
->> >> =A02 files changed, 63 insertions(+), 52 deletions(-)
->> >>
->> >> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/p=
-lat-samsung/include/plat/fb.h
->> >> index 0fedf47..39d6bd7 100644
->> >> --- a/arch/arm/plat-samsung/include/plat/fb.h
->> >> +++ b/arch/arm/plat-samsung/include/plat/fb.h
->> >> @@ -24,15 +24,16 @@
->> >>
->> >> =A0/**
->> >> =A0 * struct s3c_fb_pd_win - per window setup data
->> >> - * @win_mode: The display parameters to initialise (not for wind=
-ow 0)
->> >> + * @xres =A0 =A0 : The window X size.
->> >> + * @yres =A0 =A0 : The window Y size.
->> >> =A0 * @virtual_x: The virtual X size.
->> >> =A0 * @virtual_y: The virtual Y size.
->> >> =A0 */
->> >> =A0struct s3c_fb_pd_win {
->> >> - =A0 =A0 struct fb_videomode =A0 =A0 win_mode;
->> >> -
->> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0default_bpp;
->> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0max_bpp;
->> >> + =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0xres;
->> >> + =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0yres;
->> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0virtual_x;
->> >> =A0 =A0 =A0 unsigned short =A0 =A0 =A0 =A0 =A0virtual_y;
->> >> =A0};
->> >> @@ -45,6 +46,7 @@ struct s3c_fb_pd_win {
->> >> =A0 * @default_win: default window layer number to be used for UI=
- layer.
->> >> =A0 * @vidcon0: The base vidcon0 values to control the panel data=
- format.
->> >> =A0 * @vidcon1: The base vidcon1 values to control the panel data=
- output.
->> >> + * @vtiming: Video timing when connected to a RGB type panel.
->> >
->> > fb_videomode can be set, even if it is not RGB type panel.
->> > In my opinion, it would be better.
->> > + * @vtiming: The video timing values to set the interface timing =
-of the panel.
->>
->> The other interface that is supported is the i80 interface. Can thes=
-e
->> timing values be used for i80 interface as well ?
->
-> No, you're right. The i80 is not supported.
-> Please ignore my comment.
->
->>
->> >
->> >> =A0 * @win: The setup data for each hardware window, or NULL for =
-unused.
->> >> =A0 * @display_mode: The LCD output display mode.
->> >> =A0 *
->> >> @@ -58,6 +60,7 @@ struct s3c_fb_platdata {
->> >> =A0 =A0 =A0 void =A0 =A0(*setup_gpio)(void);
->> >>
->> >> =A0 =A0 =A0 struct s3c_fb_pd_win =A0 =A0*win[S3C_FB_MAX_WIN];
->> >> + =A0 =A0 struct fb_videomode =A0 =A0 *vtiming;
->> >>
->> >> =A0 =A0 =A0 u32 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0defaul=
-t_win;
->> >>
->> >> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
->> >> index 1fb7ddf..8e05d4d 100644
->> >> --- a/drivers/video/s3c-fb.c
->> >> +++ b/drivers/video/s3c-fb.c
->> >> @@ -495,7 +495,6 @@ static int s3c_fb_set_par(struct fb_info *inf=
-o)
->> >> =A0 =A0 =A0 u32 alpha =3D 0;
->> >> =A0 =A0 =A0 u32 data;
->> >> =A0 =A0 =A0 u32 pagewidth;
->> >> - =A0 =A0 int clkdiv;
->> >>
->> >> =A0 =A0 =A0 dev_dbg(sfb->dev, "setting framebuffer parameters\n")=
-;
->> >>
->> >> @@ -532,46 +531,9 @@ static int s3c_fb_set_par(struct fb_info *in=
-fo)
->> >> =A0 =A0 =A0 /* disable the window whilst we update it */
->> >> =A0 =A0 =A0 writel(0, regs + WINCON(win_no));
->> >>
->> >> - =A0 =A0 /* use platform specified window as the basis for the l=
-cd timings */
->> >> -
->> >> - =A0 =A0 if (win_no =3D=3D sfb->pdata->default_win) {
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 clkdiv =3D s3c_fb_calc_pixclk(sfb, var-=
->pixclock);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D sfb->pdata->vidcon0;
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 data &=3D ~(VIDCON0_CLKVAL_F_MASK | VID=
-CON0_CLKDIR);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 if (clkdiv > 1)
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data |=3D VIDCON0_CLKVA=
-L_F(clkdiv-1) | VIDCON0_CLKDIR;
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 else
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data &=3D ~VIDCON0_CLKD=
-IR; =A0 =A0 =A0 =A0/* 1:1 clock */
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 /* write the timing data to the panel *=
-/
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 if (sfb->variant.is_2443)
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data |=3D (1 << 5);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + VIDCON0);
->> >> -
->> >> + =A0 =A0 if (win_no =3D=3D sfb->pdata->default_win)
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 s3c_fb_enable(sfb, 1);
->> >>
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDTCON0_VBPD(var->upper_margi=
-n - 1) |
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON0_VFPD(var->lower=
-_margin - 1) |
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON0_VSPW(var->vsync=
-_len - 1);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + sfb->variant.vidtco=
-n);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDTCON1_HBPD(var->left_margin=
- - 1) |
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON1_HFPD(var->right=
-_margin - 1) |
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON1_HSPW(var->hsync=
-_len - 1);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 /* VIDTCON1 */
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + sfb->variant.vidtco=
-n + 4);
->> >> -
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 data =3D VIDTCON2_LINEVAL(var->yres - 1=
-) |
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0VIDTCON2_HOZVAL(var->xre=
-s - 1);
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 writel(data, regs + sfb->variant.vidtco=
-n + 8);
->> >> - =A0 =A0 }
->> >> -
->> >
->> > It looks good.
->> > VIDTCON registers don't need to be written whenever s3c_fb_set_par=
- is called.
->> >
->> >> =A0 =A0 =A0 /* write the buffer address */
->> >>
->> >> =A0 =A0 =A0 /* start and end registers stride is 8 */
->> >> @@ -1136,11 +1098,11 @@ static int __devinit s3c_fb_alloc_memory(=
-struct s3c_fb *sfb,
->> >>
->> >> =A0 =A0 =A0 dev_dbg(sfb->dev, "allocating memory for display\n");
->> >>
->> >> - =A0 =A0 real_size =3D windata->win_mode.xres * windata->win_mod=
-e.yres;
->> >> + =A0 =A0 real_size =3D windata->xres * windata->yres;
->> >> =A0 =A0 =A0 virt_size =3D windata->virtual_x * windata->virtual_y=
-;
->> >>
->> >> =A0 =A0 =A0 dev_dbg(sfb->dev, "real_size=3D%u (%u.%u), virt_size=3D=
-%u (%u.%u)\n",
->> >> - =A0 =A0 =A0 =A0 =A0 =A0 real_size, windata->win_mode.xres, wind=
-ata->win_mode.yres,
->> >> + =A0 =A0 =A0 =A0 =A0 =A0 real_size, windata->xres, windata->yres=
-,
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 virt_size, windata->virtual_x, windat=
-a->virtual_y);
->> >>
->> >> =A0 =A0 =A0 size =3D (real_size > virt_size) ? real_size : virt_s=
-ize;
->> >> @@ -1222,7 +1184,7 @@ static int __devinit s3c_fb_probe_win(struc=
-t s3c_fb *sfb, unsigned int win_no,
->> >> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 struct s3c_fb_win **res)
->> >> =A0{
->> >> =A0 =A0 =A0 struct fb_var_screeninfo *var;
->> >> - =A0 =A0 struct fb_videomode *initmode;
->> >> + =A0 =A0 struct fb_videomode initmode;
->> >
->> > *initmode cannot be used???
->> > Can you tell me why pointer type should be changed?
->> >
->>
->> The initmode is used to pass video timing to the fb_videomode_to_var=
-()
->> function. Each window setup data in platform data included video
->> timing information. Since, the video timing data is now moved out of
->> per-window data, the xres and yres values have to be setup based on
->> the window for which the fb_videomode_to_var() is called. Hence, the
->> common timing values is first copied into initmode and then the wind=
-ow
->> specific xres and yres are set. If initmode is a maintained as a
->> pointer (to the video timing data in platform data), then any xres a=
-nd
->> yres update to initmode would overwrite the 'constant' video timing.
->
-> My point is that variable type 'initmode' can be not changed by using=
- pointer type as follows:
->
-> @@ -1243,11 +1243,11 @@ static int __devinit s3c_fb_probe_win(struct =
-s3c_fb *sfb, unsigned int win_no,
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0windata =3D sfb->pdata->win[win_no];
-> - =A0 =A0 =A0 initmode =3D &windata->win_mode;
-> + =A0 =A0 =A0 initmode =3D sfb->pdata->vtiming;
+> On Mon, Mar 05, 2012 at 07:48:42PM +0900, Jaehoon Chung wrote:
+>> On 03/03/2012 09:46 AM, Mark Brown wrote:
+> 
+>>> +	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+> 
+>> Could you explain why use 50ms? 
+> 
+> It's essentially a random number, some other devices use the same one.
+> We're just trying to avoid suspending between back to back requests.
+> 
+>>> +	pm_runtime_use_autosuspend(&pdev->dev);
+>>> +	pm_suspend_ignore_children(&pdev->dev, 1);
+> 
+>> Is there reason that ignore_children use to set the true?
+> 
+> So that we can suspend the host without having to have the MMC card
+> suspended (the host suspend is not visible to the card).
+> 
+> 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
-In this case, initmode is not pointing to the 'constant' lcd panel
-timing values.
 
->
-> =A0 =A0 =A0 =A0WARN_ON(windata->max_bpp =3D=3D 0);
-> - =A0 =A0 =A0 WARN_ON(windata->win_mode.xres =3D=3D 0);
-> - =A0 =A0 =A0 WARN_ON(windata->win_mode.yres =3D=3D 0);
-> + =A0 =A0 =A0 WARN_ON(windata->xres =3D=3D 0);
-> + =A0 =A0 =A0 WARN_ON(windata->yres =3D=3D 0);
->
-> =A0 =A0 =A0 =A0win =3D fbinfo->par;
-> =A0 =A0 =A0 =A0*res =3D win;
-> @@ -1286,6 +1286,8 @@ static int __devinit s3c_fb_probe_win(struct s3=
-c_fb *sfb, unsigned int win_no,
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0/* setup the initial video mode from the window */
-> + =A0 =A0 =A0 initmode->xres =3D windata->xres;
-> + =A0 =A0 =A0 initmode->yres =3D windata->yres;
-
-And then here, the xres and yres of the 'constant' lcd panel timing
-value will be changed.
-
-But, we don't want to change the actual lcd panel timing value. That
-is the reason to first copy the lcd panel timing value into a local
-copy and then update the xres and yres and then pass this local copy
-of the timing value to fb_videomode_to_var() function.
-
-Thanks,
-Thomas.
-
-[...]
