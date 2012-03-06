@@ -1,90 +1,84 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: Exynos: fix SDHCI caps for UniversalC210 and
- NURI boards
-Date: Tue, 06 Mar 2012 02:31:40 -0800
-Message-ID: <4F55E78C.5030304@samsung.com>
-References: <1330591221-31458-1-git-send-email-m.szyprowski@samsung.com> <1330591221-31458-2-git-send-email-m.szyprowski@samsung.com> <4F55E3DF.4050407@samsung.com>
+Subject: Re: [GIT PULL] Samsung fixes-4 for v3.3
+Date: Tue, 06 Mar 2012 02:47:08 -0800
+Message-ID: <4F55EB2C.6090807@samsung.com>
+References: <4F55E6D1.4080703@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:40805 "EHLO
+Received: from mail-pw0-f46.google.com ([209.85.160.46]:54224 "EHLO
 	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758838Ab2CFKbn (ORCPT
+	with ESMTP id S1758949Ab2CFKrM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 6 Mar 2012 05:31:43 -0500
-Received: by pbcun15 with SMTP id un15so3921484pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 02:31:43 -0800 (PST)
-In-Reply-To: <4F55E3DF.4050407@samsung.com>
+	Tue, 6 Mar 2012 05:47:12 -0500
+Received: by pbcun15 with SMTP id un15so3932446pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 02:47:12 -0800 (PST)
+In-Reply-To: <4F55E6D1.4080703@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On 03/06/12 02:15, Kukjin Kim wrote:
-> On 03/01/12 00:40, Marek Szyprowski wrote:
->> Add a new quirk (introduced in 6e8201f57c935 "mmc: core: add the
->> capability
->> for broken voltage" to indicate that MMC core should ignore voltage
->> change
->> errors reported by the regulators core. This is required to get SDHCI
->> working on these boards again after commit ceb6143b2df81c ("mmc: sdhci:
->> fix vmmc handling").
->>
->> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> ---
->> arch/arm/mach-exynos/mach-nuri.c | 2 ++
->> arch/arm/mach-exynos/mach-universal_c210.c | 1 +
->> 2 files changed, 3 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/mach-nuri.c
->> b/arch/arm/mach-exynos/mach-nuri.c
->> index a6b9162..8c0479f 100644
->> --- a/arch/arm/mach-exynos/mach-nuri.c
->> +++ b/arch/arm/mach-exynos/mach-nuri.c
->> @@ -112,6 +112,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data
->> __initdata = {
->> .host_caps = (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
->> MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
->> MMC_CAP_DISABLE | MMC_CAP_ERASE),
->> + .host_caps2 = MMC_CAP2_BROKEN_VOLTAGE,
->> .cd_type = S3C_SDHCI_CD_PERMANENT,
->> };
->>
->> @@ -151,6 +152,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc2_data
->> __initdata = {
->> .host_caps = MMC_CAP_4_BIT_DATA |
->> MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
->> MMC_CAP_DISABLE,
->> + .host_caps2 = MMC_CAP2_BROKEN_VOLTAGE,
->> .ext_cd_gpio = EXYNOS4_GPX3(3), /* XEINT_27 */
->> .ext_cd_gpio_invert = 1,
->> .cd_type = S3C_SDHCI_CD_GPIO,
->> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
->> b/arch/arm/mach-exynos/mach-universal_c210.c
->> index 6017a21..908624c 100644
->> --- a/arch/arm/mach-exynos/mach-universal_c210.c
->> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
->> @@ -745,6 +745,7 @@ static struct s3c_sdhci_platdata
->> universal_hsmmc0_data __initdata = {
->> .host_caps = (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
->> MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
->> MMC_CAP_DISABLE),
->> + .host_caps2 = MMC_CAP2_BROKEN_VOLTAGE,
->> .cd_type = S3C_SDHCI_CD_PERMANENT,
->> };
->>
+On 03/06/12 02:28, Kukjin Kim wrote:
+> Hi Arnd, Olof
 >
-> Hi Marek,
+> Please pull Samsung fixes for v3.3.
 >
-> If possible, please adding cover letter for patch set(series), I think
-
-Just kindly ignore above. I found your cover letter :(
-
-> these are just independent patches though. Anyway, will apply this.
+> If any problems, please kindly let me know.
 >
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> The following changes since commit
+> 6b21d18ed50c7d145220b0724ea7f2613abf0f95:
+>
+> Linux 3.3-rc5 (2012-02-25 12:18:16 -0800)
+>
+> are available in the git repository at:
+>
+> ssh://gitolite@ra.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> v3.3-samsung-fixes-4
 
+Oops, should be...
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+
+>
+> Bartlomiej Zolnierkiewicz (1):
+> ARM: EXYNOS: fix touchscreen IRQ setup on Universal C210 board
+>
+> Gusakov Andrey (1):
+> ARM: S3C24XX: DMA resume regression fix
+>
+> Heiko Stuebner (1):
+> ARM: S3C24XX: Fix restart on S3C2442
+>
+> Joonyoung Shim (1):
+> ARM: SAMSUNG: Fix memory size for hsotg
+>
+> arch/arm/mach-exynos/mach-universal_c210.c | 2 ++
+> arch/arm/mach-s3c2440/common.h | 2 +-
+> arch/arm/mach-s3c2440/mach-anubis.c | 2 +-
+> arch/arm/mach-s3c2440/mach-at2440evb.c | 2 +-
+> arch/arm/mach-s3c2440/mach-gta02.c | 2 +-
+> arch/arm/mach-s3c2440/mach-mini2440.c | 2 +-
+> arch/arm/mach-s3c2440/mach-nexcoder.c | 2 +-
+> arch/arm/mach-s3c2440/mach-osiris.c | 2 +-
+> arch/arm/mach-s3c2440/mach-rx1950.c | 2 +-
+> arch/arm/mach-s3c2440/mach-rx3715.c | 2 +-
+> arch/arm/mach-s3c2440/mach-smdk2440.c | 2 +-
+> arch/arm/mach-s3c2440/s3c2440.c | 13 -------------
+> arch/arm/mach-s3c2440/s3c244x.c | 11 +++++++++++
+> arch/arm/plat-s3c24xx/dma.c | 2 +-
+> arch/arm/plat-samsung/devs.c | 2 +-
+> 15 files changed, 25 insertions(+), 25 deletions(-)
+
+-- 
 Thanks.
 
 Best regards,
