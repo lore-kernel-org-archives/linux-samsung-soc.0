@@ -1,45 +1,46 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL] fix to use static declarations for samsung stuff
-Date: Wed, 07 Mar 2012 03:55:26 -0800
-Message-ID: <4F574CAE.6030903@samsung.com>
-References: <013b01cce7f3$48c87e30$da597a90$%kim@samsung.com>
+Subject: Re: [PATCH v2 2/3] gpio/samsung: add support GPIOlib for EXYNOS5250
+Date: Wed, 07 Mar 2012 04:06:37 -0800
+Message-ID: <4F574F4D.5000708@samsung.com>
+References: <1329341829-14403-1-git-send-email-kgene.kim@samsung.com> <1329341829-14403-3-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:43411 "EHLO
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:46085 "EHLO
 	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755361Ab2CGLza (ORCPT
+	by vger.kernel.org with ESMTP id S1757315Ab2CGMGr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 06:55:30 -0500
-Received: by obbuo6 with SMTP id uo6so6812932obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 03:55:30 -0800 (PST)
-In-Reply-To: <013b01cce7f3$48c87e30$da597a90$%kim@samsung.com>
+	Wed, 7 Mar 2012 07:06:47 -0500
+Received: by obbuo6 with SMTP id uo6so6825032obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 04:06:46 -0800 (PST)
+In-Reply-To: <1329341829-14403-3-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: rmk+kernel@arm.linux.org.uk, arnd@arndb.de, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangsu Park <sangsu4u.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
 
-On 02/10/12 04:55, Kukjin Kim wrote:
-> Hi Russell, Arnd and Olof,
+On 02/15/12 13:37, Kukjin Kim wrote:
+> From: Sangsu Park<sangsu4u.park@samsung.com>
 >
-> Please pull following branch which is including fix to use static
-> declarations for samsung stuff.
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> next/cleanup-use-static
+> This patch adds gpio_chips for EXYNOS5250 and replaces
+> exynos4_xxx() with exynos_xxx() and variables to support
+> exynos4 and exynos5 together.
+> In addition, use ioreamp() for base address of gpios.
 >
-> I'm not sure it can be sent to upstream for v3.3 but if so, would be better.
->
-Hi Arnd, Olof,
+> Signed-off-by: Sangsu Park<sangsu4u.park@samsung.com>
+> Cc: Grant Likely<grant.likely@secretlab.ca>
 
-I can't see this series in arm-soc yet. If missed, please pull from:
-  http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-use-static
+Hi Grant,
 
-As a note, I rebased it on top of arm-soc/depends/rmk/for-armsoc because 
-this touches same points(dma declaration part).
+How about upstreaming this via samsung tree when sending EXYNOS5 stuff, 
+I think, gpio-samsung needs still cleanup though? If any comments, 
+please kindly let me know.
 
-If any problems, please kindly let me know.
+> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
+> ---
+>   drivers/gpio/gpio-samsung.c             |  439 +++++++++++++++++++++++++++++--
+>   1 files changed, 411 insertions(+), 28 deletions(-)
 
 Thanks.
 
@@ -48,343 +49,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit a5f17d1f4c2831b9b9bf8b1a537cdbac995d6e13:
-
-   Merge tag 'v3.3-rc2' into depends/rmk/for-armsoc (2012-02-07 15:05:20 
--0800)
-
-are available in the git repository at:
-
- 
-http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-use-static
-
-Kukjin Kim (8):
-       ARM: EXYNOS: use static declaration when it is not used in other 
-files
-       ARM: S3C24XX: use static declaration when it is not used in other 
-files
-       ARM: S3C64XX: use static declaration when it is not used in other 
-files
-       ARM: S5P64X0: use static declaration when it is not used in other 
-files
-       ARM: S5PC100: use static declaration when it is not used in other 
-files
-       ARM: S5PV210: use static declaration when it is not used in other 
-files
-       ARM: SAMSUNG: use static declaration when it is not used in other 
-files
-       Merge branch 'topic/cleanup-use-static' into next/cleanup-use-static
-
-  arch/arm/mach-exynos/clock-exynos4210.c            |    2 +-
-  arch/arm/mach-exynos/clock-exynos4212.c            |    2 +-
-  arch/arm/mach-exynos/clock.c                       |    2 +-
-  arch/arm/mach-exynos/common.c                      |    2 +-
-  arch/arm/mach-exynos/dma.c                         |   16 +++++-----
-  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
-  arch/arm/mach-exynos/mach-universal_c210.c         |    2 +-
-  arch/arm/mach-s3c2410/mach-h1940.c                 |   12 ++++----
-  arch/arm/mach-s3c2416/clock.c                      |    6 ----
-  arch/arm/mach-s3c2416/mach-smdk2416.c              |    8 +++---
-  arch/arm/mach-s3c2440/mach-gta02.c                 |    4 +-
-  arch/arm/mach-s3c2440/mach-rx1950.c                |   12 ++++----
-  arch/arm/mach-s3c64xx/common.c                     |    2 +-
-  arch/arm/mach-s3c64xx/common.h                     |    2 -
-  arch/arm/mach-s3c64xx/irq-pm.c                     |    2 +-
-  arch/arm/mach-s5p64x0/clock.c                      |   11 ++++---
-  arch/arm/mach-s5p64x0/dma.c                        |   12 ++++----
-  arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h |    7 -----
-  arch/arm/mach-s5pc100/clock.c                      |   28 
-++++++++++----------
-  arch/arm/mach-s5pc100/dma.c                        |   16 +++++-----
-  arch/arm/mach-s5pv210/dma.c                        |   16 +++++-----
-  arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
-  arch/arm/mach-s5pv210/mach-smdkv210.c              |    2 +-
-  arch/arm/plat-s3c24xx/s3c2443-clock.c              |    2 +-
-  arch/arm/plat-s5p/irq-eint.c                       |    2 +-
-  arch/arm/plat-s5p/irq-gpioint.c                    |    2 +-
-  arch/arm/plat-samsung/devs.c                       |   13 +--------
-  arch/arm/plat-samsung/dma-ops.c                    |    2 +-
-  28 files changed, 83 insertions(+), 108 deletions(-)
-
-> As a note, conflicts have been occurred when merge
-> arm-soc/depends/rmk/for-armsoc.
-> Following is my preferred resolution.
->
-> If any problems, please kindly let me know.
->
-> diff --cc arch/arm/mach-exynos/dma.c
-> index 8dec3db,91370de..0000000
-> --- a/arch/arm/mach-exynos/dma.c
-> +++ b/arch/arm/mach-exynos/dma.c
-> @@@ -74,23 -74,10 +74,10 @@@ static struct dma_pl330_platdata exynos
->    	.peri_id = pdma0_peri,
->    };
->
-> - static struct amba_device exynos4_device_pdma0 = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330.0",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 		.platform_data =&exynos4_pdma0_pdata,
-> - 	},
-> - 	.res = {
-> - 		.start = EXYNOS4_PA_PDMA0,
-> - 		.end = EXYNOS4_PA_PDMA0 + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_PDMA0, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(exynos4_pdma0, "dma-pl330.0", 0x00041330,
-> EXYNOS4_PA_PDMA0,
->   -	{IRQ_PDMA0},&exynos4_pdma0_pdata);
-> ++static AMBA_AHB_DEVICE(exynos4_pdma0, "dma-pl330.0", 0x00041330,
-> ++	EXYNOS4_PA_PDMA0, {IRQ_PDMA0},&exynos4_pdma0_pdata);
->
->   -u8 pdma1_peri[] = {
->   +static u8 pdma1_peri[] = {
->    	DMACH_PCM0_RX,
->    	DMACH_PCM0_TX,
->    	DMACH_PCM1_RX,
-> @@@ -123,21 -110,8 +110,8 @@@ static struct dma_pl330_platdata exynos
->    	.peri_id = pdma1_peri,
->    };
->
-> - static struct amba_device exynos4_device_pdma1 = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330.1",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 		.platform_data =&exynos4_pdma1_pdata,
-> - 	},
-> - 	.res = {
-> - 		.start = EXYNOS4_PA_PDMA1,
-> - 		.end = EXYNOS4_PA_PDMA1 + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_PDMA1, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(exynos4_pdma1,  "dma-pl330.1", 0x00041330,
-> EXYNOS4_PA_PDMA1,
->   -	{IRQ_PDMA1},&exynos4_pdma1_pdata);
-> ++static AMBA_AHB_DEVICE(exynos4_pdma1,  "dma-pl330.1", 0x00041330,
-> ++	EXYNOS4_PA_PDMA1, {IRQ_PDMA1},&exynos4_pdma1_pdata);
->
->    static int __init exynos4_dma_init(void)
->    {
-> diff --cc arch/arm/mach-s5p64x0/dma.c
-> index 8fce1161,f7f68ad..0000000
-> --- a/arch/arm/mach-s5p64x0/dma.c
-> +++ b/arch/arm/mach-s5p64x0/dma.c
-> @@@ -108,20 -108,8 +108,8 @@@ static struct dma_pl330_platdata s5p645
->    	.peri_id = s5p6450_pdma_peri,
->    };
->
-> - static struct amba_device s5p64x0_device_pdma = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 	},
-> - 	.res = {
-> - 		.start = S5P64X0_PA_PDMA,
-> - 		.end = S5P64X0_PA_PDMA + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_DMA0, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(s5p64x0_pdma, "dma-pl330", 0x00041330, S5P64X0_PA_PDMA,
->   -	{IRQ_DMA0}, NULL);
-> ++static AMBA_AHB_DEVICE(s5p64x0_pdma, "dma-pl330", 0x00041330,
-> ++	S5P64X0_PA_PDMA, {IRQ_DMA0}, NULL);
->
->    static int __init s5p64x0_dma_init(void)
->    {
-> diff --cc arch/arm/mach-s5pc100/dma.c
-> index 395e46b,96b1ab3..0000000
-> --- a/arch/arm/mach-s5pc100/dma.c
-> +++ b/arch/arm/mach-s5pc100/dma.c
-> @@@ -73,23 -73,10 +73,10 @@@ static struct dma_pl330_platdata s5pc10
->    	.peri_id = pdma0_peri,
->    };
->
-> - static struct amba_device s5pc100_device_pdma0 = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330.0",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 		.platform_data =&s5pc100_pdma0_pdata,
-> - 	},
-> - 	.res = {
-> - 		.start = S5PC100_PA_PDMA0,
-> - 		.end = S5PC100_PA_PDMA0 + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_PDMA0, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(s5pc100_pdma0,  "dma-pl330.0", 0x00041330,
-> S5PC100_PA_PDMA0,
->   -	{IRQ_PDMA0},&s5pc100_pdma0_pdata);
-> ++static AMBA_AHB_DEVICE(s5pc100_pdma0,  "dma-pl330.0", 0x00041330,
-> ++	S5PC100_PA_PDMA0, {IRQ_PDMA0},&s5pc100_pdma0_pdata);
->
->   -u8 pdma1_peri[] = {
->   +static u8 pdma1_peri[] = {
->    	DMACH_UART0_RX,
->    	DMACH_UART0_TX,
->    	DMACH_UART1_RX,
-> @@@ -127,21 -114,8 +114,8 @@@ static struct dma_pl330_platdata s5pc10
->    	.peri_id = pdma1_peri,
->    };
->
-> - static struct amba_device s5pc100_device_pdma1 = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330.1",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 		.platform_data =&s5pc100_pdma1_pdata,
-> - 	},
-> - 	.res = {
-> - 		.start = S5PC100_PA_PDMA1,
-> - 		.end = S5PC100_PA_PDMA1 + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_PDMA1, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(s5pc100_pdma1, "dma-pl330.1", 0x00041330,
-> S5PC100_PA_PDMA1,
->   -	{IRQ_PDMA1},&s5pc100_pdma1_pdata);
-> ++static AMBA_AHB_DEVICE(s5pc100_pdma1, "dma-pl330.1", 0x00041330,
-> ++	S5PC100_PA_PDMA1, {IRQ_PDMA1},&s5pc100_pdma1_pdata);
->
->    static int __init s5pc100_dma_init(void)
->    {
-> diff --cc arch/arm/mach-s5pv210/dma.c
-> index fc1be6e,f6885d2..0000000
-> --- a/arch/arm/mach-s5pv210/dma.c
-> +++ b/arch/arm/mach-s5pv210/dma.c
-> @@@ -71,23 -71,10 +71,10 @@@ static struct dma_pl330_platdata s5pv21
->    	.peri_id = pdma0_peri,
->    };
->
-> - static struct amba_device s5pv210_device_pdma0 = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330.0",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 		.platform_data =&s5pv210_pdma0_pdata,
-> - 	},
-> - 	.res = {
-> - 		.start = S5PV210_PA_PDMA0,
-> - 		.end = S5PV210_PA_PDMA0 + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_PDMA0, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(s5pv210_pdma0, "dma-pl330.0", 0x00041330,
-> S5PV210_PA_PDMA0,
->   -	{IRQ_PDMA0},&s5pv210_pdma0_pdata);
-> ++static AMBA_AHB_DEVICE(s5pv210_pdma0, "dma-pl330.0", 0x00041330,
-> ++	S5PV210_PA_PDMA0, {IRQ_PDMA0},&s5pv210_pdma0_pdata);
->
->   -u8 pdma1_peri[] = {
->   +static u8 pdma1_peri[] = {
->    	DMACH_UART0_RX,
->    	DMACH_UART0_TX,
->    	DMACH_UART1_RX,
-> @@@ -127,21 -114,8 +114,8 @@@ static struct dma_pl330_platdata s5pv21
->    	.peri_id = pdma1_peri,
->    };
->
-> - static struct amba_device s5pv210_device_pdma1 = {
-> - 	.dev = {
-> - 		.init_name = "dma-pl330.1",
-> - 		.dma_mask =&dma_dmamask,
-> - 		.coherent_dma_mask = DMA_BIT_MASK(32),
-> - 		.platform_data =&s5pv210_pdma1_pdata,
-> - 	},
-> - 	.res = {
-> - 		.start = S5PV210_PA_PDMA1,
-> - 		.end = S5PV210_PA_PDMA1 + SZ_4K,
-> - 		.flags = IORESOURCE_MEM,
-> - 	},
-> - 	.irq = {IRQ_PDMA1, NO_IRQ},
-> - 	.periphid = 0x00041330,
-> - };
->   -AMBA_AHB_DEVICE(s5pv210_pdma1, "dma-pl330.1", 0x00041330,
-> S5PV210_PA_PDMA1,
->   -	{IRQ_PDMA1},&s5pv210_pdma1_pdata);
-> ++static AMBA_AHB_DEVICE(s5pv210_pdma1, "dma-pl330.1", 0x00041330,
-> ++	S5PV210_PA_PDMA1, {IRQ_PDMA1},&s5pv210_pdma1_pdata);
->
->    static int __init s5pv210_dma_init(void)
->    {
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim<kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> The following changes since commit 62aa2b537c6f5957afd98e29f96897419ed5ebab:
->
->    Linux 3.3-rc2 (2012-01-31 13:31:54 -0800)
->
-> are available in the git repository at:
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> next/cleanup-use-static
->
-> Kukjin Kim (7):
->        ARM: EXYNOS: use static declaration when it is not used in other files
->        ARM: S3C24XX: use static declaration when it is not used in other
-> files
->        ARM: S3C64XX: use static declaration when it is not used in other
-> files
->        ARM: S5P64X0: use static declaration when it is not used in other
-> files
->        ARM: S5PC100: use static declaration when it is not used in other
-> files
->        ARM: S5PV210: use static declaration when it is not used in other
-> files
->        ARM: SAMSUNG: use static declaration when it is not used in other
-> files
->
->   arch/arm/mach-exynos/clock-exynos4210.c            |    2 +-
->   arch/arm/mach-exynos/clock-exynos4212.c            |    2 +-
->   arch/arm/mach-exynos/clock.c                       |    2 +-
->   arch/arm/mach-exynos/common.c                      |    2 +-
->   arch/arm/mach-exynos/dma.c                         |   12 ++++----
->   arch/arm/mach-exynos/mach-origen.c                 |    2 +-
->   arch/arm/mach-exynos/mach-universal_c210.c         |    2 +-
->   arch/arm/mach-s3c2410/mach-h1940.c                 |   12 ++++----
->   arch/arm/mach-s3c2416/clock.c                      |    6 ----
->   arch/arm/mach-s3c2416/mach-smdk2416.c              |    8 +++---
->   arch/arm/mach-s3c2440/mach-gta02.c                 |    4 +-
->   arch/arm/mach-s3c2440/mach-rx1950.c                |   12 ++++----
->   arch/arm/mach-s3c64xx/common.c                     |    2 +-
->   arch/arm/mach-s3c64xx/common.h                     |    2 -
->   arch/arm/mach-s3c64xx/irq-pm.c                     |    2 +-
->   arch/arm/mach-s5p64x0/clock.c                      |   11 ++++---
->   arch/arm/mach-s5p64x0/dma.c                        |   10 +++---
->   arch/arm/mach-s5p64x0/include/mach/s5p64x0-clock.h |    7 -----
->   arch/arm/mach-s5pc100/clock.c                      |   28
-> ++++++++++----------
->   arch/arm/mach-s5pc100/dma.c                        |   12 ++++----
->   arch/arm/mach-s5pv210/dma.c                        |   12 ++++----
->   arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
->   arch/arm/mach-s5pv210/mach-smdkv210.c              |    2 +-
->   arch/arm/plat-s3c24xx/s3c2443-clock.c              |    2 +-
->   arch/arm/plat-s5p/irq-eint.c                       |    2 +-
->   arch/arm/plat-s5p/irq-gpioint.c                    |    2 +-
->   arch/arm/plat-samsung/devs.c                       |   13 +--------
->   arch/arm/plat-samsung/dma-ops.c                    |    2 +-
->   28 files changed, 76 insertions(+), 101 deletions(-)
