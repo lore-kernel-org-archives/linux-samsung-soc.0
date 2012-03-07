@@ -1,75 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Fix compilation error.
-Date: Wed,  7 Mar 2012 11:39:19 +0530
-Message-ID: <1331100559-28849-1-git-send-email-sachin.kamat@linaro.org>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v10 3/3] iommu/exynos: Add iommu driver for Exynos Platforms
+Date: Wed, 7 Mar 2012 15:22:33 +0900
+Message-ID: <CAHQjnOOQKS1EU-3zWDDq2sLxPucY9CRZyrnaT5cyyrSa9-k9Nw@mail.gmail.com>
+References: <002201ccfb73$93311520$b9933f60$%cho@samsung.com>
+	<CAAQKjZNJHeApuiyh467w8wGaY8VFb_PqLrvHGUxmE8-+a4yRTA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:62476 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751920Ab2CGGQI (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 01:16:08 -0500
-Received: by dadp12 with SMTP id p12so7512450dad.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 22:16:07 -0800 (PST)
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:47917 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751502Ab2CGGWf convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Mar 2012 01:22:35 -0500
+In-Reply-To: <CAAQKjZNJHeApuiyh467w8wGaY8VFb_PqLrvHGUxmE8-+a4yRTA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: InKi Dae <daeinki@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Subash Patel <subash.ramaswamy@linaro.org>, Younglak Kim <younglak1004.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Commit 734b5bb7375 ("Merge branch 'next/soc-exynos5250-arch-wip' into f=
-or-next")
-on for-next branch of Kukjin's tree gives the following build errors:
+On Wed, Mar 7, 2012 at 2:28 PM, InKi Dae <daeinki@gmail.com> wrote:
+>> +static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+>> +{
+>> + =A0 =A0 =A0 /* SYSMMU is in blocked when interrupt occurred. */
+>> + =A0 =A0 =A0 struct sysmmu_drvdata *data =3D dev_id;
+>> + =A0 =A0 =A0 struct resource *irqres;
+>> + =A0 =A0 =A0 struct platform_device *pdev;
+>> + =A0 =A0 =A0 enum EXYNOS_SYSMMU_INTERRUPT_TYPE itype;
+>
+> how about to change EXYNOS_SYSMMU_INTERRUPT_TYPE to small letter? jus=
+t
+> for code clean.
+>
+I will. please refer to the my reply to Kyungmin Park.
 
-arch/arm/mach-exynos/clock-exynos4.c:1328:2: error: =E2=80=98clk_sclk_m=
-mc0=E2=80=99
-undeclared here (not in a function)
-arch/arm/mach-exynos/clock-exynos4.c:1329:2: error: =E2=80=98clk_sclk_m=
-mc1=E2=80=99
-undeclared here (not in a function)
-arch/arm/mach-exynos/clock-exynos4.c:1330:2: error: =E2=80=98clk_sclk_m=
-mc2=E2=80=99
-undeclared here (not in a function)
-arch/arm/mach-exynos/clock-exynos4.c:1331:2: error: =E2=80=98clk_sclk_m=
-mc3=E2=80=99
-undeclared here (not in a function)
+>> + =A0 =A0 =A0 unsigned long addr =3D -1;
+>> +
+>> + =A0 =A0 =A0 int i, ret =3D -ENOSYS;
+>> +
+>> + =A0 =A0 =A0 read_lock(&data->lock);
+>> +
+>> + =A0 =A0 =A0 WARN_ON(!is_sysmmu_active(data));
+>> +
+>> + =A0 =A0 =A0 pdev =3D to_platform_device(data->sysmmu);
+>> + =A0 =A0 =A0 for (i =3D 0; i < pdev->num_resources; i++) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 irqres =3D platform_get_resource(pdev,=
+ IORESOURCE_IRQ, i);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (irqres && ((int)irqres->start =3D=3D=
+ irq))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> + =A0 =A0 =A0 }
+>
+> is there any reason that it should get irq resources in interrupt
+> handler? if not so then how about to move it into probe()?
+>
+The platform device of ISP has a lot of IRQ sources.
+The above for clause determines which IRQ source (System MMU)
+generated the interrupt.
 
-This commit fixes the same.
+>> +
+>> + =A0 =A0 =A0 if (i =3D=3D pdev->num_resources) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 itype =3D SYSMMU_FAULT_UNKNOWN;
+>> + =A0 =A0 =A0 } else {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 i /=3D 2;
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 itype =3D (enum EXYNOS_SYSMMU_INTERRUP=
+T_TYPE)
+>
+> ditto.
+>
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/clock-exynos4.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Thank you.
 
-diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exyno=
-s/clock-exynos4.c
-index d72a1fe..bcb59e7 100644
---- a/arch/arm/mach-exynos/clock-exynos4.c
-+++ b/arch/arm/mach-exynos/clock-exynos4.c
-@@ -1325,10 +1325,10 @@ static struct clk_lookup exynos4_clk_lookup[] =3D=
- {
- 	CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &exynos4_clk_sclk_=
-uart1.clk),
- 	CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &exynos4_clk_sclk_=
-uart2.clk),
- 	CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &exynos4_clk_sclk_=
-uart3.clk),
--	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
--	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
--	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
--	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
-+	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &exynos4_clk_sclk_mmc0=
-=2Eclk),
-+	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &exynos4_clk_sclk_mmc1=
-=2Eclk),
-+	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &exynos4_clk_sclk_mmc2=
-=2Eclk),
-+	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &exynos4_clk_sclk_mmc3=
-=2Eclk),
- 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &exynos4_clk_pdma0),
- 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &exynos4_clk_pdma1),
- 	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &exynos4_clk_sclk_spi0.cl=
-k),
---=20
-1.7.4.1
+Cho KyongHo.
