@@ -1,228 +1,104 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: [PATCH V2 RESEND] video: s3c-fb: Add support EXYNOS5 FIMD
-Date: Wed, 07 Mar 2012 10:19:32 +0000
-Message-ID: <4F573634.5010800@gmx.de>
-References: <002201ccfb65$ddcb0400$99610c00$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S3C24XX: Fix Section mismatch
+Date: Wed,  7 Mar 2012 02:36:52 -0800
+Message-ID: <1331116612-14491-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.23]:53610 "HELO
-	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1752018Ab2CGKT6 (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:50844 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752018Ab2CGKhA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 05:19:58 -0500
-In-Reply-To: <002201ccfb65$ddcb0400$99610c00$%han@samsung.com>
+	Wed, 7 Mar 2012 05:37:00 -0500
+Received: by iagz16 with SMTP id z16so8449629iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 02:37:00 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-On 03/06/2012 06:53 AM, Jingoo Han wrote:
-> This patch adds s3c_fb_driverdata s3c_fb_data_exynos5 for EXYNOS5
-> and adds extended timing control setting.
-> 
-> EXYNOS5 FIMD needs extended setting for video timing control.
-> Additional bits are added to VIDTCON2, VIDWxxADD2, VIDOSDxA and
-> VIDOSDxB registers in order to set timing value for lager resolution.
-> 
-> Also, address offset of VIDTCONx registers is changed from 0x0
-> to 0x20000, thus variable type should be changed to int type
-> to handle the address offset of VIDTCONx registers for EXYNOS5 FIMD.
-> 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Fixes following:
 
-Applied.
-No need to resend when just over a week has passed. I usually try to
-wait a week for non-trivial patches to give others a chance to comment
-on it before applying.
+WARNING: arch/arm/mach-s3c24xx/built-in.o(.text+0x4464): Section mismatch in reference
+from the function usb_simtec_init() to the (unknown reference) .init.data:(unknown)
+The function usb_simtec_init() references
+the (unknown reference) __initdata (unknown).
+This is often because usb_simtec_init lacks a __initdata
+annotation or the annotation of (unknown) is wrong.
 
+WARNING: arch/arm/mach-s3c24xx/built-in.o(.data+0xf44): Section mismatch in reference
+from the variable s3c2416_irq_interface to the function .init.text:s3c2416_irq_add()
+The variable s3c2416_irq_interface references
+the function __init s3c2416_irq_add()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
 
-Thanks,
+WARNING: arch/arm/mach-s3c24xx/built-in.o(.data+0x1b80): Section mismatch in reference
+from the variable s3c2443_irq_interface to the function .init.text:s3c2443_irq_add()
+The variable s3c2443_irq_interface references
+the function __init s3c2443_irq_add()
+If the reference is valid then annotate the
+variable with __init* or __refdata (see linux/init.h) or name the variable:
+*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
 
-Florian Tobias Schandinat
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s3c24xx/irq-s3c2416.c |    2 +-
+ arch/arm/mach-s3c24xx/irq-s3c2443.c |    2 +-
+ arch/arm/mach-s3c24xx/simtec-usb.c  |    2 +-
+ arch/arm/mach-s3c24xx/simtec.h      |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-> ---
-> v2: fix commit message from VIDCONx to VIDTCONx.
-> 
->  arch/arm/plat-samsung/include/plat/regs-fb.h |   24 ++++++++----
->  drivers/video/s3c-fb.c                       |   52 +++++++++++++++++++++++--
->  2 files changed, 63 insertions(+), 13 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
-> index bbb16e0..9a78012 100644
-> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-> @@ -167,15 +167,17 @@
->  #define VIDTCON1_HSPW(_x)			((_x) << 0)
->  
->  #define VIDTCON2				(0x18)
-> +#define VIDTCON2_LINEVAL_E(_x)			((((_x) & 0x800) >> 11) << 23)
->  #define VIDTCON2_LINEVAL_MASK			(0x7ff << 11)
->  #define VIDTCON2_LINEVAL_SHIFT			(11)
->  #define VIDTCON2_LINEVAL_LIMIT			(0x7ff)
-> -#define VIDTCON2_LINEVAL(_x)			((_x) << 11)
-> +#define VIDTCON2_LINEVAL(_x)			(((_x) & 0x7ff) << 11)
->  
-> +#define VIDTCON2_HOZVAL_E(_x)			((((_x) & 0x800) >> 11) << 22)
->  #define VIDTCON2_HOZVAL_MASK			(0x7ff << 0)
->  #define VIDTCON2_HOZVAL_SHIFT			(0)
->  #define VIDTCON2_HOZVAL_LIMIT			(0x7ff)
-> -#define VIDTCON2_HOZVAL(_x)			((_x) << 0)
-> +#define VIDTCON2_HOZVAL(_x)			(((_x) & 0x7ff) << 0)
->  
->  /* WINCONx */
->  
-> @@ -231,25 +233,29 @@
->  /* Local input channels (windows 0-2) */
->  #define SHADOWCON_CHx_LOCAL_ENABLE(_win)	(1 << (5 + (_win)))
->  
-> +#define VIDOSDxA_TOPLEFT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
->  #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
->  #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
->  #define VIDOSDxA_TOPLEFT_X_LIMIT		(0x7ff)
-> -#define VIDOSDxA_TOPLEFT_X(_x)			((_x) << 11)
-> +#define VIDOSDxA_TOPLEFT_X(_x)			(((_x) & 0x7ff) << 11)
->  
-> +#define VIDOSDxA_TOPLEFT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
->  #define VIDOSDxA_TOPLEFT_Y_MASK			(0x7ff << 0)
->  #define VIDOSDxA_TOPLEFT_Y_SHIFT		(0)
->  #define VIDOSDxA_TOPLEFT_Y_LIMIT		(0x7ff)
-> -#define VIDOSDxA_TOPLEFT_Y(_x)			((_x) << 0)
-> +#define VIDOSDxA_TOPLEFT_Y(_x)			(((_x) & 0x7ff) << 0)
->  
-> +#define VIDOSDxB_BOTRIGHT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
->  #define VIDOSDxB_BOTRIGHT_X_MASK		(0x7ff << 11)
->  #define VIDOSDxB_BOTRIGHT_X_SHIFT		(11)
->  #define VIDOSDxB_BOTRIGHT_X_LIMIT		(0x7ff)
-> -#define VIDOSDxB_BOTRIGHT_X(_x)			((_x) << 11)
-> +#define VIDOSDxB_BOTRIGHT_X(_x)			(((_x) & 0x7ff) << 11)
->  
-> +#define VIDOSDxB_BOTRIGHT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
->  #define VIDOSDxB_BOTRIGHT_Y_MASK		(0x7ff << 0)
->  #define VIDOSDxB_BOTRIGHT_Y_SHIFT		(0)
->  #define VIDOSDxB_BOTRIGHT_Y_LIMIT		(0x7ff)
-> -#define VIDOSDxB_BOTRIGHT_Y(_x)			((_x) << 0)
-> +#define VIDOSDxB_BOTRIGHT_Y(_x)			(((_x) & 0x7ff) << 0)
->  
->  /* For VIDOSD[1..4]C */
->  #define VIDISD14C_ALPHA0_R(_x)			((_x) << 20)
-> @@ -281,15 +287,17 @@
->  #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
->  #define VIDW_BUF_SIZE(_buff)			(0x100 + ((_buff) * 4))
->  
-> +#define VIDW_BUF_SIZE_OFFSET_E(_x)		((((_x) & 0x2000) >> 13) << 27)
->  #define VIDW_BUF_SIZE_OFFSET_MASK		(0x1fff << 13)
->  #define VIDW_BUF_SIZE_OFFSET_SHIFT		(13)
->  #define VIDW_BUF_SIZE_OFFSET_LIMIT		(0x1fff)
-> -#define VIDW_BUF_SIZE_OFFSET(_x)		((_x) << 13)
-> +#define VIDW_BUF_SIZE_OFFSET(_x)		(((_x) & 0x1fff) << 13)
->  
-> +#define VIDW_BUF_SIZE_PAGEWIDTH_E(_x)		((((_x) & 0x2000) >> 13) << 26)
->  #define VIDW_BUF_SIZE_PAGEWIDTH_MASK		(0x1fff << 0)
->  #define VIDW_BUF_SIZE_PAGEWIDTH_SHIFT		(0)
->  #define VIDW_BUF_SIZE_PAGEWIDTH_LIMIT		(0x1fff)
-> -#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		((_x) << 0)
-> +#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		(((_x) & 0x1fff) << 0)
->  
->  /* Interrupt controls and status */
->  
-> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-> index 1fb7ddf..f310516 100644
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -89,7 +89,7 @@ struct s3c_fb;
->  struct s3c_fb_variant {
->  	unsigned int	is_2443:1;
->  	unsigned short	nr_windows;
-> -	unsigned short	vidtcon;
-> +	unsigned int	vidtcon;
->  	unsigned short	wincon;
->  	unsigned short	winmap;
->  	unsigned short	keycon;
-> @@ -568,7 +568,9 @@ static int s3c_fb_set_par(struct fb_info *info)
->  		writel(data, regs + sfb->variant.vidtcon + 4);
->  
->  		data = VIDTCON2_LINEVAL(var->yres - 1) |
-> -		       VIDTCON2_HOZVAL(var->xres - 1);
-> +		       VIDTCON2_HOZVAL(var->xres - 1) |
-> +		       VIDTCON2_LINEVAL_E(var->yres - 1) |
-> +		       VIDTCON2_HOZVAL_E(var->xres - 1);
->  		writel(data, regs + sfb->variant.vidtcon + 8);
->  	}
->  
-> @@ -584,17 +586,23 @@ static int s3c_fb_set_par(struct fb_info *info)
->  
->  	pagewidth = (var->xres * var->bits_per_pixel) >> 3;
->  	data = VIDW_BUF_SIZE_OFFSET(info->fix.line_length - pagewidth) |
-> -	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth);
-> +	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth) |
-> +	       VIDW_BUF_SIZE_OFFSET_E(info->fix.line_length - pagewidth) |
-> +	       VIDW_BUF_SIZE_PAGEWIDTH_E(pagewidth);
->  	writel(data, regs + sfb->variant.buf_size + (win_no * 4));
->  
->  	/* write 'OSD' registers to control position of framebuffer */
->  
-> -	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0);
-> +	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0) |
-> +	       VIDOSDxA_TOPLEFT_X_E(0) | VIDOSDxA_TOPLEFT_Y_E(0);
->  	writel(data, regs + VIDOSD_A(win_no, sfb->variant));
->  
->  	data = VIDOSDxB_BOTRIGHT_X(s3c_fb_align_word(var->bits_per_pixel,
->  						     var->xres - 1)) |
-> -	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1);
-> +	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1) |
-> +	       VIDOSDxB_BOTRIGHT_X_E(s3c_fb_align_word(var->bits_per_pixel,
-> +						     var->xres - 1)) |
-> +	       VIDOSDxB_BOTRIGHT_Y_E(var->yres - 1);
->  
->  	writel(data, regs + VIDOSD_B(win_no, sfb->variant));
->  
-> @@ -1903,6 +1911,37 @@ static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
->  	.win[4]	= &s3c_fb_data_s5p_wins[4],
->  };
->  
-> +static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
-> +	.variant = {
-> +		.nr_windows	= 5,
-> +		.vidtcon	= VIDTCON0,
-> +		.wincon		= WINCON(0),
-> +		.winmap		= WINxMAP(0),
-> +		.keycon		= WKEYCON,
-> +		.osd		= VIDOSD_BASE,
-> +		.osd_stride	= 16,
-> +		.buf_start	= VIDW_BUF_START(0),
-> +		.buf_size	= VIDW_BUF_SIZE(0),
-> +		.buf_end	= VIDW_BUF_END(0),
-> +
-> +		.palette = {
-> +			[0] = 0x2400,
-> +			[1] = 0x2800,
-> +			[2] = 0x2c00,
-> +			[3] = 0x3000,
-> +			[4] = 0x3400,
-> +		},
-> +		.has_shadowcon	= 1,
-> +		.has_blendcon	= 1,
-> +		.has_fixvclk	= 1,
-> +	},
-> +	.win[0]	= &s3c_fb_data_s5p_wins[0],
-> +	.win[1]	= &s3c_fb_data_s5p_wins[1],
-> +	.win[2]	= &s3c_fb_data_s5p_wins[2],
-> +	.win[3]	= &s3c_fb_data_s5p_wins[3],
-> +	.win[4]	= &s3c_fb_data_s5p_wins[4],
-> +};
-> +
->  /* S3C2443/S3C2416 style hardware */
->  static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
->  	.variant = {
-> @@ -1981,6 +2020,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
->  		.name		= "exynos4-fb",
->  		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
->  	}, {
-> +		.name		= "exynos5-fb",
-> +		.driver_data	= (unsigned long)&s3c_fb_data_exynos5,
-> +	}, {
->  		.name		= "s3c2443-fb",
->  		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
->  	}, {
+diff --git a/arch/arm/mach-s3c24xx/irq-s3c2416.c b/arch/arm/mach-s3c24xx/irq-s3c2416.c
+index b8a5836..59b7632 100644
+--- a/arch/arm/mach-s3c24xx/irq-s3c2416.c
++++ b/arch/arm/mach-s3c24xx/irq-s3c2416.c
+@@ -310,7 +310,7 @@ static int __init s3c2416_irq_add(struct device *dev)
+ 	return 0;
+ }
+ 
+-static struct subsys_interface s3c2416_irq_interface = {
++static struct subsys_interface s3c2416_irq_interface __initdata = {
+ 	.name		= "s3c2416_irq",
+ 	.subsys		= &s3c2416_subsys,
+ 	.add_dev	= s3c2416_irq_add,
+diff --git a/arch/arm/mach-s3c24xx/irq-s3c2443.c b/arch/arm/mach-s3c24xx/irq-s3c2443.c
+index 35e4ff2..439f186 100644
+--- a/arch/arm/mach-s3c24xx/irq-s3c2443.c
++++ b/arch/arm/mach-s3c24xx/irq-s3c2443.c
+@@ -265,7 +265,7 @@ static int __init s3c2443_irq_add(struct device *dev)
+ 	return 0;
+ }
+ 
+-static struct subsys_interface s3c2443_irq_interface = {
++static struct subsys_interface s3c2443_irq_interface __initdata = {
+ 	.name		= "s3c2443_irq",
+ 	.subsys		= &s3c2443_subsys,
+ 	.add_dev	= s3c2443_irq_add,
+diff --git a/arch/arm/mach-s3c24xx/simtec-usb.c b/arch/arm/mach-s3c24xx/simtec-usb.c
+index d91c1a7..c303d1b 100644
+--- a/arch/arm/mach-s3c24xx/simtec-usb.c
++++ b/arch/arm/mach-s3c24xx/simtec-usb.c
+@@ -104,7 +104,7 @@ static struct s3c2410_hcd_info usb_simtec_info __initdata = {
+ };
+ 
+ 
+-int usb_simtec_init(void)
++int __init usb_simtec_init(void)
+ {
+ 	int ret;
+ 
+diff --git a/arch/arm/mach-s3c24xx/simtec.h b/arch/arm/mach-s3c24xx/simtec.h
+index ae8f4f9..f514cd5 100644
+--- a/arch/arm/mach-s3c24xx/simtec.h
++++ b/arch/arm/mach-s3c24xx/simtec.h
+@@ -15,7 +15,7 @@ struct s3c24xx_audio_simtec_pdata;
+ 
+ extern void nor_simtec_init(void);
+ 
+-extern int usb_simtec_init(void);
++extern int __init usb_simtec_init(void);
+ 
+ extern int simtec_audio_add(const char *codec_name, bool has_lr_routing,
+ 			    struct s3c24xx_audio_simtec_pdata *pdata);
+-- 
+1.7.4.4
