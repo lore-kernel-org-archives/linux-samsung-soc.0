@@ -1,82 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Fix compilation error.
-Date: Wed, 07 Mar 2012 05:06:09 -0800
-Message-ID: <4F575D41.8030301@samsung.com>
-References: <1331100559-28849-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 04/11] ARM: EXYNOS: add interrupt definitions for EXYNOS5250
+Date: Wed, 07 Mar 2012 05:12:40 -0800
+Message-ID: <4F575EC8.2090205@samsung.com>
+References: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>	<1328981685-8602-5-git-send-email-kgene.kim@samsung.com>	<CAOesGMhmcnt6LPb9O+3420VgG=PiCnOjzZA3JqsA=4OdHN-R-g@mail.gmail.com>	<00a901ccf084$90460900$b0d21b00$%kim@samsung.com> <CAOesGMgedngJKRVCYwK=+xRnchXj4StGLTVqvv9BMqVhtM=5RA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:57548 "EHLO
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:61994 "EHLO
 	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755314Ab2CGNGN (ORCPT
+	by vger.kernel.org with ESMTP id S1751609Ab2CGNMp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 08:06:13 -0500
-Received: by obbuo6 with SMTP id uo6so6889009obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 05:06:13 -0800 (PST)
-In-Reply-To: <1331100559-28849-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 7 Mar 2012 08:12:45 -0500
+Received: by obbuo6 with SMTP id uo6so6896025obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 05:12:44 -0800 (PST)
+In-Reply-To: <CAOesGMgedngJKRVCYwK=+xRnchXj4StGLTVqvv9BMqVhtM=5RA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk, arnd@arndb.de
 
-On 03/06/12 22:09, Sachin Kamat wrote:
-> Commit 734b5bb7375 ("Merge branch 'next/soc-exynos5250-arch-wip' into=
- for-next")
-> on for-next branch of Kukjin's tree gives the following build errors:
+On 03/06/12 10:55, Olof Johansson wrote:
+> Hi,
 >
-> arch/arm/mach-exynos/clock-exynos4.c:1328:2: error: =E2=80=98clk_sclk=
-_mmc0=E2=80=99
-> undeclared here (not in a function)
-> arch/arm/mach-exynos/clock-exynos4.c:1329:2: error: =E2=80=98clk_sclk=
-_mmc1=E2=80=99
-> undeclared here (not in a function)
-> arch/arm/mach-exynos/clock-exynos4.c:1330:2: error: =E2=80=98clk_sclk=
-_mmc2=E2=80=99
-> undeclared here (not in a function)
-> arch/arm/mach-exynos/clock-exynos4.c:1331:2: error: =E2=80=98clk_sclk=
-_mmc3=E2=80=99
-> undeclared here (not in a function)
+> On Tue, Feb 21, 2012 at 2:35 AM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
 >
-> This commit fixes the same.
+>> Yes, as you said, it brakes single zImage for EXYNOS4 + EXYNOS5
+>> (mach-exynos). So I'm working on regarding resource for EXYNOS SoCs and I
+>> think, it can resolve the problem you said before v3.4 merge window.
+>>
+>> If any updates, let you know.
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
->   arch/arm/mach-exynos/clock-exynos4.c |    8 ++++----
->   1 files changed, 4 insertions(+), 4 deletions(-)
+> Just a friendly reminder; the time is close to running out for staging
+> new code for 3.4.
 >
-> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exy=
-nos/clock-exynos4.c
-> index d72a1fe..bcb59e7 100644
-> --- a/arch/arm/mach-exynos/clock-exynos4.c
-> +++ b/arch/arm/mach-exynos/clock-exynos4.c
-> @@ -1325,10 +1325,10 @@ static struct clk_lookup exynos4_clk_lookup[]=
- =3D {
->   	CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0",&exynos4_clk_scl=
-k_uart1.clk),
->   	CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0",&exynos4_clk_scl=
-k_uart2.clk),
->   	CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0",&exynos4_clk_scl=
-k_uart3.clk),
-> -	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2",&clk_sclk_mmc0.clk),
-> -	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2",&clk_sclk_mmc1.clk),
-> -	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2",&clk_sclk_mmc2.clk),
-> -	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2",&clk_sclk_mmc3.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2",&exynos4_clk_sclk_mmc=
-0.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2",&exynos4_clk_sclk_mmc=
-1.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2",&exynos4_clk_sclk_mmc=
-2.clk),
-> +	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2",&exynos4_clk_sclk_mmc=
-3.clk),
->   	CLKDEV_INIT("dma-pl330.0", "apb_pclk",&exynos4_clk_pdma0),
->   	CLKDEV_INIT("dma-pl330.1", "apb_pclk",&exynos4_clk_pdma1),
->   	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0",&exynos4_clk_sclk_spi0.=
-clk),
+Hi Olof,
 
-Yes, should be fixed. will apply.
+Thanks for your kindly reminder but I couldn't finish it yet because it 
+is required to touch most of samsung stuff, and it's a big change. 
+Frankly, I need more time...
+
+So how about sending current exynos5 stuff for now and then sorting out 
+single kernel for exynos4 and exynos5 next time? Actually, this exynos5 
+arch part is _really_ needed for developing/contribution of drivers on 
+exynos5.
+
 Thanks.
 
 Best regards,
