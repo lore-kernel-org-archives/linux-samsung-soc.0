@@ -1,87 +1,116 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v2 04/11] ARM: EXYNOS: add interrupt definitions for EXYNOS5250
-Date: Wed, 7 Mar 2012 23:20:34 +0900
-Message-ID: <CAH9JG2VhCT6psHa3nhMCeA6dF12r1EuAaXMHxca44dOV1T5nbg@mail.gmail.com>
-References: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>
-	<1328981685-8602-5-git-send-email-kgene.kim@samsung.com>
-	<CAOesGMhmcnt6LPb9O+3420VgG=PiCnOjzZA3JqsA=4OdHN-R-g@mail.gmail.com>
-	<00a901ccf084$90460900$b0d21b00$%kim@samsung.com>
-	<CAOesGMgedngJKRVCYwK=+xRnchXj4StGLTVqvv9BMqVhtM=5RA@mail.gmail.com>
-	<4F575EC8.2090205@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: SAMSUNG: change the name from s3c-sdhci to exynos4-sdhci
+Date: Wed, 07 Mar 2012 07:54:09 -0800
+Message-ID: <4F5784A1.1080903@samsung.com>
+References: <4F45D343.6020409@samsung.com> <CAJuYYwTh8tVdA0X-TLEU-9O_M0_PmJR=i3WYAQXsaRcPF3MbJA@mail.gmail.com> <4F557692.8090102@samsung.com> <4F55DE1F.9010405@samsung.com> <4F576073.6010001@samsung.com> <00db01ccfc6a$d34c2ee0$79e48ca0$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qy0-f174.google.com ([209.85.216.174]:59272 "EHLO
-	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755599Ab2CGOUf convert rfc822-to-8bit (ORCPT
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:60317 "EHLO
+	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756448Ab2CGPyP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 09:20:35 -0500
-Received: by qcqw6 with SMTP id w6so3294076qcq.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 06:20:34 -0800 (PST)
-In-Reply-To: <4F575EC8.2090205@samsung.com>
+	Wed, 7 Mar 2012 10:54:15 -0500
+In-Reply-To: <00db01ccfc6a$d34c2ee0$79e48ca0$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk, arnd@arndb.de
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Chris Ball' <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Mar 7, 2012 at 10:12 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> On 03/06/12 10:55, Olof Johansson wrote:
->>
->> Hi,
->>
->> On Tue, Feb 21, 2012 at 2:35 AM, Kukjin Kim<kgene.kim@samsung.com> =A0=
-wrote:
->>
->>> Yes, as you said, it brakes single zImage for EXYNOS4 + EXYNOS5
->>> (mach-exynos). So I'm working on regarding resource for EXYNOS SoCs=
- and I
->>> think, it can resolve the problem you said before v3.4 merge window=
-=2E
+On 03/07/12 06:01, Marek Szyprowski wrote:
+> Hello,
+>
+> On Wednesday, March 07, 2012 2:20 PM Kukjin Kim wrote:
+>
+>> On 03/06/12 01:51, Kukjin Kim wrote:
+>>> On 03/05/12 18:29, Jaehoon Chung wrote:
+>>>> Hi Kukjin.
+>>>>
+>>>> Is it merged?
+>>>>
+>>>> Best Regards,
+>>>> Jaehoon Chung
+>>>>
+>>>> On 02/24/2012 06:56 PM, Thomas Abraham wrote:
+>>>>
+>>>>> On 23 February 2012 11:18, Jaehoon Chung<jh80.chung@samsung.com>  wrote:
+>>>>>> Thomas Arbrahams's patchset have changed the device name in sdhci-s3c.c
+>>>>>> (mmc: sdhci-s3c: Rework platform data and add device tree support)
+>>>>>> But didn't change the regulator_consumer name.
+>>>>>> So maybe didn't initialize the mmc/sd card for exynos4.
+>>>>>>
+>>>>>> This patch is fixed that (based-on linux-samsung for-next branch)
+>>>>>>
+>>>>>> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
+>>>>>> Signed-off-by: kyungmin Park<kyungmin.park@samsung.com>
+>>>>>> ---
+>>>>>> arch/arm/mach-exynos/mach-nuri.c | 4 ++--
+>>>>>> arch/arm/mach-exynos/mach-universal_c210.c | 2 +-
+>>>>>> 2 files changed, 3 insertions(+), 3 deletions(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm/mach-exynos/mach-nuri.c
+>>>>>> b/arch/arm/mach-exynos/mach-nuri.c
+>>>>>> index a6b9162..251dd7a 100644
+>>>>>> --- a/arch/arm/mach-exynos/mach-nuri.c
+>>>>>> +++ b/arch/arm/mach-exynos/mach-nuri.c
+>>>>>> @@ -116,7 +116,7 @@ static struct s3c_sdhci_platdata
+>>>>>> nuri_hsmmc0_data __initdata = {
+>>>>>> };
+>>>>>>
+>>>>>> static struct regulator_consumer_supply emmc_supplies[] = {
+>>>>>> - REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+>>>>>> + REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+>>>>>> REGULATOR_SUPPLY("vmmc", "dw_mmc"),
+>>>>>> };
+>>>>>>
+>>>>>> @@ -415,7 +415,7 @@ static struct regulator_consumer_supply
+>>>>>> __initdata max8997_ldo12_[] = {
+>>>>>> REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
+>>>>>> };
+>>>>>> static struct regulator_consumer_supply __initdata max8997_ldo13_[] = {
+>>>>>> - REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
+>>>>>> + REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.2"), /* TFLASH */
+>>>>>> };
+>>>>>> static struct regulator_consumer_supply __initdata max8997_ldo14_[] = {
+>>>>>> REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
+>>>>>> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
+>>>>>> b/arch/arm/mach-exynos/mach-universal_c210.c
+>>>>>> index 6017a21..320cb1d 100644
+>>>>>> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+>>>>>> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+>>>>>> @@ -749,7 +749,7 @@ static struct s3c_sdhci_platdata
+>>>>>> universal_hsmmc0_data __initdata = {
+>>>>>> };
+>>>>>>
+>>>>>> static struct regulator_consumer_supply mmc0_supplies[] = {
+>>>>>> - REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
+>>>>>> + REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
+>>>>>> };
+>>>>>>
+>>>>>> static struct regulator_init_data mmc0_fixed_voltage_init_data = {
+>>>>>
+>>>>> Reviewed-by: Thomas Abraham<thomas.abraham@linaro.org>
 >>>
->>> If any updates, let you know.
+>>> Looks OK, will apply.
+>>>
 >>
+>> (Cc'ed Marek)
 >>
->> Just a friendly reminder; the time is close to running out for stagi=
-ng
->> new code for 3.4.
+>> Hi Kyungmin, Marek and Jaehoon,
 >>
-> Hi Olof,
+>> As you know, same patches have been submitted duplicated and this should
+>> be fixed. Which one would be better to send upstream?
 >
-> Thanks for your kindly reminder but I couldn't finish it yet because =
-it is
-> required to touch most of samsung stuff, and it's a big change. Frank=
-ly, I
-> need more time...
+> For me it doesn't matter, I just need this fix to get merged, because otherwise
+> the Universal C210 and Nuri boards are dysfunctional.
 >
-> So how about sending current exynos5 stuff for now and then sorting o=
-ut
-> single kernel for exynos4 and exynos5 next time? Actually, this exyno=
-s5 arch
-> part is _really_ needed for developing/contribution of drivers on exy=
-nos5.
-No,
+> You can select the one prepared by Jaehoon if You like.
 
-I heard too many times. "we have plan to support ..." but I didn't see
-any progress.
-it's general rules. you should fix it correctly and merged correctly
-instead of "not now"
+OK, thanks :)
 
-Thank you,
-Kyungmin Park
->
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
