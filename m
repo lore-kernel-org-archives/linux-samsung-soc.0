@@ -1,60 +1,74 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Fix compilation error with mach-exynos4-dt board
-Date: Wed,  7 Mar 2012 10:50:26 +0530
-Message-ID: <1331097626-5369-1-git-send-email-tushar.behera@linaro.org>
+From: InKi Dae <daeinki@gmail.com>
+Subject: Re: [PATCH v10 3/3] iommu/exynos: Add iommu driver for Exynos Platforms
+Date: Wed, 7 Mar 2012 14:28:13 +0900
+Message-ID: <CAAQKjZNJHeApuiyh467w8wGaY8VFb_PqLrvHGUxmE8-+a4yRTA@mail.gmail.com>
+References: <002201ccfb73$93311520$b9933f60$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:55330 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750726Ab2CGF1N (ORCPT
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:42494 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750977Ab2CGF2O convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 00:27:13 -0500
-Received: by pbcun15 with SMTP id un15so203432pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 21:27:12 -0800 (PST)
+	Wed, 7 Mar 2012 00:28:14 -0500
+In-Reply-To: <002201ccfb73$93311520$b9933f60$%cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: thomas.abraham@linaro.org, kgene.kim@samsung.com, patches@linaro.org
+To: pullip.cho@samsung.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joro@8bytes.org>, Subash Patel <subash.ramaswamy@linaro.org>, Younglak Kim <younglak1004.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Commit 84499abd19d4 ("ARM: EXYNOS: add support uart for EXYNOS4 and EXY=
-NOS5")
-renames S5P_PA_UARTn to EXYNOS4_PA_UARTn. Hence we need to do
-similar modification in mach-exynos4-dt.c to fix compilation error.
+> +static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+> +{
+> + =A0 =A0 =A0 /* SYSMMU is in blocked when interrupt occurred. */
+> + =A0 =A0 =A0 struct sysmmu_drvdata *data =3D dev_id;
+> + =A0 =A0 =A0 struct resource *irqres;
+> + =A0 =A0 =A0 struct platform_device *pdev;
+> + =A0 =A0 =A0 enum EXYNOS_SYSMMU_INTERRUPT_TYPE itype;
 
-arch/arm/mach-exynos/mach-exynos4-dt.c:40:2: error: =E2=80=98S5P_PA_UAR=
-T0=E2=80=99
-undeclared here (not in a function)
+how about to change EXYNOS_SYSMMU_INTERRUPT_TYPE to small letter? just
+for code clean.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos/mach-exynos4-dt.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+> + =A0 =A0 =A0 unsigned long addr =3D -1;
+> +
+> + =A0 =A0 =A0 int i, ret =3D -ENOSYS;
+> +
+> + =A0 =A0 =A0 read_lock(&data->lock);
+> +
+> + =A0 =A0 =A0 WARN_ON(!is_sysmmu_active(data));
+> +
+> + =A0 =A0 =A0 pdev =3D to_platform_device(data->sysmmu);
+> + =A0 =A0 =A0 for (i =3D 0; i < pdev->num_resources; i++) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 irqres =3D platform_get_resource(pdev, =
+IORESOURCE_IRQ, i);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (irqres && ((int)irqres->start =3D=3D=
+ irq))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 }
 
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exy=
-nos/mach-exynos4-dt.c
-index e6b02fd..8245f1c 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -37,13 +37,13 @@
-  * data from the device tree.
-  */
- static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initc=
-onst =3D {
--	OF_DEV_AUXDATA("samsung,exynos4210-uart", S5P_PA_UART0,
-+	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART0,
- 				"exynos4210-uart.0", NULL),
--	OF_DEV_AUXDATA("samsung,exynos4210-uart", S5P_PA_UART1,
-+	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART1,
- 				"exynos4210-uart.1", NULL),
--	OF_DEV_AUXDATA("samsung,exynos4210-uart", S5P_PA_UART2,
-+	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART2,
- 				"exynos4210-uart.2", NULL),
--	OF_DEV_AUXDATA("samsung,exynos4210-uart", S5P_PA_UART3,
-+	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART3,
- 				"exynos4210-uart.3", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos4210-sdhci", EXYNOS4_PA_HSMMC(0),
- 				"exynos4-sdhci.0", NULL),
---=20
-1.7.4.1
+is there any reason that it should get irq resources in interrupt
+handler? if not so then how about to move it into probe()?
+
+> +
+> + =A0 =A0 =A0 if (i =3D=3D pdev->num_resources) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 itype =3D SYSMMU_FAULT_UNKNOWN;
+> + =A0 =A0 =A0 } else {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 i /=3D 2;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 itype =3D (enum EXYNOS_SYSMMU_INTERRUPT=
+_TYPE)
+
+ditto.
+
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 __ffs(__raw_readl(data-=
+>sfrbases[i] + REG_INT_STATUS));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (WARN_ON(!((itype >=3D 0) && (itype =
+< SYSMMU_FAULT_UNKNOWN))))
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 itype =3D SYSMMU_FAULT_=
+UNKNOWN;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 addr =3D __raw_readl(
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data->s=
+frbases[i] + fault_reg_offset[itype]);
+> + =A0 =A0 =A0 }
+> +
