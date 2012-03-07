@@ -1,116 +1,228 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Wed, 7 Mar 2012 08:16:01 +0100
-Message-ID: <20120307.091601.458605132780655792.hdoyu@nvidia.com>
-References: <401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia.com><20120307.080952.2152478004740487196.hdoyu@nvidia.com><20120307.083706.2087121294965856946.hdoyu@nvidia.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: [PATCH V2 RESEND] video: s3c-fb: Add support EXYNOS5 FIMD
+Date: Wed, 07 Mar 2012 10:19:32 +0000
+Message-ID: <4F573634.5010800@gmx.de>
+References: <002201ccfb65$ddcb0400$99610c00$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20120307.083706.2087121294965856946.hdoyu@nvidia.com>
-Sender: owner-linux-mm@kvack.org
-To: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, Krishna Reddy <vdumpa@nvidia.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "shariq.hasnain@linaro.org" <shariq.hasnain@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "andrzej.p@samsung.com" <andrzej.p@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout-de.gmx.net ([213.165.64.23]:53610 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752018Ab2CGKT6 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Mar 2012 05:19:58 -0500
+In-Reply-To: <002201ccfb65$ddcb0400$99610c00$%han@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-From: Hiroshi DOYU <hdoyu@nvidia.com>
-Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Wed, 07 Mar 2012 08:37:06 +0200 (EET)
-Message-ID: <20120307.083706.2087121294965856946.hdoyu@nvidia.com>
+On 03/06/2012 06:53 AM, Jingoo Han wrote:
+> This patch adds s3c_fb_driverdata s3c_fb_data_exynos5 for EXYNOS5
+> and adds extended timing control setting.
+> 
+> EXYNOS5 FIMD needs extended setting for video timing control.
+> Additional bits are added to VIDTCON2, VIDWxxADD2, VIDOSDxA and
+> VIDOSDxB registers in order to set timing value for lager resolution.
+> 
+> Also, address offset of VIDTCONx registers is changed from 0x0
+> to 0x20000, thus variable type should be changed to int type
+> to handle the address offset of VIDTCONx registers for EXYNOS5 FIMD.
+> 
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
-> From: Hiroshi DOYU <hdoyu@nvidia.com>
-> Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-> Date: Wed, 07 Mar 2012 08:09:52 +0200 (EET)
-> Message-ID: <20120307.080952.2152478004740487196.hdoyu@nvidia.com>
->=20
-> > From: Krishna Reddy <vdumpa@nvidia.com>
-> > Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapp=
-er
-> > Date: Tue, 6 Mar 2012 23:48:42 +0100
-> > Message-ID: <401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia=
-.com>
-> >=20
-> > > > > +struct dma_iommu_mapping *
-> > > > > +arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, =
-size_t size,
-> > > > > +                        int order)
-> > > > > +{
-> > > > > +       unsigned int count =3D (size >> PAGE_SHIFT) - order;
-> > > > > +       unsigned int bitmap_size =3D BITS_TO_LONGS(count) * sizeo=
-f(long);
-> > >=20
-> > > The count calculation doesn't seem correct. "order" is log2 number an=
-d
-> > >  size >> PAGE_SHIFT is number of pages.=20
-> > >=20
-> > > If size is passed as 64*4096(256KB) and order is 6(allocation granula=
-rity is 2^6 pages=3D256KB),
-> > >  just 1 bit is enough to manage allocations.  So it should be 4 bytes=
- or one long.
-> >=20
-> > Good catch!
-> >=20
-> > > But the calculation gives count =3D 64 - 6 =3D 58 and=20
-> > > Bitmap_size gets set to (58/(4*8)) * 4 =3D 8 bytes, which is incorrec=
-t.
-> >=20
-> > "order" isn't the order of size passed, which is minimal *page*
-> > allocation order which client decides whatever, just in case.
-> >=20
-> > > It should be as follows.
-> > > unsigned int count =3D 1 << get_order(size) - order;
->=20
-> To be precise, as below?
->=20
->  unsigned int count =3D 1 << (get_order(size) - order);
+Applied.
+No need to resend when just over a week has passed. I usually try to
+wait a week for non-trivial patches to give others a chance to comment
+on it before applying.
 
-This could be:
 
->From fd40740ef4bc4a3924fe1188ea6dd785be0fe859 Mon Sep 17 00:00:00 2001
-From: Hiroshi DOYU <hdoyu@nvidia.com>
-Date: Wed, 7 Mar 2012 08:14:38 +0200
-Subject: [PATCH 1/1] dma-mapping: Fix count calculation of iova space
+Thanks,
 
-Fix count calculation of iova space.
-Pointed by Krishna Reddy <vdumpa@nvidia.com>
+Florian Tobias Schandinat
 
-Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
----
- arch/arm/mm/dma-mapping.c |   11 +++++++++--
- 1 files changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 6c2f104..56f0af5 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1483,11 +1483,18 @@ struct dma_iommu_mapping *
- arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t siz=
-e,
- 			 int order)
- {
--	unsigned int count =3D (size >> PAGE_SHIFT) - order;
--	unsigned int bitmap_size =3D BITS_TO_LONGS(count) * sizeof(long);
-+	unsigned int n, count;
-+	unsigned int bitmap_size;
- 	struct dma_iommu_mapping *mapping;
- 	int err =3D -ENOMEM;
-=20
-+	n =3D get_order(size);
-+	if (n < order)
-+		return ERR_PTR(-EINVAL);
-+
-+	count =3D 1 << (n - order);
-+	bitmap_size =3D BITS_TO_LONGS(count) * sizeof(long);
-+
- 	mapping =3D kzalloc(sizeof(struct dma_iommu_mapping), GFP_KERNEL);
- 	if (!mapping)
- 		goto err;
---=20
-1.7.5.4
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+> ---
+> v2: fix commit message from VIDCONx to VIDTCONx.
+> 
+>  arch/arm/plat-samsung/include/plat/regs-fb.h |   24 ++++++++----
+>  drivers/video/s3c-fb.c                       |   52 +++++++++++++++++++++++--
+>  2 files changed, 63 insertions(+), 13 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> index bbb16e0..9a78012 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> @@ -167,15 +167,17 @@
+>  #define VIDTCON1_HSPW(_x)			((_x) << 0)
+>  
+>  #define VIDTCON2				(0x18)
+> +#define VIDTCON2_LINEVAL_E(_x)			((((_x) & 0x800) >> 11) << 23)
+>  #define VIDTCON2_LINEVAL_MASK			(0x7ff << 11)
+>  #define VIDTCON2_LINEVAL_SHIFT			(11)
+>  #define VIDTCON2_LINEVAL_LIMIT			(0x7ff)
+> -#define VIDTCON2_LINEVAL(_x)			((_x) << 11)
+> +#define VIDTCON2_LINEVAL(_x)			(((_x) & 0x7ff) << 11)
+>  
+> +#define VIDTCON2_HOZVAL_E(_x)			((((_x) & 0x800) >> 11) << 22)
+>  #define VIDTCON2_HOZVAL_MASK			(0x7ff << 0)
+>  #define VIDTCON2_HOZVAL_SHIFT			(0)
+>  #define VIDTCON2_HOZVAL_LIMIT			(0x7ff)
+> -#define VIDTCON2_HOZVAL(_x)			((_x) << 0)
+> +#define VIDTCON2_HOZVAL(_x)			(((_x) & 0x7ff) << 0)
+>  
+>  /* WINCONx */
+>  
+> @@ -231,25 +233,29 @@
+>  /* Local input channels (windows 0-2) */
+>  #define SHADOWCON_CHx_LOCAL_ENABLE(_win)	(1 << (5 + (_win)))
+>  
+> +#define VIDOSDxA_TOPLEFT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
+>  #define VIDOSDxA_TOPLEFT_X_MASK			(0x7ff << 11)
+>  #define VIDOSDxA_TOPLEFT_X_SHIFT		(11)
+>  #define VIDOSDxA_TOPLEFT_X_LIMIT		(0x7ff)
+> -#define VIDOSDxA_TOPLEFT_X(_x)			((_x) << 11)
+> +#define VIDOSDxA_TOPLEFT_X(_x)			(((_x) & 0x7ff) << 11)
+>  
+> +#define VIDOSDxA_TOPLEFT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
+>  #define VIDOSDxA_TOPLEFT_Y_MASK			(0x7ff << 0)
+>  #define VIDOSDxA_TOPLEFT_Y_SHIFT		(0)
+>  #define VIDOSDxA_TOPLEFT_Y_LIMIT		(0x7ff)
+> -#define VIDOSDxA_TOPLEFT_Y(_x)			((_x) << 0)
+> +#define VIDOSDxA_TOPLEFT_Y(_x)			(((_x) & 0x7ff) << 0)
+>  
+> +#define VIDOSDxB_BOTRIGHT_X_E(_x)		((((_x) & 0x800) >> 11) << 23)
+>  #define VIDOSDxB_BOTRIGHT_X_MASK		(0x7ff << 11)
+>  #define VIDOSDxB_BOTRIGHT_X_SHIFT		(11)
+>  #define VIDOSDxB_BOTRIGHT_X_LIMIT		(0x7ff)
+> -#define VIDOSDxB_BOTRIGHT_X(_x)			((_x) << 11)
+> +#define VIDOSDxB_BOTRIGHT_X(_x)			(((_x) & 0x7ff) << 11)
+>  
+> +#define VIDOSDxB_BOTRIGHT_Y_E(_x)		((((_x) & 0x800) >> 11) << 22)
+>  #define VIDOSDxB_BOTRIGHT_Y_MASK		(0x7ff << 0)
+>  #define VIDOSDxB_BOTRIGHT_Y_SHIFT		(0)
+>  #define VIDOSDxB_BOTRIGHT_Y_LIMIT		(0x7ff)
+> -#define VIDOSDxB_BOTRIGHT_Y(_x)			((_x) << 0)
+> +#define VIDOSDxB_BOTRIGHT_Y(_x)			(((_x) & 0x7ff) << 0)
+>  
+>  /* For VIDOSD[1..4]C */
+>  #define VIDISD14C_ALPHA0_R(_x)			((_x) << 20)
+> @@ -281,15 +287,17 @@
+>  #define VIDW_BUF_END1(_buff)			(0xD4 + ((_buff) * 8))
+>  #define VIDW_BUF_SIZE(_buff)			(0x100 + ((_buff) * 4))
+>  
+> +#define VIDW_BUF_SIZE_OFFSET_E(_x)		((((_x) & 0x2000) >> 13) << 27)
+>  #define VIDW_BUF_SIZE_OFFSET_MASK		(0x1fff << 13)
+>  #define VIDW_BUF_SIZE_OFFSET_SHIFT		(13)
+>  #define VIDW_BUF_SIZE_OFFSET_LIMIT		(0x1fff)
+> -#define VIDW_BUF_SIZE_OFFSET(_x)		((_x) << 13)
+> +#define VIDW_BUF_SIZE_OFFSET(_x)		(((_x) & 0x1fff) << 13)
+>  
+> +#define VIDW_BUF_SIZE_PAGEWIDTH_E(_x)		((((_x) & 0x2000) >> 13) << 26)
+>  #define VIDW_BUF_SIZE_PAGEWIDTH_MASK		(0x1fff << 0)
+>  #define VIDW_BUF_SIZE_PAGEWIDTH_SHIFT		(0)
+>  #define VIDW_BUF_SIZE_PAGEWIDTH_LIMIT		(0x1fff)
+> -#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		((_x) << 0)
+> +#define VIDW_BUF_SIZE_PAGEWIDTH(_x)		(((_x) & 0x1fff) << 0)
+>  
+>  /* Interrupt controls and status */
+>  
+> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> index 1fb7ddf..f310516 100644
+> --- a/drivers/video/s3c-fb.c
+> +++ b/drivers/video/s3c-fb.c
+> @@ -89,7 +89,7 @@ struct s3c_fb;
+>  struct s3c_fb_variant {
+>  	unsigned int	is_2443:1;
+>  	unsigned short	nr_windows;
+> -	unsigned short	vidtcon;
+> +	unsigned int	vidtcon;
+>  	unsigned short	wincon;
+>  	unsigned short	winmap;
+>  	unsigned short	keycon;
+> @@ -568,7 +568,9 @@ static int s3c_fb_set_par(struct fb_info *info)
+>  		writel(data, regs + sfb->variant.vidtcon + 4);
+>  
+>  		data = VIDTCON2_LINEVAL(var->yres - 1) |
+> -		       VIDTCON2_HOZVAL(var->xres - 1);
+> +		       VIDTCON2_HOZVAL(var->xres - 1) |
+> +		       VIDTCON2_LINEVAL_E(var->yres - 1) |
+> +		       VIDTCON2_HOZVAL_E(var->xres - 1);
+>  		writel(data, regs + sfb->variant.vidtcon + 8);
+>  	}
+>  
+> @@ -584,17 +586,23 @@ static int s3c_fb_set_par(struct fb_info *info)
+>  
+>  	pagewidth = (var->xres * var->bits_per_pixel) >> 3;
+>  	data = VIDW_BUF_SIZE_OFFSET(info->fix.line_length - pagewidth) |
+> -	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth);
+> +	       VIDW_BUF_SIZE_PAGEWIDTH(pagewidth) |
+> +	       VIDW_BUF_SIZE_OFFSET_E(info->fix.line_length - pagewidth) |
+> +	       VIDW_BUF_SIZE_PAGEWIDTH_E(pagewidth);
+>  	writel(data, regs + sfb->variant.buf_size + (win_no * 4));
+>  
+>  	/* write 'OSD' registers to control position of framebuffer */
+>  
+> -	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0);
+> +	data = VIDOSDxA_TOPLEFT_X(0) | VIDOSDxA_TOPLEFT_Y(0) |
+> +	       VIDOSDxA_TOPLEFT_X_E(0) | VIDOSDxA_TOPLEFT_Y_E(0);
+>  	writel(data, regs + VIDOSD_A(win_no, sfb->variant));
+>  
+>  	data = VIDOSDxB_BOTRIGHT_X(s3c_fb_align_word(var->bits_per_pixel,
+>  						     var->xres - 1)) |
+> -	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1);
+> +	       VIDOSDxB_BOTRIGHT_Y(var->yres - 1) |
+> +	       VIDOSDxB_BOTRIGHT_X_E(s3c_fb_align_word(var->bits_per_pixel,
+> +						     var->xres - 1)) |
+> +	       VIDOSDxB_BOTRIGHT_Y_E(var->yres - 1);
+>  
+>  	writel(data, regs + VIDOSD_B(win_no, sfb->variant));
+>  
+> @@ -1903,6 +1911,37 @@ static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
+>  	.win[4]	= &s3c_fb_data_s5p_wins[4],
+>  };
+>  
+> +static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
+> +	.variant = {
+> +		.nr_windows	= 5,
+> +		.vidtcon	= VIDTCON0,
+> +		.wincon		= WINCON(0),
+> +		.winmap		= WINxMAP(0),
+> +		.keycon		= WKEYCON,
+> +		.osd		= VIDOSD_BASE,
+> +		.osd_stride	= 16,
+> +		.buf_start	= VIDW_BUF_START(0),
+> +		.buf_size	= VIDW_BUF_SIZE(0),
+> +		.buf_end	= VIDW_BUF_END(0),
+> +
+> +		.palette = {
+> +			[0] = 0x2400,
+> +			[1] = 0x2800,
+> +			[2] = 0x2c00,
+> +			[3] = 0x3000,
+> +			[4] = 0x3400,
+> +		},
+> +		.has_shadowcon	= 1,
+> +		.has_blendcon	= 1,
+> +		.has_fixvclk	= 1,
+> +	},
+> +	.win[0]	= &s3c_fb_data_s5p_wins[0],
+> +	.win[1]	= &s3c_fb_data_s5p_wins[1],
+> +	.win[2]	= &s3c_fb_data_s5p_wins[2],
+> +	.win[3]	= &s3c_fb_data_s5p_wins[3],
+> +	.win[4]	= &s3c_fb_data_s5p_wins[4],
+> +};
+> +
+>  /* S3C2443/S3C2416 style hardware */
+>  static struct s3c_fb_driverdata s3c_fb_data_s3c2443 = {
+>  	.variant = {
+> @@ -1981,6 +2020,9 @@ static struct platform_device_id s3c_fb_driver_ids[] = {
+>  		.name		= "exynos4-fb",
+>  		.driver_data	= (unsigned long)&s3c_fb_data_exynos4,
+>  	}, {
+> +		.name		= "exynos5-fb",
+> +		.driver_data	= (unsigned long)&s3c_fb_data_exynos5,
+> +	}, {
+>  		.name		= "s3c2443-fb",
+>  		.driver_data	= (unsigned long)&s3c_fb_data_s3c2443,
+>  	}, {
