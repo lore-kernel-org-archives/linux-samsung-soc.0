@@ -1,131 +1,85 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Wed, 07 Mar 2012 17:58:07 +0100
-Message-ID: <011701ccfc83$78030180$68090480$%szyprowski@samsung.com>
-References: <401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia.com>
- <20120307.080952.2152478004740487196.hdoyu@nvidia.com>
- <20120307.083706.2087121294965856946.hdoyu@nvidia.com>
- <20120307.091601.458605132780655792.hdoyu@nvidia.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 0/4] mmc: sdhci-s3c: use the sdhci-pltfm.c and move
+ the header file
+Date: Wed, 7 Mar 2012 18:48:44 +0000
+Message-ID: <20120307184843.GW3107@opensource.wolfsonmicro.com>
+References: <4F55ABF0.1060801@samsung.com>
+ <20120306130054.GA9890@sirena.org.uk>
+ <201203061415.18836.heiko@sntech.de>
+ <CAELcNGS6UynrJPRk1KtEJT3Rm6Jb5_scLm4KKca+dJ1ZYDOVbg@mail.gmail.com>
+ <20120306163052.GX19635@opensource.wolfsonmicro.com>
+ <4F56D003.5070406@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="je0mZywpqEo4t1RU"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:29122 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755650Ab2CGQ6M (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:49669 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759623Ab2CGSsq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 11:58:12 -0500
-In-reply-to: <20120307.091601.458605132780655792.hdoyu@nvidia.com>
-Content-language: pl
+	Wed, 7 Mar 2012 13:48:46 -0500
+Content-Disposition: inline
+In-Reply-To: <4F56D003.5070406@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Hiroshi Doyu' <hdoyu@nvidia.com>, 'Krishna Reddy' <vdumpa@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, shariq.hasnain@linaro.org, arnd@arndb.de, benh@kernel.crashing.org, kyungmin.park@samsung.com, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux@arm.linux.org.uk, pullip.cho@samsung.com, chunsang.jeong@linaro.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
 
-Hello,
 
-On Wednesday, March 07, 2012 8:16 AM Hiroshi Doyu wrote:
+--je0mZywpqEo4t1RU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> From: Hiroshi DOYU <hdoyu@nvidia.com>
-> Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-> Date: Wed, 07 Mar 2012 08:37:06 +0200 (EET)
-> Message-ID: <20120307.083706.2087121294965856946.hdoyu@nvidia.com>
-> 
-> > From: Hiroshi DOYU <hdoyu@nvidia.com>
-> > Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-> > Date: Wed, 07 Mar 2012 08:09:52 +0200 (EET)
-> > Message-ID: <20120307.080952.2152478004740487196.hdoyu@nvidia.com>
-> >
-> > > From: Krishna Reddy <vdumpa@nvidia.com>
-> > > Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-> > > Date: Tue, 6 Mar 2012 23:48:42 +0100
-> > > Message-ID: <401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia.com>
-> > >
-> > > > > > +struct dma_iommu_mapping *
-> > > > > > +arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
-> > > > > > +                        int order)
-> > > > > > +{
-> > > > > > +       unsigned int count = (size >> PAGE_SHIFT) - order;
-> > > > > > +       unsigned int bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
-> > > >
-> > > > The count calculation doesn't seem correct. "order" is log2 number and
-> > > >  size >> PAGE_SHIFT is number of pages.
-> > > >
-> > > > If size is passed as 64*4096(256KB) and order is 6(allocation granularity is 2^6
-> pages=256KB),
-> > > >  just 1 bit is enough to manage allocations.  So it should be 4 bytes or one long.
-> > >
-> > > Good catch!
-> > >
-> > > > But the calculation gives count = 64 - 6 = 58 and
-> > > > Bitmap_size gets set to (58/(4*8)) * 4 = 8 bytes, which is incorrect.
-> > >
-> > > "order" isn't the order of size passed, which is minimal *page*
-> > > allocation order which client decides whatever, just in case.
-> > >
-> > > > It should be as follows.
-> > > > unsigned int count = 1 << get_order(size) - order;
-> >
-> > To be precise, as below?
-> >
-> >  unsigned int count = 1 << (get_order(size) - order);
-> 
-> This could be:
-> 
-> From fd40740ef4bc4a3924fe1188ea6dd785be0fe859 Mon Sep 17 00:00:00 2001
-> From: Hiroshi DOYU <hdoyu@nvidia.com>
-> Date: Wed, 7 Mar 2012 08:14:38 +0200
-> Subject: [PATCH 1/1] dma-mapping: Fix count calculation of iova space
-> 
-> Fix count calculation of iova space.
-> Pointed by Krishna Reddy <vdumpa@nvidia.com>
-> 
-> Signed-off-by: Hiroshi DOYU <hdoyu@nvidia.com>
-> ---
->  arch/arm/mm/dma-mapping.c |   11 +++++++++--
->  1 files changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 6c2f104..56f0af5 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -1483,11 +1483,18 @@ struct dma_iommu_mapping *
->  arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
->  			 int order)
->  {
-> -	unsigned int count = (size >> PAGE_SHIFT) - order;
-> -	unsigned int bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
-> +	unsigned int n, count;
-> +	unsigned int bitmap_size;
->  	struct dma_iommu_mapping *mapping;
->  	int err = -ENOMEM;
-> 
-> +	n = get_order(size);
-> +	if (n < order)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	count = 1 << (n - order);
-> +	bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
-> +
->  	mapping = kzalloc(sizeof(struct dma_iommu_mapping), GFP_KERNEL);
->  	if (!mapping)
->  		goto err;
+On Wed, Mar 07, 2012 at 12:03:31PM +0900, Jaehoon Chung wrote:
+> On 03/07/2012 01:30 AM, Mark Brown wrote:
 
-Thanks again for finding another bug. I thought that I've checked that code more
-than twice, but it looks that I've missed something again.
+> > The same IP is present and used with the same driver on other Samsung
+> > SoCs.
 
-IMHO the size of virtual memory area doesn't need to be aligned to the power of
-two, so I will simplify it to the following code:
+> I know that used with the same driver on other Samsung-SoCs(S3C64XX/S3C24=
+XX..etc)
+> I just only used the interface in sdhci-pltfm.c. Nothing difference..
+> Why do you think that will break the other SoC?
 
-unsigned int count = size >> (PAGE_SHIFT + order);
-unsigned int bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
+> Header file(/plat/regs-sdhci.h) also is only used in sdhci-s3c.c.
+> And the least portion is moved into /linux/mmc/.=20
+> Then included "linux/mmc/sdhci-s3c.h" in plat/sdhci.h.
 
-if (!count)
-	return ERR_PTR(-EINVAL);
+> What's difference?=20
+> If you can explain the more detail, i can understand.
+> But sorry, now i didn't accept your opinion.
 
-...
+To be honest I didn't read the series, the diffstat looks so obviously
+problematic as you're touching the setup-gpio- files for only a subset
+of Samsung architectures - there's been quite regular issues with
+updates for newer SoCs breaking support for s3c64xx.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+I also notice that this will conflict with the series I've previously
+posted for runtime PM support which would push us even further back from
+being able to use the lower power WFI modes in mainline :(  Though
+hopefully that'll be easier to fix.
+
+--je0mZywpqEo4t1RU
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPV6x6AAoJEBus8iNuMP3dMKsP/3N8KSQV3RpSYeyhHcNuTcxj
+rLoilLbpulvuBu5gw8sJmL4fFMshTfKgp9wwRsiH1kAaYJ7A5iKUHZCt2K9PRSef
+Qnf5UTfTif/ItPY1w/zz9lBfXr0x39IlrtDHPHSaw9VhbCAXrw1/C27rogM79C/W
+tidU9TAT/iXH8VrteW0B/OfaCSXq7PygDcgH2uE+s98+vV1ikotzK2LQLPY3mrZr
+YJ1o95TDZ10QKZu6RAAiEqP/LdC9qsDWuYTyR4oV94JGtf83S4UJMckItL5e1kTU
+T4gZNffMrJsLmy3MaIaT6ot3I+/Vjnbr7GNmzERmd/QHFC4Ppg4npqtENAz6vnT1
+1oNevMxhQ4bdOPW47VszZ9BYgsSzeGn3Jg7wcHVrzPYdV4/9ZXd+BwFPlPqbRvDK
+xQlMny4bOtdPHoO/+aaLuJjVNuwy5LSKPbAEUN2SGwU700TTqcaN0kBFt58zHmLm
+P240+YRwvMbDR3OJwdQggl8svvPNGi8/t+T9s20xrz53eSAH+JZ4bjWCn1sHwNud
+NXdNP4Q7oEpTPETOQ2FndukwA5ioUc5diIqKgyFG7jIXyV9ihz0Hh5kucP61FoW4
+XiqTuy9XYzcgEdEkCx4U5TIKkmxz+12CrV0P2N/dI6uAnGROVt5y/r2X1M3xA8kr
+1h9MAtxL1mSBd7yc2pTJ
+=ChaI
+-----END PGP SIGNATURE-----
+
+--je0mZywpqEo4t1RU--
