@@ -1,116 +1,89 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: change the name from s3c-sdhci to exynos4-sdhci
-Date: Wed, 07 Mar 2012 07:54:09 -0800
-Message-ID: <4F5784A1.1080903@samsung.com>
-References: <4F45D343.6020409@samsung.com> <CAJuYYwTh8tVdA0X-TLEU-9O_M0_PmJR=i3WYAQXsaRcPF3MbJA@mail.gmail.com> <4F557692.8090102@samsung.com> <4F55DE1F.9010405@samsung.com> <4F576073.6010001@samsung.com> <00db01ccfc6a$d34c2ee0$79e48ca0$%szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
+Date: Wed, 07 Mar 2012 17:17:25 +0100
+Message-ID: <00f801ccfc7d$c8da6810$5a8f3830$%szyprowski@samsung.com>
+References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com>
+ <1330527862-16234-10-git-send-email-m.szyprowski@samsung.com>
+ <20120306232138.GF15201@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:60317 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756448Ab2CGPyP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 10:54:15 -0500
-In-Reply-To: <00db01ccfc6a$d34c2ee0$79e48ca0$%szyprowski@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-reply-to: <20120306232138.GF15201@n2100.arm.linux.org.uk>
+Content-language: pl
+Sender: linux-arch-owner@vger.kernel.org
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Joerg Roedel' <joro@8bytes.org>, 'Shariq Hasnain' <shariq.hasnain@linaro.org>, 'Chunsang Jeong' <chunsang.jeong@linaro.org>, 'Krishna Reddy' <vdumpa@nvidia.com>, 'KyongHo Cho' <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Benjamin Herrenschmidt' <benh@kernel.crashing.org>, 'Konrad Rzeszutek Wilk' <konrad.wilk@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Jaehoon Chung' <jh80.chung@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Chris Ball' <cjb@laptop.org>, linux-arm-kernel@lists.infradead.org
 
-On 03/07/12 06:01, Marek Szyprowski wrote:
-> Hello,
->
-> On Wednesday, March 07, 2012 2:20 PM Kukjin Kim wrote:
->
->> On 03/06/12 01:51, Kukjin Kim wrote:
->>> On 03/05/12 18:29, Jaehoon Chung wrote:
->>>> Hi Kukjin.
->>>>
->>>> Is it merged?
->>>>
->>>> Best Regards,
->>>> Jaehoon Chung
->>>>
->>>> On 02/24/2012 06:56 PM, Thomas Abraham wrote:
->>>>
->>>>> On 23 February 2012 11:18, Jaehoon Chung<jh80.chung@samsung.com>  wrote:
->>>>>> Thomas Arbrahams's patchset have changed the device name in sdhci-s3c.c
->>>>>> (mmc: sdhci-s3c: Rework platform data and add device tree support)
->>>>>> But didn't change the regulator_consumer name.
->>>>>> So maybe didn't initialize the mmc/sd card for exynos4.
->>>>>>
->>>>>> This patch is fixed that (based-on linux-samsung for-next branch)
->>>>>>
->>>>>> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
->>>>>> Signed-off-by: kyungmin Park<kyungmin.park@samsung.com>
->>>>>> ---
->>>>>> arch/arm/mach-exynos/mach-nuri.c | 4 ++--
->>>>>> arch/arm/mach-exynos/mach-universal_c210.c | 2 +-
->>>>>> 2 files changed, 3 insertions(+), 3 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm/mach-exynos/mach-nuri.c
->>>>>> b/arch/arm/mach-exynos/mach-nuri.c
->>>>>> index a6b9162..251dd7a 100644
->>>>>> --- a/arch/arm/mach-exynos/mach-nuri.c
->>>>>> +++ b/arch/arm/mach-exynos/mach-nuri.c
->>>>>> @@ -116,7 +116,7 @@ static struct s3c_sdhci_platdata
->>>>>> nuri_hsmmc0_data __initdata = {
->>>>>> };
->>>>>>
->>>>>> static struct regulator_consumer_supply emmc_supplies[] = {
->>>>>> - REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
->>>>>> + REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
->>>>>> REGULATOR_SUPPLY("vmmc", "dw_mmc"),
->>>>>> };
->>>>>>
->>>>>> @@ -415,7 +415,7 @@ static struct regulator_consumer_supply
->>>>>> __initdata max8997_ldo12_[] = {
->>>>>> REGULATOR_SUPPLY("vddio", "6-003c"), /* HDC802 */
->>>>>> };
->>>>>> static struct regulator_consumer_supply __initdata max8997_ldo13_[] = {
->>>>>> - REGULATOR_SUPPLY("vmmc", "s3c-sdhci.2"), /* TFLASH */
->>>>>> + REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.2"), /* TFLASH */
->>>>>> };
->>>>>> static struct regulator_consumer_supply __initdata max8997_ldo14_[] = {
->>>>>> REGULATOR_SUPPLY("inmotor", "max8997-haptic"),
->>>>>> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
->>>>>> b/arch/arm/mach-exynos/mach-universal_c210.c
->>>>>> index 6017a21..320cb1d 100644
->>>>>> --- a/arch/arm/mach-exynos/mach-universal_c210.c
->>>>>> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
->>>>>> @@ -749,7 +749,7 @@ static struct s3c_sdhci_platdata
->>>>>> universal_hsmmc0_data __initdata = {
->>>>>> };
->>>>>>
->>>>>> static struct regulator_consumer_supply mmc0_supplies[] = {
->>>>>> - REGULATOR_SUPPLY("vmmc", "s3c-sdhci.0"),
->>>>>> + REGULATOR_SUPPLY("vmmc", "exynos4-sdhci.0"),
->>>>>> };
->>>>>>
->>>>>> static struct regulator_init_data mmc0_fixed_voltage_init_data = {
->>>>>
->>>>> Reviewed-by: Thomas Abraham<thomas.abraham@linaro.org>
->>>
->>> Looks OK, will apply.
->>>
->>
->> (Cc'ed Marek)
->>
->> Hi Kyungmin, Marek and Jaehoon,
->>
->> As you know, same patches have been submitted duplicated and this should
->> be fixed. Which one would be better to send upstream?
->
-> For me it doesn't matter, I just need this fix to get merged, because otherwise
-> the Universal C210 and Nuri boards are dysfunctional.
->
-> You can select the one prepared by Jaehoon if You like.
+Hello,
 
-OK, thanks :)
+On Wednesday, March 07, 2012 12:22 AM Russell King - ARM Linux wrote:
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> On Wed, Feb 29, 2012 at 04:04:22PM +0100, Marek Szyprowski wrote:
+> > +static int arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
+> > +		    void *cpu_addr, dma_addr_t dma_addr, size_t size,
+> > +		    struct dma_attrs *attrs)
+> > +{
+> > +	struct arm_vmregion *c;
+> > +
+> > +	vma->vm_page_prot = __get_dma_pgprot(attrs, vma->vm_page_prot);
+> > +	c = arm_vmregion_find(&consistent_head, (unsigned long)cpu_addr);
+> 
+> What protects this against other insertions/removals from the list?
+
+arm_vmregion_* functions have their own spinlock.
+
+(snipped)
+
+> > +	if (c) {
+> > +		struct page **pages = c->priv;
+> > +		__dma_free_remap(cpu_addr, size);
+> > +		__iommu_remove_mapping(dev, handle, size);
+> > +		__iommu_free_buffer(dev, pages, size);
+> > +	}
+> > +}
+> > +
+> > +/*
+> > + * Map a part of the scatter-gather list into contiguous io address space
+> > + */
+> > +static int __map_sg_chunk(struct device *dev, struct scatterlist *sg,
+> > +			  size_t size, dma_addr_t *handle,
+> > +			  enum dma_data_direction dir)
+> > +{
+> > +	struct dma_iommu_mapping *mapping = dev->archdata.mapping;
+> > +	dma_addr_t iova, iova_base;
+> > +	int ret = 0;
+> > +	unsigned int count;
+> > +	struct scatterlist *s;
+> > +
+> > +	size = PAGE_ALIGN(size);
+> > +	*handle = ARM_DMA_ERROR;
+> > +
+> > +	iova_base = iova = __alloc_iova(mapping, size);
+> > +	if (iova == ARM_DMA_ERROR)
+> > +		return -ENOMEM;
+> > +
+> > +	for (count = 0, s = sg; count < (size >> PAGE_SHIFT); s = sg_next(s))
+> > +	{
+> > +		phys_addr_t phys = page_to_phys(sg_page(s));
+> > +		unsigned int len = PAGE_ALIGN(s->offset + s->length);
+> > +
+> > +		if (!arch_is_coherent())
+> > +			__dma_page_cpu_to_dev(sg_page(s), s->offset, s->length, dir);
+> > +
+> > +		ret = iommu_map(mapping->domain, iova, phys, len, 0);
+> 
+> Dealing with phys addresses on one part and pages + offset + length
+> in a different part doesn't look like a good idea.  Why can't there
+> be some consistency?
+
+Well, I have no idea how to be more consistent here. scatter-lists operates on 
+pages + offsets + length parameters. iommu api operates on the whole pages, but
+they are referred with physical address. Right now I cannot change any of it, 
+at least not it the near future.
+
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
