@@ -1,63 +1,75 @@
-From: Hiroshi Doyu <hdoyu@nvidia.com>
-Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Wed, 7 Mar 2012 07:09:52 +0100
-Message-ID: <20120307.080952.2152478004740487196.hdoyu@nvidia.com>
-References: <20120305134721.0ab0d0e6de56fa30250059b1@nvidia.com><000001ccfaea$00c16f70$02444e50$%szyprowski@samsung.com><401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Fix compilation error.
+Date: Wed,  7 Mar 2012 11:39:19 +0530
+Message-ID: <1331100559-28849-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia.com>
-Sender: owner-linux-mm@kvack.org
-To: Krishna Reddy <vdumpa@nvidia.com>
-Cc: "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, "shariq.hasnain@linaro.org" <shariq.hasnain@linaro.org>, "arnd@arndb.de" <arnd@arndb.de>, "benh@kernel.crashing.org" <benh@kernel.crashing.org>, "kyungmin.park@samsung.com" <kyungmin.park@samsung.com>, "andrzej.p@samsung.com" <andrzej.p@samsung.com>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "pullip.cho@samsung.com" <pullip.cho@samsung.com>, "chunsang.jeong@linaro.org" <chunsang.jeong@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:62476 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751920Ab2CGGQI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 7 Mar 2012 01:16:08 -0500
+Received: by dadp12 with SMTP id p12so7512450dad.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 06 Mar 2012 22:16:07 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Tue, 6 Mar 2012 23:48:42 +0100
-Message-ID: <401E54CE964CD94BAE1EB4A729C7087E37970113FE@HQMAIL04.nvidia.com=
->
+Commit 734b5bb7375 ("Merge branch 'next/soc-exynos5250-arch-wip' into f=
+or-next")
+on for-next branch of Kukjin's tree gives the following build errors:
 
-> > > +struct dma_iommu_mapping *
-> > > +arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size=
-_t size,
-> > > +                        int order)
-> > > +{
-> > > +       unsigned int count =3D (size >> PAGE_SHIFT) - order;
-> > > +       unsigned int bitmap_size =3D BITS_TO_LONGS(count) * sizeof(lo=
-ng);
->=20
-> The count calculation doesn't seem correct. "order" is log2 number and
->  size >> PAGE_SHIFT is number of pages.=20
->=20
-> If size is passed as 64*4096(256KB) and order is 6(allocation granularity=
- is 2^6 pages=3D256KB),
->  just 1 bit is enough to manage allocations.  So it should be 4 bytes or =
-one long.
+arch/arm/mach-exynos/clock-exynos4.c:1328:2: error: =E2=80=98clk_sclk_m=
+mc0=E2=80=99
+undeclared here (not in a function)
+arch/arm/mach-exynos/clock-exynos4.c:1329:2: error: =E2=80=98clk_sclk_m=
+mc1=E2=80=99
+undeclared here (not in a function)
+arch/arm/mach-exynos/clock-exynos4.c:1330:2: error: =E2=80=98clk_sclk_m=
+mc2=E2=80=99
+undeclared here (not in a function)
+arch/arm/mach-exynos/clock-exynos4.c:1331:2: error: =E2=80=98clk_sclk_m=
+mc3=E2=80=99
+undeclared here (not in a function)
 
-Good catch!
+This commit fixes the same.
 
-> But the calculation gives count =3D 64 - 6 =3D 58 and=20
-> Bitmap_size gets set to (58/(4*8)) * 4 =3D 8 bytes, which is incorrect.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/clock-exynos4.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-"order" isn't the order of size passed, which is minimal *page*
-allocation order which client decides whatever, just in case.
-
-> It should be as follows.
-> unsigned int count =3D 1 << get_order(size) - order;
-> unsigned int bitmap_size =3D BITS_TO_LONGS(count) * sizeof(long) * BITS_P=
-ER_BYTE;
->=20
-> -KR
->=20
-> --nvpublic
->=20
->=20
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exyno=
+s/clock-exynos4.c
+index d72a1fe..bcb59e7 100644
+--- a/arch/arm/mach-exynos/clock-exynos4.c
++++ b/arch/arm/mach-exynos/clock-exynos4.c
+@@ -1325,10 +1325,10 @@ static struct clk_lookup exynos4_clk_lookup[] =3D=
+ {
+ 	CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", &exynos4_clk_sclk_=
+uart1.clk),
+ 	CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", &exynos4_clk_sclk_=
+uart2.clk),
+ 	CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", &exynos4_clk_sclk_=
+uart3.clk),
+-	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &clk_sclk_mmc0.clk),
+-	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &clk_sclk_mmc1.clk),
+-	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &clk_sclk_mmc2.clk),
+-	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
++	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", &exynos4_clk_sclk_mmc0=
+=2Eclk),
++	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &exynos4_clk_sclk_mmc1=
+=2Eclk),
++	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &exynos4_clk_sclk_mmc2=
+=2Eclk),
++	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &exynos4_clk_sclk_mmc3=
+=2Eclk),
+ 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &exynos4_clk_pdma0),
+ 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &exynos4_clk_pdma1),
+ 	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &exynos4_clk_sclk_spi0.cl=
+k),
+--=20
+1.7.4.1
