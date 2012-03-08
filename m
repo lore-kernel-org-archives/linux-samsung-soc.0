@@ -1,76 +1,81 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 2/6] ARM: SAMSUNG: Fix memory size for hsotg
-Date: Thu, 08 Mar 2012 08:20:26 +0530
-Message-ID: <4F581E72.5040005@linaro.org>
-References: <1328870146-20312-1-git-send-email-l.majewski@samsung.com> <1328870146-20312-3-git-send-email-l.majewski@samsung.com> <077101ccf765$69bea0c0$3d3be240$%kim@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v3 0/4] mmc: sdhci-s3c: use the sdhci-pltfm.c and move the
+ header file
+Date: Thu, 08 Mar 2012 14:35:53 +0900
+Message-ID: <4F584539.9080007@samsung.com>
+References: <4F55ABF0.1060801@samsung.com>
+ <20120306130054.GA9890@sirena.org.uk> <201203061415.18836.heiko@sntech.de>
+ <CAELcNGS6UynrJPRk1KtEJT3Rm6Jb5_scLm4KKca+dJ1ZYDOVbg@mail.gmail.com>
+ <20120306163052.GX19635@opensource.wolfsonmicro.com>
+ <4F56D003.5070406@samsung.com>
+ <20120307184843.GW3107@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pw0-f46.google.com ([209.85.160.46]:60609 "EHLO
-	mail-pw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751347Ab2CHCug (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:17904 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751244Ab2CHFgC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 7 Mar 2012 21:50:36 -0500
-Received: by pbcun15 with SMTP id un15so1094519pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 18:50:35 -0800 (PST)
-In-Reply-To: <077101ccf765$69bea0c0$3d3be240$%kim@samsung.com>
+	Thu, 8 Mar 2012 00:36:02 -0500
+In-reply-to: <20120307184843.GW3107@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Lukasz Majewski' <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCb?= =?ISO-8859-1?Q?ner?= <heiko@sntech.de>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
 
-On 03/01/2012 10:10 AM, Kukjin Kim wrote:
-> Lukasz Majewski wrote:
->>
->> From: Joonyoung Shim <jy0922.shim@samsung.com>
->>
->> The device link core registers for hsotg is base + 0000h ~ base +
->> 11000h.
->>
->> Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> [Rebased on the newest git/kgene/linux-samsung #for-next]
->> Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
->> ---
->>  arch/arm/plat-samsung/devs.c |    2 +-
->>  1 files changed, 1 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
->> index 21168ea..7ca0875 100644
->> --- a/arch/arm/plat-samsung/devs.c
->> +++ b/arch/arm/plat-samsung/devs.c
->> @@ -1436,7 +1436,7 @@ void __init s5p_ehci_set_platdata(struct
->> s5p_ehci_platdata *pd)
->>
->>  #ifdef CONFIG_S3C_DEV_USB_HSOTG
->>  static struct resource s3c_usb_hsotg_resources[] = {
->> -	[0] = DEFINE_RES_MEM(S3C_PA_USB_HSOTG, SZ_16K),
->> +	[0] = DEFINE_RES_MEM(S3C_PA_USB_HSOTG, SZ_128K),
->>  	[1] = DEFINE_RES_IRQ(IRQ_OTG),
+Hi Mark.
 
-As defined in arch/arm/mach-exynos/include/mach/irqs.h, should the IRQ
-resource be DEFINE_RES_IRQ(IRQ_USB_HSOTG)?
+On 03/08/2012 03:48 AM, Mark Brown wrote:
 
->>  };
->>
->> --
->> 1.7.2.3
+> On Wed, Mar 07, 2012 at 12:03:31PM +0900, Jaehoon Chung wrote:
+>> On 03/07/2012 01:30 AM, Mark Brown wrote:
 > 
-> OK, will apply.
-> Thanks.
+>>> The same IP is present and used with the same driver on other Samsung
+>>> SoCs.
 > 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>> I know that used with the same driver on other Samsung-SoCs(S3C64XX/S3C24XX..etc)
+>> I just only used the interface in sdhci-pltfm.c. Nothing difference..
+>> Why do you think that will break the other SoC?
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> Header file(/plat/regs-sdhci.h) also is only used in sdhci-s3c.c.
+>> And the least portion is moved into /linux/mmc/. 
+>> Then included "linux/mmc/sdhci-s3c.h" in plat/sdhci.h.
+> 
+>> What's difference? 
+>> If you can explain the more detail, i can understand.
+>> But sorry, now i didn't accept your opinion.
+> 
+> To be honest I didn't read the series, the diffstat looks so obviously
+> problematic as you're touching the setup-gpio- files for only a subset
+> of Samsung architectures - there's been quite regular issues with
+> updates for newer SoCs breaking support for s3c64xx.
 
+Is there problem that move the s3c_sdhci_platdata struct into linux/mmc/?
+In setup-gpio- files, you can see that included regs-sdhci.h.
+But defined macro in regs-sdhci.h only used in sdhci-s3c.c.
+So i think no problem that removed "#include <plat/regs-sdhci.h>". is it wrong?
+Just touching the setup-gpio- files is problem?
+If i have moved the defined as "extern", it's problem.
+But i didn't move them.
 
--- 
-Tushar Behera
+For example, When i want to add the second capability for sdhci-s3c,
+need to change code in samsung-soc and mmc stack.
+if one of both didn't be merged, it's conflict or should not be work fine.
+(Now, in mmc-next tree, mmc for Samsung-SoC didn't work fine during long time.)
+There are reason that move the s3c_sdhci_platdata into linux/mmc/.
+Then we can work at only mmc-next repository for sdhci-s3c.c.
+
+> 
+> I also notice that this will conflict with the series I've previously
+> posted for runtime PM support which would push us even further back from
+> being able to use the lower power WFI modes in mainline :(  Though
+> hopefully that'll be easier to fix.
+
+Right, it should be conflicted with your patch. but it will be fixed.
+It's not big problem.
+
+Thanks for your opinion.
+
+Best Regards,
+Jaehoon Chung
