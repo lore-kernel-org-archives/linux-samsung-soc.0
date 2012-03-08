@@ -1,81 +1,53 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v3 0/4] mmc: sdhci-s3c: use the sdhci-pltfm.c and move the
- header file
-Date: Thu, 08 Mar 2012 14:35:53 +0900
-Message-ID: <4F584539.9080007@samsung.com>
-References: <4F55ABF0.1060801@samsung.com>
- <20120306130054.GA9890@sirena.org.uk> <201203061415.18836.heiko@sntech.de>
- <CAELcNGS6UynrJPRk1KtEJT3Rm6Jb5_scLm4KKca+dJ1ZYDOVbg@mail.gmail.com>
- <20120306163052.GX19635@opensource.wolfsonmicro.com>
- <4F56D003.5070406@samsung.com>
- <20120307184843.GW3107@opensource.wolfsonmicro.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v2 04/11] ARM: EXYNOS: add interrupt definitions for EXYNOS5250
+Date: Wed, 7 Mar 2012 21:53:38 -0800
+Message-ID: <CAOesGMgbm0+3nSnw=MTM--5kzUNMEofNQRudRUNzF_LCLCKX5A@mail.gmail.com>
+References: <1328981685-8602-1-git-send-email-kgene.kim@samsung.com>
+	<1328981685-8602-5-git-send-email-kgene.kim@samsung.com>
+	<CAOesGMhmcnt6LPb9O+3420VgG=PiCnOjzZA3JqsA=4OdHN-R-g@mail.gmail.com>
+	<00a901ccf084$90460900$b0d21b00$%kim@samsung.com>
+	<CAOesGMgedngJKRVCYwK=+xRnchXj4StGLTVqvv9BMqVhtM=5RA@mail.gmail.com>
+	<4F575EC8.2090205@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:17904 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751244Ab2CHFgC (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:56557 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752694Ab2CHFxi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Mar 2012 00:36:02 -0500
-In-reply-to: <20120307184843.GW3107@opensource.wolfsonmicro.com>
+	Thu, 8 Mar 2012 00:53:38 -0500
+Received: by mail-gy0-f174.google.com with SMTP id r11so50690ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 07 Mar 2012 21:53:38 -0800 (PST)
+In-Reply-To: <4F575EC8.2090205@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCb?= =?ISO-8859-1?Q?ner?= <heiko@sntech.de>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rmk+kernel@arm.linux.org.uk, arnd@arndb.de
 
-Hi Mark.
+Hi,
 
-On 03/08/2012 03:48 AM, Mark Brown wrote:
+On Wed, Mar 7, 2012 at 5:12 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-> On Wed, Mar 07, 2012 at 12:03:31PM +0900, Jaehoon Chung wrote:
->> On 03/07/2012 01:30 AM, Mark Brown wrote:
-> 
->>> The same IP is present and used with the same driver on other Samsung
->>> SoCs.
-> 
->> I know that used with the same driver on other Samsung-SoCs(S3C64XX/S3C24XX..etc)
->> I just only used the interface in sdhci-pltfm.c. Nothing difference..
->> Why do you think that will break the other SoC?
-> 
->> Header file(/plat/regs-sdhci.h) also is only used in sdhci-s3c.c.
->> And the least portion is moved into /linux/mmc/. 
->> Then included "linux/mmc/sdhci-s3c.h" in plat/sdhci.h.
-> 
->> What's difference? 
->> If you can explain the more detail, i can understand.
->> But sorry, now i didn't accept your opinion.
-> 
-> To be honest I didn't read the series, the diffstat looks so obviously
-> problematic as you're touching the setup-gpio- files for only a subset
-> of Samsung architectures - there's been quite regular issues with
-> updates for newer SoCs breaking support for s3c64xx.
+> Thanks for your kindly reminder but I couldn't finish it yet because it is
+> required to touch most of samsung stuff, and it's a big change. Frankly, I
+> need more time...
+>
+> So how about sending current exynos5 stuff for now and then sorting out
+> single kernel for exynos4 and exynos5 next time? Actually, this exynos5 arch
+> part is _really_ needed for developing/contribution of drivers on exynos5.
 
-Is there problem that move the s3c_sdhci_platdata struct into linux/mmc/?
-In setup-gpio- files, you can see that included regs-sdhci.h.
-But defined macro in regs-sdhci.h only used in sdhci-s3c.c.
-So i think no problem that removed "#include <plat/regs-sdhci.h>". is it wrong?
-Just touching the setup-gpio- files is problem?
-If i have moved the defined as "extern", it's problem.
-But i didn't move them.
+I suggest that you work on the code until it's in shape to go in. If
+we pick it up half-finished it just causes extra churn.
 
-For example, When i want to add the second capability for sdhci-s3c,
-need to change code in samsung-soc and mmc stack.
-if one of both didn't be merged, it's conflict or should not be work fine.
-(Now, in mmc-next tree, mmc for Samsung-SoC didn't work fine during long time.)
-There are reason that move the s3c_sdhci_platdata into linux/mmc/.
-Then we can work at only mmc-next repository for sdhci-s3c.c.
+We have been pushing back on v6/v7 additions that are not multi-board
+and multi-soc within the same machine type. Not being able to build a
+combined binary with exynos 4 and 5 support in one would be a step
+backwards on that effort.
 
-> 
-> I also notice that this will conflict with the series I've previously
-> posted for runtime PM support which would push us even further back from
-> being able to use the lower power WFI modes in mainline :(  Though
-> hopefully that'll be easier to fix.
+I'm not sure I understand the argument about drivers -- they should
+mostly be possible to submit and get included without the core SoC
+patches such that when those land, you'll have a fully functional
+system.
 
-Right, it should be conflicted with your patch. but it will be fixed.
-It's not big problem.
 
-Thanks for your opinion.
-
-Best Regards,
-Jaehoon Chung
+-Olof
