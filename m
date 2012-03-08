@@ -1,66 +1,242 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung Cleanup EXYNOS clock for v3.4
-Date: Thu, 08 Mar 2012 03:13:56 -0800
-Message-ID: <4F589474.8050609@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/6] ARM: S3C64XX: Add usb otg phy control
+Date: Thu, 08 Mar 2012 20:27:30 +0900
+Message-ID: <4F5897A2.807@samsung.com>
+References: <1328870146-20312-1-git-send-email-l.majewski@samsung.com>
+ <1328870146-20312-2-git-send-email-l.majewski@samsung.com>
+ <20120210182639.GB11701@sirena.org.uk> <4F575452.4090201@samsung.com>
+ <4F58816F.2030004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary=------------000004040203030501010804
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:40890 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752679Ab2CHLN6 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:21494 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756473Ab2CHL1O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Mar 2012 06:13:58 -0500
-Received: by obbuo6 with SMTP id uo6so512725obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 08 Mar 2012 03:13:58 -0800 (PST)
+	Thu, 8 Mar 2012 06:27:14 -0500
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0M0K00JFLD4GLWU0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 Mar 2012 20:27:12 +0900 (KST)
+Received: from [165.213.219.123] by mmp1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTPA id <0M0K009V6D5CEH30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 08 Mar 2012 20:27:12 +0900 (KST)
+In-reply-to: <4F58816F.2030004@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Lukasz Majewski <l.majewski@samsung.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Arnd, Olof,
+This is a multi-part message in MIME format.
+--------------000004040203030501010804
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Here is cleanup clock part for EXYNOS SoCs from:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-exynos-clock
+On 03/08/2012 06:52 PM, Kukjin Kim wrote:
+> On 03/07/12 04:28, Kukjin Kim wrote:
+>> On 02/10/12 10:26, Mark Brown wrote:
+>>> On Fri, Feb 10, 2012 at 11:35:41AM +0100, Lukasz Majewski wrote:
+>>>> From: Joonyoung Shim<jy0922.shim@samsung.com>
+>>>>
+>>>> This patch supports to control usb otg phy of S3C64XX. Currently, the
+>>>> driver for usb otg controls usb otg phy but it can be removed by this
+>>>> patch.
+>>>
+>>> Acked-by: Mark Brown<broonie@opensource.wolfsonmicro.com>
+>>
+>> Applied, thanks.
+>>
+>
+> Oops, following error happened with s5pv210_defconfig after applying 
+> this.
+>
+> arch/arm/plat-samsung/built-in.o: In function `s3c_hsotg_set_platdata':
+> arch/arm/plat-samsung/devs.c:1449: undefined reference to 
+> `s5p_usb_phy_init'
+> arch/arm/plat-samsung/devs.c:1449: undefined reference to 
+> `s5p_usb_phy_init'
+> arch/arm/plat-samsung/devs.c:1451: undefined reference to 
+> `s5p_usb_phy_exit'
+> arch/arm/plat-samsung/devs.c:1451: undefined reference to 
+> `s5p_usb_phy_exit'
+> make: *** [.tmp_vmlinux1] Error 1
+>
 
-Please pull and if any problems, please kindly let me know.
+Also the s5pv210 needs setup-usb-phy.c file. I think the attached patch
+will solve this errors. This patch was tested only compile.
 
 Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--------------000004040203030501010804
+Content-Type: text/x-patch;
+ name="0001-ARM-S5PV210-Add-usb-otg-phy-control.patch"
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="0001-ARM-S5PV210-Add-usb-otg-phy-control.patch"
 
-The following changes since commit b01543dfe67bb1d191998e90d20534dc354de059:
+>From 9ae6ac166743391a6037d7e7a4d178f68a96f047 Mon Sep 17 00:00:00 2001
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Date: Thu, 8 Mar 2012 19:52:25 +0900
+Subject: [PATCH] ARM: S5PV210: Add usb otg phy control
 
-   Linux 3.3-rc4 (2012-02-18 15:53:33 -0800)
+This patch supports to control usb otg phy of S5PV210. Based on
+setup-usb-phy.c of S3C64XX.
 
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-exynos-clock
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/Kconfig                 |    6 ++
+ arch/arm/mach-s5pv210/Makefile                |    1 +
+ arch/arm/mach-s5pv210/include/mach/regs-sys.h |    4 -
+ arch/arm/mach-s5pv210/setup-usb-phy.c         |   90 +++++++++++++++++++++++++
+ 4 files changed, 97 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/mach-s5pv210/setup-usb-phy.c
 
-Kukjin Kim (2):
-       ARM: EXYNOS: cleanup clock part for new EXYNOS SoCs
-       PM / devfreq: update the name of EXYNOS clock register
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 2cdc42e..82525e3 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -65,6 +65,11 @@ config S5PV210_SETUP_SPI
+ 	help
+ 	  Common setup code for SPI GPIO configurations.
+ 
++config S5PV210_SETUP_USB_PHY
++	bool
++	help
++	  Common setup code for USB PHY controller
++
+ menu "S5PC110 Machines"
+ 
+ config MACH_AQUILA
+@@ -107,6 +112,7 @@ config MACH_GONI
+ 	select S5PV210_SETUP_KEYPAD
+ 	select S5PV210_SETUP_SDHCI
+ 	select S5PV210_SETUP_FIMC
++	select S5PV210_SETUP_USB_PHY
+ 	help
+ 	  Machine support for Samsung GONI board
+ 	  S5PC110(MCP) is one of package option of S5PV210
+diff --git a/arch/arm/mach-s5pv210/Makefile b/arch/arm/mach-s5pv210/Makefile
+index 76a121d..1c4e419 100644
+--- a/arch/arm/mach-s5pv210/Makefile
++++ b/arch/arm/mach-s5pv210/Makefile
+@@ -39,3 +39,4 @@ obj-$(CONFIG_S5PV210_SETUP_IDE)		+= setup-ide.o
+ obj-$(CONFIG_S5PV210_SETUP_KEYPAD)	+= setup-keypad.o
+ obj-$(CONFIG_S5PV210_SETUP_SDHCI_GPIO)	+= setup-sdhci-gpio.o
+ obj-$(CONFIG_S5PV210_SETUP_SPI)		+= setup-spi.o
++obj-$(CONFIG_S5PV210_SETUP_USB_PHY) += setup-usb-phy.o
+diff --git a/arch/arm/mach-s5pv210/include/mach/regs-sys.h b/arch/arm/mach-s5pv210/include/mach/regs-sys.h
+index 26691d3..cccb1ed 100644
+--- a/arch/arm/mach-s5pv210/include/mach/regs-sys.h
++++ b/arch/arm/mach-s5pv210/include/mach/regs-sys.h
+@@ -13,7 +13,3 @@
+ #define S5PV210_USB_PHY_CON	(S3C_VA_SYS + 0xE80C)
+ #define S5PV210_USB_PHY0_EN	(1 << 0)
+ #define S5PV210_USB_PHY1_EN	(1 << 1)
+-
+-/* compatibility defines for s3c-hsotg driver */
+-#define S3C64XX_OTHERS		S5PV210_USB_PHY_CON
+-#define S3C64XX_OTHERS_USBMASK	S5PV210_USB_PHY0_EN
+diff --git a/arch/arm/mach-s5pv210/setup-usb-phy.c b/arch/arm/mach-s5pv210/setup-usb-phy.c
+new file mode 100644
+index 0000000..be39cf4
+--- /dev/null
++++ b/arch/arm/mach-s5pv210/setup-usb-phy.c
+@@ -0,0 +1,90 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics Co.Ltd
++ * Author: Joonyoung Shim <jy0922.shim@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundationr
++ */
++
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/platform_device.h>
++#include <mach/map.h>
++#include <mach/regs-sys.h>
++#include <plat/cpu.h>
++#include <plat/regs-usb-hsotg-phy.h>
++#include <plat/usb-phy.h>
++
++static int s5pv210_usb_otgphy_init(struct platform_device *pdev)
++{
++	struct clk *xusbxti;
++	u32 phyclk;
++
++	writel(readl(S5PV210_USB_PHY_CON) | S5PV210_USB_PHY0_EN,
++			S5PV210_USB_PHY_CON);
++
++	/* set clock frequency for PLL */
++	phyclk = readl(S3C_PHYCLK) & ~S3C_PHYCLK_CLKSEL_MASK;
++
++	xusbxti = clk_get(&pdev->dev, "xusbxti");
++	if (xusbxti && !IS_ERR(xusbxti)) {
++		switch (clk_get_rate(xusbxti)) {
++		case 12 * MHZ:
++			phyclk |= S3C_PHYCLK_CLKSEL_12M;
++			break;
++		case 24 * MHZ:
++			phyclk |= S3C_PHYCLK_CLKSEL_24M;
++			break;
++		default:
++		case 48 * MHZ:
++			/* default reference clock */
++			break;
++		}
++		clk_put(xusbxti);
++	}
++
++	/* TODO: select external clock/oscillator */
++	writel(phyclk | S3C_PHYCLK_CLK_FORCE, S3C_PHYCLK);
++
++	/* set to normal OTG PHY */
++	writel((readl(S3C_PHYPWR) & ~S3C_PHYPWR_NORMAL_MASK), S3C_PHYPWR);
++	mdelay(1);
++
++	/* reset OTG PHY and Link */
++	writel(S3C_RSTCON_PHY | S3C_RSTCON_HCLK | S3C_RSTCON_PHYCLK,
++			S3C_RSTCON);
++	udelay(20);	/* at-least 10uS */
++	writel(0, S3C_RSTCON);
++
++	return 0;
++}
++
++static int s5pv210_usb_otgphy_exit(struct platform_device *pdev)
++{
++	writel((readl(S3C_PHYPWR) | S3C_PHYPWR_ANALOG_POWERDOWN |
++				S3C_PHYPWR_OTG_DISABLE), S3C_PHYPWR);
++
++	writel(readl(S5PV210_USB_PHY_CON) & ~S5PV210_USB_PHY0_EN,
++			S5PV210_USB_PHY_CON);
++
++	return 0;
++}
++
++int s5p_usb_phy_init(struct platform_device *pdev, int type)
++{
++	if (type == S5P_USB_PHY_DEVICE)
++		return s5pv210_usb_otgphy_init(pdev);
++
++	return -EINVAL;
++}
++
++int s5p_usb_phy_exit(struct platform_device *pdev, int type)
++{
++	if (type == S5P_USB_PHY_DEVICE)
++		return s5pv210_usb_otgphy_exit(pdev);
++
++	return -EINVAL;
++}
+-- 
+1.7.5.4
 
-  arch/arm/mach-exynos/Makefile                     |    3 +-
-  arch/arm/mach-exynos/clock-exynos4.c              | 1564 
-+++++++++++++++++++++
-  arch/arm/mach-exynos/clock-exynos4.h              |   32 +
-  arch/arm/mach-exynos/clock-exynos4210.c           |   46 +-
-  arch/arm/mach-exynos/clock-exynos4212.c           |   30 +-
-  arch/arm/mach-exynos/clock.c                      | 1564 
----------------------
-  arch/arm/mach-exynos/common.h                     |    9 +
-  arch/arm/mach-exynos/include/mach/exynos4-clock.h |   43 -
-  arch/arm/mach-exynos/include/mach/regs-clock.h    |  364 +++---
-  arch/arm/mach-exynos/pm.c                         |   40 +-
-  drivers/devfreq/exynos4_bus.c                     |  224 ++--
-  11 files changed, 1959 insertions(+), 1960 deletions(-)
-  create mode 100644 arch/arm/mach-exynos/clock-exynos4.c
-  create mode 100644 arch/arm/mach-exynos/clock-exynos4.h
-  delete mode 100644 arch/arm/mach-exynos/clock.c
-  delete mode 100644 arch/arm/mach-exynos/include/mach/exynos4-clock.h
+
+--------------000004040203030501010804--
