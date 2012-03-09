@@ -1,33 +1,34 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Hook up G2D PD to generic PD infrastructure
-Date: Fri, 09 Mar 2012 07:33:45 -0800
-Message-ID: <4F5A22D9.6000008@samsung.com>
-References: <1329278462-30851-1-git-send-email-sachin.kamat@linaro.org>	<4F3CF765.4040802@samsung.com> <CAK9yfHxBO2CgmpF0dSUTHW=iMCTbOmW85yzt-N4Co+vfYCOGOw@mail.gmail.com>
+Subject: Re: [PATCH-RESEND 0/4] ARM: S5PV210: Enable FIMC & MFC on SMDKC110
+ & V210 boards
+Date: Fri, 09 Mar 2012 07:34:00 -0800
+Message-ID: <4F5A22E8.9050700@samsung.com>
+References: <1329110331-12746-1-git-send-email-sachin.kamat@linaro.org>	<4F3CFDFD.1000804@samsung.com> <CAK9yfHzeaKA7CeiEu1b+tcXiHLic5VS-aRB40EM0sCM7vrPSow@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:65308 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755075Ab2CIPdv (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:57012 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755491Ab2CIPeF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Mar 2012 10:33:51 -0500
-Received: by mail-tul01m020-f174.google.com with SMTP id uo6so2273888obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 07:33:50 -0800 (PST)
-In-Reply-To: <CAK9yfHxBO2CgmpF0dSUTHW=iMCTbOmW85yzt-N4Co+vfYCOGOw@mail.gmail.com>
+	Fri, 9 Mar 2012 10:34:05 -0500
+Received: by yenl12 with SMTP id l12so902122yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 07:34:04 -0800 (PST)
+In-Reply-To: <CAK9yfHzeaKA7CeiEu1b+tcXiHLic5VS-aRB40EM0sCM7vrPSow@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, rjw@sisk.pl, thomas.abraham@linaro.org, patches@linaro.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On 03/08/12 03:34, Sachin Kamat wrote:
+On 03/08/12 03:29, Sachin Kamat wrote:
 > Hi Kukjin,
 >
-> This patch is also missed in your tree. Other G2D patches in arch/arm
-> are already there.
-> Please check.
+> Could not find this series applied on any of your branches. Please
+> check the same.
 >
-Applied this in my next/devel-samsung-pd branch.
+Applied this whole series in my next/board-samsung.
+
 Thanks.
 
 Best regards,
