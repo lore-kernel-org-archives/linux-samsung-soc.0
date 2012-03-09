@@ -1,33 +1,47 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] drivers: mmc: sdhci-s3c: fix broken compilation for non-Exynos
- SoCs
-Date: Fri, 09 Mar 2012 07:56:08 -0800
-Message-ID: <4F5A2818.4090104@samsung.com>
-References: <1331300667-22566-1-git-send-email-m.szyprowski@samsung.com>
+Subject: Re: [PATCH 0/4] ARM: SAMSUNG: Add __init attribute to functions calling
+ s3c_set_platdata
+Date: Fri, 09 Mar 2012 08:04:04 -0800
+Message-ID: <4F5A29F4.7020308@samsung.com>
+References: <1330593446-663-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:54478 "EHLO
-	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932100Ab2CIP4N (ORCPT
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:57185 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932280Ab2CIQEK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Mar 2012 10:56:13 -0500
-In-Reply-To: <1331300667-22566-1-git-send-email-m.szyprowski@samsung.com>
+	Fri, 9 Mar 2012 11:04:10 -0500
+Received: by yhmm54 with SMTP id m54so916294yhm.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 08:04:09 -0800 (PST)
+In-Reply-To: <1330593446-663-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org, linux@arm.linux.org.uk, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org
 
-On 03/09/12 05:44, Marek Szyprowski wrote:
-> exynos4_sdhci_drv_data structure is not available on non-Exynos builds,
-> that's why EXYNOS4_SDHCI_DRV_DATA macro has been introduced. This patch
-> fixes commit 67819656 'mmc: sdhci-s3c: Add device tree support' to use
-> that macro. This fixes broken build for pre-Exynos SoCs.
+On 03/01/12 01:17, Tushar Behera wrote:
+> The function s3c_set_platdata is defined with __init attribute, hence the
+> functions calling s3c_set_platdata should also be defined with __init
+> attribute.
 >
-I think, it is protected by CONFIG_OF and the pre-EXYNOS SoCs is not 
-support device tree yet. Could you please let me know the build error 
-and build condition?
+> Even though all the modified functions are called from xxx_machine_init()
+> functions, it is still better to define each of them with __init attribute.
+>
+> Tushar Behera (4):
+>    ARM: EXYNOS: Add __init attribute to nuri_camera_init()
+>    ARM: EXYNOS: Add __init attribute to universal_camera_init()
+>    ARM: SAMSUNG: Add __init attribute to samsung_bl_set()
+>    ARM: SAMSUNG: Add __init attribute to xxx_set_platdata() wrappers
+>
+>   arch/arm/mach-exynos/mach-nuri.c           |    2 +-
+>   arch/arm/mach-exynos/mach-universal_c210.c |    2 +-
+>   arch/arm/plat-samsung/dev-backlight.c      |    2 +-
+>   arch/arm/plat-samsung/devs.c               |    4 ++--
+>   4 files changed, 5 insertions(+), 5 deletions(-)
+>
+Looks good to me, applied.
 
 Thanks.
 
@@ -36,22 +50,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
-> ---
->   drivers/mmc/host/sdhci-s3c.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index ea0767e..984601e 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -859,7 +859,7 @@ MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
->   static const struct of_device_id sdhci_s3c_dt_match[] = {
->   	{ .compatible = "samsung,s3c6410-sdhci", },
->   	{ .compatible = "samsung,exynos4210-sdhci",
-> -		.data =&exynos4_sdhci_drv_data },
-> +		.data = EXYNOS4_SDHCI_DRV_DATA },
->   	{},
->   };
->   MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
