@@ -1,45 +1,67 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v3 0/4] mmc: sdhci-s3c: use the sdhci-pltfm.c and move the
- header file
-Date: Fri, 09 Mar 2012 10:53:26 +0900
-Message-ID: <4F596296.60103@samsung.com>
-References: <4F55ABF0.1060801@samsung.com>
- <20120306130054.GA9890@sirena.org.uk> <201203061415.18836.heiko@sntech.de>
- <CAELcNGS6UynrJPRk1KtEJT3Rm6Jb5_scLm4KKca+dJ1ZYDOVbg@mail.gmail.com>
- <20120306163052.GX19635@opensource.wolfsonmicro.com>
- <4F56D003.5070406@samsung.com>
- <20120307184843.GW3107@opensource.wolfsonmicro.com>
- <4F584539.9080007@samsung.com>
- <20120308110105.GD3638@opensource.wolfsonmicro.com>
+From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
+Subject: Re: [GIT PULL] Samsung Cleanup EXYNOS clock for v3.4
+Date: Fri, 09 Mar 2012 04:38:17 +0000 (GMT)
+Message-ID: <22926872.16671331267895327.JavaMail.weblogic@epml04>
+Reply-To: myungjoo.ham@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=euc-kr
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:52010 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756311Ab2CIBx2 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:11664 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756502Ab2CIEiS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Mar 2012 20:53:28 -0500
-In-reply-to: <20120308110105.GD3638@opensource.wolfsonmicro.com>
+	Thu, 8 Mar 2012 23:38:18 -0500
+Received: from epcpsbge6.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0M0L00FW7OVLS4C0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Mar 2012 13:38:17 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, =?ISO-8859-1?Q?Heiko_St=FCb?= =?ISO-8859-1?Q?ner?= <heiko@sntech.de>, linux-mmc <linux-mmc@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, kgene kim <kgene.kim@samsung.com>
+To: =?euc-kr?Q?=B1=E8=B1=B9=C1=F8?= <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>
 
-On 03/08/2012 08:01 PM, Mark Brown wrote:
-
-> On Thu, Mar 08, 2012 at 02:35:53PM +0900, Jaehoon Chung wrote:
-> 
->> So i think no problem that removed "#include <plat/regs-sdhci.h>". is it wrong?
->> Just touching the setup-gpio- files is problem?
-> 
-> It should be fine, like I say I didn't really read the patches in enough
-> detail as the diffstat set off alarm bells.
-
-
-If you have any opinions, let me know.
-I believe that these patches can be maintain more efficiently for eMMC
-
-Best Regards,
-Jaehoon Chung
- 
+PiBIaSBBcm5kLCBPbG9mLA0KPiANCj4gSGVyZSBpcyBjbGVhbnVwIGNsb2NrIHBhcnQgZm9yIEVY
+WU5PUyBTb0NzIGZyb206DQo+ICAgIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
+a2VybmVsL2dpdC9rZ2VuZS9saW51eC1zYW1zdW5nLmdpdCANCj4gbmV4dC9jbGVhbnVwLWV4eW5v
+cy1jbG9jaw0KPiANCj4gUGxlYXNlIHB1bGwgYW5kIGlmIGFueSBwcm9ibGVtcywgcGxlYXNlIGtp
+bmRseSBsZXQgbWUga25vdy4NCg0KSGVsbG8sDQoNCkl0IGFwcGVhcnMgdGhhdCBzb21lIHBhdGNo
+ZXMgYXJlIG1pc3NpbmcgaW4gdGhpcyBicmFuY2g7IGkuZS4sIHlvdSBzZWVtZWQgbm90IHRvIGhh
+dmUgcHVsbGVkIG9uZSByZXF1aXJlZCBieSB0aGlzIHBhdGNoc2V0OiBodHRwOi8vcGVybWFsaW5r
+LmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuc2Ftc3VuZy1zb2MvODQ3NA0KDQpJZiB0aGUg
+bWlzc2luZyBwYXRjaGVzIGFyZSBpbmNsdWRlZCBpbiBhbm90aGVyIGJyYW5jaCBvZiB5b3VycyBh
+bmQgYmVpbmcgcHVsbGVkIGF0IHNvbWV3aGVyZSBlbHNlLCBwbGVhc2UgbmV2ZXIgbWluZC4gSG93
+ZXZlciwgaXQgZG9lc24ndCBhcHBlYXIgc28uDQoNCkFueXdheSwgSSdtIHJlYmFzaW5nIHRoZSBw
+dWxsLXJlcXVlc3RlZCBicmFuY2ggdXBvbiBtb3N0IHJlY2VudCBSQywgc28gaXQnbGwgYmUgYXZh
+aWxhYmxlIHNvb24gKGluIGFuIGhvdXI/KSBhdCBodHRwOi8vZ2l0LmluZnJhZGVhZC5vcmcvdXNl
+cnMva21wYXJrL2xpbnV4LXNhbXN1bmcvc2hvcnRsb2cvcmVmcy9oZWFkcy9kZXZmcmVxLWZvci1z
+YW1zdW5nDQoNCg0KQ2hlZXJzIQ0KTXl1bmdKb28uDQoNCj4gDQo+IFRoZSBmb2xsb3dpbmcgY2hh
+bmdlcyBzaW5jZSBjb21taXQgYjAxNTQzZGZlNjdiYjFkMTkxOTk4ZTkwZDIwNTM0ZGMzNTRkZTA1
+OToNCj4gDQo+ICAgIExpbnV4IDMuMy1yYzQgKDIwMTItMDItMTggMTU6NTM6MzMgLTA4MDApDQo+
+IA0KPiBhcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoNCj4gICAgZ2l0Oi8v
+Z2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2tnZW5lL2xpbnV4LXNhbXN1
+bmcuZ2l0IA0KPiBuZXh0L2NsZWFudXAtZXh5bm9zLWNsb2NrDQo+IA0KPiBLdWtqaW4gS2ltICgy
+KToNCj4gICAgICAgIEFSTTogRVhZTk9TOiBjbGVhbnVwIGNsb2NrIHBhcnQgZm9yIG5ldyBFWFlO
+T1MgU29Dcw0KPiAgICAgICAgUE0gLyBkZXZmcmVxOiB1cGRhdGUgdGhlIG5hbWUgb2YgRVhZTk9T
+IGNsb2NrIHJlZ2lzdGVyDQo+IA0KPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL01ha2VmaWxlICAg
+ICAgICAgICAgICAgICAgICAgfCAgICAzICstDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xv
+Y2stZXh5bm9zNC5jICAgICAgICAgICAgICB8IDE1NjQgDQo+ICsrKysrKysrKysrKysrKysrKysr
+Kw0KPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczQuaCAgICAgICAgICAgICAg
+fCAgIDMyICsNCj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M0MjEwLmMgICAg
+ICAgICAgIHwgICA0NiArLQ0KPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczQy
+MTIuYyAgICAgICAgICAgfCAgIDMwICstDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2su
+YyAgICAgICAgICAgICAgICAgICAgICB8IDE1NjQgDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
+PiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL2NvbW1vbi5oICAgICAgICAgICAgICAgICAgICAgfCAg
+ICA5ICsNCj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9pbmNsdWRlL21hY2gvZXh5bm9zNC1jbG9j
+ay5oIHwgICA0MyAtDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvaW5jbHVkZS9tYWNoL3JlZ3Mt
+Y2xvY2suaCAgICB8ICAzNjQgKysrLS0tDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvcG0uYyAg
+ICAgICAgICAgICAgICAgICAgICAgICB8ICAgNDAgKy0NCj4gICBkcml2ZXJzL2RldmZyZXEvZXh5
+bm9zNF9idXMuYyAgICAgICAgICAgICAgICAgICAgIHwgIDIyNCArKy0tDQo+ICAgMTEgZmlsZXMg
+Y2hhbmdlZCwgMTk1OSBpbnNlcnRpb25zKCspLCAxOTYwIGRlbGV0aW9ucygtKQ0KPiAgIGNyZWF0
+ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M0LmMNCj4gICBj
+cmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNC5oDQo+
+ICAgZGVsZXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLmMNCj4gICBk
+ZWxldGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC1leHlub3MvaW5jbHVkZS9tYWNoL2V4eW5v
+czQtY2xvY2suaA0KPiANCg==
