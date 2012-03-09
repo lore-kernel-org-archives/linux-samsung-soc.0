@@ -1,53 +1,55 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH] ARM: dma-mapping: fix calculation of iova bitmap size
-Date: Fri, 09 Mar 2012 15:53:32 +0100
-Message-ID: <1331304812-10386-1-git-send-email-m.szyprowski@samsung.com>
-References: <011701ccfc83$78030180$68090480$%szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [GIT PULL] Samsung Cleanup EXYNOS clock for v3.4
+Date: Fri, 09 Mar 2012 07:33:01 -0800
+Message-ID: <4F5A22AD.1070907@samsung.com>
+References: <4F589474.8050609@samsung.com> <CAOesGMiWOChuMjLQTK1pGys+oXCc4A=HO-2_=37rh3M6pgUP_g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-reply-to: <011701ccfc83$78030180$68090480$%szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Chunsang Jeong <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-tul01m020-f174.google.com ([209.85.214.174]:65308 "EHLO
+	mail-tul01m020-f174.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756673Ab2CIPdG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Mar 2012 10:33:06 -0500
+Received: by obbuo6 with SMTP id uo6so2273888obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 07:33:04 -0800 (PST)
+In-Reply-To: <CAOesGMiWOChuMjLQTK1pGys+oXCc4A=HO-2_=37rh3M6pgUP_g@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
 
-Fix calculation of iova address space for IOMMU-aware dma mapping.
+On 03/08/12 07:16, Olof Johansson wrote:
+> Hi,
+>
+> On Thu, Mar 8, 2012 at 3:13 AM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>
+>> Kukjin Kim (2):
+>>       ARM: EXYNOS: cleanup clock part for new EXYNOS SoCs
+>
+> This is one large commit that does many things in one change. As the
+> patch message says:
+>
+> ARM: EXYNOS: cleanup clock part for new EXYNOS SoCs
+>
+> - the prefix of clk register replace S5P_ with EXYNOS4_
+> - move mach-exynos/clock.c to mach-exynos/clock-exynos4.c
+> - according to moving clock-exynos4.c,
+>    move<mach/exynos4-clock.h>  to "clock-exynos4.h"
+> - add prefix exynos4_ on clk declaration
+>
+> It makes it hard to review, especially when you combine a move with
+> other changes. It's better to do the move in a separate commit that
+> doesn't change code (or only changes very very little) and then do the
+> other changes in separate commits later.
+>
+Hmm...OK, let me do as per your suggestion and will re-send this soon.
 
-Reported-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mm/dma-mapping.c |    5 ++++-
- 1 files changed, 4 insertions(+), 1 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index ea5a0ad..f0f600a 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -1601,11 +1601,14 @@ struct dma_iommu_mapping *
- arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
- 			 int order)
- {
--	unsigned int count = (size >> PAGE_SHIFT) - order;
-+	unsigned int count = size >> (PAGE_SHIFT + order);
- 	unsigned int bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
- 	struct dma_iommu_mapping *mapping;
- 	int err = -ENOMEM;
- 
-+	if (!count)
-+		return ERR_PTR(-EINVAL);
-+
- 	mapping = kzalloc(sizeof(struct dma_iommu_mapping), GFP_KERNEL);
- 	if (!mapping)
- 		goto err;
--- 
-1.7.1.569.g6f426
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
