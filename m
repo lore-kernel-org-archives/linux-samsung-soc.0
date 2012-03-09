@@ -1,47 +1,59 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2] ARM: Exynos: JPEG board definition and device register
-Date: Fri, 09 Mar 2012 10:29:56 -0800
-Message-ID: <4F5A4C24.2000302@samsung.com>
-References: <1328005243-6072-1-git-send-email-andrzej.p@samsung.com> <4F2902C0.5020805@linaro.org> <000001cce0cc$08258a90$18709fb0$%p@samsung.com> <4F5A4B41.2000009@samsung.com>
+Subject: Re: [PATCHv3 1/3] ARM: Exynos: JPEG board definition
+Date: Fri, 09 Mar 2012 11:02:11 -0800
+Message-ID: <4F5A53B3.8060806@samsung.com>
+References: <1328095165-31628-1-git-send-email-andrzej.p@samsung.com> <1328095165-31628-2-git-send-email-andrzej.p@samsung.com> <001601cce726$3dee9080$b9cbb180$%kim@samsung.com> <008101cce739$9839f8f0$c8adead0$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:38580 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758549Ab2CIS36 (ORCPT
+Received: from mail-qy0-f174.google.com ([209.85.216.174]:54677 "EHLO
+	mail-qy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757566Ab2CITCP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Mar 2012 13:29:58 -0500
-Received: by yenl12 with SMTP id l12so1030456yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 10:29:57 -0800 (PST)
-In-Reply-To: <4F5A4B41.2000009@samsung.com>
+	Fri, 9 Mar 2012 14:02:15 -0500
+Received: by qcqw6 with SMTP id w6so1341181qcq.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 11:02:13 -0800 (PST)
+In-Reply-To: <008101cce739$9839f8f0$c8adead0$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Kukjin Kim wrote:
-> Andrzej Pietrasiewicz wrote:
-
-[...]
-
->>>
->> Thank you for pointing this out. I will fix it.
->>
-> Probably, I didn't get updated this so now happens build error about
-> lack of s5p_device_jpeg.
+2012-02-09 =EC=98=A4=EC=A0=84 6:46, Marek Szyprowski =EC=93=B4 =EA=B8=80=
+:
+> Hello,
 >
->>> Also, wouldn't be a good idea to split this patch into 2 different
->>> patches for platform-specific and board-specific changes?
->>>
->> I think I will split it into 3 patches: platform-specific and
->> 2 board-specific (universal, nuri).
->>
-> Yes, please re-submit adding platform_device of jpeg. If not, I should
-> drop regarding patches in my tree for upcoming merge window.
+> On Thursday, February 09, 2012 1:28 PM Kukjin Kim wrote:
 >
-I found it just now. Please kindly ignore above.
-Will apply that.
+>>> ARM: Exynos: JPEG board definition
+>>>
+>>
+>> [...]
+>>
+>>>
+>>> +#define EXYNOS4_PA_JPEG			0x11840000
+>>> +
+>>>   #define EXYNOS4_PA_G2D			0x12800000
+>>>
+>>>   #define EXYNOS4_PA_I2S0			0x03830000
+>>> @@ -164,6 +166,7 @@
+>>>   #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
+>>>   #define S5P_PA_FIMC2			EXYNOS4_PA_FIMC2
+>>>   #define S5P_PA_FIMC3			EXYNOS4_PA_FIMC3
+>>> +#define S5P_PA_JPEG			EXYNOS4_PA_JPEG
+>>
+>> I'm not sure we _really_ need to re-define for JPEG.
+>> Why not just use EXYNOS4_PA_JPEG?
+>
+> The s5p-jpeg driver can be also used on S5PV210 so this approach seem=
+s
+> to be fine, the patch only lacks definitions for the S5PV210 series.
+>
+I mean, if we use still this style, re-definition for physical address=20
+and interrupt number, it will break one kernel image with others.=20
+Anyway, I will apply this and will sort it out next time.
 
 Thanks.
 
