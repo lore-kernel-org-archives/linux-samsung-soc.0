@@ -1,67 +1,75 @@
-From: =?euc-kr?B?x9S47cHW?= <myungjoo.ham@samsung.com>
-Subject: Re: [GIT PULL] Samsung Cleanup EXYNOS clock for v3.4
-Date: Fri, 09 Mar 2012 04:38:17 +0000 (GMT)
-Message-ID: <22926872.16671331267895327.JavaMail.weblogic@epml04>
-Reply-To: myungjoo.ham@samsung.com
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH 1/2] mmc: sdhci-s3c: Use CONFIG_PM_SLEEP to ifdef system suspend
+Date: Thu, 08 Mar 2012 23:56:10 -0500
+Message-ID: <m27gyupe39.fsf@bob.laptop.org>
+References: <4F51697C.40408@samsung.com>
+	<1330735602-22409-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=euc-kr
-Content-Transfer-Encoding: base64
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:11664 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756502Ab2CIEiS (ORCPT
+Received: from void.printf.net ([89.145.121.20]:43368 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754306Ab2CIE4P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 8 Mar 2012 23:38:18 -0500
-Received: from epcpsbge6.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M0L00FW7OVLS4C0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Mar 2012 13:38:17 +0900 (KST)
-MIME-version: 1.0
+	Thu, 8 Mar 2012 23:56:15 -0500
+In-Reply-To: <1330735602-22409-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	(Mark Brown's message of "Sat, 3 Mar 2012 00:46:41 +0000")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?euc-kr?Q?=B1=E8=B1=B9=C1=F8?= <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?euc-kr?Q?=B9=DA=B0=E6=B9=CE?= <kyungmin.park@samsung.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org
 
-PiBIaSBBcm5kLCBPbG9mLA0KPiANCj4gSGVyZSBpcyBjbGVhbnVwIGNsb2NrIHBhcnQgZm9yIEVY
-WU5PUyBTb0NzIGZyb206DQo+ICAgIGdpdDovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgv
-a2VybmVsL2dpdC9rZ2VuZS9saW51eC1zYW1zdW5nLmdpdCANCj4gbmV4dC9jbGVhbnVwLWV4eW5v
-cy1jbG9jaw0KPiANCj4gUGxlYXNlIHB1bGwgYW5kIGlmIGFueSBwcm9ibGVtcywgcGxlYXNlIGtp
-bmRseSBsZXQgbWUga25vdy4NCg0KSGVsbG8sDQoNCkl0IGFwcGVhcnMgdGhhdCBzb21lIHBhdGNo
-ZXMgYXJlIG1pc3NpbmcgaW4gdGhpcyBicmFuY2g7IGkuZS4sIHlvdSBzZWVtZWQgbm90IHRvIGhh
-dmUgcHVsbGVkIG9uZSByZXF1aXJlZCBieSB0aGlzIHBhdGNoc2V0OiBodHRwOi8vcGVybWFsaW5r
-LmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuc2Ftc3VuZy1zb2MvODQ3NA0KDQpJZiB0aGUg
-bWlzc2luZyBwYXRjaGVzIGFyZSBpbmNsdWRlZCBpbiBhbm90aGVyIGJyYW5jaCBvZiB5b3VycyBh
-bmQgYmVpbmcgcHVsbGVkIGF0IHNvbWV3aGVyZSBlbHNlLCBwbGVhc2UgbmV2ZXIgbWluZC4gSG93
-ZXZlciwgaXQgZG9lc24ndCBhcHBlYXIgc28uDQoNCkFueXdheSwgSSdtIHJlYmFzaW5nIHRoZSBw
-dWxsLXJlcXVlc3RlZCBicmFuY2ggdXBvbiBtb3N0IHJlY2VudCBSQywgc28gaXQnbGwgYmUgYXZh
-aWxhYmxlIHNvb24gKGluIGFuIGhvdXI/KSBhdCBodHRwOi8vZ2l0LmluZnJhZGVhZC5vcmcvdXNl
-cnMva21wYXJrL2xpbnV4LXNhbXN1bmcvc2hvcnRsb2cvcmVmcy9oZWFkcy9kZXZmcmVxLWZvci1z
-YW1zdW5nDQoNCg0KQ2hlZXJzIQ0KTXl1bmdKb28uDQoNCj4gDQo+IFRoZSBmb2xsb3dpbmcgY2hh
-bmdlcyBzaW5jZSBjb21taXQgYjAxNTQzZGZlNjdiYjFkMTkxOTk4ZTkwZDIwNTM0ZGMzNTRkZTA1
-OToNCj4gDQo+ICAgIExpbnV4IDMuMy1yYzQgKDIwMTItMDItMTggMTU6NTM6MzMgLTA4MDApDQo+
-IA0KPiBhcmUgYXZhaWxhYmxlIGluIHRoZSBnaXQgcmVwb3NpdG9yeSBhdDoNCj4gICAgZ2l0Oi8v
-Z2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2tnZW5lL2xpbnV4LXNhbXN1
-bmcuZ2l0IA0KPiBuZXh0L2NsZWFudXAtZXh5bm9zLWNsb2NrDQo+IA0KPiBLdWtqaW4gS2ltICgy
-KToNCj4gICAgICAgIEFSTTogRVhZTk9TOiBjbGVhbnVwIGNsb2NrIHBhcnQgZm9yIG5ldyBFWFlO
-T1MgU29Dcw0KPiAgICAgICAgUE0gLyBkZXZmcmVxOiB1cGRhdGUgdGhlIG5hbWUgb2YgRVhZTk9T
-IGNsb2NrIHJlZ2lzdGVyDQo+IA0KPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL01ha2VmaWxlICAg
-ICAgICAgICAgICAgICAgICAgfCAgICAzICstDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xv
-Y2stZXh5bm9zNC5jICAgICAgICAgICAgICB8IDE1NjQgDQo+ICsrKysrKysrKysrKysrKysrKysr
-Kw0KPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczQuaCAgICAgICAgICAgICAg
-fCAgIDMyICsNCj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M0MjEwLmMgICAg
-ICAgICAgIHwgICA0NiArLQ0KPiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczQy
-MTIuYyAgICAgICAgICAgfCAgIDMwICstDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2su
-YyAgICAgICAgICAgICAgICAgICAgICB8IDE1NjQgDQo+IC0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0K
-PiAgIGFyY2gvYXJtL21hY2gtZXh5bm9zL2NvbW1vbi5oICAgICAgICAgICAgICAgICAgICAgfCAg
-ICA5ICsNCj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9pbmNsdWRlL21hY2gvZXh5bm9zNC1jbG9j
-ay5oIHwgICA0MyAtDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvaW5jbHVkZS9tYWNoL3JlZ3Mt
-Y2xvY2suaCAgICB8ICAzNjQgKysrLS0tDQo+ICAgYXJjaC9hcm0vbWFjaC1leHlub3MvcG0uYyAg
-ICAgICAgICAgICAgICAgICAgICAgICB8ICAgNDAgKy0NCj4gICBkcml2ZXJzL2RldmZyZXEvZXh5
-bm9zNF9idXMuYyAgICAgICAgICAgICAgICAgICAgIHwgIDIyNCArKy0tDQo+ICAgMTEgZmlsZXMg
-Y2hhbmdlZCwgMTk1OSBpbnNlcnRpb25zKCspLCAxOTYwIGRlbGV0aW9ucygtKQ0KPiAgIGNyZWF0
-ZSBtb2RlIDEwMDY0NCBhcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M0LmMNCj4gICBj
-cmVhdGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNC5oDQo+
-ICAgZGVsZXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLmMNCj4gICBk
-ZWxldGUgbW9kZSAxMDA2NDQgYXJjaC9hcm0vbWFjaC1leHlub3MvaW5jbHVkZS9tYWNoL2V4eW5v
-czQtY2xvY2suaA0KPiANCg==
+Hi Mark,
+
+On Fri, Mar 02 2012, Mark Brown wrote:
+> This matches current best practice as one can have runtime PM enabled
+> without system sleep and CONFIG_PM is defined for both.
+>
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> ---
+>  drivers/mmc/host/sdhci-s3c.c |    9 +++++----
+>  1 files changed, 5 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index ea0767e..46152d6 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -22,6 +22,7 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_gpio.h>
+> +#include <linux/pm.h>
+>  
+>  #include <linux/mmc/host.h>
+>  
+> @@ -807,8 +808,7 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
+>  
+> -#ifdef CONFIG_PM
+> -
+> +#ifdef CONFIG_PM_SLEEP
+>  static int sdhci_s3c_suspend(struct device *dev)
+>  {
+>  	struct sdhci_host *host = dev_get_drvdata(dev);
+> @@ -822,10 +822,11 @@ static int sdhci_s3c_resume(struct device *dev)
+>  
+>  	return sdhci_resume_host(host);
+>  }
+> +#endif
+>  
+> +#ifdef CONFIG_PM
+>  static const struct dev_pm_ops sdhci_s3c_pmops = {
+> -	.suspend	= sdhci_s3c_suspend,
+> -	.resume		= sdhci_s3c_resume,
+> +	SET_SYSTEM_SLEEP_PM_OPS(sdhci_s3c_suspend, sdhci_s3c_resume)
+>  };
+>  
+>  #define SDHCI_S3C_PMOPS (&sdhci_s3c_pmops)
+
+Thanks, pushed to mmc-next for 3.4 with Jaehoon's ACK.
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
