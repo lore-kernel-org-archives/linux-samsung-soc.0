@@ -1,40 +1,53 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH] drivers: mmc: sdhci-s3c: fix broken compilation for non-Exynos
- SoCs
-Date: Fri, 09 Mar 2012 14:44:27 +0100
-Message-ID: <1331300667-22566-1-git-send-email-m.szyprowski@samsung.com>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] ARM: dma-mapping: fix calculation of iova bitmap size
+Date: Fri, 09 Mar 2012 15:53:32 +0100
+Message-ID: <1331304812-10386-1-git-send-email-m.szyprowski@samsung.com>
+References: <011701ccfc83$78030180$68090480$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <011701ccfc83$78030180$68090480$%szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org, linux-arch-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Cc: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Benjamin Herrenschmidt <benh-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>, Chunsang Jeong <chunsang.jeong-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Andrzej Pietrasiewicz <andrzej.p-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-exynos4_sdhci_drv_data structure is not available on non-Exynos builds,
-that's why EXYNOS4_SDHCI_DRV_DATA macro has been introduced. This patch
-fixes commit 67819656 'mmc: sdhci-s3c: Add device tree support' to use
-that macro. This fixes broken build for pre-Exynos SoCs.
+Fix calculation of iova address space for IOMMU-aware dma mapping.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reported-by: Krishna Reddy <vdumpa-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 ---
- drivers/mmc/host/sdhci-s3c.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ arch/arm/mm/dma-mapping.c |    5 ++++-
+ 1 files changed, 4 insertions(+), 1 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index ea0767e..984601e 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -859,7 +859,7 @@ MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
- static const struct of_device_id sdhci_s3c_dt_match[] = {
- 	{ .compatible = "samsung,s3c6410-sdhci", },
- 	{ .compatible = "samsung,exynos4210-sdhci",
--		.data = &exynos4_sdhci_drv_data },
-+		.data = EXYNOS4_SDHCI_DRV_DATA },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index ea5a0ad..f0f600a 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -1601,11 +1601,14 @@ struct dma_iommu_mapping *
+ arm_iommu_create_mapping(struct bus_type *bus, dma_addr_t base, size_t size,
+ 			 int order)
+ {
+-	unsigned int count = (size >> PAGE_SHIFT) - order;
++	unsigned int count = size >> (PAGE_SHIFT + order);
+ 	unsigned int bitmap_size = BITS_TO_LONGS(count) * sizeof(long);
+ 	struct dma_iommu_mapping *mapping;
+ 	int err = -ENOMEM;
+ 
++	if (!count)
++		return ERR_PTR(-EINVAL);
++
+ 	mapping = kzalloc(sizeof(struct dma_iommu_mapping), GFP_KERNEL);
+ 	if (!mapping)
+ 		goto err;
 -- 
 1.7.1.569.g6f426
-
