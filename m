@@ -1,119 +1,125 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 1/3] ARM: Exynos: add platform device for core DRM subsystem
-Date: Fri, 09 Mar 2012 12:05:03 +0100
-Message-ID: <1331291105-18152-2-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 2/3] ARM: Exynos: Add DRM core device support for Universal
+ C210 board
+Date: Fri, 09 Mar 2012 12:05:04 +0100
+Message-ID: <1331291105-18152-3-git-send-email-m.szyprowski@samsung.com>
 References: <1331291105-18152-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:50451 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752365Ab2CILHq (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:57664 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752365Ab2CILHr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Mar 2012 06:07:46 -0500
-Received: from euspt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+	Fri, 9 Mar 2012 06:07:47 -0500
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M0M0074W6WWG870@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Mar 2012 11:07:44 +0000 (GMT)
+ with ESMTP id <0M0M006676WX6V70@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Mar 2012 11:07:45 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
  by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M0M00KCQ6WW63@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 09 Mar 2012 11:07:44 +0000 (GMT)
+ 2004)) with ESMTPA id <0M0M00KCY6WX63@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 09 Mar 2012 11:07:45 +0000 (GMT)
 In-reply-to: <1331291105-18152-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Add platform device for Exynos DRM core. This device is used for
-creating DRM user-space device and allocating memory for display buffers.
+Add core DRM device and alternative platform device data for FIMD DRM
+subdriver. Based on the initial patch by Joonyoung Shim
+<jy0922.shim@samsung.com>
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig              |    5 +++++
- arch/arm/mach-exynos/Makefile             |    1 +
- arch/arm/mach-exynos/dev-drm.c            |   29 +++++++++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/devs.h |    2 ++
- 4 files changed, 37 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/mach-exynos/dev-drm.c
+ arch/arm/mach-exynos/Kconfig               |    1 +
+ arch/arm/mach-exynos/mach-universal_c210.c |   31 ++++++++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 9f40689..5a26944 100644
+index 5a26944..c73eeba 100644
 --- a/arch/arm/mach-exynos/Kconfig
 +++ b/arch/arm/mach-exynos/Kconfig
-@@ -83,6 +83,11 @@ config EXYNOS4_DEV_AHCI
- 	help
- 	  Compile in platform device definitions for AHCI
+@@ -257,6 +257,7 @@ config MACH_UNIVERSAL_C210
+ 	select S5P_DEV_ONENAND
+ 	select S5P_DEV_TV
+ 	select EXYNOS4_DEV_DMA
++	select EXYNOS_DEV_DRM
+ 	select EXYNOS4_SETUP_FIMD0
+ 	select EXYNOS4_SETUP_I2C1
+ 	select EXYNOS4_SETUP_I2C3
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 322b272..30a3ff3 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -23,6 +23,7 @@
+ #include <linux/i2c-gpio.h>
+ #include <linux/i2c/mcs.h>
+ #include <linux/i2c/atmel_mxt_ts.h>
++#include <drm/exynos_drm.h>
  
-+config EXYNOS_DEV_DRM
-+	bool
-+	help
-+	  Compile in platform device definitions for core DRM device
-+
- config EXYNOS4_SETUP_FIMD0
- 	bool
- 	help
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 04feed2..39a9ee4 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -51,6 +51,7 @@ obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
- obj-y					+= dev-uart.o
- obj-$(CONFIG_ARCH_EXYNOS4)		+= dev-audio.o
- obj-$(CONFIG_EXYNOS4_DEV_AHCI)		+= dev-ahci.o
-+obj-$(CONFIG_EXYNOS_DEV_DRM)		+= dev-drm.o
- obj-$(CONFIG_EXYNOS4_DEV_SYSMMU)	+= dev-sysmmu.o
- obj-$(CONFIG_EXYNOS4_DEV_DWMCI)		+= dev-dwmci.o
- obj-$(CONFIG_EXYNOS4_DEV_DMA)		+= dma.o
-diff --git a/arch/arm/mach-exynos/dev-drm.c b/arch/arm/mach-exynos/dev-drm.c
-new file mode 100644
-index 0000000..b2258c8
---- /dev/null
-+++ b/arch/arm/mach-exynos/dev-drm.c
-@@ -0,0 +1,29 @@
-+/*
-+ * linux/arch/arm/mach-exynos/dev-drm.c
-+ *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * EXYNOS - core DRM device
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/kernel.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/platform_device.h>
-+
-+#include <plat/devs.h>
-+
-+static u64 exynos_drm_dma_mask = DMA_BIT_MASK(32);
-+
-+struct platform_device exynos_device_drm = {
-+	.name	= "exynos-drm",
-+	.dev	= {
-+		.dma_mask		= &exynos_drm_dma_mask,
-+		.coherent_dma_mask	= DMA_BIT_MASK(32),
-+	}
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -811,6 +812,27 @@ static struct i2c_board_info i2c1_devs[] __initdata = {
+ 	/* Gyro, To be updated */
+ };
+ 
++#ifdef CONFIG_DRM_EXYNOS
++static struct exynos_drm_fimd_pdata drm_fimd_pdata = {
++	.timing	= {
++		.left_margin	= 16,
++		.right_margin	= 16,
++		.upper_margin	= 2,
++		.lower_margin	= 28,
++		.hsync_len	= 2,
++		.vsync_len	= 1,
++		.xres		= 480,
++		.yres		= 800,
++		.refresh	= 55,
++	},
++	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB |
++			  VIDCON0_CLKSEL_LCD,
++	.vidcon1	= VIDCON1_INV_VCLK | VIDCON1_INV_VDEN
++			  | VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	.default_win	= 3,
++	.bpp		= 32,
 +};
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 2dd5267..d4075cb 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -134,6 +134,8 @@ extern struct platform_device exynos4_device_pd[];
- extern struct platform_device exynos4_device_spdif;
- extern struct platform_device exynos4_device_sysmmu;
++#else
+ /* Frame Buffer */
+ static struct s3c_fb_pd_win universal_fb_win0 = {
+ 	.win_mode = {
+@@ -838,6 +860,7 @@ static struct s3c_fb_platdata universal_lcd_pdata __initdata = {
+ 			  | VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
+ 	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
+ };
++#endif
  
-+extern struct platform_device exynos_device_drm;
-+
- extern struct platform_device samsung_asoc_dma;
- extern struct platform_device samsung_asoc_idma;
- extern struct platform_device samsung_device_keypad;
+ static struct regulator_consumer_supply cam_vt_dio_supply =
+ 	REGULATOR_SUPPLY("vdd_core", "0-003c");
+@@ -1046,6 +1069,9 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&universal_gpio_keys,
+ 	&s5p_device_onenand,
+ 	&s5p_device_fimd0,
++#ifdef CONFIG_DRM_EXYNOS
++	&exynos_device_drm,
++#endif
+ 	&s5p_device_mfc,
+ 	&s5p_device_mfc_l,
+ 	&s5p_device_mfc_r,
+@@ -1091,7 +1117,12 @@ static void __init universal_machine_init(void)
+ 	s5p_i2c_hdmiphy_set_platdata(NULL);
+ 	i2c_register_board_info(5, i2c5_devs, ARRAY_SIZE(i2c5_devs));
+ 
++#ifdef CONFIG_DRM_EXYNOS
++	s5p_device_fimd0.dev.platform_data = &drm_fimd_pdata;
++	exynos4_fimd0_gpio_setup_24bpp();
++#else
+ 	s5p_fimd0_set_platdata(&universal_lcd_pdata);
++#endif
+ 
+ 	universal_touchkey_init();
+ 	i2c_register_board_info(I2C_GPIO_BUS_12, i2c_gpio12_devs,
 -- 
 1.7.1.569.g6f426
