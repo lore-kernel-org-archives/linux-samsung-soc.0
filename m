@@ -1,70 +1,53 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCHv5] ARM: Exynos: Register JPEG on nuri
-Date: Fri, 09 Mar 2012 08:26:23 -0800
-Message-ID: <4F5A2F2F.4080008@samsung.com>
-References: <1330083894-18769-1-git-send-email-andrzej.p@samsung.com>
+Subject: Re: [PATCH 0/4] ARM: SAMSUNG: JPEG support on Exynos and S5PV210
+Date: Fri, 09 Mar 2012 08:26:33 -0800
+Message-ID: <4F5A2F39.6030205@samsung.com>
+References: <1330574752-14088-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-gy0-f174.google.com ([209.85.160.174]:43476 "EHLO
 	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751365Ab2CIQ02 (ORCPT
+	with ESMTP id S1757905Ab2CIQ0g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Mar 2012 11:26:28 -0500
-Received: by ghrr11 with SMTP id r11so941202ghr.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 08:26:28 -0800 (PST)
-In-Reply-To: <1330083894-18769-1-git-send-email-andrzej.p@samsung.com>
+	Fri, 9 Mar 2012 11:26:36 -0500
+Received: by mail-gy0-f174.google.com with SMTP id r11so941202ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 08:26:36 -0800 (PST)
+In-Reply-To: <1330574752-14088-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Andrzej Pietrasiewicz <andrzej.p@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 02/24/12 03:44, Andrzej Pietrasiewicz wrote:
-> ARM: Exynos: Register JPEG on nuri
+On 02/29/12 20:05, Sachin Kamat wrote:
+> This patch series adds JPEG platform support to S5PV210 and board support to
+> SMDKV210, SMDKV310 and Origen.
+> This series is based on Kukjin Kim's for-next branch.
 >
-> Signed-off-by: Andrzej Pietrasiewicz<andrzej.p@samsung.com>
-> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> ---
+> This series depends on the following patches:
 >
-> This is in response to:
-> http://www.spinics.net/lists/linux-samsung-soc/msg09530.html
+> http://www.spinics.net/lists/linux-samsung-soc/msg09163.html
+> http://www.spinics.net/lists/linux-samsung-soc/msg09475.html
+> http://www.spinics.net/lists/linux-samsung-soc/msg09554.html
 >
-> Now it should apply cleanly.
 >
-> @Sachin: Thank you for spotting the problem.
+> Sachin Kamat (4):
+>    ARM: EXYNOS: Enable JPEG on SMDKV310
+>    ARM: EXYNOS: Enable JPEG on Origen
+>    ARM: S5PV210: Add JPEG board definition
+>    ARM: S5PV210: Enable JPEG on SMDKV210
 >
->   arch/arm/mach-exynos/Kconfig     |    1 +
->   arch/arm/mach-exynos/mach-nuri.c |    1 +
->   2 files changed, 2 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> index a95146b..6db7dd2 100644
-> --- a/arch/arm/mach-exynos/Kconfig
-> +++ b/arch/arm/mach-exynos/Kconfig
-> @@ -265,6 +265,7 @@ config MACH_NURI
->   	select S3C_DEV_I2C5
->   	select S3C_DEV_I2C6
->   	select S5P_DEV_CSIS0
-> +	select S5P_DEV_JPEG
->   	select S5P_DEV_FIMC0
->   	select S5P_DEV_FIMC1
->   	select S5P_DEV_FIMC2
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-> index a6b9162..8016649 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -1320,6 +1320,7 @@ static struct platform_device *nuri_devices[] __initdata = {
->   	&i2c9_gpio,
->   	&s3c_device_adc,
->   	&s5p_device_g2d,
-> +	&s5p_device_jpeg,
->   	&s3c_device_rtc,
->   	&s5p_device_mfc,
->   	&s5p_device_mfc_l,
+>   arch/arm/mach-exynos/Kconfig             |    2 ++
+>   arch/arm/mach-exynos/mach-origen.c       |    1 +
+>   arch/arm/mach-exynos/mach-smdkv310.c     |    1 +
+>   arch/arm/mach-s5pv210/Kconfig            |    1 +
+>   arch/arm/mach-s5pv210/clock.c            |    5 +++++
+>   arch/arm/mach-s5pv210/include/mach/map.h |    4 ++++
+>   arch/arm/mach-s5pv210/mach-smdkv210.c    |    1 +
+>   7 files changed, 15 insertions(+), 0 deletions(-)
 
-OK, applied.
-Thanks.
+Applied, thanks.
 
 Best regards,
 Kgene.
