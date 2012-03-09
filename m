@@ -1,167 +1,86 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: [PATCH 1/2] i2c-s3c2410: Rework device type handling
-Date: Fri, 09 Mar 2012 18:04:45 +0100
-Message-ID: <1331312686-2077-2-git-send-email-k.lewandowsk@samsung.com>
-References: <1331312686-2077-1-git-send-email-k.lewandowsk@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1331312686-2077-1-git-send-email-k.lewandowsk@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ben-linux@fluff.org
-Cc: thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH 6/6] spi/s3c64xx: Allow usage for ARCH_S3C24XX
+Date: Fri, 09 Mar 2012 10:52:10 -0700
+Message-ID: <20120309175210.21B2C3E0880@localhost>
+References: <201203041902.38318.heiko@sntech.de>
+	<201203041909.10400.heiko@sntech.de>
+Content-Type: multipart/mixed; boundary="===============1899010109105207814=="
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <201203041909.10400.heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Reorganize driver a bit to better handle device tree-based systems:
+--===============1899010109105207814==
 
- - move machine type to driver's private structure instead of
-   quering platform device variants in runtime
+On Sun, 4 Mar 2012 19:09:10 +0100, Heiko Stübner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org> wrote:
+> Newer SoCs from the S3C24XX line, namely S3C2416/2443/2450 contain
+> hsspi-controllers compatible with the s3c64xx type.
+> 
+> The previous patches enabled platform support for it, so make the
+> driver also usable for the S3C24xx architecture.
+> 
+> Signed-off-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
- - replace s3c24xx_i2c_type enum with plain unsigned int that can
-   hold not only device type but also hw revision-specific quirks
+Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/i2c/busses/i2c-s3c2410.c |   56 +++++++++++++------------------------
- 1 files changed, 20 insertions(+), 36 deletions(-)
+> ---
+> As it is part of a series this probably needs an ack from Grant Likely
+> and should be merged via the samsung tree.
+> 
+>  drivers/spi/Kconfig |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
+> index ac92194..e411364 100644
+> --- a/drivers/spi/Kconfig
+> +++ b/drivers/spi/Kconfig
+> @@ -299,7 +299,7 @@ config SPI_S3C24XX_FIQ
+>  
+>  config SPI_S3C64XX
+>  	tristate "Samsung S3C64XX series type SPI"
+> -	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
+> +	depends on (ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
+>  	select S3C64XX_DMA if ARCH_S3C64XX
+>  	help
+>  	  SPI driver for Samsung S3C64XX and newer SoCs.
+> -- 
+> 1.7.2.3
+> 
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 737f721..5b400c6 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -44,8 +44,12 @@
- #include <plat/regs-iic.h>
- #include <plat/iic.h>
- 
--/* i2c controller state */
-+/* type */
-+#define TYPE_BITS		0x000000ff
-+#define TYPE_S3C2410		0x00000001
-+#define TYPE_S3C2440		0x00000002
- 
-+/* i2c controller state */
- enum s3c24xx_i2c_state {
- 	STATE_IDLE,
- 	STATE_START,
-@@ -54,14 +58,10 @@ enum s3c24xx_i2c_state {
- 	STATE_STOP
- };
- 
--enum s3c24xx_i2c_type {
--	TYPE_S3C2410,
--	TYPE_S3C2440,
--};
--
- struct s3c24xx_i2c {
- 	spinlock_t		lock;
- 	wait_queue_head_t	wait;
-+	unsigned int            type;
- 	unsigned int		suspended:1;
- 
- 	struct i2c_msg		*msg;
-@@ -88,28 +88,6 @@ struct s3c24xx_i2c {
- #endif
- };
- 
--/* default platform data removed, dev should always carry data. */
--
--/* s3c24xx_i2c_is2440()
-- *
-- * return true is this is an s3c2440
--*/
--
--static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
--{
--	struct platform_device *pdev = to_platform_device(i2c->dev);
--	enum s3c24xx_i2c_type type;
--
--#ifdef CONFIG_OF
--	if (i2c->dev->of_node)
--		return of_device_is_compatible(i2c->dev->of_node,
--				"samsung,s3c2440-i2c");
--#endif
--
--	type = platform_get_device_id(pdev)->driver_data;
--	return type == TYPE_S3C2440;
--}
--
- /* s3c24xx_i2c_master_complete
-  *
-  * complete the message and wake up the caller, using the given return code,
-@@ -676,7 +654,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *i2c, unsigned int *got)
- 
- 	writel(iiccon, i2c->regs + S3C2410_IICCON);
- 
--	if (s3c24xx_i2c_is2440(i2c)) {
-+	if (i2c->type & TYPE_S3C2440) {
- 		unsigned long sda_delay;
- 
- 		if (pdata->sda_delay) {
-@@ -847,6 +825,8 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c *i2c)
- }
- 
- #ifdef CONFIG_OF
-+static const struct of_device_id s3c24xx_i2c_match[];
-+
- /* s3c24xx_i2c_parse_dt
-  *
-  * Parse the device tree node and retreive the platform data.
-@@ -856,11 +836,16 @@ static void
- s3c24xx_i2c_parse_dt(struct device_node *np, struct s3c24xx_i2c *i2c)
- {
- 	struct s3c2410_platform_i2c *pdata = i2c->pdata;
-+	const struct of_device_id *match;
- 
- 	if (!np)
- 		return;
- 
- 	pdata->bus_num = -1; /* i2c bus number is dynamically assigned */
-+
-+	match = of_match_node(&s3c24xx_i2c_match[0], np);
-+	i2c->type = (unsigned int)match->data;
-+
- 	of_property_read_u32(np, "samsung,i2c-sda-delay", &pdata->sda_delay);
- 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
- 	of_property_read_u32(np, "samsung,i2c-max-bus-freq",
-@@ -906,9 +891,10 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
- 		goto err_noclk;
- 	}
- 
--	if (pdata)
-+	if (pdata) {
- 		memcpy(i2c->pdata, pdata, sizeof(*pdata));
--	else
-+		i2c->type = platform_get_device_id(pdev)->driver_data;
-+	} else
- 		s3c24xx_i2c_parse_dt(pdev->dev.of_node, i2c);
- 
- 	strlcpy(i2c->adap.name, "s3c2410-i2c", sizeof(i2c->adap.name));
-@@ -1123,13 +1109,11 @@ MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
- 
- #ifdef CONFIG_OF
- static const struct of_device_id s3c24xx_i2c_match[] = {
--	{ .compatible = "samsung,s3c2410-i2c" },
--	{ .compatible = "samsung,s3c2440-i2c" },
-+	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)TYPE_S3C2410 },
-+	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)TYPE_S3C2440 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
--#else
--#define s3c24xx_i2c_match NULL
- #endif
- 
- static struct platform_driver s3c24xx_i2c_driver = {
-@@ -1140,7 +1124,7 @@ static struct platform_driver s3c24xx_i2c_driver = {
- 		.owner	= THIS_MODULE,
- 		.name	= "s3c-i2c",
- 		.pm	= S3C24XX_DEV_PM_OPS,
--		.of_match_table = s3c24xx_i2c_match,
-+		.of_match_table = of_match_ptr(s3c24xx_i2c_match),
- 	},
- };
- 
 -- 
-1.7.9
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
+
+
+--===============1899010109105207814==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+------------------------------------------------------------------------------
+Virtualization & Cloud Management Using Capacity Planning
+Cloud computing makes use of virtualization - but cloud computing 
+also focuses on allowing computing to be delivered as a service.
+http://www.accelacomm.com/jaw/sfnl/114/51521223/
+--===============1899010109105207814==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+spi-devel-general mailing list
+spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+https://lists.sourceforge.net/lists/listinfo/spi-devel-general
+
+--===============1899010109105207814==--
