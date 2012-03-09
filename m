@@ -1,44 +1,63 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH] drivers: mmc: sdhci-s3c: fix broken compilation for
- non-Exynos SoCs
-Date: Fri, 09 Mar 2012 17:07:40 +0100
-Message-ID: <00ce01ccfe0e$c1469f50$43d3ddf0$%szyprowski@samsung.com>
-References: <1331300667-22566-1-git-send-email-m.szyprowski@samsung.com>
- <4F5A2818.4090104@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
+Date: Fri, 09 Mar 2012 08:08:54 -0800
+Message-ID: <4F5A2B16.9090408@samsung.com>
+References: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org> <1322718611-20934-3-git-send-email-tushar.behera@linaro.org> <001701ccf6cc$a83727d0$f8a57770$%han@samsung.com> <076b01ccf760$ad072730$07157590$%kim@samsung.com> <4F4EF845.7050803@linaro.org> <077401ccf76a$4f863010$ee929030$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <4F5A2818.4090104@samsung.com>
-Content-language: pl
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-mmc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:59791 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932200Ab2CIQI7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 9 Mar 2012 11:08:59 -0500
+Received: by yenl12 with SMTP id l12so928475yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 08:08:59 -0800 (PST)
+In-Reply-To: <077401ccf76a$4f863010$ee929030$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Tushar Behera' <tushar.behera@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>, linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
 
-Hello,
+On 02/29/12 21:15, Kukjin Kim wrote:
+> Tushar Behera wrote:
 
-On Friday, March 09, 2012 4:56 PM Kukjin Kim wrote:
+[...]
 
-> On 03/09/12 05:44, Marek Szyprowski wrote:
-> > exynos4_sdhci_drv_data structure is not available on non-Exynos builds,
-> > that's why EXYNOS4_SDHCI_DRV_DATA macro has been introduced. This patch
-> > fixes commit 67819656 'mmc: sdhci-s3c: Add device tree support' to use
-> > that macro. This fixes broken build for pre-Exynos SoCs.
-> >
-> I think, it is protected by CONFIG_OF and the pre-EXYNOS SoCs is not
-> support device tree yet. Could you please let me know the build error
-> and build condition?
+>>>> Acked-by: Jingoo Han<jg1.han@samsung.com>
+>>>>
+>>>
+>>> OK, I will apply this with Sylwester's 'reviewed-by' I looked at
+> before.
+>>>
+>> Thanks. Do you want me rebase this patch on your latest for-next and
+>> resend?
+>>
+> Thanks but I can do it.
+>
+>>> BTW, Tushar, what's the [1/3] and [3/3] in this series? If they are
+>> still
+>>> needed now, could you please re-send? Maybe I missed.
+>>>
+>> "[PATCH 1/3] ARM: EXYNOS: Increase DMA pool allocator size for
+>> framebuffer"
+>> 	- It should be dropped.
+>>
+>> "[PATCH 3/3] ARM: EXYNOS: Invert VCLK polarity for framebuffer on Origen
+>> board"
+>> 	- It has already been applied.
+>
+> OK, thanks.
 
-pre-EXYNOS SoC do not support device tree, but I had to enable flat device
-tree support to get them working once in the past and I still have it in my
-config. Now I see that kernel boots fine without enabling flat device tree,
-but imho the reported issue should be fixed to reduce the amount of work in
-the future.
+Tushar,
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+As a note, this will be applied on top of new cleanup-exynos-clock.
 
+Thanks.
 
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
