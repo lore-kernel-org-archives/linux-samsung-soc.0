@@ -1,677 +1,422 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 1/5] ARM: EXYNOS: replace clock.c for other new EXYNOS SoCs
-Date: Sat, 10 Mar 2012 02:19:05 -0800
-Message-ID: <1331374749-23256-2-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 4/5] PM / devfreq: update the name of EXYNOS clock register
+Date: Sat, 10 Mar 2012 02:19:08 -0800
+Message-ID: <1331374749-23256-5-git-send-email-kgene.kim@samsung.com>
 References: <1331374749-23256-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-iy0-f174.google.com ([209.85.210.174]:62343 "EHLO
 	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753792Ab2CJKTU (ORCPT
+	with ESMTP id S1753792Ab2CJKT0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Mar 2012 05:19:20 -0500
+	Sat, 10 Mar 2012 05:19:26 -0500
 Received: by mail-iy0-f174.google.com with SMTP id z16so3631387iag.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 02:19:19 -0800 (PST)
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 02:19:26 -0800 (PST)
 In-Reply-To: <1331374749-23256-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: olof@lixom.net, Kukjin Kim <kgene.kim@samsung.com>
+Cc: olof@lixom.net, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch changes the name of clock.c to clock-exynos4.c for other
-EXYNOS series such as EXYNOS5. And since the header file of clock
-is used only in arch/arm/mach-exynos, moves it in the local directory.
+According to replacing the name of EXYNOS clock registers,
+this patch updates exynos4_bus.c file where it is used.
 
+Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos/Makefile                      |    3 +-
- arch/arm/mach-exynos/{clock.c => clock-exynos4.c}  |  173 ++++++++++----------
- .../mach/exynos4-clock.h => clock-exynos4.h}       |    1 -
- arch/arm/mach-exynos/clock-exynos4210.c            |    2 +-
- arch/arm/mach-exynos/clock-exynos4212.c            |    2 +-
- 5 files changed, 90 insertions(+), 91 deletions(-)
- rename arch/arm/mach-exynos/{clock.c => clock-exynos4.c} (92%)
- rename arch/arm/mach-exynos/{include/mach/exynos4-clock.h => clock-exynos4.h} (95%)
+ drivers/devfreq/exynos4_bus.c |  224 ++++++++++++++++++++--------------------
+ 1 files changed, 112 insertions(+), 112 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 5fc202c..995e7cc 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -12,7 +12,8 @@ obj-				:=
+diff --git a/drivers/devfreq/exynos4_bus.c b/drivers/devfreq/exynos4_bus.c
+index 6460577..565aa98 100644
+--- a/drivers/devfreq/exynos4_bus.c
++++ b/drivers/devfreq/exynos4_bus.c
+@@ -311,51 +311,51 @@ static int exynos4210_set_busclk(struct busfreq_data *data, struct opp *opp)
+ 	/* Change Divider - DMC0 */
+ 	tmp = data->dmc_divtable[index];
  
- # Core
+-	__raw_writel(tmp, S5P_CLKDIV_DMC0);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_DMC0);
  
--obj-$(CONFIG_ARCH_EXYNOS4)	+= common.o clock.o
-+obj-$(CONFIG_ARCH_EXYNOS)	+= common.o
-+obj-$(CONFIG_ARCH_EXYNOS4)	+= clock-exynos4.o
- obj-$(CONFIG_CPU_EXYNOS4210)	+= clock-exynos4210.o
- obj-$(CONFIG_SOC_EXYNOS4212)	+= clock-exynos4212.o
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC0);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_DMC0);
+ 	} while (tmp & 0x11111111);
  
-diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock-exynos4.c
-similarity index 92%
-rename from arch/arm/mach-exynos/clock.c
-rename to arch/arm/mach-exynos/clock-exynos4.c
-index 187287a..1d6d64f 100644
---- a/arch/arm/mach-exynos/clock.c
-+++ b/arch/arm/mach-exynos/clock-exynos4.c
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/mach-exynos4/clock.c
-- *
-+/*
-  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-@@ -26,9 +25,9 @@
- #include <mach/map.h>
- #include <mach/regs-clock.h>
- #include <mach/sysmmu.h>
--#include <mach/exynos4-clock.h>
+ 	/* Change Divider - TOP */
+ 	tmp = data->top_divtable[index];
  
- #include "common.h"
-+#include "clock-exynos4.h"
+-	__raw_writel(tmp, S5P_CLKDIV_TOP);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_TOP);
  
- #ifdef CONFIG_PM_SLEEP
- static struct sleep_save exynos4_clock_save[] = {
-@@ -215,8 +214,8 @@ static struct clksrc_clk clk_mout_apll = {
- 	.clk	= {
- 		.name		= "mout_apll",
- 	},
--	.sources	= &clk_src_apll,
--	.reg_src	= { .reg = S5P_CLKSRC_CPU, .shift = 0, .size = 1 },
-+	.sources = &clk_src_apll,
-+	.reg_src = { .reg = S5P_CLKSRC_CPU, .shift = 0, .size = 1 },
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_TOP);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_TOP);
+ 	} while (tmp & 0x11111);
  
- struct clksrc_clk clk_sclk_apll = {
-@@ -224,22 +223,22 @@ struct clksrc_clk clk_sclk_apll = {
- 		.name		= "sclk_apll",
- 		.parent		= &clk_mout_apll.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 24, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_CPU, .shift = 24, .size = 3 },
- };
+ 	/* Change Divider - LEFTBUS */
+-	tmp = __raw_readl(S5P_CLKDIV_LEFTBUS);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_LEFTBUS);
  
- struct clksrc_clk clk_mout_epll = {
- 	.clk	= {
- 		.name		= "mout_epll",
- 	},
--	.sources	= &clk_src_epll,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 4, .size = 1 },
-+	.sources = &clk_src_epll,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP0, .shift = 4, .size = 1 },
- };
+-	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
  
- struct clksrc_clk clk_mout_mpll = {
--	.clk = {
-+	.clk	= {
- 		.name		= "mout_mpll",
- 	},
--	.sources	= &clk_src_mpll,
-+	.sources = &clk_src_mpll,
+ 	tmp |= ((exynos4210_clkdiv_lr_bus[index][0] <<
+-				S5P_CLKDIV_BUS_GDLR_SHIFT) |
++				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
+ 		(exynos4210_clkdiv_lr_bus[index][1] <<
+-				S5P_CLKDIV_BUS_GPLR_SHIFT));
++				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
  
- 	/* reg_src will be added in each SoCs' clock */
- };
-@@ -258,8 +257,8 @@ static struct clksrc_clk clk_moutcore = {
- 	.clk	= {
- 		.name		= "moutcore",
- 	},
--	.sources	= &clkset_moutcore,
--	.reg_src	= { .reg = S5P_CLKSRC_CPU, .shift = 16, .size = 1 },
-+	.sources = &clkset_moutcore,
-+	.reg_src = { .reg = S5P_CLKSRC_CPU, .shift = 16, .size = 1 },
- };
+-	__raw_writel(tmp, S5P_CLKDIV_LEFTBUS);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_LEFTBUS);
  
- static struct clksrc_clk clk_coreclk = {
-@@ -267,7 +266,7 @@ static struct clksrc_clk clk_coreclk = {
- 		.name		= "core_clk",
- 		.parent		= &clk_moutcore.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 0, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_CPU, .shift = 0, .size = 3 },
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_LEFTBUS);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_LEFTBUS);
+ 	} while (tmp & 0x11);
  
- static struct clksrc_clk clk_armclk = {
-@@ -282,7 +281,7 @@ static struct clksrc_clk clk_aclk_corem0 = {
- 		.name		= "aclk_corem0",
- 		.parent		= &clk_coreclk.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 4, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_CPU, .shift = 4, .size = 3 },
- };
+ 	/* Change Divider - RIGHTBUS */
+-	tmp = __raw_readl(S5P_CLKDIV_RIGHTBUS);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_RIGHTBUS);
  
- static struct clksrc_clk clk_aclk_cores = {
-@@ -290,7 +289,7 @@ static struct clksrc_clk clk_aclk_cores = {
- 		.name		= "aclk_cores",
- 		.parent		= &clk_coreclk.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 4, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_CPU, .shift = 4, .size = 3 },
- };
+-	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
  
- static struct clksrc_clk clk_aclk_corem1 = {
-@@ -298,7 +297,7 @@ static struct clksrc_clk clk_aclk_corem1 = {
- 		.name		= "aclk_corem1",
- 		.parent		= &clk_coreclk.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 8, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_CPU, .shift = 8, .size = 3 },
- };
+ 	tmp |= ((exynos4210_clkdiv_lr_bus[index][0] <<
+-				S5P_CLKDIV_BUS_GDLR_SHIFT) |
++				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
+ 		(exynos4210_clkdiv_lr_bus[index][1] <<
+-				S5P_CLKDIV_BUS_GPLR_SHIFT));
++				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
  
- static struct clksrc_clk clk_periphclk = {
-@@ -306,7 +305,7 @@ static struct clksrc_clk clk_periphclk = {
- 		.name		= "periphclk",
- 		.parent		= &clk_coreclk.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_CPU, .shift = 12, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_CPU, .shift = 12, .size = 3 },
- };
+-	__raw_writel(tmp, S5P_CLKDIV_RIGHTBUS);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_RIGHTBUS);
  
- /* Core list of CMU_CORE side */
-@@ -325,8 +324,8 @@ static struct clksrc_clk clk_mout_corebus = {
- 	.clk	= {
- 		.name		= "mout_corebus",
- 	},
--	.sources	= &clkset_mout_corebus,
--	.reg_src	= { .reg = S5P_CLKSRC_DMC, .shift = 4, .size = 1 },
-+	.sources = &clkset_mout_corebus,
-+	.reg_src = { .reg = S5P_CLKSRC_DMC, .shift = 4, .size = 1 },
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_RIGHTBUS);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_RIGHTBUS);
+ 	} while (tmp & 0x11);
  
- static struct clksrc_clk clk_sclk_dmc = {
-@@ -334,7 +333,7 @@ static struct clksrc_clk clk_sclk_dmc = {
- 		.name		= "sclk_dmc",
- 		.parent		= &clk_mout_corebus.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 12, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_DMC0, .shift = 12, .size = 3 },
- };
+ 	return 0;
+@@ -376,137 +376,137 @@ static int exynos4x12_set_busclk(struct busfreq_data *data, struct opp *opp)
+ 	/* Change Divider - DMC0 */
+ 	tmp = data->dmc_divtable[index];
  
- static struct clksrc_clk clk_aclk_cored = {
-@@ -342,7 +341,7 @@ static struct clksrc_clk clk_aclk_cored = {
- 		.name		= "aclk_cored",
- 		.parent		= &clk_sclk_dmc.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 16, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_DMC0, .shift = 16, .size = 3 },
- };
+-	__raw_writel(tmp, S5P_CLKDIV_DMC0);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_DMC0);
  
- static struct clksrc_clk clk_aclk_corep = {
-@@ -350,7 +349,7 @@ static struct clksrc_clk clk_aclk_corep = {
- 		.name		= "aclk_corep",
- 		.parent		= &clk_aclk_cored.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 20, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_DMC0, .shift = 20, .size = 3 },
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC0);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_DMC0);
+ 	} while (tmp & 0x11111111);
  
- static struct clksrc_clk clk_aclk_acp = {
-@@ -358,7 +357,7 @@ static struct clksrc_clk clk_aclk_acp = {
- 		.name		= "aclk_acp",
- 		.parent		= &clk_mout_corebus.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 0, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_DMC0, .shift = 0, .size = 3 },
- };
+ 	/* Change Divider - DMC1 */
+-	tmp = __raw_readl(S5P_CLKDIV_DMC1);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_DMC1);
  
- static struct clksrc_clk clk_pclk_acp = {
-@@ -366,7 +365,7 @@ static struct clksrc_clk clk_pclk_acp = {
- 		.name		= "pclk_acp",
- 		.parent		= &clk_aclk_acp.clk,
- 	},
--	.reg_div	= { .reg = S5P_CLKDIV_DMC0, .shift = 4, .size = 3 },
-+	.reg_div = { .reg = S5P_CLKDIV_DMC0, .shift = 4, .size = 3 },
- };
+-	tmp &= ~(S5P_CLKDIV_DMC1_G2D_ACP_MASK |
+-		S5P_CLKDIV_DMC1_C2C_MASK |
+-		S5P_CLKDIV_DMC1_C2CACLK_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_DMC1_G2D_ACP_MASK |
++		EXYNOS4_CLKDIV_DMC1_C2C_MASK |
++		EXYNOS4_CLKDIV_DMC1_C2CACLK_MASK);
  
- /* Core list of CMU_TOP side */
-@@ -385,36 +384,36 @@ static struct clksrc_clk clk_aclk_200 = {
- 	.clk	= {
- 		.name		= "aclk_200",
- 	},
--	.sources	= &clkset_aclk,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 12, .size = 1 },
--	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 0, .size = 3 },
-+	.sources = &clkset_aclk,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP0, .shift = 12, .size = 1 },
-+	.reg_div = { .reg = S5P_CLKDIV_TOP, .shift = 0, .size = 3 },
- };
+ 	tmp |= ((exynos4x12_clkdiv_dmc1[index][0] <<
+-				S5P_CLKDIV_DMC1_G2D_ACP_SHIFT) |
++				EXYNOS4_CLKDIV_DMC1_G2D_ACP_SHIFT) |
+ 		(exynos4x12_clkdiv_dmc1[index][1] <<
+-				S5P_CLKDIV_DMC1_C2C_SHIFT) |
++				EXYNOS4_CLKDIV_DMC1_C2C_SHIFT) |
+ 		(exynos4x12_clkdiv_dmc1[index][2] <<
+-				S5P_CLKDIV_DMC1_C2CACLK_SHIFT));
++				EXYNOS4_CLKDIV_DMC1_C2CACLK_SHIFT));
  
- static struct clksrc_clk clk_aclk_100 = {
- 	.clk	= {
- 		.name		= "aclk_100",
- 	},
--	.sources	= &clkset_aclk,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 16, .size = 1 },
--	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 4, .size = 4 },
-+	.sources = &clkset_aclk,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP0, .shift = 16, .size = 1 },
-+	.reg_div = { .reg = S5P_CLKDIV_TOP, .shift = 4, .size = 4 },
- };
+-	__raw_writel(tmp, S5P_CLKDIV_DMC1);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_DMC1);
  
- static struct clksrc_clk clk_aclk_160 = {
- 	.clk	= {
- 		.name		= "aclk_160",
- 	},
--	.sources	= &clkset_aclk,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 20, .size = 1 },
--	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 8, .size = 3 },
-+	.sources = &clkset_aclk,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP0, .shift = 20, .size = 1 },
-+	.reg_div = { .reg = S5P_CLKDIV_TOP, .shift = 8, .size = 3 },
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_DMC1);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_DMC1);
+ 	} while (tmp & 0x111111);
  
- struct clksrc_clk clk_aclk_133 = {
- 	.clk	= {
- 		.name		= "aclk_133",
- 	},
--	.sources	= &clkset_aclk,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 24, .size = 1 },
--	.reg_div	= { .reg = S5P_CLKDIV_TOP, .shift = 12, .size = 3 },
-+	.sources = &clkset_aclk,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP0, .shift = 24, .size = 1 },
-+	.reg_div = { .reg = S5P_CLKDIV_TOP, .shift = 12, .size = 3 },
- };
+ 	/* Change Divider - TOP */
+-	tmp = __raw_readl(S5P_CLKDIV_TOP);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_TOP);
  
- static struct clk *clkset_vpllsrc_list[] = {
-@@ -433,8 +432,8 @@ static struct clksrc_clk clk_vpllsrc = {
- 		.enable		= exynos4_clksrc_mask_top_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	},
--	.sources	= &clkset_vpllsrc,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP1, .shift = 0, .size = 1 },
-+	.sources = &clkset_vpllsrc,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP1, .shift = 0, .size = 1 },
- };
+-	tmp &= ~(S5P_CLKDIV_TOP_ACLK266_GPS_MASK |
+-		S5P_CLKDIV_TOP_ACLK100_MASK |
+-		S5P_CLKDIV_TOP_ACLK160_MASK |
+-		S5P_CLKDIV_TOP_ACLK133_MASK |
+-		S5P_CLKDIV_TOP_ONENAND_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_TOP_ACLK266_GPS_MASK |
++		EXYNOS4_CLKDIV_TOP_ACLK100_MASK |
++		EXYNOS4_CLKDIV_TOP_ACLK160_MASK |
++		EXYNOS4_CLKDIV_TOP_ACLK133_MASK |
++		EXYNOS4_CLKDIV_TOP_ONENAND_MASK);
  
- static struct clk *clkset_sclk_vpll_list[] = {
-@@ -451,8 +450,8 @@ struct clksrc_clk clk_sclk_vpll = {
- 	.clk	= {
- 		.name		= "sclk_vpll",
- 	},
--	.sources	= &clkset_sclk_vpll,
--	.reg_src	= { .reg = S5P_CLKSRC_TOP0, .shift = 8, .size = 1 },
-+	.sources = &clkset_sclk_vpll,
-+	.reg_src = { .reg = S5P_CLKSRC_TOP0, .shift = 8, .size = 1 },
- };
+ 	tmp |= ((exynos4x12_clkdiv_top[index][0] <<
+-				S5P_CLKDIV_TOP_ACLK266_GPS_SHIFT) |
++				EXYNOS4_CLKDIV_TOP_ACLK266_GPS_SHIFT) |
+ 		(exynos4x12_clkdiv_top[index][1] <<
+-				S5P_CLKDIV_TOP_ACLK100_SHIFT) |
++				EXYNOS4_CLKDIV_TOP_ACLK100_SHIFT) |
+ 		(exynos4x12_clkdiv_top[index][2] <<
+-				S5P_CLKDIV_TOP_ACLK160_SHIFT) |
++				EXYNOS4_CLKDIV_TOP_ACLK160_SHIFT) |
+ 		(exynos4x12_clkdiv_top[index][3] <<
+-				S5P_CLKDIV_TOP_ACLK133_SHIFT) |
++				EXYNOS4_CLKDIV_TOP_ACLK133_SHIFT) |
+ 		(exynos4x12_clkdiv_top[index][4] <<
+-				S5P_CLKDIV_TOP_ONENAND_SHIFT));
++				EXYNOS4_CLKDIV_TOP_ONENAND_SHIFT));
  
- static struct clk init_clocks_off[] = {
-@@ -816,8 +815,8 @@ static struct clksrc_clk clk_mout_g2d0 = {
- 	.clk	= {
- 		.name		= "mout_g2d0",
- 	},
--	.sources	= &clkset_mout_g2d0,
--	.reg_src	= { .reg = S5P_CLKSRC_IMAGE, .shift = 0, .size = 1 },
-+	.sources = &clkset_mout_g2d0,
-+	.reg_src = { .reg = S5P_CLKSRC_IMAGE, .shift = 0, .size = 1 },
- };
+-	__raw_writel(tmp, S5P_CLKDIV_TOP);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_TOP);
  
- static struct clk *clkset_mout_g2d1_list[] = {
-@@ -834,8 +833,8 @@ static struct clksrc_clk clk_mout_g2d1 = {
- 	.clk	= {
- 		.name		= "mout_g2d1",
- 	},
--	.sources	= &clkset_mout_g2d1,
--	.reg_src	= { .reg = S5P_CLKSRC_IMAGE, .shift = 4, .size = 1 },
-+	.sources = &clkset_mout_g2d1,
-+	.reg_src = { .reg = S5P_CLKSRC_IMAGE, .shift = 4, .size = 1 },
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_TOP);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_TOP);
+ 	} while (tmp & 0x11111);
  
- static struct clk *clkset_mout_g2d_list[] = {
-@@ -862,8 +861,8 @@ static struct clksrc_clk clk_mout_mfc0 = {
- 	.clk	= {
- 		.name		= "mout_mfc0",
- 	},
--	.sources	= &clkset_mout_mfc0,
--	.reg_src	= { .reg = S5P_CLKSRC_MFC, .shift = 0, .size = 1 },
-+	.sources = &clkset_mout_mfc0,
-+	.reg_src = { .reg = S5P_CLKSRC_MFC, .shift = 0, .size = 1 },
- };
+ 	/* Change Divider - LEFTBUS */
+-	tmp = __raw_readl(S5P_CLKDIV_LEFTBUS);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_LEFTBUS);
  
- static struct clk *clkset_mout_mfc1_list[] = {
-@@ -880,8 +879,8 @@ static struct clksrc_clk clk_mout_mfc1 = {
- 	.clk	= {
- 		.name		= "mout_mfc1",
- 	},
--	.sources	= &clkset_mout_mfc1,
--	.reg_src	= { .reg = S5P_CLKSRC_MFC, .shift = 4, .size = 1 },
-+	.sources = &clkset_mout_mfc1,
-+	.reg_src = { .reg = S5P_CLKSRC_MFC, .shift = 4, .size = 1 },
- };
+-	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
  
- static struct clk *clkset_mout_mfc_list[] = {
-@@ -917,7 +916,7 @@ static struct clksrc_clk clk_sclk_dac = {
- static struct clksrc_clk clk_sclk_pixel = {
- 	.clk		= {
- 		.name		= "sclk_pixel",
--		.parent = &clk_sclk_vpll.clk,
-+		.parent		= &clk_sclk_vpll.clk,
- 	},
- 	.reg_div = { .reg = S5P_CLKDIV_TV, .shift = 0, .size = 4 },
- };
-@@ -953,7 +952,7 @@ static struct clksrc_sources clkset_sclk_mixer = {
- };
+ 	tmp |= ((exynos4x12_clkdiv_lr_bus[index][0] <<
+-				S5P_CLKDIV_BUS_GDLR_SHIFT) |
++				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
+ 		(exynos4x12_clkdiv_lr_bus[index][1] <<
+-				S5P_CLKDIV_BUS_GPLR_SHIFT));
++				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
  
- static struct clksrc_clk clk_sclk_mixer = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_mixer",
- 		.enable		= exynos4_clksrc_mask_tv_ctrl,
- 		.ctrlbit	= (1 << 4),
-@@ -970,7 +969,7 @@ static struct clksrc_clk *sclk_tv[] = {
- };
+-	__raw_writel(tmp, S5P_CLKDIV_LEFTBUS);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_LEFTBUS);
  
- static struct clksrc_clk clk_dout_mmc0 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "dout_mmc0",
- 	},
- 	.sources = &clkset_group,
-@@ -979,7 +978,7 @@ static struct clksrc_clk clk_dout_mmc0 = {
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_LEFTBUS);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_LEFTBUS);
+ 	} while (tmp & 0x11);
  
- static struct clksrc_clk clk_dout_mmc1 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "dout_mmc1",
- 	},
- 	.sources = &clkset_group,
-@@ -988,7 +987,7 @@ static struct clksrc_clk clk_dout_mmc1 = {
- };
+ 	/* Change Divider - RIGHTBUS */
+-	tmp = __raw_readl(S5P_CLKDIV_RIGHTBUS);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_RIGHTBUS);
  
- static struct clksrc_clk clk_dout_mmc2 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "dout_mmc2",
- 	},
- 	.sources = &clkset_group,
-@@ -997,7 +996,7 @@ static struct clksrc_clk clk_dout_mmc2 = {
- };
+-	tmp &= ~(S5P_CLKDIV_BUS_GDLR_MASK | S5P_CLKDIV_BUS_GPLR_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_BUS_GDLR_MASK | EXYNOS4_CLKDIV_BUS_GPLR_MASK);
  
- static struct clksrc_clk clk_dout_mmc3 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "dout_mmc3",
- 	},
- 	.sources = &clkset_group,
-@@ -1016,7 +1015,7 @@ static struct clksrc_clk clk_dout_mmc4 = {
+ 	tmp |= ((exynos4x12_clkdiv_lr_bus[index][0] <<
+-				S5P_CLKDIV_BUS_GDLR_SHIFT) |
++				EXYNOS4_CLKDIV_BUS_GDLR_SHIFT) |
+ 		(exynos4x12_clkdiv_lr_bus[index][1] <<
+-				S5P_CLKDIV_BUS_GPLR_SHIFT));
++				EXYNOS4_CLKDIV_BUS_GPLR_SHIFT));
  
- static struct clksrc_clk clksrcs[] = {
- 	{
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_pwm",
- 			.enable		= exynos4_clksrc_mask_peril0_ctrl,
- 			.ctrlbit	= (1 << 24),
-@@ -1025,7 +1024,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_PERIL0, .shift = 24, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_PERIL3, .shift = 0, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_csis",
- 			.devname	= "s5p-mipi-csis.0",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
-@@ -1035,7 +1034,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 24, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 24, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_csis",
- 			.devname	= "s5p-mipi-csis.1",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
-@@ -1045,7 +1044,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 28, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 28, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_cam0",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
- 			.ctrlbit	= (1 << 16),
-@@ -1054,7 +1053,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 16, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 16, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_cam1",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
- 			.ctrlbit	= (1 << 20),
-@@ -1063,7 +1062,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 20, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 20, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_fimc",
- 			.devname	= "exynos4-fimc.0",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
-@@ -1073,7 +1072,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 0, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 0, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_fimc",
- 			.devname	= "exynos4-fimc.1",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
-@@ -1083,7 +1082,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 4, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 4, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_fimc",
- 			.devname	= "exynos4-fimc.2",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
-@@ -1093,7 +1092,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 8, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 8, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_fimc",
- 			.devname	= "exynos4-fimc.3",
- 			.enable		= exynos4_clksrc_mask_cam_ctrl,
-@@ -1103,7 +1102,7 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_CAM, .shift = 12, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_CAM, .shift = 12, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_fimd",
- 			.devname	= "exynos4-fb.0",
- 			.enable		= exynos4_clksrc_mask_lcd0_ctrl,
-@@ -1113,14 +1112,14 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_LCD0, .shift = 0, .size = 4 },
- 		.reg_div = { .reg = S5P_CLKDIV_LCD0, .shift = 0, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_fimg2d",
- 		},
- 		.sources = &clkset_mout_g2d,
- 		.reg_src = { .reg = S5P_CLKSRC_IMAGE, .shift = 8, .size = 1 },
- 		.reg_div = { .reg = S5P_CLKDIV_IMAGE, .shift = 0, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_mfc",
- 			.devname	= "s5p-mfc",
- 		},
-@@ -1128,9 +1127,9 @@ static struct clksrc_clk clksrcs[] = {
- 		.reg_src = { .reg = S5P_CLKSRC_MFC, .shift = 8, .size = 1 },
- 		.reg_div = { .reg = S5P_CLKDIV_MFC, .shift = 0, .size = 4 },
- 	}, {
--		.clk		= {
-+		.clk	= {
- 			.name		= "sclk_dwmmc",
--			.parent         = &clk_dout_mmc4.clk,
-+			.parent		= &clk_dout_mmc4.clk,
- 			.enable		= exynos4_clksrc_mask_fsys_ctrl,
- 			.ctrlbit	= (1 << 16),
- 		},
-@@ -1151,7 +1150,7 @@ static struct clksrc_clk clk_sclk_uart0 = {
- };
+-	__raw_writel(tmp, S5P_CLKDIV_RIGHTBUS);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_RIGHTBUS);
  
- static struct clksrc_clk clk_sclk_uart1 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "uclk1",
- 		.devname	= "exynos4210-uart.1",
- 		.enable		= exynos4_clksrc_mask_peril0_ctrl,
-@@ -1163,7 +1162,7 @@ static struct clksrc_clk clk_sclk_uart1 = {
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_RIGHTBUS);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_RIGHTBUS);
+ 	} while (tmp & 0x11);
  
- static struct clksrc_clk clk_sclk_uart2 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "uclk1",
- 		.devname	= "exynos4210-uart.2",
- 		.enable		= exynos4_clksrc_mask_peril0_ctrl,
-@@ -1175,7 +1174,7 @@ static struct clksrc_clk clk_sclk_uart2 = {
- };
+ 	/* Change Divider - MFC */
+-	tmp = __raw_readl(S5P_CLKDIV_MFC);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_MFC);
  
- static struct clksrc_clk clk_sclk_uart3 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "uclk1",
- 		.devname	= "exynos4210-uart.3",
- 		.enable		= exynos4_clksrc_mask_peril0_ctrl,
-@@ -1187,7 +1186,7 @@ static struct clksrc_clk clk_sclk_uart3 = {
- };
+-	tmp &= ~(S5P_CLKDIV_MFC_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_MFC_MASK);
  
- static struct clksrc_clk clk_sclk_mmc0 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_mmc",
- 		.devname	= "s3c-sdhci.0",
- 		.parent		= &clk_dout_mmc0.clk,
-@@ -1198,10 +1197,10 @@ static struct clksrc_clk clk_sclk_mmc0 = {
- };
+ 	tmp |= ((exynos4x12_clkdiv_sclkip[index][0] <<
+-				S5P_CLKDIV_MFC_SHIFT));
++				EXYNOS4_CLKDIV_MFC_SHIFT));
  
- static struct clksrc_clk clk_sclk_mmc1 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_mmc",
- 		.devname	= "s3c-sdhci.1",
--		.parent         = &clk_dout_mmc1.clk,
-+		.parent		= &clk_dout_mmc1.clk,
- 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 4),
- 	},
-@@ -1209,10 +1208,10 @@ static struct clksrc_clk clk_sclk_mmc1 = {
- };
+-	__raw_writel(tmp, S5P_CLKDIV_MFC);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_MFC);
  
- static struct clksrc_clk clk_sclk_mmc2 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_mmc",
- 		.devname	= "s3c-sdhci.2",
--		.parent         = &clk_dout_mmc2.clk,
-+		.parent		= &clk_dout_mmc2.clk,
- 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 8),
- 	},
-@@ -1220,10 +1219,10 @@ static struct clksrc_clk clk_sclk_mmc2 = {
- };
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_MFC);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_MFC);
+ 	} while (tmp & 0x1);
  
- static struct clksrc_clk clk_sclk_mmc3 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_mmc",
- 		.devname	= "s3c-sdhci.3",
--		.parent         = &clk_dout_mmc3.clk,
-+		.parent		= &clk_dout_mmc3.clk,
- 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 12),
- 	},
-@@ -1231,11 +1230,11 @@ static struct clksrc_clk clk_sclk_mmc3 = {
- };
+ 	/* Change Divider - JPEG */
+-	tmp = __raw_readl(S5P_CLKDIV_CAM1);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_CAM1);
  
- static struct clksrc_clk clk_sclk_spi0 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_spi",
--		.devname		= "s3c64xx-spi.0",
-+		.devname	= "s3c64xx-spi.0",
- 		.enable		= exynos4_clksrc_mask_peril1_ctrl,
--		.ctrlbit		= (1 << 16),
-+		.ctrlbit	= (1 << 16),
- 	},
- 	.sources = &clkset_group,
- 	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 16, .size = 4 },
-@@ -1243,11 +1242,11 @@ static struct clksrc_clk clk_sclk_spi0 = {
- };
+-	tmp &= ~(S5P_CLKDIV_CAM1_JPEG_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_CAM1_JPEG_MASK);
  
- static struct clksrc_clk clk_sclk_spi1 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_spi",
--		.devname		= "s3c64xx-spi.1",
-+		.devname	= "s3c64xx-spi.1",
- 		.enable		= exynos4_clksrc_mask_peril1_ctrl,
--		.ctrlbit		= (1 << 20),
-+		.ctrlbit	= (1 << 20),
- 	},
- 	.sources = &clkset_group,
- 	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 20, .size = 4 },
-@@ -1255,11 +1254,11 @@ static struct clksrc_clk clk_sclk_spi1 = {
- };
+ 	tmp |= ((exynos4x12_clkdiv_sclkip[index][1] <<
+-				S5P_CLKDIV_CAM1_JPEG_SHIFT));
++				EXYNOS4_CLKDIV_CAM1_JPEG_SHIFT));
  
- static struct clksrc_clk clk_sclk_spi2 = {
--	.clk		= {
-+	.clk	= {
- 		.name		= "sclk_spi",
--		.devname		= "s3c64xx-spi.2",
-+		.devname	= "s3c64xx-spi.2",
- 		.enable		= exynos4_clksrc_mask_peril1_ctrl,
--		.ctrlbit		= (1 << 24),
-+		.ctrlbit	= (1 << 24),
- 	},
- 	.sources = &clkset_group,
- 	.reg_src = { .reg = S5P_CLKSRC_PERIL1, .shift = 24, .size = 4 },
-diff --git a/arch/arm/mach-exynos/include/mach/exynos4-clock.h b/arch/arm/mach-exynos/clock-exynos4.h
-similarity index 95%
-rename from arch/arm/mach-exynos/include/mach/exynos4-clock.h
-rename to arch/arm/mach-exynos/clock-exynos4.h
-index a07fcbf..f64e9f7 100644
---- a/arch/arm/mach-exynos/include/mach/exynos4-clock.h
-+++ b/arch/arm/mach-exynos/clock-exynos4.h
-@@ -1,5 +1,4 @@
- /*
-- * linux/arch/arm/mach-exynos4/include/mach/exynos4-clock.h
-  *
-  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-diff --git a/arch/arm/mach-exynos/clock-exynos4210.c b/arch/arm/mach-exynos/clock-exynos4210.c
-index 13312cc..190d94a 100644
---- a/arch/arm/mach-exynos/clock-exynos4210.c
-+++ b/arch/arm/mach-exynos/clock-exynos4210.c
-@@ -28,9 +28,9 @@
- #include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/regs-clock.h>
--#include <mach/exynos4-clock.h>
+-	__raw_writel(tmp, S5P_CLKDIV_CAM1);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_CAM1);
  
- #include "common.h"
-+#include "clock-exynos4.h"
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_CAM1);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_CAM1);
+ 	} while (tmp & 0x1);
  
- #ifdef CONFIG_PM_SLEEP
- static struct sleep_save exynos4210_clock_save[] = {
-diff --git a/arch/arm/mach-exynos/clock-exynos4212.c b/arch/arm/mach-exynos/clock-exynos4212.c
-index 48af285..e83d4b2 100644
---- a/arch/arm/mach-exynos/clock-exynos4212.c
-+++ b/arch/arm/mach-exynos/clock-exynos4212.c
-@@ -28,9 +28,9 @@
- #include <mach/hardware.h>
- #include <mach/map.h>
- #include <mach/regs-clock.h>
--#include <mach/exynos4-clock.h>
+ 	/* Change Divider - FIMC0~3 */
+-	tmp = __raw_readl(S5P_CLKDIV_CAM);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_CAM);
  
- #include "common.h"
-+#include "clock-exynos4.h"
+-	tmp &= ~(S5P_CLKDIV_CAM_FIMC0_MASK | S5P_CLKDIV_CAM_FIMC1_MASK |
+-		S5P_CLKDIV_CAM_FIMC2_MASK | S5P_CLKDIV_CAM_FIMC3_MASK);
++	tmp &= ~(EXYNOS4_CLKDIV_CAM_FIMC0_MASK | EXYNOS4_CLKDIV_CAM_FIMC1_MASK |
++		EXYNOS4_CLKDIV_CAM_FIMC2_MASK | EXYNOS4_CLKDIV_CAM_FIMC3_MASK);
  
- #ifdef CONFIG_PM_SLEEP
- static struct sleep_save exynos4212_clock_save[] = {
+ 	tmp |= ((exynos4x12_clkdiv_sclkip[index][2] <<
+-				S5P_CLKDIV_CAM_FIMC0_SHIFT) |
++				EXYNOS4_CLKDIV_CAM_FIMC0_SHIFT) |
+ 		(exynos4x12_clkdiv_sclkip[index][2] <<
+-				S5P_CLKDIV_CAM_FIMC1_SHIFT) |
++				EXYNOS4_CLKDIV_CAM_FIMC1_SHIFT) |
+ 		(exynos4x12_clkdiv_sclkip[index][2] <<
+-				S5P_CLKDIV_CAM_FIMC2_SHIFT) |
++				EXYNOS4_CLKDIV_CAM_FIMC2_SHIFT) |
+ 		(exynos4x12_clkdiv_sclkip[index][2] <<
+-				S5P_CLKDIV_CAM_FIMC3_SHIFT));
++				EXYNOS4_CLKDIV_CAM_FIMC3_SHIFT));
+ 
+-	__raw_writel(tmp, S5P_CLKDIV_CAM);
++	__raw_writel(tmp, EXYNOS4_CLKDIV_CAM);
+ 
+ 	do {
+-		tmp = __raw_readl(S5P_CLKDIV_STAT_CAM1);
++		tmp = __raw_readl(EXYNOS4_CLKDIV_STAT_CAM1);
+ 	} while (tmp & 0x1111);
+ 
+ 	return 0;
+@@ -760,55 +760,55 @@ static int exynos4210_init_tables(struct busfreq_data *data)
+ 	int mgrp;
+ 	int i, err = 0;
+ 
+-	tmp = __raw_readl(S5P_CLKDIV_DMC0);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_DMC0);
+ 	for (i = LV_0; i < EX4210_LV_NUM; i++) {
+-		tmp &= ~(S5P_CLKDIV_DMC0_ACP_MASK |
+-			S5P_CLKDIV_DMC0_ACPPCLK_MASK |
+-			S5P_CLKDIV_DMC0_DPHY_MASK |
+-			S5P_CLKDIV_DMC0_DMC_MASK |
+-			S5P_CLKDIV_DMC0_DMCD_MASK |
+-			S5P_CLKDIV_DMC0_DMCP_MASK |
+-			S5P_CLKDIV_DMC0_COPY2_MASK |
+-			S5P_CLKDIV_DMC0_CORETI_MASK);
++		tmp &= ~(EXYNOS4_CLKDIV_DMC0_ACP_MASK |
++			EXYNOS4_CLKDIV_DMC0_ACPPCLK_MASK |
++			EXYNOS4_CLKDIV_DMC0_DPHY_MASK |
++			EXYNOS4_CLKDIV_DMC0_DMC_MASK |
++			EXYNOS4_CLKDIV_DMC0_DMCD_MASK |
++			EXYNOS4_CLKDIV_DMC0_DMCP_MASK |
++			EXYNOS4_CLKDIV_DMC0_COPY2_MASK |
++			EXYNOS4_CLKDIV_DMC0_CORETI_MASK);
+ 
+ 		tmp |= ((exynos4210_clkdiv_dmc0[i][0] <<
+-					S5P_CLKDIV_DMC0_ACP_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_ACP_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][1] <<
+-					S5P_CLKDIV_DMC0_ACPPCLK_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_ACPPCLK_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][2] <<
+-					S5P_CLKDIV_DMC0_DPHY_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DPHY_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][3] <<
+-					S5P_CLKDIV_DMC0_DMC_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DMC_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][4] <<
+-					S5P_CLKDIV_DMC0_DMCD_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DMCD_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][5] <<
+-					S5P_CLKDIV_DMC0_DMCP_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DMCP_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][6] <<
+-					S5P_CLKDIV_DMC0_COPY2_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_COPY2_SHIFT) |
+ 			(exynos4210_clkdiv_dmc0[i][7] <<
+-					S5P_CLKDIV_DMC0_CORETI_SHIFT));
++					EXYNOS4_CLKDIV_DMC0_CORETI_SHIFT));
+ 
+ 		data->dmc_divtable[i] = tmp;
+ 	}
+ 
+-	tmp = __raw_readl(S5P_CLKDIV_TOP);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_TOP);
+ 	for (i = LV_0; i <  EX4210_LV_NUM; i++) {
+-		tmp &= ~(S5P_CLKDIV_TOP_ACLK200_MASK |
+-			S5P_CLKDIV_TOP_ACLK100_MASK |
+-			S5P_CLKDIV_TOP_ACLK160_MASK |
+-			S5P_CLKDIV_TOP_ACLK133_MASK |
+-			S5P_CLKDIV_TOP_ONENAND_MASK);
++		tmp &= ~(EXYNOS4_CLKDIV_TOP_ACLK200_MASK |
++			EXYNOS4_CLKDIV_TOP_ACLK100_MASK |
++			EXYNOS4_CLKDIV_TOP_ACLK160_MASK |
++			EXYNOS4_CLKDIV_TOP_ACLK133_MASK |
++			EXYNOS4_CLKDIV_TOP_ONENAND_MASK);
+ 
+ 		tmp |= ((exynos4210_clkdiv_top[i][0] <<
+-					S5P_CLKDIV_TOP_ACLK200_SHIFT) |
++					EXYNOS4_CLKDIV_TOP_ACLK200_SHIFT) |
+ 			(exynos4210_clkdiv_top[i][1] <<
+-					S5P_CLKDIV_TOP_ACLK100_SHIFT) |
++					EXYNOS4_CLKDIV_TOP_ACLK100_SHIFT) |
+ 			(exynos4210_clkdiv_top[i][2] <<
+-					S5P_CLKDIV_TOP_ACLK160_SHIFT) |
++					EXYNOS4_CLKDIV_TOP_ACLK160_SHIFT) |
+ 			(exynos4210_clkdiv_top[i][3] <<
+-					S5P_CLKDIV_TOP_ACLK133_SHIFT) |
++					EXYNOS4_CLKDIV_TOP_ACLK133_SHIFT) |
+ 			(exynos4210_clkdiv_top[i][4] <<
+-					S5P_CLKDIV_TOP_ONENAND_SHIFT));
++					EXYNOS4_CLKDIV_TOP_ONENAND_SHIFT));
+ 
+ 		data->top_divtable[i] = tmp;
+ 	}
+@@ -872,28 +872,28 @@ static int exynos4x12_init_tables(struct busfreq_data *data)
+ 	tmp |= DMC_PAUSE_ENABLE;
+ 	__raw_writel(tmp, S5P_DMC_PAUSE_CTRL);
+ 
+-	tmp = __raw_readl(S5P_CLKDIV_DMC0);
++	tmp = __raw_readl(EXYNOS4_CLKDIV_DMC0);
+ 
+ 	for (i = 0; i <  EX4x12_LV_NUM; i++) {
+-		tmp &= ~(S5P_CLKDIV_DMC0_ACP_MASK |
+-			S5P_CLKDIV_DMC0_ACPPCLK_MASK |
+-			S5P_CLKDIV_DMC0_DPHY_MASK |
+-			S5P_CLKDIV_DMC0_DMC_MASK |
+-			S5P_CLKDIV_DMC0_DMCD_MASK |
+-			S5P_CLKDIV_DMC0_DMCP_MASK);
++		tmp &= ~(EXYNOS4_CLKDIV_DMC0_ACP_MASK |
++			EXYNOS4_CLKDIV_DMC0_ACPPCLK_MASK |
++			EXYNOS4_CLKDIV_DMC0_DPHY_MASK |
++			EXYNOS4_CLKDIV_DMC0_DMC_MASK |
++			EXYNOS4_CLKDIV_DMC0_DMCD_MASK |
++			EXYNOS4_CLKDIV_DMC0_DMCP_MASK);
+ 
+ 		tmp |= ((exynos4x12_clkdiv_dmc0[i][0] <<
+-					S5P_CLKDIV_DMC0_ACP_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_ACP_SHIFT) |
+ 			(exynos4x12_clkdiv_dmc0[i][1] <<
+-					S5P_CLKDIV_DMC0_ACPPCLK_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_ACPPCLK_SHIFT) |
+ 			(exynos4x12_clkdiv_dmc0[i][2] <<
+-					S5P_CLKDIV_DMC0_DPHY_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DPHY_SHIFT) |
+ 			(exynos4x12_clkdiv_dmc0[i][3] <<
+-					S5P_CLKDIV_DMC0_DMC_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DMC_SHIFT) |
+ 			(exynos4x12_clkdiv_dmc0[i][4] <<
+-					S5P_CLKDIV_DMC0_DMCD_SHIFT) |
++					EXYNOS4_CLKDIV_DMC0_DMCD_SHIFT) |
+ 			(exynos4x12_clkdiv_dmc0[i][5] <<
+-					S5P_CLKDIV_DMC0_DMCP_SHIFT));
++					EXYNOS4_CLKDIV_DMC0_DMCP_SHIFT));
+ 
+ 		data->dmc_divtable[i] = tmp;
+ 	}
 -- 
 1.7.4.4
