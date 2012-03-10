@@ -1,61 +1,40 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 3/4] Samsung devel-mmc for v3.4
-Date: Sat, 10 Mar 2012 10:10:38 -0800
-Message-ID: <CAOesGMjPqWbKQ+kSKa6EfTpBwE3-3aBWTRoDDr9bGF-HuLcpGg@mail.gmail.com>
-References: <4F5B7C8D.5000805@samsung.com>
-	<CAOesGMgx-86rUuOfjTN8BeYZD+S=04oj+N9u-m9dr8JQA1Oxiw@mail.gmail.com>
+Subject: Re: [GIT PULL 1/4] Samsung devel for v3.4
+Date: Sat, 10 Mar 2012 10:20:41 -0800
+Message-ID: <CAOesGMgec=KVBQJjVs3p3B2GGj9q9mwC2XCdxLNvvJL61u+f8g@mail.gmail.com>
+References: <4F5B7C71.2090303@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:38453 "EHLO
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:62859 "EHLO
 	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750930Ab2CJSKi (ORCPT
+	with ESMTP id S1751056Ab2CJSUm convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Mar 2012 13:10:38 -0500
-Received: by yhmm54 with SMTP id m54so1615881yhm.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 10:10:38 -0800 (PST)
-In-Reply-To: <CAOesGMgx-86rUuOfjTN8BeYZD+S=04oj+N9u-m9dr8JQA1Oxiw@mail.gmail.com>
+	Sat, 10 Mar 2012 13:20:42 -0500
+Received: by yhmm54 with SMTP id m54so1618834yhm.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 10:20:41 -0800 (PST)
+In-Reply-To: <4F5B7C71.2090303@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Chris Ball <cjb@laptop.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Sat, Mar 10, 2012 at 10:08 AM, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
+On Sat, Mar 10, 2012 at 8:08 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> Hi Arnd, Olof,
 >
-> On Sat, Mar 10, 2012 at 8:08 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Hi Arnd, Olof
->>
->> This is regarding Samsung mmc for v3.4.
->>
->> As a note, v3.4-for-cjb branch is merged into mmc/mmc-next like following:
->> http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=fcd9bdae386753531a9cb6b2577359a83f4e121c
+> This is various develop regarding Samsung stuff for v3.4.
+> Please pull following:
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
+git
+> next/devel-samsung
 >
-> Looking at this series, there's really only one patch that is not in
-> the mmc tree:
->
-> ARM: SAMSUNG: change the name from s3c-sdhci to exynos4-sdhci
->
-> And all it does is change the platform device string contents.
->
-> Since there are no build-time dependencies between this and the MMC
-> change, I suggest you send only this patch so that we avoid having
-> merge dependencies where not strictly needed.
->
-> Would that be OK with you? If so, please send a fresh pull request
-> with only the above change in it.
-
-Sorry, I misread the series when browsing it. Looks like there are two
-more patches in it:
-
-mmc: sdhci-s3c: add platform data for the second capability
-ARM: SAMSUNG: support the second capability for samsung-soc
-
-But the original suggestion remains, since those two seem to be
-unrelated to the branch sent to Chris. So please resend with just
-those patches, please?
+> I think, you can pull this cleanly without any conflicts.
+> If any problems, please kindly let me know.
 
 
-Thanks,
+Thanks, pulled into next/soc.
+
 
 -Olof
