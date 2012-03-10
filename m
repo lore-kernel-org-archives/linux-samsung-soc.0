@@ -1,86 +1,89 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] spi: Compatibility with direction which is used in samsung DMA operation
-Date: Fri, 09 Mar 2012 14:58:56 -0700
-Message-ID: <20120309215856.802E73E0880@localhost>
-References: <000501cce62e$87b4d100$971e7300$%kim@samsung.com>
+From: Kyoungil Kim <ki0351.kim@samsung.com>
+Subject: [PATCH] spi: Compatibility with direction which is used in samsung DMA
+ operation
+Date: Sat, 10 Mar 2012 09:48:46 +0900
+Message-ID: <003801ccfe57$8ccff2f0$a66fd8d0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:57702 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030181Ab2CIV67 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:25563 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758633Ab2CJAss (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 9 Mar 2012 16:58:59 -0500
-Received: by iagz16 with SMTP id z16so2811391iag.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 09 Mar 2012 13:58:59 -0800 (PST)
-In-Reply-To: <000501cce62e$87b4d100$971e7300$%kim@samsung.com>
+	Fri, 9 Mar 2012 19:48:48 -0500
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0M0N002J78XAL360@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 10 Mar 2012 09:48:46 +0900 (KST)
+Received: from DOKI0351KIM04 ([12.23.119.96])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M0N00HS78XAHX60@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 10 Mar 2012 09:48:46 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>
 
-On Wed, 08 Feb 2012 15:54:40 +0900, Kyoungil Kim <ki0351.kim@samsung.com> wrote:
-> Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
-> Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+I found that there are two kind of direction type.
+First one is dma_data_direction defined in include/linux/dma-direction.h.
+It is used for parameter of dma_map/unmap_single in spi-s3c64xx.
+The other one is dma_transter_direction defined in include/linux/dmaengine.h.
+It is used for direction of samsung DMA operation
+(arch/arm/plat-samsung/dma-ops.c).
+This patch is just some changes to use direction defines
+which is used in samsung DMA operation.
 
-I'm sorry, I don't understand the reason for the patch.  Please help a poor
-maintainer out and include the reason *why* the patch is needed in the
-commit text.
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-(repost with a proper commit log message).
-
-g.
-
-> ---
->  drivers/spi/spi-s3c64xx.c |   10 +++++-----
->  1 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index f3b7f6a..1972377 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -239,7 +239,7 @@ static void s3c64xx_spi_dmacb(void *data)
->  	struct s3c64xx_spi_dma_data *dma = data;
->  	unsigned long flags;
->  
-> -	if (dma->direction == DMA_FROM_DEVICE)
-> +	if (dma->direction == DMA_DEV_TO_MEM)
->  		sdd = container_of(data,
->  			struct s3c64xx_spi_driver_data, rx_dma);
->  	else
-> @@ -248,7 +248,7 @@ static void s3c64xx_spi_dmacb(void *data)
->  
->  	spin_lock_irqsave(&sdd->lock, flags);
->  
-> -	if (dma->direction == DMA_FROM_DEVICE) {
-> +	if (dma->direction == DMA_DEV_TO_MEM) {
->  		sdd->state &= ~RXBUSY;
->  		if (!(sdd->state & TXBUSY))
->  			complete(&sdd->xfer_completion);
-> @@ -268,7 +268,7 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
->  	struct samsung_dma_prep info;
->  	struct samsung_dma_config config;
->  
-> -	if (dma->direction == DMA_FROM_DEVICE) {
-> +	if (dma->direction == DMA_DEV_TO_MEM) {
->  		sdd = container_of((void *)dma,
->  			struct s3c64xx_spi_driver_data, rx_dma);
->  
-> @@ -1028,9 +1028,9 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
->  	sdd->pdev = pdev;
->  	sdd->sfr_start = mem_res->start;
->  	sdd->tx_dma.dmach = dmatx_res->start;
-> -	sdd->tx_dma.direction = DMA_TO_DEVICE;
-> +	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
->  	sdd->rx_dma.dmach = dmarx_res->start;
-> -	sdd->rx_dma.direction = DMA_FROM_DEVICE;
-> +	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
->  
->  	sdd->cur_bpw = 8;
->  
-> -- 
-> 1.7.1
-> 
-> 
-
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index dcf7e10..003a1bf 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -239,7 +239,7 @@ static void s3c64xx_spi_dmacb(void *data)
+ 	struct s3c64xx_spi_dma_data *dma = data;
+ 	unsigned long flags;
+ 
+-	if (dma->direction == DMA_FROM_DEVICE)
++	if (dma->direction == DMA_DEV_TO_MEM)
+ 		sdd = container_of(data,
+ 			struct s3c64xx_spi_driver_data, rx_dma);
+ 	else
+@@ -248,7 +248,7 @@ static void s3c64xx_spi_dmacb(void *data)
+ 
+ 	spin_lock_irqsave(&sdd->lock, flags);
+ 
+-	if (dma->direction == DMA_FROM_DEVICE) {
++	if (dma->direction == DMA_DEV_TO_MEM) {
+ 		sdd->state &= ~RXBUSY;
+ 		if (!(sdd->state & TXBUSY))
+ 			complete(&sdd->xfer_completion);
+@@ -267,7 +267,7 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
+ 	struct s3c64xx_spi_driver_data *sdd;
+ 	struct samsung_dma_prep_info info;
+ 
+-	if (dma->direction == DMA_FROM_DEVICE)
++	if (dma->direction == DMA_DEV_TO_MEM) {
+ 		sdd = container_of((void *)dma,
+ 			struct s3c64xx_spi_driver_data, rx_dma);
+ 	else
+@@ -1021,9 +1021,9 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 	sdd->pdev = pdev;
+ 	sdd->sfr_start = mem_res->start;
+ 	sdd->tx_dma.dmach = dmatx_res->start;
+-	sdd->tx_dma.direction = DMA_TO_DEVICE;
++	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
+ 	sdd->rx_dma.dmach = dmarx_res->start;
+-	sdd->rx_dma.direction = DMA_FROM_DEVICE;
++	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
+ 
+ 	sdd->cur_bpw = 8;
+ 
 -- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies,Ltd.
+1.7.1
