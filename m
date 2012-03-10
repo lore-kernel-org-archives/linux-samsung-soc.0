@@ -1,226 +1,117 @@
-From: Chenglie He <chengjie.he-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/3] ARM: EXYNOS: Add clkdev lookup entry for lcd clock
-Date: Sat, 10 Mar 2012 22:22:36 +0800
-Message-ID: <CACNz9cV39Nbb0vMGc7xhb7tcFkcMWt_hCaR327oBUKZiGnSQPQ@mail.gmail.com>
-References: <1322718611-20934-1-git-send-email-tushar.behera@linaro.org>
-	<1322718611-20934-3-git-send-email-tushar.behera@linaro.org>
-	<4F4DBB68.6000108@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung board stuff for v3.4
+Date: Sat, 10 Mar 2012 07:34:35 -0800
+Message-ID: <4F5B748B.6050404@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7353821007034506836=="
-Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-In-Reply-To: <4F4DBB68.6000108-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
-List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
-List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
-	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
-Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-To: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
---===============7353821007034506836==
-Content-Type: multipart/alternative; boundary=14dae9399b97a296e104bae43dfc
-
---14dae9399b97a296e104bae43dfc
-Content-Type: text/plain; charset=ISO-8859-1
-
-I am doing the suspend and resume of s3cfb on exynos. the clk_on and
-clk_off just failed. I think this is a related issue.
-
-On 29 February 2012 13:45, Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-
-> Hi Kukjin,
->
-> On 12/01/2011 11:20 AM, Tushar Behera wrote:
-> > The framebuffer driver needs the clock named 'lcd' as its bus
-> > clock but the equivalent clock on Exynos4 is named as 'fimd'.
-> > Hence, create a clkdev lookup entry with the name 'lcd' that
-> > references the 'fimd' clock.
-> >
-> > Signed-off-by: Tushar Behera <tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > ---
-> >  arch/arm/mach-exynos/clock.c |   14 +++++++++-----
-> >  1 files changed, 9 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock.c
-> > index 5d8d483..607ec28 100644
-> > --- a/arch/arm/mach-exynos/clock.c
-> > +++ b/arch/arm/mach-exynos/clock.c
-> > @@ -489,11 +489,6 @@ static struct clk init_clocks_off[] = {
-> >               .enable         = exynos4_clk_ip_cam_ctrl,
-> >               .ctrlbit        = (1 << 3),
-> >       }, {
-> > -             .name           = "fimd",
-> > -             .devname        = "exynos4-fb.0",
-> > -             .enable         = exynos4_clk_ip_lcd0_ctrl,
-> > -             .ctrlbit        = (1 << 0),
-> > -     }, {
-> >               .name           = "hsmmc",
-> >               .devname        = "s3c-sdhci.0",
-> >               .parent         = &clk_aclk_133.clk,
-> > @@ -782,6 +777,13 @@ static struct clk clk_pdma1 = {
-> >       .ctrlbit        = (1 << 1),
-> >  };
-> >
-> > +static struct clk clk_fimd0 = {
-> > +     .name           = "fimd",
-> > +     .devname        = "exynos4-fb.0",
-> > +     .enable         = exynos4_clk_ip_lcd0_ctrl,
-> > +     .ctrlbit        = (1 << 0),
-> > +};
-> > +
-> >  struct clk *clkset_group_list[] = {
-> >       [0] = &clk_ext_xtal_mux,
-> >       [1] = &clk_xusbxti,
-> > @@ -1294,6 +1296,7 @@ static struct clksrc_clk *sysclks[] = {
-> >  static struct clk *clk_cdev[] = {
-> >       &clk_pdma0,
-> >       &clk_pdma1,
-> > +     &clk_fimd0,
-> >  };
-> >
-> >  static struct clksrc_clk *clksrc_cdev[] = {
-> > @@ -1318,6 +1321,7 @@ static struct clk_lookup exynos4_clk_lookup[] = {
-> >       CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &clk_sclk_mmc3.clk),
-> >       CLKDEV_INIT("dma-pl330.0", "apb_pclk", &clk_pdma0),
-> >       CLKDEV_INIT("dma-pl330.1", "apb_pclk", &clk_pdma1),
-> > +     CLKDEV_INIT("exynos4-fb.0", "lcd", &clk_fimd0),
-> >  };
-> >
-> >  static int xtal_rate;
->
-> Would you please review this patch and let me know your opinion? Without
-> this patch, frame-buffer support on EXYNOS4 is broken.
->
-> --
-> Tushar Behera
->
-> _______________________________________________
-> linaro-dev mailing list
-> linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-> http://lists.linaro.org/mailman/listinfo/linaro-dev
->
-
---14dae9399b97a296e104bae43dfc
-Content-Type: text/html; charset=ISO-8859-1
-Content-Transfer-Encoding: quoted-printable
-
-I am doing the suspend and resume of s3cfb on exynos. the clk_on and clk_of=
-f just failed. I think this is a related issue.<br><br><div class=3D"gmail_=
-quote">On 29 February 2012 13:45, Tushar Behera <span dir=3D"ltr">&lt;<a hr=
-ef=3D"mailto:tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org">tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt;</sp=
-an> wrote:<br>
-<blockquote class=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1p=
-x #ccc solid;padding-left:1ex">Hi Kukjin,<br>
-<br>
-On 12/01/2011 11:20 AM, Tushar Behera wrote:<br>
-&gt; The framebuffer driver needs the clock named &#39;lcd&#39; as its bus<=
-br>
-&gt; clock but the equivalent clock on Exynos4 is named as &#39;fimd&#39;.<=
-br>
-&gt; Hence, create a clkdev lookup entry with the name &#39;lcd&#39; that<b=
-r>
-&gt; references the &#39;fimd&#39; clock.<br>
-&gt;<br>
-&gt; Signed-off-by: Tushar Behera &lt;<a href=3D"mailto:tushar.behera@linar=
-o.org">tushar.behera-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org</a>&gt;<br>
-&gt; ---<br>
-&gt; =A0arch/arm/mach-exynos/clock.c | =A0 14 +++++++++-----<br>
-&gt; =A01 files changed, 9 insertions(+), 5 deletions(-)<br>
-&gt;<br>
-&gt; diff --git a/arch/arm/mach-exynos/clock.c b/arch/arm/mach-exynos/clock=
-.c<br>
-&gt; index 5d8d483..607ec28 100644<br>
-&gt; --- a/arch/arm/mach-exynos/clock.c<br>
-&gt; +++ b/arch/arm/mach-exynos/clock.c<br>
-&gt; @@ -489,11 +489,6 @@ static struct clk init_clocks_off[] =3D {<br>
-&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_ip=
-_cam_ctrl,<br>
-&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 &lt;&lt; 3)=
-,<br>
-&gt; =A0 =A0 =A0 }, {<br>
-&gt; - =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D &quot;fimd&quo=
-t;,<br>
-&gt; - =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D &quot;exynos4-fb=
-.0&quot;,<br>
-&gt; - =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_ip_l=
-cd0_ctrl,<br>
-&gt; - =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 &lt;&lt; 0),<=
-br>
-&gt; - =A0 =A0 }, {<br>
-&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D &quot;hsmmc&=
-quot;,<br>
-&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D &quot;s3c-sdhc=
-i.0&quot;,<br>
-&gt; =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &amp;clk_aclk_=
-133.clk,<br>
-&gt; @@ -782,6 +777,13 @@ static struct clk clk_pdma1 =3D {<br>
-&gt; =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 &lt;&lt; 1),<br>
-&gt; =A0};<br>
-&gt;<br>
-&gt; +static struct clk clk_fimd0 =3D {<br>
-&gt; + =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D &quot;fimd&quot;,<br>
-&gt; + =A0 =A0 .devname =A0 =A0 =A0 =A0=3D &quot;exynos4-fb.0&quot;,<br>
-&gt; + =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos4_clk_ip_lcd0_ctrl,<br>
-&gt; + =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 &lt;&lt; 0),<br>
-&gt; +};<br>
-&gt; +<br>
-&gt; =A0struct clk *clkset_group_list[] =3D {<br>
-&gt; =A0 =A0 =A0 [0] =3D &amp;clk_ext_xtal_mux,<br>
-&gt; =A0 =A0 =A0 [1] =3D &amp;clk_xusbxti,<br>
-&gt; @@ -1294,6 +1296,7 @@ static struct clksrc_clk *sysclks[] =3D {<br>
-&gt; =A0static struct clk *clk_cdev[] =3D {<br>
-&gt; =A0 =A0 =A0 &amp;clk_pdma0,<br>
-&gt; =A0 =A0 =A0 &amp;clk_pdma1,<br>
-&gt; + =A0 =A0 &amp;clk_fimd0,<br>
-&gt; =A0};<br>
-&gt;<br>
-&gt; =A0static struct clksrc_clk *clksrc_cdev[] =3D {<br>
-&gt; @@ -1318,6 +1321,7 @@ static struct clk_lookup exynos4_clk_lookup[] =
-=3D {<br>
-&gt; =A0 =A0 =A0 CLKDEV_INIT(&quot;s3c-sdhci.3&quot;, &quot;mmc_busclk.2&qu=
-ot;, &amp;clk_sclk_mmc3.clk),<br>
-&gt; =A0 =A0 =A0 CLKDEV_INIT(&quot;dma-pl330.0&quot;, &quot;apb_pclk&quot;,=
- &amp;clk_pdma0),<br>
-&gt; =A0 =A0 =A0 CLKDEV_INIT(&quot;dma-pl330.1&quot;, &quot;apb_pclk&quot;,=
- &amp;clk_pdma1),<br>
-&gt; + =A0 =A0 CLKDEV_INIT(&quot;exynos4-fb.0&quot;, &quot;lcd&quot;, &amp;=
-clk_fimd0),<br>
-&gt; =A0};<br>
-&gt;<br>
-&gt; =A0static int xtal_rate;<br>
-<br>
-Would you please review this patch and let me know your opinion? Without<br=
->
-this patch, frame-buffer support on EXYNOS4 is broken.<br>
-<span class=3D"HOEnZb"><font color=3D"#888888"><br>
---<br>
-Tushar Behera<br>
-<br>
-_______________________________________________<br>
-linaro-dev mailing list<br>
-<a href=3D"mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org">linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org<=
-/a><br>
-<a href=3D"http://lists.linaro.org/mailman/listinfo/linaro-dev" target=3D"_=
-blank">http://lists.linaro.org/mailman/listinfo/linaro-dev</a><br>
-</font></span></blockquote></div><br>
-
---14dae9399b97a296e104bae43dfc--
-
-
---===============7353821007034506836==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:59334 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755104Ab2CJPel (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 10 Mar 2012 10:34:41 -0500
+Received: by gghe5 with SMTP id e5so1568532ggh.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 07:34:40 -0800 (PST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-_______________________________________________
-linaro-dev mailing list
-linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
-http://lists.linaro.org/mailman/listinfo/linaro-dev
+Hi Arnd, Olof,
 
---===============7353821007034506836==--
+Please pull regarding Samsung board patches for v3.4.
+
+Most are enabling some features(IPs) on each board and
+one is adding new board file, Samsung Mobile's TRATS board.
+
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 192cfd58774b4d17b2fe8bdc77d89c2ef4e0591d:
+
+   Linux 3.3-rc6 (2012-03-03 17:08:09 -0800)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/board-samsung
+
+Andrzej Pietrasiewicz (2):
+       ARM: EXYNOS: Register JPEG on universal_c210
+       ARM: EXYNOS: Register JPEG on nuri
+
+HeungJun, Kim (1):
+       ARM: EXYNOS: Adds Samsung TRATS board support
+
+Kamil Debski (2):
+       ARM: EXYNOS: add G2D to mach-nuri
+       ARM: EXYNOS: add G2D to mach-universal
+
+Mark Brown (8):
+       ARM: S3C64XX: Support GPIO LEDs on Cragganmore
+       ARM: S3C64XX: Fix build of Cragganmore after SPI changes
+       ARM: S3C64XX: Enable power management for disk on Cragganmore
+       ARM: S3C64XX: Enable power management for WiFi on Cragganmore
+       ARM: S3C64XX: Add hookup for Tomatin module on Cragganmore
+       ARM: S3C64XX: Add a SPKVDD supply for CODECs on Cragganmore
+       ARM: S3C64XX: Add some more Cragganmore module IDs to the table
+       ARM: S3C64XX: Supply platform data for SPI on Cragganmore
+
+MyungJoo Ham (1):
+       ARM: EXYNOS: support Exynos4210-bus Devfreq driver on Nuri board
+
+Sachin Kamat (13):
+       ARM: EXYNOS: Enable G2D on ORIGEN
+       ARM: S5PV210: Add missing FIMC media device to Aquila
+       ARM: EXYNOS: Add missing FIMC media device to SMDKV310
+       ARM: EXYNOS: Add missing FIMC media device to Origen
+       ARM: EXYNOS: Enable G2D on SMDKV310
+       ARM: S5PV210: Enable MFC on SMDKV210
+       ARM: S5PV210: Enable MFC on SMDKC110
+       ARM: S5PV210: Enable FIMC on SMDKV210
+       ARM: S5PV210: Enable FIMC on SMDKC110
+       ARM: EXYNOS: Enable JPEG on SMDKV310
+       ARM: EXYNOS: Enable JPEG on Origen
+       ARM: S5PV210: Add JPEG board definition
+       ARM: S5PV210: Enable JPEG on SMDKV210
+
+Sangwook Lee (1):
+       ARM: EXYNOS: Enable Bluetooth on ORIGEN
+
+Sylwester Nawrocki (3):
+       ARM: EXYNOS: Increase virtual framebuffer size on Universal C210 
+board
+       ARM: EXYNOS: Add support for S5K6AAFX image sensor on Universal 
+C210 board
+       ARM: SAMSUNG: Add support for S5K6AAFX camera on Nuri board
+
+Tushar Behera (2):
+       ARM: EXYNOS: Add __init attribute to nuri_camera_init()
+       ARM: EXYNOS: Add __init attribute to universal_camera_init()
+
+  arch/arm/mach-exynos/Kconfig                 |   21 ++
+  arch/arm/mach-exynos/Makefile                |    1 +
+  arch/arm/mach-exynos/mach-nuri.c             |   80 ++++++-
+  arch/arm/mach-exynos/mach-origen.c           |   37 +++
+  arch/arm/mach-exynos/mach-smdkv310.c         |    3 +
+  arch/arm/mach-exynos/mach-trats.c            |  344 
+++++++++++++++++++++++++++
+  arch/arm/mach-exynos/mach-universal_c210.c   |   80 ++++++-
+  arch/arm/mach-s3c64xx/Kconfig                |    1 +
+  arch/arm/mach-s3c64xx/mach-crag6410-module.c |   31 +++-
+  arch/arm/mach-s3c64xx/mach-crag6410.c        |   67 +++++-
+  arch/arm/mach-s5pv210/Kconfig                |    9 +
+  arch/arm/mach-s5pv210/clock.c                |    5 +
+  arch/arm/mach-s5pv210/include/mach/map.h     |    4 +
+  arch/arm/mach-s5pv210/mach-aquila.c          |    1 +
+  arch/arm/mach-s5pv210/mach-smdkc110.c        |   14 +
+  arch/arm/mach-s5pv210/mach-smdkv210.c        |   15 ++
+  16 files changed, 702 insertions(+), 11 deletions(-)
+  create mode 100644 arch/arm/mach-exynos/mach-trats.c
