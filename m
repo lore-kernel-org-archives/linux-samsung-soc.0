@@ -1,31 +1,61 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung board stuff for v3.4
-Date: Sat, 10 Mar 2012 07:34:35 -0800
-Message-ID: <4F5B748B.6050404@samsung.com>
+Subject: Re: [GIT PULL] Samsung Cleanup EXYNOS clock for v3.4
+Date: Sat, 10 Mar 2012 07:35:29 -0800
+Message-ID: <4F5B74C1.3080200@samsung.com>
+References: <4F589474.8050609@samsung.com> <CAOesGMiWOChuMjLQTK1pGys+oXCc4A=HO-2_=37rh3M6pgUP_g@mail.gmail.com> <4F5A22AD.1070907@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:59334 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755104Ab2CJPel (ORCPT
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:43973 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755104Ab2CJPfe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Mar 2012 10:34:41 -0500
-Received: by gghe5 with SMTP id e5so1568532ggh.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 07:34:40 -0800 (PST)
+	Sat, 10 Mar 2012 10:35:34 -0500
+Received: by yhmm54 with SMTP id m54so1561573yhm.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 07:35:33 -0800 (PST)
+In-Reply-To: <4F5A22AD.1070907@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, MyungJoo Ham <myungjoo.ham@samsung.com>
 
-Hi Arnd, Olof,
+On 03/09/12 07:33, Kukjin Kim wrote:
+> On 03/08/12 07:16, Olof Johansson wrote:
+>> Hi,
+>>
+>> On Thu, Mar 8, 2012 at 3:13 AM, Kukjin Kim<kgene.kim@samsung.com> wrote:
+>>
+>>> Kukjin Kim (2):
+>>> ARM: EXYNOS: cleanup clock part for new EXYNOS SoCs
+>>
+>> This is one large commit that does many things in one change. As the
+>> patch message says:
+>>
+>> ARM: EXYNOS: cleanup clock part for new EXYNOS SoCs
+>>
+>> - the prefix of clk register replace S5P_ with EXYNOS4_
+>> - move mach-exynos/clock.c to mach-exynos/clock-exynos4.c
+>> - according to moving clock-exynos4.c,
+>> move<mach/exynos4-clock.h> to "clock-exynos4.h"
+>> - add prefix exynos4_ on clk declaration
+>>
+>> It makes it hard to review, especially when you combine a move with
+>> other changes. It's better to do the move in a separate commit that
+>> doesn't change code (or only changes very very little) and then do the
+>> other changes in separate commits later.
+>>
+> Hmm...OK, let me do as per your suggestion and will re-send this soon.
+>
+Hi Olof,
 
-Please pull regarding Samsung board patches for v3.4.
+I addressed comments from you and I think it should be ok to you.
 
-Most are enabling some features(IPs) on each board and
-one is adding new board file, Samsung Mobile's TRATS board.
+Please pull from:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/cleanup-exynos-clock
 
-If any problems, please let me know.
+If any problems, please kindly let me know.
 
 Thanks.
 
@@ -35,83 +65,45 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
+
 The following changes since commit 192cfd58774b4d17b2fe8bdc77d89c2ef4e0591d:
 
    Linux 3.3-rc6 (2012-03-03 17:08:09 -0800)
 
 are available in the git repository at:
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/board-samsung
+next/cleanup-exynos-clock
 
-Andrzej Pietrasiewicz (2):
-       ARM: EXYNOS: Register JPEG on universal_c210
-       ARM: EXYNOS: Register JPEG on nuri
+Jaecheol Lee (1):
+       ARM: EXYNOS: add clock registers for exynos4x12-cpufreq
 
-HeungJun, Kim (1):
-       ARM: EXYNOS: Adds Samsung TRATS board support
+Kukjin Kim (4):
+       ARM: EXYNOS: replace clock.c for other new EXYNOS SoCs
+       ARM: EXYNOS: use static declaration on regarding clock
+       ARM: EXYNOS: change the prefix S5P_ to EXYNOS4_ for clock
+       PM / devfreq: update the name of EXYNOS clock register
 
-Kamil Debski (2):
-       ARM: EXYNOS: add G2D to mach-nuri
-       ARM: EXYNOS: add G2D to mach-universal
+MyungJoo Ham (2):
+       PM / devfreq: update the name of EXYNOS clock registers that were 
+omitted
+       ARM: EXYNOS: Add clock register addresses for EXYNOS4X12 bus 
+devfreq driver
 
-Mark Brown (8):
-       ARM: S3C64XX: Support GPIO LEDs on Cragganmore
-       ARM: S3C64XX: Fix build of Cragganmore after SPI changes
-       ARM: S3C64XX: Enable power management for disk on Cragganmore
-       ARM: S3C64XX: Enable power management for WiFi on Cragganmore
-       ARM: S3C64XX: Add hookup for Tomatin module on Cragganmore
-       ARM: S3C64XX: Add a SPKVDD supply for CODECs on Cragganmore
-       ARM: S3C64XX: Add some more Cragganmore module IDs to the table
-       ARM: S3C64XX: Supply platform data for SPI on Cragganmore
-
-MyungJoo Ham (1):
-       ARM: EXYNOS: support Exynos4210-bus Devfreq driver on Nuri board
-
-Sachin Kamat (13):
-       ARM: EXYNOS: Enable G2D on ORIGEN
-       ARM: S5PV210: Add missing FIMC media device to Aquila
-       ARM: EXYNOS: Add missing FIMC media device to SMDKV310
-       ARM: EXYNOS: Add missing FIMC media device to Origen
-       ARM: EXYNOS: Enable G2D on SMDKV310
-       ARM: S5PV210: Enable MFC on SMDKV210
-       ARM: S5PV210: Enable MFC on SMDKC110
-       ARM: S5PV210: Enable FIMC on SMDKV210
-       ARM: S5PV210: Enable FIMC on SMDKC110
-       ARM: EXYNOS: Enable JPEG on SMDKV310
-       ARM: EXYNOS: Enable JPEG on Origen
-       ARM: S5PV210: Add JPEG board definition
-       ARM: S5PV210: Enable JPEG on SMDKV210
-
-Sangwook Lee (1):
-       ARM: EXYNOS: Enable Bluetooth on ORIGEN
-
-Sylwester Nawrocki (3):
-       ARM: EXYNOS: Increase virtual framebuffer size on Universal C210 
-board
-       ARM: EXYNOS: Add support for S5K6AAFX image sensor on Universal 
-C210 board
-       ARM: SAMSUNG: Add support for S5K6AAFX camera on Nuri board
-
-Tushar Behera (2):
-       ARM: EXYNOS: Add __init attribute to nuri_camera_init()
-       ARM: EXYNOS: Add __init attribute to universal_camera_init()
-
-  arch/arm/mach-exynos/Kconfig                 |   21 ++
-  arch/arm/mach-exynos/Makefile                |    1 +
-  arch/arm/mach-exynos/mach-nuri.c             |   80 ++++++-
-  arch/arm/mach-exynos/mach-origen.c           |   37 +++
-  arch/arm/mach-exynos/mach-smdkv310.c         |    3 +
-  arch/arm/mach-exynos/mach-trats.c            |  344 
-++++++++++++++++++++++++++
-  arch/arm/mach-exynos/mach-universal_c210.c   |   80 ++++++-
-  arch/arm/mach-s3c64xx/Kconfig                |    1 +
-  arch/arm/mach-s3c64xx/mach-crag6410-module.c |   31 +++-
-  arch/arm/mach-s3c64xx/mach-crag6410.c        |   67 +++++-
-  arch/arm/mach-s5pv210/Kconfig                |    9 +
-  arch/arm/mach-s5pv210/clock.c                |    5 +
-  arch/arm/mach-s5pv210/include/mach/map.h     |    4 +
-  arch/arm/mach-s5pv210/mach-aquila.c          |    1 +
-  arch/arm/mach-s5pv210/mach-smdkc110.c        |   14 +
-  arch/arm/mach-s5pv210/mach-smdkv210.c        |   15 ++
-  16 files changed, 702 insertions(+), 11 deletions(-)
-  create mode 100644 arch/arm/mach-exynos/mach-trats.c
+  arch/arm/mach-exynos/Makefile                     |    3 +-
+  arch/arm/mach-exynos/clock-exynos4.c              | 1563 
+++++++++++++++++++++
+  arch/arm/mach-exynos/clock-exynos4.h              |   30 +
+  arch/arm/mach-exynos/clock-exynos4210.c           |   46 +-
+  arch/arm/mach-exynos/clock-exynos4212.c           |   30 +-
+  arch/arm/mach-exynos/clock.c                      | 1564 
+---------------------
+  arch/arm/mach-exynos/common.h                     |    9 +
+  arch/arm/mach-exynos/include/mach/exynos4-clock.h |   43 -
+  arch/arm/mach-exynos/include/mach/regs-clock.h    |  416 +++---
+  arch/arm/mach-exynos/pm.c                         |   40 +-
+  drivers/devfreq/exynos4_bus.c                     |  230 ++--
+  11 files changed, 2009 insertions(+), 1965 deletions(-)
+  create mode 100644 arch/arm/mach-exynos/clock-exynos4.c
+  create mode 100644 arch/arm/mach-exynos/clock-exynos4.h
+  delete mode 100644 arch/arm/mach-exynos/clock.c
+  delete mode 100644 arch/arm/mach-exynos/include/mach/exynos4-clock.h
