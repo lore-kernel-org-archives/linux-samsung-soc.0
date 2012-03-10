@@ -1,136 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 4/4] Samsung devel-dma for v3.4
-Date: Sat, 10 Mar 2012 08:09:11 -0800
-Message-ID: <4F5B7CA7.2010604@samsung.com>
+Subject: Re: [GIT PULL] Samsung Cleanup S3C24XX for v3.4
+Date: Sat, 10 Mar 2012 08:16:46 -0800
+Message-ID: <4F5B7E6E.2010909@samsung.com>
+References: <4F589313.1050706@samsung.com> <CAOesGMhbmnWSrfEQC5tVrskhjQPMSj1aki1CQ-UM_=mv0-re+A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:36500 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750733Ab2CJQJQ (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:55601 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752487Ab2CJQQu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Mar 2012 11:09:16 -0500
-Received: by ghrr11 with SMTP id r11so1583440ghr.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 08:09:15 -0800 (PST)
+	Sat, 10 Mar 2012 11:16:50 -0500
+Received: by yenl12 with SMTP id l12so1586503yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 08:16:50 -0800 (PST)
+In-Reply-To: <CAOesGMhbmnWSrfEQC5tVrskhjQPMSj1aki1CQ-UM_=mv0-re+A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
 
-Hi Arnd, Olof,
+On 03/08/12 08:56, Olof Johansson wrote:
+> On Thu, Mar 8, 2012 at 3:08 AM, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>> Hi Arnd, Olof,
+>>
+>> Please pull cleanup s3c24xx from following:
+>> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>> next/cleanup-s3c24xx
+>>
+>> As I said before, this is including merge of mach-s3c24.. directories into
+>> just one mach-s3c24xx directory.
+>>
+>> If any problems, please kindly let me know.
+>
+> Thanks, pulled. Nice first step on making all of this common!
+>
+Thanks and as a note, will happen conflicts when this is on top of 
+latest mainline.
 
-This is for Samsung dma stuff for v3.4 and depends on following:
-   next/cleanup-use-static
-   next/cleanup-exynos-clock
+Just FYI.
 
-Please pull from:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/devel-samsung-dma
+arch/arm/mach-s3c2440/common.h can be deleted with following
 
-And conflicts will be happened in clock part. Here is my preferred 
-resolution. The mach-exynos/clock.c can be removed with following:
+diff --cc arch/arm/mach-s3c24xx/common.h
+index f65dc80,62a2e19..a7cd62f
+--- a/arch/arm/mach-s3c24xx/common.h
++++ b/arch/arm/mach-s3c24xx/common.h
+@@@ -12,6 -12,12 +12,12 @@@
+   #ifndef __ARCH_ARM_MACH_S3C2410_COMMON_H
+   #define __ARCH_ARM_MACH_S3C2410_COMMON_H
 
-arch/arm/mach-exynos/exynos-clock4.c
++ #ifdef CONFIG_CPU_S3C2410
+   void s3c2410_restart(char mode, const char *cmd);
++ #endif
++
+  -#ifdef CONFIG_CPU_S3C2440
+  -void s3c2440_restart(char mode, const char *cmd);
+++#ifdef CONFIG_CPU_S3C244X
+++void s3c244x_restart(char mode, const char *cmd);
++ #endif
 
-[...]
-
-+ 		.ctrlbit	= (1 << 0),
-+ 	}, {
-+ 		.name		= "hsmmc",
-  -		.devname	= "s3c-sdhci.0",
-++		.devname	= "exynos4-sdhci.0",
-+ 		.parent		= &exynos4_clk_aclk_133.clk,
-+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 5),
-+ 	}, {
-+ 		.name		= "hsmmc",
-  -		.devname	= "s3c-sdhci.1",
-++		.devname	= "exynos4-sdhci.1",
-+ 		.parent		= &exynos4_clk_aclk_133.clk,
-+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 6),
-+ 	}, {
-+ 		.name		= "hsmmc",
-  -		.devname	= "s3c-sdhci.2",
-++		.devname	= "exynos4-sdhci.2",
-+ 		.parent		= &exynos4_clk_aclk_133.clk,
-+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 7),
-+ 	}, {
-+ 		.name		= "hsmmc",
-  -		.devname	= "s3c-sdhci.3",
-++		.devname	= "exynos4-sdhci.3",
-+ 		.parent		= &exynos4_clk_aclk_133.clk,
-+ 		.enable		= exynos4_clk_ip_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 8),
-
-[...]
-
-+ static struct clksrc_clk exynos5_clk_sclk_mmc0 = {
-+ 	.clk	= {
-+ 		.name		= "sclk_mmc",
-  -		.devname	= "s3c-sdhci.0",
-++		.devname	= "exynos4-sdhci.0",
-+ 		.parent		= &exynos4_clk_dout_mmc0.clk,
-+ 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 0),
-[...]
-+ static struct clksrc_clk exynos4_clk_sclk_mmc1 = {
-+ 	.clk	= {
-+ 		.name		= "sclk_mmc",
-  -		.devname	= "s3c-sdhci.1",
-++		.devname	= "exynos4-sdhci.1",
-+ 		.parent		= &exynos4_clk_dout_mmc1.clk,
-+ 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 4),
-[...]
-+ static struct clksrc_clk exynos4_clk_sclk_mmc2 = {
-+ 	.clk	= {
-+ 		.name		= "sclk_mmc",
-  -		.devname	= "s3c-sdhci.2",
-++		.devname	= "exynos4-sdhci.2",
-+ 		.parent		= &exynos4_clk_dout_mmc2.clk,
-+ 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 8),
-[...]
-+ static struct clksrc_clk exynos4_clk_sclk_mmc3 = {
-+ 	.clk	= {
-+ 		.name		= "sclk_mmc",
-  -		.devname	= "s3c-sdhci.3",
-++		.devname	= "exynos4-sdhci.3",
-+ 		.parent		= &exynos4_clk_dout_mmc3.clk,
-+ 		.enable		= exynos4_clksrc_mask_fsys_ctrl,
-+ 		.ctrlbit	= (1 << 12),
-
-[...]
-
-+ static struct clk_lookup exynos4_clk_lookup[] = {
-+ 	CLKDEV_INIT("exynos4210-uart.0", "clk_uart_baud0", 
-&exynos4_clk_sclk_uart0.clk),
-+ 	CLKDEV_INIT("exynos4210-uart.1", "clk_uart_baud0", 
-&exynos4_clk_sclk_uart1.clk),
-+ 	CLKDEV_INIT("exynos4210-uart.2", "clk_uart_baud0", 
-&exynos4_clk_sclk_uart2.clk),
-+ 	CLKDEV_INIT("exynos4210-uart.3", "clk_uart_baud0", 
-&exynos4_clk_sclk_uart3.clk),
-  -	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &exynos4_clk_sclk_mmc0.clk),
-  -	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &exynos4_clk_sclk_mmc1.clk),
-  -	CLKDEV_INIT("s3c-sdhci.2", "mmc_busclk.2", &exynos4_clk_sclk_mmc2.clk),
-  -	CLKDEV_INIT("s3c-sdhci.3", "mmc_busclk.2", &exynos4_clk_sclk_mmc3.clk),
-++	CLKDEV_INIT("exynos4-sdhci.0", "mmc_busclk.2", 
-&exynos4_clk_sclk_mmc0.clk),
-++	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", 
-&exynos4_clk_sclk_mmc1.clk),
-++	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", 
-&exynos4_clk_sclk_mmc2.clk),
-++	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", 
-&exynos4_clk_sclk_mmc3.clk),
-+ 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &exynos4_clk_pdma0),
-+ 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &exynos4_clk_pdma1),
-+ 	CLKDEV_INIT("dma-pl330.2", "apb_pclk", &exynos4_clk_mdma1),
-
-If any problems, please kindly let me know.
+   #endif /* __ARCH_ARM_MACH_S3C2410_COMMON_H */
 
 Thanks.
 
@@ -139,29 +69,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit e914c89254a8f943d8d06a0bda67769fd27bf9c6:
-
-   Merge branch 'next/cleanup-exynos-clock' into next/devel-samsung-dma 
-(2012-03-10 03:32:19 -0800)
-
-are available in the git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/devel-samsung-dma
-
-Boojin Kim (2):
-       ARM: EXYNOS: Enable MDMA driver
-       ARM: EXYNOS: add support DMA for EXYNOS4X12 SoC
-
-Tushar Behera (1):
-       ARM: EXYNOS: Add apb_pclk clkdev entry for mdma1
-
-  arch/arm/mach-exynos/Kconfig                   |    3 +
-  arch/arm/mach-exynos/clock-exynos4.c           |    9 ++
-  arch/arm/mach-exynos/dma.c                     |  117 
-++++++++++++++++++++++--
-  arch/arm/mach-exynos/include/mach/irqs.h       |    2 +
-  arch/arm/mach-exynos/include/mach/map.h        |    3 +-
-  arch/arm/plat-samsung/include/plat/dma-pl330.h |   16 +++
-  6 files changed, 141 insertions(+), 9 deletions(-)
