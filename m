@@ -1,51 +1,33 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 2/4] Samsung devel-pd for v3.4
-Date: Sat, 10 Mar 2012 08:08:33 -0800
-Message-ID: <4F5B7C81.6080301@samsung.com>
+Subject: [GIT PULL 3/4] Samsung devel-mmc for v3.4
+Date: Sat, 10 Mar 2012 08:08:45 -0800
+Message-ID: <4F5B7C8D.5000805@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:34099 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751247Ab2CJQIi (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:38798 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751732Ab2CJQIu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 10 Mar 2012 11:08:38 -0500
-Received: by yhmm54 with SMTP id m54so1574025yhm.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 08:08:37 -0800 (PST)
+	Sat, 10 Mar 2012 11:08:50 -0500
+Received: by iagz16 with SMTP id z16so3989818iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 10 Mar 2012 08:08:49 -0800 (PST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, Chris Ball <cjb@laptop.org>
 
-Hi Arnd, Olof,
+Hi Arnd, Olof
 
-This is Generic Power Domain patches for EXYNOS. Basically, Thomas' 
-patches, adding support Generic Power Domain patches are in Rafael's 
-tree, linux-pm/linux-next and see below merge commit.
-http://git.kernel.org/?p=linux/kernel/git/rafael/linux-pm.git;a=commit;h=dcaad77a8074b6de58e745546bc543d5538404f2
-And this adds hooking up G2D and JPEG to Generic PD.
+This is regarding Samsung mmc for v3.4.
 
-Please pull and here is my preferred resolution when merge this after 
-next/board-samsung.
+As a note, v3.4-for-cjb branch is merged into mmc/mmc-next like following:
+http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=fcd9bdae386753531a9cb6b2577359a83f4e121c
 
-diff --cc arch/arm/mach-exynos/mach-universal_c210.c
-index 3663aee,0262417..0b944eb
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@@ -1053,10 -981,6 +1052,7 @@@ static struct platform_device *universa
-         &s5p_device_mfc,
-         &s5p_device_mfc_l,
-         &s5p_device_mfc_r,
--       &exynos4_device_pd[PD_MFC],
--       &exynos4_device_pd[PD_LCD0],
--       &exynos4_device_pd[PD_CAM],
-  +      &cam_vt_dio_fixed_reg_dev,
-         &cam_i_core_fixed_reg_dev,
-         &cam_s_if_fixed_reg_dev,
-         &s5p_device_fimc_md,
+And others are accordingly changes on regarding mmc.
 
-If any problems, please kindly let me know.
+Please pull and if any problems, please kindly let me know.
 
 Thanks.
 
@@ -61,31 +43,39 @@ The following changes since commit 192cfd58774b4d17b2fe8bdc77d89c2ef4e0591d:
 
 are available in the git repository at:
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/devel-samsung-pd
+next/devel-samsung-mmc
 
-Sachin Kamat (2):
-       ARM: EXYNOS: Hook up G2D PD to generic PD infrastructure
-       ARM: EXYNOS: Hook up JPEG PD to generic PD infrastructure
+Jaehoon Chung (3):
+       ARM: SAMSUNG: support the second capability for samsung-soc
+       mmc: sdhci-s3c: add platform data for the second capability
+       ARM: SAMSUNG: change the name from s3c-sdhci to exynos4-sdhci
 
-Thomas Abraham (2):
-       PM / Domains: Add OF support
-       ARM: EXYNOS: Hook up power domains to generic power domain 
-infrastructure
+Kukjin Kim (1):
+       Merge branch 'v3.4-for-cjb' into next/devel-samsung-mmc
 
-  .../bindings/arm/exynos/power_domain.txt           |   21 ++
-  arch/arm/mach-exynos/Kconfig                       |   10 +-
-  arch/arm/mach-exynos/Makefile                      |    2 +-
-  arch/arm/mach-exynos/dev-pd.c                      |  139 --------------
-  arch/arm/mach-exynos/mach-nuri.c                   |   11 -
-  arch/arm/mach-exynos/mach-origen.c                 |   14 --
-  arch/arm/mach-exynos/mach-smdkv310.c               |   12 --
-  arch/arm/mach-exynos/mach-universal_c210.c         |   17 --
-  arch/arm/mach-exynos/pm_domains.c                  |  201 
-++++++++++++++++++++
-  drivers/base/power/domain.c                        |   32 +++
-  include/linux/pm_domain.h                          |   12 ++
-  11 files changed, 268 insertions(+), 203 deletions(-)
-  create mode 100644 
-Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-  delete mode 100644 arch/arm/mach-exynos/dev-pd.c
-  create mode 100644 arch/arm/mach-exynos/pm_domains.c
+Thomas Abraham (6):
+       mmc: sdhci-s3c: Remove usage of clk_type member in platform data
+       ARM: EXYNOS: use 'exynos4-sdhci' as device name for sdhci controllers
+       ARM: SAMSUNG: remove all uses of clk_type member in sdhci 
+platform data
+       mmc: sdhci-s3c: derive transfer width host capability from 
+max_width in platform data
+       mmc: sdhci-s3c: Keep a copy of platform data and use it
+       mmc: sdhci-s3c: Add device tree support
+
+  .../devicetree/bindings/mmc/samsung-sdhci.txt      |   70 ++++++
+  arch/arm/mach-exynos/clock.c                       |   24 +-
+  arch/arm/mach-exynos/common.c                      |    5 +
+  arch/arm/mach-exynos/mach-armlex4210.c             |    3 -
+  arch/arm/mach-exynos/mach-nuri.c                   |    7 +-
+  arch/arm/mach-exynos/mach-origen.c                 |    2 -
+  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 -
+  arch/arm/mach-exynos/mach-smdkv310.c               |    4 -
+  arch/arm/mach-exynos/mach-universal_c210.c         |    4 +-
+  arch/arm/plat-samsung/devs.c                       |    4 -
+  arch/arm/plat-samsung/include/plat/sdhci.h         |   37 +++-
+  arch/arm/plat-samsung/platformdata.c               |    4 +-
+  drivers/mmc/host/sdhci-s3c.c                       |  238 
++++++++++++++++++++-
+  13 files changed, 351 insertions(+), 53 deletions(-)
+  create mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
