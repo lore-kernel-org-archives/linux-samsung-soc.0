@@ -1,126 +1,75 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 3/5] ARM: Exynos4: Add pinctrl devices and pin maps
-Date: Sun, 11 Mar 2012 14:17:21 -0700
-Message-ID: <4F5D1661.4090007@samsung.com>
-References: <1331469965-28846-1-git-send-email-thomas.abraham@linaro.org> <1331469965-28846-4-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH 5/5] mmc: sdhci-s3c: setup pins using pinctrl interface
+Date: Sun, 11 Mar 2012 14:25:23 -0700
+Message-ID: <4F5D1843.1010608@samsung.com>
+References: <1331469965-28846-1-git-send-email-thomas.abraham@linaro.org> <1331469965-28846-6-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:58804 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752136Ab2CKVR2 (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:36620 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753391Ab2CKVZ2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 11 Mar 2012 17:17:28 -0400
-In-Reply-To: <1331469965-28846-4-git-send-email-thomas.abraham@linaro.org>
+	Sun, 11 Mar 2012 17:25:28 -0400
+In-Reply-To: <1331469965-28846-6-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
 Thomas Abraham wrote:
-> Add the three pinctrl platform devices and the pin maps for Exynos4.
+> The platform specific callback to setup the sdhci pin mux and pin config
+> is removed and the pinctrl subsystem interface is used to setup the
+> mux and config.
 > 
 > Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
 > ---
->   arch/arm/mach-exynos/Kconfig              |    1 +
->   arch/arm/mach-exynos/Makefile             |    1 +
->   arch/arm/mach-exynos/common.h             |    6 ++
->   arch/arm/mach-exynos/dev-pinctrl.c        |  115 +++++++++++++++++++++++++++++
->   arch/arm/plat-samsung/include/plat/devs.h |    3 +
->   5 files changed, 126 insertions(+), 0 deletions(-)
->   create mode 100644 arch/arm/mach-exynos/dev-pinctrl.c
-
+>   drivers/mmc/host/sdhci-s3c.c |   15 +++++++++++++--
+>   1 files changed, 13 insertions(+), 2 deletions(-)
+> 
 [...]
 
-> +#include<linux/kernel.h>
-> +#include<linux/dma-mapping.h>
-> +#include<linux/platform_device.h>
-> +#include<linux/interrupt.h>
-> +#include<linux/pinctrl/machine.h>
+> 
+> +#include<plat/map-s5p.h>
+> +#include<plat/map-base.h>
 
-#include <linux/ioport.h> for DEFINE_RES_xxx at below.
+You can add <mach/map.h> instead of above.
 
 > +
-> +#include<plat/devs.h>
-> +#include<plat/pinctrl.h>
-> +
-> +#include<mach/map.h>
-> +
-> +static struct resource exynos4_pinctrl_resource0[] = {
-> +	[0] = {
-> +		.start  = EXYNOS4_PA_GPIO1,
-> +		.end    = EXYNOS4_PA_GPIO1 + SZ_4K - 1,
-> +		.flags  = IORESOURCE_MEM,
-> +	},
+>   static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>   {
+>   	struct s3c_sdhci_platdata *pdata;
+> @@ -538,6 +543,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>   	struct sdhci_s3c *sc;
+>   	struct resource *res;
+>   	int ret, irq, ptr, clks;
+> +	char *pstate;
+> 
+>   	if (!pdev->dev.platform_data&&  !pdev->dev.of_node) {
+>   		dev_err(dev, "no device data specified\n");
+> @@ -643,8 +649,13 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>   	}
+> 
+>   	/* Ensure we have minimal gpio selected CMD/CLK/Detect */
+> -	if (pdata->cfg_gpio)
+> -		pdata->cfg_gpio(pdev, pdata->max_width);
 
-[0] = DEFINE_RES_MEM(EXYNOS4_PA_GPIO1, SZ_4K),
+I'm not sure we can remove above now for all of Samsung stuff?
 
-> +	[1] = {
-> +		.start  = IRQ_GPIO_XA,
-> +		.end    = IRQ_GPIO_XA,
-> +		.flags  = IORESOURCE_IRQ,
-> +	},
+> +	pstate = pdata->max_width ? "sdhci-pcfg8" : "sdhci-pcfg4";
 
-[1] = DEFINE_RES_IRQ(IRQ_GPIO_XA),
+Is this right? Current max_width can be 4 or 8 in each board file now.
 
-But I'm thinking, we need to move to use EXYNOS4_IRQ_GPIO_XA here for
-both EXYNOS4 and EXYNOS5 and as a note, I'm working on updating IRQ
-naming you can see it in this week :)
-
-> +};
-> +
-> +struct platform_device exynos4_pinctrl0 = {
-> +	.name		= "exynos4-pinctrl",
-> +	.id		= 0,
-> +	.resource	= exynos4_pinctrl_resource0,
-> +	.num_resources	= ARRAY_SIZE(exynos4_pinctrl_resource0),
-> +};
-> +
-> +static struct resource exynos4_pinctrl_resource1[] = {
-> +	[0] = {
-> +		.start  = EXYNOS4_PA_GPIO2,
-> +		.end    = EXYNOS4_PA_GPIO2 + SZ_4K - 1,
-> +		.flags  = IORESOURCE_MEM,
-> +	},
-
-same as above.
-
-> +	[1] = {
-> +		.start  = IRQ_GPIO_XB,
-> +		.end    = IRQ_GPIO_XB,
-> +		.flags  = IORESOURCE_IRQ,
-> +	},
-
-same.
-
-> +};
-> +
-> +struct platform_device exynos4_pinctrl1 = {
-> +	.name		= "exynos4-pinctrl",
-> +	.id		= 1,
-> +	.resource	= exynos4_pinctrl_resource1,
-> +	.num_resources	= ARRAY_SIZE(exynos4_pinctrl_resource1),
-> +};
-> +
-> +static struct resource exynos4_pinctrl_resource2[] = {
-> +	[0] = {
-> +		.start  = EXYNOS4_PA_GPIO3,
-> +		.end    = EXYNOS4_PA_GPIO3 + SZ_4K - 1,
-> +		.flags  = IORESOURCE_MEM,
-> +	},
-
-same.
-
-> +};
-> +
-> +struct platform_device exynos4_pinctrl2 = {
-> +	.name		= "exynos4-pinctrl",
-> +	.id		= 2,
-> +	.resource	= exynos4_pinctrl_resource2,
-> +	.num_resources	= ARRAY_SIZE(exynos4_pinctrl_resource2),
-> +};
-> +
+> +	sc->pinctrl = pinctrl_get_select(&pdev->dev, pstate);
+> +	if (IS_ERR(sc->pinctrl)) {
+> +		dev_err(dev, "failed to setup pin configuration\n");
+> +		ret = -ENXIO;
+> +		goto err_req_regs;
+> +	}
+> 
+>   	host->hw_name = "samsung-hsmmc";
+>   	host->ops =&sdhci_s3c_ops;
 
 Thanks.
 
