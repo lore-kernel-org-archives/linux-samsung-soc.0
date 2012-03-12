@@ -1,82 +1,69 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Subject: Re: [PATCH v11 3/3] iommu/exynos: Add iommu driver for Exynos
- Platforms
-Date: Mon, 12 Mar 2012 16:01:56 +0100
-Message-ID: <20120312150156.GF18973@amd.com>
-References: <017a01ccfdee$4e5e7a00$eb1b6e00$%cho@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 5/5] mmc: sdhci-s3c: setup pins using pinctrl interface
+Date: Mon, 12 Mar 2012 16:12:18 +0000
+Message-ID: <20120312161218.GK3110@opensource.wolfsonmicro.com>
+References: <1331469965-28846-1-git-send-email-thomas.abraham@linaro.org>
+ <1331469965-28846-6-git-send-email-thomas.abraham@linaro.org>
+ <20120312142143.GC14020@sirena.org.uk>
+ <CAJuYYwQ=vhcrbH3gsMBuLG1D_p=mx_RFbN86+ETPT4bLYrRgEA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dxRQSzdsN/lOP445"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from db3ehsobe001.messaging.microsoft.com ([213.199.154.139]:14407
-	"EHLO db3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753116Ab2CLPCK (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60509 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751353Ab2CLQMU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 11:02:10 -0400
+	Mon, 12 Mar 2012 12:12:20 -0400
 Content-Disposition: inline
-In-Reply-To: <017a01ccfdee$4e5e7a00$eb1b6e00$%cho@samsung.com>
+In-Reply-To: <CAJuYYwQ=vhcrbH3gsMBuLG1D_p=mx_RFbN86+ETPT4bLYrRgEA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
-
-On Fri, Mar 09, 2012 at 09:15:24PM +0900, Cho KyongHo wrote:
-> +/* We does not consider super section mapping (16MB) */
-> +struct iommu_client {
-> +	struct list_head node;
-> +	struct device *dev;
-> +};
-> +
-> +struct exynos_iommu_domain {
-> +	struct list_head clients; /* list of iommu_client */
-> +	unsigned long *pgtable; /* lv1 page table, 16KB */
-> +	short *lv2entcnt; /* free lv2 entry counter for each section */
-> +	spinlock_t lock; /* lock for this structure and attached iommu_client */
-> +	spinlock_t pgtablelock; /* lock for modifying page table @ pgtable */
-> +};
-> +
-> +struct sysmmu_drvdata {
-> +	struct device *sysmmu;
-> +	char *dbgname;
-> +	int nsfrs;
-> +	void __iomem **sfrbases;
-> +	struct clk *clk[2];
-> +	int activations;
-> +	rwlock_t lock;
-> +	struct iommu_domain *domain;
-> +	sysmmu_fault_handler_t fault_handler;
-> +	unsigned long pgtable;
-> +	struct iommu_client client;
-> +};
-
-Is there any reason why 'struct iommu_client' is a seperate data
-structure? Otherwise it can be merged with 'truct sysmmu_drvdata'.
-
-> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain)
-> +{
-> +	struct exynos_iommu_domain *priv = domain->priv;
-> +	struct list_head *pos, *n;
-> +	unsigned long flags;
-> +	int i;
-> +
-> +	WARN_ON(!list_empty(&priv->clients));
-> +
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +
-> +	list_for_each_safe(pos, n, &priv->clients) {
-> +		struct iommu_client *client;
-> +
-> +		client = list_entry(pos, struct iommu_client, node);
-> +		exynos_sysmmu_disable(client->dev);
-> +		kfree(client);
-> +	}
-
-Why this kfree here? Aren't all iommu_clients just a part of another
-data-structre?
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
 
--- 
-AMD Operating System Research Center
+--dxRQSzdsN/lOP445
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+On Mon, Mar 12, 2012 at 08:01:34PM +0530, Thomas Abraham wrote:
+
+> Yes, I agree with your comment. I did refer to manuals of s3c24xx to
+> Exynos to ensure that the samsung pinctrl driver is generic and
+> reusable on all samsung soc's. I hope I have not missed out something
+> important that would require additional tweaks in the samsung pinctrl
+> driver. The missing bits now are gpio interrupt and wakeup interrupt
+> support in the samsung pinctrl driver. Once that is complete, I
+> believe it should be easy to add support for other SoC and convert the
+> drivers to use pinctrl (other option being to let pinctrl driver hog
+> all the mappings at boot and remove the cfg_gpio platform callbacks
+> from the driver).
+
+Yes, I don't see any fundamental problems here - it's more that either
+we'll need to get all the SoCs converted over (which is a lot of work)
+or we'll need to have drivers be able to cope with running either way.
+
+--dxRQSzdsN/lOP445
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPXiBbAAoJEBus8iNuMP3dI9oP/34qglJfej0g6XSdlJvd5X+5
+y03PKJQYtnY/C0DbjWs+J1xBh19JyKDQWtWgrRA8ku6r5WGXcUgCYA8GHfTUNk6W
+vbo6TcUrhSTlhBHPJgpmMNK/j2ua57v95RZpfRNjDM+mnFCE3GJqx+fPQ1H4BrmU
+4H7i/ZqbT0FpMBcYaS032b7pPaiPevlM8Zk8cymismLBN5L93im8TbjVkqkt7tKP
+XfWAVXGB2jLqWeguOWQZ+u8B8QzBEcyeFqx0pw6iYapWAN4qfYu8DNqtEaKnDSgO
+2TyKDNid6ATu27mlae9+61OM2c39VujZur4mwHC4DJ+x3pdIhzCJh0PWMyg5dUlZ
+Njk4Tg6WTmw7niSze4WX2Va+Sygroau9jaZqXgk2JY4B6YBdyrMqILClRbeTFWDp
+sxTWVWo32H94YJuFfSwHTUvtCStMYzURfbL46gg0IL7GGJD+a2bIeEHFgNnhM/q7
+LRwmThIRiJLUNQf5+Svc0pRg+KSQMa6DVt01QkjcQN3wNA5QdsqbQEDIn1D7M9Eg
+x2iLdllXbb5O7bfIe5rDuMsiWl8rU+u6VPT76dfvXBAWpMLDe5LUjXc19nxN30Nj
+Oxjd2iqzpSD6S6yTpkBv8Yxhv8zTFWOLmnwEfzPws/suNTLywIKrTNRgh0L3RC0l
+1TWk2fqB5dpZQ+wu9wGs
+=T40z
+-----END PGP SIGNATURE-----
+
+--dxRQSzdsN/lOP445--
