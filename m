@@ -1,69 +1,207 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 5/5] mmc: sdhci-s3c: setup pins using pinctrl interface
-Date: Mon, 12 Mar 2012 16:12:18 +0000
-Message-ID: <20120312161218.GK3110@opensource.wolfsonmicro.com>
-References: <1331469965-28846-1-git-send-email-thomas.abraham@linaro.org>
- <1331469965-28846-6-git-send-email-thomas.abraham@linaro.org>
- <20120312142143.GC14020@sirena.org.uk>
- <CAJuYYwQ=vhcrbH3gsMBuLG1D_p=mx_RFbN86+ETPT4bLYrRgEA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="dxRQSzdsN/lOP445"
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH v2 3/3] gpio/samsung: use ioremap() for EXYNOS4 GPIOlib
+Date: Mon, 12 Mar 2012 10:19:04 -0600
+Message-ID: <20120312161904.E57193E07B0@localhost>
+References: <1329341829-14403-1-git-send-email-kgene.kim@samsung.com> <1329341829-14403-4-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60509 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751353Ab2CLQMU (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:43625 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753036Ab2CLQTH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 12:12:20 -0400
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwQ=vhcrbH3gsMBuLG1D_p=mx_RFbN86+ETPT4bLYrRgEA@mail.gmail.com>
+	Mon, 12 Mar 2012 12:19:07 -0400
+Received: by iagz16 with SMTP id z16so7055014iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 09:19:07 -0700 (PDT)
+In-Reply-To: <1329341829-14403-4-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Sangsu Park <sangsu4u.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+
+On Thu, 16 Feb 2012 06:37:09 +0900, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> From: Sangsu Park <sangsu4u.park@samsung.com>
+> 
+> This patch changes to use ioremap() for EXYNOS4210
+> so that we can drop the static mapping for EXYNOS
+> SoCs.
+> 
+> Note: Will be updated for all of Samsung GPIOlibs
+> to use ioremap() next time.
+> 
+> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
+
+Kukjin, I think you wanted to take this via your tree?  I'm fine with that.
+Let me know if you'd rather it go via the gpio tree.
+
+g.
 
 
---dxRQSzdsN/lOP445
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> ---
+>  arch/arm/mach-exynos/common.c |   15 ------------
+>  drivers/gpio/gpio-samsung.c   |   48 +++++++++++++++++++++++++++++------------
+>  2 files changed, 34 insertions(+), 29 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 63a2b04..618e7f3 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -172,21 +172,6 @@ static struct map_desc exynos4_iodesc[] __initdata = {
+>  		.length		= SZ_4K,
+>  		.type		= MT_DEVICE,
+>  	}, {
+> -		.virtual	= (unsigned long)S5P_VA_GPIO1,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_GPIO1),
+> -		.length		= SZ_4K,
+> -		.type		= MT_DEVICE,
+> -	}, {
+> -		.virtual	= (unsigned long)S5P_VA_GPIO2,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_GPIO2),
+> -		.length		= SZ_4K,
+> -		.type		= MT_DEVICE,
+> -	}, {
+> -		.virtual	= (unsigned long)S5P_VA_GPIO3,
+> -		.pfn		= __phys_to_pfn(EXYNOS4_PA_GPIO3),
+> -		.length		= SZ_256,
+> -		.type		= MT_DEVICE,
+> -	}, {
+>  		.virtual	= (unsigned long)S5P_VA_DMC0,
+>  		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC0),
+>  		.length		= SZ_4K,
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index d6cfdee7..4627787 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -2331,7 +2331,6 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  			.label	= "GPY6",
+>  		},
+>  	}, {
+> -		.base	= (S5P_VA_GPIO2 + 0xC00),
+>  		.config	= &samsung_gpio_cfgs[9],
+>  		.irq_base = IRQ_EINT(0),
+>  		.chip	= {
+> @@ -2341,7 +2340,6 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  			.to_irq	= samsung_gpiolib_to_irq,
+>  		},
+>  	}, {
+> -		.base	= (S5P_VA_GPIO2 + 0xC20),
+>  		.config	= &samsung_gpio_cfgs[9],
+>  		.irq_base = IRQ_EINT(8),
+>  		.chip	= {
+> @@ -2351,7 +2349,6 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  			.to_irq	= samsung_gpiolib_to_irq,
+>  		},
+>  	}, {
+> -		.base	= (S5P_VA_GPIO2 + 0xC40),
+>  		.config	= &samsung_gpio_cfgs[9],
+>  		.irq_base = IRQ_EINT(16),
+>  		.chip	= {
+> @@ -2361,7 +2358,6 @@ static struct samsung_gpio_chip exynos4_gpios_2[] = {
+>  			.to_irq	= samsung_gpiolib_to_irq,
+>  		},
+>  	}, {
+> -		.base	= (S5P_VA_GPIO2 + 0xC60),
+>  		.config	= &samsung_gpio_cfgs[9],
+>  		.irq_base = IRQ_EINT(24),
+>  		.chip	= {
+> @@ -2789,9 +2785,16 @@ static __init int samsung_gpiolib_init(void)
+>  		s5p_register_gpioint_bank(IRQ_GPIOINT, 0, S5P_GPIOINT_GROUP_MAXNR);
+>  #endif
+>  	} else if (soc_is_exynos4210()) {
+> -		group = 0;
+> +#ifdef CONFIG_CPU_EXYNOS4210
+> +		void __iomem *gpx_base;
+>  
+>  		/* gpio part1 */
+> +		gpio_base1 = ioremap(EXYNOS4_PA_GPIO1, SZ_4K);
+> +		if (gpio_base1 == NULL) {
+> +			pr_err("unable to ioremap for gpio_base1\n");
+> +			goto err_ioremap1;
+> +		}
+> +
+>  		chip = exynos4_gpios_1;
+>  		nr_chips = ARRAY_SIZE(exynos4_gpios_1);
+>  
+> @@ -2800,14 +2803,25 @@ static __init int samsung_gpiolib_init(void)
+>  				chip->config = &exynos_gpio_cfg;
+>  				chip->group = group++;
+>  			}
+> -#ifdef CONFIG_CPU_EXYNOS4210
+>  			exynos_gpiolib_attach_ofnode(chip,
+>  					EXYNOS4_PA_GPIO1, i * 0x20);
+> -#endif
+>  		}
+> -		samsung_gpiolib_add_4bit_chips(exynos4_gpios_1, nr_chips, S5P_VA_GPIO1);
+> +		samsung_gpiolib_add_4bit_chips(exynos4_gpios_1,
+> +					       nr_chips, gpio_base1);
+>  
+>  		/* gpio part2 */
+> +		gpio_base2 = ioremap(EXYNOS4_PA_GPIO2, SZ_4K);
+> +		if (gpio_base2 == NULL) {
+> +			pr_err("unable to ioremap for gpio_base2\n");
+> +			goto err_ioremap2;
+> +		}
+> +
+> +		/* need to set base address for gpx */
+> +		chip = &exynos4_gpios_2[16];
+> +		gpx_base = gpio_base2 + 0xC00;
+> +		for (i = 0; i < 4; i++, chip++, gpx_base += 0x20)
+> +			chip->base = gpx_base;
+> +
+>  		chip = exynos4_gpios_2;
+>  		nr_chips = ARRAY_SIZE(exynos4_gpios_2);
+>  
+> @@ -2816,14 +2830,19 @@ static __init int samsung_gpiolib_init(void)
+>  				chip->config = &exynos_gpio_cfg;
+>  				chip->group = group++;
+>  			}
+> -#ifdef CONFIG_CPU_EXYNOS4210
+>  			exynos_gpiolib_attach_ofnode(chip,
+>  					EXYNOS4_PA_GPIO2, i * 0x20);
+> -#endif
+>  		}
+> -		samsung_gpiolib_add_4bit_chips(exynos4_gpios_2, nr_chips, S5P_VA_GPIO2);
+> +		samsung_gpiolib_add_4bit_chips(exynos4_gpios_2,
+> +					       nr_chips, gpio_base2);
+>  
+>  		/* gpio part3 */
+> +		gpio_base3 = ioremap(EXYNOS4_PA_GPIO3, SZ_256);
+> +		if (gpio_base3 == NULL) {
+> +			pr_err("unable to ioremap for gpio_base3\n");
+> +			goto err_ioremap3;
+> +		}
+> +
+>  		chip = exynos4_gpios_3;
+>  		nr_chips = ARRAY_SIZE(exynos4_gpios_3);
+>  
+> @@ -2832,17 +2851,18 @@ static __init int samsung_gpiolib_init(void)
+>  				chip->config = &exynos_gpio_cfg;
+>  				chip->group = group++;
+>  			}
+> -#ifdef CONFIG_CPU_EXYNOS4210
+>  			exynos_gpiolib_attach_ofnode(chip,
+>  					EXYNOS4_PA_GPIO3, i * 0x20);
+> -#endif
+>  		}
+> -		samsung_gpiolib_add_4bit_chips(exynos4_gpios_3, nr_chips, S5P_VA_GPIO3);
+> +		samsung_gpiolib_add_4bit_chips(exynos4_gpios_3,
+> +					       nr_chips, gpio_base3);
+>  
+>  #if defined(CONFIG_CPU_EXYNOS4210) && defined(CONFIG_S5P_GPIO_INT)
+>  		s5p_register_gpioint_bank(IRQ_GPIO_XA, 0, IRQ_GPIO1_NR_GROUPS);
+>  		s5p_register_gpioint_bank(IRQ_GPIO_XB, IRQ_GPIO1_NR_GROUPS, IRQ_GPIO2_NR_GROUPS);
+>  #endif
+> +
+> +#endif	/* CONFIG_CPU_EXYNOS4210 */
+>  	} else if (soc_is_exynos5250()) {
+>  #ifdef CONFIG_SOC_EXYNOS5250
+>  		void __iomem *gpx_base;
+> -- 
+> 1.7.4.4
+> 
 
-On Mon, Mar 12, 2012 at 08:01:34PM +0530, Thomas Abraham wrote:
-
-> Yes, I agree with your comment. I did refer to manuals of s3c24xx to
-> Exynos to ensure that the samsung pinctrl driver is generic and
-> reusable on all samsung soc's. I hope I have not missed out something
-> important that would require additional tweaks in the samsung pinctrl
-> driver. The missing bits now are gpio interrupt and wakeup interrupt
-> support in the samsung pinctrl driver. Once that is complete, I
-> believe it should be easy to add support for other SoC and convert the
-> drivers to use pinctrl (other option being to let pinctrl driver hog
-> all the mappings at boot and remove the cfg_gpio platform callbacks
-> from the driver).
-
-Yes, I don't see any fundamental problems here - it's more that either
-we'll need to get all the SoCs converted over (which is a lot of work)
-or we'll need to have drivers be able to cope with running either way.
-
---dxRQSzdsN/lOP445
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPXiBbAAoJEBus8iNuMP3dI9oP/34qglJfej0g6XSdlJvd5X+5
-y03PKJQYtnY/C0DbjWs+J1xBh19JyKDQWtWgrRA8ku6r5WGXcUgCYA8GHfTUNk6W
-vbo6TcUrhSTlhBHPJgpmMNK/j2ua57v95RZpfRNjDM+mnFCE3GJqx+fPQ1H4BrmU
-4H7i/ZqbT0FpMBcYaS032b7pPaiPevlM8Zk8cymismLBN5L93im8TbjVkqkt7tKP
-XfWAVXGB2jLqWeguOWQZ+u8B8QzBEcyeFqx0pw6iYapWAN4qfYu8DNqtEaKnDSgO
-2TyKDNid6ATu27mlae9+61OM2c39VujZur4mwHC4DJ+x3pdIhzCJh0PWMyg5dUlZ
-Njk4Tg6WTmw7niSze4WX2Va+Sygroau9jaZqXgk2JY4B6YBdyrMqILClRbeTFWDp
-sxTWVWo32H94YJuFfSwHTUvtCStMYzURfbL46gg0IL7GGJD+a2bIeEHFgNnhM/q7
-LRwmThIRiJLUNQf5+Svc0pRg+KSQMa6DVt01QkjcQN3wNA5QdsqbQEDIn1D7M9Eg
-x2iLdllXbb5O7bfIe5rDuMsiWl8rU+u6VPT76dfvXBAWpMLDe5LUjXc19nxN30Nj
-Oxjd2iqzpSD6S6yTpkBv8Yxhv8zTFWOLmnwEfzPws/suNTLywIKrTNRgh0L3RC0l
-1TWk2fqB5dpZQ+wu9wGs
-=T40z
------END PGP SIGNATURE-----
-
---dxRQSzdsN/lOP445--
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
