@@ -1,53 +1,82 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 5/5] mmc: sdhci-s3c: setup pins using pinctrl interface
-Date: Mon, 12 Mar 2012 20:01:34 +0530
-Message-ID: <CAJuYYwQ=vhcrbH3gsMBuLG1D_p=mx_RFbN86+ETPT4bLYrRgEA@mail.gmail.com>
-References: <1331469965-28846-1-git-send-email-thomas.abraham@linaro.org>
-	<1331469965-28846-6-git-send-email-thomas.abraham@linaro.org>
-	<20120312142143.GC14020@sirena.org.uk>
+From: Joerg Roedel <joerg.roedel@amd.com>
+Subject: Re: [PATCH v11 3/3] iommu/exynos: Add iommu driver for Exynos
+ Platforms
+Date: Mon, 12 Mar 2012 16:01:56 +0100
+Message-ID: <20120312150156.GF18973@amd.com>
+References: <017a01ccfdee$4e5e7a00$eb1b6e00$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:57176 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751901Ab2CLObg convert rfc822-to-8bit (ORCPT
+Received: from db3ehsobe001.messaging.microsoft.com ([213.199.154.139]:14407
+	"EHLO db3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753116Ab2CLPCK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 10:31:36 -0400
-Received: by eaaq12 with SMTP id q12so1092728eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 07:31:34 -0700 (PDT)
-In-Reply-To: <20120312142143.GC14020@sirena.org.uk>
+	Mon, 12 Mar 2012 11:02:10 -0400
+Content-Disposition: inline
+In-Reply-To: <017a01ccfdee$4e5e7a00$eb1b6e00$%cho@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, patches@linaro.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-On 12 March 2012 19:51, Mark Brown <broonie@opensource.wolfsonmicro.com=
-> wrote:
-> On Sun, Mar 11, 2012 at 06:16:05PM +0530, Thomas Abraham wrote:
->> The platform specific callback to setup the sdhci pin mux and pin co=
-nfig
->> is removed and the pinctrl subsystem interface is used to setup the
->> mux and config.
->
-> You've only added pinctrl support for Exynos but this driver is also
-> used by SoCs going back to s3c24xx era. =A0Either all those SoCs need=
- to
-> be converted to use pinctrl or the driver needs to understand both
-> methods (eg, using pinctrl if no callback is supplied).
+On Fri, Mar 09, 2012 at 09:15:24PM +0900, Cho KyongHo wrote:
+> +/* We does not consider super section mapping (16MB) */
+> +struct iommu_client {
+> +	struct list_head node;
+> +	struct device *dev;
+> +};
+> +
+> +struct exynos_iommu_domain {
+> +	struct list_head clients; /* list of iommu_client */
+> +	unsigned long *pgtable; /* lv1 page table, 16KB */
+> +	short *lv2entcnt; /* free lv2 entry counter for each section */
+> +	spinlock_t lock; /* lock for this structure and attached iommu_client */
+> +	spinlock_t pgtablelock; /* lock for modifying page table @ pgtable */
+> +};
+> +
+> +struct sysmmu_drvdata {
+> +	struct device *sysmmu;
+> +	char *dbgname;
+> +	int nsfrs;
+> +	void __iomem **sfrbases;
+> +	struct clk *clk[2];
+> +	int activations;
+> +	rwlock_t lock;
+> +	struct iommu_domain *domain;
+> +	sysmmu_fault_handler_t fault_handler;
+> +	unsigned long pgtable;
+> +	struct iommu_client client;
+> +};
 
-Yes, I agree with your comment. I did refer to manuals of s3c24xx to
-Exynos to ensure that the samsung pinctrl driver is generic and
-reusable on all samsung soc's. I hope I have not missed out something
-important that would require additional tweaks in the samsung pinctrl
-driver. The missing bits now are gpio interrupt and wakeup interrupt
-support in the samsung pinctrl driver. Once that is complete, I
-believe it should be easy to add support for other SoC and convert the
-drivers to use pinctrl (other option being to let pinctrl driver hog
-all the mappings at boot and remove the cfg_gpio platform callbacks
-from the driver).
+Is there any reason why 'struct iommu_client' is a seperate data
+structure? Otherwise it can be merged with 'truct sysmmu_drvdata'.
 
-Thank you Mark for your comments.
+> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain)
+> +{
+> +	struct exynos_iommu_domain *priv = domain->priv;
+> +	struct list_head *pos, *n;
+> +	unsigned long flags;
+> +	int i;
+> +
+> +	WARN_ON(!list_empty(&priv->clients));
+> +
+> +	spin_lock_irqsave(&priv->lock, flags);
+> +
+> +	list_for_each_safe(pos, n, &priv->clients) {
+> +		struct iommu_client *client;
+> +
+> +		client = list_entry(pos, struct iommu_client, node);
+> +		exynos_sysmmu_disable(client->dev);
+> +		kfree(client);
+> +	}
 
-Regards,
-Thomas.
+Why this kfree here? Aren't all iommu_clients just a part of another
+data-structre?
+
+
+-- 
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
