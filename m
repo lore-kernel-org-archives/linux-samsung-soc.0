@@ -1,56 +1,56 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 3/3] gpio/samsung: use ioremap() for EXYNOS4 GPIOlib
-Date: Mon, 12 Mar 2012 11:52:16 -0700
-Message-ID: <4F5E45E0.9020108@samsung.com>
-References: <1329341829-14403-1-git-send-email-kgene.kim@samsung.com> <1329341829-14403-4-git-send-email-kgene.kim@samsung.com> <20120312161904.E57193E07B0@localhost>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/6] S3C24XX: Add support for HSSPI on S3C2416/S3C2443
+Date: Mon, 12 Mar 2012 19:59:32 +0100
+Message-ID: <201203121959.32966.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
+Content-Type: Text/Plain;
+  charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:36494 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752891Ab2CLSwX (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:49649 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756430Ab2CLS7q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 14:52:23 -0400
-Received: by ghrr11 with SMTP id r11so2904398ghr.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 11:52:22 -0700 (PDT)
-In-Reply-To: <20120312161904.E57193E07B0@localhost>
+	Mon, 12 Mar 2012 14:59:46 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sangsu Park <sangsu4u.park@samsung.com>
+To: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Grant Likely wrote:
-> On Thu, 16 Feb 2012 06:37:09 +0900, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->> From: Sangsu Park<sangsu4u.park@samsung.com>
->>
->> This patch changes to use ioremap() for EXYNOS4210
->> so that we can drop the static mapping for EXYNOS
->> SoCs.
->>
->> Note: Will be updated for all of Samsung GPIOlibs
->> to use ioremap() next time.
->>
->> Signed-off-by: Sangsu Park<sangsu4u.park@samsung.com>
->> Cc: Grant Likely<grant.likely@secretlab.ca>
->> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
-> 
-> Acked-by: Grant Likely<grant.likely@secretlab.ca>
-> 
-> Kukjin, I think you wanted to take this via your tree?  I'm fine with that.
-> Let me know if you'd rather it go via the gpio tree.
-> 
-Hi Grant,
+The S3C2416/S3C2443/S3C2450 SoCs contain HSSPI controllers compatible
+with the ones in the S3C64xx and later.
 
-I think, since this series has no depenency with current samsung tree
-for upcoming merge window, this can be sent to upstream via the gpio tree.
+The second patch modifying the dma selection depends on the series
+enabling the dma support on the S3C2416, but as the whole s3c64xx-spi
+driver needs dma support this should be ok.
 
-If any problems, please kindly let me know.
+Tested on an Asus DR-900 ebook reader with a Marvell MR8686 using the
+libertas driver.
 
-Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+This is a repost of the series adapted to changes resulting from the
+other cleanup series.
+
+
+Heiko Stuebner (6):
+  ARM: S3C24XX: Add forgotten clock lookup table to S3C2443
+  ARM: S3C24XX: claim spi channels for hsspi in dma-s3c2443
+  ARM: S3C24XX: Add map entries needed by the s3c64xx-spi devices
+  ARM: S3C24XX: Add clock-lookup entries required by s3c64xx-spi
+  ARM: S3C24XX: Add HSSPI setup callback for s3c64xx-spi driver
+  spi/s3c64xx: Allow usage for ARCH_S3C24XX
+
+ arch/arm/mach-s3c24xx/Kconfig            |    5 ++++
+ arch/arm/mach-s3c24xx/Makefile           |    1 +
+ arch/arm/mach-s3c24xx/clock-s3c2416.c    |    1 +
+ arch/arm/mach-s3c24xx/clock-s3c2443.c    |    6 ++++
+ arch/arm/mach-s3c24xx/common-s3c2443.c   |   15 +++++++----
+ arch/arm/mach-s3c24xx/dma-s3c2443.c      |   16 +++++++++---
+ arch/arm/mach-s3c24xx/include/mach/dma.h |    4 +++
+ arch/arm/mach-s3c24xx/include/mach/map.h |    5 ++++
+ arch/arm/mach-s3c24xx/setup-spi.c        |   39 ++++++++++++++++++++++++++++++
+ drivers/spi/Kconfig                      |    2 +-
+ 10 files changed, 84 insertions(+), 10 deletions(-)
+ create mode 100644 arch/arm/mach-s3c24xx/setup-spi.c
+
+-- 
+1.7.2.3
