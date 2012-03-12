@@ -1,48 +1,81 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH 6/6] spi/s3c64xx: Allow usage for ARCH_S3C24XX
-Date: Mon, 12 Mar 2012 20:03:36 +0100
-Message-ID: <201203122003.36553.heiko@sntech.de>
-References: <201203121959.32966.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v2 0/3] video: s3c-fb: Rearrange the elements in platform data
+Date: Tue, 13 Mar 2012 02:29:56 +0530
+Message-ID: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:53461 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756507Ab2CLTDo (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:48769 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757318Ab2CLU4D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 15:03:44 -0400
-In-Reply-To: <201203121959.32966.heiko@sntech.de>
+	Mon, 12 Mar 2012 16:56:03 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
+Cc: FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, patches@linaro.org
 
-Newer SoCs from the S3C24XX line, namely S3C2416/2443/2450 contain
-hsspi-controllers compatible with the s3c64xx type.
+Changes since v1:
+- Includes all changes suggested by Jingoo Han.
+- Reworked s3c-fb platform data in all Samsung SoC based board files.
 
-The previous patches enabled platform support for it, so make the
-driver also usable for the S3C24xx architecture.
+This patchset rearranges the elements in the platform data of the s3c-fb
+driver with the intent of adding device tree support to the driver in
+subsequent patches.
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
----
- drivers/spi/Kconfig |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+The first patch moves the video timing information from the individual window
+setup data into the platform specific configuration section in the platform
+data. The video timing is independent of the window setup. The resolution of
+the window could be smaller than that of the lcd panel attached. So the video
+timing data is removed from window configuration data.
 
-diff --git a/drivers/spi/Kconfig b/drivers/spi/Kconfig
-index 004e6d1..e981fe6 100644
---- a/drivers/spi/Kconfig
-+++ b/drivers/spi/Kconfig
-@@ -305,7 +305,7 @@ config SPI_S3C24XX_FIQ
- 
- config SPI_S3C64XX
- 	tristate "Samsung S3C64XX series type SPI"
--	depends on (ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
-+	depends on (ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5P64X0 || ARCH_EXYNOS)
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	help
- 	  SPI driver for Samsung S3C64XX and newer SoCs.
--- 
-1.7.2.3
+The second patch removes the need for the 'default_win' element in the
+platform data. This element was used to decide whether the video data
+output from the controller should be enabled or disabled when the window
+specified by 'default_win' is enabled or disabled. With the first patch
+removing the need for atleast one window to be of the same resolution as
+that of the lcd panel, it is now possible to decide when to enable/disable
+the video data output based on the state of each window. If any of the
+window is active, the lcd data output is enabled. Otherwise, the lcd data
+output is disabled. Hence, the 'default_win' parameter from the platform
+data can be removed, which anyways cannot be specified when using
+device tree.
+
+For all the Samsung SoC based boards, the third patch reworks the platform
+data of the display controller based on the changes introduced in the first
+two patches.
+
+This patch series is based on
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git [for-next]
+
+with all patches merged from
+https://github.com/schandinat/linux-2.6.git [fbdev-next]
+
+and tested one Exynos4210 based Origen board (only compile tested for
+other boards)
+
+Thomas Abraham (3):
+  video: s3c-fb: move video interface timing out of window setup data
+  video: s3c-fb: remove 'default_win' element from platform data
+  ARM: Samsung: Rework platform data of s3c-fb driver
+
+ arch/arm/mach-exynos/mach-nuri.c           |   26 +++---
+ arch/arm/mach-exynos/mach-origen.c         |   24 +++--
+ arch/arm/mach-exynos/mach-smdkv310.c       |   28 ++++---
+ arch/arm/mach-exynos/mach-universal_c210.c |   26 +++---
+ arch/arm/mach-s3c24xx/mach-smdk2416.c      |   27 +++---
+ arch/arm/mach-s3c64xx/mach-anw6410.c       |   25 +++---
+ arch/arm/mach-s3c64xx/mach-crag6410.c      |   25 +++---
+ arch/arm/mach-s3c64xx/mach-hmt.c           |   24 +++--
+ arch/arm/mach-s3c64xx/mach-mini6410.c      |   40 ++++-----
+ arch/arm/mach-s3c64xx/mach-real6410.c      |   40 ++++-----
+ arch/arm/mach-s3c64xx/mach-smartq5.c       |   26 +++---
+ arch/arm/mach-s3c64xx/mach-smartq7.c       |   26 +++---
+ arch/arm/mach-s3c64xx/mach-smdk6410.c      |   25 +++---
+ arch/arm/mach-s5p64x0/mach-smdk6440.c      |   24 +++--
+ arch/arm/mach-s5p64x0/mach-smdk6450.c      |   24 +++--
+ arch/arm/mach-s5pc100/mach-smdkc100.c      |   27 +++---
+ arch/arm/mach-s5pv210/mach-aquila.c        |   36 ++++----
+ arch/arm/mach-s5pv210/mach-goni.c          |   26 +++---
+ arch/arm/mach-s5pv210/mach-smdkv210.c      |   24 +++--
+ arch/arm/plat-samsung/include/plat/fb.h    |   11 ++-
+ drivers/video/s3c-fb.c                     |  136 +++++++++++++---------------
+ 21 files changed, 356 insertions(+), 314 deletions(-)
