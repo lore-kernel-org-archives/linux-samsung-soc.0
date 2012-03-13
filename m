@@ -1,107 +1,68 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3 0/2] regulator: add irq domain and device tree support
- for MAX8997
-Date: Tue, 13 Mar 2012 02:40:03 +0530
-Message-ID: <CAJuYYwQMB0ANS6noscRe6P4d0JKmTPLP_1r2Sr6-N3amAZiD5Q@mail.gmail.com>
-References: <1330000688-11226-1-git-send-email-thomas.abraham@linaro.org>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH v4 0/2] ARM: Exynos: Add irq_domain and device tree support
+ for combiner
+Date: Mon, 12 Mar 2012 20:34:51 -0500
+Message-ID: <4F5EA43B.8040802@gmail.com>
+References: <1329798806-32482-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vx0-f174.google.com ([209.85.220.174]:40955 "EHLO
-	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756652Ab2CLVKE convert rfc822-to-8bit (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:36315 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757951Ab2CMBfG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 17:10:04 -0400
-Received: by vcqp1 with SMTP id p1so4626587vcq.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 14:10:04 -0700 (PDT)
-In-Reply-To: <1330000688-11226-1-git-send-email-thomas.abraham@linaro.org>
+	Mon, 12 Mar 2012 21:35:06 -0400
+Received: by ghrr11 with SMTP id r11so23136ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 18:35:04 -0700 (PDT)
+In-Reply-To: <1329798806-32482-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
 
-Hi Rob/Grant,
-
-On 23 February 2012 18:08, Thomas Abraham <thomas.abraham@linaro.org> w=
-rote:
+On 02/20/2012 10:33 PM, Thomas Abraham wrote:
+> Changes since v3:
+> - In dt case, the use of fixed gic linux irq number to map the combiner
+>   interrupt output is removed. This is replaced with the interrupt number
+>   obtained from the gic irq domain. (Thanks to Rob Herring and Grant
+>   Likely for this suggestion).
+> - Split the patch into two parts - irq_domain and device tree support
+>   addition.
+> 
 > Changes since v2:
-> - Atleast one voltage level has to be specfied for Buck 1/2/5 even if=
- GPIO
-> =A0DVS option is not used (suggested by MyungJoo Ham).
-> - Reworked the irq_domain support based the v5 of irq_domain generali=
-zation
-> =A0patches.
->
-> MAX8997 is a multi-function device which includes support for regulat=
-ors, rtc,
-> battery charger and other sub-blocks. This patchset adds device tree =
-support
-> for the pmic (regulators) sub-block.
->
-> The first patch adds irq domain support for the interrupts supported =
-by max8997
-> mainly for removing the need to pass a irq_base from the platform cod=
-e. The
-> irq_base could not anyway be passed in case of device tree based inst=
-antiation.
-> The reverse mapping method used is linear since the sub-drivers of ma=
-x8997 has
-> access to the max8997 irq_domain from which the linux irq number can =
-be
-> obtained.
->
-> The second patch adds device tree support for max8997. This patch mod=
-ifies both
-> mfd and regulator portions of the max8997 code.
->
-> This patchset is based on the following tree.
-> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.gi=
-t [for-next]
->
-> with all patches merged from
-> http://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git =
-[for-next]
+> - Rebased to Grant's irqdomain/next branch.
+> 
+> Changes since v1:
+> - Includes all changes suggested by Rob Herring.
+> - Tested with SPARSE_IRQ enabled.
+> 
+> This patchset adds irq_domain and device tree support for the Exynos Interrupt
+> Combiner controller.
+> 
+> The first patch adds a common irq domain for the interrupts managed by the
+> interrupt combiners. All the instances of irq combiner reference the common irq
+> domain for translating hardware interrupts to linux irq number.
+> 
+> The second patch adds a interrupt specifier translator to support device tree
+> based instantiation. It can translate interrupt specifiers for device nodes
+> which use combiner as their interrupt parent.
+> 
+> This patchset is based on
+> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git [for-next]
+> 
+> with all irq_domain (v5) patches merged from
 > http://git.secretlab.ca/git/linux-2.6.git [irqdomain/next]
->
-> and depends on the following patchset.
-> [PATCH v3 0/4] ARM: Exynos4: Add irq domain and device tree support f=
-or wakeup interrupts.
->
-> This patchset has been tested on Origen board.
->
+> 
 > Thomas Abraham (2):
-> =A0mfd: add irq domain support for max8997 interrupts
-> =A0regulator: add device tree support for max8997
+>   ARM: Exynos: Add irq_domain support for interrupt combiner
+>   ARM: Exynos: Add device tree support for interrupt combiner
+> 
+>  .../bindings/arm/samsung/interrupt-combiner.txt    |   48 +++++++++
+>  arch/arm/mach-exynos/common.c                      |  112 ++++++++++++++++----
+>  2 files changed, 140 insertions(+), 20 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
 
-Any comments for this patch series?
+Acked-by: Rob Herring <rob.herring@calxeda.com>
 
-Thanks,
-Thomas.
-
->
-> =A0.../devicetree/bindings/regulator/max8997-pmic.txt | =A0134 ++++++=
-+++++++++++++
-> =A0arch/arm/mach-exynos/mach-nuri.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A04 -
-> =A0arch/arm/mach-exynos/mach-origen.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- | =A0 =A01 -
-> =A0drivers/mfd/max8997-irq.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0| =A0 60 +++++----
-> =A0drivers/mfd/max8997.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 =A0 =A0 =A0| =A0 73 ++++++++++-
-> =A0drivers/regulator/max8997.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0139 +++++++++++++++++++-
-> =A0include/linux/mfd/max8997-private.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-| =A0 =A04 +-
-> =A0include/linux/mfd/max8997.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0| =A0 =A02 +-
-> =A08 files changed, 382 insertions(+), 35 deletions(-)
-> =A0create mode 100644 Documentation/devicetree/bindings/regulator/max=
-8997-pmic.txt
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+Rob
