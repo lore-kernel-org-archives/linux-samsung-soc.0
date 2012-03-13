@@ -1,41 +1,63 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH v3 2/2] regulator: add device tree support for max8997
-Date: Tue, 13 Mar 2012 12:18:03 -0600
-Message-ID: <20120313181803.B45073E053B@localhost>
-References: <1330000688-11226-1-git-send-email-thomas.abraham@linaro.org> <1330000688-11226-3-git-send-email-thomas.abraham@linaro.org> <20120313034306.16CF73E07E4@localhost> <CAJuYYwRAXyU7d7qhGUX-=qWUJ0M1KB3XCGPOnUxToP=0XOhzqg@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL 2/4] Samsung devel-pd for v3.4
+Date: Tue, 13 Mar 2012 16:46:56 -0700
+Message-ID: <CAOesGMiOXKV03YC=6eG6rHhWw+ObGYoVJCqrPdHAsZLmjjzmtw@mail.gmail.com>
+References: <4F5B7C81.6080301@samsung.com>
+	<CAOesGMjff3gVNJQ5FpJuSf+uvVDW8k22b+Xcikot-isM-4-6iw@mail.gmail.com>
+	<201203102209.22451.rjw@sisk.pl>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:59982 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759358Ab2CMSSN (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:56903 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754280Ab2CMXq5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Mar 2012 14:18:13 -0400
-Received: by eekc41 with SMTP id c41so499044eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Mar 2012 11:18:12 -0700 (PDT)
-In-Reply-To: <CAJuYYwRAXyU7d7qhGUX-=qWUJ0M1KB3XCGPOnUxToP=0XOhzqg@mail.gmail.com>
+	Tue, 13 Mar 2012 19:46:57 -0400
+Received: by yenl12 with SMTP id l12so1193168yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Mar 2012 16:46:57 -0700 (PDT)
+In-Reply-To: <201203102209.22451.rjw@sisk.pl>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Rajendra Nayak <rnayak@ti.com>
+To: "Rafael J. Wysocki" <rjw@sisk.pl>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Tue, 13 Mar 2012 12:14:42 +0530, Thomas Abraham <thomas.abraham@lina=
-ro.org> wrote:
-> On 13 March 2012 09:13, Grant Likely <grant.likely@secretlab.ca> wrot=
-e:
-> > On Thu, 23 Feb 2012 18:08:08 +0530, Thomas Abraham <thomas.abraham@=
-linaro.org> wrote:
-> > Otherwise, the patch looks pretty good. =C2=A0(although seeing the =
-decode function
-> > has got me thinking that we need a much better way of decoding the =
-dt data).
->=20
-> The parsing function looks huge since there is lot of data to pick up
-> from the dt node.
+Hi,
 
-Oh, I understand that you have to do it this way; I just think the core=
- code
-should make it a lot easier.  :-)
+On Sat, Mar 10, 2012 at 1:09 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
+> Hi,
+>
+> On Saturday, March 10, 2012, Olof Johansson wrote:
+>> Hi Rafael,
+>>
+>> The below series contains two patches that have been sent to you, and
+>> that are sitting in the pm-domains branch.
+>>
+>> Two questions before I pull this into arm-soc:
+>>
+>> 1) Are you 100% sure this will be submitted to 3.4? And if so, will
+>> you send it early during the merge window?
+>
+> Yes and yes.
+>
+>> 2) Are you 100% sure you will not rebase the branch into which you
+>> pulled the v3.4-for-rafael branch?
+>
+> Yes, I am.
+>
+>> I am asking because if we pull this in, and you rebase between now and
+>> when it's sent in, we're risking merge conflicts that will be painful
+>> to resolve. We've been bitten by that from other dependencies in the
+>> past so we're being careful.
+>
+> Sure, I understand that.
+>
+> As a general rule, topic braches in my tree whose names start with pm- are
+> never rebased (exactly for this reason).
 
-g.
+Excellent, thanks! I'll pull that in as a depends/ branch in arm-soc
+(since that's how we document it), and mark it in our notes so the
+Samsung branch gets merged after yours when going to Linus.
+
+
+
+-Olof
