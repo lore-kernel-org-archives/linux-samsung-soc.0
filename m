@@ -1,111 +1,141 @@
 From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH 2/3] ARM: EXYNOS: Add s3c-hsotg device support for NURI board
-Date: Tue, 13 Mar 2012 09:14:06 +0100
-Message-ID: <1331626447-22868-3-git-send-email-l.majewski@samsung.com>
+Subject: [PATCH 3/3] ARM: EXYNOS: Add s3c-hsotg device support for Universal
+ C210 board
+Date: Tue, 13 Mar 2012 09:14:07 +0100
+Message-ID: <1331626447-22868-4-git-send-email-l.majewski@samsung.com>
 References: <1331626447-22868-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:31152 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758953Ab2CMIOR (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:31481 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758690Ab2CMIOR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Tue, 13 Mar 2012 04:14:17 -0400
-Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
+Received: from euspt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
  (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0M0T00LK7DJRF2@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Mar 2012 08:14:15 +0000 (GMT)
+ with ESMTP id <0M0T00AG4DJN32@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 13 Mar 2012 08:14:11 +0000 (GMT)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M0T0049XDJQJP@spt1.w1.samsung.com> for
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M0T00ANPDJQZJ@spt2.w1.samsung.com> for
  linux-samsung-soc@vger.kernel.org; Tue, 13 Mar 2012 08:14:14 +0000 (GMT)
 In-reply-to: <1331626447-22868-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+This patch adds platform data for using S3C-HSOTG driver at
+Universal_C210 target.
 
-This patch adds hsotg device to the NURI board.
-
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-[Rebased on the newest git/kgene/linux-samsung #for-next]
 Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig     |    1 +
- arch/arm/mach-exynos/mach-nuri.c |    9 ++++++++-
- 2 files changed, 9 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos/Kconfig               |    2 ++
+ arch/arm/mach-exynos/mach-universal_c210.c |   14 ++++++++++++++
+ 2 files changed, 16 insertions(+), 0 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 060414e..1292ad3 100644
+index 1292ad3..118f35d 100644
 --- a/arch/arm/mach-exynos/Kconfig
 +++ b/arch/arm/mach-exynos/Kconfig
-@@ -292,6 +292,7 @@ config MACH_NURI
+@@ -256,6 +256,7 @@ config MACH_UNIVERSAL_C210
  	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
- 	select S5P_SETUP_MIPIPHY
+ 	select S5P_DEV_ONENAND
+ 	select S5P_DEV_TV
 +	select S3C_DEV_USB_HSOTG
  	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_FIMC
  	select EXYNOS4_SETUP_FIMD0
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 7ac81ce..23463d8 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -44,6 +44,7 @@
- #include <plat/fb.h>
- #include <plat/sdhci.h>
- #include <plat/ehci.h>
-+#include <plat/udc-hs.h>
- #include <plat/clock.h>
- #include <plat/gpio-cfg.h>
+ 	select EXYNOS4_SETUP_I2C1
+@@ -264,6 +265,7 @@ config MACH_UNIVERSAL_C210
+ 	select EXYNOS4_SETUP_SDHCI
+ 	select EXYNOS4_SETUP_FIMC
+ 	select S5P_SETUP_MIPIPHY
++	select EXYNOS4_SETUP_USB_PHY
+ 	help
+ 	  Machine support for Samsung Mobile Universal S5PC210 Reference
+ 	  Board.
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 57e4418..f15dcc7 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -29,6 +29,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
++#include <plat/clock.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
  #include <plat/iic.h>
-@@ -390,6 +391,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo1_[] = {
- 	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* Used by CPU's ADC drv */
+@@ -41,6 +42,7 @@
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+ #include <plat/mipi_csis.h>
++#include <plat/udc-hs.h>
+ 
+ #include <mach/map.h>
+ 
+@@ -203,6 +205,7 @@ static struct regulator_init_data lp3974_ldo2_data = {
  };
- static struct regulator_consumer_supply __initdata max8997_ldo3_[] = {
-+	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"), /* USB */
- 	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
+ 
+ static struct regulator_consumer_supply lp3974_ldo3_consumer[] = {
++	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"),
+ 	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"),
+ 	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"),
+ 	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"),
+@@ -288,6 +291,7 @@ static struct regulator_init_data lp3974_ldo7_data = {
  };
- static struct regulator_consumer_supply __initdata max8997_ldo4_[] = {
-@@ -405,7 +407,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo7_[] = {
- 	REGULATOR_SUPPLY("dig_18", "0-001f"), /* HCD803 */
+ 
+ static struct regulator_consumer_supply lp3974_ldo8_consumer[] = {
++	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"),
+ 	REGULATOR_SUPPLY("vdd33a_dac", "s5p-sdo"),
  };
- static struct regulator_consumer_supply __initdata max8997_ldo8_[] = {
--	REGULATOR_SUPPLY("vusb_d", NULL), /* Used by CPU */
-+	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"), /* USB */
- 	REGULATOR_SUPPLY("vdac", NULL), /* Used by CPU */
+ 
+@@ -484,7 +488,10 @@ static struct regulator_init_data lp3974_vichg_data = {
+ static struct regulator_init_data lp3974_esafeout1_data = {
+ 	.constraints	= {
+ 		.name		= "SAFEOUT1",
++		.min_uV		= 4800000,
++		.max_uV		= 4800000,
+ 		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
++		.always_on	= 1,
+ 		.state_mem	= {
+ 			.enabled	= 1,
+ 		},
+@@ -992,6 +999,9 @@ static struct gpio universal_camera_gpios[] = {
+ 	{ GPIO_CAM_VGA_NSTBY,	GPIOF_OUT_INIT_LOW,  "CAM_VGA_NSTBY" },
  };
- static struct regulator_consumer_supply __initdata max8997_ldo11_[] = {
-@@ -1118,6 +1120,9 @@ static void __init nuri_ehci_init(void)
- 	s5p_ehci_set_platdata(pdata);
- }
  
 +/* USB OTG */
-+static struct s3c_hsotg_plat nuri_hsotg_pdata;
++static struct s3c_hsotg_plat universal_hsotg_pdata;
 +
- /* CAMERA */
- static struct regulator_consumer_supply cam_vt_cam15_supply =
- 	REGULATOR_SUPPLY("vdd_core", "6-003c");
-@@ -1330,6 +1335,7 @@ static struct platform_device *nuri_devices[] __initdata = {
+ static void __init universal_camera_init(void)
+ {
+ 	s3c_set_platdata(&mipi_csis_platdata, sizeof(mipi_csis_platdata),
+@@ -1047,6 +1057,7 @@ static struct platform_device *universal_devices[] __initdata = {
+ 	&s5p_device_onenand,
+ 	&s5p_device_fimd0,
+ 	&s5p_device_jpeg,
++	&s3c_device_usb_hsotg,
+ 	&s5p_device_mfc,
  	&s5p_device_mfc_l,
  	&s5p_device_mfc_r,
- 	&s5p_device_fimc_md,
-+	&s3c_device_usb_hsotg,
+@@ -1098,10 +1109,13 @@ static void __init universal_machine_init(void)
+ 	i2c_register_board_info(I2C_GPIO_BUS_12, i2c_gpio12_devs,
+ 			ARRAY_SIZE(i2c_gpio12_devs));
  
- 	/* NURI Devices */
- 	&nuri_gpio_keys,
-@@ -1377,6 +1383,7 @@ static void __init nuri_machine_init(void)
- 	nuri_camera_init();
- 
- 	nuri_ehci_init();
-+	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
- 	clk_xusbxti.rate = 24000000;
++	s3c_hsotg_set_platdata(&universal_hsotg_pdata);
+ 	universal_camera_init();
  
  	/* Last */
+ 	platform_add_devices(universal_devices, ARRAY_SIZE(universal_devices));
++
++	clk_xusbxti.rate = 24000000;
+ }
+ 
+ MACHINE_START(UNIVERSAL_C210, "UNIVERSAL_C210")
 -- 
 1.7.2.3
