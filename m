@@ -1,96 +1,115 @@
-From: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v11 3/3] iommu/exynos: Add iommu driver for Exynos
-	Platforms
-Date: Tue, 13 Mar 2012 17:50:16 +0900
-Message-ID: <CAHQjnOOCQb4G1aeFB0FQVBstXpaXmahnQO8+FoinPcQNZEieGg@mail.gmail.com>
-References: <017a01ccfdee$4e5e7a00$eb1b6e00$%cho@samsung.com>
-	<20120312150156.GF18973@amd.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH v3 2/3] video: s3c-fb: remove 'default_win' element from
+ platform data
+Date: Tue, 13 Mar 2012 18:34:32 +0900
+Message-ID: <002e01cd00fc$7efad9e0$7cf08da0$%han@samsung.com>
+References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
+ <1331585999-8604-3-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20120312150156.GF18973-5C7GfCeVMHo@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Younglak Kim <younglak1004.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sanghyun Lee <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:9471 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759774Ab2CMJef (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 13 Mar 2012 05:34:35 -0400
+In-reply-to: <1331585999-8604-3-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
+Cc: FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Tue, Mar 13, 2012 at 12:01 AM, Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org> wrote:
-> On Fri, Mar 09, 2012 at 09:15:24PM +0900, Cho KyongHo wrote:
->> +/* We does not consider super section mapping (16MB) */
->> +struct iommu_client {
->> + =A0 =A0 struct list_head node;
->> + =A0 =A0 struct device *dev;
->> +};
->> +
->> +struct exynos_iommu_domain {
->> + =A0 =A0 struct list_head clients; /* list of iommu_client */
->> + =A0 =A0 unsigned long *pgtable; /* lv1 page table, 16KB */
->> + =A0 =A0 short *lv2entcnt; /* free lv2 entry counter for each section */
->> + =A0 =A0 spinlock_t lock; /* lock for this structure and attached iommu=
-_client */
->> + =A0 =A0 spinlock_t pgtablelock; /* lock for modifying page table @ pgt=
-able */
->> +};
->> +
->> +struct sysmmu_drvdata {
->> + =A0 =A0 struct device *sysmmu;
->> + =A0 =A0 char *dbgname;
->> + =A0 =A0 int nsfrs;
->> + =A0 =A0 void __iomem **sfrbases;
->> + =A0 =A0 struct clk *clk[2];
->> + =A0 =A0 int activations;
->> + =A0 =A0 rwlock_t lock;
->> + =A0 =A0 struct iommu_domain *domain;
->> + =A0 =A0 sysmmu_fault_handler_t fault_handler;
->> + =A0 =A0 unsigned long pgtable;
->> + =A0 =A0 struct iommu_client client;
->> +};
->
-> Is there any reason why 'struct iommu_client' is a seperate data
-> structure? Otherwise it can be merged with 'truct sysmmu_drvdata'.
->
+From: Thomas Abraham <thomas.abraham@linaro.org>
 
-There is no reason to separate it.
-It is not cleanly refactored since patch version 10.
+The decision to enable or disable the data output to the lcd panel from
+the controller need not be based on the value of 'default_win' element
+in the platform data. Instead, the data output to the panel is enabled
+if any of the windows are active, else data output is disabled.
 
->> +static void exynos_iommu_domain_destroy(struct iommu_domain *domain)
->> +{
->> + =A0 =A0 struct exynos_iommu_domain *priv =3D domain->priv;
->> + =A0 =A0 struct list_head *pos, *n;
->> + =A0 =A0 unsigned long flags;
->> + =A0 =A0 int i;
->> +
->> + =A0 =A0 WARN_ON(!list_empty(&priv->clients));
->> +
->> + =A0 =A0 spin_lock_irqsave(&priv->lock, flags);
->> +
->> + =A0 =A0 list_for_each_safe(pos, n, &priv->clients) {
->> + =A0 =A0 =A0 =A0 =A0 =A0 struct iommu_client *client;
->> +
->> + =A0 =A0 =A0 =A0 =A0 =A0 client =3D list_entry(pos, struct iommu_client=
-, node);
->> + =A0 =A0 =A0 =A0 =A0 =A0 exynos_sysmmu_disable(client->dev);
->> + =A0 =A0 =A0 =A0 =A0 =A0 kfree(client);
->> + =A0 =A0 }
->
-> Why this kfree here? Aren't all iommu_clients just a part of another
-> data-structre?
+Cc: Ben Dooks <ben-linux@fluff.org>
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+v3: fix some minor coding styles
 
-It is absolutely my fault. It must be removed.
-I have forgot to care about updating iommu_domain_destroy()
-when modifying exynos_iommu_attach/detach_device().
+ arch/arm/plat-samsung/include/plat/fb.h |    3 ---
+ drivers/video/s3c-fb.c                  |   24 +++++-------------------
+ 2 files changed, 5 insertions(+), 22 deletions(-)
 
-Thank you.
-
-The problems will be soon fixed and I will post next patch tomorrow.
-
-Cho KyongHo/
+diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
+index 39d6bd7..b885322 100644
+--- a/arch/arm/plat-samsung/include/plat/fb.h
++++ b/arch/arm/plat-samsung/include/plat/fb.h
+@@ -43,7 +43,6 @@ struct s3c_fb_pd_win {
+  * @setup_gpio: Setup the external GPIO pins to the right state to transfer
+  *		the data from the display system to the connected display
+  *		device.
+- * @default_win: default window layer number to be used for UI layer.
+  * @vidcon0: The base vidcon0 values to control the panel data format.
+  * @vidcon1: The base vidcon1 values to control the panel data output.
+  * @vtiming: Video timing when connected to a RGB type panel.
+@@ -62,8 +61,6 @@ struct s3c_fb_platdata {
+ 	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
+ 	struct fb_videomode     *vtiming;
+ 
+-	u32			 default_win;
+-
+ 	u32			 vidcon0;
+ 	u32			 vidcon1;
+ };
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index c94f40d..dd816fb 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -531,7 +531,7 @@ static int s3c_fb_set_par(struct fb_info *info)
+ 	/* disable the window whilst we update it */
+ 	writel(0, regs + WINCON(win_no));
+ 
+-	if (win_no == sfb->pdata->default_win)
++	if (!sfb->output_on)
+ 		s3c_fb_enable(sfb, 1);
+ 
+ 	/* write the buffer address */
+@@ -799,6 +799,7 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
+ 	struct s3c_fb *sfb = win->parent;
+ 	unsigned int index = win->index;
+ 	u32 wincon;
++	u32 output_on = sfb->output_on;
+ 
+ 	dev_dbg(sfb->dev, "blank mode %d\n", blank_mode);
+ 
+@@ -844,27 +845,12 @@ static int s3c_fb_blank(int blank_mode, struct fb_info *info)
+ 	 * it is highly likely that we also do not need to output
+ 	 * anything.
+ 	 */
+-
+-	/* We could do something like the following code, but the current
+-	 * system of using framebuffer events means that we cannot make
+-	 * the distinction between just window 0 being inactive and all
+-	 * the windows being down.
+-	 *
+-	 * s3c_fb_enable(sfb, sfb->enabled ? 1 : 0);
+-	*/
+-
+-	/* we're stuck with this until we can do something about overriding
+-	 * the power control using the blanking event for a single fb.
+-	 */
+-	if (index == sfb->pdata->default_win) {
+-		shadow_protect_win(win, 1);
+-		s3c_fb_enable(sfb, blank_mode != FB_BLANK_POWERDOWN ? 1 : 0);
+-		shadow_protect_win(win, 0);
+-	}
++	s3c_fb_enable(sfb, sfb->enabled ? 1 : 0);
++	shadow_protect_win(win, 0);
+ 
+ 	pm_runtime_put_sync(sfb->dev);
+ 
+-	return 0;
++	return output_on == sfb->output_on;
+ }
+ 
+ /**
+-- 
+1.7.1
