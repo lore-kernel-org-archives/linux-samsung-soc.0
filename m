@@ -1,68 +1,252 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v4 0/2] ARM: Exynos: Add irq_domain and device tree support
- for combiner
-Date: Mon, 12 Mar 2012 20:34:51 -0500
-Message-ID: <4F5EA43B.8040802@gmail.com>
-References: <1329798806-32482-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH v3 1/2] mfd: add irq domain support for max8997 interrupts
+Date: Mon, 12 Mar 2012 21:28:32 -0600
+Message-ID: <20120313032832.655983E07E4@localhost>
+References: <1330000688-11226-1-git-send-email-thomas.abraham@linaro.org> <1330000688-11226-2-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:36315 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757951Ab2CMBfG (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:55894 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759026Ab2CMD2h (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 12 Mar 2012 21:35:06 -0400
-Received: by ghrr11 with SMTP id r11so23136ghr.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 18:35:04 -0700 (PDT)
-In-Reply-To: <1329798806-32482-1-git-send-email-thomas.abraham@linaro.org>
+	Mon, 12 Mar 2012 23:28:37 -0400
+Received: by iagz16 with SMTP id z16so165318iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 12 Mar 2012 20:28:36 -0700 (PDT)
+In-Reply-To: <1330000688-11226-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, rob.herring@calxeda.com, patches@linaro.org
+To: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org
+Cc: k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, dg77.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 02/20/2012 10:33 PM, Thomas Abraham wrote:
-> Changes since v3:
-> - In dt case, the use of fixed gic linux irq number to map the combiner
->   interrupt output is removed. This is replaced with the interrupt number
->   obtained from the gic irq domain. (Thanks to Rob Herring and Grant
->   Likely for this suggestion).
-> - Split the patch into two parts - irq_domain and device tree support
->   addition.
+On Thu, 23 Feb 2012 18:08:07 +0530, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> Add irq domain support for max8997 interrupts. The reverse mapping method
+> used is linear mapping since the sub-drivers of max8997 such as regulator
+> and charger drivers can use the max8997 irq_domain to get the linux irq
+> number for max8997 interrupts. All uses of irq_base in platform data and
+> max8997 driver private data are removed.
 > 
-> Changes since v2:
-> - Rebased to Grant's irqdomain/next branch.
-> 
-> Changes since v1:
-> - Includes all changes suggested by Rob Herring.
-> - Tested with SPARSE_IRQ enabled.
-> 
-> This patchset adds irq_domain and device tree support for the Exynos Interrupt
-> Combiner controller.
-> 
-> The first patch adds a common irq domain for the interrupts managed by the
-> interrupt combiners. All the instances of irq combiner reference the common irq
-> domain for translating hardware interrupts to linux irq number.
-> 
-> The second patch adds a interrupt specifier translator to support device tree
-> based instantiation. It can translate interrupt specifiers for device nodes
-> which use combiner as their interrupt parent.
-> 
-> This patchset is based on
-> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git [for-next]
-> 
-> with all irq_domain (v5) patches merged from
-> http://git.secretlab.ca/git/linux-2.6.git [irqdomain/next]
-> 
-> Thomas Abraham (2):
->   ARM: Exynos: Add irq_domain support for interrupt combiner
->   ARM: Exynos: Add device tree support for interrupt combiner
-> 
->  .../bindings/arm/samsung/interrupt-combiner.txt    |   48 +++++++++
->  arch/arm/mach-exynos/common.c                      |  112 ++++++++++++++++----
->  2 files changed, 140 insertions(+), 20 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/mach-exynos/mach-nuri.c    |    4 --
+>  arch/arm/mach-exynos/mach-origen.c  |    1 -
+>  drivers/mfd/max8997-irq.c           |   60 ++++++++++++++++++++--------------
+>  drivers/mfd/max8997.c               |    1 -
+>  include/linux/mfd/max8997-private.h |    4 ++-
+>  include/linux/mfd/max8997.h         |    1 -
+>  6 files changed, 38 insertions(+), 33 deletions(-)
 
-Acked-by: Rob Herring <rob.herring@calxeda.com>
+Nice patch.  Nice diffstat too.  Some comments below, but I'm happy with where
+this is at.
 
-Rob
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
+
+> 
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+> index a6b9162..1e9ba12 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -1078,12 +1078,8 @@ static struct platform_device nuri_max8903_device = {
+>  static void __init nuri_power_init(void)
+>  {
+>  	int gpio;
+> -	int irq_base = IRQ_GPIO_END + 1;
+>  	int ta_en = 0;
+>  
+> -	nuri_max8997_pdata.irq_base = irq_base;
+> -	irq_base += MAX8997_IRQ_NR;
+> -
+>  	gpio = EXYNOS4_GPX0(7);
+>  	gpio_request(gpio, "AP_PMIC_IRQ");
+>  	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+> index 02c242e..328dadb 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -424,7 +424,6 @@ static struct max8997_platform_data __initdata origen_max8997_pdata = {
+>  	.buck1_gpiodvs	= false,
+>  	.buck2_gpiodvs	= false,
+>  	.buck5_gpiodvs	= false,
+> -	.irq_base	= IRQ_GPIO_END + 1,
+>  
+>  	.ignore_gpiodvs_side_effect = true,
+>  	.buck125_default_idx = 0x0,
+> diff --git a/drivers/mfd/max8997-irq.c b/drivers/mfd/max8997-irq.c
+> index 09274cf..3d8c9d1 100644
+> --- a/drivers/mfd/max8997-irq.c
+> +++ b/drivers/mfd/max8997-irq.c
+> @@ -142,7 +142,8 @@ static void max8997_irq_sync_unlock(struct irq_data *data)
+>  static const inline struct max8997_irq_data *
+>  irq_to_max8997_irq(struct max8997_dev *max8997, int irq)
+>  {
+> -	return &max8997_irqs[irq - max8997->irq_base];
+> +	struct irq_data *data = irq_get_irq_data(irq);
+> +	return &max8997_irqs[data->hwirq];
+
+Hahaha.  The max8997_irqs table is kind of overdone when the group and mask values
+can be arithmetically derived from the hwirq number..
+
+This change is fine, but the driver could use some refactoring.  :-)
+
+>  }
+>  
+>  static void max8997_irq_mask(struct irq_data *data)
+> @@ -182,7 +183,7 @@ static irqreturn_t max8997_irq_thread(int irq, void *data)
+>  	u8 irq_reg[MAX8997_IRQ_GROUP_NR] = {};
+>  	u8 irq_src;
+>  	int ret;
+> -	int i;
+> +	int i, cur_irq;
+>  
+>  	ret = max8997_read_reg(max8997->i2c, MAX8997_REG_INTSRC, &irq_src);
+>  	if (ret < 0) {
+> @@ -269,8 +270,10 @@ static irqreturn_t max8997_irq_thread(int irq, void *data)
+>  
+>  	/* Report */
+>  	for (i = 0; i < MAX8997_IRQ_NR; i++) {
+> -		if (irq_reg[max8997_irqs[i].group] & max8997_irqs[i].mask)
+> -			handle_nested_irq(max8997->irq_base + i);
+> +		if (irq_reg[max8997_irqs[i].group] & max8997_irqs[i].mask) {
+> +			cur_irq = irq_find_mapping(max8997->irq_domain, i);
+> +			handle_nested_irq(cur_irq);
+> +		}
+
+Well, if you're using the linear mapping, then only actually allocated irqs will
+have a mapping set up.  So the driver could simply do:
+
+	for (i = 0; i < MAX8997_IRQ_NR; i++) {
+		cur_irq = irq_find_mapping(max8997->irq_domain, i);
+		if (cur_irq)
+			handle_nested_irq(cur_irq);
+	}
+
+>  	}
+>  
+>  	return IRQ_HANDLED;
+> @@ -278,26 +281,40 @@ static irqreturn_t max8997_irq_thread(int irq, void *data)
+>  
+>  int max8997_irq_resume(struct max8997_dev *max8997)
+>  {
+> -	if (max8997->irq && max8997->irq_base)
+> -		max8997_irq_thread(max8997->irq_base, max8997);
+> +	if (max8997->irq && max8997->irq_domain)
+> +		max8997_irq_thread(0, max8997);
+> +	return 0;
+> +}
+> +
+> +static int max8997_irq_domain_map(struct irq_domain *d, unsigned int irq,
+> +					irq_hw_number_t hw)
+> +{
+> +	struct max8997_dev *max8997 = d->host_data;
+> +
+> +	irq_set_chip_data(irq, max8997);
+> +	irq_set_chip_and_handler(irq, &max8997_irq_chip, handle_edge_irq);
+> +	irq_set_nested_thread(irq, 1);
+> +#ifdef CONFIG_ARM
+> +	set_irq_flags(irq, IRQF_VALID);
+> +#else
+> +	irq_set_noprobe(irq);
+> +#endif
+>  	return 0;
+>  }
+>  
+> +static struct irq_domain_ops max8997_irq_domain_ops = {
+> +	.map = max8997_irq_domain_map,
+> +};
+> +
+>  int max8997_irq_init(struct max8997_dev *max8997)
+>  {
+> +	struct irq_domain *domain;
+>  	int i;
+> -	int cur_irq;
+>  	int ret;
+>  	u8 val;
+>  
+>  	if (!max8997->irq) {
+>  		dev_warn(max8997->dev, "No interrupt specified.\n");
+> -		max8997->irq_base = 0;
+> -		return 0;
+> -	}
+> -
+> -	if (!max8997->irq_base) {
+> -		dev_err(max8997->dev, "No interrupt base specified.\n");
+>  		return 0;
+>  	}
+>  
+> @@ -327,18 +344,11 @@ int max8997_irq_init(struct max8997_dev *max8997)
+>  					true : false;
+>  	}
+>  
+> -	/* Register with genirq */
+> -	for (i = 0; i < MAX8997_IRQ_NR; i++) {
+> -		cur_irq = i + max8997->irq_base;
+> -		irq_set_chip_data(cur_irq, max8997);
+> -		irq_set_chip_and_handler(cur_irq, &max8997_irq_chip,
+> -				handle_edge_irq);
+> -		irq_set_nested_thread(cur_irq, 1);
+> -#ifdef CONFIG_ARM
+> -		set_irq_flags(cur_irq, IRQF_VALID);
+> -#else
+> -		irq_set_noprobe(cur_irq);
+> -#endif
+> +	domain = irq_domain_add_linear(NULL, MAX8997_IRQ_NR,
+> +					&max8997_irq_domain_ops, &max8997);
+> +	if (!domain) {
+> +		dev_err(max8997->dev, "could not create irq domain\n");
+> +		return -ENODEV;
+>  	}
+>  
+>  	ret = request_threaded_irq(max8997->irq, NULL, max8997_irq_thread,
+> diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+> index cb83a7a..20ecad3 100644
+> --- a/drivers/mfd/max8997.c
+> +++ b/drivers/mfd/max8997.c
+> @@ -143,7 +143,6 @@ static int max8997_i2c_probe(struct i2c_client *i2c,
+>  	if (!pdata)
+>  		goto err;
+>  
+> -	max8997->irq_base = pdata->irq_base;
+>  	max8997->ono = pdata->ono;
+>  
+>  	mutex_init(&max8997->iolock);
+> diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/max8997-private.h
+> index 3f4deb6..830152c 100644
+> --- a/include/linux/mfd/max8997-private.h
+> +++ b/include/linux/mfd/max8997-private.h
+> @@ -23,6 +23,8 @@
+>  #define __LINUX_MFD_MAX8997_PRIV_H
+>  
+>  #include <linux/i2c.h>
+> +#include <linux/export.h>
+> +#include <linux/irqdomain.h>
+>  
+>  #define MAX8997_REG_INVALID	(0xff)
+>  
+> @@ -325,7 +327,7 @@ struct max8997_dev {
+>  
+>  	int irq;
+>  	int ono;
+> -	int irq_base;
+> +	struct irq_domain *irq_domain;
+>  	struct mutex irqlock;
+>  	int irq_masks_cur[MAX8997_IRQ_GROUP_NR];
+>  	int irq_masks_cache[MAX8997_IRQ_GROUP_NR];
+> diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.h
+> index fff5905..818486c 100644
+> --- a/include/linux/mfd/max8997.h
+> +++ b/include/linux/mfd/max8997.h
+> @@ -155,7 +155,6 @@ struct max8997_led_platform_data {
+>  
+>  struct max8997_platform_data {
+>  	/* IRQ */
+> -	int irq_base;
+>  	int ono;
+>  	int wakeup;
+>  
+> -- 
+> 1.6.6.rc2
+> 
+
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
