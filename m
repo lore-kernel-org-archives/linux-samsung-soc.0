@@ -1,32 +1,58 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 00/12] ARM: EXYNOS: add support new EXYNOS5250
-Date: Tue, 13 Mar 2012 16:22:08 +0000
-Message-ID: <201203131622.09048.arnd@arndb.de>
-References: <1331652643-12626-1-git-send-email-kgene.kim@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH v11 3/3] iommu/exynos: Add iommu driver for Exynos Platforms
+Date: Wed, 14 Mar 2012 01:38:05 +0900
+Message-ID: <CAHQjnOO2Me5C6it=M0OFKdRcK0LObDR8+hPGyuUb21oqGwsg0g@mail.gmail.com>
+References: <017a01ccfdee$4e5e7a00$eb1b6e00$%cho@samsung.com>
+	<20120312150156.GF18973@amd.com>
+	<CAHQjnOOCQb4G1aeFB0FQVBstXpaXmahnQO8+FoinPcQNZEieGg@mail.gmail.com>
+	<20120313100024.GG18973@amd.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:60844 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757419Ab2CMQWQ (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:39569 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753058Ab2CMQiH convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Mar 2012 12:22:16 -0400
-In-Reply-To: <1331652643-12626-1-git-send-email-kgene.kim@samsung.com>
+	Tue, 13 Mar 2012 12:38:07 -0400
+In-Reply-To: <20120313100024.GG18973@amd.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, olof@lixom.net
+To: Joerg Roedel <joerg.roedel@amd.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org, Younglak Kim <younglak1004.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Sanghyun Lee <sanghyun75.lee@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-On Tuesday 13 March 2012, Kukjin Kim wrote:
-> 
-> This patch adds support EXYNOS5250 SoC which has two A15 cores
-> can be used on mobile and tablet devices.
+On Tue, Mar 13, 2012 at 7:00 PM, Joerg Roedel <joerg.roedel@amd.com> wr=
+ote:
+> On Tue, Mar 13, 2012 at 05:50:16PM +0900, KyongHo Cho wrote:
+>> >> +struct sysmmu_drvdata {
+>> >> + =A0 =A0 struct device *sysmmu;
+>> >> + =A0 =A0 char *dbgname;
+>> >> + =A0 =A0 int nsfrs;
+>> >> + =A0 =A0 void __iomem **sfrbases;
+>> >> + =A0 =A0 struct clk *clk[2];
+>> >> + =A0 =A0 int activations;
+>> >> + =A0 =A0 rwlock_t lock;
+>> >> + =A0 =A0 struct iommu_domain *domain;
+>> >> + =A0 =A0 sysmmu_fault_handler_t fault_handler;
+>> >> + =A0 =A0 unsigned long pgtable;
+>> >> + =A0 =A0 struct iommu_client client;
+>> >> +};
+>> >
+>> > Is there any reason why 'struct iommu_client' is a seperate data
+>> > structure? Otherwise it can be merged with 'truct sysmmu_drvdata'.
+>
+> Of course this doesn't need to be changed immediatly. I just asked if
+> there was a specific reason for this seperation.
+>
+>> The problems will be soon fixed and I will post next patch tomorrow.
+>
+> Fine. Please also get the Acked-bys from the Exynos maintainer on
+> patches 1 and 2 at least. I'll merge it then.
+>
+Thank you.
+AFAIK, Exynos maintainer is somewhat busy for his own job.
+I will ask him to ack my patch soon.
 
-Looks basically ok to me. I've commented on patches 5 and 9 and
-in both cases, I would either like to see the patch get dropped
-or the changeset description expanded to give a good explanation
-why the change is actually needed.
+Best regards,
 
-	Arnd
+Cho KyongHo.
