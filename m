@@ -1,110 +1,141 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 2/3] ARM: Exynos: Add DRM core device support for Universal
- C210 board
-Date: Tue, 13 Mar 2012 15:14:20 +0100
-Message-ID: <031601cd0123$9626a2d0$c273e870$%szyprowski@samsung.com>
-References: <1331291105-18152-1-git-send-email-m.szyprowski@samsung.com>
- <1331291105-18152-3-git-send-email-m.szyprowski@samsung.com>
- <CAK9yfHyHoDucPwvZbb_ireRTohkd9hCDf3ER_yp3Rv_7BmNwhg@mail.gmail.com>
- <CAH9JG2UWE1CNOrHVtMawS9TrPHHZrgpbVwvgmXb4OiLObnxdsA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7BIT
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH v3 01/12] ARM: EXYNOS: to declare static for mach-exynos/common.c
+Date: Tue, 13 Mar 2012 08:30:32 -0700
+Message-ID: <1331652643-12626-2-git-send-email-kgene.kim@samsung.com>
+References: <1331652643-12626-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:11045 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754879Ab2CMOO2 (ORCPT
+Received: from mail-iy0-f174.google.com ([209.85.210.174]:37236 "EHLO
+	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756191Ab2CMPbf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Mar 2012 10:14:28 -0400
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0M0T0070UU7YHK@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Mar 2012 14:14:22 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M0T00MNQU82BS@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 13 Mar 2012 14:14:26 +0000 (GMT)
-In-reply-to: <CAH9JG2UWE1CNOrHVtMawS9TrPHHZrgpbVwvgmXb4OiLObnxdsA@mail.gmail.com>
-Content-language: pl
+	Tue, 13 Mar 2012 11:31:35 -0400
+Received: by iagz16 with SMTP id z16so910445iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Mar 2012 08:31:34 -0700 (PDT)
+In-Reply-To: <1331652643-12626-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sachin Kamat' <sachin.kamat@linaro.org>, =?ks_c_5601-1987?B?J7TrwM6x4ic=?= <inki.dae@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: arnd@arndb.de, olof@lixom.net, Kukjin Kim <kgene.kim@samsung.com>
 
-Hello,
+According to commit cc511b8d84d8 ("ARM: 7257/1: EXYNOS: introduce
+arch/arm/mach-exynos/common.[ch]"), we don't need to declare extern
+for exynos4_map_io(), exynos4_init_clocks(), exynos4_init_uarts(),
+and exynos_init(). And the exynos4210_register_clocks() and
+exynos4212_register_clocks depend on each SoC not ARCH_EXYNOS4.
+So this patch fixed above.
 
-On Tuesday, March 13, 2012 5:39 AM Kyungmin Park wrote:
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |   13 +++++++++----
+ arch/arm/mach-exynos/common.h |   28 +++++++++++-----------------
+ 2 files changed, 20 insertions(+), 21 deletions(-)
 
-> On 3/13/12, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> > Hi Marek,
-> > Thanks for the patch.
-> >
-> > On 09/03/2012, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> >> Add core DRM device and alternative platform device data for FIMD DRM
-> >> subdriver. Based on the initial patch by Joonyoung Shim
-> >> <jy0922.shim@samsung.com>
-> >>
-> >> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> >> ---
-> >>  arch/arm/mach-exynos/Kconfig               |    1 +
-> >>  arch/arm/mach-exynos/mach-universal_c210.c |   31
-> >> ++++++++++++++++++++++++++++
-> >>  2 files changed, 32 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-> >> index 5a26944..c73eeba 100644
-> >> --- a/arch/arm/mach-exynos/Kconfig
-> >> +++ b/arch/arm/mach-exynos/Kconfig
-> >> @@ -257,6 +257,7 @@ config MACH_UNIVERSAL_C210
-> >>  	select S5P_DEV_ONENAND
-> >>  	select S5P_DEV_TV
-> >>  	select EXYNOS4_DEV_DMA
-> >> +	select EXYNOS_DEV_DRM
-> >>  	select EXYNOS4_SETUP_FIMD0
-> >>  	select EXYNOS4_SETUP_I2C1
-> >>  	select EXYNOS4_SETUP_I2C3
-> >> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c
-> >> b/arch/arm/mach-exynos/mach-universal_c210.c
-> >> index 322b272..30a3ff3 100644
-> >> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> >> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> >> @@ -23,6 +23,7 @@
-> >>  #include <linux/i2c-gpio.h>
-> >>  #include <linux/i2c/mcs.h>
-> >>  #include <linux/i2c/atmel_mxt_ts.h>
-> >> +#include <drm/exynos_drm.h>
-> >>
-> >>  #include <asm/mach/arch.h>
-> >>  #include <asm/hardware/gic.h>
-> >> @@ -811,6 +812,27 @@ static struct i2c_board_info i2c1_devs[] __initdata =
-> >> {
-> >>  	/* Gyro, To be updated */
-> >>  };
-> >>
-> >> +#ifdef CONFIG_DRM_EXYNOS
-> >> +static struct exynos_drm_fimd_pdata drm_fimd_pdata = {
-> >> +	.timing	= {
-> >> +		.left_margin	= 16,
-> >> +		.right_margin	= 16,
-> >> +		.upper_margin	= 2,
-> >> +		.lower_margin	= 28,
-> >> +		.hsync_len	= 2,
-> >> +		.vsync_len	= 1,
-> >> +		.xres		= 480,
-> >> +		.yres		= 800,
-> >> +		.refresh	= 55,
-> >> +	},
-> >
-> > Shouldn't this be:
-> Right, recently we added the panel information. It should be drm-next soon.
-
-I'm sorry for the confusion, I've sent patches which were based on 3.3-rc5 without 
-drm-next/fixes. I've just sent v2 patchset which reflects latest changes in drm-next/fixes
-branches.
-
-Best regards
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 34e8190..a1f8a99 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -50,6 +50,11 @@ static const char name_exynos4210[] = "EXYNOS4210";
+ static const char name_exynos4212[] = "EXYNOS4212";
+ static const char name_exynos4412[] = "EXYNOS4412";
+ 
++static void exynos4_map_io(void);
++static void exynos4_init_clocks(int xtal);
++static void exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no);
++static int exynos_init(void);
++
+ static struct cpu_table cpu_ids[] __initdata = {
+ 	{
+ 		.idcode		= EXYNOS4210_CPU_ID,
+@@ -225,7 +230,7 @@ void __init exynos_init_io(struct map_desc *mach_desc, int size)
+ 	s3c_init_cpu(samsung_cpu_id, cpu_ids, ARRAY_SIZE(cpu_ids));
+ }
+ 
+-void __init exynos4_map_io(void)
++static void __init exynos4_map_io(void)
+ {
+ 	iotable_init(exynos4_iodesc, ARRAY_SIZE(exynos4_iodesc));
+ 
+@@ -256,7 +261,7 @@ void __init exynos4_map_io(void)
+ 	s5p_hdmi_setname("exynos4-hdmi");
+ }
+ 
+-void __init exynos4_init_clocks(int xtal)
++static void __init exynos4_init_clocks(int xtal)
+ {
+ 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+ 
+@@ -456,7 +461,7 @@ static int __init exynos4_l2x0_cache_init(void)
+ early_initcall(exynos4_l2x0_cache_init);
+ #endif
+ 
+-int __init exynos_init(void)
++static int __init exynos_init(void)
+ {
+ 	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
+ 	return device_register(&exynos4_dev);
+@@ -464,7 +469,7 @@ int __init exynos_init(void)
+ 
+ /* uart registration process */
+ 
+-void __init exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no)
++static void __init exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no)
+ {
+ 	struct s3c2410_uartcfg *tcfg = cfg;
+ 	u32 ucnt;
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 8c1efe6..b32c6b5 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -12,39 +12,33 @@
+ #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ 
++extern struct sys_timer exynos4_timer;
++
+ void exynos_init_io(struct map_desc *mach_desc, int size);
+ void exynos4_init_irq(void);
++void exynos4_restart(char mode, const char *cmd);
+ 
+ #ifdef CONFIG_ARCH_EXYNOS4
+ void exynos4_register_clocks(void);
+ void exynos4_setup_clocks(void);
+ 
+-void exynos4210_register_clocks(void);
+-void exynos4212_register_clocks(void);
+-
+ #else
+ #define exynos4_register_clocks()
+ #define exynos4_setup_clocks()
+-
+-#define exynos4210_register_clocks()
+-#define exynos4212_register_clocks()
+ #endif
+ 
+-void exynos4_restart(char mode, const char *cmd);
++#ifdef CONFIG_CPU_EXYNOS4210
++void exynos4210_register_clocks(void);
+ 
+-extern struct sys_timer exynos4_timer;
++#else
++#define exynos4210_register_clocks()
++#endif
+ 
+-#ifdef CONFIG_ARCH_EXYNOS
+-extern  int exynos_init(void);
+-extern void exynos4_map_io(void);
+-extern void exynos4_init_clocks(int xtal);
+-extern void exynos4_init_uarts(struct s3c2410_uartcfg *cfg, int no);
++#ifdef CONFIG_SOC_EXYNOS4212
++void exynos4212_register_clocks(void);
+ 
+ #else
+-#define exynos4_init_clocks NULL
+-#define exynos4_init_uarts NULL
+-#define exynos4_map_io NULL
+-#define exynos_init NULL
++#define exynos4212_register_clocks()
+ #endif
+ 
+ #endif /* __ARCH_ARM_MACH_EXYNOS_COMMON_H */
 -- 
-Marek Szyprowski
-Samsung Poland R&D Center
+1.7.4.4
