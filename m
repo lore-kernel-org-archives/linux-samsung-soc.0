@@ -1,27 +1,128 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 0/5] ARM: EXYNOS: add support PM for EXYNOS5250
-Date: Wed, 14 Mar 2012 07:26:25 -0700
-Message-ID: <1331735190-28773-1-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 1/5] ARM: EXYNOS: Remove GIC save & restore function
+Date: Wed, 14 Mar 2012 07:26:26 -0700
+Message-ID: <1331735190-28773-2-git-send-email-kgene.kim@samsung.com>
+References: <1331735190-28773-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-iy0-f174.google.com ([209.85.210.174]:43720 "EHLO
 	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030522Ab2CNO0m (ORCPT
+	with ESMTP id S1030522Ab2CNO0p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 10:26:42 -0400
-Received: by iagz16 with SMTP id z16so2393644iag.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 07:26:42 -0700 (PDT)
+	Wed, 14 Mar 2012 10:26:45 -0400
+Received: by mail-iy0-f174.google.com with SMTP id z16so2393644iag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 07:26:45 -0700 (PDT)
+In-Reply-To: <1331735190-28773-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Jongpill Lee <boyko.lee@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch adds support power management for EXYNOS5250 SoCs
-and incudes regarding cleanup.
+From: Jongpill Lee <boyko.lee@samsung.com>
 
-NOTE: this can be applied on top of next/soc-exynos5250-arch
-of linux-samsung.git cleanly.
+This patch removes GIC save & restore functino in pm.c. Because when
+enalbe CPU_PM feature, GIC driver execute save and restore function
+in CPU_PM notifier.
+So it is not needed to GIC save & restore function at pm.c file.
 
-[PATCH 1/5] ARM: EXYNOS: Remove GIC save & restore function
-[PATCH 2/5] ARM: EXYNOS: Rename of function for pm.c
-[PATCH 3/5] ARM: EXYNOS: Add PMU table for EXYNOS5250
-[PATCH 4/5] ARM: EXYNOS: Add Clock register list for save and
-[PATCH 5/5] ARM: EXYNOS: Support suspend and resume for EXYNOS5250
+Signed-off-by: Jongpill Lee <boyko.lee@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/pm.c |   83 ---------------------------------------------
+ 1 files changed, 0 insertions(+), 83 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index f105bd2..696f0bf 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -64,89 +64,6 @@ static struct sleep_save exynos4_vpll_save[] = {
+ };
+ 
+ static struct sleep_save exynos4_core_save[] = {
+-	/* GIC side */
+-	SAVE_ITEM(S5P_VA_GIC_CPU + 0x000),
+-	SAVE_ITEM(S5P_VA_GIC_CPU + 0x004),
+-	SAVE_ITEM(S5P_VA_GIC_CPU + 0x008),
+-	SAVE_ITEM(S5P_VA_GIC_CPU + 0x00C),
+-	SAVE_ITEM(S5P_VA_GIC_CPU + 0x014),
+-	SAVE_ITEM(S5P_VA_GIC_CPU + 0x018),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x000),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x004),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x100),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x104),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x108),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x300),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x304),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x308),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x400),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x404),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x408),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x40C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x410),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x414),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x418),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x41C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x420),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x424),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x428),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x42C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x430),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x434),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x438),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x43C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x440),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x444),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x448),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x44C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x450),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x454),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x458),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x45C),
+-
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x800),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x804),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x808),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x80C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x810),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x814),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x818),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x81C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x820),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x824),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x828),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x82C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x830),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x834),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x838),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x83C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x840),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x844),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x848),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x84C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x850),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x854),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x858),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0x85C),
+-
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC00),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC04),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC08),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC0C),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC10),
+-	SAVE_ITEM(S5P_VA_GIC_DIST + 0xC14),
+-
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x000),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x010),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x020),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x030),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x040),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x050),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x060),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x070),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x080),
+-	SAVE_ITEM(S5P_VA_COMBINER_BASE + 0x090),
+-
+ 	/* SROM side */
+ 	SAVE_ITEM(S5P_SROM_BW),
+ 	SAVE_ITEM(S5P_SROM_BC0),
+-- 
+1.7.4.4
