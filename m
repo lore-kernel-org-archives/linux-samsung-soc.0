@@ -1,530 +1,1024 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v4 06/12] ARM: EXYNOS: add support for EXYNOS5250 SoC
-Date: Wed, 14 Mar 2012 07:42:12 -0700
-Message-ID: <1331736138-28964-7-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH v4 07/12] ARM: EXYNOS: add interrupt definitions for EXYNOS5250
+Date: Wed, 14 Mar 2012 07:42:13 -0700
+Message-ID: <1331736138-28964-8-git-send-email-kgene.kim@samsung.com>
 References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:35540 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755671Ab2CNOmu (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:45081 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755671Ab2CNOmz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 10:42:50 -0400
-Received: by mail-gx0-f174.google.com with SMTP id e5so1877131ggh.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 07:42:50 -0700 (PDT)
+	Wed, 14 Mar 2012 10:42:55 -0400
+Received: by mail-gy0-f174.google.com with SMTP id r11so1872516ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 07:42:54 -0700 (PDT)
 In-Reply-To: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: arnd@arndb.de, olof@lixom.net, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch add support for EXYNOS5250 SoC has two Cortex-A15 cores.
-Since actually, most codes in mach-exynos/ are used commonly for
-EXYNOS4 and EXYNOS5 the EXYNOS5/EXYNOS5250 has been implemented
-in mach-exynos/.
+This patch adds the interrupt definitions for EXYNOS5250 at
+<mach/irqs.h> file and it is needed for EXYNOS5250 SoC.
+As a note, for single zImage of EXYNOS4 and EXYNOS5, prefix
+of EXYNOS4_ and EXYNOS5_ has been added.
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/Makefile                            |    1 +
- arch/arm/mach-exynos/common.c                |  191 ++++++++++++++++++++++++--
- arch/arm/mach-exynos/common.h                |   11 ++
- arch/arm/mach-exynos/include/mach/map.h      |   21 +++-
- arch/arm/mach-exynos/include/mach/regs-pmu.h |    1 +
- arch/arm/plat-s5p/Kconfig                    |    4 +-
- arch/arm/plat-samsung/include/plat/cpu.h     |   10 ++
- 7 files changed, 223 insertions(+), 16 deletions(-)
+ arch/arm/mach-exynos/common.c            |  101 ++++--
+ arch/arm/mach-exynos/dev-ahci.c          |    4 +-
+ arch/arm/mach-exynos/dev-audio.c         |    4 +-
+ arch/arm/mach-exynos/dma.c               |    6 +-
+ arch/arm/mach-exynos/include/mach/irqs.h |  587 ++++++++++++++++++++++--------
+ arch/arm/mach-exynos/mct.c               |   23 +-
+ arch/arm/plat-s5p/irq-pm.c               |   25 +-
+ arch/arm/plat-samsung/irq-vic-timer.c    |   16 +
+ 8 files changed, 558 insertions(+), 208 deletions(-)
 
-diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-index 1683bfb..a826ffc 100644
---- a/arch/arm/Makefile
-+++ b/arch/arm/Makefile
-@@ -180,6 +180,7 @@ machine-$(CONFIG_ARCH_S5P64X0)		:= s5p64x0
- machine-$(CONFIG_ARCH_S5PC100)		:= s5pc100
- machine-$(CONFIG_ARCH_S5PV210)		:= s5pv210
- machine-$(CONFIG_ARCH_EXYNOS4)		:= exynos
-+machine-$(CONFIG_ARCH_EXYNOS5)		:= exynos
- machine-$(CONFIG_ARCH_SA1100)		:= sa1100
- machine-$(CONFIG_ARCH_SHARK)		:= shark
- machine-$(CONFIG_ARCH_SHMOBILE) 	:= shmobile
 diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4a82cf0..7fdb139 100644
+index 7fdb139..4ef0cb5 100644
 --- a/arch/arm/mach-exynos/common.c
 +++ b/arch/arm/mach-exynos/common.c
-@@ -49,9 +49,12 @@
- static const char name_exynos4210[] = "EXYNOS4210";
- static const char name_exynos4212[] = "EXYNOS4212";
- static const char name_exynos4412[] = "EXYNOS4412";
-+static const char name_exynos5250[] = "EXYNOS5250";
- 
- static void exynos4_map_io(void);
-+static void exynos5_map_io(void);
- static void exynos4_init_clocks(int xtal);
-+static void exynos5_init_clocks(int xtal);
- static void exynos_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- static int exynos_init(void);
- 
-@@ -80,6 +83,14 @@ static struct cpu_table cpu_ids[] __initdata = {
- 		.init_uarts	= exynos_init_uarts,
- 		.init		= exynos_init,
- 		.name		= name_exynos4412,
-+	}, {
-+		.idcode		= EXYNOS5250_SOC_ID,
-+		.idmask		= EXYNOS5_SOC_MASK,
-+		.map_io		= exynos5_map_io,
-+		.init_clocks	= exynos5_init_clocks,
-+		.init_uarts	= exynos_init_uarts,
-+		.init		= exynos_init,
-+		.name		= name_exynos5250,
- 	},
- };
- 
-@@ -88,10 +99,14 @@ static struct cpu_table cpu_ids[] __initdata = {
- static struct map_desc exynos_iodesc[] __initdata = {
- 	{
- 		.virtual	= (unsigned long)S5P_VA_CHIPID,
--		.pfn		= __phys_to_pfn(EXYNOS4_PA_CHIPID),
-+		.pfn		= __phys_to_pfn(EXYNOS_PA_CHIPID),
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
--	}, {
-+	},
-+};
-+
-+static struct map_desc exynos4_iodesc[] __initdata = {
-+	{
- 		.virtual	= (unsigned long)S3C_VA_SYS,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_SYSCON),
- 		.length		= SZ_64K,
-@@ -141,11 +156,7 @@ static struct map_desc exynos_iodesc[] __initdata = {
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_UART),
- 		.length		= SZ_512K,
- 		.type		= MT_DEVICE,
--	},
--};
--
--static struct map_desc exynos4_iodesc[] __initdata = {
--	{
-+	}, {
- 		.virtual	= (unsigned long)S5P_VA_CMU,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_CMU),
- 		.length		= SZ_128K,
-@@ -206,11 +217,80 @@ static struct map_desc exynos4_iodesc1[] __initdata = {
- 	},
- };
- 
-+static struct map_desc exynos5_iodesc[] __initdata = {
-+	{
-+		.virtual	= (unsigned long)S3C_VA_SYS,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSCON),
-+		.length		= SZ_64K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_TIMER,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_TIMER),
-+		.length		= SZ_16K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_WATCHDOG,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_WATCHDOG),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_SROMC,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_SROMC),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_SYSTIMER,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSTIMER),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_SYSRAM,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_SYSRAM),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_CMU,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_CMU),
-+		.length		= 144 * SZ_1K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_PMU,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_PMU),
-+		.length		= SZ_64K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_COMBINER_BASE,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_COMBINER),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S3C_VA_UART,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_UART),
-+		.length		= SZ_512K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_GIC_CPU,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_GIC_CPU),
-+		.length		= SZ_64K,
-+		.type		= MT_DEVICE,
-+	}, {
-+		.virtual	= (unsigned long)S5P_VA_GIC_DIST,
-+		.pfn		= __phys_to_pfn(EXYNOS5_PA_GIC_DIST),
-+		.length		= SZ_64K,
-+		.type		= MT_DEVICE,
-+	},
-+};
-+
- void exynos4_restart(char mode, const char *cmd)
+@@ -345,6 +345,11 @@ static void __init exynos5_map_io(void)
  {
- 	__raw_writel(0x1, S5P_SWRESET);
- }
+ 	iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
  
-+void exynos5_restart(char mode, const char *cmd)
-+{
-+	__raw_writel(0x1, EXYNOS_SWRESET);
-+}
++	s3c_device_i2c0.resource[0].start = EXYNOS5_PA_IIC(0);
++	s3c_device_i2c0.resource[0].end   = EXYNOS5_PA_IIC(0) + SZ_4K - 1;
++	s3c_device_i2c0.resource[1].start = EXYNOS5_IRQ_IIC;
++	s3c_device_i2c0.resource[1].end   = EXYNOS5_IRQ_IIC;
 +
- /*
-  * exynos_map_io
-  *
-@@ -261,6 +341,16 @@ static void __init exynos4_map_io(void)
- 	s5p_hdmi_setname("exynos4-hdmi");
- }
+ 	/* The I2C bus controllers are directly compatible with s3c2440 */
+ 	s3c_i2c0_setname("s3c2440-i2c");
+ 	s3c_i2c1_setname("s3c2440-i2c");
+@@ -451,7 +456,14 @@ static struct irq_chip combiner_chip = {
  
-+static void __init exynos5_map_io(void)
-+{
-+	iotable_init(exynos5_iodesc, ARRAY_SIZE(exynos5_iodesc));
-+
-+	/* The I2C bus controllers are directly compatible with s3c2440 */
-+	s3c_i2c0_setname("s3c2440-i2c");
-+	s3c_i2c1_setname("s3c2440-i2c");
-+	s3c_i2c2_setname("s3c2440-i2c");
-+}
-+
- static void __init exynos4_init_clocks(int xtal)
+ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
  {
- 	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
-@@ -277,6 +367,17 @@ static void __init exynos4_init_clocks(int xtal)
- 	exynos4_setup_clocks();
- }
- 
-+static void __init exynos5_init_clocks(int xtal)
-+{
-+	printk(KERN_DEBUG "%s: initializing clocks\n", __func__);
+-	if (combiner_nr >= MAX_COMBINER_NR)
++	unsigned int max_nr;
 +
-+	s3c24xx_register_baseclocks(xtal);
-+	s5p_register_clocks(xtal);
-+
-+	exynos5_register_clocks();
-+	exynos5_setup_clocks();
-+}
-+
- #define COMBINER_ENABLE_SET	0x0
- #define COMBINER_ENABLE_CLEAR	0x4
- #define COMBINER_INT_STATUS	0xC
-@@ -420,24 +521,59 @@ void __init exynos4_init_irq(void)
- 	s5p_init_irq(NULL, 0);
- }
- 
-+void __init exynos5_init_irq(void)
-+{
-+	int irq;
-+
-+	gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
-+
-+	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
-+		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
-+				COMBINER_IRQ(irq, 0));
-+		combiner_cascade_irq(irq, IRQ_SPI(irq));
-+	}
-+
-+	/*
-+	 * The parameters of s5p_init_irq() are for VIC init.
-+	 * Theses parameters should be NULL and 0 because EXYNOS4
-+	 * uses GIC instead of VIC.
-+	 */
-+	s5p_init_irq(NULL, 0);
-+}
-+
- struct bus_type exynos4_subsys = {
- 	.name		= "exynos4-core",
- 	.dev_name	= "exynos4-core",
- };
- 
-+struct bus_type exynos5_subsys = {
-+	.name		= "exynos5-core",
-+	.dev_name	= "exynos5-core",
-+};
-+
- static struct device exynos4_dev = {
- 	.bus	= &exynos4_subsys,
- };
- 
--static int __init exynos4_core_init(void)
-+static struct device exynos5_dev = {
-+	.bus	= &exynos5_subsys,
-+};
-+
-+static int __init exynos_core_init(void)
- {
--	return subsys_system_register(&exynos4_subsys, NULL);
 +	if (soc_is_exynos5250())
-+		return subsys_system_register(&exynos5_subsys, NULL);
++		max_nr = EXYNOS5_MAX_COMBINER_NR;
 +	else
-+		return subsys_system_register(&exynos4_subsys, NULL);
- }
--core_initcall(exynos4_core_init);
-+core_initcall(exynos_core_init);
- 
- #ifdef CONFIG_CACHE_L2X0
- static int __init exynos4_l2x0_cache_init(void)
- {
-+	if (soc_is_exynos5250())
-+		return 0;
++		max_nr = EXYNOS4_MAX_COMBINER_NR;
 +
- 	/* TAG, Data Latency Control: 2cycle */
- 	__raw_writel(0x110, S5P_VA_L2CC + L2X0_TAG_LATENCY_CTRL);
++	if (combiner_nr >= max_nr)
+ 		BUG();
+ 	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
+ 		BUG();
+@@ -462,8 +474,14 @@ static void __init combiner_init(unsigned int combiner_nr, void __iomem *base,
+ 			  unsigned int irq_start)
+ {
+ 	unsigned int i;
++	unsigned int max_nr;
  
-@@ -457,14 +593,42 @@ static int __init exynos4_l2x0_cache_init(void)
+-	if (combiner_nr >= MAX_COMBINER_NR)
++	if (soc_is_exynos5250())
++		max_nr = EXYNOS5_MAX_COMBINER_NR;
++	else
++		max_nr = EXYNOS4_MAX_COMBINER_NR;
++
++	if (combiner_nr >= max_nr)
+ 		BUG();
+ 
+ 	combiner_data[combiner_nr].base = base;
+@@ -506,7 +524,7 @@ void __init exynos4_init_irq(void)
+ 		of_irq_init(exynos4_dt_irq_match);
+ #endif
+ 
+-	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
++	for (irq = 0; irq < EXYNOS4_MAX_COMBINER_NR; irq++) {
+ 
+ 		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
+ 				COMBINER_IRQ(irq, 0));
+@@ -527,7 +545,7 @@ void __init exynos5_init_irq(void)
+ 
+ 	gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
+ 
+-	for (irq = 0; irq < MAX_COMBINER_NR; irq++) {
++	for (irq = 0; irq < EXYNOS5_MAX_COMBINER_NR; irq++) {
+ 		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
+ 				COMBINER_IRQ(irq, 0));
+ 		combiner_cascade_irq(irq, IRQ_SPI(irq));
+@@ -651,27 +669,43 @@ static DEFINE_SPINLOCK(eint_lock);
+ 
+ static unsigned int eint0_15_data[16];
+ 
+-static unsigned int exynos4_get_irq_nr(unsigned int number)
+-{
+-	u32 ret = 0;
+-
+-	switch (number) {
+-	case 0 ... 3:
+-		ret = (number + IRQ_EINT0);
+-		break;
+-	case 4 ... 7:
+-		ret = (number + (IRQ_EINT4 - 4));
+-		break;
+-	case 8 ... 15:
+-		ret = (number + (IRQ_EINT8 - 8));
+-		break;
+-	default:
+-		printk(KERN_ERR "number available : %d\n", number);
+-	}
+-
+-	return ret;
+-}
++static unsigned int exynos4_eint0_15_src_int[16] = {
++	EXYNOS4_IRQ_EINT0,
++	EXYNOS4_IRQ_EINT1,
++	EXYNOS4_IRQ_EINT2,
++	EXYNOS4_IRQ_EINT3,
++	EXYNOS4_IRQ_EINT4,
++	EXYNOS4_IRQ_EINT5,
++	EXYNOS4_IRQ_EINT6,
++	EXYNOS4_IRQ_EINT7,
++	EXYNOS4_IRQ_EINT8,
++	EXYNOS4_IRQ_EINT9,
++	EXYNOS4_IRQ_EINT10,
++	EXYNOS4_IRQ_EINT11,
++	EXYNOS4_IRQ_EINT12,
++	EXYNOS4_IRQ_EINT13,
++	EXYNOS4_IRQ_EINT14,
++	EXYNOS4_IRQ_EINT15,
++};
+ 
++static unsigned int exynos5_eint0_15_src_int[16] = {
++	EXYNOS5_IRQ_EINT0,
++	EXYNOS5_IRQ_EINT1,
++	EXYNOS5_IRQ_EINT2,
++	EXYNOS5_IRQ_EINT3,
++	EXYNOS5_IRQ_EINT4,
++	EXYNOS5_IRQ_EINT5,
++	EXYNOS5_IRQ_EINT6,
++	EXYNOS5_IRQ_EINT7,
++	EXYNOS5_IRQ_EINT8,
++	EXYNOS5_IRQ_EINT9,
++	EXYNOS5_IRQ_EINT10,
++	EXYNOS5_IRQ_EINT11,
++	EXYNOS5_IRQ_EINT12,
++	EXYNOS5_IRQ_EINT13,
++	EXYNOS5_IRQ_EINT14,
++	EXYNOS5_IRQ_EINT15,
++};
+ static inline void exynos4_irq_eint_mask(struct irq_data *data)
+ {
+ 	u32 mask;
+@@ -816,7 +850,7 @@ static void exynos4_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static void exynos4_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
++static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+ {
+ 	u32 *irq_data = irq_get_handler_data(irq);
+ 	struct irq_chip *chip = irq_get_chip(irq);
+@@ -846,15 +880,22 @@ static int __init exynos4_init_irq_eint(void)
+ 		set_irq_flags(IRQ_EINT(irq), IRQF_VALID);
+ 	}
+ 
+-	irq_set_chained_handler(IRQ_EINT16_31, exynos4_irq_demux_eint16_31);
++	irq_set_chained_handler(EXYNOS_IRQ_EINT16_31, exynos4_irq_demux_eint16_31);
+ 
+ 	for (irq = 0 ; irq <= 15 ; irq++) {
+ 		eint0_15_data[irq] = IRQ_EINT(irq);
+ 
+-		irq_set_handler_data(exynos4_get_irq_nr(irq),
+-				     &eint0_15_data[irq]);
+-		irq_set_chained_handler(exynos4_get_irq_nr(irq),
+-					exynos4_irq_eint0_15);
++		if (soc_is_exynos5250()) {
++			irq_set_handler_data(exynos5_eint0_15_src_int[irq],
++					     &eint0_15_data[irq]);
++			irq_set_chained_handler(exynos5_eint0_15_src_int[irq],
++						exynos_irq_eint0_15);
++		} else {
++			irq_set_handler_data(exynos4_eint0_15_src_int[irq],
++					     &eint0_15_data[irq]);
++			irq_set_chained_handler(exynos4_eint0_15_src_int[irq],
++						exynos_irq_eint0_15);
++		}
+ 	}
  
  	return 0;
- }
--
- early_initcall(exynos4_l2x0_cache_init);
- #endif
+diff --git a/arch/arm/mach-exynos/dev-ahci.c b/arch/arm/mach-exynos/dev-ahci.c
+index f57a3de..50ce5b0 100644
+--- a/arch/arm/mach-exynos/dev-ahci.c
++++ b/arch/arm/mach-exynos/dev-ahci.c
+@@ -242,8 +242,8 @@ static struct resource exynos4_ahci_resource[] = {
+ 		.flags	= IORESOURCE_MEM,
+ 	},
+ 	[1] = {
+-		.start	= IRQ_SATA,
+-		.end	= IRQ_SATA,
++		.start	= EXYNOS4_IRQ_SATA,
++		.end	= EXYNOS4_IRQ_SATA,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+ };
+diff --git a/arch/arm/mach-exynos/dev-audio.c b/arch/arm/mach-exynos/dev-audio.c
+index 5a9f9c2e..7199e1a 100644
+--- a/arch/arm/mach-exynos/dev-audio.c
++++ b/arch/arm/mach-exynos/dev-audio.c
+@@ -304,8 +304,8 @@ static struct resource exynos4_ac97_resource[] = {
+ 		.flags	= IORESOURCE_DMA,
+ 	},
+ 	[4] = {
+-		.start	= IRQ_AC97,
+-		.end	= IRQ_AC97,
++		.start	= EXYNOS4_IRQ_AC97,
++		.end	= EXYNOS4_IRQ_AC97,
+ 		.flags	= IORESOURCE_IRQ,
+ 	},
+ };
+diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
+index 13607c4..3983abe 100644
+--- a/arch/arm/mach-exynos/dma.c
++++ b/arch/arm/mach-exynos/dma.c
+@@ -108,7 +108,7 @@ static u8 exynos4212_pdma0_peri[] = {
+ struct dma_pl330_platdata exynos4_pdma0_pdata;
  
-+static int __init exynos5_l2_cache_init(void)
-+{
-+	unsigned int val;
-+
-+	if (!soc_is_exynos5250())
-+		return 0;
-+
-+	asm volatile("mrc p15, 0, %0, c1, c0, 0\n"
-+		     "bic %0, %0, #(1 << 2)\n"	/* cache disable */
-+		     "mcr p15, 0, %0, c1, c0, 0\n"
-+		     "mrc p15, 1, %0, c9, c0, 2\n"
-+		     : "=r"(val));
-+
-+	val |= (1 << 9) | (1 << 5) | (2 << 6) | (2 << 0);
-+
-+	asm volatile("mcr p15, 1, %0, c9, c0, 2\n" : : "r"(val));
-+	asm volatile("mrc p15, 0, %0, c1, c0, 0\n"
-+		     "orr %0, %0, #(1 << 2)\n"	/* cache enable */
-+		     "mcr p15, 0, %0, c1, c0, 0\n"
-+		     : : "r"(val));
-+
-+	return 0;
-+}
-+early_initcall(exynos5_l2_cache_init);
-+
- static int __init exynos_init(void)
+ static AMBA_AHB_DEVICE(exynos4_pdma0, "dma-pl330.0", 0x00041330,
+-	EXYNOS4_PA_PDMA0, {IRQ_PDMA0}, &exynos4_pdma0_pdata);
++	EXYNOS4_PA_PDMA0, {EXYNOS4_IRQ_PDMA0}, &exynos4_pdma0_pdata);
+ 
+ static u8 exynos4210_pdma1_peri[] = {
+ 	DMACH_PCM0_RX,
+@@ -174,7 +174,7 @@ static u8 exynos4212_pdma1_peri[] = {
+ static struct dma_pl330_platdata exynos4_pdma1_pdata;
+ 
+ static AMBA_AHB_DEVICE(exynos4_pdma1,  "dma-pl330.1", 0x00041330,
+-	EXYNOS4_PA_PDMA1, {IRQ_PDMA1}, &exynos4_pdma1_pdata);
++	EXYNOS4_PA_PDMA1, {EXYNOS4_IRQ_PDMA1}, &exynos4_pdma1_pdata);
+ 
+ static u8 mdma_peri[] = {
+ 	DMACH_MTOM_0,
+@@ -193,7 +193,7 @@ static struct dma_pl330_platdata exynos4_mdma1_pdata = {
+ };
+ 
+ static AMBA_AHB_DEVICE(exynos4_mdma1,  "dma-pl330.2", 0x00041330,
+-	EXYNOS4_PA_MDMA1, {IRQ_MDMA1}, &exynos4_mdma1_pdata);
++	EXYNOS4_PA_MDMA1, {EXYNOS4_IRQ_MDMA1}, &exynos4_mdma1_pdata);
+ 
+ static int __init exynos4_dma_init(void)
  {
- 	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
--	return device_register(&exynos4_dev);
+diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+index f78070e..9bee853 100644
+--- a/arch/arm/mach-exynos/include/mach/irqs.h
++++ b/arch/arm/mach-exynos/include/mach/irqs.h
+@@ -1,9 +1,8 @@
+-/* linux/arch/arm/mach-exynos4/include/mach/irqs.h
+- *
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
++/*
++ * Copyright (c) 2010-2012 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+  *
+- * EXYNOS4 - IRQ definitions
++ * EXYNOS - IRQ definitions
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+@@ -17,172 +16,450 @@
+ 
+ /* PPI: Private Peripheral Interrupt */
+ 
+-#define IRQ_PPI(x)		(x+16)
+-
+-#define IRQ_MCT_LOCALTIMER	IRQ_PPI(12)
++#define IRQ_PPI(x)			(x + 16)
+ 
+ /* SPI: Shared Peripheral Interrupt */
+ 
+-#define IRQ_SPI(x)		(x+32)
+-
+-#define IRQ_EINT0		IRQ_SPI(16)
+-#define IRQ_EINT1		IRQ_SPI(17)
+-#define IRQ_EINT2		IRQ_SPI(18)
+-#define IRQ_EINT3		IRQ_SPI(19)
+-#define IRQ_EINT4		IRQ_SPI(20)
+-#define IRQ_EINT5		IRQ_SPI(21)
+-#define IRQ_EINT6		IRQ_SPI(22)
+-#define IRQ_EINT7		IRQ_SPI(23)
+-#define IRQ_EINT8		IRQ_SPI(24)
+-#define IRQ_EINT9		IRQ_SPI(25)
+-#define IRQ_EINT10		IRQ_SPI(26)
+-#define IRQ_EINT11		IRQ_SPI(27)
+-#define IRQ_EINT12		IRQ_SPI(28)
+-#define IRQ_EINT13		IRQ_SPI(29)
+-#define IRQ_EINT14		IRQ_SPI(30)
+-#define IRQ_EINT15		IRQ_SPI(31)
+-#define IRQ_EINT16_31		IRQ_SPI(32)
+-
+-#define IRQ_MDMA0		IRQ_SPI(33)
+-#define IRQ_MDMA1		IRQ_SPI(34)
+-#define IRQ_PDMA0		IRQ_SPI(35)
+-#define IRQ_PDMA1		IRQ_SPI(36)
+-#define IRQ_TIMER0_VIC		IRQ_SPI(37)
+-#define IRQ_TIMER1_VIC		IRQ_SPI(38)
+-#define IRQ_TIMER2_VIC		IRQ_SPI(39)
+-#define IRQ_TIMER3_VIC		IRQ_SPI(40)
+-#define IRQ_TIMER4_VIC		IRQ_SPI(41)
+-#define IRQ_MCT_L0		IRQ_SPI(42)
+-#define IRQ_WDT			IRQ_SPI(43)
+-#define IRQ_RTC_ALARM		IRQ_SPI(44)
+-#define IRQ_RTC_TIC		IRQ_SPI(45)
+-#define IRQ_GPIO_XB		IRQ_SPI(46)
+-#define IRQ_GPIO_XA		IRQ_SPI(47)
+-#define IRQ_MCT_L1		IRQ_SPI(48)
+-
+-#define IRQ_UART0		IRQ_SPI(52)
+-#define IRQ_UART1		IRQ_SPI(53)
+-#define IRQ_UART2		IRQ_SPI(54)
+-#define IRQ_UART3		IRQ_SPI(55)
+-#define IRQ_UART4		IRQ_SPI(56)
+-#define IRQ_MCT_G0		IRQ_SPI(57)
+-#define IRQ_IIC			IRQ_SPI(58)
+-#define IRQ_IIC1		IRQ_SPI(59)
+-#define IRQ_IIC2		IRQ_SPI(60)
+-#define IRQ_IIC3		IRQ_SPI(61)
+-#define IRQ_IIC4		IRQ_SPI(62)
+-#define IRQ_IIC5		IRQ_SPI(63)
+-#define IRQ_IIC6		IRQ_SPI(64)
+-#define IRQ_IIC7		IRQ_SPI(65)
+-#define IRQ_SPI0		IRQ_SPI(66)
+-#define IRQ_SPI1		IRQ_SPI(67)
+-#define IRQ_SPI2		IRQ_SPI(68)
+-
+-#define IRQ_USB_HOST		IRQ_SPI(70)
+-#define IRQ_USB_HSOTG		IRQ_SPI(71)
+-#define IRQ_MODEM_IF		IRQ_SPI(72)
+-#define IRQ_HSMMC0		IRQ_SPI(73)
+-#define IRQ_HSMMC1		IRQ_SPI(74)
+-#define IRQ_HSMMC2		IRQ_SPI(75)
+-#define IRQ_HSMMC3		IRQ_SPI(76)
+-#define IRQ_DWMCI		IRQ_SPI(77)
+-
+-#define IRQ_MIPI_CSIS0		IRQ_SPI(78)
+-#define IRQ_MIPI_CSIS1		IRQ_SPI(80)
+-
+-#define IRQ_ONENAND_AUDI	IRQ_SPI(82)
+-#define IRQ_ROTATOR		IRQ_SPI(83)
+-#define IRQ_FIMC0		IRQ_SPI(84)
+-#define IRQ_FIMC1		IRQ_SPI(85)
+-#define IRQ_FIMC2		IRQ_SPI(86)
+-#define IRQ_FIMC3		IRQ_SPI(87)
+-#define IRQ_JPEG		IRQ_SPI(88)
+-#define IRQ_2D			IRQ_SPI(89)
+-#define IRQ_PCIE		IRQ_SPI(90)
+-
+-#define IRQ_MIXER		IRQ_SPI(91)
+-#define IRQ_HDMI		IRQ_SPI(92)
+-#define IRQ_IIC_HDMIPHY		IRQ_SPI(93)
+-#define IRQ_MFC			IRQ_SPI(94)
+-#define IRQ_SDO			IRQ_SPI(95)
+-
+-#define IRQ_AUDIO_SS		IRQ_SPI(96)
+-#define IRQ_I2S0		IRQ_SPI(97)
+-#define IRQ_I2S1		IRQ_SPI(98)
+-#define IRQ_I2S2		IRQ_SPI(99)
+-#define IRQ_AC97		IRQ_SPI(100)
+-
+-#define IRQ_SPDIF		IRQ_SPI(104)
+-#define IRQ_ADC0		IRQ_SPI(105)
+-#define IRQ_PEN0		IRQ_SPI(106)
+-#define IRQ_ADC1		IRQ_SPI(107)
+-#define IRQ_PEN1		IRQ_SPI(108)
+-#define IRQ_KEYPAD		IRQ_SPI(109)
+-#define IRQ_PMU			IRQ_SPI(110)
+-#define IRQ_GPS			IRQ_SPI(111)
+-#define IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
+-#define IRQ_SLIMBUS		IRQ_SPI(113)
+-
+-#define IRQ_TSI			IRQ_SPI(115)
+-#define IRQ_SATA		IRQ_SPI(116)
+-
+-#define MAX_IRQ_IN_COMBINER	8
+-#define COMBINER_GROUP(x)	((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
+-#define COMBINER_IRQ(x, y)	(COMBINER_GROUP(x) + y)
+-
+-#define IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
+-#define IRQ_SYSMMU_SSS_0	COMBINER_IRQ(4, 1)
+-#define IRQ_SYSMMU_FIMC0_0	COMBINER_IRQ(4, 2)
+-#define IRQ_SYSMMU_FIMC1_0	COMBINER_IRQ(4, 3)
+-#define IRQ_SYSMMU_FIMC2_0	COMBINER_IRQ(4, 4)
+-#define IRQ_SYSMMU_FIMC3_0	COMBINER_IRQ(4, 5)
+-#define IRQ_SYSMMU_JPEG_0	COMBINER_IRQ(4, 6)
+-#define IRQ_SYSMMU_2D_0		COMBINER_IRQ(4, 7)
+-
+-#define IRQ_SYSMMU_ROTATOR_0	COMBINER_IRQ(5, 0)
+-#define IRQ_SYSMMU_MDMA1_0	COMBINER_IRQ(5, 1)
+-#define IRQ_SYSMMU_LCD0_M0_0	COMBINER_IRQ(5, 2)
+-#define IRQ_SYSMMU_LCD1_M1_0	COMBINER_IRQ(5, 3)
+-#define IRQ_SYSMMU_TV_M0_0	COMBINER_IRQ(5, 4)
+-#define IRQ_SYSMMU_MFC_M0_0	COMBINER_IRQ(5, 5)
+-#define IRQ_SYSMMU_MFC_M1_0	COMBINER_IRQ(5, 6)
+-#define IRQ_SYSMMU_PCIE_0	COMBINER_IRQ(5, 7)
+-
+-#define IRQ_FIMD0_FIFO		COMBINER_IRQ(11, 0)
+-#define IRQ_FIMD0_VSYNC		COMBINER_IRQ(11, 1)
+-#define IRQ_FIMD0_SYSTEM	COMBINER_IRQ(11, 2)
+-
+-#define MAX_COMBINER_NR		16
+-
+-#define IRQ_ADC			IRQ_ADC0
+-#define IRQ_TC			IRQ_PEN0
+-
+-#define S5P_IRQ_EINT_BASE	COMBINER_IRQ(MAX_COMBINER_NR, 0)
+-
+-#define S5P_EINT_BASE1		(S5P_IRQ_EINT_BASE + 0)
+-#define S5P_EINT_BASE2		(S5P_IRQ_EINT_BASE + 16)
+-
+-/* optional GPIO interrupts */
+-#define S5P_GPIOINT_BASE	(S5P_IRQ_EINT_BASE + 32)
+-#define IRQ_GPIO1_NR_GROUPS	16
+-#define IRQ_GPIO2_NR_GROUPS	9
+-#define IRQ_GPIO_END		(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
+-
+-#define IRQ_TIMER_BASE		(IRQ_GPIO_END + 64)
++#define IRQ_SPI(x)			(x + 32)
+ 
+-/* Set the default NR_IRQS */
+-#define NR_IRQS			(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
++/* COMBINER */
 +
++#define MAX_IRQ_IN_COMBINER		8
++#define COMBINER_GROUP(x)		((x) * MAX_IRQ_IN_COMBINER + IRQ_SPI(128))
++#define COMBINER_IRQ(x, y)		(COMBINER_GROUP(x) + y)
++
++/* For EXYNOS4 and EXYNOS5 */
++
++#define EXYNOS_IRQ_MCT_LOCALTIMER	IRQ_PPI(12)
++
++#define EXYNOS_IRQ_EINT16_31		IRQ_SPI(32)
++
++/* For EXYNOS4 SoCs */
++
++#define EXYNOS4_IRQ_EINT0		IRQ_SPI(16)
++#define EXYNOS4_IRQ_EINT1		IRQ_SPI(17)
++#define EXYNOS4_IRQ_EINT2		IRQ_SPI(18)
++#define EXYNOS4_IRQ_EINT3		IRQ_SPI(19)
++#define EXYNOS4_IRQ_EINT4		IRQ_SPI(20)
++#define EXYNOS4_IRQ_EINT5		IRQ_SPI(21)
++#define EXYNOS4_IRQ_EINT6		IRQ_SPI(22)
++#define EXYNOS4_IRQ_EINT7		IRQ_SPI(23)
++#define EXYNOS4_IRQ_EINT8		IRQ_SPI(24)
++#define EXYNOS4_IRQ_EINT9		IRQ_SPI(25)
++#define EXYNOS4_IRQ_EINT10		IRQ_SPI(26)
++#define EXYNOS4_IRQ_EINT11		IRQ_SPI(27)
++#define EXYNOS4_IRQ_EINT12		IRQ_SPI(28)
++#define EXYNOS4_IRQ_EINT13		IRQ_SPI(29)
++#define EXYNOS4_IRQ_EINT14		IRQ_SPI(30)
++#define EXYNOS4_IRQ_EINT15		IRQ_SPI(31)
++
++#define EXYNOS4_IRQ_MDMA0		IRQ_SPI(33)
++#define EXYNOS4_IRQ_MDMA1		IRQ_SPI(34)
++#define EXYNOS4_IRQ_PDMA0		IRQ_SPI(35)
++#define EXYNOS4_IRQ_PDMA1		IRQ_SPI(36)
++#define EXYNOS4_IRQ_TIMER0_VIC		IRQ_SPI(37)
++#define EXYNOS4_IRQ_TIMER1_VIC		IRQ_SPI(38)
++#define EXYNOS4_IRQ_TIMER2_VIC		IRQ_SPI(39)
++#define EXYNOS4_IRQ_TIMER3_VIC		IRQ_SPI(40)
++#define EXYNOS4_IRQ_TIMER4_VIC		IRQ_SPI(41)
++#define EXYNOS4_IRQ_MCT_L0		IRQ_SPI(42)
++#define EXYNOS4_IRQ_WDT			IRQ_SPI(43)
++#define EXYNOS4_IRQ_RTC_ALARM		IRQ_SPI(44)
++#define EXYNOS4_IRQ_RTC_TIC		IRQ_SPI(45)
++#define EXYNOS4_IRQ_GPIO_XB		IRQ_SPI(46)
++#define EXYNOS4_IRQ_GPIO_XA		IRQ_SPI(47)
++#define EXYNOS4_IRQ_MCT_L1		IRQ_SPI(48)
+ 
+ #define EXYNOS4_IRQ_UART0		IRQ_SPI(52)
+ #define EXYNOS4_IRQ_UART1		IRQ_SPI(53)
+ #define EXYNOS4_IRQ_UART2		IRQ_SPI(54)
+ #define EXYNOS4_IRQ_UART3		IRQ_SPI(55)
+ #define EXYNOS4_IRQ_UART4		IRQ_SPI(56)
++#define EXYNOS4_IRQ_MCT_G0		IRQ_SPI(57)
++#define EXYNOS4_IRQ_IIC			IRQ_SPI(58)
++#define EXYNOS4_IRQ_IIC1		IRQ_SPI(59)
++#define EXYNOS4_IRQ_IIC2		IRQ_SPI(60)
++#define EXYNOS4_IRQ_IIC3		IRQ_SPI(61)
++#define EXYNOS4_IRQ_IIC4		IRQ_SPI(62)
++#define EXYNOS4_IRQ_IIC5		IRQ_SPI(63)
++#define EXYNOS4_IRQ_IIC6		IRQ_SPI(64)
++#define EXYNOS4_IRQ_IIC7		IRQ_SPI(65)
++#define EXYNOS4_IRQ_SPI0		IRQ_SPI(66)
++#define EXYNOS4_IRQ_SPI1		IRQ_SPI(67)
++#define EXYNOS4_IRQ_SPI2		IRQ_SPI(68)
++
++#define EXYNOS4_IRQ_USB_HOST		IRQ_SPI(70)
++#define EXYNOS4_IRQ_USB_HSOTG		IRQ_SPI(71)
++#define EXYNOS4_IRQ_MODEM_IF		IRQ_SPI(72)
++#define EXYNOS4_IRQ_HSMMC0		IRQ_SPI(73)
++#define EXYNOS4_IRQ_HSMMC1		IRQ_SPI(74)
++#define EXYNOS4_IRQ_HSMMC2		IRQ_SPI(75)
++#define EXYNOS4_IRQ_HSMMC3		IRQ_SPI(76)
++#define EXYNOS4_IRQ_DWMCI		IRQ_SPI(77)
++
++#define EXYNOS4_IRQ_MIPI_CSIS0		IRQ_SPI(78)
++#define EXYNOS4_IRQ_MIPI_CSIS1		IRQ_SPI(80)
++
++#define EXYNOS4_IRQ_ONENAND_AUDI	IRQ_SPI(82)
++#define EXYNOS4_IRQ_ROTATOR		IRQ_SPI(83)
++#define EXYNOS4_IRQ_FIMC0		IRQ_SPI(84)
++#define EXYNOS4_IRQ_FIMC1		IRQ_SPI(85)
++#define EXYNOS4_IRQ_FIMC2		IRQ_SPI(86)
++#define EXYNOS4_IRQ_FIMC3		IRQ_SPI(87)
++#define EXYNOS4_IRQ_JPEG		IRQ_SPI(88)
++#define EXYNOS4_IRQ_2D			IRQ_SPI(89)
++#define EXYNOS4_IRQ_PCIE		IRQ_SPI(90)
++
++#define EXYNOS4_IRQ_MIXER		IRQ_SPI(91)
++#define EXYNOS4_IRQ_HDMI		IRQ_SPI(92)
++#define EXYNOS4_IRQ_IIC_HDMIPHY		IRQ_SPI(93)
++#define EXYNOS4_IRQ_MFC			IRQ_SPI(94)
++#define EXYNOS4_IRQ_SDO			IRQ_SPI(95)
++
++#define EXYNOS4_IRQ_AUDIO_SS		IRQ_SPI(96)
++#define EXYNOS4_IRQ_I2S0		IRQ_SPI(97)
++#define EXYNOS4_IRQ_I2S1		IRQ_SPI(98)
++#define EXYNOS4_IRQ_I2S2		IRQ_SPI(99)
++#define EXYNOS4_IRQ_AC97		IRQ_SPI(100)
++
++#define EXYNOS4_IRQ_SPDIF		IRQ_SPI(104)
++#define EXYNOS4_IRQ_ADC0		IRQ_SPI(105)
++#define EXYNOS4_IRQ_PEN0		IRQ_SPI(106)
++#define EXYNOS4_IRQ_ADC1		IRQ_SPI(107)
++#define EXYNOS4_IRQ_PEN1		IRQ_SPI(108)
++#define EXYNOS4_IRQ_KEYPAD		IRQ_SPI(109)
++#define EXYNOS4_IRQ_PMU			IRQ_SPI(110)
++#define EXYNOS4_IRQ_GPS			IRQ_SPI(111)
++#define EXYNOS4_IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
++#define EXYNOS4_IRQ_SLIMBUS		IRQ_SPI(113)
++
++#define EXYNOS4_IRQ_TSI			IRQ_SPI(115)
++#define EXYNOS4_IRQ_SATA		IRQ_SPI(116)
++
++#define EXYNOS4_IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(4, 0)
++#define EXYNOS4_IRQ_SYSMMU_SSS_0	COMBINER_IRQ(4, 1)
++#define EXYNOS4_IRQ_SYSMMU_FIMC0_0	COMBINER_IRQ(4, 2)
++#define EXYNOS4_IRQ_SYSMMU_FIMC1_0	COMBINER_IRQ(4, 3)
++#define EXYNOS4_IRQ_SYSMMU_FIMC2_0	COMBINER_IRQ(4, 4)
++#define EXYNOS4_IRQ_SYSMMU_FIMC3_0	COMBINER_IRQ(4, 5)
++#define EXYNOS4_IRQ_SYSMMU_JPEG_0	COMBINER_IRQ(4, 6)
++#define EXYNOS4_IRQ_SYSMMU_2D_0		COMBINER_IRQ(4, 7)
++
++#define EXYNOS4_IRQ_SYSMMU_ROTATOR_0	COMBINER_IRQ(5, 0)
++#define EXYNOS4_IRQ_SYSMMU_MDMA1_0	COMBINER_IRQ(5, 1)
++#define EXYNOS4_IRQ_SYSMMU_LCD0_M0_0	COMBINER_IRQ(5, 2)
++#define EXYNOS4_IRQ_SYSMMU_LCD1_M1_0	COMBINER_IRQ(5, 3)
++#define EXYNOS4_IRQ_SYSMMU_TV_M0_0	COMBINER_IRQ(5, 4)
++#define EXYNOS4_IRQ_SYSMMU_MFC_M0_0	COMBINER_IRQ(5, 5)
++#define EXYNOS4_IRQ_SYSMMU_MFC_M1_0	COMBINER_IRQ(5, 6)
++#define EXYNOS4_IRQ_SYSMMU_PCIE_0	COMBINER_IRQ(5, 7)
++
++#define EXYNOS4_IRQ_FIMD0_FIFO		COMBINER_IRQ(11, 0)
++#define EXYNOS4_IRQ_FIMD0_VSYNC		COMBINER_IRQ(11, 1)
++#define EXYNOS4_IRQ_FIMD0_SYSTEM	COMBINER_IRQ(11, 2)
++
++#define EXYNOS4_MAX_COMBINER_NR		16
++
++#define EXYNOS4_IRQ_GPIO1_NR_GROUPS	16
++#define EXYNOS4_IRQ_GPIO2_NR_GROUPS	9
++
++/*
++ * For Compatibility:
++ * the default is for EXYNOS4, and
++ * for exynos5, should be re-mapped at function
++ */
++
++#define IRQ_TIMER0_VIC			EXYNOS4_IRQ_TIMER0_VIC
++#define IRQ_TIMER1_VIC			EXYNOS4_IRQ_TIMER1_VIC
++#define IRQ_TIMER2_VIC			EXYNOS4_IRQ_TIMER2_VIC
++#define IRQ_TIMER3_VIC			EXYNOS4_IRQ_TIMER3_VIC
++#define IRQ_TIMER4_VIC			EXYNOS4_IRQ_TIMER4_VIC
++
++#define IRQ_WDT				EXYNOS4_IRQ_WDT
++#define IRQ_RTC_ALARM			EXYNOS4_IRQ_RTC_ALARM
++#define IRQ_RTC_TIC			EXYNOS4_IRQ_RTC_TIC
++#define IRQ_GPIO_XB			EXYNOS4_IRQ_GPIO_XB
++#define IRQ_GPIO_XA			EXYNOS4_IRQ_GPIO_XA
++
++#define IRQ_IIC				EXYNOS4_IRQ_IIC
++#define IRQ_IIC1			EXYNOS4_IRQ_IIC1
++#define IRQ_IIC3			EXYNOS4_IRQ_IIC3
++#define IRQ_IIC5			EXYNOS4_IRQ_IIC5
++#define IRQ_IIC6			EXYNOS4_IRQ_IIC6
++#define IRQ_IIC7			EXYNOS4_IRQ_IIC7
++
++#define IRQ_USB_HOST			EXYNOS4_IRQ_USB_HOST
++
++#define IRQ_HSMMC0			EXYNOS4_IRQ_HSMMC0
++#define IRQ_HSMMC1			EXYNOS4_IRQ_HSMMC1
++#define IRQ_HSMMC2			EXYNOS4_IRQ_HSMMC2
++#define IRQ_HSMMC3			EXYNOS4_IRQ_HSMMC3
++
++#define IRQ_MIPI_CSIS0			EXYNOS4_IRQ_MIPI_CSIS0
++
++#define IRQ_ONENAND_AUDI		EXYNOS4_IRQ_ONENAND_AUDI
++
++#define IRQ_FIMC0			EXYNOS4_IRQ_FIMC0
++#define IRQ_FIMC1			EXYNOS4_IRQ_FIMC1
++#define IRQ_FIMC2			EXYNOS4_IRQ_FIMC2
++#define IRQ_FIMC3			EXYNOS4_IRQ_FIMC3
++#define IRQ_JPEG			EXYNOS4_IRQ_JPEG
++#define IRQ_2D				EXYNOS4_IRQ_2D
++
++#define IRQ_MIXER			EXYNOS4_IRQ_MIXER
++#define IRQ_HDMI			EXYNOS4_IRQ_HDMI
++#define IRQ_IIC_HDMIPHY			EXYNOS4_IRQ_IIC_HDMIPHY
++#define IRQ_MFC				EXYNOS4_IRQ_MFC
++#define IRQ_SDO				EXYNOS4_IRQ_SDO
++
++#define IRQ_ADC				EXYNOS4_IRQ_ADC0
++#define IRQ_TC				EXYNOS4_IRQ_PEN0
++
++#define IRQ_KEYPAD			EXYNOS4_IRQ_KEYPAD
++#define IRQ_PMU				EXYNOS4_IRQ_PMU
++
++#define IRQ_SYSMMU_MDMA0_0		EXYNOS4_IRQ_SYSMMU_MDMA0_0
++#define IRQ_SYSMMU_SSS_0                EXYNOS4_IRQ_SYSMMU_SSS_0
++#define IRQ_SYSMMU_FIMC0_0              EXYNOS4_IRQ_SYSMMU_FIMC0_0
++#define IRQ_SYSMMU_FIMC1_0              EXYNOS4_IRQ_SYSMMU_FIMC1_0
++#define IRQ_SYSMMU_FIMC2_0              EXYNOS4_IRQ_SYSMMU_FIMC2_0
++#define IRQ_SYSMMU_FIMC3_0              EXYNOS4_IRQ_SYSMMU_FIMC3_0
++#define IRQ_SYSMMU_JPEG_0               EXYNOS4_IRQ_SYSMMU_JPEG_0
++#define IRQ_SYSMMU_2D_0                 EXYNOS4_IRQ_SYSMMU_2D_0
+ 
++#define IRQ_SYSMMU_ROTATOR_0            EXYNOS4_IRQ_SYSMMU_ROTATOR_0
++#define IRQ_SYSMMU_MDMA1_0              EXYNOS4_IRQ_SYSMMU_MDMA1_0
++#define IRQ_SYSMMU_LCD0_M0_0            EXYNOS4_IRQ_SYSMMU_LCD0_M0_0
++#define IRQ_SYSMMU_LCD1_M1_0            EXYNOS4_IRQ_SYSMMU_LCD1_M1_0
++#define IRQ_SYSMMU_TV_M0_0              EXYNOS4_IRQ_SYSMMU_TV_M0_0
++#define IRQ_SYSMMU_MFC_M0_0             EXYNOS4_IRQ_SYSMMU_MFC_M0_0
++#define IRQ_SYSMMU_MFC_M1_0             EXYNOS4_IRQ_SYSMMU_MFC_M1_0
++#define IRQ_SYSMMU_PCIE_0               EXYNOS4_IRQ_SYSMMU_PCIE_0
++
++#define IRQ_FIMD0_FIFO			EXYNOS4_IRQ_FIMD0_FIFO
++#define IRQ_FIMD0_VSYNC			EXYNOS4_IRQ_FIMD0_VSYNC
++#define IRQ_FIMD0_SYSTEM		EXYNOS4_IRQ_FIMD0_SYSTEM
++
++#define IRQ_GPIO1_NR_GROUPS		EXYNOS4_IRQ_GPIO1_NR_GROUPS
++#define IRQ_GPIO2_NR_GROUPS		EXYNOS4_IRQ_GPIO2_NR_GROUPS
++
++/* For EXYNOS5 SoCs */
++
++#define EXYNOS5_IRQ_MDMA0		IRQ_SPI(33)
++#define EXYNOS5_IRQ_PDMA0		IRQ_SPI(34)
++#define EXYNOS5_IRQ_PDMA1		IRQ_SPI(35)
++#define EXYNOS5_IRQ_TIMER0_VIC		IRQ_SPI(36)
++#define EXYNOS5_IRQ_TIMER1_VIC		IRQ_SPI(37)
++#define EXYNOS5_IRQ_TIMER2_VIC		IRQ_SPI(38)
++#define EXYNOS5_IRQ_TIMER3_VIC		IRQ_SPI(39)
++#define EXYNOS5_IRQ_TIMER4_VIC		IRQ_SPI(40)
++#define EXYNOS5_IRQ_RTIC		IRQ_SPI(41)
++#define EXYNOS5_IRQ_WDT			IRQ_SPI(42)
++#define EXYNOS5_IRQ_RTC_ALARM		IRQ_SPI(43)
++#define EXYNOS5_IRQ_RTC_TIC		IRQ_SPI(44)
++#define EXYNOS5_IRQ_GPIO_XB		IRQ_SPI(45)
++#define EXYNOS5_IRQ_GPIO_XA		IRQ_SPI(46)
++#define EXYNOS5_IRQ_GPIO		IRQ_SPI(47)
++#define EXYNOS5_IRQ_IEM_IEC		IRQ_SPI(48)
++#define EXYNOS5_IRQ_IEM_APC		IRQ_SPI(49)
++#define EXYNOS5_IRQ_GPIO_C2C		IRQ_SPI(50)
+ #define EXYNOS5_IRQ_UART0		IRQ_SPI(51)
+ #define EXYNOS5_IRQ_UART1		IRQ_SPI(52)
+ #define EXYNOS5_IRQ_UART2		IRQ_SPI(53)
+ #define EXYNOS5_IRQ_UART3		IRQ_SPI(54)
+ #define EXYNOS5_IRQ_UART4		IRQ_SPI(55)
++#define EXYNOS5_IRQ_IIC			IRQ_SPI(56)
++#define EXYNOS5_IRQ_IIC1		IRQ_SPI(57)
++#define EXYNOS5_IRQ_IIC2		IRQ_SPI(58)
++#define EXYNOS5_IRQ_IIC3		IRQ_SPI(59)
++#define EXYNOS5_IRQ_IIC4		IRQ_SPI(60)
++#define EXYNOS5_IRQ_IIC5		IRQ_SPI(61)
++#define EXYNOS5_IRQ_IIC6		IRQ_SPI(62)
++#define EXYNOS5_IRQ_IIC7		IRQ_SPI(63)
++#define EXYNOS5_IRQ_IIC_HDMIPHY		IRQ_SPI(64)
++#define EXYNOS5_IRQ_TMU			IRQ_SPI(65)
++#define EXYNOS5_IRQ_FIQ_0		IRQ_SPI(66)
++#define EXYNOS5_IRQ_FIQ_1		IRQ_SPI(67)
++#define EXYNOS5_IRQ_SPI0		IRQ_SPI(68)
++#define EXYNOS5_IRQ_SPI1		IRQ_SPI(69)
++#define EXYNOS5_IRQ_SPI2		IRQ_SPI(70)
++#define EXYNOS5_IRQ_USB_HOST		IRQ_SPI(71)
++#define EXYNOS5_IRQ_USB3_DRD		IRQ_SPI(72)
++#define EXYNOS5_IRQ_MIPI_HSI		IRQ_SPI(73)
++#define EXYNOS5_IRQ_USB_HSOTG		IRQ_SPI(74)
++#define EXYNOS5_IRQ_HSMMC0		IRQ_SPI(75)
++#define EXYNOS5_IRQ_HSMMC1		IRQ_SPI(76)
++#define EXYNOS5_IRQ_HSMMC2		IRQ_SPI(77)
++#define EXYNOS5_IRQ_HSMMC3		IRQ_SPI(78)
++#define EXYNOS5_IRQ_MIPICSI0		IRQ_SPI(79)
++#define EXYNOS5_IRQ_MIPICSI1		IRQ_SPI(80)
++#define EXYNOS5_IRQ_EFNFCON_DMA_ABORT	IRQ_SPI(81)
++#define EXYNOS5_IRQ_MIPIDSI0		IRQ_SPI(82)
++#define EXYNOS5_IRQ_ROTATOR		IRQ_SPI(84)
++#define EXYNOS5_IRQ_GSC0		IRQ_SPI(85)
++#define EXYNOS5_IRQ_GSC1		IRQ_SPI(86)
++#define EXYNOS5_IRQ_GSC2		IRQ_SPI(87)
++#define EXYNOS5_IRQ_GSC3		IRQ_SPI(88)
++#define EXYNOS5_IRQ_JPEG		IRQ_SPI(89)
++#define EXYNOS5_IRQ_EFNFCON_DMA		IRQ_SPI(90)
++#define EXYNOS5_IRQ_2D			IRQ_SPI(91)
++#define EXYNOS5_IRQ_SFMC0		IRQ_SPI(92)
++#define EXYNOS5_IRQ_SFMC1		IRQ_SPI(93)
++#define EXYNOS5_IRQ_MIXER		IRQ_SPI(94)
++#define EXYNOS5_IRQ_HDMI		IRQ_SPI(95)
++#define EXYNOS5_IRQ_MFC			IRQ_SPI(96)
++#define EXYNOS5_IRQ_AUDIO_SS		IRQ_SPI(97)
++#define EXYNOS5_IRQ_I2S0		IRQ_SPI(98)
++#define EXYNOS5_IRQ_I2S1		IRQ_SPI(99)
++#define EXYNOS5_IRQ_I2S2		IRQ_SPI(100)
++#define EXYNOS5_IRQ_AC97		IRQ_SPI(101)
++#define EXYNOS5_IRQ_PCM0		IRQ_SPI(102)
++#define EXYNOS5_IRQ_PCM1		IRQ_SPI(103)
++#define EXYNOS5_IRQ_PCM2		IRQ_SPI(104)
++#define EXYNOS5_IRQ_SPDIF		IRQ_SPI(105)
++#define EXYNOS5_IRQ_ADC0		IRQ_SPI(106)
++
++#define EXYNOS5_IRQ_SATA_PHY		IRQ_SPI(108)
++#define EXYNOS5_IRQ_SATA_PMEMREQ	IRQ_SPI(109)
++#define EXYNOS5_IRQ_CAM_C		IRQ_SPI(110)
++#define EXYNOS5_IRQ_EAGLE_PMU		IRQ_SPI(111)
++#define EXYNOS5_IRQ_INTFEEDCTRL_SSS	IRQ_SPI(112)
++#define EXYNOS5_IRQ_DP1_INTP1		IRQ_SPI(113)
++#define EXYNOS5_IRQ_CEC			IRQ_SPI(114)
++#define EXYNOS5_IRQ_SATA		IRQ_SPI(115)
++#define EXYNOS5_IRQ_NFCON		IRQ_SPI(116)
++
++#define EXYNOS5_IRQ_MMC44		IRQ_SPI(123)
++#define EXYNOS5_IRQ_MDMA1		IRQ_SPI(124)
++#define EXYNOS5_IRQ_FIMC_LITE0		IRQ_SPI(125)
++#define EXYNOS5_IRQ_FIMC_LITE1		IRQ_SPI(126)
++#define EXYNOS5_IRQ_RP_TIMER		IRQ_SPI(127)
++
++#define EXYNOS5_IRQ_PMU			COMBINER_IRQ(1, 2)
++#define EXYNOS5_IRQ_PMU_CPU1		COMBINER_IRQ(1, 6)
++
++#define EXYNOS5_IRQ_SYSMMU_GSC0_0	COMBINER_IRQ(2, 0)
++#define EXYNOS5_IRQ_SYSMMU_GSC0_1	COMBINER_IRQ(2, 1)
++#define EXYNOS5_IRQ_SYSMMU_GSC1_0	COMBINER_IRQ(2, 2)
++#define EXYNOS5_IRQ_SYSMMU_GSC1_1	COMBINER_IRQ(2, 3)
++#define EXYNOS5_IRQ_SYSMMU_GSC2_0	COMBINER_IRQ(2, 4)
++#define EXYNOS5_IRQ_SYSMMU_GSC2_1	COMBINER_IRQ(2, 5)
++#define EXYNOS5_IRQ_SYSMMU_GSC3_0	COMBINER_IRQ(2, 6)
++#define EXYNOS5_IRQ_SYSMMU_GSC3_1	COMBINER_IRQ(2, 7)
++
++#define EXYNOS5_IRQ_SYSMMU_FIMD1_0	COMBINER_IRQ(3, 2)
++#define EXYNOS5_IRQ_SYSMMU_FIMD1_1	COMBINER_IRQ(3, 3)
++#define EXYNOS5_IRQ_SYSMMU_LITE0_0	COMBINER_IRQ(3, 4)
++#define EXYNOS5_IRQ_SYSMMU_LITE0_1	COMBINER_IRQ(3, 5)
++#define EXYNOS5_IRQ_SYSMMU_SCALERPISP_0	COMBINER_IRQ(3, 6)
++#define EXYNOS5_IRQ_SYSMMU_SCALERPISP_1	COMBINER_IRQ(3, 7)
++
++#define EXYNOS5_IRQ_SYSMMU_ROTATOR_0	COMBINER_IRQ(4, 0)
++#define EXYNOS5_IRQ_SYSMMU_ROTATOR_1	COMBINER_IRQ(4, 1)
++#define EXYNOS5_IRQ_SYSMMU_JPEG_0	COMBINER_IRQ(4, 2)
++#define EXYNOS5_IRQ_SYSMMU_JPEG_1	COMBINER_IRQ(4, 3)
++
++#define EXYNOS5_IRQ_SYSMMU_FD_0		COMBINER_IRQ(5, 0)
++#define EXYNOS5_IRQ_SYSMMU_FD_1		COMBINER_IRQ(5, 1)
++#define EXYNOS5_IRQ_SYSMMU_SCALERCISP_0	COMBINER_IRQ(5, 2)
++#define EXYNOS5_IRQ_SYSMMU_SCALERCISP_1	COMBINER_IRQ(5, 3)
++#define EXYNOS5_IRQ_SYSMMU_MCUISP_0	COMBINER_IRQ(5, 4)
++#define EXYNOS5_IRQ_SYSMMU_MCUISP_1	COMBINER_IRQ(5, 5)
++#define EXYNOS5_IRQ_SYSMMU_3DNR_0	COMBINER_IRQ(5, 6)
++#define EXYNOS5_IRQ_SYSMMU_3DNR_1	COMBINER_IRQ(5, 7)
++
++#define EXYNOS5_IRQ_SYSMMU_ARM_0	COMBINER_IRQ(6, 0)
++#define EXYNOS5_IRQ_SYSMMU_ARM_1	COMBINER_IRQ(6, 1)
++#define EXYNOS5_IRQ_SYSMMU_MFC_L_0	COMBINER_IRQ(6, 2)
++#define EXYNOS5_IRQ_SYSMMU_MFC_L_1	COMBINER_IRQ(6, 3)
++#define EXYNOS5_IRQ_SYSMMU_RTIC_0	COMBINER_IRQ(6, 4)
++#define EXYNOS5_IRQ_SYSMMU_RTIC_1	COMBINER_IRQ(6, 5)
++#define EXYNOS5_IRQ_SYSMMU_SSS_0	COMBINER_IRQ(6, 6)
++#define EXYNOS5_IRQ_SYSMMU_SSS_1	COMBINER_IRQ(6, 7)
++
++#define EXYNOS5_IRQ_SYSMMU_MDMA0_0	COMBINER_IRQ(7, 0)
++#define EXYNOS5_IRQ_SYSMMU_MDMA0_1	COMBINER_IRQ(7, 1)
++#define EXYNOS5_IRQ_SYSMMU_MDMA1_0	COMBINER_IRQ(7, 2)
++#define EXYNOS5_IRQ_SYSMMU_MDMA1_1	COMBINER_IRQ(7, 3)
++#define EXYNOS5_IRQ_SYSMMU_TV_0		COMBINER_IRQ(7, 4)
++#define EXYNOS5_IRQ_SYSMMU_TV_1		COMBINER_IRQ(7, 5)
++#define EXYNOS5_IRQ_SYSMMU_GPSX_0	COMBINER_IRQ(7, 6)
++#define EXYNOS5_IRQ_SYSMMU_GPSX_1	COMBINER_IRQ(7, 7)
++
++#define EXYNOS5_IRQ_SYSMMU_MFC_R_0	COMBINER_IRQ(8, 5)
++#define EXYNOS5_IRQ_SYSMMU_MFC_R_1	COMBINER_IRQ(8, 6)
++
++#define EXYNOS5_IRQ_SYSMMU_DIS1_0	COMBINER_IRQ(9, 4)
++#define EXYNOS5_IRQ_SYSMMU_DIS1_1	COMBINER_IRQ(9, 5)
++
++#define EXYNOS5_IRQ_DP			COMBINER_IRQ(10, 3)
++#define EXYNOS5_IRQ_SYSMMU_DIS0_0	COMBINER_IRQ(10, 4)
++#define EXYNOS5_IRQ_SYSMMU_DIS0_1	COMBINER_IRQ(10, 5)
++#define EXYNOS5_IRQ_SYSMMU_ISP_0	COMBINER_IRQ(10, 6)
++#define EXYNOS5_IRQ_SYSMMU_ISP_1	COMBINER_IRQ(10, 7)
++
++#define EXYNOS5_IRQ_SYSMMU_ODC_0	COMBINER_IRQ(11, 0)
++#define EXYNOS5_IRQ_SYSMMU_ODC_1	COMBINER_IRQ(11, 1)
++#define EXYNOS5_IRQ_SYSMMU_DRC_0	COMBINER_IRQ(11, 6)
++#define EXYNOS5_IRQ_SYSMMU_DRC_1	COMBINER_IRQ(11, 7)
++
++#define EXYNOS5_IRQ_FIMD1_FIFO		COMBINER_IRQ(18, 4)
++#define EXYNOS5_IRQ_FIMD1_VSYNC		COMBINER_IRQ(18, 5)
++#define EXYNOS5_IRQ_FIMD1_SYSTEM	COMBINER_IRQ(18, 6)
++
++#define EXYNOS5_IRQ_EINT0		COMBINER_IRQ(23, 0)
++#define EXYNOS5_IRQ_MCT_L0		COMBINER_IRQ(23, 1)
++#define EXYNOS5_IRQ_MCT_L1		COMBINER_IRQ(23, 2)
++#define EXYNOS5_IRQ_MCT_G0		COMBINER_IRQ(23, 3)
++#define EXYNOS5_IRQ_MCT_G1		COMBINER_IRQ(23, 4)
++#define EXYNOS5_IRQ_MCT_G2		COMBINER_IRQ(23, 5)
++#define EXYNOS5_IRQ_MCT_G3		COMBINER_IRQ(23, 6)
++
++#define EXYNOS5_IRQ_EINT1		COMBINER_IRQ(24, 0)
++#define EXYNOS5_IRQ_SYSMMU_LITE1_0	COMBINER_IRQ(24, 1)
++#define EXYNOS5_IRQ_SYSMMU_LITE1_1	COMBINER_IRQ(24, 2)
++#define EXYNOS5_IRQ_SYSMMU_2D_0		COMBINER_IRQ(24, 5)
++#define EXYNOS5_IRQ_SYSMMU_2D_1		COMBINER_IRQ(24, 6)
++
++#define EXYNOS5_IRQ_EINT2		COMBINER_IRQ(25, 0)
++#define EXYNOS5_IRQ_EINT3		COMBINER_IRQ(25, 1)
++
++#define EXYNOS5_IRQ_EINT4		COMBINER_IRQ(26, 0)
++#define EXYNOS5_IRQ_EINT5		COMBINER_IRQ(26, 1)
++
++#define EXYNOS5_IRQ_EINT6		COMBINER_IRQ(27, 0)
++#define EXYNOS5_IRQ_EINT7		COMBINER_IRQ(27, 1)
++
++#define EXYNOS5_IRQ_EINT8		COMBINER_IRQ(28, 0)
++#define EXYNOS5_IRQ_EINT9		COMBINER_IRQ(28, 1)
++
++#define EXYNOS5_IRQ_EINT10		COMBINER_IRQ(29, 0)
++#define EXYNOS5_IRQ_EINT11		COMBINER_IRQ(29, 1)
++
++#define EXYNOS5_IRQ_EINT12		COMBINER_IRQ(30, 0)
++#define EXYNOS5_IRQ_EINT13		COMBINER_IRQ(30, 1)
++
++#define EXYNOS5_IRQ_EINT14		COMBINER_IRQ(31, 0)
++#define EXYNOS5_IRQ_EINT15		COMBINER_IRQ(31, 1)
++
++#define EXYNOS5_MAX_COMBINER_NR		32
++
++#define EXYNOS5_IRQ_GPIO1_NR_GROUPS	13
++#define EXYNOS5_IRQ_GPIO2_NR_GROUPS	9
++#define EXYNOS5_IRQ_GPIO3_NR_GROUPS	5
++#define EXYNOS5_IRQ_GPIO4_NR_GROUPS	1
++
++#define MAX_COMBINER_NR			(EXYNOS4_MAX_COMBINER_NR > EXYNOS5_MAX_COMBINER_NR ? \
++					EXYNOS4_MAX_COMBINER_NR : EXYNOS5_MAX_COMBINER_NR)
++
++#define S5P_EINT_BASE1			COMBINER_IRQ(MAX_COMBINER_NR, 0)
++#define S5P_EINT_BASE2			(S5P_EINT_BASE1 + 16)
++#define S5P_GPIOINT_BASE		(S5P_EINT_BASE1 + 32)
++#define IRQ_GPIO_END			(S5P_GPIOINT_BASE + S5P_GPIOINT_COUNT)
++#define IRQ_TIMER_BASE			(IRQ_GPIO_END + 64)
++
++/* Set the default NR_IRQS */
++
++#define NR_IRQS				(IRQ_TIMER_BASE + IRQ_TIMER_COUNT)
+ 
+ #endif /* __ASM_ARCH_IRQS_H */
+diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+index 85b5527..1016515 100644
+--- a/arch/arm/mach-exynos/mct.c
++++ b/arch/arm/mach-exynos/mct.c
+@@ -258,7 +258,10 @@ static void exynos4_clockevent_init(void)
+ 	mct_comp_device.cpumask = cpumask_of(0);
+ 	clockevents_register_device(&mct_comp_device);
+ 
+-	setup_irq(IRQ_MCT_G0, &mct_comp_event_irq);
 +	if (soc_is_exynos5250())
-+		return device_register(&exynos5_dev);
++		setup_irq(EXYNOS5_IRQ_MCT_G0, &mct_comp_event_irq);
 +	else
-+		return device_register(&exynos4_dev);
++		setup_irq(EXYNOS4_IRQ_MCT_G0, &mct_comp_event_irq);
  }
  
- /* uart registration process */
-@@ -673,6 +837,9 @@ static int __init exynos4_init_irq_eint(void)
+ #ifdef CONFIG_LOCAL_TIMERS
+@@ -406,16 +409,16 @@ static void exynos4_mct_tick_init(struct clock_event_device *evt)
+ 	if (mct_int_type == MCT_INT_SPI) {
+ 		if (cpu == 0) {
+ 			mct_tick0_event_irq.dev_id = mevt;
+-			evt->irq = IRQ_MCT_L0;
+-			setup_irq(IRQ_MCT_L0, &mct_tick0_event_irq);
++			evt->irq = EXYNOS4_IRQ_MCT_L0;
++			setup_irq(EXYNOS4_IRQ_MCT_L0, &mct_tick0_event_irq);
+ 		} else {
+ 			mct_tick1_event_irq.dev_id = mevt;
+-			evt->irq = IRQ_MCT_L1;
+-			setup_irq(IRQ_MCT_L1, &mct_tick1_event_irq);
+-			irq_set_affinity(IRQ_MCT_L1, cpumask_of(1));
++			evt->irq = EXYNOS4_IRQ_MCT_L1;
++			setup_irq(EXYNOS4_IRQ_MCT_L1, &mct_tick1_event_irq);
++			irq_set_affinity(EXYNOS4_IRQ_MCT_L1, cpumask_of(1));
+ 		}
+ 	} else {
+-		enable_percpu_irq(IRQ_MCT_LOCALTIMER, 0);
++		enable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER, 0);
+ 	}
+ }
+ 
+@@ -437,7 +440,7 @@ void local_timer_stop(struct clock_event_device *evt)
+ 		else
+ 			remove_irq(evt->irq, &mct_tick1_event_irq);
+ 	else
+-		disable_percpu_irq(IRQ_MCT_LOCALTIMER);
++		disable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER);
+ }
+ #endif /* CONFIG_LOCAL_TIMERS */
+ 
+@@ -452,11 +455,11 @@ static void __init exynos4_timer_resources(void)
+ 	if (mct_int_type == MCT_INT_PPI) {
+ 		int err;
+ 
+-		err = request_percpu_irq(IRQ_MCT_LOCALTIMER,
++		err = request_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER,
+ 					 exynos4_mct_tick_isr, "MCT",
+ 					 &percpu_mct_tick);
+ 		WARN(err, "MCT: can't request IRQ %d (%d)\n",
+-		     IRQ_MCT_LOCALTIMER, err);
++		     EXYNOS_IRQ_MCT_LOCALTIMER, err);
+ 	}
+ #endif /* CONFIG_LOCAL_TIMERS */
+ }
+diff --git a/arch/arm/plat-s5p/irq-pm.c b/arch/arm/plat-s5p/irq-pm.c
+index 327acb3..d1bfeca 100644
+--- a/arch/arm/plat-s5p/irq-pm.c
++++ b/arch/arm/plat-s5p/irq-pm.c
+@@ -39,19 +39,32 @@ unsigned long s3c_irqwake_eintallow	= 0xffffffffL;
+ int s3c_irq_wake(struct irq_data *data, unsigned int state)
  {
- 	int irq;
- 
-+	if (soc_is_exynos5250())
-+		return 0;
+ 	unsigned long irqbit;
++	unsigned int irq_rtc_tic, irq_rtc_alarm;
 +
- 	for (irq = 0 ; irq <= 31 ; irq++) {
- 		irq_set_chip_and_handler(IRQ_EINT(irq), &exynos4_irq_eint,
- 					 handle_level_irq);
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index b32c6b5..677b546 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -16,7 +16,9 @@ extern struct sys_timer exynos4_timer;
- 
- void exynos_init_io(struct map_desc *mach_desc, int size);
- void exynos4_init_irq(void);
-+void exynos5_init_irq(void);
- void exynos4_restart(char mode, const char *cmd);
-+void exynos5_restart(char mode, const char *cmd);
- 
- #ifdef CONFIG_ARCH_EXYNOS4
- void exynos4_register_clocks(void);
-@@ -27,6 +29,15 @@ void exynos4_setup_clocks(void);
- #define exynos4_setup_clocks()
- #endif
- 
-+#ifdef CONFIG_ARCH_EXYNOS5
-+void exynos5_register_clocks(void);
-+void exynos5_setup_clocks(void);
-+
++#ifdef CONFIG_ARCH_EXYNOS
++	if (soc_is_exynos5250()) {
++		irq_rtc_tic = EXYNOS5_IRQ_RTC_TIC;
++		irq_rtc_alarm = EXYNOS5_IRQ_RTC_ALARM;
++	} else {
++		irq_rtc_tic = EXYNOS4_IRQ_RTC_TIC;
++		irq_rtc_alarm = EXYNOS4_IRQ_RTC_ALARM;
++	}
 +#else
-+#define exynos5_register_clocks()
-+#define exynos5_setup_clocks()
++	irq_rtc_tic = IRQ_RTC_TIC;
++	irq_rtc_alarm = IRQ_RTC_ALARM;
 +#endif
 +
- #ifdef CONFIG_CPU_EXYNOS4210
- void exynos4210_register_clocks(void);
++	if (data->irq == irq_rtc_tic || data->irq == irq_rtc_alarm) {
++		irqbit = 1 << (data->irq + 1 - irq_rtc_alarm);
  
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index ea513c6..bf90bb0 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -25,6 +25,7 @@
- 
- #define EXYNOS4_PA_SYSRAM0		0x02025000
- #define EXYNOS4_PA_SYSRAM1		0x02020000
-+#define EXYNOS5_PA_SYSRAM		0x02020000
- 
- #define EXYNOS4_PA_FIMC0		0x11800000
- #define EXYNOS4_PA_FIMC1		0x11810000
-@@ -44,14 +45,23 @@
- #define EXYNOS4_PA_ONENAND		0x0C000000
- #define EXYNOS4_PA_ONENAND_DMA		0x0C600000
- 
--#define EXYNOS4_PA_CHIPID		0x10000000
-+#define EXYNOS_PA_CHIPID		0x10000000
- 
- #define EXYNOS4_PA_SYSCON		0x10010000
-+#define EXYNOS5_PA_SYSCON		0x10050100
+-	switch (data->irq) {
+-	case IRQ_RTC_TIC:
+-	case IRQ_RTC_ALARM:
+-		irqbit = 1 << (data->irq + 1 - IRQ_RTC_ALARM);
+ 		if (!state)
+ 			s3c_irqwake_intmask |= irqbit;
+ 		else
+ 			s3c_irqwake_intmask &= ~irqbit;
+-		break;
+-	default:
++	} else {
+ 		return -ENOENT;
+ 	}
 +
- #define EXYNOS4_PA_PMU			0x10020000
-+#define EXYNOS5_PA_PMU			0x10040000
-+
- #define EXYNOS4_PA_CMU			0x10030000
-+#define EXYNOS5_PA_CMU			0x10010000
+ 	return 0;
+ }
  
- #define EXYNOS4_PA_SYSTIMER		0x10050000
-+#define EXYNOS5_PA_SYSTIMER		0x101C0000
-+
- #define EXYNOS4_PA_WATCHDOG		0x10060000
-+#define EXYNOS5_PA_WATCHDOG		0x101D0000
-+
- #define EXYNOS4_PA_RTC			0x10070000
+diff --git a/arch/arm/plat-samsung/irq-vic-timer.c b/arch/arm/plat-samsung/irq-vic-timer.c
+index 51583cd..f980cf3 100644
+--- a/arch/arm/plat-samsung/irq-vic-timer.c
++++ b/arch/arm/plat-samsung/irq-vic-timer.c
+@@ -19,6 +19,7 @@
+ #include <linux/io.h>
  
- #define EXYNOS4_PA_KEYPAD		0x100A0000
-@@ -59,9 +69,12 @@
- #define EXYNOS4_PA_DMC0			0x10400000
+ #include <mach/map.h>
++#include <plat/cpu.h>
+ #include <plat/irq-vic-timer.h>
+ #include <plat/regs-timer.h>
  
- #define EXYNOS4_PA_COMBINER		0x10440000
-+#define EXYNOS5_PA_COMBINER		0x10440000
+@@ -57,6 +58,21 @@ void __init s3c_init_vic_timer_irq(unsigned int num, unsigned int timer_irq)
+ 	struct irq_chip_type *ct;
+ 	unsigned int i;
  
- #define EXYNOS4_PA_GIC_CPU		0x10480000
- #define EXYNOS4_PA_GIC_DIST		0x10490000
-+#define EXYNOS5_PA_GIC_CPU		0x10480000
-+#define EXYNOS5_PA_GIC_DIST		0x10490000
- 
- #define EXYNOS4_PA_COREPERI		0x10500000
- #define EXYNOS4_PA_TWD			0x10500600
-@@ -92,7 +105,6 @@
- #define EXYNOS4_PA_SPI1			0x13930000
- #define EXYNOS4_PA_SPI2			0x13940000
- 
--
- #define EXYNOS4_PA_GPIO1		0x11400000
- #define EXYNOS4_PA_GPIO2		0x11000000
- #define EXYNOS4_PA_GPIO3		0x03860000
-@@ -110,6 +122,7 @@
- #define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
- 
- #define EXYNOS4_PA_SROMC		0x12570000
-+#define EXYNOS5_PA_SROMC		0x12250000
- 
- #define EXYNOS4_PA_EHCI			0x12580000
- #define EXYNOS4_PA_OHCI			0x12590000
-@@ -117,6 +130,7 @@
- #define EXYNOS4_PA_MFC			0x13400000
- 
- #define EXYNOS4_PA_UART			0x13800000
-+#define EXYNOS5_PA_UART			0x12C00000
- 
- #define EXYNOS4_PA_VP			0x12C00000
- #define EXYNOS4_PA_MIXER		0x12C10000
-@@ -125,6 +139,7 @@
- #define EXYNOS4_PA_IIC_HDMIPHY		0x138E0000
- 
- #define EXYNOS4_PA_IIC(x)		(0x13860000 + ((x) * 0x10000))
-+#define EXYNOS5_PA_IIC(x)		(0x12C60000 + ((x) * 0x10000))
- 
- #define EXYNOS4_PA_ADC			0x13910000
- #define EXYNOS4_PA_ADC1			0x13911000
-@@ -134,8 +149,10 @@
- #define EXYNOS4_PA_SPDIF		0x139B0000
- 
- #define EXYNOS4_PA_TIMER		0x139D0000
-+#define EXYNOS5_PA_TIMER		0x12DD0000
- 
- #define EXYNOS4_PA_SDRAM		0x40000000
-+#define EXYNOS5_PA_SDRAM		0x40000000
- 
- /* Compatibiltiy Defines */
- 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index 4fff8e9..4c53f38 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -31,6 +31,7 @@
- #define S5P_USE_STANDBYWFE_ISP_ARM		(1 << 26)
- 
- #define S5P_SWRESET				S5P_PMUREG(0x0400)
-+#define EXYNOS_SWRESET				S5P_PMUREG(0x0400)
- 
- #define S5P_WAKEUP_STAT				S5P_PMUREG(0x0600)
- #define S5P_EINT_WAKEUP_MASK			S5P_PMUREG(0x0604)
-diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index 10e235cc7..88795ea 100644
---- a/arch/arm/plat-s5p/Kconfig
-+++ b/arch/arm/plat-s5p/Kconfig
-@@ -9,8 +9,8 @@ config PLAT_S5P
- 	bool
- 	depends on (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_EXYNOS)
- 	default y
--	select ARM_VIC if !ARCH_EXYNOS4
--	select ARM_GIC if ARCH_EXYNOS4
-+	select ARM_VIC if !ARCH_EXYNOS
-+	select ARM_GIC if ARCH_EXYNOS
- 	select GIC_NON_BANKED if ARCH_EXYNOS4
- 	select NO_IOPORT
- 	select ARCH_REQUIRE_GPIOLIB
-diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
-index 73cb3cf..787ceac 100644
---- a/arch/arm/plat-samsung/include/plat/cpu.h
-+++ b/arch/arm/plat-samsung/include/plat/cpu.h
-@@ -42,6 +42,9 @@ extern unsigned long samsung_cpu_id;
- #define EXYNOS4412_CPU_ID	0xE4412200
- #define EXYNOS4_CPU_MASK	0xFFFE0000
- 
-+#define EXYNOS5250_SOC_ID	0x43520000
-+#define EXYNOS5_SOC_MASK	0xFFFFF000
-+
- #define IS_SAMSUNG_CPU(name, id, mask)		\
- static inline int is_samsung_##name(void)	\
- {						\
-@@ -58,6 +61,7 @@ IS_SAMSUNG_CPU(s5pv210, S5PV210_CPU_ID, S5PV210_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4210, EXYNOS4210_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4212, EXYNOS4212_CPU_ID, EXYNOS4_CPU_MASK)
- IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
-+IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
- 
- #if defined(CONFIG_CPU_S3C2410) || defined(CONFIG_CPU_S3C2412) || \
-     defined(CONFIG_CPU_S3C2416) || defined(CONFIG_CPU_S3C2440) || \
-@@ -120,6 +124,12 @@ IS_SAMSUNG_CPU(exynos4412, EXYNOS4412_CPU_ID, EXYNOS4_CPU_MASK)
- #define EXYNOS4210_REV_1_0	(0x10)
- #define EXYNOS4210_REV_1_1	(0x11)
- 
-+#if defined(CONFIG_SOC_EXYNOS5250)
-+# define soc_is_exynos5250()	is_samsung_exynos5250()
-+#else
-+# define soc_is_exynos5250()	0
++#ifdef CONFIG_ARCH_EXYNOS
++	if (soc_is_exynos5250()) {
++		pirq[0] = EXYNOS5_IRQ_TIMER0_VIC;
++		pirq[1] = EXYNOS5_IRQ_TIMER1_VIC;
++		pirq[2] = EXYNOS5_IRQ_TIMER2_VIC;
++		pirq[3] = EXYNOS5_IRQ_TIMER3_VIC;
++		pirq[4] = EXYNOS5_IRQ_TIMER4_VIC;
++	} else {
++		pirq[0] = EXYNOS4_IRQ_TIMER0_VIC;
++		pirq[1] = EXYNOS4_IRQ_TIMER1_VIC;
++		pirq[2] = EXYNOS4_IRQ_TIMER2_VIC;
++		pirq[3] = EXYNOS4_IRQ_TIMER3_VIC;
++		pirq[4] = EXYNOS4_IRQ_TIMER4_VIC;
++	}
 +#endif
-+
- #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
+ 	s3c_tgc = irq_alloc_generic_chip("s3c-timer", 1, timer_irq,
+ 					 S3C64XX_TINT_CSTAT, handle_level_irq);
  
- #ifndef MHZ
 -- 
 1.7.4.4
