@@ -1,81 +1,55 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/4] Samsung devel-pd for v3.4
-Date: Tue, 13 Mar 2012 17:53:06 -0700
-Message-ID: <CAOesGMg8iv=jE52sFs-np4HXuokMstZt8igHTQBJ4wJNOCae9A@mail.gmail.com>
-References: <4F5B7C81.6080301@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH 0/3 v2] Updates for exynos4210 and DT-based systems
+Date: Wed, 14 Mar 2012 10:49:48 +0900
+Message-ID: <CAH9JG2VhDKN4skjtgsYXDJqrNbXbOuheKHo_hQPeQ3XdNgh1Lg@mail.gmail.com>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:51988 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964959Ab2CNAxG convert rfc822-to-8bit (ORCPT
+Received: from mail-gx0-f174.google.com ([209.85.161.174]:57988 "EHLO
+	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932335Ab2CNBtu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Mar 2012 20:53:06 -0400
-Received: by mail-yx0-f174.google.com with SMTP id l12so1239758yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Mar 2012 17:53:06 -0700 (PDT)
-In-Reply-To: <4F5B7C81.6080301@samsung.com>
+	Tue, 13 Mar 2012 21:49:50 -0400
+In-Reply-To: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Karol Lewandowski <k.lewandowsk@samsung.com>, Wolfram Sang <w.sang@pengutronix.de>
+Cc: ben-linux@fluff.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com
 
-Hi,
++CC another i2c subsystem maintainer, Wolfram Sang.
 
-On Sat, Mar 10, 2012 at 8:08 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Hi Arnd, Olof,
+On 3/14/12, Karol Lewandowski <k.lewandowsk@samsung.com> wrote:
+> Changes since v1:
+>  - Move unrelated code fragment to separate patch (of_match_ptr())
+>  - Move device-type handling to separate function and rework its
+>    internals a bit
 >
-> This is Generic Power Domain patches for EXYNOS. Basically, Thomas' p=
-atches,
-> adding support Generic Power Domain patches are in Rafael's tree,
-> linux-pm/linux-next and see below merge commit.
-> http://git.kernel.org/?p=3Dlinux/kernel/git/rafael/linux-pm.git;a=3Dc=
-ommit;h=3Ddcaad77a8074b6de58e745546bc543d5538404f2
-> And this adds hooking up G2D and JPEG to Generic PD.
+> This patchset reworks i2c-s3c2410 driver a bit to better handle
+> device tree-enabled platforms and adds two quirks required by
+> exynos4210-specific I2C controller used by s5p-hdmi driver.
 >
-> Please pull and here is my preferred resolution when merge this after
-> next/board-samsung.
+> This patchset is based on "i2c-bjdooks/for-34/i2c/i2c-samsung" branch
+> taken from:
 >
-> diff --cc arch/arm/mach-exynos/mach-universal_c210.c
-> index 3663aee,0262417..0b944eb
-> --- a/arch/arm/mach-exynos/mach-universal_c210.c
-> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
-> @@@ -1053,10 -981,6 +1052,7 @@@ static struct platform_device *univer=
-sa
-> =A0 =A0 =A0 =A0&s5p_device_mfc,
-> =A0 =A0 =A0 =A0&s5p_device_mfc_l,
-> =A0 =A0 =A0 =A0&s5p_device_mfc_r,
-> - =A0 =A0 =A0 &exynos4_device_pd[PD_MFC],
-> - =A0 =A0 =A0 &exynos4_device_pd[PD_LCD0],
-> - =A0 =A0 =A0 &exynos4_device_pd[PD_CAM],
-> =A0+ =A0 =A0 =A0&cam_vt_dio_fixed_reg_dev,
-> =A0 =A0 =A0 =A0&cam_i_core_fixed_reg_dev,
-> =A0 =A0 =A0 =A0&cam_s_if_fixed_reg_dev,
-> =A0 =A0 =A0 =A0&s5p_device_fimc_md,
+>   git://git.fluff.org/bjdooks/linux.git
 >
-> If any problems, please kindly let me know.
+> Karol Lewandowski (3):
+>   i2c-s3c2410: Drop unused define
+>   i2c-s3c2410: Rework device type handling
+>   i2c-s3c2410: Add HDMIPHY quirk for S3C2440
 >
-> Thanks.
+>  .../devicetree/bindings/i2c/samsung-i2c.txt        |   10 ++-
+>  drivers/i2c/busses/i2c-s3c2410.c                   |   93
+> +++++++++++++++-----
+>  2 files changed, 77 insertions(+), 26 deletions(-)
 >
-> Best regards,
-> Kgene.
 > --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 1.7.9
 >
-> The following changes since commit 192cfd58774b4d17b2fe8bdc77d89c2ef4=
-e0591d:
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
-> =A0Linux 3.3-rc6 (2012-03-03 17:08:09 -0800)
->
-> are available in the git repository at:
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
-git
-> next/devel-samsung-pd
-
-
-Pulled, thanks!
-
-
--Olof
