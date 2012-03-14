@@ -1,40 +1,23 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] spi: s3c64xx: Fix build
-Date: Wed, 14 Mar 2012 16:52:14 +0000
-Message-ID: <1331743934-23577-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51711 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757002Ab2CNQwS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 12:52:18 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Wed, 14 Mar 2012 17:29:15 +0000
+Message-ID: <20120314172915.GB13393@sirena.org.uk>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
+ <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1331657679-31302-3-git-send-email-k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>, Kyoungil Kim <ki0351.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
-Cc: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Commit 054ebc (spi: Compatibility with direction which is used in samsung
-DMA operation) does not build as one hunk adds a brace to the first branch
-of an if statement without adding at least the correspoding close. Remove
-the unwanted brace.
+On Tue, Mar 13, 2012 at 05:54:38PM +0100, Karol Lewandowski wrote:
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
----
- drivers/spi/spi-s3c64xx.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+>  - replace s3c24xx_i2c_type enum with plain unsigned int that can
+>    hold not only device type but also hw revision-specific quirks
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index c40d118..3180100 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -264,7 +264,7 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
- 	struct s3c64xx_spi_driver_data *sdd;
- 	struct samsung_dma_prep_info info;
- 
--	if (dma->direction == DMA_DEV_TO_MEM) {
-+	if (dma->direction == DMA_DEV_TO_MEM)
- 		sdd = container_of((void *)dma,
- 			struct s3c64xx_spi_driver_data, rx_dma);
- 	else
--- 
-1.7.9.1
+Would it not be clearer to just have explicit flags for the quirks (eg,
+as a set of bitfield flags)?
