@@ -1,45 +1,51 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v4 00/12] ARM: EXYNOS: add support new EXYNOS5250
-Date: Wed, 14 Mar 2012 16:20:27 -0700
-Message-ID: <4F6127BB.1070406@samsung.com>
-References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com> <20120314224001.GB13872@quad.lixom.net>
+From: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+Subject: [PATCH] watchdog: s3c2410_wdt: fix printk format compilation errors
+Date: Thu, 15 Mar 2012 00:21:55 +0100
+Message-ID: <1331767315-8290-1-git-send-email-GNUtoo@no-log.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:36991 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753992Ab2CNXUa (ORCPT
+Received: from smtp201.alice.it ([82.57.200.97]:58407 "EHLO smtp201.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1758999Ab2CNXXB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 19:20:30 -0400
-Received: by dadp12 with SMTP id p12so3684222dad.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 16:20:29 -0700 (PDT)
-In-Reply-To: <20120314224001.GB13872@quad.lixom.net>
+	Wed, 14 Mar 2012 19:23:01 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
 
-Olof Johansson wrote:
-> On Wed, Mar 14, 2012 at 07:42:06AM -0700, Kukjin Kim wrote:
->> This patch adds support EXYNOS5250 SoC which has two A15 cores
->> can be used on mobile and tablet devices.
->
-> Looks good. I've switched back with Arnd so he does pulls right now,
-> but I'd be OK with this going in as it is now (see one nit to fixup when you
-> build the branch -- no need to repost with it I think).
->
-OK, let me do it.
+Without that fix we have:
+  drivers/watchdog/s3c2410_wdt.c: In function =E2=80=98watchdog_init=E2=
+=80=99:
+  drivers/watchdog/s3c2410_wdt.c:542:0: error: unterminated argument li=
+st invoking macro "pr_info"
+  [...]
 
-> So, I'll leave it up to Arnd to pull but it looks good enough for me at this
-> time.
->
-OK, I see.
+This problem has been introduced by the commit 1ab73c46629484053953e678=
+328b0a115a39ed3b
+  "watchdog: Use pr_<fmt> and pr_<level>".
 
-Thanks.
+Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+---
+ drivers/watchdog/s3c2410_wdt.c |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_=
+wdt.c
+index 96b598c..cd6d688 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -521,7 +521,7 @@ static struct platform_driver s3c2410wdt_driver =3D=
+ {
+=20
+ static int __init watchdog_init(void)
+ {
+-	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n";
++	pr_info("S3C2410 Watchdog Timer, (c) 2004 Simtec Electronics\n");
+=20
+ 	return platform_driver_register(&s3c2410wdt_driver);
+ }
+--=20
+1.7.4.1
