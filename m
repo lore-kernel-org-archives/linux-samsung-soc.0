@@ -1,88 +1,285 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v2 RE-SEND] [CPUFREQ] EXYNOS5250: Add support cpufreq
- for EXYNOS5250
-Date: Wed, 14 Mar 2012 11:24:28 -0700
-Message-ID: <4F60E25C.9060005@samsung.com>
-References: <1331377202-25173-1-git-send-email-kgene.kim@samsung.com> <4F60D5FE.7080400@samsung.com> <20120314175703.GA3803@redhat.com>
+From: Darius Augulis <augulis.darius@gmail.com>
+Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
+Date: Wed, 14 Mar 2012 20:39:04 +0200
+Message-ID: <4F60E5C8.3040804@gmail.com>
+References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org> <1331585999-8604-4-git-send-email-thomas.abraham@linaro.org> <002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com> <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com> <000501cd0184$f088cb20$d19a6160$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:37552 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758394Ab2CNSYd (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:38524 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756965Ab2CNSjK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 14:24:33 -0400
-Received: by ghrr11 with SMTP id r11so2118578ghr.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 11:24:32 -0700 (PDT)
-In-Reply-To: <20120314175703.GA3803@redhat.com>
+	Wed, 14 Mar 2012 14:39:10 -0400
+In-Reply-To: <000501cd0184$f088cb20$d19a6160$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dave Jones <davej@redhat.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'JeongHyeon Kim' <jhkim@insignal.co.kr>, 'Heiko Stuebner' <heiko@sntech.de>, 'Kwangwoo Lee' <kwangwoo.lee@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Peter Korsgaard' <jacmet@sunsite.dk>, 'Maurus Cuelenaere' <mcuelenaere@gmail.com>
 
-2012-03-14 =EC=98=A4=EC=A0=84 10:57, Dave Jones =EC=93=B4 =EA=B8=80:
-> On Wed, Mar 14, 2012 at 10:31:42AM -0700, Kukjin Kim wrote:
->   >  Kukjin Kim wrote:
->   >  >  From: Jaecheol Lee<jc.lee@samsung.com>
->   >  >
->   >  >  This patch adds support cpufreq for EXYNOS5250 SoC. Basically=
-,
->   >  >  the exynos-cpufreq.c is used commonly and exynos5250-cpufreq.=
-c
->   >  >  is used for EXYNOS5250(two Cortex-A15 cores) SoC.
->   >  >
->   >  >  Signed-off-by: Jaecheol Lee<jc.lee@samsung.com>
->   >  >  Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->   >
->   >  Hi again Dave :)
->   >
->   >  Please pick up this patch for v3.4.
->   >  If any problems, please kindly let us know.
+On 03/14/2012 03:51 AM, Jingoo Han wrote:
+>> -----Original Message-----
+>> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+>> Sent: Tuesday, March 13, 2012 7:11 PM
+>> To: Jingoo Han
+>> Cc: linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-arm-kernel@lists.infradead.org; linux-
+>> samsung-soc@vger.kernel.org; kgene.kim@samsung.com; ben-linux@fluff.org; patches@linaro.org; Kyungmin
+>> Park; JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter Korsgaard; Darius Augulis; Maurus
+>> Cuelenaere
+>> Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
+>>
+>> On 13 March 2012 15:17, Jingoo Han<jg1.han@samsung.com>  wrote:
+>>>> -----Original Message-----
+>>>> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
+>>>> Sent: Tuesday, March 13, 2012 6:00 AM
+>>>> To: linux-fbdev@vger.kernel.org
+>>>> Cc: FlorianSchandinat@gmx.de; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+>>>> kgene.kim@samsung.com; jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org; Kyungmin Park;
+>>>> JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter Korsgaard; Darius Augulis; Maurus
+>>>> Cuelenaere
+>>>> Subject: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
+>>>>
+>>>> For all the Samsung SoC based boards which have the platform data for
+>>>> s3c-fb driver, the 'default_win' element in the platform data is removed
+>>>> and the lcd panel video timing values are moved out of individual window
+>>>> configuration data.
+>>>>
+>>>> Cc: Jingoo Han<jg1.han@samsung.com>
+>>>> Cc: Kyungmin Park<kyungmin.park@samsung.com>
+>>>> Cc: JeongHyeon Kim<jhkim@insignal.co.kr>
+>>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
+>>>> Cc: Heiko Stuebner<heiko@sntech.de>
+>>>> Cc: Ben Dooks<ben-linux@fluff.org>
+>>>> Cc: Kwangwoo Lee<kwangwoo.lee@gmail.com>
+>>>> Cc: Mark Brown<broonie@opensource.wolfsonmicro.com>
+>>>> Cc: Peter Korsgaard<jacmet@sunsite.dk>
+>>>> Cc: Darius Augulis<augulis.darius@gmail.com>
+>>>> Cc: Maurus Cuelenaere<mcuelenaere@gmail.com>
+>>>> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+>>>> ---
+>>>>   arch/arm/mach-exynos/mach-nuri.c           |   26 ++++++++++-------
+>>>>   arch/arm/mach-exynos/mach-origen.c         |   24 ++++++++++-------
+>>>>   arch/arm/mach-exynos/mach-smdkv310.c       |   28 +++++++++++--------
+>>>>   arch/arm/mach-exynos/mach-universal_c210.c |   26 ++++++++++-------
+>>>>   arch/arm/mach-s3c24xx/mach-smdk2416.c      |   27 ++++++++++--------
+>>>>   arch/arm/mach-s3c64xx/mach-anw6410.c       |   25 ++++++++++-------
+>>>>   arch/arm/mach-s3c64xx/mach-crag6410.c      |   25 ++++++++++-------
+>>>>   arch/arm/mach-s3c64xx/mach-hmt.c           |   24 ++++++++++-------
+>>>>   arch/arm/mach-s3c64xx/mach-mini6410.c      |   40 ++++++++++++---------------
+>>>>   arch/arm/mach-s3c64xx/mach-real6410.c      |   40 ++++++++++++---------------
+>>>>   arch/arm/mach-s3c64xx/mach-smartq5.c       |   26 ++++++++++-------
+>>>>   arch/arm/mach-s3c64xx/mach-smartq7.c       |   26 ++++++++++-------
+>>>>   arch/arm/mach-s3c64xx/mach-smdk6410.c      |   25 ++++++++++-------
+>>>>   arch/arm/mach-s5p64x0/mach-smdk6440.c      |   24 ++++++++++-------
+>>>>   arch/arm/mach-s5p64x0/mach-smdk6450.c      |   24 ++++++++++-------
+>>>>   arch/arm/mach-s5pc100/mach-smdkc100.c      |   27 ++++++++++--------
+>>>>   arch/arm/mach-s5pv210/mach-aquila.c        |   36 +++++++++++--------------
+>>>>   arch/arm/mach-s5pv210/mach-goni.c          |   26 ++++++++++-------
+>>>>   arch/arm/mach-s5pv210/mach-smdkv210.c      |   24 ++++++++++-------
+>>>>   19 files changed, 285 insertions(+), 238 deletions(-)
+>>>>
+>>> [.....]
+>>>
+>>>> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+>>>> index c34c2ab..24dcdc9 100644
+>>>> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
+>>>> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+>>>> @@ -153,36 +153,32 @@ static struct s3c2410_platform_nand mini6410_nand_info = {
+>>>>
+>>>>   static struct s3c_fb_pd_win mini6410_fb_win[] = {
+>>>>        {
+>>>> -             .win_mode       = {     /* 4.3" 480x272 */
+>>>> -                     .left_margin    = 3,
+>>>> -                     .right_margin   = 2,
+>>>> -                     .upper_margin   = 1,
+>>>> -                     .lower_margin   = 1,
+>>>> -                     .hsync_len      = 40,
+>>>> -                     .vsync_len      = 1,
+>>>> -                     .xres           = 480,
+>>>> -                     .yres           = 272,
+>>>> -             },
+>>>>                .max_bpp        = 32,
+>>>>                .default_bpp    = 16,
+>>>> +             .xres           = 480,
+>>>> +             .yres           = 272,
+>>>>        }, {
+>>>> -             .win_mode       = {     /* 7.0" 800x480 */
+>>>> -                     .left_margin    = 8,
+>>>> -                     .right_margin   = 13,
+>>>> -                     .upper_margin   = 7,
+>>>> -                     .lower_margin   = 5,
+>>>> -                     .hsync_len      = 3,
+>>>> -                     .vsync_len      = 1,
+>>>> -                     .xres           = 800,
+>>>> -                     .yres           = 480,
+>>>> -             },
+>>>>                .max_bpp        = 32,
+>>>>                .default_bpp    = 16,
+>>>> +             .xres           = 800,
+>>>> +             .yres           = 480,
+>>>>        },
+>>>>   };
+>>>>
+>>>> +static struct fb_videomode mini6410_lcd_timing = {
+>>>> +     .left_margin    = 8,
+>>>> +     .right_margin   = 13,
+>>>> +     .upper_margin   = 7,
+>>>> +     .lower_margin   = 5,
+>>>> +     .hsync_len      = 3,
+>>>> +     .vsync_len      = 1,
+>>>> +     .xres           = 800,
+>>>> +     .yres           = 480,
+>>>> +};
+>>>> +
+>>>>   static struct s3c_fb_platdata mini6410_lcd_pdata __initdata = {
+>>>>        .setup_gpio     = s3c64xx_fb_gpio_setup_24bpp,
+>>>> +     .vtiming        =&mini6410_lcd_timing,
+>>>>        .win[0]         =&mini6410_fb_win[0],
+>>>>        .vidcon0        = VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
+>>>>        .vidcon1        = VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
+>>>> @@ -310,8 +306,8 @@ static void __init mini6410_machine_init(void)
+>>>>        mini6410_lcd_pdata.win[0] =&mini6410_fb_win[features.lcd_index];
+>>>>
+>>>>        printk(KERN_INFO "MINI6410: selected LCD display is %dx%d\n",
+>>>> -             mini6410_lcd_pdata.win[0]->win_mode.xres,
+>>>> -             mini6410_lcd_pdata.win[0]->win_mode.yres);
+>>>> +             mini6410_lcd_pdata.win[0]->xres,
+>>>> +             mini6410_lcd_pdata.win[0]->yres);
+>>>>
+>>>>        s3c_nand_set_platdata(&mini6410_nand_info);
+>>>>        s3c_fb_set_platdata(&mini6410_lcd_pdata);
+>>>> diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
+>>>> index be2a9a2..41e4f74 100644
+>>>> --- a/arch/arm/mach-s3c64xx/mach-real6410.c
+>>>> +++ b/arch/arm/mach-s3c64xx/mach-real6410.c
+>>>> @@ -119,36 +119,32 @@ static struct platform_device real6410_device_eth = {
+>>>>
+>>>>   static struct s3c_fb_pd_win real6410_fb_win[] = {
+>>>>        {
+>>>> -             .win_mode       = {     /* 4.3" 480x272 */
+>>>> -                     .left_margin    = 3,
+>>>> -                     .right_margin   = 2,
+>>>> -                     .upper_margin   = 1,
+>>>> -                     .lower_margin   = 1,
+>>>> -                     .hsync_len      = 40,
+>>>> -                     .vsync_len      = 1,
+>>>> -                     .xres           = 480,
+>>>> -                     .yres           = 272,
+>>>> -             },
+>>>>                .max_bpp        = 32,
+>>>>                .default_bpp    = 16,
+>>>> +             .xres           = 480,
+>>>> +             .yres           = 272,
+>>>>        }, {
+>>>> -             .win_mode       = {     /* 7.0" 800x480 */
+>>>> -                     .left_margin    = 8,
+>>>> -                     .right_margin   = 13,
+>>>> -                     .upper_margin   = 7,
+>>>> -                     .lower_margin   = 5,
+>>>> -                     .hsync_len      = 3,
+>>>> -                     .vsync_len      = 1,
+>>>> -                     .xres           = 800,
+>>>> -                     .yres           = 480,
+>>>> -             },
+>>>>                .max_bpp        = 32,
+>>>>                .default_bpp    = 16,
+>>>> +             .xres           = 800,
+>>>> +             .yres           = 480,
+>>>>        },
+>>>>   };
+>>>>
+>>>> +static struct fb_videomode real6410_lcd_timing = {
+>>>> +     .left_margin    = 3,
+>>>> +     .right_margin   = 2,
+>>>> +     .upper_margin   = 1,
+>>>> +     .lower_margin   = 1,
+>>>> +     .hsync_len      = 40,
+>>>> +     .vsync_len      = 1,
+>>>> +     .xres           = 800,
+>>>> +     .yres           = 480,
+>>>> +};
+>>>
+>>> What is the difference between mini6410_lcd_timing and real6410_lcd_timing?
+>>> In my opinion, it would be good as follows:
+>>>
+>>> +static struct fb_videomode real6410_lcd_timing = {
+>>> +       .left_margin    = 8,
+>>> +       .right_margin   = 13,
+>>> +       .upper_margin   = 7,
+>>> +       .lower_margin   = 5,
+>>> +       .hsync_len      = 3,
+>>> +       .vsync_len      = 1,
+>>> +       .xres           = 800,
+>>> +       .yres           = 480,
+>>> +};
+>>>
+>>>
+>> Before this patch series, both real6410 and mini6410 had 'default_win'
+>> = 0 in the platform data. And, the s3c-fb driver selected the video
+>> timing from the window selected by the default_win parameter in s3c-fb
+>> platform data, i.e window 0 for both mini6440 and real6410. So, in
+>> this patch, while moving the timing values out of window data, the
+>> timing values for window 0 was selected.
+>>
+>> The timing value for window 1 was never used on mini6410 and real6410.
+>> So I would suggest to use timing value of window 0 in this patch.
+> OK, I see.
+> Then, as you mentioned above, the timing value of mini6410 and real6410 should be same.
+> Also, the mini6410 should use the timing value for window 0 as below.
 >
-> this, and the other patch doesn't apply against current cpufreq.git
+> Also, this timing value is used for 4.3" 480x272 LCD.
+> So, xres and yres would be 480 and 272, respectively, instead of 800 and 480.
 >
-Oops, maybe you applied this first. Pleae try again EXYNOS4X12 first=20
-then, this. I applied on top of cpufreq/next and there was no complain.
+> The mini6410 seems to use 4.3" 480x272 LCD as default LCD.
+> Please refer to 'http://www.friendlyarm.net/products/mini6410'.
+>
+> Also, real6410 seems to use 4.3" 480x272 LCD as default LCD.
+> http://s3c6410kits.googlecode.com/files/overview_Real6410.pdf
+>
+> Therefore, given this, the timing value of mini6410 and real6410 would be as follows.
+>
+> +static struct fb_videomode mini6410_lcd_timing = {
+> +	.left_margin	= 8,
+> +	.right_margin	= 13,
+> +	.upper_margin	= 7,
+> +	.lower_margin	= 5,
+> +	.hsync_len	= 3,
+> +	.vsync_len	= 1,
+> +	.xres		= 480,
+> +	.yres		= 272,
+> +};
+>
+> +static struct fb_videomode real6410_lcd_timing = {
+> +	.left_margin	= 8,
+> +	.right_margin	= 13,
+> +	.upper_margin	= 7,
+> +	.lower_margin	= 5,
+> +	.hsync_len	= 3,
+> +	.vsync_len	= 1,
+> +	.xres		= 480,
+> +	.yres		= 272,
+> +};
+>
+> Darius Augulis, can you confirm it?
+> (Darius Augulis is a maintainer for real6410 and mini6410 boards.)
 
-If any problems, please kindly let me know.
+Are you going to leave only single LCD resolution for every of two 
+boards? If so, then my answer is no.
+I have mini6410 with both 4.3" and 7" LCDs and real6410 with 7" LCD. Now 
+we have possibility to choose LCD size dynamically - leave it there.
+What you mean "default" 4.3" size LCD? The 7" size LCD is also provided 
+by board sellers - I've bought it.
 
-Thanks.
+regards,
+Darius Augulis
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> patching file arch/arm/mach-exynos/include/mach/cpufreq.h
-> patching file drivers/cpufreq/Kconfig.arm
-> Hunk #1 succeeded at 30 (offset -17 lines).
-> Hunk #2 succeeded at 43 (offset -18 lines).
-> patching file drivers/cpufreq/Makefile
-> Hunk #1 FAILED at 45.
-> 1 out of 1 hunk FAILED -- saving rejects to file drivers/cpufreq/Make=
-file.rej
-> patching file drivers/cpufreq/exynos-cpufreq.c
-> Hunk #1 succeeded at 252 (offset -2 lines).
-> patching file drivers/cpufreq/exynos4x12-cpufreq.c
-> patching file arch/arm/mach-exynos/include/mach/cpufreq.h
-> Hunk #1 FAILED at 33.
-> 1 out of 1 hunk FAILED -- saving rejects to file arch/arm/mach-exynos=
-/include/mach/cpufreq.h.rej
-> patching file drivers/cpufreq/Kconfig.arm
-> Hunk #1 FAILED at 48.
-> Hunk #2 FAILED at 67.
-> 2 out of 2 hunks FAILED -- saving rejects to file drivers/cpufreq/Kco=
-nfig.arm.rej
-> patching file drivers/cpufreq/Makefile
-> Hunk #1 FAILED at 46.
-> 1 out of 1 hunk FAILED -- saving rejects to file drivers/cpufreq/Make=
-file.rej
-> patching file drivers/cpufreq/exynos-cpufreq.c
-> Hunk #1 FAILED at 256.
-> 1 out of 1 hunk FAILED -- saving rejects to file drivers/cpufreq/exyn=
-os-cpufreq.c.rej
-> patching file drivers/cpufreq/exynos5250-cpufreq.c
+>
+> Best regards,
+> Jingoo Han
+>
+>> Thanks for your comments.
+>>
+>> Regards,
+>> Thomas.
+>
