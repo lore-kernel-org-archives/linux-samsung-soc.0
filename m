@@ -1,63 +1,62 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 2/4] Samsung devel-pd for v3.4
-Date: Tue, 13 Mar 2012 16:46:56 -0700
-Message-ID: <CAOesGMiOXKV03YC=6eG6rHhWw+ObGYoVJCqrPdHAsZLmjjzmtw@mail.gmail.com>
-References: <4F5B7C81.6080301@samsung.com>
-	<CAOesGMjff3gVNJQ5FpJuSf+uvVDW8k22b+Xcikot-isM-4-6iw@mail.gmail.com>
-	<201203102209.22451.rjw@sisk.pl>
+Subject: Re: [GIT PULL v2] Samsung cleanup EXYNOS clock for v3.4
+Date: Tue, 13 Mar 2012 17:52:40 -0700
+Message-ID: <CAOesGMjPxTL8EDKgbJ7Ubsn2-Esgj+vobwGPkRNJWRW8CZd8+g@mail.gmail.com>
+References: <4F5C6310.5010402@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:56903 "EHLO
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:51988 "EHLO
 	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754280Ab2CMXq5 (ORCPT
+	with ESMTP id S964938Ab2CNAwl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 13 Mar 2012 19:46:57 -0400
-Received: by yenl12 with SMTP id l12so1193168yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Mar 2012 16:46:57 -0700 (PDT)
-In-Reply-To: <201203102209.22451.rjw@sisk.pl>
+	Tue, 13 Mar 2012 20:52:41 -0400
+Received: by mail-yx0-f174.google.com with SMTP id l12so1239758yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 13 Mar 2012 17:52:40 -0700 (PDT)
+In-Reply-To: <4F5C6310.5010402@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+On Sun, Mar 11, 2012 at 12:32 AM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> Hi Arnd, Olof,
+>
+> I rebased cleanup-exynos-clock on top of cleanup-use-static as per Ol=
+of's
+> suggestion.
+>
+> Please pull it from:
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
+git
+> next/cleanup-exynos-clock
+>
+> If any problems, please kindly let me know.
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> The following changes since commit c15a04338b5a6d4305d107a5b6c0cd4341=
+8b7f3e:
+>
+> =A0Merge branch 'next/cleanup-use-static' into next/cleanup-exynos-cl=
+ock
+> (2012-03-10 22:21:36 -0800)
+>
+> are available in the git repository at:
+>
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
+git
+> next/cleanup-exynos-clock
 
-On Sat, Mar 10, 2012 at 1:09 PM, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> Hi,
->
-> On Saturday, March 10, 2012, Olof Johansson wrote:
->> Hi Rafael,
->>
->> The below series contains two patches that have been sent to you, and
->> that are sitting in the pm-domains branch.
->>
->> Two questions before I pull this into arm-soc:
->>
->> 1) Are you 100% sure this will be submitted to 3.4? And if so, will
->> you send it early during the merge window?
->
-> Yes and yes.
->
->> 2) Are you 100% sure you will not rebase the branch into which you
->> pulled the v3.4-for-rafael branch?
->
-> Yes, I am.
->
->> I am asking because if we pull this in, and you rebase between now and
->> when it's sent in, we're risking merge conflicts that will be painful
->> to resolve. We've been bitten by that from other dependencies in the
->> past so we're being careful.
->
-> Sure, I understand that.
->
-> As a general rule, topic braches in my tree whose names start with pm- are
-> never rebased (exactly for this reason).
-
-Excellent, thanks! I'll pull that in as a depends/ branch in arm-soc
-(since that's how we document it), and mark it in our notes so the
-Samsung branch gets merged after yours when going to Linus.
-
+Thanks, pulled into next/cleanup.
 
 
 -Olof
