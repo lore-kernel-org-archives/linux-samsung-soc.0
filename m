@@ -1,227 +1,60 @@
-From: Darius Augulis <augulis.darius@gmail.com>
-Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-Date: Wed, 14 Mar 2012 21:08:11 +0200
-Message-ID: <4F60EC9B.9040409@gmail.com>
-References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org> <1331585999-8604-4-git-send-email-thomas.abraham@linaro.org> <002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com> <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH v4 11/12] ARM: EXYNOS: add support device tree enabled
+ board file for EXYNOS5
+Date: Wed, 14 Mar 2012 15:37:15 -0700
+Message-ID: <20120314223715.GA13872@quad.lixom.net>
+References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
+ <1331736138-28964-12-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:62629 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760161Ab2CNTIR (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:47199 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752606Ab2CNWhW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 15:08:17 -0400
-In-Reply-To: <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
+	Wed, 14 Mar 2012 18:37:22 -0400
+Received: by pbcun15 with SMTP id un15so4706pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 15:37:21 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1331736138-28964-12-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Jingoo Han <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, Kyungmin Park <kyungmin.park@samsung.com>, JeongHyeon Kim <jhkim@insignal.co.kr>, Heiko Stuebner <heiko@sntech.de>, Kwangwoo Lee <kwangwoo.lee@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Peter Korsgaard <jacmet@sunsite.dk>, Maurus Cuelenaere <mcuelenaere@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@secretlab.ca>
 
-On 03/13/2012 12:10 PM, Thomas Abraham wrote:
-> On 13 March 2012 15:17, Jingoo Han<jg1.han@samsung.com>  wrote:
->>> -----Original Message-----
->>> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
->>> Sent: Tuesday, March 13, 2012 6:00 AM
->>> To: linux-fbdev@vger.kernel.org
->>> Cc: FlorianSchandinat@gmx.de; linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
->>> kgene.kim@samsung.com; jg1.han@samsung.com; ben-linux@fluff.org; patches@linaro.org; Kyungmin Park;
->>> JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter Korsgaard; Darius Augulis; Maurus
->>> Cuelenaere
->>> Subject: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
->>>
->>> For all the Samsung SoC based boards which have the platform data for
->>> s3c-fb driver, the 'default_win' element in the platform data is removed
->>> and the lcd panel video timing values are moved out of individual window
->>> configuration data.
->>>
->>> Cc: Jingoo Han<jg1.han@samsung.com>
->>> Cc: Kyungmin Park<kyungmin.park@samsung.com>
->>> Cc: JeongHyeon Kim<jhkim@insignal.co.kr>
->>> Cc: Kukjin Kim<kgene.kim@samsung.com>
->>> Cc: Heiko Stuebner<heiko@sntech.de>
->>> Cc: Ben Dooks<ben-linux@fluff.org>
->>> Cc: Kwangwoo Lee<kwangwoo.lee@gmail.com>
->>> Cc: Mark Brown<broonie@opensource.wolfsonmicro.com>
->>> Cc: Peter Korsgaard<jacmet@sunsite.dk>
->>> Cc: Darius Augulis<augulis.darius@gmail.com>
->>> Cc: Maurus Cuelenaere<mcuelenaere@gmail.com>
->>> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
->>> ---
->>>   arch/arm/mach-exynos/mach-nuri.c           |   26 ++++++++++-------
->>>   arch/arm/mach-exynos/mach-origen.c         |   24 ++++++++++-------
->>>   arch/arm/mach-exynos/mach-smdkv310.c       |   28 +++++++++++--------
->>>   arch/arm/mach-exynos/mach-universal_c210.c |   26 ++++++++++-------
->>>   arch/arm/mach-s3c24xx/mach-smdk2416.c      |   27 ++++++++++--------
->>>   arch/arm/mach-s3c64xx/mach-anw6410.c       |   25 ++++++++++-------
->>>   arch/arm/mach-s3c64xx/mach-crag6410.c      |   25 ++++++++++-------
->>>   arch/arm/mach-s3c64xx/mach-hmt.c           |   24 ++++++++++-------
->>>   arch/arm/mach-s3c64xx/mach-mini6410.c      |   40 ++++++++++++---------------
->>>   arch/arm/mach-s3c64xx/mach-real6410.c      |   40 ++++++++++++---------------
->>>   arch/arm/mach-s3c64xx/mach-smartq5.c       |   26 ++++++++++-------
->>>   arch/arm/mach-s3c64xx/mach-smartq7.c       |   26 ++++++++++-------
->>>   arch/arm/mach-s3c64xx/mach-smdk6410.c      |   25 ++++++++++-------
->>>   arch/arm/mach-s5p64x0/mach-smdk6440.c      |   24 ++++++++++-------
->>>   arch/arm/mach-s5p64x0/mach-smdk6450.c      |   24 ++++++++++-------
->>>   arch/arm/mach-s5pc100/mach-smdkc100.c      |   27 ++++++++++--------
->>>   arch/arm/mach-s5pv210/mach-aquila.c        |   36 +++++++++++--------------
->>>   arch/arm/mach-s5pv210/mach-goni.c          |   26 ++++++++++-------
->>>   arch/arm/mach-s5pv210/mach-smdkv210.c      |   24 ++++++++++-------
->>>   19 files changed, 285 insertions(+), 238 deletions(-)
->>>
->> [.....]
->>
->>> diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
->>> index c34c2ab..24dcdc9 100644
->>> --- a/arch/arm/mach-s3c64xx/mach-mini6410.c
->>> +++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
->>> @@ -153,36 +153,32 @@ static struct s3c2410_platform_nand mini6410_nand_info = {
->>>
->>>   static struct s3c_fb_pd_win mini6410_fb_win[] = {
->>>        {
->>> -             .win_mode       = {     /* 4.3" 480x272 */
->>> -                     .left_margin    = 3,
->>> -                     .right_margin   = 2,
->>> -                     .upper_margin   = 1,
->>> -                     .lower_margin   = 1,
->>> -                     .hsync_len      = 40,
->>> -                     .vsync_len      = 1,
->>> -                     .xres           = 480,
->>> -                     .yres           = 272,
->>> -             },
->>>                .max_bpp        = 32,
->>>                .default_bpp    = 16,
->>> +             .xres           = 480,
->>> +             .yres           = 272,
->>>        }, {
->>> -             .win_mode       = {     /* 7.0" 800x480 */
->>> -                     .left_margin    = 8,
->>> -                     .right_margin   = 13,
->>> -                     .upper_margin   = 7,
->>> -                     .lower_margin   = 5,
->>> -                     .hsync_len      = 3,
->>> -                     .vsync_len      = 1,
->>> -                     .xres           = 800,
->>> -                     .yres           = 480,
->>> -             },
->>>                .max_bpp        = 32,
->>>                .default_bpp    = 16,
->>> +             .xres           = 800,
->>> +             .yres           = 480,
->>>        },
->>>   };
->>>
->>> +static struct fb_videomode mini6410_lcd_timing = {
->>> +     .left_margin    = 8,
->>> +     .right_margin   = 13,
->>> +     .upper_margin   = 7,
->>> +     .lower_margin   = 5,
->>> +     .hsync_len      = 3,
->>> +     .vsync_len      = 1,
->>> +     .xres           = 800,
->>> +     .yres           = 480,
->>> +};
->>> +
->>>   static struct s3c_fb_platdata mini6410_lcd_pdata __initdata = {
->>>        .setup_gpio     = s3c64xx_fb_gpio_setup_24bpp,
->>> +     .vtiming        =&mini6410_lcd_timing,
->>>        .win[0]         =&mini6410_fb_win[0],
->>>        .vidcon0        = VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
->>>        .vidcon1        = VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
->>> @@ -310,8 +306,8 @@ static void __init mini6410_machine_init(void)
->>>        mini6410_lcd_pdata.win[0] =&mini6410_fb_win[features.lcd_index];
->>>
->>>        printk(KERN_INFO "MINI6410: selected LCD display is %dx%d\n",
->>> -             mini6410_lcd_pdata.win[0]->win_mode.xres,
->>> -             mini6410_lcd_pdata.win[0]->win_mode.yres);
->>> +             mini6410_lcd_pdata.win[0]->xres,
->>> +             mini6410_lcd_pdata.win[0]->yres);
->>>
->>>        s3c_nand_set_platdata(&mini6410_nand_info);
->>>        s3c_fb_set_platdata(&mini6410_lcd_pdata);
->>> diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
->>> index be2a9a2..41e4f74 100644
->>> --- a/arch/arm/mach-s3c64xx/mach-real6410.c
->>> +++ b/arch/arm/mach-s3c64xx/mach-real6410.c
->>> @@ -119,36 +119,32 @@ static struct platform_device real6410_device_eth = {
->>>
->>>   static struct s3c_fb_pd_win real6410_fb_win[] = {
->>>        {
->>> -             .win_mode       = {     /* 4.3" 480x272 */
->>> -                     .left_margin    = 3,
->>> -                     .right_margin   = 2,
->>> -                     .upper_margin   = 1,
->>> -                     .lower_margin   = 1,
->>> -                     .hsync_len      = 40,
->>> -                     .vsync_len      = 1,
->>> -                     .xres           = 480,
->>> -                     .yres           = 272,
->>> -             },
->>>                .max_bpp        = 32,
->>>                .default_bpp    = 16,
->>> +             .xres           = 480,
->>> +             .yres           = 272,
->>>        }, {
->>> -             .win_mode       = {     /* 7.0" 800x480 */
->>> -                     .left_margin    = 8,
->>> -                     .right_margin   = 13,
->>> -                     .upper_margin   = 7,
->>> -                     .lower_margin   = 5,
->>> -                     .hsync_len      = 3,
->>> -                     .vsync_len      = 1,
->>> -                     .xres           = 800,
->>> -                     .yres           = 480,
->>> -             },
->>>                .max_bpp        = 32,
->>>                .default_bpp    = 16,
->>> +             .xres           = 800,
->>> +             .yres           = 480,
->>>        },
->>>   };
->>>
->>> +static struct fb_videomode real6410_lcd_timing = {
->>> +     .left_margin    = 3,
->>> +     .right_margin   = 2,
->>> +     .upper_margin   = 1,
->>> +     .lower_margin   = 1,
->>> +     .hsync_len      = 40,
->>> +     .vsync_len      = 1,
->>> +     .xres           = 800,
->>> +     .yres           = 480,
->>> +};
->>
->> What is the difference between mini6410_lcd_timing and real6410_lcd_timing?
->> In my opinion, it would be good as follows:
->>
->> +static struct fb_videomode real6410_lcd_timing = {
->> +       .left_margin    = 8,
->> +       .right_margin   = 13,
->> +       .upper_margin   = 7,
->> +       .lower_margin   = 5,
->> +       .hsync_len      = 3,
->> +       .vsync_len      = 1,
->> +       .xres           = 800,
->> +       .yres           = 480,
->> +};
->>
->>
-> Before this patch series, both real6410 and mini6410 had 'default_win'
-> = 0 in the platform data. And, the s3c-fb driver selected the video
-> timing from the window selected by the default_win parameter in s3c-fb
-> platform data, i.e window 0 for both mini6440 and real6410. So, in
-> this patch, while moving the timing values out of window data, the
-> timing values for window 0 was selected.
->
-> The timing value for window 1 was never used on mini6410 and real6410.
-> So I would suggest to use timing value of window 0 in this patch.
+On Wed, Mar 14, 2012 at 07:42:17AM -0700, Kukjin Kim wrote:
+> This patch adds a new EXYNOS5 compatible device tree enabled board
+> When using this, a corresponding device tree blob which describes the
+> board's properties should be supplied at boot time to the kernel.
 
-You are wrong. Please see mini6410_parse_features(). Please do not 
-remove second window because it could be selected via kernel parameters 
-dinamically. It's very useful and I spend my hours to create it.
+Hi,
 
->
-> Thanks for your comments.
->
-> Regards,
-> Thomas.
->
+Sorry, missed this last time around:
+
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index a2ed05c..ac24386 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -362,7 +362,18 @@ config MACH_SMDK4412
+>  	  Machine support for Samsung SMDK4412
+>  endif
+>  
+> -comment "Flattened Device Tree based board for Exynos4 based SoC"
+> +if ARCH_EXYNOS5
+> +
+> +comment "EXYNOS5250 Boards"
+> +
+> +config MACH_SMDK5250
+> +	bool "SMDK5250"
+> +	select SOC_EXYNOS5250
+> +	help
+> +	  Machine support for Samsung SMDK5250
+> +endif
+
+
+There's no board file for SMDK5250 in this series (and there shouldn't be since
+it should all be covered by MACH_EXYNOS5_DT. So the above config option can go
+away.
+
+
+-Olof
