@@ -1,487 +1,220 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH v4 12/12] ARM: dts: add initial dts file for EXYNOS5250, SMDK5250
-Date: Wed, 14 Mar 2012 07:42:18 -0700
-Message-ID: <1331736138-28964-13-git-send-email-kgene.kim@samsung.com>
-References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
+From: Ulf Hansson <ulf.hansson@stericsson.com>
+Subject: Re: [PATCH] mmc: core: Fix PowerOff Notify suspend/resume
+Date: Wed, 14 Mar 2012 16:23:52 +0100
+Message-ID: <4F60B808.4010803@stericsson.com>
+References: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:44598 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030864Ab2CNOnS (ORCPT
+Received: from eu1sys200aog103.obsmtp.com ([207.126.144.115]:35436 "EHLO
+	eu1sys200aog103.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753630Ab2CNPY2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 14 Mar 2012 10:43:18 -0400
-Received: by yenl12 with SMTP id l12so1864054yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 14 Mar 2012 07:43:17 -0700 (PDT)
-In-Reply-To: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
+	Wed, 14 Mar 2012 11:24:28 -0400
+In-Reply-To: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: arnd@arndb.de, olof@lixom.net, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Grant Likely <grant.likely@secretlab.ca>
+To: Girish K S <girish.shivananjappa@linaro.org>, Chris Ball <cjb@laptop.org>
+Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "saugata.das@linaro.org" <saugata.das@linaro.org>
 
-This patch adds initial dts file for EXYNOS5250 SoC. This dts
-file is including the SoC specific devices and properties. And
-adds the dts file for SMDK5250 board which uses the EXYNOS5250
-dts file. Its board specific properites will be added later.
+Hi Girish and Chris,
 
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Grant Likely <grant.likely@secretlab.ca>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   26 ++
- arch/arm/boot/dts/exynos5250.dtsi         |  413 +++++++++++++++++++++++++++++
- 2 files changed, 439 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/boot/dts/exynos5250-smdk5250.dts
- create mode 100644 arch/arm/boot/dts/exynos5250.dtsi
+I noticed that this has been pushed for 3.3, I think we need to make a 
+revert of it asap if possible.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-new file mode 100644
-index 0000000..399d17b
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -0,0 +1,26 @@
-+/*
-+ * SAMSUNG SMDK5250 board device tree source
-+ *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/dts-v1/;
-+/include/ "exynos5250.dtsi"
-+
-+/ {
-+	model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
-+	compatible = "samsung,smdk5250", "samsung,exynos5250";
-+
-+	memory {
-+		reg = <0x40000000 0x80000000>;
-+	};
-+
-+	chosen {
-+		bootargs = "root=/dev/ram0 rw ramdisk=8192 console=ttySAC1,115200";
-+	};
-+};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-new file mode 100644
-index 0000000..dfc4335
---- /dev/null
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -0,0 +1,413 @@
-+/*
-+ * SAMSUNG EXYNOS5250 SoC device tree source
-+ *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ *
-+ * SAMSUNG EXYNOS5250 SoC device nodes are listed in this file.
-+ * EXYNOS5250 based board files can include this file and provide
-+ * values for board specfic bindings.
-+ *
-+ * Note: This file does not include device nodes for all the controllers in
-+ * EXYNOS5250 SoC. As device tree coverage for EXYNOS5250 increases,
-+ * additional nodes can be added to this file.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+*/
-+
-+/include/ "skeleton.dtsi"
-+
-+/ {
-+	compatible = "samsung,exynos5250";
-+	interrupt-parent = <&gic>;
-+
-+	gic:interrupt-controller@10490000 {
-+		compatible = "arm,cortex-a9-gic";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
-+	};
-+
-+	watchdog {
-+		compatible = "samsung,s3c2410-wdt";
-+		reg = <0x101D0000 0x100>;
-+		interrupts = <0 42 0>;
-+	};
-+
-+	rtc {
-+		compatible = "samsung,s3c6410-rtc";
-+		reg = <0x101E0000 0x100>;
-+		interrupts = <0 43 0>, <0 44 0>;
-+	};
-+
-+	sdhci@12200000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12200000 0x100>;
-+		interrupts = <0 75 0>;
-+	};
-+
-+	sdhci@12210000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12210000 0x100>;
-+		interrupts = <0 76 0>;
-+	};
-+
-+	sdhci@12220000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12220000 0x100>;
-+		interrupts = <0 77 0>;
-+	};
-+
-+	sdhci@12230000 {
-+		compatible = "samsung,exynos4210-sdhci";
-+		reg = <0x12230000 0x100>;
-+		interrupts = <0 78 0>;
-+	};
-+
-+	serial@12C00000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x12C00000 0x100>;
-+		interrupts = <0 51 0>;
-+	};
-+
-+	serial@12C10000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x12C10000 0x100>;
-+		interrupts = <0 52 0>;
-+	};
-+
-+	serial@12C20000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x12C20000 0x100>;
-+		interrupts = <0 53 0>;
-+	};
-+
-+	serial@12C30000 {
-+		compatible = "samsung,exynos4210-uart";
-+		reg = <0x12C30000 0x100>;
-+		interrupts = <0 54 0>;
-+	};
-+
-+	i2c@12C60000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C60000 0x100>;
-+		interrupts = <0 56 0>;
-+	};
-+
-+	i2c@12C70000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C70000 0x100>;
-+		interrupts = <0 57 0>;
-+	};
-+
-+	i2c@12C80000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C80000 0x100>;
-+		interrupts = <0 58 0>;
-+	};
-+
-+	i2c@12C90000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12C90000 0x100>;
-+		interrupts = <0 59 0>;
-+	};
-+
-+	i2c@12CA0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12CA0000 0x100>;
-+		interrupts = <0 60 0>;
-+	};
-+
-+	i2c@12CB0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12CB0000 0x100>;
-+		interrupts = <0 61 0>;
-+	};
-+
-+	i2c@12CC0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12CC0000 0x100>;
-+		interrupts = <0 62 0>;
-+	};
-+
-+	i2c@12CD0000 {
-+		compatible = "samsung,s3c2440-i2c";
-+		reg = <0x12CD0000 0x100>;
-+		interrupts = <0 63 0>;
-+	};
-+
-+	amba {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		compatible = "arm,amba-bus";
-+		interrupt-parent = <&gic>;
-+		ranges;
-+
-+		pdma0: pdma@121A0000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x121A0000 0x1000>;
-+			interrupts = <0 34 0>;
-+		};
-+
-+		pdma1: pdma@121B0000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x121B0000 0x1000>;
-+			interrupts = <0 35 0>;
-+		};
-+
-+		mdma0: pdma@10800000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x10800000 0x1000>;
-+			interrupts = <0 33 0>;
-+		};
-+
-+		mdma1: pdma@11C10000 {
-+			compatible = "arm,pl330", "arm,primecell";
-+			reg = <0x11C10000 0x1000>;
-+			interrupts = <0 124 0>;
-+		};
-+	};
-+
-+	gpio-controllers {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		gpio-controller;
-+		ranges;
-+
-+		gpa0: gpio-controller@11400000 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpa1: gpio-controller@11400020 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400020 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpa2: gpio-controller@11400040 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400040 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpb0: gpio-controller@11400060 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400060 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpb1: gpio-controller@11400080 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400080 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpb2: gpio-controller@114000A0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x114000A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpb3: gpio-controller@114000C0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x114000C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpc0: gpio-controller@114000E0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x114000E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpc1: gpio-controller@11400100 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400100 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpc2: gpio-controller@11400120 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400120 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpc3: gpio-controller@11400140 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400140 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpd0: gpio-controller@11400160 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400160 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpd1: gpio-controller@11400180 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400180 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy0: gpio-controller@114001A0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x114001A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy1: gpio-controller@114001C0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x114001C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy2: gpio-controller@114001E0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x114001E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy3: gpio-controller@11400200 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400200 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy4: gpio-controller@11400220 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400220 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy5: gpio-controller@11400240 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400240 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpy6: gpio-controller@11400260 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400260 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx0: gpio-controller@11400C00 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400C00 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx1: gpio-controller@11400C20 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400C20 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx2: gpio-controller@11400C40 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400C40 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpx3: gpio-controller@11400C60 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x11400C60 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe0: gpio-controller@13400000 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x13400000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpe1: gpio-controller@13400020 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x13400020 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpf0: gpio-controller@13400040 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x13400040 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpf1: gpio-controller@13400060 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x13400060 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpg0: gpio-controller@13400080 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x13400080 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpg1: gpio-controller@134000A0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x134000A0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpg2: gpio-controller@134000C0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x134000C0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gph0: gpio-controller@134000E0 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x134000E0 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gph1: gpio-controller@13400100 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x13400100 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpv0: gpio-controller@10D10000 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x10D10000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpv1: gpio-controller@10D10020 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x10D10020 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpv2: gpio-controller@10D10040 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x10D10040 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpv3: gpio-controller@10D10060 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x10D10060 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpv4: gpio-controller@10D10080 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x10D10080 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+
-+		gpz: gpio-controller@03860000 {
-+			compatible = "samsung,exynos4-gpio";
-+			reg = <0x03860000 0x20>;
-+			#gpio-cells = <4>;
-+		};
-+	};
-+};
--- 
-1.7.4.4
+I were unfortunately not able to review this patch earlier but it has 
+issues I believe. It will break suspend/resume for eMMC devices 
+supporting the SLEEP command and not the "poweroff notify" from eMMC 4.5.
+
+Please see my comments below.
+
+On 01/31/2012 11:14 AM, Girish K S wrote:
+> Modified the mmc_poweroff to resume before sending the
+> poweroff notification command. In sleep mode only AWAKE
+> and RESET commands are allowed, so before sending the
+> poweroff notification command resume from sleep mode and
+> then send the notification command.
+>
+> POwerOff Notify is tested on a Synopsis Designware Host
+> Controller(eMMC 4.5). The suspend to RAM and resume works fine.
+>
+> This patch is successfully applied on the Chris's mmc-next
+> branch
+>
+> cc: Chris Ball<cjb@laptop.org>
+> Signed-off-by: Girish K S<girish.shivananjappa@linaro.org>
+> Tested-by: Girish K S<girish.shivananjappa@linaro.org>
+> ---
+>   drivers/mmc/core/core.c  |   28 ++++++++++++++++++++--------
+>   drivers/mmc/core/mmc.c   |   17 ++++++++++++-----
+>   include/linux/mmc/card.h |    4 ++++
+>   3 files changed, 36 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+> index bec0bf2..14ec575 100644
+> --- a/drivers/mmc/core/core.c
+> +++ b/drivers/mmc/core/core.c
+> @@ -1239,7 +1239,8 @@ static void mmc_poweroff_notify(struct mmc_host *host)
+>   	int err = 0;
+>
+>   	card = host->card;
+> -
+> +	mmc_claim_host(host);
+> +
+>   	/*
+>   	 * Send power notify command only if card
+>   	 * is mmc and notify state is powered ON
+> @@ -1269,6 +1270,7 @@ static void mmc_poweroff_notify(struct mmc_host *host)
+>   		/* Set the card state to no notification after the poweroff */
+>   		card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
+>   	}
+> +	mmc_release_host(host);
+>   }
+>
+>   /*
+> @@ -1327,12 +1329,28 @@ static void mmc_power_up(struct mmc_host *host)
+>
+>   void mmc_power_off(struct mmc_host *host)
+>   {
+> +	int err = 0;
+>   	mmc_host_clk_hold(host);
+>
+>   	host->ios.clock = 0;
+>   	host->ios.vdd = 0;
+>
+> -	mmc_poweroff_notify(host);
+> +	/*
+> +	 * For eMMC 4.5 device send AWAKE command before
+> +	 * POWER_OFF_NOTIFY command, because in sleep state
+> +	 * eMMC 4.5 devices respond to only RESET and AWAKE cmd
+> +	 */
+> +	if (host->card&&  mmc_card_is_sleep(host->card)&&
+> +	    host->bus_ops->resume) {
+> +		err = host->bus_ops->resume(host);
+
+This is just plain wrong. First we may have suspended the host from 
+mmc_suspend_host then we enter this funtion (mmc_power_off) to cut the 
+power to the card. Why do we even want to resume if we just did suspend?
+
+Moreover, this will actually mean that for mmc devices which are 
+supporting SLEEP but not the new eMMC 4.5 feature poweroff_notify will 
+leave this function in a resumed state (in other words, not in SLEEP 
+state) which is not OK.
+
+> +
+> +		if (!err)
+> +			mmc_poweroff_notify(host);
+> +		else
+> +			pr_warning("%s: error %d during resume "
+> +				   "(continue with poweroff sequence)\n",
+> +				   mmc_hostname(host), err);
+> +	}
+>
+>   	/*
+>   	 * Reset ocr mask to be the highest possible voltage supported for
+> @@ -2386,12 +2404,6 @@ int mmc_suspend_host(struct mmc_host *host)
+>   		 */
+>   		if (mmc_try_claim_host(host)) {
+>   			if (host->bus_ops->suspend) {
+> -				/*
+> -				 * For eMMC 4.5 device send notify command
+> -				 * before sleep, because in sleep state eMMC 4.5
+> -				 * devices respond to only RESET and AWAKE cmd
+> -				 */
+> -				mmc_poweroff_notify(host);
+>   				err = host->bus_ops->suspend(host);
+>   			}
+>   			mmc_do_release_host(host);
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index 2bc586b..c3f09a2 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -1330,11 +1330,13 @@ static int mmc_suspend(struct mmc_host *host)
+>   	BUG_ON(!host->card);
+>
+>   	mmc_claim_host(host);
+> -	if (mmc_card_can_sleep(host))
+> +	if (mmc_card_can_sleep(host)) {
+>   		err = mmc_card_sleep(host);
+> -	else if (!mmc_host_is_spi(host))
+> +		if (!err)
+> +			mmc_card_set_sleep(host->card);
+
+I suggest to move this inside the mmc_card_sleep function instead.
+
+> +	} else if (!mmc_host_is_spi(host))
+>   		mmc_deselect_cards(host);
+> -	host->card->state&= ~MMC_STATE_HIGHSPEED;
+> +	host->card->state&= ~(MMC_STATE_HIGHSPEED | MMC_STATE_HIGHSPEED_200);
+
+What has MMC_STATE_HIGHSPEED_200 with this patch to do?
+
+>   	mmc_release_host(host);
+>
+>   	return err;
+> @@ -1354,7 +1356,11 @@ static int mmc_resume(struct mmc_host *host)
+>   	BUG_ON(!host->card);
+>
+>   	mmc_claim_host(host);
+> -	err = mmc_init_card(host, host->ocr, host->card);
+> +	if (mmc_card_is_sleep(host->card)) {
+> +		err = mmc_card_awake(host);
+> +		mmc_card_clr_sleep(host->card);
+
+I suggest to move this inside the mmc_card_sleep function instead.
+
+> +	} else
+> +		err = mmc_init_card(host, host->ocr, host->card);
+>   	mmc_release_host(host);
+>
+>   	return err;
+> @@ -1364,7 +1370,8 @@ static int mmc_power_restore(struct mmc_host *host)
+>   {
+>   	int ret;
+>
+> -	host->card->state&= ~MMC_STATE_HIGHSPEED;
+> +	host->card->state&= ~(MMC_STATE_HIGHSPEED | MMC_STATE_HIGHSPEED_200);
+
+What has MMC_STATE_HIGHSPEED_200 with this patch to do?
+
+> +	mmc_card_clr_sleep(host->card);
+
+Why do we have clear the sleep state here?
+
+>   	mmc_claim_host(host);
+>   	ret = mmc_init_card(host, host->ocr, host->card);
+>   	mmc_release_host(host);
+> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+> index f9a0663..1a1ca71 100644
+> --- a/include/linux/mmc/card.h
+> +++ b/include/linux/mmc/card.h
+> @@ -219,6 +219,7 @@ struct mmc_card {
+>   #define MMC_CARD_SDXC		(1<<6)		/* card is SDXC */
+>   #define MMC_CARD_REMOVED	(1<<7)		/* card has been removed */
+>   #define MMC_STATE_HIGHSPEED_200	(1<<8)		/* card is in HS200 mode */
+> +#define MMC_STATE_SLEEP		(1<<9)		/* card is in sleep state */
+>   	unsigned int		quirks; 	/* card quirks */
+>   #define MMC_QUIRK_LENIENT_FN0	(1<<0)		/* allow SDIO FN0 writes outside of the VS CCCR range */
+>   #define MMC_QUIRK_BLKSZ_FOR_BYTE_MODE (1<<1)	/* use func->cur_blksize */
+> @@ -384,6 +385,7 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
+>   #define mmc_sd_card_uhs(c)	((c)->state&  MMC_STATE_ULTRAHIGHSPEED)
+>   #define mmc_card_ext_capacity(c) ((c)->state&  MMC_CARD_SDXC)
+>   #define mmc_card_removed(c)	((c)&&  ((c)->state&  MMC_CARD_REMOVED))
+> +#define mmc_card_is_sleep(c)	((c)->state&  MMC_STATE_SLEEP)
+>
+>   #define mmc_card_set_present(c)	((c)->state |= MMC_STATE_PRESENT)
+>   #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
+> @@ -395,7 +397,9 @@ static inline void __maybe_unused remove_quirk(struct mmc_card *card, int data)
+>   #define mmc_sd_card_set_uhs(c) ((c)->state |= MMC_STATE_ULTRAHIGHSPEED)
+>   #define mmc_card_set_ext_capacity(c) ((c)->state |= MMC_CARD_SDXC)
+>   #define mmc_card_set_removed(c) ((c)->state |= MMC_CARD_REMOVED)
+> +#define mmc_card_set_sleep(c)	((c)->state |= MMC_STATE_SLEEP)
+>
+> +#define mmc_card_clr_sleep(c)	((c)->state&= ~MMC_STATE_SLEEP)
+>   /*
+>    * Quirk add/remove for MMC products.
+>    */
+
+Best regards
+Ulf Hansson
