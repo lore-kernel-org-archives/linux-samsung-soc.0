@@ -1,81 +1,81 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-Date: Thu, 15 Mar 2012 17:39:58 +0900
-Message-ID: <000001cd0287$34ae4890$9e0ad9b0$%han@samsung.com>
-References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
- <1331585999-8604-4-git-send-email-thomas.abraham@linaro.org>
- <002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com>
- <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
- <000501cd0184$f088cb20$d19a6160$%han@samsung.com> <4F60E5C8.3040804@gmail.com>
- <001501cd0241$6bb53560$431fa020$%han@samsung.com>
- <CAEYLNCp5e=86rpRi2C-5OJptTyEeXAn8JHhbWw_BqGzSaDD9wQ@mail.gmail.com>
- <002a01cd0283$1f61b200$5e251600$%han@samsung.com>
- <CAEYLNCrprPE60ZS=_OWuck0JCJMhCxzVErZwuwGpEDYkQq-hXg@mail.gmail.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Add s3c-hsotg device support for GONI board
+Date: Thu, 15 Mar 2012 10:03:15 +0100
+Message-ID: <1331802195-10133-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46402 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759563Ab2COIkA (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42529 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760747Ab2COJDW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Mar 2012 04:40:00 -0400
-In-reply-to: <CAEYLNCrprPE60ZS=_OWuck0JCJMhCxzVErZwuwGpEDYkQq-hXg@mail.gmail.com>
-Content-language: ko
+	Thu, 15 Mar 2012 05:03:22 -0400
+Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0M0X008F055CB6@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Mar 2012 09:03:12 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M0X00KCB55H8H@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 15 Mar 2012 09:03:17 +0000 (GMT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Darius Augulis' <augulis.darius@gmail.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'JeongHyeon Kim' <jhkim@insignal.co.kr>, 'Heiko Stuebner' <heiko@sntech.de>, 'Kwangwoo Lee' <kwangwoo.lee@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Peter Korsgaard' <jacmet@sunsite.dk>, 'Maurus Cuelenaere' <mcuelenaere@gmail.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
+This patch adds hsotg device to the GONI board.
 
+Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-s5pv210/Kconfig     |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c |    6 ++++++
+ 2 files changed, 7 insertions(+), 0 deletions(-)
 
-> -----Original Message-----
-> From: Darius Augulis [mailto:augulis.darius@gmail.com]
-> Sent: Thursday, March 15, 2012 5:27 PM
-> To: Jingoo Han
-> Cc: Thomas Abraham; linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; kgene.kim@samsung.com; ben-
-> linux@fluff.org; patches@linaro.org; Kyungmin Park; JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark
-> Brown; Peter Korsgaard; Maurus Cuelenaere
-> Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-> 
-> On Thu, Mar 15, 2012 at 10:10 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> 
-> >> There is single board - mini6410 (or real6410) and it's name doesn't
-> >> depend on connected LCD size.
-> >> We know, that this board is available with different sizes of LCD and
-> >> currently we have in kernel support for both sizes.
-> >> It might be so, that it's implemented not in perfect way, but it was
-> >> accepted and at least it's working.
-> >
-> >
-> > I don't think so.
-> > You argues that the wrong code should not be removed because it was accepted and at least it's working.
-> > It is just wrong usage, which can just work.
-> > Moreover, your code will make the problem, when 2~5 windows of FIMD IP are used.
-> 
-> Could please explain that? How does LCD feature selection for mini6410
-> and real6410 break that?
-> Timing for different sizes of LCD is located in two statically
-> allocated structures which are used at board init time depending on
-> kernel param line.
-> Data from one of these structures is copied to s3c-fb platform data
-> dynamically by board init code. Why it's a problem? What changes if
-> platform data isn't rewritten dynamically?
-> 
-> > So, your code can be removed.
-> 
-> I don't think so. It does not break anything yet. One who make
-> changes, should ensure backwards compatibility, at least talking about
-> functionality and hardware (LCD) support, which was added few months
-> ago. Remember, we talk about kernel parameters line - now it lets
-> bootloader to select correct LCD size. After your changes, board with
-> 7" LCD wont show anything.
-
-OK, your code work, although the usage is wrong.
-
-Thomas, can you keep backwards compatibility?
-
-
-> 
-> Darius A.
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 29594fc..88e983b 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -85,6 +85,7 @@ config MACH_AQUILA
+ 	select S5P_DEV_ONENAND
+ 	select S5PV210_SETUP_FB_24BPP
+ 	select S5PV210_SETUP_SDHCI
++	select S5PV210_SETUP_USB_PHY
+ 	help
+ 	  Machine support for the Samsung Aquila target based on S5PC110 SoC
+ 
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 2cf5ed7..f5f4926 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -49,6 +49,7 @@
+ #include <plat/mfc.h>
+ #include <plat/regs-fb-v4.h>
+ #include <plat/camport.h>
++#include <plat/udc-hs.h>
+ 
+ #include <media/v4l2-mediabus.h>
+ #include <media/s5p_fimc.h>
+@@ -277,6 +278,9 @@ static void __init goni_tsp_init(void)
+ 	i2c2_devs[0].irq = gpio_to_irq(gpio);
+ }
+ 
++/* USB OTG */
++static struct s3c_hsotg_plat goni_hsotg_pdata;
++
+ static void goni_camera_init(void)
+ {
+ 	s5pv210_fimc_setup_gpio(S5P_CAMPORT_A);
+@@ -939,6 +943,8 @@ static void __init goni_machine_init(void)
+ 	s3c_set_platdata(&goni_fimc_md_platdata, sizeof(goni_fimc_md_platdata),
+ 			 &s5p_device_fimc_md);
+ 
++	s3c_hsotg_set_platdata(&goni_hsotg_pdata);
++
+ 	goni_camera_init();
+ 
+ 	/* SPI */
+-- 
+1.7.2.3
