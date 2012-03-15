@@ -1,82 +1,116 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
-Date: Thu, 15 Mar 2012 12:56:30 +0000
-Message-ID: <20120315125630.GK3138@opensource.wolfsonmicro.com>
-References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
- <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
- <20120314172915.GB13393@sirena.org.uk>
- <4F61BEC8.4030008@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung SoC EXYNOS5250 arch for v3.4
+Date: Thu, 15 Mar 2012 07:17:49 -0700
+Message-ID: <4F61FA0D.1050007@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3471446847755934681=="
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <4F61BEC8.4030008-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---===============3471446847755934681==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
-Content-Disposition: inline
-
-
---HcccYpVZDxQ8hzPO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Mar 15, 2012 at 11:04:56AM +0100, Karol Lewandowski wrote:
-
-> Introducing separate type (TYPE_S3C2440_HDMIPHY) has been our original
-> attempt to solve this issue.  However, this required adding explicit
-> checks to driver code all over the place (if (type == S3C2400 ||
-> type == S3c2440_HDMIPHY).
-
-Another option is to change the type to be a pointer to a struct with
-quirk flags in it.
-
---HcccYpVZDxQ8hzPO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPYebwAAoJEBus8iNuMP3drkYP/1PZa56oyfKw8hJd1h9L+IZv
-RKBh7G8R2Z3Yx/uLDIP5PlhYoPOdMeQ9ngg4svOh27maeDvhEXgXO5jP2nzxjCOo
-Su62mR8sozezGe2OO6cFkX4zaa6I48gexfiSZzkMpr16HEkRXd5Cu/aSO4ruF50R
-yduSDMPZVuiI/fnlKvYpSKmkOhVUfgRNI+Zg7qbV6YqQLDjsP5EvEia7NU4h3T+B
-qs1RWcZC67LRvuDBWfB3akTHtoQqPAMLGqvqXgZfFOT860erAAVTfBj4jQ/1VIwo
-blaycDLtSAD6iQhtXE6HL06exP57GBtfYnXrFdxFu0OtyMRsgbpUeYFPuNE9japD
-dcC+t5gmGYrG8yVYtUjF607kP3HgQnKHDD/JmbGDo66IBxQC0F7gYJh/LBNstMK2
-YXZLi5JEmUMuvMlNQ/aQE7HdzVf4m0FiJHWCNaL8z7cmNF7HLERHARvW3WlT3vgJ
-2SMb3vKq9EQWQs0wvCqMfdROrVEXO8pEdjYwveZdiMXqNheCEuyPIjqG8tPPjwjv
-M41QcfsCTwdZIfaoJlCAPc/qiw7HmlyFOlXvFIUrOrw6d0/06XYJmSoS5h5EQhyy
-z2jj70jFdWTejb7ZBixO3RRD+J4j7psa/A7LzrlgJxKoDnhiITn6OHMwaS6UAVBf
-ihCC5yudMnNesehNatHt
-=NmrA
------END PGP SIGNATURE-----
-
---HcccYpVZDxQ8hzPO--
-
---===============3471446847755934681==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:62849 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753490Ab2COOR5 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Mar 2012 10:17:57 -0400
+Received: by dadp12 with SMTP id p12so4949863dad.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Mar 2012 07:17:56 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-_______________________________________________
-devicetree-discuss mailing list
-devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-https://lists.ozlabs.org/listinfo/devicetree-discuss
+Hi Arnd, Olof,
 
---===============3471446847755934681==--
+Thank you for kindly review for EXYNOS5 and addressed comments.
+
+Here are 'pull request' for supporting EXYNOS5250.
+
+Please pull from:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/soc-exynos5250-arch
+
+It is based on next/devel-samsung-dma which has been pulled into arm-soc 
+to avoid merge conflicts, because they touches same files.
+And it is including additional two commits, one commit for fix 
+exynos4-dt build error which is caused by this series and one for 
+supporting lcd clkdev.
+
+If any problems, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit efd9960b0e1bdfe48490504a8166ffdbcc466dba:
+
+   ARM: EXYNOS: add support DMA for EXYNOS4X12 SoC (2012-03-10 22:51:20 
+-0800)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/soc-exynos5250-arch
+
+Eunki Kim (1):
+       ARM: EXYNOS: support EINT for EXYNOS4 and EXYNOS5
+
+Kukjin Kim (11):
+       ARM: EXYNOS: to declare static for mach-exynos/common.c
+       ARM: EXYNOS: use exynos_init_uarts() instead of exynos4_init_uarts()
+       ARM: EXYNOS: add clock part for EXYNOS5250 SoC
+       ARM: EXYNOS: add initial setup-i2c0 for EXYNOS5
+       ARM: EXYNOS: add support uart for EXYNOS4 and EXYNOS5
+       ARM: EXYNOS: add support for EXYNOS5250 SoC
+       ARM: EXYNOS: add interrupt definitions for EXYNOS5250
+       ARM: EXYNOS: add support get_core_count() for EXYNOS5250
+       ARM: EXYNOS: add support ARCH_EXYNOS5 for EXYNOS5 SoCs
+       ARM: EXYNOS: add support device tree enabled board file for EXYNOS5
+       ARM: dts: add initial dts file for EXYNOS5250, SMDK5250
+
+Tushar Behera (2):
+       ARM: EXYNOS: Add clkdev lookup entry for lcd clock
+       ARM: EXYNOS: Fix compilation error with mach-exynos4-dt board
+
+  arch/arm/Makefile                               |    1 +
+  arch/arm/boot/dts/exynos5250-smdk5250.dts       |   26 +
+  arch/arm/boot/dts/exynos5250.dtsi               |  413 ++++++++
+  arch/arm/mach-exynos/Kconfig                    |   29 +-
+  arch/arm/mach-exynos/Makefile                   |    5 +-
+  arch/arm/mach-exynos/clock-exynos4.c            |   14 +-
+  arch/arm/mach-exynos/clock-exynos5.c            | 1247 
++++++++++++++++++++++++
+  arch/arm/mach-exynos/common.c                   |  449 +++++++--
+  arch/arm/mach-exynos/common.h                   |   37 +-
+  arch/arm/mach-exynos/dev-ahci.c                 |    4 +-
+  arch/arm/mach-exynos/dev-audio.c                |    4 +-
+  arch/arm/mach-exynos/dev-uart.c                 |   78 ++
+  arch/arm/mach-exynos/dma.c                      |    6 +-
+  arch/arm/mach-exynos/include/mach/debug-macro.S |    9 +-
+  arch/arm/mach-exynos/include/mach/irqs.h        |  597 ++++++++---
+  arch/arm/mach-exynos/include/mach/map.h         |   41 +-
+  arch/arm/mach-exynos/include/mach/regs-clock.h  |   62 ++
+  arch/arm/mach-exynos/include/mach/regs-gpio.h   |   20 +-
+  arch/arm/mach-exynos/include/mach/regs-pmu.h    |    1 +
+  arch/arm/mach-exynos/include/mach/uncompress.h  |   17 +-
+  arch/arm/mach-exynos/mach-exynos4-dt.c          |    8 +-
+  arch/arm/mach-exynos/mach-exynos5-dt.c          |   78 ++
+  arch/arm/mach-exynos/mct.c                      |   23 +-
+  arch/arm/mach-exynos/platsmp.c                  |    9 +-
+  arch/arm/mach-exynos/setup-i2c0.c               |    9 +-
+  arch/arm/plat-s5p/Kconfig                       |    8 +-
+  arch/arm/plat-s5p/Makefile                      |    3 +-
+  arch/arm/plat-s5p/clock.c                       |   36 +
+  arch/arm/plat-s5p/irq-pm.c                      |   25 +-
+  arch/arm/plat-samsung/include/plat/cpu.h        |   10 +
+  arch/arm/plat-samsung/include/plat/devs.h       |    2 +
+  arch/arm/plat-samsung/include/plat/s5p-clock.h  |    6 +
+  arch/arm/plat-samsung/include/plat/uncompress.h |    2 +
+  arch/arm/plat-samsung/irq-vic-timer.c           |   16 +
+  34 files changed, 2954 insertions(+), 341 deletions(-)
+  create mode 100644 arch/arm/boot/dts/exynos5250-smdk5250.dts
+  create mode 100644 arch/arm/boot/dts/exynos5250.dtsi
+  create mode 100644 arch/arm/mach-exynos/clock-exynos5.c
+  create mode 100644 arch/arm/mach-exynos/dev-uart.c
+  create mode 100644 arch/arm/mach-exynos/mach-exynos5-dt.c
