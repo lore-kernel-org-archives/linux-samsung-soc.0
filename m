@@ -1,81 +1,54 @@
-From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add s3c-hsotg device support for GONI board
-Date: Thu, 15 Mar 2012 10:03:15 +0100
-Message-ID: <1331802195-10133-1-git-send-email-l.majewski@samsung.com>
+From: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Thu, 15 Mar 2012 11:04:56 +0100
+Message-ID: <4F61BEC8.4030008@samsung.com>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
+ <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
+ <20120314172915.GB13393@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:42529 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760747Ab2COJDW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Mar 2012 05:03:22 -0400
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0M0X008F055CB6@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Mar 2012 09:03:12 +0000 (GMT)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M0X00KCB55H8H@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 15 Mar 2012 09:03:17 +0000 (GMT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20120314172915.GB13393-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch adds hsotg device to the GONI board.
+On 14.03.2012 18:29, Mark Brown wrote:
 
-Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-s5pv210/Kconfig     |    1 +
- arch/arm/mach-s5pv210/mach-goni.c |    6 ++++++
- 2 files changed, 7 insertions(+), 0 deletions(-)
+> On Tue, Mar 13, 2012 at 05:54:38PM +0100, Karol Lewandowski wrote:
+> 
+>>  - replace s3c24xx_i2c_type enum with plain unsigned int that can
+>>    hold not only device type but also hw revision-specific quirks
+> 
+> Would it not be clearer to just have explicit flags for the quirks (eg,
+> as a set of bitfield flags)?
 
-diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-index 29594fc..88e983b 100644
---- a/arch/arm/mach-s5pv210/Kconfig
-+++ b/arch/arm/mach-s5pv210/Kconfig
-@@ -85,6 +85,7 @@ config MACH_AQUILA
- 	select S5P_DEV_ONENAND
- 	select S5PV210_SETUP_FB_24BPP
- 	select S5PV210_SETUP_SDHCI
-+	select S5PV210_SETUP_USB_PHY
- 	help
- 	  Machine support for the Samsung Aquila target based on S5PC110 SoC
- 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index 2cf5ed7..f5f4926 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -49,6 +49,7 @@
- #include <plat/mfc.h>
- #include <plat/regs-fb-v4.h>
- #include <plat/camport.h>
-+#include <plat/udc-hs.h>
- 
- #include <media/v4l2-mediabus.h>
- #include <media/s5p_fimc.h>
-@@ -277,6 +278,9 @@ static void __init goni_tsp_init(void)
- 	i2c2_devs[0].irq = gpio_to_irq(gpio);
- }
- 
-+/* USB OTG */
-+static struct s3c_hsotg_plat goni_hsotg_pdata;
-+
- static void goni_camera_init(void)
- {
- 	s5pv210_fimc_setup_gpio(S5P_CAMPORT_A);
-@@ -939,6 +943,8 @@ static void __init goni_machine_init(void)
- 	s3c_set_platdata(&goni_fimc_md_platdata, sizeof(goni_fimc_md_platdata),
- 			 &s5p_device_fimc_md);
- 
-+	s3c_hsotg_set_platdata(&goni_hsotg_pdata);
-+
- 	goni_camera_init();
- 
- 	/* SPI */
+
+That would work on runtime but we also need to initialize this
+somehow.  The way it was done today on non-dt platforms is via platform
+device variants, i.e. (taken from 3rd patch):
+
+@@ -1128,6 +1161,9 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
+ 	}, {
+ 		.name		= "s3c2440-i2c",
+ 		.driver_data	= TYPE_S3C2440,
++	}, {
++		.name		= "s3c2440-hdmiphy-i2c",
++		.driver_data	= TYPE_S3C2440 | FLAG_HDMIPHY | FLAG_NO_GPIO,
+
+Ability to address above scenario was sole motivation for this change.
+Without it one would need either need separate type (e.g. 
+TYPE_S3C2440_HDMIPHY) or setting flags based just on device name.
+
+Introducing separate type (TYPE_S3C2440_HDMIPHY) has been our original
+attempt to solve this issue.  However, this required adding explicit
+checks to driver code all over the place (if (type == S3C2400 ||
+type == S3c2440_HDMIPHY).
+
+Thus, I felt that sqeezing quirks into type is a bit cleaner approach.
+
+Regards,
 -- 
-1.7.2.3
+Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
