@@ -1,69 +1,82 @@
-From: Joerg Roedel <joerg.roedel@amd.com>
-Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Thu, 15 Mar 2012 12:12:27 +0100
-Message-ID: <20120315111227.GA2384@amd.com>
-References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Thu, 15 Mar 2012 12:56:30 +0000
+Message-ID: <20120315125630.GK3138@opensource.wolfsonmicro.com>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
+ <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
+ <20120314172915.GB13393@sirena.org.uk>
+ <4F61BEC8.4030008@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from tx2ehsobe003.messaging.microsoft.com ([65.55.88.13]:17777 "EHLO
-	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751535Ab2COLMi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Mar 2012 07:12:38 -0400
-Content-Disposition: inline
-In-Reply-To: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============3471446847755934681=="
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <4F61BEC8.4030008-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Cho KyongHo <pullip.cho@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
-
-On Thu, Mar 15, 2012 at 05:32:39PM +0900, Cho KyongHo wrote:
-> Handling System MMUs with an identifier is not flexible to manage
-> System MMU platform devices because of the following reasons:
-> 1. A device driver which needs to handle System MMU must know the ID.
-> 2. A System MMU may not present in some implementations of Exynos family.
-> 3. Handling System MMU with IOMMU API does not require an ID.
-> 
-> This patch is the result of removing ID of System MMUs.
-> Instead, a device driver that needs to handle its System MMU must
-> use IOMMU API while its descriptor of platform device is given.
-> 
-> This patch also includes the following enhancements:
-> - A System MMU device becomes a child if its power domain device.
-> - clkdev
-> 
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
-> ---
->  arch/arm/mach-exynos/Kconfig                    |   10 +-
->  arch/arm/mach-exynos/Makefile                   |    2 +-
->  arch/arm/mach-exynos/clock-exynos4.c            |   79 ++--
->  arch/arm/mach-exynos/clock-exynos4.h            |    2 +
->  arch/arm/mach-exynos/clock-exynos4210.c         |   11 +
->  arch/arm/mach-exynos/clock-exynos4212.c         |   28 ++-
->  arch/arm/mach-exynos/clock-exynos5.c            |   90 +++++
->  arch/arm/mach-exynos/dev-sysmmu.c               |  457 ++++++++++++----------
->  arch/arm/mach-exynos/include/mach/irqs.h        |   25 +-
->  arch/arm/mach-exynos/include/mach/map.h         |   38 ++
->  arch/arm/mach-exynos/include/mach/regs-clock.h  |    5 +
->  arch/arm/mach-exynos/include/mach/regs-sysmmu.h |   28 --
->  arch/arm/mach-exynos/include/mach/sysmmu.h      |   88 +++--
->  arch/arm/mach-exynos/mach-armlex4210.c          |    1 -
->  arch/arm/mach-exynos/mach-smdkv310.c            |    1 -
->  15 files changed, 529 insertions(+), 336 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
-
-This patch doesn't apply cleanly against upstream Linux (v3.3-rcX).
-Please rebase to upstream and resend. The other 2 patches apply fine.
 
 
-	Joerg
+--===============3471446847755934681==
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
+Content-Disposition: inline
 
--- 
-AMD Operating System Research Center
 
-Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
-General Managers: Alberto Bozzo
-Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
+--HcccYpVZDxQ8hzPO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Thu, Mar 15, 2012 at 11:04:56AM +0100, Karol Lewandowski wrote:
+
+> Introducing separate type (TYPE_S3C2440_HDMIPHY) has been our original
+> attempt to solve this issue.  However, this required adding explicit
+> checks to driver code all over the place (if (type == S3C2400 ||
+> type == S3c2440_HDMIPHY).
+
+Another option is to change the type to be a pointer to a struct with
+quirk flags in it.
+
+--HcccYpVZDxQ8hzPO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPYebwAAoJEBus8iNuMP3drkYP/1PZa56oyfKw8hJd1h9L+IZv
+RKBh7G8R2Z3Yx/uLDIP5PlhYoPOdMeQ9ngg4svOh27maeDvhEXgXO5jP2nzxjCOo
+Su62mR8sozezGe2OO6cFkX4zaa6I48gexfiSZzkMpr16HEkRXd5Cu/aSO4ruF50R
+yduSDMPZVuiI/fnlKvYpSKmkOhVUfgRNI+Zg7qbV6YqQLDjsP5EvEia7NU4h3T+B
+qs1RWcZC67LRvuDBWfB3akTHtoQqPAMLGqvqXgZfFOT860erAAVTfBj4jQ/1VIwo
+blaycDLtSAD6iQhtXE6HL06exP57GBtfYnXrFdxFu0OtyMRsgbpUeYFPuNE9japD
+dcC+t5gmGYrG8yVYtUjF607kP3HgQnKHDD/JmbGDo66IBxQC0F7gYJh/LBNstMK2
+YXZLi5JEmUMuvMlNQ/aQE7HdzVf4m0FiJHWCNaL8z7cmNF7HLERHARvW3WlT3vgJ
+2SMb3vKq9EQWQs0wvCqMfdROrVEXO8pEdjYwveZdiMXqNheCEuyPIjqG8tPPjwjv
+M41QcfsCTwdZIfaoJlCAPc/qiw7HmlyFOlXvFIUrOrw6d0/06XYJmSoS5h5EQhyy
+z2jj70jFdWTejb7ZBixO3RRD+J4j7psa/A7LzrlgJxKoDnhiITn6OHMwaS6UAVBf
+ihCC5yudMnNesehNatHt
+=NmrA
+-----END PGP SIGNATURE-----
+
+--HcccYpVZDxQ8hzPO--
+
+--===============3471446847755934681==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devicetree-discuss mailing list
+devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+https://lists.ozlabs.org/listinfo/devicetree-discuss
+
+--===============3471446847755934681==--
