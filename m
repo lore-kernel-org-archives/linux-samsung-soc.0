@@ -1,80 +1,43 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Thu, 15 Mar 2012 07:39:25 -0700
-Message-ID: <4F61FF1D.5000502@samsung.com>
-References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com>
+From: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Thu, 15 Mar 2012 17:54:33 +0100
+Message-ID: <4F621EC9.6020106@samsung.com>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
+ <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
+ <20120314172915.GB13393@sirena.org.uk> <4F61BEC8.4030008@samsung.com>
+ <20120315125630.GK3138@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:60425 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753958Ab2COOja (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Mar 2012 10:39:30 -0400
-In-Reply-To: <20120315111227.GA2384@amd.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <20120315125630.GK3138-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joerg.roedel@amd.com>
-Cc: Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-On 03/15/12 04:12, Joerg Roedel wrote:
-> On Thu, Mar 15, 2012 at 05:32:39PM +0900, Cho KyongHo wrote:
+On 15.03.2012 13:56, Mark Brown wrote:
 
-KyongHo, I looked at 'Cho KyongHo <pullip.cho ...>' and 'KyongHo Cho 
-<pullip.cho ...>' in this series, which one do you want to use?
+> On Thu, Mar 15, 2012 at 11:04:56AM +0100, Karol Lewandowski wrote:
+> 
+>> Introducing separate type (TYPE_S3C2440_HDMIPHY) has been our original
+>> attempt to solve this issue.  However, this required adding explicit
+>> checks to driver code all over the place (if (type == S3C2400 ||
+>> type == S3c2440_HDMIPHY).
+> 
+> Another option is to change the type to be a pointer to a struct with
+> quirk flags in it.
 
->> Handling System MMUs with an identifier is not flexible to manage
->> System MMU platform devices because of the following reasons:
->> 1. A device driver which needs to handle System MMU must know the ID.
->> 2. A System MMU may not present in some implementations of Exynos family.
->> 3. Handling System MMU with IOMMU API does not require an ID.
->>
->> This patch is the result of removing ID of System MMUs.
->> Instead, a device driver that needs to handle its System MMU must
->> use IOMMU API while its descriptor of platform device is given.
->>
->> This patch also includes the following enhancements:
->> - A System MMU device becomes a child if its power domain device.
->> - clkdev
->>
->> Cc: Kukjin Kim<kgene.kim@samsung.com>
->> Signed-off-by: KyongHo Cho<pullip.cho@samsung.com>
->> ---
->>   arch/arm/mach-exynos/Kconfig                    |   10 +-
->>   arch/arm/mach-exynos/Makefile                   |    2 +-
->>   arch/arm/mach-exynos/clock-exynos4.c            |   79 ++--
->>   arch/arm/mach-exynos/clock-exynos4.h            |    2 +
->>   arch/arm/mach-exynos/clock-exynos4210.c         |   11 +
->>   arch/arm/mach-exynos/clock-exynos4212.c         |   28 ++-
->>   arch/arm/mach-exynos/clock-exynos5.c            |   90 +++++
->>   arch/arm/mach-exynos/dev-sysmmu.c               |  457 ++++++++++++----------
->>   arch/arm/mach-exynos/include/mach/irqs.h        |   25 +-
->>   arch/arm/mach-exynos/include/mach/map.h         |   38 ++
->>   arch/arm/mach-exynos/include/mach/regs-clock.h  |    5 +
->>   arch/arm/mach-exynos/include/mach/regs-sysmmu.h |   28 --
->>   arch/arm/mach-exynos/include/mach/sysmmu.h      |   88 +++--
->>   arch/arm/mach-exynos/mach-armlex4210.c          |    1 -
->>   arch/arm/mach-exynos/mach-smdkv310.c            |    1 -
->>   15 files changed, 529 insertions(+), 336 deletions(-)
->>   delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
->
-> This patch doesn't apply cleanly against upstream Linux (v3.3-rcX).
-> Please rebase to upstream and resend. The other 2 patches apply fine.
->
 
-Yes, as KyoungHo said, this has been created on top of Samsung tree 
-for-next because this touches many exynos stuff which has been changed 
-from Samsung tree for upcoming merge window. So if you're ok on this, 
-1st patch and this should be sent to upstream via samsung tree even 
-though I can't find any topic branch for this yet. And if you want topic 
-branch for your tree, let me know, I can provide it.
+Sure, that's possible.   However, I don't find it any simpler than
+using  bitmasks.  Quite to contrary - I consider it redundant to
+bring new structure into existence when simple uint does the trick
+just fine (IMHO, of course).
 
-Thanks.
+If you consider code to be inherently less readable because of this
+approach I'll rework it.  If it's not a such big deal for you I would
+prefer to keep it as is.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks!
+-- 
+Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
