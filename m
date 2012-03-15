@@ -1,54 +1,69 @@
-From: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
-Date: Thu, 15 Mar 2012 11:04:56 +0100
-Message-ID: <4F61BEC8.4030008@samsung.com>
-References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
- <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
- <20120314172915.GB13393@sirena.org.uk>
+From: Joerg Roedel <joerg.roedel@amd.com>
+Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
+ definitions
+Date: Thu, 15 Mar 2012 12:12:27 +0100
+Message-ID: <20120315111227.GA2384@amd.com>
+References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20120314172915.GB13393-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from tx2ehsobe003.messaging.microsoft.com ([65.55.88.13]:17777 "EHLO
+	tx2outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751535Ab2COLMi (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 15 Mar 2012 07:12:38 -0400
+Content-Disposition: inline
+In-Reply-To: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Cho KyongHo <pullip.cho@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-On 14.03.2012 18:29, Mark Brown wrote:
-
-> On Tue, Mar 13, 2012 at 05:54:38PM +0100, Karol Lewandowski wrote:
+On Thu, Mar 15, 2012 at 05:32:39PM +0900, Cho KyongHo wrote:
+> Handling System MMUs with an identifier is not flexible to manage
+> System MMU platform devices because of the following reasons:
+> 1. A device driver which needs to handle System MMU must know the ID.
+> 2. A System MMU may not present in some implementations of Exynos family.
+> 3. Handling System MMU with IOMMU API does not require an ID.
 > 
->>  - replace s3c24xx_i2c_type enum with plain unsigned int that can
->>    hold not only device type but also hw revision-specific quirks
+> This patch is the result of removing ID of System MMUs.
+> Instead, a device driver that needs to handle its System MMU must
+> use IOMMU API while its descriptor of platform device is given.
 > 
-> Would it not be clearer to just have explicit flags for the quirks (eg,
-> as a set of bitfield flags)?
+> This patch also includes the following enhancements:
+> - A System MMU device becomes a child if its power domain device.
+> - clkdev
+> 
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: KyongHo Cho <pullip.cho@samsung.com>
+> ---
+>  arch/arm/mach-exynos/Kconfig                    |   10 +-
+>  arch/arm/mach-exynos/Makefile                   |    2 +-
+>  arch/arm/mach-exynos/clock-exynos4.c            |   79 ++--
+>  arch/arm/mach-exynos/clock-exynos4.h            |    2 +
+>  arch/arm/mach-exynos/clock-exynos4210.c         |   11 +
+>  arch/arm/mach-exynos/clock-exynos4212.c         |   28 ++-
+>  arch/arm/mach-exynos/clock-exynos5.c            |   90 +++++
+>  arch/arm/mach-exynos/dev-sysmmu.c               |  457 ++++++++++++----------
+>  arch/arm/mach-exynos/include/mach/irqs.h        |   25 +-
+>  arch/arm/mach-exynos/include/mach/map.h         |   38 ++
+>  arch/arm/mach-exynos/include/mach/regs-clock.h  |    5 +
+>  arch/arm/mach-exynos/include/mach/regs-sysmmu.h |   28 --
+>  arch/arm/mach-exynos/include/mach/sysmmu.h      |   88 +++--
+>  arch/arm/mach-exynos/mach-armlex4210.c          |    1 -
+>  arch/arm/mach-exynos/mach-smdkv310.c            |    1 -
+>  15 files changed, 529 insertions(+), 336 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
+
+This patch doesn't apply cleanly against upstream Linux (v3.3-rcX).
+Please rebase to upstream and resend. The other 2 patches apply fine.
 
 
-That would work on runtime but we also need to initialize this
-somehow.  The way it was done today on non-dt platforms is via platform
-device variants, i.e. (taken from 3rd patch):
+	Joerg
 
-@@ -1128,6 +1161,9 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
- 	}, {
- 		.name		= "s3c2440-i2c",
- 		.driver_data	= TYPE_S3C2440,
-+	}, {
-+		.name		= "s3c2440-hdmiphy-i2c",
-+		.driver_data	= TYPE_S3C2440 | FLAG_HDMIPHY | FLAG_NO_GPIO,
-
-Ability to address above scenario was sole motivation for this change.
-Without it one would need either need separate type (e.g. 
-TYPE_S3C2440_HDMIPHY) or setting flags based just on device name.
-
-Introducing separate type (TYPE_S3C2440_HDMIPHY) has been our original
-attempt to solve this issue.  However, this required adding explicit
-checks to driver code all over the place (if (type == S3C2400 ||
-type == S3c2440_HDMIPHY).
-
-Thus, I felt that sqeezing quirks into type is a bit cleaner approach.
-
-Regards,
 -- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+AMD Operating System Research Center
+
+Advanced Micro Devices GmbH Einsteinring 24 85609 Dornach
+General Managers: Alberto Bozzo
+Registration: Dornach, Landkr. Muenchen; Registerger. Muenchen, HRB Nr. 43632
