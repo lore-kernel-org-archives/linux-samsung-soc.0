@@ -1,55 +1,61 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH] spi: s3c64xx: Fix build
-Date: Thu, 15 Mar 2012 03:32:33 -0600
-Message-ID: <20120315093233.7F7ED3E0648@localhost>
-References: <1331743934-23577-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung EXYNOS5250 GPIO for v3.4
+Date: Thu, 15 Mar 2012 07:25:20 -0700
+Message-ID: <4F61FBD0.4040904@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:33207 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755527Ab2COOWX (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:54735 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753490Ab2COOZZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 15 Mar 2012 10:22:23 -0400
-Received: by wgbdr13 with SMTP id dr13so51091wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Mar 2012 07:22:21 -0700 (PDT)
-In-Reply-To: <1331743934-23577-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Thu, 15 Mar 2012 10:25:25 -0400
+Received: by pbcun15 with SMTP id un15so48823pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Mar 2012 07:25:24 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Boojin Kim <boojin.kim@samsung.com>, Kyoungil Kim <ki0351.kim@samsung.com>
-Cc: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Wed, 14 Mar 2012 16:52:14 +0000, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
-> Commit 054ebc (spi: Compatibility with direction which is used in samsung
-> DMA operation) does not build as one hunk adds a brace to the first branch
-> of an if statement without adding at least the correspoding close. Remove
-> the unwanted brace.
-> 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Hi Arnd, Olof,
 
-Applied, thanks.
+Please pull EXYNOS5250 gpio for v3.4.
 
-g.
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/soc-exynos5250-gpio
 
-> ---
->  drivers/spi/spi-s3c64xx.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index c40d118..3180100 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -264,7 +264,7 @@ static void prepare_dma(struct s3c64xx_spi_dma_data *dma,
->  	struct s3c64xx_spi_driver_data *sdd;
->  	struct samsung_dma_prep_info info;
->  
-> -	if (dma->direction == DMA_DEV_TO_MEM) {
-> +	if (dma->direction == DMA_DEV_TO_MEM)
->  		sdd = container_of((void *)dma,
->  			struct s3c64xx_spi_driver_data, rx_dma);
->  	else
-> -- 
-> 1.7.9.1
-> 
+It is including add support GPIOlib for EXYNOS5250 and Grant Likely 
+already agreed to send this via arm-soc for v3.4. Actually, this is 
+needed for compilation of EXYNOS5250 arch. As a note, this has no 
+dependency with others for merging.
 
--- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies,Ltd.
+If any problems, please let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit fde7d9049e55ab85a390be7f415d74c9f62dd0f9:
+
+   Linux 3.3-rc7 (2012-03-10 13:49:52 -0800)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/soc-exynos5250-gpio
+
+Sangsu Park (3):
+       ARM: EXYNOS: add support GPIO for EXYNOS5250
+       gpio/samsung: add support GPIOlib for EXYNOS5250
+       gpio/samsung: use ioremap() for EXYNOS4 GPIOlib
+
+  arch/arm/mach-exynos/common.c            |   15 -
+  arch/arm/mach-exynos/include/mach/gpio.h |  239 ++++++++++++---
+  arch/arm/mach-exynos/include/mach/map.h  |    4 +
+  drivers/gpio/gpio-samsung.c              |  487 
++++++++++++++++++++++++++++---
+  4 files changed, 637 insertions(+), 108 deletions(-)
