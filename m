@@ -1,55 +1,103 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [GIT PULL] Samsung SoC EXYNOS5250 arch for v3.4
-Date: Fri, 16 Mar 2012 13:30:22 -0700
-Message-ID: <4F63A2DE.7070705@samsung.com>
-References: <4F61FA0D.1050007@samsung.com> <201203161250.11353.arnd@arndb.de>
+Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
+ definitions
+Date: Fri, 16 Mar 2012 13:47:50 -0700
+Message-ID: <4F63A6F6.9050506@samsung.com>
+References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com> <4F630841.2070307@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:53025 "EHLO
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:44785 "EHLO
 	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030320Ab2CPUaZ (ORCPT
+	with ESMTP id S932273Ab2CPUrx (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Mar 2012 16:30:25 -0400
-Received: by dajr28 with SMTP id r28so6593601daj.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Mar 2012 13:30:25 -0700 (PDT)
-In-Reply-To: <201203161250.11353.arnd@arndb.de>
+	Fri, 16 Mar 2012 16:47:53 -0400
+In-Reply-To: <4F630841.2070307@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Subash Patel <subash.ramaswamy@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joerg.roedel@amd.com>, Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-Arnd Bergmann wrote:
-
-[...]
-
+Subash Patel wrote:
+> Hi KyongHo, Kukjin,
 >
-> As you may have noticed from Stephen's notification about the merge
-> conflict, I have put this into the next/soc2 branch now.
->
-Yes, thanks.
+> On 03/15/2012 08:09 PM, Kukjin Kim wrote:
+>> On 03/15/12 04:12, Joerg Roedel wrote:
+>>> On Thu, Mar 15, 2012 at 05:32:39PM +0900, Cho KyongHo wrote:
+>>
+>> KyongHo, I looked at 'Cho KyongHo <pullip.cho ...>' and 'KyongHo Cho
+>> <pullip.cho ...>' in this series, which one do you want to use?
+>>
+>>>> Handling System MMUs with an identifier is not flexible to manage
+>>>> System MMU platform devices because of the following reasons:
+>>>> 1. A device driver which needs to handle System MMU must know the ID.
+>>>> 2. A System MMU may not present in some implementations of Exynos
+>>>> family.
+>>>> 3. Handling System MMU with IOMMU API does not require an ID.
+>>>>
+>>>> This patch is the result of removing ID of System MMUs.
+>>>> Instead, a device driver that needs to handle its System MMU must
+>>>> use IOMMU API while its descriptor of platform device is given.
+>>>>
+>>>> This patch also includes the following enhancements:
+>>>> - A System MMU device becomes a child if its power domain device.
+>>>> - clkdev
+>>>>
+>>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
+>>>> Signed-off-by: KyongHo Cho<pullip.cho@samsung.com>
+>>>> ---
+>>>> arch/arm/mach-exynos/Kconfig | 10 +-
+>>>> arch/arm/mach-exynos/Makefile | 2 +-
+>>>> arch/arm/mach-exynos/clock-exynos4.c | 79 ++--
+>>>> arch/arm/mach-exynos/clock-exynos4.h | 2 +
+>>>> arch/arm/mach-exynos/clock-exynos4210.c | 11 +
+>>>> arch/arm/mach-exynos/clock-exynos4212.c | 28 ++-
+>>>> arch/arm/mach-exynos/clock-exynos5.c | 90 +++++
+>>>> arch/arm/mach-exynos/dev-sysmmu.c | 457 ++++++++++++----------
+>>>> arch/arm/mach-exynos/include/mach/irqs.h | 25 +-
+>>>> arch/arm/mach-exynos/include/mach/map.h | 38 ++
+>>>> arch/arm/mach-exynos/include/mach/regs-clock.h | 5 +
+>>>> arch/arm/mach-exynos/include/mach/regs-sysmmu.h | 28 --
+>>>> arch/arm/mach-exynos/include/mach/sysmmu.h | 88 +++--
+>>>> arch/arm/mach-exynos/mach-armlex4210.c | 1 -
+>>>> arch/arm/mach-exynos/mach-smdkv310.c | 1 -
+>>>> 15 files changed, 529 insertions(+), 336 deletions(-)
+>>>> delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
+>>>
+>>> This patch doesn't apply cleanly against upstream Linux (v3.3-rcX).
+>>> Please rebase to upstream and resend. The other 2 patches apply fine.
+>>>
+>>
+>> Yes, as KyoungHo said, this has been created on top of Samsung tree
+>> for-next because this touches many exynos stuff which has been changed
+>> from Samsung tree for upcoming merge window. So if you're ok on this,
+>> 1st patch and this should be sent to upstream via samsung tree even
+>> though I can't find any topic branch for this yet. And if you want
+>> topic branch for your tree, let me know, I can provide it.
+>>
+>> Thanks.
+> Wouldn't it be good to send exynos4 SYSMMU patches now, and send only
+> the exynos5 delta when your for-next(exynos5) changes
 
-> I'm not too happy with the resolution of my comments, but in the
+Hmm, it can be a solution for this, but I'm not sure exynos4 and exynos5 
+can be splitted.
 
-Hmm, sorry about that.
+> get merged to mainline? Manually editing the patches is really pain-some
 
-> end I think it's better to have it in the tree than not have it.
-> While you did reply with explanations for why some of the patches
-> were necessary, you did not actually put the explanations into
-> the changeset descriptions but only sent a reply to my emails.
+YES, absolutely. Nobody like it.
 
-Oh, I see. If similar case will happen next time, let me expand its 
-descritpions.
+> and sometimes error-some :( Can this patch in particular
+> be split?
 
->
-> I don't think that the merge conflict is problematic, especially
-> since Linus won't see the same thing that Stephen did, but as I
-> wrote in the other mail, please check that my resolution was correct.
->
-Yes, as I replied, I think your resolution and Stehpehn's one, both are 
-correct to me and just different postion of 'int ret'. As a note, I just 
-fixed it up with yours.
+Hmm...
+
+Now we don't have much time for upcoming merge window, and this should 
+be in linux-next before open merge window.
+
+Anyway Joerg, how do you want to handle this? Do you want to pick up 
+1/2/3 all of them in your tree? If so, 2nd patch should be on top of 
+some samsung topic stuff.
 
 Thanks.
 
