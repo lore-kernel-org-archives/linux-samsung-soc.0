@@ -1,96 +1,295 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-Date: Fri, 16 Mar 2012 17:07:03 +0900
-Message-ID: <002d01cd034b$c56f2b00$504d8100$%han@samsung.com>
-References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
- <1331585999-8604-4-git-send-email-thomas.abraham@linaro.org>
- <002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com>
- <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
- <000501cd0184$f088cb20$d19a6160$%han@samsung.com> <4F60E5C8.3040804@gmail.com>
- <001501cd0241$6bb53560$431fa020$%han@samsung.com>
- <CAEYLNCp5e=86rpRi2C-5OJptTyEeXAn8JHhbWw_BqGzSaDD9wQ@mail.gmail.com>
- <002a01cd0283$1f61b200$5e251600$%han@samsung.com>
- <CAEYLNCrprPE60ZS=_OWuck0JCJMhCxzVErZwuwGpEDYkQq-hXg@mail.gmail.com>
- <001d01cd0315$935cc720$ba165560$%han@samsung.com>
- <CAEYLNCrGCmb5EJjURLY=EGfM=4N54MirNkCCyQRxqKEN3Eka8Q@mail.gmail.com>
+From: Ulf Hansson <ulf.hansson@stericsson.com>
+Subject: Re: [PATCH] mmc: core: Fix PowerOff Notify suspend/resume
+Date: Fri, 16 Mar 2012 10:03:22 +0100
+Message-ID: <4F6301DA.2080705@stericsson.com>
+References: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>	<4F60B808.4010803@stericsson.com> <CAGxe1ZGrCULDFuXoaoM5_hmuZhBSJvJpJ_F-jCLAEAgmiK2Aww@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:46101 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S964997Ab2CPIHG (ORCPT
+Received: from eu1sys200aog102.obsmtp.com ([207.126.144.113]:36710 "EHLO
+	eu1sys200aog102.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932386Ab2CPJDn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Mar 2012 04:07:06 -0400
-In-reply-to: <CAEYLNCrGCmb5EJjURLY=EGfM=4N54MirNkCCyQRxqKEN3Eka8Q@mail.gmail.com>
-Content-language: ko
+	Fri, 16 Mar 2012 05:03:43 -0400
+In-Reply-To: <CAGxe1ZGrCULDFuXoaoM5_hmuZhBSJvJpJ_F-jCLAEAgmiK2Aww@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Darius Augulis' <augulis.darius@gmail.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org, kgene.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'JeongHyeon Kim' <jhkim@insignal.co.kr>, 'Heiko Stuebner' <heiko@sntech.de>, 'Kwangwoo Lee' <kwangwoo.lee@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Peter Korsgaard' <jacmet@sunsite.dk>, 'Maurus Cuelenaere' <mcuelenaere@gmail.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "saugata.das@linaro.org" <saugata.das@linaro.org>
 
+Hi Girish,
 
+On 03/16/2012 04:49 AM, Girish K S wrote:
+> On 14 March 2012 20:53, Ulf Hansson<ulf.hansson@stericsson.com>  wrote:
+>> Hi Girish and Chris,
+>>
+>> I noticed that this has been pushed for 3.3, I think we need to make a
+>> revert of it asap if possible.
+>>
+>> I were unfortunately not able to review this patch earlier but it has issues
+>> I believe. It will break suspend/resume for eMMC devices supporting the
+>> SLEEP command and not the "poweroff notify" from eMMC 4.5.
+>
+> By break do you mean compilation break or system crash. can you please
+> post the log that caused the break.
+> I re checked it on eMMC 4.5, 4.41, high speed mmc card and normal mmc
+> card. I can compile successfully and
+> could test the suspend/ resume functionality without carsh.
+> If you provide the log, i can check more.
 
-> -----Original Message-----
-> From: Darius Augulis [mailto:augulis.darius@gmail.com]
-> Sent: Friday, March 16, 2012 4:47 PM
-> To: Jingoo Han
-> Cc: Thomas Abraham; linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; ben-linux@fluff.org; patches@linaro.org;
-> kgene.kim@samsung.com; Kyungmin Park; JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter
-> Korsgaard; Maurus Cuelenaere; Tushar Behera
-> Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-> 
-> On Fri, Mar 16, 2012 at 3:39 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> 
-> >> > So, your code can be removed.
-> >>
-> >> I don't think so. It does not break anything yet. One who make
-> >> changes, should ensure backwards compatibility, at least talking about
-> >> functionality and hardware (LCD) support, which was added few months
-> >> ago. Remember, we talk about kernel parameters line - now it lets
-> >> bootloader to select correct LCD size. After your changes, board with
-> >> 7" LCD wont show anything.
-> >
-> > [CC'ed Tushar Behera]
-> >
-> > Yes, your code is working. However, your code is bug.
-> 
-> it's not a bug, because it's working like it was intended to. it was
-> reviewed and accepted by maintainers before merging to main line.
-> you do not have rights to drop it because you don't like it.
-> You are doing changes - please do it correctly and do not break
-> existing functionality.
-> btw, you still not answered my question: why these two s3c_fb_pd_win
-> structures in mach-mini6410.c is a problem? They are declared on the
-> stack, but platform data uses only single one. mini6410 rewrites its
-> s3c-fb platform data with data from one of these two structures
-> dynamically. Why it's a bug? You want to remove this dynamic selection
-> which could be leaved there with reworked framework too.
+For eMMC devices supporting SLEEP, the SLEEP cmd must be issued before 
+powering down the VCC to the card. Otherwise we are violating the eMMC 
+spec. (Some eMMC device accept the above condition anyway, so that might 
+be why your devices were able to resumed without any problem).
 
+>
+>>
+>> Please see my comments below.
+>>
+>>
+>> On 01/31/2012 11:14 AM, Girish K S wrote:
+>>>
+>>> Modified the mmc_poweroff to resume before sending the
+>>> poweroff notification command. In sleep mode only AWAKE
+>>> and RESET commands are allowed, so before sending the
+>>> poweroff notification command resume from sleep mode and
+>>> then send the notification command.
+>>>
+>>> POwerOff Notify is tested on a Synopsis Designware Host
+>>> Controller(eMMC 4.5). The suspend to RAM and resume works fine.
+>>>
+>>> This patch is successfully applied on the Chris's mmc-next
+>>> branch
+>>>
+>>> cc: Chris Ball<cjb@laptop.org>
+>>> Signed-off-by: Girish K S<girish.shivananjappa@linaro.org>
+>>> Tested-by: Girish K S<girish.shivananjappa@linaro.org>
+>>> ---
+>>>   drivers/mmc/core/core.c  |   28 ++++++++++++++++++++--------
+>>>   drivers/mmc/core/mmc.c   |   17 ++++++++++++-----
+>>>   include/linux/mmc/card.h |    4 ++++
+>>>   3 files changed, 36 insertions(+), 13 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
+>>> index bec0bf2..14ec575 100644
+>>> --- a/drivers/mmc/core/core.c
+>>> +++ b/drivers/mmc/core/core.c
+>>> @@ -1239,7 +1239,8 @@ static void mmc_poweroff_notify(struct mmc_host
+>>> *host)
+>>>         int err = 0;
+>>>
+>>>         card = host->card;
+>>> -
+>>> +       mmc_claim_host(host);
+>>> +
+>>>         /*
+>>>          * Send power notify command only if card
+>>>          * is mmc and notify state is powered ON
+>>> @@ -1269,6 +1270,7 @@ static void mmc_poweroff_notify(struct mmc_host
+>>> *host)
+>>>                 /* Set the card state to no notification after the poweroff
+>>> */
+>>>                 card->poweroff_notify_state = MMC_NO_POWER_NOTIFICATION;
+>>>         }
+>>> +       mmc_release_host(host);
+>>>   }
+>>>
+>>>   /*
+>>> @@ -1327,12 +1329,28 @@ static void mmc_power_up(struct mmc_host *host)
+>>>
+>>>   void mmc_power_off(struct mmc_host *host)
+>>>   {
+>>> +       int err = 0;
+>>>         mmc_host_clk_hold(host);
+>>>
+>>>         host->ios.clock = 0;
+>>>         host->ios.vdd = 0;
+>>>
+>>> -       mmc_poweroff_notify(host);
+>>> +       /*
+>>> +        * For eMMC 4.5 device send AWAKE command before
+>>> +        * POWER_OFF_NOTIFY command, because in sleep state
+>>> +        * eMMC 4.5 devices respond to only RESET and AWAKE cmd
+>>> +        */
+>>> +       if (host->card&&    mmc_card_is_sleep(host->card)&&
+>>> +           host->bus_ops->resume) {
+>>> +               err = host->bus_ops->resume(host);
+>>
+>>
+>> This is just plain wrong. First we may have suspended the host from
+>> mmc_suspend_host then we enter this funtion (mmc_power_off) to cut the power
+>> to the card. Why do we even want to resume if we just did suspend?
+> for 4.5 case, cards wont respond to any command other than awake and
+> reset. so we resume before executing a switch
+> for poweroff notify. for non 4.5 card, it will resume and wont
+> continue in resume state because of the poweroff executed in the end.
 
-It's just bug.
+I understand, but I think we should never have put the card into 
+suspend/sleep state if we now that the card support poweroff notify 
+feature. The poweroff notify shall be handled similar how sleep is 
+handled from within the suspend function, I think.
 
-struct s3c_fb_pd_win should be used for windows of FIMD IP.
-It should not be used for selecting multi-LCDs.
+>>
+>> Moreover, this will actually mean that for mmc devices which are supporting
+>> SLEEP but not the new eMMC 4.5 feature poweroff_notify will leave this
+>> function in a resumed state (in other words, not in SLEEP state) which is
+>> not OK.
+> non 4.5 devices will not remain in resume state. Because mmc_set_ios
+> will power down the device.
 
-struct s3c_fb_pd_win should include information of windows of FIMD IP, s3c_fb_pd_win[0], s3c_fb_pd_win[1] represents window 0,
-window 1 of FIMD IP. However, your code includes information of LCD, it means that struct s3c_fb_pd_win represents 4.3" LCD, 7.0"
-LCD. It is wrong usage.
+Yes, and thus violating the eMMC spec for devices supporting SLEEP.
 
+>>
+>>
+>>> +
+>>> +               if (!err)
+>>> +                       mmc_poweroff_notify(host);
+>>> +               else
+>>> +                       pr_warning("%s: error %d during resume "
+>>> +                                  "(continue with poweroff sequence)\n",
+>>> +                                  mmc_hostname(host), err);
+>>> +       }
+>>>
+>>>         /*
+>>>          * Reset ocr mask to be the highest possible voltage supported for
+>>> @@ -2386,12 +2404,6 @@ int mmc_suspend_host(struct mmc_host *host)
+>>>                  */
+>>>                 if (mmc_try_claim_host(host)) {
+>>>                         if (host->bus_ops->suspend) {
+>>> -                               /*
+>>> -                                * For eMMC 4.5 device send notify command
+>>> -                                * before sleep, because in sleep state
+>>> eMMC 4.5
+>>> -                                * devices respond to only RESET and AWAKE
+>>> cmd
+>>> -                                */
+>>> -                               mmc_poweroff_notify(host);
+>>>                                 err = host->bus_ops->suspend(host);
+>>>                         }
+>>>                         mmc_do_release_host(host);
+>>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+>>> index 2bc586b..c3f09a2 100644
+>>> --- a/drivers/mmc/core/mmc.c
+>>> +++ b/drivers/mmc/core/mmc.c
+>>> @@ -1330,11 +1330,13 @@ static int mmc_suspend(struct mmc_host *host)
+>>>         BUG_ON(!host->card);
+>>>
+>>>         mmc_claim_host(host);
+>>> -       if (mmc_card_can_sleep(host))
+>>> +       if (mmc_card_can_sleep(host)) {
+>>>                 err = mmc_card_sleep(host);
+>>> -       else if (!mmc_host_is_spi(host))
+>>> +               if (!err)
+>>> +                       mmc_card_set_sleep(host->card);
+>>
+>>
+>> I suggest to move this inside the mmc_card_sleep function instead.
+> sure will do that as a additional patch
+>>
+>>
+>>> +       } else if (!mmc_host_is_spi(host))
+>>>                 mmc_deselect_cards(host);
+>>> -       host->card->state&= ~MMC_STATE_HIGHSPEED;
+>>> +       host->card->state&= ~(MMC_STATE_HIGHSPEED |
+>>> MMC_STATE_HIGHSPEED_200);
+>>
+>>
+>> What has MMC_STATE_HIGHSPEED_200 with this patch to do?
+> same as high_speed. on suspend high speed state is reset.
 
-> 
-> > 'struct s3c_fb_pd_win' is used not for LCD, but for windows of FIMD IP. So, 'struct s3c_fb_pd_win'
-> should not be used to select LCD.
-> > The mach-aquila.c uses two 'struct s3c_fb_pd_win' like you, however 'struct s3c_fb_pd_win' don't make
-> problem with Thomas's
-> > patchset. It is because mach-aquila.c use 'struct s3c_fb_pd_win' for only windows of FIMD IP.
-> > We don't have to responsibility to keep wrong code. If you have kept the rule, Thomas's patch would
-> not make the compatibility
-> > problem with your code. Why we should keep aberration such as your code? If you want to select two
-> LCDs, please find other way.
-> >
-> >
-> >>
-> >> Darius A.
-> >
+I am not saying that this should not be done, just saying that should 
+this been done within this patch. It has nothing to do with poweroff notify.
+
+>>
+>>
+>>>         mmc_release_host(host);
+>>>
+>>>         return err;
+>>> @@ -1354,7 +1356,11 @@ static int mmc_resume(struct mmc_host *host)
+>>>         BUG_ON(!host->card);
+>>>
+>>>         mmc_claim_host(host);
+>>> -       err = mmc_init_card(host, host->ocr, host->card);
+>>> +       if (mmc_card_is_sleep(host->card)) {
+>>> +               err = mmc_card_awake(host);
+>>> +               mmc_card_clr_sleep(host->card);
+>>
+>>
+>> I suggest to move this inside the mmc_card_sleep function instead.
+> sure will do it.
+>>
+>>
+>>> +       } else
+>>> +               err = mmc_init_card(host, host->ocr, host->card);
+>>>         mmc_release_host(host);
+>>>
+>>>         return err;
+>>> @@ -1364,7 +1370,8 @@ static int mmc_power_restore(struct mmc_host *host)
+>>>   {
+>>>         int ret;
+>>>
+>>> -       host->card->state&= ~MMC_STATE_HIGHSPEED;
+>>> +       host->card->state&= ~(MMC_STATE_HIGHSPEED |
+>>> MMC_STATE_HIGHSPEED_200);
+>>
+>>
+>> What has MMC_STATE_HIGHSPEED_200 with this patch to do?
+>>
+>>> +       mmc_card_clr_sleep(host->card);
+>>
+>>
+>> Why do we have clear the sleep state here?
+> currently it is of no use. coz init_card will initialize the card data
+> structure. If power_save / power_restore function is modified to put
+> the card in sleep state and only wake up (no complete card
+> initialization), then above setting is required.
+>>
+>>>         mmc_claim_host(host);
+>>>         ret = mmc_init_card(host, host->ocr, host->card);
+>>>         mmc_release_host(host);
+>>> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+>>> index f9a0663..1a1ca71 100644
+>>> --- a/include/linux/mmc/card.h
+>>> +++ b/include/linux/mmc/card.h
+>>> @@ -219,6 +219,7 @@ struct mmc_card {
+>>>   #define MMC_CARD_SDXC         (1<<6)          /* card is SDXC */
+>>>   #define MMC_CARD_REMOVED      (1<<7)          /* card has been removed */
+>>>   #define MMC_STATE_HIGHSPEED_200       (1<<8)          /* card is in HS200
+>>> mode */
+>>> +#define MMC_STATE_SLEEP                (1<<9)          /* card is in
+>>> sleep state */
+>>>         unsigned int            quirks;         /* card quirks */
+>>>   #define MMC_QUIRK_LENIENT_FN0 (1<<0)          /* allow SDIO FN0 writes
+>>> outside of the VS CCCR range */
+>>>   #define MMC_QUIRK_BLKSZ_FOR_BYTE_MODE (1<<1)  /* use func->cur_blksize */
+>>> @@ -384,6 +385,7 @@ static inline void __maybe_unused remove_quirk(struct
+>>> mmc_card *card, int data)
+>>>   #define mmc_sd_card_uhs(c)    ((c)->state&    MMC_STATE_ULTRAHIGHSPEED)
+>>>   #define mmc_card_ext_capacity(c) ((c)->state&    MMC_CARD_SDXC)
+>>>   #define mmc_card_removed(c)   ((c)&&    ((c)->state&    MMC_CARD_REMOVED))
+>>> +#define mmc_card_is_sleep(c)   ((c)->state&    MMC_STATE_SLEEP)
+>>>
+>>>
+>>>   #define mmc_card_set_present(c)       ((c)->state |= MMC_STATE_PRESENT)
+>>>   #define mmc_card_set_readonly(c) ((c)->state |= MMC_STATE_READONLY)
+>>> @@ -395,7 +397,9 @@ static inline void __maybe_unused remove_quirk(struct
+>>> mmc_card *card, int data)
+>>>   #define mmc_sd_card_set_uhs(c) ((c)->state |= MMC_STATE_ULTRAHIGHSPEED)
+>>>   #define mmc_card_set_ext_capacity(c) ((c)->state |= MMC_CARD_SDXC)
+>>>   #define mmc_card_set_removed(c) ((c)->state |= MMC_CARD_REMOVED)
+>>> +#define mmc_card_set_sleep(c)  ((c)->state |= MMC_STATE_SLEEP)
+>>>
+>>> +#define mmc_card_clr_sleep(c)  ((c)->state&= ~MMC_STATE_SLEEP)
+>>>
+>>>   /*
+>>>    * Quirk add/remove for MMC products.
+>>>    */
+>>
+>>
+>> Best regards
+>> Ulf Hansson
+>
+
+Kind regards
+Ulf Hansson
