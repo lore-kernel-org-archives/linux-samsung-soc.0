@@ -1,94 +1,133 @@
-From: Subash Patel <subash.ramaswamy@linaro.org>
-Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Fri, 16 Mar 2012 15:00:41 +0530
-Message-ID: <4F630841.2070307@linaro.org>
-References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
+Date: Fri, 16 Mar 2012 18:48:19 +0900
+Message-ID: <002f01cd0359$eb718330$c2548990$%han@samsung.com>
+References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
+ <1331585999-8604-4-git-send-email-thomas.abraham@linaro.org>
+ <002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com>
+ <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
+ <000501cd0184$f088cb20$d19a6160$%han@samsung.com> <4F60E5C8.3040804@gmail.com>
+ <001501cd0241$6bb53560$431fa020$%han@samsung.com>
+ <CAEYLNCp5e=86rpRi2C-5OJptTyEeXAn8JHhbWw_BqGzSaDD9wQ@mail.gmail.com>
+ <002a01cd0283$1f61b200$5e251600$%han@samsung.com>
+ <CAEYLNCrprPE60ZS=_OWuck0JCJMhCxzVErZwuwGpEDYkQq-hXg@mail.gmail.com>
+ <001d01cd0315$935cc720$ba165560$%han@samsung.com>
+ <CAEYLNCrGCmb5EJjURLY=EGfM=4N54MirNkCCyQRxqKEN3Eka8Q@mail.gmail.com>
+ <002d01cd034b$c56f2b00$504d8100$%han@samsung.com>
+ <CAEYLNCpfQ0cYb4efw6PZNnKjQ2rF25rj5Ed=i884LJXHAwigBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:51662 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760740Ab2CPJas (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:33092 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030678Ab2CPJsW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Mar 2012 05:30:48 -0400
-Received: by iagz16 with SMTP id z16so5188568iag.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Mar 2012 02:30:47 -0700 (PDT)
-In-Reply-To: <4F61FF1D.5000502@samsung.com>
+	Fri, 16 Mar 2012 05:48:22 -0400
+In-reply-to: <CAEYLNCpfQ0cYb4efw6PZNnKjQ2rF25rj5Ed=i884LJXHAwigBw@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Joerg Roedel <joerg.roedel@amd.com>, Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
+To: 'Darius Augulis' <augulis.darius@gmail.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org, kgene.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'JeongHyeon Kim' <jhkim@insignal.co.kr>, 'Heiko Stuebner' <heiko@sntech.de>, 'Kwangwoo Lee' <kwangwoo.lee@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Peter Korsgaard' <jacmet@sunsite.dk>, 'Maurus Cuelenaere' <mcuelenaere@gmail.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi KyongHo, Kukjin,
 
-On 03/15/2012 08:09 PM, Kukjin Kim wrote:
-> On 03/15/12 04:12, Joerg Roedel wrote:
->> On Thu, Mar 15, 2012 at 05:32:39PM +0900, Cho KyongHo wrote:
->
-> KyongHo, I looked at 'Cho KyongHo <pullip.cho ...>' and 'KyongHo Cho 
-> <pullip.cho ...>' in this series, which one do you want to use?
->
->>> Handling System MMUs with an identifier is not flexible to manage
->>> System MMU platform devices because of the following reasons:
->>> 1. A device driver which needs to handle System MMU must know the ID.
->>> 2. A System MMU may not present in some implementations of Exynos 
->>> family.
->>> 3. Handling System MMU with IOMMU API does not require an ID.
->>>
->>> This patch is the result of removing ID of System MMUs.
->>> Instead, a device driver that needs to handle its System MMU must
->>> use IOMMU API while its descriptor of platform device is given.
->>>
->>> This patch also includes the following enhancements:
->>> - A System MMU device becomes a child if its power domain device.
->>> - clkdev
->>>
->>> Cc: Kukjin Kim<kgene.kim@samsung.com>
->>> Signed-off-by: KyongHo Cho<pullip.cho@samsung.com>
->>> ---
->>>   arch/arm/mach-exynos/Kconfig                    |   10 +-
->>>   arch/arm/mach-exynos/Makefile                   |    2 +-
->>>   arch/arm/mach-exynos/clock-exynos4.c            |   79 ++--
->>>   arch/arm/mach-exynos/clock-exynos4.h            |    2 +
->>>   arch/arm/mach-exynos/clock-exynos4210.c         |   11 +
->>>   arch/arm/mach-exynos/clock-exynos4212.c         |   28 ++-
->>>   arch/arm/mach-exynos/clock-exynos5.c            |   90 +++++
->>>   arch/arm/mach-exynos/dev-sysmmu.c               |  457 
->>> ++++++++++++----------
->>>   arch/arm/mach-exynos/include/mach/irqs.h        |   25 +-
->>>   arch/arm/mach-exynos/include/mach/map.h         |   38 ++
->>>   arch/arm/mach-exynos/include/mach/regs-clock.h  |    5 +
->>>   arch/arm/mach-exynos/include/mach/regs-sysmmu.h |   28 --
->>>   arch/arm/mach-exynos/include/mach/sysmmu.h      |   88 +++--
->>>   arch/arm/mach-exynos/mach-armlex4210.c          |    1 -
->>>   arch/arm/mach-exynos/mach-smdkv310.c            |    1 -
->>>   15 files changed, 529 insertions(+), 336 deletions(-)
->>>   delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
->>
->> This patch doesn't apply cleanly against upstream Linux (v3.3-rcX).
->> Please rebase to upstream and resend. The other 2 patches apply fine.
->>
->
-> Yes, as KyoungHo said, this has been created on top of Samsung tree 
-> for-next because this touches many exynos stuff which has been changed 
-> from Samsung tree for upcoming merge window. So if you're ok on this, 
-> 1st patch and this should be sent to upstream via samsung tree even 
-> though I can't find any topic branch for this yet. And if you want 
-> topic branch for your tree, let me know, I can provide it.
->
-> Thanks.
-Wouldn't it be good to send exynos4 SYSMMU patches now, and send only 
-the exynos5 delta when your for-next(exynos5) changes
-get merged to mainline? Manually editing the patches is really pain-some 
-and sometimes error-some :( Can this patch in particular
-be split?
->
-> Best regards,
-> Kgene.
-> -- 
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-Regards,
-Subash
+> -----Original Message-----
+> From: Darius Augulis [mailto:augulis.darius@gmail.com]
+> Sent: Friday, March 16, 2012 6:16 PM
+> To: Jingoo Han
+> Cc: Thomas Abraham; linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-arm-
+> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; ben-linux@fluff.org; patches@linaro.org;
+> kgene.kim@samsung.com; Kyungmin Park; JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter
+> Korsgaard; Maurus Cuelenaere; Tushar Behera
+> Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
+> 
+> On Fri, Mar 16, 2012 at 10:07 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> >
+> >
+> >> -----Original Message-----
+> >> From: Darius Augulis [mailto:augulis.darius@gmail.com]
+> >> Sent: Friday, March 16, 2012 4:47 PM
+> >> To: Jingoo Han
+> >> Cc: Thomas Abraham; linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-arm-
+> >> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; ben-linux@fluff.org;
+> patches@linaro.org;
+> >> kgene.kim@samsung.com; Kyungmin Park; JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter
+> >> Korsgaard; Maurus Cuelenaere; Tushar Behera
+> >> Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
+> >>
+> >> On Fri, Mar 16, 2012 at 3:39 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> >>
+> >> it's not a bug, because it's working like it was intended to. it was
+> >> reviewed and accepted by maintainers before merging to main line.
+> >> you do not have rights to drop it because you don't like it.
+> >> You are doing changes - please do it correctly and do not break
+> >> existing functionality.
+> >> btw, you still not answered my question: why these two s3c_fb_pd_win
+> >> structures in mach-mini6410.c is a problem? They are declared on the
+> >> stack, but platform data uses only single one. mini6410 rewrites its
+> >> s3c-fb platform data with data from one of these two structures
+> >> dynamically. Why it's a bug? You want to remove this dynamic selection
+> >> which could be leaved there with reworked framework too.
+> >
+> >
+> > It's just bug.
+> >
+> > struct s3c_fb_pd_win should be used for windows of FIMD IP.
+> > It should not be used for selecting multi-LCDs.
+> 
+> why not? s3c_fb_pd_win contains timing values which depend directly on
+> LCD size and resolution.
+> Please look into the code again - mini6410 doesn't use platform data
+> so select different LCD sizes.
+> It has only single window in platform data - exactly what you want.
+> Now tell my, why you are arguing, that this platform data cannot be
+> rewritten dynamically by board setup routines at kernel startup time?
+> Many ARM architectures are doing the same - takes kernel command line
+> argument to select LCD and passes necessary data for its fb drivers
+> via platform data structures. It not a bug, it's correct approach to
+> support different sizes of LCD display for the same board.
+
+
+Hey, it is not my point.
+To take kernel command line is not problem to support multiple LCDs.
+
+My point is that s3c_fb_pd_win should not include variable LCD option.
+So, if you want to support multiple LCDs, you should use another variable,
+instead of using s3c_fb_pd_win[0] and s3c_fb_pd_win[1] as 4.3" LCD, 7.0" LCD.
+
+You use s3c_fb_pd_win[0], s3c_fb_pd_win[1] as 4.3" LCD, 7.0" LCD.
+However, s3c_fb_pd_win[0], s3c_fb_pd_win[1] means the windows of FIMD IP.
+
+
+> You are simply lazy to deal with little bit different code of mini6410
+> and real6410 because they have support for multiple LCDs and other
+> s3c-fb boards doesn't.
+> This is a reason why you want to drop it and not because it's a bug.
+> Hope other maintainers and code reviewers understand this situation correctly.
+> 
+> >
+> > struct s3c_fb_pd_win should include information of windows of FIMD IP, s3c_fb_pd_win[0],
+> s3c_fb_pd_win[1] represents window 0,
+> > window 1 of FIMD IP. However, your code includes information of LCD, it means that struct
+> s3c_fb_pd_win represents 4.3" LCD, 7.0"
+> > LCD. It is wrong usage.
+> >
+> >
+> >>
+> >> > 'struct s3c_fb_pd_win' is used not for LCD, but for windows of FIMD IP. So, 'struct s3c_fb_pd_win'
+> >> should not be used to select LCD.
+> >> > The mach-aquila.c uses two 'struct s3c_fb_pd_win' like you, however 'struct s3c_fb_pd_win' don't
+> make
+> >> problem with Thomas's
+> >> > patchset. It is because mach-aquila.c use 'struct s3c_fb_pd_win' for only windows of FIMD IP.
+> >> > We don't have to responsibility to keep wrong code. If you have kept the rule, Thomas's patch would
+> >> not make the compatibility
+> >> > problem with your code. Why we should keep aberration such as your code? If you want to select two
+> >> LCDs, please find other way.
+> >> >
+> >> >
+> >> >>
+> >> >> Darius A.
+> >> >
+> >
