@@ -1,54 +1,80 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung SoC EXYNOS5250 arch for v3.4
-Date: Fri, 16 Mar 2012 12:50:11 +0000
-Message-ID: <201203161250.11353.arnd@arndb.de>
-References: <4F61FA0D.1050007@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Sangwook Lee <sangwook.lee@linaro.org>
+Subject: [PATCH] usb: gadget: s3c-hsotg: fix kernel panic
+Date: Fri, 16 Mar 2012 13:35:20 +0000
+Message-ID: <1331904920-19685-1-git-send-email-sangwook.lee@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:58961 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1030320Ab2CPMuS (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:44606 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030751Ab2CPNh0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Mar 2012 08:50:18 -0400
-In-Reply-To: <4F61FA0D.1050007@samsung.com>
+	Fri, 16 Mar 2012 09:37:26 -0400
+Received: by wibhq7 with SMTP id hq7so887394wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 16 Mar 2012 06:37:25 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-usb@vger.kernel.org
+Cc: gregkh@linuxfoundation.org, l.Majewski@samsung.com, linux-samsung-soc@vger.kernel.org, patches@linaro.org, linaro-dev@lists.linaro.org, Sangwook Lee <sangwook.lee@linaro.org>
 
-On Thursday 15 March 2012, Kukjin Kim wrote:
-> Hi Arnd, Olof,
-> 
-> Thank you for kindly review for EXYNOS5 and addressed comments.
-> 
-> Here are 'pull request' for supporting EXYNOS5250.
-> 
-> Please pull from:
->    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-> next/soc-exynos5250-arch
-> 
-> It is based on next/devel-samsung-dma which has been pulled into arm-soc 
-> to avoid merge conflicts, because they touches same files.
-> And it is including additional two commits, one commit for fix 
-> exynos4-dt build error which is caused by this series and one for 
-> supporting lcd clkdev.
-> 
-> If any problems, please kindly let me know.
+Fix kernel panic from s3c_hsotg_udc_stop.
+if udc_is_newstyle is true, s3c_hsotg_udc_stop should not
+call disconnect, unbind.
 
-As you may have noticed from Stephen's notification about the merge
-conflict, I have put this into the next/soc2 branch now.
+As running rmmod g_mass_storage, kernel panic happens.
 
-I'm not too happy with the resolution of my comments, but in the
-end I think it's better to have it in the tree than not have it.
-While you did reply with explanations for why some of the patches
-were necessary, you did not actually put the explanations into 
-the changeset descriptions but only sent a reply to my emails.
+(composite_unbind+0x14/0x164 [g_mass_storage])
+from [<c023e950>] (s3c_hsotg_udc_stop)
 
-I don't think that the merge conflict is problematic, especially
-since Linus won't see the same thing that Stephen did, but as I
-wrote in the other mail, please check that my resolution was correct.
+This patch is based on Lukasz Majewski's patches:
+[PATCH 0/9] USB: s3c-hsotg: USB S3C-HSOTG driver fixes and code cleanu
 
-	Arnd
+in order to test g_mass_storage in Origen board:
+
+Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+---
+ drivers/usb/gadget/s3c-hsotg.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index 4262df8..9925661 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -2883,16 +2883,12 @@ static int s3c_hsotg_udc_stop(struct usb_gadget *gadget,
+ 	for (ep = 0; ep < hsotg->num_of_eps; ep++)
+ 		s3c_hsotg_ep_disable(&hsotg->eps[ep].ep);
+ 
+-	call_gadget(hsotg, disconnect);
+-
+-	driver->unbind(&hsotg->gadget);
+ 	s3c_hsotg_phy_disable(hsotg);
+ 	regulator_bulk_disable(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
+ 
+ 	hsotg->driver = NULL;
+ 	hsotg->gadget.speed = USB_SPEED_UNKNOWN;
+-
+-	device_del(&hsotg->gadget.dev);
++	hsotg->gadget.dev.driver = NULL;
+ 
+ 	dev_info(hsotg->dev, "unregistered gadget driver '%s'\n",
+ 		 driver->driver.name);
+@@ -3526,7 +3522,10 @@ static int __devexit s3c_hsotg_remove(struct platform_device *pdev)
+ 
+ 	s3c_hsotg_delete_debug(hsotg);
+ 
+-	usb_gadget_unregister_driver(hsotg->driver);
++	if (hsotg->driver) {
++		/* should have been done already by driver model core */
++		usb_gadget_unregister_driver(hsotg->driver);
++	}
+ 
+ 	free_irq(hsotg->irq, hsotg);
+ 	iounmap(hsotg->regs);
+@@ -3540,6 +3539,7 @@ static int __devexit s3c_hsotg_remove(struct platform_device *pdev)
+ 	clk_disable(hsotg->clk);
+ 	clk_put(hsotg->clk);
+ 
++	device_unregister(&hsotg->gadget.dev);
+ 	kfree(hsotg);
+ 	return 0;
+ }
+-- 
+1.7.4.1
