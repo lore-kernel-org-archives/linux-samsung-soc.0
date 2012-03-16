@@ -1,7 +1,7 @@
 From: Girish K S <girish.shivananjappa@linaro.org>
 Subject: Re: [PATCH] mmc: core: Fix PowerOff Notify suspend/resume
-Date: Fri, 16 Mar 2012 11:01:06 +0530
-Message-ID: <CAGxe1ZGxM1kHThW_Y9TUy4aWMVH5agKQvgq-BaYFGw33NDFLzA@mail.gmail.com>
+Date: Fri, 16 Mar 2012 11:10:46 +0530
+Message-ID: <CAGxe1ZHHFMqT6n-i1f7uSUg=F9Cq99tDgDkAwp2LoDrUN_kp=Q@mail.gmail.com>
 References: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
 	<4F60B808.4010803@stericsson.com>
 	<CAGxe1ZGrCULDFuXoaoM5_hmuZhBSJvJpJ_F-jCLAEAgmiK2Aww@mail.gmail.com>
@@ -9,12 +9,19 @@ References: <1328004843-16094-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:38229 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1031395Ab2CPFkr convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 16 Mar 2012 01:40:47 -0400
+Received: by qcqw6 with SMTP id w6so145905qcq.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 15 Mar 2012 22:40:46 -0700 (PDT)
 In-Reply-To: <CAKLKtzdQxdpTHbuAjb1eF4bUVCk-7mOhPesQnVGJJ9XcrjWSZg@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: Saugata Das <saugata.das@linaro.org>
 Cc: Ulf Hansson <ulf.hansson@stericsson.com>, Chris Ball <cjb@laptop.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "patches@linaro.org" <patches@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-List-Id: linux-samsung-soc@vger.kernel.org
 
 On 16 March 2012 10:43, Saugata Das <saugata.das@linaro.org> wrote:
 > On 16 March 2012 09:19, Girish K S <girish.shivananjappa@linaro.org> =
@@ -234,11 +241,12 @@ ost->card);
 >> sure will do it.
 >
 > I guess the proposal is to move this inside mmc_card_awake ?
-I thought so and commented to do the change.
 >
 > But is there any specific reason for moving this code within
 > mmc_card_awake or the above comment about moving some code from
 > mmc_suspend to mmc_card_sleep ?
+I understood it as moving the card state (set/clear) to be moved to
+sleep and awake function.
 >
 >>>
 >>>
