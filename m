@@ -1,108 +1,41 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Fri, 16 Mar 2012 13:47:50 -0700
-Message-ID: <4F63A6F6.9050506@samsung.com>
-References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com> <4F630841.2070307@linaro.org>
+	definitions
+Date: Sun, 18 Mar 2012 14:27:46 +0100
+Message-ID: <20120318132746.GL26973@8bytes.org>
+References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com>
+	<20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com>
+	<4F630841.2070307@linaro.org> <4F63A6F6.9050506@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:44785 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932273Ab2CPUrx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 16 Mar 2012 16:47:53 -0400
-In-Reply-To: <4F630841.2070307@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <4F63A6F6.9050506-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Subash Patel <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Younglak Kim' <younglak1004.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Cho KyongHo <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Subash Patel <subash.ramaswamy@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Joerg Roedel <joerg.roedel@amd.com>, Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>
 
-Subash Patel wrote:
-> Hi KyongHo, Kukjin,
->
-> On 03/15/2012 08:09 PM, Kukjin Kim wrote:
->> On 03/15/12 04:12, Joerg Roedel wrote:
->>> On Thu, Mar 15, 2012 at 05:32:39PM +0900, Cho KyongHo wrote:
->>
->> KyongHo, I looked at 'Cho KyongHo <pullip.cho ...>' and 'KyongHo Cho
->> <pullip.cho ...>' in this series, which one do you want to use?
->>
->>>> Handling System MMUs with an identifier is not flexible to manage
->>>> System MMU platform devices because of the following reasons:
->>>> 1. A device driver which needs to handle System MMU must know the ID.
->>>> 2. A System MMU may not present in some implementations of Exynos
->>>> family.
->>>> 3. Handling System MMU with IOMMU API does not require an ID.
->>>>
->>>> This patch is the result of removing ID of System MMUs.
->>>> Instead, a device driver that needs to handle its System MMU must
->>>> use IOMMU API while its descriptor of platform device is given.
->>>>
->>>> This patch also includes the following enhancements:
->>>> - A System MMU device becomes a child if its power domain device.
->>>> - clkdev
->>>>
->>>> Cc: Kukjin Kim<kgene.kim@samsung.com>
->>>> Signed-off-by: KyongHo Cho<pullip.cho@samsung.com>
->>>> ---
->>>> arch/arm/mach-exynos/Kconfig | 10 +-
->>>> arch/arm/mach-exynos/Makefile | 2 +-
->>>> arch/arm/mach-exynos/clock-exynos4.c | 79 ++--
->>>> arch/arm/mach-exynos/clock-exynos4.h | 2 +
->>>> arch/arm/mach-exynos/clock-exynos4210.c | 11 +
->>>> arch/arm/mach-exynos/clock-exynos4212.c | 28 ++-
->>>> arch/arm/mach-exynos/clock-exynos5.c | 90 +++++
->>>> arch/arm/mach-exynos/dev-sysmmu.c | 457 ++++++++++++----------
->>>> arch/arm/mach-exynos/include/mach/irqs.h | 25 +-
->>>> arch/arm/mach-exynos/include/mach/map.h | 38 ++
->>>> arch/arm/mach-exynos/include/mach/regs-clock.h | 5 +
->>>> arch/arm/mach-exynos/include/mach/regs-sysmmu.h | 28 --
->>>> arch/arm/mach-exynos/include/mach/sysmmu.h | 88 +++--
->>>> arch/arm/mach-exynos/mach-armlex4210.c | 1 -
->>>> arch/arm/mach-exynos/mach-smdkv310.c | 1 -
->>>> 15 files changed, 529 insertions(+), 336 deletions(-)
->>>> delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
->>>
->>> This patch doesn't apply cleanly against upstream Linux (v3.3-rcX).
->>> Please rebase to upstream and resend. The other 2 patches apply fine.
->>>
->>
->> Yes, as KyoungHo said, this has been created on top of Samsung tree
->> for-next because this touches many exynos stuff which has been changed
->> from Samsung tree for upcoming merge window. So if you're ok on this,
->> 1st patch and this should be sent to upstream via samsung tree even
->> though I can't find any topic branch for this yet. And if you want
->> topic branch for your tree, let me know, I can provide it.
->>
->> Thanks.
-> Wouldn't it be good to send exynos4 SYSMMU patches now, and send only
-> the exynos5 delta when your for-next(exynos5) changes
+On Fri, Mar 16, 2012 at 01:47:50PM -0700, Kukjin Kim wrote:
+> Anyway Joerg, how do you want to handle this? Do you want to pick up  
+> 1/2/3 all of them in your tree? If so, 2nd patch should be on top of  
+> some samsung topic stuff.
 
-Hmm, it can be a solution for this, but I'm not sure exynos4 and exynos5 
-can be splitted.
+Since patch 2 only applies to the Samsung tree, it is best to carry
+this in your tree for merging. Feel free to add my Acked-by to patch 3.
+But any further patches for the Exynos IOMMU drivers should go through
+my tree after it is merged.
 
-> get merged to mainline? Manually editing the patches is really pain-some
 
-YES, absolutely. Nobody like it.
+Thanks,
 
-> and sometimes error-some :( Can this patch in particular
-> be split?
-
-Hmm...
-
-Now we don't have much time for upcoming merge window, and this should 
-be in linux-next before open merge window.
-
-Anyway Joerg, how do you want to handle this? Do you want to pick up 
-1/2/3 all of them in your tree? If so, 2nd patch should be on top of 
-some samsung topic stuff.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+	Joerg
