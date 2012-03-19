@@ -1,59 +1,66 @@
-From: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] usb: gadget: s3c-hsotg: fix kernel panic
-Date: Mon, 19 Mar 2012 17:52:08 +0100
-Message-ID: <20120319175208.274ca294@lmajewski.digital.local>
-References: <1331904920-19685-1-git-send-email-sangwook.lee@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Mon, 19 Mar 2012 19:55:41 +0000
+Message-ID: <20120319195540.GH12384@opensource.wolfsonmicro.com>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
+ <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
+ <20120314172915.GB13393@sirena.org.uk>
+ <4F61BEC8.4030008@samsung.com>
+ <20120315125630.GK3138@opensource.wolfsonmicro.com>
+ <4F621EC9.6020106@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1331904920-19685-1-git-send-email-sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sangwook Lee <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2NLGdgz3UMHa/lqP"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35359 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1030753Ab2CSTzn (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 19 Mar 2012 15:55:43 -0400
+Content-Disposition: inline
+In-Reply-To: <4F621EC9.6020106@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-On Fri, 16 Mar 2012 13:35:20 +0000
-Sangwook Lee <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-
-> Fix kernel panic from s3c_hsotg_udc_stop.
-> if udc_is_newstyle is true, s3c_hsotg_udc_stop should not
-> call disconnect, unbind.
-> 
-> As running rmmod g_mass_storage, kernel panic happens.
-> 
-> (composite_unbind+0x14/0x164 [g_mass_storage])
-> from [<c023e950>] (s3c_hsotg_udc_stop)
-> 
-> This patch is based on Lukasz Majewski's patches:
-> [PATCH 0/9] USB: s3c-hsotg: USB S3C-HSOTG driver fixes and code cleanu
-> 
-> in order to test g_mass_storage in Origen board:
-> 
-> Signed-off-by: Sangwook Lee <sangwook.lee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
->  drivers/usb/gadget/s3c-hsotg.c |   12 ++++++------
->  1 files changed, 6 insertions(+), 6 deletions(-)
-> 
-
-Hi Sangwook,
-
-Test HW: GONI S5PV210 
-module: g_ether.ko
-
-Yes, this patch works. Thanks for spotting the error.
-
-Tested-by: Lukasz Majewski <l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: ben-linux@fluff.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
 
 
--- 
-Best regards,
+--2NLGdgz3UMHa/lqP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Lukasz Majewski
+On Thu, Mar 15, 2012 at 05:54:33PM +0100, Karol Lewandowski wrote:
 
-Samsung Poland R&D Center
-Platform Group
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> If you consider code to be inherently less readable because of this
+> approach I'll rework it.  If it's not a such big deal for you I would
+> prefer to keep it as is.
+
+The thing that was causing me to think the code was funny was mainly the
+fact that we're now combining both quirk based selection and chip type
+based selection into the same bitmask.  If the chip types were quirks
+it'd probably not have looked odd, and that might just be a case of
+renaming them - I can't remember what they do.
+
+--2NLGdgz3UMHa/lqP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPZ46JAAoJEBus8iNuMP3dGgkP/RQpJ1YPK5e6mrLjrIplCMc1
+lVJEVBVloDF70KFFIGj6SWVmf6aqwW3mMANpGlGnFPSG6H4nd0UbtUetKTYqmh2y
+0mmb2nCmuTN47u7EWayrVKzBuG616EJkmXGJywxtmBzPAy9vIAwsrpc1DZ4bNS59
+XyNZDcVr8B22ef4BRiietQ+HBtzhPEWTNJYy35dqKHSuwLwgl5jv6RykD8oLYbbt
+2nduVPR7itWWdhmaskjlhvGr6Rbm2SLypBbcJJlLXFghoTjyAK5my6RyWAd6sjwg
+UDM1vSeAijpC1Uk2CjjGFqk4HUc29XT6dq6dcqxB6WERChU/hrrGr1uh323Msbct
+wEAOJL/RZbn1RTo4k0YrFk8e6mMqZTx0W429v3gMt/6NyabjCAXFFZ5ZeW28XGE3
+59zVsFmNbRmSWmvmU8YqbmuvRjZX4rWc7QhPgIf0ao4S51Sz1z2k5qIn5EsJVR/C
+v7ilhi0HBmVPkoobaUktBUePkZULd4sNUJlHKn0pWkYbrfiIpb8U7ns/ri5WNk9C
+fx/EGtNd3hT3AKa/EUweWgQTOWQBTFIe1F/cfNaLHYTtsDfibwWtlrVYypC9dUT1
+fjKXD9sa02cddCB9f3IZuL85R2oOEqdkvfMtZlDCuNX1F1H46qvXgN0b6rn9KbHh
+INpEOLy1sWiyNpAcL6Kj
+=R1iX
+-----END PGP SIGNATURE-----
+
+--2NLGdgz3UMHa/lqP--
