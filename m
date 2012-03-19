@@ -1,56 +1,76 @@
-From: Darius Augulis <augulis.darius@gmail.com>
-Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-Date: Mon, 19 Mar 2012 09:52:33 +0200
-Message-ID: <CAEYLNCqzSFW4ugsXgG0ugwQ6p0fSmZaYdgx03J0XVKK4bKH5Lg@mail.gmail.com>
-References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
-	<1331585999-8604-4-git-send-email-thomas.abraham@linaro.org>
-	<002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com>
-	<CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
-	<000501cd0184$f088cb20$d19a6160$%han@samsung.com>
-	<4F60E5C8.3040804@gmail.com>
-	<001501cd0241$6bb53560$431fa020$%han@samsung.com>
-	<CAEYLNCp5e=86rpRi2C-5OJptTyEeXAn8JHhbWw_BqGzSaDD9wQ@mail.gmail.com>
-	<002a01cd0283$1f61b200$5e251600$%han@samsung.com>
-	<CAEYLNCrprPE60ZS=_OWuck0JCJMhCxzVErZwuwGpEDYkQq-hXg@mail.gmail.com>
-	<001d01cd0315$935cc720$ba165560$%han@samsung.com>
-	<CAEYLNCrGCmb5EJjURLY=EGfM=4N54MirNkCCyQRxqKEN3Eka8Q@mail.gmail.com>
-	<002d01cd034b$c56f2b00$504d8100$%han@samsung.com>
-	<CAEYLNCpfQ0cYb4efw6PZNnKjQ2rF25rj5Ed=i884LJXHAwigBw@mail.gmail.com>
-	<002f01cd0359$eb718330$c2548990$%han@samsung.com>
-	<CAEYLNCpJU_5uVa-jo5HUNY8Av6eYaiow1gEZtHCiQZ5oKkGoMQ@mail.gmail.com>
-	<001501cd0561$57c642b0$0752c810$%han@samsung.com>
-	<CAJuYYwQmJvx_uGZKbAJ9uds-ciLs2VDqcifhoqB-P0M5uhO-nA@mail.gmail.com>
-	<CAEYLNCo0zyH9Nsf59UU-J4m=km+mKH1ym5a-9s7WthFpos6D+w@mail.gmail.com>
-	<CAJuYYwQY6C-+NUuYfmDyGoh0ahVa8_x1cai8MCfN_JjWh1k1Gg@mail.gmail.com>
+From: JaeHun Jung <jh0801.jung@samsung.com>
+Subject: [PATCH] mmc: dwmci: Add new register bit at IP version of 240A.
+Date: Mon, 19 Mar 2012 18:26:53 +0900
+Message-ID: <005401cd05b2$6bde22d0$439a6870$%jung@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:35712 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752393Ab2CSHwe (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:15484 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757066Ab2CSJ0y (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Mar 2012 03:52:34 -0400
-In-Reply-To: <CAJuYYwQY6C-+NUuYfmDyGoh0ahVa8_x1cai8MCfN_JjWh1k1Gg@mail.gmail.com>
+	Mon, 19 Mar 2012 05:26:54 -0400
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Jingoo Han <jg1.han@samsung.com>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org, kgene.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, JeongHyeon Kim <jhkim@insignal.co.kr>, Heiko Stuebner <heiko@sntech.de>, Kwangwoo Lee <kwangwoo.lee@gmail.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Peter Korsgaard <jacmet@sunsite.dk>, Maurus Cuelenaere <mcuelenaere@gmail.com>, Tushar Behera <tushar.behera@linaro.org>
+To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Chris Ball' <cjb@laptop.org>, jh0801.jung@samsung.com
 
-On Mon, Mar 19, 2012 at 9:49 AM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> On 19 March 2012 13:10, Darius Augulis <augulis.darius@gmail.com> wrote:
+use_hold_reg bit is added at 240A version.
+This register is..
+Use Hold Register
+0 - CMD and DATA sent to card bypassing HOLD Register
+1 - CMD and DATA sent to card through the HOLD Register
+Note:
+Set to 1'b1 for SDR12 and SDR25
+(with non-zero phase-shifted cclk_in_drv)
+zero phase shift is not allowed in these modes.
+Set to 1'b0 for SDR50, SDR104, and DDR50
+(with zero phaseshifted cclk_in_drv)
+Set to 1'b1 for SDR50, SDR104, and DDR50
+(with non-zero phase-shifted cclk_in_drv)
 
->> Right now s3c_fb_pd_win contains exactly LCD timing values.
->> Your patch will move these timing values to struct fb_videomode.
->>
->> I could make necessary patch for that too, but I think you will spend
->> less time doing it by yourself than syncing with me.
->> What do you think?
->
-> Yes, I will prepare an additional patch in this series that will
-> maintain backward compatibility for real6410 and mini6410 with the
-> approach suggested by Jingoo Han. As I do not have either of these
-> boards, an ack from you would be very helpful when the next version of
-> this patchset is posted.
+Signed-off-by: JaeHun Jung <jh0801.jung@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c |    5 +++++
+ drivers/mmc/host/dw_mmc.h |    1 +
+ 2 files changed, 6 insertions(+), 0 deletions(-)
 
-It's fine - I will review and probably test it.
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 8bec1c3..e23bd5b 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -232,6 +232,7 @@ static void dw_mci_set_timeout(struct dw_mci *host)
+ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
+ {
+ 	struct mmc_data	*data;
++	struct dw_mci_slot *slot = mmc_priv(mmc);
+ 	u32 cmdr;
+ 	cmd->error = -EINPROGRESS;
+ 
+@@ -261,6 +262,10 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
+ 			cmdr |= SDMMC_CMD_DAT_WR;
+ 	}
+ 
++	/* Use hold bit register */
++	if (slot->host->pdata->set_io_timing)
++		cmdr |= SDMMC_USE_HOLD_REG;
++
+ 	return cmdr;
+ }
+ 
+diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+index df392a1..06c2818 100644
+--- a/drivers/mmc/host/dw_mmc.h
++++ b/drivers/mmc/host/dw_mmc.h
+@@ -111,6 +111,7 @@
+ #define SDMMC_INT_ERROR			0xbfc2
+ /* Command register defines */
+ #define SDMMC_CMD_START			BIT(31)
++#define SDMMC_USE_HOLD_REG		BIT(29)
+ #define SDMMC_CMD_CCS_EXP		BIT(23)
+ #define SDMMC_CMD_CEATA_RD		BIT(22)
+ #define SDMMC_CMD_UPD_CLK		BIT(21)
+-- 
+1.7.1
