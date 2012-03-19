@@ -1,170 +1,137 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-Date: Mon, 19 Mar 2012 08:46:25 +0900
-Message-ID: <001501cd0561$57c642b0$0752c810$%han@samsung.com>
-References: <1331585999-8604-1-git-send-email-thomas.abraham@linaro.org>
- <1331585999-8604-4-git-send-email-thomas.abraham@linaro.org>
- <002f01cd00fe$5df84fa0$19e8eee0$%han@samsung.com>
- <CAJuYYwSUf-gsVesduMggSuues9OLOR6DUDAAMg_tL=e3=3c0tQ@mail.gmail.com>
- <000501cd0184$f088cb20$d19a6160$%han@samsung.com> <4F60E5C8.3040804@gmail.com>
- <001501cd0241$6bb53560$431fa020$%han@samsung.com>
- <CAEYLNCp5e=86rpRi2C-5OJptTyEeXAn8JHhbWw_BqGzSaDD9wQ@mail.gmail.com>
- <002a01cd0283$1f61b200$5e251600$%han@samsung.com>
- <CAEYLNCrprPE60ZS=_OWuck0JCJMhCxzVErZwuwGpEDYkQq-hXg@mail.gmail.com>
- <001d01cd0315$935cc720$ba165560$%han@samsung.com>
- <CAEYLNCrGCmb5EJjURLY=EGfM=4N54MirNkCCyQRxqKEN3Eka8Q@mail.gmail.com>
- <002d01cd034b$c56f2b00$504d8100$%han@samsung.com>
- <CAEYLNCpfQ0cYb4efw6PZNnKjQ2rF25rj5Ed=i884LJXHAwigBw@mail.gmail.com>
- <002f01cd0359$eb718330$c2548990$%han@samsung.com>
- <CAEYLNCpJU_5uVa-jo5HUNY8Av6eYaiow1gEZtHCiQZ5oKkGoMQ@mail.gmail.com>
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH V2 0/6] thermal: exynos: Add kernel thermal
+	support for exynos platform
+Date: Mon, 19 Mar 2012 11:47:38 +0530
+Message-ID: <1332137864-12943-1-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:53784 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756975Ab2CRXqi (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 18 Mar 2012 19:46:38 -0400
-In-reply-to: <CAEYLNCpJU_5uVa-jo5HUNY8Av6eYaiow1gEZtHCiQZ5oKkGoMQ@mail.gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org
+Cc: linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Darius Augulis' <augulis.darius@gmail.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, patches@linaro.org, kgene.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'JeongHyeon Kim' <jhkim@insignal.co.kr>, 'Heiko Stuebner' <heiko@sntech.de>, 'Kwangwoo Lee' <kwangwoo.lee@gmail.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Peter Korsgaard' <jacmet@sunsite.dk>, 'Maurus Cuelenaere' <mcuelenaere@gmail.com>, 'Tushar Behera' <tushar.behera@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-> -----Original Message-----
-> From: linux-samsung-soc-owner@vger.kernel.org [mailto:linux-samsung-soc-owner@vger.kernel.org] On Behalf
-> Of Darius Augulis
-> Sent: Friday, March 16, 2012 7:19 PM
-> To: Jingoo Han
-> Cc: Thomas Abraham; linux-fbdev@vger.kernel.org; FlorianSchandinat@gmx.de; linux-arm-
-> kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org; ben-linux@fluff.org; patches@linaro.org;
-> kgene.kim@samsung.com; Kyungmin Park; JeongHyeon Kim; Heiko Stuebner; Kwangwoo Lee; Mark Brown; Peter
-> Korsgaard; Maurus Cuelenaere; Tushar Behera
-> Subject: Re: [PATCH v2 3/3] ARM: Samsung: Rework platform data of s3c-fb driver
-> 
-> On Fri, Mar 16, 2012 at 11:48 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> >> > It's just bug.
-> >> >
-> >> > struct s3c_fb_pd_win should be used for windows of FIMD IP.
-> >> > It should not be used for selecting multi-LCDs.
-> >>
-> >> why not? s3c_fb_pd_win contains timing values which depend directly on
-> >> LCD size and resolution.
-> >> Please look into the code again - mini6410 doesn't use platform data
-> >> so select different LCD sizes.
-> >> It has only single window in platform data - exactly what you want.
-> >> Now tell my, why you are arguing, that this platform data cannot be
-> >> rewritten dynamically by board setup routines at kernel startup time?
-> >> Many ARM architectures are doing the same - takes kernel command line
-> >> argument to select LCD and passes necessary data for its fb drivers
-> >> via platform data structures. It not a bug, it's correct approach to
-> >> support different sizes of LCD display for the same board.
-> >
-> >
-> > Hey, it is not my point.
-> > To take kernel command line is not problem to support multiple LCDs.
-> >
-> > My point is that s3c_fb_pd_win should not include variable LCD option.
-> > So, if you want to support multiple LCDs, you should use another variable,
-> > instead of using s3c_fb_pd_win[0] and s3c_fb_pd_win[1] as 4.3" LCD, 7.0" LCD.
-> 
-> But I use s3c_fb_pd_win only as container to hold timing values in
-> board setup code.
-> s3c-fb platform data has only single window and does not perform any
-> LCD selection.
-> What is wrong here? You suggest to declare some custom structure to
-> hold these timing values? What's the point?
-> 
-> >
-> > You use s3c_fb_pd_win[0], s3c_fb_pd_win[1] as 4.3" LCD, 7.0" LCD.
-> > However, s3c_fb_pd_win[0], s3c_fb_pd_win[1] means the windows of FIMD IP.
-> 
-> There is no multiple windows in platform data! driver sees only single
-> window. And this wont change in any way if you drop LCD selection from
-> board setup code.
-> Driver will see the same single window. So - your are arguing, that
-> board setup code sets platform data in bad way. I don't accept your
-> opinion, because tens of boards are doing the same and nobody call it
-> bug.
+Changes since V1:
+*Moved the sensor driver to driver/thermal folder from driver/hwmon folder
+ as suggested by Mark Brown and Guenter Roeck 
+*Added notifier support to notify the registered drivers of any cpu cooling
+ action. The driver can modify the default cooling behaviour(eg set different
+ max clip frequency).
+*The percentage based frequency replaced with absolute clipped frequency.
+*Some more conditional checks when setting max frequency.
+*Renamed the new trip type THERMAL_TRIP_STATE_ACTIVE to
+ THERMAL_TRIP_STATE_INSTANCE
+*Many review comments from R, Durgadoss <durgadoss.r@intel.com> and 
+ eduardo.valentin@ti.com implemented.
+*Removed cooling stats through debugfs patch
+*The V1 based can be found here,
+ https://lkml.org/lkml/2012/2/22/123
+ http://lkml.org/lkml/2012/3/3/32
 
-Because there are not multiple windows and driver sees only single window as you mentiond, 
-Only 'struct s3c_fb_pd_win mini6410_fb_win[0]' should be used and 
-'struct s3c_fb_pd_win mini6410_fb_win[1]' should not be used.
-s3c_fb_pd_win[0] means window 0 of FIMD IP, s3c_fb_pd_win[1] means window 1 of FIMD IP.
+Changes since RFC:
+*Changed the cpu cooling registration/unregistration API's to instance based
+*Changed the STATE_ACTIVE trip type to pass correct instance id
+*Adding support to restore back the policy->max_freq after doing frequency 
+  clipping.
+*Moved the trip cooling stats from sysfs node to debugfs node as suggested
+  by Greg KH greg@kroah.com 
+*Incorporated several review comments from eduardo.valentin@ti.com
+*Moved the Temperature sensor driver from driver/hwmon/ to driver/mfd
+ as discussed with Guenter Roeck <guenter.roeck@ericsson.com> and 
+ Donggeun Kim <dg77.kim@samsung.com> (https://lkml.org/lkml/2012/1/5/7)
+*Some changes according to the changes in common cpu cooling APIs
+*The RFC based patches can be found here,
+ https://lkml.org/lkml/2011/12/13/186
+ https://lkml.org/lkml/2011/12/21/169
 
-Therefore, if mini6410_fb_win[0] and mini6410_fb_win[1] are included, it means that
-2 windows of FIMD IP are used in single LCD.
 
-If you want to support multiple LCDs, you should use struct s3c_fb_platdata[0], struct s3c_fb_platdata[1],
-because 'struct s3c_fb_platdata' means LCD panel.
+Brief Description:
 
-If you understand the purpose of s3c_fb_platdata and s3c_fb_pd_win, you should do, at least, as below.
+1) The generic cooling devices code is placed inside driver/thermal/* as 
+placing inside acpi folder will need un-necessary enabling of acpi code. This
+codes is architecture independent.
 
-static struct s3c_fb_pd_win mini6410_fb_lcd0_win[] = {
-	{
-		.win_mode	= {	/* 4.3" 480x272 */
-			.left_margin	= 3,
-			.right_margin	= 2,
-			.upper_margin	= 1,
-			.lower_margin	= 1,
-			.hsync_len	= 40,
-			.vsync_len	= 1,
-			.xres		= 480,
-			.yres		= 272,
-		},
-		.max_bpp	= 32,
-		.default_bpp	= 16,
-	},
-};
+2) This patchset adds a new trip type THERMAL_TRIP_STATE_INSTANCE which passes
+cooling device instance number and may be helpful for cpufreq cooling devices
+to take the correct cooling action. This trip type avoids the temperature
+comparision check again inside the cooling handler.
 
-static struct s3c_fb_platdata mini6410_lcd_pdata[0] __initdata = {
-	.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
-	.win[0]		= &mini6410_fb_lcd0_win[0],
-	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-};
+3) This patchset adds generic cpu cooling low level implementation through
+frequency clipping and cpu hotplug. In future, other cpu related cooling
+devices may be added here. An ACPI version of this already exists
+(drivers/acpi/processor_thermal.c). But this will be useful for platforms
+like ARM using the generic thermal interface along with the generic cpu
+cooling devices. The cooling device registration API's return cooling device
+pointers which can be easily binded with the thermal zone trip points.
+The important APIs exposed are,
+   a)struct thermal_cooling_device *cpufreq_cooling_register(
+	struct freq_clip_table *tab_ptr, unsigned int tab_size,
+	const struct cpumask *mask_val)
+   b)void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
 
-static struct s3c_fb_pd_win mini6410_fb_lcd1_win[] = {
-	{
-		.win_mode	= {	/* 7.0" 800x480 */
-			.left_margin	= 8,
-			.right_margin	= 13,
-			.upper_margin	= 7,
-			.lower_margin	= 5,
-			.hsync_len	= 3,
-			.vsync_len	= 1,
-			.xres		= 800,
-			.yres		= 480,
-		},
-		.max_bpp	= 32,
-		.default_bpp	= 16,
-	},
-};
+4) Samsung exynos platform thermal implementation is done using the generic
+cpu cooling APIs and the new trip type. The temperature sensor driver present
+in the hwmon folder(registered as hwmon driver) is moved to thermal folder
+and registered as a thermal driver.
 
-static struct s3c_fb_platdata mini6410_lcd_pdata[1] __initdata = {
-	.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
-	.win[0]		= &mini6410_fb_lcd1_win[0],
-	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-};
+All this patchset is based on Kernel version 3.3-rc7 
 
-Each struct means:
-  mini6410_lcd_pdata[0]: 4.3" 480x272 LCD
-  mini6410_fb_lcd0_win[0]: window 0 used for 4.3" 480x272 LCD
+A simple data/control flow diagrams is shown below,
 
-  mini6410_lcd_pdata[1]: 7.0" 800x480 LCD
-  mini6410_fb_lcd1_win[0]: window 0 used for 7.0" 800x480 LCD
+Core Linux thermal <----->  Exynos thermal interface <----- Temperature Sensor
+	  |                             |
+	 \|/                            |
+  Cpufreq cooling device <---------------
 
-In this case, 4.3" or 7.0" LCD can be selected using mini6410_lcd_pdata[], instead of selecting mini6410_fb_win[0] or
-mini6410_fb_win[1].
 
-My point is that 's3c_fb_platdata and s3c_fb_pd_win should be used exactly'.
+Amit Daniel Kachhap (6):
+  thermal: Add a new trip type to use cooling device instance number
+  thermal: Add generic cpufreq cooling implementation
+  thermal: Add generic cpuhotplug cooling implementation
+  hwmon: exynos4: Move thermal sensor driver to driver/thermal
+    directory
+  thermal: exynos4: Register the tmu sensor with the kernel thermal
+    layer
+  ARM: exynos4: Add thermal sensor driver platform device support
 
-> 
-> >
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ Documentation/hwmon/exynos4_tmu           |   81 ---
+ Documentation/thermal/cpu-cooling-api.txt |   76 +++
+ Documentation/thermal/exynos4_tmu         |   52 ++
+ Documentation/thermal/sysfs-api.txt       |    4 +-
+ arch/arm/mach-exynos/Kconfig              |   11 +
+ arch/arm/mach-exynos/Makefile             |    1 +
+ arch/arm/mach-exynos/clock.c              |    4 +
+ arch/arm/mach-exynos/dev-tmu.c            |   39 ++
+ arch/arm/mach-exynos/include/mach/irqs.h  |    2 +
+ arch/arm/mach-exynos/include/mach/map.h   |    1 +
+ arch/arm/mach-exynos/mach-origen.c        |    1 +
+ arch/arm/plat-samsung/include/plat/devs.h |    1 +
+ drivers/hwmon/Kconfig                     |   10 -
+ drivers/hwmon/Makefile                    |    1 -
+ drivers/hwmon/exynos4_tmu.c               |  514 -------------------
+ drivers/thermal/Kconfig                   |   21 +
+ drivers/thermal/Makefile                  |    2 +
+ drivers/thermal/cpu_cooling.c             |  529 +++++++++++++++++++
+ drivers/thermal/exynos4_thermal.c         |  790 +++++++++++++++++++++++++++++
+ drivers/thermal/thermal_sys.c             |   45 ++-
+ include/linux/cpu_cooling.h               |   78 +++
+ include/linux/platform_data/exynos4_tmu.h |    7 +
+ include/linux/thermal.h                   |    1 +
+ 23 files changed, 1660 insertions(+), 611 deletions(-)
+ delete mode 100644 Documentation/hwmon/exynos4_tmu
+ create mode 100644 Documentation/thermal/cpu-cooling-api.txt
+ create mode 100644 Documentation/thermal/exynos4_tmu
+ create mode 100644 arch/arm/mach-exynos/dev-tmu.c
+ delete mode 100644 drivers/hwmon/exynos4_tmu.c
+ create mode 100644 drivers/thermal/cpu_cooling.c
+ create mode 100644 drivers/thermal/exynos4_thermal.c
+ create mode 100644 include/linux/cpu_cooling.h
