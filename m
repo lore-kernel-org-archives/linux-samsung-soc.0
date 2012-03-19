@@ -1,90 +1,44 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] mmc: dwmci: Add new register bit at IP version of 240A.
-Date: Mon, 19 Mar 2012 19:29:48 +0900
-Message-ID: <4F670A9C.107@samsung.com>
-References: <005401cd05b2$6bde22d0$439a6870$%jung@samsung.com>
+From: Madhvapathi Sriram <Madhvapathi.Sriram@csr.com>
+Subject: s3c64xx wake up question
+Date: Mon, 19 Mar 2012 10:12:48 +0000
+Message-ID: <AAD401B65941D44692B7183E657718080357CFDA@banasiexm01.ASIA.ROOT.PRI>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28040 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab2CSK3u (ORCPT
+Received: from cluster-g.mailcontrol.com ([208.87.233.190]:55160 "EHLO
+	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753349Ab2CSK4e convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Mar 2012 06:29:50 -0400
-In-reply-to: <005401cd05b2$6bde22d0$439a6870$%jung@samsung.com>
+	Mon, 19 Mar 2012 06:56:34 -0400
+Received: from banasiexc01.ASIA.ROOT.PRI ([202.80.51.114])
+	by rly12g.srv.mailcontrol.com (MailControl) with ESMTP id q2JAColQ024873
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL)
+	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Mar 2012 10:12:54 GMT
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: JaeHun Jung <jh0801.jung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Chris Ball' <cjb@laptop.org>
+To: "'linux-samsung-soc@vger.kernel.org'" <linux-samsung-soc@vger.kernel.org>
 
-Hi Jaehun.
+Hi,
 
-I have sent the similar to your patch.
-(http://www.spinics.net/lists/linux-mmc/msg10305.html)
-I think good that add the checking point whether implement hold_reg in dwmmc-IP or not.
+I am trying to get wake-up from IDLE and SLEEP working on my board based on S3C6410.
 
-On 03/19/2012 06:26 PM, JaeHun Jung wrote:
+The problem I see is that once the CPU goes to SLEEP or IDLE state, it does not wake up despite configuring activity on Keypad.
+I have verified the following:
+1. VDD_ALIVE is powered up @1.2V
+2. Dumped EINT_MASK and EINT0_MASK - reset with 0 (enable) for almost all the sources.
+3. PWR_CFG is configured to be woken up for all sources (HSMMCx, RTC, KEYPAD etc)
 
-> use_hold_reg bit is added at 240A version.
-> This register is..
-> Use Hold Register
-> 0 - CMD and DATA sent to card bypassing HOLD Register
-> 1 - CMD and DATA sent to card through the HOLD Register
-> Note:
-> Set to 1'b1 for SDR12 and SDR25
-> (with non-zero phase-shifted cclk_in_drv)
-> zero phase shift is not allowed in these modes.
-> Set to 1'b0 for SDR50, SDR104, and DDR50
-> (with zero phaseshifted cclk_in_drv)
-> Set to 1'b1 for SDR50, SDR104, and DDR50
-> (with non-zero phase-shifted cclk_in_drv)
-> 
-> Signed-off-by: JaeHun Jung <jh0801.jung@samsung.com>
-> ---
->  drivers/mmc/host/dw_mmc.c |    5 +++++
->  drivers/mmc/host/dw_mmc.h |    1 +
->  2 files changed, 6 insertions(+), 0 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 8bec1c3..e23bd5b 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -232,6 +232,7 @@ static void dw_mci_set_timeout(struct dw_mci *host)
->  static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
->  {
->  	struct mmc_data	*data;
-> +	struct dw_mci_slot *slot = mmc_priv(mmc);
->  	u32 cmdr;
->  	cmd->error = -EINPROGRESS;
->  
-> @@ -261,6 +262,10 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
->  			cmdr |= SDMMC_CMD_DAT_WR;
->  	}
->  
-> +	/* Use hold bit register */
-> +	if (slot->host->pdata->set_io_timing)
-> +		cmdr |= SDMMC_USE_HOLD_REG;
+So, not sure if have something else to verify or check.
 
-Where is defined set_io_timing?
+I hope someone could provide some pointers on the problem.
 
-> +
->  	return cmdr;
->  }
->  
-> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-> index df392a1..06c2818 100644
-> --- a/drivers/mmc/host/dw_mmc.h
-> +++ b/drivers/mmc/host/dw_mmc.h
-> @@ -111,6 +111,7 @@
->  #define SDMMC_INT_ERROR			0xbfc2
->  /* Command register defines */
->  #define SDMMC_CMD_START			BIT(31)
-> +#define SDMMC_USE_HOLD_REG		BIT(29)
->  #define SDMMC_CMD_CCS_EXP		BIT(23)
->  #define SDMMC_CMD_CEATA_RD		BIT(22)
->  #define SDMMC_CMD_UPD_CLK		BIT(21)
+Regards,
+Madhvapathi Sriram
 
 
-Best Regards,
-Jaehoon Chung
+
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+More information can be found at www.csr.com. Follow CSR on Twitter at http://twitter.com/CSR_PLC and read our blog at www.csr.com/blog
