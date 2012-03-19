@@ -1,44 +1,130 @@
-From: Madhvapathi Sriram <Madhvapathi.Sriram@csr.com>
-Subject: s3c64xx wake up question
-Date: Mon, 19 Mar 2012 10:12:48 +0000
-Message-ID: <AAD401B65941D44692B7183E657718080357CFDA@banasiexm01.ASIA.ROOT.PRI>
+From: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Subject: Re: [PATCH V2 3/6] thermal: Add generic cpuhotplug
+	cooling implementation
+Date: Mon, 19 Mar 2012 17:15:40 +0530
+Message-ID: <4F671C64.5020803@linux.vnet.ibm.com>
+References: <1332137864-12943-1-git-send-email-amit.kachhap@linaro.org>
+	<1332137864-12943-4-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cluster-g.mailcontrol.com ([208.87.233.190]:55160 "EHLO
-	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753349Ab2CSK4e convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 19 Mar 2012 06:56:34 -0400
-Received: from banasiexc01.ASIA.ROOT.PRI ([202.80.51.114])
-	by rly12g.srv.mailcontrol.com (MailControl) with ESMTP id q2JAColQ024873
-	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL)
-	for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Mar 2012 10:12:54 GMT
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <1332137864-12943-4-git-send-email-amit.kachhap@linaro.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "'linux-samsung-soc@vger.kernel.org'" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+On 03/19/2012 11:47 AM, Amit Daniel Kachhap wrote:
 
-I am trying to get wake-up from IDLE and SLEEP working on my board based on S3C6410.
-
-The problem I see is that once the CPU goes to SLEEP or IDLE state, it does not wake up despite configuring activity on Keypad.
-I have verified the following:
-1. VDD_ALIVE is powered up @1.2V
-2. Dumped EINT_MASK and EINT0_MASK - reset with 0 (enable) for almost all the sources.
-3. PWR_CFG is configured to be woken up for all sources (HSMMCx, RTC, KEYPAD etc)
-
-So, not sure if have something else to verify or check.
-
-I hope someone could provide some pointers on the problem.
-
-Regards,
-Madhvapathi Sriram
+> This patch adds support for generic cpu thermal cooling low level
+> implementations using cpuhotplug based on the thermal level requested
+> from user. Different cpu related cooling devices can be registered by the
+> user and the binding of these cooling devices to the corresponding
+> trip points can be easily done as the registration APIs return the
+> cooling device pointer. The user of these APIs are responsible for
+> passing the cpumask.
+> 
 
 
+I am really not aware of the cpu thermal cooling stuff, but since this patch
+deals with CPU Hotplug (which I am interested in), I have some questions
+below..
+ 
+
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> +
+> +static int cpuhotplug_get_cur_state(struct thermal_cooling_device *cdev,
+> +				 unsigned long *state)
+> +{
+> +	int ret = -EINVAL;
+> +	struct hotplug_cooling_device *hotplug_dev;
+> +
+> +	mutex_lock(&cooling_cpuhotplug_lock);
+> +	list_for_each_entry(hotplug_dev, &cooling_cpuhotplug_list, node) {
+> +		if (hotplug_dev && hotplug_dev->cool_dev == cdev) {
+> +			*state = hotplug_dev->hotplug_state;
+> +			ret = 0;
+> +			break;
+> +		}
+> +	}
+> +	mutex_unlock(&cooling_cpuhotplug_lock);
+> +	return ret;
+> +}
+> +
+> +/*This cooling may be as ACTIVE type*/
+> +static int cpuhotplug_set_cur_state(struct thermal_cooling_device *cdev,
+> +				 unsigned long state)
+> +{
+> +	int cpuid, this_cpu = smp_processor_id();
 
 
-Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
-More information can be found at www.csr.com. Follow CSR on Twitter at http://twitter.com/CSR_PLC and read our blog at www.csr.com/blog
+What prevents this task from being migrated to another CPU?
+IOW, what ensures that 'this_cpu' remains valid throughout this function?
+
+I see that you are acquiring mutex locks below.. So this is definitely not
+a preempt disabled section.. so I guess my question above is valid..
+
+Or is this code bound to a particular cpu?
+
+> +	struct hotplug_cooling_device *hotplug_dev;
+> +
+> +	mutex_lock(&cooling_cpuhotplug_lock);
+> +	list_for_each_entry(hotplug_dev, &cooling_cpuhotplug_list, node)
+> +		if (hotplug_dev && hotplug_dev->cool_dev == cdev)
+> +			break;
+> +
+> +	mutex_unlock(&cooling_cpuhotplug_lock);
+> +	if (!hotplug_dev || hotplug_dev->cool_dev != cdev)
+> +		return -EINVAL;
+> +
+> +	if (hotplug_dev->hotplug_state == state)
+> +		return 0;
+> +
+> +	/*
+> +	* This cooling device may be of type ACTIVE, so state field can
+> +	* be 0 or 1
+> +	*/
+> +	if (state == 1) {
+> +		for_each_cpu(cpuid, hotplug_dev->allowed_cpus) {
+> +			if (cpu_online(cpuid) && (cpuid != this_cpu))
+
+
+What prevents the cpu numbered cpuid from being taken down right at this moment?
+Don't you need explicit synchronization with CPU Hotplug using something like
+get_online_cpus()/put_online_cpus() here?
+
+> +				cpu_down(cpuid);
+> +		}
+> +	} else if (state == 0) {
+> +		for_each_cpu(cpuid, hotplug_dev->allowed_cpus) {
+> +			if (!cpu_online(cpuid) && (cpuid != this_cpu))
+
+
+Same here.
+
+> +				cpu_up(cpuid);
+> +		}
+> +	} else {
+> +		return -EINVAL;
+> +	}
+> +
+> +	hotplug_dev->hotplug_state = state;
+> +
+> +	return 0;
+> +}
+> +/* bind hotplug callbacks to cpu hotplug cooling device */
+> +static struct thermal_cooling_device_ops cpuhotplug_cooling_ops = {
+> +	.get_max_state = cpuhotplug_get_max_state,
+> +	.get_cur_state = cpuhotplug_get_cur_state,
+> +	.set_cur_state = cpuhotplug_set_cur_state,
+> +};
+> +
