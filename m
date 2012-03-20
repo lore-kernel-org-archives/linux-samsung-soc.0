@@ -1,47 +1,48 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH][RESEND] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
-Date: Tue, 20 Mar 2012 21:20:45 +0100
-Message-ID: <201203202120.45806.heiko@sntech.de>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
+Date: Wed, 21 Mar 2012 08:56:51 +0900
+Message-ID: <CAHQjnOMjSPDOymJe356AWnJszQv+X-QWrVrB7ahYDkXBr5HrQw@mail.gmail.com>
+References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com>
+	<1330527862-16234-10-git-send-email-m.szyprowski@samsung.com>
+	<CAHQjnOO5DLOj8Fw=ZriSnXg8W3k7y8Dnu--Peqe6JJX0xGMhoQ@mail.gmail.com>
+	<4F688B2D.20808@gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="us-ascii"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:40445 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753952Ab2CTUVD (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:55938 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750923Ab2CTX4x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Mar 2012 16:21:03 -0400
+	Tue, 20 Mar 2012 19:56:53 -0400
+In-Reply-To: <4F688B2D.20808@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>
+To: Subash Patel <subashrp@gmail.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, Shariq Hasnain <shariq.hasnain@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Krishna Reddy <vdumpa@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Chunsang Jeong <chunsang.jeong@linaro.org>
 
-From: Maurus Cuelenaere <mcuelenaere@gmail.com>
+On Tue, Mar 20, 2012 at 10:50 PM, Subash Patel <subashrp@gmail.com> wrote:
+> Sorry for digging this very late. But as part of integrating dma_map v7 &
+> sysmmu v12 on 3.3-rc5, I am facing below issue:
+>
+> a) By un-selecting IOMMU in menu config, I am able to allocate memory in
+> vb2-dma-contig
+>
+> b) When I enable SYSMMU support for the IP's, I am receiving below fault:
+>
+> Unhandled fault: external abort on non-linefetch (0x818) at 0xb6f55000
+>
+> I think this has something to do with the access to the SYSMMU registers for
+> writing the page table. Has anyone of you faced this issue while testing
+> these(dma_map+iommu) patches on kernel mentioned above? This must be
+> something related to recent changes, as I didn't have issues with these
+> patches on 3.2 kernel.
+>
 
-When selecting SAMSUNG_PM_DEBUG, it complains about a missing printascii()
-function if you do not select DEBUG_LL, so make the former select the latter.
+0xb6f55000 is not an address of SYSMMU register if your kernel starts
+at 0xc0000000.
 
-Signed-off-by: Maurus Cuelenaere <mcuelenaere@gmail.com>
-Acked-by: Heiko Stuebner <heiko@sntech.de>
----
-This was originally sent in september 2010, but seems to have been forgotten.
-As this problem has bitten me today, here it is again.
+Can you tell me any detailed information or situation?
 
- arch/arm/plat-samsung/Kconfig |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Regards,
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 6a2abe6..ec84c1a 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -302,6 +302,7 @@ comment "Power management"
- config SAMSUNG_PM_DEBUG
- 	bool "S3C2410 PM Suspend debug"
- 	depends on PM
-+	select DEBUG_LL
- 	help
- 	  Say Y here if you want verbose debugging from the PM Suspend and
- 	  Resume code. See <file:Documentation/arm/Samsung-S3C24XX/Suspend.txt>
--- 
-1.7.2.3
+KyongHo.
