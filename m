@@ -1,169 +1,162 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: [GIT PULL] Power management updates for 3.4
-Date: Tue, 20 Mar 2012 00:17:18 +0100
-Message-ID: <201203200017.19074.rjw@sisk.pl>
+From: Amit Kachhap <amit.kachhap@linaro.org>
+Subject: Re: [PATCH V2 3/6] thermal: Add generic cpuhotplug cooling implementation
+Date: Tue, 20 Mar 2012 11:36:18 +0530
+Message-ID: <CAK44p20K-GyG5o6=BzK7iPZTDNepPh3iKYm0Bi1PETBp0sVRsQ@mail.gmail.com>
+References: <1332137864-12943-1-git-send-email-amit.kachhap@linaro.org>
+	<1332137864-12943-4-git-send-email-amit.kachhap@linaro.org>
+	<4F671C64.5020803@linux.vnet.ibm.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-samsung-soc@vger.kernel.org, linux-sh@vger.kernel.org, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:38668 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753694Ab2CTGGU convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 20 Mar 2012 02:06:20 -0400
+Received: by lahj13 with SMTP id j13so5317994lah.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 19 Mar 2012 23:06:18 -0700 (PDT)
+In-Reply-To: <4F671C64.5020803@linux.vnet.ibm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "Srivatsa S. Bhat" <srivatsa.bhat@linux.vnet.ibm.com>
+Cc: linux-pm@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, mjg59@srcf.ucam.org, linux-acpi@vger.kernel.org, lenb@kernel.org, linaro-dev@lists.linaro.org, lm-sensors@lm-sensors.org, patches@linaro.org, eduardo.valentin@ti.com, durgadoss.r@intel.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 
-Hi Linus,
+On 19 March 2012 17:15, Srivatsa S. Bhat
+<srivatsa.bhat@linux.vnet.ibm.com> wrote:
+> On 03/19/2012 11:47 AM, Amit Daniel Kachhap wrote:
+>
+>> This patch adds support for generic cpu thermal cooling low level
+>> implementations using cpuhotplug based on the thermal level requeste=
+d
+>> from user. Different cpu related cooling devices can be registered b=
+y the
+>> user and the binding of these cooling devices to the corresponding
+>> trip points can be easily done as the registration APIs return the
+>> cooling device pointer. The user of these APIs are responsible for
+>> passing the cpumask.
+>>
+>
+>
+> I am really not aware of the cpu thermal cooling stuff, but since thi=
+s patch
+> deals with CPU Hotplug (which I am interested in), I have some questi=
+ons
+> below..
+>
+>
+>> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+>> +
+>> +static int cpuhotplug_get_cur_state(struct thermal_cooling_device *=
+cdev,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0unsigne=
+d long *state)
+>> +{
+>> + =A0 =A0 int ret =3D -EINVAL;
+>> + =A0 =A0 struct hotplug_cooling_device *hotplug_dev;
+>> +
+>> + =A0 =A0 mutex_lock(&cooling_cpuhotplug_lock);
+>> + =A0 =A0 list_for_each_entry(hotplug_dev, &cooling_cpuhotplug_list,=
+ node) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 if (hotplug_dev && hotplug_dev->cool_dev =3D=
+=3D cdev) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 *state =3D hotplug_dev->ho=
+tplug_state;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D 0;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 }
+>> + =A0 =A0 }
+>> + =A0 =A0 mutex_unlock(&cooling_cpuhotplug_lock);
+>> + =A0 =A0 return ret;
+>> +}
+>> +
+>> +/*This cooling may be as ACTIVE type*/
+>> +static int cpuhotplug_set_cur_state(struct thermal_cooling_device *=
+cdev,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0unsigne=
+d long state)
+>> +{
+>> + =A0 =A0 int cpuid, this_cpu =3D smp_processor_id();
+>
+>
+> What prevents this task from being migrated to another CPU?
+> IOW, what ensures that 'this_cpu' remains valid throughout this funct=
+ion?
+>
+> I see that you are acquiring mutex locks below.. So this is definitel=
+y not
+> a preempt disabled section.. so I guess my question above is valid..
+>
+> Or is this code bound to a particular cpu?
 
-Please pull power management updates for 3.4 since commit
-192cfd58774b4d17b2fe8bdc77d89c2ef4e0591d:
+No this thread is not bound to a cpu. Your comment is valid and some
+synchronization is needed for preemption. Thanks for pointing this
+out.
 
-    Linux 3.3-rc6
-
-with top-most commit 98e8bdafeb4728a6af7bbcbcc3984967d1cf2bc1
-
-    Merge branch 'pm-domains'
-
-from the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-for-3.4
-
-They include:
-
-* Introduction of early/late suspend/hibernation device callbacks.
-
-* Generic PM domains extensions and fixes.
-
-* devfreq updates from Axel Lin and MyungJoo Ham.
-
-* Device PM QoS updates.
-
-* Fixes of concurrency problems with wakeup sources.
-
-* System suspend and hibernation fixes.
-
-Thanks!
-
-
- Documentation/ABI/testing/sysfs-devices-power      |   18 ++
- .../bindings/arm/exynos/power_domain.txt           |   21 ++
- Documentation/power/devices.txt                    |   93 +++++---
- Documentation/power/freezing-of-tasks.txt          |   21 ++
- arch/arm/mach-exynos/Kconfig                       |   10 +-
- arch/arm/mach-exynos/Makefile                      |    2 +-
- arch/arm/mach-exynos/dev-pd.c                      |  139 -----------
- arch/arm/mach-exynos/mach-nuri.c                   |   11 -
- arch/arm/mach-exynos/mach-origen.c                 |   14 -
- arch/arm/mach-exynos/mach-smdkv310.c               |   12 -
- arch/arm/mach-exynos/mach-universal_c210.c         |   17 --
- arch/arm/mach-exynos/pm_domains.c                  |  195 +++++++++++++++
- arch/arm/mach-shmobile/setup-sh7372.c              |    2 +
- arch/x86/kernel/apm_32.c                           |   11 +-
- drivers/base/power/domain.c                        |  253 +++++++++++++++-----
- drivers/base/power/generic_ops.c                   |  157 ++++++++----
- drivers/base/power/main.c                          |  247 +++++++++++++++++--
- drivers/base/power/power.h                         |    4 +
- drivers/base/power/qos.c                           |   61 +++++
- drivers/base/power/sysfs.c                         |   47 ++++
- drivers/base/power/wakeup.c                        |   85 +++++--
- drivers/clocksource/sh_cmt.c                       |    4 +
- drivers/clocksource/sh_mtu2.c                      |    4 +
- drivers/clocksource/sh_tmu.c                       |    4 +
- drivers/devfreq/devfreq.c                          |  112 +++++++++-
- drivers/devfreq/exynos4_bus.c                      |   23 +-
- drivers/devfreq/governor_performance.c             |    5 +-
- drivers/devfreq/governor_powersave.c               |    2 +-
- drivers/devfreq/governor_simpleondemand.c          |   12 +-
- drivers/devfreq/governor_userspace.c               |   15 +-
- drivers/mmc/host/sh_mmcif.c                        |    5 +
- drivers/mmc/host/tmio_mmc_pio.c                    |    5 +
- drivers/xen/manage.c                               |    6 +-
- fs/jbd/journal.c                                   |    2 +
- fs/jbd2/journal.c                                  |    2 +
- include/linux/devfreq.h                            |   25 ++-
- include/linux/pm.h                                 |   59 ++++-
- include/linux/pm_domain.h                          |   25 ++-
- include/linux/pm_qos.h                             |   64 ++----
- include/linux/pm_wakeup.h                          |   22 ++-
- include/linux/suspend.h                            |    4 +
- kernel/exit.c                                      |    2 +-
- kernel/freezer.c                                   |    6 +-
- kernel/kexec.c                                     |    8 +-
- kernel/power/Makefile                              |    3 +-
- kernel/power/hibernate.c                           |   47 ++--
- kernel/power/main.c                                |   20 +-
- kernel/power/power.h                               |    7 +-
- kernel/power/process.c                             |   24 +-
- kernel/power/qos.c                                 |   23 +-
- kernel/power/snapshot.c                            |    7 +-
- kernel/power/suspend.c                             |   84 ++++----
- kernel/power/user.c                                |   12 +-
- 53 files changed, 1452 insertions(+), 611 deletions(-)
-
----------------
-
-Alex Frid (1):
-      PM / QoS: Simplify PM QoS expansion/merge
-
-Axel Lin (2):
-      devfreq: exynos4_bus: Use dev_get_drvdata at appropriate places
-      devfreq: Remove MODULE_ALIAS for exynos4 busfreq driver
-
-Bjorn Helgaas (1):
-      PM / Hibernate: print physical addresses consistently with other parts of kernel
-
-Guennadi Liakhovetski (1):
-      PM / Domains: Provide a dummy dev_gpd_data() when generic domains are not used
-
-Jean Pihet (1):
-      PM / QoS: unconditionally build the feature
-
-Magnus Damm (1):
-      PM / Domains: Fix include for PM_GENERIC_DOMAINS=n case
-
-Marcos Paulo de Souza (2):
-      PM / Suspend: Avoid code duplication in suspend statistics update
-      PM / Freezer: Remove references to TIF_FREEZE in comments
-
-MyungJoo Ham (3):
-      PM / devfreq: fixed syntax errors.
-      PM / devfreq: add min/max_freq limit requested by users.
-      PM / devfreq: add relation of recommended frequency.
-
-Nigel Cunningham (1):
-      PM / Sleep: JBD and JBD2 missing set_freezable()
-
-Rafael J. Wysocki (24):
-      PM / Sleep: Introduce "late suspend" and "early resume" of devices
-      PM / Sleep: Introduce generic callbacks for new device PM phases
-      PM / Domains: Run late/early device suspend callbacks at the right time
-      PM / Sleep: Initialize wakeup source locks in wakeup_source_add()
-      PM / Sleep: Do not check wakeup too often in try_to_freeze_tasks()
-      PM / Sleep: Remove unnecessary label from suspend_freeze_processes()
-      PM / Sleep: Unify kerneldoc comments in kernel/power/suspend.c
-      PM / Sleep: Make enter_state() in kernel/power/suspend.c static
-      PM / Sleep: Drop suspend_stats_update()
-      PM: Add comment describing relationships between PM callbacks to pm.h
-      PM / Sleep: Fix possible infinite loop during wakeup source destruction
-      PM / Sleep: Fix race conditions related to wakeup source timer function
-      PM / Sleep: Make __pm_stay_awake() delete wakeup source timers
-      PM / Sleep: Add more wakeup source initialization routines
-      PM / QoS: Make it possible to expose PM QoS latency constraints
-      tmio_mmc / PM: Use PM QoS latency constraint
-      sh_mmcif / PM: Use PM QoS latency constraint
-      PM / Domains: Fix handling of wakeup devices during system resume
-      PM / Domains: Fix hibernation restore of devices, v2
-      PM / Domains: Introduce "always on" device flag
-      PM / shmobile: Make TMU driver use pm_genpd_dev_always_on()
-      PM / shmobile: Make CMT driver use pm_genpd_dev_always_on()
-      PM / shmobile: Make MTU2 driver use pm_genpd_dev_always_on()
-      PM / Domains: Check domain status during hibernation restore of devices
-
-Srivatsa S. Bhat (4):
-      PM / Freezer / Docs: Document the beauty of freeze/thaw semantics
-      PM / Hibernate: Thaw kernel threads in hibernation_snapshot() in error/test path
-      PM / Hibernate: Refactor and simplify freezer_test_done
-      PM / Hibernate: Enable usermodehelpers in hibernate() error path
-
-Thomas Abraham (2):
-      PM / Domains: Add OF support
-      ARM: EXYNOS: Hook up power domains to generic power domain infrastructure
+>
+>> + =A0 =A0 struct hotplug_cooling_device *hotplug_dev;
+>> +
+>> + =A0 =A0 mutex_lock(&cooling_cpuhotplug_lock);
+>> + =A0 =A0 list_for_each_entry(hotplug_dev, &cooling_cpuhotplug_list,=
+ node)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 if (hotplug_dev && hotplug_dev->cool_dev =3D=
+=3D cdev)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> +
+>> + =A0 =A0 mutex_unlock(&cooling_cpuhotplug_lock);
+>> + =A0 =A0 if (!hotplug_dev || hotplug_dev->cool_dev !=3D cdev)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
+>> +
+>> + =A0 =A0 if (hotplug_dev->hotplug_state =3D=3D state)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return 0;
+>> +
+>> + =A0 =A0 /*
+>> + =A0 =A0 * This cooling device may be of type ACTIVE, so state fiel=
+d can
+>> + =A0 =A0 * be 0 or 1
+>> + =A0 =A0 */
+>> + =A0 =A0 if (state =3D=3D 1) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 for_each_cpu(cpuid, hotplug_dev->allowed_c=
+pus) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (cpu_online(cpuid) && (=
+cpuid !=3D this_cpu))
+>
+>
+> What prevents the cpu numbered cpuid from being taken down right at t=
+his moment?
+> Don't you need explicit synchronization with CPU Hotplug using someth=
+ing like
+> get_online_cpus()/put_online_cpus() here?
+>
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_down(c=
+puid);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 }
+>> + =A0 =A0 } else if (state =3D=3D 0) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 for_each_cpu(cpuid, hotplug_dev->allowed_c=
+pus) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!cpu_online(cpuid) && =
+(cpuid !=3D this_cpu))
+>
+>
+> Same here.
+>
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_up(cpu=
+id);
+>> + =A0 =A0 =A0 =A0 =A0 =A0 }
+>> + =A0 =A0 } else {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
+>> + =A0 =A0 }
+>> +
+>> + =A0 =A0 hotplug_dev->hotplug_state =3D state;
+>> +
+>> + =A0 =A0 return 0;
+>> +}
+>> +/* bind hotplug callbacks to cpu hotplug cooling device */
+>> +static struct thermal_cooling_device_ops cpuhotplug_cooling_ops =3D=
+ {
+>> + =A0 =A0 .get_max_state =3D cpuhotplug_get_max_state,
+>> + =A0 =A0 .get_cur_state =3D cpuhotplug_get_cur_state,
+>> + =A0 =A0 .set_cur_state =3D cpuhotplug_set_cur_state,
+>> +};
+>> +
+>
