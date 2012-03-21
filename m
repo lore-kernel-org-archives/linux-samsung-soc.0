@@ -1,54 +1,94 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v4 05/12] ARM: EXYNOS: add support uart for EXYNOS4 and EXYNOS5
-Date: Wed, 21 Mar 2012 14:43:53 +0530
-Message-ID: <CAJuYYwTJsA1M1Qj2P1-1K=pWzi0BPo8YJNDSx4NqGC7NX0030g@mail.gmail.com>
-References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
-	<1331736138-28964-6-git-send-email-kgene.kim@samsung.com>
+From: Felipe Balbi <balbi@ti.com>
+Subject: Re: [PATCH] usb: gadget: s3c-hsotg: fix kernel panic
+Date: Wed, 21 Mar 2012 11:56:23 +0200
+Message-ID: <20120321095622.GK3092@arwen.pp.htv.fi>
+References: <1331904920-19685-1-git-send-email-sangwook.lee@linaro.org>
+ <20120319175208.274ca294@lmajewski.digital.local>
+Reply-To: balbi@ti.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="37nyS7qXrnu4wN2o"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:40731 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754947Ab2CUJNy convert rfc822-to-8bit (ORCPT
+Received: from na3sys009aog105.obsmtp.com ([74.125.149.75]:48972 "HELO
+	na3sys009aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with SMTP id S1753660Ab2CUJ4o (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Mar 2012 05:13:54 -0400
-Received: by wgbdr13 with SMTP id dr13so518427wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Mar 2012 02:13:53 -0700 (PDT)
-In-Reply-To: <1331736138-28964-6-git-send-email-kgene.kim@samsung.com>
+	Wed, 21 Mar 2012 05:56:44 -0400
+Received: by mail-lpp01m010-f53.google.com with SMTP id c1so756297lah.26
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Mar 2012 02:56:42 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <20120319175208.274ca294@lmajewski.digital.local>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Sangwook Lee <sangwook.lee@linaro.org>, linux-usb@vger.kernel.org, gregkh@linuxfoundation.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, linaro-dev@lists.linaro.org, Felipe Balbi <balbi@ti.com>
 
-On 14 March 2012 20:12, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Actually, the base address of uart is different between EXYNOS4
-> and EXYNOS5 and this patch enables to support uart for EXYNOS4
-> and EXYNOS5 SoCs at runtime.
->
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
 
-[...]
+--37nyS7qXrnu4wN2o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch/a=
-rm/mach-exynos/include/mach/debug-macro.S
-> index 6cacf16..6c857ff 100644
-> --- a/arch/arm/mach-exynos/include/mach/debug-macro.S
-> +++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
-> @@ -21,8 +21,13 @@
-> =A0 =A0 =A0 =A0 */
->
-> =A0 =A0 =A0 =A0.macro addruart, rp, rv, tmp
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ldr =A0 =A0 \rp, =3D S3C_PA_UART
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ldr =A0 =A0 \rv, =3D S3C_VA_UART
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mov =A0 =A0 \rp, #0x10000000
+Hi,
+On Mon, Mar 19, 2012 at 05:52:08PM +0100, Lukasz Majewski wrote:
+> On Fri, 16 Mar 2012 13:35:20 +0000
+> Sangwook Lee <sangwook.lee@linaro.org> wrote:
+>=20
+> > Fix kernel panic from s3c_hsotg_udc_stop.
+> > if udc_is_newstyle is true, s3c_hsotg_udc_stop should not
+> > call disconnect, unbind.
+> >=20
+> > As running rmmod g_mass_storage, kernel panic happens.
+> >=20
+> > (composite_unbind+0x14/0x164 [g_mass_storage])
+> > from [<c023e950>] (s3c_hsotg_udc_stop)
+> >=20
+> > This patch is based on Lukasz Majewski's patches:
+> > [PATCH 0/9] USB: s3c-hsotg: USB S3C-HSOTG driver fixes and code cleanu
+> >=20
+> > in order to test g_mass_storage in Origen board:
+> >=20
+> > Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
+> > ---
+> >  drivers/usb/gadget/s3c-hsotg.c |   12 ++++++------
+> >  1 files changed, 6 insertions(+), 6 deletions(-)
+> >=20
+>=20
+> Hi Sangwook,
+>=20
+> Test HW: GONI S5PV210=20
+> module: g_ether.ko
+>=20
+> Yes, this patch works. Thanks for spotting the error.
+>=20
+> Tested-by: Lukasz Majewski <l.majewski@samsung.com>
 
-This is physical address of Exynos4/5 CPUID register which cannot be
-used here. And virtual address S5P_VA_CPUID also cannot be used here
-since this will be called before paging_init when earlyprintk boot
-param is used. So, with this change, earlyprintk does not work for
-both Exynos4 and Exynos5.
+I don't seem to have the patch in my inbox, can someone re-send with
+Lukasz Tested-by line already in place ?
 
-Thanks,
-Thomas.
+--=20
+balbi
+
+--37nyS7qXrnu4wN2o
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPaaXGAAoJEIaOsuA1yqREfUUP/iUIMYxZkhJu8rFz65h8qR5e
+S4GUd51rdvrudde32YB2vYPn7XwEKjUp3EePoynIuO6ibZGSXlx9hME6OIMzTkO6
+HbNMRDpETliv89H9UXSAqmUqOpeNUA6Ihi0M5DJOlB7SnmUi7SfGx7MCeMlIq1zT
+Y4CsWWXoaJ1bGZHrzAOty6+BEdjzD21LUWfhw1rk7iHmX+/crAl6zga6RtX/D/1+
+fhgB0eLMVvGDVUEGZv7bbSSVPn42MoTmAzl//g/dkJQqz9C9BbQvmCLY4pB2u7hk
+w2Xy61hA+29RtzWzEH7bCQ6sEz4+6OGR03QdCUjnLw7s3MmVnKco4k2IfHvOJruq
+XRT3AkD+Mm1s+RSH8CYWsxmogfTISDkT3zHewbRe1QoqZjhBF9w4fbln+wyf2ilA
+cQTgohg+hWuNy6nBABg8pDjovzg3Ou+ezJUIliotmNIU2Uc0XNCFH6kcP6APoE1n
+0D0tbpv5mj29fwXgzGdeqxrYxZ3L3JqAsYmPzbzMk970j9YhnhOjaRTSe+bwOO9R
+a27XKg3mpAyLEluyt4x9OuSqIFchYKtTpssNj+ArKMCy3zBT5Ge/Ac8okKnEKByr
+5dCjQeSuJtBzxiy1X2OEalRm114Dau7HtCOPqB1WWDAT93rl2GL9upNZGXHUT+Ed
+3mh7QZvNHlRG6meoGKux
+=Z84m
+-----END PGP SIGNATURE-----
+
+--37nyS7qXrnu4wN2o--
