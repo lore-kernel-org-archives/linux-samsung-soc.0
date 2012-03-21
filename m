@@ -1,48 +1,54 @@
-From: David Gibson <david@gibson.dropbear.id.au>
-Subject: Re: Device node for a controller with two interrupt parents
-Date: Wed, 21 Mar 2012 14:41:51 +1100
-Message-ID: <20120321034151.GC15997@truffala.fritz.box>
-References: <CAJuYYwT1uKaUDuh98i4B286az-_26YCN31UXXFWsP=_M-UL_vg@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v4 05/12] ARM: EXYNOS: add support uart for EXYNOS4 and EXYNOS5
+Date: Wed, 21 Mar 2012 14:43:53 +0530
+Message-ID: <CAJuYYwTJsA1M1Qj2P1-1K=pWzi0BPo8YJNDSx4NqGC7NX0030g@mail.gmail.com>
+References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
+	<1331736138-28964-6-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ozlabs.org ([203.10.76.45]:42613 "EHLO ozlabs.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751808Ab2CUDl6 (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:40731 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754947Ab2CUJNy convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Mar 2012 23:41:58 -0400
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwT1uKaUDuh98i4B286az-_26YCN31UXXFWsP=_M-UL_vg@mail.gmail.com>
+	Wed, 21 Mar 2012 05:13:54 -0400
+Received: by wgbdr13 with SMTP id dr13so518427wgb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Mar 2012 02:13:53 -0700 (PDT)
+In-Reply-To: <1331736138-28964-6-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, olof@lixom.net
 
-On Wed, Mar 21, 2012 at 07:55:43AM +0530, Thomas Abraham wrote:
-> Hi,
-> 
-> Exynos5 includes a gpio wakeup interrupt controller that generates 32
-> interrupts. The first 16 interrupts are routed to the interrupt
-> combiner controller. The last 16 are muxed into one interrupt and this
-> interrupt line is connected to the GIC interrupt controller.
-> 
-> So, the wakeup interrupt controller node in device tree requires two
-> interrupt parents. I do not know how to handle this. Any suggestions
-> will be very helpful.
+On 14 March 2012 20:12, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Actually, the base address of uart is different between EXYNOS4
+> and EXYNOS5 and this patch enables to support uart for EXYNOS4
+> and EXYNOS5 SoCs at runtime.
+>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
 
-This has occurred before, for example on the MAL device on 440EP (see
-the bamboo board dts for example).  The semi-standard approach is to
-make the node an interrupt-nexus for itself.  That is in the node's
-interrupts property, just list 0..N giving as many interrupts as you
-need.  Set the node's interrupt-parent to point to the node itself,
-then add interrupt-map and interrupt-map-mask properties which remap
-those interrupts 0..N to the correct interrupts on the actual
-interrupt controllers.  Each entry in the interrupt map specifies an
-interrupt parent phandle, so you can distribute the irqs to multiple
-interrupt controllers that way.
+[...]
 
--- 
-David Gibson			| I'll have my music baroque, and my code
-david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _other_
-				| _way_ _around_!
-http://www.ozlabs.org/~dgibson
+> diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch/a=
+rm/mach-exynos/include/mach/debug-macro.S
+> index 6cacf16..6c857ff 100644
+> --- a/arch/arm/mach-exynos/include/mach/debug-macro.S
+> +++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
+> @@ -21,8 +21,13 @@
+> =A0 =A0 =A0 =A0 */
+>
+> =A0 =A0 =A0 =A0.macro addruart, rp, rv, tmp
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ldr =A0 =A0 \rp, =3D S3C_PA_UART
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ldr =A0 =A0 \rv, =3D S3C_VA_UART
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mov =A0 =A0 \rp, #0x10000000
+
+This is physical address of Exynos4/5 CPUID register which cannot be
+used here. And virtual address S5P_VA_CPUID also cannot be used here
+since this will be called before paging_init when earlyprintk boot
+param is used. So, with this change, earlyprintk does not work for
+both Exynos4 and Exynos5.
+
+Thanks,
+Thomas.
