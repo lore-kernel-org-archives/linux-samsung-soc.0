@@ -1,94 +1,208 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH] usb: gadget: s3c-hsotg: fix kernel panic
-Date: Wed, 21 Mar 2012 11:56:23 +0200
-Message-ID: <20120321095622.GK3092@arwen.pp.htv.fi>
-References: <1331904920-19685-1-git-send-email-sangwook.lee@linaro.org>
- <20120319175208.274ca294@lmajewski.digital.local>
-Reply-To: balbi@ti.com
+From: Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Wed, 21 Mar 2012 11:33:58 +0100
+Message-ID: <4F69AE96.6060901@samsung.com>
+References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
+ <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
+ <20120314172915.GB13393@sirena.org.uk> <4F61BEC8.4030008@samsung.com>
+ <20120315125630.GK3138@opensource.wolfsonmicro.com>
+ <4F621EC9.6020106@samsung.com>
+ <20120319195540.GH12384@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="37nyS7qXrnu4wN2o"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog105.obsmtp.com ([74.125.149.75]:48972 "HELO
-	na3sys009aog105.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with SMTP id S1753660Ab2CUJ4o (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:55616 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757904Ab2CUKd4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Mar 2012 05:56:44 -0400
-Received: by mail-lpp01m010-f53.google.com with SMTP id c1so756297lah.26
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Mar 2012 02:56:42 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <20120319175208.274ca294@lmajewski.digital.local>
+	Wed, 21 Mar 2012 06:33:56 -0400
+In-reply-to: <20120319195540.GH12384@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Lukasz Majewski <l.majewski@samsung.com>
-Cc: Sangwook Lee <sangwook.lee@linaro.org>, linux-usb@vger.kernel.org, gregkh@linuxfoundation.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, linaro-dev@lists.linaro.org, Felipe Balbi <balbi@ti.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: ben-linux@fluff.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, w.sang@pengutronix.de
+
+On 19.03.2012 20:55, Mark Brown wrote:
+
+> On Thu, Mar 15, 2012 at 05:54:33PM +0100, Karol Lewandowski wrote:
+> 
+>> If you consider code to be inherently less readable because of this
+>> approach I'll rework it.  If it's not a such big deal for you I would
+>> prefer to keep it as is.
+> 
+> The thing that was causing me to think the code was funny was mainly the
+> fact that we're now combining both quirk based selection and chip type
+> based selection into the same bitmask.  If the chip types were quirks
+> it'd probably not have looked odd, and that might just be a case of
+> renaming them - I can't remember what they do.
 
 
---37nyS7qXrnu4wN2o
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What do you think about following changes, then?
 
-Hi,
-On Mon, Mar 19, 2012 at 05:52:08PM +0100, Lukasz Majewski wrote:
-> On Fri, 16 Mar 2012 13:35:20 +0000
-> Sangwook Lee <sangwook.lee@linaro.org> wrote:
->=20
-> > Fix kernel panic from s3c_hsotg_udc_stop.
-> > if udc_is_newstyle is true, s3c_hsotg_udc_stop should not
-> > call disconnect, unbind.
-> >=20
-> > As running rmmod g_mass_storage, kernel panic happens.
-> >=20
-> > (composite_unbind+0x14/0x164 [g_mass_storage])
-> > from [<c023e950>] (s3c_hsotg_udc_stop)
-> >=20
-> > This patch is based on Lukasz Majewski's patches:
-> > [PATCH 0/9] USB: s3c-hsotg: USB S3C-HSOTG driver fixes and code cleanu
-> >=20
-> > in order to test g_mass_storage in Origen board:
-> >=20
-> > Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
-> > ---
-> >  drivers/usb/gadget/s3c-hsotg.c |   12 ++++++------
-> >  1 files changed, 6 insertions(+), 6 deletions(-)
-> >=20
->=20
-> Hi Sangwook,
->=20
-> Test HW: GONI S5PV210=20
-> module: g_ether.ko
->=20
-> Yes, this patch works. Thanks for spotting the error.
->=20
-> Tested-by: Lukasz Majewski <l.majewski@samsung.com>
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c
+b/drivers/i2c/busses/i2c-s3c2410.c
+index fa5f8c4..18c9760 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -48,12 +48,9 @@
+ static const struct of_device_id s3c24xx_i2c_match[];
+ #endif
 
-I don't seem to have the patch in my inbox, can someone re-send with
-Lukasz Tested-by line already in place ?
+-/* reserve lower 8 bits for device type, use remaining space for hw
+quirks */
+-#define TYPE_BITS		0x000000ff
+-#define TYPE_S3C2410		0x00000001
+-#define TYPE_S3C2440		0x00000002
+-#define FLAG_HDMIPHY		0x00000100
+-#define FLAG_NO_GPIO		0x00000200
++#define QUIRK_S3C2440		(1 << 0)
++#define QUIRK_HDMIPHY		(1 << 1)
++#define QUIRK_NO_GPIO		(1 << 2)
 
---=20
-balbi
+ /* i2c controller state */
+ enum s3c24xx_i2c_state {
+@@ -67,7 +64,7 @@ enum s3c24xx_i2c_state {
+ struct s3c24xx_i2c {
+ 	spinlock_t		lock;
+ 	wait_queue_head_t	wait;
+-	unsigned int            type;
++	unsigned int            quirks;
+ 	unsigned int		suspended:1;
 
---37nyS7qXrnu4wN2o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+ 	struct i2c_msg		*msg;
+@@ -94,22 +91,12 @@ struct s3c24xx_i2c {
+ #endif
+ };
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
+-/* s3c24xx_i2c_is_type()
+- *
+- * return true if this controller is of specified type
+-*/
+-
+-static inline int s3c24xx_i2c_is_type(struct s3c24xx_i2c *i2c, unsigned
+int type)
+-{
+-	return (i2c->type & TYPE_BITS) == type;
+-}
+-
+-/* s3c24xx_get_device_type
++/* s3c24xx_get_device_quirks
+  *
+  * Get controller type either from device tree or platform device variant.
+ */
 
-iQIcBAEBAgAGBQJPaaXGAAoJEIaOsuA1yqREfUUP/iUIMYxZkhJu8rFz65h8qR5e
-S4GUd51rdvrudde32YB2vYPn7XwEKjUp3EePoynIuO6ibZGSXlx9hME6OIMzTkO6
-HbNMRDpETliv89H9UXSAqmUqOpeNUA6Ihi0M5DJOlB7SnmUi7SfGx7MCeMlIq1zT
-Y4CsWWXoaJ1bGZHrzAOty6+BEdjzD21LUWfhw1rk7iHmX+/crAl6zga6RtX/D/1+
-fhgB0eLMVvGDVUEGZv7bbSSVPn42MoTmAzl//g/dkJQqz9C9BbQvmCLY4pB2u7hk
-w2Xy61hA+29RtzWzEH7bCQ6sEz4+6OGR03QdCUjnLw7s3MmVnKco4k2IfHvOJruq
-XRT3AkD+Mm1s+RSH8CYWsxmogfTISDkT3zHewbRe1QoqZjhBF9w4fbln+wyf2ilA
-cQTgohg+hWuNy6nBABg8pDjovzg3Ou+ezJUIliotmNIU2Uc0XNCFH6kcP6APoE1n
-0D0tbpv5mj29fwXgzGdeqxrYxZ3L3JqAsYmPzbzMk970j9YhnhOjaRTSe+bwOO9R
-a27XKg3mpAyLEluyt4x9OuSqIFchYKtTpssNj+ArKMCy3zBT5Ge/Ac8okKnEKByr
-5dCjQeSuJtBzxiy1X2OEalRm114Dau7HtCOPqB1WWDAT93rl2GL9upNZGXHUT+Ed
-3mh7QZvNHlRG6meoGKux
-=Z84m
------END PGP SIGNATURE-----
+-static inline unsigned int s3c24xx_get_device_type(struct
+platform_device *pdev)
++static inline unsigned int s3c24xx_get_device_quirks(struct
+platform_device *pdev)
+ {
+ #ifdef CONFIG_OF
+         if (pdev->dev.of_node) {
+@@ -487,7 +474,7 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
+*i2c)
+ 	 * the hangup is expected to happen, so waiting 400 ms
+ 	 * causes only unnecessary system hangup
+ 	 */
+-	if (i2c->type & FLAG_HDMIPHY)
++	if (i2c->quirks & QUIRK_HDMIPHY)
+ 		timeout = 10;
 
---37nyS7qXrnu4wN2o--
+ 	while (timeout-- > 0) {
+@@ -500,7 +487,7 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
+*i2c)
+ 	}
+
+ 	/* hang-up of bus dedicated for HDMIPHY occurred, resetting */
+-	if (i2c->type & FLAG_HDMIPHY) {
++	if (i2c->quirks & QUIRK_HDMIPHY) {
+ 		writel(0, i2c->regs + S3C2410_IICCON);
+ 		writel(0, i2c->regs + S3C2410_IICSTAT);
+ 		writel(0, i2c->regs + S3C2410_IICDS);
+@@ -704,7 +691,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c
+*i2c, unsigned int *got)
+
+ 	writel(iiccon, i2c->regs + S3C2410_IICCON);
+
+-	if (s3c24xx_i2c_is_type(i2c, TYPE_S3C2440)) {
++	if (i2c->quirks & QUIRK_S3C2440) {
+ 		unsigned long sda_delay;
+
+ 		if (pdata->sda_delay) {
+@@ -789,7 +776,7 @@ static int s3c24xx_i2c_parse_dt_gpio(struct
+s3c24xx_i2c *i2c)
+ {
+ 	int idx, gpio, ret;
+
+-	if (i2c->type & FLAG_NO_GPIO)
++	if (i2c->quirks & QUIRK_NO_GPIO)
+ 		return 0;
+
+ 	for (idx = 0; idx < 2; idx++) {
+@@ -817,7 +804,7 @@ static void s3c24xx_i2c_dt_gpio_free(struct
+s3c24xx_i2c *i2c)
+ {
+ 	unsigned int idx;
+
+-	if (i2c->type & FLAG_NO_GPIO)
++	if (i2c->quirks & QUIRK_NO_GPIO)
+ 		return;
+
+ 	for (idx = 0; idx < 2; idx++)
+@@ -898,10 +885,10 @@ s3c24xx_i2c_parse_dt(struct device_node *np,
+struct s3c24xx_i2c *i2c)
+ 	pdata->bus_num = -1; /* i2c bus number is dynamically assigned */
+
+ 	if (of_get_property(np, "samsung,i2c-quirk-hdmiphy", NULL))
+-		i2c->type |= FLAG_HDMIPHY;
++		i2c->quirks |= QUIRK_HDMIPHY;
+
+ 	if (of_get_property(np, "samsung,i2c-no-gpio", NULL))
+-		i2c->type |= FLAG_NO_GPIO;
++		i2c->quirks |= QUIRK_NO_GPIO;
+
+ 	of_property_read_u32(np, "samsung,i2c-sda-delay", &pdata->sda_delay);
+ 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
+@@ -948,7 +935,7 @@ static int s3c24xx_i2c_probe(struct platform_device
+*pdev)
+ 		goto err_noclk;
+ 	}
+
+-	i2c->type = s3c24xx_get_device_type(pdev);
++	i2c->quirks = s3c24xx_get_device_quirks(pdev);
+ 	if (pdata)
+ 		memcpy(i2c->pdata, pdata, sizeof(*pdata));
+ 	else
+@@ -1156,21 +1143,21 @@ static const struct dev_pm_ops
+s3c24xx_i2c_dev_pm_ops = {
+ static struct platform_device_id s3c24xx_driver_ids[] = {
+ 	{
+ 		.name		= "s3c2410-i2c",
+-		.driver_data	= TYPE_S3C2410,
++		.driver_data	= 0,
+ 	}, {
+ 		.name		= "s3c2440-i2c",
+-		.driver_data	= TYPE_S3C2440,
++		.driver_data	= QUIRK_S3C2440,
+ 	}, {
+ 		.name		= "s3c2440-hdmiphy-i2c",
+-		.driver_data	= TYPE_S3C2440 | FLAG_HDMIPHY | FLAG_NO_GPIO,
++		.driver_data	= QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO,
+ 	}, { },
+ };
+ MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+
+ #ifdef CONFIG_OF
+ static const struct of_device_id s3c24xx_i2c_match[] = {
+-	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)TYPE_S3C2410 },
+-	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)TYPE_S3C2440 },
++	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)0 },
++	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)QUIRK_S3C2440 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+
+
+Regards,
+-- 
+Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
