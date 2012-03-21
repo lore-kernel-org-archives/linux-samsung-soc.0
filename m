@@ -1,48 +1,32 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Wed, 21 Mar 2012 08:56:51 +0900
-Message-ID: <CAHQjnOMjSPDOymJe356AWnJszQv+X-QWrVrB7ahYDkXBr5HrQw@mail.gmail.com>
-References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com>
-	<1330527862-16234-10-git-send-email-m.szyprowski@samsung.com>
-	<CAHQjnOO5DLOj8Fw=ZriSnXg8W3k7y8Dnu--Peqe6JJX0xGMhoQ@mail.gmail.com>
-	<4F688B2D.20808@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Device node for a controller with two interrupt parents
+Date: Wed, 21 Mar 2012 07:55:43 +0530
+Message-ID: <CAJuYYwT1uKaUDuh98i4B286az-_26YCN31UXXFWsP=_M-UL_vg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:55938 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750923Ab2CTX4x (ORCPT
+Received: from mail-vx0-f174.google.com ([209.85.220.174]:60684 "EHLO
+	mail-vx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751385Ab2CUCZo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 20 Mar 2012 19:56:53 -0400
-In-Reply-To: <4F688B2D.20808@gmail.com>
+	Tue, 20 Mar 2012 22:25:44 -0400
+Received: by vcqp1 with SMTP id p1so655331vcq.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 20 Mar 2012 19:25:43 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Subash Patel <subashrp@gmail.com>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, Shariq Hasnain <shariq.hasnain@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Krishna Reddy <vdumpa@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Chunsang Jeong <chunsang.jeong@linaro.org>
+To: devicetree-discuss <devicetree-discuss@lists.ozlabs.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>
 
-On Tue, Mar 20, 2012 at 10:50 PM, Subash Patel <subashrp@gmail.com> wrote:
-> Sorry for digging this very late. But as part of integrating dma_map v7 &
-> sysmmu v12 on 3.3-rc5, I am facing below issue:
->
-> a) By un-selecting IOMMU in menu config, I am able to allocate memory in
-> vb2-dma-contig
->
-> b) When I enable SYSMMU support for the IP's, I am receiving below fault:
->
-> Unhandled fault: external abort on non-linefetch (0x818) at 0xb6f55000
->
-> I think this has something to do with the access to the SYSMMU registers for
-> writing the page table. Has anyone of you faced this issue while testing
-> these(dma_map+iommu) patches on kernel mentioned above? This must be
-> something related to recent changes, as I didn't have issues with these
-> patches on 3.2 kernel.
->
+Hi,
 
-0xb6f55000 is not an address of SYSMMU register if your kernel starts
-at 0xc0000000.
+Exynos5 includes a gpio wakeup interrupt controller that generates 32
+interrupts. The first 16 interrupts are routed to the interrupt
+combiner controller. The last 16 are muxed into one interrupt and this
+interrupt line is connected to the GIC interrupt controller.
 
-Can you tell me any detailed information or situation?
+So, the wakeup interrupt controller node in device tree requires two
+interrupt parents. I do not know how to handle this. Any suggestions
+will be very helpful.
 
-Regards,
-
-KyongHo.
+Thanks,
+Thomas.
