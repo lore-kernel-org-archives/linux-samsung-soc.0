@@ -1,41 +1,40 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
-Date: Wed, 21 Mar 2012 12:54:03 +0100
-Message-ID: <4F69C15B.8080909@samsung.com>
-References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
- <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
- <20120314172915.GB13393@sirena.org.uk> <4F61BEC8.4030008@samsung.com>
- <20120315125630.GK3138@opensource.wolfsonmicro.com>
- <4F621EC9.6020106@samsung.com>
- <20120319195540.GH12384@opensource.wolfsonmicro.com>
- <4F69AE96.6060901@samsung.com>
- <20120321115036.GB3226@opensource.wolfsonmicro.com>
+From: Madhvapathi Sriram <Madhvapathi.Sriram@csr.com>
+Subject: s3c64xx : RTC alarm wakeup
+Date: Wed, 21 Mar 2012 11:57:58 +0000
+Message-ID: <AAD401B65941D44692B7183E657718080358B7D5@banasiexm01.ASIA.ROOT.PRI>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41404 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750922Ab2CULyA (ORCPT
+Received: from cluster-g.mailcontrol.com ([208.87.233.190]:56988 "EHLO
+	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751321Ab2CUL6o convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Mar 2012 07:54:00 -0400
-In-reply-to: <20120321115036.GB3226@opensource.wolfsonmicro.com>
+	Wed, 21 Mar 2012 07:58:44 -0400
+Received: from banasiexc01.ASIA.ROOT.PRI ([202.80.51.114])
+	by rly33g.srv.mailcontrol.com (MailControl) with ESMTP id q2LBtNac031128
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL)
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 21 Mar 2012 11:58:42 GMT
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: ben-linux@fluff.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, w.sang@pengutronix.de
+To: "'linux-samsung-soc@vger.kernel.org'" <linux-samsung-soc@vger.kernel.org>
 
-On 21.03.2012 12:50, Mark Brown wrote:
+Hi,
 
-> On Wed, Mar 21, 2012 at 11:33:58AM +0100, Karol Lewandowski wrote:
-> 
->> What do you think about following changes, then?
-> 
-> That looks reasonable.
+I am trying to use RTC alarm for wakeup on s3c6410.
 
+I could verify that the RTC gives an alarm interrupt, without putting the CPU to sleep.
+However, when I set the RTC alarm at some future time and put the CPU to sleep (RTC configured for ALARMINT), the CPU does not resume.
+Are there any problems with the RTC wakeup on s3c6410? Or am I missing something?
 
-Thanks. I'll incorporate this change and post whole patchset again.
+Does anyone know about this problem?
+
 
 Regards,
--- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+Madhvapathi Sriram
+
+
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+More information can be found at www.csr.com. Follow CSR on Twitter at http://twitter.com/CSR_PLC and read our blog at www.csr.com/blog
