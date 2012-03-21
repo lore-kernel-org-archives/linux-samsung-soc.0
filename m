@@ -1,208 +1,74 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
-Date: Wed, 21 Mar 2012 11:33:58 +0100
-Message-ID: <4F69AE96.6060901@samsung.com>
-References: <1331657679-31302-1-git-send-email-k.lewandowsk@samsung.com>
- <1331657679-31302-3-git-send-email-k.lewandowsk@samsung.com>
- <20120314172915.GB13393@sirena.org.uk> <4F61BEC8.4030008@samsung.com>
- <20120315125630.GK3138@opensource.wolfsonmicro.com>
- <4F621EC9.6020106@samsung.com>
- <20120319195540.GH12384@opensource.wolfsonmicro.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH v4 05/12] ARM: EXYNOS: add support uart for EXYNOS4 and
+ EXYNOS5
+Date: Wed, 21 Mar 2012 11:45:41 +0100
+Message-ID: <074401cd074f$c2946b90$47bd42b0$%szyprowski@samsung.com>
+References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com>
+ <1331736138-28964-6-git-send-email-kgene.kim@samsung.com>
+ <CAJuYYwTJsA1M1Qj2P1-1K=pWzi0BPo8YJNDSx4NqGC7NX0030g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=iso-8859-2
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55616 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757904Ab2CUKd4 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:34652 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758278Ab2CUKpr convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 21 Mar 2012 06:33:56 -0400
-In-reply-to: <20120319195540.GH12384@opensource.wolfsonmicro.com>
+	Wed, 21 Mar 2012 06:45:47 -0400
+Received: from euspt2 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0M1800FC7DVP5Q@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Mar 2012 10:45:25 +0000 (GMT)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M1800AWLDW61T@spt2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 21 Mar 2012 10:45:43 +0000 (GMT)
+In-reply-to: <CAJuYYwTJsA1M1Qj2P1-1K=pWzi0BPo8YJNDSx4NqGC7NX0030g@mail.gmail.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: ben-linux@fluff.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>, w.sang@pengutronix.de
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: olof@lixom.net, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
 
-On 19.03.2012 20:55, Mark Brown wrote:
+Hello,
 
-> On Thu, Mar 15, 2012 at 05:54:33PM +0100, Karol Lewandowski wrote:
-> 
->> If you consider code to be inherently less readable because of this
->> approach I'll rework it.  If it's not a such big deal for you I would
->> prefer to keep it as is.
-> 
-> The thing that was causing me to think the code was funny was mainly the
-> fact that we're now combining both quirk based selection and chip type
-> based selection into the same bitmask.  If the chip types were quirks
-> it'd probably not have looked odd, and that might just be a case of
-> renaming them - I can't remember what they do.
+On Wednesday, March 21, 2012 10:14 AM Thomas Abraham wrote:
 
+> On 14 March 2012 20:12, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Actually, the base address of uart is different between EXYNOS4
+> > and EXYNOS5 and this patch enables to support uart for EXYNOS4
+> > and EXYNOS5 SoCs at runtime.
+> >
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+>=20
+> [...]
+>=20
+> > diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch=
+/arm/mach-
+> exynos/include/mach/debug-macro.S
+> > index 6cacf16..6c857ff 100644
+> > --- a/arch/arm/mach-exynos/include/mach/debug-macro.S
+> > +++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
+> > @@ -21,8 +21,13 @@
+> > =A0 =A0 =A0 =A0 */
+> >
+> > =A0 =A0 =A0 =A0.macro addruart, rp, rv, tmp
+> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ldr =A0 =A0 \rp, =3D S3C_PA_UART
+> > - =A0 =A0 =A0 =A0 =A0 =A0 =A0 ldr =A0 =A0 \rv, =3D S3C_VA_UART
+> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 mov =A0 =A0 \rp, #0x10000000
+>=20
+> This is physical address of Exynos4/5 CPUID register which cannot be
+> used here. And virtual address S5P_VA_CPUID also cannot be used here
+> since this will be called before paging_init when earlyprintk boot
+> param is used. So, with this change, earlyprintk does not work for
+> both Exynos4 and Exynos5.
 
-What do you think about following changes, then?
+I confirm, printascii freeze the system on EXYNOS4 after that patch,
+tested on Exynos4210 Nuri board.
 
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c
-b/drivers/i2c/busses/i2c-s3c2410.c
-index fa5f8c4..18c9760 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -48,12 +48,9 @@
- static const struct of_device_id s3c24xx_i2c_match[];
- #endif
-
--/* reserve lower 8 bits for device type, use remaining space for hw
-quirks */
--#define TYPE_BITS		0x000000ff
--#define TYPE_S3C2410		0x00000001
--#define TYPE_S3C2440		0x00000002
--#define FLAG_HDMIPHY		0x00000100
--#define FLAG_NO_GPIO		0x00000200
-+#define QUIRK_S3C2440		(1 << 0)
-+#define QUIRK_HDMIPHY		(1 << 1)
-+#define QUIRK_NO_GPIO		(1 << 2)
-
- /* i2c controller state */
- enum s3c24xx_i2c_state {
-@@ -67,7 +64,7 @@ enum s3c24xx_i2c_state {
- struct s3c24xx_i2c {
- 	spinlock_t		lock;
- 	wait_queue_head_t	wait;
--	unsigned int            type;
-+	unsigned int            quirks;
- 	unsigned int		suspended:1;
-
- 	struct i2c_msg		*msg;
-@@ -94,22 +91,12 @@ struct s3c24xx_i2c {
- #endif
- };
-
--/* s3c24xx_i2c_is_type()
-- *
-- * return true if this controller is of specified type
--*/
--
--static inline int s3c24xx_i2c_is_type(struct s3c24xx_i2c *i2c, unsigned
-int type)
--{
--	return (i2c->type & TYPE_BITS) == type;
--}
--
--/* s3c24xx_get_device_type
-+/* s3c24xx_get_device_quirks
-  *
-  * Get controller type either from device tree or platform device variant.
- */
-
--static inline unsigned int s3c24xx_get_device_type(struct
-platform_device *pdev)
-+static inline unsigned int s3c24xx_get_device_quirks(struct
-platform_device *pdev)
- {
- #ifdef CONFIG_OF
-         if (pdev->dev.of_node) {
-@@ -487,7 +474,7 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
-*i2c)
- 	 * the hangup is expected to happen, so waiting 400 ms
- 	 * causes only unnecessary system hangup
- 	 */
--	if (i2c->type & FLAG_HDMIPHY)
-+	if (i2c->quirks & QUIRK_HDMIPHY)
- 		timeout = 10;
-
- 	while (timeout-- > 0) {
-@@ -500,7 +487,7 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c
-*i2c)
- 	}
-
- 	/* hang-up of bus dedicated for HDMIPHY occurred, resetting */
--	if (i2c->type & FLAG_HDMIPHY) {
-+	if (i2c->quirks & QUIRK_HDMIPHY) {
- 		writel(0, i2c->regs + S3C2410_IICCON);
- 		writel(0, i2c->regs + S3C2410_IICSTAT);
- 		writel(0, i2c->regs + S3C2410_IICDS);
-@@ -704,7 +691,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c
-*i2c, unsigned int *got)
-
- 	writel(iiccon, i2c->regs + S3C2410_IICCON);
-
--	if (s3c24xx_i2c_is_type(i2c, TYPE_S3C2440)) {
-+	if (i2c->quirks & QUIRK_S3C2440) {
- 		unsigned long sda_delay;
-
- 		if (pdata->sda_delay) {
-@@ -789,7 +776,7 @@ static int s3c24xx_i2c_parse_dt_gpio(struct
-s3c24xx_i2c *i2c)
- {
- 	int idx, gpio, ret;
-
--	if (i2c->type & FLAG_NO_GPIO)
-+	if (i2c->quirks & QUIRK_NO_GPIO)
- 		return 0;
-
- 	for (idx = 0; idx < 2; idx++) {
-@@ -817,7 +804,7 @@ static void s3c24xx_i2c_dt_gpio_free(struct
-s3c24xx_i2c *i2c)
- {
- 	unsigned int idx;
-
--	if (i2c->type & FLAG_NO_GPIO)
-+	if (i2c->quirks & QUIRK_NO_GPIO)
- 		return;
-
- 	for (idx = 0; idx < 2; idx++)
-@@ -898,10 +885,10 @@ s3c24xx_i2c_parse_dt(struct device_node *np,
-struct s3c24xx_i2c *i2c)
- 	pdata->bus_num = -1; /* i2c bus number is dynamically assigned */
-
- 	if (of_get_property(np, "samsung,i2c-quirk-hdmiphy", NULL))
--		i2c->type |= FLAG_HDMIPHY;
-+		i2c->quirks |= QUIRK_HDMIPHY;
-
- 	if (of_get_property(np, "samsung,i2c-no-gpio", NULL))
--		i2c->type |= FLAG_NO_GPIO;
-+		i2c->quirks |= QUIRK_NO_GPIO;
-
- 	of_property_read_u32(np, "samsung,i2c-sda-delay", &pdata->sda_delay);
- 	of_property_read_u32(np, "samsung,i2c-slave-addr", &pdata->slave_addr);
-@@ -948,7 +935,7 @@ static int s3c24xx_i2c_probe(struct platform_device
-*pdev)
- 		goto err_noclk;
- 	}
-
--	i2c->type = s3c24xx_get_device_type(pdev);
-+	i2c->quirks = s3c24xx_get_device_quirks(pdev);
- 	if (pdata)
- 		memcpy(i2c->pdata, pdata, sizeof(*pdata));
- 	else
-@@ -1156,21 +1143,21 @@ static const struct dev_pm_ops
-s3c24xx_i2c_dev_pm_ops = {
- static struct platform_device_id s3c24xx_driver_ids[] = {
- 	{
- 		.name		= "s3c2410-i2c",
--		.driver_data	= TYPE_S3C2410,
-+		.driver_data	= 0,
- 	}, {
- 		.name		= "s3c2440-i2c",
--		.driver_data	= TYPE_S3C2440,
-+		.driver_data	= QUIRK_S3C2440,
- 	}, {
- 		.name		= "s3c2440-hdmiphy-i2c",
--		.driver_data	= TYPE_S3C2440 | FLAG_HDMIPHY | FLAG_NO_GPIO,
-+		.driver_data	= QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO,
- 	}, { },
- };
- MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
-
- #ifdef CONFIG_OF
- static const struct of_device_id s3c24xx_i2c_match[] = {
--	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)TYPE_S3C2410 },
--	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)TYPE_S3C2440 },
-+	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)0 },
-+	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)QUIRK_S3C2440 },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
-
-
-Regards,
--- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+Best regards
+--=20
+Marek Szyprowski
+Samsung Poland R&D Center
