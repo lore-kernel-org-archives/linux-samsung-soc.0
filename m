@@ -1,101 +1,54 @@
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-Subject: Re: [PATCH v3 0/5] [SCSI] ufshcd: UFS Host Controller Driver
-Date: Thu, 22 Mar 2012 13:51:51 +0000
-Message-ID: <1332424311.2946.15.camel@dabdike.int.hansenpartnership.com>
-References: <1330497714-26504-1-git-send-email-santoshsy@gmail.com>
+From: Subash Patel <subashrp@gmail.com>
+Subject: Re: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
+Date: Thu, 22 Mar 2012 19:29:42 +0530
+Message-ID: <4F6B304E.5010402@gmail.com>
+References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com> <1330527862-16234-10-git-send-email-m.szyprowski@samsung.com> <CAHQjnOO5DLOj8Fw=ZriSnXg8W3k7y8Dnu--Peqe6JJX0xGMhoQ@mail.gmail.com> <4F688B2D.20808@gmail.com> <CAHQjnOMjSPDOymJe356AWnJszQv+X-QWrVrB7ahYDkXBr5HrQw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1330497714-26504-1-git-send-email-santoshsy@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Santosh Y <santoshsy@gmail.com>
-Cc: linux-scsi@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd.bergmann@linaro.org, saugata.das@linaro.org, dsaxena@linaro.org, stephen.doel@linaro.org, venkat@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com, sreekumar.c@samsung.com, vinholikatti@gmail.com, linkinjeon@gmail.com, michaelc@cs.wisc.edu
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:44527 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751672Ab2CVN7u (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 22 Mar 2012 09:59:50 -0400
+In-Reply-To: <CAHQjnOMjSPDOymJe356AWnJszQv+X-QWrVrB7ahYDkXBr5HrQw@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, Shariq Hasnain <shariq.hasnain@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Krishna Reddy <vdumpa@nvidia.com>, Kyungmin Park <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Chunsang Jeong <chunsang.jeong@linaro.org>
 
-On Wed, 2012-02-29 at 12:11 +0530, Santosh Y wrote:
-> From: Santosh Yaraganavi <santoshsy@gmail.com>
->=20
-> UFS:
-> Universal Flash Storage is a storage specification for flash devices.
-> It is aimed to provide a universal storage interface for both
-> embedded and removable flash memory based storage in mobile
-> devices such as smart phones and tablet computers. The specification
-> is defined by JEDEC Solid State Technology Association. UFS is based
-> on MIPI M-PHY physical layer standard. UFS uses MIPI M-PHY as the
-> physical layer and MIPI Unipro as the link layer.
+Hi KyongHo,
 
-This doesn't compile correctly on a 32 bit platform:
-
-  CC [M]  drivers/scsi/ufs/ufshcd.o
-drivers/scsi/ufs/ufshcd.c: In function =E2=80=98ufshcd_map_sg=E2=80=99:
-drivers/scsi/ufs/ufshcd.c:555:5: warning: right shift count >=3D width =
-of
-type [enabled by default]
-drivers/scsi/ufs/ufshcd.c: In function =E2=80=98ufshcd_host_memory_conf=
-igure=E2=80=99:
-drivers/scsi/ufs/ufshcd.c:831:5: warning: right shift count >=3D width =
-of
-type [enabled by default]
-drivers/scsi/ufs/ufshcd.c: In function =E2=80=98ufshcd_initialize_hba=E2=
-=80=99:
-drivers/scsi/ufs/ufshcd.c:1037:2: warning: right shift count >=3D width=
- of
-type [enabled by default]
-drivers/scsi/ufs/ufshcd.c:1041:2: warning: right shift count >=3D width=
- of
-type [enabled by default]
-
-That's because you use >> 32 for the upper address bits.
-
-I did the replacement below to use macros which do this correctly
-(basically trick the compiler).
-
-James
-
----
-
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 07ec973..52b96e8 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -550,9 +550,9 @@ static int ufshcd_map_sg(struct ufshcd_lrb *lrbp)
- 			prd_table[i].size  =3D
- 				cpu_to_le32(((u32) sg_dma_len(sg))-1);
- 			prd_table[i].base_addr =3D
--				cpu_to_le32(sg->dma_address);
-+				cpu_to_le32(lower_32_bits(sg->dma_address));
- 			prd_table[i].upper_addr =3D
--				cpu_to_le32((sg->dma_address >> 32));
-+				cpu_to_le32(upper_32_bits(sg->dma_address));
- 		}
- 	} else {
- 		lrbp->utr_descriptor_ptr->prd_table_length =3D 0;
-@@ -826,9 +826,9 @@ static void ufshcd_host_memory_configure(struct ufs=
-_hba *hba)
- 		cmd_desc_element_addr =3D
- 				(cmd_desc_dma_addr + (cmd_desc_size * i));
- 		utrdlp[i].command_desc_base_addr_lo =3D
--				cpu_to_le32(cmd_desc_element_addr);
-+				cpu_to_le32(lower_32_bits(cmd_desc_element_addr));
- 		utrdlp[i].command_desc_base_addr_hi =3D
--				cpu_to_le32(cmd_desc_element_addr >> 32);
-+				cpu_to_le32(upper_32_bits(cmd_desc_element_addr));
-=20
- 		/* Response upiu and prdt offset should be in double words */
- 		utrdlp[i].response_upiu_offset =3D
-@@ -1034,11 +1034,11 @@ static int ufshcd_initialize_hba(struct ufs_hba=
- *hba)
- 	/* Configure UTRL and UTMRL base address registers */
- 	writel(hba->utrdl_dma_addr,
- 	       (hba->mmio_base + REG_UTP_TRANSFER_REQ_LIST_BASE_L));
--	writel((hba->utrdl_dma_addr >> 32),
-+	writel(lower_32_bits(hba->utrdl_dma_addr),
- 	       (hba->mmio_base + REG_UTP_TRANSFER_REQ_LIST_BASE_H));
- 	writel(hba->utmrdl_dma_addr,
- 	       (hba->mmio_base + REG_UTP_TASK_REQ_LIST_BASE_L));
--	writel((hba->utmrdl_dma_addr >> 32),
-+	writel(upper_32_bits(hba->utmrdl_dma_addr),
- 	       (hba->mmio_base + REG_UTP_TASK_REQ_LIST_BASE_H));
-=20
- 	/* Initialize unipro link startup procedure */
+On 03/21/2012 05:26 AM, KyongHo Cho wrote:
+> On Tue, Mar 20, 2012 at 10:50 PM, Subash Patel<subashrp@gmail.com>  wrote:
+>> Sorry for digging this very late. But as part of integrating dma_map v7&
+>> sysmmu v12 on 3.3-rc5, I am facing below issue:
+>>
+>> a) By un-selecting IOMMU in menu config, I am able to allocate memory in
+>> vb2-dma-contig
+>>
+>> b) When I enable SYSMMU support for the IP's, I am receiving below fault:
+>>
+>> Unhandled fault: external abort on non-linefetch (0x818) at 0xb6f55000
+>>
+>> I think this has something to do with the access to the SYSMMU registers for
+>> writing the page table. Has anyone of you faced this issue while testing
+>> these(dma_map+iommu) patches on kernel mentioned above? This must be
+>> something related to recent changes, as I didn't have issues with these
+>> patches on 3.2 kernel.
+>>
+>
+> 0xb6f55000 is not an address of SYSMMU register if your kernel starts
+> at 0xc0000000.
+>
+> Can you tell me any detailed information or situation?
+I hate to say this, but I am not able to catch the fault location even 
+with JTAG. Once the fault comes, the debugger looses all control over. I 
+think now possible method is reproduction at your end :)
+>
+> Regards,
+>
+> KyongHo.
+Regards,
+Subash
