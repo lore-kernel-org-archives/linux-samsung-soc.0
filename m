@@ -1,89 +1,42 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v4 05/12] ARM: EXYNOS: add support uart for EXYNOS4 and
- EXYNOS5
-Date: Thu, 22 Mar 2012 07:08:22 -0700
-Message-ID: <4F6B3256.40304@samsung.com>
-References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com> <1331736138-28964-6-git-send-email-kgene.kim@samsung.com> <CAJuYYwTJsA1M1Qj2P1-1K=pWzi0BPo8YJNDSx4NqGC7NX0030g@mail.gmail.com> <074401cd074f$c2946b90$47bd42b0$%szyprowski@samsung.com>
+Subject: Re: [PATCH][RESEND] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
+Date: Thu, 22 Mar 2012 07:39:06 -0700
+Message-ID: <4F6B398A.8040703@samsung.com>
+References: <201203202120.45806.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-2; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:56952 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755851Ab2CVOIa (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:54198 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751335Ab2CVOjM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Mar 2012 10:08:30 -0400
-Received: by gghe5 with SMTP id e5so1760308ggh.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Mar 2012 07:08:29 -0700 (PDT)
-In-Reply-To: <074401cd074f$c2946b90$47bd42b0$%szyprowski@samsung.com>
+	Thu, 22 Mar 2012 10:39:12 -0400
+Received: by ghrr11 with SMTP id r11so1790851ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Mar 2012 07:39:12 -0700 (PDT)
+In-Reply-To: <201203202120.45806.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>
 
-On 03/21/12 03:45, Marek Szyprowski wrote:
-> Hello,
+On 03/20/12 13:20, Heiko St=FCbner wrote:
+> From: Maurus Cuelenaere<mcuelenaere@gmail.com>
 >
-> On Wednesday, March 21, 2012 10:14 AM Thomas Abraham wrote:
+> When selecting SAMSUNG_PM_DEBUG, it complains about a missing printas=
+cii()
+> function if you do not select DEBUG_LL, so make the former select the=
+ latter.
 >
->> On 14 March 2012 20:12, Kukjin Kim<kgene.kim@samsung.com>  wrote:
->>> Actually, the base address of uart is different between EXYNOS4
->>> and EXYNOS5 and this patch enables to support uart for EXYNOS4
->>> and EXYNOS5 SoCs at runtime.
->>>
->>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->>> ---
->>
->> [...]
->>
->>> diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch/arm/mach-
->> exynos/include/mach/debug-macro.S
->>> index 6cacf16..6c857ff 100644
->>> --- a/arch/arm/mach-exynos/include/mach/debug-macro.S
->>> +++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
->>> @@ -21,8 +21,13 @@
->>>          */
->>>
->>>         .macro addruart, rp, rv, tmp
->>> -               ldr     \rp, = S3C_PA_UART
->>> -               ldr     \rv, = S3C_VA_UART
->>> +               mov     \rp, #0x10000000
->>
->> This is physical address of Exynos4/5 CPUID register which cannot be
->> used here. And virtual address S5P_VA_CPUID also cannot be used here
->> since this will be called before paging_init when earlyprintk boot
->> param is used. So, with this change, earlyprintk does not work for
->> both Exynos4 and Exynos5.
+> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
+> Acked-by: Heiko Stuebner<heiko@sntech.de>
+> ---
+> This was originally sent in september 2010, but seems to have been fo=
+rgotten.
+> As this problem has bitten me today, here it is again.
 >
-> I confirm, printascii freeze the system on EXYNOS4 after that patch,
-> tested on Exynos4210 Nuri board.
->
-Hi,
-
-I think, it can be solved with following and if no problems, it will be 
-fixed during v3.4-rcX.
-
-diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S 
-b/arch/arm/mach-exynos/in
-index 6c857ff..a865417 100644
---- a/arch/arm/mach-exynos/include/mach/debug-macro.S
-+++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
-@@ -21,10 +21,10 @@
-          */
-
-         .macro addruart, rp, rv, tmp
--               mov     \rp, #0x10000000
--               ldr     \rp, [\rp, #0x0]
--               and     \rp, \rp, #0xf00000
--               teq     \rp, #0x500000          @@ EXYNOS5
-+               mrc     p15, 0, \tmp, c0, c0, 0
-+               and     \tmp, \tmp, #0xf0
-+               teq     \tmp, #0xf0             @@ A15
-+
-                 ldreq   \rp, =EXYNOS5_PA_UART
-                 movne   \rp, #EXYNOS4_PA_UART   @@ EXYNOS4
-                 ldr     \rv, =S3C_VA_UART
-
+Yeah, missed. Looks good to me and will apply.
 
 Thanks.
 
@@ -92,3 +45,21 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+>   arch/arm/plat-samsung/Kconfig |    1 +
+>   1 files changed, 1 insertions(+), 0 deletions(-)
+>
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kc=
+onfig
+> index 6a2abe6..ec84c1a 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -302,6 +302,7 @@ comment "Power management"
+>   config SAMSUNG_PM_DEBUG
+>   	bool "S3C2410 PM Suspend debug"
+>   	depends on PM
+> +	select DEBUG_LL
+>   	help
+>   	  Say Y here if you want verbose debugging from the PM Suspend and
+>   	  Resume code. See<file:Documentation/arm/Samsung-S3C24XX/Suspend.=
+txt>
