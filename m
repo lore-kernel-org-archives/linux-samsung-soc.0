@@ -1,49 +1,47 @@
-From: Ebin <ebin@ritesourcellc.com>
-Subject: Emulating S3C6410 using qemu
-Date: Thu, 22 Mar 2012 09:23:41 +0000 (UTC)
-Message-ID: <loom.20120322T094359-501@post.gmane.org>
+From: Madhvapathi Sriram <Madhvapathi.Sriram@csr.com>
+Subject: Suspend/Resume issues on s3c6410
+Date: Thu, 22 Mar 2012 12:02:41 +0000
+Message-ID: <AAD401B65941D44692B7183E6577180803590E84@banasiexm01.ASIA.ROOT.PRI>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from plane.gmane.org ([80.91.229.3]:37234 "EHLO plane.gmane.org"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S964916Ab2CVJaH (ORCPT
+Received: from cluster-g.mailcontrol.com ([208.87.233.190]:34427 "EHLO
+	cluster-g.mailcontrol.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932152Ab2CVMDT convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 22 Mar 2012 05:30:07 -0400
-Received: from list by plane.gmane.org with local (Exim 4.69)
-	(envelope-from <glks-linux-samsung-soc@m.gmane.org>)
-	id 1SAeLN-00065v-Dw
-	for linux-samsung-soc@vger.kernel.org; Thu, 22 Mar 2012 10:30:05 +0100
-Received: from ABTS-KK-dynamic-224.152.166.122.airtelbroadband.in ([ABTS-KK-dynamic-224.152.166.122.airtelbroadband.in])
-        by main.gmane.org with esmtp (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Mar 2012 10:30:05 +0100
-Received: from ebin by ABTS-KK-dynamic-224.152.166.122.airtelbroadband.in with local (Gmexim 0.1 (Debian))
-        id 1AlnuQ-0007hv-00
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Mar 2012 10:30:05 +0100
+	Thu, 22 Mar 2012 08:03:19 -0400
+Received: from banasiexc02.ASIA.ROOT.PRI ([202.80.51.114])
+	by rly17g.srv.mailcontrol.com (MailControl) with ESMTP id q2MC2DS8005205
+	(version=TLSv1/SSLv3 cipher=AES128-SHA bits=128 verify=FAIL)
+	for <linux-samsung-soc@vger.kernel.org>; Thu, 22 Mar 2012 12:03:15 GMT
+Content-Language: en-US
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
+To: "'linux-samsung-soc@vger.kernel.org'" <linux-samsung-soc@vger.kernel.org>
 
-Hi all, i am new to the embedded linux field.
-I am trying to emulate Real6410-s3c6410 board using qemu. I am using the linux 
-kernel version-2.6.28.6 and toolchain-gcc version 4.3.2 (Sourcery G++ Lite 
-2008q3-72 which came with the development board cd.
+Hi,
 
-I compiled qemu for arm and configured the kernel for arm system type-Samsung 
-S3C64XX using menuconfig command and compiled it to make the zImage. When i 
-checked the qemu-arm supported machines, i couldn't see supported machine for 
-s3c6410. so i used versatilepb machine using command :qemu-system-arm -M 
-versatilepb -m 128M -kernel zImage. But when i test this image on qemu it shows 
-error message-
- qemu: fatal: Trying to execute code outside RAM or ROM at 0x50008000 
-R00=00000000 R01=00000183 R02=00000100 R03=00000000 R04=00000000 R05=00000000 
-R06=00000000 R07=00000000 R08=00000000 R09=00000000 R10=00000000 R11=00000000 
-R12=00000000 R13=00000000 R14=00000000 R15=50008000 PSR=400001d3 -Z-- A svc32 
-Aborted.
-Can you suggest a method to solve this, and i would like to know whether it is 
-possible to emulate S3C6410 on qemu?
+I have been trying to get past the un-resume-able state of the s3c6410 on my board, but to no avail.
+I have been trying various things:
+1. Trying to get it through the EINT sources (GPN4 through 11) but the CPU just does not wake up.
+2. Trying to get it through the RTC (which was an arduous task - the driver had to go through changes for IRQs registering etc,  and then I found them on the post too) but looks like RTC cannot wake up the CPU
 
-Thanks,
-Ebin.
+Posting at [1] and [2] yielded no results.
+However, looking at [3] gives me an impression that things are pretty much ok on 6410. The board specific issues could be present.
+Anyone has an idea as to what should I look into? - I am very new to S3c6410 and would need some pointers. BTW I am using a pretty old kernel version -2.6.35.
+
+[1] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg10070.html
+[2] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg10050.html
+[3] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg00960.html
+
+Thanks in advance for any pointers.
+
+Regards,
+Madhvapathi Sriram
+
+
+
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+More information can be found at www.csr.com. Follow CSR on Twitter at http://twitter.com/CSR_PLC and read our blog at www.csr.com/blog
