@@ -1,57 +1,94 @@
-From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
-Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
-Date: Wed, 21 Mar 2012 20:30:32 +0000
-Message-ID: <20120321203032.GQ3226@opensource.wolfsonmicro.com>
-References: <1332357113-2973-1-git-send-email-k.lewandowsk@samsung.com>
- <1332357113-2973-3-git-send-email-k.lewandowsk@samsung.com>
+From: David Gibson <david@gibson.dropbear.id.au>
+Subject: Re: Device node for a controller with two interrupt parents
+Date: Thu, 22 Mar 2012 12:05:24 +1100
+Message-ID: <20120322010524.GI15997@truffala.fritz.box>
+References: <CAJuYYwT1uKaUDuh98i4B286az-_26YCN31UXXFWsP=_M-UL_vg@mail.gmail.com>
+ <20120321034151.GC15997@truffala.fritz.box>
+ <CAJuYYwSv9aoCWNJ9=m9LjaaGqvzEA07SHt6wT56HTNLQdkNU2Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="z87VqPJ/HsYrR2WM"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ozlabs.org ([203.10.76.45]:48021 "EHLO ozlabs.org"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1754967Ab2CVBY3 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 21 Mar 2012 21:24:29 -0400
 Content-Disposition: inline
-In-Reply-To: <1332357113-2973-3-git-send-email-k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+In-Reply-To: <CAJuYYwSv9aoCWNJ9=m9LjaaGqvzEA07SHt6wT56HTNLQdkNU2Q@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>
 
-
---z87VqPJ/HsYrR2WM
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 21, 2012 at 08:11:52PM +0100, Karol Lewandowski wrote:
-> Reorganize driver a bit to better handle device tree-based systems:
+On Wed, Mar 21, 2012 at 07:05:26PM +0530, Thomas Abraham wrote:
+> Hi David,
 >=20
->  - move machine type to driver's private structure instead of
->    quering platform device variants in runtime
+> On 21 March 2012 09:11, David Gibson <david@gibson.dropbear.id.au> wr=
+ote:
+> > On Wed, Mar 21, 2012 at 07:55:43AM +0530, Thomas Abraham wrote:
+> >> Hi,
+> >>
+> >> Exynos5 includes a gpio wakeup interrupt controller that generates=
+ 32
+> >> interrupts. The first 16 interrupts are routed to the interrupt
+> >> combiner controller. The last 16 are muxed into one interrupt and =
+this
+> >> interrupt line is connected to the GIC interrupt controller.
+> >>
+> >> So, the wakeup interrupt controller node in device tree requires t=
+wo
+> >> interrupt parents. I do not know how to handle this. Any suggestio=
+ns
+> >> will be very helpful.
+> >
+> > This has occurred before, for example on the MAL device on 440EP (s=
+ee
+> > the bamboo board dts for example). =A0The semi-standard approach is=
+ to
+> > make the node an interrupt-nexus for itself. =A0That is in the node=
+'s
+> > interrupts property, just list 0..N giving as many interrupts as yo=
+u
+> > need. =A0Set the node's interrupt-parent to point to the node itsel=
+f,
+> > then add interrupt-map and interrupt-map-mask properties which rema=
+p
+> > those interrupts 0..N to the correct interrupts on the actual
+> > interrupt controllers. =A0Each entry in the interrupt map specifies=
+ an
+> > interrupt parent phandle, so you can distribute the irqs to multipl=
+e
+> > interrupt controllers that way.
 >=20
->  - replace s3c24xx_i2c_type enum with unsigned int that holds
->    bitmask with revision-specific quirks
+> Thanks for your suggestion and pointing out an example. I tried this
+> approach for Exynos4 and Exynos5. It mostly works but there are two
+> issues here.
+>=20
+> 1. In the Exynos5 case, the wakeup interrupt controller (which has tw=
+o
+> separate interrupt parents - gic and combiner) is itself a interrupt
+> controller and has the 'interrupt-controller' property. So
+> of_irq_map_raw() function does not process the interrupt-map in the
+> wakeup interrupt controller device node. I did the following change t=
+o
+> get past this but I am not sure if this the correct thing to do.
 
-Reviewed-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+That might work, but it obviously won't help you with existing
+kernels.  I think a better idea is not to try to make the
+interrupt-controller and interrupt-nexus the same node in this case.
+Instead add an intermediate nexus node to remap the
+interrupt-controller's output interrupts into it's various parents.
+You could make this fake nexus node a subnode of the interrupt
+controller itself.
 
---z87VqPJ/HsYrR2WM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+It's a bit of a hack, but it should work with existing parsing code,
+and I think it's better than inventing a whole new convention to cover
+this case.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPajphAAoJEBus8iNuMP3dMwwP/jgjBp+gspHKZZlU3EX9OZzl
-9shg8+4X22tppGQziiCZkqeWmaaHExVyFBvBIcLvpb1WRcroJafLEFqrC5O/AOKr
-C2G3S16Q3NYvrGShGVqxU6M1FSges8v4y0PKkClSzcdot8FsAKr035aFw19LblRv
-3HlZhiKQTNDivzVW31UkmkKMf+Kvqg3eJmwyT6RXwkRMEP1AmjXLSXxDfafFGFOJ
-qN7krly9N8A/vBZOFiAC6TS8zepGIYR3lwU/9rSYyMeDprEgcEayL7FwoTKAawQC
-MCl1ZvRolJViIkrhivYk/sGXo0f7144q1Vf5324qiVl7Tjh57hYxwxhynCXDJVUB
-P0IkBXKq+3fcskvTsLkbJy9r0EfnHD3AQWOziQHv4dnvwnZUC58nYgtq2lzIyL4/
-KzpqjGc+Kgw3VIfzEAyBIiNo+LVyVJfugL22169CZZrs7mOxcVkOG/Tbt27tei2w
-S3k01hLSmaWCotgAcwNzTLh7wqaSxs5RAp8TRcXCvcQhgCvgNnYpHo+3vVrutfHA
-+szVZl6ZEf58RLm9ehpI/7bp5G8cWgJXJaYv7Z4mv6KrAIBVQzsKVcCLvp2eaZfS
-Oq3RA8j6eLTjAKxoz33ABY9daAPYaRZlDN3cgTiS4+HXk40UF63uLvjGs9D+FJAY
-HaCuFRAm1MngMv1Y8l+l
-=ANMQ
------END PGP SIGNATURE-----
-
---z87VqPJ/HsYrR2WM--
+--=20
+David Gibson			| I'll have my music baroque, and my code
+david AT gibson.dropbear.id.au	| minimalist, thank you.  NOT _the_ _oth=
+er_
+				| _way_ _around_!
+http://www.ozlabs.org/~dgibson
