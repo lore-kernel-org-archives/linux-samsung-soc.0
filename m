@@ -1,159 +1,227 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: Device node for a controller with two interrupt parents
-Date: Fri, 23 Mar 2012 16:18:09 +0530
-Message-ID: <CAJuYYwQapeMthSxSgpaJ5fQNQnyvducgGyi-75WrjZut6akh+w@mail.gmail.com>
-References: <CAJuYYwT1uKaUDuh98i4B286az-_26YCN31UXXFWsP=_M-UL_vg@mail.gmail.com>
-	<20120321034151.GC15997@truffala.fritz.box>
-	<CAJuYYwSv9aoCWNJ9=m9LjaaGqvzEA07SHt6wT56HTNLQdkNU2Q@mail.gmail.com>
-	<20120321151321.34A813E095F@localhost>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCHv7 8/9] ARM: dma-mapping: use alloc, mmap, free from dma_ops
+Date: Fri, 23 Mar 2012 13:12:16 +0100
+Message-ID: <08af01cd08ee$2fd04770$8f70d650$%szyprowski@samsung.com>
+References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com>
+ <1330527862-16234-9-git-send-email-m.szyprowski@samsung.com>
+ <4F6B2CDE.4020601@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:57245 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755799Ab2CWKsK convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 23 Mar 2012 06:48:10 -0400
-Received: by vbbff1 with SMTP id ff1so1407202vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 23 Mar 2012 03:48:09 -0700 (PDT)
-In-Reply-To: <20120321151321.34A813E095F@localhost>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
+Return-path: <linux-arch-owner@vger.kernel.org>
+In-reply-to: <4F6B2CDE.4020601@gmail.com>
+Content-language: pl
+Sender: linux-arch-owner@vger.kernel.org
+To: 'Subash Patel' <subashrp@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, 'Joerg Roedel' <joro@8bytes.org>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Chunsang Jeong' <chunsang.jeong@linaro.org>, 'Krishna Reddy' <vdumpa@nvidia.com>, 'KyongHo Cho' <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Benjamin Herrenschmidt' <benh@kernel.crashing.org>, 'Konrad Rzeszutek Wilk' <konrad.wilk@oracle.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: David Gibson <david@gibson.dropbear.id.au>, devicetree-discuss <devicetree-discuss@lists.ozlabs.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Herring <rob.herring@calxeda.com>
 
-Hi Grant,
+Hello,
 
-On 21 March 2012 20:43, Grant Likely <grant.likely@secretlab.ca> wrote:
-> Okay, so you're saying there are three important aspects to this
-> device:
-> 1) it terminates interrupts from other devices (therefore needs an
-> =A0 interrupt controller driver)
-> 2) it passes some interrupts through untouched (interrupt controller
-> =A0 driver doesn't need to touch them; it directly raises an irq on t=
-he
-> =A0 gic or combiner)
-> 3) It is able generate interrupt signals on it's own (independent of
-> =A0 any attached devices)
->
-> Do I understand correctly?
+On Thursday, March 22, 2012 2:45 PM Subash Patel wrote:
 
-#1 is applicable but not #2 and #3 (if I have interpreted the above
-correctly). The wakeup interrupt controller looks for an edge or level
-on pins (which are connected to external devices) and generates a
-interrupt (to gic or combiner) when the set condition on that pin is
-found (edge or level).
+> I have found out an issue with dma_mmap_writecombine() and coherent devices.
+> 
+> On 02/29/2012 08:34 PM, Marek Szyprowski wrote:
+> > This patch converts dma_alloc/free/mmap_{coherent,writecombine}
+> > functions to use generic alloc/free/mmap methods from dma_map_ops
+> > structure. A new DMA_ATTR_WRITE_COMBINE DMA attribute have been
+> > introduced to implement writecombine methods.
+> >
+> > Signed-off-by: Marek Szyprowski<m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> > ---
+> >   arch/arm/common/dmabounce.c        |    3 +
+> >   arch/arm/include/asm/dma-mapping.h |  107 ++++++++++++++++++++++++++----------
+> >   arch/arm/mm/dma-mapping.c          |   53 ++++++------------
+> >   3 files changed, 98 insertions(+), 65 deletions(-)
+> >
+> > diff --git a/arch/arm/common/dmabounce.c b/arch/arm/common/dmabounce.c
+> > index 119f487..dbae5ad 100644
+> > --- a/arch/arm/common/dmabounce.c
+> > +++ b/arch/arm/common/dmabounce.c
+> > @@ -449,6 +449,9 @@ static int dmabounce_set_mask(struct device *dev, u64 dma_mask)
+> >   }
+> >
+> >   static struct dma_map_ops dmabounce_ops = {
+> > +	.alloc			= arm_dma_alloc,
+> > +	.free			= arm_dma_free,
+> > +	.mmap			= arm_dma_mmap,
+> >   	.map_page		= dmabounce_map_page,
+> >   	.unmap_page		= dmabounce_unmap_page,
+> >   	.sync_single_for_cpu	= dmabounce_sync_for_cpu,
+> > diff --git a/arch/arm/include/asm/dma-mapping.h b/arch/arm/include/asm/dma-mapping.h
+> > index 266cba6..4342b75 100644
+> > --- a/arch/arm/include/asm/dma-mapping.h
+> > +++ b/arch/arm/include/asm/dma-mapping.h
+> > @@ -5,6 +5,7 @@
+> >
+> >   #include<linux/mm_types.h>
+> >   #include<linux/scatterlist.h>
+> > +#include<linux/dma-attrs.h>
+> >   #include<linux/dma-debug.h>
+> >
+> >   #include<asm-generic/dma-coherent.h>
+> > @@ -110,68 +111,115 @@ static inline void dma_free_noncoherent(struct device *dev, size_t
+> size,
+> >   extern int dma_supported(struct device *dev, u64 mask);
+> >
+> >   /**
+> > - * dma_alloc_coherent - allocate consistent memory for DMA
+> > + * arm_dma_alloc - allocate consistent memory for DMA
+> >    * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
+> >    * @size: required memory size
+> >    * @handle: bus-specific DMA address
+> > + * @attrs: optinal attributes that specific mapping properties
+> >    *
+> > - * Allocate some uncached, unbuffered memory for a device for
+> > - * performing DMA.  This function allocates pages, and will
+> > - * return the CPU-viewed address, and sets @handle to be the
+> > - * device-viewed address.
+> > + * Allocate some memory for a device for performing DMA.  This function
+> > + * allocates pages, and will return the CPU-viewed address, and sets @handle
+> > + * to be the device-viewed address.
+> >    */
+> > -extern void *dma_alloc_coherent(struct device *, size_t, dma_addr_t *, gfp_t);
+> > +extern void *arm_dma_alloc(struct device *dev, size_t size, dma_addr_t *handle,
+> > +			   gfp_t gfp, struct dma_attrs *attrs);
+> > +
+> > +#define dma_alloc_coherent(d,s,h,f) dma_alloc_attrs(d,s,h,f,NULL)
+> > +
+> > +static inline void *dma_alloc_attrs(struct device *dev, size_t size,
+> > +				       dma_addr_t *dma_handle, gfp_t flag,
+> > +				       struct dma_attrs *attrs)
+> > +{
+> > +	struct dma_map_ops *ops = get_dma_ops(dev);
+> > +	void *cpu_addr;
+> > +	BUG_ON(!ops);
+> > +
+> > +	cpu_addr = ops->alloc(dev, size, dma_handle, flag, attrs);
+> > +	debug_dma_alloc_coherent(dev, size, *dma_handle, cpu_addr);
+> > +	return cpu_addr;
+> > +}
+> >
+> >   /**
+> > - * dma_free_coherent - free memory allocated by dma_alloc_coherent
+> > + * arm_dma_free - free memory allocated by arm_dma_alloc
+> >    * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
+> >    * @size: size of memory originally requested in dma_alloc_coherent
+> >    * @cpu_addr: CPU-view address returned from dma_alloc_coherent
+> >    * @handle: device-view address returned from dma_alloc_coherent
+> > + * @attrs: optinal attributes that specific mapping properties
+> >    *
+> >    * Free (and unmap) a DMA buffer previously allocated by
+> > - * dma_alloc_coherent().
+> > + * arm_dma_alloc().
+> >    *
+> >    * References to memory and mappings associated with cpu_addr/handle
+> >    * during and after this call executing are illegal.
+> >    */
+> > -extern void dma_free_coherent(struct device *, size_t, void *, dma_addr_t);
+> > +extern void arm_dma_free(struct device *dev, size_t size, void *cpu_addr,
+> > +			 dma_addr_t handle, struct dma_attrs *attrs);
+> > +
+> > +#define dma_free_coherent(d,s,c,h) dma_free_attrs(d,s,c,h,NULL)
+> > +
+> > +static inline void dma_free_attrs(struct device *dev, size_t size,
+> > +				     void *cpu_addr, dma_addr_t dma_handle,
+> > +				     struct dma_attrs *attrs)
+> > +{
+> > +	struct dma_map_ops *ops = get_dma_ops(dev);
+> > +	BUG_ON(!ops);
+> > +
+> > +	debug_dma_free_coherent(dev, size, cpu_addr, dma_handle);
+> > +	ops->free(dev, size, cpu_addr, dma_handle, attrs);
+> > +}
+> >
+> >   /**
+> > - * dma_mmap_coherent - map a coherent DMA allocation into user space
+> > + * arm_dma_mmap - map a coherent DMA allocation into user space
+> >    * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
+> >    * @vma: vm_area_struct describing requested user mapping
+> >    * @cpu_addr: kernel CPU-view address returned from dma_alloc_coherent
+> >    * @handle: device-view address returned from dma_alloc_coherent
+> >    * @size: size of memory originally requested in dma_alloc_coherent
+> > + * @attrs: optinal attributes that specific mapping properties
+> >    *
+> >    * Map a coherent DMA buffer previously allocated by dma_alloc_coherent
+> >    * into user space.  The coherent DMA buffer must not be freed by the
+> >    * driver until the user space mapping has been released.
+> >    */
+> > -int dma_mmap_coherent(struct device *, struct vm_area_struct *,
+> > -		void *, dma_addr_t, size_t);
+> > +extern int arm_dma_mmap(struct device *dev, struct vm_area_struct *vma,
+> > +			void *cpu_addr, dma_addr_t dma_addr, size_t size,
+> > +			struct dma_attrs *attrs);
+> >
+> > +#define dma_mmap_coherent(d,v,c,h,s) dma_mmap_attrs(d,v,c,h,s,NULL)
+> >
+> > -/**
+> > - * dma_alloc_writecombine - allocate writecombining memory for DMA
+> > - * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
+> > - * @size: required memory size
+> > - * @handle: bus-specific DMA address
+> > - *
+> > - * Allocate some uncached, buffered memory for a device for
+> > - * performing DMA.  This function allocates pages, and will
+> > - * return the CPU-viewed address, and sets @handle to be the
+> > - * device-viewed address.
+> > - */
+> > -extern void *dma_alloc_writecombine(struct device *, size_t, dma_addr_t *,
+> > -		gfp_t);
+> > +static inline int dma_mmap_attrs(struct device *dev, struct vm_area_struct *vma,
+> > +				  void *cpu_addr, dma_addr_t dma_addr,
+> > +				  size_t size, struct dma_attrs *attrs)
+> > +{
+> > +	struct dma_map_ops *ops = get_dma_ops(dev);
+> > +	BUG_ON(!ops);
+> > +	return ops->mmap(dev, vma, cpu_addr, dma_addr, size, attrs);
+> > +}
+> >
+> > -#define dma_free_writecombine(dev,size,cpu_addr,handle) \
+> > -	dma_free_coherent(dev,size,cpu_addr,handle)
+> > +static inline void *dma_alloc_writecombine(struct device *dev, size_t size,
+> > +				       dma_addr_t *dma_handle, gfp_t flag)
+> > +{
+> > +	DEFINE_DMA_ATTRS(attrs);
+> > +	dma_set_attr(DMA_ATTR_WRITE_COMBINE,&attrs);
+> > +	return dma_alloc_attrs(dev, size, dma_handle, flag,&attrs);
+> > +}
+> >
+> > -int dma_mmap_writecombine(struct device *, struct vm_area_struct *,
+> > -		void *, dma_addr_t, size_t);
+> > +static inline void dma_free_writecombine(struct device *dev, size_t size,
+> > +				     void *cpu_addr, dma_addr_t dma_handle)
+> > +{
+> > +	DEFINE_DMA_ATTRS(attrs);
+> > +	dma_set_attr(DMA_ATTR_WRITE_COMBINE,&attrs);
+> > +	return dma_free_attrs(dev, size, cpu_addr, dma_handle,&attrs);
+> > +}
+> > +
+> > +static inline int dma_mmap_writecombine(struct device *dev, struct vm_area_struct *vma,
+> > +		      void *cpu_addr, dma_addr_t dma_addr, size_t size)
+> > +{
+> > +	DEFINE_DMA_ATTRS(attrs);
+> > +	dma_set_attr(DMA_ATTR_WRITE_COMBINE,&attrs);
+> > +	return dma_mmap_attrs(dev, vma, cpu_addr, dma_addr, size,&attrs);
+> > +}
+> >
+> For devices, which do not have a coherent/reserved pool, then the
+> allocation in function __dma_alloc() happens, and the memory will be
+> remapped by calling __dma_alloc_remap(). In the above function,
+> arm_vmregion_find() will be called, and it succeeds to get the map and
+> it will be mapped to used.
+> 
+> This has issues with devices with coherent memory. If we have any device
+> which has declared coherent memory, then the allocation happens from
+> per-device coherent area. Eg: Exynos MFC which declares:
+> s5p_mfc_reserve_mem(). In that case, dma_mmap_writecombine() fails, and
+> hence vb2_dc_mmap() fails as well.
 
->
-> Your patch above solves the problem for #2 above, but it breaks #1
-> because interrupts from external devices can no longer be terminated
-> on the wakeup controller node (they'll always get passed through).
+Right, I missed that case. Now I prepared a fix, I will send the patches in a minute. 
+Please check if it works for you.
 
-Ok.
-
->
-> --- Possible solution 1 ---
-> If other devices *don't* use the wakeup node as their interrupt
-> parent, then you should be able to simply drop the
-> interrupt-controller property and make the other devices directly
-> reference the gic and combiner.
-
-Other devices use wakeup node as interrupt controller. The wakeup
-interrupt controller supports masking, unmasking and prioritization of
-the wakeup interrupts. The interrupt-controller property can be
-dropped but then of_irq_init() function cannot be used.
-
->
-> --- Possible solution 2 ---
-> Split the interrupt map into a separate node:
->
->
-> =A0 =A0 =A0 =A0wakeup_eint: interrupt-controller@11000000 {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0compatible =3D "samsung,exynos4210-wak=
-eup-eint";
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0reg =3D <0x11000000 0x1000>;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0interrupt-controller;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0#interrupt-cells =3D <1>;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0interrupt-parent =3D <&wakeup_map>;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0interrupts =3D <0 1 2 3 f 5 6 7 8 9 10=
- 11 12 13 14 15 16>;
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0wakeup_map: interrupt-map {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0#interrupt-cells =3D <=
-1>;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0#address-cells =3D <0>=
-;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0interrupt-map =3D <0 &=
-gic 0 16 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<1 &gic 0 17 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<2 &gic 0 18 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<3 &gic 0 19 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<4 &gic 0 20 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<5 &gic 0 21 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<6 &gic 0 22 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<7 &gic 0 23 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<8 &gic 0 24 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<9 &gic 0 25 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<10 &gic 0 26 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<11 &gic 0 27 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<12 &gic 0 28 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<13 &gic 0 29 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<14 &gic 0 30 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<15 &gic 0 31 0>,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0<16 &combiner 2 4>;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0};
-> =A0 =A0 =A0 =A0};
-
-I have tested with this and it works but of_irq_init() function cannot
-be used because 'wakeup_map' is set as interrupt parent and
-'wakeup_map' is not a interrupt-controller. So of_irq_init() does not
-invoke the initialization function for the wakeup node. If the machine
-init code explicitly looks for this node and calls the corresponding
-initialization function, it works fine.
-
->
-> --- possible solution 3 ---
-> 'interrupts' just isn't sufficient for some devices; add a binding fo=
-r
-> a 'interrupts-multiparent' that can be used instead of 'interrupts'
-> and uses the format <phandle> <specifier> [<phandle> <specifier> [...=
-]].
-
-This would be the ideal case. In addition to this, the
-interrupt-parent property handling should be modified to support
-multiple parent phandles like <&parent1 [&parent2] [&parent3] ....>.
-This will be useful to extend the capability of of_irq_init() to
-handle interrupt-controller node with multiple interrupt parents.
-
->
-> I'm not opposed to this solution since it is a more natural binding
-> for multiparented interrupt controllers, but I won't commit to it
-> without feedback and agreement from Mitch, Ben, David Gibson, etc.
-
-Ok. For now, I will go ahead and use solution #2 which you and David
-have suggested. And correspondingly add explicit lookup of wakeup node
-and call to its initialization function in the machine init code.
-
-Thanks for your suggestions.
-
-Regards,
-Thomas.
-
-[...]
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
