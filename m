@@ -1,48 +1,80 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/2] arm: dma-mapping: use dma_mmap_from_coherent()
-Date: Fri, 23 Mar 2012 13:26:03 +0100
-Message-ID: <1332505563-17646-3-git-send-email-m.szyprowski@samsung.com>
-References: <08af01cd08ee$2fd04770$8f70d650$%szyprowski@samsung.com>
- <1332505563-17646-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <owner-linux-mm@kvack.org>
-In-reply-to: <1332505563-17646-1-git-send-email-m.szyprowski@samsung.com>
-Sender: owner-linux-mm@kvack.org
-To: linux-arm-kernel@lists.infradead.org, linaro-mm-sig@lists.linaro.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, linux-samsung-soc@vger.kernel.org, iommu@lists.linux-foundation.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Arnd Bergmann <arnd@arndb.de>, Joerg Roedel <joro@8bytes.org>, Russell King - ARM Linux <linux@arm.linux.org.uk>, Chunsang Jeong <chunsang.jeong@linaro.org>, Krishna Reddy <vdumpa@nvidia.com>, KyongHo Cho <pullip.cho@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Hiroshi Doyu <hdoyu@nvidia.com>, Subash Patel <subashrp@gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v5 0/2] ARM: Exynos: Add irq_domain and device tree support for
+ combiner
+Date: Sat, 24 Mar 2012 15:03:01 +0530
+Message-ID: <1332581583-16100-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:49783 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751445Ab2CXJ21 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 24 Mar 2012 05:28:27 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
+ 2010)) with ESMTP id <0M1D00GKPUBDC6G0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Mar 2012 18:28:25 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M1D00F07UB7HF90@mmp2.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 24 Mar 2012 18:28:25 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-Use dma_mmap_from_coherent() to fix broken mapping of the coherent buffers
-to userspace.
+Changes since v4:
+- In patch 2/2, removed the #ifdef CONFIF_OF around irq_of_parse_and_map() as
+  suggested by Grant Likely. Hence this patch series depends on the patch
+  with subject "of/irq: add empty irq_of_parse_and_map() for non-dt builds".
 
-Reported-by: Subash Patel <subashrp@gmail.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- arch/arm/mm/dma-mapping.c |    3 +++
- 1 files changed, 3 insertions(+), 0 deletions(-)
+- Rebased to the latest kgene/for-next branch which now includes support for
+  Exynos5. Since this patchset modifies portions of code that are common for
+  both Exynos4 and Exynos5, there are minor modifications in this patch series
+  to accommodate Exynos5 dt support as well.
 
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 6c24218..0cee054 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -511,6 +511,9 @@ int arm_dma_mmap(struct device *dev, struct vm_area_struct *vma,
- 			    pgprot_writecombine(vma->vm_page_prot) :
- 			    pgprot_dmacoherent(vma->vm_page_prot);
- 
-+	if (dma_mmap_from_coherent(dev, vma, cpu_addr, size, &ret))
-+		return ret;
-+
- 	c = arm_vmregion_find(&consistent_head, (unsigned long)cpu_addr);
- 	if (c) {
- 		unsigned long off = vma->vm_pgoff;
--- 
-1.7.1.569.g6f426
+- v4 of this patchset was acked by Grant Likely and Rob Herring. This patch
+  series (v5) has minor modifications over v4 to include Exynos5 support. Since
+  those modifications are minor (not related to irq_domain or dt functionality),
+  I am retaining the Ack from Grant and Rob for this series.
 
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Changes since v3:
+- In dt case, the use of fixed gic linux irq number to map the combiner
+  interrupt output is removed. This is replaced with the interrupt number
+  obtained from the gic irq domain. (Thanks to Rob Herring and Grant
+  Likely for this suggestion).
+- Split the patch into two parts - irq_domain and device tree support
+  addition.
+
+Changes since v2:
+- Rebased to Grant's irqdomain/next branch.
+
+Changes since v1:
+- Includes all changes suggested by Rob Herring.
+- Tested with SPARSE_IRQ enabled.
+
+This patchset adds irq_domain and device tree support for the Exynos Interrupt
+Combiner controller.
+
+The first patch adds a common irq domain for the interrupts managed by the
+interrupt combiners. All the instances of irq combiner reference the common irq
+domain for translating hardware interrupts to linux irq number.
+
+The second patch adds a interrupt specifier translator to support device tree
+based instantiation. It can translate interrupt specifiers for device nodes
+which use combiner as their interrupt parent.
+
+This patchset is based on
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git [for-next]
+
+with all patches merged from
+http://git.secretlab.ca/git/linux-2.6.git [irqdomain/next]
+
+Thomas Abraham (2):
+  ARM: Exynos: Add irq_domain support for interrupt combiner
+  ARM: Exynos: Add device tree support for interrupt combiner
+
+ .../bindings/arm/samsung/interrupt-combiner.txt    |   52 ++++++++
+ arch/arm/mach-exynos/common.c                      |  138 ++++++++++++++-----
+ 2 files changed, 153 insertions(+), 37 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
