@@ -1,269 +1,264 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 1/4] video: s3c-fb: move video interface timing out of
- window setup data
-Date: Sat, 24 Mar 2012 21:58:45 +0530
-Message-ID: <1332606528-32338-2-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v3 3/4] ARM: s3c64xx: Decouple lcd type from display controller
+ window data
+Date: Sat, 24 Mar 2012 21:58:47 +0530
+Message-ID: <1332606528-32338-4-git-send-email-thomas.abraham@linaro.org>
 References: <1332606528-32338-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:48431 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:48447 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754504Ab2CXQYa (ORCPT
+	with ESMTP id S1754504Ab2CXQYe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Mar 2012 12:24:30 -0400
+	Sat, 24 Mar 2012 12:24:34 -0400
 In-reply-to: <1332606528-32338-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-fbdev@vger.kernel.org
 Cc: FlorianSchandinat@gmx.de, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, augulis.darius@gmail.com, patches@linaro.org
 
-The video interface timing is independent of the window setup data.
-The resolution of the window can be smaller than that of the lcd
-panel to which the video data is output.
+The display controller window data should contain window configuration data
+for only one type of lcd panel. So, for real6410 and mini6410 boards, split
+the existing display controller window data, which contains window
+configuration data for two different types of lcd panels, into two seperate
+instances and register one of them depending on the type of the lcd panel
+detected at runtime.
 
-So move the video timing data from the per-window setup data to the
-platform specific section in the platform data. This also removes
-the restriction that atleast one window should have the same
-resolution as that of the panel attached.
+This is a prerequisite change for a subsequent commit that reorders the
+platform data of display controller by moving video interface timing out
+of window setup data.
 
-Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Darius Augulis <augulis.darius@gmail.com>
+Cc: Jingoo Han <jg1.han@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Acked-by: Jingoo Han <jg1.han@samsung.com>
 ---
- arch/arm/plat-samsung/include/plat/fb.h |    9 ++-
- drivers/video/s3c-fb.c                  |  112 +++++++++++++++++--------------
- 2 files changed, 67 insertions(+), 54 deletions(-)
+ arch/arm/mach-s3c64xx/mach-mini6410.c |   82 +++++++++++++++++---------------
+ arch/arm/mach-s3c64xx/mach-real6410.c |   82 +++++++++++++++++---------------
+ 2 files changed, 88 insertions(+), 76 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index 0fedf47..39d6bd7 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -24,15 +24,16 @@
- 
- /**
-  * struct s3c_fb_pd_win - per window setup data
-- * @win_mode: The display parameters to initialise (not for window 0)
-+ * @xres     : The window X size.
-+ * @yres     : The window Y size.
-  * @virtual_x: The virtual X size.
-  * @virtual_y: The virtual Y size.
-  */
- struct s3c_fb_pd_win {
--	struct fb_videomode	win_mode;
--
- 	unsigned short		default_bpp;
- 	unsigned short		max_bpp;
-+	unsigned short		xres;
-+	unsigned short		yres;
- 	unsigned short		virtual_x;
- 	unsigned short		virtual_y;
+diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+index c34c2ab..34f5195 100644
+--- a/arch/arm/mach-s3c64xx/mach-mini6410.c
++++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+@@ -151,41 +151,49 @@ static struct s3c2410_platform_nand mini6410_nand_info = {
+ 	.sets		= mini6410_nand_sets,
  };
-@@ -45,6 +46,7 @@ struct s3c_fb_pd_win {
-  * @default_win: default window layer number to be used for UI layer.
-  * @vidcon0: The base vidcon0 values to control the panel data format.
-  * @vidcon1: The base vidcon1 values to control the panel data output.
-+ * @vtiming: Video timing when connected to a RGB type panel.
-  * @win: The setup data for each hardware window, or NULL for unused.
-  * @display_mode: The LCD output display mode.
-  *
-@@ -58,6 +60,7 @@ struct s3c_fb_platdata {
- 	void	(*setup_gpio)(void);
  
- 	struct s3c_fb_pd_win	*win[S3C_FB_MAX_WIN];
-+	struct fb_videomode     *vtiming;
+-static struct s3c_fb_pd_win mini6410_fb_win[] = {
+-	{
+-		.win_mode	= {	/* 4.3" 480x272 */
+-			.left_margin	= 3,
+-			.right_margin	= 2,
+-			.upper_margin	= 1,
+-			.lower_margin	= 1,
+-			.hsync_len	= 40,
+-			.vsync_len	= 1,
+-			.xres		= 480,
+-			.yres		= 272,
+-		},
+-		.max_bpp	= 32,
+-		.default_bpp	= 16,
+-	}, {
+-		.win_mode	= {	/* 7.0" 800x480 */
+-			.left_margin	= 8,
+-			.right_margin	= 13,
+-			.upper_margin	= 7,
+-			.lower_margin	= 5,
+-			.hsync_len	= 3,
+-			.vsync_len	= 1,
+-			.xres		= 800,
+-			.yres		= 480,
+-		},
+-		.max_bpp	= 32,
+-		.default_bpp	= 16,
++static struct s3c_fb_pd_win mini6410_lcd_type0_fb_win = {
++	.win_mode	= {	/* 4.3" 480x272 */
++		.left_margin	= 3,
++		.right_margin	= 2,
++		.upper_margin	= 1,
++		.lower_margin	= 1,
++		.hsync_len	= 40,
++		.vsync_len	= 1,
++		.xres		= 480,
++		.yres		= 272,
+ 	},
++	.max_bpp	= 32,
++	.default_bpp	= 16,
+ };
  
- 	u32			 default_win;
- 
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index f310516..c94f40d 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -495,7 +495,6 @@ static int s3c_fb_set_par(struct fb_info *info)
- 	u32 alpha = 0;
- 	u32 data;
- 	u32 pagewidth;
--	int clkdiv;
- 
- 	dev_dbg(sfb->dev, "setting framebuffer parameters\n");
- 
-@@ -532,48 +531,9 @@ static int s3c_fb_set_par(struct fb_info *info)
- 	/* disable the window whilst we update it */
- 	writel(0, regs + WINCON(win_no));
- 
--	/* use platform specified window as the basis for the lcd timings */
--
--	if (win_no == sfb->pdata->default_win) {
--		clkdiv = s3c_fb_calc_pixclk(sfb, var->pixclock);
--
--		data = sfb->pdata->vidcon0;
--		data &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
--
--		if (clkdiv > 1)
--			data |= VIDCON0_CLKVAL_F(clkdiv-1) | VIDCON0_CLKDIR;
--		else
--			data &= ~VIDCON0_CLKDIR;	/* 1:1 clock */
--
--		/* write the timing data to the panel */
--
--		if (sfb->variant.is_2443)
--			data |= (1 << 5);
--
--		writel(data, regs + VIDCON0);
--
-+	if (win_no == sfb->pdata->default_win)
- 		s3c_fb_enable(sfb, 1);
- 
--		data = VIDTCON0_VBPD(var->upper_margin - 1) |
--		       VIDTCON0_VFPD(var->lower_margin - 1) |
--		       VIDTCON0_VSPW(var->vsync_len - 1);
--
--		writel(data, regs + sfb->variant.vidtcon);
--
--		data = VIDTCON1_HBPD(var->left_margin - 1) |
--		       VIDTCON1_HFPD(var->right_margin - 1) |
--		       VIDTCON1_HSPW(var->hsync_len - 1);
--
--		/* VIDTCON1 */
--		writel(data, regs + sfb->variant.vidtcon + 4);
--
--		data = VIDTCON2_LINEVAL(var->yres - 1) |
--		       VIDTCON2_HOZVAL(var->xres - 1) |
--		       VIDTCON2_LINEVAL_E(var->yres - 1) |
--		       VIDTCON2_HOZVAL_E(var->xres - 1);
--		writel(data, regs + sfb->variant.vidtcon + 8);
--	}
--
- 	/* write the buffer address */
- 
- 	/* start and end registers stride is 8 */
-@@ -1144,11 +1104,11 @@ static int __devinit s3c_fb_alloc_memory(struct s3c_fb *sfb,
- 
- 	dev_dbg(sfb->dev, "allocating memory for display\n");
- 
--	real_size = windata->win_mode.xres * windata->win_mode.yres;
-+	real_size = windata->xres * windata->yres;
- 	virt_size = windata->virtual_x * windata->virtual_y;
- 
- 	dev_dbg(sfb->dev, "real_size=%u (%u.%u), virt_size=%u (%u.%u)\n",
--		real_size, windata->win_mode.xres, windata->win_mode.yres,
-+		real_size, windata->xres, windata->yres,
- 		virt_size, windata->virtual_x, windata->virtual_y);
- 
- 	size = (real_size > virt_size) ? real_size : virt_size;
-@@ -1230,7 +1190,7 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- 				      struct s3c_fb_win **res)
- {
- 	struct fb_var_screeninfo *var;
--	struct fb_videomode *initmode;
-+	struct fb_videomode initmode;
- 	struct s3c_fb_pd_win *windata;
- 	struct s3c_fb_win *win;
- 	struct fb_info *fbinfo;
-@@ -1251,11 +1211,11 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- 	}
- 
- 	windata = sfb->pdata->win[win_no];
--	initmode = &windata->win_mode;
-+	initmode = *sfb->pdata->vtiming;
- 
- 	WARN_ON(windata->max_bpp == 0);
--	WARN_ON(windata->win_mode.xres == 0);
--	WARN_ON(windata->win_mode.yres == 0);
-+	WARN_ON(windata->xres == 0);
-+	WARN_ON(windata->yres == 0);
- 
- 	win = fbinfo->par;
- 	*res = win;
-@@ -1294,7 +1254,9 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- 	}
- 
- 	/* setup the initial video mode from the window */
--	fb_videomode_to_var(&fbinfo->var, initmode);
-+	initmode.xres = windata->xres;
-+	initmode.yres = windata->yres;
-+	fb_videomode_to_var(&fbinfo->var, &initmode);
- 
- 	fbinfo->fix.type	= FB_TYPE_PACKED_PIXELS;
- 	fbinfo->fix.accel	= FB_ACCEL_NONE;
-@@ -1339,6 +1301,53 @@ static int __devinit s3c_fb_probe_win(struct s3c_fb *sfb, unsigned int win_no,
- }
- 
- /**
-+ * s3c_fb_set_rgb_timing() - set video timing for rgb interface.
-+ * @sfb: The base resources for the hardware.
-+ *
-+ * Set horizontal and vertical lcd rgb interface timing.
-+ */
-+static void s3c_fb_set_rgb_timing(struct s3c_fb *sfb)
-+{
-+	struct fb_videomode *vmode = sfb->pdata->vtiming;
-+	void __iomem *regs = sfb->regs;
-+	int clkdiv;
-+	u32 data;
+-static struct s3c_fb_platdata mini6410_lcd_pdata __initdata = {
+-	.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
+-	.win[0]		= &mini6410_fb_win[0],
+-	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
+-	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++static struct s3c_fb_pd_win mini6410_lcd_type1_fb_win = {
++	.win_mode	= {	/* 7.0" 800x480 */
++		.left_margin	= 8,
++		.right_margin	= 13,
++		.upper_margin	= 7,
++		.lower_margin	= 5,
++		.hsync_len	= 3,
++		.vsync_len	= 1,
++		.xres		= 800,
++		.yres		= 480,
++	},
++	.max_bpp	= 32,
++	.default_bpp	= 16,
++};
 +
-+	if (!vmode->pixclock)
-+		s3c_fb_missing_pixclock(vmode);
-+
-+	clkdiv = s3c_fb_calc_pixclk(sfb, vmode->pixclock);
-+
-+	data = sfb->pdata->vidcon0;
-+	data &= ~(VIDCON0_CLKVAL_F_MASK | VIDCON0_CLKDIR);
-+
-+	if (clkdiv > 1)
-+		data |= VIDCON0_CLKVAL_F(clkdiv-1) | VIDCON0_CLKDIR;
-+	else
-+		data &= ~VIDCON0_CLKDIR;	/* 1:1 clock */
-+
-+	if (sfb->variant.is_2443)
-+		data |= (1 << 5);
-+	writel(data, regs + VIDCON0);
-+
-+	data = VIDTCON0_VBPD(vmode->upper_margin - 1) |
-+	       VIDTCON0_VFPD(vmode->lower_margin - 1) |
-+	       VIDTCON0_VSPW(vmode->vsync_len - 1);
-+	writel(data, regs + sfb->variant.vidtcon);
-+
-+	data = VIDTCON1_HBPD(vmode->left_margin - 1) |
-+	       VIDTCON1_HFPD(vmode->right_margin - 1) |
-+	       VIDTCON1_HSPW(vmode->hsync_len - 1);
-+	writel(data, regs + sfb->variant.vidtcon + 4);
-+
-+	data = VIDTCON2_LINEVAL(vmode->yres - 1) |
-+	       VIDTCON2_HOZVAL(vmode->xres - 1) |
-+	       VIDTCON2_LINEVAL_E(vmode->yres - 1) |
-+	       VIDTCON2_HOZVAL_E(vmode->xres - 1);
-+	writel(data, regs + sfb->variant.vidtcon + 8);
-+}
-+
-+/**
-  * s3c_fb_clear_win() - clear hardware window registers.
-  * @sfb: The base resources for the hardware.
-  * @win: The window to process.
-@@ -1481,15 +1490,14 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 		writel(0xffffff, regs + WKEYCON1);
- 	}
++static struct s3c_fb_platdata mini6410_lcd_pdata[] __initdata = {
++	{
++		.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
++		.win[0]		= &mini6410_lcd_type0_fb_win,
++		.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++		.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	}, {
++		.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
++		.win[0]		= &mini6410_lcd_type1_fb_win,
++		.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++		.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	},
++	{ },
+ };
  
-+	s3c_fb_set_rgb_timing(sfb);
-+
- 	/* we have the register setup, start allocating framebuffers */
+ static void mini6410_lcd_power_set(struct plat_lcd_data *pd,
+@@ -283,7 +291,7 @@ static void mini6410_parse_features(
+ 					"screen type already set\n", f);
+ 			} else {
+ 				int li = f - '0';
+-				if (li >= ARRAY_SIZE(mini6410_fb_win))
++				if (li >= ARRAY_SIZE(mini6410_lcd_pdata))
+ 					printk(KERN_INFO "MINI6410: '%c' out "
+ 						"of range LCD mode\n", f);
+ 				else {
+@@ -307,14 +315,12 @@ static void __init mini6410_machine_init(void)
+ 	/* Parse the feature string */
+ 	mini6410_parse_features(&features, mini6410_features_str);
  
- 	for (win = 0; win < fbdrv->variant.nr_windows; win++) {
- 		if (!pd->win[win])
- 			continue;
- 
--		if (!pd->win[win]->win_mode.pixclock)
--			s3c_fb_missing_pixclock(&pd->win[win]->win_mode);
+-	mini6410_lcd_pdata.win[0] = &mini6410_fb_win[features.lcd_index];
 -
- 		ret = s3c_fb_probe_win(sfb, win, fbdrv->win[win],
- 				       &sfb->windows[win]);
- 		if (ret < 0) {
-@@ -1623,6 +1631,8 @@ static int s3c_fb_resume(struct device *dev)
- 		shadow_protect_win(win, 0);
- 	}
+ 	printk(KERN_INFO "MINI6410: selected LCD display is %dx%d\n",
+-		mini6410_lcd_pdata.win[0]->win_mode.xres,
+-		mini6410_lcd_pdata.win[0]->win_mode.yres);
++		mini6410_lcd_pdata[features.lcd_index].win[0]->win_mode.xres,
++		mini6410_lcd_pdata[features.lcd_index].win[0]->win_mode.yres);
  
-+	s3c_fb_set_rgb_timing(sfb);
+ 	s3c_nand_set_platdata(&mini6410_nand_info);
+-	s3c_fb_set_platdata(&mini6410_lcd_pdata);
++	s3c_fb_set_platdata(&mini6410_lcd_pdata[features.lcd_index]);
+ 	s3c24xx_ts_set_platdata(NULL);
+ 
+ 	/* configure nCS1 width to 16 bits */
+diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
+index be2a9a2..21f91e5 100644
+--- a/arch/arm/mach-s3c64xx/mach-real6410.c
++++ b/arch/arm/mach-s3c64xx/mach-real6410.c
+@@ -117,41 +117,49 @@ static struct platform_device real6410_device_eth = {
+ 	},
+ };
+ 
+-static struct s3c_fb_pd_win real6410_fb_win[] = {
+-	{
+-		.win_mode	= {	/* 4.3" 480x272 */
+-			.left_margin	= 3,
+-			.right_margin	= 2,
+-			.upper_margin	= 1,
+-			.lower_margin	= 1,
+-			.hsync_len	= 40,
+-			.vsync_len	= 1,
+-			.xres		= 480,
+-			.yres		= 272,
+-		},
+-		.max_bpp	= 32,
+-		.default_bpp	= 16,
+-	}, {
+-		.win_mode	= {	/* 7.0" 800x480 */
+-			.left_margin	= 8,
+-			.right_margin	= 13,
+-			.upper_margin	= 7,
+-			.lower_margin	= 5,
+-			.hsync_len	= 3,
+-			.vsync_len	= 1,
+-			.xres		= 800,
+-			.yres		= 480,
+-		},
+-		.max_bpp	= 32,
+-		.default_bpp	= 16,
++static struct s3c_fb_pd_win real6410_lcd_type0_fb_win = {
++	.win_mode	= {	/* 4.3" 480x272 */
++		.left_margin	= 3,
++		.right_margin	= 2,
++		.upper_margin	= 1,
++		.lower_margin	= 1,
++		.hsync_len	= 40,
++		.vsync_len	= 1,
++		.xres		= 480,
++		.yres		= 272,
+ 	},
++	.max_bpp	= 32,
++	.default_bpp	= 16,
+ };
+ 
+-static struct s3c_fb_platdata real6410_lcd_pdata __initdata = {
+-	.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
+-	.win[0]		= &real6410_fb_win[0],
+-	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
+-	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++static struct s3c_fb_pd_win real6410_lcd_type1_fb_win = {
++	.win_mode	= {	/* 7.0" 800x480 */
++		.left_margin	= 8,
++		.right_margin	= 13,
++		.upper_margin	= 7,
++		.lower_margin	= 5,
++		.hsync_len	= 3,
++		.vsync_len	= 1,
++		.xres		= 800,
++		.yres		= 480,
++	},
++	.max_bpp	= 32,
++	.default_bpp	= 16,
++};
 +
- 	/* restore framebuffers */
- 	for (win_no = 0; win_no < S3C_FB_MAX_WIN; win_no++) {
- 		win = sfb->windows[win_no];
++static struct s3c_fb_platdata real6410_lcd_pdata[] __initdata = {
++	{
++		.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
++		.win[0]		= &real6410_lcd_type0_fb_win,
++		.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++		.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	}, {
++		.setup_gpio	= s3c64xx_fb_gpio_setup_24bpp,
++		.win[0]		= &real6410_lcd_type1_fb_win,
++		.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
++		.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
++	},
++	{ },
+ };
+ 
+ static struct mtd_partition real6410_nand_part[] = {
+@@ -264,7 +272,7 @@ static void real6410_parse_features(
+ 					"screen type already set\n", f);
+ 			} else {
+ 				int li = f - '0';
+-				if (li >= ARRAY_SIZE(real6410_fb_win))
++				if (li >= ARRAY_SIZE(real6410_lcd_pdata))
+ 					printk(KERN_INFO "REAL6410: '%c' out "
+ 						"of range LCD mode\n", f);
+ 				else {
+@@ -288,13 +296,11 @@ static void __init real6410_machine_init(void)
+ 	/* Parse the feature string */
+ 	real6410_parse_features(&features, real6410_features_str);
+ 
+-	real6410_lcd_pdata.win[0] = &real6410_fb_win[features.lcd_index];
+-
+ 	printk(KERN_INFO "REAL6410: selected LCD display is %dx%d\n",
+-		real6410_lcd_pdata.win[0]->win_mode.xres,
+-		real6410_lcd_pdata.win[0]->win_mode.yres);
++		real6410_lcd_pdata[features.lcd_index].win[0]->win_mode.xres,
++		real6410_lcd_pdata[features.lcd_index].win[0]->win_mode.yres);
+ 
+-	s3c_fb_set_platdata(&real6410_lcd_pdata);
++	s3c_fb_set_platdata(&real6410_lcd_pdata[features.lcd_index]);
+ 	s3c_nand_set_platdata(&real6410_nand_info);
+ 	s3c24xx_ts_set_platdata(NULL);
+ 
 -- 
 1.6.6.rc2
