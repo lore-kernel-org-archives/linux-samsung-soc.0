@@ -1,219 +1,222 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v5 2/2] ARM: Exynos: Add device tree support for interrupt
- combiner
-Date: Sat, 24 Mar 2012 15:03:03 +0530
-Message-ID: <1332581583-16100-3-git-send-email-thomas.abraham@linaro.org>
-References: <1332581583-16100-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v4 2/4] ARM: Exynos: Add irq_domain support for gpio wakeup
+ interrupts
+Date: Sat, 24 Mar 2012 15:11:13 +0530
+Message-ID: <1332582075-16204-3-git-send-email-thomas.abraham@linaro.org>
+References: <1332582075-16204-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:49801 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751445Ab2CXJ2a (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:20777 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753143Ab2CXJgh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 24 Mar 2012 05:28:30 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Sat, 24 Mar 2012 05:36:37 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M1D00GKPUBDC6G0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 24 Mar 2012 18:28:29 +0900 (KST)
+ 2010)) with ESMTP id <0M1D006OVUOYDWE0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 24 Mar 2012 18:36:36 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M1D00F07UB7HF90@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Sat, 24 Mar 2012 18:28:28 +0900 (KST)
-In-reply-to: <1332581583-16100-1-git-send-email-thomas.abraham@linaro.org>
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M1D00D9XUORGL60@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Sat, 24 Mar 2012 18:36:36 +0900 (KST)
+In-reply-to: <1332582075-16204-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
 
-Add device tree based instantiation of the interrupt combiner controller.
+Add a irq_domain for all the 32 gpio external wakeup interrupt sources.
+Since there are users of fixed linux irq numbers of the external wakeup
+interrupts, the legacy mapping is used for the irq domain. The fixups
+required to use irq domain based interrupt mapping is also included.
 
+Cc: Grant Likely <grant.likely@secretlab.ca>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 Acked-by: Rob Herring <rob.herring@calxeda.com>
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
 ---
- .../bindings/arm/samsung/interrupt-combiner.txt    |   52 +++++++++++++++++
- arch/arm/mach-exynos/common.c                      |   61 ++++++++++++++++++--
- 2 files changed, 108 insertions(+), 5 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
+ arch/arm/mach-exynos/common.c                 |   67 +++++++++++++++++--------
+ arch/arm/mach-exynos/include/mach/regs-gpio.h |    4 +-
+ 2 files changed, 48 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-new file mode 100644
-index 0000000..f2f2171
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-@@ -0,0 +1,52 @@
-+* Samsung Exynos Interrupt Combiner Controller
-+
-+Samsung's Exynos architecture includes a interrupt combiner controller which
-+can combine interrupt sources as a group and provide a single interrupt request
-+for the group. The interrupt request from each group are connected to a parent
-+interrupt controller, such as GIC in case of Exynos4210.
-+
-+The interrupt combiner controller consists of multiple combiners. Upto eight
-+interrupt sources can be connected to a combiner. The combiner outputs one
-+combined interrupt for its eight interrupt sources. The combined interrupt
-+is usually connected to a parent interrupt controller.
-+
-+A single node in the device tree is used to describe the interrupt combiner
-+controller module (which includes multiple combiners). A combiner in the
-+interrupt controller module shares config/control registers with other
-+combiners. For example, a 32-bit interrupt enable/disable config register
-+can accommodate upto 4 interrupt combiners (with each combiner supporting
-+upto 8 interrupt sources).
-+
-+Required properties:
-+- compatible: should be "samsung,exynos4210-combiner".
-+- interrupt-controller: Identifies the node as an interrupt controller.
-+- #interrupt-cells: should be <2>. The meaning of the cells are
-+	* First Cell: Combiner Group Number.
-+	* Second Cell: Interrupt number within the group.
-+- reg: Base address and size of interrupt combiner registers.
-+- interrupts: The list of interrupts generated by the combiners which are then
-+    connected to a parent interrupt controller. The format of the interrupt
-+    specifier depends in the interrupt parent controller.
-+
-+Optional properties:
-+- samsung,combiner-nr: The number of interrupt combiners supported. If this
-+  property is not specified, the default number of combiners is assumed
-+  to be 16.
-+- interrupt-parent: pHandle of the parent interrupt controller, if not
-+  inherited from the parent node.
-+
-+
-+Example:
-+
-+	The following is a an example from the Exynos4210 SoC dtsi file.
-+
-+	combiner:interrupt-controller@10440000 {
-+		compatible = "samsung,exynos4210-combiner";
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		reg = <0x10440000 0x1000>;
-+		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-+			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-+			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-+			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
-+	};
 diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 7518945..36b5837 100644
+index 3768efa..b69f36a 100644
 --- a/arch/arm/mach-exynos/common.c
 +++ b/arch/arm/mach-exynos/common.c
-@@ -21,6 +21,7 @@
- #include <linux/of_irq.h>
- #include <linux/export.h>
- #include <linux/irqdomain.h>
-+#include <linux/of_address.h>
+@@ -759,6 +759,9 @@ static DEFINE_SPINLOCK(eint_lock);
  
- #include <asm/proc-fns.h>
- #include <asm/exception.h>
-@@ -486,6 +487,30 @@ static void __init combiner_init_one(unsigned int combiner_nr,
- 		     base + COMBINER_ENABLE_CLEAR);
- }
+ static unsigned int eint0_15_data[16];
  
-+#ifdef CONFIG_OF
-+static int combiner_irq_domain_xlate(struct irq_domain *d,
-+		struct device_node *controller, const u32 *intspec,
-+		unsigned int intsize, unsigned long *out_hwirq,
-+		unsigned int *out_type)
-+{
-+	if (d->of_node != controller)
-+		return -EINVAL;
-+	if (intsize < 2)
-+		return -EINVAL;
-+	*out_hwirq = intspec[0] * MAX_IRQ_IN_COMBINER + intspec[1];
-+	*out_type = 0;
-+	return 0;
-+}
-+#else
-+static int combiner_irq_domain_xlate(struct irq_domain *d,
-+		struct device_node *controller, const u32 *intspec,
-+		unsigned int intsize, unsigned long *out_hwirq,
-+		unsigned int *out_type)
-+{
-+	return -EINVAL;
-+}
-+#endif
++#define EXYNOS_EINT_NR 32
++static struct irq_domain *irq_domain;
 +
- static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 					irq_hw_number_t hw)
+ static inline int exynos4_irq_to_gpio(unsigned int irq)
  {
-@@ -496,16 +521,26 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 	if (irq < IRQ_EINT(0))
+@@ -849,9 +852,9 @@ static inline void exynos_irq_eint_mask(struct irq_data *data)
+ 	u32 mask;
+ 
+ 	spin_lock(&eint_lock);
+-	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->irq));
+-	mask |= EINT_OFFSET_BIT(data->irq);
+-	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->irq));
++	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->hwirq));
++	mask |= EINT_OFFSET_BIT(data->hwirq);
++	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->hwirq));
+ 	spin_unlock(&eint_lock);
  }
  
- static struct irq_domain_ops combiner_irq_domain_ops = {
-+	.xlate = combiner_irq_domain_xlate,
- 	.map = combiner_irq_domain_map,
- };
+@@ -860,16 +863,16 @@ static void exynos_irq_eint_unmask(struct irq_data *data)
+ 	u32 mask;
  
- void __init combiner_init(void __iomem *combiner_base, struct device_node *np)
+ 	spin_lock(&eint_lock);
+-	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->irq));
+-	mask &= ~(EINT_OFFSET_BIT(data->irq));
+-	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->irq));
++	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->hwirq));
++	mask &= ~(EINT_OFFSET_BIT(data->hwirq));
++	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->hwirq));
+ 	spin_unlock(&eint_lock);
+ }
+ 
+ static inline void exynos_irq_eint_ack(struct irq_data *data)
  {
--	int i, irq_base;
-+	int i, irq, irq_base;
- 	unsigned int max_nr, nr_irq;
+-	__raw_writel(EINT_OFFSET_BIT(data->irq),
+-		     EINT_PEND(exynos_eint_base, data->irq));
++	__raw_writel(EINT_OFFSET_BIT(data->hwirq),
++		     EINT_PEND(exynos_eint_base, data->hwirq));
+ }
  
--	max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
-+	if (np) {
-+		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
-+			pr_warning("%s: number of combiners not specified, "
-+				"setting default as %d.\n",
-+				__func__, EXYNOS4_MAX_COMBINER_NR);
-+			max_nr = EXYNOS4_MAX_COMBINER_NR;
-+		}
-+	} else {
-+		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
- 						EXYNOS4_MAX_COMBINER_NR;
-+	}
- 	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
+ static void exynos_irq_eint_maskack(struct irq_data *data)
+@@ -880,7 +883,7 @@ static void exynos_irq_eint_maskack(struct irq_data *data)
  
- 	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
-@@ -524,13 +559,29 @@ void __init combiner_init(void __iomem *combiner_base, struct device_node *np)
+ static int exynos_irq_eint_set_type(struct irq_data *data, unsigned int type)
+ {
+-	int offs = EINT_OFFSET(data->irq);
++	int offs = data->hwirq;
+ 	int shift;
+ 	u32 ctrl, mask;
+ 	u32 newvalue = 0;
+@@ -915,10 +918,10 @@ static int exynos_irq_eint_set_type(struct irq_data *data, unsigned int type)
+ 	mask = 0x7 << shift;
  
- 	for (i = 0; i < max_nr; i++) {
- 		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
--		combiner_cascade_irq(i, IRQ_SPI(i));
-+		irq = np ? irq_of_parse_and_map(np, i) : IRQ_SPI(i);
-+		combiner_cascade_irq(i, irq);
+ 	spin_lock(&eint_lock);
+-	ctrl = __raw_readl(EINT_CON(exynos_eint_base, data->irq));
++	ctrl = __raw_readl(EINT_CON(exynos_eint_base, data->hwirq));
+ 	ctrl &= ~mask;
+ 	ctrl |= newvalue << shift;
+-	__raw_writel(ctrl, EINT_CON(exynos_eint_base, data->irq));
++	__raw_writel(ctrl, EINT_CON(exynos_eint_base, data->hwirq));
+ 	spin_unlock(&eint_lock);
+ 
+ 	if (soc_is_exynos5250())
+@@ -962,7 +965,7 @@ static inline void exynos_irq_demux_eint(unsigned int start)
+ 
+ 	while (status) {
+ 		irq = fls(status) - 1;
+-		generic_handle_irq(irq + start);
++		generic_handle_irq(irq_find_mapping(irq_domain, irq + start));
+ 		status &= ~(1 << irq);
  	}
  }
+@@ -971,8 +974,8 @@ static void exynos_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
+ {
+ 	struct irq_chip *chip = irq_get_chip(irq);
+ 	chained_irq_enter(chip, desc);
+-	exynos_irq_demux_eint(IRQ_EINT(16));
+-	exynos_irq_demux_eint(IRQ_EINT(24));
++	exynos_irq_demux_eint(16);
++	exynos_irq_demux_eint(24);
+ 	chained_irq_exit(chip, desc);
+ }
  
- #ifdef CONFIG_OF
-+void __init combiner_of_init(struct device_node *np, struct device_node *parent)
+@@ -980,6 +983,7 @@ static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+ {
+ 	u32 *irq_data = irq_get_handler_data(irq);
+ 	struct irq_chip *chip = irq_get_chip(irq);
++	int eint_irq;
+ 
+ 	chained_irq_enter(chip, desc);
+ 	chip->irq_mask(&desc->irq_data);
+@@ -987,15 +991,28 @@ static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+ 	if (chip->irq_ack)
+ 		chip->irq_ack(&desc->irq_data);
+ 
+-	generic_handle_irq(*irq_data);
++	eint_irq = irq_find_mapping(irq_domain, *irq_data);
++	generic_handle_irq(eint_irq);
+ 
+ 	chip->irq_unmask(&desc->irq_data);
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++static int exynos_eint_irq_domain_map(struct irq_domain *d, unsigned int irq,
++					irq_hw_number_t hw)
 +{
-+	void __iomem *combiner_base;
-+
-+	combiner_base = of_iomap(np, 0);
-+	if (!combiner_base) {
-+		pr_err("%s: failed to map combiner registers\n", __func__);
-+		return;
-+	}
-+
-+	combiner_init(combiner_base, np);
++	irq_set_chip_and_handler(irq, &exynos_irq_eint, handle_level_irq);
++	set_irq_flags(irq, IRQF_VALID);
++	return 0;
 +}
 +
- static const struct of_device_id exynos4_dt_irq_match[] = {
- 	{ .compatible = "arm,cortex-a9-gic", .data = gic_of_init, },
-+	{ .compatible = "samsung,exynos4210-combiner",
-+			.data = combiner_of_init, },
- 	{},
- };
- #endif
-@@ -548,7 +599,8 @@ void __init exynos4_init_irq(void)
- 		of_irq_init(exynos4_dt_irq_match);
- #endif
- 
--	combiner_init(S5P_VA_COMBINER_BASE, NULL);
-+	if (!of_have_populated_dt())
-+		combiner_init(S5P_VA_COMBINER_BASE, NULL);
- 
- 	/*
- 	 * The parameters of s5p_init_irq() are for VIC init.
-@@ -561,7 +613,6 @@ void __init exynos4_init_irq(void)
- void __init exynos5_init_irq(void)
++static struct irq_domain_ops exynos_eint_irq_domain_ops = {
++	.map = exynos_eint_irq_domain_map,
++};
++
+ static int __init exynos_init_irq_eint(void)
  {
- 	gic_init(0, IRQ_PPI(0), S5P_VA_GIC_DIST, S5P_VA_GIC_CPU);
--	combiner_init(S5P_VA_COMBINER_BASE, NULL);
+-	int irq, *src_int;
++	int irq, *src_int, irq_base;
+ 	unsigned int paddr;
  
- 	/*
- 	 * The parameters of s5p_init_irq() are for VIC init.
+ 	paddr = soc_is_exynos5250() ? EXYNOS5_PA_GPIO1 : EXYNOS4_PA_GPIO2;
+@@ -1005,16 +1022,24 @@ static int __init exynos_init_irq_eint(void)
+ 		return -ENXIO;
+ 	}
+ 
+-	for (irq = 0 ; irq <= 31 ; irq++) {
+-		irq_set_chip_and_handler(IRQ_EINT(irq), &exynos_irq_eint,
+-					 handle_level_irq);
+-		set_irq_flags(IRQ_EINT(irq), IRQF_VALID);
++	irq_base = irq_alloc_descs(IRQ_EINT(0), 1, EXYNOS_EINT_NR, 0);
++	if (IS_ERR_VALUE(irq_base)) {
++		irq_base = IRQ_EINT(0);
++		pr_warning("%s: irq desc alloc failed. Continuing with %d as "
++				"linux irq base\n", __func__, irq_base);
++	}
++
++	irq_domain = irq_domain_add_legacy(NULL, EXYNOS_EINT_NR, irq_base, 0,
++					 &exynos_eint_irq_domain_ops, NULL);
++	if (WARN_ON(!irq_domain)) {
++		pr_warning("%s: irq domain init failed\n", __func__);
++		return 0;
+ 	}
+ 
+ 	irq_set_chained_handler(EXYNOS_IRQ_EINT16_31, exynos_irq_demux_eint16_31);
+ 
+ 	for (irq = 0 ; irq <= 15; irq++) {
+-		eint0_15_data[irq] = IRQ_EINT(irq);
++		eint0_15_data[irq] = irq;
+ 		src_int = soc_is_exynos5250() ? exynos5_eint0_15_src_int :
+ 						exynos4_eint0_15_src_int;
+ 		irq_set_handler_data(src_int[irq], &eint0_15_data[irq]);
+diff --git a/arch/arm/mach-exynos/include/mach/regs-gpio.h b/arch/arm/mach-exynos/include/mach/regs-gpio.h
+index e4b5b60..24bf4ec 100644
+--- a/arch/arm/mach-exynos/include/mach/regs-gpio.h
++++ b/arch/arm/mach-exynos/include/mach/regs-gpio.h
+@@ -16,13 +16,13 @@
+ #include <mach/map.h>
+ #include <mach/irqs.h>
+ 
+-#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
++#define EINT_REG_NR(x)			((x) >> 3)
+ #define EINT_CON(b, x)			(b + 0xE00 + (EINT_REG_NR(x) * 4))
+ #define EINT_FLTCON(b, x)		(b + 0xE80 + (EINT_REG_NR(x) * 4))
+ #define EINT_MASK(b, x)			(b + 0xF00 + (EINT_REG_NR(x) * 4))
+ #define EINT_PEND(b, x)			(b + 0xF40 + (EINT_REG_NR(x) * 4))
+ 
+-#define EINT_OFFSET_BIT(x)		(1 << (EINT_OFFSET(x) & 0x7))
++#define EINT_OFFSET_BIT(x)		(1 << ((x) & 0x7))
+ 
+ /* compatibility for plat-s5p/irq-pm.c */
+ #define EXYNOS4_EINT40CON		(S5P_VA_GPIO2 + 0xE00)
 -- 
 1.6.6.rc2
