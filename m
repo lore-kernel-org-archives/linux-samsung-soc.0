@@ -1,100 +1,69 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] of/irq: of_irq_init: Call initialization function for all
- controllers
-Date: Sun, 25 Mar 2012 18:08:49 +0530
-Message-ID: <1332679129-23864-1-git-send-email-thomas.abraham@linaro.org>
-References: <CAJuYYwS5Srw2-D6hdk=-=YN3iB37+KTWVqQPPPVbb-e7it+uVQ@mail.gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <CAJuYYwS5Srw2-D6hdk=-=YN3iB37+KTWVqQPPPVbb-e7it+uVQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+Subject: [PATCH v2] of/irq: add empty irq_of_parse_and_map() for non-dt builds
+Date: Sun, 25 Mar 2012 20:32:49 +0530
+Message-ID: <1332687769-3127-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:38976 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756125Ab2CYO5x (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 25 Mar 2012 10:57:53 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org
 Cc: rob.herring@calxeda.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, patches@linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
 
-The of_irq_init function stops processing the interrupt controller hierarchy
-when there are no more interrupt controller parents identified. Though this
-condition suffices most cases, there are cases where a interrupt controller's
-parent controller does not participate in the initialization of the interrupt
-hierarchy. An example of such a case is the use of a interrupt nexus node
-by a interrupt controller node which delivers interrupts to separate interrupt
-parent controllers.
+Add a empty irq_of_parse_and_map() function that returns 0 for non-dt
+builds and avoid having #ifdef CONFIG_OF around all calls to
+irq_of_parse_and_map(). In addition to that, the irq_of_parse_and_map()
+function declaration is made available only if CONFIG_OF_IRQ is defined,
+which is the same config option that makes the irq_of_parse_and_map()
+function definition available. While at it, fix a typo as well.
 
-Instead of stopping the processing of interrupt controller hierarchy in such
-a case, the orphan interrupt controller node's descriptor can be identified
-and its 'logical' parent in the descriptor is set as NULL. The processing of
-interrupt hierarchy is then restarted by looking for descriptors which have
-a NULL interrupt parent.
-
-Cc: Rob Herring <rob.herring@calxeda.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>
+Suggested-by: Grant Likely <grant.likely@secretlab.ca>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Rob Herring <rob.herring@calxeda.com>
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
 ---
- drivers/of/irq.c |   45 ++++++++++++++++++++++++++++++++++++++++++++-
- 1 files changed, 44 insertions(+), 1 deletions(-)
+Changes since v1:
+- Moved irq_of_parse_and_map() function declaration under CONFIG_OF_IRQ.
+- Fix a minor typo in comments.
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 9cf0060..70c6ece 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -400,6 +400,38 @@ struct intc_desc {
- };
+ include/linux/of_irq.h |   10 ++++++++--
+ 1 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+index d229ad3..11d57e4 100644
+--- a/include/linux/of_irq.h
++++ b/include/linux/of_irq.h
+@@ -10,14 +10,14 @@ struct of_irq;
+ #include <linux/ioport.h>
+ #include <linux/of.h>
  
++#if defined(CONFIG_OF_IRQ)
+ /*
+- * irq_of_parse_and_map() is used ba all OF enabled platforms; but SPARC
++ * irq_of_parse_and_map() is used by all OF enabled platforms; but SPARC
+  * implements it differently.  However, the prototype is the same for all,
+  * so declare it here regardless of the CONFIG_OF_IRQ setting.
+  */
+ extern unsigned int irq_of_parse_and_map(struct device_node *node, int index);
+ 
+-#if defined(CONFIG_OF_IRQ)
  /**
-+ * of_irq_mark_orphan_desc - Set parent as NULL for a orphan intc_desc
-+ * @intc_desc_list: the list of intc_desc to search for orphan intc_desc
-+ *
-+ * This is a helper function for the of_irq_init function and is invoked
-+ * when there are child nodes available in intc_desc_list but there are
-+ * no parent nodes in intc_parent_list. When invoked, this function
-+ * searches for a intc_desc instance that does not have a parent intc_desc
-+ * instance in intc_desc_list. The very reason of the invocation of this
-+ * function ensures that a orphan intc_desc will be found. When found, the
-+ * interrupt_parent of the orphan intc_desc is set to NULL.
-+ */
-+static void of_irq_mark_orphan_desc(struct list_head *intc_desc_list)
+  * of_irq - container for device_node/irq_specifier pair for an irq controller
+  * @controller: pointer to interrupt controller device tree node
+@@ -76,5 +76,11 @@ extern struct device_node *of_irq_find_parent(struct device_node *child);
+ extern void of_irq_init(const struct of_device_id *matches);
+ 
+ #endif /* CONFIG_OF_IRQ */
++#else /* CONFIG_OF */
++static inline unsigned int irq_of_parse_and_map(struct device_node *dev,
++						int index)
 +{
-+	struct intc_desc *desc, *temp_desc;
-+
-+	list_for_each_entry_safe(desc, temp_desc, intc_desc_list, list) {
-+		struct intc_desc *td1, *td2;
-+		list_for_each_entry_safe(td1, td2, intc_desc_list, list) {
-+			if (desc->interrupt_parent == td1->dev)
-+				break;
-+		}
-+		if (desc->interrupt_parent == td1->dev)
-+			continue;
-+
-+		pr_debug("%s: set interrupt_parent of 'intc_desc' with dev name"
-+			" %s as NULL\n", __func__, desc->dev->full_name);
-+		desc->interrupt_parent = NULL;
-+		return;
-+	}
++	return 0;
 +}
-+
-+/**
-  * of_irq_init - Scan and init matching interrupt controllers in DT
-  * @matches: 0 terminated array of nodes to match and init function to call
-  *
-@@ -481,8 +513,19 @@ void __init of_irq_init(const struct of_device_id *matches)
- 		/* Get the next pending parent that might have children */
- 		desc = list_first_entry(&intc_parent_list, typeof(*desc), list);
- 		if (list_empty(&intc_parent_list) || !desc) {
-+			/*
-+			 * This has reached a point where there are children in
-+			 * the intc_desc_list but no parent in intc_parent_list.
-+			 * This means there is a child desc in intc_desc_list
-+			 * whose parent is not one of the remaining elements of
-+			 * the intc_desc_list. Such a child node is marked as
-+			 * orphan (interrupt_parent is set to NULL) and the
-+			 * process continues with parent set to NULL.
-+			 */
- 			pr_err("of_irq_init: children remain, but no parents\n");
--			break;
-+			of_irq_mark_orphan_desc(&intc_desc_list);
-+			parent = NULL;
-+			continue;
- 		}
- 		list_del(&desc->list);
- 		parent = desc->dev;
+ #endif /* CONFIG_OF */
+ #endif /* __OF_IRQ_H */
 -- 
 1.6.6.rc2
