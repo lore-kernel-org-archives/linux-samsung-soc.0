@@ -1,280 +1,300 @@
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-Subject: Re: [PATCH v4 1/2] mfd: add irq domain support for max8997 interrupts
-Date: Mon, 26 Mar 2012 21:20:47 +0900
-Message-ID: <CAJ0PZbSw3LcgkCw0-_VvmM2ijJOU0gKk_EEnwhoY4r7J8rU3_Q@mail.gmail.com>
-References: <1332582590-16382-1-git-send-email-thomas.abraham@linaro.org>
-	<1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
-Reply-To: myungjoo.ham@gmail.com
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH v12 3/3] iommu/exynos: Add iommu driver for Exynos
+	Platforms
+Date: Mon, 26 Mar 2012 14:55:34 +0200
+Message-ID: <001401cd0b4f$bbf0e120$33d2a360$%szyprowski@samsung.com>
+References: <000301cd0286$2f4310d0$8dc93270$%cho@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:39633 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932186Ab2CZMUs convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Mar 2012 08:20:48 -0400
-In-Reply-To: <1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-reply-to: <000301cd0286$2f4310d0$8dc93270$%cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-language: pl
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: 'Cho KyongHo' <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.orglinux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.orgiommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.orglinux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Subash Patel' <subash.ramaswamy-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Younglak Kim' <younglak1004.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyungmin Park' <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Sanghyun Lee' <sanghyun75.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On Sat, Mar 24, 2012 at 6:49 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> Add irq domain support for max8997 interrupts. The reverse mapping me=
-thod
-> used is linear mapping since the sub-drivers of max8997 such as regul=
-ator
-> and charger drivers can use the max8997 irq_domain to get the linux i=
-rq
-> number for max8997 interrupts. All uses of irq_base in platform data =
-and
-> max8997 driver private data are removed.
->
-> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+Hello,
 
-Acked-by: MyungJoo Ham <myungjoo.ham@samsung.com>
+I'm sorry for a delay, I was quite busy recently, but I have finally found some
+time to review the code.
 
-> ---
-> =A0arch/arm/mach-exynos/mach-nuri.c =A0 =A0| =A0 =A04 --
-> =A0arch/arm/mach-exynos/mach-origen.c =A0| =A0 =A01 -
-> =A0drivers/mfd/max8997-irq.c =A0 =A0 =A0 =A0 =A0 | =A0 61 +++++++++++=
-+++++++++--------------
-> =A0drivers/mfd/max8997.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A01 -
-> =A0include/linux/mfd/max8997-private.h | =A0 =A04 ++-
-> =A0include/linux/mfd/max8997.h =A0 =A0 =A0 =A0 | =A0 =A01 -
-> =A06 files changed, 39 insertions(+), 33 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/=
-mach-nuri.c
-> index 7ac81ce..b21d85d 100644
-> --- a/arch/arm/mach-exynos/mach-nuri.c
-> +++ b/arch/arm/mach-exynos/mach-nuri.c
-> @@ -1077,12 +1077,8 @@ static struct platform_device nuri_max8903_dev=
-ice =3D {
-> =A0static void __init nuri_power_init(void)
-> =A0{
-> =A0 =A0 =A0 =A0int gpio;
-> - =A0 =A0 =A0 int irq_base =3D IRQ_GPIO_END + 1;
-> =A0 =A0 =A0 =A0int ta_en =3D 0;
->
-> - =A0 =A0 =A0 nuri_max8997_pdata.irq_base =3D irq_base;
-> - =A0 =A0 =A0 irq_base +=3D MAX8997_IRQ_NR;
-> -
-> =A0 =A0 =A0 =A0gpio =3D EXYNOS4_GPX0(7);
-> =A0 =A0 =A0 =A0gpio_request(gpio, "AP_PMIC_IRQ");
-> =A0 =A0 =A0 =A0s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
-> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exyno=
-s/mach-origen.c
-> index 827cb99..d3b2e9d 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -424,7 +424,6 @@ static struct max8997_platform_data __initdata or=
-igen_max8997_pdata =3D {
-> =A0 =A0 =A0 =A0.buck1_gpiodvs =A0=3D false,
-> =A0 =A0 =A0 =A0.buck2_gpiodvs =A0=3D false,
-> =A0 =A0 =A0 =A0.buck5_gpiodvs =A0=3D false,
-> - =A0 =A0 =A0 .irq_base =A0 =A0 =A0 =3D IRQ_GPIO_END + 1,
->
-> =A0 =A0 =A0 =A0.ignore_gpiodvs_side_effect =3D true,
-> =A0 =A0 =A0 =A0.buck125_default_idx =3D 0x0,
-> diff --git a/drivers/mfd/max8997-irq.c b/drivers/mfd/max8997-irq.c
-> index 09274cf..00390a1 100644
-> --- a/drivers/mfd/max8997-irq.c
-> +++ b/drivers/mfd/max8997-irq.c
-> @@ -142,7 +142,8 @@ static void max8997_irq_sync_unlock(struct irq_da=
-ta *data)
-> =A0static const inline struct max8997_irq_data *
-> =A0irq_to_max8997_irq(struct max8997_dev *max8997, int irq)
-> =A0{
-> - =A0 =A0 =A0 return &max8997_irqs[irq - max8997->irq_base];
-> + =A0 =A0 =A0 struct irq_data *data =3D irq_get_irq_data(irq);
-> + =A0 =A0 =A0 return &max8997_irqs[data->hwirq];
-> =A0}
->
-> =A0static void max8997_irq_mask(struct irq_data *data)
-> @@ -182,7 +183,7 @@ static irqreturn_t max8997_irq_thread(int irq, vo=
-id *data)
-> =A0 =A0 =A0 =A0u8 irq_reg[MAX8997_IRQ_GROUP_NR] =3D {};
-> =A0 =A0 =A0 =A0u8 irq_src;
-> =A0 =A0 =A0 =A0int ret;
-> - =A0 =A0 =A0 int i;
-> + =A0 =A0 =A0 int i, cur_irq;
->
-> =A0 =A0 =A0 =A0ret =3D max8997_read_reg(max8997->i2c, MAX8997_REG_INT=
-SRC, &irq_src);
-> =A0 =A0 =A0 =A0if (ret < 0) {
-> @@ -269,8 +270,11 @@ static irqreturn_t max8997_irq_thread(int irq, v=
-oid *data)
->
-> =A0 =A0 =A0 =A0/* Report */
-> =A0 =A0 =A0 =A0for (i =3D 0; i < MAX8997_IRQ_NR; i++) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (irq_reg[max8997_irqs[i].group] & ma=
-x8997_irqs[i].mask)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 handle_nested_irq(max89=
-97->irq_base + i);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (irq_reg[max8997_irqs[i].group] & ma=
-x8997_irqs[i].mask) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cur_irq =3D irq_find_ma=
-pping(max8997->irq_domain, i);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (cur_irq)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 handle_=
-nested_irq(cur_irq);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0return IRQ_HANDLED;
-> @@ -278,26 +282,40 @@ static irqreturn_t max8997_irq_thread(int irq, =
-void *data)
->
-> =A0int max8997_irq_resume(struct max8997_dev *max8997)
-> =A0{
-> - =A0 =A0 =A0 if (max8997->irq && max8997->irq_base)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 max8997_irq_thread(max8997->irq_base, m=
-ax8997);
-> + =A0 =A0 =A0 if (max8997->irq && max8997->irq_domain)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 max8997_irq_thread(0, max8997);
-> + =A0 =A0 =A0 return 0;
+On Thursday, March 15, 2012 9:33 AM Cho KyongHo wrote:
+
+> This is the System MMU driver and IOMMU API implementation for
+> Exynos SOC platforms. Exynos platforms has more than 10 System
+> MMUs dedicated for each multimedia accelerators.
+> 
+> The System MMU driver is already in arc/arm/plat-s5p but it is
+> moved to drivers/iommu due to Ohad Ben-Cohen gathered IOMMU drivers
+> there
+> 
+> Any device driver in Exynos platforms that needs to control its
+> System MMU must call platform_set_sysmmu() to inform System MMU
+> driver who will control it.
+> platform_set_sysmmu() is defined in <mach/sysmmu.h>
+> 
+> Cc: Joerg Roedel <joerg.roedel-5C7GfCeVMHo@public.gmane.org>
+> Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+
+(snipped)
+
+> diff --git a/drivers/iommu/exynos-iommu.c b/drivers/iommu/exynos-iommu.c
+> new file mode 100644
+> index 0000000..b8daf7c
+> --- /dev/null
+> +++ b/drivers/iommu/exynos-iommu.c
+> @@ -0,0 +1,1057 @@
+> +/* linux/drivers/iommu/exynos_iommu.c
+> + *
+> + * Copyright (c) 2011 Samsung Electronics Co., Ltd.
+> + *		http://www.samsung.com
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+
+(snipped)
+
+> +static irqreturn_t exynos_sysmmu_irq(int irq, void *dev_id)
+> +{
+> +	/* SYSMMU is in blocked when interrupt occurred. */
+> +	struct sysmmu_drvdata *data = dev_id;
+> +	struct resource *irqres;
+> +	struct platform_device *pdev;
+> +	enum exynos_sysmmu_inttype itype;
+> +	unsigned long addr = -1;
+> +
+> +	int i, ret = -ENOSYS;
+> +
+> +	read_lock(&data->lock);
+> +
+> +	WARN_ON(!is_sysmmu_active(data));
+> +
+> +	pdev = to_platform_device(data->sysmmu);
+> +	for (i = 0; i < pdev->num_resources; i++) {
+> +		irqres = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+> +		if (irqres && ((int)irqres->start == irq))
+> +			break;
+> +	}
+> +
+> +	if (i == pdev->num_resources) {
+> +		itype = SYSMMU_FAULT_UNKNOWN;
+> +	} else {
+> +		i /= 2;
+> +
+> +		itype = (enum exynos_sysmmu_inttype)
+> +			__ffs(__raw_readl(data->sfrbases[i] + REG_INT_STATUS));
+> +		if (WARN_ON(!((itype >= 0) && (itype < SYSMMU_FAULT_UNKNOWN))))
+> +			itype = SYSMMU_FAULT_UNKNOWN;
+> +		else
+> +			addr = __raw_readl(
+> +				data->sfrbases[i] + fault_reg_offset[itype]);
+> +	}
+> +
+> +	if (data->domain)
+> +		ret = report_iommu_fault(data->domain, data->dev,
+> +				addr, itype);
+> +
+> +	if ((ret == -ENOSYS) && data->fault_handler) {
+> +		unsigned long base = data->pgtable;
+> +		if (itype != SYSMMU_FAULT_UNKNOWN)
+> +			base = __raw_readl(
+> +					data->sfrbases[i] + REG_PT_BASE_ADDR);
+> +		ret = data->fault_handler(itype, base, addr);
+> +	}
+> +
+> +	if (!ret && (itype != SYSMMU_FAULT_UNKNOWN))
+> +		__raw_writel(1 << itype, data->sfrbases[i] + REG_INT_CLEAR);
+> +	else
+> +		dev_dbg(data->sysmmu, "(%s) %s is not handled.\n",
+> +				data->dbgname, sysmmu_fault_name[itype]);
+> +
+> +	if (itype != SYSMMU_FAULT_UNKNOWN)
+> +		sysmmu_unblock(data->sfrbases[i]);
+> +
+> +	read_unlock(&data->lock);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
+(snipped)
+
+> +static int exynos_sysmmu_probe(struct platform_device *pdev)
+> +{
+> +	int i, ret;
+> +	struct device *dev;
+> +	struct sysmmu_drvdata *data;
+> +
+> +	dev = &pdev->dev;
+> +
+> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
+> +	if (!data) {
+> +		dev_dbg(dev, "Not enough memory\n");
+> +		ret = -ENOMEM;
+> +		goto err_alloc;
+> +	}
+> +
+> +	ret = dev_set_drvdata(dev, data);
+> +	if (ret) {
+> +		dev_dbg(dev, "Unabled to initialize driver data\n");
+> +		goto err_init;
+> +	}
+> +
+> +	data->nsfrs = pdev->num_resources / 2;
+> +	data->sfrbases = kmalloc(sizeof(*data->sfrbases) * data->nsfrs,
+> +								GFP_KERNEL);
+> +	if (data->sfrbases == NULL) {
+> +		dev_dbg(dev, "Not enough memory\n");
+> +		ret = -ENOMEM;
+> +		goto err_init;
+> +	}
+> +
+> +	for (i = 0; i < data->nsfrs; i++) {
+> +		struct resource *res;
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, i);
+> +		if (!res) {
+> +			dev_dbg(dev, "Unable to find IOMEM region\n");
+> +			ret = -ENOENT;
+> +			goto err_res;
+> +		}
+> +
+> +		data->sfrbases[i] = ioremap(res->start, resource_size(res));
+> +		if (!data->sfrbases[i]) {
+> +			dev_dbg(dev, "Unable to map IOMEM @ PA:%#x\n",
+> +							res->start);
+> +			ret = -ENOENT;
+> +			goto err_res;
+> +		}
+> +	}
+> +
+> +	for (i = 0; i < data->nsfrs; i++) {
+> +		ret = platform_get_irq(pdev, i);
+> +		if (ret <= 0) {
+> +			dev_dbg(dev, "Unable to find IRQ resource\n");
+> +			goto err_irq;
+> +		}
+> +
+> +		ret = request_irq(ret, exynos_sysmmu_irq, 0,
+> +					dev_name(dev), data);
+> +		if (ret) {
+> +			dev_dbg(dev, "Unabled to register interrupt handler\n");
+> +			goto err_irq;
+> +		}
+> +	}
+
+Please look at those loops and the interrupt function above. Those for-loops over 
+all the resources looks really ugly and makes the driver less portable. The previous 
+version (v8 afair) had much cleaned design.
+
+It would be better not to squash multiple sysmmu controllers into a single instance
+of the driver. Please keep the driver simple. Sysmmu driver's resource should consist
+only of one io register area and one irq, nothing more. Such approach will remove 
+the need for all that custom data in platform_data and it also make the future 
+integration much easier for other non-samsung platforms (the sysmmu hardware is also
+used by other hw vendors). Support for device tree is also easier to add if the device
+driver is kept simple (supporting only one instance of the hardware block).
+
+The only reason I can see, which might have suggested you to squash hardware sysmmu 
+controllers into one single instance was to provide the same virtual io mappings
+for all these sub-devices (it is mainly used by fims-isp complex block). 
+
+This can be achieved in a much clearer design by using one, common iommu domain 
+and attaching all these separate iommu controllers to it. Of course this will also
+require having a separate platform devices for each sub-device, but sooner or later
+you will need them anyway. The good example here is the MFC module, which already
+have separate devices: mfc_l and mfc_r for each memory controller.
+
+> +	if (dev_get_platdata(dev)) {
+> +		char *deli, *beg;
+> +		struct sysmmu_platform_data *platdata = dev_get_platdata(dev);
+> +
+> +		beg = platdata->clockname;
+> +
+> +		for (deli = beg; (*deli != '\0') && (*deli != ','); deli++)
+> +			/* NOTHING */;
+> +
+> +		if (*deli == '\0')
+> +			deli = NULL;
+> +		else
+> +			*deli = '\0';
+> +
+> +		data->clk[0] = clk_get(dev, beg);
+> +		if (IS_ERR(data->clk[0])) {
+> +			data->clk[0] = NULL;
+> +			dev_dbg(dev, "No clock descriptor registered\n");
+> +		}
+> +
+> +		if (data->clk[0] && deli) {
+> +			*deli = ',';
+> +			data->clk[1] = clk_get(dev, deli + 1);
+> +			if (IS_ERR(data->clk[1]))
+> +				data->clk[1] = NULL;
+> +		}
+> +
+> +		data->dbgname = platdata->dbgname;
+> +	}
+
+Passing clocks via platform data is also considered as a bad idea, especially if 
+you need to parse string to extract the clock names. It would be much cleaner to
+have 2 (or more if required) variants of sysmmu driver, each one for a different
+version of the sysmmu hardware (I noticed only that some of the sysmmu units 
+require one clock, the other require 2 clocks).
+
+> +
+> +	data->sysmmu = dev;
+> +	rwlock_init(&data->lock);
+> +	INIT_LIST_HEAD(&data->node);
+> +
+> +	__set_fault_handler(data, &default_fault_handler);
+> +
+> +	if (dev->parent)
+> +		pm_runtime_enable(dev);
+> +
+> +	dev_dbg(dev, "(%s) Initialized\n", data->dbgname);
+> +	return 0;
+> +err_irq:
+> +	while (i-- > 0) {
+> +		int irq;
+> +
+> +		irq = platform_get_irq(pdev, i);
+> +		free_irq(irq, data);
+> +	}
+> +err_res:
+> +	while (data->nsfrs-- > 0)
+> +		iounmap(data->sfrbases[data->nsfrs]);
+> +	kfree(data->sfrbases);
+> +err_init:
+> +	kfree(data);
+> +err_alloc:
+> +	dev_err(dev, "Failed to initialize\n");
+> +	return ret;
 > +}
 > +
-> +static int max8997_irq_domain_map(struct irq_domain *d, unsigned int=
- irq,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 irq_hw_number_t hw)
-> +{
-> + =A0 =A0 =A0 struct max8997_dev *max8997 =3D d->host_data;
-> +
-> + =A0 =A0 =A0 irq_set_chip_data(irq, max8997);
-> + =A0 =A0 =A0 irq_set_chip_and_handler(irq, &max8997_irq_chip, handle=
-_edge_irq);
-> + =A0 =A0 =A0 irq_set_nested_thread(irq, 1);
-> +#ifdef CONFIG_ARM
-> + =A0 =A0 =A0 set_irq_flags(irq, IRQF_VALID);
-> +#else
-> + =A0 =A0 =A0 irq_set_noprobe(irq);
-> +#endif
-> =A0 =A0 =A0 =A0return 0;
-> =A0}
->
-> +static struct irq_domain_ops max8997_irq_domain_ops =3D {
-> + =A0 =A0 =A0 .map =3D max8997_irq_domain_map,
+> +static struct platform_driver exynos_sysmmu_driver = {
+> +	.probe		= exynos_sysmmu_probe,
+> +	.driver		= {
+> +		.owner		= THIS_MODULE,
+> +		.name		= "exynos-sysmmu",
+> +	}
 > +};
 > +
-> =A0int max8997_irq_init(struct max8997_dev *max8997)
-> =A0{
-> + =A0 =A0 =A0 struct irq_domain *domain;
-> =A0 =A0 =A0 =A0int i;
-> - =A0 =A0 =A0 int cur_irq;
-> =A0 =A0 =A0 =A0int ret;
-> =A0 =A0 =A0 =A0u8 val;
->
-> =A0 =A0 =A0 =A0if (!max8997->irq) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_warn(max8997->dev, "No interrupt s=
-pecified.\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 max8997->irq_base =3D 0;
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return 0;
-> - =A0 =A0 =A0 }
-> -
-> - =A0 =A0 =A0 if (!max8997->irq_base) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(max8997->dev, "No interrupt bas=
-e specified.\n");
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return 0;
-> =A0 =A0 =A0 =A0}
->
-> @@ -327,18 +345,11 @@ int max8997_irq_init(struct max8997_dev *max899=
-7)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0true : false;
-> =A0 =A0 =A0 =A0}
->
-> - =A0 =A0 =A0 /* Register with genirq */
-> - =A0 =A0 =A0 for (i =3D 0; i < MAX8997_IRQ_NR; i++) {
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 cur_irq =3D i + max8997->irq_base;
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 irq_set_chip_data(cur_irq, max8997);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 irq_set_chip_and_handler(cur_irq, &max8=
-997_irq_chip,
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 handle_=
-edge_irq);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 irq_set_nested_thread(cur_irq, 1);
-> -#ifdef CONFIG_ARM
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 set_irq_flags(cur_irq, IRQF_VALID);
-> -#else
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 irq_set_noprobe(cur_irq);
-> -#endif
-> + =A0 =A0 =A0 domain =3D irq_domain_add_linear(NULL, MAX8997_IRQ_NR,
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
- =A0 =A0 &max8997_irq_domain_ops, &max8997);
-> + =A0 =A0 =A0 if (!domain) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_err(max8997->dev, "could not create=
- irq domain\n");
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0ret =3D request_threaded_irq(max8997->irq, NULL, max89=
-97_irq_thread,
-> diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
-> index cb83a7a..20ecad3 100644
-> --- a/drivers/mfd/max8997.c
-> +++ b/drivers/mfd/max8997.c
-> @@ -143,7 +143,6 @@ static int max8997_i2c_probe(struct i2c_client *i=
-2c,
-> =A0 =A0 =A0 =A0if (!pdata)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0goto err;
->
-> - =A0 =A0 =A0 max8997->irq_base =3D pdata->irq_base;
-> =A0 =A0 =A0 =A0max8997->ono =3D pdata->ono;
->
-> =A0 =A0 =A0 =A0mutex_init(&max8997->iolock);
-> diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/=
-max8997-private.h
-> index 3f4deb6..830152c 100644
-> --- a/include/linux/mfd/max8997-private.h
-> +++ b/include/linux/mfd/max8997-private.h
-> @@ -23,6 +23,8 @@
-> =A0#define __LINUX_MFD_MAX8997_PRIV_H
->
-> =A0#include <linux/i2c.h>
-> +#include <linux/export.h>
-> +#include <linux/irqdomain.h>
->
-> =A0#define MAX8997_REG_INVALID =A0 =A0(0xff)
->
-> @@ -325,7 +327,7 @@ struct max8997_dev {
->
-> =A0 =A0 =A0 =A0int irq;
-> =A0 =A0 =A0 =A0int ono;
-> - =A0 =A0 =A0 int irq_base;
-> + =A0 =A0 =A0 struct irq_domain *irq_domain;
-> =A0 =A0 =A0 =A0struct mutex irqlock;
-> =A0 =A0 =A0 =A0int irq_masks_cur[MAX8997_IRQ_GROUP_NR];
-> =A0 =A0 =A0 =A0int irq_masks_cache[MAX8997_IRQ_GROUP_NR];
-> diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.=
-h
-> index fff5905..818486c 100644
-> --- a/include/linux/mfd/max8997.h
-> +++ b/include/linux/mfd/max8997.h
-> @@ -155,7 +155,6 @@ struct max8997_led_platform_data {
->
-> =A0struct max8997_platform_data {
-> =A0 =A0 =A0 =A0/* IRQ */
-> - =A0 =A0 =A0 int irq_base;
-> =A0 =A0 =A0 =A0int ono;
-> =A0 =A0 =A0 =A0int wakeup;
->
-> --
-> 1.6.6.rc2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
 
+(snipped)
 
-
---=20
-MyungJoo Ham, Ph.D.
-Mobile Software Platform Lab, DMC Business, Samsung Electronics
+Best regards
+-- 
+Marek Szyprowski
+Samsung Poland R&D Center
