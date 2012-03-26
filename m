@@ -1,78 +1,45 @@
-From: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
-Subject: Re: [PATCH v3 2/5] [SCSI] ufshcd: UFS UTP Transfer requests handling
-Date: Mon, 26 Mar 2012 13:34:43 +0900
-Message-ID: <4F6FF1E3.7080908@toshiba.co.jp>
-References: <1330497714-26504-3-git-send-email-santoshsy@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from imx9.toshiba.co.jp ([202.33.96.51]:52140 "EHLO
-	imx9.toshiba.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752636Ab2CZFWh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 26 Mar 2012 01:22:37 -0400
-In-Reply-To: <1330497714-26504-3-git-send-email-santoshsy@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v3 0/2] Add lcd driver for panels with gpio controlled panel
+ reset
+Date: Mon, 26 Mar 2012 14:16:38 +0530
+Message-ID: <1332751600-11371-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: rpurdie@rpsys.net, florianSchandinat@gmx.de, devicetree-discuss@lists.ozlabs.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, augulis.darius@gmail.com, ben-linux@fluff.org, lars@metafoo.de, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Santosh Y <santoshsy@gmail.com>
-Cc: James Bottomley <James.Bottomley@HansenPartnership.com>, linux-scsi@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd.bergmann@linaro.org, saugata.das@linaro.org, dsaxena@linaro.org, stephen.doel@linaro.org, venkat@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com, sreekumar.c@samsung.com, vinholikatti@gmail.com, linkinjeon@gmail.com, michaelc@cs.wisc.edu
 
-Santosh Y wrote:
-> +        ucd_cmd_ptr->exp_data_transfer_len =
-> +            cpu_to_be32(lrbp->cmd->transfersize);
-> +
-> +        memcpy(ucd_cmd_ptr->cdb,
-> +               lrbp->cmd->cmnd,
-> +               (min_t(unsigned short,
-> +                  lrbp->cmd->cmd_len,
-> +                  MAX_CDB_SIZE)));
+Changes since v2:
+- Reworked as per comments[1] from Mark Brown.
+  - removed the setting of regulator voltage.
 
-"Exptected Data Transfer Length" field contains a value that
-represents the number of bytes that are required to complete the
-SCSI command request and the number of bytes that the Initiator
-expects to be transferred to/from the Target.
-(JEDEC Standard 220 Table7-7)
-On the other hand, "transfersize" in a scsi_cmnd struct is trimmed
-to the sector size when requested transfer length exceeds it.
-You may derive the actual transfer length from SCSI command itself like following.
+[1] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg08743.html
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index feffe65..e63fecb 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -647,6 +647,34 @@ static void ufshcd_compose_upiu(struct ufshcd_lrb *lrbp)
-                        (min_t(unsigned short,
-                               lrbp->cmd->cmd_len,
-                               MAX_CDB_SIZE)));
-+
-+               /* Overwrite exptected transfer length by using TRANSFER_LENGTH in SCSI commands */
-+               switch(ucd_cmd_ptr->cdb[0]) {
-+               case READ_6:
-+               case WRITE_6:
-+                       ucd_cmd_ptr->exp_data_transfer_len =
-+                               cpu_to_be32(lrbp->cmd->transfersize *
-+                                           ucd_cmd_ptr->cdb[4]);
-+                       break;
-+               case READ_10:
-+               case WRITE_10:
-+                       ucd_cmd_ptr->exp_data_transfer_len =
-+                               cpu_to_be32(lrbp->cmd->transfersize *
-+                                           ((ucd_cmd_ptr->cdb[7] << 8) |
-+                                            ucd_cmd_ptr->cdb[8]));
-+                       break;
-+               case READ_12:
-+               case WRITE_12:
-+                       ucd_cmd_ptr->exp_data_transfer_len =
-+                               cpu_to_be32(lrbp->cmd->transfersize *
-+                                           ((ucd_cmd_ptr->cdb[10] << 24) |
-+                                            (ucd_cmd_ptr->cdb[11] << 16) |
-+                                            (ucd_cmd_ptr->cdb[12] << 8) |
-+                                            ucd_cmd_ptr->cdb[13]));
-+                       break;
-+               default:
-+                       break;
-+               }
-                 break;
-         case UTP_CMD_TYPE_DEV_MANAGE:
-                 /* For query function implementation */
+Changes since v1:
+- Fixed gpio leak, added MODULE_DEVICE_TABLE and dev_pm_ops.
+- Changed device tree bindings.
+
+This patchset adds support for passive panels that use a nRESET line which is
+controlled by a GPIO of the host system and which do not use a serial comamnd
+interface (i2c or spi) or memory-mapped-io interface. Platforms that do not
+require any additional control apart from the nRESET line can use this driver
+for lcd power control.
+
+The first patch adds driver for passive raster-type lcd's with gpio controlled
+panel reset. It includes support for both dt and non-dt platforms. The second
+patch adds support for using this driver on Origen board.
+
+Thomas Abraham (2):
+  backlight: lcd: add driver for raster-type lcd's with gpio controlled panel reset
+  ARM: Exynos: Use lcd power control driver for lcd panel
+
+ .../devicetree/bindings/lcd/lcd-pwrctrl.txt        |   36 +++
+ arch/arm/mach-exynos/mach-origen.c                 |   29 +--
+ drivers/video/backlight/Kconfig                    |    7 +
+ drivers/video/backlight/Makefile                   |    1 +
+ drivers/video/backlight/lcd_pwrctrl.c              |  226 ++++++++++++++++++++
+ include/video/lcd_pwrctrl.h                        |   24 ++
+ 6 files changed, 300 insertions(+), 23 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/lcd/lcd-pwrctrl.txt
+ create mode 100644 drivers/video/backlight/lcd_pwrctrl.c
+ create mode 100644 include/video/lcd_pwrctrl.h
