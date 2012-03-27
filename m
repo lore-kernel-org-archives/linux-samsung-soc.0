@@ -1,23 +1,25 @@
 From: Thomas Abraham <thomas.ab@samsung.com>
 Subject: [PATCH] ARM: Samsung: Make PM_GENERIC_DOMAINS config depend on
  CONFIG_PM
-Date: Tue, 27 Mar 2012 15:46:43 +0530
-Message-ID: <1332843404-25476-1-git-send-email-thomas.ab@samsung.com>
+Date: Tue, 27 Mar 2012 15:46:44 +0530
+Message-ID: <1332843404-25476-2-git-send-email-thomas.ab@samsung.com>
+References: <1332843404-25476-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50069 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:50202 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757992Ab2C0KMA (ORCPT
+	with ESMTP id S1757992Ab2C0KMY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Mar 2012 06:12:00 -0400
+	Tue, 27 Mar 2012 06:12:24 -0400
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
  2010)) with ESMTP id <0M1J00EWGGBZ7FD0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 19:11:59 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 19:12:23 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
  64bit (built Sep  7 2010)) with ESMTPA id <0M1J00FDQGB1YC50@mmp1.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 19:11:59 +0900 (KST)
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 19:12:23 +0900 (KST)
+In-reply-to: <1332843404-25476-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
