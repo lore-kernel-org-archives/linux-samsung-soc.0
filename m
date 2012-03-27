@@ -1,68 +1,62 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 4/4] ARM: Exynos5: Add PDMA and MDMA physical base address
- defines
-Date: Tue, 27 Mar 2012 14:56:05 +0530
-Message-ID: <1332840365-24827-5-git-send-email-thomas.abraham@linaro.org>
-References: <1332840365-24827-1-git-send-email-thomas.abraham@linaro.org>
+From: Thomas Abraham <thomas.ab@samsung.com>
+Subject: [PATCH] ARM: Samsung: Make PM_GENERIC_DOMAINS config depend on
+ CONFIG_PM
+Date: Tue, 27 Mar 2012 15:46:43 +0530
+Message-ID: <1332843404-25476-1-git-send-email-thomas.ab@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:24106 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756020Ab2C0JXI (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:50069 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757992Ab2C0KMA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Mar 2012 05:23:08 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Tue, 27 Mar 2012 06:12:00 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Exchange Server 7u4-19.01 64bit (built Sep  7
- 2010)) with ESMTP id <0M1J00CQPE1MRHB0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 18:23:07 +0900 (KST)
+ 2010)) with ESMTP id <0M1J00EWGGBZ7FD0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 19:11:59 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
- 64bit (built Sep  7 2010)) with ESMTPA id <0M1J003DJDYYQZJ0@mmp2.samsung.com>
- for linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 18:23:07 +0900 (KST)
-In-reply-to: <1332840365-24827-1-git-send-email-thomas.abraham@linaro.org>
+ by mmp1.samsung.com (Oracle Communications Messaging Exchange Server 7u4-19.01
+ 64bit (built Sep  7 2010)) with ESMTPA id <0M1J00FDQGB1YC50@mmp1.samsung.com>
+ for linux-samsung-soc@vger.kernel.org; Tue, 27 Mar 2012 19:11:59 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, broonie@opensource.wolfsonmicro.com
 
-Add PDMA and MDMA physical base address macros which is require for Exynos5
-of_dev_auxdata setup.
+For s3c64xx and exynos platforms, make the selection of PM_GENERIC_DOMAINS
+depend on the CONFIG_PM.
 
 Signed-off-by: Thomas Abraham <thomas.ab@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/map.h |    5 +++++
- arch/arm/mach-exynos/mach-exynos5-dt.c  |    3 ++-
- 2 files changed, 7 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos/Kconfig  |    2 +-
+ arch/arm/mach-s3c64xx/Kconfig |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 024d38f..37d93fd 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -90,6 +90,11 @@
- #define EXYNOS4_PA_PDMA0		0x12680000
- #define EXYNOS4_PA_PDMA1		0x12690000
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 0491cee..6c8f17b 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -35,7 +35,7 @@ config CPU_EXYNOS4210
+ 	select ARM_CPU_SUSPEND if PM
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
+-	select PM_GENERIC_DOMAINS
++	select PM_GENERIC_DOMAINS if PM
+ 	help
+ 	  Enable EXYNOS4210 CPU support
  
-+#define EXYNOS5_PA_PDMA0		0x121A0000
-+#define EXYNOS5_PA_PDMA1		0x121B0000
-+#define EXYNOS5_PA_MDMA0		0x10800000
-+#define EXYNOS5_PA_MDMA1		0x11C10000
-+
- #define EXYNOS4_PA_SYSMMU_MDMA		0x10A40000
- #define EXYNOS4_PA_SYSMMU_SSS		0x10A50000
- #define EXYNOS4_PA_SYSMMU_FIMC0		0x11A20000
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 0d26f50..cdc3a26 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -45,7 +45,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos4210-uart.3", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
--	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.2", NULL),
-+	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA0, "dma-pl330.2", NULL),
-+	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA0, "dma-pl330.3", NULL),
- 	{},
- };
- 
+diff --git a/arch/arm/mach-s3c64xx/Kconfig b/arch/arm/mach-s3c64xx/Kconfig
+index 82c0915..2609349 100644
+--- a/arch/arm/mach-s3c64xx/Kconfig
++++ b/arch/arm/mach-s3c64xx/Kconfig
+@@ -8,7 +8,7 @@ config PLAT_S3C64XX
+ 	bool
+ 	depends on ARCH_S3C64XX
+ 	select SAMSUNG_WAKEMASK
+-	select PM_GENERIC_DOMAINS
++	select PM_GENERIC_DOMAINS if PM
+ 	default y
+ 	help
+ 	  Base platform code for any Samsung S3C64XX device
 -- 
 1.6.6.rc2
