@@ -1,18 +1,18 @@
 From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [PATCH v3 6/6] mmc: sdhci-s3c: Add device tree support
-Date: Tue, 27 Mar 2012 16:15:43 +0000
-Message-ID: <201203271615.43394.arnd@arndb.de>
+Date: Tue, 27 Mar 2012 16:19:13 +0000
+Message-ID: <201203271619.13320.arnd@arndb.de>
 References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org> <1328032576-9269-7-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-15"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:55031 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.187]:54513 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753848Ab2C0QTU (ORCPT
+	with ESMTP id S1753848Ab2C0QTy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Mar 2012 12:19:20 -0400
+	Tue, 27 Mar 2012 12:19:54 -0400
 In-Reply-To: <1328032576-9269-7-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
