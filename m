@@ -1,60 +1,64 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 6/6] mmc: sdhci-s3c: Add device tree support
-Date: Tue, 27 Mar 2012 16:19:13 +0000
-Message-ID: <201203271619.13320.arnd@arndb.de>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org> <1328032576-9269-7-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+From: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+Subject: [PATCH] s3c24xx: Fix level irqs on external interrupts.
+Date: Wed, 28 Mar 2012 01:00:03 +0200
+Message-ID: <1332889203-5718-2-git-send-email-GNUtoo@no-log.org>
+References: <1332889203-5718-1-git-send-email-GNUtoo@no-log.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:54513 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753848Ab2C0QTy (ORCPT
+Received: from smtp204.alice.it ([82.57.200.100]:35198 "EHLO smtp204.alice.it"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1755327Ab2C0XAi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 27 Mar 2012 12:19:54 -0400
-In-Reply-To: <1328032576-9269-7-git-send-email-thomas.abraham@linaro.org>
+	Tue, 27 Mar 2012 19:00:38 -0400
+In-Reply-To: <1332889203-5718-1-git-send-email-GNUtoo@no-log.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, Lee Jones <lee.jones@linaro.org>, Viresh Kumar <viresh.kumar@st.com>, Rajendra Nayak <rnayak@ti.com>, Stephen Warren <swarren@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>, Anton Vorontsov <anton.vorontsov@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: linux-samsung-soc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Martin Jansa <Martin.Jansa@gmail.com>, Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
 
-On Tuesday 31 January 2012, Thomas Abraham wrote:
-> +
-> +Optional Board Specific Properties:
-> +- samsung,sdhci-bus-width: Number of data lines connected to the controller.
-> +  Note: This excludes the clock,command and card detect lines. If this property
-> +  is not specified, default value is 1.
-> +
-> +- samsung,cd-gpio-invert: If 'samsung,sdhci-cd-gpio' card detect method is
-> +  selected, this property can be optionally specified to invert the value of
-> +  external card detect gpio line.
-> +
-> +- One of the following properties for card detect type.
-> +  - samsung,sdhci-cd-internal: Card detect line from the card slot  is
-> +    connected to the card detect pad of the sdhci controller. A gpio is
-> +    used for this connection (with possible pin function settings).
-> +  - samsung,sdhci-cd-gpio: A gpio line (with possible pin function settings)
-> +    is used a card detect line. This gpio line is not connected to card detect
-> +    pad of the sdhci controller.
-> +  - samsung,sdhci-cd-none: There is no card detect line. Polling is used to
-> +    detect the presence of the card. (DEFAULT, if no card detect property
-> +    is specified).
-> +  - samsung,sdhci-cd-permanent: There is no card detect line. The card is
-> +    permanently connected to the sdhci controller.
-> +
-> +- gpio-cd: The gpio to be used as card detect line for
-> +  'samsung,sdhci-cd-internal' or 'samsung,sdhci-cd-gpio' card detection method.
-> +  The gpio specifier format depends on the gpio controller.
+From: Lars-Peter Clausen <lars@metafoo.de>
 
-These bindings came up in a discussion IRC today. I think it's rather bad that
-we can't agree on a common way to name the properties for mmc. We have
-bindings being proposed or already included from Anton, Stephen, Shawn,
-Rajendra, Viresh, Lee and Thomas. Almost all of them define GPIO pins
-for card detect and write protect, as well properties to define the bus
-width and high-speed modes, but we seem to have almost as many different
-definitions of these as we have drivers.
+Although the external interrupts support level and edge triggered irqs their
+handler is currently always set to handle_edge_irq().
+While being technically wrong for a level triggered irq to be handled by
+handle_edge_irq() it will cause serious problems in combination with a oneshot
+irq. handle_edge_irq() will unmask the irq immediately and as a result the irq
+will be triggered again before the threaded irq handler had a chance to run and
+clear the irq source.
 
-Can we please come up with a common binding for these?
+Thus level triggered irqs should be handled by handle_level_irq.
+According to the specs the irq controller will remember if an irq has been
+triggered while it had been masked and will issue it when the irq gets
+unmasked. Thus it is sufficient to use handle_level_irq() for edge triggered
+irqs as well. Hence handle_level_irq() can always be used for external
+interrupts.
 
-	Arnd
+Signed-off-by: Lars-Peter Clausen <lars@metafoo.de>
+Signed-off-by: Martin Jansa <Martin.Jansa@gmail.com>
+Signed-off-by: Denis 'GNUtoo' Carikli <GNUtoo@no-log.org>
+---
+ arch/arm/plat-s3c24xx/irq.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/plat-s3c24xx/irq.c b/arch/arm/plat-s3c24xx/irq.c
+index bc42c04..a429996 100644
+--- a/arch/arm/plat-s3c24xx/irq.c
++++ b/arch/arm/plat-s3c24xx/irq.c
+@@ -625,14 +625,14 @@ void __init s3c24xx_init_irq(void)
+ 	for (irqno = IRQ_EINT0; irqno <= IRQ_EINT3; irqno++) {
+ 		irqdbf("registering irq %d (ext int)\n", irqno);
+ 		irq_set_chip_and_handler(irqno, &s3c_irq_eint0t4,
+-					 handle_edge_irq);
++					 handle_level_irq);
+ 		set_irq_flags(irqno, IRQF_VALID);
+ 	}
+ 
+ 	for (irqno = IRQ_EINT4; irqno <= IRQ_EINT23; irqno++) {
+ 		irqdbf("registering irq %d (extended s3c irq)\n", irqno);
+ 		irq_set_chip_and_handler(irqno, &s3c_irqext_chip,
+-					 handle_edge_irq);
++					 handle_level_irq);
+ 		set_irq_flags(irqno, IRQF_VALID);
+ 	}
+ 
+-- 
+1.7.4.1
