@@ -1,97 +1,49 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] of/irq: of_irq_init: Call initialization function for all controllers
-Date: Wed, 28 Mar 2012 11:32:20 +0530
-Message-ID: <CAJuYYwSTA_oibeF0maCeaMnw4z2hU33wBjW_ussfLY9S-=UEmA@mail.gmail.com>
-References: <CAJuYYwS5Srw2-D6hdk=-=YN3iB37+KTWVqQPPPVbb-e7it+uVQ@mail.gmail.com>
-	<1332679129-23864-1-git-send-email-thomas.abraham@linaro.org>
-	<4F6F37B6.3050506@gmail.com>
-	<CAJuYYwTzx8+J9oMRd7kJ=Qp5V4v0LVUYxdkAe8dMqVji0Dk4yg@mail.gmail.com>
-	<4F706947.2080405@gmail.com>
-	<CAJuYYwRxCTWxnof1HUqYVX4mbzWCxcab69CJyKxOh13bQbQ_5Q@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add
+ device tree support
+Date: Wed, 28 Mar 2012 10:54:50 +0100
+Message-ID: <20120328095450.GA23005@sirena.org.uk>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+ <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
+ <m2aa4pkq5g.fsf@bob.laptop.org>
+ <4F3CFEED.6060206@samsung.com>
+ <m239abgc32.fsf@bob.laptop.org>
+ <00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com>
+ <m2vcn0496y.fsf@bob.laptop.org>
+ <87k426vy9r.fsf@laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:46913 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751158Ab2C1GCW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Mar 2012 02:02:22 -0400
-Received: by wgbdr13 with SMTP id dr13so611816wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 27 Mar 2012 23:02:20 -0700 (PDT)
-In-Reply-To: <CAJuYYwRxCTWxnof1HUqYVX4mbzWCxcab69CJyKxOh13bQbQ_5Q@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <87k426vy9r.fsf@laptop.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, 'Thomas Abraham' <thomas.abraham@linaro.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, patches@linaro.org
 
-On 26 March 2012 21:06, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> On 26 March 2012 18:34, Rob Herring <robherring2@gmail.com> wrote:
+On Tue, Mar 27, 2012 at 11:50:24AM -0400, Chris Ball wrote:
+> On Tue, Feb 21 2012, Chris Ball wrote:
+> > On Tue, Feb 21 2012, Kukjin Kim wrote:
 
->> Your fix doesn't really guarantee the proper order either. It's still a
->> side effect of the implementation. Perhaps a retry mechanism would work.
->> Then the init for wakeup_eint can retry if the gic is not yet setup.
->
-> Ok. A retry mechanism would be most robust solution for this case.
->
+> >> I created topic branch for this we talked. You can pull that following:
+> >>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> >> v3.4-for-cjb
 
-Hi Rob,
+> >> If any problems, please kindly let me know.
 
-I have attempted an implementation of the the retry mechanism in the
-of_irq_init() function. It allows initialization functions of
-interrupt controller nodes to report -EAGAIN indicating that the
-initialization was not complete and should be retried.
+> > Pushed to mmc-next, thanks.  (I'm expecting that you'll do the merge
+> > to Linus.)
 
-I have tested this and it is working fine. But the complexity of the
-interrupt controller's intialization function increases because it has
-to undo some of the intialization steps it completed before finding
-that the its parent controller was not initialized.
+> I was expecting you to merge these patches, but they aren't in the
+> arm-soc tree and haven't been sent to Linus, and we're in the last few
+> days of the merge window.
 
-The following is the diff of the changes for of_irq_init() function.
-Please let know if this is acceptable.
+> As a result I'm dropping this tree -- and all of the patches that I
+> have on top of it -- from mmc-next so that I can get a pull request
+> out.  This means that I'm dropping:
 
-Thanks,
-Thomas.
+If they're already in your tree why not just send them to Linus?  Given
+that everything's in git I don't understand why you'd need Kukjin to
+push them separately or what the benefit of that would be?
 
-@@ -452,7 +454,6 @@ void __init of_irq_init(const struct of_device_id *matches)
- 			if (desc->interrupt_parent != parent)
- 				continue;
-
--			list_del(&desc->list);
- 			match = of_match_node(matches, desc->dev);
- 			if (WARN(!match->data,
- 			    "of_irq_init: no init function for %s\n",
-@@ -466,6 +467,14 @@ void __init of_irq_init(const struct of_device_id *matches)
- 				 desc->dev, desc->interrupt_parent);
- 			irq_init_cb = match->data;
- 			ret = irq_init_cb(desc->dev, desc->interrupt_parent);
-+			if (ret == -EAGAIN)
-+				/*
-+				 * Interrupt controller's initialization did not
-+				 * complete and should be retried. So let its
-+				 * intc_desc be on intc_desc_list.
-+				 */
-+				continue;
-+			list_del(&desc->list);
- 			if (ret) {
- 				kfree(desc);
- 				continue;
-@@ -482,7 +491,18 @@ void __init of_irq_init(const struct of_device_id *matches)
- 		desc = list_first_entry(&intc_parent_list, typeof(*desc), list);
- 		if (list_empty(&intc_parent_list) || !desc) {
- 			pr_err("of_irq_init: children remain, but no parents\n");
--			break;
-+			/*
-+			 * If a search with NULL as parent did not result in any
-+			 * new parent being found, then the scan for matching
-+			 * interrupt controller nodes is considered as complete.
-+			 * Otherwise, if there are pending elements on the
-+			 * intc_desc_list, then retry this process again with
-+			 * NULL as parent.
-+			 */
-+			if (!parent)
-+				break;
-+			parent = NULL;
-+			continue;
- 		}
- 		list_del(&desc->list);
- 		parent = desc->dev;
+This is all extremely frustrating fromm the contributor point of view.
