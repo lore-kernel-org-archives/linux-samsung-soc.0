@@ -1,41 +1,57 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Fix soft reboot hang after suspend/resume
-Date: Wed, 28 Mar 2012 15:47:46 +0530
-Message-ID: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: Samsung: Make PM_GENERIC_DOMAINS config depend on
+ CONFIG_PM
+Date: Wed, 28 Mar 2012 11:51:22 +0100
+Message-ID: <20120328105122.GF3232@opensource.wolfsonmicro.com>
+References: <1332843404-25476-1-git-send-email-thomas.ab@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="WlEyl6ow+jlIgNUh"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:47433 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757656Ab2C1KRz (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51841 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753949Ab2C1Kvt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Mar 2012 06:17:55 -0400
-Received: by gghe5 with SMTP id e5so563813ggh.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Mar 2012 03:17:55 -0700 (PDT)
+	Wed, 28 Mar 2012 06:51:49 -0400
+Content-Disposition: inline
+In-Reply-To: <1332843404-25476-1-git-send-email-thomas.ab@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org, kgene.kim@samsung.com, Inderpal Singh <inderpal.singh@linaro.org>
+To: Thomas Abraham <thomas.ab@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Upon wake-up, clear the sleep mode set in INFORM1 register.
 
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
----
- arch/arm/mach-exynos/pm.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+--WlEyl6ow+jlIgNUh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index f0bb467..16cba3f 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -381,6 +381,10 @@ static void exynos4_pm_resume(void)
- #endif
- 
- early_wakeup:
-+
-+	/* Clear SLEEP mode set in INFORM1 */
-+	__raw_writel(0x0, S5P_INFORM1);
-+
- 	return;
- }
- 
--- 
-1.7.5.4
+On Tue, Mar 27, 2012 at 03:46:43PM +0530, Thomas Abraham wrote:
+> For s3c64xx and exynos platforms, make the selection of PM_GENERIC_DOMAINS
+> depend on the CONFIG_PM.
+
+What's the underlying issue here?  This seems like something the PM core
+should be dealing with gracefully...
+
+--WlEyl6ow+jlIgNUh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPcu0jAAoJEBus8iNuMP3dlO4P/jvudFYH9JL+YOEwmwU6AlS6
+avHd2yHeTkW5eJjlwwy2kiuAtXA12HRTMcEQbNN22W/pE11zSXXHbNr9PTK0fejK
+uYLM61UqOpTLnaJnNIux5y1i6yoxa7WT31xsFybedGSVvofWqQgmnFqDXKUpBhj+
+Og0oNeTHTnN01RiRKUmhbuvluz5c62K2Hvu49NJ/x19gYRL6Rypm0pv5CFHV7O5M
+BPDhHs6pzd7CHEpEZ74ppZLfqp/gTWBNnlwMkpx6Mkv2L9PCCRr36SZm0LxtuJAl
+FraFcG9DPY7Xy2+KBBSs99j5UzmV3yWP6cqgIgZ46gufqMw0X2+ghV0UZLJXRA5L
+ycv3ZMZch0q4c4mzGaX2ajivouRaZ0ltNL1G6v04SoBH6speePT6zlO1TuC7nmhk
+o5OcHEu4tGdSS8zCcjjFWBKWoo8qaozXOtK5ANa6zQLXwHI+B+enOV47EDHKiiR+
+d5iJDuJxDByQgrsioLT3o4sQFWkgRIt1OnioIMGPG7Ddz4F6CyD3mQCIaplY5Xne
+zxoN2lfGJqtKUNO8KAgkSjFZVtcKdQFl6vezARyhNz2ofeEmxo8doOI9bCK5ocRl
+D6Tfm/bxH87HAtVqrjEh4IPWU2P7r2SLIFnLSuRfjWWji/1umEtuRgfO4V/QlsXd
+2uLS9EWfcl7Kemfc0XdP
+=j5iN
+-----END PGP SIGNATURE-----
+
+--WlEyl6ow+jlIgNUh--
