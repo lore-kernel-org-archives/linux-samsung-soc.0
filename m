@@ -1,134 +1,57 @@
-From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: Re: [PATCH v4 2/2] regulator: add device tree support for max8997
-Date: Wed, 28 Mar 2012 19:03:28 +0200
-Message-ID: <4F734460.4060605@samsung.com>
-References: <1332582590-16382-1-git-send-email-thomas.abraham@linaro.org>
- <1332582590-16382-3-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1332582590-16382-3-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, Rajendra Nayak <rnayak@ti.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: S3C24XX: fix missing common.h in mach-s3c24xx/
+Date: Thu, 29 Mar 2012 09:14:34 +0900
+Message-ID: <1332980074-4614-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:50990 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754121Ab2C2AVy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 28 Mar 2012 20:21:54 -0400
+Received: by pbcun15 with SMTP id un15so2515388pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Mar 2012 17:21:54 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>
 
-On 24.03.2012 10:49, Thomas Abraham wrote:
+This patch fixes missing mach-s3c24xx/common.h which has been
+lost when regarding s3c24xx directories merged.
 
-Hi Thomas!
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-s3c24xx/common.h |   23 +++++++++++++++++++++++
+ 1 files changed, 23 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/mach-s3c24xx/common.h
 
-> Add device tree based discovery support for max8997.
-... 
-> +Regulators: The regulators of max8997 that have to be instantiated should be
-> +included in a sub-node named 'regulators'. Regulator nodes included in this
-> +sub-node should be of the format as below. Note: The 'n' in LDOn and BUCKn
-> +represents the LDO or BUCK number as per the datasheet of max8997.
-> +
-> +    For LDO's:
-> +		LDOn {
-> +			standard regulator bindings here
-> +		};
-> +
-> +    For BUCK's:
-> +		BUCKn {
-> +			standard regulator bindings here
-> +		};
-> +
-
-
-Small note - driver supports[1] configuring following regulators by
-using respective DT node names:
-
- - EN32KHz_AP
- - EN32KHz_CP
- - ENVICHG
- - ESAFEOUT1
- - ESAFEOUT2
- - CHARGER
- - CHARGER_CV
- - CHARGER_TOPOFF
-
-I wonder if these should be mentioned in documentation too.
-
-[1] These are used in e.g. mach-nuri.c
-
-> diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.c> index 9657929..dce8aaf 100644
-
-> --- a/drivers/regulator/max8997.c
-> +++ b/drivers/regulator/max8997.c
-..
-> +static int max8997_pmic_dt_parse_pdata(struct max8997_dev *iodev,
-> +					struct max8997_platform_data *pdata)
-> +{
-> +	struct device_node *pmic_np, *regulators_np, *reg_np;
-> +	struct max8997_regulator_data *rdata;
-> +	unsigned int i, dvs_voltage_nr = 1, ret;
-> +
-> +	pmic_np = iodev->dev->of_node;
-> +	if (!pmic_np) {
-> +		dev_err(iodev->dev, "could not find pmic sub-node\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	regulators_np = of_find_node_by_name(pmic_np, "regulators");
-> +	if (!regulators_np) {
-> +		dev_err(iodev->dev, "could not find regulators sub-node\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* count the number of regulators to be supported in pmic */
-> +	pdata->num_regulators = 0;
-> +	for_each_child_of_node(regulators_np, reg_np)
-> +		pdata->num_regulators++;
-> +
-> +	rdata = devm_kzalloc(iodev->dev, sizeof(*rdata) *
-> +				pdata->num_regulators, GFP_KERNEL);
-> +	if (!rdata) {
-> +		dev_err(iodev->dev, "could not allocate memory for "
-> +						"regulator data\n");
-> +		return -ENOMEM;
-> +	}
-
-> +	pdata->regulators = rdata;
-
-> +	for_each_child_of_node(regulators_np, reg_np) {
-> +		for (i = 0; i < ARRAY_SIZE(regulators); i++)
-> +			if (!of_node_cmp(reg_np->name, regulators[i].name))
-> +				break;
-> +		rdata->id = i;
-
-
-rdata->id will be equal to ARRAY_SIZE(regulators) when one adds DT node
-name (below "regulators") which is different from what can be found in
-regulators[] table.
-
-On my test machine this results in hard lockup - possibly because
-something tries to access regulators[ARRAY_SIZE(regulators)]
-later on.
-
-Following patch fixes this on my machine (using DTS with misspelled LDO1 for LDx1):
-
-diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.c
-index dce8aaf..c20fd72 100644
---- a/drivers/regulator/max8997.c
-+++ b/drivers/regulator/max8997.c
-@@ -1011,6 +1011,13 @@ static int max8997_pmic_dt_parse_pdata(struct max8997_dev *iodev,
-                for (i = 0; i < ARRAY_SIZE(regulators); i++)
-                        if (!of_node_cmp(reg_np->name, regulators[i].name))
-                                break;
+diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/common.h
+new file mode 100644
+index 0000000..a7cd62f
+--- /dev/null
++++ b/arch/arm/mach-s3c24xx/common.h
+@@ -0,0 +1,23 @@
++/*
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Common Header for S3C24XX SoCs
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+               if (i == ARRAY_SIZE(regulators)) {
-+                       dev_warn(iodev->dev, "don't know how to configure regulator %s\n",
-+                                reg_np->name);
-+                       continue;
-+               }
++#ifndef __ARCH_ARM_MACH_S3C24XX_COMMON_H
++#define __ARCH_ARM_MACH_S3C24XX_COMMON_H
 +
-                rdata->id = i;
-                rdata->initdata = of_get_regulator_init_data(
-                                                iodev->dev, reg_np);
-
-
-Regards,
++#ifdef CONFIG_CPU_S3C2410
++void s3c2410_restart(char mode, const char *cmd);
++#endif
++
++#ifdef CONFIG_CPU_S3C244X
++void s3c244x_restart(char mode, const char *cmd);
++#endif
++
++#endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
 -- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+1.7.2.3
