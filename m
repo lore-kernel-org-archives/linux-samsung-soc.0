@@ -1,123 +1,279 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH] ARM: EXYNOS4: Support Suspend/Resume for EXYNOS4412
-Date: Thu, 29 Mar 2012 08:55:17 +0530
-Message-ID: <1332991517-3083-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:53475 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758614Ab2C2DZf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Mar 2012 23:25:35 -0400
-Received: by yenl12 with SMTP id l12so1216191yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Mar 2012 20:25:34 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH V2] mmc: core: Add host capability check for power class
+Date: Thu, 29 Mar 2012 11:17:32 +0530
+Message-ID: <CAGxe1ZFF2ABSh122iwMja0UvSHLhe0hqeGa+bVhsNkka5-hGdQ@mail.gmail.com>
+References: <1323921517-31241-1-git-send-email-girish.shivananjappa@linaro.org>
+	<CAKLKtzc4HDmqStQhn_J6GZxdZ0vE_vb7=+xq+oEHqp6QxYDxsg@mail.gmail.com>
+	<CAGxe1ZEAj1PASOxQHNm=DNOSt2MWMvCQdWu4hKFnYoaLmnLShg@mail.gmail.com>
+	<CAKLKtzfPC_+SnsaJ0YjWj6rpKeUdxhAxRxec=fDb_J5N1YRrkg@mail.gmail.com>
+	<000401cd0cd3$4a6be470$df43ad50$@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <000401cd0cd3$4a6be470$df43ad50$@codeaurora.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Subhash Jadavani <subhashj@codeaurora.org>
+Cc: Saugata Das <saugata.das@linaro.org>, linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: patches@linaro.org, kgene.kim@samsung.com, Inderpal Singh <inderpal.singh@linaro.org>
 
-This patch provides the suspend/resume support for EXYNOS4412.
+On 28 March 2012 16:39, Subhash Jadavani <subhashj@codeaurora.org> wrot=
+e:
+>
+>
+>> -----Original Message-----
+>> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
+>> owner@vger.kernel.org] On Behalf Of Saugata Das
+>> Sent: Thursday, December 15, 2011 6:35 PM
+>> To: Girish K S
+>> Cc: linux-mmc@vger.kernel.org; patches@linaro.org; linux-samsung-
+>> soc@vger.kernel.org; subhashj@codeaurora.org; Chris Ball
+>> Subject: Re: [PATCH V2] mmc: core: Add host capability check for pow=
+er
+> class
+>>
+>> On 15 December 2011 16:22, Girish K S <girish.shivananjappa@linaro.o=
+rg>
+>> wrote:
+>> > On 15 December 2011 15:34, Saugata Das <saugata.das@linaro.org> wr=
+ote:
+>> >> On 15 December 2011 09:28, Girish K S <girish.shivananjappa@linar=
+o.org>
+>> wrote:
+>> >>> This patch adds a check whether the host supports maximum curren=
+t
+>> >>> value obtained from the device's extended csd register for a
+>> >>> selected interface voltage and frequency.
+>> >>>
+>> >>> cc: Chris Ball <cjb@laptop.org>
+>> >>> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+>> >>> ---
+>> >>> Changes in v2:
+>> >>> =A0 =A0 =A0 =A0deleted a unnecessary if else condition identifie=
+d by subhash
+>> >>> J Changes in v1:
+>> >>> =A0 =A0 =A0 reduced the number of comparisons as per Hein's sugg=
+estion
+>> >>>
+>> >>> =A0drivers/mmc/core/mmc.c =A0 | =A0 19 +++++++++++++++++++
+>> >>> =A0include/linux/mmc/card.h | =A0 =A04 ++++
+>> >>> =A02 files changed, 23 insertions(+), 0 deletions(-)
+>> >>>
+>> >>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c ind=
+ex
+>> >>> 006e932..b9ef777 100644
+>> >>> --- a/drivers/mmc/core/mmc.c
+>> >>> +++ b/drivers/mmc/core/mmc.c
+>> >>> @@ -688,6 +688,25 @@ static int mmc_select_powerclass(struct
+>> >>> mmc_card *card,
+>> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pwrclass_val =3D (pwrclass_val &
+>> >>> EXT_CSD_PWR_CL_4BIT_MASK) >>
+>> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0E=
+XT_CSD_PWR_CL_4BIT_SHIFT;
+>> >>>
+>> >>> + =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_800)
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_8=
+00;
+>> >>> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_600)
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_6=
+00;
+>> >>> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_400)
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_4=
+00;
+>> >>> + =A0 =A0 =A0 else
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_2=
+00;
+>> >>> +
+>> >>> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_800) &&
+>> >>> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_8=
+00))
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_6=
+00;
+>> >>> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_600) &&
+>> >>> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_6=
+00))
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_4=
+00;
+>> >>> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_400) &&
+>> >>> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURRENT_4=
+00))
+>> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURRENT_2=
+00;
+>> >>> +
+>> >>> =A0 =A0 =A0 =A0/* If the power class is different from the defau=
+lt value */
+>> >>> =A0 =A0 =A0 =A0if (pwrclass_val > 0) {
+>> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_CSD_=
+CMD_SET_NORMAL,
+>> >>
+>> >> It is not allowed to set the POWER_CLASS with any value other tha=
+n
+>> >> what is mentioned in the PWR_CL_ff_vvv or PWR_CL_DDR_ff_vvv =A0fo=
+r
+>> the
+>> >> corresponding frequency, voltage. That is, if PWR_CL_200_195 is 1=
+4
+>> >> and we want to operate at HS200 then the only value allowed for
+>> >> POWER_CLASS is 14. So, we need to check the PWR_CL numbers and
+>> choose
+>> >> the operating mode (HS200/DDR50/..) based on the platform capabil=
+ity
+>> >> to support the current consumption and set the corresponding
+>> >> POWER_CLASS value.
+>> >>
+>> >> Please refer to section 6.6.5 of the 4.5 spec.
+>> >
+>> > The upstreamed code reads the extended csd value based on the alre=
+ady
+>> > set voltage level and frequency of host. So it will get the requir=
+ed
+>> > power class value which can be set directly. Is my understanding
+>> > correct?
+>> >
+>>
+>> It is not enough to just check the voltage level and frequency.
+>> Consider this example, host has capability to support
+>> MMC_CAP_MAX_CURRENT_400, the PWR_CL_DDR_52_360 has the value 9
+>> (400mA) and PWR_CL_200_360 has the value 14 (800mA). Then even thoug=
+h
+>> the host might be capable to run 200MHz clock and 3.6V, it can only =
+enable
+>> DDR at 52MHz and set 9 in POWER_CLASS.
+>>
+>> I think, in mmc_select_powerclass, we need to loop through the power
+>> classes of all supported modes of transfer (HS200, DDR52, ... ) and =
+choose
+> the
+>> mode which gives maximum bandwidth but falls within host capability =
+of
+>> current consumption. Then set this to POWER_CLASS byte and also use =
+the
+>> same information when setting HS_TIMING in mmc_init_card.
+>
+> Hi Saugata,
+>
+> Does the spec mandates you to set the power class to what is needed b=
+y
+> frequency/voltage combination? I can't see that mentioned anywhere
+> explicitly in eMMC4.5 spec (if it is mentioned in spec, please let me=
+ know
+> section and line number). It may be still possible to set the power c=
+lass
+> lower than what is needed by frequency/voltage combination. Say for e=
+xample,
+> 8-bit HS200 (200MHz) with high voltage cards may specify power class
+> (PWR_CL_200_3_6) value of 14 (800 mA) but that doesn't mean if you wa=
+nt the
+> card to work in 8-bit HS200 mode, its POWER_CLASS value must be 14 (8=
+00mA).
+> If host's VDD regulator is only capable of say 600mA then it may stil=
+l set
+> the POWER_CLASS to 12 (600 mA) which should be the indication to card=
+ that
+> host power supply is capable of sourcing only 600mA and I would assum=
+e card
+> will make sure that it doesn't draw anything more than that.
+>
+> Hi Girish,
+>
+> I see couple of other issues with your original power_class selection=
+ patch.
+> 1. mmc_select_powerclass() function considers 2.7v to 3.2v VDD range =
+as
+> invalid. That's not correct. Valid high voltage range is from 2.7v to=
+ 3.6v.
+> Is there a specific reason you have skipped the 2.7v to 3.2v VDD rang=
+e? If
+> not, I should post following change:
 
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
----
- arch/arm/mach-exynos/include/mach/regs-pmu.h |   10 +++++++++-
- arch/arm/mach-exynos/pm.c                    |    2 +-
- arch/arm/mach-exynos/pmu.c                   |   24 ++++++++++++++++++++----
- 3 files changed, 30 insertions(+), 6 deletions(-)
+can post a patch for this
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index 4c53f38..606b199 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -177,7 +177,7 @@
- 
- #define S5P_PMU_LCD1_CONF		S5P_PMUREG(0x3CA0)
- 
--/* Only for EXYNOS4212 */
-+/* Only for EXYNOS4x12 */
- #define S5P_ISP_ARM_LOWPWR			S5P_PMUREG(0x1050)
- #define S5P_DIS_IRQ_ISP_ARM_LOCAL_LOWPWR	S5P_PMUREG(0x1054)
- #define S5P_DIS_IRQ_ISP_ARM_CENTRAL_LOWPWR	S5P_PMUREG(0x1058)
-@@ -218,4 +218,12 @@
- #define S5P_SECSS_MEM_OPTION			S5P_PMUREG(0x2EC8)
- #define S5P_ROTATOR_MEM_OPTION			S5P_PMUREG(0x2F48)
- 
-+/* Only for EXYNOS4412 */
-+#define S5P_ARM_CORE2_LOWPWR			S5P_PMUREG(0x1020)
-+#define S5P_DIS_IRQ_CORE2			S5P_PMUREG(0x1024)
-+#define S5P_DIS_IRQ_CENTRAL2			S5P_PMUREG(0x1028)
-+#define S5P_ARM_CORE3_LOWPWR			S5P_PMUREG(0x1030)
-+#define S5P_DIS_IRQ_CORE3			S5P_PMUREG(0x1034)
-+#define S5P_DIS_IRQ_CENTRAL3			S5P_PMUREG(0x1038)
-+
- #endif /* __ASM_ARCH_REGS_PMU_H */
-diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-index 428cfeb..f0bb467 100644
---- a/arch/arm/mach-exynos/pm.c
-+++ b/arch/arm/mach-exynos/pm.c
-@@ -313,7 +313,7 @@ static int exynos4_pm_suspend(void)
- 	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
- 	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
- 
--	if (soc_is_exynos4212()) {
-+	if (soc_is_exynos4212() || soc_is_exynos4412()) {
- 		tmp = __raw_readl(S5P_CENTRAL_SEQ_OPTION);
- 		tmp &= ~(S5P_USE_STANDBYWFI_ISP_ARM |
- 			 S5P_USE_STANDBYWFE_ISP_ARM);
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index bba48f5..77c6815 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -94,7 +94,7 @@ static struct exynos4_pmu_conf exynos4210_pmu_config[] = {
- 	{ PMU_TABLE_END,},
- };
- 
--static struct exynos4_pmu_conf exynos4212_pmu_config[] = {
-+static struct exynos4_pmu_conf exynos4x12_pmu_config[] = {
- 	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
- 	{ S5P_DIS_IRQ_CORE0,			{ 0x0, 0x0, 0x0 } },
- 	{ S5P_DIS_IRQ_CENTRAL0,			{ 0x0, 0x0, 0x0 } },
-@@ -202,6 +202,16 @@ static struct exynos4_pmu_conf exynos4212_pmu_config[] = {
- 	{ PMU_TABLE_END,},
- };
- 
-+static struct exynos4_pmu_conf exynos4412_pmu_config[] = {
-+	{ S5P_ARM_CORE2_LOWPWR,			{ 0x0, 0x0, 0x2 } },
-+	{ S5P_DIS_IRQ_CORE2,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_CENTRAL2,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_ARM_CORE3_LOWPWR,			{ 0x0, 0x0, 0x2 } },
-+	{ S5P_DIS_IRQ_CORE3,			{ 0x0, 0x0, 0x0 } },
-+	{ S5P_DIS_IRQ_CENTRAL3,			{ 0x0, 0x0, 0x0 } },
-+	{ PMU_TABLE_END,},
-+};
-+
- void exynos4_sys_powerdown_conf(enum sys_powerdown mode)
- {
- 	unsigned int i;
-@@ -209,6 +219,12 @@ void exynos4_sys_powerdown_conf(enum sys_powerdown mode)
- 	for (i = 0; (exynos4_pmu_config[i].reg != PMU_TABLE_END) ; i++)
- 		__raw_writel(exynos4_pmu_config[i].val[mode],
- 				exynos4_pmu_config[i].reg);
-+
-+	if (soc_is_exynos4412()) {
-+		for (i = 0; exynos4412_pmu_config[i].reg != PMU_TABLE_END ; i++)
-+			__raw_writel(exynos4412_pmu_config[i].val[mode],
-+				exynos4412_pmu_config[i].reg);
-+	}
- }
- 
- static int __init exynos4_pmu_init(void)
-@@ -218,9 +234,9 @@ static int __init exynos4_pmu_init(void)
- 	if (soc_is_exynos4210()) {
- 		exynos4_pmu_config = exynos4210_pmu_config;
- 		pr_info("EXYNOS4210 PMU Initialize\n");
--	} else if (soc_is_exynos4212()) {
--		exynos4_pmu_config = exynos4212_pmu_config;
--		pr_info("EXYNOS4212 PMU Initialize\n");
-+	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
-+		exynos4_pmu_config = exynos4x12_pmu_config;
-+		pr_info("EXYNOS4x12 PMU Initialize\n");
- 	} else {
- 		pr_info("EXYNOS4: PMU not supported\n");
- 	}
--- 
-1.7.5.4
+>
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -626,6 +626,11 @@ static int mmc_select_powerclass(struct mmc_card=
+ *card,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else if (host->ios.clock <=3D 20000000=
+0)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0index =3D EXT_CSD_PWR_=
+CL_200_195;
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
+> + =A0 =A0 =A0 case MMC_VDD_27_28:
+> + =A0 =A0 =A0 case MMC_VDD_28_29:
+> + =A0 =A0 =A0 case MMC_VDD_29_30:
+> + =A0 =A0 =A0 case MMC_VDD_30_31:
+> + =A0 =A0 =A0 case MMC_VDD_31_32:
+> =A0 =A0 =A0 =A0case MMC_VDD_32_33:
+> =A0 =A0 =A0 =A0case MMC_VDD_33_34:
+> =A0 =A0 =A0 =A0case MMC_VDD_34_35:
+>
+> 2. =A0Currently in mmc_init_card(), power class selection is done if =
+it's
+> normal (DS or HS) or DDR or HS200 card.
+> =A0 =A0If power class selection fails (mmc_select_powerclass() return=
+s error)
+> for DS/HS/DDR cards, we are just printing the error and going ahead w=
+ith the
+> rest of the initialization where as if power class selection fails fo=
+r HS200
+> cards, we are simply aborting the
+> =A0 =A0initialization and mark it as failed.
+>
+> =A0 There are my points:
+> =A0 =A0 =A0 1. =A0Power class failure must be treated in same manner =
+for
+> DS/HS/DDR/HS200 cards
+good find.
+Yes will modify and repost for the HS200 case.
+
+> =A0 =A0 =A0 2. =A0If you agree on first point then we need to decide =
+whether power
+> class selection failure is fatal enough to abort the MMC initializati=
+on? or
+> we can just print the warning and go ahead with rest of the initializ=
+ation
+> in same bus speed mode?
+
+Should not be treated as fatal, should continue the initialization
+with default power class
+
+>
+> Regards,
+> Subhash
+>
+>>
+>> >>
+>> >>
+>> >>> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/card.h
+>> >>> index 9478a6b..c5e031a 100644
+>> >>> --- a/include/linux/mmc/card.h
+>> >>> +++ b/include/linux/mmc/card.h
+>> >>> @@ -195,6 +195,10 @@ struct mmc_part {
+>> >>> =A0#define MMC_BLK_DATA_AREA_GP =A0 (1<<2)
+>> >>> =A0};
+>> >>>
+>> >>> +#define MMC_MAX_CURRENT_200 =A0 =A0(0)
+>> >>> +#define MMC_MAX_CURRENT_400 =A0 =A0(7)
+>> >>> +#define MMC_MAX_CURRENT_600 =A0 =A0(11) #define
+>> MMC_MAX_CURRENT_800
+>> >>> +(13)
+>> >>> =A0/*
+>> >>> =A0* MMC device
+>> >>> =A0*/
+>> >>> --
+>> >>> 1.7.1
+>> >>>
+>> >>> --
+>> >>> To unsubscribe from this list: send the line "unsubscribe linux-=
+mmc"
+>> >>> in the body of a message to majordomo@vger.kernel.org More
+>> majordomo
+>> >>> info at =A0http://vger.kernel.org/majordomo-info.html
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc"=
+ in
+> the
+>> body of a message to majordomo@vger.kernel.org More majordomo info a=
+t
+>> http://vger.kernel.org/majordomo-info.html
+>
