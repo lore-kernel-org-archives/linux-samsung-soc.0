@@ -1,67 +1,107 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Wed, 28 Mar 2012 18:23:47 -0700
-Message-ID: <4F73B9A3.30605@samsung.com>
-References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com> <4F630841.2070307@linaro.org> <4F63A6F6.9050506@samsung.com> <20120318132746.GL26973@8bytes.org>
+Subject: Re: [PATCH 1/4] ARM: Exynos: Use CHIP_ID to detect cpu type during
+ decompression setup
+Date: Wed, 28 Mar 2012 18:34:05 -0700
+Message-ID: <4F73BC0D.7070004@samsung.com>
+References: <1332840365-24827-1-git-send-email-thomas.abraham@linaro.org> <1332840365-24827-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:54285 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758047Ab2C2BXv (ORCPT
+Received: from mail-gy0-f174.google.com ([209.85.160.174]:35733 "EHLO
+	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758027Ab2C2BeJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Mar 2012 21:23:51 -0400
-In-Reply-To: <20120318132746.GL26973@8bytes.org>
+	Wed, 28 Mar 2012 21:34:09 -0400
+Received: by ghrr11 with SMTP id r11so1210092ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Mar 2012 18:34:08 -0700 (PDT)
+In-Reply-To: <1332840365-24827-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Joerg Roedel wrote:
-> On Fri, Mar 16, 2012 at 01:47:50PM -0700, Kukjin Kim wrote:
->> Anyway Joerg, how do you want to handle this? Do you want to pick up
->> 1/2/3 all of them in your tree? If so, 2nd patch should be on top of
->> some samsung topic stuff.
->
-> Since patch 2 only applies to the Samsung tree, it is best to carry
-> this in your tree for merging. Feel free to add my Acked-by to patch 3.
-> But any further patches for the Exynos IOMMU drivers should go through
-> my tree after it is merged.
->
+Thomas Abraham wrote:
+> The config option MACH_SMDK5250 is not available for Exynos5 since only
+> a device tree based machine is supported and selected by MACH_EXYNOS5_DT.
+> Hence, the detection of the cpu type based on machine_is_smdk5250 always
+> fails and boot hangs due to incorrect uart base being used. Fix this by
+> reading the chip id to determine the cpu type and setup the uart_base
+> accordingly.
+> 
+> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
+> ---
+>   arch/arm/mach-exynos/include/mach/uncompress.h |    6 +++++-
+>   1 files changed, 5 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/arm/mach-exynos/include/mach/uncompress.h
+> index 493f4f3..603ea9b 100644
+> --- a/arch/arm/mach-exynos/include/mach/uncompress.h
+> +++ b/arch/arm/mach-exynos/include/mach/uncompress.h
+> @@ -14,15 +14,19 @@
+> 
+>   #include<asm/mach-types.h>
+> 
+> +#include<plat/cpu.h>
+>   #include<mach/map.h>
+> 
+>   volatile u8 *uart_base;
+> 
+>   #include<plat/uncompress.h>
+> 
+> +#define __raw_readl(addr)		\
+> +	(*((volatile unsigned int __force *)(addr)))
+> +
+>   static void arch_detect_cpu(void)
+>   {
+> -	if (machine_is_smdk5250())
+> +	if ((__raw_readl(EXYNOS_PA_CHIPID)&  EXYNOS5_SOC_MASK) == EXYNOS5250_SOC_ID)
+>   		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
+>   	else
+>   		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
 
-Hi Joerg,
+Hi Thomas,
 
-Now that 1st and 2nd can be applied cleanly into latest mainline. But 
-unfortunately, I have no chance to send them to Linus now and I'm not 
-sure you can do it during this merge window. If it is possible, please 
-keep going on with my ack.
+Thanks for fix.
 
-KyongHo, just note, happens follwoing complaint with checkpatch, but I'm 
-not sure this should be fixed right now. I think, if required, we can 
-fix it later.
+But I have following patch and it is not required to add inclusion of
+<plat/cpu.h>. How do you think? If you're ok, I would preferred to use
+follwoing.
 
-ERROR: Macros with complex values should be enclosed in parenthesis
-#698: FILE: arch/arm/mach-exynos/dev-sysmmu.c:64:
-+#define DEFINE_SYSMMU_RESOURCE(core, mem, irq)                         \
-+       DEFINE_RES_MEM_NAMED(core##_PA_SYSMMU_##mem, SZ_4K, #mem),      \
-+       DEFINE_RES_IRQ_NAMED(core##_IRQ_SYSMMU_##irq##_0, #mem)
+diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h
+b/arch/arm/mach-exynos/include/mach/uncompress.h
+index 493f4f3..2979995 100644
+--- a/arch/arm/mach-exynos/include/mach/uncompress.h
++++ b/arch/arm/mach-exynos/include/mach/uncompress.h
+@@ -20,9 +20,24 @@ volatile u8 *uart_base;
 
-ERROR: Macros with complex values should be enclosed in parenthesis
-#702: FILE: arch/arm/mach-exynos/dev-sysmmu.c:68:
-+#define SYSMMU_RESOURCE_DEFINE(core, ipname, mem, irq)                 \
-+       SYSMMU_RESOURCE(core, ipname) {                                 \
-+               DEFINE_SYSMMU_RESOURCE(core, mem, irq)                  \
-+       }
+ #include <plat/uncompress.h>
 
-WARNING: quoted string split across lines
-#914: FILE: arch/arm/mach-exynos/dev-sysmmu.c:259:
-+                               pr_err("%s: Failed to add device 
-resources for "
-+                                               "%s.%d\n", __func__,
++static unsigned int __raw_readl(unsigned int ptr)
++{
++	return *((volatile unsigned int *)ptr);
++}
++
+ static void arch_detect_cpu(void)
+ {
+-	if (machine_is_smdk5250())
++	u32 chip_id = __raw_readl(EXYNOS_PA_CHIPID);
++
++	/*
++	 * product_id is bits 31:12
++	 *    bits 23:20 describe the exynosX family
++	 *
++	 */
++	chip_id >>= 20;
++	chip_id &= 0xf;
++
++	if (chip_id == 0x5)
+ 		uart_base = (volatile u8 *)EXYNOS5_PA_UART + (S3C_UART_OFFSET *
+CONFIG_S3C_LOWLEVEL_UART_PORT);
+ 	else
+ 		uart_base = (volatile u8 *)EXYNOS4_PA_UART + (S3C_UART_OFFSET *
+CONFIG_S3C_LOWLEVEL_UART_PORT);
 
-total: 2 errors, 1 warnings, 1062 lines checked
 
 Thanks.
 
