@@ -1,65 +1,72 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] [CPUFREQ] EXYNOS: fix dependency for EXYNOS_CPUFREQ
-Date: Thu, 29 Mar 2012 09:51:24 +0900
-Message-ID: <1332982284-8143-1-git-send-email-kgene.kim@samsung.com>
+Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
+ definitions
+Date: Wed, 28 Mar 2012 18:23:47 -0700
+Message-ID: <4F73B9A3.30605@samsung.com>
+References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com> <4F630841.2070307@linaro.org> <4F63A6F6.9050506@samsung.com> <20120318132746.GL26973@8bytes.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:62125 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:54285 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932832Ab2C2A6y (ORCPT
+	with ESMTP id S1758047Ab2C2BXv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Mar 2012 20:58:54 -0400
+	Wed, 28 Mar 2012 21:23:51 -0400
+In-Reply-To: <20120318132746.GL26973@8bytes.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org
-Cc: davej@redhat.com, rmk+kernel@arm.linux.org.uk, Kukjin Kim <kgene.kim@samsung.com>
+To: Joerg Roedel <joro@8bytes.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-This fixes the CPUFREQ dependency for regarding EXYNOS SoCs
-such as EXYNOS4210, EXYNOS4X12 and EXYNOS5250. Its cpufreq
-driver should be built with selection of SoC arch part.
+Joerg Roedel wrote:
+> On Fri, Mar 16, 2012 at 01:47:50PM -0700, Kukjin Kim wrote:
+>> Anyway Joerg, how do you want to handle this? Do you want to pick up
+>> 1/2/3 all of them in your tree? If so, 2nd patch should be on top of
+>> some samsung topic stuff.
+>
+> Since patch 2 only applies to the Samsung tree, it is best to carry
+> this in your tree for merging. Feel free to add my Acked-by to patch 3.
+> But any further patches for the Exynos IOMMU drivers should go through
+> my tree after it is merged.
+>
 
-Reported-by: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/cpufreq/Kconfig.arm |   10 +++-------
- 1 files changed, 3 insertions(+), 7 deletions(-)
+Hi Joerg,
 
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 32d790d..ffbb446 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -51,9 +51,6 @@ config ARM_S5PV210_CPUFREQ
- config ARM_EXYNOS_CPUFREQ
- 	bool "SAMSUNG EXYNOS SoCs"
- 	depends on ARCH_EXYNOS
--	select ARM_EXYNOS4210_CPUFREQ if CPU_EXYNOS4210
--	select ARM_EXYNOS4X12_CPUFREQ if (SOC_EXYNOS4212 || SOC_EXYNOS4412)
--	select ARM_EXYNOS5250_CPUFREQ if SOC_EXYNOS5250
- 	default y
- 	help
- 	  This adds the CPUFreq driver common part for Samsung
-@@ -62,20 +59,19 @@ config ARM_EXYNOS_CPUFREQ
- 	  If in doubt, say N.
- 
- config ARM_EXYNOS4210_CPUFREQ
--	bool "Samsung EXYNOS4210"
--	depends on ARCH_EXYNOS
-+	def_bool CPU_EXYNOS4210
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS4210
- 	  SoC (S5PV310 or S5PC210).
- 
- config ARM_EXYNOS4X12_CPUFREQ
--	bool "Samsung EXYNOS4X12"
-+	def_bool (SOC_EXYNOS4212 || SOC_EXYNOS4412)
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS4X12
- 	  SoC (EXYNOS4212 or EXYNOS4412).
- 
- config ARM_EXYNOS5250_CPUFREQ
--	bool "Samsung EXYNOS5250"
-+	def_bool SOC_EXYNOS5250
- 	help
- 	  This adds the CPUFreq driver for Samsung EXYNOS5250
- 	  SoC.
--- 
-1.7.2.3
+Now that 1st and 2nd can be applied cleanly into latest mainline. But 
+unfortunately, I have no chance to send them to Linus now and I'm not 
+sure you can do it during this merge window. If it is possible, please 
+keep going on with my ack.
+
+KyongHo, just note, happens follwoing complaint with checkpatch, but I'm 
+not sure this should be fixed right now. I think, if required, we can 
+fix it later.
+
+ERROR: Macros with complex values should be enclosed in parenthesis
+#698: FILE: arch/arm/mach-exynos/dev-sysmmu.c:64:
++#define DEFINE_SYSMMU_RESOURCE(core, mem, irq)                         \
++       DEFINE_RES_MEM_NAMED(core##_PA_SYSMMU_##mem, SZ_4K, #mem),      \
++       DEFINE_RES_IRQ_NAMED(core##_IRQ_SYSMMU_##irq##_0, #mem)
+
+ERROR: Macros with complex values should be enclosed in parenthesis
+#702: FILE: arch/arm/mach-exynos/dev-sysmmu.c:68:
++#define SYSMMU_RESOURCE_DEFINE(core, ipname, mem, irq)                 \
++       SYSMMU_RESOURCE(core, ipname) {                                 \
++               DEFINE_SYSMMU_RESOURCE(core, mem, irq)                  \
++       }
+
+WARNING: quoted string split across lines
+#914: FILE: arch/arm/mach-exynos/dev-sysmmu.c:259:
++                               pr_err("%s: Failed to add device 
+resources for "
++                                               "%s.%d\n", __func__,
+
+total: 2 errors, 1 warnings, 1062 lines checked
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
