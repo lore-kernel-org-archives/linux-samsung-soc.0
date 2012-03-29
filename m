@@ -1,112 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v4 05/12] ARM: EXYNOS: add support uart for EXYNOS4 and
- EXYNOS5
-Date: Wed, 28 Mar 2012 19:05:53 -0700
-Message-ID: <4F73C381.1090504@samsung.com>
-References: <1331736138-28964-1-git-send-email-kgene.kim@samsung.com> <1331736138-28964-6-git-send-email-kgene.kim@samsung.com> <CAJuYYwTJsA1M1Qj2P1-1K=pWzi0BPo8YJNDSx4NqGC7NX0030g@mail.gmail.com> <074401cd074f$c2946b90$47bd42b0$%szyprowski@samsung.com> <4F6B3256.40304@samsung.com> <CAJuYYwT5_EHPD4D+Qx0rX8bUVGLbLYUps2BYSUihLbuKGnhHdA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device
+ tree support
+Date: Wed, 28 Mar 2012 20:15:35 -0700
+Message-ID: <4F73D3D7.1010202@samsung.com>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org> <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com> <m2aa4pkq5g.fsf@bob.laptop.org> <4F3CFEED.6060206@samsung.com> <m239abgc32.fsf@bob.laptop.org> <00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com> <m2vcn0496y.fsf@bob.laptop.org> <87k426vy9r.fsf@laptop.org> <20120328095450.GA23005@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:36291 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758587Ab2C2CF5 (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:46995 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758287Ab2C2DPk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 28 Mar 2012 22:05:57 -0400
-Received: by gghe5 with SMTP id e5so1215160ggh.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 28 Mar 2012 19:05:57 -0700 (PDT)
-In-Reply-To: <CAJuYYwT5_EHPD4D+Qx0rX8bUVGLbLYUps2BYSUihLbuKGnhHdA@mail.gmail.com>
+	Wed, 28 Mar 2012 23:15:40 -0400
+In-Reply-To: <20120328095450.GA23005@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, olof@lixom.net, linux-samsung-soc@vger.kernel.org, arnd@arndb.de, linux-arm-kernel@lists.infradead.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Chris Ball <cjb@laptop.org>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, 'Thomas Abraham' <thomas.abraham@linaro.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-Thomas Abraham wrote:
-> 2012/3/22 Kukjin Kim<kgene.kim@samsung.com>:
->> On 03/21/12 03:45, Marek Szyprowski wrote:
->>>
->>> Hello,
->>>
->>> On Wednesday, March 21, 2012 10:14 AM Thomas Abraham wrote:
->>>
->>>> On 14 March 2012 20:12, Kukjin Kim<kgene.kim@samsung.com>    wrote:
->>>>>
->>>>> Actually, the base address of uart is different between EXYNOS4
->>>>> and EXYNOS5 and this patch enables to support uart for EXYNOS4
->>>>> and EXYNOS5 SoCs at runtime.
->>>>>
->>>>> Signed-off-by: Kukjin Kim<kgene.kim@samsung.com>
->>>>> ---
->>>>
->>>>
->>>> [...]
->>>>
->>>>> diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S
->>>>> b/arch/arm/mach-
->>>>
->>>> exynos/include/mach/debug-macro.S
->>>>>
->>>>> index 6cacf16..6c857ff 100644
->>>>> --- a/arch/arm/mach-exynos/include/mach/debug-macro.S
->>>>> +++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
->>>>> @@ -21,8 +21,13 @@
->>>>>          */
->>>>>
->>>>>         .macro addruart, rp, rv, tmp
->>>>> -               ldr     \rp, = S3C_PA_UART
->>>>> -               ldr     \rv, = S3C_VA_UART
->>>>> +               mov     \rp, #0x10000000
->>>>
->>>>
->>>> This is physical address of Exynos4/5 CPUID register which cannot be
->>>> used here. And virtual address S5P_VA_CPUID also cannot be used here
->>>> since this will be called before paging_init when earlyprintk boot
->>>> param is used. So, with this change, earlyprintk does not work for
->>>> both Exynos4 and Exynos5.
->>>
->>>
->>> I confirm, printascii freeze the system on EXYNOS4 after that patch,
->>> tested on Exynos4210 Nuri board.
->>>
->> Hi,
->>
->> I think, it can be solved with following and if no problems, it will be
->> fixed during v3.4-rcX.
->>
->> diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S
->> b/arch/arm/mach-exynos/in
->> index 6c857ff..a865417 100644
->> --- a/arch/arm/mach-exynos/include/mach/debug-macro.S
->> +++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
->> @@ -21,10 +21,10 @@
->>
->>          */
->>
->>         .macro addruart, rp, rv, tmp
->> -               mov     \rp, #0x10000000
->> -               ldr     \rp, [\rp, #0x0]
->> -               and     \rp, \rp, #0xf00000
->> -               teq     \rp, #0x500000          @@ EXYNOS5
->> +               mrc     p15, 0, \tmp, c0, c0, 0
->> +               and     \tmp, \tmp, #0xf0
->> +               teq     \tmp, #0xf0             @@ A15
->> +
->>                 ldreq   \rp, =EXYNOS5_PA_UART
->>
->>                 movne   \rp, #EXYNOS4_PA_UART   @@ EXYNOS4
->>                 ldr     \rv, =S3C_VA_UART
->>
+On 03/28/12 02:54, Mark Brown wrote:
+> On Tue, Mar 27, 2012 at 11:50:24AM -0400, Chris Ball wrote:
+>> On Tue, Feb 21 2012, Chris Ball wrote:
+>>> On Tue, Feb 21 2012, Kukjin Kim wrote:
 >
-> Dear Mr. Kim,
+>>>> I created topic branch for this we talked. You can pull that following:
+>>>>    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+>>>> v3.4-for-cjb
 >
-> I have tested the above patch on Exynos5. Thanks.
+>>>> If any problems, please kindly let me know.
 >
-> Tested-by: Thomas Abraham<thomas.abraham@linaro.org>
+>>> Pushed to mmc-next, thanks.  (I'm expecting that you'll do the merge
+>>> to Linus.)
+>
+>> I was expecting you to merge these patches, but they aren't in the
+>> arm-soc tree and haven't been sent to Linus,
 
-Hi Marek, Thomas,
+(Cc'ed Olof and Arnd)
 
-Thanks for your test.
-I will apply above patch with your 'Tested-by:...'
+Chris, Yeah, it is not in arm-soc tree now. Because I sent a pull 
+request of samsung-mmc which is including this v3.4-for-cjb but Olof 
+wanted to merge only arch/arm/ part for samsung mmc because they are not 
+unrelated to the branch, v3.4-for-cjb sent to you. Since I thought the 
+branch would be sent to upstream via your tree and you were included in 
+the mailing loop, I agreed. So there is no it in arm-soc.
+
+>> and we're in the last few
+>> days of the merge window.
+>
+Yeah...it means not closed yet ;)
+
+>> As a result I'm dropping this tree -- and all of the patches that I
+>> have on top of it -- from mmc-next so that I can get a pull request
+>> out.  This means that I'm dropping:
+>
+Hmm, I think, if you're ok, you can send a second pull request to Linus 
+for it and actually, it is in linux-next for a long time via mmc and 
+samsung tree.
+
+Note, please don't rebase it because its resolution for conflicts is in 
+linux-next and I think Linus will use it when happens conflicts...Or I 
+can provide new tree on top of latest mainline. But I'm not sure about 
+latter.
+
+> If they're already in your tree why not just send them to Linus?  Given
+> that everything's in git I don't understand why you'd need Kukjin to
+> push them separately or what the benefit of that would be?
+>
+Yes, I already agreed its merging in the mmc tree :)
+
+> This is all extremely frustrating fromm the contributor point of view.
+
+If any my effort is required, feel free to contact me.
 
 Thanks.
 
