@@ -1,70 +1,67 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ARM: S3C64XX: Add basic cpuidle driver
-Date: Fri, 30 Mar 2012 10:35:56 +0100
-Message-ID: <20120330093556.GA21950@opensource.wolfsonmicro.com>
-References: <1323117169-9817-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <201112061231.22570.heiko@sntech.de>
- <20111222181359.GA19259@sirena.org.uk>
- <201203301032.54739.heiko@sntech.de>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [PATCH 03/17] ARM: mark const init data with __initconst instead
+ of __initdata
+Date: Fri, 30 Mar 2012 11:50:24 +0200
+Message-ID: <20120330095024.GS15647@pengutronix.de>
+References: <20120329211131.GA31250@pengutronix.de>
+ <1333055554-31300-3-git-send-email-u.kleine-koenig@pengutronix.de>
+ <20120330061134.GD3254@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58002 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755181Ab2C3Jf7 (ORCPT
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:53460 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760579Ab2C3JvF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 30 Mar 2012 05:35:59 -0400
+	Fri, 30 Mar 2012 05:51:05 -0400
 Content-Disposition: inline
-In-Reply-To: <201203301032.54739.heiko@sntech.de>
+In-Reply-To: <20120330061134.GD3254@S2101-09.ap.freescale.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Russell King <linux@arm.linux.org.uk>, Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Lennert Buytenhek <kernel@wantstofly.org>, Nicolas Pitre <nico@fluxnic.net>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Barry Song <baohua.song@csr.com>, Andrew Lunn <andrew@lunn.ch>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, linux-sa
 
+Hello Shawn,
 
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Mar 30, 2012 at 02:11:36PM +0800, Shawn Guo wrote:
+> On Thu, Mar 29, 2012 at 11:12:20PM +0200, Uwe Kleine-K=F6nig wrote:
+> ...
+> > diff --git a/arch/arm/mach-imx/imx51-dt.c b/arch/arm/mach-imx/imx51=
+-dt.c
+> > index 5cca573..7e00748 100644
+> > --- a/arch/arm/mach-imx/imx51-dt.c
+> > +++ b/arch/arm/mach-imx/imx51-dt.c
+> > @@ -102,7 +102,7 @@ static struct sys_timer imx51_timer =3D {
+> >  	.init =3D imx51_timer_init,
+> >  };
+> > =20
+> > -static const char *imx51_dt_board_compat[] __initdata =3D {
+> > +static const char *imx51_dt_board_compat[] __initconst =3D {
+> >  	"fsl,imx51-babbage",
+> >  	"fsl,imx51",
+> >  	NULL
+>=20
+>   CC      arch/arm/mach-imx/imx51-dt.o
+> arch/arm/mach-imx/imx51-dt.c:105:20: error: imx51_dt_board_compat cau=
+ses a section type conflict
+> make[2]: *** [arch/arm/mach-imx/imx51-dt.o] Error 1
+>=20
+> I do not understand why though.
+that's because the strings are constant, but the array is not. The fix
+is:
 
-On Fri, Mar 30, 2012 at 10:32:54AM +0200, Heiko St=FCbner wrote:
-> Am Donnerstag, 22. Dezember 2011, 19:13:59 schrieb Mark Brown:
+-static const char *imx51_dt_board_compat[] __initconst =3D {
++static const char *const imx51_dt_board_compat[] __initconst =3D {
 
-> > My plan there for the s3c64xx was to use pm_domain to figure out if the
-> > system is idle enough to drop down, I've been adding some pm_runtime
-> > support to provide the information to the core to let it figure this ou=
-t.
+or keeping __initdata.
 
-> sorry for digging this up again, but do you happen to have some prelimina=
-ry=20
-> code laying around for this, that I could "borrow"?
+Best regards
+Uwe
 
-No, sorry.  The big problem is putting all the devices in power domains
-since the Samsung port always has every single machine driver directly
-register devices.  Until that problem is solved it's not possible to
-figure out if we're idle.
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.11 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPdX5CAAoJEBus8iNuMP3d7U0P/RPtMNg6qVcsiAj/RM+dS36p
-fWE0iMT6q/FHC7OTxBVvKX7HiZYS7iav0F3BF56gpod4WSLFcfalA3j7PQ05YBD7
-Dxlg0mLVyIJyE1yrH1tuqoNPDnFk7RqlU+RcqMA49+1SJdP64vShsQOBBi31QweT
-lhFj8MEPYqvepvO/e8lgDM/yIaILiDVKXapCPGE6AztsEJy0dFoqyC/0srhdD1F6
-dpPu/ZyMiLscdyOir2t2STGwltFH1AU6mC4hgIllpQfQygxMSeGtMg3W8SEafO16
-/XIezhPyDIVuuXUdFzBCMkskEsSuSW1Mv2At+PzhuadJQveomKWbAOyHr7GwofQF
-4jsoDo+jdO3nWzdF9Df8wAWMWiHRDDYHIsH4pWfngKFpCwkaY9nkotPGCkv6betw
-ZTHTN+4OOZzmYFcljv3eGVIETd977ycaJwY5b6LbtkhXnKMgUfhuAUyBiX6R162Y
-qsbxj/Js2Ph1XWid8tjaNSIlNWw6IaVjiyey1vP0NN6300aD21RwA+R2fRFEtdhd
-F/dTzDxWAUld+0ZzMt2Ox+AbkajHmVsMpijppjRtpQzu2p2wBKKpaAYJo/Nyd9ln
-MKci3c51Do+oC2HgiZ63d8lKLQ7RyJL7mxSM/jgd8QTBdyR5DBJ4kciREnU8uLnt
-ZqqeTOjxscqngWvUZSU2
-=yhJT
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
