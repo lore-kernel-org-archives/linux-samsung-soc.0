@@ -1,58 +1,73 @@
-From: Krishna Reddy <vdumpa@nvidia.com>
-Subject: RE: [PATCHv7 9/9] ARM: dma-mapping: add support for IOMMU mapper
-Date: Thu, 29 Mar 2012 19:24:21 -0700
-Message-ID: <401E54CE964CD94BAE1EB4A729C7087E37978A1E66@HQMAIL04.nvidia.com>
-References: <1330527862-16234-1-git-send-email-m.szyprowski@samsung.com>
- <1330527862-16234-10-git-send-email-m.szyprowski@samsung.com>
- <20120329101927.8ab6b1993475b7e16ae2258f@nvidia.com>
- <01b301cd0d81$f935d750$eba185f0$%szyprowski@samsung.com>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 03/17] ARM: mark const init data with __initconst
+ instead of __initdata
+Date: Fri, 30 Mar 2012 06:34:56 +0200
+Message-ID: <20120330043456.GL7757@game.jcrosoft.org>
+References: <20120329211131.GA31250@pengutronix.de>
+ <1333055554-31300-3-git-send-email-u.kleine-koenig@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <01b301cd0d81$f935d750$eba185f0$%szyprowski@samsung.com>
-Content-Language: en-US
-Sender: owner-linux-mm@kvack.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>, 'Shariq Hasnain' <shariq.hasnain@linaro.org>, 'Arnd Bergmann' <arnd@arndb.de>, 'Benjamin Herrenschmidt' <benh@kernel.crashing.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, Andrzej Pietrasiewicz <andrzej.p@samsung.com>, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'KyongHo Cho' <pullip.cho@samsung.com>, Hiroshi Doyu <hdoyu@nvidia.com>, 'Chunsang Jeong' <chunsang.jeong@linaro.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1333055554-31300-3-git-send-email-u.kleine-koenig@pengutronix.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Andrew Lunn <andrew@lunn.ch>, Tony Lindgren <tony@atomide.com>, Sekhar Nori <nsekhar@ti.com>, Daniel Walker <dwalker@fifo99.com>, Lennert Buytenhek <kernel@wantstofly.org>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-msm@vger.kernel.org, David Brown <davidb@codeaurora.org>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, Nicolas Ferre <nicolas.ferre@atmel.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, linux-samsung-soc@vger.kernel.org, Barry Song <baohua.song@csr.com>, linux-omap@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.com, Eric Miao <eric.y.miao@gmail.com>, Nicolas Pitre <nico@fluxnic.net>, linux-kernel@vger.kernel.org, Bryan Huntsman <bryanh@codeaurora.org>, kernel@pengutronix.de, Andrew Morton <akpm@li>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
-I have found a bug in arm_iommu_map_sg().=20
+On 23:12 Thu 29 Mar     , Uwe Kleine-K=F6nig wrote:
+> As long as there is no other non-const variable marked __initdata in the
+> same compilation unit it doesn't hurt. If there were one however
+> compilation would fail with
+> =
 
-> +int arm_iommu_map_sg(struct device *dev, struct scatterlist *sg, int nen=
-ts,
-> +		     enum dma_data_direction dir, struct dma_attrs *attrs) {
-> +	struct scatterlist *s =3D sg, *dma =3D sg, *start =3D sg;
-> +	int i, count =3D 0;
-> +	unsigned int offset =3D s->offset;
-> +	unsigned int size =3D s->offset + s->length;
-> +	unsigned int max =3D dma_get_max_seg_size(dev);
-> +
-> +	for (i =3D 1; i < nents; i++) {
-> +		s->dma_address =3D ARM_DMA_ERROR;
-> +		s->dma_length =3D 0;
-> +
-> +		s =3D sg_next(s);
+> 	error: $variablename causes a section type conflict
+> =
 
-With above code, the last sg element's dma_length is not getting set to zer=
-o.
-This causing additional incorrect  unmapping during arm_iommu_unmap_sg call=
- and=20
-leading to random crashes.
-The order of above three lines should be as follows.
-		s =3D sg_next(s);
+> because a section containing const variables is marked read only and so
+> cannot contain non-const variables.
+> =
 
-		s->dma_address =3D ARM_DMA_ERROR;
-		s->dma_length =3D 0;
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+> Cc: Andrew Victor <linux@maxim.org.za>
+> Cc: Nicolas Ferre <nicolas.ferre@atmel.com>
+> Cc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
+> Cc: Russell King <linux@arm.linux.org.uk>
+> Cc: Sekhar Nori <nsekhar@ti.com>
+> Cc: Kevin Hilman <khilman@ti.com>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Shawn Guo <shawn.guo@linaro.org>
+> Cc: Lennert Buytenhek <kernel@wantstofly.org>
+> Cc: Nicolas Pitre <nico@fluxnic.net>
+> Cc: Eric Miao <eric.y.miao@gmail.com>
+> Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+> Cc: David Brown <davidb@codeaurora.org>
+> Cc: Daniel Walker <dwalker@fifo99.com>
+> Cc: Bryan Huntsman <bryanh@codeaurora.org>
+> Cc: Tony Lindgren <tony@atomide.com>
+> Cc: Barry Song <baohua.song@csr.com>
+> Cc: Andrew Lunn <andrew@lunn.ch>
+> Cc: Lucas De Marchi <lucas.demarchi@profusion.mobi>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: davinci-linux-open-source@linux.davincidsp.com
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> ---
+>  arch/arm/mach-at91/board-dt.c                 |    2 +-
+>  arch/arm/mach-at91/clock.c                    |    2 +-
+for at91
+Acked-by: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
 
-
--KR
---nvpublic
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+Best Regards,
+J.
