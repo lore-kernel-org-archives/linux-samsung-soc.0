@@ -1,15 +1,16 @@
-From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2] video: s3c-fb: Add device tree support
-Date: Sun, 1 Apr 2012 14:41:24 +0800
-Message-ID: <20120401064121.GC2395@S2101-09.ap.freescale.net>
-References: <1333086797-1625-1-git-send-email-thomas.abraham@linaro.org>
- <CAH+eYFCrdtYC+v3tgqsaCS9-Y61JCwA1MLkkPtH14p=JWBbzBw@mail.gmail.com>
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: Re: [PATCH v3 6/6] mmc: sdhci-s3c: Add device tree support
+Date: Sun, 1 Apr 2012 12:29:49 +0100
+Message-ID: <20120401112949.GA19107@sirena.org.uk>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+ <201203301136.05038.arnd@arndb.de> <4F75D5C0.5050307@wwwdotorg.org>
+ <201203301845.07534.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAH+eYFCrdtYC+v3tgqsaCS9-Y61JCwA1MLkkPtH14p=JWBbzBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <201203301845.07534.arnd-r2nGTMty4D4@public.gmane.org>
 List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
@@ -19,63 +20,26 @@ List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
  <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
 Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org>
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, FlorianSchandinat-Mmb7MZpHnFY@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Viresh Kumar <viresh.kumar-qxv4g6HH51o@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org" <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org" <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, Anton Vorontsov <anton.vorontsov-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org" <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org" <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, "cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org" <cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Fri, Mar 30, 2012 at 09:25:14PM +0530, Rabin Vincent wrote:
-> On Fri, Mar 30, 2012 at 11:23, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>=
- wrote:
-> > + =A0 =A0- samsung,fimd-display: The fimd controller is interfaced with=
- the a
-> > + =A0 =A0 =A0display device such as a lcd panel. This property should s=
-pecify the
-> > + =A0 =A0 =A0phandle of the display device node. For a display device n=
-ode that
-> > + =A0 =A0 =A0represents a RGB type display interface, it is expected to=
- specify the
-> > + =A0 =A0 =A0video interface timing using the following properties.
-> > +
-> > + =A0 =A0 =A0- lcd-htiming: Specifies the horizontal timing for the ove=
-rlay. The
-> > + =A0 =A0 =A0 =A0horizontal timing includes four parameters in the foll=
-owing order.
-> > +
-> > + =A0 =A0 =A0 =A0- horizontal back porch (in number of lcd clocks)
-> > + =A0 =A0 =A0 =A0- horizontal front porch (in number of lcd clocks)
-> > + =A0 =A0 =A0 =A0- hsync pulse width (in number of lcd clocks)
-> > + =A0 =A0 =A0 =A0- Display panels X resolution.
-> > +
-> > + =A0 =A0 =A0- lcd-vtiming: Specifies the vertical timing for the overl=
-ay. The
-> > + =A0 =A0 =A0 =A0vertical timing includes four parameters in the follow=
-ing order.
-> > +
-> > + =A0 =A0 =A0 =A0- vertical back porch (in number of lcd lines)
-> > + =A0 =A0 =A0 =A0- vertical front porch (in number of lcd lines)
-> > + =A0 =A0 =A0 =A0- vsync pulse width (in number of lcd clocks)
-> > + =A0 =A0 =A0 =A0- Y resolution.
-> =
+On Fri, Mar 30, 2012 at 06:45:07PM +0000, Arnd Bergmann wrote:
+> On Friday 30 March 2012, Stephen Warren wrote:
 
-> In this old thread, it was suggested to use a raw EDID block to supply
-> timings, and since then a couple of drivers in mainline (sm501fb and
-> fsl-diu) are doing it that way:
-> =
+> > > +- cd-inverted: when present, polarity on the wp gpio line is inverted
+> > > +- wp-inverted: when present, polarity on the wp gpio line is inverted
 
-> http://lists.ozlabs.org/pipermail/linuxppc-dev/2010-February/080683.html
-> =
+> > I'm not sure about those two: Some of the GPIO bindings have flags in
+> > the GPIO specifier (Tegra, ARM PL061, gpio.txt mentions the possibility
+> > of polarity being in the specifier), and bit 0 of the flags is used to
+> > indicate inversion. I think that either we should rely on GPIO
+> > specifiers having such flags and remove these xxx-inverted properties
+> > from the MMC binding, or remove that flag bit from the GPIO bindings.
 
-> Shouldn't this driver be doing the same thing?  If not, shouldn't
-> whatever interface this is adding be provided in a common helper (like
-> that old patch was trying to add) so it's standardized between drivers?
+> Maybe the GPIO maintainer can comment on this. My understanding is
+> that not all gpio controllers support this in their bindings. If they
+> do, I agree that we can remove the extra properties here.
 
-+1
-
-We need a generic binding for the data defined in "struct fb_videomode"
-and a generic helper function to retrieve the data from device tree,
-so that individual display driver does not have to invent their owns.
-
--- =
-
-Regards,
-Shawn
+Surely it'd be better to fix this at the GPIO controller end rather than
+having a patchwork of approaches?
