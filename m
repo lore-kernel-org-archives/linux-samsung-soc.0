@@ -1,59 +1,81 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device tree support
-Date: Sat, 31 Mar 2012 21:12:39 -0400
-Message-ID: <87zkawmf08.fsf@laptop.org>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
-	<003401cce730$baf979a0$30ec6ce0$%kim@samsung.com>
-	<m2aa4pkq5g.fsf@bob.laptop.org> <4F3CFEED.6060206@samsung.com>
-	<m239abgc32.fsf@bob.laptop.org>
-	<00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com>
-	<m2vcn0496y.fsf@bob.laptop.org> <87k426vy9r.fsf@laptop.org>
-	<20120328095450.GA23005@sirena.org.uk> <4F73D3D7.1010202@samsung.com>
+From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2] video: s3c-fb: Add device tree support
+Date: Sun, 1 Apr 2012 14:41:24 +0800
+Message-ID: <20120401064121.GC2395@S2101-09.ap.freescale.net>
+References: <1333086797-1625-1-git-send-email-thomas.abraham@linaro.org>
+ <CAH+eYFCrdtYC+v3tgqsaCS9-Y61JCwA1MLkkPtH14p=JWBbzBw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:54500 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751251Ab2DABM7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 31 Mar 2012 21:12:59 -0400
-In-Reply-To: <4F73D3D7.1010202@samsung.com> (Kukjin Kim's message of "Wed, 28
-	Mar 2012 20:15:35 -0700")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAH+eYFCrdtYC+v3tgqsaCS9-Y61JCwA1MLkkPtH14p=JWBbzBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Rabin Vincent <rabin-66gdRtMMWGc@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, FlorianSchandinat-Mmb7MZpHnFY@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, 'Thomas Abraham' <thomas.abraham@linaro.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 
-Hi Kukjin,
+On Fri, Mar 30, 2012 at 09:25:14PM +0530, Rabin Vincent wrote:
+> On Fri, Mar 30, 2012 at 11:23, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>=
+ wrote:
+> > + =A0 =A0- samsung,fimd-display: The fimd controller is interfaced with=
+ the a
+> > + =A0 =A0 =A0display device such as a lcd panel. This property should s=
+pecify the
+> > + =A0 =A0 =A0phandle of the display device node. For a display device n=
+ode that
+> > + =A0 =A0 =A0represents a RGB type display interface, it is expected to=
+ specify the
+> > + =A0 =A0 =A0video interface timing using the following properties.
+> > +
+> > + =A0 =A0 =A0- lcd-htiming: Specifies the horizontal timing for the ove=
+rlay. The
+> > + =A0 =A0 =A0 =A0horizontal timing includes four parameters in the foll=
+owing order.
+> > +
+> > + =A0 =A0 =A0 =A0- horizontal back porch (in number of lcd clocks)
+> > + =A0 =A0 =A0 =A0- horizontal front porch (in number of lcd clocks)
+> > + =A0 =A0 =A0 =A0- hsync pulse width (in number of lcd clocks)
+> > + =A0 =A0 =A0 =A0- Display panels X resolution.
+> > +
+> > + =A0 =A0 =A0- lcd-vtiming: Specifies the vertical timing for the overl=
+ay. The
+> > + =A0 =A0 =A0 =A0vertical timing includes four parameters in the follow=
+ing order.
+> > +
+> > + =A0 =A0 =A0 =A0- vertical back porch (in number of lcd lines)
+> > + =A0 =A0 =A0 =A0- vertical front porch (in number of lcd lines)
+> > + =A0 =A0 =A0 =A0- vsync pulse width (in number of lcd clocks)
+> > + =A0 =A0 =A0 =A0- Y resolution.
+> =
 
-On Wed, Mar 28 2012, Kukjin Kim wrote:
->>> As a result I'm dropping this tree -- and all of the patches that I
->>> have on top of it -- from mmc-next so that I can get a pull request
->>> out.  This means that I'm dropping:
->>
-> Hmm, I think, if you're ok, you can send a second pull request to
-> Linus for it and actually, it is in linux-next for a long time via mmc
-> and samsung tree.
->
-> Note, please don't rebase it because its resolution for conflicts is
-> in linux-next and I think Linus will use it when happens
-> conflicts...Or I can provide new tree on top of latest mainline. But
-> I'm not sure about latter.
+> In this old thread, it was suggested to use a raw EDID block to supply
+> timings, and since then a couple of drivers in mainline (sm501fb and
+> fsl-diu) are doing it that way:
+> =
 
-I can't send the tree as it is to Linus now, because Arnd has asked us
-to hold off on these device tree bindings and work with the unified
-bindings he's proposing instead.  (Rebasing to drop that patch will
-introduce new conflicts.)
+> http://lists.ozlabs.org/pipermail/linuxppc-dev/2010-February/080683.html
+> =
 
-I'm going to send Mark Brown's two patches to Linus now, even though it
-will cause a conflict in -next.  The rest (other than the device tree
-bindings) are mergable after -rc1, because they're fixes, so we'll
-eventually get everything except DT in to 3.4.  I think you should
-just drop this patchset from your tree in linux-next entirely now.
+> Shouldn't this driver be doing the same thing?  If not, shouldn't
+> whatever interface this is adding be provided in a common helper (like
+> that old patch was trying to add) so it's standardized between drivers?
 
-Thanks,
++1
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+We need a generic binding for the data defined in "struct fb_videomode"
+and a generic helper function to retrieve the data from device tree,
+so that individual display driver does not have to invent their owns.
+
+-- =
+
+Regards,
+Shawn
