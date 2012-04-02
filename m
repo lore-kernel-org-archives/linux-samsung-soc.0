@@ -1,68 +1,43 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: S3C64XX: Hook up new style regulator-regulator supplies
- on Cragganmore
-Date: Mon, 02 Apr 2012 12:05:53 -0700
-Message-ID: <4F79F891.7050106@samsung.com>
-References: <1333366519-7900-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device
+ tree support
+Date: Mon, 02 Apr 2012 12:08:23 -0700
+Message-ID: <4F79F927.5060707@samsung.com>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org> <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com> <m2aa4pkq5g.fsf@bob.laptop.org> <4F3CFEED.6060206@samsung.com> <m239abgc32.fsf@bob.laptop.org> <00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com> <m2vcn0496y.fsf@bob.laptop.org> <87k426vy9r.fsf@laptop.org> <20120328095450.GA23005@sirena.org.uk> <4F73D3D7.1010202@samsung.com> <87zkawmf08.fsf@laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:41241 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751295Ab2DBTFx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Apr 2012 15:05:53 -0400
-Received: by pbcun15 with SMTP id un15so4745280pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Apr 2012 12:05:53 -0700 (PDT)
-In-Reply-To: <1333366519-7900-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <87zkawmf08.fsf@laptop.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, 'Thomas Abraham' <thomas.abraham@linaro.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com
 
-Mark Brown wrote:
-> The regulator API now allows supplies used by regulators to be specified
-> as normal supplies - provide the hookup for that mechanism on Cragganmore.
-> 
-> Signed-off-by: Mark Brown<broonie@opensource.wolfsonmicro.com>
-> ---
->   arch/arm/mach-s3c64xx/mach-crag6410.c |   18 ++++++++++++++++++
->   1 files changed, 18 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> index 02fd009..4ee0249 100644
-> --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-> +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-> @@ -306,6 +306,24 @@ static struct regulator_consumer_supply wallvdd_consumers[] = {
->   	REGULATOR_SUPPLY("SPKVDD2", "1-001a"),
->   	REGULATOR_SUPPLY("SPKVDDL", "1-001a"),
->   	REGULATOR_SUPPLY("SPKVDDR", "1-001a"),
-> +
-> +	REGULATOR_SUPPLY("DC1VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("DC2VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("DC3VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO1VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO2VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO4VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO5VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO6VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO7VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO8VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO9VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO10VDD", "0-0034"),
-> +	REGULATOR_SUPPLY("LDO11VDD", "0-0034"),
-> +
-> +	REGULATOR_SUPPLY("DC1VDD", "1-0034"),
-> +	REGULATOR_SUPPLY("DC2VDD", "1-0034"),
-> +	REGULATOR_SUPPLY("DC3VDD", "1-0034"),
->   };
-> 
->   static struct regulator_init_data wallvdd_data = {
+Chris Ball wrote:
+> Hi Kukjin,
+>
+Hi,
 
-Looks ok to me, will apply.
+Sorry for late response.
 
-Mark, is this needed for v3.4?
+[...]
+
+>
+> I can't send the tree as it is to Linus now, because Arnd has asked us
+> to hold off on these device tree bindings and work with the unified
+> bindings he's proposing instead.  (Rebasing to drop that patch will
+> introduce new conflicts.)
+>
+OK, I see.
+
+> I'm going to send Mark Brown's two patches to Linus now, even though it
+> will cause a conflict in -next.  The rest (other than the device tree
+> bindings) are mergable after -rc1, because they're fixes, so we'll
+> eventually get everything except DT in to 3.4.  I think you should
+> just drop this patchset from your tree in linux-next entirely now.
+>
+Yep, I dropped it in my -next.
 
 Thanks.
 
