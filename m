@@ -1,48 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v3 0/6] mmc: sdhci-s3c: Rework platform data and add device
- tree support
-Date: Mon, 02 Apr 2012 12:08:23 -0700
-Message-ID: <4F79F927.5060707@samsung.com>
-References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org> <003401cce730$baf979a0$30ec6ce0$%kim@samsung.com> <m2aa4pkq5g.fsf@bob.laptop.org> <4F3CFEED.6060206@samsung.com> <m239abgc32.fsf@bob.laptop.org> <00b901ccf08d$2fc18b50$8f44a1f0$%kim@samsung.com> <m2vcn0496y.fsf@bob.laptop.org> <87k426vy9r.fsf@laptop.org> <20120328095450.GA23005@sirena.org.uk> <4F73D3D7.1010202@samsung.com> <87zkawmf08.fsf@laptop.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <87zkawmf08.fsf@laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, 'Thomas Abraham' <thomas.abraham@linaro.org>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, 'Olof Johansson' <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: EXYNOS: fix CONFIG_DEBUG_LL
+Date: Mon,  2 Apr 2012 12:13:57 -0700
+Message-ID: <1333394037-19349-1-git-send-email-kgene.kim@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:38648 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751192Ab2DBTUX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 2 Apr 2012 15:20:23 -0400
+Received: by dake40 with SMTP id e40so2809534dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Apr 2012 12:20:23 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Colin Cross <ccross@android.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Chris Ball wrote:
-> Hi Kukjin,
->
-Hi,
+From: Colin Cross <ccross@android.com>
 
-Sorry for late response.
+addruart cannot read from the physical address of the chipid
+register, that will fail as soon as the mmu is turned on.
+Fixing it to read from the physical or virtual address depending
+on the mmu state also does not work, because there is a period
+between head.S and exynos_map_io where the mmu is on, the uart
+is mapped and used, but the chipid mapping is not yet present.
 
-[...]
+Fix addruart to use the ARM Main ID cp15 register to determine
+if the core is Cortex A15 (EXYNOS5) or not (EXYNOS4).
 
->
-> I can't send the tree as it is to Linus now, because Arnd has asked us
-> to hold off on these device tree bindings and work with the unified
-> bindings he's proposing instead.  (Rebasing to drop that patch will
-> introduce new conflicts.)
->
-OK, I see.
+Signed-off-by: Colin Cross <ccross@android.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/include/mach/debug-macro.S |    7 +++----
+ 1 files changed, 3 insertions(+), 4 deletions(-)
 
-> I'm going to send Mark Brown's two patches to Linus now, even though it
-> will cause a conflict in -next.  The rest (other than the device tree
-> bindings) are mergable after -rc1, because they're fixes, so we'll
-> eventually get everything except DT in to 3.4.  I think you should
-> just drop this patchset from your tree in linux-next entirely now.
->
-Yep, I dropped it in my -next.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-exynos/include/mach/debug-macro.S b/arch/arm/mach-exynos/include/mach/debug-macro.S
+index 6c857ff..e0c86ea 100644
+--- a/arch/arm/mach-exynos/include/mach/debug-macro.S
++++ b/arch/arm/mach-exynos/include/mach/debug-macro.S
+@@ -21,10 +21,9 @@
+ 	 */
+ 
+ 	.macro addruart, rp, rv, tmp
+-		mov	\rp, #0x10000000
+-		ldr	\rp, [\rp, #0x0]
+-		and	\rp, \rp, #0xf00000
+-		teq	\rp, #0x500000		@@ EXYNOS5
++		mrc	p15, 0, \tmp, c0, c0, 0
++		and	\tmp, \tmp, #0xf0
++		teq	\tmp, #0xf0		@@ A15
+ 		ldreq	\rp, =EXYNOS5_PA_UART
+ 		movne	\rp, #EXYNOS4_PA_UART	@@ EXYNOS4
+ 		ldr	\rv, =S3C_VA_UART
+-- 
+1.7.2.3
