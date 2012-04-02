@@ -1,76 +1,57 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/6] ARM: S3C24XX: Add forgotten clock lookup table to
- S3C2443
-Date: Mon, 02 Apr 2012 14:08:10 -0700
-Message-ID: <4F7A153A.5070701@samsung.com>
-References: <201203121959.32966.heiko@sntech.de> <201203122000.31216.heiko@sntech.de>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ARM: S3C64XX: Hook up new style regulator-regulator
+ supplies on Cragganmore
+Date: Mon, 2 Apr 2012 22:26:26 +0100
+Message-ID: <20120402212625.GB3160@opensource.wolfsonmicro.com>
+References: <1333366519-7900-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <4F79F891.7050106@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="98e8jtXdkpgskNou"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:40652 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751742Ab2DBVIK (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:37724 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751686Ab2DBV03 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Apr 2012 17:08:10 -0400
-Received: by dake40 with SMTP id e40so2894594dak.11
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Apr 2012 14:08:10 -0700 (PDT)
-In-Reply-To: <201203122000.31216.heiko@sntech.de>
+	Mon, 2 Apr 2012 17:26:29 -0400
+Content-Disposition: inline
+In-Reply-To: <4F79F891.7050106@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@opensource.wolfsonmicro.com
 
-Heiko St=FCbner wrote:
-> When the hsmmc clock lookup was changed to be lookup tables based,
-> it seems the S3C2443 was forgotten.
->
-> As subsequent patches will want to add more lookups to it, this
-> patch adds the base table with the missing hsmmc lookup.
->
-> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
-> ---
->   arch/arm/mach-s3c24xx/clock-s3c2443.c |    5 +++++
->   1 files changed, 5 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c b/arch/arm/mach-s3=
-c24xx/clock-s3c2443.c
-> index efb3ac3..bce1cd3 100644
-> --- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
-> +++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
-> @@ -179,6 +179,10 @@ static struct clk *clks[] __initdata =3D {
->   	&clk_hsmmc,
->   };
->
-> +static struct clk_lookup s3c2443_clk_lookup[] =3D {
-> +	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2",&clk_hsmmc),
-> +};
-> +
->   void __init s3c2443_init_clocks(int xtal)
->   {
->   	unsigned long epllcon =3D __raw_readl(S3C2443_EPLLCON);
-> @@ -210,6 +214,7 @@ void __init s3c2443_init_clocks(int xtal)
->
->   	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
->   	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
-> +	clkdev_add_table(s3c2443_clk_lookup, ARRAY_SIZE(s3c2443_clk_lookup)=
-);
->
->   	s3c_pwmclk_init();
->   }
 
-Uhm..how about mach-s3c24xx/common-s3c2443.c?
+--98e8jtXdkpgskNou
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I think, we need to sort out some files in mach-s3c24xx/ and some=20
-remained mach-s3c24.. directories, actually, as you know, we didn't hav=
-e=20
-much time to do it last time :)
+On Mon, Apr 02, 2012 at 12:05:53PM -0700, Kukjin Kim wrote:
 
-Thanks.
+> Mark, is this needed for v3.4?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+No.
+
+--98e8jtXdkpgskNou
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPehjAAAoJEBus8iNuMP3dyLoP/i5xeueDeXytUwkUpUqIGxF4
+XT8edtnzuPaBaeluPsuOvBaldJ8P0JknHsgLoSqHZVfctUaNrpt9Yy4dIhba4EJa
+TX2h7q222kt3+a2mA1psdloTR0Aw6oZI810Mpq69zY839RhhSbIkSdO/3TUotCq9
+SB1y6g7G244rHjyaUJnYYBY0Y04AapP2MuTRzOLNCEh47JdlW9q8A2HaB4j/R3Q+
+Lmzha39mvPiBxTA3Gekb9wkk3QO6M/gVIuJvH3yObhOinsIj5iyVNfYdBa2SVBbO
+SH22UbQw6v0/yrODvLOHLQDoyB240yPGU24gS2rVPUar+jn3E4ZrUmgf2shx2VLk
+SbY5dgXKbmRTaDqKFEcSQA1HPEuGDoJHg2KLZpsqj8UAtrlnJbTQyJRSuUH4p27Q
+IPkaTWwCE7TcrFvDCGV7rSdw0AGR3U0JDIopVu5UuJIiJ+YA1b0Noa993MiEflC3
+Cc5Wm+vacIZEkqnOmNT7uX5RLqJ7jg2NP+cDt1bnohTNyqNwMjNVnmcbUelbW7wb
+PEkS1oWhILMyKZ65tizGnm8Tqwuv2eq48Ut1j+Wn4WC5XlkRYqhOgZT9sZSedcq7
+Mfo7Jgevg/3DmfL5oitykaEIYfcoT6NlT4khFs3IzkzomL+I6J6feTK+z6RYYsr9
+oKD7hhHURbskkpgaALwY
+=V8N1
+-----END PGP SIGNATURE-----
+
+--98e8jtXdkpgskNou--
