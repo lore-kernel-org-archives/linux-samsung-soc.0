@@ -1,111 +1,76 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH] ARM: EXYNOS: autodetect enabled serial port in uncompress
-Date: Tue, 3 Apr 2012 06:06:19 +0900
-Message-ID: <CAH9JG2Uh0FvO=3fzPGiZvfvS2r-xDrJ2953m+o2NO82UvTtn_w@mail.gmail.com>
-References: <1333394227-21986-1-git-send-email-kgene.kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH 1/6] ARM: S3C24XX: Add forgotten clock lookup table to
+ S3C2443
+Date: Mon, 02 Apr 2012 14:08:10 -0700
+Message-ID: <4F7A153A.5070701@samsung.com>
+References: <201203121959.32966.heiko@sntech.de> <201203122000.31216.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:63876 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752167Ab2DBVGT convert rfc822-to-8bit (ORCPT
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:40652 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751742Ab2DBVIK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Apr 2012 17:06:19 -0400
-Received: by iagz16 with SMTP id z16so4609357iag.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Apr 2012 14:06:19 -0700 (PDT)
-In-Reply-To: <1333394227-21986-1-git-send-email-kgene.kim@samsung.com>
+	Mon, 2 Apr 2012 17:08:10 -0400
+Received: by dake40 with SMTP id e40so2894594dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Apr 2012 14:08:10 -0700 (PDT)
+In-Reply-To: <201203122000.31216.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Colin Cross <ccross@android.com>
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: kgene.kim@samsung.com, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
-
-On Tue, Apr 3, 2012 at 4:17 AM, Kukjin Kim <kgene.kim@samsung.com> wrot=
-e:
-> From: Colin Cross <ccross@android.com>
+Heiko St=FCbner wrote:
+> When the hsmmc clock lookup was changed to be lookup tables based,
+> it seems the S3C2443 was forgotten.
 >
-> Check the ULCON register of each serial port to determine if
-> it has been enabled by the bootloader. =A0If only one serial port
-> is found enabled, use that one. =A0Otherwise, use the value from
-> CONFIG_S3C_LOWLEVEL_UART_PORT.
+> As subsequent patches will want to add more lookups to it, this
+> patch adds the base table with the missing hsmmc lookup.
 >
-> Signed-off-by: Colin Cross <ccross@android.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
 > ---
-> =A0arch/arm/mach-exynos/include/mach/uncompress.h | =A0 25 ++++++++++=
-++++++++++++-
-> =A01 files changed, 23 insertions(+), 2 deletions(-)
+>   arch/arm/mach-s3c24xx/clock-s3c2443.c |    5 +++++
+>   1 files changed, 5 insertions(+), 0 deletions(-)
 >
-> diff --git a/arch/arm/mach-exynos/include/mach/uncompress.h b/arch/ar=
-m/mach-exynos/include/mach/uncompress.h
-> index 2979995..0d17a43 100644
-> --- a/arch/arm/mach-exynos/include/mach/uncompress.h
-> +++ b/arch/arm/mach-exynos/include/mach/uncompress.h
-> @@ -25,6 +25,25 @@ static unsigned int __raw_readl(unsigned int ptr)
-> =A0 =A0 =A0 =A0return *((volatile unsigned int *)ptr);
-> =A0}
+> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c b/arch/arm/mach-s3=
+c24xx/clock-s3c2443.c
+> index efb3ac3..bce1cd3 100644
+> --- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+> +++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+> @@ -179,6 +179,10 @@ static struct clk *clks[] __initdata =3D {
+>   	&clk_hsmmc,
+>   };
 >
-> +static volatile u8 *exynos_autodetect_uart(volatile u8 *base)
-> +{
-> + =A0 =A0 =A0 int i;
-> + =A0 =A0 =A0 int found =3D 0;
-> + =A0 =A0 =A0 int port;
+> +static struct clk_lookup s3c2443_clk_lookup[] =3D {
+> +	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2",&clk_hsmmc),
+> +};
 > +
-> + =A0 =A0 =A0 for (i =3D 0; i < CONFIG_SERIAL_SAMSUNG_UARTS; i++) {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (__raw_readl((unsigned int)base + S3=
-C_UART_OFFSET * i)) {
-1. Even though ULCON has offset 0, it's better to add ULCON_OFFSET.
-2. In our case, we disable the unused UART at bootloader except the
-debug uart, then does it possible to read this value at kernel?
-I think it's hang at here. So read it correctly it should enable the
-required uart clock before read it.
-3. As similar tegra, how about to read specific value from RX
-register. e.g., 'D'?
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 port =3D i;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 found++;
-To match the description, it should brake at here. if not it detects
-the last uart at several detected uarts.
+>   void __init s3c2443_init_clocks(int xtal)
+>   {
+>   	unsigned long epllcon =3D __raw_readl(S3C2443_EPLLCON);
+> @@ -210,6 +214,7 @@ void __init s3c2443_init_clocks(int xtal)
+>
+>   	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+>   	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off));
+> +	clkdev_add_table(s3c2443_clk_lookup, ARRAY_SIZE(s3c2443_clk_lookup)=
+);
+>
+>   	s3c_pwmclk_init();
+>   }
 
-BR,
-kmpark
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
-> + =A0 =A0 =A0 }
-> +
-> + =A0 =A0 =A0 if (found !=3D 1)
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 port =3D CONFIG_S3C_LOWLEVEL_UART_PORT;
-> +
-> + =A0 =A0 =A0 return base + S3C_UART_OFFSET * port;
-> +}
-> +
-> =A0static void arch_detect_cpu(void)
-> =A0{
-> =A0 =A0 =A0 =A0u32 chip_id =3D __raw_readl(EXYNOS_PA_CHIPID);
-> @@ -38,9 +57,11 @@ static void arch_detect_cpu(void)
-> =A0 =A0 =A0 =A0chip_id &=3D 0xf;
->
-> =A0 =A0 =A0 =A0if (chip_id =3D=3D 0x5)
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 uart_base =3D (volatile u8 *)EXYNOS5_PA=
-_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 uart_base =3D (volatile u8 *)EXYNOS5_PA=
-_UART;
-> =A0 =A0 =A0 =A0else
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 uart_base =3D (volatile u8 *)EXYNOS4_PA=
-_UART + (S3C_UART_OFFSET * CONFIG_S3C_LOWLEVEL_UART_PORT);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 uart_base =3D (volatile u8 *)EXYNOS4_PA=
-_UART;
-> +
-> + =A0 =A0 =A0 uart_base =3D exynos_autodetect_uart(uart_base);
->
-> =A0 =A0 =A0 =A0/*
-> =A0 =A0 =A0 =A0 * For preventing FIFO overrun or infinite loop of UAR=
-T console,
-> --
-> 1.7.2.3
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+Uhm..how about mach-s3c24xx/common-s3c2443.c?
+
+I think, we need to sort out some files in mach-s3c24xx/ and some=20
+remained mach-s3c24.. directories, actually, as you know, we didn't hav=
+e=20
+much time to do it last time :)
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
