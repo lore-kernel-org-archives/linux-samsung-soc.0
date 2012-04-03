@@ -1,326 +1,83 @@
-From: Saugata Das <saugata.das@linaro.org>
-Subject: Re: [PATCH V2] mmc: core: Add host capability check for power class
-Date: Tue, 3 Apr 2012 16:12:54 +0530
-Message-ID: <CAKLKtzcJQbRUP7gbgutf5YmT14VTSbnncuXjFS=ZctH_voiv3A@mail.gmail.com>
-References: <1323921517-31241-1-git-send-email-girish.shivananjappa@linaro.org>
-	<CAKLKtzc4HDmqStQhn_J6GZxdZ0vE_vb7=+xq+oEHqp6QxYDxsg@mail.gmail.com>
-	<CAGxe1ZEAj1PASOxQHNm=DNOSt2MWMvCQdWu4hKFnYoaLmnLShg@mail.gmail.com>
-	<CAKLKtzfPC_+SnsaJ0YjWj6rpKeUdxhAxRxec=fDb_J5N1YRrkg@mail.gmail.com>
-	<000401cd0cd3$4a6be470$df43ad50$@codeaurora.org>
-	<CAKLKtzeZFQoWFLRE67tyw06FoDpoaTRWpSDzii8qTEBHSHxJTg@mail.gmail.com>
-	<000a01cd10bf$0456ae80$0d040b80$@codeaurora.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH] ARM: S3C24XX: fix missing common.h in mach-s3c24xx/
+Date: Tue, 3 Apr 2012 18:33:28 -0400
+Message-ID: <CAP=VYLp-FwEu2AY9wWY7vygmjtZ30AMD=0h8+VtuNVZF2xtTYw@mail.gmail.com>
+References: <1332980074-4614-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:58341 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753128Ab2DCKmz convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Apr 2012 06:42:55 -0400
-Received: by yhmm54 with SMTP id m54so1649486yhm.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Apr 2012 03:42:54 -0700 (PDT)
-In-Reply-To: <000a01cd10bf$0456ae80$0d040b80$@codeaurora.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:57630 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754866Ab2DCWda convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 3 Apr 2012 18:33:30 -0400
+In-Reply-To: <1332980074-4614-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Subhash Jadavani <subhashj@codeaurora.org>
-Cc: Girish K S <girish.shivananjappa@linaro.org>, linux-mmc@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, Chris Ball <cjb@laptop.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-next@vger.kernel.org
 
-On 2 April 2012 16:24, Subhash Jadavani <subhashj@codeaurora.org> wrote=
-:
->
->
->> -----Original Message-----
->> From: Saugata Das [mailto:saugata.das@linaro.org]
->> Sent: Monday, April 02, 2012 1:20 PM
->> To: Subhash Jadavani
->> Cc: Girish K S; linux-mmc@vger.kernel.org; patches@linaro.org; linux=
--
->> samsung-soc@vger.kernel.org; Chris Ball
->> Subject: Re: [PATCH V2] mmc: core: Add host capability check for pow=
-er
-> class
->>
->> On 28 March 2012 16:39, Subhash Jadavani <subhashj@codeaurora.org>
->> wrote:
->> >
->> >
->> >> -----Original Message-----
->> >> From: linux-mmc-owner@vger.kernel.org [mailto:linux-mmc-
->> >> owner@vger.kernel.org] On Behalf Of Saugata Das
->> >> Sent: Thursday, December 15, 2011 6:35 PM
->> >> To: Girish K S
->> >> Cc: linux-mmc@vger.kernel.org; patches@linaro.org; linux-samsung-
->> >> soc@vger.kernel.org; subhashj@codeaurora.org; Chris Ball
->> >> Subject: Re: [PATCH V2] mmc: core: Add host capability check for
->> >> power
->> > class
->> >>
->> >> On 15 December 2011 16:22, Girish K S
->> >> <girish.shivananjappa@linaro.org>
->> >> wrote:
->> >> > On 15 December 2011 15:34, Saugata Das <saugata.das@linaro.org>
->> wrote:
->> >> >> On 15 December 2011 09:28, Girish K S
->> >> >> <girish.shivananjappa@linaro.org>
->> >> wrote:
->> >> >>> This patch adds a check whether the host supports maximum cur=
-rent
->> >> >>> value obtained from the device's extended csd register for a
->> >> >>> selected interface voltage and frequency.
->> >> >>>
->> >> >>> cc: Chris Ball <cjb@laptop.org>
->> >> >>> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
->> >> >>> ---
->> >> >>> Changes in v2:
->> >> >>> =A0 =A0 =A0 =A0deleted a unnecessary if else condition identi=
-fied by
->> >> >>> subhash J Changes in v1:
->> >> >>> =A0 =A0 =A0 reduced the number of comparisons as per Hein's s=
-uggestion
->> >> >>>
->> >> >>> =A0drivers/mmc/core/mmc.c =A0 | =A0 19 +++++++++++++++++++
->> >> >>> =A0include/linux/mmc/card.h | =A0 =A04 ++++
->> >> >>> =A02 files changed, 23 insertions(+), 0 deletions(-)
->> >> >>>
->> >> >>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> >> >>> index
->> >> >>> 006e932..b9ef777 100644
->> >> >>> --- a/drivers/mmc/core/mmc.c
->> >> >>> +++ b/drivers/mmc/core/mmc.c
->> >> >>> @@ -688,6 +688,25 @@ static int mmc_select_powerclass(struct
->> >> >>> mmc_card *card,
->> >> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0pwrclass_val =3D (pwrclass_val=
- &
->> >> >>> EXT_CSD_PWR_CL_4BIT_MASK) >>
->> >> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
-EXT_CSD_PWR_CL_4BIT_SHIFT;
->> >> >>>
->> >> >>> + =A0 =A0 =A0 if (pwrclass_val >=3D MMC_MAX_CURRENT_800)
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_800;
->> >> >>> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_600)
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_600;
->> >> >>> + =A0 =A0 =A0 else if (pwrclass_val >=3D MMC_MAX_CURRENT_400)
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_400;
->> >> >>> + =A0 =A0 =A0 else
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_200;
->> >> >>> +
->> >> >>> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_800) &=
-&
->> >> >>> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURREN=
-T_800))
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_600;
->> >> >>> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_600) &=
-&
->> >> >>> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURREN=
-T_600))
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_400;
->> >> >>> + =A0 =A0 =A0 if ((pwrclass_val =3D=3D MMC_MAX_CURRENT_400) &=
-&
->> >> >>> + =A0 =A0 =A0 =A0 =A0 !(card->host->caps & MMC_CAP_MAX_CURREN=
-T_400))
->> >> >>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 pwrclass_val =3D MMC_MAX_CURREN=
-T_200;
->> >> >>> +
->> >> >>> =A0 =A0 =A0 =A0/* If the power class is different from the de=
-fault value
->> >> >>> */
->> >> >>> =A0 =A0 =A0 =A0if (pwrclass_val > 0) {
->> >> >>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0err =3D mmc_switch(card, EXT_C=
-SD_CMD_SET_NORMAL,
->> >> >>
->> >> >> It is not allowed to set the POWER_CLASS with any value other =
-than
->> >> >> what is mentioned in the PWR_CL_ff_vvv or PWR_CL_DDR_ff_vvv =A0=
-for
->> >> the
->> >> >> corresponding frequency, voltage. That is, if PWR_CL_200_195 i=
-s 14
->> >> >> and we want to operate at HS200 then the only value allowed fo=
-r
->> >> >> POWER_CLASS is 14. So, we need to check the PWR_CL numbers and
->> >> choose
->> >> >> the operating mode (HS200/DDR50/..) based on the platform
->> >> >> capability to support the current consumption and set the
->> >> >> corresponding POWER_CLASS value.
->> >> >>
->> >> >> Please refer to section 6.6.5 of the 4.5 spec.
->> >> >
->> >> > The upstreamed code reads the extended csd value based on the
->> >> > already set voltage level and frequency of host. So it will get=
- the
->> >> > required power class value which can be set directly. Is my
->> >> > understanding correct?
->> >> >
->> >>
->> >> It is not enough to just check the voltage level and frequency.
->> >> Consider this example, host has capability to support
->> >> MMC_CAP_MAX_CURRENT_400, the PWR_CL_DDR_52_360 has the value
->> 9
->> >> (400mA) and PWR_CL_200_360 has the value 14 (800mA). Then even
->> though
->> >> the host might be capable to run 200MHz clock and 3.6V, it can on=
-ly
->> >> enable DDR at 52MHz and set 9 in POWER_CLASS.
->> >>
->> >> I think, in mmc_select_powerclass, we need to loop through the po=
-wer
->> >> classes of all supported modes of transfer (HS200, DDR52, ... ) a=
-nd
->> >> choose
->> > the
->> >> mode which gives maximum bandwidth but falls within host capabili=
-ty
->> >> of current consumption. Then set this to POWER_CLASS byte and als=
-o
->> >> use the same information when setting HS_TIMING in mmc_init_card.
->> >
->> > Hi Saugata,
->> >
->> > Does the spec mandates you to set the power class to what is neede=
-d by
->> > frequency/voltage combination? I can't see that mentioned anywhere
->> > explicitly in eMMC4.5 spec (if it is mentioned in spec, please let=
- me
->> > know section and line number). It may be still possible to set the
->> > power class lower than what is needed by frequency/voltage
->> > combination. Say for example, 8-bit HS200 (200MHz) with high volta=
-ge
->> > cards may specify power class
->> > (PWR_CL_200_3_6) value of 14 (800 mA) but that doesn't mean if you
->> > want the card to work in 8-bit HS200 mode, its POWER_CLASS value m=
-ust
->> be 14 (800mA).
->> > If host's VDD regulator is only capable of say 600mA then it may s=
-till
->> > set the POWER_CLASS to 12 (600 mA) which should be the indication =
-to
->> > card that host power supply is capable of sourcing only 600mA and =
-I
->> > would assume card will make sure that it doesn't draw anything mor=
-e than
->> that.
->>
->> Please refer to section 6.6.5 of MMC-4.5. It says that the valid val=
-ues
-> are
->> defined in the PWR_CL_ff_vvv and PWR_CL_DDR_ff_vvv. We are allowed t=
-o
->> set only that value, depending on the mode, to POWER_CLASS.
->> Any other value will result in SWITCH_ERROR.
->
-> Thanks for the details. Just curious, do you have any cards where you=
- have
-> seen such SWITCH_ERROR while setting the power class?
->
+Hi,
 
-Typically, the host design takes care of the maximum power budget
-needed for the highest speed modes. So, I have not encountered such
-issues so far.
+On Wed, Mar 28, 2012 at 8:14 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> This patch fixes missing mach-s3c24xx/common.h which has been
+> lost when regarding s3c24xx directories merged.
 
+Just checking that the updated version of this patch is headed
+in for 3.4 -- we are still seeing the failure in linux-next builds
+and it would be nice to close out the build regressions in there
+as quickly as possible, since they tend to mask other regressions
+from being seen.
 
->>
->>
->> >
->> > Hi Girish,
->> >
->> > I see couple of other issues with your original power_class select=
-ion
-> patch.
->> > 1. mmc_select_powerclass() function considers 2.7v to 3.2v VDD ran=
-ge
->> > as invalid. That's not correct. Valid high voltage range is from 2=
-=2E7v to
-> 3.6v.
->> > Is there a specific reason you have skipped the 2.7v to 3.2v VDD
->> > range? If not, I should post following change:
->> >
->> > --- a/drivers/mmc/core/mmc.c
->> > +++ b/drivers/mmc/core/mmc.c
->> > @@ -626,6 +626,11 @@ static int mmc_select_powerclass(struct mmc_c=
-ard
->> > *card,
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0else if (host->ios.clock <=3D 20000=
-0000)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0index =3D EXT_CSD_P=
-WR_CL_200_195;
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
->> > + =A0 =A0 =A0 case MMC_VDD_27_28:
->> > + =A0 =A0 =A0 case MMC_VDD_28_29:
->> > + =A0 =A0 =A0 case MMC_VDD_29_30:
->> > + =A0 =A0 =A0 case MMC_VDD_30_31:
->> > + =A0 =A0 =A0 case MMC_VDD_31_32:
->> > =A0 =A0 =A0 =A0case MMC_VDD_32_33:
->> > =A0 =A0 =A0 =A0case MMC_VDD_33_34:
->> > =A0 =A0 =A0 =A0case MMC_VDD_34_35:
->> >
->> > 2. =A0Currently in mmc_init_card(), power class selection is done =
-if
->> > it's normal (DS or HS) or DDR or HS200 card.
->> > =A0 =A0If power class selection fails (mmc_select_powerclass() ret=
-urns
->> > error) for DS/HS/DDR cards, we are just printing the error and goi=
-ng
->> > ahead with the rest of the initialization where as if power class
->> > selection fails for HS200 cards, we are simply aborting the
->> > =A0 =A0initialization and mark it as failed.
->> >
->> > =A0 There are my points:
->> > =A0 =A0 =A0 1. =A0Power class failure must be treated in same mann=
-er for
->> > DS/HS/DDR/HS200 cards
->> > =A0 =A0 =A0 2. =A0If you agree on first point then we need to deci=
-de whether
->> > power class selection failure is fatal enough to abort the MMC
->> > initialization? or we can just print the warning and go ahead with
->> > rest of the initialization in same bus speed mode?
->> >
->> > Regards,
->> > Subhash
->> >
->> >>
->> >> >>
->> >> >>
->> >> >>> diff --git a/include/linux/mmc/card.h b/include/linux/mmc/car=
-d.h
->> >> >>> index 9478a6b..c5e031a 100644
->> >> >>> --- a/include/linux/mmc/card.h
->> >> >>> +++ b/include/linux/mmc/card.h
->> >> >>> @@ -195,6 +195,10 @@ struct mmc_part {
->> >> >>> =A0#define MMC_BLK_DATA_AREA_GP =A0 (1<<2)
->> >> >>> =A0};
->> >> >>>
->> >> >>> +#define MMC_MAX_CURRENT_200 =A0 =A0(0) #define
->> MMC_MAX_CURRENT_400
->> >> >>> +(7) #define MMC_MAX_CURRENT_600 =A0 =A0(11) #define
->> >> MMC_MAX_CURRENT_800
->> >> >>> +(13)
->> >> >>> =A0/*
->> >> >>> =A0* MMC device
->> >> >>> =A0*/
->> >> >>> --
->> >> >>> 1.7.1
->> >> >>>
->> >> >>> --
->> >> >>> To unsubscribe from this list: send the line "unsubscribe
-> linux-mmc"
->> >> >>> in the body of a message to majordomo@vger.kernel.org More
->> >> majordomo
->> >> >>> info at =A0http://vger.kernel.org/majordomo-info.html
->> >> --
->> >> To unsubscribe from this list: send the line "unsubscribe linux-m=
-mc"
->> >> in
->> > the
->> >> body of a message to majordomo@vger.kernel.org More majordomo inf=
-o
->> at
->> >> http://vger.kernel.org/majordomo-info.html
->> >
+Thanks,
+Paul.
+--
+
 >
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+> =A0arch/arm/mach-s3c24xx/common.h | =A0 23 +++++++++++++++++++++++
+> =A01 files changed, 23 insertions(+), 0 deletions(-)
+> =A0create mode 100644 arch/arm/mach-s3c24xx/common.h
+>
+> diff --git a/arch/arm/mach-s3c24xx/common.h b/arch/arm/mach-s3c24xx/c=
+ommon.h
+> new file mode 100644
+> index 0000000..a7cd62f
+> --- /dev/null
+> +++ b/arch/arm/mach-s3c24xx/common.h
+> @@ -0,0 +1,23 @@
+> +/*
+> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+> + * =A0 =A0 =A0 =A0 =A0 =A0 http://www.samsung.com
+> + *
+> + * Common Header for S3C24XX SoCs
+> + *
+> + * This program is free software; you can redistribute it and/or mod=
+ify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#ifndef __ARCH_ARM_MACH_S3C24XX_COMMON_H
+> +#define __ARCH_ARM_MACH_S3C24XX_COMMON_H
+> +
+> +#ifdef CONFIG_CPU_S3C2410
+> +void s3c2410_restart(char mode, const char *cmd);
+> +#endif
+> +
+> +#ifdef CONFIG_CPU_S3C244X
+> +void s3c244x_restart(char mode, const char *cmd);
+> +#endif
+> +
+> +#endif /* __ARCH_ARM_MACH_S3C24XX_COMMON_H */
+> --
+> 1.7.2.3
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
