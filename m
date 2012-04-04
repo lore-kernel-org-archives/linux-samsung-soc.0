@@ -1,170 +1,256 @@
-From: Amit Kachhap <amit.kachhap@linaro.org>
-Subject: Re: [PATCH V2 0/6] thermal: exynos: Add kernel thermal
- support for exynos platform
-Date: Wed, 4 Apr 2012 10:02:14 +0530
-Message-ID: <CAK44p23jiXn6mn-VsdXr3h9J5FfKztXMiqu=XjaF6nqLnRQAmA@mail.gmail.com>
-References: <1332137864-12943-1-git-send-email-amit.kachhap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <1332137864-12943-1-git-send-email-amit.kachhap@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: lenb@kernel.org, rui.zhang@intel.com
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org
+From: jhbird.choi@gmail.com
+Subject: [PATCH] ARM: EXYNOS: Remove unused code related to samsung power domain
+Date: Wed,  4 Apr 2012 02:04:40 -0400
+Message-ID: <1333519480-1813-1-git-send-email-jhbird.choi@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:49792 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751363Ab2DDGEr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 4 Apr 2012 02:04:47 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
 
-Hi Len/Rui,
+From: Jonghwan Choi <jhbird.choi@samsung.com>
 
-Any comment or feedback from your side about the status of this patch?
-Is it merge-able or major re-work is needed? I have fixed most of the
-comments in this patchset and currently working on some of the minor
-comments received and will submit them shortly.
+Generic I/O Domain will be used to control power domain instead of
+samsung power domain. So remove unused code related to samsung
+power domain.
 
-Regards,
-Amit Daniel
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ arch/arm/mach-exynos/mach-nuri.c           |    1 -
+ arch/arm/mach-exynos/mach-origen.c         |    1 -
+ arch/arm/mach-exynos/mach-smdkv310.c       |    1 -
+ arch/arm/mach-exynos/mach-universal_c210.c |    1 -
+ arch/arm/plat-samsung/Kconfig              |    8 ---
+ arch/arm/plat-samsung/Makefile             |    4 -
+ arch/arm/plat-samsung/include/plat/pd.h    |   30 ---------
+ arch/arm/plat-samsung/pd.c                 |   95 ----------------------------
+ 8 files changed, 0 insertions(+), 141 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
+ delete mode 100644 arch/arm/plat-samsung/pd.c
 
-On 19 March 2012 11:47, Amit Daniel Kachhap <amit.kachhap@linaro.org> wrote:
-> Changes since V1:
-> *Moved the sensor driver to driver/thermal folder from driver/hwmon folder
-> =A0as suggested by Mark Brown and Guenter Roeck
-> *Added notifier support to notify the registered drivers of any cpu cooli=
-ng
-> =A0action. The driver can modify the default cooling behaviour(eg set dif=
-ferent
-> =A0max clip frequency).
-> *The percentage based frequency replaced with absolute clipped frequency.
-> *Some more conditional checks when setting max frequency.
-> *Renamed the new trip type THERMAL_TRIP_STATE_ACTIVE to
-> =A0THERMAL_TRIP_STATE_INSTANCE
-> *Many review comments from R, Durgadoss <durgadoss.r@intel.com> and
-> =A0eduardo.valentin@ti.com implemented.
-> *Removed cooling stats through debugfs patch
-> *The V1 based can be found here,
-> =A0https://lkml.org/lkml/2012/2/22/123
-> =A0http://lkml.org/lkml/2012/3/3/32
->
-> Changes since RFC:
-> *Changed the cpu cooling registration/unregistration API's to instance ba=
-sed
-> *Changed the STATE_ACTIVE trip type to pass correct instance id
-> *Adding support to restore back the policy->max_freq after doing frequency
-> =A0clipping.
-> *Moved the trip cooling stats from sysfs node to debugfs node as suggested
-> =A0by Greg KH greg@kroah.com
-> *Incorporated several review comments from eduardo.valentin@ti.com
-> *Moved the Temperature sensor driver from driver/hwmon/ to driver/mfd
-> =A0as discussed with Guenter Roeck <guenter.roeck@ericsson.com> and
-> =A0Donggeun Kim <dg77.kim@samsung.com> (https://lkml.org/lkml/2012/1/5/7)
-> *Some changes according to the changes in common cpu cooling APIs
-> *The RFC based patches can be found here,
-> =A0https://lkml.org/lkml/2011/12/13/186
-> =A0https://lkml.org/lkml/2011/12/21/169
->
->
-> Brief Description:
->
-> 1) The generic cooling devices code is placed inside driver/thermal/* as
-> placing inside acpi folder will need un-necessary enabling of acpi code. =
-This
-> codes is architecture independent.
->
-> 2) This patchset adds a new trip type THERMAL_TRIP_STATE_INSTANCE which p=
-asses
-> cooling device instance number and may be helpful for cpufreq cooling dev=
-ices
-> to take the correct cooling action. This trip type avoids the temperature
-> comparision check again inside the cooling handler.
->
-> 3) This patchset adds generic cpu cooling low level implementation through
-> frequency clipping and cpu hotplug. In future, other cpu related cooling
-> devices may be added here. An ACPI version of this already exists
-> (drivers/acpi/processor_thermal.c). But this will be useful for platforms
-> like ARM using the generic thermal interface along with the generic cpu
-> cooling devices. The cooling device registration API's return cooling dev=
-ice
-> pointers which can be easily binded with the thermal zone trip points.
-> The important APIs exposed are,
-> =A0 a)struct thermal_cooling_device *cpufreq_cooling_register(
-> =A0 =A0 =A0 =A0struct freq_clip_table *tab_ptr, unsigned int tab_size,
-> =A0 =A0 =A0 =A0const struct cpumask *mask_val)
-> =A0 b)void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
->
-> 4) Samsung exynos platform thermal implementation is done using the gener=
-ic
-> cpu cooling APIs and the new trip type. The temperature sensor driver pre=
-sent
-> in the hwmon folder(registered as hwmon driver) is moved to thermal folder
-> and registered as a thermal driver.
->
-> All this patchset is based on Kernel version 3.3-rc7
->
-> A simple data/control flow diagrams is shown below,
->
-> Core Linux thermal <-----> =A0Exynos thermal interface <----- Temperature=
- Sensor
-> =A0 =A0 =A0 =A0 =A0| =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0 |
-> =A0 =A0 =A0 =A0 \|/ =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =
-=A0|
-> =A0Cpufreq cooling device <---------------
->
->
-> Amit Daniel Kachhap (6):
-> =A0thermal: Add a new trip type to use cooling device instance number
-> =A0thermal: Add generic cpufreq cooling implementation
-> =A0thermal: Add generic cpuhotplug cooling implementation
-> =A0hwmon: exynos4: Move thermal sensor driver to driver/thermal
-> =A0 =A0directory
-> =A0thermal: exynos4: Register the tmu sensor with the kernel thermal
-> =A0 =A0layer
-> =A0ARM: exynos4: Add thermal sensor driver platform device support
->
-> =A0Documentation/hwmon/exynos4_tmu =A0 =A0 =A0 =A0 =A0 | =A0 81 ---
-> =A0Documentation/thermal/cpu-cooling-api.txt | =A0 76 +++
-> =A0Documentation/thermal/exynos4_tmu =A0 =A0 =A0 =A0 | =A0 52 ++
-> =A0Documentation/thermal/sysfs-api.txt =A0 =A0 =A0 | =A0 =A04 +-
-> =A0arch/arm/mach-exynos/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 11 +
-> =A0arch/arm/mach-exynos/Makefile =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A01 +
-> =A0arch/arm/mach-exynos/clock.c =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A04 +
-> =A0arch/arm/mach-exynos/dev-tmu.c =A0 =A0 =A0 =A0 =A0 =A0| =A0 39 ++
-> =A0arch/arm/mach-exynos/include/mach/irqs.h =A0| =A0 =A02 +
-> =A0arch/arm/mach-exynos/include/mach/map.h =A0 | =A0 =A01 +
-> =A0arch/arm/mach-exynos/mach-origen.c =A0 =A0 =A0 =A0| =A0 =A01 +
-> =A0arch/arm/plat-samsung/include/plat/devs.h | =A0 =A01 +
-> =A0drivers/hwmon/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 10=
- -
-> =A0drivers/hwmon/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =
-=A01 -
-> =A0drivers/hwmon/exynos4_tmu.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0514 -----=
---------------
-> =A0drivers/thermal/Kconfig =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 21 +
-> =A0drivers/thermal/Makefile =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0| =A0 =A02=
- +
-> =A0drivers/thermal/cpu_cooling.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0529 +++++++=
-++++++++++++
-> =A0drivers/thermal/exynos4_thermal.c =A0 =A0 =A0 =A0 | =A0790 +++++++++++=
-++++++++++++++++++
-> =A0drivers/thermal/thermal_sys.c =A0 =A0 =A0 =A0 =A0 =A0 | =A0 45 ++-
-> =A0include/linux/cpu_cooling.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 78 +++
-> =A0include/linux/platform_data/exynos4_tmu.h | =A0 =A07 +
-> =A0include/linux/thermal.h =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A01=
- +
-> =A023 files changed, 1660 insertions(+), 611 deletions(-)
-> =A0delete mode 100644 Documentation/hwmon/exynos4_tmu
-> =A0create mode 100644 Documentation/thermal/cpu-cooling-api.txt
-> =A0create mode 100644 Documentation/thermal/exynos4_tmu
-> =A0create mode 100644 arch/arm/mach-exynos/dev-tmu.c
-> =A0delete mode 100644 drivers/hwmon/exynos4_tmu.c
-> =A0create mode 100644 drivers/thermal/cpu_cooling.c
-> =A0create mode 100644 drivers/thermal/exynos4_thermal.c
-> =A0create mode 100644 include/linux/cpu_cooling.h
->
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index b3982c8..b33ef08 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -48,7 +48,6 @@
+ #include <plat/gpio-cfg.h>
+ #include <plat/iic.h>
+ #include <plat/mfc.h>
+-#include <plat/pd.h>
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+ #include <plat/mipi_csis.h>
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 878d4c9..a734e93 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -38,7 +38,6 @@
+ #include <plat/clock.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+-#include <plat/pd.h>
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+ 
+diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
+index 83b91fa..e3597f0 100644
+--- a/arch/arm/mach-exynos/mach-smdkv310.c
++++ b/arch/arm/mach-exynos/mach-smdkv310.c
+@@ -34,7 +34,6 @@
+ #include <plat/keypad.h>
+ #include <plat/sdhci.h>
+ #include <plat/iic.h>
+-#include <plat/pd.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ #include <plat/mfc.h>
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 6bb9dbd..427dc33 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -36,7 +36,6 @@
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+ #include <plat/sdhci.h>
+-#include <plat/pd.h>
+ #include <plat/regs-fb-v4.h>
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 71553f4..986f2ef 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -350,14 +350,6 @@ config SAMSUNG_WAKEMASK
+ 	  and above. This code allows a set of interrupt to wakeup-mask
+ 	  mappings. See <plat/wakeup-mask.h>
+ 
+-comment "Power Domain"
+-
+-config SAMSUNG_PD
+-	bool "Samsung Power Domain"
+-	depends on PM_RUNTIME
+-	help
+-	  Say Y here if you want to control Power Domain by Runtime PM.
+-
+ config DEBUG_S3C_UART
+ 	depends on PLAT_SAMSUNG
+ 	int
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 6012366..403ae65 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -47,10 +47,6 @@ obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
+ 
+ obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
+ 
+-# PD support
+-
+-obj-$(CONFIG_SAMSUNG_PD)	+= pd.o
+-
+ # PWM support
+ 
+ obj-$(CONFIG_HAVE_PWM)		+= pwm.o
+diff --git a/arch/arm/plat-samsung/include/plat/pd.h b/arch/arm/plat-samsung/include/plat/pd.h
+deleted file mode 100644
+index abb4bc3..0000000
+--- a/arch/arm/plat-samsung/include/plat/pd.h
++++ /dev/null
+@@ -1,30 +0,0 @@
+-/* linux/arch/arm/plat-samsung/include/plat/pd.h
+- *
+- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM_PLAT_SAMSUNG_PD_H
+-#define __ASM_PLAT_SAMSUNG_PD_H __FILE__
+-
+-struct samsung_pd_info {
+-	int (*enable)(struct device *dev);
+-	int (*disable)(struct device *dev);
+-	void __iomem *base;
+-};
+-
+-enum exynos4_pd_block {
+-	PD_MFC,
+-	PD_G3D,
+-	PD_LCD0,
+-	PD_LCD1,
+-	PD_TV,
+-	PD_CAM,
+-	PD_GPS
+-};
+-
+-#endif /* __ASM_PLAT_SAMSUNG_PD_H */
+diff --git a/arch/arm/plat-samsung/pd.c b/arch/arm/plat-samsung/pd.c
+deleted file mode 100644
+index 312b510..0000000
+--- a/arch/arm/plat-samsung/pd.c
++++ /dev/null
+@@ -1,95 +0,0 @@
+-/* linux/arch/arm/plat-samsung/pd.c
+- *
+- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+- *		http://www.samsung.com
+- *
+- * Samsung Power domain support
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#include <linux/init.h>
+-#include <linux/export.h>
+-#include <linux/platform_device.h>
+-#include <linux/err.h>
+-#include <linux/pm_runtime.h>
+-
+-#include <plat/pd.h>
+-
+-static int samsung_pd_probe(struct platform_device *pdev)
+-{
+-	struct samsung_pd_info *pdata = pdev->dev.platform_data;
+-	struct device *dev = &pdev->dev;
+-
+-	if (!pdata) {
+-		dev_err(dev, "no device data specified\n");
+-		return -ENOENT;
+-	}
+-
+-	pm_runtime_set_active(dev);
+-	pm_runtime_enable(dev);
+-
+-	dev_info(dev, "power domain registered\n");
+-	return 0;
+-}
+-
+-static int __devexit samsung_pd_remove(struct platform_device *pdev)
+-{
+-	struct device *dev = &pdev->dev;
+-
+-	pm_runtime_disable(dev);
+-	return 0;
+-}
+-
+-static int samsung_pd_runtime_suspend(struct device *dev)
+-{
+-	struct samsung_pd_info *pdata = dev->platform_data;
+-	int ret = 0;
+-
+-	if (pdata->disable)
+-		ret = pdata->disable(dev);
+-
+-	dev_dbg(dev, "suspended\n");
+-	return ret;
+-}
+-
+-static int samsung_pd_runtime_resume(struct device *dev)
+-{
+-	struct samsung_pd_info *pdata = dev->platform_data;
+-	int ret = 0;
+-
+-	if (pdata->enable)
+-		ret = pdata->enable(dev);
+-
+-	dev_dbg(dev, "resumed\n");
+-	return ret;
+-}
+-
+-static const struct dev_pm_ops samsung_pd_pm_ops = {
+-	.runtime_suspend	= samsung_pd_runtime_suspend,
+-	.runtime_resume		= samsung_pd_runtime_resume,
+-};
+-
+-static struct platform_driver samsung_pd_driver = {
+-	.driver		= {
+-		.name		= "samsung-pd",
+-		.owner		= THIS_MODULE,
+-		.pm		= &samsung_pd_pm_ops,
+-	},
+-	.probe		= samsung_pd_probe,
+-	.remove		= __devexit_p(samsung_pd_remove),
+-};
+-
+-static int __init samsung_pd_init(void)
+-{
+-	int ret;
+-
+-	ret = platform_driver_register(&samsung_pd_driver);
+-	if (ret)
+-		printk(KERN_ERR "%s: failed to add PD driver\n", __func__);
+-
+-	return ret;
+-}
+-arch_initcall(samsung_pd_init);
+-- 
+1.7.0.4
