@@ -1,256 +1,276 @@
-From: jhbird.choi@gmail.com
-Subject: [PATCH] ARM: EXYNOS: Remove unused code related to samsung power domain
-Date: Wed,  4 Apr 2012 02:04:40 -0400
-Message-ID: <1333519480-1813-1-git-send-email-jhbird.choi@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v4 1/2] mfd: add irq domain support for max8997 interrupts
+Date: Wed, 4 Apr 2012 22:22:57 +0100
+Message-ID: <20120404212257.GE10787@opensource.wolfsonmicro.com>
+References: <1332582590-16382-1-git-send-email-thomas.abraham@linaro.org>
+ <1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="xA/XKXTdy9G3iaIz"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:49792 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751363Ab2DDGEr (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60474 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751944Ab2DDVXB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Apr 2012 02:04:47 -0400
+	Wed, 4 Apr 2012 17:23:01 -0400
+Content-Disposition: inline
+In-Reply-To: <1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: Ben Dooks <ben-linux@fluff.org>, Russell King <linux@arm.linux.org.uk>, Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, Samuel Ortiz <sameo@linux.intel.com>
 
-From: Jonghwan Choi <jhbird.choi@samsung.com>
 
-Generic I/O Domain will be used to control power domain instead of
-samsung power domain. So remove unused code related to samsung
-power domain.
+--xA/XKXTdy9G3iaIz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- arch/arm/mach-exynos/mach-nuri.c           |    1 -
- arch/arm/mach-exynos/mach-origen.c         |    1 -
- arch/arm/mach-exynos/mach-smdkv310.c       |    1 -
- arch/arm/mach-exynos/mach-universal_c210.c |    1 -
- arch/arm/plat-samsung/Kconfig              |    8 ---
- arch/arm/plat-samsung/Makefile             |    4 -
- arch/arm/plat-samsung/include/plat/pd.h    |   30 ---------
- arch/arm/plat-samsung/pd.c                 |   95 ----------------------------
- 8 files changed, 0 insertions(+), 141 deletions(-)
- delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
- delete mode 100644 arch/arm/plat-samsung/pd.c
+On Sat, Mar 24, 2012 at 03:19:49PM +0530, Thomas Abraham wrote:
+> Add irq domain support for max8997 interrupts. The reverse mapping method
+> used is linear mapping since the sub-drivers of max8997 such as regulator
+> and charger drivers can use the max8997 irq_domain to get the linux irq
+> number for max8997 interrupts. All uses of irq_base in platform data and
+> max8997 driver private data are removed.
 
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index b3982c8..b33ef08 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -48,7 +48,6 @@
- #include <plat/gpio-cfg.h>
- #include <plat/iic.h>
- #include <plat/mfc.h>
--#include <plat/pd.h>
- #include <plat/fimc-core.h>
- #include <plat/camport.h>
- #include <plat/mipi_csis.h>
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 878d4c9..a734e93 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -38,7 +38,6 @@
- #include <plat/clock.h>
- #include <plat/gpio-cfg.h>
- #include <plat/backlight.h>
--#include <plat/pd.h>
- #include <plat/fb.h>
- #include <plat/mfc.h>
- 
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index 83b91fa..e3597f0 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -34,7 +34,6 @@
- #include <plat/keypad.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
--#include <plat/pd.h>
- #include <plat/gpio-cfg.h>
- #include <plat/backlight.h>
- #include <plat/mfc.h>
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 6bb9dbd..427dc33 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -36,7 +36,6 @@
- #include <plat/fb.h>
- #include <plat/mfc.h>
- #include <plat/sdhci.h>
--#include <plat/pd.h>
- #include <plat/regs-fb-v4.h>
- #include <plat/fimc-core.h>
- #include <plat/camport.h>
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 71553f4..986f2ef 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -350,14 +350,6 @@ config SAMSUNG_WAKEMASK
- 	  and above. This code allows a set of interrupt to wakeup-mask
- 	  mappings. See <plat/wakeup-mask.h>
- 
--comment "Power Domain"
--
--config SAMSUNG_PD
--	bool "Samsung Power Domain"
--	depends on PM_RUNTIME
--	help
--	  Say Y here if you want to control Power Domain by Runtime PM.
--
- config DEBUG_S3C_UART
- 	depends on PLAT_SAMSUNG
- 	int
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 6012366..403ae65 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -47,10 +47,6 @@ obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
- 
- obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
- 
--# PD support
--
--obj-$(CONFIG_SAMSUNG_PD)	+= pd.o
--
- # PWM support
- 
- obj-$(CONFIG_HAVE_PWM)		+= pwm.o
-diff --git a/arch/arm/plat-samsung/include/plat/pd.h b/arch/arm/plat-samsung/include/plat/pd.h
-deleted file mode 100644
-index abb4bc3..0000000
---- a/arch/arm/plat-samsung/include/plat/pd.h
-+++ /dev/null
-@@ -1,30 +0,0 @@
--/* linux/arch/arm/plat-samsung/include/plat/pd.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_PLAT_SAMSUNG_PD_H
--#define __ASM_PLAT_SAMSUNG_PD_H __FILE__
--
--struct samsung_pd_info {
--	int (*enable)(struct device *dev);
--	int (*disable)(struct device *dev);
--	void __iomem *base;
--};
--
--enum exynos4_pd_block {
--	PD_MFC,
--	PD_G3D,
--	PD_LCD0,
--	PD_LCD1,
--	PD_TV,
--	PD_CAM,
--	PD_GPS
--};
--
--#endif /* __ASM_PLAT_SAMSUNG_PD_H */
-diff --git a/arch/arm/plat-samsung/pd.c b/arch/arm/plat-samsung/pd.c
-deleted file mode 100644
-index 312b510..0000000
---- a/arch/arm/plat-samsung/pd.c
-+++ /dev/null
-@@ -1,95 +0,0 @@
--/* linux/arch/arm/plat-samsung/pd.c
-- *
-- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * Samsung Power domain support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/init.h>
--#include <linux/export.h>
--#include <linux/platform_device.h>
--#include <linux/err.h>
--#include <linux/pm_runtime.h>
--
--#include <plat/pd.h>
--
--static int samsung_pd_probe(struct platform_device *pdev)
--{
--	struct samsung_pd_info *pdata = pdev->dev.platform_data;
--	struct device *dev = &pdev->dev;
--
--	if (!pdata) {
--		dev_err(dev, "no device data specified\n");
--		return -ENOENT;
--	}
--
--	pm_runtime_set_active(dev);
--	pm_runtime_enable(dev);
--
--	dev_info(dev, "power domain registered\n");
--	return 0;
--}
--
--static int __devexit samsung_pd_remove(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--
--	pm_runtime_disable(dev);
--	return 0;
--}
--
--static int samsung_pd_runtime_suspend(struct device *dev)
--{
--	struct samsung_pd_info *pdata = dev->platform_data;
--	int ret = 0;
--
--	if (pdata->disable)
--		ret = pdata->disable(dev);
--
--	dev_dbg(dev, "suspended\n");
--	return ret;
--}
--
--static int samsung_pd_runtime_resume(struct device *dev)
--{
--	struct samsung_pd_info *pdata = dev->platform_data;
--	int ret = 0;
--
--	if (pdata->enable)
--		ret = pdata->enable(dev);
--
--	dev_dbg(dev, "resumed\n");
--	return ret;
--}
--
--static const struct dev_pm_ops samsung_pd_pm_ops = {
--	.runtime_suspend	= samsung_pd_runtime_suspend,
--	.runtime_resume		= samsung_pd_runtime_resume,
--};
--
--static struct platform_driver samsung_pd_driver = {
--	.driver		= {
--		.name		= "samsung-pd",
--		.owner		= THIS_MODULE,
--		.pm		= &samsung_pd_pm_ops,
--	},
--	.probe		= samsung_pd_probe,
--	.remove		= __devexit_p(samsung_pd_remove),
--};
--
--static int __init samsung_pd_init(void)
--{
--	int ret;
--
--	ret = platform_driver_register(&samsung_pd_driver);
--	if (ret)
--		printk(KERN_ERR "%s: failed to add PD driver\n", __func__);
--
--	return ret;
--}
--arch_initcall(samsung_pd_init);
--- 
-1.7.0.4
+> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+
+CCing in Samuel for the MFD review - review tends to be faster if you CC
+maintainers!  Samuel, there's a followup patch for the regulator API
+which is likely to collide with some API updates so is it OK to merge
+via regulator if the patch is OK?
+
+> ---
+>  arch/arm/mach-exynos/mach-nuri.c    |    4 --
+>  arch/arm/mach-exynos/mach-origen.c  |    1 -
+>  drivers/mfd/max8997-irq.c           |   61 ++++++++++++++++++++---------=
+-----
+>  drivers/mfd/max8997.c               |    1 -
+>  include/linux/mfd/max8997-private.h |    4 ++-
+>  include/linux/mfd/max8997.h         |    1 -
+>  6 files changed, 39 insertions(+), 33 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach=
+-nuri.c
+> index 7ac81ce..b21d85d 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -1077,12 +1077,8 @@ static struct platform_device nuri_max8903_device =
+=3D {
+>  static void __init nuri_power_init(void)
+>  {
+>  	int gpio;
+> -	int irq_base =3D IRQ_GPIO_END + 1;
+>  	int ta_en =3D 0;
+> =20
+> -	nuri_max8997_pdata.irq_base =3D irq_base;
+> -	irq_base +=3D MAX8997_IRQ_NR;
+> -
+>  	gpio =3D EXYNOS4_GPX0(7);
+>  	gpio_request(gpio, "AP_PMIC_IRQ");
+>  	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/ma=
+ch-origen.c
+> index 827cb99..d3b2e9d 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -424,7 +424,6 @@ static struct max8997_platform_data __initdata origen=
+_max8997_pdata =3D {
+>  	.buck1_gpiodvs	=3D false,
+>  	.buck2_gpiodvs	=3D false,
+>  	.buck5_gpiodvs	=3D false,
+> -	.irq_base	=3D IRQ_GPIO_END + 1,
+> =20
+>  	.ignore_gpiodvs_side_effect =3D true,
+>  	.buck125_default_idx =3D 0x0,
+> diff --git a/drivers/mfd/max8997-irq.c b/drivers/mfd/max8997-irq.c
+> index 09274cf..00390a1 100644
+> --- a/drivers/mfd/max8997-irq.c
+> +++ b/drivers/mfd/max8997-irq.c
+> @@ -142,7 +142,8 @@ static void max8997_irq_sync_unlock(struct irq_data *=
+data)
+>  static const inline struct max8997_irq_data *
+>  irq_to_max8997_irq(struct max8997_dev *max8997, int irq)
+>  {
+> -	return &max8997_irqs[irq - max8997->irq_base];
+> +	struct irq_data *data =3D irq_get_irq_data(irq);
+> +	return &max8997_irqs[data->hwirq];
+>  }
+> =20
+>  static void max8997_irq_mask(struct irq_data *data)
+> @@ -182,7 +183,7 @@ static irqreturn_t max8997_irq_thread(int irq, void *=
+data)
+>  	u8 irq_reg[MAX8997_IRQ_GROUP_NR] =3D {};
+>  	u8 irq_src;
+>  	int ret;
+> -	int i;
+> +	int i, cur_irq;
+> =20
+>  	ret =3D max8997_read_reg(max8997->i2c, MAX8997_REG_INTSRC, &irq_src);
+>  	if (ret < 0) {
+> @@ -269,8 +270,11 @@ static irqreturn_t max8997_irq_thread(int irq, void =
+*data)
+> =20
+>  	/* Report */
+>  	for (i =3D 0; i < MAX8997_IRQ_NR; i++) {
+> -		if (irq_reg[max8997_irqs[i].group] & max8997_irqs[i].mask)
+> -			handle_nested_irq(max8997->irq_base + i);
+> +		if (irq_reg[max8997_irqs[i].group] & max8997_irqs[i].mask) {
+> +			cur_irq =3D irq_find_mapping(max8997->irq_domain, i);
+> +			if (cur_irq)
+> +				handle_nested_irq(cur_irq);
+> +		}
+>  	}
+> =20
+>  	return IRQ_HANDLED;
+> @@ -278,26 +282,40 @@ static irqreturn_t max8997_irq_thread(int irq, void=
+ *data)
+> =20
+>  int max8997_irq_resume(struct max8997_dev *max8997)
+>  {
+> -	if (max8997->irq && max8997->irq_base)
+> -		max8997_irq_thread(max8997->irq_base, max8997);
+> +	if (max8997->irq && max8997->irq_domain)
+> +		max8997_irq_thread(0, max8997);
+> +	return 0;
+> +}
+> +
+> +static int max8997_irq_domain_map(struct irq_domain *d, unsigned int irq,
+> +					irq_hw_number_t hw)
+> +{
+> +	struct max8997_dev *max8997 =3D d->host_data;
+> +
+> +	irq_set_chip_data(irq, max8997);
+> +	irq_set_chip_and_handler(irq, &max8997_irq_chip, handle_edge_irq);
+> +	irq_set_nested_thread(irq, 1);
+> +#ifdef CONFIG_ARM
+> +	set_irq_flags(irq, IRQF_VALID);
+> +#else
+> +	irq_set_noprobe(irq);
+> +#endif
+>  	return 0;
+>  }
+> =20
+> +static struct irq_domain_ops max8997_irq_domain_ops =3D {
+> +	.map =3D max8997_irq_domain_map,
+> +};
+> +
+>  int max8997_irq_init(struct max8997_dev *max8997)
+>  {
+> +	struct irq_domain *domain;
+>  	int i;
+> -	int cur_irq;
+>  	int ret;
+>  	u8 val;
+> =20
+>  	if (!max8997->irq) {
+>  		dev_warn(max8997->dev, "No interrupt specified.\n");
+> -		max8997->irq_base =3D 0;
+> -		return 0;
+> -	}
+> -
+> -	if (!max8997->irq_base) {
+> -		dev_err(max8997->dev, "No interrupt base specified.\n");
+>  		return 0;
+>  	}
+> =20
+> @@ -327,18 +345,11 @@ int max8997_irq_init(struct max8997_dev *max8997)
+>  					true : false;
+>  	}
+> =20
+> -	/* Register with genirq */
+> -	for (i =3D 0; i < MAX8997_IRQ_NR; i++) {
+> -		cur_irq =3D i + max8997->irq_base;
+> -		irq_set_chip_data(cur_irq, max8997);
+> -		irq_set_chip_and_handler(cur_irq, &max8997_irq_chip,
+> -				handle_edge_irq);
+> -		irq_set_nested_thread(cur_irq, 1);
+> -#ifdef CONFIG_ARM
+> -		set_irq_flags(cur_irq, IRQF_VALID);
+> -#else
+> -		irq_set_noprobe(cur_irq);
+> -#endif
+> +	domain =3D irq_domain_add_linear(NULL, MAX8997_IRQ_NR,
+> +					&max8997_irq_domain_ops, &max8997);
+> +	if (!domain) {
+> +		dev_err(max8997->dev, "could not create irq domain\n");
+> +		return -ENODEV;
+>  	}
+> =20
+>  	ret =3D request_threaded_irq(max8997->irq, NULL, max8997_irq_thread,
+> diff --git a/drivers/mfd/max8997.c b/drivers/mfd/max8997.c
+> index cb83a7a..20ecad3 100644
+> --- a/drivers/mfd/max8997.c
+> +++ b/drivers/mfd/max8997.c
+> @@ -143,7 +143,6 @@ static int max8997_i2c_probe(struct i2c_client *i2c,
+>  	if (!pdata)
+>  		goto err;
+> =20
+> -	max8997->irq_base =3D pdata->irq_base;
+>  	max8997->ono =3D pdata->ono;
+> =20
+>  	mutex_init(&max8997->iolock);
+> diff --git a/include/linux/mfd/max8997-private.h b/include/linux/mfd/max8=
+997-private.h
+> index 3f4deb6..830152c 100644
+> --- a/include/linux/mfd/max8997-private.h
+> +++ b/include/linux/mfd/max8997-private.h
+> @@ -23,6 +23,8 @@
+>  #define __LINUX_MFD_MAX8997_PRIV_H
+> =20
+>  #include <linux/i2c.h>
+> +#include <linux/export.h>
+> +#include <linux/irqdomain.h>
+> =20
+>  #define MAX8997_REG_INVALID	(0xff)
+> =20
+> @@ -325,7 +327,7 @@ struct max8997_dev {
+> =20
+>  	int irq;
+>  	int ono;
+> -	int irq_base;
+> +	struct irq_domain *irq_domain;
+>  	struct mutex irqlock;
+>  	int irq_masks_cur[MAX8997_IRQ_GROUP_NR];
+>  	int irq_masks_cache[MAX8997_IRQ_GROUP_NR];
+> diff --git a/include/linux/mfd/max8997.h b/include/linux/mfd/max8997.h
+> index fff5905..818486c 100644
+> --- a/include/linux/mfd/max8997.h
+> +++ b/include/linux/mfd/max8997.h
+> @@ -155,7 +155,6 @@ struct max8997_led_platform_data {
+> =20
+>  struct max8997_platform_data {
+>  	/* IRQ */
+> -	int irq_base;
+>  	int ono;
+>  	int wakeup;
+> =20
+> --=20
+> 1.6.6.rc2
+>=20
+
+--xA/XKXTdy9G3iaIz
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPfLuqAAoJEBus8iNuMP3dOYsP/19Z3Q5dIvDcpiTZZvrXvYox
+gFO25Aks29N78RJE5u3ygkS32W/TAvxydi2Kxm3Ytz2bKCkfDGDtP+nf/F0ymzVK
+JoLD6otJgl3RxGAw0fpwxVuV0YjVNfGMQi+VuezAlkdilTaXSlcZrmOw4OdIrY00
+W02S3l3kpHnueDBHvQr/wlNeNB96jEjtfCDvs7db/uqqfm7SEGbUTrycQI71tqo7
+HnuSEuP+HZmzSGY5UkoR7p8Aeaf5DR9uO4WiwH9iK5u0+1rBDYj2MyXYxOWHNxZj
+wLfP9ggz4uoa0nNWB51pk2CxbQlMGnHT7xzAhcPEWH1ZzIECoH7dTsOz3O7JK3ba
+MN3C38RpfSJAjdB2HlOYCFiLjG5uhzYMtjZYqPD0+8bXlnlx/+Z7tOEx9qOuYrku
+iatwGo7grsND6LaDfmhlXKyCyVU5Am1/oyTL4zKjpic1FKgdt4xT3Lb8RNRfR1jB
+Aa7g07fytGLFlRIH1BcXlwL9fMjo0qvVSxBYaddS7YIh8S2LIvyQR+GreoqqSBTo
+jIQGEehWS8tWECdYQylcmFx5wV10kMrGyXf3KJiZqQrHHrkP2x8QfxdEX20MQ6Co
+VXdZFuMOSSfOKjbZwoZwlFZymdxgoL1I1FMX1eMTN32GR4+8xu9vYHQ4Uf568fEn
+k0eCaej/EKOEeH7Qx55X
+=48E+
+-----END PGP SIGNATURE-----
+
+--xA/XKXTdy9G3iaIz--
