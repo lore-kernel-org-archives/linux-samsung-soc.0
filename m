@@ -1,69 +1,73 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes-1 for v3.4
-Date: Thu, 05 Apr 2012 08:30:23 -0700
-Message-ID: <4F7DBA8F.2010903@samsung.com>
+From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH 1/4] ARM: EXYNOS: Hook up power domains to generic power
+ domain infrastructure (part 2)
+Date: Thu, 05 Apr 2012 18:50:10 +0200
+Message-ID: <201204051850.10213.b.zolnierkie@samsung.com>
+References: <1330505255-25587-1-git-send-email-b.zolnierkie@samsung.com>
+ <076701ccf75f$8c217b20$a4647160$%kim@samsung.com>
+ <201203061611.52908.b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:52099 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753649Ab2DEPa1 (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:13272 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753211Ab2DEQuf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Apr 2012 11:30:27 -0400
-Received: by pbcun15 with SMTP id un15so1674266pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 08:30:26 -0700 (PDT)
+	Thu, 5 Apr 2012 12:50:35 -0400
+In-reply-to: <201203061611.52908.b.zolnierkie@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, thomas.abraham@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, rjw@sisk.pl, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Hi Arnd, Olof
+On Tuesday 06 March 2012 16:11:52 Bartlomiej Zolnierkiewicz wrote:
+> On Thursday 01 March 2012 04:58:23 Kukjin Kim wrote:
+> > Bartlomiej Zolnierkiewicz wrote:
+> > > 
+> > > * Add support of enabling/disabling modules in S5P_CLKGATE_BLOCK register.
+> > 
+> > NO. I remember, we talked about this before and I'm still thinking it should
+> > be handled independently.
+> 
+> OK, here is only the cleanup part.  Unfortunately I couldn't find
+> the previous discussion regarding S5P_CLKGATE_BLOCK register handling
+> on the public mailing lists so could you please describe how it
+> should be done properly?
+> 
+> Best regards,
+> --
+> Bartlomiej Zolnierkiewicz
+> Samsung Poland R&D Center
+> 
+> 
+> From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Subject: [PATCH] ARM: EXYNOS: Remove leftovers of the Samsung specific power domain control
 
-Please pull samsung-fixes-1 for v3.4 from:
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-v3.4-samsung-fixes-1
+ping?
 
-They are for fix uart stuff on exynos, build warning and omission file 
-happened during resolving merge conflict on s3c24xx.
+Could I get this patch merged please.
 
-If any problems, please let me know.
-
-Thanks.
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Cc: Rob Herring <rob.herring@calxeda.com>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+> 
+>  arch/arm/mach-exynos/mach-nuri.c           |    1 
+>  arch/arm/mach-exynos/mach-origen.c         |    1 
+>  arch/arm/mach-exynos/mach-smdkv310.c       |    1 
+>  arch/arm/mach-exynos/mach-universal_c210.c |    1 
+>  arch/arm/plat-samsung/Kconfig              |    8 --
+>  arch/arm/plat-samsung/Makefile             |    4 -
+>  arch/arm/plat-samsung/include/plat/devs.h  |    1 
+>  arch/arm/plat-samsung/include/plat/pd.h    |   30 ---------
+>  arch/arm/plat-samsung/pd.c                 |   95 -----------------------------
+>  9 files changed, 142 deletions(-)
 
 Best regards,
-Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit dd775ae2549217d3ae09363e3edb305d0fa19928:
-
-   Linux 3.4-rc1 (2012-03-31 16:24:09 -0700)
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-v3.4-samsung-fixes-1
-
-Colin Cross (1):
-       ARM: EXYNOS: fix CONFIG_DEBUG_LL
-
-Dima Zavin (1):
-       ARM: EXYNOS: use chip_id reg in uncompress to select uart base phys
-
-Il Han (1):
-       ARM: EXYNOS: fix ISO C90 warning
-
-Kukjin Kim (1):
-       ARM: S3C24XX: fix missing common.h in mach-s3c24xx/
-
-Sachin Kamat (1):
-       ARM: EXYNOS: Fix compiler warning in dma.c file
-
-  arch/arm/mach-exynos/common.c                   |    3 ++-
-  arch/arm/mach-exynos/dma.c                      |    2 --
-  arch/arm/mach-exynos/include/mach/debug-macro.S |    7 +++----
-  arch/arm/mach-exynos/include/mach/uncompress.h  |   17 ++++++++++++++++-
-  arch/arm/mach-s3c24xx/common.h                  |   18 ++++++++++++++++++
-  5 files changed, 39 insertions(+), 8 deletions(-)
-  create mode 100644 arch/arm/mach-s3c24xx/common.h
+Bartlomiej Zolnierkiewicz
+Samsung Poland R&D Center
