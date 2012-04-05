@@ -1,116 +1,56 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Add API to set platform data for s5p-tv
- driver
-Date: Thu, 05 Apr 2012 18:43:41 +0530
-Message-ID: <4F7D9A85.6000007@linaro.org>
-References: <1333614296-13256-1-git-send-email-tushar.behera@linaro.org> <1333614296-13256-2-git-send-email-tushar.behera@linaro.org> <4F7D652A.5010001@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix compiler warning in dma.c file
+Date: Thu, 05 Apr 2012 07:58:46 -0700
+Message-ID: <4F7DB326.8030603@samsung.com>
+References: <1333441841-2307-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:38000 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752321Ab2DENNp (ORCPT
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:44492 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753780Ab2DEO6v (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Apr 2012 09:13:45 -0400
-Received: by pbcun15 with SMTP id un15so1538207pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 06:13:45 -0700 (PDT)
-In-Reply-To: <4F7D652A.5010001@samsung.com>
+	Thu, 5 Apr 2012 10:58:51 -0400
+Received: by dake40 with SMTP id e40so1722806dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 07:58:51 -0700 (PDT)
+In-Reply-To: <1333441841-2307-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Stanislawski <t.stanislaws@samsung.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 04/05/2012 02:56 PM, Tomasz Stanislawski wrote:
-> Hi Tushbar Behera,
-> 
-> On 04/05/2012 10:24 AM, Tushar Behera wrote:
->> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
->> platform data") makes the presence of platform data mandatory for s5p-tv
->> driver. Adding an API to plat-samsung for this purpose.
->>
->> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
->> ---
->>  arch/arm/plat-samsung/devs.c              |   25 +++++++++++++++++++++++++
->>  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
->>  2 files changed, 41 insertions(+), 0 deletions(-)
->>  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
->>
->> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
->> index 8b928f9..0ac3884 100644
->> --- a/arch/arm/plat-samsung/devs.c
->> +++ b/arch/arm/plat-samsung/devs.c
->> @@ -31,6 +31,8 @@
->>  #include <linux/ioport.h>
->>  #include <linux/platform_data/s3c-hsudc.h>
->>  
->> +#include <media/s5p_hdmi.h>
->> +
->>  #include <asm/irq.h>
->>  #include <asm/pmu.h>
->>  #include <asm/mach/arch.h>
->> @@ -770,6 +772,29 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *pd)
->>  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
->>  			       &s5p_device_i2c_hdmiphy);
->>  }
->> +
->> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
->> +
->> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
->> +				struct i2c_board_info *mhl_info, int mhl_bus)
->> +{
->> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
->> +
->> +	if (soc_is_exynos4210())
->> +		pd->hdmiphy_bus = 8;
-> 
-> I found that hdmiphy is installed on 8th controller on all probably all
-> chips from Exynos4*1* family not only 4210. It should be reflected here.
-> 
+On 04/03/12 01:30, Sachin Kamat wrote:
+> Fixes the following warning:
+> warning: =E2=80=98dma_dmamask=E2=80=99 defined but not used [-Wunused=
+-variable]
+>
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+> ---
+>   arch/arm/mach-exynos/dma.c |    2 --
+>   1 files changed, 0 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
+> index 3983abe..69aaa45 100644
+> --- a/arch/arm/mach-exynos/dma.c
+> +++ b/arch/arm/mach-exynos/dma.c
+> @@ -35,8 +35,6 @@
+>   #include<mach/irqs.h>
+>   #include<mach/dma.h>
+>
+> -static u64 dma_dmamask =3D DMA_BIT_MASK(32);
+> -
+>   static u8 exynos4210_pdma0_peri[] =3D {
+>   	DMACH_PCM0_RX,
+>   	DMACH_PCM0_TX,
 
-Thanks for pointing out ... I will update for other variants also.
+Applied, thanks.
 
+Thanks.
 
->> +	else if (soc_is_s5pv210())
->> +		pd->hdmiphy_bus = 3;
->> +	else
->> +		pd->hdmiphy_bus = 0;
->> +
->> +	pd->hdmiphy_info = hdmiphy_info;
->> +	pd->mhl_info = mhl_info;
->> +	pd->mhl_bus = mhl_bus;
->> +
->> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
->> +				&s5p_device_hdmi);
->> +}
->> +
->>  #endif /* CONFIG_S5P_DEV_I2C_HDMIPHY */
->>  
->>  /* I2S */
->> diff --git a/arch/arm/plat-samsung/include/plat/hdmi.h b/arch/arm/plat-samsung/include/plat/hdmi.h
->> new file mode 100644
->> index 0000000..5dc7347
->> --- /dev/null
->> +++ b/arch/arm/plat-samsung/include/plat/hdmi.h
->> @@ -0,0 +1,16 @@
->> +/*
->> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
->> + *
->> + * This program is free software; you can redistribute  it and/or modify it
->> + * under  the terms of  the GNU General  Public License as published by the
->> + * Free Software Foundation;  either version 2 of the  License, or (at your
->> + * option) any later version.
->> + */
->> +
->> +#ifndef __PLAT_SAMSUNG_HDMI_H
->> +#define __PLAT_SAMSUNG_HDMI_H __FILE__
->> +
->> +extern void s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
->> +				struct i2c_board_info *mhl_info, int mhl_bus);
->> +
->> +#endif /* __PLAT_SAMSUNG_HDMI_H */
-> 
-
-
--- 
-Tushar Behera
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
