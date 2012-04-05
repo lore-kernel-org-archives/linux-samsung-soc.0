@@ -1,78 +1,116 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 2/2] ARM: EXYNOS: Set HDMI platform data in Origen board
-Date: Thu, 05 Apr 2012 18:41:19 +0530
-Message-ID: <4F7D99F7.4070206@linaro.org>
-References: <1333614296-13256-1-git-send-email-tushar.behera@linaro.org> <1333614296-13256-3-git-send-email-tushar.behera@linaro.org> <4F7D67DA.2010105@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Add API to set platform data for s5p-tv
+ driver
+Date: Thu, 05 Apr 2012 18:43:41 +0530
+Message-ID: <4F7D9A85.6000007@linaro.org>
+References: <1333614296-13256-1-git-send-email-tushar.behera@linaro.org> <1333614296-13256-2-git-send-email-tushar.behera@linaro.org> <4F7D652A.5010001@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:52523 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:38000 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752549Ab2DENLY (ORCPT
+	with ESMTP id S1752321Ab2DENNp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Apr 2012 09:11:24 -0400
-Received: by pbcun15 with SMTP id un15so1535828pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 06:11:23 -0700 (PDT)
-In-Reply-To: <4F7D67DA.2010105@samsung.com>
+	Thu, 5 Apr 2012 09:13:45 -0400
+Received: by pbcun15 with SMTP id un15so1538207pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 06:13:45 -0700 (PDT)
+In-Reply-To: <4F7D652A.5010001@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Stanislawski <t.stanislaws@samsung.com>
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 04/05/2012 03:07 PM, Tomasz Stanislawski wrote:
-> Hi Tushar Behera,
+On 04/05/2012 02:56 PM, Tomasz Stanislawski wrote:
+> Hi Tushbar Behera,
 > 
 > On 04/05/2012 10:24 AM, Tushar Behera wrote:
+>> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
+>> platform data") makes the presence of platform data mandatory for s5p-tv
+>> driver. Adding an API to plat-samsung for this purpose.
+>>
 >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 >> ---
->>  arch/arm/mach-exynos/mach-origen.c |    7 +++++++
->>  1 files changed, 7 insertions(+), 0 deletions(-)
+>>  arch/arm/plat-samsung/devs.c              |   25 +++++++++++++++++++++++++
+>>  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
+>>  2 files changed, 41 insertions(+), 0 deletions(-)
+>>  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
 >>
->> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
->> index 878d4c9..ac6f78f 100644
->> --- a/arch/arm/mach-exynos/mach-origen.c
->> +++ b/arch/arm/mach-exynos/mach-origen.c
->> @@ -41,6 +41,7 @@
->>  #include <plat/pd.h>
->>  #include <plat/fb.h>
->>  #include <plat/mfc.h>
->> +#include <plat/hdmi.h>
+>> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+>> index 8b928f9..0ac3884 100644
+>> --- a/arch/arm/plat-samsung/devs.c
+>> +++ b/arch/arm/plat-samsung/devs.c
+>> @@ -31,6 +31,8 @@
+>>  #include <linux/ioport.h>
+>>  #include <linux/platform_data/s3c-hsudc.h>
 >>  
->>  #include <mach/ohci.h>
->>  #include <mach/map.h>
->> @@ -671,6 +672,11 @@ static void __init origen_bt_setup(void)
->>  	s3c_gpio_setpull(EXYNOS4_GPX2(2), S3C_GPIO_PULL_NONE);
+>> +#include <media/s5p_hdmi.h>
+>> +
+>>  #include <asm/irq.h>
+>>  #include <asm/pmu.h>
+>>  #include <asm/mach/arch.h>
+>> @@ -770,6 +772,29 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *pd)
+>>  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
+>>  			       &s5p_device_i2c_hdmiphy);
 >>  }
+>> +
+>> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
+>> +
+>> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>> +				struct i2c_board_info *mhl_info, int mhl_bus)
+>> +{
+>> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
+>> +
+>> +	if (soc_is_exynos4210())
+>> +		pd->hdmiphy_bus = 8;
+> 
+> I found that hdmiphy is installed on 8th controller on all probably all
+> chips from Exynos4*1* family not only 4210. It should be reflected here.
+> 
+
+Thanks for pointing out ... I will update for other variants also.
+
+
+>> +	else if (soc_is_s5pv210())
+>> +		pd->hdmiphy_bus = 3;
+>> +	else
+>> +		pd->hdmiphy_bus = 0;
+>> +
+>> +	pd->hdmiphy_info = hdmiphy_info;
+>> +	pd->mhl_info = mhl_info;
+>> +	pd->mhl_bus = mhl_bus;
+>> +
+>> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
+>> +				&s5p_device_hdmi);
+>> +}
+>> +
+>>  #endif /* CONFIG_S5P_DEV_I2C_HDMIPHY */
 >>  
->> +/* I2C module and id for HDMIPHY */
->> +static struct i2c_board_info hdmiphy_info = {
->> +	I2C_BOARD_INFO("hdmiphy", 0x38),
+>>  /* I2S */
+>> diff --git a/arch/arm/plat-samsung/include/plat/hdmi.h b/arch/arm/plat-samsung/include/plat/hdmi.h
+>> new file mode 100644
+>> index 0000000..5dc7347
+>> --- /dev/null
+>> +++ b/arch/arm/plat-samsung/include/plat/hdmi.h
+>> @@ -0,0 +1,16 @@
+>> +/*
+>> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+>> + *
+>> + * This program is free software; you can redistribute  it and/or modify it
+>> + * under  the terms of  the GNU General  Public License as published by the
+>> + * Free Software Foundation;  either version 2 of the  License, or (at your
+>> + * option) any later version.
+>> + */
+>> +
+>> +#ifndef __PLAT_SAMSUNG_HDMI_H
+>> +#define __PLAT_SAMSUNG_HDMI_H __FILE__
+>> +
+>> +extern void s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>> +				struct i2c_board_info *mhl_info, int mhl_bus);
+>> +
+>> +#endif /* __PLAT_SAMSUNG_HDMI_H */
 > 
-> I warn you :) that the s5p-hdmiphy driver is going to use driver variant
-> to handle per-platform setup arrays for HDMIPHY. Refer to patch
-> 
-> http://thread.gmane.org/gmane.linux.drivers.video-input-infrastructure/45756/focus=45757
-> 
-> If the mentioned patch gets merged into the mainline then the support
-> for HDMI will be broken on your machine.
-> 
 
-Please correct me if I am wrong.
-
-Above patch doesn't remove the usage of platform data, it is still
-mandatory to pass platform data from board file. Hence I need to pass a
-valid platform data structure to the driver.
-
-With your current patch, won't it just ignore the hdmiphy_info passed
-through the platform data and use driver variant to handle per-platform
-setup arrays for HDMIPHY.
-
-The reason I am worried is that the support for s5p-tv as such is broken
-now because of mandatory usage of platform data. Had it not been the
-case, the need for my patch won't have arised. :(
-
-Nevertheless, what do you think is the best solution right now?
 
 -- 
 Tushar Behera
