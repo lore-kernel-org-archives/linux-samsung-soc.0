@@ -1,32 +1,33 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] exynos cpufreq fix for v3.4
-Date: Thu, 05 Apr 2012 08:26:04 -0700
-Message-ID: <4F7DB98C.9090707@samsung.com>
+Subject: [GIT PULL] Samsung fixes-1 for v3.4
+Date: Thu, 05 Apr 2012 08:30:23 -0700
+Message-ID: <4F7DBA8F.2010903@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gx0-f174.google.com ([209.85.161.174]:39423 "EHLO
-	mail-gx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753211Ab2DEP0J (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:52099 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753649Ab2DEPa1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Apr 2012 11:26:09 -0400
-Received: by gghe5 with SMTP id e5so746512ggh.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 08:26:09 -0700 (PDT)
+	Thu, 5 Apr 2012 11:30:27 -0400
+Received: by pbcun15 with SMTP id un15so1674266pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 08:30:26 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Dave Jones <davej@redhat.com>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Arnd, Olof,
+Hi Arnd, Olof
 
-Please pull fix exposure of exynos cpufreq. Now, exynos4x12-cpufreq and 
-exynos5250-cpufreq can be selected on non-exynos stuff and it means can 
-happen build error.
-I got the ack from Dave and he agreed to send this to Linus via samsung 
-tree. So please pull this and send to upstream.
+Please pull samsung-fixes-1 for v3.4 from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+v3.4-samsung-fixes-1
 
-If any problem, please let me know.
+They are for fix uart stuff on exynos, build warning and omission file 
+happened during resolving merge conflict on s3c24xx.
+
+If any problems, please let me know.
 
 Thanks.
 
@@ -42,10 +43,27 @@ The following changes since commit dd775ae2549217d3ae09363e3edb305d0fa19928:
 
 are available in the git repository at:
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-v3.4-cpufreq-exynos-fixes
+v3.4-samsung-fixes-1
+
+Colin Cross (1):
+       ARM: EXYNOS: fix CONFIG_DEBUG_LL
+
+Dima Zavin (1):
+       ARM: EXYNOS: use chip_id reg in uncompress to select uart base phys
+
+Il Han (1):
+       ARM: EXYNOS: fix ISO C90 warning
 
 Kukjin Kim (1):
-       EXYNOS: fix dependency for EXYNOS_CPUFREQ
+       ARM: S3C24XX: fix missing common.h in mach-s3c24xx/
 
-  drivers/cpufreq/Kconfig.arm |   10 +++-------
-  1 files changed, 3 insertions(+), 7 deletions(-)
+Sachin Kamat (1):
+       ARM: EXYNOS: Fix compiler warning in dma.c file
+
+  arch/arm/mach-exynos/common.c                   |    3 ++-
+  arch/arm/mach-exynos/dma.c                      |    2 --
+  arch/arm/mach-exynos/include/mach/debug-macro.S |    7 +++----
+  arch/arm/mach-exynos/include/mach/uncompress.h  |   17 ++++++++++++++++-
+  arch/arm/mach-s3c24xx/common.h                  |   18 ++++++++++++++++++
+  5 files changed, 39 insertions(+), 8 deletions(-)
+  create mode 100644 arch/arm/mach-s3c24xx/common.h
