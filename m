@@ -1,135 +1,174 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 0/2] Fixes related to rtc-s3c
-Date: Fri, 6 Apr 2012 22:12:56 +0200
-Message-ID: <201204062212.57574.heiko@sntech.de>
-References: <1332931837-3819-1-git-send-email-tushar.behera@linaro.org> <201203281328.41802.heiko@sntech.de> <4F72FF25.3030702@linaro.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [PATCH v3 1/2] backlight: lcd: add driver for raster-type lcd's
+ with gpio controlled panel reset
+Date: Fri, 6 Apr 2012 16:17:20 -0700
+Message-ID: <20120406161720.cf464c39.akpm@linux-foundation.org>
+References: <1332751600-11371-1-git-send-email-thomas.abraham@linaro.org>
+	<1332751600-11371-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:54179 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757791Ab2DFUND convert rfc822-to-8bit
-	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Apr 2012 16:13:03 -0400
-In-Reply-To: <4F72FF25.3030702@linaro.org>
+Received: from mail.linuxfoundation.org ([140.211.169.12]:38172 "EHLO
+	mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752169Ab2DFXRW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 6 Apr 2012 19:17:22 -0400
+In-Reply-To: <1332751600-11371-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: Tushar Behera <tushar.behera@linaro.org>, rtc-linux@googlegroups.com, linux-samsung-soc@vger.kernel.org, a.zummo@towertech.it, patches@linaro.org
-
-Hi Kgene,
-
-Am Mittwoch 28 M=C3=A4rz 2012, 14:08:05 schrieb Tushar Behera:
-> On 03/28/2012 04:58 PM, Heiko St=C3=BCbner wrote:
-> > Am Mittwoch, 28. M=C3=A4rz 2012, 12:50:35 schrieb Tushar Behera:
-> >> The patches are based on Kukjin's for-next branch and they fix a c=
-ouple
-> >> of compile-time errors and warnings.
-> >=20
-> > There was also a fixup patch for these problems posted on 2012-01-0=
-4. But
-> > it seems to have been forgotten somehow.
-> >=20
-> > I think either solution is fine.
-> >=20
-> >=20
-> > Heiko
->=20
-> I must have missed this patch too. We can go ahead with Heiko's patch=
-=2E
-
-could you please take either this patch, or my two-patch series from=20
-2012-01-04 to fix this problem?
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, rpurdie@rpsys.net, florianSchandinat@gmx.de, devicetree-discuss@lists.ozlabs.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, augulis.darius@gmail.com, ben-linux@fluff.org, lars@metafoo.de, patches@linaro.org
 
 
-Thanks
-Heiko
+> Cc: rpurdie@rpsys.net, florianSchandinat@gmx.de, devicetree-discuss@lists.ozlabs.org, linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, broonie@opensource.wolfsonmicro.com, kyungmin.park@samsung.com, augulis.darius@gmail.com, ben-linux@fluff.org, lars@metafoo.de, patches@linaro.org
+
+Poor me.  When someone sends a patch like this, I need to go and hunt
+down everyone's real names to nicely add them to the changelog's Cc:
+list.  I prefer that you do this ;)
+
+You can add Cc:'s to the changelog yourself, of course.  Often that
+works out better than having me try to work out who might be
+interested in the patch.
+
+On Mon, 26 Mar 2012 14:16:39 +0530
+Thomas Abraham <thomas.abraham@linaro.org> wrote:
+
+> Add a lcd panel driver for simple raster-type lcd's which uses a gpio
+> controlled panel reset. The driver controls the nRESET line of the panel
+> using a gpio connected from the host system. The Vcc supply to the panel
+> is (optionally) controlled using a voltage regulator. This driver excludes
+> support for lcd panels that use a serial command interface or direct
+> memory mapped IO interface.
+> 
+>
+> ...
+>
+> +struct lcd_pwrctrl {
+> +	struct device		*dev;
+> +	struct lcd_device	*lcd;
+> +	struct lcd_pwrctrl_data	*pdata;
+> +	struct regulator	*regulator;
+> +	unsigned int		power;
+> +	bool			suspended;
+> +	bool			pwr_en;
+
+Generally kernel code will avoid these unpronounceable abbreviations. 
+So we do
+
+pwr -> power
+en -> enable
+ctrl -> control
+
+etc.  It results in longer identifiers, but the code is more readable
+and, more importantly, more *rememberable*.  
+
+> +};
+> +
+> +static int lcd_pwrctrl_get_power(struct lcd_device *lcd)
+> +{
+> +	struct lcd_pwrctrl *lp = lcd_get_data(lcd);
+> +	return lp->power;
+> +}
+> +
+> +static int lcd_pwrctrl_set_power(struct lcd_device *lcd, int power)
+
+See, shouldn't that have been lcd_pwrctrl_set_pwr?
+
+If we avoid the abbreviations, such issues do not arise.
+
+> +{
+> +	struct lcd_pwrctrl *lp = lcd_get_data(lcd);
+> +	struct lcd_pwrctrl_data *pd = lp->pdata;
+> +	bool lcd_enable;
+> +	int lcd_reset, ret = 0;
+> +
+> +	lcd_enable = (power == FB_BLANK_POWERDOWN || lp->suspended) ? 0 : 1;
+
+This isn't how to use `bool'.  We can use
+
+	lcd_enable = (power == FB_BLANK_POWERDOWN) || lp->suspended;
 
 
->=20
-> > For reference the original patch was:
-> >=20
-> > ---- 8< ----------------------------------- >8 ----
-> > Subject: [PATCH] rtc-s3c: Fix breakage introduced by S3C2443/S3C241=
-6
-> > support
-> >=20
-> > Commits 7006ee4f (rtc-s3c: make room for more variants in devicetre=
-e
-> > block) and 6c0a2365 (rtc-s3c: add variants for S3C2443 and S3C2416)
-> > introduced build-failures with enabled CONFIG_USE_OF option.
-> >=20
-> > This patch fixes missing "," in s3c_rtc_dt_match and wrong handling=
- of
-> > the of_device_id.data property.
-> >=20
-> > Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >=20
-> >  drivers/rtc/rtc-s3c.c |   18 +++++++++---------
-> >  1 files changed, 9 insertions(+), 9 deletions(-)
-> >=20
-> > diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
-> > index bb0f320..2b4feb8 100644
-> > --- a/drivers/rtc/rtc-s3c.c
-> > +++ b/drivers/rtc/rtc-s3c.c
-> > @@ -449,7 +449,7 @@ static inline int s3c_rtc_get_driver_data(struc=
-t
-> > platform_device *pdev)
-> >=20
-> >         if (pdev->dev.of_node) {
-> >        =20
-> >                 const struct of_device_id *match;
-> >                 match =3D of_match_node(s3c_rtc_dt_match,
-> >                 pdev->dev.of_node);
-> >=20
-> > -               return match->data;
-> > +               return (int)match->data;
-> >=20
-> >         }
-> > =20
-> >  #endif
-> > =20
-> >         return platform_get_device_id(pdev)->driver_data;
-> >=20
-> > @@ -667,17 +667,17 @@ static int s3c_rtc_resume(struct platform_dev=
-ice
-> > *pdev)
-> >=20
-> >  #ifdef CONFIG_OF
-> >  static const struct of_device_id s3c_rtc_dt_match[] =3D {
-> > =20
-> >         {
-> >=20
-> > -               .compatible =3D "samsung,s3c2410-rtc"
-> > -               .data =3D TYPE_S3C2410,
-> > +               .compatible =3D "samsung,s3c2410-rtc",
-> > +               .data =3D (void *)TYPE_S3C2410,
-> >=20
-> >         }, {
-> >=20
-> > -               .compatible =3D "samsung,s3c2416-rtc"
-> > -               .data =3D TYPE_S3C2416,
-> > +               .compatible =3D "samsung,s3c2416-rtc",
-> > +               .data =3D (void *)TYPE_S3C2416,
-> >=20
-> >         }, {
-> >=20
-> > -               .compatible =3D "samsung,s3c2443-rtc"
-> > -               .data =3D TYPE_S3C2443,
-> > +               .compatible =3D "samsung,s3c2443-rtc",
-> > +               .data =3D (void *)TYPE_S3C2443,
-> >=20
-> >         }, {
-> >=20
-> > -               .compatible =3D "samsung,s3c6410-rtc"
-> > -               .data =3D TYPE_S3C64XX,
-> > +               .compatible =3D "samsung,s3c6410-rtc",
-> > +               .data =3D (void *)TYPE_S3C64XX,
-> >=20
-> >         },
-> >         {},
-> > =20
-> >  };
+> +	lcd_reset = (pd->invert) ? !lcd_enable : lcd_enable;
+> +
+> +	if (lp->pwr_en == lcd_enable)
+> +		return 0;
+> +
+> +	if (!IS_ERR_OR_NULL(lp->regulator)) {
+> +		if (lcd_enable) {
+> +			if (regulator_enable(lp->regulator)) {
+> +				dev_info(lp->dev, "regulator enable failed\n");
+> +				ret = -EPERM;
+> +			}
+> +		} else {
+> +			if (regulator_disable(lp->regulator)) {
+> +				dev_info(lp->dev, "regulator disable failed\n");
+> +				ret = -EPERM;
+> +			}
+> +		}
+> +	}
+> +
+> +	gpio_direction_output(lp->pdata->gpio, lcd_reset);
+> +	lp->power = power;
+> +	lp->pwr_en = lcd_enable;
+
+Again, this could have been any of
+
+	lp->[power|pwr] = [power|pwr];
+	lp->[power|pwr]_[en|enable] = lcd_[en|enable];
+
+zillions of combinations!  If we just avoid the abbreviations, there is
+only one combination.
+
+> +	return ret;
+> +}
+> +
+>
+> ...
+>
+> +static int __devinit lcd_pwrctrl_probe(struct platform_device *pdev)
+> +{
+> +	struct lcd_pwrctrl *lp;
+> +	struct lcd_pwrctrl_data *pdata = pdev->dev.platform_data;
+> +	struct device *dev = &pdev->dev;
+> +	int err;
+> +
+> +#ifdef CONFIG_OF
+> +	if (dev->of_node) {
+> +		pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> +		if (!pdata) {
+> +			dev_err(dev, "memory allocation for pdata failed\n");
+> +			return -ENOMEM;
+> +		}
+> +		lcd_pwrctrl_parse_dt(dev, pdata);
+> +	}
+> +#endif
+> +
+> +	if (!pdata) {
+> +		dev_err(dev, "platform data not available\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	lp = devm_kzalloc(dev, sizeof(struct lcd_pwrctrl), GFP_KERNEL);
+
+Nit: I prefer sizeof(*lp) here, so I don't have to scroll back and
+check the type of lp.
+
+> +	if (!lp) {
+> +		dev_err(dev, "memory allocation failed for private data\n");
+> +		return -ENOMEM;
+> +	}
+> +
+> +	err = gpio_request(pdata->gpio, "LCD-nRESET");
+> +	if (err) {
+> +		dev_err(dev, "gpio [%d] request failed\n", pdata->gpio);
+> +		return err;
+> +	}
+> +
+>
+> ...
+>
+
+The code looks OK to me, but I do think the naming decisions should be
+revisited, please.
