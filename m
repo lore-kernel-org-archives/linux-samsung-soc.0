@@ -1,62 +1,84 @@
-From: Jonghwan Choi <jhbird.choi@gmail.com>
-Subject: [PATCH] ARM: EXYNOS: Fix compile error in exynos5250-cpufreq.c
-Date: Fri,  6 Apr 2012 01:24:08 -0400
-Message-ID: <1333689848-10932-1-git-send-email-jhbird.choi@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH 3/4] ARM: Exynos4: set fix xusbxti clock for NURI and
+ Universal210 boards
+Date: Fri, 06 Apr 2012 09:43:25 +0200
+Message-ID: <1333698206-12348-4-git-send-email-m.szyprowski@samsung.com>
+References: <1333698206-12348-1-git-send-email-m.szyprowski@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:48038 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752634Ab2DFFYV (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:46891 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752933Ab2DFHnf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Apr 2012 01:24:21 -0400
-Received: by pbcun15 with SMTP id un15so2300579pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Apr 2012 22:24:21 -0700 (PDT)
+	Fri, 6 Apr 2012 03:43:35 -0400
+Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0M2100BGHS372Y@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 06 Apr 2012 08:42:43 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M2100FZ8S4KK4@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 06 Apr 2012 08:43:32 +0100 (BST)
+In-reply-to: <1333698206-12348-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-This patch is omitted in v2 patch of Jaecheol Lee.
+On some versions of NURI and UniversalC210 boards, camera clocks are
+routed directly to xusbxti clock source. This patch sets the correct
+value for this clock to let usb and camera sensors to work correctly and
+avoid division by zero on driver's probe.
 
-drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_clkdiv':
-drivers/cpufreq/exynos5250-cpufreq.c:144: error: 'EXYNOS5_CLKDIV_STATCPU0' undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:144: error: (Each undeclared identifier is reported only once
-drivers/cpufreq/exynos5250-cpufreq.c:144: error: for each function it appears in.)
-drivers/cpufreq/exynos5250-cpufreq.c:150: error: 'EXYNOS5_CLKDIV_CPU1' undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:152: error: 'EXYNOS5_CLKDIV_STATCPU1' undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c: In function 'set_apll':
-drivers/cpufreq/exynos5250-cpufreq.c:166: error: 'EXYNOS5_CLKMUX_STATCPU' undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c:173: error: 'EXYNOS5_APLL_LOCK' undeclared (first use in this function)
-drivers/cpufreq/exynos5250-cpufreq.c: In function 'exynos5250_cpufreq_init':
-drivers/cpufreq/exynos5250-cpufreq.c:312: error: 'EXYNOS5_CLKDIV_CPU1' undeclared (first use in this function)
-
-Cc: Jaecheol Lee <jc.lee@samsung.com>
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/regs-clock.h |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/mach-nuri.c           |    2 +-
+ arch/arm/mach-exynos/mach-universal_c210.c |    2 ++
+ 2 files changed, 3 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-index e141c1f..6a47d47 100644
---- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-@@ -255,13 +255,18 @@
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 88a3b5c3..d55298d 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -1348,6 +1348,7 @@ static struct platform_device *nuri_devices[] __initdata = {
  
- /* For EXYNOS5250 */
+ static void __init nuri_map_io(void)
+ {
++	clk_xusbxti.rate = 24000000;
+ 	exynos_init_io(NULL, 0);
+ 	s3c24xx_init_clocks(24000000);
+ 	s3c24xx_init_uarts(nuri_uartcfgs, ARRAY_SIZE(nuri_uartcfgs));
+@@ -1380,7 +1381,6 @@ static void __init nuri_machine_init(void)
+ 	nuri_camera_init();
  
-+#define EXYNOS5_APLL_LOCK			EXYNOS_CLKREG(0x00000)
- #define EXYNOS5_APLL_CON0			EXYNOS_CLKREG(0x00100)
- #define EXYNOS5_CLKSRC_CPU			EXYNOS_CLKREG(0x00200)
-+#define EXYNOS5_CLKMUX_STATCPU			EXYNOS_CLKREG(0x00400)
- #define EXYNOS5_CLKDIV_CPU0			EXYNOS_CLKREG(0x00500)
- #define EXYNOS5_MPLL_CON0			EXYNOS_CLKREG(0x04100)
- #define EXYNOS5_CLKSRC_CORE1			EXYNOS_CLKREG(0x04204)
+ 	nuri_ehci_init();
+-	clk_xusbxti.rate = 24000000;
  
- #define EXYNOS5_CLKGATE_IP_CORE			EXYNOS_CLKREG(0x04900)
-+#define EXYNOS5_CLKDIV_CPU1			EXYNOS_CLKREG(0x00504)
-+#define EXYNOS5_CLKDIV_STATCPU0			EXYNOS_CLKREG(0x00600)
-+#define EXYNOS5_CLKDIV_STATCPU1			EXYNOS_CLKREG(0x00604)
+ 	/* Last */
+ 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index e10c87f..a6f13ce 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -29,6 +29,7 @@
+ #include <asm/mach-types.h>
  
- #define EXYNOS5_CLKDIV_ACP			EXYNOS_CLKREG(0x08500)
+ #include <plat/regs-serial.h>
++#include <plat/clock.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/iic.h>
+@@ -1058,6 +1059,7 @@ static struct platform_device *universal_devices[] __initdata = {
  
+ static void __init universal_map_io(void)
+ {
++	clk_xusbxti.rate = 24000000;
+ 	exynos_init_io(NULL, 0);
+ 	s3c24xx_init_clocks(24000000);
+ 	s3c24xx_init_uarts(universal_uartcfgs, ARRAY_SIZE(universal_uartcfgs));
 -- 
-1.7.0.4
+1.7.1.569.g6f426
