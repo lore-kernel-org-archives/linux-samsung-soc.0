@@ -1,67 +1,93 @@
-From: Jonghwan Choi <jhbird.choi@gmail.com>
-Subject: [PATCH] ARM: EXYNOS: Fix compile error in pm.c
-Date: Fri,  6 Apr 2012 19:18:36 -0400
-Message-ID: <1333754316-9194-1-git-send-email-jhbird.choi@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:51068 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752169Ab2DFXSk (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 6 Apr 2012 19:18:40 -0400
-Received: by dake40 with SMTP id e40so3183557dak.11
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Apr 2012 16:18:40 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH v2] of/irq: add empty irq_of_parse_and_map() for non-dt
+ builds
+Date: Fri, 06 Apr 2012 20:57:48 -0700
+Message-ID: <20120407035748.F261E3E24EC@localhost>
+References: <1332687769-3127-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1332687769-3127-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
 
-Fix compile error when ARCH_EXYNOS5 is only enabled without ARCH_EXYNOS4.
+On Sun, 25 Mar 2012 20:32:49 +0530, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> Add a empty irq_of_parse_and_map() function that returns 0 for non-dt
+> builds and avoid having #ifdef CONFIG_OF around all calls to
+> irq_of_parse_and_map(). In addition to that, the irq_of_parse_and_map()
+> function declaration is made available only if CONFIG_OF_IRQ is defined,
+> which is the same config option that makes the irq_of_parse_and_map()
+> function definition available. While at it, fix a typo as well.
+> 
+> Suggested-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
+> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
 
-arch/arm/mach-exynos/built-in.o: In function `exynos4_pm_prepare':
-linux/arch/arm/mach-exynos/pm.c:185: undefined reference to `exynos4_sys_powerdown_conf'
-arch/arm/mach-exynos/built-in.o: In function `__virt_to_phys':
-linux/arch/arm/include/asm/memory.h:175: undefined reference to `s3c_cpu_resume'
-linux/arch/arm/include/asm/memory.h:175: undefined reference to `s3c_cpu_resume'
-arch/arm/plat-samsung/built-in.o: In function `s3c_irqext_wake':
-linux/arch/arm/plat-samsung/pm.c:151: undefined reference to `s3c_irqwake_eintallow'
-arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
-linux/arch/arm/plat-samsung/pm.c:274: undefined reference to `s3c_pm_save_core'
-linux/arch/arm/plat-samsung/pm.c:278: undefined reference to `s3c_pm_configure_extint'
-linux/arch/arm/plat-samsung/pm.c:307: undefined reference to `s3c_pm_restore_core'
-linux/arch/arm/plat-samsung/pm.c:329: undefined reference to `s3c_irqwake_intallow'
-linux/arch/arm/plat-samsung/pm.c:329: undefined reference to `s3c_irqwake_eintallow'
+Oops, I applied the wrong one.  I've applied this one now instead.
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- arch/arm/mach-exynos/Kconfig  |    2 ++
- arch/arm/mach-exynos/Makefile |    2 +-
- 2 files changed, 3 insertions(+), 1 deletions(-)
+> ---
+> Changes since v1:
+> - Moved irq_of_parse_and_map() function declaration under CONFIG_OF_IRQ.
+> - Fix a minor typo in comments.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 0491cee..676d3fa 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -61,6 +61,8 @@ config SOC_EXYNOS5250
- 	bool "SAMSUNG EXYNOS5250"
- 	default y
- 	depends on ARCH_EXYNOS5
-+	select S5P_PM if PM
-+	select S5P_SLEEP if PM
- 	help
- 	  Enable EXYNOS5250 SoC support
- 
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 8631840..1524efb 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -22,7 +22,7 @@ obj-$(CONFIG_PM)		+= pm.o
- obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
- obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
- 
--obj-$(CONFIG_ARCH_EXYNOS4)	+= pmu.o
-+obj-$(CONFIG_ARCH_EXYNOS)	+= pmu.o
- 
- obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
- 
+BTW; For patches submitted to me, keep the changelog above the s-o-b lines
+so it gets included in the commit.
+
+g.
+
+> 
+>  include/linux/of_irq.h |   10 ++++++++--
+>  1 files changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
+> index d229ad3..11d57e4 100644
+> --- a/include/linux/of_irq.h
+> +++ b/include/linux/of_irq.h
+> @@ -10,14 +10,14 @@ struct of_irq;
+>  #include <linux/ioport.h>
+>  #include <linux/of.h>
+>  
+> +#if defined(CONFIG_OF_IRQ)
+>  /*
+> - * irq_of_parse_and_map() is used ba all OF enabled platforms; but SPARC
+> + * irq_of_parse_and_map() is used by all OF enabled platforms; but SPARC
+>   * implements it differently.  However, the prototype is the same for all,
+>   * so declare it here regardless of the CONFIG_OF_IRQ setting.
+>   */
+>  extern unsigned int irq_of_parse_and_map(struct device_node *node, int index);
+>  
+> -#if defined(CONFIG_OF_IRQ)
+>  /**
+>   * of_irq - container for device_node/irq_specifier pair for an irq controller
+>   * @controller: pointer to interrupt controller device tree node
+> @@ -76,5 +76,11 @@ extern struct device_node *of_irq_find_parent(struct device_node *child);
+>  extern void of_irq_init(const struct of_device_id *matches);
+>  
+>  #endif /* CONFIG_OF_IRQ */
+> +#else /* CONFIG_OF */
+> +static inline unsigned int irq_of_parse_and_map(struct device_node *dev,
+> +						int index)
+> +{
+> +	return 0;
+> +}
+>  #endif /* CONFIG_OF */
+>  #endif /* __OF_IRQ_H */
+> -- 
+> 1.6.6.rc2
+> 
+
 -- 
-1.7.0.4
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies,Ltd.
