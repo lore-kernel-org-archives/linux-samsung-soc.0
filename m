@@ -1,93 +1,96 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH v2] of/irq: add empty irq_of_parse_and_map() for non-dt
- builds
-Date: Fri, 06 Apr 2012 20:57:48 -0700
-Message-ID: <20120407035748.F261E3E24EC@localhost>
-References: <1332687769-3127-1-git-send-email-thomas.abraham@linaro.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: spi-s3c64xx: problems with SPI_MODE_3 transfers
+Date: Sun, 8 Apr 2012 20:39:33 +0200
+Message-ID: <201204082039.34325.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1332687769-3127-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sun, 25 Mar 2012 20:32:49 +0530, Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> Add a empty irq_of_parse_and_map() function that returns 0 for non-dt
-> builds and avoid having #ifdef CONFIG_OF around all calls to
-> irq_of_parse_and_map(). In addition to that, the irq_of_parse_and_map()
-> function declaration is made available only if CONFIG_OF_IRQ is defined,
-> which is the same config option that makes the irq_of_parse_and_map()
-> function definition available. While at it, fix a typo as well.
-> 
-> Suggested-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> Acked-by: Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>
-> Acked-by: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+[@jassi: I know that you do not work at this stuff any longer, but I included 
+you in the list of recipients in the hope that you might be able to give me a 
+pointer on where to look for the culprit of the problem :-) ]
 
-Oops, I applied the wrong one.  I've applied this one now instead.
 
-> ---
-> Changes since v1:
-> - Moved irq_of_parse_and_map() function declaration under CONFIG_OF_IRQ.
-> - Fix a minor typo in comments.
+Hi,
 
-BTW; For patches submitted to me, keep the changelog above the s-o-b lines
-so it gets included in the commit.
+while working on the beginnings of a wireless driver connected via SPI [1], 
+the s3c64xx-spi-driver produced strange problems while doing MODE_3  (CPOL | 
+CPHA) transfers: [2]
 
-g.
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
+[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
+(chip_id = 0x0000, chip_rev = 0x00) 
+mapped channel 24 to 0
+mapped channel 23 to 1
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
+[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
+CIR: 0
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
+mt592x_spi spi0.0: I/O Error: rx-1 tx-0 res:rx-f tx-p len-4
+CIR: 0
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
+CIR: 0
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
+CIR: 0
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
+CIR: 0
 
-> 
->  include/linux/of_irq.h |   10 ++++++++--
->  1 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/linux/of_irq.h b/include/linux/of_irq.h
-> index d229ad3..11d57e4 100644
-> --- a/include/linux/of_irq.h
-> +++ b/include/linux/of_irq.h
-> @@ -10,14 +10,14 @@ struct of_irq;
->  #include <linux/ioport.h>
->  #include <linux/of.h>
->  
-> +#if defined(CONFIG_OF_IRQ)
->  /*
-> - * irq_of_parse_and_map() is used ba all OF enabled platforms; but SPARC
-> + * irq_of_parse_and_map() is used by all OF enabled platforms; but SPARC
->   * implements it differently.  However, the prototype is the same for all,
->   * so declare it here regardless of the CONFIG_OF_IRQ setting.
->   */
->  extern unsigned int irq_of_parse_and_map(struct device_node *node, int index);
->  
-> -#if defined(CONFIG_OF_IRQ)
->  /**
->   * of_irq - container for device_node/irq_specifier pair for an irq controller
->   * @controller: pointer to interrupt controller device tree node
-> @@ -76,5 +76,11 @@ extern struct device_node *of_irq_find_parent(struct device_node *child);
->  extern void of_irq_init(const struct of_device_id *matches);
->  
->  #endif /* CONFIG_OF_IRQ */
-> +#else /* CONFIG_OF */
-> +static inline unsigned int irq_of_parse_and_map(struct device_node *dev,
-> +						int index)
-> +{
-> +	return 0;
-> +}
->  #endif /* CONFIG_OF */
->  #endif /* __OF_IRQ_H */
-> -- 
-> 1.6.6.rc2
-> 
+where the expected result would be:
 
--- 
-Grant Likely, B.Sc, P.Eng.
-Secret Lab Technologies,Ltd.
+[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
+[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
+[read]  spi cur_bpw: 8:  0x21 0x59 0x91 0x00
+
+The pattern of either empty results or read errors also varies with each 
+invocation, i.e. sometimes all fail or all result in wrong values and so on.
+
+
+In contrast when doing this with the spi-gpio driver, everything works as 
+expected and I get the expected results. 
+
+Also the device-family I'm working on contains a variant with a Marvell 8686 
+wlan chip [= the rest of the system is the same]. Using the spi-s3c64xx with 
+the libertas driver (MODE_0) works as expected.
+
+
+As I'm not sure where I should look for errors in the driver, I would be glad 
+to get pointers in the right direction.
+
+
+Thanks
+Heiko
+
+
+[1] a MediaTek MT5921
+[2] the ouput is a simple
+
+printk("spi cur_bpw: %d: ", sdd->cur_bpw);
+for(tmp = 0; tmp < xfer->len; tmp++)
+  printk(" 0x%02x", ((u8 *)xfer->tx_buf)[tmp]);
+printk("\n");
+
+same for rxbuf
+
+------------------------------------------------------------------------------
+For Developers, A Lot Can Happen In A Second.
+Boundary is the first to Know...and Tell You.
+Monitor Your Applications in Ultra-Fine Resolution. Try it FREE!
+http://p.sf.net/sfu/Boundary-d2dvs2
