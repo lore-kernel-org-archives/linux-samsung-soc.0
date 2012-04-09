@@ -1,96 +1,65 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: spi-s3c64xx: problems with SPI_MODE_3 transfers
-Date: Sun, 8 Apr 2012 20:39:33 +0200
-Message-ID: <201204082039.34325.heiko@sntech.de>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 4/4] ARM: Exynos5: Add PDMA and MDMA physical base address defines
+Date: Sun, 8 Apr 2012 20:48:57 -0700
+Message-ID: <CAOesGMisDq_Z3zNFNmOeyDPEj-VXDsy9a8ABhJie4fsjtRkeJw@mail.gmail.com>
+References: <1332840365-24827-1-git-send-email-thomas.abraham@linaro.org>
+	<1332840365-24827-5-git-send-email-thomas.abraham@linaro.org>
+	<4F73C0EC.60201@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:58697 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753765Ab2DIDs6 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 8 Apr 2012 23:48:58 -0400
+Received: by yenl12 with SMTP id l12so1677473yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Apr 2012 20:48:57 -0700 (PDT)
+In-Reply-To: <4F73C0EC.60201@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-
-[@jassi: I know that you do not work at this stuff any longer, but I included 
-you in the list of recipients in the hope that you might be able to give me a 
-pointer on where to look for the culprit of the problem :-) ]
-
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
 Hi,
 
-while working on the beginnings of a wireless driver connected via SPI [1], 
-the s3c64xx-spi-driver produced strange problems while doing MODE_3  (CPOL | 
-CPHA) transfers: [2]
+2012/3/28 Kukjin Kim <kgene.kim@samsung.com>:
+> Thomas Abraham wrote:
+>> Add PDMA and MDMA physical base address macros which is require for =
+Exynos5
+>> of_dev_auxdata setup.
+>>
+>> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
+>> ---
+>> =A0 arch/arm/mach-exynos/include/mach/map.h | =A0 =A05 +++++
+>> =A0 arch/arm/mach-exynos/mach-exynos5-dt.c =A0| =A0 =A03 ++-
+>> =A0 2 files changed, 7 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach=
+-exynos/include/mach/map.h
+>> index 024d38f..37d93fd 100644
+>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>> @@ -90,6 +90,11 @@
+>> =A0 #define EXYNOS4_PA_PDMA0 =A0 =A0 =A0 =A0 =A0 =A00x12680000
+>> =A0 #define EXYNOS4_PA_PDMA1 =A0 =A0 =A0 =A0 =A0 =A00x12690000
+>>
+>> +#define EXYNOS5_PA_PDMA0 =A0 =A0 =A0 =A0 =A0 =A0 0x121A0000
+>> +#define EXYNOS5_PA_PDMA1 =A0 =A0 =A0 =A0 =A0 =A0 0x121B0000
+>> +#define EXYNOS5_PA_MDMA0 =A0 =A0 =A0 =A0 =A0 =A0 0x10800000
+>> +#define EXYNOS5_PA_MDMA1 =A0 =A0 =A0 =A0 =A0 =A0 0x11C10000
+>> +
+>
+> See, "ARM: EXYNOS: Support DMA for Exynos5250 SoC"
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-February/0=
+85434.html
+>
+> But this merge window is not including it :(
 
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
-[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
-(chip_id = 0x0000, chip_rev = 0x00) 
-mapped channel 24 to 0
-mapped channel 23 to 1
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
-[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
-CIR: 0
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
-mt592x_spi spi0.0: I/O Error: rx-1 tx-0 res:rx-f tx-p len-4
-CIR: 0
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
-CIR: 0
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
-CIR: 0
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
-CIR: 0
-
-where the expected result would be:
-
-[write] spi cur_bpw: 8:  0x00 0x00 0x04 0x00
-[read]  spi cur_bpw: 8:  0x00 0x00 0x00 0x00
-[read]  spi cur_bpw: 8:  0x21 0x59 0x91 0x00
-
-The pattern of either empty results or read errors also varies with each 
-invocation, i.e. sometimes all fail or all result in wrong values and so on.
-
-
-In contrast when doing this with the spi-gpio driver, everything works as 
-expected and I get the expected results. 
-
-Also the device-family I'm working on contains a variant with a Marvell 8686 
-wlan chip [= the rest of the system is the same]. Using the spi-s3c64xx with 
-the libertas driver (MODE_0) works as expected.
+Compilation of CONFIG_MACH_EXYNOS5_DT is broken without the above PDMA
+defines. Either add the defines, or remove the AUXDATA as part of the
+fixes for this release, please.
 
 
-As I'm not sure where I should look for errors in the driver, I would be glad 
-to get pointers in the right direction.
-
-
-Thanks
-Heiko
-
-
-[1] a MediaTek MT5921
-[2] the ouput is a simple
-
-printk("spi cur_bpw: %d: ", sdd->cur_bpw);
-for(tmp = 0; tmp < xfer->len; tmp++)
-  printk(" 0x%02x", ((u8 *)xfer->tx_buf)[tmp]);
-printk("\n");
-
-same for rxbuf
-
-------------------------------------------------------------------------------
-For Developers, A Lot Can Happen In A Second.
-Boundary is the first to Know...and Tell You.
-Monitor Your Applications in Ultra-Fine Resolution. Try it FREE!
-http://p.sf.net/sfu/Boundary-d2dvs2
+-Olof
