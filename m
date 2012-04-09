@@ -1,45 +1,94 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: S5PV210: Fix compiler warning in dma.c file
-Date: Mon,  9 Apr 2012 09:56:37 +0530
-Message-ID: <1333945597-28243-1-git-send-email-sachin.kamat@linaro.org>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: spi-s3c64xx: problems with SPI_MODE_3 transfers
+Date: Mon, 9 Apr 2012 12:21:08 +0530
+Message-ID: <CABb+yY3_YAk_V5ZVJ1ntKEhvsL4BcC+YSnu_-6v=dHCMZ6ZmHg@mail.gmail.com>
+References: <201204082039.34325.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:40054 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809Ab2DIEe5 (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:46359 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752292Ab2DIGvJ convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Apr 2012 00:34:57 -0400
-Received: by dake40 with SMTP id e40so4795909dak.11
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Apr 2012 21:34:57 -0700 (PDT)
+	Mon, 9 Apr 2012 02:51:09 -0400
+Received: by bkcik5 with SMTP id ik5so3195683bkc.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Apr 2012 23:51:08 -0700 (PDT)
+In-Reply-To: <201204082039.34325.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-=46ixes the following warning:
+On Mon, Apr 9, 2012 at 12:09 AM, Heiko St=C3=BCbner <heiko@sntech.de> w=
+rote:
+> [@jassi: I know that you do not work at this stuff any longer, but I =
+included
+> you in the list of recipients in the hope that you might be able to g=
+ive me a
+> pointer on where to look for the culprit of the problem :-) ]
+>
+>
+> Hi,
+>
+> while working on the beginnings of a wireless driver connected via SP=
+I [1],
+> the s3c64xx-spi-driver produced strange problems while doing MODE_3 =C2=
+=A0(CPOL |
+> CPHA) transfers: [2]
+>
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
+> (chip_id =3D 0x0000, chip_rev =3D 0x00)
+> mapped channel 24 to 0
+> mapped channel 23 to 1
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
+> CIR: 0
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
+> mt592x_spi spi0.0: I/O Error: rx-1 tx-0 res:rx-f tx-p len-4
+> CIR: 0
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
+> CIR: 0
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
+> CIR: 0
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
+> CIR: 0
+>
+> where the expected result would be:
+>
+> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
+> [read] =C2=A0spi cur_bpw: 8: =C2=A00x21 0x59 0x91 0x00
+>
+> The pattern of either empty results or read errors also varies with e=
+ach
+> invocation, i.e. sometimes all fail or all result in wrong values and=
+ so on.
+>
+>
+> In contrast when doing this with the spi-gpio driver, everything work=
+s as
+> expected and I get the expected results.
+>
+> Also the device-family I'm working on contains a variant with a Marve=
+ll 8686
+> wlan chip [=3D the rest of the system is the same]. Using the spi-s3c=
+64xx with
+> the libertas driver (MODE_0) works as expected.
+>
+>
+> As I'm not sure where I should look for errors in the driver, I would=
+ be glad
+> to get pointers in the right direction.
+>
+You might want to play around tuning the 'fb_delay' and maybe signal
+strength too.
 
-warning: =E2=80=98dma_dmamask=E2=80=99 defined but not used [-Wunused-v=
-ariable]
-
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-s5pv210/dma.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.c
-index 86ce62f..b8337e2 100644
---- a/arch/arm/mach-s5pv210/dma.c
-+++ b/arch/arm/mach-s5pv210/dma.c
-@@ -33,8 +33,6 @@
- #include <mach/irqs.h>
- #include <mach/dma.h>
-=20
--static u64 dma_dmamask =3D DMA_BIT_MASK(32);
--
- static u8 pdma0_peri[] =3D {
- 	DMACH_UART0_RX,
- 	DMACH_UART0_TX,
---=20
-1.7.4.1
+-j
