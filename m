@@ -1,36 +1,45 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: [PATCH] ARM: exynos: add dts files to dtbs target
-Date: Sun,  8 Apr 2012 21:33:13 -0700
-Message-ID: <1333945993-20363-1-git-send-email-olof@lixom.net>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: S5PV210: Fix compiler warning in dma.c file
+Date: Mon,  9 Apr 2012 09:56:37 +0530
+Message-ID: <1333945597-28243-1-git-send-email-sachin.kamat@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:55069 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809Ab2DIEdX (ORCPT
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:40054 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750809Ab2DIEe5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Apr 2012 00:33:23 -0400
-Received: by pbcun15 with SMTP id un15so4604415pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Apr 2012 21:33:23 -0700 (PDT)
+	Mon, 9 Apr 2012 00:34:57 -0400
+Received: by dake40 with SMTP id e40so4795909dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Apr 2012 21:34:57 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Olof Johansson <olof@lixom.net>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Add the currently in-tree device tree sources to the dtbs target.
+=46ixes the following warning:
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
+warning: =E2=80=98dma_dmamask=E2=80=99 defined but not used [-Wunused-v=
+ariable]
+
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/mach-exynos/Makefile.boot |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/mach-s5pv210/dma.c |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Makefile.boot b/arch/arm/mach-exynos/Makefile.boot
-index b9862e2..31bd181 100644
---- a/arch/arm/mach-exynos/Makefile.boot
-+++ b/arch/arm/mach-exynos/Makefile.boot
-@@ -1,2 +1,5 @@
-    zreladdr-y	+= 0x40008000
- params_phys-y	:= 0x40000100
-+
-+dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb
-+dtb-$(CONFIG_MACH_EXYNOS5_DT) += exynos5250-smdk5250.dtb
--- 
-1.7.9.2.359.gebfc2
+diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.c
+index 86ce62f..b8337e2 100644
+--- a/arch/arm/mach-s5pv210/dma.c
++++ b/arch/arm/mach-s5pv210/dma.c
+@@ -33,8 +33,6 @@
+ #include <mach/irqs.h>
+ #include <mach/dma.h>
+=20
+-static u64 dma_dmamask =3D DMA_BIT_MASK(32);
+-
+ static u8 pdma0_peri[] =3D {
+ 	DMACH_UART0_RX,
+ 	DMACH_UART0_TX,
+--=20
+1.7.4.1
