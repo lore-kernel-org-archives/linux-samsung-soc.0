@@ -1,94 +1,55 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: spi-s3c64xx: problems with SPI_MODE_3 transfers
-Date: Mon, 9 Apr 2012 12:21:08 +0530
-Message-ID: <CABb+yY3_YAk_V5ZVJ1ntKEhvsL4BcC+YSnu_-6v=dHCMZ6ZmHg@mail.gmail.com>
-References: <201204082039.34325.heiko@sntech.de>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v3 6/6] mmc: sdhci-s3c: Add device tree support
+Date: Mon, 09 Apr 2012 10:48:07 -0400
+Message-ID: <87pqbhx8pk.fsf@laptop.org>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+	<201203271619.13320.arnd@arndb.de> <4F7553D1.4030008@st.com>
+	<201203301136.05038.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:46359 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752292Ab2DIGvJ convert rfc822-to-8bit (ORCPT
+Received: from void.printf.net ([89.145.121.20]:52039 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752544Ab2DIOs2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 9 Apr 2012 02:51:09 -0400
-Received: by bkcik5 with SMTP id ik5so3195683bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 08 Apr 2012 23:51:08 -0700 (PDT)
-In-Reply-To: <201204082039.34325.heiko@sntech.de>
+	Mon, 9 Apr 2012 10:48:28 -0400
+In-Reply-To: <201203301136.05038.arnd@arndb.de> (Arnd Bergmann's message of
+	"Fri, 30 Mar 2012 11:36:04 +0000")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: spi-devel-general@lists.sourceforge.net, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Viresh Kumar <viresh.kumar@st.com>, Thomas Abraham <thomas.abraham@linaro.org>, Lee Jones <lee.jones@linaro.org>, Rajendra Nayak <rnayak@ti.com>, Stephen Warren <swarren@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>, Anton Vorontsov <anton.vorontsov@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "patches@linaro.org" <patches@linaro.org>
 
-On Mon, Apr 9, 2012 at 12:09 AM, Heiko St=C3=BCbner <heiko@sntech.de> w=
-rote:
-> [@jassi: I know that you do not work at this stuff any longer, but I =
-included
-> you in the list of recipients in the hope that you might be able to g=
-ive me a
-> pointer on where to look for the culprit of the problem :-) ]
->
->
-> Hi,
->
-> while working on the beginnings of a wireless driver connected via SP=
-I [1],
-> the s3c64xx-spi-driver produced strange problems while doing MODE_3 =C2=
-=A0(CPOL |
-> CPHA) transfers: [2]
->
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
-> (chip_id =3D 0x0000, chip_rev =3D 0x00)
-> mapped channel 24 to 0
-> mapped channel 23 to 1
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
-> CIR: 0
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
-> mt592x_spi spi0.0: I/O Error: rx-1 tx-0 res:rx-f tx-p len-4
-> CIR: 0
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
-> CIR: 0
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
-> CIR: 0
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> mt592x_spi spi0.0: I/O Error: rx-0 tx-1 res:rx-p tx-f len-4
-> CIR: 0
->
-> where the expected result would be:
->
-> [write] spi cur_bpw: 8: =C2=A00x00 0x00 0x04 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x00 0x00 0x00 0x00
-> [read] =C2=A0spi cur_bpw: 8: =C2=A00x21 0x59 0x91 0x00
->
-> The pattern of either empty results or read errors also varies with e=
-ach
-> invocation, i.e. sometimes all fail or all result in wrong values and=
- so on.
->
->
-> In contrast when doing this with the spi-gpio driver, everything work=
-s as
-> expected and I get the expected results.
->
-> Also the device-family I'm working on contains a variant with a Marve=
-ll 8686
-> wlan chip [=3D the rest of the system is the same]. Using the spi-s3c=
-64xx with
-> the libertas driver (MODE_0) works as expected.
->
->
-> As I'm not sure where I should look for errors in the driver, I would=
- be glad
-> to get pointers in the right direction.
->
-You might want to play around tuning the 'fb_delay' and maybe signal
-strength too.
+Hi Arnd,
 
--j
+On Fri, Mar 30 2012, Arnd Bergmann wrote:
+> On Friday 30 March 2012, Viresh Kumar wrote:
+>> On 3/27/2012 9:49 PM, Arnd Bergmann wrote:
+>> > These bindings came up in a discussion IRC today. I think it's rather bad that
+>> > we can't agree on a common way to name the properties for mmc. We have
+>> > bindings being proposed or already included from Anton, Stephen, Shawn,
+>> > Rajendra, Viresh, Lee and Thomas. Almost all of them define GPIO pins
+>> > for card detect and write protect, as well properties to define the bus
+>> > width and high-speed modes, but we seem to have almost as many different
+>> > definitions of these as we have drivers.
+>> > 
+>> > Can we please come up with a common binding for these?
+>> 
+>> Is there any progress on this? Sorry i wasn't following all mails.
+>> How should i progress for sdhci-spear?
+>
+> No progress so far. I would suggest we apply the patch below to unify
+> the bindings we have. I tried to minimize the impact by picking the most
+> common version for each property, but if we know about devices that would
+> get broken by this, we may have to be more careful.
+>
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+Thanks very much for doing this -- I'll be happy to take the patch in
+mmc-next once you get time to post a v2 covering Stephen Warren's review
+comments (and adding "max-frequency" to the document, I guess).
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
