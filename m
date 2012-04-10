@@ -1,54 +1,75 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH v12 2/3] ARM: EXYNOS: Change System MMU platform device
- definitions
-Date: Tue, 10 Apr 2012 12:34:35 -0700
-Message-ID: <4F848B4B.5000308@samsung.com>
-References: <000201cd0286$2e6fbb40$8b4f31c0$%cho@samsung.com> <20120315111227.GA2384@amd.com> <4F61FF1D.5000502@samsung.com> <4F630841.2070307@linaro.org> <4F63A6F6.9050506@samsung.com> <20120318132746.GL26973@8bytes.org>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v3 6/6] mmc: sdhci-s3c: Add device tree support
+Date: Tue, 10 Apr 2012 17:37:41 -0400
+Message-ID: <87wr5ntgii.fsf@laptop.org>
+References: <1328032576-9269-1-git-send-email-thomas.abraham@linaro.org>
+	<201203271619.13320.arnd@arndb.de> <4F7553D1.4030008@st.com>
+	<201203301136.05038.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:56888 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755477Ab2DJTej (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Apr 2012 15:34:39 -0400
-In-Reply-To: <20120318132746.GL26973@8bytes.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <201203301136.05038.arnd@arndb.de> (Arnd Bergmann's message of
+	"Fri, 30 Mar 2012 11:36:04 +0000")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Viresh Kumar <viresh.kumar@st.com>, Thomas Abraham <thomas.abraham@linaro.org>, Lee Jones <lee.jones@linaro.org>, Rajendra Nayak <rnayak@ti.com>, Stephen Warren <swarren@nvidia.com>, Shawn Guo <shawn.guo@linaro.org>, Anton Vorontsov <anton.vorontsov@linaro.org>, "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>, "rob.herring@calxeda.com" <rob.herring@calxeda.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "ben-linux@fluff.org" <ben-linux@fluff.org>, "patches@linaro.org" <patches@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Joerg Roedel <joro@8bytes.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Younglak Kim' <younglak1004.kim@samsung.com>, iommu@lists.linux-foundation.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Sanghyun Lee' <sanghyun75.lee@samsung.com>, Cho KyongHo <pullip.cho@samsung.com>, linux-arm-kernel@lists.infradead.org
 
-Joerg Roedel wrote:
-> On Fri, Mar 16, 2012 at 01:47:50PM -0700, Kukjin Kim wrote:
->> Anyway Joerg, how do you want to handle this? Do you want to pick up
->> 1/2/3 all of them in your tree? If so, 2nd patch should be on top of
->> some samsung topic stuff.
->
-> Since patch 2 only applies to the Samsung tree, it is best to carry
-> this in your tree for merging. Feel free to add my Acked-by to patch 3.
-> But any further patches for the Exynos IOMMU drivers should go through
-> my tree after it is merged.
->
-Hi Joerg,
+Hi Arnd,
 
-I applied 1st and 2nd patches in my tree.
+(Diff truncated to show relevant hunks.)
 
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-samsung-iommu
+On Fri, Mar 30 2012, Arnd Bergmann wrote:
+> diff --git a/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt b/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt
+> index dbd4368..90b86e5 100644
+> --- a/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/ti-omap-hsmmc.txt
+> @@ -15,10 +15,10 @@ Optional properties:
+>  ti,dual-volt: boolean, supports dual voltage cards
+>  <supply-name>-supply: phandle to the regulator device tree node
+>  "supply-name" examples are "vmmc", "vmmc_aux" etc
+> -ti,bus-width: Number of data lines, default assumed is 1 if the property is missing.
+> +bus-width: Number of data lines, default assumed is 1 if the property is missing.
+>  cd-gpios: GPIOs for card detection
+>  wp-gpios: GPIOs for write protection
+> -ti,non-removable: non-removable slot (like eMMC)
+> +non-removable: non-removable slot (like eMMC)
+>  ti,needs-special-reset: Requires a special softreset sequence
+>  
+>  Example:
+> @@ -27,7 +27,7 @@ Example:
+>  		reg = <0x4809c000 0x400>;
+>  		ti,hwmods = "mmc1";
+>  		ti,dual-volt;
+> -		ti,bus-width = <4>;
+> +		bus-width = <4>;
+>  		vmmc-supply = <&vmmc>; /* phandle to regulator node */
+>  		ti,non-removable;
+>  	};
+> diff --git a/drivers/mmc/host/omap_hsmmc.c b/drivers/mmc/host/omap_hsmmc.c
+> index 47adb16..ae48fc7 100644
+> --- a/drivers/mmc/host/omap_hsmmc.c
+> +++ b/drivers/mmc/host/omap_hsmmc.c
+> @@ -1766,7 +1766,7 @@ static struct omap_mmc_platform_data *of_get_hsmmc_pdata(struct device *dev)
+>  		pdata->slots[0].nonremovable = true;
+>  		pdata->slots[0].no_regulator_off_init = true;
+>  	}
+> -	of_property_read_u32(np, "ti,bus-width", &bus_width);
+> +	of_property_read_u32(np, "bus-width", &bus_width);
+>  	if (bus_width == 4)
+>  		pdata->slots[0].caps |= MMC_CAP_4_BIT_DATA;
+>  	else if (bus_width == 8)
 
-and my -next.
+Here you change "ti,non-removable" to "non-removable" in the properties
+section of ti-omap-hsmmc.txt without changing it in the example section
+of that document, or in the code or shipped .dts files.
 
-So please go ahead for 3rd patch in your tree. Note that if you need 1st 
-and 2nd patches for your tree, please merge the 
-'next/cleanup-samsung-iommu' branch in my tree. If not, will happen 
-useless conflicts.
+(Presumably you decided to preserve it for backwards compatibility, so
+the bindings documentation shouldn't be changed.)
 
-If any problems, please let me know.
-Thanks.
+Thanks,
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
