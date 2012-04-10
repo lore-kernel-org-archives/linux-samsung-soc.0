@@ -1,154 +1,117 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH V2 0/6] thermal: exynos: Add kernel thermal
- support for exynos platform
-Date: Tue, 10 Apr 2012 08:58:22 +0800
-Message-ID: <1334019502.2387.211.camel@rui.sh.intel.com>
-References: <1332137864-12943-1-git-send-email-amit.kachhap@linaro.org>
-	<CAK44p23jiXn6mn-VsdXr3h9J5FfKztXMiqu=XjaF6nqLnRQAmA@mail.gmail.com>
+From: Venkatraman S <venkat@linaro.org>
+Subject: Re: [PATCH v3 2/5] [SCSI] ufshcd: UFS UTP Transfer requests handling
+Date: Tue, 10 Apr 2012 16:38:46 +0530
+Message-ID: <CAFSEfh3vunABGrPW0_80tuTMvc1PnLHdR80HASXW=v0f_0bLAQ@mail.gmail.com>
+References: <1330497714-26504-3-git-send-email-santoshsy@gmail.com>
+	<4F6FF1E3.7080908@toshiba.co.jp>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <CAK44p23jiXn6mn-VsdXr3h9J5FfKztXMiqu=XjaF6nqLnRQAmA@mail.gmail.com>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Amit Kachhap <amit.kachhap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:51464 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754485Ab2DJLIu convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 10 Apr 2012 07:08:50 -0400
+Received: by lahj13 with SMTP id j13so4089661lah.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Apr 2012 04:08:48 -0700 (PDT)
+In-Reply-To: <4F6FF1E3.7080908@toshiba.co.jp>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: KOBAYASHI Yoshitake <yoshitake.kobayashi@toshiba.co.jp>
+Cc: Santosh Y <santoshsy@gmail.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, arnd.bergmann@linaro.org, saugata.das@linaro.org, dsaxena@linaro.org, stephen.doel@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, girish.shivananjappa@linaro.org, vishak.g@samsung.com, k.rajesh@samsung.com, yejin.moon@samsung.com, sreekumar.c@samsung.com, vinholikatti@gmail.com, linkinjeon@gmail.com, michaelc@cs.wisc.edu
 
-SGksIEFtaXQsCgpPbiDkuIksIDIwMTItMDQtMDQgYXQgMTA6MDIgKzA1MzAsIEFtaXQgS2FjaGhh
-cCB3cm90ZToKPiBIaSBMZW4vUnVpLAo+IAo+IEFueSBjb21tZW50IG9yIGZlZWRiYWNrIGZyb20g
-eW91ciBzaWRlIGFib3V0IHRoZSBzdGF0dXMgb2YgdGhpcyBwYXRjaD8KPiBJcyBpdCBtZXJnZS1h
-YmxlIG9yIG1ham9yIHJlLXdvcmsgaXMgbmVlZGVkPyBJIGhhdmUgZml4ZWQgbW9zdCBvZiB0aGUK
-PiBjb21tZW50cyBpbiB0aGlzIHBhdGNoc2V0IGFuZCBjdXJyZW50bHkgd29ya2luZyBvbiBzb21l
-IG9mIHRoZSBtaW5vcgo+IGNvbW1lbnRzIHJlY2VpdmVkIGFuZCB3aWxsIHN1Ym1pdCB0aGVtIHNo
-b3J0bHkuCj4gClNvcnJ5IGZvciB0aGUgbGF0ZSByZXNwb25zZS4KCkZpcnN0IG9mIGFsbCwgaXQg
-bWFrZXMgc2Vuc2UgdG8gbWUgdG8gaW50cm9kdWNlIHRoZSBnZW5lcmljIGNwdWZycQpjb29saW5n
-IGltcGxlbWVudGF0aW9uLgpCdXQgSSBzdGlsbCBoYXZlIHNvbWUgcXVlc3Rpb25zLgpJIHRoaW5r
-IHRoZSBrZXkgcmVhc29uIHdoeSBUSEVSTUFMX1RSSVBfU1RBVEVfSU5TVEFOQ0UgaXMgaW50cm9k
-dWNlZCBpcwp0aGF0IHRoZSBNT05JUk9SX1pPTkUgYW5kIFdBUk5fWk9ORSBvbiBleHlub3M0IGNh
-biBub3QgZml0IGludG8gdGhlCmN1cnJlbnQgcGFzc2l2ZSBoYW5kbGluZyBpbiB0aGUgZ2VuZXJp
-YyB0aGVybWFsIGxheWVyIHdlbGwsIHJpZ2h0PwplLmcuIHRoZXJlIGlzIG5vIHRjMS90YzIgb24g
-ZXh5bm9zNC4KCklmIHllcywgaXMgaXQgcG9zc2libGUgdGhhdCB3ZSBjYW4gZW5oYW5jZSB0aGUg
-cGFzc2l2ZSBjb29saW5nIHRvCnN1cHBvcnQgdGhlIGdlbmVyaWMgcHJvY2Vzc29yIGNvb2xpbmc/
-CnNheSwgaW50cm9kdWNlIGFub3RoZXIgd2F5IHRvIHRocm90dGxlIHRoZSBwcm9jZXNzb3IgaW4K
-dGhlcm1hbF96b25lX2RldmljZV9wYXNzaXZlIHdoZW4gdGMxIGFuZCB0YzIgYXJlIG5vdCBhdmFp
-bGFibGU/Cgp0aGFua3MsCnJ1aQoKPiBSZWdhcmRzLAo+IEFtaXQgRGFuaWVsCj4gCj4gT24gMTkg
-TWFyY2ggMjAxMiAxMTo0NywgQW1pdCBEYW5pZWwgS2FjaGhhcCA8YW1pdC5rYWNoaGFwQGxpbmFy
-by5vcmc+IHdyb3RlOgo+ID4gQ2hhbmdlcyBzaW5jZSBWMToKPiA+ICpNb3ZlZCB0aGUgc2Vuc29y
-IGRyaXZlciB0byBkcml2ZXIvdGhlcm1hbCBmb2xkZXIgZnJvbSBkcml2ZXIvaHdtb24gZm9sZGVy
-Cj4gPiAgYXMgc3VnZ2VzdGVkIGJ5IE1hcmsgQnJvd24gYW5kIEd1ZW50ZXIgUm9lY2sKPiA+ICpB
-ZGRlZCBub3RpZmllciBzdXBwb3J0IHRvIG5vdGlmeSB0aGUgcmVnaXN0ZXJlZCBkcml2ZXJzIG9m
-IGFueSBjcHUgY29vbGluZwo+ID4gIGFjdGlvbi4gVGhlIGRyaXZlciBjYW4gbW9kaWZ5IHRoZSBk
-ZWZhdWx0IGNvb2xpbmcgYmVoYXZpb3VyKGVnIHNldCBkaWZmZXJlbnQKPiA+ICBtYXggY2xpcCBm
-cmVxdWVuY3kpLgo+ID4gKlRoZSBwZXJjZW50YWdlIGJhc2VkIGZyZXF1ZW5jeSByZXBsYWNlZCB3
-aXRoIGFic29sdXRlIGNsaXBwZWQgZnJlcXVlbmN5Lgo+ID4gKlNvbWUgbW9yZSBjb25kaXRpb25h
-bCBjaGVja3Mgd2hlbiBzZXR0aW5nIG1heCBmcmVxdWVuY3kuCj4gPiAqUmVuYW1lZCB0aGUgbmV3
-IHRyaXAgdHlwZSBUSEVSTUFMX1RSSVBfU1RBVEVfQUNUSVZFIHRvCj4gPiAgVEhFUk1BTF9UUklQ
-X1NUQVRFX0lOU1RBTkNFCj4gPiAqTWFueSByZXZpZXcgY29tbWVudHMgZnJvbSBSLCBEdXJnYWRv
-c3MgPGR1cmdhZG9zcy5yQGludGVsLmNvbT4gYW5kCj4gPiAgZWR1YXJkby52YWxlbnRpbkB0aS5j
-b20gaW1wbGVtZW50ZWQuCj4gPiAqUmVtb3ZlZCBjb29saW5nIHN0YXRzIHRocm91Z2ggZGVidWdm
-cyBwYXRjaAo+ID4gKlRoZSBWMSBiYXNlZCBjYW4gYmUgZm91bmQgaGVyZSwKPiA+ICBodHRwczov
-L2xrbWwub3JnL2xrbWwvMjAxMi8yLzIyLzEyMwo+ID4gIGh0dHA6Ly9sa21sLm9yZy9sa21sLzIw
-MTIvMy8zLzMyCj4gPgo+ID4gQ2hhbmdlcyBzaW5jZSBSRkM6Cj4gPiAqQ2hhbmdlZCB0aGUgY3B1
-IGNvb2xpbmcgcmVnaXN0cmF0aW9uL3VucmVnaXN0cmF0aW9uIEFQSSdzIHRvIGluc3RhbmNlIGJh
-c2VkCj4gPiAqQ2hhbmdlZCB0aGUgU1RBVEVfQUNUSVZFIHRyaXAgdHlwZSB0byBwYXNzIGNvcnJl
-Y3QgaW5zdGFuY2UgaWQKPiA+ICpBZGRpbmcgc3VwcG9ydCB0byByZXN0b3JlIGJhY2sgdGhlIHBv
-bGljeS0+bWF4X2ZyZXEgYWZ0ZXIgZG9pbmcgZnJlcXVlbmN5Cj4gPiAgY2xpcHBpbmcuCj4gPiAq
-TW92ZWQgdGhlIHRyaXAgY29vbGluZyBzdGF0cyBmcm9tIHN5c2ZzIG5vZGUgdG8gZGVidWdmcyBu
-b2RlIGFzIHN1Z2dlc3RlZAo+ID4gIGJ5IEdyZWcgS0ggZ3JlZ0Brcm9haC5jb20KPiA+ICpJbmNv
-cnBvcmF0ZWQgc2V2ZXJhbCByZXZpZXcgY29tbWVudHMgZnJvbSBlZHVhcmRvLnZhbGVudGluQHRp
-LmNvbQo+ID4gKk1vdmVkIHRoZSBUZW1wZXJhdHVyZSBzZW5zb3IgZHJpdmVyIGZyb20gZHJpdmVy
-L2h3bW9uLyB0byBkcml2ZXIvbWZkCj4gPiAgYXMgZGlzY3Vzc2VkIHdpdGggR3VlbnRlciBSb2Vj
-ayA8Z3VlbnRlci5yb2Vja0Blcmljc3Nvbi5jb20+IGFuZAo+ID4gIERvbmdnZXVuIEtpbSA8ZGc3
-Ny5raW1Ac2Ftc3VuZy5jb20+IChodHRwczovL2xrbWwub3JnL2xrbWwvMjAxMi8xLzUvNykKPiA+
-ICpTb21lIGNoYW5nZXMgYWNjb3JkaW5nIHRvIHRoZSBjaGFuZ2VzIGluIGNvbW1vbiBjcHUgY29v
-bGluZyBBUElzCj4gPiAqVGhlIFJGQyBiYXNlZCBwYXRjaGVzIGNhbiBiZSBmb3VuZCBoZXJlLAo+
-ID4gIGh0dHBzOi8vbGttbC5vcmcvbGttbC8yMDExLzEyLzEzLzE4Ngo+ID4gIGh0dHBzOi8vbGtt
-bC5vcmcvbGttbC8yMDExLzEyLzIxLzE2OQo+ID4KPiA+Cj4gPiBCcmllZiBEZXNjcmlwdGlvbjoK
-PiA+Cj4gPiAxKSBUaGUgZ2VuZXJpYyBjb29saW5nIGRldmljZXMgY29kZSBpcyBwbGFjZWQgaW5z
-aWRlIGRyaXZlci90aGVybWFsLyogYXMKPiA+IHBsYWNpbmcgaW5zaWRlIGFjcGkgZm9sZGVyIHdp
-bGwgbmVlZCB1bi1uZWNlc3NhcnkgZW5hYmxpbmcgb2YgYWNwaSBjb2RlLiBUaGlzCj4gPiBjb2Rl
-cyBpcyBhcmNoaXRlY3R1cmUgaW5kZXBlbmRlbnQuCj4gPgo+ID4gMikgVGhpcyBwYXRjaHNldCBh
-ZGRzIGEgbmV3IHRyaXAgdHlwZSBUSEVSTUFMX1RSSVBfU1RBVEVfSU5TVEFOQ0Ugd2hpY2ggcGFz
-c2VzCj4gPiBjb29saW5nIGRldmljZSBpbnN0YW5jZSBudW1iZXIgYW5kIG1heSBiZSBoZWxwZnVs
-IGZvciBjcHVmcmVxIGNvb2xpbmcgZGV2aWNlcwo+ID4gdG8gdGFrZSB0aGUgY29ycmVjdCBjb29s
-aW5nIGFjdGlvbi4gVGhpcyB0cmlwIHR5cGUgYXZvaWRzIHRoZSB0ZW1wZXJhdHVyZQo+ID4gY29t
-cGFyaXNpb24gY2hlY2sgYWdhaW4gaW5zaWRlIHRoZSBjb29saW5nIGhhbmRsZXIuCj4gPgo+ID4g
-MykgVGhpcyBwYXRjaHNldCBhZGRzIGdlbmVyaWMgY3B1IGNvb2xpbmcgbG93IGxldmVsIGltcGxl
-bWVudGF0aW9uIHRocm91Z2gKPiA+IGZyZXF1ZW5jeSBjbGlwcGluZyBhbmQgY3B1IGhvdHBsdWcu
-IEluIGZ1dHVyZSwgb3RoZXIgY3B1IHJlbGF0ZWQgY29vbGluZwo+ID4gZGV2aWNlcyBtYXkgYmUg
-YWRkZWQgaGVyZS4gQW4gQUNQSSB2ZXJzaW9uIG9mIHRoaXMgYWxyZWFkeSBleGlzdHMKPiA+IChk
-cml2ZXJzL2FjcGkvcHJvY2Vzc29yX3RoZXJtYWwuYykuIEJ1dCB0aGlzIHdpbGwgYmUgdXNlZnVs
-IGZvciBwbGF0Zm9ybXMKPiA+IGxpa2UgQVJNIHVzaW5nIHRoZSBnZW5lcmljIHRoZXJtYWwgaW50
-ZXJmYWNlIGFsb25nIHdpdGggdGhlIGdlbmVyaWMgY3B1Cj4gPiBjb29saW5nIGRldmljZXMuIFRo
-ZSBjb29saW5nIGRldmljZSByZWdpc3RyYXRpb24gQVBJJ3MgcmV0dXJuIGNvb2xpbmcgZGV2aWNl
-Cj4gPiBwb2ludGVycyB3aGljaCBjYW4gYmUgZWFzaWx5IGJpbmRlZCB3aXRoIHRoZSB0aGVybWFs
-IHpvbmUgdHJpcCBwb2ludHMuCj4gPiBUaGUgaW1wb3J0YW50IEFQSXMgZXhwb3NlZCBhcmUsCj4g
-PiAgIGEpc3RydWN0IHRoZXJtYWxfY29vbGluZ19kZXZpY2UgKmNwdWZyZXFfY29vbGluZ19yZWdp
-c3RlcigKPiA+ICAgICAgICBzdHJ1Y3QgZnJlcV9jbGlwX3RhYmxlICp0YWJfcHRyLCB1bnNpZ25l
-ZCBpbnQgdGFiX3NpemUsCj4gPiAgICAgICAgY29uc3Qgc3RydWN0IGNwdW1hc2sgKm1hc2tfdmFs
-KQo+ID4gICBiKXZvaWQgY3B1ZnJlcV9jb29saW5nX3VucmVnaXN0ZXIoc3RydWN0IHRoZXJtYWxf
-Y29vbGluZ19kZXZpY2UgKmNkZXYpCj4gPgo+ID4gNCkgU2Ftc3VuZyBleHlub3MgcGxhdGZvcm0g
-dGhlcm1hbCBpbXBsZW1lbnRhdGlvbiBpcyBkb25lIHVzaW5nIHRoZSBnZW5lcmljCj4gPiBjcHUg
-Y29vbGluZyBBUElzIGFuZCB0aGUgbmV3IHRyaXAgdHlwZS4gVGhlIHRlbXBlcmF0dXJlIHNlbnNv
-ciBkcml2ZXIgcHJlc2VudAo+ID4gaW4gdGhlIGh3bW9uIGZvbGRlcihyZWdpc3RlcmVkIGFzIGh3
-bW9uIGRyaXZlcikgaXMgbW92ZWQgdG8gdGhlcm1hbCBmb2xkZXIKPiA+IGFuZCByZWdpc3RlcmVk
-IGFzIGEgdGhlcm1hbCBkcml2ZXIuCj4gPgo+ID4gQWxsIHRoaXMgcGF0Y2hzZXQgaXMgYmFzZWQg
-b24gS2VybmVsIHZlcnNpb24gMy4zLXJjNwo+ID4KPiA+IEEgc2ltcGxlIGRhdGEvY29udHJvbCBm
-bG93IGRpYWdyYW1zIGlzIHNob3duIGJlbG93LAo+ID4KPiA+IENvcmUgTGludXggdGhlcm1hbCA8
-LS0tLS0+ICBFeHlub3MgdGhlcm1hbCBpbnRlcmZhY2UgPC0tLS0tIFRlbXBlcmF0dXJlIFNlbnNv
-cgo+ID4gICAgICAgICAgfCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgfAo+ID4gICAgICAg
-ICBcfC8gICAgICAgICAgICAgICAgICAgICAgICAgICAgfAo+ID4gIENwdWZyZXEgY29vbGluZyBk
-ZXZpY2UgPC0tLS0tLS0tLS0tLS0tLQo+ID4KPiA+Cj4gPiBBbWl0IERhbmllbCBLYWNoaGFwICg2
-KToKPiA+ICB0aGVybWFsOiBBZGQgYSBuZXcgdHJpcCB0eXBlIHRvIHVzZSBjb29saW5nIGRldmlj
-ZSBpbnN0YW5jZSBudW1iZXIKPiA+ICB0aGVybWFsOiBBZGQgZ2VuZXJpYyBjcHVmcmVxIGNvb2xp
-bmcgaW1wbGVtZW50YXRpb24KPiA+ICB0aGVybWFsOiBBZGQgZ2VuZXJpYyBjcHVob3RwbHVnIGNv
-b2xpbmcgaW1wbGVtZW50YXRpb24KPiA+ICBod21vbjogZXh5bm9zNDogTW92ZSB0aGVybWFsIHNl
-bnNvciBkcml2ZXIgdG8gZHJpdmVyL3RoZXJtYWwKPiA+ICAgIGRpcmVjdG9yeQo+ID4gIHRoZXJt
-YWw6IGV4eW5vczQ6IFJlZ2lzdGVyIHRoZSB0bXUgc2Vuc29yIHdpdGggdGhlIGtlcm5lbCB0aGVy
-bWFsCj4gPiAgICBsYXllcgo+ID4gIEFSTTogZXh5bm9zNDogQWRkIHRoZXJtYWwgc2Vuc29yIGRy
-aXZlciBwbGF0Zm9ybSBkZXZpY2Ugc3VwcG9ydAo+ID4KPiA+ICBEb2N1bWVudGF0aW9uL2h3bW9u
-L2V4eW5vczRfdG11ICAgICAgICAgICB8ICAgODEgLS0tCj4gPiAgRG9jdW1lbnRhdGlvbi90aGVy
-bWFsL2NwdS1jb29saW5nLWFwaS50eHQgfCAgIDc2ICsrKwo+ID4gIERvY3VtZW50YXRpb24vdGhl
-cm1hbC9leHlub3M0X3RtdSAgICAgICAgIHwgICA1MiArKwo+ID4gIERvY3VtZW50YXRpb24vdGhl
-cm1hbC9zeXNmcy1hcGkudHh0ICAgICAgIHwgICAgNCArLQo+ID4gIGFyY2gvYXJtL21hY2gtZXh5
-bm9zL0tjb25maWcgICAgICAgICAgICAgIHwgICAxMSArCj4gPiAgYXJjaC9hcm0vbWFjaC1leHlu
-b3MvTWFrZWZpbGUgICAgICAgICAgICAgfCAgICAxICsKPiA+ICBhcmNoL2FybS9tYWNoLWV4eW5v
-cy9jbG9jay5jICAgICAgICAgICAgICB8ICAgIDQgKwo+ID4gIGFyY2gvYXJtL21hY2gtZXh5bm9z
-L2Rldi10bXUuYyAgICAgICAgICAgIHwgICAzOSArKwo+ID4gIGFyY2gvYXJtL21hY2gtZXh5bm9z
-L2luY2x1ZGUvbWFjaC9pcnFzLmggIHwgICAgMiArCj4gPiAgYXJjaC9hcm0vbWFjaC1leHlub3Mv
-aW5jbHVkZS9tYWNoL21hcC5oICAgfCAgICAxICsKPiA+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9t
-YWNoLW9yaWdlbi5jICAgICAgICB8ICAgIDEgKwo+ID4gIGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9p
-bmNsdWRlL3BsYXQvZGV2cy5oIHwgICAgMSArCj4gPiAgZHJpdmVycy9od21vbi9LY29uZmlnICAg
-ICAgICAgICAgICAgICAgICAgfCAgIDEwIC0KPiA+ICBkcml2ZXJzL2h3bW9uL01ha2VmaWxlICAg
-ICAgICAgICAgICAgICAgICB8ICAgIDEgLQo+ID4gIGRyaXZlcnMvaHdtb24vZXh5bm9zNF90bXUu
-YyAgICAgICAgICAgICAgIHwgIDUxNCAtLS0tLS0tLS0tLS0tLS0tLS0tCj4gPiAgZHJpdmVycy90
-aGVybWFsL0tjb25maWcgICAgICAgICAgICAgICAgICAgfCAgIDIxICsKPiA+ICBkcml2ZXJzL3Ro
-ZXJtYWwvTWFrZWZpbGUgICAgICAgICAgICAgICAgICB8ICAgIDIgKwo+ID4gIGRyaXZlcnMvdGhl
-cm1hbC9jcHVfY29vbGluZy5jICAgICAgICAgICAgIHwgIDUyOSArKysrKysrKysrKysrKysrKysr
-Cj4gPiAgZHJpdmVycy90aGVybWFsL2V4eW5vczRfdGhlcm1hbC5jICAgICAgICAgfCAgNzkwICsr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gPiAgZHJpdmVycy90aGVybWFsL3RoZXJtYWxf
-c3lzLmMgICAgICAgICAgICAgfCAgIDQ1ICsrLQo+ID4gIGluY2x1ZGUvbGludXgvY3B1X2Nvb2xp
-bmcuaCAgICAgICAgICAgICAgIHwgICA3OCArKysKPiA+ICBpbmNsdWRlL2xpbnV4L3BsYXRmb3Jt
-X2RhdGEvZXh5bm9zNF90bXUuaCB8ICAgIDcgKwo+ID4gIGluY2x1ZGUvbGludXgvdGhlcm1hbC5o
-ICAgICAgICAgICAgICAgICAgIHwgICAgMSArCj4gPiAgMjMgZmlsZXMgY2hhbmdlZCwgMTY2MCBp
-bnNlcnRpb25zKCspLCA2MTEgZGVsZXRpb25zKC0pCj4gPiAgZGVsZXRlIG1vZGUgMTAwNjQ0IERv
-Y3VtZW50YXRpb24vaHdtb24vZXh5bm9zNF90bXUKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9j
-dW1lbnRhdGlvbi90aGVybWFsL2NwdS1jb29saW5nLWFwaS50eHQKPiA+ICBjcmVhdGUgbW9kZSAx
-MDA2NDQgRG9jdW1lbnRhdGlvbi90aGVybWFsL2V4eW5vczRfdG11Cj4gPiAgY3JlYXRlIG1vZGUg
-MTAwNjQ0IGFyY2gvYXJtL21hY2gtZXh5bm9zL2Rldi10bXUuYwo+ID4gIGRlbGV0ZSBtb2RlIDEw
-MDY0NCBkcml2ZXJzL2h3bW9uL2V4eW5vczRfdG11LmMKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQg
-ZHJpdmVycy90aGVybWFsL2NwdV9jb29saW5nLmMKPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJp
-dmVycy90aGVybWFsL2V4eW5vczRfdGhlcm1hbC5jCj4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IGlu
-Y2x1ZGUvbGludXgvY3B1X2Nvb2xpbmcuaAo+ID4KCgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1wbSBtYWlsaW5nIGxpc3QKbGludXgtcG1AbGlz
-dHMubGludXgtZm91bmRhdGlvbi5vcmcKaHR0cHM6Ly9saXN0cy5saW51eGZvdW5kYXRpb24ub3Jn
-L21haWxtYW4vbGlzdGluZm8vbGludXgtcG0=
+On 26 March 2012 10:04, KOBAYASHI Yoshitake
+<yoshitake.kobayashi@toshiba.co.jp> wrote:
+> Santosh Y wrote:
+>>
+>> + =A0 =A0 =A0 =A0ucd_cmd_ptr->exp_data_transfer_len =3D
+>> + =A0 =A0 =A0 =A0 =A0 =A0cpu_to_be32(lrbp->cmd->transfersize);
+>> +
+>> + =A0 =A0 =A0 =A0memcpy(ucd_cmd_ptr->cdb,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 lrbp->cmd->cmnd,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 (min_t(unsigned short,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0lrbp->cmd->cmd_len,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0MAX_CDB_SIZE)));
+>
+>
+> "Exptected Data Transfer Length" field contains a value that
+> represents the number of bytes that are required to complete the
+> SCSI command request and the number of bytes that the Initiator
+> expects to be transferred to/from the Target.
+> (JEDEC Standard 220 Table7-7)
+> On the other hand, "transfersize" in a scsi_cmnd struct is trimmed
+> to the sector size when requested transfer length exceeds it.
+> You may derive the actual transfer length from SCSI command itself li=
+ke
+> following.
+Hi,
+  Can you please send signed-off patches for the two issues that you re=
+ported ?
+I would like to use them on my development tree.
+
+Thanks and regards,
+Venkat.
+
+>
+> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+> index feffe65..e63fecb 100644
+> --- a/drivers/scsi/ufs/ufshcd.c
+> +++ b/drivers/scsi/ufs/ufshcd.c
+> @@ -647,6 +647,34 @@ static void ufshcd_compose_upiu(struct ufshcd_lr=
+b
+> *lrbp)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 (min_t(unsigned short,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0lrbp->cmd-=
+>cmd_len,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0MAX_CDB_SI=
+ZE)));
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Overwrite exptected transfer length =
+by using
+> TRANSFER_LENGTH in SCSI commands */
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 switch(ucd_cmd_ptr->cdb[0]) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 case READ_6:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 case WRITE_6:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ucd_cmd_ptr->exp_data_t=
+ransfer_len =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_to_=
+be32(lrbp->cmd->transfersize *
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 ucd_cmd_ptr->cdb[4]);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 case READ_10:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 case WRITE_10:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ucd_cmd_ptr->exp_data_t=
+ransfer_len =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_to_=
+be32(lrbp->cmd->transfersize *
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 ((ucd_cmd_ptr->cdb[7] << 8) |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0ucd_cmd_ptr->cdb[8]));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 case READ_12:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 case WRITE_12:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 ucd_cmd_ptr->exp_data_t=
+ransfer_len =3D
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cpu_to_=
+be32(lrbp->cmd->transfersize *
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 ((ucd_cmd_ptr->cdb[10] << 24) |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0(ucd_cmd_ptr->cdb[11] << 16) |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0(ucd_cmd_ptr->cdb[12] << 8) |
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0ucd_cmd_ptr->cdb[13]));
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 default:
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
+> =A0 =A0 =A0 =A0case UTP_CMD_TYPE_DEV_MANAGE:
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0/* For query function implementation *=
+/
+>
