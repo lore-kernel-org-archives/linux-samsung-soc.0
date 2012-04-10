@@ -1,53 +1,79 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: S5PV210: Fix compiler warning in dma.c file
-Date: Tue, 10 Apr 2012 09:54:35 -0700
-Message-ID: <4F8465CB.8060403@samsung.com>
-References: <1333945597-28243-1-git-send-email-sachin.kamat@linaro.org>
+Subject: Re: [PATCH 4/4] ARM: Exynos5: Add PDMA and MDMA physical base address
+ defines
+Date: Tue, 10 Apr 2012 09:56:29 -0700
+Message-ID: <4F84663D.5070501@samsung.com>
+References: <1332840365-24827-1-git-send-email-thomas.abraham@linaro.org> <1332840365-24827-5-git-send-email-thomas.abraham@linaro.org> <4F73C0EC.60201@samsung.com> <CAOesGMisDq_Z3zNFNmOeyDPEj-VXDsy9a8ABhJie4fsjtRkeJw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:44731 "EHLO
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:46051 "EHLO
 	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751707Ab2DJQyi (ORCPT
+	with ESMTP id S1754662Ab2DJQ4d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Apr 2012 12:54:38 -0400
-Received: by dake40 with SMTP id e40so6046dak.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Apr 2012 09:54:38 -0700 (PDT)
-In-Reply-To: <1333945597-28243-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 10 Apr 2012 12:56:33 -0400
+Received: by dake40 with SMTP id e40so7879dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Apr 2012 09:56:33 -0700 (PDT)
+In-Reply-To: <CAOesGMisDq_Z3zNFNmOeyDPEj-VXDsy9a8ABhJie4fsjtRkeJw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Sachin Kamat wrote:
-> Fixes the following warning:
+Olof Johansson wrote:
+> Hi,
 >
-> warning: =E2=80=98dma_dmamask=E2=80=99 defined but not used [-Wunused=
--variable]
+> 2012/3/28 Kukjin Kim<kgene.kim@samsung.com>:
+>> Thomas Abraham wrote:
+>>> Add PDMA and MDMA physical base address macros which is require for Exynos5
+>>> of_dev_auxdata setup.
+>>>
+>>> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
+>>> ---
+>>>    arch/arm/mach-exynos/include/mach/map.h |    5 +++++
+>>>    arch/arm/mach-exynos/mach-exynos5-dt.c  |    3 ++-
+>>>    2 files changed, 7 insertions(+), 1 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+>>> index 024d38f..37d93fd 100644
+>>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>>> @@ -90,6 +90,11 @@
+>>>    #define EXYNOS4_PA_PDMA0            0x12680000
+>>>    #define EXYNOS4_PA_PDMA1            0x12690000
+>>>
+>>> +#define EXYNOS5_PA_PDMA0             0x121A0000
+>>> +#define EXYNOS5_PA_PDMA1             0x121B0000
+>>> +#define EXYNOS5_PA_MDMA0             0x10800000
+>>> +#define EXYNOS5_PA_MDMA1             0x11C10000
+>>> +
+>>
+>> See, "ARM: EXYNOS: Support DMA for Exynos5250 SoC"
+>> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-February/085434.html
+>>
+>> But this merge window is not including it :(
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
->   arch/arm/mach-s5pv210/dma.c |    2 --
->   1 files changed, 0 insertions(+), 2 deletions(-)
+> Compilation of CONFIG_MACH_EXYNOS5_DT is broken without the above PDMA
+> defines. Either add the defines, or remove the AUXDATA as part of the
+> fixes for this release, please.
 >
-> diff --git a/arch/arm/mach-s5pv210/dma.c b/arch/arm/mach-s5pv210/dma.=
-c
-> index 86ce62f..b8337e2 100644
-> --- a/arch/arm/mach-s5pv210/dma.c
-> +++ b/arch/arm/mach-s5pv210/dma.c
-> @@ -33,8 +33,6 @@
->   #include<mach/irqs.h>
->   #include<mach/dma.h>
->
-> -static u64 dma_dmamask =3D DMA_BIT_MASK(32);
-> -
->   static u8 pdma0_peri[] =3D {
->   	DMACH_UART0_RX,
->   	DMACH_UART0_TX,
+Yeah, right.
 
-Applied, thanks.
+I fixed it with this but changed dma channel for mdma1.
+
+@@ -45,7 +45,7 @@ static const struct of_dev_auxdata 
+exynos5250_auxdata_lookup[]
+                                 "exynos4210-uart.3", NULL),
+         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
+         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
+-       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.2", NULL),
++       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
+         {},
+  };
+
+
+Thanks.
 
 Best regards,
 Kgene.
