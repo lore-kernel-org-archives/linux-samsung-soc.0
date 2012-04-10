@@ -1,77 +1,86 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 4/4] ARM: Exynos5: Add PDMA and MDMA physical base address
- defines
-Date: Tue, 10 Apr 2012 09:56:29 -0700
-Message-ID: <4F84663D.5070501@samsung.com>
-References: <1332840365-24827-1-git-send-email-thomas.abraham@linaro.org> <1332840365-24827-5-git-send-email-thomas.abraham@linaro.org> <4F73C0EC.60201@samsung.com> <CAOesGMisDq_Z3zNFNmOeyDPEj-VXDsy9a8ABhJie4fsjtRkeJw@mail.gmail.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix compile error in pm.c
+Date: Tue, 10 Apr 2012 10:04:31 -0700
+Message-ID: <4F84681F.9020106@samsung.com>
+References: <1333754316-9194-1-git-send-email-jhbird.choi@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:46051 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754662Ab2DJQ4d (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:45706 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751930Ab2DJREf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Apr 2012 12:56:33 -0400
-Received: by dake40 with SMTP id e40so7879dak.11
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Apr 2012 09:56:33 -0700 (PDT)
-In-Reply-To: <CAOesGMisDq_Z3zNFNmOeyDPEj-VXDsy9a8ABhJie4fsjtRkeJw@mail.gmail.com>
+	Tue, 10 Apr 2012 13:04:35 -0400
+Received: by pbcun15 with SMTP id un15so193196pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Apr 2012 10:04:35 -0700 (PDT)
+In-Reply-To: <1333754316-9194-1-git-send-email-jhbird.choi@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Jonghwan Choi <jhbird.choi@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
 
-Olof Johansson wrote:
-> Hi,
->
-> 2012/3/28 Kukjin Kim<kgene.kim@samsung.com>:
->> Thomas Abraham wrote:
->>> Add PDMA and MDMA physical base address macros which is require for Exynos5
->>> of_dev_auxdata setup.
->>>
->>> Signed-off-by: Thomas Abraham<thomas.ab@samsung.com>
->>> ---
->>>    arch/arm/mach-exynos/include/mach/map.h |    5 +++++
->>>    arch/arm/mach-exynos/mach-exynos5-dt.c  |    3 ++-
->>>    2 files changed, 7 insertions(+), 1 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
->>> index 024d38f..37d93fd 100644
->>> --- a/arch/arm/mach-exynos/include/mach/map.h
->>> +++ b/arch/arm/mach-exynos/include/mach/map.h
->>> @@ -90,6 +90,11 @@
->>>    #define EXYNOS4_PA_PDMA0            0x12680000
->>>    #define EXYNOS4_PA_PDMA1            0x12690000
->>>
->>> +#define EXYNOS5_PA_PDMA0             0x121A0000
->>> +#define EXYNOS5_PA_PDMA1             0x121B0000
->>> +#define EXYNOS5_PA_MDMA0             0x10800000
->>> +#define EXYNOS5_PA_MDMA1             0x11C10000
->>> +
->>
->> See, "ARM: EXYNOS: Support DMA for Exynos5250 SoC"
->> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-February/085434.html
->>
->> But this merge window is not including it :(
->
-> Compilation of CONFIG_MACH_EXYNOS5_DT is broken without the above PDMA
-> defines. Either add the defines, or remove the AUXDATA as part of the
-> fixes for this release, please.
->
-Yeah, right.
+Jonghwan Choi wrote:
+> Fix compile error when ARCH_EXYNOS5 is only enabled without ARCH_EXYNOS4.
+> 
+> arch/arm/mach-exynos/built-in.o: In function `exynos4_pm_prepare':
+> linux/arch/arm/mach-exynos/pm.c:185: undefined reference to `exynos4_sys_powerdown_conf'
+> arch/arm/mach-exynos/built-in.o: In function `__virt_to_phys':
+> linux/arch/arm/include/asm/memory.h:175: undefined reference to `s3c_cpu_resume'
+> linux/arch/arm/include/asm/memory.h:175: undefined reference to `s3c_cpu_resume'
+> arch/arm/plat-samsung/built-in.o: In function `s3c_irqext_wake':
+> linux/arch/arm/plat-samsung/pm.c:151: undefined reference to `s3c_irqwake_eintallow'
+> arch/arm/plat-samsung/built-in.o: In function `s3c_pm_enter':
+> linux/arch/arm/plat-samsung/pm.c:274: undefined reference to `s3c_pm_save_core'
+> linux/arch/arm/plat-samsung/pm.c:278: undefined reference to `s3c_pm_configure_extint'
+> linux/arch/arm/plat-samsung/pm.c:307: undefined reference to `s3c_pm_restore_core'
+> linux/arch/arm/plat-samsung/pm.c:329: undefined reference to `s3c_irqwake_intallow'
+> linux/arch/arm/plat-samsung/pm.c:329: undefined reference to `s3c_irqwake_eintallow'
+> 
 
-I fixed it with this but changed dma channel for mdma1.
+Yes, right. When we build for exynos5 with only ARCH_EXYNOS5, above
+build failure happens. But this cannot fix it. See below my comments.
 
-@@ -45,7 +45,7 @@ static const struct of_dev_auxdata 
-exynos5250_auxdata_lookup[]
-                                 "exynos4210-uart.3", NULL),
-         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
-         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
--       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.2", NULL),
-+       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-         {},
-  };
+> Signed-off-by: Jonghwan Choi<jhbird.choi@samsung.com>
+> ---
+>   arch/arm/mach-exynos/Kconfig  |    2 ++
+>   arch/arm/mach-exynos/Makefile |    2 +-
+>   2 files changed, 3 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 0491cee..676d3fa 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -61,6 +61,8 @@ config SOC_EXYNOS5250
+>   	bool "SAMSUNG EXYNOS5250"
+>   	default y
+>   	depends on ARCH_EXYNOS5
+> +	select S5P_PM if PM
+> +	select S5P_SLEEP if PM
 
+No, current mainline cannot support PM for exynos5 and we need Jongpill
+Lee's patch for it.
+
+>   	help
+>   	  Enable EXYNOS5250 SoC support
+> 
+> diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+> index 8631840..1524efb 100644
+> --- a/arch/arm/mach-exynos/Makefile
+> +++ b/arch/arm/mach-exynos/Makefile
+> @@ -22,7 +22,7 @@ obj-$(CONFIG_PM)		+= pm.o
+>   obj-$(CONFIG_PM_GENERIC_DOMAINS) += pm_domains.o
+>   obj-$(CONFIG_CPU_IDLE)		+= cpuidle.o
+> 
+> -obj-$(CONFIG_ARCH_EXYNOS4)	+= pmu.o
+> +obj-$(CONFIG_ARCH_EXYNOS)	+= pmu.o
+> 
+same as above, not support yet.
+
+>   obj-$(CONFIG_SMP)		+= platsmp.o headsmp.o
+> 
+
+I think, we need to fix it but need other method. Could you please check it?
 
 Thanks.
 
