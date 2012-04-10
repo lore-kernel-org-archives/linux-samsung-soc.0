@@ -1,61 +1,50 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH v2] ARM: Exynos4: read initial state of power domain from hw
- registers
-Date: Tue, 10 Apr 2012 14:39:39 +0200
-Message-ID: <1334061579-8492-1-git-send-email-m.szyprowski@samsung.com>
-References: <4F7EE249.30002@mvista.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH] ARM: exynos: add dts files to dtbs target
+Date: Tue, 10 Apr 2012 09:53:19 -0700
+Message-ID: <4F84657F.9060008@samsung.com>
+References: <1333945993-20363-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:10173 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751905Ab2DJMjr (ORCPT
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:49173 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753279Ab2DJQyG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Apr 2012 08:39:47 -0400
-Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M29005FRKHPAG60@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Apr 2012 13:39:25 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M2900JSUKI6AB@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 10 Apr 2012 13:39:43 +0100 (BST)
-In-reply-to: <4F7EE249.30002@mvista.com>
+	Tue, 10 Apr 2012 12:54:06 -0400
+Received: by dake40 with SMTP id e40so5490dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 10 Apr 2012 09:54:05 -0700 (PDT)
+In-Reply-To: <1333945993-20363-1-git-send-email-olof@lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Some bootloaders disable unused power domains, so kernel code should
-read the actual state from the hardware registers instead of assuming
-that their initial state is 'on'.
+Olof Johansson wrote:
+> Add the currently in-tree device tree sources to the dtbs target.
+> 
+> Signed-off-by: Olof Johansson<olof@lixom.net>
+> ---
+>   arch/arm/mach-exynos/Makefile.boot |    3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm/mach-exynos/Makefile.boot b/arch/arm/mach-exynos/Makefile.boot
+> index b9862e2..31bd181 100644
+> --- a/arch/arm/mach-exynos/Makefile.boot
+> +++ b/arch/arm/mach-exynos/Makefile.boot
+> @@ -1,2 +1,5 @@
+>      zreladdr-y	+= 0x40008000
+>   params_phys-y	:= 0x40000100
+> +
+> +dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb
+> +dtb-$(CONFIG_MACH_EXYNOS5_DT) += exynos5250-smdk5250.dtb
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/pm_domains.c |    9 ++++++---
- 1 files changed, 6 insertions(+), 3 deletions(-)
+Applied, thanks.
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 13b3068..26fc47d 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -151,9 +151,12 @@ static __init int exynos4_pm_init_power_domain(void)
- 	if (of_have_populated_dt())
- 		return exynos_pm_dt_parse_domains();
- 
--	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++)
--		pm_genpd_init(&exynos4_pm_domains[idx]->pd, NULL,
--				exynos4_pm_domains[idx]->is_off);
-+	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++) {
-+		struct exynos_pm_domain *pd = exynos4_pm_domains[idx];
-+		int on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
-+
-+		pm_genpd_init(&pd->pd, NULL, !on);
-+	}
- 
- #ifdef CONFIG_S5P_DEV_FIMD0
- 	exynos_pm_add_dev_to_genpd(&s5p_device_fimd0, &exynos4_pd_lcd0);
--- 
-1.7.1.569.g6f426
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
