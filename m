@@ -1,38 +1,48 @@
-From: Sekhar Nori <nsekhar@ti.com>
-Subject: Re: [PATCH v2 02/15] ARM: mark const init data with __initconst instead
- of __initdata
-Date: Wed, 11 Apr 2012 17:04:15 +0530
-Message-ID: <4F856C37.2040304@ti.com>
-References: <20120330200358.GV15647@pengutronix.de> <1333137905-13809-2-git-send-email-u.kleine-koenig@pengutronix.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-In-Reply-To: <1333137905-13809-2-git-send-email-u.kleine-koenig@pengutronix.de>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>
-Cc: linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, kernel@pengutronix.de, Andrew Victor <linux@maxim.org.za>, Nicolas Ferre <nicolas.ferre@atmel.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Russell King <linux@arm.linux.org.uk>, Kevin Hilman <khilman@ti.com>, Kukjin Kim <kgene.kim@samsung.com>, Shawn Guo <shawn.guo@linaro.org>, Lennert Buytenhek <kernel@wantstofly.org>, Nicolas Pitre <nico@fluxnic.net>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Barry Song <baohua.song@csr.com>, Andrew Lunn <andrew@lunn.ch>, Lucas De Marchi <lucas.demarchi@profusion.mobi>, linux-arm-kernel@lists.infradead.org, davinci-linux-open-source@linux.davincidsp.co
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Fix Kconfig dependencies for device tree enabled machine files
+Date: Wed, 11 Apr 2012 17:19:24 +0530
+Message-ID: <1334144964-3282-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:34600 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753317Ab2DKL5v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 11 Apr 2012 07:57:51 -0400
+Received: by dake40 with SMTP id e40so1104286dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Apr 2012 04:57:51 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Hi Uwe,
+Add config dependency for Exynos4 and Exynos5 device tree enabled machine
+files on config options ARCH_EXYNOS4 and ARCH_EXYNOS5 respectively.
+Enabling machine support without proper ARCH support enabled is incorrect.
 
-On 3/31/2012 1:34 AM, Uwe Kleine-K=C3=B6nig wrote:
-> As long as there is no other non-const variable marked __initdata in =
-the
-> same compilation unit it doesn't hurt. If there were one however
-> compilation would fail with
->=20
-> 	error: $variablename causes a section type conflict
->=20
-> because a section containing const variables is marked read only and =
-so
-> cannot contain non-const variables.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/Kconfig |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-=46or the DaVinci parts,
-
-Acked-by: Sekhar Nori <nsekhar@ti.com>
-
-Thanks,
-Sekhar
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 801c738..2c35fd4 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -370,6 +370,7 @@ comment "Flattened Device Tree based board for EXYNOS SoCs"
+ 
+ config MACH_EXYNOS4_DT
+ 	bool "Samsung Exynos4 Machine using device tree"
++	depends on ARCH_EXYNOS4
+ 	select CPU_EXYNOS4210
+ 	select USE_OF
+ 	select ARM_AMBA
+@@ -382,6 +383,7 @@ config MACH_EXYNOS4_DT
+ 
+ config MACH_EXYNOS5_DT
+ 	bool "SAMSUNG EXYNOS5 Machine using device tree"
++	depends on ARCH_EXYNOS5
+ 	select SOC_EXYNOS5250
+ 	select USE_OF
+ 	select ARM_AMBA
+-- 
+1.7.4.1
