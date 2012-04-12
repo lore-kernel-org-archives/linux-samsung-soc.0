@@ -1,7 +1,8 @@
 From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: [PATCH 07/13] s5p-tv: Add initial DT-support for TV mixer
-Date: Thu, 12 Apr 2012 20:45:26 +0200
-Message-ID: <1334256332-29867-8-git-send-email-k.lewandowsk@samsung.com>
+Subject: [PATCH 05/13] i2c: Dynamically assign adapter id if it wasn't
+ explictly specified
+Date: Thu, 12 Apr 2012 20:45:24 +0200
+Message-ID: <1334256332-29867-6-git-send-email-k.lewandowsk@samsung.com>
 References: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
@@ -10,76 +11,78 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-reply-to: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Wolfram Sang <w.sang@pengutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
+
+Commit 488bf314b ("i2c: Allow i2c_add_numbered_adapter() to assign a
+bus id") reworked i2c_add_numbered_adapter() to call i2c_add_adapter()
+if requested bus was -1.
+
+This allows to simplify driver's initialization procedure by using
+just one function for static and dynamic adapter id registration.
+
+This patch updates few more drivers (missed out in original patch)
+to use this functionality.
 
 Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>
+Cc: Wolfram Sang <w.sang@pengutronix.de>
 ---
- .../devicetree/bindings/arm/exynos/tvmixer.txt     |   26 ++++++++++++++++++++
- drivers/media/video/s5p-tv/mixer_drv.c             |    9 +++++++
- 2 files changed, 35 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/exynos/tvmixer.txt
+ drivers/i2c/busses/i2c-gpio.c         |    7 +------
+ drivers/i2c/busses/i2c-pca-platform.c |    2 +-
+ drivers/i2c/busses/i2c-versatile.c    |    9 ++-------
+ 3 files changed, 4 insertions(+), 14 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/exynos/tvmixer.txt b/Documentation/devicetree/bindings/arm/exynos/tvmixer.txt
-new file mode 100644
-index 0000000..5b4f02e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/exynos/tvmixer.txt
-@@ -0,0 +1,26 @@
-+* Samsung video/graphics mixer and blender
-+
-+Mixer blends graphics data from multiple sources and sends resulting
-+data to TVOUT module.
-+
-+
-+Required properties:
-+
-+ - compatible : "samsung,s5pv210-tvmixer"
-+ - reg : shall contain memory addresses and sizes of mixer and video
-+   processor devices
-+ - reg-names : "mxr" for mixer's address/size and "vp" to for video
-+   processor's.
-+ - interrupt-names : shall contain "irq"
-+
-+
-+Example:
-+
-+	tvmixer@12c10000 {
-+		compatible = "samsung,s5pv210-tvmixer";
-+		reg = <0x12c10000 0x10000>,
-+		      <0x12c00000 0x10000>;
-+		reg-names = "mxr", "vp";
-+		interrupts = <0 123 0>;
-+		interrupt-names = "irq";
-+	};
-diff --git a/drivers/media/video/s5p-tv/mixer_drv.c b/drivers/media/video/s5p-tv/mixer_drv.c
-index a2c0c25..80b7755 100644
---- a/drivers/media/video/s5p-tv/mixer_drv.c
-+++ b/drivers/media/video/s5p-tv/mixer_drv.c
-@@ -448,6 +448,14 @@ static int __devexit mxr_remove(struct platform_device *pdev)
- 	return 0;
- }
+diff --git a/drivers/i2c/busses/i2c-gpio.c b/drivers/i2c/busses/i2c-gpio.c
+index c0330a4..e62d2d9 100644
+--- a/drivers/i2c/busses/i2c-gpio.c
++++ b/drivers/i2c/busses/i2c-gpio.c
+@@ -190,12 +190,7 @@ static int __devinit i2c_gpio_probe(struct platform_device *pdev)
+ 	adap->dev.parent = &pdev->dev;
+ 	adap->dev.of_node = pdev->dev.of_node;
  
-+#ifdef CONFIG_OF
-+static const struct of_device_id mxr_dt_match[] = {
-+	{ .compatible = "samsung,s5pv210-tvmixer" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, mxr_dt_match);
-+#endif
-+
- static struct platform_driver mxr_driver __refdata = {
- 	.probe = mxr_probe,
- 	.remove = __devexit_p(mxr_remove),
-@@ -455,6 +463,7 @@ static struct platform_driver mxr_driver __refdata = {
- 		.name = MXR_DRIVER_NAME,
- 		.owner = THIS_MODULE,
- 		.pm = &mxr_pm_ops,
-+		.of_match_table = of_match_ptr(mxr_dt_match),
- 	}
- };
+-	/*
+-	 * If "dev->id" is negative we consider it as zero.
+-	 * The reason to do so is to avoid sysfs names that only make
+-	 * sense when there are multiple adapters.
+-	 */
+-	adap->nr = (pdev->id != -1) ? pdev->id : 0;
++	adap->nr = pdev->id;
+ 	ret = i2c_bit_add_numbered_bus(adap);
+ 	if (ret)
+ 		goto err_add_bus;
+diff --git a/drivers/i2c/busses/i2c-pca-platform.c b/drivers/i2c/busses/i2c-pca-platform.c
+index 2adbf1a..675878f 100644
+--- a/drivers/i2c/busses/i2c-pca-platform.c
++++ b/drivers/i2c/busses/i2c-pca-platform.c
+@@ -171,7 +171,7 @@ static int __devinit i2c_pca_pf_probe(struct platform_device *pdev)
+ 	i2c->io_size = resource_size(res);
+ 	i2c->irq = irq;
  
+-	i2c->adap.nr = pdev->id >= 0 ? pdev->id : 0;
++	i2c->adap.nr = pdev->id;
+ 	i2c->adap.owner = THIS_MODULE;
+ 	snprintf(i2c->adap.name, sizeof(i2c->adap.name),
+ 		 "PCA9564/PCA9665 at 0x%08lx",
+diff --git a/drivers/i2c/busses/i2c-versatile.c b/drivers/i2c/busses/i2c-versatile.c
+index f585aea..eec20db 100644
+--- a/drivers/i2c/busses/i2c-versatile.c
++++ b/drivers/i2c/busses/i2c-versatile.c
+@@ -104,13 +104,8 @@ static int i2c_versatile_probe(struct platform_device *dev)
+ 	i2c->algo = i2c_versatile_algo;
+ 	i2c->algo.data = i2c;
+ 
+-	if (dev->id >= 0) {
+-		/* static bus numbering */
+-		i2c->adap.nr = dev->id;
+-		ret = i2c_bit_add_numbered_bus(&i2c->adap);
+-	} else
+-		/* dynamic bus numbering */
+-		ret = i2c_bit_add_bus(&i2c->adap);
++	i2c->adap.nr = dev->id;
++	ret = i2c_bit_add_numbered_bus(&i2c->adap);
+ 	if (ret >= 0) {
+ 		platform_set_drvdata(dev, i2c);
+ 		of_i2c_register_devices(&i2c->adap);
 -- 
 1.7.9.1
