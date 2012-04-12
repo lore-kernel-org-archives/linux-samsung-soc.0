@@ -1,50 +1,52 @@
 From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: [PATCH 01/13] regulator: Fix DT node name checking in max8997-pmic
-Date: Thu, 12 Apr 2012 20:45:20 +0200
-Message-ID: <1334256332-29867-2-git-send-email-k.lewandowsk@samsung.com>
+Subject: [PATCH 02/13] ARM: Add document to list devices with trivial DT
+ description
+Date: Thu, 12 Apr 2012 20:45:21 +0200
+Message-ID: <1334256332-29867-3-git-send-email-k.lewandowsk@samsung.com>
 References: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:43812 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762218Ab2DLSpU (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:50961 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1761550Ab2DLSpT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Apr 2012 14:45:20 -0400
+	Thu, 12 Apr 2012 14:45:19 -0400
 In-reply-to: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
 
-Avoid hard lockup when someone provides non-supported regulator
-name.
+Add arm/trivial-devices.txt to enumerate devices for which only
+basic resources are provided (compat, address and irq line).
+
+This is based on i2c's trivial-devices.txt by Olof Johansson.
 
 Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>
 ---
- drivers/regulator/max8997.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/arm/trivial-devices.txt    |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/arm/trivial-devices.txt
 
-diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.c
-index dce8aaf..c20fd72 100644
---- a/drivers/regulator/max8997.c
-+++ b/drivers/regulator/max8997.c
-@@ -1011,6 +1011,13 @@ static int max8997_pmic_dt_parse_pdata(struct max8997_dev *iodev,
- 		for (i = 0; i < ARRAY_SIZE(regulators); i++)
- 			if (!of_node_cmp(reg_np->name, regulators[i].name))
- 				break;
+diff --git a/Documentation/devicetree/bindings/arm/trivial-devices.txt b/Documentation/devicetree/bindings/arm/trivial-devices.txt
+new file mode 100644
+index 0000000..443814a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/trivial-devices.txt
+@@ -0,0 +1,10 @@
++This is a list of trivial devices that have simple device tree
++bindings, consisting only of a compatible field, an address and
++possibly an interrupt line.
 +
-+		if (i == ARRAY_SIZE(regulators)) {
-+			dev_warn(iodev->dev, "don't know how to configure regulator %s\n",
-+				 reg_np->name);
-+			continue;
-+		}
++If a device needs more specific bindings, such as properties to
++describe some aspect of it, there needs to be a specific binding
++document for it just like any other devices.
 +
- 		rdata->id = i;
- 		rdata->initdata = of_get_regulator_init_data(
- 						iodev->dev, reg_np);
++Compatible                      Vendor / Chip
++========================        =============
 -- 
 1.7.9.1
