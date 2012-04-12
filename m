@@ -1,50 +1,50 @@
 From: Karol Lewandowski <k.lewandowsk@samsung.com>
-Subject: [PATCH 04/13] i2c-pxa: Drop leftover comment
-Date: Thu, 12 Apr 2012 20:45:23 +0200
-Message-ID: <1334256332-29867-5-git-send-email-k.lewandowsk@samsung.com>
+Subject: [PATCH 01/13] regulator: Fix DT node name checking in max8997-pmic
+Date: Thu, 12 Apr 2012 20:45:20 +0200
+Message-ID: <1334256332-29867-2-git-send-email-k.lewandowsk@samsung.com>
 References: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:52679 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1762210Ab2DLSpT (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:43812 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1762218Ab2DLSpU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Apr 2012 14:45:19 -0400
+	Thu, 12 Apr 2012 14:45:20 -0400
 In-reply-to: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>, Wolfram Sang <w.sang@pengutronix.de>
+Cc: devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>
 
-Commit 488bf314b ("i2c: Allow i2c_add_numbered_adapter() to assign a
-bus id") reworked i2c-pxa driver leaving obsolete comment.
-
-This commit simply drops it.
+Avoid hard lockup when someone provides non-supported regulator
+name.
 
 Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Wolfram Sang <w.sang@pengutronix.de>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- drivers/i2c/busses/i2c-pxa.c |    5 -----
- 1 files changed, 0 insertions(+), 5 deletions(-)
+ drivers/regulator/max8997.c |    7 +++++++
+ 1 files changed, 7 insertions(+), 0 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-pxa.c b/drivers/i2c/busses/i2c-pxa.c
-index f673326..a997c7d 100644
---- a/drivers/i2c/busses/i2c-pxa.c
-+++ b/drivers/i2c/busses/i2c-pxa.c
-@@ -1131,11 +1131,6 @@ static int i2c_pxa_probe(struct platform_device *dev)
- 	spin_lock_init(&i2c->lock);
- 	init_waitqueue_head(&i2c->wait);
- 
--	/*
--	 * If "dev->id" is negative we consider it as zero.
--	 * The reason to do so is to avoid sysfs names that only make
--	 * sense when there are multiple adapters.
--	 */
- 	i2c->adap.nr = dev->id;
- 	snprintf(i2c->adap.name, sizeof(i2c->adap.name), "pxa_i2c-i2c.%u",
- 		 i2c->adap.nr);
+diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.c
+index dce8aaf..c20fd72 100644
+--- a/drivers/regulator/max8997.c
++++ b/drivers/regulator/max8997.c
+@@ -1011,6 +1011,13 @@ static int max8997_pmic_dt_parse_pdata(struct max8997_dev *iodev,
+ 		for (i = 0; i < ARRAY_SIZE(regulators); i++)
+ 			if (!of_node_cmp(reg_np->name, regulators[i].name))
+ 				break;
++
++		if (i == ARRAY_SIZE(regulators)) {
++			dev_warn(iodev->dev, "don't know how to configure regulator %s\n",
++				 reg_np->name);
++			continue;
++		}
++
+ 		rdata->id = i;
+ 		rdata->initdata = of_get_regulator_init_data(
+ 						iodev->dev, reg_np);
 -- 
 1.7.9.1
