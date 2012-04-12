@@ -1,115 +1,39 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: [PATCH v3 0/4] video: s3c-fb: Rearrange the elements in platform
- data
-Date: Thu, 12 Apr 2012 02:20:21 +0000
-Message-ID: <4F863BE5.9080503@gmx.de>
-References: <1332606528-32338-1-git-send-email-thomas.abraham@linaro.org>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 0/2] Exynos: fix SYSMMU driver to work with power domains
+Date: Thu, 12 Apr 2012 17:19:05 +0900
+Message-ID: <CAHQjnOOGWVcc95F==1__SCH0S-mX8bvRwOr7MhB3Arw=83jZMw@mail.gmail.com>
+References: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.22]:41780 "HELO
-	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1757181Ab2DLCU2 (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:48761 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753904Ab2DLITH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Apr 2012 22:20:28 -0400
-In-Reply-To: <1332606528-32338-1-git-send-email-thomas.abraham@linaro.org>
+	Thu, 12 Apr 2012 04:19:07 -0400
+Received: by lbbgm6 with SMTP id gm6so1400455lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Apr 2012 01:19:05 -0700 (PDT)
+In-Reply-To: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-fbdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, ben-linux@fluff.org, augulis.darius@gmail.com, patches@linaro.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 03/24/2012 04:28 PM, Thomas Abraham wrote:
-> Changes since v2:
-> - Patch 3/4 is a new patch in this series. The real6410 and mini6410 boards
->   use the display controllers window configuration data to represent video
->   timing of two different lcd panels. Since the window configuration data
->   should be not be used to specify timing of two different panels, this has
->   been reworked in such a way that two instance of display controller's
->   platform data is setup for the two supported lcd panels. Depending on the
->   lcd panel specified using boot parameters, the corresponding platform data
->   is registered. This maintains backward compatibility with existing
->   functionality of supporting multiple lcd panels at runtime.
-> 
-> Changes since v1:
-> - Includes all changes suggested by Jingoo Han.
-> - Reworked s3c-fb platform data in all Samsung SoC based board files.
-> 
-> This patchset rearranges the elements in the platform data of the s3c-fb
-> driver with the intent of adding device tree support to the driver in
-> subsequent patches.
-> 
-> The first patch moves the video timing information from the individual window
-> setup data into the platform specific configuration section in the platform
-> data. The video timing is independent of the window setup. The resolution of
-> the window could be smaller than that of the lcd panel attached. So the video
-> timing data is removed from window configuration data.
-> 
-> The second patch removes the need for the 'default_win' element in the
-> platform data. This element was used to decide whether the video data
-> output from the controller should be enabled or disabled when the window
-> specified by 'default_win' is enabled or disabled. With the first patch
-> removing the need for atleast one window to be of the same resolution as
-> that of the lcd panel, it is now possible to decide when to enable/disable
-> the video data output based on the state of each window. If any of the
-> window is active, the lcd data output is enabled. Otherwise, the lcd data
-> output is disabled. Hence, the 'default_win' parameter from the platform
-> data can be removed, which anyways cannot be specified when using
-> device tree.
-> 
-> The third patch reworks the display controller's platform data that was
-> used to supply video timing information for two different panels on the
-> mini6410 and real6410 boards. That was not the correct usage of the window
-> data and hence reworks the runtime handling of two different lcd panels.
-> 
-> For all the Samsung SoC based boards, the forth patch reworks the platform
-> data of the display controller based on the changes introduced in the first
-> two patches.
-> 
-> This patch series is based on
-> http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git [for-next]
-> 
-> with all patches merged from
-> https://github.com/schandinat/linux-2.6.git [fbdev-next]
-> 
-> and tested one Exynos4210 based Origen board (only compile tested for
-> other boards)
-> 
-> Thomas Abraham (4):
->   video: s3c-fb: move video interface timing out of window setup data
->   video: s3c-fb: remove 'default_win' element from platform data
->   ARM: s3c64xx: Decouple lcd type from display controller window data
->   ARM: Samsung: Rework platform data of s3c-fb driver
+On Wed, Apr 11, 2012 at 11:34 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hi!
+>
+> These two patches fixes operation of the SYSMMU driver (v12 version [1])
+> with the new power domain driver based on generic power domains and
+> runtime pw, which has been merged to Linux kernel v3.4-rc1.
+>
+Thanks, Marek.
 
-Applied this series.
+Your way of power gating is right
+and I will look into the changed runtime PM scheme in Exynos tree.
 
+> [1] https://lkml.org/lkml/2012/3/15/51
 
-Thanks,
+Regards,
 
-Florian Tobias Schandinat
-
-> 
->  arch/arm/mach-exynos/mach-nuri.c           |   26 +++---
->  arch/arm/mach-exynos/mach-origen.c         |   24 +++--
->  arch/arm/mach-exynos/mach-smdkv310.c       |   28 ++++---
->  arch/arm/mach-exynos/mach-universal_c210.c |   26 +++---
->  arch/arm/mach-s3c24xx/mach-smdk2416.c      |   27 +++---
->  arch/arm/mach-s3c64xx/mach-anw6410.c       |   25 +++---
->  arch/arm/mach-s3c64xx/mach-crag6410.c      |   25 +++---
->  arch/arm/mach-s3c64xx/mach-hmt.c           |   24 +++--
->  arch/arm/mach-s3c64xx/mach-mini6410.c      |   92 +++++++++++--------
->  arch/arm/mach-s3c64xx/mach-real6410.c      |   90 +++++++++++--------
->  arch/arm/mach-s3c64xx/mach-smartq5.c       |   26 +++---
->  arch/arm/mach-s3c64xx/mach-smartq7.c       |   26 +++---
->  arch/arm/mach-s3c64xx/mach-smdk6410.c      |   25 +++---
->  arch/arm/mach-s5p64x0/mach-smdk6440.c      |   24 +++--
->  arch/arm/mach-s5p64x0/mach-smdk6450.c      |   24 +++--
->  arch/arm/mach-s5pc100/mach-smdkc100.c      |   27 +++---
->  arch/arm/mach-s5pv210/mach-aquila.c        |   36 ++++----
->  arch/arm/mach-s5pv210/mach-goni.c          |   26 +++---
->  arch/arm/mach-s5pv210/mach-smdkv210.c      |   24 +++--
->  arch/arm/plat-samsung/include/plat/fb.h    |   11 ++-
->  drivers/video/s3c-fb.c                     |  135 +++++++++++++--------------
->  21 files changed, 426 insertions(+), 345 deletions(-)
-> 
-> 
+KyongHo
