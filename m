@@ -1,39 +1,44 @@
-From: KyongHo Cho <pullip.cho@samsung.com>
-Subject: Re: [PATCH 0/2] Exynos: fix SYSMMU driver to work with power domains
-Date: Thu, 12 Apr 2012 17:19:05 +0900
-Message-ID: <CAHQjnOOGWVcc95F==1__SCH0S-mX8bvRwOr7MhB3Arw=83jZMw@mail.gmail.com>
-References: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH][RESEND] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
+Date: Thu, 12 Apr 2012 14:11:54 +0200
+Message-ID: <201204121411.55054.heiko@sntech.de>
+References: <201203202120.45806.heiko@sntech.de> <4F6B398A.8040703@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:48761 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753904Ab2DLITH (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Apr 2012 04:19:07 -0400
-Received: by lbbgm6 with SMTP id gm6so1400455lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Apr 2012 01:19:05 -0700 (PDT)
-In-Reply-To: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com>
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:39410 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757492Ab2DLMMI convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Apr 2012 08:12:08 -0400
+In-Reply-To: <4F6B398A.8040703@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>
 
-On Wed, Apr 11, 2012 at 11:34 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hi!
->
-> These two patches fixes operation of the SYSMMU driver (v12 version [1])
-> with the new power domain driver based on generic power domains and
-> runtime pw, which has been merged to Linux kernel v3.4-rc1.
->
-Thanks, Marek.
+Am Donnerstag, 22. M=E4rz 2012, 15:39:06 schrieb Kukjin Kim:
+> On 03/20/12 13:20, Heiko St=FCbner wrote:
+> > From: Maurus Cuelenaere<mcuelenaere@gmail.com>
+> >=20
+> > When selecting SAMSUNG_PM_DEBUG, it complains about a missing
+> > printascii() function if you do not select DEBUG_LL, so make the fo=
+rmer
+> > select the latter.
+> >=20
+> > Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
+> > Acked-by: Heiko Stuebner<heiko@sntech.de>
+> > ---
+> > This was originally sent in september 2010, but seems to have been
+> > forgotten. As this problem has bitten me today, here it is again.
+>=20
+> Yeah, missed. Looks good to me and will apply.
 
-Your way of power gating is right
-and I will look into the changed runtime PM scheme in Exynos tree.
+thanks, but it seems I can't find it in the linux-samsung git currently=
+=2E
 
-> [1] https://lkml.org/lkml/2012/3/15/51
+Any news on this?
 
-Regards,
-
-KyongHo
+Thanks
+Heiko
