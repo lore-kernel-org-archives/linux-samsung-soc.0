@@ -1,56 +1,39 @@
-From: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 0/3] i2c-s3c2410: Updates for exynos4210 and DT-based
- systems
-Date: Fri, 13 Apr 2012 11:30:50 +0200
-Message-ID: <4F87F24A.1040408@samsung.com>
-References: <1332357113-2973-1-git-send-email-k.lewandowsk@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1332357113-2973-1-git-send-email-k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, "grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org" <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Increase framebuffer virtual size for origen
+Date: Fri, 13 Apr 2012 16:29:31 +0530
+Message-ID: <1334314771-10928-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:53603 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S935210Ab2DMLIH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Apr 2012 07:08:07 -0400
+Received: by pbcun15 with SMTP id un15so3511332pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Apr 2012 04:08:07 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org
 
-On 21.03.2012 20:11, Karol Lewandowski wrote:
+To support display panning, framebuffer virtual size needs to be increased.
 
-> Changes since v2:
->  - Merge device type and flags into flat bitmask named quirks -
->    Consequently, treat s3c24xx as baseline hardware platform and
->    support all hw variations via quirks [Suggested by Mark Brown]
-> 
-> Changes since v1:
->  - Move unrelated code fragment to separate patch (of_match_ptr())
->    [Suggested by Thomas Abraham]
->  - Move device-type handling to separate function and rework its
->    internals a bit [likewise]
-> 
-> This patchset reworks i2c-s3c2410 driver a bit to better handle
-> device tree-enabled platforms and adds two quirks required by
-> exynos4210-specific I2C controller used by s5p-hdmi driver.
-> 
-> This patchset is based on "i2c-bjdooks/for-34/i2c/i2c-samsung" branch
-> taken from:
-> 
->   git://git.fluff.org/bjdooks/linux.git
-> 
-> Karol Lewandowski (3):
->   i2c-s3c2410: Drop unused define
->   i2c-s3c2410: Rework device type handling
->   i2c-s3c2410: Add HDMIPHY quirk for S3C2440
-> 
->  .../devicetree/bindings/i2c/samsung-i2c.txt        |   11 ++-
->  drivers/i2c/busses/i2c-s3c2410.c                   |   86 +++++++++++++------
->  2 files changed, 68 insertions(+), 29 deletions(-)
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/mach-exynos/mach-origen.c |    2 ++
+ 1 files changed, 2 insertions(+), 0 deletions(-)
 
-
-Wolfram,
-
-Is there anything I can do to have these patches in -next
-(and, consequently, in 3.5-rc1)?
-
-Regards,
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 878d4c9..4d80212 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -596,6 +596,8 @@ static struct s3c_fb_pd_win origen_fb_win0 = {
+ 	},
+ 	.max_bpp		= 32,
+ 	.default_bpp		= 24,
++	.virtual_x		= 1024,
++	.virtual_y		= 2 * 600,
+ };
+ 
+ static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
 -- 
-Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
+1.7.4.1
