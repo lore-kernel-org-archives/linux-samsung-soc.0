@@ -1,162 +1,177 @@
 From: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Subject: Re: [PATCH 09/13] s5p-tv: Move HDMIPHY and MHL subdev probing to
- dedicated function
-Date: Fri, 13 Apr 2012 08:42:44 +0200
-Message-ID: <4F87CAE4.80305@samsung.com>
+Subject: Re: [PATCH 10/13] s5p-tv: Add DT-support for HDMI driver
+Date: Fri, 13 Apr 2012 09:21:40 +0200
+Message-ID: <4F87D404.8060908@samsung.com>
 References: <1334256332-29867-1-git-send-email-k.lewandowsk@samsung.com>
- <1334256332-29867-10-git-send-email-k.lewandowsk@samsung.com>
+ <1334256332-29867-11-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:18801 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751225Ab2DMGmw (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:25725 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754062Ab2DMHVp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Apr 2012 02:42:52 -0400
-In-reply-to: <1334256332-29867-10-git-send-email-k.lewandowsk@samsung.com>
+	Fri, 13 Apr 2012 03:21:45 -0400
+In-reply-to: <1334256332-29867-11-git-send-email-k.lewandowsk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, thomas.abraham@linaro.org, m.szyprowski@samsung.com, kyungmin.park@samsung.com, linux-kernel@vger.kernel.org, olof@lixom.net, kgene.kim@samsung.com, Hans Verkuil <hverkuil@xs4all.nl>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
 Hi Karol,
-Thank you for the patch.
+Thanks for the patch.
+
+Please refer to the comments below.
 
 On 04/12/2012 08:45 PM, Karol Lewandowski wrote:
+> Includes v4l2/dt helper function (hdmi_of_get_i2c_subdev() that probably
+> should be implemented in v4l2 core itself.
+> 
 > Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
 > Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>
 > ---
->  drivers/media/video/s5p-tv/hdmi_drv.c |   90 ++++++++++++++++++---------------
->  1 files changed, 49 insertions(+), 41 deletions(-)
+>  drivers/media/video/s5p-tv/hdmi_drv.c |   68 ++++++++++++++++++++++++++++++++-
+>  1 files changed, 67 insertions(+), 1 deletions(-)
 > 
 > diff --git a/drivers/media/video/s5p-tv/hdmi_drv.c b/drivers/media/video/s5p-tv/hdmi_drv.c
-> index 4865d25..fff3cab 100644
+> index fff3cab..a402e8f 100644
 > --- a/drivers/media/video/s5p-tv/hdmi_drv.c
 > +++ b/drivers/media/video/s5p-tv/hdmi_drv.c
-> @@ -865,11 +865,47 @@ fail:
->  	return -ENODEV;
+> @@ -29,6 +29,8 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/clk.h>
+>  #include <linux/regulator/consumer.h>
+> +#include <linux/of.h>
+> +#include <linux/of_i2c.h>
+>  
+>  #include <media/s5p_hdmi.h>
+>  #include <media/v4l2-common.h>
+> @@ -712,6 +714,56 @@ static int hdmi_enum_dv_presets(struct v4l2_subdev *sd,
+>  	return v4l_fill_dv_preset_info(hdmi_conf[preset->index].preset, preset);
 >  }
 >  
-> +static struct v4l2_subdev *hdmi_get_subdev(
-> +	struct hdmi_device *hdmi_dev,
-> +	struct i2c_board_info *bdinfo,
-> +	int bus,
-> +	const char *propname)
+> +#ifdef CONFIG_OF
+> +/* Heavily based[1] on v4l2_i2c_new_subdev_board()
+> + *
+> + * [1] Copy-pasted, that is
+> + */
+> +struct v4l2_subdev *hdmi_of_get_i2c_subdev(struct v4l2_device *v4l2_dev,
+> +	struct device_node *np, const char *propname)
 > +{
 > +	struct v4l2_subdev *sd = NULL;
-> +	struct i2c_adapter *adapter;
-> +	struct device *dev = hdmi_dev->dev;
+> +	struct i2c_client *client;
+> +	struct device_node *cnp;
 > +
-> +	if (!bdinfo) {
-> +		dev_err(dev, "%s info is missing in platform data\n",
+> +	BUG_ON(!v4l2_dev);
+
+Crashing a kernel is not a good idea in general. Especially when it is possible
+to handle a situation. I think that "if (WARN_ON(..)) return NULL" combo
+is a preferred way for handling such an error.
+
+> +
+> +	cnp = of_parse_phandle(np, propname, 0);
+> +	if (!cnp) {
+> +		dev_err(v4l2_dev->dev, "Can't find subdev %s\n", propname);
+> +		goto err;
+> +	}
+> +
+> +	client = of_find_i2c_device_by_node(cnp);
+> +	if (!client) {
+> +		dev_err(v4l2_dev->dev, "subdev %s doesn't reference correct node\n",
 > +			propname);
-> +		return ERR_PTR(-ENXIO);
+> +		goto err;
 > +	}
 > +
-> +	adapter = i2c_get_adapter(bus);
-> +	if (adapter == NULL) {
-> +		dev_err(dev, "%s adapter request failed, name\n",
-> +			propname);
-> +		return ERR_PTR(-ENXIO);
+
+Maybe you should combine the check below with the check above.
+
+> +	if (client == NULL || client->driver == NULL)
+> +		goto err;
+> +
+> +	/* Lock the module so we can safely get the v4l2_subdev pointer */
+> +	if (!try_module_get(client->driver->driver.owner))
+> +		goto err;
+> +	sd = i2c_get_clientdata(client);
+> +
+> +	/* Register with the v4l2_device which increases the module's
+> +	   use count as well. */
+> +	if (v4l2_device_register_subdev(v4l2_dev, sd)) {
+> +		printk(KERN_ERR "%s: failed to register subdev\n", __func__);
+> +		sd = NULL;
 > +	}
-> +
-> +	sd = v4l2_i2c_new_subdev_board(&hdmi_dev->v4l2_dev,
-> +				       adapter, bdinfo, NULL);
-> +
-> +	/* on failure or not adapter is no longer useful */
-> +	i2c_put_adapter(adapter);
-> +
-> +	if (sd == NULL) {
-> +		dev_err(dev, "missing subdev for %s\n", propname);
-> +		return ERR_PTR(-ENODEV);
-> +	}
+> +	/* Decrease the module use count to match the first try_module_get. */
+> +	module_put(client->driver->driver.owner);
+
+This label 'err' is not only used for error cleanups. Maybe you should rename it
+to 'cleanup' or 'done'.
+
+> +err:
+> +	of_node_put(cnp);
 > +
 > +	return sd;
 > +}
+> +#endif
+
+I think that you should strongly consider adding the function above to
+the V4L2 core to drivers/media/video/videobuf2-core.c file and post
+the patch to linux-media list.
+
 > +
->  static int __devinit hdmi_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	struct resource *res;
-> -	struct i2c_adapter *adapter;
->  	struct v4l2_subdev *sd;
->  	struct hdmi_device *hdmi_dev = NULL;
->  	struct s5p_hdmi_platform_data *pdata = dev->platform_data;
-> @@ -937,51 +973,23 @@ static int __devinit hdmi_probe(struct platform_device *pdev)
->  		goto fail_init;
->  	}
+>  static const struct v4l2_subdev_core_ops hdmi_sd_core_ops = {
+>  	.s_power = hdmi_s_power,
+>  };
+> @@ -875,6 +927,12 @@ static struct v4l2_subdev *hdmi_get_subdev(
+>  	struct i2c_adapter *adapter;
+>  	struct device *dev = hdmi_dev->dev;
+> 
+
+Now I see why hdmi_get_subdev is called with NULL arguments in the
+previous patch :).
+
+However I think that you should introduce two explicit paths in probe
+function for handling non-DT and DT cases.
+
+> +#ifdef CONFIG_OF
+> +	if (dev->of_node)
+> +		return hdmi_of_get_i2c_subdev(&hdmi_dev->v4l2_dev,
+> +					   dev->of_node, propname);
+> +#endif
+> +
+>  	if (!bdinfo) {
+>  		dev_err(dev, "%s info is missing in platform data\n",
+>  			propname);
+> @@ -913,7 +971,7 @@ static int __devinit hdmi_probe(struct platform_device *pdev)
 >  
-> -	/* testing if hdmiphy info is present */
-> -	if (!pdata->hdmiphy_info) {
-> -		dev_err(dev, "hdmiphy info is missing in platform data\n");
-> -		ret = -ENXIO;
-> +	hdmi_dev->phy_sd = hdmi_get_subdev(hdmi_dev,
-
-If we know that plat data is missing so what is the purpose of calling
-hdmi_get_subdev while we know that this function is going to fail?
-
-> +					   pdata ? pdata->hdmiphy_info : NULL,
-> +					   pdata ? pdata->hdmiphy_bus : -1,
-> +					   "phy");
-> +	if (IS_ERR_OR_NULL(hdmi_dev->phy_sd)) {
-> +		ret = PTR_ERR(hdmi_dev->phy_sd);
->  		goto fail_vdev;
->  	}
-> -
-> -	adapter = i2c_get_adapter(pdata->hdmiphy_bus);
-> -	if (adapter == NULL) {
-> -		dev_err(dev, "hdmiphy adapter request failed\n");
-> -		ret = -ENXIO;
-> +	hdmi_dev->mhl_sd = hdmi_get_subdev(hdmi_dev,
-> +					   pdata ? pdata->mhl_info : NULL ,
-> +					   pdata ? pdata->mhl_bus : -1,
-> +					   "mhl");
-> +	if (IS_ERR_OR_NULL(hdmi_dev->mhl_sd)) {
-> +		ret = PTR_ERR(hdmi_dev->mhl_sd)
-
-The MHL is an optional subdev. There are platforms that support HDMI but does
-not have MHL "on board" like Universal C210. Failing due to a lack of
-MHL plat data will break HDMI support on Universal.
-
-;
->  		goto fail_vdev;
->  	}
+>  	dev_dbg(dev, "probe start\n");
 >  
-> -	hdmi_dev->phy_sd = v4l2_i2c_new_subdev_board(&hdmi_dev->v4l2_dev,
-> -		adapter, pdata->hdmiphy_info, NULL);
-> -	/* on failure or not adapter is no longer useful */
-> -	i2c_put_adapter(adapter);
-> -	if (hdmi_dev->phy_sd == NULL) {
-> -		dev_err(dev, "missing subdev for hdmiphy\n");
-> -		ret = -ENODEV;
-> -		goto fail_vdev;
-> -	}
-> -
-> -	/* initialization of MHL interface if present */
-> -	if (pdata->mhl_info) {
-> -		adapter = i2c_get_adapter(pdata->mhl_bus);
-> -		if (adapter == NULL) {
-> -			dev_err(dev, "MHL adapter request failed\n");
-> -			ret = -ENXIO;
-> -			goto fail_vdev;
-> -		}
-> -
-> -		hdmi_dev->mhl_sd = v4l2_i2c_new_subdev_board(
-> -			&hdmi_dev->v4l2_dev, adapter,
-> -			pdata->mhl_info, NULL);
-> -		/* on failure or not adapter is no longer useful */
-> -		i2c_put_adapter(adapter);
-> -		if (hdmi_dev->mhl_sd == NULL) {
-> -			dev_err(dev, "missing subdev for MHL\n");
-> -			ret = -ENODEV;
-> -			goto fail_vdev;
-> -		}
-> -	}
-> -
->  	clk_enable(hdmi_dev->res.hdmi);
+> -	if (!pdata) {
+> +	if (!pdata && !dev->of_node) {
+>  		dev_err(dev, "platform data is missing\n");
+>  		ret = -ENODEV;
+>  		goto fail;
+> @@ -1037,6 +1095,13 @@ static int __devexit hdmi_remove(struct platform_device *pdev)
+>  	return 0;
+>  }
 >  
->  	pm_runtime_enable(dev);
+> +#ifdef CONFIG_OF
+> +static struct of_device_id hdmi_dt_match[] = {
+> +	{ .compatible = "samsung,s5pv210-hdmi" },
+> +	{ },
+> +};
+> +#endif
+> +
+>  static struct platform_driver hdmi_driver __refdata = {
+>  	.probe = hdmi_probe,
+>  	.remove = __devexit_p(hdmi_remove),
+> @@ -1045,6 +1110,7 @@ static struct platform_driver hdmi_driver __refdata = {
+>  		.name = "s5p-hdmi",
+>  		.owner = THIS_MODULE,
+>  		.pm = &hdmi_pm_ops,
+> +		.of_match_table = of_match_ptr(hdmi_dt_match),
+>  	}
+>  };
+> 
 
 Regards,
 Tomasz Stanislawski
