@@ -1,39 +1,60 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Increase framebuffer virtual size for origen
-Date: Fri, 13 Apr 2012 16:29:31 +0530
-Message-ID: <1334314771-10928-1-git-send-email-tushar.behera@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH][RESEND] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
+Date: Sat, 14 Apr 2012 08:44:49 -0700
+Message-ID: <4F899B71.1090303@samsung.com>
+References: <201203202120.45806.heiko@sntech.de> <4F6B398A.8040703@samsung.com> <201204121411.55054.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:53603 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S935210Ab2DMLIH (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:58485 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751922Ab2DNPoy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Apr 2012 07:08:07 -0400
-Received: by pbcun15 with SMTP id un15so3511332pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Apr 2012 04:08:07 -0700 (PDT)
+	Sat, 14 Apr 2012 11:44:54 -0400
+Received: by obbta14 with SMTP id ta14so1809598obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Apr 2012 08:44:53 -0700 (PDT)
+In-Reply-To: <201204121411.55054.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>
 
-To support display panning, framebuffer virtual size needs to be increased.
+On 04/12/12 05:11, Heiko St=FCbner wrote:
+> Am Donnerstag, 22. M=E4rz 2012, 15:39:06 schrieb Kukjin Kim:
+>> On 03/20/12 13:20, Heiko St=FCbner wrote:
+>>> From: Maurus Cuelenaere<mcuelenaere@gmail.com>
+>>>
+>>> When selecting SAMSUNG_PM_DEBUG, it complains about a missing
+>>> printascii() function if you do not select DEBUG_LL, so make the fo=
+rmer
+>>> select the latter.
+>>>
+>>> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
+>>> Acked-by: Heiko Stuebner<heiko@sntech.de>
+>>> ---
+>>> This was originally sent in september 2010, but seems to have been
+>>> forgotten. As this problem has bitten me today, here it is again.
+>>
+>> Yeah, missed. Looks good to me and will apply.
+>
+> thanks, but it seems I can't find it in the linux-samsung git current=
+ly.
+>
+> Any news on this?
+>
+Oops, I didn't push :( thanks for your reminder.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos/mach-origen.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+You can see it now :)
 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 878d4c9..4d80212 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -596,6 +596,8 @@ static struct s3c_fb_pd_win origen_fb_win0 = {
- 	},
- 	.max_bpp		= 32,
- 	.default_bpp		= 24,
-+	.virtual_x		= 1024,
-+	.virtual_y		= 2 * 600,
- };
- 
- static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
--- 
-1.7.4.1
+Ah one more note will look at your s3c24xx patches in the beginning of=20
+next week, sorry for late.
+
+Thanks.
+
+Best regards,
+Gene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
