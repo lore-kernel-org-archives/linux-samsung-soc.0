@@ -1,58 +1,43 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/4] ARM: Exynos4: NURI and UniversalC210 fixes for v3.4-rc2
-Date: Sat, 14 Apr 2012 08:50:07 -0700
-Message-ID: <4F899CAF.6080906@samsung.com>
-References: <1333698206-12348-1-git-send-email-m.szyprowski@samsung.com> <4F84686D.60606@samsung.com> <00c101cd17ae$4582f0d0$d088d270$%szyprowski@samsung.com>
+Subject: Re: [PATCH 0/2] Exynos: fix SYSMMU driver to work with power domains
+Date: Sat, 14 Apr 2012 08:51:52 -0700
+Message-ID: <4F899D18.6000700@samsung.com>
+References: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com> <CAHQjnOOGWVcc95F==1__SCH0S-mX8bvRwOr7MhB3Arw=83jZMw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:50586 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:45347 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752720Ab2DNPuL (ORCPT
+	with ESMTP id S1754262Ab2DNPvz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Apr 2012 11:50:11 -0400
-Received: by pbcun15 with SMTP id un15so4700862pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Apr 2012 08:50:11 -0700 (PDT)
-In-Reply-To: <00c101cd17ae$4582f0d0$d088d270$%szyprowski@samsung.com>
+	Sat, 14 Apr 2012 11:51:55 -0400
+Received: by pbcun15 with SMTP id un15so4701823pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Apr 2012 08:51:55 -0700 (PDT)
+In-Reply-To: <CAHQjnOOGWVcc95F==1__SCH0S-mX8bvRwOr7MhB3Arw=83jZMw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: KyongHo Cho <pullip.cho@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-On 04/10/12 23:42, Marek Szyprowski wrote:
-> Hi Kukjin,
+On 04/12/12 01:19, KyongHo Cho wrote:
+> On Wed, Apr 11, 2012 at 11:34 PM, Marek Szyprowski
+> <m.szyprowski@samsung.com>  wrote:
+>> Hi!
+>>
+>> These two patches fixes operation of the SYSMMU driver (v12 version [1])
+>> with the new power domain driver based on generic power domains and
+>> runtime pw, which has been merged to Linux kernel v3.4-rc1.
+>>
+> Thanks, Marek.
 >
-Hi Marek :)
+> Your way of power gating is right
+> and I will look into the changed runtime PM scheme in Exynos tree.
+>
+KyongHo,
 
-> On Tuesday, April 10, 2012 7:06 PM Kukjin Kim wrote:
->
->>> I've just checked the support for Samsung NURI and UniversalC210 boards
->>> in v3.4-rc1 and found some issues. The attached patches fixes the
->>> leftovers from missing s3c-sdhci driver changes, fixes division by
->>> zero caused by missing initial value for xusbxti clock and removes broken
->>> optional configuration entries for touch screen driver. It would be great
->>> if the attached patches will get merged to v3.4-rcX series.
->>>
->> OK, looks good to me, applied.
->
-> Huh, it doesn't look that easy...
->
-> I've just noticed that v3.4-rc2 comes with missing s3c-sdhci driver patches
-> (see commit 1ddca05743525), so you need a bit more work on your fixes branch
-> to get sdhci working again. Please restore patches 'ARM: EXYNOS: use
-> 'exynos4-sdhci' as device name for sdhci controllers' and 'ARM: SAMSUNG:
-> remove all uses of clk_type member in sdhci platform data' as well as the
-> other patches which fixes issues after changing the name of sdhci platform
-> devices from s3c-sdhci to exynos4-sdhci. My patch 'ARM: EXYNOS: fix SDHCI
-> support on NURI and UniversalC210 boards' should be dropped then.
->
-> If you have any problems, let me know, I have them already collected and
-> rebased onto v3.4-rc2, so I can resend an updated version.
->
-
-Thanks for your reminder. I re-worked Thomas' patches you said for it 
-and you can check it in my -next and -fixes-3 and I'm looking at that.
+Do you want to upstream this series with your previous sysmmu (cleanup 
+and moving) patches?
 
 Thanks.
 
