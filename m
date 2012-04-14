@@ -1,60 +1,61 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH][RESEND] ARM: SAMSUNG: make SAMSUNG_PM_DEBUG select DEBUG_LL
-Date: Sat, 14 Apr 2012 08:44:49 -0700
-Message-ID: <4F899B71.1090303@samsung.com>
-References: <201203202120.45806.heiko@sntech.de> <4F6B398A.8040703@samsung.com> <201204121411.55054.heiko@sntech.de>
+Subject: Re: [PATCH] ARM: EXYNOS: Fix Kconfig dependencies for device tree
+ enabled machine files
+Date: Sat, 14 Apr 2012 08:46:40 -0700
+Message-ID: <4F899BE0.9040504@samsung.com>
+References: <1334144964-3282-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:58485 "EHLO
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:59439 "EHLO
 	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751922Ab2DNPoy (ORCPT
+	with ESMTP id S1751922Ab2DNPqn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 14 Apr 2012 11:44:54 -0400
-Received: by obbta14 with SMTP id ta14so1809598obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Apr 2012 08:44:53 -0700 (PDT)
-In-Reply-To: <201204121411.55054.heiko@sntech.de>
+	Sat, 14 Apr 2012 11:46:43 -0400
+Received: by obbta14 with SMTP id ta14so1810867obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 14 Apr 2012 08:46:43 -0700 (PDT)
+In-Reply-To: <1334144964-3282-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Maurus Cuelenaere <mcuelenaere@gmail.com>
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On 04/12/12 05:11, Heiko St=FCbner wrote:
-> Am Donnerstag, 22. M=E4rz 2012, 15:39:06 schrieb Kukjin Kim:
->> On 03/20/12 13:20, Heiko St=FCbner wrote:
->>> From: Maurus Cuelenaere<mcuelenaere@gmail.com>
->>>
->>> When selecting SAMSUNG_PM_DEBUG, it complains about a missing
->>> printascii() function if you do not select DEBUG_LL, so make the fo=
-rmer
->>> select the latter.
->>>
->>> Signed-off-by: Maurus Cuelenaere<mcuelenaere@gmail.com>
->>> Acked-by: Heiko Stuebner<heiko@sntech.de>
->>> ---
->>> This was originally sent in september 2010, but seems to have been
->>> forgotten. As this problem has bitten me today, here it is again.
->>
->> Yeah, missed. Looks good to me and will apply.
+On 04/11/12 04:49, Sachin Kamat wrote:
+> Add config dependency for Exynos4 and Exynos5 device tree enabled machine
+> files on config options ARCH_EXYNOS4 and ARCH_EXYNOS5 respectively.
+> Enabling machine support without proper ARCH support enabled is incorrect.
 >
-> thanks, but it seems I can't find it in the linux-samsung git current=
-ly.
+> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
+> ---
+>   arch/arm/mach-exynos/Kconfig |    2 ++
+>   1 files changed, 2 insertions(+), 0 deletions(-)
 >
-> Any news on this?
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 801c738..2c35fd4 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -370,6 +370,7 @@ comment "Flattened Device Tree based board for EXYNOS SoCs"
 >
-Oops, I didn't push :( thanks for your reminder.
+>   config MACH_EXYNOS4_DT
+>   	bool "Samsung Exynos4 Machine using device tree"
+> +	depends on ARCH_EXYNOS4
+>   	select CPU_EXYNOS4210
+>   	select USE_OF
+>   	select ARM_AMBA
+> @@ -382,6 +383,7 @@ config MACH_EXYNOS4_DT
+>
+>   config MACH_EXYNOS5_DT
+>   	bool "SAMSUNG EXYNOS5 Machine using device tree"
+> +	depends on ARCH_EXYNOS5
+>   	select SOC_EXYNOS5250
+>   	select USE_OF
+>   	select ARM_AMBA
 
-You can see it now :)
-
-Ah one more note will look at your s3c24xx patches in the beginning of=20
-next week, sorry for late.
-
-Thanks.
+Applied, thanks.
 
 Best regards,
-Gene.
+Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
