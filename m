@@ -1,87 +1,77 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH for v3.4-rc3] ARM: Samsung: add missing MMC_CAP2_BROKEN_VOLTAGE
- capability
-Date: Mon, 16 Apr 2012 08:33:45 +0200
-Message-ID: <1334558025-26635-1-git-send-email-m.szyprowski@samsung.com>
+Subject: RE: [PATCH 0/4] ARM: Exynos4: NURI and UniversalC210 fixes for v3.4-rc2
+Date: Mon, 16 Apr 2012 08:39:56 +0200
+Message-ID: <003401cd1b9b$bd602cd0$38208670$%szyprowski@samsung.com>
+References: <1333698206-12348-1-git-send-email-m.szyprowski@samsung.com>
+ <4F84686D.60606@samsung.com>
+ <00c101cd17ae$4582f0d0$d088d270$%szyprowski@samsung.com>
+ <4F899CAF.6080906@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17740 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750845Ab2DPGeD (ORCPT
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:31848 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751338Ab2DPGkF (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Apr 2012 02:34:03 -0400
-Received: from euspt2 ([210.118.77.14]) by mailout4.w1.samsung.com
+	Mon, 16 Apr 2012 02:40:05 -0400
+Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
  (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M2K009AU7KTLD40@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 07:34:06 +0100 (BST)
+ with ESMTP id <0M2K009CW7U2R440@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 07:39:38 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M2K00AG97KLLO@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 07:33:57 +0100 (BST)
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M2K00FB17UQU5@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 07:40:02 +0100 (BST)
+In-reply-to: <4F899CAF.6080906@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Jaehoon Chung <jh80.chung@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Commit 6e8201f57c935 "mmc: core: add the capability for broken voltage"
-introduced a new quirk to indicate that MMC core should ignore voltage
-change errors reported by the regulators core. This is required to get
-SDHCI working on UniversalC210, NURI and GONI boards again after commit
-ceb6143b2df81c ("mmc: sdhci: fix vmmc handling").
+Hi Kukjin,
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/mach-nuri.c           |    1 +
- arch/arm/mach-exynos/mach-universal_c210.c |    1 +
- arch/arm/mach-s5pv210/mach-goni.c          |    2 ++
- 3 files changed, 4 insertions(+), 0 deletions(-)
+On Saturday, April 14, 2012 5:50 PM Kukjin Kim wrote:
 
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 91e5986..021dc68 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -112,6 +112,7 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
- 	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
- 				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
- 				MMC_CAP_ERASE),
-+	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
- 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
- };
- 
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index ef706e9..add55b4 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -747,6 +747,7 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data __initdata = {
- 	.max_width		= 8,
- 	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
- 				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
-+	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
- 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
- };
- 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index a8933de..3239566 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -25,6 +25,7 @@
- #include <linux/gpio_keys.h>
- #include <linux/input.h>
- #include <linux/gpio.h>
-+#include <linux/mmc/host.h>
- #include <linux/interrupt.h>
- 
- #include <asm/hardware/vic.h>
-@@ -765,6 +766,7 @@ static void __init goni_pmic_init(void)
- /* MoviNAND */
- static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
- 	.max_width		= 4,
-+	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
- 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
- };
- 
+> >>> I've just checked the support for Samsung NURI and UniversalC210 boards
+> >>> in v3.4-rc1 and found some issues. The attached patches fixes the
+> >>> leftovers from missing s3c-sdhci driver changes, fixes division by
+> >>> zero caused by missing initial value for xusbxti clock and removes broken
+> >>> optional configuration entries for touch screen driver. It would be great
+> >>> if the attached patches will get merged to v3.4-rcX series.
+> >>>
+> >> OK, looks good to me, applied.
+> >
+> > Huh, it doesn't look that easy...
+> >
+> > I've just noticed that v3.4-rc2 comes with missing s3c-sdhci driver patches
+> > (see commit 1ddca05743525), so you need a bit more work on your fixes branch
+> > to get sdhci working again. Please restore patches 'ARM: EXYNOS: use
+> > 'exynos4-sdhci' as device name for sdhci controllers' and 'ARM: SAMSUNG:
+> > remove all uses of clk_type member in sdhci platform data' as well as the
+> > other patches which fixes issues after changing the name of sdhci platform
+> > devices from s3c-sdhci to exynos4-sdhci. My patch 'ARM: EXYNOS: fix SDHCI
+> > support on NURI and UniversalC210 boards' should be dropped then.
+> >
+> > If you have any problems, let me know, I have them already collected and
+> > rebased onto v3.4-rc2, so I can resend an updated version.
+> 
+> Thanks for your reminder. I re-worked Thomas' patches you said for it
+> and you can check it in my -next and -fixes-3 and I'm looking at that.
+
+Thanks, now it is much better. 
+
+The only missing thing are host_caps2 entry updates, which I've posted a few 
+minutes ago in '[PATCH for v3.4-rc3] ARM: Samsung: add missing 
+MMC_CAP2_BROKEN_VOLTAGE capability' mail.
+
+I would also like to remind that UniversalC210 board requires 'ARM: Exynos4:
+use s5p-timer for UniversalC210 board' bugfix/workaround to work with recent 
+kernels. Any chance to get this patch merged? It has been (re)posted many 
+times since v3.2-rc1 if I remember correctly...
+
+Best regards
 -- 
-1.7.1.569.g6f426
+Marek Szyprowski
+Samsung Poland R&D Center
