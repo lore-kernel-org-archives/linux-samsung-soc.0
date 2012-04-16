@@ -1,77 +1,57 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 0/4] ARM: Exynos4: NURI and UniversalC210 fixes for v3.4-rc2
-Date: Mon, 16 Apr 2012 08:39:56 +0200
-Message-ID: <003401cd1b9b$bd602cd0$38208670$%szyprowski@samsung.com>
-References: <1333698206-12348-1-git-send-email-m.szyprowski@samsung.com>
- <4F84686D.60606@samsung.com>
- <00c101cd17ae$4582f0d0$d088d270$%szyprowski@samsung.com>
- <4F899CAF.6080906@samsung.com>
+From: KyongHo Cho <pullip.cho@samsung.com>
+Subject: Re: [PATCH 0/2] Exynos: fix SYSMMU driver to work with power domains
+Date: Mon, 16 Apr 2012 18:54:55 +0900
+Message-ID: <CAHQjnOOws9imNo-S4prfHdqXjghotFaw_tqi81jNzHVPn8dXLg@mail.gmail.com>
+References: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com>
+	<CAHQjnOOGWVcc95F==1__SCH0S-mX8bvRwOr7MhB3Arw=83jZMw@mail.gmail.com>
+	<4F899D18.6000700@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:31848 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751338Ab2DPGkF (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Apr 2012 02:40:05 -0400
-Received: from euspt1 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M2K009CW7U2R440@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 07:39:38 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M2K00FB17UQU5@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 07:40:02 +0100 (BST)
-In-reply-to: <4F899CAF.6080906@samsung.com>
-Content-language: pl
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:58383 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752011Ab2DPJy4 convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Apr 2012 05:54:56 -0400
+Received: by lahj13 with SMTP id j13so3804994lah.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Apr 2012 02:54:55 -0700 (PDT)
+In-Reply-To: <4F899D18.6000700@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, iommu@lists.linux-foundation.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Hi Kukjin,
+On Sun, Apr 15, 2012 at 12:51 AM, Kukjin Kim <kgene.kim@samsung.com> wr=
+ote:
+> On 04/12/12 01:19, KyongHo Cho wrote:
+>>
+>> On Wed, Apr 11, 2012 at 11:34 PM, Marek Szyprowski
+>> <m.szyprowski@samsung.com> =A0wrote:
+>>>
+>>> Hi!
+>>>
+>>> These two patches fixes operation of the SYSMMU driver (v12 version=
+ [1])
+>>> with the new power domain driver based on generic power domains and
+>>> runtime pw, which has been merged to Linux kernel v3.4-rc1.
+>>>
+>> Thanks, Marek.
+>>
+>> Your way of power gating is right
+>> and I will look into the changed runtime PM scheme in Exynos tree.
+>>
+> KyongHo,
+>
+> Do you want to upstream this series with your previous sysmmu (cleanu=
+p and
+> moving) patches?
+>
 
-On Saturday, April 14, 2012 5:50 PM Kukjin Kim wrote:
+Yes I hope so.
+Marek's patch corrects run-time power management in Exynos4 with System=
+ MMU.
 
-> >>> I've just checked the support for Samsung NURI and UniversalC210 boards
-> >>> in v3.4-rc1 and found some issues. The attached patches fixes the
-> >>> leftovers from missing s3c-sdhci driver changes, fixes division by
-> >>> zero caused by missing initial value for xusbxti clock and removes broken
-> >>> optional configuration entries for touch screen driver. It would be great
-> >>> if the attached patches will get merged to v3.4-rcX series.
-> >>>
-> >> OK, looks good to me, applied.
-> >
-> > Huh, it doesn't look that easy...
-> >
-> > I've just noticed that v3.4-rc2 comes with missing s3c-sdhci driver patches
-> > (see commit 1ddca05743525), so you need a bit more work on your fixes branch
-> > to get sdhci working again. Please restore patches 'ARM: EXYNOS: use
-> > 'exynos4-sdhci' as device name for sdhci controllers' and 'ARM: SAMSUNG:
-> > remove all uses of clk_type member in sdhci platform data' as well as the
-> > other patches which fixes issues after changing the name of sdhci platform
-> > devices from s3c-sdhci to exynos4-sdhci. My patch 'ARM: EXYNOS: fix SDHCI
-> > support on NURI and UniversalC210 boards' should be dropped then.
-> >
-> > If you have any problems, let me know, I have them already collected and
-> > rebased onto v3.4-rc2, so I can resend an updated version.
-> 
-> Thanks for your reminder. I re-worked Thomas' patches you said for it
-> and you can check it in my -next and -fixes-3 and I'm looking at that.
+Thank you.
 
-Thanks, now it is much better. 
-
-The only missing thing are host_caps2 entry updates, which I've posted a few 
-minutes ago in '[PATCH for v3.4-rc3] ARM: Samsung: add missing 
-MMC_CAP2_BROKEN_VOLTAGE capability' mail.
-
-I would also like to remind that UniversalC210 board requires 'ARM: Exynos4:
-use s5p-timer for UniversalC210 board' bugfix/workaround to work with recent 
-kernels. Any chance to get this patch merged? It has been (re)posted many 
-times since v3.2-rc1 if I remember correctly...
-
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+KyongHo
