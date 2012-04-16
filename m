@@ -1,52 +1,59 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
 Subject: Re: [PATCH v4 1/2] mfd: add irq domain support for max8997 interrupts
-Date: Mon, 16 Apr 2012 17:32:24 +0200
-Message-ID: <20120416153224.GF24130@sortiz-mobl>
+Date: Mon, 16 Apr 2012 19:47:39 +0100
+Message-ID: <20120416184739.GG3219@opensource.wolfsonmicro.com>
 References: <1332582590-16382-1-git-send-email-thomas.abraham@linaro.org>
  <1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
- <20120404212257.GE10787@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="1XWsVB21DFCvn2e8"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga14.intel.com ([143.182.124.37]:51500 "EHLO mga14.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753732Ab2DPPXe (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:39144 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751189Ab2DPSrn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Apr 2012 11:23:34 -0400
+	Mon, 16 Apr 2012 14:47:43 -0400
 Content-Disposition: inline
-In-Reply-To: <20120404212257.GE10787@opensource.wolfsonmicro.com>
+In-Reply-To: <1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Hi Mark,
 
-On Wed, Apr 04, 2012 at 10:22:57PM +0100, Mark Brown wrote:
-> On Sat, Mar 24, 2012 at 03:19:49PM +0530, Thomas Abraham wrote:
-> > Add irq domain support for max8997 interrupts. The reverse mapping method
-> > used is linear mapping since the sub-drivers of max8997 such as regulator
-> > and charger drivers can use the max8997 irq_domain to get the linux irq
-> > number for max8997 interrupts. All uses of irq_base in platform data and
-> > max8997 driver private data are removed.
-> 
-> > Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
-> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> 
-> CCing in Samuel for the MFD review - review tends to be faster if you CC
-> maintainers!  Samuel, there's a followup patch for the regulator API
-> which is likely to collide with some API updates so is it OK to merge
-> via regulator if the patch is OK?
-Yes, the patch looks fine, you can merge it through the regulator tree with my
+--1XWsVB21DFCvn2e8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Acked-by: Samuel Ortiz <sameo@linux.intel.com>
+On Sat, Mar 24, 2012 at 03:19:49PM +0530, Thomas Abraham wrote:
+> Add irq domain support for max8997 interrupts. The reverse mapping method
+> used is linear mapping since the sub-drivers of max8997 such as regulator
+> and charger drivers can use the max8997 irq_domain to get the linux irq
+> number for max8997 interrupts. All uses of irq_base in platform data and
+> max8997 driver private data are removed.
 
-if you think that's necessary.
+Applied, thanks.
 
-Cheers,
-Samuel.
+--1XWsVB21DFCvn2e8
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-Intel Open Source Technology Centre
-http://oss.intel.com/
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPjGlEAAoJEBus8iNuMP3dCfQP/2awbnbc3dYnm7DJ/TjQs3HM
+wPtJshUps7WW4FBfl8mHXDPheNhA277rjAPyuGfKPeKEH3CkmuXYHTvimNqkycsR
+FP77REVa5UQmHXPhokRhl7DfzBlXxNdqgOfa1L365cOobWXnGpuLBp1m6/AROKM2
+AVaf4juy1fT/LhisUSYmz1WMCvcNqLb4hfC+CkUSSYLWJmqayrcrnIllFEudMK+1
+ewxrWAkko8YN0NS2psxcN3ijfuffPMXESUV1P+ARek6u10tk+18AkLUJ6ZDKEnC1
+Ff2rgH4/XhGOimxfZUDsPPZNdeGxkw4VvaVtOK55S/e9zWKJ4lxARwYrzRMrx2pt
+QdrjFYZbIxxg5C2VC18fJuIfBA3/WGboeHc6EoeRd3bXMLDgNlaezcvCs4NOkrEF
+EysXY8pKT3VWMmAGabQOTHq20DqCBn5ICmeXpt7S4iJy3fc72xrcH8Vsu0LjSL9c
+sUGj3Gh7Z4ldRltT4bHPoDjdKJ2Vyk6Ki58tLz3e3oxDdUOK1xrc3GJbtYsqV7sM
+o+b42//qzdgT0L0emtLdw+9c1mIXjaWIy04r8qC9/ALDCb4WkeJAvMEmtHe4gcH2
+5sX2ifokwVJvJCvJkWHkRypCcaxkMBN/SKf1bKiXVyx4RdVVZ060FSi7o/Jdq2Ur
+Fpfn01sSvXHu53eDfog+
+=+gaP
+-----END PGP SIGNATURE-----
+
+--1XWsVB21DFCvn2e8--
