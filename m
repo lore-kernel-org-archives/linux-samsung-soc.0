@@ -1,94 +1,56 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 2/2] ARM: Exynos4: update SYSMMU setup code for gen_pd
- power domain driver
-Date: Mon, 16 Apr 2012 12:28:15 +0200
-Message-ID: <009a01cd1bbb$a22c50e0$e684f2a0$%szyprowski@samsung.com>
+From: Subash Patel <subashrp-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/2] Exynos: fix SYSMMU driver to work with power domains
+Date: Mon, 16 Apr 2012 19:05:57 +0530
+Message-ID: <4F8C203D.3000407@gmail.com>
 References: <1334154871-4756-1-git-send-email-m.szyprowski@samsung.com>
- <1334154871-4756-3-git-send-email-m.szyprowski@samsung.com>
- <CAHQjnOMnxFvPGYxpvXTxKRU7aSOEKfcpOaBUnYikNwk=WRevbg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:55713 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752693Ab2DPK2V convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Apr 2012 06:28:21 -0400
-Received: from euspt2 ([210.118.77.13]) by mailout3.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M2K009AQIEJRP70@mailout3.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 11:27:55 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M2K00948IF5DZ@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 16 Apr 2012 11:28:18 +0100 (BST)
-In-reply-to: <CAHQjnOMnxFvPGYxpvXTxKRU7aSOEKfcpOaBUnYikNwk=WRevbg@mail.gmail.com>
-Content-language: pl
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1334154871-4756-1-git-send-email-m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, KyongHo Cho <pullip.cho-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'KyongHo Cho' <pullip.cho@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux-foundation.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-Hi,
+Hello Marek,
 
-On Monday, April 16, 2012 12:10 PM KyongHo Cho wrote:
+I have tested these patches on origen 3.4-rc2 with sysmmu_v12, and they 
+work great ! Thank you for sharing them.
 
-> On Wed, Apr 11, 2012 at 11:34 PM, Marek Szyprowski
-> <m.szyprowski@samsung.com> wrote:
-> > SYSMMU platform devices must be registered before setting up power
-> > domains to let power domain driver to correctly register also SYSMM=
-U
-> > controller devices. This patch also registers SYSMMU controller dev=
-ices
-> > to respective power domains.
-> >
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Acked-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> > =A0arch/arm/mach-exynos/dev-sysmmu.c | =A0 =A06 +++++-
-> > =A0arch/arm/mach-exynos/pm_domains.c | =A0 13 +++++++++++++
-> > =A02 files changed, 18 insertions(+), 1 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/dev-sysmmu.c b/arch/arm/mach-exyn=
-os/dev-sysmmu.c
-> > index c5b1ea3..3544638 100644
-> > --- a/arch/arm/mach-exynos/dev-sysmmu.c
-> > +++ b/arch/arm/mach-exynos/dev-sysmmu.c
-> > @@ -271,4 +271,8 @@ static int __init init_sysmmu_platform_device(v=
-oid)
-> >
-> > =A0 =A0 =A0 =A0return 0;
-> > =A0}
-> > -arch_initcall(init_sysmmu_platform_device);
-> > +/*
-> > + * SYSMMU platform devices must be registered before power domains
-> > + * see pm_domain.c, which use arch_initcall()
-> > + */
-> > +core_initcall(init_sysmmu_platform_device);
-> I don't understand why init_sysmmu_platform_device() must be called b=
-efore
-> exynos4_pm_init_power_domain()?
->=20
-> Other devices also added by an arch_initcall() function which calls
-> mdesc->init_machine().
-> I also was unable to find any reason to add devices before registerin=
-g
-> the devices to pm domain.
+Regards,
+Subash
 
-mdesc->init_machine is called before exynos4_pm_init_power_domain() fro=
-m=20
-arch/arm/mach-exynos/pm_domain.c, although both are started from arch_i=
-nitcall.
-In this case the order of linking defines the order of calls.
-
-exynos4_pm_init_power_domain() calls exynos_pm_add_dev_to_genpd() which=
- in turn
-checks for pdev->dev.bus. All devices which have not been registered ye=
-t on the
-bus are simply skipped.
-
-Best regards
---=20
-Marek Szyprowski
-Samsung Poland R&D Center
+On 04/11/2012 08:04 PM, Marek Szyprowski wrote:
+> Hi!
+>
+> These two patches fixes operation of the SYSMMU driver (v12 version [1])
+> with the new power domain driver based on generic power domains and
+> runtime pw, which has been merged to Linux kernel v3.4-rc1.
+>
+> [1] https://lkml.org/lkml/2012/3/15/51
+>
+> Best regards
+> Marek Szyprowski
+> Samsung Poland R&D Center
+>
+>
+> Patch summary:
+>
+> Marek Szyprowski (2):
+>    iommu/exynos: fix runtime pm support
+>    ARM: Exynos4: update SYSMMU setup code for gen_pd power domain driver
+>
+>   arch/arm/mach-exynos/dev-sysmmu.c |    6 +++++-
+>   arch/arm/mach-exynos/pm_domains.c |   13 +++++++++++++
+>   drivers/iommu/exynos-iommu.c      |   20 ++++++++++++++++++--
+>   3 files changed, 36 insertions(+), 3 deletions(-)
+>
