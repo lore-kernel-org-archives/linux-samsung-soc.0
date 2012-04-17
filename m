@@ -1,108 +1,85 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH 08/12] gpio/samsung: add GPC4 bank instance
-Date: Tue, 17 Apr 2012 15:33:06 +0900
-Message-ID: <CAH9JG2VorCARJie+nrxh13-p0zTkboiRjkyMFpw8Eczb-9V-Bw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 03/12] ARM: Exynos5: Add watchdog timer clock instance
+Date: Tue, 17 Apr 2012 13:42:11 +0530
+Message-ID: <CAJuYYwTLZ8TCkaTFOGB8cS9AXXf_OyTkCysWHoGR4h7C47-JWA@mail.gmail.com>
 References: <1334641595-25301-1-git-send-email-thomas.abraham@linaro.org>
-	<1334641595-25301-9-git-send-email-thomas.abraham@linaro.org>
+	<1334641595-25301-4-git-send-email-thomas.abraham@linaro.org>
+	<CAH9JG2WOUjG=spRGPCcWocLkhMXA7PtmdxLdq87VCez_6L84XA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-iy0-f174.google.com ([209.85.210.174]:55688 "EHLO
-	mail-iy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751267Ab2DQGdG (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:64054 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755188Ab2DQIMM convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Apr 2012 02:33:06 -0400
-Received: by iagz16 with SMTP id z16so8509293iag.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Apr 2012 23:33:06 -0700 (PDT)
-In-Reply-To: <1334641595-25301-9-git-send-email-thomas.abraham@linaro.org>
+	Tue, 17 Apr 2012 04:12:12 -0400
+Received: by vbbff1 with SMTP id ff1so3947939vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Apr 2012 01:12:11 -0700 (PDT)
+In-Reply-To: <CAH9JG2WOUjG=spRGPCcWocLkhMXA7PtmdxLdq87VCez_6L84XA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, Sangsu Park <sangsu4u.park@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On 4/17/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> From: Sangsu Park <sangsu4u.park@samsung.com>
+On 17 April 2012 11:44, Kyungmin Park <kmpark@infradead.org> wrote:
+> On 4/17/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+>> Add watchdog timer clock instance for Exynos5 watchdog controller.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>> =A0arch/arm/mach-exynos/clock-exynos5.c | =A0 =A05 +++++
+>> =A01 files changed, 5 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/clock-exynos5.c
+>> b/arch/arm/mach-exynos/clock-exynos5.c
+>> index ad3bec4..662615d 100644
+>> --- a/arch/arm/mach-exynos/clock-exynos5.c
+>> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+>> @@ -474,6 +474,11 @@ static struct clk exynos5_init_clocks_off[] =3D=
+ {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos5_clk_=
+ip_peris_ctrl,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 20),
+>> =A0 =A0 =A0 }, {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "watchdog",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &exynos5_clk_a=
+clk_66.clk,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos5_clk_ip=
+_peris_ctrl,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 19),
 >
-> Add GPC4 bank instance which is included in rev1 of Exynos5.
+> Hi,
 >
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/include/mach/gpio.h |    9 ++++++---
->  drivers/gpio/gpio-samsung.c              |    8 ++++++++
->  2 files changed, 14 insertions(+), 3 deletions(-)
+> Can you place this in order? It has same "exynos5_clk_ip_peris_ctrl",
+> but located under (1 << 20).
+
+Hi Mr. Park,
+
+At present, there is only one clock gate from the peris register for
+which there is a struct clock instance. This patch adds the watchdog
+timer clock gate right below it and maintains the descending bit
+position order.
+
+Thanks,
+Thomas.
+
 >
-> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h
-> b/arch/arm/mach-exynos/include/mach/gpio.h
-> index d7498af..df5612b 100644
-> --- a/arch/arm/mach-exynos/include/mach/gpio.h
-> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
-> @@ -153,10 +153,11 @@ enum exynos4_gpio_number {
->  #define EXYNOS5_GPIO_B2_NR	(4)
->  #define EXYNOS5_GPIO_B3_NR	(4)
->  #define EXYNOS5_GPIO_C0_NR	(7)
-> -#define EXYNOS5_GPIO_C1_NR	(7)
-> +#define EXYNOS5_GPIO_C1_NR	(4)
->  #define EXYNOS5_GPIO_C2_NR	(7)
->  #define EXYNOS5_GPIO_C3_NR	(7)
-> -#define EXYNOS5_GPIO_D0_NR	(8)
-> +#define EXYNOS5_GPIO_C4_NR	(8)
-> +#define EXYNOS5_GPIO_D0_NR	(4)
->  #define EXYNOS5_GPIO_D1_NR	(8)
->  #define EXYNOS5_GPIO_Y0_NR	(6)
->  #define EXYNOS5_GPIO_Y1_NR	(4)
-> @@ -199,7 +200,8 @@ enum exynos5_gpio_number {
->  	EXYNOS5_GPIO_C1_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C0),
->  	EXYNOS5_GPIO_C2_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C1),
->  	EXYNOS5_GPIO_C3_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C2),
-> -	EXYNOS5_GPIO_D0_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C3),
-> +	EXYNOS5_GPIO_C4_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C3),
-> +	EXYNOS5_GPIO_D0_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C4),
->  	EXYNOS5_GPIO_D1_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_D0),
->  	EXYNOS5_GPIO_Y0_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_D1),
->  	EXYNOS5_GPIO_Y1_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_Y0),
-> @@ -242,6 +244,7 @@ enum exynos5_gpio_number {
->  #define EXYNOS5_GPC1(_nr)	(EXYNOS5_GPIO_C1_START + (_nr))
->  #define EXYNOS5_GPC2(_nr)	(EXYNOS5_GPIO_C2_START + (_nr))
->  #define EXYNOS5_GPC3(_nr)	(EXYNOS5_GPIO_C3_START + (_nr))
-> +#define EXYNOS5_GPC4(_nr)	(EXYNOS5_GPIO_C4_START + (_nr))
->  #define EXYNOS5_GPD0(_nr)	(EXYNOS5_GPIO_D0_START + (_nr))
->  #define EXYNOS5_GPD1(_nr)	(EXYNOS5_GPIO_D1_START + (_nr))
->  #define EXYNOS5_GPY0(_nr)	(EXYNOS5_GPIO_Y0_START + (_nr))
-> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> index 4627787..0153bb9 100644
-> --- a/drivers/gpio/gpio-samsung.c
-> +++ b/drivers/gpio/gpio-samsung.c
-> @@ -2452,6 +2452,12 @@ static struct samsung_gpio_chip exynos5_gpios_1[] = {
->  		},
->  	}, {
->  		.chip	= {
-> +			.base	= EXYNOS5_GPC4(0),
-> +			.ngpio	= EXYNOS5_GPIO_C4_NR,
-> +			.label	= "GPC4",
-> +		},
-> +	}, {
-> +		.chip	= {
->  			.base	= EXYNOS5_GPD0(0),
->  			.ngpio	= EXYNOS5_GPIO_D0_NR,
->  			.label	= "GPD0",
-> @@ -2880,6 +2886,8 @@ static __init int samsung_gpiolib_init(void)
->  		for (i = 0; i < 4; i++, chip++, gpx_base += 0x20)
->  			chip->base = gpx_base;
->
-> +		exynos5_gpios_1[11].base = gpio_base1 + 0x2E0;
-'11' seems dangerous. I think you add comments here and above to know
-'11' meaning.
-> +
->  		chip = exynos5_gpios_1;
->  		nr_chips = ARRAY_SIZE(exynos5_gpios_1);
->
-> --
-> 1.6.6.rc2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+> Thank you,
+> Kyungmin Park
+>> + =A0 =A0 }, {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "hsmmc",
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "exynos4-sdh=
+ci.0",
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &exynos5_clk=
+_aclk_200.clk,
+>> --
+>> 1.6.6.rc2
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-sams=
+ung-soc"
+>> in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+>>
