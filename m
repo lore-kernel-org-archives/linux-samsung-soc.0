@@ -1,116 +1,181 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v4 1/2] mfd: add irq domain support for max8997 interrupts
-Date: Tue, 17 Apr 2012 23:41:51 +0530
-Message-ID: <CAJuYYwRa-_0HWeSuOgAT20dCCDdg=NBruQ9_m28TFZkXMRJhaw@mail.gmail.com>
+Subject: Re: [PATCH v4 2/2] regulator: add device tree support for max8997
+Date: Wed, 18 Apr 2012 00:05:59 +0530
+Message-ID: <CAJuYYwRsHynt6pBHUgk72Z-UjHj3DM=s4pV4dzbb2hTAZOUSAw@mail.gmail.com>
 References: <1332582590-16382-1-git-send-email-thomas.abraham@linaro.org>
-	<1332582590-16382-2-git-send-email-thomas.abraham@linaro.org>
-	<20120330220619.334AC3E054E@localhost>
+	<1332582590-16382-3-git-send-email-thomas.abraham@linaro.org>
+	<4F734460.4060605@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:35969 "EHLO
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:40113 "EHLO
 	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752661Ab2DQSLw convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751674Ab2DQSgA convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Apr 2012 14:11:52 -0400
-Received: by vbbff1 with SMTP id ff1so4371582vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Apr 2012 11:11:51 -0700 (PDT)
-In-Reply-To: <20120330220619.334AC3E054E@localhost>
+	Tue, 17 Apr 2012 14:36:00 -0400
+Received: by vbbff1 with SMTP id ff1so4391842vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Apr 2012 11:35:59 -0700 (PDT)
+In-Reply-To: <4F734460.4060605@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>
-Cc: linux-kernel@vger.kernel.org, k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, Rajendra Nayak <rnayak@ti.com>
 
-On 31 March 2012 03:36, Grant Likely <grant.likely@secretlab.ca> wrote:
-> On Sat, 24 Mar 2012 15:19:49 +0530, Thomas Abraham <thomas.abraham@li=
-naro.org> wrote:
->> Add irq domain support for max8997 interrupts. The reverse mapping m=
-ethod
->> used is linear mapping since the sub-drivers of max8997 such as regu=
-lator
->> and charger drivers can use the max8997 irq_domain to get the linux =
-irq
->> number for max8997 interrupts. All uses of irq_base in platform data=
- and
->> max8997 driver private data are removed.
->>
->> Cc: MyungJoo Ham <myungjoo.ham@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> Acked-by: Grant Likely <grant.likely@secretlab.ca>
->> ---
->> =A0arch/arm/mach-exynos/mach-nuri.c =A0 =A0| =A0 =A04 --
->> =A0arch/arm/mach-exynos/mach-origen.c =A0| =A0 =A01 -
->> =A0drivers/mfd/max8997-irq.c =A0 =A0 =A0 =A0 =A0 | =A0 61 ++++++++++=
-++++++++++--------------
->> =A0drivers/mfd/max8997.c =A0 =A0 =A0 =A0 =A0 =A0 =A0 | =A0 =A01 -
->> =A0include/linux/mfd/max8997-private.h | =A0 =A04 ++-
->> =A0include/linux/mfd/max8997.h =A0 =A0 =A0 =A0 | =A0 =A01 -
->> =A06 files changed, 39 insertions(+), 33 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos=
-/mach-nuri.c
->> index 7ac81ce..b21d85d 100644
->> --- a/arch/arm/mach-exynos/mach-nuri.c
->> +++ b/arch/arm/mach-exynos/mach-nuri.c
->> @@ -1077,12 +1077,8 @@ static struct platform_device nuri_max8903_de=
-vice =3D {
->> =A0static void __init nuri_power_init(void)
->> =A0{
->> =A0 =A0 =A0 int gpio;
->> - =A0 =A0 int irq_base =3D IRQ_GPIO_END + 1;
->> =A0 =A0 =A0 int ta_en =3D 0;
->>
->> - =A0 =A0 nuri_max8997_pdata.irq_base =3D irq_base;
->> - =A0 =A0 irq_base +=3D MAX8997_IRQ_NR;
->> -
->> =A0 =A0 =A0 gpio =3D EXYNOS4_GPX0(7);
->> =A0 =A0 =A0 gpio_request(gpio, "AP_PMIC_IRQ");
->> =A0 =A0 =A0 s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
->> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exyn=
-os/mach-origen.c
->> index 827cb99..d3b2e9d 100644
->> --- a/arch/arm/mach-exynos/mach-origen.c
->> +++ b/arch/arm/mach-exynos/mach-origen.c
->> @@ -424,7 +424,6 @@ static struct max8997_platform_data __initdata o=
-rigen_max8997_pdata =3D {
->> =A0 =A0 =A0 .buck1_gpiodvs =A0=3D false,
->> =A0 =A0 =A0 .buck2_gpiodvs =A0=3D false,
->> =A0 =A0 =A0 .buck5_gpiodvs =A0=3D false,
->> - =A0 =A0 .irq_base =A0 =A0 =A0 =3D IRQ_GPIO_END + 1,
->>
->> =A0 =A0 =A0 .ignore_gpiodvs_side_effect =3D true,
->> =A0 =A0 =A0 .buck125_default_idx =3D 0x0,
->> diff --git a/drivers/mfd/max8997-irq.c b/drivers/mfd/max8997-irq.c
->> index 09274cf..00390a1 100644
->> --- a/drivers/mfd/max8997-irq.c
->> +++ b/drivers/mfd/max8997-irq.c
->> @@ -142,7 +142,8 @@ static void max8997_irq_sync_unlock(struct irq_d=
-ata *data)
->> =A0static const inline struct max8997_irq_data *
->> =A0irq_to_max8997_irq(struct max8997_dev *max8997, int irq)
->> =A0{
->> - =A0 =A0 return &max8997_irqs[irq - max8997->irq_base];
->> + =A0 =A0 struct irq_data *data =3D irq_get_irq_data(irq);
->> + =A0 =A0 return &max8997_irqs[data->hwirq];
->> =A0}
+On 28 March 2012 22:33, Karol Lewandowski <k.lewandowsk@samsung.com> wr=
+ote:
+> On 24.03.2012 10:49, Thomas Abraham wrote:
 >
-> Haha, this is kind of bogus now. =A0There are only two users of this
-> function, and *both* of them already have the irq_data pointer.
-> Instead of this, delete this function entirely and make each caller
-> derefernce max8997_irqs directly:
+> Hi Thomas!
 >
-> =A0 =A0 =A0 =A0const struct max8997_irq_data *irq_data =3D &max8997_i=
-rqs[data->hwirq];
+>> Add device tree based discovery support for max8997.
+> ...
+>> +Regulators: The regulators of max8997 that have to be instantiated =
+should be
+>> +included in a sub-node named 'regulators'. Regulator nodes included=
+ in this
+>> +sub-node should be of the format as below. Note: The 'n' in LDOn an=
+d BUCKn
+>> +represents the LDO or BUCK number as per the datasheet of max8997.
+>> +
+>> + =A0 =A0For LDO's:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 LDOn {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 standard regulator binding=
+s here
+>> + =A0 =A0 =A0 =A0 =A0 =A0 };
+>> +
+>> + =A0 =A0For BUCK's:
+>> + =A0 =A0 =A0 =A0 =A0 =A0 BUCKn {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 standard regulator binding=
+s here
+>> + =A0 =A0 =A0 =A0 =A0 =A0 };
+>> +
 >
-> Otherwise, looks good. =A0After fixing you can add my:
 >
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
+> Small note - driver supports[1] configuring following regulators by
+> using respective DT node names:
+>
+> =A0- EN32KHz_AP
+> =A0- EN32KHz_CP
+> =A0- ENVICHG
+> =A0- ESAFEOUT1
+> =A0- ESAFEOUT2
+> =A0- CHARGER
+> =A0- CHARGER_CV
+> =A0- CHARGER_TOPOFF
+>
+> I wonder if these should be mentioned in documentation too.
+>
+> [1] These are used in e.g. mach-nuri.c
 
-Hi Grant,
+Yes, I missed the above regulators in the documentation. I have
+included them now and will resubmit this patch.
 
-Thanks for the suggestion. I have modified the code accordingly and
-included your ack.
+>
+>> diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997=
+=2Ec> index 9657929..dce8aaf 100644
+>
+>> --- a/drivers/regulator/max8997.c
+>> +++ b/drivers/regulator/max8997.c
+> ..
+>> +static int max8997_pmic_dt_parse_pdata(struct max8997_dev *iodev,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 struct max8997_platform_data *pdata)
+>> +{
+>> + =A0 =A0 struct device_node *pmic_np, *regulators_np, *reg_np;
+>> + =A0 =A0 struct max8997_regulator_data *rdata;
+>> + =A0 =A0 unsigned int i, dvs_voltage_nr =3D 1, ret;
+>> +
+>> + =A0 =A0 pmic_np =3D iodev->dev->of_node;
+>> + =A0 =A0 if (!pmic_np) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(iodev->dev, "could not find pmic s=
+ub-node\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;
+>> + =A0 =A0 }
+>> +
+>> + =A0 =A0 regulators_np =3D of_find_node_by_name(pmic_np, "regulator=
+s");
+>> + =A0 =A0 if (!regulators_np) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(iodev->dev, "could not find regula=
+tors sub-node\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -EINVAL;
+>> + =A0 =A0 }
+>> +
+>> + =A0 =A0 /* count the number of regulators to be supported in pmic =
+*/
+>> + =A0 =A0 pdata->num_regulators =3D 0;
+>> + =A0 =A0 for_each_child_of_node(regulators_np, reg_np)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 pdata->num_regulators++;
+>> +
+>> + =A0 =A0 rdata =3D devm_kzalloc(iodev->dev, sizeof(*rdata) *
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pdata->num=
+_regulators, GFP_KERNEL);
+>> + =A0 =A0 if (!rdata) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dev_err(iodev->dev, "could not allocate me=
+mory for "
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 "regulator data\n");
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return -ENOMEM;
+>> + =A0 =A0 }
+>
+>> + =A0 =A0 pdata->regulators =3D rdata;
+>
+>> + =A0 =A0 for_each_child_of_node(regulators_np, reg_np) {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 for (i =3D 0; i < ARRAY_SIZE(regulators); =
+i++)
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (!of_node_cmp(reg_np->n=
+ame, regulators[i].name))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 break;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 rdata->id =3D i;
+>
+>
+> rdata->id will be equal to ARRAY_SIZE(regulators) when one adds DT no=
+de
+> name (below "regulators") which is different from what can be found i=
+n
+> regulators[] table.
+>
+> On my test machine this results in hard lockup - possibly because
+> something tries to access regulators[ARRAY_SIZE(regulators)]
+> later on.
+>
+> Following patch fixes this on my machine (using DTS with misspelled L=
+DO1 for LDx1):
+>
+> diff --git a/drivers/regulator/max8997.c b/drivers/regulator/max8997.=
+c
+> index dce8aaf..c20fd72 100644
+> --- a/drivers/regulator/max8997.c
+> +++ b/drivers/regulator/max8997.c
+> @@ -1011,6 +1011,13 @@ static int max8997_pmic_dt_parse_pdata(struct =
+max8997_dev *iodev,
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0for (i =3D 0; i < ARRAY_SIZE(regulator=
+s); i++)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (!of_node_cmp(reg_n=
+p->name, regulators[i].name))
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0break;
+> +
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (i =3D=3D ARRAY_SIZE(regulators)) {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_warn(iodev->dev, "d=
+on't know how to configure regulator %s\n",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0reg_=
+np->name);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 continue;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 }
+> +
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0rdata->id =3D i;
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0rdata->initdata =3D of_get_regulator_i=
+nit_data(
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 =A0 =A0 =A0 =A0iodev->dev, reg_np);
+>
+
+Thanks for this fix. I have merged this change into this patch.
 
 Regards,
 Thomas.
+
+>
+> Regards,
+> --
+> Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
