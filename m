@@ -1,78 +1,131 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 03/12] ARM: Exynos5: Add watchdog timer clock instance
-Date: Tue, 17 Apr 2012 13:42:11 +0530
-Message-ID: <CAJuYYwTLZ8TCkaTFOGB8cS9AXXf_OyTkCysWHoGR4h7C47-JWA@mail.gmail.com>
+Subject: Re: [PATCH 06/12] rtc-s3c: Fix breakage introduced by S3C2443/S3C2416 support
+Date: Tue, 17 Apr 2012 13:45:37 +0530
+Message-ID: <CAJuYYwR14_wxBswzkVcObWAEDFqDXyi751gmiHyJNW+rA0JcQQ@mail.gmail.com>
 References: <1334641595-25301-1-git-send-email-thomas.abraham@linaro.org>
-	<1334641595-25301-4-git-send-email-thomas.abraham@linaro.org>
-	<CAH9JG2WOUjG=spRGPCcWocLkhMXA7PtmdxLdq87VCez_6L84XA@mail.gmail.com>
+	<1334641595-25301-7-git-send-email-thomas.abraham@linaro.org>
+	<CAH9JG2V=5v0hp9rcynywcHYnrPUqN0XrS_hOcU-uY=FkNJ0O9g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:64054 "EHLO
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:49144 "EHLO
 	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755188Ab2DQIMM convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1755061Ab2DQIPi convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Apr 2012 04:12:12 -0400
-Received: by vbbff1 with SMTP id ff1so3947939vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Apr 2012 01:12:11 -0700 (PDT)
-In-Reply-To: <CAH9JG2WOUjG=spRGPCcWocLkhMXA7PtmdxLdq87VCez_6L84XA@mail.gmail.com>
+	Tue, 17 Apr 2012 04:15:38 -0400
+Received: by vbbff1 with SMTP id ff1so3949405vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 17 Apr 2012 01:15:38 -0700 (PDT)
+In-Reply-To: <CAH9JG2V=5v0hp9rcynywcHYnrPUqN0XrS_hOcU-uY=FkNJ0O9g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kyungmin Park <kmpark@infradead.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, Heiko Stuebner <heiko@sntech.de>
 
-On 17 April 2012 11:44, Kyungmin Park <kmpark@infradead.org> wrote:
-> On 4/17/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
->> Add watchdog timer clock instance for Exynos5 watchdog controller.
->>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> =A0arch/arm/mach-exynos/clock-exynos5.c | =A0 =A05 +++++
->> =A01 files changed, 5 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/clock-exynos5.c
->> b/arch/arm/mach-exynos/clock-exynos5.c
->> index ad3bec4..662615d 100644
->> --- a/arch/arm/mach-exynos/clock-exynos5.c
->> +++ b/arch/arm/mach-exynos/clock-exynos5.c
->> @@ -474,6 +474,11 @@ static struct clk exynos5_init_clocks_off[] =3D=
- {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos5_clk_=
-ip_peris_ctrl,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 20),
->> =A0 =A0 =A0 }, {
->> + =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "watchdog",
->> + =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &exynos5_clk_a=
-clk_66.clk,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .enable =A0 =A0 =A0 =A0 =3D exynos5_clk_ip=
-_peris_ctrl,
->> + =A0 =A0 =A0 =A0 =A0 =A0 .ctrlbit =A0 =A0 =A0 =A0=3D (1 << 19),
->
+On 17 April 2012 12:00, Kyungmin Park <kmpark@infradead.org> wrote:
 > Hi,
 >
-> Can you place this in order? It has same "exynos5_clk_ip_peris_ctrl",
-> but located under (1 << 20).
+> It's already merged with different patch,
 
-Hi Mr. Park,
-
-At present, there is only one clock gate from the peris register for
-which there is a struct clock instance. This patch adds the watchdog
-timer clock gate right below it and maintains the descending bit
-position order.
+This is a repost of the patch from Heiko Stuebner which would be
+required to fix compilation issue for rtc driver. I think you are
+referring to that patch but it is not merged yet. So I am reposting it
+with this series.
 
 Thanks,
 Thomas.
 
 >
+> #ifdef CONFIG_OF
+> static const struct of_device_id s3c_rtc_dt_match[] =3D {
+> =A0 =A0 =A0 =A0{
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.compatible =3D "samsung,s3c2410-rtc",
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.data =3D &s3c_rtc_drv_data_array[TYPE=
+_S3C2410],
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.compatible =3D "samsung,s3c2416-rtc",
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.data =3D &s3c_rtc_drv_data_array[TYPE=
+_S3C2416],
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.compatible =3D "samsung,s3c2443-rtc",
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.data =3D &s3c_rtc_drv_data_array[TYPE=
+_S3C2443],
+> =A0 =A0 =A0 =A0}, {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.compatible =3D "samsung,s3c6410-rtc",
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0.data =3D &s3c_rtc_drv_data_array[TYPE=
+_S3C64XX],
+> =A0 =A0 =A0 =A0},
+> =A0 =A0 =A0 =A0{},
+> };
+> MODULE_DEVICE_TABLE(of, s3c_rtc_dt_match);
+> #else
+> #define s3c_rtc_dt_match NULL
+> #endif
+>
 > Thank you,
 > Kyungmin Park
->> + =A0 =A0 }, {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .name =A0 =A0 =A0 =A0 =A0 =3D "hsmmc",
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .devname =A0 =A0 =A0 =A0=3D "exynos4-sdh=
-ci.0",
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 .parent =A0 =A0 =A0 =A0 =3D &exynos5_clk=
-_aclk_200.clk,
+>
+> On 4/17/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+>> From: Heiko Stuebner <heiko@sntech.de>
+>>
+>> Commits 7006ee4f (rtc-s3c: make room for more variants in devicetree=
+ block)
+>> and 6c0a2365 (rtc-s3c: add variants for S3C2443 and S3C2416)
+>> introduced build-failures with enabled CONFIG_USE_OF option.
+>>
+>> This patch fixes missing "," in s3c_rtc_dt_match and wrong handling =
+of
+>> the of_device_id.data property.
+>>
+>> Reported-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>> ---
+>> =A0drivers/rtc/rtc-s3c.c | =A0 18 +++++++++---------
+>> =A01 files changed, 9 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/rtc/rtc-s3c.c b/drivers/rtc/rtc-s3c.c
+>> index 9ccea13..c792b6d 100644
+>> --- a/drivers/rtc/rtc-s3c.c
+>> +++ b/drivers/rtc/rtc-s3c.c
+>> @@ -449,7 +449,7 @@ static inline int s3c_rtc_get_driver_data(struct
+>> platform_device *pdev)
+>> =A0 =A0 =A0 if (pdev->dev.of_node) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 const struct of_device_id *match;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 match =3D of_match_node(s3c_rtc_dt_match=
+, pdev->dev.of_node);
+>> - =A0 =A0 =A0 =A0 =A0 =A0 return match->data;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 return (int)match->data;
+>> =A0 =A0 =A0 }
+>> =A0#endif
+>> =A0 =A0 =A0 return platform_get_device_id(pdev)->driver_data;
+>> @@ -667,17 +667,17 @@ static int s3c_rtc_resume(struct platform_devi=
+ce
+>> *pdev)
+>> =A0#ifdef CONFIG_OF
+>> =A0static const struct of_device_id s3c_rtc_dt_match[] =3D {
+>> =A0 =A0 =A0 {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c2410-rtc"
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .data =3D TYPE_S3C2410,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c2410-rtc",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .data =3D (void *)TYPE_S3C2410,
+>> =A0 =A0 =A0 }, {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c2416-rtc"
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .data =3D TYPE_S3C2416,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c2416-rtc",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .data =3D (void *)TYPE_S3C2416,
+>> =A0 =A0 =A0 }, {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c2443-rtc"
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .data =3D TYPE_S3C2443,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c2443-rtc",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .data =3D (void *)TYPE_S3C2443,
+>> =A0 =A0 =A0 }, {
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c6410-rtc"
+>> - =A0 =A0 =A0 =A0 =A0 =A0 .data =3D TYPE_S3C64XX,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .compatible =3D "samsung,s3c6410-rtc",
+>> + =A0 =A0 =A0 =A0 =A0 =A0 .data =3D (void *)TYPE_S3C64XX,
+>> =A0 =A0 =A0 },
+>> =A0 =A0 =A0 {},
+>> =A0};
 >> --
 >> 1.6.6.rc2
 >>
