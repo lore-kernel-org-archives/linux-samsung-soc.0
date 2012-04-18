@@ -1,89 +1,105 @@
-From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 3/3] i2c-s3c2410: Add HDMIPHY quirk for S3C2440
-Date: Wed, 18 Apr 2012 14:11:10 +0200
-Message-ID: <00dd01cd1d5c$57ce7f80$076b7e80$%szyprowski@samsung.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
+Date: Wed, 18 Apr 2012 15:39:45 +0200
+Message-ID: <20120418133945.GA19220@pengutronix.de>
 References: <1332357113-2973-1-git-send-email-k.lewandowsk@samsung.com>
- <1332357113-2973-4-git-send-email-k.lewandowsk@samsung.com>
- <20120417174029.GC22406@pengutronix.de>
+ <1332357113-2973-3-git-send-email-k.lewandowsk@samsung.com>
+ <20120417173136.GB22406@pengutronix.de>
+ <4F8EAB94.7080707@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <20120417174029.GC22406-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Content-language: pl
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Wolfram Sang' <w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F8EAB94.7080707@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: ben-linux@fluff.org, m.szyprowski@samsung.com, thomas.abraham@linaro.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, kyungmin.park@samsung.com, broonie@opensource.wolfsonmicro.com, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <robherring2@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi Wolfram,
 
-On Tuesday, April 17, 2012 7:40 PM Wolfram Sang wrote:
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Wed, Mar 21, 2012 at 08:11:53PM +0100, Karol Lewandowski wrote:
-> > This patch adds support for s3c2440 I2C bus controller dedicated HDMIPHY device on
-> > Exynos4 platform. Some quirks are introduced due to differences between HDMIPHY
-> > and other I2C controllers on Exynos4.  These differences are:
-> > - no GPIOs, HDMIPHY is inside the SoC and the controller is connected
-> >   internally
-> > - due to unknown reason (probably HW bug in HDMIPHY and/or the controller) a
-> >   transfer fails to finish. The controller hangs after sending the last byte,
-> >   the workaround for this bug is resetting the controller after each transfer
-> >
-> > Signed-off-by: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Signed-off-by: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Tested-by: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> > ---
-> >  .../devicetree/bindings/i2c/samsung-i2c.txt        |   11 +++++-
-> >  drivers/i2c/busses/i2c-s3c2410.c                   |   35 ++++++++++++++++++++
-> >  2 files changed, 44 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-> b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-> > index 38832c7..c6670f9 100644
-> > --- a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-> > +++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-> > @@ -10,14 +10,21 @@ Required properties:
-> >      region.
-> >    - interrupts: interrupt number to the cpu.
-> >    - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
-> > -  - gpios: The order of the gpios should be the following: <SDA, SCL>.
-> > -    The gpio specifier depends on the gpio controller.
-> >
-> >  Optional properties:
-> > +  - gpios: The order of the gpios should be the following: <SDA, SCL>.
-> > +    The gpio specifier depends on the gpio controller. Required in all cases
-> > +    except when "samsung,i2c-no-gpio" is also specified.
-> > +  - samsung,i2c-no-gpio: input/output lines of the controller are
-> > +    permanently wired to the respective client, there are no gpio
-> > +    lines that need to be configured to enable this controller
-> 
-> Can't we just skip this property...
+Hi,
 
-All standard s3c-24x0 i2c controllers require gpio lines for proper operation,
-so lack of the gpios property should be considered as an error. However there
-is a special case of internal, embedded i2c controller which has no such gpio 
-lines at all.
+> >> Reorganize driver a bit to better handle device tree-based systems:
+> >>
+> >>  - move machine type to driver's private structure instead of
+> >>    quering platform device variants in runtime
+> >>
+> >>  - replace s3c24xx_i2c_type enum with unsigned int that holds
+> >>    bitmask with revision-specific quirks
+> >>
+> >> Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
+> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >=20
+> > Okay, so this driver needs to the 'data' field from either
+> > platform_device_id or of_device_id and implements a function for that,
+> > namely s3c24xx_get_device_quirks(). Grant, Rob: I'd think there might be
+> > more drivers in need of that, so maybe it makes sense to have a generic
+> > of-helper function?
 
-> >    - samsung,i2c-slave-addr: Slave address in multi-master enviroment. If not
-> >      specified, default value is 0.
-> >    - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
-> >      specified, the default value in Hz is 100000.
-> > +  - samsung,i2c-quirk-hdmiphy: Quirk for HDMI PHY block found on
-> > +    Exynos4 platform - reduce timeout and reset controller after each
-> > +    transfer
-> 
-> ... and this one, if we declare a new compatible-entry for exynos4?
+Please wait one or two days before resending. Maybe Grant or Rob find
+some time to answer this question. (Yeah, we can fix it later if such a
+generic function is introduced somewhen).
 
-It is not strictly related to Exynos4 SoCs. Exynos4 SoC has 8 standard s3c2440 style
-i2c controllers and one additional, internal controller for HDMIPHY, which needs 
-some workarounds in the driver. Maybe the quirk should be named 'broken timeout 
-detection'
+> >> -/* i2c controller state */
+> >> +#ifdef CONFIG_OF
+> >> +static const struct of_device_id s3c24xx_i2c_match[];
+> >> +#endif
+> >=20
+> > Uh, forward declaration with #ifdef. I'd think we should get this simply
+> > to the front.
+>=20
+>=20
+> Ok, as I think it's better to have dt and non-dt definitions together
+> I'll move both of_device_id and platform_device_id to the top.
 
-(snipped)
+Agreed.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+>=20
+> >> +/* Treat S3C2410 as baseline hardware, anything else is supported via=
+ quirks */
+> >> +#define QUIRK_S3C2440		(1 << 0)
+> >=20
+> > Minor: Is it really a quirk being s3c2440? Maybe FLAG_*, dunno.
+>=20
+>=20
+> In first version[1] of this patch I've used TYPEs for device types
+> and FLAGS for quirks. However, I've squashed these into "quirks" after
+> discussion with Mark[2].
+>=20
+> [1] http://permalink.gmane.org/gmane.linux.kernel/1266759
+> [2] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/10255
+
+It's minor, keep the QUIRKs.
+
+> [ I'll also drop above CONFIG_OF ifdef, as of_match_node() seem
+>   to be always defined since v3.2-rc1. ]
+
+Great.
+
+Thanks,
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk+OxCEACgkQD27XaX1/VRsfBACgvFrE7I7yC075t+xwKUfaHfgr
+wvUAn3raIeCytJJ3hQU3BZzR/y7Q/ua2
+=fZFN
+-----END PGP SIGNATURE-----
+
+--G4iJoqBmSsgzjUCe--
