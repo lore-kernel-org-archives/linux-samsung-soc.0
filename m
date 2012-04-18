@@ -1,88 +1,76 @@
 From: Wolfram Sang <w.sang@pengutronix.de>
-Subject: Re: [PATCH 2/3] i2c-s3c2410: Rework device type handling
-Date: Wed, 18 Apr 2012 15:39:45 +0200
-Message-ID: <20120418133945.GA19220@pengutronix.de>
+Subject: Re: [PATCH 3/3] i2c-s3c2410: Add HDMIPHY quirk for S3C2440
+Date: Wed, 18 Apr 2012 15:46:44 +0200
+Message-ID: <20120418134644.GB19220@pengutronix.de>
 References: <1332357113-2973-1-git-send-email-k.lewandowsk@samsung.com>
- <1332357113-2973-3-git-send-email-k.lewandowsk@samsung.com>
- <20120417173136.GB22406@pengutronix.de>
- <4F8EAB94.7080707@samsung.com>
+ <1332357113-2973-4-git-send-email-k.lewandowsk@samsung.com>
+ <20120417174029.GC22406@pengutronix.de>
+ <00dd01cd1d5c$57ce7f80$076b7e80$%szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
+	protocol="application/pgp-signature"; boundary="b5gNqxB1S1yM7hjW"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <4F8EAB94.7080707@samsung.com>
+In-Reply-To: <00dd01cd1d5c$57ce7f80$076b7e80$%szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: ben-linux@fluff.org, m.szyprowski@samsung.com, thomas.abraham@linaro.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, kyungmin.park@samsung.com, broonie@opensource.wolfsonmicro.com, Grant Likely <grant.likely@secretlab.ca>, Rob Herring <robherring2@gmail.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Karol Lewandowski <k.lewandowsk@samsung.com>, ben-linux@fluff.org, thomas.abraham@linaro.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, Tomasz Stanislawski <t.stanislaws@samsung.com>, kyungmin.park@samsung.com, broonie@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
---G4iJoqBmSsgzjUCe
+--b5gNqxB1S1yM7hjW
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
 
-> >> Reorganize driver a bit to better handle device tree-based systems:
-> >>
-> >>  - move machine type to driver's private structure instead of
-> >>    quering platform device variants in runtime
-> >>
-> >>  - replace s3c24xx_i2c_type enum with unsigned int that holds
-> >>    bitmask with revision-specific quirks
-> >>
-> >> Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
-> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > >  Optional properties:
+> > > +  - gpios: The order of the gpios should be the following: <SDA, SCL=
+>.
+> > > +    The gpio specifier depends on the gpio controller. Required in a=
+ll cases
+> > > +    except when "samsung,i2c-no-gpio" is also specified.
+> > > +  - samsung,i2c-no-gpio: input/output lines of the controller are
+> > > +    permanently wired to the respective client, there are no gpio
+> > > +    lines that need to be configured to enable this controller
 > >=20
-> > Okay, so this driver needs to the 'data' field from either
-> > platform_device_id or of_device_id and implements a function for that,
-> > namely s3c24xx_get_device_quirks(). Grant, Rob: I'd think there might be
-> > more drivers in need of that, so maybe it makes sense to have a generic
-> > of-helper function?
-
-Please wait one or two days before resending. Maybe Grant or Rob find
-some time to answer this question. (Yeah, we can fix it later if such a
-generic function is introduced somewhen).
-
-> >> -/* i2c controller state */
-> >> +#ifdef CONFIG_OF
-> >> +static const struct of_device_id s3c24xx_i2c_match[];
-> >> +#endif
+> > Can't we just skip this property...
+>=20
+> All standard s3c-24x0 i2c controllers require gpio lines for proper opera=
+tion,
+> so lack of the gpios property should be considered as an error. However t=
+here
+> is a special case of internal, embedded i2c controller which has no such =
+gpio=20
+> lines at all.
+>=20
+> > >    - samsung,i2c-slave-addr: Slave address in multi-master enviroment=
+=2E If not
+> > >      specified, default value is 0.
+> > >    - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If=
+ not
+> > >      specified, the default value in Hz is 100000.
+> > > +  - samsung,i2c-quirk-hdmiphy: Quirk for HDMI PHY block found on
+> > > +    Exynos4 platform - reduce timeout and reset controller after each
+> > > +    transfer
 > >=20
-> > Uh, forward declaration with #ifdef. I'd think we should get this simply
-> > to the front.
+> > ... and this one, if we declare a new compatible-entry for exynos4?
 >=20
->=20
-> Ok, as I think it's better to have dt and non-dt definitions together
-> I'll move both of_device_id and platform_device_id to the top.
+> It is not strictly related to Exynos4 SoCs. Exynos4 SoC has 8 standard s3=
+c2440 style
+> i2c controllers and one additional, internal controller for HDMIPHY, whic=
+h needs=20
+> some workarounds in the driver. Maybe the quirk should be named 'broken t=
+imeout=20
+> detection'
 
-Agreed.
+I was wondering since you do what I suggested for platform devices already:
 
->=20
-> >> +/* Treat S3C2410 as baseline hardware, anything else is supported via=
- quirks */
-> >> +#define QUIRK_S3C2440		(1 << 0)
-> >=20
-> > Minor: Is it really a quirk being s3c2440? Maybe FLAG_*, dunno.
->=20
->=20
-> In first version[1] of this patch I've used TYPEs for device types
-> and FLAGS for quirks. However, I've squashed these into "quirks" after
-> discussion with Mark[2].
->=20
-> [1] http://permalink.gmane.org/gmane.linux.kernel/1266759
-> [2] http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/10255
++               .name           =3D "s3c2440-hdmiphy-i2c",
++               .driver_data    =3D QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_N=
+O_GPIO,
 
-It's minor, keep the QUIRKs.
-
-> [ I'll also drop above CONFIG_OF ifdef, as of_match_node() seem
->   to be always defined since v3.2-rc1. ]
-
-Great.
-
-Thanks,
+Regards,
 
    Wolfram
 
@@ -90,16 +78,16 @@ Thanks,
 Pengutronix e.K.                           | Wolfram Sang                |
 Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
---G4iJoqBmSsgzjUCe
+--b5gNqxB1S1yM7hjW
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iEYEARECAAYFAk+OxCEACgkQD27XaX1/VRsfBACgvFrE7I7yC075t+xwKUfaHfgr
-wvUAn3raIeCytJJ3hQU3BZzR/y7Q/ua2
-=fZFN
+iEYEARECAAYFAk+OxcQACgkQD27XaX1/VRu4KwCgu1vgcMKKuwN5f0KINk3bpier
+OPUAn3bMe8SobLi5a+rxq/07bMC0WSA3
+=dA0t
 -----END PGP SIGNATURE-----
 
---G4iJoqBmSsgzjUCe--
+--b5gNqxB1S1yM7hjW--
