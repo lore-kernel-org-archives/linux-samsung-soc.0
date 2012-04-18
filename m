@@ -1,66 +1,72 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v4 2/2] regulator: add device tree support for max8997
-Date: Wed, 18 Apr 2012 13:46:58 +0530
-Message-ID: <CAJuYYwSg-VkWe=0PFNj2snX4+_fN7Lc1-YU1xdUvTM9uJvha7A@mail.gmail.com>
-References: <1332582590-16382-1-git-send-email-thomas.abraham@linaro.org>
-	<1332582590-16382-3-git-send-email-thomas.abraham@linaro.org>
-	<4F734460.4060605@samsung.com>
-	<CAJuYYwRsHynt6pBHUgk72Z-UjHj3DM=s4pV4dzbb2hTAZOUSAw@mail.gmail.com>
-	<20120417183829.GW6652@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH v5 0/2] regulator: add irq domain and device tree support for
+ MAX8997
+Date: Wed, 18 Apr 2012 15:01:01 +0530
+Message-ID: <1334741463-25058-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:43668 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751558Ab2DRIQ7 convert rfc822-to-8bit (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:47241 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751251Ab2DRJWW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Apr 2012 04:16:59 -0400
-Received: by vbbff1 with SMTP id ff1so4786813vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 01:16:59 -0700 (PDT)
-In-Reply-To: <20120417183829.GW6652@opensource.wolfsonmicro.com>
+	Wed, 18 Apr 2012 05:22:22 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Karol Lewandowski <k.lewandowsk@samsung.com>, linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, Rajendra Nayak <rnayak@ti.com>
+To: linux-kernel@vger.kernel.org
+Cc: k.lewandowsk@samsung.com, devicetree-discuss@lists.ozlabs.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, myungjoo.ham@samsung.com, kyungmin.park@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Hi Mark,
+Changes since v4:
+- Removed redundant irq_to_max8997_irq function.
+- Fixed the bug in lookup of regulator names
+- Inculded documentation of additional regulators supported.
+- Rebased to Mark's latest 'for-next' branch
 
-On 18 April 2012 00:08, Mark Brown <broonie@opensource.wolfsonmicro.com=
-> wrote:
-> On Wed, Apr 18, 2012 at 12:05:59AM +0530, Thomas Abraham wrote:
->> On 28 March 2012 22:33, Karol Lewandowski <k.lewandowsk@samsung.com>=
- wrote:
->
->> >> + =A0 =A0For BUCK's:
->
-> No 's here, BTW.
+Changes since v3:
+- Fixed all comments from Grant Likely.
+  - In patch 1/2, since linear mapping is used, the handle_nested_irq() is
+    called only for allocated irq's.
+  - In patch 2/2, the incorrect assignment of platform data pointer to
+    dev->platform_data is reworked and fixed.
 
-Ok.
+Changes since v2:
+- Atleast one voltage level has to be specfied for Buck 1/2/5 even if GPIO
+  DVS option is not used (suggested by MyungJoo Ham).
+- Reworked the irq_domain support based the v5 of irq_domain generalization
+  patches.
 
->
->> > =A0- EN32KHz_AP
->> > =A0- EN32KHz_CP
->> > =A0- ENVICHG
->> > =A0- ESAFEOUT1
->> > =A0- ESAFEOUT2
->> > =A0- CHARGER
->> > =A0- CHARGER_CV
->> > =A0- CHARGER_TOPOFF
->
->> > I wonder if these should be mentioned in documentation too.
->
->> Yes, I missed the above regulators in the documentation. I have
->> included them now and will resubmit this patch.
->
-> Please omit the clocks; these are obviously a bodge due to the inabil=
-ity
-> to support clocks off-SoC so we shouldn't be enshrining them in the
-> device tree bindings.
+MAX8997 is a multi-function device which includes support for regulators, rtc,
+battery charger and other sub-blocks. This patchset adds device tree support
+for the pmic (regulators) sub-block.
 
-Thanks for the suggestion. I have removed EN32KHz_AP and EN32KHz_CP
-from the list. The rest are either voltage (fixed) or current
-regulators.
+The first patch adds irq domain support for the interrupts supported by max8997
+mainly for removing the need to pass a irq_base from the platform code. The
+irq_base could not anyway be passed in case of device tree based instantiation.
+The reverse mapping method used is linear since the sub-drivers of max8997 has
+access to the max8997 irq_domain from which the linux irq number can be
+obtained.
 
-Regards,
-Thomas.
+The second patch adds device tree support for max8997. This patch modifies both
+mfd and regulator portions of the max8997 code.
+
+This patchset is based on the following tree.
+http://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git [for-next]
+
+with all patches merged from
+http://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git [for-next]
+http://git.secretlab.ca/git/linux-2.6.git [irqdomain/next]
+
+This patchset has been tested on Origen board.
+
+Thomas Abraham (2):
+  mfd: add irq domain support for max8997 interrupts
+  regulator: add device tree support for max8997
+
+ .../devicetree/bindings/regulator/max8997-pmic.txt |  147 +++++++++++++++++++
+ arch/arm/mach-exynos/mach-nuri.c                   |    4 -
+ arch/arm/mach-exynos/mach-origen.c                 |    1 -
+ drivers/mfd/max8997-irq.c                          |   70 +++++-----
+ drivers/mfd/max8997.c                              |   74 ++++++++++-
+ drivers/regulator/max8997.c                        |  148 +++++++++++++++++++-
+ include/linux/mfd/max8997-private.h                |    5 +-
+ include/linux/mfd/max8997.h                        |    2 +-
+ 8 files changed, 406 insertions(+), 45 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/regulator/max8997-pmic.txt
