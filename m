@@ -1,55 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 12/12] ARM: Exynos5: Update device tree enabled machine
- file
-Date: Wed, 18 Apr 2012 17:23:50 -0700
-Message-ID: <4F8F5B16.7000501@samsung.com>
-References: <1334641595-25301-1-git-send-email-thomas.abraham@linaro.org> <1334641595-25301-13-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH 03/12] ARM: Exynos5: Add watchdog timer clock instance
+Date: Wed, 18 Apr 2012 17:28:44 -0700
+Message-ID: <4F8F5C3C.2050803@samsung.com>
+References: <1334641595-25301-1-git-send-email-thomas.abraham@linaro.org> <1334641595-25301-4-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:50379 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751125Ab2DSAXv (ORCPT
+Received: from mail-pz0-f52.google.com ([209.85.210.52]:33230 "EHLO
+	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751125Ab2DSA2p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Apr 2012 20:23:51 -0400
-Received: by pbcun15 with SMTP id un15so9563076pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 17:23:51 -0700 (PDT)
-In-Reply-To: <1334641595-25301-13-git-send-email-thomas.abraham@linaro.org>
+	Wed, 18 Apr 2012 20:28:45 -0400
+Received: by dake40 with SMTP id e40so10563877dak.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 17:28:45 -0700 (PDT)
+In-Reply-To: <1334641595-25301-4-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
 Thomas Abraham wrote:
-> Add AUXDATA for i2c and MDMA controllers of Exynos5.
+> Add watchdog timer clock instance for Exynos5 watchdog controller.
 > 
 > Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
 > ---
->   arch/arm/mach-exynos/mach-exynos5-dt.c |    7 ++++++-
->   1 files changed, 6 insertions(+), 1 deletions(-)
+>   arch/arm/mach-exynos/clock-exynos5.c |    5 +++++
+>   1 files changed, 5 insertions(+), 0 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 4711c89..8adc061 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -43,9 +43,14 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->   				"exynos4210-uart.2", NULL),
->   	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5_PA_UART3,
->   				"exynos4210-uart.3", NULL),
-> +	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(0),
-> +				"s3c2440-i2c.0", NULL),
-> +	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(1),
-> +				"s3c2440-i2c.1", NULL),
->   	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
->   	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
-> -	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-> +	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA0, "dma-pl330.2", NULL),
-> +	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.3", NULL),
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+> index ad3bec4..662615d 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -474,6 +474,11 @@ static struct clk exynos5_init_clocks_off[] = {
+>   		.enable		= exynos5_clk_ip_peris_ctrl,
+>   		.ctrlbit	= (1<<  20),
+>   	}, {
+> +		.name		= "watchdog",
+> +		.parent		=&exynos5_clk_aclk_66.clk,
+> +		.enable		= exynos5_clk_ip_peris_ctrl,
+> +		.ctrlbit	= (1<<  19),
+> +	}, {
+>   		.name		= "hsmmc",
+>   		.devname	= "exynos4-sdhci.0",
+>   		.parent		=&exynos5_clk_aclk_200.clk,
 
-Probably, you missed my comments on your previous patches. Fixed on rc3.
-
-So just need to update i2c stuff now.
+Looks ok, will apply.
 
 Thanks.
 
