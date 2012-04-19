@@ -1,16 +1,16 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH 3/7] ARM: SAMSUNG: move pm part for common s5p into plat-samsung
-Date: Wed, 18 Apr 2012 19:20:32 -0700
-Message-ID: <1334802036-16768-4-git-send-email-kgene.kim@samsung.com>
+Subject: [PATCH 6/7] ARM: SAMSUNG: move setup code for s5p mfc and mipiphy into plat-samsung
+Date: Wed, 18 Apr 2012 19:20:35 -0700
+Message-ID: <1334802036-16768-7-git-send-email-kgene.kim@samsung.com>
 References: <1334802036-16768-1-git-send-email-kgene.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f52.google.com ([209.85.210.52]:65059 "EHLO
-	mail-pz0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751590Ab2DSC2e (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:54273 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751590Ab2DSC2k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Apr 2012 22:28:34 -0400
-Received: by mail-pz0-f52.google.com with SMTP id e40so10677696dak.11
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 19:28:34 -0700 (PDT)
+	Wed, 18 Apr 2012 22:28:40 -0400
+Received: by mail-pb0-f46.google.com with SMTP id un15so9660204pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 19:28:40 -0700 (PDT)
 In-Reply-To: <1334802036-16768-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,132 +19,125 @@ Cc: Kukjin Kim <kgene.kim@samsung.com>
 
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/plat-s5p/Kconfig                          |   12 ------------
- arch/arm/plat-s5p/Makefile                         |    2 --
- arch/arm/plat-samsung/Kconfig                      |   12 ++++++++++++
+ arch/arm/plat-s5p/Kconfig                          |   10 ----------
+ arch/arm/plat-s5p/Makefile                         |    5 -----
+ arch/arm/plat-samsung/Kconfig                      |   10 ++++++++++
  arch/arm/plat-samsung/Makefile                     |    3 +++
- .../irq-pm.c => plat-samsung/s5p-irq-pm.c}         |    3 +--
- arch/arm/{plat-s5p/pm.c => plat-samsung/s5p-pm.c}  |    3 +--
- .../{plat-s5p/sleep.S => plat-samsung/s5p-sleep.S} |    3 +--
- 7 files changed, 18 insertions(+), 20 deletions(-)
- rename arch/arm/{plat-s5p/irq-pm.c => plat-samsung/s5p-irq-pm.c} (98%)
- rename arch/arm/{plat-s5p/pm.c => plat-samsung/s5p-pm.c} (95%)
- rename arch/arm/{plat-s5p/sleep.S => plat-samsung/s5p-sleep.S} (98%)
+ .../dev-mfc.c => plat-samsung/s5p-dev-mfc.c}       |    4 +---
+ .../arm/{plat-s5p => plat-samsung}/setup-mipiphy.c |    0
+ 6 files changed, 14 insertions(+), 18 deletions(-)
+ rename arch/arm/{plat-s5p/dev-mfc.c => plat-samsung/s5p-dev-mfc.c} (97%)
+ rename arch/arm/{plat-s5p => plat-samsung}/setup-mipiphy.c (100%)
 
 diff --git a/arch/arm/plat-s5p/Kconfig b/arch/arm/plat-s5p/Kconfig
-index efff0a3..8e45c8b 100644
+index 33d9bc8..4ff6d7e 100644
 --- a/arch/arm/plat-s5p/Kconfig
 +++ b/arch/arm/plat-s5p/Kconfig
-@@ -33,18 +33,6 @@ config S5P_DEV_UART
- 	def_bool y
- 	depends on (ARCH_S5P64X0 || ARCH_S5PC100 || ARCH_S5PV210)
+@@ -63,11 +63,6 @@ config S5P_DEV_I2C_HDMIPHY
+ 	help
+ 	  Compile in platform device definitions for I2C HDMIPHY controller
  
--config S5P_PM
+-config S5P_DEV_MFC
 -	bool
 -	help
--	  Common code for power management support on S5P and newer SoCs
--	  Note: Do not select this for S5P6440 and S5P6450.
+-	  Compile in platform device definitions for MFC
 -
--config S5P_SLEEP
--	bool
--	help
--	  Internal config node to apply common S5P sleep management code.
--	  Can be selected by S5P and newer SoCs with similar sleep procedure.
--
- config S5P_DEV_FIMC0
+ config S5P_DEV_ONENAND
  	bool
  	help
+@@ -92,8 +87,3 @@ config S5P_DEV_USB_EHCI
+ 	bool
+ 	help
+ 	  Compile in platform device definition for USB EHCI
+-
+-config S5P_SETUP_MIPIPHY
+-	bool
+-	help
+-	  Compile in common setup code for MIPI-CSIS and MIPI-DSIM devices
 diff --git a/arch/arm/plat-s5p/Makefile b/arch/arm/plat-s5p/Makefile
-index 8701c3c..c81106f 100644
+index 1dc6b1c..884b9a1 100644
 --- a/arch/arm/plat-s5p/Makefile
 +++ b/arch/arm/plat-s5p/Makefile
-@@ -12,8 +12,6 @@ obj-				:=
- 
- # Core files
- 
--obj-$(CONFIG_S5P_PM)		+= pm.o irq-pm.o
--obj-$(CONFIG_S5P_SLEEP)		+= sleep.o
- obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
- 
- # devices
+@@ -9,8 +9,3 @@ obj-y				:=
+ obj-m				:=
+ obj-n				:= dummy.o
+ obj-				:=
+-
+-# devices
+-
+-obj-$(CONFIG_S5P_DEV_MFC)	+= dev-mfc.o
+-obj-$(CONFIG_S5P_SETUP_MIPIPHY)	+= setup-mipiphy.o
 diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 9ae8036..56e6ae7 100644
+index 0f112a7..cfa62e8 100644
 --- a/arch/arm/plat-samsung/Kconfig
 +++ b/arch/arm/plat-samsung/Kconfig
-@@ -372,6 +372,18 @@ config SAMSUNG_WAKEMASK
- 	  and above. This code allows a set of interrupt to wakeup-mask
- 	  mappings. See <plat/wakeup-mask.h>
+@@ -309,6 +309,11 @@ config SAMSUNG_DEV_BACKLIGHT
+ 	help
+ 	  Compile in platform device definition LCD backlight with PWM Timer
  
-+config S5P_PM
++config S5P_DEV_MFC
 +	bool
 +	help
-+	  Common code for power management support on S5P and newer SoCs
-+	  Note: Do not select this for S5P6440 and S5P6450.
++	  Compile in setup memory (init) code for MFC
 +
-+config S5P_SLEEP
+ config S3C24XX_PWM
+ 	bool "PWM device support"
+ 	select HAVE_PWM
+@@ -316,6 +321,11 @@ config S3C24XX_PWM
+ 	  Support for exporting the PWM timer blocks via the pwm device
+ 	  system
+ 
++config S5P_SETUP_MIPIPHY
 +	bool
 +	help
-+	  Internal config node to apply common S5P sleep management code.
-+	  Can be selected by S5P and newer SoCs with similar sleep procedure.
++	  Compile in common setup code for MIPI-CSIS and MIPI-DSIM devices
 +
- comment "Power Domain"
+ # DMA
  
- config SAMSUNG_PD
+ config S3C_DMA
 diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 5b65009..caa6f9a 100644
+index b20047b..860b2db 100644
 --- a/arch/arm/plat-samsung/Makefile
 +++ b/arch/arm/plat-samsung/Makefile
-@@ -51,6 +51,9 @@ obj-$(CONFIG_SAMSUNG_PM_CHECK)	+= pm-check.o
+@@ -36,10 +36,13 @@ obj-y				+= platformdata.o
  
- obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
+ obj-y				+= devs.o
+ obj-y				+= dev-uart.o
++obj-$(CONFIG_S5P_DEV_MFC)	+= s5p-dev-mfc.o
+ obj-$(CONFIG_S5P_DEV_UART)	+= s5p-dev-uart.o
  
-+obj-$(CONFIG_S5P_PM)		+= s5p-pm.o s5p-irq-pm.o
-+obj-$(CONFIG_S5P_SLEEP)		+= s5p-sleep.o
+ obj-$(CONFIG_SAMSUNG_DEV_BACKLIGHT)	+= dev-backlight.o
+ 
++obj-$(CONFIG_S5P_SETUP_MIPIPHY)	+= setup-mipiphy.o
 +
- # PD support
+ # DMA support
  
- obj-$(CONFIG_SAMSUNG_PD)	+= pd.o
-diff --git a/arch/arm/plat-s5p/irq-pm.c b/arch/arm/plat-samsung/s5p-irq-pm.c
-similarity index 98%
-rename from arch/arm/plat-s5p/irq-pm.c
-rename to arch/arm/plat-samsung/s5p-irq-pm.c
-index d1bfeca..7c1e3b7 100644
---- a/arch/arm/plat-s5p/irq-pm.c
-+++ b/arch/arm/plat-samsung/s5p-irq-pm.c
+ obj-$(CONFIG_S3C_DMA)		+= dma.o s3c-dma-ops.o
+diff --git a/arch/arm/plat-s5p/dev-mfc.c b/arch/arm/plat-samsung/s5p-dev-mfc.c
+similarity index 97%
+rename from arch/arm/plat-s5p/dev-mfc.c
+rename to arch/arm/plat-samsung/s5p-dev-mfc.c
+index a30d36b..ad60894 100644
+--- a/arch/arm/plat-s5p/dev-mfc.c
++++ b/arch/arm/plat-samsung/s5p-dev-mfc.c
 @@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-s5p/irq-pm.c
+-/* linux/arch/arm/plat-s5p/dev-mfc.c
 - *
 +/*
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
+  * Copyright (C) 2010-2011 Samsung Electronics Co.Ltd
   *
-diff --git a/arch/arm/plat-s5p/pm.c b/arch/arm/plat-samsung/s5p-pm.c
-similarity index 95%
-rename from arch/arm/plat-s5p/pm.c
-rename to arch/arm/plat-samsung/s5p-pm.c
-index d15dc47..0747468 100644
---- a/arch/arm/plat-s5p/pm.c
-+++ b/arch/arm/plat-samsung/s5p-pm.c
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-s5p/pm.c
-- *
-+/*
-  * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
-diff --git a/arch/arm/plat-s5p/sleep.S b/arch/arm/plat-samsung/s5p-sleep.S
-similarity index 98%
-rename from arch/arm/plat-s5p/sleep.S
-rename to arch/arm/plat-samsung/s5p-sleep.S
-index 006bd01..bdf6dad 100644
---- a/arch/arm/plat-s5p/sleep.S
-+++ b/arch/arm/plat-samsung/s5p-sleep.S
-@@ -1,5 +1,4 @@
--/* linux/arch/arm/plat-s5p/sleep.S
-- *
-+/*
-  * Copyright (c) 2011 Samsung Electronics Co., Ltd.
-  *		http://www.samsung.com
-  *
+  * Base S5P MFC resource and device definitions
+@@ -9,7 +8,6 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+diff --git a/arch/arm/plat-s5p/setup-mipiphy.c b/arch/arm/plat-samsung/setup-mipiphy.c
+similarity index 100%
+rename from arch/arm/plat-s5p/setup-mipiphy.c
+rename to arch/arm/plat-samsung/setup-mipiphy.c
 -- 
 1.7.2.3
