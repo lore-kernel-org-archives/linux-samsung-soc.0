@@ -1,47 +1,43 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH] ARM: SAMSUNG: Should check for IS_ERR(clk) instead of
-	NULL
-Date: Thu, 19 Apr 2012 10:03:25 +0100
-Message-ID: <20120419090325.GC24211@n2100.arm.linux.org.uk>
-References: <1334722134-14545-1-git-send-email-jhbird.choi@samsung.com> <4F8F586C.3020401@samsung.com> <4F8FCC00.10807@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/7] ARM: S5P: moving plat-s5p stuff into plat-samsung
+Date: Thu, 19 Apr 2012 13:23:32 +0000
+Message-ID: <201204191323.32301.arnd@arndb.de>
+References: <1334802036-16768-1-git-send-email-kgene.kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:50923 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751105Ab2DSJDi (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.186]:62577 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751639Ab2DSNXm (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Apr 2012 05:03:38 -0400
-Content-Disposition: inline
-In-Reply-To: <4F8FCC00.10807@samsung.com>
+	Thu, 19 Apr 2012 09:23:42 -0400
+In-Reply-To: <1334802036-16768-1-git-send-email-kgene.kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, jhbird.choi@gmail.com, linux-samsung-soc@vger.kernel.org, Jonghwan Choi <jhbird.choi@samsung.com>, 'linux-arm-kernel' <linux-arm-kernel@lists.infradead.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org
 
-On Thu, Apr 19, 2012 at 10:25:36AM +0200, Sylwester Nawrocki wrote:
-> On 04/19/2012 02:12 AM, Kukjin Kim wrote:
-> >> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> >> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> >> @@ -25,7 +25,7 @@ static inline void arch_wdt_reset(void)
-> >>
-> >>   	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe  */
-> >>
-> >> -	if (s3c2410_wdtclk)
-> >> +	if (!IS_ERR(s3c2410_wdtclk))
-> > 
-> > Yeah, right. BTW don't we need to check NULL here?
+On Thursday 19 April 2012, Kukjin Kim wrote:
+> This patches move plat-s5p stuff into plat-samsung for keep just one
+> plat directory, plat-samsung for Samsung stuff. Actually, it includes
+> small things for common s5p and there is no problem this moving.
+> Of course, I'm working on removing plat-s3c24xx and will be submitted
+> before v3.4 release.
 > 
-> It might make sense to check for NULL as well, but only if it happens
-> that a clock entry is ever added to clkdev with null struct clk_lookup:clk
-> member.
+> NOTE, now the plat-s5p directory which is including Kconfig and dummy
+> Makefile is not removed yet because need to cleanup CONFIG_PLAT_S5P
+> and will be removed soon.
+> 
 
-Not quite the correct answer.  The correct answer is:
+Very nice!
 
-Drivers have no business interpreting anything but IS_ERR() values from
-clk_get() as errors.  Everything else they _MUST_ assume is valid for
-the rest of the clk API.
+Out of curiosity, how far are you planning to take the consolidation
+of the various directories in the end?
+I assume all the s3c24* directories end up getting merged into
+s3c24xx, but what about s3c64xx, s5p64x0, s5pc100 and s5pcv210?
+Are they going to stay separate or do they get merged together
+or with exynos?
 
-The clue: struct clk is an opaque cookie as far as drivers are concerned.
-The only interpretation drivers are allowed to make is that IS_ERR()
-values indicate an error.  Everything else is potentially valid.
+	Arnd
