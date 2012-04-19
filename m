@@ -1,52 +1,34 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: SAMSUNG: Should check for IS_ERR(clk) instead of
- NULL
-Date: Wed, 18 Apr 2012 17:12:28 -0700
-Message-ID: <4F8F586C.3020401@samsung.com>
-References: <1334722134-14545-1-git-send-email-jhbird.choi@samsung.com>
+Subject: Re: [PATCH 01/12] ARM: Exynos: Remove a new bus_type instance for
+ Exynos5
+Date: Wed, 18 Apr 2012 17:15:10 -0700
+Message-ID: <4F8F590E.1000602@samsung.com>
+References: <1334641595-25301-1-git-send-email-thomas.abraham@linaro.org> <1334641595-25301-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:41772 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:51166 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751605Ab2DSAM2 (ORCPT
+	with ESMTP id S1752521Ab2DSAPO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Apr 2012 20:12:28 -0400
-Received: by mail-pb0-f46.google.com with SMTP id un15so9554209pbc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 17:12:28 -0700 (PDT)
-In-Reply-To: <1334722134-14545-1-git-send-email-jhbird.choi@samsung.com>
+	Wed, 18 Apr 2012 20:15:14 -0400
+Received: by pbcun15 with SMTP id un15so9556415pbc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Apr 2012 17:15:13 -0700 (PDT)
+In-Reply-To: <1334641595-25301-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jhbird.choi@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-jhbird.choi@gmail.com wrote:
-> From: Jonghwan Choi<jhbird.choi@samsung.com>
-> 
-> On the error condition clk_get() returns ERR_PTR().
-> 
-> Signed-off-by: Jonghwan Choi<jhbird.choi@samsung.com>
-> ---
->   .../arm/plat-samsung/include/plat/watchdog-reset.h |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> index f19aff1..bc4db9b 100644
-> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
-> @@ -25,7 +25,7 @@ static inline void arch_wdt_reset(void)
-> 
->   	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe  */
-> 
-> -	if (s3c2410_wdtclk)
-> +	if (!IS_ERR(s3c2410_wdtclk))
+Thomas Abraham wrote:
+> A seperate bus_type instance is not required for Exynos5. The existing bus_type
+> instance used with Exynos4 is sufficient for both Exynos4 and Exynos5. This
+> also solves issue of uninitialized usage of exynos4_subsys in Exynos4 power
 
-Yeah, right. BTW don't we need to check NULL here?
-
->   		clk_enable(s3c2410_wdtclk);
-> 
->   	/* put initial values into count and data */
+Yes, could be. BTW could you please check that with Jongpill's PM patch
+for EXYNOS5? If just single bus_type supports EXYNOS4 and EXYNOS5, I'd
+like to change its name to exynos_subsys.
 
 Thanks.
 
@@ -55,3 +37,54 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> management code that is reused for Exynos5 also.
+> 
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+> ---
+>   arch/arm/mach-exynos/common.c |   19 ++-----------------
+>   1 files changed, 2 insertions(+), 17 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index e9e353b..636d5f8 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -557,25 +557,13 @@ struct bus_type exynos4_subsys = {
+>   	.dev_name	= "exynos4-core",
+>   };
+> 
+> -struct bus_type exynos5_subsys = {
+> -	.name		= "exynos5-core",
+> -	.dev_name	= "exynos5-core",
+> -};
+> -
+>   static struct device exynos4_dev = {
+>   	.bus	=&exynos4_subsys,
+>   };
+> 
+> -static struct device exynos5_dev = {
+> -	.bus	=&exynos5_subsys,
+> -};
+> -
+>   static int __init exynos_core_init(void)
+>   {
+> -	if (soc_is_exynos5250())
+> -		return subsys_system_register(&exynos5_subsys, NULL);
+> -	else
+> -		return subsys_system_register(&exynos4_subsys, NULL);
+> +	return subsys_system_register(&exynos4_subsys, NULL);
+>   }
+>   core_initcall(exynos_core_init);
+> 
+> @@ -662,10 +650,7 @@ static int __init exynos_init(void)
+>   {
+>   	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
+> 
+> -	if (soc_is_exynos5250())
+> -		return device_register(&exynos5_dev);
+> -	else
+> -		return device_register(&exynos4_dev);
+> +	return device_register(&exynos4_dev);
+>   }
+> 
+>   /* uart registration process */
