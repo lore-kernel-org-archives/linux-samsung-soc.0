@@ -1,75 +1,31 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: s5p-fimc VIDIOC_STREAMOFF bug
-Date: Sat, 21 Apr 2012 17:22:07 +0200
-Message-ID: <1671013.6k1K925o3Y@flatron>
-References: <6126533.0OoG4qIlQU@flatron> <4F91A9E6.3060402@samsung.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: arch/arm/mach-s3c2410/Kconfig is unsourced
+Date: Sun, 22 Apr 2012 12:21:22 +0200
+Message-ID: <1335090082.1814.27.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:47958 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750829Ab2DUPWW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Apr 2012 11:22:22 -0400
-In-Reply-To: <4F91A9E6.3060402@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>, Russell King <rmk+kernel@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>
 
-Hi Sylwester,
+0) commit 85fd6d63bf2927b9da7ab1b0d46723bfdb13808c ("ARM: S3C2410: move
+mach-s3c2410/* into mach-s3c24xx/") orphaned
+arch/arm/mach-s3c2410/Kconfig: currently nothing sources that file in
+Linus' tree.
 
-Thanks for your response.
+1) I haven't looked in depth at this, but this made S3C2410_PLLTABLE
+disappear from the build system (ie, arch/arm/mach-s3c2410/pll.c is dead
+code now). Moreover, this basically turned both "select S3C2410_CPUFREQ
+if CPU_FREQ_S3C24XX", under "config CPU_S3C2410", and "select
+S3C2410_IOTIMING if S3C2410_CPUFREQ", under "config ARCH_BAST", into
+nops (both in arch/arm/mach-s3c24xx/Kconfig).
 
-On Friday 20 of April 2012 20:24:38 Sylwester Nawrocki wrote:
-> Hi Tomasz,
-> 
-> On 04/19/2012 11:45 PM, Tomasz Figa wrote:
-> > Hi,
-> > 
-> > I have been working on adapting s5p-fimc driver for s3c6410 and
-> > everything seems to be working just fine after some minor changes
-> > (except minor loss of functionality - only codec path is supported,
-> > but for most use cases it does not matter).
-> > 
-> > However I think that I have spotted a bug in capture stop / capture
-> > suspend handling. In fimc_capture_state_cleanup() the
-> > ST_CAPT_SUSPENDED status bit of fimc->state field is being set
-> > regardless of suspend parameter, which confuses the driver that FIMC
-> > is suspended and might not accept buffers into active queue and so
-> > the driver will never start the capture process unless the device
-> > gets closed and reopened (because of the condition checking the
-> > count of active buffers).
-> > 
-> > In my fork for s3c6410 I have moved the set_bit call into
-> > fimc_capture_suspend(), so the bit gets set only when the device gets
-> > suspended. This seems to solve the problem and I do not see any
-> > issues that this could introduce, so it might be a good solution.
-> > 
-> > Let me know if I am wrong in anything I have written.
-> 
-> Your conclusions are correct, there was indeed a bug like that.
-> There is already a patch fixing this [1], but it is going to be available
-> just from v3.4. I'm considering sending it to Greg for inclusion in the
-> stable releases, after it gets upstream.
+2) So to me it seems the move has only been done half: either more
+things needs to be moved or those things can be removed entirely. But
+perhaps arch/arm/mach-s3c2410/Kconfig should just be sourced again.
 
-OK, I must have missed the patch. Good that it has been already noticed and 
-fixed.
 
-> Once I did some preliminary work for the s3c-fimc driver, but dropped
-> this due to lack of time. If you ever decide you want to mainline your
-> work, just send the patches to linux-media@vger.kernel.org (and perhaps
-> also to samsung-soc and ARM Linux) for review.
-
-I am not sure sure if there is any interest for more advanced support of 
-S3C6410 going into mainline, but if such shows up I am ready to cooperate.
-
-> 
-> > Best regards,
-> > Tomasz Figa
-> 
-> [1] http://patchwork.linuxtv.org/patch/10417
-> 
-> 
-> Thanks,
+Paul Bolle
