@@ -1,143 +1,207 @@
-From: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/2] i2c-s3c2410: Add HDMIPHY quirk for S3C2440
-Date: Mon, 23 Apr 2012 18:24:01 +0200
-Message-ID: <1335198241-19344-3-git-send-email-k.lewandowsk@samsung.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: [PATCH 1/2] i2c-s3c2410: Rework device type handling
+Date: Mon, 23 Apr 2012 20:20:33 +0200
+Message-ID: <20120423182033.GB2767@pengutronix.de>
 References: <1335198241-19344-1-git-send-email-k.lewandowsk@samsung.com>
+ <1335198241-19344-2-git-send-email-k.lewandowsk@samsung.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1335198241-19344-1-git-send-email-k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org
-Cc: m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1335198241-19344-2-git-send-email-k.lewandowsk@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: m.szyprowski@samsung.com, ben-linux@fluff.org, thomas.abraham@linaro.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, kyungmin.park@samsung.com, broonie@opensource.wolfsonmicro.com
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch adds support for s3c2440 I2C bus controller dedicated HDMIPHY device on
-Exynos4 platform. Some quirks are introduced due to differences between HDMIPHY
-and other I2C controllers on Exynos4.  These differences are:
-- no GPIOs, HDMIPHY is inside the SoC and the controller is connected
-  internally
-- due to unknown reason (probably HW bug in HDMIPHY and/or the controller) a
-  transfer fails to finish. The controller hangs after sending the last byte,
-  the workaround for this bug is resetting the controller after each transfer
 
-Signed-off-by: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Karol Lewandowski <k.lewandowsk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Tested-by: Tomasz Stanislawski <t.stanislaws-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- .../devicetree/bindings/i2c/samsung-i2c.txt        |    8 ++++--
- drivers/i2c/busses/i2c-s3c2410.c                   |   30 ++++++++++++++++++++
- 2 files changed, 36 insertions(+), 2 deletions(-)
+--5/uDoXvLw7AC5HRs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-index 38832c7..b6cb5a1 100644
---- a/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-+++ b/Documentation/devicetree/bindings/i2c/samsung-i2c.txt
-@@ -6,14 +6,18 @@ Required properties:
-   - compatible: value should be either of the following.
-       (a) "samsung, s3c2410-i2c", for i2c compatible with s3c2410 i2c.
-       (b) "samsung, s3c2440-i2c", for i2c compatible with s3c2440 i2c.
-+      (c) "samsung, s3c2440-hdmiphy-i2c", for s3c2440-like i2c used
-+          inside HDMIPHY block found on several samsung SoCs
-   - reg: physical base address of the controller and length of memory mapped
-     region.
-   - interrupts: interrupt number to the cpu.
-   - samsung,i2c-sda-delay: Delay (in ns) applied to data line (SDA) edges.
--  - gpios: The order of the gpios should be the following: <SDA, SCL>.
--    The gpio specifier depends on the gpio controller.
- 
- Optional properties:
-+  - gpios: The order of the gpios should be the following: <SDA, SCL>.
-+    The gpio specifier depends on the gpio controller. Required in all
-+    cases except for "samsung,s3c2440-hdmiphy-i2c" whose input/output
-+    lines are permanently wired to the respective client
-   - samsung,i2c-slave-addr: Slave address in multi-master enviroment. If not
-     specified, default value is 0.
-   - samsung,i2c-max-bus-freq: Desired frequency in Hz of the bus. If not
-diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-index 23736ff..fa0b134 100644
---- a/drivers/i2c/busses/i2c-s3c2410.c
-+++ b/drivers/i2c/busses/i2c-s3c2410.c
-@@ -46,6 +46,8 @@
- 
- /* Treat S3C2410 as baseline hardware, anything else is supported via quirks */
- #define QUIRK_S3C2440		(1 << 0)
-+#define QUIRK_HDMIPHY		(1 << 1)
-+#define QUIRK_NO_GPIO		(1 << 2)
- 
- /* i2c controller state */
- enum s3c24xx_i2c_state {
-@@ -93,6 +95,9 @@ static struct platform_device_id s3c24xx_driver_ids[] = {
- 	}, {
- 		.name		= "s3c2440-i2c",
- 		.driver_data	= QUIRK_S3C2440,
-+	}, {
-+		.name		= "s3c2440-hdmiphy-i2c",
-+		.driver_data	= QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO,
- 	}, { },
- };
- MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
-@@ -101,6 +106,8 @@ MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
- static const struct of_device_id s3c24xx_i2c_match[] = {
- 	{ .compatible = "samsung,s3c2410-i2c", .data = (void *)0 },
- 	{ .compatible = "samsung,s3c2440-i2c", .data = (void *)QUIRK_S3C2440 },
-+	{ .compatible = "samsung,s3c2440-hdmiphy-i2c",
-+	  .data = (void *)(QUIRK_S3C2440 | QUIRK_HDMIPHY | QUIRK_NO_GPIO) },
- 	{},
- };
- MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
-@@ -483,6 +490,13 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
- 	unsigned long iicstat;
- 	int timeout = 400;
- 
-+	/* the timeout for HDMIPHY is reduced to 10 ms because
-+	 * the hangup is expected to happen, so waiting 400 ms
-+	 * causes only unnecessary system hangup
-+	 */
-+	if (i2c->quirks & QUIRK_HDMIPHY)
-+		timeout = 10;
-+
- 	while (timeout-- > 0) {
- 		iicstat = readl(i2c->regs + S3C2410_IICSTAT);
- 
-@@ -492,6 +506,15 @@ static int s3c24xx_i2c_set_master(struct s3c24xx_i2c *i2c)
- 		msleep(1);
- 	}
- 
-+	/* hang-up of bus dedicated for HDMIPHY occurred, resetting */
-+	if (i2c->quirks & QUIRK_HDMIPHY) {
-+		writel(0, i2c->regs + S3C2410_IICCON);
-+		writel(0, i2c->regs + S3C2410_IICSTAT);
-+		writel(0, i2c->regs + S3C2410_IICDS);
-+
-+		return 0;
-+	}
-+
- 	return -ETIMEDOUT;
- }
- 
-@@ -773,6 +796,9 @@ static int s3c24xx_i2c_parse_dt_gpio(struct s3c24xx_i2c *i2c)
- {
- 	int idx, gpio, ret;
- 
-+	if (i2c->quirks & QUIRK_NO_GPIO)
-+		return 0;
-+
- 	for (idx = 0; idx < 2; idx++) {
- 		gpio = of_get_gpio(i2c->dev->of_node, idx);
- 		if (!gpio_is_valid(gpio)) {
-@@ -797,6 +823,10 @@ free_gpio:
- static void s3c24xx_i2c_dt_gpio_free(struct s3c24xx_i2c *i2c)
- {
- 	unsigned int idx;
-+
-+	if (i2c->quirks & QUIRK_NO_GPIO)
-+		return;
-+
- 	for (idx = 0; idx < 2; idx++)
- 		gpio_free(i2c->gpios[idx]);
- }
--- 
-1.7.9.5
+On Mon, Apr 23, 2012 at 06:24:00PM +0200, Karol Lewandowski wrote:
+> Reorganize driver a bit to better handle device tree-based systems:
+>=20
+>  - move machine type to driver's private structure instead of
+>    quering platform device variants in runtime
+>=20
+>  - replace s3c24xx_i2c_type enum with unsigned int that holds
+>    bitmask with revision-specific quirks
+>=20
+> Signed-off-by: Karol Lewandowski <k.lewandowsk@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  drivers/i2c/busses/i2c-s3c2410.c |   75 +++++++++++++++++---------------=
+------
+>  1 file changed, 34 insertions(+), 41 deletions(-)
+>=20
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3=
+c2410.c
+> index 85e3664..23736ff 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -44,8 +44,10 @@
+>  #include <plat/regs-iic.h>
+>  #include <plat/iic.h>
+> =20
+> -/* i2c controller state */
+> +/* Treat S3C2410 as baseline hardware, anything else is supported via qu=
+irks */
+> +#define QUIRK_S3C2440		(1 << 0)
+> =20
+> +/* i2c controller state */
+>  enum s3c24xx_i2c_state {
+>  	STATE_IDLE,
+>  	STATE_START,
+> @@ -54,14 +56,10 @@ enum s3c24xx_i2c_state {
+>  	STATE_STOP
+>  };
+> =20
+> -enum s3c24xx_i2c_type {
+> -	TYPE_S3C2410,
+> -	TYPE_S3C2440,
+> -};
+> -
+>  struct s3c24xx_i2c {
+>  	spinlock_t		lock;
+>  	wait_queue_head_t	wait;
+> +	unsigned int            quirks;
+>  	unsigned int		suspended:1;
+> =20
+>  	struct i2c_msg		*msg;
+> @@ -88,26 +86,40 @@ struct s3c24xx_i2c {
+>  #endif
+>  };
+> =20
+> -/* default platform data removed, dev should always carry data. */
+> +static struct platform_device_id s3c24xx_driver_ids[] =3D {
+> +	{
+> +		.name		=3D "s3c2410-i2c",
+> +		.driver_data	=3D 0,
+> +	}, {
+> +		.name		=3D "s3c2440-i2c",
+> +		.driver_data	=3D QUIRK_S3C2440,
+> +	}, { },
+> +};
+> +MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id s3c24xx_i2c_match[] =3D {
+> +	{ .compatible =3D "samsung,s3c2410-i2c", .data =3D (void *)0 },
+> +	{ .compatible =3D "samsung,s3c2440-i2c", .data =3D (void *)QUIRK_S3C244=
+0 },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+> +#endif
+> =20
+> -/* s3c24xx_i2c_is2440()
+> +/* s3c24xx_get_device_quirks
+>   *
+> - * return true is this is an s3c2440
+> + * Get controller type either from device tree or platform device varian=
+t.
+>  */
+> =20
+> -static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
+> +static inline unsigned int s3c24xx_get_device_quirks(struct platform_dev=
+ice *pdev)
+>  {
+> -	struct platform_device *pdev =3D to_platform_device(i2c->dev);
+> -	enum s3c24xx_i2c_type type;
+> -
+> -#ifdef CONFIG_OF
+> -	if (i2c->dev->of_node)
+> -		return of_device_is_compatible(i2c->dev->of_node,
+> -				"samsung,s3c2440-i2c");
+> -#endif
+> +	if (pdev->dev.of_node) {
+> +		const struct of_device_id *match;
+> +		match =3D of_match_node(&s3c24xx_i2c_match, pdev->dev.of_node);
+
+I'd appreciate a comment explaining why match can't be NULL here (as to
+my understanding, it can't). Or just check for it, but this way it looks
+a bit fishy and people (hopefully ;)) will ask about it.
+
+> +		return (unsigned int)match->data;
+> +	}
+> =20
+> -	type =3D platform_get_device_id(pdev)->driver_data;
+> -	return type =3D=3D TYPE_S3C2440;
+> +	return platform_get_device_id(pdev)->driver_data;
+>  }
+> =20
+>  /* s3c24xx_i2c_master_complete
+> @@ -676,7 +688,7 @@ static int s3c24xx_i2c_clockrate(struct s3c24xx_i2c *=
+i2c, unsigned int *got)
+> =20
+>  	writel(iiccon, i2c->regs + S3C2410_IICCON);
+> =20
+> -	if (s3c24xx_i2c_is2440(i2c)) {
+> +	if (i2c->quirks & QUIRK_S3C2440) {
+>  		unsigned long sda_delay;
+> =20
+>  		if (pdata->sda_delay) {
+> @@ -906,6 +918,7 @@ static int s3c24xx_i2c_probe(struct platform_device *=
+pdev)
+>  		goto err_noclk;
+>  	}
+> =20
+> +	i2c->quirks =3D s3c24xx_get_device_quirks(pdev);
+>  	if (pdata)
+>  		memcpy(i2c->pdata, pdata, sizeof(*pdata));
+>  	else
+> @@ -1110,26 +1123,6 @@ static const struct dev_pm_ops s3c24xx_i2c_dev_pm_=
+ops =3D {
+> =20
+>  /* device driver for platform bus bits */
+> =20
+> -static struct platform_device_id s3c24xx_driver_ids[] =3D {
+> -	{
+> -		.name		=3D "s3c2410-i2c",
+> -		.driver_data	=3D TYPE_S3C2410,
+> -	}, {
+> -		.name		=3D "s3c2440-i2c",
+> -		.driver_data	=3D TYPE_S3C2440,
+> -	}, { },
+> -};
+> -MODULE_DEVICE_TABLE(platform, s3c24xx_driver_ids);
+> -
+> -#ifdef CONFIG_OF
+> -static const struct of_device_id s3c24xx_i2c_match[] =3D {
+> -	{ .compatible =3D "samsung,s3c2410-i2c" },
+> -	{ .compatible =3D "samsung,s3c2440-i2c" },
+> -	{},
+> -};
+> -MODULE_DEVICE_TABLE(of, s3c24xx_i2c_match);
+> -#endif
+> -
+>  static struct platform_driver s3c24xx_i2c_driver =3D {
+>  	.probe		=3D s3c24xx_i2c_probe,
+>  	.remove		=3D s3c24xx_i2c_remove,
+
+Rest is looking good, second patch, too.
+
+Thanks,
+
+   Wolfram
+
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+
+--5/uDoXvLw7AC5HRs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk+VnXEACgkQD27XaX1/VRvu7wCeJw0RQLM2K411oS1ZUovYgHOy
+J+wAnRYJcozv8W83GhehalFocONFUU0d
+=ZwSd
+-----END PGP SIGNATURE-----
+
+--5/uDoXvLw7AC5HRs--
