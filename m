@@ -1,46 +1,83 @@
-From: victor@ens.cablered.com.mx
-Subject: Hello Dear
-Date: Tue, 24 Apr 2012 16:39:20 +0300
-Message-ID: <5d5c1abd92bb52bfeb61328c53a25878.squirrel@189.214.96.6>
-Reply-To: elisbethereseh14@yahoo.com.ph
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: [PATCH 1/2] i2c-s3c2410: Rework device type handling
+Date: Tue, 24 Apr 2012 16:44:07 +0200
+Message-ID: <20120424144407.GA9007@pengutronix.de>
+References: <1335198241-19344-1-git-send-email-k.lewandowsk@samsung.com>
+ <1335198241-19344-2-git-send-email-k.lewandowsk@samsung.com>
+ <20120423182033.GB2767@pengutronix.de>
+ <4F966711.7080608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from deliver-003.cablemas.com ([200.95.144.83]:61298 "EHLO
-	deliver-003.cablemas.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754144Ab2DXNuQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Apr 2012 09:50:16 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="y0ulUmNC+osPPQO6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <4F966711.7080608@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: m.szyprowski@samsung.com, ben-linux@fluff.org, thomas.abraham@linaro.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, kyungmin.park@samsung.com, broonie@opensource.wolfsonmicro.com, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>
 List-Id: linux-samsung-soc@vger.kernel.org
 
 
-Hello Dear,
+--y0ulUmNC+osPPQO6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-We know that our mail will come to you as a surprise since you do not know
-me and my brother. Please, we are very sorry if we disturb your privacy.It
-is our pleasure to contact you for a business venture which we intend to
-establish in your country under your kind care.
+On Tue, Apr 24, 2012 at 10:40:49AM +0200, Karol Lewandowski wrote:
+> On 23.04.2012 20:20, Wolfram Sang wrote:
+>=20
+> Hi!
+>=20
+> >> -static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
+> >> +static inline unsigned int s3c24xx_get_device_quirks(struct platform_=
+device *pdev)
+> >>  {
+> >> -	struct platform_device *pdev =3D to_platform_device(i2c->dev);
+> >> -	enum s3c24xx_i2c_type type;
+> >> -
+> >> -#ifdef CONFIG_OF
+> >> -	if (i2c->dev->of_node)
+> >> -		return of_device_is_compatible(i2c->dev->of_node,
+> >> -				"samsung,s3c2440-i2c");
+> >> -#endif
+> >> +	if (pdev->dev.of_node) {
+> >> +		const struct of_device_id *match;
+> >> +		match =3D of_match_node(&s3c24xx_i2c_match, pdev->dev.of_node);
+> >=20
+> > I'd appreciate a comment explaining why match can't be NULL here (as to
+> > my understanding, it can't). Or just check for it, but this way it looks
+> > a bit fishy and people (hopefully ;)) will ask about it.
+>=20
+>=20
+> My understanding is that it can't be null for exactly same reason why
+> platform_get_device_id(pdev) can't be null either (see below).
+>=20
+> I.e. prerequisite for this code to be run at all (as it's called from
+> driver's .probe()) is to be already matched against very same match
+> table.
 
-Why we contacted you this way is because of the urgency and pressure which
-we are now facing to find some one to help us. Our Late father before he
-died deposited a huge amount Eight million,Six Hundred Thousand United
-States Dollars (US$8.6Million) in one of the leading bank here in Abidjan
-cote d'Ivoire. I and my younger brother are looking for your help to guide
-us on how this money will be transferred abroad so that we can move out of
-here to continue our education in your country while you take charge of
-the investment with the money.
+Yes, I agree. Yet, this is not obvious and people might try to fix it
+(especially since programs like smatch report it as potentially
+dangerous). Ah, whatever, I could simply apply the fix then :) OK.
 
-We are humbly asking for your godly assistance in these ways, To provide a
-bank account into which this money would be transferred and to serve as a
-guardian of this money since we are Orphans and still very young.
+Regards,
 
-If you can be of an assistance to us,we will be pleased to offer to you
-20% Of the total money.Please,we are waiting for your response urgently so
-that we can discuss more with you.
+   Wolfram
 
-Keep Bless.
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
-Yours Sincerely,
-Ms Elisbeth and Martin Ereseh
+--y0ulUmNC+osPPQO6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iEYEARECAAYFAk+WvDcACgkQD27XaX1/VRtfRwCfWhhvxIvD1njgpI9TcTD9rkO6
+u9YAoKTCSavc1yBC7fSYosfqcBM3L/DE
+=sVaK
+-----END PGP SIGNATURE-----
+
+--y0ulUmNC+osPPQO6--
