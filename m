@@ -1,45 +1,71 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Fix compilation error when CONFIG_OF is not defined
-Date: Tue, 24 Apr 2012 11:36:48 +0530
-Message-ID: <1335247608-28518-1-git-send-email-tushar.behera@linaro.org>
+From: Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: Re: [PATCH 1/2] i2c-s3c2410: Rework device type handling
+Date: Tue, 24 Apr 2012 10:40:49 +0200
+Message-ID: <4F966711.7080608@samsung.com>
+References: <1335198241-19344-1-git-send-email-k.lewandowsk@samsung.com>
+ <1335198241-19344-2-git-send-email-k.lewandowsk@samsung.com>
+ <20120423182033.GB2767@pengutronix.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:38371 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751876Ab2DXGPv (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:64885 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755991Ab2DXIkb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Apr 2012 02:15:51 -0400
-Received: by dadz8 with SMTP id z8so452268dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Apr 2012 23:15:51 -0700 (PDT)
+	Tue, 24 Apr 2012 04:40:31 -0400
+In-reply-to: <20120423182033.GB2767@pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org, Thomas Abraham <thomas.abraham@linaro.org>
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: m.szyprowski@samsung.com, ben-linux@fluff.org, thomas.abraham@linaro.org, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, t.stanislaws@samsung.com, kyungmin.park@samsung.com, broonie@opensource.wolfsonmicro.com, "grant.likely@secretlab.ca" <grant.likely@secretlab.ca>
 
-Fixed following compile time error.
-arch/arm/mach-exynos/common.c: In function 'exynos5_init_irq':
-arch/arm/mach-exynos/common.c:539:2: error: implicit declaration of function 'of_irq_init'
-arch/arm/mach-exynos/common.c:539:14: error: 'exynos4_dt_irq_match' undeclared (first use in this function)
-arch/arm/mach-exynos/common.c:539:14: note: each undeclared identifier is reported only once for each function it appears in
+On 23.04.2012 20:20, Wolfram Sang wrote:
 
-CC: Thomas Abraham <thomas.abraham@linaro.org>
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/mach-exynos/common.c |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Hi!
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 1396c06..42de625 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -536,7 +536,9 @@ void __init exynos5_init_irq(void)
- {
- 	int irq;
- 
-+#ifdef CONFIG_OF
- 	of_irq_init(exynos4_dt_irq_match);
-+#endif
- 
- 	for (irq = 0; irq < EXYNOS5_MAX_COMBINER_NR; irq++) {
- 		combiner_init(irq, (void __iomem *)S5P_VA_COMBINER(irq),
+>> -static inline int s3c24xx_i2c_is2440(struct s3c24xx_i2c *i2c)
+>> +static inline unsigned int s3c24xx_get_device_quirks(struct platform_device *pdev)
+>>  {
+>> -	struct platform_device *pdev = to_platform_device(i2c->dev);
+>> -	enum s3c24xx_i2c_type type;
+>> -
+>> -#ifdef CONFIG_OF
+>> -	if (i2c->dev->of_node)
+>> -		return of_device_is_compatible(i2c->dev->of_node,
+>> -				"samsung,s3c2440-i2c");
+>> -#endif
+>> +	if (pdev->dev.of_node) {
+>> +		const struct of_device_id *match;
+>> +		match = of_match_node(&s3c24xx_i2c_match, pdev->dev.of_node);
+> 
+> I'd appreciate a comment explaining why match can't be NULL here (as to
+> my understanding, it can't). Or just check for it, but this way it looks
+> a bit fishy and people (hopefully ;)) will ask about it.
+
+
+My understanding is that it can't be null for exactly same reason why
+platform_get_device_id(pdev) can't be null either (see below).
+
+I.e. prerequisite for this code to be run at all (as it's called from
+driver's .probe()) is to be already matched against very same match
+table.
+
+As far I can see the only possibility for it to fail is to have
+dev.of_node pointing to device tree node and NOT being instantiated
+from DT description...
+
+>> +		return (unsigned int)match->data;
+>> +	}
+>>  
+>> -	type = platform_get_device_id(pdev)->driver_data;
+>> -	return type == TYPE_S3C2440;
+>> +	return platform_get_device_id(pdev)->driver_data;
+>>  }
+
+
+Regards,
+
 -- 
-1.7.4.1
+
+Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
