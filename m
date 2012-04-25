@@ -1,48 +1,115 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Increase framebuffer virtual size for origen
-Date: Tue, 24 Apr 2012 17:38:33 -0700
-Message-ID: <4F974789.4010602@samsung.com>
-References: <1334314771-10928-1-git-send-email-tushar.behera@linaro.org>
+Subject: Re: [PATCH 1/6] ARM: S3C24XX: Add forgotten clock lookup table to
+ S3C2443
+Date: Tue, 24 Apr 2012 18:36:41 -0700
+Message-ID: <4F975529.8030203@samsung.com>
+References: <201203121959.32966.heiko@sntech.de> <201203122000.31216.heiko@sntech.de> <4F7A153A.5070701@samsung.com> <201204030037.07993.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=EUC-KR
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:49205 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753626Ab2DYAih (ORCPT
+Received: from mail-pz0-f51.google.com ([209.85.210.51]:56827 "EHLO
+	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757303Ab2DYBgp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Apr 2012 20:38:37 -0400
-Received: by pbbro12 with SMTP id ro12so752060pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 17:38:37 -0700 (PDT)
-In-Reply-To: <1334314771-10928-1-git-send-email-tushar.behera@linaro.org>
+	Tue, 24 Apr 2012 21:36:45 -0400
+Received: by mail-pz0-f51.google.com with SMTP id z8so1643378dad.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 18:36:45 -0700 (PDT)
+In-Reply-To: <201204030037.07993.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Tushar Behera wrote:
-> To support display panning, framebuffer virtual size needs to be increased.
-> 
-> Signed-off-by: Tushar Behera<tushar.behera@linaro.org>
-> ---
->   arch/arm/mach-exynos/mach-origen.c |    2 ++
->   1 files changed, 2 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-> index 878d4c9..4d80212 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -596,6 +596,8 @@ static struct s3c_fb_pd_win origen_fb_win0 = {
->   	},
->   	.max_bpp		= 32,
->   	.default_bpp		= 24,
-> +	.virtual_x		= 1024,
-> +	.virtual_y		= 2 * 600,
->   };
-> 
->   static struct s3c_fb_platdata origen_lcd_pdata __initdata = {
+Heiko St=FCbner wrote:
+> Am Montag 02 April 2012, 23:08:10 schrieb Kukjin Kim:
+>> Heiko St=FCbner wrote:
+>>> When the hsmmc clock lookup was changed to be lookup tables based,
+>>> it seems the S3C2443 was forgotten.
+>>>
+>>> As subsequent patches will want to add more lookups to it, this
+>>> patch adds the base table with the missing hsmmc lookup.
+>>>
+>>> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
+>>> ---
+>>>
+>>>    arch/arm/mach-s3c24xx/clock-s3c2443.c |    5 +++++
+>>>    1 files changed, 5 insertions(+), 0 deletions(-)
+>>>
+>>> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>>> b/arch/arm/mach-s3c24xx/clock-s3c2443.c index efb3ac3..bce1cd3 1006=
+44
+>>> --- a/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>>> +++ b/arch/arm/mach-s3c24xx/clock-s3c2443.c
+>>> @@ -179,6 +179,10 @@ static struct clk *clks[] __initdata =3D {
+>>>
+>>>    	&clk_hsmmc,
+>>>
+>>>    };
+>>>
+>>> +static struct clk_lookup s3c2443_clk_lookup[] =3D {
+>>> +	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2",&clk_hsmmc),
+>>> +};
+>>> +
+>>>
+>>>    void __init s3c2443_init_clocks(int xtal)
+>>>    {
+>>>
+>>>    	unsigned long epllcon =3D __raw_readl(S3C2443_EPLLCON);
+>>>
+>>> @@ -210,6 +214,7 @@ void __init s3c2443_init_clocks(int xtal)
+>>>
+>>>    	s3c_register_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off=
+));
+>>>    	s3c_disable_clocks(init_clocks_off, ARRAY_SIZE(init_clocks_off)=
+);
+>>>
+>>> +	clkdev_add_table(s3c2443_clk_lookup, ARRAY_SIZE(s3c2443_clk_looku=
+p));
+>>>
+>>>    	s3c_pwmclk_init();
+>>>
+>>>    }
+>>
+>> Uhm..how about mach-s3c24xx/common-s3c2443.c?
+>
+> Nope. This clock is really specific to only the s3c2443. There is onl=
+y one
+> hsmmc clock that is identical on both the s3c2443 and s3c2416/2450 an=
+d this
+> one already is in common-s3c2443.c .
+>
+OK, you're right, I forgot s3c2443_common_init_clocks() is for s3c2416=20
+and s3c2443 :-)
 
-OK, will apply
+> common-s3c2443.c was meant for stuff common to s3c2443 _and newer_, i=
+=2Ee.
+> common clocks and so on.
+>
+>> I think, we need to sort out some files in mach-s3c24xx/ and some
+>> remained mach-s3c24.. directories, actually, as you know, we didn't =
+have
+>> much time to do it last time :)
+>
+> yeah, we did cut it quite close :-), but it also doesn't seem to have=
+ produced
+> much fall-out. I moved my s3c2416 based development code to 3.4-rc1 w=
+ithout
+> major hickups.
+>
+> Getting rid of the remaining mach-directories and also the plat-s3c24=
+xx would
+> be good. But I'm not sure what you would want to change in mach-s3c24=
+xx
+> directory itself.
+>
+> I don't know the earlier SoCs, but the s3c2443 and s3c2416/2450 SoCs =
+currently
+> don't have redundancies and in the current layout it's quite easy to
+> understand what belongs to which SoC.
+>
+Hmm...I'm sorting that out and if any updates, let you know.
 
 Thanks.
 
