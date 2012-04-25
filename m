@@ -1,59 +1,109 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 26/33] ARM: S3C64XX: mach-crag6410: Use common macro to
- define resources
-Date: Wed, 25 Apr 2012 09:24:54 +0100
-Message-ID: <20120425082454.GF3195@opensource.wolfsonmicro.com>
-References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
- <1335327163-11794-27-git-send-email-tushar.behera@linaro.org>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 06/33] ARM: S3C24XX: dev-uart: Use common macro to define resources
+Date: Wed, 25 Apr 2012 11:13:26 +0200
+Message-ID: <201204251113.26333.heiko@sntech.de>
+References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org> <1335327163-11794-7-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="4VrXvz3cwkc87Wze"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60565 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755173Ab2DYIY4 (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:50089 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754619Ab2DYJNf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 04:24:56 -0400
-Content-Disposition: inline
-In-Reply-To: <1335327163-11794-27-git-send-email-tushar.behera@linaro.org>
+	Wed, 25 Apr 2012 05:13:35 -0400
+In-Reply-To: <1335327163-11794-7-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, Ben Dooks <ben-linux@fluff.org>, patches@linaro.org
 
-
---4VrXvz3cwkc87Wze
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Apr 25, 2012 at 09:42:36AM +0530, Tushar Behera wrote:
-> CC: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Am Mittwoch, 25. April 2012, 06:12:16 schrieb Tushar Behera:
 > CC: Ben Dooks <ben-linux@fluff.org>
 > CC: Kukjin Kim <kgene.kim@samsung.com>
 > Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 
-Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
---4VrXvz3cwkc87Wze
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPl7TPAAoJEBus8iNuMP3d8ksP/1dS6hOdFrjjPdyrBc/qjLeS
-FXJbr2KwZoiOkbysNxVY4560R9T141IGVxNYgt+0HDCMWnqavf4LW5GUHqEjmKR3
-eY6g7J61EJ1ocU1yJ7QPXZBAS7Bq80TGp+5t5pVRgK3dR98yOewbbAMXAwgJIwCO
-kD3z72mgVpFhbVQ50b00Lq5PQ4RlH2No6D4rZog8RwUgjPZEb68Lo2U1u7DDjm3n
-6wLZiR0AkvSw7Lig1E2EEP1IswmfrGWy4vsqE8LF1VyS7pum7JiSTbVHwOa6L8zb
-jADoCP6yGnCtbyCheeflZzWep4Mt7FNvenaa04t1t31wHKaKCcYSTaK6bL9lU1ys
-0VpW3AGdslNWo4bsnlmpHngSEIySi5YIFFiHCgvO6hg/eh2G3jBzpBsjo1pi3XhR
-lfAVbuD+tDisCNEHnEKO0E1MFc2pow73b16p/HtSlKp+/Y4hcB3z4GPpysrIm1y+
-xNwADP8xlYQ4QEF5sNfst5VTFrUwEu3B96NNuzTi40gY+AymXERCr+wmMnhkb1CU
-3N3t5rPeeTHk5YQW5JBNB+/IMBp8ScDB02SpmhB/cNPJsKE4tykwfLYjDRqzewFJ
-t0dZWrHjeDSl9+/3MXG75r1LV0hSw1Of79jd6AdQjt0T1Sv8BFddZrAW6xilpAgf
-gevOkBaA6bOu8BICsoX/
-=y84M
------END PGP SIGNATURE-----
-
---4VrXvz3cwkc87Wze--
+> ---
+>  arch/arm/plat-s3c24xx/dev-uart.c |   56
+> +++++++++++--------------------------- 1 files changed, 16 insertions(+),
+> 40 deletions(-)
+> 
+> diff --git a/arch/arm/plat-s3c24xx/dev-uart.c
+> b/arch/arm/plat-s3c24xx/dev-uart.c index 9ab22e6..d779216 100644
+> --- a/arch/arm/plat-s3c24xx/dev-uart.c
+> +++ b/arch/arm/plat-s3c24xx/dev-uart.c
+> @@ -29,55 +29,31 @@
+>  /* Serial port registrations */
+> 
+>  static struct resource s3c2410_uart0_resource[] = {
+> -	[0] = {
+> -		.start = S3C2410_PA_UART0,
+> -		.end   = S3C2410_PA_UART0 + 0x3fff,
+> -		.flags = IORESOURCE_MEM,
+> -	},
+> -	[1] = {
+> -		.start = IRQ_S3CUART_RX0,
+> -		.end   = IRQ_S3CUART_ERR0,
+> -		.flags = IORESOURCE_IRQ,
+> -	}
+> +	[0] = DEFINE_RES_MEM(S3C2410_PA_UART0, SZ_16K),
+> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX0, \
+> +			IRQ_S3CUART_ERR0 - IRQ_S3CUART_RX0 + 1, \
+> +			NULL, IORESOURCE_IRQ)
+>  };
+> 
+>  static struct resource s3c2410_uart1_resource[] = {
+> -	[0] = {
+> -		.start = S3C2410_PA_UART1,
+> -		.end   = S3C2410_PA_UART1 + 0x3fff,
+> -		.flags = IORESOURCE_MEM,
+> -	},
+> -	[1] = {
+> -		.start = IRQ_S3CUART_RX1,
+> -		.end   = IRQ_S3CUART_ERR1,
+> -		.flags = IORESOURCE_IRQ,
+> -	}
+> +	[0] = DEFINE_RES_MEM(S3C2410_PA_UART1, SZ_16K),
+> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX1, \
+> +			IRQ_S3CUART_ERR1 - IRQ_S3CUART_RX1 + 1, \
+> +			NULL, IORESOURCE_IRQ)
+>  };
+> 
+>  static struct resource s3c2410_uart2_resource[] = {
+> -	[0] = {
+> -		.start = S3C2410_PA_UART2,
+> -		.end   = S3C2410_PA_UART2 + 0x3fff,
+> -		.flags = IORESOURCE_MEM,
+> -	},
+> -	[1] = {
+> -		.start = IRQ_S3CUART_RX2,
+> -		.end   = IRQ_S3CUART_ERR2,
+> -		.flags = IORESOURCE_IRQ,
+> -	}
+> +	[0] = DEFINE_RES_MEM(S3C2410_PA_UART2, SZ_16K),
+> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX2, \
+> +			IRQ_S3CUART_ERR2 - IRQ_S3CUART_RX2 + 1, \
+> +			NULL, IORESOURCE_IRQ)
+>  };
+> 
+>  static struct resource s3c2410_uart3_resource[] = {
+> -	[0] = {
+> -		.start = S3C2443_PA_UART3,
+> -		.end   = S3C2443_PA_UART3 + 0x3fff,
+> -		.flags = IORESOURCE_MEM,
+> -	},
+> -	[1] = {
+> -		.start = IRQ_S3CUART_RX3,
+> -		.end   = IRQ_S3CUART_ERR3,
+> -		.flags = IORESOURCE_IRQ,
+> -	},
+> +	[0] = DEFINE_RES_MEM(S3C2443_PA_UART3, SZ_16K),
+> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX3, \
+> +			IRQ_S3CUART_ERR3 - IRQ_S3CUART_RX3 + 1, \
+> +			NULL, IORESOURCE_IRQ)
+>  };
+> 
+>  struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
