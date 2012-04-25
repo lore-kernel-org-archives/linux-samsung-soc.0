@@ -1,135 +1,279 @@
-From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [PATCH] ARM: exynos: Adapt to cpuidle core time keeping and irq enable
-Date: Wed, 25 Apr 2012 17:41:52 +0530
-Message-ID: <1335355912-26063-1-git-send-email-amit.kachhap@linaro.org>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] ARM: S3C24XX: add support for second irq set of S3C2416
+Date: Wed, 25 Apr 2012 15:11:25 +0200
+Message-ID: <201204251511.26072.heiko@sntech.de>
+References: <201203032219.45813.heiko@sntech.de> <201204022128.10321.heiko@sntech.de>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:55431 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754346Ab2DYMMM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 08:12:12 -0400
-Received: by dadz8 with SMTP id z8so13215dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Apr 2012 05:12:11 -0700 (PDT)
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:50887 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751325Ab2DYNQo convert rfc822-to-8bit
+	(ORCPT <rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Apr 2012 09:16:44 -0400
+In-Reply-To: <201204022128.10321.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linaro-dev@lists.linaro.org, amit.kachhap@linaro.org, patches@linaro.org, Daniel Lezcano <daniel.lezcano@linaro.org>, Robert Lee <rob.lee@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-This patch enables core cpuidle timekeeping and irq enabling and
-remove those redundant parts from the exynos cpuidle drivers
+Am Montag, 2. April 2012, 21:28:09 schrieb Heiko St=FCbner:
+> Am Samstag 03 M=E4rz 2012, 22:19:45 schrieb Heiko St=FCbner:
+> > The S3C2416 has a separate second interrupt register-set to support
+> > additional irqs. This patch adds the necessary constants and regist=
+ers
+> > the irq handlers for it.
+> >=20
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>=20
+> and also "ping" :-)
 
-CC: Daniel Lezcano <daniel.lezcano@linaro.org>
-CC: Robert Lee <rob.lee@linaro.org>
-Signed-off-by: Amit Daniel <amit.kachhap@linaro.org>
----
- arch/arm/mach-exynos/cpuidle.c |   53 ++++-----------------------------------
- 1 files changed, 6 insertions(+), 47 deletions(-)
+and another one :-)
 
-diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
-index 33ab4e7..26dac28 100644
---- a/arch/arm/mach-exynos/cpuidle.c
-+++ b/arch/arm/mach-exynos/cpuidle.c
-@@ -20,6 +20,7 @@
- #include <asm/smp_scu.h>
- #include <asm/suspend.h>
- #include <asm/unified.h>
-+#include <asm/cpuidle.h>
- #include <mach/regs-pmu.h>
- #include <mach/pmu.h>
- 
-@@ -34,22 +35,12 @@
- 
- #define S5P_CHECK_AFTR		0xFCBA0D10
- 
--static int exynos4_enter_idle(struct cpuidle_device *dev,
--			struct cpuidle_driver *drv,
--			      int index);
- static int exynos4_enter_lowpower(struct cpuidle_device *dev,
- 				struct cpuidle_driver *drv,
- 				int index);
- 
- static struct cpuidle_state exynos4_cpuidle_set[] __initdata = {
--	[0] = {
--		.enter			= exynos4_enter_idle,
--		.exit_latency		= 1,
--		.target_residency	= 100000,
--		.flags			= CPUIDLE_FLAG_TIME_VALID,
--		.name			= "C0",
--		.desc			= "ARM clock gating(WFI)",
--	},
-+	[0] = ARM_CPUIDLE_WFI_STATE,
- 	[1] = {
- 		.enter			= exynos4_enter_lowpower,
- 		.exit_latency		= 300,
-@@ -63,8 +54,9 @@ static struct cpuidle_state exynos4_cpuidle_set[] __initdata = {
- static DEFINE_PER_CPU(struct cpuidle_device, exynos4_cpuidle_device);
- 
- static struct cpuidle_driver exynos4_idle_driver = {
--	.name		= "exynos4_idle",
--	.owner		= THIS_MODULE,
-+	.name			= "exynos4_idle",
-+	.owner			= THIS_MODULE,
-+	.en_core_tk_irqen	= 1,
- };
- 
- /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
-@@ -103,13 +95,8 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
- 				struct cpuidle_driver *drv,
- 				int index)
- {
--	struct timeval before, after;
--	int idle_time;
- 	unsigned long tmp;
- 
--	local_irq_disable();
--	do_gettimeofday(&before);
--
- 	exynos4_set_wakeupmask();
- 
- 	/* Set value of power down register for aftr mode */
-@@ -150,34 +137,6 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
- 	/* Clear wakeup state register */
- 	__raw_writel(0x0, S5P_WAKEUP_STAT);
- 
--	do_gettimeofday(&after);
--
--	local_irq_enable();
--	idle_time = (after.tv_sec - before.tv_sec) * USEC_PER_SEC +
--		    (after.tv_usec - before.tv_usec);
--
--	dev->last_residency = idle_time;
--	return index;
--}
--
--static int exynos4_enter_idle(struct cpuidle_device *dev,
--				struct cpuidle_driver *drv,
--				int index)
--{
--	struct timeval before, after;
--	int idle_time;
--
--	local_irq_disable();
--	do_gettimeofday(&before);
--
--	cpu_do_idle();
--
--	do_gettimeofday(&after);
--	local_irq_enable();
--	idle_time = (after.tv_sec - before.tv_sec) * USEC_PER_SEC +
--		    (after.tv_usec - before.tv_usec);
--
--	dev->last_residency = idle_time;
- 	return index;
- }
- 
-@@ -192,7 +151,7 @@ static int exynos4_enter_lowpower(struct cpuidle_device *dev,
- 		new_index = drv->safe_state_index;
- 
- 	if (new_index == 0)
--		return exynos4_enter_idle(dev, drv, new_index);
-+		return arm_cpuidle_simple_enter(dev, drv, new_index);
- 	else
- 		return exynos4_enter_core0_aftr(dev, drv, new_index);
- }
--- 
-1.7.1
+>=20
+> Thanks
+> Heiko
+>=20
+> > ---
+> > Patch should go on top of the current s3c24xx consolidation
+> >=20
+> >  arch/arm/mach-s3c24xx/include/mach/irqs.h    |   15 ++++-
+> >  arch/arm/mach-s3c24xx/irq-s3c2416.c          |   98
+> >=20
+> > ++++++++++++++++++++++++++ arch/arm/mach-s3c24xx/s3c2416.c         =
+     |
+> >=20
+> >   1 +
+> > =20
+> >  arch/arm/plat-samsung/include/plat/s3c2416.h |    3 +
+> >  4 files changed, 116 insertions(+), 1 deletions(-)
+> >=20
+> > diff --git a/arch/arm/mach-s3c24xx/include/mach/irqs.h
+> > b/arch/arm/mach-s3c24xx/include/mach/irqs.h index e53b217..e120576 =
+100644
+> > --- a/arch/arm/mach-s3c24xx/include/mach/irqs.h
+> > +++ b/arch/arm/mach-s3c24xx/include/mach/irqs.h
+> > @@ -134,6 +134,17 @@
+> >=20
+> >  #define IRQ_S32416_WDT		S3C2410_IRQSUB(27)
+> >  #define IRQ_S32416_AC97		S3C2410_IRQSUB(28)
+> >=20
+> > +/* second interrupt-register of s3c2416/s3c2450 */
+> > +
+> > +#define S3C2416_IRQ(x)		S3C2410_IRQ((x)+54+29)
+> > +#define IRQ_S3C2416_2D		S3C2416_IRQ(0)
+> > +#define IRQ_S3C2416_IIC1	S3C2416_IRQ(1)
+> > +#define IRQ_S3C2416_RESERVED2	S3C2416_IRQ(2)
+> > +#define IRQ_S3C2416_RESERVED3	S3C2416_IRQ(3)
+> > +#define IRQ_S3C2416_PCM0	S3C2416_IRQ(4)
+> > +#define IRQ_S3C2416_PCM1	S3C2416_IRQ(5)
+> > +#define IRQ_S3C2416_I2S0	S3C2416_IRQ(6)
+> > +#define IRQ_S3C2416_I2S1	S3C2416_IRQ(7)
+> >=20
+> >  /* extra irqs for s3c2440 */
+> >=20
+> > @@ -175,7 +186,9 @@
+> >=20
+> >  #define IRQ_S3C2443_WDT		S3C2410_IRQSUB(27)
+> >  #define IRQ_S3C2443_AC97	S3C2410_IRQSUB(28)
+> >=20
+> > -#if defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+> > +#if defined(CONFIG_CPU_S3C2416)
+> > +#define NR_IRQS (IRQ_S3C2416_I2S1+1)
+> > +#elif defined(CONFIG_CPU_S3C2443)
+> >=20
+> >  #define NR_IRQS (IRQ_S3C2443_AC97+1)
+> >  #else
+> >  #define NR_IRQS (IRQ_S3C2440_AC97+1)
+> >=20
+> > diff --git a/arch/arm/mach-s3c24xx/irq-s3c2416.c
+> > b/arch/arm/mach-s3c24xx/irq-s3c2416.c index fd49f35..d92f879 100644
+> > --- a/arch/arm/mach-s3c24xx/irq-s3c2416.c
+> > +++ b/arch/arm/mach-s3c24xx/irq-s3c2416.c
+> > @@ -27,6 +27,7 @@
+> >=20
+> >  #include <linux/ioport.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> >=20
+> > +#include <linux/syscore_ops.h>
+> >=20
+> >  #include <mach/hardware.h>
+> >  #include <asm/irq.h>
+> >=20
+> > @@ -192,6 +193,43 @@ static struct irq_chip s3c2416_irq_uart3 =3D {
+> >=20
+> >  	.irq_ack	=3D s3c2416_irq_uart3_ack,
+> > =20
+> >  };
+> >=20
+> > +/* second interrupt register */
+> > +
+> > +static inline void s3c2416_irq_ack_second(struct irq_data *data)
+> > +{
+> > +	unsigned long bitval =3D 1UL << (data->irq - IRQ_S3C2416_2D);
+> > +
+> > +	__raw_writel(bitval, S3C2416_SRCPND2);
+> > +	__raw_writel(bitval, S3C2416_INTPND2);
+> > +}
+> > +
+> > +static void s3c2416_irq_mask_second(struct irq_data *data)
+> > +{
+> > +	unsigned long bitval =3D 1UL << (data->irq - IRQ_S3C2416_2D);
+> > +	unsigned long mask;
+> > +
+> > +	mask =3D __raw_readl(S3C2416_INTMSK2);
+> > +	mask |=3D bitval;
+> > +	__raw_writel(mask, S3C2416_INTMSK2);
+> > +}
+> > +
+> > +static void s3c2416_irq_unmask_second(struct irq_data *data)
+> > +{
+> > +	unsigned long bitval =3D 1UL << (data->irq - IRQ_S3C2416_2D);
+> > +	unsigned long mask;
+> > +
+> > +	mask =3D __raw_readl(S3C2416_INTMSK2);
+> > +	mask &=3D ~bitval;
+> > +	__raw_writel(mask, S3C2416_INTMSK2);
+> > +}
+> > +
+> > +struct irq_chip s3c2416_irq_second =3D {
+> > +	.irq_ack	=3D s3c2416_irq_ack_second,
+> > +	.irq_mask	=3D s3c2416_irq_mask_second,
+> > +	.irq_unmask	=3D s3c2416_irq_unmask_second,
+> > +};
+> > +
+> > +
+> >=20
+> >  /* IRQ initialisation code */
+> > =20
+> >  static int __init s3c2416_add_sub(unsigned int base,
+> >=20
+> > @@ -213,6 +251,42 @@ static int __init s3c2416_add_sub(unsigned int=
+ base,
+> >=20
+> >  	return 0;
+> > =20
+> >  }
+> >=20
+> > +static void __init s3c2416_add_second(void)
+> > +{
+> > +	unsigned long pend;
+> > +	unsigned long last;
+> > +	int irqno;
+> > +	int i;
+> > +
+> > +	/* first, clear all interrupts pending... */
+> > +	last =3D 0;
+> > +	for (i =3D 0; i < 4; i++) {
+> > +		pend =3D __raw_readl(S3C2416_INTPND2);
+> > +
+> > +		if (pend =3D=3D 0 || pend =3D=3D last)
+> > +			break;
+> > +
+> > +		__raw_writel(pend, S3C2416_SRCPND2);
+> > +		__raw_writel(pend, S3C2416_INTPND2);
+> > +		printk(KERN_INFO "irq: clearing pending status %08x\n",
+> > +		       (int)pend);
+> > +		last =3D pend;
+> > +	}
+> > +
+> > +	for (irqno =3D IRQ_S3C2416_2D; irqno <=3D IRQ_S3C2416_I2S1; irqno=
+++) {
+> > +		switch (irqno) {
+> > +		case IRQ_S3C2416_RESERVED2:
+> > +		case IRQ_S3C2416_RESERVED3:
+> > +			/* no IRQ here */
+> > +			break;
+> > +		default:
+> > +			irq_set_chip_and_handler(irqno, &s3c2416_irq_second,
+> > +						 handle_edge_irq);
+> > +			set_irq_flags(irqno, IRQF_VALID);
+> > +		}
+> > +	}
+> > +}
+> > +
+> >=20
+> >  static int __init s3c2416_irq_add(struct device *dev,
+> > =20
+> >  				  struct subsys_interface *sif)
+> > =20
+> >  {
+> >=20
+> > @@ -232,6 +306,8 @@ static int __init s3c2416_irq_add(struct device=
+ *dev,
+> >=20
+> >  			&s3c2416_irq_wdtac97,
+> >  			IRQ_S3C2443_WDT, IRQ_S3C2443_AC97);
+> >=20
+> > +	s3c2416_add_second();
+> > +
+> >=20
+> >  	return 0;
+> > =20
+> >  }
+> >=20
+> > @@ -248,3 +324,25 @@ static int __init s3c2416_irq_init(void)
+> >=20
+> >  arch_initcall(s3c2416_irq_init);
+> >=20
+> > +#ifdef CONFIG_PM
+> > +static struct sleep_save irq_save[] =3D {
+> > +	SAVE_ITEM(S3C2416_INTMSK2),
+> > +};
+> > +
+> > +int s3c2416_irq_suspend(void)
+> > +{
+> > +	s3c_pm_do_save(irq_save, ARRAY_SIZE(irq_save));
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +void s3c2416_irq_resume(void)
+> > +{
+> > +	s3c_pm_do_restore(irq_save, ARRAY_SIZE(irq_save));
+> > +}
+> > +
+> > +struct syscore_ops s3c2416_irq_syscore_ops =3D {
+> > +	.suspend	=3D s3c2416_irq_suspend,
+> > +	.resume		=3D s3c2416_irq_resume,
+> > +};
+> > +#endif
+> > diff --git a/arch/arm/mach-s3c24xx/s3c2416.c
+> > b/arch/arm/mach-s3c24xx/s3c2416.c index 0e9a71c..694977e 100644
+> > --- a/arch/arm/mach-s3c24xx/s3c2416.c
+> > +++ b/arch/arm/mach-s3c24xx/s3c2416.c
+> > @@ -105,6 +105,7 @@ int __init s3c2416_init(void)
+> >=20
+> >  	register_syscore_ops(&s3c2416_pm_syscore_ops);
+> > =20
+> >  #endif
+> > =20
+> >  	register_syscore_ops(&s3c24xx_irq_syscore_ops);
+> >=20
+> > +	register_syscore_ops(&s3c2416_irq_syscore_ops);
+> >=20
+> >  	return device_register(&s3c2416_dev);
+> > =20
+> >  }
+> >=20
+> > diff --git a/arch/arm/plat-samsung/include/plat/s3c2416.h
+> > b/arch/arm/plat-samsung/include/plat/s3c2416.h index de2b5bd..7178e=
+33
+> > 100644
+> > --- a/arch/arm/plat-samsung/include/plat/s3c2416.h
+> > +++ b/arch/arm/plat-samsung/include/plat/s3c2416.h
+> > @@ -24,6 +24,9 @@ extern void s3c2416_init_clocks(int xtal);
+> >=20
+> >  extern  int s3c2416_baseclk_add(void);
+> > =20
+> >  extern void s3c2416_restart(char mode, const char *cmd);
+> >=20
+> > +
+> > +extern struct syscore_ops s3c2416_irq_syscore_ops;
+> > +
+> >=20
+> >  #else
+> >  #define s3c2416_init_clocks NULL
+> >  #define s3c2416_init_uarts NULL
