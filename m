@@ -1,16 +1,16 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 07/33] ARM: S3C24XX: bast-ide: Use common macro to define resources
-Date: Wed, 25 Apr 2012 09:42:17 +0530
-Message-ID: <1335327163-11794-8-git-send-email-tushar.behera@linaro.org>
+Subject: [PATCH 08/33] ARM: S3C24XX: mach-amlm5900: Use common macro to define resources
+Date: Wed, 25 Apr 2012 09:42:18 +0530
+Message-ID: <1335327163-11794-9-git-send-email-tushar.behera@linaro.org>
 References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-pz0-f51.google.com ([209.85.210.51]:44854 "EHLO
 	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751825Ab2DYEWU (ORCPT
+	with ESMTP id S1751825Ab2DYEWZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 00:22:20 -0400
+	Wed, 25 Apr 2012 00:22:25 -0400
 Received: by mail-pz0-f51.google.com with SMTP id z8so1811908dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 21:22:20 -0700 (PDT)
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 21:22:24 -0700 (PDT)
 In-Reply-To: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,62 +21,28 @@ CC: Ben Dooks <ben-linux@fluff.org>
 CC: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/mach-s3c24xx/bast-ide.c |   36 ++++++------------------------------
- 1 files changed, 6 insertions(+), 30 deletions(-)
+ arch/arm/mach-s3c24xx/mach-amlm5900.c |    9 ++-------
+ 1 files changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/bast-ide.c b/arch/arm/mach-s3c24xx/bast-ide.c
-index 298ecec..ba02cf8 100644
---- a/arch/arm/mach-s3c24xx/bast-ide.c
-+++ b/arch/arm/mach-s3c24xx/bast-ide.c
-@@ -37,21 +37,9 @@ static struct pata_platform_info bast_ide_platdata = {
- #define IDE_CS	S3C2410_CS5
+diff --git a/arch/arm/mach-s3c24xx/mach-amlm5900.c b/arch/arm/mach-s3c24xx/mach-amlm5900.c
+index 4220cc6..ea2c4b0 100644
+--- a/arch/arm/mach-s3c24xx/mach-amlm5900.c
++++ b/arch/arm/mach-s3c24xx/mach-amlm5900.c
+@@ -65,13 +65,8 @@
  
- static struct resource bast_ide0_resource[] = {
--	[0]	= {
--		.start	= IDE_CS + BAST_PA_IDEPRI,
--		.end	= IDE_CS + BAST_PA_IDEPRI + (8 * 0x20) - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	[1]	= {
--		.start	= IDE_CS + BAST_PA_IDEPRIAUX + (6 * 0x20) ,
--		.end	= IDE_CS + BAST_PA_IDEPRIAUX + (7 * 0x20) - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	[2]	= {
--		.start	= IRQ_IDE0,
--		.end	= IRQ_IDE0,
--		.flags	= IORESOURCE_IRQ,
--	},
-+	[0] = DEFINE_RES_MEM(IDE_CS + BAST_PA_IDEPRI, 8 * 0x20),
-+	[1] = DEFINE_RES_MEM(IDE_CS + BAST_PA_IDEPRIAUX + (6 * 0x20), 0x20),
-+	[2] = DEFINE_RES_IRQ(IRQ_IDE0),
- };
+ #include "common.h"
  
- static struct platform_device bast_device_ide0 = {
-@@ -67,21 +55,9 @@ static struct platform_device bast_device_ide0 = {
- };
+-static struct resource amlm5900_nor_resource = {
+-		.start = 0x00000000,
+-		.end   = 0x01000000 - 1,
+-		.flags = IORESOURCE_MEM,
+-};
+-
+-
++static struct resource amlm5900_nor_resource =
++			DEFINE_RES_MEM(0x00000000, SZ_16M);
  
- static struct resource bast_ide1_resource[] = {
--	[0]	= {
--		.start	= IDE_CS + BAST_PA_IDESEC,
--		.end	= IDE_CS + BAST_PA_IDESEC + (8 * 0x20) - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	[1]	= {
--		.start	= IDE_CS + BAST_PA_IDESECAUX + (6 * 0x20),
--		.end	= IDE_CS + BAST_PA_IDESECAUX + (7 * 0x20) - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	[2]	= {
--		.start	= IRQ_IDE1,
--		.end	= IRQ_IDE1,
--		.flags	= IORESOURCE_IRQ,
--	},
-+	[0] = DEFINE_RES_MEM(IDE_CS + BAST_PA_IDESEC, 8 * 0x20),
-+	[1] = DEFINE_RES_MEM(IDE_CS + BAST_PA_IDESECAUX + (6 * 0x20), 0x20),
-+	[2] = DEFINE_RES_IRQ(IRQ_IDE1),
- };
- 
- static struct platform_device bast_device_ide1 = {
+ static struct mtd_partition amlm5900_mtd_partitions[] = {
+ 	{
 -- 
 1.7.4.1
