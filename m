@@ -1,81 +1,51 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: add the definition for IRQ_DWMCI
-Date: Wed, 25 Apr 2012 10:19:49 +0530
-Message-ID: <4F97826D.6010404@linaro.org>
-References: <4F8E400E.3000300@samsung.com> <4F8F5858.4060804@samsung.com> <4F8F6C34.1090308@samsung.com> <4F8F78EC.8030602@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [GIT PULL] Samsung fixes-2 for v3.4
+Date: Wed, 25 Apr 2012 07:59:21 +0200
+Message-ID: <016501cd22a8$8fd16f90$af744eb0$%szyprowski@samsung.com>
+References: <4F89A0A5.5030806@samsung.com>
+ <CAOesGMhp48Kh+tJ1534G=ze0CEcVBpaPQxVKs8A31difVw9h9Q@mail.gmail.com>
+ <4F974625.1030607@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:55189 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753232Ab2DYEt6 (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:32601 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758066Ab2DYF7e (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 00:49:58 -0400
-Received: by pbbro12 with SMTP id ro12so962816pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 21:49:58 -0700 (PDT)
-In-Reply-To: <4F8F78EC.8030602@samsung.com>
+	Wed, 25 Apr 2012 01:59:34 -0400
+Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0M30006A8TZ12U@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Apr 2012 06:59:25 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M3000GQITZ78D@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Apr 2012 06:59:31 +0100 (BST)
+In-reply-to: <4F974625.1030607@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>
+Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 04/19/2012 08:01 AM, Kukjin Kim wrote:
-> Jaehoon Chung wroteh:
->> On 04/19/2012 09:12 AM, Kukjin Kim wrote:
->>
->>> Jaehoon Chung wrote:
->>>> In dev-dwmci.c, IRQ_DWMCI is referenced.
->>>> But there is no defined anywhere.
->>>> This patch is added the missing definition for IRQ_DWMCI.
->>>>
->>>> Signed-off-by: Jaehoon Chung<jh80.chung@samsung.com>
->>>> Signed-off-by: Kyungmin Park<Kyungmin.park@samsung.com>
->>>> ---
->>>>    arch/arm/mach-exynos/include/mach/irqs.h |    1 +
->>>>    1 files changed, 1 insertions(+), 0 deletions(-)
->>>>
->>>> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h
->>>> b/arch/arm/mach-exynos/include/mach/irqs.h
->>>> index 1161675..ed2295f 100644
->>>> --- a/arch/arm/mach-exynos/include/mach/irqs.h
->>>> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
->>>> @@ -201,6 +201,7 @@
->>>>    #define IRQ_HSMMC1            EXYNOS4_IRQ_HSMMC1
->>>>    #define IRQ_HSMMC2            EXYNOS4_IRQ_HSMMC2
->>>>    #define IRQ_HSMMC3            EXYNOS4_IRQ_HSMMC3
->>>> +#define IRQ_DWMCI            EXYNOS4_IRQ_DWMCI
->>>
->>> Yeah, we need fix it but I have no idea need re-mapping. Just
->>> following can do it. If you're ok on following, let me pick this up.
->>
->> If it's working, i don't care..I didn't see the
->> DEFINE_RES_MEM/DEFINE_RES_IRQ.
->> But if we can use them, it's more readable.
->>
-> Yes, this should be working fine. And note, need inclusion of
-> <linux/ioport.h> for DEFINE_RES_{MEM,IRQ}.
+Hi Kukjin,
+
+On Wednesday, April 25, 2012 2:33 AM Kukjin Kim wrote:
+
+> > Looking at your current fixes-3 branch, it's unclear at a quick glance
+> > why the clk_type patch is a bugfix, and especially why it is a
+> > regression fix -- it looks like a cleanup. We're very close to 3.4-rc3
 > 
-We should not require explicit inclusion of <linux/ioport.h> here. The
-definition of "struct resource {" and DEFINE_RES_{MEM,IRQ}" are in same
-ioport.h file. Hence if "struct resource {" is accessible here,
-"DEFINE_RES_{MEM,IRQ}" would also be accessible.
-
-> If any problems, please let me know.
+> I agree that the removing clk_type member in sdhci platform data should
+> be included in cleanup stuff, it is useless in current mainline though.
 > 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> -- 
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe
-> linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Marek, is this ok to you?
 
+Yes, this patch is not strictly needed to get SDHCI working again on v3.4-rcX.
 
+Best regards
 -- 
-Tushar Behera
+Marek Szyprowski
+Samsung Poland R&D Center
