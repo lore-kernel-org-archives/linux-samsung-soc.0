@@ -1,16 +1,16 @@
 From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH 20/33] ARM: S3C24XX: mach-tct_hammer: Use common macro to define resources
-Date: Wed, 25 Apr 2012 09:42:30 +0530
-Message-ID: <1335327163-11794-21-git-send-email-tushar.behera@linaro.org>
+Subject: [PATCH 21/33] ARM: S3C24XX: mach-vr1000: Use common macro to define resources
+Date: Wed, 25 Apr 2012 09:42:31 +0530
+Message-ID: <1335327163-11794-22-git-send-email-tushar.behera@linaro.org>
 References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:36558 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753216Ab2DYEXY (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:49498 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753216Ab2DYEX3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 00:23:24 -0400
-Received: by mail-pz0-f51.google.com with SMTP id z8so1813007dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 21:23:24 -0700 (PDT)
+	Wed, 25 Apr 2012 00:23:29 -0400
+Received: by mail-pb0-f46.google.com with SMTP id ro12so939266pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 21:23:29 -0700 (PDT)
 In-Reply-To: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -21,26 +21,61 @@ CC: Ben Dooks <ben-linux@fluff.org>
 CC: Kukjin Kim <kgene.kim@samsung.com>
 Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/mach-s3c24xx/mach-tct_hammer.c |    7 ++-----
- 1 files changed, 2 insertions(+), 5 deletions(-)
+ arch/arm/mach-s3c24xx/mach-vr1000.c |   39 +++++++---------------------------
+ 1 files changed, 8 insertions(+), 31 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/mach-tct_hammer.c b/arch/arm/mach-s3c24xx/mach-tct_hammer.c
-index 1114666..fe99028 100644
---- a/arch/arm/mach-s3c24xx/mach-tct_hammer.c
-+++ b/arch/arm/mach-s3c24xx/mach-tct_hammer.c
-@@ -56,11 +56,8 @@
+diff --git a/arch/arm/mach-s3c24xx/mach-vr1000.c b/arch/arm/mach-s3c24xx/mach-vr1000.c
+index 87608d4..bd5f189 100644
+--- a/arch/arm/mach-s3c24xx/mach-vr1000.c
++++ b/arch/arm/mach-s3c24xx/mach-vr1000.c
+@@ -187,40 +187,17 @@ static struct platform_device serial_device = {
+ /* DM9000 ethernet devices */
  
- #include "common.h"
+ static struct resource vr1000_dm9k0_resource[] = {
+-	[0] = {
+-		.start = S3C2410_CS5 + VR1000_PA_DM9000,
+-		.end   = S3C2410_CS5 + VR1000_PA_DM9000 + 3,
+-		.flags = IORESOURCE_MEM
+-	},
+-	[1] = {
+-		.start = S3C2410_CS5 + VR1000_PA_DM9000 + 0x40,
+-		.end   = S3C2410_CS5 + VR1000_PA_DM9000 + 0x7f,
+-		.flags = IORESOURCE_MEM
+-	},
+-	[2] = {
+-		.start = IRQ_VR1000_DM9000A,
+-		.end   = IRQ_VR1000_DM9000A,
+-		.flags = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL,
+-	}
+-
++	[0] = DEFINE_RES_MEM(S3C2410_CS5 + VR1000_PA_DM9000, 4),
++	[1] = DEFINE_RES_MEM(S3C2410_CS5 + VR1000_PA_DM9000 + 0x40, 0x40),
++	[2] = DEFINE_RES_NAMED(IRQ_VR1000_DM9000A, 1, NULL, IORESOURCE_IRQ \
++						| IORESOURCE_IRQ_HIGHLEVEL),
+ };
  
--static struct resource tct_hammer_nor_resource = {
--		.start = 0x00000000,
--		.end   = 0x01000000 - 1,
--		.flags = IORESOURCE_MEM,
--};
-+static struct resource tct_hammer_nor_resource =
-+			DEFINE_RES_MEM(0x00000000, SZ_16M);
+ static struct resource vr1000_dm9k1_resource[] = {
+-	[0] = {
+-		.start = S3C2410_CS5 + VR1000_PA_DM9000 + 0x80,
+-		.end   = S3C2410_CS5 + VR1000_PA_DM9000 + 0x83,
+-		.flags = IORESOURCE_MEM
+-	},
+-	[1] = {
+-		.start = S3C2410_CS5 + VR1000_PA_DM9000 + 0xC0,
+-		.end   = S3C2410_CS5 + VR1000_PA_DM9000 + 0xFF,
+-		.flags = IORESOURCE_MEM
+-	},
+-	[2] = {
+-		.start = IRQ_VR1000_DM9000N,
+-		.end   = IRQ_VR1000_DM9000N,
+-		.flags = IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL,
+-	}
++	[0] = DEFINE_RES_MEM(S3C2410_CS5 + VR1000_PA_DM9000 + 0x80, 4),
++	[1] = DEFINE_RES_MEM(S3C2410_CS5 + VR1000_PA_DM9000 + 0xC0, 0x40),
++	[2] = DEFINE_RES_NAMED(IRQ_VR1000_DM9000N, 1, NULL, IORESOURCE_IRQ \
++						| IORESOURCE_IRQ_HIGHLEVEL),
+ };
  
- static struct mtd_partition tct_hammer_mtd_partitions[] = {
- 	{
+ /* for the moment we limit ourselves to 16bit IO until some
 -- 
 1.7.4.1
