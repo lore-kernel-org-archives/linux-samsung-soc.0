@@ -1,109 +1,70 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH 06/33] ARM: S3C24XX: dev-uart: Use common macro to define resources
-Date: Wed, 25 Apr 2012 11:13:26 +0200
-Message-ID: <201204251113.26333.heiko@sntech.de>
-References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org> <1335327163-11794-7-git-send-email-tushar.behera@linaro.org>
+From: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Subject: Re: [PATCH 00/33] Use common macro to define resources
+Date: Wed, 25 Apr 2012 12:10:07 +0200
+Message-ID: <20120425101007.GM9142@game.jcrosoft.org>
+References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
+ <20120425041939.GL9142@game.jcrosoft.org>
+ <201204250938.58397.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from s15407518.onlinehome-server.info ([82.165.136.167]:50089 "EHLO
-	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754619Ab2DYJNf (ORCPT
+Received: from 8.mo4.mail-out.ovh.net ([188.165.33.112]:47231 "EHLO
+	mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+	with ESMTP id S1757866Ab2DYKaX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 05:13:35 -0400
-In-Reply-To: <1335327163-11794-7-git-send-email-tushar.behera@linaro.org>
+	Wed, 25 Apr 2012 06:30:23 -0400
+Received: from mail97.ha.ovh.net (b7.ovh.net [213.186.33.57])
+	by mo4.mail-out.ovh.net (Postfix) with SMTP id 5B9601050624
+	for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Apr 2012 12:31:31 +0200 (CEST)
+Content-Disposition: inline
+In-Reply-To: <201204250938.58397.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Tushar Behera <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, Ben Dooks <ben-linux@fluff.org>, patches@linaro.org
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org
 
-Am Mittwoch, 25. April 2012, 06:12:16 schrieb Tushar Behera:
-> CC: Ben Dooks <ben-linux@fluff.org>
-> CC: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+On 09:38 Wed 25 Apr     , Heiko St=FCbner wrote:
+> Hi,
+>=20
+> Am Mittwoch, 25. April 2012, 06:19:39 schrieb Jean-Christophe PLAGNIO=
+L-
+> VILLARD:
+> > On 09:42 Wed 25 Apr     , Tushar Behera wrote:
+> > > There are some helper macros (DEFINE_RES_XXX) for defining resour=
+ce
+> > > structures. This patchset migrates all the earlier resource
+> > > definitions (within Samsung specific code base) to use these macr=
+os.
+> > >=20
+> > > In some cases, it was not possible to use DEFINE_RES_IRQ() macro =
+because
+> > > of usage of additional flags. In those cases, DEFINE_RES_NAMED() =
+macro
+> > > is used instead.
+> > >=20
+> > > The patches are rebased on top of Kukjin's for-next branch at thi=
+s
+> > > commit.
+> > >=20
+> > > d0ee53a Merge branch 'next/board-samsung' into for-next
+> >=20
+> > is this really necessary as we switch to DT this code will be drope=
+d
+>=20
+> As far as I know legacy SoCs are allowed to keep being non-DT and I d=
+on't see=20
+> the older Samsung SoCs (especially the S3C24XX ones) changing to DT a=
+nytime=20
+> soon, as they don't see any new development but only bug fixes curren=
+tly.
+>=20
+>=20
+> > for my point of view it's cosmetics change
+> it is, but it also makes the code more readable
+we get comment from Linus to do not do cosmetic changes
 
-Acked-by: Heiko Stuebner <heiko@sntech.de>
+so if it work well I'll not touch it
 
-> ---
->  arch/arm/plat-s3c24xx/dev-uart.c |   56
-> +++++++++++--------------------------- 1 files changed, 16 insertions(+),
-> 40 deletions(-)
-> 
-> diff --git a/arch/arm/plat-s3c24xx/dev-uart.c
-> b/arch/arm/plat-s3c24xx/dev-uart.c index 9ab22e6..d779216 100644
-> --- a/arch/arm/plat-s3c24xx/dev-uart.c
-> +++ b/arch/arm/plat-s3c24xx/dev-uart.c
-> @@ -29,55 +29,31 @@
->  /* Serial port registrations */
-> 
->  static struct resource s3c2410_uart0_resource[] = {
-> -	[0] = {
-> -		.start = S3C2410_PA_UART0,
-> -		.end   = S3C2410_PA_UART0 + 0x3fff,
-> -		.flags = IORESOURCE_MEM,
-> -	},
-> -	[1] = {
-> -		.start = IRQ_S3CUART_RX0,
-> -		.end   = IRQ_S3CUART_ERR0,
-> -		.flags = IORESOURCE_IRQ,
-> -	}
-> +	[0] = DEFINE_RES_MEM(S3C2410_PA_UART0, SZ_16K),
-> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX0, \
-> +			IRQ_S3CUART_ERR0 - IRQ_S3CUART_RX0 + 1, \
-> +			NULL, IORESOURCE_IRQ)
->  };
-> 
->  static struct resource s3c2410_uart1_resource[] = {
-> -	[0] = {
-> -		.start = S3C2410_PA_UART1,
-> -		.end   = S3C2410_PA_UART1 + 0x3fff,
-> -		.flags = IORESOURCE_MEM,
-> -	},
-> -	[1] = {
-> -		.start = IRQ_S3CUART_RX1,
-> -		.end   = IRQ_S3CUART_ERR1,
-> -		.flags = IORESOURCE_IRQ,
-> -	}
-> +	[0] = DEFINE_RES_MEM(S3C2410_PA_UART1, SZ_16K),
-> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX1, \
-> +			IRQ_S3CUART_ERR1 - IRQ_S3CUART_RX1 + 1, \
-> +			NULL, IORESOURCE_IRQ)
->  };
-> 
->  static struct resource s3c2410_uart2_resource[] = {
-> -	[0] = {
-> -		.start = S3C2410_PA_UART2,
-> -		.end   = S3C2410_PA_UART2 + 0x3fff,
-> -		.flags = IORESOURCE_MEM,
-> -	},
-> -	[1] = {
-> -		.start = IRQ_S3CUART_RX2,
-> -		.end   = IRQ_S3CUART_ERR2,
-> -		.flags = IORESOURCE_IRQ,
-> -	}
-> +	[0] = DEFINE_RES_MEM(S3C2410_PA_UART2, SZ_16K),
-> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX2, \
-> +			IRQ_S3CUART_ERR2 - IRQ_S3CUART_RX2 + 1, \
-> +			NULL, IORESOURCE_IRQ)
->  };
-> 
->  static struct resource s3c2410_uart3_resource[] = {
-> -	[0] = {
-> -		.start = S3C2443_PA_UART3,
-> -		.end   = S3C2443_PA_UART3 + 0x3fff,
-> -		.flags = IORESOURCE_MEM,
-> -	},
-> -	[1] = {
-> -		.start = IRQ_S3CUART_RX3,
-> -		.end   = IRQ_S3CUART_ERR3,
-> -		.flags = IORESOURCE_IRQ,
-> -	},
-> +	[0] = DEFINE_RES_MEM(S3C2443_PA_UART3, SZ_16K),
-> +	[1] = DEFINE_RES_NAMED(IRQ_S3CUART_RX3, \
-> +			IRQ_S3CUART_ERR3 - IRQ_S3CUART_RX3 + 1, \
-> +			NULL, IORESOURCE_IRQ)
->  };
-> 
->  struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
+Best Regards,
+J.
