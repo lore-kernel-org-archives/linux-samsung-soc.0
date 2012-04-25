@@ -1,65 +1,52 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: add the definition for IRQ_DWMCI
-Date: Tue, 24 Apr 2012 17:20:14 -0700
-Message-ID: <4F97433E.2040004@samsung.com>
-References: <4F8E400E.3000300@samsung.com> <4F8F5858.4060804@samsung.com> <4F8F6C34.1090308@samsung.com> <4F8F78EC.8030602@samsung.com>
+Subject: Re: [GIT PULL] Samsung fixes-2 for v3.4
+Date: Tue, 24 Apr 2012 17:32:37 -0700
+Message-ID: <4F974625.1030607@samsung.com>
+References: <4F89A0A5.5030806@samsung.com> <CAOesGMhp48Kh+tJ1534G=ze0CEcVBpaPQxVKs8A31difVw9h9Q@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:60500 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757132Ab2DYAUS (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:47000 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752744Ab2DYAcl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Apr 2012 20:20:18 -0400
-Received: by dadz8 with SMTP id z8so1574132dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 17:20:17 -0700 (PDT)
-In-Reply-To: <4F8F78EC.8030602@samsung.com>
+	Tue, 24 Apr 2012 20:32:41 -0400
+Received: by pbbro12 with SMTP id ro12so747603pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 24 Apr 2012 17:32:41 -0700 (PDT)
+In-Reply-To: <CAOesGMhp48Kh+tJ1534G=ze0CEcVBpaPQxVKs8A31difVw9h9Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
+Olof Johansson wrote:
+> Hi,
 
-Should be EXYNOS4_IRQ_DWMCI instead of IRQ_DWMCI,
-and use DEFINE_RES_{MEM,IRQ}.
+[...]
 
-Reported-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-  arch/arm/mach-exynos/dev-dwmci.c |   13 +++----------
-  1 files changed, 3 insertions(+), 10 deletions(-)
+(Cc'ed Marek Szyprowsk)
 
-diff --git a/arch/arm/mach-exynos/dev-dwmci.c 
-b/arch/arm/mach-exynos/dev-dwmci.c
-index b025db4..7903501 100644
---- a/arch/arm/mach-exynos/dev-dwmci.c
-+++ b/arch/arm/mach-exynos/dev-dwmci.c
-@@ -16,6 +16,7 @@
-  #include <linux/dma-mapping.h>
-  #include <linux/platform_device.h>
-  #include <linux/interrupt.h>
-+#include <linux/ioport.h>
-  #include <linux/mmc/dw_mmc.h>
+> Looking at your current fixes-3 branch, it's unclear at a quick glance
+> why the clk_type patch is a bugfix, and especially why it is a
+> regression fix -- it looks like a cleanup. We're very close to 3.4-rc3
 
-  #include <plat/devs.h>
-@@ -33,16 +34,8 @@ static int exynos4_dwmci_init(u32 slot_id, 
-irq_handler_t handler, void *data)
-  }
+I agree that the removing clk_type member in sdhci platform data should 
+be included in cleanup stuff, it is useless in current mainline though.
 
-  static struct resource exynos4_dwmci_resource[] = {
--	[0] = {
--		.start	= EXYNOS4_PA_DWMCI,
--		.end	= EXYNOS4_PA_DWMCI + SZ_4K - 1,
--		.flags	= IORESOURCE_MEM,
--	},
--	[1] = {
--		.start	= IRQ_DWMCI,
--		.end	= IRQ_DWMCI,
--		.flags	= IORESOURCE_IRQ,
--	}
-+	[0] = DEFINE_RES_MEM(EXYNOS4_PA_DWMCI, SZ_4K),
-+	[1] = DEFINE_RES_IRQ(EXYNOS4_IRQ_DWMCI),
-  };
+Marek, is this ok to you?
 
-  static struct dw_mci_board exynos4_dwci_pdata = {
+> now, so we should only be merging fixes (and ideally only regressions
+> since 3.3).
+>
+> So, if you do need it to go into 3.4 please motivate it when you send
+> the pull request.
+>
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
