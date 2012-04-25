@@ -1,51 +1,51 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [GIT PULL] Samsung fixes-2 for v3.4
-Date: Wed, 25 Apr 2012 07:59:21 +0200
-Message-ID: <016501cd22a8$8fd16f90$af744eb0$%szyprowski@samsung.com>
-References: <4F89A0A5.5030806@samsung.com>
- <CAOesGMhp48Kh+tJ1534G=ze0CEcVBpaPQxVKs8A31difVw9h9Q@mail.gmail.com>
- <4F974625.1030607@samsung.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH 00/33] Use common macro to define resources
+Date: Wed, 25 Apr 2012 09:38:57 +0200
+Message-ID: <201204250938.58397.heiko@sntech.de>
+References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org> <20120425041939.GL9142@game.jcrosoft.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7BIT
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32601 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758066Ab2DYF7e (ORCPT
+Received: from s15407518.onlinehome-server.info ([82.165.136.167]:54479 "EHLO
+	s15407518.onlinehome-server.info" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752142Ab2DYHjG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 01:59:34 -0400
-Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0M30006A8TZ12U@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Apr 2012 06:59:25 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M3000GQITZ78D@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Apr 2012 06:59:31 +0100 (BST)
-In-reply-to: <4F974625.1030607@samsung.com>
-Content-language: pl
+	Wed, 25 Apr 2012 03:39:06 -0400
+In-Reply-To: <20120425041939.GL9142@game.jcrosoft.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>
+Cc: Tushar Behera <tushar.behera@linaro.org>, Arnd Bergmann <arnd@arndb.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, patches@linaro.org
 
-Hi Kukjin,
+Hi,
 
-On Wednesday, April 25, 2012 2:33 AM Kukjin Kim wrote:
-
-> > Looking at your current fixes-3 branch, it's unclear at a quick glance
-> > why the clk_type patch is a bugfix, and especially why it is a
-> > regression fix -- it looks like a cleanup. We're very close to 3.4-rc3
+Am Mittwoch, 25. April 2012, 06:19:39 schrieb Jean-Christophe PLAGNIOL-
+VILLARD:
+> On 09:42 Wed 25 Apr     , Tushar Behera wrote:
+> > There are some helper macros (DEFINE_RES_XXX) for defining resource
+> > structures. This patchset migrates all the earlier resource
+> > definitions (within Samsung specific code base) to use these macros.
+> > 
+> > In some cases, it was not possible to use DEFINE_RES_IRQ() macro because
+> > of usage of additional flags. In those cases, DEFINE_RES_NAMED() macro
+> > is used instead.
+> > 
+> > The patches are rebased on top of Kukjin's for-next branch at this
+> > commit.
+> > 
+> > d0ee53a Merge branch 'next/board-samsung' into for-next
 > 
-> I agree that the removing clk_type member in sdhci platform data should
-> be included in cleanup stuff, it is useless in current mainline though.
-> 
-> Marek, is this ok to you?
+> is this really necessary as we switch to DT this code will be droped
 
-Yes, this patch is not strictly needed to get SDHCI working again on v3.4-rcX.
+As far as I know legacy SoCs are allowed to keep being non-DT and I don't see 
+the older Samsung SoCs (especially the S3C24XX ones) changing to DT anytime 
+soon, as they don't see any new development but only bug fixes currently.
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+
+> for my point of view it's cosmetics change
+it is, but it also makes the code more readable
+
+
+Heiko
