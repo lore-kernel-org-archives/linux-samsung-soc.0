@@ -1,39 +1,79 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH 00/33] Use common macro to define resources
-Date: Thu, 26 Apr 2012 09:23:07 +0530
-Message-ID: <4F98C6A3.1060700@linaro.org>
-References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org> <201204250938.58397.heiko@sntech.de> <20120425101007.GM9142@game.jcrosoft.org> <201204251121.47358.arnd@arndb.de> <20120425113521.GW24211@n2100.arm.linux.org.uk>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: RE: [PATCH] drivers: genpd: let platform code to register devices into
+ disabled domains
+Date: Fri, 27 Apr 2012 11:30:53 +0200
+Message-ID: <012601cd2458$70d85480$5288fd80$%szyprowski@samsung.com>
+References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:51638 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751876Ab2DZDxO (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:12297 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759871Ab2D0Ja4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Apr 2012 23:53:14 -0400
-Received: by dadz8 with SMTP id z8so960864dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Apr 2012 20:53:14 -0700 (PDT)
-In-Reply-To: <20120425113521.GW24211@n2100.arm.linux.org.uk>
+	Fri, 27 Apr 2012 05:30:56 -0400
+In-reply-to: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: pl
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jean-Christophe PLAGNIOL-VILLARD <plagnioj@jcrosoft.com>, =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, patches@linaro.org
+To: "'Rafael J. Wysocki'" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 04/25/2012 05:05 PM, Russell King - ARM Linux wrote:
-> On Wed, Apr 25, 2012 at 11:21:47AM +0000, Arnd Bergmann wrote:
->> Note that the point of the DEFINE_RES_*() macros is really to prevent
->> people from coming up with new silly macros to do the same thing, as
->> we've had in the past.
-> 
-> One of the other reaons was to stop the stream of resources with wrong
-> endings (because people kept thinking it was exclusive rather than
-> inclusive) - and the resulting stream of additional patches to fix those
-> errors.
-> 
-Patch 16, 18, 24 seemed to touch that problem. It was fixed in patches
-16 and 24. There was not much clarity regarding the situation in patch
-18, so it was left as it was.
+Hi Rafeal,
 
+On Friday, April 06, 2012 10:03 AM Marek Szyprowski wrote:
+
+> Some bootloaders disable power domains on boot and the platform startup
+> code registers them in the 'disabled' state. Current gen_pd code assumed
+> that the devices can be registered only to the power domain which is in
+> 'enabled' state and these devices are active at the time of the
+> registration. This is not correct in our case. This patch lets drivers
+> to be registered into 'disabled' power domains and finally solves
+> mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
+> NURI and UniversalC210 platforms.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+
+Could you comment on this patch? It is really annoying issue and I would like to have it
+finally solved.
+
+> ---
+>  drivers/base/power/domain.c |    7 +------
+>  1 files changed, 1 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 73ce9fb..05f5799f 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
+> device *dev,
+> 
+>  	genpd_acquire_lock(genpd);
+> 
+> -	if (genpd->status == GPD_STATE_POWER_OFF) {
+> -		ret = -EINVAL;
+> -		goto out;
+> -	}
+> -
+>  	if (genpd->prepared_count > 0) {
+>  		ret = -EAGAIN;
+>  		goto out;
+> @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device
+> *dev,
+>  	dev_pm_get_subsys_data(dev);
+>  	dev->power.subsys_data->domain_data = &gpd_data->base;
+>  	gpd_data->base.dev = dev;
+> -	gpd_data->need_restore = false;
+> +	gpd_data->need_restore = true;
+>  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+>  	if (td)
+>  		gpd_data->td = *td;
+> --
+> 1.7.1.569.g6f426
+
+Best regards
 -- 
-Tushar Behera
+Marek Szyprowski
+Samsung Poland R&D Center
