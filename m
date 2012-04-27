@@ -1,42 +1,83 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] 3rd Samsung fixes for v3.4
-Date: Fri, 27 Apr 2012 09:54:52 -0700
-Message-ID: <CAOesGMizNYe_87BsUHAyKf+1QSfA7g1bpLGU-U9VWHKH4w8ppA@mail.gmail.com>
-References: <4F9AACD2.80308@samsung.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
+Date: Fri, 27 Apr 2012 23:11:57 +0200
+Message-ID: <201204272311.57828.rjw@sisk.pl>
+References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com> <012601cd2458$70d85480$5288fd80$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:46689 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758382Ab2D0Qyx convert rfc822-to-8bit (ORCPT
+Received: from ogre.sisk.pl ([193.178.161.156]:42031 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751663Ab2D0VHR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Apr 2012 12:54:53 -0400
-Received: by yhmm54 with SMTP id m54so541902yhm.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Apr 2012 09:54:52 -0700 (PDT)
-In-Reply-To: <4F9AACD2.80308@samsung.com>
+	Fri, 27 Apr 2012 17:07:17 -0400
+In-Reply-To: <012601cd2458$70d85480$5288fd80$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Fri, Apr 27, 2012 at 7:27 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Hi Arnd, Olof
->
-> Here this pull request includes fix for some remained build error and
-> warning for samsung stuff and change the device name for exynos4 sdhc=
-i
-> according to change of regarding driver and fix gic initializer for e=
-xynos5
-> dt.
->
-> Please pull from:
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
-git
-> v3.4-samsung-fixes-3
+On Friday, April 27, 2012, Marek Szyprowski wrote:
+> Hi Rafeal,
+> 
+> On Friday, April 06, 2012 10:03 AM Marek Szyprowski wrote:
+> 
+> > Some bootloaders disable power domains on boot and the platform startup
+> > code registers them in the 'disabled' state. Current gen_pd code assumed
+> > that the devices can be registered only to the power domain which is in
+> > 'enabled' state and these devices are active at the time of the
+> > registration. This is not correct in our case. This patch lets drivers
+> > to be registered into 'disabled' power domains and finally solves
+> > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
+> > NURI and UniversalC210 platforms.
+> > 
+> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> 
+> Could you comment on this patch? It is really annoying issue and I would like to have it
+> finally solved.
 
-Thanks, pulled.
+It looks reasonable to me, I'm going to push it for v3.5.
+
+Thanks,
+Rafael
 
 
--Olof
+> > ---
+> >  drivers/base/power/domain.c |    7 +------
+> >  1 files changed, 1 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > index 73ce9fb..05f5799f 100644
+> > --- a/drivers/base/power/domain.c
+> > +++ b/drivers/base/power/domain.c
+> > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
+> > device *dev,
+> > 
+> >  	genpd_acquire_lock(genpd);
+> > 
+> > -	if (genpd->status == GPD_STATE_POWER_OFF) {
+> > -		ret = -EINVAL;
+> > -		goto out;
+> > -	}
+> > -
+> >  	if (genpd->prepared_count > 0) {
+> >  		ret = -EAGAIN;
+> >  		goto out;
+> > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device
+> > *dev,
+> >  	dev_pm_get_subsys_data(dev);
+> >  	dev->power.subsys_data->domain_data = &gpd_data->base;
+> >  	gpd_data->base.dev = dev;
+> > -	gpd_data->need_restore = false;
+> > +	gpd_data->need_restore = true;
+> >  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+> >  	if (td)
+> >  		gpd_data->td = *td;
+> > --
+> > 1.7.1.569.g6f426
+> 
+> Best regards
+> 
