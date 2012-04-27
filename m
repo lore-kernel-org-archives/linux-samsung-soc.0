@@ -1,83 +1,57 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
-Date: Fri, 27 Apr 2012 23:11:57 +0200
-Message-ID: <201204272311.57828.rjw@sisk.pl>
-References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com> <012601cd2458$70d85480$5288fd80$%szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: jhbird.choi@gmail.com
+Subject: [PATCH] ARM: SAMSUNG: Remove unusued variable 'running'
+Date: Fri, 27 Apr 2012 18:13:22 -0400
+Message-ID: <1335564802-31937-1-git-send-email-jhbird.choi@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:42031 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751663Ab2D0VHR (ORCPT
+Received: from mail-pz0-f51.google.com ([209.85.210.51]:55675 "EHLO
+	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751620Ab2D0WNb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 27 Apr 2012 17:07:17 -0400
-In-Reply-To: <012601cd2458$70d85480$5288fd80$%szyprowski@samsung.com>
+	Fri, 27 Apr 2012 18:13:31 -0400
+Received: by dadz8 with SMTP id z8so1524877dad.10
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 27 Apr 2012 15:13:31 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Jonghwan Choi <jhbird.choi@samsung.com>
 
-On Friday, April 27, 2012, Marek Szyprowski wrote:
-> Hi Rafeal,
-> 
-> On Friday, April 06, 2012 10:03 AM Marek Szyprowski wrote:
-> 
-> > Some bootloaders disable power domains on boot and the platform startup
-> > code registers them in the 'disabled' state. Current gen_pd code assumed
-> > that the devices can be registered only to the power domain which is in
-> > 'enabled' state and these devices are active at the time of the
-> > registration. This is not correct in our case. This patch lets drivers
-> > to be registered into 'disabled' power domains and finally solves
-> > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
-> > NURI and UniversalC210 platforms.
-> > 
-> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> 
-> Could you comment on this patch? It is really annoying issue and I would like to have it
-> finally solved.
+From: Jonghwan Choi <jhbird.choi@samsung.com>
 
-It looks reasonable to me, I'm going to push it for v3.5.
+This variable is indeed no longer in use.
 
-Thanks,
-Rafael
+Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
+---
+ arch/arm/plat-samsung/pwm.c |    4 ----
+ 1 files changed, 0 insertions(+), 4 deletions(-)
 
-
-> > ---
-> >  drivers/base/power/domain.c |    7 +------
-> >  1 files changed, 1 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > index 73ce9fb..05f5799f 100644
-> > --- a/drivers/base/power/domain.c
-> > +++ b/drivers/base/power/domain.c
-> > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
-> > device *dev,
-> > 
-> >  	genpd_acquire_lock(genpd);
-> > 
-> > -	if (genpd->status == GPD_STATE_POWER_OFF) {
-> > -		ret = -EINVAL;
-> > -		goto out;
-> > -	}
-> > -
-> >  	if (genpd->prepared_count > 0) {
-> >  		ret = -EAGAIN;
-> >  		goto out;
-> > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device
-> > *dev,
-> >  	dev_pm_get_subsys_data(dev);
-> >  	dev->power.subsys_data->domain_data = &gpd_data->base;
-> >  	gpd_data->base.dev = dev;
-> > -	gpd_data->need_restore = false;
-> > +	gpd_data->need_restore = true;
-> >  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
-> >  	if (td)
-> >  		gpd_data->td = *td;
-> > --
-> > 1.7.1.569.g6f426
-> 
-> Best regards
-> 
+diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.c
+index c559d84..d358305 100644
+--- a/arch/arm/plat-samsung/pwm.c
++++ b/arch/arm/plat-samsung/pwm.c
+@@ -36,7 +36,6 @@ struct pwm_device {
+ 	unsigned int		 duty_ns;
+ 
+ 	unsigned char		 tcon_base;
+-	unsigned char		 running;
+ 	unsigned char		 use_count;
+ 	unsigned char		 pwm_id;
+ };
+@@ -116,7 +115,6 @@ int pwm_enable(struct pwm_device *pwm)
+ 
+ 	local_irq_restore(flags);
+ 
+-	pwm->running = 1;
+ 	return 0;
+ }
+ 
+@@ -134,8 +132,6 @@ void pwm_disable(struct pwm_device *pwm)
+ 	__raw_writel(tcon, S3C2410_TCON);
+ 
+ 	local_irq_restore(flags);
+-
+-	pwm->running = 0;
+ }
+ 
+ EXPORT_SYMBOL(pwm_disable);
+-- 
+1.7.0.4
