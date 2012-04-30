@@ -1,196 +1,113 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 07/20] ARM: EXYNOS: Add pre-divider and fout mux clocks for bpll and mpll
-Date: Mon, 30 Apr 2012 12:14:17 -0700
-Message-ID: <1335813270-13083-8-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 09/20] ARM: Exynos: Remove a new bus_type instance for Exynos5
+Date: Mon, 30 Apr 2012 12:14:19 -0700
+Message-ID: <1335813270-13083-10-git-send-email-thomas.abraham@linaro.org>
 References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:47061 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756515Ab2D3TRI (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:42437 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756579Ab2D3TRL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Apr 2012 15:17:08 -0400
-Received: by mail-pz0-f51.google.com with SMTP id z8so4463466dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:17:07 -0700 (PDT)
+	Mon, 30 Apr 2012 15:17:11 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rp8so3589582pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:17:11 -0700 (PDT)
 In-Reply-To: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Kisoo Yu <ksoo.yu@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-From: Kisoo Yu <ksoo.yu@samsung.com>
+A seperate bus_type instance is not required for Exynos5. The existing bus_type
+instance used with Exynos4 is sufficient for both Exynos4 and Exynos5. This
+also solves issue of uninitialized usage of exynos4_subsys in Exynos4 power
+management code that is reused for Exynos5 also. In addition to that, the
+existing exynos4_subsys bus_type is renamed to exynos_subsys to indicate that
+it is reused on both Exynos4 and Exynos5 platforms.
 
-The fout clock of BPLL and MPLL have a selectable source in rev1 of
-EXYNOS5. The clock options are a fixed divided by 2 clock and the
-output of the PLL itself. Add support for these new clock instances.
-
-Signed-off-by: Kisoo Yu <ksoo.yu@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-[kgene.kim@samsung.com: temporary apply this because I
-don't want to add pll stuff in each clock not commonly]
-Temporary-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos/clock-exynos5.c           |   73 +++++++++++++++++++++++-
- arch/arm/mach-exynos/include/mach/regs-clock.h |    2 +
- arch/arm/plat-s5p/clock.c                      |   11 ----
- 3 files changed, 74 insertions(+), 12 deletions(-)
+ arch/arm/mach-exynos/common.c            |   27 ++++++---------------------
+ arch/arm/mach-exynos/pm.c                |    2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h |    2 +-
+ 3 files changed, 8 insertions(+), 23 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 846741e..7c0f810 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -145,6 +145,39 @@ static struct clksrc_clk exynos5_clk_sclk_apll = {
- 	.reg_div = { .reg = EXYNOS5_CLKDIV_CPU0, .shift = 24, .size = 3 },
- };
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index eff4446..3302a8d 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -565,30 +565,18 @@ void __init exynos5_init_irq(void)
+ 	s5p_init_irq(NULL, 0);
+ }
  
-+static struct clk clk_fout_bpll_div2 = {
-+	.name	= "fout_bpll_div2",
-+};
-+
-+static struct clk *exynos5_clkset_mout_bpll_fout_list[] = {
-+	[0] = &clk_fout_bpll_div2,
-+	[1] = &clk_fout_bpll,
-+};
-+
-+static struct clksrc_sources exynos5_clkset_mout_bpll_fout = {
-+	.sources	= exynos5_clkset_mout_bpll_fout_list,
-+	.nr_sources	= ARRAY_SIZE(exynos5_clkset_mout_bpll_fout_list),
-+};
-+
-+static struct clksrc_clk exynos5_clk_mout_bpll_fout = {
-+	.clk	= {
-+		.name		= "mout_bpll_fout",
-+	},
-+	.sources = &exynos5_clkset_mout_bpll_fout,
-+	.reg_src = { .reg = EXYNOS5_PLL_DIV2_SEL, .shift = 0, .size = 1 },
-+};
-+
-+/* Possible clock sources for BPLL Mux */
-+static struct clk *clk_src_bpll_list[] = {
-+	[0] = &clk_fin_bpll,
-+	[1] = &exynos5_clk_mout_bpll_fout.clk,
-+};
-+
-+struct clksrc_sources clk_src_bpll = {
-+	.sources	= clk_src_bpll_list,
-+	.nr_sources	= ARRAY_SIZE(clk_src_bpll_list),
-+};
-+
- static struct clksrc_clk exynos5_clk_mout_bpll = {
- 	.clk	= {
- 		.name		= "mout_bpll",
-@@ -187,11 +220,43 @@ static struct clksrc_clk exynos5_clk_mout_epll = {
- 	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP2, .shift = 12, .size = 1 },
- };
- 
-+static struct clk clk_fout_mpll_div2 = {
-+	.name	= "fout_mpll_div2",
-+};
-+
-+static struct clk *exynos5_clkset_mout_mpll_fout_list[] = {
-+	[0] = &clk_fout_mpll_div2,
-+	[1] = &clk_fout_mpll,
-+};
-+
-+static struct clksrc_sources exynos5_clkset_mout_mpll_fout = {
-+	.sources	= exynos5_clkset_mout_mpll_fout_list,
-+	.nr_sources	= ARRAY_SIZE(exynos5_clkset_mout_mpll_fout_list),
-+};
-+
-+static struct clksrc_clk exynos5_clk_mout_mpll_fout = {
-+	.clk	= {
-+		.name		= "mout_mpll_fout",
-+	},
-+	.sources = &exynos5_clkset_mout_mpll_fout,
-+	.reg_src = { .reg = EXYNOS5_PLL_DIV2_SEL, .shift = 4, .size = 1 },
-+};
-+
-+static struct clk *exynos5_clk_src_mpll_list[] = {
-+	[0] = &clk_fin_mpll,
-+	[1] = &exynos5_clk_mout_mpll_fout.clk,
-+};
-+
-+struct clksrc_sources exynos5_clk_src_mpll = {
-+	.sources	= exynos5_clk_src_mpll_list,
-+	.nr_sources	= ARRAY_SIZE(exynos5_clk_src_mpll_list),
-+};
-+
- struct clksrc_clk exynos5_clk_mout_mpll = {
- 	.clk = {
- 		.name		= "mout_mpll",
- 	},
--	.sources = &clk_src_mpll,
-+	.sources = &exynos5_clk_src_mpll,
- 	.reg_src = { .reg = EXYNOS5_CLKSRC_CORE1, .shift = 8, .size = 1 },
- };
- 
-@@ -946,10 +1011,12 @@ static struct clksrc_clk *exynos5_sysclks[] = {
- 	&exynos5_clk_mout_apll,
- 	&exynos5_clk_sclk_apll,
- 	&exynos5_clk_mout_bpll,
-+	&exynos5_clk_mout_bpll_fout,
- 	&exynos5_clk_mout_bpll_user,
- 	&exynos5_clk_mout_cpll,
- 	&exynos5_clk_mout_epll,
- 	&exynos5_clk_mout_mpll,
-+	&exynos5_clk_mout_mpll_fout,
- 	&exynos5_clk_mout_mpll_user,
- 	&exynos5_clk_vpllsrc,
- 	&exynos5_clk_sclk_vpll,
-@@ -1013,6 +1080,8 @@ static struct clk *exynos5_clks[] __initdata = {
- 	&exynos5_clk_sclk_hdmi27m,
- 	&exynos5_clk_sclk_hdmiphy,
- 	&clk_fout_bpll,
-+	&clk_fout_bpll_div2,
-+	&clk_fout_mpll_div2,
- 	&clk_fout_cpll,
- 	&exynos5_clk_armclk,
- };
-@@ -1178,8 +1247,10 @@ void __init_or_cpufreq exynos5_setup_clocks(void)
- 
- 	clk_fout_apll.ops = &exynos5_fout_apll_ops;
- 	clk_fout_bpll.rate = bpll;
-+	clk_fout_bpll_div2.rate = bpll >> 1;
- 	clk_fout_cpll.rate = cpll;
- 	clk_fout_mpll.rate = mpll;
-+	clk_fout_mpll_div2.rate = mpll >> 1;
- 	clk_fout_epll.rate = epll;
- 	clk_fout_vpll.rate = vpll;
- 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
-index d9578a5..130034d 100644
---- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-@@ -313,6 +313,8 @@
- #define EXYNOS5_CLKGATE_IP_PERIS		EXYNOS_CLKREG(0x10960)
- #define EXYNOS5_CLKGATE_BLOCK			EXYNOS_CLKREG(0x10980)
- 
-+#define EXYNOS5_PLL_DIV2_SEL			EXYNOS_CLKREG(0x20A24)
-+
- #define EXYNOS5_BPLL_CON0			EXYNOS_CLKREG(0x20110)
- #define EXYNOS5_CLKSRC_CDREX			EXYNOS_CLKREG(0x20200)
- #define EXYNOS5_CLKDIV_CDREX			EXYNOS_CLKREG(0x20500)
-diff --git a/arch/arm/plat-s5p/clock.c b/arch/arm/plat-s5p/clock.c
-index f68a9bb..bea0907 100644
---- a/arch/arm/plat-s5p/clock.c
-+++ b/arch/arm/plat-s5p/clock.c
-@@ -115,17 +115,6 @@ struct clksrc_sources clk_src_apll = {
- 	.nr_sources	= ARRAY_SIZE(clk_src_apll_list),
- };
- 
--/* Possible clock sources for BPLL Mux */
--static struct clk *clk_src_bpll_list[] = {
--	[0] = &clk_fin_bpll,
--	[1] = &clk_fout_bpll,
+-struct bus_type exynos4_subsys = {
+-	.name		= "exynos4-core",
+-	.dev_name	= "exynos4-core",
 -};
 -
--struct clksrc_sources clk_src_bpll = {
--	.sources	= clk_src_bpll_list,
--	.nr_sources	= ARRAY_SIZE(clk_src_bpll_list),
+-struct bus_type exynos5_subsys = {
+-	.name		= "exynos5-core",
+-	.dev_name	= "exynos5-core",
++struct bus_type exynos_subsys = {
++	.name		= "exynos-core",
++	.dev_name	= "exynos-core",
+ };
+ 
+ static struct device exynos4_dev = {
+-	.bus	= &exynos4_subsys,
 -};
 -
- /* Possible clock sources for CPLL Mux */
- static struct clk *clk_src_cpll_list[] = {
- 	[0] = &clk_fin_cpll,
+-static struct device exynos5_dev = {
+-	.bus	= &exynos5_subsys,
++	.bus	= &exynos_subsys,
+ };
+ 
+ static int __init exynos_core_init(void)
+ {
+-	if (soc_is_exynos5250())
+-		return subsys_system_register(&exynos5_subsys, NULL);
+-	else
+-		return subsys_system_register(&exynos4_subsys, NULL);
++	return subsys_system_register(&exynos_subsys, NULL);
+ }
+ core_initcall(exynos_core_init);
+ 
+@@ -675,10 +663,7 @@ static int __init exynos_init(void)
+ {
+ 	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
+ 
+-	if (soc_is_exynos5250())
+-		return device_register(&exynos5_dev);
+-	else
+-		return device_register(&exynos4_dev);
++	return device_register(&exynos4_dev);
+ }
+ 
+ /* uart registration process */
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 428cfeb..7164aa9 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -275,7 +275,7 @@ static void exynos4_restore_pll(void)
+ 
+ static struct subsys_interface exynos4_pm_interface = {
+ 	.name		= "exynos4_pm",
+-	.subsys		= &exynos4_subsys,
++	.subsys		= &exynos_subsys,
+ 	.add_dev	= exynos4_pm_add,
+ };
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 787ceac..0721293 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -202,7 +202,7 @@ extern struct bus_type s3c2443_subsys;
+ extern struct bus_type s3c6410_subsys;
+ extern struct bus_type s5p64x0_subsys;
+ extern struct bus_type s5pv210_subsys;
+-extern struct bus_type exynos4_subsys;
++extern struct bus_type exynos_subsys;
+ 
+ extern void (*s5pc1xx_idle)(void);
+ 
 -- 
 1.7.5.4
