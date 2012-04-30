@@ -1,73 +1,47 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
-Date: Sun, 29 Apr 2012 22:55:25 +0200
-Message-ID: <201204292255.25438.rjw@sisk.pl>
-References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-2"
-Content-Transfer-Encoding: 7bit
+From: "HeungJun, Kim" <riverful.kim@samsung.com>
+Subject: ARM: Exynos4: NURI: Remove redundant S5P_SETUP_MIPIPHY configuration
+Date: Mon, 30 Apr 2012 20:24:41 +0900
+Message-ID: <1335785081-5398-1-git-send-email-riverful.kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:44504 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754417Ab2D2Uuo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:43784 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751696Ab2D3LYl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 29 Apr 2012 16:50:44 -0400
-In-Reply-To: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com>
+	Mon, 30 Apr 2012 07:24:41 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3A00JUXID4W600@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Apr 2012 20:24:40 +0900 (KST)
+Received: from riverful-ubuntu.165.213.246.161 ([165.213.219.119])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0M3A005MIID46A60@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 30 Apr 2012 20:24:40 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, "HeungJun, Kim" <riverful.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Friday, April 06, 2012, Marek Szyprowski wrote:
-> Some bootloaders disable power domains on boot and the platform startup
-> code registers them in the 'disabled' state. Current gen_pd code assumed
-> that the devices can be registered only to the power domain which is in
-> 'enabled' state and these devices are active at the time of the
-> registration. This is not correct in our case. This patch lets drivers
-> to be registered into 'disabled' power domains and finally solves
-> mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
-> NURI and UniversalC210 platforms.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  drivers/base/power/domain.c |    7 +------
->  1 files changed, 1 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 73ce9fb..05f5799f 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->  
->  	genpd_acquire_lock(genpd);
->  
-> -	if (genpd->status == GPD_STATE_POWER_OFF) {
-> -		ret = -EINVAL;
-> -		goto out;
-> -	}
-> -
->  	if (genpd->prepared_count > 0) {
->  		ret = -EAGAIN;
->  		goto out;
-> @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct device *dev,
->  	dev_pm_get_subsys_data(dev);
->  	dev->power.subsys_data->domain_data = &gpd_data->base;
->  	gpd_data->base.dev = dev;
-> -	gpd_data->need_restore = false;
-> +	gpd_data->need_restore = true;
+From: "HeungJun, Kim" <riverful.kim@samsung.com>
 
-I think that should be:
+Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/Kconfig |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-+	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
-
-Otherwise, on the next domain power off the device's state won't be saved.
-
->  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
->  	if (td)
->  		gpd_data->td = *td;
-> 
-
-Thanks,
-Rafael
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index eb35b8a..0f9bbca 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -297,7 +297,6 @@ config MACH_NURI
+ 	select S5P_DEV_G2D
+ 	select S5P_DEV_MFC
+ 	select S5P_DEV_USB_EHCI
+-	select S5P_SETUP_MIPIPHY
+ 	select S3C_DEV_USB_HSOTG
+ 	select EXYNOS4_DEV_DMA
+ 	select EXYNOS_DEV_DRM
+-- 
+1.7.5.4
