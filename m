@@ -1,83 +1,45 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 00/20] ARM: Samsung: Add support for Exynos5250 Rev1.0
-Date: Mon, 30 Apr 2012 12:14:10 -0700
-Message-ID: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 01/20] ARM: EXYNOS: Add watchdog timer clock instance
+Date: Mon, 30 Apr 2012 12:14:11 -0700
+Message-ID: <1335813270-13083-2-git-send-email-thomas.abraham@linaro.org>
+References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f51.google.com ([209.85.210.51]:47061 "EHLO
-	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756515Ab2D3TQv (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:42437 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756515Ab2D3TQw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Apr 2012 15:16:51 -0400
-Received: by dadz8 with SMTP id z8so4463466dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:16:51 -0700 (PDT)
+	Mon, 30 Apr 2012 15:16:52 -0400
+Received: by pbbrp8 with SMTP id rp8so3589582pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:16:52 -0700 (PDT)
+In-Reply-To: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-This patch series adds support for Samsung's Exynos5250 Rev1.0. It includes
-fixes for device tree support, updates for rev1.0 silicon and device tree
-discovery for combiner and wakeup interrupt controller. This patch series
-depricates the existing support for Exynos5250 Rev0.0.
+Add watchdog timer clock instance for EXYNOS5 watchdog controller.
 
-This patchset is based and tested on top of v3.4-rc5.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/clock-exynos5.c |    5 +++++
+ 1 files changed, 5 insertions(+), 0 deletions(-)
 
-Boojin Kim (1):
-  ARM: EXYNOS: Support DMA for EXYNOS5250 SoC
-
-Changhwan Youn (2):
-  ARM: EXYNOS: Modify the GIC physical address for static io-mapping
-  ARM: EXYNOS: Redefine IRQ_MCT_L0,1 definition
-
-Kisoo Yu (1):
-  ARM: EXYNOS: Add pre-divider and fout mux clocks for bpll and mpll
-
-Kukjin Kim (2):
-  ARM: EXYNOS: fix ctrlbit for exynos5_clk_pdma1
-  ARM: EXYNOS: update irqs for EXYNOS5250 evt1
-
-Sangsu Park (1):
-  ARM: EXYNOS: add GPC4 bank instance
-
-Thomas Abraham (13):
-  ARM: EXYNOS: Add watchdog timer clock instance
-  ARM: Exynos: Remove a new bus_type instance for Exynos5
-  of/irq: fix interrupt parent lookup procedure
-  of/irq: add retry support for interrupt controller tree initialization
-  ARM: Exynos: Add irq_domain support for interrupt combiner
-  ARM: Exynos: Add device tree support for interrupt combiner
-  ARM: Exynos: Simplify the wakeup interrupt setup code
-  ARM: Exynos: Add irq_domain support for gpio wakeup interrupts
-  ARM: Exynos: Remove arch_initcall for wakeup interrupt initialization
-  ARM: Exynos: Add device tree support for gpio wakeup interrupt controller
-  ARM: dts: Update device tree source files for EXYNOS5250
-  ARM: Exynos5: Add combiner, wakeup interrupt controller and ethernet nodes
-  ARM: Exynos5: Add AUXDATA for i2c controllers
-
- .../bindings/arm/samsung/interrupt-combiner.txt    |   52 +++
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |   63 ++++
- arch/arm/boot/dts/exynos5250.dtsi                  |   99 ++++--
- arch/arm/mach-exynos/Kconfig                       |    7 +-
- arch/arm/mach-exynos/Makefile                      |    2 +-
- arch/arm/mach-exynos/clock-exynos5.c               |   80 +++++-
- arch/arm/mach-exynos/common.c                      |  338 ++++++++++++++------
- arch/arm/mach-exynos/dma.c                         |  129 +++++++--
- arch/arm/mach-exynos/include/mach/gpio.h           |    9 +-
- arch/arm/mach-exynos/include/mach/irqs.h           |   40 ++-
- arch/arm/mach-exynos/include/mach/map.h            |    4 +-
- arch/arm/mach-exynos/include/mach/regs-clock.h     |    2 +
- arch/arm/mach-exynos/include/mach/regs-gpio.h      |    4 +-
- arch/arm/mach-exynos/mach-exynos5-dt.c             |    4 +
- arch/arm/mach-exynos/mct.c                         |   17 +-
- arch/arm/mach-exynos/pm.c                          |    2 +-
- arch/arm/plat-s5p/clock.c                          |   11 -
- arch/arm/plat-samsung/Kconfig                      |    2 +-
- arch/arm/plat-samsung/include/plat/cpu.h           |    2 +-
- arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 +
- drivers/gpio/gpio-samsung.c                        |   11 +-
- drivers/of/irq.c                                   |   29 ++-
- 22 files changed, 698 insertions(+), 210 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
-
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index 5cd7a8b..3dc3c50 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -454,6 +454,11 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.enable		= exynos5_clk_ip_peris_ctrl,
+ 		.ctrlbit	= (1 << 20),
+ 	}, {
++		.name		= "watchdog",
++		.parent		= &exynos5_clk_aclk_66.clk,
++		.enable		= exynos5_clk_ip_peris_ctrl,
++		.ctrlbit	= (1 << 19),
++	}, {
+ 		.name		= "hsmmc",
+ 		.devname	= "exynos4-sdhci.0",
+ 		.parent		= &exynos5_clk_aclk_200.clk,
 -- 
 1.7.5.4
