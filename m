@@ -1,70 +1,88 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 16/20] ARM: Exynos: Remove arch_initcall for wakeup interrupt initialization
-Date: Mon, 30 Apr 2012 12:14:26 -0700
-Message-ID: <1335813270-13083-17-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 11/20] of/irq: add retry support for interrupt controller tree initialization
+Date: Mon, 30 Apr 2012 12:14:21 -0700
+Message-ID: <1335813270-13083-12-git-send-email-thomas.abraham@linaro.org>
 References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:42437 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756579Ab2D3TRW (ORCPT
+Received: from mail-pz0-f51.google.com ([209.85.210.51]:47061 "EHLO
+	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756579Ab2D3TRN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Apr 2012 15:17:22 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rp8so3589582pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:17:22 -0700 (PDT)
+	Mon, 30 Apr 2012 15:17:13 -0400
+Received: by mail-pz0-f51.google.com with SMTP id z8so4463466dad.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:17:13 -0700 (PDT)
 In-Reply-To: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-The of_irq_init function would be setup to invoke the exynos4_init_irq_eint
-function when booting using device tree. The arch_initcall for
-exynos4_init_irq_eint would duplicate its invocation in that case. Hence,
-arch_initcall for exynos4_init_irq_eint is removed and this function is invoked
-from the exynos4_init_irq for non-dt case.
+Allow a interrupt-controller initializtion call to report -EAGAIN to notify
+that its initializtion has not been completed since one or more of its
+interrupt-parent has not yet been initialized.
 
-Moreover, with single kernel image build, the exynos4_init_irq_eint has no checks
-to ensure that it is running on a exynos4 platform. So it would be appropriate
-to invoke it from exynos4_init_irq.
-
+Suggested-by: Rob Herring <rob.herring@calxeda.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-Acked-by: Rob Herring <rob.herring@calxeda.com>
 ---
- arch/arm/mach-exynos/common.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+ drivers/of/irq.c |   25 +++++++++++++++++++++----
+ 1 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 0d69412..544f8b5 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -64,6 +64,7 @@ static void exynos4_init_clocks(int xtal);
- static void exynos5_init_clocks(int xtal);
- static void exynos_init_uarts(struct s3c2410_uartcfg *cfg, int no);
- static int exynos_init(void);
-+static int exynos_init_irq_eint(void);
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index a520363..bbe6039 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -418,8 +418,6 @@ void __init of_irq_init(const struct of_device_id *matches)
+ 	INIT_LIST_HEAD(&intc_parent_list);
  
- static struct cpu_table cpu_ids[] __initdata = {
- 	{
-@@ -614,6 +615,7 @@ void __init exynos4_init_irq(void)
- 	 * uses GIC instead of VIC.
- 	 */
- 	s5p_init_irq(NULL, 0);
-+	exynos_init_irq_eint();
- }
+ 	for_each_matching_node(np, matches) {
+-		if (!of_find_property(np, "interrupt-controller", NULL))
+-			continue;
+ 		/*
+ 		 * Here, we allocate and populate an intc_desc with the node
+ 		 * pointer, interrupt-parent device_node etc.
+@@ -454,7 +452,6 @@ void __init of_irq_init(const struct of_device_id *matches)
+ 			if (desc->interrupt_parent != parent)
+ 				continue;
  
- void __init exynos5_init_irq(void)
-@@ -627,6 +629,7 @@ void __init exynos5_init_irq(void)
- 	 * uses GIC instead of VIC.
- 	 */
- 	s5p_init_irq(NULL, 0);
-+	exynos_init_irq_eint();
- }
- 
- struct bus_type exynos_subsys = {
-@@ -1041,4 +1044,3 @@ static int __init exynos_init_irq_eint(void)
- 
- 	return 0;
- }
--arch_initcall(exynos_init_irq_eint);
+-			list_del(&desc->list);
+ 			match = of_match_node(matches, desc->dev);
+ 			if (WARN(!match->data,
+ 			    "of_irq_init: no init function for %s\n",
+@@ -468,6 +465,15 @@ void __init of_irq_init(const struct of_device_id *matches)
+ 				 desc->dev, desc->interrupt_parent);
+ 			irq_init_cb = match->data;
+ 			ret = irq_init_cb(desc->dev, desc->interrupt_parent);
++			if (ret == -EAGAIN)
++				/* 
++				 * Interrupt controller's initialization did not
++				 * complete and should be retried. So let its
++				 * intc_desc be on intc_desc_list.
++				 */
++				continue;
++			list_del(&desc->list);
++
+ 			if (ret) {
+ 				kfree(desc);
+ 				continue;
+@@ -484,7 +490,18 @@ void __init of_irq_init(const struct of_device_id *matches)
+ 		desc = list_first_entry(&intc_parent_list, typeof(*desc), list);
+ 		if (list_empty(&intc_parent_list) || !desc) {
+ 			pr_err("of_irq_init: children remain, but no parents\n");
+-			break;
++			/*
++			 * If a search with NULL as parent did not result in any
++			 * new parent being found, then the scan for matching
++			 * interrupt controller nodes is considered as complete.
++			 * Otherwise, if there are pending elements on the
++			 * intc_desc_list, then retry this process again with
++			 * NULL as parent.
++			 */
++			if (!parent)
++				break;
++			parent = NULL;
++			continue;
+ 		}
+ 		list_del(&desc->list);
+ 		parent = desc->dev;
 -- 
 1.7.5.4
