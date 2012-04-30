@@ -1,44 +1,122 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 20/20] ARM: Exynos5: Add AUXDATA for i2c controllers
-Date: Mon, 30 Apr 2012 12:14:30 -0700
-Message-ID: <1335813270-13083-21-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 19/20] ARM: Exynos5: Add combiner, wakeup interrupt controller and ethernet nodes
+Date: Mon, 30 Apr 2012 12:14:29 -0700
+Message-ID: <1335813270-13083-20-git-send-email-thomas.abraham@linaro.org>
 References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:42437 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756574Ab2D3TRb (ORCPT
+Received: from mail-pz0-f51.google.com ([209.85.210.51]:47061 "EHLO
+	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756587Ab2D3TRa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Apr 2012 15:17:31 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rp8so3589582pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:17:31 -0700 (PDT)
+	Mon, 30 Apr 2012 15:17:30 -0400
+Received: by mail-pz0-f51.google.com with SMTP id z8so4463466dad.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:17:30 -0700 (PDT)
 In-Reply-To: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-Use AUXDATA to set the device names for controller instances discovered
-from device tree.
+And interrupt combiner, external interrupt wakeup interrupt controller
+and smsc9215 lan controller nodes.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/mach-exynos5-dt.c |    4 ++++
- 1 files changed, 4 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   11 ++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |   55 +++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 4711c89..cf5d222 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -43,6 +43,10 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos4210-uart.2", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS5_PA_UART3,
- 				"exynos4210-uart.3", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(0),
-+				"s3c2440-i2c.0", NULL),
-+	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(1),
-+				"s3c2440-i2c.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index bcc4b89..dbc4bdb 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -24,6 +24,17 @@
+ 		bootargs = "root=/dev/ram0 rw ramdisk=8192 console=ttySAC1,115200";
+ 	};
+ 
++	lan9215@0x05000000 {
++		compatible = "smsc,lan9215", "smsc,lan9115";
++		reg = <0x05000000 0x20000>;
++		interrupts = <5 0>;
++		interrupt-parent = <&wakeup_eint>;
++		phy-mode = "mii";
++		smsc,irq-push-pull;
++		smsc,force-internal-phy;
++		local-mac-address = [00 80 00 23 45 67];
++	};
++
+ 	i2c@12C60000 {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 76b7dba..af124917 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -26,10 +26,65 @@
+ 	gic:interrupt-controller@10481000 {
+ 		compatible = "arm,cortex-a9-gic";
+ 		#interrupt-cells = <3>;
++		#address-cells = <0>;
++		#size-cells = <0>;
+ 		interrupt-controller;
+ 		reg = <0x10481000 0x1000>, <0x10482000 0x2000>;
+ 	};
+ 
++	combiner:interrupt-controller@10440000 {
++		compatible = "samsung,exynos4210-combiner";
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		samsung,combiner-nr = <32>;
++		reg = <0x10440000 0x1000>;
++		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
++			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
++			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
++			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>,
++			     <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
++			     <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
++			     <0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
++			     <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>;
++	};
++
++	wakeup_eint: interrupt-controller@11400000 {
++		compatible = "samsung,exynos5210-wakeup-eint";
++		reg = <0x11400000 0x1000>;
++		interrupt-controller;
++		#interrupt-cells = <2>;
++		interrupt-parent = <&wakeup_map>;
++		interrupts = <0x0 0>, <0x1 0>, <0x2 0>, <0x3 0>,
++			     <0x4 0>, <0x5 0>, <0x6 0>, <0x7 0>,
++			     <0x8 0>, <0x9 0>, <0xa 0>, <0xb 0>,
++			     <0xc 0>, <0xd 0>, <0xe 0>, <0xf 0>,
++			     <0x10 0>;
++
++                wakeup_map: interrupt-map {
++			compatible = "samsung,exynos5210-wakeup-eint-map";
++                        #interrupt-cells = <2>;
++                        #address-cells = <0>;
++                        #size-cells = <0>;
++                        interrupt-map = <0x0 0 &combiner 23 0>,
++                                        <0x1 0 &combiner 24 0>,
++                                        <0x2 0 &combiner 25 0>,
++                                        <0x3 0 &combiner 25 1>,
++                                        <0x4 0 &combiner 26 0>,
++                                        <0x5 0 &combiner 26 1>,
++                                        <0x6 0 &combiner 27 0>,
++                                        <0x7 0 &combiner 27 1>,
++                                        <0x8 0 &combiner 28 0>,
++                                        <0x9 0 &combiner 28 1>,
++                                        <0xa 0 &combiner 29 0>,
++                                        <0xb 0 &combiner 29 1>,
++                                        <0xc 0 &combiner 30 0>,
++                                        <0xd 0 &combiner 30 1>,
++                                        <0xe 0 &combiner 31 0>,
++                                        <0xf 0 &combiner 31 1>,
++                                        <0x10 0 &gic 0 32 0>;
++                };
++        };
++
+ 	watchdog {
+ 		compatible = "samsung,s3c2410-wdt";
+ 		reg = <0x101D0000 0x100>;
 -- 
 1.7.5.4
