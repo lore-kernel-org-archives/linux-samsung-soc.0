@@ -1,16 +1,16 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 05/20] ARM: EXYNOS: Redefine IRQ_MCT_L0,1 definition
-Date: Mon, 30 Apr 2012 12:14:15 -0700
-Message-ID: <1335813270-13083-6-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 04/20] ARM: EXYNOS: Modify the GIC physical address for static io-mapping
+Date: Mon, 30 Apr 2012 12:14:14 -0700
+Message-ID: <1335813270-13083-5-git-send-email-thomas.abraham@linaro.org>
 References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mail-pz0-f51.google.com ([209.85.210.51]:47061 "EHLO
 	mail-pz0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756515Ab2D3TQ5 (ORCPT
+	with ESMTP id S1756515Ab2D3TQ4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Apr 2012 15:16:57 -0400
+	Mon, 30 Apr 2012 15:16:56 -0400
 Received: by mail-pz0-f51.google.com with SMTP id z8so4463466dad.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:16:57 -0700 (PDT)
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 30 Apr 2012 12:16:56 -0700 (PDT)
 In-Reply-To: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -19,82 +19,49 @@ Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Changhwan Youn <ch
 
 From: Changhwan Youn <chaos.youn@samsung.com>
 
-Redefine IRQ_MCT_L0,1 irq definition as it is changed in rev1 of EXYNOS5.
+Adapt to changes in GIC physical address in rev1 of EXYNOS5.
 
 Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
 ---
- arch/arm/mach-exynos/include/mach/irqs.h |    4 ++--
- arch/arm/mach-exynos/mct.c               |   17 +++++++++++------
- 2 files changed, 13 insertions(+), 8 deletions(-)
+ arch/arm/mach-exynos/common.c           |    4 ++--
+ arch/arm/mach-exynos/include/mach/map.h |    4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-index 591e7852..ef52f61 100644
---- a/arch/arm/mach-exynos/include/mach/irqs.h
-+++ b/arch/arm/mach-exynos/include/mach/irqs.h
-@@ -331,6 +331,8 @@
- #define EXYNOS5_IRQ_SATA		IRQ_SPI(115)
- #define EXYNOS5_IRQ_NFCON		IRQ_SPI(116)
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 5ccd6e8..eff4446 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -265,12 +265,12 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 	}, {
+ 		.virtual	= (unsigned long)S5P_VA_GIC_CPU,
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_GIC_CPU),
+-		.length		= SZ_64K,
++		.length		= SZ_8K,
+ 		.type		= MT_DEVICE,
+ 	}, {
+ 		.virtual	= (unsigned long)S5P_VA_GIC_DIST,
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_GIC_DIST),
+-		.length		= SZ_64K,
++		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
+ 	},
+ };
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 6e6d11f..cf7d200 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -78,8 +78,8 @@
  
-+#define EXYNOS5_IRQ_MCT_L0		IRQ_SPI(120)
-+#define EXYNOS5_IRQ_MCT_L1		IRQ_SPI(121)
- #define EXYNOS5_IRQ_MMC44		IRQ_SPI(123)
- #define EXYNOS5_IRQ_MDMA1		IRQ_SPI(124)
- #define EXYNOS5_IRQ_FIMC_LITE0		IRQ_SPI(125)
-@@ -410,8 +412,6 @@
- #define EXYNOS5_IRQ_FIMD1_SYSTEM	COMBINER_IRQ(18, 6)
+ #define EXYNOS4_PA_GIC_CPU		0x10480000
+ #define EXYNOS4_PA_GIC_DIST		0x10490000
+-#define EXYNOS5_PA_GIC_CPU		0x10480000
+-#define EXYNOS5_PA_GIC_DIST		0x10490000
++#define EXYNOS5_PA_GIC_CPU		0x10482000
++#define EXYNOS5_PA_GIC_DIST		0x10481000
  
- #define EXYNOS5_IRQ_EINT0		COMBINER_IRQ(23, 0)
--#define EXYNOS5_IRQ_MCT_L0		COMBINER_IRQ(23, 1)
--#define EXYNOS5_IRQ_MCT_L1		COMBINER_IRQ(23, 2)
- #define EXYNOS5_IRQ_MCT_G0		COMBINER_IRQ(23, 3)
- #define EXYNOS5_IRQ_MCT_G1		COMBINER_IRQ(23, 4)
- #define EXYNOS5_IRQ_MCT_G2		COMBINER_IRQ(23, 5)
-diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
-index 897d9a9..b601fb8 100644
---- a/arch/arm/mach-exynos/mct.c
-+++ b/arch/arm/mach-exynos/mct.c
-@@ -388,6 +388,7 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
- {
- 	struct mct_clock_event_device *mevt;
- 	unsigned int cpu = smp_processor_id();
-+	int mct_lx_irq;
- 
- 	mevt = this_cpu_ptr(&percpu_mct_tick);
- 	mevt->evt = evt;
-@@ -414,14 +415,18 @@ static int __cpuinit exynos4_local_timer_setup(struct clock_event_device *evt)
- 
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (cpu == 0) {
-+			mct_lx_irq = soc_is_exynos4210() ? EXYNOS4_IRQ_MCT_L0 :
-+						EXYNOS5_IRQ_MCT_L0;
- 			mct_tick0_event_irq.dev_id = mevt;
--			evt->irq = EXYNOS4_IRQ_MCT_L0;
--			setup_irq(EXYNOS4_IRQ_MCT_L0, &mct_tick0_event_irq);
-+			evt->irq = mct_lx_irq;
-+			setup_irq(mct_lx_irq, &mct_tick0_event_irq);
- 		} else {
-+			mct_lx_irq = soc_is_exynos4210() ? EXYNOS4_IRQ_MCT_L1 :
-+						EXYNOS5_IRQ_MCT_L1;
- 			mct_tick1_event_irq.dev_id = mevt;
--			evt->irq = EXYNOS4_IRQ_MCT_L1;
--			setup_irq(EXYNOS4_IRQ_MCT_L1, &mct_tick1_event_irq);
--			irq_set_affinity(EXYNOS4_IRQ_MCT_L1, cpumask_of(1));
-+			evt->irq = mct_lx_irq;
-+			setup_irq(mct_lx_irq, &mct_tick1_event_irq);
-+			irq_set_affinity(mct_lx_irq, cpumask_of(1));
- 		}
- 	} else {
- 		enable_percpu_irq(EXYNOS_IRQ_MCT_LOCALTIMER, 0);
-@@ -473,7 +478,7 @@ static void __init exynos4_timer_resources(void)
- 
- static void __init exynos4_timer_init(void)
- {
--	if (soc_is_exynos4210())
-+	if ((soc_is_exynos4210()) || (soc_is_exynos5250()))
- 		mct_int_type = MCT_INT_SPI;
- 	else
- 		mct_int_type = MCT_INT_PPI;
+ #define EXYNOS4_PA_COREPERI		0x10500000
+ #define EXYNOS4_PA_TWD			0x10500600
 -- 
 1.7.5.4
