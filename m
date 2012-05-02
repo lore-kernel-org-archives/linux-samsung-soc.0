@@ -1,88 +1,116 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH] drivers: genpd: let platform code to register devices
- into disabled domains
-Date: Wed, 2 May 2012 14:03:07 +0900
-Message-ID: <CAH9JG2VG0X5XCshyBOq7f6OsHiDrNLoMjp=ehp+K0njOOCkwyg@mail.gmail.com>
-References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com>
-	<201204292255.25438.rjw@sisk.pl>
-	<201205012117.39750.rjw@sisk.pl>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gy0-f174.google.com ([209.85.160.174]:42582 "EHLO
-	mail-gy0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753476Ab2EBFDJ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 May 2012 01:03:09 -0400
-In-Reply-To: <201205012117.39750.rjw@sisk.pl>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 1/7] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Tue,  1 May 2012 22:07:40 -0700
+Message-ID: <1335935266-25289-2-git-send-email-thomas.abraham@linaro.org>
+References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@sisk.pl>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
 
-On 5/2/12, Rafael J. Wysocki <rjw@sisk.pl> wrote:
-> On Sunday, April 29, 2012, Rafael J. Wysocki wrote:
->> On Friday, April 06, 2012, Marek Szyprowski wrote:
->> > Some bootloaders disable power domains on boot and the platform startup
->> > code registers them in the 'disabled' state. Current gen_pd code
->> > assumed
->> > that the devices can be registered only to the power domain which is in
->> > 'enabled' state and these devices are active at the time of the
->> > registration. This is not correct in our case. This patch lets drivers
->> > to be registered into 'disabled' power domains and finally solves
->> > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
->> > NURI and UniversalC210 platforms.
->> >
->> > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
->> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> > ---
->> >  drivers/base/power/domain.c |    7 +------
->> >  1 files changed, 1 insertions(+), 6 deletions(-)
->> >
->> > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> > index 73ce9fb..05f5799f 100644
->> > --- a/drivers/base/power/domain.c
->> > +++ b/drivers/base/power/domain.c
->> > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct
->> > generic_pm_domain *genpd, struct device *dev,
->> >
->> >  	genpd_acquire_lock(genpd);
->> >
->> > -	if (genpd->status == GPD_STATE_POWER_OFF) {
->> > -		ret = -EINVAL;
->> > -		goto out;
->> > -	}
->> > -
->> >  	if (genpd->prepared_count > 0) {
->> >  		ret = -EAGAIN;
->> >  		goto out;
->> > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain
->> > *genpd, struct device *dev,
->> >  	dev_pm_get_subsys_data(dev);
->> >  	dev->power.subsys_data->domain_data = &gpd_data->base;
->> >  	gpd_data->base.dev = dev;
->> > -	gpd_data->need_restore = false;
->> > +	gpd_data->need_restore = true;
->>
->> I think that should be:
->>
->> +	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
->>
->> Otherwise, on the next domain power off the device's state won't be
->> saved.
->
-> Ping?
-Hi Rafael,
+Some platforms allow for clock gating and control of bus interface unit clock
+and card interface unit clock. Add support for clock lookup of optional biu
+and ciu clocks for clock gating and clock speed determination.
 
-Now Marek is on vacation util 6 May. He'll answer at that time.
-Sorry.
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/mmc/host/dw_mmc.c  |   35 +++++++++++++++++++++++++++++++----
+ include/linux/mmc/dw_mmc.h |    4 ++++
+ 2 files changed, 35 insertions(+), 4 deletions(-)
 
-Thank you,
-Kyungmin Park
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 1532357..036846f 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1938,19 +1938,35 @@ int dw_mci_probe(struct dw_mci *host)
+ 		return -ENODEV;
+ 	}
+ 
+-	if (!host->pdata->bus_hz) {
++	host->biu_clk = clk_get(&host->dev, "biu");
++	if (IS_ERR(host->biu_clk))
++		dev_info(&host->dev, "biu clock not available\n");
++	else
++		clk_enable(host->biu_clk);
++
++	host->ciu_clk = clk_get(&host->dev, "ciu");
++	if (IS_ERR(host->ciu_clk))
++		dev_info(&host->dev, "ciu clock not available\n");
++	else
++		clk_enable(host->ciu_clk);
++
++	if (IS_ERR(host->ciu_clk))
++		host->bus_hz = host->pdata->bus_hz;
++	else
++		host->bus_hz = clk_get_rate(host->ciu_clk);
++
++	if (!host->bus_hz) {
+ 		dev_err(&host->dev,
+ 			"Platform data must supply bus speed\n");
+-		return -ENODEV;
++		ret = -ENODEV;
++		goto err_clk;
+ 	}
+ 
+-	host->bus_hz = host->pdata->bus_hz;
+ 	host->quirks = host->pdata->quirks;
+ 
+ 	spin_lock_init(&host->lock);
+ 	INIT_LIST_HEAD(&host->queue);
+ 
+-
+ 	host->dma_ops = host->pdata->dma_ops;
+ 	dw_mci_init_dma(host);
+ 
+@@ -2095,6 +2111,13 @@ err_dmaunmap:
+ 		regulator_disable(host->vmmc);
+ 		regulator_put(host->vmmc);
+ 	}
++	kfree(host);
++
++err_clk:
++	clk_disable(host->ciu_clk);
++	clk_disable(host->biu_clk);
++	clk_put(host->ciu_clk);
++	clk_put(host->biu_clk);
+ 	return ret;
+ }
+ EXPORT_SYMBOL(dw_mci_probe);
+@@ -2128,6 +2151,10 @@ void dw_mci_remove(struct dw_mci *host)
+ 		regulator_put(host->vmmc);
+ 	}
+ 
++	clk_disable(host->ciu_clk);
++	clk_disable(host->biu_clk);
++	clk_put(host->ciu_clk);
++	clk_put(host->biu_clk);
+ }
+ EXPORT_SYMBOL(dw_mci_remove);
+ 
+diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+index 7a7ebd3..fa9a139 100644
+--- a/include/linux/mmc/dw_mmc.h
++++ b/include/linux/mmc/dw_mmc.h
+@@ -78,6 +78,8 @@ struct mmc_data;
+  * @data_offset: Set the offset of DATA register according to VERID.
+  * @dev: Device associated with the MMC controller.
+  * @pdata: Platform data associated with the MMC controller.
++ * @biu_clk: Pointer to bus interface unit clock instance.
++ * @ciu_clk: Pointer to card interface unit clock instance.
+  * @slot: Slots sharing this MMC controller.
+  * @fifo_depth: depth of FIFO.
+  * @data_shift: log2 of FIFO item size.
+@@ -158,6 +160,8 @@ struct dw_mci {
+ 	u16			data_offset;
+ 	struct device		dev;
+ 	struct dw_mci_board	*pdata;
++	struct clk		*biu_clk;
++	struct clk		*ciu_clk;
+ 	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
+ 
+ 	/* FIFO push and pull */
+-- 
+1.7.5.4
