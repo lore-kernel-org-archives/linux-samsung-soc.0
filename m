@@ -1,161 +1,106 @@
-From: James Hogan <james@albanarts.com>
-Subject: Re: [PATCH 1/7] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Wed, 2 May 2012 15:53:53 +0100
-Message-ID: <CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
-References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
-	<1335935266-25289-2-git-send-email-thomas.abraham@linaro.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 19/20] ARM: Exynos5: Add combiner, wakeup interrupt
+ controller and ethernet nodes
+Date: Wed, 2 May 2012 10:57:11 -0700
+Message-ID: <CAOesGMhxn6L+Pcp-v2v6z7srGd=8kGwqff7Tt6ok8pHMVXp3ZQ@mail.gmail.com>
+References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
+	<1335813270-13083-20-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1335935266-25289-2-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:62333 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754749Ab2EBR5M convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 2 May 2012 13:57:12 -0400
+Received: by yhmm54 with SMTP id m54so962436yhm.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 May 2012 10:57:11 -0700 (PDT)
+In-Reply-To: <1335813270-13083-20-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, devicetree-discuss@lists.ozlabs.org
 
-Hi
+Hi,
 
-On 2 May 2012 06:07, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> Some platforms allow for clock gating and control of bus interface un=
-it clock
-> and card interface unit clock. Add support for clock lookup of option=
-al biu
-> and ciu clocks for clock gating and clock speed determination.
+[adding devicetree-discuss]
+
+On Mon, Apr 30, 2012 at 12:14 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
+> And interrupt combiner, external interrupt wakeup interrupt controlle=
+r
+> and smsc9215 lan controller nodes.
 >
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > ---
-> =A0drivers/mmc/host/dw_mmc.c =A0| =A0 35 ++++++++++++++++++++++++++++=
-+++----
-> =A0include/linux/mmc/dw_mmc.h | =A0 =A04 ++++
-> =A02 files changed, 35 insertions(+), 4 deletions(-)
+> =A0arch/arm/boot/dts/exynos5250-smdk5250.dts | =A0 11 ++++++
+> =A0arch/arm/boot/dts/exynos5250.dtsi =A0 =A0 =A0 =A0 | =A0 55 +++++++=
+++++++++++++++++++++++
+> =A02 files changed, 66 insertions(+), 0 deletions(-)
 >
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 1532357..036846f 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1938,19 +1938,35 @@ int dw_mci_probe(struct dw_mci *host)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -ENODEV;
-> =A0 =A0 =A0 =A0}
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boo=
+t/dts/exynos5250-smdk5250.dts
+> index bcc4b89..dbc4bdb 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -24,6 +24,17 @@
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0bootargs =3D "root=3D/dev/ram0 rw ramd=
+isk=3D8192 console=3DttySAC1,115200";
+> =A0 =A0 =A0 =A0};
 >
-> - =A0 =A0 =A0 if (!host->pdata->bus_hz) {
-> + =A0 =A0 =A0 host->biu_clk =3D clk_get(&host->dev, "biu");
-
-These clock names sound quite platform specific (what if they're
-called something else on another platform, or another platform has
-separate ones for different instantiations of the block?). Perhaps the
-clk names should get passed in through platform data. I haven't looked
-how other drivers handle that though.
-
-> + =A0 =A0 =A0 if (IS_ERR(host->biu_clk))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "biu clock not ava=
-ilable\n");
-
-In this case, should it set host->biu_clk to NULL or are clk_disable
-and clk_put guaranteed to handle an IS_ERR value?
-
-> + =A0 =A0 =A0 else
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(host->biu_clk);
+> + =A0 =A0 =A0 lan9215@0x05000000 {
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "smsc,lan9215", "smsc,la=
+n9115";
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0x05000000 0x20000>;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupts =3D <5 0>;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupt-parent =3D <&wakeup_eint>;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 phy-mode =3D "mii";
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 smsc,irq-push-pull;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 smsc,force-internal-phy;
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 local-mac-address =3D [00 80 00 23 45 6=
+7];
+> + =A0 =A0 =A0 };
 > +
-> + =A0 =A0 =A0 host->ciu_clk =3D clk_get(&host->dev, "ciu");
-> + =A0 =A0 =A0 if (IS_ERR(host->ciu_clk))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "ciu clock not ava=
-ilable\n");
 
-same here
+since the 911x sits on a chipselect bus, you should instead add that
+bus to the dtsi and define this on that bus.
 
-> + =A0 =A0 =A0 else
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(host->ciu_clk);
-> +
-> + =A0 =A0 =A0 if (IS_ERR(host->ciu_clk))
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->bus_hz =3D host->pdata->bus_hz;
-> + =A0 =A0 =A0 else
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->bus_hz =3D clk_get_rate(host->ciu=
-_clk);
-> +
-> + =A0 =A0 =A0 if (!host->bus_hz) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(&host->dev,
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"Platform data must su=
-pply bus speed\n");
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENODEV;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_clk;
-> =A0 =A0 =A0 =A0}
->
-> - =A0 =A0 =A0 host->bus_hz =3D host->pdata->bus_hz;
-> =A0 =A0 =A0 =A0host->quirks =3D host->pdata->quirks;
->
-> =A0 =A0 =A0 =A0spin_lock_init(&host->lock);
-> =A0 =A0 =A0 =A0INIT_LIST_HEAD(&host->queue);
->
-> -
-> =A0 =A0 =A0 =A0host->dma_ops =3D host->pdata->dma_ops;
-> =A0 =A0 =A0 =A0dw_mci_init_dma(host);
->
-> @@ -2095,6 +2111,13 @@ err_dmaunmap:
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_disable(host->vmmc);
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_put(host->vmmc);
-> =A0 =A0 =A0 =A0}
-> + =A0 =A0 =A0 kfree(host);
+Something like this in the dtsi:
 
-what's this about?
+       sromc-bus {
+               #address-cells =3D <2>;
+               #size-cells =3D <1>;
+               ranges =3D < 0 0 0x04000000 0x20000
+                          1 0 0x05000000 0x20000
+                          2 0 0x06000000 0x20000
+                          3 0 0x07000000 0x20000>;
+       };
 
-> +
-> +err_clk:
-> + =A0 =A0 =A0 clk_disable(host->ciu_clk);
-> + =A0 =A0 =A0 clk_disable(host->biu_clk);
-> + =A0 =A0 =A0 clk_put(host->ciu_clk);
-> + =A0 =A0 =A0 clk_put(host->biu_clk);
-> =A0 =A0 =A0 =A0return ret;
-> =A0}
-> =A0EXPORT_SYMBOL(dw_mci_probe);
-> @@ -2128,6 +2151,10 @@ void dw_mci_remove(struct dw_mci *host)
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_put(host->vmmc);
-> =A0 =A0 =A0 =A0}
->
-> + =A0 =A0 =A0 clk_disable(host->ciu_clk);
-> + =A0 =A0 =A0 clk_disable(host->biu_clk);
-> + =A0 =A0 =A0 clk_put(host->ciu_clk);
-> + =A0 =A0 =A0 clk_put(host->biu_clk);
-> =A0}
-> =A0EXPORT_SYMBOL(dw_mci_remove);
->
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index 7a7ebd3..fa9a139 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -78,6 +78,8 @@ struct mmc_data;
-> =A0* @data_offset: Set the offset of DATA register according to VERID=
-=2E
-> =A0* @dev: Device associated with the MMC controller.
-> =A0* @pdata: Platform data associated with the MMC controller.
-> + * @biu_clk: Pointer to bus interface unit clock instance.
-> + * @ciu_clk: Pointer to card interface unit clock instance.
-> =A0* @slot: Slots sharing this MMC controller.
-> =A0* @fifo_depth: depth of FIFO.
-> =A0* @data_shift: log2 of FIFO item size.
-> @@ -158,6 +160,8 @@ struct dw_mci {
-> =A0 =A0 =A0 =A0u16 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 data_offse=
-t;
-> =A0 =A0 =A0 =A0struct device =A0 =A0 =A0 =A0 =A0 dev;
-> =A0 =A0 =A0 =A0struct dw_mci_board =A0 =A0 *pdata;
-> + =A0 =A0 =A0 struct clk =A0 =A0 =A0 =A0 =A0 =A0 =A0*biu_clk;
-> + =A0 =A0 =A0 struct clk =A0 =A0 =A0 =A0 =A0 =A0 =A0*ciu_clk;
-> =A0 =A0 =A0 =A0struct dw_mci_slot =A0 =A0 =A0*slot[MAX_MCI_SLOTS];
->
-> =A0 =A0 =A0 =A0/* FIFO push and pull */
-> --
-> 1.7.5.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at =A0http://www.tux.org/lkml/
+and in the dts:
+
+       sromc-bus {
+               lan9215@1,0 {
+                       compatible =3D "smsc,lan9215", "smsc,lan9115";
+                       reg =3D <1 0 0x20000>;
+                       interrupts =3D <5 0>;
+                       interrupt-parent =3D <&wakeup_eint>;
+                       phy-mode =3D "mii";
+                       smsc,irq-push-pull;
+                       smsc,force-internal-phy;
+                       local-mac-address =3D [00 80 00 23 45 67];
+               };
+        };
+
+
+(You might be able to do just fine with one address cell, I'm not 100%
+sure why Grant's example uses two, but I used the same above for
+consistency).
+
+Also, I don't think it's a good idea to hardcode the mac address in
+the dts like this; have u-boot fill it in from the environment
+variable there instead, if needed.
 
 
 
---=20
-James Hogan
+-Olof
