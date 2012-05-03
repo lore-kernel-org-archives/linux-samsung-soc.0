@@ -1,65 +1,63 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 18/20] ARM: dts: Update device tree source files for EXYNOS5250
-Date: Wed, 2 May 2012 12:55:53 -0700
-Message-ID: <CAOesGMiSrNoOA5wTEZo4RiZkPvSAMi43CntN6GUepTzx6M++OA@mail.gmail.com>
-References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
-	<1335813270-13083-19-git-send-email-thomas.abraham@linaro.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 0/2] ARM: EXYNOS: Add DRM device to Origen and SMDKV310
+Date: Thu, 3 May 2012 09:13:07 +0530
+Message-ID: <CAK9yfHx6sez0hMyMvqmYZ=OaNpBbPa-mTZe_3_Fq4hj_sohDbA@mail.gmail.com>
+References: <1332823239-12280-1-git-send-email-sachin.kamat@linaro.org>
+	<CAK9yfHw8bfnrmw5yw66C2v162vr6h3eW6SOAU-0=vqVVzFYiWg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:64813 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756181Ab2EBTzy convert rfc822-to-8bit (ORCPT
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:39007 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753464Ab2ECDnI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 2 May 2012 15:55:54 -0400
-Received: by yenm10 with SMTP id m10so580280yen.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 May 2012 12:55:54 -0700 (PDT)
-In-Reply-To: <1335813270-13083-19-git-send-email-thomas.abraham@linaro.org>
+	Wed, 2 May 2012 23:43:08 -0400
+Received: by qcro28 with SMTP id o28so868427qcr.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 02 May 2012 20:43:07 -0700 (PDT)
+In-Reply-To: <CAK9yfHw8bfnrmw5yw66C2v162vr6h3eW6SOAU-0=vqVVzFYiWg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org, "aditya.ps" <aditya.ps@samsung.com>
 
-Hi,
+Hi Kukjin,
 
-On Mon, Apr 30, 2012 at 12:14 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> Updated EXYNOS5 device tree source files to reflect changes in rev1
-> of EXYNOS5 SoC. This includes new additions to the EXYNOS5 dtsi and
-> SMDK5250 dts files and few minor fixes.
+Can you please review these patches and let me know your comments.
+
+On 11/04/2012, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> ping...
 >
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
-> =A0arch/arm/boot/dts/exynos5250-smdk5250.dts | =A0 52 +++++++++++++++=
-++++++++++++++
-> =A0arch/arm/boot/dts/exynos5250.dtsi =A0 =A0 =A0 =A0 | =A0 44 +++++++=
------------------
-> =A02 files changed, 65 insertions(+), 31 deletions(-)
+> On 27/03/2012, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+>> This patch series adds DRM core device and FIMD DRM platform device
+>> support
+>> to Origen and SMDKV310 boards.
+>>
+>> This series depends on the following patch:
+>> http://www.spinics.net/lists/arm-kernel/msg164762.html
+>>
+>> Sachin Kamat (2):
+>>   ARM: EXYNOS: Add DRM device to Origen
+>>   ARM: EXYNOS: Add DRM device to SMDKV310
+>>
+>>  arch/arm/mach-exynos/Kconfig         |    2 ++
+>>  arch/arm/mach-exynos/mach-origen.c   |   31
+>> +++++++++++++++++++++++++++++++
+>>  arch/arm/mach-exynos/mach-smdkv310.c |   30
+>> ++++++++++++++++++++++++++++++
+>>  3 files changed, 63 insertions(+), 0 deletions(-)
+>>
+>> --
+>> 1.7.4.1
+>>
+>>
 >
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boo=
-t/dts/exynos5250-smdk5250.dts
-> index 399d17b..bcc4b89 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -23,4 +23,56 @@
-> =A0 =A0 =A0 =A0chosen {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0bootargs =3D "root=3D/dev/ram0 rw ramd=
-isk=3D8192 console=3DttySAC1,115200";
-> =A0 =A0 =A0 =A0};
-> +
-> + =A0 =A0 =A0 i2c@12C60000 {
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
-
-Two nits:
-
-#a-c and #s-c is likely to always be 1/0, so you might as well move
-these to the dtsi file for the SoC.
-
-Also, we tend to use non-caps here and in other locations (so it
-should be 12c60000 here).
+>
+> --
+> With warm regards,
+> Sachin
+>
 
 
--Olof
+-- 
+With warm regards,
+Sachin
