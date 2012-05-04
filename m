@@ -1,102 +1,75 @@
 From: Lukasz Majewski <l.majewski@samsung.com>
-Subject: [PATCH 3/4] ARM: EXYNOS: Add s3c-hsotg device support for NURI board
-Date: Fri, 04 May 2012 17:57:56 +0200
-Message-ID: <1336147077-16137-4-git-send-email-l.majewski@samsung.com>
+Subject: [PATCH 2/4] ARM: EXYNOS: Add s3c-hsotg device support for GONI board
+Date: Fri, 04 May 2012 17:57:55 +0200
+Message-ID: <1336147077-16137-3-git-send-email-l.majewski@samsung.com>
 References: <1336147077-16137-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:34215 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751665Ab2EDP6D (ORCPT
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54861 "EHLO
+	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751227Ab2EDP6D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
 	Fri, 4 May 2012 11:58:03 -0400
-Received: from euspt2 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M3I00ARB9OZ2I90@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 May 2012 16:58:11 +0100 (BST)
+Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
+ by mailout1.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0M3I00IYU9LT9K@mailout1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 May 2012 16:56:17 +0100 (BST)
 Received: from linux.samsung.com ([106.116.38.10])
- by spt2.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M3I00HVP9ONGD@spt2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 May 2012 16:57:59 +0100 (BST)
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M3I00GE89OPOK@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 04 May 2012 16:58:01 +0100 (BST)
 In-reply-to: <1336147077-16137-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Lukasz Majewski <l.majewski@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+This patch adds hsotg device to the GONI board.
 
-This patch adds hsotg device to the NURI board.
-
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-[Rebased on the newest git/kgene/linux-samsung #for-next]
 Signed-off-by: Lukasz Majewski <l.majewski@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig     |    1 +
- arch/arm/mach-exynos/mach-nuri.c |    8 +++++++-
- 2 files changed, 8 insertions(+), 1 deletions(-)
+ arch/arm/mach-s5pv210/Kconfig     |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c |    5 +++++
+ 2 files changed, 6 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 2c35fd4..5e64728 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -287,6 +287,7 @@ config MACH_NURI
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
- 	select S5P_SETUP_MIPIPHY
-+	select S3C_DEV_USB_HSOTG
- 	select EXYNOS4_DEV_DMA
- 	select EXYNOS4_SETUP_FIMC
- 	select EXYNOS4_SETUP_FIMD0
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 18d6c94..2f1d417 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -349,6 +349,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo1_[] = {
- 	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* Used by CPU's ADC drv */
- };
- static struct regulator_consumer_supply __initdata max8997_ldo3_[] = {
-+	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"), /* USB */
- 	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
- };
- static struct regulator_consumer_supply __initdata max8997_ldo4_[] = {
-@@ -364,7 +365,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo7_[] = {
- 	REGULATOR_SUPPLY("dig_18", "0-001f"), /* HCD803 */
- };
- static struct regulator_consumer_supply __initdata max8997_ldo8_[] = {
--	REGULATOR_SUPPLY("vusb_d", NULL), /* Used by CPU */
-+	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"), /* USB */
- 	REGULATOR_SUPPLY("vdac", NULL), /* Used by CPU */
- };
- static struct regulator_consumer_supply __initdata max8997_ldo11_[] = {
-@@ -1077,6 +1078,9 @@ static void __init nuri_ehci_init(void)
- 	s5p_ehci_set_platdata(pdata);
+diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+index 29594fc..88e983b 100644
+--- a/arch/arm/mach-s5pv210/Kconfig
++++ b/arch/arm/mach-s5pv210/Kconfig
+@@ -85,6 +85,7 @@ config MACH_AQUILA
+ 	select S5P_DEV_ONENAND
+ 	select S5PV210_SETUP_FB_24BPP
+ 	select S5PV210_SETUP_SDHCI
++	select S5PV210_SETUP_USB_PHY
+ 	help
+ 	  Machine support for the Samsung Aquila target based on S5PC110 SoC
+ 
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 781fed6..7247d90 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -279,6 +279,9 @@ static void __init goni_tsp_init(void)
+ 	i2c2_devs[0].irq = gpio_to_irq(gpio);
  }
  
 +/* USB OTG */
-+static struct s3c_hsotg_plat nuri_hsotg_pdata;
++static struct s3c_hsotg_plat goni_hsotg_pdata;
 +
- /* CAMERA */
- static struct regulator_consumer_supply cam_vt_cam15_supply =
- 	REGULATOR_SUPPLY("vdd_core", "6-003c");
-@@ -1289,6 +1293,7 @@ static struct platform_device *nuri_devices[] __initdata = {
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
- 	&s5p_device_fimc_md,
-+	&s3c_device_usb_hsotg,
+ static void goni_camera_init(void)
+ {
+ 	s5pv210_fimc_setup_gpio(S5P_CAMPORT_A);
+@@ -942,6 +945,8 @@ static void __init goni_machine_init(void)
+ 	s3c_set_platdata(&goni_fimc_md_platdata, sizeof(goni_fimc_md_platdata),
+ 			 &s5p_device_fimc_md);
  
- 	/* NURI Devices */
- 	&nuri_gpio_keys,
-@@ -1337,6 +1342,7 @@ static void __init nuri_machine_init(void)
- 	nuri_camera_init();
++	s3c_hsotg_set_platdata(&goni_hsotg_pdata);
++
+ 	goni_camera_init();
  
- 	nuri_ehci_init();
-+	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
- 
- 	/* Last */
- 	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
+ 	/* SPI */
 -- 
 1.7.2.3
