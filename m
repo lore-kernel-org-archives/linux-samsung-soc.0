@@ -1,74 +1,94 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add platform resource definitions for FIMC-LITE
-Date: Fri, 04 May 2012 18:17:40 +0200
-Message-ID: <1336148260-19952-1-git-send-email-s.nawrocki@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH] dma: pl330: assign a new cookie when restarting tx
+ descriptors in cyclic mode
+Date: Sat, 5 May 2012 12:50:30 -0700
+Message-ID: <CAJuYYwRecbOgkegB4BcY_JUqtW9vW2FPk+Yz1YfkrRxyGxHVPA@mail.gmail.com>
+References: <1336092630-20627-1-git-send-email-thomas.abraham@linaro.org>
+ <1336103059.1593.28.camel@vkoul-udesk3>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:56124 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759135Ab2EDQRp (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 4 May 2012 12:17:45 -0400
-Received: from euspt1 (mailout1.w1.samsung.com [210.118.77.11])
- by mailout1.w1.samsung.com
- (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
- with ESMTP id <0M3I00I99AIN9Q@mailout1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 May 2012 17:15:59 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M3I006NAALJGM@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 04 May 2012 17:17:43 +0100 (BST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1336103059.1593.28.camel@vkoul-udesk3>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: rmk+kernel@arm.linux.org.uk, linux-samsung-soc@vger.kernel.org, jassisinghbrar@gmail.com, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Add the gate clocks and register region address definition for
-FIMC-LITE devices available in Exynos4x12 and Exynos5 SoCs.
+On 3 May 2012 20:44, Vinod Koul <vinod.koul@linux.intel.com> wrote:
+> On Thu, 2012-05-03 at 17:50 -0700, Thomas Abraham wrote:
+>> The cookie of completed transfer descriptors are marked as zero. In case=
+ of
+>> cyclic transfers, a new cookie needs to be assigned to the transfer desc=
+riptors
+>> which are picked up from the work_list list before they are re-enabled f=
+or
+>> transfer. This prevents hitting BUG_ON in dma_cookie_complete function w=
+hen
+>> transfer descriptors are recycled from the work_list list.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>> =A0drivers/dma/pl330.c | =A0 =A01 +
+>> =A01 files changed, 1 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+>> index 2ee6e23..7f8f422 100644
+>> --- a/drivers/dma/pl330.c
+>> +++ b/drivers/dma/pl330.c
+>> @@ -2265,6 +2265,7 @@ static inline void handle_cyclic_desc_list(struct =
+list_head *list)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 dma_async_tx_callback callback;
+>>
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 /* Change status to reload it */
+>> + =A0 =A0 =A0 =A0 =A0 =A0 dma_cookie_assign(&desc->txd);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 desc->status =3D PREP;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 pch =3D desc->pchan;
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 callback =3D desc->txd.callback;
+> Nope, this doesn't seem correct to me for two reasons:
+> 1. client doesnt know this new descriptor, so how will it keep track
+> 2. What does marking cyclic descriptor complete mean... Nothing IMO
+>
+> So it is better *NOT* to mark the descriptor complete.
+> And below is a better fix this for you, Please test.
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/clock-exynos4212.c |   10 ++++++++++
- arch/arm/mach-exynos/include/mach/map.h |    3 +++
- 2 files changed, 13 insertions(+)
+Ok.
 
-diff --git a/arch/arm/mach-exynos/clock-exynos4212.c b/arch/arm/mach-exynos/clock-exynos4212.c
-index 9882312..da397d2 100644
---- a/arch/arm/mach-exynos/clock-exynos4212.c
-+++ b/arch/arm/mach-exynos/clock-exynos4212.c
-@@ -92,6 +92,16 @@ static struct clk init_clocks_off[] = {
- 		.devname	= SYSMMU_CLOCK_DEVNAME(isp, 9),
- 		.enable		= exynos4212_clk_ip_isp1_ctrl,
- 		.ctrlbit	= (1 << 4),
-+	}, {
-+		.name		= "flite",
-+		.devname	= "exynos-fimc-lite.0",
-+		.enable		= exynos4212_clk_ip_isp0_ctrl,
-+		.ctrlbit	= (1 << 4),
-+	}, {
-+		.name		= "flite",
-+		.devname	= "exynos-fimc-lite.1",
-+		.enable		= exynos4212_clk_ip_isp0_ctrl,
-+		.ctrlbit	= (1 << 3),
- 	}
- };
- 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 0e2292d..d30643b 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -34,6 +34,9 @@
- 
- #define EXYNOS4_PA_JPEG			0x11840000
- 
-+/* x = 0...1 */
-+#define EXYNOS4_PA_FIMC_LITE(x)		(0x12390000 + ((x) * 0x10000))
-+
- #define EXYNOS4_PA_G2D			0x12800000
- 
- #define EXYNOS4_PA_I2S0			0x03830000
--- 
-1.7.10
+>
+> ----------
+>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 2ee6e23..fa3fb21 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -2322,7 +2322,8 @@ static void pl330_tasklet(unsigned long data)
+> =A0 =A0 =A0 =A0/* Pick up ripe tomatoes */
+> =A0 =A0 =A0 =A0list_for_each_entry_safe(desc, _dt, &pch->work_list, node)
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (desc->status =3D=3D DONE) {
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dma_cookie_complete(&desc->=
+txd);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (pch->cyclic)
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 dma_cookie_=
+complete(&desc->txd);
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0list_move_tail(&desc->node=
+, &list);
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
+>
+>
+> --
+> ~Vinod
+>
+
+I have tested this patch. You can add:
+Tested-by: Thomas Abraham <thomas.abraham@linaro.org>
+
+Thanks,
+Thomas.
