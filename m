@@ -1,105 +1,47 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
-Date: Mon, 7 May 2012 20:45:02 +0200
-Message-ID: <201205072045.02505.rjw@sisk.pl>
-References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com> <201204292255.25438.rjw@sisk.pl> <06aa01cd2c54$c7d39660$577ac320$%szyprowski@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/5] ARM: S3C24XX: move plat-s3c24xx/irq.c into common.c
+Date: Mon, 7 May 2012 19:59:21 +0000
+Message-ID: <201205071959.22122.arnd@arndb.de>
+References: <201205071939.37433.heiko@sntech.de> <201205071941.33343.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:57663 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1757194Ab2EGSkN (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.187]:51756 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757523Ab2EGT70 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 7 May 2012 14:40:13 -0400
-In-Reply-To: <06aa01cd2c54$c7d39660$577ac320$%szyprowski@samsung.com>
+	Mon, 7 May 2012 15:59:26 -0400
+In-Reply-To: <201205071941.33343.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-On Monday, May 07, 2012, Marek Szyprowski wrote:
-> Hi Rafael,
-> 
-> I'm sorry for a late reply, I was on holidays last week and just got back to 
-> the office.
-> 
-> On Sunday, April 29, 2012 10:55 PM Rafael J. Wysocki wrote:
-> 
-> > On Friday, April 06, 2012, Marek Szyprowski wrote:
-> > > Some bootloaders disable power domains on boot and the platform startup
-> > > code registers them in the 'disabled' state. Current gen_pd code assumed
-> > > that the devices can be registered only to the power domain which is in
-> > > 'enabled' state and these devices are active at the time of the
-> > > registration. This is not correct in our case. This patch lets drivers
-> > > to be registered into 'disabled' power domains and finally solves
-> > > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
-> > > NURI and UniversalC210 platforms.
-> > >
-> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > ---
-> > >  drivers/base/power/domain.c |    7 +------
-> > >  1 files changed, 1 insertions(+), 6 deletions(-)
-> > >
-> > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > > index 73ce9fb..05f5799f 100644
-> > > --- a/drivers/base/power/domain.c
-> > > +++ b/drivers/base/power/domain.c
-> > > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
-> > device *dev,
-> > >
-> > >  	genpd_acquire_lock(genpd);
-> > >
-> > > -	if (genpd->status == GPD_STATE_POWER_OFF) {
-> > > -		ret = -EINVAL;
-> > > -		goto out;
-> > > -	}
-> > > -
-> > >  	if (genpd->prepared_count > 0) {
-> > >  		ret = -EAGAIN;
-> > >  		goto out;
-> > > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
-> > device *dev,
-> > >  	dev_pm_get_subsys_data(dev);
-> > >  	dev->power.subsys_data->domain_data = &gpd_data->base;
-> > >  	gpd_data->base.dev = dev;
-> > > -	gpd_data->need_restore = false;
-> > > +	gpd_data->need_restore = true;
-> > 
-> > I think that should be:
-> > 
-> > +	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
-> > 
-> > Otherwise, on the next domain power off the device's state won't be saved.
-> > 
-> > >  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
-> > >  	if (td)
-> > >  		gpd_data->td = *td;
-> 
-> I've tested the above change and there is problem. Let me explain in detail the 
-> sw/hw configuration I have.
-> 
-> There is a power domain and the device driver. The device itself also has it's own 
-> power management code (which enables and disables clocks).  Some power domains are 
-> disabled by bootloader and some devices in the active power domains have their 
-> clocks disabled too. In the current runtime pm code the devices were probed in
-> 'disabled' state and had to enable itself by calling get_runtime_sync(). My initial
-> patch restored runtime pm handling to the old state (the same which was with non 
-> gen_pd based driver or no power domain driver at all, where runtime pm was handled
-> by platform bus). If I apply your patch the runtime_restore
+On Monday 07 May 2012, Heiko St=FCbner wrote:
+> Again following the model set out by s3c64xx.
+>=20
+> As checkpatch showed a lot of style errors and warning, these got fix=
+ed too.
+>=20
+> Signed-off-by: Heiko Stueber <heiko@sntech.de>
 
-I guess you mean .runtime_resume().
+I object on two grounds:
 
-> callback is not called on first driver probe for devices inside the domain which
-> has been left enabled by the bootloader.
+1. there are plans to move irq chip drivers to drivers/irqchip eventual=
+ly,
+so I think it makes little sense to merge the current implementation in=
+to
+another file. That just makes it harder to split it out again. Better l=
+eave
+the file named irq.c and just move it to the mach-s3c24xx for now.
 
-I don't see why .probe() should depend on the runtime PM framework to call
-.runtime_resume() for it.  It looks like .probe() could just call
-.runtime_resume() directly if needed.
+2. You should *never* move code around and change it at the same time
+if you have a choice. Instead if you discover coding style issues with
+code you want to move, fix those first and then do a second patch to
+move it without further changes. Otherwise it becomes very hard to
+check that the coding style changes are actually correct.
 
-Besides, your change breaks existing code as I said.
+The other four patches look fine to me.
 
-Thanks,
-Rafael
+	Arnd
