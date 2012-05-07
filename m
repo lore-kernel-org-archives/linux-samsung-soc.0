@@ -1,150 +1,105 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH 5/5] ARM: S3C24XX: move common clock init into common.c
-Date: Mon, 7 May 2012 19:44:10 +0200
-Message-ID: <201205071944.11151.heiko@sntech.de>
-References: <201205071939.37433.heiko@sntech.de>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
+Date: Mon, 7 May 2012 20:45:02 +0200
+Message-ID: <201205072045.02505.rjw@sisk.pl>
+References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com> <201204292255.25438.rjw@sisk.pl> <06aa01cd2c54$c7d39660$577ac320$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <201205071939.37433.heiko@sntech.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from ogre.sisk.pl ([193.178.161.156]:57663 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1757194Ab2EGSkN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 7 May 2012 14:40:13 -0400
+In-Reply-To: <06aa01cd2c54$c7d39660$577ac320$%szyprowski@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- arch/arm/mach-s3c24xx/common.c |   18 ++++++++++++
- arch/arm/plat-s3c24xx/Makefile |    1 -
- arch/arm/plat-s3c24xx/clock.c  |   59 ----------------------------------------
- 3 files changed, 18 insertions(+), 60 deletions(-)
- delete mode 100644 arch/arm/plat-s3c24xx/clock.c
+On Monday, May 07, 2012, Marek Szyprowski wrote:
+> Hi Rafael,
+> 
+> I'm sorry for a late reply, I was on holidays last week and just got back to 
+> the office.
+> 
+> On Sunday, April 29, 2012 10:55 PM Rafael J. Wysocki wrote:
+> 
+> > On Friday, April 06, 2012, Marek Szyprowski wrote:
+> > > Some bootloaders disable power domains on boot and the platform startup
+> > > code registers them in the 'disabled' state. Current gen_pd code assumed
+> > > that the devices can be registered only to the power domain which is in
+> > > 'enabled' state and these devices are active at the time of the
+> > > registration. This is not correct in our case. This patch lets drivers
+> > > to be registered into 'disabled' power domains and finally solves
+> > > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
+> > > NURI and UniversalC210 platforms.
+> > >
+> > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > > ---
+> > >  drivers/base/power/domain.c |    7 +------
+> > >  1 files changed, 1 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > > index 73ce9fb..05f5799f 100644
+> > > --- a/drivers/base/power/domain.c
+> > > +++ b/drivers/base/power/domain.c
+> > > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
+> > device *dev,
+> > >
+> > >  	genpd_acquire_lock(genpd);
+> > >
+> > > -	if (genpd->status == GPD_STATE_POWER_OFF) {
+> > > -		ret = -EINVAL;
+> > > -		goto out;
+> > > -	}
+> > > -
+> > >  	if (genpd->prepared_count > 0) {
+> > >  		ret = -EAGAIN;
+> > >  		goto out;
+> > > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
+> > device *dev,
+> > >  	dev_pm_get_subsys_data(dev);
+> > >  	dev->power.subsys_data->domain_data = &gpd_data->base;
+> > >  	gpd_data->base.dev = dev;
+> > > -	gpd_data->need_restore = false;
+> > > +	gpd_data->need_restore = true;
+> > 
+> > I think that should be:
+> > 
+> > +	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
+> > 
+> > Otherwise, on the next domain power off the device's state won't be saved.
+> > 
+> > >  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+> > >  	if (td)
+> > >  		gpd_data->td = *td;
+> 
+> I've tested the above change and there is problem. Let me explain in detail the 
+> sw/hw configuration I have.
+> 
+> There is a power domain and the device driver. The device itself also has it's own 
+> power management code (which enables and disables clocks).  Some power domains are 
+> disabled by bootloader and some devices in the active power domains have their 
+> clocks disabled too. In the current runtime pm code the devices were probed in
+> 'disabled' state and had to enable itself by calling get_runtime_sync(). My initial
+> patch restored runtime pm handling to the old state (the same which was with non 
+> gen_pd based driver or no power domain driver at all, where runtime pm was handled
+> by platform bus). If I apply your patch the runtime_restore
 
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index bf1cd36..bcc99e9 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -42,6 +42,7 @@
- #include <asm/mach/arch.h>
- #include <asm/mach/map.h>
- 
-+#include <mach/regs-clock.h>
- #include <mach/regs-gpio.h>
- #include <plat/regs-serial.h>
- #include <plat/regs-irqtype.h>
-@@ -56,6 +57,8 @@
- #include <plat/s3c2416.h>
- #include <plat/s3c244x.h>
- #include <plat/s3c2443.h>
-+#include <plat/cpu-freq.h>
-+#include <plat/pll.h>
- 
- /* table of supported CPUs */
- 
-@@ -949,3 +952,18 @@ struct s3c24xx_uart_resources s3c2410_uart_resources[] __initdata = {
- 		.nr_resources	= ARRAY_SIZE(s3c2410_uart3_resource),
- 	},
- };
-+
-+/* initialise all the clocks */
-+
-+void __init_or_cpufreq s3c24xx_setup_clocks(unsigned long fclk,
-+					   unsigned long hclk,
-+					   unsigned long pclk)
-+{
-+	clk_upll.rate = s3c24xx_get_pll(__raw_readl(S3C2410_UPLLCON),
-+					clk_xtal.rate);
-+
-+	clk_mpll.rate = fclk;
-+	clk_h.rate = hclk;
-+	clk_p.rate = pclk;
-+	clk_f.rate = fclk;
-+}
-diff --git a/arch/arm/plat-s3c24xx/Makefile b/arch/arm/plat-s3c24xx/Makefile
-index 937fc67..6472416 100644
---- a/arch/arm/plat-s3c24xx/Makefile
-+++ b/arch/arm/plat-s3c24xx/Makefile
-@@ -12,7 +12,6 @@ obj-				:=
- 
- # Core files
- 
--obj-y				+= clock.o
- obj-$(CONFIG_S3C24XX_DCLK)	+= clock-dclk.o
- 
- obj-$(CONFIG_CPU_FREQ_S3C24XX)	+= cpu-freq.o
-diff --git a/arch/arm/plat-s3c24xx/clock.c b/arch/arm/plat-s3c24xx/clock.c
-deleted file mode 100644
-index 931d26d..0000000
---- a/arch/arm/plat-s3c24xx/clock.c
-+++ /dev/null
-@@ -1,59 +0,0 @@
--/* linux/arch/arm/plat-s3c24xx/clock.c
-- *
-- * Copyright (c) 2004-2005 Simtec Electronics
-- *	Ben Dooks <ben@simtec.co.uk>
-- *
-- * S3C24XX Core clock control support
-- *
-- * Based on, and code from linux/arch/arm/mach-versatile/clock.c
-- **
-- **  Copyright (C) 2004 ARM Limited.
-- **  Written by Deep Blue Solutions Limited.
-- *
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License as published by
-- * the Free Software Foundation; either version 2 of the License, or
-- * (at your option) any later version.
-- *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
-- *
-- * You should have received a copy of the GNU General Public License
-- * along with this program; if not, write to the Free Software
-- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
--*/
--
--#include <linux/init.h>
--#include <linux/kernel.h>
--#include <linux/clk.h>
--#include <linux/io.h>
--
--#include <mach/hardware.h>
--#include <asm/irq.h>
--
--#include <mach/regs-clock.h>
--#include <mach/regs-gpio.h>
--
--#include <plat/cpu-freq.h>
--
--#include <plat/clock.h>
--#include <plat/cpu.h>
--#include <plat/pll.h>
--
--/* initialise all the clocks */
--
--void __init_or_cpufreq s3c24xx_setup_clocks(unsigned long fclk,
--					   unsigned long hclk,
--					   unsigned long pclk)
--{
--	clk_upll.rate = s3c24xx_get_pll(__raw_readl(S3C2410_UPLLCON),
--					clk_xtal.rate);
--
--	clk_mpll.rate = fclk;
--	clk_h.rate = hclk;
--	clk_p.rate = pclk;
--	clk_f.rate = fclk;
--}
--- 
-1.7.5.4
+I guess you mean .runtime_resume().
+
+> callback is not called on first driver probe for devices inside the domain which
+> has been left enabled by the bootloader.
+
+I don't see why .probe() should depend on the runtime PM framework to call
+.runtime_resume() for it.  It looks like .probe() could just call
+.runtime_resume() directly if needed.
+
+Besides, your change breaks existing code as I said.
+
+Thanks,
+Rafael
