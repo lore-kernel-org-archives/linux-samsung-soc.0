@@ -1,69 +1,153 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Add platform resource definitions for
- FIMC-LITE
-Date: Tue, 08 May 2012 09:43:34 +0200
-Message-ID: <4FA8CEA6.3000008@samsung.com>
-References: <1336148260-19952-1-git-send-email-s.nawrocki@samsung.com>
- <017b01cd2cdd$4e4ff570$eaefe050$%kim@samsung.com>
- <4FA8CCC9.9030601@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.w1.samsung.com ([210.118.77.14]:17594 "EHLO
-	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751367Ab2EHHng (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 May 2012 03:43:36 -0400
-Received: from euspt1 ([210.118.77.14]) by mailout4.w1.samsung.com
- (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
- with ESMTP id <0M3P00CKP1GZ3T20@mailout4.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 08:43:47 +0100 (BST)
-Received: from linux.samsung.com ([106.116.38.10])
- by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
- 2004)) with ESMTPA id <0M3P00H0C1GMUA@spt1.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 08:43:34 +0100 (BST)
-In-reply-to: <4FA8CCC9.9030601@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH v3 0/6] thermal: exynos: Add kernel thermal support for exynos platform
+Date: Tue,  8 May 2012 21:48:12 +0530
+Message-ID: <1336493898-7039-1-git-send-email-amit.kachhap@linaro.org>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: akpm@linux-foundation.org, linux-pm@lists.linux-foundation.org
+Cc: durgadoss.r@intel.com, linux-acpi@vger.kernel.org, lenb@kernel.org, rui.zhang@intel.com, amit.kachhap@linaro.org, linaro-dev@lists.linaro.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 05/08/2012 09:35 AM, Sylwester Nawrocki wrote:
-> On 05/08/2012 07:42 AM, Kukjin Kim wrote:
->> Sylwester Nawrocki wrote:
->>>
->>> Add the gate clocks and register region address definition for
->>> FIMC-LITE devices available in Exynos4x12 and Exynos5 SoCs.
->>>
->> This is right description? I can't find your changes for EXYNOS4412 and
->> EXYNOS5 here. Only this is for EXYNOS4212 SoC.
-> 
-> Sorry, I wasn't precise enough. EXYNOS4_PA_FIMC_LITE is for EXYNOS4212
-> and EXYNOS4412 though. Please note it is initially needed for DT platforms,
-> until we get proper clock DT bindings for EXYNOS. Is there, BTW, anyone 
-> known to work on converting EXYNOS to the common clock framework ?
-> 
-> This patch was intended for EXYNOS4212/4412. AFAICS clock code in
-> mach-exynos/clock-exynos4412.c is a subset of the EXYNOS4412 platform:
-              ^^^^^^^^^^^^^^^^^^
-Uh, should be clock-exynos4212.c.
+Hi Andrew,
 
-> static void __init exynos4_init_clocks(int xtal)
-> {
-> 	...
-> 	if (soc_is_exynos4210())
-> 		exynos4210_register_clocks();
-> 	else if (soc_is_exynos4212() || soc_is_exynos4412())
-> 		exynos4212_register_clocks();
-> 	
-> 	exynos4_register_clocks();
-> 	...
-> }
-> 
-> Should I resend the patch or could you remove " and Exynos5 SoCs"
-> from the description ?
-> 
-> --
-> 
-> Regards,
-> Sylwester Nawrocki
+This patchset introduces a new generic cooling device based on cpufreq that
+can be used on non-ACPI platforms. As a proof of concept, we have drivers for
+the following platforms using this mechanism now:
+
+ * TI OMAP (git://git.linaro.org/people/amitdanielk/linux.git omap4460_thermal)
+ * Samsung Exynos (Exynos4 and Exynos5) in the current patchset.
+ * Freescale i.MX (git://git.linaro.org/people/amitdanielk/linux.git imx6q_thermal)
+
+These patches have been reviewed by Rui Zhang (https://lkml.org/lkml/2012/4/9/448)
+who seems to agree with them in principle, but I haven't had any luck getting them
+merged, perhaps a lack of maintainer bandwidth.
+
+ACPI platforms currently have such a mechanism but it is wrapped in ACPI'isms
+that we don't have on ARM platforms. If this is accepted, I'm proposing to
+convert over the ACPI thermal driver to use this common code too.
+
+Can you please merge these patches for 3.5?
+
+Thanks,
+Amit Daniel
+
+
+Changes since V2:
+*Added Exynos5 TMU sensor support by enhancing the exynos4 tmu driver. Exynos5 TMU
+ driver was internally developed by SangWook Ju <sw.ju@samsung.com>.
+*Removed cpuhotplug cooling code in this patchset.
+*Rebased the patches against 3.4-rc6 kernel.
+
+Changes since V1:
+*Moved the sensor driver to driver/thermal folder from driver/hwmon folder
+ as suggested by Mark Brown and Guenter Roeck 
+*Added notifier support to notify the registered drivers of any cpu cooling
+ action. The driver can modify the default cooling behaviour(eg set different
+ max clip frequency).
+*The percentage based frequency replaced with absolute clipped frequency.
+*Some more conditional checks when setting max frequency.
+*Renamed the new trip type THERMAL_TRIP_STATE_ACTIVE to
+ THERMAL_TRIP_STATE_INSTANCE
+*Many review comments from R, Durgadoss <durgadoss.r@intel.com> and 
+ eduardo.valentin@ti.com implemented.
+*Removed cooling stats through debugfs patch
+*The V1 based can be found here,
+ https://lkml.org/lkml/2012/2/22/123
+ http://lkml.org/lkml/2012/3/3/32
+
+Changes since RFC:
+*Changed the cpu cooling registration/unregistration API's to instance based
+*Changed the STATE_ACTIVE trip type to pass correct instance id
+*Adding support to restore back the policy->max_freq after doing frequency 
+  clipping.
+*Moved the trip cooling stats from sysfs node to debugfs node as suggested
+  by Greg KH greg@kroah.com 
+*Incorporated several review comments from eduardo.valentin@ti.com
+*Moved the Temperature sensor driver from driver/hwmon/ to driver/mfd
+ as discussed with Guenter Roeck <guenter.roeck@ericsson.com> and 
+ Donggeun Kim <dg77.kim@samsung.com> (https://lkml.org/lkml/2012/1/5/7)
+*Some changes according to the changes in common cpu cooling APIs
+*The RFC based patches can be found here,
+ https://lkml.org/lkml/2011/12/13/186
+ https://lkml.org/lkml/2011/12/21/169
+
+
+Brief Description:
+
+1) The generic cooling devices code is placed inside driver/thermal/* as 
+placing inside acpi folder will need un-necessary enabling of acpi code. This
+codes is architecture independent.
+
+2) This patchset adds a new trip type THERMAL_TRIP_STATE_INSTANCE which passes
+cooling device instance number and may be helpful for cpufreq cooling devices
+to take the correct cooling action. This trip type avoids the temperature
+comparision check again inside the cooling handler.
+
+3) This patchset adds generic cpu cooling low level implementation through
+frequency clipping and cpu hotplug. In future, other cpu related cooling
+devices may be added here. An ACPI version of this already exists
+(drivers/acpi/processor_thermal.c). But this will be useful for platforms
+like ARM using the generic thermal interface along with the generic cpu
+cooling devices. The cooling device registration API's return cooling device
+pointers which can be easily binded with the thermal zone trip points.
+The important APIs exposed are,
+   a)struct thermal_cooling_device *cpufreq_cooling_register(
+	struct freq_clip_table *tab_ptr, unsigned int tab_size,
+	const struct cpumask *mask_val)
+   b)void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
+
+4) Samsung exynos platform thermal implementation is done using the generic
+cpu cooling APIs and the new trip type. The temperature sensor driver present
+in the hwmon folder(registered as hwmon driver) is moved to thermal folder
+and registered as a thermal driver.
+
+All this patchset is based on Kernel version 3.4-rc6 
+
+A simple data/control flow diagrams is shown below,
+
+Core Linux thermal <----->  Exynos thermal interface <----- Temperature Sensor
+	  |                             |
+	 \|/                            |
+  Cpufreq cooling device <---------------
+
+TODO:
+*Will send the DT enablement patches later after the driver is merged.
+
+
+Amit Daniel Kachhap (6):
+  thermal: Add a new trip type to use cooling device instance number
+  thermal: Add generic cpufreq cooling implementation
+  hwmon: exynos4: Move thermal sensor driver to driver/thermal
+    directory
+  thermal: exynos5: Add exynos5 thermal sensor driver support
+  thermal: exynos: Register the tmu sensor with the kernel thermal
+    layer
+  ARM: exynos: Add thermal sensor driver platform data support
+
+ Documentation/hwmon/exynos4_tmu              |   81 ---
+ Documentation/thermal/cpu-cooling-api.txt    |   60 ++
+ Documentation/thermal/exynos_thermal         |   52 ++
+ Documentation/thermal/sysfs-api.txt          |    4 +-
+ drivers/hwmon/Kconfig                        |   10 -
+ drivers/hwmon/Makefile                       |    1 -
+ drivers/hwmon/exynos4_tmu.c                  |  514 --------------
+ drivers/thermal/Kconfig                      |   20 +
+ drivers/thermal/Makefile                     |    4 +-
+ drivers/thermal/cpu_cooling.c                |  359 ++++++++++
+ drivers/thermal/exynos_thermal.c             |  933 ++++++++++++++++++++++++++
+ drivers/thermal/thermal_sys.c                |   62 ++-
+ include/linux/cpu_cooling.h                  |   62 ++
+ include/linux/platform_data/exynos4_tmu.h    |   83 ---
+ include/linux/platform_data/exynos_thermal.h |  100 +++
+ include/linux/thermal.h                      |    1 +
+ 16 files changed, 1651 insertions(+), 695 deletions(-)
+ delete mode 100644 Documentation/hwmon/exynos4_tmu
+ create mode 100644 Documentation/thermal/cpu-cooling-api.txt
+ create mode 100644 Documentation/thermal/exynos_thermal
+ delete mode 100644 drivers/hwmon/exynos4_tmu.c
+ create mode 100644 drivers/thermal/cpu_cooling.c
+ create mode 100644 drivers/thermal/exynos_thermal.c
+ create mode 100644 include/linux/cpu_cooling.h
+ delete mode 100644 include/linux/platform_data/exynos4_tmu.h
+ create mode 100644 include/linux/platform_data/exynos_thermal.h
+
