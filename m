@@ -1,68 +1,67 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Make BT platform data structure static in
- mach-origen.c file
-Date: Tue, 08 May 2012 14:49:03 +0900
-Message-ID: <018401cd2cde$46385070$d2a8f150$%kim@samsung.com>
-References: <1336362415-15144-1-git-send-email-sachin.kamat@linaro.org>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add platform resource definitions for
+ FIMC-LITE
+Date: Tue, 08 May 2012 09:35:37 +0200
+Message-ID: <4FA8CCC9.9030601@samsung.com>
+References: <1336148260-19952-1-git-send-email-s.nawrocki@samsung.com>
+ <017b01cd2cdd$4e4ff570$eaefe050$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:52711 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750834Ab2EHFtF (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37609 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752699Ab2EHHfk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 May 2012 01:49:05 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M3O00H18W4STM00@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 14:49:04 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M3O00H7XW5SZV00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 14:49:04 +0900 (KST)
-In-reply-to: <1336362415-15144-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Tue, 8 May 2012 03:35:40 -0400
+Received: from euspt1 (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14 2004))
+ with ESMTP id <0M3P00C5D136O1@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 08:35:30 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M3P00AQ713DV6@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 08:35:38 +0100 (BST)
+In-reply-to: <017b01cd2cdd$4e4ff570$eaefe050$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Sachin Kamat wrote:
-> 
-> Adds missing storage class static to origen_bt_pdata structure.
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/mach-exynos/mach-origen.c |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-
-> exynos/mach-origen.c
-> index 4a8b3ff..df32cf4 100644
-> --- a/arch/arm/mach-exynos/mach-origen.c
-> +++ b/arch/arm/mach-exynos/mach-origen.c
-> @@ -607,7 +607,7 @@ static struct s3c_fb_platdata origen_lcd_pdata
-> __initdata = {
->  };
-> 
->  /* Bluetooth rfkill gpio platform data */
-> -struct rfkill_gpio_platform_data origen_bt_pdata = {
-> +static struct rfkill_gpio_platform_data origen_bt_pdata = {
->  	.reset_gpio	= EXYNOS4_GPX2(2),
->  	.shutdown_gpio	= -1,
->  	.type		= RFKILL_TYPE_BLUETOOTH,
-> --
-> 1.7.4.1
+On 05/08/2012 07:42 AM, Kukjin Kim wrote:
+> Sylwester Nawrocki wrote:
+>>
+>> Add the gate clocks and register region address definition for
+>> FIMC-LITE devices available in Exynos4x12 and Exynos5 SoCs.
+>>
+> This is right description? I can't find your changes for EXYNOS4412 and
+> EXYNOS5 here. Only this is for EXYNOS4212 SoC.
 
-OK, will apply.
+Sorry, I wasn't precise enough. EXYNOS4_PA_FIMC_LITE is for EXYNOS4212
+and EXYNOS4412 though. Please note it is initially needed for DT platforms,
+until we get proper clock DT bindings for EXYNOS. Is there, BTW, anyone 
+known to work on converting EXYNOS to the common clock framework ?
 
-Thanks.
+This patch was intended for EXYNOS4212/4412. AFAICS clock code in
+mach-exynos/clock-exynos4412.c is a subset of the EXYNOS4412 platform:
 
-Best regards,
-Kgene.
+static void __init exynos4_init_clocks(int xtal)
+{
+	...
+	if (soc_is_exynos4210())
+		exynos4210_register_clocks();
+	else if (soc_is_exynos4212() || soc_is_exynos4412())
+		exynos4212_register_clocks();
+	
+	exynos4_register_clocks();
+	...
+}
+
+Should I resend the patch or could you remove " and Exynos5 SoCs"
+from the description ?
+
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+Regards,
+Sylwester Nawrocki
