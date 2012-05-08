@@ -1,53 +1,75 @@
 From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH v2 0/4] ARM: S3C24XX: move some code from plat to mach directory
-Date: Tue, 8 May 2012 20:34:50 +0200
-Message-ID: <201205082034.50658.heiko@sntech.de>
+Subject: [PATCH 1/4] ARM: S3C24XX: move plat-s3c24xx/cpu.c
+Date: Tue, 8 May 2012 20:35:57 +0200
+Message-ID: <201205082035.58032.heiko@sntech.de>
+References: <201205082034.50658.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:43606 "EHLO gloria.sntech.de"
+Received: from gloria.sntech.de ([95.129.55.99]:43624 "EHLO gloria.sntech.de"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754601Ab2EHSe6 (ORCPT
+	id S1755304Ab2EHSgE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 May 2012 14:34:58 -0400
+	Tue, 8 May 2012 14:36:04 -0400
+In-Reply-To: <201205082034.50658.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Again the series of small moves of common code from the plat-s3c24xx to the
-mach-s3c24xx directory.
+Following the model of s3c64xx cpu.c becomes common.c in mach-s3c24xx,
+to got more common code added later on.
 
-This time without the wrong handled irq.c . Hopefully I'll get time to do it
-properly later.
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ arch/arm/mach-s3c24xx/Makefile                     |    2 ++
+ .../{plat-s3c24xx/cpu.c => mach-s3c24xx/common.c}  |    2 +-
+ arch/arm/plat-s3c24xx/Makefile                     |    1 -
+ 3 files changed, 3 insertions(+), 2 deletions(-)
+ rename arch/arm/{plat-s3c24xx/cpu.c => mach-s3c24xx/common.c} (99%)
 
-As the dev-uart.c move breaks the resource patch by Tushar Behera, I updated
-the patch to fix the correct code and will submit it as a v2 to the resource
-series.
-
-Heiko Stuebner (4):
-  ARM: S3C24XX: move plat-s3c24xx/cpu.c
-  ARM: S3C24XX: move plat-s3c24xx/dev-uart.c into common.c
-  ARM: S3C24XX: move common power-management code to mach-s3c24xx
-  ARM: S3C24XX: move common clock init into common.c
-
- arch/arm/mach-s3c24xx/Makefile                     |    6 +
- .../{plat-s3c24xx/cpu.c => mach-s3c24xx/common.c}  |   93 ++++++++++++++++++-
- arch/arm/{plat-s3c24xx => mach-s3c24xx}/irq-pm.c   |    0
- arch/arm/{plat-s3c24xx => mach-s3c24xx}/pm.c       |    0
- arch/arm/{plat-s3c24xx => mach-s3c24xx}/sleep.S    |    0
- arch/arm/plat-s3c24xx/Makefile                     |    6 -
- arch/arm/plat-s3c24xx/clock.c                      |   59 ------------
- arch/arm/plat-s3c24xx/dev-uart.c                   |  100 --------------------
- 8 files changed, 98 insertions(+), 166 deletions(-)
- rename arch/arm/{plat-s3c24xx/cpu.c => mach-s3c24xx/common.c} (75%)
- rename arch/arm/{plat-s3c24xx => mach-s3c24xx}/irq-pm.c (100%)
- rename arch/arm/{plat-s3c24xx => mach-s3c24xx}/pm.c (100%)
- rename arch/arm/{plat-s3c24xx => mach-s3c24xx}/sleep.S (100%)
- delete mode 100644 arch/arm/plat-s3c24xx/clock.c
- delete mode 100644 arch/arm/plat-s3c24xx/dev-uart.c
-
+diff --git a/arch/arm/mach-s3c24xx/Makefile b/arch/arm/mach-s3c24xx/Makefile
+index d0f3a92..d56b990 100644
+--- a/arch/arm/mach-s3c24xx/Makefile
++++ b/arch/arm/mach-s3c24xx/Makefile
+@@ -14,6 +14,8 @@ obj-				:=
+ 
+ # core
+ 
++obj-y				+= common.o
++
+ obj-$(CONFIG_CPU_S3C2410)	+= s3c2410.o
+ obj-$(CONFIG_S3C2410_DMA)	+= dma-s3c2410.o
+ obj-$(CONFIG_S3C2410_PM)	+= pm-s3c2410.o sleep-s3c2410.o
+diff --git a/arch/arm/plat-s3c24xx/cpu.c b/arch/arm/mach-s3c24xx/common.c
+similarity index 99%
+rename from arch/arm/plat-s3c24xx/cpu.c
+rename to arch/arm/mach-s3c24xx/common.c
+index 290942d..dc9927b 100644
+--- a/arch/arm/plat-s3c24xx/cpu.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -4,7 +4,7 @@
+  *	http://www.simtec.co.uk/products/SWLINUX/
+  *	Ben Dooks <ben@simtec.co.uk>
+  *
+- * S3C24XX CPU Support
++ * Common code for S3C24XX machines
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+diff --git a/arch/arm/plat-s3c24xx/Makefile b/arch/arm/plat-s3c24xx/Makefile
+index 2467b80..f7fe935 100644
+--- a/arch/arm/plat-s3c24xx/Makefile
++++ b/arch/arm/plat-s3c24xx/Makefile
+@@ -12,7 +12,6 @@ obj-				:=
+ 
+ # Core files
+ 
+-obj-y				+= cpu.o
+ obj-y				+= irq.o
+ obj-y				+= dev-uart.o
+ obj-y				+= clock.o
 -- 
 1.7.5.4
