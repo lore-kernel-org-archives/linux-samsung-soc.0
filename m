@@ -1,141 +1,74 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 6/6] ARM: exynos: Add thermal sensor
- driver platform data support
-Date: Tue, 8 May 2012 13:16:44 -0700
-Message-ID: <20120508131644.e2e92f3e.akpm@linux-foundation.org>
-References: <1336493898-7039-1-git-send-email-amit.kachhap@linaro.org>
-	<1336493898-7039-2-git-send-email-amit.kachhap@linaro.org>
-	<1336493898-7039-3-git-send-email-amit.kachhap@linaro.org>
-	<1336493898-7039-4-git-send-email-amit.kachhap@linaro.org>
-	<1336493898-7039-5-git-send-email-amit.kachhap@linaro.org>
-	<1336493898-7039-6-git-send-email-amit.kachhap@linaro.org>
-	<1336493898-7039-7-git-send-email-amit.kachhap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <1336493898-7039-7-git-send-email-amit.kachhap@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, linux-pm@lists.linux-foundation.org, linux-arm-kernel@lists.infradead.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 00/10] spi: s3c64xx: add support for device tree
+Date: Wed, 09 May 2012 03:34:44 +0530
+Message-ID: <1336514694-22393-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:63245 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756740Ab2EHVwk (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 8 May 2012 17:52:40 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3Q00KN14RQ0C00@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 06:52:38 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3Q009L04RKMU40@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 06:52:38 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-On Tue,  8 May 2012 21:48:18 +0530
-Amit Daniel Kachhap <amit.kachhap@linaro.org> wrote:
+This patch series adds device tree based discovery support for Samsung's
+s3c64xx compatible spi controller. This is mainly tested for Exynos4210
+and Exynos5250 with onboard spi nor flash device.
 
-> This patch adds necessary default platform data support needed for TMU driver.
-> This dt/non-dt values are tested for origen exynos4210 and smdk exynos5250 platforms.
-> 
->
-> ...
->
-> --- a/drivers/thermal/exynos_thermal.c
-> +++ b/drivers/thermal/exynos_thermal.c
-> @@ -646,14 +646,117 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
->  static struct thermal_sensor_conf exynos_sensor_conf = {
->  	.name			= "exynos-therm",
->  	.read_temperature	= (int (*)(void *))exynos_tmu_read,
-> +};
-> +
-> +#if defined(CONFIG_CPU_EXYNOS4210)
-> +static struct exynos_tmu_platform_data exynos4_default_tmu_data = {
+This patch series is based on Linux 3.4-rc5 with the following two
+patch series applied.
 
-Again, make it const if possible.
+[1] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg10494.html
+    [PATCH 00/20] ARM: Samsung: Add support for Exynos5250 Rev1.0
 
-> +	.threshold = 80,
-> +	.trigger_levels[0] = 5,
-> +	.trigger_levels[1] = 20,
-> +	.trigger_levels[2] = 30,
-> +	.trigger_level0_en = 1,
-> +	.trigger_level1_en = 1,
-> +	.trigger_level2_en = 1,
-> +	.trigger_level3_en = 0,
-> +	.gain = 15,
-> +	.reference_voltage = 7,
-> +	.cal_type = TYPE_ONE_POINT_TRIMMING,
-> +	.freq_tab[0] = {
-> +		.freq_clip_max = 800 * 1000,
-> +	},
-> +	.freq_tab[1] = {
-> +		.freq_clip_max = 200 * 1000,
-> +	},
-> +	.freq_tab_count = 2,
-> +	.type = SOC_ARCH_EXYNOS4,
-> +};
-> +#define EXYNOS4_TMU_DRV_DATA ((kernel_ulong_t)&exynos4_default_tmu_data)
-> +#else
-> +#define EXYNOS4_TMU_DRV_DATA ((kernel_ulong_t)NULL)
-> +#endif
+[2] http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg09640.html
+    [PATCH 0/6] S3C24XX: Add support for HSSPI on S3C2416/S3C2443
 
-See below.
+Thomas Abraham (10):
+  spi: s3c64xx: remove unused S3C64XX_SPI_ST_TRLCNTZ macro
+  spi: s3c64xx: move controller information into driver data
+  ARM: Samsung: Remove spi hardware controller information from platform data
+  ARM: Samsung: Remove pdev pointer paremeter from spi gpio setup functions
+  ARM: Samsung: Update the device names for spi clock lookup
+  ARM: Samsung: Modify s3c64xx_spi{0|1|2}_set_platdata function
+  spi: s3c64xx: Remove the 'set_level' callback from controller data
+  ARM: Exynos4: Fix the incorrect hierarchy of spi controller bus clock
+  ARM: Exynos5: Add spi clock support
+  spi: s3c64xx: add device tree support
 
-> +#if defined(CONFIG_SOC_EXYNOS5250)
-> +static struct exynos_tmu_platform_data exynos5_default_tmu_data = {
-> +	.trigger_levels[0] = 85,
-> +	.trigger_levels[1] = 103,
-> +	.trigger_levels[2] = 110,
-> +	.trigger_level0_en = 1,
-> +	.trigger_level1_en = 1,
-> +	.trigger_level2_en = 1,
-> +	.trigger_level3_en = 0,
-> +	.gain = 8,
-> +	.reference_voltage = 16,
-> +	.noise_cancel_mode = 4,
-> +	.cal_type = TYPE_ONE_POINT_TRIMMING,
-> +	.efuse_value = 55,
-> +	.freq_tab[0] = {
-> +		.freq_clip_max = 800 * 1000,
-> +	},
-> +	.freq_tab[1] = {
-> +		.freq_clip_max = 200 * 1000,
-> +	},
-> +	.freq_tab_count = 2,
-> +	.type = SOC_ARCH_EXYNOS5,
-> +};
-> +#define EXYNOS5_TMU_DRV_DATA ((kernel_ulong_t)&exynos5_default_tmu_data)
-
-The use of kernel_ulong_t is unexpected.
-
-I suspect you could remove this cast altogether.  Or make it void*.
-
-> +#else
-> +#define EXYNOS5_TMU_DRV_DATA ((kernel_ulong_t)NULL)
-
-And remove this cast too.  Rely upon void* magic.
-
-> +#endif
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id exynos_tmu_match[] = {
-> +	{
-> +		.compatible = "samsung,exynos4-tmu",
-> +		.data = (void *)EXYNOS4_TMU_DRV_DATA,
-
-No cast is needed if EXYNOS4_TMU_DRV_DATA has a pointer type.
-
-> +	},
-> +	{
-> +		.compatible = "samsung,exynos5-tmu",
-> +		.data = (void *)EXYNOS5_TMU_DRV_DATA,
-
-No cast is needed if EXYNOS4_TMU_DRV_DATA has a pointer type.
-
-> +	},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, exynos_tmu_match);
-> +#else
-> +#define  exynos_tmu_match NULL
-> +#endif
-> +
->
-> ...
->
+.../devicetree/bindings/spi/spi-samsung.txt        |  113 +++++
+ arch/arm/mach-exynos/clock-exynos4.c               |   66 ++-
+ arch/arm/mach-exynos/clock-exynos5.c               |   98 ++++
+ arch/arm/mach-exynos/include/mach/regs-clock.h     |    4 +
+ arch/arm/mach-exynos/setup-spi.c                   |   33 +--
+ arch/arm/mach-s3c24xx/clock-s3c2416.c              |    2 +-
+ arch/arm/mach-s3c24xx/clock-s3c2443.c              |    2 +-
+ arch/arm/mach-s3c24xx/common-s3c2443.c             |    4 +-
+ arch/arm/mach-s3c24xx/setup-spi.c                  |   10 +-
+ arch/arm/mach-s3c64xx/clock.c                      |   20 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
+ arch/arm/mach-s3c64xx/setup-spi.c                  |   19 +-
+ arch/arm/mach-s5p64x0/clock-s5p6440.c              |   12 +-
+ arch/arm/mach-s5p64x0/clock-s5p6450.c              |   12 +-
+ arch/arm/mach-s5p64x0/setup-spi.c                  |   21 +-
+ arch/arm/mach-s5pc100/clock.c                      |   30 +-
+ arch/arm/mach-s5pc100/setup-spi.c                  |   30 +--
+ arch/arm/mach-s5pv210/clock.c                      |   14 +-
+ arch/arm/mach-s5pv210/setup-spi.c                  |   21 +-
+ arch/arm/plat-samsung/devs.c                       |   50 +--
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h   |   31 +-
+ drivers/spi/spi-s3c64xx.c                          |  467 +++++++++++++++++---
+ 22 files changed, 753 insertions(+), 308 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
