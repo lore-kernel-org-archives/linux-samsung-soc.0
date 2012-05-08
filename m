@@ -1,83 +1,77 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 3/5] ARM: S3C24XX: move plat-s3c24xx/dev-uart.c into
- common.c
-Date: Tue, 08 May 2012 14:38:23 +0900
-Message-ID: <017801cd2cdc$ca6ef8f0$5f4cead0$%kim@samsung.com>
+Subject: RE: [PATCH 2/5] ARM: S3C24XX: move plat-s3c24xx/irq.c into common.c
+Date: Tue, 08 May 2012 14:38:37 +0900
+Message-ID: <017901cd2cdc$d1214c20$7363e460$%kim@samsung.com>
 References: <201205071939.37433.heiko@sntech.de>
- <201205071942.12082.heiko@sntech.de>
+ <201205071941.33343.heiko@sntech.de> <201205071959.22122.arnd@arndb.de>
+ <201205072230.00758.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45784 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:45839 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750737Ab2EHFid convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751016Ab2EHFij convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 8 May 2012 01:38:33 -0400
+	Tue, 8 May 2012 01:38:39 -0400
 Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0M3O00G1HVNX09Q0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 14:38:31 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 14:38:38 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M3O00B0FVO25IG0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 14:38:31 +0900 (KST)
-In-reply-to: <201205071942.12082.heiko@sntech.de>
+ with ESMTPA id <0M3O00D7EVOEM730@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 08 May 2012 14:38:38 +0900 (KST)
+In-reply-to: <201205072230.00758.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
+To: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Arnd Bergmann' <arnd@arndb.de>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Heiko St=C3=BCbner wrote:
+Heiko St=FCbner wrote:
 >=20
-> The uart devices are used on all s3c24xx machines, so they can reside
-> in the common code for all machines.
+> Hi Arnd,
 >=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  arch/arm/mach-s3c24xx/common.c   |   73 +++++++++++++++++++++++++++
->  arch/arm/plat-s3c24xx/Makefile   |    1 -
->  arch/arm/plat-s3c24xx/dev-uart.c |  100 ----------------------------=
------
-> -----
->  3 files changed, 73 insertions(+), 101 deletions(-)
->  delete mode 100644 arch/arm/plat-s3c24xx/dev-uart.c
+> Am Montag 07 Mai 2012, 21:59:21 schrieb Arnd Bergmann:
+> > On Monday 07 May 2012, Heiko St=FCbner wrote:
+> > > Again following the model set out by s3c64xx.
+> > >
+> > > As checkpatch showed a lot of style errors and warning, these got
+> fixed
+> > > too.
+> > >
+> > > Signed-off-by: Heiko Stueber <heiko@sntech.de>
+> >
+> > I object on two grounds:
+> >
+> > 1. there are plans to move irq chip drivers to drivers/irqchip
+> eventually,
+> > so I think it makes little sense to merge the current implementatio=
+n
+> into
+> > another file. That just makes it harder to split it out again. Bett=
+er
+> leave
+> > the file named irq.c and just move it to the mach-s3c24xx for now.
+> >
+> > 2. You should *never* move code around and change it at the same ti=
+me
+> > if you have a choice. Instead if you discover coding style issues w=
+ith
+> > code you want to move, fix those first and then do a second patch t=
+o
+> > move it without further changes. Otherwise it becomes very hard to
+> > check that the coding style changes are actually correct.
 >=20
-> diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-
-> s3c24xx/common.c
-> index 755d5f1..bf1cd36 100644
-> --- a/arch/arm/mach-s3c24xx/common.c
-> +++ b/arch/arm/mach-s3c24xx/common.c
-> @@ -876,3 +876,76 @@ struct syscore_ops s3c24xx_irq_syscore_ops =3D {
->  	.suspend	=3D s3c24xx_irq_suspend,
->  	.resume		=3D s3c24xx_irq_resume,
->  };
-> +
-> +/* Serial port registrations */
-> +
-> +static struct resource s3c2410_uart0_resource[] =3D {
-> +	[0] =3D {
-> +		.start =3D S3C2410_PA_UART0,
-> +		.end   =3D S3C2410_PA_UART0 + 0x3fff,
-> +		.flags =3D IORESOURCE_MEM,
-> +	},
-> +	[1] =3D {
-> +		.start =3D IRQ_S3CUART_RX0,
-> +		.end   =3D IRQ_S3CUART_ERR0,
-> +		.flags =3D IORESOURCE_IRQ,
-> +	}
+> thanks for the two pointers, you are of course right with them.
+> I will do another round of the patches.
+>=20
+Yes, agree.
 
-+	[0] =3D DEFINE_RES_MEM(S3C2410_PA_UART0, SZ_16K),
-+	[1] =3D DEFINE_RES_NAMED(IRQ_S3CUART_RX0, \
-+			IRQ_S3CUART_ERR0 - IRQ_S3CUART_RX0 + 1, \
-+			NULL, IORESOURCE_IRQ)
-
-Note, Tushar's patch updated so I will update when apply this.
-
-[...]
+I will apply Heiko's this series except 2nd patch.
 
 Thanks.
 
