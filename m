@@ -1,62 +1,39 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 00/33] Use common macro to define resources
-Date: Wed, 09 May 2012 21:55:23 +0900
-Message-ID: <01b201cd2de2$ffa5d7d0$fef18770$%kim@samsung.com>
-References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
- <201204250938.58397.heiko@sntech.de> <20120425101007.GM9142@game.jcrosoft.org>
- <201204251121.47358.arnd@arndb.de>
- <20120425113521.GW24211@n2100.arm.linux.org.uk>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 05/10] ARM: Samsung: Update the device names for spi clock lookup
+Date: Wed, 9 May 2012 21:40:26 +0800
+Message-ID: <CAJuYYwQ+Wn11puF7AdPD41Jntbuj7oZHqNfzQA2T8V=2cigQnw@mail.gmail.com>
+References: <1336514694-22393-1-git-send-email-thomas.abraham@linaro.org>
+	<1336514694-22393-6-git-send-email-thomas.abraham@linaro.org>
+	<20120509085249.GA28702@sirena.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47271 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752931Ab2EIMzZ (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:39404 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753416Ab2EINk1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 08:55:25 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M3R00MAUAKCFA40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:55:24 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M3R005NJAKBTD20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:55:24 +0900 (KST)
-In-reply-to: <20120425113521.GW24211@n2100.arm.linux.org.uk>
-Content-language: ko
+	Wed, 9 May 2012 09:40:27 -0400
+Received: by wibhr2 with SMTP id hr2so468139wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 May 2012 06:40:26 -0700 (PDT)
+In-Reply-To: <20120509085249.GA28702@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Russell King - ARM Linux wrote:
-> 
-> On Wed, Apr 25, 2012 at 11:21:47AM +0000, Arnd Bergmann wrote:
-> > Note that the point of the DEFINE_RES_*() macros is really to prevent
-> > people from coming up with new silly macros to do the same thing, as
-> > we've had in the past.
-> 
-> One of the other reaons was to stop the stream of resources with wrong
-> endings (because people kept thinking it was exclusive rather than
-> inclusive) - and the resulting stream of additional patches to fix those
-> errors.
-> 
-> The legacy platforms do have those kinds of errors - when I converted
-> SA11x0 as part of a previous patch set, I found a number suffering from
-> this error.  (Were any found in this patch set?  I've not read through
-> it.)
-> 
-> I think if this becomes a small %age of the change to Samsung stuff,
-> and Kukjin is happy with it, it should go in.
+On 9 May 2012 16:52, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
+> On Wed, May 09, 2012 at 03:34:49AM +0530, Thomas Abraham wrote:
+>> With the addition of platform specific driver data in the spi-s3c64xx
+>> driver, the device name of spi controllers are changed. Accordingly,
+>> update the device name of spi clocks instances.
+>
+> This should've been squashed into the patch that updated to use driver
+> data in order to avoid breaking bisection.
 
-Yes, agree. I will apply this whole series.
-Thanks.
+This patch updates clock devname in the platform code and the
+modifications to use driver data is in the driver file. So these two
+changes are kept separate to allow them to be applied to their
+respective trees.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Thanks,
+Thomas.
