@@ -1,224 +1,118 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 07/20] ARM: EXYNOS: Add pre-divider and fout mux clocks for
- bpll and mpll
-Date: Wed, 09 May 2012 20:45:32 +0900
-Message-ID: <019601cd2dd9$3da83780$b8f8a680$%kim@samsung.com>
+Subject: RE: [PATCH 00/20] ARM: Samsung: Add support for Exynos5250 Rev1.0
+Date: Wed, 09 May 2012 20:50:31 +0900
+Message-ID: <019701cd2dd9$ef5cec50$ce16c4f0$%kim@samsung.com>
 References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
- <1335813270-13083-8-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:33007 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:34106 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755794Ab2EILpf (ORCPT
+	with ESMTP id S1756100Ab2EILud (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 07:45:35 -0400
+	Wed, 9 May 2012 07:50:33 -0400
 Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M3R0007N7BPN620@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 20:45:33 +0900 (KST)
+ 17 2011)) with ESMTP id <0M3R00MVL7K7FA20@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 20:50:32 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M3R005D97BWXU40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 20:45:33 +0900 (KST)
-In-reply-to: <1335813270-13083-8-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0M3R000C37K6G590@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 20:50:31 +0900 (KST)
+In-reply-to: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Kisoo Yu' <ksoo.yu@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
 Thomas Abraham wrote:
 > 
-> From: Kisoo Yu <ksoo.yu@samsung.com>
+> This patch series adds support for Samsung's Exynos5250 Rev1.0. It
+> includes
+> fixes for device tree support, updates for rev1.0 silicon and device tree
+> discovery for combiner and wakeup interrupt controller. This patch series
+> depricates the existing support for Exynos5250 Rev0.0.
 > 
-> The fout clock of BPLL and MPLL have a selectable source in rev1 of
-> EXYNOS5. The clock options are a fixed divided by 2 clock and the
-> output of the PLL itself. Add support for these new clock instances.
+> This patchset is based and tested on top of v3.4-rc5.
 > 
-> Signed-off-by: Kisoo Yu <ksoo.yu@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> [kgene.kim@samsung.com: temporary apply this because I
-> don't want to add pll stuff in each clock not commonly]
-
-As I commented, I won't apply this because pll stuff should be added in
-common file such as plat-s5p/clock.c even though the plat-s5p files moved
-into plat-samsung.
-
-> Temporary-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-
-No. I didn't sign on this in my topic branch.
-
-> ---
->  arch/arm/mach-exynos/clock-exynos5.c           |   73
-> +++++++++++++++++++++++-
->  arch/arm/mach-exynos/include/mach/regs-clock.h |    2 +
->  arch/arm/plat-s5p/clock.c                      |   11 ----
->  3 files changed, 74 insertions(+), 12 deletions(-)
+> Boojin Kim (1):
+>   ARM: EXYNOS: Support DMA for EXYNOS5250 SoC
 > 
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-
-> exynos/clock-exynos5.c
-> index 846741e..7c0f810 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -145,6 +145,39 @@ static struct clksrc_clk exynos5_clk_sclk_apll = {
->  	.reg_div = { .reg = EXYNOS5_CLKDIV_CPU0, .shift = 24, .size = 3 },
->  };
+> Changhwan Youn (2):
+>   ARM: EXYNOS: Modify the GIC physical address for static io-mapping
+>   ARM: EXYNOS: Redefine IRQ_MCT_L0,1 definition
 > 
-> +static struct clk clk_fout_bpll_div2 = {
-> +	.name	= "fout_bpll_div2",
-> +};
-> +
-> +static struct clk *exynos5_clkset_mout_bpll_fout_list[] = {
-> +	[0] = &clk_fout_bpll_div2,
-> +	[1] = &clk_fout_bpll,
-> +};
-> +
-> +static struct clksrc_sources exynos5_clkset_mout_bpll_fout = {
-> +	.sources	= exynos5_clkset_mout_bpll_fout_list,
-> +	.nr_sources	= ARRAY_SIZE(exynos5_clkset_mout_bpll_fout_list),
-> +};
-> +
-> +static struct clksrc_clk exynos5_clk_mout_bpll_fout = {
-> +	.clk	= {
-> +		.name		= "mout_bpll_fout",
-> +	},
-> +	.sources = &exynos5_clkset_mout_bpll_fout,
-> +	.reg_src = { .reg = EXYNOS5_PLL_DIV2_SEL, .shift = 0, .size = 1 },
-> +};
-> +
-> +/* Possible clock sources for BPLL Mux */
-> +static struct clk *clk_src_bpll_list[] = {
-> +	[0] = &clk_fin_bpll,
-> +	[1] = &exynos5_clk_mout_bpll_fout.clk,
-> +};
-> +
-> +struct clksrc_sources clk_src_bpll = {
-> +	.sources	= clk_src_bpll_list,
-> +	.nr_sources	= ARRAY_SIZE(clk_src_bpll_list),
-> +};
-> +
->  static struct clksrc_clk exynos5_clk_mout_bpll = {
->  	.clk	= {
->  		.name		= "mout_bpll",
-> @@ -187,11 +220,43 @@ static struct clksrc_clk exynos5_clk_mout_epll = {
->  	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP2, .shift = 12, .size = 1 },
->  };
+> Kisoo Yu (1):
+>   ARM: EXYNOS: Add pre-divider and fout mux clocks for bpll and mpll
 > 
-> +static struct clk clk_fout_mpll_div2 = {
-> +	.name	= "fout_mpll_div2",
-> +};
-> +
-> +static struct clk *exynos5_clkset_mout_mpll_fout_list[] = {
-> +	[0] = &clk_fout_mpll_div2,
-> +	[1] = &clk_fout_mpll,
-> +};
-> +
-> +static struct clksrc_sources exynos5_clkset_mout_mpll_fout = {
-> +	.sources	= exynos5_clkset_mout_mpll_fout_list,
-> +	.nr_sources	= ARRAY_SIZE(exynos5_clkset_mout_mpll_fout_list),
-> +};
-> +
-> +static struct clksrc_clk exynos5_clk_mout_mpll_fout = {
-> +	.clk	= {
-> +		.name		= "mout_mpll_fout",
-> +	},
-> +	.sources = &exynos5_clkset_mout_mpll_fout,
-> +	.reg_src = { .reg = EXYNOS5_PLL_DIV2_SEL, .shift = 4, .size = 1 },
-> +};
-> +
-> +static struct clk *exynos5_clk_src_mpll_list[] = {
-> +	[0] = &clk_fin_mpll,
-> +	[1] = &exynos5_clk_mout_mpll_fout.clk,
-> +};
-> +
-> +struct clksrc_sources exynos5_clk_src_mpll = {
-> +	.sources	= exynos5_clk_src_mpll_list,
-> +	.nr_sources	= ARRAY_SIZE(exynos5_clk_src_mpll_list),
-> +};
-> +
->  struct clksrc_clk exynos5_clk_mout_mpll = {
->  	.clk = {
->  		.name		= "mout_mpll",
->  	},
-> -	.sources = &clk_src_mpll,
-> +	.sources = &exynos5_clk_src_mpll,
->  	.reg_src = { .reg = EXYNOS5_CLKSRC_CORE1, .shift = 8, .size = 1 },
->  };
+> Kukjin Kim (2):
+>   ARM: EXYNOS: fix ctrlbit for exynos5_clk_pdma1
+>   ARM: EXYNOS: update irqs for EXYNOS5250 evt1
 > 
-> @@ -946,10 +1011,12 @@ static struct clksrc_clk *exynos5_sysclks[] = {
->  	&exynos5_clk_mout_apll,
->  	&exynos5_clk_sclk_apll,
->  	&exynos5_clk_mout_bpll,
-> +	&exynos5_clk_mout_bpll_fout,
->  	&exynos5_clk_mout_bpll_user,
->  	&exynos5_clk_mout_cpll,
->  	&exynos5_clk_mout_epll,
->  	&exynos5_clk_mout_mpll,
-> +	&exynos5_clk_mout_mpll_fout,
->  	&exynos5_clk_mout_mpll_user,
->  	&exynos5_clk_vpllsrc,
->  	&exynos5_clk_sclk_vpll,
-> @@ -1013,6 +1080,8 @@ static struct clk *exynos5_clks[] __initdata = {
->  	&exynos5_clk_sclk_hdmi27m,
->  	&exynos5_clk_sclk_hdmiphy,
->  	&clk_fout_bpll,
-> +	&clk_fout_bpll_div2,
-> +	&clk_fout_mpll_div2,
->  	&clk_fout_cpll,
->  	&exynos5_clk_armclk,
->  };
-> @@ -1178,8 +1247,10 @@ void __init_or_cpufreq exynos5_setup_clocks(void)
+> Sangsu Park (1):
+>   ARM: EXYNOS: add GPC4 bank instance
 > 
->  	clk_fout_apll.ops = &exynos5_fout_apll_ops;
->  	clk_fout_bpll.rate = bpll;
-> +	clk_fout_bpll_div2.rate = bpll >> 1;
->  	clk_fout_cpll.rate = cpll;
->  	clk_fout_mpll.rate = mpll;
-> +	clk_fout_mpll_div2.rate = mpll >> 1;
->  	clk_fout_epll.rate = epll;
->  	clk_fout_vpll.rate = vpll;
+> Thomas Abraham (13):
+>   ARM: EXYNOS: Add watchdog timer clock instance
+>   ARM: Exynos: Remove a new bus_type instance for Exynos5
+>   of/irq: fix interrupt parent lookup procedure
+>   of/irq: add retry support for interrupt controller tree initialization
+>   ARM: Exynos: Add irq_domain support for interrupt combiner
+>   ARM: Exynos: Add device tree support for interrupt combiner
+>   ARM: Exynos: Simplify the wakeup interrupt setup code
+>   ARM: Exynos: Add irq_domain support for gpio wakeup interrupts
+>   ARM: Exynos: Remove arch_initcall for wakeup interrupt initialization
+>   ARM: Exynos: Add device tree support for gpio wakeup interrupt
+> controller
+>   ARM: dts: Update device tree source files for EXYNOS5250
+>   ARM: Exynos5: Add combiner, wakeup interrupt controller and ethernet
+> nodes
+>   ARM: Exynos5: Add AUXDATA for i2c controllers
 > 
-> diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h
-> b/arch/arm/mach-exynos/include/mach/regs-clock.h
-> index d9578a5..130034d 100644
-> --- a/arch/arm/mach-exynos/include/mach/regs-clock.h
-> +++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
-> @@ -313,6 +313,8 @@
->  #define EXYNOS5_CLKGATE_IP_PERIS		EXYNOS_CLKREG(0x10960)
->  #define EXYNOS5_CLKGATE_BLOCK
-EXYNOS_CLKREG(0x10980)
+>  .../bindings/arm/samsung/interrupt-combiner.txt    |   52 +++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |   63 ++++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   99 ++++--
+>  arch/arm/mach-exynos/Kconfig                       |    7 +-
+>  arch/arm/mach-exynos/Makefile                      |    2 +-
+>  arch/arm/mach-exynos/clock-exynos5.c               |   80 +++++-
+>  arch/arm/mach-exynos/common.c                      |  338
+++++++++++++++------
+>  arch/arm/mach-exynos/dma.c                         |  129 +++++++--
+>  arch/arm/mach-exynos/include/mach/gpio.h           |    9 +-
+>  arch/arm/mach-exynos/include/mach/irqs.h           |   40 ++-
+>  arch/arm/mach-exynos/include/mach/map.h            |    4 +-
+>  arch/arm/mach-exynos/include/mach/regs-clock.h     |    2 +
+>  arch/arm/mach-exynos/include/mach/regs-gpio.h      |    4 +-
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    4 +
+>  arch/arm/mach-exynos/mct.c                         |   17 +-
+>  arch/arm/mach-exynos/pm.c                          |    2 +-
+>  arch/arm/plat-s5p/clock.c                          |   11 -
+>  arch/arm/plat-samsung/Kconfig                      |    2 +-
+>  arch/arm/plat-samsung/include/plat/cpu.h           |    2 +-
+>  arch/arm/plat-samsung/include/plat/dma-pl330.h     |    1 +
+>  drivers/gpio/gpio-samsung.c                        |   11 +-
+>  drivers/of/irq.c                                   |   29 ++-
+>  22 files changed, 698 insertions(+), 210 deletions(-)
+>  create mode 100644
+> Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
 > 
-> +#define EXYNOS5_PLL_DIV2_SEL			EXYNOS_CLKREG(0x20A24)
-> +
->  #define EXYNOS5_BPLL_CON0			EXYNOS_CLKREG(0x20110)
->  #define EXYNOS5_CLKSRC_CDREX			EXYNOS_CLKREG(0x20200)
->  #define EXYNOS5_CLKDIV_CDREX			EXYNOS_CLKREG(0x20500)
-> diff --git a/arch/arm/plat-s5p/clock.c b/arch/arm/plat-s5p/clock.c
-> index f68a9bb..bea0907 100644
-> --- a/arch/arm/plat-s5p/clock.c
-> +++ b/arch/arm/plat-s5p/clock.c
-> @@ -115,17 +115,6 @@ struct clksrc_sources clk_src_apll = {
->  	.nr_sources	= ARRAY_SIZE(clk_src_apll_list),
->  };
-> 
-> -/* Possible clock sources for BPLL Mux */
-> -static struct clk *clk_src_bpll_list[] = {
-> -	[0] = &clk_fin_bpll,
-> -	[1] = &clk_fout_bpll,
-> -};
-> -
-> -struct clksrc_sources clk_src_bpll = {
-> -	.sources	= clk_src_bpll_list,
-> -	.nr_sources	= ARRAY_SIZE(clk_src_bpll_list),
-> -};
-> -
->  /* Possible clock sources for CPLL Mux */
->  static struct clk *clk_src_cpll_list[] = {
->  	[0] = &clk_fin_cpll,
 > --
 > 1.7.5.4
+
+Hi,
+
+Basically, it's ok to me on 1st~9th patches except #7 as I commented. Will
+apply them but need to update #7. And I will look at the others again. If
+any comments, let you know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
