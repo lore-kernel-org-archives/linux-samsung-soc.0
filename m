@@ -1,62 +1,68 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 06/10] ARM: Samsung: Modify s3c64xx_spi{0|1|2}_set_platdata
- function
-Date: Wed, 9 May 2012 22:22:26 +0800
-Message-ID: <CAJuYYwSMant-44jvvyeefojmur7vCvKLeEPWEK52pqUTB4RZkg@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 05/10] ARM: Samsung: Update the device names for spi
+ clock lookup
+Date: Wed, 9 May 2012 15:28:37 +0100
+Message-ID: <20120509142836.GT3955@opensource.wolfsonmicro.com>
 References: <1336514694-22393-1-git-send-email-thomas.abraham@linaro.org>
-	<1336514694-22393-7-git-send-email-thomas.abraham@linaro.org>
-	<20120509085617.GB28702@sirena.org.uk>
-	<201205091110.15224.heiko@sntech.de>
-	<20120509105500.GG3955@opensource.wolfsonmicro.com>
+ <1336514694-22393-6-git-send-email-thomas.abraham@linaro.org>
+ <20120509085249.GA28702@sirena.org.uk>
+ <CAJuYYwQ+Wn11puF7AdPD41Jntbuj7oZHqNfzQA2T8V=2cigQnw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="TJ9V72hR/LoebVea"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:40133 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757182Ab2EIOW1 convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:47425 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1759598Ab2EIO2l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 10:22:27 -0400
-Received: by werb10 with SMTP id b10so222848wer.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 May 2012 07:22:26 -0700 (PDT)
-In-Reply-To: <20120509105500.GG3955@opensource.wolfsonmicro.com>
+	Wed, 9 May 2012 10:28:41 -0400
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwQ+Wn11puF7AdPD41Jntbuj7oZHqNfzQA2T8V=2cigQnw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 9 May 2012 18:55, Mark Brown <broonie@opensource.wolfsonmicro.com> w=
-rote:
-> On Wed, May 09, 2012 at 11:10:14AM +0200, Heiko St=FCbner wrote:
->
->> Similar to the adc and rtc driver, all Samsung platforms reuse a com=
-mon
->> platform-device definition for the s3c64xx-spi and simply will set t=
-he correct
->> name when the machine type is determined during boot.
->
-> Right, that doesn't mean this is a great way of doing things, though =
--
-> it's been a frequent source of errors in the past and is painful to
-> debug as the data structures get rewritten during boot which is a bit=
- of
-> a surprise.
->
->> The alternative is creating a mulitude of platform devices for each =
-possible
->> machine type using this driver.
->
-> Yes, that's the normal way of handling this and is actually what the
-> code was originally doing - there's a bunch of ifdefed devices in
-> plat-samsung/devs.c. =A0You usually have to do this anyway as the IPs=
- move
-> about so the resources need changing.
 
-In addition to the setting the name, the platform data is also
-assigned at runtime. Adding multiple platform devices means that we
-add lot more code in setting up the platform data. And since we are
-moving towards adopting dt, these would anyway go away when we have
-all the platforms migrated to dt.
+--TJ9V72hR/LoebVea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks,
-Thomas.
+On Wed, May 09, 2012 at 09:40:26PM +0800, Thomas Abraham wrote:
+> On 9 May 2012 16:52, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
+
+> > This should've been squashed into the patch that updated to use driver
+> > data in order to avoid breaking bisection.
+
+> This patch updates clock devname in the platform code and the
+> modifications to use driver data is in the driver file. So these two
+> changes are kept separate to allow them to be applied to their
+> respective trees.
+
+This means that bisection will be broken - anything with only one tree
+won't be able to load the SPI driver successfully until it's merged
+with the other which isn't ideal.
+
+--TJ9V72hR/LoebVea
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPqn8OAAoJEBus8iNuMP3dh2gP/22S3d/mFd2A6Joxy1+0qKec
+eZlNkcq+qwpbeAB2zUJphmxYSt2z8+ft4PQmSfDk0PbcGRB2YMd2zV4BjzVeUv1f
+Tz2SR9b766GLxyDOlKAkuHD3YKFMpo8UmnRfHEZnHf4n0ooc2sNv8dFIZ/OupfeD
+/qetGt3BHFoRlz9eOc99M9AgKrh6+AxF7rMF+tgldIHXgbE9XhSA3cjvGPiAiix0
+lBC7wJSiEqfc6us+hFOoAHZ3jEdMBRytwtGwQQkf6mB1Q/r5wZuhyW7fgymk3ca6
+wBmW6SCEr4kTcJn/FZWs6BJusqDmbalI+sW2QeW9UmOIRJdqE6WNz++lzHDss4bS
+q0QvtiQRhBrlRF6lAggG3vqRXO5SsRTaPXcWdne6x3CXmiTkuYO/4gVgEuCiKBS3
+Hm1q9FZA0W3NvufNRo4IJlB3oiuKAhOR4MJJFPMSOfayl3BSPXjxM3r88iR12lwo
+MzImhYpgOUayunPF/N72RW28q1htKUkBMWPHgmNpZwES0GMjqosVuYn/TmKvVpYR
+3T/NKwoIwprdxR3UD5uUrJQRgMyh4x+T4963PcEsj4sVNJ2eXeL3s9zoxQfhHeWZ
+nl6KZMsINrQX5JCoOzgcy0IUT0mYSPYZZkLGXa4oQS9goEn9Jot+R7AajwVvZeTc
+jTeDpZFOjxOtgycaVt5Y
+=xdHu
+-----END PGP SIGNATURE-----
+
+--TJ9V72hR/LoebVea--
