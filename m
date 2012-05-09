@@ -1,76 +1,83 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 06/10] ARM: Samsung: Modify
- s3c64xx_spi{0|1|2}_set_platdata function
-Date: Wed, 9 May 2012 11:55:00 +0100
-Message-ID: <20120509105500.GG3955@opensource.wolfsonmicro.com>
-References: <1336514694-22393-1-git-send-email-thomas.abraham@linaro.org>
- <1336514694-22393-7-git-send-email-thomas.abraham@linaro.org>
- <20120509085617.GB28702@sirena.org.uk>
- <201205091110.15224.heiko@sntech.de>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: SAMSUNG: Fix the value of tcnt and tcmp for PWM
+Date: Wed, 09 May 2012 20:36:34 +0900
+Message-ID: <019201cd2dd7$feaf91f0$fc0eb5d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oOB74oR0WcNeq9Zb"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58968 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754507Ab2EIKzF (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:65471 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757892Ab2EILhO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 06:55:05 -0400
-Content-Disposition: inline
-In-Reply-To: <201205091110.15224.heiko@sntech.de>
+	Wed, 9 May 2012 07:37:14 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3R008ZB6X78M30@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 20:36:43 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3R005US6X1XU20@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 20:36:43 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 
---oOB74oR0WcNeq9Zb
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+According to PWM hardware spec, the actual period which
+has been calculated by period and input clock is same
+with (tcnt + 1), so need to down count for tcnt register.
+And current PWM HW checks the compare register after
+tcmp++ internally in hardware.
 
-On Wed, May 09, 2012 at 11:10:14AM +0200, Heiko St=FCbner wrote:
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/plat-samsung/pwm.c |   23 +++++++++++++++++++----
+ 1 files changed, 19 insertions(+), 4 deletions(-)
 
-> Similar to the adc and rtc driver, all Samsung platforms reuse a common=
-=20
-> platform-device definition for the s3c64xx-spi and simply will set the co=
-rrect=20
-> name when the machine type is determined during boot.
-
-Right, that doesn't mean this is a great way of doing things, though -
-it's been a frequent source of errors in the past and is painful to
-debug as the data structures get rewritten during boot which is a bit of
-a surprise.
-
-> The alternative is creating a mulitude of platform devices for each possi=
-ble=20
-> machine type using this driver.
-
-Yes, that's the normal way of handling this and is actually what the
-code was originally doing - there's a bunch of ifdefed devices in
-plat-samsung/devs.c.  You usually have to do this anyway as the IPs move
-about so the resources need changing.
-
---oOB74oR0WcNeq9Zb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPqkz5AAoJEBus8iNuMP3dbngQAJbQqoRi/t8RmwT//QoNI13A
-7S2IslIQzzhqlaI7+wMrrH4P8el9I/6QuR6njg5sqWtsKT/8atzq95YykknMiku4
-hU/immXcS3Cav8RgDoO5eA2+uo771SZI/KWOAQPt5SAiZkKMzbKTHArzgafeuY/1
-TENWDYUOreyGDXBncmBEApFhxNDBqe9w+uwjD1THLcMPlTmK7+OkK/w/rjXIXYoR
-Ru6S4LodFS4fTOQk62ehQWlmXErYHISn/6vHL1ooKcxIb9C5UEwdAj88/M1uH1wt
-tH4jW01E7UaVWdSTKpUWR2RSlf3a0KDp8B/E6XkATdGz9JNSYXQbNPFcurbaRC5j
-4l1+mUAC9iR2c/1O9jecJEWRaQy+jIzLzIZYBXwxGHPdDzR/yMfNyD1SffUvey6H
-EFYj/4AoQwX2vxryfsDHVDCTcP2PYcedLxVT8TKTusZZbRUWPkSNXeeZwquIEx7Q
-jxusJZQ8uztLhfaUFMEHeiwSdMBBFgUEcOroV6F97/4jy34qwEVHjd7r30UBk4TF
-hIBwKl/eGCK/VAk52CLx5HmM1TvHECnhBRjpK0oFN030PXaDCwHcyS+3S/FBTRv6
-e6eky8EkFkX2bHuU5g1e4vv9Vaf5PXLSLO50At1XqM1faawufNVNFbt/8CY1Wxa8
-mNuSIQUQFNKRW/0Nh0F9
-=6YXC
------END PGP SIGNATURE-----
-
---oOB74oR0WcNeq9Zb--
+diff --git a/arch/arm/plat-samsung/pwm.c b/arch/arm/plat-samsung/pwm.c
+index c559d84..88fdb1c 100644
+--- a/arch/arm/plat-samsung/pwm.c
++++ b/arch/arm/plat-samsung/pwm.c
+@@ -22,6 +22,7 @@
+ 
+ #include <mach/map.h>
+ 
++#include <plat/cpu.h>
+ #include <plat/regs-timer.h>
+ 
+ struct pwm_device {
+@@ -215,10 +216,24 @@ int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
+ 
+ 	tcmp = duty_ns / tin_ns;
+ 	tcmp = tcnt - tcmp;
+-	/* the pwm hw only checks the compare register after a decrement,
+-	   so the pin never toggles if tcmp = tcnt */
+-	if (tcmp == tcnt)
+-		tcmp--;
++
++	if (soc_is_s3c24xx()) {
++		/*
++		 * The S3C24XX PWM HW only checks the compare register after
++		 * a decrement, so the pin never toggles if tcmp = tcnt.
++		 */
++		if (tcmp == tcnt)
++			tcmp--;
++	} else {
++		/*
++		 * The other PWM HW checks the compare register after tcmp++
++		 * internally, so needs -2 for tcmp, and the actual period
++		 * which has been calculated by period_ns and tin_ns is same
++		 * with (tcnt + 1), so need to down count for tcnt register.
++		 */
++		tcmp = tcmp - 2;
++		tcnt--;
++	}
+ 
+ 	pwm_dbg(pwm, "tin_ns=%lu, tcmp=%ld/%lu\n", tin_ns, tcmp, tcnt);
+ 
+-- 
+1.7.1
