@@ -1,114 +1,89 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: fix the hotplug for Cortex-A15
-Date: Wed, 09 May 2012 21:37:28 +0900
-Message-ID: <01a301cd2de0$7ebaada0$7c3008e0$%kim@samsung.com>
+Subject: RE: [PATCH v2 0/4] ARM: S3C24XX: move some code from plat to mach
+ directory
+Date: Wed, 09 May 2012 21:44:00 +0900
+Message-ID: <01af01cd2de1$6812da90$38388fb0$%kim@samsung.com>
+References: <201205082034.50658.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:21133 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758865Ab2EIMhb (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:45204 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752549Ab2EIMoC convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 08:37:31 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Wed, 9 May 2012 08:44:02 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M3R00CAL9QH2540@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:37:29 +0900 (KST)
+ 17 2011)) with ESMTP id <0M3R000H2A11N630@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:44:00 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M3R0055S9QGPE00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:37:29 +0900 (KST)
+ with ESMTPA id <0M3R008OSA1BE440@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:44:00 +0900 (KST)
+In-reply-to: <201205082034.50658.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: chaos.youn@samsung.com, 'Russell King' <rmk+kernel@arm.linux.org.uk>
+To: =?utf-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-From: Changhwan Youn <chaos.youn@samsung.com>
+Heiko St=C3=BCbner wrote:
+>=20
+> Again the series of small moves of common code from the plat-s3c24xx =
+to
+> the
+> mach-s3c24xx directory.
+>=20
+> This time without the wrong handled irq.c . Hopefully I'll get time t=
+o do
+> it
+> properly later.
+>=20
+> As the dev-uart.c move breaks the resource patch by Tushar Behera, I
+> updated
+> the patch to fix the correct code and will submit it as a v2 to the
+> resource
+> series.
+>=20
+> Heiko Stuebner (4):
+>   ARM: S3C24XX: move plat-s3c24xx/cpu.c
+>   ARM: S3C24XX: move plat-s3c24xx/dev-uart.c into common.c
+>   ARM: S3C24XX: move common power-management code to mach-s3c24xx
+>   ARM: S3C24XX: move common clock init into common.c
+>=20
+>  arch/arm/mach-s3c24xx/Makefile                     |    6 +
+>  .../{plat-s3c24xx/cpu.c =3D> mach-s3c24xx/common.c}  |   93
+> ++++++++++++++++++-
+>  arch/arm/{plat-s3c24xx =3D> mach-s3c24xx}/irq-pm.c   |    0
+>  arch/arm/{plat-s3c24xx =3D> mach-s3c24xx}/pm.c       |    0
+>  arch/arm/{plat-s3c24xx =3D> mach-s3c24xx}/sleep.S    |    0
+>  arch/arm/plat-s3c24xx/Makefile                     |    6 -
+>  arch/arm/plat-s3c24xx/clock.c                      |   59 ----------=
+--
+>  arch/arm/plat-s3c24xx/dev-uart.c                   |  100 ----------=
+----------
+>  8 files changed, 98 insertions(+), 166 deletions(-)
+>  rename arch/arm/{plat-s3c24xx/cpu.c =3D> mach-s3c24xx/common.c} (75%=
+)
+>  rename arch/arm/{plat-s3c24xx =3D> mach-s3c24xx}/irq-pm.c (100%)
+>  rename arch/arm/{plat-s3c24xx =3D> mach-s3c24xx}/pm.c (100%)
+>  rename arch/arm/{plat-s3c24xx =3D> mach-s3c24xx}/sleep.S (100%)
+>  delete mode 100644 arch/arm/plat-s3c24xx/clock.c
+>  delete mode 100644 arch/arm/plat-s3c24xx/dev-uart.c
+>=20
+> --
+> 1.7.5.4
 
-The sequence of cpu_enter_lowpower() for Cortex-A15
-is different from the sequence for Cortex-A9.
-This patch implements cpu_enter_lowpower() for EXYNOS5
-SoC which has Cortex-A15 cores.
+Thanks for your re-posting.
+Looks better. Will apply this series instead.
 
-Signed-off-by: Changhwan Youn <chaos.youn@samsung.com>
-Cc: Russell King <rmk+kernel@arm.linux.org.uk>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-Note, I didn't see common code for fix of hotplug for Cortex-A15.
-If any regarding patch, please kindly let me know, thanks.
+Thanks.
 
- arch/arm/mach-exynos/hotplug.c |   39 +++++++++++++++++++++++++++++++++++++--
- 1 files changed, 37 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/hotplug.c b/arch/arm/mach-exynos/hotplug.c
-index 9c17a0a..2a444b1 100644
---- a/arch/arm/mach-exynos/hotplug.c
-+++ b/arch/arm/mach-exynos/hotplug.c
-@@ -21,9 +21,11 @@
- 
- #include <mach/regs-pmu.h>
- 
-+#include <plat/cpu.h>
-+
- extern volatile int pen_release;
- 
--static inline void cpu_enter_lowpower(void)
-+static inline void cpu_enter_lowpower_a9(void)
- {
- 	unsigned int v;
- 
-@@ -45,6 +47,35 @@ static inline void cpu_enter_lowpower(void)
- 	  : "cc");
- }
- 
-+static inline void cpu_enter_lowpower_a15(void)
-+{
-+	unsigned int v;
-+
-+	asm volatile(
-+	"	mrc	p15, 0, %0, c1, c0, 0\n"
-+	"	bic	%0, %0, %1\n"
-+	"	mcr	p15, 0, %0, c1, c0, 0\n"
-+	  : "=&r" (v)
-+	  : "Ir" (CR_C)
-+	  : "cc");
-+
-+	flush_cache_all();
-+
-+	asm volatile(
-+	/*
-+	* Turn off coherency
-+	*/
-+	"	mrc	p15, 0, %0, c1, c0, 1\n"
-+	"	bic	%0, %0, %1\n"
-+	"	mcr	p15, 0, %0, c1, c0, 1\n"
-+	: "=&r" (v)
-+	: "Ir" (0x40)
-+	: "cc");
-+
-+	isb();
-+	dsb();
-+}
-+
- static inline void cpu_leave_lowpower(void)
- {
- 	unsigned int v;
-@@ -112,7 +143,11 @@ void platform_cpu_die(unsigned int cpu)
- 	/*
- 	 * we're ready for shutdown now, so do it
- 	 */
--	cpu_enter_lowpower();
-+	if (soc_is_exynos5250())
-+		cpu_enter_lowpower_a15();
-+	else
-+		cpu_enter_lowpower_a9();
-+
- 	platform_do_lowpower(cpu, &spurious);
- 
- 	/*
--- 
-1.7.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
