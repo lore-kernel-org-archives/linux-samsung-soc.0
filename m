@@ -1,102 +1,91 @@
-From: Sylwester Nawrocki <snjw23@gmail.com>
-Subject: Re: [PATCH 2/2] regulator: Add support for MAX77686.
-Date: Wed, 09 May 2012 21:54:14 +0200
-Message-ID: <4FAACB66.3020706@gmail.com>
-References: <1336580695-1184-1-git-send-email-yadi.brar@samsung.com> <1336580695-1184-3-git-send-email-yadi.brar@samsung.com>
+From: Chanwoo Choi <cw00.choi@samsung.com>
+Subject: Re: [PATCH 1/2] mfd: Add support for MAX77686.
+Date: Thu, 10 May 2012 08:42:00 +0900
+Message-ID: <4FAB00C8.8000308@samsung.com>
+References: <1336580695-1184-1-git-send-email-yadi.brar@samsung.com>
+ <1336580695-1184-2-git-send-email-yadi.brar@samsung.com>
+ <20120509182757.GB32037@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:39906 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754241Ab2EITyS (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:13141 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760071Ab2EIXmC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 15:54:18 -0400
-In-Reply-To: <1336580695-1184-3-git-send-email-yadi.brar@samsung.com>
+	Wed, 9 May 2012 19:42:02 -0400
+In-reply-to: <20120509182757.GB32037@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh <yadi.brar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Yadwinder Singh <yadi.brar@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <snjw23@gmail.com>
 
-Hi,
+Hi Mark,
 
-just a few nitpicks...
+We have posted following patch on the last week and received
+your comment. So, We are implementing that use regmap API for I2C
+and modify MFD driver of MAX77686 according to your comment.
 
-On 05/09/2012 06:24 PM, Yadwinder Singh wrote:
-> From: Yadwinder Singh Brar<yadi.brar@samsung.com>
->
-> Add support for PMIC/regulator portion of MAX77686 multifunction device.
-> MAX77686 provides LDOs[1-26] and BUCKs[1-9]. This is initial release of driver
-> which supports setting and getting the voltage of a regulator with I2C
-> interface.
->
-> Signed-off-by: Yadwinder Singh Brar<yadi.brar@samsung.com>
-...
-> diff --git a/drivers/regulator/max77686.c b/drivers/regulator/max77686.c
-> new file mode 100644
-> index 0000000..4aa9722
-> --- /dev/null
-> +++ b/drivers/regulator/max77686.c
-> @@ -0,0 +1,660 @@
-> +/*
-> + * max77686.c - Regulator driver for the Maxim 77686
-> + *
-> + * Copyright (C) 2012 Samsung Electronics
+[PATCH] MFD : add MAX77686 mfd driver
+- https://lkml.org/lkml/2012/4/30/96
 
-I believe this should read:
+Additionally, We are intergrating support irq_domain for MAX77686 irq.
 
-   + * Copyright (C) 2012 Samsung Electronics Co., Ltd.
+We will post new patch to support MFD driver of MAX77686 including
+modification by your comment within this week.
 
-In patch 1/2 the copyright notice is also not exactly correct.
+Best Regards,
+Chanwoo Choi
 
-> + * Chiwoong Byun<woong.byun@smasung.com>
+On 05/10/2012 03:27 AM, Mark Brown wrote:
 
-s/smasung/samsung
-
-...
-> +static int max77686_get_enable_register(struct regulator_dev *rdev,
-> +					int *reg, int *mask, int *pattern)
-> +{
-> +	int rid = rdev_get_id(rdev);
-> +
-> +	switch (rid) {
-> +	case MAX77686_LDO1...MAX77686_LDO26:
-> +		*reg = MAX77686_REG_LDO1CTRL1 + (rid - MAX77686_LDO1);
-> +		*mask = 0xC0;
-> +		*pattern = 0xC0;
-
-What about using lower case for all hex numbers ?
-
-...
-> +static int max77686_get_voltage_register(struct regulator_dev *rdev,
-> +					 int *_reg, int *_shift, int *_mask)
-> +{
-...
-> +	case MAX77686_BUCK2:
-> +		reg = MAX77686_REG_BUCK2DVS1;
-> +		mask = 0xff;
-> +		break;
-> +	case MAX77686_BUCK3:
-> +		reg = MAX77686_REG_BUCK3DVS1;
-> +		mask = 0xff;
-> +		break;
-> +	case MAX77686_BUCK4:
-> +		reg = MAX77686_REG_BUCK4DVS1;
-> +		mask = 0xff;
-> +		break;
-> +	case MAX77686_BUCK5...MAX77686_BUCK9:
-> +		reg = MAX77686_REG_BUCK5OUT + (rid - MAX77686_BUCK5) * 2;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	*_reg = reg;
-> +	*_shift = shift;
-> +	*_mask = mask;
-> +
-> +	return 0;
-> +}
-
-Thanks,
-Sylwester
+> On Wed, May 09, 2012 at 09:54:54PM +0530, Yadwinder Singh wrote:
+> 
+>> +int max77686_read_reg(struct i2c_client *i2c, u8 reg, u8 *dest)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = i2c_smbus_read_byte_data(i2c, reg);
+>> +	if (ret < 0)
+> 
+> It would really be better if this used the regmap API - the regulator
+> API is starting to build out functionality on top of regmap which this
+> won't be able to take advantage of if it doesn't use regmap.
+> 
+>> +	if (of_get_property(dev->of_node, "max77686,wakeup", NULL))
+>> +		pd->wakeup = true;
+> 
+> You haven't included any binding documentatiojn for the device tree
+> bindings - you should do this.
+> 
+>> +	max77686 = kzalloc(sizeof(struct max77686_dev), GFP_KERNEL);
+>> +	if (max77686 == NULL) {
+>> +		dev_err(max77686->dev, "could not allocate memory\n");
+>> +		return -ENOMEM;
+>> +	}
+> 
+> devm_kzalloc().
+> 
+>> +	device_init_wakeup(max77686->dev, max77686->wakeup);
+> 
+> Why is this not just done unconditionally?  There's sysfs files to allow
+> userspace control.
+> 
+>> +	if (max77686_read_reg(i2c, MAX77686_REG_DEVICE_ID, &data) < 0) {
+>> +		ret = -EIO;
+>> +		dbg_info("%s : device not found on this channel\n", __func__);
+>> +		goto err_mfd;
+>> +	} else
+>> +		dev_info(max77686->dev, "device found\n");
+> 
+> You should verify that the device ID you read back is the expected one.
+> 
+>> +	dev_err(max77686->dev, "device probe failed : %d\n", ret);
+> 
+> Driver core should do this for you.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+> 
