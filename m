@@ -1,69 +1,62 @@
-From: Sangwook Lee <sangwook.lee@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: PD: Fix duplicate variable
-Date: Wed,  9 May 2012 13:50:28 +0100
-Message-ID: <1336567828-9967-1-git-send-email-sangwook.lee@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 00/33] Use common macro to define resources
+Date: Wed, 09 May 2012 21:55:23 +0900
+Message-ID: <01b201cd2de2$ffa5d7d0$fef18770$%kim@samsung.com>
+References: <1335327163-11794-1-git-send-email-tushar.behera@linaro.org>
+ <201204250938.58397.heiko@sntech.de> <20120425101007.GM9142@game.jcrosoft.org>
+ <201204251121.47358.arnd@arndb.de>
+ <20120425113521.GW24211@n2100.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:60170 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759200Ab2EIMwf (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47271 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752931Ab2EIMzZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 9 May 2012 08:52:35 -0400
-Received: by bkcji2 with SMTP id ji2so228737bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 09 May 2012 05:52:34 -0700 (PDT)
+	Wed, 9 May 2012 08:55:25 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3R00MAUAKCFA40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:55:24 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3R005NJAKBTD20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 09 May 2012 21:55:24 +0900 (KST)
+In-reply-to: <20120425113521.GW24211@n2100.arm.linux.org.uk>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, linux@arm.linux.org.uk, linaro-dev@lists.linaro.org, patches@linaro.org, Sangwook Lee <sangwook.lee@linaro.org>
+To: 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Jean-Christophe PLAGNIOL-VILLARD' <plagnioj@jcrosoft.com>, =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-struct generic_pm_domain already has a field for name. Use that field
-instead of creating another field in struct exynos_pm_domain
+Russell King - ARM Linux wrote:
+> 
+> On Wed, Apr 25, 2012 at 11:21:47AM +0000, Arnd Bergmann wrote:
+> > Note that the point of the DEFINE_RES_*() macros is really to prevent
+> > people from coming up with new silly macros to do the same thing, as
+> > we've had in the past.
+> 
+> One of the other reaons was to stop the stream of resources with wrong
+> endings (because people kept thinking it was exclusive rather than
+> inclusive) - and the resulting stream of additional patches to fix those
+> errors.
+> 
+> The legacy platforms do have those kinds of errors - when I converted
+> SA11x0 as part of a previous patch set, I found a number suffering from
+> this error.  (Were any found in this patch set?  I've not read through
+> it.)
+> 
+> I think if this becomes a small %age of the change to Samsung stuff,
+> and Kukjin is happy with it, it should go in.
 
-Signed-off-by: Sangwook Lee <sangwook.lee@linaro.org>
----
- arch/arm/mach-exynos/pm_domains.c |    7 +++----
- 1 files changed, 3 insertions(+), 4 deletions(-)
+Yes, agree. I will apply this whole series.
+Thanks.
 
-diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 13b3068..4d2563c 100644
---- a/arch/arm/mach-exynos/pm_domains.c
-+++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -28,7 +28,6 @@
-  */
- struct exynos_pm_domain {
- 	void __iomem *base;
--	char const *name;
- 	bool is_off;
- 	struct generic_pm_domain pd;
- };
-@@ -75,10 +74,10 @@ static int exynos_pd_power_off(struct generic_pm_domain *domain)
- #define EXYNOS_GPD(PD, BASE, NAME)			\
- static struct exynos_pm_domain PD = {			\
- 	.base = (void __iomem *)BASE,			\
--	.name = NAME,					\
- 	.pd = {						\
- 		.power_off = exynos_pd_power_off,	\
- 		.power_on = exynos_pd_power_on,	\
-+		.name = NAME,				\
- 	},						\
- }
- 
-@@ -99,7 +98,7 @@ static __init int exynos_pm_dt_parse_domains(void)
- 
- 		if (of_get_property(np, "samsung,exynos4210-pd-off", NULL))
- 			pd->is_off = true;
--		pd->name = np->name;
-+		pd->pd.name = (char *)np->name;
- 		pd->base = of_iomap(np, 0);
- 		pd->pd.power_off = exynos_pd_power_off;
- 		pd->pd.power_on = exynos_pd_power_on;
-@@ -122,7 +121,7 @@ static __init void exynos_pm_add_dev_to_genpd(struct platform_device *pdev,
- 		if (pm_genpd_add_device(&pd->pd, &pdev->dev))
- 			pr_info("%s: error in adding %s device to %s power"
- 				"domain\n", __func__, dev_name(&pdev->dev),
--				pd->name);
-+				pd->pd.name);
- 	}
- }
- 
--- 
-1.7.4.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
