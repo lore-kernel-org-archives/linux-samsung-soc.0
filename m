@@ -1,37 +1,60 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [PATCH 1/7] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Thu, 10 May 2012 14:43:42 +0100
-Message-ID: <20120510134342.GA12727@n2100.arm.linux.org.uk>
-References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org> <1335935266-25289-2-git-send-email-thomas.abraham@linaro.org> <CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv2 0/3] Add support for DRM display subsystem
+Date: Thu, 10 May 2012 13:48:20 +0000
+Message-ID: <201205101348.20870.arnd@arndb.de>
+References: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com> <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com> <CAH9JG2V_9RVPvEHodDD422r=o4QxHcrMO-YXv2KUGYeys=ZjqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from caramon.arm.linux.org.uk ([78.32.30.218]:38276 "EHLO
-	caramon.arm.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755160Ab2EJNn7 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.10]:49953 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758104Ab2EJNs0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 09:43:59 -0400
-Content-Disposition: inline
-In-Reply-To: <CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
+	Thu, 10 May 2012 09:48:26 -0400
+In-Reply-To: <CAH9JG2V_9RVPvEHodDD422r=o4QxHcrMO-YXv2KUGYeys=ZjqA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James Hogan <james@albanarts.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Wed, May 02, 2012 at 03:53:53PM +0100, James Hogan wrote:
-> Hi
->=20
-> On 2 May 2012 06:07, Thomas Abraham <thomas.abraham@linaro.org> wrote=
-:
-> > + =A0 =A0 =A0 if (IS_ERR(host->biu_clk))
-> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "biu clock not a=
-vailable\n");
->=20
-> In this case, should it set host->biu_clk to NULL or are clk_disable
-> and clk_put guaranteed to handle an IS_ERR value?
+On Thursday 10 May 2012, Kyungmin Park wrote:
+> > And I won't apply new feature for non-dt board file from now on. I think,
+> > we
+> > need to support DT in mach-exynos/ instead of non-DT and DT together, so
+> > please consider to move on dt supporting for Samsung mobile boards.
+> >
+> 
+> Probably you misunderstand Arnd word.
+> 
+> "From the statements made so far, I can see no clear policy that we can
+> apply to everyone. My take on this is that for any work I spend on
+> multiplatform kernel, I concentrate on the DT-based board files and
+> get them to work together first, but leave it up to the individual
+> subarch maintainers whether they want to add other board files into
+> the mix."
+> 
+> It doesn't mean add new feature to non-DT board. don't add new board file.
 
-I keep saying this.  NULL must be treated as a valid reutrn value from
-clk_get() and must not use this as a sentinel.  The clk namespace is
-that errors are indicated with IS_ERR(clk) returning true.  Everything
-else must be assumed to be valid by drivers.
+This is a completely separate discussion, the problem at hand doesn't
+have anything to do with building a kernel for multiple mach-*
+directories combined that I was referring to in the text you quote.
+
+> In this case, DRM is not yet ready to support DT.
+> 
+> Okay, you can just drop this patches. but please note that this
+> patches are posted at Mar 13 before you decide.
+
+I think it's a good idea to make new features DT-only because this
+way we don't get any regressions and everyone who want to use
+the new feature will be able to test the DT support on his board.
+
+This of course requires that basic DT support is available for the
+systems in question so we don't regress when moving away from the
+old board files. My impression is that we're getting close to that
+point on exynos thanks to Thomas' work on this. AFAICT we don't
+have a DT binding for screen timings yet, so you will still have
+to use auxdata for that or put the timings into the driver.
+
+	Arnd
