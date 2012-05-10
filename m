@@ -1,60 +1,104 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv2 0/3] Add support for DRM display subsystem
-Date: Thu, 10 May 2012 13:48:20 +0000
-Message-ID: <201205101348.20870.arnd@arndb.de>
-References: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com> <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com> <CAH9JG2V_9RVPvEHodDD422r=o4QxHcrMO-YXv2KUGYeys=ZjqA@mail.gmail.com>
+From: =?UTF-8?B?Sm9zw6kgTWlndWVsIEdvbsOnYWx2ZXM=?=
+	<jose.goncalves@inov.pt>
+Subject: Re: [PATCH] ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping.
+Date: Thu, 10 May 2012 14:48:16 +0100
+Message-ID: <4FABC720.5090301@inov.pt>
+References: <1336607209-6409-1-git-send-email-jose.goncalves@inov.pt> <036701cd2e8e$cf4cc100$6de64300$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:49953 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758104Ab2EJNs0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 09:48:26 -0400
-In-Reply-To: <CAH9JG2V_9RVPvEHodDD422r=o4QxHcrMO-YXv2KUGYeys=ZjqA@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <036701cd2e8e$cf4cc100$6de64300$%kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Thursday 10 May 2012, Kyungmin Park wrote:
-> > And I won't apply new feature for non-dt board file from now on. I think,
-> > we
-> > need to support DT in mach-exynos/ instead of non-DT and DT together, so
-> > please consider to move on dt supporting for Samsung mobile boards.
-> >
-> 
-> Probably you misunderstand Arnd word.
-> 
-> "From the statements made so far, I can see no clear policy that we can
-> apply to everyone. My take on this is that for any work I spend on
-> multiplatform kernel, I concentrate on the DT-based board files and
-> get them to work together first, but leave it up to the individual
-> subarch maintainers whether they want to add other board files into
-> the mix."
-> 
-> It doesn't mean add new feature to non-DT board. don't add new board file.
+On 10-05-2012 10:25, Kukjin Kim wrote:
+> Jos=C3=A9 Miguel Gon=C3=A7alves wrote:
+>> While upgrading the kernel on a S3C2412 based board I've noted that =
+it was
+>> impossible to boot the board with a 2.6.32 or upper kernel.
+>> I've tracked down the problem to the EBI virtual memory mapping that=
+ is in
+>> conflict with the IO mapping definition in arch/arm/mach-s3c24xx/s3c=
+2412.c.
+>>
+>> Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves<jose.goncalves@inov.p=
+t>
+>> ---
+>>   arch/arm/plat-samsung/include/plat/map-s3c.h |    2 +-
+>>   1 files changed, 1 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h b/arch/arm=
+/plat-
+>> samsung/include/plat/map-s3c.h
+>> index 7d04875..c0c70a8 100644
+>> --- a/arch/arm/plat-samsung/include/plat/map-s3c.h
+>> +++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
+>> @@ -22,7 +22,7 @@
+>>   #define S3C24XX_VA_WATCHDOG	S3C_VA_WATCHDOG
+>>
+>>   #define S3C2412_VA_SSMC		S3C_ADDR_CPU(0x00000000)
+>> -#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00010000)
+>> +#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00100000)
+>>
+>>   #define S3C2410_PA_UART		(0x50000000)
+>>   #define S3C24XX_PA_UART		S3C2410_PA_UART
+>> --
+>> 1.7.5.4
+> Yeah, as you said, the mapping for SSMC invade EBI area but I think, =
+just SZ_4K is enough for SSMC. So following is better in this case. How=
+ do you think? And there is no problem on your board?
+>
+> diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/=
+s3c2412.c
+> index d4bc7f9..ac906bf 100644
+> --- a/arch/arm/mach-s3c24xx/s3c2412.c
+> +++ b/arch/arm/mach-s3c24xx/s3c2412.c
+> @@ -72,7 +72,7 @@ static struct map_desc s3c2412_iodesc[] __initdata =
+=3D {
+>   	{
+>   		.virtual =3D (unsigned long)S3C2412_VA_SSMC,
+>   		.pfn     =3D __phys_to_pfn(S3C2412_PA_SSMC),
+> -		.length  =3D SZ_1M,
+> +		.length  =3D SZ_4K,
+>   		.type    =3D MT_DEVICE,
+>   	},
+>   	{
+>
 
-This is a completely separate discussion, the problem at hand doesn't
-have anything to do with building a kernel for multiple mach-*
-directories combined that I was referring to in the text you quote.
+It does not work! I tried also a 64K length and also did not work. With=
+ your patch=20
+my console (with earlyprintk set) only displays the following:
 
-> In this case, DRM is not yet ready to support DT.
-> 
-> Okay, you can just drop this patches. but please note that this
-> patches are posted at Mar 13 before you decide.
+## Booting image at 30800000 ...
+    Image Name:   Linux-3.2.16-inov1
+    Created:      2012-05-10  12:42:49 UTC
+    Image Type:   ARM Linux Kernel Image (uncompressed)
+    Data Size:    1202592 Bytes =3D  1.1 MB
+    Load Address: 30008000
+    Entry Point:  30008000
+    Verifying Checksum ... OK
+OK
 
-I think it's a good idea to make new features DT-only because this
-way we don't get any regressions and everyone who want to use
-the new feature will be able to test the DT support on his board.
+Starting kernel ...
 
-This of course requires that basic DT support is available for the
-systems in question so we don't regress when moving away from the
-old board files. My impression is that we're getting close to that
-point on exynos thanks to Thomas' work on this. AFAICT we don't
-have a DT binding for screen timings yet, so you will still have
-to use auxdata for that or put the timings into the driver.
+Uncompressing Linux... done, booting the kernel.
+Linux version 3.2.16-inov1 (jmpg@st-ze) (gcc version 4.6.4 20120402 (pr=
+erelease)=20
+(crosstool-NG 1.15.2) ) #3 PREEMPT Thu May 10 13:42:48 WEST 2012
+CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=3D00053177
+CPU: VIVT data cache, VIVT instruction cache
+Machine: SMDK2412
+bootconsole [earlycon0] enabled
+Memory policy: ECC disabled, Data cache writeback
+CPU S3C2412 (id 0x32412003)
 
-	Arnd
+My guess is that the MMU initialization on the S3C2412 chip only allows=
+ a minimum=20
+of 1MB for the page size.
+
+Best regards,
+Jos=C3=A9 Gon=C3=A7alves
