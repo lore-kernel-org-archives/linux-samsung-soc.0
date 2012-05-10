@@ -1,233 +1,128 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: Exynos4: add support for GATE BLOCK clocks
-Date: Thu, 10 May 2012 18:13:34 +0900
-Message-ID: <034c01cd2e8d$2ce8c090$86ba41b0$%kim@samsung.com>
-References: <1333699250-16420-1-git-send-email-m.szyprowski@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/7] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Thu, 10 May 2012 14:50:04 +0530
+Message-ID: <CAJuYYwQ5NLvsYK2iAaXtggbjYx7EUvc2RDjyFyrazke2E2wgiQ@mail.gmail.com>
+References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
+	<1335935266-25289-2-git-send-email-thomas.abraham@linaro.org>
+	<CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8546 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757747Ab2EJJNf (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 05:13:35 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M3S00MIMUYFD9E0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:13:34 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M3S00HQ1UYLI090@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:13:34 +0900 (KST)
-In-reply-to: <1333699250-16420-1-git-send-email-m.szyprowski@samsung.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: James Hogan <james@albanarts.com>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Marek Szyprowski wrote:
-> 
-> EXYNOS4_CLKGATE_BLOCK register can be used to disable the respective
-> multimedia block hardware planes. It acts similar to the power domains.
-> This patch adds transparent support for this method of gating of
-> multimedia blocks. New clocks are added as parents to the respective
-> block bus clocks. This patch has been tested on NURI and UniversalC210
-> boards, which have bootloader which disable all multimedia blocks with
-> both GATE BLOCK method and power domains.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/mach-exynos/clock-exynos4.c |   54
-> ++++++++++++++++++++++++++++++++++
->  1 files changed, 54 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-
-> exynos/clock-exynos4.c
-> index 4287311..a2f8b2e 100644
-> --- a/arch/arm/mach-exynos/clock-exynos4.c
-> +++ b/arch/arm/mach-exynos/clock-exynos4.c
-> @@ -213,6 +213,11 @@ static int exynos4_clk_dac_ctrl(struct clk *clk, int
-> enable)
->  	return s5p_gatectrl(S5P_DAC_PHY_CONTROL, clk, enable);
->  }
-> 
-> +static int exynos4_clk_gate_block_ctrl(struct clk *clk, int enable)
-> +{
-> +	return s5p_gatectrl(EXYNOS4_CLKGATE_BLOCK, clk, enable);
-> +}
-> +
->  /* Core list of CMU_CPU side */
-> 
->  static struct clksrc_clk exynos4_clk_mout_apll = {
-> @@ -459,6 +464,37 @@ static struct clksrc_clk exynos4_clk_sclk_vpll = {
->  	.reg_src = { .reg = EXYNOS4_CLKSRC_TOP0, .shift = 8, .size = 1 },
->  };
-> 
-> +static struct clk exynos4_clk_gate_cam = {
-> +	.name		= "cam",
-> +	.enable		= exynos4_clk_gate_block_ctrl,
-> +	.ctrlbit	= (1 << 0),
-> +};
-> +
-> +static struct clk exynos4_clk_gate_tv = {
-> +	.name		= "tv",
-> +	.enable		= exynos4_clk_gate_block_ctrl,
-> +	.ctrlbit	= (1 << 1),
-> +};
-> +
-> +static struct clk exynos4_clk_gate_mfc = {
-> +	.name		= "mfc",
-> +	.enable		= exynos4_clk_gate_block_ctrl,
-> +	.ctrlbit	= (1 << 2),
-> +};
-> +
-> +static struct clk exynos4_clk_gate_lcd0 = {
-> +	.name		= "lcd0",
-> +	.enable		= exynos4_clk_gate_block_ctrl,
-> +	.ctrlbit	= (1 << 4),
-> +};
-> +
-> +static struct clk *exynos4_gate_clocks[] = {
-> +	&exynos4_clk_gate_cam,
-> +	&exynos4_clk_gate_tv,
-> +	&exynos4_clk_gate_mfc,
-> +	&exynos4_clk_gate_lcd0,
-> +};
-> +
->  static struct clk exynos4_init_clocks_off[] = {
->  	{
->  		.name		= "timers",
-> @@ -470,36 +506,43 @@ static struct clk exynos4_init_clocks_off[] = {
->  		.devname	= "s5p-mipi-csis.0",
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 4),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "csis",
->  		.devname	= "s5p-mipi-csis.1",
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 5),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "jpeg",
->  		.id		= 0,
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 6),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "fimc",
->  		.devname	= "exynos4-fimc.0",
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 0),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "fimc",
->  		.devname	= "exynos4-fimc.1",
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 1),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "fimc",
->  		.devname	= "exynos4-fimc.2",
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 2),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "fimc",
->  		.devname	= "exynos4-fimc.3",
->  		.enable		= exynos4_clk_ip_cam_ctrl,
->  		.ctrlbit	= (1 << 3),
-> +		.parent		= &exynos4_clk_gate_cam,
->  	}, {
->  		.name		= "hsmmc",
->  		.devname	= "s3c-sdhci.0",
-> @@ -534,31 +577,37 @@ static struct clk exynos4_init_clocks_off[] = {
->  		.devname	= "s5p-sdo",
->  		.enable		= exynos4_clk_ip_tv_ctrl,
->  		.ctrlbit	= (1 << 2),
-> +		.parent		= &exynos4_clk_gate_tv,
->  	}, {
->  		.name		= "mixer",
->  		.devname	= "s5p-mixer",
->  		.enable		= exynos4_clk_ip_tv_ctrl,
->  		.ctrlbit	= (1 << 1),
-> +		.parent		= &exynos4_clk_gate_tv,
->  	}, {
->  		.name		= "vp",
->  		.devname	= "s5p-mixer",
->  		.enable		= exynos4_clk_ip_tv_ctrl,
->  		.ctrlbit	= (1 << 0),
-> +		.parent		= &exynos4_clk_gate_tv,
->  	}, {
->  		.name		= "hdmi",
->  		.devname	= "exynos4-hdmi",
->  		.enable		= exynos4_clk_ip_tv_ctrl,
->  		.ctrlbit	= (1 << 3),
-> +		.parent		= &exynos4_clk_gate_tv,
->  	}, {
->  		.name		= "hdmiphy",
->  		.devname	= "exynos4-hdmi",
->  		.enable		= exynos4_clk_hdmiphy_ctrl,
->  		.ctrlbit	= (1 << 0),
-> +		.parent		= &exynos4_clk_gate_tv,
->  	}, {
->  		.name		= "dacphy",
->  		.devname	= "s5p-sdo",
->  		.enable		= exynos4_clk_dac_ctrl,
->  		.ctrlbit	= (1 << 0),
-> +		.parent		= &exynos4_clk_gate_tv,
->  	}, {
->  		.name		= "adc",
->  		.enable		= exynos4_clk_ip_peril_ctrl,
-> @@ -623,11 +672,13 @@ static struct clk exynos4_init_clocks_off[] = {
->  		.name		= "fimg2d",
->  		.enable		= exynos4_clk_ip_image_ctrl,
->  		.ctrlbit	= (1 << 0),
-> +		.parent		= &exynos4_clk_gate_lcd0,
->  	}, {
->  		.name		= "mfc",
->  		.devname	= "s5p-mfc",
->  		.enable		= exynos4_clk_ip_mfc_ctrl,
->  		.ctrlbit	= (1 << 0),
-> +		.parent		= &exynos4_clk_gate_mfc,
->  	}, {
->  		.name		= "i2c",
->  		.devname	= "s3c2440-i2c.0",
-> @@ -795,6 +846,7 @@ static struct clk exynos4_clk_fimd0 = {
->  	.devname	= "exynos4-fb.0",
->  	.enable		= exynos4_clk_ip_lcd0_ctrl,
->  	.ctrlbit	= (1 << 0),
-> +	.parent		= &exynos4_clk_gate_lcd0,
->  };
-> 
->  struct clk *exynos4_clkset_group_list[] = {
-> @@ -1565,6 +1617,8 @@ void __init exynos4_register_clocks(void)
->  	s3c_register_clksrc(exynos4_clksrcs, ARRAY_SIZE(exynos4_clksrcs));
->  	s3c_register_clocks(exynos4_init_clocks_on,
-> ARRAY_SIZE(exynos4_init_clocks_on));
-> 
-> +	s3c24xx_register_clocks(exynos4_gate_clocks,
-> ARRAY_SIZE(exynos4_gate_clocks));
-> +
->  	s3c24xx_register_clocks(exynos4_clk_cdev,
-> ARRAY_SIZE(exynos4_clk_cdev));
->  	for (ptr = 0; ptr < ARRAY_SIZE(exynos4_clk_cdev); ptr++)
->  		s3c_disable_clocks(exynos4_clk_cdev[ptr], 1);
-> --
-> 1.7.1.569.g6f426
+On 2 May 2012 20:23, James Hogan <james@albanarts.com> wrote:
+> Hi
+>
+> On 2 May 2012 06:07, Thomas Abraham <thomas.abraham@linaro.org> wrote=
+:
+>> Some platforms allow for clock gating and control of bus interface u=
+nit clock
+>> and card interface unit clock. Add support for clock lookup of optio=
+nal biu
+>> and ciu clocks for clock gating and clock speed determination.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>> =A0drivers/mmc/host/dw_mmc.c =A0| =A0 35 +++++++++++++++++++++++++++=
+++++----
+>> =A0include/linux/mmc/dw_mmc.h | =A0 =A04 ++++
+>> =A02 files changed, 35 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 1532357..036846f 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -1938,19 +1938,35 @@ int dw_mci_probe(struct dw_mci *host)
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -ENODEV;
+>> =A0 =A0 =A0 =A0}
+>>
+>> - =A0 =A0 =A0 if (!host->pdata->bus_hz) {
+>> + =A0 =A0 =A0 host->biu_clk =3D clk_get(&host->dev, "biu");
+>
+> These clock names sound quite platform specific (what if they're
+> called something else on another platform, or another platform has
+> separate ones for different instantiations of the block?). Perhaps th=
+e
+> clk names should get passed in through platform data. I haven't looke=
+d
+> how other drivers handle that though.
 
-I remember, we talked about the GATE BLOCK for EXYNOS.
-So now, there are any reasons it should be implemented?
+The clock names 'biu' and 'ciu' are derived from the terminology used
+by the data sheet of the mshc controller. The 'biu' clock is the
+source clock for the bus interface unit and 'ciu' clock is the clock
+source for card interface unit of the controller. So these names are
+generic and not specific to a platform. Passing clock names from
+platform data is generally frowned upon.
 
-Thanks.
+>
+>> + =A0 =A0 =A0 if (IS_ERR(host->biu_clk))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "biu clock not av=
+ailable\n");
+>
+> In this case, should it set host->biu_clk to NULL or are clk_disable
+> and clk_put guaranteed to handle an IS_ERR value?
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Yes, the clk_disable will have to be preceded with a IS_ERR check. I
+will fix this.
+
+>
+>> + =A0 =A0 =A0 else
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(host->biu_clk);
+>> +
+>> + =A0 =A0 =A0 host->ciu_clk =3D clk_get(&host->dev, "ciu");
+>> + =A0 =A0 =A0 if (IS_ERR(host->ciu_clk))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "ciu clock not av=
+ailable\n");
+>
+> same here
+
+Ok, this also will be fixed.
+
+>
+>> + =A0 =A0 =A0 else
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(host->ciu_clk);
+>> +
+>> + =A0 =A0 =A0 if (IS_ERR(host->ciu_clk))
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->bus_hz =3D host->pdata->bus_hz;
+>> + =A0 =A0 =A0 else
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->bus_hz =3D clk_get_rate(host->ci=
+u_clk);
+>> +
+>> + =A0 =A0 =A0 if (!host->bus_hz) {
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(&host->dev,
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"Platform data must s=
+upply bus speed\n");
+>> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENODEV;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_clk;
+>> =A0 =A0 =A0 =A0}
+>>
+>> - =A0 =A0 =A0 host->bus_hz =3D host->pdata->bus_hz;
+>> =A0 =A0 =A0 =A0host->quirks =3D host->pdata->quirks;
+>>
+>> =A0 =A0 =A0 =A0spin_lock_init(&host->lock);
+>> =A0 =A0 =A0 =A0INIT_LIST_HEAD(&host->queue);
+>>
+>> -
+>> =A0 =A0 =A0 =A0host->dma_ops =3D host->pdata->dma_ops;
+>> =A0 =A0 =A0 =A0dw_mci_init_dma(host);
+>>
+>> @@ -2095,6 +2111,13 @@ err_dmaunmap:
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_disable(host->vmmc);
+>> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_put(host->vmmc);
+>> =A0 =A0 =A0 =A0}
+>> + =A0 =A0 =A0 kfree(host);
+>
+> what's this about?
+
+This is wrong. It should not have been here. I will fix this. Thanks
+for pointing this out.
+
+Thanks,
+Thomas.
