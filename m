@@ -1,128 +1,77 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/7] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Thu, 10 May 2012 14:50:04 +0530
-Message-ID: <CAJuYYwQ5NLvsYK2iAaXtggbjYx7EUvc2RDjyFyrazke2E2wgiQ@mail.gmail.com>
-References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
-	<1335935266-25289-2-git-send-email-thomas.abraham@linaro.org>
-	<CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping.
+Date: Thu, 10 May 2012 18:25:16 +0900
+Message-ID: <036701cd2e8e$cf4cc100$6de64300$%kim@samsung.com>
+References: <1336607209-6409-1-git-send-email-jose.goncalves@inov.pt>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAG0J9-NDM9wLKpq04ofPkvFqiWxjmP84ojsP9Hfs0SJ_0FaXg@mail.gmail.com>
+In-reply-to: <1336607209-6409-1-git-send-email-jose.goncalves@inov.pt>
+Content-language: ko
 Sender: linux-kernel-owner@vger.kernel.org
-To: James Hogan <james@albanarts.com>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: =?utf-8?Q?'Jos=C3=A9_Miguel_Gon=C3=A7alves'?= <jose.goncalves@inov.pt>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 2 May 2012 20:23, James Hogan <james@albanarts.com> wrote:
-> Hi
->
-> On 2 May 2012 06:07, Thomas Abraham <thomas.abraham@linaro.org> wrote=
-:
->> Some platforms allow for clock gating and control of bus interface u=
-nit clock
->> and card interface unit clock. Add support for clock lookup of optio=
-nal biu
->> and ciu clocks for clock gating and clock speed determination.
->>
->> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->> =A0drivers/mmc/host/dw_mmc.c =A0| =A0 35 +++++++++++++++++++++++++++=
-++++----
->> =A0include/linux/mmc/dw_mmc.h | =A0 =A04 ++++
->> =A02 files changed, 35 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->> index 1532357..036846f 100644
->> --- a/drivers/mmc/host/dw_mmc.c
->> +++ b/drivers/mmc/host/dw_mmc.c
->> @@ -1938,19 +1938,35 @@ int dw_mci_probe(struct dw_mci *host)
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return -ENODEV;
->> =A0 =A0 =A0 =A0}
->>
->> - =A0 =A0 =A0 if (!host->pdata->bus_hz) {
->> + =A0 =A0 =A0 host->biu_clk =3D clk_get(&host->dev, "biu");
->
-> These clock names sound quite platform specific (what if they're
-> called something else on another platform, or another platform has
-> separate ones for different instantiations of the block?). Perhaps th=
-e
-> clk names should get passed in through platform data. I haven't looke=
-d
-> how other drivers handle that though.
+Jos=C3=A9 Miguel Gon=C3=A7alves wrote:
+>=20
+> While upgrading the kernel on a S3C2412 based board I've noted that i=
+t was
+> impossible to boot the board with a 2.6.32 or upper kernel.
+> I've tracked down the problem to the EBI virtual memory mapping that =
+is in
+> conflict with the IO mapping definition in arch/arm/mach-s3c24xx/s3c2=
+412.c.
+>=20
+> Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves <jose.goncalves@inov.p=
+t>
+> ---
+>  arch/arm/plat-samsung/include/plat/map-s3c.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
+>=20
+> diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h b/arch/arm/=
+plat-
+> samsung/include/plat/map-s3c.h
+> index 7d04875..c0c70a8 100644
+> --- a/arch/arm/plat-samsung/include/plat/map-s3c.h
+> +++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
+> @@ -22,7 +22,7 @@
+>  #define S3C24XX_VA_WATCHDOG	S3C_VA_WATCHDOG
+>=20
+>  #define S3C2412_VA_SSMC		S3C_ADDR_CPU(0x00000000)
+> -#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00010000)
+> +#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00100000)
+>=20
+>  #define S3C2410_PA_UART		(0x50000000)
+>  #define S3C24XX_PA_UART		S3C2410_PA_UART
+> --
+> 1.7.5.4
 
-The clock names 'biu' and 'ciu' are derived from the terminology used
-by the data sheet of the mshc controller. The 'biu' clock is the
-source clock for the bus interface unit and 'ciu' clock is the clock
-source for card interface unit of the controller. So these names are
-generic and not specific to a platform. Passing clock names from
-platform data is generally frowned upon.
+Yeah, as you said, the mapping for SSMC invade EBI area but I think, ju=
+st SZ_4K is enough for SSMC. So following is better in this case. How d=
+o you think? And there is no problem on your board?
 
->
->> + =A0 =A0 =A0 if (IS_ERR(host->biu_clk))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "biu clock not av=
-ailable\n");
->
-> In this case, should it set host->biu_clk to NULL or are clk_disable
-> and clk_put guaranteed to handle an IS_ERR value?
+diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3=
+c2412.c
+index d4bc7f9..ac906bf 100644
+--- a/arch/arm/mach-s3c24xx/s3c2412.c
++++ b/arch/arm/mach-s3c24xx/s3c2412.c
+@@ -72,7 +72,7 @@ static struct map_desc s3c2412_iodesc[] __initdata =3D=
+ {
+ 	{
+ 		.virtual =3D (unsigned long)S3C2412_VA_SSMC,
+ 		.pfn     =3D __phys_to_pfn(S3C2412_PA_SSMC),
+-		.length  =3D SZ_1M,
++		.length  =3D SZ_4K,
+ 		.type    =3D MT_DEVICE,
+ 	},
+ 	{
 
-Yes, the clk_disable will have to be preceded with a IS_ERR check. I
-will fix this.
+Thanks.
 
->
->> + =A0 =A0 =A0 else
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(host->biu_clk);
->> +
->> + =A0 =A0 =A0 host->ciu_clk =3D clk_get(&host->dev, "ciu");
->> + =A0 =A0 =A0 if (IS_ERR(host->ciu_clk))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 dev_info(&host->dev, "ciu clock not av=
-ailable\n");
->
-> same here
-
-Ok, this also will be fixed.
-
->
->> + =A0 =A0 =A0 else
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 clk_enable(host->ciu_clk);
->> +
->> + =A0 =A0 =A0 if (IS_ERR(host->ciu_clk))
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->bus_hz =3D host->pdata->bus_hz;
->> + =A0 =A0 =A0 else
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 host->bus_hz =3D clk_get_rate(host->ci=
-u_clk);
->> +
->> + =A0 =A0 =A0 if (!host->bus_hz) {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0dev_err(&host->dev,
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0"Platform data must s=
-upply bus speed\n");
->> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 return -ENODEV;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 ret =3D -ENODEV;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 goto err_clk;
->> =A0 =A0 =A0 =A0}
->>
->> - =A0 =A0 =A0 host->bus_hz =3D host->pdata->bus_hz;
->> =A0 =A0 =A0 =A0host->quirks =3D host->pdata->quirks;
->>
->> =A0 =A0 =A0 =A0spin_lock_init(&host->lock);
->> =A0 =A0 =A0 =A0INIT_LIST_HEAD(&host->queue);
->>
->> -
->> =A0 =A0 =A0 =A0host->dma_ops =3D host->pdata->dma_ops;
->> =A0 =A0 =A0 =A0dw_mci_init_dma(host);
->>
->> @@ -2095,6 +2111,13 @@ err_dmaunmap:
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_disable(host->vmmc);
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0regulator_put(host->vmmc);
->> =A0 =A0 =A0 =A0}
->> + =A0 =A0 =A0 kfree(host);
->
-> what's this about?
-
-This is wrong. It should not have been here. I will fix this. Thanks
-for pointing this out.
-
-Thanks,
-Thomas.
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
