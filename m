@@ -1,83 +1,85 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] regulator: Add support for MAX77686.
-Date: Thu, 10 May 2012 10:34:43 +0100
-Message-ID: <20120510093442.GK3908@opensource.wolfsonmicro.com>
-References: <1336580695-1184-1-git-send-email-yadi.brar@samsung.com>
- <1336580695-1184-3-git-send-email-yadi.brar@samsung.com>
- <20120509184709.GC32037@sirena.org.uk>
- <CAKew6eWEYBP1zXXwLL4eWOhOKZ-HwAfUX_kg8cnsaDyUXVKSkQ@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCHv2 0/3] Add support for DRM display subsystem
+Date: Thu, 10 May 2012 18:36:05 +0900
+Message-ID: <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com>
+References: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="iSeZnk6FyAS3EJ1y"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34351 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757870Ab2EJJep (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:31604 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757870Ab2EJJgI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 05:34:45 -0400
-Content-Disposition: inline
-In-Reply-To: <CAKew6eWEYBP1zXXwLL4eWOhOKZ-HwAfUX_kg8cnsaDyUXVKSkQ@mail.gmail.com>
+	Thu, 10 May 2012 05:36:08 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3S00BGNW06U3Q0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:36:06 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3S00GFWW054540@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:36:06 +0900 (KST)
+In-reply-to: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: Yadwinder Singh <yadi.brar@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>
 
+Marek Szyprowski wrote:
+> 
+> Hello,
+> 
+> This patch set adds support for Exynos DRM display subsystem for
+> Universal C210 and NURI boards. Exynos DRM driver has been merged to 3.3
+> kernel tree and provides unified and more powerful alternative for
+> s3c-fb and s5p-tv drivers. V2 includes update for the latest changes in
+> platform data structure (added 'panel' entry).
+> 
+> Best regards
+> 
+> Marek Szyprowski
+> Samsung Poland R&D Center
+> 
+> Patch summary:
+> 
+> Marek Szyprowski (3):
+>   ARM: Exynos: add platform device for core DRM subsystem
+>   ARM: Exynos: Add DRM core device support for Universal C210 board
+>   ARM: Exynos: Add DRM core support for NURI board
+> 
+>  arch/arm/mach-exynos/Kconfig               |    7 ++++++
+>  arch/arm/mach-exynos/Makefile              |    1 +
+>  arch/arm/mach-exynos/dev-drm.c             |   29
+++++++++++++++++++++++++
+>  arch/arm/mach-exynos/mach-nuri.c           |   33
+> ++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/mach-universal_c210.c |   33
+> ++++++++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/devs.h  |    2 +
+>  6 files changed, 105 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/mach-exynos/dev-drm.c
+> 
+> --
+> 1.7.1.569.g6f426
 
---iSeZnk6FyAS3EJ1y
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, 2nd and 3rd patches can break multi-platform for EXYNOS SoCs with one
+kernel image.
 
-On Thu, May 10, 2012 at 12:54:24PM +0530, Yadwinder Singh Brar wrote:
-> On Thu, May 10, 2012 at 12:17 AM, Mark Brown
-> > On Wed, May 09, 2012 at 09:54:55PM +0530, Yadwinder Singh wrote:
+And I won't apply new feature for non-dt board file from now on. I think, we
+need to support DT in mach-exynos/ instead of non-DT and DT together, so
+please consider to move on dt supporting for Samsung mobile boards.
 
-> >> + =A0 =A0 [MAX77686_EN32KHZ_AP] =3D NULL,
-> >> + =A0 =A0 [MAX77686_EN32KHZ_CP] =3D NULL,
+Note that I have a plan to replace board files with DT supporting in
+mach-exynos/ next time.
 
-> > Now that the generic clock API is in mainline these should be moved over
-> > to use it.
+Thanks.
 
-> Sorry, I cann't get your point here. Please explain it little bit more.
-
-These are not regulators, these are clocks.  They should use the clock
-API.
-
-> >> + =A0 =A0 if (pdata->ramp_delay) {
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 max77686->ramp_delay =3D pdata->ramp_delay;
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 max77686_update_reg(i2c, MAX77686_REG_BUCK2C=
-TRL1,
-> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 RAMP_VALUE, RAMP_MASK);
-
-> > This appears not to actually use the value passed in as platform_data.
-
-> It gets corresponding index of ramp_rate value in ramp_rate_value
-> table supported by hardware, from platform_data which we write to
-> ramp_rate control bits of control registers.
-
-Why is the driver unconditionally writing these register values here
-rather than setting the ramp delay that was passed in?
-
---iSeZnk6FyAS3EJ1y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPq4urAAoJEBus8iNuMP3dm4MP/2/+jQIWB2OMph66lu7FnD0s
-gc/YAQCsinMwiKpRTRNkYJNzGc+IRZyHelqLTc8cRXgdLtsZDrWdBVaxqXbiftIz
-57jEz3Tr+5ovgIjllJ7a65J/Ye2a3VdozyPqxTqfISK45piHCy2NGTJIctbCqfDA
-JYpV/Vhqn/Lb3fg2xquGtCh6Hd9omD7TYhqdTpPNUzMIkj3xrEiX5Iv1zpBMMpst
-u/rLyEHTUj7tovJkOrtkLUVe5PFm6M07g7KgvaaUC52+bjdh1t+slMSYgaL4zw17
-760CG4NO/3xxoxNDDH7wb6uJ+BA/mMyhU/ay4tJVZlMbOJQ14V327+R4F/QEm3NC
-SDQJDKAGb+IdoYcQPxtCMWia5NzU+l4a62pHvByelFBMnZUJhyRJHibvwdmK5XUU
-VAtdwPY6/X3jmeMGSnT4E1iQMDFFqA8ghi+bByL4ROqt1Bl9WqrbecTEPOaSakIm
-GwiMdfqoKd4Mwwl+y83M1iRgp2Xvc+exe0ZNnvxOWJFwzFzpouB/2e9TxQ0MfVN6
-IimTEk851eJHJTslsnQUZRe155QChIYuDqcmZy3ufaXePoOHNGxJrRcLeTdZCfHa
-eVMvFbVdWk8+ugYFNxdc54Gf4NQxkTB7M5NuebfJufUPvAwH0DiRbAwsOzh3z+3L
-zIgSXcgj+zPdFcZ9RLU2
-=W6IA
------END PGP SIGNATURE-----
-
---iSeZnk6FyAS3EJ1y--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
