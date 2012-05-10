@@ -1,77 +1,83 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping.
-Date: Thu, 10 May 2012 18:25:16 +0900
-Message-ID: <036701cd2e8e$cf4cc100$6de64300$%kim@samsung.com>
-References: <1336607209-6409-1-git-send-email-jose.goncalves@inov.pt>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 2/2] regulator: Add support for MAX77686.
+Date: Thu, 10 May 2012 10:34:43 +0100
+Message-ID: <20120510093442.GK3908@opensource.wolfsonmicro.com>
+References: <1336580695-1184-1-git-send-email-yadi.brar@samsung.com>
+ <1336580695-1184-3-git-send-email-yadi.brar@samsung.com>
+ <20120509184709.GC32037@sirena.org.uk>
+ <CAKew6eWEYBP1zXXwLL4eWOhOKZ-HwAfUX_kg8cnsaDyUXVKSkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <1336607209-6409-1-git-send-email-jose.goncalves@inov.pt>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?'Jos=C3=A9_Miguel_Gon=C3=A7alves'?= <jose.goncalves@inov.pt>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="iSeZnk6FyAS3EJ1y"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:34351 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1757870Ab2EJJep (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 May 2012 05:34:45 -0400
+Content-Disposition: inline
+In-Reply-To: <CAKew6eWEYBP1zXXwLL4eWOhOKZ-HwAfUX_kg8cnsaDyUXVKSkQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Yadwinder Singh <yadi.brar@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Jos=C3=A9 Miguel Gon=C3=A7alves wrote:
->=20
-> While upgrading the kernel on a S3C2412 based board I've noted that i=
-t was
-> impossible to boot the board with a 2.6.32 or upper kernel.
-> I've tracked down the problem to the EBI virtual memory mapping that =
-is in
-> conflict with the IO mapping definition in arch/arm/mach-s3c24xx/s3c2=
-412.c.
->=20
-> Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves <jose.goncalves@inov.p=
-t>
-> ---
->  arch/arm/plat-samsung/include/plat/map-s3c.h |    2 +-
->  1 files changed, 1 insertions(+), 1 deletions(-)
->=20
-> diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h b/arch/arm/=
-plat-
-> samsung/include/plat/map-s3c.h
-> index 7d04875..c0c70a8 100644
-> --- a/arch/arm/plat-samsung/include/plat/map-s3c.h
-> +++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
-> @@ -22,7 +22,7 @@
->  #define S3C24XX_VA_WATCHDOG	S3C_VA_WATCHDOG
->=20
->  #define S3C2412_VA_SSMC		S3C_ADDR_CPU(0x00000000)
-> -#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00010000)
-> +#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00100000)
->=20
->  #define S3C2410_PA_UART		(0x50000000)
->  #define S3C24XX_PA_UART		S3C2410_PA_UART
-> --
-> 1.7.5.4
 
-Yeah, as you said, the mapping for SSMC invade EBI area but I think, ju=
-st SZ_4K is enough for SSMC. So following is better in this case. How d=
-o you think? And there is no problem on your board?
+--iSeZnk6FyAS3EJ1y
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-s3c24xx/s3=
-c2412.c
-index d4bc7f9..ac906bf 100644
---- a/arch/arm/mach-s3c24xx/s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/s3c2412.c
-@@ -72,7 +72,7 @@ static struct map_desc s3c2412_iodesc[] __initdata =3D=
- {
- 	{
- 		.virtual =3D (unsigned long)S3C2412_VA_SSMC,
- 		.pfn     =3D __phys_to_pfn(S3C2412_PA_SSMC),
--		.length  =3D SZ_1M,
-+		.length  =3D SZ_4K,
- 		.type    =3D MT_DEVICE,
- 	},
- 	{
+On Thu, May 10, 2012 at 12:54:24PM +0530, Yadwinder Singh Brar wrote:
+> On Thu, May 10, 2012 at 12:17 AM, Mark Brown
+> > On Wed, May 09, 2012 at 09:54:55PM +0530, Yadwinder Singh wrote:
 
-Thanks.
+> >> + =A0 =A0 [MAX77686_EN32KHZ_AP] =3D NULL,
+> >> + =A0 =A0 [MAX77686_EN32KHZ_CP] =3D NULL,
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> > Now that the generic clock API is in mainline these should be moved over
+> > to use it.
+
+> Sorry, I cann't get your point here. Please explain it little bit more.
+
+These are not regulators, these are clocks.  They should use the clock
+API.
+
+> >> + =A0 =A0 if (pdata->ramp_delay) {
+> >> + =A0 =A0 =A0 =A0 =A0 =A0 max77686->ramp_delay =3D pdata->ramp_delay;
+> >> + =A0 =A0 =A0 =A0 =A0 =A0 max77686_update_reg(i2c, MAX77686_REG_BUCK2C=
+TRL1,
+> >> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 RAMP_VALUE, RAMP_MASK);
+
+> > This appears not to actually use the value passed in as platform_data.
+
+> It gets corresponding index of ramp_rate value in ramp_rate_value
+> table supported by hardware, from platform_data which we write to
+> ramp_rate control bits of control registers.
+
+Why is the driver unconditionally writing these register values here
+rather than setting the ramp delay that was passed in?
+
+--iSeZnk6FyAS3EJ1y
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPq4urAAoJEBus8iNuMP3dm4MP/2/+jQIWB2OMph66lu7FnD0s
+gc/YAQCsinMwiKpRTRNkYJNzGc+IRZyHelqLTc8cRXgdLtsZDrWdBVaxqXbiftIz
+57jEz3Tr+5ovgIjllJ7a65J/Ye2a3VdozyPqxTqfISK45piHCy2NGTJIctbCqfDA
+JYpV/Vhqn/Lb3fg2xquGtCh6Hd9omD7TYhqdTpPNUzMIkj3xrEiX5Iv1zpBMMpst
+u/rLyEHTUj7tovJkOrtkLUVe5PFm6M07g7KgvaaUC52+bjdh1t+slMSYgaL4zw17
+760CG4NO/3xxoxNDDH7wb6uJ+BA/mMyhU/ay4tJVZlMbOJQ14V327+R4F/QEm3NC
+SDQJDKAGb+IdoYcQPxtCMWia5NzU+l4a62pHvByelFBMnZUJhyRJHibvwdmK5XUU
+VAtdwPY6/X3jmeMGSnT4E1iQMDFFqA8ghi+bByL4ROqt1Bl9WqrbecTEPOaSakIm
+GwiMdfqoKd4Mwwl+y83M1iRgp2Xvc+exe0ZNnvxOWJFwzFzpouB/2e9TxQ0MfVN6
+IimTEk851eJHJTslsnQUZRe155QChIYuDqcmZy3ufaXePoOHNGxJrRcLeTdZCfHa
+eVMvFbVdWk8+ugYFNxdc54Gf4NQxkTB7M5NuebfJufUPvAwH0DiRbAwsOzh3z+3L
+zIgSXcgj+zPdFcZ9RLU2
+=W6IA
+-----END PGP SIGNATURE-----
+
+--iSeZnk6FyAS3EJ1y--
