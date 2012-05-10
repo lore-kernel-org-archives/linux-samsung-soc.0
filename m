@@ -1,59 +1,188 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCHv2 0/3] Add support for DRM display subsystem
-Date: Thu, 10 May 2012 20:16:21 +0200
-Message-ID: <4FAC05F5.1050506@gmail.com>
-References: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com> <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
+Date: Thu, 10 May 2012 21:52:56 +0200
+Message-ID: <201205102152.56294.rjw@sisk.pl>
+References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com> <201205072045.02505.rjw@sisk.pl> <023801cd2eaa$e5ddf8a0$b199e9e0$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:62249 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756319Ab2EJSQ1 (ORCPT
+Received: from ogre.sisk.pl ([193.178.161.156]:36781 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1759340Ab2EJTsG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 14:16:27 -0400
-Received: by bkcji2 with SMTP id ji2so1576837bkc.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 May 2012 11:16:26 -0700 (PDT)
-In-Reply-To: <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com>
+	Thu, 10 May 2012 15:48:06 -0400
+In-Reply-To: <023801cd2eaa$e5ddf8a0$b199e9e0$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, Russell King - ARM Linux <linux@arm.linux.org.uk>, arnd@arndb.de
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 05/10/2012 11:36 AM, Kukjin Kim wrote:
-> Note that I have a plan to replace board files with DT supporting in
-> mach-exynos/ next time.
+On Thursday, May 10, 2012, Marek Szyprowski wrote:
+> Hi Rafael,
+> 
+> On Monday, May 07, 2012 8:45 PM Rafael J. Wysocki wrote:
+> 
+> > On Monday, May 07, 2012, Marek Szyprowski wrote:
+> > > Hi Rafael,
+> > >
+> > > I'm sorry for a late reply, I was on holidays last week and just got back to
+> > > the office.
+> > >
+> > > On Sunday, April 29, 2012 10:55 PM Rafael J. Wysocki wrote:
+> > >
+> > > > On Friday, April 06, 2012, Marek Szyprowski wrote:
+> > > > > Some bootloaders disable power domains on boot and the platform startup
+> > > > > code registers them in the 'disabled' state. Current gen_pd code assumed
+> > > > > that the devices can be registered only to the power domain which is in
+> > > > > 'enabled' state and these devices are active at the time of the
+> > > > > registration. This is not correct in our case. This patch lets drivers
+> > > > > to be registered into 'disabled' power domains and finally solves
+> > > > > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
+> > > > > NURI and UniversalC210 platforms.
+> > > > >
+> > > > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> > > > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > > > > ---
+> > > > >  drivers/base/power/domain.c |    7 +------
+> > > > >  1 files changed, 1 insertions(+), 6 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> > > > > index 73ce9fb..05f5799f 100644
+> > > > > --- a/drivers/base/power/domain.c
+> > > > > +++ b/drivers/base/power/domain.c
+> > > > > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
+> > > > device *dev,
+> > > > >
+> > > > >  	genpd_acquire_lock(genpd);
+> > > > >
+> > > > > -	if (genpd->status == GPD_STATE_POWER_OFF) {
+> > > > > -		ret = -EINVAL;
+> > > > > -		goto out;
+> > > > > -	}
+> > > > > -
+> > > > >  	if (genpd->prepared_count > 0) {
+> > > > >  		ret = -EAGAIN;
+> > > > >  		goto out;
+> > > > > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
+> > > > device *dev,
+> > > > >  	dev_pm_get_subsys_data(dev);
+> > > > >  	dev->power.subsys_data->domain_data = &gpd_data->base;
+> > > > >  	gpd_data->base.dev = dev;
+> > > > > -	gpd_data->need_restore = false;
+> > > > > +	gpd_data->need_restore = true;
+> > > >
+> > > > I think that should be:
+> > > >
+> > > > +	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
+> > > >
+> > > > Otherwise, on the next domain power off the device's state won't be saved.
+> > > >
+> > > > >  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
+> > > > >  	if (td)
+> > > > >  		gpd_data->td = *td;
+> > >
+> > > I've tested the above change and there is problem. Let me explain in detail the
+> > > sw/hw configuration I have.
+> > >
+> > > There is a power domain and the device driver. The device itself also has it's own
+> > > power management code (which enables and disables clocks).  Some power domains are
+> > > disabled by bootloader and some devices in the active power domains have their
+> > > clocks disabled too. In the current runtime pm code the devices were probed in
+> > > 'disabled' state and had to enable itself by calling get_runtime_sync(). My initial
+> > > patch restored runtime pm handling to the old state (the same which was with non
+> > > gen_pd based driver or no power domain driver at all, where runtime pm was handled
+> > > by platform bus). If I apply your patch the runtime_restore
+> > 
+> > I guess you mean .runtime_resume().
+> > 
+> > > callback is not called on first driver probe for devices inside the domain which
+> > > has been left enabled by the bootloader.
+> > 
+> > I don't see why .probe() should depend on the runtime PM framework to call
+> > .runtime_resume() for it.  It looks like .probe() could just call
+> > .runtime_resume() directly if needed.
+> > 
+> > Besides, your change breaks existing code as I said.
+> 
+> Before using gen_pd power domains we had the following flow of calls/controls:
+> 
+> 1. fimc_probe(fimd_pdev)
+> ...
+> 2. pm_runtime_enable(fimd_pdev->dev)
+> 3. pm_runtime_get_sync(fimd_pdev->dev)
+> 	3a. parent device's runtime_resume()
+> 	3b. fimc_runtime_resume(fimd_pdev->dev)
+> ...
+> 4. pm_runtime_put(fimd_pdev->dev)
+> ...
+> 5. (runtime put timer kicks off)
+> 	5a. fimc_runtime_put(fimd_pdev->dev)
+> 	5b. parent device's runtime_suspend()
+> 
+> (this flow assumed that fimc device was the only child of its parent platform device).
+> 
+> Now with power gen_pd driver with my patch I get the following call sequence:
+> 
+> 1. fimc_probe(fimd_pdev)
+> ...
+> 2. pm_runtime_enable(fimd_pdev->dev)
+> 3. pm_runtime_get_sync(fimd_pdev->dev)
+> 	3a. gen_pd pd_power_on(...)
+> 	3b. fimc_runtime_resume(fimd_pdev->dev)
+> 4. pm_runtime_put(fimd_pdev->dev)
+> ...
+> 5. (runtime put timer kicks off)
+> 	5a. fimc_runtime_put(fimd_pdev->dev)
+> 	5b. gen_pd pd_power_off (...)
+> 
+> so it works like before.
+> 
+> Now with your suggested change I get following call sequence:
+> 
+> 1. fimc_probe(fimc_pdev)
+> ...
+> 2. pm_runtime_enable(fimd_pdev->dev)
+> 3. pm_runtime_get_sync(fimd_pdev->dev)
+> 	(gen_pd finds that the power domain is already activated)
+> ...
+> 4. pm_runtime_put(fimd_pdev->dev)
+> ...
+> 5. (runtime put timer kicks off)
+> 	5a. fimc_runtime_put(fimd_pdev->dev)
+> 	5b. gen_pd pd_power_off (...)
+> 
+> As you can notice in point 3, gen_pd driver checks its internal state,
+> finds that the power domain is already enabled and skips calling 
+> fimc_runtime_resume(). This breaks the driver which worked fine before.
 
-What is the purpose of one side decisions like this ? I find it really
-annoying. We have been building those board files through multiple kernel 
-releases, it took much effort and time to create proper drivers and 
-extending frameworks, like video or media.
+It doesn't break anything, you're just using a wrong tool for a wrong
+purpose.  Generic PM domains are not supposed to be a drop-in replacement
+for platform bus type!
 
-It is going to take some more effort to make those subsystems DT aware and
-add proper support at the drivers. This is being worked on and touching 
-existing boards doesn't sound like an incentive to me. We have to deal 
-with multiple boards and breaking existing ones which are almost completed
-just adds an effort for us of maintaining them internally. The mainline 
-kernel is going to always be a half-product, not properly tested and 
-validated.
+> Please notice that fimc_runtime_resume() does something completely 
+> different than the power domain driver and those operations are essential
+> for getting the driver to work correctly.
 
-We get new boards that need to be supported in the kernel quite frequently,
-those boards share device IPs, so adapting the drivers to the DT is
-already our goal, for getting new boards supported in the mainline.
+I don't quite understand what you mean here.  What's the power domain driver
+in particular?
 
-I have no idea what that "replacing" is going to be about, but if you add
-support for all devices present in those boards and they will all work
-as before - I'll happily accept that. Although I'm afraid it is just going
-to be one big breakage and regression, in the name of "everything must
-migrate to the device tree".
+Now, you can kind of make things work with my proposed modification of the
+patch if you make your platform code that adds the fmc device to the PM
+domain set its need_restore flag directly afterwards.
 
-I would really appreciate more common agreement, rather than putting 
-a spoke in somebody else's wheel.
+So, you do
 
-Once all devices in current mach-exynos board files get proper DT support
-we are going to remove the boards ourselves. I'm sure there is lots of 
-other things that need more attention than that.
+pm_genpd_add_device(domain, fmc);
+fmc->power.subsys_data->domain_data->need_restore = true;
 
---
-Regards,
-Sylwester
+Or you can actually modify __pm_genpd_add_device() so that it takes
+need_restore as an additional argument.  That would be fine by me too so long
+as pm_genpd_add_device() worked in the same way as before.
+
+However, there is code already in the kernel that will break if you change
+__pm_genpd_add_device() to set need_restore unconditionally.  Is that clear
+enough?
+
+Rafael
