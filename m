@@ -1,105 +1,83 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCHv2 0/3] Add support for DRM display subsystem
-Date: Thu, 10 May 2012 18:53:18 +0900
-Message-ID: <CAH9JG2V_9RVPvEHodDD422r=o4QxHcrMO-YXv2KUGYeys=ZjqA@mail.gmail.com>
-References: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com>
-	<037301cd2e90$529112e0$f7b338a0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Add platform resource definitions for
+ FIMC-LITE
+Date: Thu, 10 May 2012 18:56:00 +0900
+Message-ID: <038401cd2e93$1a571fc0$4f055f40$%kim@samsung.com>
+References: <1336148260-19952-1-git-send-email-s.nawrocki@samsung.com>
+ <017b01cd2cdd$4e4ff570$eaefe050$%kim@samsung.com>
+ <4FA8CCC9.9030601@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gg0-f174.google.com ([209.85.161.174]:41878 "EHLO
-	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758486Ab2EJJxS (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:25738 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758120Ab2EJJ4D (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 05:53:18 -0400
-Received: by gglu4 with SMTP id u4so783744ggl.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 10 May 2012 02:53:18 -0700 (PDT)
-In-Reply-To: <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com>
+	Thu, 10 May 2012 05:56:03 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3S00065WXCO2O0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:56:00 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3S00K0OWXB4X60@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:56:00 +0900 (KST)
+In-reply-to: <4FA8CCC9.9030601@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 5/10/12, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Marek Szyprowski wrote:
->>
->> Hello,
->>
->> This patch set adds support for Exynos DRM display subsystem for
->> Universal C210 and NURI boards. Exynos DRM driver has been merged to 3.3
->> kernel tree and provides unified and more powerful alternative for
->> s3c-fb and s5p-tv drivers. V2 includes update for the latest changes in
->> platform data structure (added 'panel' entry).
->>
->> Best regards
->>
->> Marek Szyprowski
->> Samsung Poland R&D Center
->>
->> Patch summary:
->>
->> Marek Szyprowski (3):
->>   ARM: Exynos: add platform device for core DRM subsystem
->>   ARM: Exynos: Add DRM core device support for Universal C210 board
->>   ARM: Exynos: Add DRM core support for NURI board
->>
->>  arch/arm/mach-exynos/Kconfig               |    7 ++++++
->>  arch/arm/mach-exynos/Makefile              |    1 +
->>  arch/arm/mach-exynos/dev-drm.c             |   29
-> ++++++++++++++++++++++++
->>  arch/arm/mach-exynos/mach-nuri.c           |   33
->> ++++++++++++++++++++++++++++
->>  arch/arm/mach-exynos/mach-universal_c210.c |   33
->> ++++++++++++++++++++++++++++
->>  arch/arm/plat-samsung/include/plat/devs.h  |    2 +
->>  6 files changed, 105 insertions(+), 0 deletions(-)
->>  create mode 100644 arch/arm/mach-exynos/dev-drm.c
->>
->> --
->> 1.7.1.569.g6f426
->
-> Well, 2nd and 3rd patches can break multi-platform for EXYNOS SoCs with one
-> kernel image.
->
-> And I won't apply new feature for non-dt board file from now on. I think,
-> we
-> need to support DT in mach-exynos/ instead of non-DT and DT together, so
-> please consider to move on dt supporting for Samsung mobile boards.
->
+Sylwester Nawrocki wrote:
 
-Probably you misunderstand Arnd word.
+> 
+> On 05/08/2012 07:42 AM, Kukjin Kim wrote:
+> > Sylwester Nawrocki wrote:
+> >>
+> >> Add the gate clocks and register region address definition for
+> >> FIMC-LITE devices available in Exynos4x12 and Exynos5 SoCs.
+> >>
+> > This is right description? I can't find your changes for EXYNOS4412 and
+> > EXYNOS5 here. Only this is for EXYNOS4212 SoC.
+> 
+> Sorry, I wasn't precise enough. EXYNOS4_PA_FIMC_LITE is for EXYNOS4212
+> and EXYNOS4412 though. Please note it is initially needed for DT
+platforms,
+> until we get proper clock DT bindings for EXYNOS. Is there, BTW, anyone
+> known to work on converting EXYNOS to the common clock framework ?
+> 
+Yes, my colleague is working on common clock for all of exynos stuff.
 
-"From the statements made so far, I can see no clear policy that we can
-apply to everyone. My take on this is that for any work I spend on
-multiplatform kernel, I concentrate on the DT-based board files and
-get them to work together first, but leave it up to the individual
-subarch maintainers whether they want to add other board files into
-the mix."
+> This patch was intended for EXYNOS4212/4412. AFAICS clock code in
+> mach-exynos/clock-exynos4412.c is a subset of the EXYNOS4412 platform:
+> 
+OK.
 
-It doesn't mean add new feature to non-DT board. don't add new board file.
+> static void __init exynos4_init_clocks(int xtal)
+> {
+> 	...
+> 	if (soc_is_exynos4210())
+> 		exynos4210_register_clocks();
+> 	else if (soc_is_exynos4212() || soc_is_exynos4412())
+> 		exynos4212_register_clocks();
+> 
+> 	exynos4_register_clocks();
+> 	...
+> }
+> 
+> Should I resend the patch or could you remove " and Exynos5 SoCs"
+> from the description ?
+> 
+I see, let me fix it when I apply this.
 
-In this case, DRM is not yet ready to support DT.
+Thanks.
 
-Okay, you can just drop this patches. but please note that this
-patches are posted at Mar 13 before you decide.
-
-BR,
-Kyungmin Park
-
-> Note that I have a plan to replace board files with DT supporting in
-> mach-exynos/ next time.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
