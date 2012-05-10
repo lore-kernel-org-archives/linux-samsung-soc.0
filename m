@@ -1,41 +1,233 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/7] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Thu, 10 May 2012 14:42:30 +0530
-Message-ID: <CAJuYYwSJ8FBQiykcyym9Gg1jVoW+rGZmjtHfy4zgcDEX6edOEA@mail.gmail.com>
-References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
-	<1335935266-25289-2-git-send-email-thomas.abraham@linaro.org>
-	<20120502095311.GZ24211@n2100.arm.linux.org.uk>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: Exynos4: add support for GATE BLOCK clocks
+Date: Thu, 10 May 2012 18:13:34 +0900
+Message-ID: <034c01cd2e8d$2ce8c090$86ba41b0$%kim@samsung.com>
+References: <1333699250-16420-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <20120502095311.GZ24211@n2100.arm.linux.org.uk>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:8546 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757747Ab2EJJNf (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 10 May 2012 05:13:35 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3S00MIMUYFD9E0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:13:34 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3S00HQ1UYLI090@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 10 May 2012 18:13:34 +0900 (KST)
+In-reply-to: <1333699250-16420-1-git-send-email-m.szyprowski@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On 2 May 2012 15:23, Russell King - ARM Linux <linux@arm.linux.org.uk> =
-wrote:
-> On Tue, May 01, 2012 at 10:07:40PM -0700, Thomas Abraham wrote:
->> Some platforms allow for clock gating and control of bus interface u=
-nit clock
->> and card interface unit clock. Add support for clock lookup of optio=
-nal biu
->> and ciu clocks for clock gating and clock speed determination.
->
-> As we're moving progressively towards the common clk API, which requi=
-res
-> the new clk_prepare/clk_unprepare calls, new code should be using the
-> dated API. =A0Please update this to do so (eg, by using clk_prepare_e=
-nable()
-> instead of clk_enable() for the simple solution.) =A0Better solutions
-> involve decoupling the two and only using clk_enable()/clk_disable() =
-where
-> you really need the clock to be on.
+Marek Szyprowski wrote:
+> 
+> EXYNOS4_CLKGATE_BLOCK register can be used to disable the respective
+> multimedia block hardware planes. It acts similar to the power domains.
+> This patch adds transparent support for this method of gating of
+> multimedia blocks. New clocks are added as parents to the respective
+> block bus clocks. This patch has been tested on NURI and UniversalC210
+> boards, which have bootloader which disable all multimedia blocks with
+> both GATE BLOCK method and power domains.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/clock-exynos4.c |   54
+> ++++++++++++++++++++++++++++++++++
+>  1 files changed, 54 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-
+> exynos/clock-exynos4.c
+> index 4287311..a2f8b2e 100644
+> --- a/arch/arm/mach-exynos/clock-exynos4.c
+> +++ b/arch/arm/mach-exynos/clock-exynos4.c
+> @@ -213,6 +213,11 @@ static int exynos4_clk_dac_ctrl(struct clk *clk, int
+> enable)
+>  	return s5p_gatectrl(S5P_DAC_PHY_CONTROL, clk, enable);
+>  }
+> 
+> +static int exynos4_clk_gate_block_ctrl(struct clk *clk, int enable)
+> +{
+> +	return s5p_gatectrl(EXYNOS4_CLKGATE_BLOCK, clk, enable);
+> +}
+> +
+>  /* Core list of CMU_CPU side */
+> 
+>  static struct clksrc_clk exynos4_clk_mout_apll = {
+> @@ -459,6 +464,37 @@ static struct clksrc_clk exynos4_clk_sclk_vpll = {
+>  	.reg_src = { .reg = EXYNOS4_CLKSRC_TOP0, .shift = 8, .size = 1 },
+>  };
+> 
+> +static struct clk exynos4_clk_gate_cam = {
+> +	.name		= "cam",
+> +	.enable		= exynos4_clk_gate_block_ctrl,
+> +	.ctrlbit	= (1 << 0),
+> +};
+> +
+> +static struct clk exynos4_clk_gate_tv = {
+> +	.name		= "tv",
+> +	.enable		= exynos4_clk_gate_block_ctrl,
+> +	.ctrlbit	= (1 << 1),
+> +};
+> +
+> +static struct clk exynos4_clk_gate_mfc = {
+> +	.name		= "mfc",
+> +	.enable		= exynos4_clk_gate_block_ctrl,
+> +	.ctrlbit	= (1 << 2),
+> +};
+> +
+> +static struct clk exynos4_clk_gate_lcd0 = {
+> +	.name		= "lcd0",
+> +	.enable		= exynos4_clk_gate_block_ctrl,
+> +	.ctrlbit	= (1 << 4),
+> +};
+> +
+> +static struct clk *exynos4_gate_clocks[] = {
+> +	&exynos4_clk_gate_cam,
+> +	&exynos4_clk_gate_tv,
+> +	&exynos4_clk_gate_mfc,
+> +	&exynos4_clk_gate_lcd0,
+> +};
+> +
+>  static struct clk exynos4_init_clocks_off[] = {
+>  	{
+>  		.name		= "timers",
+> @@ -470,36 +506,43 @@ static struct clk exynos4_init_clocks_off[] = {
+>  		.devname	= "s5p-mipi-csis.0",
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 4),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "csis",
+>  		.devname	= "s5p-mipi-csis.1",
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 5),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "jpeg",
+>  		.id		= 0,
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 6),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "fimc",
+>  		.devname	= "exynos4-fimc.0",
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 0),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "fimc",
+>  		.devname	= "exynos4-fimc.1",
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 1),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "fimc",
+>  		.devname	= "exynos4-fimc.2",
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 2),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "fimc",
+>  		.devname	= "exynos4-fimc.3",
+>  		.enable		= exynos4_clk_ip_cam_ctrl,
+>  		.ctrlbit	= (1 << 3),
+> +		.parent		= &exynos4_clk_gate_cam,
+>  	}, {
+>  		.name		= "hsmmc",
+>  		.devname	= "s3c-sdhci.0",
+> @@ -534,31 +577,37 @@ static struct clk exynos4_init_clocks_off[] = {
+>  		.devname	= "s5p-sdo",
+>  		.enable		= exynos4_clk_ip_tv_ctrl,
+>  		.ctrlbit	= (1 << 2),
+> +		.parent		= &exynos4_clk_gate_tv,
+>  	}, {
+>  		.name		= "mixer",
+>  		.devname	= "s5p-mixer",
+>  		.enable		= exynos4_clk_ip_tv_ctrl,
+>  		.ctrlbit	= (1 << 1),
+> +		.parent		= &exynos4_clk_gate_tv,
+>  	}, {
+>  		.name		= "vp",
+>  		.devname	= "s5p-mixer",
+>  		.enable		= exynos4_clk_ip_tv_ctrl,
+>  		.ctrlbit	= (1 << 0),
+> +		.parent		= &exynos4_clk_gate_tv,
+>  	}, {
+>  		.name		= "hdmi",
+>  		.devname	= "exynos4-hdmi",
+>  		.enable		= exynos4_clk_ip_tv_ctrl,
+>  		.ctrlbit	= (1 << 3),
+> +		.parent		= &exynos4_clk_gate_tv,
+>  	}, {
+>  		.name		= "hdmiphy",
+>  		.devname	= "exynos4-hdmi",
+>  		.enable		= exynos4_clk_hdmiphy_ctrl,
+>  		.ctrlbit	= (1 << 0),
+> +		.parent		= &exynos4_clk_gate_tv,
+>  	}, {
+>  		.name		= "dacphy",
+>  		.devname	= "s5p-sdo",
+>  		.enable		= exynos4_clk_dac_ctrl,
+>  		.ctrlbit	= (1 << 0),
+> +		.parent		= &exynos4_clk_gate_tv,
+>  	}, {
+>  		.name		= "adc",
+>  		.enable		= exynos4_clk_ip_peril_ctrl,
+> @@ -623,11 +672,13 @@ static struct clk exynos4_init_clocks_off[] = {
+>  		.name		= "fimg2d",
+>  		.enable		= exynos4_clk_ip_image_ctrl,
+>  		.ctrlbit	= (1 << 0),
+> +		.parent		= &exynos4_clk_gate_lcd0,
+>  	}, {
+>  		.name		= "mfc",
+>  		.devname	= "s5p-mfc",
+>  		.enable		= exynos4_clk_ip_mfc_ctrl,
+>  		.ctrlbit	= (1 << 0),
+> +		.parent		= &exynos4_clk_gate_mfc,
+>  	}, {
+>  		.name		= "i2c",
+>  		.devname	= "s3c2440-i2c.0",
+> @@ -795,6 +846,7 @@ static struct clk exynos4_clk_fimd0 = {
+>  	.devname	= "exynos4-fb.0",
+>  	.enable		= exynos4_clk_ip_lcd0_ctrl,
+>  	.ctrlbit	= (1 << 0),
+> +	.parent		= &exynos4_clk_gate_lcd0,
+>  };
+> 
+>  struct clk *exynos4_clkset_group_list[] = {
+> @@ -1565,6 +1617,8 @@ void __init exynos4_register_clocks(void)
+>  	s3c_register_clksrc(exynos4_clksrcs, ARRAY_SIZE(exynos4_clksrcs));
+>  	s3c_register_clocks(exynos4_init_clocks_on,
+> ARRAY_SIZE(exynos4_init_clocks_on));
+> 
+> +	s3c24xx_register_clocks(exynos4_gate_clocks,
+> ARRAY_SIZE(exynos4_gate_clocks));
+> +
+>  	s3c24xx_register_clocks(exynos4_clk_cdev,
+> ARRAY_SIZE(exynos4_clk_cdev));
+>  	for (ptr = 0; ptr < ARRAY_SIZE(exynos4_clk_cdev); ptr++)
+>  		s3c_disable_clocks(exynos4_clk_cdev[ptr], 1);
+> --
+> 1.7.1.569.g6f426
 
-Thanks for your suggestion. I will modify this to use the
-clk_prepare_enable and clk_disable_unprepare calls for now.
+I remember, we talked about the GATE BLOCK for EXYNOS.
+So now, there are any reasons it should be implemented?
 
-Thanks,
-Thomas.
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
