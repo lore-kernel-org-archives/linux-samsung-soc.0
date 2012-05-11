@@ -1,188 +1,53 @@
-From: "Rafael J. Wysocki" <rjw@sisk.pl>
-Subject: Re: [PATCH] drivers: genpd: let platform code to register devices into disabled domains
-Date: Thu, 10 May 2012 21:52:56 +0200
-Message-ID: <201205102152.56294.rjw@sisk.pl>
-References: <1333699379-16700-1-git-send-email-m.szyprowski@samsung.com> <201205072045.02505.rjw@sisk.pl> <023801cd2eaa$e5ddf8a0$b199e9e0$%szyprowski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCHv2 0/3] Add support for DRM display subsystem
+Date: Fri, 11 May 2012 19:37:56 +0900
+Message-ID: <045401cd2f62$210f3e40$632dbac0$%kim@samsung.com>
+References: <1331635180-7207-1-git-send-email-m.szyprowski@samsung.com>
+ <037301cd2e90$529112e0$f7b338a0$%kim@samsung.com>
+ <CAH9JG2V_9RVPvEHodDD422r=o4QxHcrMO-YXv2KUGYeys=ZjqA@mail.gmail.com>
+ <201205101348.20870.arnd@arndb.de>
+ <CAH9JG2U83+q9NKuvZV4s_iHvDTrQ-RCEqx=9L9uwqiMhYMSiHA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ogre.sisk.pl ([193.178.161.156]:36781 "EHLO ogre.sisk.pl"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1759340Ab2EJTsG (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:54855 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755542Ab2EKKiE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 10 May 2012 15:48:06 -0400
-In-Reply-To: <023801cd2eaa$e5ddf8a0$b199e9e0$%szyprowski@samsung.com>
+	Fri, 11 May 2012 06:38:04 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M3U00993TIC8WI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 11 May 2012 19:38:02 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M3U00FF8TJ7F110@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 11 May 2012 19:38:02 +0900 (KST)
+In-reply-to: <CAH9JG2U83+q9NKuvZV4s_iHvDTrQ-RCEqx=9L9uwqiMhYMSiHA@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Kyungmin Park' <kmpark@infradead.org>, 'Arnd Bergmann' <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Marek Szyprowski' <m.szyprowski@samsung.com>
 
-On Thursday, May 10, 2012, Marek Szyprowski wrote:
-> Hi Rafael,
-> 
-> On Monday, May 07, 2012 8:45 PM Rafael J. Wysocki wrote:
-> 
-> > On Monday, May 07, 2012, Marek Szyprowski wrote:
-> > > Hi Rafael,
-> > >
-> > > I'm sorry for a late reply, I was on holidays last week and just got back to
-> > > the office.
-> > >
-> > > On Sunday, April 29, 2012 10:55 PM Rafael J. Wysocki wrote:
-> > >
-> > > > On Friday, April 06, 2012, Marek Szyprowski wrote:
-> > > > > Some bootloaders disable power domains on boot and the platform startup
-> > > > > code registers them in the 'disabled' state. Current gen_pd code assumed
-> > > > > that the devices can be registered only to the power domain which is in
-> > > > > 'enabled' state and these devices are active at the time of the
-> > > > > registration. This is not correct in our case. This patch lets drivers
-> > > > > to be registered into 'disabled' power domains and finally solves
-> > > > > mysterious freezes and lack of resume/suspend calls on Samsung Exynos4
-> > > > > NURI and UniversalC210 platforms.
-> > > > >
-> > > > > Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> > > > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > > > ---
-> > > > >  drivers/base/power/domain.c |    7 +------
-> > > > >  1 files changed, 1 insertions(+), 6 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> > > > > index 73ce9fb..05f5799f 100644
-> > > > > --- a/drivers/base/power/domain.c
-> > > > > +++ b/drivers/base/power/domain.c
-> > > > > @@ -1211,11 +1211,6 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
-> > > > device *dev,
-> > > > >
-> > > > >  	genpd_acquire_lock(genpd);
-> > > > >
-> > > > > -	if (genpd->status == GPD_STATE_POWER_OFF) {
-> > > > > -		ret = -EINVAL;
-> > > > > -		goto out;
-> > > > > -	}
-> > > > > -
-> > > > >  	if (genpd->prepared_count > 0) {
-> > > > >  		ret = -EAGAIN;
-> > > > >  		goto out;
-> > > > > @@ -1239,7 +1234,7 @@ int __pm_genpd_add_device(struct generic_pm_domain *genpd, struct
-> > > > device *dev,
-> > > > >  	dev_pm_get_subsys_data(dev);
-> > > > >  	dev->power.subsys_data->domain_data = &gpd_data->base;
-> > > > >  	gpd_data->base.dev = dev;
-> > > > > -	gpd_data->need_restore = false;
-> > > > > +	gpd_data->need_restore = true;
-> > > >
-> > > > I think that should be:
-> > > >
-> > > > +	gpd_data->need_restore = genpd->status == GPD_STATE_POWER_OFF;
-> > > >
-> > > > Otherwise, on the next domain power off the device's state won't be saved.
-> > > >
-> > > > >  	list_add_tail(&gpd_data->base.list_node, &genpd->dev_list);
-> > > > >  	if (td)
-> > > > >  		gpd_data->td = *td;
-> > >
-> > > I've tested the above change and there is problem. Let me explain in detail the
-> > > sw/hw configuration I have.
-> > >
-> > > There is a power domain and the device driver. The device itself also has it's own
-> > > power management code (which enables and disables clocks).  Some power domains are
-> > > disabled by bootloader and some devices in the active power domains have their
-> > > clocks disabled too. In the current runtime pm code the devices were probed in
-> > > 'disabled' state and had to enable itself by calling get_runtime_sync(). My initial
-> > > patch restored runtime pm handling to the old state (the same which was with non
-> > > gen_pd based driver or no power domain driver at all, where runtime pm was handled
-> > > by platform bus). If I apply your patch the runtime_restore
-> > 
-> > I guess you mean .runtime_resume().
-> > 
-> > > callback is not called on first driver probe for devices inside the domain which
-> > > has been left enabled by the bootloader.
-> > 
-> > I don't see why .probe() should depend on the runtime PM framework to call
-> > .runtime_resume() for it.  It looks like .probe() could just call
-> > .runtime_resume() directly if needed.
-> > 
-> > Besides, your change breaks existing code as I said.
-> 
-> Before using gen_pd power domains we had the following flow of calls/controls:
-> 
-> 1. fimc_probe(fimd_pdev)
-> ...
-> 2. pm_runtime_enable(fimd_pdev->dev)
-> 3. pm_runtime_get_sync(fimd_pdev->dev)
-> 	3a. parent device's runtime_resume()
-> 	3b. fimc_runtime_resume(fimd_pdev->dev)
-> ...
-> 4. pm_runtime_put(fimd_pdev->dev)
-> ...
-> 5. (runtime put timer kicks off)
-> 	5a. fimc_runtime_put(fimd_pdev->dev)
-> 	5b. parent device's runtime_suspend()
-> 
-> (this flow assumed that fimc device was the only child of its parent platform device).
-> 
-> Now with power gen_pd driver with my patch I get the following call sequence:
-> 
-> 1. fimc_probe(fimd_pdev)
-> ...
-> 2. pm_runtime_enable(fimd_pdev->dev)
-> 3. pm_runtime_get_sync(fimd_pdev->dev)
-> 	3a. gen_pd pd_power_on(...)
-> 	3b. fimc_runtime_resume(fimd_pdev->dev)
-> 4. pm_runtime_put(fimd_pdev->dev)
-> ...
-> 5. (runtime put timer kicks off)
-> 	5a. fimc_runtime_put(fimd_pdev->dev)
-> 	5b. gen_pd pd_power_off (...)
-> 
-> so it works like before.
-> 
-> Now with your suggested change I get following call sequence:
-> 
-> 1. fimc_probe(fimc_pdev)
-> ...
-> 2. pm_runtime_enable(fimd_pdev->dev)
-> 3. pm_runtime_get_sync(fimd_pdev->dev)
-> 	(gen_pd finds that the power domain is already activated)
-> ...
-> 4. pm_runtime_put(fimd_pdev->dev)
-> ...
-> 5. (runtime put timer kicks off)
-> 	5a. fimc_runtime_put(fimd_pdev->dev)
-> 	5b. gen_pd pd_power_off (...)
-> 
-> As you can notice in point 3, gen_pd driver checks its internal state,
-> finds that the power domain is already enabled and skips calling 
-> fimc_runtime_resume(). This breaks the driver which worked fine before.
+OK, I thought again and talked to some guys. It's okay to add updated to the
+non-dt board files on exynos4 for now. I know, until there is dt coverage
+for more drivers, actually it will be difficult to build/support a complete
+system with only dt support.
 
-It doesn't break anything, you're just using a wrong tool for a wrong
-purpose.  Generic PM domains are not supposed to be a drop-in replacement
-for platform bus type!
+Note, we need to keep adding more and more support for dt for exynos4 and
+exynos5. Then only we can stop the development of non-dt board files.
 
-> Please notice that fimc_runtime_resume() does something completely 
-> different than the power domain driver and those operations are essential
-> for getting the driver to work correctly.
+Thanks for many opinions about this and if any objections, feel free to
+contact me.
 
-I don't quite understand what you mean here.  What's the power domain driver
-in particular?
+Thanks.
 
-Now, you can kind of make things work with my proposed modification of the
-patch if you make your platform code that adds the fmc device to the PM
-domain set its need_restore flag directly afterwards.
-
-So, you do
-
-pm_genpd_add_device(domain, fmc);
-fmc->power.subsys_data->domain_data->need_restore = true;
-
-Or you can actually modify __pm_genpd_add_device() so that it takes
-need_restore as an additional argument.  That would be fine by me too so long
-as pm_genpd_add_device() worked in the same way as before.
-
-However, there is code already in the kernel that will break if you change
-__pm_genpd_add_device() to set need_restore unconditionally.  Is that clear
-enough?
-
-Rafael
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
