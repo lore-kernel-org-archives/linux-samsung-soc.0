@@ -1,120 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping.
-Date: Fri, 11 May 2012 19:45:18 +0900
-Message-ID: <045501cd2f63$27de99e0$779bcda0$%kim@samsung.com>
-References: <1336607209-6409-1-git-send-email-jose.goncalves@inov.pt>
- <036701cd2e8e$cf4cc100$6de64300$%kim@samsung.com> <4FABC720.5090301@inov.pt>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH] mtd: m25p80: Add support for Winbond W25Q80BW
+Date: Fri, 11 May 2012 14:24:16 +0300
+Message-ID: <1336735456.2625.40.camel@sauron.fi.intel.com>
+References: <1336516494-22791-1-git-send-email-thomas.abraham@linaro.org>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <4FABC720.5090301@inov.pt>
-Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?utf-8?Q?'Jos=C3=A9_Miguel_Gon=C3=A7alves'?= <jose.goncalves@inov.pt>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-jCccJ0Fw38S9ls8uWvwC"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga02.intel.com ([134.134.136.20]:43255 "EHLO mga02.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752299Ab2EKLUw (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 11 May 2012 07:20:52 -0400
+In-Reply-To: <1336516494-22791-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mtd@lists.infradead.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, dwmw2@infradead.org, linux-arm-kernel@lists.infradead.org, mike@steroidmicros.com
 
-Jos=C3=A9 Miguel Gon=C3=A7alves wrote:
->=20
-> On 10-05-2012 10:25, Kukjin Kim wrote:
-> > Jos=C3=A9 Miguel Gon=C3=A7alves wrote:
-> >> While upgrading the kernel on a S3C2412 based board I've noted tha=
-t it
-> was
-> >> impossible to boot the board with a 2.6.32 or upper kernel.
-> >> I've tracked down the problem to the EBI virtual memory mapping th=
-at is
-> in
-> >> conflict with the IO mapping definition in arch/arm/mach-
-> s3c24xx/s3c2412.c.
-> >>
-> >> Signed-off-by: Jos=C3=A9 Miguel Gon=C3=A7alves<jose.goncalves@inov=
-=2Ept>
-> >> ---
-> >>   arch/arm/plat-samsung/include/plat/map-s3c.h |    2 +-
-> >>   1 files changed, 1 insertions(+), 1 deletions(-)
-> >>
-> >> diff --git a/arch/arm/plat-samsung/include/plat/map-s3c.h
-> b/arch/arm/plat-
-> >> samsung/include/plat/map-s3c.h
-> >> index 7d04875..c0c70a8 100644
-> >> --- a/arch/arm/plat-samsung/include/plat/map-s3c.h
-> >> +++ b/arch/arm/plat-samsung/include/plat/map-s3c.h
-> >> @@ -22,7 +22,7 @@
-> >>   #define S3C24XX_VA_WATCHDOG	S3C_VA_WATCHDOG
-> >>
-> >>   #define S3C2412_VA_SSMC		S3C_ADDR_CPU(0x00000000)
-> >> -#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00010000)
-> >> +#define S3C2412_VA_EBI		S3C_ADDR_CPU(0x00100000)
-> >>
-> >>   #define S3C2410_PA_UART		(0x50000000)
-> >>   #define S3C24XX_PA_UART		S3C2410_PA_UART
-> >> --
-> >> 1.7.5.4
-> > Yeah, as you said, the mapping for SSMC invade EBI area but I think=
-,
-> just SZ_4K is enough for SSMC. So following is better in this case. H=
-ow do
-> you think? And there is no problem on your board?
-> >
-> > diff --git a/arch/arm/mach-s3c24xx/s3c2412.c b/arch/arm/mach-
-> s3c24xx/s3c2412.c
-> > index d4bc7f9..ac906bf 100644
-> > --- a/arch/arm/mach-s3c24xx/s3c2412.c
-> > +++ b/arch/arm/mach-s3c24xx/s3c2412.c
-> > @@ -72,7 +72,7 @@ static struct map_desc s3c2412_iodesc[] __initdat=
-a =3D {
-> >   	{
-> >   		.virtual =3D (unsigned long)S3C2412_VA_SSMC,
-> >   		.pfn     =3D __phys_to_pfn(S3C2412_PA_SSMC),
-> > -		.length  =3D SZ_1M,
-> > +		.length  =3D SZ_4K,
-> >   		.type    =3D MT_DEVICE,
-> >   	},
-> >   	{
-> >
->=20
-> It does not work! I tried also a 64K length and also did not work. Wi=
-th
-> your patch
-> my console (with earlyprintk set) only displays the following:
->=20
-> ## Booting image at 30800000 ...
->     Image Name:   Linux-3.2.16-inov1
->     Created:      2012-05-10  12:42:49 UTC
->     Image Type:   ARM Linux Kernel Image (uncompressed)
->     Data Size:    1202592 Bytes =3D  1.1 MB
->     Load Address: 30008000
->     Entry Point:  30008000
->     Verifying Checksum ... OK
-> OK
->=20
-> Starting kernel ...
->=20
-> Uncompressing Linux... done, booting the kernel.
-> Linux version 3.2.16-inov1 (jmpg@st-ze) (gcc version 4.6.4 20120402
-> (prerelease)
-> (crosstool-NG 1.15.2) ) #3 PREEMPT Thu May 10 13:42:48 WEST 2012
-> CPU: ARM926EJ-S [41069265] revision 5 (ARMv5TEJ), cr=3D00053177
-> CPU: VIVT data cache, VIVT instruction cache
-> Machine: SMDK2412
-> bootconsole [earlycon0] enabled
-> Memory policy: ECC disabled, Data cache writeback
-> CPU S3C2412 (id 0x32412003)
->=20
-> My guess is that the MMU initialization on the S3C2412 chip only allo=
-ws a
-> minimum
-> of 1MB for the page size.
->=20
-Hmm, could be... there is no smdk2412 on my desk :(
 
-OK, will apply your fix.
-Thanks.
+--=-jCccJ0Fw38S9ls8uWvwC
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+On Wed, 2012-05-09 at 04:04 +0530, Thomas Abraham wrote:
+> Winbond W25Q80BW is a 8Mbit serial flash memory device.
+>=20
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+
+Pushed to l2-mtd.git, thanks!
+
+--=20
+Best Regards,
+Artem Bityutskiy
+
+--=-jCccJ0Fw38S9ls8uWvwC
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAABAgAGBQJPrPbgAAoJECmIfjd9wqK08ysQAIKU0gJRhP46eXyGK+A2RcvW
+5R4Tsf5ev6Zv0LfoYCRFNiW9ngmne7GEkkNCpyDrwpWYGRaGth65aEU7GZPPi4/l
+dbM5waZnz/wM1idNIowPuBg9/a17ujqWbTWQcbzX4ZFQ/LCzgZwRogV6C7eG7+Z7
+XQ0eX7P7Fr26XJuEqGUQFtRhpZd6arPURoadXW6Hdu11ib68W6JM/x3cxYOC7kJA
+X31YNde3AFKCyuulMdCICuAhZzgDXyIIc6bJ2VOkNwL+aaNY9/PO07APq6keo6Kk
+f8zk1ZdRGVUL1tfyPf6H7Q5nrrF6/YlMUtrDBsAX2iwH2p3RfMK78mvlW8/7IV5K
+E1Q6azf/dgepYyQ/tpACZYes0GiqkbFz/dI2gkU5t0j5UnFntRELq2HXoMmTl8PO
+rplSAy+W6JEeJxrrc05OvR9DdU4R7bqIQgaM9pPHFXvhciPXvNvmhDUY1J4zDfux
+iKuFgaxoqsNPKBA9/yS/s0Giv1i9KnPr/5z6VlJIPWGVXcxMWrJa/EHAo1IjTlcO
+cb0fuB3yPu7MD9R5VBIBi/h8k6sev0WuIxNRDPPy3Tb4GLb3o7TbYTEyJ5dIVyHb
+9GDWpJRsjdQ3uOjoFGt7k5pzHYmAkMNIAf/1GqFXisi+vpPv9wSeQDn1uGaYK5Y2
+9tMhHA3qGrWZkq643vj5
+=V57E
+-----END PGP SIGNATURE-----
+
+--=-jCccJ0Fw38S9ls8uWvwC--
