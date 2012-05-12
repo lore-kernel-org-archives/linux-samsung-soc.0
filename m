@@ -1,56 +1,22 @@
-From: Guenter Roeck <guenter.roeck@ericsson.com>
-Subject: Re: [PATCH v4 2/5] hwmon: exynos4: Move thermal sensor driver to
- driver/thermal directory
-Date: Sat, 12 May 2012 08:38:05 -0700
-Message-ID: <20120512153805.GB5769@ericsson.com>
-References: <1336815645-29625-1-git-send-email-amit.kachhap@linaro.org>
- <1336815645-29625-3-git-send-email-amit.kachhap@linaro.org>
+From: abi <abiokom88@yahoo.com>
+Subject: haalloo,
+Date: Sat, 12 May 2012 19:30:47 +0200 (CEST)
+Message-ID: <15837683.8678931336843847349.JavaMail.defaultUser__13744.9428708807$1336843902$gmane$org@defaultHost>
+Reply-To: abi <abiokom88@yahoo.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-acpi-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1336815645-29625-3-git-send-email-amit.kachhap@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: "linux-pm@lists.linux-foundation.org" <linux-pm@lists.linux-foundation.org>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "durgadoss.r@intel.com" <durgadoss.r@intel.com>, "lenb@kernel.org" <lenb@kernel.org>, "rui.zhang@intel.com" <rui.zhang@intel.com>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "linaro-dev@lists.linaro.org" <linaro-dev@lists.linaro.org>, "lm-sensors@lm-sensors.org" <lm-sensors@lm-sensors.org>, "khali@linux-fr.org" <khali@linux-fr.org>, "patches@linaro.org" <patches@linaro.org>
+Content-Type: text/plain;charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from outrelay03.libero.it ([212.52.84.103]:43606 "EHLO
+	outrelay03.libero.it" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751266Ab2ELRbW (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 12 May 2012 13:31:22 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Sat, May 12, 2012 at 05:40:42AM -0400, Amit Daniel Kachhap wrote:
-> This movement is needed because the hwmon entries and corresponding
-> sysfs interface is a duplicate of utilities already provided by
-> driver/thermal/thermal_sys.c. The goal is to place it in thermal folder
-> and add necessary functions to use the in-kernel thermal interfaces.
-> 
-> CC: Guenter Roeck <guenter.roeck@ericsson.com>
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> Signed-off-by: Donggeun Kim <dg77.kim@samsung.com>
-
-Acked-by: Guenter Roeck <guenter.roeck@ericsson.com>
-
-Some suggestions, possibly for later cleanup.
-
-> -
-> -       data = kzalloc(sizeof(struct exynos4_tmu_data), GFP_KERNEL);
-
-If you use devm_kzalloc, you won't have to free it.
-
-[ ...]
-
-> -       data->mem = request_mem_region(data->mem->start,
-> -                       resource_size(data->mem), pdev->name);
-
-Same here, with devm_request_mem_region.
-
-[ ... ]
-
-> -       data->base = ioremap(data->mem->start, resource_size(data->mem));
-
-and devm_ioremap
-
-[ ... ]
-
-> -       ret = request_irq(data->irq, exynos4_tmu_irq,
-
-and devm_request_irq
-
-Guenter
+haalloo,
+how are you doing,i hope you are fine,my name is miss abi okom i got your
+contact and want us to be a good friend,
+please try and write back to me so that i will give you my pictures and tell
+you more about me,
