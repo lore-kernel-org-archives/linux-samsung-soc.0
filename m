@@ -1,56 +1,68 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes for v3.4
-Date: Sat, 12 May 2012 15:49:51 -0700
-Message-ID: <CAOesGMjA2uSFdYoE7H02W7DcD92KFat1CWkoT2rLfxhf3o_pPw@mail.gmail.com>
-References: <4FAED92C.4090103@samsung.com>
-	<CAOesGMj8PgGRmdQQSnJmAurL1uYM2exxDaeTTWHVe9JQR0zQ-w@mail.gmail.com>
-	<4FAEF438.6010802@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: Re: [PATCH RESEND 0/4] ARM: EXYNOS: Add s3c-hsotg support for Exynos4210
+ and S5PV210 boards
+Date: Sun, 13 May 2012 08:53:37 +0900
+Message-ID: <4FAEF801.7040202@samsung.com>
+References: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:52127 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753580Ab2ELWtw convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:33949 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754347Ab2ELWxo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 May 2012 18:49:52 -0400
-Received: by obbtb18 with SMTP id tb18so5213614obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 15:49:52 -0700 (PDT)
-In-Reply-To: <4FAEF438.6010802@samsung.com>
+	Sat, 12 May 2012 18:53:44 -0400
+Received: by pbbrp8 with SMTP id rp8so4660460pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 15:53:44 -0700 (PDT)
+In-Reply-To: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Sat, May 12, 2012 at 4:37 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
-> Hi Arnd, Olof,
+On 05/10/12 22:16, Lukasz Majewski wrote:
+> This patch series adds S3C-HSOTG UDC support for Exynos4210 and S5PV210 based targets; namely
+>   Universal_C210, Nuri and GONI.
 >
-> Please pull Samsung fixes for v3.4:
+> Tested HW:
+> - Exynos4210 NURI target rev.1
+> - Exynos4210 Universal_C210 target rev.0
+> - S5PV210 GONI target
 >
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.4-samsung-fixes-5
+> Dependencies:
+> - usb:hsotg:samsung USB S3C-HSOTG driver fixes and code cleanup
+>    patches, which have been already pulled to usb for-next branch.
 >
+> http://permalink.gmane.org/gmane.linux.usb.general/62101
 >
-> Thanks.
+> Those patches are enabling this UDC driver on GONI, NURI and Universal_C210 targets
 >
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Joonyoung Shim (1):
+>    ARM: EXYNOS: Add s3c-hsotg device support for NURI board
 >
-> The following changes since commit d48b97b403d23f6df0b990cee652bdf9a5=
-2337a3:
+> Lukasz Majewski (3):
+>    ARM: EXYNOS: Add usb otg phy control for EXYNOS4210
+>    ARM: EXYNOS: Add s3c-hsotg device support for GONI board
+>    ARM: EXYNOS: Add s3c-hsotg device support for Universal C210 board
 >
-> =A0Linux 3.4-rc6 (2012-05-06 15:07:32 -0700)
+>   arch/arm/mach-exynos/Kconfig                 |    3 +
+>   arch/arm/mach-exynos/include/mach/irqs.h     |    1 +
+>   arch/arm/mach-exynos/include/mach/map.h      |    4 +
+>   arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
+>   arch/arm/mach-exynos/mach-nuri.c             |    9 ++-
+>   arch/arm/mach-exynos/mach-universal_c210.c   |   10 +++
+>   arch/arm/mach-exynos/setup-usb-phy.c         |   95 +++++++++++++++++++-------
+>   arch/arm/mach-s5pv210/Kconfig                |    1 +
+>   arch/arm/mach-s5pv210/mach-goni.c            |    5 ++
+>   9 files changed, 105 insertions(+), 26 deletions(-)
 >
-> are available in the git repository at:
-> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
-git
-> v3.4-samsung-fixes-5
+Applied,
 
-Pulled, thanks!
+Thanks.
 
-
--Olof
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
