@@ -1,18 +1,18 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung cleanup for v3.5
-Date: Sun, 13 May 2012 06:56:02 +0900
-Message-ID: <4FAEDC72.60206@samsung.com>
+Subject: [GIT PULL] cleanup samsung plat-s3c24xx and s5p for v3.5
+Date: Sun, 13 May 2012 08:18:43 +0900
+Message-ID: <4FAEEFD3.9040907@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:41754 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756452Ab2ELU4I (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:60714 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752066Ab2ELWSu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 May 2012 16:56:08 -0400
-Received: by pbbrp8 with SMTP id rp8so4608869pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 13:56:08 -0700 (PDT)
+	Sat, 12 May 2012 18:18:50 -0400
+Received: by dady13 with SMTP id y13so4442642dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 15:18:49 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
@@ -20,14 +20,18 @@ Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org
 
 Hi Arnd, Olof
 
-Here is cleanup samsung stuff for v3.5.
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-samsung
+Please pull cleanup plat-s3c24xx-s5p for v3.5 Samsung stuff.
 
-Mostly it is using common macro to define resources and clean up useless 
-codes.
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/cleanup-plat-s3c24xx-s5p
 
-If any problems, please kindly let me know.
+We can remove plat-s5p directory with this series and I think, the 
+plat-s3c24xx can be removed next time for one plat-samsung of Samsung stuff.
+
+Note, this is including cleanup-samsung-iommu which is removing s5p 
+iommu stuff in plat-s5p.
+
+If any problems, please let me know.
 
 Thanks.
 
@@ -42,95 +46,92 @@ The following changes since commit d48b97b403d23f6df0b990cee652bdf9a52337a3:
    Linux 3.4-rc6 (2012-05-06 15:07:32 -0700)
 
 are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/cleanup-samsung
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+next/cleanup-plat-s3c24xx-s5p
 
-Amit Daniel Kachhap (1):
-       ARM: EXYNOS: Adapt to cpuidle core time keeping and irq enable
+Heiko Stuebner (4):
+       ARM: S3C24XX: move plat-s3c24xx/cpu.c
+       ARM: S3C24XX: move plat-s3c24xx/dev-uart.c into common.c
+       ARM: S3C24XX: move common power-management code to mach-s3c24xx
+       ARM: S3C24XX: move common clock init into common.c
 
-Kukjin Kim (1):
-       Merge branch 'next/cleanup-samsung-macro' into next/cleanup-samsung
+Kukjin Kim (9):
+       ARM: SAMSUNG: move clock part for common s5p into plat-samsung
+       ARM: SAMSUNG: move interrupt part for common s5p into plat-samsung
+       ARM: SAMSUNG: move pm part for common s5p into plat-samsung
+       ARM: SAMSUNG: move hr timer for common s5p into plat-samsung
+       ARM: SAMSUNG: move platform device for s5p uart into plat-samsung
+       ARM: SAMSUNG: move setup code for s5p mfc and mipiphy into 
+plat-samsung
+       ARM: SAMSUNG: move options for common s5p into plat-samsung/Kconfig
+       ARM: SAMSUNG: merge plat-s5p into plat-samsung
+       Merge branch 'next/cleanup-plat-s3c24xx' into 
+next/cleanup-plat-s3c24xx-s5p
 
-Thomas Abraham (1):
-       ARM: SAMSUNG: remove all uses of clk_type member in sdhci 
-platform data
+KyongHo Cho (2):
+       S5P: SYSMMU: Remove System MMU device driver
+       ARM: EXYNOS: Change System MMU platform device definitions
 
-Tushar Behera (32):
-       ARM: SAMSUNG: Use common macro to define resources on devs.c
-       ARM: EXYNOS: Use common macro to define resources on dev-ahci.c
-       ARM: EXYNOS: Use common macro to define resources on dev-audio.c
-       ARM: EXYNOS: Use common macro to define resources on 
-mach-armlex4210.c
-       ARM: EXYNOS: Use common macro to define resources on mach-smdkv310.c
-       ARM: S3C24XX: Use common macro to define resources on bast-ide.c
-       ARM: S3C24XX: Use common macro to define resources on mach-amlm5900.c
-       ARM: S3C24XX: Use common macro to define resources on mach-anubis.c
-       ARM: S3C24XX: Use common macro to define resources on 
-mach-at2440evb.c
-       ARM: S3C24XX: Use common macro to define resources on mach-bast.c
-       ARM: S3C24XX: Use common macro to define resources on mach-gta02.c
-       ARM: S3C24XX: Use common macro to define resources on mach-h1940.c
-       ARM: S3C24XX: Use common macro to define resources on mach-mini2440.c
-       ARM: S3C24XX: Use common macro to define resources on mach-nexcoder.c
-       ARM: S3C24XX: Use common macro to define resources on mach-otom.c
-       ARM: S3C24XX: Use common macro to define resources on mach-rx1950.c
-       ARM: S3C24XX: Use common macro to define resources on 
-mach-tct_hammer.c
-       ARM: S3C24XX: Use common macro to define resources on mach-vr1000.c
-       ARM: S3C24XX: Use common macro to define resources on simtec-nor.c
-       ARM: S3C64XX: Use common macro to define resources on dev-audio.c
-       ARM: S3C64XX: Use common macro to define resources on dev-uart.c
-       ARM: S3C64XX: Use common macro to define resources on mach-anw6410.c
-       ARM: S3C64XX: Use common macro to define resources on mach-crag6410.c
-       ARM: S3C64XX: Use common macro to define resources on mach-mini6410.c
-       ARM: S3C64XX: Use common macro to define resources on mach-real6410.c
-       ARM: S3C64XX: Use common macro to define resources on mach-smdk6410.c
-       ARM: S5P64X0: Use common macro to define resources on dev-audio.c
-       ARM: S5PC100: Use common macro to define resources on dev-audio.c
-       ARM: S5PV210: Use common macro to define resources on dev-audio.c
-       ARM: S5PV210: Use common macro to define resources on mach-smdkv210.c
-       ARM: S3C24XX: Use common macro to define resources on mach-osiris.c
-       ARM: S3C24XX: Use common macro to define resources on mach-qt2410.c
-
-  arch/arm/mach-exynos/cpuidle.c             |   53 +---------
-  arch/arm/mach-exynos/dev-ahci.c            |   12 +--
-  arch/arm/mach-exynos/dev-audio.c           |  156 
-+++++-----------------------
-  arch/arm/mach-exynos/mach-armlex4210.c     |   16 +---
-  arch/arm/mach-exynos/mach-nuri.c           |    3 -
-  arch/arm/mach-exynos/mach-origen.c         |    2 -
-  arch/arm/mach-exynos/mach-smdk4x12.c       |    2 -
-  arch/arm/mach-exynos/mach-smdkv310.c       |   17 +---
-  arch/arm/mach-exynos/mach-universal_c210.c |    2 -
-  arch/arm/mach-s3c24xx/bast-ide.c           |   36 +------
-  arch/arm/mach-s3c24xx/mach-amlm5900.c      |    9 +--
-  arch/arm/mach-s3c24xx/mach-anubis.c        |   62 ++---------
-  arch/arm/mach-s3c24xx/mach-at2440evb.c     |   19 +---
-  arch/arm/mach-s3c24xx/mach-bast.c          |   45 ++-------
-  arch/arm/mach-s3c24xx/mach-gta02.c         |    7 +-
-  arch/arm/mach-s3c24xx/mach-h1940.c         |    9 +--
-  arch/arm/mach-s3c24xx/mach-mini2440.c      |   19 +---
-  arch/arm/mach-s3c24xx/mach-nexcoder.c      |    6 +-
-  arch/arm/mach-s3c24xx/mach-osiris.c        |   12 +--
-  arch/arm/mach-s3c24xx/mach-otom.c          |    6 +-
-  arch/arm/mach-s3c24xx/mach-qt2410.c        |   12 +--
-  arch/arm/mach-s3c24xx/mach-rx1950.c        |    9 +--
-  arch/arm/mach-s3c24xx/mach-tct_hammer.c    |    7 +-
-  arch/arm/mach-s3c24xx/mach-vr1000.c        |   39 ++------
-  arch/arm/mach-s3c24xx/simtec-nor.c         |    6 +-
-  arch/arm/mach-s3c64xx/dev-audio.c          |  120 ++++------------------
-  arch/arm/mach-s3c64xx/dev-uart.c           |   48 ++-------
-  arch/arm/mach-s3c64xx/mach-anw6410.c       |   19 +---
-  arch/arm/mach-s3c64xx/mach-crag6410.c      |   26 +----
-  arch/arm/mach-s3c64xx/mach-mini6410.c      |   19 +---
-  arch/arm/mach-s3c64xx/mach-real6410.c      |   19 +---
-  arch/arm/mach-s3c64xx/mach-smdk6410.c      |   13 +--
-  arch/arm/mach-s5p64x0/dev-audio.c          |   72 ++-----------
-  arch/arm/mach-s5pc100/dev-audio.c          |  138 ++++--------------------
-  arch/arm/mach-s5pv210/dev-audio.c          |  156 
-+++++-----------------------
-  arch/arm/mach-s5pv210/mach-smdkv210.c      |   19 +---
-  arch/arm/plat-samsung/devs.c               |   16 +---
-  arch/arm/plat-samsung/include/plat/sdhci.h |    7 --
-  arch/arm/plat-samsung/platformdata.c       |    2 -
-  39 files changed, 214 insertions(+), 1026 deletions(-)
+  arch/arm/mach-exynos/clock-exynos4.h               |    2 +
+  arch/arm/mach-exynos/clock-exynos4210.c            |   11 +
+  arch/arm/mach-exynos/clock-exynos4212.c            |   28 ++-
+  arch/arm/mach-exynos/clock-exynos5.c               |   90 ++++
+  arch/arm/mach-exynos/dev-sysmmu.c                  |  457 
++++++++++++---------
+  arch/arm/mach-exynos/include/mach/irqs.h           |   25 +-
+  arch/arm/mach-exynos/include/mach/map.h            |   38 ++
+  arch/arm/mach-exynos/include/mach/regs-clock.h     |    5 +
+  arch/arm/mach-exynos/include/mach/regs-sysmmu.h    |   28 --
+  arch/arm/mach-exynos/include/mach/sysmmu.h         |   88 +++--
+  arch/arm/mach-exynos/mach-armlex4210.c             |    1 -
+  arch/arm/mach-exynos/mach-smdkv310.c               |    1 -
+  arch/arm/mach-s3c24xx/Makefile                     |    6 +
+  .../{plat-s3c24xx/cpu.c => mach-s3c24xx/common.c}  |   69 +++-
+  arch/arm/{plat-s3c24xx => mach-s3c24xx}/irq-pm.c   |    0
+  arch/arm/{plat-s3c24xx => mach-s3c24xx}/pm.c       |    0
+  arch/arm/{plat-s3c24xx => mach-s3c24xx}/sleep.S    |    0
+  arch/arm/plat-s3c24xx/Makefile                     |    6 -
+  arch/arm/plat-s3c24xx/clock.c                      |   59 ---
+  arch/arm/plat-s3c24xx/dev-uart.c                   |  100 -----
+  arch/arm/plat-s5p/Kconfig                          |  140 ------
+  arch/arm/plat-s5p/Makefile                         |   28 --
+  arch/arm/plat-s5p/sysmmu.c                         |  313 --------------
+  arch/arm/plat-samsung/Kconfig                      |  140 ++++++
+  arch/arm/plat-samsung/Makefile                     |   13 +
+  arch/arm/plat-samsung/include/plat/devs.h          |    1 -
+  arch/arm/plat-samsung/include/plat/sysmmu.h        |   95 ----
+  .../{plat-s5p/clock.c => plat-samsung/s5p-clock.c} |    3 +-
+  .../dev-mfc.c => plat-samsung/s5p-dev-mfc.c}       |    4 +-
+  .../dev-uart.c => plat-samsung/s5p-dev-uart.c}     |   78 +---
+  .../irq-eint.c => plat-samsung/s5p-irq-eint.c}     |    3 +-
+  .../s5p-irq-gpioint.c}                             |    3 +-
+  .../irq-pm.c => plat-samsung/s5p-irq-pm.c}         |    3 +-
+  .../arm/{plat-s5p/irq.c => plat-samsung/s5p-irq.c} |    3 +-
+  arch/arm/{plat-s5p/pm.c => plat-samsung/s5p-pm.c}  |    3 +-
+  .../{plat-s5p/sleep.S => plat-samsung/s5p-sleep.S} |    3 +-
+  arch/arm/{plat-s5p => plat-samsung}/s5p-time.c     |    3 +-
+  .../arm/{plat-s5p => plat-samsung}/setup-mipiphy.c |    0
+  43 files changed, 781 insertions(+), 1163 deletions(-)
+  delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
+  rename arch/arm/{plat-s3c24xx/cpu.c => mach-s3c24xx/common.c} (76%)
+  rename arch/arm/{plat-s3c24xx => mach-s3c24xx}/irq-pm.c (100%)
+  rename arch/arm/{plat-s3c24xx => mach-s3c24xx}/pm.c (100%)
+  rename arch/arm/{plat-s3c24xx => mach-s3c24xx}/sleep.S (100%)
+  delete mode 100644 arch/arm/plat-s3c24xx/clock.c
+  delete mode 100644 arch/arm/plat-s3c24xx/dev-uart.c
+  delete mode 100644 arch/arm/plat-s5p/Kconfig
+  delete mode 100644 arch/arm/plat-s5p/Makefile
+  delete mode 100644 arch/arm/plat-s5p/sysmmu.c
+  delete mode 100644 arch/arm/plat-samsung/include/plat/sysmmu.h
+  rename arch/arm/{plat-s5p/clock.c => plat-samsung/s5p-clock.c} (99%)
+  rename arch/arm/{plat-s5p/dev-mfc.c => plat-samsung/s5p-dev-mfc.c} (97%)
+  rename arch/arm/{plat-s5p/dev-uart.c => plat-samsung/s5p-dev-uart.c} (57%)
+  rename arch/arm/{plat-s5p/irq-eint.c => plat-samsung/s5p-irq-eint.c} (99%)
+  rename arch/arm/{plat-s5p/irq-gpioint.c => 
+plat-samsung/s5p-irq-gpioint.c} (99%)
+  rename arch/arm/{plat-s5p/irq-pm.c => plat-samsung/s5p-irq-pm.c} (98%)
+  rename arch/arm/{plat-s5p/irq.c => plat-samsung/s5p-irq.c} (96%)
+  rename arch/arm/{plat-s5p/pm.c => plat-samsung/s5p-pm.c} (95%)
+  rename arch/arm/{plat-s5p/sleep.S => plat-samsung/s5p-sleep.S} (98%)
+  rename arch/arm/{plat-s5p => plat-samsung}/s5p-time.c (99%)
+  rename arch/arm/{plat-s5p => plat-samsung}/setup-mipiphy.c (100%)
