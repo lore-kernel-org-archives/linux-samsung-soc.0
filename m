@@ -1,62 +1,55 @@
-From: Olof Johansson <olof@lixom.net>
+From: Kukjin Kim <kgene.kim@samsung.com>
 Subject: Re: [GIT PULL] Samsung fixes for v3.4
-Date: Sat, 12 May 2012 15:29:31 -0700
-Message-ID: <CAOesGMj8PgGRmdQQSnJmAurL1uYM2exxDaeTTWHVe9JQR0zQ-w@mail.gmail.com>
-References: <4FAED92C.4090103@samsung.com>
+Date: Sun, 13 May 2012 08:37:28 +0900
+Message-ID: <4FAEF438.6010802@samsung.com>
+References: <4FAED92C.4090103@samsung.com> <CAOesGMj8PgGRmdQQSnJmAurL1uYM2exxDaeTTWHVe9JQR0zQ-w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:42939 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752066Ab2ELW3c convert rfc822-to-8bit (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:53859 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753063Ab2ELWhf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 May 2012 18:29:32 -0400
-Received: by obbtb18 with SMTP id tb18so5193761obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 15:29:31 -0700 (PDT)
-In-Reply-To: <4FAED92C.4090103@samsung.com>
+	Sat, 12 May 2012 18:37:35 -0400
+Received: by pbbrp8 with SMTP id rp8so4653650pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 15:37:34 -0700 (PDT)
+In-Reply-To: <CAOesGMj8PgGRmdQQSnJmAurL1uYM2exxDaeTTWHVe9JQR0zQ-w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
+Hi Arnd, Olof,
 
+Please pull Samsung fixes for v3.4:
 
-Since we are _so_ close to release, I am going to be picky about what
-kind of patches we're going to accept for 3.4. See below.
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.4-samsung-fixes-5
 
-On Sat, May 12, 2012 at 2:42 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
-te:
+Thanks.
 
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-> Changhwan Youn (1):
-> =A0 =A0 =A0ARM: EXYNOS: fix the hotplug for Cortex-A15
+The following changes since commit d48b97b403d23f6df0b990cee652bdf9a52337a3:
 
-This is a feature, not a bug fix -- cpu hotplug has never worked for
-A15 based on the patch description. So per definition it's 3.5
-material.
+   Linux 3.4-rc6 (2012-05-06 15:07:32 -0700)
 
-Also, I'll send out a comment on the patch itself, it shouldn't check
-for SoC version, it should check for core version. See separate email
-shortly.
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.4-samsung-fixes-5
 
-> Jose Miguel Goncalves (1):
-> =A0 =A0 =A0ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping
+Kukjin Kim (1):
+       ARM: EXYNOS: fix ctrlbit for exynos5_clk_pdma1
 
-This has been broken since 2.6.32. Please queue it up in a fixes
-branch for the 3.5 merge window instead, it doesn't qualify as a
-recent regression and thus we shouldn't try to squeeze it in before
-the merge window closes.
+Marek Szyprowski (1):
+       ARM: EXYNOS: use s5p-timer for UniversalC210 board
 
-> Kukjin Kim (1):
-> =A0 =A0 =A0ARM: EXYNOS: fix ctrlbit for exynos5_clk_pdma1
->
-> Marek Szyprowski (1):
-> =A0 =A0 =A0ARM: EXYNOS: use s5p-timer for UniversalC210 board
-
-Those two look appropriate. Please send a new pull request with those t=
-wo.
-
-
--Olof
+  arch/arm/mach-exynos/Kconfig               |    3 +++
+  arch/arm/mach-exynos/clock-exynos5.c       |    2 +-
+  arch/arm/mach-exynos/mach-universal_c210.c |    4 +++-
+  3 files changed, 7 insertions(+), 2 deletions(-)
