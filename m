@@ -1,89 +1,48 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/7] mmc: dw_mmc: add device tree support
-Date: Sat, 12 May 2012 14:13:07 +0530
-Message-ID: <CAJuYYwTQ6M0uTLQ_1M9HdcBpaYd2vws36Xx0fJFmwfJ-LSVJAA@mail.gmail.com>
-References: <1335935266-25289-1-git-send-email-thomas.abraham@linaro.org>
- <1335935266-25289-4-git-send-email-thomas.abraham@linaro.org>
- <CAOesGMh_0dShqe+kSB1Xgn9bpLv0j+b9QP+vN9N57XHP1geSHg@mail.gmail.com>
- <CAJuYYwSmiPNrFhd9xr2AkAbRfJm_gP9ym+AXyy9jyPG3FnFuhA@mail.gmail.com>
- <CAOesGMiXfODM=hDp9EP3uQOk041XCvPFfTzDwfkvBWeGWLdCgg@mail.gmail.com>
+From: Ken Harris <kjh@hokulea.org>
+Subject: U1HD info
+Date: Sat, 12 May 2012 01:51:49 -0700
+Message-ID: <CAK_-F2+ouuOFbEgB6BisyLm=VxjjfwpYHtuys9_6bhbhtH71jQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAOesGMiXfODM=hDp9EP3uQOk041XCvPFfTzDwfkvBWeGWLdCgg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:43144 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751972Ab2ELIvt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 12 May 2012 04:51:49 -0400
+Received: by obbtb18 with SMTP id tb18so4412645obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 01:51:49 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 12 May 2012 12:37, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
-> Hi,
->
-> On Thu, May 10, 2012 at 3:15 AM, Thomas Abraham
-> <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
->> Hi Olof,
->>
->> On 2 May 2012 23:37, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
->>> Hi,
->>
->> [...]
->>
->>>> +# Slots: The slot specific information are contained within child-nod=
-es with
->>>> + =A0each child-node representing a supported slot. There should be at=
-least one
->>>> + =A0child node representing a card slot. The name of the slot child n=
-ode should
->>>> + =A0be 'slot{n}' where n is the unique number of the slot connnected =
-to the
->>>> + =A0controller. The following are optional properties which can be in=
-cluded in
->>>> + =A0the slot child node.
->>>
->>> Since we're talking slots / cards on a bus, I think the addressing
->>> model would be useful here. So in the main controller node:
->>> =A0 =A0#address-cells =3D <1>;
->>> =A0 =A0#size-cells =3D <0>;
->>>
->>> And then each slot would need a reg property and possibly unit address:
->>>
->>> =A0 slot {
->>> =A0 =A0 =A0 =A0reg =3D <0>;
->>> =A0 =A0 =A0 =A0...
->>> =A0 };
->>>
->>> (unit addresses on the slots are only needed if they can't be
->>> disambiguated by name, so not needed if you only have one slot).
->>>
->>
->> Is the addressing model as described above needed in this case? The
->> address for a slot is not used by the controller driver code and is
->> just a virtual number. It would be sufficient to represent the nodes
->> representing the slots with a unique name.
->
-> The driver has the concept of slot IDs (slot->id struct member), and
-> the hardware definitely enumerates them.
->
-> So, I think it makes sense to give a chance to enumerate the slots in
-> the device tree. Otherwise, how do you know which one is which on
-> hardware? It also opens up the flexibility to have the same name for
-> both slots if it makes sense to describe a board that way.
+I'm interested in the Tizen developers device.
 
-Thanks Olof. Yes, I missed the usage of the id number in the driver. I
-will add the slot addressing as you have suggested and repost.
+Do you have detailed info about the hardware?
 
-Thanks,
-Thomas.
+I have some info (see below), but I'm interested in info about the
+cameras, GPS chip, baseband chips.
 
->
->
-> -Olof
+If you can share some info, please let me know.
+
+Cheers,
+Ken
+
+PS:
+
+>From the "dmesg" output and the log files, I see this:
+
+S5PV310 Revision: EVT1
+Memory: 256MB 256MB 128MB 128MB 256MB = 1024MB total
+LCD dimensions:    720x1280 pixels (58x103 millimeters)
+Touchscreen: melfas
+
+BCM4330 : 802.11a/b/g/n MAC/Baseband/Radio with Integrated Bluetooth
+4.0+HS & FM Transceiver
+
+Si470x FM Radio Receiver
+
+If seems to have an NFC chip, but no antenna.
+
+KR3DH accelerometer
+ak8975 : 3-axis Electronic Compass
