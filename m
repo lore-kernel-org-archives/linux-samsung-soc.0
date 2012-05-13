@@ -1,71 +1,300 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 05/10] ARM: Samsung: Update the device names for spi
- clock lookup
-Date: Sun, 13 May 2012 15:51:35 +0100
-Message-ID: <20120513145134.GA6381@opensource.wolfsonmicro.com>
-References: <1336514694-22393-1-git-send-email-thomas.abraham@linaro.org>
- <1336514694-22393-6-git-send-email-thomas.abraham@linaro.org>
- <20120509085249.GA28702@sirena.org.uk>
- <CAJuYYwQ+Wn11puF7AdPD41Jntbuj7oZHqNfzQA2T8V=2cigQnw@mail.gmail.com>
- <20120509142836.GT3955@opensource.wolfsonmicro.com>
- <CAJuYYwSTJoNRuN87GoTZMgF-qahbu02kJ9SUd7omQ5WD0VjTww@mail.gmail.com>
+From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] ARM: S3C24XX: add support for second irq set of S3C2416
+Date: Sun, 13 May 2012 17:25:57 +0200
+Message-ID: <201205131725.58200.heiko@sntech.de>
+References: <201203032219.45813.heiko@sntech.de> <201204022128.10321.heiko@sntech.de> <201204251511.26072.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
+Content-Type: Text/Plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55665 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751573Ab2EMOvl (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:58378 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1753236Ab2EMP0O (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 13 May 2012 10:51:41 -0400
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwSTJoNRuN87GoTZMgF-qahbu02kJ9SUd7omQ5WD0VjTww@mail.gmail.com>
+	Sun, 13 May 2012 11:26:14 -0400
+In-Reply-To: <201204251511.26072.heiko@sntech.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+
+Hi Kgene,
+
+Am Mittwoch 25 April 2012, 15:11:25 schrieb Heiko St=FCbner:
+> Am Montag, 2. April 2012, 21:28:09 schrieb Heiko St=FCbner:
+> > Am Samstag 03 M=E4rz 2012, 22:19:45 schrieb Heiko St=FCbner:
+> > > The S3C2416 has a separate second interrupt register-set to suppo=
+rt
+> > > additional irqs. This patch adds the necessary constants and regi=
+sters
+> > > the irq handlers for it.
+> > >=20
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> >=20
+> > and also "ping" :-)
+>=20
+> and another one :-)
+
+could you take a look at this patch please?
+
+Thanks
+Heiko
 
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, May 10, 2012 at 01:17:32AM +0800, Thomas Abraham wrote:
-> On 9 May 2012 22:28, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
-
-> > This means that bisection will be broken - anything with only one tree
-> > won't be able to load the SPI driver successfully until it's merged
-> > with the other which isn't ideal.
-
-> Yes, we would have that problem until the two trees are merged. But I
-> still prefer not to squash the two patches which already contain huge
-> diff.
-
-I'd not say the diff is *that* big (and most of what's there is simple
-and repetitive), and bisection is a very useful tool.  I know I
-frequently find it enormously painful trying to figure out breakage when
-large chunks of the history don't work usefully.
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPr8o7AAoJEBus8iNuMP3dgagP/A7mKrizYW+adHb7Rn///vWv
-3Ob/XG/AgiioD+0zeHs5/tKECe4oHrFiXZUKwKuXHHH2KU/uYuEkGlW+O5VoHG/2
-msxyuaWFU8HjrMkrM7onjRJdQJNIocXLXgR8Ou4AKt3xgfVzajwtxfcIz6+jP6WQ
-PK6Dng9666yoHzKcwJoQkdmJJXy9O5i8VuyUclf12ifssPjDiF+Osl+zth5TcZ6T
-SN0SS8lS537huRXbbfbNvd1KZl4E98e1l2HGfiYdLmcWyN1QVK6I5dC0pU0OiGKG
-7oxi51BQ3T3HBcXTKHErIdvHRgVY92gXwoQOLgAzPCxaeT3n/mC2lHQmuq/8q5UH
-SdFHfKRiFMzjDJmgvSOeFFODwu5v1xNWsXxAjNybIpaA35alX8m7+GSVv3pCp3Pt
-MF0WRDkwnA9vjS9TK52IoOMytaDVn8tOnJSzl9EorLAhr62Hg2l/g42EQxsZFeh0
-V/+LPPsVITs5X497EW+Nx4dWfKYjWdAUpfC4Q4txkJ/xiUq4iagZTMwwrB3HGiwL
-D/vE+8AVhPsRdTTu4LNe8qmXKQwqfJ0uLwELRBMq8r0P9MLPS5N7kTIkKJKLKLYP
-MTEohI7940V6/gWBoqfwnvn+0WOnXdFaz94NWj6Fca7iVIzxyqpwFXp6lI7hcbSR
-RQ/WulHFOW9St3zQf+5T
-=M6co
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+>=20
+> > Thanks
+> > Heiko
+> >=20
+> > > ---
+> > > Patch should go on top of the current s3c24xx consolidation
+> > >=20
+> > >  arch/arm/mach-s3c24xx/include/mach/irqs.h    |   15 ++++-
+> > >  arch/arm/mach-s3c24xx/irq-s3c2416.c          |   98
+> > >=20
+> > > ++++++++++++++++++++++++++ arch/arm/mach-s3c24xx/s3c2416.c       =
+     =20
+> > > |
+> > >=20
+> > >   1 +
+> > > =20
+> > >  arch/arm/plat-samsung/include/plat/s3c2416.h |    3 +
+> > >  4 files changed, 116 insertions(+), 1 deletions(-)
+> > >=20
+> > > diff --git a/arch/arm/mach-s3c24xx/include/mach/irqs.h
+> > > b/arch/arm/mach-s3c24xx/include/mach/irqs.h index e53b217..e12057=
+6
+> > > 100644 --- a/arch/arm/mach-s3c24xx/include/mach/irqs.h
+> > > +++ b/arch/arm/mach-s3c24xx/include/mach/irqs.h
+> > > @@ -134,6 +134,17 @@
+> > >=20
+> > >  #define IRQ_S32416_WDT		S3C2410_IRQSUB(27)
+> > >  #define IRQ_S32416_AC97		S3C2410_IRQSUB(28)
+> > >=20
+> > > +/* second interrupt-register of s3c2416/s3c2450 */
+> > > +
+> > > +#define S3C2416_IRQ(x)		S3C2410_IRQ((x)+54+29)
+> > > +#define IRQ_S3C2416_2D		S3C2416_IRQ(0)
+> > > +#define IRQ_S3C2416_IIC1	S3C2416_IRQ(1)
+> > > +#define IRQ_S3C2416_RESERVED2	S3C2416_IRQ(2)
+> > > +#define IRQ_S3C2416_RESERVED3	S3C2416_IRQ(3)
+> > > +#define IRQ_S3C2416_PCM0	S3C2416_IRQ(4)
+> > > +#define IRQ_S3C2416_PCM1	S3C2416_IRQ(5)
+> > > +#define IRQ_S3C2416_I2S0	S3C2416_IRQ(6)
+> > > +#define IRQ_S3C2416_I2S1	S3C2416_IRQ(7)
+> > >=20
+> > >  /* extra irqs for s3c2440 */
+> > >=20
+> > > @@ -175,7 +186,9 @@
+> > >=20
+> > >  #define IRQ_S3C2443_WDT		S3C2410_IRQSUB(27)
+> > >  #define IRQ_S3C2443_AC97	S3C2410_IRQSUB(28)
+> > >=20
+> > > -#if defined(CONFIG_CPU_S3C2443) || defined(CONFIG_CPU_S3C2416)
+> > > +#if defined(CONFIG_CPU_S3C2416)
+> > > +#define NR_IRQS (IRQ_S3C2416_I2S1+1)
+> > > +#elif defined(CONFIG_CPU_S3C2443)
+> > >=20
+> > >  #define NR_IRQS (IRQ_S3C2443_AC97+1)
+> > >  #else
+> > >  #define NR_IRQS (IRQ_S3C2440_AC97+1)
+> > >=20
+> > > diff --git a/arch/arm/mach-s3c24xx/irq-s3c2416.c
+> > > b/arch/arm/mach-s3c24xx/irq-s3c2416.c index fd49f35..d92f879 1006=
+44
+> > > --- a/arch/arm/mach-s3c24xx/irq-s3c2416.c
+> > > +++ b/arch/arm/mach-s3c24xx/irq-s3c2416.c
+> > > @@ -27,6 +27,7 @@
+> > >=20
+> > >  #include <linux/ioport.h>
+> > >  #include <linux/device.h>
+> > >  #include <linux/io.h>
+> > >=20
+> > > +#include <linux/syscore_ops.h>
+> > >=20
+> > >  #include <mach/hardware.h>
+> > >  #include <asm/irq.h>
+> > >=20
+> > > @@ -192,6 +193,43 @@ static struct irq_chip s3c2416_irq_uart3 =3D=
+ {
+> > >=20
+> > >  	.irq_ack	=3D s3c2416_irq_uart3_ack,
+> > > =20
+> > >  };
+> > >=20
+> > > +/* second interrupt register */
+> > > +
+> > > +static inline void s3c2416_irq_ack_second(struct irq_data *data)
+> > > +{
+> > > +	unsigned long bitval =3D 1UL << (data->irq - IRQ_S3C2416_2D);
+> > > +
+> > > +	__raw_writel(bitval, S3C2416_SRCPND2);
+> > > +	__raw_writel(bitval, S3C2416_INTPND2);
+> > > +}
+> > > +
+> > > +static void s3c2416_irq_mask_second(struct irq_data *data)
+> > > +{
+> > > +	unsigned long bitval =3D 1UL << (data->irq - IRQ_S3C2416_2D);
+> > > +	unsigned long mask;
+> > > +
+> > > +	mask =3D __raw_readl(S3C2416_INTMSK2);
+> > > +	mask |=3D bitval;
+> > > +	__raw_writel(mask, S3C2416_INTMSK2);
+> > > +}
+> > > +
+> > > +static void s3c2416_irq_unmask_second(struct irq_data *data)
+> > > +{
+> > > +	unsigned long bitval =3D 1UL << (data->irq - IRQ_S3C2416_2D);
+> > > +	unsigned long mask;
+> > > +
+> > > +	mask =3D __raw_readl(S3C2416_INTMSK2);
+> > > +	mask &=3D ~bitval;
+> > > +	__raw_writel(mask, S3C2416_INTMSK2);
+> > > +}
+> > > +
+> > > +struct irq_chip s3c2416_irq_second =3D {
+> > > +	.irq_ack	=3D s3c2416_irq_ack_second,
+> > > +	.irq_mask	=3D s3c2416_irq_mask_second,
+> > > +	.irq_unmask	=3D s3c2416_irq_unmask_second,
+> > > +};
+> > > +
+> > > +
+> > >=20
+> > >  /* IRQ initialisation code */
+> > > =20
+> > >  static int __init s3c2416_add_sub(unsigned int base,
+> > >=20
+> > > @@ -213,6 +251,42 @@ static int __init s3c2416_add_sub(unsigned i=
+nt
+> > > base,
+> > >=20
+> > >  	return 0;
+> > > =20
+> > >  }
+> > >=20
+> > > +static void __init s3c2416_add_second(void)
+> > > +{
+> > > +	unsigned long pend;
+> > > +	unsigned long last;
+> > > +	int irqno;
+> > > +	int i;
+> > > +
+> > > +	/* first, clear all interrupts pending... */
+> > > +	last =3D 0;
+> > > +	for (i =3D 0; i < 4; i++) {
+> > > +		pend =3D __raw_readl(S3C2416_INTPND2);
+> > > +
+> > > +		if (pend =3D=3D 0 || pend =3D=3D last)
+> > > +			break;
+> > > +
+> > > +		__raw_writel(pend, S3C2416_SRCPND2);
+> > > +		__raw_writel(pend, S3C2416_INTPND2);
+> > > +		printk(KERN_INFO "irq: clearing pending status %08x\n",
+> > > +		       (int)pend);
+> > > +		last =3D pend;
+> > > +	}
+> > > +
+> > > +	for (irqno =3D IRQ_S3C2416_2D; irqno <=3D IRQ_S3C2416_I2S1; irq=
+no++) {
+> > > +		switch (irqno) {
+> > > +		case IRQ_S3C2416_RESERVED2:
+> > > +		case IRQ_S3C2416_RESERVED3:
+> > > +			/* no IRQ here */
+> > > +			break;
+> > > +		default:
+> > > +			irq_set_chip_and_handler(irqno, &s3c2416_irq_second,
+> > > +						 handle_edge_irq);
+> > > +			set_irq_flags(irqno, IRQF_VALID);
+> > > +		}
+> > > +	}
+> > > +}
+> > > +
+> > >=20
+> > >  static int __init s3c2416_irq_add(struct device *dev,
+> > > =20
+> > >  				  struct subsys_interface *sif)
+> > > =20
+> > >  {
+> > >=20
+> > > @@ -232,6 +306,8 @@ static int __init s3c2416_irq_add(struct devi=
+ce
+> > > *dev,
+> > >=20
+> > >  			&s3c2416_irq_wdtac97,
+> > >  			IRQ_S3C2443_WDT, IRQ_S3C2443_AC97);
+> > >=20
+> > > +	s3c2416_add_second();
+> > > +
+> > >=20
+> > >  	return 0;
+> > > =20
+> > >  }
+> > >=20
+> > > @@ -248,3 +324,25 @@ static int __init s3c2416_irq_init(void)
+> > >=20
+> > >  arch_initcall(s3c2416_irq_init);
+> > >=20
+> > > +#ifdef CONFIG_PM
+> > > +static struct sleep_save irq_save[] =3D {
+> > > +	SAVE_ITEM(S3C2416_INTMSK2),
+> > > +};
+> > > +
+> > > +int s3c2416_irq_suspend(void)
+> > > +{
+> > > +	s3c_pm_do_save(irq_save, ARRAY_SIZE(irq_save));
+> > > +
+> > > +	return 0;
+> > > +}
+> > > +
+> > > +void s3c2416_irq_resume(void)
+> > > +{
+> > > +	s3c_pm_do_restore(irq_save, ARRAY_SIZE(irq_save));
+> > > +}
+> > > +
+> > > +struct syscore_ops s3c2416_irq_syscore_ops =3D {
+> > > +	.suspend	=3D s3c2416_irq_suspend,
+> > > +	.resume		=3D s3c2416_irq_resume,
+> > > +};
+> > > +#endif
+> > > diff --git a/arch/arm/mach-s3c24xx/s3c2416.c
+> > > b/arch/arm/mach-s3c24xx/s3c2416.c index 0e9a71c..694977e 100644
+> > > --- a/arch/arm/mach-s3c24xx/s3c2416.c
+> > > +++ b/arch/arm/mach-s3c24xx/s3c2416.c
+> > > @@ -105,6 +105,7 @@ int __init s3c2416_init(void)
+> > >=20
+> > >  	register_syscore_ops(&s3c2416_pm_syscore_ops);
+> > > =20
+> > >  #endif
+> > > =20
+> > >  	register_syscore_ops(&s3c24xx_irq_syscore_ops);
+> > >=20
+> > > +	register_syscore_ops(&s3c2416_irq_syscore_ops);
+> > >=20
+> > >  	return device_register(&s3c2416_dev);
+> > > =20
+> > >  }
+> > >=20
+> > > diff --git a/arch/arm/plat-samsung/include/plat/s3c2416.h
+> > > b/arch/arm/plat-samsung/include/plat/s3c2416.h index de2b5bd..717=
+8e33
+> > > 100644
+> > > --- a/arch/arm/plat-samsung/include/plat/s3c2416.h
+> > > +++ b/arch/arm/plat-samsung/include/plat/s3c2416.h
+> > > @@ -24,6 +24,9 @@ extern void s3c2416_init_clocks(int xtal);
+> > >=20
+> > >  extern  int s3c2416_baseclk_add(void);
+> > > =20
+> > >  extern void s3c2416_restart(char mode, const char *cmd);
+> > >=20
+> > > +
+> > > +extern struct syscore_ops s3c2416_irq_syscore_ops;
+> > > +
+> > >=20
+> > >  #else
+> > >  #define s3c2416_init_clocks NULL
+> > >  #define s3c2416_init_uarts NULL
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in the body of a message to majordomo@vger.kernel.=
+org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
