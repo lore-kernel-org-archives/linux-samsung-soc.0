@@ -1,56 +1,616 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] serial: samsung: Add support 4M baudrate for samsung
- serial
-Date: Sun, 13 May 2012 08:58:08 +0900
-Message-ID: <4FAEF910.902@samsung.com>
-References: <001b01cce24a$b01cb370$10561a50$%kim@samsung.com>
+Subject: Re: [PATCH 2/2] ARM: EXYNOS5: Add support SPI for EXYNOS5250
+Date: Sun, 13 May 2012 09:06:25 +0900
+Message-ID: <4FAEFB01.6070603@samsung.com>
+References: <001d01cce24b$2bf19920$83d4cb60$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=EUC-KR
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:54143 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753063Ab2ELW6P (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:63894 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754347Ab2ELXGc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 May 2012 18:58:15 -0400
-Received: by pbbrp8 with SMTP id rp8so4662303pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 15:58:14 -0700 (PDT)
-In-Reply-To: <001b01cce24a$b01cb370$10561a50$%kim@samsung.com>
+	Sat, 12 May 2012 19:06:32 -0400
+Received: by dady13 with SMTP id y13so4463021dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 16:06:32 -0700 (PDT)
+In-Reply-To: <001d01cce24b$2bf19920$83d4cb60$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: =?EUC-KR?B?seiw5sDP?= <ki0351.kim@samsung.com>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>
 
-On 02/03/12 17:06, =B1=E8=B0=E6=C0=CF wrote:
-> At getting the baudrate, the max baudrate parameter value
-> is changed to 4M.
-> So samsung serial can support upto 4M baudrate.
+On 02/03/12 17:09, =B1=E8=B0=E6=C0=CF wrote:
+> This patch adds clocks, gpio configs and platform devices for EXYNOS5=
+ SPI.
+> And also the spi clock and gpio setup are added in the smdk5250_machi=
+ne_init.
 >=20
 > Signed-off-by: Kyoungil Kim<ki0351.kim@samsung.com>
 > ---
->   drivers/tty/serial/samsung.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
+>   arch/arm/mach-exynos/clock-exynos5.c             |   89 +++++++++++=
+++++
+>   arch/arm/mach-exynos/include/mach/map.h          |   13 ++-
+>   arch/arm/mach-exynos/include/mach/regs-clock.h   |    4 +
+>   arch/arm/mach-exynos/mach-smdk5250.c             |  108 +++++++++++=
++++++++-
+>   arch/arm/mach-exynos/setup-spi.c                 |  129 +++++++++++=
++++++++++--
+>   arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    4 +
+>   6 files changed, 330 insertions(+), 17 deletions(-)
 >=20
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsun=
-g.c
-> index a6abe0c..513096d 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -701,7 +701,7 @@ static void s3c24xx_serial_set_termios(struct uar=
-t_port *port,
->   	 * Ask the core to calculate the divisor for us.
->   	 */
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exy=
+nos/clock-exynos5.c
+> index b43161b..d6fa729 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -83,6 +83,11 @@ static int exynos5_clksrc_mask_peric0_ctrl(struct =
+clk *clk, int enable)
+>   	return s5p_gatectrl(EXYNOS5_CLKSRC_MASK_PERIC0, clk, enable);
+>   }
 >=20
-> -	baud =3D uart_get_baud_rate(port, termios, old, 0, 115200*8);
-> +	baud =3D uart_get_baud_rate(port, termios, old, 0, 4000000);
->   	quot =3D s3c24xx_serial_getclk(ourport, baud,&clk,&clk_sel);
->   	if (baud =3D=3D 38400&&  (port->flags&  UPF_SPD_MASK) =3D=3D UPF_S=
-PD_CUST)
->   		quot =3D port->custom_divisor;
+> +static int exynos5_clksrc_mask_peric1_ctrl(struct clk *clk, int enab=
+le)
+> +{
+> +	return s5p_gatectrl(EXYNOS5_CLKSRC_MASK_PERIC1, clk, enable);
+> +}
+> +
+>   static int exynos5_clk_ip_acp_ctrl(struct clk *clk, int enable)
+>   {
+>   	return s5p_gatectrl(EXYNOS5_CLKGATE_IP_ACP, clk, enable);
+> @@ -641,6 +646,21 @@ static struct clk exynos5_init_clocks_off[] =3D =
+{
+>   		.parent		=3D&exynos5_clk_aclk_66.clk,
+>   		.enable		=3D exynos5_clk_ip_peric_ctrl,
+>   		.ctrlbit	=3D (1<<  14),
+> +	}, {
+> +		.name		=3D "spi",
+> +		.devname	=3D "s3c64xx-spi.0",
+> +		.enable		=3D exynos5_clk_ip_peric_ctrl,
+> +		.ctrlbit	=3D (1<<  16),
+> +	}, {
+> +		.name		=3D "spi",
+> +		.devname	=3D "s3c64xx-spi.1",
+> +		.enable		=3D exynos5_clk_ip_peric_ctrl,
+> +		.ctrlbit	=3D (1<<  17),
+> +	}, {
+> +		.name		=3D "spi",
+> +		.devname	=3D "s3c64xx-spi.2",
+> +		.enable		=3D exynos5_clk_ip_peric_ctrl,
+> +		.ctrlbit	=3D (1<<  18),
+>   	}
+>   };
+>=20
+> @@ -865,6 +885,66 @@ static struct clksrc_clk exynos5_clk_sclk_mmc3 =3D=
+ {
+>   	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_FSYS2, .shift =3D 24, .size=
+ =3D 8 },
+>   };
+>=20
+> +static struct clksrc_clk exynos5_clk_dout_spi0 =3D {
+> +	.clk		=3D {
+> +		.name		=3D "dout_spi0",
+> +	},
+> +	.sources =3D&exynos5_clkset_group,
+> +	.reg_src =3D { .reg =3D EXYNOS5_CLKSRC_PERIC1, .shift =3D 16, .size=
+ =3D 4 },
+> +	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_PERIC1, .shift =3D 0, .size =
+=3D 4 },
+> +};
+> +
+> +static struct clksrc_clk exynos5_clk_dout_spi1 =3D {
+> +	.clk		=3D {
+> +		.name		=3D "dout_spi1",
+> +	},
+> +	.sources =3D&exynos5_clkset_group,
+> +	.reg_src =3D { .reg =3D EXYNOS5_CLKSRC_PERIC1, .shift =3D 20, .size=
+ =3D 4 },
+> +	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_PERIC1, .shift =3D 16, .size=
+ =3D 4 },
+> +};
+> +
+> +static struct clksrc_clk exynos5_clk_dout_spi2 =3D {
+> +	.clk		=3D {
+> +		.name		=3D "dout_spi2",
+> +	},
+> +	.sources =3D&exynos5_clkset_group,
+> +	.reg_src =3D { .reg =3D EXYNOS5_CLKSRC_PERIC1, .shift =3D 24, .size=
+ =3D 4 },
+> +	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_PERIC2, .shift =3D 0, .size =
+=3D 4 },
+> +};
+> +
+> +static struct clksrc_clk exynos5_clk_sclk_spi0 =3D {
+> +	.clk	=3D {
+> +		.name		=3D "sclk_spi",
+> +		.devname	=3D "s3c64xx-spi.0",
+> +		.parent		=3D&exynos5_clk_dout_spi0.clk,
+> +		.enable		=3D exynos5_clksrc_mask_peric1_ctrl,
+> +		.ctrlbit	=3D (1<<  16),
+> +	},
+> +	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_PERIC1, .shift =3D 8, .size =
+=3D 8 },
+> +};
+> +
+> +static struct clksrc_clk exynos5_clk_sclk_spi1 =3D {
+> +	.clk	=3D {
+> +		.name		=3D "sclk_spi",
+> +		.devname	=3D "s3c64xx-spi.1",
+> +		.parent		=3D&exynos5_clk_dout_spi1.clk,
+> +		.enable		=3D exynos5_clksrc_mask_peric1_ctrl,
+> +		.ctrlbit	=3D (1<<  20),
+> +	},
+> +	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_PERIC1, .shift =3D 24, .size=
+ =3D 8 },
+> +};
+> +
+> +static struct clksrc_clk exynos5_clk_sclk_spi2 =3D {
+> +	.clk	=3D {
+> +		.name		=3D "sclk_spi",
+> +		.devname	=3D "s3c64xx-spi.2",
+> +		.parent		=3D&exynos5_clk_dout_spi2.clk,
+> +		.enable		=3D exynos5_clksrc_mask_peric1_ctrl,
+> +		.ctrlbit	=3D (1<<  24),
+> +	},
+> +	.reg_div =3D { .reg =3D EXYNOS5_CLKDIV_PERIC2, .shift =3D 8, .size =
+=3D 8 },
+> +};
+> +
+>   static struct clksrc_clk exynos5_clksrcs[] =3D {
+>   	{
+>   		.clk	=3D {
+> @@ -977,6 +1057,9 @@ static struct clksrc_clk *exynos5_sysclks[] =3D =
+{
+>   	&exynos5_clk_dout_mmc4,
+>   	&exynos5_clk_aclk_acp,
+>   	&exynos5_clk_pclk_acp,
+> +	&exynos5_clk_dout_spi0,
+> +	&exynos5_clk_dout_spi1,
+> +	&exynos5_clk_dout_spi2,
+>   };
+>=20
+>   static struct clk *exynos5_clk_cdev[] =3D {
+> @@ -994,6 +1077,9 @@ static struct clksrc_clk *exynos5_clksrc_cdev[] =
+=3D {
+>   	&exynos5_clk_sclk_mmc1,
+>   	&exynos5_clk_sclk_mmc2,
+>   	&exynos5_clk_sclk_mmc3,
+> +	&exynos5_clk_sclk_spi0,
+> +	&exynos5_clk_sclk_spi1,
+> +	&exynos5_clk_sclk_spi2,
+>   };
+>=20
+>   static struct clk_lookup exynos5_clk_lookup[] =3D {
+> @@ -1008,6 +1094,9 @@ static struct clk_lookup exynos5_clk_lookup[] =3D=
+ {
+>   	CLKDEV_INIT("dma-pl330.0", "apb_pclk",&exynos5_clk_pdma0),
+>   	CLKDEV_INIT("dma-pl330.1", "apb_pclk",&exynos5_clk_pdma1),
+>   	CLKDEV_INIT("dma-pl330.2", "apb_pclk",&exynos5_clk_mdma),
+> +	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0",&exynos5_clk_sclk_spi0.c=
+lk),
+> +	CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk0",&exynos5_clk_sclk_spi1.c=
+lk),
+> +	CLKDEV_INIT("s3c64xx-spi.2", "spi_busclk0",&exynos5_clk_sclk_spi2.c=
+lk),
+>   };
+>=20
+>   static unsigned long exynos5_epll_get_rate(struct clk *clk)
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-=
+exynos/include/mach/map.h
+> index 7cdeae0..1c25dc9 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -108,6 +108,9 @@
+>   #define EXYNOS4_PA_SPI0			0x13920000
+>   #define EXYNOS4_PA_SPI1			0x13930000
+>   #define EXYNOS4_PA_SPI2			0x13940000
+> +#define EXYNOS5_PA_SPI0			0x12D20000
+> +#define EXYNOS5_PA_SPI1			0x12D30000
+> +#define EXYNOS5_PA_SPI2			0x12D40000
+>=20
+>   #define EXYNOS4_PA_GPIO1		0x11400000
+>   #define EXYNOS4_PA_GPIO2		0x11000000
+> @@ -177,10 +180,6 @@
+>   #define S3C_PA_IIC6			EXYNOS4_PA_IIC(6)
+>   #define S3C_PA_IIC7			EXYNOS4_PA_IIC(7)
+>=20
+> -#define S3C_PA_SPI0			EXYNOS4_PA_SPI0
+> -#define S3C_PA_SPI1			EXYNOS4_PA_SPI1
+> -#define S3C_PA_SPI2			EXYNOS4_PA_SPI2
+> -
+>   #define S5P_PA_EHCI			EXYNOS4_PA_EHCI
+>   #define S5P_PA_FIMC0			EXYNOS4_PA_FIMC0
+>   #define S5P_PA_FIMC1			EXYNOS4_PA_FIMC1
+> @@ -210,6 +209,9 @@
+>   #define EXYNOS_PA_PDMA0			EXYNOS4_PA_PDMA0
+>   #define EXYNOS_PA_PDMA1			EXYNOS4_PA_PDMA1
+>   #define EXYNOS_PA_MDMA1			EXYNOS4_PA_MDMA1
+> +#define S3C_PA_SPI0			EXYNOS4_PA_SPI0
+> +#define S3C_PA_SPI1			EXYNOS4_PA_SPI1
+> +#define S3C_PA_SPI2			EXYNOS4_PA_SPI2
+>   #endif
+>=20
+>   #ifdef CONFIG_ARCH_EXYNOS5
+> @@ -219,6 +221,9 @@
+>   #define EXYNOS_PA_PDMA0			EXYNOS5_PA_PDMA0
+>   #define EXYNOS_PA_PDMA1			EXYNOS5_PA_PDMA1
+>   #define EXYNOS_PA_MDMA1			EXYNOS5_PA_MDMA1
+> +#define S3C_PA_SPI0			EXYNOS5_PA_SPI0
+> +#define S3C_PA_SPI1			EXYNOS5_PA_SPI1
+> +#define S3C_PA_SPI2			EXYNOS5_PA_SPI2
+>   #endif
+>=20
+>   /* Compatibility UART */
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/ar=
+m/mach-exynos/include/mach/regs-clock.h
+> index 113836b..b994633 100644
+> --- a/arch/arm/mach-exynos/include/mach/regs-clock.h
+> +++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
+> @@ -226,12 +226,14 @@
+>   #define EXYNOS5_CLKSRC_DISP1_0			EXYNOS_CLKREG(0x1022C)
+>   #define EXYNOS5_CLKSRC_FSYS			EXYNOS_CLKREG(0x10244)
+>   #define EXYNOS5_CLKSRC_PERIC0			EXYNOS_CLKREG(0x10250)
+> +#define EXYNOS5_CLKSRC_PERIC1			EXYNOS_CLKREG(0x10254)
+>=20
+>   #define EXYNOS5_CLKSRC_MASK_TOP			EXYNOS_CLKREG(0x10310)
+>   #define EXYNOS5_CLKSRC_MASK_GSCL		EXYNOS_CLKREG(0x10320)
+>   #define EXYNOS5_CLKSRC_MASK_DISP1_0		EXYNOS_CLKREG(0x1032C)
+>   #define EXYNOS5_CLKSRC_MASK_FSYS		EXYNOS_CLKREG(0x10340)
+>   #define EXYNOS5_CLKSRC_MASK_PERIC0		EXYNOS_CLKREG(0x10350)
+> +#define EXYNOS5_CLKSRC_MASK_PERIC1		EXYNOS_CLKREG(0x10354)
+>=20
+>   #define EXYNOS5_CLKDIV_TOP0			EXYNOS_CLKREG(0x10510)
+>   #define EXYNOS5_CLKDIV_TOP1			EXYNOS_CLKREG(0x10514)
+> @@ -243,6 +245,8 @@
+>   #define EXYNOS5_CLKDIV_FSYS2			EXYNOS_CLKREG(0x10550)
+>   #define EXYNOS5_CLKDIV_FSYS3			EXYNOS_CLKREG(0x10554)
+>   #define EXYNOS5_CLKDIV_PERIC0			EXYNOS_CLKREG(0x10558)
+> +#define EXYNOS5_CLKDIV_PERIC1			EXYNOS_CLKREG(0x1055C)
+> +#define EXYNOS5_CLKDIV_PERIC2			EXYNOS_CLKREG(0x10560)
+>=20
+>   #define EXYNOS5_CLKGATE_IP_ACP			EXYNOS_CLKREG(0x08800)
+>   #define EXYNOS5_CLKGATE_IP_GSCL			EXYNOS_CLKREG(0x10920)
+> diff --git a/arch/arm/mach-exynos/mach-smdk5250.c b/arch/arm/mach-exy=
+nos/mach-smdk5250.c
+> index 0fe4a0b..0c55bfa 100644
+> --- a/arch/arm/mach-exynos/mach-smdk5250.c
+> +++ b/arch/arm/mach-exynos/mach-smdk5250.c
+> @@ -11,6 +11,9 @@
+>=20
+>   #include<linux/platform_device.h>
+>   #include<linux/serial_core.h>
+> +#include<linux/clk.h>
+> +#include<linux/gpio.h>
+> +#include<linux/spi/spi.h>
+>=20
+>   #include<asm/mach/arch.h>
+>   #include<asm/hardware/gic.h>
+> @@ -18,9 +21,13 @@
+>=20
+>   #include<plat/clock.h>
+>   #include<plat/cpu.h>
+> +#include<plat/devs.h>
+> +#include<plat/gpio-cfg.h>
+>   #include<plat/regs-serial.h>
+> +#include<plat/s3c64xx-spi.h>
+>=20
+>   #include<mach/map.h>
+> +#include<mach/spi-clocks.h>
+>=20
+>   #include "common.h"
+>=20
+> @@ -69,6 +76,72 @@ static struct s3c2410_uartcfg smdk5250_uartcfgs[] =
+__initdata =3D {
+>   	},
+>   };
+>=20
+> +static struct s3c64xx_spi_csinfo spi0_csi[] =3D {
+> +	[0] =3D {
+> +		.line		=3D EXYNOS5_GPA2(1),
+> +		.set_level	=3D gpio_set_value,
+> +		.fb_delay	=3D 0x2,
+> +	},
+> +};
+> +
+> +static struct spi_board_info spi0_board_info[] __initdata =3D {
+> +	{
+> +		.modalias		=3D "spidev",
+> +		.platform_data		=3D NULL,
+> +		.max_speed_hz		=3D 10*1000*1000,
+> +		.bus_num		=3D 0,
+> +		.chip_select		=3D 0,
+> +		.mode			=3D SPI_MODE_0,
+> +		.controller_data	=3D&spi0_csi[0],
+> +	}
+> +};
+> +
+> +static struct s3c64xx_spi_csinfo spi1_csi[] =3D {
+> +	[0] =3D {
+> +		.line		=3D EXYNOS5_GPA2(5),
+> +		.set_level	=3D gpio_set_value,
+> +		.fb_delay	=3D 0x2,
+> +	},
+> +};
+> +
+> +static struct spi_board_info spi1_board_info[] __initdata =3D {
+> +	{
+> +		.modalias		=3D "spidev",
+> +		.platform_data		=3D NULL,
+> +		.max_speed_hz		=3D 10*1000*1000,
+> +		.bus_num		=3D 1,
+> +		.chip_select		=3D 0,
+> +		.mode			=3D SPI_MODE_0,
+> +		.controller_data	=3D&spi1_csi[0],
+> +	}
+> +};
+> +
+> +static struct s3c64xx_spi_csinfo spi2_csi[] =3D {
+> +	[0] =3D {
+> +		.line		=3D EXYNOS5_GPB1(2),
+> +		.set_level	=3D gpio_set_value,
+> +		.fb_delay	=3D 0x2,
+> +	},
+> +};
+> +
+> +static struct spi_board_info spi2_board_info[] __initdata =3D {
+> +	{
+> +		.modalias		=3D "spidev",
+> +		.platform_data		=3D NULL,
+> +		.max_speed_hz		=3D 10*1000*1000,
+> +		.bus_num		=3D 2,
+> +		.chip_select		=3D 0,
+> +		.mode			=3D SPI_MODE_0,
+> +		.controller_data	=3D&spi2_csi[0],
+> +	}
+> +};
+> +
+> +static struct platform_device *smdk5250_devices[] __initdata =3D {
+> +	&s3c64xx_device_spi0,
+> +	&s3c64xx_device_spi1,
+> +	&s3c64xx_device_spi2,
+> +};
+> +
+>   static void __init smdk5250_map_io(void)
+>   {
+>   	clk_xusbxti.rate =3D 24000000;
+> @@ -80,7 +153,40 @@ static void __init smdk5250_map_io(void)
+>=20
+>   static void __init smdk5250_machine_init(void)
+>   {
+> -	/* nothing here yet */
+> +	platform_add_devices(smdk5250_devices, ARRAY_SIZE(smdk5250_devices)=
+);
+> +
+> +	exynos_spi_clock_setup(&s3c64xx_device_spi0.dev, 0);
+> +	exynos_spi_clock_setup(&s3c64xx_device_spi1.dev, 1);
+> +	exynos_spi_clock_setup(&s3c64xx_device_spi2.dev, 2);
+> +
+> +	if (!exynos_spi_cfg_cs(spi0_csi[0].line, 0)) {
+> +		s3c64xx_spi0_set_platdata(&s3c64xx_spi0_pdata,
+> +				EXYNOS_SPI_SRCCLK_SCLK, ARRAY_SIZE(spi0_csi));
+> +
+> +		spi_register_board_info(spi0_board_info,
+> +				ARRAY_SIZE(spi0_board_info));
+> +	} else
+> +		printk(KERN_ERR "Error requesting gpio for SPI-CH0 CS\n");
+> +
+> +
+> +	if (!exynos_spi_cfg_cs(spi1_csi[0].line, 1)) {
+> +		s3c64xx_spi1_set_platdata(&s3c64xx_spi1_pdata,
+> +				EXYNOS_SPI_SRCCLK_SCLK, ARRAY_SIZE(spi1_csi));
+> +
+> +		spi_register_board_info(spi1_board_info,
+> +				ARRAY_SIZE(spi1_board_info));
+> +	} else
+> +		printk(KERN_ERR "Error requesting gpio for SPI-CH1 CS\n");
+> +
+> +
+> +	if (!exynos_spi_cfg_cs(spi2_csi[0].line, 2)) {
+> +		s3c64xx_spi2_set_platdata(&s3c64xx_spi2_pdata,
+> +				EXYNOS_SPI_SRCCLK_SCLK, ARRAY_SIZE(spi2_csi));
+> +
+> +		spi_register_board_info(spi2_board_info,
+> +				ARRAY_SIZE(spi2_board_info));
+> +	} else
+> +		printk(KERN_ERR "Error requesting gpio for SPI-CH2 CS\n");
+>   }
+>=20
+>   MACHINE_START(SMDK5250, "SMDK5250")
+> diff --git a/arch/arm/mach-exynos/setup-spi.c b/arch/arm/mach-exynos/=
+setup-spi.c
+> index 833ff40..60c8037 100644
+> --- a/arch/arm/mach-exynos/setup-spi.c
+> +++ b/arch/arm/mach-exynos/setup-spi.c
+> @@ -8,12 +8,71 @@
+>    * published by the Free Software Foundation.
+>    */
+>=20
+> +#include<linux/clk.h>
+> +#include<linux/err.h>
+>   #include<linux/gpio.h>
+>   #include<linux/platform_device.h>
+>=20
+> +#include<plat/clock.h>
+> +#include<plat/cpu.h>
+>   #include<plat/gpio-cfg.h>
+>   #include<plat/s3c64xx-spi.h>
+>=20
+> +int exynos_spi_cfg_cs(int gpio, int ch_num)
+> +{
+> +	char cs_name[16];
+> +
+> +	sprintf(cs_name, "dout_spi%d", ch_num);
+> +
+> +	if (!gpio_request(gpio, cs_name)) {
+> +		gpio_direction_output(gpio, 1);
+> +		s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(1));
+> +		s3c_gpio_setpull(gpio, S3C_GPIO_PULL_UP);
+> +		gpio_free(gpio);
+> +
+> +		return 0;
+> +	}
+> +
+> +	return -EIO;
+> +}
+> +
+> +void exynos_spi_clock_setup(struct device *spi_dev, int ch_num)
+> +{
+> +	struct clk *child_clk =3D NULL;
+> +	struct clk *parent_clk =3D NULL;
+> +	char clk_name[16];
+> +
+> +	sprintf(clk_name, "dout_spi%d", ch_num);
+> +	child_clk =3D clk_get(spi_dev, clk_name);
+> +
+> +	if (IS_ERR(child_clk)) {
+> +		printk(KERN_ERR "Failed to get %s clk\n", clk_name);
+> +		return;
+> +	}
+> +
+> +	parent_clk =3D clk_get(spi_dev, "mout_mpll_user");
+> +
+> +	if (IS_ERR(parent_clk)) {
+> +		printk(KERN_ERR "Failed to get mout_mpll_user clk\n");
+> +		goto err1;
+> +	}
+> +
+> +	if (clk_set_parent(child_clk, parent_clk)) {
+> +		printk(KERN_ERR "Unable to set parent %s of clock %s\n",
+> +				parent_clk->name, child_clk->name);
+> +		goto err2;
+> +	}
+> +
+> +	if (clk_set_rate(child_clk, 800 * 1000 * 1000))
+> +		printk(KERN_ERR "Unable to set rate of clock %s\n",
+> +				child_clk->name);
+> +
+> +err2:
+> +	clk_put(parent_clk);
+> +err1:
+> +	clk_put(child_clk);
+> +}
+> +
+>   #ifdef CONFIG_S3C64XX_DEV_SPI0
+>   struct s3c64xx_spi_info s3c64xx_spi0_pdata __initdata =3D {
+>   	.fifo_lvl_mask	=3D 0x1ff,
+> @@ -25,10 +84,26 @@ struct s3c64xx_spi_info s3c64xx_spi0_pdata __init=
+data =3D {
+>=20
+>   int s3c64xx_spi0_cfg_gpio(struct platform_device *dev)
+>   {
+> -	s3c_gpio_cfgpin(EXYNOS4_GPB(0), S3C_GPIO_SFN(2));
+> -	s3c_gpio_setpull(EXYNOS4_GPB(0), S3C_GPIO_PULL_UP);
+> -	s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
+> -			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+> +	int gpio;
+> +
+> +	if (soc_is_exynos5250()) {
+> +		s3c_gpio_cfgpin(EXYNOS5_GPA2(0), S3C_GPIO_SFN(2));
+> +		s3c_gpio_setpull(EXYNOS5_GPA2(0), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgall_range(EXYNOS5_GPA2(2), 2,
+> +				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+> +
+> +		for (gpio =3D EXYNOS5_GPA2(0); gpio<  EXYNOS5_GPA2(4); gpio++)
+> +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV3);
+> +	} else {
+> +		s3c_gpio_cfgpin(EXYNOS4_GPB(0), S3C_GPIO_SFN(2));
+> +		s3c_gpio_setpull(EXYNOS4_GPB(0), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgall_range(EXYNOS4_GPB(2), 2,
+> +				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+> +
+> +		for (gpio =3D EXYNOS4_GPB(0); gpio<  EXYNOS4_GPB(4); gpio++)
+> +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV3);
+> +	}
+> +
+>   	return 0;
+>   }
+>   #endif
+> @@ -44,10 +119,25 @@ struct s3c64xx_spi_info s3c64xx_spi1_pdata __ini=
+tdata =3D {
+>=20
+>   int s3c64xx_spi1_cfg_gpio(struct platform_device *dev)
+>   {
+> -	s3c_gpio_cfgpin(EXYNOS4_GPB(4), S3C_GPIO_SFN(2));
+> -	s3c_gpio_setpull(EXYNOS4_GPB(4), S3C_GPIO_PULL_UP);
+> -	s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
+> -			      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+> +	int gpio;
+> +
+> +	if (soc_is_exynos5250()) {
+> +		s3c_gpio_cfgpin(EXYNOS5_GPA2(4), S3C_GPIO_SFN(2));
+> +		s3c_gpio_setpull(EXYNOS5_GPA2(4), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgall_range(EXYNOS5_GPA2(6), 2,
+> +				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+> +
+> +		for (gpio =3D EXYNOS5_GPA2(4); gpio<  EXYNOS5_GPA2(8); gpio++)
+> +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV3);
+> +	} else {
+> +		s3c_gpio_cfgpin(EXYNOS4_GPB(4), S3C_GPIO_SFN(2));
+> +		s3c_gpio_setpull(EXYNOS4_GPB(4), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgall_range(EXYNOS4_GPB(6), 2,
+> +				      S3C_GPIO_SFN(2), S3C_GPIO_PULL_UP);
+> +
+> +		for (gpio =3D EXYNOS4_GPB(4); gpio<  EXYNOS4_GPB(8); gpio++)
+> +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV3);
+> +	}
+>   	return 0;
+>   }
+>   #endif
+> @@ -63,10 +153,25 @@ struct s3c64xx_spi_info s3c64xx_spi2_pdata __ini=
+tdata =3D {
+>=20
+>   int s3c64xx_spi2_cfg_gpio(struct platform_device *dev)
+>   {
+> -	s3c_gpio_cfgpin(EXYNOS4_GPC1(1), S3C_GPIO_SFN(5));
+> -	s3c_gpio_setpull(EXYNOS4_GPC1(1), S3C_GPIO_PULL_UP);
+> -	s3c_gpio_cfgall_range(EXYNOS4_GPC1(3), 2,
+> -			      S3C_GPIO_SFN(5), S3C_GPIO_PULL_UP);
+> +	int gpio;
+> +
+> +	if (soc_is_exynos5250()) {
+> +		s3c_gpio_cfgpin(EXYNOS5_GPB1(1), S3C_GPIO_SFN(5));
+> +		s3c_gpio_setpull(EXYNOS5_GPB1(1), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgall_range(EXYNOS5_GPB1(3), 2,
+> +				      S3C_GPIO_SFN(5), S3C_GPIO_PULL_UP);
+> +
+> +		for (gpio =3D EXYNOS5_GPB1(1); gpio<  EXYNOS5_GPB1(5); gpio++)
+> +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV3);
+> +	} else {
+> +		s3c_gpio_cfgpin(EXYNOS4_GPC1(1), S3C_GPIO_SFN(5));
+> +		s3c_gpio_setpull(EXYNOS4_GPC1(1), S3C_GPIO_PULL_UP);
+> +		s3c_gpio_cfgall_range(EXYNOS4_GPC1(3), 2,
+> +				      S3C_GPIO_SFN(5), S3C_GPIO_PULL_UP);
+> +
+> +		for (gpio =3D EXYNOS4_GPC1(1); gpio<  EXYNOS4_GPC1(5); gpio++)
+> +			s5p_gpio_set_drvstr(gpio, S5P_GPIO_DRVSTR_LV3);
+> +	}
+>   	return 0;
+>   }
+>   #endif
+> diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/=
+arm/plat-samsung/include/plat/s3c64xx-spi.h
+> index fa95e9a..ff4c301 100644
+> --- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+> +++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+> @@ -74,6 +74,10 @@ extern void s3c64xx_spi1_set_platdata(struct s3c64=
+xx_spi_info *pd,
+>   extern void s3c64xx_spi2_set_platdata(struct s3c64xx_spi_info *pd,
+>   				      int src_clk_nr, int num_cs);
+>=20
+> +/* defined to setup chip select GPIO and clock of SPI */
+> +extern int exynos_spi_cfg_cs(int gpio, int ch_num);
+> +extern void exynos_spi_clock_setup(struct device *spi_dev, int ch_nu=
+m);
+> +
+>   /* defined by architecture to configure gpio */
+>   extern int s3c64xx_spi0_cfg_gpio(struct platform_device *dev);
+>   extern int s3c64xx_spi1_cfg_gpio(struct platform_device *dev);
 
-Kyoungil,
+Hi,
 
-Is this available on all of Samsung serial?
+There is no board file, mach-smdk5250.c for EXYNOS5 so this should be
+updated.
+Please re-submit this for exynos5250 SPI with dt.
 
 Thanks.
 
