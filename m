@@ -1,36 +1,113 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung boards update for v3.5
-Date: Sun, 13 May 2012 09:41:10 +0900
-Message-ID: <4FAF0326.8000408@samsung.com>
+Subject: Re: [PATCH RESEND 3/4] ARM: EXYNOS: Add s3c-hsotg device support
+ for NURI board
+Date: Sun, 13 May 2012 10:07:48 +0900
+Message-ID: <4FAF0964.9030704@samsung.com>
+References: <1336655818-15136-1-git-send-email-l.majewski@samsung.com> <1336655818-15136-4-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:59722 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755265Ab2ELXlR (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:48740 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755547Ab2EMAH4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 12 May 2012 19:41:17 -0400
-Received: by dady13 with SMTP id y13so4477911dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 16:41:16 -0700 (PDT)
+	Sat, 12 May 2012 20:07:56 -0400
+Received: by pbbrp8 with SMTP id rp8so4692243pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 12 May 2012 17:07:55 -0700 (PDT)
+In-Reply-To: <1336655818-15136-4-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: Lukasz Majewski <l.majewski@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>
 
-Hi Arnd, Olof,
+On 05/10/12 22:16, Lukasz Majewski wrote:
+> From: Joonyoung Shim<jy0922.shim@samsung.com>
+>
+> This patch adds hsotg device to the NURI board.
+>
+> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> [Rebased on the newest git/kgene/linux-samsung #for-next]
+> Signed-off-by: Lukasz Majewski<l.majewski@samsung.com>
+> ---
+>   arch/arm/mach-exynos/Kconfig     |    1 +
+>   arch/arm/mach-exynos/mach-nuri.c |    9 ++++++++-
+>   2 files changed, 9 insertions(+), 1 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+> index 2c35fd4..5e64728 100644
+> --- a/arch/arm/mach-exynos/Kconfig
+> +++ b/arch/arm/mach-exynos/Kconfig
+> @@ -287,6 +287,7 @@ config MACH_NURI
+>   	select S5P_DEV_MFC
+>   	select S5P_DEV_USB_EHCI
+>   	select S5P_SETUP_MIPIPHY
+> +	select S3C_DEV_USB_HSOTG
+>   	select EXYNOS4_DEV_DMA
+>   	select EXYNOS4_SETUP_FIMC
+>   	select EXYNOS4_SETUP_FIMD0
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+> index 021dc68..4402aad 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -348,6 +348,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo1_[] = {
+>   	REGULATOR_SUPPLY("vdd", "s5p-adc"), /* Used by CPU's ADC drv */
+>   };
+>   static struct regulator_consumer_supply __initdata max8997_ldo3_[] = {
+> +	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"), /* USB */
+>   	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
+>   };
+>   static struct regulator_consumer_supply __initdata max8997_ldo4_[] = {
+> @@ -363,7 +364,7 @@ static struct regulator_consumer_supply __initdata max8997_ldo7_[] = {
+>   	REGULATOR_SUPPLY("dig_18", "0-001f"), /* HCD803 */
+>   };
+>   static struct regulator_consumer_supply __initdata max8997_ldo8_[] = {
+> -	REGULATOR_SUPPLY("vusb_d", NULL), /* Used by CPU */
+> +	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"), /* USB */
+>   	REGULATOR_SUPPLY("vdac", NULL), /* Used by CPU */
+>   };
+>   static struct regulator_consumer_supply __initdata max8997_ldo11_[] = {
+> @@ -819,6 +820,7 @@ static struct regulator_init_data __initdata max8997_esafeout1_data = {
+>   	.constraints	= {
+>   		.name		= "SAFEOUT1",
+>   		.valid_ops_mask	= REGULATOR_CHANGE_STATUS,
+> +		.always_on	= 1,
+>   		.state_mem	= {
+>   			.disabled	= 1,
+>   		},
+> @@ -1076,6 +1078,9 @@ static void __init nuri_ehci_init(void)
+>   	s5p_ehci_set_platdata(pdata);
+>   }
+>
+> +/* USB OTG */
+> +static struct s3c_hsotg_plat nuri_hsotg_pdata;
+> +
+>   /* CAMERA */
+>   static struct regulator_consumer_supply cam_vt_cam15_supply =
+>   	REGULATOR_SUPPLY("vdd_core", "6-003c");
+> @@ -1288,6 +1293,7 @@ static struct platform_device *nuri_devices[] __initdata = {
+>   	&s5p_device_mfc_l,
+>   	&s5p_device_mfc_r,
+>   	&s5p_device_fimc_md,
+> +	&s3c_device_usb_hsotg,
+>
+>   	/* NURI Devices */
+>   	&nuri_gpio_keys,
+> @@ -1336,6 +1342,7 @@ static void __init nuri_machine_init(void)
+>   	nuri_camera_init();
+>
+>   	nuri_ehci_init();
+> +	s3c_hsotg_set_platdata(&nuri_hsotg_pdata);
+>
+>   	/* Last */
+>   	platform_add_devices(nuri_devices, ARRAY_SIZE(nuri_devices));
 
-Please pull Samsung boards update for v3.5.
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/board-samsung
+Oops, happens build error...
 
-As there were discussions, some exynos4 boards have been updated because 
-current dt cannot support all features for current board files on exynos4.
-
-Note, this should be merged after next/devel-samsung because some 
-platform devices are defined in that.
-
-If any problems, please let me know.
+arch/arm/mach-s5pv210/mach-goni.c: In function 'goni_machine_init':
+arch/arm/mach-s5pv210/mach-goni.c:947: error: implicit declaration of 
+function 's3c_hsotg_set_platdata'
 
 Thanks.
 
@@ -39,50 +116,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit d48b97b403d23f6df0b990cee652bdf9a52337a3:
-
-   Linux 3.4-rc6 (2012-05-06 15:07:32 -0700)
-
-are available in the git repository at:
-   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-next/board-samsung
-
-Joonyoung Shim (1):
-       ARM: EXYNOS: Add s3c-hsotg device support for NURI board
-
-Lukasz Majewski (2):
-       ARM: EXYNOS: Add s3c-hsotg device support for GONI board
-       ARM: EXYNOS: Add s3c-hsotg device support for Universal C210 board
-
-Marek Szyprowski (2):
-       ARM: EXYNOS: Add DRM core device support for Universal C210 board
-       ARM: EXYNOS: Add DRM core support for NURI board
-
-Mark Brown (1):
-       ARM: S3C64XX: Hook up new style regulator-regulator supplies on 
-Cragganmore
-
-Sachin Kamat (5):
-       ARM: EXYNOS: Make BT platform data structure static in 
-mach-origen.c file
-       ARM: EXYNOS: Add DRM device to Origen
-       ARM: EXYNOS: Add DRM device to SMDKV310
-       ARM: EXYNOS: Add MFC device to SMDK4X12
-       ARM: EXYNOS: Add FIMC device to SMDK4X12
-
-Tushar Behera (1):
-       ARM: EXYNOS: Increase framebuffer virtual size for origen
-
-  arch/arm/mach-exynos/Kconfig               |   12 ++++++++
-  arch/arm/mach-exynos/mach-nuri.c           |   42 
-++++++++++++++++++++++++++-
-  arch/arm/mach-exynos/mach-origen.c         |   35 ++++++++++++++++++++++-
-  arch/arm/mach-exynos/mach-smdk4x12.c       |   16 ++++++++++
-  arch/arm/mach-exynos/mach-smdkv310.c       |   30 +++++++++++++++++++
-  arch/arm/mach-exynos/mach-universal_c210.c |   43 
-++++++++++++++++++++++++++++
-  arch/arm/mach-s3c64xx/mach-crag6410.c      |   18 +++++++++++
-  arch/arm/mach-s5pv210/Kconfig              |    1 +
-  arch/arm/mach-s5pv210/mach-goni.c          |    5 +++
-  9 files changed, 200 insertions(+), 2 deletions(-)
