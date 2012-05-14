@@ -1,76 +1,61 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS4: Fix soft reboot hang after suspend/resume
-Date: Mon, 14 May 2012 14:12:30 +0530
-Message-ID: <CAG17yqQ8o3mDCP2k0OE5PG2SXWTyWDh+_xbvKjnvmrgkxqKgZg@mail.gmail.com>
-References: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
-	<065f01cd31a9$c5f38f80$51daae80$%kim@samsung.com>
+From: Lukasz Majewski <l.majewski@samsung.com>
+Subject: Re: [PATCH RESEND 3/4] ARM: EXYNOS: Add s3c-hsotg device support for
+ NURI board
+Date: Mon, 14 May 2012 10:48:45 +0200
+Message-ID: <20120514104845.43ce9dea@lmajewski.digital.local>
+References: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
+ <1336655818-15136-4-git-send-email-l.majewski@samsung.com>
+ <4FAF0964.9030704@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:46117 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754489Ab2ENImb convert rfc822-to-8bit (ORCPT
+Received: from mailout4.w1.samsung.com ([210.118.77.14]:64746 "EHLO
+	mailout4.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754489Ab2ENIsy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 May 2012 04:42:31 -0400
-Received: by obbtb18 with SMTP id tb18so7130886obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 May 2012 01:42:30 -0700 (PDT)
-In-Reply-To: <065f01cd31a9$c5f38f80$51daae80$%kim@samsung.com>
+	Mon, 14 May 2012 04:48:54 -0400
+Received: from euspt1 ([210.118.77.14]) by mailout4.w1.samsung.com
+ (Sun Java(tm) System Messaging Server 6.3-8.04 (built Jul 29 2009; 32bit))
+ with ESMTP id <0M4000BBC8HSA230@mailout4.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 09:49:04 +0100 (BST)
+Received: from linux.samsung.com ([106.116.38.10])
+ by spt1.w1.samsung.com (iPlanet Messaging Server 5.2 Patch 2 (built Jul 14
+ 2004)) with ESMTPA id <0M400059F8HFCV@spt1.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 09:48:51 +0100 (BST)
+In-reply-to: <4FAF0964.9030704@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
 Hi Kukjin,
 
-On 14 May 2012 13:45, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Inderpal Singh wrote:
->>
->> Upon wake-up, clear the sleep mode set in INFORM1 register.
->>
-> Is this for wake-up or _really_ software reset? And is this available=
- on all
-> of EXYNOS4 SoCs?
+> Oops, happens build error...
+> 
+> arch/arm/mach-s5pv210/mach-goni.c: In function 'goni_machine_init':
+> arch/arm/mach-s5pv210/mach-goni.c:947: error: implicit declaration of 
+> function 's3c_hsotg_set_platdata'
 
-This is for soft reboot hang after one cycle of suspend/resume is compl=
-ete.
-And yes this is applicable for all exynos SOCs.
+Thanks for applying patches.
 
-With Regards,
-Inder
+Regarding the build error:
 
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
->> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
->> ---
->> =A0arch/arm/mach-exynos/pm.c | =A0 =A04 ++++
->> =A01 files changed, 4 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
->> index f0bb467..16cba3f 100644
->> --- a/arch/arm/mach-exynos/pm.c
->> +++ b/arch/arm/mach-exynos/pm.c
->> @@ -381,6 +381,10 @@ static void exynos4_pm_resume(void)
->> =A0#endif
->>
->> =A0early_wakeup:
->> +
->> + =A0 =A0 /* Clear SLEEP mode set in INFORM1 */
->> + =A0 =A0 __raw_writel(0x0, S5P_INFORM1);
->> +
->> =A0 =A0 =A0 return;
->> =A0}
->>
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
-ng-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+After applying following patches on top of yours for next
+(linux-samsung/for-next) the problem with build error doesn't appear
+anymore.
+
+Link to USB HSOTG patch series:
+
+http://permalink.gmane.org/gmane.linux.usb.general/62101
+"usb:hsotg:samsung USB S3C-HSOTG driver fixes and code cleanup"
+
+Moreover those patches have been already applied to Greg-KH's usb-next
+branch an will be released with 3.5 kernel.
+
+-- 
+Best regards,
+
+Lukasz Majewski
+
+Samsung Poland R&D Center | Linux Platform Group
