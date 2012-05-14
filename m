@@ -1,40 +1,151 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS4: Fix soft reboot hang after suspend/resume
-Date: Mon, 14 May 2012 17:15:50 +0900
-Message-ID: <065f01cd31a9$c5f38f80$51daae80$%kim@samsung.com>
-References: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
+Subject: RE: [PATCH] ARM: EXYNOS4: Support Suspend/Resume for EXYNOS4412
+Date: Mon, 14 May 2012 17:16:22 +0900
+Message-ID: <066001cd31a9$d92d6f80$8b884e80$%kim@samsung.com>
+References: <1332991517-3083-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:25340 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:25782 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752402Ab2ENIPu (ORCPT
+	with ESMTP id S1754136Ab2ENIQV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 May 2012 04:15:50 -0400
+	Mon, 14 May 2012 04:16:21 -0400
 Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0M40000TV6XM30N0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 17:15:49 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 17:16:20 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4000A826YBGU00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 17:15:48 +0900 (KST)
-In-reply-to: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
+ with ESMTPA id <0M400096T6Z7YW70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 17:16:20 +0900 (KST)
+In-reply-to: <1332991517-3083-1-git-send-email-inderpal.singh@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Inderpal Singh' <inderpal.singh@linaro.org>, samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org
+To: 'Inderpal Singh' <inderpal.singh@linaro.org>, samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: patches@linaro.org
 
 Inderpal Singh wrote:
 > 
-> Upon wake-up, clear the sleep mode set in INFORM1 register.
+> This patch provides the suspend/resume support for EXYNOS4412.
 > 
-Is this for wake-up or _really_ software reset? And is this available on all
-of EXYNOS4 SoCs?
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+>  arch/arm/mach-exynos/include/mach/regs-pmu.h |   10 +++++++++-
+>  arch/arm/mach-exynos/pm.c                    |    2 +-
+>  arch/arm/mach-exynos/pmu.c                   |   24
+++++++++++++++++++++----
+>  3 files changed, 30 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-
+> exynos/include/mach/regs-pmu.h
+> index 4c53f38..606b199 100644
+> --- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> +++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+> @@ -177,7 +177,7 @@
+> 
+>  #define S5P_PMU_LCD1_CONF		S5P_PMUREG(0x3CA0)
+> 
+> -/* Only for EXYNOS4212 */
+> +/* Only for EXYNOS4x12 */
+>  #define S5P_ISP_ARM_LOWPWR			S5P_PMUREG(0x1050)
+>  #define S5P_DIS_IRQ_ISP_ARM_LOCAL_LOWPWR	S5P_PMUREG(0x1054)
+>  #define S5P_DIS_IRQ_ISP_ARM_CENTRAL_LOWPWR	S5P_PMUREG(0x1058)
+> @@ -218,4 +218,12 @@
+>  #define S5P_SECSS_MEM_OPTION			S5P_PMUREG(0x2EC8)
+>  #define S5P_ROTATOR_MEM_OPTION			S5P_PMUREG(0x2F48)
+> 
+> +/* Only for EXYNOS4412 */
+> +#define S5P_ARM_CORE2_LOWPWR			S5P_PMUREG(0x1020)
+> +#define S5P_DIS_IRQ_CORE2			S5P_PMUREG(0x1024)
+> +#define S5P_DIS_IRQ_CENTRAL2			S5P_PMUREG(0x1028)
+> +#define S5P_ARM_CORE3_LOWPWR			S5P_PMUREG(0x1030)
+> +#define S5P_DIS_IRQ_CORE3			S5P_PMUREG(0x1034)
+> +#define S5P_DIS_IRQ_CENTRAL3			S5P_PMUREG(0x1038)
+> +
+>  #endif /* __ASM_ARCH_REGS_PMU_H */
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index 428cfeb..f0bb467 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -313,7 +313,7 @@ static int exynos4_pm_suspend(void)
+>  	tmp &= ~S5P_CENTRAL_LOWPWR_CFG;
+>  	__raw_writel(tmp, S5P_CENTRAL_SEQ_CONFIGURATION);
+> 
+> -	if (soc_is_exynos4212()) {
+> +	if (soc_is_exynos4212() || soc_is_exynos4412()) {
+>  		tmp = __raw_readl(S5P_CENTRAL_SEQ_OPTION);
+>  		tmp &= ~(S5P_USE_STANDBYWFI_ISP_ARM |
+>  			 S5P_USE_STANDBYWFE_ISP_ARM);
+> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
+> index bba48f5..77c6815 100644
+> --- a/arch/arm/mach-exynos/pmu.c
+> +++ b/arch/arm/mach-exynos/pmu.c
+> @@ -94,7 +94,7 @@ static struct exynos4_pmu_conf exynos4210_pmu_config[] =
+> {
+>  	{ PMU_TABLE_END,},
+>  };
+> 
+> -static struct exynos4_pmu_conf exynos4212_pmu_config[] = {
+> +static struct exynos4_pmu_conf exynos4x12_pmu_config[] = {
+>  	{ S5P_ARM_CORE0_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+>  	{ S5P_DIS_IRQ_CORE0,			{ 0x0, 0x0, 0x0 } },
+>  	{ S5P_DIS_IRQ_CENTRAL0,			{ 0x0, 0x0, 0x0 } },
+> @@ -202,6 +202,16 @@ static struct exynos4_pmu_conf
+exynos4212_pmu_config[]
+> = {
+>  	{ PMU_TABLE_END,},
+>  };
+> 
+> +static struct exynos4_pmu_conf exynos4412_pmu_config[] = {
+> +	{ S5P_ARM_CORE2_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+> +	{ S5P_DIS_IRQ_CORE2,			{ 0x0, 0x0, 0x0 } },
+> +	{ S5P_DIS_IRQ_CENTRAL2,			{ 0x0, 0x0, 0x0 } },
+> +	{ S5P_ARM_CORE3_LOWPWR,			{ 0x0, 0x0, 0x2 } },
+> +	{ S5P_DIS_IRQ_CORE3,			{ 0x0, 0x0, 0x0 } },
+> +	{ S5P_DIS_IRQ_CENTRAL3,			{ 0x0, 0x0, 0x0 } },
+> +	{ PMU_TABLE_END,},
+> +};
+> +
+>  void exynos4_sys_powerdown_conf(enum sys_powerdown mode)
+>  {
+>  	unsigned int i;
+> @@ -209,6 +219,12 @@ void exynos4_sys_powerdown_conf(enum sys_powerdown
+> mode)
+>  	for (i = 0; (exynos4_pmu_config[i].reg != PMU_TABLE_END) ; i++)
+>  		__raw_writel(exynos4_pmu_config[i].val[mode],
+>  				exynos4_pmu_config[i].reg);
+> +
+> +	if (soc_is_exynos4412()) {
+> +		for (i = 0; exynos4412_pmu_config[i].reg != PMU_TABLE_END ;
+> i++)
+> +			__raw_writel(exynos4412_pmu_config[i].val[mode],
+> +				exynos4412_pmu_config[i].reg);
+> +	}
+>  }
+> 
+>  static int __init exynos4_pmu_init(void)
+> @@ -218,9 +234,9 @@ static int __init exynos4_pmu_init(void)
+>  	if (soc_is_exynos4210()) {
+>  		exynos4_pmu_config = exynos4210_pmu_config;
+>  		pr_info("EXYNOS4210 PMU Initialize\n");
+> -	} else if (soc_is_exynos4212()) {
+> -		exynos4_pmu_config = exynos4212_pmu_config;
+> -		pr_info("EXYNOS4212 PMU Initialize\n");
+> +	} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
+> +		exynos4_pmu_config = exynos4x12_pmu_config;
+> +		pr_info("EXYNOS4x12 PMU Initialize\n");
+>  	} else {
+>  		pr_info("EXYNOS4: PMU not supported\n");
+>  	}
+> --
+> 1.7.5.4
+
+Looks ok to me, will apply.
 
 Thanks.
 
@@ -43,24 +154,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
->  arch/arm/mach-exynos/pm.c |    4 ++++
->  1 files changed, 4 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
-> index f0bb467..16cba3f 100644
-> --- a/arch/arm/mach-exynos/pm.c
-> +++ b/arch/arm/mach-exynos/pm.c
-> @@ -381,6 +381,10 @@ static void exynos4_pm_resume(void)
->  #endif
-> 
->  early_wakeup:
-> +
-> +	/* Clear SLEEP mode set in INFORM1 */
-> +	__raw_writel(0x0, S5P_INFORM1);
-> +
->  	return;
->  }
-> 
