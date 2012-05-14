@@ -1,61 +1,40 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung devel-1 for v3.5
-Date: Mon, 14 May 2012 16:47:32 +0900
-Message-ID: <064f01cd31a5$d2300660$76901320$%kim@samsung.com>
-References: <4FAF0156.5080306@samsung.com>
- <CAOesGMhwEpQstrM5Zc4ie=CX2BAoSsfAvJbZYxUpg66NUnxrjw@mail.gmail.com>
+Subject: RE: [PATCH] ARM: EXYNOS4: Fix soft reboot hang after suspend/resume
+Date: Mon, 14 May 2012 17:15:50 +0900
+Message-ID: <065f01cd31a9$c5f38f80$51daae80$%kim@samsung.com>
+References: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29069 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753336Ab2ENHrc (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25340 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752402Ab2ENIPu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 May 2012 03:47:32 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Mon, 14 May 2012 04:15:50 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M40006IT5N2EIH0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 16:47:31 +0900 (KST)
+ 17 2011)) with ESMTP id <0M40000TV6XM30N0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 17:15:49 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4000K5Q5N6RFW1@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 16:47:31 +0900 (KST)
-In-reply-to: <CAOesGMhwEpQstrM5Zc4ie=CX2BAoSsfAvJbZYxUpg66NUnxrjw@mail.gmail.com>
+ with ESMTPA id <0M4000A826YBGU00@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 14 May 2012 17:15:48 +0900 (KST)
+In-reply-to: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Inderpal Singh' <inderpal.singh@linaro.org>, samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-Olof Johansson wrote:
+Inderpal Singh wrote:
 > 
-> On Sat, May 12, 2012 at 5:33 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Hi Arnd, Olof
-> >
-> > Please pull Samsung devel for v3.5
-> >
-> > This is including exynos/iommu, platform of drm and fimc-lite, dma for
-> > exynos5250 and s3c24xx-hsspi.
-> >
-> > Note, the exynos/iommu patch got the ack from Joerg and this should be
-> sent
-> > to upstream via arm tree and since it depends on cleanup-samsung-iommu,
-> the
-> > cleanup branch is included(merged) in here.
-> >
-> > If any problems, please let me know.
+> Upon wake-up, clear the sleep mode set in INFORM1 register.
 > 
-> Same here, I'll hold off pulling this until we've sorted out the
-> cleanup-samsung-iommu request.
-> 
-Please hold this off for a moment because I need to sort out regarding
-s3c-hsotg patches which cause build error because some patches have been
-already in usb tree for it.
-
-If required, I will send separate branch to you.
+Is this for wake-up or _really_ software reset? And is this available on all
+of EXYNOS4 SoCs?
 
 Thanks.
 
@@ -64,3 +43,24 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+>  arch/arm/mach-exynos/pm.c |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+> index f0bb467..16cba3f 100644
+> --- a/arch/arm/mach-exynos/pm.c
+> +++ b/arch/arm/mach-exynos/pm.c
+> @@ -381,6 +381,10 @@ static void exynos4_pm_resume(void)
+>  #endif
+> 
+>  early_wakeup:
+> +
+> +	/* Clear SLEEP mode set in INFORM1 */
+> +	__raw_writel(0x0, S5P_INFORM1);
+> +
+>  	return;
+>  }
+> 
