@@ -1,82 +1,72 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 1/2] ARM: s3c64xx: cpuidle - declare the states with the new api
-Date: Mon, 14 May 2012 16:06:16 +0200
-Message-ID: <1337004377-17732-2-git-send-email-daniel.lezcano@linaro.org>
+From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 2/2] ARM: s3c64xx: cpuidle - use timekeeping wrapper
+Date: Mon, 14 May 2012 16:06:17 +0200
+Message-ID: <1337004377-17732-3-git-send-email-daniel.lezcano@linaro.org>
 References: <1337004377-17732-1-git-send-email-daniel.lezcano@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:53899 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756816Ab2ENOGV (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 14 May 2012 10:06:21 -0400
-Received: by weyu7 with SMTP id u7so1775449wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 May 2012 07:06:20 -0700 (PDT)
-In-Reply-To: <1337004377-17732-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+In-Reply-To: <1337004377-17732-1-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+List-Unsubscribe: <http://lists.linaro.org/mailman/options/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linaro.org/pipermail/linaro-dev>
+List-Post: <mailto:linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>
+List-Help: <mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.linaro.org/mailman/listinfo/linaro-dev>,
+	<mailto:linaro-dev-request-cunTk1MwBs8s++Sfvej+rw@public.gmane.org?subject=subscribe>
+Sender: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+Errors-To: linaro-dev-bounces-cunTk1MwBs8s++Sfvej+rw@public.gmane.org
+To: ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linaro-dev-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: ben-linux@fluff.org, kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com
-Cc: linux-arm-kernel@lists.infradead.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
 
-The states are now part of the cpuidle_driver structure, so we can
-declare the states in this structure directly. That saves us an extra
-variable declaration and a memcpy.
+The timekeeping is computed from the cpuidle core if we set
+the .en_core_tk_irqen flag. Let's use it and remove the duplicated
+code.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/mach-s3c64xx/cpuidle.c |   33 ++++++++++++++-------------------
- 1 files changed, 14 insertions(+), 19 deletions(-)
+ arch/arm/mach-s3c64xx/cpuidle.c |   12 +-----------
+ 1 files changed, 1 insertions(+), 11 deletions(-)
 
 diff --git a/arch/arm/mach-s3c64xx/cpuidle.c b/arch/arm/mach-s3c64xx/cpuidle.c
-index 179460f..2750e54 100644
+index 2750e54..acb197c 100644
 --- a/arch/arm/mach-s3c64xx/cpuidle.c
 +++ b/arch/arm/mach-s3c64xx/cpuidle.c
-@@ -51,33 +51,28 @@ static int s3c64xx_enter_idle(struct cpuidle_device *dev,
+@@ -27,12 +27,7 @@ static int s3c64xx_enter_idle(struct cpuidle_device *dev,
+ 			      struct cpuidle_driver *drv,
+ 			      int index)
+ {
+-	struct timeval before, after;
+ 	unsigned long tmp;
+-	int idle_time;
+-
+-	local_irq_disable();
+-	do_gettimeofday(&before);
+ 
+ 	/* Setup PWRCFG to enter idle mode */
+ 	tmp = __raw_readl(S3C64XX_PWR_CFG);
+@@ -42,12 +37,6 @@ static int s3c64xx_enter_idle(struct cpuidle_device *dev,
+ 
+ 	cpu_do_idle();
+ 
+-	do_gettimeofday(&after);
+-	local_irq_enable();
+-	idle_time = (after.tv_sec - before.tv_sec) * USEC_PER_SEC +
+-		    (after.tv_usec - before.tv_usec);
+-
+-	dev->last_residency = idle_time;
  	return index;
  }
  
--static struct cpuidle_state s3c64xx_cpuidle_set[] = {
--	[0] = {
--		.enter			= s3c64xx_enter_idle,
--		.exit_latency		= 1,
--		.target_residency	= 1,
--		.flags			= CPUIDLE_FLAG_TIME_VALID,
--		.name			= "IDLE",
--		.desc			= "System active, ARM gated",
--	},
--};
-+static DEFINE_PER_CPU(struct cpuidle_device, s3c64xx_cpuidle_device);
- 
+@@ -56,6 +45,7 @@ static DEFINE_PER_CPU(struct cpuidle_device, s3c64xx_cpuidle_device);
  static struct cpuidle_driver s3c64xx_cpuidle_driver = {
--	.name		= "s3c64xx_cpuidle",
--	.owner		= THIS_MODULE,
--	.state_count	= ARRAY_SIZE(s3c64xx_cpuidle_set),
--};
--
--static struct cpuidle_device s3c64xx_cpuidle_device = {
--	.state_count	= ARRAY_SIZE(s3c64xx_cpuidle_set),
-+	.name	= "s3c64xx_cpuidle",
-+	.owner  = THIS_MODULE,
-+	.states = {
-+		{
-+			.enter            = s3c64xx_enter_idle,
-+			.exit_latency     = 1,
-+			.target_residency = 1,
-+			.flags            = CPUIDLE_FLAG_TIME_VALID,
-+			.name             = "IDLE",
-+			.desc             = "System active, ARM gated",
-+		},
-+	},
-+	.state_count = 1,
- };
- 
- static int __init s3c64xx_init_cpuidle(void)
- {
- 	int ret;
- 
--	memcpy(s3c64xx_cpuidle_driver.states, s3c64xx_cpuidle_set,
--	       sizeof(s3c64xx_cpuidle_set));
- 	cpuidle_register_driver(&s3c64xx_cpuidle_driver);
- 
- 	ret = cpuidle_register_device(&s3c64xx_cpuidle_device);
+ 	.name	= "s3c64xx_cpuidle",
+ 	.owner  = THIS_MODULE,
++	.en_core_tk_irqen = 1,
+ 	.states = {
+ 		{
+ 			.enter            = s3c64xx_enter_idle,
 -- 
 1.7.5.4
