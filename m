@@ -1,70 +1,76 @@
-From: "HeungJun, Kim" <riverful.kim@samsung.com>
-Subject: RE: Exynos4: Fix the I2C.0 platform device's ID to 0 in the devs.c
-Date: Tue, 15 May 2012 13:04:03 +0900
-Message-ID: <002a01cd324f$c4384680$4ca8d380$%kim@samsung.com>
-References: <1335785096-5430-1-git-send-email-riverful.kim@samsung.com>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS4: Fix soft reboot hang after suspend/resume
+Date: Tue, 15 May 2012 10:01:07 +0530
+Message-ID: <CAG17yqR3v=UpT0cb4797CTLhDv5Wxe=NvB84LkMfRixv0206BA@mail.gmail.com>
+References: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
+	<065f01cd31a9$c5f38f80$51daae80$%kim@samsung.com>
+	<CAG17yqQ8o3mDCP2k0OE5PG2SXWTyWDh+_xbvKjnvmrgkxqKgZg@mail.gmail.com>
+	<4FB10BEE.1010302@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27025 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750767Ab2EOEEJ (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:36742 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757169Ab2EOEbI convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 00:04:09 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4100EWMPYLUM00@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 13:04:08 +0900 (KST)
-Received: from NORIVERFULK04 ([165.213.219.118])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4100GI6PYWLHD0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 13:04:08 +0900 (KST)
-In-reply-to: <1335785096-5430-1-git-send-email-riverful.kim@samsung.com>
-Content-language: ko
+	Tue, 15 May 2012 00:31:08 -0400
+Received: by obbtb18 with SMTP id tb18so8375038obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 14 May 2012 21:31:07 -0700 (PDT)
+In-Reply-To: <4FB10BEE.1010302@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "'HeungJun, Kim'" <riverful.kim@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-and Ping again?
+Hi Kukjin,
 
-> -----Original Message-----
-> From: HeungJun, Kim [mailto:riverful.kim@samsung.com]
-> Sent: Monday, April 30, 2012 8:25 PM
-> To: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org; HeungJun, Kim; Kyungmin Park
-> Subject: ARM: Exynos4: Fix the I2C.0 platform device's ID to 0 in the devs.c
-> 
-> From: "HeungJun, Kim" <riverful.kim@samsung.com>
-> 
-> The #ifdef of CONFIG_S3C_DEV_I2C1 in devs.c, occurs to fail to get I2C0
-adapter.
-> So, this patch removes #ifdef, and fixes 0 when I2C0 devices.
-> 
-> Signed-off-by: HeungJun, Kim <riverful.kim@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/plat-samsung/devs.c |    4 ----
->  1 files changed, 0 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index db32ec5..964a866 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -491,11 +491,7 @@ static struct resource s3c_i2c0_resource[] = {
-> 
->  struct platform_device s3c_device_i2c0 = {
->  	.name		= "s3c2410-i2c",
-> -#ifdef CONFIG_S3C_DEV_I2C1
->  	.id		= 0,
-> -#else
-> -	.id		= -1,
-> -#endif
->  	.num_resources	= ARRAY_SIZE(s3c_i2c0_resource),
->  	.resource	= s3c_i2c0_resource,
->  };
+On 14 May 2012 19:13, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 05/14/12 17:42, Inderpal Singh wrote:
+>>
+>> Hi Kukjin,
+>>
+>> On 14 May 2012 13:45, Kukjin Kim<kgene.kim@samsung.com> =A0wrote:
+>>>
+>>> Inderpal Singh wrote:
+>>>>
+>>>>
+>>>> Upon wake-up, clear the sleep mode set in INFORM1 register.
+>>>>
+>>> Is this for wake-up or _really_ software reset? And is this availab=
+le on
+>>> all
+>>> of EXYNOS4 SoCs?
+>>
+>>
+>> This is for soft reboot hang after one cycle of suspend/resume is
+>> complete.
+>> And yes this is applicable for all exynos SOCs.
+>>
+> Hi,
+>
+> As I know, we don't need it for all of EXYNOS SoCs but let me check a=
+bout
+> the situation you said with hardware engineer tomorrow. If any update=
+s, let
+> you know.
+>
+
+The issue happens because u-boot checks INFROM1 register to know if
+its wake-up from sleep. Hence if INFORM1 is not cleared, the soft
+reboot after one suspend/resume cycle will be understood by u-boot as
+wake-up from sleep, so it will try to resume and will hang up.
+
+I have faced this issue on Origen, Pegasus SMDK and 5250 SMDK.
+
+Thanks,
+Inder
+
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-> 1.7.5.4
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
