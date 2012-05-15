@@ -1,124 +1,219 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 06/20] ARM: EXYNOS: add GPC4 bank instance
-Date: Tue, 15 May 2012 10:27:46 -0600
-Message-ID: <20120515162747.070303E07AF@localhost>
-References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org> <1335813270-13083-7-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH 15/20] ARM: Exynos: Add irq_domain support for gpio wakeup interrupts
+Date: Tue, 15 May 2012 10:29:43 -0600
+Message-ID: <20120515162943.EDA6A3E07AF@localhost>
+References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org> <1335813270-13083-16-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:56568 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:52552 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S965661Ab2EOQ1t (ORCPT
+	with ESMTP id S965661Ab2EOQ3q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 12:27:49 -0400
-Received: by pbbrp8 with SMTP id rp8so7730668pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 May 2012 09:27:49 -0700 (PDT)
-In-Reply-To: <1335813270-13083-7-git-send-email-thomas.abraham@linaro.org>
+	Tue, 15 May 2012 12:29:46 -0400
+Received: by pbbrp8 with SMTP id rp8so7732909pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 May 2012 09:29:45 -0700 (PDT)
+In-Reply-To: <1335813270-13083-16-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sangsu Park <sangsu4u.park@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
-On Mon, 30 Apr 2012 12:14:16 -0700, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> From: Sangsu Park <sangsu4u.park@samsung.com>
-> 
-> Add GPC4 bank instance which is included in rev1 of EXYNOS5.
+On Mon, 30 Apr 2012 12:14:25 -0700, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> Add a irq_domain for all the 32 gpio external wakeup interrupt sources.
+> Since there are users of fixed linux irq numbers of the external wakeup
+> interrupts, the legacy mapping is used for the irq domain. The fixups
+> required to use irq domain based interrupt mapping is also included.
 > 
 > Cc: Grant Likely <grant.likely@secretlab.ca>
-> Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
 > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> [kgene.kim@samsung.com: re-worked on top of v3.4-rc3]
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> Acked-by: Rob Herring <rob.herring@calxeda.com>
 
 Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
-Should be merged with the rest of the series I think.
-
-g.
-
 > ---
->  arch/arm/mach-exynos/include/mach/gpio.h |    9 ++++++---
->  arch/arm/mach-exynos/include/mach/irqs.h |    2 +-
->  drivers/gpio/gpio-samsung.c              |   11 ++++++++++-
->  3 files changed, 17 insertions(+), 5 deletions(-)
+>  arch/arm/mach-exynos/common.c                 |   67 +++++++++++++++++--------
+>  arch/arm/mach-exynos/include/mach/regs-gpio.h |    4 +-
+>  2 files changed, 48 insertions(+), 23 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-exynos/include/mach/gpio.h
-> index d7498af..eb24f1e 100644
-> --- a/arch/arm/mach-exynos/include/mach/gpio.h
-> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
-> @@ -153,10 +153,11 @@ enum exynos4_gpio_number {
->  #define EXYNOS5_GPIO_B2_NR	(4)
->  #define EXYNOS5_GPIO_B3_NR	(4)
->  #define EXYNOS5_GPIO_C0_NR	(7)
-> -#define EXYNOS5_GPIO_C1_NR	(7)
-> +#define EXYNOS5_GPIO_C1_NR	(4)
->  #define EXYNOS5_GPIO_C2_NR	(7)
->  #define EXYNOS5_GPIO_C3_NR	(7)
-> -#define EXYNOS5_GPIO_D0_NR	(8)
-> +#define EXYNOS5_GPIO_C4_NR	(7)
-> +#define EXYNOS5_GPIO_D0_NR	(4)
->  #define EXYNOS5_GPIO_D1_NR	(8)
->  #define EXYNOS5_GPIO_Y0_NR	(6)
->  #define EXYNOS5_GPIO_Y1_NR	(4)
-> @@ -199,7 +200,8 @@ enum exynos5_gpio_number {
->  	EXYNOS5_GPIO_C1_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C0),
->  	EXYNOS5_GPIO_C2_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C1),
->  	EXYNOS5_GPIO_C3_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C2),
-> -	EXYNOS5_GPIO_D0_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C3),
-> +	EXYNOS5_GPIO_C4_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C3),
-> +	EXYNOS5_GPIO_D0_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_C4),
->  	EXYNOS5_GPIO_D1_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_D0),
->  	EXYNOS5_GPIO_Y0_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_D1),
->  	EXYNOS5_GPIO_Y1_START		= EXYNOS_GPIO_NEXT(EXYNOS5_GPIO_Y0),
-> @@ -242,6 +244,7 @@ enum exynos5_gpio_number {
->  #define EXYNOS5_GPC1(_nr)	(EXYNOS5_GPIO_C1_START + (_nr))
->  #define EXYNOS5_GPC2(_nr)	(EXYNOS5_GPIO_C2_START + (_nr))
->  #define EXYNOS5_GPC3(_nr)	(EXYNOS5_GPIO_C3_START + (_nr))
-> +#define EXYNOS5_GPC4(_nr)	(EXYNOS5_GPIO_C4_START + (_nr))
->  #define EXYNOS5_GPD0(_nr)	(EXYNOS5_GPIO_D0_START + (_nr))
->  #define EXYNOS5_GPD1(_nr)	(EXYNOS5_GPIO_D1_START + (_nr))
->  #define EXYNOS5_GPY0(_nr)	(EXYNOS5_GPIO_Y0_START + (_nr))
-> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
-> index ef52f61..ece5624 100644
-> --- a/arch/arm/mach-exynos/include/mach/irqs.h
-> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
-> @@ -446,7 +446,7 @@
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 810f804..0d69412 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -752,6 +752,9 @@ static DEFINE_SPINLOCK(eint_lock);
 >  
->  #define EXYNOS5_MAX_COMBINER_NR		32
+>  static unsigned int eint0_15_data[16];
 >  
-> -#define EXYNOS5_IRQ_GPIO1_NR_GROUPS	13
-> +#define EXYNOS5_IRQ_GPIO1_NR_GROUPS	14
->  #define EXYNOS5_IRQ_GPIO2_NR_GROUPS	9
->  #define EXYNOS5_IRQ_GPIO3_NR_GROUPS	5
->  #define EXYNOS5_IRQ_GPIO4_NR_GROUPS	1
-> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-> index 19d6fc0..0a2087b 100644
-> --- a/drivers/gpio/gpio-samsung.c
-> +++ b/drivers/gpio/gpio-samsung.c
-> @@ -2452,6 +2452,12 @@ static struct samsung_gpio_chip exynos5_gpios_1[] = {
->  		},
->  	}, {
->  		.chip	= {
-> +			.base	= EXYNOS5_GPC4(0),
-> +			.ngpio	= EXYNOS5_GPIO_C4_NR,
-> +			.label	= "GPC4",
-> +		},
-> +	}, {
-> +		.chip	= {
->  			.base	= EXYNOS5_GPD0(0),
->  			.ngpio	= EXYNOS5_GPIO_D0_NR,
->  			.label	= "GPD0",
-> @@ -2874,8 +2880,11 @@ static __init int samsung_gpiolib_init(void)
->  			goto err_ioremap1;
->  		}
->  
-> +		/* need to set base address for gpc4 */
-> +		exynos5_gpios_1[11].base = gpio_base1 + 0x2E0;
+> +#define EXYNOS_EINT_NR 32
+> +static struct irq_domain *irq_domain;
 > +
->  		/* need to set base address for gpx */
-> -		chip = &exynos5_gpios_1[20];
-> +		chip = &exynos5_gpios_1[21];
->  		gpx_base = gpio_base1 + 0xC00;
->  		for (i = 0; i < 4; i++, chip++, gpx_base += 0x20)
->  			chip->base = gpx_base;
+>  static inline int exynos4_irq_to_gpio(unsigned int irq)
+>  {
+>  	if (irq < IRQ_EINT(0))
+> @@ -842,9 +845,9 @@ static inline void exynos_irq_eint_mask(struct irq_data *data)
+>  	u32 mask;
+>  
+>  	spin_lock(&eint_lock);
+> -	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->irq));
+> -	mask |= EINT_OFFSET_BIT(data->irq);
+> -	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->irq));
+> +	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->hwirq));
+> +	mask |= EINT_OFFSET_BIT(data->hwirq);
+> +	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->hwirq));
+>  	spin_unlock(&eint_lock);
+>  }
+>  
+> @@ -853,16 +856,16 @@ static void exynos_irq_eint_unmask(struct irq_data *data)
+>  	u32 mask;
+>  
+>  	spin_lock(&eint_lock);
+> -	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->irq));
+> -	mask &= ~(EINT_OFFSET_BIT(data->irq));
+> -	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->irq));
+> +	mask = __raw_readl(EINT_MASK(exynos_eint_base, data->hwirq));
+> +	mask &= ~(EINT_OFFSET_BIT(data->hwirq));
+> +	__raw_writel(mask, EINT_MASK(exynos_eint_base, data->hwirq));
+>  	spin_unlock(&eint_lock);
+>  }
+>  
+>  static inline void exynos_irq_eint_ack(struct irq_data *data)
+>  {
+> -	__raw_writel(EINT_OFFSET_BIT(data->irq),
+> -		     EINT_PEND(exynos_eint_base, data->irq));
+> +	__raw_writel(EINT_OFFSET_BIT(data->hwirq),
+> +		     EINT_PEND(exynos_eint_base, data->hwirq));
+>  }
+>  
+>  static void exynos_irq_eint_maskack(struct irq_data *data)
+> @@ -873,7 +876,7 @@ static void exynos_irq_eint_maskack(struct irq_data *data)
+>  
+>  static int exynos_irq_eint_set_type(struct irq_data *data, unsigned int type)
+>  {
+> -	int offs = EINT_OFFSET(data->irq);
+> +	int offs = data->hwirq;
+>  	int shift;
+>  	u32 ctrl, mask;
+>  	u32 newvalue = 0;
+> @@ -908,10 +911,10 @@ static int exynos_irq_eint_set_type(struct irq_data *data, unsigned int type)
+>  	mask = 0x7 << shift;
+>  
+>  	spin_lock(&eint_lock);
+> -	ctrl = __raw_readl(EINT_CON(exynos_eint_base, data->irq));
+> +	ctrl = __raw_readl(EINT_CON(exynos_eint_base, data->hwirq));
+>  	ctrl &= ~mask;
+>  	ctrl |= newvalue << shift;
+> -	__raw_writel(ctrl, EINT_CON(exynos_eint_base, data->irq));
+> +	__raw_writel(ctrl, EINT_CON(exynos_eint_base, data->hwirq));
+>  	spin_unlock(&eint_lock);
+>  
+>  	if (soc_is_exynos5250())
+> @@ -955,7 +958,7 @@ static inline void exynos_irq_demux_eint(unsigned int start)
+>  
+>  	while (status) {
+>  		irq = fls(status) - 1;
+> -		generic_handle_irq(irq + start);
+> +		generic_handle_irq(irq_find_mapping(irq_domain, irq + start));
+>  		status &= ~(1 << irq);
+>  	}
+>  }
+> @@ -964,8 +967,8 @@ static void exynos_irq_demux_eint16_31(unsigned int irq, struct irq_desc *desc)
+>  {
+>  	struct irq_chip *chip = irq_get_chip(irq);
+>  	chained_irq_enter(chip, desc);
+> -	exynos_irq_demux_eint(IRQ_EINT(16));
+> -	exynos_irq_demux_eint(IRQ_EINT(24));
+> +	exynos_irq_demux_eint(16);
+> +	exynos_irq_demux_eint(24);
+>  	chained_irq_exit(chip, desc);
+>  }
+>  
+> @@ -973,6 +976,7 @@ static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+>  {
+>  	u32 *irq_data = irq_get_handler_data(irq);
+>  	struct irq_chip *chip = irq_get_chip(irq);
+> +	int eint_irq;
+>  
+>  	chained_irq_enter(chip, desc);
+>  	chip->irq_mask(&desc->irq_data);
+> @@ -980,15 +984,28 @@ static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
+>  	if (chip->irq_ack)
+>  		chip->irq_ack(&desc->irq_data);
+>  
+> -	generic_handle_irq(*irq_data);
+> +	eint_irq = irq_find_mapping(irq_domain, *irq_data);
+> +	generic_handle_irq(eint_irq);
+>  
+>  	chip->irq_unmask(&desc->irq_data);
+>  	chained_irq_exit(chip, desc);
+>  }
+>  
+> +static int exynos_eint_irq_domain_map(struct irq_domain *d, unsigned int irq,
+> +					irq_hw_number_t hw)
+> +{
+> +	irq_set_chip_and_handler(irq, &exynos_irq_eint, handle_level_irq);
+> +	set_irq_flags(irq, IRQF_VALID);
+> +	return 0;
+> +}
+> +
+> +static struct irq_domain_ops exynos_eint_irq_domain_ops = {
+> +	.map = exynos_eint_irq_domain_map,
+> +};
+> +
+>  static int __init exynos_init_irq_eint(void)
+>  {
+> -	int irq, *src_int;
+> +	int irq, *src_int, irq_base;
+>  	unsigned int paddr;
+>  
+>  	paddr = soc_is_exynos5250() ? EXYNOS5_PA_GPIO1 : EXYNOS4_PA_GPIO2;
+> @@ -998,16 +1015,24 @@ static int __init exynos_init_irq_eint(void)
+>  		return -ENXIO;
+>  	}
+>  
+> -	for (irq = 0 ; irq <= 31 ; irq++) {
+> -		irq_set_chip_and_handler(IRQ_EINT(irq), &exynos_irq_eint,
+> -					 handle_level_irq);
+> -		set_irq_flags(IRQ_EINT(irq), IRQF_VALID);
+> +	irq_base = irq_alloc_descs(IRQ_EINT(0), 1, EXYNOS_EINT_NR, 0);
+> +	if (IS_ERR_VALUE(irq_base)) {
+> +		irq_base = IRQ_EINT(0);
+> +		pr_warning("%s: irq desc alloc failed. Continuing with %d as "
+> +				"linux irq base\n", __func__, irq_base);
+> +	}
+> +
+> +	irq_domain = irq_domain_add_legacy(NULL, EXYNOS_EINT_NR, irq_base, 0,
+> +					 &exynos_eint_irq_domain_ops, NULL);
+> +	if (WARN_ON(!irq_domain)) {
+> +		pr_warning("%s: irq domain init failed\n", __func__);
+> +		return 0;
+>  	}
+>  
+>  	irq_set_chained_handler(EXYNOS_IRQ_EINT16_31, exynos_irq_demux_eint16_31);
+>  
+>  	for (irq = 0 ; irq <= 15; irq++) {
+> -		eint0_15_data[irq] = IRQ_EINT(irq);
+> +		eint0_15_data[irq] = irq;
+>  		src_int = soc_is_exynos5250() ? exynos5_eint0_15_src_int :
+>  						exynos4_eint0_15_src_int;
+>  		irq_set_handler_data(src_int[irq], &eint0_15_data[irq]);
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-gpio.h b/arch/arm/mach-exynos/include/mach/regs-gpio.h
+> index e4b5b60..24bf4ec 100644
+> --- a/arch/arm/mach-exynos/include/mach/regs-gpio.h
+> +++ b/arch/arm/mach-exynos/include/mach/regs-gpio.h
+> @@ -16,13 +16,13 @@
+>  #include <mach/map.h>
+>  #include <mach/irqs.h>
+>  
+> -#define EINT_REG_NR(x)			(EINT_OFFSET(x) >> 3)
+> +#define EINT_REG_NR(x)			((x) >> 3)
+>  #define EINT_CON(b, x)			(b + 0xE00 + (EINT_REG_NR(x) * 4))
+>  #define EINT_FLTCON(b, x)		(b + 0xE80 + (EINT_REG_NR(x) * 4))
+>  #define EINT_MASK(b, x)			(b + 0xF00 + (EINT_REG_NR(x) * 4))
+>  #define EINT_PEND(b, x)			(b + 0xF40 + (EINT_REG_NR(x) * 4))
+>  
+> -#define EINT_OFFSET_BIT(x)		(1 << (EINT_OFFSET(x) & 0x7))
+> +#define EINT_OFFSET_BIT(x)		(1 << ((x) & 0x7))
+>  
+>  /* compatibility for plat-s5p/irq-pm.c */
+>  #define EXYNOS4_EINT40CON		(S5P_VA_GPIO2 + 0xE00)
 > -- 
 > 1.7.5.4
 > 
