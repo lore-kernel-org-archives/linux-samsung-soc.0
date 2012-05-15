@@ -1,70 +1,57 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung boards update for v3.5
-Date: Tue, 15 May 2012 17:55:38 +0900
-Message-ID: <07fb01cd3278$7f918540$7eb48fc0$%kim@samsung.com>
-References: <4FAF0326.8000408@samsung.com> <201205142003.27537.arnd@arndb.de>
+Subject: RE: [PATCH 2/2] ARM: S3C64XX: Hook up carrier class modules on
+ Cragganmore
+Date: Tue, 15 May 2012 17:58:12 +0900
+Message-ID: <07fc01cd3278$dbbf63f0$933e2bd0$%kim@samsung.com>
+References: <1337016041-16096-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <1337016041-16096-2-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:30324 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758309Ab2EOIzh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 04:55:37 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4200K9X3DQ9KE0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 17:55:36 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M42004DW3GM1E00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 17:55:35 +0900 (KST)
-In-reply-to: <201205142003.27537.arnd@arndb.de>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <1337016041-16096-2-git-send-email-broonie@opensource.wolfsonmicro.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Arnd Bergmann wrote:
-
+Mark Brown wrote:
 > 
-> On Sunday 13 May 2012, Kukjin Kim wrote:
-> > Hi Arnd, Olof,
-> >
-> > Please pull Samsung boards update for v3.5.
-> >    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > next/board-samsung
-> >
-> > As there were discussions, some exynos4 boards have been updated because
-> > current dt cannot support all features for current board files on exynos4.
-> >
-> > Note, this should be merged after next/devel-samsung because some
-> > platform devices are defined in that.
-> >
-> > If any problems, please let me know.
+> We now have an additional classs of modules which are enumerated at I2C
+> address 0x22. Add hookup for these modules.
 > 
-> Pulled into next/boards now.
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> ---
+>  arch/arm/mach-s3c64xx/mach-crag6410.c |    1 +
+>  1 file changed, 1 insertion(+)
 > 
-Thanks.
-
-> Since we have not pulled the next/devel-samsung branch yet, and that branch
-> depends on the sysmmu branch, the dependencies won't easily get fulfilled.
-
-Hmm...I know...but in this case, I had no choice for avoid mess conflicts between them with keeping separate topic branches.
-
-> A test build of exynos4_defconfig showed that there is at least no build
-> time problem.
+> diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> index 0787b91..48eb76f 100644
+> --- a/arch/arm/mach-s3c64xx/mach-crag6410.c
+> +++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+> @@ -674,6 +674,7 @@ static struct i2c_board_info i2c_devs1[] __initdata = {
+>  	  .platform_data = &glenfarclas_pmic_pdata },
 > 
-Yeah, could be. Because current exynos4_defconfig doesn't enable newly added feature such as DRM_EXYNOS which has been included in
-next/devel-samsung branch for its platform device.
+>  	{ I2C_BOARD_INFO("wlf-gf-module", 0x20) },
+> +	{ I2C_BOARD_INFO("wlf-gf-module", 0x22) },
+>  	{ I2C_BOARD_INFO("wlf-gf-module", 0x24) },
+>  	{ I2C_BOARD_INFO("wlf-gf-module", 0x25) },
+>  	{ I2C_BOARD_INFO("wlf-gf-module", 0x26) },
+> --
+> 1.7.10
 
-> What is the dependency you are referring to?
-> 
-Same above.
+Looks good to me, but there is no '{ I2C_BOARD_INFO("wlf-gf-module", 0x20) },' in my tree.
+
+Just adding address 0x22 stuff is enough now?
 
 Thanks.
 
