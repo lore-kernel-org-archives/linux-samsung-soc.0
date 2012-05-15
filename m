@@ -1,177 +1,45 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung devel-1 for v3.5
-Date: Tue, 15 May 2012 18:06:49 +0900
-Message-ID: <07fe01cd327a$0fde53c0$2f9afb40$%kim@samsung.com>
-References: <4FAF0156.5080306@samsung.com>
- <CAOesGMhwEpQstrM5Zc4ie=CX2BAoSsfAvJbZYxUpg66NUnxrjw@mail.gmail.com>
- <064f01cd31a5$d2300660$76901320$%kim@samsung.com>
+From: Kyoungil Kim <ki0351.kim@samsung.com>
+Subject: [PATCH] serial: samsung: Fixed wrong comparison for baudclk_rate
+Date: Tue, 15 May 2012 19:13:28 +0900
+Message-ID: <000101cd3283$5f58eba0$1e0ac2e0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:8691 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758501Ab2EOJGt (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 05:06:49 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4200CU43YHRS70@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 18:06:47 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M42008DH3ZABG30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 18:06:47 +0900 (KST)
-In-reply-to: <064f01cd31a5$d2300660$76901320$%kim@samsung.com>
+Return-path: <linux-serial-owner@vger.kernel.org>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-serial-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-serial@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Alan Cox' <alan@linux.intel.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>, 'Yoon' <junho78.yoon@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Kukjin Kim wrote:
-> 
-> Olof Johansson wrote:
-> >
-> > On Sat, May 12, 2012 at 5:33 PM, Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> > > Hi Arnd, Olof
-> > >
-> > > Please pull Samsung devel for v3.5
-> > >
-> > > This is including exynos/iommu, platform of drm and fimc-lite, dma for
-> > > exynos5250 and s3c24xx-hsspi.
-> > >
-> > > Note, the exynos/iommu patch got the ack from Joerg and this should be
-> > sent
-> > > to upstream via arm tree and since it depends on
-cleanup-samsung-iommu,
-> > the
-> > > cleanup branch is included(merged) in here.
-> > >
-> > > If any problems, please let me know.
-> >
-> > Same here, I'll hold off pulling this until we've sorted out the
-> > cleanup-samsung-iommu request.
-> >
-> Please hold this off for a moment because I need to sort out regarding
-> s3c-hsotg patches which cause build error because some patches have been
-> already in usb tree for it.
-> 
-> If required, I will send separate branch to you.
-> 
-Hi Arnd and Olof,
+port->baudclk_rate should be compared to the rate of port->baudclk,
+because port->baudclk_rate was assigned as the rate of port->baudclk previously.
+So to check that the current baudclk rate is same as previous rate,
+the target of comparison sholud be the rate of port->baudclk.
 
-I updated the next/devel-samsung branch. As I said, I separate out the
-regarding s3c-hsotg patches from here and it will be sent to usb tree. And
-added support suspend/resume for EXYNOS4412, others same as before.
+Signed-off-by: Jun-Ho, Yoon <junho78.yoon@samsung.com>
+Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>	
+---
+ drivers/tty/serial/samsung.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-Please pull Samsung devel-1 for v3.5 from:
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next/devel-samsung
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index d8b0aee..c4867ea 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1014,10 +1014,10 @@ static int s3c24xx_serial_cpufreq_transition(struct notifier_block *nb,
+ 	 * a disturbance in the clock-rate over the change.
+ 	 */
+ 
+-	if (IS_ERR(port->clk))
++	if (IS_ERR_OR_NULL(port->baudclk))
+ 		goto exit;
+ 
+-	if (port->baudclk_rate == clk_get_rate(port->clk))
++	if (port->baudclk_rate == clk_get_rate(port->baudclk))
+ 		goto exit;
+ 
+ 	if (val == CPUFREQ_PRECHANGE) {
+-- 
+1.7.1
 
-If any problems, please kindly let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit d48b97b403d23f6df0b990cee652bdf9a52337a3:
-
-  Linux 3.4-rc6 (2012-05-06 15:07:32 -0700)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next/devel-samsung
-
-Boojin Kim (1):
-      ARM: EXYNOS: Support DMA for EXYNOS5250 SoC
-
-Heiko Stuebner (6):
-      ARM: S3C24XX: Add forgotten clock lookup table to S3C2443
-      ARM: S3C24XX: claim spi channels for hsspi in dma-s3c2443
-      ARM: S3C24XX: Add map entries needed by the s3c64xx-spi devices
-      ARM: S3C24XX: Add clock-lookup entries required by s3c64xx-spi
-      ARM: S3C24XX: Add HSSPI setup callback for s3c64xx-spi driver
-      spi/s3c64xx: Allow usage for ARCH_S3C24XX
-
-Inderpal Singh (1):
-      ARM: EXYNOS: Support Suspend/Resume for EXYNOS4412
-
-Kukjin Kim (2):
-      Merge branch 'next/devel-samsung-iommu' into next/devel-samsung
-      Merge branch 'next/devel-s3c24xx-hsspi' into next/devel-samsung
-
-KyongHo Cho (3):
-      S5P: SYSMMU: Remove System MMU device driver
-      ARM: EXYNOS: Change System MMU platform device definitions
-      iommu/exynos: Add iommu driver for EXYNOS Platforms
-
-Kyoungil Kim (1):
-      ARM: EXYNOS: To use common config for EXYNOS4 and EXYNOS5 SPI
-
-Marek Szyprowski (1):
-      ARM: EXYNOS: add platform device for core DRM subsystem
-
-Olof Johansson (1):
-      ARM: EXYNOS: add dts files to dtbs target
-
-Sylwester Nawrocki (1):
-      ARM: EXYNOS: Add platform resource definitions for FIMC-LITE
-
- arch/arm/mach-exynos/Kconfig                    |   24 +-
- arch/arm/mach-exynos/Makefile                   |    7 +-
- arch/arm/mach-exynos/Makefile.boot              |    3 +
- arch/arm/mach-exynos/clock-exynos4.c            |   79 +-
- arch/arm/mach-exynos/clock-exynos4.h            |    2 +
- arch/arm/mach-exynos/clock-exynos4210.c         |   11 +
- arch/arm/mach-exynos/clock-exynos4212.c         |   38 +-
- arch/arm/mach-exynos/clock-exynos5.c            |   90 ++
- arch/arm/mach-exynos/dev-drm.c                  |   29 +
- arch/arm/mach-exynos/dev-sysmmu.c               |  457 ++++++-----
- arch/arm/mach-exynos/dma.c                      |  141 +++-
- arch/arm/mach-exynos/include/mach/irqs.h        |   25 +-
- arch/arm/mach-exynos/include/mach/map.h         |   41 +
- arch/arm/mach-exynos/include/mach/regs-clock.h  |    5 +
- arch/arm/mach-exynos/include/mach/regs-pmu.h    |   10 +-
- arch/arm/mach-exynos/include/mach/regs-sysmmu.h |   28 -
- arch/arm/mach-exynos/include/mach/spi-clocks.h  |    2 +-
- arch/arm/mach-exynos/include/mach/sysmmu.h      |   88 ++-
- arch/arm/mach-exynos/mach-armlex4210.c          |    1 -
- arch/arm/mach-exynos/mach-smdkv310.c            |    1 -
- arch/arm/mach-exynos/pm.c                       |    2 +-
- arch/arm/mach-exynos/pmu.c                      |   24 +-
- arch/arm/mach-s3c24xx/Kconfig                   |    5 +
- arch/arm/mach-s3c24xx/Makefile                  |    1 +
- arch/arm/mach-s3c24xx/clock-s3c2416.c           |    1 +
- arch/arm/mach-s3c24xx/clock-s3c2443.c           |    6 +
- arch/arm/mach-s3c24xx/common-s3c2443.c          |   15 +-
- arch/arm/mach-s3c24xx/dma-s3c2443.c             |   16 +-
- arch/arm/mach-s3c24xx/include/mach/dma.h        |    4 +
- arch/arm/mach-s3c24xx/include/mach/map.h        |    5 +
- arch/arm/mach-s3c24xx/setup-spi.c               |   39 +
- arch/arm/plat-s5p/Kconfig                       |    8 -
- arch/arm/plat-s5p/Makefile                      |    1 -
- arch/arm/plat-s5p/sysmmu.c                      |  313 -------
- arch/arm/plat-samsung/Kconfig                   |    2 +-
- arch/arm/plat-samsung/include/plat/devs.h       |    3 +-
- arch/arm/plat-samsung/include/plat/dma-pl330.h  |    1 +
- arch/arm/plat-samsung/include/plat/sysmmu.h     |   95 --
- drivers/iommu/Kconfig                           |   21 +
- drivers/iommu/Makefile                          |    1 +
- drivers/iommu/exynos-iommu.c                    | 1076
-+++++++++++++++++++++++
- drivers/spi/Kconfig                             |    2 +-
- 42 files changed, 1918 insertions(+), 805 deletions(-)
- create mode 100644 arch/arm/mach-exynos/dev-drm.c
- delete mode 100644 arch/arm/mach-exynos/include/mach/regs-sysmmu.h
- create mode 100644 arch/arm/mach-s3c24xx/setup-spi.c
- delete mode 100644 arch/arm/plat-s5p/sysmmu.c
- delete mode 100644 arch/arm/plat-samsung/include/plat/sysmmu.h
- create mode 100644 drivers/iommu/exynos-iommu.c
