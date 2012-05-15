@@ -1,79 +1,263 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 18/20] ARM: dts: Update device tree source files for EXYNOS5250
-Date: Tue, 15 May 2012 19:30:29 +0530
-Message-ID: <CAJuYYwTws16QQzimAp4c1T33nW4XapOLtE8mL8p=aRfRp8V28A@mail.gmail.com>
-References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
-	<1335813270-13083-19-git-send-email-thomas.abraham@linaro.org>
-	<CAOesGMiSrNoOA5wTEZo4RiZkPvSAMi43CntN6GUepTzx6M++OA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH v2 18/20] ARM: dts: Update device tree source files for
+ EXYNOS5250
+Date: Tue, 15 May 2012 19:50:39 +0530
+Message-ID: <1337091639-15912-1-git-send-email-thomas.abraham@linaro.org>
+References: <CAJuYYwTws16QQzimAp4c1T33nW4XapOLtE8mL8p=aRfRp8V28A@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:64682 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753304Ab2EOOA3 convert rfc822-to-8bit (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64502 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753253Ab2EOOHr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 10:00:29 -0400
-Received: by vbbff1 with SMTP id ff1so6053462vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 May 2012 07:00:29 -0700 (PDT)
-In-Reply-To: <CAOesGMiSrNoOA5wTEZo4RiZkPvSAMi43CntN6GUepTzx6M++OA@mail.gmail.com>
+	Tue, 15 May 2012 10:07:47 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M4200APMHWTR4K0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 23:07:45 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4200HKCHVTTN20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 15 May 2012 23:07:45 +0900 (KST)
+In-reply-to: <CAJuYYwTws16QQzimAp4c1T33nW4XapOLtE8mL8p=aRfRp8V28A@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, olof@lixom.net
 
-On 3 May 2012 01:25, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
->
-> On Mon, Apr 30, 2012 at 12:14 PM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->> Updated EXYNOS5 device tree source files to reflect changes in rev1
->> of EXYNOS5 SoC. This includes new additions to the EXYNOS5 dtsi and
->> SMDK5250 dts files and few minor fixes.
->>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->> ---
->> =A0arch/arm/boot/dts/exynos5250-smdk5250.dts | =A0 52 ++++++++++++++=
-+++++++++++++++
->> =A0arch/arm/boot/dts/exynos5250.dtsi =A0 =A0 =A0 =A0 | =A0 44 ++++++=
-+-----------------
->> =A02 files changed, 65 insertions(+), 31 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/bo=
-ot/dts/exynos5250-smdk5250.dts
->> index 399d17b..bcc4b89 100644
->> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> @@ -23,4 +23,56 @@
->> =A0 =A0 =A0 =A0chosen {
->> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0bootargs =3D "root=3D/dev/ram0 rw ram=
-disk=3D8192 console=3DttySAC1,115200";
->> =A0 =A0 =A0 =A0};
->> +
->> + =A0 =A0 =A0 i2c@12C60000 {
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
->> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <0>;
->
-> Two nits:
->
-> #a-c and #s-c is likely to always be 1/0, so you might as well move
-> these to the dtsi file for the SoC.
+Update EXYNOS5 device tree source files to reflect changes in rev1
+of EXYNOS5 SoC. This includes new additions to the EXYNOS5 dtsi and
+SMDK5250 dts files and few minor fixes.
 
-This is fixed.
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   48 +++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |   60 ++++++++++++++---------------
+ 2 files changed, 77 insertions(+), 31 deletions(-)
 
->
-> Also, we tend to use non-caps here and in other locations (so it
-> should be 12c60000 here).
-
-The dtsi file uses 'C' instead of 'c'. So any change here in dts file
-would require a change in the dtsi file as well. So adding this change
-in this patch does not seem correct. So I will not do this change for
-now.
-
-Thanks,
-Thomas.
-
->
->
-> -Olof
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 399d17b..49945cc 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -23,4 +23,52 @@
+ 	chosen {
+ 		bootargs = "root=/dev/ram0 rw ramdisk=8192 console=ttySAC1,115200";
+ 	};
++
++	i2c@12C60000 {
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <20000>;
++		gpios = <&gpb3 0 2 3 0>,
++			<&gpb3 1 2 3 0>;
++
++		eeprom@50 {
++			compatible = "samsung,s524ad0xd1";
++			reg = <0x50>;
++		};
++	};
++
++	i2c@12C70000 {
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-max-bus-freq = <20000>;
++		gpios = <&gpb3 2 2 3 0>,
++			<&gpb3 3 2 3 0>;
++
++		eeprom@51 {
++			compatible = "samsung,s524ad0xd1";
++			reg = <0x51>;
++		};
++	};
++
++	i2c@12C80000 {
++		status = "disabled";
++	};
++
++	i2c@12C90000 {
++		status = "disabled";
++	};
++
++	i2c@12CA0000 {
++		status = "disabled";
++	};
++
++	i2c@12CB0000 {
++		status = "disabled";
++	};
++
++	i2c@12CC0000 {
++		status = "disabled";
++	};
++
++	i2c@12CD0000 {
++		status = "disabled";
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index dfc4335..5ca0cdb 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -23,11 +23,11 @@
+ 	compatible = "samsung,exynos5250";
+ 	interrupt-parent = <&gic>;
+ 
+-	gic:interrupt-controller@10490000 {
++	gic:interrupt-controller@10481000 {
+ 		compatible = "arm,cortex-a9-gic";
+ 		#interrupt-cells = <3>;
+ 		interrupt-controller;
+-		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
++		reg = <0x10481000 0x1000>, <0x10482000 0x2000>;
+ 	};
+ 
+ 	watchdog {
+@@ -42,30 +42,6 @@
+ 		interrupts = <0 43 0>, <0 44 0>;
+ 	};
+ 
+-	sdhci@12200000 {
+-		compatible = "samsung,exynos4210-sdhci";
+-		reg = <0x12200000 0x100>;
+-		interrupts = <0 75 0>;
+-	};
+-
+-	sdhci@12210000 {
+-		compatible = "samsung,exynos4210-sdhci";
+-		reg = <0x12210000 0x100>;
+-		interrupts = <0 76 0>;
+-	};
+-
+-	sdhci@12220000 {
+-		compatible = "samsung,exynos4210-sdhci";
+-		reg = <0x12220000 0x100>;
+-		interrupts = <0 77 0>;
+-	};
+-
+-	sdhci@12230000 {
+-		compatible = "samsung,exynos4210-sdhci";
+-		reg = <0x12230000 0x100>;
+-		interrupts = <0 78 0>;
+-	};
+-
+ 	serial@12C00000 {
+ 		compatible = "samsung,exynos4210-uart";
+ 		reg = <0x12C00000 0x100>;
+@@ -94,48 +70,64 @@
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12C60000 0x100>;
+ 		interrupts = <0 56 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12C70000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12C70000 0x100>;
+ 		interrupts = <0 57 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12C80000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12C80000 0x100>;
+ 		interrupts = <0 58 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12C90000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12C90000 0x100>;
+ 		interrupts = <0 59 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12CA0000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12CA0000 0x100>;
+ 		interrupts = <0 60 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12CB0000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12CB0000 0x100>;
+ 		interrupts = <0 61 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12CC0000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12CC0000 0x100>;
+ 		interrupts = <0 62 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	i2c@12CD0000 {
+ 		compatible = "samsung,s3c2440-i2c";
+ 		reg = <0x12CD0000 0x100>;
+ 		interrupts = <0 63 0>;
++		#address-cells = <1>;
++		#size-cells = <0>;
+ 	};
+ 
+ 	amba {
+@@ -157,13 +149,13 @@
+ 			interrupts = <0 35 0>;
+ 		};
+ 
+-		mdma0: pdma@10800000 {
++		mdma0: mdma@10800000 {
+ 			compatible = "arm,pl330", "arm,primecell";
+ 			reg = <0x10800000 0x1000>;
+ 			interrupts = <0 33 0>;
+ 		};
+ 
+-		mdma1: pdma@11C10000 {
++		mdma1: mdma@11C10000 {
+ 			compatible = "arm,pl330", "arm,primecell";
+ 			reg = <0x11C10000 0x1000>;
+ 			interrupts = <0 124 0>;
+@@ -242,6 +234,12 @@
+ 			#gpio-cells = <4>;
+ 		};
+ 
++		gpc4: gpio-controller@114002E0 {
++			compatible = "samsung,exynos4-gpio";
++			reg = <0x114002E0 0x20>;
++			#gpio-cells = <4>;
++		};
++
+ 		gpd0: gpio-controller@11400160 {
+ 			compatible = "samsung,exynos4-gpio";
+ 			reg = <0x11400160 0x20>;
+@@ -388,19 +386,19 @@
+ 
+ 		gpv2: gpio-controller@10D10040 {
+ 			compatible = "samsung,exynos4-gpio";
+-			reg = <0x10D10040 0x20>;
++			reg = <0x10D10060 0x20>;
+ 			#gpio-cells = <4>;
+ 		};
+ 
+ 		gpv3: gpio-controller@10D10060 {
+ 			compatible = "samsung,exynos4-gpio";
+-			reg = <0x10D10060 0x20>;
++			reg = <0x10D10080 0x20>;
+ 			#gpio-cells = <4>;
+ 		};
+ 
+ 		gpv4: gpio-controller@10D10080 {
+ 			compatible = "samsung,exynos4-gpio";
+-			reg = <0x10D10080 0x20>;
++			reg = <0x10D100C0 0x20>;
+ 			#gpio-cells = <4>;
+ 		};
+ 
+-- 
+1.6.6.rc2
