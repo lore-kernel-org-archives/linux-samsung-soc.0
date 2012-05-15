@@ -1,60 +1,126 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] ARM: S3C64XX: Hook up carrier class modules on
- Cragganmore
-Date: Tue, 15 May 2012 18:37:09 +0100
-Message-ID: <20120515173706.GD4140@opensource.wolfsonmicro.com>
-References: <1337016041-16096-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1337016041-16096-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <07fc01cd3278$dbbf63f0$933e2bd0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SO98HVl1bnMOfKZd"
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: RE: [PATCH 10/20] of/irq: fix interrupt parent lookup procedure
+Date: Tue, 15 May 2012 12:41:49 -0600
+Message-ID: <20120515184149.4E6B93E080A@localhost>
+References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org> <1335813270-13083-11-git-send-email-thomas.abraham@linaro.org> <07f801cd3274$cfbe4200$6f3ac600$%kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60827 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S966081Ab2EORhM (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:39682 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S965807Ab2EOSlv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 13:37:12 -0400
-Content-Disposition: inline
-In-Reply-To: <07fc01cd3278$dbbf63f0$933e2bd0$%kim@samsung.com>
+	Tue, 15 May 2012 14:41:51 -0400
+Received: by pbbrp8 with SMTP id rp8so7878300pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 May 2012 11:41:51 -0700 (PDT)
+In-Reply-To: <07f801cd3274$cfbe4200$6f3ac600$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com
 
+On Tue, 15 May 2012 17:29:14 +0900, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Thomas Abraham wrote:
+> > 
+> > The interrupt parent lookup fails for a node that is a interrupt-controller
+> > but does not have an explict interrupt-parent property and instead inherits
+> > this property from the root node.
+> > 
+> > Consider the nodes listed below.
+> > 
+> >     / {
+> >         interrupt-parent = <&intc_level1>;
+> > 
+> >         intc_level1: interrupt-controller@xxx {
+> >                 interrupt-controller;
+> >                 #interrupt-cells = <3>;
+> >                 <rest of the properties here>;
+> >         };
+> > 
+> >         intc_level2: interrupt-controller@yyy {
+> >                 interrupt-controller;
+> >                 #interrupt-cells = <2>;
+> >                 <rest of the properties here>;
+> >         };
+> >     };
+> > 
+> > The interrupt parent lookup for interrupt-controller@yyy fails. It inherits
+> > the interrupt-parent property from the root node and the root node ('/')
+> > specifies a 'interrupt-parent' property which represents the default interrupt
+> > root controller. But, the property '#interrupt-cells' might not be specified
+> > in the root node.
+> > 
+> > In case a interrupt controller node does not include a 'interrupt-parent'
+> > property but inherits that property from the root node, the check for
+> > 'interrupt-cells' property in the root node fails. Fix this removing the
+> > check for 'interrupt-cells' property.
 
---SO98HVl1bnMOfKZd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hmmm... I dont see the bug...  From your description above, I see the
+following sequence.
 
-On Tue, May 15, 2012 at 05:58:12PM +0900, Kukjin Kim wrote:
+First iteration:
+	child = &ic@yyy;
+	cannot find "interrupt-parent" so take 'if' clause
+		p = of_get_parent(child);  (root)
+	iteration continues because #interrupt-cells not found in 'p'(root)
+Second iteration:
+	child = root;
+	found "interrupt-parent", so take 'else' clause
+		p = of_find_node_by_phandle();  (ic@xxx)
+	iteration stops because #interrupt-cells is found in 'p'(ic@xxx)
 
-> Looks good to me, but there is no '{ I2C_BOARD_INFO("wlf-gf-module", 0x20) },' in my tree.
+What am I missing in my admittedly short look at the code?
 
-> Just adding address 0x22 stuff is enough now?
+g.
 
-Yes, it is - sorry, context diff for another project.
+> > 
+> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> > ---
+> >  drivers/of/irq.c |    4 +++-
+> >  1 files changed, 3 insertions(+), 1 deletions(-)
+> > 
+> > diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+> > index 9cf0060..a520363 100644
+> > --- a/drivers/of/irq.c
+> > +++ b/drivers/of/irq.c
+> > @@ -66,14 +66,16 @@ struct device_node *of_irq_find_parent(struct device_node *child)
+> >  		if (parp == NULL)
+> >  			p = of_get_parent(child);
+> >  		else {
+> > +			of_node_put(child);
+> >  			if (of_irq_workarounds & OF_IMAP_NO_PHANDLE)
+> >  				p = of_node_get(of_irq_dflt_pic);
+> >  			else
+> >  				p = of_find_node_by_phandle(be32_to_cpup(parp));
+> > +			return p;
+> >  		}
+> >  		of_node_put(child);
+> >  		child = p;
+> > -	} while (p && of_get_property(p, "#interrupt-cells", NULL) == NULL);
+> > +	} while (p);
 
---SO98HVl1bnMOfKZd
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+This does break one use-case.  Sometimes the interrupt-parent is the
+same node when an 
+> > 
+> >  	return p;
+> >  }
+> > --
+> > 1.7.5.4
+> 
+> Hi Grant and Rob,
+> 
+> I'm ok on this and this patch and #11 patch in this series are required for patches that add device tree based support for wakeup
+> interrupts on EXYNOS5250.
+> 
+> So could you have a look at this patch and let us know if this is okay or any rework is required.
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPspQ4AAoJEBus8iNuMP3dDBwQAJ29Nh132OKBytiE+lbyHtpq
-fPBspjtMdPXJuTl3ihxI5fBMLkQRNjGA6guXEEVipyiPH3UEqbhaLhgye6T5FeR3
-CccqgBuDkJGoiSsQDBWfC6Cl9pTn/ZEcEo0Ug4C2gltgyepR+ZGZIKxgiawn+JyV
-gQshiw81r5WTrydMEDRSxdnSFpUkqS5xeAQqnEWMyqRBkU/+4OLdEh8I69Pwq7KQ
-FuqJBHsiV48xDCruoR8uRnHI3PNqth3ebmEN1Yfz9bAGf+TG16JVZhLHchvbQ2VN
-vBuRU2+eRuj+JqIOCPEthHaQWZCCVvy1sMbtl499tP8doyUVTManOkSIVu6mSnKC
-5zM+5abtVLPt0ALcB1Q47NXLSsFWphT27HtPyUVoLFaXdOrSZhQ8Bjiox+Semxay
-gGTs+6T38jf+8DgAieIpelFcf5z4TBk5nWyFrd4U8QWvGySw3nJd6PBSB3MkQcef
-n22j2yg+8dHzgggAAX9T2y2jxvhvg2NsFNgiO9XnNezK87s0rH9IBYzYJV2ZlI9m
-zI/l9P/CjdYzKvQ+DAU53plYfgbh6EiWmBrGWNAtoHpq3LWhBnln9DPM/lJabjXk
-9LiKFZM3kV1PCbZM3qYHh+lQUCpiKyPOwd/Dja0O/esKRE/RakOrMcq11KJJblEg
-x9vEaiaqMgQ9mPVMShcq
-=Jx5U
------END PGP SIGNATURE-----
-
---SO98HVl1bnMOfKZd--
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies, Ltd.
