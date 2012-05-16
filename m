@@ -1,133 +1,102 @@
-From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 10/20] of/irq: fix interrupt parent lookup procedure
-Date: Tue, 15 May 2012 14:59:17 -0600
-Message-ID: <CACxGe6u2EqcrNwb61P8YbkmvDhymv16Zrp0A+O4zc9AV3HMdMg@mail.gmail.com>
-References: <1335813270-13083-1-git-send-email-thomas.abraham@linaro.org>
- <1335813270-13083-11-git-send-email-thomas.abraham@linaro.org>
- <07f801cd3274$cfbe4200$6f3ac600$%kim@samsung.com> <20120515184149.4E6B93E080A@localhost>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung devel-2 for v3.5
+Date: Wed, 16 May 2012 15:20:34 +0900
+Message-ID: <092f01cd332c$00df3c60$029db520$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61428 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S966750Ab2EOU7i convert rfc822-to-8bit (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12702 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754611Ab2EPGUi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 15 May 2012 16:59:38 -0400
-Received: by pbbrp8 with SMTP id rp8so149090pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 15 May 2012 13:59:38 -0700 (PDT)
-In-Reply-To: <20120515184149.4E6B93E080A@localhost>
+	Wed, 16 May 2012 02:20:38 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M4300I0FQWHXBO0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 May 2012 15:20:36 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4300J9CQY61A70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 16 May 2012 15:20:36 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Tue, May 15, 2012 at 12:41 PM, Grant Likely
-<grant.likely@secretlab.ca> wrote:
-> On Tue, 15 May 2012 17:29:14 +0900, Kukjin Kim <kgene.kim@samsung.com=
-> wrote:
->> Thomas Abraham wrote:
->> >
->> > The interrupt parent lookup fails for a node that is a interrupt-c=
-ontroller
->> > but does not have an explict interrupt-parent property and instead=
- inherits
->> > this property from the root node.
->> >
->> > Consider the nodes listed below.
->> >
->> > =A0 =A0 / {
->> > =A0 =A0 =A0 =A0 interrupt-parent =3D <&intc_level1>;
->> >
->> > =A0 =A0 =A0 =A0 intc_level1: interrupt-controller@xxx {
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupt-controller;
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #interrupt-cells =3D <3>;
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <rest of the properties here>;
->> > =A0 =A0 =A0 =A0 };
->> >
->> > =A0 =A0 =A0 =A0 intc_level2: interrupt-controller@yyy {
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 interrupt-controller;
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #interrupt-cells =3D <2>;
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <rest of the properties here>;
->> > =A0 =A0 =A0 =A0 };
->> > =A0 =A0 };
->> >
->> > The interrupt parent lookup for interrupt-controller@yyy fails. It=
- inherits
->> > the interrupt-parent property from the root node and the root node=
- ('/')
->> > specifies a 'interrupt-parent' property which represents the defau=
-lt interrupt
->> > root controller. But, the property '#interrupt-cells' might not be=
- specified
->> > in the root node.
->> >
->> > In case a interrupt controller node does not include a 'interrupt-=
-parent'
->> > property but inherits that property from the root node, the check =
-for
->> > 'interrupt-cells' property in the root node fails. Fix this removi=
-ng the
->> > check for 'interrupt-cells' property.
->
-> Hmmm... I dont see the bug... =A0From your description above, I see t=
-he
-> following sequence.
->
-> First iteration:
-> =A0 =A0 =A0 =A0child =3D &ic@yyy;
-> =A0 =A0 =A0 =A0cannot find "interrupt-parent" so take 'if' clause
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0p =3D of_get_parent(child); =A0(root)
-> =A0 =A0 =A0 =A0iteration continues because #interrupt-cells not found=
- in 'p'(root)
-> Second iteration:
-> =A0 =A0 =A0 =A0child =3D root;
-> =A0 =A0 =A0 =A0found "interrupt-parent", so take 'else' clause
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0p =3D of_find_node_by_phandle(); =A0(i=
-c@xxx)
-> =A0 =A0 =A0 =A0iteration stops because #interrupt-cells is found in '=
-p'(ic@xxx)
->
-> What am I missing in my admittedly short look at the code?
->
-> g.
->
->> >
->> > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> > ---
->> > =A0drivers/of/irq.c | =A0 =A04 +++-
->> > =A01 files changed, 3 insertions(+), 1 deletions(-)
->> >
->> > diff --git a/drivers/of/irq.c b/drivers/of/irq.c
->> > index 9cf0060..a520363 100644
->> > --- a/drivers/of/irq.c
->> > +++ b/drivers/of/irq.c
->> > @@ -66,14 +66,16 @@ struct device_node *of_irq_find_parent(struct =
-device_node *child)
->> > =A0 =A0 =A0 =A0 =A0 =A0 if (parp =3D=3D NULL)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 p =3D of_get_parent(child)=
-;
->> > =A0 =A0 =A0 =A0 =A0 =A0 else {
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 of_node_put(child);
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 if (of_irq_workarounds & O=
-=46_IMAP_NO_PHANDLE)
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 p =3D of_n=
-ode_get(of_irq_dflt_pic);
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 else
->> > =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 p =3D of_f=
-ind_node_by_phandle(be32_to_cpup(parp));
->> > + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 return p;
->> > =A0 =A0 =A0 =A0 =A0 =A0 }
->> > =A0 =A0 =A0 =A0 =A0 =A0 of_node_put(child);
->> > =A0 =A0 =A0 =A0 =A0 =A0 child =3D p;
->> > - =A0 } while (p && of_get_property(p, "#interrupt-cells", NULL) =3D=
-=3D NULL);
->> > + =A0 } while (p);
->
-> This does break one use-case. =A0Sometimes the interrupt-parent is th=
-e
-> same node when an
+Hi Arnd and Olof,
 
-Oops, ignore this comment.  I meant to delete it before sending.
+Here is Samsung devel-2 for v3.5 and it is including update support for
+EXYNOS5250 SoC.
 
-g.
+Please pull from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next/devel-exynos5250-1
+
+Note, this branch has a dependency on next/cleanup-plat-s5p which is already
+in next/cleanup2 of arm-soc.
+
+If any problems, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 0f58487b1e313e6abf500431e05f4d54f61736f2:
+
+  Merge branch 'next/cleanup-plat-s5p' into next/devel-exynos5250-1
+(2012-05-15 15:55:25 +0900)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+next/devel-exynos5250-1
+
+Changhwan Youn (2):
+      ARM: EXYNOS: Modify the GIC physical address for static io-mapping
+      ARM: EXYNOS: Redefine IRQ_MCT_L0,1 definition
+
+Kisoo Yu (1):
+      ARM: EXYNOS: Add pre-divider and fout mux clocks for bpll and mpll
+
+Kukjin Kim (1):
+      ARM: EXYNOS: update irqs for EXYNOS5250 SoC
+
+Sangsu Park (1):
+      ARM: EXYNOS: add GPC4 bank instance
+
+Thomas Abraham (6):
+      ARM: EXYNOS: Add watchdog timer clock instance
+      ARM: EXYNOS: Remove a new bus_type instance for EXYNOS5
+      ARM: EXYNOS: Add irq_domain support for interrupt combiner
+      ARM: EXYNOS: Add device tree support for interrupt combiner
+      ARM: dts: Update device tree source files for EXYNOS5250
+      ARM: EXYNOS: Add AUXDATA for i2c controllers
+
+ .../bindings/arm/samsung/interrupt-combiner.txt    |   52 ++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |   48 ++++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   60 ++++----
+ arch/arm/mach-exynos/clock-exynos5.c               |   51 ++++++-
+ arch/arm/mach-exynos/common.c                      |  178
++++++++++++++-------
+ arch/arm/mach-exynos/include/mach/gpio.h           |    9 +-
+ arch/arm/mach-exynos/include/mach/irqs.h           |   40 +++--
+ arch/arm/mach-exynos/include/mach/map.h            |    4 +-
+ arch/arm/mach-exynos/include/mach/regs-clock.h     |    2 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    4 +
+ arch/arm/mach-exynos/mct.c                         |   17 ++-
+ arch/arm/mach-exynos/pm.c                          |    2 +-
+ arch/arm/plat-samsung/include/plat/cpu.h           |    2 +-
+ arch/arm/plat-samsung/include/plat/s5p-clock.h     |    4 +
+ arch/arm/plat-samsung/s5p-clock.c                  |   30 ++++
+ drivers/gpio/gpio-samsung.c                        |   11 +-
+ 16 files changed, 389 insertions(+), 125 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/arm/samsung/interrupt-combiner.txt
