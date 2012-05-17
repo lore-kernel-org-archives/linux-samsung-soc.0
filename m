@@ -1,79 +1,39 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [GIT PULL] Samsung usb stuff for v3.5
-Date: Thu, 17 May 2012 09:18:28 -0700
-Message-ID: <20120517161828.GA6759@kroah.com>
-References: <0b1401cd33f8$b5aca930$2105fb90$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/3] ARM: Exynos5: Enable support for DW-MMC controllers
+Date: Thu, 17 May 2012 22:05:31 +0530
+Message-ID: <1337272534-30370-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:48411 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758331Ab2EQQSe (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:14435 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759562Ab2EQQW2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 May 2012 12:18:34 -0400
-Received: by dady13 with SMTP id y13so2614994dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 May 2012 09:18:33 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <0b1401cd33f8$b5aca930$2105fb90$%kim@samsung.com>
+	Thu, 17 May 2012 12:22:28 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M46008B7DHENO70@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 01:22:26 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4600C3IDGOZP50@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 01:22:26 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: balbi@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Thu, May 17, 2012 at 03:45:55PM +0900, Kukjin Kim wrote:
-> Hi Greg and Felipe,
-> 
-> Please pull Samsung 's3c-hsotg' UDC support for EXYNOS4210 and S5PV210 from:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.5-for-usb
-> 
-> Since it has a dependency on 'usb: hsotg: samsung ...' patches which have
-> been already in usb tree now, so would be better if you could pull this
-> series in your tree. Or this can be sent to upstream in the end of upcoming
-> merge window after pulling usb tree. But I think usb tree is better in this
-> case.
-> 
-> If any problems, please kindly let me know.
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> The following changes since commit 36be50515fe2aef61533b516fa2576a2c7fe7664:
-> 
->   Linux 3.4-rc7 (2012-05-12 18:37:47 -0700)
-> 
-> are available in the git repository at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.5-for-usb
-> 
-> Joonyoung Shim (1):
->       ARM: EXYNOS: Add s3c-hsotg device support for NURI board
-> 
-> Lukasz Majewski (3):
->       ARM: EXYNOS: Add usb otg phy control for EXYNOS4210
->       ARM: EXYNOS: Add s3c-hsotg device support for GONI board
->       ARM: EXYNOS: Add s3c-hsotg device support for Universal C210 board
-> 
->  arch/arm/mach-exynos/Kconfig                 |    3 +
->  arch/arm/mach-exynos/include/mach/irqs.h     |    1 +
->  arch/arm/mach-exynos/include/mach/map.h      |    4 +
->  arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
->  arch/arm/mach-exynos/mach-nuri.c             |    9 ++-
->  arch/arm/mach-exynos/mach-universal_c210.c   |   10 +++
->  arch/arm/mach-exynos/setup-usb-phy.c         |  100
-> ++++++++++++++++++-------
->  arch/arm/mach-s5pv210/Kconfig                |    1 +
->  arch/arm/mach-s5pv210/mach-goni.c            |    5 ++
->  9 files changed, 107 insertions(+), 29 deletions(-)
+This patch set enables device tree based support for the four dw-mmc controllers
+on Samsung's Exynos5250 SoC.
 
-Hm, this branch is against 3.4-rc7, while my tree is currently at
-3.4-rc6, so it pulls in Linus's recent merges.
+Thomas Abraham (3):
+  ARM: Samsung: Add support for MSHC controller clocks
+  ARM: Exynos5: Add AUXDATA support for MSHC controllers
+  ARM: dts: Add nodes for dw_mmc controllers for Samsung Exynos5250 platforms
 
-Which might be ok, let me see how it goes...
-
-greg k-h
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   59 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |   32 +++++++++++++++
+ arch/arm/mach-exynos/clock-exynos5.c      |   45 ++++++++--------------
+ arch/arm/mach-exynos/include/mach/map.h   |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c    |    8 ++++
+ 5 files changed, 116 insertions(+), 29 deletions(-)
