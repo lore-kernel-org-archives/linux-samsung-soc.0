@@ -1,89 +1,69 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [GIT PULL] Samsung devel-2 for v3.5
-Date: Thu, 17 May 2012 08:21:57 +0530
-Message-ID: <CAK9yfHyw81CM6OWvwFCG0jqQLULviUhUrz5bA2gM3h+W25rwfQ@mail.gmail.com>
-References: <092f01cd332c$00df3c60$029db520$%kim@samsung.com>
-	<201205162013.37031.arnd@arndb.de>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH RESEND 0/4] ARM: EXYNOS: Add s3c-hsotg support for Exynos4210
+ and S5PV210 boards
+Date: Thu, 17 May 2012 08:57:32 +0530
+Message-ID: <4FB47024.9000203@linaro.org>
+References: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f49.google.com ([209.85.216.49]:61038 "EHLO
-	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932983Ab2EQCv6 (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:64567 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756254Ab2EQD1i (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 May 2012 22:51:58 -0400
-Received: by qabj40 with SMTP id j40so1799046qab.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 May 2012 19:51:57 -0700 (PDT)
-In-Reply-To: <201205162013.37031.arnd@arndb.de>
+	Wed, 16 May 2012 23:27:38 -0400
+Received: by dady13 with SMTP id y13so1834855dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 May 2012 20:27:37 -0700 (PDT)
+In-Reply-To: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Lukasz Majewski <l.majewski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-Hi Arnd,
+On 05/10/2012 06:46 PM, Lukasz Majewski wrote:
+> This patch series adds S3C-HSOTG UDC support for Exynos4210 and S5PV210 based targets; namely
+>  Universal_C210, Nuri and GONI.
+> 
+> Tested HW:
+> - Exynos4210 NURI target rev.1
+> - Exynos4210 Universal_C210 target rev.0
+> - S5PV210 GONI target
+> 
+> Dependencies:
+> - usb:hsotg:samsung USB S3C-HSOTG driver fixes and code cleanup
+>   patches, which have been already pulled to usb for-next branch.
+> 
+> http://permalink.gmane.org/gmane.linux.usb.general/62101
+> 
+> Those patches are enabling this UDC driver on GONI, NURI and Universal_C210 targets
+> 
+> Joonyoung Shim (1):
+>   ARM: EXYNOS: Add s3c-hsotg device support for NURI board
+> 
+> Lukasz Majewski (3):
+>   ARM: EXYNOS: Add usb otg phy control for EXYNOS4210
+>   ARM: EXYNOS: Add s3c-hsotg device support for GONI board
+>   ARM: EXYNOS: Add s3c-hsotg device support for Universal C210 board
+> 
+>  arch/arm/mach-exynos/Kconfig                 |    3 +
+>  arch/arm/mach-exynos/include/mach/irqs.h     |    1 +
+>  arch/arm/mach-exynos/include/mach/map.h      |    4 +
+>  arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
+>  arch/arm/mach-exynos/mach-nuri.c             |    9 ++-
+>  arch/arm/mach-exynos/mach-universal_c210.c   |   10 +++
+>  arch/arm/mach-exynos/setup-usb-phy.c         |   95 +++++++++++++++++++-------
+>  arch/arm/mach-s5pv210/Kconfig                |    1 +
+>  arch/arm/mach-s5pv210/mach-goni.c            |    5 ++
+>  9 files changed, 105 insertions(+), 26 deletions(-)
+> 
+Kukjin,
 
-Thomas has posted a patch [1] (available on Grant's tree) to fix this problem.
+Are you planning to queue this patchset for 3.5? If so, I have one patch
+for enabling support on Origen board, which I would like to add on top
+of these patches.
 
-[1] http://git.secretlab.ca/?p=linux-2.6.git;a=commitdiff;h=766644d2df254934d656a0a0628b636212c24f9e;hp=0034102808e0dbbf3a2394b82b1bb40b5778de9e
-
-
-
-On 17/05/2012, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 16 May 2012, Kukjin Kim wrote:
->
->> Note, this branch has a dependency on next/cleanup-plat-s5p which is
->> already
->> in next/cleanup2 of arm-soc.
->>
->> If any problems, please kindly let me know.
->
-> I've hit a build problem with exynos4_defconfig, which I fixed using this
-> patch.
->
-> 	Arnd
->
-> commit 820f3dd7964f1889baaaaa0c2ba45d05bb619f66
-> Author: Arnd Bergmann <arnd@arndb.de>
-> Date:   Wed May 16 22:10:14 2012 +0200
->
->     ARM: exynos: fix building with CONFIG_OF disabled
->
->     irq_of_parse_and_map does not have an empty definition for the
->     !CONFIG_OF case, so we should not try to call it then:
->
->     arch/arm/mach-exynos/common.c: In function 'combiner_init':
->     arch/arm/mach-exynos/common.c:576:3: warning: implicit declaration of
-> function 'irq_of_parse_and_map'
->
->     Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 9900158..4913471 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -568,7 +568,11 @@ void __init combiner_init(void __iomem *combiner_base,
-> struct device_node *np)
->
->  	for (i = 0; i < max_nr; i++) {
->  		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
-> -		irq = np ? irq_of_parse_and_map(np, i) : IRQ_SPI(i);
-> +		irq = IRQ_SPI(i);
-> +#ifdef CONFIG_OF
-> +		if (np)
-> +			irq = irq_of_parse_and_map(np, i);
-> +#endif
->  		combiner_cascade_irq(i, irq);
->  	}
->  }
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-
+Please let me know about your plan.
 
 -- 
-With warm regards,
-Sachin
+Tushar Behera
