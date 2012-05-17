@@ -1,79 +1,58 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/3] ARM: EXYNOS: Add HSOTG support to SMDKV310
-Date: Thu, 17 May 2012 17:24:14 +0530
-Message-ID: <1337255655-10633-3-git-send-email-sachin.kamat@linaro.org>
-References: <1337255655-10633-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] ARM: s3c64xx: cpuidle - declare the states with the
+ new api
+Date: Thu, 17 May 2012 13:28:02 +0100
+Message-ID: <20120517122802.GG26337@opensource.wolfsonmicro.com>
+References: <1337004377-17732-1-git-send-email-daniel.lezcano@linaro.org>
+ <1337004377-17732-2-git-send-email-daniel.lezcano@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="XuV1QlJbYrcVoo+x"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:55043 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760254Ab2EQME2 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51778 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1755165Ab2EQM2I (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 May 2012 08:04:28 -0400
-Received: by mail-pz0-f46.google.com with SMTP id y13so2338036dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 17 May 2012 05:04:28 -0700 (PDT)
-In-Reply-To: <1337255655-10633-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 17 May 2012 08:28:08 -0400
+Content-Disposition: inline
+In-Reply-To: <1337004377-17732-2-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: ben-linux@fluff.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linaro-dev@lists.linaro.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, heiko@sntech.de
 
-S3C-HSOTG device is added to SMDKV310 board.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/Kconfig         |    1 +
- arch/arm/mach-exynos/mach-smdkv310.c |    6 ++++++
- 2 files changed, 7 insertions(+), 0 deletions(-)
+--XuV1QlJbYrcVoo+x
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 4bc13f4..9928f3d 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -199,6 +199,7 @@ config MACH_SMDKV310
- 	select S3C_DEV_HSMMC1
- 	select S3C_DEV_HSMMC2
- 	select S3C_DEV_HSMMC3
-+	select S3C_DEV_USB_HSOTG
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select EXYNOS4_DEV_AHCI
- 	select SAMSUNG_DEV_KEYPAD
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index 83b91fa..b7a6360 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -19,6 +19,7 @@
- #include <linux/i2c.h>
- #include <linux/input.h>
- #include <linux/pwm_backlight.h>
-+#include <linux/platform_data/s3c-hsotg.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -256,6 +257,9 @@ static void __init smdkv310_ohci_init(void)
- 	exynos4_ohci_set_platdata(pdata);
- }
- 
-+/* USB OTG */
-+static struct s3c_hsotg_plat smdkv310_hsotg_pdata;
-+
- static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s3c_device_hsmmc0,
- 	&s3c_device_hsmmc1,
-@@ -264,6 +268,7 @@ static struct platform_device *smdkv310_devices[] __initdata = {
- 	&s3c_device_i2c1,
- 	&s5p_device_i2c_hdmiphy,
- 	&s3c_device_rtc,
-+	&s3c_device_usb_hsotg,
- 	&s3c_device_wdt,
- 	&s5p_device_ehci,
- 	&s5p_device_fimc0,
-@@ -368,6 +373,7 @@ static void __init smdkv310_machine_init(void)
- 
- 	smdkv310_ehci_init();
- 	smdkv310_ohci_init();
-+	s3c_hsotg_set_platdata(&smdkv310_hsotg_pdata);
- 	clk_xusbxti.rate = 24000000;
- 
- 	platform_add_devices(smdkv310_devices, ARRAY_SIZE(smdkv310_devices));
--- 
-1.7.4.1
+On Mon, May 14, 2012 at 04:06:16PM +0200, Daniel Lezcano wrote:
+> The states are now part of the cpuidle_driver structure, so we can
+> declare the states in this structure directly. That saves us an extra
+> variable declaration and a memcpy.
+
+Tested-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+
+--XuV1QlJbYrcVoo+x
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPtO7LAAoJEBus8iNuMP3dZlQP/361ID4+EODBoLILsKwdySYE
+SsQGihWxieEK+xyIW+iGViiNfovGem1nDRCpSiIiqAvb1yT9w0zIUebKWVPOj2t5
+i/8Gx7gEIlC+FmIkH0eVWR8XCFLiJ7MID2EFhvg8bsLbP8NvtC0DAs0jPMMv3a9Z
+g/nSKky3DTnGVAsan/l0qr5SfQuWc02Zx7sXE/BsZGlCBhK2PB+GNFzfOO/j5sa0
+aniUEl0AddfN3Xhk6kF0dm7dc6uUawpv3wxjuj6OOd5zLkD5qJnSJCvpmTK2RB00
+QF/yMR71b8M6t2U+PM+3YLnZkr5lw7eZsA/joDkiROETkSGIx1+yqTfp6TsKkjPS
+HgldEKtVmE6hoWWJvl90R8r8kGCiXIxE0YcY+woXeoLY2y4hKYOAPAEGsRnEQb26
+di8oX29lEkyVAhzyJmegwlxlU9Au3/HUyulCfcLBqHGqBFWJ8mFeIUJI/WxMXYJc
+0Sn4Sj7wnBafzqxC6sc/tMET5gQa+4wf6VBrewh8/TFGIZs0mDdtB9tPj3bjNute
+j/zOZe0DXhqv7xh8KxIntif6OPut680qGMyT4/T7IZwfnJKCfEomVHBr/MgL18Z0
+/FdlDPpPOWuW62j30M1jFlN/3LUFdAvAtEd4G4NV82YAV6IpwNigJZdJHbNmuzvA
+eSijxC/tYoiOyjI1YnP3
+=08TB
+-----END PGP SIGNATURE-----
+
+--XuV1QlJbYrcVoo+x--
