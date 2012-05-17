@@ -1,46 +1,52 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: dw_mmc: Fixed sdio interrupt mask bit setting bug
-Date: Thu, 17 May 2012 08:35:38 -0400
-Message-ID: <87wr4b3rz9.fsf@laptop.org>
-References: <002901cd31ac$fb410250$f1c306f0$%kim@samsung.com>
-	<CAFbHwiSwu32cdzQib+TYj9uSt+PXmA1Ltk1mzECRoy1DfdjyNQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: [PATCH v2 0/2] regulator: Add initial suport for max77686
+Date: Thu, 17 May 2012 19:09:25 +0530
+Message-ID: <1337261967-26004-1-git-send-email-yadi.brar@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:45803 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S965551Ab2EQMfm convert rfc822-to-8bit (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:48464 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752918Ab2EQNju (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 May 2012 08:35:42 -0400
-In-Reply-To: <CAFbHwiSwu32cdzQib+TYj9uSt+PXmA1Ltk1mzECRoy1DfdjyNQ@mail.gmail.com>
-	(Will Newton's message of "Mon, 14 May 2012 10:06:41 +0100")
+	Thu, 17 May 2012 09:39:50 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Will Newton <will.newton@gmail.com>
-Cc: Kyoungil Kim <ki0351.kim@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-Hi,
+This patch series adds support for max77686 which is a multifunction device which
+includes regulator (pmic), rtc and charger sub-blocks within it. The support for
+mfd driver and regulator driver are added by this patch series. This patch series
+also includes device tree and irqdomain support for mfd and regulator portions.
 
-On Mon, May 14 2012, Will Newton wrote:
-> On Mon, May 14, 2012 at 9:38 AM, Kyoungil Kim <ki0351.kim@samsung.com=
-> wrote:
->> The sdio interrupt mask bits are arranged in [31:16].
->> (1 << SDMMC_INT_SDIO(slot->id))) does 16 bits left shift twice.
->> So this patch changes to do 16 bits left shift only one time.
->>
->> Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
->> ---
->> =C2=A0drivers/mmc/host/dw_mmc.c | =C2=A0 =C2=A04 ++--
->> =C2=A01 files changed, 2 insertions(+), 2 deletions(-)
->
-> Yes, looks correct.
->
-> Acked-by: Will Newton <will.newton@imgtec.com>
+Implemented the required modification, stated in the recieved review comments.
+changes since V1:
+-added regmap support.
+-implemented .get_voltage_sel, .set_voltage_sel and .set_voltage_time_sel after
+ removing .get_voltage and .set_voltage in regulator driver.
+-used of_regulator_match() for parsing DT.
+-added Documentation for Devive Tree binding.
 
-Thanks, pushed to mmc-next for 3.5.
+This patch series is based on mark_regulator/for-next and has been tested on
+GAIA board.
 
-- Chris.
---=20
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Yadwinder Singh Brar (2):
+  mfd: Add support for MAX77686.
+  regulator: Add support for MAX77686.
+
+ Documentation/devicetree/bindings/mfd/max77686.txt |   63 +++
+ drivers/mfd/Kconfig                                |   21 +
+ drivers/mfd/Makefile                               |    1 +
+ drivers/mfd/max77686-irq.c                         |  255 ++++++++++
+ drivers/mfd/max77686.c                             |  322 ++++++++++++
+ drivers/regulator/Kconfig                          |    9 +
+ drivers/regulator/Makefile                         |    1 +
+ drivers/regulator/max77686.c                       |  512 ++++++++++++++++++++
+ include/linux/mfd/max77686-private.h               |  282 +++++++++++
+ include/linux/mfd/max77686.h                       |  100 ++++
+ 10 files changed, 1566 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mfd/max77686.txt
+ create mode 100644 drivers/mfd/max77686-irq.c
+ create mode 100644 drivers/mfd/max77686.c
+ create mode 100644 drivers/regulator/max77686.c
+ create mode 100644 include/linux/mfd/max77686-private.h
+ create mode 100644 include/linux/mfd/max77686.h
