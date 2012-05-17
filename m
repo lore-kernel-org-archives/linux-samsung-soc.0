@@ -1,69 +1,78 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH RESEND 0/4] ARM: EXYNOS: Add s3c-hsotg support for Exynos4210
- and S5PV210 boards
-Date: Thu, 17 May 2012 08:57:32 +0530
-Message-ID: <4FB47024.9000203@linaro.org>
-References: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung usb stuff for v3.5
+Date: Thu, 17 May 2012 15:45:55 +0900
+Message-ID: <0b1401cd33f8$b5aca930$2105fb90$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:64567 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756254Ab2EQD1i (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:57119 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758215Ab2EQGpy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 16 May 2012 23:27:38 -0400
-Received: by dady13 with SMTP id y13so1834855dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 16 May 2012 20:27:37 -0700 (PDT)
-In-Reply-To: <1336655818-15136-1-git-send-email-l.majewski@samsung.com>
+	Thu, 17 May 2012 02:45:54 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M4500D96MLJBYM0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 May 2012 15:45:52 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4500G7TMSFHW40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 17 May 2012 15:45:52 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Lukasz Majewski <l.majewski@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>
+To: gregkh@linuxfoundation.org, balbi@ti.com
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
 
-On 05/10/2012 06:46 PM, Lukasz Majewski wrote:
-> This patch series adds S3C-HSOTG UDC support for Exynos4210 and S5PV210 based targets; namely
->  Universal_C210, Nuri and GONI.
-> 
-> Tested HW:
-> - Exynos4210 NURI target rev.1
-> - Exynos4210 Universal_C210 target rev.0
-> - S5PV210 GONI target
-> 
-> Dependencies:
-> - usb:hsotg:samsung USB S3C-HSOTG driver fixes and code cleanup
->   patches, which have been already pulled to usb for-next branch.
-> 
-> http://permalink.gmane.org/gmane.linux.usb.general/62101
-> 
-> Those patches are enabling this UDC driver on GONI, NURI and Universal_C210 targets
-> 
-> Joonyoung Shim (1):
->   ARM: EXYNOS: Add s3c-hsotg device support for NURI board
-> 
-> Lukasz Majewski (3):
->   ARM: EXYNOS: Add usb otg phy control for EXYNOS4210
->   ARM: EXYNOS: Add s3c-hsotg device support for GONI board
->   ARM: EXYNOS: Add s3c-hsotg device support for Universal C210 board
-> 
->  arch/arm/mach-exynos/Kconfig                 |    3 +
->  arch/arm/mach-exynos/include/mach/irqs.h     |    1 +
->  arch/arm/mach-exynos/include/mach/map.h      |    4 +
->  arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
->  arch/arm/mach-exynos/mach-nuri.c             |    9 ++-
->  arch/arm/mach-exynos/mach-universal_c210.c   |   10 +++
->  arch/arm/mach-exynos/setup-usb-phy.c         |   95 +++++++++++++++++++-------
->  arch/arm/mach-s5pv210/Kconfig                |    1 +
->  arch/arm/mach-s5pv210/mach-goni.c            |    5 ++
->  9 files changed, 105 insertions(+), 26 deletions(-)
-> 
-Kukjin,
+Hi Greg and Felipe,
 
-Are you planning to queue this patchset for 3.5? If so, I have one patch
-for enabling support on Origen board, which I would like to add on top
-of these patches.
+Please pull Samsung 's3c-hsotg' UDC support for EXYNOS4210 and S5PV210 from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.5-for-usb
 
-Please let me know about your plan.
+Since it has a dependency on 'usb: hsotg: samsung ...' patches which have
+been already in usb tree now, so would be better if you could pull this
+series in your tree. Or this can be sent to upstream in the end of upcoming
+merge window after pulling usb tree. But I think usb tree is better in this
+case.
 
--- 
-Tushar Behera
+If any problems, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 36be50515fe2aef61533b516fa2576a2c7fe7664:
+
+  Linux 3.4-rc7 (2012-05-12 18:37:47 -0700)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.5-for-usb
+
+Joonyoung Shim (1):
+      ARM: EXYNOS: Add s3c-hsotg device support for NURI board
+
+Lukasz Majewski (3):
+      ARM: EXYNOS: Add usb otg phy control for EXYNOS4210
+      ARM: EXYNOS: Add s3c-hsotg device support for GONI board
+      ARM: EXYNOS: Add s3c-hsotg device support for Universal C210 board
+
+ arch/arm/mach-exynos/Kconfig                 |    3 +
+ arch/arm/mach-exynos/include/mach/irqs.h     |    1 +
+ arch/arm/mach-exynos/include/mach/map.h      |    4 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
+ arch/arm/mach-exynos/mach-nuri.c             |    9 ++-
+ arch/arm/mach-exynos/mach-universal_c210.c   |   10 +++
+ arch/arm/mach-exynos/setup-usb-phy.c         |  100
+++++++++++++++++++-------
+ arch/arm/mach-s5pv210/Kconfig                |    1 +
+ arch/arm/mach-s5pv210/mach-goni.c            |    5 ++
+ 9 files changed, 107 insertions(+), 29 deletions(-)
