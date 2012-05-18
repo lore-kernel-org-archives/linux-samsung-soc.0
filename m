@@ -1,178 +1,135 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 4/6] ARM: Samsung: Modify s3c64xx_spi{0|1|2}_set_platdata
- function
-Date: Fri, 18 May 2012 15:03:31 +0530
-Message-ID: <1337333613-6216-5-git-send-email-thomas.abraham@linaro.org>
-References: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 1/6] ARM: Exynos4: Fix the incorrect hierarchy of spi
+ controller bus clock
+Date: Fri, 18 May 2012 15:16:27 +0530
+Message-ID: <1337334392-6441-2-git-send-email-thomas.abraham@linaro.org>
+References: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54280 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967838Ab2ERJUt (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48391 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S967899Ab2ERJcq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 May 2012 05:20:49 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Fri, 18 May 2012 05:32:46 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4700377OLLBUV0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:20:28 +0900 (KST)
+ 17 2011)) with ESMTP id <0M4700DRDP41MDS0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:32:45 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4700JDHOKMNE20@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:20:27 +0900 (KST)
-In-reply-to: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0M4700FF3P67SH60@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:32:45 +0900 (KST)
+In-reply-to: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org, broonie@opensource.wolfsonmicro.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-With the spi controller hardware configuration moved into the driver data, there
-are no more default hardware configuration data that is passed through platform
-data. Accordingly, the s3c64xx_spi{0|1|2}_set_platdata functions are adapted to
-these changes.
+The sclk_spi clock is derived currently from the first level divider
+(MMCx_RATIO) which is incorrect. The output of the first level clock
+is divided by a second level divider (MMCx_PRE_RATIO), the output of
+which is used as the spi bus clock (sclk_spi). Fix the clock hierarchy
+issues for the sclk_spi clock.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
 ---
- arch/arm/mach-s3c64xx/mach-crag6410.c            |    2 +-
- arch/arm/plat-samsung/devs.c                     |   50 ++++++++-------------
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    6 +-
- 3 files changed, 23 insertions(+), 35 deletions(-)
+ arch/arm/mach-exynos/clock-exynos4.c |   48 ++++++++++++++++++++++++++++-----
+ 1 files changed, 40 insertions(+), 8 deletions(-)
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 0569765..cda8007 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -795,7 +795,7 @@ static void __init crag6410_machine_init(void)
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
- 
- 	samsung_keypad_set_platdata(&crag6410_keypad_data);
--	s3c64xx_spi0_set_platdata(&s3c64xx_spi0_pdata, 0, 1);
-+	s3c64xx_spi0_set_platdata("s3c6410-spi", NULL, 0, 1);
- 
- 	platform_add_devices(crag6410_devices, ARRAY_SIZE(crag6410_devices));
- 
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 1013a34..a16f30c 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -1522,13 +1522,10 @@ struct platform_device s3c64xx_device_spi0 = {
- 	},
+diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exynos/clock-exynos4.c
+index 10a46a9..b5f0507 100644
+--- a/arch/arm/mach-exynos/clock-exynos4.c
++++ b/arch/arm/mach-exynos/clock-exynos4.c
+@@ -1242,40 +1242,70 @@ static struct clksrc_clk exynos4_clk_sclk_mmc3 = {
+ 	.reg_div = { .reg = EXYNOS4_CLKDIV_FSYS2, .shift = 24, .size = 8 },
  };
  
--void __init s3c64xx_spi0_set_platdata(struct s3c64xx_spi_info *pd,
-+void __init s3c64xx_spi0_set_platdata(char *dev_name, int (*cfg_gpio)(void),
- 				      int src_clk_nr, int num_cs)
- {
--	if (!pd) {
--		pr_err("%s:Need to pass platform data\n", __func__);
--		return;
--	}
-+	struct s3c64xx_spi_info pd;
- 
- 	/* Reject invalid configuration */
- 	if (!num_cs || src_clk_nr < 0) {
-@@ -1536,12 +1533,11 @@ void __init s3c64xx_spi0_set_platdata(struct s3c64xx_spi_info *pd,
- 		return;
- 	}
- 
--	pd->num_cs = num_cs;
--	pd->src_clk_nr = src_clk_nr;
--	if (!pd->cfg_gpio)
--		pd->cfg_gpio = s3c64xx_spi0_cfg_gpio;
-+	pd.src_clk_nr = src_clk_nr;
-+	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
-+	s3c64xx_device_spi0.name = dev_name;
- 
--	s3c_set_platdata(pd, sizeof(*pd), &s3c64xx_device_spi0);
-+	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi0);
- }
- #endif /* CONFIG_S3C64XX_DEV_SPI0 */
- 
-@@ -1564,26 +1560,21 @@ struct platform_device s3c64xx_device_spi1 = {
++static struct clksrc_clk exynos4_clk_mdout_spi0 = {
++	.clk	= {
++		.name		= "sclk_spi_mdout",
++		.devname	= "exynos4210-spi.0",
++	},
++	.sources = &exynos4_clkset_group,
++	.reg_src = { .reg = EXYNOS4_CLKSRC_PERIL1, .shift = 16, .size = 4 },
++	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL1, .shift = 0, .size = 4 },
++
++};
++
+ static struct clksrc_clk exynos4_clk_sclk_spi0 = {
+ 	.clk	= {
+ 		.name		= "sclk_spi",
+ 		.devname	= "exynos4210-spi.0",
++		.parent		= &exynos4_clk_mdout_spi0.clk,
+ 		.enable		= exynos4_clksrc_mask_peril1_ctrl,
+ 		.ctrlbit	= (1 << 16),
  	},
++	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL1, .shift = 8, .size = 8 },
++};
++
++static struct clksrc_clk exynos4_clk_mdout_spi1 = {
++	.clk	= {
++		.name		= "sclk_spi_mdout",
++		.devname	= "exynos4210-spi.1",
++	},
+ 	.sources = &exynos4_clkset_group,
+-	.reg_src = { .reg = EXYNOS4_CLKSRC_PERIL1, .shift = 16, .size = 4 },
+-	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL1, .shift = 0, .size = 4 },
++	.reg_src = { .reg = EXYNOS4_CLKSRC_PERIL1, .shift = 20, .size = 4 },
++	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL1, .shift = 16, .size = 4 },
++
  };
  
--void __init s3c64xx_spi1_set_platdata(struct s3c64xx_spi_info *pd,
-+void __init s3c64xx_spi1_set_platdata(char *dev_name, int (*cfg_gpio)(void),
- 				      int src_clk_nr, int num_cs)
- {
--	if (!pd) {
--		pr_err("%s:Need to pass platform data\n", __func__);
--		return;
--	}
+ static struct clksrc_clk exynos4_clk_sclk_spi1 = {
+ 	.clk	= {
+ 		.name		= "sclk_spi",
+ 		.devname	= "exynos4210-spi.1",
++		.parent		= &exynos4_clk_mdout_spi1.clk,
+ 		.enable		= exynos4_clksrc_mask_peril1_ctrl,
+ 		.ctrlbit	= (1 << 20),
+ 	},
++	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL1, .shift = 24, .size = 8 },
++};
++
++static struct clksrc_clk exynos4_clk_mdout_spi2 = {
++	.clk	= {
++		.name		= "sclk_spi_mdout",
++		.devname	= "exynos4210-spi.2",
++	},
+ 	.sources = &exynos4_clkset_group,
+-	.reg_src = { .reg = EXYNOS4_CLKSRC_PERIL1, .shift = 20, .size = 4 },
+-	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL1, .shift = 16, .size = 4 },
++	.reg_src = { .reg = EXYNOS4_CLKSRC_PERIL1, .shift = 24, .size = 4 },
++	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL2, .shift = 0, .size = 4 },
++
+ };
+ 
+ static struct clksrc_clk exynos4_clk_sclk_spi2 = {
+ 	.clk	= {
+ 		.name		= "sclk_spi",
+ 		.devname	= "exynos4210-spi.2",
++		.parent		= &exynos4_clk_mdout_spi2.clk,
+ 		.enable		= exynos4_clksrc_mask_peril1_ctrl,
+ 		.ctrlbit	= (1 << 24),
+ 	},
+-	.sources = &exynos4_clkset_group,
+-	.reg_src = { .reg = EXYNOS4_CLKSRC_PERIL1, .shift = 24, .size = 4 },
+-	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL2, .shift = 0, .size = 4 },
++	.reg_div = { .reg = EXYNOS4_CLKDIV_PERIL2, .shift = 8, .size = 8 },
+ };
+ 
+ /* Clock initialization code */
+@@ -1331,7 +1361,9 @@ static struct clksrc_clk *exynos4_clksrc_cdev[] = {
+ 	&exynos4_clk_sclk_spi0,
+ 	&exynos4_clk_sclk_spi1,
+ 	&exynos4_clk_sclk_spi2,
 -
- 	/* Reject invalid configuration */
- 	if (!num_cs || src_clk_nr < 0) {
- 		pr_err("%s: Invalid SPI configuration\n", __func__);
- 		return;
- 	}
- 
--	pd->num_cs = num_cs;
--	pd->src_clk_nr = src_clk_nr;
--	if (!pd->cfg_gpio)
--		pd->cfg_gpio = s3c64xx_spi1_cfg_gpio;
-+	pd.num_cs = num_cs;
-+	pd.src_clk_nr = src_clk_nr;
-+	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi1_cfg_gpio;
-+	s3c64xx_device_spi1.name = dev_name;
- 
--	s3c_set_platdata(pd, sizeof(*pd), &s3c64xx_device_spi1);
-+	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi1);
- }
- #endif /* CONFIG_S3C64XX_DEV_SPI1 */
- 
-@@ -1606,13 +1597,10 @@ struct platform_device s3c64xx_device_spi2 = {
- 	},
++	&exynos4_clk_mdout_spi0,
++	&exynos4_clk_mdout_spi1,
++	&exynos4_clk_mdout_spi2,
  };
  
--void __init s3c64xx_spi2_set_platdata(struct s3c64xx_spi_info *pd,
-+void __init s3c64xx_spi2_set_platdata(char *dev_name, int (*cfg_gpio)(void),
- 				      int src_clk_nr, int num_cs)
- {
--	if (!pd) {
--		pr_err("%s:Need to pass platform data\n", __func__);
--		return;
--	}
-+	struct s3c64xx_spi_info pd;
- 
- 	/* Reject invalid configuration */
- 	if (!num_cs || src_clk_nr < 0) {
-@@ -1620,11 +1608,11 @@ void __init s3c64xx_spi2_set_platdata(struct s3c64xx_spi_info *pd,
- 		return;
- 	}
- 
--	pd->num_cs = num_cs;
--	pd->src_clk_nr = src_clk_nr;
--	if (!pd->cfg_gpio)
--		pd->cfg_gpio = s3c64xx_spi2_cfg_gpio;
-+	pd.num_cs = num_cs;
-+	pd.src_clk_nr = src_clk_nr;
-+	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi2_cfg_gpio;
-+	s3c64xx_device_spi2.name = dev_name;
- 
--	s3c_set_platdata(pd, sizeof(*pd), &s3c64xx_device_spi2);
-+	s3c_set_platdata(&pd, sizeof(pd), &s3c64xx_device_spi2);
- }
- #endif /* CONFIG_S3C64XX_DEV_SPI2 */
-diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-index 89dbaee..a733ce9 100644
---- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-+++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-@@ -52,11 +52,11 @@ struct s3c64xx_spi_info {
-  * Call this from machine init code for each SPI Controller that
-  * has some chips attached to it.
-  */
--extern void s3c64xx_spi0_set_platdata(struct s3c64xx_spi_info *pd,
-+extern void s3c64xx_spi0_set_platdata(char *dev_name, int (*cfg_gpio)(void),
- 				      int src_clk_nr, int num_cs);
--extern void s3c64xx_spi1_set_platdata(struct s3c64xx_spi_info *pd,
-+extern void s3c64xx_spi1_set_platdata(char *dev_name, int (*cfg_gpio)(void),
- 				      int src_clk_nr, int num_cs);
--extern void s3c64xx_spi2_set_platdata(struct s3c64xx_spi_info *pd,
-+extern void s3c64xx_spi2_set_platdata(char *dev_name, int (*cfg_gpio)(void),
- 				      int src_clk_nr, int num_cs);
- 
- /* defined by architecture to configure gpio */
+ static struct clk_lookup exynos4_clk_lookup[] = {
 -- 
 1.6.6.rc2
