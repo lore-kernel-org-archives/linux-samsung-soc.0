@@ -1,302 +1,379 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v2 1/6] mmc: dw_mmc: convert copy of struct device in
- struct dw_mci to a reference
-Date: Fri, 18 May 2012 11:24:07 +0900
-Message-ID: <4FB5B2C7.6010700@samsung.com>
-References: <1337267411-28226-1-git-send-email-thomas.abraham@linaro.org>
- <1337267411-28226-2-git-send-email-thomas.abraham@linaro.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: EXYYNOS: Use EXYNOS4210_GPEx instead of
+ EXYNOS4_GPEx
+Date: Fri, 18 May 2012 11:53:21 +0900
+Message-ID: <4FB5B9A1.2030606@samsung.com>
+References: <1337307497-15777-1-git-send-email-jy0922.shim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1337267411-28226-2-git-send-email-thomas.abraham@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, cjb@laptop.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:63196 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030725Ab2ERCxQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 17 May 2012 22:53:16 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M4700E2U6O7MDA0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 11:53:08 +0900 (KST)
+Received: from [165.213.219.123] by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0M4700LMS6OJ8U10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 11:53:07 +0900 (KST)
+In-reply-to: <1337307497-15777-1-git-send-email-jy0922.shim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: kgene.kim@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, linus.walleij@stericsson.com
 
-Hi Thomas,
+Add to cc Grant Likely and Linus Walleij
 
-I think that also need to consider for using dw_mci-pci.c.
-
-Best Regards,
-Jaehoon chung
-
-On 05/18/2012 12:10 AM, Thomas Abraham wrote:
-
-> The 'struct dw_mci' maintains a copy of the pdev->dev instance instead of
-> maintaining a reference to that 'struct device' instance. Any resource
-> allocated using the device resource management kernel API with the instance
-> of 'struct device' in 'struct dw_mci' is then incorrect. Fix this by
-> converting the copy of 'struct device' in 'struct dw_mci' to a reference.
-> 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+On 05/18/2012 11:18 AM, Joonyoung Shim wrote:
+> Also use EXYNOS4210_GPIO_Ex instead of EXYNOS4_GPIO_Ex. The GPEx gpios
+> exist only on Exynos4210 and there are no on Exynos4x12. Redefine them
+> to exact SoC name.
+>
+> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
+> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
 > ---
->  drivers/mmc/host/dw_mmc-pltfm.c |    2 +-
->  drivers/mmc/host/dw_mmc.c       |   54 +++++++++++++++++++-------------------
->  include/linux/mmc/dw_mmc.h      |    2 +-
->  3 files changed, 29 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
-> index 92ec3eb..9a63299 100644
-> --- a/drivers/mmc/host/dw_mmc-pltfm.c
-> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
-> @@ -43,7 +43,7 @@ static int dw_mci_pltfm_probe(struct platform_device *pdev)
->  		goto err_free;
->  	}
->  
-> -	host->dev = pdev->dev;
-> +	host->dev = &pdev->dev;
->  	host->irq_flags = 0;
->  	host->pdata = pdev->dev.platform_data;
->  	ret = -ENOMEM;
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 1532357..01d870a 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -266,7 +266,7 @@ static void dw_mci_start_command(struct dw_mci *host,
->  				 struct mmc_command *cmd, u32 cmd_flags)
->  {
->  	host->cmd = cmd;
-> -	dev_vdbg(&host->dev,
-> +	dev_vdbg(host->dev,
->  		 "start command: ARGR=0x%08x CMDR=0x%08x\n",
->  		 cmd->arg, cmd_flags);
->  
-> @@ -308,7 +308,7 @@ static void dw_mci_dma_cleanup(struct dw_mci *host)
->  
->  	if (data)
->  		if (!data->host_cookie)
-> -			dma_unmap_sg(&host->dev,
-> +			dma_unmap_sg(host->dev,
->  				     data->sg,
->  				     data->sg_len,
->  				     dw_mci_get_dma_dir(data));
-> @@ -334,7 +334,7 @@ static void dw_mci_idmac_complete_dma(struct dw_mci *host)
->  {
->  	struct mmc_data *data = host->data;
->  
-> -	dev_vdbg(&host->dev, "DMA complete\n");
-> +	dev_vdbg(host->dev, "DMA complete\n");
->  
->  	host->dma_ops->cleanup(host);
->  
-> @@ -462,7 +462,7 @@ static int dw_mci_pre_dma_transfer(struct dw_mci *host,
->  			return -EINVAL;
->  	}
->  
-> -	sg_len = dma_map_sg(&host->dev,
-> +	sg_len = dma_map_sg(host->dev,
->  			    data->sg,
->  			    data->sg_len,
->  			    dw_mci_get_dma_dir(data));
-> @@ -505,7 +505,7 @@ static void dw_mci_post_req(struct mmc_host *mmc,
->  		return;
->  
->  	if (data->host_cookie)
-> -		dma_unmap_sg(&slot->host->dev,
-> +		dma_unmap_sg(slot->host->dev,
->  			     data->sg,
->  			     data->sg_len,
->  			     dw_mci_get_dma_dir(data));
-> @@ -531,7 +531,7 @@ static int dw_mci_submit_data_dma(struct dw_mci *host, struct mmc_data *data)
->  
->  	host->using_dma = 1;
->  
-> -	dev_vdbg(&host->dev,
-> +	dev_vdbg(host->dev,
->  		 "sd sg_cpu: %#lx sg_dma: %#lx sg_len: %d\n",
->  		 (unsigned long)host->sg_cpu, (unsigned long)host->sg_dma,
->  		 sg_len);
-> @@ -889,12 +889,12 @@ static void dw_mci_request_end(struct dw_mci *host, struct mmc_request *mrq)
->  		slot = list_entry(host->queue.next,
->  				  struct dw_mci_slot, queue_node);
->  		list_del(&slot->queue_node);
-> -		dev_vdbg(&host->dev, "list not empty: %s is next\n",
-> +		dev_vdbg(host->dev, "list not empty: %s is next\n",
->  			 mmc_hostname(slot->mmc));
->  		host->state = STATE_SENDING_CMD;
->  		dw_mci_start_request(host, slot);
->  	} else {
-> -		dev_vdbg(&host->dev, "list empty\n");
-> +		dev_vdbg(host->dev, "list empty\n");
->  		host->state = STATE_IDLE;
->  	}
->  
-> @@ -1033,7 +1033,7 @@ static void dw_mci_tasklet_func(unsigned long priv)
->  					data->bytes_xfered = 0;
->  					data->error = -ETIMEDOUT;
->  				} else {
-> -					dev_err(&host->dev,
-> +					dev_err(host->dev,
->  						"data FIFO error "
->  						"(status=%08x)\n",
->  						status);
-> @@ -1750,7 +1750,7 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
->  	struct mmc_host *mmc;
->  	struct dw_mci_slot *slot;
->  
-> -	mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), &host->dev);
-> +	mmc = mmc_alloc_host(sizeof(struct dw_mci_slot), host->dev);
->  	if (!mmc)
->  		return -ENOMEM;
->  
-> @@ -1862,10 +1862,10 @@ static void dw_mci_cleanup_slot(struct dw_mci_slot *slot, unsigned int id)
->  static void dw_mci_init_dma(struct dw_mci *host)
->  {
->  	/* Alloc memory for sg translation */
-> -	host->sg_cpu = dma_alloc_coherent(&host->dev, PAGE_SIZE,
-> +	host->sg_cpu = dma_alloc_coherent(host->dev, PAGE_SIZE,
->  					  &host->sg_dma, GFP_KERNEL);
->  	if (!host->sg_cpu) {
-> -		dev_err(&host->dev, "%s: could not alloc DMA memory\n",
-> +		dev_err(host->dev, "%s: could not alloc DMA memory\n",
->  			__func__);
->  		goto no_dma;
->  	}
-> @@ -1873,7 +1873,7 @@ static void dw_mci_init_dma(struct dw_mci *host)
->  	/* Determine which DMA interface to use */
->  #ifdef CONFIG_MMC_DW_IDMAC
->  	host->dma_ops = &dw_mci_idmac_ops;
-> -	dev_info(&host->dev, "Using internal DMA controller.\n");
-> +	dev_info(host->dev, "Using internal DMA controller.\n");
->  #endif
->  
->  	if (!host->dma_ops)
-> @@ -1882,12 +1882,12 @@ static void dw_mci_init_dma(struct dw_mci *host)
->  	if (host->dma_ops->init && host->dma_ops->start &&
->  	    host->dma_ops->stop && host->dma_ops->cleanup) {
->  		if (host->dma_ops->init(host)) {
-> -			dev_err(&host->dev, "%s: Unable to initialize "
-> +			dev_err(host->dev, "%s: Unable to initialize "
->  				"DMA Controller.\n", __func__);
->  			goto no_dma;
->  		}
->  	} else {
-> -		dev_err(&host->dev, "DMA initialization not found.\n");
-> +		dev_err(host->dev, "DMA initialization not found.\n");
->  		goto no_dma;
->  	}
->  
-> @@ -1895,7 +1895,7 @@ static void dw_mci_init_dma(struct dw_mci *host)
->  	return;
->  
->  no_dma:
-> -	dev_info(&host->dev, "Using PIO mode.\n");
-> +	dev_info(host->dev, "Using PIO mode.\n");
->  	host->use_dma = 0;
->  	return;
->  }
-> @@ -1927,19 +1927,19 @@ int dw_mci_probe(struct dw_mci *host)
->  	u32 fifo_size;
->  
->  	if (!host->pdata || !host->pdata->init) {
-> -		dev_err(&host->dev,
-> +		dev_err(host->dev,
->  			"Platform data must supply init function\n");
->  		return -ENODEV;
->  	}
->  
->  	if (!host->pdata->select_slot && host->pdata->num_slots > 1) {
-> -		dev_err(&host->dev,
-> +		dev_err(host->dev,
->  			"Platform data must supply select_slot function\n");
->  		return -ENODEV;
->  	}
->  
->  	if (!host->pdata->bus_hz) {
-> -		dev_err(&host->dev,
-> +		dev_err(host->dev,
->  			"Platform data must supply bus speed\n");
->  		return -ENODEV;
->  	}
-> @@ -1981,7 +1981,7 @@ int dw_mci_probe(struct dw_mci *host)
->  	}
->  
->  	/* Reset all blocks */
-> -	if (!mci_wait_reset(&host->dev, host)) {
-> +	if (!mci_wait_reset(host->dev, host)) {
->  		ret = -ENODEV;
->  		goto err_dmaunmap;
->  	}
-> @@ -2047,7 +2047,7 @@ int dw_mci_probe(struct dw_mci *host)
->  	 * Need to check the version-id and set data-offset for DATA register.
->  	 */
->  	host->verid = SDMMC_GET_VERID(mci_readl(host, VERID));
-> -	dev_info(&host->dev, "Version ID is %04x\n", host->verid);
-> +	dev_info(host->dev, "Version ID is %04x\n", host->verid);
->  
->  	if (host->verid < DW_MMC_240A)
->  		host->data_offset = DATA_OFFSET;
-> @@ -2064,12 +2064,12 @@ int dw_mci_probe(struct dw_mci *host)
->  		   DW_MCI_ERROR_FLAGS | SDMMC_INT_CD);
->  	mci_writel(host, CTRL, SDMMC_CTRL_INT_ENABLE); /* Enable mci interrupt */
->  
-> -	dev_info(&host->dev, "DW MMC controller at irq %d, "
-> +	dev_info(host->dev, "DW MMC controller at irq %d, "
->  		 "%d bit host data width, "
->  		 "%u deep fifo\n",
->  		 host->irq, width, fifo_size);
->  	if (host->quirks & DW_MCI_QUIRK_IDMAC_DTO)
-> -		dev_info(&host->dev, "Internal DMAC interrupt fix enabled.\n");
-> +		dev_info(host->dev, "Internal DMAC interrupt fix enabled.\n");
->  
->  	return 0;
->  
-> @@ -2088,7 +2088,7 @@ err_workqueue:
->  err_dmaunmap:
->  	if (host->use_dma && host->dma_ops->exit)
->  		host->dma_ops->exit(host);
-> -	dma_free_coherent(&host->dev, PAGE_SIZE,
-> +	dma_free_coherent(host->dev, PAGE_SIZE,
->  			  host->sg_cpu, host->sg_dma);
->  
->  	if (host->vmmc) {
-> @@ -2107,7 +2107,7 @@ void dw_mci_remove(struct dw_mci *host)
->  	mci_writel(host, INTMASK, 0); /* disable all mmc interrupt first */
->  
->  	for (i = 0; i < host->num_slots; i++) {
-> -		dev_dbg(&host->dev, "remove slot %d\n", i);
-> +		dev_dbg(host->dev, "remove slot %d\n", i);
->  		if (host->slot[i])
->  			dw_mci_cleanup_slot(host->slot[i], i);
->  	}
-> @@ -2118,7 +2118,7 @@ void dw_mci_remove(struct dw_mci *host)
->  
->  	free_irq(host->irq, host);
->  	destroy_workqueue(host->card_workqueue);
-> -	dma_free_coherent(&host->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
-> +	dma_free_coherent(host->dev, PAGE_SIZE, host->sg_cpu, host->sg_dma);
->  
->  	if (host->use_dma && host->dma_ops->exit)
->  		host->dma_ops->exit(host);
-> @@ -2173,7 +2173,7 @@ int dw_mci_resume(struct dw_mci *host)
->  	if (host->dma_ops->init)
->  		host->dma_ops->init(host);
->  
-> -	if (!mci_wait_reset(&host->dev, host)) {
-> +	if (!mci_wait_reset(host->dev, host)) {
->  		ret = -ENODEV;
->  		return ret;
->  	}
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index 7a7ebd3..a37a573 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -156,7 +156,7 @@ struct dw_mci {
->  	u32			fifoth_val;
->  	u16			verid;
->  	u16			data_offset;
-> -	struct device		dev;
-> +	struct device		*dev;
->  	struct dw_mci_board	*pdata;
->  	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
->  
+>   arch/arm/mach-exynos/include/mach/gpio.h   |   32 ++++++++++++++--------------
+>   arch/arm/mach-exynos/mach-nuri.c           |   16 +++++++-------
+>   arch/arm/mach-exynos/mach-origen.c         |    6 ++--
+>   arch/arm/mach-exynos/mach-universal_c210.c |   32 ++++++++++++++--------------
+>   arch/arm/mach-exynos/setup-fimc.c          |    4 +-
+>   drivers/gpio/gpio-samsung.c                |   20 ++++++++--------
+>   6 files changed, 55 insertions(+), 55 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-exynos/include/mach/gpio.h
+> index eb24f1e..21c9bf1 100644
+> --- a/arch/arm/mach-exynos/include/mach/gpio.h
+> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
+> @@ -26,11 +26,11 @@
+>   #define EXYNOS4_GPIO_C1_NR	(5)
+>   #define EXYNOS4_GPIO_D0_NR	(4)
+>   #define EXYNOS4_GPIO_D1_NR	(4)
+> -#define EXYNOS4_GPIO_E0_NR	(5)
+> -#define EXYNOS4_GPIO_E1_NR	(8)
+> -#define EXYNOS4_GPIO_E2_NR	(6)
+> -#define EXYNOS4_GPIO_E3_NR	(8)
+> -#define EXYNOS4_GPIO_E4_NR	(8)
+> +#define EXYNOS4210_GPIO_E0_NR	(5)
+> +#define EXYNOS4210_GPIO_E1_NR	(8)
+> +#define EXYNOS4210_GPIO_E2_NR	(6)
+> +#define EXYNOS4210_GPIO_E3_NR	(8)
+> +#define EXYNOS4210_GPIO_E4_NR	(8)
+>   #define EXYNOS4_GPIO_F0_NR	(8)
+>   #define EXYNOS4_GPIO_F1_NR	(8)
+>   #define EXYNOS4_GPIO_F2_NR	(8)
+> @@ -67,12 +67,12 @@ enum exynos4_gpio_number {
+>   	EXYNOS4_GPIO_C1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C0),
+>   	EXYNOS4_GPIO_D0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C1),
+>   	EXYNOS4_GPIO_D1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D0),
+> -	EXYNOS4_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
+> -	EXYNOS4_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E0),
+> -	EXYNOS4_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E1),
+> -	EXYNOS4_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E2),
+> -	EXYNOS4_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E3),
+> -	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E4),
+> +	EXYNOS4210_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
+> +	EXYNOS4210_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E0),
+> +	EXYNOS4210_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E1),
+> +	EXYNOS4210_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E2),
+> +	EXYNOS4210_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E3),
+> +	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E4),
+>   	EXYNOS4_GPIO_F1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F0),
+>   	EXYNOS4_GPIO_F2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F1),
+>   	EXYNOS4_GPIO_F3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F2),
+> @@ -108,11 +108,11 @@ enum exynos4_gpio_number {
+>   #define EXYNOS4_GPC1(_nr)	(EXYNOS4_GPIO_C1_START + (_nr))
+>   #define EXYNOS4_GPD0(_nr)	(EXYNOS4_GPIO_D0_START + (_nr))
+>   #define EXYNOS4_GPD1(_nr)	(EXYNOS4_GPIO_D1_START + (_nr))
+> -#define EXYNOS4_GPE0(_nr)	(EXYNOS4_GPIO_E0_START + (_nr))
+> -#define EXYNOS4_GPE1(_nr)	(EXYNOS4_GPIO_E1_START + (_nr))
+> -#define EXYNOS4_GPE2(_nr)	(EXYNOS4_GPIO_E2_START + (_nr))
+> -#define EXYNOS4_GPE3(_nr)	(EXYNOS4_GPIO_E3_START + (_nr))
+> -#define EXYNOS4_GPE4(_nr)	(EXYNOS4_GPIO_E4_START + (_nr))
+> +#define EXYNOS4210_GPE0(_nr)	(EXYNOS4210_GPIO_E0_START + (_nr))
+> +#define EXYNOS4210_GPE1(_nr)	(EXYNOS4210_GPIO_E1_START + (_nr))
+> +#define EXYNOS4210_GPE2(_nr)	(EXYNOS4210_GPIO_E2_START + (_nr))
+> +#define EXYNOS4210_GPE3(_nr)	(EXYNOS4210_GPIO_E3_START + (_nr))
+> +#define EXYNOS4210_GPE4(_nr)	(EXYNOS4210_GPIO_E4_START + (_nr))
+>   #define EXYNOS4_GPF0(_nr)	(EXYNOS4_GPIO_F0_START + (_nr))
+>   #define EXYNOS4_GPF1(_nr)	(EXYNOS4_GPIO_F1_START + (_nr))
+>   #define EXYNOS4_GPF2(_nr)	(EXYNOS4_GPIO_F2_START + (_nr))
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+> index 5784b0a..d02c429 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -264,7 +264,7 @@ static struct s3c_fb_platdata nuri_fb_pdata __initdata = {
+>
+>   static void nuri_lcd_power_on(struct plat_lcd_data *pd, unsigned int power)
+>   {
+> -	int gpio = EXYNOS4_GPE1(5);
+> +	int gpio = EXYNOS4210_GPE1(5);
+>
+>   	gpio_request(gpio, "LVDS_nSHDN");
+>   	gpio_direction_output(gpio, power);
+> @@ -273,7 +273,7 @@ static void nuri_lcd_power_on(struct plat_lcd_data *pd, unsigned int power)
+>
+>   static int nuri_bl_init(struct device *dev)
+>   {
+> -	return gpio_request_one(EXYNOS4_GPE2(3), GPIOF_OUT_INIT_LOW,
+> +	return gpio_request_one(EXYNOS4210_GPE2(3), GPIOF_OUT_INIT_LOW,
+>   				"LCD_LD0_EN");
+>   }
+>
+> @@ -282,14 +282,14 @@ static int nuri_bl_notify(struct device *dev, int brightness)
+>   	if (brightness<  1)
+>   		brightness = 0;
+>
+> -	gpio_set_value(EXYNOS4_GPE2(3), 1);
+> +	gpio_set_value(EXYNOS4210_GPE2(3), 1);
+>
+>   	return brightness;
+>   }
+>
+>   static void nuri_bl_exit(struct device *dev)
+>   {
+> -	gpio_free(EXYNOS4_GPE2(3));
+> +	gpio_free(EXYNOS4210_GPE2(3));
+>   }
+>
+>   /* nuri pwm backlight */
+> @@ -1042,7 +1042,7 @@ static struct max8903_pdata nuri_max8903 = {
+>   	 */
+>   	.dok = EXYNOS4_GPX1(4), /* TA_nCONNECTED */
+>   	/* uok, usus: not connected */
+> -	.chg = EXYNOS4_GPE2(0), /* TA_nCHG */
+> +	.chg = EXYNOS4210_GPE2(0), /* TA_nCHG */
+>   	/* flt: vcc_1.8V_pda */
+>   	.dcm = EXYNOS4_GPL0(1), /* CURR_ADJ */
+>
+> @@ -1114,7 +1114,7 @@ static struct regulator_init_data cam_vt_cam15_reg_init_data = {
+>   static struct fixed_voltage_config cam_vt_cam15_fixed_voltage_cfg = {
+>   	.supply_name	= "VT_CAM_1.5V",
+>   	.microvolts	= 1500000,
+> -	.gpio		= EXYNOS4_GPE2(2), /* VT_CAM_1.5V_EN */
+> +	.gpio		= EXYNOS4210_GPE2(2), /* VT_CAM_1.5V_EN */
+>   	.enable_high	= 1,
+>   	.init_data	=&cam_vt_cam15_reg_init_data,
+>   };
+> @@ -1138,7 +1138,7 @@ static struct regulator_init_data cam_vdda_reg_init_data = {
+>   static struct fixed_voltage_config cam_vdda_fixed_voltage_cfg = {
+>   	.supply_name	= "CAM_IO_EN",
+>   	.microvolts	= 2800000,
+> -	.gpio		= EXYNOS4_GPE2(1), /* CAM_IO_EN */
+> +	.gpio		= EXYNOS4210_GPE2(1), /* CAM_IO_EN */
+>   	.enable_high	= 1,
+>   	.init_data	=&cam_vdda_reg_init_data,
+>   };
+> @@ -1162,7 +1162,7 @@ static struct regulator_init_data cam_8m_12v_reg_init_data = {
+>   static struct fixed_voltage_config cam_8m_12v_fixed_voltage_cfg = {
+>   	.supply_name	= "8M_1.2V",
+>   	.microvolts	= 1200000,
+> -	.gpio		= EXYNOS4_GPE2(5), /* 8M_1.2V_EN */
+> +	.gpio		= EXYNOS4210_GPE2(5), /* 8M_1.2V_EN */
+>   	.enable_high	= 1,
+>   	.init_data	=&cam_8m_12v_reg_init_data,
+>   };
+> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+> index 26124a3..753bbd4 100644
+> --- a/arch/arm/mach-exynos/mach-origen.c
+> +++ b/arch/arm/mach-exynos/mach-origen.c
+> @@ -560,13 +560,13 @@ static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
+>   	int ret;
+>
+>   	if (power)
+> -		ret = gpio_request_one(EXYNOS4_GPE3(4),
+> +		ret = gpio_request_one(EXYNOS4210_GPE3(4),
+>   					GPIOF_OUT_INIT_HIGH, "GPE3_4");
+>   	else
+> -		ret = gpio_request_one(EXYNOS4_GPE3(4),
+> +		ret = gpio_request_one(EXYNOS4210_GPE3(4),
+>   					GPIOF_OUT_INIT_LOW, "GPE3_4");
+>
+> -	gpio_free(EXYNOS4_GPE3(4));
+> +	gpio_free(EXYNOS4210_GPE3(4));
+>
+>   	if (ret)
+>   		pr_err("failed to request gpio for LCD power: %d\n", ret);
+> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+> index 27fab53..6ea74e6 100644
+> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+> @@ -545,7 +545,7 @@ static struct max8998_platform_data universal_lp3974_pdata = {
+>   	.buck2_voltage1		= 1200000,	/* G3D */
+>   	.buck2_voltage2		= 1100000,
+>   	.buck1_default_idx	= 0,
+> -	.buck2_set3		= EXYNOS4_GPE2(0),
+> +	.buck2_set3		= EXYNOS4210_GPE2(0),
+>   	.buck2_default_idx	= 0,
+>   	.wakeup			= true,
+>   };
+> @@ -574,7 +574,7 @@ static struct regulator_init_data hdmi_fixed_voltage_init_data = {
+>   static struct fixed_voltage_config hdmi_fixed_voltage_config = {
+>   	.supply_name		= "HDMI_EN1",
+>   	.microvolts		= 5000000,
+> -	.gpio			= EXYNOS4_GPE0(1),
+> +	.gpio			= EXYNOS4210_GPE0(1),
+>   	.enable_high		= true,
+>   	.init_data		=&hdmi_fixed_voltage_init_data,
+>   };
+> @@ -623,12 +623,12 @@ static void __init universal_tsp_init(void)
+>   	int gpio;
+>
+>   	/* TSP_LDO_ON: XMDMADDR_11 */
+> -	gpio = EXYNOS4_GPE2(3);
+> +	gpio = EXYNOS4210_GPE2(3);
+>   	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "TSP_LDO_ON");
+>   	gpio_export(gpio, 0);
+>
+>   	/* TSP_INT: XMDMADDR_7 */
+> -	gpio = EXYNOS4_GPE1(7);
+> +	gpio = EXYNOS4210_GPE1(7);
+>   	gpio_request(gpio, "TSP_INT");
+>
+>   	s5p_register_gpio_interrupt(gpio);
+> @@ -654,8 +654,8 @@ static struct mcs_platform_data touchkey_data = {
+>   /* GPIO I2C 3_TOUCH 2.8V */
+>   #define I2C_GPIO_BUS_12		12
+>   static struct i2c_gpio_platform_data i2c_gpio12_data = {
+> -	.sda_pin	= EXYNOS4_GPE4(0),	/* XMDMDATA_8 */
+> -	.scl_pin	= EXYNOS4_GPE4(1),	/* XMDMDATA_9 */
+> +	.sda_pin	= EXYNOS4210_GPE4(0),	/* XMDMDATA_8 */
+> +	.scl_pin	= EXYNOS4210_GPE4(1),	/* XMDMDATA_9 */
+>   };
+>
+>   static struct platform_device i2c_gpio12 = {
+> @@ -677,13 +677,13 @@ static void __init universal_touchkey_init(void)
+>   {
+>   	int gpio;
+>
+> -	gpio = EXYNOS4_GPE3(7);			/* XMDMDATA_7 */
+> +	gpio = EXYNOS4210_GPE3(7);			/* XMDMDATA_7 */
+>   	gpio_request(gpio, "3_TOUCH_INT");
+>   	s5p_register_gpio_interrupt(gpio);
+>   	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+>   	i2c_gpio12_devs[0].irq = gpio_to_irq(gpio);
+>
+> -	gpio = EXYNOS4_GPE3(3);			/* XMDMDATA_3 */
+> +	gpio = EXYNOS4210_GPE3(3);			/* XMDMDATA_3 */
+>   	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "3_TOUCH_EN");
+>   }
+>
+> @@ -769,7 +769,7 @@ static struct regulator_init_data mmc0_fixed_voltage_init_data = {
+>   static struct fixed_voltage_config mmc0_fixed_voltage_config = {
+>   	.supply_name		= "MASSMEMORY_EN",
+>   	.microvolts		= 2800000,
+> -	.gpio			= EXYNOS4_GPE1(3),
+> +	.gpio			= EXYNOS4210_GPE1(3),
+>   	.enable_high		= true,
+>   	.init_data		=&mmc0_fixed_voltage_init_data,
+>   };
+> @@ -876,7 +876,7 @@ static struct regulator_init_data cam_vt_dio_reg_init_data = {
+>   static struct fixed_voltage_config cam_vt_dio_fixed_voltage_cfg = {
+>   	.supply_name	= "CAM_VT_D_IO",
+>   	.microvolts	= 2800000,
+> -	.gpio		= EXYNOS4_GPE2(1), /* CAM_PWR_EN2 */
+> +	.gpio		= EXYNOS4210_GPE2(1), /* CAM_PWR_EN2 */
+>   	.enable_high	= 1,
+>   	.init_data	=&cam_vt_dio_reg_init_data,
+>   };
+> @@ -898,7 +898,7 @@ static struct regulator_init_data cam_i_core_reg_init_data = {
+>   static struct fixed_voltage_config cam_i_core_fixed_voltage_cfg = {
+>   	.supply_name	= "CAM_I_CORE_1.2V",
+>   	.microvolts	= 1200000,
+> -	.gpio		= EXYNOS4_GPE2(2),	/* CAM_8M_CORE_EN */
+> +	.gpio		= EXYNOS4210_GPE2(2),	/* CAM_8M_CORE_EN */
+>   	.enable_high	= 1,
+>   	.init_data	=&cam_i_core_reg_init_data,
+>   };
+> @@ -920,7 +920,7 @@ static struct regulator_init_data cam_s_if_reg_init_data = {
+>   static struct fixed_voltage_config cam_s_if_fixed_voltage_cfg = {
+>   	.supply_name	= "CAM_S_IF_1.8V",
+>   	.microvolts	= 1800000,
+> -	.gpio		= EXYNOS4_GPE3(0),	/* CAM_PWR_EN1 */
+> +	.gpio		= EXYNOS4210_GPE3(0),	/* CAM_PWR_EN1 */
+>   	.enable_high	= 1,
+>   	.init_data	=&cam_s_if_reg_init_data,
+>   };
+> @@ -938,11 +938,11 @@ static struct s5p_platform_mipi_csis mipi_csis_platdata = {
+>   	.phy_enable	= s5p_csis_phy_enable,
+>   };
+>
+> -#define GPIO_CAM_LEVEL_EN(n)	EXYNOS4_GPE4(n + 3)
+> +#define GPIO_CAM_LEVEL_EN(n)	EXYNOS4210_GPE4(n + 3)
+>   #define GPIO_CAM_8M_ISP_INT	EXYNOS4_GPX1(5)	/* XEINT_13 */
+> -#define GPIO_CAM_MEGA_nRST	EXYNOS4_GPE2(5)
+> -#define GPIO_CAM_VGA_NRST	EXYNOS4_GPE4(7)
+> -#define GPIO_CAM_VGA_NSTBY	EXYNOS4_GPE4(6)
+> +#define GPIO_CAM_MEGA_nRST	EXYNOS4210_GPE2(5)
+> +#define GPIO_CAM_VGA_NRST	EXYNOS4210_GPE4(7)
+> +#define GPIO_CAM_VGA_NSTBY	EXYNOS4210_GPE4(6)
+>
+>   static int s5k6aa_set_power(int on)
+>   {
+> diff --git a/arch/arm/mach-exynos/setup-fimc.c b/arch/arm/mach-exynos/setup-fimc.c
+> index 6a45078..d74843e 100644
+> --- a/arch/arm/mach-exynos/setup-fimc.c
+> +++ b/arch/arm/mach-exynos/setup-fimc.c
+> @@ -26,8 +26,8 @@ int exynos4_fimc_setup_gpio(enum s5p_camport_id id)
+>   		break;
+>
+>   	case S5P_CAMPORT_B:
+> -		gpio8 = EXYNOS4_GPE0(0); /* DATA[0:7] */
+> -		gpio5 = EXYNOS4_GPE1(0); /* PCLK, VSYNC, HREF, CLKOUT, FIELD */
+> +		gpio8 = EXYNOS4210_GPE0(0); /* DATA[0:7] */
+> +		gpio5 = EXYNOS4210_GPE1(0); /* PCLK, VSYNC, HREF, CLKOUT, FIELD */
+>   		sfn = S3C_GPIO_SFN(3);
+>   		break;
+>
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index f88bb9f..eda34e6 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -2171,32 +2171,32 @@ static struct samsung_gpio_chip exynos4_gpios_1[] = {
+>   		},
+>   	}, {
+>   		.chip	= {
+> -			.base	= EXYNOS4_GPE0(0),
+> -			.ngpio	= EXYNOS4_GPIO_E0_NR,
+> +			.base	= EXYNOS4210_GPE0(0),
+> +			.ngpio	= EXYNOS4210_GPIO_E0_NR,
+>   			.label	= "GPE0",
+>   		},
+>   	}, {
+>   		.chip	= {
+> -			.base	= EXYNOS4_GPE1(0),
+> -			.ngpio	= EXYNOS4_GPIO_E1_NR,
+> +			.base	= EXYNOS4210_GPE1(0),
+> +			.ngpio	= EXYNOS4210_GPIO_E1_NR,
+>   			.label	= "GPE1",
+>   		},
+>   	}, {
+>   		.chip	= {
+> -			.base	= EXYNOS4_GPE2(0),
+> -			.ngpio	= EXYNOS4_GPIO_E2_NR,
+> +			.base	= EXYNOS4210_GPE2(0),
+> +			.ngpio	= EXYNOS4210_GPIO_E2_NR,
+>   			.label	= "GPE2",
+>   		},
+>   	}, {
+>   		.chip	= {
+> -			.base	= EXYNOS4_GPE3(0),
+> -			.ngpio	= EXYNOS4_GPIO_E3_NR,
+> +			.base	= EXYNOS4210_GPE3(0),
+> +			.ngpio	= EXYNOS4210_GPIO_E3_NR,
+>   			.label	= "GPE3",
+>   		},
+>   	}, {
+>   		.chip	= {
+> -			.base	= EXYNOS4_GPE4(0),
+> -			.ngpio	= EXYNOS4_GPIO_E4_NR,
+> +			.base	= EXYNOS4210_GPE4(0),
+> +			.ngpio	= EXYNOS4210_GPIO_E4_NR,
+>   			.label	= "GPE4",
+>   		},
+>   	}, {
