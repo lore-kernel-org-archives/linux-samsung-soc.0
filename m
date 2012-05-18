@@ -1,290 +1,373 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v2 6/6] mmc: dw_mmc: add samsung exynos5250 specific
- extentions
-Date: Fri, 18 May 2012 10:36:25 +0900
-Message-ID: <4FB5A799.6070700@samsung.com>
-References: <1337267411-28226-1-git-send-email-thomas.abraham@linaro.org>
- <1337267411-28226-7-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: [PATCH 1/2] ARM: EXYYNOS: Use EXYNOS4210_GPEx instead of EXYNOS4_GPEx
+Date: Fri, 18 May 2012 11:18:16 +0900
+Message-ID: <1337307497-15777-1-git-send-email-jy0922.shim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:24605 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:44602 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1760971Ab2ERBhE (ORCPT
+	with ESMTP id S1030459Ab2ERCSG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 17 May 2012 21:37:04 -0400
-In-reply-to: <1337267411-28226-7-git-send-email-thomas.abraham@linaro.org>
+	Thu, 17 May 2012 22:18:06 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M47002KA51RQH20@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 11:18:04 +0900 (KST)
+Received: from localhost.localdomain ([165.213.219.123])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4700MXO524JD70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 11:18:04 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com
 
-Hi Thomas,
+Also use EXYNOS4210_GPIO_Ex instead of EXYNOS4_GPIO_Ex. The GPEx gpios
+exist only on Exynos4210 and there are no on Exynos4x12. Redefine them
+to exact SoC name.
 
-On 05/18/2012 12:10 AM, Thomas Abraham wrote:
+Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/include/mach/gpio.h   |   32 ++++++++++++++--------------
+ arch/arm/mach-exynos/mach-nuri.c           |   16 +++++++-------
+ arch/arm/mach-exynos/mach-origen.c         |    6 ++--
+ arch/arm/mach-exynos/mach-universal_c210.c |   32 ++++++++++++++--------------
+ arch/arm/mach-exynos/setup-fimc.c          |    4 +-
+ drivers/gpio/gpio-samsung.c                |   20 ++++++++--------
+ 6 files changed, 55 insertions(+), 55 deletions(-)
 
-> The instantiation of the Synopsis Designware controller on Exynos5250
-> include extension for SDR and DDR specific tx/rx phase shift timing
-> and CIU internal divider. In addition to that, the option to skip the
-> command hold stage is also introduced. Add support for these Exynos5250
-> specfic extenstions.
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  .../devicetree/bindings/mmc/synposis-dw-mshc.txt   |   33 ++++++++++++++++-
->  drivers/mmc/host/dw_mmc-pltfm.c                    |   15 +++++++
->  drivers/mmc/host/dw_mmc.c                          |   40 +++++++++++++++++++-
->  drivers/mmc/host/dw_mmc.h                          |   14 +++++++
->  include/linux/mmc/dw_mmc.h                         |    6 +++
->  5 files changed, 105 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt b/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> index 3acd6c9..99b166e 100644
-> --- a/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> @@ -7,6 +7,8 @@ Required Properties:
->  
->  * compatible: should be one of the following
->  	- snps,dw-mshc: for controllers compliant with synopsis dw-mshc.
-> +	- samsung,exynos5250-dw-mshc: for controllers with Samsung
-> +	  Exynos5250 specific extentions.
->  
->  * reg: physical base address of the dw-mshc controller and size of its memory
->    region.
-> @@ -74,13 +76,40 @@ Aliases:
->    the following format 'mshc{n}' where n is a unique number for the alias.
->  
->  
-> +Samsung Exynos5250 specific properties:
-> +
-> +* samsung,dw-mshc-sdr-timing: Specifies the value of CUI clock divider, CIU
-> +  clock phase shift value in transmit mode and CIU clock phase shift value in
-> +  receive mode for single data rate mode operation. Refer notes of the valid
-> +  values below.
-> +
-> +* samsung,dw-mshc-ddr-timing: Specifies the value of CUI clock divider, CIU
-> +  clock phase shift value in transmit mode and CIU clock phase shift value in
-> +  receive mode for double data rate mode operation. Refer notes of the valid
-> +  values below. The order of the cells should be
-> +
-> +    - First Cell: 	CIU clock divider value.
-> +    - Second Cell:	CIU clock phase shift value for tx mode.
-> +    - Third Cell:	CIU clock phase shift value for rx mode.
-> +
-> +  Valid values for SDR and DDR CIU clock timing:
-> +
-> +    - valid values for CIU clock divider, tx phase shift and rx phase shift
-> +      is 0 to 7.
-> +
-> +    - When CIU clock divider value is set to 3, all possible 8 phase shift
-> +      values can be used.
-> +
-> +    - If CIU clock divider value is 0 (that is divide by 1), both tx and rx
-> +      phase shift clocks should be 0.
-> +
->  Example:
->  
->    The MSHC controller node can be split into two portions, SoC specific and
->    board specific portions as listed below.
->  
->  	dwmmc0@12200000 {
-> -		compatible = "snps,dw-mshc";
-> +		compatible = "samsung,exynos5250-dw-mshc";
->  		reg = <0x12200000 0x1000>;
->  		interrupts = <0 75 0>;
->  		#address-cells = <1>;
-> @@ -94,6 +123,8 @@ Example:
->  		no-write-protect;
->  		fifo-depth = <0x80>;
->  		card-detect-delay = <200>;
-> +		samsung,dw-mshc-sdr-timing = <2 3 3>;
-> +		samsung,dw-mshc-ddr-timing = <1 2 3>;
->  
->  		slot@0 {
->  			reg = <0>;
-> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
-> index 8d24f6d..900f412 100644
-> --- a/drivers/mmc/host/dw_mmc-pltfm.c
-> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
-> @@ -27,9 +27,24 @@ static struct dw_mci_drv_data synopsis_drv_data = {
->  	.ctrl_type	= DW_MCI_TYPE_SYNOPSIS,
->  };
->  
-> +static unsigned long exynos5250_dwmmc_caps[4] = {
-> +	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
-> +		MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
-> +	MMC_CAP_CMD23,
-> +	MMC_CAP_CMD23,
-> +	MMC_CAP_CMD23,
-> +};
-> +
-> +static struct dw_mci_drv_data exynos5250_drv_data = {
-> +	.ctrl_type	= DW_MCI_TYPE_EXYNOS5250,
-> +	.caps		= exynos5250_dwmmc_caps,
-> +};
-> +
->  static const struct of_device_id dw_mci_pltfm_match[] = {
->  	{ .compatible = "snps,dw-mshc",
->  			.data = (void *)&synopsis_drv_data, },
-> +	{ .compatible = "samsung,exynos5250-dw-mshc",
-> +			.data = (void *)&exynos5250_drv_data, },
->  	{},
->  };
->  MODULE_DEVICE_TABLE(of, dw_mci_pltfm_match);
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index 0317287..58bab5b 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -236,6 +236,7 @@ static void dw_mci_set_timeout(struct dw_mci *host)
->  static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
->  {
->  	struct mmc_data	*data;
-> +	struct dw_mci_slot *slot = mmc_priv(mmc);
->  	u32 cmdr;
->  	cmd->error = -EINPROGRESS;
->  
-> @@ -265,6 +266,17 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
->  			cmdr |= SDMMC_CMD_DAT_WR;
->  	}
->  
-> +	/*
-> +	 * Samsung Exynos5250 extends the use of CMD register with the use of
-> +	 * bit 29 (which is reserved on standard MSHC controllers) for
-> +	 * optionally bypassing the HOLD register for command and data. The
-> +	 * HOLD register should be bypassed in case there is no phase shift
-> +	 * applied on CMD/DATA that is sent to the card.
-> +	 */
-> +	if (slot->host->drv_data->ctrl_type == DW_MCI_TYPE_EXYNOS5250)
-> +		if (SDMMC_CLKSEL_GET_SELCLK_DRV(mci_readl(slot->host, CLKSEL)))
-> +			cmdr |= SDMMC_CMD_USE_HOLD_REG;
-> +
->  	return cmdr;
->  }
->  
-> @@ -787,10 +799,19 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->  	regs = mci_readl(slot->host, UHS_REG);
->  
->  	/* DDR mode set */
-> -	if (ios->timing == MMC_TIMING_UHS_DDR50)
-> +	if (ios->timing == MMC_TIMING_UHS_DDR50) {
->  		regs |= (0x1 << slot->id) << 16;
-> -	else
-> +		mci_writel(slot->host, CLKSEL, slot->host->ddr_timing);
-> +	} else {
->  		regs &= ~(0x1 << slot->id) << 16;
-> +		mci_writel(slot->host, CLKSEL, slot->host->sdr_timing);
-> +	}
-> +
-> +	if (slot->host->drv_data->ctrl_type == DW_MCI_TYPE_EXYNOS5250) {
-> +		slot->host->bus_hz = clk_get_rate(slot->host->ciu_clk);
-> +		slot->host->bus_hz /= SDMMC_CLKSEL_GET_DIVRATIO(
-> +					mci_readl(slot->host, CLKSEL));
-> +	}
->  
->  	mci_writel(slot->host, UHS_REG, regs);
->  
-> @@ -2076,6 +2097,7 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
->  	struct dw_mci_board *pdata;
->  	struct device *dev = host->dev;
->  	struct device_node *np = dev->of_node;
-> +	u32 timing[3];
->  	int idx, cnt;
->  
->  	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> @@ -2098,6 +2120,20 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
->  		if (of_get_property(np, of_quriks[idx].quirk, NULL))
->  			pdata->quirks |= of_quriks[idx].id;
->  
-> +	if (of_property_read_u32_array(dev->of_node,
-> +			"samsung,dw-mshc-sdr-timing", timing, 3))
-> +		host->sdr_timing = DW_MCI_DEF_SDR_TIMING;
-> +	else
-> +		host->sdr_timing = SDMMC_CLKSEL_TIMING(timing[0],
-> +					timing[1], timing[2]);
-> +
-> +	if (of_property_read_u32_array(dev->of_node,
-> +			"samsung,dw-mshc-ddr-timing", timing, 3))
-> +		host->ddr_timing = DW_MCI_DEF_DDR_TIMING;
-> +	else
-> +		host->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0],
-> +					timing[1], timing[2]);
-> +
->  	if (of_property_read_u32(np, "fifo-depth", &pdata->fifo_depth))
->  		dev_info(dev, "fifo-depth property not found, using "
->  				"value of FIFOTH register as default\n");
-> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-> index 1ecaa02..6c17282 100644
-> --- a/drivers/mmc/host/dw_mmc.h
-> +++ b/drivers/mmc/host/dw_mmc.h
-> @@ -53,6 +53,7 @@
->  #define SDMMC_IDINTEN		0x090
->  #define SDMMC_DSCADDR		0x094
->  #define SDMMC_BUFADDR		0x098
-> +#define SDMMC_CLKSEL		0x09C /* specific to Samsung Exynos5250 */
->  #define SDMMC_DATA(x)		(x)
-
-I know that didn't use to specific field(CLKSEL register) for only Samsung Exynos5250.
-Maybe it should be used to Samsung-SoC.
-
->  
->  /*
-> @@ -111,6 +112,7 @@
->  #define SDMMC_INT_ERROR			0xbfc2
->  /* Command register defines */
->  #define SDMMC_CMD_START			BIT(31)
-> +#define SDMMC_CMD_USE_HOLD_REG		BIT(29)
->  #define SDMMC_CMD_CCS_EXP		BIT(23)
->  #define SDMMC_CMD_CEATA_RD		BIT(22)
->  #define SDMMC_CMD_UPD_CLK		BIT(21)
-> @@ -142,6 +144,17 @@
->  /* Version ID register define */
->  #define SDMMC_GET_VERID(x)		((x) & 0xFFFF)
->  
-> +#define DW_MCI_DEF_SDR_TIMING		0x03030002
-> +#define DW_MCI_DEF_DDR_TIMING		0x03020001
-> +#define SDMMC_CLKSEL_CCLK_SAMPLE(x)	(((x) & 3) << 0)
-> +#define SDMMC_CLKSEL_CCLK_DRIVE(x)	(((x) & 3) << 16)
-> +#define SDMMC_CLKSEL_CCLK_DIVIDER(x)	(((x) & 3) << 24)
-> +#define SDMMC_CLKSEL_TIMING(x, y, z)	(SDMMC_CLKSEL_CCLK_SAMPLE(x) |	\
-> +					SDMMC_CLKSEL_CCLK_DRIVE(y) |	\
-> +					SDMMC_CLKSEL_CCLK_DIVIDER(z))
-> +#define SDMMC_CLKSEL_GET_DIVRATIO(x)	((((x) >> 24) & 0x7) + 1)
-> +#define SDMMC_CLKSEL_GET_SELCLK_DRV(x)	(((x) >> 16) & 0x7)
-> +
->  /* Register access macros */
->  #define mci_readl(dev, reg)			\
->  	__raw_readl((dev)->regs + SDMMC_##reg)
-> @@ -184,6 +197,7 @@ extern int dw_mci_resume(struct dw_mci *host);
->  
->  /* Variations in the dw_mci controller */
->  #define DW_MCI_TYPE_SYNOPSIS		0
-> +#define DW_MCI_TYPE_EXYNOS5250		1 /* Samsung Exynos5250 Extensions */
->  
->  /* dw_mci platform driver data */
->  struct dw_mci_drv_data {
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index ae45e4f..32c778f 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -82,6 +82,8 @@ struct mmc_data;
->   * @biu_clk: Pointer to bus interface unit clock instance.
->   * @ciu_clk: Pointer to card interface unit clock instance.
->   * @slot: Slots sharing this MMC controller.
-> + * @sdr_timing: Clock phase shifting for driving and sampling in sdr mode
-> + * @ddr_timing: Clock phase shifting for driving and sampling in ddr mode
->   * @fifo_depth: depth of FIFO.
->   * @data_shift: log2 of FIFO item size.
->   * @part_buf_start: Start index in part_buf.
-> @@ -166,6 +168,10 @@ struct dw_mci {
->  	struct clk		*ciu_clk;
->  	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
->  
-> +	/* Phase Shift Value (for exynos5250 variant) */
-> +	u32			sdr_timing;
-> +	u32			ddr_timing;
-> +
->  	/* FIFO push and pull */
->  	int			fifo_depth;
->  	int			data_shift;
+diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-exynos/include/mach/gpio.h
+index eb24f1e..21c9bf1 100644
+--- a/arch/arm/mach-exynos/include/mach/gpio.h
++++ b/arch/arm/mach-exynos/include/mach/gpio.h
+@@ -26,11 +26,11 @@
+ #define EXYNOS4_GPIO_C1_NR	(5)
+ #define EXYNOS4_GPIO_D0_NR	(4)
+ #define EXYNOS4_GPIO_D1_NR	(4)
+-#define EXYNOS4_GPIO_E0_NR	(5)
+-#define EXYNOS4_GPIO_E1_NR	(8)
+-#define EXYNOS4_GPIO_E2_NR	(6)
+-#define EXYNOS4_GPIO_E3_NR	(8)
+-#define EXYNOS4_GPIO_E4_NR	(8)
++#define EXYNOS4210_GPIO_E0_NR	(5)
++#define EXYNOS4210_GPIO_E1_NR	(8)
++#define EXYNOS4210_GPIO_E2_NR	(6)
++#define EXYNOS4210_GPIO_E3_NR	(8)
++#define EXYNOS4210_GPIO_E4_NR	(8)
+ #define EXYNOS4_GPIO_F0_NR	(8)
+ #define EXYNOS4_GPIO_F1_NR	(8)
+ #define EXYNOS4_GPIO_F2_NR	(8)
+@@ -67,12 +67,12 @@ enum exynos4_gpio_number {
+ 	EXYNOS4_GPIO_C1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C0),
+ 	EXYNOS4_GPIO_D0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C1),
+ 	EXYNOS4_GPIO_D1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D0),
+-	EXYNOS4_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
+-	EXYNOS4_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E0),
+-	EXYNOS4_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E1),
+-	EXYNOS4_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E2),
+-	EXYNOS4_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E3),
+-	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E4),
++	EXYNOS4210_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
++	EXYNOS4210_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E0),
++	EXYNOS4210_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E1),
++	EXYNOS4210_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E2),
++	EXYNOS4210_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E3),
++	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E4),
+ 	EXYNOS4_GPIO_F1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F0),
+ 	EXYNOS4_GPIO_F2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F1),
+ 	EXYNOS4_GPIO_F3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F2),
+@@ -108,11 +108,11 @@ enum exynos4_gpio_number {
+ #define EXYNOS4_GPC1(_nr)	(EXYNOS4_GPIO_C1_START + (_nr))
+ #define EXYNOS4_GPD0(_nr)	(EXYNOS4_GPIO_D0_START + (_nr))
+ #define EXYNOS4_GPD1(_nr)	(EXYNOS4_GPIO_D1_START + (_nr))
+-#define EXYNOS4_GPE0(_nr)	(EXYNOS4_GPIO_E0_START + (_nr))
+-#define EXYNOS4_GPE1(_nr)	(EXYNOS4_GPIO_E1_START + (_nr))
+-#define EXYNOS4_GPE2(_nr)	(EXYNOS4_GPIO_E2_START + (_nr))
+-#define EXYNOS4_GPE3(_nr)	(EXYNOS4_GPIO_E3_START + (_nr))
+-#define EXYNOS4_GPE4(_nr)	(EXYNOS4_GPIO_E4_START + (_nr))
++#define EXYNOS4210_GPE0(_nr)	(EXYNOS4210_GPIO_E0_START + (_nr))
++#define EXYNOS4210_GPE1(_nr)	(EXYNOS4210_GPIO_E1_START + (_nr))
++#define EXYNOS4210_GPE2(_nr)	(EXYNOS4210_GPIO_E2_START + (_nr))
++#define EXYNOS4210_GPE3(_nr)	(EXYNOS4210_GPIO_E3_START + (_nr))
++#define EXYNOS4210_GPE4(_nr)	(EXYNOS4210_GPIO_E4_START + (_nr))
+ #define EXYNOS4_GPF0(_nr)	(EXYNOS4_GPIO_F0_START + (_nr))
+ #define EXYNOS4_GPF1(_nr)	(EXYNOS4_GPIO_F1_START + (_nr))
+ #define EXYNOS4_GPF2(_nr)	(EXYNOS4_GPIO_F2_START + (_nr))
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 5784b0a..d02c429 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -264,7 +264,7 @@ static struct s3c_fb_platdata nuri_fb_pdata __initdata = {
+ 
+ static void nuri_lcd_power_on(struct plat_lcd_data *pd, unsigned int power)
+ {
+-	int gpio = EXYNOS4_GPE1(5);
++	int gpio = EXYNOS4210_GPE1(5);
+ 
+ 	gpio_request(gpio, "LVDS_nSHDN");
+ 	gpio_direction_output(gpio, power);
+@@ -273,7 +273,7 @@ static void nuri_lcd_power_on(struct plat_lcd_data *pd, unsigned int power)
+ 
+ static int nuri_bl_init(struct device *dev)
+ {
+-	return gpio_request_one(EXYNOS4_GPE2(3), GPIOF_OUT_INIT_LOW,
++	return gpio_request_one(EXYNOS4210_GPE2(3), GPIOF_OUT_INIT_LOW,
+ 				"LCD_LD0_EN");
+ }
+ 
+@@ -282,14 +282,14 @@ static int nuri_bl_notify(struct device *dev, int brightness)
+ 	if (brightness < 1)
+ 		brightness = 0;
+ 
+-	gpio_set_value(EXYNOS4_GPE2(3), 1);
++	gpio_set_value(EXYNOS4210_GPE2(3), 1);
+ 
+ 	return brightness;
+ }
+ 
+ static void nuri_bl_exit(struct device *dev)
+ {
+-	gpio_free(EXYNOS4_GPE2(3));
++	gpio_free(EXYNOS4210_GPE2(3));
+ }
+ 
+ /* nuri pwm backlight */
+@@ -1042,7 +1042,7 @@ static struct max8903_pdata nuri_max8903 = {
+ 	 */
+ 	.dok = EXYNOS4_GPX1(4), /* TA_nCONNECTED */
+ 	/* uok, usus: not connected */
+-	.chg = EXYNOS4_GPE2(0), /* TA_nCHG */
++	.chg = EXYNOS4210_GPE2(0), /* TA_nCHG */
+ 	/* flt: vcc_1.8V_pda */
+ 	.dcm = EXYNOS4_GPL0(1), /* CURR_ADJ */
+ 
+@@ -1114,7 +1114,7 @@ static struct regulator_init_data cam_vt_cam15_reg_init_data = {
+ static struct fixed_voltage_config cam_vt_cam15_fixed_voltage_cfg = {
+ 	.supply_name	= "VT_CAM_1.5V",
+ 	.microvolts	= 1500000,
+-	.gpio		= EXYNOS4_GPE2(2), /* VT_CAM_1.5V_EN */
++	.gpio		= EXYNOS4210_GPE2(2), /* VT_CAM_1.5V_EN */
+ 	.enable_high	= 1,
+ 	.init_data	= &cam_vt_cam15_reg_init_data,
+ };
+@@ -1138,7 +1138,7 @@ static struct regulator_init_data cam_vdda_reg_init_data = {
+ static struct fixed_voltage_config cam_vdda_fixed_voltage_cfg = {
+ 	.supply_name	= "CAM_IO_EN",
+ 	.microvolts	= 2800000,
+-	.gpio		= EXYNOS4_GPE2(1), /* CAM_IO_EN */
++	.gpio		= EXYNOS4210_GPE2(1), /* CAM_IO_EN */
+ 	.enable_high	= 1,
+ 	.init_data	= &cam_vdda_reg_init_data,
+ };
+@@ -1162,7 +1162,7 @@ static struct regulator_init_data cam_8m_12v_reg_init_data = {
+ static struct fixed_voltage_config cam_8m_12v_fixed_voltage_cfg = {
+ 	.supply_name	= "8M_1.2V",
+ 	.microvolts	= 1200000,
+-	.gpio		= EXYNOS4_GPE2(5), /* 8M_1.2V_EN */
++	.gpio		= EXYNOS4210_GPE2(5), /* 8M_1.2V_EN */
+ 	.enable_high	= 1,
+ 	.init_data	= &cam_8m_12v_reg_init_data,
+ };
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 26124a3..753bbd4 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -560,13 +560,13 @@ static void lcd_hv070wsa_set_power(struct plat_lcd_data *pd, unsigned int power)
+ 	int ret;
+ 
+ 	if (power)
+-		ret = gpio_request_one(EXYNOS4_GPE3(4),
++		ret = gpio_request_one(EXYNOS4210_GPE3(4),
+ 					GPIOF_OUT_INIT_HIGH, "GPE3_4");
+ 	else
+-		ret = gpio_request_one(EXYNOS4_GPE3(4),
++		ret = gpio_request_one(EXYNOS4210_GPE3(4),
+ 					GPIOF_OUT_INIT_LOW, "GPE3_4");
+ 
+-	gpio_free(EXYNOS4_GPE3(4));
++	gpio_free(EXYNOS4210_GPE3(4));
+ 
+ 	if (ret)
+ 		pr_err("failed to request gpio for LCD power: %d\n", ret);
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 27fab53..6ea74e6 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -545,7 +545,7 @@ static struct max8998_platform_data universal_lp3974_pdata = {
+ 	.buck2_voltage1		= 1200000,	/* G3D */
+ 	.buck2_voltage2		= 1100000,
+ 	.buck1_default_idx	= 0,
+-	.buck2_set3		= EXYNOS4_GPE2(0),
++	.buck2_set3		= EXYNOS4210_GPE2(0),
+ 	.buck2_default_idx	= 0,
+ 	.wakeup			= true,
+ };
+@@ -574,7 +574,7 @@ static struct regulator_init_data hdmi_fixed_voltage_init_data = {
+ static struct fixed_voltage_config hdmi_fixed_voltage_config = {
+ 	.supply_name		= "HDMI_EN1",
+ 	.microvolts		= 5000000,
+-	.gpio			= EXYNOS4_GPE0(1),
++	.gpio			= EXYNOS4210_GPE0(1),
+ 	.enable_high		= true,
+ 	.init_data		= &hdmi_fixed_voltage_init_data,
+ };
+@@ -623,12 +623,12 @@ static void __init universal_tsp_init(void)
+ 	int gpio;
+ 
+ 	/* TSP_LDO_ON: XMDMADDR_11 */
+-	gpio = EXYNOS4_GPE2(3);
++	gpio = EXYNOS4210_GPE2(3);
+ 	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "TSP_LDO_ON");
+ 	gpio_export(gpio, 0);
+ 
+ 	/* TSP_INT: XMDMADDR_7 */
+-	gpio = EXYNOS4_GPE1(7);
++	gpio = EXYNOS4210_GPE1(7);
+ 	gpio_request(gpio, "TSP_INT");
+ 
+ 	s5p_register_gpio_interrupt(gpio);
+@@ -654,8 +654,8 @@ static struct mcs_platform_data touchkey_data = {
+ /* GPIO I2C 3_TOUCH 2.8V */
+ #define I2C_GPIO_BUS_12		12
+ static struct i2c_gpio_platform_data i2c_gpio12_data = {
+-	.sda_pin	= EXYNOS4_GPE4(0),	/* XMDMDATA_8 */
+-	.scl_pin	= EXYNOS4_GPE4(1),	/* XMDMDATA_9 */
++	.sda_pin	= EXYNOS4210_GPE4(0),	/* XMDMDATA_8 */
++	.scl_pin	= EXYNOS4210_GPE4(1),	/* XMDMDATA_9 */
+ };
+ 
+ static struct platform_device i2c_gpio12 = {
+@@ -677,13 +677,13 @@ static void __init universal_touchkey_init(void)
+ {
+ 	int gpio;
+ 
+-	gpio = EXYNOS4_GPE3(7);			/* XMDMDATA_7 */
++	gpio = EXYNOS4210_GPE3(7);			/* XMDMDATA_7 */
+ 	gpio_request(gpio, "3_TOUCH_INT");
+ 	s5p_register_gpio_interrupt(gpio);
+ 	s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));
+ 	i2c_gpio12_devs[0].irq = gpio_to_irq(gpio);
+ 
+-	gpio = EXYNOS4_GPE3(3);			/* XMDMDATA_3 */
++	gpio = EXYNOS4210_GPE3(3);			/* XMDMDATA_3 */
+ 	gpio_request_one(gpio, GPIOF_OUT_INIT_HIGH, "3_TOUCH_EN");
+ }
+ 
+@@ -769,7 +769,7 @@ static struct regulator_init_data mmc0_fixed_voltage_init_data = {
+ static struct fixed_voltage_config mmc0_fixed_voltage_config = {
+ 	.supply_name		= "MASSMEMORY_EN",
+ 	.microvolts		= 2800000,
+-	.gpio			= EXYNOS4_GPE1(3),
++	.gpio			= EXYNOS4210_GPE1(3),
+ 	.enable_high		= true,
+ 	.init_data		= &mmc0_fixed_voltage_init_data,
+ };
+@@ -876,7 +876,7 @@ static struct regulator_init_data cam_vt_dio_reg_init_data = {
+ static struct fixed_voltage_config cam_vt_dio_fixed_voltage_cfg = {
+ 	.supply_name	= "CAM_VT_D_IO",
+ 	.microvolts	= 2800000,
+-	.gpio		= EXYNOS4_GPE2(1), /* CAM_PWR_EN2 */
++	.gpio		= EXYNOS4210_GPE2(1), /* CAM_PWR_EN2 */
+ 	.enable_high	= 1,
+ 	.init_data	= &cam_vt_dio_reg_init_data,
+ };
+@@ -898,7 +898,7 @@ static struct regulator_init_data cam_i_core_reg_init_data = {
+ static struct fixed_voltage_config cam_i_core_fixed_voltage_cfg = {
+ 	.supply_name	= "CAM_I_CORE_1.2V",
+ 	.microvolts	= 1200000,
+-	.gpio		= EXYNOS4_GPE2(2),	/* CAM_8M_CORE_EN */
++	.gpio		= EXYNOS4210_GPE2(2),	/* CAM_8M_CORE_EN */
+ 	.enable_high	= 1,
+ 	.init_data	= &cam_i_core_reg_init_data,
+ };
+@@ -920,7 +920,7 @@ static struct regulator_init_data cam_s_if_reg_init_data = {
+ static struct fixed_voltage_config cam_s_if_fixed_voltage_cfg = {
+ 	.supply_name	= "CAM_S_IF_1.8V",
+ 	.microvolts	= 1800000,
+-	.gpio		= EXYNOS4_GPE3(0),	/* CAM_PWR_EN1 */
++	.gpio		= EXYNOS4210_GPE3(0),	/* CAM_PWR_EN1 */
+ 	.enable_high	= 1,
+ 	.init_data	= &cam_s_if_reg_init_data,
+ };
+@@ -938,11 +938,11 @@ static struct s5p_platform_mipi_csis mipi_csis_platdata = {
+ 	.phy_enable	= s5p_csis_phy_enable,
+ };
+ 
+-#define GPIO_CAM_LEVEL_EN(n)	EXYNOS4_GPE4(n + 3)
++#define GPIO_CAM_LEVEL_EN(n)	EXYNOS4210_GPE4(n + 3)
+ #define GPIO_CAM_8M_ISP_INT	EXYNOS4_GPX1(5)	/* XEINT_13 */
+-#define GPIO_CAM_MEGA_nRST	EXYNOS4_GPE2(5)
+-#define GPIO_CAM_VGA_NRST	EXYNOS4_GPE4(7)
+-#define GPIO_CAM_VGA_NSTBY	EXYNOS4_GPE4(6)
++#define GPIO_CAM_MEGA_nRST	EXYNOS4210_GPE2(5)
++#define GPIO_CAM_VGA_NRST	EXYNOS4210_GPE4(7)
++#define GPIO_CAM_VGA_NSTBY	EXYNOS4210_GPE4(6)
+ 
+ static int s5k6aa_set_power(int on)
+ {
+diff --git a/arch/arm/mach-exynos/setup-fimc.c b/arch/arm/mach-exynos/setup-fimc.c
+index 6a45078..d74843e 100644
+--- a/arch/arm/mach-exynos/setup-fimc.c
++++ b/arch/arm/mach-exynos/setup-fimc.c
+@@ -26,8 +26,8 @@ int exynos4_fimc_setup_gpio(enum s5p_camport_id id)
+ 		break;
+ 
+ 	case S5P_CAMPORT_B:
+-		gpio8 = EXYNOS4_GPE0(0); /* DATA[0:7] */
+-		gpio5 = EXYNOS4_GPE1(0); /* PCLK, VSYNC, HREF, CLKOUT, FIELD */
++		gpio8 = EXYNOS4210_GPE0(0); /* DATA[0:7] */
++		gpio5 = EXYNOS4210_GPE1(0); /* PCLK, VSYNC, HREF, CLKOUT, FIELD */
+ 		sfn = S3C_GPIO_SFN(3);
+ 		break;
+ 
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index f88bb9f..eda34e6 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -2171,32 +2171,32 @@ static struct samsung_gpio_chip exynos4_gpios_1[] = {
+ 		},
+ 	}, {
+ 		.chip	= {
+-			.base	= EXYNOS4_GPE0(0),
+-			.ngpio	= EXYNOS4_GPIO_E0_NR,
++			.base	= EXYNOS4210_GPE0(0),
++			.ngpio	= EXYNOS4210_GPIO_E0_NR,
+ 			.label	= "GPE0",
+ 		},
+ 	}, {
+ 		.chip	= {
+-			.base	= EXYNOS4_GPE1(0),
+-			.ngpio	= EXYNOS4_GPIO_E1_NR,
++			.base	= EXYNOS4210_GPE1(0),
++			.ngpio	= EXYNOS4210_GPIO_E1_NR,
+ 			.label	= "GPE1",
+ 		},
+ 	}, {
+ 		.chip	= {
+-			.base	= EXYNOS4_GPE2(0),
+-			.ngpio	= EXYNOS4_GPIO_E2_NR,
++			.base	= EXYNOS4210_GPE2(0),
++			.ngpio	= EXYNOS4210_GPIO_E2_NR,
+ 			.label	= "GPE2",
+ 		},
+ 	}, {
+ 		.chip	= {
+-			.base	= EXYNOS4_GPE3(0),
+-			.ngpio	= EXYNOS4_GPIO_E3_NR,
++			.base	= EXYNOS4210_GPE3(0),
++			.ngpio	= EXYNOS4210_GPIO_E3_NR,
+ 			.label	= "GPE3",
+ 		},
+ 	}, {
+ 		.chip	= {
+-			.base	= EXYNOS4_GPE4(0),
+-			.ngpio	= EXYNOS4_GPIO_E4_NR,
++			.base	= EXYNOS4210_GPE4(0),
++			.ngpio	= EXYNOS4210_GPIO_E4_NR,
+ 			.label	= "GPE4",
+ 		},
+ 	}, {
+-- 
+1.7.5.4
