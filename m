@@ -1,51 +1,197 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 0/6] ARM: Exynos: Enable SPI platform support for Exynos4 and
- Exynos5
-Date: Fri, 18 May 2012 15:16:26 +0530
-Message-ID: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH 2/6] ARM: Exynos5: Add spi clock support
+Date: Fri, 18 May 2012 15:16:28 +0530
+Message-ID: <1337334392-6441-3-git-send-email-thomas.abraham@linaro.org>
+References: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13958 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:14011 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S967899Ab2ERJcn (ORCPT
+	with ESMTP id S967899Ab2ERJct (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 18 May 2012 05:32:43 -0400
+	Fri, 18 May 2012 05:32:49 -0400
 Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0M47002F3P67QHP0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:32:42 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:32:48 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M4700FF3P67SH60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:32:42 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 18 May 2012 18:32:47 +0900 (KST)
+In-reply-to: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-This patch set enables device tree based platform support for the three spi
-controllers on Samsung's Exynos4 and Exynos5 SoC's.
+Add support for clock instances for each spi controller.
 
-Thomas Abraham (6):
-  ARM: Exynos4: Fix the incorrect hierarchy of spi controller bus clock
-  ARM: Exynos5: Add spi clock support
-  ARM: Exynos4: Enable platform support for SPI controllers
-  ARM: Exynos5: Enable platform support for SPI controllers
-  ARM: dts: Add nodes for spi controllers for Samsung Exynos4 platforms
-  ARM: dts: Add nodes for spi controllers for Samsung Exynos5 platforms
-
- arch/arm/boot/dts/exynos4210-origen.dts        |   12 +++
- arch/arm/boot/dts/exynos4210-smdkv310.dts      |   44 +++++++++++
- arch/arm/boot/dts/exynos4210.dtsi              |   30 +++++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts      |   47 +++++++++++-
- arch/arm/boot/dts/exynos5250.dtsi              |   46 +++++++++++
- arch/arm/mach-exynos/Kconfig                   |    2 +
- arch/arm/mach-exynos/clock-exynos4.c           |   48 ++++++++++--
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
+---
  arch/arm/mach-exynos/clock-exynos5.c           |   98 ++++++++++++++++++++++++
- arch/arm/mach-exynos/include/mach/irqs.h       |    4 +
- arch/arm/mach-exynos/include/mach/map.h        |    3 +
  arch/arm/mach-exynos/include/mach/regs-clock.h |    4 +
- arch/arm/mach-exynos/mach-exynos4-dt.c         |    6 ++
- arch/arm/mach-exynos/mach-exynos5-dt.c         |    6 ++
- 13 files changed, 341 insertions(+), 9 deletions(-)
+ 2 files changed, 102 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index 5aa460b..ad6c959 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -82,6 +82,11 @@ static int exynos5_clksrc_mask_peric0_ctrl(struct clk *clk, int enable)
+ 	return s5p_gatectrl(EXYNOS5_CLKSRC_MASK_PERIC0, clk, enable);
+ }
+ 
++static int exynos5_clksrc_mask_peric1_ctrl(struct clk *clk, int enable)
++{
++	return s5p_gatectrl(EXYNOS5_CLKSRC_MASK_PERIC1, clk, enable);
++}
++
+ static int exynos5_clk_ip_acp_ctrl(struct clk *clk, int enable)
+ {
+ 	return s5p_gatectrl(EXYNOS5_CLKGATE_IP_ACP, clk, enable);
+@@ -692,6 +697,24 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.enable		= exynos5_clk_ip_peric_ctrl,
+ 		.ctrlbit	= (1 << 14),
+ 	}, {
++		.name		= "spi",
++		.devname	= "exynos4210-spi.0",
++		.parent		= &exynos5_clk_aclk_66.clk,
++		.enable		= exynos5_clk_ip_peric_ctrl,
++		.ctrlbit	= (1 << 16),
++	}, {
++		.name		= "spi",
++		.devname	= "exynos4210-spi.1",
++		.parent		= &exynos5_clk_aclk_66.clk,
++		.enable		= exynos5_clk_ip_peric_ctrl,
++		.ctrlbit	= (1 << 17),
++	}, {
++		.name		= "spi",
++		.devname	= "exynos4210-spi.2",
++		.parent		= &exynos5_clk_aclk_66.clk,
++		.enable		= exynos5_clk_ip_peric_ctrl,
++		.ctrlbit	= (1 << 18),
++	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
+ 		.enable		= &exynos5_clk_ip_mfc_ctrl,
+@@ -985,6 +1008,72 @@ static struct clksrc_clk exynos5_clk_sclk_mmc3 = {
+ 	.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS2, .shift = 24, .size = 8 },
+ };
+ 
++static struct clksrc_clk exynos5_clk_mdout_spi0 = {
++	.clk	= {
++		.name		= "sclk_spi_mdout",
++		.devname	= "exynos4210-spi.0",
++	},
++	.sources = &exynos5_clkset_group,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_PERIC1, .shift = 16, .size = 4 },
++	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC1, .shift = 0, .size = 4 },
++
++};
++
++static struct clksrc_clk exynos5_clk_sclk_spi0 = {
++	.clk	= {
++		.name		= "sclk_spi",
++		.devname	= "exynos4210-spi.0",
++		.parent		= &exynos5_clk_mdout_spi0.clk,
++		.enable		= exynos5_clksrc_mask_peric1_ctrl,
++		.ctrlbit	= (1 << 16),
++	},
++	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC1, .shift = 8, .size = 8 },
++};
++
++static struct clksrc_clk exynos5_clk_mdout_spi1 = {
++	.clk	= {
++		.name		= "sclk_spi_mdout",
++		.devname	= "exynos4210-spi.1",
++	},
++	.sources = &exynos5_clkset_group,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_PERIC1, .shift = 20, .size = 4 },
++	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC1, .shift = 16, .size = 4 },
++
++};
++
++static struct clksrc_clk exynos5_clk_sclk_spi1 = {
++	.clk	= {
++		.name		= "sclk_spi",
++		.devname	= "exynos4210-spi.1",
++		.parent		= &exynos5_clk_mdout_spi1.clk,
++		.enable		= exynos5_clksrc_mask_peric1_ctrl,
++		.ctrlbit	= (1 << 20),
++	},
++	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC1, .shift = 24, .size = 8 },
++};
++
++static struct clksrc_clk exynos5_clk_mdout_spi2 = {
++	.clk	= {
++		.name		= "sclk_spi_mdout",
++		.devname	= "exynos4210-spi.2",
++	},
++	.sources = &exynos5_clkset_group,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_PERIC1, .shift = 24, .size = 4 },
++	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC2, .shift = 0, .size = 4 },
++
++};
++
++static struct clksrc_clk exynos5_clk_sclk_spi2 = {
++	.clk	= {
++		.name		= "sclk_spi",
++		.devname	= "exynos4210-spi.2",
++		.parent		= &exynos5_clk_mdout_spi2.clk,
++		.enable		= exynos5_clksrc_mask_peric1_ctrl,
++		.ctrlbit	= (1 << 24),
++	},
++	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC2, .shift = 8, .size = 8 },
++};
++
+ static struct clksrc_clk exynos5_clksrcs[] = {
+ 	{
+ 		.clk	= {
+@@ -1116,6 +1205,12 @@ static struct clksrc_clk *exynos5_clksrc_cdev[] = {
+ 	&exynos5_clk_sclk_mmc1,
+ 	&exynos5_clk_sclk_mmc2,
+ 	&exynos5_clk_sclk_mmc3,
++	&exynos5_clk_sclk_spi0,
++	&exynos5_clk_sclk_spi1,
++	&exynos5_clk_sclk_spi2,
++	&exynos5_clk_mdout_spi0,
++	&exynos5_clk_mdout_spi1,
++	&exynos5_clk_mdout_spi2,
+ };
+ 
+ static struct clk_lookup exynos5_clk_lookup[] = {
+@@ -1127,6 +1222,9 @@ static struct clk_lookup exynos5_clk_lookup[] = {
+ 	CLKDEV_INIT("exynos4-sdhci.1", "mmc_busclk.2", &exynos5_clk_sclk_mmc1.clk),
+ 	CLKDEV_INIT("exynos4-sdhci.2", "mmc_busclk.2", &exynos5_clk_sclk_mmc2.clk),
+ 	CLKDEV_INIT("exynos4-sdhci.3", "mmc_busclk.2", &exynos5_clk_sclk_mmc3.clk),
++	CLKDEV_INIT("exynos4210-spi.0", "spi_busclk0", &exynos5_clk_sclk_spi0.clk),
++	CLKDEV_INIT("exynos4210-spi.1", "spi_busclk0", &exynos5_clk_sclk_spi1.clk),
++	CLKDEV_INIT("exynos4210-spi.2", "spi_busclk0", &exynos5_clk_sclk_spi2.clk),
+ 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &exynos5_clk_pdma0),
+ 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &exynos5_clk_pdma1),
+ 	CLKDEV_INIT("dma-pl330.2", "apb_pclk", &exynos5_clk_mdma1),
+diff --git a/arch/arm/mach-exynos/include/mach/regs-clock.h b/arch/arm/mach-exynos/include/mach/regs-clock.h
+index b78b5f3..ca86aba 100644
+--- a/arch/arm/mach-exynos/include/mach/regs-clock.h
++++ b/arch/arm/mach-exynos/include/mach/regs-clock.h
+@@ -287,6 +287,7 @@
+ #define EXYNOS5_CLKSRC_DISP1_0			EXYNOS_CLKREG(0x1022C)
+ #define EXYNOS5_CLKSRC_FSYS			EXYNOS_CLKREG(0x10244)
+ #define EXYNOS5_CLKSRC_PERIC0			EXYNOS_CLKREG(0x10250)
++#define EXYNOS5_CLKSRC_PERIC1			EXYNOS_CLKREG(0x10254)
+ 
+ #define EXYNOS5_CLKSRC_MASK_TOP			EXYNOS_CLKREG(0x10310)
+ #define EXYNOS5_CLKSRC_MASK_GSCL		EXYNOS_CLKREG(0x10320)
+@@ -304,6 +305,9 @@
+ #define EXYNOS5_CLKDIV_FSYS2			EXYNOS_CLKREG(0x10550)
+ #define EXYNOS5_CLKDIV_FSYS3			EXYNOS_CLKREG(0x10554)
+ #define EXYNOS5_CLKDIV_PERIC0			EXYNOS_CLKREG(0x10558)
++#define EXYNOS5_CLKDIV_PERIC1			EXYNOS_CLKREG(0x1055C)
++#define EXYNOS5_CLKDIV_PERIC2			EXYNOS_CLKREG(0x10560)
++#define EXYNOS5_CLKSRC_MASK_PERIC1		EXYNOS_CLKREG(0x10354)
+ 
+ #define EXYNOS5_CLKGATE_IP_ACP			EXYNOS_CLKREG(0x08800)
+ #define EXYNOS5_CLKGATE_IP_ISP0			EXYNOS_CLKREG(0x0C800)
+-- 
+1.6.6.rc2
