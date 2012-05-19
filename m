@@ -1,45 +1,67 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung cleanup-2 for v3.5
-Date: Sat, 19 May 2012 16:11:37 -0700
-Message-ID: <CAOesGMi_zNFAn4z162pzvRHHX3SQyi5qEkdi=7SZYE=-=mvHVQ@mail.gmail.com>
-References: <4FB81E2A.1050806@samsung.com>
+Subject: Re: [GIT PULL] Samsung devel-2 for v3.5
+Date: Sat, 19 May 2012 16:12:40 -0700
+Message-ID: <CAOesGMhFPQ1tP8e7mMn+j=n1APK0YYKrMXL=wJXOtRaX=T8=ew@mail.gmail.com>
+References: <4FB8211E.6070905@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:51637 "EHLO
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:36789 "EHLO
 	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754872Ab2ESXLi (ORCPT
+	with ESMTP id S1754757Ab2ESXMl convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 19 May 2012 19:11:38 -0400
-Received: by obbtb18 with SMTP id tb18so5939593obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 May 2012 16:11:38 -0700 (PDT)
-In-Reply-To: <4FB81E2A.1050806@samsung.com>
+	Sat, 19 May 2012 19:12:41 -0400
+Received: by obbtb18 with SMTP id tb18so5940566obb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 May 2012 16:12:40 -0700 (PDT)
+In-Reply-To: <4FB8211E.6070905@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
 Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi,
-
-On Sat, May 19, 2012 at 10:26 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+On Sat, May 19, 2012 at 3:39 PM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
 > Hi Arnd, Olof
 >
-> Please pull Samsung cleanup-2 for v3.5 from:
+> Here is second development of Samsung stuff for v3.5:
 > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> next/cleanup-samsung-2
+> next/devel-samsung-2
 >
-> It is including cleanup of s3c64xx-cpuidle to use new api and has no
-> dependency with other branches.
+> It is adding support second irq set for s3c2416, suspend/resume for
+> exynos5250 and none of interrupt combiner controller for exynos5250.
 >
-> If any problems, please let me know.
+> Since above patches have dependencies with pm of exynos4412 is in
+> next/devel-samsung and regarding dt update is in next/exynos5250-1 br=
+anch,
+> so I made this on top of them.
+>
+> If any problems, please kindly let me know.
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
+> The following changes since commit 2de05a57467c43f58802cdeaa547aee733=
+96b6f3:
+>
+> =A0Merge branch 'next/devel-exynos5250-1' into next/devel-samsung-2
+> (2012-05-20 03:04:59 +0900)
+>
+> are available in the git repository at:
+>
+> =A0git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.=
+git
+> next/devel-samsung-2
 
-I'm going to queue this in a late/cleanup branch. We will make a best
-effort to get it in during the merge window but can't guarantee that
-it happens.
+Pulled into late/soc (see reply to cleanup-2).
 
-If the merge window is cut short, or we end up having to deal with too
-much merge conflicts or if we just run out of time to deal with it,
-then this will have to be postponed to 3.6.
 
+Thanks,
 
 -Olof
