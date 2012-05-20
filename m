@@ -1,49 +1,70 @@
-From: Kyoungil Kim <ki0351.kim@samsung.com>
-Subject: [PATCH 2/2] serial: samsung: Fixed wrong comparison for baudclk_rate
-Date: Sun, 20 May 2012 17:49:31 +0900
-Message-ID: <000101cd3665$7943b690$6bcb23b0$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 4/6] ARM: Samsung: Modify
+ s3c64xx_spi{0|1|2}_set_platdata function
+Date: Sun, 20 May 2012 10:21:13 +0100
+Message-ID: <20120520092113.GA20652@opensource.wolfsonmicro.com>
+References: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
+ <1337333613-6216-5-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13659 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858Ab2ETItc (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60163 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752009Ab2ETJVR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 May 2012 04:49:32 -0400
-Content-language: ko
+	Sun, 20 May 2012 05:21:17 -0400
+Content-Disposition: inline
+In-Reply-To: <1337333613-6216-5-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Alan Cox' <alan@linux.intel.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>, 'Yoon' <junho78.yoon@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-port->baudclk_rate should be compared to the rate of port->baudclk,
-because port->baudclk_rate was assigned as the rate of port->baudclk previously.
-So to check that the current baudclk rate is same as previous rate,
-the target of comparison sholud be the rate of port->baudclk.
 
-Signed-off-by: Jun-Ho, Yoon <junho78.yoon@samsung.com>
-Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
----
- drivers/tty/serial/samsung.c |    4 ++--
- 1 files changed, 2 insertions(+), 2 deletions(-)
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 5668538..cefdd2d 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1013,10 +1013,10 @@ static int s3c24xx_serial_cpufreq_transition(struct notifier_block *nb,
- 	 * a disturbance in the clock-rate over the change.
- 	 */
- 
--	if (IS_ERR(port->clk))
-+	if (IS_ERR(port->baudclk))
- 		goto exit;
- 
--	if (port->baudclk_rate == clk_get_rate(port->clk))
-+	if (port->baudclk_rate == clk_get_rate(port->baudclk))
- 		goto exit;
- 
- 	if (val == CPUFREQ_PRECHANGE) {
--- 
-1.7.1
+On Fri, May 18, 2012 at 03:03:31PM +0530, Thomas Abraham wrote:
+
+> -	s3c64xx_spi0_set_platdata(&s3c64xx_spi0_pdata, 0, 1);
+> +	s3c64xx_spi0_set_platdata("s3c6410-spi", NULL, 0, 1);
+
+...
+
+> +	pd.src_clk_nr = src_clk_nr;
+> +	pd.cfg_gpio = (cfg_gpio) ? cfg_gpio : s3c64xx_spi0_cfg_gpio;
+> +	s3c64xx_device_spi0.name = dev_name;
+
+This looks *really* strange.  Why do we need to pass in a name to set in
+s3c64xx_device_spi0's name, why would we want to use a different name?
+This dev_name also isn't equivalent to dev_name() which makes matters
+more confusing than they need to be.
+
+There was similar code for the I2C controllers which caused some really
+hard to debug brittleness.
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPuLd9AAoJEBus8iNuMP3dLqoQAIR6rqQ9pjM8FvqwohQzlWo+
+1jzGq53e1GzU9X3dEGxd9JKO+G7dH1zsltCbYlMpOAZC/RJVjsC+f6Ni8+ZOI7Em
+9ixnGTf+iQT475vW4XBi0FZoWzsdYtvU9f8RD0xVLkVjNPfF1ALubhfdBu/hJo8i
+eyYk+426Lc9QCI2YrMceCJcgLv7CwwZ6sFckDU5pSXvDReSQ9AJ+LtCR/e9MOds3
+otGDcT4x5+5BoFm+m01628qqJoN2VrNlrxprtMMg1rYW2s/jKOKN9KNujC6DmY7S
+i5pIF9EqNsa4+xrGRbDnqCo5mr/9yEAXFCSA1P0PnbAKUO0QL9U0iJu/20hZoAX3
+bOsvy+YinWi/I6t3bMcOND6uivjcDJDzaXcXCTCtfXeQAlzecQ/OfU7t7KwJuGb8
+yKD2Li02enYN9z/NFA0tOB6g75Nkuy+HFL0IpWi3zqz8Ap8qxjssukBMMuvtuu1N
+7mBr3WKhxTh/XnGLGT2zoCvTvc/p/wznajsM3fDB5Afygf3WP5cHU6t5BdO1jpaT
+e6uskxXD9fS3+PsXheAqggAMEBNnU2U+ca8MVzAq7t2Ncr5xgKJINaJhd7uQaTXp
+LzyITh8TCogXQKSQAxbv+edWKL1XEMKTGaHtITg6NYgMh9o0Phf7DREEXvSBZa2b
+dB7NFN04HgHCpyh1YajU
+=fwSS
+-----END PGP SIGNATURE-----
+
+--Dxnq1zWXvFF0Q93v--
