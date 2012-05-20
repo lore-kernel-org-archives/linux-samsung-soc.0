@@ -1,58 +1,83 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 1/2] mfd: Add support for MAX77686.
-Date: Sun, 20 May 2012 10:47:51 +0100
-Message-ID: <20120520094750.GB20652@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 2/2] regulator: Add support for MAX77686.
+Date: Sun, 20 May 2012 11:00:15 +0100
+Message-ID: <20120520100015.GC20652@opensource.wolfsonmicro.com>
 References: <1337261967-26004-1-git-send-email-yadi.brar@samsung.com>
- <1337261967-26004-2-git-send-email-yadi.brar@samsung.com>
+ <1337261967-26004-3-git-send-email-yadi.brar@samsung.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Yylu36WmvOXNoKYn"
+	protocol="application/pgp-signature"; boundary="QRj9sO5tAVLaXnSD"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58601 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46690 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753183Ab2ETJr4 (ORCPT
+	by vger.kernel.org with ESMTP id S1752782Ab2ETKAT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 May 2012 05:47:56 -0400
+	Sun, 20 May 2012 06:00:19 -0400
 Content-Disposition: inline
-In-Reply-To: <1337261967-26004-2-git-send-email-yadi.brar@samsung.com>
+In-Reply-To: <1337261967-26004-3-git-send-email-yadi.brar@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
 Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
 
---Yylu36WmvOXNoKYn
+--QRj9sO5tAVLaXnSD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Thu, May 17, 2012 at 07:09:26PM +0530, Yadwinder Singh Brar wrote:
-> MAX77686 is a mulitifunction device with PMIC, RTC and Charger on chip. This
-> driver provides common support for accessing the device. This is initial
-> version of this driver that supports to enable the chip with its primary I2C
-> bus.It also includes IRQ and device tree support for MAX77686 chip.
+On Thu, May 17, 2012 at 07:09:27PM +0530, Yadwinder Singh Brar wrote:
 
-Reviwed-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Looks mostly good.  A couple of fairly small things:
 
---Yylu36WmvOXNoKYn
+> +static int max77686_get_voltage_sel(struct regulator_dev *rdev)
+> +{
+
+This looks like it should be regulator_get_voltage_sel_regmap().
+
+> +static int max77686_set_voltage_sel(struct regulator_dev *rdev,
+> +					unsigned sel)
+> +{
+
+This looks like it should be regulator_set_voltage_sel_regmap().
+
+> +	max77686->ramp_delay = pdata->ramp_delay - 1;
+> +	max77686_update_reg(i2c, MAX77686_REG_BUCK2CTRL1,
+> +		RAMP_VALUE, RAMP_MASK);
+> +	max77686_update_reg(i2c, MAX77686_REG_BUCK3CTRL1,
+> +		RAMP_VALUE, RAMP_MASK);
+> +	max77686_update_reg(i2c, MAX77686_REG_BUCK4CTRL1,
+> +		RAMP_VALUE, RAMP_MASK);
+
+This code is unclear because RAMP_VALUE looks like a constant that has
+nothing to do with ramp_delay when in fact it's actually this:
+
+> +#define RAMP_VALUE (max77686->ramp_delay << 6)
+
+which isn't constant - this is why I queried this last time.  Just
+remove the define and write this out directly.  The way the code is
+written at the minute it looks like ramp_delay is just stored and not
+referred to unless you go searching around the rest of the driver.
+
+--QRj9sO5tAVLaXnSD
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.12 (GNU/Linux)
 
-iQIcBAEBAgAGBQJPuL2gAAoJEBus8iNuMP3dvFYQAJFpSA+6LbmF0M6l4KRAjxN5
-Kjg3J165Ut+RAXehO78I7SJLeJMhLzUTgHzWoSTO60CcNMwGQYnE1XWpviynmkEi
-lKuyx85BgwK35rWg80K7LujXMdkLnTzP6SuvrvxtRYXZdYKiYyBK/17ESZHmMAaM
-EntYRz8GAYZt6x9MkwL0UUrjHChUET5Niu8y+b/i2nuBNOm7QBfC1QF5KiGOZlvd
-u8SIPfDNnnswmydFF2MwlAMVjU0Vn1x92IVZHVx9wLOOm6Q3VGcBmKPULQwpnvdR
-H6GfWqImHvLHdyKeiYY3XGQtA3EFjA8gx1jVhfmUt4G7vluxHcRNNwNim8Zt2POr
-dZzqUYJSBJJT8c3uAn6qhzAhxvNIs6ry4M8wcm6Z+VWWJVC9P+sALu7vXar7yneV
-vn7JdrgoeEhPaoxNwktsyikMMuVebUjyDvoELgQib2q6ZkZJphQHbkK2U0Q3ulPJ
-cmJyLcgsuH/4+ALkfh39E1MRyQKdXb6YQ5X5nQ+AqKL5AbygWebw6TZeTK2wUWRs
-GQYbFtjFvuMvOvtNV9m6uh+WdMl/UvmOmAEp5es7RZz5yFVbcQJWEWUbj2hsxsp8
-OSUiWh+zJbCQEV2QsMiiXNWSUnnY8FruYsimN14hKpM7+Rbk17RJmgk6gGQO71Ma
-ho3m7LJghYGwNZHw5XsA
-=197Y
+iQIcBAEBAgAGBQJPuMBOAAoJEBus8iNuMP3d738P/1qxAQHycb5hE5qBSc1TzcXb
+ZIGlT5TWxb0u+xDq2QbDgsqJWcwO576OlGaxhEKpflFqguJDJORaGKhWJXW+f+bm
+Lt6Q49JE76NX+sUdwn7JXa3G07KDqzHu9i722/juOUpILoNFrwRzL3rSUID+Qn1F
+mYrnKtWZZejqtXQ3h/6B0b+bxy03HbC2EBcoDbmyY5/3JPxFTYJC069+Nh1p3Sv/
+tIXuBdn2ShgQcgsKC25rVAihRvwpU5BPYGmSxG14A2PgeoKH20/XkAlPyURv6ize
+CjOghnjJRwwRO4ESbDN11Eb4UYjZF29PKbr6VwCxYMQ2z5OiDJOSjFrbvSmKqyuf
+DInT5oodESo6sy+BoPOZXEeHQkHJoBODcEVBu7M5UAai1JBG6ALEWaezJAqI6dKb
+Wf0O/QSORQ5Gptq10jRt7HF6ez5VWP7+FfRwIdEhdhRV7q+UnLfYPMJpAOoCJkHX
+Sv7/ZCyot05wtKKrDPZ27xrA61EJqG6lOUirNsfrqIkvFJOZAETLqPxunnUnPFP4
+wSC/5ZMnmhXM25TqdQ5sCycTmO8H+K3u3yVEWKJxjlZiO300Jtrv9iA6Ta7ckoQ6
+iQ/sBKI64WQz+1kqN78V4ZKS2G6AgMLaDqShT4jKtdrbwjelPajrSq1KiDrNhSm9
+ci/aN6kl2R/KLTiaZDn3
+=gDAk
 -----END PGP SIGNATURE-----
 
---Yylu36WmvOXNoKYn--
+--QRj9sO5tAVLaXnSD--
