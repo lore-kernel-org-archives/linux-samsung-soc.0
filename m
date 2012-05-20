@@ -1,92 +1,75 @@
 From: Grant Likely <grant.likely@secretlab.ca>
-Subject: Re: [PATCH 07/10] spi: s3c64xx: Remove the 'set_level' callback from controller data
-Date: Sat, 19 May 2012 22:45:21 -0600
-Message-ID: <20120520044521.88CE13E03B8@localhost>
-References: <1336514694-22393-1-git-send-email-thomas.abraham@linaro.org> <1336514694-22393-8-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH v2 0/6] spi: s3c64xx: add support for device tree
+Date: Sat, 19 May 2012 23:02:49 -0600
+Message-ID: <20120520050249.2F5113E03B8@localhost>
+References: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:47851 "EHLO
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:59639 "EHLO
 	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750809Ab2ETEpY (ORCPT
+	with ESMTP id S1750985Ab2ETFCv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 20 May 2012 00:45:24 -0400
-Received: by dady13 with SMTP id y13so5429398dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 May 2012 21:45:23 -0700 (PDT)
-In-Reply-To: <1336514694-22393-8-git-send-email-thomas.abraham@linaro.org>
+	Sun, 20 May 2012 01:02:51 -0400
+Received: by dady13 with SMTP id y13so5438039dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 19 May 2012 22:02:51 -0700 (PDT)
+In-Reply-To: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>, spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, kgene.kim@samsung.com, jaswinder.singh@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, kgene.kim@samsung.com, jaswinder.singh@linaro.org, broonie@opensource.wolfsonmicro.com
 
-On Wed, 09 May 2012 03:34:51 +0530, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> The set_level callback in the controller data, which is used to configure
-> the slave select line, cannot be supported when migrating the driver to
-> device tree based discovery. Since all the platforms currently use gpio
-> as the slave select line, this callback can be removed from the
-> controller data and replaced with call to gpio_set_value in the driver.
+On Fri, 18 May 2012 15:03:27 +0530, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> Changes since v1:
+
+Heh, I really should look further down my inbox before I start
+replying to old patches.  I'll recheck this version of the changes,
+but I'm still happy for this stuff to go via arm-soc or whatever
+branch makes the most sense.
+
+g.
+
+> - Incorporated changes suggested by Mark Brown
+>   - Merged 2nd, 3rd and 5th patch into one single patch.
+>   - Listed the order of gpios in the device tree support documentation.
+>   - Switched to generic property names for chip select gpio line and
+>     number of slave select lines.
+> - Moved the platform enablement patches for Exynos4 and Exynos5 into a
+>   different patch series.
+> - Included Ack from Jaswinder Singh <jaswinder.singh@linaro.org>.
 > 
-> Cc: Jaswinder Singh <jaswinder.singh@linaro.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-
-Acked-by: Grant Likely <grant.likely@secretlab.ca>
-
-> ---
->  arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 --
->  drivers/spi/spi-s3c64xx.c                        |    8 ++++----
->  2 files changed, 4 insertions(+), 6 deletions(-)
+> This patch series adds device tree based discovery support for Samsung's
+> s3c64xx compatible spi controller. This is mainly tested for Exynos4210
+> and Exynos5250 with onboard spi nor flash device.
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-> index a733ce9..48a6495 100644
-> --- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-> +++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
-> @@ -18,7 +18,6 @@ struct platform_device;
->   * @fb_delay: Slave specific feedback delay.
->   *            Refer to FB_CLK_SEL register definition in SPI chapter.
->   * @line: Custom 'identity' of the CS line.
-> - * @set_level: CS line control.
->   *
->   * This is per SPI-Slave Chipselect information.
->   * Allocate and initialize one in machine init code and make the
-> @@ -27,7 +26,6 @@ struct platform_device;
->  struct s3c64xx_spi_csinfo {
->  	u8 fb_delay;
->  	unsigned line;
-> -	void (*set_level)(unsigned line_id, int lvl);
->  };
->  
->  /**
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index f6bc0e3..d84ce7f 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -406,14 +406,14 @@ static inline void enable_cs(struct s3c64xx_spi_driver_data *sdd,
->  		if (sdd->tgl_spi != spi) { /* if last mssg on diff device */
->  			/* Deselect the last toggled device */
->  			cs = sdd->tgl_spi->controller_data;
-> -			cs->set_level(cs->line,
-> -					spi->mode & SPI_CS_HIGH ? 0 : 1);
-> +			gpio_set_value(cs->line,
-> +				spi->mode & SPI_CS_HIGH ? 0 : 1);
->  		}
->  		sdd->tgl_spi = NULL;
->  	}
->  
->  	cs = spi->controller_data;
-> -	cs->set_level(cs->line, spi->mode & SPI_CS_HIGH ? 1 : 0);
-> +	gpio_set_value(cs->line, spi->mode & SPI_CS_HIGH ? 1 : 0);
->  }
->  
->  static int wait_for_xfer(struct s3c64xx_spi_driver_data *sdd,
-> @@ -499,7 +499,7 @@ static inline void disable_cs(struct s3c64xx_spi_driver_data *sdd,
->  	if (sdd->tgl_spi == spi)
->  		sdd->tgl_spi = NULL;
->  
-> -	cs->set_level(cs->line, spi->mode & SPI_CS_HIGH ? 0 : 1);
-> +	gpio_set_value(cs->line, spi->mode & SPI_CS_HIGH ? 0 : 1);
->  }
->  
->  static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
-> -- 
-> 1.6.6.rc2
+> Thomas Abraham (6):
+>   spi: s3c64xx: remove unused S3C64XX_SPI_ST_TRLCNTZ macro
+>   spi: s3c64xx: move controller information into driver data
+>   ARM: Samsung: Remove pdev pointer paremeter from spi gpio setup functions
+>   ARM: Samsung: Modify s3c64xx_spi{0|1|2}_set_platdata function
+>   spi: s3c64xx: Remove the 'set_level' callback from controller data
+>   spi: s3c64xx: add device tree support
+> 
+>  .../devicetree/bindings/spi/spi-samsung.txt        |  113 +++++
+>  arch/arm/mach-exynos/clock-exynos4.c               |   18 +-
+>  arch/arm/mach-exynos/setup-spi.c                   |   33 +--
+>  arch/arm/mach-s3c24xx/clock-s3c2416.c              |    2 +-
+>  arch/arm/mach-s3c24xx/clock-s3c2443.c              |    2 +-
+>  arch/arm/mach-s3c24xx/common-s3c2443.c             |    4 +-
+>  arch/arm/mach-s3c24xx/setup-spi.c                  |   10 +-
+>  arch/arm/mach-s3c64xx/clock.c                      |   20 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/setup-spi.c                  |   19 +-
+>  arch/arm/mach-s5p64x0/clock-s5p6440.c              |   12 +-
+>  arch/arm/mach-s5p64x0/clock-s5p6450.c              |   12 +-
+>  arch/arm/mach-s5p64x0/setup-spi.c                  |   21 +-
+>  arch/arm/mach-s5pc100/clock.c                      |   30 +-
+>  arch/arm/mach-s5pc100/setup-spi.c                  |   30 +--
+>  arch/arm/mach-s5pv210/clock.c                      |   14 +-
+>  arch/arm/mach-s5pv210/setup-spi.c                  |   21 +-
+>  arch/arm/plat-samsung/devs.c                       |   50 +--
+>  arch/arm/plat-samsung/include/plat/s3c64xx-spi.h   |   31 +-
+>  drivers/spi/spi-s3c64xx.c                          |  467 +++++++++++++++++---
+>  20 files changed, 611 insertions(+), 300 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-samsung.txt
 > 
 
 -- 
