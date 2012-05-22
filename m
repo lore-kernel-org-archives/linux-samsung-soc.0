@@ -1,91 +1,62 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/2] ARM: EXYNOS: Add HSOTG support to SMDK4X12
-Date: Tue, 22 May 2012 14:35:29 +0530
-Message-ID: <1337677529-7325-2-git-send-email-sachin.kamat@linaro.org>
-References: <1337677529-7325-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 0/2] regulator: Add initial suport for max77686
+Date: Tue, 22 May 2012 10:38:00 +0100
+Message-ID: <20120522093800.GC21999@opensource.wolfsonmicro.com>
+References: <4fbb2ac4.63de440a.589d.78cc@mx.google.com>
+ <CAH9JG2Xq-4J9Vn6d6cxcMNsZ5Y2LLJG9vrVQWEyPHhNd08ek9g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="3siQDZowHQqNOShm"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:33351 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757071Ab2EVJP7 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36622 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753334Ab2EVJiD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 May 2012 05:15:59 -0400
-Received: by pbbrp8 with SMTP id rp8so8114899pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 May 2012 02:15:59 -0700 (PDT)
-In-Reply-To: <1337677529-7325-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 22 May 2012 05:38:03 -0400
+Content-Disposition: inline
+In-Reply-To: <CAH9JG2Xq-4J9Vn6d6cxcMNsZ5Y2LLJG9vrVQWEyPHhNd08ek9g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Kyungmin Park <kmpark@infradead.org>
+Cc: yadi.brar01@gmail.com, "jonghwa3.lee" <jonghwa3.lee@samsung.com>, =?utf-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
 
-S3C-HSOTG support is added to SMDK4212 and SMDK4412 boards.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Based on Kukjin Kim's v3.5-for-usb-2 branch.
----
- arch/arm/mach-exynos/Kconfig         |    2 ++
- arch/arm/mach-exynos/mach-smdk4x12.c |    8 ++++++++
- 2 files changed, 10 insertions(+), 0 deletions(-)
+--3siQDZowHQqNOShm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 6682f35..95e3ee3 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -349,6 +349,7 @@ config MACH_SMDK4212
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C7
- 	select S3C_DEV_RTC
-+	select S3C_DEV_USB_HSOTG
- 	select S3C_DEV_WDT
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_KEYPAD
-@@ -359,6 +360,7 @@ config MACH_SMDK4212
- 	select EXYNOS4_SETUP_I2C7
- 	select EXYNOS4_SETUP_KEYPAD
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_SETUP_USB_PHY
- 	help
- 	  Machine support for Samsung SMDK4212
- 
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index d00e4f0..6d8f325 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -19,6 +19,7 @@
- #include <linux/pwm_backlight.h>
- #include <linux/regulator/machine.h>
- #include <linux/serial_core.h>
-+#include <linux/platform_data/s3c-hsotg.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -235,6 +236,9 @@ static struct samsung_keypad_platdata smdk4x12_keypad_data __initdata = {
- 	.cols		= 5,
- };
- 
-+/* USB OTG */
-+static struct s3c_hsotg_plat smdk4x12_hsotg_pdata;
-+
- static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc3,
-@@ -243,6 +247,7 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s3c_device_i2c3,
- 	&s3c_device_i2c7,
- 	&s3c_device_rtc,
-+	&s3c_device_usb_hsotg,
- 	&s3c_device_wdt,
- 	&samsung_device_keypad,
- };
-@@ -281,6 +286,9 @@ static void __init smdk4x12_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdk4x12_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdk4x12_hsmmc3_pdata);
- 
-+	s3c_hsotg_set_platdata(&smdk4x12_hsotg_pdata);
-+	clk_xusbxti.rate = 24000000;
-+
- 	platform_add_devices(smdk4x12_devices, ARRAY_SIZE(smdk4x12_devices));
- }
- 
--- 
-1.7.4.1
+On Tue, May 22, 2012 at 03:53:11PM +0900, Kyungmin Park wrote:
+
+> BTW, do you know that you're reviewing the same device driver patch
+> from different person?
+> One from Mr. Lee and another from Yadwinder.
+
+> I wonder how to handle it finally. which one is choose?
+
+Yes, I realise there's two different versions of it floating around -
+personally I'd hope that you guys could come to some agreement about a
+common set of code that works for everyone.
+
+--3siQDZowHQqNOShm
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPu15yAAoJEBus8iNuMP3dMMMP/jXdSUtUNltFo/Fi6ZVM+tyz
+kYlV8QhYYn/qwJsjL5PgHb5pJf95v3QjHJMN9jv8txmA/V2E1JuazBmeKUuMnjTR
+QYVZ0UNgOU6mDzOKu+I/vMEmditsQOfz//fMZYU35pe/itj5PNXeYtYk644nsvaI
+npPmEb59HenLQ2e9GjoxJPZqaqv6r3WAUnazz/iO1+TOtj/95WjP7kMpqjRhUdIr
+aep+R6ASy7iQO8bnyKMT5OKRPOYwPobcaGVZBkRxvPZvVULACHRUDR9sTxR74IbG
+FCBPVOK1cO/D/N4okmEyNWZPpaQRHX/WrI5G0plC+DrqBN9EbfhvtI65ljtB0jYD
+H2+mATHrlownbWDcBdbfVuVosemnNrzenDX8JdjL+nK1TpmZXErDY/qw28XX3hKt
+O2W4Jx13EwSHs407jw08xCWz2YfR1Z/JFzzag5Nij8YMFEGm9yZAhd4zioIoP71g
+7ecJJ3BepTr2qVZg6OeIQlLhRTXjWpJaFWsHswqfM4D8UQm1rJgyDMVI68VDErhE
+MYpztVtofpmcNw4JL5L7hKwy6XlmIrd3GEh2Pe9jBKI2yx9B52dvzLEpPiW5zmQu
+CYCEGHgYUxFwYJ5gYF7PP7MLAnIJnQF8QrYmPGaqo8cK/A44zP+EJTRmII9LiarH
+liiDlrENo0q81B2yg/fv
+=94WC
+-----END PGP SIGNATURE-----
+
+--3siQDZowHQqNOShm--
