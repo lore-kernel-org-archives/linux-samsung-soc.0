@@ -1,88 +1,121 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: Re: [PATCH v3 0/2] regulator: Add initial suport for max77686
-Date: Tue, 22 May 2012 15:53:11 +0900
-Message-ID: <CAH9JG2Xq-4J9Vn6d6cxcMNsZ5Y2LLJG9vrVQWEyPHhNd08ek9g@mail.gmail.com>
-References: <4fbb2ac4.63de440a.589d.78cc@mx.google.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] ARM: EXYNOS: Update HSOTG PHY clock setting for Exynos4x12
+Date: Tue, 22 May 2012 14:35:28 +0530
+Message-ID: <1337677529-7325-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gg0-f174.google.com ([209.85.161.174]:65182 "EHLO
-	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750896Ab2EVGxM (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:45700 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756883Ab2EVJP4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 May 2012 02:53:12 -0400
-In-Reply-To: <4fbb2ac4.63de440a.589d.78cc@mx.google.com>
+	Tue, 22 May 2012 05:15:56 -0400
+Received: by dady13 with SMTP id y13so7989753dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 22 May 2012 02:15:56 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: yadi.brar01@gmail.com, "jonghwa3.lee" <jonghwa3.lee@samsung.com>, =?UTF-8?B?7LWc7LCs7Jqw?= <cw00.choi@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Hi Mark,
+Adds clock setting entries for Exynos4212 and Exynos4412 platforms.
 
-BTW, do you know that you're reviewing the same device driver patch
-from different person?
-One from Mr. Lee and another from Yadwinder.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+Based on Kukjin Kim's v3.5-for-usb-2 branch.
+---
+ arch/arm/mach-exynos/include/mach/regs-usb-phy.h |    5 ++
+ arch/arm/mach-exynos/setup-usb-phy.c             |   47 ++++++++++++++++-----
+ arch/arm/plat-samsung/include/plat/cpu.h         |    4 ++
+ 3 files changed, 45 insertions(+), 11 deletions(-)
 
-I wonder how to handle it finally. which one is choose?
-
-Thank you,
-Kyungmin Park
-
-On 5/22/12, yadi.brar01@gmail.com <yadi.brar01@gmail.com> wrote:
-> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
->
-> This patch series adds support for max77686 which is a multifunction device
-> which includes regulator (pmic), rtc and charger sub-blocks within it. The
-> support for mfd driver and regulator driver are added by this patch series.
-> This
-> patch series also includes device tree and irqdomain support for mfd and
-> regulator portions.
->
-> Implemented the required modification, stated in the recieved review
-> comments.
-> changes since v1:
-> -added regmap support.
-> -implemented .get_voltage_sel, .set_voltage_sel and .set_voltage_time_sel
-> after
->  removing .get_voltage and .set_voltage in regulator driver.
-> -used of_regulator_match() for parsing DT.
-> -added Documentation for Devive Tree binding.
->
-> changes since v2:
-> -converted to use regulator_get_voltage_sel_regmap,
->  regulator_set_voltage_sel_regmap, regulator_enable_regmap,
->  regulator_disable_regmap, regulator_is_enabled_regmap.
->
-> This patch series is based on mark_regulator/for-next and has been tested
-> on
-> GAIA board.
->
-> Yadwinder Singh Brar (2):
->   mfd: Add support for MAX77686.
->   regulator: Add support for MAX77686.
->
->  Documentation/devicetree/bindings/mfd/max77686.txt |   61 +++
->  drivers/mfd/Kconfig                                |   21 +
->  drivers/mfd/Makefile                               |    1 +
->  drivers/mfd/max77686-irq.c                         |  255 +++++++++++++
->  drivers/mfd/max77686.c                             |  322 ++++++++++++++++
->  drivers/regulator/Kconfig                          |    9 +
->  drivers/regulator/Makefile                         |    1 +
->  drivers/regulator/max77686.c                       |  389
-> ++++++++++++++++++++
->  include/linux/mfd/max77686-private.h               |  282 ++++++++++++++
->  include/linux/mfd/max77686.h                       |  100 +++++
->  10 files changed, 1441 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mfd/max77686.txt
->  create mode 100644 drivers/mfd/max77686-irq.c
->  create mode 100644 drivers/mfd/max77686.c
->  create mode 100644 drivers/regulator/max77686.c
->  create mode 100644 include/linux/mfd/max77686-private.h
->  create mode 100644 include/linux/mfd/max77686.h
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
-> in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+index c337cf3..bab28d9 100644
+--- a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
++++ b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+@@ -38,8 +38,13 @@
+ #define CLKSEL_MASK			(0x3 << 0)
+ #define CLKSEL_SHIFT			(0)
+ #define CLKSEL_48M			(0x0 << 0)
++#define CLKSEL_9600K			(0x0 << 0)
++#define CLKSEL_10M			(0x1 << 0)
+ #define CLKSEL_12M			(0x2 << 0)
++#define CLKSEL_19200K			(0x3 << 0)
+ #define CLKSEL_24M			(0x3 << 0)
++#define CLKSEL_20M			(0x4 << 0)
++#define EXYNOS4X12_CLKSEL_24M		(0x5 << 0)
+ 
+ #define EXYNOS4_RSTCON			EXYNOS4_HSOTG_PHYREG(0x08)
+ #define HOST_LINK_PORT_SWRST_MASK	(0xf << 6)
+diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
+index 1af0a7f..b8cf0f8 100644
+--- a/arch/arm/mach-exynos/setup-usb-phy.c
++++ b/arch/arm/mach-exynos/setup-usb-phy.c
+@@ -36,17 +36,42 @@ static void exynos4210_usb_phy_clkset(struct platform_device *pdev)
+ 
+ 	xusbxti_clk = clk_get(&pdev->dev, "xusbxti");
+ 	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
+-		switch (clk_get_rate(xusbxti_clk)) {
+-		case 12 * MHZ:
+-			phyclk |= CLKSEL_12M;
+-			break;
+-		case 24 * MHZ:
+-			phyclk |= CLKSEL_24M;
+-			break;
+-		default:
+-		case 48 * MHZ:
+-			/* default reference clock */
+-			break;
++		if (soc_is_exynos4210()) {
++			switch (clk_get_rate(xusbxti_clk)) {
++			case 12 * MHZ:
++				phyclk |= CLKSEL_12M;
++				break;
++			case 24 * MHZ:
++				phyclk |= CLKSEL_24M;
++				break;
++			default:
++			case 48 * MHZ:
++				/* default reference clock */
++				break;
++			}
++		} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
++			switch (clk_get_rate(xusbxti_clk)) {
++			case 9600 * KHZ:
++				phyclk |= CLKSEL_9600K;
++				break;
++			case 10 * MHZ:
++				phyclk |= CLKSEL_10M;
++				break;
++			case 12 * MHZ:
++				phyclk |= CLKSEL_12M;
++				break;
++			case 19200 * KHZ:
++				phyclk |= CLKSEL_19200K;
++				break;
++			case 20 * MHZ:
++				phyclk |= CLKSEL_20M;
++				break;
++			default:
++			case 24 * MHZ:
++				/* default reference clock */
++				phyclk |= EXYNOS4X12_CLKSEL_24M;
++				break;
++			}
+ 		}
+ 		clk_put(xusbxti_clk);
+ 	}
+diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-samsung/include/plat/cpu.h
+index 787ceac..6a6ff7e 100644
+--- a/arch/arm/plat-samsung/include/plat/cpu.h
++++ b/arch/arm/plat-samsung/include/plat/cpu.h
+@@ -132,6 +132,10 @@ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID, EXYNOS5_SOC_MASK)
+ 
+ #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x, __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
+ 
++#ifndef KHZ
++#define KHZ (1000)
++#endif
++
+ #ifndef MHZ
+ #define MHZ (1000*1000)
+ #endif
+-- 
+1.7.4.1
