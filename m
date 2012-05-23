@@ -1,49 +1,136 @@
-From: jonghwa3.lee@samsung.com
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
 Subject: Re: [PATCH v3 2/2] regulator: Add support for MAX77686.
-Date: Wed, 23 May 2012 10:50:13 +0900
-Message-ID: <4FBC4255.4040307@samsung.com>
-References: <y@samsung.com> <4fbb2ada.63de440a.589d.78e2@mx.google.com>
+Date: Wed, 23 May 2012 09:46:19 +0530
+Message-ID: <CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
+References: <y@samsung.com>
+	<4fbb2ada.63de440a.589d.78e2@mx.google.com>
+	<4FBC3FF0.5080408@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:50040 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756706Ab2EWBuY (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:49692 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751134Ab2EWEQV convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 22 May 2012 21:50:24 -0400
-In-reply-to: <4fbb2ada.63de440a.589d.78e2@mx.google.com>
+	Wed, 23 May 2012 00:16:21 -0400
+In-Reply-To: <4FBC3FF0.5080408@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: yadi.brar01@gmail.com
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: jonghwa3.lee@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi, again.
-On 2012=EB=85=84 05=EC=9B=94 22=EC=9D=BC 14:57, yadi.brar01@gmail.com w=
-rote:
+(adding Kyungmin Park and Samuel Ortiz)
 
+Hi,
 
-> +static __devinit int max77686_pmic_probe(struct platform_device *pde=
-v)
-> +{
+Yes, It happened unintentionally. I didn't know about your patch
+before submitting
+the initial version of my patches. I agree with you, I will review
+your patches and
+will try to incorporate extra features from your patches.
 
-> +
-> +	for (i =3D 0; i < pdata->num_regulators; i++) {
-> +		config.dev =3D max77686->dev;
-> +		config.init_data =3D pdata->regulators[i].init_data;
-> +		config.driver_data =3D max77686;
-> +		config.regmap =3D iodev->regmap;
-> +
-> +		rdev[i] =3D regulator_register(&regulators[i], &config);
+On Wed, May 23, 2012 at 7:10 AM,  <jonghwa3.lee@samsung.com> wrote:
+> Hi, Yadwinder,
+> As you know, both of us, recently, had competition for one driver
+> whether you intend or not. And now, i think it is time to stop this a=
+nd
+> to find appropriate goal. From now on, i won't update this driver no
+> more. I recommend you to review my patch and apply feature that you c=
+an
+> apply. And also check comments that i wrote below.
+>
+> On 2012=EB=85=84 05=EC=9B=94 22=EC=9D=BC 14:57, yadi.brar01@gmail.com=
+ wrote:
+>
+>> From: Yadwinder Singh Brar <yadi.brar@samsung.com>
+>>
+>> Add support for PMIC/regulator portion of MAX77686 multifunction dev=
+ice.
+>> MAX77686 provides LDOs[1-26] and BUCKs[1-9]. This is initial release=
+ of driv
+>> which supports setting and getting the voltage of a regulator with I=
+2C
+>> interface.
 
+>> + =C2=A0 =C2=A0 return DIV_ROUND_UP(rdev->desc->uV_step *
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 abs(new_sel - old_sel),
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=
+=A0 =C2=A0 =C2=A0 100);
+>> +}
+>> +
+>
+>
+> Does LDO also need waiting for voltage change? I afraid it's not.
+>
 
-I'm sorry that i missed one. You have to register all regulators
-unconditionally. Mark brown commented about this to my former patch.
+Yes, according to technical reference manual which I have, ramp rate fo=
+r
+LDOs is also 100mV/us.
 
-'No, you should unconditionally register all regulators the device
-physically has.  This is useful for debug and simplifies the code.'
-						- from Mark Brown
+>> +
+>> + =C2=A0 =C2=A0 if (pdata->ramp_delay < MAX77686_RAMP_RATE_13MV ||
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pdata->ramp_delay > MAX7=
+7686_RAMP_RATE_100MV)
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 pdata->ramp_delay =3D MA=
+X77686_RAMP_RATE_27MV; =C2=A0 =C2=A0/* default */
 
+If pdata doesn't have proper ramp_delay, it will get value
+MAX77686_RAMP_RATE_27MV.
 
+>> +
+>> + =C2=A0 =C2=A0 max77686->ramp_delay =3D pdata->ramp_delay - 1;
+>
+>
+> I think it is better to check pdata->ramp_delay is available.
+> If pdata doesn't have ramp_delay member it might be error.
+>
 
-Thanks.
+Yes, we have taken care of this case above before setting value of
+max77686->ramp_delay.
+
+>> + =C2=A0 =C2=A0 max77686_update_reg(i2c, MAX77686_REG_BUCK2CTRL1,
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 max77686->ramp_delay << =
+6, RAMP_MASK);
+>> + =C2=A0 =C2=A0 max77686_update_reg(i2c, MAX77686_REG_BUCK3CTRL1,
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 max77686->ramp_delay << =
+6, RAMP_MASK);
+>> + =C2=A0 =C2=A0 max77686_update_reg(i2c, MAX77686_REG_BUCK4CTRL1,
+>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 max77686->ramp_delay << =
+6, RAMP_MASK);
+>> +
+>
+>
+> Why do you use i2c client still? If you registered regmap you can use
+> its API. I recommend you to use regmap_update_bits() directly.
+>
+>
+
+Yes, we are using regmap_update_bits().  max77686_update_reg() is just
+a wrapper over it.
+
+>> + =C2=A0 =C2=A0 platform_set_drvdata(pdev, max77686);
+>> +
+
+>
+> MAX77686 has crystal oscillator in it. And original version of this
+> driver which was written by Chiwoon Byun, registers it as a regulator=
+=2E
+> As Mark says, we have to change it to use generic clock API. Where do
+> you think should we put them into? In my opinion, it is proper that j=
+ust
+> leave them in regulator driver because this driver is almost core of
+> PMIC. I already applied generic API in my local repository but i
+> couldn't test yet. Because it crashed with SOC's private clock API.
+> Anyway if you register 32khz clock with generic API ,DEFINE_CLK_GATE(=
+)
+> will help you out which defined in linux/clk-private.h.
+>
+
+Yes, I was also thinking about where to put it. I am not sure whether t=
+his
+is a proper place to put them. Anyway I will again think about it.
+
+Thanks,
+Yadwinder.
