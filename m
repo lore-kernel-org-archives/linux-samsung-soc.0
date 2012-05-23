@@ -1,65 +1,66 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v3 2/2] regulator: Add support for MAX77686.
-Date: Wed, 23 May 2012 11:18:34 +0100
-Message-ID: <20120523101834.GI4085@opensource.wolfsonmicro.com>
-References: <y@samsung.com>
- <4fbb2ada.63de440a.589d.78e2@mx.google.com>
- <4FBC3FF0.5080408@samsung.com>
- <CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
- <4FBC6A2D.6040408@samsung.com>
- <CAKew6eUew+=f-dGjJZD7Wy8Xt2f4smEhkYh=CUhx6Y_EMByFFw@mail.gmail.com>
- <4FBC76A8.2070004@samsung.com>
+From: Kyoungil Kim <ki0351.kim@samsung.com>
+Subject: [PATCH] spi: Change FIFO flush operation and spi channel off
+Date: Wed, 23 May 2012 21:29:51 +0900
+Message-ID: <009f01cd38df$c00cf6f0$4026e4d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="KrHCbChajFcK0yQE"
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:33387 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1757395Ab2EWKSh (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:18141 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750854Ab2EWM3x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 May 2012 06:18:37 -0400
-Content-Disposition: inline
-In-Reply-To: <4FBC76A8.2070004@samsung.com>
+	Wed, 23 May 2012 08:29:53 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M4H00ALZ6POAFK0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 May 2012 21:29:51 +0900 (KST)
+Received: from DOKI0351KIM04 ([12.23.119.96])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4H0037O6PRLX10@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 23 May 2012 21:29:51 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jonghwa3.lee@samsung.com
-Cc: Yadwinder Singh Brar <yadi.brar01@gmail.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>
+To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>
 
+Setting SW_RST does TX/RX FIFO flush.
+After FIFO flush, SW_RST should be cleared.
+The above setting and clearing SW_RST operation should be done after spi channel off.
 
---KrHCbChajFcK0yQE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+---
+ drivers/spi/spi-s3c64xx.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-On Wed, May 23, 2012 at 02:33:28PM +0900, jonghwa3.lee@samsung.com wrote:
-
-> I inform you my mfd driver has been confirmed by Samuel Oritz and there
-> is no mfd private API. This situation looks unusual that we registers
-> mfd driver and regulator driver separately. But how should we do? For
-> corporation , i'm asking you to consider my suggestion.
-
-Given all this discussion I'm going to ignore this patch for now and
-wait for a repost after you've come to an agreement.
-
---KrHCbChajFcK0yQE
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJPvLlyAAoJEBus8iNuMP3dHtkQAIdTQtJ6OnJo05vBU/rZMCcd
-DmKlQof4lF3rcSN0K/w+ELwpEG3nM8etkxYNTlm/Yt9Vy1n9uTnMsLb+QvVEoAfX
-DnjX7BwLuqBt+T1t89+P6OXLNPIFYiSw/54BWYr776G3OYWtrJVmnlpI5649vLYq
-1HSFZ6FS3i51lbPwKI++6kknSPUvDEq9JpaP1f2P3uzSxAhEvwNXSpvT08kypZVA
-tA42Gc9MZUbIK9yZ6AEbt7U8v2R7lb0J1UrTyfaiD86p5D2xmUomR+fqJ59auwPm
-YfCdwNV7TSTEiNdxCHrFo2D5jqY2dufFKy8cWP4HXT5XHrL6P1vsH7nkXmAwdTUb
-DK/QM5Gv+cBwsnszeAPWkUkw54b/XDWF9XwT7hUFipZpSsGy1fRZ+1oaIIzdEHfx
-czAPQQNnvoe0MlGK8grxZi9gtjFO4ECONZu5ME89yrAyTHySnln11Tye6swia07Y
-msgzIebW0CK/U0xflnFE/hdhcM4sBRkpCFrEAI4agvwDJPUatEJzIU7ydlSYdfE4
-kWcYfYZRP/AyJVozMpTkBJ43Cj4Zc7xfvv2VzYPnIeHdt5Ym6qHPPC5UKPX+7rz8
-1vgc0WuripkLtq1YW2gLfCOHh12QNUlLcHRrp3eNjZ5RDnzPt9Aa0sJpDIO0CZ+D
-7bcDvP9m3xiC7h8Q7cxa
-=eGON
------END PGP SIGNATURE-----
-
---KrHCbChajFcK0yQE--
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 972a94c..293f097 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -191,6 +191,10 @@ static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+ 	writel(0, regs + S3C64XX_SPI_PACKET_CNT);
+ 
+ 	val = readl(regs + S3C64XX_SPI_CH_CFG);
++	val &= ~(S3C64XX_SPI_CH_RXCH_ON | S3C64XX_SPI_CH_TXCH_ON);
++	writel(val, regs + S3C64XX_SPI_CH_CFG);
++
++	val = readl(regs + S3C64XX_SPI_CH_CFG);
+ 	val |= S3C64XX_SPI_CH_SW_RST;
+ 	val &= ~S3C64XX_SPI_CH_HS_EN;
+ 	writel(val, regs + S3C64XX_SPI_CH_CFG);
+@@ -224,10 +228,6 @@ static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+ 	val = readl(regs + S3C64XX_SPI_MODE_CFG);
+ 	val &= ~(S3C64XX_SPI_MODE_TXDMA_ON | S3C64XX_SPI_MODE_RXDMA_ON);
+ 	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+-
+-	val = readl(regs + S3C64XX_SPI_CH_CFG);
+-	val &= ~(S3C64XX_SPI_CH_RXCH_ON | S3C64XX_SPI_CH_TXCH_ON);
+-	writel(val, regs + S3C64XX_SPI_CH_CFG);
+ }
+ 
+ static void s3c64xx_spi_dmacb(void *data)
+-- 
+1.7.1
