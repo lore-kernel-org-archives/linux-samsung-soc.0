@@ -1,69 +1,65 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+From: jonghwa3.lee@samsung.com
 Subject: Re: [PATCH v3 2/2] regulator: Add support for MAX77686.
-Date: Wed, 23 May 2012 10:53:27 +0530
-Message-ID: <CAKew6eUew+=f-dGjJZD7Wy8Xt2f4smEhkYh=CUhx6Y_EMByFFw@mail.gmail.com>
-References: <y@samsung.com>
-	<4fbb2ada.63de440a.589d.78e2@mx.google.com>
-	<4FBC3FF0.5080408@samsung.com>
-	<CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
-	<4FBC6A2D.6040408@samsung.com>
+Date: Wed, 23 May 2012 14:33:28 +0900
+Message-ID: <4FBC76A8.2070004@samsung.com>
+References: <y@samsung.com> <4fbb2ada.63de440a.589d.78e2@mx.google.com>
+ <4FBC3FF0.5080408@samsung.com>
+ <CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
+ <4FBC6A2D.6040408@samsung.com>
+ <CAKew6eUew+=f-dGjJZD7Wy8Xt2f4smEhkYh=CUhx6Y_EMByFFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:35505 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751559Ab2EWFX2 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 May 2012 01:23:28 -0400
-In-Reply-To: <4FBC6A2D.6040408@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-reply-to: <CAKew6eUew+=f-dGjJZD7Wy8Xt2f4smEhkYh=CUhx6Y_EMByFFw@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: Yadwinder Singh Brar <yadi.brar@samsung.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>, Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, Liam Girdwood <lrg@ti.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jonghwa3.lee@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-On Wed, May 23, 2012 at 10:10 AM,  <jonghwa3.lee@samsung.com> wrote:
-> On 2012=EB=85=84 05=EC=9B=94 23=EC=9D=BC 13:16, Yadwinder Singh Brar =
-wrote:
->
->>>> + =C2=A0 =C2=A0 max77686_update_reg(i2c, MAX77686_REG_BUCK2CTRL1,
->>>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 max77686->ramp_delay <=
-< 6, RAMP_MASK);
->>>> + =C2=A0 =C2=A0 max77686_update_reg(i2c, MAX77686_REG_BUCK3CTRL1,
->>>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 max77686->ramp_delay <=
-< 6, RAMP_MASK);
->>>> + =C2=A0 =C2=A0 max77686_update_reg(i2c, MAX77686_REG_BUCK4CTRL1,
->>>> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 max77686->ramp_delay <=
-< 6, RAMP_MASK);
->>>> +
->>>
->>>
->>> Why do you use i2c client still? If you registered regmap you can u=
-se
->>> its API. I recommend you to use regmap_update_bits() directly.
->>>
->>>
->>
->> Yes, we are using regmap_update_bits(). =C2=A0max77686_update_reg() =
-is just
->> a wrapper over it.
->>
->
->
-> Yes, i know what you mean. However it doesn't need max77686_update_re=
-g()
-> any more since it uses regmap API. Why don't you just pass iodev->reg=
-map
-> to regmap_update_bits(). It is clear that there is no reason for usin=
-g
-> i2c client as a medium. Please check regulator and mfd driver of my
-> previous patch.
->
-
-I agree with you we can use directly  regmap API. But I preferred
-max77686_update_reg() because its a common practice to use
-common read/write API which we define in mfd driver to access
-that particular mfd device from other drivers.
-
-Regards,
-Yadwinder.
+T24gMjAxMuuFhCAwNeyblCAyM+ydvCAxNDoyMywgWWFkd2luZGVyIFNpbmdoIEJyYXIgd3JvdGU6
+Cgo+IE9uIFdlZCwgTWF5IDIzLCAyMDEyIGF0IDEwOjEwIEFNLCAgPGpvbmdod2EzLmxlZUBzYW1z
+dW5nLmNvbT4gd3JvdGU6Cj4+IE9uIDIwMTLrhYQgMDXsm5QgMjPsnbwgMTM6MTYsIFlhZHdpbmRl
+ciBTaW5naCBCcmFyIHdyb3RlOgo+Pgo+Pj4+PiArICAgICBtYXg3NzY4Nl91cGRhdGVfcmVnKGky
+YywgTUFYNzc2ODZfUkVHX0JVQ0syQ1RSTDEsCj4+Pj4+ICsgICAgICAgICAgICAgbWF4Nzc2ODYt
+PnJhbXBfZGVsYXkgPDwgNiwgUkFNUF9NQVNLKTsKPj4+Pj4gKyAgICAgbWF4Nzc2ODZfdXBkYXRl
+X3JlZyhpMmMsIE1BWDc3Njg2X1JFR19CVUNLM0NUUkwxLAo+Pj4+PiArICAgICAgICAgICAgIG1h
+eDc3Njg2LT5yYW1wX2RlbGF5IDw8IDYsIFJBTVBfTUFTSyk7Cj4+Pj4+ICsgICAgIG1heDc3Njg2
+X3VwZGF0ZV9yZWcoaTJjLCBNQVg3NzY4Nl9SRUdfQlVDSzRDVFJMMSwKPj4+Pj4gKyAgICAgICAg
+ICAgICBtYXg3NzY4Ni0+cmFtcF9kZWxheSA8PCA2LCBSQU1QX01BU0spOwo+Pj4+PiArCj4+Pj4K
+Pj4+Pgo+Pj4+IFdoeSBkbyB5b3UgdXNlIGkyYyBjbGllbnQgc3RpbGw/IElmIHlvdSByZWdpc3Rl
+cmVkIHJlZ21hcCB5b3UgY2FuIHVzZQo+Pj4+IGl0cyBBUEkuIEkgcmVjb21tZW5kIHlvdSB0byB1
+c2UgcmVnbWFwX3VwZGF0ZV9iaXRzKCkgZGlyZWN0bHkuCj4+Pj4KPj4+Pgo+Pj4KPj4+IFllcywg
+d2UgYXJlIHVzaW5nIHJlZ21hcF91cGRhdGVfYml0cygpLiAgbWF4Nzc2ODZfdXBkYXRlX3JlZygp
+IGlzIGp1c3QKPj4+IGEgd3JhcHBlciBvdmVyIGl0Lgo+Pj4KPj4KPj4KPj4gWWVzLCBpIGtub3cg
+d2hhdCB5b3UgbWVhbi4gSG93ZXZlciBpdCBkb2Vzbid0IG5lZWQgbWF4Nzc2ODZfdXBkYXRlX3Jl
+ZygpCj4+IGFueSBtb3JlIHNpbmNlIGl0IHVzZXMgcmVnbWFwIEFQSS4gV2h5IGRvbid0IHlvdSBq
+dXN0IHBhc3MgaW9kZXYtPnJlZ21hcAo+PiB0byByZWdtYXBfdXBkYXRlX2JpdHMoKS4gSXQgaXMg
+Y2xlYXIgdGhhdCB0aGVyZSBpcyBubyByZWFzb24gZm9yIHVzaW5nCj4+IGkyYyBjbGllbnQgYXMg
+YSBtZWRpdW0uIFBsZWFzZSBjaGVjayByZWd1bGF0b3IgYW5kIG1mZCBkcml2ZXIgb2YgbXkKPj4g
+cHJldmlvdXMgcGF0Y2guCj4+Cj4gCj4gSSBhZ3JlZSB3aXRoIHlvdSB3ZSBjYW4gdXNlIGRpcmVj
+dGx5ICByZWdtYXAgQVBJLiBCdXQgSSBwcmVmZXJyZWQKPiBtYXg3NzY4Nl91cGRhdGVfcmVnKCkg
+YmVjYXVzZSBpdHMgYSBjb21tb24gcHJhY3RpY2UgdG8gdXNlCj4gY29tbW9uIHJlYWQvd3JpdGUg
+QVBJIHdoaWNoIHdlIGRlZmluZSBpbiBtZmQgZHJpdmVyIHRvIGFjY2Vzcwo+IHRoYXQgcGFydGlj
+dWxhciBtZmQgZGV2aWNlIGZyb20gb3RoZXIgZHJpdmVycy4KPiAKPiBSZWdhcmRzLAo+IFlhZHdp
+bmRlci4KPiAtLQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5l
+ICJ1bnN1YnNjcmliZSBsaW51eC1rZXJuZWwiIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRv
+IG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRw
+Oi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiBQbGVhc2UgcmVhZCB0aGUg
+RkFRIGF0ICBodHRwOi8vd3d3LnR1eC5vcmcvbGttbC8KPiAKCgpJIGluZm9ybSB5b3UgbXkgbWZk
+IGRyaXZlciBoYXMgYmVlbiBjb25maXJtZWQgYnkgU2FtdWVsIE9yaXR6IGFuZCB0aGVyZQppcyBu
+byBtZmQgcHJpdmF0ZSBBUEkuIFRoaXMgc2l0dWF0aW9uIGxvb2tzIHVudXN1YWwgdGhhdCB3ZSBy
+ZWdpc3RlcnMKbWZkIGRyaXZlciBhbmQgcmVndWxhdG9yIGRyaXZlciBzZXBhcmF0ZWx5LiBCdXQg
+aG93IHNob3VsZCB3ZSBkbz8gRm9yCmNvcnBvcmF0aW9uICwgaSdtIGFza2luZyB5b3UgdG8gY29u
+c2lkZXIgbXkgc3VnZ2VzdGlvbi4KClRoYW5rcy4KCgpUaGFua3MuCgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcg
+bGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmlu
+ZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
