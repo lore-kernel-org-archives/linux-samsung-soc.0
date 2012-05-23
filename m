@@ -1,46 +1,56 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Subject: Re: [PATCH v3 2/2] regulator: Add support for MAX77686.
-Date: Wed, 23 May 2012 18:32:23 +0530
-Message-ID: <CAKew6eVoqnJaVP81oiopowsqrhNZ1rSMWO4YuGo5ghsmcTGQtA@mail.gmail.com>
-References: <y@samsung.com>
-	<4fbb2ada.63de440a.589d.78e2@mx.google.com>
-	<4FBC3FF0.5080408@samsung.com>
-	<CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
-	<4FBC6A2D.6040408@samsung.com>
-	<CAKew6eUew+=f-dGjJZD7Wy8Xt2f4smEhkYh=CUhx6Y_EMByFFw@mail.gmail.com>
-	<4FBC76A8.2070004@samsung.com>
-	<20120523101834.GI4085@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:34318 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751770Ab2EWNCY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 May 2012 09:02:24 -0400
-In-Reply-To: <20120523101834.GI4085@opensource.wolfsonmicro.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH 0/3] pinctrl: add support for samsung pinctrl driver
+Date: Thu, 24 May 2012 05:17:34 +0530
+Message-ID: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: jonghwa3.lee@samsung.com
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-Hi Jonghwa,
+This patch series adds a common pinctrl driver for all Samsung platforms and
+enables the pinctrl driver support for Exynos4210 based device tree enabled
+platforms. The scope of this driver is limited to only device tree enabled
+platforms.
 
-I didn't know about confirmation of your mfd driver by Samuel Oritz.
-So please feel free to revise and submit your patch set.
-Anyways, I am interested only in getting the driver for max77686 in mainline.
+The intention of this driver is to replace the existing gpiolib driver and
+provide pinctrl subsystem interface to configure the pins/mux instead
+of existing platform callbacks. At this point, the pinmux and pinconfig
+functionality is fully supported. Additional work is required to add gpio
+interrupts and wakeup interrupts support but that should not stop device
+drivers from switching over to use the pinctrl subsystem to configure
+the io-pads.
 
-Thanks,
-Yadwinder.
+Note that, the Samsung pinctrl driver is usable only on device tree enabled
+Samsung platforms. Legacy platforms would still continue to use the older
+gpiolib driver and hence updates to device drivers to use the pinctrl api
+should ensure that support for legacy platforms is maintained.
 
-On Wed, May 23, 2012 at 3:48 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, May 23, 2012 at 02:33:28PM +0900, jonghwa3.lee@samsung.com wrote:
->
->> I inform you my mfd driver has been confirmed by Samuel Oritz and there
->> is no mfd private API. This situation looks unusual that we registers
->> mfd driver and regulator driver separately. But how should we do? For
->> corporation , i'm asking you to consider my suggestion.
->
-> Given all this discussion I'm going to ignore this patch for now and
-> wait for a repost after you've come to an agreement.
+The first patch adds a new pinctrl driver for Samsung. It provides interfaces
+to the pinctrl and gpiolib subsystems. This driver provides a common framework
+for all Samsung SoC's to enable the pinctrl and gpiolib support. The driver
+accepts the information about pins, groups and functions from the device tree
+and the information about gpio banks is supplied using driver data.
+
+The second patch adds the driver data required to operate the pinctrl driver
+on Exynos4210 based platforms. The third patch modifies the existing gpiolib
+driver to skip the gpio pin registrations if pinctrl driver support is found
+to be enabled.
+
+Thomas Abraham (3):
+  pinctrl: add samsung pinctrl and gpiolib driver
+  pinctrl: add exynos4210 specific driver data for samsung pinctrl driver
+  gpio: exynos4: skip gpiolib registration if pinctrl driver is used
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           |  111 +++
+ drivers/gpio/gpio-samsung.c                        |   21 +
+ drivers/pinctrl/Kconfig                            |   11 +
+ drivers/pinctrl/Makefile                           |    2 +
+ drivers/pinctrl/pinctrl-exynos4.c                  |  211 +++++
+ drivers/pinctrl/pinctrl-samsung.c                  |  881 ++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.h                  |  170 ++++
+ 7 files changed, 1407 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-exynos4.c
+ create mode 100644 drivers/pinctrl/pinctrl-samsung.c
+ create mode 100644 drivers/pinctrl/pinctrl-samsung.h
