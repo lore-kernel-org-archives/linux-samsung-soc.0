@@ -1,52 +1,46 @@
-From: Kyoungil Kim <ki0351.kim@samsung.com>
-Subject: [PATCH] spi: Keep chipselect assertion during one message
-Date: Wed, 23 May 2012 21:34:06 +0900
-Message-ID: <00a001cd38e0$57efde60$07cf9b20$%kim@samsung.com>
+From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Subject: Re: [PATCH v3 2/2] regulator: Add support for MAX77686.
+Date: Wed, 23 May 2012 18:32:23 +0530
+Message-ID: <CAKew6eVoqnJaVP81oiopowsqrhNZ1rSMWO4YuGo5ghsmcTGQtA@mail.gmail.com>
+References: <y@samsung.com>
+	<4fbb2ada.63de440a.589d.78e2@mx.google.com>
+	<4FBC3FF0.5080408@samsung.com>
+	<CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
+	<4FBC6A2D.6040408@samsung.com>
+	<CAKew6eUew+=f-dGjJZD7Wy8Xt2f4smEhkYh=CUhx6Y_EMByFFw@mail.gmail.com>
+	<4FBC76A8.2070004@samsung.com>
+	<20120523101834.GI4085@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:19038 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751039Ab2EWMeH (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:34318 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751770Ab2EWNCY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 May 2012 08:34:07 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4H007586WES2L0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 May 2012 21:34:06 +0900 (KST)
-Received: from DOKI0351KIM04 ([12.23.119.96])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4H007U46WUGX90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 23 May 2012 21:34:06 +0900 (KST)
-Content-language: ko
+	Wed, 23 May 2012 09:02:24 -0400
+In-Reply-To: <20120523101834.GI4085@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>
+To: jonghwa3.lee@samsung.com
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>
 
-During all transfers in one message, the device will not be chagned.
-So we don't need to deassert chipselect during one message.
+Hi Jonghwa,
 
-Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
----
- drivers/spi/spi-s3c64xx.c |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+I didn't know about confirmation of your mfd driver by Samuel Oritz.
+So please feel free to revise and submit your patch set.
+Anyways, I am interested only in getting the driver for max77686 in mainline.
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index 972a94c..0f79f5b 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -745,8 +745,6 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
- 			if (list_is_last(&xfer->transfer_list,
- 						&msg->transfers))
- 				cs_toggle = 1;
--			else
--				disable_cs(sdd, spi);
- 		}
- 
- 		msg->actual_length += xfer->len;
--- 
-1.7.1
+Thanks,
+Yadwinder.
+
+On Wed, May 23, 2012 at 3:48 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> On Wed, May 23, 2012 at 02:33:28PM +0900, jonghwa3.lee@samsung.com wrote:
+>
+>> I inform you my mfd driver has been confirmed by Samuel Oritz and there
+>> is no mfd private API. This situation looks unusual that we registers
+>> mfd driver and regulator driver separately. But how should we do? For
+>> corporation , i'm asking you to consider my suggestion.
+>
+> Given all this discussion I'm going to ignore this patch for now and
+> wait for a repost after you've come to an agreement.
