@@ -1,60 +1,51 @@
-From: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+From: jonghwa3.lee@samsung.com
 Subject: Re: [PATCH v3 2/2] regulator: Add support for MAX77686.
-Date: Wed, 23 May 2012 09:47:28 +0530
-Message-ID: <CAKew6eVXhg9RscZFM1_go3bjvvn_99zqaDRQ1ZjG_BUWCYR0YQ@mail.gmail.com>
-References: <y@samsung.com>
-	<4fbb2ada.63de440a.589d.78e2@mx.google.com>
-	<4FBC4255.4040307@samsung.com>
+Date: Wed, 23 May 2012 13:40:13 +0900
+Message-ID: <4FBC6A2D.6040408@samsung.com>
+References: <y@samsung.com> <4fbb2ada.63de440a.589d.78e2@mx.google.com>
+ <4FBC3FF0.5080408@samsung.com>
+ <CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <4FBC4255.4040307@samsung.com>
+In-reply-to: <CAKew6eW2eGrBnzSGsr3N_dXSixXv-bkBo7xkbC-o9DNnwBhcuw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: jonghwa3.lee@samsung.com
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>
+To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Samuel Ortiz <sameo@linux.intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Hi,
+On 2012=EB=85=84 05=EC=9B=94 23=EC=9D=BC 13:16, Yadwinder Singh Brar wr=
+ote:
 
-On Wed, May 23, 2012 at 7:20 AM,  <jonghwa3.lee@samsung.com> wrote:
-> Hi, again.
-> On 2012=EB=85=84 05=EC=9B=94 22=EC=9D=BC 14:57, yadi.brar01@gmail.com=
- wrote:
->
->
->> +static __devinit int max77686_pmic_probe(struct platform_device *pd=
-ev)
->> +{
->
->> +
->> + =C2=A0 =C2=A0 for (i =3D 0; i < pdata->num_regulators; i++) {
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 config.dev =3D max77686-=
->dev;
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 config.init_data =3D pda=
-ta->regulators[i].init_data;
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 config.driver_data =3D m=
-ax77686;
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 config.regmap =3D iodev-=
->regmap;
->> +
->> + =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 rdev[i] =3D regulator_re=
-gister(&regulators[i], &config);
->
->
-> I'm sorry that i missed one. You have to register all regulators
-> unconditionally. Mark brown commented about this to my former patch.
->
-> 'No, you should unconditionally register all regulators the device
-> physically has. =C2=A0This is useful for debug and simplifies the cod=
-e.'
-> =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0=
- =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 =
-=C2=A0 =C2=A0 =C2=A0 =C2=A0- from Mark Brown
->
+>>> +     max77686_update_reg(i2c, MAX77686_REG_BUCK2CTRL1,
+>>> +             max77686->ramp_delay << 6, RAMP_MASK);
+>>> +     max77686_update_reg(i2c, MAX77686_REG_BUCK3CTRL1,
+>>> +             max77686->ramp_delay << 6, RAMP_MASK);
+>>> +     max77686_update_reg(i2c, MAX77686_REG_BUCK4CTRL1,
+>>> +             max77686->ramp_delay << 6, RAMP_MASK);
+>>> +
+>>
+>>
+>> Why do you use i2c client still? If you registered regmap you can us=
+e
+>> its API. I recommend you to use regmap_update_bits() directly.
+>>
+>>
+>=20
+> Yes, we are using regmap_update_bits().  max77686_update_reg() is jus=
+t
+> a wrapper over it.
+>=20
 
-Yes, we are registering all regulators here.
-As pdata->num_regulators will be equal to ARRAY_SIZE(regulators)
 
-Thanks,
-Yadwinder.
+Yes, i know what you mean. However it doesn't need max77686_update_reg(=
+)
+any more since it uses regmap API. Why don't you just pass iodev->regma=
+p
+to regmap_update_bits(). It is clear that there is no reason for using
+i2c client as a medium. Please check regulator and mfd driver of my
+previous patch.
+
+
+Thanks.
