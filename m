@@ -1,29 +1,30 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/6] ARM: Exynos5: Add spi clock support
-Date: Thu, 24 May 2012 16:30:04 +0900
-Message-ID: <006b01cd397f$09784840$1c68d8c0$%kim@samsung.com>
+Subject: RE: [PATCH 5/6] ARM: dts: Add nodes for spi controllers for Samsung
+ Exynos4 platforms
+Date: Thu, 24 May 2012 16:43:27 +0900
+Message-ID: <006c01cd3980$e814b240$b83e16c0$%kim@samsung.com>
 References: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
- <1337334392-6441-3-git-send-email-thomas.abraham@linaro.org>
+ <1337334392-6441-6-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:29756 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751263Ab2EXHaG (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:60079 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753000Ab2EXHna (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 May 2012 03:30:06 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Thu, 24 May 2012 03:43:30 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4I00013NHKVKG0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:30:05 +0900 (KST)
+ 17 2011)) with ESMTP id <0M4I00GMEO2T3YS0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:43:29 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4I0093LNI4J520@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:30:04 +0900 (KST)
-In-reply-to: <1337334392-6441-3-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0M4I00972O4FXL40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:43:28 +0900 (KST)
+In-reply-to: <1337334392-6441-6-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,69 +33,65 @@ Cc: linux-samsung-soc@vger.kernel.org, jaswinder.singh@linaro.org, 'Kyoungil Kim
 
 Thomas Abraham wrote:
 > 
-> Add support for clock instances for each spi controller.
+> Add device nodes for the three instances of spi controllers in Exynos4
+> platforms. Enable instance spi 2 for smdkv310 board and disable all
+> spi instances for origen board.
 > 
 > Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
 > ---
->  arch/arm/mach-exynos/clock-exynos5.c           |   98
-> ++++++++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/regs-clock.h |    4 +
->  2 files changed, 102 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-
-> exynos/clock-exynos5.c
-> index 5aa460b..ad6c959 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -82,6 +82,11 @@ static int exynos5_clksrc_mask_peric0_ctrl(struct clk
-> *clk, int enable)
->  	return s5p_gatectrl(EXYNOS5_CLKSRC_MASK_PERIC0, clk, enable);
->  }
-> 
-> +static int exynos5_clksrc_mask_peric1_ctrl(struct clk *clk, int enable)
-> +{
-> +	return s5p_gatectrl(EXYNOS5_CLKSRC_MASK_PERIC1, clk, enable);
-> +}
+>  arch/arm/boot/dts/exynos4210-origen.dts   |   12 ++++++++
+>  arch/arm/boot/dts/exynos4210-smdkv310.dts |   44
+> +++++++++++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi         |   30 +++++++++++++++++++
+>  3 files changed, 86 insertions(+), 0 deletions(-)
+
+[...]
+
+> +	aliases {
+> +		spi0 = &spi_0;
+> +		spi1 = &spi_1;
+> +		spi2 = &spi_2;
+> +	};
 > +
->  static int exynos5_clk_ip_acp_ctrl(struct clk *clk, int enable)
->  {
->  	return s5p_gatectrl(EXYNOS5_CLKGATE_IP_ACP, clk, enable);
-> @@ -692,6 +697,24 @@ static struct clk exynos5_init_clocks_off[] = {
->  		.enable		= exynos5_clk_ip_peric_ctrl,
->  		.ctrlbit	= (1 << 14),
->  	}, {
-> +		.name		= "spi",
-> +		.devname	= "exynos4210-spi.0",
-> +		.parent		= &exynos5_clk_aclk_66.clk,
-> +		.enable		= exynos5_clk_ip_peric_ctrl,
-> +		.ctrlbit	= (1 << 16),
-> +	}, {
-> +		.name		= "spi",
-> +		.devname	= "exynos4210-spi.1",
-> +		.parent		= &exynos5_clk_aclk_66.clk,
-> +		.enable		= exynos5_clk_ip_peric_ctrl,
-> +		.ctrlbit	= (1 << 17),
-> +	}, {
-> +		.name		= "spi",
-> +		.devname	= "exynos4210-spi.2",
-> +		.parent		= &exynos5_clk_aclk_66.clk,
-> +		.enable		= exynos5_clk_ip_peric_ctrl,
-> +		.ctrlbit	= (1 << 18),
-> +	}, {
->  		.name		= SYSMMU_CLOCK_NAME,
->  		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
->  		.enable		= &exynos5_clk_ip_mfc_ctrl,
-> @@ -985,6 +1008,72 @@ static struct clksrc_clk exynos5_clk_sclk_mmc3 = {
->  	.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS2, .shift = 24, .size = 8 },
->  };
+
+Do we need above aliases?
+
+[...]
+
 > 
-> +static struct clksrc_clk exynos5_clk_mdout_spi0 = {
+> +	spi_2: spi@13940000 {
+> +		gpios = <&gpc1 1 5 3 0>,
+> +			<&gpc1 3 5 3 0>,
+> +			<&gpc1 4 5 3 0>;
+> +
+> +		w25x80@0 {
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			compatible = "w25x80";
+> +			reg = <0>;
+> +			spi-max-frequency = <10000>;
+> +
+> +			controller-data {
+> +				cs-gpio = <&gpc1 2 1 0 3>;
+> +				samsung,spi-feedback-delay = <0>;
+> +			};
+> +
+> +			partition@0 {
+> +				label = "U-Boot";
+> +				reg = <0x0 0x40000>;
+> +				read-only;
+> +			};
+> +
+> +			partition@40000 {
+> +				label = "Kernel";
+> +				reg = <0x40000 0xc0000>;
+> +			};
+> +		};
+> +	};
+> +
 
-See the previous comments and below url.
 
-http://lists.infradead.org/pipermail/linux-arm-kernel/2012-February/083153.h
-tml
+Is there a serial flash(w25x80) is connected via SPI2 on smdkv310?
 
 [...]
 
