@@ -1,97 +1,72 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: EXYNOS: Update HSOTG PHY clock setting for
- Exynos4x12
-Date: Thu, 24 May 2012 16:19:26 +0900
-Message-ID: <005b01cd397d$8d21cbf0$a76563d0$%kim@samsung.com>
-References: <1337677529-7325-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH 1/6] ARM: Exynos4: Fix the incorrect hierarchy of spi
+ controller bus clock
+Date: Thu, 24 May 2012 16:27:23 +0900
+Message-ID: <006601cd397e$a9932df0$fcb989d0$%kim@samsung.com>
+References: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
+ <1337334392-6441-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:59965 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751346Ab2EXHT2 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:28365 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751263Ab2EXH10 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 May 2012 03:19:28 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Thu, 24 May 2012 03:27:26 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M4I00FPRMZXS300@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:19:26 +0900 (KST)
+ 17 2011)) with ESMTP id <0M4I003VXNDN2YO0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:27:25 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M4I00522N0E64P0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:19:26 +0900 (KST)
-In-reply-to: <1337677529-7325-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0M4I008B0NDNIVB1@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:27:24 +0900 (KST)
+In-reply-to: <1337334392-6441-2-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, jaswinder.singh@linaro.org
 
-Sachin Kamat wrote:
+Thomas Abraham wrote:
 > 
-> Adds clock setting entries for Exynos4212 and Exynos4412 platforms.
+> The sclk_spi clock is derived currently from the first level divider
+> (MMCx_RATIO) which is incorrect. The output of the first level clock
+> is divided by a second level divider (MMCx_PRE_RATIO), the output of
+> which is used as the spi bus clock (sclk_spi). Fix the clock hierarchy
+> issues for the sclk_spi clock.
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
 > ---
-> Based on Kukjin Kim's v3.5-for-usb-2 branch.
+>  arch/arm/mach-exynos/clock-exynos4.c |   48
+++++++++++++++++++++++++++++--
 > ---
->  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |    5 ++
->  arch/arm/mach-exynos/setup-usb-phy.c             |   47
-++++++++++++++++-----
->  arch/arm/plat-samsung/include/plat/cpu.h         |    4 ++
->  3 files changed, 45 insertions(+), 11 deletions(-)
+>  1 files changed, 40 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> index c337cf3..bab28d9 100644
-> --- a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> +++ b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> @@ -38,8 +38,13 @@
->  #define CLKSEL_MASK			(0x3 << 0)
->  #define CLKSEL_SHIFT			(0)
->  #define CLKSEL_48M			(0x0 << 0)
-> +#define CLKSEL_9600K			(0x0 << 0)
-> +#define CLKSEL_10M			(0x1 << 0)
->  #define CLKSEL_12M			(0x2 << 0)
-> +#define CLKSEL_19200K			(0x3 << 0)
->  #define CLKSEL_24M			(0x3 << 0)
-> +#define CLKSEL_20M			(0x4 << 0)
-> +#define EXYNOS4X12_CLKSEL_24M		(0x5 << 0)
+> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-
+> exynos/clock-exynos4.c
+> index 10a46a9..b5f0507 100644
+> --- a/arch/arm/mach-exynos/clock-exynos4.c
+> +++ b/arch/arm/mach-exynos/clock-exynos4.c
+> @@ -1242,40 +1242,70 @@ static struct clksrc_clk exynos4_clk_sclk_mmc3 = {
+>  	.reg_div = { .reg = EXYNOS4_CLKDIV_FSYS2, .shift = 24, .size = 8 },
+>  };
 > 
+> +static struct clksrc_clk exynos4_clk_mdout_spi0 = {
 
-I would preferred following to avoid confusion. Of course, need to update
-regarding file accordingly.
+In this case, it's expected that 'exynos4_clk_dout_spi0' will be used even
+though this indicates the clock of mux_out and divider_out together.
 
-@@ -35,11 +35,21 @@
- #define PHY1_COMMON_ON_N		(1 << 7)
- #define PHY0_COMMON_ON_N		(1 << 4)
- #define PHY0_ID_PULLUP			(1 << 2)
--#define CLKSEL_MASK			(0x3 << 0)
--#define CLKSEL_SHIFT			(0)
--#define CLKSEL_48M			(0x0 << 0)
--#define CLKSEL_12M			(0x2 << 0)
--#define CLKSEL_24M			(0x3 << 0)
-+
-+#define EXYNOS4_CLKSEL_SHIFT		(0)
-+
-+#define EXYNOS4210_CLKSEL_MASK		(0x3 << 0)
-+#define EXYNOS4210_CLKSEL_48M		(0x0 << 0)
-+#define EXYNOS4210_CLKSEL_12M		(0x2 << 0)
-+#define EXYNOS4210_CLKSEL_24M		(0x3 << 0)
-+
-+#define EXYNOS4X12_CLKSEL_MASK		(0x7 << 0)
-+#define EXYNOS4X12_CLKSEL_9600K		(0x0 << 0)
-+#define EXYNOS4X12_CLKSEL_10M		(0x1 << 0)
-+#define EXYNOS4X12_CLKSEL_12M		(0x2 << 0)
-+#define EXYNOS4X12_CLKSEL_19200K	(0x3 << 0)
-+#define EXYNOS4X12_CLKSEL_20M		(0x4 << 0)
-+#define EXYNOS4X12_CLKSEL_24M		(0x5 << 0)
- 
- #define EXYNOS4_RSTCON			EXYNOS4_HSOTG_PHYREG(0x08)
- #define HOST_LINK_PORT_SWRST_MASK	(0xf << 6)
+> +	.clk	= {
+> +		.name		= "sclk_spi_mdout",
+
+So, this should be 'dout_spi0'
+
+> +		.devname	= "exynos4210-spi.0",
 
 [...]
 
