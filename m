@@ -1,89 +1,117 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH-Resend 2/2] ARM: EXYNOS: Add HSOTG support to SMDK4X12
-Date: Thu, 24 May 2012 14:25:26 +0530
-Message-ID: <1337849726-17744-2-git-send-email-sachin.kamat@linaro.org>
-References: <1337849726-17744-1-git-send-email-sachin.kamat@linaro.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 5/6] ARM: dts: Add nodes for spi controllers for Samsung
+ Exynos4 platforms
+Date: Thu, 24 May 2012 14:37:55 +0530
+Message-ID: <CAJuYYwSpAG17hR2OWdF=heDsjBoTthp=ZoYzZmSQ5u_BxJLQSA@mail.gmail.com>
+References: <1337334392-6441-1-git-send-email-thomas.abraham@linaro.org>
+	<1337334392-6441-6-git-send-email-thomas.abraham@linaro.org>
+	<006c01cd3980$e814b240$b83e16c0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:46335 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752221Ab2EXJF4 (ORCPT
+Received: from mail-wi0-f170.google.com ([209.85.212.170]:47134 "EHLO
+	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753130Ab2EXJIB convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 24 May 2012 05:05:56 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rp8so11176227pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 May 2012 02:05:56 -0700 (PDT)
-In-Reply-To: <1337849726-17744-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 24 May 2012 05:08:01 -0400
+Received: by wibhm6 with SMTP id hm6so5459684wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 24 May 2012 02:08:00 -0700 (PDT)
+In-Reply-To: <006c01cd3980$e814b240$b83e16c0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, jaswinder.singh@linaro.org, Kyoungil Kim <ki0351.kim@samsung.com>
 
-S3C-HSOTG support is added to SMDK4212 and SMDK4412 boards.
+On 24 May 2012 13:13, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Thomas Abraham wrote:
+>>
+>> Add device nodes for the three instances of spi controllers in Exyno=
+s4
+>> platforms. Enable instance spi 2 for smdkv310 board and disable all
+>> spi instances for origen board.
+>>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>> =A0arch/arm/boot/dts/exynos4210-origen.dts =A0 | =A0 12 ++++++++
+>> =A0arch/arm/boot/dts/exynos4210-smdkv310.dts | =A0 44
+>> +++++++++++++++++++++++++++++
+>> =A0arch/arm/boot/dts/exynos4210.dtsi =A0 =A0 =A0 =A0 | =A0 30 ++++++=
++++++++++++++
+>> =A03 files changed, 86 insertions(+), 0 deletions(-)
+>
+> [...]
+>
+>> + =A0 =A0 aliases {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 spi0 =3D &spi_0;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 spi1 =3D &spi_1;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 spi2 =3D &spi_2;
+>> + =A0 =A0 };
+>> +
+>
+> Do we need above aliases?
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/Kconfig         |    2 ++
- arch/arm/mach-exynos/mach-smdk4x12.c |    8 ++++++++
- 2 files changed, 10 insertions(+), 0 deletions(-)
+spi0 controller has different fifo sizes than spi1 and spi2. So we
+need aliases to identify the port number and know the fifo sizes.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 6682f35..95e3ee3 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -349,6 +349,7 @@ config MACH_SMDK4212
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C7
- 	select S3C_DEV_RTC
-+	select S3C_DEV_USB_HSOTG
- 	select S3C_DEV_WDT
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_KEYPAD
-@@ -359,6 +360,7 @@ config MACH_SMDK4212
- 	select EXYNOS4_SETUP_I2C7
- 	select EXYNOS4_SETUP_KEYPAD
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_SETUP_USB_PHY
- 	help
- 	  Machine support for Samsung SMDK4212
- 
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index d00e4f0..6d8f325 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -19,6 +19,7 @@
- #include <linux/pwm_backlight.h>
- #include <linux/regulator/machine.h>
- #include <linux/serial_core.h>
-+#include <linux/platform_data/s3c-hsotg.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -235,6 +236,9 @@ static struct samsung_keypad_platdata smdk4x12_keypad_data __initdata = {
- 	.cols		= 5,
- };
- 
-+/* USB OTG */
-+static struct s3c_hsotg_plat smdk4x12_hsotg_pdata;
-+
- static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc3,
-@@ -243,6 +247,7 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s3c_device_i2c3,
- 	&s3c_device_i2c7,
- 	&s3c_device_rtc,
-+	&s3c_device_usb_hsotg,
- 	&s3c_device_wdt,
- 	&samsung_device_keypad,
- };
-@@ -281,6 +286,9 @@ static void __init smdk4x12_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdk4x12_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdk4x12_hsmmc3_pdata);
- 
-+	s3c_hsotg_set_platdata(&smdk4x12_hsotg_pdata);
-+	clk_xusbxti.rate = 24000000;
-+
- 	platform_add_devices(smdk4x12_devices, ARRAY_SIZE(smdk4x12_devices));
- }
- 
--- 
-1.7.4.1
+>
+> [...]
+>
+>>
+>> + =A0 =A0 spi_2: spi@13940000 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 gpios =3D <&gpc1 1 5 3 0>,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <&gpc1 3 5 3 0>,
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 <&gpc1 4 5 3 0>;
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 w25x80@0 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #address-cells =3D <1>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 #size-cells =3D <1>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 compatible =3D "w25x80";
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 spi-max-frequency =3D <100=
+00>;
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 controller-data {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 cs-gpio =3D=
+ <&gpc1 2 1 0 3>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 samsung,sp=
+i-feedback-delay =3D <0>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 partition@0 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 label =3D =
+"U-Boot";
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0=
+x0 0x40000>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 read-only;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
+>> +
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 partition@40000 {
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 label =3D =
+"Kernel";
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 reg =3D <0=
+x40000 0xc0000>;
+>> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 };
+>> + =A0 =A0 =A0 =A0 =A0 =A0 };
+>> + =A0 =A0 };
+>> +
+>
+>
+> Is there a serial flash(w25x80) is connected via SPI2 on smdkv310?
+
+Yes, smdkv310 has a onboard spi flash connected to SPI2 (w25x80).
+
+Thanks,
+Thomas.
+
+>
+> [...]
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
