@@ -1,276 +1,294 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH 2/3] pinctrl: add exynos4210 specific driver data for samsung pinctrl driver
-Date: Thu, 24 May 2012 05:17:36 +0530
-Message-ID: <1337816857-14694-3-git-send-email-thomas.abraham@linaro.org>
-References: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2 2/6] spi: s3c64xx: move controller information into
+ driver data
+Date: Thu, 24 May 2012 16:18:48 +0900
+Message-ID: <005a01cd397d$77f39600$67dac200$%kim@samsung.com>
+References: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
+ <1337333613-6216-3-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:36809 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752465Ab2EWXwR (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:24428 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840Ab2EXHS6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 23 May 2012 19:52:17 -0400
-Received: by dady13 with SMTP id y13so10445022dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 23 May 2012 16:52:17 -0700 (PDT)
-In-Reply-To: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
+	Thu, 24 May 2012 03:18:58 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M4I000KXMZCVKF0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:18:55 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M4I008ZIMZFM730@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 24 May 2012 16:18:54 +0900 (KST)
+In-reply-to: <1337333613-6216-3-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org, broonie@opensource.wolfsonmicro.com, 'Kyoungil Kim' <ki0351.kim@samsung.com>
 
-Add information about the Exynos4210 pin banks, SoC specific configuration
-callbacks and driver data which is used by the Samsung pinctrl driver.
+Thomas Abraham wrote:
+> 
+> Platform data is used to specify controller hardware specific information
+> such as the tx/rx fifo level mask and bit offset of rx fifo level. Such
+> information is not suitable to be supplied from device tree. Instead,
+> it can be moved into the driver data and removed from platform data.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
+> ---
+>  arch/arm/mach-exynos/clock-exynos4.c             |   18 +-
+>  arch/arm/mach-exynos/setup-spi.c                 |   25 ---
+>  arch/arm/mach-s3c24xx/clock-s3c2416.c            |    2 +-
+>  arch/arm/mach-s3c24xx/clock-s3c2443.c            |    2 +-
+>  arch/arm/mach-s3c24xx/common-s3c2443.c           |    4 +-
+>  arch/arm/mach-s3c24xx/setup-spi.c                |    8 -
+>  arch/arm/mach-s3c64xx/clock.c                    |   20 ++--
+>  arch/arm/mach-s3c64xx/setup-spi.c                |   13 --
+>  arch/arm/mach-s5p64x0/clock-s5p6440.c            |   12 +-
+>  arch/arm/mach-s5p64x0/clock-s5p6450.c            |   12 +-
+>  arch/arm/mach-s5p64x0/setup-spi.c                |   16 --
+>  arch/arm/mach-s5pc100/clock.c                    |   30 ++--
+>  arch/arm/mach-s5pc100/setup-spi.c                |   22 ---
+>  arch/arm/mach-s5pv210/clock.c                    |   14 +-
+>  arch/arm/mach-s5pv210/setup-spi.c                |   15 --
+>  arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |   15 --
+>  drivers/spi/spi-s3c64xx.c                        |  180
+++++++++++++++++++----
+>  17 files changed, 210 insertions(+), 198 deletions(-)
+> 
+Basically, looks ok to me and there are small comments.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- drivers/pinctrl/Kconfig           |    7 ++
- drivers/pinctrl/Makefile          |    1 +
- drivers/pinctrl/pinctrl-exynos4.c |  211 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 219 insertions(+), 0 deletions(-)
- create mode 100644 drivers/pinctrl/pinctrl-exynos4.c
+> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-
+> exynos/clock-exynos4.c
+> index bcb7db4..10a46a9 100644
+> --- a/arch/arm/mach-exynos/clock-exynos4.c
+> +++ b/arch/arm/mach-exynos/clock-exynos4.c
+> @@ -586,17 +586,17 @@ static struct clk exynos4_init_clocks_off[] = {
+>  		.ctrlbit	= (1 << 13),
+>  	}, {
+>  		.name		= "spi",
+> -		.devname	= "s3c64xx-spi.0",
+> +		.devname	= "exynos4210-spi.0",
 
-diff --git a/drivers/pinctrl/Kconfig b/drivers/pinctrl/Kconfig
-index a6198c1..5acb90e 100644
---- a/drivers/pinctrl/Kconfig
-+++ b/drivers/pinctrl/Kconfig
-@@ -131,6 +131,13 @@ config PINCTRL_SAMSUNG
- 	bool "Samsung pinctrl driver"
- 	depends on OF
- 
-+config PINCTRL_EXYNOS4
-+	bool "Pinctrl driver data for Exynos4 SoC"
-+	depends on ARCH_EXYNOS4 && OF
-+	depends on PINCTRL_SAMSUNG
-+	select PINMUX
-+	select PINCONF
-+
- endmenu
- 
- endif
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 35986ed..589498e 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -27,3 +27,4 @@ obj-$(CONFIG_PINCTRL_TEGRA30)	+= pinctrl-tegra30.o
- obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
- obj-$(CONFIG_PINCTRL_COH901)	+= pinctrl-coh901.o
- obj-$(CONFIG_PINCTRL_SAMSUNG)	+= pinctrl-samsung.o
-+obj-$(CONFIG_PINCTRL_EXYNOS4)	+= pinctrl-exynos4.o
-diff --git a/drivers/pinctrl/pinctrl-exynos4.c b/drivers/pinctrl/pinctrl-exynos4.c
-new file mode 100644
-index 0000000..ed419b2
---- /dev/null
-+++ b/drivers/pinctrl/pinctrl-exynos4.c
-@@ -0,0 +1,211 @@
-+/*
-+ * Exynos4 specific driver data for Samsung pinctrl and gpiolib driver.
-+ *
-+ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-+ *		http://www.samsung.com
-+ * Copyright (c) 2012 Linaro Ltd
-+ *		http://www.linaro.org
-+ *
-+ * This file contains the Exynos4 specific driver data for the Samsung
-+ * pinctrl/gpiolib interface drivers.
-+ *
-+ * Author: Thomas Abraham <thomas.ab@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License as published by
-+ * the Free Software Foundation; either version 2 of the License, or
-+ * (at your option) any later version.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/gpio.h>
-+
-+#include "pinctrl-samsung.h"
-+
-+#define EXYNOS4_PIN_BANK(offset, __gpio, id)		\
-+	{						\
-+		.reg_offset	= offset,		\
-+		.pin_base	= (__gpio##_START),	\
-+		.nr_pins	= (__gpio##_NR),	\
-+		.func_width	= 4,			\
-+		.pud_width	= 2,			\
-+		.drv_width	= 2,			\
-+		.name		= id			\
-+	}
-+
-+/* pin banks of pin-controller 0 */
-+static struct samsung_pin_bank exynos4210_pin_banks0[] = {
-+	EXYNOS4_PIN_BANK(0x000, EXYNOS4_GPIO_A0, "gpa0"),
-+	EXYNOS4_PIN_BANK(0x020, EXYNOS4_GPIO_A1, "gpa1"),
-+	EXYNOS4_PIN_BANK(0x040, EXYNOS4_GPIO_B, "gpb"),
-+	EXYNOS4_PIN_BANK(0x060, EXYNOS4_GPIO_C0, "gpc0"),
-+	EXYNOS4_PIN_BANK(0x080, EXYNOS4_GPIO_C1, "gpc1"),
-+	EXYNOS4_PIN_BANK(0x0A0, EXYNOS4_GPIO_D0, "gpd0"),
-+	EXYNOS4_PIN_BANK(0x0C0, EXYNOS4_GPIO_D1, "gpd1"),
-+	EXYNOS4_PIN_BANK(0x0E0, EXYNOS4_GPIO_E0, "gpe0"),
-+	EXYNOS4_PIN_BANK(0x100, EXYNOS4_GPIO_E1, "gpe1"),
-+	EXYNOS4_PIN_BANK(0x120, EXYNOS4_GPIO_E2, "gpe2"),
-+	EXYNOS4_PIN_BANK(0x140, EXYNOS4_GPIO_E3, "gpe3"),
-+	EXYNOS4_PIN_BANK(0x160, EXYNOS4_GPIO_E4, "gpe4"),
-+	EXYNOS4_PIN_BANK(0x180, EXYNOS4_GPIO_F0, "gpf0"),
-+	EXYNOS4_PIN_BANK(0x1A0, EXYNOS4_GPIO_F1, "gpf1"),
-+	EXYNOS4_PIN_BANK(0x1C0, EXYNOS4_GPIO_F2, "gpf2"),
-+	EXYNOS4_PIN_BANK(0x1E0, EXYNOS4_GPIO_F3, "gpf3"),
-+};
-+
-+#define EXYNOS4_PIN_BANK1(offset, __gpio, id)		\
-+	{						\
-+		.reg_offset	= offset,		\
-+		.pin_base	= (__gpio##_START) - EXYNOS4_GPIO_J0_START,\
-+		.nr_pins	= (__gpio##_NR),	\
-+		.func_width	= 4,			\
-+		.pud_width	= 2,			\
-+		.drv_width	= 2,			\
-+		.name		= id,			\
-+	}
-+
-+/* pin banks of pin-controller 1 */
-+static struct samsung_pin_bank exynos4210_pin_banks1[] = {
-+	EXYNOS4_PIN_BANK1(0x000, EXYNOS4_GPIO_J0, "gpj0"),
-+	EXYNOS4_PIN_BANK1(0x020, EXYNOS4_GPIO_J1, "gpj1"),
-+	EXYNOS4_PIN_BANK1(0x040, EXYNOS4_GPIO_K0, "gpk0"),
-+	EXYNOS4_PIN_BANK1(0x060, EXYNOS4_GPIO_K1, "gpk1"),
-+	EXYNOS4_PIN_BANK1(0x080, EXYNOS4_GPIO_K2, "gpk2"),
-+	EXYNOS4_PIN_BANK1(0x0A0, EXYNOS4_GPIO_K3, "gpk3"),
-+	EXYNOS4_PIN_BANK1(0x0C0, EXYNOS4_GPIO_L0, "gpl0"),
-+	EXYNOS4_PIN_BANK1(0x0E0, EXYNOS4_GPIO_L1, "gpl1"),
-+	EXYNOS4_PIN_BANK1(0x100, EXYNOS4_GPIO_L2, "gpl2"),
-+	EXYNOS4_PIN_BANK1(0x120, EXYNOS4_GPIO_Y0, "gpy0"),
-+	EXYNOS4_PIN_BANK1(0x140, EXYNOS4_GPIO_Y1, "gpy1"),
-+	EXYNOS4_PIN_BANK1(0x160, EXYNOS4_GPIO_Y2, "gpy2"),
-+	EXYNOS4_PIN_BANK1(0x180, EXYNOS4_GPIO_Y3, "gpy3"),
-+	EXYNOS4_PIN_BANK1(0x1A0, EXYNOS4_GPIO_Y4, "gpy4"),
-+	EXYNOS4_PIN_BANK1(0x1C0, EXYNOS4_GPIO_Y5, "gpy5"),
-+	EXYNOS4_PIN_BANK1(0x1E0, EXYNOS4_GPIO_Y6, "gpy6"),
-+	EXYNOS4_PIN_BANK1(0xC00, EXYNOS4_GPIO_X0, "gpx0"),
-+	EXYNOS4_PIN_BANK1(0xC20, EXYNOS4_GPIO_X1, "gpx1"),
-+	EXYNOS4_PIN_BANK1(0xC40, EXYNOS4_GPIO_X2, "gpx2"),
-+	EXYNOS4_PIN_BANK1(0xC60, EXYNOS4_GPIO_X3, "gpx3"),
-+};
-+
-+#define EXYNOS4_PIN_BANK2(offset, __gpio, id)		\
-+	{						\
-+		.reg_offset	= offset,		\
-+		.pin_base	= (__gpio##_START) - EXYNOS4_GPIO_Z_START,\
-+		.nr_pins	= (__gpio##_NR),	\
-+		.func_width	= 4,			\
-+		.pud_width	= 2,			\
-+		.drv_width	= 2,			\
-+		.name		= id,			\
-+	}
-+
-+/* pin banks of pin-controller 2 */
-+static struct samsung_pin_bank exynos4210_pin_banks2[] = {
-+	EXYNOS4_PIN_BANK2(0x000, EXYNOS4_GPIO_Z, "gpz"),
-+};
-+
-+/* gpio range instance for pinctrl 0 */
-+static struct pinctrl_gpio_range exynos4210_pctrl0_gpio_range = {
-+	.name		= "exynos4210_gpio_range0",
-+	.id		= 0,
-+};
-+
-+/* gpio range instance for pinctrl 1 */
-+static struct pinctrl_gpio_range exynos4210_pctrl1_gpio_range = {
-+	.name		= "exynos4210_gpio_range1",
-+	.id		= 0,
-+};
-+
-+/* gpio range instance for pinctrl 2 */
-+static struct pinctrl_gpio_range exynos4210_pctrl2_gpio_range = {
-+	.name		= "exynos4210_gpio_range2",
-+	.id		= 0,
-+};
-+
-+/*
-+ * Exynos4210 specific callback to translate PUD_xxx values into Exynos4210
-+ * specific register values.
-+ */
-+static int exynos4210_xlate_pud(unsigned int pud)
-+{
-+	if (pud == PUD_UP)
-+		return 3;
-+	else
-+		return pud;
-+}
-+
-+/*
-+ * Exynos4210 specific callback to translate DRV_xxx values into Exynos4210
-+ * specific register values.
-+ */
-+static int exynos4210_xlate_drv(unsigned int drv)
-+{
-+	switch (drv) {
-+	case DRV_3X:
-+		return 1;
-+	case DRV_2X:
-+		return 2;
-+	default:
-+		return drv;
-+	}
-+}
-+
-+/*
-+ * Samsung pinctrl driver data for Exynos4210 SoC. Exynos4210 SoC includes
-+ * three gpio/pin-mux/pinconfig controllers.
-+ */
-+struct samsung_pinctrl_drv_data exynos4210_pinctrl_drv_data[] = {
-+	{
-+		/* pin-controller instance 0 data */
-+		.ctrl = &(struct samsung_pin_ctrl) {
-+			.grange		= &exynos4210_pctrl0_gpio_range,
-+			.pin_banks	= exynos4210_pin_banks0,
-+			.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks0),
-+			.base		= EXYNOS4_GPIO_A0_START,
-+			.nr_pins	= EXYNOS4_GPIO_J0_START - 1,
-+			.xlate_pud	= exynos4210_xlate_pud,
-+			.xlate_drv	= exynos4210_xlate_drv,
-+			.label		= "exynos4210-gpio-ctrl0",
-+		},
-+		.pctl = &(struct pinctrl_desc) {
-+			.name		= "exynos4210_pinctrl",
-+			.owner		= THIS_MODULE,
-+		},
-+	}, {
-+		/* pin-controller instance 1 data */
-+		.ctrl = &(struct samsung_pin_ctrl) {
-+			.grange		= &exynos4210_pctrl1_gpio_range,
-+			.pin_banks	= exynos4210_pin_banks1,
-+			.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks1),
-+			.base		= EXYNOS4_GPIO_J0_START,
-+			.nr_pins	= EXYNOS4_GPIO_Z_START -
-+						EXYNOS4_GPIO_J0_START,
-+			.xlate_pud	= exynos4210_xlate_pud,
-+			.xlate_drv	= exynos4210_xlate_drv,
-+			.label		= "exynos4210-gpio-ctrl1",
-+		},
-+		.pctl = &(struct pinctrl_desc) {
-+			.name		= "exynos4210_pinctrl",
-+			.owner		= THIS_MODULE,
-+		},
-+	}, {
-+		/* pin-controller instance 2 data */
-+		.ctrl = &(struct samsung_pin_ctrl) {
-+			.grange		= &exynos4210_pctrl2_gpio_range,
-+			.pin_banks	= exynos4210_pin_banks2,
-+			.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks2),
-+			.base		= EXYNOS4_GPIO_Z_START,
-+			.nr_pins	= EXYNOS4_GPIO_Z_NR,
-+			.xlate_pud	= exynos4210_xlate_pud,
-+			.xlate_drv	= exynos4210_xlate_drv,
-+			.label		= "exynos4210-gpio-ctrl2",
-+		},
-+		.pctl = &(struct pinctrl_desc) {
-+			.name		= "exynos4210_pinctrl",
-+			.owner		= THIS_MODULE,
-+		},
-+	},
-+};
--- 
-1.6.6.rc2
+Please consider that this can be used only for exynos4210 or all of exynos4
+Socs. We need to keep the consistency for the naming.
+
+[...]
+
+> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2416.c b/arch/arm/mach-
+> s3c24xx/clock-s3c2416.c
+> index 8702ecf..a582ba1 100644
+> --- a/arch/arm/mach-s3c24xx/clock-s3c2416.c
+> +++ b/arch/arm/mach-s3c24xx/clock-s3c2416.c
+> @@ -144,7 +144,7 @@ static struct clk_lookup s3c2416_clk_lookup[] = {
+>  	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.0", &hsmmc0_clk),
+>  	CLKDEV_INIT("s3c-sdhci.0", "mmc_busclk.2", &hsmmc_mux0.clk),
+>  	CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.2", &hsmmc_mux1.clk),
+> -	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk2", &hsspi_mux.clk),
+> +	CLKDEV_INIT("s3c2443-spi.0", "spi_busclk2", &hsspi_mux.clk),
+
+I think, in this case, some comment helps to know that 's3c2443-spi' can
+support s3c2416/s3c2450 together.
+
+[...]
+
+> diff --git a/arch/arm/mach-s5p64x0/clock-s5p6440.c b/arch/arm/mach-
+> s5p64x0/clock-s5p6440.c
+> index ee1e8e7..55ea3ab 100644
+> --- a/arch/arm/mach-s5p64x0/clock-s5p6440.c
+> +++ b/arch/arm/mach-s5p64x0/clock-s5p6440.c
+
+[...]
+
+> @@ -519,8 +519,8 @@ static struct clk_lookup s5p6440_clk_lookup[] = {
+>  	CLKDEV_INIT(NULL, "clk_uart_baud2", &clk_pclk_low.clk),
+>  	CLKDEV_INIT(NULL, "clk_uart_baud3", &clk_sclk_uclk.clk),
+>  	CLKDEV_INIT(NULL, "spi_busclk0", &clk_p),
+> -	CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk1", &clk_sclk_spi0.clk),
+> -	CLKDEV_INIT("s3c64xx-spi.1", "spi_busclk1", &clk_sclk_spi1.clk),
+> +	CLKDEV_INIT("s5p64x0.0", "spi_busclk1", &clk_sclk_spi0.clk),
+> +	CLKDEV_INIT("s5p64x0.1", "spi_busclk1", &clk_sclk_spi1.clk),
+
+Should be s5p64x0-spi.0 and s5p64x0-spi.1 ?
+
+[...]
+
+> diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+> b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+> index fa95e9a..4e9b9c3 100644
+> --- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+> +++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+
+[...]
+
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 6a3d51a..f6bc0e3 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -31,6 +31,8 @@
+>  #include <mach/dma.h>
+>  #include <plat/s3c64xx-spi.h>
+> 
+> +#define MAX_SPI_PORTS		3
+
+As you know, if spi_isp is used, this can be 5 for latest SoCs later. Just
+note.
+
+[...]
+
+>  /**
+> + * struct s3c64xx_spi_info - SPI Controller hardware info
+> + * @fifo_lvl_mask: Bit-mask for {TX|RX}_FIFO_LVL bits in SPI_STATUS
+> register.
+> + * @rx_lvl_offset: Bit offset of RX_FIFO_LVL bits in SPI_STATUS regiter.
+> + * @tx_st_done: Bit offset of TX_DONE bit in SPI_STATUS regiter.
+> + * @high_speed: True, if the controller supports HIGH_SPEED_EN bit.
+> + * @clk_from_cmu: True, if the controller does not include a clock mux
+> and
+> + *	prescaler unit.
+> + *
+> + * The Samsung s3c64xx SPI controller are used on various Samsung SoC's
+> but
+> + * differ in some aspects such as the size of the fifo and spi bus clock
+> + * setup. Such differences are specified to the driver using this
+> structure
+> + * which is provided as driver data to the driver.
+> + */
+> +struct s3c64xx_spi_port_config {
+> +	int	fifo_lvl_mask[MAX_SPI_PORTS];
+> +	int	rx_lvl_offset;
+> +	int	tx_st_done;
+> +	bool	high_speed;
+> +	bool	clk_from_cmu;
+> +};
+
+When I saw this, I thought this will be used for each SPI port. But I know,
+above structure is used for each SoC not each SPI port. So I think, how
+about to change the structure name to avoid confusion?
+
+[...]
+
+> @@ -1000,6 +1029,7 @@ static int __init s3c64xx_spi_probe(struct
+> platform_device *pdev)
+>  	platform_set_drvdata(pdev, master);
+> 
+>  	sdd = spi_master_get_devdata(master);
+> +	sdd->port_conf = s3c64xx_spi_get_port_config(pdev);
+>  	sdd->master = master;
+>  	sdd->cntrlr_info = sci;
+>  	sdd->pdev = pdev;
+> @@ -1008,10 +1038,11 @@ static int __init s3c64xx_spi_probe(struct
+> platform_device *pdev)
+>  	sdd->tx_dma.direction = DMA_MEM_TO_DEV;
+>  	sdd->rx_dma.dmach = dmarx_res->start;
+>  	sdd->rx_dma.direction = DMA_DEV_TO_MEM;
+> +	sdd->port_id = pdev->id;
+> 
+>  	sdd->cur_bpw = 8;
+> 
+> -	master->bus_num = pdev->id;
+> +	master->bus_num = sdd->port_id;
+
+[...]
+
+> @@ -1071,7 +1102,7 @@ static int __init s3c64xx_spi_probe(struct
+> platform_device *pdev)
+>  	}
+> 
+>  	/* Setup Deufult Mode */
+> -	s3c64xx_spi_hwinit(sdd, pdev->id);
+> +	s3c64xx_spi_hwinit(sdd, sdd->port_id);
+
+Do we need this change?
+
+> 
+>  	spin_lock_init(&sdd->lock);
+>  	init_completion(&sdd->xfer_completion);
+> @@ -1096,7 +1127,7 @@ static int __init s3c64xx_spi_probe(struct
+> platform_device *pdev)
+> 
+>  	dev_dbg(&pdev->dev, "Samsung SoC SPI Driver loaded for Bus SPI-%d "
+>  					"with %d Slaves attached\n",
+> -					pdev->id, master->num_chipselect);
+> +					sdd->port_id,
+master->num_chipselect);
+
+Same as above.
+
+>  	dev_dbg(&pdev->dev, "\tIOmem=[0x%x-0x%x]\tDMA=[Rx-%d, Tx-%d]\n",
+>  					mem_res->end, mem_res->start,
+>  					sdd->rx_dma.dmach,
+sdd->tx_dma.dmach);
+> @@ -1189,7 +1220,7 @@ static int s3c64xx_spi_resume(struct device *dev)
+>  	clk_enable(sdd->src_clk);
+>  	clk_enable(sdd->clk);
+> 
+> -	s3c64xx_spi_hwinit(sdd, pdev->id);
+> +	s3c64xx_spi_hwinit(sdd, sdd->port_id);
+
+Same as above.
+
+[...]
+
+> +#ifdef CONFIG_ARCH_EXYNOS4
+> +struct s3c64xx_spi_port_config exynos4_spi_port_config = {
+
+Is this available on exynos4212/exynos4412? If not, this should be
+'exynos4210_spi_port_config' and ifdef CONFIG_CPU_EXYNOS4210.
+
+> +	.fifo_lvl_mask	= { 0x1ff, 0x7F, 0x7F },
+> +	.rx_lvl_offset	= 15,
+> +	.tx_st_done	= 25,
+> +	.high_speed	= 1,
+> +	.clk_from_cmu	= true,
+> +};
+> +#define EXYNOS4_SPI_PORT_CONFIG
+((kernel_ulong_t)&exynos4_spi_port_config)
+> +#else
+> +#define EXYNOS4_SPI_PORT_CONFIG ((kernel_ulong_t)NULL)
+> +#endif /* CONFIG_ARCH_EXYNOS4 */
+
+And let's think the name of ..._SPI_PORT_CONFIG again. How about just
+..._SPI_CONFIG?
+
+> +
+> +static struct platform_device_id s3c64xx_spi_driver_ids[] = {
+> +	{
+> +		.name		= "s3c2443-spi",
+> +		.driver_data	= S3C2443_SPI_PORT_CONFIG,
+> +	}, {
+> +		.name		= "s3c6410-spi",
+> +		.driver_data	= S3C6410_SPI_PORT_CONFIG,
+> +	}, {
+> +		.name		= "s5p64x0-spi",
+> +		.driver_data	= S5P64X0_SPI_PORT_CONFIG,
+> +	}, {
+> +		.name		= "s5pc100-spi",
+> +		.driver_data	= S5PC100_SPI_PORT_CONFIG,
+> +	}, {
+> +		.name		= "s5pv210-spi",
+> +		.driver_data	= S5PV210_SPI_PORT_CONFIG,
+> +	}, {
+> +		.name		= "exynos4210-spi",
+> +		.driver_data	= EXYNOS4_SPI_PORT_CONFIG,
+
+As I commented, if this is only for exynos4210, EXYNOS4210_SPI_CONFIG should
+be used here not EXYNOS4_SPI_.
+
+[...]
+
+And I think, it's time to change the name of spi driver to spi-samsung.c and
+samsung_spi as a prefix even though we have another s3c24xx spi driver now.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
