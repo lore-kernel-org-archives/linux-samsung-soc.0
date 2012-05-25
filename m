@@ -1,147 +1,210 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [RFC/PATCH 11/13] media: s5p-fimc: Keep local copy of sensors platform
- data
-Date: Fri, 25 May 2012 21:52:50 +0200
-Message-ID: <1337975573-27117-11-git-send-email-s.nawrocki@samsung.com>
+Subject: [RFC/PATCH 13/13] media: s5p-fimc: Add parallel video port pin
+ configuration
+Date: Fri, 25 May 2012 21:52:52 +0200
+Message-ID: <1337975573-27117-13-git-send-email-s.nawrocki@samsung.com>
 References: <4FBFE1EC.9060209@samsung.com>
  <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com>
+Mime-Version: 1.0
+Content-Type: TEXT/PLAIN
 Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:46844 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932263Ab2EYTxL (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 May 2012 15:53:11 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, s.nawrocki@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Use a copy of sensor platform data structure, rather than referencing
-external platform data from the driver. This allows to fill the local
-copy with values parsed from device tree when needed.
+This patch adds parsing of 'samsung,fimc-camport-a-gpios' and
+'samsung,fimc-camport-b-gpios' properties from 'camera' node
+and configuration of camera parallel port pins. It can be
+in future replaced with equivalent pinctrl API calls.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Signed-off-by: Kyugmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-capture.c |    6 +++---
- drivers/media/video/s5p-fimc/fimc-lite.c    |    2 +-
- drivers/media/video/s5p-fimc/fimc-mdevice.c |   18 +++++++++---------
- drivers/media/video/s5p-fimc/fimc-mdevice.h |    2 +-
- 4 files changed, 14 insertions(+), 14 deletions(-)
+ .../bindings/camera/soc/samsung-fimc.txt           |   12 +++
+ drivers/media/video/s5p-fimc/fimc-mdevice.c        |   87 ++++++++++++++++++++
+ drivers/media/video/s5p-fimc/fimc-mdevice.h        |   10 +++
+ 3 files changed, 109 insertions(+)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-capture.c b/drivers/media/video/s5p-fimc/fimc-capture.c
-index 7585b2f..ec259fb 100644
---- a/drivers/media/video/s5p-fimc/fimc-capture.c
-+++ b/drivers/media/video/s5p-fimc/fimc-capture.c
-@@ -50,9 +50,9 @@ static int fimc_capture_hw_init(struct fimc_dev *fimc)
- 	fimc_prepare_dma_offset(ctx, &ctx->d_frame);
- 	fimc_set_yuv_order(ctx);
+diff --git a/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
+index ffe09ac..efa5be5 100644
+--- a/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
++++ b/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
+@@ -23,6 +23,18 @@ Optional properties:
+ - csi-rx-controllers : an array of phandles to 'csis' device nodes,
+ 		       it is required for sensors with MIPI-CSI2 bus;
  
--	fimc_hw_set_camera_polarity(fimc, sensor->pdata);
--	fimc_hw_set_camera_type(fimc, sensor->pdata);
--	fimc_hw_set_camera_source(fimc, sensor->pdata);
-+	fimc_hw_set_camera_polarity(fimc, &sensor->pdata);
-+	fimc_hw_set_camera_type(fimc, &sensor->pdata);
-+	fimc_hw_set_camera_source(fimc, &sensor->pdata);
- 	fimc_hw_set_camera_offset(fimc, &ctx->s_frame);
++- samsung,camport-a-gpios, samsung,camport-b-gpios : gpio specifier list for
++			   the parallel camera ports A and B respectively;
++
++  For 'video-itu-601-bus' the list length must be 13, for 'video-itu-656-bus'
++  at least 10 and for 'video-mipi-csi2-bus' the array should contain at least
++  one gpio (CLKOUT). The meaning of the gpios is as following: DATA[7:0], PCLK,
++  VSYNC, HREF, CLKOUT, FIELD. It is not required to list gpios exactly in that
++  order. All gpios listed here will be configured into camera port function.
++  In case of ITU-R BT.656 bus the VSYNC, HREF, and FIELD pins remain unused,
++  hence don't need to be specified here.
++
++
+ 'fimc' device node
+ ------------------
  
- 	ret = fimc_set_scaler_info(ctx);
-diff --git a/drivers/media/video/s5p-fimc/fimc-lite.c b/drivers/media/video/s5p-fimc/fimc-lite.c
-index a7ae149..4ee5b70 100644
---- a/drivers/media/video/s5p-fimc/fimc-lite.c
-+++ b/drivers/media/video/s5p-fimc/fimc-lite.c
-@@ -165,7 +165,7 @@ static int fimc_lite_hw_init(struct fimc_lite *fimc)
- 	sensor = v4l2_get_subdev_hostdata(pipeline->subdevs[IDX_SENSOR]);
- 	spin_lock_irqsave(&fimc->slock, flags);
- 
--	flite_hw_set_camera_bus(fimc, sensor->pdata);
-+	flite_hw_set_camera_bus(fimc, &sensor->pdata);
- 	flite_hw_set_source_format(fimc, &fimc->inp_frame);
- 	flite_hw_set_window_offset(fimc, &fimc->inp_frame);
- 	flite_hw_set_output_dma(fimc, &fimc->out_frame, true);
 diff --git a/drivers/media/video/s5p-fimc/fimc-mdevice.c b/drivers/media/video/s5p-fimc/fimc-mdevice.c
-index 92c9887..1b3b13c 100644
+index faf5665..31bf852 100644
 --- a/drivers/media/video/s5p-fimc/fimc-mdevice.c
 +++ b/drivers/media/video/s5p-fimc/fimc-mdevice.c
-@@ -244,27 +244,27 @@ static struct v4l2_subdev *fimc_md_register_sensor(struct fimc_md *fmd,
- 	if (!s_info || !fmd)
- 		return NULL;
+@@ -1108,6 +1108,87 @@ static ssize_t fimc_md_sysfs_store(struct device *dev,
+ static DEVICE_ATTR(subdev_conf_mode, S_IWUSR | S_IRUGO,
+ 		   fimc_md_sysfs_show, fimc_md_sysfs_store);
  
--	adapter = i2c_get_adapter(s_info->pdata->i2c_bus_num);
-+	adapter = i2c_get_adapter(s_info->pdata.i2c_bus_num);
- 	if (!adapter) {
- 		v4l2_warn(&fmd->v4l2_dev,
- 			  "Failed to get I2C adapter %d, deferring probe\n",
--			  s_info->pdata->i2c_bus_num);
-+			  s_info->pdata.i2c_bus_num);
- 		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 	sd = v4l2_i2c_new_subdev_board(&fmd->v4l2_dev, adapter,
--				       s_info->pdata->board_info, NULL);
-+				       s_info->pdata.board_info, NULL);
- 	if (IS_ERR_OR_NULL(sd)) {
- 		i2c_put_adapter(adapter);
- 		v4l2_warn(&fmd->v4l2_dev,
- 			  "Failed to acquire subdev %s, deferring probe\n",
--			  s_info->pdata->board_info->type);
-+			  s_info->pdata.board_info->type);
- 		return ERR_PTR(-EPROBE_DEFER);
- 	}
- 	v4l2_set_subdev_hostdata(sd, s_info);
- 	sd->grp_id = SENSOR_GROUP_ID;
++static int __fimc_md_get_gpios(struct device_node *np,
++			       struct fimc_video_port *port,
++			       const char *prop_name)
++{
++	int i, err = -EINVAL;
++
++	for (i = 0; i < FIMC_MAX_PARALLEL_PORT_PINS; i++) {
++		port->gpios[i] = of_get_named_gpio(np, prop_name, i);
++		if (port->gpios[i] == -ENOENT && i > 0)
++			return 0;
++
++		if (gpio_is_valid(port->gpios[i])) {
++			err = gpio_request(port->gpios[i], "fimc");
++			if (!err)
++				continue;
++		}
++
++		pr_err("Failed to configure gpios: %s\n", prop_name);
++
++		while (--i >= 0) {
++			gpio_free(port->gpios[i]);
++			port->gpios[i] = -EINVAL;
++		}
++		break;
++	}
++
++	return err;
++}
++
++static int fimc_md_camport_setup(struct fimc_md *fmd, struct device_node *np)
++{
++	const char *gpio_props[] = { "samsung,camport-a-gpios",
++				     "samsung,camport-b-gpios" };
++	struct fimc_video_port *pport;
++	unsigned int ret;
++	int i;
++
++	pport = devm_kzalloc(&fmd->pdev->dev, FIMC_MAX_PARALLEL_PORTS *
++			     sizeof(*pport), GFP_KERNEL);
++	if (pport == NULL)
++		return -ENOMEM;
++
++	for (i = 0; i < ARRAY_SIZE(gpio_props); i++) {
++		if (!of_find_property(np, gpio_props[i], NULL))
++			continue;
++		ret = __fimc_md_get_gpios(np, &pport[i], gpio_props[i]);
++		if (ret < 0)
++			return ret;
++	}
++
++	fmd->parallel_ports = pport;
++	return ret;
++}
++
++static void fimc_md_camport_release(struct fimc_md *fmd)
++{
++	struct fimc_video_port *pport = fmd->parallel_ports;
++	int port, i;
++
++	if (pport == NULL)
++		return;
++
++	for (port = 0; port < FIMC_MAX_PARALLEL_PORTS; port++, pport++) {
++		for (i = 0; i < FIMC_MAX_PARALLEL_PORT_PINS; i++) {
++			if (!gpio_is_valid(pport->gpios[i]))
++				continue;
++			gpio_free(pport->gpios[i]);
++		}
++	}
++}
++
++static int fimc_md_parse_dt(struct fimc_md *fmd)
++{
++	struct device_node *np = fmd->pdev->dev.of_node;
++
++	if (np == NULL)
++		return 0;
++
++	return fimc_md_camport_setup(fmd, np);
++}
++
+ static int fimc_md_probe(struct platform_device *pdev)
+ {
+ 	struct v4l2_device *v4l2_dev;
+@@ -1155,11 +1236,16 @@ static int fimc_md_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		goto err_unlock;
  
- 	v4l2_info(&fmd->v4l2_dev, "Registered sensor subdevice %s\n",
--		  s_info->pdata->board_info->type);
-+		  s_info->pdata.board_info->type);
- 	return sd;
++	ret = fimc_md_parse_dt(fmd);
++	if (ret < 0)
++		goto err_unlock;
++
+ 	if (pdev->dev.platform_data || pdev->dev.of_node) {
+ 		ret = fimc_md_register_sensor_entities(fmd);
+ 		if (ret)
+ 			goto err_unlock;
+ 	}
++
+ 	ret = fimc_md_create_links(fmd);
+ 	if (ret)
+ 		goto err_unlock;
+@@ -1196,6 +1282,7 @@ static int __devexit fimc_md_remove(struct platform_device *pdev)
+ 	fimc_md_unregister_entities(fmd);
+ 	media_device_unregister(&fmd->media_dev);
+ 	fimc_md_put_clocks(fmd);
++	fimc_md_camport_release(fmd);
+ 	return 0;
  }
  
-@@ -308,7 +308,7 @@ static int fimc_md_register_sensor_entities(struct fimc_md *fmd)
- 	for (i = 0; i < num_clients; i++) {
- 		struct v4l2_subdev *sd;
- 
--		fmd->sensor[i].pdata = &pdata->isp_info[i];
-+		fmd->sensor[i].pdata = pdata->isp_info[i];
- 		ret = __fimc_md_set_camclk(fmd, &fmd->sensor[i], true);
- 		if (ret)
- 			break;
-@@ -713,11 +713,11 @@ static int fimc_md_create_links(struct fimc_md *fmd)
- 
- 		sensor = fmd->sensor[i].subdev;
- 		s_info = v4l2_get_subdev_hostdata(sensor);
--		if (!s_info || !s_info->pdata)
-+		if (!s_info)
- 			continue;
- 
- 		source = NULL;
--		pdata = s_info->pdata;
-+		pdata = &s_info->pdata;
- 
- 		switch (pdata->bus_type) {
- 		case FIMC_MIPI_CSI2:
-@@ -827,7 +827,7 @@ static int __fimc_md_set_camclk(struct fimc_md *fmd,
- 					 struct fimc_sensor_info *s_info,
- 					 bool on)
- {
--	struct s5p_fimc_isp_info *pdata = s_info->pdata;
-+	struct s5p_fimc_isp_info *pdata = &s_info->pdata;
- 	struct fimc_camclk_info *camclk;
- 	int ret = 0;
- 
 diff --git a/drivers/media/video/s5p-fimc/fimc-mdevice.h b/drivers/media/video/s5p-fimc/fimc-mdevice.h
-index 3b8a349..bba85bf 100644
+index bba85bf..1f7ebf8 100644
 --- a/drivers/media/video/s5p-fimc/fimc-mdevice.h
 +++ b/drivers/media/video/s5p-fimc/fimc-mdevice.h
-@@ -52,7 +52,7 @@ struct fimc_camclk_info {
-  * This data structure applies to image sensor and the writeback subdevs.
-  */
- struct fimc_sensor_info {
--	struct s5p_fimc_isp_info *pdata;
-+	struct s5p_fimc_isp_info pdata;
- 	struct v4l2_subdev *subdev;
- 	struct fimc_dev *host;
+@@ -30,6 +30,10 @@
+ 
+ #define FIMC_MAX_SENSORS	8
+ #define FIMC_MAX_CAMCLKS	2
++/* Maximum number of supported parallel video ports */
++#define FIMC_MAX_PARALLEL_PORTS		2
++/* Maximum number of pins per 8-bit parallel port */
++#define FIMC_MAX_PARALLEL_PORT_PINS	13
+ 
+ struct fimc_csis_info {
+ 	struct v4l2_subdev *sd;
+@@ -58,8 +62,13 @@ struct fimc_sensor_info {
  	bool clk_on;
+ };
+ 
++struct fimc_video_port {
++	int gpios[FIMC_MAX_PARALLEL_PORT_PINS];
++};
++
+ /**
+  * struct fimc_md - fimc media device information
++ * @parallel_ports: parallel video ports data
+  * @csis: MIPI CSIS subdevs data
+  * @sensor: array of registered sensor subdevs
+  * @num_sensors: actual number of registered sensors
+@@ -72,6 +81,7 @@ struct fimc_sensor_info {
+  * @slock: spinlock protecting @sensor array
+  */
+ struct fimc_md {
++	struct fimc_video_port *parallel_ports;
+ 	struct fimc_csis_info csis[CSIS_MAX_ENTITIES];
+ 	struct fimc_sensor_info sensor[FIMC_MAX_SENSORS];
+ 	int num_sensors;
 -- 
 1.7.10
