@@ -1,30 +1,78 @@
-From: "robothroli company" <info@cagle.com>
-Subject: (unknown)
-Date: Fri, 25 May 2012 14:45:54 +0100
-Message-ID: <1179bde6ebe1caaacb0dddb6780534c7.squirrel__49460.0108977922$1337992498$gmane$org@mail.cafconc.cd>
-Reply-To: robothroli@gmail.com
+From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Subject: Re: [PATCH] spi: Change FIFO flush operation and spi channel off
+Date: Fri, 25 May 2012 16:57:06 -0600
+Message-ID: <20120525225706.10F1E3E092A@localhost>
+References: <009f01cd38df$c00cf6f0$4026e4d0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [217.171.93.200] ([217.171.93.200]:58914 "EHLO mail.cafconc.cd"
-	rhost-flags-FAIL-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1753273Ab2EZAeo (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 25 May 2012 20:34:44 -0400
-Subject: 
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <009f01cd38df$c00cf6f0$4026e4d0$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyoungil Kim' <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
 
+On Wed, 23 May 2012 21:29:51 +0900, Kyoungil Kim <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> Setting SW_RST does TX/RX FIFO flush.
+> After FIFO flush, SW_RST should be cleared.
+> The above setting and clearing SW_RST operation should be done after spi channel off.
+> 
+> Signed-off-by: Kyoungil Kim <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 
- i am robothroli, Purchase manager from roli Merchant Ltd. We are
-Import/export Company based in taiwan. We are interested in purchasing
-your product and I would like to make an inquiry. Please inform me on:
+Applied, thanks.
 
-Sample availability and price
-Minimum order quantity
-FOB Prices
+g.
 
-Sincerely
-Purchase Manager
-robothroli
+> ---
+>  drivers/spi/spi-s3c64xx.c |    8 ++++----
+>  1 files changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 972a94c..293f097 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -191,6 +191,10 @@ static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+>  	writel(0, regs + S3C64XX_SPI_PACKET_CNT);
+>  
+>  	val = readl(regs + S3C64XX_SPI_CH_CFG);
+> +	val &= ~(S3C64XX_SPI_CH_RXCH_ON | S3C64XX_SPI_CH_TXCH_ON);
+> +	writel(val, regs + S3C64XX_SPI_CH_CFG);
+> +
+> +	val = readl(regs + S3C64XX_SPI_CH_CFG);
+>  	val |= S3C64XX_SPI_CH_SW_RST;
+>  	val &= ~S3C64XX_SPI_CH_HS_EN;
+>  	writel(val, regs + S3C64XX_SPI_CH_CFG);
+> @@ -224,10 +228,6 @@ static void flush_fifo(struct s3c64xx_spi_driver_data *sdd)
+>  	val = readl(regs + S3C64XX_SPI_MODE_CFG);
+>  	val &= ~(S3C64XX_SPI_MODE_TXDMA_ON | S3C64XX_SPI_MODE_RXDMA_ON);
+>  	writel(val, regs + S3C64XX_SPI_MODE_CFG);
+> -
+> -	val = readl(regs + S3C64XX_SPI_CH_CFG);
+> -	val &= ~(S3C64XX_SPI_CH_RXCH_ON | S3C64XX_SPI_CH_TXCH_ON);
+> -	writel(val, regs + S3C64XX_SPI_CH_CFG);
+>  }
+>  
+>  static void s3c64xx_spi_dmacb(void *data)
+> -- 
+> 1.7.1
+> 
+> 
+
+-- 
+Grant Likely, B.Sc, P.Eng.
+Secret Lab Technologies, Ltd.
+
+------------------------------------------------------------------------------
+Live Security Virtual Conference
+Exclusive live event will cover all the ways today's security and 
+threat landscape has changed and how IT managers can respond. Discussions 
+will include endpoint security, mobile security and the latest in malware 
+threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
