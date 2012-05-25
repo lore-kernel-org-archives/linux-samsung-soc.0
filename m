@@ -1,52 +1,88 @@
-From: "Olav Haugan" <ohaugan@codeaurora.org>
-Subject: RE: mm: fix faulty initialization in vmalloc_init()
-Date: Thu, 24 May 2012 17:24:01 -0700
-Message-ID: <002c01cd3a0c$aef39530$0cdabf90$@codeaurora.org>
-References: <001c01cd3987$d1a71a50$74f54ef0$%cho@samsung.com> <20120524151231.e3a18ac5.akpm@linux-foundation.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <owner-linux-mm@kvack.org>
-In-Reply-To: <20120524151231.e3a18ac5.akpm@linux-foundation.org>
-Content-Language: en-us
-Sender: owner-linux-mm@kvack.org
-To: 'Andrew Morton' <akpm@linux-foundation.org>, 'KyongHo' <pullip.cho@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: EXYNOS: Add touchscreen support to SMDK4X12
+Date: Fri, 25 May 2012 14:28:08 +0530
+Message-ID: <1337936288-25246-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:40560 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752846Ab2EYJIj (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 25 May 2012 05:08:39 -0400
+Received: by dady13 with SMTP id y13so996476dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 25 May 2012 02:08:39 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-> -----Original Message-----
-> On Thu, 24 May 2012 17:32:56 +0900
-> KyongHo <pullip.cho@samsung.com> wrote:
-> 
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -1185,9 +1185,10 @@ void __init vmalloc_init(void)
-> >  	/* Import existing vmlist entries. */
-> >  	for (tmp = vmlist; tmp; tmp = tmp->next) {
-> >  		va = kzalloc(sizeof(struct vmap_area), GFP_NOWAIT);
- > -		va->flags = tmp->flags | VM_VM_AREA;
-> > +		va->flags = VM_VM_AREA;
-> 
-> This change is a mystery.  Why do we no longer transfer ->flags?
+Pixcir touchscreen device support is added to SMDK4X12 boards.
 
-I was actually debugging the same exact issue today. This transfer of flags
-actually causes some of the static mapping virtual addresses to be
-prematurely freed (before the mapping is removed) because VM_LAZY_FREE gets
-"set" if tmp->flags has VM_IOREMAP set. This might cause subsequent
-vmalloc/ioremap calls to fail because it might allocate one of the freed
-virtual address ranges that aren't unmapped. 
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/mach-smdk4x12.c |   32 +++++++++++++++++++++++++++++++-
+ 1 files changed, 31 insertions(+), 1 deletions(-)
 
---
-Olav Haugan
-
-Sent by an employee of the Qualcomm Innovation Center, Inc.
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
-
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Fight unfair telecom internet charges in Canada: sign http://stopthemeter.ca/
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
+diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
+index fe772d8..0af6088 100644
+--- a/arch/arm/mach-exynos/mach-smdk4x12.c
++++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+@@ -9,10 +9,12 @@
+  * published by the Free Software Foundation.
+ */
+ 
++#include <linux/delay.h>
+ #include <linux/gpio.h>
+ #include <linux/i2c.h>
+ #include <linux/input.h>
+ #include <linux/io.h>
++#include <linux/input/pixcir_ts.h>
+ #include <linux/mfd/max8997.h>
+ #include <linux/mmc/host.h>
+ #include <linux/platform_device.h>
+@@ -203,8 +205,34 @@ static struct i2c_board_info smdk4x12_i2c_devs3[] __initdata = {
+ 	/* nothing here yet */
+ };
+ 
++static void smdk4x12_ts_gpio_setup(void)
++{
++	int gpio_reset = EXYNOS4_GPM3(4);
++
++	gpio_request_one(gpio_reset, GPIOF_OUT_INIT_LOW, "TOUCH RESET");
++	mdelay(20);
++	gpio_direction_output(gpio_reset, 1);
++	mdelay(30);
++	s3c_gpio_setpull(EXYNOS4_GPX2(6), S3C_GPIO_PULL_NONE);
++}
++
++static int smdk4x12_ts_get_value(void)
++{
++	return gpio_get_value(EXYNOS4_GPX2(6));
++}
++
++static struct pixcir_ts_platform_data smdk4x12_ts_data = {
++	.attb_read_val = smdk4x12_ts_get_value,
++	.x_max = 480,
++	.y_max = 800,
++};
++
+ static struct i2c_board_info smdk4x12_i2c_devs7[] __initdata = {
+-	/* nothing here yet */
++	{
++		I2C_BOARD_INFO("pixcir_ts", 0x5C),
++		.irq		= IRQ_EINT(22),
++		.platform_data	= &smdk4x12_ts_data,
++	}
+ };
+ 
+ static struct samsung_bl_gpio_info smdk4x12_bl_gpio_info = {
+@@ -293,6 +321,8 @@ static void __init smdk4x12_machine_init(void)
+ 	s3c_sdhci2_set_platdata(&smdk4x12_hsmmc2_pdata);
+ 	s3c_sdhci3_set_platdata(&smdk4x12_hsmmc3_pdata);
+ 
++	smdk4x12_ts_gpio_setup();
++
+ 	platform_add_devices(smdk4x12_devices, ARRAY_SIZE(smdk4x12_devices));
+ }
+ 
+-- 
+1.7.4.1
