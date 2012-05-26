@@ -1,64 +1,63 @@
-From: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Subject: Re: [PATCH] spi: Keep chipselect assertion during one message
-Date: Fri, 25 May 2012 16:56:11 -0600
-Message-ID: <20120525225611.719313E0908@localhost>
-References: <00a001cd38e0$57efde60$07cf9b20$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-In-Reply-To: <00a001cd38e0$57efde60$07cf9b20$%kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: 'Kukjin Kim' <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, 'Kyoungil Kim' <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: Grant Likely <grant.likely@secretlab.ca>
+Subject: Re: [PATCH 3/3] gpio: exynos4: skip gpiolib registration if pinctrl driver is used
+Date: Fri, 25 May 2012 18:44:09 -0600
+Message-ID: <20120526004409.A59FD3E1E15@localhost>
+References: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org> <1337816857-14694-4-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1337816857-14694-4-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, 23 May 2012 21:34:06 +0900, Kyoungil Kim <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
-> During all transfers in one message, the device will not be chagned.
-> So we don't need to deassert chipselect during one message.
+On Thu, 24 May 2012 05:17:37 +0530, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> Pinctrl driver, when enabled, registers all the gpio pins and hence the
+> registration of gpio pins by this driver can be skipped.
 > 
-> Signed-off-by: Kyoungil Kim <ki0351.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-Applied, thanks.
-
-g.
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
 
 > ---
->  drivers/spi/spi-s3c64xx.c |    2 --
->  1 files changed, 0 insertions(+), 2 deletions(-)
+>  drivers/gpio/gpio-samsung.c |   21 +++++++++++++++++++++
+>  1 files changed, 21 insertions(+), 0 deletions(-)
 > 
-> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> index 972a94c..0f79f5b 100644
-> --- a/drivers/spi/spi-s3c64xx.c
-> +++ b/drivers/spi/spi-s3c64xx.c
-> @@ -745,8 +745,6 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
->  			if (list_is_last(&xfer->transfer_list,
->  						&msg->transfers))
->  				cs_toggle = 1;
-> -			else
-> -				disable_cs(sdd, spi);
->  		}
+> diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+> index 19d6fc0..34a9638 100644
+> --- a/drivers/gpio/gpio-samsung.c
+> +++ b/drivers/gpio/gpio-samsung.c
+> @@ -2788,6 +2788,27 @@ static __init int samsung_gpiolib_init(void)
+>  #ifdef CONFIG_CPU_EXYNOS4210
+>  		void __iomem *gpx_base;
 >  
->  		msg->actual_length += xfer->len;
+> +#ifdef CONFIG_OF
+> +		/*
+> +		 * This gpio driver includes support for device tree support and
+> +		 * there are platforms using it. In order to maintain
+> +		 * compatibility with those platforms, and to allow non-dt
+> +		 * Exynos4210 platforms to use this gpiolib support, a check
+> +		 * is added to find out if there is a active pin-controller
+> +		 * driver support available. If it is available, this gpiolib
+> +		 * support is ignored and the gpiolib support available in
+> +		 * pin-controller driver is used. This is a temporary check and
+> +		 * will go away when all of the Exynos4210 platforms have
+> +		 * switched to using device tree and the pin-ctrl driver.
+> +		 */
+> +		struct device_node *pctrl_np;
+> +		const char *pctrl_compat = "samsung,pinctrl-exynos4210";
+> +		pctrl_np = of_find_compatible_node(NULL, NULL, pctrl_compat);
+> +		if (pctrl_np)
+> +			if (of_device_is_available(pctrl_np))
+> +				return -ENODEV;
+> +#endif
+> +
+>  		/* gpio part1 */
+>  		gpio_base1 = ioremap(EXYNOS4_PA_GPIO1, SZ_4K);
+>  		if (gpio_base1 == NULL) {
 > -- 
-> 1.7.1
-> 
+> 1.6.6.rc2
 > 
 
 -- 
 Grant Likely, B.Sc, P.Eng.
 Secret Lab Technologies, Ltd.
-
-------------------------------------------------------------------------------
-Live Security Virtual Conference
-Exclusive live event will cover all the ways today's security and 
-threat landscape has changed and how IT managers can respond. Discussions 
-will include endpoint security, mobile security and the latest in malware 
-threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
