@@ -1,82 +1,77 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v2 4/6] ARM: Samsung: Modify s3c64xx_spi{0|1|2}_set_platdata
- function
-Date: Wed, 30 May 2012 18:05:31 +0800
-Message-ID: <CAJuYYwShLhKSrpGhaTyxX4dqaiKDAcjBtuWSMYAdsWcOMfP=qw@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v2 4/6] ARM: Samsung: Modify
+ s3c64xx_spi{0|1|2}_set_platdata function
+Date: Wed, 30 May 2012 11:13:26 +0100
+Message-ID: <20120530101326.GF9947@opensource.wolfsonmicro.com>
 References: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
-	<1337333613-6216-5-git-send-email-thomas.abraham@linaro.org>
-	<20120520092113.GA20652@opensource.wolfsonmicro.com>
-	<CAOesGMhFcdv7QW=_1U8HHfaETD83mJt=Dgk-8z40yOrC3PB_fA@mail.gmail.com>
-	<20120530093421.GA9947@opensource.wolfsonmicro.com>
+ <1337333613-6216-5-git-send-email-thomas.abraham@linaro.org>
+ <20120520092113.GA20652@opensource.wolfsonmicro.com>
+ <CAOesGMhFcdv7QW=_1U8HHfaETD83mJt=Dgk-8z40yOrC3PB_fA@mail.gmail.com>
+ <20120530093421.GA9947@opensource.wolfsonmicro.com>
+ <CAJuYYwShLhKSrpGhaTyxX4dqaiKDAcjBtuWSMYAdsWcOMfP=qw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="VuQYccsttdhdIfIP"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:42590 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751874Ab2E3KFc convert rfc822-to-8bit (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:40420 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751161Ab2E3KN3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 30 May 2012 06:05:32 -0400
-Received: by wibhm6 with SMTP id hm6so3075404wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 30 May 2012 03:05:31 -0700 (PDT)
-In-Reply-To: <20120530093421.GA9947@opensource.wolfsonmicro.com>
+	Wed, 30 May 2012 06:13:29 -0400
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwShLhKSrpGhaTyxX4dqaiKDAcjBtuWSMYAdsWcOMfP=qw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
 Cc: Olof Johansson <olof@lixom.net>, spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-On 30 May 2012 17:34, Mark Brown <broonie@opensource.wolfsonmicro.com> =
-wrote:
-> On Wed, May 30, 2012 at 12:28:55AM -0700, Olof Johansson wrote:
->> On Sun, May 20, 2012 at 2:21 AM, Mark Brown
->
->> > This dev_name also isn't equivalent to dev_name() which makes matt=
-ers
->> > more confusing than they need to be.
->
->> Looks like they use the name as the magic string to pick initializat=
-ion data.
->
-> Right, and there's no problem at all with using the name. =A0The thin=
-g is
-> that there's no need to set the name at runtime since the struct devi=
-ce
-> being configured is always going to end up with the same name and doi=
-ng
-> so is just causing confusion. =A0The device being registered is speci=
-fic
-> to the SoC already so setting the SoC name at runtime isn't needed.
 
-I think I did not understand your point. There is only one instance of
-spi platform device statically defined for all Samsung platforms. The
-name of this device is set as "s3c64xx-spi". Now, to choose a
-particular driver data (for a platform) based on the device name, the
-device name has to be changed during boot to indicate the platform.
+--VuQYccsttdhdIfIP
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-If this not a good way, then the other way to choose driver data based
-on device name is to statically define platform device for each of the
-samsung platforms. This will add more lines of code into arch/arm and
-can be avoided. If all the Samsung platforms had device tree support
-enabled, this would not have been a problem.
+On Wed, May 30, 2012 at 06:05:31PM +0800, Thomas Abraham wrote:
+> On 30 May 2012 17:34, Mark Brown <broonie@opensource.wolfsonmicro.com> wr=
+ote:
 
->
->> I wonder if it makes more sense to keep the platform_data still
->> around, and just fill it in with the table (from patch "spi: s3c64xx=
-:
->> move controller information into driver data") based on the OF
->> compatible field for the device-tree probe case, instead of trying t=
-o
->> overload and having to change the name in this way.
->
-> We could do that, though it does seem nice to have everything be
-> consistent.
+> > Right, and there's no problem at all with using the name. =A0The thing =
+is
+> > that there's no need to set the name at runtime since the struct device
+> > being configured is always going to end up with the same name and doing
+> > so is just causing confusion. =A0The device being registered is specific
+> > to the SoC already so setting the SoC name at runtime isn't needed.
 
-So, for now, I will not change the existing platform data. But add
-driver data (spi controller configuration) only for dt enabled
-platforms. And use the spi controller configuration found in the
-driver data instead of the platform data.
+> I think I did not understand your point. There is only one instance of
+> spi platform device statically defined for all Samsung platforms. The
 
-Thanks Mark for your comments.
+No there isn't.  You've got things like s3c64xx_device_spi0 in
+arch/arm/plat-samsung/devs.c (which you'd expect since the resources
+that are passed in for memory mapping, DMA and interrupt vary with the
+SoC).  The bit of code I was querying just changes "s3c64xx-spi" to
+"s3c6410-spi" at runtime in that structure which seems like a waste of
+time.
 
-Regards,
-Thomas.
+--VuQYccsttdhdIfIP
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJPxfK/AAoJEBus8iNuMP3dq5wP/jTlK1sThAap4v5QkMmHNDu/
+OQ970m7KCRF15PVCRQul2mLgpoQ9o7lBBbAQGY3/VL+kDqT7BuSiQfkkUTe0hKys
+0IiAb+cIv2WlMlH6pcCQyhfpEpLEQUPc263Q1ug0hgNdulnIC9lpx5m6k7gonmWV
+WTW366mV230ANamEeRd2UXaX50sR+Z3nvykZAre86sTRPfgguJkUjlhwuCBxzHDx
+QJYRYcRQg4NsBH8mSzwHwHT1jqe5W4jBYX+8YUQ85OlMZIjVUX7f+XSUJaedCpf3
+kyvnA37Jrewd6DhRlRvBQS2Wix1v6ckJpXMQj04WXKehdf4LdP/2lZLlB31LD+lA
+GK8txsf/eB8beKw/DOISTevKT4B2ZsU0eiM8wNA+Ah4j5Mjspoazjk2Zx2sKsn9s
+tcBlca7RyJw4ACiPpDsF5nwXr3jxT3fUPtSLjdZGpxzd9bwv0Ydh3wlGDjaBVZCg
+PI1IR1EaJoNaJqFJ0CZBTscLFEvIaxgo3bok/6nRXX1dNuvt11oEeYXblD8v7GEB
+QyXvCIfpalwYiBeadcsYh1MAslOLHwqrIQELIWz4d599EAsZwv5soLq2GZ2AqVJN
+u0tvDjTRzjZdwknSc8/klxO/wVL5YvpGsYTg1JC/0YgVb24gAF/G/mgCOJC/2pQW
+9Hej8/z2FWFzMeJc4Yy4
+=lR1x
+-----END PGP SIGNATURE-----
+
+--VuQYccsttdhdIfIP--
