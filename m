@@ -1,21 +1,19 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/3] pinctrl: add exynos4210 specific driver data for
- samsung pinctrl driver
-Date: Fri, 1 Jun 2012 09:37:45 +0800
-Message-ID: <CACRpkdYA1on77kDb3qvJGr9E332EiNt_piY40iLHY3rs4f57=w@mail.gmail.com>
+Subject: Re: [PATCH 0/3] pinctrl: add support for samsung pinctrl driver
+Date: Fri, 1 Jun 2012 09:40:14 +0800
+Message-ID: <CACRpkdZ++GiqE55ofuwOssY4RLE5NctiY1rik1PDtm5r+CL4dw@mail.gmail.com>
 References: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
-	<1337816857-14694-3-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f49.google.com ([209.85.216.49]:55891 "EHLO
-	mail-qa0-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751945Ab2FABhq (ORCPT
+Received: from mail-qc0-f174.google.com ([209.85.216.174]:45867 "EHLO
+	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752744Ab2FABkP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 May 2012 21:37:46 -0400
-Received: by qabj40 with SMTP id j40so131850qab.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 May 2012 18:37:46 -0700 (PDT)
-In-Reply-To: <1337816857-14694-3-git-send-email-thomas.abraham@linaro.org>
+	Thu, 31 May 2012 21:40:15 -0400
+Received: by qcro28 with SMTP id o28so877720qcr.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 31 May 2012 18:40:14 -0700 (PDT)
+In-Reply-To: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
@@ -24,17 +22,13 @@ Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sa
 On Thu, May 24, 2012 at 7:47 AM, Thomas Abraham
 <thomas.abraham@linaro.org> wrote:
 
-> Add information about the Exynos4210 pin banks, SoC specific configuration
-> callbacks and driver data which is used by the Samsung pinctrl driver.
->
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Note that, the Samsung pinctrl driver is usable only on device tree enabled
+> Samsung platforms. Legacy platforms would still continue to use the older
+> gpiolib driver and hence updates to device drivers to use the pinctrl api
+> should ensure that support for legacy platforms is maintained.
 
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
-
-Overall this patch set is looking really good, just the final touches
-on the main
-driver needed from my point of view, would be nice to have some DT review
-though.
+Is the plan to move also the older platforms over to the DT-based model?
+It'd be really nice to be able to just delete the old drivers at some point...
 
 Yours,
 Linus Walleij
