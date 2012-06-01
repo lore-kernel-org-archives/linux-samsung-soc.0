@@ -1,79 +1,116 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH v2 4/6] ARM: Samsung: Modify
- s3c64xx_spi{0|1|2}_set_platdata function
-Date: Thu, 31 May 2012 12:36:59 +0100
-Message-ID: <20120531113659.GB2666@opensource.wolfsonmicro.com>
-References: <1337333613-6216-1-git-send-email-thomas.abraham@linaro.org>
- <1337333613-6216-5-git-send-email-thomas.abraham@linaro.org>
- <20120520092113.GA20652@opensource.wolfsonmicro.com>
- <CAOesGMhFcdv7QW=_1U8HHfaETD83mJt=Dgk-8z40yOrC3PB_fA@mail.gmail.com>
- <20120530093421.GA9947@opensource.wolfsonmicro.com>
- <CAJuYYwShLhKSrpGhaTyxX4dqaiKDAcjBtuWSMYAdsWcOMfP=qw@mail.gmail.com>
- <20120530101326.GF9947@opensource.wolfsonmicro.com>
- <CAJuYYwT88mpTKmOD8mpCjsQo9O_+Giri7+q-Rzz=zPNj+F7aDg@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 1/3] pinctrl: add samsung pinctrl and gpiolib driver
+Date: Fri, 1 Jun 2012 09:36:17 +0800
+Message-ID: <CACRpkdZDnFW4-bDsHN5BOr2e5NLGzouSBY7ngf-VsoPn-SyxAA@mail.gmail.com>
+References: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
+	<1337816857-14694-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35590 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754625Ab2EaLhC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 31 May 2012 07:37:02 -0400
-Content-Disposition: inline
-In-Reply-To: <CAJuYYwT88mpTKmOD8mpCjsQo9O_+Giri7+q-Rzz=zPNj+F7aDg@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1337816857-14694-2-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org, ext Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>
+List-Id: linux-samsung-soc@vger.kernel.org
 
+On Thu, May 24, 2012 at 7:47 AM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
 
---oC1+HKm2/end4ao3
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctr=
+l.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
 
-On Thu, May 31, 2012 at 10:05:42AM +0800, Thomas Abraham wrote:
-> On 30 May 2012 18:13, Mark Brown <broonie@opensource.wolfsonmicro.com> wr=
-ote:
+It would be nice if some DT person could review the bindings, but if
+nothing happens
+I will accept them as-is.
 
-> > No there isn't. =A0You've got things like s3c64xx_device_spi0 in
-> > arch/arm/plat-samsung/devs.c (which you'd expect since the resources
-> > that are passed in for memory mapping, DMA and interrupt vary with the
-> > SoC). =A0The bit of code I was querying just changes "s3c64xx-spi" to
-> > "s3c6410-spi" at runtime in that structure which seems like a waste of
-> > time.
+This driver is special since it seems to keep all pin, group and
+function information
+in the device tree, but not like Tony is doing it in pinctrl-simple,
+if I understand
+correctly?
 
-> So is the concern only with the change of device name from
-> "s3c64xx-spi" to "s3c6410-spi"? Is there any concern with changing the
-> name of the static spi platform device (s3c64xx_device_spi0/1/2) at
-> runtime which then is used to select a driver data?
+> diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinc=
+trl-samsung.c
+> new file mode 100644
+> index 0000000..480e2f0
+(...)
+> +/* reading pin pull up/down and driver strength settings not impleme=
+nted */
+> +static int samsung_pinconf_get(struct pinctrl_dev *pctldev, unsigned=
+ int pin,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0=
+ =A0 =A0 unsigned long *config)
+> +{
+> + =A0 =A0 =A0 return -ENOTSUPP;
+> +}
+> +
+> +/* reading pin pull up/down and driver strength settings not impleme=
+nted */
+> +static int samsung_pinconf_group_get(struct pinctrl_dev *pctldev,
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 unsigne=
+d int group, unsigned long *config)
+> +{
+> + =A0 =A0 =A0 return -ENOTSUPP;
+> +}
 
-No, you're not getting it at all.  The changing at runtime is the
-problem, it's achieving nothing except making the code more fragile and
-obscure.  Those devices will always come out with exactly the same name
-so we should just assign that name statically.
+I think we made these optional now, so you can just leave them undefine=
+d
+in the pinconf_ops.
 
---oC1+HKm2/end4ao3
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+> +static inline struct samsung_pinctrl_drv_data *samsung_pinctrl_get_d=
+river_data(
+> +                               struct platform_device *pdev)
+> +{
+> +#ifdef CONFIG_OF
+> +       if (pdev->dev.of_node) {
+> +               int id;
+> +               const struct of_device_id *match;
+> +               const struct device_node *node =3D pdev->dev.of_node;
+> +
+> +               id =3D of_alias_get_id(pdev->dev.of_node, "pinctrl");
+> +               if (id < 0) {
+> +                       dev_err(&pdev->dev, "failed to get alias id\n=
+");
+> +                       return NULL;
+> +               }
+> +               match =3D of_match_node(samsung_pinctrl_dt_match, nod=
+e);
+> +               return (struct samsung_pinctrl_drv_data *)match->data=
+ + id;
+> +       }
+> +#endif
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
+You don't need this #ifdef because in Kconfig the driver already depend=
+s on
+OF so this is always available.
 
-iQIcBAEBAgAGBQJPx1fFAAoJEBus8iNuMP3djjQP/iTDFIB6+JISK/182WzEohok
-KaSOevQ9ZNdxpig9fqWnPFesBcr2GCPoPl4pMzg1wmaHNrztZPkIcn3PUf+veMPi
-CIzzZOG5HGMe+atDfUEy+1JiGmA6AX+/oKTadwep4gdQUb2qJZMLgXuqItxoEXqz
-xg20CrYk3sywQPpaTVDewqsQNuvUR3kXPq1vPfHNbYzQ4Os6it6Vj6EaPnDIEHqW
-g7VL0SvJyiKUzMXXhVun938uzDt2WQVySEH2+nl8rnenu5wGY5Fi4wwHrt+9Xyjy
-WdRAFXvMNnuFr/ISriB/DZhncUXVEhqkVXLtNqmb8WGN74jxU8+Xvga5TRijYhn3
-5871LBQdejmm2TKMsby6a//jjTZm8aO0JsZzoIKEMCSillZIvxvgH8/OtBlSspIe
-y5EKsWSFuBMoKuV4oCKek0UENI75NP2xvWekqr6wUZp1Ecfy5fdHh/WZTsyIKNj7
-tYmH0qwoJ0gmCe9kKyZg+oRtmzHXDB3KN0rLdHh6h+08t+CUn3bEdquEIQaaH+AL
-CbWJVf19Xexio2l3rXppHCmLDYh4jCx8PFK4f+rcqKUEY3EIlZMQ1//ci7dHdX9x
-BcGCEOo7arsTgpzqbLGxP7Y6TiEfNmDtwxPnUiJxOYLguI8Iq7FPr6TxCY0bWbCq
-aRSQ1qlP2AG8sEVNY4vE
-=vWQf
------END PGP SIGNATURE-----
+> +/* driver data for various samsung soc's */
+> +#ifdef CONFIG_CPU_EXYNOS4210
+> +#define EXYNOS4210_PCTRL_DRVDATA (&exynos4210_pinctrl_drv_data)
+> +#else
+> +#define EXYNOS4210_PCTRL_DRVDATA (NULL)
+> +#endif /* CONFIG_CPU_EXYNOS4210 */
 
---oC1+HKm2/end4ao3--
+Can you do this in some .h file instead?
+
+> +#ifdef CONFIG_OF
+
+You don't need this because in Kconfig the driver depends on OF
+already.
+
+> +static const struct of_device_id samsung_pinctrl_dt_match[] =3D {
+> +#ifdef CONFIG_CPU_EXYNOS4210
+> + =A0 =A0 =A0 { .compatible =3D "samsung,pinctrl-exynos4210",
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 .data =3D (void *)exynos4210_pinctrl_dr=
+v_data },
+> +#endif /* CONFIG_CPU_EXYNOS4210 */
+> + =A0 =A0 =A0 {},
+> +};
+> +MODULE_DEVICE_TABLE(of, samsung_pinctrl_dt_match);
+> +#endif /* CONFIG_OF */
+
+So delete the closing #endif too.
+
+Yours,
+Linus Walleij
