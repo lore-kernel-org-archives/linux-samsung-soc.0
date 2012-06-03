@@ -1,69 +1,51 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 4/6] ARM: Exynos5: Enable platform support for SPI
- controllers
-Date: Sun, 03 Jun 2012 18:12:47 +0530
-Message-ID: <1338727369-18241-5-git-send-email-thomas.abraham@linaro.org>
-References: <1338727369-18241-1-git-send-email-thomas.abraham@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/2] ARM: S3C64XX: Dynamically allocate the IRQ range for WM8994 on Cragganmore
+Date: Sun,  3 Jun 2012 13:42:40 +0100
+Message-ID: <1338727361-25243-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:30650 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752774Ab2FCM1w (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:45698 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750958Ab2FCMmp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 3 Jun 2012 08:27:52 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M51008O7JYB3OB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 03 Jun 2012 21:27:52 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M5100119JY60A40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 03 Jun 2012 21:27:52 +0900 (KST)
-In-reply-to: <1338727369-18241-1-git-send-email-thomas.abraham@linaro.org>
+	Sun, 3 Jun 2012 08:42:45 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, jaswinder.singh@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Add the platform bits which are required to support SPI controllers.
+Use the new irqdomain support in the WM8994 driver to dynamically allocate
+the interrupt range for the WM8994 rather than doing it explicitly. This
+is more idiomatic for modern interrupt usage.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 ---
- arch/arm/mach-exynos/include/mach/map.h |    3 +++
- arch/arm/mach-exynos/mach-exynos5-dt.c  |    6 ++++++
- 2 files changed, 9 insertions(+), 0 deletions(-)
+ arch/arm/mach-s3c64xx/include/mach/crag6410.h |    1 -
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c  |    1 -
+ 2 files changed, 2 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index ca4aa89..c72b675 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -154,6 +154,9 @@
- #define EXYNOS4_PA_SPI0			0x13920000
- #define EXYNOS4_PA_SPI1			0x13930000
- #define EXYNOS4_PA_SPI2			0x13940000
-+#define EXYNOS5_PA_SPI0			0x12D20000
-+#define EXYNOS5_PA_SPI1			0x12D30000
-+#define EXYNOS5_PA_SPI2			0x12D40000
+diff --git a/arch/arm/mach-s3c64xx/include/mach/crag6410.h b/arch/arm/mach-s3c64xx/include/mach/crag6410.h
+index 4cb2f951..ec97c15 100644
+--- a/arch/arm/mach-s3c64xx/include/mach/crag6410.h
++++ b/arch/arm/mach-s3c64xx/include/mach/crag6410.h
+@@ -15,7 +15,6 @@
  
- #define EXYNOS4_PA_GPIO1		0x11400000
- #define EXYNOS4_PA_GPIO2		0x11000000
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 7b1e11a..ef770bc 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -47,6 +47,12 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"s3c2440-i2c.0", NULL),
- 	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(1),
- 				"s3c2440-i2c.1", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI0,
-+				"exynos4210-spi.0", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI1,
-+				"exynos4210-spi.1", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI2,
-+				"exynos4210-spi.2", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
+ #define BANFF_PMIC_IRQ_BASE		IRQ_BOARD_START
+ #define GLENFARCLAS_PMIC_IRQ_BASE	(IRQ_BOARD_START + 64)
+-#define CODEC_IRQ_BASE			(IRQ_BOARD_START + 128)
+ 
+ #define PCA935X_GPIO_BASE		GPIO_BOARD_START
+ #define CODEC_GPIO_BASE			(GPIO_BOARD_START + 8)
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 4979372..4a83b4e 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -168,7 +168,6 @@ static struct wm8994_pdata wm8994_pdata = {
+ 	.gpio_defaults = {
+ 		0x3,          /* IRQ out, active high, CMOS */
+ 	},
+-	.irq_base = CODEC_IRQ_BASE,
+ 	.ldo = {
+ 		 { .init_data = &wm8994_ldo1, },
+ 		 { .init_data = &wm8994_ldo2, },
 -- 
-1.6.6.rc2
+1.7.10
