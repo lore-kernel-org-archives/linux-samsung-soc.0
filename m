@@ -1,44 +1,31 @@
-From: Samuel Ortiz <sameo@linux.intel.com>
-Subject: Re: [PATCH] NFC: Driver for SAMSUNG S3FHRN2 NFC Chip.
-Date: Tue, 5 Jun 2012 10:59:19 +0200
-Message-ID: <20120605085919.GI27105@sortiz-mobl>
-References: <001201cd42ef$c283d8d0$478b8a70$%lee@samsung.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 3/3] gpio: exynos4: skip gpiolib registration if pinctrl
+ driver is used
+Date: Tue, 5 Jun 2012 14:46:18 +0200
+Message-ID: <CACRpkda1iiOFfjWbtJTf=R7qqHkzPbA3oTsWSiC08W_zctaexQ@mail.gmail.com>
+References: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
+	<1337816857-14694-4-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga01.intel.com ([192.55.52.88]:34273 "EHLO mga01.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1758094Ab2FEIsx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 5 Jun 2012 04:48:53 -0400
-Content-Disposition: inline
-In-Reply-To: <001201cd42ef$c283d8d0$478b8a70$%lee@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1337816857-14694-4-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: =?utf-8?B?77+9zL/vv73vv73vv70=?= <woonki84.lee@samsung.com>
-Cc: linux-wireless@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, kgene.kim@samsung.com
 
-Hi WoonKi,
+On Thu, May 24, 2012 at 1:47 AM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
 
-On Tue, Jun 05, 2012 at 04:49:38PM +0900, =EF=BF=BD=CC=BF=EF=BF=BD=EF=BF=
-=BD=EF=BF=BD wrote:
-> This is a driver for the S3FHRN2 NFC device. the driver is just a
-> proxy getting SHDLC/HCI frames from a userspace stack.
->=20
-> Signed-off-by: WoonKi Lee <woonki84.lee@samsung.com>
-NACK from me. We started the NFC subsystem to avoid having a new and di=
-fferent
-ad-hoc API for each and every NFC driver, and that's what you're doing =
-right
-here.
-Until this driver gets converted to the kernel NFC APIs, it should live=
- in the
-staging directory.
+> Pinctrl driver, when enabled, registers all the gpio pins and hence the
+> registration of gpio pins by this driver can be skipped.
+>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-Cheers,
-Samuel.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
---=20
-Intel Open Source Technology Centre
-http://oss.intel.com/
+I guess it's already applied... sorry for taking so long time
+to respond.
+
+Yours,
+Linus Walleij
