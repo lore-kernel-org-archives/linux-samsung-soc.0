@@ -1,56 +1,78 @@
-From: =?utf-8?B?7J207Jq06riw?= <woonki84.lee@samsung.com>
-Subject: RE: [PATCH] NFC: Driver for SAMSUNG S3FHRN2 NFC Chip.
-Date: Thu, 07 Jun 2012 10:10:24 +0900
-Message-ID: <000701cd444a$514a39a0$f3deace0$%lee@samsung.com>
-References: <001201cd42ef$c283d8d0$478b8a70$%lee@samsung.com>
- <20120605085919.GI27105@sortiz-mobl>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: [PATCH] ARM: s3c24xx: remove unused header
+Date: Thu, 07 Jun 2012 16:15:40 +0200
+Message-ID: <1339078540.25798.13.camel@x61.thuisdomein>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:32683 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752217Ab2FGBK0 convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 6 Jun 2012 21:10:26 -0400
-In-reply-to: <20120605085919.GI27105@sortiz-mobl>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Samuel Ortiz' <sameo@linux.intel.com>
-Cc: linux-wireless@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, kgene.kim@samsung.com
 
-Hello Samuel.
+Since (at least) v2.6.12-rc2 there has been a bast-pmu.h header in the
+tree. Currently it can be found at
+arch/arm/mach-s3c24xx/include/mach/bast-pmu.h.
 
->=20
-> Hi WoonKi,
->=20
-> On Tue, Jun 05, 2012 at 04:49:38PM +0900, =EF=BF=BD=CC=BF=EF=BF=BD=EF=
-=BF=BD=EF=BF=BD wrote:
-> > This is a driver for the S3FHRN2 NFC device. the driver is just a
-> > proxy getting SHDLC/HCI frames from a userspace stack.
-> >
-> > Signed-off-by: WoonKi Lee <woonki84.lee@samsung.com>
-> NACK from me. We started the NFC subsystem to avoid having a new and =
-different
-> ad-hoc API for each and every NFC driver, and that's what you're doin=
-g right
-> here.
-> Until this driver gets converted to the kernel NFC APIs, it should li=
-ve in the
-> staging directory.
->=20
+It seems that during that entire period nothing included that header and
+that none of the named constants it provided were ever used. That header
+can safely be removed.
 
-Ok, I see.
-I wonder that if I am able to use NFC API except HCI/SHDLC.
-I do not have any API of HCI/SHDLC. This driver assumes the upper layer=
- of kernel
-supports them.
-Please let me know if I have to use HCI/SHDLC components of NFC subsyst=
-em.
+Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+---
+Tested with "git grep". But it's again hard to imagine how this could
+break anything.
 
-Thank you for your review.
+ arch/arm/mach-s3c24xx/include/mach/bast-pmu.h |   40 -------------------------
+ 1 files changed, 0 insertions(+), 40 deletions(-)
+ delete mode 100644 arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
 
-Regards,
-
-WoonKi.
+diff --git a/arch/arm/mach-s3c24xx/include/mach/bast-pmu.h b/arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
+deleted file mode 100644
+index 4c38b39..0000000
+--- a/arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
++++ /dev/null
+@@ -1,40 +0,0 @@
+-/* arch/arm/mach-s3c2410/include/mach/bast-pmu.h
+- *
+- * Copyright (c) 2003-2004 Simtec Electronics
+- *	Ben Dooks <ben@simtec.co.uk>
+- *	Vincent Sanders <vince@simtec.co.uk>
+- *
+- * Machine BAST - Power Management chip
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+-*/
+-
+-#ifndef __ASM_ARCH_BASTPMU_H
+-#define __ASM_ARCH_BASTPMU_H "08_OCT_2004"
+-
+-#define BASTPMU_REG_IDENT	(0x00)
+-#define BASTPMU_REG_VERSION	(0x01)
+-#define BASTPMU_REG_DDCCTRL	(0x02)
+-#define BASTPMU_REG_POWER	(0x03)
+-#define BASTPMU_REG_RESET	(0x04)
+-#define BASTPMU_REG_GWO		(0x05)
+-#define BASTPMU_REG_WOL		(0x06)
+-#define BASTPMU_REG_WOR		(0x07)
+-#define BASTPMU_REG_UID		(0x09)
+-
+-#define BASTPMU_EEPROM		(0xC0)
+-
+-#define BASTPMU_EEP_UID		(BASTPMU_EEPROM + 0)
+-#define BASTPMU_EEP_WOL		(BASTPMU_EEPROM + 8)
+-#define BASTPMU_EEP_WOR		(BASTPMU_EEPROM + 9)
+-
+-#define BASTPMU_IDENT_0		0x53
+-#define BASTPMU_IDENT_1		0x42
+-#define BASTPMU_IDENT_2		0x50
+-#define BASTPMU_IDENT_3		0x4d
+-
+-#define BASTPMU_RESET_GUARD	(0x55)
+-
+-#endif /* __ASM_ARCH_BASTPMU_H */
+-- 
+1.7.7.6
