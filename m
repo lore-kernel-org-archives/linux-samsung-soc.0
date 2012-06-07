@@ -1,55 +1,56 @@
-From: =?utf-8?B?7J207Jq06riw?= <woonki84.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: =?utf-8?B?7J207Jq06riw?= <woonki84.lee@samsung.com>
 Subject: RE: [PATCH] NFC: Driver for SAMSUNG S3FHRN2 NFC Chip.
-Date: Thu, 07 Jun 2012 09:40:11 +0900
-Message-ID: <000601cd4446$18d0a9a0$4a71fce0$%lee@samsung.com>
+Date: Thu, 07 Jun 2012 10:10:24 +0900
+Message-ID: <000701cd444a$514a39a0$f3deace0$%lee@samsung.com>
 References: <001201cd42ef$c283d8d0$478b8a70$%lee@samsung.com>
- <1338885523.1817.101.camel@aeonflux>
+ <20120605085919.GI27105@sortiz-mobl>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1338885523.1817.101.camel@aeonflux>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:32683 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752217Ab2FGBK0 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 6 Jun 2012 21:10:26 -0400
+In-reply-to: <20120605085919.GI27105@sortiz-mobl>
 Content-language: ko
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Marcel Holtmann' <marcel-kz+m5ild9QBg9hUCZPvPmw@public.gmane.org>
-Cc: linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, lauro.venancio-430g2QfJUUCGglJvpFV4uA@public.gmane.org, aloisio.almeida-430g2QfJUUCGglJvpFV4uA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Samuel Ortiz' <sameo@linux.intel.com>
+Cc: linux-wireless@vger.kernel.org, linux-samsung-soc@vger.kernel.org, lauro.venancio@openbossa.org, aloisio.almeida@openbossa.org, kgene.kim@samsung.com
 
-Hello,
+Hello Samuel.
 
-> 
+>=20
+> Hi WoonKi,
+>=20
+> On Tue, Jun 05, 2012 at 04:49:38PM +0900, =EF=BF=BD=CC=BF=EF=BF=BD=EF=
+=BF=BD=EF=BF=BD wrote:
 > > This is a driver for the S3FHRN2 NFC device. the driver is just a
 > > proxy getting SHDLC/HCI frames from a userspace stack.
-> 
-> <snip>
-> 
-> > +
-> > +	info->miscdev.minor = MISC_DYNAMIC_MINOR;
-> > +	info->miscdev.name = S3FHRN2_DRIVER_NAME;
-> > +	info->miscdev.fops = &s3fhrn2_fops;
-> > +	info->miscdev.parent = &client->dev;
-> > +	ret = misc_register(&info->miscdev);
-> > +	if (ret < 0) {
-> > +		dev_err(&client->dev, "failed to register Device\n");
-> > +		goto err_dev_reg;
-> > +	}
-> 
-> instead of creating a misc character device, I would prefer that this
-> gets integrated as driver for the NFC subsystem.
-> 
-> We do not want to have shim NFC drivers in the kernel anymore.
-> 
+> >
+> > Signed-off-by: WoonKi Lee <woonki84.lee@samsung.com>
+> NACK from me. We started the NFC subsystem to avoid having a new and =
+different
+> ad-hoc API for each and every NFC driver, and that's what you're doin=
+g right
+> here.
+> Until this driver gets converted to the kernel NFC APIs, it should li=
+ve in the
+> staging directory.
+>=20
 
-Ok, I think you are right.
-I will submit again after I change misc character device to nfc device
-of NFC subsystem.
+Ok, I see.
+I wonder that if I am able to use NFC API except HCI/SHDLC.
+I do not have any API of HCI/SHDLC. This driver assumes the upper layer=
+ of kernel
+supports them.
+Please let me know if I have to use HCI/SHDLC components of NFC subsyst=
+em.
+
 Thank you for your review.
 
-Regards
+Regards,
 
-Woonki.
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+WoonKi.
