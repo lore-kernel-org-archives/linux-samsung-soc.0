@@ -1,50 +1,55 @@
-From: Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH 1/3] pinctrl: add samsung pinctrl and gpiolib driver
-Date: Fri, 8 Jun 2012 05:32:13 -0700
-Message-ID: <20120608123213.GP12766@atomide.com>
-References: <1337816857-14694-1-git-send-email-thomas.abraham@linaro.org>
- <1337816857-14694-2-git-send-email-thomas.abraham@linaro.org>
- <CACRpkdZDnFW4-bDsHN5BOr2e5NLGzouSBY7ngf-VsoPn-SyxAA@mail.gmail.com>
+From: Paul Bolle <pebolle@tiscali.nl>
+Subject: Re: arch/arm/mach-s3c2410/Kconfig is unsourced
+Date: Sun, 10 Jun 2012 11:57:15 +0200
+Message-ID: <1339322235.30984.35.camel@x61.thuisdomein>
+References: <1335090082.1814.27.camel@x61.thuisdomein>
+	 <4F973FB2.1050004@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mho-02-ewr.mailhop.org ([204.13.248.72]:27967 "EHLO
-	mho-02-ewr.mailhop.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756314Ab2FHMcS (ORCPT
+Received: from cpsmtpb-ews10.kpnxchange.com ([213.75.39.15]:3195 "EHLO
+	cpsmtpb-ews10.kpnxchange.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751205Ab2FJJ5R (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 8 Jun 2012 08:32:18 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdZDnFW4-bDsHN5BOr2e5NLGzouSBY7ngf-VsoPn-SyxAA@mail.gmail.com>
+	Sun, 10 Jun 2012 05:57:17 -0400
+In-Reply-To: <4F973FB2.1050004@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, kgene.kim@samsung.com, kyungmin.park@samsung.com, patches@linaro.org, Stephen Warren <swarren@wwwdotorg.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Russell King <rmk+kernel@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>, linux-kernel@vger.kernel.org
 
-* Linus Walleij <linus.walleij@linaro.org> [120531 18:40]:
-> On Thu, May 24, 2012 at 7:47 AM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
+On Tue, 2012-04-24 at 17:05 -0700, Kukjin Kim wrote:
+> Paul Bolle wrote:
+> > 0) commit 85fd6d63bf2927b9da7ab1b0d46723bfdb13808c ("ARM: S3C2410: move
+> > mach-s3c2410/* into mach-s3c24xx/") orphaned
+> > arch/arm/mach-s3c2410/Kconfig: currently nothing sources that file in
+> > Linus' tree.
+> >
+> Oops, you're right.
 > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+> > 1) I haven't looked in depth at this, but this made S3C2410_PLLTABLE
+> > disappear from the build system (ie, arch/arm/mach-s3c2410/pll.c is dead
+> > code now). Moreover, this basically turned both "select S3C2410_CPUFREQ
+> > if CPU_FREQ_S3C24XX", under "config CPU_S3C2410", and "select
+> > S3C2410_IOTIMING if S3C2410_CPUFREQ", under "config ARCH_BAST", into
+> > nops (both in arch/arm/mach-s3c24xx/Kconfig).
+> >
+> > 2) So to me it seems the move has only been done half: either more
+> > things needs to be moved or those things can be removed entirely. But
+> > perhaps arch/arm/mach-s3c2410/Kconfig should just be sourced again.
+> >
+> Yes, I think, would be better right now, if we could add just sourcing 
+> mach-s3c2410/Kconfig but as you said, I need to remove entire mach-s3c24 
+> stuff.
 > 
-> It would be nice if some DT person could review the bindings, but if
-> nothing happens
-> I will accept them as-is.
+> Thanks for your pointing out and let me fix it.
 
-Looks OK to me, that's a bit slower way of parsing pins compared to
-just register value pairs but allows naming them. And it was agreed
-that it's up to the driver to define it's binding.
- 
-> This driver is special since it seems to keep all pin, group and
-> function information
-> in the device tree, but not like Tony is doing it in pinctrl-simple,
-> if I understand
-> correctly?
+I reported this issue just after v3.4-rc4 was released. We're now at
+v3.5-rc2 and arch/arm/mach-s3c2410/Kconfig is still unsourced. I'm
+tempted to submit a clean up patch (though I haven't checked what
+currently can be removed because that Kconfig file is still unsourced).
+But perhaps there's a fix pending in some development branch.
 
-Looks like it's using static arrays which I was too using earlier.
-That too should be OK for now, then at some point we can probably
-have something generic to manage the pins for at least some drivers.
 
-Regards,
-
-Tony
- 
+Paul Bolle
