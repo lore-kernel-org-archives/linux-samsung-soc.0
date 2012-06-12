@@ -1,39 +1,38 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: SAMSUNG: Remove description corresponding to a deleted element
-Date: Tue, 12 Jun 2012 11:00:59 +0530
-Message-ID: <1339479059-18527-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: S3C24XX: Remove duplicate header file inclusion
+Date: Tue, 12 Jun 2012 13:56:03 +0530
+Message-ID: <1339489563-30705-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:46137 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751954Ab2FLFmS (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:46157 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751181Ab2FLIhX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 12 Jun 2012 01:42:18 -0400
-Received: by dady13 with SMTP id y13so6382715dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 11 Jun 2012 22:42:18 -0700 (PDT)
+	Tue, 12 Jun 2012 04:37:23 -0400
+Received: by pbbrp8 with SMTP id rp8so493755pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 12 Jun 2012 01:37:22 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, sachin.kamat@linaro.org, patches@linaro.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Commit 3c582647a9f84affd5c86e89d548157c62f8d9ca removed the default_win
-element from the structure, but the description was not removed.
+regs-clock.h header file was included twice.
 
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/plat-samsung/include/plat/fb.h |    1 -
+ arch/arm/mach-s3c24xx/common.c |    1 -
  1 files changed, 0 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-samsung/include/plat/fb.h
-index 536002f..b885322 100644
---- a/arch/arm/plat-samsung/include/plat/fb.h
-+++ b/arch/arm/plat-samsung/include/plat/fb.h
-@@ -43,7 +43,6 @@ struct s3c_fb_pd_win {
-  * @setup_gpio: Setup the external GPIO pins to the right state to transfer
-  *		the data from the display system to the connected display
-  *		device.
-- * @default_win: default window layer number to be used for UI layer.
-  * @vidcon0: The base vidcon0 values to control the panel data format.
-  * @vidcon1: The base vidcon1 values to control the panel data output.
-  * @vtiming: Video timing when connected to a RGB type panel.
+diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
+index 56cdd34..0c9e9a7 100644
+--- a/arch/arm/mach-s3c24xx/common.c
++++ b/arch/arm/mach-s3c24xx/common.c
+@@ -41,7 +41,6 @@
+ #include <asm/mach/arch.h>
+ #include <asm/mach/map.h>
+ 
+-#include <mach/regs-clock.h>
+ #include <mach/regs-gpio.h>
+ #include <plat/regs-serial.h>
+ 
 -- 
 1.7.4.1
