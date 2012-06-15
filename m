@@ -1,64 +1,61 @@
 From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: [PATCH 2/2] ARM: Exynos4: pm_domains: register devices in
- 'need_restore' state
-Date: Fri, 15 Jun 2012 10:54:33 +0200
-Message-ID: <1339750473-32699-3-git-send-email-m.szyprowski@samsung.com>
+Subject: [PATCH 1/2] ARM: Exynos4: read initial state of power domain from hw
+ registers
+Date: Fri, 15 Jun 2012 10:54:32 +0200
+Message-ID: <1339750473-32699-2-git-send-email-m.szyprowski@samsung.com>
 References: <1339750473-32699-1-git-send-email-m.szyprowski@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42502 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754570Ab2FOIzW (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:42594 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753203Ab2FOIzU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 15 Jun 2012 04:55:22 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Fri, 15 Jun 2012 04:55:20 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M5N00D9TI1Q93I0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jun 2012 17:55:21 +0900 (KST)
+ 17 2011)) with ESMTP id <0M5N00K7RI1QJBG0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jun 2012 17:55:19 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M5N003NNI3RZC00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 15 Jun 2012 17:55:21 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 15 Jun 2012 17:55:19 +0900 (KST)
 In-reply-to: <1339750473-32699-1-git-send-email-m.szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
 
-Commit ca1d72f033 ('PM / Domains: Make it possible to add devices to
-inactive domains') introduced possibility to add devices to inactive
-power domains and added pm_genpd_dev_need_restore() function which lets
-platform core to notify power domain core that the specified device must
-be restored (with its runtime_resume() callback) before first use.
-
-This patch adds the pm_genpd_dev_need_restore() call what brings back
-the suspend/resume behaviour for the client devices known from the
-previous power domain driver (removed by commit 91cfbd4ee0 - 'ARM:
-EXYNOS: Hook up power domains to generic power domain infrastructure').
-Client device drivers relay on that suspend/resume behaviour, thus this
-patch fixes runtime pm operation for client devices.
+Some bootloaders disable unused power domains to reduce power
+consuption. Power domain driver can easily read the actual state from
+the hardware registers instead of assuming that their initial state is
+always 'on'.
 
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 Reviewed-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/pm_domains.c |    4 +++-
- 1 files changed, 3 insertions(+), 1 deletions(-)
+ arch/arm/mach-exynos/pm_domains.c |    9 ++++++---
+ 1 files changed, 6 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-index 0a952a5..373c3c0 100644
+index e9fafcf..0a952a5 100644
 --- a/arch/arm/mach-exynos/pm_domains.c
 +++ b/arch/arm/mach-exynos/pm_domains.c
-@@ -119,7 +119,9 @@ static __init void exynos_pm_add_dev_to_genpd(struct platform_device *pdev,
- 						struct exynos_pm_domain *pd)
- {
- 	if (pdev->dev.bus) {
--		if (pm_genpd_add_device(&pd->pd, &pdev->dev))
-+		if (!pm_genpd_add_device(&pd->pd, &pdev->dev))
-+			pm_genpd_dev_need_restore(&pdev->dev, true);
-+		else
- 			pr_info("%s: error in adding %s device to %s power"
- 				"domain\n", __func__, dev_name(&pdev->dev),
- 				pd->name);
+@@ -151,9 +151,12 @@ static __init int exynos4_pm_init_power_domain(void)
+ 	if (of_have_populated_dt())
+ 		return exynos_pm_dt_parse_domains();
+ 
+-	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++)
+-		pm_genpd_init(&exynos4_pm_domains[idx]->pd, NULL,
+-				exynos4_pm_domains[idx]->is_off);
++	for (idx = 0; idx < ARRAY_SIZE(exynos4_pm_domains); idx++) {
++		struct exynos_pm_domain *pd = exynos4_pm_domains[idx];
++		int on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
++
++		pm_genpd_init(&pd->pd, NULL, !on);
++	}
+ 
+ #ifdef CONFIG_S5P_DEV_FIMD0
+ 	exynos_pm_add_dev_to_genpd(&s5p_device_fimd0, &exynos4_pd_lcd0);
 -- 
 1.7.1.569.g6f426
