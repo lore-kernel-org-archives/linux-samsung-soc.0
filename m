@@ -1,150 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/2] serial: samsung: Remove NULL checking for baud clock
-Date: Tue, 19 Jun 2012 17:52:07 +0900
-Message-ID: <01a401cd4df8$ce633a10$6b29ae30$%kim@samsung.com>
-References: <002d01cd3988$c0d914c0$428b3e40$%kim@samsung.com>
+Subject: RE: [PATCH 1/1] ARM: S5P64X0: Remove unused variable in dma.c file
+Date: Tue, 19 Jun 2012 17:51:59 +0900
+Message-ID: <01a301cd4df8$c9e700c0$5db50240$%kim@samsung.com>
+References: <1338871088-15668-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-serial-owner@vger.kernel.org>
-In-reply-to: <002d01cd3988$c0d914c0$428b3e40$%kim@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:48165 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753611Ab2FSIw2 convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jun 2012 04:52:28 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M5U00BYKWJAA3C0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:52:00 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M5U00HFBWMO3Y50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:52:00 +0900 (KST)
+In-reply-to: <1338871088-15668-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
-Sender: linux-serial-owner@vger.kernel.org
-To: 'Kyoungil Kim' <ki0351.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: 'Alan Cox' <alan@linux.intel.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: jaswinder.singh@linaro.org, patches@linaro.org
 
-Kyoungil Kim wrote:
-> 
-> Kyoungil Kim wrote:
-> 
-> I missed following.
-> 
-> Russell King suggested:
-> 
-> As I said, drivers have no business interpreting anything but IS_ERR(clk)
-> as being an error.  They should not make any other
-> assumptions.
-> 
-> Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> 
-> > Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
-> > ---
-> >  drivers/tty/serial/samsung.c |   21 ++++++++++++---------
-> >  1 files changed, 12 insertions(+), 9 deletions(-)
-> >
-> > diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> > index d8b0aee..5668538 100644
-> > --- a/drivers/tty/serial/samsung.c
-> > +++ b/drivers/tty/serial/samsung.c
-> > @@ -529,7 +529,7 @@ static void s3c24xx_serial_pm(struct uart_port
-*port,
-> unsigned int level,
-> >
-> >  	switch (level) {
-> >  	case 3:
-> > -		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
-> > +		if (!IS_ERR(ourport->baudclk))
-> >  			clk_disable(ourport->baudclk);
-> >
-> >  		clk_disable(ourport->clk);
-> > @@ -538,7 +538,7 @@ static void s3c24xx_serial_pm(struct uart_port
-*port,
-> unsigned int level,
-> >  	case 0:
-> >  		clk_enable(ourport->clk);
-> >
-> > -		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
-> > +		if (!IS_ERR(ourport->baudclk))
-> >  			clk_enable(ourport->baudclk);
-> >
-> >  		break;
-> > @@ -604,7 +604,6 @@ static unsigned int s3c24xx_serial_getclk(struct
-> s3c24xx_uart_port *ourport,
-> >  	char clkname[MAX_CLK_NAME_LENGTH];
-> >  	int calc_deviation, deviation = (1 << 30) - 1;
-> >
-> > -	*best_clk = NULL;
-> >  	clk_sel = (ourport->cfg->clk_sel) ? ourport->cfg->clk_sel :
-> >  			ourport->info->def_clk_sel;
-> >  	for (cnt = 0; cnt < info->num_clks; cnt++) {
-> > @@ -613,7 +612,7 @@ static unsigned int s3c24xx_serial_getclk(struct
-> s3c24xx_uart_port *ourport,
-> >
-> >  		sprintf(clkname, "clk_uart_baud%d", cnt);
-> >  		clk = clk_get(ourport->port.dev, clkname);
-> > -		if (IS_ERR_OR_NULL(clk))
-> > +		if (IS_ERR(clk))
-> >  			continue;
-> >
-> >  		rate = clk_get_rate(clk);
-> > @@ -684,7 +683,7 @@ static void s3c24xx_serial_set_termios(struct
-> uart_port *port,
-> >  {
-> >  	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
-> >  	struct s3c24xx_uart_port *ourport = to_ourport(port);
-> > -	struct clk *clk = NULL;
-> > +	struct clk *clk = ERR_PTR(-EINVAL);
-> >  	unsigned long flags;
-> >  	unsigned int baud, quot, clk_sel = 0;
-> >  	unsigned int ulcon;
-> > @@ -705,7 +704,7 @@ static void s3c24xx_serial_set_termios(struct
-> uart_port *port,
-> >  	quot = s3c24xx_serial_getclk(ourport, baud, &clk, &clk_sel);
-> >  	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
-> >  		quot = port->custom_divisor;
-> > -	if (!clk)
-> > +	if (IS_ERR(clk))
-> >  		return;
-> >
-> >  	/* check to see if we need  to change clock source */
-> > @@ -713,9 +712,9 @@ static void s3c24xx_serial_set_termios(struct
-> uart_port *port,
-> >  	if (ourport->baudclk != clk) {
-> >  		s3c24xx_serial_setsource(port, clk_sel);
-> >
-> > -		if (ourport->baudclk != NULL && !IS_ERR(ourport->baudclk)) {
-> > +		if (!IS_ERR(ourport->baudclk)) {
-> >  			clk_disable(ourport->baudclk);
-> > -			ourport->baudclk  = NULL;
-> > +			ourport->baudclk = ERR_PTR(-EINVAL);
-> >  		}
-> >
-> >  		clk_enable(clk);
-> > @@ -1160,6 +1159,9 @@ static ssize_t s3c24xx_serial_show_clksrc(struct
-> device *dev,
-> >  	struct uart_port *port = s3c24xx_dev_to_port(dev);
-> >  	struct s3c24xx_uart_port *ourport = to_ourport(port);
-> >
-> > +	if (IS_ERR(ourport->baudclk))
-> > +		return -EINVAL;
-> > +
-> >  	return snprintf(buf, PAGE_SIZE, "* %s\n", ourport->baudclk->name);
-> >  }
-> >
-> > @@ -1200,6 +1202,7 @@ static int s3c24xx_serial_probe(struct
-> platform_device *pdev)
-> >  		return -ENODEV;
-> >  	}
-> >
-> > +	ourport->baudclk = ERR_PTR(-EINVAL);
-> >  	ourport->info = ourport->drv_data->info;
-> >  	ourport->cfg = (pdev->dev.platform_data) ?
-> >  			(struct s3c2410_uartcfg *)pdev->dev.platform_data :
-> > @@ -1387,7 +1390,7 @@ s3c24xx_serial_get_options(struct uart_port *port,
-> int *baud,
-> >  		sprintf(clk_name, "clk_uart_baud%d", clk_sel);
-> >
-> >  		clk = clk_get(port->dev, clk_name);
-> > -		if (!IS_ERR(clk) && clk != NULL)
-> > +		if (!IS_ERR(clk))
-> >  			rate = clk_get_rate(clk);
-> >  		else
-> >  			rate = 1;
-> > --
-> > 1.7.1
+Sachin Kamat wrote:
+>
+> Fixes the following warning:
+> arch/arm/mach-s5p64x0/dma.c:39:12: warning: =E2=80=98dma_dmamask=E2=80=
+=99 defined but not
+> used [-Wunused-variable]
+>=20
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/mach-s5p64x0/dma.c |    2 --
+>  1 files changed, 0 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-s5p64x0/dma.c b/arch/arm/mach-s5p64x0/dma.=
+c
+> index 2ee5dc0..9c4ce08 100644
+> --- a/arch/arm/mach-s5p64x0/dma.c
+> +++ b/arch/arm/mach-s5p64x0/dma.c
+> @@ -36,8 +36,6 @@
+>  #include <plat/devs.h>
+>  #include <plat/irqs.h>
+>=20
+> -static u64 dma_dmamask =3D DMA_BIT_MASK(32);
+> -
+>  static u8 s5p6440_pdma_peri[] =3D {
+>  	DMACH_UART0_RX,
+>  	DMACH_UART0_TX,
+> --
+> 1.7.4.1
 
-Looks ok to me, will apply.
+OK, will apply.
 Thanks.
 
 Best regards,
@@ -152,4 +66,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
