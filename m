@@ -1,56 +1,37 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] regulator: Add ramp_delay to regulator constraints to
- get used as a configurable parameter.
-Date: Sun, 17 Jun 2012 21:14:19 +0100
-Message-ID: <20120617201419.GU4267@opensource.wolfsonmicro.com>
-References: <1339416668-17028-1-git-send-email-yadi.brar@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="pzbqGaOtRNiVr7w4"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1339416668-17028-1-git-send-email-yadi.brar@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Yadwinder Singh Brar <yadi.brar01@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lrg@ti.com>, Yadwinder Singh Brar <yadi.brar@samsung.com>, Axel Lin <axel.lin@gmail.com>
+From: Boojin Kim <boojin.kim@samsung.com>
+Subject: RE: [PATCH 3/3] ASoC: follow the updated samsung DMA common operations
+Date: Tue, 19 Jun 2012 15:30:00 +0900
+Message-ID: <011101cd4de4$f41f59f0$dc5e0dd0$%kim@samsung.com>
+References: <011701cd42eb$a4209940$ec61cbc0$%kim@samsung.com>
+ <20120607234540.GU14525@opensource.wolfsonmicro.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:55829 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753756Ab2FSGaD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 19 Jun 2012 02:30:03 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M5U00N1LQ1345S0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 15:30:01 +0900 (KST)
+Received: from DOBOOJINKIM03 ([12.23.119.77])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M5U00CHUQ207160@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 15:30:00 +0900 (KST)
+In-reply-to: <20120607234540.GU14525@opensource.wolfsonmicro.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, 'Russell King - ARM Linux' <linux@arm.linux.org.uk>, 'Vinod Koul' <vinod.koul@intel.com>, 'Grant Likely' <grant.likely@secretlab.ca>, kgene.kim@samsung.com, spi-devel-general@lists.sourceforge.net, 'Dan Williams' <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
 
-
---pzbqGaOtRNiVr7w4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Mon, Jun 11, 2012 at 05:41:08PM +0530, Yadwinder Singh Brar wrote:
-> For some hardwares ramp_delay for BUCKs is a configurable parameter which can
-> be configured through DT or board file.This patch adds ramp_delay to regulator
-> constraints and allow user to configure it for regulators which supports this
-> feature, through DT or board file. It will provide two ways of setting the
-> ramp_delay for a regulator:
-
-Applied, thanks - sorry about the delay, you submitted the day before I
-flew back from China.  I rewrote the subject line to fit in 80 columns,
-otherwise things like git log and pull requests look odd.
-
---pzbqGaOtRNiVr7w4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP3jqVAAoJEBus8iNuMP3dPh8P/1O1yqphLz6fTHVkISPYzZVR
-PIOeQLyTWEzdIeJFM4CMOC+uv4bq/oqBk2wtPSUZpklWQSrwFVpUcKJfHDvPV7Fl
-6GBSIcUymNJ/MfUjb+FaCpezaMIB6zWFDkDmDWqTxPZzKhpRrD0csbZHflVyVqj3
-TvNJnNswX3o84nbxrQjGeQ51MYVi6fRl4Y5LjawDStOxpPoOGbf9FjoL60psGjiF
-HhTZsY8v/X0b1z69d4rrow6uO1VU+X1FLdBnpqYVCoBjub0vIvrBvqjtsBBJBYsx
-B4MtHOzVA2SJsbr+Aq8loBEVjLgh8i4XcaPCO/PIqeL7AHeJBGthuwLN9KhqIo14
-/xdjgOSCQzPAwJ5SIb0gXQxuEcRcmuZt/X10cds25U4t6cosoVr4l7wFWiIygPI8
-JXKpLy4a4fXolHVvmGmXG5h1z00arNzB1W2sugne4cNkfA3BcvoVYwNgpJa1yAu1
-IZlfl4Fl2UGrM9GxV0XDX1Ye19Cesh/5Y2rvkU8KHFswEOwrs/WiILl5C7kk6TrW
-aYOF4l5RDF5m7socq/jl52EBj0aT/PnAmyB/WbL3C463XhznH4rJ+vWb0u/Dj8g+
-OaJ2psnP/OFD+oHFQNJ3PIcxeuRto8dmRHj78oTNMXS/K4EV3U/aP9qkfQAKGAhK
-ZzBVVfCoZAUBqxRB3Izt
-=uUXM
------END PGP SIGNATURE-----
-
---pzbqGaOtRNiVr7w4--
+Mark Brown wrote
+> > This patch uses config() function to configure DMA transmit options.
+>
+> Acked-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+>
+> It'd be good if we could get all the older Samsung platforms moved over to dmaengine...
+Thanks for your ack :)
+And, Our engineer's preparing to move the older Samsung dma driver into dmaengine.
