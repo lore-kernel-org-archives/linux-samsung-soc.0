@@ -1,95 +1,78 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: s3c24xx: remove unused header
-Date: Tue, 19 Jun 2012 17:51:02 +0900
-Message-ID: <019c01cd4df8$a80f5e20$f82e1a60$%kim@samsung.com>
-References: <1339078540.25798.13.camel@x61.thuisdomein>
+Subject: RE: [PATCH 1/1] ARM: EXYNOS: Update keypad entries for SMDK4X12
+Date: Tue, 19 Jun 2012 17:51:08 +0900
+Message-ID: <019d01cd4df8$ab313790$0193a6b0$%kim@samsung.com>
+References: <1337752798-6987-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:47445 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:47481 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752251Ab2FSIvH convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1753952Ab2FSIvJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Jun 2012 04:51:07 -0400
-In-reply-to: <1339078540.25798.13.camel@x61.thuisdomein>
+	Tue, 19 Jun 2012 04:51:09 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M5U00BYKWJAA3C0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:51:08 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M5U00GLJWL84380@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:51:08 +0900 (KST)
+In-reply-to: <1337752798-6987-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-Paul Bolle wrote:
+Sachin Kamat wrote:
 > 
-> Since (at least) v2.6.12-rc2 there has been a bast-pmu.h header in the
-> tree. Currently it can be found at
-> arch/arm/mach-s3c24xx/include/mach/bast-pmu.h.
+> Keypad entries are updated as per the latest revision of the board.
 > 
-> It seems that during that entire period nothing included that header and
-> that none of the named constants it provided were ever used. That header
-> can safely be removed.
-> 
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
-> Tested with "git grep". But it's again hard to imagine how this could
-> break anything.
+>  arch/arm/mach-exynos/mach-smdk4x12.c |   10 ++++++----
+>  1 files changed, 6 insertions(+), 4 deletions(-)
 > 
->  arch/arm/mach-s3c24xx/include/mach/bast-pmu.h |   40 ---------------------
-> ----
->  1 files changed, 0 insertions(+), 40 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
+> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-
+> exynos/mach-smdk4x12.c
+> index fe772d8..31b105f 100644
+> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
+> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+> @@ -219,8 +219,10 @@ static struct platform_pwm_backlight_data
+> smdk4x12_bl_data = {
 > 
-> diff --git a/arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
-> b/arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
-> deleted file mode 100644
-> index 4c38b39..0000000
-> --- a/arch/arm/mach-s3c24xx/include/mach/bast-pmu.h
-> +++ /dev/null
-> @@ -1,40 +0,0 @@
-> -/* arch/arm/mach-s3c2410/include/mach/bast-pmu.h
-> - *
-> - * Copyright (c) 2003-2004 Simtec Electronics
-> - *	Ben Dooks <ben@simtec.co.uk>
-> - *	Vincent Sanders <vince@simtec.co.uk>
-> - *
-> - * Machine BAST - Power Management chip
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#ifndef __ASM_ARCH_BASTPMU_H
-> -#define __ASM_ARCH_BASTPMU_H "08_OCT_2004"
-> -
-> -#define BASTPMU_REG_IDENT	(0x00)
-> -#define BASTPMU_REG_VERSION	(0x01)
-> -#define BASTPMU_REG_DDCCTRL	(0x02)
-> -#define BASTPMU_REG_POWER	(0x03)
-> -#define BASTPMU_REG_RESET	(0x04)
-> -#define BASTPMU_REG_GWO		(0x05)
-> -#define BASTPMU_REG_WOL		(0x06)
-> -#define BASTPMU_REG_WOR		(0x07)
-> -#define BASTPMU_REG_UID		(0x09)
-> -
-> -#define BASTPMU_EEPROM		(0xC0)
-> -
-> -#define BASTPMU_EEP_UID		(BASTPMU_EEPROM + 0)
-> -#define BASTPMU_EEP_WOL		(BASTPMU_EEPROM + 8)
-> -#define BASTPMU_EEP_WOR		(BASTPMU_EEPROM + 9)
-> -
-> -#define BASTPMU_IDENT_0		0x53
-> -#define BASTPMU_IDENT_1		0x42
-> -#define BASTPMU_IDENT_2		0x50
-> -#define BASTPMU_IDENT_3		0x4d
-> -
-> -#define BASTPMU_RESET_GUARD	(0x55)
-> -
-> -#endif /* __ASM_ARCH_BASTPMU_H */
+>  static uint32_t smdk4x12_keymap[] __initdata = {
+>  	/* KEY(row, col, keycode) */
+> -	KEY(1, 0, KEY_D), KEY(1, 1, KEY_A), KEY(1, 2, KEY_B),
+> -	KEY(1, 3, KEY_E), KEY(1, 4, KEY_C)
+> +	KEY(1, 3, KEY_1), KEY(1, 4, KEY_2), KEY(1, 5, KEY_3),
+> +	KEY(1, 6, KEY_4), KEY(1, 7, KEY_5),
+> +	KEY(2, 5, KEY_D), KEY(2, 6, KEY_A), KEY(2, 7, KEY_B),
+> +	KEY(0, 7, KEY_E), KEY(0, 5, KEY_C)
+>  };
+> 
+>  static struct matrix_keymap_data smdk4x12_keymap_data __initdata = {
+> @@ -230,8 +232,8 @@ static struct matrix_keymap_data smdk4x12_keymap_data
+> __initdata = {
+> 
+>  static struct samsung_keypad_platdata smdk4x12_keypad_data __initdata = {
+>  	.keymap_data	= &smdk4x12_keymap_data,
+> -	.rows		= 2,
+> -	.cols		= 5,
+> +	.rows		= 3,
+> +	.cols		= 8,
+>  };
+> 
+>  static struct platform_device *smdk4x12_devices[] __initdata = {
 > --
-> 1.7.7.6
+> 1.7.4.1
 
-Yes, I think, no longer need above header. Will apply this into cleanup branch.
+Looks ok, will apply.
 Thanks.
 
 Best regards,
