@@ -1,70 +1,181 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/1] ARM: SAMSUNG: Remove description corresponding to a
- deleted element
-Date: Tue, 19 Jun 2012 17:51:48 +0900
-Message-ID: <01a101cd4df8$c329ff30$497dfd90$%kim@samsung.com>
-References: <1339479059-18527-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH-Resend 1/2] ARM: EXYNOS: Update HSOTG PHY clock setting for
+ Exynos4x12
+Date: Tue, 19 Jun 2012 17:51:16 +0900
+Message-ID: <019e01cd4df8$b01a8a90$104f9fb0$%kim@samsung.com>
+References: <1337849726-17744-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:9742 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753611Ab2FSIwp (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:60444 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753580Ab2FSIxG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 19 Jun 2012 04:52:45 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Tue, 19 Jun 2012 04:53:06 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M5U004DNWELQO60@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:51:49 +0900 (KST)
+ 17 2011)) with ESMTP id <0M5U009UYWL33RB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:51:19 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M5U00H39WMCVE10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:51:49 +0900 (KST)
-In-reply-to: <1339479059-18527-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0M5U00HA7WLG3Y50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 19 Jun 2012 17:51:17 +0900 (KST)
+In-reply-to: <1337849726-17744-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: thomas.abraham@linaro.org, patches@linaro.org
+Cc: patches@linaro.org
 
 Sachin Kamat wrote:
 > 
-> Commit 3c582647a9f84affd5c86e89d548157c62f8d9ca removed the default_win
-
-In this case, 8 or 12 digits commit id is enough and please explain the
-subject like following next time.
-
-Commit 3c582647a9f8 ("video: s3c-fb: remove 'default_win' element from
-platform data")...
-
-> element from the structure, but the description was not removed.
+> Adds clock setting entries for Exynos4212 and Exynos4412 platforms.
 > 
 > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
->  arch/arm/plat-samsung/include/plat/fb.h |    1 -
->  1 files changed, 0 insertions(+), 1 deletions(-)
+>  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   20 ++++++--
+>  arch/arm/mach-exynos/setup-usb-phy.c             |   55
+++++++++++++++++-----
+>  arch/arm/plat-samsung/include/plat/cpu.h         |    4 ++
+>  3 files changed, 61 insertions(+), 18 deletions(-)
 > 
-> diff --git a/arch/arm/plat-samsung/include/plat/fb.h b/arch/arm/plat-
-> samsung/include/plat/fb.h
-> index 536002f..b885322 100644
-> --- a/arch/arm/plat-samsung/include/plat/fb.h
-> +++ b/arch/arm/plat-samsung/include/plat/fb.h
-> @@ -43,7 +43,6 @@ struct s3c_fb_pd_win {
->   * @setup_gpio: Setup the external GPIO pins to the right state to
-> transfer
->   *		the data from the display system to the connected display
->   *		device.
-> - * @default_win: default window layer number to be used for UI layer.
->   * @vidcon0: The base vidcon0 values to control the panel data format.
->   * @vidcon1: The base vidcon1 values to control the panel data output.
->   * @vtiming: Video timing when connected to a RGB type panel.
+> diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+> b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+> index c337cf3..0727773 100644
+> --- a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+> +++ b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
+> @@ -35,11 +35,21 @@
+>  #define PHY1_COMMON_ON_N		(1 << 7)
+>  #define PHY0_COMMON_ON_N		(1 << 4)
+>  #define PHY0_ID_PULLUP			(1 << 2)
+> -#define CLKSEL_MASK			(0x3 << 0)
+> -#define CLKSEL_SHIFT			(0)
+> -#define CLKSEL_48M			(0x0 << 0)
+> -#define CLKSEL_12M			(0x2 << 0)
+> -#define CLKSEL_24M			(0x3 << 0)
+> +
+> +#define EXYNOS4_CLKSEL_SHIFT		(0)
+> +
+> +#define EXYNOS4210_CLKSEL_MASK		(0x3 << 0)
+> +#define EXYNOS4210_CLKSEL_48M		(0x0 << 0)
+> +#define EXYNOS4210_CLKSEL_12M		(0x2 << 0)
+> +#define EXYNOS4210_CLKSEL_24M		(0x3 << 0)
+> +
+> +#define EXYNOS4X12_CLKSEL_MASK		(0x7 << 0)
+> +#define EXYNOS4X12_CLKSEL_9600K		(0x0 << 0)
+> +#define EXYNOS4X12_CLKSEL_10M		(0x1 << 0)
+> +#define EXYNOS4X12_CLKSEL_12M		(0x2 << 0)
+> +#define EXYNOS4X12_CLKSEL_19200K	(0x3 << 0)
+> +#define EXYNOS4X12_CLKSEL_20M		(0x4 << 0)
+> +#define EXYNOS4X12_CLKSEL_24M		(0x5 << 0)
+> 
+>  #define EXYNOS4_RSTCON			EXYNOS4_HSOTG_PHYREG(0x08)
+>  #define HOST_LINK_PORT_SWRST_MASK	(0xf << 6)
+> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-
+> exynos/setup-usb-phy.c
+> index 1af0a7f..8f90ce0 100644
+> --- a/arch/arm/mach-exynos/setup-usb-phy.c
+> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
+> @@ -31,22 +31,51 @@ static void exynos4210_usb_phy_clkset(struct
+> platform_device *pdev)
+>  	struct clk *xusbxti_clk;
+>  	u32 phyclk;
+> 
+> -	/* set clock frequency for PLL */
+> -	phyclk = readl(EXYNOS4_PHYCLK) & ~CLKSEL_MASK;
+> 
+>  	xusbxti_clk = clk_get(&pdev->dev, "xusbxti");
+>  	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
+> -		switch (clk_get_rate(xusbxti_clk)) {
+> -		case 12 * MHZ:
+> -			phyclk |= CLKSEL_12M;
+> -			break;
+> -		case 24 * MHZ:
+> -			phyclk |= CLKSEL_24M;
+> -			break;
+> -		default:
+> -		case 48 * MHZ:
+> -			/* default reference clock */
+> -			break;
+> +		if (soc_is_exynos4210()) {
+> +			/* set clock frequency for PLL */
+> +			phyclk = readl(EXYNOS4_PHYCLK) &
+> ~EXYNOS4210_CLKSEL_MASK;
+> +
+> +			switch (clk_get_rate(xusbxti_clk)) {
+> +			case 12 * MHZ:
+> +				phyclk |= EXYNOS4210_CLKSEL_12M;
+> +				break;
+> +			case 24 * MHZ:
+> +				phyclk |= EXYNOS4210_CLKSEL_24M;
+> +				break;
+> +			default:
+> +			case 48 * MHZ:
+> +				/* default reference clock */
+
+Shouldn't this 24Mhz? Because the clk_xusbxti.rate is 24Mhz in most board
+file?
+
+> +				break;
+> +			}
+> +		} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
+> +			/* set clock frequency for PLL */
+> +			phyclk = readl(EXYNOS4_PHYCLK) &
+> ~EXYNOS4X12_CLKSEL_MASK;
+> +
+> +			switch (clk_get_rate(xusbxti_clk)) {
+> +			case 9600 * KHZ:
+> +				phyclk |= EXYNOS4X12_CLKSEL_9600K;
+> +				break;
+> +			case 10 * MHZ:
+> +				phyclk |= EXYNOS4X12_CLKSEL_10M;
+> +				break;
+> +			case 12 * MHZ:
+> +				phyclk |= EXYNOS4X12_CLKSEL_12M;
+> +				break;
+> +			case 19200 * KHZ:
+> +				phyclk |= EXYNOS4X12_CLKSEL_19200K;
+> +				break;
+> +			case 20 * MHZ:
+> +				phyclk |= EXYNOS4X12_CLKSEL_20M;
+> +				break;
+
+Please list in order of the value?
+
+
+> +			default:
+> +			case 24 * MHZ:
+> +				/* default reference clock */
+> +				phyclk |= EXYNOS4X12_CLKSEL_24M;
+> +				break;
+> +			}
+>  		}
+>  		clk_put(xusbxti_clk);
+>  	}
+> diff --git a/arch/arm/plat-samsung/include/plat/cpu.h b/arch/arm/plat-
+> samsung/include/plat/cpu.h
+> index 787ceac..6a6ff7e 100644
+> --- a/arch/arm/plat-samsung/include/plat/cpu.h
+> +++ b/arch/arm/plat-samsung/include/plat/cpu.h
+> @@ -132,6 +132,10 @@ IS_SAMSUNG_CPU(exynos5250, EXYNOS5250_SOC_ID,
+> EXYNOS5_SOC_MASK)
+> 
+>  #define IODESC_ENT(x) { (unsigned long)S3C24XX_VA_##x,
+> __phys_to_pfn(S3C24XX_PA_##x), S3C24XX_SZ_##x, MT_DEVICE }
+> 
+> +#ifndef KHZ
+> +#define KHZ (1000)
+> +#endif
+> +
+>  #ifndef MHZ
+>  #define MHZ (1000*1000)
+>  #endif
 > --
 > 1.7.4.1
 
-Will apply after updating commit log I said.
 
 Thanks.
 
