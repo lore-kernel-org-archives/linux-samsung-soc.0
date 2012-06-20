@@ -1,68 +1,54 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] serial: samsung: protect NULL dereference of clock name
-Date: Wed, 20 Jun 2012 13:28:47 +0900
-Message-ID: <029001cd4e9d$2f2af9b0$8d80ed10$%kim@samsung.com>
-References: <001401cd3e3e$644fd3a0$2cef7ae0$%kim@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ARM: SAMSUNG: Fix compilation error
+Date: Wed, 20 Jun 2012 09:49:10 +0530
+Message-ID: <1340165950-8996-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41485 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751169Ab2FTE2s (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:37945 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751169Ab2FTEaw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 00:28:48 -0400
-In-reply-to: <001401cd3e3e$644fd3a0$2cef7ae0$%kim@samsung.com>
-Content-language: ko
+	Wed, 20 Jun 2012 00:30:52 -0400
+Received: by dady13 with SMTP id y13so9296546dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Jun 2012 21:30:52 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kyoungil Kim' <ki0351.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
-Cc: 'Alan Cox' <alan@linux.intel.com>, 'KeyYoung Park' <keyyoung.park@samsung.com>, 'Huisung Kang' <hs1218.kang@samsung.com>, gregkh@linuxfoundation.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Kyoungil Kim wrote:
-> 
-> From: KeyYoung Park <keyyoung.park@samsung.com>
-> 
-> When priting the serial clock source, if clock source name is null,
-> kernel reference NULL point.
-> 
-> Signed-off-by: KeyYoung Park <keyyoung.park@samsung.com>
-> Signed-off-by: Huisung Kang <hs1218.kang@samsung.com>
-> Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+=46ixes the following build error:
+In file included from arch/arm/mach-exynos/include/mach/dma.h:24:0,
+                 from arch/arm/plat-samsung/include/plat/dma-ops.h:17,
+                 from arch/arm/plat-samsung/include/plat/dma.h:128,
+                 from sound/soc/samsung/pcm.c:23:
+arch/arm/plat-samsung/include/plat/dma-pl330.h:106:8: error: redefiniti=
+on of =E2=80=98struct s3c2410_dma_client=E2=80=99
+arch/arm/plat-samsung/include/plat/dma.h:40:8: note: originally defined=
+ here
 
-(Cc'ed Greg)
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/plat-samsung/include/plat/dma.h |    5 +----
+ 1 files changed, 1 insertions(+), 4 deletions(-)
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Greg, could you please pick this up?
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> ---
->  drivers/tty/serial/samsung.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-> index ea76b40..77484e0 100644
-> --- a/drivers/tty/serial/samsung.c
-> +++ b/drivers/tty/serial/samsung.c
-> @@ -1160,7 +1160,8 @@ static ssize_t s3c24xx_serial_show_clksrc(struct
-> device *dev,
->  	struct uart_port *port = s3c24xx_dev_to_port(dev);
->  	struct s3c24xx_uart_port *ourport = to_ourport(port);
-> 
-> -	return snprintf(buf, PAGE_SIZE, "* %s\n", ourport->baudclk->name);
-> +	return snprintf(buf, PAGE_SIZE, "* %s\n",
-> +			ourport->baudclk->name ?: "(null)");
->  }
-> 
->  static DEVICE_ATTR(clock_source, S_IRUGO, s3c24xx_serial_show_clksrc,
-> NULL);
-> --
-> 1.7.1
+diff --git a/arch/arm/plat-samsung/include/plat/dma.h b/arch/arm/plat-s=
+amsung/include/plat/dma.h
+index 7b02143..fdf34bc 100644
+--- a/arch/arm/plat-samsung/include/plat/dma.h
++++ b/arch/arm/plat-samsung/include/plat/dma.h
+@@ -37,10 +37,7 @@ enum s3c2410_chan_op {
+ 	S3C2410_DMAOP_STARTED,		/* indicate channel started */
+ };
+=20
+-struct s3c2410_dma_client {
+-	char                *name;
+-};
+-
++struct s3c2410_dma_client;
+ struct s3c2410_dma_chan;
+ enum dma_ch;
+=20
+--=20
+1.7.4.1
