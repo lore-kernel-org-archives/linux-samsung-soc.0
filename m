@@ -1,186 +1,119 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: remove unused SPI clock headers
-Date: Wed, 20 Jun 2012 14:15:32 +0900
-Message-ID: <029101cd4ea3$b744fd40$25cef7c0$%kim@samsung.com>
-References: <1339616647.30984.174.camel@x61.thuisdomein>
+Subject: RE: [PATCH 3/3] ARM: S5PV210: Add HSOTG support to SMDKV210
+Date: Wed, 20 Jun 2012 14:23:28 +0900
+Message-ID: <02a901cd4ea4$d2d52700$787f7500$%kim@samsung.com>
+References: <1337255655-10633-1-git-send-email-sachin.kamat@linaro.org>
+ <1337255655-10633-4-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64094 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751342Ab2FTFPf (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62635 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753029Ab2FTFXa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 01:15:35 -0400
-In-reply-to: <1339616647.30984.174.camel@x61.thuisdomein>
+	Wed, 20 Jun 2012 01:23:30 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M5W00JOMHJWN9K0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jun 2012 14:23:29 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M5W005ASHN34I60@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 20 Jun 2012 14:23:29 +0900 (KST)
+In-reply-to: <1337255655-10633-4-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-Paul Bolle wrote:
+Sachin Kamat wrote:
 > 
-> Commit 875a59374cd10200ac24f03877ccd8f73af590cc ("ARM: SAMSUNG:
-> Consolidation of SPI platform devices to plat-samsung") deleted all
-> (four) files that included one of the "spi-clocks.h" headers. It seems
-> it was just an oversight to not remove those headers too. They can
-> safely be removed now.
+> Adds S3C-HSOTG support to SMDKV210 board.
 > 
-> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 > ---
-> 0) Only tested by using various git commands on the (history of the)
-> tree.
+>  arch/arm/mach-s5pv210/Kconfig         |    2 ++
+>  arch/arm/mach-s5pv210/mach-smdkv210.c |    8 ++++++++
+>  2 files changed, 10 insertions(+), 0 deletions(-)
 > 
-> 1) The history of arch/arm/mach-exynos/include/mach/spi-clocks.h
-> actually differs from the history of the other four headers. It got
-> added by commit 74ac23a3e4962bf4f935a5579ae08754d21f9d5a ("ARM: EXYNOS:
-> Modified files for SPI consolidation work"). That commit actually got
-> added (very shortly) after commit
-> 875a59374cd10200ac24f03877ccd8f73af590cc removed all files that included
-> spi-clocks.h.
+> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
+> index 88e983b..77185c3 100644
+> --- a/arch/arm/mach-s5pv210/Kconfig
+> +++ b/arch/arm/mach-s5pv210/Kconfig
+> @@ -152,6 +152,7 @@ config MACH_SMDKV210
+>  	select S3C_DEV_I2C1
+>  	select S3C_DEV_I2C2
+>  	select S3C_DEV_RTC
+> +	select S3C_DEV_USB_HSOTG
+>  	select S3C_DEV_WDT
+>  	select S5P_DEV_FIMC0
+>  	select S5P_DEV_FIMC1
+> @@ -170,6 +171,7 @@ config MACH_SMDKV210
+>  	select S5PV210_SETUP_IDE
+>  	select S5PV210_SETUP_KEYPAD
+>  	select S5PV210_SETUP_SDHCI
+> +	select S5PV210_SETUP_USB_PHY
+>  	help
+>  	  Machine support for Samsung SMDKV210
 > 
->  arch/arm/mach-exynos/include/mach/spi-clocks.h  |   16 ----------------
->  arch/arm/mach-s3c64xx/include/mach/spi-clocks.h |   18 ------------------
->  arch/arm/mach-s5p64x0/include/mach/spi-clocks.h |   20 -------------------
-> -
->  arch/arm/mach-s5pc100/include/mach/spi-clocks.h |   18 ------------------
->  arch/arm/mach-s5pv210/include/mach/spi-clocks.h |   17 -----------------
->  5 files changed, 0 insertions(+), 89 deletions(-)
->  delete mode 100644 arch/arm/mach-exynos/include/mach/spi-clocks.h
->  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
->  delete mode 100644 arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
->  delete mode 100644 arch/arm/mach-s5pc100/include/mach/spi-clocks.h
->  delete mode 100644 arch/arm/mach-s5pv210/include/mach/spi-clocks.h
+> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
+> s5pv210/mach-smdkv210.c
+> index 91d4ad8..0041045 100644
+> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
+> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+> @@ -19,6 +19,7 @@
+>  #include <linux/gpio.h>
+>  #include <linux/delay.h>
+>  #include <linux/pwm_backlight.h>
+> +#include <linux/platform_data/s3c-hsotg.h>
 > 
-> diff --git a/arch/arm/mach-exynos/include/mach/spi-clocks.h
-> b/arch/arm/mach-exynos/include/mach/spi-clocks.h
-> deleted file mode 100644
-> index c71a5fb..0000000
-> --- a/arch/arm/mach-exynos/include/mach/spi-clocks.h
-> +++ /dev/null
-> @@ -1,16 +0,0 @@
-> -/* linux/arch/arm/mach-exynos4/include/mach/spi-clocks.h
-> - *
-> - * Copyright (C) 2011 Samsung Electronics Co. Ltd.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - */
-> -
-> -#ifndef __ASM_ARCH_SPI_CLKS_H
-> -#define __ASM_ARCH_SPI_CLKS_H __FILE__
-> -
-> -/* Must source from SCLK_SPI */
-> -#define EXYNOS_SPI_SRCCLK_SCLK		0
-> -
-> -#endif /* __ASM_ARCH_SPI_CLKS_H */
-> diff --git a/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
-> b/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
-> deleted file mode 100644
-> index 9d0c43b..0000000
-> --- a/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
-> +++ /dev/null
-> @@ -1,18 +0,0 @@
-> -/* linux/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
-> - *
-> - * Copyright (C) 2009 Samsung Electronics Ltd.
-> - *	Jaswinder Singh <jassi.brar@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - */
-> -
-> -#ifndef __S3C64XX_PLAT_SPI_CLKS_H
-> -#define __S3C64XX_PLAT_SPI_CLKS_H __FILE__
-> -
-> -#define S3C64XX_SPI_SRCCLK_PCLK		0
-> -#define S3C64XX_SPI_SRCCLK_SPIBUS	1
-> -#define S3C64XX_SPI_SRCCLK_48M		2
-> -
-> -#endif /* __S3C64XX_PLAT_SPI_CLKS_H */
-> diff --git a/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
-> b/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
-> deleted file mode 100644
-> index 170a20a..0000000
-> --- a/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
-> +++ /dev/null
-> @@ -1,20 +0,0 @@
-> -/* linux/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
-> - *
-> - * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
-> - *	Jaswinder Singh <jassi.brar@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#ifndef __ASM_ARCH_SPI_CLKS_H
-> -#define __ASM_ARCH_SPI_CLKS_H __FILE__
-> -
-> -#define S5P64X0_SPI_SRCCLK_PCLK		0
-> -#define S5P64X0_SPI_SRCCLK_SCLK		1
-> -
-> -#endif /* __ASM_ARCH_SPI_CLKS_H */
-> diff --git a/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
-> b/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
-> deleted file mode 100644
-> index 65e4263..0000000
-> --- a/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
-> +++ /dev/null
-> @@ -1,18 +0,0 @@
-> -/* linux/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
-> - *
-> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
-> - *	Jaswinder Singh <jassi.brar@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - */
-> -
-> -#ifndef __S5PC100_PLAT_SPI_CLKS_H
-> -#define __S5PC100_PLAT_SPI_CLKS_H __FILE__
-> -
-> -#define S5PC100_SPI_SRCCLK_PCLK		0
-> -#define S5PC100_SPI_SRCCLK_48M		1
-> -#define S5PC100_SPI_SRCCLK_SPIBUS	2
-> -
-> -#endif /* __S5PC100_PLAT_SPI_CLKS_H */
-> diff --git a/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
-> b/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
-> deleted file mode 100644
-> index 02acded..0000000
-> --- a/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
-> +++ /dev/null
-> @@ -1,17 +0,0 @@
-> -/* linux/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
-> - *
-> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
-> - *	Jaswinder Singh <jassi.brar@samsung.com>
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> - */
-> -
-> -#ifndef __S5PV210_PLAT_SPI_CLKS_H
-> -#define __S5PV210_PLAT_SPI_CLKS_H __FILE__
-> -
-> -#define S5PV210_SPI_SRCCLK_PCLK		0
-> -#define S5PV210_SPI_SRCCLK_SCLK		1
-> -
-> -#endif /* __S5PV210_PLAT_SPI_CLKS_H */
-> --
-> 1.7.7.6
+>  #include <asm/hardware/vic.h>
+>  #include <asm/mach/arch.h>
+> @@ -210,6 +211,9 @@ static struct s3c_fb_platdata smdkv210_lcd0_pdata
+> __initdata = {
+>  	.setup_gpio	= s5pv210_fb_gpio_setup_24bpp,
+>  };
+> 
+> +/* USB OTG */
+> +static struct s3c_hsotg_plat smdkv210_hsotg_pdata;
+> +
+>  static struct platform_device *smdkv210_devices[] __initdata = {
+>  	&s3c_device_adc,
+>  	&s3c_device_cfcon,
+> @@ -223,6 +227,7 @@ static struct platform_device *smdkv210_devices[]
+> __initdata = {
+>  	&s3c_device_i2c2,
+>  	&s3c_device_rtc,
+>  	&s3c_device_ts,
+> +	&s3c_device_usb_hsotg,
+>  	&s3c_device_wdt,
+>  	&s5p_device_fimc0,
+>  	&s5p_device_fimc1,
+> @@ -321,6 +326,9 @@ static void __init smdkv210_machine_init(void)
+> 
+>  	samsung_bl_set(&smdkv210_bl_gpio_info, &smdkv210_bl_data);
+> 
+> +	s3c_hsotg_set_platdata(&smdkv210_hsotg_pdata);
+> +	clk_xusbxti.rate = 24000000;
 
-Yes, looks ok to me and will apply this into cleanup branch.
+Well, you need to fix following with this patch.
+
+arch/arm/mach-s5pv210/mach-smdkv210.c: In function 'smdkv210_machine_init':
+arch/arm/mach-s5pv210/mach-smdkv210.c:323: error: 'clk_xusbxti' undeclared
+(first use in this function)
+arch/arm/mach-s5pv210/mach-smdkv210.c:323: error: (Each undeclared
+identifier is reported only once
+arch/arm/mach-s5pv210/mach-smdkv210.c:323: error: for each function it
+appears in.)
+  AS      arch/arm/lib/backtrace.o
+make[2]: *** [arch/arm/mach-s5pv210/mach-smdkv210.o] Error 1
+make[1]: *** [arch/arm/mach-s5pv210] Error 2
+make[1]: *** Waiting for unfinished jobs....
+
 Thanks.
 
 Best regards,
