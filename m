@@ -1,90 +1,190 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 2/2][Resend] ARM: EXYNOS: Add HSOTG support to SMDK4X12
-Date: Wed, 20 Jun 2012 10:05:17 +0530
-Message-ID: <1340166917-25657-2-git-send-email-sachin.kamat@linaro.org>
-References: <1340166917-25657-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: remove unused SPI clock headers
+Date: Wed, 20 Jun 2012 14:15:32 +0900
+Message-ID: <029101cd4ea3$b744fd40$25cef7c0$%kim@samsung.com>
+References: <1339616647.30984.174.camel@x61.thuisdomein>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:64774 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751419Ab2FTErB (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:64094 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751342Ab2FTFPf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 00:47:01 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rp8so78198pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 19 Jun 2012 21:47:01 -0700 (PDT)
-In-Reply-To: <1340166917-25657-1-git-send-email-sachin.kamat@linaro.org>
+	Wed, 20 Jun 2012 01:15:35 -0400
+In-reply-to: <1339616647.30984.174.camel@x61.thuisdomein>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: 'Paul Bolle' <pebolle@tiscali.nl>, 'Russell King' <linux@arm.linux.org.uk>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-S3C-HSOTG support is added to SMDK4212 and SMDK4412 boards.
+Paul Bolle wrote:
+> 
+> Commit 875a59374cd10200ac24f03877ccd8f73af590cc ("ARM: SAMSUNG:
+> Consolidation of SPI platform devices to plat-samsung") deleted all
+> (four) files that included one of the "spi-clocks.h" headers. It seems
+> it was just an oversight to not remove those headers too. They can
+> safely be removed now.
+> 
+> Signed-off-by: Paul Bolle <pebolle@tiscali.nl>
+> ---
+> 0) Only tested by using various git commands on the (history of the)
+> tree.
+> 
+> 1) The history of arch/arm/mach-exynos/include/mach/spi-clocks.h
+> actually differs from the history of the other four headers. It got
+> added by commit 74ac23a3e4962bf4f935a5579ae08754d21f9d5a ("ARM: EXYNOS:
+> Modified files for SPI consolidation work"). That commit actually got
+> added (very shortly) after commit
+> 875a59374cd10200ac24f03877ccd8f73af590cc removed all files that included
+> spi-clocks.h.
+> 
+>  arch/arm/mach-exynos/include/mach/spi-clocks.h  |   16 ----------------
+>  arch/arm/mach-s3c64xx/include/mach/spi-clocks.h |   18 ------------------
+>  arch/arm/mach-s5p64x0/include/mach/spi-clocks.h |   20 -------------------
+> -
+>  arch/arm/mach-s5pc100/include/mach/spi-clocks.h |   18 ------------------
+>  arch/arm/mach-s5pv210/include/mach/spi-clocks.h |   17 -----------------
+>  5 files changed, 0 insertions(+), 89 deletions(-)
+>  delete mode 100644 arch/arm/mach-exynos/include/mach/spi-clocks.h
+>  delete mode 100644 arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
+>  delete mode 100644 arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
+>  delete mode 100644 arch/arm/mach-s5pc100/include/mach/spi-clocks.h
+>  delete mode 100644 arch/arm/mach-s5pv210/include/mach/spi-clocks.h
+> 
+> diff --git a/arch/arm/mach-exynos/include/mach/spi-clocks.h
+> b/arch/arm/mach-exynos/include/mach/spi-clocks.h
+> deleted file mode 100644
+> index c71a5fb..0000000
+> --- a/arch/arm/mach-exynos/include/mach/spi-clocks.h
+> +++ /dev/null
+> @@ -1,16 +0,0 @@
+> -/* linux/arch/arm/mach-exynos4/include/mach/spi-clocks.h
+> - *
+> - * Copyright (C) 2011 Samsung Electronics Co. Ltd.
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - */
+> -
+> -#ifndef __ASM_ARCH_SPI_CLKS_H
+> -#define __ASM_ARCH_SPI_CLKS_H __FILE__
+> -
+> -/* Must source from SCLK_SPI */
+> -#define EXYNOS_SPI_SRCCLK_SCLK		0
+> -
+> -#endif /* __ASM_ARCH_SPI_CLKS_H */
+> diff --git a/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
+> b/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
+> deleted file mode 100644
+> index 9d0c43b..0000000
+> --- a/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
+> +++ /dev/null
+> @@ -1,18 +0,0 @@
+> -/* linux/arch/arm/mach-s3c64xx/include/mach/spi-clocks.h
+> - *
+> - * Copyright (C) 2009 Samsung Electronics Ltd.
+> - *	Jaswinder Singh <jassi.brar@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - */
+> -
+> -#ifndef __S3C64XX_PLAT_SPI_CLKS_H
+> -#define __S3C64XX_PLAT_SPI_CLKS_H __FILE__
+> -
+> -#define S3C64XX_SPI_SRCCLK_PCLK		0
+> -#define S3C64XX_SPI_SRCCLK_SPIBUS	1
+> -#define S3C64XX_SPI_SRCCLK_48M		2
+> -
+> -#endif /* __S3C64XX_PLAT_SPI_CLKS_H */
+> diff --git a/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
+> b/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
+> deleted file mode 100644
+> index 170a20a..0000000
+> --- a/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
+> +++ /dev/null
+> @@ -1,20 +0,0 @@
+> -/* linux/arch/arm/mach-s5p64x0/include/mach/spi-clocks.h
+> - *
+> - * Copyright (c) 2010 Samsung Electronics Co., Ltd.
+> - *		http://www.samsung.com
+> - *
+> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+> - *	Jaswinder Singh <jassi.brar@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> -*/
+> -
+> -#ifndef __ASM_ARCH_SPI_CLKS_H
+> -#define __ASM_ARCH_SPI_CLKS_H __FILE__
+> -
+> -#define S5P64X0_SPI_SRCCLK_PCLK		0
+> -#define S5P64X0_SPI_SRCCLK_SCLK		1
+> -
+> -#endif /* __ASM_ARCH_SPI_CLKS_H */
+> diff --git a/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
+> b/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
+> deleted file mode 100644
+> index 65e4263..0000000
+> --- a/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
+> +++ /dev/null
+> @@ -1,18 +0,0 @@
+> -/* linux/arch/arm/mach-s5pc100/include/mach/spi-clocks.h
+> - *
+> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+> - *	Jaswinder Singh <jassi.brar@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - */
+> -
+> -#ifndef __S5PC100_PLAT_SPI_CLKS_H
+> -#define __S5PC100_PLAT_SPI_CLKS_H __FILE__
+> -
+> -#define S5PC100_SPI_SRCCLK_PCLK		0
+> -#define S5PC100_SPI_SRCCLK_48M		1
+> -#define S5PC100_SPI_SRCCLK_SPIBUS	2
+> -
+> -#endif /* __S5PC100_PLAT_SPI_CLKS_H */
+> diff --git a/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
+> b/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
+> deleted file mode 100644
+> index 02acded..0000000
+> --- a/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
+> +++ /dev/null
+> @@ -1,17 +0,0 @@
+> -/* linux/arch/arm/mach-s5pv210/include/mach/spi-clocks.h
+> - *
+> - * Copyright (C) 2010 Samsung Electronics Co. Ltd.
+> - *	Jaswinder Singh <jassi.brar@samsung.com>
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License version 2 as
+> - * published by the Free Software Foundation.
+> - */
+> -
+> -#ifndef __S5PV210_PLAT_SPI_CLKS_H
+> -#define __S5PV210_PLAT_SPI_CLKS_H __FILE__
+> -
+> -#define S5PV210_SPI_SRCCLK_PCLK		0
+> -#define S5PV210_SPI_SRCCLK_SCLK		1
+> -
+> -#endif /* __S5PV210_PLAT_SPI_CLKS_H */
+> --
+> 1.7.7.6
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-Based on v3.5-for-usb-2 branch of Kukjin's tree
----
- arch/arm/mach-exynos/Kconfig         |    2 ++
- arch/arm/mach-exynos/mach-smdk4x12.c |    7 +++++++
- 2 files changed, 9 insertions(+), 0 deletions(-)
+Yes, looks ok to me and will apply this into cleanup branch.
+Thanks.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 6682f35..95e3ee3 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -349,6 +349,7 @@ config MACH_SMDK4212
- 	select S3C_DEV_I2C3
- 	select S3C_DEV_I2C7
- 	select S3C_DEV_RTC
-+	select S3C_DEV_USB_HSOTG
- 	select S3C_DEV_WDT
- 	select SAMSUNG_DEV_BACKLIGHT
- 	select SAMSUNG_DEV_KEYPAD
-@@ -359,6 +360,7 @@ config MACH_SMDK4212
- 	select EXYNOS4_SETUP_I2C7
- 	select EXYNOS4_SETUP_KEYPAD
- 	select EXYNOS4_SETUP_SDHCI
-+	select EXYNOS4_SETUP_USB_PHY
- 	help
- 	  Machine support for Samsung SMDK4212
- 
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index d00e4f0..91fbdea 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -19,6 +19,7 @@
- #include <linux/pwm_backlight.h>
- #include <linux/regulator/machine.h>
- #include <linux/serial_core.h>
-+#include <linux/platform_data/s3c-hsotg.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -235,6 +236,9 @@ static struct samsung_keypad_platdata smdk4x12_keypad_data __initdata = {
- 	.cols		= 5,
- };
- 
-+/* USB OTG */
-+static struct s3c_hsotg_plat smdk4x12_hsotg_pdata;
-+
- static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s3c_device_hsmmc2,
- 	&s3c_device_hsmmc3,
-@@ -243,6 +247,7 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s3c_device_i2c3,
- 	&s3c_device_i2c7,
- 	&s3c_device_rtc,
-+	&s3c_device_usb_hsotg,
- 	&s3c_device_wdt,
- 	&samsung_device_keypad,
- };
-@@ -281,6 +286,8 @@ static void __init smdk4x12_machine_init(void)
- 	s3c_sdhci2_set_platdata(&smdk4x12_hsmmc2_pdata);
- 	s3c_sdhci3_set_platdata(&smdk4x12_hsmmc3_pdata);
- 
-+	s3c_hsotg_set_platdata(&smdk4x12_hsotg_pdata);
-+
- 	platform_add_devices(smdk4x12_devices, ARRAY_SIZE(smdk4x12_devices));
- }
- 
--- 
-1.7.4.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
