@@ -1,164 +1,162 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH-Resend 1/2] ARM: EXYNOS: Update HSOTG PHY clock setting for
- Exynos4x12
-Date: Wed, 20 Jun 2012 13:28:21 +0900
-Message-ID: <028d01cd4e9d$1ff5b200$5fe11600$%kim@samsung.com>
-References: <1337849726-17744-1-git-send-email-sachin.kamat@linaro.org>
- <019e01cd4df8$b01a8a90$104f9fb0$%kim@samsung.com>
- <CAK9yfHw8oeW2D4G2izKu2W6-bXB84cML7+nsFBJRDd08qd5=0g@mail.gmail.com>
+Subject: RE: [PATCH 1/2] serial: samsung: Remove NULL checking for baud clock
+Date: Wed, 20 Jun 2012 13:28:36 +0900
+Message-ID: <028e01cd4e9d$28cbcf90$7a636eb0$%kim@samsung.com>
+References: <002d01cd3988$c0d914c0$428b3e40$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41266 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751169Ab2FTE2W (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 00:28:22 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M5W00KBKF0M9RI0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Jun 2012 13:28:21 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M5W002OUF39YE20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 20 Jun 2012 13:28:21 +0900 (KST)
-In-reply-to: <CAK9yfHw8oeW2D4G2izKu2W6-bXB84cML7+nsFBJRDd08qd5=0g@mail.gmail.com>
+Return-path: <linux-serial-owner@vger.kernel.org>
+In-reply-to: 
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-serial-owner@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-serial@vger.kernel.org
+Cc: 'Alan Cox' <alan@linux.intel.com>, 'Russell King' <rmk+kernel@arm.linux.org.uk>, gregkh@linuxfoundation.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Sachin Kamat wrote:
+Kukjin Kim wrote:
 > 
-> On 19/06/2012, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Sachin Kamat wrote:
-> >>
-> >> Adds clock setting entries for Exynos4212 and Exynos4412 platforms.
-> >>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> ---
-> >>  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   20 ++++++--
-> >>  arch/arm/mach-exynos/setup-usb-phy.c             |   55
-> > ++++++++++++++++-----
-> >>  arch/arm/plat-samsung/include/plat/cpu.h         |    4 ++
-> >>  3 files changed, 61 insertions(+), 18 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> >> b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> >> index c337cf3..0727773 100644
-> >> --- a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> >> +++ b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-> >> @@ -35,11 +35,21 @@
-> >>  #define PHY1_COMMON_ON_N		(1 << 7)
-> >>  #define PHY0_COMMON_ON_N		(1 << 4)
-> >>  #define PHY0_ID_PULLUP			(1 << 2)
-> >> -#define CLKSEL_MASK			(0x3 << 0)
-> >> -#define CLKSEL_SHIFT			(0)
-> >> -#define CLKSEL_48M			(0x0 << 0)
-> >> -#define CLKSEL_12M			(0x2 << 0)
-> >> -#define CLKSEL_24M			(0x3 << 0)
-> >> +
-> >> +#define EXYNOS4_CLKSEL_SHIFT		(0)
-> >> +
-> >> +#define EXYNOS4210_CLKSEL_MASK		(0x3 << 0)
-> >> +#define EXYNOS4210_CLKSEL_48M		(0x0 << 0)
-> >> +#define EXYNOS4210_CLKSEL_12M		(0x2 << 0)
-> >> +#define EXYNOS4210_CLKSEL_24M		(0x3 << 0)
-> >> +
-> >> +#define EXYNOS4X12_CLKSEL_MASK		(0x7 << 0)
-> >> +#define EXYNOS4X12_CLKSEL_9600K		(0x0 << 0)
-> >> +#define EXYNOS4X12_CLKSEL_10M		(0x1 << 0)
-> >> +#define EXYNOS4X12_CLKSEL_12M		(0x2 << 0)
-> >> +#define EXYNOS4X12_CLKSEL_19200K	(0x3 << 0)
-> >> +#define EXYNOS4X12_CLKSEL_20M		(0x4 << 0)
-> >> +#define EXYNOS4X12_CLKSEL_24M		(0x5 << 0)
-> >>
-> >>  #define EXYNOS4_RSTCON			EXYNOS4_HSOTG_PHYREG(0x08)
-> >>  #define HOST_LINK_PORT_SWRST_MASK	(0xf << 6)
-> >> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-
-> >> exynos/setup-usb-phy.c
-> >> index 1af0a7f..8f90ce0 100644
-> >> --- a/arch/arm/mach-exynos/setup-usb-phy.c
-> >> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
-> >> @@ -31,22 +31,51 @@ static void exynos4210_usb_phy_clkset(struct
-> >> platform_device *pdev)
-> >>  	struct clk *xusbxti_clk;
-> >>  	u32 phyclk;
-> >>
-> >> -	/* set clock frequency for PLL */
-> >> -	phyclk = readl(EXYNOS4_PHYCLK) & ~CLKSEL_MASK;
-> >>
-> >>  	xusbxti_clk = clk_get(&pdev->dev, "xusbxti");
-> >>  	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
-> >> -		switch (clk_get_rate(xusbxti_clk)) {
-> >> -		case 12 * MHZ:
-> >> -			phyclk |= CLKSEL_12M;
-> >> -			break;
-> >> -		case 24 * MHZ:
-> >> -			phyclk |= CLKSEL_24M;
-> >> -			break;
-> >> -		default:
-> >> -		case 48 * MHZ:
-> >> -			/* default reference clock */
-> >> -			break;
-> >> +		if (soc_is_exynos4210()) {
-> >> +			/* set clock frequency for PLL */
-> >> +			phyclk = readl(EXYNOS4_PHYCLK) &
-> >> ~EXYNOS4210_CLKSEL_MASK;
-> >> +
-> >> +			switch (clk_get_rate(xusbxti_clk)) {
-> >> +			case 12 * MHZ:
-> >> +				phyclk |= EXYNOS4210_CLKSEL_12M;
-> >> +				break;
-> >> +			case 24 * MHZ:
-> >> +				phyclk |= EXYNOS4210_CLKSEL_24M;
-> >> +				break;
-> >> +			default:
-> >> +			case 48 * MHZ:
-> >> +				/* default reference clock */
+> Kyoungil Kim wrote:
 > >
-> > Shouldn't this 24Mhz? Because the clk_xusbxti.rate is 24Mhz in most
-> board
-> > file?
-> 
-> Yes, you are right. I will modify the same.
-> 
+> > Kyoungil Kim wrote:
 > >
-> >> +				break;
-> >> +			}
-> >> +		} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
-> >> +			/* set clock frequency for PLL */
-> >> +			phyclk = readl(EXYNOS4_PHYCLK) &
-> >> ~EXYNOS4X12_CLKSEL_MASK;
-> >> +
-> >> +			switch (clk_get_rate(xusbxti_clk)) {
-> >> +			case 9600 * KHZ:
-> >> +				phyclk |= EXYNOS4X12_CLKSEL_9600K;
-> >> +				break;
-> >> +			case 10 * MHZ:
-> >> +				phyclk |= EXYNOS4X12_CLKSEL_10M;
-> >> +				break;
-> >> +			case 12 * MHZ:
-> >> +				phyclk |= EXYNOS4X12_CLKSEL_12M;
-> >> +				break;
-> >> +			case 19200 * KHZ:
-> >> +				phyclk |= EXYNOS4X12_CLKSEL_19200K;
-> >> +				break;
-> >> +			case 20 * MHZ:
-> >> +				phyclk |= EXYNOS4X12_CLKSEL_20M;
-> >> +				break;
+> > I missed following.
 > >
-> > Please list in order of the value?
+> > Russell King suggested:
+> >
+> > As I said, drivers have no business interpreting anything but
+IS_ERR(clk)
+> > as being an error.  They should not make any other
+> > assumptions.
+> >
+> > Suggested-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> >
+> > > Signed-off-by: Kyoungil Kim <ki0351.kim@samsung.com>
+> > > ---
+> > >  drivers/tty/serial/samsung.c |   21 ++++++++++++---------
+> > >  1 files changed, 12 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/drivers/tty/serial/samsung.c
+> b/drivers/tty/serial/samsung.c
+> > > index d8b0aee..5668538 100644
+> > > --- a/drivers/tty/serial/samsung.c
+> > > +++ b/drivers/tty/serial/samsung.c
+> > > @@ -529,7 +529,7 @@ static void s3c24xx_serial_pm(struct uart_port
+> *port,
+> > unsigned int level,
+> > >
+> > >  	switch (level) {
+> > >  	case 3:
+> > > -		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
+> > > +		if (!IS_ERR(ourport->baudclk))
+> > >  			clk_disable(ourport->baudclk);
+> > >
+> > >  		clk_disable(ourport->clk);
+> > > @@ -538,7 +538,7 @@ static void s3c24xx_serial_pm(struct uart_port
+> *port,
+> > unsigned int level,
+> > >  	case 0:
+> > >  		clk_enable(ourport->clk);
+> > >
+> > > -		if (!IS_ERR(ourport->baudclk) && ourport->baudclk != NULL)
+> > > +		if (!IS_ERR(ourport->baudclk))
+> > >  			clk_enable(ourport->baudclk);
+> > >
+> > >  		break;
+> > > @@ -604,7 +604,6 @@ static unsigned int s3c24xx_serial_getclk(struct
+> > s3c24xx_uart_port *ourport,
+> > >  	char clkname[MAX_CLK_NAME_LENGTH];
+> > >  	int calc_deviation, deviation = (1 << 30) - 1;
+> > >
+> > > -	*best_clk = NULL;
+> > >  	clk_sel = (ourport->cfg->clk_sel) ? ourport->cfg->clk_sel :
+> > >  			ourport->info->def_clk_sel;
+> > >  	for (cnt = 0; cnt < info->num_clks; cnt++) {
+> > > @@ -613,7 +612,7 @@ static unsigned int s3c24xx_serial_getclk(struct
+> > s3c24xx_uart_port *ourport,
+> > >
+> > >  		sprintf(clkname, "clk_uart_baud%d", cnt);
+> > >  		clk = clk_get(ourport->port.dev, clkname);
+> > > -		if (IS_ERR_OR_NULL(clk))
+> > > +		if (IS_ERR(clk))
+> > >  			continue;
+> > >
+> > >  		rate = clk_get_rate(clk);
+> > > @@ -684,7 +683,7 @@ static void s3c24xx_serial_set_termios(struct
+> > uart_port *port,
+> > >  {
+> > >  	struct s3c2410_uartcfg *cfg = s3c24xx_port_to_cfg(port);
+> > >  	struct s3c24xx_uart_port *ourport = to_ourport(port);
+> > > -	struct clk *clk = NULL;
+> > > +	struct clk *clk = ERR_PTR(-EINVAL);
+> > >  	unsigned long flags;
+> > >  	unsigned int baud, quot, clk_sel = 0;
+> > >  	unsigned int ulcon;
+> > > @@ -705,7 +704,7 @@ static void s3c24xx_serial_set_termios(struct
+> > uart_port *port,
+> > >  	quot = s3c24xx_serial_getclk(ourport, baud, &clk, &clk_sel);
+> > >  	if (baud == 38400 && (port->flags & UPF_SPD_MASK) == UPF_SPD_CUST)
+> > >  		quot = port->custom_divisor;
+> > > -	if (!clk)
+> > > +	if (IS_ERR(clk))
+> > >  		return;
+> > >
+> > >  	/* check to see if we need  to change clock source */
+> > > @@ -713,9 +712,9 @@ static void s3c24xx_serial_set_termios(struct
+> > uart_port *port,
+> > >  	if (ourport->baudclk != clk) {
+> > >  		s3c24xx_serial_setsource(port, clk_sel);
+> > >
+> > > -		if (ourport->baudclk != NULL && !IS_ERR(ourport->baudclk)) {
+> > > +		if (!IS_ERR(ourport->baudclk)) {
+> > >  			clk_disable(ourport->baudclk);
+> > > -			ourport->baudclk  = NULL;
+> > > +			ourport->baudclk = ERR_PTR(-EINVAL);
+> > >  		}
+> > >
+> > >  		clk_enable(clk);
+> > > @@ -1160,6 +1159,9 @@ static ssize_t s3c24xx_serial_show_clksrc(struct
+> > device *dev,
+> > >  	struct uart_port *port = s3c24xx_dev_to_port(dev);
+> > >  	struct s3c24xx_uart_port *ourport = to_ourport(port);
+> > >
+> > > +	if (IS_ERR(ourport->baudclk))
+> > > +		return -EINVAL;
+> > > +
+> > >  	return snprintf(buf, PAGE_SIZE, "* %s\n", ourport->baudclk->name);
+> > >  }
+> > >
+> > > @@ -1200,6 +1202,7 @@ static int s3c24xx_serial_probe(struct
+> > platform_device *pdev)
+> > >  		return -ENODEV;
+> > >  	}
+> > >
+> > > +	ourport->baudclk = ERR_PTR(-EINVAL);
+> > >  	ourport->info = ourport->drv_data->info;
+> > >  	ourport->cfg = (pdev->dev.platform_data) ?
+> > >  			(struct s3c2410_uartcfg *)pdev->dev.platform_data :
+> > > @@ -1387,7 +1390,7 @@ s3c24xx_serial_get_options(struct uart_port
+> *port,
+> > int *baud,
+> > >  		sprintf(clk_name, "clk_uart_baud%d", clk_sel);
+> > >
+> > >  		clk = clk_get(port->dev, clk_name);
+> > > -		if (!IS_ERR(clk) && clk != NULL)
+> > > +		if (!IS_ERR(clk))
+> > >  			rate = clk_get_rate(clk);
+> > >  		else
+> > >  			rate = 1;
+> > > --
+> > > 1.7.1
 > 
-> I think they are already in increasing values in MHz (9.6, 10, 12,
-> 19.2, 20 and 24).
-> Please let me know if this is what you meant.
+> Looks ok to me, will apply.
+> Thanks.
 > 
-Ah, OK.
+(Cc'ed Greg)
+
+I think, would be better if Greg could pick this up in his tree.
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
 Thanks.
 
@@ -167,3 +165,4 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
