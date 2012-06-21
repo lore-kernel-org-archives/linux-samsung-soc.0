@@ -1,120 +1,62 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH][Resend] ARM: S5PV210: Add HSOTG support to SMDKV210
-Date: Thu, 21 Jun 2012 09:16:57 +0900
-Message-ID: <037b01cd4f43$2b5200d0$81f60270$%kim@samsung.com>
-References: <1340170132-30136-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH] ARM: SAMSUNG: Should check for IS_ERR(clk) instead of NULL
+Date: Thu, 21 Jun 2012 09:18:27 +0900
+Message-ID: <037f01cd4f43$61796040$246c20c0$%kim@samsung.com>
+References: <1334722134-14545-1-git-send-email-jhbird.choi@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:29430 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932417Ab2FUARD (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:55394 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932417Ab2FUAS3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 20:17:03 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
+	Wed, 20 Jun 2012 20:18:29 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M5X008VKY42HR50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:17:01 +0900 (KST)
+ 17 2011)) with ESMTP id <0M5X00C4IY6JQP50@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:18:28 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M5X009LXY49IX00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:17:00 +0900 (KST)
-In-reply-to: <1340170132-30136-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0M5X009P3Y6RPM50@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:18:28 +0900 (KST)
+In-reply-to: <1334722134-14545-1-git-send-email-jhbird.choi@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: jhbird.choi@gmail.com, linux-samsung-soc@vger.kernel.org
+Cc: 'Jonghwan Choi' <jhbird.choi@samsung.com>
 
-Sachin Kamat wrote:
+jhbird.choi@gmail.com wrote:
 > 
-> Adds S3C-HSOTG support to SMDKV210 board.
+> From: Jonghwan Choi <jhbird.choi@samsung.com>
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> On the error condition clk_get() returns ERR_PTR().
+> 
+> Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
 > ---
-> Based on Kukjin's tree - v3.5-for-usb-2 branch
-> ---
->  arch/arm/mach-s5pv210/Kconfig         |    2 ++
->  arch/arm/mach-s5pv210/mach-smdkv210.c |    9 +++++++++
->  2 files changed, 11 insertions(+), 0 deletions(-)
+>  .../arm/plat-samsung/include/plat/watchdog-reset.h |    2 +-
+>  1 files changed, 1 insertions(+), 1 deletions(-)
 > 
-> diff --git a/arch/arm/mach-s5pv210/Kconfig b/arch/arm/mach-s5pv210/Kconfig
-> index 88e983b..77185c3 100644
-> --- a/arch/arm/mach-s5pv210/Kconfig
-> +++ b/arch/arm/mach-s5pv210/Kconfig
-> @@ -152,6 +152,7 @@ config MACH_SMDKV210
->  	select S3C_DEV_I2C1
->  	select S3C_DEV_I2C2
->  	select S3C_DEV_RTC
-> +	select S3C_DEV_USB_HSOTG
->  	select S3C_DEV_WDT
->  	select S5P_DEV_FIMC0
->  	select S5P_DEV_FIMC1
-> @@ -170,6 +171,7 @@ config MACH_SMDKV210
->  	select S5PV210_SETUP_IDE
->  	select S5PV210_SETUP_KEYPAD
->  	select S5PV210_SETUP_SDHCI
-> +	select S5PV210_SETUP_USB_PHY
->  	help
->  	  Machine support for Samsung SMDKV210
+> diff --git a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> index f19aff1..bc4db9b 100644
+> --- a/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> +++ b/arch/arm/plat-samsung/include/plat/watchdog-reset.h
+> @@ -25,7 +25,7 @@ static inline void arch_wdt_reset(void)
 > 
-> diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-
-> s5pv210/mach-smdkv210.c
-> index 91d4ad8..c7a6e49 100644
-> --- a/arch/arm/mach-s5pv210/mach-smdkv210.c
-> +++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
-> @@ -19,6 +19,7 @@
->  #include <linux/gpio.h>
->  #include <linux/delay.h>
->  #include <linux/pwm_backlight.h>
-> +#include <linux/platform_data/s3c-hsotg.h>
+>  	__raw_writel(0, S3C2410_WTCON);	  /* disable watchdog, to be safe
+> */
 > 
->  #include <asm/hardware/vic.h>
->  #include <asm/mach/arch.h>
-> @@ -47,6 +48,7 @@
->  #include <plat/backlight.h>
->  #include <plat/regs-fb-v4.h>
->  #include <plat/mfc.h>
-> +#include <plat/clock.h>
+> -	if (s3c2410_wdtclk)
+> +	if (!IS_ERR(s3c2410_wdtclk))
+>  		clk_enable(s3c2410_wdtclk);
 > 
->  #include "common.h"
-> 
-> @@ -210,6 +212,9 @@ static struct s3c_fb_platdata smdkv210_lcd0_pdata
-> __initdata = {
->  	.setup_gpio	= s5pv210_fb_gpio_setup_24bpp,
->  };
-> 
-> +/* USB OTG */
-> +static struct s3c_hsotg_plat smdkv210_hsotg_pdata;
-> +
->  static struct platform_device *smdkv210_devices[] __initdata = {
->  	&s3c_device_adc,
->  	&s3c_device_cfcon,
-> @@ -223,6 +228,7 @@ static struct platform_device *smdkv210_devices[]
-> __initdata = {
->  	&s3c_device_i2c2,
->  	&s3c_device_rtc,
->  	&s3c_device_ts,
-> +	&s3c_device_usb_hsotg,
->  	&s3c_device_wdt,
->  	&s5p_device_fimc0,
->  	&s5p_device_fimc1,
-> @@ -321,6 +327,9 @@ static void __init smdkv210_machine_init(void)
-> 
->  	samsung_bl_set(&smdkv210_bl_gpio_info, &smdkv210_bl_data);
-> 
-> +	s3c_hsotg_set_platdata(&smdkv210_hsotg_pdata);
-> +	clk_xusbxti.rate = 24000000;
-> +
->  	platform_add_devices(smdkv210_devices,
-> ARRAY_SIZE(smdkv210_devices));
->  }
-> 
+>  	/* put initial values into count and data */
 > --
-> 1.7.4.1
+> 1.7.0.4
 
 Applied, thanks.
 
