@@ -1,91 +1,48 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Clear SYS_WDTRESET bit to use watchdog reset
-Date: Thu, 21 Jun 2012 10:28:14 +0900
-Message-ID: <038801cd4f4d$20942bf0$61bc83d0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: SAMSUNG: Update default rate for xusbxti clock
+Date: Thu, 21 Jun 2012 08:36:59 +0530
+Message-ID: <1340248019-24129-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11708 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755883Ab2FUB2Q (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:58150 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758176Ab2FUDSn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 21:28:16 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M5Y008641DEHRA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 10:28:15 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M5Y00B9F1F2SC60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 10:28:15 +0900 (KST)
-Content-language: ko
+	Wed, 20 Jun 2012 23:18:43 -0400
+Received: by pbbrp8 with SMTP id rp8so1449230pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 20 Jun 2012 20:18:42 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Jonghwan Choi' <jhbird.choi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com
 
-From: Jonghwan Choi <jhbird.choi@samsung.com>
+The rate of xusbxti clock is set in individual machine files. The default
+value should be defined at the clock definition and individual machine files
+should modify it if required.
 
-When SYS_WDTRESET is set, watchdog timer reset request
-is ignored by power management unit.
+Division by zero in kernel.
+[<c0011849>] (unwind_backtrace+0x1/0x9c) from [<c022c663>] (Ldiv0+0x9/0x12)
+[<c022c663>] (Ldiv0+0x9/0x12) from [<c001a3c3>] (s3c_setrate_clksrc+0x33/0x78)
+[<c001a3c3>] (s3c_setrate_clksrc+0x33/0x78) from [<c0019e67>] (clk_set_rate+0x2f/0x78)
 
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 ---
- arch/arm/mach-exynos/include/mach/regs-pmu.h |    5 +++++
- arch/arm/mach-exynos/pmu.c                   |   14 ++++++++++++++
- 2 files changed, 19 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index 43a99e6..d4e392b 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -232,6 +232,11 @@
+Patch is rebased on v3.5-rc3.
+
+ arch/arm/plat-samsung/s5p-clock.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/plat-samsung/s5p-clock.c b/arch/arm/plat-samsung/s5p-clock.c
+index 031a618..48a1599 100644
+--- a/arch/arm/plat-samsung/s5p-clock.c
++++ b/arch/arm/plat-samsung/s5p-clock.c
+@@ -37,6 +37,7 @@ struct clk clk_ext_xtal_mux = {
+ struct clk clk_xusbxti = {
+ 	.name		= "xusbxti",
+ 	.id		= -1,
++	.rate		= 24000000,
+ };
  
- #define EXYNOS5_USB_CFG						S5P_PMUREG(0x0230)
- 
-+#define EXYNOS5_AUTO_WDTRESET_DISABLE				S5P_PMUREG(0x0408)
-+#define EXYNOS5_MASK_WDTRESET_REQUEST				S5P_PMUREG(0x040C)
-+
-+#define EXYNOS5_SYS_WDTRESET					(1 << 20)
-+
- #define EXYNOS5_ARM_CORE0_SYS_PWR_REG				S5P_PMUREG(0x1000)
- #define EXYNOS5_DIS_IRQ_ARM_CORE0_LOCAL_SYS_PWR_REG		S5P_PMUREG(0x1004)
- #define EXYNOS5_DIS_IRQ_ARM_CORE0_CENTRAL_SYS_PWR_REG		S5P_PMUREG(0x1008)
-diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-index 4aacb66..bb4c522 100644
---- a/arch/arm/mach-exynos/pmu.c
-+++ b/arch/arm/mach-exynos/pmu.c
-@@ -390,6 +390,8 @@ void exynos_sys_powerdown_conf(enum sys_powerdown mode)
- 
- static int __init exynos_pmu_init(void)
- {
-+	unsigned int value;
-+
- 	exynos_pmu_config = exynos4210_pmu_config;
- 
- 	if (soc_is_exynos4210()) {
-@@ -399,6 +401,18 @@ static int __init exynos_pmu_init(void)
- 		exynos_pmu_config = exynos4x12_pmu_config;
- 		pr_info("EXYNOS4x12 PMU Initialize\n");
- 	} else if (soc_is_exynos5250()) {
-+		/*
-+		 * When SYS_WDTRESET is set, watchdog timer reset request
-+		 * is ignored by power management unit.
-+		 */
-+		value = __raw_readl(EXYNOS5_AUTO_WDTRESET_DISABLE);
-+		value &= ~EXYNOS5_SYS_WDTRESET;
-+		__raw_writel(value, EXYNOS5_AUTO_WDTRESET_DISABLE);
-+
-+		value = __raw_readl(EXYNOS5_MASK_WDTRESET_REQUEST);
-+		value &= ~EXYNOS5_SYS_WDTRESET;
-+		__raw_writel(value, EXYNOS5_MASK_WDTRESET_REQUEST);
-+
- 		exynos_pmu_config = exynos5250_pmu_config;
- 		pr_info("EXYNOS5250 PMU Initialize\n");
- 	} else {
+ struct clk s5p_clk_27m = {
 -- 
-1.7.1
+1.7.4.1
