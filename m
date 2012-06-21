@@ -1,322 +1,79 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH][resend] ARM: EXYNOS: Remove leftovers of the Samsung
- specific power domain control
-Date: Thu, 21 Jun 2012 09:19:46 +0900
-Message-ID: <038001cd4f43$909269d0$b1b73d70$%kim@samsung.com>
-References: <201205230936.46759.b.zolnierkie@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Remove the L2 cache latency setting for EXYNOS5
+Date: Thu, 21 Jun 2012 09:48:00 +0900
+Message-ID: <038301cd4f47$8202b420$86081c60$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:30783 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:46583 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758672Ab2FUATs (ORCPT
+	with ESMTP id S1754399Ab2FUAsE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 20 Jun 2012 20:19:48 -0400
+	Wed, 20 Jun 2012 20:48:04 -0400
 Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M5X00113Y8FXM70@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:19:47 +0900 (KST)
+ 17 2011)) with ESMTP id <0M5X001ZPZJUXM80@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:48:03 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M5X009IKY8YPI00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:19:47 +0900 (KST)
-In-reply-to: <201205230936.46759.b.zolnierkie@samsung.com>
+ with ESMTPA id <0M5X009ZIZK0KZ40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 21 Jun 2012 09:48:01 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Grant Likely' <grant.likely@secretlab.ca>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Russell King' <rmk+kernel@arm.linux.org.uk>, 'Boojin Kim' <boojin.kim@samsung.com>
 
-Bartlomiej Zolnierkiewicz wrote:
-> 
-> From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Subject: [PATCH] ARM: EXYNOS: Remove leftovers of the Samsung specific
-> power domain control
-> 
-> Nowadays we use generic power domain support instead of Samsung
-> specific power domain control driver.
-> 
-> Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> Cc: Rob Herring <rob.herring@calxeda.com>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: Rafael J. Wysocki <rjw@sisk.pl>
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> 
->  arch/arm/mach-exynos/mach-nuri.c           |    1
->  arch/arm/mach-exynos/mach-origen.c         |    1
->  arch/arm/mach-exynos/mach-smdkv310.c       |    1
->  arch/arm/mach-exynos/mach-universal_c210.c |    1
->  arch/arm/plat-samsung/Kconfig              |    8 --
->  arch/arm/plat-samsung/Makefile             |    4 -
->  arch/arm/plat-samsung/include/plat/devs.h  |    1
->  arch/arm/plat-samsung/include/plat/pd.h    |   30 ---------
->  arch/arm/plat-samsung/pd.c                 |   95
-----------------------------
-> -
->  9 files changed, 142 deletions(-)
-> 
-> Index: linux-sprc/arch/arm/mach-exynos/mach-nuri.c
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/mach-exynos/mach-nuri.c	2012-03-06
-> 15:59:13.432481942 +0100
-> +++ linux-sprc/arch/arm/mach-exynos/mach-nuri.c	2012-03-06
-> 15:59:22.528481940 +0100
-> @@ -48,7 +48,6 @@
->  #include <plat/gpio-cfg.h>
->  #include <plat/iic.h>
->  #include <plat/mfc.h>
-> -#include <plat/pd.h>
->  #include <plat/fimc-core.h>
->  #include <plat/camport.h>
->  #include <plat/mipi_csis.h>
-> Index: linux-sprc/arch/arm/mach-exynos/mach-origen.c
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/mach-exynos/mach-origen.c	2012-03-06
-> 15:59:13.432481942 +0100
-> +++ linux-sprc/arch/arm/mach-exynos/mach-origen.c	2012-03-06
-> 15:59:22.528481940 +0100
-> @@ -38,7 +38,6 @@
->  #include <plat/clock.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/backlight.h>
-> -#include <plat/pd.h>
->  #include <plat/fb.h>
->  #include <plat/mfc.h>
-> 
-> Index: linux-sprc/arch/arm/mach-exynos/mach-smdkv310.c
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/mach-exynos/mach-smdkv310.c	2012-03-06
-> 15:59:13.432481942 +0100
-> +++ linux-sprc/arch/arm/mach-exynos/mach-smdkv310.c	2012-03-06
-> 15:59:22.532481931 +0100
-> @@ -34,7 +34,6 @@
->  #include <plat/keypad.h>
->  #include <plat/sdhci.h>
->  #include <plat/iic.h>
-> -#include <plat/pd.h>
->  #include <plat/gpio-cfg.h>
->  #include <plat/backlight.h>
->  #include <plat/mfc.h>
-> Index: linux-sprc/arch/arm/mach-exynos/mach-universal_c210.c
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/mach-exynos/mach-universal_c210.c
-2012-
-> 03-06 15:59:13.432481942 +0100
-> +++ linux-sprc/arch/arm/mach-exynos/mach-universal_c210.c	2012-03-06
-> 15:59:22.532481931 +0100
-> @@ -35,7 +35,6 @@
->  #include <plat/fb.h>
->  #include <plat/mfc.h>
->  #include <plat/sdhci.h>
-> -#include <plat/pd.h>
->  #include <plat/regs-fb-v4.h>
->  #include <plat/fimc-core.h>
->  #include <plat/camport.h>
-> Index: linux-sprc/arch/arm/plat-samsung/Kconfig
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/plat-samsung/Kconfig	2012-03-06
-> 15:57:57.092481952 +0100
-> +++ linux-sprc/arch/arm/plat-samsung/Kconfig	2012-03-06
-> 15:59:22.532481931 +0100
-> @@ -350,14 +350,6 @@
->  	  and above. This code allows a set of interrupt to wakeup-mask
->  	  mappings. See <plat/wakeup-mask.h>
-> 
-> -comment "Power Domain"
-> -
-> -config SAMSUNG_PD
-> -	bool "Samsung Power Domain"
-> -	depends on PM_RUNTIME
-> -	help
-> -	  Say Y here if you want to control Power Domain by Runtime PM.
-> -
->  config DEBUG_S3C_UART
->  	depends on PLAT_SAMSUNG
->  	int
-> Index: linux-sprc/arch/arm/plat-samsung/Makefile
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/plat-samsung/Makefile	2012-03-06
-> 15:57:57.092481952 +0100
-> +++ linux-sprc/arch/arm/plat-samsung/Makefile	2012-03-06
-> 15:59:22.532481931 +0100
-> @@ -47,10 +47,6 @@
-> 
->  obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
-> 
-> -# PD support
-> -
-> -obj-$(CONFIG_SAMSUNG_PD)	+= pd.o
-> -
->  # PWM support
-> 
->  obj-$(CONFIG_HAVE_PWM)		+= pwm.o
-> Index: linux-sprc/arch/arm/plat-samsung/include/plat/devs.h
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/plat-samsung/include/plat/devs.h	2012-
-> 03-06 15:59:13.444481941 +0100
-> +++ linux-sprc/arch/arm/plat-samsung/include/plat/devs.h	2012-03-06
-> 15:59:22.532481931 +0100
-> @@ -128,7 +128,6 @@
->  extern struct platform_device exynos4_device_pcm0;
->  extern struct platform_device exynos4_device_pcm1;
->  extern struct platform_device exynos4_device_pcm2;
-> -extern struct platform_device exynos4_device_pd[];
->  extern struct platform_device exynos4_device_spdif;
->  extern struct platform_device exynos4_device_sysmmu;
-> 
-> Index: linux-sprc/arch/arm/plat-samsung/include/plat/pd.h
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/plat-samsung/include/plat/pd.h	2012-03-06
-> 15:59:13.444481941 +0100
-> +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
-> @@ -1,30 +0,0 @@
-> -/* linux/arch/arm/plat-samsung/include/plat/pd.h
-> - *
-> - * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#ifndef __ASM_PLAT_SAMSUNG_PD_H
-> -#define __ASM_PLAT_SAMSUNG_PD_H __FILE__
-> -
-> -struct samsung_pd_info {
-> -	int (*enable)(struct device *dev);
-> -	int (*disable)(struct device *dev);
-> -	void __iomem *base;
-> -};
-> -
-> -enum exynos4_pd_block {
-> -	PD_MFC,
-> -	PD_G3D,
-> -	PD_LCD0,
-> -	PD_LCD1,
-> -	PD_TV,
-> -	PD_CAM,
-> -	PD_GPS
-> -};
-> -
-> -#endif /* __ASM_PLAT_SAMSUNG_PD_H */
-> Index: linux-sprc/arch/arm/plat-samsung/pd.c
-> ===================================================================
-> --- linux-sprc.orig/arch/arm/plat-samsung/pd.c	2012-03-06
-> 15:57:57.000000000 +0100
-> +++ /dev/null	1970-01-01 00:00:00.000000000 +0000
-> @@ -1,95 +0,0 @@
-> -/* linux/arch/arm/plat-samsung/pd.c
-> - *
-> - * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-> - *		http://www.samsung.com
-> - *
-> - * Samsung Power domain support
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License version 2 as
-> - * published by the Free Software Foundation.
-> -*/
-> -
-> -#include <linux/init.h>
-> -#include <linux/export.h>
-> -#include <linux/platform_device.h>
-> -#include <linux/err.h>
-> -#include <linux/pm_runtime.h>
-> -
-> -#include <plat/pd.h>
-> -
-> -static int samsung_pd_probe(struct platform_device *pdev)
-> -{
-> -	struct samsung_pd_info *pdata = pdev->dev.platform_data;
-> -	struct device *dev = &pdev->dev;
-> -
-> -	if (!pdata) {
-> -		dev_err(dev, "no device data specified\n");
-> -		return -ENOENT;
-> -	}
-> -
-> -	pm_runtime_set_active(dev);
-> -	pm_runtime_enable(dev);
-> -
-> -	dev_info(dev, "power domain registered\n");
-> -	return 0;
-> -}
-> -
-> -static int __devexit samsung_pd_remove(struct platform_device *pdev)
-> -{
-> -	struct device *dev = &pdev->dev;
-> -
-> -	pm_runtime_disable(dev);
-> -	return 0;
-> -}
-> -
-> -static int samsung_pd_runtime_suspend(struct device *dev)
-> -{
-> -	struct samsung_pd_info *pdata = dev->platform_data;
-> -	int ret = 0;
-> -
-> -	if (pdata->disable)
-> -		ret = pdata->disable(dev);
-> -
-> -	dev_dbg(dev, "suspended\n");
-> -	return ret;
-> -}
-> -
-> -static int samsung_pd_runtime_resume(struct device *dev)
-> -{
-> -	struct samsung_pd_info *pdata = dev->platform_data;
-> -	int ret = 0;
-> -
-> -	if (pdata->enable)
-> -		ret = pdata->enable(dev);
-> -
-> -	dev_dbg(dev, "resumed\n");
-> -	return ret;
-> -}
-> -
-> -static const struct dev_pm_ops samsung_pd_pm_ops = {
-> -	.runtime_suspend	= samsung_pd_runtime_suspend,
-> -	.runtime_resume		= samsung_pd_runtime_resume,
-> -};
-> -
-> -static struct platform_driver samsung_pd_driver = {
-> -	.driver		= {
-> -		.name		= "samsung-pd",
-> -		.owner		= THIS_MODULE,
-> -		.pm		= &samsung_pd_pm_ops,
-> -	},
-> -	.probe		= samsung_pd_probe,
-> -	.remove		= __devexit_p(samsung_pd_remove),
-> -};
-> -
-> -static int __init samsung_pd_init(void)
-> -{
-> -	int ret;
-> -
-> -	ret = platform_driver_register(&samsung_pd_driver);
-> -	if (ret)
-> -		printk(KERN_ERR "%s: failed to add PD driver\n", __func__);
-> -
-> -	return ret;
-> -}
-> -arch_initcall(samsung_pd_init);
+From: Boojin Kim <boojin.kim@samsung.com>
 
-Looks OK, but you need to re-submit this with right format :(
+Since SYSRAM set the L2 cache latency on EXYNOS5 SoCs,
+no longer need that in the kernel. It helps to reduce
+booting time (no need cache disable and cache enable).
 
-Applying: ARM: EXYNOS: Remove leftovers of the Samsung specific power domain
-control
-fatal: patch fragment without header at line 20: @@ -48,7 +48,6 @@
+Signed-off-by: Boojin Kim <boojin.kim@samsung.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |   25 -------------------------
+ 1 files changed, 0 insertions(+), 25 deletions(-)
 
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 742edd3..0ec1a91 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -712,31 +712,6 @@ static int __init exynos4_l2x0_cache_init(void)
+ early_initcall(exynos4_l2x0_cache_init);
+ #endif
+ 
+-static int __init exynos5_l2_cache_init(void)
+-{
+-	unsigned int val;
+-
+-	if (!soc_is_exynos5250())
+-		return 0;
+-
+-	asm volatile("mrc p15, 0, %0, c1, c0, 0\n"
+-		     "bic %0, %0, #(1 << 2)\n"	/* cache disable */
+-		     "mcr p15, 0, %0, c1, c0, 0\n"
+-		     "mrc p15, 1, %0, c9, c0, 2\n"
+-		     : "=r"(val));
+-
+-	val |= (1 << 9) | (1 << 5) | (2 << 6) | (2 << 0);
+-
+-	asm volatile("mcr p15, 1, %0, c9, c0, 2\n" : : "r"(val));
+-	asm volatile("mrc p15, 0, %0, c1, c0, 0\n"
+-		     "orr %0, %0, #(1 << 2)\n"	/* cache enable */
+-		     "mcr p15, 0, %0, c1, c0, 0\n"
+-		     : : "r"(val));
+-
+-	return 0;
+-}
+-early_initcall(exynos5_l2_cache_init);
+-
+ static int __init exynos_init(void)
+ {
+ 	printk(KERN_INFO "EXYNOS: Initializing architecture\n");
+-- 
+1.7.1
