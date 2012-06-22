@@ -1,68 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 1/1] ARM: EXYNOS: Fix EXYNOS_DEV_DMA Kconfig entry
-Date: Thu, 21 Jun 2012 17:25:01 +0530
-Message-ID: <1340279701-22822-1-git-send-email-sachin.kamat@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH][resend] ARM: EXYNOS: Remove leftovers of the Samsung
+ specific power domain control
+Date: Fri, 22 Jun 2012 11:08:22 +0900
+Message-ID: <04ab01cd501b$e6953690$b3bfa3b0$%kim@samsung.com>
+References: <201205230936.46759.b.zolnierkie@samsung.com>
+ <038001cd4f43$909269d0$b1b73d70$%kim@samsung.com>
+ <201206211130.20174.b.zolnierkie@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:47314 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757123Ab2FUMGq (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16221 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751876Ab2FVCId (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 21 Jun 2012 08:06:46 -0400
-Received: by pbbrp8 with SMTP id rp8so2008111pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 21 Jun 2012 05:06:45 -0700 (PDT)
+	Thu, 21 Jun 2012 22:08:33 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M5Z003B2XXKCR90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Jun 2012 11:08:23 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M5Z00A44XXYT170@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 22 Jun 2012 11:08:22 +0900 (KST)
+In-reply-to: <201206211130.20174.b.zolnierkie@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, boojin.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: 'Bartlomiej Zolnierkiewicz' <b.zolnierkie@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Grant Likely' <grant.likely@secretlab.ca>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org
 
-Commit 20ef9e08 ("ARM: EXYNOS: Support DMA for EXYNOS5250 SoC")
-renamed EXYNOS4_DEV_DMA to EXYNOS_DEV_DMA. But some machine entries
-still had EXYNOS4_DEV_DMA. Changed them to EXYNOS_DEV_DMA.
+Bartlomiej Zolnierkiewicz wrote:
+> 
+> On Thursday 21 June 2012 02:19:46 Kukjin Kim wrote:
+> > Bartlomiej Zolnierkiewicz wrote:
+> > >
+> > > From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > > Subject: [PATCH] ARM: EXYNOS: Remove leftovers of the Samsung specific
+> > > power domain control
+> > >
+> > > Nowadays we use generic power domain support instead of Samsung
+> > > specific power domain control driver.
+> > >
+> > > Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> > > Cc: Rob Herring <rob.herring@calxeda.com>
+> > > Cc: Grant Likely <grant.likely@secretlab.ca>
+> > > Cc: Rafael J. Wysocki <rjw@sisk.pl>
+> > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+> > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> > > ---
+> 
+> [...]
+> 
+> > Looks OK, but you need to re-submit this with right format :(
+> >
+> > Applying: ARM: EXYNOS: Remove leftovers of the Samsung specific power
+> domain
+> > control
+> > fatal: patch fragment without header at line 20: @@ -48,7 +48,6 @@
+> 
+> Sorry for this.  Here is a refreshed version against your for-next tree.
+> 
+No, I meant you need to create your patch with git-format-patch not wrong
+against on.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/Kconfig |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Thanks.
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index f5fb6ea..498596b 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -213,7 +213,7 @@ config MACH_SMDKV310
- 	select EXYNOS_DEV_SYSMMU
- 	select EXYNOS4_DEV_AHCI
- 	select SAMSUNG_DEV_KEYPAD
--	select EXYNOS4_DEV_DMA
-+	select EXYNOS_DEV_DMA
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS4_DEV_USB_OHCI
- 	select EXYNOS4_SETUP_FIMD0
-@@ -265,7 +265,7 @@ config MACH_UNIVERSAL_C210
- 	select S5P_DEV_ONENAND
- 	select S5P_DEV_TV
- 	select EXYNOS_DEV_SYSMMU
--	select EXYNOS4_DEV_DMA
-+	select EXYNOS_DEV_DMA
- 	select EXYNOS_DEV_DRM
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
-@@ -304,7 +304,7 @@ config MACH_NURI
- 	select S5P_DEV_MFC
- 	select S5P_DEV_USB_EHCI
- 	select S5P_SETUP_MIPIPHY
--	select EXYNOS4_DEV_DMA
-+	select EXYNOS_DEV_DMA
- 	select EXYNOS_DEV_DRM
- 	select EXYNOS4_SETUP_FIMC
- 	select EXYNOS4_SETUP_FIMD0
-@@ -343,7 +343,7 @@ config MACH_ORIGEN
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS_DEV_DRM
- 	select EXYNOS_DEV_SYSMMU
--	select EXYNOS4_DEV_DMA
-+	select EXYNOS_DEV_DMA
- 	select EXYNOS4_DEV_USB_OHCI
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_SDHCI
--- 
-1.7.4.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
