@@ -1,333 +1,61 @@
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH][resend] ARM: EXYNOS: Remove leftovers of the Samsung
- specific power domain control
-Date: Fri, 22 Jun 2012 10:23:56 +0200
-Message-ID: <201206221023.56323.b.zolnierkie@samsung.com>
-References: <201205230936.46759.b.zolnierkie@samsung.com>
- <201206211130.20174.b.zolnierkie@samsung.com>
- <04ab01cd501b$e6953690$b3bfa3b0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
+From: Subash Patel <subashrp@gmail.com>
+Subject: [PATCH] DRM: exynos: return NULL if exynos_pages_to_sg fails
+Date: Fri, 22 Jun 2012 18:12:38 -0700
+Message-ID: <1340413958-23125-1-git-send-email-subash.ramaswamy@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:48451 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1761637Ab2FVIYu convert rfc822-to-8bit (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:36604 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756848Ab2FWBNP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 22 Jun 2012 04:24:50 -0400
-Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6000LJDFDCTB40@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Jun 2012 17:24:48 +0900 (KST)
-Received: from bzolnier-desktop.localnet ([106.116.147.136])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0M60003MUFDAV650@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 22 Jun 2012 17:24:48 +0900 (KST)
-In-reply-to: <04ab01cd501b$e6953690$b3bfa3b0$%kim@samsung.com>
+	Fri, 22 Jun 2012 21:13:15 -0400
+Received: by dady13 with SMTP id y13so3005536dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 22 Jun 2012 18:13:15 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Rob Herring' <rob.herring@calxeda.com>, 'Grant Likely' <grant.likely@secretlab.ca>, "'Rafael J. Wysocki'" <rjw@sisk.pl>, linux-samsung-soc@vger.kernel.org
+To: dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linaro-mm-sig@lists.linaro.org
+Cc: olofj@chromium.org, inki.dae@samsung.com, airlied@redhat.com, Subash Patel <subash.rp@samsung.com>, Subash Patel <subash.ramaswamy@linaro.org>
 
-On Friday 22 June 2012 04:08:22 Kukjin Kim wrote:
-> Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > On Thursday 21 June 2012 02:19:46 Kukjin Kim wrote:
-> > > Bartlomiej Zolnierkiewicz wrote:
-> > > >
-> > > > From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > > Subject: [PATCH] ARM: EXYNOS: Remove leftovers of the Samsung specific
-> > > > power domain control
-> > > >
-> > > > Nowadays we use generic power domain support instead of Samsung
-> > > > specific power domain control driver.
-> > > >
-> > > > Cc: Thomas Abraham <thomas.abraham@linaro.org>
-> > > > Cc: Rob Herring <rob.herring@calxeda.com>
-> > > > Cc: Grant Likely <grant.likely@secretlab.ca>
-> > > > Cc: Rafael J. Wysocki <rjw@sisk.pl>
-> > > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > > > ---
-> > 
-> > [...]
-> > 
-> > > Looks OK, but you need to re-submit this with right format :(
-> > >
-> > > Applying: ARM: EXYNOS: Remove leftovers of the Samsung specific power
-> > domain
-> > > control
-> > > fatal: patch fragment without header at line 20: @@ -48,7 +48,6 @@
-> > 
-> > Sorry for this.  Here is a refreshed version against your for-next tree.
-> > 
-> No, I meant you need to create your patch with git-format-patch not wrong
-> against on.
+From: Subash Patel <subash.rp@samsung.com>
 
-Ok, here it is (though I still don't know what the problem was as the patch
-applies cleanly here using both quilt and git quiltimport). 
+exynos_pages_to_sg() internally calls sg_kmalloc() which can return
+no pages when the system is under high memory crunch. One such instance
+is chromeos-install in the chromeos. This patch adds check for the return
+value of the function in subject to return NULL on failure.
 
->From a14b75c3f0b0ddea613b6ae5cace20b89c989393 Mon Sep 17 00:00:00 2001
-From: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Date: Fri, 22 Jun 2012 10:20:04 +0200
-Subject: [PATCH] ARM: EXYNOS: Remove leftovers of the Samsung specific power
- domain control
-
-Nowadays we use generic power domain support instead of Samsung
-specific power domain control driver.
-
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Rob Herring <rob.herring@calxeda.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>
-Cc: Rafael J. Wysocki <rjw@sisk.pl>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Subash Patel <subash.ramaswamy@linaro.org>
+CC: dri-devel@lists.freedesktop.org
+CC: linux-samsung-soc@vger.kernel.org
+CC: linaro-mm-sig@lists.linaro.org
+CC: inki.dae@samsung.com
+CC: airlied@redhat.com
+CC: olofj@chromium.org
 ---
- arch/arm/mach-exynos/mach-nuri.c           |  1 -
- arch/arm/mach-exynos/mach-origen.c         |  1 -
- arch/arm/mach-exynos/mach-smdkv310.c       |  1 -
- arch/arm/mach-exynos/mach-universal_c210.c |  1 -
- arch/arm/plat-samsung/Kconfig              |  8 ---
- arch/arm/plat-samsung/Makefile             |  4 --
- arch/arm/plat-samsung/include/plat/devs.h  |  1 -
- arch/arm/plat-samsung/include/plat/pd.h    | 30 ----------
- arch/arm/plat-samsung/pd.c                 | 95 ------------------------------
- 9 files changed, 142 deletions(-)
- delete mode 100644 arch/arm/plat-samsung/include/plat/pd.h
- delete mode 100644 arch/arm/plat-samsung/pd.c
+ drivers/gpu/drm/exynos/exynos_drm_dmabuf.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 656f8fc..f3b328d 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -50,7 +50,6 @@
- #include <plat/gpio-cfg.h>
- #include <plat/iic.h>
- #include <plat/mfc.h>
--#include <plat/pd.h>
- #include <plat/fimc-core.h>
- #include <plat/camport.h>
- #include <plat/mipi_csis.h>
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 9ed0229..580cc77 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -39,7 +39,6 @@
- #include <plat/clock.h>
- #include <plat/gpio-cfg.h>
- #include <plat/backlight.h>
--#include <plat/pd.h>
- #include <plat/fb.h>
- #include <plat/mfc.h>
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+index 97325c1..c908a29 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
+@@ -87,6 +87,10 @@ static struct sg_table *
+ 	npages = buf->size / buf->page_size;
  
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index 7b1b866..95ce9f6 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -35,7 +35,6 @@
- #include <plat/keypad.h>
- #include <plat/sdhci.h>
- #include <plat/iic.h>
--#include <plat/pd.h>
- #include <plat/gpio-cfg.h>
- #include <plat/backlight.h>
- #include <plat/mfc.h>
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index cd92fa8..68719f5 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -39,7 +39,6 @@
- #include <plat/fb.h>
- #include <plat/mfc.h>
- #include <plat/sdhci.h>
--#include <plat/pd.h>
- #include <plat/regs-fb-v4.h>
- #include <plat/fimc-core.h>
- #include <plat/s5p-time.h>
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index a2fae4e..ffc84ac 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -491,14 +491,6 @@ config S5P_SLEEP
- 	  Internal config node to apply common S5P sleep management code.
- 	  Can be selected by S5P and newer SoCs with similar sleep procedure.
+ 	sgt = exynos_pages_to_sg(buf->pages, npages, buf->page_size);
++	if (!sgt) {
++		DRM_DEBUG_PRIME("exynos_pages_to_sg returned NULL!\n");
++		goto err_unlock;
++	}
+ 	nents = dma_map_sg(attach->dev, sgt->sgl, sgt->nents, dir);
  
--comment "Power Domain"
--
--config SAMSUNG_PD
--	bool "Samsung Power Domain"
--	depends on PM_RUNTIME
--	help
--	  Say Y here if you want to control Power Domain by Runtime PM.
--
- config DEBUG_S3C_UART
- 	depends on PLAT_SAMSUNG
- 	int
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 860b2db..4bb58c2 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -60,10 +60,6 @@ obj-$(CONFIG_SAMSUNG_WAKEMASK)	+= wakeup-mask.o
- obj-$(CONFIG_S5P_PM)		+= s5p-pm.o s5p-irq-pm.o
- obj-$(CONFIG_S5P_SLEEP)		+= s5p-sleep.o
+ 	DRM_DEBUG_PRIME("npages = %d buffer size = 0x%lx page_size = 0x%lx\n",
+@@ -241,7 +245,7 @@ struct drm_gem_object *exynos_dmabuf_prime_import(struct drm_device *drm_dev,
  
--# PD support
--
--obj-$(CONFIG_SAMSUNG_PD)	+= pd.o
--
- # PWM support
  
- obj-$(CONFIG_HAVE_PWM)		+= pwm.o
-diff --git a/arch/arm/plat-samsung/include/plat/devs.h b/arch/arm/plat-samsung/include/plat/devs.h
-index 61ca2f3..5da4b4f 100644
---- a/arch/arm/plat-samsung/include/plat/devs.h
-+++ b/arch/arm/plat-samsung/include/plat/devs.h
-@@ -131,7 +131,6 @@ extern struct platform_device exynos4_device_ohci;
- extern struct platform_device exynos4_device_pcm0;
- extern struct platform_device exynos4_device_pcm1;
- extern struct platform_device exynos4_device_pcm2;
--extern struct platform_device exynos4_device_pd[];
- extern struct platform_device exynos4_device_spdif;
- 
- extern struct platform_device exynos_device_drm;
-diff --git a/arch/arm/plat-samsung/include/plat/pd.h b/arch/arm/plat-samsung/include/plat/pd.h
-deleted file mode 100644
-index abb4bc3..0000000
---- a/arch/arm/plat-samsung/include/plat/pd.h
-+++ /dev/null
-@@ -1,30 +0,0 @@
--/* linux/arch/arm/plat-samsung/include/plat/pd.h
-- *
-- * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#ifndef __ASM_PLAT_SAMSUNG_PD_H
--#define __ASM_PLAT_SAMSUNG_PD_H __FILE__
--
--struct samsung_pd_info {
--	int (*enable)(struct device *dev);
--	int (*disable)(struct device *dev);
--	void __iomem *base;
--};
--
--enum exynos4_pd_block {
--	PD_MFC,
--	PD_G3D,
--	PD_LCD0,
--	PD_LCD1,
--	PD_TV,
--	PD_CAM,
--	PD_GPS
--};
--
--#endif /* __ASM_PLAT_SAMSUNG_PD_H */
-diff --git a/arch/arm/plat-samsung/pd.c b/arch/arm/plat-samsung/pd.c
-deleted file mode 100644
-index 312b510..0000000
---- a/arch/arm/plat-samsung/pd.c
-+++ /dev/null
-@@ -1,95 +0,0 @@
--/* linux/arch/arm/plat-samsung/pd.c
-- *
-- * Copyright (c) 2010 Samsung Electronics Co., Ltd.
-- *		http://www.samsung.com
-- *
-- * Samsung Power domain support
-- *
-- * This program is free software; you can redistribute it and/or modify
-- * it under the terms of the GNU General Public License version 2 as
-- * published by the Free Software Foundation.
--*/
--
--#include <linux/init.h>
--#include <linux/export.h>
--#include <linux/platform_device.h>
--#include <linux/err.h>
--#include <linux/pm_runtime.h>
--
--#include <plat/pd.h>
--
--static int samsung_pd_probe(struct platform_device *pdev)
--{
--	struct samsung_pd_info *pdata = pdev->dev.platform_data;
--	struct device *dev = &pdev->dev;
--
--	if (!pdata) {
--		dev_err(dev, "no device data specified\n");
--		return -ENOENT;
--	}
--
--	pm_runtime_set_active(dev);
--	pm_runtime_enable(dev);
--
--	dev_info(dev, "power domain registered\n");
--	return 0;
--}
--
--static int __devexit samsung_pd_remove(struct platform_device *pdev)
--{
--	struct device *dev = &pdev->dev;
--
--	pm_runtime_disable(dev);
--	return 0;
--}
--
--static int samsung_pd_runtime_suspend(struct device *dev)
--{
--	struct samsung_pd_info *pdata = dev->platform_data;
--	int ret = 0;
--
--	if (pdata->disable)
--		ret = pdata->disable(dev);
--
--	dev_dbg(dev, "suspended\n");
--	return ret;
--}
--
--static int samsung_pd_runtime_resume(struct device *dev)
--{
--	struct samsung_pd_info *pdata = dev->platform_data;
--	int ret = 0;
--
--	if (pdata->enable)
--		ret = pdata->enable(dev);
--
--	dev_dbg(dev, "resumed\n");
--	return ret;
--}
--
--static const struct dev_pm_ops samsung_pd_pm_ops = {
--	.runtime_suspend	= samsung_pd_runtime_suspend,
--	.runtime_resume		= samsung_pd_runtime_resume,
--};
--
--static struct platform_driver samsung_pd_driver = {
--	.driver		= {
--		.name		= "samsung-pd",
--		.owner		= THIS_MODULE,
--		.pm		= &samsung_pd_pm_ops,
--	},
--	.probe		= samsung_pd_probe,
--	.remove		= __devexit_p(samsung_pd_remove),
--};
--
--static int __init samsung_pd_init(void)
--{
--	int ret;
--
--	ret = platform_driver_register(&samsung_pd_driver);
--	if (ret)
--		printk(KERN_ERR "%s: failed to add PD driver\n", __func__);
--
--	return ret;
--}
--arch_initcall(samsung_pd_init);
+ 	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
+-	if (IS_ERR(sgt)) {
++	if (IS_ERR_OR_NULL(sgt)) {
+ 		ret = PTR_ERR(sgt);
+ 		goto err_buf_detach;
+ 	}
 -- 
-1.7.11
+1.7.9.5
