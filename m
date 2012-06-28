@@ -1,85 +1,119 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: RE: [PATCH 2/2] DRM: Exynos: check for null in return value of
- dma_buf_map_attachment()
-Date: Wed, 27 Jun 2012 11:17:36 +0900
-Message-ID: <006301cd540b$04b35f10$0e1a1d30$%dae@samsung.com>
-References: <1340648577-28402-1-git-send-email-subash.ramaswamy@linaro.org>
- <1340648577-28402-3-git-send-email-subash.ramaswamy@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] i2c-s3c2410: Convert to devm_request_and_ioremap()
+Date: Thu, 28 Jun 2012 13:55:38 +0100
+Message-ID: <1340888138-32710-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:55121 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751159Ab2F0CRW (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51618 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752307Ab2F1Mzl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 26 Jun 2012 22:17:22 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6900IGL7O4DN80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Jun 2012 11:17:21 +0900 (KST)
-Received: from NOINKIDAE02 ([10.90.51.52])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M690011D7OXRL20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 27 Jun 2012 11:17:21 +0900 (KST)
-In-reply-to: <1340648577-28402-3-git-send-email-subash.ramaswamy@linaro.org>
-Content-language: ko
+	Thu, 28 Jun 2012 08:55:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Subash Patel' <subashrp@gmail.com>, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linaro-mm-sig@lists.linaro.org
-Cc: olofj@chromium.org, airlied@redhat.com, 'Subash Patel' <subash.rp@samsung.com>, 'Subash Patel' <subash.ramaswamy@linaro.org>
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
+A small code saving and less error handling to worry about.
 
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ drivers/i2c/busses/i2c-s3c2410.c |   35 +++++++----------------------------
+ 1 file changed, 7 insertions(+), 28 deletions(-)
 
-> -----Original Message-----
-> From: Subash Patel [mailto:subashrp@gmail.com]
-> Sent: Tuesday, June 26, 2012 3:23 AM
-> To: dri-devel@lists.freedesktop.org; linux-samsung-soc@vger.kernel.org;
-> linaro-mm-sig@lists.linaro.org
-> Cc: olofj@chromium.org; inki.dae@samsung.com; airlied@redhat.com; Subash
-> Patel; Subash Patel
-> Subject: [PATCH 2/2] DRM: Exynos: check for null in return value of
-> dma_buf_map_attachment()
-> 
-> From: Subash Patel <subash.rp@samsung.com>
-> 
-> dma_buf_map_attachment() can return NULL and valid sg as return
-> value. Hence the check for the returned scatter-gather must be using
-> the inline function IS_ERR_OR_NULL() in place of IS_ERR()
-> 
-> Change-Id: I33218480e220f6a26a1e726b336bf533a95363de
-> Signed-off-by: Subash Patel <subash.ramaswamy@linaro.org>
-> CC: dri-devel@lists.freedesktop.org
-> CC: linux-samsung-soc@vger.kernel.org
-> CC: linaro-mm-sig@lists.linaro.org
-> CC: inki.dae@samsung.com
-> CC: airlied@redhat.com
-> CC: olofj@chromium.org
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_dmabuf.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> index 52cf761..c908a29 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_dmabuf.c
-> @@ -245,7 +245,7 @@ struct drm_gem_object
-> *exynos_dmabuf_prime_import(struct drm_device *drm_dev,
-> 
-> 
->  	sgt = dma_buf_map_attachment(attach, DMA_BIDIRECTIONAL);
-> -	if (IS_ERR(sgt)) {
-> +	if (IS_ERR_OR_NULL(sgt)) {
->  		ret = PTR_ERR(sgt);
->  		goto err_buf_detach;
->  	}
-> --
-> 1.7.9.5
-
-Applied.
-
-Thanks,
-Inki Dae
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 7fe8c73..ddd5797 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -78,7 +78,6 @@ struct s3c24xx_i2c {
+ 	void __iomem		*regs;
+ 	struct clk		*clk;
+ 	struct device		*dev;
+-	struct resource		*ioarea;
+ 	struct i2c_adapter	adap;
+ 
+ 	struct s3c2410_platform_i2c	*pdata;
+@@ -988,25 +987,16 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 		goto err_clk;
+ 	}
+ 
+-	i2c->ioarea = request_mem_region(res->start, resource_size(res),
+-					 pdev->name);
+-
+-	if (i2c->ioarea == NULL) {
+-		dev_err(&pdev->dev, "cannot request IO\n");
+-		ret = -ENXIO;
+-		goto err_clk;
+-	}
+-
+-	i2c->regs = ioremap(res->start, resource_size(res));
++	i2c->regs = devm_request_and_ioremap(&pdev->dev, res);
+ 
+ 	if (i2c->regs == NULL) {
+ 		dev_err(&pdev->dev, "cannot map IO\n");
+ 		ret = -ENXIO;
+-		goto err_ioarea;
++		goto err_clk;
+ 	}
+ 
+-	dev_dbg(&pdev->dev, "registers %p (%p, %p)\n",
+-		i2c->regs, i2c->ioarea, res);
++	dev_dbg(&pdev->dev, "registers %p (%p)\n",
++		i2c->regs, res);
+ 
+ 	/* setup info block for the i2c core */
+ 
+@@ -1017,7 +1007,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	ret = s3c24xx_i2c_init(i2c);
+ 	if (ret != 0)
+-		goto err_iomap;
++		goto err_clk;
+ 
+ 	/* find the IRQ for this unit (note, this relies on the init call to
+ 	 * ensure no current IRQs pending
+@@ -1026,7 +1016,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 	i2c->irq = ret = platform_get_irq(pdev, 0);
+ 	if (ret <= 0) {
+ 		dev_err(&pdev->dev, "cannot find IRQ\n");
+-		goto err_iomap;
++		goto err_clk;
+ 	}
+ 
+ 	ret = request_irq(i2c->irq, s3c24xx_i2c_irq, 0,
+@@ -1034,7 +1024,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+ 
+ 	if (ret != 0) {
+ 		dev_err(&pdev->dev, "cannot claim IRQ %d\n", i2c->irq);
+-		goto err_iomap;
++		goto err_clk;
+ 	}
+ 
+ 	ret = s3c24xx_i2c_register_cpufreq(i2c);
+@@ -1074,13 +1064,6 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
+  err_irq:
+ 	free_irq(i2c->irq, i2c);
+ 
+- err_iomap:
+-	iounmap(i2c->regs);
+-
+- err_ioarea:
+-	release_resource(i2c->ioarea);
+-	kfree(i2c->ioarea);
+-
+  err_clk:
+ 	clk_disable(i2c->clk);
+ 	clk_put(i2c->clk);
+@@ -1109,11 +1092,7 @@ static int s3c24xx_i2c_remove(struct platform_device *pdev)
+ 	clk_disable(i2c->clk);
+ 	clk_put(i2c->clk);
+ 
+-	iounmap(i2c->regs);
+-
+-	release_resource(i2c->ioarea);
+ 	s3c24xx_i2c_dt_gpio_free(i2c);
+-	kfree(i2c->ioarea);
+ 
+ 	return 0;
+ }
+-- 
+1.7.10
