@@ -1,37 +1,68 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] spi/s3c64xx: Expand S3C64XX_SPI_{DE,}ACT macros at
- call sites
-Date: Thu, 28 Jun 2012 20:52:45 +0200
-Message-ID: <CACRpkdaC3mXcgTib3JWOjuvaWU_NEcg1JCV-4QNS4EcAAZzCJQ@mail.gmail.com>
-References: <1340889811-7524-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-	<1340889811-7524-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-1 for v3.5
+Date: Fri, 29 Jun 2012 08:39:44 +0900
+Message-ID: <02c401cd5587$4bbff670$e33fe350$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qa0-f46.google.com ([209.85.216.46]:62950 "EHLO
-	mail-qa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754640Ab2F1Swq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:56039 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753178Ab2F1Xjp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jun 2012 14:52:46 -0400
-Received: by qadb17 with SMTP id b17so213548qad.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 28 Jun 2012 11:52:45 -0700 (PDT)
-In-Reply-To: <1340889811-7524-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Thu, 28 Jun 2012 19:39:45 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M6C00MUVPQ7HQ50@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 29 Jun 2012 08:39:44 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M6C005CBPQ88CB0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 29 Jun 2012 08:39:44 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Jun 28, 2012 at 3:23 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
+Hi Arnd, Olof,
 
-> They have very few users and they're both just doing a single register
-> write so the advantage of having the macro is a bit limited. An inline
-> function might make sense but it's as easy to just do the writes directly.
->
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Please pull Samsung fixes for v3.5 from:
+git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.5-samsung-fixes-1
 
-Much clearer.
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+These are small fixes for wrong address, config and clk check.
 
-Yours,
-Linus Walleij
+If any problems, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 485802a6c524e62b5924849dd727ddbb1497cc71:
+
+  Linux 3.5-rc3 (2012-06-16 17:25:17 -0700)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.5-samsung-fixes-1
+
+Jonghwan Choi (1):
+      ARM: SAMSUNG: Should check for IS_ERR(clk) instead of NULL
+
+Jose Miguel Goncalves (1):
+      ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping
+
+Sachin Kamat (1):
+      ARM: EXYNOS: Fix EXYNOS_DEV_DMA Kconfig entry
+
+ arch/arm/mach-exynos/Kconfig                       |    8 ++++----
+ arch/arm/plat-samsung/include/plat/map-s3c.h       |    2 +-
+ .../arm/plat-samsung/include/plat/watchdog-reset.h |    2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
