@@ -1,68 +1,60 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes-1 for v3.5
-Date: Fri, 29 Jun 2012 08:39:44 +0900
-Message-ID: <02c401cd5587$4bbff670$e33fe350$%kim@samsung.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] spi/s3c64xx: Convert to devm_request_and_ioremap()
+Date: Fri, 29 Jun 2012 02:20:28 +0100
+Message-ID: <20120629012028.GK28922@opensource.wolfsonmicro.com>
+References: <1340889811-7524-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <CACRpkdYwGoUwSRX2ASa5kJPpNFtmxbKPtgwUnFhQzZs9EUoHQQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="huBJOJF9BsF479P6"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56039 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753178Ab2F1Xjp (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35480 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754581Ab2F2BUc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jun 2012 19:39:45 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6C00MUVPQ7HQ50@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 29 Jun 2012 08:39:44 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M6C005CBPQ88CB0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 29 Jun 2012 08:39:44 +0900 (KST)
-Content-language: ko
+	Thu, 28 Jun 2012 21:20:32 -0400
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYwGoUwSRX2ASa5kJPpNFtmxbKPtgwUnFhQzZs9EUoHQQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-Hi Arnd, Olof,
 
-Please pull Samsung fixes for v3.5 from:
-git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.5-samsung-fixes-1
+--huBJOJF9BsF479P6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-These are small fixes for wrong address, config and clk check.
+On Thu, Jun 28, 2012 at 08:51:44PM +0200, Linus Walleij wrote:
 
-If any problems, please kindly let me know.
+> I'm starting to wonder if it would not be possible to mass-convert these
+> using coccinelle.
 
-Thanks.
+Probably, yes.  I'm not actually going through these particularly,
+really what I'm doing is looking to find drivers I run on my systems
+that might be able to use regmap-mmio and fixing things I find as I
+look.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--huBJOJF9BsF479P6
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-The following changes since commit 485802a6c524e62b5924849dd727ddbb1497cc71:
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
-  Linux 3.5-rc3 (2012-06-16 17:25:17 -0700)
+iQIcBAEBAgAGBQJP7QKqAAoJEBus8iNuMP3d13MP/A63AEGJv8P5oZkJCRqg2e5S
+JNIZpfIKVCBr7JsaAdswCRoPZOuEiIltavc68O25Ba8oo/U0fQaXt254VbGAtP3Q
+YVQliS+QEzbMczb9HphzoxEJFkGjmbiT1jepjo2RfzxLXGjoCR9x3zXL8JJE+/xB
+T3EIltYilGOJr2LfLlkEFy94sbG8gBKkUyo4lS9GZaCZcN36OlVKAeD3FOXvH8fs
+KglvIdy0ePtqyRGG8k4cjU3XBGASSkfqkiPRiEwVgDn6RfzaztZEgd0Op2vA6BSk
+yb2m50GyyuESN6aniuVX9wR5vnG2HLyUWD1QiVzV9YUw8p2UgZLg6zDZAB9nUU/O
+snSH0xr5CXLTQF5nYoqmE0SozUSmr7w4Yek129HWqqnTUtoaI6Ka6KS86dxnQS3s
+2trSkTMdW2+WBJr1NZFJEareEl0H2QXaM2BL51IQXIunPNqAuRKohnjwjE7Hz0Xs
+i7sSYDirwX9oMm5LVSk5TMl1KMONR0iG7zRTF6TSKKUQL839txYmjKxzBWREjQ1s
+WwOBo0kZZeGq5h/tC6OXENv1fBM6cG22nE+AWpaoivdn9bQ/mhBzvcL/jRwAo8fj
+CFyS/EUjs1oJ/BxyhbTMgQ/eCXrJyE81WF7A2VBH8nvmi6k5BpEFaHeaZVHnAzGQ
+oVjNHCscmQ8LfELDgfDH
+=+OEy
+-----END PGP SIGNATURE-----
 
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.5-samsung-fixes-1
-
-Jonghwan Choi (1):
-      ARM: SAMSUNG: Should check for IS_ERR(clk) instead of NULL
-
-Jose Miguel Goncalves (1):
-      ARM: SAMSUNG: Fix for S3C2412 EBI memory mapping
-
-Sachin Kamat (1):
-      ARM: EXYNOS: Fix EXYNOS_DEV_DMA Kconfig entry
-
- arch/arm/mach-exynos/Kconfig                       |    8 ++++----
- arch/arm/plat-samsung/include/plat/map-s3c.h       |    2 +-
- .../arm/plat-samsung/include/plat/watchdog-reset.h |    2 +-
- 3 files changed, 6 insertions(+), 6 deletions(-)
+--huBJOJF9BsF479P6--
