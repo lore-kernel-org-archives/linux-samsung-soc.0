@@ -1,60 +1,75 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] spi/s3c64xx: Convert to devm_request_and_ioremap()
-Date: Fri, 29 Jun 2012 02:20:28 +0100
-Message-ID: <20120629012028.GK28922@opensource.wolfsonmicro.com>
-References: <1340889811-7524-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <CACRpkdYwGoUwSRX2ASa5kJPpNFtmxbKPtgwUnFhQzZs9EUoHQQ@mail.gmail.com>
+From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
+Subject: Re: [PATCH] i2c-s3c2410: Use plain pm_runtime_put()
+Date: Fri, 29 Jun 2012 15:00:40 +0530
+Message-ID: <CAM=Q2cs2-aSPGz3FSLkWj3AV28qCZbNxYdTg3ym=6=h-+uZpaw@mail.gmail.com>
+References: <1340888906-1152-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="huBJOJF9BsF479P6"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35480 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754581Ab2F2BUc (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:64564 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753831Ab2F2Jal convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 28 Jun 2012 21:20:32 -0400
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYwGoUwSRX2ASa5kJPpNFtmxbKPtgwUnFhQzZs9EUoHQQ@mail.gmail.com>
+	Fri, 29 Jun 2012 05:30:41 -0400
+In-Reply-To: <1340888906-1152-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Wolfram Sang <w.sang@pengutronix.de>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+
+Hi Mark,
+
+On Thu, Jun 28, 2012 at 6:38 PM, Mark Brown
+<broonie@opensource.wolfsonmicro.com> wrote:
+> There's no point in using _sync() as we don't really care if the susp=
+end
+> has completed immediately.
+
+Agree.
 
 
---huBJOJF9BsF479P6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Reviewed-by: Shubhrajyoti D <shubhrajyoti@ti.com>
+>
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> ---
+> =A0drivers/i2c/busses/i2c-s3c2410.c | =A0 =A04 ++--
+> =A01 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
+c-s3c2410.c
+> index ddd5797..c4a4494 100644
+> --- a/drivers/i2c/busses/i2c-s3c2410.c
+> +++ b/drivers/i2c/busses/i2c-s3c2410.c
+> @@ -608,7 +608,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *a=
+dap,
+>
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (ret !=3D -EAGAIN) {
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clk_disable(i2c->clk);
+> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pm_runtime_put_sync(&ad=
+ap->dev);
+> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pm_runtime_put(&adap->d=
+ev);
+Especially if we are retrying in 100us :-)
 
-On Thu, Jun 28, 2012 at 08:51:44PM +0200, Linus Walleij wrote:
-
-> I'm starting to wonder if it would not be possible to mass-convert these
-> using coccinelle.
-
-Probably, yes.  I'm not actually going through these particularly,
-really what I'm doing is looking to find drivers I run on my systems
-that might be able to use regmap-mmio and fixing things I find as I
-look.
-
---huBJOJF9BsF479P6
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP7QKqAAoJEBus8iNuMP3d13MP/A63AEGJv8P5oZkJCRqg2e5S
-JNIZpfIKVCBr7JsaAdswCRoPZOuEiIltavc68O25Ba8oo/U0fQaXt254VbGAtP3Q
-YVQliS+QEzbMczb9HphzoxEJFkGjmbiT1jepjo2RfzxLXGjoCR9x3zXL8JJE+/xB
-T3EIltYilGOJr2LfLlkEFy94sbG8gBKkUyo4lS9GZaCZcN36OlVKAeD3FOXvH8fs
-KglvIdy0ePtqyRGG8k4cjU3XBGASSkfqkiPRiEwVgDn6RfzaztZEgd0Op2vA6BSk
-yb2m50GyyuESN6aniuVX9wR5vnG2HLyUWD1QiVzV9YUw8p2UgZLg6zDZAB9nUU/O
-snSH0xr5CXLTQF5nYoqmE0SozUSmr7w4Yek129HWqqnTUtoaI6Ka6KS86dxnQS3s
-2trSkTMdW2+WBJr1NZFJEareEl0H2QXaM2BL51IQXIunPNqAuRKohnjwjE7Hz0Xs
-i7sSYDirwX9oMm5LVSk5TMl1KMONR0iG7zRTF6TSKKUQL839txYmjKxzBWREjQ1s
-WwOBo0kZZeGq5h/tC6OXENv1fBM6cG22nE+AWpaoivdn9bQ/mhBzvcL/jRwAo8fj
-CFyS/EUjs1oJ/BxyhbTMgQ/eCXrJyE81WF7A2VBH8nvmi6k5BpEFaHeaZVHnAzGQ
-oVjNHCscmQ8LfELDgfDH
-=+OEy
------END PGP SIGNATURE-----
-
---huBJOJF9BsF479P6--
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return ret;
+> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
+>
+> @@ -618,7 +618,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *a=
+dap,
+> =A0 =A0 =A0 =A0}
+>
+> =A0 =A0 =A0 =A0clk_disable(i2c->clk);
+> - =A0 =A0 =A0 pm_runtime_put_sync(&adap->dev);
+> + =A0 =A0 =A0 pm_runtime_put(&adap->dev);
+> =A0 =A0 =A0 =A0return -EREMOTEIO;
+> =A0}
+>
+> --
+> 1.7.10
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-i2c" =
+in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
