@@ -1,75 +1,49 @@
-From: Shubhrajyoti Datta <omaplinuxkernel@gmail.com>
-Subject: Re: [PATCH] i2c-s3c2410: Use plain pm_runtime_put()
-Date: Fri, 29 Jun 2012 15:00:40 +0530
-Message-ID: <CAM=Q2cs2-aSPGz3FSLkWj3AV28qCZbNxYdTg3ym=6=h-+uZpaw@mail.gmail.com>
-References: <1340888906-1152-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: [PATCH 01/10] ARM: S3C24XX: Free the backlight gpio requested in Mini2440 board code
+Date: Sat, 30 Jun 2012 14:08:53 +0200
+Message-ID: <1341058142-30438-2-git-send-email-sylvester.nawrocki@gmail.com>
+References: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:64564 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753831Ab2F2Jal convert rfc822-to-8bit (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:57054 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754249Ab2F3MJY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 29 Jun 2012 05:30:41 -0400
-In-Reply-To: <1340888906-1152-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Sat, 30 Jun 2012 08:09:24 -0400
+Received: by eaak11 with SMTP id k11so1647555eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jun 2012 05:09:23 -0700 (PDT)
+In-Reply-To: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Wolfram Sang <w.sang@pengutronix.de>, linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
+To: kgene.kim@samsung.com
+Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-Hi Mark,
+The backlight gpio must not be left requested in the board
+code, otherwise s3c24xx_led driver can't successfully claim it.
+So request the backlight gpio, configure it to proper state and
+gpio_free right away.
 
-On Thu, Jun 28, 2012 at 6:38 PM, Mark Brown
-<broonie@opensource.wolfsonmicro.com> wrote:
-> There's no point in using _sync() as we don't really care if the susp=
-end
-> has completed immediately.
+This change is required for converting the s3c24xx_led driver
+to the gpiolib API.
 
-Agree.
+Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+---
+ arch/arm/mach-s3c24xx/mach-mini2440.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
 
-
-Reviewed-by: Shubhrajyoti D <shubhrajyoti@ti.com>
->
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
-> =A0drivers/i2c/busses/i2c-s3c2410.c | =A0 =A04 ++--
-> =A01 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2=
-c-s3c2410.c
-> index ddd5797..c4a4494 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -608,7 +608,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *a=
-dap,
->
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0if (ret !=3D -EAGAIN) {
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0clk_disable(i2c->clk);
-> - =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pm_runtime_put_sync(&ad=
-ap->dev);
-> + =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 pm_runtime_put(&adap->d=
-ev);
-Especially if we are retrying in 100us :-)
-
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0return ret;
-> =A0 =A0 =A0 =A0 =A0 =A0 =A0 =A0}
->
-> @@ -618,7 +618,7 @@ static int s3c24xx_i2c_xfer(struct i2c_adapter *a=
-dap,
-> =A0 =A0 =A0 =A0}
->
-> =A0 =A0 =A0 =A0clk_disable(i2c->clk);
-> - =A0 =A0 =A0 pm_runtime_put_sync(&adap->dev);
-> + =A0 =A0 =A0 pm_runtime_put(&adap->dev);
-> =A0 =A0 =A0 =A0return -EREMOTEIO;
-> =A0}
->
-> --
-> 1.7.10
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-i2c" =
-in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at =A0http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index f092b18..bd6d252 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -634,8 +634,8 @@ static void __init mini2440_init(void)
+ 	s3c_gpio_cfgpin(S3C2410_GPC(0), S3C2410_GPC0_LEND);
+ 
+ 	/* Turn the backlight early on */
+-	WARN_ON(gpio_request(S3C2410_GPG(4), "backlight"));
+-	gpio_direction_output(S3C2410_GPG(4), 1);
++	WARN_ON(gpio_request_one(S3C2410_GPG(4), GPIOF_OUT_INIT_HIGH, NULL));
++	gpio_free(S3C2410_GPG(4));
+ 
+ 	/* remove pullup on optional PWM backlight -- unused on 3.5 and 7"s */
+ 	s3c_gpio_setpull(S3C2410_GPB(1), S3C_GPIO_PULL_UP);
+-- 
+1.7.4.1
