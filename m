@@ -1,42 +1,60 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH 09/10] ARM: S3C24XX: Correct AC97 clock control bit for S3C2440
-Date: Sat, 30 Jun 2012 14:09:01 +0200
-Message-ID: <1341058142-30438-10-git-send-email-sylvester.nawrocki@gmail.com>
-References: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
+Subject: [PATCH] mmc: Convert s3cmci driver to gpiolib API
+Date: Sat, 30 Jun 2012 14:24:22 +0200
+Message-ID: <1341059062-16530-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:41567 "EHLO
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:49435 "EHLO
 	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754249Ab2F3MJf (ORCPT
+	with ESMTP id S1754249Ab2F3MYn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Jun 2012 08:09:35 -0400
-Received: by mail-ee0-f46.google.com with SMTP id t10so1629924eei.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jun 2012 05:09:35 -0700 (PDT)
-In-Reply-To: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
+	Sat, 30 Jun 2012 08:24:43 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: cjb@laptop.org
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Ben Dooks <ben-linux@fluff.org>
 
-Use correct gate control bit for AC97 clock which is
-S3C2440_CLKCON_AC97, not S3C2440_CLKCON_CAMERA.
+The s3c2410_gpio* calls are obsolete and have been scheduled for
+removal since several kernel releases. Remove them and use common
+gpiolib API.
 
+This patch is a prerequisite for removal of the S3C24XX SoC specific
+arch/arm/plat-samsung/include/gpio-fns.h header.
+
+Tested on Micro2440-SDK.
+
+Cc: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 ---
- arch/arm/mach-s3c24xx/clock-s3c2440.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+ drivers/mmc/host/s3cmci.c |   10 +++-------
+ 1 files changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm/mach-s3c24xx/clock-s3c2440.c b/arch/arm/mach-s3c24xx/clock-s3c2440.c
-index 414364e..cb2883d 100644
---- a/arch/arm/mach-s3c24xx/clock-s3c2440.c
-+++ b/arch/arm/mach-s3c24xx/clock-s3c2440.c
-@@ -106,7 +106,7 @@ static struct clk s3c2440_clk_cam_upll = {
- static struct clk s3c2440_clk_ac97 = {
- 	.name		= "ac97",
- 	.enable		= s3c2410_clkcon_enable,
--	.ctrlbit	= S3C2440_CLKCON_CAMERA,
-+	.ctrlbit	= S3C2440_CLKCON_AC97,
- };
- 
- static unsigned long  s3c2440_fclk_n_getrate(struct clk *clk)
--- 
+diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+index c3622a6..bd5a5cc 100644
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -26,7 +26,6 @@
+ #include <mach/dma.h>
+
+ #include <mach/regs-sdi.h>
+-#include <mach/regs-gpio.h>
+
+ #include <plat/mci.h>
+
+@@ -1237,12 +1236,9 @@ static void s3cmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_ON:
+ 	case MMC_POWER_UP:
+-		s3c2410_gpio_cfgpin(S3C2410_GPE(5), S3C2410_GPE5_SDCLK);
+-		s3c2410_gpio_cfgpin(S3C2410_GPE(6), S3C2410_GPE6_SDCMD);
+-		s3c2410_gpio_cfgpin(S3C2410_GPE(7), S3C2410_GPE7_SDDAT0);
+-		s3c2410_gpio_cfgpin(S3C2410_GPE(8), S3C2410_GPE8_SDDAT1);
+-		s3c2410_gpio_cfgpin(S3C2410_GPE(9), S3C2410_GPE9_SDDAT2);
+-		s3c2410_gpio_cfgpin(S3C2410_GPE(10), S3C2410_GPE10_SDDAT3);
++		/* Configure GPE5...GPE10 pins in SD mode */
++		s3c_gpio_cfgall_range(S3C2410_GPE(5), 6, S3C_GPIO_SFN(2),
++				      S3C_GPIO_PULL_NONE);
+
+ 		if (host->pdata->set_power)
+ 			host->pdata->set_power(ios->power_mode, ios->vdd);
+--
 1.7.4.1
