@@ -1,62 +1,59 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH 00/10] ARM: S3C24XX gpio cleanups and fixes
-Date: Sat, 30 Jun 2012 14:08:52 +0200
-Message-ID: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
+Subject: [PATCH 04/10] ARM: S3C24XX: Convert the PM code to gpiolib API
+Date: Sat, 30 Jun 2012 14:08:56 +0200
+Message-ID: <1341058142-30438-5-git-send-email-sylvester.nawrocki@gmail.com>
+References: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:64040 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754135Ab2F3MJW (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:41567 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754249Ab2F3MJ2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Jun 2012 08:09:22 -0400
-Received: by eaak11 with SMTP id k11so1647543eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jun 2012 05:09:21 -0700 (PDT)
+	Sat, 30 Jun 2012 08:09:28 -0400
+Received: by mail-ee0-f46.google.com with SMTP id t10so1629924eei.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jun 2012 05:09:27 -0700 (PDT)
+In-Reply-To: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com
 Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-This changset attempts to remove the users of an obsolete GPIO API in
-Samsung S3C24XX platform and instead use the gpiolib API. It should
-allow to drop some s3c24xx SoC specific headers as a next step and
-simplify drivers/gpio/gpio-samsung.c driver a little. With the
-introduction of the pinctrl GPIO driver we're going to have three
-distinct GPIO APIs. Let's avoid this and drop the s3c24xx_gpio_*
-functions, which have been scheduled for removal since about v2.6.35.
+Replace deprecated functions with the gpiolib ones.
 
-Additionally this changeset includes two minor fixes, for AC97 clock
-and CAMIF interrupts.
+Cc: ben-linux@fluff.org
+Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+---
+ arch/arm/mach-s3c24xx/pm-s3c2410.c |   12 ++++++++----
+ 1 files changed, 8 insertions(+), 4 deletions(-)
 
-
-Sylwester Nawrocki (10):
-  ARM: S3C24XX: Free the backlight gpio requested in Mini2440 board code
-  ARM: S3C24XX: Convert SMDK board file to the gpiolib API
-  ARM: S3C24XX: Convert QT2410 board file to the gpiolib API
-  ARM: S3C24XX: Convert the PM code to gpiolib API
-  ARM: S3C24XX: Convert the touchscreen setup code to common GPIO API
-  ARM: S3C24XX: Remove unused GPA, GPE, GPH bank GPIO aliases
-  ARM: S3C24XX: Remove unused GPIO definitions for port J
-  ARM: S3C24XX: Remove unused GPIO definitions for Openmoko GTA02 board
-  ARM: S3C24XX: Correct AC97 clock control bit for S3C2440
-  ARM: S3C24XX: Correct CAMIF interrupt definitions
-
- arch/arm/mach-s3c24xx/clock-s3c2440.c           |    2 +-
- arch/arm/mach-s3c24xx/common-smdk.c             |   20 ++++---
- arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h   |   21 -------
- arch/arm/mach-s3c24xx/include/mach/gta02.h      |   69 ----------------------
- arch/arm/mach-s3c24xx/include/mach/regs-gpio.h  |   17 +++++-
- arch/arm/mach-s3c24xx/include/mach/regs-gpioj.h |   70 -----------------------
- arch/arm/mach-s3c24xx/mach-gta02.c              |    1 -
- arch/arm/mach-s3c24xx/mach-mini2440.c           |    4 +-
- arch/arm/mach-s3c24xx/mach-qt2410.c             |    6 +-
- arch/arm/mach-s3c24xx/mach-rx1950.c             |    1 -
- arch/arm/mach-s3c24xx/pm-s3c2410.c              |   12 +++-
- arch/arm/mach-s3c24xx/pm-s3c2412.c              |    1 -
- arch/arm/mach-s3c24xx/s3c2412.c                 |    1 -
- arch/arm/mach-s3c24xx/s3c244x.c                 |    1 -
- arch/arm/mach-s3c24xx/setup-ts.c                |    6 +--
- arch/arm/plat-samsung/devs.c                    |    3 +-
- 16 files changed, 43 insertions(+), 192 deletions(-)
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-gpioj.h
-
---
+diff --git a/arch/arm/mach-s3c24xx/pm-s3c2410.c b/arch/arm/mach-s3c24xx/pm-s3c2410.c
+index 03f706d..949ae05 100644
+--- a/arch/arm/mach-s3c24xx/pm-s3c2410.c
++++ b/arch/arm/mach-s3c24xx/pm-s3c2410.c
+@@ -77,8 +77,10 @@ static void s3c2410_pm_prepare(void)
+ 		__raw_writel(calc, phys_to_virt(H1940_SUSPEND_CHECKSUM));
+ 	}
+ 
+-	if ( machine_is_aml_m5900() )
+-		s3c2410_gpio_setpin(S3C2410_GPF(2), 1);
++	if (machine_is_aml_m5900()) {
++		gpio_request_one(S3C2410_GPF(2), GPIOF_OUT_INIT_HIGH, NULL);
++		gpio_free(S3C2410_GPF(2));
++	}
+ 
+ 	if (machine_is_rx1950()) {
+ 		/* According to S3C2442 user's manual, page 7-17,
+@@ -103,8 +105,10 @@ static void s3c2410_pm_resume(void)
+ 	tmp &= S3C2410_GSTATUS2_OFFRESET;
+ 	__raw_writel(tmp, S3C2410_GSTATUS2);
+ 
+-	if ( machine_is_aml_m5900() )
+-		s3c2410_gpio_setpin(S3C2410_GPF(2), 0);
++	if (machine_is_aml_m5900()) {
++		gpio_request_one(S3C2410_GPF(2), GPIOF_OUT_INIT_LOW, NULL);
++		gpio_free(S3C2410_GPF(2));
++	}
+ }
+ 
+ struct syscore_ops s3c2410_pm_syscore_ops = {
+-- 
 1.7.4.1
