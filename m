@@ -1,60 +1,60 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH] mmc: Convert s3cmci driver to gpiolib API
-Date: Sat, 30 Jun 2012 14:24:22 +0200
-Message-ID: <1341059062-16530-1-git-send-email-sylvester.nawrocki@gmail.com>
+Subject: [PATCH 1/2] leds: Convert S3C24XX LED driver to devm_kzalloc()
+Date: Sat, 30 Jun 2012 14:30:25 +0200
+Message-ID: <1341059426-22693-1-git-send-email-sylvester.nawrocki@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:49435 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754249Ab2F3MYn (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:35395 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754598Ab2F3Mag (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Jun 2012 08:24:43 -0400
+	Sat, 30 Jun 2012 08:30:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: cjb@laptop.org
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Ben Dooks <ben-linux@fluff.org>
+To: bryan.wu@canonical.com, rpurdie@rpsys.net
+Cc: linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Ben Dooks <ben-linux@fluff.org>
 
-The s3c2410_gpio* calls are obsolete and have been scheduled for
-removal since several kernel releases. Remove them and use common
-gpiolib API.
-
-This patch is a prerequisite for removal of the S3C24XX SoC specific
-arch/arm/plat-samsung/include/gpio-fns.h header.
-
-Tested on Micro2440-SDK.
+Use the device managed resource API for simplifying
+the error/driver remove paths.
 
 Cc: Ben Dooks <ben-linux@fluff.org>
 Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 ---
- drivers/mmc/host/s3cmci.c |   10 +++-------
- 1 files changed, 3 insertions(+), 7 deletions(-)
+ drivers/leds/leds-s3c24xx.c |    8 +++-----
+ 1 files changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
-index c3622a6..bd5a5cc 100644
---- a/drivers/mmc/host/s3cmci.c
-+++ b/drivers/mmc/host/s3cmci.c
-@@ -26,7 +26,6 @@
- #include <mach/dma.h>
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index e6ee105..b816ccb 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -63,7 +63,6 @@ static int s3c24xx_led_remove(struct platform_device *dev)
+ 	struct s3c24xx_gpio_led *led = pdev_to_gpio(dev);
 
- #include <mach/regs-sdi.h>
--#include <mach/regs-gpio.h>
+ 	led_classdev_unregister(&led->cdev);
+-	kfree(led);
 
- #include <plat/mci.h>
+ 	return 0;
+ }
+@@ -74,7 +73,8 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 	struct s3c24xx_gpio_led *led;
+ 	int ret;
 
-@@ -1237,12 +1236,9 @@ static void s3cmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	switch (ios->power_mode) {
- 	case MMC_POWER_ON:
- 	case MMC_POWER_UP:
--		s3c2410_gpio_cfgpin(S3C2410_GPE(5), S3C2410_GPE5_SDCLK);
--		s3c2410_gpio_cfgpin(S3C2410_GPE(6), S3C2410_GPE6_SDCMD);
--		s3c2410_gpio_cfgpin(S3C2410_GPE(7), S3C2410_GPE7_SDDAT0);
--		s3c2410_gpio_cfgpin(S3C2410_GPE(8), S3C2410_GPE8_SDDAT1);
--		s3c2410_gpio_cfgpin(S3C2410_GPE(9), S3C2410_GPE9_SDDAT2);
--		s3c2410_gpio_cfgpin(S3C2410_GPE(10), S3C2410_GPE10_SDDAT3);
-+		/* Configure GPE5...GPE10 pins in SD mode */
-+		s3c_gpio_cfgall_range(S3C2410_GPE(5), 6, S3C_GPIO_SFN(2),
-+				      S3C_GPIO_PULL_NONE);
+-	led = kzalloc(sizeof(struct s3c24xx_gpio_led), GFP_KERNEL);
++	led = devm_kzalloc(&dev->dev, sizeof(struct s3c24xx_gpio_led),
++			   GFP_KERNEL);
+ 	if (led == NULL) {
+ 		dev_err(&dev->dev, "No memory for device\n");
+ 		return -ENOMEM;
+@@ -103,10 +103,8 @@ static int s3c24xx_led_probe(struct platform_device *dev)
+ 	/* register our new led device */
 
- 		if (host->pdata->set_power)
- 			host->pdata->set_power(ios->power_mode, ios->vdd);
+ 	ret = led_classdev_register(&dev->dev, &led->cdev);
+-	if (ret < 0) {
++	if (ret < 0)
+ 		dev_err(&dev->dev, "led_classdev_register failed\n");
+-		kfree(led);
+-	}
+
+ 	return ret;
+ }
 --
 1.7.4.1
