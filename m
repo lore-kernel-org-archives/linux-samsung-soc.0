@@ -1,38 +1,44 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes-1 for v3.5
-Date: Sat, 30 Jun 2012 15:29:00 -0700
-Message-ID: <CAOesGMi56JyC9tC6zciPA=Vz_cH1ietdKiec0FsO3WDMFbuSmw@mail.gmail.com>
-References: <02c401cd5587$4bbff670$e33fe350$%kim@samsung.com>
+From: Harald Welte <laforge@gnumonks.org>
+Subject: Re: [PATCH 03/10] ARM: S3C24XX: Convert QT2410 board file to the
+ gpiolib API
+Date: Sun, 1 Jul 2012 07:46:42 +0200
+Message-ID: <20120701054641.GB6079@prithivi.gnumonks.org>
+References: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
+ <1341058142-30438-4-git-send-email-sylvester.nawrocki@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:37387 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751368Ab2F3W3A (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 30 Jun 2012 18:29:00 -0400
-Received: by dady13 with SMTP id y13so5849750dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 30 Jun 2012 15:29:00 -0700 (PDT)
-In-Reply-To: <02c401cd5587$4bbff670$e33fe350$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <1341058142-30438-4-git-send-email-sylvester.nawrocki@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+On Sat, Jun 30, 2012 at 02:08:55PM +0200, Sylwester Nawrocki wrote:
+> Cc: laforge@openmoko.org
+> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-On Thu, Jun 28, 2012 at 4:39 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Hi Arnd, Olof,
->
-> Please pull Samsung fixes for v3.5 from:
-> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.5-samsung-fixes-1
->
-> These are small fixes for wrong address, config and clk check.
->
-> If any problems, please kindly let me know.
+Acked-by: Harald Welte <laforge@gnumonks.org>
 
-Thanks, pulled.
+> This change was only compile tested. If there is someone still
+> using this board please provide a "Tested-by" tag.
 
+I unfortuntely also don't have access to a QT2410 anymore, sorry.
 
--Olof
+Regards,
+	Harald
+-- 
+- Harald Welte <laforge@gnumonks.org>           http://laforge.gnumonks.org/
+============================================================================
+"Privacy in residential applications is a desirable marketing option."
+                                                  (ETSI EN 300 175-7 Ch. A6)
