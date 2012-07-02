@@ -1,37 +1,44 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Add missing .reserve field to SMDKC210
-Date: Mon,  2 Jul 2012 14:33:11 +0530
-Message-ID: <1341219791-17202-1-git-send-email-sachin.kamat@linaro.org>
+From: Vinayak Holikatti <vinholikatti@gmail.com>
+Subject: [PATCH 0/4] ufshcd: Adds glue drivers to ufshcd
+Date: Mon,  2 Jul 2012 20:02:48 +0530
+Message-ID: <1341239572-7408-1-git-send-email-vinholikatti@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:34388 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932310Ab2GBJPc (ORCPT
+Received: from mail-gh0-f174.google.com ([209.85.160.174]:55297 "EHLO
+	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751183Ab2GBOdS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jul 2012 05:15:32 -0400
-Received: by dady13 with SMTP id y13so7133218dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jul 2012 02:15:32 -0700 (PDT)
+	Mon, 2 Jul 2012 10:33:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: James.Bottomley@hansenpartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, yejin.moon@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, stephen.doel@linaro.org, sreekumar.c@samsung.com, Vinayak Holikatti <vinholikatti@gmail.com>
 
-Adds missing .reserve field to SMDKC210 board.
+This patch set adds following features
+ - Seprates PCI glue layer from ufshcd.c into ufshcd-pci.c
+ - Adds Platform glue driver ufshcd-pltfrm.c
+ - Adds AMBA Primecell support with ufshcd-amba.c
+ - Update correct transfer size in Command UPIU
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/mach-smdkv310.c |    1 +
- 1 files changed, 1 insertions(+), 0 deletions(-)
+Vinayak Holikatti (4):
+  [SCSI] ufs: Separate PCI glue driver for ufshcd
+  [SCSI] ufs: Add Platform glue driver for ufshcd
+  [SCSI] ufs: Add AMBA glue driver to ufshcd
+  [SCSI] ufs: Correct the expected data transfer size in UPIU
 
-diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
-index 95ce9f6..2d34ec7 100644
---- a/arch/arm/mach-exynos/mach-smdkv310.c
-+++ b/arch/arm/mach-exynos/mach-smdkv310.c
-@@ -422,5 +422,6 @@ MACHINE_START(SMDKC210, "SMDKC210")
- 	.init_machine	= smdkv310_machine_init,
- 	.init_late	= exynos_init_late,
- 	.timer		= &exynos4_timer,
-+	.reserve	= &smdkv310_reserve,
- 	.restart	= exynos4_restart,
- MACHINE_END
+ drivers/scsi/ufs/Kconfig         |   47 ++++-
+ drivers/scsi/ufs/Makefile        |    3 +
+ drivers/scsi/ufs/ufshcd-amba.c   |  180 ++++++++++++++++
+ drivers/scsi/ufs/ufshcd-pci.c    |  227 ++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  212 +++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c        |  422 ++++++--------------------------------
+ drivers/scsi/ufs/ufshcd.h        |  206 +++++++++++++++++++
+ drivers/scsi/ufs/ufshcd_common.h |   53 +++++
+ 8 files changed, 993 insertions(+), 357 deletions(-)
+ create mode 100644 drivers/scsi/ufs/ufshcd-amba.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-pci.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-pltfrm.c
+ create mode 100644 drivers/scsi/ufs/ufshcd.h
+ create mode 100644 drivers/scsi/ufs/ufshcd_common.h
+
 -- 
-1.7.4.1
+1.7.5.4
