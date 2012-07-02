@@ -1,120 +1,55 @@
-From: Bryan Wu <bryan.wu@canonical.com>
-Subject: Re: [PATCH 2/2] leds: Convert S3C24XX LED driver to gpiolib API
-Date: Mon, 2 Jul 2012 11:35:38 +0800
-Message-ID: <CAK5ve-JRmb93+KVFVfeDbP7i_7n3dN22WcsyLurgAbvkU5e=mA@mail.gmail.com>
-References: <1341059426-22693-1-git-send-email-sylvester.nawrocki@gmail.com> <1341059426-22693-2-git-send-email-sylvester.nawrocki@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 0/2] ARM: EXYNOS: G2D clock support to Exynos4
+Date: Mon, 2 Jul 2012 11:04:23 +0530
+Message-ID: <CAK9yfHz14cYUqKj_QHCMcEJRQa5Hdq61fS5NJ5VHahSt_emDvA@mail.gmail.com>
+References: <1337314071-15305-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f42.google.com ([209.85.213.42]:44719 "EHLO
-	mail-yw0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751032Ab2GBDf7 (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:39352 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755090Ab2GBFeY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 1 Jul 2012 23:35:59 -0400
-In-Reply-To: <1341059426-22693-2-git-send-email-sylvester.nawrocki@gmail.com>
+	Mon, 2 Jul 2012 01:34:24 -0400
+Received: by vcbf11 with SMTP id f11so3297453vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 01 Jul 2012 22:34:23 -0700 (PDT)
+In-Reply-To: <1337314071-15305-1-git-send-email-sachin.kamat@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-On Sat, Jun 30, 2012 at 8:30 PM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> The s3c2410_gpio* calls are obsolete and have been scheduled for
-> removal since several kernel releases. Remove them and use common
-> gpiolib API instead.
-> This patch also adds gpio_request/gpio_free call for API corectness.
->
-> It is a prerequisite for removal of the S3C24XX SoC specific
-> arch/arm/plat-samsung/include/gpio-fns.h header.
->
-> Tested on Micro2440-SDK.
->
+ping ...
 
-Overall, these 2 patches are good. I'm just curious why not we just
-use generic led-gpio driver to replace this one.
-
--Bryan
-
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> ---
->  drivers/leds/leds-s3c24xx.c |   34 ++++++++++++++++++++--------------
->  1 files changed, 20 insertions(+), 14 deletions(-)
+On 18/05/2012, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> This patch series moves the SoC specific G2D clock entries from common clock
 >
-> diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
-> index b816ccb..e120640 100644
-> --- a/drivers/leds/leds-s3c24xx.c
-> +++ b/drivers/leds/leds-s3c24xx.c
-> @@ -45,17 +45,19 @@ static void s3c24xx_led_set(struct led_classdev *led_cdev,
->  {
->         struct s3c24xx_gpio_led *led = to_gpio(led_cdev);
->         struct s3c24xx_led_platdata *pd = led->pdata;
-> +       int state = (value ? 1 : 0) ^ (pd->flags & S3C24XX_LEDF_ACTLOW);
+> file (clock-exynos4.c) to Exynos4210 specific clock file
+> (clock-exynos4210.c)
+> since G2D clock registers are different in Exynos4210 and Exynos4X12 SoCs
+> and adds support for Exynos4x12 G2D clock.
 >
->         /* there will be a short delay between setting the output and
->          * going from output to input when using tristate. */
+> This series is based on Kukjin Kim's latest for-next branch.
 >
-> -       s3c2410_gpio_setpin(pd->gpio, (value ? 1 : 0) ^
-> -                           (pd->flags & S3C24XX_LEDF_ACTLOW));
-> -
-> -       if (pd->flags & S3C24XX_LEDF_TRISTATE)
-> -               s3c2410_gpio_cfgpin(pd->gpio,
-> -                       value ? S3C2410_GPIO_OUTPUT : S3C2410_GPIO_INPUT);
-> +       gpio_set_value(pd->gpio, state);
+> Sachin Kamat (2):
+>   ARM: EXYNOS: Move G2D clock entries to clock-exynos4210.c file
+>   ARM: EXYNOS: Add G2D related clock entries for SMDK4X12
 >
-> +       if (pd->flags & S3C24XX_LEDF_TRISTATE) {
-> +               if (value)
-> +                       gpio_direction_output(pd->gpio, state);
-> +               else
-> +                       gpio_direction_input(pd->gpio);
-> +       }
->  }
->
->  static int s3c24xx_led_remove(struct platform_device *dev)
-> @@ -63,6 +65,7 @@ static int s3c24xx_led_remove(struct platform_device *dev)
->         struct s3c24xx_gpio_led *led = pdev_to_gpio(dev);
->
->         led_classdev_unregister(&led->cdev);
-> +       gpio_free(led->pdata->gpio);
->
->         return 0;
->  }
-> @@ -89,16 +92,19 @@ static int s3c24xx_led_probe(struct platform_device *dev)
->
->         led->pdata = pdata;
->
-> +       ret = gpio_request(pdata->gpio, "S3C24XX_LED");
-> +       if (ret < 0)
-> +               return ret;
-> +
->         /* no point in having a pull-up if we are always driving */
->
-> -       if (pdata->flags & S3C24XX_LEDF_TRISTATE) {
-> -               s3c2410_gpio_setpin(pdata->gpio, 0);
-> -               s3c2410_gpio_cfgpin(pdata->gpio, S3C2410_GPIO_INPUT);
-> -       } else {
-> -               s3c2410_gpio_pullup(pdata->gpio, 0);
-> -               s3c2410_gpio_setpin(pdata->gpio, 0);
-> -               s3c2410_gpio_cfgpin(pdata->gpio, S3C2410_GPIO_OUTPUT);
-> -       }
-> +       s3c_gpio_setpull(pdata->gpio, S3C_GPIO_PULL_NONE);
-> +
-> +       if (pdata->flags & S3C24XX_LEDF_TRISTATE)
-> +               gpio_direction_input(pdata->gpio);
-> +       else
-> +               gpio_direction_output(pdata->gpio,
-> +                       pdata->flags & S3C24XX_LEDF_ACTLOW ? 1 : 0);
->
->         /* register our new led device */
+>  arch/arm/mach-exynos/clock-exynos4.c    |   41
+> +-----------------------------
+>  arch/arm/mach-exynos/clock-exynos4.h    |    3 ++
+>  arch/arm/mach-exynos/clock-exynos4210.c |   37
+> ++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/clock-exynos4212.c |   41
+> +++++++++++++++++++++++++++++-
+>  4 files changed, 81 insertions(+), 41 deletions(-)
 >
 > --
 > 1.7.4.1
 >
-
+>
 
 
 -- 
-Bryan Wu <bryan.wu@canonical.com>
-Kernel Developer    +86.186-168-78255 Mobile
-Canonical Ltd.      www.canonical.com
-Ubuntu - Linux for human beings | www.ubuntu.com
+With warm regards,
+Sachin
