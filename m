@@ -1,56 +1,51 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/1] ASoC: Samsung: Convert to use snd_soc_register_card()
-Date: Tue, 3 Jul 2012 19:48:20 +0100
-Message-ID: <20120703184819.GW29030@opensource.wolfsonmicro.com>
-References: <1341304444-11188-1-git-send-email-sachin.kamat@linaro.org>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 2/2] leds: Convert S3C24XX LED driver to gpiolib API
+Date: Tue, 03 Jul 2012 23:10:41 +0200
+Message-ID: <4FF35FD1.4060402@gmail.com>
+References: <1341059426-22693-1-git-send-email-sylvester.nawrocki@gmail.com> <1341059426-22693-2-git-send-email-sylvester.nawrocki@gmail.com> <CAK5ve-JRmb93+KVFVfeDbP7i_7n3dN22WcsyLurgAbvkU5e=mA@mail.gmail.com> <4FF20224.4020203@gmail.com> <CAK5ve-+k0vJCDrrLoVTrtCDz0MrfootreAsy2+O6YRss1apB=g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Q/AGl/UrDvkbRExF"
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:58149 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932255Ab2GCSsX (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:57180 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757266Ab2GCVKp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jul 2012 14:48:23 -0400
-Content-Disposition: inline
-In-Reply-To: <1341304444-11188-1-git-send-email-sachin.kamat@linaro.org>
+	Tue, 3 Jul 2012 17:10:45 -0400
+In-Reply-To: <CAK5ve-+k0vJCDrrLoVTrtCDz0MrfootreAsy2+O6YRss1apB=g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, kgene.kim@samsung.com, tiwai@suse.de, patches@linaro.org
+To: Bryan Wu <bryan.wu@canonical.com>
+Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 
+On 07/03/2012 04:30 AM, Bryan Wu wrote:
+...
+>>> Overall, these 2 patches are good. I'm just curious why not we just
+>>> use generic led-gpio driver to replace this one.
+>>
+>> Thank you for the suggestion, I wasn't really aware of generic leds-gpio
+>> driver... This could be nice optimization. However my intention was
+>> to just clean up the GPIO bits, with minimal changes to other subsystems.
+>> I could check and see how it could be done perhaps as a next step ?
+> 
+> Sure, no problem. I will merge these 2 patches soon.
 
---Q/AGl/UrDvkbRExF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thank you.
 
-On Tue, Jul 03, 2012 at 02:04:04PM +0530, Sachin Kamat wrote:
-> Current method for machine driver to register with the ASoC core is to use
-> snd_soc_register_card() instead of creating a "soc-audio" platform device.
+>> There is a few (old) boards that use this driver and converting them would
+>> delay the GPIO patches even further...
+>>
+>> Also generic led-gpio has some limitations, e.g. I couldn't see it supports
+>> tri-stating a GPIO when a LED is off. Probably this feature could be added.
+>>
+> 
+> Good point, I will help to take a look.
 
-Applied, thanks (it's not a generic Samsung patch, it's just for the one
-board BTW).
+I should get back to this when I find some more time.
 
---Q/AGl/UrDvkbRExF
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+That might not be difficult, probably gpio_request_one() with GPIOF_OPEN_DRAIN/
+GPIOF_OPEN_SOURCE flag instead of gpio_request() would do.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP8z5sAAoJEBus8iNuMP3daooP+gKq4PWE0G3w+vwqm4m8ReVc
-XnkcOiF+oi6ePxUD3F+eVo3T1IzrO0+DGtweARnmF8AGV+fzUK1khUCOvxD7K5iG
-FETUbJrb79Fup9ez/83VsDzks73abZn/Zt3/GSGSVVoL9IddENtfW2JI4+wvc0Vl
-bpsHrtmvSQI+4vlUwMz9hz/qJur6F5am3FkCsX+8h4/9VWsfubfuT/uoI/vjDlSv
-oj+5bKrDodOm8hETyyXstMZX+JY1LM+FmmHxf9NpFuuV7aPLkZsW+P4Oi0Ce1ffH
-dbW1nWqp06d8PAKds/9mrP0rdOC12/uWbCwjg74whlcrXiSoo5tn9vXaThOl36KA
-23MNSl4/3Xgu5rzzNRXZfPZX586Ywzz2Eaj/uKEa1YN9YM/6hBZIPaBNeVZiu1vy
-MMfUvQAs9qYmKfqBwLLDQkLAIFTmuSmGZgvNcv6A5ZjDP3RkgWYPcBGfm8VOR7rb
-e0VQbRM9UNgESODp3fVrFSYLuKjnHUKdaHBb0OUlj3kts7O8rLqJ6QWT+ccpWPCj
-hhbg4+VfX/qQhjkX7Gb+bNDbce2Y/9Ng8Txh2LpbAE3F7TXeYav456FdziYKzojT
-Zs+/uYcNBd0oUXa87ZqS9CfgrI/rIfn4+KYe0ffNWd2iJrnPIyHKc5wHV/Pmc+GT
-38wfGkqrE8jP7rypI2Kv
-=kBr5
------END PGP SIGNATURE-----
-
---Q/AGl/UrDvkbRExF--
+--
+Regards,
+Sylwester
