@@ -1,64 +1,87 @@
-From: Bryan Wu <bryan.wu@canonical.com>
-Subject: Re: [PATCH 2/2] leds: Convert S3C24XX LED driver to gpiolib API
-Date: Tue, 3 Jul 2012 10:30:12 +0800
-Message-ID: <CAK5ve-+k0vJCDrrLoVTrtCDz0MrfootreAsy2+O6YRss1apB=g@mail.gmail.com>
-References: <1341059426-22693-1-git-send-email-sylvester.nawrocki@gmail.com>
- <1341059426-22693-2-git-send-email-sylvester.nawrocki@gmail.com>
- <CAK5ve-JRmb93+KVFVfeDbP7i_7n3dN22WcsyLurgAbvkU5e=mA@mail.gmail.com> <4FF20224.4020203@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Add leds status1 and status2 on Origen board
+Date: Tue,  3 Jul 2012 10:00:05 +0530
+Message-ID: <1341289805-26091-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yx0-f174.google.com ([209.85.213.174]:58001 "EHLO
-	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750881Ab2GCCad (ORCPT
+Received: from mail-yw0-f51.google.com ([209.85.213.51]:39870 "EHLO
+	mail-yw0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751402Ab2GCEmY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 2 Jul 2012 22:30:33 -0400
-In-Reply-To: <4FF20224.4020203@gmail.com>
+	Tue, 3 Jul 2012 00:42:24 -0400
+Received: by yhnn12 with SMTP id n12so6748845yhn.10
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jul 2012 21:42:23 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, ricardo.salveti@linaro.org, patches@linaro.org
 
-On Tue, Jul 3, 2012 at 4:18 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> Hi,
->
-> On 07/02/2012 05:35 AM, Bryan Wu wrote:
->> On Sat, Jun 30, 2012 at 8:30 PM, Sylwester Nawrocki
->> <sylvester.nawrocki@gmail.com>  wrote:
->>> The s3c2410_gpio* calls are obsolete and have been scheduled for
->>> removal since several kernel releases. Remove them and use common
->>> gpiolib API instead.
->>> This patch also adds gpio_request/gpio_free call for API corectness.
->>>
->>> It is a prerequisite for removal of the S3C24XX SoC specific
->>> arch/arm/plat-samsung/include/gpio-fns.h header.
->>>
->>> Tested on Micro2440-SDK.
->>>
->>
->> Overall, these 2 patches are good. I'm just curious why not we just
->> use generic led-gpio driver to replace this one.
->
-> Thank you for the suggestion, I wasn't really aware of generic leds-gpio
-> driver... This could be nice optimization. However my intention was
-> to just clean up the GPIO bits, with minimal changes to other subsystems.
-> I could check and see how it could be done perhaps as a next step ?
+From: Ricardo Salveti de Araujo <ricardo.salveti@linaro.org>
 
-Sure, no problem. I will merge these 2 patches soon.
+On Origen board, we have 2 status leds, so adding them as heartbeat and mmc0 by
+default. The patch basically adds the platform data required by
+leds-gpio driver.
 
-> There is a few (old) boards that use this driver and converting them would
-> delay the GPIO patches even further...
->
-> Also generic led-gpio has some limitations, e.g. I couldn't see it supports
-> tri-stating a GPIO when a LED is off. Probably this feature could be added.
->
+Signed-off-by: Ricardo Salveti de Araujo <ricardo.salveti@linaro.org>
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/mach-origen.c |   30 ++++++++++++++++++++++++++++++
+ 1 files changed, 30 insertions(+), 0 deletions(-)
 
-Good point, I will help to take a look.
-
-Thanks,
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 580cc77..8e9a884 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -9,6 +9,7 @@
+ */
+ 
+ #include <linux/serial_core.h>
++#include <linux/leds.h>
+ #include <linux/gpio.h>
+ #include <linux/mmc/host.h>
+ #include <linux/platform_device.h>
+@@ -502,6 +503,34 @@ static void __init origen_ohci_init(void)
+ /* USB OTG */
+ static struct s3c_hsotg_plat origen_hsotg_pdata;
+ 
++static struct gpio_led origen_gpio_leds[] = {
++	{
++		.name			= "origen::status1",
++		.default_trigger	= "heartbeat",
++		.gpio			= EXYNOS4_GPX1(3),
++		.active_low		= 1,
++	},
++	{
++		.name			= "origen::status2",
++		.default_trigger	= "mmc0",
++		.gpio			= EXYNOS4_GPX1(4),
++		.active_low		= 1,
++	},
++};
++
++static struct gpio_led_platform_data origen_gpio_led_info = {
++	.leds		= origen_gpio_leds,
++	.num_leds	= ARRAY_SIZE(origen_gpio_leds),
++};
++
++static struct platform_device origen_leds_gpio = {
++	.name	= "leds-gpio",
++	.id	= -1,
++	.dev	= {
++		.platform_data	= &origen_gpio_led_info,
++	},
++};
++
+ static struct gpio_keys_button origen_gpio_keys_table[] = {
+ 	{
+ 		.code			= KEY_MENU,
+@@ -681,6 +710,7 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&exynos4_device_ohci,
+ 	&origen_device_gpiokeys,
+ 	&origen_lcd_hv070wsa,
++	&origen_leds_gpio,
+ 	&origen_device_bluetooth,
+ };
+ 
 -- 
-Bryan Wu <bryan.wu@canonical.com>
-Kernel Developer    +86.186-168-78255 Mobile
-Canonical Ltd.      www.canonical.com
-Ubuntu - Linux for human beings | www.ubuntu.com
+1.7.4.1
