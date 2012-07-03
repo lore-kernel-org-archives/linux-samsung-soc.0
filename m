@@ -1,87 +1,86 @@
 From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Add leds status1 and status2 on Origen board
-Date: Tue,  3 Jul 2012 10:00:05 +0530
-Message-ID: <1341289805-26091-1-git-send-email-sachin.kamat@linaro.org>
+Subject: [PATCH 1/1] ASoC: Samsung: Convert to use snd_soc_register_card()
+Date: Tue,  3 Jul 2012 14:04:04 +0530
+Message-ID: <1341304444-11188-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f51.google.com ([209.85.213.51]:39870 "EHLO
+Received: from mail-yw0-f51.google.com ([209.85.213.51]:52841 "EHLO
 	mail-yw0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751402Ab2GCEmY (ORCPT
+	with ESMTP id S1750710Ab2GCIqX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jul 2012 00:42:24 -0400
-Received: by yhnn12 with SMTP id n12so6748845yhn.10
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 02 Jul 2012 21:42:23 -0700 (PDT)
+	Tue, 3 Jul 2012 04:46:23 -0400
+Received: by yhnn12 with SMTP id n12so6939268yhn.10
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 03 Jul 2012 01:46:22 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, tushar.behera@linaro.org, ricardo.salveti@linaro.org, patches@linaro.org
+To: alsa-devel@alsa-project.org
+Cc: linux-samsung-soc@vger.kernel.org, broonie@opensource.wolfsonmicro.com, sbkim73@samsung.com, kgene.kim@samsung.com, tiwai@suse.de, sachin.kamat@linaro.org, patches@linaro.org
 
-From: Ricardo Salveti de Araujo <ricardo.salveti@linaro.org>
+Current method for machine driver to register with the ASoC core is to use
+snd_soc_register_card() instead of creating a "soc-audio" platform device.
 
-On Origen board, we have 2 status leds, so adding them as heartbeat and mmc0 by
-default. The patch basically adds the platform data required by
-leds-gpio driver.
-
-Signed-off-by: Ricardo Salveti de Araujo <ricardo.salveti@linaro.org>
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
 ---
- arch/arm/mach-exynos/mach-origen.c |   30 ++++++++++++++++++++++++++++++
- 1 files changed, 30 insertions(+), 0 deletions(-)
+ sound/soc/samsung/smdk_wm8994.c |   36 +++++++++++++++++++++++-------------
+ 1 files changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 580cc77..8e9a884 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -9,6 +9,7 @@
- */
- 
- #include <linux/serial_core.h>
-+#include <linux/leds.h>
- #include <linux/gpio.h>
- #include <linux/mmc/host.h>
- #include <linux/platform_device.h>
-@@ -502,6 +503,34 @@ static void __init origen_ohci_init(void)
- /* USB OTG */
- static struct s3c_hsotg_plat origen_hsotg_pdata;
- 
-+static struct gpio_led origen_gpio_leds[] = {
-+	{
-+		.name			= "origen::status1",
-+		.default_trigger	= "heartbeat",
-+		.gpio			= EXYNOS4_GPX1(3),
-+		.active_low		= 1,
-+	},
-+	{
-+		.name			= "origen::status2",
-+		.default_trigger	= "mmc0",
-+		.gpio			= EXYNOS4_GPX1(4),
-+		.active_low		= 1,
-+	},
-+};
-+
-+static struct gpio_led_platform_data origen_gpio_led_info = {
-+	.leds		= origen_gpio_leds,
-+	.num_leds	= ARRAY_SIZE(origen_gpio_leds),
-+};
-+
-+static struct platform_device origen_leds_gpio = {
-+	.name	= "leds-gpio",
-+	.id	= -1,
-+	.dev	= {
-+		.platform_data	= &origen_gpio_led_info,
-+	},
-+};
-+
- static struct gpio_keys_button origen_gpio_keys_table[] = {
- 	{
- 		.code			= KEY_MENU,
-@@ -681,6 +710,7 @@ static struct platform_device *origen_devices[] __initdata = {
- 	&exynos4_device_ohci,
- 	&origen_device_gpiokeys,
- 	&origen_lcd_hv070wsa,
-+	&origen_leds_gpio,
- 	&origen_device_bluetooth,
+diff --git a/sound/soc/samsung/smdk_wm8994.c b/sound/soc/samsung/smdk_wm8994.c
+index 8eb309f..3ea3098 100644
+--- a/sound/soc/samsung/smdk_wm8994.c
++++ b/sound/soc/samsung/smdk_wm8994.c
+@@ -149,31 +149,41 @@ static struct snd_soc_card smdk = {
+ 	.num_links = ARRAY_SIZE(smdk_dai),
  };
  
+-static struct platform_device *smdk_snd_device;
+ 
+-static int __init smdk_audio_init(void)
++static int __devinit smdk_audio_probe(struct platform_device *pdev)
+ {
+ 	int ret;
++	struct snd_soc_card *card = &smdk;
+ 
+-	smdk_snd_device = platform_device_alloc("soc-audio", -1);
+-	if (!smdk_snd_device)
+-		return -ENOMEM;
++	card->dev = &pdev->dev;
++	ret = snd_soc_register_card(card);
+ 
+-	platform_set_drvdata(smdk_snd_device, &smdk);
+-
+-	ret = platform_device_add(smdk_snd_device);
+ 	if (ret)
+-		platform_device_put(smdk_snd_device);
++		dev_err(&pdev->dev, "snd_soc_register_card() failed:%d\n", ret);
+ 
+ 	return ret;
+ }
+-module_init(smdk_audio_init);
+ 
+-static void __exit smdk_audio_exit(void)
++static int __devexit smdk_audio_remove(struct platform_device *pdev)
+ {
+-	platform_device_unregister(smdk_snd_device);
++	struct snd_soc_card *card = platform_get_drvdata(pdev);
++
++	snd_soc_unregister_card(card);
++
++	return 0;
+ }
+-module_exit(smdk_audio_exit);
++
++static struct platform_driver smdk_audio_driver = {
++	.driver		= {
++		.name	= "smdk-audio",
++		.owner	= THIS_MODULE,
++	},
++	.probe		= smdk_audio_probe,
++	.remove		= __devexit_p(smdk_audio_remove),
++};
++
++module_platform_driver(smdk_audio_driver);
+ 
+ MODULE_DESCRIPTION("ALSA SoC SMDK WM8994");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:smdk-audio");
 -- 
 1.7.4.1
