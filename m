@@ -1,59 +1,95 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] ARM: SAMSUNG: Introduce Kconfig variable for Samsung custom clk API
-Date: Wed,  4 Jul 2012 17:07:24 +0100
-Message-ID: <1341418044-24572-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42765 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753551Ab2GDQJE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Jul 2012 12:09:04 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Subject: [PATCH 1/2] spi/s3c64xx: Convert to devm_request_and_ioremap()
+Date: Wed,  4 Jul 2012 17:11:55 +0100
+Message-ID: <1341418316-26190-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Make it easier to switch to the common clock API by making the existing
-clock API implementation depend on a Kconfig symbol which is enabled when
-the common clock API is disabled. This means that we can have some SoCs
-using the common clock API and some using the existing API rather than
-needing a flag day to convert the entire family of devices over.
+Saves some error handling and a small amount of code.
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Mark Brown <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- arch/arm/plat-samsung/Kconfig  |    4 ++++
- arch/arm/plat-samsung/Makefile |    4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
+ drivers/spi/spi-s3c64xx.c |   25 +------------------------
+ 1 file changed, 1 insertion(+), 24 deletions(-)
 
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index ffc84ac..7aca31c 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -78,6 +78,10 @@ config S5P_HRT
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index f4e2341..b7aeb5d 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1028,19 +1028,7 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 	/* the spi->mode bits understood by this driver: */
+ 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
  
- # clock options
+-	if (request_mem_region(mem_res->start,
+-			resource_size(mem_res), pdev->name) == NULL) {
+-		dev_err(&pdev->dev, "Req mem region failed\n");
+-		ret = -ENXIO;
+-		goto err0;
+-	}
+-
+-	sdd->regs = ioremap(mem_res->start, resource_size(mem_res));
+-	if (sdd->regs == NULL) {
+-		dev_err(&pdev->dev, "Unable to remap IO\n");
+-		ret = -ENXIO;
+-		goto err1;
+-	}
++	sdd->regs = devm_request_and_ioremap(&pdev->dev, mem_res);
  
-+config SAMSUNG_CLOCK
-+	bool
-+	default y if !COMMON_CLK
-+
- config SAMSUNG_CLKSRC
- 	bool
- 	help
-diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
-index 856f4ee..9e40e8d 100644
---- a/arch/arm/plat-samsung/Makefile
-+++ b/arch/arm/plat-samsung/Makefile
-@@ -15,8 +15,8 @@ obj-y				+= init.o cpu.o
- obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET)   += time.o
- obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
+ 	if (sci->cfg_gpio == NULL || sci->cfg_gpio(pdev)) {
+ 		dev_err(&pdev->dev, "Unable to config gpio\n");
+@@ -1124,10 +1112,6 @@ err4:
+ 	clk_put(sdd->clk);
+ err3:
+ err2:
+-	iounmap((void *) sdd->regs);
+-err1:
+-	release_mem_region(mem_res->start, resource_size(mem_res));
+-err0:
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
  
--obj-y				+= clock.o
--obj-y				+= pwm-clock.o
-+obj-$(CONFIG_SAMSUNG_CLOCK)	+= clock.o
-+obj-$(CONFIG_SAMSUNG_CLOCK)	+= pwm-clock.o
+@@ -1138,7 +1122,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ {
+ 	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+-	struct resource	*mem_res;
  
- obj-$(CONFIG_SAMSUNG_CLKSRC)	+= clock-clksrc.o
- obj-$(CONFIG_S5P_CLOCK)		+= s5p-clock.o
+ 	pm_runtime_disable(&pdev->dev);
+ 
+@@ -1154,12 +1137,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 	clk_disable(sdd->clk);
+ 	clk_put(sdd->clk);
+ 
+-	iounmap((void *) sdd->regs);
+-
+-	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (mem_res != NULL)
+-		release_mem_region(mem_res->start, resource_size(mem_res));
+-
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+ 
 -- 
 1.7.10
+
+
+------------------------------------------------------------------------------
+Live Security Virtual Conference
+Exclusive live event will cover all the ways today's security and 
+threat landscape has changed and how IT managers can respond. Discussions 
+will include endpoint security, mobile security and the latest in malware 
+threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
