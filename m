@@ -1,73 +1,59 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: Convert s3cmci driver to gpiolib API
-Date: Tue, 03 Jul 2012 20:27:41 -0400
-Message-ID: <87hato74le.fsf@octavius.laptop.org>
-References: <1341059062-16530-1-git-send-email-sylvester.nawrocki@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH] ARM: SAMSUNG: Introduce Kconfig variable for Samsung custom clk API
+Date: Wed,  4 Jul 2012 17:07:24 +0100
+Message-ID: <1341418044-24572-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:60478 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751754Ab2GDA1s (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:42765 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753551Ab2GDQJE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jul 2012 20:27:48 -0400
-In-Reply-To: <1341059062-16530-1-git-send-email-sylvester.nawrocki@gmail.com>
-	(Sylwester Nawrocki's message of "Sat, 30 Jun 2012 14:24:22 +0200")
+	Wed, 4 Jul 2012 12:09:04 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
-Hi,
+Make it easier to switch to the common clock API by making the existing
+clock API implementation depend on a Kconfig symbol which is enabled when
+the common clock API is disabled. This means that we can have some SoCs
+using the common clock API and some using the existing API rather than
+needing a flag day to convert the entire family of devices over.
 
-On Sat, Jun 30 2012, Sylwester Nawrocki wrote:
-> The s3c2410_gpio* calls are obsolete and have been scheduled for
-> removal since several kernel releases. Remove them and use common
-> gpiolib API.
->
-> This patch is a prerequisite for removal of the S3C24XX SoC specific
-> arch/arm/plat-samsung/include/gpio-fns.h header.
->
-> Tested on Micro2440-SDK.
->
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> ---
->  drivers/mmc/host/s3cmci.c |   10 +++-------
->  1 files changed, 3 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
-> index c3622a6..bd5a5cc 100644
-> --- a/drivers/mmc/host/s3cmci.c
-> +++ b/drivers/mmc/host/s3cmci.c
-> @@ -26,7 +26,6 @@
->  #include <mach/dma.h>
->
->  #include <mach/regs-sdi.h>
-> -#include <mach/regs-gpio.h>
->
->  #include <plat/mci.h>
->
-> @@ -1237,12 +1236,9 @@ static void s3cmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->  	switch (ios->power_mode) {
->  	case MMC_POWER_ON:
->  	case MMC_POWER_UP:
-> -		s3c2410_gpio_cfgpin(S3C2410_GPE(5), S3C2410_GPE5_SDCLK);
-> -		s3c2410_gpio_cfgpin(S3C2410_GPE(6), S3C2410_GPE6_SDCMD);
-> -		s3c2410_gpio_cfgpin(S3C2410_GPE(7), S3C2410_GPE7_SDDAT0);
-> -		s3c2410_gpio_cfgpin(S3C2410_GPE(8), S3C2410_GPE8_SDDAT1);
-> -		s3c2410_gpio_cfgpin(S3C2410_GPE(9), S3C2410_GPE9_SDDAT2);
-> -		s3c2410_gpio_cfgpin(S3C2410_GPE(10), S3C2410_GPE10_SDDAT3);
-> +		/* Configure GPE5...GPE10 pins in SD mode */
-> +		s3c_gpio_cfgall_range(S3C2410_GPE(5), 6, S3C_GPIO_SFN(2),
-> +				      S3C_GPIO_PULL_NONE);
->
->  		if (host->pdata->set_power)
->  			host->pdata->set_power(ios->power_mode, ios->vdd);
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ arch/arm/plat-samsung/Kconfig  |    4 ++++
+ arch/arm/plat-samsung/Makefile |    4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-Thanks, pushed to mmc-next for 3.6.
-
-- Chris.
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index ffc84ac..7aca31c 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -78,6 +78,10 @@ config S5P_HRT
+ 
+ # clock options
+ 
++config SAMSUNG_CLOCK
++	bool
++	default y if !COMMON_CLK
++
+ config SAMSUNG_CLKSRC
+ 	bool
+ 	help
+diff --git a/arch/arm/plat-samsung/Makefile b/arch/arm/plat-samsung/Makefile
+index 856f4ee..9e40e8d 100644
+--- a/arch/arm/plat-samsung/Makefile
++++ b/arch/arm/plat-samsung/Makefile
+@@ -15,8 +15,8 @@ obj-y				+= init.o cpu.o
+ obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET)   += time.o
+ obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
+ 
+-obj-y				+= clock.o
+-obj-y				+= pwm-clock.o
++obj-$(CONFIG_SAMSUNG_CLOCK)	+= clock.o
++obj-$(CONFIG_SAMSUNG_CLOCK)	+= pwm-clock.o
+ 
+ obj-$(CONFIG_SAMSUNG_CLKSRC)	+= clock-clksrc.o
+ obj-$(CONFIG_S5P_CLOCK)		+= s5p-clock.o
 -- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+1.7.10
