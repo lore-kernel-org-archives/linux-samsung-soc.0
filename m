@@ -1,51 +1,73 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 2/2] leds: Convert S3C24XX LED driver to gpiolib API
-Date: Tue, 03 Jul 2012 23:10:41 +0200
-Message-ID: <4FF35FD1.4060402@gmail.com>
-References: <1341059426-22693-1-git-send-email-sylvester.nawrocki@gmail.com> <1341059426-22693-2-git-send-email-sylvester.nawrocki@gmail.com> <CAK5ve-JRmb93+KVFVfeDbP7i_7n3dN22WcsyLurgAbvkU5e=mA@mail.gmail.com> <4FF20224.4020203@gmail.com> <CAK5ve-+k0vJCDrrLoVTrtCDz0MrfootreAsy2+O6YRss1apB=g@mail.gmail.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH] mmc: Convert s3cmci driver to gpiolib API
+Date: Tue, 03 Jul 2012 20:27:41 -0400
+Message-ID: <87hato74le.fsf@octavius.laptop.org>
+References: <1341059062-16530-1-git-send-email-sylvester.nawrocki@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:57180 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757266Ab2GCVKp (ORCPT
+Received: from void.printf.net ([89.145.121.20]:60478 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751754Ab2GDA1s (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 3 Jul 2012 17:10:45 -0400
-In-Reply-To: <CAK5ve-+k0vJCDrrLoVTrtCDz0MrfootreAsy2+O6YRss1apB=g@mail.gmail.com>
+	Tue, 3 Jul 2012 20:27:48 -0400
+In-Reply-To: <1341059062-16530-1-git-send-email-sylvester.nawrocki@gmail.com>
+	(Sylwester Nawrocki's message of "Sat, 30 Jun 2012 14:24:22 +0200")
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Bryan Wu <bryan.wu@canonical.com>
-Cc: rpurdie@rpsys.net, linux-leds@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 
-On 07/03/2012 04:30 AM, Bryan Wu wrote:
-...
->>> Overall, these 2 patches are good. I'm just curious why not we just
->>> use generic led-gpio driver to replace this one.
->>
->> Thank you for the suggestion, I wasn't really aware of generic leds-gpio
->> driver... This could be nice optimization. However my intention was
->> to just clean up the GPIO bits, with minimal changes to other subsystems.
->> I could check and see how it could be done perhaps as a next step ?
-> 
-> Sure, no problem. I will merge these 2 patches soon.
+Hi,
 
-Thank you.
+On Sat, Jun 30 2012, Sylwester Nawrocki wrote:
+> The s3c2410_gpio* calls are obsolete and have been scheduled for
+> removal since several kernel releases. Remove them and use common
+> gpiolib API.
+>
+> This patch is a prerequisite for removal of the S3C24XX SoC specific
+> arch/arm/plat-samsung/include/gpio-fns.h header.
+>
+> Tested on Micro2440-SDK.
+>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> ---
+>  drivers/mmc/host/s3cmci.c |   10 +++-------
+>  1 files changed, 3 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+> index c3622a6..bd5a5cc 100644
+> --- a/drivers/mmc/host/s3cmci.c
+> +++ b/drivers/mmc/host/s3cmci.c
+> @@ -26,7 +26,6 @@
+>  #include <mach/dma.h>
+>
+>  #include <mach/regs-sdi.h>
+> -#include <mach/regs-gpio.h>
+>
+>  #include <plat/mci.h>
+>
+> @@ -1237,12 +1236,9 @@ static void s3cmci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	switch (ios->power_mode) {
+>  	case MMC_POWER_ON:
+>  	case MMC_POWER_UP:
+> -		s3c2410_gpio_cfgpin(S3C2410_GPE(5), S3C2410_GPE5_SDCLK);
+> -		s3c2410_gpio_cfgpin(S3C2410_GPE(6), S3C2410_GPE6_SDCMD);
+> -		s3c2410_gpio_cfgpin(S3C2410_GPE(7), S3C2410_GPE7_SDDAT0);
+> -		s3c2410_gpio_cfgpin(S3C2410_GPE(8), S3C2410_GPE8_SDDAT1);
+> -		s3c2410_gpio_cfgpin(S3C2410_GPE(9), S3C2410_GPE9_SDDAT2);
+> -		s3c2410_gpio_cfgpin(S3C2410_GPE(10), S3C2410_GPE10_SDDAT3);
+> +		/* Configure GPE5...GPE10 pins in SD mode */
+> +		s3c_gpio_cfgall_range(S3C2410_GPE(5), 6, S3C_GPIO_SFN(2),
+> +				      S3C_GPIO_PULL_NONE);
+>
+>  		if (host->pdata->set_power)
+>  			host->pdata->set_power(ios->power_mode, ios->vdd);
 
->> There is a few (old) boards that use this driver and converting them would
->> delay the GPIO patches even further...
->>
->> Also generic led-gpio has some limitations, e.g. I couldn't see it supports
->> tri-stating a GPIO when a LED is off. Probably this feature could be added.
->>
-> 
-> Good point, I will help to take a look.
+Thanks, pushed to mmc-next for 3.6.
 
-I should get back to this when I find some more time.
-
-That might not be difficult, probably gpio_request_one() with GPIOF_OPEN_DRAIN/
-GPIOF_OPEN_SOURCE flag instead of gpio_request() would do.
-
---
-Regards,
-Sylwester
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
