@@ -1,59 +1,77 @@
 From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] spi/s3c64xx: Convert to devm_request_and_ioremap()
-Date: Thu, 5 Jul 2012 10:50:24 +0100
-Message-ID: <20120705095024.GL4111@opensource.wolfsonmicro.com>
-References: <1341418316-26190-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <4FF55320.4020107@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="9SzJfJEKNI6APITJ"
+Subject: [PATCH] spi/s3c64xx: Convert to devm_request_and_ioremap()
+Date: Thu,  5 Jul 2012 13:33:13 +0100
+Message-ID: <1341491593-6781-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53495 "EHLO
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35638 "EHLO
 	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752950Ab2GEJu1 (ORCPT
+	by vger.kernel.org with ESMTP id S1752948Ab2GEMdR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jul 2012 05:50:27 -0400
-Content-Disposition: inline
-In-Reply-To: <4FF55320.4020107@samsung.com>
+	Thu, 5 Jul 2012 08:33:17 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>
+To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
+Saves some error handling and a small amount of code.
 
---9SzJfJEKNI6APITJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/spi/spi-s3c64xx.c |   19 +------------------
+ 1 file changed, 1 insertion(+), 18 deletions(-)
 
-On Thu, Jul 05, 2012 at 10:41:04AM +0200, Sylwester Nawrocki wrote:
-
-> It doesn't seem right. Why is is the check for valid sdd->regs removed ?
-> This should have rather been:
-
-Mostly just because the structure of the code is a bit error prone when
-making quick updates with the if statement afterwards that looks like
-error handling.
-
---9SzJfJEKNI6APITJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJP9WNYAAoJEBus8iNuMP3d7SMP/3NQRba9dK1XubdZsKyy2+dr
-CTpBohfSOhmmfgY8X/dz7QHO5RJcOQu/mooez3j+Y2K0FkVtBc2uQKquoFXaUFrA
-9RElkjtg75JGX89lyPBd+ZquF8tk/m4GRAOHyLxrG6KIc2x62XOEjwiOv3AuXzoS
-ofQKVl0RF1OUDZPUEmZzhHl/E6VDUGti7f3/WjcfF3UV8wf4y/2UlCMjJ/Z+JPiz
-UV0sc0YuTNZQKNHCKW0yDbGVqsvJNrAk7ZTYhmqHVxf9wE99FXrvTQy7YR4GRqHR
-PYHkKwBK2GqoxgCBYi2WxPvCX5z8X8OT+DqvGMZRD5CNxa0M4P32/kzRK+AHKAng
-7BgiLT29OWJVGX6y40/gfrJGSsLNMmtg8cJCzRU138vLdEq1WXxCmcUSErqjjvCd
-nxkP/JQzXPrSWOnFk6h8p8hQhYrfVZRFIqWD/UvqrFL0sjSS3AC7vp8Scy+KMpvp
-lj0NdWAOIVWhj8KiOkwLZ6FHI0M/y6xPoVShebHDJIwy2QctLnrDGdMlSNQXIFyp
-7TNeSKK59aNxOJwbpPrnSGWg+tkAvq8C7DWkNqiIUqHwKbqlkt3ZXxoDY53P1p4b
-84pYl3eJ/VS4BKCEde6FEbH0D+6qkJHiaLb+7iXlnxHdb246e5gWem0Y+r0XGBqM
-u3CiKQoaB3M6OqLjFdNv
-=987w
------END PGP SIGNATURE-----
-
---9SzJfJEKNI6APITJ--
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index f4e2341..f62c13e 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -1028,14 +1028,7 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
+ 	/* the spi->mode bits understood by this driver: */
+ 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
+ 
+-	if (request_mem_region(mem_res->start,
+-			resource_size(mem_res), pdev->name) == NULL) {
+-		dev_err(&pdev->dev, "Req mem region failed\n");
+-		ret = -ENXIO;
+-		goto err0;
+-	}
+-
+-	sdd->regs = ioremap(mem_res->start, resource_size(mem_res));
++	sdd->regs = devm_request_and_ioremap(&pdev->dev, mem_res);
+ 	if (sdd->regs == NULL) {
+ 		dev_err(&pdev->dev, "Unable to remap IO\n");
+ 		ret = -ENXIO;
+@@ -1124,10 +1117,7 @@ err4:
+ 	clk_put(sdd->clk);
+ err3:
+ err2:
+-	iounmap((void *) sdd->regs);
+ err1:
+-	release_mem_region(mem_res->start, resource_size(mem_res));
+-err0:
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+ 
+@@ -1138,7 +1128,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ {
+ 	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
+ 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
+-	struct resource	*mem_res;
+ 
+ 	pm_runtime_disable(&pdev->dev);
+ 
+@@ -1154,12 +1143,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
+ 	clk_disable(sdd->clk);
+ 	clk_put(sdd->clk);
+ 
+-	iounmap((void *) sdd->regs);
+-
+-	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	if (mem_res != NULL)
+-		release_mem_region(mem_res->start, resource_size(mem_res));
+-
+ 	platform_set_drvdata(pdev, NULL);
+ 	spi_master_put(master);
+ 
+-- 
+1.7.10
