@@ -1,77 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH] spi/s3c64xx: Convert to devm_request_and_ioremap()
-Date: Thu,  5 Jul 2012 13:33:13 +0100
-Message-ID: <1341491593-6781-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH] spi/s3c64xx: Convert to devm_request_and_ioremap()
+Date: Thu, 05 Jul 2012 14:47:02 +0200
+Message-ID: <4FF58CC6.3010509@samsung.com>
+References: <1341491593-6781-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35638 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752948Ab2GEMdR (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:63439 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932530Ab2GEMrH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jul 2012 08:33:17 -0400
+	Thu, 5 Jul 2012 08:47:07 -0400
+Received: from eusync1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M6O00DWVU7A2I80@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 05 Jul 2012 13:47:34 +0100 (BST)
+Received: from [106.116.147.32] by eusync1.samsung.com
+ (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
+ 10 2011)) with ESMTPA id <0M6O00BCUU6FI430@eusync1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 05 Jul 2012 13:47:05 +0100 (BST)
+In-reply-to: <1341491593-6781-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-Saves some error handling and a small amount of code.
+Hi,
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/spi/spi-s3c64xx.c |   19 +------------------
- 1 file changed, 1 insertion(+), 18 deletions(-)
+On 07/05/2012 02:33 PM, Mark Brown wrote:
+> Saves some error handling and a small amount of code.
+> 
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index f4e2341..f62c13e 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -1028,14 +1028,7 @@ static int __init s3c64xx_spi_probe(struct platform_device *pdev)
- 	/* the spi->mode bits understood by this driver: */
- 	master->mode_bits = SPI_CPOL | SPI_CPHA | SPI_CS_HIGH;
- 
--	if (request_mem_region(mem_res->start,
--			resource_size(mem_res), pdev->name) == NULL) {
--		dev_err(&pdev->dev, "Req mem region failed\n");
--		ret = -ENXIO;
--		goto err0;
--	}
--
--	sdd->regs = ioremap(mem_res->start, resource_size(mem_res));
-+	sdd->regs = devm_request_and_ioremap(&pdev->dev, mem_res);
- 	if (sdd->regs == NULL) {
- 		dev_err(&pdev->dev, "Unable to remap IO\n");
- 		ret = -ENXIO;
-@@ -1124,10 +1117,7 @@ err4:
- 	clk_put(sdd->clk);
- err3:
- err2:
--	iounmap((void *) sdd->regs);
- err1:
--	release_mem_region(mem_res->start, resource_size(mem_res));
--err0:
- 	platform_set_drvdata(pdev, NULL);
- 	spi_master_put(master);
- 
-@@ -1138,7 +1128,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- {
- 	struct spi_master *master = spi_master_get(platform_get_drvdata(pdev));
- 	struct s3c64xx_spi_driver_data *sdd = spi_master_get_devdata(master);
--	struct resource	*mem_res;
- 
- 	pm_runtime_disable(&pdev->dev);
- 
-@@ -1154,12 +1143,6 @@ static int s3c64xx_spi_remove(struct platform_device *pdev)
- 	clk_disable(sdd->clk);
- 	clk_put(sdd->clk);
- 
--	iounmap((void *) sdd->regs);
--
--	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (mem_res != NULL)
--		release_mem_region(mem_res->start, resource_size(mem_res));
--
- 	platform_set_drvdata(pdev, NULL);
- 	spi_master_put(master);
- 
--- 
-1.7.10
+Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+--
+Regards,
+Sylwester
