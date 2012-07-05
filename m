@@ -1,54 +1,59 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH 3/3] ARM: S5PV210: Add audio platform device in Goni board
-Date: Thu,  5 Jul 2012 14:31:58 +0530
-Message-ID: <1341478918-6602-4-git-send-email-sachin.kamat@linaro.org>
-References: <1341478918-6602-1-git-send-email-sachin.kamat@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/2] spi/s3c64xx: Convert to devm_request_and_ioremap()
+Date: Thu, 5 Jul 2012 10:50:24 +0100
+Message-ID: <20120705095024.GL4111@opensource.wolfsonmicro.com>
+References: <1341418316-26190-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <4FF55320.4020107@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="9SzJfJEKNI6APITJ"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:42785 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753335Ab2GEJOq (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:53495 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752950Ab2GEJu1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jul 2012 05:14:46 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rp8so12487389pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 05 Jul 2012 02:14:45 -0700 (PDT)
-In-Reply-To: <1341478918-6602-1-git-send-email-sachin.kamat@linaro.org>
+	Thu, 5 Jul 2012 05:50:27 -0400
+Content-Disposition: inline
+In-Reply-To: <4FF55320.4020107@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, m.szyprowski@samsung.com, kyungmin.park@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>
 
-After using snd_soc_register_card() in smdk_wm8994.c, the sound
-card is registered as a platform driver and it needs related platform
-device entry in machine file.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-s5pv210/mach-goni.c |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+--9SzJfJEKNI6APITJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index bf5087c..b2cae13 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -859,12 +859,19 @@ static struct s5p_platform_fimc goni_fimc_md_platdata __initdata = {
- 	.num_clients	= ARRAY_SIZE(goni_camera_sensors),
- };
- 
-+/* Audio device */
-+static struct platform_device goni_device_audio = {
-+	.name = "smdk-audio",
-+	.id = -1,
-+};
-+
- static struct platform_device *goni_devices[] __initdata = {
- 	&s3c_device_fb,
- 	&s5p_device_onenand,
- 	&goni_spi_gpio,
- 	&goni_i2c_gpio_pmic,
- 	&goni_i2c_gpio5,
-+	&goni_device_audio,
- 	&mmc2_fixed_voltage,
- 	&goni_device_gpiokeys,
- 	&s5p_device_mfc,
--- 
-1.7.4.1
+On Thu, Jul 05, 2012 at 10:41:04AM +0200, Sylwester Nawrocki wrote:
+
+> It doesn't seem right. Why is is the check for valid sdd->regs removed ?
+> This should have rather been:
+
+Mostly just because the structure of the code is a bit error prone when
+making quick updates with the if statement afterwards that looks like
+error handling.
+
+--9SzJfJEKNI6APITJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP9WNYAAoJEBus8iNuMP3d7SMP/3NQRba9dK1XubdZsKyy2+dr
+CTpBohfSOhmmfgY8X/dz7QHO5RJcOQu/mooez3j+Y2K0FkVtBc2uQKquoFXaUFrA
+9RElkjtg75JGX89lyPBd+ZquF8tk/m4GRAOHyLxrG6KIc2x62XOEjwiOv3AuXzoS
+ofQKVl0RF1OUDZPUEmZzhHl/E6VDUGti7f3/WjcfF3UV8wf4y/2UlCMjJ/Z+JPiz
+UV0sc0YuTNZQKNHCKW0yDbGVqsvJNrAk7ZTYhmqHVxf9wE99FXrvTQy7YR4GRqHR
+PYHkKwBK2GqoxgCBYi2WxPvCX5z8X8OT+DqvGMZRD5CNxa0M4P32/kzRK+AHKAng
+7BgiLT29OWJVGX6y40/gfrJGSsLNMmtg8cJCzRU138vLdEq1WXxCmcUSErqjjvCd
+nxkP/JQzXPrSWOnFk6h8p8hQhYrfVZRFIqWD/UvqrFL0sjSS3AC7vp8Scy+KMpvp
+lj0NdWAOIVWhj8KiOkwLZ6FHI0M/y6xPoVShebHDJIwy2QctLnrDGdMlSNQXIFyp
+7TNeSKK59aNxOJwbpPrnSGWg+tkAvq8C7DWkNqiIUqHwKbqlkt3ZXxoDY53P1p4b
+84pYl3eJ/VS4BKCEde6FEbH0D+6qkJHiaLb+7iXlnxHdb246e5gWem0Y+r0XGBqM
+u3CiKQoaB3M6OqLjFdNv
+=987w
+-----END PGP SIGNATURE-----
+
+--9SzJfJEKNI6APITJ--
