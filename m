@@ -1,72 +1,71 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: [PATCH 2/2] spi/s3c64xx: Expand S3C64XX_SPI_{DE,}ACT macros at call sites
-Date: Wed,  4 Jul 2012 17:11:56 +0100
-Message-ID: <1341418316-26190-2-git-send-email-broonie@opensource.wolfsonmicro.com>
-References: <1341418316-26190-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] ARM: SAMSUNG: Introduce Kconfig variable for Samsung custom clk API
+Date: Thu, 5 Jul 2012 09:24:43 +0200
+Message-ID: <201207050924.43932.heiko@sntech.de>
+References: <1341418044-24572-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50396 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1755112Ab2GDQL7 (ORCPT
+Received: from gloria.sntech.de ([95.129.55.99]:57031 "EHLO gloria.sntech.de"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752853Ab2GEHYs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 4 Jul 2012 12:11:59 -0400
-In-Reply-To: <1341418316-26190-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Thu, 5 Jul 2012 03:24:48 -0400
+In-Reply-To: <1341418044-24572-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
-Cc: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, Mark Brown <broonie@opensource.wolfsonmicro.com>
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-They have very few users and they're both just doing a single register
-write so the advantage of having the macro is a bit limited. An inline
-function might make sense but it's as easy to just do the writes directly.
+Am Mittwoch, 4. Juli 2012, 18:07:24 schrieb Mark Brown:
+> Make it easier to switch to the common clock API by making the existing
+> clock API implementation depend on a Kconfig symbol which is enabled when
+> the common clock API is disabled. This means that we can have some SoCs
+> using the common clock API and some using the existing API rather than
+> needing a flag day to convert the entire family of devices over.
+nice idea. 
 
-Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/spi/spi-s3c64xx.c |   12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index b7aeb5d..3514ef9 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -74,11 +74,6 @@
- #define S3C64XX_SPI_SLAVE_AUTO			(1<<1)
- #define S3C64XX_SPI_SLAVE_SIG_INACT		(1<<0)
- 
--#define S3C64XX_SPI_ACT(c) writel(0, (c)->regs + S3C64XX_SPI_SLAVE_SEL)
--
--#define S3C64XX_SPI_DEACT(c) writel(S3C64XX_SPI_SLAVE_SIG_INACT, \
--					(c)->regs + S3C64XX_SPI_SLAVE_SEL)
--
- #define S3C64XX_SPI_INT_TRAILING_EN		(1<<6)
- #define S3C64XX_SPI_INT_RX_OVERRUN_EN		(1<<5)
- #define S3C64XX_SPI_INT_RX_UNDERRUN_EN		(1<<4)
-@@ -712,14 +707,15 @@ static int s3c64xx_spi_transfer_one_message(struct spi_master *master,
- 		enable_cs(sdd, spi);
- 
- 		/* Start the signals */
--		S3C64XX_SPI_ACT(sdd);
-+		writel(0, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 		spin_unlock_irqrestore(&sdd->lock, flags);
- 
- 		status = wait_for_xfer(sdd, xfer, use_dma);
- 
- 		/* Quiese the signals */
--		S3C64XX_SPI_DEACT(sdd);
-+		writel(S3C64XX_SPI_SLAVE_SIG_INACT,
-+		       sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 		if (status) {
- 			dev_err(&spi->dev, "I/O Error: "
-@@ -923,7 +919,7 @@ static void s3c64xx_spi_hwinit(struct s3c64xx_spi_driver_data *sdd, int channel)
- 
- 	sdd->cur_speed = 0;
- 
--	S3C64XX_SPI_DEACT(sdd);
-+	writel(S3C64XX_SPI_SLAVE_SIG_INACT, sdd->regs + S3C64XX_SPI_SLAVE_SEL);
- 
- 	/* Disable Interrupts - we use Polling if not DMA mode */
- 	writel(0, regs + S3C64XX_SPI_INT_EN);
--- 
-1.7.10
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Acked-by: Heiko Stuebner <heiko@sntech.de>
+
+
+Heiko
+
+> ---
+>  arch/arm/plat-samsung/Kconfig  |    4 ++++
+>  arch/arm/plat-samsung/Makefile |    4 ++--
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index ffc84ac..7aca31c 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -78,6 +78,10 @@ config S5P_HRT
+> 
+>  # clock options
+> 
+> +config SAMSUNG_CLOCK
+> +	bool
+> +	default y if !COMMON_CLK
+> +
+>  config SAMSUNG_CLKSRC
+>  	bool
+>  	help
+> diff --git a/arch/arm/plat-samsung/Makefile
+> b/arch/arm/plat-samsung/Makefile index 856f4ee..9e40e8d 100644
+> --- a/arch/arm/plat-samsung/Makefile
+> +++ b/arch/arm/plat-samsung/Makefile
+> @@ -15,8 +15,8 @@ obj-y				+= init.o cpu.o
+>  obj-$(CONFIG_ARCH_USES_GETTIMEOFFSET)   += time.o
+>  obj-$(CONFIG_S5P_HRT) 		+= s5p-time.o
+> 
+> -obj-y				+= clock.o
+> -obj-y				+= pwm-clock.o
+> +obj-$(CONFIG_SAMSUNG_CLOCK)	+= clock.o
+> +obj-$(CONFIG_SAMSUNG_CLOCK)	+= pwm-clock.o
+> 
+>  obj-$(CONFIG_SAMSUNG_CLKSRC)	+= clock-clksrc.o
+>  obj-$(CONFIG_S5P_CLOCK)		+= s5p-clock.o
