@@ -1,42 +1,42 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] spi/s3c64xx: Convert to devm_request_and_ioremap()
-Date: Thu, 05 Jul 2012 14:47:02 +0200
-Message-ID: <4FF58CC6.3010509@samsung.com>
-References: <1341491593-6781-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Make combiner_init function static
+Date: Fri,  6 Jul 2012 17:09:03 +0530
+Message-ID: <1341574743-3897-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:63439 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932530Ab2GEMrH (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:55301 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1030257Ab2GFLva (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 5 Jul 2012 08:47:07 -0400
-Received: from eusync1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6O00DWVU7A2I80@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Jul 2012 13:47:34 +0100 (BST)
-Received: from [106.116.147.32] by eusync1.samsung.com
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPA id <0M6O00BCUU6FI430@eusync1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 05 Jul 2012 13:47:05 +0100 (BST)
-In-reply-to: <1341491593-6781-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+	Fri, 6 Jul 2012 07:51:30 -0400
+Received: by pbbrp8 with SMTP id rp8so14511279pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jul 2012 04:51:29 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Hi,
+Fixes the following warning:
+arch/arm/mach-exynos/common.c:543:13:
+warning: symbol 'combiner_init' was not declared. Should it be static?
 
-On 07/05/2012 02:33 PM, Mark Brown wrote:
-> Saves some error handling and a small amount of code.
-> 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-exynos/common.c |    3 ++-
+ 1 files changed, 2 insertions(+), 1 deletions(-)
 
-Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
---
-Regards,
-Sylwester
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 0ec1a91..66d71ba 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -540,7 +540,8 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
+ 	.map	= combiner_irq_domain_map,
+ };
+ 
+-void __init combiner_init(void __iomem *combiner_base, struct device_node *np)
++static void __init combiner_init(void __iomem *combiner_base,
++				struct device_node *np)
+ {
+ 	int i, irq, irq_base;
+ 	unsigned int max_nr, nr_irq;
+-- 
+1.7.4.1
