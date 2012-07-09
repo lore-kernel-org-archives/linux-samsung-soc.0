@@ -1,120 +1,56 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 2/2] ARM: EXYNOS5: Add gscalar device from DT
-Date: Sat, 7 Jul 2012 11:58:24 +0530
-Message-ID: <CAK9yfHy_kXKQ0oDYLzvzUc0XK5kYYx2UUiwUEk_1JsKWRjmJOA@mail.gmail.com>
-References: <1341578702-10263-1-git-send-email-shaik.ameer@samsung.com>
-	<1341578702-10263-3-git-send-email-shaik.ameer@samsung.com>
+From: Wolfram Sang <w.sang@pengutronix.de>
+Subject: Re: [PATCH] i2c-s3c2410: Convert to devm_request_and_ioremap()
+Date: Mon, 9 Jul 2012 15:52:29 +0200
+Message-ID: <20120709135229.GL1296@pengutronix.de>
+References: <1340888138-32710-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="RD6GsZsdEJvsf78O"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:59898 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751742Ab2GGG2Z (ORCPT
+Received: from metis.ext.pengutronix.de ([92.198.50.35]:39629 "EHLO
+	metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753758Ab2GINwa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 7 Jul 2012 02:28:25 -0400
-Received: by vbbff1 with SMTP id ff1so6561446vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 06 Jul 2012 23:28:24 -0700 (PDT)
-In-Reply-To: <1341578702-10263-3-git-send-email-shaik.ameer@samsung.com>
+	Mon, 9 Jul 2012 09:52:30 -0400
+Content-Disposition: inline
+In-Reply-To: <1340888138-32710-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, olofj@google.com, prashanth.g@samsung.com, joshi@samsung.com, ameersk@gmail.com, thomas.ab@samsung.com
-
-Hi Shaik,
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 
 
-On 6 July 2012 18:15, Shaik Ameer Basha <shaik.ameer@samsung.com> wrote:
-> Adding all 4 gscalar devices from DT device list in machine file.
->
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi      |   31 +++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/mach-exynos5-dt.c |    8 ++++++++
->  2 files changed, 39 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 4272b29..b945c00 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -23,6 +23,13 @@
->         compatible = "samsung,exynos5250";
->         interrupt-parent = <&gic>;
->
-> +       aliases {
-> +               gsc0 = &gsc_0;
-> +               gsc1 = &gsc_1;
-> +               gsc2 = &gsc_2;
-> +               gsc3 = &gsc_3;
-> +       };
-> +
->         gic:interrupt-controller@10481000 {
->                 compatible = "arm,cortex-a9-gic";
->                 #interrupt-cells = <3>;
-> @@ -424,4 +431,28 @@
->                         #gpio-cells = <4>;
->                 };
->         };
-> +
-> +       gsc_0:  gsc@0x13e00000 {
-> +               compatible = "samsung,exynos-gsc";
-> +               reg = <0x13e00000 0x1000>;
-> +               interrupts = <0 85 0>;
-> +       };
-> +
-> +       gsc_1:  gsc@0x13e10000 {
-> +               compatible = "samsung,exynos-gsc";
-> +               reg = <0x13e10000 0x1000>;
-> +               interrupts = <0 86 0>;
-> +       };
-> +
-> +       gsc_2:  gsc@0x13e20000 {
-> +               compatible = "samsung,exynos-gsc";
-> +               reg = <0x13e20000 0x1000>;
-> +               interrupts = <0 87 0>;
-> +       };
-> +
-> +       gsc_3:  gsc@0x13e30000 {
-> +               compatible = "samsung,exynos-gsc";
-> +               reg = <0x13e30000 0x1000>;
-> +               interrupts = <0 88 0>;
-> +       };
->  };
+--RD6GsZsdEJvsf78O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 28, 2012 at 01:55:38PM +0100, Mark Brown wrote:
+> A small code saving and less error handling to worry about.
+>=20
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+
+What about devm for the clocks, too?
 
 
-Please also update the documentaion for these bindings.
+Thanks,
 
+   Wolfram
 
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 7b1e11a..76b081c 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -50,6 +50,14 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
->         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
->         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos-gsc", 0x13E00000,
-> +                               "exynos-gsc.0", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos-gsc", 0x13E10000,
-> +                               "exynos-gsc.1", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos-gsc", 0x13E20000,
-> +                               "exynos-gsc.2", NULL),
-> +       OF_DEV_AUXDATA("samsung,exynos-gsc", 0x13E30000,
-> +                               "exynos-gsc.3", NULL),
->         {},
->  };
->
-> --
-> 1.7.0.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=20
+Pengutronix e.K.                           | Wolfram Sang                |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
 
+--RD6GsZsdEJvsf78O
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
 
--- 
-With warm regards,
-Sachin
+iEYEARECAAYFAk/64h0ACgkQD27XaX1/VRsXTgCfVXW0XlddjyS5YVoXQ4EgQdQ5
+QPsAoKzteXWy14/kYTD0YRUlctpg9mKB
+=WwKg
+-----END PGP SIGNATURE-----
+
+--RD6GsZsdEJvsf78O--
