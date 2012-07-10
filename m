@@ -1,51 +1,62 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung cleanup-1 for v3.6
-Date: Tue, 10 Jul 2012 12:11:07 +0000
-Message-ID: <201207101211.07905.arnd@arndb.de>
-References: <0c4901cd5e3e$aa970660$ffc51320$%kim@samsung.com>
+Subject: Re: [GIT PULL] Samsung devel-dma ops for v3.6
+Date: Tue, 10 Jul 2012 12:42:41 +0000
+Message-ID: <201207101242.41867.arnd@arndb.de>
+References: <0c5001cd5e41$87daa1b0$978fe510$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+Content-Type: Text/Plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:58824 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.10]:62372 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752460Ab2GJML3 (ORCPT
+	with ESMTP id S1752144Ab2GJMmt convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 10 Jul 2012 08:11:29 -0400
-In-Reply-To: <0c4901cd5e3e$aa970660$ffc51320$%kim@samsung.com>
+	Tue, 10 Jul 2012 08:42:49 -0400
+In-Reply-To: <0c5001cd5e41$87daa1b0$978fe510$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, w.sang@pengutronix.de, Boojin Kim <boojin.kim@samsung.com>, Kyoungil Kim <ki0351.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Ben Dooks <ben@simtec.co.uk>
 
 On Tuesday 10 July 2012, Kukjin Kim wrote:
->  arch/arm/mach-exynos/common.c                   |   25 ------
->  arch/arm/mach-exynos/include/mach/spi-clocks.h  |   16 ----
->  arch/arm/mach-exynos/mach-nuri.c                |    1 -
->  arch/arm/mach-exynos/mach-origen.c              |    1 -
->  arch/arm/mach-exynos/mach-smdkv310.c            |    1 -
->  arch/arm/mach-exynos/mach-universal_c210.c      |    1 -
->  arch/arm/mach-s3c24xx/common.c                  |    1 -
->  arch/arm/mach-s3c24xx/include/mach/bast-pmu.h   |   40 ----------
->  arch/arm/mach-s3c64xx/include/mach/spi-clocks.h |   18 ----
->  arch/arm/mach-s5p64x0/dma.c                     |    2 -
->  arch/arm/mach-s5p64x0/include/mach/spi-clocks.h |   20 -----
->  arch/arm/mach-s5pc100/dma.c                     |    2 -
->  arch/arm/mach-s5pc100/include/mach/spi-clocks.h |   18 ----
->  arch/arm/mach-s5pv210/include/mach/spi-clocks.h |   17 ----
->  arch/arm/plat-samsung/Kconfig                   |    8 --
->  arch/arm/plat-samsung/Makefile                  |    4 -
->  arch/arm/plat-samsung/include/plat/devs.h       |    1 -
->  arch/arm/plat-samsung/include/plat/fb.h         |    1 -
->  arch/arm/plat-samsung/include/plat/pd.h         |   30 -------
->  arch/arm/plat-samsung/pd.c                      |   95
-> -----------------------
->  arch/arm/plat-samsung/pwm.c                     |    4 -
->  21 files changed, 0 insertions(+), 306 deletions(-)
+> Hi Arnd, Olof,
+> 
+> Here is updating DMA common operation for Samsung SoCs.
+> 
+> Since some DMA client driver such as spi needs to change the configuration
+> after dma_request() so this branch adds dma_config() can configure DMA
+> transmit option which is included in dma_request() after that.
+> 
+> Note, according to the changes, needs to update spi and ASoC drivers for
+> Samsung SoCs and only got the ack from Mark Brown not Grant Likely and as I
+> know, he is busy for moving. But I think, the spi change has no problem and
+> it is simple.
+> 
+> If any problems, please kindly let me know.
 
-Great diffstat!
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git next/devel-dma-ops
 
-Pulled into next/cleanup, thanks,
+I've applied this to a new next/dma branch for now, as it sounds that you
+need these changes.
+
+However, my feeling is that the s3c-dma-ops support is moving in the wrong
+direction, or at least I do not see where you're heading with it.
+
+>From what I see, there is the 
+
+* arch/arm/plat-s3c24xx/dma.c driver with a proprietary s3c2410_dma_*
+  interface, used by s3cmci and some asoc drivers.
+* arch/arm/mach-s3c64xx/dma.c implementing the same interface and exporting
+  the same symbols.
+* The arch/arm/plat-samsung/dma-ops.c which is a wrapper around the generic
+  dmaengine API, hardcoding the pl330 DMA driver
+* The arch/arm/plat-samsung/include/plat/dma-ops.h interface abstraction
+  that gets used to pick between the two at compile time, and being used by
+  the spi driver and again other asoc drivers
+
+Can you (or someone on the Cc list) explain what the plan is for this?
+Are you moving over the s3c2410_dma*() function to a dmaengine driver
+eventually? Do you expect to see more users of the nonstandard intefaces
+in the samsung code, or are they going away?
 
 	Arnd
