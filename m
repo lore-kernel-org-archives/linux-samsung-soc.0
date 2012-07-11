@@ -1,157 +1,142 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH 7/7] ARM: EXYNOS5: Set parent clock to fimd
-Date: Wed, 11 Jul 2012 19:24:08 +0900
-Message-ID: <001e01cd5f4f$4e316ed0$ea944c70$%han@samsung.com>
-References: <1341999741-15578-1-git-send-email-l.krishna@samsung.com>
- <1341999741-15578-8-git-send-email-l.krishna@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v5 5/6] spi: s3c64xx: Remove the 'set_level' callback from
+ controller data
+Date: Wed, 11 Jul 2012 16:45:59 +0530
+Message-ID: <1342005359-748-1-git-send-email-thomas.abraham@linaro.org>
+References: <CAJuYYwSi-1nBM40SWt359W0Lr2n_yVX5tvWfOS77bmLQRt_9fw@mail.gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:63067 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:17361 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751688Ab2GKKYK (ORCPT
+	with ESMTP id S1753320Ab2GKLCR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jul 2012 06:24:10 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+	Wed, 11 Jul 2012 07:02:17 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6Z00BX1RK1QCO0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 19:24:08 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.119.56])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ 17 2011)) with ESMTP id <0M6Z00KBSTBKDEM0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 20:02:16 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M6Z009VFRK8R640@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 19:24:08 +0900 (KST)
-In-reply-to: <1341999741-15578-8-git-send-email-l.krishna@samsung.com>
-Content-language: ko
+ with ESMTPA id <0M6Z00DA2TBJ2O60@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 20:02:16 +0900 (KST)
+In-reply-to: <CAJuYYwSi-1nBM40SWt359W0Lr2n_yVX5tvWfOS77bmLQRt_9fw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org
+Cc: broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-On July 11, 2012 6:42 PM, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
+The set_level callback in the controller data, which is used to configure
+the slave select line, cannot be supported when migrating the driver to
+device tree based discovery. Since all the platforms currently use gpio
+as the slave select line, this callback can be removed from the
+controller data and replaced with call to gpio_set_value in the driver.
 
-> 
-> From: Leela Krishna <l.krishna@samsung.com>
-> 
-> This patch sets mout_mpll_user as parent clock to fimd also
-> sets Fimd source clock rate to 800 MHz for MIPI LCD
-> 
-> Signed-off-by: Leela Krishna <l.krishna@samsung.com>
-> ---
->  arch/arm/mach-exynos/clock-exynos5.c       |   25 +++++++++++++++----------
->  arch/arm/mach-exynos/mach-exynos5-dt.c     |   11 +++++++++++
->  arch/arm/plat-samsung/include/plat/clock.h |    2 ++
->  3 files changed, 28 insertions(+), 10 deletions(-)
-> 
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-> index 61bf88d..a0d65f6 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -1039,6 +1039,18 @@ static struct clksrc_clk exynos5_clk_sclk_mmc3 = {
->  	.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS2, .shift = 24, .size = 8 },
->  };
-> 
-> +struct clksrc_clk exynos5_clk_sclk_fimd = {
-> +	.clk	= {
-> +		.name		= "sclk_fimd",
-> +		.devname	= "exynos5-fb",
-> +		.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
-> +		.ctrlbit	= (1 << 0),
-> +	},
-> +	.sources = &exynos5_clkset_group,
-> +	.reg_src = { .reg = EXYNOS5_CLKSRC_DISP1_0, .shift = 0,	.size = 4 },
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
+Acked-by: Grant Likely <grant.likely@secretlab.ca>
+---
+ arch/arm/plat-samsung/include/plat/s3c64xx-spi.h |    2 -
+ drivers/spi/spi-s3c64xx.c                        |   30 ++++++++++++++++++---
+ 2 files changed, 25 insertions(+), 7 deletions(-)
 
-Please use spaces instead of tab.
-
-> +	.reg_div = { .reg = EXYNOS5_CLKDIV_DISP1_0, .shift = 0, .size = 4 },
-> +};
-> +
->  static struct clksrc_clk exynos5_clksrcs[] = {
->  	{
->  		.clk	= {
-> @@ -1050,16 +1062,6 @@ static struct clksrc_clk exynos5_clksrcs[] = {
->  		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS3, .shift = 8, .size = 8 },
->  	}, {
->  		.clk	= {
-> -			.name		= "sclk_fimd",
-> -			.devname	= "exynos5-fb",
-> -			.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
-> -			.ctrlbit	= (1 << 0),
-> -		},
-> -		.sources = &exynos5_clkset_group,
-> -		.reg_src = { .reg = EXYNOS5_CLKSRC_DISP1_0, .shift = 0, .size = 4 },
-> -		.reg_div = { .reg = EXYNOS5_CLKDIV_DISP1_0, .shift = 0, .size = 4 },
-> -	}, {
-> -		.clk	= {
->  			.name		= "aclk_266_gscl",
->  		},
->  		.sources = &clk_src_gscl_266,
-> @@ -1153,6 +1155,7 @@ static struct clksrc_clk *exynos5_sysclks[] = {
->  	&exynos5_clk_dout_mmc4,
->  	&exynos5_clk_aclk_acp,
->  	&exynos5_clk_pclk_acp,
-> +	&exynos5_clk_sclk_fimd,
->  };
-> 
->  static struct clk *exynos5_clk_cdev[] = {
-> @@ -1402,6 +1405,8 @@ void __init_or_cpufreq exynos5_setup_clocks(void)
-> 
->  	clk_set_rate(&exynos5_clk_aclk_acp.clk, 267000000);
->  	clk_set_rate(&exynos5_clk_pclk_acp.clk, 134000000);
-> +	clk_set_parent(&exynos5_clk_sclk_fimd.clk,
-> +			&exynos5_clk_mout_mpll_user.clk);
-> 
->  	for (ptr = 0; ptr < ARRAY_SIZE(exynos5_clksrcs); ptr++)
->  		s3c_set_clksrc(&exynos5_clksrcs[ptr], true);
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 9d5bccc..248ca58 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -24,6 +24,9 @@
->  #include <plat/regs-serial.h>
->  #include <plat/backlight.h>
->  #include <plat/gpio-cfg.h>
-> +#include <plat/clock.h>
-> +#include <plat/s5p-clock.h>
-> +#include <plat/clock-clksrc.h>
-> 
->  #include "common.h"
-> 
-> @@ -172,9 +175,17 @@ static void __init exynos5250_dt_map_io(void)
-> 
->  static void __init exynos5250_dt_machine_init(void)
->  {
-> +	struct device_node *fimd_node;
-> +
->  	samsung_bl_set(&smdk5250_bl_gpio_info, &smdk5250_bl_data);
->  	of_platform_populate(NULL, of_default_bus_match_table,
->  				exynos5250_auxdata_lookup, NULL);
-> +
-
-Delete this useless line.
-
-> +	fimd_node = of_find_node_with_property(NULL, "supports-mipi-panel");
-> +	if (of_get_property(fimd_node, "supports-mipi-panel", NULL))
-> +		clk_set_rate(&exynos5_clk_sclk_fimd.clk, 800000000);
-> +	of_node_put(fimd_node);
-> +
->  	exynos_fimd_gpio_setup_24bpp();
->  	platform_add_devices(smdk5250_devices, ARRAY_SIZE(smdk5250_devices));
->  }
-> diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-> index a62753d..3d27783 100644
-> --- a/arch/arm/plat-samsung/include/plat/clock.h
-> +++ b/arch/arm/plat-samsung/include/plat/clock.h
-> @@ -83,6 +83,8 @@ extern struct clk clk_ext;
->  extern struct clksrc_clk clk_epllref;
->  extern struct clksrc_clk clk_esysclk;
-> 
-> +extern struct clksrc_clk exynos5_clk_sclk_fimd;
-> +
->  /* S3C64XX specific clocks */
->  extern struct clk clk_h2;
->  extern struct clk clk_27m;
-> --
-> 1.7.0.4
+diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+index c818a7c..ceba18d 100644
+--- a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
++++ b/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+@@ -18,7 +18,6 @@ struct platform_device;
+  * @fb_delay: Slave specific feedback delay.
+  *            Refer to FB_CLK_SEL register definition in SPI chapter.
+  * @line: Custom 'identity' of the CS line.
+- * @set_level: CS line control.
+  *
+  * This is per SPI-Slave Chipselect information.
+  * Allocate and initialize one in machine init code and make the
+@@ -27,7 +26,6 @@ struct platform_device;
+ struct s3c64xx_spi_csinfo {
+ 	u8 fb_delay;
+ 	unsigned line;
+-	void (*set_level)(unsigned line_id, int lvl);
+ };
+ 
+ /**
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index 0a9e43e..ba5193b 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -27,6 +27,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/spi/spi.h>
++#include <linux/gpio.h>
+ 
+ #include <mach/dma.h>
+ #include <plat/s3c64xx-spi.h>
+@@ -411,14 +412,14 @@ static inline void enable_cs(struct s3c64xx_spi_driver_data *sdd,
+ 		if (sdd->tgl_spi != spi) { /* if last mssg on diff device */
+ 			/* Deselect the last toggled device */
+ 			cs = sdd->tgl_spi->controller_data;
+-			cs->set_level(cs->line,
+-					spi->mode & SPI_CS_HIGH ? 0 : 1);
++			gpio_set_value(cs->line,
++				spi->mode & SPI_CS_HIGH ? 0 : 1);
+ 		}
+ 		sdd->tgl_spi = NULL;
+ 	}
+ 
+ 	cs = spi->controller_data;
+-	cs->set_level(cs->line, spi->mode & SPI_CS_HIGH ? 1 : 0);
++	gpio_set_value(cs->line, spi->mode & SPI_CS_HIGH ? 1 : 0);
+ }
+ 
+ static int wait_for_xfer(struct s3c64xx_spi_driver_data *sdd,
+@@ -504,7 +505,7 @@ static inline void disable_cs(struct s3c64xx_spi_driver_data *sdd,
+ 	if (sdd->tgl_spi == spi)
+ 		sdd->tgl_spi = NULL;
+ 
+-	cs->set_level(cs->line, spi->mode & SPI_CS_HIGH ? 0 : 1);
++	gpio_set_value(cs->line, spi->mode & SPI_CS_HIGH ? 0 : 1);
+ }
+ 
+ static void s3c64xx_spi_config(struct s3c64xx_spi_driver_data *sdd)
+@@ -833,11 +834,21 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+ 	unsigned long flags;
+ 	int err = 0;
+ 
+-	if (cs == NULL || cs->set_level == NULL) {
++	if (cs == NULL) {
+ 		dev_err(&spi->dev, "No CS for SPI(%d)\n", spi->chip_select);
+ 		return -ENODEV;
+ 	}
+ 
++	if (!spi_get_ctldata(spi)) {
++		err = gpio_request(cs->line, dev_name(&spi->dev));
++		if (err) {
++			dev_err(&spi->dev, "request for slave select gpio "
++					"line [%d] failed\n", cs->line);
++			return -EBUSY;
++		}
++		spi_set_ctldata(spi, cs);
++	}
++
+ 	sdd = spi_master_get_devdata(spi->master);
+ 	sci = sdd->cntrlr_info;
+ 
+@@ -908,6 +919,15 @@ setup_exit:
+ 	return err;
+ }
+ 
++static void s3c64xx_spi_cleanup(struct spi_device *spi)
++{
++	struct s3c64xx_spi_csinfo *cs = spi_get_ctldata(spi);
++
++	if (cs)
++		gpio_free(cs->line);
++	spi_set_ctldata(spi, NULL);
++}
++
+ static irqreturn_t s3c64xx_spi_irq(int irq, void *data)
+ {
+ 	struct s3c64xx_spi_driver_data *sdd = data;
+-- 
+1.6.6.rc2
