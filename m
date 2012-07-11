@@ -1,133 +1,109 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH 3/7] ARM: EXYNOS5: add machine specific support for LCD
-Date: Wed, 11 Jul 2012 14:54:37 +0530
-Message-ID: <1341998681-1888-4-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH 5/7] ARM: EXYNOS5: add device tree based discovery support for
+ FIMD
+Date: Wed, 11 Jul 2012 14:54:39 +0530
+Message-ID: <1341998681-1888-6-git-send-email-l.krishna@samsung.com>
 References: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:64166 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:64213 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751835Ab2GKJKw (ORCPT
+	with ESMTP id S1753844Ab2GKJK6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jul 2012 05:10:52 -0400
+	Wed, 11 Jul 2012 05:10:58 -0400
 Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0M6Z007WWO4RP3H0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:51 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:57 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M6Z008NXO5HIZ50@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:51 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:57 +0900 (KST)
 In-reply-to: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com, Leela Krishna <l.krishna@samsung.com>
 
-This patch adds machine specific support for LCD controller like setting power to LCD
-and adding LCD platform device.
+From: Leela Krishna <l.krishna@samsung.com>
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+This patch adds support for device tree based discovery for Samsung's
+display controller. Adds DRM-Fimd plat data for smdk5250
+evt1 to the corresponding dts file
+
+Signed-off-by: Leela Krishna <l.krishna@samsung.com>
 ---
- arch/arm/mach-exynos/mach-exynos5-dt.c |   57 ++++++++++++++++++++++++++++++++
- 1 files changed, 57 insertions(+), 0 deletions(-)
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |    7 +++++++
+ arch/arm/mach-exynos/include/mach/map.h   |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
+ 4 files changed, 26 insertions(+), 0 deletions(-)
 
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 49945cc..781f836 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -71,4 +71,20 @@
+ 	i2c@12CD0000 {
+ 		status = "disabled";
+ 	};
++
++	lcd_fimd0: lcd_panel0 {
++			lcd-htiming = <4 4 4 1280>;
++			lcd-vtiming = <4 4 4 800>;
++			supports-mipi-panel;
++	};
++
++	fimd {
++		samsung,fimd-display = <&lcd_fimd0>;
++		samsung,fimd-vidout-rgb;
++		samsung,fimd-inv-vclk;
++		samsung,fimd-frame-rate = <60>;
++		samsung,default-window = <0>;
++		samsung,fimd-win-bpp = <32>;
++	};
++
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index 4272b29..f9954fe 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -424,4 +424,11 @@
+ 			#gpio-cells = <4>;
+ 		};
+ 	};
++
++	fimd {
++		compatible = "samsung,exynos5-drm";
++		interrupt-parent = <&combiner>;
++		reg = <0x14400000 0x40000>;
++		interrupts = <18 5>, <18 4>, <18 6>;
++	};
+ };
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index ca4aa89..731b56e 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -167,6 +167,7 @@
+ #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
+ 
+ #define EXYNOS4_PA_FIMD0		0x11C00000
++#define EXYNOS5_PA_FIMD1		0x14400000
+ 
+ #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
+ #define EXYNOS4_PA_DWMCI		0x12550000
 diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 0a200fd..652a537 100644
+index a91c928..9d5bccc 100644
 --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
 +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -13,6 +13,7 @@
- #include <linux/serial_core.h>
- #include <linux/pwm_backlight.h>
- #include <linux/gpio.h>
-+#include <linux/delay.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -25,6 +26,8 @@
- 
- #include "common.h"
- 
-+#include <video/platform_lcd.h>
-+
- 
- static int smdk5250_bl_notify(struct device *unused, int brightness)
- {
-@@ -48,6 +51,55 @@ static struct platform_pwm_backlight_data smdk5250_bl_data = {
- 	.notify		= smdk5250_bl_notify,
- };
- 
-+static void lcd_set_power(struct plat_lcd_data *pd,
-+			unsigned int power)
-+{
-+
-+	/* reset */
-+	gpio_request_one(EXYNOS5_GPX1(5), GPIOF_OUT_INIT_HIGH, "GPX1");
-+
-+	mdelay(20);
-+	if (power) {
-+		/* fire nRESET on power up */
-+		gpio_set_value(EXYNOS5_GPX1(5), 0);
-+		mdelay(20);
-+		gpio_set_value(EXYNOS5_GPX1(5), 1);
-+		mdelay(20);
-+		gpio_free(EXYNOS5_GPX1(5));
-+	} else {
-+		/* fire nRESET on power off */
-+		gpio_set_value(EXYNOS5_GPX1(5), 0);
-+		mdelay(20);
-+		gpio_set_value(EXYNOS5_GPX1(5), 1);
-+		mdelay(20);
-+		gpio_free(EXYNOS5_GPX1(5));
-+	}
-+	mdelay(20);
-+
-+	/*
-+	 * Request lcd_bl_en GPIO for smdk5250_bl_notify().
-+	 * TODO: Fix this so we are not at risk of requesting the GPIO
-+	 * multiple times, this should be done with device tree, and
-+	 * likely integrated into the plat-samsung/dev-backlight.c init.
-+	 */
-+	gpio_request_one(EXYNOS5_GPX3(0), GPIOF_OUT_INIT_LOW, "GPX3");
-+}
-+
-+static int smdk5250_match_fb(struct plat_lcd_data *pd, struct fb_info *info)
-+{
-+	/* Don't call .set_power callback while unblanking */
-+	return 0;
-+}
-+
-+static struct plat_lcd_data smdk5250_lcd_data = {
-+	.set_power	= lcd_set_power,
-+	.match_fb	= smdk5250_match_fb,
-+};
-+
-+static struct platform_device smdk5250_lcd = {
-+	.name			= "platform-lcd",
-+	.dev.platform_data	= &smdk5250_lcd_data,
-+};
- /*
-  * The following lookup table is used to override device names when devices
-  * are registered from device tree. This is temporarily added to enable
-@@ -80,6 +132,10 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+@@ -154,6 +154,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5-drm", EXYNOS5_PA_FIMD1,
++				"exynos5-fb", NULL),
  	{},
  };
  
-+static struct platform_device *smdk5250_devices[] __initdata = {
-+	&smdk5250_lcd, /* for platform_lcd device */
-+};
-+
- static void __init exynos5250_dt_map_io(void)
- {
- 	exynos_init_io(NULL, 0);
-@@ -91,6 +147,7 @@ static void __init exynos5250_dt_machine_init(void)
- 	samsung_bl_set(&smdk5250_bl_gpio_info, &smdk5250_bl_data);
- 	of_platform_populate(NULL, of_default_bus_match_table,
- 				exynos5250_auxdata_lookup, NULL);
-+	platform_add_devices(smdk5250_devices, ARRAY_SIZE(smdk5250_devices));
- }
- 
- static char const *exynos5250_dt_compat[] __initdata = {
 -- 
 1.7.0.4
