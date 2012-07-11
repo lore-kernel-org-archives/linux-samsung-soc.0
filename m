@@ -1,55 +1,206 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH 0/7] Add device tree based discovery support for drm-fimd
-Date: Wed, 11 Jul 2012 14:54:34 +0530
-Message-ID: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH 1/7] ARM: SAMSUNG: add additional registers and SFR definitions
+ for writeback
+Date: Wed, 11 Jul 2012 14:54:35 +0530
+Message-ID: <1341998681-1888-2-git-send-email-l.krishna@samsung.com>
+References: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43995 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:44028 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751460Ab2GKJKp (ORCPT
+	with ESMTP id S1751460Ab2GKJKs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jul 2012 05:10:45 -0400
+	Wed, 11 Jul 2012 05:10:48 -0400
 Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0M6Z00MGRO45VN40@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:44 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:46 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M6Z008NXO5HIZ50@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:43 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:46 +0900 (KST)
+In-reply-to: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com, Leela Krishna <l.krishna@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com
 
-From: Leela Krishna <l.krishna@samsung.com>
+This patch updates the register address offsets and adds SFR definitions
+for writeback for Samsung's V8 display controller.
 
-The patches are created against "for-next" branch of Kukjin Kim's tree at:
- git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+---
+ arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++++
+ arch/arm/plat-samsung/include/plat/regs-fb.h    |   51 +++++++++++++++++++++++
+ drivers/video/Kconfig                           |    6 +++
+ 3 files changed, 67 insertions(+), 0 deletions(-)
 
-This patch set adds Backlight, LCD support and device tree based discovery 
-support for drm-fimd
-
-Leela Krishna (3):
-  ARM: EXYNOS5: add device tree based discovery support for FIMD
-  ARM: EXYNOS5: Add the bus clock for FIMD
-  ARM: EXYNOS5: Set parent clock to fimd
-
-Leela Krishna Amudala (4):
-  ARM: SAMSUNG: add additional registers and SFR definitions for
-    writeback
-  ARM: EXYNOS5: add machine specific support for backlight
-  ARM: EXYNOS5: add machine specific support for LCD
-  ARM: EXYNOS: Adding DRM platform device
-
- arch/arm/boot/dts/exynos5250-smdk5250.dts       |   16 +++
- arch/arm/boot/dts/exynos5250.dtsi               |    7 ++
- arch/arm/mach-exynos/Kconfig                    |    1 +
- arch/arm/mach-exynos/clock-exynos5.c            |   30 ++++--
- arch/arm/mach-exynos/include/mach/map.h         |    1 +
- arch/arm/mach-exynos/mach-exynos5-dt.c          |  125 +++++++++++++++++++++++
- arch/arm/plat-samsung/include/plat/clock.h      |    2 +
- arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++
- arch/arm/plat-samsung/include/plat/regs-fb.h    |   51 +++++++++
- drivers/video/Kconfig                           |    6 +
- 10 files changed, 239 insertions(+), 10 deletions(-)
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+index 4c3647f..1639c17 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+@@ -30,9 +30,16 @@
+ #define VIDCON1_FSTATUS_EVEN	(1 << 15)
+ 
+ /* Video timing controls */
++#ifdef CONFIG_FB_EXYNOS_FIMD_V8
++#define VIDTCON0                                (0x20010)
++#define VIDTCON1                                (0x20014)
++#define VIDTCON3                                (0x2001C)
++#else
+ #define VIDTCON0				(0x10)
+ #define VIDTCON1				(0x14)
+ #define VIDTCON2				(0x18)
++#define VIDTCON3				(0x1C)
++#endif
+ 
+ /* Window position controls */
+ 
+@@ -43,9 +50,12 @@
+ #define VIDOSD_BASE				(0x40)
+ 
+ #define VIDINTCON0				(0x130)
++#define VIDINTCON1                              (0x134)
+ 
+ /* WINCONx */
+ 
++#define WINCONx_CSC_CON_EQ709                   (1 << 28)
++#define WINCONx_CSC_CON_EQ601                   (0 << 28)
+ #define WINCONx_CSCWIDTH_MASK			(0x3 << 26)
+ #define WINCONx_CSCWIDTH_SHIFT			(26)
+ #define WINCONx_CSCWIDTH_WIDE			(0x0 << 26)
+diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-samsung/include/plat/regs-fb.h
+index 9a78012..6d2ee16 100644
+--- a/arch/arm/plat-samsung/include/plat/regs-fb.h
++++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+@@ -32,12 +32,28 @@
+ 
+ #define VIDCON0					(0x00)
+ #define VIDCON0_INTERLACE			(1 << 29)
++
++#ifdef CONFIG_FB_EXYNOS_FIMD_V8
++#define VIDOUT_CON				(0x20000)
++#define VIDOUT_CON_VIDOUT_UP_MASK		(0x1 << 16)
++#define VIDOUT_CON_VIDOUT_UP_SHIFT		(16)
++#define VIDOUT_CON_VIDOUT_UP_ALWAYS		(0x0 << 16)
++#define VIDOUT_CON_VIDOUT_UP_START_FRAME	(0x1 << 16)
++#define VIDOUT_CON_VIDOUT_F_MASK		(0x7 << 8)
++#define VIDOUT_CON_VIDOUT_F_SHIFT		(8)
++#define VIDOUT_CON_VIDOUT_F_RGB			(0x0 << 8)
++#define VIDOUT_CON_VIDOUT_F_I80_LDI0		(0x2 << 8)
++#define VIDOUT_CON_VIDOUT_F_I80_LDI1		(0x3 << 8)
++#define VIDOUT_CON_VIDOUT_F_WB			(0x4 << 8)
++#endif
++
+ #define VIDCON0_VIDOUT_MASK			(0x3 << 26)
+ #define VIDCON0_VIDOUT_SHIFT			(26)
+ #define VIDCON0_VIDOUT_RGB			(0x0 << 26)
+ #define VIDCON0_VIDOUT_TV			(0x1 << 26)
+ #define VIDCON0_VIDOUT_I80_LDI0			(0x2 << 26)
+ #define VIDCON0_VIDOUT_I80_LDI1			(0x3 << 26)
++#define VIDCON0_VIDOUT_WB                       (0x4 << 26)
+ 
+ #define VIDCON0_L1_DATA_MASK			(0x7 << 23)
+ #define VIDCON0_L1_DATA_SHIFT			(23)
+@@ -81,7 +97,13 @@
+ #define VIDCON0_ENVID				(1 << 1)
+ #define VIDCON0_ENVID_F				(1 << 0)
+ 
++#ifdef CONFIG_FB_EXYNOS_FIMD_V8
++#define VIDOUT_CON                              (0x20000)
++#define VIDCON1                                 (0x20004)
++#else
+ #define VIDCON1					(0x04)
++#endif
++
+ #define VIDCON1_LINECNT_MASK			(0x7ff << 16)
+ #define VIDCON1_LINECNT_SHIFT			(16)
+ #define VIDCON1_LINECNT_GET(_v)			(((_v) >> 16) & 0x7ff)
+@@ -111,6 +133,14 @@
+ #define VIDCON2_TVFMTSEL1_RGB			(0x0 << 12)
+ #define VIDCON2_TVFMTSEL1_YUV422		(0x1 << 12)
+ #define VIDCON2_TVFMTSEL1_YUV444		(0x2 << 12)
++#define VIDCON2_TVFMTSEL1_SHIFT			(12)
++#define VIDCON2_TVFMTSEL_SW			(1 << 14)
++#define VIDCON2_TVFORMATSEL_YUV444		(0x2 << 12)
++
++#define VIDCON2_TVFMTSEL1_MASK			(0x3 << 12)
++#define VIDCON2_TVFMTSEL1_RGB			(0x0 << 12)
++#define VIDCON2_TVFMTSEL1_YUV422		(0x1 << 12)
++#define VIDCON2_TVFMTSEL1_YUV444		(0x2 << 12)
+ 
+ #define VIDCON2_ORGYCbCr			(1 << 8)
+ #define VIDCON2_YUVORDCrCb			(1 << 7)
+@@ -165,8 +195,15 @@
+ #define VIDTCON1_HSPW_SHIFT			(0)
+ #define VIDTCON1_HSPW_LIMIT			(0xff)
+ #define VIDTCON1_HSPW(_x)			((_x) << 0)
++#define VIDCON1_VCLK_MASK                       (0x3 << 9)
++#define VIDCON1_VCLK_HOLD                       (0x0 << 9)
++#define VIDCON1_VCLK_RUN                        (0x1 << 9)
+ 
++#ifdef CONFIG_FB_EXYNOS_FIMD_V8
++#define VIDTCON2				(0x20018)
++#else
+ #define VIDTCON2				(0x18)
++#endif
+ #define VIDTCON2_LINEVAL_E(_x)			((((_x) & 0x800) >> 11) << 23)
+ #define VIDTCON2_LINEVAL_MASK			(0x7ff << 11)
+ #define VIDTCON2_LINEVAL_SHIFT			(11)
+@@ -186,6 +223,9 @@
+ #define WINCONx_BYTSWP				(1 << 17)
+ #define WINCONx_HAWSWP				(1 << 16)
+ #define WINCONx_WSWP				(1 << 15)
++#define WINCONx_ENLOCAL_MASK			(0xf << 15)
++#define WINCONx_INRGB_RGB			(0 << 13)
++#define WINCONx_INRGB_YCBCR			(1 << 13)
+ #define WINCONx_BURSTLEN_MASK			(0x3 << 9)
+ #define WINCONx_BURSTLEN_SHIFT			(9)
+ #define WINCONx_BURSTLEN_16WORD			(0x0 << 9)
+@@ -205,6 +245,7 @@
+ #define WINCON0_BPPMODE_24BPP_888		(0xb << 2)
+ 
+ #define WINCON1_BLD_PIX				(1 << 6)
++#define WINCON1_BLD_PLANE			(0 << 6)
+ 
+ #define WINCON1_ALPHA_SEL			(1 << 1)
+ #define WINCON1_BPPMODE_MASK			(0xf << 2)
+@@ -395,9 +436,19 @@
+ #define WPALCON_W0PAL_16BPP_A555		(0x5 << 0)
+ #define WPALCON_W0PAL_16BPP_565			(0x6 << 0)
+ 
++/* Clock gate mode control */
++#define REG_CLKGATE_MODE			(0x1b0)
++#define REG_CLKGATE_MODE_AUTO_CLOCK_GATE	(0 << 0)
++#define REG_CLKGATE_MODE_NON_CLOCK_GATE		(1 << 0)
++
+ /* Blending equation control */
+ #define BLENDCON				(0x260)
+ #define BLENDCON_NEW_MASK			(1 << 0)
+ #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+ #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+ 
++/* Window alpha control */
++#define VIDW0ALPHA0				(0x200)
++#define VIDW0ALPHA1				(0x204)
++#define DPCLKCON				(0x27c)
++#define DPCLKCON_ENABLE				(1 << 1)
+diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+index 0217f74..f81bf55 100644
+--- a/drivers/video/Kconfig
++++ b/drivers/video/Kconfig
+@@ -2053,6 +2053,12 @@ config FB_S3C
+ 
+ 	  Currently the support is only for the S3C6400 and S3C6410 SoCs.
+ 
++config FB_EXYNOS_FIMD_V8
++	bool "register extensions for FIMD version 8"
++	depends on ARCH_EXYNOS5
++	---help---
++	This uses register extensions for FIMD version 8
++
+ config FB_S3C_DEBUG_REGWRITE
+        bool "Debug register writes"
+        depends on FB_S3C
+-- 
+1.7.0.4
