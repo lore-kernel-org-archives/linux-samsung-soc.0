@@ -1,43 +1,55 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung devel-dma ops for v3.6
-Date: Wed, 11 Jul 2012 08:18:03 +0000
-Message-ID: <201207110818.04091.arnd@arndb.de>
-References: <0c5001cd5e41$87daa1b0$978fe510$%kim@samsung.com> <201207101242.41867.arnd@arndb.de> <0e1301cd5f34$008fe1e0$01afa5a0$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
-Content-Transfer-Encoding: 7bit
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/7] Add device tree based discovery support for drm-fimd
+Date: Wed, 11 Jul 2012 14:54:34 +0530
+Message-ID: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.171]:58589 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750829Ab2GKIS3 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:43995 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751460Ab2GKJKp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jul 2012 04:18:29 -0400
-In-Reply-To: <0e1301cd5f34$008fe1e0$01afa5a0$%kim@samsung.com>
+	Wed, 11 Jul 2012 05:10:45 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M6Z00MGRO45VN40@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:44 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M6Z008NXO5HIZ50@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 18:10:43 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, w.sang@pengutronix.de, 'Boojin Kim' <boojin.kim@samsung.com>, 'Kyoungil Kim' <ki0351.kim@samsung.com>, 'Vinod Koul' <vinod.koul@intel.com>, 'Dan Williams' <dan.j.williams@intel.com>, 'Ben Dooks' <ben@simtec.co.uk>
+Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com, Leela Krishna <l.krishna@samsung.com>
 
-On Wednesday 11 July 2012, Kukjin Kim wrote:
-> Yeah, let me explain the status for Samsung SoCs' DMA. There are 3 different
-> DMA IPs, samsung specific s3c24xx dma, pl080 and pl330. As you know, pl330
-> already moved in drivers/dma for using common DMA engine and Alim is
-> re-working on pl080
-> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg10954.html
-> ) and let me check its progress. But s3c24xx dma is not ready yet. When
-> pl330 was moving, my colleague, Boojin Kim posted to use common DMA APIs for
-> Samsung drivers which are using DMA such as spi and ASoC. But it was
-> including too many ifdef for checking which DMA is used and it can occur
-> breakage for multiplatform
-> (http://www.spinics.net/lists/arm-kernel/msg131137.html). So we implemented
-> to use some dma_ops after discussing with Grant Likely
-> (http://lists.infradead.org/pipermail/linux-arm-kernel/2011-July/058171.html
-> ).
-> 
-> Anyway, we will try to use common DMA APIs for all Samsung SoCs. But need
-> more time ;)
+From: Leela Krishna <l.krishna@samsung.com>
 
-Ok, sounds good. Thanks for the background information!
+The patches are created against "for-next" branch of Kukjin Kim's tree at:
+ git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-	Arnd
+This patch set adds Backlight, LCD support and device tree based discovery 
+support for drm-fimd
+
+Leela Krishna (3):
+  ARM: EXYNOS5: add device tree based discovery support for FIMD
+  ARM: EXYNOS5: Add the bus clock for FIMD
+  ARM: EXYNOS5: Set parent clock to fimd
+
+Leela Krishna Amudala (4):
+  ARM: SAMSUNG: add additional registers and SFR definitions for
+    writeback
+  ARM: EXYNOS5: add machine specific support for backlight
+  ARM: EXYNOS5: add machine specific support for LCD
+  ARM: EXYNOS: Adding DRM platform device
+
+ arch/arm/boot/dts/exynos5250-smdk5250.dts       |   16 +++
+ arch/arm/boot/dts/exynos5250.dtsi               |    7 ++
+ arch/arm/mach-exynos/Kconfig                    |    1 +
+ arch/arm/mach-exynos/clock-exynos5.c            |   30 ++++--
+ arch/arm/mach-exynos/include/mach/map.h         |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c          |  125 +++++++++++++++++++++++
+ arch/arm/plat-samsung/include/plat/clock.h      |    2 +
+ arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++
+ arch/arm/plat-samsung/include/plat/regs-fb.h    |   51 +++++++++
+ drivers/video/Kconfig                           |    6 +
+ 10 files changed, 239 insertions(+), 10 deletions(-)
