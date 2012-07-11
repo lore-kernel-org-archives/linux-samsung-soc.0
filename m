@@ -1,38 +1,98 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v5 5/6] spi: s3c64xx: Remove the 'set_level' callback from
- controller data
-Date: Wed, 11 Jul 2012 17:51:13 +0530
-Message-ID: <CAJuYYwR8o76aLr_2J4jqF93hhz_4L3MJikJUtTpG5jWfPKDk+w@mail.gmail.com>
-References: <CAJuYYwSi-1nBM40SWt359W0Lr2n_yVX5tvWfOS77bmLQRt_9fw@mail.gmail.com>
-	<1342005359-748-1-git-send-email-thomas.abraham@linaro.org>
-	<20120711114716.GF3938@opensource.wolfsonmicro.com>
+From: AMEER BASHA SHAIK <shaik.ameer@samsung.com>
+Subject: Re: Re: [PATCH 2/2] ARM: EXYNOS5: Add gscalar device from DT
+Date: Wed, 11 Jul 2012 13:06:25 +0000 (GMT)
+Message-ID: <24338044.529411342011985196.JavaMail.weblogic@epml01>
+Reply-To: shaik.ameer@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:46756 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751319Ab2GKMVP (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:45186 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754662Ab2GKNG1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jul 2012 08:21:15 -0400
-Received: by wibhr14 with SMTP id hr14so1071523wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 11 Jul 2012 05:21:13 -0700 (PDT)
-In-Reply-To: <20120711114716.GF3938@opensource.wolfsonmicro.com>
+	Wed, 11 Jul 2012 09:06:27 -0400
+Received: from epcpsbge7.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M6Z00G8EZ2P18K0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 22:06:25 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "olofj@google.com" <olofj@google.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, "ameersk@gmail.com" <ameersk@gmail.com>, Thomas P Abraham <thomas.ab@samsung.com>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
 
-On 11 July 2012 17:17, Mark Brown <broonie@opensource.wolfsonmicro.com> wrote:
-> On Wed, Jul 11, 2012 at 04:45:59PM +0530, Thomas Abraham wrote:
->> The set_level callback in the controller data, which is used to configure
->> the slave select line, cannot be supported when migrating the driver to
->> device tree based discovery. Since all the platforms currently use gpio
->> as the slave select line, this callback can be removed from the
->> controller data and replaced with call to gpio_set_value in the driver.
->
-> I don't seem to have patches 1-4?
-
-Based on your comments to add the gpio request, only two patches 5/6
-and 6/6 in this series have changed since. I have cc'ed you in the
-other 4 patches as well. If you do not have those patches, please let
-me know, I will repost the whole series again. Thanks.
+SGkgU3lsd2VzdGVyLA0KDQoNCk9uIFNhdCwgSnVsIDcsIDIwMTIgYXQgMTI6MjAgQU0sIFN5bHdl
+c3RlciBOYXdyb2NraSA8c3lsdmVzdGVyLm5hd3JvY2tpQGdtYWlsLmNvbT4gd3JvdGU6DQo+DQo+
+IEhpIFNoYWlrLA0KPg0KPg0KPiBPbiAwNy8wNi8yMDEyIDAyOjQ1IFBNLCBTaGFpayBBbWVlciBC
+YXNoYSB3cm90ZToNCj4+DQo+PiBBZGRpbmcgYWxsIDQgZ3NjYWxhciBkZXZpY2VzIGZyb20gRFQg
+ZGV2aWNlIGxpc3QgaW4gbWFjaGluZSBmaWxlLg0KPg0KPg0KPiBuaXQ6IHMvZ3NjYWxhci9nc2Nh
+bGVyDQo+DQo+IFRoZSBhYm92ZSBzZW50ZW5jZSBkb2Vzbid0IHF1aXRlIHBhcnNlIHRob3VnaC4N
+Cj4NCg0KT0suIEkgd2lsbCBmaXggaXQuDQoNCj4NCj4+IFNpZ25lZC1vZmYtYnk6IEFiaGlsYXNo
+IEtlc2F2YW48YS5rZXNhdmFuQHNhbXN1bmcuY29tPg0KPj4gU2lnbmVkLW9mZi1ieTogTGVlbGEg
+S3Jpc2huYSBBbXVkYWxhPGwua3Jpc2huYUBzYW1zdW5nLmNvbT4NCj4+IFNpZ25lZC1vZmYtYnk6
+IFNoYWlrIEFtZWVyIEJhc2hhPHNoYWlrLmFtZWVyQHNhbXN1bmcuY29tPg0KPj4gLS0tDQo+PiAg
+IGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSAgICAgIHwgICAzMQ0KPj4gKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKw0KPj4gICBhcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNo
+LWV4eW5vczUtZHQuYyB8ICAgIDggKysrKysrKysNCj4+ICAgMiBmaWxlcyBjaGFuZ2VkLCAzOSBp
+bnNlcnRpb25zKCspLCAwIGRlbGV0aW9ucygtKQ0KPj4NCj4+IGRpZmYgLS1naXQgYS9hcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kNCj4+IGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9z
+NTI1MC5kdHNpDQo+PiBpbmRleCA0MjcyYjI5Li5iOTQ1YzAwIDEwMDY0NA0KPj4gLS0tIGEvYXJj
+aC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpDQo+PiArKysgYi9hcmNoL2FybS9ib290L2R0
+cy9leHlub3M1MjUwLmR0c2kNCj4+IEBAIC0yMyw2ICsyMywxMyBAQA0KPj4gICAgICAgICBjb21w
+YXRpYmxlID0gInNhbXN1bmcsZXh5bm9zNTI1MCI7DQo+PiAgICAgICAgIGludGVycnVwdC1wYXJl
+bnQgPTwmZ2ljPjsNCj4+DQo+PiArICAgICAgIGFsaWFzZXMgew0KPj4gKyAgICAgICAgICAgICAg
+IGdzYzAgPSZnc2NfMDsNCj4+ICsgICAgICAgICAgICAgICBnc2MxID0mZ3NjXzE7DQo+PiArICAg
+ICAgICAgICAgICAgZ3NjMiA9JmdzY18yOw0KPj4gKyAgICAgICAgICAgICAgIGdzYzMgPSZnc2Nf
+MzsNCj4+ICsgICAgICAgfTsNCj4+ICsNCj4NCj4NCj4gV2hhdCBhcmUgdGhlc2UgYWxpYXNlcyB1
+c2VmdWwgZm9yID8NCg0KR1NjYWxlciBkcml2ZXIgdXNlcyB0aGUgIm9mX2FsaWFzX2dldF9pZCgp
+IiBjYWxsIHRvIHJldHJpZXZlIHRoZSBkZXZpY2UgSURzLCB3aGljaCANCmludGVybmFsbHkgdXNl
+cyB0aGVzZSBhbGlhc2VzLi4uDQoNCj4gQWxzbyBJIHRoaW5rIGFsbCBEVCByZWxhdGVkIHBhdGNo
+ZXMgc2hvdWxkIGJlIHBvc3RlZCB0bw0KPiBkZXZpY2V0cmVlLWRpc2N1c3NAbGlzdHMub3psYWJz
+Lm9yZyBhcyB3ZWxsLg0KPg0KDQpJIHdpbGwgcG9zdCB0aGUgdjIgdmVyc2lvbiBvZiB0aGlzIHBh
+dGNoIHRvIHRoZSBzcGVjaWZpZWQgbWFpbGluZyBsaXN0Lg0KDQo+DQo+PiAgICAgICAgIGdpYzpp
+bnRlcnJ1cHQtY29udHJvbGxlckAxMDQ4MTAwMCB7DQo+PiAgICAgICAgICAgICAgICAgY29tcGF0
+aWJsZSA9ICJhcm0sY29ydGV4LWE5LWdpYyI7DQo+PiAgICAgICAgICAgICAgICAgI2ludGVycnVw
+dC1jZWxscyA9PDM+Ow0KPj4gQEAgLTQyNCw0ICs0MzEsMjggQEANCj4+ICAgICAgICAgICAgICAg
+ICAgICAgICAgICNncGlvLWNlbGxzID08ND47DQo+PiAgICAgICAgICAgICAgICAgfTsNCj4+ICAg
+ICAgICAgfTsNCj4+ICsNCj4+ICsgICAgICAgZ3NjXzA6ICBnc2NAMHgxM2UwMDAwMCB7DQo+PiAr
+ICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1nc2MiOw0KPj4gKyAg
+ICAgICAgICAgICAgIHJlZyA9PDB4MTNlMDAwMDAgMHgxMDAwPjsNCj4+ICsgICAgICAgICAgICAg
+ICBpbnRlcnJ1cHRzID08MCA4NSAwPjsNCj4+ICsgICAgICAgfTsNCj4+ICsNCj4+ICsgICAgICAg
+Z3NjXzE6ICBnc2NAMHgxM2UxMDAwMCB7DQo+PiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9
+ICJzYW1zdW5nLGV4eW5vcy1nc2MiOw0KPj4gKyAgICAgICAgICAgICAgIHJlZyA9PDB4MTNlMTAw
+MDAgMHgxMDAwPjsNCj4+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID08MCA4NiAwPjsNCj4+
+ICsgICAgICAgfTsNCj4+ICsNCj4+ICsgICAgICAgZ3NjXzI6ICBnc2NAMHgxM2UyMDAwMCB7DQo+
+PiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLGV4eW5vcy1nc2MiOw0KPj4g
+KyAgICAgICAgICAgICAgIHJlZyA9PDB4MTNlMjAwMDAgMHgxMDAwPjsNCj4+ICsgICAgICAgICAg
+ICAgICBpbnRlcnJ1cHRzID08MCA4NyAwPjsNCj4+ICsgICAgICAgfTsNCj4+ICsNCj4+ICsgICAg
+ICAgZ3NjXzM6ICBnc2NAMHgxM2UzMDAwMCB7DQo+PiArICAgICAgICAgICAgICAgY29tcGF0aWJs
+ZSA9ICJzYW1zdW5nLGV4eW5vcy1nc2MiOw0KPj4gKyAgICAgICAgICAgICAgIHJlZyA9PDB4MTNl
+MzAwMDAgMHgxMDAwPjsNCj4+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID08MCA4OCAwPjsN
+Cj4+ICsgICAgICAgfTsNCj4+ICAgfTsNCj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9tYWNoLWV4
+eW5vcy9tYWNoLWV4eW5vczUtZHQuYw0KPj4gYi9hcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4
+eW5vczUtZHQuYw0KPj4gaW5kZXggN2IxZTExYS4uNzZiMDgxYyAxMDA2NDQNCj4+IC0tLSBhL2Fy
+Y2gvYXJtL21hY2gtZXh5bm9zL21hY2gtZXh5bm9zNS1kdC5jDQo+PiArKysgYi9hcmNoL2FybS9t
+YWNoLWV4eW5vcy9tYWNoLWV4eW5vczUtZHQuYw0KPj4gQEAgLTUwLDYgKzUwLDE0IEBAIHN0YXRp
+YyBjb25zdCBzdHJ1Y3Qgb2ZfZGV2X2F1eGRhdGENCj4+IGV4eW5vczUyNTBfYXV4ZGF0YV9sb29r
+dXBbXSBfX2luaXRjb25zdCA9IHsNCj4+ICAgICAgICAgT0ZfREVWX0FVWERBVEEoImFybSxwbDMz
+MCIsIEVYWU5PUzVfUEFfUERNQTAsICJkbWEtcGwzMzAuMCIsDQo+PiBOVUxMKSwNCj4+ICAgICAg
+ICAgT0ZfREVWX0FVWERBVEEoImFybSxwbDMzMCIsIEVYWU5PUzVfUEFfUERNQTEsICJkbWEtcGwz
+MzAuMSIsDQo+PiBOVUxMKSwNCj4+ICAgICAgICAgT0ZfREVWX0FVWERBVEEoImFybSxwbDMzMCIs
+IEVYWU5PUzVfUEFfTURNQTEsICJkbWEtcGwzMzAuMiIsDQo+PiBOVUxMKSwNCj4+ICsgICAgICAg
+T0ZfREVWX0FVWERBVEEoInNhbXN1bmcsZXh5bm9zLWdzYyIsIDB4MTNFMDAwMDAsDQo+PiArICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICJleHlub3MtZ3NjLjAiLCBOVUxMKSwNCj4+ICsg
+ICAgICAgT0ZfREVWX0FVWERBVEEoInNhbXN1bmcsZXh5bm9zLWdzYyIsIDB4MTNFMTAwMDAsDQo+
+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJleHlub3MtZ3NjLjEiLCBOVUxMKSwN
+Cj4+ICsgICAgICAgT0ZfREVWX0FVWERBVEEoInNhbXN1bmcsZXh5bm9zLWdzYyIsIDB4MTNFMjAw
+MDAsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJleHlub3MtZ3NjLjIiLCBO
+VUxMKSwNCj4+ICsgICAgICAgT0ZfREVWX0FVWERBVEEoInNhbXN1bmcsZXh5bm9zLWdzYyIsIDB4
+MTNFMzAwMDAsDQo+PiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICJleHlub3MtZ3Nj
+LjMiLCBOVUxMKSwNCj4NCj4NCj4gSXQncyBwcm9iYWJseSBiZXR0ZXIgdG8gYWRkIHJlbGV2YW50
+IGVudHJ5IGF0DQo+IGFyY2gvYXJtL21hY2gtZXh5bm9zL2luY2x1ZGUvbWFjaC9tYXAuIEl0J3Mg
+anVzdCBhIG9uZSBsaW5lLCBlLmcuDQo+DQo+IC8qIHggPSAwLi4uMyAqLw0KPiAjZGVmaW5lIEVY
+WU5PUzVfUEFfR1NDKHgpICAgICAgICgweDEzZTAwMDAwICsgKCh4KSAqIDB4MTAwMDApKQ0KPg0K
+PiBBbmQgdXNlIGl0IGhlcmUgaW5zdGVhZCBvZiBwbGFpbiBudW1iZXJzLg0KDQpPSy4gd2lsbCBh
+ZGRyZXNzIHRoZXNlIGNvbW1lbnRzIGluIHYyLg0KDQo+DQo+IC0tDQo+IFRoYW5rcywNCj4gU3ls
+d2VzdGVyDQoNCg0KUmVnYXJkcywNClNoYWlrIEFtZWVyIEJhc2hh
