@@ -1,121 +1,62 @@
-From: AMEER BASHA SHAIK <shaik.ameer@samsung.com>
-Subject: Re: Re: [PATCH 1/2] ARM: EXYNOS5: Add clock support for Gscaler
-Date: Wed, 11 Jul 2012 13:18:42 +0000 (GMT)
-Message-ID: <20148646.529691342012721490.JavaMail.weblogic@epml01>
-Reply-To: shaik.ameer@samsung.com
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v5 5/6] spi: s3c64xx: Remove the 'set_level' callback
+ from controller data
+Date: Wed, 11 Jul 2012 14:31:42 +0100
+Message-ID: <20120711133142.GH3938@opensource.wolfsonmicro.com>
+References: <CAJuYYwSi-1nBM40SWt359W0Lr2n_yVX5tvWfOS77bmLQRt_9fw@mail.gmail.com>
+ <1342005359-748-1-git-send-email-thomas.abraham@linaro.org>
+ <20120711114716.GF3938@opensource.wolfsonmicro.com>
+ <CAJuYYwR8o76aLr_2J4jqF93hhz_4L3MJikJUtTpG5jWfPKDk+w@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="tctmm6wHVGT/P6vA"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47644 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754434Ab2GKNSn (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:36215 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754932Ab2GKNbo (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 11 Jul 2012 09:18:43 -0400
-Received: from epcpsbge6.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M6Z00016ZMWFXH0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 11 Jul 2012 22:18:42 +0900 (KST)
-MIME-version: 1.0
+	Wed, 11 Jul 2012 09:31:44 -0400
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwR8o76aLr_2J4jqF93hhz_4L3MJikJUtTpG5jWfPKDk+w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Kukjin Kim <kgene.kim@samsung.com>, "olofj@google.com" <olofj@google.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, "ameersk@gmail.com" <ameersk@gmail.com>, Thomas P Abraham <thomas.ab@samsung.com>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, kgene.kim@samsung.com, jaswinder.singh@linaro.org
 
-SGkgU2FjaGluLA0KDQoNCk9uIEZyaSwgSnVsIDYsIDIwMTIgYXQgODozMCBQTSwgU2FjaGluIEth
-bWF0IDxzYWNoaW4ua2FtYXRAbGluYXJvLm9yZz4gd3JvdGU6DQo+IEhpIFNoYWlrLA0KPg0KPiBT
-b21lIG5pdHM6DQo+DQo+IFBhdGNoIHN1YmplY3Q6IHMvRVhZTk9TNS9FWFlOT1MNCj4NCg0KT0su
-IEkgd2lsbCBjaGFuZ2UgdGhpcy4NCg0KPiBPbiA2IEp1bHkgMjAxMiAxODoxNSwgU2hhaWsgQW1l
-ZXIgQmFzaGEgPHNoYWlrLmFtZWVyQHNhbXN1bmcuY29tPiB3cm90ZToNCj4+IEFkZCByZXF1aXJl
-ZCBjbG9jayBzdXBwb3J0IGZvciBHc2NhbGVyIGZvciBleHlub3M1DQo+Pg0KPj4gU2lnbmVkLW9m
-Zi1ieTogQWJoaWxhc2ggS2VzYXZhbiA8YS5rZXNhdmFuQHNhbXN1bmcuY29tPg0KPj4gU2lnbmVk
-LW9mZi1ieTogTGVlbGEgS3Jpc2huYSBBbXVkYWxhIDxsLmtyaXNobmFAc2Ftc3VuZy5jb20+DQo+
-PiBTaWduZWQtb2ZmLWJ5OiBQcmF0aHl1c2ggSyA8cHJhdGh5dXNoLmtAc2Ftc3VuZy5jb20+DQo+
-PiBTaWduZWQtb2ZmLWJ5OiBTaGFpayBBbWVlciBCYXNoYSA8c2hhaWsuYW1lZXJAc2Ftc3VuZy5j
-b20+DQo+PiAtLS0NCj4+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M1LmMgfCAg
-IDc5ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysNCj4+ICAxIGZpbGVzIGNoYW5n
-ZWQsIDc5IGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0pDQo+Pg0KPj4gZGlmZiAtLWdpdCBh
-L2FyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczUuYyBiL2FyY2gvYXJtL21hY2gtZXh5
-bm9zL2Nsb2NrLWV4eW5vczUuYw0KPj4gaW5kZXggZmVmYTMzNi4uNDlmOThjZCAxMDA2NDQNCj4+
-IC0tLSBhL2FyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczUuYw0KPj4gKysrIGIvYXJj
-aC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNS5jDQo+PiBAQCAtNzQxLDYgKzc0MSwyNiBA
-QCBzdGF0aWMgc3RydWN0IGNsayBleHlub3M1X2luaXRfY2xvY2tzX29mZltdID0gew0KPj4gICAg
-ICAgICAgICAgICAgIC5lbmFibGUgICAgICAgICA9IGV4eW5vczVfY2xrX2lwX3BlcmljX2N0cmws
-DQo+PiAgICAgICAgICAgICAgICAgLmN0cmxiaXQgICAgICAgID0gKDEgPDwgMTQpLA0KPj4gICAg
-ICAgICB9LCB7DQo+PiArICAgICAgICAgICAgICAgLm5hbWUgICAgICAgICAgID0gImdzY2wiLA0K
-Pj4gKyAgICAgICAgICAgICAgIC5kZXZuYW1lICAgICAgICA9ICJleHlub3MtZ3NjLjAiLA0KPj4g
-KyAgICAgICAgICAgICAgIC5lbmFibGUgICAgICAgICA9IGV4eW5vczVfY2xrX2lwX2dzY2xfY3Ry
-bCwNCj4+ICsgICAgICAgICAgICAgICAuY3RybGJpdCAgICAgICAgPSAoMSA8PCAwKSwNCj4+ICsg
-ICAgICAgfSwgew0KPj4gKyAgICAgICAgICAgICAgIC5uYW1lICAgICAgICAgICA9ICJnc2NsIiwN
-Cj4+ICsgICAgICAgICAgICAgICAuZGV2bmFtZSAgICAgICAgPSAiZXh5bm9zLWdzYy4xIiwNCj4+
-ICsgICAgICAgICAgICAgICAuZW5hYmxlICAgICAgICAgPSBleHlub3M1X2Nsa19pcF9nc2NsX2N0
-cmwsDQo+PiArICAgICAgICAgICAgICAgLmN0cmxiaXQgICAgICAgID0gKDEgPDwgMSksDQo+PiAr
-ICAgICAgIH0sIHsNCj4+ICsgICAgICAgICAgICAgICAubmFtZSAgICAgICAgICAgPSAiZ3NjbCIs
-DQo+PiArICAgICAgICAgICAgICAgLmRldm5hbWUgICAgICAgID0gImV4eW5vcy1nc2MuMiIsDQo+
-PiArICAgICAgICAgICAgICAgLmVuYWJsZSAgICAgICAgID0gZXh5bm9zNV9jbGtfaXBfZ3NjbF9j
-dHJsLA0KPj4gKyAgICAgICAgICAgICAgIC5jdHJsYml0ICAgICAgICA9ICgxIDw8IDIpLA0KPj4g
-KyAgICAgICB9LCB7DQo+PiArICAgICAgICAgICAgICAgLm5hbWUgICAgICAgICAgID0gImdzY2wi
-LA0KPj4gKyAgICAgICAgICAgICAgIC5kZXZuYW1lICAgICAgICA9ICJleHlub3MtZ3NjLjMiLA0K
-Pj4gKyAgICAgICAgICAgICAgIC5lbmFibGUgICAgICAgICA9IGV4eW5vczVfY2xrX2lwX2dzY2xf
-Y3RybCwNCj4+ICsgICAgICAgICAgICAgICAuY3RybGJpdCAgICAgICAgPSAoMSA8PCAzKSwNCj4+
-ICsgICAgICAgfSwgew0KPj4gICAgICAgICAgICAgICAgIC5uYW1lICAgICAgICAgICA9IFNZU01N
-VV9DTE9DS19OQU1FLA0KPj4gICAgICAgICAgICAgICAgIC5kZXZuYW1lICAgICAgICA9IFNZU01N
-VV9DTE9DS19ERVZOQU1FKG1mY19sLCAwKSwNCj4+ICAgICAgICAgICAgICAgICAuZW5hYmxlICAg
-ICAgICAgPSAmZXh5bm9zNV9jbGtfaXBfbWZjX2N0cmwsDQo+PiBAQCAtMTExNiw2ICsxMTM2LDYx
-IEBAIHN0YXRpYyBzdHJ1Y3QgY2xrc3JjX2NsayBleHlub3M1X2Nsa3NyY3NbXSA9IHsNCj4+ICAg
-ICAgICAgfSwNCj4+ICB9Ow0KPj4NCj4+ICsvKiBGb3IgQUNMS18zMDBfZ3NjbF9taWQgKi8NCj4+
-ICtzdGF0aWMgc3RydWN0IGNsa3NyY19jbGsgZXh5bm9zNV9jbGtfbW91dF9hY2xrXzMwMF9nc2Ns
-X21pZCA9IHsNCj4+ICsgICAgICAgLmNsayAgICA9IHsNCj4+ICsgICAgICAgICAgICAgICAubmFt
-ZSAgID0gIm1vdXRfYWNsa18zMDBfZ3NjbF9taWQiLA0KPj4gKyAgICAgICB9LA0KPj4gKyAgICAg
-ICAuc291cmNlcyA9ICZleHlub3M1X2Nsa3NldF9hY2xrLA0KPj4gKyAgICAgICAucmVnX3NyYyA9
-IHsgLnJlZyA9IEVYWU5PUzVfQ0xLU1JDX1RPUDAsIC5zaGlmdCA9IDI0LCAuc2l6ZSA9IDEgfSwN
-Cj4+ICt9Ow0KPj4gKw0KPj4gKy8qIEZvciBBQ0xLXzMwMF9nc2NsICovDQo+PiArc3RydWN0IGNs
-ayAqZXh5bm9zNV9jbGtzZXRfYWNsa18zMDBfZ3NjbF9saXN0W10gPSB7DQo+PiArICAgICAgIFsw
-XSA9ICZleHlub3M1X2Nsa19tb3V0X2FjbGtfMzAwX2dzY2xfbWlkLmNsaywNCj4+ICsgICAgICAg
-WzFdID0gJmV4eW5vczVfY2xrX3NjbGtfdnBsbC5jbGssDQo+PiArfTsNCj4+ICsNCj4+ICtzdHJ1
-Y3QgY2xrc3JjX3NvdXJjZXMgZXh5bm9zNV9jbGtzZXRfYWNsa18zMDBfZ3NjbCA9IHsNCj4+ICsg
-ICAgICAgLnNvdXJjZXMgICAgICAgID0gZXh5bm9zNV9jbGtzZXRfYWNsa18zMDBfZ3NjbF9saXN0
-LA0KPj4gKyAgICAgICAubnJfc291cmNlcyAgICAgPSBBUlJBWV9TSVpFKGV4eW5vczVfY2xrc2V0
-X2FjbGtfMzAwX2dzY2xfbGlzdCksDQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgc3RydWN0IGNs
-a3NyY19jbGsgZXh5bm9zNV9jbGtfbW91dF9hY2xrXzMwMF9nc2NsID0gew0KPj4gKyAgICAgICAu
-Y2xrICAgID0gew0KPj4gKyAgICAgICAgICAgICAgIC5uYW1lICAgICAgICAgICA9ICJtb3V0X2Fj
-bGtfMzAwX2dzY2wiLA0KPj4gKyAgICAgICB9LA0KPj4gKyAgICAgICAuc291cmNlcyA9ICZleHlu
-b3M1X2Nsa3NldF9hY2xrXzMwMF9nc2NsLA0KPj4gKyAgICAgICAucmVnX3NyYyA9IHsgLnJlZyA9
-IEVYWU5PUzVfQ0xLU1JDX1RPUDAsIC5zaGlmdCA9IDI1LCAuc2l6ZSA9IDEgfSwNCj4+ICt9Ow0K
-Pj4gKw0KPj4gK3N0YXRpYyBzdHJ1Y3QgY2xrc3JjX2NsayBleHlub3M1X2Nsa19kb3V0X2FjbGtf
-MzAwX2dzY2wgPSB7DQo+PiArICAgICAgIC5jbGsgICAgPSB7DQo+PiArICAgICAgICAgICAgICAg
-Lm5hbWUgICAgICAgICAgID0gImRvdXRfYWNsa18zMDBfZ3NjbCIsDQo+PiArICAgICAgICAgICAg
-ICAgLnBhcmVudCAgICAgICAgID0gJmV4eW5vczVfY2xrX21vdXRfYWNsa18zMDBfZ3NjbC5jbGss
-DQo+PiArICAgICAgIH0sDQo+PiArICAgICAgIC5yZWdfZGl2ID0geyAucmVnID0gRVhZTk9TNV9D
-TEtESVZfVE9QMSwgLnNoaWZ0ID0gMTIsIC5zaXplID0gMyB9LA0KPj4gK307DQo+PiArDQo+PiAr
-LyogUG9zc2libGUgY2xvY2sgc291cmNlcyBmb3IgYWNsa18zMDBfZ3NjbF9zdWIgTXV4ICovDQo+
-PiArc3RhdGljIHN0cnVjdCBjbGsgKmNsa19zcmNfZ3NjbF8zMDBfbGlzdFtdID0gew0KPj4gKyAg
-ICAgICBbMF0gPSAmY2xrX2V4dF94dGFsX211eCwNCj4+ICsgICAgICAgWzFdID0gJmV4eW5vczVf
-Y2xrX2RvdXRfYWNsa18zMDBfZ3NjbC5jbGssDQo+PiArfTsNCj4+ICsNCj4+ICtzdGF0aWMgc3Ry
-dWN0IGNsa3NyY19zb3VyY2VzIGNsa19zcmNfZ3NjbF8zMDAgPSB7DQo+PiArICAgICAgIC5zb3Vy
-Y2VzICAgICAgICA9IGNsa19zcmNfZ3NjbF8zMDBfbGlzdCwNCj4+ICsgICAgICAgLm5yX3NvdXJj
-ZXMgICAgID0gQVJSQVlfU0laRShjbGtfc3JjX2dzY2xfMzAwX2xpc3QpLA0KPj4gK307DQo+PiAr
-DQo+PiArc3RhdGljIHN0cnVjdCBjbGtzcmNfY2xrIGV4eW5vczVfY2xrX2FjbGtfMzAwX2dzY2wg
-PSB7DQo+PiArICAgICAgIC5jbGsgICAgPSB7DQo+PiArICAgICAgICAgICAgICAgLm5hbWUgICAg
-ICAgICAgID0gImFjbGtfMzAwX2dzY2wiLA0KPj4gKyAgICAgICB9LA0KPj4gKyAgICAgICAuc291
-cmNlcyA9ICZjbGtfc3JjX2dzY2xfMzAwLA0KPj4gKyAgICAgICAucmVnX3NyYyA9IHsgLnJlZyA9
-IEVYWU5PUzVfQ0xLU1JDX1RPUDMsIC5zaGlmdCA9IDEwLCAuc2l6ZSA9IDEgfSwNCj4+ICt9Ow0K
-Pj4gKw0KPj4gIC8qIENsb2NrIGluaXRpYWxpemF0aW9uIGNvZGUgKi8NCj4+ICBzdGF0aWMgc3Ry
-dWN0IGNsa3NyY19jbGsgKmV4eW5vczVfc3lzY2xrc1tdID0gew0KPj4gICAgICAgICAmZXh5bm9z
-NV9jbGtfbW91dF9hcGxsLA0KPj4gQEAgLTExMzksNiArMTIxNCwxMCBAQCBzdGF0aWMgc3RydWN0
-IGNsa3NyY19jbGsgKmV4eW5vczVfc3lzY2xrc1tdID0gew0KPj4gICAgICAgICAmZXh5bm9zNV9j
-bGtfYWNsa18yNjYsDQo+PiAgICAgICAgICZleHlub3M1X2Nsa19hY2xrXzIwMCwNCj4+ICAgICAg
-ICAgJmV4eW5vczVfY2xrX2FjbGtfMTY2LA0KPj4gKyAgICAgICAmZXh5bm9zNV9jbGtfbW91dF9h
-Y2xrXzMwMF9nc2NsX21pZCwNCj4+ICsgICAgICAgJmV4eW5vczVfY2xrX21vdXRfYWNsa18zMDBf
-Z3NjbCwNCj4+ICsgICAgICAgJmV4eW5vczVfY2xrX2RvdXRfYWNsa18zMDBfZ3NjbCwNCj4+ICsg
-ICAgICAgJmV4eW5vczVfY2xrX2FjbGtfMzAwX2dzY2wsDQo+PiAgICAgICAgICZleHlub3M1X2Ns
-a19hY2xrXzY2X3ByZSwNCj4+ICAgICAgICAgJmV4eW5vczVfY2xrX2FjbGtfNjYsDQo+PiAgICAg
-ICAgICZleHlub3M1X2Nsa19kb3V0X21tYzAsDQo+DQo+IFBsZWFzZSBtYWludGFpbiB0aGUgYWxw
-aGFiZXRpYyBvcmRlci4NCg0KT0suIEkgd2lsbCByZS1vcmRlciB0aGlzLg0KDQo+DQo+PiAtLQ0K
-Pj4gMS43LjAuNA0KPj4NCj4+IC0tDQo+PiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMgbGlzdDog
-c2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluDQo+PiB0aGUg
-Ym9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVsLm9yZw0KPj4gTW9yZSBt
-YWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5o
-dG1sDQo+DQo+DQo+DQo+IC0tDQo+IFdpdGggd2FybSByZWdhcmRzLA0KPiBTYWNoaW4NCg0KDQot
-LS0NClJlZ2FyZHMsDQpTaGFpayBBbWVlciBCYXNoYQ==
+
+--tctmm6wHVGT/P6vA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Jul 11, 2012 at 05:51:13PM +0530, Thomas Abraham wrote:
+
+> Based on your comments to add the gpio request, only two patches 5/6
+> and 6/6 in this series have changed since. I have cc'ed you in the
+> other 4 patches as well. If you do not have those patches, please let
+> me know, I will repost the whole series again. Thanks.
+
+Please resend the full series.
+
+--tctmm6wHVGT/P6vA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP/YAvAAoJEBus8iNuMP3d0c8P/Riiuihd+B+jVuRwYmmEzhrq
+/SB0ZxvMhc9K71IBCPDQAjUQEUIk1cYKVuT5iMB/FcZBYLpTwUnAZ+JD8Hdf6W1R
+TUEWgf/pWQRdMaJyYQzCys2mT+ZOJe4+LriOdrODwEWLLLSdqCN02BXXGDoIZviM
+Ts5Aiiyu2tiVVuiS5nqbskP1HYB3pOlEctHd0oso1DUQsDfy+ANMZSdJ/Kt2KLxc
+Q7vriXYUd8GgkFCfUO5hh2+TOtA0qqxfTw3x6Nm1SWvrbEQVOgpqHd3z5czyp7iK
+tFQOY94Stvf7L0DAqvWm/osw585u6PhFUaUabfUKGBfUH7YJw6lZ8f7G1+8xfZ9r
+FRFqiIMydHeMo1Bk2FKE7taJZS99vWza0Ls2S13HUQeh6zZ2iChaeoiI+0iJQFCX
+MFqEYJfY1LlzmUTzP+bcOhBurOZBsghY+K+n+3xzLdIkpDIlTQIUowvqevgCmFx2
+l/ovND9mH7XCka2Dh0OzeACqA2dlYLg2xZXslxnXLippjJZey5uhEtnLWktBZe3+
+zj1KdpzOyU7eIjHSn4eZWfMICxJdBAguMDOR0bUPAnIOlVEM68Va+0g9hDXMriRz
+V833QZ7YxFWRR92S3srypJnIoDagiss/Ect/xk76Wf7lG6bch3lFxYnVFHGUeqmP
+ePYfe9impXFwPrFob9BI
+=3Jil
+-----END PGP SIGNATURE-----
+
+--tctmm6wHVGT/P6vA--
