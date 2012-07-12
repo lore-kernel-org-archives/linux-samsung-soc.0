@@ -1,45 +1,49 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH] ARM: samsung: adc: fix race in s3c_adc_start
-Date: Fri, 13 Jul 2012 07:41:11 +0900
-Message-ID: <4FFF5287.8000608@samsung.com>
-References: <1342059131-31251-1-git-send-email-toddpoynor@google.com>
- <20120712123125.GJ18513@trinity.fluff.org>
+From: Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RESEND PATCH v4 1/5] thermal: add generic cpufreq
+ cooling implementation
+Date: Thu, 12 Jul 2012 16:04:15 -0700
+Message-ID: <20120712160415.473748fd.akpm@linux-foundation.org>
+References: <1342100468-19426-1-git-send-email-amit.kachhap@linaro.org>
+	<1342100468-19426-2-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20120712123125.GJ18513@trinity.fluff.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben@trinity.fluff.org>
-Cc: linux-samsung-soc@vger.kernel.org, eunki_kim@samsung.com, Kukjin Kim <kgene.kim@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Todd Poynor <toddpoynor@google.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <1342100468-19426-2-git-send-email-amit.kachhap@linaro.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: Guenter Roeck <guenter.roeck@ericsson.com>, linux-samsung-soc@vger.kernel.org, SangWook Ju <sw.ju@samsung.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, Jean Delvare <khali@linux-fr.org>, linux-pm@lists.linux-foundation.org, Donggeun Kim <dg77.kim@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 07/12/12 21:31, Ben Dooks wrote:
-> On Wed, Jul 11, 2012 at 07:12:11PM -0700, Todd Poynor wrote:
->> Checking for adc->ts_pend already claimed should be done with the
->> lock held.
->>
->> Change-Id: Ic9f15e26bd19934ab8c2885ce5df265933ac304a
->> Signed-off-by: Todd Poynor<toddpoynor@google.com>
-> Acked-by: Ben Dooks<ben-linux@fluff.org>
+On Thu, 12 Jul 2012 19:11:04 +0530
+Amit Daniel Kachhap <amit.kachhap@linaro.org> wrote:
 
-Ben, thanks for your ack, will apply.
+> [akpm@linux-foundation.org: fix comment layout]
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> Cc: Donggeun Kim <dg77.kim@samsung.com>
+> Cc: Guenter Roeck <guenter.roeck@ericsson.com>
+> Cc: SangWook Ju <sw.ju@samsung.com>
+> Cc: Durgadoss <durgadoss.r@intel.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Jean Delvare <khali@linux-fr.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-BTW, Todd, do you want to keep the 'Change-Id' in mainline?
-If you don't mind, I'd like to remove it...
+Something strange appears to have happened here?  At a guess it seems
+that the patches were in my tree, I sent them to someone (Len?), then
+they were merged into linux-next by "someone" and then they fell
+out of linux-next again?
 
-Thanks.
+If so, they will hopefully come back soon.  If not, something failed
+fairly seriously.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+I took a look at re-merging these patches into my tree, but there are
+significant conflicts with other work which has gone into linux-next.
