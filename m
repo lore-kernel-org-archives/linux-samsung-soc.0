@@ -1,75 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/1] ARM: EXYNOS: Add missing static storage class
- specifier in pmu.c file
-Date: Thu, 12 Jul 2012 18:10:25 +0900
-Message-ID: <0fac01cd600e$2c97d8d0$85c78a70$%kim@samsung.com>
-References: <1341575543-19521-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH 0/2] Exynos4: power domain fixes for v3.5-rc
+Date: Thu, 12 Jul 2012 18:11:00 +0900
+Message-ID: <0fad01cd600e$41940240$c4bc06c0$%kim@samsung.com>
+References: <1339750473-32699-1-git-send-email-m.szyprowski@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:28683 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:29058 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932960Ab2GLJK1 (ORCPT
+	with ESMTP id S932960Ab2GLJLM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jul 2012 05:10:27 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	Thu, 12 Jul 2012 05:11:12 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7100G3VITEUSW0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 18:10:26 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7100FRPITDRHW0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 18:11:01 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M71004UUITDPI30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 18:10:25 +0900 (KST)
-In-reply-to: <1341575543-19521-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0M71002LKIUDB150@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 18:11:01 +0900 (KST)
+In-reply-to: <1339750473-32699-1-git-send-email-m.szyprowski@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-Sachin Kamat wrote:
+Marek Szyprowski wrote:
 > 
-> arch/arm/mach-exynos/pmu.c:318:14: warning:
-> symbol 'exynos5_list_both_cnt_feed' was not declared. Should it be static?
-> arch/arm/mach-exynos/pmu.c:332:14: warning:
-> symbol 'exynos5_list_diable_wfi_wfe' was not declared. Should it be
-static?
+> Hello,
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/mach-exynos/pmu.c |    4 ++--
->  1 files changed, 2 insertions(+), 2 deletions(-)
+> This is a resend of my power domain fixes for Samsung Exynos platform.
+> They fix issues introduced by switching to gen_pd based driver in commit
+> 91cfbd4ee0 ('ARM: EXYNOS: Hook up power domains to generic power domain
+> infrastructure') and restore runtime pm functionality for multimedia
+> drivers (s5p-fimc, s5p-mfc, s5p-tv, exynos-drm). Tested on Universal
+> C210 and NURI boards, but the issues were also reported for Origen
+> boards and others. If possible, please consider these patches as fixes
+> (runtime pm is broken without them) and merge to v3.5-rc line.
 > 
-> diff --git a/arch/arm/mach-exynos/pmu.c b/arch/arm/mach-exynos/pmu.c
-> index bb4c522..3a48c85 100644
-> --- a/arch/arm/mach-exynos/pmu.c
-> +++ b/arch/arm/mach-exynos/pmu.c
-> @@ -315,7 +315,7 @@ static struct exynos_pmu_conf exynos5250_pmu_config[]
-> = {
->  	{ PMU_TABLE_END,},
->  };
+> Best regards
+> Marek Szyprowski
+> Samsung Poland R&D Center
 > 
-> -void __iomem *exynos5_list_both_cnt_feed[] = {
-> +static void __iomem *exynos5_list_both_cnt_feed[] = {
->  	EXYNOS5_ARM_CORE0_OPTION,
->  	EXYNOS5_ARM_CORE1_OPTION,
->  	EXYNOS5_ARM_COMMON_OPTION,
-> @@ -329,7 +329,7 @@ void __iomem *exynos5_list_both_cnt_feed[] = {
->  	EXYNOS5_TOP_PWR_SYSMEM_OPTION,
->  };
 > 
-> -void __iomem *exynos5_list_diable_wfi_wfe[] = {
-> +static void __iomem *exynos5_list_diable_wfi_wfe[] = {
->  	EXYNOS5_ARM_CORE1_OPTION,
->  	EXYNOS5_FSYS_ARM_OPTION,
->  	EXYNOS5_ISP_ARM_OPTION,
+> Patch summary:
+> 
+> Marek Szyprowski (2):
+>   ARM: Exynos4: read initial state of power domain from hw registers
+>   ARM: Exynos4: pm_domains: register devices in 'need_restore' state
+> 
+>  arch/arm/mach-exynos/pm_domains.c |   13 +++++++++----
+>  1 files changed, 9 insertions(+), 4 deletions(-)
+> 
 > --
-> 1.7.4.1
+> 1.7.1.569.g6f426
 
-OK, applied.
+OK, applied this series in my -fixes.
+
 Thanks.
 
 Best regards,
