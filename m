@@ -1,135 +1,145 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v3 3/6] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Thu, 12 Jul 2012 18:24:25 +0530
-Message-ID: <1342097668-25243-4-git-send-email-thomas.abraham@linaro.org>
-References: <1342097668-25243-1-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1342097668-25243-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, cjb-2X9k7bc8m7Mdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v2 1/3] ARM: Samsung: Add support for MSHC controller clocks
+Date: Thu, 12 Jul 2012 18:28:45 +0530
+Message-ID: <1342097927-25334-2-git-send-email-thomas.abraham@linaro.org>
+References: <1342097927-25334-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:36067 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752320Ab2GLMo7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Jul 2012 08:44:59 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7100FGTSQV6JO0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 21:44:58 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7100BY3SQSXZ10@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 21:44:58 +0900 (KST)
+In-reply-to: <1342097927-25334-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-Some platforms allow for clock gating and control of bus interface unit clock
-and card interface unit clock. Add support for clock lookup of optional biu
-and ciu clocks for clock gating and clock speed determination.
+Add clock instances for bus interface unit clock and card interface unit
+clock of the all four MSHC controller instances.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- drivers/mmc/host/dw_mmc.c  |   42 +++++++++++++++++++++++++++++++++++++++---
- include/linux/mmc/dw_mmc.h |    4 ++++
- 2 files changed, 43 insertions(+), 3 deletions(-)
+ arch/arm/mach-exynos/clock-exynos5.c |   45 ++++++++++++----------------------
+ 1 files changed, 16 insertions(+), 29 deletions(-)
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index cd58063..679473c 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1953,18 +1953,38 @@ int dw_mci_probe(struct dw_mci *host)
- 		return -ENODEV;
- 	}
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index fefa336..02038d8 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -564,35 +564,30 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.enable		= exynos5_clk_ip_peris_ctrl,
+ 		.ctrlbit	= (1 << 19),
+ 	}, {
+-		.name		= "hsmmc",
+-		.devname	= "exynos4-sdhci.0",
++		.name		= "biu",
++		.devname	= "dw_mmc.0",
+ 		.parent		= &exynos5_clk_aclk_200.clk,
+ 		.enable		= exynos5_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 12),
+ 	}, {
+-		.name		= "hsmmc",
+-		.devname	= "exynos4-sdhci.1",
++		.name		= "biu",
++		.devname	= "dw_mmc.1",
+ 		.parent		= &exynos5_clk_aclk_200.clk,
+ 		.enable		= exynos5_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 13),
+ 	}, {
+-		.name		= "hsmmc",
+-		.devname	= "exynos4-sdhci.2",
++		.name		= "biu",
++		.devname	= "dw_mmc.2",
+ 		.parent		= &exynos5_clk_aclk_200.clk,
+ 		.enable		= exynos5_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 14),
+ 	}, {
+-		.name		= "hsmmc",
+-		.devname	= "exynos4-sdhci.3",
++		.name		= "biu",
++		.devname	= "dw_mmc.3",
+ 		.parent		= &exynos5_clk_aclk_200.clk,
+ 		.enable		= exynos5_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 15),
+ 	}, {
+-		.name		= "dwmci",
+-		.parent		= &exynos5_clk_aclk_200.clk,
+-		.enable		= exynos5_clk_ip_fsys_ctrl,
+-		.ctrlbit	= (1 << 16),
+-	}, {
+ 		.name		= "sata",
+ 		.devname	= "ahci",
+ 		.enable		= exynos5_clk_ip_fsys_ctrl,
+@@ -992,8 +987,8 @@ static struct clksrc_clk exynos5_clk_sclk_uart3 = {
  
--	if (!host->pdata->bus_hz) {
-+	host->biu_clk = clk_get(host->dev, "biu");
-+	if (IS_ERR(host->biu_clk))
-+		dev_dbg(host->dev, "biu clock not available\n");
-+	else
-+		clk_prepare_enable(host->biu_clk);
-+
-+	host->ciu_clk = clk_get(host->dev, "ciu");
-+	if (IS_ERR(host->ciu_clk))
-+		dev_dbg(host->dev, "ciu clock not available\n");
-+	else
-+		clk_prepare_enable(host->ciu_clk);
-+
-+	if (IS_ERR(host->ciu_clk))
-+		host->bus_hz = host->pdata->bus_hz;
-+	else
-+		host->bus_hz = clk_get_rate(host->ciu_clk);
-+
-+	if (!host->bus_hz) {
- 		dev_err(host->dev,
- 			"Platform data must supply bus speed\n");
--		return -ENODEV;
-+		ret = -ENODEV;
-+		goto err_clk;
- 	}
+ static struct clksrc_clk exynos5_clk_sclk_mmc0 = {
+ 	.clk	= {
+-		.name		= "sclk_mmc",
+-		.devname	= "exynos4-sdhci.0",
++		.name		= "ciu",
++		.devname	= "dw_mmc.0",
+ 		.parent		= &exynos5_clk_dout_mmc0.clk,
+ 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
+ 		.ctrlbit	= (1 << 0),
+@@ -1003,8 +998,8 @@ static struct clksrc_clk exynos5_clk_sclk_mmc0 = {
  
--	host->bus_hz = host->pdata->bus_hz;
- 	host->quirks = host->pdata->quirks;
+ static struct clksrc_clk exynos5_clk_sclk_mmc1 = {
+ 	.clk	= {
+-		.name		= "sclk_mmc",
+-		.devname	= "exynos4-sdhci.1",
++		.name		= "ciu",
++		.devname	= "dw_mmc.1",
+ 		.parent		= &exynos5_clk_dout_mmc1.clk,
+ 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
+ 		.ctrlbit	= (1 << 4),
+@@ -1014,8 +1009,8 @@ static struct clksrc_clk exynos5_clk_sclk_mmc1 = {
  
- 	spin_lock_init(&host->lock);
- 	INIT_LIST_HEAD(&host->queue);
+ static struct clksrc_clk exynos5_clk_sclk_mmc2 = {
+ 	.clk	= {
+-		.name		= "sclk_mmc",
+-		.devname	= "exynos4-sdhci.2",
++		.name		= "ciu",
++		.devname	= "dw_mmc.2",
+ 		.parent		= &exynos5_clk_dout_mmc2.clk,
+ 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
+ 		.ctrlbit	= (1 << 8),
+@@ -1025,8 +1020,8 @@ static struct clksrc_clk exynos5_clk_sclk_mmc2 = {
  
-+	host->dma_ops = host->pdata->dma_ops;
-+	dw_mci_init_dma(host);
-+
- 	/*
- 	 * Get the host data width - this assumes that HCON has been set with
- 	 * the correct values.
-@@ -2109,6 +2129,16 @@ err_dmaunmap:
- 		regulator_disable(host->vmmc);
- 		regulator_put(host->vmmc);
- 	}
-+
-+err_clk:
-+	if (!IS_ERR(host->ciu_clk)) {
-+		clk_disable_unprepare(host->ciu_clk);
-+		clk_put(host->ciu_clk);
-+	}
-+	if (!IS_ERR(host->biu_clk)) {
-+		clk_disable_unprepare(host->biu_clk);
-+		clk_put(host->biu_clk);
-+	}
- 	return ret;
- }
- EXPORT_SYMBOL(dw_mci_probe);
-@@ -2142,6 +2172,12 @@ void dw_mci_remove(struct dw_mci *host)
- 		regulator_put(host->vmmc);
- 	}
- 
-+	if (!IS_ERR(host->ciu_clk))
-+		clk_disable_unprepare(host->ciu_clk);
-+	if (!IS_ERR(host->biu_clk))
-+		clk_disable_unprepare(host->biu_clk);
-+	clk_put(host->ciu_clk);
-+	clk_put(host->biu_clk);
- }
- EXPORT_SYMBOL(dw_mci_remove);
- 
-diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-index a37a573..787ad56 100644
---- a/include/linux/mmc/dw_mmc.h
-+++ b/include/linux/mmc/dw_mmc.h
-@@ -78,6 +78,8 @@ struct mmc_data;
-  * @data_offset: Set the offset of DATA register according to VERID.
-  * @dev: Device associated with the MMC controller.
-  * @pdata: Platform data associated with the MMC controller.
-+ * @biu_clk: Pointer to bus interface unit clock instance.
-+ * @ciu_clk: Pointer to card interface unit clock instance.
-  * @slot: Slots sharing this MMC controller.
-  * @fifo_depth: depth of FIFO.
-  * @data_shift: log2 of FIFO item size.
-@@ -158,6 +160,8 @@ struct dw_mci {
- 	u16			data_offset;
- 	struct device		*dev;
- 	struct dw_mci_board	*pdata;
-+	struct clk		*biu_clk;
-+	struct clk		*ciu_clk;
- 	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
- 
- 	/* FIFO push and pull */
+ static struct clksrc_clk exynos5_clk_sclk_mmc3 = {
+ 	.clk	= {
+-		.name		= "sclk_mmc",
+-		.devname	= "exynos4-sdhci.3",
++		.name		= "ciu",
++		.devname	= "dw_mmc.3",
+ 		.parent		= &exynos5_clk_dout_mmc3.clk,
+ 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
+ 		.ctrlbit	= (1 << 12),
+@@ -1037,14 +1032,6 @@ static struct clksrc_clk exynos5_clk_sclk_mmc3 = {
+ static struct clksrc_clk exynos5_clksrcs[] = {
+ 	{
+ 		.clk	= {
+-			.name		= "sclk_dwmci",
+-			.parent		= &exynos5_clk_dout_mmc4.clk,
+-			.enable		= exynos5_clksrc_mask_fsys_ctrl,
+-			.ctrlbit	= (1 << 16),
+-		},
+-		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS3, .shift = 8, .size = 8 },
+-	}, {
+-		.clk	= {
+ 			.name		= "sclk_fimd",
+ 			.devname	= "s3cfb.1",
+ 			.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
 -- 
 1.6.6.rc2
