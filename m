@@ -1,94 +1,142 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 00/10] ARM: S3C24XX gpio cleanups and fixes
-Date: Thu, 12 Jul 2012 18:19:53 +0900
-Message-ID: <0fb401cd600f$7ef9f9e0$7cededa0$%kim@samsung.com>
-References: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/1] ARM: EXYNOS: Fix compilation warning in
+ setup-usb-phy.c file
+Date: Thu, 12 Jul 2012 14:52:25 +0530
+Message-ID: <CAK9yfHw=obimeLs_sKA-kJuD1yRF_65gPzirHvvJnZ_uKa1gqw@mail.gmail.com>
+References: <1341899860-17979-1-git-send-email-sachin.kamat@linaro.org>
+	<0fa801cd600e$1b1e6d80$515b4880$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56978 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753544Ab2GLJTy (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:56725 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753544Ab2GLJW2 convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 12 Jul 2012 05:19:54 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M710025XJ8XTO10@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 18:19:53 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M71003YGJ959300@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 12 Jul 2012 18:19:53 +0900 (KST)
-In-reply-to: <1341058142-30438-1-git-send-email-sylvester.nawrocki@gmail.com>
-Content-language: ko
+	Thu, 12 Jul 2012 05:22:28 -0400
+Received: by vbbff1 with SMTP id ff1so1358681vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jul 2012 02:22:25 -0700 (PDT)
+In-Reply-To: <0fa801cd600e$1b1e6d80$515b4880$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: ben-linux@fluff.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, arnd@arndb.de, patches@linaro.org
 
-Sylwester Nawrocki wrote:
-> 
-> This changset attempts to remove the users of an obsolete GPIO API in
-> Samsung S3C24XX platform and instead use the gpiolib API. It should
-> allow to drop some s3c24xx SoC specific headers as a next step and
-> simplify drivers/gpio/gpio-samsung.c driver a little. With the
-> introduction of the pinctrl GPIO driver we're going to have three
-> distinct GPIO APIs. Let's avoid this and drop the s3c24xx_gpio_*
-> functions, which have been scheduled for removal since about v2.6.35.
-> 
-> Additionally this changeset includes two minor fixes, for AC97 clock
-> and CAMIF interrupts.
-> 
-> 
-> Sylwester Nawrocki (10):
->   ARM: S3C24XX: Free the backlight gpio requested in Mini2440 board code
->   ARM: S3C24XX: Convert SMDK board file to the gpiolib API
->   ARM: S3C24XX: Convert QT2410 board file to the gpiolib API
->   ARM: S3C24XX: Convert the PM code to gpiolib API
->   ARM: S3C24XX: Convert the touchscreen setup code to common GPIO API
->   ARM: S3C24XX: Remove unused GPA, GPE, GPH bank GPIO aliases
->   ARM: S3C24XX: Remove unused GPIO definitions for port J
->   ARM: S3C24XX: Remove unused GPIO definitions for Openmoko GTA02 board
->   ARM: S3C24XX: Correct AC97 clock control bit for S3C2440
->   ARM: S3C24XX: Correct CAMIF interrupt definitions
-> 
->  arch/arm/mach-s3c24xx/clock-s3c2440.c           |    2 +-
->  arch/arm/mach-s3c24xx/common-smdk.c             |   20 ++++---
->  arch/arm/mach-s3c24xx/include/mach/gpio-nrs.h   |   21 -------
->  arch/arm/mach-s3c24xx/include/mach/gta02.h      |   69
---------------------
+On 12/07/2012, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Sachin Kamat wrote:
+>>
+>> Fixes the following warning:
+>> arch/arm/mach-exynos/setup-usb-phy.c: In function
+>> =91exynos4210_usb_phy_clkset=92:
+>> arch/arm/mach-exynos/setup-usb-phy.c:83:2:
+>> warning: =91phyclk=92 may be used uninitialized in this function [-
+>> Wuninitialized]
+>>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>>  arch/arm/mach-exynos/setup-usb-phy.c |    8 ++++----
+>>  1 files changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-
+>> exynos/setup-usb-phy.c
+>> index d26deb7..1eaa0b0 100644
+>> --- a/arch/arm/mach-exynos/setup-usb-phy.c
+>> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
+>> @@ -31,7 +31,6 @@ static void exynos4210_usb_phy_clkset(struct
+>> platform_device *pdev)
+>>  	struct clk *xusbxti_clk;
+>>  	u32 phyclk;
+>>
+>> -
+>>  	xusbxti_clk =3D clk_get(&pdev->dev, "xusbxti");
+>>  	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
+>>  		if (soc_is_exynos4210()) {
+>> @@ -50,6 +49,8 @@ static void exynos4210_usb_phy_clkset(struct
+>> platform_device *pdev)
+>>  				phyclk |=3D EXYNOS4210_CLKSEL_48M;
+>>  				break;
+>>  			}
+>> +			clk_put(xusbxti_clk);
+>> +			writel(phyclk, EXYNOS4_PHYCLK);
+>>  		} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
+>>  			/* set clock frequency for PLL */
+>>  			phyclk =3D readl(EXYNOS4_PHYCLK) &
+>> ~EXYNOS4X12_CLKSEL_MASK;
+>> @@ -76,11 +77,10 @@ static void exynos4210_usb_phy_clkset(struct
+>> platform_device *pdev)
+>>  				phyclk |=3D EXYNOS4X12_CLKSEL_24M;
+>>  				break;
+>>  			}
+>> +			clk_put(xusbxti_clk);
+>> +			writel(phyclk, EXYNOS4_PHYCLK);
+>>  		}
+>> -		clk_put(xusbxti_clk);
+>>  	}
+>> -
+>> -	writel(phyclk, EXYNOS4_PHYCLK);
+>>  }
+>>
+>>  static int exynos4210_usb_phy0_init(struct platform_device *pdev)
+>> --
+>> 1.7.4.1
+>
+> Well, I think, following is enough?
+No. That will still give the same warning if none of the cases are true=
+=2E
+
+>
+> And if you're ok on this, I will squash into your original one which =
+is
+> still in my tree.
+
+OK.
+
+>
+> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c
+> b/arch/arm/mach-exynos/setup-usb-phy.c
+> index d26deb7..3f82414 100644
+> --- a/arch/arm/mach-exynos/setup-usb-phy.c
+> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
+> @@ -31,7 +31,6 @@ static void exynos4210_usb_phy_clkset(struct
+> platform_device *pdev)
+>  	struct clk *xusbxti_clk;
+>  	u32 phyclk;
+>
+> -
+>  	xusbxti_clk =3D clk_get(&pdev->dev, "xusbxti");
+>  	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
+>  		if (soc_is_exynos4210()) {
+> @@ -78,9 +77,8 @@ static void exynos4210_usb_phy_clkset(struct
+> platform_device *pdev)
+>  			}
+>  		}
+>  		clk_put(xusbxti_clk);
+> +		writel(phyclk, EXYNOS4_PHYCLK);
+>  	}
+> -
+> -	writel(phyclk, EXYNOS4_PHYCLK);
+>  }
+>
+>  static int exynos4210_usb_phy0_init(struct platform_device *pdev)
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
->  arch/arm/mach-s3c24xx/include/mach/regs-gpio.h  |   17 +++++-
->  arch/arm/mach-s3c24xx/include/mach/regs-gpioj.h |   70
--------------------
-> ----
->  arch/arm/mach-s3c24xx/mach-gta02.c              |    1 -
->  arch/arm/mach-s3c24xx/mach-mini2440.c           |    4 +-
->  arch/arm/mach-s3c24xx/mach-qt2410.c             |    6 +-
->  arch/arm/mach-s3c24xx/mach-rx1950.c             |    1 -
->  arch/arm/mach-s3c24xx/pm-s3c2410.c              |   12 +++-
->  arch/arm/mach-s3c24xx/pm-s3c2412.c              |    1 -
->  arch/arm/mach-s3c24xx/s3c2412.c                 |    1 -
->  arch/arm/mach-s3c24xx/s3c244x.c                 |    1 -
->  arch/arm/mach-s3c24xx/setup-ts.c                |    6 +--
->  arch/arm/plat-samsung/devs.c                    |    3 +-
->  16 files changed, 43 insertions(+), 192 deletions(-)
->  delete mode 100644 arch/arm/mach-s3c24xx/include/mach/regs-gpioj.h
-> 
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>
 > --
-> 1.7.4.1
+> To unsubscribe from this list: send the line "unsubscribe linux-samsu=
+ng-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
 
-Basically, looks ok to me :)
 
-I need to check in detail then will apply this series with some guys' ack.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+--=20
+With warm regards,
+Sachin
