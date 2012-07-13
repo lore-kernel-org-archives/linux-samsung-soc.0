@@ -1,60 +1,148 @@
-From: Rolf Eike Beer <eike-kernel@sf-tec.de>
-Subject: Re: [PATCH V2 2/4] [SCSI] drivers/scsi/ufs: Add PCI glue driver
-Date: Fri, 13 Jul 2012 18:01:58 +0200
-Message-ID: <4746865.F6XkGPQgWn@eto>
-References: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: [sachin.kamat@linaro.org: [PATCH] hwmon: exynos4_tmu: Use devm_*
+ functions]
+Date: Fri, 13 Jul 2012 09:58:06 -0700
+Message-ID: <20120713165806.GA10558@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart7993383.oMlWoQhI4o"; micalg="pgp-sha1"; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinayak Holikatti <vinholikatti@gmail.com>
-Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail.active-venture.com ([67.228.131.205]:58337 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933344Ab2GMQ6I (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Jul 2012 12:58:08 -0400
+Content-Disposition: inline
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
+
+Fyi.
+
+Guenter
+
+----- Forwarded message from Sachin Kamat <sachin.kamat@linaro.org> -----
+
+Date: Fri, 13 Jul 2012 14:16:27 +0530
+From: Sachin Kamat <sachin.kamat@linaro.org>
+To: lm-sensors@lm-sensors.org
+Cc: khali@linux-fr.org, linux@roeck-us.net, sachin.kamat@linaro.org, patches@linaro.org
+Subject: [PATCH] hwmon: exynos4_tmu: Use devm_* functions
+X-Mailer: git-send-email 1.7.4.1
+
+devm_* functions are used to replace kzalloc, request_mem_region, ioremap
+and request_irq functions in probe call. With the usage of devm_* functions
+explicit freeing and unmapping is not required.
+
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ drivers/hwmon/exynos4_tmu.c |   44 ++++++++----------------------------------
+ 1 files changed, 9 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/hwmon/exynos4_tmu.c b/drivers/hwmon/exynos4_tmu.c
+index e912059..ee6e26c 100644
+--- a/drivers/hwmon/exynos4_tmu.c
++++ b/drivers/hwmon/exynos4_tmu.c
+@@ -356,7 +356,8 @@ static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	data = kzalloc(sizeof(struct exynos4_tmu_data), GFP_KERNEL);
++	data = devm_kzalloc(&pdev->dev, sizeof(struct exynos4_tmu_data),
++								GFP_KERNEL);
+ 	if (!data) {
+ 		dev_err(&pdev->dev, "Failed to allocate driver structure\n");
+ 		return -ENOMEM;
+@@ -364,48 +365,36 @@ static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
+ 
+ 	data->irq = platform_get_irq(pdev, 0);
+ 	if (data->irq < 0) {
+-		ret = data->irq;
+ 		dev_err(&pdev->dev, "Failed to get platform irq\n");
+-		goto err_free;
++		return data->irq;
+ 	}
+ 
+ 	INIT_WORK(&data->irq_work, exynos4_tmu_work);
+ 
+ 	data->mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!data->mem) {
+-		ret = -ENOENT;
+ 		dev_err(&pdev->dev, "Failed to get platform resource\n");
+-		goto err_free;
++		return -ENOENT;
+ 	}
+ 
+-	data->mem = request_mem_region(data->mem->start,
+-			resource_size(data->mem), pdev->name);
+-	if (!data->mem) {
+-		ret = -ENODEV;
+-		dev_err(&pdev->dev, "Failed to request memory region\n");
+-		goto err_free;
+-	}
+-
+-	data->base = ioremap(data->mem->start, resource_size(data->mem));
++	data->base = devm_request_and_ioremap(&pdev->dev, data->mem);
+ 	if (!data->base) {
+-		ret = -ENODEV;
+ 		dev_err(&pdev->dev, "Failed to ioremap memory\n");
+-		goto err_mem_region;
++		return -ENODEV;
+ 	}
+ 
+-	ret = request_irq(data->irq, exynos4_tmu_irq,
++	ret = devm_request_irq(&pdev->dev, data->irq, exynos4_tmu_irq,
+ 		IRQF_TRIGGER_RISING,
+ 		"exynos4-tmu", data);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
+-		goto err_io_remap;
++		return ret;
+ 	}
+ 
+ 	data->clk = clk_get(NULL, "tmu_apbif");
+ 	if (IS_ERR(data->clk)) {
+-		ret = PTR_ERR(data->clk);
+ 		dev_err(&pdev->dev, "Failed to get clock\n");
+-		goto err_irq;
++		return PTR_ERR(data->clk);
+ 	}
+ 
+ 	data->pdata = pdata;
+@@ -440,14 +429,6 @@ err_create_group:
+ err_clk:
+ 	platform_set_drvdata(pdev, NULL);
+ 	clk_put(data->clk);
+-err_irq:
+-	free_irq(data->irq, data);
+-err_io_remap:
+-	iounmap(data->base);
+-err_mem_region:
+-	release_mem_region(data->mem->start, resource_size(data->mem));
+-err_free:
+-	kfree(data);
+ 
+ 	return ret;
+ }
+@@ -463,15 +444,8 @@ static int __devexit exynos4_tmu_remove(struct platform_device *pdev)
+ 
+ 	clk_put(data->clk);
+ 
+-	free_irq(data->irq, data);
+-
+-	iounmap(data->base);
+-	release_mem_region(data->mem->start, resource_size(data->mem));
+-
+ 	platform_set_drvdata(pdev, NULL);
+ 
+-	kfree(data);
+-
+ 	return 0;
+ }
+ 
+-- 
+1.7.4.1
 
 
---nextPart7993383.oMlWoQhI4o
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
 
-Vinayak Holikatti wrote:
-
-> +static int __devinit
-> +ufshcd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
-> +{
-> +	struct ufs_hba *hba;
-> +	void __iomem *mmio_base;
-> +	int err;
-> +
-> +	err = pci_enable_device(pdev);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "pci_enable_device failed\n");
-> +		goto out_error;
-> +	}
-
-My question as basically every time at this point: why not use devres, i.e. 
-pcim_enable_device()? This would make the cleanup and error handling much 
-easier. See Documentation/driver-model/devres.txt.
-
-> +
-> +	pci_set_master(pdev);
-> +
-> +
-
-Duplicate newline.
-
-Eike
---nextPart7993383.oMlWoQhI4o
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.18 (GNU/Linux)
-
-iEYEABECAAYFAlAARnwACgkQXKSJPmm5/E7vqQCePm5KApz+P+Z70Wke1wm/YZ6l
-MIMAnihTzDvQ5WZI4Xg/Tm58yjAYO7+O
-=3dIT
------END PGP SIGNATURE-----
-
---nextPart7993383.oMlWoQhI4o--
+----- End forwarded message -----
