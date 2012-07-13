@@ -1,71 +1,65 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] ARM: Exynos: Add device tree node for Exynos4 interrupt
- combiner controller
-Date: Fri, 13 Jul 2012 20:27:58 +0900
-Message-ID: <117b01cd60ea$8dcdc920$a9695b60$%kim@samsung.com>
-References: <1342158999-3924-1-git-send-email-thomas.abraham@linaro.org>
+Subject: RE: [PATCH v5 6/6] spi: s3c64xx: add device tree support
+Date: Fri, 13 Jul 2012 20:28:03 +0900
+Message-ID: <117c01cd60ea$90f76ac0$b2e64040$%kim@samsung.com>
+References: <1342021265-11212-1-git-send-email-thomas.abraham@linaro.org>
+ <1342021265-11212-7-git-send-email-thomas.abraham@linaro.org>
+ <4FFF51EE.4080609@samsung.com>
+ <CAJuYYwQBL6OGJM41e9kD2ATUj3g9NTs-OC+G_gMKMScn3ms=hw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:60792 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:60834 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754938Ab2GML2A (ORCPT
+	with ESMTP id S1754938Ab2GML2F (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 07:28:00 -0400
+	Fri, 13 Jul 2012 07:28:05 -0400
 Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7300F7ZJTEO9Q0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 20:27:58 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7300I6XJUSFOP0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 20:28:04 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M730047EJUMHG60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 20:27:58 +0900 (KST)
-In-reply-to: <1342158999-3924-1-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0M730051XJUR1960@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 20:28:04 +0900 (KST)
+In-reply-to: <CAJuYYwQBL6OGJM41e9kD2ATUj3g9NTs-OC+G_gMKMScn3ms=hw@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org
+Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org
 
 Thomas Abraham wrote:
 > 
-> Add node for Exynos4 interrupt combiner controller.
+> On 13 July 2012 04:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Thomas, the DMACH_DT_PROP is available only on pl330 now. So seems occur
+> > following build error with s3c6400_defconfig.
+> >
+> > drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_get_dmares':
+> > drivers/spi/spi-s3c64xx.c:1098: error: 'DMACH_DT_PROP' undeclared (first
+> use
+> > in this function)
+> > drivers/spi/spi-s3c64xx.c:1098: error: (Each undeclared identifier is
+> > reported only once
+> > drivers/spi/spi-s3c64xx.c:1098: error: for each function it appears in.)
+> > make[3]: *** [drivers/spi/spi-s3c64xx.o] Error 1
+> > make[2]: *** [drivers/spi] Error 2
+> >
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  arch/arm/boot/dts/exynos4210.dtsi |   11 +++++++++++
->  1 files changed, 11 insertions(+), 0 deletions(-)
+> Dear Mr. Kim,
 > 
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
-> b/arch/arm/boot/dts/exynos4210.dtsi
-> index a1dd2ee..0e4f659 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -33,6 +33,17 @@
->  		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
->  	};
+> Thanks for considering these patches to be merged via your tree. For
+> the build break you mentioned above, there was a patch submitted some
+> time back to handle this. The link to that patch is:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-
+> June/102627.html.
+> Could you please apply this patch also to your tree.
 > 
-> +	combiner:interrupt-controller@10440000 {
-> +		compatible = "samsung,exynos4210-combiner";
-> +		#interrupt-cells = <2>;
-> +		interrupt-controller;
-> +		reg = <0x10440000 0x1000>;
-> +		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
-> +			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
-> +			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
-> +			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
-> +	};
-> +
->  	watchdog@10060000 {
->  		compatible = "samsung,s3c2410-wdt";
->  		reg = <0x10060000 0x100>;
-> --
-> 1.6.6.rc2
-
-Looks ok to me, applied.
+Sure, it looks good to me, will apply that then this series will be rebased
+on top of that.
 
 Thanks.
 
