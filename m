@@ -1,140 +1,67 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH v3 3/6] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Fri, 13 Jul 2012 14:41:35 +0530
-Message-ID: <CAGxe1ZGMvrec-nEYdZJ84Hub0fByYvnkCY_dRq2k489gCRSxQg@mail.gmail.com>
-References: <1342097668-25243-1-git-send-email-thomas.abraham@linaro.org>
-	<1342097668-25243-4-git-send-email-thomas.abraham@linaro.org>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] i2c-s3c2410: Convert to devm_request_and_ioremap()
+Date: Fri, 13 Jul 2012 10:44:43 +0100
+Message-ID: <20120713094442.GA4215@opensource.wolfsonmicro.com>
+References: <1340888138-32710-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <20120709135229.GL1296@pengutronix.de>
+ <20120709135809.GG3934@opensource.wolfsonmicro.com>
+ <20120713083712.GH32184@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:41772 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756038Ab2GMJLg (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:59481 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754891Ab2GMJoq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 05:11:36 -0400
-Received: by qcro28 with SMTP id o28so2027917qcr.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jul 2012 02:11:35 -0700 (PDT)
-In-Reply-To: <1342097668-25243-4-git-send-email-thomas.abraham@linaro.org>
+	Fri, 13 Jul 2012 05:44:46 -0400
+Content-Disposition: inline
+In-Reply-To: <20120713083712.GH32184@pengutronix.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Wolfram Sang <w.sang@pengutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org, linux-i2c@vger.kernel.org
 
-On 12 July 2012 18:24, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> Some platforms allow for clock gating and control of bus interface unit clock
-> and card interface unit clock. Add support for clock lookup of optional biu
-> and ciu clocks for clock gating and clock speed determination.
->
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/mmc/host/dw_mmc.c  |   42 +++++++++++++++++++++++++++++++++++++++---
->  include/linux/mmc/dw_mmc.h |    4 ++++
->  2 files changed, 43 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index cd58063..679473c 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1953,18 +1953,38 @@ int dw_mci_probe(struct dw_mci *host)
->                 return -ENODEV;
->         }
->
-> -       if (!host->pdata->bus_hz) {
-> +       host->biu_clk = clk_get(host->dev, "biu");
-> +       if (IS_ERR(host->biu_clk))
-> +               dev_dbg(host->dev, "biu clock not available\n");
-> +       else
-> +               clk_prepare_enable(host->biu_clk);
-> +
-> +       host->ciu_clk = clk_get(host->dev, "ciu");
-> +       if (IS_ERR(host->ciu_clk))
-> +               dev_dbg(host->dev, "ciu clock not available\n");
-> +       else
-> +               clk_prepare_enable(host->ciu_clk);
-> +
-> +       if (IS_ERR(host->ciu_clk))
-> +               host->bus_hz = host->pdata->bus_hz;
-> +       else
-> +               host->bus_hz = clk_get_rate(host->ciu_clk);
-> +
-> +       if (!host->bus_hz) {
->                 dev_err(host->dev,
->                         "Platform data must supply bus speed\n");
-> -               return -ENODEV;
-> +               ret = -ENODEV;
-> +               goto err_clk;
->         }
->
-> -       host->bus_hz = host->pdata->bus_hz;
->         host->quirks = host->pdata->quirks;
->
->         spin_lock_init(&host->lock);
->         INIT_LIST_HEAD(&host->queue);
->
-> +       host->dma_ops = host->pdata->dma_ops;
-> +       dw_mci_init_dma(host);
-This initialization is already done.
-> +
->         /*
->          * Get the host data width - this assumes that HCON has been set with
->          * the correct values.
-> @@ -2109,6 +2129,16 @@ err_dmaunmap:
->                 regulator_disable(host->vmmc);
->                 regulator_put(host->vmmc);
->         }
-> +
-> +err_clk:
-> +       if (!IS_ERR(host->ciu_clk)) {
-> +               clk_disable_unprepare(host->ciu_clk);
-> +               clk_put(host->ciu_clk);
-> +       }
-> +       if (!IS_ERR(host->biu_clk)) {
-> +               clk_disable_unprepare(host->biu_clk);
-> +               clk_put(host->biu_clk);
-> +       }
->         return ret;
->  }
->  EXPORT_SYMBOL(dw_mci_probe);
-> @@ -2142,6 +2172,12 @@ void dw_mci_remove(struct dw_mci *host)
->                 regulator_put(host->vmmc);
->         }
->
-> +       if (!IS_ERR(host->ciu_clk))
-> +               clk_disable_unprepare(host->ciu_clk);
-> +       if (!IS_ERR(host->biu_clk))
-> +               clk_disable_unprepare(host->biu_clk);
-> +       clk_put(host->ciu_clk);
-> +       clk_put(host->biu_clk);
->  }
->  EXPORT_SYMBOL(dw_mci_remove);
->
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index a37a573..787ad56 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -78,6 +78,8 @@ struct mmc_data;
->   * @data_offset: Set the offset of DATA register according to VERID.
->   * @dev: Device associated with the MMC controller.
->   * @pdata: Platform data associated with the MMC controller.
-> + * @biu_clk: Pointer to bus interface unit clock instance.
-> + * @ciu_clk: Pointer to card interface unit clock instance.
->   * @slot: Slots sharing this MMC controller.
->   * @fifo_depth: depth of FIFO.
->   * @data_shift: log2 of FIFO item size.
-> @@ -158,6 +160,8 @@ struct dw_mci {
->         u16                     data_offset;
->         struct device           *dev;
->         struct dw_mci_board     *pdata;
-> +       struct clk              *biu_clk;
-> +       struct clk              *ciu_clk;
->         struct dw_mci_slot      *slot[MAX_MCI_SLOTS];
->
->         /* FIFO push and pull */
-> --
-> 1.6.6.rc2
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jul 13, 2012 at 10:37:12AM +0200, Wolfram Sang wrote:
+> On Mon, Jul 09, 2012 at 02:58:10PM +0100, Mark Brown wrote:
+
+> > The devm_ versions of the API aren't exported there yet and there's a
+> > bug fix pending too but Russell and Mike have ignored the patches thus
+> > far.
+
+> I'd rather wait for this to be fixed and have all devm applied in one
+> go?
+
+clkdev is vanishingly unlikely to be fixed this release, the patches
+have been languishing in the patch tracker for essentially the entire
+release cycle, rmk is on vacation now and Mike doesn't like taking
+clkdev stuff.
+
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJP/+3wAAoJEBus8iNuMP3dNxYP/2aA2bG5+QLjoLBA4o5HUOkO
+6MA/gg76OoOaTFKlRw9mRqLrJ/u8WHq/SP7NDWBJg6HfxBoPh6mFfCDDuz940t18
+RNLf3/xbk3yyBxZLTM4JyNZMOgSVnnp6eA/1YLAt9Rrk6DM1G/a7LCEKLqgq9d/W
+FoDlJD8PVuosWjNS0bNytqU7RUvK+Ym3dTdJ99WxpasDcpEso3rBsVRzcDgVNr65
+QQmKbhPvpAoW/SKv/3GN6QeWgojntTtO6e6HJjUaXwtsabw6M3c7rYTPJUfU6pkr
+K5kNZi3lMk6NYp8BYgCWP2oWeR2G2ZeMLhdJalrnZ+O/Y7OiUbwpVfRtyhwY298a
+8OMgsiI2Wa6GYP/r5jVAWKIf02HsAPnrSzIBJdkvCBxfEMqY8j2+RcFd8A38PTeb
+cv9SVi6rh7qgr0auzwYfMYswsbzpIzd7ddGdHbwm2gBuN3HJg6InejaamC6ub3K3
+m/WCUUfwfMgFI5q6Um1eR+XJjqvB0VvArbfdtPP88BPCCS9vKvxXzGfB+3zZD3Dc
+EnrGi4Jb2yialym2eN5WRdvVk3/5vogukjpDbpgVD3BQGkc+u9rKJKkz5Tv317R8
+1G8TiPJGoUZwCgqYdkcq9gn8kdRT1IqgSWgTT31/7D+emrbmLiRXNdtWIY49CCEo
+PyaGJ/gCw+7envfYlGSD
+=bDH3
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
