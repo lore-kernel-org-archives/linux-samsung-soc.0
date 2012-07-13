@@ -1,109 +1,163 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: Samsung: Remove unused code for the clocks debug-fs
- interface
-Date: Wed, 05 Sep 2012 07:41:14 +0900
-Message-ID: <227c01cd8aee$638ee0d0$2aaca270$%kim@samsung.com>
-References: <1346603823-14422-1-git-send-email-sylvester.nawrocki@gmail.com>
+From: "rakesh" <rks.linux.88@gmail.com>
+Subject: Need Help
+Date: Fri, 13 Jul 2012 16:43:25 +0530
+Message-ID: <50000318.c588440a.420e.7c47@mx.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:38661 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757813Ab2IDWlP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Sep 2012 18:41:15 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9U00634KCQ6B00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Sep 2012 07:41:14 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9U003GMKCQ9310@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Sep 2012 07:41:14 +0900 (KST)
-In-reply-to: <1346603823-14422-1-git-send-email-sylvester.nawrocki@gmail.com>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/alternative;
+	boundary="----=_NextPart_000_003E_01CD6116.C1CFAC80"
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+Content-Language: en-us
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: amit.kachhap@linaro.org
+Cc: 'Guenter Roeck' <guenter.roeck@ericsson.com>, linux-samsung-soc@vger.kernel.org, 'SangWook Ju' <sw.ju@samsung.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, 'Jean Delvare' <khali@linux-fr.org>, linux-pm@lists.linux-foundation.org, 'Donggeun Kim' <dg77.kim@samsung.com>, akpm@linux-foundation.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
-Cc: thomas.abraham@linaro.org, amit.daniel@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jhbird.choi@samsung.com, arve@android.com
 
-Sylwester Nawrocki wrote:
-> 
-> Commit f86c6660927614fcda257 "ARM: SAMSUNG: Add clkdev infrastructure"
-> disabled population of the 'clocks' list - the clocks are now on the
-> clkdev clock list. However, this effectively broke the existing clocks
-> debug-fs interface on all Samsung platforms. Nobody complained about
-> this missing feature for over one year, so remove the unused code.
-> 
-Yeah, could be. BTW, following will fix it on Samsung platforms?
+This is a multipart message in MIME format.
 
-From: Arve Hj<C3><B8>nnev<C3><A5>g <arve@android.com>
-Subject: [PATCH] ARM: SAMSUNG: Fix clock debugfs code
+------=_NextPart_000_003E_01CD6116.C1CFAC80
+Content-Type: text/plain;
+	charset="us-ascii"
+Content-Transfer-Encoding: 7bit
 
-Restore list add deleted by commit f86c66609276('ARM: SAMSUNG:
-Add clkdev infrastructure') and fix clk_debugfs_register_one
-to not crash when devname is NULL.
+Hello everyone,
 
-Signed-off-by: Arve Hj<C3><B8>nnev<C3><A5>g <arve@android.com>
-Signed-off-by: Jonghwan Choi <jhbird.choi@samsung.com>
----
- arch/arm/plat-samsung/clock.c |   15 ++++++++++++++-
- 1 files changed, 14 insertions(+), 1 deletions(-)
-
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index 65c5eca..b7338ce 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -281,6 +281,15 @@ int s3c24xx_register_clock(struct clk *clk)
- 	if (clk->enable == NULL)
- 		clk->enable = clk_null_enable;
  
-+	/* add to the list of available clocks */
-+
-+	/* Quick check to see if this clock has already been registered. */
-+	BUG_ON(clk->list.prev != clk->list.next);
-+
-+	spin_lock(&clocks_lock);
-+	list_add(&clk->list, &clocks);
-+	spin_unlock(&clocks_lock);
-+
- 	/* fill up the clk_lookup structure and register it*/
- 	clk->lookup.dev_id = clk->devname;
- 	clk->lookup.con_id = clk->name;
-@@ -395,7 +404,11 @@ static int clk_debugfs_register_one(struct clk *c)
- 	char s[255];
- 	char *p = s;
+
+I am new to linux and i also want to contribute in linux community.
+
+I am running Ubuntu 11.04 and i have downloaded linux-2.6.35.13 for
+learning. so kindly tell me how to set up and starting kernel development.
+
+I did tried some books and websites but i am still unable to do some
+productive work. So,, its my request that kindly help me in setting up the
+environment and start learning.
+
  
--	p += sprintf(p, "%s", c->devname);
-+	if (c->name)
-+		p += sprintf(p, "%s", c->name);
-+
-+	if (c->devname)
-+		p += sprintf(p, ":%s", c->devname);
+
+Regards
+
+Rakesh kumar
+
  
- 	d = debugfs_create_dir(s, pa ? pa->dent : clk_debugfs_root);
- 	if (!d)
--- 
-1.7.1
 
-Thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+------=_NextPart_000_003E_01CD6116.C1CFAC80
+Content-Type: text/html;
+	charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 
-> This functionality will be restored when switching to the common clock
-> framework.
-> 
-> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-> ---
->  arch/arm/plat-samsung/clock.c              |   92
----------------------------
-> -
->  arch/arm/plat-samsung/include/plat/clock.h |    8 +--
->  2 files changed, 1 insertions(+), 99 deletions(-)
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" =
+xmlns:o=3D"urn:schemas-microsoft-com:office:office" =
+xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" =
+xmlns=3D"http://www.w3.org/TR/REC-html40">
+
+<head>
+<META HTTP-EQUIV=3D"Content-Type" CONTENT=3D"text/html; =
+charset=3Dus-ascii">
+<meta name=3DGenerator content=3D"Microsoft Word 12 (filtered medium)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:"Cambria Math";
+	panose-1:0 0 0 0 0 0 0 0 0 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:purple;
+	text-decoration:underline;}
+p.MsoPlainText, li.MsoPlainText, div.MsoPlainText
+	{mso-style-priority:99;
+	mso-style-link:"Plain Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:10.5pt;
+	font-family:Consolas;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri","sans-serif";
+	color:windowtext;}
+span.PlainTextChar
+	{mso-style-name:"Plain Text Char";
+	mso-style-priority:99;
+	mso-style-link:"Plain Text";
+	font-family:Consolas;}
+.MsoChpDefault
+	{mso-style-type:export-only;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.0in 1.0in 1.0in;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext=3D"edit">
+  <o:idmap v:ext=3D"edit" data=3D"1" />
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=3DEN-US link=3Dblue vlink=3Dpurple>
+
+<div class=3DSection1>
+
+<p class=3DMsoPlainText>Hello everyone,<o:p></o:p></p>
+
+<p class=3DMsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=3DMsoPlainText>I am new to linux and i also want to contribute =
+in linux
+community.<o:p></o:p></p>
+
+<p class=3DMsoPlainText>I am running Ubuntu 11.04 and i have downloaded
+linux-2.6.35.13 for learning. so kindly tell me how to set up and =
+starting
+kernel development.<o:p></o:p></p>
+
+<p class=3DMsoPlainText>I did tried some books and websites but i am =
+still unable
+to do some productive work. So,, its my request that kindly help me in =
+setting
+up the environment and start learning.<o:p></o:p></p>
+
+<p class=3DMsoPlainText><o:p>&nbsp;</o:p></p>
+
+<p class=3DMsoPlainText>Regards<o:p></o:p></p>
+
+<p class=3DMsoPlainText>Rakesh kumar<o:p></o:p></p>
+
+<p class=3DMsoNormal><o:p>&nbsp;</o:p></p>
+
+</div>
+
+</body>
+
+</html>
+
+------=_NextPart_000_003E_01CD6116.C1CFAC80--
