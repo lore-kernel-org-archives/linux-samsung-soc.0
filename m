@@ -1,49 +1,32 @@
-From: Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [RESEND PATCH v4 1/5] thermal: add generic cpufreq
- cooling implementation
-Date: Thu, 12 Jul 2012 16:04:15 -0700
-Message-ID: <20120712160415.473748fd.akpm@linux-foundation.org>
-References: <1342100468-19426-1-git-send-email-amit.kachhap@linaro.org>
-	<1342100468-19426-2-git-send-email-amit.kachhap@linaro.org>
+From: Todd Poynor <toddpoynor@google.com>
+Subject: Re: [PATCH] ARM: samsung: adc: fix race in s3c_adc_start
+Date: Thu, 12 Jul 2012 18:35:29 -0700
+Message-ID: <20120713013529.GA16856@google.com>
+References: <1342059131-31251-1-git-send-email-toddpoynor@google.com>
+ <20120712123125.GJ18513@trinity.fluff.org>
+ <4FFF5287.8000608@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <1342100468-19426-2-git-send-email-amit.kachhap@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: Guenter Roeck <guenter.roeck@ericsson.com>, linux-samsung-soc@vger.kernel.org, SangWook Ju <sw.ju@samsung.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, Jean Delvare <khali@linux-fr.org>, linux-pm@lists.linux-foundation.org, Donggeun Kim <dg77.kim@samsung.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f202.google.com ([209.85.220.202]:56056 "EHLO
+	mail-vc0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932250Ab2GMBfb (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 12 Jul 2012 21:35:31 -0400
+Received: by vcqp1 with SMTP id p1so49096vcq.1
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 12 Jul 2012 18:35:30 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <4FFF5287.8000608@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Ben Dooks <ben@trinity.fluff.org>, eunki_kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ben Dooks <ben-linux@fluff.org>
 
-On Thu, 12 Jul 2012 19:11:04 +0530
-Amit Daniel Kachhap <amit.kachhap@linaro.org> wrote:
+On Fri, Jul 13, 2012 at 07:41:11AM +0900, Kukjin Kim wrote:
+> BTW, Todd, do you want to keep the 'Change-Id' in mainline?
+> If you don't mind, I'd like to remove it...
 
-> [akpm@linux-foundation.org: fix comment layout]
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> Cc: Donggeun Kim <dg77.kim@samsung.com>
-> Cc: Guenter Roeck <guenter.roeck@ericsson.com>
-> Cc: SangWook Ju <sw.ju@samsung.com>
-> Cc: Durgadoss <durgadoss.r@intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Jean Delvare <khali@linux-fr.org>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-
-Something strange appears to have happened here?  At a guess it seems
-that the patches were in my tree, I sent them to someone (Len?), then
-they were merged into linux-next by "someone" and then they fell
-out of linux-next again?
-
-If so, they will hopefully come back soon.  If not, something failed
-fairly seriously.
+Oops, I forgot to take it out, please do remove it, thanks.
 
 
-I took a look at re-merging these patches into my tree, but there are
-significant conflicts with other work which has gone into linux-next.
+Todd
