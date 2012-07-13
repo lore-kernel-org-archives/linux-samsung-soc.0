@@ -1,77 +1,279 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] ASoC: Convert S3C24XX I2S driver to
-	gpiolib API
-Date: Fri, 13 Jul 2012 15:28:53 +0100
-Message-ID: <20120713142853.GN4215@opensource.wolfsonmicro.com>
-References: <1341059876-29460-1-git-send-email-sylvester.nawrocki@gmail.com>
-	<4FFED794.9050800@gmail.com>
-	<20120712161933.GD7256@opensource.wolfsonmicro.com>
-	<4FFF12C5.6030403@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============9145243592403228478=="
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <4FFF12C5.6030403@gmail.com>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
-	<mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Sender: alsa-devel-bounces@alsa-project.org
-Errors-To: alsa-devel-bounces@alsa-project.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: sbkim73@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, lrg@ti.com, Ben Dooks <ben-linux@fluff.org>
+From: Vinayak Holikatti <vinholikatti@gmail.com>
+Subject: [PATCH V2 3/4] [SCSI] ufs: Add Platform glue driver for ufshcd
+Date: Fri, 13 Jul 2012 19:58:17 +0530
+Message-ID: <1342189698-20393-2-git-send-email-vinholikatti@gmail.com>
+References: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-gg0-f174.google.com ([209.85.161.174]:34790 "EHLO
+	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752150Ab2GMO25 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 13 Jul 2012 10:28:57 -0400
+In-Reply-To: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: James.Bottomley@hansenpartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Vinayak Holikatti <vinholikatti@gmail.com>
 
+This patch adds Platform glue driver for ufshcd.
 
---===============9145243592403228478==
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FCF9ydJxlAJsfRTu"
-Content-Disposition: inline
+Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
+Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
+---
+ drivers/scsi/ufs/Kconfig         |   11 ++
+ drivers/scsi/ufs/Makefile        |    1 +
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  215 ++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 227 insertions(+)
+ create mode 100644 drivers/scsi/ufs/ufshcd-pltfrm.c
 
-
---FCF9ydJxlAJsfRTu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu, Jul 12, 2012 at 08:09:09PM +0200, Sylwester Nawrocki wrote:
-
-> Thanks, would that be Takashi Iwai and Jaroslav Kysela then ? I just
-> want to get it right this time...
-> Or perhaps could you take care of them ?
-
-As with everything else look in MAINTAINERS, so me for ASoC.
-
---FCF9ydJxlAJsfRTu
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQADCNAAoJEBus8iNuMP3dDdwP/140e7KW3JM7IZxMWv50tSQE
-mC92LOboWm9VAuIi1mHczWqqAwHWCp7FVaHs2ft/z/onjfvvshYsb3zgyjh/O+R5
-YVghp6HEJIt8iizsBIXFUOFKYFSIF2a1reGpYCv8cFhSIzg7UlROnSKjl4/9ahCT
-tDHeXuTzeSgF/EOAmLVzcKEl1Mgu6No75tIZprIWO5o6d79TzmwI9KfSNOoIxJR1
-zzlzNVHz9e/zZbLBhIe34L2LGGiMGrHusx4xjULqDC3KEY+B9rTZR3ry613wZFAN
-+9nL1QAM371ZqEnuFt+bjBG8xqn0yCxA65gmD1jxjLm3oonrJ5T/YuiXSPBFiMXG
-/YrItC4tJpGjfUiKKPXvUQf3NxiVB4jNvzCt5KtrBPJ+09PEUHk6UfkFhwYx0NEt
-X0ZyAQwzNEti8CWyM2L57UFUIG4XhWGbquBEzEK5/4NhroBIdtcmVGTfCkzVm3oZ
-VAUC+4JhNK8ZXnXOB0Qa2XS7WTdnZUrGWg0bkR9ynOfocw65FBkJzaGh07ctqctJ
-nFwAsrkox/03nRM72IKS4OWI8gIb46fgD1pbPWbzDZNVradLVOxRIPgg/u10WoLa
-o+iYblSisW/Nni7BOf/8sm9rNX4hqeA1rB6fS57uex7InTb9lO/+WTz3AhUPzlPc
-4k9i24vEDm1Y9Tm3iqnQ
-=QLt0
------END PGP SIGNATURE-----
-
---FCF9ydJxlAJsfRTu--
-
---===============9145243592403228478==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-
---===============9145243592403228478==--
+diff --git a/drivers/scsi/ufs/Kconfig b/drivers/scsi/ufs/Kconfig
+index 265a8c8..8c06330 100644
+--- a/drivers/scsi/ufs/Kconfig
++++ b/drivers/scsi/ufs/Kconfig
+@@ -67,3 +67,14 @@ config SCSI_UFSHCD_PCI
+ 	  If you have a controller with this interface, say Y or M here.
+ 
+ 	  If unsure, say N.
++
++config SCSI_UFSHCD_PLATFORM
++	tristate "Platform based UFS Controller support"
++	depends on SCSI_UFSHCD
++	---help---
++	This selects the UFS host controller support. If you have a
++	   platform with UFS controller, say Y or M here.
++
++	   If you have a controller with this interface, say Y or M here.
++
++	  If unsure, say N.
+diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
+index 9eda0df..1e5bd48 100644
+--- a/drivers/scsi/ufs/Makefile
++++ b/drivers/scsi/ufs/Makefile
+@@ -1,3 +1,4 @@
+ # UFSHCD makefile
+ obj-$(CONFIG_SCSI_UFSHCD) += ufshcd.o
+ obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
++obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
+diff --git a/drivers/scsi/ufs/ufshcd-pltfrm.c b/drivers/scsi/ufs/ufshcd-pltfrm.c
+new file mode 100644
+index 0000000..1d3a63f
+--- /dev/null
++++ b/drivers/scsi/ufs/ufshcd-pltfrm.c
+@@ -0,0 +1,215 @@
++/*
++ * Universal Flash Storage Host controller driver
++ *
++ * This code is based on drivers/scsi/ufs/ufshcd-pltfm.c
++ * Copyright (C) 2011-2012 Samsung India Software Operations
++ *
++ * Santosh Yaraganavi <santosh.sy@samsung.com>
++ * Vinayak Holikatti <h.vinayak@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version 2
++ * of the License, or (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * NO WARRANTY
++ * THE PROGRAM IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OR
++ * CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT
++ * LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,
++ * MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is
++ * solely responsible for determining the appropriateness of using and
++ * distributing the Program and assumes all risks associated with its
++ * exercise of rights under this Agreement, including but not limited to
++ * the risks and costs of program errors, damage to or loss of data,
++ * programs or equipment, and unavailability or interruption of operations.
++
++ * DISCLAIMER OF LIABILITY
++ * NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY
++ * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND
++ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
++ * TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
++ * USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED
++ * HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES
++
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, write to the Free Software
++ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
++ * USA.
++ */
++
++#include "ufshcd.h"
++#include "ufshcd_common.h"
++#include <linux/platform_device.h>
++
++#ifdef CONFIG_PM
++/**
++ * ufshcd_suspend - suspend power management function
++ * @pdev: pointer to Platform device handle
++ * @mesg: power state
++ *
++ * Returns -ENOSYS
++ */
++static int ufshcd_pltfrm_suspend(struct platform_device *pdev,
++				 pm_message_t mesg)
++{
++	/*
++	 * TODO:
++	 * 1. Block SCSI requests from SCSI midlayer
++	 * 2. Change the internal driver state to non operational
++	 * 3. Set UTRLRSR and UTMRLRSR bits to zero
++	 * 4. Wait until outstanding commands are completed
++	 * 5. Set HCE to zero to send the UFS host controller to reset state
++	 */
++
++	return -ENOSYS;
++}
++
++/**
++ * ufshcd_resume - resume power management function
++ * @pdev: pointer to Platform device handle
++ *
++ * Returns -ENOSYS
++ */
++static int ufshcd_pltfrm_resume(struct platform_device *pdev)
++{
++	/*
++	 * TODO:
++	 * 1. Set HCE to 1, to start the UFS host controller
++	 * initialization process
++	 * 2. Set UTRLRSR and UTMRLRSR bits to 1
++	 * 3. Change the internal driver state to operational
++	 * 4. Unblock SCSI requests from SCSI midlayer
++	 */
++
++	return -ENOSYS;
++}
++#endif
++
++/**
++ * ufshcd_pltfrm_probe - probe routine of the driver
++ * @pdev: pointer to Platform device handle
++ *
++ * Returns 0 on success, non-zero value on failure
++ */
++static int __devinit
++ufshcd_pltfrm_probe(struct platform_device *pdev)
++{
++	struct ufs_hba *hba;
++	void __iomem *mmio_base;
++	struct resource *mem_res;
++	struct resource *irq_res;
++	resource_size_t mem_size;
++	int err;
++	struct device *dev = &pdev->dev;
++
++	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!mem_res) {
++		dev_err(&pdev->dev,
++			"%s: Memory resource not available\n", __FILE__);
++		err = -ENODEV;
++		goto out_error;
++	}
++
++	mem_size = resource_size(mem_res);
++	if (!request_mem_region(mem_res->start, mem_size, "ufshcd")) {
++		dev_err(&pdev->dev,
++			"ufshcd: Cannot reserve the memory resource\n");
++		err = -EBUSY;
++		goto out_error;
++	}
++
++	mmio_base = ioremap_nocache(mem_res->start, mem_size);
++	if (!mmio_base) {
++		dev_err(&pdev->dev, "memory map failed\n");
++		err = -ENOMEM;
++		goto out_release_regions;
++	}
++
++	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++	if (!irq_res) {
++		dev_err(&pdev->dev, "ufshcd: IRQ resource not available\n");
++		err = -ENODEV;
++		goto out_iounmap;
++	}
++
++	err = dma_set_coherent_mask(dev, dev->coherent_dma_mask);
++	if (err) {
++		dev_err(&pdev->dev, "set dma mask failed\n");
++		goto out_iounmap;
++	}
++
++	err = ufshcd_init(&pdev->dev, &hba, mmio_base, irq_res->start);
++	if (err) {
++		dev_err(&pdev->dev, "%s: Intialization failed\n",
++			__FILE__);
++		goto out_iounmap;
++	}
++
++	platform_set_drvdata(pdev, hba);
++
++	return 0;
++
++out_iounmap:
++	iounmap(mmio_base);
++out_release_regions:
++	release_mem_region(mem_res->start, mem_size);
++out_error:
++	return err;
++}
++
++/**
++ * ufshcd_pltfrm_remove - remove platform driver routine
++ * @pdev: pointer to platform device handle
++ *
++ * Returns 0 on success, non-zero value on failure
++ */
++static int __devexit ufshcd_pltfrm_remove(struct platform_device *pdev)
++{
++	struct resource *mem_res;
++	struct resource *irq_res;
++	resource_size_t mem_size;
++	struct ufs_hba *hba =  platform_get_drvdata(pdev);
++
++	ufshcd_remove(hba);
++	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
++	if (!irq_res)
++		dev_err(&pdev->dev, "ufshcd: IRQ resource not available\n");
++	free_irq(irq_res->start, hba);
++	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	mem_size = resource_size(mem_res);
++	release_mem_region(mem_res->start, mem_size);
++	platform_set_drvdata(pdev, NULL);
++	return 0;
++}
++
++static const struct of_device_id ufs_of_match[] = {
++	{ .compatible = "jedec,ufs-1.1"},
++};
++
++static struct platform_driver ufshcd_pltfrm_driver = {
++	.probe	= ufshcd_pltfrm_probe,
++	.remove	= __devexit_p(ufshcd_pltfrm_remove),
++#ifdef CONFIG_PM
++	.suspend = ufshcd_pltfrm_suspend,
++	.resume = ufshcd_pltfrm_resume,
++#endif
++	.driver	= {
++		.name	= "ufshcd",
++		.owner	= THIS_MODULE,
++		.of_match_table = ufs_of_match,
++	},
++};
++
++module_platform_driver(ufshcd_pltfrm_driver);
++
++MODULE_AUTHOR("Santosh Yaragnavi <santosh.sy@samsung.com>");
++MODULE_AUTHOR("Vinayak Holikatti <h.vinayak@samsung.com>");
++MODULE_DESCRIPTION("Platform based UFS host controller driver");
++MODULE_LICENSE("GPL");
++MODULE_VERSION(UFSHCD_DRIVER_VERSION);
+-- 
+1.7.9.5
