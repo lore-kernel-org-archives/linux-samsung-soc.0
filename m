@@ -1,41 +1,46 @@
-From: Vinayak Holikatti <vinholikatti@gmail.com>
-Subject: [PATCH V2 4/4] [SCSI] ufs: Correct the expected data transfer size
-Date: Fri, 13 Jul 2012 20:04:45 +0530
-Message-ID: <1342190085-20480-1-git-send-email-vinholikatti@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 0/2] ARM: exynos: Enable TMU support in exynos platforms
+Date: Fri, 13 Jul 2012 07:41:38 -0700
+Message-ID: <20120713144138.GB25264@roeck-us.net>
+References: <1342084543-8302-1-git-send-email-amit.daniel@samsung.com>
+ <117e01cd60ea$99f24e60$cdd6eb20$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:41033 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753807Ab2GMOfN (ORCPT
+Received: from mail.active-venture.com ([67.228.131.205]:58741 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753366Ab2GMOli (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 10:35:13 -0400
+	Fri, 13 Jul 2012 10:41:38 -0400
+Content-Disposition: inline
+In-Reply-To: <117e01cd60ea$99f24e60$cdd6eb20$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James.Bottomley@hansenpartnership.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Vinayak Holikatti <vinholikatti@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, linux-arm-kernel@lists.infradead.org, amit.kachhap@linaro.org, linux-samsung-soc@vger.kernel.org, lenb@kernel.org, "'Rafael J. Wysocki'" <rjw@sisk.pl>
 
-This patch corrects the expected data transfer size of the
-command UPIU. The current implementation of cmd->transfersize
-is wrong as it probably equal to sector size. With this
-implementation the transfer size is updated correctly
+On Fri, Jul 13, 2012 at 08:28:18PM +0900, Kukjin Kim wrote:
+> Amit Daniel Kachhap wrote:
+> > 
+> > These TMU enablement patches are needed for exynos4 and exynos5 TMU
+> > driver patches sent earlier. The link for those are
+> > http://www.spinics.net/lists/lm-sensors/msg35858.html.
+> > 
+> How was going on above patches? I can't see them you said in linux-next now,
+> it means if I apply this series in my tree, problem will be happened :(
+> 
+> Note1: I've seen Rafael's updating exynos4_tmu patch which is using struct
+> dev_pm_ops for pm and applied by Guenter.
+> 
+If that is in the way, I can drop it, to be applied after the move. Let me know.
+There is now another patch pending, to convert the driver to use devm_ functions.
+Please let me know what you want me to do with it.
 
-Signed-off-by: Vinayak Holikatti <vinholikatti@gmail.com>
-Signed-off-by: Santosh Yaraganavi <santoshsy@gmail.com>
----
- drivers/scsi/ufs/ufshcd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Note2: would be helpful if you could do adding me in Cc of exynos tmu
+> patches...
+> 
+If you want to be copied, it might make sense to add yourself as maintainer for
+this file. Otherwise you can not expect people to know.
 
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index dfc3e85..5e732c3 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -488,7 +488,7 @@ static void ufshcd_compose_upiu(struct ufshcd_lrb *lrbp)
- 		ucd_cmd_ptr->header.dword_2 = 0;
- 
- 		ucd_cmd_ptr->exp_data_transfer_len =
--			cpu_to_be32(lrbp->cmd->transfersize);
-+			cpu_to_be32(lrbp->cmd->sdb.length);
- 
- 		memcpy(ucd_cmd_ptr->cdb,
- 		       lrbp->cmd->cmnd,
--- 
-1.7.9.5
+Thanks,
+Guenter
