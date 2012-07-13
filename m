@@ -1,83 +1,81 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v5 6/6] spi: s3c64xx: add device tree support
-Date: Fri, 13 Jul 2012 22:42:52 +0900
-Message-ID: <118901cd60fd$66c26260$34472720$%kim@samsung.com>
-References: <1342021265-11212-1-git-send-email-thomas.abraham@linaro.org>
- <1342021265-11212-7-git-send-email-thomas.abraham@linaro.org>
- <4FFF51EE.4080609@samsung.com>
- <CAJuYYwQBL6OGJM41e9kD2ATUj3g9NTs-OC+G_gMKMScn3ms=hw@mail.gmail.com>
- <117c01cd60ea$90f76ac0$b2e64040$%kim@samsung.com>
- <CAJuYYwRiR8M5m9rDE6dzMawuSLO03f7mydoks+zU2ByTmbtMrA@mail.gmail.com>
+Subject: RE: [PATCH 1/1] ARM: EXYNOS: Add touchscreen support to SMDK4X12
+Date: Fri, 13 Jul 2012 22:51:53 +0900
+Message-ID: <118a01cd60fe$a8af41b0$fa0dc510$%kim@samsung.com>
+References: <1337936288-25246-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:45748 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756673Ab2GMNmz (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:62699 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751100Ab2GMNvz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 09:42:55 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Fri, 13 Jul 2012 09:51:55 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7300LTYQ3IDTT0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 22:42:54 +0900 (KST)
+ 17 2011)) with ESMTP id <0M73004AGQIIIUT0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 22:51:54 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7300BKPQ3HCA00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 22:42:54 +0900 (KST)
-In-reply-to: <CAJuYYwRiR8M5m9rDE6dzMawuSLO03f7mydoks+zU2ByTmbtMrA@mail.gmail.com>
+ with ESMTPA id <0M7300B2KQIINQ30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 22:51:54 +0900 (KST)
+In-reply-to: <1337936288-25246-1-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-Thomas Abraham wrote:
+Sachin Kamat wrote:
 > 
-> On 13 July 2012 16:58, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Thomas Abraham wrote:
-> >>
-> >> On 13 July 2012 04:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> >> > Thomas, the DMACH_DT_PROP is available only on pl330 now. So seems
-> occur
-> >> > following build error with s3c6400_defconfig.
-> >> >
-> >> > drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_get_dmares':
-> >> > drivers/spi/spi-s3c64xx.c:1098: error: 'DMACH_DT_PROP' undeclared
-> (first
-> >> use
-> >> > in this function)
-> >> > drivers/spi/spi-s3c64xx.c:1098: error: (Each undeclared identifier is
-> >> > reported only once
-> >> > drivers/spi/spi-s3c64xx.c:1098: error: for each function it appears
-> in.)
-> >> > make[3]: *** [drivers/spi/spi-s3c64xx.o] Error 1
-> >> > make[2]: *** [drivers/spi] Error 2
-> >> >
-> >>
-> >> Dear Mr. Kim,
-> >>
-> >> Thanks for considering these patches to be merged via your tree. For
-> >> the build break you mentioned above, there was a patch submitted some
-> >> time back to handle this. The link to that patch is:
-> >> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-
-> >> June/102627.html.
-> >> Could you please apply this patch also to your tree.
-> >>
-> > Sure, it looks good to me, will apply that then this series will be
-> rebased
-> > on top of that.
+> Pixcir touchscreen device support is added to SMDK4X12 boards.
 > 
-> There are six more patches that enable spi device tree support for
-> Exynos4 and Exynos5 platforms. Could you consider to apply those
-> patches as well. The link to those patches is:
-> http://www.mail-archive.com/linux-samsung-
-> soc@vger.kernel.org/msg10851.html.
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/mach-exynos/mach-smdk4x12.c |   32
+> +++++++++++++++++++++++++++++++-
+>  1 files changed, 31 insertions(+), 1 deletions(-)
 > 
-Yeah, I remember, but I think some patches is needed to re-work as per
-comments...?
+> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-
+> exynos/mach-smdk4x12.c
+> index fe772d8..0af6088 100644
+> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
+> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+> @@ -9,10 +9,12 @@
+>   * published by the Free Software Foundation.
+>  */
+> 
+> +#include <linux/delay.h>
+>  #include <linux/gpio.h>
+>  #include <linux/i2c.h>
+>  #include <linux/input.h>
+>  #include <linux/io.h>
+> +#include <linux/input/pixcir_ts.h>
+>  #include <linux/mfd/max8997.h>
+>  #include <linux/mmc/host.h>
+>  #include <linux/platform_device.h>
+> @@ -203,8 +205,34 @@ static struct i2c_board_info smdk4x12_i2c_devs3[]
+> __initdata = {
+>  	/* nothing here yet */
+>  };
+> 
+> +static void smdk4x12_ts_gpio_setup(void)
+> +{
+> +	int gpio_reset = EXYNOS4_GPM3(4);
+> +
+> +	gpio_request_one(gpio_reset, GPIOF_OUT_INIT_LOW, "TOUCH RESET");
+> +	mdelay(20);
+> +	gpio_direction_output(gpio_reset, 1);
+
+Do you want to set the gpio_reset value from 0 to 1 with 20m delays? Why?
+
+> +	mdelay(30);
+> +	s3c_gpio_setpull(EXYNOS4_GPX2(6), S3C_GPIO_PULL_NONE);
+
+Hmm...don't we need gpio_reqeust()? and what's the gpx2(6)?
 
 Thanks.
 
