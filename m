@@ -1,148 +1,76 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [sachin.kamat@linaro.org: [PATCH] hwmon: exynos4_tmu: Use devm_*
- functions]
-Date: Fri, 13 Jul 2012 09:58:06 -0700
-Message-ID: <20120713165806.GA10558@roeck-us.net>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes-2 for v3.5
+Date: Sat, 14 Jul 2012 08:38:55 +0900
+Message-ID: <11fd01cd6150$aaf8ea50$00eabef0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:58337 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S933344Ab2GMQ6I (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:21198 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756182Ab2GMXi6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 12:58:08 -0400
-Content-Disposition: inline
+	Fri, 13 Jul 2012 19:38:58 -0400
+Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7400DG8HORAM80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 14 Jul 2012 08:38:56 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7400E87HOWL240@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 14 Jul 2012 08:38:56 +0900 (KST)
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Amit Daniel Kachhap' <amit.daniel@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org
+To: arnd@arndb.de, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Fyi.
+Hi Arnd, Olof,
 
-Guenter
+Please pull second samsung fixes for v3.5 from:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.5-samsung-fixes-2
 
------ Forwarded message from Sachin Kamat <sachin.kamat@linaro.org> -----
+Correcting some values, fixing race and fixing regarding pm_domains are
+included in.
 
-Date: Fri, 13 Jul 2012 14:16:27 +0530
-From: Sachin Kamat <sachin.kamat@linaro.org>
-To: lm-sensors@lm-sensors.org
-Cc: khali@linux-fr.org, linux@roeck-us.net, sachin.kamat@linaro.org, patches@linaro.org
-Subject: [PATCH] hwmon: exynos4_tmu: Use devm_* functions
-X-Mailer: git-send-email 1.7.4.1
+If any problems, please kindly let me know.
 
-devm_* functions are used to replace kzalloc, request_mem_region, ioremap
-and request_irq functions in probe call. With the usage of devm_* functions
-explicit freeing and unmapping is not required.
+Thanks.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- drivers/hwmon/exynos4_tmu.c |   44 ++++++++----------------------------------
- 1 files changed, 9 insertions(+), 35 deletions(-)
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-diff --git a/drivers/hwmon/exynos4_tmu.c b/drivers/hwmon/exynos4_tmu.c
-index e912059..ee6e26c 100644
---- a/drivers/hwmon/exynos4_tmu.c
-+++ b/drivers/hwmon/exynos4_tmu.c
-@@ -356,7 +356,8 @@ static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
--	data = kzalloc(sizeof(struct exynos4_tmu_data), GFP_KERNEL);
-+	data = devm_kzalloc(&pdev->dev, sizeof(struct exynos4_tmu_data),
-+								GFP_KERNEL);
- 	if (!data) {
- 		dev_err(&pdev->dev, "Failed to allocate driver structure\n");
- 		return -ENOMEM;
-@@ -364,48 +365,36 @@ static int __devinit exynos4_tmu_probe(struct platform_device *pdev)
- 
- 	data->irq = platform_get_irq(pdev, 0);
- 	if (data->irq < 0) {
--		ret = data->irq;
- 		dev_err(&pdev->dev, "Failed to get platform irq\n");
--		goto err_free;
-+		return data->irq;
- 	}
- 
- 	INIT_WORK(&data->irq_work, exynos4_tmu_work);
- 
- 	data->mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!data->mem) {
--		ret = -ENOENT;
- 		dev_err(&pdev->dev, "Failed to get platform resource\n");
--		goto err_free;
-+		return -ENOENT;
- 	}
- 
--	data->mem = request_mem_region(data->mem->start,
--			resource_size(data->mem), pdev->name);
--	if (!data->mem) {
--		ret = -ENODEV;
--		dev_err(&pdev->dev, "Failed to request memory region\n");
--		goto err_free;
--	}
--
--	data->base = ioremap(data->mem->start, resource_size(data->mem));
-+	data->base = devm_request_and_ioremap(&pdev->dev, data->mem);
- 	if (!data->base) {
--		ret = -ENODEV;
- 		dev_err(&pdev->dev, "Failed to ioremap memory\n");
--		goto err_mem_region;
-+		return -ENODEV;
- 	}
- 
--	ret = request_irq(data->irq, exynos4_tmu_irq,
-+	ret = devm_request_irq(&pdev->dev, data->irq, exynos4_tmu_irq,
- 		IRQF_TRIGGER_RISING,
- 		"exynos4-tmu", data);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to request irq: %d\n", data->irq);
--		goto err_io_remap;
-+		return ret;
- 	}
- 
- 	data->clk = clk_get(NULL, "tmu_apbif");
- 	if (IS_ERR(data->clk)) {
--		ret = PTR_ERR(data->clk);
- 		dev_err(&pdev->dev, "Failed to get clock\n");
--		goto err_irq;
-+		return PTR_ERR(data->clk);
- 	}
- 
- 	data->pdata = pdata;
-@@ -440,14 +429,6 @@ err_create_group:
- err_clk:
- 	platform_set_drvdata(pdev, NULL);
- 	clk_put(data->clk);
--err_irq:
--	free_irq(data->irq, data);
--err_io_remap:
--	iounmap(data->base);
--err_mem_region:
--	release_mem_region(data->mem->start, resource_size(data->mem));
--err_free:
--	kfree(data);
- 
- 	return ret;
- }
-@@ -463,15 +444,8 @@ static int __devexit exynos4_tmu_remove(struct platform_device *pdev)
- 
- 	clk_put(data->clk);
- 
--	free_irq(data->irq, data);
--
--	iounmap(data->base);
--	release_mem_region(data->mem->start, resource_size(data->mem));
--
- 	platform_set_drvdata(pdev, NULL);
- 
--	kfree(data);
--
- 	return 0;
- }
- 
--- 
-1.7.4.1
+The following changes since commit bd0a521e88aa7a06ae7aabaed7ae196ed4ad867a:
 
+  Linux 3.5-rc6 (2012-07-07 17:23:56 -0700)
 
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.5-samsung-fixes-2
 
------ End forwarded message -----
+Marek Szyprowski (2):
+      ARM: EXYNOS: read initial state of power domain from hw registers
+      ARM: EXYNOS: register devices in 'need_restore' state for pm_domains
+
+Sylwester Nawrocki (2):
+      ARM: S3C24XX: Correct AC97 clock control bit for S3C2440
+      ARM: S3C24XX: Correct CAMIF interrupt definitions
+
+Todd Poynor (1):
+      ARM: SAMSUNG: fix race in s3c_adc_start for ADC
+
+Tushar Behera (1):
+      ARM: SAMSUNG: Update default rate for xusbxti clock
+
+ arch/arm/mach-exynos/pm_domains.c     |   13 +++++++++----
+ arch/arm/mach-s3c24xx/clock-s3c2440.c |    2 +-
+ arch/arm/plat-samsung/adc.c           |    8 +++++---
+ arch/arm/plat-samsung/devs.c          |    3 ++-
+ arch/arm/plat-samsung/s5p-clock.c     |    1 +
+ 5 files changed, 18 insertions(+), 9 deletions(-)
