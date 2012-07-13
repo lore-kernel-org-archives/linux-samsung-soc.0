@@ -1,125 +1,75 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: EXYNOS: Move G2D clock entries to
- clock-exynos4210.c file
-Date: Fri, 13 Jul 2012 20:15:12 +0530
-Message-ID: <CAK9yfHy9+jWtu0k0hoa9HKt+_ZGHDJMH1tT5_xoXd28k4s+rnw@mail.gmail.com>
-References: <1337314071-15305-1-git-send-email-sachin.kamat@linaro.org>
-	<1337314071-15305-2-git-send-email-sachin.kamat@linaro.org>
-	<118701cd60fc$c06e6da0$414b48e0$%kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v5 6/6] spi: s3c64xx: add device tree support
+Date: Fri, 13 Jul 2012 20:21:53 +0530
+Message-ID: <CAJuYYwQ9AyVPiZzV4-ncYF-Z1JqwHx-xKGHJXGhugc_w+KUHZQ@mail.gmail.com>
+References: <1342021265-11212-1-git-send-email-thomas.abraham@linaro.org>
+	<1342021265-11212-7-git-send-email-thomas.abraham@linaro.org>
+	<4FFF51EE.4080609@samsung.com>
+	<CAJuYYwQBL6OGJM41e9kD2ATUj3g9NTs-OC+G_gMKMScn3ms=hw@mail.gmail.com>
+	<117c01cd60ea$90f76ac0$b2e64040$%kim@samsung.com>
+	<CAJuYYwRiR8M5m9rDE6dzMawuSLO03f7mydoks+zU2ByTmbtMrA@mail.gmail.com>
+	<118901cd60fd$66c26260$34472720$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:36157 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752158Ab2GMOpN (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:48881 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754349Ab2GMOvy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 10:45:13 -0400
-Received: by vbbff1 with SMTP id ff1so2309794vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jul 2012 07:45:12 -0700 (PDT)
-In-Reply-To: <118701cd60fc$c06e6da0$414b48e0$%kim@samsung.com>
+	Fri, 13 Jul 2012 10:51:54 -0400
+Received: by eekb15 with SMTP id b15so969963eek.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jul 2012 07:51:53 -0700 (PDT)
+In-Reply-To: <118901cd60fd$66c26260$34472720$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org
+Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org
 
-On 13 July 2012 19:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
+On 13 July 2012 19:12, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Thomas Abraham wrote:
 >>
->> G2D clock registers are different in Exynos4210 and Exynos4X12 SoCs.
->> Hence moving the SoC specific G2D clock entries from common clock file
->> (clock-exynos4.c) to Exynos4210 specific clock file (clock-exynos4210.c).
+>> On 13 July 2012 16:58, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> > Thomas Abraham wrote:
+>> >>
+>> >> On 13 July 2012 04:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> >> > Thomas, the DMACH_DT_PROP is available only on pl330 now. So seems
+>> occur
+>> >> > following build error with s3c6400_defconfig.
+>> >> >
+>> >> > drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_get_dmares':
+>> >> > drivers/spi/spi-s3c64xx.c:1098: error: 'DMACH_DT_PROP' undeclared
+>> (first
+>> >> use
+>> >> > in this function)
+>> >> > drivers/spi/spi-s3c64xx.c:1098: error: (Each undeclared identifier is
+>> >> > reported only once
+>> >> > drivers/spi/spi-s3c64xx.c:1098: error: for each function it appears
+>> in.)
+>> >> > make[3]: *** [drivers/spi/spi-s3c64xx.o] Error 1
+>> >> > make[2]: *** [drivers/spi] Error 2
+>> >> >
+>> >>
+>> >> Dear Mr. Kim,
+>> >>
+>> >> Thanks for considering these patches to be merged via your tree. For
+>> >> the build break you mentioned above, there was a patch submitted some
+>> >> time back to handle this. The link to that patch is:
+>> >> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-
+>> >> June/102627.html.
+>> >> Could you please apply this patch also to your tree.
+>> >>
+>> > Sure, it looks good to me, will apply that then this series will be
+>> rebased
+>> > on top of that.
 >>
-> Yeah, I agree but there are small comments.
->
-> [snip]
->
->> +static struct clksrc_clk exynos4_clk_mout_g2d0 = {
->
-> In this case, 'exynos4210_clk_mout_g2d0' is clearer, it is static though.
->
->> +     .clk    = {
->> +             .name           = "mout_g2d0",
->> +     },
->> +     .sources = &exynos4_clkset_mout_g2d0,
->> +     .reg_src = { .reg = EXYNOS4_CLKSRC_IMAGE, .shift = 0, .size = 1 },
->> +};
->> +
->> +static struct clksrc_clk exynos4_clk_mout_g2d1 = {
->
-> Same as above, exynos4210_clk_mout_g2d1.
->
->> +     .clk    = {
->> +             .name           = "mout_g2d1",
->> +     },
->> +     .sources = &exynos4_clkset_mout_g2d1,
->> +     .reg_src = { .reg = EXYNOS4_CLKSRC_IMAGE, .shift = 4, .size = 1 },
->> +};
->> +
->> +static struct clk *exynos4_clkset_mout_g2d_list[] = {
->
-> Same, exynos4210_clkset_mout_g2d_list[]
->
->> +     [0] = &exynos4_clk_mout_g2d0.clk,
->
-> exynos4210_clk_mout_g2d0.clk
->
->> +     [1] = &exynos4_clk_mout_g2d1.clk,
->
-> exynos4210_clk_mout_g2d1.clk
->
->> +};
->> +
->> +static struct clksrc_sources exynos4_clkset_mout_g2d = {
->
-> Same, exynos4210_clkset_mout_g2d
->
->> +     .sources        = exynos4_clkset_mout_g2d_list,
->
-> exynos4210_clkset_mout_g2d_list
->
->> +     .nr_sources     = ARRAY_SIZE(exynos4_clkset_mout_g2d_list),
->
-> exynos4210_clkset_mout_g2d_list
->
->> +};
->> +
->>  static int exynos4_clksrc_mask_lcd1_ctrl(struct clk *clk, int enable)
->>  {
->>       return s5p_gatectrl(EXYNOS4210_CLKSRC_MASK_LCD1, clk, enable);
->> @@ -74,6 +100,13 @@ static struct clksrc_clk clksrcs[] = {
->>               .sources = &exynos4_clkset_group,
->>               .reg_src = { .reg = EXYNOS4210_CLKSRC_LCD1, .shift =
->> 0, .size = 4 },
->>               .reg_div = { .reg = EXYNOS4210_CLKDIV_LCD1, .shift =
->> 0, .size = 4 },
->> +     }, {
->> +             .clk    = {
->> +                     .name           = "sclk_fimg2d",
->> +             },
->> +             .sources = &exynos4_clkset_mout_g2d,
->
-> exynos4210_clkset_mout_g2d
->
-> [snip]
->
-> Could you please re-submit this after re-working on top of my
-> next/devel-samsung.
+>> There are six more patches that enable spi device tree support for
+>> Exynos4 and Exynos5 platforms. Could you consider to apply those
+>> patches as well. The link to those patches is:
+>> http://www.mail-archive.com/linux-samsung-
+>> soc@vger.kernel.org/msg10851.html.
+>>
+> Yeah, I remember, but I think some patches is needed to re-work as per
+> comments...?
 
-Ok. I will update as per your suggestion and re-send.
-Thanks for the review.
-
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-
-
-
--- 
-With warm regards,
-Sachin
+I checked again for any pending comments on v2 version. There are no
+pending comments for the v2 version of this patch series. Thanks.
