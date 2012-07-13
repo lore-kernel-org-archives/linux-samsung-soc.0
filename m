@@ -1,174 +1,76 @@
-From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [PATCH v5 5/5] ARM: exynos: add thermal sensor driver platform data support
-Date: Fri, 13 Jul 2012 16:40:25 +0530
-Message-ID: <1342177825-19006-6-git-send-email-amit.kachhap@linaro.org>
-References: <1342177825-19006-1-git-send-email-amit.kachhap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH v2] ARM: Exynos: Add device tree node for Exynos4 interrupt
+ combiner controller
+Date: Fri, 13 Jul 2012 20:27:58 +0900
+Message-ID: <117b01cd60ea$8dcdc920$a9695b60$%kim@samsung.com>
+References: <1342158999-3924-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:39235 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757364Ab2GMLLG (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:60792 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754938Ab2GML2A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 07:11:06 -0400
-In-Reply-To: <1342177825-19006-1-git-send-email-amit.kachhap@linaro.org>
+	Fri, 13 Jul 2012 07:28:00 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7300F7ZJTEO9Q0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 20:27:58 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M730047EJUMHG60@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 13 Jul 2012 20:27:58 +0900 (KST)
+In-reply-to: <1342158999-3924-1-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-pm@lists.linux-foundation.org, akpm@linux-foundation.org, lenb@kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lm-sensors@lm-sensors.org, amit.kachhap@linaro.org, Donggeun Kim <dg77.kim@samsung.com>, SangWook Ju <sw.ju@samsung.com>, Durgadoss <durgadoss.r@intel.com>, Jean Delvare <khali@linux-fr.org>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Add necessary default platform data support needed for TMU driver.  This
-dt/non-dt values are tested for origen exynos4210 and smdk exynos5250
-platforms.
+Thomas Abraham wrote:
+> 
+> Add node for Exynos4 interrupt combiner controller.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4210.dtsi |   11 +++++++++++
+>  1 files changed, 11 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
+> b/arch/arm/boot/dts/exynos4210.dtsi
+> index a1dd2ee..0e4f659 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -33,6 +33,17 @@
+>  		reg = <0x10490000 0x1000>, <0x10480000 0x100>;
+>  	};
+> 
+> +	combiner:interrupt-controller@10440000 {
+> +		compatible = "samsung,exynos4210-combiner";
+> +		#interrupt-cells = <2>;
+> +		interrupt-controller;
+> +		reg = <0x10440000 0x1000>;
+> +		interrupts = <0 0 0>, <0 1 0>, <0 2 0>, <0 3 0>,
+> +			     <0 4 0>, <0 5 0>, <0 6 0>, <0 7 0>,
+> +			     <0 8 0>, <0 9 0>, <0 10 0>, <0 11 0>,
+> +			     <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
+> +	};
+> +
+>  	watchdog@10060000 {
+>  		compatible = "samsung,s3c2410-wdt";
+>  		reg = <0x10060000 0x100>;
+> --
+> 1.6.6.rc2
 
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: Donggeun Kim <dg77.kim@samsung.com>
-Acked-by: Guenter Roeck <guenter.roeck@ericsson.com>
-Cc: SangWook Ju <sw.ju@samsung.com>
-Cc: Durgadoss <durgadoss.r@intel.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Jean Delvare <khali@linux-fr.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
- drivers/thermal/exynos_thermal.c |  111 +++++++++++++++++++++++++++++++++++++-
- 1 files changed, 110 insertions(+), 1 deletions(-)
+Looks ok to me, applied.
 
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index 9ef8c37..07736ea 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -662,14 +662,121 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
- static struct thermal_sensor_conf exynos_sensor_conf = {
- 	.name			= "exynos-therm",
- 	.read_temperature	= (int (*)(void *))exynos_tmu_read,
-+};
-+
-+#if defined(CONFIG_CPU_EXYNOS4210)
-+static struct exynos_tmu_platform_data const exynos4_default_tmu_data = {
-+	.threshold = 80,
-+	.trigger_levels[0] = 5,
-+	.trigger_levels[1] = 20,
-+	.trigger_levels[2] = 30,
-+	.trigger_level0_en = 1,
-+	.trigger_level1_en = 1,
-+	.trigger_level2_en = 1,
-+	.trigger_level3_en = 0,
-+	.gain = 15,
-+	.reference_voltage = 7,
-+	.cal_type = TYPE_ONE_POINT_TRIMMING,
-+	.freq_tab[0] = {
-+		.freq_clip_max = 800 * 1000,
-+		.temp_level = 85,
-+	},
-+	.freq_tab[1] = {
-+		.freq_clip_max = 200 * 1000,
-+		.temp_level = 100,
-+	},
-+	.freq_tab_count = 2,
-+	.type = SOC_ARCH_EXYNOS4,
-+};
-+#define EXYNOS4_TMU_DRV_DATA (&exynos4_default_tmu_data)
-+#else
-+#define EXYNOS4_TMU_DRV_DATA (NULL)
-+#endif
-+
-+#if defined(CONFIG_SOC_EXYNOS5250)
-+static struct exynos_tmu_platform_data const exynos5_default_tmu_data = {
-+	.trigger_levels[0] = 85,
-+	.trigger_levels[1] = 103,
-+	.trigger_levels[2] = 110,
-+	.trigger_level0_en = 1,
-+	.trigger_level1_en = 1,
-+	.trigger_level2_en = 1,
-+	.trigger_level3_en = 0,
-+	.gain = 8,
-+	.reference_voltage = 16,
-+	.noise_cancel_mode = 4,
-+	.cal_type = TYPE_ONE_POINT_TRIMMING,
-+	.efuse_value = 55,
-+	.freq_tab[0] = {
-+		.freq_clip_max = 800 * 1000,
-+		.temp_level = 85,
-+	},
-+	.freq_tab[1] = {
-+		.freq_clip_max = 200 * 1000,
-+		.temp_level = 103,
-+	},
-+	.freq_tab_count = 2,
-+	.type = SOC_ARCH_EXYNOS5,
-+};
-+#define EXYNOS5_TMU_DRV_DATA (&exynos5_default_tmu_data)
-+#else
-+#define EXYNOS5_TMU_DRV_DATA (NULL)
-+#endif
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id exynos_tmu_match[] = {
-+	{
-+		.compatible = "samsung,exynos4-tmu",
-+		.data = (void *)EXYNOS4_TMU_DRV_DATA,
-+	},
-+	{
-+		.compatible = "samsung,exynos5-tmu",
-+		.data = (void *)EXYNOS5_TMU_DRV_DATA,
-+	},
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, exynos_tmu_match);
-+#else
-+#define  exynos_tmu_match NULL
-+#endif
-+
-+static struct platform_device_id exynos_tmu_driver_ids[] = {
-+	{
-+		.name		= "exynos4-tmu",
-+		.driver_data    = (kernel_ulong_t)EXYNOS4_TMU_DRV_DATA,
-+	},
-+	{
-+		.name		= "exynos5-tmu",
-+		.driver_data    = (kernel_ulong_t)EXYNOS5_TMU_DRV_DATA,
-+	},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(platform, exynos4_tmu_driver_ids);
-+
-+static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
-+			struct platform_device *pdev)
-+{
-+#ifdef CONFIG_OF
-+	if (pdev->dev.of_node) {
-+		const struct of_device_id *match;
-+		match = of_match_node(exynos_tmu_match, pdev->dev.of_node);
-+		if (!match)
-+			return NULL;
-+		return (struct exynos_tmu_platform_data *) match->data;
-+	}
-+#endif
-+	return (struct exynos_tmu_platform_data *)
-+			platform_get_device_id(pdev)->driver_data;
- }
--;
- static int __devinit exynos_tmu_probe(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data;
- 	struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
- 	int ret, i;
- 
-+	if (!pdata)
-+		pdata = exynos_get_driver_data(pdev);
-+
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "No platform init data supplied.\n");
- 		return -ENODEV;
-@@ -838,9 +945,11 @@ static struct platform_driver exynos_tmu_driver = {
- 		.name   = "exynos-tmu",
- 		.owner  = THIS_MODULE,
- 		.pm     = EXYNOS_TMU_PM,
-+		.of_match_table = exynos_tmu_match,
- 	},
- 	.probe = exynos_tmu_probe,
- 	.remove	= __devexit_p(exynos_tmu_remove),
-+	.id_table = exynos_tmu_driver_ids,
- };
- 
- module_platform_driver(exynos_tmu_driver);
--- 
-1.7.1
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
