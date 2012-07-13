@@ -1,75 +1,50 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v5 6/6] spi: s3c64xx: add device tree support
-Date: Fri, 13 Jul 2012 20:21:53 +0530
-Message-ID: <CAJuYYwQ9AyVPiZzV4-ncYF-Z1JqwHx-xKGHJXGhugc_w+KUHZQ@mail.gmail.com>
-References: <1342021265-11212-1-git-send-email-thomas.abraham@linaro.org>
-	<1342021265-11212-7-git-send-email-thomas.abraham@linaro.org>
-	<4FFF51EE.4080609@samsung.com>
-	<CAJuYYwQBL6OGJM41e9kD2ATUj3g9NTs-OC+G_gMKMScn3ms=hw@mail.gmail.com>
-	<117c01cd60ea$90f76ac0$b2e64040$%kim@samsung.com>
-	<CAJuYYwRiR8M5m9rDE6dzMawuSLO03f7mydoks+zU2ByTmbtMrA@mail.gmail.com>
-	<118901cd60fd$66c26260$34472720$%kim@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: Convert S3C24XX I2S driver to gpiolib API
+Date: Fri, 13 Jul 2012 17:11:32 +0200
+Message-ID: <50003AA4.7070900@gmail.com>
+References: <1341059876-29460-1-git-send-email-sylvester.nawrocki@gmail.com> <4FFED794.9050800@gmail.com> <20120712161933.GD7256@opensource.wolfsonmicro.com> <4FFF12C5.6030403@gmail.com> <20120713142853.GN4215@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ee0-f46.google.com ([74.125.83.46]:48881 "EHLO
-	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754349Ab2GMOvy (ORCPT
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:35353 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754473Ab2GMPLg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 10:51:54 -0400
-Received: by eekb15 with SMTP id b15so969963eek.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jul 2012 07:51:53 -0700 (PDT)
-In-Reply-To: <118901cd60fd$66c26260$34472720$%kim@samsung.com>
+	Fri, 13 Jul 2012 11:11:36 -0400
+Received: by eaak11 with SMTP id k11so1110893eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 13 Jul 2012 08:11:34 -0700 (PDT)
+In-Reply-To: <20120713142853.GN4215@opensource.wolfsonmicro.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: spi-devel-general@lists.sourceforge.net, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, jaswinder.singh@linaro.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: alsa-devel@alsa-project.org, sbkim73@samsung.com, lrg@ti.com, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>
 
-On 13 July 2012 19:12, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Thomas Abraham wrote:
->>
->> On 13 July 2012 16:58, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > Thomas Abraham wrote:
->> >>
->> >> On 13 July 2012 04:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> >> > Thomas, the DMACH_DT_PROP is available only on pl330 now. So seems
->> occur
->> >> > following build error with s3c6400_defconfig.
->> >> >
->> >> > drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_get_dmares':
->> >> > drivers/spi/spi-s3c64xx.c:1098: error: 'DMACH_DT_PROP' undeclared
->> (first
->> >> use
->> >> > in this function)
->> >> > drivers/spi/spi-s3c64xx.c:1098: error: (Each undeclared identifier is
->> >> > reported only once
->> >> > drivers/spi/spi-s3c64xx.c:1098: error: for each function it appears
->> in.)
->> >> > make[3]: *** [drivers/spi/spi-s3c64xx.o] Error 1
->> >> > make[2]: *** [drivers/spi] Error 2
->> >> >
->> >>
->> >> Dear Mr. Kim,
->> >>
->> >> Thanks for considering these patches to be merged via your tree. For
->> >> the build break you mentioned above, there was a patch submitted some
->> >> time back to handle this. The link to that patch is:
->> >> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-
->> >> June/102627.html.
->> >> Could you please apply this patch also to your tree.
->> >>
->> > Sure, it looks good to me, will apply that then this series will be
->> rebased
->> > on top of that.
->>
->> There are six more patches that enable spi device tree support for
->> Exynos4 and Exynos5 platforms. Could you consider to apply those
->> patches as well. The link to those patches is:
->> http://www.mail-archive.com/linux-samsung-
->> soc@vger.kernel.org/msg10851.html.
->>
-> Yeah, I remember, but I think some patches is needed to re-work as per
-> comments...?
+On 07/13/2012 04:28 PM, Mark Brown wrote:
+> On Thu, Jul 12, 2012 at 08:09:09PM +0200, Sylwester Nawrocki wrote:
+> 
+>> Thanks, would that be Takashi Iwai and Jaroslav Kysela then ? I just
+>> want to get it right this time...
+>> Or perhaps could you take care of them ?
+> 
+> As with everything else look in MAINTAINERS, so me for ASoC.
 
-I checked again for any pending comments on v2 version. There are no
-pending comments for the v2 version of this patch series. Thanks.
+Gah, how could I miss that.. especially having gone through the
+WolfsonMicro ASoC website before. scripts/get_maintainer.pl must have
+led me astray:
+
+$ scripts/get_maintainer.pl -f sound/soc/samsung
+Ben Dooks <ben-linux@fluff.org> (maintainer:ARM/SAMSUNG ARM A...)
+Kukjin Kim <kgene.kim@samsung.com> (maintainer:ARM/SAMSUNG ARM A...)
+Sangbeom Kim <sbkim73@samsung.com> (supporter:SAMSUNG AUDIO (AS...)
+Liam Girdwood <lrg@ti.com> (supporter:SOUND - SOC LAYER...)
+Mark Brown <broonie@opensource.wolfsonmicro.com> (supporter:SOUND - SOC LAYER...)
+Jaroslav Kysela <perex@perex.cz> (maintainer:SOUND)
+Takashi Iwai <tiwai@suse.de> (maintainer:SOUND)
+linux-arm-kernel@lists.infradead.org (moderated list:ARM/SAMSUNG ARM A...)
+linux-samsung-soc@vger.kernel.org (moderated list:ARM/SAMSUNG ARM A...)
+alsa-devel@alsa-project.org (moderated list:SAMSUNG AUDIO (AS...)
+linux-kernel@vger.kernel.org (open list)
+
+Looks like there is something that could be improved in the MAINTAINERS
+file.
