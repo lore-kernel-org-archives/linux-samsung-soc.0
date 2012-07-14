@@ -1,76 +1,189 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes-2 for v3.5
-Date: Sat, 14 Jul 2012 08:38:55 +0900
-Message-ID: <11fd01cd6150$aaf8ea50$00eabef0$%kim@samsung.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: [PATCH v5 5/5] ARM: exynos: add thermal sensor driver platform
+ data support
+Date: Sat, 14 Jul 2012 10:33:10 +0900
+Message-ID: <CAH9JG2XGWgX-FiBacnrGXS-oG_7rbN1aum3mpW5HUAukiwaB7A@mail.gmail.com>
+References: <1342177825-19006-1-git-send-email-amit.kachhap@linaro.org>
+	<1342177825-19006-6-git-send-email-amit.kachhap@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:21198 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756182Ab2GMXi6 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 13 Jul 2012 19:38:58 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7400DG8HORAM80@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 14 Jul 2012 08:38:56 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7400E87HOWL240@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 14 Jul 2012 08:38:56 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1342177825-19006-6-git-send-email-amit.kachhap@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-pm@lists.linux-foundation.org, akpm@linux-foundation.org, lenb@kernel.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lm-sensors@lm-sensors.org, Donggeun Kim <dg77.kim@samsung.com>, SangWook Ju <sw.ju@samsung.com>, Durgadoss <durgadoss.r@intel.com>, Jean Delvare <khali@linux-fr.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: arnd@arndb.de, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Hi Arnd, Olof,
+On Fri, Jul 13, 2012 at 8:10 PM, Amit Daniel Kachhap
+<amit.kachhap@linaro.org> wrote:
+> Add necessary default platform data support needed for TMU driver.  This
+> dt/non-dt values are tested for origen exynos4210 and smdk exynos5250
+> platforms.
+Looks good to me.
+just nitpicks below.
 
-Please pull second samsung fixes for v3.5 from:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.5-samsung-fixes-2
-
-Correcting some values, fixing race and fixing regarding pm_domains are
-included in.
-
-If any problems, please kindly let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit bd0a521e88aa7a06ae7aabaed7ae196ed4ad867a:
-
-  Linux 3.5-rc6 (2012-07-07 17:23:56 -0700)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.5-samsung-fixes-2
-
-Marek Szyprowski (2):
-      ARM: EXYNOS: read initial state of power domain from hw registers
-      ARM: EXYNOS: register devices in 'need_restore' state for pm_domains
-
-Sylwester Nawrocki (2):
-      ARM: S3C24XX: Correct AC97 clock control bit for S3C2440
-      ARM: S3C24XX: Correct CAMIF interrupt definitions
-
-Todd Poynor (1):
-      ARM: SAMSUNG: fix race in s3c_adc_start for ADC
-
-Tushar Behera (1):
-      ARM: SAMSUNG: Update default rate for xusbxti clock
-
- arch/arm/mach-exynos/pm_domains.c     |   13 +++++++++----
- arch/arm/mach-s3c24xx/clock-s3c2440.c |    2 +-
- arch/arm/plat-samsung/adc.c           |    8 +++++---
- arch/arm/plat-samsung/devs.c          |    3 ++-
- arch/arm/plat-samsung/s5p-clock.c     |    1 +
- 5 files changed, 18 insertions(+), 9 deletions(-)
+Thank you,
+Kyungmin Park
+>
+> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> Cc: Donggeun Kim <dg77.kim@samsung.com>
+> Acked-by: Guenter Roeck <guenter.roeck@ericsson.com>
+> Cc: SangWook Ju <sw.ju@samsung.com>
+> Cc: Durgadoss <durgadoss.r@intel.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Jean Delvare <khali@linux-fr.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  drivers/thermal/exynos_thermal.c |  111 +++++++++++++++++++++++++++++++++++++-
+>  1 files changed, 110 insertions(+), 1 deletions(-)
+>
+> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
+> index 9ef8c37..07736ea 100644
+> --- a/drivers/thermal/exynos_thermal.c
+> +++ b/drivers/thermal/exynos_thermal.c
+> @@ -662,14 +662,121 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
+>  static struct thermal_sensor_conf exynos_sensor_conf = {
+>         .name                   = "exynos-therm",
+>         .read_temperature       = (int (*)(void *))exynos_tmu_read,
+> +};
+> +
+> +#if defined(CONFIG_CPU_EXYNOS4210)
+BTW, doesn't it same as exynos4412? does it different from exynos4412?
+If it's same, it's better to use CONFIG_SOC_EXYNOS4?
+> +static struct exynos_tmu_platform_data const exynos4_default_tmu_data = {
+> +       .threshold = 80,
+> +       .trigger_levels[0] = 5,
+> +       .trigger_levels[1] = 20,
+> +       .trigger_levels[2] = 30,
+> +       .trigger_level0_en = 1,
+> +       .trigger_level1_en = 1,
+> +       .trigger_level2_en = 1,
+> +       .trigger_level3_en = 0,
+> +       .gain = 15,
+> +       .reference_voltage = 7,
+> +       .cal_type = TYPE_ONE_POINT_TRIMMING,
+> +       .freq_tab[0] = {
+> +               .freq_clip_max = 800 * 1000,
+> +               .temp_level = 85,
+> +       },
+> +       .freq_tab[1] = {
+> +               .freq_clip_max = 200 * 1000,
+> +               .temp_level = 100,
+> +       },
+> +       .freq_tab_count = 2,
+> +       .type = SOC_ARCH_EXYNOS4,
+> +};
+> +#define EXYNOS4_TMU_DRV_DATA (&exynos4_default_tmu_data)
+> +#else
+> +#define EXYNOS4_TMU_DRV_DATA (NULL)
+> +#endif
+> +
+> +#if defined(CONFIG_SOC_EXYNOS5250)
+similar.
+> +static struct exynos_tmu_platform_data const exynos5_default_tmu_data = {
+> +       .trigger_levels[0] = 85,
+> +       .trigger_levels[1] = 103,
+> +       .trigger_levels[2] = 110,
+> +       .trigger_level0_en = 1,
+> +       .trigger_level1_en = 1,
+> +       .trigger_level2_en = 1,
+> +       .trigger_level3_en = 0,
+> +       .gain = 8,
+> +       .reference_voltage = 16,
+> +       .noise_cancel_mode = 4,
+> +       .cal_type = TYPE_ONE_POINT_TRIMMING,
+> +       .efuse_value = 55,
+> +       .freq_tab[0] = {
+> +               .freq_clip_max = 800 * 1000,
+> +               .temp_level = 85,
+> +       },
+> +       .freq_tab[1] = {
+> +               .freq_clip_max = 200 * 1000,
+> +               .temp_level = 103,
+> +       },
+> +       .freq_tab_count = 2,
+> +       .type = SOC_ARCH_EXYNOS5,
+> +};
+> +#define EXYNOS5_TMU_DRV_DATA (&exynos5_default_tmu_data)
+> +#else
+> +#define EXYNOS5_TMU_DRV_DATA (NULL)
+> +#endif
+> +
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id exynos_tmu_match[] = {
+> +       {
+> +               .compatible = "samsung,exynos4-tmu",
+> +               .data = (void *)EXYNOS4_TMU_DRV_DATA,
+> +       },
+> +       {
+> +               .compatible = "samsung,exynos5-tmu",
+> +               .data = (void *)EXYNOS5_TMU_DRV_DATA,
+> +       },
+> +       {},
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_tmu_match);
+> +#else
+> +#define  exynos_tmu_match NULL
+> +#endif
+> +
+> +static struct platform_device_id exynos_tmu_driver_ids[] = {
+> +       {
+> +               .name           = "exynos4-tmu",
+> +               .driver_data    = (kernel_ulong_t)EXYNOS4_TMU_DRV_DATA,
+> +       },
+> +       {
+> +               .name           = "exynos5-tmu",
+> +               .driver_data    = (kernel_ulong_t)EXYNOS5_TMU_DRV_DATA,
+> +       },
+> +       { },
+> +};
+> +MODULE_DEVICE_TABLE(platform, exynos4_tmu_driver_ids);
+> +
+> +static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
+> +                       struct platform_device *pdev)
+> +{
+> +#ifdef CONFIG_OF
+> +       if (pdev->dev.of_node) {
+> +               const struct of_device_id *match;
+> +               match = of_match_node(exynos_tmu_match, pdev->dev.of_node);
+> +               if (!match)
+> +                       return NULL;
+> +               return (struct exynos_tmu_platform_data *) match->data;
+> +       }
+> +#endif
+> +       return (struct exynos_tmu_platform_data *)
+> +                       platform_get_device_id(pdev)->driver_data;
+>  }
+> -;
+>  static int __devinit exynos_tmu_probe(struct platform_device *pdev)
+>  {
+>         struct exynos_tmu_data *data;
+>         struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
+>         int ret, i;
+>
+> +       if (!pdata)
+> +               pdata = exynos_get_driver_data(pdev);
+> +
+>         if (!pdata) {
+>                 dev_err(&pdev->dev, "No platform init data supplied.\n");
+>                 return -ENODEV;
+> @@ -838,9 +945,11 @@ static struct platform_driver exynos_tmu_driver = {
+>                 .name   = "exynos-tmu",
+>                 .owner  = THIS_MODULE,
+>                 .pm     = EXYNOS_TMU_PM,
+> +               .of_match_table = exynos_tmu_match,
+>         },
+>         .probe = exynos_tmu_probe,
+>         .remove = __devexit_p(exynos_tmu_remove),
+> +       .id_table = exynos_tmu_driver_ids,
+>  };
+>
+>  module_platform_driver(exynos_tmu_driver);
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
