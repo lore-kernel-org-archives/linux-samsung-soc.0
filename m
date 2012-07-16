@@ -1,91 +1,49 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [RFC/PATCH 12/13] media: s5p-fimc: Add device tree based sensors
- registration
-Date: Mon, 16 Jul 2012 11:51:54 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.1207161149230.12302@axis700.grange>
-References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com>
- <1337975573-27117-12-git-send-email-s.nawrocki@samsung.com>
+From: Namjae Jeon <linkinjeon@gmail.com>
+Subject: Re: [PATCH V2 3/4] [SCSI] ufs: Add Platform glue driver for ufshcd
+Date: Mon, 16 Jul 2012 22:49:02 +0900
+Message-ID: <CAKYAXd9cPuN-HfifDmz4M==QfjEW7CX6BF=rumSBSwRtO38_PQ@mail.gmail.com>
+References: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
+	<1342189698-20393-2-git-send-email-vinholikatti@gmail.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:64807 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751271Ab2GPJv4 (ORCPT
+Received: from mail-wg0-f42.google.com ([74.125.82.42]:50294 "EHLO
+	mail-wg0-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752021Ab2GPNtE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 05:51:56 -0400
-In-Reply-To: <1337975573-27117-12-git-send-email-s.nawrocki@samsung.com>
+	Mon, 16 Jul 2012 09:49:04 -0400
+In-Reply-To: <1342189698-20393-2-git-send-email-vinholikatti@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+To: Vinayak Holikatti <vinholikatti@gmail.com>
+Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com
 
-On Fri, 25 May 2012, Sylwester Nawrocki wrote:
-
-> Add parsing of 'sensor' nodes specified as 'camera' child nodes.
-> Each 'sensor' node should contain a phandle indicating sensor I2C
-> client device. Sensors with SPI control bus are not yet supported.
-> 
-> Additionally it is required that the I2C client node (child node
-> of I2C bus controller node) contains 'clock-frequency' and
-> 'video-bus-type' properties. These properties allow the host
-> controller to switch to proper video bus and set proper master
-> clock frequency for a sensor.
-> 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
-> 
-> We might need something like this as a V4L2 core function.
-> But I wanted to have something settled first until proposing
-> any addtions to the V4L2 core modules.
-> ---
->  .../bindings/camera/soc/samsung-fimc.txt           |   22 ++++
->  drivers/media/video/s5p-fimc/fimc-mdevice.c        |  114 +++++++++++++++++++-
->  2 files changed, 133 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt b/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
-> index b459da2..ffe09ac 100644
-> --- a/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
-> +++ b/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
-> @@ -54,6 +54,28 @@ Required properties:
->  - cell-index : FIMC-LITE IP instance index;
->  
->  
-> +The 'sensor' nodes
-> +------------------
+Hi Vinayak.
+> + * ufshcd_pltfrm_remove - remove platform driver routine
+> + * @pdev: pointer to platform device handle
+> + *
+> + * Returns 0 on success, non-zero value on failure
+> + */
+> +static int __devexit ufshcd_pltfrm_remove(struct platform_device *pdev)
+> +{
+> +	struct resource *mem_res;
+> +	struct resource *irq_res;
+> +	resource_size_t mem_size;
+> +	struct ufs_hba *hba =  platform_get_drvdata(pdev);
 > +
-> +Required properties:
+> +	ufshcd_remove(hba);
+> +	irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+> +	if (!irq_res)
+> +		dev_err(&pdev->dev, "ufshcd: IRQ resource not available\n");
+> +	free_irq(irq_res->start, hba);
+Is there no possibility of null pointer dereferencing error ?(irq_res->start)
+I think that free_irq should be not called if irq_res is NULL.
+> +	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+Looks mem_res is also same with upper case.
+Thanks.
+> +	mem_size = resource_size(mem_res);
+> +	release_mem_region(mem_res->start, mem_size);
+> +	platform_set_drvdata(pdev, NULL);
+> +	return 0;
+> +}
 > +
-> + - i2c-client : a phandle to an image sensor I2C client device;
-> +
-> +Optional properties:
-> +
-> +- samsung,camif-mux-id : FIMC video multiplexer input index; for camera
-> +			 port A, B, C the indexes are 0, 1, 0 respectively.
-> +			 If this property is not specified a default 0
-> +			 value will be used by driver.
-
-Isn't it possible to have several clients connected to different mux 
-inputs and switch between them at run-time? Even if only one of them can 
-be active at any time? That's why I've introduced link nodes in my RFC to 
-specify exactly which pads are connected.
-
-> +
-> +- samsung,fimc-camclk-id : the SoC CAM_MCLK clock output index. These clocks
-> +			   are master clocks for external image processors.
-> +			   If this property is not specified a default 0 value
-> +			   will be used by driver.
-> +
-> + "video-bus-type" and "clock-frequency" properties must be specified at the
-> + node referenced by 'i2c-client' phandle.
-> +
->  Example:
->  
->  	fimc0: fimc@11800000 {
-
-Thanks
-Guennadi
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
