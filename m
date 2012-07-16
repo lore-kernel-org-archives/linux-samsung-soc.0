@@ -1,120 +1,108 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2] ARM: EXYNOS: Add touchscreen support to SMDK4X12
-Date: Mon, 16 Jul 2012 14:01:15 +0530
-Message-ID: <CAK9yfHyAKr=8Mn9wzhFS+Aa8TP1-H6zeMKw8J74aS8_FPRKNhA@mail.gmail.com>
-References: <1342420976-25068-1-git-send-email-sachin.kamat@linaro.org>
-	<5003CEC4.8070901@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH] mmc: dwmmc: Add quirk for broken Hardware Config
+Date: Mon, 16 Jul 2012 14:15:02 +0530
+Message-ID: <1342428302-10707-1-git-send-email-girish.shivananjappa@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:46073 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752639Ab2GPIbQ (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:48718 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752261Ab2GPIpZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 04:31:16 -0400
-Received: by vcbfk26 with SMTP id fk26so675613vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:31:15 -0700 (PDT)
-In-Reply-To: <5003CEC4.8070901@gmail.com>
+	Mon, 16 Jul 2012 04:45:25 -0400
+Received: by yenl2 with SMTP id l2so4748929yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:45:24 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, shashidharh@vayavyalabs.com, thomas.abraham@linaro.org, Girish K S <girish.shivananjappa@linaro.org>
 
-Hi Sylwester,
+In some Soc'S that integrate Designware mmc host controllers, the
+HCON register is broken. The hardware configuration is not
+updated. One specific usecase is the IDMAC. In Exysons5 SoC
+there exist a internal DMA, but the HCON register's DMA_INTERFACE
+field is not set to indicate its existance.
 
-Thank you for the review.
+This quirk can be used in such case to force the existance broken
+HCON field.
 
-On 16/07/2012, Sylwester Nawrocki <sylvester.nawrocki@gmail.com> wrote:
-> Hi Sachin,
->
-> On 07/16/2012 08:42 AM, Sachin Kamat wrote:
->> Pixcir touchscreen device support is added to SMDK4X12 boards.
->>
->> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
->> ---
->> This patch is based on Kukjin Kim's latest for-next branch.
->>
->> Changes since v1:
->> Incorporated Kukjin's review comments
->> -reduced mdelay
->> -removed a unnecessary gpio
->> ---
->>   arch/arm/mach-exynos/mach-smdk4x12.c |   31
->> ++++++++++++++++++++++++++++++-
->>   1 files changed, 30 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c
->> b/arch/arm/mach-exynos/mach-smdk4x12.c
->> index 2623f3b..b3207ea 100644
->> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
->> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
->> @@ -9,9 +9,11 @@
->>    * published by the Free Software Foundation.
->>   */
->>
->> +#include<linux/delay.h>
->>   #include<linux/gpio.h>
->>   #include<linux/i2c.h>
->>   #include<linux/input.h>
->> +#include<linux/input/pixcir_ts.h>
->>   #include<linux/io.h>
->>   #include<linux/lcd.h>
->>   #include<linux/mfd/max8997.h>
->> @@ -207,8 +209,33 @@ static struct i2c_board_info smdk4x12_i2c_devs3[]
->> __initdata = {
->>   	/* nothing here yet */
->>   };
->>
->> +static void smdk4x12_ts_gpio_setup(void)
->> +{
->> +	int gpio_reset = EXYNOS4_GPM3(4);
->
-> I don't seem to find this GPIO defined in Kgene's for-next tree.
-> Is there already GPIO support for Exynos4x12 SoC's merged in someone's
-> tree ? I thought it's not completed yet.
+Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+---
+ drivers/mmc/host/dw_mmc-pltfm.c |    5 +++++
+ drivers/mmc/host/dw_mmc.c       |   11 ++++++++++-
+ drivers/mmc/host/dw_mmc.h       |    1 +
+ include/linux/mmc/host.h        |    1 +
+ 4 files changed, 17 insertions(+), 1 deletions(-)
 
-Yes, you are right. GPIO support for 4X12 is not yet merged. I had
-that patch locally on my branch, so did not realise it. This patch
-should then go after the GPIO support gets merged.
-
-
->
->> +
->> +	gpio_request_one(gpio_reset, GPIOF_OUT_INIT_LOW, "TOUCH RESET");
->> +	mdelay(2);
->
-> Any reason to use mdelay, rather than msleep/usleep_range ?
-No.
-
->
->> +	gpio_direction_output(gpio_reset, 1);
->
-> Probably better to make it:
->
-> 	gpio_set_value(gpio_reset, 1);
-
-Ok.
-
-
->
-> since the GPIO's direction is already set in gpio_request_one().
->
->> +	mdelay(30);
->
-> msleep(30);
-Ok.
-
-I will update and re-send the patch once GPIO support gets merged.
-
-
->
-> --
->
-> Regards,
-> Sylwester
->
-
-
+diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
+index 900f412..24ea485 100644
+--- a/drivers/mmc/host/dw_mmc-pltfm.c
++++ b/drivers/mmc/host/dw_mmc-pltfm.c
+@@ -35,9 +35,14 @@ static unsigned long exynos5250_dwmmc_caps[4] = {
+ 	MMC_CAP_CMD23,
+ };
+ 
++static unsigned long exynos5250_dwmmc_caps2[1] = {
++	MMC_CAP2_CONFIG_BROKEN,
++};
++
+ static struct dw_mci_drv_data exynos5250_drv_data = {
+ 	.ctrl_type	= DW_MCI_TYPE_EXYNOS5250,
+ 	.caps		= exynos5250_dwmmc_caps,
++	.caps2		= exynos5250_dwmmc_caps2,
+ };
+ 
+ static const struct of_device_id dw_mci_pltfm_match[] = {
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 1a59a92..030224c 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -431,7 +431,13 @@ static int dw_mci_idmac_init(struct dw_mci *host)
+ 	/* Check if Hardware Configuration Register has support for DMA */
+ 	dma_support = (mci_readl(host, HCON) >> 16) & 0x3;
+ 
+-	if (!dma_support || dma_support > 2) {
++	/*
++	 * In Some of the Soc's the HCON Register is broken. Even though the
++	 * Soc's has a internal DMA the HCON register's DMA field doesnt
++	 * show it. So additional quirk is added for such Soc's
++	 */
++	if ((!dma_support || dma_support > 2) &&
++		!((u32)host->drv_data->caps2 & MMC_CAP2_CONFIG_BROKEN)) {
+ 		dev_err(&host->dev,
+ 			"Host Controller does not support IDMA Tx.\n");
+ 		host->dma_ops = NULL;
+@@ -1957,6 +1963,9 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+ 	if (host->pdata->caps2)
+ 		mmc->caps2 = host->pdata->caps2;
+ 
++	if (host->drv_data->caps2)
++		mmc->caps2 |= host->drv_data->caps2[ctrl_id];
++
+ 	if (host->pdata->get_bus_wd) {
+ 		if (host->pdata->get_bus_wd(slot->id) >= 4)
+ 			mmc->caps |= MMC_CAP_4_BIT_DATA;
+diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+index 6c17282..8c4810a 100644
+--- a/drivers/mmc/host/dw_mmc.h
++++ b/drivers/mmc/host/dw_mmc.h
+@@ -203,6 +203,7 @@ extern int dw_mci_resume(struct dw_mci *host);
+ struct dw_mci_drv_data {
+ 	unsigned long		ctrl_type;
+ 	unsigned long		*caps;
++	unsigned long		*caps2;
+ };
+ 
+ #endif /* _DW_MMC_H_ */
+diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+index 65c64ee..ab5c7f9 100644
+--- a/include/linux/mmc/host.h
++++ b/include/linux/mmc/host.h
+@@ -261,6 +261,7 @@ struct mmc_host {
+ #define MMC_CAP2_HC_ERASE_SZ	(1 << 9)	/* High-capacity erase size */
+ #define MMC_CAP2_CD_ACTIVE_HIGH	(1 << 10)	/* Card-detect signal active high */
+ #define MMC_CAP2_RO_ACTIVE_HIGH	(1 << 11)	/* Write-protect signal active high */
++#define MMC_CAP2_CONFIG_BROKEN	(1 << 12)	/* Broken Config Register */
+ 
+ 	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+ 	unsigned int        power_notify_type;
 -- 
-With warm regards,
-Sachin
+1.7.4.1
