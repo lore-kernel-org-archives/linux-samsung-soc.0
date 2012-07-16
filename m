@@ -1,134 +1,120 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH 5/7] ARM: EXYNOS5: add device tree based discovery support
- for FIMD
-Date: Mon, 16 Jul 2012 13:58:36 +0530
-Message-ID: <CAL1wa8eyC8ciZMTJB79qtTjaTG8CagFyoYLHO3Uh1QkQXOcrzA@mail.gmail.com>
-References: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
- <1341998681-1888-6-git-send-email-l.krishna@samsung.com> <CAK9yfHw1cC9Uo4Jzb_m6kc6yiBhyWTwL8n8dtZjhiVij-cLCWQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Add touchscreen support to SMDK4X12
+Date: Mon, 16 Jul 2012 14:01:15 +0530
+Message-ID: <CAK9yfHyAKr=8Mn9wzhFS+Aa8TP1-H6zeMKw8J74aS8_FPRKNhA@mail.gmail.com>
+References: <1342420976-25068-1-git-send-email-sachin.kamat@linaro.org>
+	<5003CEC4.8070901@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:52365 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751942Ab2GPI25 (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:46073 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752639Ab2GPIbQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 04:28:57 -0400
-Received: by pbbrp8 with SMTP id rp8so9703872pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:28:57 -0700 (PDT)
-In-Reply-To: <CAK9yfHw1cC9Uo4Jzb_m6kc6yiBhyWTwL8n8dtZjhiVij-cLCWQ@mail.gmail.com>
+	Mon, 16 Jul 2012 04:31:16 -0400
+Received: by vcbfk26 with SMTP id fk26so675613vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:31:15 -0700 (PDT)
+In-Reply-To: <5003CEC4.8070901@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Wed, Jul 11, 2012 at 3:06 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> On 11/07/2012, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
->> From: Leela Krishna <l.krishna@samsung.com>
+Hi Sylwester,
+
+Thank you for the review.
+
+On 16/07/2012, Sylwester Nawrocki <sylvester.nawrocki@gmail.com> wrote:
+> Hi Sachin,
+>
+> On 07/16/2012 08:42 AM, Sachin Kamat wrote:
+>> Pixcir touchscreen device support is added to SMDK4X12 boards.
 >>
->> This patch adds support for device tree based discovery for Samsung's
->> display controller. Adds DRM-Fimd plat data for smdk5250
->> evt1 to the corresponding dts file
->>
->> Signed-off-by: Leela Krishna <l.krishna@samsung.com>
+>> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
 >> ---
->>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++++++++++++++
->>  arch/arm/boot/dts/exynos5250.dtsi         |    7 +++++++
->>  arch/arm/mach-exynos/include/mach/map.h   |    1 +
->>  arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
+>> This patch is based on Kukjin Kim's latest for-next branch.
+>>
+>> Changes since v1:
+>> Incorporated Kukjin's review comments
+>> -reduced mdelay
+>> -removed a unnecessary gpio
+>> ---
+>>   arch/arm/mach-exynos/mach-smdk4x12.c |   31
+>> ++++++++++++++++++++++++++++++-
+>>   1 files changed, 30 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c
+>> b/arch/arm/mach-exynos/mach-smdk4x12.c
+>> index 2623f3b..b3207ea 100644
+>> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
+>> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+>> @@ -9,9 +9,11 @@
+>>    * published by the Free Software Foundation.
+>>   */
+>>
+>> +#include<linux/delay.h>
+>>   #include<linux/gpio.h>
+>>   #include<linux/i2c.h>
+>>   #include<linux/input.h>
+>> +#include<linux/input/pixcir_ts.h>
+>>   #include<linux/io.h>
+>>   #include<linux/lcd.h>
+>>   #include<linux/mfd/max8997.h>
+>> @@ -207,8 +209,33 @@ static struct i2c_board_info smdk4x12_i2c_devs3[]
+>> __initdata = {
+>>   	/* nothing here yet */
+>>   };
+>>
+>> +static void smdk4x12_ts_gpio_setup(void)
+>> +{
+>> +	int gpio_reset = EXYNOS4_GPM3(4);
 >
-> You also need to update the documentation for the bindings.
->
-Yes, updated the documentation for bindings
-Please refer to the link  http://www.spinics.net/lists/dri-devel/msg24862.html
+> I don't seem to find this GPIO defined in Kgene's for-next tree.
+> Is there already GPIO support for Exynos4x12 SoC's merged in someone's
+> tree ? I thought it's not completed yet.
 
->>  4 files changed, 26 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> index 49945cc..781f836 100644
->> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> @@ -71,4 +71,20 @@
->>       i2c@12CD0000 {
->>               status = "disabled";
->>       };
->> +
->> +     lcd_fimd0: lcd_panel0 {
->> +                     lcd-htiming = <4 4 4 1280>;
->> +                     lcd-vtiming = <4 4 4 800>;
->> +                     supports-mipi-panel;
->> +     };
->> +
->> +     fimd {
->> +             samsung,fimd-display = <&lcd_fimd0>;
->> +             samsung,fimd-vidout-rgb;
->> +             samsung,fimd-inv-vclk;
->> +             samsung,fimd-frame-rate = <60>;
->> +             samsung,default-window = <0>;
->> +             samsung,fimd-win-bpp = <32>;
->> +     };
->> +
->>  };
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> b/arch/arm/boot/dts/exynos5250.dtsi
->> index 4272b29..f9954fe 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -424,4 +424,11 @@
->>                       #gpio-cells = <4>;
->>               };
->>       };
->> +
->> +     fimd {
->> +             compatible = "samsung,exynos5-drm";
->> +             interrupt-parent = <&combiner>;
->> +             reg = <0x14400000 0x40000>;
->> +             interrupts = <18 5>, <18 4>, <18 6>;
->> +     };
->>  };
->> diff --git a/arch/arm/mach-exynos/include/mach/map.h
->> b/arch/arm/mach-exynos/include/mach/map.h
->> index ca4aa89..731b56e 100644
->> --- a/arch/arm/mach-exynos/include/mach/map.h
->> +++ b/arch/arm/mach-exynos/include/mach/map.h
->> @@ -167,6 +167,7 @@
->>  #define EXYNOS4_PA_MIPI_CSIS1                0x11890000
->>
->>  #define EXYNOS4_PA_FIMD0             0x11C00000
->> +#define EXYNOS5_PA_FIMD1             0x14400000
->>
->>  #define EXYNOS4_PA_HSMMC(x)          (0x12510000 + ((x) * 0x10000))
->>  #define EXYNOS4_PA_DWMCI             0x12550000
->> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c
->> b/arch/arm/mach-exynos/mach-exynos5-dt.c
->> index a91c928..9d5bccc 100644
->> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
->> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
->> @@ -154,6 +154,8 @@ static const struct of_dev_auxdata
->> exynos5250_auxdata_lookup[] __initconst = {
->>       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
->>       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
->>       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
->> +     OF_DEV_AUXDATA("samsung,exynos5-drm", EXYNOS5_PA_FIMD1,
->> +                             "exynos5-fb", NULL),
->>       {},
->>  };
->>
->> --
->> 1.7.0.4
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
->> in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
+Yes, you are right. GPIO support for 4X12 is not yet merged. I had
+that patch locally on my branch, so did not realise it. This patch
+should then go after the GPIO support gets merged.
+
+
 >
+>> +
+>> +	gpio_request_one(gpio_reset, GPIOF_OUT_INIT_LOW, "TOUCH RESET");
+>> +	mdelay(2);
+>
+> Any reason to use mdelay, rather than msleep/usleep_range ?
+No.
+
+>
+>> +	gpio_direction_output(gpio_reset, 1);
+>
+> Probably better to make it:
+>
+> 	gpio_set_value(gpio_reset, 1);
+
+Ok.
+
+
+>
+> since the GPIO's direction is already set in gpio_request_one().
+>
+>> +	mdelay(30);
+>
+> msleep(30);
+Ok.
+
+I will update and re-send the patch once GPIO support gets merged.
+
+
 >
 > --
-> With warm regards,
-> Sachin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Regards,
+> Sylwester
+>
+
+
+-- 
+With warm regards,
+Sachin
