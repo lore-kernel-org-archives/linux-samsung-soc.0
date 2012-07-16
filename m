@@ -1,125 +1,133 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH 4/7] ARM: EXYNOS: Adding DRM platform device
-Date: Mon, 16 Jul 2012 13:56:55 +0530
-Message-ID: <CAL1wa8d-Hq1mnwtRD9HR8Fopv2U8ka+s6ppbLbanFVqee4g-Rg@mail.gmail.com>
-References: <1341999741-15578-1-git-send-email-l.krishna@samsung.com>
- <1341999741-15578-5-git-send-email-l.krishna@samsung.com> <001d01cd5f4e$ff51c850$fdf558f0$%han@samsung.com>
+Subject: Re: [PATCH 5/7] ARM: EXYNOS5: add device tree based discovery support
+ for FIMD
+Date: Mon, 16 Jul 2012 13:58:36 +0530
+Message-ID: <CAL1wa8eyC8ciZMTJB79qtTjaTG8CagFyoYLHO3Uh1QkQXOcrzA@mail.gmail.com>
+References: <1341998681-1888-1-git-send-email-l.krishna@samsung.com>
+ <1341998681-1888-6-git-send-email-l.krishna@samsung.com> <CAK9yfHw1cC9Uo4Jzb_m6kc6yiBhyWTwL8n8dtZjhiVij-cLCWQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:64907 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:52365 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751497Ab2GPI1Q (ORCPT
+	with ESMTP id S1751942Ab2GPI25 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 04:27:16 -0400
-Received: by pbbrp8 with SMTP id rp8so9701692pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:27:15 -0700 (PDT)
-In-Reply-To: <001d01cd5f4e$ff51c850$fdf558f0$%han@samsung.com>
+	Mon, 16 Jul 2012 04:28:57 -0400
+Received: by pbbrp8 with SMTP id rp8so9703872pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:28:57 -0700 (PDT)
+In-Reply-To: <CAK9yfHw1cC9Uo4Jzb_m6kc6yiBhyWTwL8n8dtZjhiVij-cLCWQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, prashanth.g@samsung.com
 
-On Wed, Jul 11, 2012 at 3:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
->
->
->> -----Original Message-----
->> From: Leela Krishna Amudala [mailto:l.krishna@samsung.com]
->> Sent: Wednesday, July 11, 2012 6:42 PM
->> To: linux-arm-kernel@lists.infradead.org
->> Cc: grant.likely@secretlab.ca; olofj@google.com; thomas.ab@samsung.com; kgene.kim@samsung.com;
->> joshi@samsung.com; jg1.han@samsung.com
->> Subject: [PATCH 4/7] ARM: EXYNOS: Adding DRM platform device
+On Wed, Jul 11, 2012 at 3:06 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> On 11/07/2012, Leela Krishna Amudala <l.krishna@samsung.com> wrote:
+>> From: Leela Krishna <l.krishna@samsung.com>
 >>
->> Add DRM platform device to machine file for exynos5.
+>> This patch adds support for device tree based discovery for Samsung's
+>> display controller. Adds DRM-Fimd plat data for smdk5250
+>> evt1 to the corresponding dts file
 >>
->> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
->> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> Signed-off-by: Leela Krishna <l.krishna@samsung.com>
 >> ---
->>  arch/arm/mach-exynos/mach-exynos5-dt.c |   27 +++++++++++++++++++++++++++
->>  1 files changed, 27 insertions(+), 0 deletions(-)
+>>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++++++++++++++
+>>  arch/arm/boot/dts/exynos5250.dtsi         |    7 +++++++
+>>  arch/arm/mach-exynos/include/mach/map.h   |    1 +
+>>  arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
+>
+> You also need to update the documentation for the bindings.
+>
+Yes, updated the documentation for bindings
+Please refer to the link  http://www.spinics.net/lists/dri-devel/msg24862.html
+
+>>  4 files changed, 26 insertions(+), 0 deletions(-)
 >>
->> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
->> index 652a537..a91c928 100644
+>> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> index 49945cc..781f836 100644
+>> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+>> @@ -71,4 +71,20 @@
+>>       i2c@12CD0000 {
+>>               status = "disabled";
+>>       };
+>> +
+>> +     lcd_fimd0: lcd_panel0 {
+>> +                     lcd-htiming = <4 4 4 1280>;
+>> +                     lcd-vtiming = <4 4 4 800>;
+>> +                     supports-mipi-panel;
+>> +     };
+>> +
+>> +     fimd {
+>> +             samsung,fimd-display = <&lcd_fimd0>;
+>> +             samsung,fimd-vidout-rgb;
+>> +             samsung,fimd-inv-vclk;
+>> +             samsung,fimd-frame-rate = <60>;
+>> +             samsung,default-window = <0>;
+>> +             samsung,fimd-win-bpp = <32>;
+>> +     };
+>> +
+>>  };
+>> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+>> b/arch/arm/boot/dts/exynos5250.dtsi
+>> index 4272b29..f9954fe 100644
+>> --- a/arch/arm/boot/dts/exynos5250.dtsi
+>> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+>> @@ -424,4 +424,11 @@
+>>                       #gpio-cells = <4>;
+>>               };
+>>       };
+>> +
+>> +     fimd {
+>> +             compatible = "samsung,exynos5-drm";
+>> +             interrupt-parent = <&combiner>;
+>> +             reg = <0x14400000 0x40000>;
+>> +             interrupts = <18 5>, <18 4>, <18 6>;
+>> +     };
+>>  };
+>> diff --git a/arch/arm/mach-exynos/include/mach/map.h
+>> b/arch/arm/mach-exynos/include/mach/map.h
+>> index ca4aa89..731b56e 100644
+>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>> @@ -167,6 +167,7 @@
+>>  #define EXYNOS4_PA_MIPI_CSIS1                0x11890000
+>>
+>>  #define EXYNOS4_PA_FIMD0             0x11C00000
+>> +#define EXYNOS5_PA_FIMD1             0x14400000
+>>
+>>  #define EXYNOS4_PA_HSMMC(x)          (0x12510000 + ((x) * 0x10000))
+>>  #define EXYNOS4_PA_DWMCI             0x12550000
+>> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> index a91c928..9d5bccc 100644
 >> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
 >> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
->> @@ -17,6 +17,7 @@
->>
->>  #include <asm/mach/arch.h>
->>  #include <asm/hardware/gic.h>
->> +#include <asm/io.h>
->>  #include <mach/map.h>
->>
->>  #include <plat/cpu.h>
->> @@ -29,6 +30,22 @@
->>  #include <video/platform_lcd.h>
->>
->>
->> +static void exynos_fimd_gpio_setup_24bpp(void)
->> +{
->> +     unsigned int reg = 0;
->> +     /*
->> +      * Set DISP1BLK_CFG register for Display path selection
->> +      * FIMD of DISP1_BLK Bypass selection : DISP1BLK_CFG[15]
->> +      * ---------------------
->> +      * 0 | MIE/MDNIE
->> +      * 1 | FIMD : selected
->> +      */
->> +     reg = __raw_readl(S3C_VA_SYS + 0x0214);
->> +     reg &= ~(1 << 15);      /* To save other reset values */
->> +     reg |= (1 << 15);
->> +     __raw_writel(reg, S3C_VA_SYS + 0x0214);
->> +}
->> +
->>  static int smdk5250_bl_notify(struct device *unused, int brightness)
->>  {
->>       /* manage lcd_bl_en signal */
->> @@ -51,6 +68,14 @@ static struct platform_pwm_backlight_data smdk5250_bl_data = {
->>       .notify         = smdk5250_bl_notify,
+>> @@ -154,6 +154,8 @@ static const struct of_dev_auxdata
+>> exynos5250_auxdata_lookup[] __initconst = {
+>>       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
+>>       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
+>>       OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
+>> +     OF_DEV_AUXDATA("samsung,exynos5-drm", EXYNOS5_PA_FIMD1,
+>> +                             "exynos5-fb", NULL),
+>>       {},
 >>  };
->>
->> +static struct platform_device exynos_drm_device = {
->> +     .name           = "exynos-drm",
->> +     .dev = {
->> +             .dma_mask = &exynos_drm_device.dev.coherent_dma_mask,
->> +             .coherent_dma_mask = 0xffffffffUL,
->> +     }
->> +};
->> +
->
->
-> If your patches use ./drivers/video/s3c-fb.c, please use the term 'FB'.
-> In this case, this 'exynos_drm_device' is not unnecessary.
->
-> Um... Have you tested this patchset with board such as SMDK5250?
-> Does it work properly?
->
->
-
-Yes, I tested this patchset with smdk5250 board, and I could see bootup logo.
-
->>  static void lcd_set_power(struct plat_lcd_data *pd,
->>                       unsigned int power)
->>  {
->> @@ -134,6 +159,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->>
->>  static struct platform_device *smdk5250_devices[] __initdata = {
->>       &smdk5250_lcd, /* for platform_lcd device */
->> +     &exynos_drm_device,
->>  };
->>
->>  static void __init exynos5250_dt_map_io(void)
->> @@ -147,6 +173,7 @@ static void __init exynos5250_dt_machine_init(void)
->>       samsung_bl_set(&smdk5250_bl_gpio_info, &smdk5250_bl_data);
->>       of_platform_populate(NULL, of_default_bus_match_table,
->>                               exynos5250_auxdata_lookup, NULL);
->> +     exynos_fimd_gpio_setup_24bpp();
->>       platform_add_devices(smdk5250_devices, ARRAY_SIZE(smdk5250_devices));
->>  }
 >>
 >> --
 >> 1.7.0.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+>> in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 >
+>
+> --
+> With warm regards,
+> Sachin
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
