@@ -1,89 +1,126 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v2] ARM: EXYNOS: Add touchscreen support to SMDK4X12
-Date: Mon, 16 Jul 2012 10:20:20 +0200
-Message-ID: <5003CEC4.8070901@gmail.com>
-References: <1342420976-25068-1-git-send-email-sachin.kamat@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH 4/7] ARM: EXYNOS: Adding DRM platform device
+Date: Mon, 16 Jul 2012 13:56:55 +0530
+Message-ID: <CAL1wa8d-Hq1mnwtRD9HR8Fopv2U8ka+s6ppbLbanFVqee4g-Rg@mail.gmail.com>
+References: <1341999741-15578-1-git-send-email-l.krishna@samsung.com>
+ <1341999741-15578-5-git-send-email-l.krishna@samsung.com> <001d01cd5f4e$ff51c850$fdf558f0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:49167 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750843Ab2GPIUZ (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:64907 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751497Ab2GPI1Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 04:20:25 -0400
-Received: by eaak11 with SMTP id k11so1550373eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:20:23 -0700 (PDT)
-In-Reply-To: <1342420976-25068-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 16 Jul 2012 04:27:16 -0400
+Received: by pbbrp8 with SMTP id rp8so9701692pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 01:27:15 -0700 (PDT)
+In-Reply-To: <001d01cd5f4e$ff51c850$fdf558f0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com
 
-Hi Sachin,
-
-On 07/16/2012 08:42 AM, Sachin Kamat wrote:
-> Pixcir touchscreen device support is added to SMDK4X12 boards.
+On Wed, Jul 11, 2012 at 3:51 PM, Jingoo Han <jg1.han@samsung.com> wrote:
 >
-> Signed-off-by: Sachin Kamat<sachin.kamat@linaro.org>
-> ---
-> This patch is based on Kukjin Kim's latest for-next branch.
 >
-> Changes since v1:
-> Incorporated Kukjin's review comments
-> -reduced mdelay
-> -removed a unnecessary gpio
-> ---
->   arch/arm/mach-exynos/mach-smdk4x12.c |   31 ++++++++++++++++++++++++++++++-
->   1 files changed, 30 insertions(+), 1 deletions(-)
+>> -----Original Message-----
+>> From: Leela Krishna Amudala [mailto:l.krishna@samsung.com]
+>> Sent: Wednesday, July 11, 2012 6:42 PM
+>> To: linux-arm-kernel@lists.infradead.org
+>> Cc: grant.likely@secretlab.ca; olofj@google.com; thomas.ab@samsung.com; kgene.kim@samsung.com;
+>> joshi@samsung.com; jg1.han@samsung.com
+>> Subject: [PATCH 4/7] ARM: EXYNOS: Adding DRM platform device
+>>
+>> Add DRM platform device to machine file for exynos5.
+>>
+>> Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/mach-exynos5-dt.c |   27 +++++++++++++++++++++++++++
+>>  1 files changed, 27 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> index 652a537..a91c928 100644
+>> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+>> @@ -17,6 +17,7 @@
+>>
+>>  #include <asm/mach/arch.h>
+>>  #include <asm/hardware/gic.h>
+>> +#include <asm/io.h>
+>>  #include <mach/map.h>
+>>
+>>  #include <plat/cpu.h>
+>> @@ -29,6 +30,22 @@
+>>  #include <video/platform_lcd.h>
+>>
+>>
+>> +static void exynos_fimd_gpio_setup_24bpp(void)
+>> +{
+>> +     unsigned int reg = 0;
+>> +     /*
+>> +      * Set DISP1BLK_CFG register for Display path selection
+>> +      * FIMD of DISP1_BLK Bypass selection : DISP1BLK_CFG[15]
+>> +      * ---------------------
+>> +      * 0 | MIE/MDNIE
+>> +      * 1 | FIMD : selected
+>> +      */
+>> +     reg = __raw_readl(S3C_VA_SYS + 0x0214);
+>> +     reg &= ~(1 << 15);      /* To save other reset values */
+>> +     reg |= (1 << 15);
+>> +     __raw_writel(reg, S3C_VA_SYS + 0x0214);
+>> +}
+>> +
+>>  static int smdk5250_bl_notify(struct device *unused, int brightness)
+>>  {
+>>       /* manage lcd_bl_en signal */
+>> @@ -51,6 +68,14 @@ static struct platform_pwm_backlight_data smdk5250_bl_data = {
+>>       .notify         = smdk5250_bl_notify,
+>>  };
+>>
+>> +static struct platform_device exynos_drm_device = {
+>> +     .name           = "exynos-drm",
+>> +     .dev = {
+>> +             .dma_mask = &exynos_drm_device.dev.coherent_dma_mask,
+>> +             .coherent_dma_mask = 0xffffffffUL,
+>> +     }
+>> +};
+>> +
 >
-> diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-> index 2623f3b..b3207ea 100644
-> --- a/arch/arm/mach-exynos/mach-smdk4x12.c
-> +++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-> @@ -9,9 +9,11 @@
->    * published by the Free Software Foundation.
->   */
 >
-> +#include<linux/delay.h>
->   #include<linux/gpio.h>
->   #include<linux/i2c.h>
->   #include<linux/input.h>
-> +#include<linux/input/pixcir_ts.h>
->   #include<linux/io.h>
->   #include<linux/lcd.h>
->   #include<linux/mfd/max8997.h>
-> @@ -207,8 +209,33 @@ static struct i2c_board_info smdk4x12_i2c_devs3[] __initdata = {
->   	/* nothing here yet */
->   };
+> If your patches use ./drivers/video/s3c-fb.c, please use the term 'FB'.
+> In this case, this 'exynos_drm_device' is not unnecessary.
 >
-> +static void smdk4x12_ts_gpio_setup(void)
-> +{
-> +	int gpio_reset = EXYNOS4_GPM3(4);
+> Um... Have you tested this patchset with board such as SMDK5250?
+> Does it work properly?
+>
+>
 
-I don't seem to find this GPIO defined in Kgene's for-next tree.
-Is there already GPIO support for Exynos4x12 SoC's merged in someone's
-tree ? I thought it's not completed yet.
+Yes, I tested this patchset with smdk5250 board, and I could see bootup logo.
 
-> +
-> +	gpio_request_one(gpio_reset, GPIOF_OUT_INIT_LOW, "TOUCH RESET");
-> +	mdelay(2);
-
-Any reason to use mdelay, rather than msleep/usleep_range ?
-
-> +	gpio_direction_output(gpio_reset, 1);
-
-Probably better to make it:
-
-	gpio_set_value(gpio_reset, 1);
-
-since the GPIO's direction is already set in gpio_request_one().
-
-> +	mdelay(30);
-
-msleep(30);
-
---
-
-Regards,
-Sylwester
+>>  static void lcd_set_power(struct plat_lcd_data *pd,
+>>                       unsigned int power)
+>>  {
+>> @@ -134,6 +159,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>>
+>>  static struct platform_device *smdk5250_devices[] __initdata = {
+>>       &smdk5250_lcd, /* for platform_lcd device */
+>> +     &exynos_drm_device,
+>>  };
+>>
+>>  static void __init exynos5250_dt_map_io(void)
+>> @@ -147,6 +173,7 @@ static void __init exynos5250_dt_machine_init(void)
+>>       samsung_bl_set(&smdk5250_bl_gpio_info, &smdk5250_bl_data);
+>>       of_platform_populate(NULL, of_default_bus_match_table,
+>>                               exynos5250_auxdata_lookup, NULL);
+>> +     exynos_fimd_gpio_setup_24bpp();
+>>       platform_add_devices(smdk5250_devices, ARRAY_SIZE(smdk5250_devices));
+>>  }
+>>
+>> --
+>> 1.7.0.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
