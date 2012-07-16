@@ -1,67 +1,59 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/2] ARM: EXYNOS: G2D clock support to Exynos4
-Date: Tue, 17 Jul 2012 08:24:24 +0900
-Message-ID: <143f01cd63aa$233294c0$6997be40$%kim@samsung.com>
-References: <1342415220-15497-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH 2/2] spi/s3c64xx: Expand S3C64XX_SPI_{DE,}ACT macros at
+ call sites
+Date: Tue, 17 Jul 2012 08:52:20 +0900
+Message-ID: <144001cd63ae$0a31af20$1e950d60$%kim@samsung.com>
+References: <1340889811-7524-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <1340889811-7524-2-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <CACRpkdaC3mXcgTib3JWOjuvaWU_NEcg1JCV-4QNS4EcAAZzCJQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16216 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:27376 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750932Ab2GPXY0 (ORCPT
+	with ESMTP id S1751802Ab2GPXwW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 19:24:26 -0400
+	Mon, 16 Jul 2012 19:52:22 -0400
 Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7A00BBH10GM390@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 08:24:24 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7A00CAD2ASL4A0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 08:52:20 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7A0080G10O7Z80@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 08:24:24 +0900 (KST)
-In-reply-to: <1342415220-15497-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0M7A00C2Y2B8PO00@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 08:52:20 +0900 (KST)
+In-reply-to: <CACRpkdaC3mXcgTib3JWOjuvaWU_NEcg1JCV-4QNS4EcAAZzCJQ@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: 'Linus Walleij' <linus.walleij@linaro.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-Sachin Kamat wrote:
+Linus Walleij wrote:
 > 
-> This patch series moves the SoC specific G2D clock entries from common
-> clock-
-> file (clock-exynos4.c) to Exynos4210 specific clock file (clock-
-> exynos4210.c)
-> since G2D clock registers are different in Exynos4210 and Exynos4X12 SoCs
-> and adds support for Exynos4x12 G2D clock.
+> On Thu, Jun 28, 2012 at 3:23 PM, Mark Brown
+> <broonie@opensource.wolfsonmicro.com> wrote:
 > 
-> Changes since v1:
-> Incorporated Kukjin's comments to use exynos4210/4x12 in structure names
-> instead of exynos4 for better clarity.
+> > They have very few users and they're both just doing a single register
+> > write so the advantage of having the macro is a bit limited. An inline
+> > function might make sense but it's as easy to just do the writes
+> directly.
+> >
+> > Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 > 
-> This series is based on Kukjin Kim's latest next/devel-samsung branch.
+> Much clearer.
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > 
-> Sachin Kamat (2):
->   ARM: EXYNOS: Move G2D clock entries to clock-exynos4210.c file
->   ARM: EXYNOS: Add G2D related clock entries for SMDK4X12
-> 
->  arch/arm/mach-exynos/clock-exynos4.c    |   41
-+---------------------------
-> --
->  arch/arm/mach-exynos/clock-exynos4.h    |    3 ++
->  arch/arm/mach-exynos/clock-exynos4210.c |   37
-> ++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/clock-exynos4212.c |   41
-> +++++++++++++++++++++++++++++-
->  4 files changed, 81 insertions(+), 41 deletions(-)
-> 
-> --
-> 1.7.4.1
+Yeah, I agree, looks good to me.
 
-Looks OK to me, will apply.
+But I think, nobody takes this series...?
+
+So may I take then send this series via samsung tree? Because for samsung
+spi dt, the file has been touched in samsung tree so it helps to avoid bad
+conflicts.
 
 Thanks.
 
