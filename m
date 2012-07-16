@@ -1,57 +1,89 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V2 0/4] [SCSI] ufs: Adds glue drivers to ufshcd
-Date: Mon, 16 Jul 2012 16:22:23 +0000
-Message-ID: <201207161622.24063.arnd@arndb.de>
-References: <1342188465-20239-1-git-send-email-vinholikatti@gmail.com> <201207131545.28877.arnd@arndb.de> <1342447217.3176.22.camel@dabdike.int.hansenpartnership.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH RESEND v2 2/2] ARM: EXYNOS: Add gscaler device from DT
+Date: Mon, 16 Jul 2012 22:33:45 +0200
+Message-ID: <50047AA9.4000608@gmail.com>
+References: <1342416803-30809-1-git-send-email-shaik.ameer@samsung.com> <1342416803-30809-3-git-send-email-shaik.ameer@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:57953 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753109Ab2GPTpf (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:55323 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753125Ab2GPUdt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 15:45:35 -0400
-In-Reply-To: <1342447217.3176.22.camel@dabdike.int.hansenpartnership.com>
+	Mon, 16 Jul 2012 16:33:49 -0400
+Received: by bkwj10 with SMTP id j10so5107373bkw.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 13:33:48 -0700 (PDT)
+In-Reply-To: <1342416803-30809-3-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Vinayak Holikatti <vinholikatti@gmail.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com
+To: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, olofj@google.com, thomas.ab@samsung.com, sylvester.nawrocki@gmail.com, sachin.kamat@linaro.org, joshi@samsung.com, ameersk@gmail.com
 
-On Monday 16 July 2012, James Bottomley wrote:
-> On Fri, 2012-07-13 at 15:45 +0000, Arnd Bergmann wrote:
-> > On Friday 13 July 2012, Vinayak Holikatti wrote:
-> > > This patch set adds following features
-> > >  - Seprates PCI specific code from ufshcd.c to make it as core
-> > >  - Adds PCI glue driver ufshcd-pci.c
-> > >  - Adds Platform glue driver ufshcd-pltfrm.c
-> > >  - Update correct transfer size in Command UPIU
-> > 
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> I need a maintainer ack for this to go upstream.
-> 
-> Also, looking at this, I think this patch series isn't bisectable:
-> Patch 1 removes PCI support and patch 2 adds it back in a different
-> form.  However, any PCI based UFS system would stop working if the
-> bisect landed at patch 1.  I think you can fix this just by combining
-> patches 1 and 2.
+Hi Shaik,
 
-I suggested to split the patch in two in a private review that we
-did on the linaro mailing list. I gave my Ack because the split
-was done, but I failed to notice that it was done differently
-from what I suggested in 
+On 07/16/2012 07:33 AM, Shaik Ameer Basha wrote:
+> +++ b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+> @@ -0,0 +1,16 @@
+> +* Samsung Exynos5 Gscaler device
+> +
+> +Gscaler is used for scaling and color space conversion on EXYNOS5 SoCs.
+> +
+> +Required properties:
+> +- compatible: should be "samsung,exynos-gsc"
 
-On Monday 02 July 2012, Arnd Bergmann wrote:
-> I would recommend that you split this patch into two separate
-> changesets, where you do all the changes to existing code in the
-> first patch, and only move but don't change code in the second one
-> that creates the new file.
+Shouldn't there rather be a specific "compatible" property for each SoC,
+e.g.
+    - compatible: should be one of:
+	"samsung5250,exynos-gsc",
+	"samsung5450,exynos-gsc",
+etc. ?
 
-I agree that breaking bisectibility by ripping out the PCI code
-first is not good. The version 2 is not actually easier to review
-at all than the first version, it just splits the changes by
-file, which is pointless.
+> +- reg: should contian Gsaler physical address location and length.
 
-	Arnd
+contian -> contain, Gsaler -> Gscaler
+
+> +- interrupts: should contain Gscaler interrupt number
+> +
+> +Example:
+> +
+> +gsc_0:  gsc@0x13e00000 {
+> +	compatible = "samsung,exynos-gsc";
+
+	compatible = "samsung5250,exynos-gsc";
+
+> +	reg =<0x13e00000 0x1000>;
+> +	interrupts =<0 85 0>;
+> +};
+
+The aliases are still undocumented. How about adding something
+along the lines of:
+
+"Each Gscaler node should have a numbered alias in the aliases node,
+in the form of gscN, N = 0...3."
+
+?
+
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 4272b29..b945c00 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -23,6 +23,13 @@
+>   	compatible = "samsung,exynos5250";
+>   	interrupt-parent =<&gic>;
+>
+> +	aliases {
+> +		gsc0 =&gsc_0;
+> +		gsc1 =&gsc_1;
+> +		gsc2 =&gsc_2;
+> +		gsc3 =&gsc_3;
+> +	};
+> +
+>   	gic:interrupt-controller@10481000 {
+>   		compatible = "arm,cortex-a9-gic";
+>   		#interrupt-cells =<3>;
+
+--
+
+Regards,
+Sylwester
