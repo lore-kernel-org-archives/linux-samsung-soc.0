@@ -1,92 +1,51 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH v2 2/2] ARM: EXYNOS: Add G2D related clock entries for SMDK4X12
-Date: Mon, 16 Jul 2012 10:37:00 +0530
-Message-ID: <1342415220-15497-3-git-send-email-sachin.kamat@linaro.org>
-References: <1342415220-15497-1-git-send-email-sachin.kamat@linaro.org>
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH RESEND v2 0/2] Add device tree and clock support for Gscaler.
+Date: Mon, 16 Jul 2012 11:03:21 +0530
+Message-ID: <1342416803-30809-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:33902 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751090Ab2GPFHa (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:52058 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750789Ab2GPFS6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 01:07:30 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rp8so9452839pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 15 Jul 2012 22:07:30 -0700 (PDT)
-In-Reply-To: <1342415220-15497-1-git-send-email-sachin.kamat@linaro.org>
+	Mon, 16 Jul 2012 01:18:58 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7800I5IMRC9IC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 Jul 2012 14:18:57 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M78008JRMRF4640@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 16 Jul 2012 14:18:56 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, olofj@google.com, thomas.ab@samsung.com, sylvester.nawrocki@gmail.com, sachin.kamat@linaro.org, joshi@samsung.com, ameersk@gmail.com, shaik.ameer@samsung.com
 
-Adds G2D related clock entries for SMDK4X12 boards.
+This patch series adds clock support for Gscaler and device node
+ entries for Gscaler on exynos5.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/mach-exynos/clock-exynos4212.c |   41 +++++++++++++++++++++++++++++-
- 1 files changed, 39 insertions(+), 2 deletions(-)
+This patch is based on Kukjin Kim's (linux-samsung) for-next branch.
+    https://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-diff --git a/arch/arm/mach-exynos/clock-exynos4212.c b/arch/arm/mach-exynos/clock-exynos4212.c
-index da397d2..8fba0b5 100644
---- a/arch/arm/mach-exynos/clock-exynos4212.c
-+++ b/arch/arm/mach-exynos/clock-exynos4212.c
-@@ -68,12 +68,45 @@ static struct clksrc_clk clk_mout_mpll_user = {
- 	.reg_src	= { .reg = EXYNOS4_CLKSRC_CPU, .shift = 24, .size = 1 },
- };
- 
-+static struct clksrc_clk exynos4x12_clk_mout_g2d0 = {
-+	.clk	= {
-+		.name		= "mout_g2d0",
-+	},
-+	.sources = &exynos4_clkset_mout_g2d0,
-+	.reg_src = { .reg = EXYNOS4_CLKSRC_DMC, .shift = 20, .size = 1 },
-+};
-+
-+static struct clksrc_clk exynos4x12_clk_mout_g2d1 = {
-+	.clk	= {
-+		.name		= "mout_g2d1",
-+	},
-+	.sources = &exynos4_clkset_mout_g2d1,
-+	.reg_src = { .reg = EXYNOS4_CLKSRC_DMC, .shift = 24, .size = 1 },
-+};
-+
-+static struct clk *exynos4x12_clkset_mout_g2d_list[] = {
-+	[0] = &exynos4x12_clk_mout_g2d0.clk,
-+	[1] = &exynos4x12_clk_mout_g2d1.clk,
-+};
-+
-+static struct clksrc_sources exynos4x12_clkset_mout_g2d = {
-+	.sources	= exynos4x12_clkset_mout_g2d_list,
-+	.nr_sources	= ARRAY_SIZE(exynos4x12_clkset_mout_g2d_list),
-+};
-+
- static struct clksrc_clk *sysclks[] = {
- 	&clk_mout_mpll_user,
- };
- 
- static struct clksrc_clk clksrcs[] = {
--	/* nothing here yet */
-+	{
-+		.clk	= {
-+			.name		= "sclk_fimg2d",
-+		},
-+		.sources = &exynos4x12_clkset_mout_g2d,
-+		.reg_src = { .reg = EXYNOS4_CLKSRC_DMC, .shift = 28, .size = 1 },
-+		.reg_div = { .reg = EXYNOS4_CLKDIV_DMC1, .shift = 0, .size = 4 },
-+	},
- };
- 
- static struct clk init_clocks_off[] = {
-@@ -102,7 +135,11 @@ static struct clk init_clocks_off[] = {
- 		.devname	= "exynos-fimc-lite.1",
- 		.enable		= exynos4212_clk_ip_isp0_ctrl,
- 		.ctrlbit	= (1 << 3),
--	}
-+	}, {
-+		.name		= "fimg2d",
-+		.enable		= exynos4_clk_ip_dmc_ctrl,
-+		.ctrlbit	= (1 << 23),
-+	},
- };
- 
- #ifdef CONFIG_PM_SLEEP
--- 
-1.7.4.1
+changes since v1:
+- Addressed review comments from Sylwester Nawrocki
+    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg11177.html
+- Addressed review comments from Sachin Kamat
+    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg11176.html
+    http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg11178.html
+
+Resending this patch for posting to devicetree-discuss@lists.ozlabs.org
+
+Shaik Ameer Basha (2):
+  ARM: EXYNOS: Add clock support for Gscaler
+  ARM: EXYNOS: Add gscaler device from DT
+
+ .../devicetree/bindings/media/exynos5-gsc.txt      |   16 ++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   31 ++++++++
+ arch/arm/mach-exynos/clock-exynos5.c               |   79 ++++++++++++++++++++
+ arch/arm/mach-exynos/include/mach/map.h            |    3 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    8 ++
+ 5 files changed, 137 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-gsc.txt
