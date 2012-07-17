@@ -1,67 +1,145 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: ARM: s3c2410: remove dead mach-s3c2410 directory
-Date: Tue, 17 Jul 2012 09:01:16 +0900
-Message-ID: <144301cd63af$49c53520$dd4f9f60$%kim@samsung.com>
-References: <1340619112.1773.155.camel@x61.thuisdomein>
- <201206251806.28081.heiko@sntech.de>
+Subject: RE: [PATCH] [CPUFREQ] EXYNOS5250: Add support max 1.7GHz for EXYNOS5250
+Date: Tue, 17 Jul 2012 09:11:06 +0900
+Message-ID: <144501cd63b0$a91e94c0$fb5bbe40$%kim@samsung.com>
+References: <02d501cd4ebe$d9fbc100$8df34300$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-reply-to: <201206251806.28081.heiko@sntech.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:51013 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751308Ab2GQALH (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 16 Jul 2012 20:11:07 -0400
+In-reply-to: <02d501cd4ebe$d9fbc100$8df34300$%kim@samsung.com>
 Content-language: ko
-Sender: linux-kernel-owner@vger.kernel.org
-To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, 'Paul Bolle' <pebolle@tiscali.nl>
-Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org
+Cc: "'Rafael J. Wysocki'" <rjw@sisk.pl>, jc.lee@samsung.com
 
-Heiko St=C3=BCbner wrote:
->=20
-> Am Montag 25 Juni 2012, 12:11:52 schrieb Paul Bolle:
-> > Commit 85fd6d63bf2927b9da7ab1b0d46723bfdb13808c ("ARM: S3C2410: mov=
-e
-> > mach-s3c2410/* into mach-s3c24xx/") orphaned
-> > arch/arm/mach-s3c2410/Kconfig: currently no other Kconfig file sour=
-ces
-> > that file. This means that the Kconfig symbols S3C2410_CPUFREQ and
-> > S3C2410_PLLTABLE will never be set, which in turns means that the m=
-acros
-> > CONFIG_S3C2410_CPUFREQ and CONFIG_S3C2410_PLLTABLE will never be
-> > defined.
-> >
-> > All this makes that all four files in the mach-directory (Kconfig,
-> > Makefile, cpu-freq.c, and pll.c) are effectively dead files since v=
-3.4:
-> > none of them can lead to any code in someones kernel. This director=
-y can
-> > safely be removed.
->=20
-> I don't think so. CPU-frequency-scaling on the earlier S3C architectu=
-res
-> was
-> probably working before the beginning of the directory merge.
->=20
-Yeah, maybe. But I think, sourcing mach-s3c2410/Kconfig is enough to fi=
-x working s3c24xx cpufreq.
+Kukjin Kim wrote:
+> 
+> From: Jaecheol Lee <jc.lee@samsung.com>
+> 
+> This patch adds support 1.7GHz max frequency for EXYNOS5250
+> 
+> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> ---
+>  drivers/cpufreq/exynos5250-cpufreq.c |   55
++++++++++++++++---------------
+> ----
+>  1 files changed, 24 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
+> b/drivers/cpufreq/exynos5250-cpufreq.c
+> index a883316..e64c253 100644
+> --- a/drivers/cpufreq/exynos5250-cpufreq.c
+> +++ b/drivers/cpufreq/exynos5250-cpufreq.c
+> @@ -65,20 +65,20 @@ static unsigned int
+> clkdiv_cpu0_5250[CPUFREQ_LEVEL_END][8] = {
+>  	 * Clock divider value for following
+>  	 * { ARM, CPUD, ACP, PERIPH, ATB, PCLK_DBG, APLL, ARM2 }
+>  	 */
+> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1700 MHz - N/A */
+> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1600 MHz - N/A */
+> -	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1500 MHz - N/A */
+> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1400 MHz */
+> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1300 MHz */
+> -	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1200 MHz */
+> -	{ 0, 2, 7, 7, 5, 1, 2, 0 },	/* 1100 MHz */
+> -	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 1000 MHz */
+> -	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 900 MHz */
+> -	{ 0, 2, 7, 7, 3, 1, 1, 0 },	/* 800 MHz */
+> +	{ 0, 3, 7, 7, 7, 3, 5, 0 },	/* 1700 MHz */
+> +	{ 0, 3, 7, 7, 7, 1, 4, 0 },	/* 1600 MHz */
+> +	{ 0, 2, 7, 7, 7, 1, 4, 0 },	/* 1500 MHz */
+> +	{ 0, 2, 7, 7, 6, 1, 4, 0 },	/* 1400 MHz */
+> +	{ 0, 2, 7, 7, 6, 1, 3, 0 },	/* 1300 MHz */
+> +	{ 0, 2, 7, 7, 5, 1, 3, 0 },	/* 1200 MHz */
+> +	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1100 MHz */
+> +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 1000 MHz */
+> +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 900 MHz */
+> +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 800 MHz */
+>  	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 700 MHz */
+> -	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 600 MHz */
+> +	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 600 MHz */
+>  	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 500 MHz */
+> -	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 400 MHz */
+> +	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 400 MHz */
+>  	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 300 MHz */
+>  	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 200 MHz */
+>  };
+> @@ -87,9 +87,9 @@ static unsigned int
+> clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
+>  	/* Clock divider value for following
+>  	 * { COPY, HPM }
+>  	 */
+> -	{ 0, 2 },	/* 1700 MHz - N/A */
+> -	{ 0, 2 },	/* 1600 MHz - N/A */
+> -	{ 0, 2 },	/* 1500 MHz - N/A */
+> +	{ 0, 2 },	/* 1700 MHz */
+> +	{ 0, 2 },	/* 1600 MHz */
+> +	{ 0, 2 },	/* 1500 MHz */
+>  	{ 0, 2 },	/* 1400 MHz */
+>  	{ 0, 2 },	/* 1300 MHz */
+>  	{ 0, 2 },	/* 1200 MHz */
+> @@ -106,10 +106,10 @@ static unsigned int
+> clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
+>  };
+> 
+>  static unsigned int exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
+> -	(0),				/* 1700 MHz - N/A */
+> -	(0),				/* 1600 MHz - N/A */
+> -	(0),				/* 1500 MHz - N/A */
+> -	(0),				/* 1400 MHz */
+> +	((425 << 16) | (6 << 8) | 0),	/* 1700 MHz */
+> +	((200 << 16) | (3 << 8) | 0),	/* 1600 MHz */
+> +	((250 << 16) | (4 << 8) | 0),	/* 1500 MHz */
+> +	((175 << 16) | (3 << 8) | 0),	/* 1400 MHz */
+>  	((325 << 16) | (6 << 8) | 0),	/* 1300 MHz */
+>  	((200 << 16) | (4 << 8) | 0),	/* 1200 MHz */
+>  	((275 << 16) | (6 << 8) | 0),	/* 1100 MHz */
+> @@ -126,9 +126,10 @@ static unsigned int
+> exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
+> 
+>  /* ASV group voltage table */
+>  static const unsigned int asv_voltage_5250[CPUFREQ_LEVEL_END] = {
+> -	0, 0, 0, 0, 0, 0, 0,	/* 1700 MHz ~ 1100 MHz Not supported */
+> -	1175000, 1125000, 1075000, 1050000, 1000000,
+> -	950000, 925000, 925000, 900000
+> +	1300000, 1250000, 1225000, 1200000, 1150000,
+> +	1125000, 1100000, 1075000, 1050000, 1025000,
+> +	1012500, 1000000,  975000,  950000,  937500,
+> +	925000
+>  };
+> 
+>  static void set_clkdiv(unsigned int div_index)
+> @@ -248,15 +249,7 @@ static void __init set_volt_table(void)
+>  {
+>  	unsigned int i;
+> 
+> -	exynos5250_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
+> -	exynos5250_freq_table[L1].frequency = CPUFREQ_ENTRY_INVALID;
+> -	exynos5250_freq_table[L2].frequency = CPUFREQ_ENTRY_INVALID;
+> -	exynos5250_freq_table[L3].frequency = CPUFREQ_ENTRY_INVALID;
+> -	exynos5250_freq_table[L4].frequency = CPUFREQ_ENTRY_INVALID;
+> -	exynos5250_freq_table[L5].frequency = CPUFREQ_ENTRY_INVALID;
+> -	exynos5250_freq_table[L6].frequency = CPUFREQ_ENTRY_INVALID;
+> -
+> -	max_support_idx = L7;
+> +	max_support_idx = L0;
+> 
+>  	for (i = 0 ; i < CPUFREQ_LEVEL_END ; i++)
+>  		exynos5250_volt_table[i] = asv_voltage_5250[i];
+> --
+> 1.7.1
 
-> If I recall correctly Kgene was working on completing these missing p=
-ieces
-> of
-> the move to mach-s3c24xx.
->=20
-Yes, Heiko's memory is correct. But mainly my colleague is working it i=
-nstead and I'm just helping him. As I know he needs more time probably =
-it's not possible for upcoming merge window but next time, it's ok.
+Hi Rafael,
 
-> The reason for noone complaining about the missing cpufreq support ye=
-t,
-> might
-> be that projects using the early S3C architectures hae not made it to=
- the
-> most
-> recent kernel releases.
->=20
-Yeah, maybe. Anyway we should fix it as soon as possible...
+Any problems or comments on this? I couldn't find this in your tree...
 
 Thanks.
 
