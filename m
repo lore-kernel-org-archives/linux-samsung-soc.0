@@ -1,59 +1,67 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/2] spi/s3c64xx: Expand S3C64XX_SPI_{DE,}ACT macros at
- call sites
-Date: Tue, 17 Jul 2012 08:52:20 +0900
-Message-ID: <144001cd63ae$0a31af20$1e950d60$%kim@samsung.com>
-References: <1340889811-7524-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1340889811-7524-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <CACRpkdaC3mXcgTib3JWOjuvaWU_NEcg1JCV-4QNS4EcAAZzCJQ@mail.gmail.com>
+Subject: RE: ARM: s3c2410: remove dead mach-s3c2410 directory
+Date: Tue, 17 Jul 2012 09:01:16 +0900
+Message-ID: <144301cd63af$49c53520$dd4f9f60$%kim@samsung.com>
+References: <1340619112.1773.155.camel@x61.thuisdomein>
+ <201206251806.28081.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:27376 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751802Ab2GPXwW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 19:52:22 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7A00CAD2ASL4A0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 08:52:20 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7A00C2Y2B8PO00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 08:52:20 +0900 (KST)
-In-reply-to: <CACRpkdaC3mXcgTib3JWOjuvaWU_NEcg1JCV-4QNS4EcAAZzCJQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <201206251806.28081.heiko@sntech.de>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
+To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, 'Paul Bolle' <pebolle@tiscali.nl>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-Linus Walleij wrote:
-> 
-> On Thu, Jun 28, 2012 at 3:23 PM, Mark Brown
-> <broonie@opensource.wolfsonmicro.com> wrote:
-> 
-> > They have very few users and they're both just doing a single register
-> > write so the advantage of having the macro is a bit limited. An inline
-> > function might make sense but it's as easy to just do the writes
-> directly.
+Heiko St=C3=BCbner wrote:
+>=20
+> Am Montag 25 Juni 2012, 12:11:52 schrieb Paul Bolle:
+> > Commit 85fd6d63bf2927b9da7ab1b0d46723bfdb13808c ("ARM: S3C2410: mov=
+e
+> > mach-s3c2410/* into mach-s3c24xx/") orphaned
+> > arch/arm/mach-s3c2410/Kconfig: currently no other Kconfig file sour=
+ces
+> > that file. This means that the Kconfig symbols S3C2410_CPUFREQ and
+> > S3C2410_PLLTABLE will never be set, which in turns means that the m=
+acros
+> > CONFIG_S3C2410_CPUFREQ and CONFIG_S3C2410_PLLTABLE will never be
+> > defined.
 > >
-> > Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> 
-> Much clearer.
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-Yeah, I agree, looks good to me.
+> > All this makes that all four files in the mach-directory (Kconfig,
+> > Makefile, cpu-freq.c, and pll.c) are effectively dead files since v=
+3.4:
+> > none of them can lead to any code in someones kernel. This director=
+y can
+> > safely be removed.
+>=20
+> I don't think so. CPU-frequency-scaling on the earlier S3C architectu=
+res
+> was
+> probably working before the beginning of the directory merge.
+>=20
+Yeah, maybe. But I think, sourcing mach-s3c2410/Kconfig is enough to fi=
+x working s3c24xx cpufreq.
 
-But I think, nobody takes this series...?
+> If I recall correctly Kgene was working on completing these missing p=
+ieces
+> of
+> the move to mach-s3c24xx.
+>=20
+Yes, Heiko's memory is correct. But mainly my colleague is working it i=
+nstead and I'm just helping him. As I know he needs more time probably =
+it's not possible for upcoming merge window but next time, it's ok.
 
-So may I take then send this series via samsung tree? Because for samsung
-spi dt, the file has been touched in samsung tree so it helps to avoid bad
-conflicts.
+> The reason for noone complaining about the missing cpufreq support ye=
+t,
+> might
+> be that projects using the early S3C architectures hae not made it to=
+ the
+> most
+> recent kernel releases.
+>=20
+Yeah, maybe. Anyway we should fix it as soon as possible...
 
 Thanks.
 
