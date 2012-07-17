@@ -1,141 +1,145 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for s5p-tv
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for s5p-tv
  driver
-Date: Tue, 17 Jul 2012 11:41:22 +0900
-Message-ID: <147701cd63c5$a6c8ff70$f45afe50$%kim@samsung.com>
-References: <1341218932-15846-1-git-send-email-sachin.kamat@linaro.org>
- <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org>
+Date: Tue, 17 Jul 2012 09:03:08 +0530
+Message-ID: <5004DCF4.1090409@linaro.org>
+References: <1341218932-15846-1-git-send-email-sachin.kamat@linaro.org> <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org> <147701cd63c5$a6c8ff70$f45afe50$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:39091 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754289Ab2GQClX (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:54254 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753458Ab2GQDdO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 22:41:23 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7A0080CA4FNJL0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 11:41:21 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7A000C0A4X2G30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 11:41:21 +0900 (KST)
-In-reply-to: <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Mon, 16 Jul 2012 23:33:14 -0400
+Received: by pbbrp8 with SMTP id rp8so71858pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 20:33:14 -0700 (PDT)
+In-Reply-To: <147701cd63c5$a6c8ff70$f45afe50$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: tushar.behera@linaro.org, patches@linaro.org, a.sim@samsung.com, jiun.yu@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, a.sim@samsung.com, jiun.yu@samsung.com
 
-Sachin Kamat wrote:
+On 07/17/2012 08:11 AM, Kukjin Kim wrote:
+> Sachin Kamat wrote:
+>>
+>> From: Tushar Behera <tushar.behera@linaro.org>
+>>
+>> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
+>> platform data") makes the presence of platform data mandatory for s5p-tv
+>> driver. Adding an API to plat-samsung for this purpose.
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> ---
+>>  arch/arm/plat-samsung/devs.c              |   26
+> ++++++++++++++++++++++++++
+>>  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
+>>  2 files changed, 42 insertions(+), 0 deletions(-)
+>>  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
+>>
+>> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+>> index 07b5ac6..921ed88 100644
+>> --- a/arch/arm/plat-samsung/devs.c
+>> +++ b/arch/arm/plat-samsung/devs.c
+>> @@ -32,6 +32,8 @@
+>>  #include <linux/platform_data/s3c-hsudc.h>
+>>  #include <linux/platform_data/s3c-hsotg.h>
+>>
+>> +#include <media/s5p_hdmi.h>
+>> +
+>>  #include <asm/irq.h>
+>>  #include <asm/pmu.h>
+>>  #include <asm/mach/arch.h>
+>> @@ -759,6 +761,30 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
+>> s3c2410_platform_i2c *pd)
+>>  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
+>>  			       &s5p_device_i2c_hdmiphy);
+>>  }
+>> +
+>> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
+>> +
+>> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>> +				struct i2c_board_info *mhl_info, int
+> mhl_bus)
+>> +{
+>> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
+>> +
+>> +	if (soc_is_exynos4210() || soc_is_exynos4212() ||
+>> +						soc_is_exynos4412())
+>> +		pd->hdmiphy_bus = 8;
+>> +	else if (soc_is_s5pv210())
+>> +		pd->hdmiphy_bus = 3;
+>> +	else
+>> +		pd->hdmiphy_bus = 0;
+>> +
+>> +	pd->hdmiphy_info = hdmiphy_info;
+>> +	pd->mhl_info = mhl_info;
+>> +	pd->mhl_bus = mhl_bus;
+>> +
+>> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
+>> +				&s5p_device_hdmi);
+>> +}
 > 
-> From: Tushar Behera <tushar.behera@linaro.org>
+> (Cc'ed Ayoung Sim and Jiun Yu in my team)
 > 
-> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
-> platform data") makes the presence of platform data mandatory for s5p-tv
-> driver. Adding an API to plat-samsung for this purpose.
+> Totally I wonder, do we really need s5p_i2c_hdmiphy_set_platdata and this
+> adding together? You updated s5p_i2c_hdmiphy_set_platdata in your 1/4 patch
+> so I don't see why we should keep the bus number in duplicated...
 > 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/plat-samsung/devs.c              |   26
-++++++++++++++++++++++++++
->  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
->  2 files changed, 42 insertions(+), 0 deletions(-)
->  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
+
+s5p_i2c_hdmiphy_set_platdata sets platform data for
+s5p_device_i2c_hdmiphy. 'bus_num' assigned in that structure is not
+accessible in s5p-tv driver. But s5p-tv driver needs the bus number to
+get appropriate i2c adapter. Hence we need to update the bus number in
+both the places.
+
+
+> Thanks.
 > 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 07b5ac6..921ed88 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -32,6 +32,8 @@
->  #include <linux/platform_data/s3c-hsudc.h>
->  #include <linux/platform_data/s3c-hsotg.h>
-> 
-> +#include <media/s5p_hdmi.h>
-> +
->  #include <asm/irq.h>
->  #include <asm/pmu.h>
->  #include <asm/mach/arch.h>
-> @@ -759,6 +761,30 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
-> s3c2410_platform_i2c *pd)
->  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
->  			       &s5p_device_i2c_hdmiphy);
->  }
-> +
-> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
-> +
-> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
-> +				struct i2c_board_info *mhl_info, int
-mhl_bus)
-> +{
-> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
-> +
-> +	if (soc_is_exynos4210() || soc_is_exynos4212() ||
-> +						soc_is_exynos4412())
-> +		pd->hdmiphy_bus = 8;
-> +	else if (soc_is_s5pv210())
-> +		pd->hdmiphy_bus = 3;
-> +	else
-> +		pd->hdmiphy_bus = 0;
-> +
-> +	pd->hdmiphy_info = hdmiphy_info;
-> +	pd->mhl_info = mhl_info;
-> +	pd->mhl_bus = mhl_bus;
-> +
-> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
-> +				&s5p_device_hdmi);
-> +}
-
-(Cc'ed Ayoung Sim and Jiun Yu in my team)
-
-Totally I wonder, do we really need s5p_i2c_hdmiphy_set_platdata and this
-adding together? You updated s5p_i2c_hdmiphy_set_platdata in your 1/4 patch
-so I don't see why we should keep the bus number in duplicated...
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> +
->  #endif /* CONFIG_S5P_DEV_I2C_HDMIPHY */
-> 
->  /* I2S */
-> diff --git a/arch/arm/plat-samsung/include/plat/hdmi.h b/arch/arm/plat-
-> samsung/include/plat/hdmi.h
-> new file mode 100644
-> index 0000000..5dc7347
-> --- /dev/null
-> +++ b/arch/arm/plat-samsung/include/plat/hdmi.h
-> @@ -0,0 +1,16 @@
-> +/*
-> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
-> + *
-> + * This program is free software; you can redistribute  it and/or modify
-> it
-> + * under  the terms of  the GNU General  Public License as published by
-> the
-> + * Free Software Foundation;  either version 2 of the  License, or (at
-> your
-> + * option) any later version.
-> + */
-> +
-> +#ifndef __PLAT_SAMSUNG_HDMI_H
-> +#define __PLAT_SAMSUNG_HDMI_H __FILE__
-> +
-> +extern void s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
-> +				struct i2c_board_info *mhl_info, int
-mhl_bus);
-> +
-> +#endif /* __PLAT_SAMSUNG_HDMI_H */
+> Best regards,
+> Kgene.
 > --
-> 1.7.4.1
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> 
+>> +
+>>  #endif /* CONFIG_S5P_DEV_I2C_HDMIPHY */
+>>
+>>  /* I2S */
+>> diff --git a/arch/arm/plat-samsung/include/plat/hdmi.h b/arch/arm/plat-
+>> samsung/include/plat/hdmi.h
+>> new file mode 100644
+>> index 0000000..5dc7347
+>> --- /dev/null
+>> +++ b/arch/arm/plat-samsung/include/plat/hdmi.h
+>> @@ -0,0 +1,16 @@
+>> +/*
+>> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+>> + *
+>> + * This program is free software; you can redistribute  it and/or modify
+>> it
+>> + * under  the terms of  the GNU General  Public License as published by
+>> the
+>> + * Free Software Foundation;  either version 2 of the  License, or (at
+>> your
+>> + * option) any later version.
+>> + */
+>> +
+>> +#ifndef __PLAT_SAMSUNG_HDMI_H
+>> +#define __PLAT_SAMSUNG_HDMI_H __FILE__
+>> +
+>> +extern void s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>> +				struct i2c_board_info *mhl_info, int
+> mhl_bus);
+>> +
+>> +#endif /* __PLAT_SAMSUNG_HDMI_H */
+>> --
+>> 1.7.4.1
+> 
+
+
+-- 
+Tushar Behera
