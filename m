@@ -1,61 +1,112 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 2/2] spi/s3c64xx: Expand S3C64XX_SPI_{DE,}ACT macros at
- call sites
-Date: Tue, 17 Jul 2012 08:44:29 +0100
-Message-ID: <20120717074428.GB12047@opensource.wolfsonmicro.com>
-References: <1340889811-7524-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <1340889811-7524-2-git-send-email-broonie@opensource.wolfsonmicro.com>
- <CACRpkdaC3mXcgTib3JWOjuvaWU_NEcg1JCV-4QNS4EcAAZzCJQ@mail.gmail.com>
- <144001cd63ae$0a31af20$1e950d60$%kim@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dwmmc: Add quirk for broken Hardware Config
+Date: Tue, 17 Jul 2012 16:46:22 +0900
+Message-ID: <5005184E.6000807@samsung.com>
+References: <1342428302-10707-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="CdrF4e02JqNVZeln"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:35430 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751136Ab2GQHoc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jul 2012 03:44:32 -0400
-Content-Disposition: inline
-In-Reply-To: <144001cd63ae$0a31af20$1e950d60$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <1342428302-10707-1-git-send-email-girish.shivananjappa@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, shashidharh@vayavyalabs.com, thomas.abraham@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, 'Grant Likely' <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
+
+Hi Girish,
+
+On 07/16/2012 05:45 PM, Girish K S wrote:
+> In some Soc'S that integrate Designware mmc host controllers, the
+> HCON register is broken. The hardware configuration is not
+> updated. One specific usecase is the IDMAC. In Exysons5 SoC
+> there exist a internal DMA, but the HCON register's DMA_INTERFACE
+> field is not set to indicate its existance.
+> 
+> This quirk can be used in such case to force the existance broken
+> HCON field.
+> 
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+>  drivers/mmc/host/dw_mmc-pltfm.c |    5 +++++
+>  drivers/mmc/host/dw_mmc.c       |   11 ++++++++++-
+>  drivers/mmc/host/dw_mmc.h       |    1 +
+>  include/linux/mmc/host.h        |    1 +
+>  4 files changed, 17 insertions(+), 1 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
+> index 900f412..24ea485 100644
+> --- a/drivers/mmc/host/dw_mmc-pltfm.c
+> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
+> @@ -35,9 +35,14 @@ static unsigned long exynos5250_dwmmc_caps[4] = {
+>  	MMC_CAP_CMD23,
+>  };
+>  
+> +static unsigned long exynos5250_dwmmc_caps2[1] = {
+> +	MMC_CAP2_CONFIG_BROKEN,
+> +};
+> +
+>  static struct dw_mci_drv_data exynos5250_drv_data = {
+>  	.ctrl_type	= DW_MCI_TYPE_EXYNOS5250,
+>  	.caps		= exynos5250_dwmmc_caps,
+> +	.caps2		= exynos5250_dwmmc_caps2,
+>  };
+>  
+>  static const struct of_device_id dw_mci_pltfm_match[] = {
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 1a59a92..030224c 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -431,7 +431,13 @@ static int dw_mci_idmac_init(struct dw_mci *host)
+>  	/* Check if Hardware Configuration Register has support for DMA */
+>  	dma_support = (mci_readl(host, HCON) >> 16) & 0x3;
+>  
+> -	if (!dma_support || dma_support > 2) {
+> +	/*
+> +	 * In Some of the Soc's the HCON Register is broken. Even though the
+> +	 * Soc's has a internal DMA the HCON register's DMA field doesnt
+> +	 * show it. So additional quirk is added for such Soc's
+> +	 */
+> +	if ((!dma_support || dma_support > 2) &&
+> +		!((u32)host->drv_data->caps2 & MMC_CAP2_CONFIG_BROKEN)) {
+Just caps2? if use the device tree, need to get ctrl_id?
+It didn't work..
+>  		dev_err(&host->dev,
+>  			"Host Controller does not support IDMA Tx.\n");
+>  		host->dma_ops = NULL;
+> @@ -1957,6 +1963,9 @@ static int __init dw_mci_init_slot(struct dw_mci *host, unsigned int id)
+>  	if (host->pdata->caps2)
+>  		mmc->caps2 = host->pdata->caps2;
+>  
+> +	if (host->drv_data->caps2)
+> +		mmc->caps2 |= host->drv_data->caps2[ctrl_id];
+> +
+>  	if (host->pdata->get_bus_wd) {
+>  		if (host->pdata->get_bus_wd(slot->id) >= 4)
+>  			mmc->caps |= MMC_CAP_4_BIT_DATA;
+> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> index 6c17282..8c4810a 100644
+> --- a/drivers/mmc/host/dw_mmc.h
+> +++ b/drivers/mmc/host/dw_mmc.h
+> @@ -203,6 +203,7 @@ extern int dw_mci_resume(struct dw_mci *host);
+>  struct dw_mci_drv_data {
+>  	unsigned long		ctrl_type;
+>  	unsigned long		*caps;
+> +	unsigned long		*caps2;
+>  };
+>  
+>  #endif /* _DW_MMC_H_ */
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 65c64ee..ab5c7f9 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -261,6 +261,7 @@ struct mmc_host {
+>  #define MMC_CAP2_HC_ERASE_SZ	(1 << 9)	/* High-capacity erase size */
+>  #define MMC_CAP2_CD_ACTIVE_HIGH	(1 << 10)	/* Card-detect signal active high */
+>  #define MMC_CAP2_RO_ACTIVE_HIGH	(1 << 11)	/* Write-protect signal active high */
+> +#define MMC_CAP2_CONFIG_BROKEN	(1 << 12)	/* Broken Config Register */
+>  
+>  	mmc_pm_flag_t		pm_caps;	/* supported pm features */
+>  	unsigned int        power_notify_type;
+> 
 
 
---CdrF4e02JqNVZeln
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Tue, Jul 17, 2012 at 08:52:20AM +0900, Kukjin Kim wrote:
-
-> So may I take then send this series via samsung tree? Because for samsung
-> spi dt, the file has been touched in samsung tree so it helps to avoid bad
-> conflicts.
-
-May as well, yes.
-
---CdrF4e02JqNVZeln
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQBRfTAAoJEBus8iNuMP3dF68P/3xjlFD/ZwTdaM0dLD1D6KTD
-94jsh6YJ58UAWudQycerAwmInIhoWVbGtCKXNYgiC5orxPO+MHA0PAMWH8hrtSZ7
-EOHYELt0UsmR+mYfsGqBfUMiSU9nnkR9fPQSMh660byANM0FnyMBixmRumk/b0ra
-C00Nr/aKm05hlGaJCtXWvH7b0nWwofhxaNsBgI3btpe4F2Stus7Ms1nEHXggP+v8
-AjP/tIjbWlRCJka8NS9POWp6YNE+CjJ9d4gnFk70+bL/x6f4R9Vupt2FFA1FnRQT
-2eB5w6nZQYNNLqXgZcE4muYtF1aKdNjAhakw2o1flQOQfkJIFjcOcZE9sZj8EFDC
-BbDjyldDv5AyU78JhFDxrP5xvfVEO9DLMH13okHFlXPxULZiUTfEPnGPOM9tv73p
-hNHugqL4p5aVjBZARTNx0HGzkL9voNSo64/BlTPVdL1fU2kFC2JF0DTuZHfS2NNK
-yy9k+nGLdIKIWmy4w+PlaD2mHv9VuXeupV+gtJ3trYnWkspmpzue1rKsmD1g0wac
-kRLHLm3TTH4bT+P1hEseAYgb+Bu13TUSrz9NGk0DzmZPDakXVlXuKnxsJcJvdwkX
-ATgKSUrKVYhMrTQkU+8aPsn9FzG2QFM4bnjsPA25y2WvgqNiQ+zo2Q4OI1rDmSDN
-tUbc2yvKv3/jBp5ASWOB
-=snfq
------END PGP SIGNATURE-----
-
---CdrF4e02JqNVZeln--
