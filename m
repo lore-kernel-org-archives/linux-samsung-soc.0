@@ -1,153 +1,148 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC/PATCH 02/13] media: s5p-csis: Add device tree support
-Date: Tue, 17 Jul 2012 20:16:23 +0200
-Message-ID: <5005ABF7.6020008@gmail.com>
-References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com> <1337975573-27117-2-git-send-email-s.nawrocki@samsung.com> <Pine.LNX.4.64.1207161031000.12302@axis700.grange>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH] [CPUFREQ] EXYNOS5250: Add support max 1.7GHz for EXYNOS5250
+Date: Tue, 17 Jul 2012 20:33:38 +0200
+Message-ID: <201207172033.38308.rjw@sisk.pl>
+References: <02d501cd4ebe$d9fbc100$8df34300$%kim@samsung.com> <144501cd63b0$a91e94c0$fb5bbe40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:36351 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756195Ab2GQSQ1 (ORCPT
+Received: from ogre.sisk.pl ([193.178.161.156]:44747 "EHLO ogre.sisk.pl"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752059Ab2GQS2A (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jul 2012 14:16:27 -0400
-In-Reply-To: <Pine.LNX.4.64.1207161031000.12302@axis700.grange>
+	Tue, 17 Jul 2012 14:28:00 -0400
+In-Reply-To: <144501cd63b0$a91e94c0$fb5bbe40$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org, jc.lee@samsung.com
 
-Hi Guennadi,
+On Tuesday, July 17, 2012, Kukjin Kim wrote:
+> Kukjin Kim wrote:
+> > 
+> > From: Jaecheol Lee <jc.lee@samsung.com>
+> > 
+> > This patch adds support 1.7GHz max frequency for EXYNOS5250
+> > 
+> > Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
+> > Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+> > ---
+> >  drivers/cpufreq/exynos5250-cpufreq.c |   55
+> +++++++++++++++---------------
+> > ----
+> >  1 files changed, 24 insertions(+), 31 deletions(-)
+> > 
+> > diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
+> > b/drivers/cpufreq/exynos5250-cpufreq.c
+> > index a883316..e64c253 100644
+> > --- a/drivers/cpufreq/exynos5250-cpufreq.c
+> > +++ b/drivers/cpufreq/exynos5250-cpufreq.c
+> > @@ -65,20 +65,20 @@ static unsigned int
+> > clkdiv_cpu0_5250[CPUFREQ_LEVEL_END][8] = {
+> >  	 * Clock divider value for following
+> >  	 * { ARM, CPUD, ACP, PERIPH, ATB, PCLK_DBG, APLL, ARM2 }
+> >  	 */
+> > -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1700 MHz - N/A */
+> > -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1600 MHz - N/A */
+> > -	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1500 MHz - N/A */
+> > -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1400 MHz */
+> > -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1300 MHz */
+> > -	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1200 MHz */
+> > -	{ 0, 2, 7, 7, 5, 1, 2, 0 },	/* 1100 MHz */
+> > -	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 1000 MHz */
+> > -	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 900 MHz */
+> > -	{ 0, 2, 7, 7, 3, 1, 1, 0 },	/* 800 MHz */
+> > +	{ 0, 3, 7, 7, 7, 3, 5, 0 },	/* 1700 MHz */
+> > +	{ 0, 3, 7, 7, 7, 1, 4, 0 },	/* 1600 MHz */
+> > +	{ 0, 2, 7, 7, 7, 1, 4, 0 },	/* 1500 MHz */
+> > +	{ 0, 2, 7, 7, 6, 1, 4, 0 },	/* 1400 MHz */
+> > +	{ 0, 2, 7, 7, 6, 1, 3, 0 },	/* 1300 MHz */
+> > +	{ 0, 2, 7, 7, 5, 1, 3, 0 },	/* 1200 MHz */
+> > +	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1100 MHz */
+> > +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 1000 MHz */
+> > +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 900 MHz */
+> > +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 800 MHz */
+> >  	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 700 MHz */
+> > -	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 600 MHz */
+> > +	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 600 MHz */
+> >  	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 500 MHz */
+> > -	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 400 MHz */
+> > +	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 400 MHz */
+> >  	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 300 MHz */
+> >  	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 200 MHz */
+> >  };
+> > @@ -87,9 +87,9 @@ static unsigned int
+> > clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
+> >  	/* Clock divider value for following
+> >  	 * { COPY, HPM }
+> >  	 */
+> > -	{ 0, 2 },	/* 1700 MHz - N/A */
+> > -	{ 0, 2 },	/* 1600 MHz - N/A */
+> > -	{ 0, 2 },	/* 1500 MHz - N/A */
+> > +	{ 0, 2 },	/* 1700 MHz */
+> > +	{ 0, 2 },	/* 1600 MHz */
+> > +	{ 0, 2 },	/* 1500 MHz */
+> >  	{ 0, 2 },	/* 1400 MHz */
+> >  	{ 0, 2 },	/* 1300 MHz */
+> >  	{ 0, 2 },	/* 1200 MHz */
+> > @@ -106,10 +106,10 @@ static unsigned int
+> > clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
+> >  };
+> > 
+> >  static unsigned int exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
+> > -	(0),				/* 1700 MHz - N/A */
+> > -	(0),				/* 1600 MHz - N/A */
+> > -	(0),				/* 1500 MHz - N/A */
+> > -	(0),				/* 1400 MHz */
+> > +	((425 << 16) | (6 << 8) | 0),	/* 1700 MHz */
+> > +	((200 << 16) | (3 << 8) | 0),	/* 1600 MHz */
+> > +	((250 << 16) | (4 << 8) | 0),	/* 1500 MHz */
+> > +	((175 << 16) | (3 << 8) | 0),	/* 1400 MHz */
+> >  	((325 << 16) | (6 << 8) | 0),	/* 1300 MHz */
+> >  	((200 << 16) | (4 << 8) | 0),	/* 1200 MHz */
+> >  	((275 << 16) | (6 << 8) | 0),	/* 1100 MHz */
+> > @@ -126,9 +126,10 @@ static unsigned int
+> > exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
+> > 
+> >  /* ASV group voltage table */
+> >  static const unsigned int asv_voltage_5250[CPUFREQ_LEVEL_END] = {
+> > -	0, 0, 0, 0, 0, 0, 0,	/* 1700 MHz ~ 1100 MHz Not supported */
+> > -	1175000, 1125000, 1075000, 1050000, 1000000,
+> > -	950000, 925000, 925000, 900000
+> > +	1300000, 1250000, 1225000, 1200000, 1150000,
+> > +	1125000, 1100000, 1075000, 1050000, 1025000,
+> > +	1012500, 1000000,  975000,  950000,  937500,
+> > +	925000
+> >  };
+> > 
+> >  static void set_clkdiv(unsigned int div_index)
+> > @@ -248,15 +249,7 @@ static void __init set_volt_table(void)
+> >  {
+> >  	unsigned int i;
+> > 
+> > -	exynos5250_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
+> > -	exynos5250_freq_table[L1].frequency = CPUFREQ_ENTRY_INVALID;
+> > -	exynos5250_freq_table[L2].frequency = CPUFREQ_ENTRY_INVALID;
+> > -	exynos5250_freq_table[L3].frequency = CPUFREQ_ENTRY_INVALID;
+> > -	exynos5250_freq_table[L4].frequency = CPUFREQ_ENTRY_INVALID;
+> > -	exynos5250_freq_table[L5].frequency = CPUFREQ_ENTRY_INVALID;
+> > -	exynos5250_freq_table[L6].frequency = CPUFREQ_ENTRY_INVALID;
+> > -
+> > -	max_support_idx = L7;
+> > +	max_support_idx = L0;
+> > 
+> >  	for (i = 0 ; i < CPUFREQ_LEVEL_END ; i++)
+> >  		exynos5250_volt_table[i] = asv_voltage_5250[i];
+> > --
+> > 1.7.1
+> 
+> Hi Rafael,
+> 
+> Any problems or comments on this? I couldn't find this in your tree...
 
-On 07/16/2012 10:55 AM, Guennadi Liakhovetski wrote:
-> Hi Sylwester
->
-> Thanks for your comments to my RFC and for pointing out to this your
-> earlier patch series. Unfortunately, I missed in in May, let me try to
-> provide some thoughts about this, we should really try to converge our
-> proposals. Maybe a discussion at KS would help too.
+No problems and I thought it would be merged through your platform tree.
 
-Thank you for the review. I was happy to see your RFC, as previously
-there seemed to be not much interest in DT among the media guys.
-Certainly, we need to work on a common approach to ensure interoperability
-of existing drivers and to avoid having people inventing different
-bindings for common features. I would also expect some share of device
-specific bindings, as diversity of media devices is significant.
-
-I'd be great to discuss these things at KS, especially support for 
-proper suspend/resume sequences. Also having common sessions with 
-other subsystems folks, like ASoC, for example, might be a good idea.
-
-I'm not sure if I'll be travelling to the KS though. :)
-
-> On Fri, 25 May 2012, Sylwester Nawrocki wrote:
->
->> s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
->> (camera host interface DMA engine and image processor). This patch
->> adds support for instantiating the MIPI-CSIS devices from DT and
->> parsing all SoC and board specific properties from device tree.
->> The MIPI DPHY control callback is now called directly from within
->> the driver, the platform code must ensure this callback does the
->> right thing for each SoC.
->>
->> The cell-index property is used to ensure proper signal routing,
->> from physical camera port, through MIPI-CSI2 receiver to the DMA
->> engine (FIMC?). It's also helpful in exposing the device topology
->> in user space at /dev/media? devnode (Media Controller API).
->>
->> This patch also defines a common property ("data-lanes") for MIPI-CSI
->> receivers and transmitters.
->>
->> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> ---
->>   Documentation/devicetree/bindings/video/mipi.txt   |    5 +
->>   .../bindings/video/samsung-mipi-csis.txt           |   47 ++++++++++
->>   drivers/media/video/s5p-fimc/mipi-csis.c           |   97 +++++++++++++++-----
->>   drivers/media/video/s5p-fimc/mipi-csis.h           |    1 +
->>   4 files changed, 126 insertions(+), 24 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/video/mipi.txt
->>   create mode 100644 Documentation/devicetree/bindings/video/samsung-mipi-csis.txt
->>
->> diff --git a/Documentation/devicetree/bindings/video/mipi.txt b/Documentation/devicetree/bindings/video/mipi.txt
->> new file mode 100644
->> index 0000000..5aed285
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/mipi.txt
->> @@ -0,0 +1,5 @@
->> +Common properties of MIPI-CSI1 and MIPI-CSI2 receivers and transmitters
->> +
->> + - data-lanes : number of differential data lanes wired and actively used in
->> +		communication between the transmitter and the receiver, this
->> +		excludes the clock lane;
->
-> Wouldn't it be better to use the standard "bus-width" DT property?
-
-I can't see any problems with using "bus-width". It seems sufficient
-and could indeed be better, without a need to invent new MIPI-CSI 
-specific names. That was my first RFC on that and my perspective 
-wasn't probably broad enough. :)
-
->> diff --git a/Documentation/devicetree/bindings/video/samsung-mipi-csis.txt b/Documentation/devicetree/bindings/video/samsung-mipi-csis.txt
->> new file mode 100644
->> index 0000000..7bce6f4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/samsung-mipi-csis.txt
->> @@ -0,0 +1,47 @@
->> +Samsung S5P/EXYNOS SoC MIPI-CSI2 receiver (MIPI CSIS)
->> +-----------------------------------------------------
->> +
->> +Required properties:
->> +
->> +- compatible - one of :
->> +		"samsung,s5pv210-csis",
->> +		"samsung,exynos4210-csis",
->> +		"samsung,exynos4212-csis",
->> +		"samsung,exynos4412-csis";
->> +- reg : physical base address and size of the device memory mapped registers;
->> +- interrupts      : should contain MIPI CSIS interrupt; the format of the
->> +		    interrupt specifier depends on the interrupt controller;
->> +- cell-index      : the hardware instance index;
->
-> Not sure whether this is absolutely needed... Wouldn't it be sufficient to
-> just enumerate them during probing?
-
-As Grant pointed to me, the "cell-index" property is something that we should
-be avoiding. But I needed something like this in the driver,
-to differentiate between the multiple IP instances. I cannot simply assign
-the indexes in random way to the hardware instances. Each of the MIPI-CSI 
-Slaves has different properties (e.g. supporting max. 2 or 4 data lanes).
-Additionally, a particular MIPI-CSI Slave instance is hard-wired inside the
-SoC to the FIMC input mux (cross-bar) and physical video port. IOW, an image
-sensor/video port/MIPI-CSIS instance assignment is fixed. If two MIPI-CSI 
-image sensors are connected, one of them will work only with MIPI-CSIS0, and
-the other only with MIPI-CSIS1.
-
-So the driver must be able to identify it's physical device (IO region + 
-IRQ) precisely.
-
-That said, I found out recently that a proper entries in the "aliases"
-could be used instead, and I could finally abandon the "cell-index" idea.
-Not sure how aliases approach is better but from what I can see it is
-a preferred way to handle things like the above.
-
-Please see Documentation/devicetree/bindings/sound/mxs-saif.txt and users
-of of_alias_get_id() for more details.
-
-So to summarize, the indexes are needed, but the current implementation 
-is not necessarily good, and AFAICT the aliases approach could be the way
-to go.
-
->> +- clock-frequency : The IP's main (system bus) clock frequency in Hz, the default
->> +		    value when this property is not specified is 166 MHz;
->> +- data-lanes      : number of physical MIPI-CSI2 lanes used;
->
-> ditto - bus-width?
-
-Yes, agreed. Let's drop it in favour of "bus-width".
-
---
-
-Regards,
-Sylwester
+Thanks,
+Rafael
