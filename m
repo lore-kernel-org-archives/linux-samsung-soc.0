@@ -1,112 +1,55 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: EXYNOS: Add DRM device to SMDK4X12 board
-Date: Tue, 17 Jul 2012 10:28:55 +0530
-Message-ID: <1342501135-10341-1-git-send-email-sachin.kamat@linaro.org>
+From: vinayak holikatti <vinholikatti@gmail.com>
+Subject: Re: [PATCH V2 3/4] [SCSI] ufs: Add Platform glue driver for ufshcd
+Date: Tue, 17 Jul 2012 11:39:49 +0530
+Message-ID: <CAKVbJB8PGZqOUOjDk-2uckx4MUkgKEb-EZ_TYt6C5fGjP2k85g@mail.gmail.com>
+References: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
+	<1342189698-20393-2-git-send-email-vinholikatti@gmail.com>
+	<CAKYAXd9cPuN-HfifDmz4M==QfjEW7CX6BF=rumSBSwRtO38_PQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:45012 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752207Ab2GQE71 (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:64621 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753057Ab2GQGJu (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jul 2012 00:59:27 -0400
-Received: by pbbrp8 with SMTP id rp8so182067pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 21:59:27 -0700 (PDT)
+	Tue, 17 Jul 2012 02:09:50 -0400
+In-Reply-To: <CAKYAXd9cPuN-HfifDmz4M==QfjEW7CX6BF=rumSBSwRtO38_PQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Namjae Jeon <linkinjeon@gmail.com>
+Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com
 
-DRM core device and FIMD DRM platform device support is added to
-SMDK4212 & SMDK4412 boards.
-
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
-This patch is based on for-next branch of Kukjin's tree.
----
- arch/arm/mach-exynos/Kconfig         |    1 +
- arch/arm/mach-exynos/mach-smdk4x12.c |   30 ++++++++++++++++++++++++++++++
- 2 files changed, 31 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index e698ca0..b5b4c8c 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -375,6 +375,7 @@ config MACH_SMDK4212
- 	select SAMSUNG_DEV_PWM
- 	select EXYNOS_DEV_SYSMMU
- 	select EXYNOS_DEV_DMA
-+	select EXYNOS_DEV_DRM
- 	select EXYNOS4_SETUP_FIMD0
- 	select EXYNOS4_SETUP_I2C1
- 	select EXYNOS4_SETUP_I2C3
-diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
-index 2623f3b..30ed609 100644
---- a/arch/arm/mach-exynos/mach-smdk4x12.c
-+++ b/arch/arm/mach-exynos/mach-smdk4x12.c
-@@ -41,6 +41,7 @@
- 
- #include <mach/map.h>
- 
-+#include <drm/exynos_drm.h>
- #include "common.h"
- 
- /* Following are default values for UCON, ULCON and UFCON UART registers */
-@@ -240,6 +241,26 @@ static struct samsung_keypad_platdata smdk4x12_keypad_data __initdata = {
- 	.cols		= 8,
- };
- 
-+#ifdef CONFIG_DRM_EXYNOS
-+static struct exynos_drm_fimd_pdata drm_fimd_pdata = {
-+	.panel	= {
-+		.timing	= {
-+			.left_margin	= 8,
-+			.right_margin	= 8,
-+			.upper_margin	= 6,
-+			.lower_margin	= 6,
-+			.hsync_len	= 6,
-+			.vsync_len	= 4,
-+			.xres		= 480,
-+			.yres		= 800,
-+		},
-+	},
-+	.vidcon0	= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB,
-+	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
-+	.default_win	= 0,
-+	.bpp		= 32,
-+};
-+#else
- static struct s3c_fb_pd_win smdk4x12_fb_win0 = {
- 	.xres		= 480,
- 	.yres		= 800,
-@@ -267,6 +288,7 @@ static struct s3c_fb_platdata smdk4x12_lcd_pdata __initdata = {
- 	.vidcon1	= VIDCON1_INV_HSYNC | VIDCON1_INV_VSYNC,
- 	.setup_gpio	= exynos4_fimd0_gpio_setup_24bpp,
- };
-+#endif
- 
- /* USB OTG */
- static struct s3c_hsotg_plat smdk4x12_hsotg_pdata;
-@@ -290,6 +312,9 @@ static struct platform_device *smdk4x12_devices[] __initdata = {
- 	&s5p_device_mfc,
- 	&s5p_device_mfc_l,
- 	&s5p_device_mfc_r,
-+#ifdef CONFIG_DRM_EXYNOS
-+	&exynos_device_drm,
-+#endif
- 	&samsung_device_keypad,
- };
- 
-@@ -334,7 +359,12 @@ static void __init smdk4x12_machine_init(void)
- 
- 	s3c_hsotg_set_platdata(&smdk4x12_hsotg_pdata);
- 
-+#ifdef CONFIG_DRM_EXYNOS
-+	s5p_device_fimd0.dev.platform_data = &drm_fimd_pdata;
-+	exynos4_fimd0_gpio_setup_24bpp();
-+#else
- 	s5p_fimd0_set_platdata(&smdk4x12_lcd_pdata);
-+#endif
- 
- 	platform_add_devices(smdk4x12_devices, ARRAY_SIZE(smdk4x12_devices));
- }
--- 
-1.7.4.1
+On Mon, Jul 16, 2012 at 7:19 PM, Namjae Jeon <linkinjeon@gmail.com> wrote:
+> Hi Vinayak.
+>> + * ufshcd_pltfrm_remove - remove platform driver routine
+>> + * @pdev: pointer to platform device handle
+>> + *
+>> + * Returns 0 on success, non-zero value on failure
+>> + */
+>> +static int __devexit ufshcd_pltfrm_remove(struct platform_device *pdev)
+>> +{
+>> +     struct resource *mem_res;
+>> +     struct resource *irq_res;
+>> +     resource_size_t mem_size;
+>> +     struct ufs_hba *hba =  platform_get_drvdata(pdev);
+>> +
+>> +     ufshcd_remove(hba);
+>> +     irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
+>> +     if (!irq_res)
+>> +             dev_err(&pdev->dev, "ufshcd: IRQ resource not available\n");
+>> +     free_irq(irq_res->start, hba);
+> Is there no possibility of null pointer dereferencing error ?(irq_res->start)
+> I think that free_irq should be not called if irq_res is NULL.
+I agree, I have overlooked at this logic, the free_irq should have
+been in the else
+part of this section. I will make the modification in the next version
+of patches.
+>> +     mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> Looks mem_res is also same with upper case.
+> Thanks.
+>> +     mem_size = resource_size(mem_res);
+>> +     release_mem_region(mem_res->start, mem_size);
+>> +     platform_set_drvdata(pdev, NULL);
+>> +     return 0;
+>> +}
+>> +
