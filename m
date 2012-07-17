@@ -1,34 +1,141 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [GIT PULL] Samsung board-2 for v3.6
-Date: Tue, 17 Jul 2012 21:01:53 +0000
-Message-ID: <201207172101.53459.arnd@arndb.de>
-References: <142d01cd639d$3ce29530$b6a7bf90$%kim@samsung.com>
+Subject: Re: [GIT PULL] Samsung DT for v3.6
+Date: Tue, 17 Jul 2012 21:17:46 +0000
+Message-ID: <201207172117.48095.arnd@arndb.de>
+References: <143401cd639e$474af610$d5e0e230$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: Text/Plain;
   charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:54243 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.10]:52372 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755248Ab2GQVCH (ORCPT
+	with ESMTP id S1755209Ab2GQVSK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 17 Jul 2012 17:02:07 -0400
-In-Reply-To: <142d01cd639d$3ce29530$b6a7bf90$%kim@samsung.com>
+	Tue, 17 Jul 2012 17:18:10 -0400
+In-Reply-To: <143401cd639e$474af610$d5e0e230$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, Jon Hunter <jon-hunter@ti.com>, Vinod Koul <vinod.koul@linux.intel.com>
 
 On Monday 16 July 2012, Kukjin Kim wrote:
-> Please pull second Samsung board updating for v3.6 from:
+> Please pull support samsung spi device tree for v3.6 from:
 >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> next/board-samsung-2
+> next/dt-samsung
 > 
-> The branch includes updating each Samsung boards such as SMDK4X12, Aquila,
-> Goni and so on, and it is for audio platform device and supporting of HSOTG
-> or framebuffer.
+> It is for supporting spi dt for exynos4210 and exynos5250, and got the ack
+> from Grant Likely for spi driver.
 > 
+> Note: Since this is including spi driver changes, so it was made based on
+> next/devel-dma-ops which touches same file, Samsung spi driver for avoiding
+> bad conflicts.
+> 
+> If any problems, please kindly let me know.
 
-Pulled into next/board, thanks!
+Applied to next/dt branch. I'm not so happy about new dma channel
+properties getting added to additional bindings. I guess I should
+have complained earlier about these, so I'm keeping the changes
+but I've added the patch below to make it clear that they will
+have to change after we have agreed with Vinod and Jon on how
+they should be represented.
 
 	Arnd
+
+Subject: [PATCH] ARM: EXYNOS: mark the DMA channel binding for SPI as preliminary
+
+Bindings for DMA channels are still under discussion and will
+change once this has been resolved. Therefore we mark them
+the newly added ones as preliminary. Let's hope nobody starts
+relying on them...
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+index 59bfc4f..a15ffed 100644
+--- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
++++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+@@ -18,6 +18,9 @@ Required SoC Specific Properties:
+ - interrupts: The interrupt number to the cpu. The interrupt specifier format
+   depends on the interrupt controller.
+ 
++[PRELIMINARY: the dma channel allocation will change once there are
++official DMA bindings]
++
+ - tx-dma-channel: The dma channel specifier for tx operations. The format of
+   the dma specifier depends on the dma controller.
+ 
+diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+index 6904d9d..02891fe 100644
+--- a/arch/arm/boot/dts/exynos4210.dtsi
++++ b/arch/arm/boot/dts/exynos4210.dtsi
+@@ -168,8 +168,8 @@
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x13920000 0x100>;
+ 		interrupts = <0 66 0>;
+-		tx-dma-channel = <&pdma0 7>;
+-		rx-dma-channel = <&pdma0 6>;
++		tx-dma-channel = <&pdma0 7>; /* preliminary */
++		rx-dma-channel = <&pdma0 6>; /* preliminary */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+@@ -178,8 +178,8 @@
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x13930000 0x100>;
+ 		interrupts = <0 67 0>;
+-		tx-dma-channel = <&pdma1 7>;
+-		rx-dma-channel = <&pdma1 6>;
++		tx-dma-channel = <&pdma1 7>; /* preliminary */
++		rx-dma-channel = <&pdma1 6>; /* preliminary */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+@@ -188,8 +188,8 @@
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x13940000 0x100>;
+ 		interrupts = <0 68 0>;
+-		tx-dma-channel = <&pdma0 9>;
+-		rx-dma-channel = <&pdma0 8>;
++		tx-dma-channel = <&pdma0 9>; /* preliminary */
++		rx-dma-channel = <&pdma0 8>; /* preliminary */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index a3a2eb2..004aaa8 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -156,8 +156,8 @@
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x12d20000 0x100>;
+ 		interrupts = <0 66 0>;
+-		tx-dma-channel = <&pdma0 5>;
+-		rx-dma-channel = <&pdma0 4>;
++		tx-dma-channel = <&pdma0 5>; /* preliminary */
++		rx-dma-channel = <&pdma0 4>; /* preliminary */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+@@ -166,8 +166,8 @@
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x12d30000 0x100>;
+ 		interrupts = <0 67 0>;
+-		tx-dma-channel = <&pdma1 5>;
+-		rx-dma-channel = <&pdma1 4>;
++		tx-dma-channel = <&pdma1 5>; /* preliminary */
++		rx-dma-channel = <&pdma1 4>; /* preliminary */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
+@@ -176,8 +176,8 @@
+ 		compatible = "samsung,exynos4210-spi";
+ 		reg = <0x12d40000 0x100>;
+ 		interrupts = <0 68 0>;
+-		tx-dma-channel = <&pdma0 7>;
+-		rx-dma-channel = <&pdma0 6>;
++		tx-dma-channel = <&pdma0 7>; /* preliminary */
++		rx-dma-channel = <&pdma0 6>; /* preliminary */
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 	};
