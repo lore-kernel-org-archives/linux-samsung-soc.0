@@ -1,145 +1,56 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] [CPUFREQ] EXYNOS5250: Add support max 1.7GHz for EXYNOS5250
-Date: Tue, 17 Jul 2012 09:11:06 +0900
-Message-ID: <144501cd63b0$a91e94c0$fb5bbe40$%kim@samsung.com>
-References: <02d501cd4ebe$d9fbc100$8df34300$%kim@samsung.com>
+Subject: RE: [PATCH] ARM: exynos: enable more platforms in defconfig
+Date: Tue, 17 Jul 2012 10:53:29 +0900
+Message-ID: <145c01cd63be$f6645900$e32d0b00$%kim@samsung.com>
+References: <1338784735-10683-1-git-send-email-olof@lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:51013 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:45336 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751308Ab2GQALH (ORCPT
+	with ESMTP id S1750906Ab2GQBxs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 20:11:07 -0400
-In-reply-to: <02d501cd4ebe$d9fbc100$8df34300$%kim@samsung.com>
+	Mon, 16 Jul 2012 21:53:48 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7A00M3O7WW7TK0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 10:53:29 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7A00KQH7X4US40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 10:53:28 +0900 (KST)
+In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, cpufreq@vger.kernel.org
-Cc: "'Rafael J. Wysocki'" <rjw@sisk.pl>, jc.lee@samsung.com
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 Kukjin Kim wrote:
 > 
-> From: Jaecheol Lee <jc.lee@samsung.com>
+> Olof Johansson wrote:
+> >
+> Hi Olof,
 > 
-> This patch adds support 1.7GHz max frequency for EXYNOS5250
+> Sorry for late reply on this, I came back from travelling, anyway.
 > 
-> Signed-off-by: Jaecheol Lee <jc.lee@samsung.com>
-> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
-> ---
->  drivers/cpufreq/exynos5250-cpufreq.c |   55
-+++++++++++++++---------------
-> ----
->  1 files changed, 24 insertions(+), 31 deletions(-)
+> > This enables the new EXYNOS5 platforms in the defconfig, and enables DT
+> > support on EXYNOS4.
+> >
+> Yes, agree, it's time to move on new defconfig for supporting DT.
 > 
-> diff --git a/drivers/cpufreq/exynos5250-cpufreq.c
-> b/drivers/cpufreq/exynos5250-cpufreq.c
-> index a883316..e64c253 100644
-> --- a/drivers/cpufreq/exynos5250-cpufreq.c
-> +++ b/drivers/cpufreq/exynos5250-cpufreq.c
-> @@ -65,20 +65,20 @@ static unsigned int
-> clkdiv_cpu0_5250[CPUFREQ_LEVEL_END][8] = {
->  	 * Clock divider value for following
->  	 * { ARM, CPUD, ACP, PERIPH, ATB, PCLK_DBG, APLL, ARM2 }
->  	 */
-> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1700 MHz - N/A */
-> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1600 MHz - N/A */
-> -	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1500 MHz - N/A */
-> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1400 MHz */
-> -	{ 0, 3, 7, 7, 6, 1, 3, 0 },	/* 1300 MHz */
-> -	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1200 MHz */
-> -	{ 0, 2, 7, 7, 5, 1, 2, 0 },	/* 1100 MHz */
-> -	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 1000 MHz */
-> -	{ 0, 2, 7, 7, 4, 1, 2, 0 },	/* 900 MHz */
-> -	{ 0, 2, 7, 7, 3, 1, 1, 0 },	/* 800 MHz */
-> +	{ 0, 3, 7, 7, 7, 3, 5, 0 },	/* 1700 MHz */
-> +	{ 0, 3, 7, 7, 7, 1, 4, 0 },	/* 1600 MHz */
-> +	{ 0, 2, 7, 7, 7, 1, 4, 0 },	/* 1500 MHz */
-> +	{ 0, 2, 7, 7, 6, 1, 4, 0 },	/* 1400 MHz */
-> +	{ 0, 2, 7, 7, 6, 1, 3, 0 },	/* 1300 MHz */
-> +	{ 0, 2, 7, 7, 5, 1, 3, 0 },	/* 1200 MHz */
-> +	{ 0, 3, 7, 7, 5, 1, 3, 0 },	/* 1100 MHz */
-> +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 1000 MHz */
-> +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 900 MHz */
-> +	{ 0, 1, 7, 7, 4, 1, 2, 0 },	/* 800 MHz */
->  	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 700 MHz */
-> -	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 600 MHz */
-> +	{ 0, 1, 7, 7, 3, 1, 1, 0 },	/* 600 MHz */
->  	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 500 MHz */
-> -	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 400 MHz */
-> +	{ 0, 1, 7, 7, 2, 1, 1, 0 },	/* 400 MHz */
->  	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 300 MHz */
->  	{ 0, 1, 7, 7, 1, 1, 1, 0 },	/* 200 MHz */
->  };
-> @@ -87,9 +87,9 @@ static unsigned int
-> clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
->  	/* Clock divider value for following
->  	 * { COPY, HPM }
->  	 */
-> -	{ 0, 2 },	/* 1700 MHz - N/A */
-> -	{ 0, 2 },	/* 1600 MHz - N/A */
-> -	{ 0, 2 },	/* 1500 MHz - N/A */
-> +	{ 0, 2 },	/* 1700 MHz */
-> +	{ 0, 2 },	/* 1600 MHz */
-> +	{ 0, 2 },	/* 1500 MHz */
->  	{ 0, 2 },	/* 1400 MHz */
->  	{ 0, 2 },	/* 1300 MHz */
->  	{ 0, 2 },	/* 1200 MHz */
-> @@ -106,10 +106,10 @@ static unsigned int
-> clkdiv_cpu1_5250[CPUFREQ_LEVEL_END][2] = {
->  };
+> > While I'm at it, I renamed it exynos4_defconfig -> exynos_defconfig,
+> > since it now encompasses all (known and supported) versions of exynos.
+> >
+> OK, basically looks good to me. But how about keeping exynos4_defconfig
+> for non-DT and creating exynos_defconfig for supporting DT on EXYNOS4 and
+> EXYNOS5? Of course, we can remove exynos4_defconfig after finishing of
+> EXYNOS DT later.
 > 
->  static unsigned int exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
-> -	(0),				/* 1700 MHz - N/A */
-> -	(0),				/* 1600 MHz - N/A */
-> -	(0),				/* 1500 MHz - N/A */
-> -	(0),				/* 1400 MHz */
-> +	((425 << 16) | (6 << 8) | 0),	/* 1700 MHz */
-> +	((200 << 16) | (3 << 8) | 0),	/* 1600 MHz */
-> +	((250 << 16) | (4 << 8) | 0),	/* 1500 MHz */
-> +	((175 << 16) | (3 << 8) | 0),	/* 1400 MHz */
->  	((325 << 16) | (6 << 8) | 0),	/* 1300 MHz */
->  	((200 << 16) | (4 << 8) | 0),	/* 1200 MHz */
->  	((275 << 16) | (6 << 8) | 0),	/* 1100 MHz */
-> @@ -126,9 +126,10 @@ static unsigned int
-> exynos5_apll_pms_table[CPUFREQ_LEVEL_END] = {
-> 
->  /* ASV group voltage table */
->  static const unsigned int asv_voltage_5250[CPUFREQ_LEVEL_END] = {
-> -	0, 0, 0, 0, 0, 0, 0,	/* 1700 MHz ~ 1100 MHz Not supported */
-> -	1175000, 1125000, 1075000, 1050000, 1000000,
-> -	950000, 925000, 925000, 900000
-> +	1300000, 1250000, 1225000, 1200000, 1150000,
-> +	1125000, 1100000, 1075000, 1050000, 1025000,
-> +	1012500, 1000000,  975000,  950000,  937500,
-> +	925000
->  };
-> 
->  static void set_clkdiv(unsigned int div_index)
-> @@ -248,15 +249,7 @@ static void __init set_volt_table(void)
->  {
->  	unsigned int i;
-> 
-> -	exynos5250_freq_table[L0].frequency = CPUFREQ_ENTRY_INVALID;
-> -	exynos5250_freq_table[L1].frequency = CPUFREQ_ENTRY_INVALID;
-> -	exynos5250_freq_table[L2].frequency = CPUFREQ_ENTRY_INVALID;
-> -	exynos5250_freq_table[L3].frequency = CPUFREQ_ENTRY_INVALID;
-> -	exynos5250_freq_table[L4].frequency = CPUFREQ_ENTRY_INVALID;
-> -	exynos5250_freq_table[L5].frequency = CPUFREQ_ENTRY_INVALID;
-> -	exynos5250_freq_table[L6].frequency = CPUFREQ_ENTRY_INVALID;
-> -
-> -	max_support_idx = L7;
-> +	max_support_idx = L0;
-> 
->  	for (i = 0 ; i < CPUFREQ_LEVEL_END ; i++)
->  		exynos5250_volt_table[i] = asv_voltage_5250[i];
-> --
-> 1.7.1
-
-Hi Rafael,
-
-Any problems or comments on this? I couldn't find this in your tree...
+Olof, how about following?
 
 Thanks.
 
@@ -148,3 +59,163 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+<----8
+From: Olof Johansson <olof@lixom.net>
+Subject: [PATCH] ARM: exynos_defconfig: enable more platforms in defconfig
+
+This enables the new EXYNOS5 platforms in the defconfig, and enables DT
+support on EXYNOS4.
+
+Other options enabled: USB host, EXT3/4, regulators and tps65090,
+networking and a few of the common usb ethernet adapters as well as the
+smsc911x controller used on some boards.
+
+I enabled EFI_PARTITION, since it's used on some filesystem images I'm
+using. I didn't see a need to keep Solaris and BSD partition format
+still enabled.
+
+Finally, framebuffer console, logo and fonts were enabled.
+
+Note that enabling some of these options introduces build coverage
+previously missing, thus introducing a few build errors and warnings
+for which fixes have been sent out already.
+
+Signed-off-by: Olof Johansson <olof@lixom.net>
+[kgene.kim@samsung.com: restored exynos4_defconfig from original]
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/configs/exynos_defconfig |   92
++++++++++++++++++++++++++++++++++++++
+ 1 files changed, 92 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/configs/exynos_defconfig
+
+diff --git a/arch/arm/configs/exynos_defconfig
+b/arch/arm/configs/exynos_defconfig
+new file mode 100644
+index 0000000..e40b435
+--- /dev/null
++++ b/arch/arm/configs/exynos_defconfig
+@@ -0,0 +1,92 @@
++CONFIG_EXPERIMENTAL=y
++CONFIG_NO_HZ=y
++CONFIG_HIGH_RES_TIMERS=y
++CONFIG_BLK_DEV_INITRD=y
++CONFIG_KALLSYMS_ALL=y
++CONFIG_MODULES=y
++CONFIG_MODULE_UNLOAD=y
++# CONFIG_BLK_DEV_BSG is not set
++CONFIG_PARTITION_ADVANCED=y
++CONFIG_EFI_PARTITION=y
++CONFIG_ARCH_EXYNOS=y
++CONFIG_S3C_LOWLEVEL_UART_PORT=1
++CONFIG_S3C24XX_PWM=y
++CONFIG_ARCH_EXYNOS5=y
++CONFIG_MACH_EXYNOS4_DT=y
++CONFIG_MACH_EXYNOS5_DT=y
++CONFIG_SMP=y
++CONFIG_NR_CPUS=2
++CONFIG_PREEMPT=y
++CONFIG_AEABI=y
++CONFIG_ARM_APPENDED_DTB=y
++CONFIG_ARM_ATAG_DTB_COMPAT=y
++CONFIG_CMDLINE="root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M
+console=ttySAC1,115200 init=/linuxrc mem=256M"
++CONFIG_VFP=y
++CONFIG_NEON=y
++CONFIG_NET=y
++CONFIG_PACKET=y
++CONFIG_UNIX=y
++CONFIG_NET_KEY=y
++CONFIG_INET=y
++CONFIG_RFKILL_REGULATOR=y
++CONFIG_UEVENT_HELPER_PATH="/sbin/hotplug"
++CONFIG_PROC_DEVICETREE=y
++CONFIG_BLK_DEV_LOOP=y
++CONFIG_BLK_DEV_RAM=y
++CONFIG_BLK_DEV_RAM_SIZE=8192
++CONFIG_SCSI=y
++CONFIG_BLK_DEV_SD=y
++CONFIG_CHR_DEV_SG=y
++CONFIG_NETDEVICES=y
++CONFIG_SMSC911X=y
++CONFIG_USB_USBNET=y
++CONFIG_USB_NET_SMSC75XX=y
++CONFIG_USB_NET_SMSC95XX=y
++CONFIG_INPUT_EVDEV=y
++# CONFIG_INPUT_KEYBOARD is not set
++# CONFIG_INPUT_MOUSE is not set
++CONFIG_INPUT_TOUCHSCREEN=y
++CONFIG_SERIAL_8250=y
++CONFIG_SERIAL_SAMSUNG=y
++CONFIG_SERIAL_SAMSUNG_CONSOLE=y
++CONFIG_SERIAL_OF_PLATFORM=y
++CONFIG_HW_RANDOM=y
++CONFIG_I2C=y
++# CONFIG_HWMON is not set
++CONFIG_MFD_TPS65090=y
++CONFIG_REGULATOR=y
++CONFIG_REGULATOR_FIXED_VOLTAGE=y
++CONFIG_REGULATOR_GPIO=y
++CONFIG_REGULATOR_TPS65090=y
++CONFIG_FB=y
++CONFIG_EXYNOS_VIDEO=y
++CONFIG_EXYNOS_MIPI_DSI=y
++CONFIG_EXYNOS_DP=y
++CONFIG_FRAMEBUFFER_CONSOLE=y
++CONFIG_FONTS=y
++CONFIG_FONT_7x14=y
++CONFIG_LOGO=y
++CONFIG_USB=y
++CONFIG_EXT2_FS=y
++CONFIG_EXT3_FS=y
++CONFIG_EXT4_FS=y
++CONFIG_MSDOS_FS=y
++CONFIG_VFAT_FS=y
++CONFIG_TMPFS=y
++CONFIG_TMPFS_POSIX_ACL=y
++CONFIG_CRAMFS=y
++CONFIG_ROMFS_FS=y
++CONFIG_NLS_CODEPAGE_437=y
++CONFIG_NLS_ASCII=y
++CONFIG_NLS_ISO8859_1=y
++CONFIG_MAGIC_SYSRQ=y
++CONFIG_DEBUG_KERNEL=y
++CONFIG_DETECT_HUNG_TASK=y
++CONFIG_DEBUG_RT_MUTEXES=y
++CONFIG_DEBUG_SPINLOCK=y
++CONFIG_DEBUG_MUTEXES=y
++CONFIG_DEBUG_INFO=y
++CONFIG_DEBUG_USER=y
++CONFIG_DEBUG_LL=y
++CONFIG_EARLY_PRINTK=y
++CONFIG_CRC_CCITT=y
+-- 
+1.7.4.1
+
+> > Other options enabled: USB host, EXT3/4, regulators and tps65090,
+> > networking and a few of the common usb ethernet adapters as well as the
+> > smsc911x controller used on some boards.
+> >
+> > I enabled EFI_PARTITION, since it's used on some filesystem images I'm
+> > using. I didn't see a need to keep Solaris and BSD partition format
+> > still enabled.
+> >
+> > Finally, framebuffer console, logo and fonts were enabled.
+> >
+> > Note that enabling some of these options introduces build coverage
+> > previously missing, thus introducing a few build errors and warnings
+> > for which fixes have been sent out already.
+> >
+> > Signed-off-by: Olof Johansson <olof@lixom.net>
+> > ---
+> >  arch/arm/configs/exynos4_defconfig | 68 --------------------------
+> >  arch/arm/configs/exynos_defconfig  | 98
+> > ++++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 98 insertions(+), 68 deletions(-)
+> >  delete mode 100644 arch/arm/configs/exynos4_defconfig
+> >  create mode 100644 arch/arm/configs/exynos_defconfig
+> >
+> 
+> [...]
+> 
