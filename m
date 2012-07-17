@@ -1,54 +1,141 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH] ARM: exynos: enable more platforms in defconfig
-Date: Mon, 16 Jul 2012 19:19:43 -0700
-Message-ID: <CAOesGMicSKkDyg64mBMjbagFq-dp=B0DHgv1kpiEThT40LAA-g@mail.gmail.com>
-References: <1338784735-10683-1-git-send-email-olof@lixom.net>
-	<145c01cd63be$f6645900$e32d0b00$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for s5p-tv
+ driver
+Date: Tue, 17 Jul 2012 11:41:22 +0900
+Message-ID: <147701cd63c5$a6c8ff70$f45afe50$%kim@samsung.com>
+References: <1341218932-15846-1-git-send-email-sachin.kamat@linaro.org>
+ <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:61855 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753862Ab2GQCTo (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:39091 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754289Ab2GQClX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 16 Jul 2012 22:19:44 -0400
-Received: by obbuo13 with SMTP id uo13so10378351obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 16 Jul 2012 19:19:44 -0700 (PDT)
-In-Reply-To: <145c01cd63be$f6645900$e32d0b00$%kim@samsung.com>
+	Mon, 16 Jul 2012 22:41:23 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7A0080CA4FNJL0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 11:41:21 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7A000C0A4X2G30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 17 Jul 2012 11:41:21 +0900 (KST)
+In-reply-to: <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: tushar.behera@linaro.org, patches@linaro.org, a.sim@samsung.com, jiun.yu@samsung.com
 
-On Mon, Jul 16, 2012 at 6:53 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Kukjin Kim wrote:
->>
->> Olof Johansson wrote:
->> >
->> Hi Olof,
->>
->> Sorry for late reply on this, I came back from travelling, anyway.
->>
->> > This enables the new EXYNOS5 platforms in the defconfig, and enables DT
->> > support on EXYNOS4.
->> >
->> Yes, agree, it's time to move on new defconfig for supporting DT.
->>
->> > While I'm at it, I renamed it exynos4_defconfig -> exynos_defconfig,
->> > since it now encompasses all (known and supported) versions of exynos.
->> >
->> OK, basically looks good to me. But how about keeping exynos4_defconfig
->> for non-DT and creating exynos_defconfig for supporting DT on EXYNOS4 and
->> EXYNOS5? Of course, we can remove exynos4_defconfig after finishing of
->> EXYNOS DT later.
->>
-> Olof, how about following?
+Sachin Kamat wrote:
+> 
+> From: Tushar Behera <tushar.behera@linaro.org>
+> 
+> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
+> platform data") makes the presence of platform data mandatory for s5p-tv
+> driver. Adding an API to plat-samsung for this purpose.
+> 
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/plat-samsung/devs.c              |   26
+++++++++++++++++++++++++++
+>  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
+>  2 files changed, 42 insertions(+), 0 deletions(-)
+>  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
+> 
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 07b5ac6..921ed88 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -32,6 +32,8 @@
+>  #include <linux/platform_data/s3c-hsudc.h>
+>  #include <linux/platform_data/s3c-hsotg.h>
+> 
+> +#include <media/s5p_hdmi.h>
+> +
+>  #include <asm/irq.h>
+>  #include <asm/pmu.h>
+>  #include <asm/mach/arch.h>
+> @@ -759,6 +761,30 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
+> s3c2410_platform_i2c *pd)
+>  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
+>  			       &s5p_device_i2c_hdmiphy);
+>  }
+> +
+> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
+> +
+> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+> +				struct i2c_board_info *mhl_info, int
+mhl_bus)
+> +{
+> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
+> +
+> +	if (soc_is_exynos4210() || soc_is_exynos4212() ||
+> +						soc_is_exynos4412())
+> +		pd->hdmiphy_bus = 8;
+> +	else if (soc_is_s5pv210())
+> +		pd->hdmiphy_bus = 3;
+> +	else
+> +		pd->hdmiphy_bus = 0;
+> +
+> +	pd->hdmiphy_info = hdmiphy_info;
+> +	pd->mhl_info = mhl_info;
+> +	pd->mhl_bus = mhl_bus;
+> +
+> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
+> +				&s5p_device_hdmi);
+> +}
 
-I think I would prefer a superset single config instead, that enables
-both DT and non-DT platforms. All drivers should compile just fine for
-either probe method in the same binary.
+(Cc'ed Ayoung Sim and Jiun Yu in my team)
 
-But, I guess one of each is ok and better than nothing.
+Totally I wonder, do we really need s5p_i2c_hdmiphy_set_platdata and this
+adding together? You updated s5p_i2c_hdmiphy_set_platdata in your 1/4 patch
+so I don't see why we should keep the bus number in duplicated...
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
 
--Olof
+> +
+>  #endif /* CONFIG_S5P_DEV_I2C_HDMIPHY */
+> 
+>  /* I2S */
+> diff --git a/arch/arm/plat-samsung/include/plat/hdmi.h b/arch/arm/plat-
+> samsung/include/plat/hdmi.h
+> new file mode 100644
+> index 0000000..5dc7347
+> --- /dev/null
+> +++ b/arch/arm/plat-samsung/include/plat/hdmi.h
+> @@ -0,0 +1,16 @@
+> +/*
+> + * Copyright (C) 2012 Samsung Electronics Co.Ltd
+> + *
+> + * This program is free software; you can redistribute  it and/or modify
+> it
+> + * under  the terms of  the GNU General  Public License as published by
+> the
+> + * Free Software Foundation;  either version 2 of the  License, or (at
+> your
+> + * option) any later version.
+> + */
+> +
+> +#ifndef __PLAT_SAMSUNG_HDMI_H
+> +#define __PLAT_SAMSUNG_HDMI_H __FILE__
+> +
+> +extern void s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+> +				struct i2c_board_info *mhl_info, int
+mhl_bus);
+> +
+> +#endif /* __PLAT_SAMSUNG_HDMI_H */
+> --
+> 1.7.4.1
