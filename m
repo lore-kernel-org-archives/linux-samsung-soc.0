@@ -1,67 +1,79 @@
 From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [RFC/PATCH 06/13] media: s5p-fimc: Add device tree support for
- FIMC-LITE
-Date: Wed, 18 Jul 2012 09:57:34 +0200 (CEST)
-Message-ID: <alpine.DEB.2.00.1207180939290.6403@axis700.grange>
+Subject: Re: [RFC/PATCH 05/13] media: s5p-fimc: Add device tree support for
+ FIMC devices
+Date: Wed, 18 Jul 2012 10:17:09 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.1207180958540.8472@axis700.grange>
 References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com>
- <1337975573-27117-6-git-send-email-s.nawrocki@samsung.com>
- <Pine.LNX.4.64.1207161114130.12302@axis700.grange> <5005B51E.20505@gmail.com>
+ <1337975573-27117-5-git-send-email-s.nawrocki@samsung.com>
+ <Pine.LNX.4.64.1207161110430.12302@axis700.grange> <5005C7E4.3050908@gmail.com>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:52215 "EHLO
+Received: from moutng.kundenserver.de ([212.227.17.8]:62251 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750999Ab2GRH5h (ORCPT
+	with ESMTP id S1751315Ab2GRIRP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jul 2012 03:57:37 -0400
-In-Reply-To: <5005B51E.20505@gmail.com>
+	Wed, 18 Jul 2012 04:17:15 -0400
+In-Reply-To: <5005C7E4.3050908@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
-
-Hi Sylwester
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>
 
 On Tue, 17 Jul 2012, Sylwester Nawrocki wrote:
 
-> On 07/16/2012 11:15 AM, Guennadi Liakhovetski wrote:
-> > > --- a/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
-> > > +++ b/Documentation/devicetree/bindings/camera/soc/samsung-fimc.txt
-> > > @@ -39,6 +39,21 @@ Required properties:
-> > >   	       depends on the SoC revision. For S5PV210 valid values are:
-> > >   	       0...2, for Exynos4x1x: 0...3.
-> > > 
-> > > +
-> > > +'fimc-lite' device node
-> > > +-----------------------
-> > > +
-> > > +Required properties:
-> > > +
-> > > +- compatible : should be one of:
-> > > +		"samsung,exynos4212-fimc";
-> > > +		"samsung,exynos4412-fimc";
-> > > +- reg	     : physical base address and size of the device's memory
-> > > mapped
-> > > +	       registers;
-> > > +- interrupts : should contain FIMC-LITE interrupt;
-> > > +- cell-index : FIMC-LITE IP instance index;
+> On 07/16/2012 11:13 AM, Guennadi Liakhovetski wrote:
+> > On Fri, 25 May 2012, Sylwester Nawrocki wrote:
 > > 
-> > Same as in an earlier patch - not sure this is needed.
+> >> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> >> Signed-off-by: Karol Lewandowski<k.lewandowsk@samsung.com>
+> >> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> > 
+> >  From the documentation below I think, I understand what it does, but why
+> > is it needed? It doesn't describe your video subsystem topology, right?
+> > How various subdevices are connected. It just lists them all in one
+> > node... A description for this patch would be very welcome IMHO and,
+> > maybe, such a node can be completely avoided?
 > 
-> It is needed for setting up a pipeline of multiple sub-device
-> within a SoC. As I commented on patch 2/13 I'd like to replace
-> this with proper entries in the "aliases" node. Some sub-devices
-> have registers that these indexes need to be directly written to.
+> Sorry, I'll provide better description in next iteration.
+> It's true it doesn't describe the topology in detail, as there are
+> multiple one-to many possible connections between sub-devices. An exact
+> topology is coded in the driver and can be changed through MC API.
+> The "samsung,camif-mux-id" and "video-bus-type" properties at "sensor" 
+> nodes just specify to which physical SoC camera port an image sensor
+> is connected.
 
-Aha, so, these are not purely software indices, that you just use to 
-identify your devices, these are actual hardware values? You really have 
-to write, e.g., "1" into a resizer register to connect it to a certain 
-capture engine? Ok, in this case it indeed might make sense to have these 
-values in the DT. Not sure how best to call these properties, or whether 
-aliases is the best solution, but that's already a detail. And btw, if you 
-do decide to keep this as a property, maybe this is one of the cases, 
-where you'd want to mark it with your hardware type, like "fimc,cell-id" 
-or similar?
+So, don't you think my media-link child nodes are a good solution for 
+this?
+
+> Originally the all camera devices were supposed to land under common 
+> 'camera' node. And a top level driver would be registering all platform 
+> devices. With this approach it would be possible to better control PM 
+> handling (which currently depends on an order of registering devices to 
+> the driver core). But then we discovered that we couldn't use OF_DEV_AUXDATA 
+> in such case, which was required to preserve platform device names, in order 
+> for the clock API to work. So I've moved some sub-devices out of 'camera' 
+> node and have added only a list of phandles to them in that node. This is 
+> rather a cheap workaround..
+> 
+> I think all camera sub-devices should be placed under common node, as there
+> are some properties that don't belong to any sub-node: GPIO config, clocks,
+> to name a few. Of course simpler devices might not need such a composite 
+> node. I think we can treat the sub-device interdependencies as an issue
+> separate from a need for a common node.
+> 
+> If some devices need to reflect the topology better, we probably could
+> include in some nodes (a list of) phandles to other nodes. This could ease
+> parsing the topology at the drivers, by using existing OF infrastructure.
+
+Ok, I think you have some good ideas in your RFC's, an interesting 
+question now is - how to proceed. Do you think we'd be able to work out a 
+combined RFC? Or would you prefer to make two versions and then see what 
+others think? In either case it would be nice, I think, if you could try 
+to separate what you see as common V4L DT bindings, then we could discuss 
+that separately. Whereas what you think is private to your hardware, we 
+can also look at for common ideas, or maybe even some of those properties 
+we'll wake to make common too.
 
 Thanks
 Guennadi
