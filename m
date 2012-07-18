@@ -1,83 +1,33 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [RFC/PATCH 05/13] media: s5p-fimc: Add device tree support for
- FIMC devices
-Date: Wed, 18 Jul 2012 10:17:09 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.1207180958540.8472@axis700.grange>
-References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com>
- <1337975573-27117-5-git-send-email-s.nawrocki@samsung.com>
- <Pine.LNX.4.64.1207161110430.12302@axis700.grange> <5005C7E4.3050908@gmail.com>
-Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:62251 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751315Ab2GRIRP (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jul 2012 04:17:15 -0400
-In-Reply-To: <5005C7E4.3050908@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: [PATCH V1] Add Quirk for Broken Configuration
+Date: Wed, 18 Jul 2012 14:08:54 +0530
+Message-ID: <1342600735-7855-1-git-send-email-girish.shivananjappa@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org
+Cc: cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org, shashidharh@vayavyalabs.com, thomas.abraham@linaro.org, jh80.chung@samsung.com, Girish K S <girish.shivananjappa@linaro.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>
 
-On Tue, 17 Jul 2012, Sylwester Nawrocki wrote:
+This patch is based on the device tree support of dw_mmc host controller
+posted by Thomas Abraham. Below is the list of his patch in review stage
 
-> On 07/16/2012 11:13 AM, Guennadi Liakhovetski wrote:
-> > On Fri, 25 May 2012, Sylwester Nawrocki wrote:
-> > 
-> >> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
-> >> Signed-off-by: Karol Lewandowski<k.lewandowsk@samsung.com>
-> >> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> > 
-> >  From the documentation below I think, I understand what it does, but why
-> > is it needed? It doesn't describe your video subsystem topology, right?
-> > How various subdevices are connected. It just lists them all in one
-> > node... A description for this patch would be very welcome IMHO and,
-> > maybe, such a node can be completely avoided?
-> 
-> Sorry, I'll provide better description in next iteration.
-> It's true it doesn't describe the topology in detail, as there are
-> multiple one-to many possible connections between sub-devices. An exact
-> topology is coded in the driver and can be changed through MC API.
-> The "samsung,camif-mux-id" and "video-bus-type" properties at "sensor" 
-> nodes just specify to which physical SoC camera port an image sensor
-> is connected.
+mmc: dw_mmc: convert copy of struct device in struct dw_mci to a reference
+mmc: dw_mmc: allow probe to succeed even if one slot is initialized
+mmc: dw_mmc: lookup for optional biu and ciu clocks
+mmc: dw_mmc: add quirk to indicate missing write protect line
+mmc: dw_mmc: add device tree support
+mmc: dw_mmc: add samsung exynos5250 specific extentions
 
-So, don't you think my media-link child nodes are a good solution for 
-this?
+Girish K S (1):
+  mmc: dwmmc: Add quirk for broken Hardware Config
 
-> Originally the all camera devices were supposed to land under common 
-> 'camera' node. And a top level driver would be registering all platform 
-> devices. With this approach it would be possible to better control PM 
-> handling (which currently depends on an order of registering devices to 
-> the driver core). But then we discovered that we couldn't use OF_DEV_AUXDATA 
-> in such case, which was required to preserve platform device names, in order 
-> for the clock API to work. So I've moved some sub-devices out of 'camera' 
-> node and have added only a list of phandles to them in that node. This is 
-> rather a cheap workaround..
-> 
-> I think all camera sub-devices should be placed under common node, as there
-> are some properties that don't belong to any sub-node: GPIO config, clocks,
-> to name a few. Of course simpler devices might not need such a composite 
-> node. I think we can treat the sub-device interdependencies as an issue
-> separate from a need for a common node.
-> 
-> If some devices need to reflect the topology better, we probably could
-> include in some nodes (a list of) phandles to other nodes. This could ease
-> parsing the topology at the drivers, by using existing OF infrastructure.
+ drivers/mmc/host/dw_mmc-pltfm.c |   10 +++-
+ drivers/mmc/host/dw_mmc.c       |  150 ++++++++++++++++++++++++---------------
+ drivers/mmc/host/dw_mmc.h       |    1 +
+ include/linux/mmc/dw_mmc.h      |    2 +-
+ include/linux/mmc/host.h        |    1 +
+ 5 files changed, 106 insertions(+), 58 deletions(-)
 
-Ok, I think you have some good ideas in your RFC's, an interesting 
-question now is - how to proceed. Do you think we'd be able to work out a 
-combined RFC? Or would you prefer to make two versions and then see what 
-others think? In either case it would be nice, I think, if you could try 
-to separate what you see as common V4L DT bindings, then we could discuss 
-that separately. Whereas what you think is private to your hardware, we 
-can also look at for common ideas, or maybe even some of those properties 
-we'll wake to make common too.
+-- 
+1.7.4.1
 
-Thanks
-Guennadi
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
