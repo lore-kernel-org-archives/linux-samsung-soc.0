@@ -1,305 +1,111 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 8/8] ARM: EXYNOS5: Add PHY initialization code for usb 3.0
-Date: Wed, 18 Jul 2012 19:15:28 +0530
-Message-ID: <1342619128-25013-9-git-send-email-gautam.vivek@samsung.com>
-References: <1342619128-25013-1-git-send-email-gautam.vivek@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [RFC/PATCH 04/13] devicetree: Add common video devices bindings
+ documentation
+Date: Wed, 18 Jul 2012 18:58:53 +0200
+Message-ID: <5006EB4D.1020104@gmail.com>
+References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com> <1337975573-27117-4-git-send-email-s.nawrocki@samsung.com> <Pine.LNX.4.64.1207161057050.12302@axis700.grange>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47629 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951Ab2GRNbT (ORCPT
+Received: from mail-ee0-f46.google.com ([74.125.83.46]:50432 "EHLO
+	mail-ee0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754944Ab2GRQ65 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jul 2012 09:31:19 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7C00LWOYVBJBE0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 22:31:18 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7C00MXCYV9WD70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 22:31:18 +0900 (KST)
-In-reply-to: <1342619128-25013-1-git-send-email-gautam.vivek@samsung.com>
+	Wed, 18 Jul 2012 12:58:57 -0400
+In-Reply-To: <Pine.LNX.4.64.1207161057050.12302@axis700.grange>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, l.majewski@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, m.szyprowski@samsung.com
-Cc: a.kesavan@samsung.com, yulgon.kim@samsung.com, boyko.lee@samsung.com, av.tikhomirov@samsung.com, joshi@samsung.com, olofj@google.com, prashanth.g@samsung.com
+To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
 
-This patch adds PHY setup functions for usb 3.0 support on exynos5
+Hi Guennadi,
 
-Signed-off-by: Yulgon Kim <yulgon.kim@samsung.com>
-Signed-off-by: Anton Tikhomirov <av.tikhomirov@samsung.com>
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+On 07/16/2012 11:09 AM, Guennadi Liakhovetski wrote:
+> On Fri, 25 May 2012, Sylwester Nawrocki wrote:
+> 
+>> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+>> ---
+>>   Documentation/devicetree/bindings/video/video.txt |   10 ++++++++++
+>>   1 file changed, 10 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/video/video.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/video/video.txt b/Documentation/devicetree/bindings/video/video.txt
+>> new file mode 100644
+>> index 0000000..9f6a637
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/video/video.txt
+>> @@ -0,0 +1,10 @@
+>> +Common properties of video data source devices (image sensor, video encoders, etc.)
+>> +
+>> +Video bus types
+>> +---------------
+>> +
+>> +- video-bus-type : must be one of:
+>> +
+>> +    - itu-601   : parallel bus with HSYNC and VSYNC - ITU-R BT.601;
+>> +    - itu-656   : parallel bus with embedded synchronization - ITU-R BT.656;
+> 
+> wikipedia tells me, that bt.601 is mostly a data encoding standard, it
+> also defines bus-types, but recent versions also include serial busses.
 
-diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
-index 3f7a26a..f8f64c8 100644
---- a/arch/arm/mach-exynos/setup-usb-phy.c
-+++ b/arch/arm/mach-exynos/setup-usb-phy.c
-@@ -18,12 +18,14 @@
- #include <mach/regs-usb-phy.h>
- #include <plat/cpu.h>
- #include <plat/usb-phy.h>
-+#include <plat/regs-usb3-exynos-drd-phy.h>
+Hmm, indeed, I got slightly misled by the Samsung SoCs' User Manuals 
+that used bt.601/bt.656 to distinguish between bus with sync signals
+and with embedded sync.
+
+>> +    - mipi-csi2 : MIPI-CSI2 serial bus;
+> 
+> In general: are these at all needed? Wouldn't it be better to specify pads
+> on sensors and interfaces to differentiate between serial and parallel
+> connections. As for whether HSYNC and VSYNC are used - I see 3
+
+We have video buses and data receivers and transmitters attached to them.
+The pads concept doesn't quite fit here for me. Specifying possible links 
+with character string tags might be a way to go, but I'd like to hear
+others' opinion on that. Do we have any bindings already that do something
+similar ?
+
+> possibilities there:
+> 
+> 1. real sync signals are used - the default.
+> 
+> 2. embedded syncs shall be used, because sync signals are missing. This
+> should (arguably) be derived from pinctrl - see this discussion:
+> 
+> http://lkml.indiana.edu/hypermail/linux/kernel/1205.2/index.html#03893
+
+Hmm, I'm not terribly familiar with pinctrl API, but wouldn't it be 
+required to have two pin group names: (data + clock + sync) signals and
+(data + clock) (for embedded video synchronization) ? We would have to name
+these two configurations somehow anyway, wouldn't we ?
+
+Also, as Stephen pointed out, the control flow is supposed to be from
+drivers to pin controller, not the other way around.
+
+> 3. sync signals are present, but cannot be used, because one of the
+> partners doesn't support them - .g_mbus_config() can be used to retrieve
+> this information.
+
+OK.
+
+> 4. sync signals are available and supported by both peers, but for some
+> reason the user prefers to use embedded sync data - is such a case
+> feasible? Even if so, this should be run-time configurable then?
+
+I've never seen such a situation. I would expect that if sync signal wires 
+are routed, they shall be used. Otherwise only embedded synchronization
+would be used, to save PCB area.
  
- #define PHY_ENABLE	1
- #define PHY_DISABLE	0
- 
- enum usb_phy_type {
- 	USB_PHY		= (0x1 << 0),
-+	USB_PHY_DRD	= (0x1 << 1),
- };
- 
- static atomic_t host_usage;
-@@ -163,11 +165,44 @@ static int exynos4210_usb_phy_clkset(struct platform_device *pdev)
- 	return phyclk;
- }
- 
-+static u32 exynos_usb_phy30_set_clock(struct platform_device *pdev)
-+{
-+	u32 reg, refclk;
-+
-+	refclk = exynos4210_usb_phy_clkset(pdev);
-+	reg = EXYNOS_USB3_PHYCLKRST_REFCLKSEL(3) |
-+	      EXYNOS_USB3_PHYCLKRST_FSEL(refclk);
-+
-+	switch (refclk) {
-+	case EXYNOS5_CLKSEL_50M:
-+		reg |= (EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER(0x02) |
-+			EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL(0x00));
-+		break;
-+	case EXYNOS5_CLKSEL_20M:
-+		reg |= (EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER(0x7d) |
-+			EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL(0x00));
-+		break;
-+	case EXYNOS5_CLKSEL_19200K:
-+		reg |= (EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER(0x02) |
-+			EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL(0x88));
-+		break;
-+	case EXYNOS5_CLKSEL_24M:
-+	default:
-+		reg |= (EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER(0x68) |
-+			EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL(0x88));
-+		break;
-+	}
-+
-+	return reg;
-+}
-+
- static void exynos_usb_phy_control(enum usb_phy_type phy_type , int on)
- {
- 	if (soc_is_exynos5250()) {
- 		if (phy_type & USB_PHY)
- 			writel(on, S5P_USBHOST_PHY_CONTROL);
-+		if (phy_type & USB_PHY_DRD)
-+			writel(on, S5P_USBDRD_PHY_CONTROL);
- 	}
- }
- 
-@@ -415,6 +450,88 @@ static int exynos5_usb_phy20_exit(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int exynos5_usb_phy30_init(struct platform_device *pdev)
-+{
-+	struct clk *host_clk;
-+	u32 reg;
-+
-+	host_clk = exynos_usb_clock_enable(pdev);
-+	if (host_clk == NULL) {
-+		dev_err(&pdev->dev, "Failed to enable USB3.0 host clock this time\n");
-+		return -1;
-+	}
-+
-+	exynos_usb_phy_control(USB_PHY_DRD, PHY_ENABLE);
-+
-+	/* Reset USB 3.0 PHY */
-+	writel(0x00000000, EXYNOS_USB3_PHYREG0);
-+	writel(0x24d4e6e4, EXYNOS_USB3_PHYPARAM0);
-+	writel(0x03fff81c, EXYNOS_USB3_PHYPARAM1);
-+	writel(0x00000000, EXYNOS_USB3_PHYRESUME);
-+
-+	writel(0x08000040, EXYNOS_USB3_LINKSYSTEM);
-+	writel(0x00000004, EXYNOS_USB3_PHYBATCHG);
-+
-+	/* PHYTEST POWERDOWN Control */
-+	reg = readl(EXYNOS_USB3_PHYTEST);
-+	reg &= ~(EXYNOS_USB3_PHYTEST_POWERDOWN_SSP |
-+		 EXYNOS_USB3_PHYTEST_POWERDOWN_HSP);
-+	writel(reg, EXYNOS_USB3_PHYTEST);
-+
-+	/* UTMI Power Control */
-+	writel(EXYNOS_USB3_PHYUTMI_OTGDISABLE, EXYNOS_USB3_PHYUTMI);
-+
-+	reg = exynos_usb_phy30_set_clock(pdev);
-+
-+	reg |= (EXYNOS_USB3_PHYCLKRST_PORTRESET |
-+		/* Digital power supply in normal operating mode */
-+		EXYNOS_USB3_PHYCLKRST_RETENABLEN |
-+		/* Enable ref clock for SS function */
-+		EXYNOS_USB3_PHYCLKRST_REF_SSP_EN |
-+		/* Enable spread spectrum */
-+		EXYNOS_USB3_PHYCLKRST_SSC_EN) |
-+		EXYNOS_USB3_PHYCLKRST_COMMONONN;
-+	writel(reg, EXYNOS_USB3_PHYCLKRST);
-+
-+	udelay(10);
-+
-+	reg &= ~(EXYNOS_USB3_PHYCLKRST_PORTRESET);
-+	writel(reg, EXYNOS_USB3_PHYCLKRST);
-+
-+	clk_disable(host_clk);
-+	clk_put(host_clk);
-+	return 0;
-+}
-+
-+static int exynos5_usb_phy30_exit(struct platform_device *pdev)
-+{
-+	struct clk *host_clk;
-+	u32 reg;
-+
-+	host_clk = exynos_usb_clock_enable(pdev);
-+	if (host_clk == NULL) {
-+		dev_err(&pdev->dev, "Failed to enable USB3.0 host clock this time\n");
-+		return -1;
-+	}
-+
-+	reg = EXYNOS_USB3_PHYUTMI_OTGDISABLE |
-+		EXYNOS_USB3_PHYUTMI_FORCESUSPEND |
-+		EXYNOS_USB3_PHYUTMI_FORCESLEEP;
-+	writel(reg, EXYNOS_USB3_PHYUTMI);
-+
-+	/* Control PHYTEST to remove leakage current */
-+	reg = readl(EXYNOS_USB3_PHYTEST);
-+	reg |= (EXYNOS_USB3_PHYTEST_POWERDOWN_SSP |
-+		 EXYNOS_USB3_PHYTEST_POWERDOWN_HSP);
-+	writel(reg, EXYNOS_USB3_PHYTEST);
-+
-+	exynos_usb_phy_control(USB_PHY_DRD, PHY_DISABLE);
-+
-+	clk_disable(host_clk);
-+	clk_put(host_clk);
-+	return 0;
-+}
-+
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
- {
- 	if (type == S5P_USB_PHY_DEVICE)
-@@ -424,6 +541,11 @@ int s5p_usb_phy_init(struct platform_device *pdev, int type)
- 			return exynos5_usb_phy20_init(pdev);
- 		else
- 			return exynos4210_usb_phy1_init(pdev);
-+	} else if (type == S5P_USB_PHY_DRD) {
-+		if (soc_is_exynos5250())
-+			return exynos5_usb_phy30_init(pdev);
-+		else
-+			dev_err(&pdev->dev, "USB 3.0 DRD not present\n");
- 	}
- 
- 	return -EINVAL;
-@@ -438,6 +560,11 @@ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- 			return exynos5_usb_phy20_exit(pdev);
- 		else
- 			return exynos4210_usb_phy1_exit(pdev);
-+	} else if (type == S5P_USB_PHY_DRD) {
-+		if (soc_is_exynos5250())
-+			return exynos5_usb_phy30_exit(pdev);
-+		else
-+			dev_err(&pdev->dev, "USB 3.0 DRD not present\n");
- 	}
- 	return -EINVAL;
- }
-diff --git a/arch/arm/plat-samsung/include/plat/regs-usb3-exynos-drd-phy.h b/arch/arm/plat-samsung/include/plat/regs-usb3-exynos-drd-phy.h
-new file mode 100644
-index 0000000..8efd5c7
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/regs-usb3-exynos-drd-phy.h
-@@ -0,0 +1,75 @@
-+/*
-+ * Copyright (c) 2012 Samsung Electronics Co. Ltd
-+ *
-+ * Exynos SuperSpeed USB 3.0 DRD Controller PHY registers
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __PLAT_SAMSUNG_REGS_USB3_EXYNOS_DRD_PHY_H
-+#define __PLAT_SAMSUNG_REGS_USB3_EXYNOS_DRD_PHY_H __FILE__
-+
-+#define EXYNOS_USB3_PHYREG(x) ((x) + S5P_VA_DRD_PHY)
-+
-+#define EXYNOS_USB3_LINKSYSTEM		EXYNOS_USB3_PHYREG(0x04)
-+#define EXYNOS_USB3_PHYUTMI		EXYNOS_USB3_PHYREG(0x08)
-+
-+#define EXYNOS_USB3_PHYUTMI_OTGDISABLE			(1 << 6)
-+#define EXYNOS_USB3_PHYUTMI_FORCESUSPEND		(1 << 1)
-+#define EXYNOS_USB3_PHYUTMI_FORCESLEEP			(1 << 0)
-+
-+#define EXYNOS_USB3_PHYPIPE		EXYNOS_USB3_PHYREG(0x0C)
-+#define EXYNOS_USB3_PHYCLKRST		EXYNOS_USB3_PHYREG(0x10)
-+
-+#define EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL_MASK	(0xff << 23)
-+#define EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL_SHIFT	(23)
-+#define EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL_LIMIT	(0xff)
-+#define EXYNOS_USB3_PHYCLKRST_SSC_REF_CLK_SEL(_x)	((_x) << 23)
-+
-+#define EXYNOS_USB3_PHYCLKRST_SSC_RANGE_MASK		(0x03 << 21)
-+#define EXYNOS_USB3_PHYCLKRST_SSC_RANGE_SHIFT		(21)
-+#define EXYNOS_USB3_PHYCLKRST_SSC_RANGE_LIMIT		(0x03)
-+#define EXYNOS_USB3_PHYCLKRST_SSC_RANGE(_x)		((_x) << 21)
-+
-+#define EXYNOS_USB3_PHYCLKRST_SSC_EN			(1 << 20)
-+#define EXYNOS_USB3_PHYCLKRST_REF_SSP_EN		(1 << 19)
-+#define EXYNOS_USB3_PHYCLKRST_REF_CLKDIV2		(1 << 18)
-+
-+#define EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER_MASK	(0x7f << 11)
-+#define EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER_SHIFT	(11)
-+#define EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER_LIMIT	(0x7f)
-+#define EXYNOS_USB3_PHYCLKRST_MPLL_MULTIPLIER(_x)	((_x) << 11)
-+
-+#define EXYNOS_USB3_PHYCLKRST_FSEL_MASK			(0x3f << 5)
-+#define EXYNOS_USB3_PHYCLKRST_FSEL_SHIFT		(5)
-+#define EXYNOS_USB3_PHYCLKRST_FSEL_LIMIT		(0x3f)
-+#define EXYNOS_USB3_PHYCLKRST_FSEL(_x)			((_x) << 5)
-+
-+#define EXYNOS_USB3_PHYCLKRST_RETENABLEN		(1 << 4)
-+
-+#define EXYNOS_USB3_PHYCLKRST_REFCLKSEL_MASK		(0x03 << 2)
-+#define EXYNOS_USB3_PHYCLKRST_REFCLKSEL_SHIFT		(2)
-+#define EXYNOS_USB3_PHYCLKRST_REFCLKSEL_LIMIT		(0x03)
-+#define EXYNOS_USB3_PHYCLKRST_REFCLKSEL(_x)		((_x) << 2)
-+
-+#define EXYNOS_USB3_PHYCLKRST_PORTRESET			(1 << 1)
-+#define EXYNOS_USB3_PHYCLKRST_COMMONONN			(1 << 0)
-+
-+#define EXYNOS_USB3_PHYREG0		EXYNOS_USB3_PHYREG(0x14)
-+#define EXYNOS_USB3_PHYREG1		EXYNOS_USB3_PHYREG(0x18)
-+#define EXYNOS_USB3_PHYPARAM0		EXYNOS_USB3_PHYREG(0x1C)
-+#define EXYNOS_USB3_PHYPARAM1		EXYNOS_USB3_PHYREG(0x20)
-+#define EXYNOS_USB3_PHYTERM		EXYNOS_USB3_PHYREG(0x24)
-+
-+#define EXYNOS_USB3_PHYTEST		EXYNOS_USB3_PHYREG(0x28)
-+
-+#define EXYNOS_USB3_PHYTEST_POWERDOWN_SSP		(1 << 3)
-+#define EXYNOS_USB3_PHYTEST_POWERDOWN_HSP		(1 << 3)
-+
-+#define EXYNOS_USB3_PHYADP		EXYNOS_USB3_PHYREG(0x2C)
-+#define EXYNOS_USB3_PHYBATCHG		EXYNOS_USB3_PHYREG(0x30)
-+#define EXYNOS_USB3_PHYRESUME		EXYNOS_USB3_PHYREG(0x34)
-+#define EXYNOS_USB3_LINKPORT		EXYNOS_USB3_PHYREG(0x44)
-+#endif /* __PLAT_SAMSUNG_REGS_USB3_EXYNOS_DRD_PHY_H */
-diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
-index 959bcdb..f784101 100644
---- a/arch/arm/plat-samsung/include/plat/usb-phy.h
-+++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
-@@ -14,6 +14,7 @@
- enum s5p_usb_phy_type {
- 	S5P_USB_PHY_DEVICE,
- 	S5P_USB_PHY_HOST,
-+	S5P_USB_PHY_DRD,
- };
- 
- extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
--- 
-1.7.0.4
+> So, maybe we don't need these at all.
+
+We need something that would let drivers distinguish which (serial/
+parallel) bus is supported on a board. And what type of synchronization
+is used. I'm fine as long as this can be specified reliably in DT and
+drivers of the transmitters/receivers can configure their output/input
+interfaces. I'm not against dynamic configuration but static one also
+need to be supported.
+
+--
+Regards,
+Sylwester
