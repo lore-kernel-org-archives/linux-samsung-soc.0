@@ -1,178 +1,219 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree
- based instantiation
-Date: Wed, 18 Jul 2012 11:18:33 +0200
-Message-ID: <50067F69.6080501@gmail.com>
-References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com> <1337975573-27117-9-git-send-email-s.nawrocki@samsung.com> <Pine.LNX.4.64.1207161122390.12302@axis700.grange>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR definitions for writeback
+Date: Wed, 18 Jul 2012 13:05:32 +0200
+Message-ID: <1429943.UqWt7uDBOU@flatron>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com> <1342591053-7092-2-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.64.1207161122390.12302@axis700.grange>
-Sender: linux-media-owner@vger.kernel.org
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:43321 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751800Ab2GRLFt (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 18 Jul 2012 07:05:49 -0400
+Received: by eaak11 with SMTP id k11so480457eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 18 Jul 2012 04:05:48 -0700 (PDT)
+In-Reply-To: <1342591053-7092-2-git-send-email-l.krishna@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, jg1.han@samsung.com
 
-Hi Guennadi,
+Hi,
 
-On 07/16/2012 11:42 AM, Guennadi Liakhovetski wrote:
-> On Fri, 25 May 2012, Sylwester Nawrocki wrote:
+On Wednesday 18 of July 2012 11:27:27 Leela Krishna Amudala wrote:
+> This patch updates the register address offsets and adds SFR definitions
+> for writeback for Samsung's V8 display controller.
 > 
->> The driver initializes all board related properties except the s_power()
->> callback to board code. The platforms that require this callback are not
->> supported by this driver yet for CONFIG_OF=y.
->>
->> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
->> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> ---
->>   .../bindings/camera/samsung-s5k6aafx.txt           |   57 +++++++++
->>   drivers/media/video/s5k6aa.c                       |  129 ++++++++++++++------
->>   2 files changed, 146 insertions(+), 40 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
->> new file mode 100644
->> index 0000000..6685a9c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
->> @@ -0,0 +1,57 @@
->> +Samsung S5K6AAFX camera sensor
->> +------------------------------
->> +
->> +Required properties:
->> +
->> +- compatible : "samsung,s5k6aafx";
->> +- reg : base address of the device on I2C bus;
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++++
+>  arch/arm/plat-samsung/include/plat/regs-fb.h    |   51
+> +++++++++++++++++++++++ drivers/video/Kconfig                          
+> |    6 +++
+>  3 files changed, 67 insertions(+), 0 deletions(-)
 > 
-> You said you ended up putting your sensors outside of I2C busses, is this
-> one of changes, that are present in your git-tree but not in this series?
-
-No, I must have been not clear enough on that. Our idea was to keep
-I2C slave device nodes as an I2C controller's child nodes, according
-to the current convention.
-The 'sensor' nodes (the 'camera''s children) would only contain a phandle
-to a respective I2C slave node.
-
-This implies that we cannot access I2C bus in I2C client's device probe() 
-callback. An actual H/W access could begin only from within and after 
-invocation of v4l2_subdev .registered callback..
-
->> +- video-itu-601-bus : parallel bus with HSYNC and VSYNC - ITU-R BT.601;
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h index 4c3647f..1639c17
+> 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> @@ -30,9 +30,16 @@
+>  #define VIDCON1_FSTATUS_EVEN	(1 << 15)
 > 
-> If this is a boolean property, it cannot be required? Otherwise, as
-> discussed in a different patch comment, this property might not be
-> required, and if it is, I would use the same definition for both the
-> camera interface and for sensors.
+>  /* Video timing controls */
+> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> +#define VIDTCON0                                (0x20010)
+> +#define VIDTCON1                                (0x20014)
+> +#define VIDTCON3                                (0x2001C)
+> +#else
+>  #define VIDTCON0				(0x10)
+>  #define VIDTCON1				(0x14)
+>  #define VIDTCON2				(0x18)
+> +#define VIDTCON3				(0x1C)
+> +#endif
 
-Yeah, that's an omission, a leftover from previous versions. It should have 
-been 'video-bus-type', for this series.
+Wouldn't it break s3c-fb on SoCs with earlier FIMD versions with 
+CONFIG_FB_EXYNOS_FIMD_V8 selected? We are aiming at multi-platform ARM 
+kernels, aren't we (i.e support of both V8 and earlier FIMD in one kernel)?
 
-Here is the updated binding documentation:
-
-8<----------------------------------------------------------------------
-Required properties:
-
-- compatible : "samsung,s5k6aafx";
-- reg : base address of the device on I2C bus;
-- vdd_core-supply : digital core voltage supply 1.5V (1.4V to 1.6V);
-- vdda-supply : analog circuits voltage supply 2.8V (2.6V to 3.0V);
-- vdd_reg-supply : regulator input voltage supply 1.8V (1.7V to 1.9V)
-                   or 2.8V (2.6V to 3.0);
-- vddio-supply : I/O voltage supply 1.8V (1.65V to 1.95V)
-                 or 2.8V (2.5V to 3.1V);
-- video-bus-type : sensor video output bus type, must be one of:
-                   "itu-601", "mipi-csi2";
-- clock-frequency : the sensor's master clock frequency in Hz;
-
-Optional properties:
-
-- data-lanes : number of physical MIPI-CSI2 data lanes used
-               (default is 2 when this property is not specified);
-- gpios : specifies gpios connected to the sensor's reset
-          reset (RSTN) and standby (STBYN) pins, the order
-          of gpios is: <RSTN, STBYN>; If any of these gpios
-          is not used, its specifier shall be 0;
-- samsung,s5k6aa-gpio-lvls : this property (bits [1:0]) specifies an active
-                             state of the S5K6AAFX reset and stand-by signals;
-                             the meaning of bits is: bit[1:0] = [RST, STBY],
-                             e.g. bit[1] = 0 indicates the GPIO driving the
-                             S5K6AAFX's standby pin should be set to 1 to bring
-                             the sensor out from stand-by to normal operation
-                             state.
-- samsung,s5k6aa-hflip : sets the default horizontal image flipping;
-- samsung,s5k6aa-vflip : sets the default vertical image flipping;
-8<----------------------------------------------------------------------
-
->> +- vdd_core-supply : digital core voltage supply 1.5V (1.4V to 1.6V);
->> +- vdda-supply : analog power voltage supply 2.8V (2.6V to 3.0V);
->> +- vdd_reg-supply : regulator input power voltage supply 1.8V (1.7V to 1.9V)
->> +		   or 2.8V (2.6V to 3.0);
 > 
-> I think, underscores in property names are generally frowned upon.
-
-Indeed, I felt something might be wrong here;) It's in this form because
-I just copied regulator supply names from the existing driver. And I
-didn't want to change them, to avoid updating them in all board files where
-they're used. Thanks for pointing it out, I'll fix that in next iteration.
-
->> +- vddio-supply : I/O voltage supply 1.8V (1.65V to 1.95V)
->> +		 or 2.8V (2.5V to 3.1V);
->> +
->> +Optional properties:
->> +
->> +- clock-frequency : the IP's main (system bus) clock frequency in Hz, the default
->> +		    value when this property is not specified is 24 MHz;
->> +- data-lanes : number of physical lanes used (default 2 if not specified);
+>  /* Window position controls */
 > 
-> bus-width?
-
-OK.
-
->> +- gpio-stby : specifies the S5K6AA_STBY GPIO
->> +- gpio-rst : specifies the S5K6AA_RST GPIO
+> @@ -43,9 +50,12 @@
+>  #define VIDOSD_BASE				(0x40)
 > 
->  From Documentation/devicetree/bindings/gpio/gpio.txt:
+>  #define VIDINTCON0				(0x130)
+> +#define VIDINTCON1                              (0x134)
 > 
-> <quote>
-> GPIO properties should be named "[<name>-]gpios".
-> </quote>
-
-Thanks, these have been already removed in the next version, as can be seen
-above.
-
->> +- samsung,s5k6aa-inv-stby : set inverted S5K6AA_STBY GPIO level;
->> +- samsung,s5k6aa-inv-rst : set inverted S5K6AA_RST GPIO level;
+>  /* WINCONx */
 > 
-> Isn't this provided by GPIO flags as described in include/linux/of_gpio.h
-> by using the OF_GPIO_ACTIVE_LOW bit?
-
-Hmm, I wasn't aware of that. I'll see how this flag can be used.
-
->> +- samsung,s5k6aa-hflip : set the default horizontal image flipping;
->> +- samsung,s5k6aa-vflip : set the default vertical image flipping;
+> +#define WINCONx_CSC_CON_EQ709                   (1 << 28)
+> +#define WINCONx_CSC_CON_EQ601                   (0 << 28)
+>  #define WINCONx_CSCWIDTH_MASK			(0x3 << 26)
+>  #define WINCONx_CSCWIDTH_SHIFT			(26)
+>  #define WINCONx_CSCWIDTH_WIDE			(0x0 << 26)
+> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> b/arch/arm/plat-samsung/include/plat/regs-fb.h index 9a78012..6d2ee16
+> 100644
+> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> @@ -32,12 +32,28 @@
 > 
-> This is a board property, specifying how the sensor is wired and mounted
-> on the casing, right? IIRC, libv4l has a database of these for USB
+>  #define VIDCON0					(0x00)
+>  #define VIDCON0_INTERLACE			(1 << 29)
+> +
+> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> +#define VIDOUT_CON				(0x20000)
+> +#define VIDOUT_CON_VIDOUT_UP_MASK		(0x1 << 16)
+> +#define VIDOUT_CON_VIDOUT_UP_SHIFT		(16)
+> +#define VIDOUT_CON_VIDOUT_UP_ALWAYS		(0x0 << 16)
+> +#define VIDOUT_CON_VIDOUT_UP_START_FRAME	(0x1 << 16)
+> +#define VIDOUT_CON_VIDOUT_F_MASK		(0x7 << 8)
+> +#define VIDOUT_CON_VIDOUT_F_SHIFT		(8)
+> +#define VIDOUT_CON_VIDOUT_F_RGB			(0x0 << 8)
+> +#define VIDOUT_CON_VIDOUT_F_I80_LDI0		(0x2 << 8)
+> +#define VIDOUT_CON_VIDOUT_F_I80_LDI1		(0x3 << 8)
+> +#define VIDOUT_CON_VIDOUT_F_WB			(0x4 << 8)
+> +#endif
+> +
+>  #define VIDCON0_VIDOUT_MASK			(0x3 << 26)
+>  #define VIDCON0_VIDOUT_SHIFT			(26)
+>  #define VIDCON0_VIDOUT_RGB			(0x0 << 26)
+>  #define VIDCON0_VIDOUT_TV			(0x1 << 26)
+>  #define VIDCON0_VIDOUT_I80_LDI0			(0x2 << 26)
+>  #define VIDCON0_VIDOUT_I80_LDI1			(0x3 << 26)
+> +#define VIDCON0_VIDOUT_WB                       (0x4 << 26)
+> 
+>  #define VIDCON0_L1_DATA_MASK			(0x7 << 23)
+>  #define VIDCON0_L1_DATA_SHIFT			(23)
+> @@ -81,7 +97,13 @@
+>  #define VIDCON0_ENVID				(1 << 1)
+>  #define VIDCON0_ENVID_F				(1 << 0)
+> 
+> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> +#define VIDOUT_CON                              (0x20000)
+> +#define VIDCON1                                 (0x20004)
+> +#else
+>  #define VIDCON1					(0x04)
+> +#endif
 
-Yeah, that's exactly it. It could be used for compensating for an
-"upside down" mounting.
+Same here. Also isn't it a redefinition of VIDOUT_CON that was defined 
+several lines above?
 
-> cameras. So, maybe it belongs to the user-space for embedded systems too?
+>  #define VIDCON1_LINECNT_MASK			(0x7ff << 16)
+>  #define VIDCON1_LINECNT_SHIFT			(16)
+>  #define VIDCON1_LINECNT_GET(_v)			(((_v) >> 16) & 0x7ff)
+> @@ -111,6 +133,14 @@
+>  #define VIDCON2_TVFMTSEL1_RGB			(0x0 << 12)
+>  #define VIDCON2_TVFMTSEL1_YUV422		(0x1 << 12)
+>  #define VIDCON2_TVFMTSEL1_YUV444		(0x2 << 12)
+> +#define VIDCON2_TVFMTSEL1_SHIFT			(12)
+> +#define VIDCON2_TVFMTSEL_SW			(1 << 14)
+> +#define VIDCON2_TVFORMATSEL_YUV444		(0x2 << 12)
+> +
+> +#define VIDCON2_TVFMTSEL1_MASK			(0x3 << 12)
+> +#define VIDCON2_TVFMTSEL1_RGB			(0x0 << 12)
+> +#define VIDCON2_TVFMTSEL1_YUV422		(0x1 << 12)
+> +#define VIDCON2_TVFMTSEL1_YUV444		(0x2 << 12)
+> 
+>  #define VIDCON2_ORGYCbCr			(1 << 8)
+>  #define VIDCON2_YUVORDCrCb			(1 << 7)
+> @@ -165,8 +195,15 @@
+>  #define VIDTCON1_HSPW_SHIFT			(0)
+>  #define VIDTCON1_HSPW_LIMIT			(0xff)
+>  #define VIDTCON1_HSPW(_x)			((_x) << 0)
+> +#define VIDCON1_VCLK_MASK                       (0x3 << 9)
+> +#define VIDCON1_VCLK_HOLD                       (0x0 << 9)
+> +#define VIDCON1_VCLK_RUN                        (0x1 << 9)
+> 
+> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> +#define VIDTCON2				(0x20018)
+> +#else
+>  #define VIDTCON2				(0x18)
+> +#endif
 
-Using library for these things is one of the solutions, which works well
-for USB webcams. However, I wouldn't like enforcing that. Those properties 
-still describe hardware IHMO, then why not add them into DT blob that is 
-usually distributed with each board ? There wouldn't be a need to rely on 
-any user-space database lookup, before the hardware can actually be used. 
+Same as in my first comment.
 
-> Or at least this shouldn't be Samsung-specific?
+>  #define VIDTCON2_LINEVAL_E(_x)			((((_x) & 0x800) >> 11) << 23)
+>  #define VIDTCON2_LINEVAL_MASK			(0x7ff << 11)
+>  #define VIDTCON2_LINEVAL_SHIFT			(11)
+> @@ -186,6 +223,9 @@
+>  #define WINCONx_BYTSWP				(1 << 17)
+>  #define WINCONx_HAWSWP				(1 << 16)
+>  #define WINCONx_WSWP				(1 << 15)
+> +#define WINCONx_ENLOCAL_MASK			(0xf << 15)
+> +#define WINCONx_INRGB_RGB			(0 << 13)
+> +#define WINCONx_INRGB_YCBCR			(1 << 13)
+>  #define WINCONx_BURSTLEN_MASK			(0x3 << 9)
+>  #define WINCONx_BURSTLEN_SHIFT			(9)
+>  #define WINCONx_BURSTLEN_16WORD			(0x0 << 9)
+> @@ -205,6 +245,7 @@
+>  #define WINCON0_BPPMODE_24BPP_888		(0xb << 2)
+> 
+>  #define WINCON1_BLD_PIX				(1 << 6)
+> +#define WINCON1_BLD_PLANE			(0 << 6)
+> 
+>  #define WINCON1_ALPHA_SEL			(1 << 1)
+>  #define WINCON1_BPPMODE_MASK			(0xf << 2)
+> @@ -395,9 +436,19 @@
+>  #define WPALCON_W0PAL_16BPP_A555		(0x5 << 0)
+>  #define WPALCON_W0PAL_16BPP_565			(0x6 << 0)
+> 
+> +/* Clock gate mode control */
+> +#define REG_CLKGATE_MODE			(0x1b0)
+> +#define REG_CLKGATE_MODE_AUTO_CLOCK_GATE	(0 << 0)
+> +#define REG_CLKGATE_MODE_NON_CLOCK_GATE		(1 << 0)
+> +
+>  /* Blending equation control */
+>  #define BLENDCON				(0x260)
+>  #define BLENDCON_NEW_MASK			(1 << 0)
+>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE		(1 << 0)
+>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE		(0 << 0)
+> 
+> +/* Window alpha control */
+> +#define VIDW0ALPHA0				(0x200)
+> +#define VIDW0ALPHA1				(0x204)
+> +#define DPCLKCON				(0x27c)
+> +#define DPCLKCON_ENABLE				(1 << 1)
+> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> index 0217f74..f81bf55 100644
+> --- a/drivers/video/Kconfig
+> +++ b/drivers/video/Kconfig
+> @@ -2053,6 +2053,12 @@ config FB_S3C
+> 
+>  	  Currently the support is only for the S3C6400 and S3C6410 SoCs.
+> 
+> +config FB_EXYNOS_FIMD_V8
+> +	bool "register extensions for FIMD version 8"
+> +	depends on ARCH_EXYNOS5
+> +	---help---
+> +	This uses register extensions for FIMD version 8
+> +
+>  config FB_S3C_DEBUG_REGWRITE
+>         bool "Debug register writes"
+>         depends on FB_S3C
 
-Yes, good point. If we agree we can keep them, perhaps we could standardize
-those as boolean properties: horizontal-flip; and vertical-flip; ?
-
---
-
-Thanks,
-Sylwester
+Best regards,
+Tomasz Figa
