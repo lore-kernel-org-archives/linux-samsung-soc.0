@@ -1,103 +1,62 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V2 4/7] ARM: EXYNOS: Adding DRM platform device
-Date: Wed, 18 Jul 2012 11:27:30 +0530
-Message-ID: <1342591053-7092-5-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH V2 6/7] ARM: EXYNOS5: Add the bus clock for FIMD
+Date: Wed, 18 Jul 2012 11:27:32 +0530
+Message-ID: <1342591053-7092-7-git-send-email-l.krishna@samsung.com>
 References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55050 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752701Ab2GRFnK (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:34487 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752694Ab2GRFnO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jul 2012 01:43:10 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Wed, 18 Jul 2012 01:43:14 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7C00CT5D7IHOP0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 14:43:09 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7C00IWUD7M5640@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 14:43:12 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M7C000CUD7GD990@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 14:43:08 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 14:43:12 +0900 (KST)
 In-reply-to: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, jg1.han@samsung.com
 
-Add DRM platform device to machine file for exynos5.
+This patch adds the bus clock for FIMD and changes
+the device name for lcd clock
 
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
 Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 ---
- arch/arm/mach-exynos/mach-exynos5-dt.c |   27 +++++++++++++++++++++++++++
- 1 files changed, 27 insertions(+), 0 deletions(-)
+ arch/arm/mach-exynos/clock-exynos5.c |    7 ++++++-
+ 1 files changed, 6 insertions(+), 1 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 02a0e68..99f2b24 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -17,6 +17,7 @@
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-+#include <asm/io.h>
- #include <mach/map.h>
- 
- #include <plat/cpu.h>
-@@ -27,6 +28,22 @@
- #include "common.h"
- #include <video/platform_lcd.h>
- 
-+static void exynos_fimd_gpio_setup_24bpp(void)
-+{
-+	unsigned int reg = 0;
-+	/*
-+	 * Set DISP1BLK_CFG register for Display path selection
-+	 * FIMD of DISP1_BLK Bypass selection : DISP1BLK_CFG[15]
-+	 * ---------------------
-+	 * 0 | MIE/MDNIE
-+	 * 1 | FIMD : selected
-+	 */
-+	reg = __raw_readl(S3C_VA_SYS + 0x0214);
-+	reg &= ~(1 << 15);      /* To save other reset values */
-+	reg |= (1 << 15);
-+	__raw_writel(reg, S3C_VA_SYS + 0x0214);
-+}
-+
- static int smdk5250_bl_notify(struct device *unused, int brightness)
- {
- 	/* manage lcd_bl_en signal */
-@@ -49,6 +66,14 @@ static struct platform_pwm_backlight_data smdk5250_bl_data = {
- 	.notify		= smdk5250_bl_notify,
- };
- 
-+static struct platform_device exynos_drm_device = {
-+	.name		= "exynos-drm",
-+	.dev = {
-+		.dma_mask = &exynos_drm_device.dev.coherent_dma_mask,
-+		.coherent_dma_mask = 0xffffffffUL,
-+	}
-+};
-+
- static void lcd_set_power(struct plat_lcd_data *pd,
- 			unsigned int power)
- {
-@@ -138,6 +163,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 
- static struct platform_device *smdk5250_devices[] __initdata = {
- 	&smdk5250_lcd, /* for platform_lcd device */
-+	&exynos_drm_device,
- };
- 
- static void __init exynos5250_dt_map_io(void)
-@@ -151,6 +177,7 @@ static void __init exynos5250_dt_machine_init(void)
- 	samsung_bl_set(&smdk5250_bl_gpio_info, &smdk5250_bl_data);
- 	of_platform_populate(NULL, of_default_bus_match_table,
- 				exynos5250_auxdata_lookup, NULL);
-+	exynos_fimd_gpio_setup_24bpp();
- 	platform_add_devices(smdk5250_devices, ARRAY_SIZE(smdk5250_devices));
- }
- 
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index 774533c..f001876 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -634,6 +634,11 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.enable		= exynos5_clk_ip_disp1_ctrl,
+ 		.ctrlbit	= (1 << 3),
+ 	}, {
++		.name           = "fimd",
++		.devname        = "exynos5-fb",
++		.enable         = exynos5_clk_ip_disp1_ctrl,
++		.ctrlbit        = (1 << 0),
++	}, {
+ 		.name		= "iis",
+ 		.devname	= "samsung-i2s.1",
+ 		.enable		= exynos5_clk_ip_peric_ctrl,
+@@ -1132,7 +1137,7 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+ 	}, {
+ 		.clk	= {
+ 			.name		= "sclk_fimd",
+-			.devname	= "s3cfb.1",
++			.devname	= "exynos5-fb",
+ 			.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
+ 			.ctrlbit	= (1 << 0),
+ 		},
 -- 
 1.7.0.4
