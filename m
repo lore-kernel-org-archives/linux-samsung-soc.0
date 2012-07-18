@@ -1,113 +1,152 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 7/8] ARM: EXYNOS5: Add XHCI device from device tree
-Date: Wed, 18 Jul 2012 19:15:27 +0530
-Message-ID: <1342619128-25013-8-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH 6/8] ARM: EXYNOS5: Add machine data for USB3.0
+Date: Wed, 18 Jul 2012 19:15:26 +0530
+Message-ID: <1342619128-25013-7-git-send-email-gautam.vivek@samsung.com>
 References: <1342619128-25013-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:32896 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751951Ab2GRNbQ (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47608 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751867Ab2GRNbN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 18 Jul 2012 09:31:16 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Wed, 18 Jul 2012 09:31:13 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7C00I6FYVD56O0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 22:31:15 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7C00LWOYVBJBE0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 22:31:12 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M7C00MXCYV9WD70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 22:31:15 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 18 Jul 2012 22:31:11 +0900 (KST)
 In-reply-to: <1342619128-25013-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, l.majewski@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, m.szyprowski@samsung.com
 Cc: a.kesavan@samsung.com, yulgon.kim@samsung.com, boyko.lee@samsung.com, av.tikhomirov@samsung.com, joshi@samsung.com, olofj@google.com, prashanth.g@samsung.com
 
-This patch adds EHCI device from device tree for exynos5
-and adds platform data.
+This patch adds clock definitions and address mapping of PHY
+for USB3.0 in exynos5
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 
-diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-index 45dadca..b2349fe 100644
---- a/Documentation/devicetree/bindings/usb/exynos-usb.txt
-+++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
-@@ -39,3 +39,22 @@ ehci {
- 	samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index 774533c..af1b917 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -668,6 +668,11 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.enable		= exynos5_clk_ip_fsys_ctrl ,
+ 		.ctrlbit	= (1 << 18),
+ 	}, {
++		.name		= "usbdrd30",
++		.parent		= &exynos5_clk_aclk_200.clk,
++		.enable		= exynos5_clk_ip_fsys_ctrl,
++		.ctrlbit	= (1 << 19),
++	}, {
+ 		.name		= "usbotg",
+ 		.enable		= exynos5_clk_ip_fsys_ctrl,
+ 		.ctrlbit	= (1 << 7),
+@@ -909,6 +914,16 @@ struct clksrc_sources exynos5_clkset_group = {
+ 	.nr_sources	= ARRAY_SIZE(exynos5_clkset_group_list),
  };
  
-+XHCI
-+Required properties:
-+ - compatible:	should be "samsung,exynos-xhci" for USB 3.0
-+   DWC3 controller in host mode.
-+ - reg: physical base address of the controller and length
-+   of memory mapped.
-+ - interrupts: interrupt number to the cpu.
-+ - samsung,vbus-gpio:  if present, specifies the GPIO
-+   that needs to be pulled up for the bus to be powered.
-+
-+Optional properties:
-+ - samsung,vbus-gpio:  if present, specifies the GPIO
-+   that needs to be pulled up for the bus to be powered.
-+
-+xhci {
-+	compatible = "samsung,exynos-xhci";
-+	reg = <0x12000000 0x10000>;
-+	interrupts = <0 72 0>;
-+};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 988f52a..bc36584 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -70,6 +70,12 @@
- 		interrupts = <0 71 0>;
- 	};
- 
-+	xhci {
-+		compatible = "samsung,exynos-xhci";
-+		reg = <0x12000000 0x10000>;
-+		interrupts = <0 72 0>;
-+	};
-+
- 	rtc {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x101E0000 0x100>;
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index 0cc626e..fc1ed3f 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -10,6 +10,7 @@
- */
- 
- #include <linux/of_platform.h>
-+#include <linux/platform_data/dwc3-exynos.h>
- #include <linux/serial_core.h>
- 
- #include <asm/mach/arch.h>
-@@ -34,6 +35,12 @@ static struct s5p_ehci_platdata smdk5250_ehci_pdata = {
- 	.phy_exit = s5p_usb_phy_exit,
- };
- 
-+static struct dwc3_exynos_data smdk5250_xhci_pdata = {
-+	.phy_type = S5P_USB_PHY_DRD,
-+	.phy_init = s5p_usb_phy_init,
-+	.phy_exit = s5p_usb_phy_exit,
++struct clk *exynos5_clkset_usbdrd30_list[] = {
++	[0] = &exynos5_clk_mout_mpll.clk,
++	[1] = &exynos5_clk_mout_cpll.clk,
 +};
 +
- /*
-  * The following lookup table is used to override device names when devices
-  * are registered from device tree. This is temporarily added to enable
-@@ -73,6 +80,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos-ohci", &smdk5250_ohci_pdata),
- 	OF_DEV_AUXDATA("samsung,exynos-ehci", 0x12110000,
- 				"s5p-ehci", &smdk5250_ehci_pdata),
-+	OF_DEV_AUXDATA("samsung,exynos-xhci", 0x12000000,
-+				"exynos-dwc3", &smdk5250_xhci_pdata),
- 	{},
++struct clksrc_sources exynos5_clkset_usbdrd30 = {
++	.sources        = exynos5_clkset_usbdrd30_list,
++	.nr_sources     = ARRAY_SIZE(exynos5_clkset_usbdrd30_list),
++};
++
+ /* Possible clock sources for aclk_266_gscl_sub Mux */
+ static struct clk *clk_src_gscl_266_list[] = {
+ 	[0] = &clk_ext_xtal_mux,
+@@ -1199,6 +1214,15 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+ 			.parent		= &exynos5_clk_mout_cpll.clk,
+ 		},
+ 		.reg_div = { .reg = EXYNOS5_CLKDIV_GEN, .shift = 4, .size = 3 },
++	}, {
++		.clk    = {
++			.name           = "sclk_usbdrd30",
++			.enable         = exynos5_clksrc_mask_fsys_ctrl,
++			.ctrlbit        = (1 << 28),
++		},
++		.sources = &exynos5_clkset_usbdrd30,
++		.reg_src = { .reg = EXYNOS5_CLKSRC_FSYS, .shift = 28, .size = 1 },
++		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS0, .shift = 24, .size = 4 },
+ 	},
  };
  
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 92d5e61..c17f1df 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -280,6 +280,11 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+ 		.pfn		= __phys_to_pfn(EXYNOS5_PA_USB_PHY),
+ 		.length		= SZ_4K,
+ 		.type		= MT_DEVICE,
++	}, {
++		.virtual        = (unsigned long)S5P_VA_DRD_PHY,
++		.pfn            = __phys_to_pfn(EXYNOS5_PA_DRD_PHY),
++		.length         = SZ_4K,
++		.type           = MT_DEVICE,
+ 	},
+ };
+ 
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 331ae57..b95b245 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -193,6 +193,7 @@
+ #define EXYNOS5_PA_UART			0x12C00000
+ 
+ #define EXYNOS5_PA_USB_PHY		0x12130000
++#define EXYNOS5_PA_DRD_PHY		0x12100000
+ 
+ #define EXYNOS4_PA_VP			0x12C00000
+ #define EXYNOS4_PA_MIXER		0x12C10000
+diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+index d4e392b..67132b4 100644
+--- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
++++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+@@ -39,6 +39,10 @@
+ #define S5P_HDMI_PHY_CONTROL			S5P_PMUREG(0x0700)
+ #define S5P_HDMI_PHY_ENABLE			(1 << 0)
+ 
++/* only for EXYNOS5250*/
++#define S5P_USBDRD_PHY_CONTROL			S5P_PMUREG(0x0704)
++#define S5P_USBDRD_PHY_ENABLE			(1 << 0)
++
+ #define S5P_DAC_PHY_CONTROL			S5P_PMUREG(0x070C)
+ #define S5P_DAC_PHY_ENABLE			(1 << 0)
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-samsung/include/plat/map-s5p.h
+index c2d7bda..836863a 100644
+--- a/arch/arm/plat-samsung/include/plat/map-s5p.h
++++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
+@@ -40,6 +40,8 @@
+ #define S5P_VA_GIC_CPU		S3C_ADDR(0x02810000)
+ #define S5P_VA_GIC_DIST		S3C_ADDR(0x02820000)
+ 
++#define S5P_VA_DRD_PHY		S3C_ADDR(0x03000000)
++
+ #define VA_VIC(x)		(S3C_VA_IRQ + ((x) * 0x10000))
+ #define VA_VIC0			VA_VIC(0)
+ #define VA_VIC1			VA_VIC(1)
+diff --git a/drivers/usb/Kconfig b/drivers/usb/Kconfig
+index a7773a3..e9cbe34 100644
+--- a/drivers/usb/Kconfig
++++ b/drivers/usb/Kconfig
+@@ -53,6 +53,7 @@ config USB_ARCH_HAS_EHCI
+ # some non-PCI HCDs implement xHCI
+ config USB_ARCH_HAS_XHCI
+ 	boolean
++	default y if ARCH_EXYNOS5
+ 	default PCI
+ 
+ menuconfig USB_SUPPORT
 -- 
 1.7.0.4
