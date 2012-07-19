@@ -1,63 +1,237 @@
-From: Namjae Jeon <linkinjeon@gmail.com>
-Subject: Re: [PATCH V2 3/4] [SCSI] ufs: Add Platform glue driver for ufshcd
-Date: Thu, 19 Jul 2012 21:16:32 +0900
-Message-ID: <CAKYAXd92fTRPpHHeNkH1bSZD1hAaU-Xm8wxjCUMHO21wX21vQA@mail.gmail.com>
-References: <1342189698-20393-1-git-send-email-vinholikatti@gmail.com>
-	<1342189698-20393-2-git-send-email-vinholikatti@gmail.com>
-	<CAKYAXd9cPuN-HfifDmz4M==QfjEW7CX6BF=rumSBSwRtO38_PQ@mail.gmail.com>
-	<CAKVbJB8PGZqOUOjDk-2uckx4MUkgKEb-EZ_TYt6C5fGjP2k85g@mail.gmail.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR
+ definitions for writeback
+Date: Thu, 19 Jul 2012 18:13:49 +0530
+Message-ID: <CAL1wa8f0NOF+K4Z-6w6Aue_L2x_1-5HaXWu9t8QDaDY9SCW-Cw@mail.gmail.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
+ <1342591053-7092-2-git-send-email-l.krishna@samsung.com> <009c01cd64b1$bd3a8390$37af8ab0$%szyprowski@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:33217 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751813Ab2GSMQd (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:40801 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752729Ab2GSMoK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 08:16:33 -0400
-In-Reply-To: <CAKVbJB8PGZqOUOjDk-2uckx4MUkgKEb-EZ_TYt6C5fGjP2k85g@mail.gmail.com>
+	Thu, 19 Jul 2012 08:44:10 -0400
+Received: by pbbrp8 with SMTP id rp8so4329597pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jul 2012 05:44:10 -0700 (PDT)
+In-Reply-To: <009c01cd64b1$bd3a8390$37af8ab0$%szyprowski@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: vinayak holikatti <vinholikatti@gmail.com>
-Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jg1.han@samsung.com, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com
 
-2012/7/17 vinayak holikatti <vinholikatti@gmail.com>:
-> On Mon, Jul 16, 2012 at 7:19 PM, Namjae Jeon <linkinjeon@gmail.com> wrote:
->> Hi Vinayak.
->>> + * ufshcd_pltfrm_remove - remove platform driver routine
->>> + * @pdev: pointer to platform device handle
->>> + *
->>> + * Returns 0 on success, non-zero value on failure
->>> + */
->>> +static int __devexit ufshcd_pltfrm_remove(struct platform_device *pdev)
->>> +{
->>> +     struct resource *mem_res;
->>> +     struct resource *irq_res;
->>> +     resource_size_t mem_size;
->>> +     struct ufs_hba *hba =  platform_get_drvdata(pdev);
->>> +
->>> +     ufshcd_remove(hba);
->>> +     irq_res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
->>> +     if (!irq_res)
->>> +             dev_err(&pdev->dev, "ufshcd: IRQ resource not available\n");
->>> +     free_irq(irq_res->start, hba);
->> Is there no possibility of null pointer dereferencing error ?(irq_res->start)
->> I think that free_irq should be not called if irq_res is NULL.
-> I agree, I have overlooked at this logic, the free_irq should have
-> been in the else
-> part of this section. I will make the modification in the next version
-> of patches.
-Okay.
-You can add my
-Reviewed-by: Namjae Jeon <linkinjeon@gmail.com>
-in these patchset
+Hello Marek,
 
-Thanks.
->>> +     mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> Looks mem_res is also same with upper case.
->> Thanks.
->>> +     mem_size = resource_size(mem_res);
->>> +     release_mem_region(mem_res->start, mem_size);
->>> +     platform_set_drvdata(pdev, NULL);
->>> +     return 0;
->>> +}
->>> +
+On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+> Hello,
+>
+> On Wednesday, July 18, 2012 7:57 AM Leela Krishna Amudala wrote:
+>
+>> This patch updates the register address offsets and adds SFR definitions
+>> for writeback for Samsung's V8 display controller.
+>>
+>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+>> ---
+>>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++++
+>>  arch/arm/plat-samsung/include/plat/regs-fb.h    |   51 +++++++++++++++++++++++
+>>  drivers/video/Kconfig                           |    6 +++
+>>  3 files changed, 67 insertions(+), 0 deletions(-)
+>>
+>> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h b/arch/arm/plat-
+>> samsung/include/plat/regs-fb-v4.h
+>> index 4c3647f..1639c17 100644
+>> --- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>> +++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>> @@ -30,9 +30,16 @@
+>>  #define VIDCON1_FSTATUS_EVEN (1 << 15)
+>>
+>>  /* Video timing controls */
+>> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+>> +#define VIDTCON0                                (0x20010)
+>> +#define VIDTCON1                                (0x20014)
+>> +#define VIDTCON3                                (0x2001C)
+>> +#else
+>>  #define VIDTCON0                             (0x10)
+>>  #define VIDTCON1                             (0x14)
+>>  #define VIDTCON2                             (0x18)
+>> +#define VIDTCON3                             (0x1C)
+>> +#endif
+>>
+>>  /* Window position controls */
+>>
+>> @@ -43,9 +50,12 @@
+>>  #define VIDOSD_BASE                          (0x40)
+>>
+>>  #define VIDINTCON0                           (0x130)
+>> +#define VIDINTCON1                              (0x134)
+>>
+>>  /* WINCONx */
+>>
+>> +#define WINCONx_CSC_CON_EQ709                   (1 << 28)
+>> +#define WINCONx_CSC_CON_EQ601                   (0 << 28)
+>>  #define WINCONx_CSCWIDTH_MASK                        (0x3 << 26)
+>>  #define WINCONx_CSCWIDTH_SHIFT                       (26)
+>>  #define WINCONx_CSCWIDTH_WIDE                        (0x0 << 26)
+>> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-
+>> samsung/include/plat/regs-fb.h
+>> index 9a78012..6d2ee16 100644
+>> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+>> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+>> @@ -32,12 +32,28 @@
+>>
+>>  #define VIDCON0                                      (0x00)
+>>  #define VIDCON0_INTERLACE                    (1 << 29)
+>> +
+>> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+>> +#define VIDOUT_CON                           (0x20000)
+>> +#define VIDOUT_CON_VIDOUT_UP_MASK            (0x1 << 16)
+>> +#define VIDOUT_CON_VIDOUT_UP_SHIFT           (16)
+>> +#define VIDOUT_CON_VIDOUT_UP_ALWAYS          (0x0 << 16)
+>> +#define VIDOUT_CON_VIDOUT_UP_START_FRAME     (0x1 << 16)
+>> +#define VIDOUT_CON_VIDOUT_F_MASK             (0x7 << 8)
+>> +#define VIDOUT_CON_VIDOUT_F_SHIFT            (8)
+>> +#define VIDOUT_CON_VIDOUT_F_RGB                      (0x0 << 8)
+>> +#define VIDOUT_CON_VIDOUT_F_I80_LDI0         (0x2 << 8)
+>> +#define VIDOUT_CON_VIDOUT_F_I80_LDI1         (0x3 << 8)
+>> +#define VIDOUT_CON_VIDOUT_F_WB                       (0x4 << 8)
+>> +#endif
+>> +
+>>  #define VIDCON0_VIDOUT_MASK                  (0x3 << 26)
+>>  #define VIDCON0_VIDOUT_SHIFT                 (26)
+>>  #define VIDCON0_VIDOUT_RGB                   (0x0 << 26)
+>>  #define VIDCON0_VIDOUT_TV                    (0x1 << 26)
+>>  #define VIDCON0_VIDOUT_I80_LDI0                      (0x2 << 26)
+>>  #define VIDCON0_VIDOUT_I80_LDI1                      (0x3 << 26)
+>> +#define VIDCON0_VIDOUT_WB                       (0x4 << 26)
+>>
+>>  #define VIDCON0_L1_DATA_MASK                 (0x7 << 23)
+>>  #define VIDCON0_L1_DATA_SHIFT                        (23)
+>> @@ -81,7 +97,13 @@
+>>  #define VIDCON0_ENVID                                (1 << 1)
+>>  #define VIDCON0_ENVID_F                              (1 << 0)
+>>
+>> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+>> +#define VIDOUT_CON                              (0x20000)
+>> +#define VIDCON1                                 (0x20004)
+>> +#else
+>>  #define VIDCON1                                      (0x04)
+>> +#endif
+>> +
+>>  #define VIDCON1_LINECNT_MASK                 (0x7ff << 16)
+>>  #define VIDCON1_LINECNT_SHIFT                        (16)
+>>  #define VIDCON1_LINECNT_GET(_v)                      (((_v) >> 16) & 0x7ff)
+>> @@ -111,6 +133,14 @@
+>>  #define VIDCON2_TVFMTSEL1_RGB                        (0x0 << 12)
+>>  #define VIDCON2_TVFMTSEL1_YUV422             (0x1 << 12)
+>>  #define VIDCON2_TVFMTSEL1_YUV444             (0x2 << 12)
+>> +#define VIDCON2_TVFMTSEL1_SHIFT                      (12)
+>> +#define VIDCON2_TVFMTSEL_SW                  (1 << 14)
+>> +#define VIDCON2_TVFORMATSEL_YUV444           (0x2 << 12)
+>> +
+>> +#define VIDCON2_TVFMTSEL1_MASK                       (0x3 << 12)
+>> +#define VIDCON2_TVFMTSEL1_RGB                        (0x0 << 12)
+>> +#define VIDCON2_TVFMTSEL1_YUV422             (0x1 << 12)
+>> +#define VIDCON2_TVFMTSEL1_YUV444             (0x2 << 12)
+>>
+>>  #define VIDCON2_ORGYCbCr                     (1 << 8)
+>>  #define VIDCON2_YUVORDCrCb                   (1 << 7)
+>> @@ -165,8 +195,15 @@
+>>  #define VIDTCON1_HSPW_SHIFT                  (0)
+>>  #define VIDTCON1_HSPW_LIMIT                  (0xff)
+>>  #define VIDTCON1_HSPW(_x)                    ((_x) << 0)
+>> +#define VIDCON1_VCLK_MASK                       (0x3 << 9)
+>> +#define VIDCON1_VCLK_HOLD                       (0x0 << 9)
+>> +#define VIDCON1_VCLK_RUN                        (0x1 << 9)
+>>
+>> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+>> +#define VIDTCON2                             (0x20018)
+>> +#else
+>>  #define VIDTCON2                             (0x18)
+>> +#endif
+>>  #define VIDTCON2_LINEVAL_E(_x)                       ((((_x) & 0x800) >> 11) << 23)
+>>  #define VIDTCON2_LINEVAL_MASK                        (0x7ff << 11)
+>>  #define VIDTCON2_LINEVAL_SHIFT                       (11)
+>> @@ -186,6 +223,9 @@
+>>  #define WINCONx_BYTSWP                               (1 << 17)
+>>  #define WINCONx_HAWSWP                               (1 << 16)
+>>  #define WINCONx_WSWP                         (1 << 15)
+>> +#define WINCONx_ENLOCAL_MASK                 (0xf << 15)
+>> +#define WINCONx_INRGB_RGB                    (0 << 13)
+>> +#define WINCONx_INRGB_YCBCR                  (1 << 13)
+>>  #define WINCONx_BURSTLEN_MASK                        (0x3 << 9)
+>>  #define WINCONx_BURSTLEN_SHIFT                       (9)
+>>  #define WINCONx_BURSTLEN_16WORD                      (0x0 << 9)
+>> @@ -205,6 +245,7 @@
+>>  #define WINCON0_BPPMODE_24BPP_888            (0xb << 2)
+>>
+>>  #define WINCON1_BLD_PIX                              (1 << 6)
+>> +#define WINCON1_BLD_PLANE                    (0 << 6)
+>>
+>>  #define WINCON1_ALPHA_SEL                    (1 << 1)
+>>  #define WINCON1_BPPMODE_MASK                 (0xf << 2)
+>> @@ -395,9 +436,19 @@
+>>  #define WPALCON_W0PAL_16BPP_A555             (0x5 << 0)
+>>  #define WPALCON_W0PAL_16BPP_565                      (0x6 << 0)
+>>
+>> +/* Clock gate mode control */
+>> +#define REG_CLKGATE_MODE                     (0x1b0)
+>> +#define REG_CLKGATE_MODE_AUTO_CLOCK_GATE     (0 << 0)
+>> +#define REG_CLKGATE_MODE_NON_CLOCK_GATE              (1 << 0)
+>> +
+>>  /* Blending equation control */
+>>  #define BLENDCON                             (0x260)
+>>  #define BLENDCON_NEW_MASK                    (1 << 0)
+>>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE                (1 << 0)
+>>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE                (0 << 0)
+>>
+>> +/* Window alpha control */
+>> +#define VIDW0ALPHA0                          (0x200)
+>> +#define VIDW0ALPHA1                          (0x204)
+>> +#define DPCLKCON                             (0x27c)
+>> +#define DPCLKCON_ENABLE                              (1 << 1)
+>> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+>> index 0217f74..f81bf55 100644
+>> --- a/drivers/video/Kconfig
+>> +++ b/drivers/video/Kconfig
+>> @@ -2053,6 +2053,12 @@ config FB_S3C
+>>
+>>         Currently the support is only for the S3C6400 and S3C6410 SoCs.
+>>
+>> +config FB_EXYNOS_FIMD_V8
+>> +     bool "register extensions for FIMD version 8"
+>> +     depends on ARCH_EXYNOS5
+>> +     ---help---
+>> +     This uses register extensions for FIMD version 8
+>> +
+>>  config FB_S3C_DEBUG_REGWRITE
+>>         bool "Debug register writes"
+>>         depends on FB_S3C
+>
+> Do we really need these defines in arch/arm/plat-samsung/include/plat/regs-fb* ?
+> IMHO they should be moved from arch/arm to drivers/video to live together with the driver.
+> They are not a part of core platform code. I thought that there have been some patches
+> cleaning up regs-fb mess a long time ago, but it looks they didn't get their way to
+> mainline.
+>
+
+The defines I had given in these headers are specific to exynos5
+platform and are using by both drm-fimd and
+s3c-fb. I'm not understanding the need to move these defines from
+arch/arm to drivers/video. Can you please tell me why we have to do
+that.
+
+Best Wishes,
+Leela Krishna Amudala.
+
+> Best regards
+> --
+> Marek Szyprowski
+> Samsung Poland R&D Center
+>
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
