@@ -1,76 +1,73 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung DT for v3.6
-Date: Fri, 20 Jul 2012 07:12:08 +0900
-Message-ID: <194d01cd65fb$89d29b50$9d77d1f0$%kim@samsung.com>
-References: <143401cd639e$474af610$d5e0e230$%kim@samsung.com>
- <201207172117.48095.arnd@arndb.de>
+Subject: RE: [GIT PULL] Samsung cleanup-2 for v3.6
+Date: Fri, 20 Jul 2012 07:21:12 +0900
+Message-ID: <194e01cd65fc$ce163be0$6a42b3a0$%kim@samsung.com>
+References: <142c01cd639c$2f081800$8d184800$%kim@samsung.com>
+ <201207172058.28993.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:60966 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752357Ab2GSWMX (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:43316 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751036Ab2GSWVN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 18:12:23 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Thu, 19 Jul 2012 18:21:13 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7F00CQMHO7R320@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:12:07 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7F00LGJI39J220@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:21:12 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7F00LHLHO7K760@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:12:07 +0900 (KST)
-In-reply-to: <201207172117.48095.arnd@arndb.de>
+ with ESMTPA id <0M7F00HUCI3BERB0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:21:11 +0900 (KST)
+In-reply-to: <201207172058.28993.arnd@arndb.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jon Hunter' <jon-hunter@ti.com>, 'Vinod Koul' <vinod.koul@linux.intel.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
 
 Arnd Bergmann wrote:
 > 
 > On Monday 16 July 2012, Kukjin Kim wrote:
-> > Please pull support samsung spi device tree for v3.6 from:
+> > Here is second Samsung cleanup pull request for v3.6.
+> > Please pull from:
 > >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > next/dt-samsung
+> > next/cleanup-samsung-2
 > >
-> > It is for supporting spi dt for exynos4210 and exynos5250, and got the
-> ack
-> > from Grant Likely for spi driver.
+> > It is related in using common GPIO API and removing unused GPIOs.
 > >
-> > Note: Since this is including spi driver changes, so it was made based
-> on
-> > next/devel-dma-ops which touches same file, Samsung spi driver for
-> avoiding
-> > bad conflicts.
+> > If any problems, please let me know.
 > >
-> > If any problems, please kindly let me know.
 > 
-> Applied to next/dt branch. I'm not so happy about new dma channel
-> properties getting added to additional bindings. I guess I should
-> have complained earlier about these, so I'm keeping the changes
-> but I've added the patch below to make it clear that they will
-> have to change after we have agreed with Vinod and Jon on how
-> they should be represented.
+> Very nice series, I've merged it into next/cleanup now.
 > 
-Yeah, I agree. 
+Thanks.
 
-> 	Arnd
+> Two general comments on your submissions:
 > 
-> Subject: [PATCH] ARM: EXYNOS: mark the DMA channel binding for SPI as
-> preliminary
+> 1. Please put the branch name into the same line as the git url, that
+> makes it slightly faster for me to copy-and-paste the pull location.
 > 
-> Bindings for DMA channels are still under discussion and will
-> change once this has been resolved. Therefore we mark them
-> the newly added ones as preliminary. Let's hope nobody starts
-> relying on them...
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Yeah, I know. If the line exceeds 80 columns (actually, 76 columns),
+automatically, my e-mail client adds new line when I send git-pull or
+anything else to mailing-list. And the git address which is including branch
+name is included in the case :-(
+So I will change the options of e-mail client when I send pull-request.
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> 2. If you can, please use signed tags for your pull requests rather
+> than branch names. A signed tag means that you can write the text
+> for the merge changeset yourself so I don't have to do the description.
+> Ideally the signing key should have signatures from other people in the
+> keyring so everybody can check the authenticity of the request, but
+> just having the changelog there also helps.
+> 
+OK, I see. I will try to use it as per your suggestion. But I'm not familiar
+with that now. So if you don't mind I'd like to send signed tag from next
+merge window :-)
 
 Thanks.
 
@@ -79,98 +76,3 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-> 
-> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-> b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-> index 59bfc4f..a15ffed 100644
-> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
-> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
-> @@ -18,6 +18,9 @@ Required SoC Specific Properties:
->  - interrupts: The interrupt number to the cpu. The interrupt specifier
-> format
->    depends on the interrupt controller.
-> 
-> +[PRELIMINARY: the dma channel allocation will change once there are
-> +official DMA bindings]
-> +
->  - tx-dma-channel: The dma channel specifier for tx operations. The format
-> of
->    the dma specifier depends on the dma controller.
-> 
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
-> b/arch/arm/boot/dts/exynos4210.dtsi
-> index 6904d9d..02891fe 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -168,8 +168,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x13920000 0x100>;
->  		interrupts = <0 66 0>;
-> -		tx-dma-channel = <&pdma0 7>;
-> -		rx-dma-channel = <&pdma0 6>;
-> +		tx-dma-channel = <&pdma0 7>; /* preliminary */
-> +		rx-dma-channel = <&pdma0 6>; /* preliminary */
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  	};
-> @@ -178,8 +178,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x13930000 0x100>;
->  		interrupts = <0 67 0>;
-> -		tx-dma-channel = <&pdma1 7>;
-> -		rx-dma-channel = <&pdma1 6>;
-> +		tx-dma-channel = <&pdma1 7>; /* preliminary */
-> +		rx-dma-channel = <&pdma1 6>; /* preliminary */
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  	};
-> @@ -188,8 +188,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x13940000 0x100>;
->  		interrupts = <0 68 0>;
-> -		tx-dma-channel = <&pdma0 9>;
-> -		rx-dma-channel = <&pdma0 8>;
-> +		tx-dma-channel = <&pdma0 9>; /* preliminary */
-> +		rx-dma-channel = <&pdma0 8>; /* preliminary */
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  	};
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
-> b/arch/arm/boot/dts/exynos5250.dtsi
-> index a3a2eb2..004aaa8 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -156,8 +156,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x12d20000 0x100>;
->  		interrupts = <0 66 0>;
-> -		tx-dma-channel = <&pdma0 5>;
-> -		rx-dma-channel = <&pdma0 4>;
-> +		tx-dma-channel = <&pdma0 5>; /* preliminary */
-> +		rx-dma-channel = <&pdma0 4>; /* preliminary */
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  	};
-> @@ -166,8 +166,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x12d30000 0x100>;
->  		interrupts = <0 67 0>;
-> -		tx-dma-channel = <&pdma1 5>;
-> -		rx-dma-channel = <&pdma1 4>;
-> +		tx-dma-channel = <&pdma1 5>; /* preliminary */
-> +		rx-dma-channel = <&pdma1 4>; /* preliminary */
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  	};
-> @@ -176,8 +176,8 @@
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x12d40000 0x100>;
->  		interrupts = <0 68 0>;
-> -		tx-dma-channel = <&pdma0 7>;
-> -		rx-dma-channel = <&pdma0 6>;
-> +		tx-dma-channel = <&pdma0 7>; /* preliminary */
-> +		rx-dma-channel = <&pdma0 6>; /* preliminary */
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  	};
