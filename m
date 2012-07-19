@@ -1,59 +1,88 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: Add missing .reserve field to SMDKC210
-Date: Thu, 19 Jul 2012 15:44:37 +0900
-Message-ID: <184401cd6579$f75e8f30$e61bad90$%kim@samsung.com>
-References: <1341219791-17202-1-git-send-email-sachin.kamat@linaro.org>
+Subject: RE: [PATCH 1/4] spi/s3c64xx: Fix handling of errors in gpio_request()
+Date: Thu, 19 Jul 2012 15:46:11 +0900
+Message-ID: <184501cd657a$2f5b23d0$8e116b70$%kim@samsung.com>
+References: <1342610921-31986-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:50618 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:51503 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752087Ab2GSGok (ORCPT
+	with ESMTP id S1751739Ab2GSGqN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 02:44:40 -0400
+	Thu, 19 Jul 2012 02:46:13 -0400
 Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7E001YLAQ6EDR0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 15:44:39 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7E00F1FASIK200@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 15:46:12 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7E00N5HAQE0T10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 15:44:38 +0900 (KST)
-In-reply-to: <1341219791-17202-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0M7E002KYAT0DLC0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 15:46:12 +0900 (KST)
+In-reply-to: <1342610921-31986-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Grant Likely' <grant.likely@secretlab.ca>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net
 
-Sachin Kamat wrote:
+Mark Brown wrote:
 > 
-> Adds missing .reserve field to SMDKC210 board.
+> When gpio_request() fails the driver logged the failure but while it'd
+> try to print an error code in the non-DT case it didn't pass the error
+> code in so garbage would be logged and in the DT case the error wasn't
+> logged.
 > 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> Further, in the non-DT case the error code was then overwritten with -
+> EBUSY
+> depriving the caller of information and breaking automatic probe deferral
+> pushing back from the GPIO level.  Also reformat the non-DT log message
+> so it's not word wrapped and we can grep for it.
+> 
+> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
 > ---
->  arch/arm/mach-exynos/mach-smdkv310.c |    1 +
->  1 files changed, 1 insertions(+), 0 deletions(-)
+>  drivers/spi/spi-s3c64xx.c |    9 +++++----
+>  1 file changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-
-> exynos/mach-smdkv310.c
-> index 95ce9f6..2d34ec7 100644
-> --- a/arch/arm/mach-exynos/mach-smdkv310.c
-> +++ b/arch/arm/mach-exynos/mach-smdkv310.c
-> @@ -422,5 +422,6 @@ MACHINE_START(SMDKC210, "SMDKC210")
->  	.init_machine	= smdkv310_machine_init,
->  	.init_late	= exynos_init_late,
->  	.timer		= &exynos4_timer,
-> +	.reserve	= &smdkv310_reserve,
->  	.restart	= exynos4_restart,
->  MACHINE_END
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 999154a0..7258b18 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -894,9 +894,9 @@ static int s3c64xx_spi_setup(struct spi_device *spi)
+>  	if (!spi_get_ctldata(spi)) {
+>  		err = gpio_request(cs->line, dev_name(&spi->dev));
+>  		if (err) {
+> -			dev_err(&spi->dev, "request for slave select gpio "
+> -					"line [%d] failed\n", cs->line);
+> -			err = -EBUSY;
+> +			dev_err(&spi->dev,
+> +				"Failed to get /CS gpio [%d]: %d\n",
+> +				cs->line, err);
+>  			goto err_gpio_req;
+>  		}
+>  		spi_set_ctldata(spi, cs);
+> @@ -1114,7 +1114,8 @@ static int s3c64xx_spi_parse_dt_gpio(struct
+> s3c64xx_spi_driver_data *sdd)
+> 
+>  		ret = gpio_request(gpio, "spi-bus");
+>  		if (ret) {
+> -			dev_err(dev, "gpio [%d] request failed\n", gpio);
+> +			dev_err(dev, "gpio [%d] request failed: %d\n",
+> +				gpio, ret);
+>  			goto free_gpio;
+>  		}
+>  	}
 > --
-> 1.7.4.1
+> 1.7.10.4
 
-OK, applied, thanks.
+Mark, thanks for your re-work 3th and 4th patches in this series :-)
+
+Looks good to me, applied this series.
+
+Thanks.
 
 Best regards,
 Kgene.
