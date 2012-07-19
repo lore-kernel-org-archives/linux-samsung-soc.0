@@ -1,68 +1,140 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: Re: [PATCH RESEND v2 2/2] ARM: EXYNOS: Add gscaler device from DT
-Date: Thu, 19 Jul 2012 09:23:12 +0000 (GMT)
-Message-ID: <4623345.151721342689791471.JavaMail.weblogic@epml09>
-Reply-To: shaik.ameer@samsung.com
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH 3/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Thu, 19 Jul 2012 19:27:25 +0900
+Message-ID: <004201cd6599$17401610$45c04230$%jun@samsung.com>
+References: <CAGxe1ZGMvrec-nEYdZJ84Hub0fByYvnkCY_dRq2k489gCRSxQg@mail.gmail.com>
+ <1342521538-12790-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:22348 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751235Ab2GSJXO (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:45500 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752079Ab2GSK1a (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 05:23:14 -0400
-Received: from epcpsbge8.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7E00D09I1GH830@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 18:23:13 +0900 (KST)
-MIME-version: 1.0
+	Thu, 19 Jul 2012 06:27:30 -0400
+In-reply-to: <1342521538-12790-1-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, "olofj@google.com" <olofj@google.com>, Thomas P Abraham <thomas.ab@samsung.com>, "sachin.kamat@linaro.org" <sachin.kamat@linaro.org>, SUNIL JOSHI <joshi@samsung.com>, "shaik.samsung@gmail.com" <shaik.samsung@gmail.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-SGkgU3lsd2VzdGVyLA0KDQoNCk9uIFR1ZSwgSnVsIDE3LCAyMDEyIGF0IDI6MDMgQU0sIFN5bHdl
-c3RlciBOYXdyb2NraSA8c3lsdmVzdGVyLm5hd3JvY2tpQGdtYWlsLmNvbT4gd3JvdGU6DQo+IEhp
-IFNoYWlrLA0KPg0KPg0KPiBPbiAwNy8xNi8yMDEyIDA3OjMzIEFNLCBTaGFpayBBbWVlciBCYXNo
-YSB3cm90ZToNCj4+DQo+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-bWVkaWEvZXh5bm9zNS1nc2MudHh0DQo+PiBAQCAtMCwwICsxLDE2IEBADQo+PiArKiBTYW1zdW5n
-IEV4eW5vczUgR3NjYWxlciBkZXZpY2UNCj4+ICsNCj4+ICtHc2NhbGVyIGlzIHVzZWQgZm9yIHNj
-YWxpbmcgYW5kIGNvbG9yIHNwYWNlIGNvbnZlcnNpb24gb24gRVhZTk9TNSBTb0NzLg0KPj4gKw0K
-Pj4gK1JlcXVpcmVkIHByb3BlcnRpZXM6DQo+PiArLSBjb21wYXRpYmxlOiBzaG91bGQgYmUgInNh
-bXN1bmcsZXh5bm9zLWdzYyINCj4NCj4NCj4gU2hvdWxkbid0IHRoZXJlIHJhdGhlciBiZSBhIHNw
-ZWNpZmljICJjb21wYXRpYmxlIiBwcm9wZXJ0eSBmb3IgZWFjaCBTb0MsDQo+IGUuZy4NCj4gICAg
-LSBjb21wYXRpYmxlOiBzaG91bGQgYmUgb25lIG9mOg0KPiAgICAgICAgICJzYW1zdW5nNTI1MCxl
-eHlub3MtZ3NjIiwNCj4gICAgICAgICAic2Ftc3VuZzU0NTAsZXh5bm9zLWdzYyIsDQo+IGV0Yy4g
-Pw0KPg0KDQoNCk9LLiBJIHdpbGwgY2hhbmdlIHRoZSBjb21wYXRpYmxlIHByb3BlcnR5IHRvICJz
-YW1zdW5nLGV4eW5vczUyNTAtZ3NjIi4NCg0KDQo+DQo+PiArLSByZWc6IHNob3VsZCBjb250aWFu
-IEdzYWxlciBwaHlzaWNhbCBhZGRyZXNzIGxvY2F0aW9uIGFuZCBsZW5ndGguDQo+DQo+DQo+IGNv
-bnRpYW4gLT4gY29udGFpbiwgR3NhbGVyIC0+IEdzY2FsZXINCj4NCg0KDQpPSy4gSSB3aWxsIGNv
-cnJlY3QgdGhhdC4uLg0KDQoNCj4NCj4+ICstIGludGVycnVwdHM6IHNob3VsZCBjb250YWluIEdz
-Y2FsZXIgaW50ZXJydXB0IG51bWJlcg0KPj4gKw0KPj4gK0V4YW1wbGU6DQo+PiArDQo+PiArZ3Nj
-XzA6ICBnc2NAMHgxM2UwMDAwMCB7DQo+PiArICAgICAgIGNvbXBhdGlibGUgPSAic2Ftc3VuZyxl
-eHlub3MtZ3NjIjsNCj4NCj4NCj4gICAgICAgICBjb21wYXRpYmxlID0gInNhbXN1bmc1MjUwLGV4
-eW5vcy1nc2MiOw0KPg0KDQpPay4gSSB3aWxsIGNoYW5nZSB0aGF0IHRvLA0KY29tcGF0aWJsZSA9
-ICJzYW1zdW5nLGV4eW5vczUyNTAtZ3NjIjsNCg0KPg0KPj4gKyAgICAgICByZWcgPTwweDEzZTAw
-MDAwIDB4MTAwMD47DQo+PiArICAgICAgIGludGVycnVwdHMgPTwwIDg1IDA+Ow0KPj4gK307DQo+
-DQo+DQo+IFRoZSBhbGlhc2VzIGFyZSBzdGlsbCB1bmRvY3VtZW50ZWQuIEhvdyBhYm91dCBhZGRp
-bmcgc29tZXRoaW5nDQo+IGFsb25nIHRoZSBsaW5lcyBvZjoNCj4NCj4gIkVhY2ggR3NjYWxlciBu
-b2RlIHNob3VsZCBoYXZlIGEgbnVtYmVyZWQgYWxpYXMgaW4gdGhlIGFsaWFzZXMgbm9kZSwNCj4g
-aW4gdGhlIGZvcm0gb2YgZ3NjTiwgTiA9IDAuLi4zLiINCj4NCg0KVGhhbmtzIGZvciB0aGF0Li4u
-DQoNCkkgcmVzZW50IHRoZSBzYW1lIHBhdGNoIHRvIGRldmljZXRyZWUgbWFpbGluZ2xpc3QuLi4g
-dGhhdCdzIHdoeSBhbGlhc2VzIGRvY3VtZW50YXRpb24gd2FzIG5vdCBwcmVzZW50Li4uLg0KSSB3
-aWxsIGFkZCB0aGUgYWxpYXNlcyBkb2N1bWVudGF0aW9uIGluIHRoZSB2MyByZWxlYXNlLg0KDQo+
-DQo+ID8NCj4NCj4+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0
-c2kNCj4+IGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpDQo+PiBpbmRleCA0Mjcy
-YjI5Li5iOTQ1YzAwIDEwMDY0NA0KPj4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1
-MC5kdHNpDQo+PiArKysgYi9hcmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kNCj4+IEBA
-IC0yMyw2ICsyMywxMyBAQA0KPj4gICAgICAgICBjb21wYXRpYmxlID0gInNhbXN1bmcsZXh5bm9z
-NTI1MCI7DQo+PiAgICAgICAgIGludGVycnVwdC1wYXJlbnQgPTwmZ2ljPjsNCj4+DQo+PiArICAg
-ICAgIGFsaWFzZXMgew0KPj4gKyAgICAgICAgICAgICAgIGdzYzAgPSZnc2NfMDsNCj4+ICsgICAg
-ICAgICAgICAgICBnc2MxID0mZ3NjXzE7DQo+PiArICAgICAgICAgICAgICAgZ3NjMiA9JmdzY18y
-Ow0KPj4gKyAgICAgICAgICAgICAgIGdzYzMgPSZnc2NfMzsNCj4+ICsgICAgICAgfTsNCj4+ICsN
-Cj4+ICAgICAgICAgZ2ljOmludGVycnVwdC1jb250cm9sbGVyQDEwNDgxMDAwIHsNCj4+ICAgICAg
-ICAgICAgICAgICBjb21wYXRpYmxlID0gImFybSxjb3J0ZXgtYTktZ2ljIjsNCj4+ICAgICAgICAg
-ICAgICAgICAjaW50ZXJydXB0LWNlbGxzID08Mz47DQo+DQo+DQo+IC0tDQo+DQo+IFJlZ2FyZHMs
-DQo+IFN5bHdlc3Rlcg0KDQpSZWdhcmRzLA0KU2hhaWsgQW1lZXIgQmFzaGE=
+July 17, 2012, Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> Some platforms allow for clock gating and control of bus interface unit clock
+> and card interface unit clock. Add support for clock lookup of optional biu
+> and ciu clocks for clock gating and clock speed determination.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/mmc/host/dw_mmc.c  |   39 ++++++++++++++++++++++++++++++++++++---
+>  include/linux/mmc/dw_mmc.h |    4 ++++
+>  2 files changed, 40 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index cd58063..ebd22d8 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1953,13 +1953,30 @@ int dw_mci_probe(struct dw_mci *host)
+>  		return -ENODEV;
+>  	}
+> 
+> -	if (!host->pdata->bus_hz) {
+> +	host->biu_clk = clk_get(host->dev, "biu");
+> +	if (IS_ERR(host->biu_clk))
+> +		dev_dbg(host->dev, "biu clock not available\n");
+> +	else
+> +		clk_prepare_enable(host->biu_clk);
+> +
+> +	host->ciu_clk = clk_get(host->dev, "ciu");
+> +	if (IS_ERR(host->ciu_clk))
+> +		dev_dbg(host->dev, "ciu clock not available\n");
+> +	else
+> +		clk_prepare_enable(host->ciu_clk);
+> +
+> +	if (IS_ERR(host->ciu_clk))
+> +		host->bus_hz = host->pdata->bus_hz;
+> +	else
+> +		host->bus_hz = clk_get_rate(host->ciu_clk);
+I have posted similar patch some time back.
+bus_hz represents input rate for cclk_in of mshc.
+Host of samsung soc doesn't use input clock from system directly.
+As you have introduced CLKSEL in your another patch, input clock can be changed prior to cclk_in.
+For non-samsung  host, we don't need to consider this with generic way?
+
+Thanks,
+Seungwon Jeon
+
+> +
+> +	if (!host->bus_hz) {
+>  		dev_err(host->dev,
+>  			"Platform data must supply bus speed\n");
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto err_clk;
+>  	}
+> 
+> -	host->bus_hz = host->pdata->bus_hz;
+>  	host->quirks = host->pdata->quirks;
+> 
+>  	spin_lock_init(&host->lock);
+> @@ -2109,6 +2126,16 @@ err_dmaunmap:
+>  		regulator_disable(host->vmmc);
+>  		regulator_put(host->vmmc);
+>  	}
+> +
+> +err_clk:
+> +	if (!IS_ERR(host->ciu_clk)) {
+> +		clk_disable_unprepare(host->ciu_clk);
+> +		clk_put(host->ciu_clk);
+> +	}
+> +	if (!IS_ERR(host->biu_clk)) {
+> +		clk_disable_unprepare(host->biu_clk);
+> +		clk_put(host->biu_clk);
+> +	}
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(dw_mci_probe);
+> @@ -2142,6 +2169,12 @@ void dw_mci_remove(struct dw_mci *host)
+>  		regulator_put(host->vmmc);
+>  	}
+> 
+> +	if (!IS_ERR(host->ciu_clk))
+> +		clk_disable_unprepare(host->ciu_clk);
+> +	if (!IS_ERR(host->biu_clk))
+> +		clk_disable_unprepare(host->biu_clk);
+> +	clk_put(host->ciu_clk);
+> +	clk_put(host->biu_clk);
+>  }
+>  EXPORT_SYMBOL(dw_mci_remove);
+> 
+> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+> index a37a573..787ad56 100644
+> --- a/include/linux/mmc/dw_mmc.h
+> +++ b/include/linux/mmc/dw_mmc.h
+> @@ -78,6 +78,8 @@ struct mmc_data;
+>   * @data_offset: Set the offset of DATA register according to VERID.
+>   * @dev: Device associated with the MMC controller.
+>   * @pdata: Platform data associated with the MMC controller.
+> + * @biu_clk: Pointer to bus interface unit clock instance.
+> + * @ciu_clk: Pointer to card interface unit clock instance.
+>   * @slot: Slots sharing this MMC controller.
+>   * @fifo_depth: depth of FIFO.
+>   * @data_shift: log2 of FIFO item size.
+> @@ -158,6 +160,8 @@ struct dw_mci {
+>  	u16			data_offset;
+>  	struct device		*dev;
+>  	struct dw_mci_board	*pdata;
+> +	struct clk		*biu_clk;
+> +	struct clk		*ciu_clk;
+>  	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
+> 
+>  	/* FIFO push and pull */
+> --
+> 1.6.6.rc2
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
