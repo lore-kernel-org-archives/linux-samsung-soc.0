@@ -1,65 +1,73 @@
-From: =?utf-8?B?5pyJ5pWI5p6c5YaN5LuY5qy+?= <admin@simir.cn>
-Subject: =?utf-8?B?MjAxMuaYpeWtozExMeWxiuW5v+S6pOS8muS5sOWutu+8jOe+pOWPkei9r+S7tg==?=
-	=?utf-8?B?77yMQjJC6K+i55uY5Lmw5a6244CBdGhvbWFzbmV0IOmHhw==?=
-	=?utf-8?B?6LSt5ZWGLOa1t+WFs+aVsOaNrizlsZXkvJrkubDlrrYg5LuFMzAw5YWDIQ==?=
-Date: Thu, 19 Jul 2012 15:02:54 +0000 (UTC)
-Message-ID: <20200719230350023786@simir.cn>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v3 0/6] mmc: dw_mmc: add support for device tree based
+ instantiation
+Date: Fri, 20 Jul 2012 00:28:27 +0900
+Message-ID: <5008279B.4000001@samsung.com>
+References: <1342097668-25243-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from [61.147.68.13] ([61.147.68.13]:3425 "HELO simir.cn"
-	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
-	id S1751739Ab2GSPCw (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:36339 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750993Ab2GSP2d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 11:02:52 -0400
-Date: Sun, 19 Jul 2020 23:03:45 +0800
+	Thu, 19 Jul 2012 11:28:33 -0400
+In-reply-to: <1342097668-25243-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linuxfeb@yahoo.com, linux-samsung-soc@vger.kernel.org, linvala@gmail.com, linteying@gmail.co, linwang@dentist.org.cn, linwehu@hotmail.com, linweixiang2009@yahoo.com.cn, linwensh@sina.com, linxi0805@gmail.com, linxiang911@vip.qq.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
 
-MjAxMuaYpeWtozExMeWxiuW5v+S6pOS8muS5sOWutu+8jOa1t+WFs+aVsOaNruaPkOWNlXBpZXJz
-54mI77yMMjAwOC0yMDEy5bm0OeWxiuW5v+S6pOS8muaVsOaNruOAgg0KDQrkuIDlhbExMOS4quWM
-hSjmlbDmja7mmK/lhajooYzkuJrnmoTvvIzlj6/ku6XmjInnhaflhbPplK7or43mj5Dlj5blh7rm
-naXnmoQp77yaIA0KMe+8jDIwMTLmmKXlraMxMTHlsYrlub/kuqTkvJrkubDlrrbnjrDlnLror6Ln
-m5jmlbDmja7lupPmlrDpspzlh7rngonvvIzotoXnuqfmlrDpspzkubDlrrbvvIzmlrDpspzmlbDm
-ja7vvIzlrrnmmJPmiJDljZXvvIEgDQoy77yM6LSt5Lmw5ZCO5Y+v5Lul5YWN6LS55pu05pawMjAx
-Mueni+Wto+W5v+S6pOS8muS5sOWutuaVsOaNruOAguWkqui2heWAvOS6huOAgg0KM++8jDIwMTLm
-nIDmlrDlhajnkIPlsZXkvJrnjrDlnLrkubDlrrblupMo5LiO6LS45Y+R5ZCM5q2lKSzlhbE0NuS4
-h+adoeaVsOaNruOAgiAo5oyJ54Wn6KGM5Lia5YiG57G7KQ0KNO+8jDIwMTEsMjAxMOW5tCwyMDA5
-5bm0LDIwMDjlubQg5pil5a2jK+eni+Wto+W5v+S6pOS8muS5sOWutuWQjeW9le+8jDEwMyAxMDQg
-MTA1IDEwNiAxMDcgMTA4LDEwOSwxMTAg5YWx5YWt5bGKIOWFsTEyMC425LiH5pWw5o2u44CCDQo1
-77yMNDguNjjkuIfmnaHmnIDmlrDkubDlrrbor6Lnm5jvvIzpg73luKbmnIlFbWFpbO+8jOacgOac
-ieS7t+WAvOeahOivouebmOOAgg0KNu+8jDIwMTHmnIDmlrAgQjJCIOiLseaWh+WbvemZheermTYw
-5LiH5bim6IGU57uc5pa55byP6K+i55uYIOacgOacieS7t+WAvOivouebmOS5i+S4gC4NCjfvvIwy
-MDEw5rW35YWz5o+Q5Y2VcGllcnPniYgxMDAw5LiH5pWw5o2uLg0KOO+8jDIwMTHlubTliLDpppnm
-uK/ph4fotK3nmoTlm73lpJblrqLkurrlkI3lvZUo6aaZ5riv6LS45Y+R5bGA5o+Q5L6bKe+8jOi2
-hee6p+mHjeimgeeahOS5sOWutuOAgg0KOe+8jDIwMTHlubTmlrDlop7liqDnmoQt576O5Zu9QjJC
-IHRob21hc25ldCDph4fotK3llYblkI3ljZXjgIINCjEw77yM576k5Y+R6L2v5Lu25a6J6KOF5LiO
-6YOo572y5pyN5Yqh44CCDQoNCui/meS6m+WFqOacie+8jOWFsTEyODDkuIcg5pWw5o2u44CCDQoN
-CiANCuimgeeahOaKk+e0p+iBlOezu1FROiA0NjAxMjI2NDEg5oiW6ICF56uL5Y2z5Zue5aSN6YKu
-566xOiA0NjAxMjI2NDFAcXEuY29tDQropoHnmoTmipPntKfogZTns7tRUTogNDYwMTIyNjQxIOaI
-luiAheeri+WNs+WbnuWkjemCrueusTogNDYwMTIyNjQxQHFxLmNvbQ0K6KaB55qE5oqT57Sn6IGU
-57O7UVE6IDQ2MDEyMjY0MSDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDQ2MDEyMjY0MUBxcS5j
-b20NCg0K6K+a5L+h5Li65pys77yM5aaC5p6c5LiN5L+h5Lu75pys5Lq6LOWPr+S7pei1sOa3mOWu
-neS6pOaYkyzmlLbliLDmlbDmja7pqozor4Ez5aSp5ZCO5YaN5LuY5qy+LOi/meaYr+WvueaCqOac
-gOWlveeahOS/nemanOS6huOAgiANCg0KDQoNCuWwj+aKgOW3p++8miANCuaKijUwMOS4h+S5sOWu
-tue+pOWPkeS7peS4gOmBje+8jOWdh+S8muacieaVsOWNg+S4quWbnuWkjeeahO+8jOi/meS6m+Ww
-seaYr+mdnuW4uOmrmOi0qOmHj+eahOS5sOWutuOAgiANCuS9v+eUqOaIkeS7rOmAgeeahOe+pOWP
-kei9r+S7tu+8jDEtMuWRqOWwseWPr+WujOWFqOWPkeWujOOAgg0KDQoNCg0KDQoNCuW5v+S6pOS8
-muS5sOWutuaMieS6p+WTgeexu+WIq+WIhuexu++8jOWIhuS4uuS7peS4i+WHoOexu++8mg0KMSDl
-ip7lhazorr7lpIcNCjIg57yW57uH5Y+K6Jek6ZOB5bel6Im65ZOBDQozIOeOu+eSgw0KNCDppJDl
-jqjnlKjlhbcNCjUg6L2m6L6GDQo2IOWkp+Wei+acuuaisOWPiuiuvuWkhw0KNyDnlLXlrZDnlLXm
-sJQNCjgg55S15a2Q5raI6LS55ZOBDQo5IOe6uue7hw0KMTAg5pyN6KOFDQoxMSDkuKrkurrmiqTn
-kIYNCjEyIOW3peeoi+acuuaisA0KMTMg5bel5YW3DQoxNCDljJblt6UNCjE1IOiuoeeul+acuuWP
-iumAmuiurw0KMTYg5a625bGF55So5ZOBDQoxNyDlrrblsYXoo4XppbANCjE4IOWutuWFtw0KMTkg
-5a6255So55S15ZmoDQoyMCDlu7rnrZHlj4roo4XppbDmnZDmlpkNCjIxIOiKguaXpeeUqOWTgQ0K
-MjIg56S85ZOB5Y+K6LWg5ZOBDQoyMyDmkanmiZjovaYNCjI0IOaxvei9pumFjeS7tg0KMjUg6aOf
-5ZOBDQoyNiDpmbbnk7cNCjI3IOmTgeefsw0KMjgg546p5YW3DQoyOSDljavmtbQNCjMwIOS6lOmH
-kQ0KMzEg5bCP5Z6L5py65qKwDQozMiDpnosNCjMzIOS8kemXsueUqOWTgQ0KMzQg5Yy755aXDQoz
-NSDmtbTlrqTkuqflk4ENCjM2IOWbreaelw0KMzcg54Wn5piO5Lqn5ZOBDQozOCDpkp/ooajnnLzp
-lZwNCjM5IOiHquihjOi9pg0KNDAg5YyFDQoNCg0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemr
-mA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+ae
-gemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeO
-h+aegemrmA0K
+Hi Thomas,
+
+I think not good that added the samsung specific code into dw_mmc-pltfm.c
+How about separating to dw-mmc-exynos.c?
+
+Best Regards,
+Jaehoon Chung
+
+On 07/12/2012 09:54 PM, Thomas Abraham wrote:
+> This patch series adds device tree support for Synopsis Designware Mobile
+> Storage Host Controller.
+> 
+> The first patch converts the copy of controller device instance into a
+> reference. This is need to allow device resource management api to correctly
+> manage the resources allocated by the driver. The second patch fixes the
+> incorrect abort of the probe in case a slot initialization fails. This is
+> fixed by allowing as many slots to be initialized successfully and failing
+> only if there are no slots that were initialized.
+> 
+> The third patch adds clock lookup in the driver and this is optional. Platforms
+> that do not need any clock gating and control for the dw_mmc controllers will
+> not be affected with this change. The fourth patch adds a quirk to notify the
+> controller about the absence of the write protect line.
+> 
+> The fifth patch adds device tree based discovery support for the dw_mmc driver.
+> The sixth patch add Samsung Exynos5250 specific extentions to the driver.
+> 
+> This patchset is based on Samsung kernel tree's for-next branch with the
+> mmc tree's mmc-next branch merged.
+> 
+> Thomas Abraham (6):
+>   mmc: dw_mmc: convert copy of struct device in struct dw_mci to a reference
+>   mmc: dw_mmc: allow probe to succeed even if one slot is initialized
+>   mmc: dw_mmc: lookup for optional biu and ciu clocks
+>   mmc: dw_mmc: add quirk to indicate missing write protect line
+>   mmc: dw_mmc: add device tree support
+>   mmc: dw_mmc: add samsung exynos5250 specific extentions
+> 
+>  .../devicetree/bindings/mmc/synposis-dw-mshc.txt   |  144 ++++++++
+>  drivers/mmc/host/dw_mmc-pci.c                      |    2 +-
+>  drivers/mmc/host/dw_mmc-pltfm.c                    |   41 +++-
+>  drivers/mmc/host/dw_mmc.c                          |  364 +++++++++++++++++---
+>  drivers/mmc/host/dw_mmc.h                          |   23 ++
+>  include/linux/mmc/dw_mmc.h                         |   17 +-
+>  6 files changed, 538 insertions(+), 53 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
