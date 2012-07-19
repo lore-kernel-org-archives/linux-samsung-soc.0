@@ -1,55 +1,79 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: S3C64XX: Mark most Cragganmore initdata devinitdata
-Date: Thu, 19 Jul 2012 15:48:06 +0900
-Message-ID: <184601cd657a$73c1f940$5b45ebc0$%kim@samsung.com>
-References: <1341245579-29007-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: Re: [PATCH RESEND v2 1/2] ARM: EXYNOS: Add clock support for Gscaler
+Date: Thu, 19 Jul 2012 09:08:57 +0000 (GMT)
+Message-ID: <24446146.151121342688937045.JavaMail.weblogic@epml09>
+Reply-To: shaik.ameer@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9724 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:24186 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751717Ab2GSGsI (ORCPT
+	with ESMTP id S1753768Ab2GSJI7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 02:48:08 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+	Thu, 19 Jul 2012 05:08:59 -0400
+Received: from epcpsbge7.samsung.com (mailout1.samsung.com [203.254.224.24])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7E00LVWAW711P0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 15:48:07 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7E00LZLAW7LTA0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 15:48:07 +0900 (KST)
-In-reply-to: <1341245579-29007-1-git-send-email-broonie@opensource.wolfsonmicro.com>
-Content-language: ko
+ 17 2011)) with ESMTP id <0M7E007D9HD5OX10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 19 Jul 2012 18:08:57 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: patches@opensource.wolfsonmicro.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Sun-Young Kang <sy0816.kang@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>
+Cc: "olofj@google.com" <olofj@google.com>, Thomas P Abraham <thomas.ab@samsung.com>, "sylvester.nawrocki@gmail.com" <sylvester.nawrocki@gmail.com>, "sachin.kamat@linaro.org" <sachin.kamat@linaro.org>, SUNIL JOSHI <joshi@samsung.com>, shaik.samsung@gmail.com
 
-Mark Brown wrote:
-> 
-> With the greater use of deferred probes we need to be more sure that
-> initdata is actually used only at system init rather than being used
-> by devices when they probe (which could happen after the main kernel
-> init has completed and is much more likely to now).
-> 
-> Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
-> ---
->  arch/arm/mach-s3c64xx/mach-crag6410.c |   68
-++++++++++++++++-------------
-> ----
->  1 file changed, 34 insertions(+), 34 deletions(-)
-> 
-[...]
-
-Looks OK, applied.
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+SGkgS3VramluIEtpbSAmIFN1bnlvdW5nLA0KDQp0aGFua3MgZm9yIHRoZSByZXZpZXcgY29tbWVu
+dHMuLi4NCg0KT24gV2VkLCBKdWwgMTgsIDIwMTIgYXQgMjoxNCBQTSwgU3VueW91bmcgS2FuZyA8
+c3kwODE2LmthbmdAc2Ftc3VuZy5jb20+IHdyb3RlOg0KPiBLdWtqaW4gS2ltIHdyb3RlOg0KPj4N
+Cj4+U2hhaWsgQW1lZXIgQmFzaGEgd3JvdGU6DQo+Pj4NCj4+PiBBZGQgcmVxdWlyZWQgY2xvY2sg
+c3VwcG9ydCBmb3IgR3NjYWxlciBmb3IgZXh5bm9zNQ0KPj4+DQo+PkhpLA0KPj4NCj4+Q2MnZWQg
+U3VueW91bmcgS2FuZyB3aG8ga25vd3MgZ3NjYWxlciB3ZWxsIGluIG15IHRlYW0uDQo+Pg0KPj4+
+IFNpZ25lZC1vZmYtYnk6IEFiaGlsYXNoIEtlc2F2YW4gPGEua2VzYXZhbkBzYW1zdW5nLmNvbT4N
+Cj4+PiBTaWduZWQtb2ZmLWJ5OiBMZWVsYSBLcmlzaG5hIEFtdWRhbGEgPGwua3Jpc2huYUBzYW1z
+dW5nLmNvbT4NCj4+PiBTaWduZWQtb2ZmLWJ5OiBQcmF0aHl1c2ggSyA8cHJhdGh5dXNoLmtAc2Ft
+c3VuZy5jb20+DQo+Pj4gU2lnbmVkLW9mZi1ieTogU2hhaWsgQW1lZXIgQmFzaGEgPHNoYWlrLmFt
+ZWVyQHNhbXN1bmcuY29tPg0KPj4+IC0tLQ0KPj4+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9j
+ay1leHlub3M1LmMgfCAgIDc5DQo+Pj4gKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Kw0KPj4+ICAxIGZpbGVzIGNoYW5nZWQsIDc5IGluc2VydGlvbnMoKyksIDAgZGVsZXRpb25zKC0p
+DQo+Pj4NCj4+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9z
+NS5jIGIvYXJjaC9hcm0vbWFjaC0NCj4+PiBleHlub3MvY2xvY2stZXh5bm9zNS5jDQo+Pj4gaW5k
+ZXggZmVmYTMzNi4uYzgyOTNhMyAxMDA2NDQNCj4+PiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5v
+cy9jbG9jay1leHlub3M1LmMNCj4+PiArKysgYi9hcmNoL2FybS9tYWNoLWV4eW5vcy9jbG9jay1l
+eHlub3M1LmMNCj4+PiBAQCAtNzQxLDYgKzc0MSwyNiBAQCBzdGF0aWMgc3RydWN0IGNsayBleHlu
+b3M1X2luaXRfY2xvY2tzX29mZltdID0gew0KPj4+ICAgICAgICAgICAgICAuZW5hYmxlICAgICAg
+ICAgPSBleHlub3M1X2Nsa19pcF9wZXJpY19jdHJsLA0KPj4+ICAgICAgICAgICAgICAuY3RybGJp
+dCAgICAgICAgPSAoMSA8PCAxNCksDQo+Pj4gICAgICB9LCB7DQo+Pj4gKyAgICAgICAgICAgIC5u
+YW1lICAgICAgICAgICA9ICJnc2NsIiwNCj4+PiArICAgICAgICAgICAgLmRldm5hbWUgICAgICAg
+ID0gImV4eW5vcy1nc2MuMCIsDQo+Pj4gKyAgICAgICAgICAgIC5lbmFibGUgICAgICAgICA9IGV4
+eW5vczVfY2xrX2lwX2dzY2xfY3RybCwNCj4+PiArICAgICAgICAgICAgLmN0cmxiaXQgICAgICAg
+ID0gKDEgPDwgMCksDQo+Pg0KPj5TdW55b3VuZywgSSd2ZSBzZWVuICgxIDw8IDE1KSB8ICgxIDw8
+IDApIGhlcmUgaW5zdGVhZCwgd2hpY2ggb25lIGlzIHJpZ2h0Pw0KPj4NCj4NCj4gQWN0dWFsbHks
+IHRoZSBjdHJsIGJpdCwgKDEgPDwgMCkgaXMgY29ycmVjdC4gVGhlIDE1dGggYml0IEt1a2ppbiBz
+YWlkIGlzDQo+IHVzZWQgZm9yIGFub3RoZXIgcHVycG9zZS4NCj4NCg0KQXMgU3VueW91bmcgcG9p
+bnRlZCBvdXQgdGhlICcuY3RybGJpdCcgdmFsdWUgaXMgY29ycmVjdC4uLg0KDQo+PltzbmlwXQ0K
+Pj4NCj4+SSB0aGluaywgZm9sbG93aW5nIHBhcnQgc2hvdWxkIGJlIG1vdmVkIGJldHdlZW4NCj4+
+DQo+Pi0tLQ0KPj5zdGF0aWMgc3RydWN0IGNsa3NyY19jbGsgZXh5bm9zNV9jbGtfYWNsa182NiA9
+IHsNCj4+W3NuaXBdDQo+Pn07DQo+Pg0KPj48PDxIRVJFPj4+DQoNCm9rLi4gaSB3aWxsIGRvIHRo
+YXQuDQoNCj4+DQo+PnN0YXRpYyBzdHJ1Y3QgY2xrIGV4eW5vczVfaW5pdF9jbG9ja3Nfb2ZmW10g
+PSB7DQo+Pi0tLQ0KPj4NCj4+UGxlYXNlIGRvbid0IHB1dCB5b3VyIGNsb2NrIGNvZGUgd2l0aG91
+dCBhbnkgY2hlY2tpbmcgdGhlIGNsb2NrIGNvZGUuDQo+Pg0KPj4NCj4+PiArLyogRm9yIEFDTEtf
+MzAwX2dzY2xfbWlkICovDQo+Pj4gK3N0YXRpYyBzdHJ1Y3QgY2xrc3JjX2NsayBleHlub3M1X2Ns
+a19tb3V0X2FjbGtfMzAwX2dzY2xfbWlkID0gew0KPj4+ICsgICAgLmNsayAgICA9IHsNCj4+PiAr
+ICAgICAgICAgICAgLm5hbWUgICA9ICJtb3V0X2FjbGtfMzAwX2dzY2xfbWlkIiwNCj4+PiArICAg
+IH0sDQo+Pj4gKyAgICAuc291cmNlcyA9ICZleHlub3M1X2Nsa3NldF9hY2xrLA0KPj4+ICsgICAg
+LnJlZ19zcmMgPSB7IC5yZWcgPSBFWFlOT1M1X0NMS1NSQ19UT1AwLCAuc2hpZnQgPSAyNCwgLnNp
+emUgPSAxIH0sDQo+Pj4gK307DQo+Pj4gKw0KPj4+ICsvKiBGb3IgQUNMS18zMDBfZ3NjbCAqLw0K
+Pj4+ICtzdHJ1Y3QgY2xrICpleHlub3M1X2Nsa3NldF9hY2xrXzMwMF9nc2NsX2xpc3RbXSA9IHsN
+Cj4+PiArICAgIFswXSA9ICZleHlub3M1X2Nsa19tb3V0X2FjbGtfMzAwX2dzY2xfbWlkLmNsaywN
+Cj4+PiArICAgIFsxXSA9ICZleHlub3M1X2Nsa19zY2xrX3ZwbGwuY2xrLA0KPj4NCj4+QXMgSSBr
+bm93LCB0aGlzIGlzIHdyb25nLiBJdHMgWzFdIHNob3VsZCBiZQ0KPj4mZXh5bm9zNV9jbGtfbW91
+dF9hY2xrXzMwMF9nc2NsX21pZDEuY2xrDQo+Pg0KPg0KPiBZZXMsIHJpZ2h0LiBJdCBzaG91bGQg
+YmUgJ2V4eW5vczVfY2xrX21vdXRfYWNsa18zMDBfZ3NjbF9taWQxLmNsaycgd2hpY2ggaXMNCj4g
+Z2VuZXJhdGVkIGJ5IENQTEwuIFRoZSBWUExMIHNob3VsZG4ndCBiZSB1c2VkIGhlcmUuIEl0IG1l
+YW5zIHlvdSBuZWVkIHRvDQo+IGltcGxlbWVudCBDUExMIGZvciBnc2NhbGVyLiBBcyBhIG5vdGUs
+IENQTEwgY2FuIGJlIHVzZWQgZm9yIGZpbWQgYXMgd2VsbC4NCg0KU29ycnksIEkgd2FzIHJlZmVy
+cmluZyB0byB0aGUgb2xkIG1hbnVhbC4gDQpJIHdpbGwgYWRkIHRoZSAnZXh5bm9zNV9jbGtfbW91
+dF9hY2xrXzMwMF9nc2NsX21pZDEnIGNsay4uLiBpbiB2MyByZWxlYXNlLi4uDQoNCj4NCj4gW3Nu
+aXBdDQo+DQo+IFRoYW5rcy4NCj4NCj4gQlJzDQo+IFN1bnlvdW5nDQo+DQoNClRoYW5rcywNClNo
+YWlrIEFtZWVyIEJhc2hh
