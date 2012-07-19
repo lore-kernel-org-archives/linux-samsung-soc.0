@@ -1,85 +1,176 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3 0/6] mmc: dw_mmc: add support for device tree based instantiation
-Date: Fri, 20 Jul 2012 00:29:08 +0530
-Message-ID: <CAJuYYwQBgpJ1wiS3fSDS2cMi6kanuO47rc8SmniAqjRPuBGJHg@mail.gmail.com>
-References: <1342097668-25243-1-git-send-email-thomas.abraham@linaro.org>
-	<5008279B.4000001@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [GIT PULL] Samsung DT for v3.6
+Date: Fri, 20 Jul 2012 07:12:08 +0900
+Message-ID: <194d01cd65fb$89d29b50$9d77d1f0$%kim@samsung.com>
+References: <143401cd639e$474af610$d5e0e230$%kim@samsung.com>
+ <201207172117.48095.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <5008279B.4000001@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:60966 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752357Ab2GSWMX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 19 Jul 2012 18:12:23 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7F00CQMHO7R320@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:12:07 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7F00LHLHO7K760@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:12:07 +0900 (KST)
+In-reply-to: <201207172117.48095.arnd@arndb.de>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Arnd Bergmann' <arnd@arndb.de>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jon Hunter' <jon-hunter@ti.com>, 'Vinod Koul' <vinod.koul@linux.intel.com>
 
-On 19 July 2012 20:58, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> Hi Thomas,
->
-> I think not good that added the samsung specific code into dw_mmc-pltfm.c
-> How about separating to dw-mmc-exynos.c?
+Arnd Bergmann wrote:
+> 
+> On Monday 16 July 2012, Kukjin Kim wrote:
+> > Please pull support samsung spi device tree for v3.6 from:
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> > next/dt-samsung
+> >
+> > It is for supporting spi dt for exynos4210 and exynos5250, and got the
+> ack
+> > from Grant Likely for spi driver.
+> >
+> > Note: Since this is including spi driver changes, so it was made based
+> on
+> > next/devel-dma-ops which touches same file, Samsung spi driver for
+> avoiding
+> > bad conflicts.
+> >
+> > If any problems, please kindly let me know.
+> 
+> Applied to next/dt branch. I'm not so happy about new dma channel
+> properties getting added to additional bindings. I guess I should
+> have complained earlier about these, so I'm keeping the changes
+> but I've added the patch below to make it clear that they will
+> have to change after we have agreed with Vinod and Jon on how
+> they should be represented.
+> 
+Yeah, I agree. 
 
-I am not sure of this. The only samsung specific code in
-dw_mmc-pltfm.c file is the data for of_device_id instances. The clock
-lookup added into this file in the 3rd patch does not cause any harm
-on non-samsung SoC's which might not define those clocks (on clock
-lookup failure, there are only warning printed, the driver's probe
-does not fail.
+> 	Arnd
+> 
+> Subject: [PATCH] ARM: EXYNOS: mark the DMA channel binding for SPI as
+> preliminary
+> 
+> Bindings for DMA channels are still under discussion and will
+> change once this has been resolved. Therefore we mark them
+> the newly added ones as preliminary. Let's hope nobody starts
+> relying on them...
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-I would prefer not to add separate file for Exynos SoC's for now.
-Splitting into different files will need to defined new callbacks
-which I fell is not really required.
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Thanks,
-Thomas.
+Thanks.
 
->
-> Best Regards,
-> Jaehoon Chung
->
-> On 07/12/2012 09:54 PM, Thomas Abraham wrote:
->> This patch series adds device tree support for Synopsis Designware Mobile
->> Storage Host Controller.
->>
->> The first patch converts the copy of controller device instance into a
->> reference. This is need to allow device resource management api to correctly
->> manage the resources allocated by the driver. The second patch fixes the
->> incorrect abort of the probe in case a slot initialization fails. This is
->> fixed by allowing as many slots to be initialized successfully and failing
->> only if there are no slots that were initialized.
->>
->> The third patch adds clock lookup in the driver and this is optional. Platforms
->> that do not need any clock gating and control for the dw_mmc controllers will
->> not be affected with this change. The fourth patch adds a quirk to notify the
->> controller about the absence of the write protect line.
->>
->> The fifth patch adds device tree based discovery support for the dw_mmc driver.
->> The sixth patch add Samsung Exynos5250 specific extentions to the driver.
->>
->> This patchset is based on Samsung kernel tree's for-next branch with the
->> mmc tree's mmc-next branch merged.
->>
->> Thomas Abraham (6):
->>   mmc: dw_mmc: convert copy of struct device in struct dw_mci to a reference
->>   mmc: dw_mmc: allow probe to succeed even if one slot is initialized
->>   mmc: dw_mmc: lookup for optional biu and ciu clocks
->>   mmc: dw_mmc: add quirk to indicate missing write protect line
->>   mmc: dw_mmc: add device tree support
->>   mmc: dw_mmc: add samsung exynos5250 specific extentions
->>
->>  .../devicetree/bindings/mmc/synposis-dw-mshc.txt   |  144 ++++++++
->>  drivers/mmc/host/dw_mmc-pci.c                      |    2 +-
->>  drivers/mmc/host/dw_mmc-pltfm.c                    |   41 +++-
->>  drivers/mmc/host/dw_mmc.c                          |  364 +++++++++++++++++---
->>  drivers/mmc/host/dw_mmc.h                          |   23 ++
->>  include/linux/mmc/dw_mmc.h                         |   17 +-
->>  6 files changed, 538 insertions(+), 53 deletions(-)
->>  create mode 100644 Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
->
->
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> 
+> diff --git a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> index 59bfc4f..a15ffed 100644
+> --- a/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> +++ b/Documentation/devicetree/bindings/spi/spi-samsung.txt
+> @@ -18,6 +18,9 @@ Required SoC Specific Properties:
+>  - interrupts: The interrupt number to the cpu. The interrupt specifier
+> format
+>    depends on the interrupt controller.
+> 
+> +[PRELIMINARY: the dma channel allocation will change once there are
+> +official DMA bindings]
+> +
+>  - tx-dma-channel: The dma channel specifier for tx operations. The format
+> of
+>    the dma specifier depends on the dma controller.
+> 
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
+> b/arch/arm/boot/dts/exynos4210.dtsi
+> index 6904d9d..02891fe 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -168,8 +168,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x13920000 0x100>;
+>  		interrupts = <0 66 0>;
+> -		tx-dma-channel = <&pdma0 7>;
+> -		rx-dma-channel = <&pdma0 6>;
+> +		tx-dma-channel = <&pdma0 7>; /* preliminary */
+> +		rx-dma-channel = <&pdma0 6>; /* preliminary */
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  	};
+> @@ -178,8 +178,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x13930000 0x100>;
+>  		interrupts = <0 67 0>;
+> -		tx-dma-channel = <&pdma1 7>;
+> -		rx-dma-channel = <&pdma1 6>;
+> +		tx-dma-channel = <&pdma1 7>; /* preliminary */
+> +		rx-dma-channel = <&pdma1 6>; /* preliminary */
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  	};
+> @@ -188,8 +188,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x13940000 0x100>;
+>  		interrupts = <0 68 0>;
+> -		tx-dma-channel = <&pdma0 9>;
+> -		rx-dma-channel = <&pdma0 8>;
+> +		tx-dma-channel = <&pdma0 9>; /* preliminary */
+> +		rx-dma-channel = <&pdma0 8>; /* preliminary */
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  	};
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index a3a2eb2..004aaa8 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -156,8 +156,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x12d20000 0x100>;
+>  		interrupts = <0 66 0>;
+> -		tx-dma-channel = <&pdma0 5>;
+> -		rx-dma-channel = <&pdma0 4>;
+> +		tx-dma-channel = <&pdma0 5>; /* preliminary */
+> +		rx-dma-channel = <&pdma0 4>; /* preliminary */
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  	};
+> @@ -166,8 +166,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x12d30000 0x100>;
+>  		interrupts = <0 67 0>;
+> -		tx-dma-channel = <&pdma1 5>;
+> -		rx-dma-channel = <&pdma1 4>;
+> +		tx-dma-channel = <&pdma1 5>; /* preliminary */
+> +		rx-dma-channel = <&pdma1 4>; /* preliminary */
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  	};
+> @@ -176,8 +176,8 @@
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x12d40000 0x100>;
+>  		interrupts = <0 68 0>;
+> -		tx-dma-channel = <&pdma0 7>;
+> -		rx-dma-channel = <&pdma0 6>;
+> +		tx-dma-channel = <&pdma0 7>; /* preliminary */
+> +		rx-dma-channel = <&pdma0 6>; /* preliminary */
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  	};
