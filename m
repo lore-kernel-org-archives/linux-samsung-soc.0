@@ -1,47 +1,46 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
 Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR
  definitions for writeback
-Date: Thu, 19 Jul 2012 18:13:49 +0530
-Message-ID: <CAL1wa8f0NOF+K4Z-6w6Aue_L2x_1-5HaXWu9t8QDaDY9SCW-Cw@mail.gmail.com>
+Date: Thu, 19 Jul 2012 18:30:44 +0530
+Message-ID: <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com>
 References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
- <1342591053-7092-2-git-send-email-l.krishna@samsung.com> <009c01cd64b1$bd3a8390$37af8ab0$%szyprowski@samsung.com>
+ <1342591053-7092-2-git-send-email-l.krishna@samsung.com> <1429943.UqWt7uDBOU@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:40801 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752729Ab2GSMoK (ORCPT
+Received: from mail-gg0-f174.google.com ([209.85.161.174]:39973 "EHLO
+	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751170Ab2GSNBG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 08:44:10 -0400
-Received: by pbbrp8 with SMTP id rp8so4329597pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jul 2012 05:44:10 -0700 (PDT)
-In-Reply-To: <009c01cd64b1$bd3a8390$37af8ab0$%szyprowski@samsung.com>
+	Thu, 19 Jul 2012 09:01:06 -0400
+Received: by gglu4 with SMTP id u4so2709131ggl.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jul 2012 06:01:05 -0700 (PDT)
+In-Reply-To: <1429943.UqWt7uDBOU@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jg1.han@samsung.com, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, jg1.han@samsung.com
 
-Hello Marek,
+Hi Tomasz,
 
-On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
-<m.szyprowski@samsung.com> wrote:
-> Hello,
+On Wed, Jul 18, 2012 at 4:35 PM, Tomasz Figa <tomasz.figa@gmail.com> wrote:
+> Hi,
 >
-> On Wednesday, July 18, 2012 7:57 AM Leela Krishna Amudala wrote:
->
+> On Wednesday 18 of July 2012 11:27:27 Leela Krishna Amudala wrote:
 >> This patch updates the register address offsets and adds SFR definitions
 >> for writeback for Samsung's V8 display controller.
 >>
 >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 >> ---
 >>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++++
->>  arch/arm/plat-samsung/include/plat/regs-fb.h    |   51 +++++++++++++++++++++++
->>  drivers/video/Kconfig                           |    6 +++
+>>  arch/arm/plat-samsung/include/plat/regs-fb.h    |   51
+>> +++++++++++++++++++++++ drivers/video/Kconfig
+>> |    6 +++
 >>  3 files changed, 67 insertions(+), 0 deletions(-)
 >>
->> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h b/arch/arm/plat-
->> samsung/include/plat/regs-fb-v4.h
->> index 4c3647f..1639c17 100644
+>> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>> b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h index 4c3647f..1639c17
+>> 100644
 >> --- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
 >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
 >> @@ -30,9 +30,16 @@
@@ -58,6 +57,18 @@ On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
 >>  #define VIDTCON2                             (0x18)
 >> +#define VIDTCON3                             (0x1C)
 >> +#endif
+>
+> Wouldn't it break s3c-fb on SoCs with earlier FIMD versions with
+> CONFIG_FB_EXYNOS_FIMD_V8 selected? We are aiming at multi-platform ARM
+> kernels, aren't we (i.e support of both V8 and earlier FIMD in one kernel)?
+>
+
+Exynos5 has FIMD_V8 and other SoCs has older FIMD versions.
+As address offsets for certain registers has changed in FIMD_V8, we
+introduced these defines.
+So we have to select CONFIG_FB_EXYNOS_FIMD_V8 in case of Exynos5 SoC,
+and deselect for other SoCs.
+
 >>
 >>  /* Window position controls */
 >>
@@ -74,9 +85,9 @@ On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
 >>  #define WINCONx_CSCWIDTH_MASK                        (0x3 << 26)
 >>  #define WINCONx_CSCWIDTH_SHIFT                       (26)
 >>  #define WINCONx_CSCWIDTH_WIDE                        (0x0 << 26)
->> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h b/arch/arm/plat-
->> samsung/include/plat/regs-fb.h
->> index 9a78012..6d2ee16 100644
+>> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h
+>> b/arch/arm/plat-samsung/include/plat/regs-fb.h index 9a78012..6d2ee16
+>> 100644
 >> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
 >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
 >> @@ -32,12 +32,28 @@
@@ -118,7 +129,16 @@ On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
 >> +#else
 >>  #define VIDCON1                                      (0x04)
 >> +#endif
->> +
+>
+> Same here. Also isn't it a redefinition of VIDOUT_CON that was defined
+> several lines above?
+>
+
+Will be corrected in the next version patch set.
+
+Best Wishes,
+Leela Krishna Amudala.
+
 >>  #define VIDCON1_LINECNT_MASK                 (0x7ff << 16)
 >>  #define VIDCON1_LINECNT_SHIFT                        (16)
 >>  #define VIDCON1_LINECNT_GET(_v)                      (((_v) >> 16) & 0x7ff)
@@ -150,6 +170,9 @@ On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
 >> +#else
 >>  #define VIDTCON2                             (0x18)
 >> +#endif
+>
+> Same as in my first comment.
+>
 >>  #define VIDTCON2_LINEVAL_E(_x)                       ((((_x) & 0x800) >> 11) << 23)
 >>  #define VIDTCON2_LINEVAL_MASK                        (0x7ff << 11)
 >>  #define VIDTCON2_LINEVAL_SHIFT                       (11)
@@ -209,27 +232,8 @@ On Wed, Jul 18, 2012 at 12:21 PM, Marek Szyprowski
 >>         bool "Debug register writes"
 >>         depends on FB_S3C
 >
-> Do we really need these defines in arch/arm/plat-samsung/include/plat/regs-fb* ?
-> IMHO they should be moved from arch/arm to drivers/video to live together with the driver.
-> They are not a part of core platform code. I thought that there have been some patches
-> cleaning up regs-fb mess a long time ago, but it looks they didn't get their way to
-> mainline.
->
-
-The defines I had given in these headers are specific to exynos5
-platform and are using by both drm-fimd and
-s3c-fb. I'm not understanding the need to move these defines from
-arch/arm to drivers/video. Can you please tell me why we have to do
-that.
-
-Best Wishes,
-Leela Krishna Amudala.
-
-> Best regards
-> --
-> Marek Szyprowski
-> Samsung Poland R&D Center
->
+> Best regards,
+> Tomasz Figa
 >
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
