@@ -1,300 +1,65 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR definitions for writeback
-Date: Thu, 19 Jul 2012 15:35:12 +0200
-Message-ID: <4240594.0SndFBiAl5@flatron>
-References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com> <1429943.UqWt7uDBOU@flatron> <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com>
+From: =?utf-8?B?5pyJ5pWI5p6c5YaN5LuY5qy+?= <admin@simir.cn>
+Subject: =?utf-8?B?MjAxMuaYpeWtozExMeWxiuW5v+S6pOS8muS5sOWutu+8jOe+pOWPkei9r+S7tg==?=
+	=?utf-8?B?77yMQjJC6K+i55uY5Lmw5a6244CBdGhvbWFzbmV0IOmHhw==?=
+	=?utf-8?B?6LSt5ZWGLOa1t+WFs+aVsOaNrizlsZXkvJrkubDlrrYg5LuFMzAw5YWDIQ==?=
+Date: Thu, 19 Jul 2012 15:02:54 +0000 (UTC)
+Message-ID: <20200719230350023786@simir.cn>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f170.google.com ([209.85.212.170]:50047 "EHLO
-	mail-wi0-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750847Ab2GSNgk (ORCPT
+Received: from [61.147.68.13] ([61.147.68.13]:3425 "HELO simir.cn"
+	rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with SMTP
+	id S1751739Ab2GSPCw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 09:36:40 -0400
-Received: by wibhq12 with SMTP id hq12so5084115wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 19 Jul 2012 06:36:39 -0700 (PDT)
-In-Reply-To: <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com>
+	Thu, 19 Jul 2012 11:02:52 -0400
+Date: Sun, 19 Jul 2020 23:03:45 +0800
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, jg1.han@samsung.com
+To: linuxfeb@yahoo.com, linux-samsung-soc@vger.kernel.org, linvala@gmail.com, linteying@gmail.co, linwang@dentist.org.cn, linwehu@hotmail.com, linweixiang2009@yahoo.com.cn, linwensh@sina.com, linxi0805@gmail.com, linxiang911@vip.qq.com
 
-Hi Leela,
-
-On Thursday 19 of July 2012 18:30:44 Leela Krishna Amudala wrote:
-> Hi Tomasz,
-> 
-> On Wed, Jul 18, 2012 at 4:35 PM, Tomasz Figa <tomasz.figa@gmail.com> 
-wrote:
-> > Hi,
-> > 
-> > On Wednesday 18 of July 2012 11:27:27 Leela Krishna Amudala wrote:
-> >> This patch updates the register address offsets and adds SFR
-> >> definitions
-> >> for writeback for Samsung's V8 display controller.
-> >> 
-> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> >> ---
-> >> 
-> >>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++++
-> >>  arch/arm/plat-samsung/include/plat/regs-fb.h    |   51
-> >> 
-> >> +++++++++++++++++++++++ drivers/video/Kconfig
-> >> 
-> >> |    6 +++
-> >>  
-> >>  3 files changed, 67 insertions(+), 0 deletions(-)
-> >> 
-> >> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-> >> b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h index
-> >> 4c3647f..1639c17
-> >> 100644
-> >> --- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-> >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-> >> @@ -30,9 +30,16 @@
-> >> 
-> >>  #define VIDCON1_FSTATUS_EVEN (1 << 15)
-> >>  
-> >>  /* Video timing controls */
-> >> 
-> >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
-> >> +#define VIDTCON0                                (0x20010)
-> >> +#define VIDTCON1                                (0x20014)
-> >> +#define VIDTCON3                                (0x2001C)
-> >> +#else
-> >> 
-> >>  #define VIDTCON0                             (0x10)
-> >>  #define VIDTCON1                             (0x14)
-> >>  #define VIDTCON2                             (0x18)
-> >> 
-> >> +#define VIDTCON3                             (0x1C)
-> >> +#endif
-> > 
-> > Wouldn't it break s3c-fb on SoCs with earlier FIMD versions with
-> > CONFIG_FB_EXYNOS_FIMD_V8 selected? We are aiming at multi-platform ARM
-> > kernels, aren't we (i.e support of both V8 and earlier FIMD in one
-> > kernel)?
-> Exynos5 has FIMD_V8 and other SoCs has older FIMD versions.
-> As address offsets for certain registers has changed in FIMD_V8, we
-> introduced these defines.
-> So we have to select CONFIG_FB_EXYNOS_FIMD_V8 in case of Exynos5 SoC,
-> and deselect for other SoCs.
-
-Yes, I'm aware of different FIMD versions in different SoCs. My point is 
-that it shouldn't be necessary to deselect CONFIG_FB_EXYNOS_FIMD_V8 to 
-support other SoCs than Exynos5, i.e. additional config options should be 
-incremental - should not break other setups. Ideally there should not be 
-any new config option for FIMD v8.
-
-The detection of FIMD version and selection of appropriate register offsets 
-should be done in the driver at runtime, based for example on 
-platform_device_id (see the s3c-fb driver and usage of s3c_fb_driverdata 
-and s3c_fb_win_variant structs).
-
-Best regards,
-Tomasz Figa
-
-> 
-> >>  /* Window position controls */
-> >> 
-> >> @@ -43,9 +50,12 @@
-> >> 
-> >>  #define VIDOSD_BASE                          (0x40)
-> >>  
-> >>  #define VIDINTCON0                           (0x130)
-> >> 
-> >> +#define VIDINTCON1                              (0x134)
-> >> 
-> >>  /* WINCONx */
-> >> 
-> >> +#define WINCONx_CSC_CON_EQ709                   (1 << 28)
-> >> +#define WINCONx_CSC_CON_EQ601                   (0 << 28)
-> >> 
-> >>  #define WINCONx_CSCWIDTH_MASK                        (0x3 << 26)
-> >>  #define WINCONx_CSCWIDTH_SHIFT                       (26)
-> >>  #define WINCONx_CSCWIDTH_WIDE                        (0x0 << 26)
-> >> 
-> >> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h
-> >> b/arch/arm/plat-samsung/include/plat/regs-fb.h index 9a78012..6d2ee16
-> >> 100644
-> >> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
-> >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
-> >> @@ -32,12 +32,28 @@
-> >> 
-> >>  #define VIDCON0                                      (0x00)
-> >>  #define VIDCON0_INTERLACE                    (1 << 29)
-> >> 
-> >> +
-> >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
-> >> +#define VIDOUT_CON                           (0x20000)
-> >> +#define VIDOUT_CON_VIDOUT_UP_MASK            (0x1 << 16)
-> >> +#define VIDOUT_CON_VIDOUT_UP_SHIFT           (16)
-> >> +#define VIDOUT_CON_VIDOUT_UP_ALWAYS          (0x0 << 16)
-> >> +#define VIDOUT_CON_VIDOUT_UP_START_FRAME     (0x1 << 16)
-> >> +#define VIDOUT_CON_VIDOUT_F_MASK             (0x7 << 8)
-> >> +#define VIDOUT_CON_VIDOUT_F_SHIFT            (8)
-> >> +#define VIDOUT_CON_VIDOUT_F_RGB                      (0x0 << 8)
-> >> +#define VIDOUT_CON_VIDOUT_F_I80_LDI0         (0x2 << 8)
-> >> +#define VIDOUT_CON_VIDOUT_F_I80_LDI1         (0x3 << 8)
-> >> +#define VIDOUT_CON_VIDOUT_F_WB                       (0x4 << 8)
-> >> +#endif
-> >> +
-> >> 
-> >>  #define VIDCON0_VIDOUT_MASK                  (0x3 << 26)
-> >>  #define VIDCON0_VIDOUT_SHIFT                 (26)
-> >>  #define VIDCON0_VIDOUT_RGB                   (0x0 << 26)
-> >>  #define VIDCON0_VIDOUT_TV                    (0x1 << 26)
-> >>  #define VIDCON0_VIDOUT_I80_LDI0                      (0x2 << 26)
-> >>  #define VIDCON0_VIDOUT_I80_LDI1                      (0x3 << 26)
-> >> 
-> >> +#define VIDCON0_VIDOUT_WB                       (0x4 << 26)
-> >> 
-> >>  #define VIDCON0_L1_DATA_MASK                 (0x7 << 23)
-> >>  #define VIDCON0_L1_DATA_SHIFT                        (23)
-> >> 
-> >> @@ -81,7 +97,13 @@
-> >> 
-> >>  #define VIDCON0_ENVID                                (1 << 1)
-> >>  #define VIDCON0_ENVID_F                              (1 << 0)
-> >> 
-> >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
-> >> +#define VIDOUT_CON                              (0x20000)
-> >> +#define VIDCON1                                 (0x20004)
-> >> +#else
-> >> 
-> >>  #define VIDCON1                                      (0x04)
-> >> 
-> >> +#endif
-> > 
-> > Same here. Also isn't it a redefinition of VIDOUT_CON that was defined
-> > several lines above?
-> 
-> Will be corrected in the next version patch set.
-> 
-> Best Wishes,
-> Leela Krishna Amudala.
-> 
-> >>  #define VIDCON1_LINECNT_MASK                 (0x7ff << 16)
-> >>  #define VIDCON1_LINECNT_SHIFT                        (16)
-> >>  #define VIDCON1_LINECNT_GET(_v)                      (((_v) >> 16) &
-> >>  0x7ff)>> 
-> >> @@ -111,6 +133,14 @@
-> >> 
-> >>  #define VIDCON2_TVFMTSEL1_RGB                        (0x0 << 12)
-> >>  #define VIDCON2_TVFMTSEL1_YUV422             (0x1 << 12)
-> >>  #define VIDCON2_TVFMTSEL1_YUV444             (0x2 << 12)
-> >> 
-> >> +#define VIDCON2_TVFMTSEL1_SHIFT                      (12)
-> >> +#define VIDCON2_TVFMTSEL_SW                  (1 << 14)
-> >> +#define VIDCON2_TVFORMATSEL_YUV444           (0x2 << 12)
-> >> +
-> >> +#define VIDCON2_TVFMTSEL1_MASK                       (0x3 << 12)
-> >> +#define VIDCON2_TVFMTSEL1_RGB                        (0x0 << 12)
-> >> +#define VIDCON2_TVFMTSEL1_YUV422             (0x1 << 12)
-> >> +#define VIDCON2_TVFMTSEL1_YUV444             (0x2 << 12)
-> >> 
-> >>  #define VIDCON2_ORGYCbCr                     (1 << 8)
-> >>  #define VIDCON2_YUVORDCrCb                   (1 << 7)
-> >> 
-> >> @@ -165,8 +195,15 @@
-> >> 
-> >>  #define VIDTCON1_HSPW_SHIFT                  (0)
-> >>  #define VIDTCON1_HSPW_LIMIT                  (0xff)
-> >>  #define VIDTCON1_HSPW(_x)                    ((_x) << 0)
-> >> 
-> >> +#define VIDCON1_VCLK_MASK                       (0x3 << 9)
-> >> +#define VIDCON1_VCLK_HOLD                       (0x0 << 9)
-> >> +#define VIDCON1_VCLK_RUN                        (0x1 << 9)
-> >> 
-> >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
-> >> +#define VIDTCON2                             (0x20018)
-> >> +#else
-> >> 
-> >>  #define VIDTCON2                             (0x18)
-> >> 
-> >> +#endif
-> > 
-> > Same as in my first comment.
-> > 
-> >>  #define VIDTCON2_LINEVAL_E(_x)                       ((((_x) & 0x800)
-> >>  >> 11) << 23) #define VIDTCON2_LINEVAL_MASK                       
-> >>  (0x7ff << 11) #define VIDTCON2_LINEVAL_SHIFT                      
-> >>  (11)
-> >> 
-> >> @@ -186,6 +223,9 @@
-> >> 
-> >>  #define WINCONx_BYTSWP                               (1 << 17)
-> >>  #define WINCONx_HAWSWP                               (1 << 16)
-> >>  #define WINCONx_WSWP                         (1 << 15)
-> >> 
-> >> +#define WINCONx_ENLOCAL_MASK                 (0xf << 15)
-> >> +#define WINCONx_INRGB_RGB                    (0 << 13)
-> >> +#define WINCONx_INRGB_YCBCR                  (1 << 13)
-> >> 
-> >>  #define WINCONx_BURSTLEN_MASK                        (0x3 << 9)
-> >>  #define WINCONx_BURSTLEN_SHIFT                       (9)
-> >>  #define WINCONx_BURSTLEN_16WORD                      (0x0 << 9)
-> >> 
-> >> @@ -205,6 +245,7 @@
-> >> 
-> >>  #define WINCON0_BPPMODE_24BPP_888            (0xb << 2)
-> >>  
-> >>  #define WINCON1_BLD_PIX                              (1 << 6)
-> >> 
-> >> +#define WINCON1_BLD_PLANE                    (0 << 6)
-> >> 
-> >>  #define WINCON1_ALPHA_SEL                    (1 << 1)
-> >>  #define WINCON1_BPPMODE_MASK                 (0xf << 2)
-> >> 
-> >> @@ -395,9 +436,19 @@
-> >> 
-> >>  #define WPALCON_W0PAL_16BPP_A555             (0x5 << 0)
-> >>  #define WPALCON_W0PAL_16BPP_565                      (0x6 << 0)
-> >> 
-> >> +/* Clock gate mode control */
-> >> +#define REG_CLKGATE_MODE                     (0x1b0)
-> >> +#define REG_CLKGATE_MODE_AUTO_CLOCK_GATE     (0 << 0)
-> >> +#define REG_CLKGATE_MODE_NON_CLOCK_GATE              (1 << 0)
-> >> +
-> >> 
-> >>  /* Blending equation control */
-> >>  #define BLENDCON                             (0x260)
-> >>  #define BLENDCON_NEW_MASK                    (1 << 0)
-> >>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE                (1 << 0)
-> >>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE                (0 << 0)
-> >> 
-> >> +/* Window alpha control */
-> >> +#define VIDW0ALPHA0                          (0x200)
-> >> +#define VIDW0ALPHA1                          (0x204)
-> >> +#define DPCLKCON                             (0x27c)
-> >> +#define DPCLKCON_ENABLE                              (1 << 1)
-> >> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
-> >> index 0217f74..f81bf55 100644
-> >> --- a/drivers/video/Kconfig
-> >> +++ b/drivers/video/Kconfig
-> >> @@ -2053,6 +2053,12 @@ config FB_S3C
-> >> 
-> >>         Currently the support is only for the S3C6400 and S3C6410
-> >>         SoCs.
-> >> 
-> >> +config FB_EXYNOS_FIMD_V8
-> >> +     bool "register extensions for FIMD version 8"
-> >> +     depends on ARCH_EXYNOS5
-> >> +     ---help---
-> >> +     This uses register extensions for FIMD version 8
-> >> +
-> >> 
-> >>  config FB_S3C_DEBUG_REGWRITE
-> >>  
-> >>         bool "Debug register writes"
-> >>         depends on FB_S3C
-> > 
-> > Best regards,
-> > Tomasz Figa
-> > 
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe
-> > linux-samsung-soc" in the body of a message to
-> > majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+MjAxMuaYpeWtozExMeWxiuW5v+S6pOS8muS5sOWutu+8jOa1t+WFs+aVsOaNruaPkOWNlXBpZXJz
+54mI77yMMjAwOC0yMDEy5bm0OeWxiuW5v+S6pOS8muaVsOaNruOAgg0KDQrkuIDlhbExMOS4quWM
+hSjmlbDmja7mmK/lhajooYzkuJrnmoTvvIzlj6/ku6XmjInnhaflhbPplK7or43mj5Dlj5blh7rm
+naXnmoQp77yaIA0KMe+8jDIwMTLmmKXlraMxMTHlsYrlub/kuqTkvJrkubDlrrbnjrDlnLror6Ln
+m5jmlbDmja7lupPmlrDpspzlh7rngonvvIzotoXnuqfmlrDpspzkubDlrrbvvIzmlrDpspzmlbDm
+ja7vvIzlrrnmmJPmiJDljZXvvIEgDQoy77yM6LSt5Lmw5ZCO5Y+v5Lul5YWN6LS55pu05pawMjAx
+Mueni+Wto+W5v+S6pOS8muS5sOWutuaVsOaNruOAguWkqui2heWAvOS6huOAgg0KM++8jDIwMTLm
+nIDmlrDlhajnkIPlsZXkvJrnjrDlnLrkubDlrrblupMo5LiO6LS45Y+R5ZCM5q2lKSzlhbE0NuS4
+h+adoeaVsOaNruOAgiAo5oyJ54Wn6KGM5Lia5YiG57G7KQ0KNO+8jDIwMTEsMjAxMOW5tCwyMDA5
+5bm0LDIwMDjlubQg5pil5a2jK+eni+Wto+W5v+S6pOS8muS5sOWutuWQjeW9le+8jDEwMyAxMDQg
+MTA1IDEwNiAxMDcgMTA4LDEwOSwxMTAg5YWx5YWt5bGKIOWFsTEyMC425LiH5pWw5o2u44CCDQo1
+77yMNDguNjjkuIfmnaHmnIDmlrDkubDlrrbor6Lnm5jvvIzpg73luKbmnIlFbWFpbO+8jOacgOac
+ieS7t+WAvOeahOivouebmOOAgg0KNu+8jDIwMTHmnIDmlrAgQjJCIOiLseaWh+WbvemZheermTYw
+5LiH5bim6IGU57uc5pa55byP6K+i55uYIOacgOacieS7t+WAvOivouebmOS5i+S4gC4NCjfvvIwy
+MDEw5rW35YWz5o+Q5Y2VcGllcnPniYgxMDAw5LiH5pWw5o2uLg0KOO+8jDIwMTHlubTliLDpppnm
+uK/ph4fotK3nmoTlm73lpJblrqLkurrlkI3lvZUo6aaZ5riv6LS45Y+R5bGA5o+Q5L6bKe+8jOi2
+hee6p+mHjeimgeeahOS5sOWutuOAgg0KOe+8jDIwMTHlubTmlrDlop7liqDnmoQt576O5Zu9QjJC
+IHRob21hc25ldCDph4fotK3llYblkI3ljZXjgIINCjEw77yM576k5Y+R6L2v5Lu25a6J6KOF5LiO
+6YOo572y5pyN5Yqh44CCDQoNCui/meS6m+WFqOacie+8jOWFsTEyODDkuIcg5pWw5o2u44CCDQoN
+CiANCuimgeeahOaKk+e0p+iBlOezu1FROiA0NjAxMjI2NDEg5oiW6ICF56uL5Y2z5Zue5aSN6YKu
+566xOiA0NjAxMjI2NDFAcXEuY29tDQropoHnmoTmipPntKfogZTns7tRUTogNDYwMTIyNjQxIOaI
+luiAheeri+WNs+WbnuWkjemCrueusTogNDYwMTIyNjQxQHFxLmNvbQ0K6KaB55qE5oqT57Sn6IGU
+57O7UVE6IDQ2MDEyMjY0MSDmiJbogIXnq4vljbPlm57lpI3pgq7nrrE6IDQ2MDEyMjY0MUBxcS5j
+b20NCg0K6K+a5L+h5Li65pys77yM5aaC5p6c5LiN5L+h5Lu75pys5Lq6LOWPr+S7pei1sOa3mOWu
+neS6pOaYkyzmlLbliLDmlbDmja7pqozor4Ez5aSp5ZCO5YaN5LuY5qy+LOi/meaYr+WvueaCqOac
+gOWlveeahOS/nemanOS6huOAgiANCg0KDQoNCuWwj+aKgOW3p++8miANCuaKijUwMOS4h+S5sOWu
+tue+pOWPkeS7peS4gOmBje+8jOWdh+S8muacieaVsOWNg+S4quWbnuWkjeeahO+8jOi/meS6m+Ww
+seaYr+mdnuW4uOmrmOi0qOmHj+eahOS5sOWutuOAgiANCuS9v+eUqOaIkeS7rOmAgeeahOe+pOWP
+kei9r+S7tu+8jDEtMuWRqOWwseWPr+WujOWFqOWPkeWujOOAgg0KDQoNCg0KDQoNCuW5v+S6pOS8
+muS5sOWutuaMieS6p+WTgeexu+WIq+WIhuexu++8jOWIhuS4uuS7peS4i+WHoOexu++8mg0KMSDl
+ip7lhazorr7lpIcNCjIg57yW57uH5Y+K6Jek6ZOB5bel6Im65ZOBDQozIOeOu+eSgw0KNCDppJDl
+jqjnlKjlhbcNCjUg6L2m6L6GDQo2IOWkp+Wei+acuuaisOWPiuiuvuWkhw0KNyDnlLXlrZDnlLXm
+sJQNCjgg55S15a2Q5raI6LS55ZOBDQo5IOe6uue7hw0KMTAg5pyN6KOFDQoxMSDkuKrkurrmiqTn
+kIYNCjEyIOW3peeoi+acuuaisA0KMTMg5bel5YW3DQoxNCDljJblt6UNCjE1IOiuoeeul+acuuWP
+iumAmuiurw0KMTYg5a625bGF55So5ZOBDQoxNyDlrrblsYXoo4XppbANCjE4IOWutuWFtw0KMTkg
+5a6255So55S15ZmoDQoyMCDlu7rnrZHlj4roo4XppbDmnZDmlpkNCjIxIOiKguaXpeeUqOWTgQ0K
+MjIg56S85ZOB5Y+K6LWg5ZOBDQoyMyDmkanmiZjovaYNCjI0IOaxvei9pumFjeS7tg0KMjUg6aOf
+5ZOBDQoyNiDpmbbnk7cNCjI3IOmTgeefsw0KMjgg546p5YW3DQoyOSDljavmtbQNCjMwIOS6lOmH
+kQ0KMzEg5bCP5Z6L5py65qKwDQozMiDpnosNCjMzIOS8kemXsueUqOWTgQ0KMzQg5Yy755aXDQoz
+NSDmtbTlrqTkuqflk4ENCjM2IOWbreaelw0KMzcg54Wn5piO5Lqn5ZOBDQozOCDpkp/ooajnnLzp
+lZwNCjM5IOiHquihjOi9pg0KNDAg5YyFDQoNCg0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemr
+mA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+ae
+gemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeOh+aegemrmA0K5paw6bKc5pWw5o2uLeaIkOWNleeO
+h+aegemrmA0K
