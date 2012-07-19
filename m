@@ -1,140 +1,63 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH 3/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Thu, 19 Jul 2012 19:27:25 +0900
-Message-ID: <004201cd6599$17401610$45c04230$%jun@samsung.com>
-References: <CAGxe1ZGMvrec-nEYdZJ84Hub0fByYvnkCY_dRq2k489gCRSxQg@mail.gmail.com>
- <1342521538-12790-1-git-send-email-thomas.abraham@linaro.org>
+From: vinayak holikatti <vinholikatti@gmail.com>
+Subject: Re: [PATCH V2 0/4] [SCSI] ufs: Adds glue drivers to ufshcd
+Date: Thu, 19 Jul 2012 16:59:26 +0530
+Message-ID: <CAKVbJB8HF2EdLxaEL7PMcU5ZAM70TCA0Y-AbDRz4g_TuXSRgBw@mail.gmail.com>
+References: <1342188465-20239-1-git-send-email-vinholikatti@gmail.com>
+	<201207131545.28877.arnd@arndb.de>
+	<1342447217.3176.22.camel@dabdike.int.hansenpartnership.com>
+	<201207161622.24063.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:45500 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752079Ab2GSK1a (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:47153 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753336Ab2GSL31 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 06:27:30 -0400
-In-reply-to: <1342521538-12790-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Thu, 19 Jul 2012 07:29:27 -0400
+In-Reply-To: <201207161622.24063.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: James Bottomley <James.Bottomley@hansenpartnership.com>, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, santoshsy@gmail.com, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com
 
-July 17, 2012, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> Some platforms allow for clock gating and control of bus interface unit clock
-> and card interface unit clock. Add support for clock lookup of optional biu
-> and ciu clocks for clock gating and clock speed determination.
-> 
-> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/mmc/host/dw_mmc.c  |   39 ++++++++++++++++++++++++++++++++++++---
->  include/linux/mmc/dw_mmc.h |    4 ++++
->  2 files changed, 40 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> index cd58063..ebd22d8 100644
-> --- a/drivers/mmc/host/dw_mmc.c
-> +++ b/drivers/mmc/host/dw_mmc.c
-> @@ -1953,13 +1953,30 @@ int dw_mci_probe(struct dw_mci *host)
->  		return -ENODEV;
->  	}
-> 
-> -	if (!host->pdata->bus_hz) {
-> +	host->biu_clk = clk_get(host->dev, "biu");
-> +	if (IS_ERR(host->biu_clk))
-> +		dev_dbg(host->dev, "biu clock not available\n");
-> +	else
-> +		clk_prepare_enable(host->biu_clk);
-> +
-> +	host->ciu_clk = clk_get(host->dev, "ciu");
-> +	if (IS_ERR(host->ciu_clk))
-> +		dev_dbg(host->dev, "ciu clock not available\n");
-> +	else
-> +		clk_prepare_enable(host->ciu_clk);
-> +
-> +	if (IS_ERR(host->ciu_clk))
-> +		host->bus_hz = host->pdata->bus_hz;
-> +	else
-> +		host->bus_hz = clk_get_rate(host->ciu_clk);
-I have posted similar patch some time back.
-bus_hz represents input rate for cclk_in of mshc.
-Host of samsung soc doesn't use input clock from system directly.
-As you have introduced CLKSEL in your another patch, input clock can be changed prior to cclk_in.
-For non-samsung  host, we don't need to consider this with generic way?
-
-Thanks,
-Seungwon Jeon
-
-> +
-> +	if (!host->bus_hz) {
->  		dev_err(host->dev,
->  			"Platform data must supply bus speed\n");
-> -		return -ENODEV;
-> +		ret = -ENODEV;
-> +		goto err_clk;
->  	}
-> 
-> -	host->bus_hz = host->pdata->bus_hz;
->  	host->quirks = host->pdata->quirks;
-> 
->  	spin_lock_init(&host->lock);
-> @@ -2109,6 +2126,16 @@ err_dmaunmap:
->  		regulator_disable(host->vmmc);
->  		regulator_put(host->vmmc);
->  	}
-> +
-> +err_clk:
-> +	if (!IS_ERR(host->ciu_clk)) {
-> +		clk_disable_unprepare(host->ciu_clk);
-> +		clk_put(host->ciu_clk);
-> +	}
-> +	if (!IS_ERR(host->biu_clk)) {
-> +		clk_disable_unprepare(host->biu_clk);
-> +		clk_put(host->biu_clk);
-> +	}
->  	return ret;
->  }
->  EXPORT_SYMBOL(dw_mci_probe);
-> @@ -2142,6 +2169,12 @@ void dw_mci_remove(struct dw_mci *host)
->  		regulator_put(host->vmmc);
->  	}
-> 
-> +	if (!IS_ERR(host->ciu_clk))
-> +		clk_disable_unprepare(host->ciu_clk);
-> +	if (!IS_ERR(host->biu_clk))
-> +		clk_disable_unprepare(host->biu_clk);
-> +	clk_put(host->ciu_clk);
-> +	clk_put(host->biu_clk);
->  }
->  EXPORT_SYMBOL(dw_mci_remove);
-> 
-> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> index a37a573..787ad56 100644
-> --- a/include/linux/mmc/dw_mmc.h
-> +++ b/include/linux/mmc/dw_mmc.h
-> @@ -78,6 +78,8 @@ struct mmc_data;
->   * @data_offset: Set the offset of DATA register according to VERID.
->   * @dev: Device associated with the MMC controller.
->   * @pdata: Platform data associated with the MMC controller.
-> + * @biu_clk: Pointer to bus interface unit clock instance.
-> + * @ciu_clk: Pointer to card interface unit clock instance.
->   * @slot: Slots sharing this MMC controller.
->   * @fifo_depth: depth of FIFO.
->   * @data_shift: log2 of FIFO item size.
-> @@ -158,6 +160,8 @@ struct dw_mci {
->  	u16			data_offset;
->  	struct device		*dev;
->  	struct dw_mci_board	*pdata;
-> +	struct clk		*biu_clk;
-> +	struct clk		*ciu_clk;
->  	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
-> 
->  	/* FIFO push and pull */
-> --
-> 1.6.6.rc2
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Mon, Jul 16, 2012 at 9:52 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Monday 16 July 2012, James Bottomley wrote:
+>> On Fri, 2012-07-13 at 15:45 +0000, Arnd Bergmann wrote:
+>> > On Friday 13 July 2012, Vinayak Holikatti wrote:
+>> > > This patch set adds following features
+>> > >  - Seprates PCI specific code from ufshcd.c to make it as core
+>> > >  - Adds PCI glue driver ufshcd-pci.c
+>> > >  - Adds Platform glue driver ufshcd-pltfrm.c
+>> > >  - Update correct transfer size in Command UPIU
+>> >
+>> > Acked-by: Arnd Bergmann <arnd@arndb.de>
+>>
+>> I need a maintainer ack for this to go upstream.
+>>
+>> Also, looking at this, I think this patch series isn't bisectable:
+>> Patch 1 removes PCI support and patch 2 adds it back in a different
+>> form.  However, any PCI based UFS system would stop working if the
+>> bisect landed at patch 1.  I think you can fix this just by combining
+>> patches 1 and 2.
+>
+> I suggested to split the patch in two in a private review that we
+> did on the linaro mailing list. I gave my Ack because the split
+> was done, but I failed to notice that it was done differently
+> from what I suggested in
+>
+> On Monday 02 July 2012, Arnd Bergmann wrote:
+>> I would recommend that you split this patch into two separate
+>> changesets, where you do all the changes to existing code in the
+>> first patch, and only move but don't change code in the second one
+>> that creates the new file.
+>
+> I agree that breaking bisectibility by ripping out the PCI code
+> first is not good. The version 2 is not actually easier to review
+> at all than the first version, it just splits the changes by
+> file, which is pointless.
+I will roll out another patch series which will address the current issue.
+Firstly will modify existing code with PCI code and then in the second
+move the code to new file ufshcd-pci.c
+>
+>         Arnd
+>
