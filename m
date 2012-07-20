@@ -1,120 +1,143 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH V2 5/7] ARM: EXYNOS: add device tree based discovery
- support for FIMD
-Date: Fri, 20 Jul 2012 16:39:21 +0900
-Message-ID: <50090B29.4060809@samsung.com>
-References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
- <1342591053-7092-6-git-send-email-l.krishna@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for s5p-tv
+ driver
+Date: Fri, 20 Jul 2012 13:58:23 +0530
+Message-ID: <500916A7.7090803@linaro.org>
+References: <1341218932-15846-1-git-send-email-sachin.kamat@linaro.org> <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org> <147701cd63c5$a6c8ff70$f45afe50$%kim@samsung.com> <5004DCF4.1090409@linaro.org> <195901cd6601$ab971c60$02c55520$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:38743 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752127Ab2GTHjN (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:44634 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752007Ab2GTI23 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jul 2012 03:39:13 -0400
-Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7G00AOO7WC7Q40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 16:39:11 +0900 (KST)
-Received: from [10.90.51.60] by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0M7G0019G7XB3C80@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 16:39:11 +0900 (KST)
-In-reply-to: <1342591053-7092-6-git-send-email-l.krishna@samsung.com>
+	Fri, 20 Jul 2012 04:28:29 -0400
+Received: by pbbrp8 with SMTP id rp8so5803031pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jul 2012 01:28:28 -0700 (PDT)
+In-Reply-To: <195901cd6601$ab971c60$02c55520$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jg1.han@samsung.com, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, a.sim@samsung.com, jiun.yu@samsung.com, june.bae@samsung.com
 
-On 07/18/2012 02:57 PM, Leela Krishna Amudala wrote:
-> This patch adds support for device tree based discovery for Samsung's
-> display controller. Adds DRM-Fimd plat data for smdk5250
-> evt1 to the corresponding dts file
->
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->   arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++++++++++++++
->   arch/arm/boot/dts/exynos5250.dtsi         |    7 +++++++
+On 07/20/2012 04:26 AM, Kukjin Kim wrote:
+> 
+>> -----Original Message-----
+>> From: Tushar Behera [mailto:tushar.behera@linaro.org]
+>> Sent: Tuesday, July 17, 2012 12:33 PM
+>> To: Kukjin Kim
+>> Cc: 'Sachin Kamat'; linux-samsung-soc@vger.kernel.org; patches@linaro.org;
+>> a.sim@samsung.com; jiun.yu@samsung.com
+>> Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for
+>> s5p-tv driver
+>>
+>> On 07/17/2012 08:11 AM, Kukjin Kim wrote:
+>>> Sachin Kamat wrote:
+>>>>
+>>>> From: Tushar Behera <tushar.behera@linaro.org>
+>>>>
+>>>> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
+>>>> platform data") makes the presence of platform data mandatory for s5p-
+>> tv
+>>>> driver. Adding an API to plat-samsung for this purpose.
+>>>>
+>>>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>>>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>>>> ---
+>>>>  arch/arm/plat-samsung/devs.c              |   26
+>>> ++++++++++++++++++++++++++
+>>>>  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
+>>>>  2 files changed, 42 insertions(+), 0 deletions(-)
+>>>>  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
+>>>>
+>>>> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-
+>> samsung/devs.c
+>>>> index 07b5ac6..921ed88 100644
+>>>> --- a/arch/arm/plat-samsung/devs.c
+>>>> +++ b/arch/arm/plat-samsung/devs.c
+>>>> @@ -32,6 +32,8 @@
+>>>>  #include <linux/platform_data/s3c-hsudc.h>
+>>>>  #include <linux/platform_data/s3c-hsotg.h>
+>>>>
+>>>> +#include <media/s5p_hdmi.h>
+>>>> +
+>>>>  #include <asm/irq.h>
+>>>>  #include <asm/pmu.h>
+>>>>  #include <asm/mach/arch.h>
+>>>> @@ -759,6 +761,30 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
+>>>> s3c2410_platform_i2c *pd)
+>>>>  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
+>>>>  			       &s5p_device_i2c_hdmiphy);
+>>>>  }
+>>>> +
+>>>> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
+>>>> +
+>>>> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>>>> +				struct i2c_board_info *mhl_info, int
+>>> mhl_bus)
+>>>> +{
+>>>> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
+>>>> +
+>>>> +	if (soc_is_exynos4210() || soc_is_exynos4212() ||
+>>>> +						soc_is_exynos4412())
+>>>> +		pd->hdmiphy_bus = 8;
+>>>> +	else if (soc_is_s5pv210())
+>>>> +		pd->hdmiphy_bus = 3;
+>>>> +	else
+>>>> +		pd->hdmiphy_bus = 0;
+>>>> +
+>>>> +	pd->hdmiphy_info = hdmiphy_info;
+>>>> +	pd->mhl_info = mhl_info;
+>>>> +	pd->mhl_bus = mhl_bus;
+>>>> +
+>>>> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
+>>>> +				&s5p_device_hdmi);
+>>>> +}
+>>>
+>>> (Cc'ed Ayoung Sim and Jiun Yu in my team)
+>>>
+>>> Totally I wonder, do we really need s5p_i2c_hdmiphy_set_platdata and
+>> this
+>>> adding together? You updated s5p_i2c_hdmiphy_set_platdata in your 1/4
+>> patch
+>>> so I don't see why we should keep the bus number in duplicated...
+>>>
+>>
+>> s5p_i2c_hdmiphy_set_platdata sets platform data for
+>> s5p_device_i2c_hdmiphy. 'bus_num' assigned in that structure is not
+>> accessible in s5p-tv driver. But s5p-tv driver needs the bus number to
+>> get appropriate i2c adapter. Hence we need to update the bus number in
+>> both the places.
+>>
+> Yeah, I know the situation, but I don't know why we should having the same
+> i2c channel is included in different platform_data. I need to talk about
+> this approach to hdmi guys in my team, I'll let you know as soon as
+> possible.
+> 
 
-Please make separated patches for exynos5250.dtsi and
-exynos5250-smdk5250.dts.
+While configuring all the i2c channels, we need to pass the channel
+number. Since the channel number is not fixed for hdmiphy, it was
+updated as per respective CPUs.
 
->   arch/arm/mach-exynos/include/mach/map.h   |    1 +
->   arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
->   4 files changed, 26 insertions(+), 0 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 8a5e348..c8d32f5 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -109,4 +109,20 @@
->   	spi_2: spi@12d40000 {
->   		status = "disabled";
->   	};
-> +
-> +	lcd_fimd0: lcd_panel0 {
-> +			lcd-htiming = <4 4 4 1280>;
-> +			lcd-vtiming = <4 4 4 800>;
-> +			supports-mipi-panel;
-> +	};
-> +
-> +	fimd {
-> +		samsung,fimd-display = <&lcd_fimd0>;
-> +		samsung,fimd-vidout-rgb;
-> +		samsung,fimd-inv-vclk;
-> +		samsung,fimd-frame-rate = <60>;
-> +		samsung,default-window = <0>;
-> +		samsung,fimd-win-bpp = <32>;
-> +	};
-> +
->   };
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index a3a2eb2..3a67092 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -460,4 +460,11 @@
->   			#gpio-cells = <4>;
->   		};
->   	};
-> +
-> +	fimd {
-> +		compatible = "samsung,exynos5-drm";
-> +		interrupt-parent = <&combiner>;
-> +		reg = <0x14400000 0x40000>;
-> +		interrupts = <18 5>, <18 4>, <18 6>;
-> +	};
->   };
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index c72b675..f027da2 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -170,6 +170,7 @@
->   #define EXYNOS4_PA_MIPI_CSIS1		0x11890000
->   
->   #define EXYNOS4_PA_FIMD0		0x11C00000
-> +#define EXYNOS5_PA_FIMD1		0x14400000
+The same would be done for other I2C channels also, we pass channel
+number in platform data (s3c_i2c0_set_platdata) and then specify the bus
+number as the first parameter in i2c_register_board_info(...) while
+adding i2c devices.
 
-Is FIMD1 name right? I know exynos5250 has one FIMD, so use FIMD
-postfix.
+It would be great if we can find a resolution on this before the merge
+window. HDMI support in mainline kernel is broken since 3.4-rc1 and we
+would love to get this fixed during 3.6.
 
->   
->   #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
->   #define EXYNOS4_PA_DWMCI		0x12550000
-> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> index 99f2b24..2107e01 100644
-> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-> @@ -158,6 +158,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
->   	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
->   	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
->   	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-> +	OF_DEV_AUXDATA("samsung,exynos5-drm", EXYNOS5_PA_FIMD1,
-> +				"exynos5-fb", NULL),
->   	{},
->   };
->   
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
 
-Thanks.
+
+-- 
+Tushar Behera
