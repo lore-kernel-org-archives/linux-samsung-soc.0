@@ -1,134 +1,325 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for s5p-tv
- driver
-Date: Fri, 20 Jul 2012 07:56:02 +0900
-Message-ID: <195901cd6601$ab971c60$02c55520$%kim@samsung.com>
-References: <1341218932-15846-1-git-send-email-sachin.kamat@linaro.org>
- <1341218932-15846-2-git-send-email-sachin.kamat@linaro.org>
- <147701cd63c5$a6c8ff70$f45afe50$%kim@samsung.com> <5004DCF4.1090409@linaro.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR
+ definitions for writeback
+Date: Fri, 20 Jul 2012 11:21:00 +0900
+Message-ID: <000a01cd661e$4e1e19e0$ea5a4da0$%han@samsung.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
+ <1429943.UqWt7uDBOU@flatron>
+ <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com>
+ <4240594.0SndFBiAl5@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:51446 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751763Ab2GSW4E (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:55561 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752589Ab2GTCVD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 19 Jul 2012 18:56:04 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Thu, 19 Jul 2012 22:21:03 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7F003SIJPDNG20@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:56:02 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ 17 2011)) with ESMTP id <0M7F00EYYT715RC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 11:21:01 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.119.56])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7F00I7GJPETYB0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 07:56:02 +0900 (KST)
-In-reply-to: <5004DCF4.1090409@linaro.org>
+ with ESMTPA id <0M7F00700T700HS0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 11:21:01 +0900 (KST)
+In-reply-to: <4240594.0SndFBiAl5@flatron>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, a.sim@samsung.com, jiun.yu@samsung.com, june.bae@samsung.com
+To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, olofj@google.com, thomas.ab@samsung.com, kgene.kim@samsung.com, joshi@samsung.com
 
+On Thursday, July 19, 2012 10:35 PM, Tomasz Figa wrote:
+> 
+> Hi Leela,
+> 
+> On Thursday 19 of July 2012 18:30:44 Leela Krishna Amudala wrote:
+> > Hi Tomasz,
+> >
+> > On Wed, Jul 18, 2012 at 4:35 PM, Tomasz Figa <tomasz.figa@gmail.com>
+> wrote:
+> > > Hi,
+> > >
+> > > On Wednesday 18 of July 2012 11:27:27 Leela Krishna Amudala wrote:
+> > >> This patch updates the register address offsets and adds SFR
+> > >> definitions
+> > >> for writeback for Samsung's V8 display controller.
+> > >>
+> > >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> > >> ---
+> > >>
+> > >>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |   10 ++++
+> > >>  arch/arm/plat-samsung/include/plat/regs-fb.h    |   51
+> > >>
+> > >> +++++++++++++++++++++++ drivers/video/Kconfig
+> > >>
+> > >> |    6 +++
+> > >>
+> > >>  3 files changed, 67 insertions(+), 0 deletions(-)
+> > >>
+> > >> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> > >> b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h index
+> > >> 4c3647f..1639c17
+> > >> 100644
+> > >> --- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> > >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> > >> @@ -30,9 +30,16 @@
+> > >>
+> > >>  #define VIDCON1_FSTATUS_EVEN (1 << 15)
+> > >>
+> > >>  /* Video timing controls */
+> > >>
+> > >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> > >> +#define VIDTCON0                                (0x20010)
+> > >> +#define VIDTCON1                                (0x20014)
+> > >> +#define VIDTCON3                                (0x2001C)
+> > >> +#else
+> > >>
+> > >>  #define VIDTCON0                             (0x10)
+> > >>  #define VIDTCON1                             (0x14)
+> > >>  #define VIDTCON2                             (0x18)
+> > >>
+> > >> +#define VIDTCON3                             (0x1C)
+> > >> +#endif
+> > >
+> > > Wouldn't it break s3c-fb on SoCs with earlier FIMD versions with
+> > > CONFIG_FB_EXYNOS_FIMD_V8 selected? We are aiming at multi-platform ARM
+> > > kernels, aren't we (i.e support of both V8 and earlier FIMD in one
+> > > kernel)?
+> > Exynos5 has FIMD_V8 and other SoCs has older FIMD versions.
+> > As address offsets for certain registers has changed in FIMD_V8, we
+> > introduced these defines.
+> > So we have to select CONFIG_FB_EXYNOS_FIMD_V8 in case of Exynos5 SoC,
+> > and deselect for other SoCs.
+> 
+> Yes, I'm aware of different FIMD versions in different SoCs. My point is
+> that it shouldn't be necessary to deselect CONFIG_FB_EXYNOS_FIMD_V8 to
+> support other SoCs than Exynos5, i.e. additional config options should be
+> incremental - should not break other setups. Ideally there should not be
+> any new config option for FIMD v8.
+> 
+> The detection of FIMD version and selection of appropriate register offsets
+> should be done in the driver at runtime, based for example on
+> platform_device_id (see the s3c-fb driver and usage of s3c_fb_driverdata
+> and s3c_fb_win_variant structs).
 
-> -----Original Message-----
-> From: Tushar Behera [mailto:tushar.behera@linaro.org]
-> Sent: Tuesday, July 17, 2012 12:33 PM
-> To: Kukjin Kim
-> Cc: 'Sachin Kamat'; linux-samsung-soc@vger.kernel.org; patches@linaro.org;
-> a.sim@samsung.com; jiun.yu@samsung.com
-> Subject: Re: [PATCH 2/4] ARM: SAMSUNG: Add API to set platform data for
-> s5p-tv driver
-> 
-> On 07/17/2012 08:11 AM, Kukjin Kim wrote:
-> > Sachin Kamat wrote:
-> >>
-> >> From: Tushar Behera <tushar.behera@linaro.org>
-> >>
-> >> Commit 350f2f4dad64 ("[media] v4l: s5p-tv: hdmi: add support for
-> >> platform data") makes the presence of platform data mandatory for s5p-
-> tv
-> >> driver. Adding an API to plat-samsung for this purpose.
-> >>
-> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> >> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> >> ---
-> >>  arch/arm/plat-samsung/devs.c              |   26
-> > ++++++++++++++++++++++++++
-> >>  arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
-> >>  2 files changed, 42 insertions(+), 0 deletions(-)
-> >>  create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
-> >>
-> >> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-
-> samsung/devs.c
-> >> index 07b5ac6..921ed88 100644
-> >> --- a/arch/arm/plat-samsung/devs.c
-> >> +++ b/arch/arm/plat-samsung/devs.c
-> >> @@ -32,6 +32,8 @@
-> >>  #include <linux/platform_data/s3c-hsudc.h>
-> >>  #include <linux/platform_data/s3c-hsotg.h>
-> >>
-> >> +#include <media/s5p_hdmi.h>
-> >> +
-> >>  #include <asm/irq.h>
-> >>  #include <asm/pmu.h>
-> >>  #include <asm/mach/arch.h>
-> >> @@ -759,6 +761,30 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
-> >> s3c2410_platform_i2c *pd)
-> >>  	npd = s3c_set_platdata(pd, sizeof(struct s3c2410_platform_i2c),
-> >>  			       &s5p_device_i2c_hdmiphy);
-> >>  }
-> >> +
-> >> +struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
-> >> +
-> >> +void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
-> >> +				struct i2c_board_info *mhl_info, int
-> > mhl_bus)
-> >> +{
-> >> +	struct s5p_hdmi_platform_data *pd = &s5p_hdmi_def_platdata;
-> >> +
-> >> +	if (soc_is_exynos4210() || soc_is_exynos4212() ||
-> >> +						soc_is_exynos4412())
-> >> +		pd->hdmiphy_bus = 8;
-> >> +	else if (soc_is_s5pv210())
-> >> +		pd->hdmiphy_bus = 3;
-> >> +	else
-> >> +		pd->hdmiphy_bus = 0;
-> >> +
-> >> +	pd->hdmiphy_info = hdmiphy_info;
-> >> +	pd->mhl_info = mhl_info;
-> >> +	pd->mhl_bus = mhl_bus;
-> >> +
-> >> +	s3c_set_platdata(pd, sizeof(struct s5p_hdmi_platform_data),
-> >> +				&s5p_device_hdmi);
-> >> +}
-> >
-> > (Cc'ed Ayoung Sim and Jiun Yu in my team)
-> >
-> > Totally I wonder, do we really need s5p_i2c_hdmiphy_set_platdata and
-> this
-> > adding together? You updated s5p_i2c_hdmiphy_set_platdata in your 1/4
-> patch
-> > so I don't see why we should keep the bus number in duplicated...
-> >
-> 
-> s5p_i2c_hdmiphy_set_platdata sets platform data for
-> s5p_device_i2c_hdmiphy. 'bus_num' assigned in that structure is not
-> accessible in s5p-tv driver. But s5p-tv driver needs the bus number to
-> get appropriate i2c adapter. Hence we need to update the bus number in
-> both the places.
-> 
-Yeah, I know the situation, but I don't know why we should having the same
-i2c channel is included in different platform_data. I need to talk about
-this approach to hdmi guys in my team, I'll let you know as soon as
-possible.
+I could not agree with Tomasz Figa more.
+FIMD register offset should be selected at runtime.
 
-Thanks.
+Leela Krishna Amudala,
+Please, don't use ugly "#ifdef".
 
 Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Jingoo Han
+
+> 
+> Best regards,
+> Tomasz Figa
+> 
+> >
+> > >>  /* Window position controls */
+> > >>
+> > >> @@ -43,9 +50,12 @@
+> > >>
+> > >>  #define VIDOSD_BASE                          (0x40)
+> > >>
+> > >>  #define VIDINTCON0                           (0x130)
+> > >>
+> > >> +#define VIDINTCON1                              (0x134)
+> > >>
+> > >>  /* WINCONx */
+> > >>
+> > >> +#define WINCONx_CSC_CON_EQ709                   (1 << 28)
+> > >> +#define WINCONx_CSC_CON_EQ601                   (0 << 28)
+> > >>
+> > >>  #define WINCONx_CSCWIDTH_MASK                        (0x3 << 26)
+> > >>  #define WINCONx_CSCWIDTH_SHIFT                       (26)
+> > >>  #define WINCONx_CSCWIDTH_WIDE                        (0x0 << 26)
+> > >>
+> > >> diff --git a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> > >> b/arch/arm/plat-samsung/include/plat/regs-fb.h index 9a78012..6d2ee16
+> > >> 100644
+> > >> --- a/arch/arm/plat-samsung/include/plat/regs-fb.h
+> > >> +++ b/arch/arm/plat-samsung/include/plat/regs-fb.h
+> > >> @@ -32,12 +32,28 @@
+> > >>
+> > >>  #define VIDCON0                                      (0x00)
+> > >>  #define VIDCON0_INTERLACE                    (1 << 29)
+> > >>
+> > >> +
+> > >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> > >> +#define VIDOUT_CON                           (0x20000)
+> > >> +#define VIDOUT_CON_VIDOUT_UP_MASK            (0x1 << 16)
+> > >> +#define VIDOUT_CON_VIDOUT_UP_SHIFT           (16)
+> > >> +#define VIDOUT_CON_VIDOUT_UP_ALWAYS          (0x0 << 16)
+> > >> +#define VIDOUT_CON_VIDOUT_UP_START_FRAME     (0x1 << 16)
+> > >> +#define VIDOUT_CON_VIDOUT_F_MASK             (0x7 << 8)
+> > >> +#define VIDOUT_CON_VIDOUT_F_SHIFT            (8)
+> > >> +#define VIDOUT_CON_VIDOUT_F_RGB                      (0x0 << 8)
+> > >> +#define VIDOUT_CON_VIDOUT_F_I80_LDI0         (0x2 << 8)
+> > >> +#define VIDOUT_CON_VIDOUT_F_I80_LDI1         (0x3 << 8)
+> > >> +#define VIDOUT_CON_VIDOUT_F_WB                       (0x4 << 8)
+> > >> +#endif
+> > >> +
+> > >>
+> > >>  #define VIDCON0_VIDOUT_MASK                  (0x3 << 26)
+> > >>  #define VIDCON0_VIDOUT_SHIFT                 (26)
+> > >>  #define VIDCON0_VIDOUT_RGB                   (0x0 << 26)
+> > >>  #define VIDCON0_VIDOUT_TV                    (0x1 << 26)
+> > >>  #define VIDCON0_VIDOUT_I80_LDI0                      (0x2 << 26)
+> > >>  #define VIDCON0_VIDOUT_I80_LDI1                      (0x3 << 26)
+> > >>
+> > >> +#define VIDCON0_VIDOUT_WB                       (0x4 << 26)
+> > >>
+> > >>  #define VIDCON0_L1_DATA_MASK                 (0x7 << 23)
+> > >>  #define VIDCON0_L1_DATA_SHIFT                        (23)
+> > >>
+> > >> @@ -81,7 +97,13 @@
+> > >>
+> > >>  #define VIDCON0_ENVID                                (1 << 1)
+> > >>  #define VIDCON0_ENVID_F                              (1 << 0)
+> > >>
+> > >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> > >> +#define VIDOUT_CON                              (0x20000)
+> > >> +#define VIDCON1                                 (0x20004)
+> > >> +#else
+> > >>
+> > >>  #define VIDCON1                                      (0x04)
+> > >>
+> > >> +#endif
+> > >
+> > > Same here. Also isn't it a redefinition of VIDOUT_CON that was defined
+> > > several lines above?
+> >
+> > Will be corrected in the next version patch set.
+> >
+> > Best Wishes,
+> > Leela Krishna Amudala.
+> >
+> > >>  #define VIDCON1_LINECNT_MASK                 (0x7ff << 16)
+> > >>  #define VIDCON1_LINECNT_SHIFT                        (16)
+> > >>  #define VIDCON1_LINECNT_GET(_v)                      (((_v) >> 16) &
+> > >>  0x7ff)>>
+> > >> @@ -111,6 +133,14 @@
+> > >>
+> > >>  #define VIDCON2_TVFMTSEL1_RGB                        (0x0 << 12)
+> > >>  #define VIDCON2_TVFMTSEL1_YUV422             (0x1 << 12)
+> > >>  #define VIDCON2_TVFMTSEL1_YUV444             (0x2 << 12)
+> > >>
+> > >> +#define VIDCON2_TVFMTSEL1_SHIFT                      (12)
+> > >> +#define VIDCON2_TVFMTSEL_SW                  (1 << 14)
+> > >> +#define VIDCON2_TVFORMATSEL_YUV444           (0x2 << 12)
+> > >> +
+> > >> +#define VIDCON2_TVFMTSEL1_MASK                       (0x3 << 12)
+> > >> +#define VIDCON2_TVFMTSEL1_RGB                        (0x0 << 12)
+> > >> +#define VIDCON2_TVFMTSEL1_YUV422             (0x1 << 12)
+> > >> +#define VIDCON2_TVFMTSEL1_YUV444             (0x2 << 12)
+> > >>
+> > >>  #define VIDCON2_ORGYCbCr                     (1 << 8)
+> > >>  #define VIDCON2_YUVORDCrCb                   (1 << 7)
+> > >>
+> > >> @@ -165,8 +195,15 @@
+> > >>
+> > >>  #define VIDTCON1_HSPW_SHIFT                  (0)
+> > >>  #define VIDTCON1_HSPW_LIMIT                  (0xff)
+> > >>  #define VIDTCON1_HSPW(_x)                    ((_x) << 0)
+> > >>
+> > >> +#define VIDCON1_VCLK_MASK                       (0x3 << 9)
+> > >> +#define VIDCON1_VCLK_HOLD                       (0x0 << 9)
+> > >> +#define VIDCON1_VCLK_RUN                        (0x1 << 9)
+> > >>
+> > >> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+> > >> +#define VIDTCON2                             (0x20018)
+> > >> +#else
+> > >>
+> > >>  #define VIDTCON2                             (0x18)
+> > >>
+> > >> +#endif
+> > >
+> > > Same as in my first comment.
+> > >
+> > >>  #define VIDTCON2_LINEVAL_E(_x)                       ((((_x) & 0x800)
+> > >>  >> 11) << 23) #define VIDTCON2_LINEVAL_MASK
+> > >>  (0x7ff << 11) #define VIDTCON2_LINEVAL_SHIFT
+> > >>  (11)
+> > >>
+> > >> @@ -186,6 +223,9 @@
+> > >>
+> > >>  #define WINCONx_BYTSWP                               (1 << 17)
+> > >>  #define WINCONx_HAWSWP                               (1 << 16)
+> > >>  #define WINCONx_WSWP                         (1 << 15)
+> > >>
+> > >> +#define WINCONx_ENLOCAL_MASK                 (0xf << 15)
+> > >> +#define WINCONx_INRGB_RGB                    (0 << 13)
+> > >> +#define WINCONx_INRGB_YCBCR                  (1 << 13)
+> > >>
+> > >>  #define WINCONx_BURSTLEN_MASK                        (0x3 << 9)
+> > >>  #define WINCONx_BURSTLEN_SHIFT                       (9)
+> > >>  #define WINCONx_BURSTLEN_16WORD                      (0x0 << 9)
+> > >>
+> > >> @@ -205,6 +245,7 @@
+> > >>
+> > >>  #define WINCON0_BPPMODE_24BPP_888            (0xb << 2)
+> > >>
+> > >>  #define WINCON1_BLD_PIX                              (1 << 6)
+> > >>
+> > >> +#define WINCON1_BLD_PLANE                    (0 << 6)
+> > >>
+> > >>  #define WINCON1_ALPHA_SEL                    (1 << 1)
+> > >>  #define WINCON1_BPPMODE_MASK                 (0xf << 2)
+> > >>
+> > >> @@ -395,9 +436,19 @@
+> > >>
+> > >>  #define WPALCON_W0PAL_16BPP_A555             (0x5 << 0)
+> > >>  #define WPALCON_W0PAL_16BPP_565                      (0x6 << 0)
+> > >>
+> > >> +/* Clock gate mode control */
+> > >> +#define REG_CLKGATE_MODE                     (0x1b0)
+> > >> +#define REG_CLKGATE_MODE_AUTO_CLOCK_GATE     (0 << 0)
+> > >> +#define REG_CLKGATE_MODE_NON_CLOCK_GATE              (1 << 0)
+> > >> +
+> > >>
+> > >>  /* Blending equation control */
+> > >>  #define BLENDCON                             (0x260)
+> > >>  #define BLENDCON_NEW_MASK                    (1 << 0)
+> > >>  #define BLENDCON_NEW_8BIT_ALPHA_VALUE                (1 << 0)
+> > >>  #define BLENDCON_NEW_4BIT_ALPHA_VALUE                (0 << 0)
+> > >>
+> > >> +/* Window alpha control */
+> > >> +#define VIDW0ALPHA0                          (0x200)
+> > >> +#define VIDW0ALPHA1                          (0x204)
+> > >> +#define DPCLKCON                             (0x27c)
+> > >> +#define DPCLKCON_ENABLE                              (1 << 1)
+> > >> diff --git a/drivers/video/Kconfig b/drivers/video/Kconfig
+> > >> index 0217f74..f81bf55 100644
+> > >> --- a/drivers/video/Kconfig
+> > >> +++ b/drivers/video/Kconfig
+> > >> @@ -2053,6 +2053,12 @@ config FB_S3C
+> > >>
+> > >>         Currently the support is only for the S3C6400 and S3C6410
+> > >>         SoCs.
+> > >>
+> > >> +config FB_EXYNOS_FIMD_V8
+> > >> +     bool "register extensions for FIMD version 8"
+> > >> +     depends on ARCH_EXYNOS5
+> > >> +     ---help---
+> > >> +     This uses register extensions for FIMD version 8
+> > >> +
+> > >>
+> > >>  config FB_S3C_DEBUG_REGWRITE
+> > >>
+> > >>         bool "Debug register writes"
+> > >>         depends on FB_S3C
+> > >
+> > > Best regards,
+> > > Tomasz Figa
+> > >
+> > > --
+> > > To unsubscribe from this list: send the line "unsubscribe
+> > > linux-samsung-soc" in the body of a message to
+> > > majordomo@vger.kernel.org
+> > > More majordomo info at  http://vger.kernel.org/majordomo-info.html
