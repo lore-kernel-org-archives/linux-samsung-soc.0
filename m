@@ -1,160 +1,27 @@
-From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
-Date: Fri, 20 Jul 2012 18:38:43 +0530
-Message-ID: <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com>
-References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR
+ definitions for writeback
+Date: Fri, 20 Jul 2012 14:54:03 +0200
+Message-ID: <500954EB.2080504@gmail.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com> <1429943.UqWt7uDBOU@flatron> <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com> <4240594.0SndFBiAl5@flatron> <000a01cd661e$4e1e19e0$ea5a4da0$%han@samsung.com> <CAL1wa8dyLjC8BZBc0wBnjP=a2Yo5XDQq1Kfq9yw35_e8wxp0bw@mail.gmail.com> <50092C2F.9010304@gmail.com> <CAL1wa8cR_1OCL8x4xoxmsZ9mU5XMd9dfsm=z4aZwmogAN4Z85Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:22562 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753490Ab2GTMyI (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:36707 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753451Ab2GTMyH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jul 2012 08:54:08 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7G00ETYMHT2580@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 21:54:06 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7G00EA1MHSQ5A0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 21:54:06 +0900 (KST)
-In-reply-to: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com>
+	Fri, 20 Jul 2012 08:54:07 -0400
+Received: by weyx8 with SMTP id x8so2577660wey.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jul 2012 05:54:06 -0700 (PDT)
+In-Reply-To: <CAL1wa8cR_1OCL8x4xoxmsZ9mU5XMd9dfsm=z4aZwmogAN4Z85Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sylvester.nawrocki@gmail.com, sachin.kamat@linaro.org, joshi@samsung.com, shaik.samsung@gmail.com, shaik.ameer@samsung.com
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, olofj@google.com, linux-arm-kernel@lists.infradead.org
 
-This patch adds,
-- 4 Gscaler devices to the DT device list
-- Gscaler specific entries to the machine file
-- binding documentation for Gscaler entries
+On 07/20/2012 01:07 PM, Leela Krishna Amudala wrote:
+> Will do the run-time approach, and post the next version patchset soon.
 
-Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
----
- .../devicetree/bindings/media/exynos5-gsc.txt      |   32 ++++++++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi                  |   28 +++++++++++++++++
- arch/arm/mach-exynos/include/mach/map.h            |    3 ++
- arch/arm/mach-exynos/mach-exynos5-dt.c             |    8 +++++
- 4 files changed, 71 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/exynos5-gsc.txt
-
-diff --git a/Documentation/devicetree/bindings/media/exynos5-gsc.txt b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
-new file mode 100644
-index 0000000..1cb4ea0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
-@@ -0,0 +1,32 @@
-+* Samsung Exynos5 Gscaler device
-+
-+Gscaler is used for scaling and color space conversion on EXYNOS5 SoCs.
-+
-+Required properties:
-+- compatible: should be "samsung,exynos5250-gsc"
-+- reg: should contain Gscaler physical address location and length.
-+- interrupts: should contain Gscaler interrupt number
-+
-+Example:
-+
-+gsc_0:  gsc@0x13e00000 {
-+	compatible = "samsung,exynos5250-gsc";
-+	reg = <0x13e00000 0x1000>;
-+	interrupts = <0 85 0>;
-+};
-+
-+Aliases:
-+Each Gscaler node should have a numbered alias in the aliases node,
-+in the form of gscN, N = 0...3. Gscaler driver uses these aliases
-+to retrieve the device IDs using "of_alias_get_id()" call.
-+
-+Example:
-+
-+aliases {
-+	gsc0 =&gsc_0;
-+	gsc1 =&gsc_1;
-+	gsc2 =&gsc_2;
-+	gsc3 =&gsc_3;
-+};
-+
-+
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index a3a2eb2..ad6c3c5 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -27,6 +27,10 @@
- 		spi0 = &spi_0;
- 		spi1 = &spi_1;
- 		spi2 = &spi_2;
-+		gsc0 = &gsc_0;
-+		gsc1 = &gsc_1;
-+		gsc2 = &gsc_2;
-+		gsc3 = &gsc_3;
- 	};
- 
- 	gic:interrupt-controller@10481000 {
-@@ -460,4 +464,28 @@
- 			#gpio-cells = <4>;
- 		};
- 	};
-+
-+	gsc_0:  gsc@0x13e00000 {
-+		compatible = "samsung,exynos5250-gsc";
-+		reg = <0x13e00000 0x1000>;
-+		interrupts = <0 85 0>;
-+	};
-+
-+	gsc_1:  gsc@0x13e10000 {
-+		compatible = "samsung,exynos5250-gsc";
-+		reg = <0x13e10000 0x1000>;
-+		interrupts = <0 86 0>;
-+	};
-+
-+	gsc_2:  gsc@0x13e20000 {
-+		compatible = "samsung,exynos5250-gsc";
-+		reg = <0x13e20000 0x1000>;
-+		interrupts = <0 87 0>;
-+	};
-+
-+	gsc_3:  gsc@0x13e30000 {
-+		compatible = "samsung,exynos5250-gsc";
-+		reg = <0x13e30000 0x1000>;
-+		interrupts = <0 88 0>;
-+	};
- };
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index c72b675..217e470 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -121,6 +121,9 @@
- #define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
- #define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
- 
-+/* x = 0...3 */
-+#define EXYNOS5_PA_GSC(x)		(0x13e00000 + ((x) * 0x10000))
-+
- #define EXYNOS5_PA_SYSMMU_MDMA1		0x10A40000
- #define EXYNOS5_PA_SYSMMU_SSS		0x10A50000
- #define EXYNOS5_PA_SYSMMU_2D		0x10A60000
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index ef770bc..fd8f1ca 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -56,6 +56,14 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(0),
-+				"exynos-gsc.0", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(1),
-+				"exynos-gsc.1", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(2),
-+				"exynos-gsc.2", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(3),
-+				"exynos-gsc.3", NULL),
- 	{},
- };
- 
--- 
-1.7.0.4
+Great, thanks.
