@@ -1,27 +1,111 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR
- definitions for writeback
-Date: Fri, 20 Jul 2012 14:54:03 +0200
-Message-ID: <500954EB.2080504@gmail.com>
-References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com> <1429943.UqWt7uDBOU@flatron> <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com> <4240594.0SndFBiAl5@flatron> <000a01cd661e$4e1e19e0$ea5a4da0$%han@samsung.com> <CAL1wa8dyLjC8BZBc0wBnjP=a2Yo5XDQq1Kfq9yw35_e8wxp0bw@mail.gmail.com> <50092C2F.9010304@gmail.com> <CAL1wa8cR_1OCL8x4xoxmsZ9mU5XMd9dfsm=z4aZwmogAN4Z85Q@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jonathan Kliegman <kliegs@chromium.org>
+Subject: [PATCH 3/3] ARM: exynos: Size combiner_data dynamically after dt parsing
+Date: Fri, 20 Jul 2012 14:14:36 -0400
+Message-ID: <1342808076-29985-3-git-send-email-kliegs@chromium.org>
+References: <1342808076-29985-1-git-send-email-kliegs@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:36707 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753451Ab2GTMyH (ORCPT
+Received: from mail-yx0-f174.google.com ([209.85.213.174]:64515 "EHLO
+	mail-yx0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752507Ab2GTSOy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jul 2012 08:54:07 -0400
-Received: by weyx8 with SMTP id x8so2577660wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jul 2012 05:54:06 -0700 (PDT)
-In-Reply-To: <CAL1wa8cR_1OCL8x4xoxmsZ9mU5XMd9dfsm=z4aZwmogAN4Z85Q@mail.gmail.com>
+	Fri, 20 Jul 2012 14:14:54 -0400
+Received: by yenl2 with SMTP id l2so4273003yen.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jul 2012 11:14:53 -0700 (PDT)
+In-Reply-To: <1342808076-29985-1-git-send-email-kliegs@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: Jingoo Han <jg1.han@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, olofj@google.com, linux-arm-kernel@lists.infradead.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, Jonathan Kliegman <kliegs@chromium.org>
 
-On 07/20/2012 01:07 PM, Leela Krishna Amudala wrote:
-> Will do the run-time approach, and post the next version patchset soon.
+The number of combiner_data entries depends on the device tree parsing
+now.  Allocate the array based on the results of the parsing or fall
+back on EXYNOS4 or EXYNOS5 defaults based on the SOC running.
 
-Great, thanks.
+Signed-off-by: Jonathan Kliegman <kliegs@chromium.org>
+---
+ arch/arm/mach-exynos/common.c |   41 +++++++++++++++++++++++++----------------
+ 1 files changed, 25 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 3627869..5075e0c 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -412,7 +412,7 @@ struct combiner_chip_data {
+ };
+ 
+ static struct irq_domain *combiner_irq_domain;
+-static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
++static struct combiner_chip_data *combiner_data;
+ static unsigned int rt_max_combiner_nr;
+ 
+ static inline void __iomem *combiner_base(struct irq_data *data)
+@@ -474,15 +474,6 @@ static struct irq_chip combiner_chip = {
+ 
+ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
+ {
+-	unsigned int max_nr;
+-
+-	if (soc_is_exynos5250())
+-		max_nr = EXYNOS5_MAX_COMBINER_NR;
+-	else
+-		max_nr = EXYNOS4_MAX_COMBINER_NR;
+-
+-	if (combiner_nr >= max_nr)
+-		BUG();
+ 	if (irq_set_handler_data(irq, &combiner_data[combiner_nr]) != 0)
+ 		BUG();
+ 	irq_set_chained_handler(irq, combiner_handle_cascade_irq);
+@@ -598,20 +589,37 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 				 struct device_node *np)
+ {
+ 	int i, irq, irq_base;
+-	unsigned int nr_irq;
++	unsigned int nr_irq, soc_max_nr;
++
++	soc_max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
++		EXYNOS4_MAX_COMBINER_NR;
+ 
+ 	if (np) {
+ 		if (of_property_read_u32(np, "samsung,combiner-nr",
+ 					 &rt_max_combiner_nr)) {
++			rt_max_combiner_nr = soc_max_nr;
+ 			pr_warning("%s: number of combiners not specified, "
+-				"setting default as %d.\n",
+-				__func__, EXYNOS4_MAX_COMBINER_NR);
+-			rt_max_combiner_nr = EXYNOS4_MAX_COMBINER_NR;
++				   "setting default as %d.\n",
++				   __func__, rt_max_combiner_nr);
+ 		}
+ 	} else {
+-		rt_max_combiner_nr = soc_is_exynos5250() ?
+-			EXYNOS5_MAX_COMBINER_NR : EXYNOS4_MAX_COMBINER_NR;
++		rt_max_combiner_nr = soc_max_nr;
+ 	}
++	if (WARN_ON(rt_max_combiner_nr > soc_max_nr)) {
++		pr_warning("%s: more combiners specified (%d) than "
++			   "architecture (%d) supports.",
++			   __func__, rt_max_combiner_nr, soc_max_nr);
++		return;
++	}
++
++	combiner_data = kmalloc(sizeof(struct combiner_chip_data) *
++				rt_max_combiner_nr, GFP_KERNEL);
++	if (WARN_ON(!combiner_data)) {
++		pr_warning("%s: combiner_data memory allocation failed for %d "
++			   "entries", __func__, rt_max_combiner_nr);
++		return;
++	}
++
+ 	nr_irq = rt_max_combiner_nr * MAX_IRQ_IN_COMBINER;
+ 
+ 	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
+@@ -624,6 +632,7 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 				&combiner_irq_domain_ops, &combiner_data);
+ 	if (WARN_ON(!combiner_irq_domain)) {
+ 		pr_warning("%s: irq domain init failed\n", __func__);
++		kfree(combiner_data);
+ 		return;
+ 	}
+ 
+-- 
+1.7.7.3
