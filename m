@@ -1,164 +1,160 @@
 From: Shaik Ameer Basha <shaik.ameer@samsung.com>
-Subject: [PATCH v3 1/2] ARM: EXYNOS: Add clock support for Gscaler
-Date: Fri, 20 Jul 2012 18:38:42 +0530
-Message-ID: <1342789723-3949-2-git-send-email-shaik.ameer@samsung.com>
+Subject: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
+Date: Fri, 20 Jul 2012 18:38:43 +0530
+Message-ID: <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com>
 References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:37360 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753451Ab2GTMyE (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:22562 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753490Ab2GTMyI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 20 Jul 2012 08:54:04 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
+	Fri, 20 Jul 2012 08:54:08 -0400
+Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7G0046HMHWWVA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 21:54:03 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7G00ETYMHT2580@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 21:54:06 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.106])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M7G00EA1MHSQ5A0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 21:54:03 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 20 Jul 2012 21:54:06 +0900 (KST)
 In-reply-to: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
 Cc: kgene.kim@samsung.com, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sylvester.nawrocki@gmail.com, sachin.kamat@linaro.org, joshi@samsung.com, shaik.samsung@gmail.com, shaik.ameer@samsung.com
 
-Add required clock support for Gscaler for exynos5
+This patch adds,
+- 4 Gscaler devices to the DT device list
+- Gscaler specific entries to the machine file
+- binding documentation for Gscaler entries
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-Signed-off-by: Prathyush K <prathyush.k@samsung.com>
 Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
 ---
- arch/arm/mach-exynos/clock-exynos5.c |  100 ++++++++++++++++++++++++++++++++++
- 1 files changed, 100 insertions(+), 0 deletions(-)
+ .../devicetree/bindings/media/exynos5-gsc.txt      |   32 ++++++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |   28 +++++++++++++++++
+ arch/arm/mach-exynos/include/mach/map.h            |    3 ++
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    8 +++++
+ 4 files changed, 71 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/exynos5-gsc.txt
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 774533c..49a76b1 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -552,6 +552,81 @@ static struct clksrc_clk exynos5_clk_aclk_66 = {
- 	.reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 0, .size = 3 },
+diff --git a/Documentation/devicetree/bindings/media/exynos5-gsc.txt b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+new file mode 100644
+index 0000000..1cb4ea0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/exynos5-gsc.txt
+@@ -0,0 +1,32 @@
++* Samsung Exynos5 Gscaler device
++
++Gscaler is used for scaling and color space conversion on EXYNOS5 SoCs.
++
++Required properties:
++- compatible: should be "samsung,exynos5250-gsc"
++- reg: should contain Gscaler physical address location and length.
++- interrupts: should contain Gscaler interrupt number
++
++Example:
++
++gsc_0:  gsc@0x13e00000 {
++	compatible = "samsung,exynos5250-gsc";
++	reg = <0x13e00000 0x1000>;
++	interrupts = <0 85 0>;
++};
++
++Aliases:
++Each Gscaler node should have a numbered alias in the aliases node,
++in the form of gscN, N = 0...3. Gscaler driver uses these aliases
++to retrieve the device IDs using "of_alias_get_id()" call.
++
++Example:
++
++aliases {
++	gsc0 =&gsc_0;
++	gsc1 =&gsc_1;
++	gsc2 =&gsc_2;
++	gsc3 =&gsc_3;
++};
++
++
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index a3a2eb2..ad6c3c5 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -27,6 +27,10 @@
+ 		spi0 = &spi_0;
+ 		spi1 = &spi_1;
+ 		spi2 = &spi_2;
++		gsc0 = &gsc_0;
++		gsc1 = &gsc_1;
++		gsc2 = &gsc_2;
++		gsc3 = &gsc_3;
+ 	};
+ 
+ 	gic:interrupt-controller@10481000 {
+@@ -460,4 +464,28 @@
+ 			#gpio-cells = <4>;
+ 		};
+ 	};
++
++	gsc_0:  gsc@0x13e00000 {
++		compatible = "samsung,exynos5250-gsc";
++		reg = <0x13e00000 0x1000>;
++		interrupts = <0 85 0>;
++	};
++
++	gsc_1:  gsc@0x13e10000 {
++		compatible = "samsung,exynos5250-gsc";
++		reg = <0x13e10000 0x1000>;
++		interrupts = <0 86 0>;
++	};
++
++	gsc_2:  gsc@0x13e20000 {
++		compatible = "samsung,exynos5250-gsc";
++		reg = <0x13e20000 0x1000>;
++		interrupts = <0 87 0>;
++	};
++
++	gsc_3:  gsc@0x13e30000 {
++		compatible = "samsung,exynos5250-gsc";
++		reg = <0x13e30000 0x1000>;
++		interrupts = <0 88 0>;
++	};
+ };
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index c72b675..217e470 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -121,6 +121,9 @@
+ #define EXYNOS4_PA_SYSMMU_MFC_L		0x13620000
+ #define EXYNOS4_PA_SYSMMU_MFC_R		0x13630000
+ 
++/* x = 0...3 */
++#define EXYNOS5_PA_GSC(x)		(0x13e00000 + ((x) * 0x10000))
++
+ #define EXYNOS5_PA_SYSMMU_MDMA1		0x10A40000
+ #define EXYNOS5_PA_SYSMMU_SSS		0x10A50000
+ #define EXYNOS5_PA_SYSMMU_2D		0x10A60000
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index ef770bc..fd8f1ca 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -56,6 +56,14 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
+ 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(0),
++				"exynos-gsc.0", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(1),
++				"exynos-gsc.1", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(2),
++				"exynos-gsc.2", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-gsc", EXYNOS5_PA_GSC(3),
++				"exynos-gsc.3", NULL),
+ 	{},
  };
  
-+/* for aclk_300_gscl_mid */
-+static struct clksrc_clk exynos5_clk_mout_aclk_300_gscl_mid = {
-+	.clk = {
-+		.name		= "mout_aclk_300_gscl_mid",
-+	},
-+	.sources = &exynos5_clkset_aclk,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP0, .shift = 24, .size = 1 },
-+};
-+
-+/* for aclk_300_gscl_mid1 */
-+static struct clk *exynos5_clkset_aclk_300_gscl_mid1_list[] = {
-+	[0] = &exynos5_clk_sclk_vpll.clk,
-+	[1] = &exynos5_clk_mout_cpll.clk,
-+};
-+
-+static struct clksrc_sources exynos5_clkset_aclk_300_gscl_mid1 = {
-+	.sources	= exynos5_clkset_aclk_300_gscl_mid1_list,
-+	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_300_gscl_mid1_list),
-+};
-+
-+
-+static struct clksrc_clk exynos5_clk_mout_aclk_300_gscl_mid1 = {
-+	.clk    = {
-+		.name		= "mout_aclk_300_gscl_mid1",
-+	},
-+	.sources = &exynos5_clkset_aclk_300_gscl_mid1,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP1, .shift = 12, .size = 1 },
-+};
-+
-+/* for aclk_300_gscl */
-+static struct clk *exynos5_clkset_aclk_300_gscl_list[] = {
-+	[0] = &exynos5_clk_mout_aclk_300_gscl_mid.clk,
-+	[1] = &exynos5_clk_mout_aclk_300_gscl_mid1.clk,
-+};
-+
-+static struct clksrc_sources exynos5_clkset_aclk_300_gscl = {
-+	.sources	= exynos5_clkset_aclk_300_gscl_list,
-+	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_300_gscl_list),
-+};
-+
-+static struct clksrc_clk exynos5_clk_mout_aclk_300_gscl = {
-+	.clk    = {
-+		.name		= "mout_aclk_300_gscl",
-+	},
-+	.sources = &exynos5_clkset_aclk_300_gscl,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP0, .shift = 25, .size = 1 },
-+};
-+
-+static struct clksrc_clk exynos5_clk_dout_aclk_300_gscl = {
-+	.clk    = {
-+		.name		= "dout_aclk_300_gscl",
-+		.parent		= &exynos5_clk_mout_aclk_300_gscl.clk,
-+	},
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_TOP1, .shift = 12, .size = 3 },
-+};
-+
-+/* for aclk_300_gscl_sub mux */
-+static struct clk *exynos5_clk_src_gscl_300_list[] = {
-+	[0] = &clk_ext_xtal_mux,
-+	[1] = &exynos5_clk_dout_aclk_300_gscl.clk,
-+};
-+
-+static struct clksrc_sources exynos5_clk_src_gscl_300 = {
-+	.sources	= exynos5_clk_src_gscl_300_list,
-+	.nr_sources	= ARRAY_SIZE(exynos5_clk_src_gscl_300_list),
-+};
-+
-+static struct clksrc_clk exynos5_clk_aclk_300_gscl = {
-+	.clk    = {
-+		.name		= "aclk_300_gscl",
-+	},
-+	.sources = &exynos5_clk_src_gscl_300,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP3, .shift = 10, .size = 1 },
-+};
-+
- static struct clk exynos5_init_clocks_off[] = {
- 	{
- 		.name		= "timers",
-@@ -764,6 +839,26 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.enable		= exynos5_clk_ip_peric_ctrl,
- 		.ctrlbit	= (1 << 18),
- 	}, {
-+		.name		= "gscl",
-+		.devname	= "exynos-gsc.0",
-+		.enable		= exynos5_clk_ip_gscl_ctrl,
-+		.ctrlbit	= (1 << 0),
-+	}, {
-+		.name		= "gscl",
-+		.devname	= "exynos-gsc.1",
-+		.enable		= exynos5_clk_ip_gscl_ctrl,
-+		.ctrlbit	= (1 << 1),
-+	}, {
-+		.name		= "gscl",
-+		.devname	= "exynos-gsc.2",
-+		.enable		= exynos5_clk_ip_gscl_ctrl,
-+		.ctrlbit	= (1 << 2),
-+	}, {
-+		.name		= "gscl",
-+		.devname	= "exynos-gsc.3",
-+		.enable		= exynos5_clk_ip_gscl_ctrl,
-+		.ctrlbit	= (1 << 3),
-+	}, {
- 		.name		= SYSMMU_CLOCK_NAME,
- 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
- 		.enable		= &exynos5_clk_ip_mfc_ctrl,
-@@ -1225,6 +1320,11 @@ static struct clksrc_clk *exynos5_sysclks[] = {
- 	&exynos5_clk_aclk_266,
- 	&exynos5_clk_aclk_200,
- 	&exynos5_clk_aclk_166,
-+	&exynos5_clk_aclk_300_gscl,
-+	&exynos5_clk_dout_aclk_300_gscl,
-+	&exynos5_clk_mout_aclk_300_gscl,
-+	&exynos5_clk_mout_aclk_300_gscl_mid,
-+	&exynos5_clk_mout_aclk_300_gscl_mid1,
- 	&exynos5_clk_aclk_66_pre,
- 	&exynos5_clk_aclk_66,
- 	&exynos5_clk_dout_mmc0,
 -- 
 1.7.0.4
