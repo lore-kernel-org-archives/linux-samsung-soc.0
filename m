@@ -1,403 +1,126 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v3 6/6] mmc: dw_mmc: add samsung exynos5250 specific
- extentions
-Date: Fri, 20 Jul 2012 19:38:58 +0900
-Message-ID: <001101cd6663$deb769d0$9c263d70$%jun@samsung.com>
-References: <1342097668-25243-1-git-send-email-thomas.abraham@linaro.org>
- <1342097668-25243-7-git-send-email-thomas.abraham@linaro.org>
- <002901cd6561$bb6dc9e0$32495da0$%jun@samsung.com>
- <CAJuYYwRKRrNgDKw8ZmHbsejO4yxUC0VXjEyfh-WtKNO5qVXukg@mail.gmail.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V2 1/7] ARM: SAMSUNG: add additional registers and SFR
+ definitions for writeback
+Date: Fri, 20 Jul 2012 16:37:52 +0530
+Message-ID: <CAL1wa8cR_1OCL8x4xoxmsZ9mU5XMd9dfsm=z4aZwmogAN4Z85Q@mail.gmail.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
+ <1429943.UqWt7uDBOU@flatron> <CAL1wa8cCq-w8w-d-Z7rqRfA9yrfPvxQjxFn9b475A-D=J8d3Ew@mail.gmail.com>
+ <4240594.0SndFBiAl5@flatron> <000a01cd661e$4e1e19e0$ea5a4da0$%han@samsung.com>
+ <CAL1wa8dyLjC8BZBc0wBnjP=a2Yo5XDQq1Kfq9yw35_e8wxp0bw@mail.gmail.com> <50092C2F.9010304@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=Windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <CAJuYYwRKRrNgDKw8ZmHbsejO4yxUC0VXjEyfh-WtKNO5qVXukg@mail.gmail.com>
-Content-language: ko
-Sender: linux-mmc-owner@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:47382 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751337Ab2GTLIN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 20 Jul 2012 07:08:13 -0400
+Received: by pbbrp8 with SMTP id rp8so5999304pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 20 Jul 2012 04:08:12 -0700 (PDT)
+In-Reply-To: <50092C2F.9010304@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Jingoo Han <jg1.han@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, thomas.ab@samsung.com, kgene.kim@samsung.com, olofj@google.com, linux-arm-kernel@lists.infradead.org
 
-July 20, 2012, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> On 19 July 2012 09:21, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> > Hi,
-> >
-> > This version does not seems to consider previous reviews fully.
-> > Could you check the comments below?
-> 
-> I did try to address all the comments. I will check again and resubmit
-> if I have missed anything.
-> 
-> >
-> > July 12, 2012, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> >> The instantiation of the Synopsis Designware controller on Exynos5250
-> >> include extension for SDR and DDR specific tx/rx phase shift timing
-> >> and CIU internal divider. In addition to that, the option to skip the
-> >> command hold stage is also introduced. Add support for these Exynos5250
-> >> specfic extenstions.
-> >>
-> >> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
-> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> >> ---
-> >>  .../devicetree/bindings/mmc/synposis-dw-mshc.txt   |   38 ++++++++++++++++++-
-> >>  drivers/mmc/host/dw_mmc-pltfm.c                    |   15 +++++++
-> >>  drivers/mmc/host/dw_mmc.c                          |   40 +++++++++++++++++++-
-> >>  drivers/mmc/host/dw_mmc.h                          |   14 +++++++
-> >>  include/linux/mmc/dw_mmc.h                         |    6 +++
-> >>  5 files changed, 110 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> >> b/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> >> index 3acd6c9..69d78c1 100644
-> >> --- a/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> >> +++ b/Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
-> >> @@ -7,6 +7,8 @@ Required Properties:
-> >>
-> >>  * compatible: should be one of the following
-> >>       - snps,dw-mshc: for controllers compliant with synopsis dw-mshc.
-> >> +     - samsung,exynos5250-dw-mshc: for controllers with Samsung
-> >> +       Exynos5250 specific extentions.
-> >>
-> >>  * reg: physical base address of the dw-mshc controller and size of its memory
-> >>    region.
-> >> @@ -74,13 +76,45 @@ Aliases:
-> >>    the following format 'mshc{n}' where n is a unique number for the alias.
-> >>
-> >>
-> >> +Samsung Exynos4/5 specific properties:
-> >> +
-> >> +Some of the variants of Exynos4 (such as Exynos4412) and Exynos5 SoC's
-> >> +includes few extensions to the Synopsis Designware Mobile Storage Host
-> >> +Controller. The following properties are used to describe those extensions.
-> >> +
-> >> +* samsung,dw-mshc-sdr-timing: Specifies the value of CUI clock divider, CIU
-> >> +  clock phase shift value in transmit mode and CIU clock phase shift value in
-> >> +  receive mode for single data rate mode operation. Refer notes of the valid
-> >> +  values below.
-> >> +
-> >> +* samsung,dw-mshc-ddr-timing: Specifies the value of CUI clock divider, CIU
-> >> +  clock phase shift value in transmit mode and CIU clock phase shift value in
-> >> +  receive mode for double data rate mode operation. Refer notes of the valid
-> >> +  values below. The order of the cells should be
-> >> +
-> >> +    - First Cell:    CIU clock divider value (applicable only for Exynos5
-> >> +                     SoC's, should be zero for Exynos4 SoC's)
-> >> +    - Second Cell:   CIU clock phase shift value for tx mode.
-> >> +    - Third Cell:    CIU clock phase shift value for rx mode.
-> >> +
-> >> +  Valid values for SDR and DDR CIU clock timing for Exynos5250:
-> >> +
-> >> +    - valid values for CIU clock divider, tx phase shift and rx phase shift
-> >> +      is 0 to 7.
-> >> +
-> >> +    - When CIU clock divider value is set to 3, all possible 8 phase shift
-> >> +      values can be used.
-> >> +
-> >> +    - If CIU clock divider value is 0 (that is divide by 1), both tx and rx
-> >> +      phase shift clocks should be 0.
-> >> +
-> >>  Example:
-> >>
-> >>    The MSHC controller node can be split into two portions, SoC specific and
-> >>    board specific portions as listed below.
-> >>
-> >>       dwmmc0@12200000 {
-> >> -             compatible = "snps,dw-mshc";
-> >> +             compatible = "samsung,exynos5250-dw-mshc";
-> >>               reg = <0x12200000 0x1000>;
-> >>               interrupts = <0 75 0>;
-> >>               #address-cells = <1>;
-> >> @@ -94,6 +128,8 @@ Example:
-> >>               no-write-protect;
-> >>               fifo-depth = <0x80>;
-> >>               card-detect-delay = <200>;
-> >> +             samsung,dw-mshc-sdr-timing = <2 3 3>;
-> >> +             samsung,dw-mshc-ddr-timing = <1 2 3>;
-> >>
-> >>               slot@0 {
-> >>                       reg = <0>;
-> >> diff --git a/drivers/mmc/host/dw_mmc-pltfm.c b/drivers/mmc/host/dw_mmc-pltfm.c
-> >> index 8d24f6d..900f412 100644
-> >> --- a/drivers/mmc/host/dw_mmc-pltfm.c
-> >> +++ b/drivers/mmc/host/dw_mmc-pltfm.c
-> >> @@ -27,9 +27,24 @@ static struct dw_mci_drv_data synopsis_drv_data = {
-> >>       .ctrl_type      = DW_MCI_TYPE_SYNOPSIS,
-> >>  };
-> >>
-> >> +static unsigned long exynos5250_dwmmc_caps[4] = {
-> >> +     MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
-> >> +             MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
-> >> +     MMC_CAP_CMD23,
-> >> +     MMC_CAP_CMD23,
-> >> +     MMC_CAP_CMD23,
-> >> +};
-> >> +
-> > Kyungmin Park has already pointed .
-> > It's not still proper place for board specific caps.
-> > If I'm incorrect, please let me know.
-> > And why MMC_CAP_CMD23 is default caps for all channel of hosts?
-> 
-> The cap listed above are specifying controller capabilities for dw-mmc
-> controllers on Exynos5 SoC. They are not board specific caps. All the
-> Exynos5 dw-mmc controllers can support MMC_CAP_CMD23 cap and hence, it
-> has been listed for all the controllers. Please let me know if you
-> feel there is any change required here.
-MMC_CAP_8_BIT_DATA could be dependent on board.
-I agree about MMC_CAP_CMD23.
-Additionally, MMC_CAP_CMD23 is applied for dw-mmc host driver without regard to Exynos5.
+Hello,
 
-> 
-> >
-> >> +static struct dw_mci_drv_data exynos5250_drv_data = {
-> >> +     .ctrl_type      = DW_MCI_TYPE_EXYNOS5250,
-> >> +     .caps           = exynos5250_dwmmc_caps,
-> >> +};
-> >> +
-> >>  static const struct of_device_id dw_mci_pltfm_match[] = {
-> >>       { .compatible = "snps,dw-mshc",
-> >>                       .data = (void *)&synopsis_drv_data, },
-> >> +     { .compatible = "samsung,exynos5250-dw-mshc",
-> >> +                     .data = (void *)&exynos5250_drv_data, },
-> >>       {},
-> >>  };
-> >>  MODULE_DEVICE_TABLE(of, dw_mci_pltfm_match);
-> >> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-> >> index 3bc276d..bbf1209 100644
-> >> --- a/drivers/mmc/host/dw_mmc.c
-> >> +++ b/drivers/mmc/host/dw_mmc.c
-> >> @@ -236,6 +236,7 @@ static void dw_mci_set_timeout(struct dw_mci *host)
-> >>  static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command *cmd)
-> >>  {
-> >>       struct mmc_data *data;
-> >> +     struct dw_mci_slot *slot = mmc_priv(mmc);
-> >>       u32 cmdr;
-> >>       cmd->error = -EINPROGRESS;
-> >>
-> >> @@ -265,6 +266,17 @@ static u32 dw_mci_prepare_command(struct mmc_host *mmc, struct mmc_command
-> *cmd)
-> >>                       cmdr |= SDMMC_CMD_DAT_WR;
-> >>       }
-> >>
-> >> +     /*
-> >> +      * Samsung Exynos5250 extends the use of CMD register with the use of
-> >> +      * bit 29 (which is reserved on standard MSHC controllers) for
-> >> +      * optionally bypassing the HOLD register for command and data. The
-> >> +      * HOLD register should be bypassed in case there is no phase shift
-> >> +      * applied on CMD/DATA that is sent to the card.
-> >> +      */
-> >> +     if (slot->host->drv_data->ctrl_type == DW_MCI_TYPE_EXYNOS5250)
-> >> +             if (SDMMC_CLKSEL_GET_SELCLK_DRV(mci_readl(slot->host, CLKSEL)))
-> >> +                     cmdr |= SDMMC_CMD_USE_HOLD_REG;
-> >> +
-> >>       return cmdr;
-> >>  }
-> >>
-> >> @@ -802,10 +814,19 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
-> >>       regs = mci_readl(slot->host, UHS_REG);
-> >>
-> >>       /* DDR mode set */
-> >> -     if (ios->timing == MMC_TIMING_UHS_DDR50)
-> >> +     if (ios->timing == MMC_TIMING_UHS_DDR50) {
-> >>               regs |= (0x1 << slot->id) << 16;
-> >> -     else
-> >> +             mci_writel(slot->host, CLKSEL, slot->host->ddr_timing);
-> >> +     } else {
-> >>               regs &= ~(0x1 << slot->id) << 16;
-> >> +             mci_writel(slot->host, CLKSEL, slot->host->sdr_timing);
-> >> +     }
-> >> +
-> >> +     if (slot->host->drv_data->ctrl_type == DW_MCI_TYPE_EXYNOS5250) {
-> >> +             slot->host->bus_hz = clk_get_rate(slot->host->ciu_clk);
-> >> +             slot->host->bus_hz /= SDMMC_CLKSEL_GET_DIVRATIO(
-> >> +                                     mci_readl(slot->host, CLKSEL));
-> >> +     }
-> > As you know, CLKSEL is specific for Samsung soc.
-> > 0x09C(CLKSEL)  is reserved area in Synopsys memory map.
-> > In case of non-samsung-soc, we cannot ensure this usage.
-> > In previous version, I have suggested separating the variant into another file.
-> 
-> There is a check for type of SoC before using 0x9C as CLKSEL register.
-Do you mean checking DW_MCI_TYPE_EXYNOS5250?
-But Above two case(ddr_timing/sdr_timing), CLKSEL can be accessed on other soc's.
+On Fri, Jul 20, 2012 at 3:30 PM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> On 07/20/2012 04:59 AM, Leela Krishna Amudala wrote:
+>>>>>>> --- a/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>>>>>>> +++ b/arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>>>>>>> @@ -30,9 +30,16 @@
+>>>>>>>
+>>>>>>>   #define VIDCON1_FSTATUS_EVEN (1<<  15)
+>>>>>>>
+>>>>>>>   /* Video timing controls */
+>>>>>>>
+>>>>>>> +#ifdef CONFIG_FB_EXYNOS_FIMD_V8
+>>>>>>> +#define VIDTCON0                                (0x20010)
+>>>>>>> +#define VIDTCON1                                (0x20014)
+>>>>>>> +#define VIDTCON3                                (0x2001C)
+>>>>>>> +#else
+>>>>>>>
+>>>>>>>   #define VIDTCON0                             (0x10)
+>>>>>>>   #define VIDTCON1                             (0x14)
+>>>>>>>   #define VIDTCON2                             (0x18)
+>>>>>>>
+>>>>>>> +#define VIDTCON3                             (0x1C)
+>>>>>>> +#endif
+>>>>>>
+>>>>>> Wouldn't it break s3c-fb on SoCs with earlier FIMD versions with
+>>>>>> CONFIG_FB_EXYNOS_FIMD_V8 selected? We are aiming at multi-platform ARM
+>>>>>> kernels, aren't we (i.e support of both V8 and earlier FIMD in one
+>>>>>> kernel)?
+>>>>> Exynos5 has FIMD_V8 and other SoCs has older FIMD versions.
+>>>>> As address offsets for certain registers has changed in FIMD_V8, we
+>>>>> introduced these defines.
+>>>>> So we have to select CONFIG_FB_EXYNOS_FIMD_V8 in case of Exynos5 SoC,
+>>>>> and deselect for other SoCs.
+>>>>
+>>>> Yes, I'm aware of different FIMD versions in different SoCs. My point is
+>>>> that it shouldn't be necessary to deselect CONFIG_FB_EXYNOS_FIMD_V8 to
+>>>> support other SoCs than Exynos5, i.e. additional config options should be
+>>>> incremental - should not break other setups. Ideally there should not be
+>>>> any new config option for FIMD v8.
+>>>>
+>>>> The detection of FIMD version and selection of appropriate register offsets
+>>>> should be done in the driver at runtime, based for example on
+>>>> platform_device_id (see the s3c-fb driver and usage of s3c_fb_driverdata
+>>>> and s3c_fb_win_variant structs).
+>>>
+>>> I could not agree with Tomasz Figa more.
+>>> FIMD register offset should be selected at runtime.
+>>>
+>>> Leela Krishna Amudala,
+>>> Please, don't use ugly "#ifdef".
+>>>
+>>> Best regards,
+>>> Jingoo Han
+>>>
+>>
+>> Yes, Each SoC having its own defconfigs (eg: exynos4_defconfig,
+>> exynos5_defconfig etc.,)
+>> So, CONFIG_FB_EXYNOS_FIMD_V8 will be added into exynos5_defconfig and
+>> it won't affect the other SoCs.
+>
+> NACK.
+>
+> As others explained, and you don't seem to understand or you are stubborn
+> enough not to change your approach, resolving hardware differences at
+> compile time only is not acceptable, especially that Exynos SoCs are
+> going to be DT only platforms. We shouldn't be short-sighted like this.
+>
+> Especially that the problem is relatively easy to solve at run-time, just
+> add EXYNOS5_* register address definitions and create separate functions
+> at the driver(s) touching those registers that changed on Exynos5.
+>
+> Or parametrize existing ones with an offset that would be stored in driver
+> data passed trough struct platform_device_id::driver_data.
+>
+> @Jingoo: BTW, shouldn't we have
+>
+> plat-samsung/include/plat/regs-fb.h
+> plat-samsung/include/plat/regs-fb-v4.h
+>
+> merged into one file and moved under include/video/ ?
+>
+> For example include/video/s3c-fb.h, and board files could also include
+> that header. We have FIMD variant structures anyway, so why do we still
+> need multiple headers ?
+>
 
-> Other implementations of dw-mmc might define custom register at 0x9C
-Even so, register field can be different with Samsung soc.
-
-> but this will code will not execute on other SoC's and will not break
-> anything on other implementations. Regarding spliting this Exynos
-> specific code into another file, I prefer not to do it for now.
-> Spliting the code means adding new definitions of callback functions
-> which I am not sure is really required. The present code is fairly
-> simple one.
-Yes, callback functions might be needed to accommodate various implementation
-of host controller. It would be better to prepare this for other variant next.
-
-> 
-> >
-> >>
-> >>       mci_writel(slot->host, UHS_REG, regs);
-> >>
-> >> @@ -2086,6 +2107,7 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
-> >>       struct dw_mci_board *pdata;
-> >>       struct device *dev = host->dev;
-> >>       struct device_node *np = dev->of_node;
-> >> +     u32 timing[3];
-> >>       int idx, cnt;
-> >>
-> >>       pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
-> >> @@ -2108,6 +2130,20 @@ static struct dw_mci_board *dw_mci_parse_dt(struct dw_mci *host)
-> >>               if (of_get_property(np, of_quriks[idx].quirk, NULL))
-> >>                       pdata->quirks |= of_quriks[idx].id;
-> >>
-> >> +     if (of_property_read_u32_array(dev->of_node,
-> >> +                     "samsung,dw-mshc-sdr-timing", timing, 3))
-> >> +             host->sdr_timing = DW_MCI_DEF_SDR_TIMING;
-> > Host of non-samsung will reach here.
-> > host->sdr_timing is needed for this host? host->ddr_timing is the same.
-> 
-> Yes, but non-samsung hosts will not have have this property into their
-> dts file. So the code within the condition will not execute on
-> non-samsung hosts. SDR and DDR timing are required for Exynos5 SoC.
-Yes, these are required only for Exynos Soc. 
-Non-samsung host will have default value here, but it seems to be meaningless.
-
-> 
-> >
-> >> +     else
-> >> +             host->sdr_timing = SDMMC_CLKSEL_TIMING(timing[0],
-> >> +                                     timing[1], timing[2]);
-> >> +
-> >> +     if (of_property_read_u32_array(dev->of_node,
-> >> +                     "samsung,dw-mshc-ddr-timing", timing, 3))
-> >> +             host->ddr_timing = DW_MCI_DEF_DDR_TIMING;
-> >> +     else
-> >> +             host->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0],
-> >> +                                     timing[1], timing[2]);
-> >> +
-> >>       if (of_property_read_u32(np, "fifo-depth", &pdata->fifo_depth))
-> >>               dev_info(dev, "fifo-depth property not found, using "
-> >>                               "value of FIFOTH register as default\n");
-> >> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
-> >> index 1ecaa02..6c17282 100644
-> >> --- a/drivers/mmc/host/dw_mmc.h
-> >> +++ b/drivers/mmc/host/dw_mmc.h
-> >> @@ -53,6 +53,7 @@
-> >>  #define SDMMC_IDINTEN                0x090
-> >>  #define SDMMC_DSCADDR                0x094
-> >>  #define SDMMC_BUFADDR                0x098
-> >> +#define SDMMC_CLKSEL         0x09C /* specific to Samsung Exynos5250 */
-> >>  #define SDMMC_DATA(x)                (x)
-> >>
-> >>  /*
-> >> @@ -111,6 +112,7 @@
-> >>  #define SDMMC_INT_ERROR                      0xbfc2
-> >>  /* Command register defines */
-> >>  #define SDMMC_CMD_START                      BIT(31)
-> >> +#define SDMMC_CMD_USE_HOLD_REG               BIT(29)
-> >>  #define SDMMC_CMD_CCS_EXP            BIT(23)
-> >>  #define SDMMC_CMD_CEATA_RD           BIT(22)
-> >>  #define SDMMC_CMD_UPD_CLK            BIT(21)
-> >> @@ -142,6 +144,17 @@
-> >>  /* Version ID register define */
-> >>  #define SDMMC_GET_VERID(x)           ((x) & 0xFFFF)
-> >>
-> >> +#define DW_MCI_DEF_SDR_TIMING                0x03030002
-> >> +#define DW_MCI_DEF_DDR_TIMING                0x03020001
-> > What is the basis for these timing?
-> > These values is board-specific.
-One missed comment?
-
-> >
-> >> +#define SDMMC_CLKSEL_CCLK_SAMPLE(x)  (((x) & 3) << 0)
-> >> +#define SDMMC_CLKSEL_CCLK_DRIVE(x)   (((x) & 3) << 16)
-> >> +#define SDMMC_CLKSEL_CCLK_DIVIDER(x) (((x) & 3) << 24)
-> > If it's for exynos5, it will be 7 not 3.
-> 
-> Yes, I missed that. Thanks. I will fix this.
-> 
-> >
-> >> +#define SDMMC_CLKSEL_TIMING(x, y, z) (SDMMC_CLKSEL_CCLK_SAMPLE(x) |  \
-> >> +                                     SDMMC_CLKSEL_CCLK_DRIVE(y) |    \
-> >> +                                     SDMMC_CLKSEL_CCLK_DIVIDER(z))
-> >> +#define SDMMC_CLKSEL_GET_DIVRATIO(x) ((((x) >> 24) & 0x7) + 1)
-> >> +#define SDMMC_CLKSEL_GET_SELCLK_DRV(x)       (((x) >> 16) & 0x7)
-> >> +
-> > Is this patch considered only for exynos5250?
-> > In case of exynos4210, the number of bits is different.
-> > If upper macros is backward-compatible, it would be better.
-> 
-> These consider the Exynos4210 and Exynos4412 implementations as well.
-> The device tree documentation clearly states that the possible values
-> for each of the dividers. For Exynos4 SoC's, the divider value is
-> between 1 to 4 (or 0 to 3). So a bit mask of 7 is backward compatilble
-> for Exynos4.
-Bit width is 2 for selclk_drv in exynos4210.
-So bit mask of 3 is proper.
-
-Let me clear it about divider value.
-In case of Exynos4 SoC's, divider value(DIVRATIO) is reserved and host doesn't modify.
-But value is fixed internally like following.
-Exynos4210 : 2
-Exynos4412 : 4
+Will do the run-time approach, and post the next version patchset soon.
 
 Thanks,
-Seungwon Jeon
+Leela Krishna Amudala
 
-> 
-> Thanks for your review and comments on this patch.
-> 
-> Regards,
-> Thomas.
-> 
-> >
-> > Best regards,
-> > Seungwon Jeon
-> >
-> >>  /* Register access macros */
-> >>  #define mci_readl(dev, reg)                  \
-> >>       __raw_readl((dev)->regs + SDMMC_##reg)
-> >> @@ -184,6 +197,7 @@ extern int dw_mci_resume(struct dw_mci *host);
-> >>
-> >>  /* Variations in the dw_mci controller */
-> >>  #define DW_MCI_TYPE_SYNOPSIS         0
-> >> +#define DW_MCI_TYPE_EXYNOS5250               1 /* Samsung Exynos5250 Extensions */
-> >>
-> >>  /* dw_mci platform driver data */
-> >>  struct dw_mci_drv_data {
-> >> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
-> >> index ae45e4f..32c778f 100644
-> >> --- a/include/linux/mmc/dw_mmc.h
-> >> +++ b/include/linux/mmc/dw_mmc.h
-> >> @@ -82,6 +82,8 @@ struct mmc_data;
-> >>   * @biu_clk: Pointer to bus interface unit clock instance.
-> >>   * @ciu_clk: Pointer to card interface unit clock instance.
-> >>   * @slot: Slots sharing this MMC controller.
-> >> + * @sdr_timing: Clock phase shifting for driving and sampling in sdr mode
-> >> + * @ddr_timing: Clock phase shifting for driving and sampling in ddr mode
-> >>   * @fifo_depth: depth of FIFO.
-> >>   * @data_shift: log2 of FIFO item size.
-> >>   * @part_buf_start: Start index in part_buf.
-> >> @@ -166,6 +168,10 @@ struct dw_mci {
-> >>       struct clk              *ciu_clk;
-> >>       struct dw_mci_slot      *slot[MAX_MCI_SLOTS];
-> >>
-> >> +     /* Phase Shift Value (for exynos5250 variant) */
-> >> +     u32                     sdr_timing;
-> >> +     u32                     ddr_timing;
-> >> +
-> >>       /* FIFO push and pull */
-> >>       int                     fifo_depth;
-> >>       int                     data_shift;
-> >> --
-> >> 1.6.6.rc2
-> >>
-> >> --
-> >> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> >> the body of a message to majordomo@vger.kernel.org
-> >> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> >
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>
+> Regards,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
