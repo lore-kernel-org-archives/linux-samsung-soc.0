@@ -1,78 +1,41 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung cleanup-2 for v3.6
-Date: Sat, 21 Jul 2012 20:33:57 +0900
-Message-ID: <1b7801cd6734$b7625e90$26271bb0$%kim@samsung.com>
-References: <142c01cd639c$2f081800$8d184800$%kim@samsung.com>
- <201207172058.28993.arnd@arndb.de>
- <194e01cd65fc$ce163be0$6a42b3a0$%kim@samsung.com>
- <201207200905.50396.arnd@arndb.de>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung devel-2 for v3.6
+Date: Sat, 21 Jul 2012 21:46:04 +0000
+Message-ID: <201207212146.04865.arnd@arndb.de>
+References: <194f01cd65fe$7c865790$759306b0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:39353 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751807Ab2GULd7 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.8]:60477 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751707Ab2GUVqZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 21 Jul 2012 07:33:59 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7I00F80DGLV020@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 21 Jul 2012 20:33:57 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7I004WADGL5E50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 21 Jul 2012 20:33:57 +0900 (KST)
-In-reply-to: <201207200905.50396.arnd@arndb.de>
-Content-language: ko
+	Sat, 21 Jul 2012 17:46:25 -0400
+In-Reply-To: <194f01cd65fe$7c865790$759306b0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Arnd Bergmann' <arnd@arndb.de>
-Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, "'Rafael J. Wysocki'" <rjw@sisk.pl>
 
-Arnd Bergmann wrote:
+On Thursday 19 July 2012, Kukjin Kim wrote:
+> Please pull it from:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git next/devel-samsung-2
 > 
-> On Thursday 19 July 2012, Kukjin Kim wrote:
-> > > 2. If you can, please use signed tags for your pull requests rather
-> > > than branch names. A signed tag means that you can write the text
-> > > for the merge changeset yourself so I don't have to do the
-description.
-> > > Ideally the signing key should have signatures from other people in
-> the
-> > > keyring so everybody can check the authenticity of the request, but
-> > > just having the changelog there also helps.
-> > >
-> > OK, I see. I will try to use it as per your suggestion. But I'm not
-> familiar
-> > with that now. So if you don't mind I'd like to send signed tag from
-> next
-> > merge window :-)
+> The updating cpufreq for 1.7GHz of exynos5250 has been included in samsung tree because Rafael
+> thought it was more related in samsung platform and I agreed. And it is including new
+> exynos_defconfig for DT configuration of exynos4 and exynos5 together. The old exynos4_defconfig
+> will be used for non-DT for a while and we will try to move on using exynos_defconfig for only DT.
+> And others are adding G2D clock for exynos4x12 Socs.
 > 
-> No problem. It's not a big difference to me anyway. I suppose by then we
-> will
-> also have had the chance for keysigning at the ARM mini summit.
-> 
-Great, thanks.
 
-BTW, maybe you missed following pull-request from me?
+I have pulled all three branches. The next/soc branch was getting pretty big now,
+and I already started a late/soc branch for late stuff, so I put devel-2 into
+late/soc. I also took the liberty to rebase it in order to split out the defconfig
+change into a separate series that I applied to the defconfig branch.
 
-Samsung devel-2:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2012-July/110336.html
+Please confirm that this is ok. If the rebasing cases problems, I can undo that
+and take all of devel-2 into late/soc.
 
-Samsung devel-spi:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2012-July/110337.html
-
-Samsung board-3:
-http://lists.infradead.org/pipermail/linux-arm-kernel/2012-July/110338.html
-
-If any problems, please kindly let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+	Arnd
