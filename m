@@ -1,77 +1,68 @@
-From: amit daniel kachhap <amit.daniel@samsung.com>
-Subject: Re: [PATCH 0/2] ARM: exynos: Enable TMU support in exynos platforms
-Date: Mon, 23 Jul 2012 12:05:57 +0530
-Message-ID: <CADGdYn7hYx9tZb=sGfhyAAYnUtx8To0ow7H62AZWXFEz=0zsZw@mail.gmail.com>
-References: <1342084543-8302-1-git-send-email-amit.daniel@samsung.com>
-	<117e01cd60ea$99f24e60$cdd6eb20$%kim@samsung.com>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH V2 6/7] ARM: EXYNOS5: Add the bus clock for FIMD
+Date: Mon, 23 Jul 2012 17:34:19 +0900
+Message-ID: <500D0C8B.3080007@samsung.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
+ <1342591053-7092-7-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:44677 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751728Ab2GWGf5 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:20023 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754035Ab2GWIeJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jul 2012 02:35:57 -0400
-Received: by obbuo13 with SMTP id uo13so9051789obb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sun, 22 Jul 2012 23:35:57 -0700 (PDT)
-In-Reply-To: <117e01cd60ea$99f24e60$cdd6eb20$%kim@samsung.com>
+	Mon, 23 Jul 2012 04:34:09 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7L00A1ZUGS4390@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 23 Jul 2012 17:34:07 +0900 (KST)
+Received: from [10.90.51.60] by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0M7L00KTCUGVP090@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 23 Jul 2012 17:34:07 +0900 (KST)
+In-reply-to: <1342591053-7092-7-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lenb@kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>, linux@roeck-us.net
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, jg1.han@samsung.com, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com
 
-On Fri, Jul 13, 2012 at 4:58 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Amit Daniel Kachhap wrote:
->>
->> These TMU enablement patches are needed for exynos4 and exynos5 TMU
->> driver patches sent earlier. The link for those are
->> http://www.spinics.net/lists/lm-sensors/msg35858.html.
->>
-> How was going on above patches? I can't see them you said in linux-next now,
-> it means if I apply this series in my tree, problem will be happened :(
-The TMU driver patches have appeared in linux-next. If it is not late
-please accept these enablement patches.
+On 07/18/2012 02:57 PM, Leela Krishna Amudala wrote:
+> This patch adds the bus clock for FIMD and changes
+> the device name for lcd clock
+
+Please refer below patch for exynos4.
+
+http://lists.linaro.org/pipermail/linaro-dev/2011-December/008872.html
+
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>   arch/arm/mach-exynos/clock-exynos5.c |    7 ++++++-
+>   1 files changed, 6 insertions(+), 1 deletions(-)
 >
-> Note1: I've seen Rafael's updating exynos4_tmu patch which is using struct
-> dev_pm_ops for pm and applied by Guenter.
->
-> Note2: would be helpful if you could do adding me in Cc of exynos tmu
-> patches...
->
->> Also patch 1 depends on combiner dt node patch sent by Thomas Abraham.
->> (http://www.spinics.net/lists/arm-kernel/msg184129.html)
->>
-> Already in my tree.
->
->> This patchset is based Samsung Maintainer's tree,
->> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git for-
->> next
->>
-> OK.
->
->> Amit Daniel Kachhap (2):
->>   ARM: exynos4: Add devicetree node for TMU driver
->>   ARM: exynos5: Add devicetree node for TMU driver
->>
->>  arch/arm/boot/dts/exynos4210.dtsi        |    7 +++++++
->>  arch/arm/boot/dts/exynos5250.dtsi        |    6 ++++++
->>  arch/arm/mach-exynos/clock-exynos4.c     |    5 +++++
->>  arch/arm/mach-exynos/clock-exynos5.c     |    5 +++++
->>  arch/arm/mach-exynos/include/mach/irqs.h |    3 +++
->>  arch/arm/mach-exynos/include/mach/map.h  |    3 +++
->>  arch/arm/mach-exynos/mach-exynos4-dt.c   |    2 ++
->>  arch/arm/mach-exynos/mach-exynos5-dt.c   |    2 ++
->>  8 files changed, 33 insertions(+), 0 deletions(-)
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+> index 774533c..f001876 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -634,6 +634,11 @@ static struct clk exynos5_init_clocks_off[] = {
+>   		.enable		= exynos5_clk_ip_disp1_ctrl,
+>   		.ctrlbit	= (1 << 3),
+>   	}, {
+> +		.name           = "fimd",
+> +		.devname        = "exynos5-fb",
+> +		.enable         = exynos5_clk_ip_disp1_ctrl,
+> +		.ctrlbit        = (1 << 0),
+> +	}, {
+>   		.name		= "iis",
+>   		.devname	= "samsung-i2s.1",
+>   		.enable		= exynos5_clk_ip_peric_ctrl,
+> @@ -1132,7 +1137,7 @@ static struct clksrc_clk exynos5_clksrcs[] = {
+>   	}, {
+>   		.clk	= {
+>   			.name		= "sclk_fimd",
+> -			.devname	= "s3cfb.1",
+> +			.devname	= "exynos5-fb",
+>   			.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
+>   			.ctrlbit	= (1 << 0),
+>   		},
