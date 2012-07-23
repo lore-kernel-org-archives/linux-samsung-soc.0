@@ -1,41 +1,82 @@
-From: Linus Walleij <linus.ml.walleij@gmail.com>
-Subject: Re: [GIT PULL] Samsung devel-dma ops for v3.6
-Date: Mon, 23 Jul 2012 16:36:17 +0200
-Message-ID: <CAKnu2Mqf+_JwaZbpfPCJ1go1iTkPb3VLRwj=pFjcr1Apu0O8fA@mail.gmail.com>
-References: <0c5001cd5e41$87daa1b0$978fe510$%kim@samsung.com>
-	<201207101242.41867.arnd@arndb.de>
-	<0e1301cd5f34$008fe1e0$01afa5a0$%kim@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 6/7] ARM: EXYNOS5: Add the bus clock for FIMD
+Date: Tue, 24 Jul 2012 08:14:22 +0900
+Message-ID: <000301cd6928$e5021660$af064320$%han@samsung.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
+ <1342591053-7092-7-git-send-email-l.krishna@samsung.com>
+ <500D0C8B.3080007@samsung.com> <500D1F59.9030807@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:39072 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753504Ab2GWOgR (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:9712 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752749Ab2GWXOY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 23 Jul 2012 10:36:17 -0400
-Received: by pbbrp8 with SMTP id rp8so10973647pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jul 2012 07:36:17 -0700 (PDT)
-In-Reply-To: <0e1301cd5f34$008fe1e0$01afa5a0$%kim@samsung.com>
+	Mon, 23 Jul 2012 19:14:24 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7M00IP8Z7QMFB0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jul 2012 08:14:22 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.119.56])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7M00DE4Z7YPS80@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jul 2012 08:14:22 +0900 (KST)
+In-reply-to: <500D1F59.9030807@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Ben Dooks <ben@simtec.co.uk>, linux-samsung-soc@vger.kernel.org, Boojin Kim <boojin.kim@samsung.com>, Vinod Koul <vinod.koul@intel.com>, w.sang@pengutronix.de, Grant Likely <grant.likely@secretlab.ca>, Kyoungil Kim <ki0351.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Dan Williams <dan.j.williams@intel.com>, linux-arm-kernel@lists.infradead.org
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
+Cc: 'Leela Krishna Amudala' <l.krishna@samsung.com>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com, linux-arm-kernel@lists.infradead.org
 
-2012/7/11 Kukjin Kim <kgene.kim@samsung.com>:
+On Monday, July 23, 2012 6:55 PM, Joonyoung Shim wrote:
+> 
+> Hi, Jingoo.
+> 
+> On 07/23/2012 05:34 PM, Joonyoung Shim wrote:
+> > On 07/18/2012 02:57 PM, Leela Krishna Amudala wrote:
+> >> This patch adds the bus clock for FIMD and changes
+> >> the device name for lcd clock
+> >
+> > Please refer below patch for exynos4.
+> >
+> > http://lists.linaro.org/pipermail/linaro-dev/2011-December/008872.html
+> >
+> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> >> ---
+> >>   arch/arm/mach-exynos/clock-exynos5.c |    7 ++++++-
+> >>   1 files changed, 6 insertions(+), 1 deletions(-)
+> >>
+> >> diff --git a/arch/arm/mach-exynos/clock-exynos5.c
+> >> b/arch/arm/mach-exynos/clock-exynos5.c
+> >> index 774533c..f001876 100644
+> >> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> >> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> >> @@ -634,6 +634,11 @@ static struct clk exynos5_init_clocks_off[] = {
+> >>           .enable        = exynos5_clk_ip_disp1_ctrl,
+> >>           .ctrlbit    = (1 << 3),
+> >>       }, {
+> >> +        .name           = "fimd",
+> >> +        .devname        = "exynos5-fb",
+> >> +        .enable         = exynos5_clk_ip_disp1_ctrl,
+> >> +        .ctrlbit        = (1 << 0),
+> >> +    }, {
+> 
+> With this patch, it causes below error at the DP driver because fimd
+> clock is disabled.
+> 
+> [    0.210000] exynos-dp exynos-dp: Timeout of video streamclk ok
+> [    0.210000] exynos-dp exynos-dp: unable to config video
+> [    0.210000] exynos-dp: probe of exynos-dp failed with error -110
+> 
+> I wonder fimd clock has any dependency with DP
 
-> Yeah, let me explain the status for Samsung SoCs' DMA. There are 3 different
-> DMA IPs, samsung specific s3c24xx dma, pl080 and pl330. As you know, pl330
-> already moved in drivers/dma for using common DMA engine and Alim is
-> re-working on pl080
-> (http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg10954.html
-> ) and let me check its progress. But s3c24xx dma is not ready yet.
+FIMD pixel clock is necessary to enable DP.
 
-I'm going to poke again on this. I think a bunch of changes to the PL080
-driver from Russell is going upstream this merge window and the S3C patch
-series need to be rebased onto that, but it should be pretty straight-forward.
+Best regards,
+Jingoo Han
 
-Can we please have something moving the S3C over to dmaengine *early*
-next kernel cycle?
-
-Yours,
-Linus Walleij
+> 
+> Thanks.
