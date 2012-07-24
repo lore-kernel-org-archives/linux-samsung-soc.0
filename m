@@ -1,84 +1,88 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 0/2] ARM: exynos: Enable TMU support in exynos platforms
-Date: Tue, 24 Jul 2012 12:20:33 +0530
-Message-ID: <CAK9yfHwGU8EWsXoY9_gDn5=zyJhqtaZbKXzwyGais8u0iaL8xA@mail.gmail.com>
-References: <1342084543-8302-1-git-send-email-amit.daniel@samsung.com>
-	<117e01cd60ea$99f24e60$cdd6eb20$%kim@samsung.com>
-	<20120713144138.GB25264@roeck-us.net>
-	<CADGdYn5mrHVBEhYF-Zv1UJK1YtVNk=kBA98xOdWevRU+_tu6cg@mail.gmail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH V2 6/7] ARM: EXYNOS5: Add the bus clock for FIMD
+Date: Tue, 24 Jul 2012 11:13:20 +0200
+Message-ID: <500E6730.1030805@samsung.com>
+References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
+ <1342591053-7092-7-git-send-email-l.krishna@samsung.com>
+ <500D0C8B.3080007@samsung.com> <500D1F59.9030807@samsung.com>
+ <000301cd6928$e5021660$af064320$%han@samsung.com>
+ <500DE22F.5010006@samsung.com>
+ <000601cd692e$b2ba7a70$182f6f50$%han@samsung.com>
+ <500E00A3.8080203@samsung.com>
+ <000101cd6942$2badc960$83095c20$%han@samsung.com>
+ <500E112F.3090202@samsung.com>
+ <000501cd6951$2aa24f00$7fe6ed00$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:32975 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754614Ab2GXGue (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:32947 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751464Ab2GXJNY (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jul 2012 02:50:34 -0400
-Received: by vcbfk26 with SMTP id fk26so5536125vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 23 Jul 2012 23:50:33 -0700 (PDT)
-In-Reply-To: <CADGdYn5mrHVBEhYF-Zv1UJK1YtVNk=kBA98xOdWevRU+_tu6cg@mail.gmail.com>
+	Tue, 24 Jul 2012 05:13:24 -0400
+Received: from eusync1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+ by mailout2.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7N00MN5QZ19O60@mailout2.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jul 2012 10:13:49 +0100 (BST)
+Received: from [106.116.147.32] by eusync1.samsung.com
+ (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
+ 10 2011)) with ESMTPA id <0M7N00E0JQY8I420@eusync1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 24 Jul 2012 10:13:21 +0100 (BST)
+In-reply-to: <000501cd6951$2aa24f00$7fe6ed00$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: amit kachhap <amit.kachhap@gmail.com>
-Cc: Guenter Roeck <linux@roeck-us.net>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lenb@kernel.org, "Rafael J. Wysocki" <rjw@sisk.pl>
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com, linux-arm-kernel@lists.infradead.org
 
-Hi Amit,
+Hi,
 
-On 14 July 2012 12:55, amit kachhap <amit.kachhap@gmail.com> wrote:
-> On Fri, Jul 13, 2012 at 8:11 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->> On Fri, Jul 13, 2012 at 08:28:18PM +0900, Kukjin Kim wrote:
->>> Amit Daniel Kachhap wrote:
->>> >
->>> > These TMU enablement patches are needed for exynos4 and exynos5 TMU
->>> > driver patches sent earlier. The link for those are
->>> > http://www.spinics.net/lists/lm-sensors/msg35858.html.
->>> >
->>> How was going on above patches? I can't see them you said in linux-next now,
->>> it means if I apply this series in my tree, problem will be happened :(
->>>
->>> Note1: I've seen Rafael's updating exynos4_tmu patch which is using struct
->>> dev_pm_ops for pm and applied by Guenter.
->>>
->> If that is in the way, I can drop it, to be applied after the move. Let me know.
->> There is now another patch pending, to convert the driver to use devm_ functions.
->> Please let me know what you want me to do with it.
+On 07/24/2012 06:02 AM, Jingoo Han wrote:
+>>>>>>>> I wonder fimd clock has any dependency with DP
+>>>>>>> FIMD pixel clock is necessary to enable DP.
+>>>>>> So then, i think DP driver also should control FIMD pixel clock.
+>>>>>> Do you have any patch or plan for it?
+>>>>> Um, I don't think so.
+>>>>> Because, DP cannot work by itself.
+>>>>> In order to use DP, FIMD should be enabled.
+>>>>>
+>>>>> If FIMD is enabled, FIMD pixel clock is enabled;
+>>>>> therefore, DP driver does not need to control FIMD pixel clock.
+>>>> Why does DP driver have FIMD driver dependency? Also for this, it needs
+>>>> FIMD driver is probed earlier then DP driver.  We cannot decide driver
+>>>> probe order if they are same level drivers and itself is weird
+>>>> condition.  Although there is hardware dependency, DP and FIMD driver
+>>>> don't have any code relations. They are each other drivers. But DP
+>>>> needs FIMD pixel clock and because the clock can be control at the
+>>>> several drivers and the clock framework exists for that, then i think
+>>>> it's better DP driver also control FIMD pixel clock.
+>>>>
+>>>>> In my opinion, adding config dependency would be better, such as FB_S3C or DRM_EXYNOS_FIMD.
+>>>> I think this is not solution. How do you ensure FIMD driver is probed
+>>>> earlier than DP driver? Even if it's possible, when FIMD driver only
+>>>> controls pixel clock, DP driver will execute any operations regardless
+>>>> status of FIMD pixel clock, so if FIMD driver turns off pixel clock,
+>>>> then DP will occur any error.
+>>> late_initcall can ensure DP driver is probed later.
 >>
-> Hi Guenter,
->
-> I rebased my V5 patch series with  hwmon-next branch so Rafael's pm
-> changes are already included. Regarding the devm_ patch by sachin
-> please hold it.
+>> I'm not sure late_initcall solution is good. It must choose at the last
+>> if there isn't other way really.
+> 
+> 
+> late_initcall is already used by many drivers.
+> If you have any good idea, please, suggest it.
 
-Guenter has already sent the pull request to Linus for v3.6 [1].
-That does not include your patches. I do not understand why you want
-to hold back my patch when you can rebase your series on top of it.
+I agree with Mr. Shim here. using initcall doesn't look like a solution
+to this issue. Neither compile time dependency is of much help.
 
-[1] https://lkml.org/lkml/2012/7/23/414
+The S3C framebuffer driver can be used as a loadable module, how
+would initcalls be supposed to work then ?
 
+Some notify mechanisms or deferred probing could be used, to make sure one
+of drivers is initialized before the other.
 
+--
 
->
-> Thanks,
-> Amit D
->>> Note2: would be helpful if you could do adding me in Cc of exynos tmu
->>> patches...
->>>
->> If you want to be copied, it might make sense to add yourself as maintainer for
->> this file. Otherwise you can not expect people to know.
->>
->> Thanks,
->> Guenter
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-
-
-
--- 
-With warm regards,
-Sachin
+Thanks,
+Sylwester
