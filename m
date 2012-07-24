@@ -1,88 +1,88 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH V2 6/7] ARM: EXYNOS5: Add the bus clock for FIMD
-Date: Tue, 24 Jul 2012 11:13:20 +0200
-Message-ID: <500E6730.1030805@samsung.com>
-References: <1342591053-7092-1-git-send-email-l.krishna@samsung.com>
- <1342591053-7092-7-git-send-email-l.krishna@samsung.com>
- <500D0C8B.3080007@samsung.com> <500D1F59.9030807@samsung.com>
- <000301cd6928$e5021660$af064320$%han@samsung.com>
- <500DE22F.5010006@samsung.com>
- <000601cd692e$b2ba7a70$182f6f50$%han@samsung.com>
- <500E00A3.8080203@samsung.com>
- <000101cd6942$2badc960$83095c20$%han@samsung.com>
- <500E112F.3090202@samsung.com>
- <000501cd6951$2aa24f00$7fe6ed00$%han@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] mmc: dw_mmc: add busmode selection support
+Date: Tue, 24 Jul 2012 20:09:05 +0900
+Message-ID: <500E8251.906@samsung.com>
+References: <1343042200-19524-1-git-send-email-girish.shivananjappa@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:32947 "EHLO
-	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751464Ab2GXJNY (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:46558 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752228Ab2GXLJU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 24 Jul 2012 05:13:24 -0400
-Received: from eusync1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
- by mailout2.w1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7N00MN5QZ19O60@mailout2.w1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Jul 2012 10:13:49 +0100 (BST)
-Received: from [106.116.147.32] by eusync1.samsung.com
- (Oracle Communications Messaging Server 7u4-23.01(7.0.4.23.0) 64bit (built Aug
- 10 2011)) with ESMTPA id <0M7N00E0JQY8I420@eusync1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 24 Jul 2012 10:13:21 +0100 (BST)
-In-reply-to: <000501cd6951$2aa24f00$7fe6ed00$%han@samsung.com>
+	Tue, 24 Jul 2012 07:09:20 -0400
+In-reply-to: <1343042200-19524-1-git-send-email-girish.shivananjappa@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: 'Joonyoung Shim' <jy0922.shim@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, joshi@samsung.com, grant.likely@secretlab.ca, linux-samsung-soc@vger.kernel.org, thomas.ab@samsung.com, olofj@google.com, linux-arm-kernel@lists.infradead.org
+To: Girish K S <girish.shivananjappa@linaro.org>
+Cc: linux-mmc@vger.kernel.org, cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 
-Hi,
+Hi Girish,
 
-On 07/24/2012 06:02 AM, Jingoo Han wrote:
->>>>>>>> I wonder fimd clock has any dependency with DP
->>>>>>> FIMD pixel clock is necessary to enable DP.
->>>>>> So then, i think DP driver also should control FIMD pixel clock.
->>>>>> Do you have any patch or plan for it?
->>>>> Um, I don't think so.
->>>>> Because, DP cannot work by itself.
->>>>> In order to use DP, FIMD should be enabled.
->>>>>
->>>>> If FIMD is enabled, FIMD pixel clock is enabled;
->>>>> therefore, DP driver does not need to control FIMD pixel clock.
->>>> Why does DP driver have FIMD driver dependency? Also for this, it needs
->>>> FIMD driver is probed earlier then DP driver.  We cannot decide driver
->>>> probe order if they are same level drivers and itself is weird
->>>> condition.  Although there is hardware dependency, DP and FIMD driver
->>>> don't have any code relations. They are each other drivers. But DP
->>>> needs FIMD pixel clock and because the clock can be control at the
->>>> several drivers and the clock framework exists for that, then i think
->>>> it's better DP driver also control FIMD pixel clock.
->>>>
->>>>> In my opinion, adding config dependency would be better, such as FB_S3C or DRM_EXYNOS_FIMD.
->>>> I think this is not solution. How do you ensure FIMD driver is probed
->>>> earlier than DP driver? Even if it's possible, when FIMD driver only
->>>> controls pixel clock, DP driver will execute any operations regardless
->>>> status of FIMD pixel clock, so if FIMD driver turns off pixel clock,
->>>> then DP will occur any error.
->>> late_initcall can ensure DP driver is probed later.
->>
->> I'm not sure late_initcall solution is good. It must choose at the last
->> if there isn't other way really.
+Well..just tested on my board.
+this patch didn't work.(eMMC card didn't initialize)
+meaning of ios->bus_mode and synosys's bus_mode is same?
+How did you test this patch?
+
+Best Regards,
+Jaehoon Chung
+
+On 07/23/2012 08:16 PM, Girish K S wrote:
+> Synopsis Designware host controller has suppport for open
+> drain mode selection. During the mmc card initialization the
+> host controller can select the open-drain bit to allow the device
+> initialization in the open-drain mode. Once the device enters
+> the standby mode this bit can be reset to enter push-pull mode.
 > 
+> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+> ---
+>  drivers/mmc/host/dw_mmc.c |   14 ++++++++++++++
+>  drivers/mmc/host/dw_mmc.h |    1 +
+>  2 files changed, 15 insertions(+), 0 deletions(-)
 > 
-> late_initcall is already used by many drivers.
-> If you have any good idea, please, suggest it.
-
-I agree with Mr. Shim here. using initcall doesn't look like a solution
-to this issue. Neither compile time dependency is of much help.
-
-The S3C framebuffer driver can be used as a loadable module, how
-would initcalls be supposed to work then ?
-
-Some notify mechanisms or deferred probing could be used, to make sure one
-of drivers is initialized before the other.
-
---
-
-Thanks,
-Sylwester
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index 72dc3cd..da11e5a 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -773,6 +773,18 @@ static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>  	spin_unlock_bh(&host->lock);
+>  }
+>  
+> +static void dw_mci_set_busmode(struct dw_mci_slot *slot)
+> +{
+> +	struct mmc_ios *ios = &slot->mmc->ios;
+> +	u32 reg;
+> +
+> +	reg = mci_readl(slot->host, CTRL);
+> +	if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
+> +		mci_writel(slot->host, CTRL, reg | SDMMC_CTRL_ENABLE_OD);
+> +	else
+> +		mci_writel(slot->host, CTRL, reg & ~SDMMC_CTRL_ENABLE_OD);
+> +}
+> +
+>  static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  {
+>  	struct dw_mci_slot *slot = mmc_priv(mmc);
+> @@ -818,6 +830,8 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	default:
+>  		break;
+>  	}
+> +
+> +	dw_mci_set_busmode(slot);
+>  }
+>  
+>  static int dw_mci_get_ro(struct mmc_host *mmc)
+> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+> index 15c27e1..1a53fb2 100644
+> --- a/drivers/mmc/host/dw_mmc.h
+> +++ b/drivers/mmc/host/dw_mmc.h
+> @@ -67,6 +67,7 @@
+>  
+>  /* Control register defines */
+>  #define SDMMC_CTRL_USE_IDMAC		BIT(25)
+> +#define SDMMC_CTRL_ENABLE_OD		BIT(24)
+>  #define SDMMC_CTRL_CEATA_INT_EN		BIT(11)
+>  #define SDMMC_CTRL_SEND_AS_CCSD		BIT(10)
+>  #define SDMMC_CTRL_SEND_CCSD		BIT(9)
+> 
