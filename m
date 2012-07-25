@@ -1,75 +1,128 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH] ASoC: Samsung: Update Kconfig for Exynos5250 and Exynos4412
-Date: Wed, 25 Jul 2012 17:42:31 +0530
-Message-ID: <1343218351-30577-1-git-send-email-padma.v@samsung.com>
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc: add busmode selection support
+Date: Wed, 25 Jul 2012 18:52:51 +0530
+Message-ID: <CAGxe1ZGP+d0A-WEuWVr6kT8Fx54Rjvw5oZd7=j+N_VnjHrLO5Q@mail.gmail.com>
+References: <1343042200-19524-1-git-send-email-girish.shivananjappa@linaro.org>
+	<500E8251.906@samsung.com>
+	<CAGxe1ZHA80qYj=vOhx5YYBhyVE_wG55PrK6DpLvA-KKef9g_GA@mail.gmail.com>
+	<CAGxe1ZFK96HRRN=42R4nwk3i26mONrTYN86TKsVMhCx94Oug9g@mail.gmail.com>
+	<CAELcNGT6CmbzmcbGB+-ZuYnjmy+vrumgb9CQxYntZYRwyJ8m6A@mail.gmail.com>
+	<CAGxe1ZHTQzFjGYgveg-MS-C7Chx+CHtY+QEZc4JX8xgnJPF6Ww@mail.gmail.com>
+	<CAELcNGSnpXd152m8jgFbmUP0OBSiGKTVAqefqTF2_YFqDMofuA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:43224 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756607Ab2GYMIQ (ORCPT
+Received: from mail-qc0-f180.google.com ([209.85.216.180]:53025 "EHLO
+	mail-qc0-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751104Ab2GYNWw (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jul 2012 08:08:16 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7P00JS8TOQVJ60@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jul 2012 21:07:55 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0M7P003R1TP0VE30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jul 2012 21:07:55 +0900 (KST)
+	Wed, 25 Jul 2012 09:22:52 -0400
+Received: by qcmv28 with SMTP id v28so361641qcm.11
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jul 2012 06:22:51 -0700 (PDT)
+In-Reply-To: <CAELcNGSnpXd152m8jgFbmUP0OBSiGKTVAqefqTF2_YFqDMofuA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: padma.v@samsung.com, rcsekar@samsung.com, sbkim73@samsung.com, sangsu4u.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, olofj@google.com, thutt@chromium.org, joshi@samsung.com
+To: Jae hoon Chung <jh80.chung@gmail.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 
-Update Kconfig file to support the Exynos5250 and Exynos4412
-
-Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- sound/soc/samsung/Kconfig |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index fe3995c..d54e400 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -1,6 +1,6 @@
- config SND_SOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
--	depends on ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5P64X0 || ARCH_EXYNOS4
-+	depends on PLAT_SAMSUNG
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	select S3C2410_DMA if ARCH_S3C24XX
- 	help
-@@ -63,7 +63,7 @@ config SND_SOC_SAMSUNG_SMDK_WM8580
- 
- config SND_SOC_SAMSUNG_SMDK_WM8994
- 	tristate "SoC I2S Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
-@@ -162,7 +162,7 @@ config SND_SOC_GONI_AQUILA_WM8994
- 
- config SND_SOC_SAMSUNG_SMDK_SPDIF
- 	tristate "SoC S/PDIF Audio support for SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
- 	select SND_SAMSUNG_SPDIF
- 	help
- 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
-@@ -177,7 +177,7 @@ config SND_SOC_SMDK_WM8580_PCM
- 
- config SND_SOC_SMDK_WM8994_PCM
- 	tristate "SoC PCM Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
--- 
-1.7.4.4
+On 24 July 2012 19:14, Jae hoon Chung <jh80.chung@gmail.com> wrote:
+> 2012/7/24 Girish K S <girish.shivananjappa@linaro.org>:
+>> On 24 July 2012 18:37, Jae hoon Chung <jh80.chung@gmail.com> wrote:
+>>> Hi Girish,
+>>>
+>>> Right, it be mentioned about the open-drain mode in synopsys spec.
+>>> But if didn't work on other board, there is some problem.
+>>> We can consider the location of set_busmode() .
+>> may i know the board on which you are testing. i will try to use the
+>> same and simulate the problem
+> Exynos4 board and eMMC4.5 card, Synopsys IP version is 2.40a
+Just now i tested it on exynos4 board/ eMMC 4.4 card Synopsis 2.40a
+host controller. Everything works fine. this patch doesnt have any
+side effect on the exynos4 board
+please check from ur end. might be some other issue.
+>>>
+>>> Best Regards,
+>>> Jaehoon Chung
+>>>
+>>> 2012/7/24 Girish K S <girish.shivananjappa@linaro.org>:
+>>>> On 24 July 2012 17:06, Girish K S <girish.shivananjappa@linaro.org> wrote:
+>>>>> On 24 July 2012 16:39, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>>>> Hi Girish,
+>>>>>>
+>>>>>> Well..just tested on my board.
+>>>>>> this patch didn't work.(eMMC card didn't initialize)
+>>>>>> meaning of ios->bus_mode and synosys's bus_mode is same?
+>>>> Yes it is same. synopsys spec says this is specific to MMC
+>>>> initialization. when the card core sets this mode during
+>>>> initialization. the host has to set this bit
+>>>>>> How did you test this patch?
+>>>>> Tested it on exynos5 board using dt patches of thomas (with some
+>>>>> modification to his patch)
+>>>>>>
+>>>>>> Best Regards,
+>>>>>> Jaehoon Chung
+>>>>>>
+>>>>>> On 07/23/2012 08:16 PM, Girish K S wrote:
+>>>>>>> Synopsis Designware host controller has suppport for open
+>>>>>>> drain mode selection. During the mmc card initialization the
+>>>>>>> host controller can select the open-drain bit to allow the device
+>>>>>>> initialization in the open-drain mode. Once the device enters
+>>>>>>> the standby mode this bit can be reset to enter push-pull mode.
+>>>>>>>
+>>>>>>> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+>>>>>>> ---
+>>>>>>>  drivers/mmc/host/dw_mmc.c |   14 ++++++++++++++
+>>>>>>>  drivers/mmc/host/dw_mmc.h |    1 +
+>>>>>>>  2 files changed, 15 insertions(+), 0 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>>>>>> index 72dc3cd..da11e5a 100644
+>>>>>>> --- a/drivers/mmc/host/dw_mmc.c
+>>>>>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>>>>>> @@ -773,6 +773,18 @@ static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>>>>>>       spin_unlock_bh(&host->lock);
+>>>>>>>  }
+>>>>>>>
+>>>>>>> +static void dw_mci_set_busmode(struct dw_mci_slot *slot)
+>>>>>>> +{
+>>>>>>> +     struct mmc_ios *ios = &slot->mmc->ios;
+>>>>>>> +     u32 reg;
+>>>>>>> +
+>>>>>>> +     reg = mci_readl(slot->host, CTRL);
+>>>>>>> +     if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
+>>>>>>> +             mci_writel(slot->host, CTRL, reg | SDMMC_CTRL_ENABLE_OD);
+>>>>>>> +     else
+>>>>>>> +             mci_writel(slot->host, CTRL, reg & ~SDMMC_CTRL_ENABLE_OD);
+>>>>>>> +}
+>>>>>>> +
+>>>>>>>  static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>>>>>  {
+>>>>>>>       struct dw_mci_slot *slot = mmc_priv(mmc);
+>>>>>>> @@ -818,6 +830,8 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>>>>>       default:
+>>>>>>>               break;
+>>>>>>>       }
+>>>>>>> +
+>>>>>>> +     dw_mci_set_busmode(slot);
+>>>>>>>  }
+>>>>>>>
+>>>>>>>  static int dw_mci_get_ro(struct mmc_host *mmc)
+>>>>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>>>>>>> index 15c27e1..1a53fb2 100644
+>>>>>>> --- a/drivers/mmc/host/dw_mmc.h
+>>>>>>> +++ b/drivers/mmc/host/dw_mmc.h
+>>>>>>> @@ -67,6 +67,7 @@
+>>>>>>>
+>>>>>>>  /* Control register defines */
+>>>>>>>  #define SDMMC_CTRL_USE_IDMAC         BIT(25)
+>>>>>>> +#define SDMMC_CTRL_ENABLE_OD         BIT(24)
+>>>>>>>  #define SDMMC_CTRL_CEATA_INT_EN              BIT(11)
+>>>>>>>  #define SDMMC_CTRL_SEND_AS_CCSD              BIT(10)
+>>>>>>>  #define SDMMC_CTRL_SEND_CCSD         BIT(9)
+>>>>>>>
+>>>>>>
+>>>>>>
+>>>> --
+>>>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>>>> the body of a message to majordomo@vger.kernel.org
+>>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
