@@ -1,54 +1,75 @@
 From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS: Enable platform support for I2S controllers
-Date: Wed, 25 Jul 2012 17:41:25 +0530
-Message-ID: <1343218285-30535-3-git-send-email-padma.v@samsung.com>
-References: <1343218285-30535-1-git-send-email-padma.v@samsung.com>
+Subject: [PATCH] ASoC: Samsung: Update Kconfig for Exynos5250 and Exynos4412
+Date: Wed, 25 Jul 2012 17:42:31 +0530
+Message-ID: <1343218351-30577-1-git-send-email-padma.v@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:63040 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756558Ab2GYMGy (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:43224 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756607Ab2GYMIQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jul 2012 08:06:54 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
+	Wed, 25 Jul 2012 08:08:16 -0400
+Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7P00HMWTNCT3L0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jul 2012 21:06:53 +0900 (KST)
+ 17 2011)) with ESMTP id <0M7P00JS8TOQVJ60@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jul 2012 21:07:55 +0900 (KST)
 Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
  by mmp2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0M7P003PWTN6VE20@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 25 Jul 2012 21:06:53 +0900 (KST)
-In-reply-to: <1343218285-30535-1-git-send-email-padma.v@samsung.com>
+ 17 2011)) with ESMTPA id <0M7P003R1TP0VE30@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 25 Jul 2012 21:07:55 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
 Cc: padma.v@samsung.com, rcsekar@samsung.com, sbkim73@samsung.com, sangsu4u.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, olofj@google.com, thutt@chromium.org, joshi@samsung.com
 
-Add AUXDATA entries for i2s controller driver so as to set the device
-name for clock lookups
+Update Kconfig file to support the Exynos5250 and Exynos4412
 
+Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
+Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
 Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 ---
- arch/arm/mach-exynos/mach-exynos5-dt.c |    6 ++++++
- 1 files changed, 6 insertions(+), 0 deletions(-)
+ sound/soc/samsung/Kconfig |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index c334eea..cf5a0f5 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -56,6 +56,12 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-+	OF_DEV_AUXDATA("samsung,samsung-i2s", EXYNOS_PA_I2S0,
-+				"samsung-i2s.0", NULL),
-+	OF_DEV_AUXDATA("samsung,samsung-i2s", EXYNOS5_PA_I2S1,
-+				"samsung-i2s.1", NULL),
-+	OF_DEV_AUXDATA("samsung,samsung-i2s", EXYNOS5_PA_I2S2,
-+				"samsung-i2s.2", NULL),
- 	{},
- };
+diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
+index fe3995c..d54e400 100644
+--- a/sound/soc/samsung/Kconfig
++++ b/sound/soc/samsung/Kconfig
+@@ -1,6 +1,6 @@
+ config SND_SOC_SAMSUNG
+ 	tristate "ASoC support for Samsung"
+-	depends on ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5P64X0 || ARCH_EXYNOS4
++	depends on PLAT_SAMSUNG
+ 	select S3C64XX_DMA if ARCH_S3C64XX
+ 	select S3C2410_DMA if ARCH_S3C24XX
+ 	help
+@@ -63,7 +63,7 @@ config SND_SOC_SAMSUNG_SMDK_WM8580
  
+ config SND_SOC_SAMSUNG_SMDK_WM8994
+ 	tristate "SoC I2S Audio support for WM8994 on SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
+ 	depends on I2C=y && GENERIC_HARDIRQS
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
+@@ -162,7 +162,7 @@ config SND_SOC_GONI_AQUILA_WM8994
+ 
+ config SND_SOC_SAMSUNG_SMDK_SPDIF
+ 	tristate "SoC S/PDIF Audio support for SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
+ 	select SND_SAMSUNG_SPDIF
+ 	help
+ 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
+@@ -177,7 +177,7 @@ config SND_SOC_SMDK_WM8580_PCM
+ 
+ config SND_SOC_SMDK_WM8994_PCM
+ 	tristate "SoC PCM Audio support for WM8994 on SMDK"
+-	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212)
++	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
+ 	depends on I2C=y && GENERIC_HARDIRQS
+ 	select MFD_WM8994
+ 	select SND_SOC_WM8994
 -- 
 1.7.4.4
