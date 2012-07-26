@@ -1,112 +1,117 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH 2/2] ARM: EXYNOS: Add set_irq_affinity function for combiner_irq
-Date: Thu, 26 Jul 2012 09:35:02 +0900
-Message-ID: <1343262902-19073-3-git-send-email-chanho61.park@samsung.com>
-References: <1343262902-19073-1-git-send-email-chanho61.park@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35084 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752192Ab2GZAgR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 25 Jul 2012 20:36:17 -0400
-Received: from epcpsbgm2.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7Q00L0YSCEUJB0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jul 2012 09:36:16 +0900 (KST)
-Received: from localhost.localdomain ([10.90.51.45])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7Q00EOXSAG9140@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jul 2012 09:36:15 +0900 (KST)
-In-reply-to: <1343262902-19073-1-git-send-email-chanho61.park@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Girish K S <girish.shivananjappa@linaro.org>
+Subject: Re: [PATCH] mmc: dw_mmc: add busmode selection support
+Date: Thu, 26 Jul 2012 09:11:33 +0530
+Message-ID: <CAGxe1ZHntoDfm3CBxx2q=yERhqZa7jnKjDeEA0bevQ_WFpOgbQ@mail.gmail.com>
+References: <1343042200-19524-1-git-send-email-girish.shivananjappa@linaro.org>
+	<500E8251.906@samsung.com>
+	<CAGxe1ZHA80qYj=vOhx5YYBhyVE_wG55PrK6DpLvA-KKef9g_GA@mail.gmail.com>
+	<CAGxe1ZFK96HRRN=42R4nwk3i26mONrTYN86TKsVMhCx94Oug9g@mail.gmail.com>
+	<CAELcNGT6CmbzmcbGB+-ZuYnjmy+vrumgb9CQxYntZYRwyJ8m6A@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAELcNGT6CmbzmcbGB+-ZuYnjmy+vrumgb9CQxYntZYRwyJ8m6A@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jae hoon Chung <jh80.chung@gmail.com>
+Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org
-Cc: linux-arm-kernel@lists.infradead.org, Chanho Park <chanho61.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patch adds set_irq_affinity function for combiner_irq. We need this
-function to enable a arm-pmu because the irq of exynos's pmu is declared
-combiner_irq.
-
-Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/common.c |   30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4eb39cd..f194bbc 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -405,6 +405,7 @@ struct combiner_chip_data {
- 	unsigned int irq_offset;
- 	unsigned int irq_mask;
- 	void __iomem *base;
-+	unsigned int parent_irq;
- };
- 
- static struct irq_domain *combiner_irq_domain;
-@@ -461,10 +462,28 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
- 	chained_irq_exit(chip, desc);
- }
- 
-+#ifdef CONFIG_SMP
-+static int combiner_set_affinity(struct irq_data *d,
-+				 const struct cpumask *mask_val, bool force)
-+{
-+	struct combiner_chip_data *chip_data = irq_data_get_irq_chip_data(d);
-+	struct irq_chip *chip = irq_get_chip(chip_data->parent_irq);
-+	struct irq_data *data = irq_get_irq_data(chip_data->parent_irq);
-+
-+	if (chip && chip->irq_set_affinity)
-+		return chip->irq_set_affinity(data, mask_val, force);
-+	else
-+		return -EINVAL;
-+}
-+#endif
-+
- static struct irq_chip combiner_chip = {
--	.name		= "COMBINER",
--	.irq_mask	= combiner_mask_irq,
--	.irq_unmask	= combiner_unmask_irq,
-+	.name			= "COMBINER",
-+	.irq_mask		= combiner_mask_irq,
-+	.irq_unmask		= combiner_unmask_irq,
-+#ifdef CONFIG_SMP
-+	.irq_set_affinity	= combiner_set_affinity,
-+#endif
- };
- 
- static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
-@@ -484,12 +503,13 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
- }
- 
- static void __init combiner_init_one(unsigned int combiner_nr,
--				     void __iomem *base)
-+				     void __iomem *base, unsigned int irq)
- {
- 	combiner_data[combiner_nr].base = base;
- 	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
- 		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
- 	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
-+	combiner_data[combiner_nr].parent_irq = irq;
- 
- 	/* Disable all interrupts */
- 	__raw_writel(combiner_data[combiner_nr].irq_mask,
-@@ -573,12 +593,12 @@ static void __init combiner_init(void __iomem *combiner_base,
- 	}
- 
- 	for (i = 0; i < max_nr; i++) {
--		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
- 		irq = IRQ_SPI(i);
- #ifdef CONFIG_OF
- 		if (np)
- 			irq = irq_of_parse_and_map(np, i);
- #endif
-+		combiner_init_one(i, combiner_base + (i >> 2) * 0x10, irq);
- 		combiner_cascade_irq(i, irq);
- 	}
- }
--- 
-1.7.9.5
+On 24 July 2012 18:37, Jae hoon Chung <jh80.chung@gmail.com> wrote:
+> Hi Girish,
+>
+> Right, it be mentioned about the open-drain mode in synopsys spec.
+> But if didn't work on other board, there is some problem.
+> We can consider the location of set_busmode() .
+Sure. Currently i am setting the bus mode after sending the command
+during the clock setting. since the bus mode has affect on the cmd
+line i will try to move the location of calling bus mode before
+setting the clock.
+you can just check whether card gets detected by moving the set mode
+function just below the switch statement of bus width.
+On my board irrespective of the set bus mode location it works fine
+>
+> Best Regards,
+> Jaehoon Chung
+>
+> 2012/7/24 Girish K S <girish.shivananjappa@linaro.org>:
+>> On 24 July 2012 17:06, Girish K S <girish.shivananjappa@linaro.org> wrote:
+>>> On 24 July 2012 16:39, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>>> Hi Girish,
+>>>>
+>>>> Well..just tested on my board.
+>>>> this patch didn't work.(eMMC card didn't initialize)
+>>>> meaning of ios->bus_mode and synosys's bus_mode is same?
+>> Yes it is same. synopsys spec says this is specific to MMC
+>> initialization. when the card core sets this mode during
+>> initialization. the host has to set this bit
+>>>> How did you test this patch?
+>>> Tested it on exynos5 board using dt patches of thomas (with some
+>>> modification to his patch)
+>>>>
+>>>> Best Regards,
+>>>> Jaehoon Chung
+>>>>
+>>>> On 07/23/2012 08:16 PM, Girish K S wrote:
+>>>>> Synopsis Designware host controller has suppport for open
+>>>>> drain mode selection. During the mmc card initialization the
+>>>>> host controller can select the open-drain bit to allow the device
+>>>>> initialization in the open-drain mode. Once the device enters
+>>>>> the standby mode this bit can be reset to enter push-pull mode.
+>>>>>
+>>>>> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
+>>>>> ---
+>>>>>  drivers/mmc/host/dw_mmc.c |   14 ++++++++++++++
+>>>>>  drivers/mmc/host/dw_mmc.h |    1 +
+>>>>>  2 files changed, 15 insertions(+), 0 deletions(-)
+>>>>>
+>>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>>>>> index 72dc3cd..da11e5a 100644
+>>>>> --- a/drivers/mmc/host/dw_mmc.c
+>>>>> +++ b/drivers/mmc/host/dw_mmc.c
+>>>>> @@ -773,6 +773,18 @@ static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+>>>>>       spin_unlock_bh(&host->lock);
+>>>>>  }
+>>>>>
+>>>>> +static void dw_mci_set_busmode(struct dw_mci_slot *slot)
+>>>>> +{
+>>>>> +     struct mmc_ios *ios = &slot->mmc->ios;
+>>>>> +     u32 reg;
+>>>>> +
+>>>>> +     reg = mci_readl(slot->host, CTRL);
+>>>>> +     if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
+>>>>> +             mci_writel(slot->host, CTRL, reg | SDMMC_CTRL_ENABLE_OD);
+>>>>> +     else
+>>>>> +             mci_writel(slot->host, CTRL, reg & ~SDMMC_CTRL_ENABLE_OD);
+>>>>> +}
+>>>>> +
+>>>>>  static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>>>  {
+>>>>>       struct dw_mci_slot *slot = mmc_priv(mmc);
+>>>>> @@ -818,6 +830,8 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>>>>>       default:
+>>>>>               break;
+>>>>>       }
+>>>>> +
+>>>>> +     dw_mci_set_busmode(slot);
+>>>>>  }
+>>>>>
+>>>>>  static int dw_mci_get_ro(struct mmc_host *mmc)
+>>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
+>>>>> index 15c27e1..1a53fb2 100644
+>>>>> --- a/drivers/mmc/host/dw_mmc.h
+>>>>> +++ b/drivers/mmc/host/dw_mmc.h
+>>>>> @@ -67,6 +67,7 @@
+>>>>>
+>>>>>  /* Control register defines */
+>>>>>  #define SDMMC_CTRL_USE_IDMAC         BIT(25)
+>>>>> +#define SDMMC_CTRL_ENABLE_OD         BIT(24)
+>>>>>  #define SDMMC_CTRL_CEATA_INT_EN              BIT(11)
+>>>>>  #define SDMMC_CTRL_SEND_AS_CCSD              BIT(10)
+>>>>>  #define SDMMC_CTRL_SEND_CCSD         BIT(9)
+>>>>>
+>>>>
+>>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
