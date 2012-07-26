@@ -1,102 +1,55 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree
- based instantiation
-Date: Thu, 26 Jul 2012 22:39:31 +0200
-Message-ID: <5011AB03.2070900@gmail.com>
-References: <4FBFE1EC.9060209@samsung.com> <1337975573-27117-1-git-send-email-s.nawrocki@samsung.com> <1337975573-27117-9-git-send-email-s.nawrocki@samsung.com> <1393020.I6XBuRyBXi@avalon>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 2/8 v2] ARM: EXYNOS5: Add machine data for USB 2.0
+Date: Thu, 26 Jul 2012 11:24:49 +0000
+Message-ID: <201207261124.50141.arnd@arndb.de>
+References: <1342866729-30460-1-git-send-email-gautam.vivek@samsung.com> <1342866729-30460-3-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:56291 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751670Ab2GZUjf (ORCPT
+Received: from moutng.kundenserver.de ([212.227.17.10]:61341 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752566Ab2GZVov (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jul 2012 16:39:35 -0400
-In-Reply-To: <1393020.I6XBuRyBXi@avalon>
+	Thu, 26 Jul 2012 17:44:51 -0400
+In-Reply-To: <1342866729-30460-3-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, kgene.kim@samsung.com, l.majewski@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, m.szyprowski@samsung.com, yulgon.kim@samsung.com, av.tikhomirov@samsung.com, prashanth.g@samsung.com, boyko.lee@samsung.com, joshi@samsung.com, a.kesavan@samsung.com, olofj@google.com, ajaykumar.rs@samsung.com
 
-Hi Laurent,
-
-On 07/26/2012 05:21 PM, Laurent Pinchart wrote:
-> On Friday 25 May 2012 21:52:48 Sylwester Nawrocki wrote:
->> The driver initializes all board related properties except the s_power()
->> callback to board code. The platforms that require this callback are not
->> supported by this driver yet for CONFIG_OF=y.
->>
->> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
->> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
->> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->> ---
->>   .../bindings/camera/samsung-s5k6aafx.txt           |   57 +++++++++
->>   drivers/media/video/s5k6aa.c                       |  129 ++++++++++++-----
->>   2 files changed, 146 insertions(+), 40 deletions(-)
->>   create mode 100644
->> Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
->>
->> diff --git a/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
->> b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt new file
->> mode 100644
->> index 0000000..6685a9c
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
->> @@ -0,0 +1,57 @@
->> +Samsung S5K6AAFX camera sensor
->> +------------------------------
->> +
->> +Required properties:
->> +
->> +- compatible : "samsung,s5k6aafx";
->> +- reg : base address of the device on I2C bus;
->> +- video-itu-601-bus : parallel bus with HSYNC and VSYNC - ITU-R BT.601;
->> +- vdd_core-supply : digital core voltage supply 1.5V (1.4V to 1.6V);
->> +- vdda-supply : analog power voltage supply 2.8V (2.6V to 3.0V);
->> +- vdd_reg-supply : regulator input power voltage supply 1.8V (1.7V to 1.9V)
->> +		   or 2.8V (2.6V to 3.0);
->> +- vddio-supply : I/O voltage supply 1.8V (1.65V to 1.95V)
->> +		 or 2.8V (2.5V to 3.1V);
->> +
->> +Optional properties:
->> +
->> +- clock-frequency : the IP's main (system bus) clock frequency in Hz, the
->> default
+On Saturday 21 July 2012, Vivek Gautam wrote:
+> From: Ajay Kumar <ajaykumar.rs@samsung.com>
 > 
-> Is that the input clock frequency ? Can't it vary ? Instead of accessing the
+> This patch adds address mapping of USB 2.0 PHY for exynos5
+> 
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.c           |    5 +++++
+>  arch/arm/mach-exynos/include/mach/map.h |    2 ++
+>  2 files changed, 7 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 4eb39cd..92d5e61 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -275,6 +275,11 @@ static struct map_desc exynos5_iodesc[] __initdata = {
+>                 .pfn            = __phys_to_pfn(EXYNOS5_PA_GIC_DIST),
+>                 .length         = SZ_4K,
+>                 .type           = MT_DEVICE,
+> +       }, {
+> +               .virtual        = (unsigned long)S3C_VA_USB_HSPHY,
+> +               .pfn            = __phys_to_pfn(EXYNOS5_PA_USB_PHY),
+> +               .length         = SZ_4K,
+> +               .type           = MT_DEVICE,
+>         },
+>  };
 
-Yes, the description is incorrect in this patch, it should read:
+Can you pleae explain why this is done in the changelog?
 
-+- clock-frequency : the sensor's master clock frequency in Hz;
+We try hard to do such mappings from the device driver instead,
+so I'm surprised that this is necessary fo rthe USB phy.
 
-and be a required property. As in this patch:
-https://github.com/snawrocki/linux/commit/e8a5f890dec0d7414b656bb1d1ac97d5e7abe563
-
-It could vary (as this is a PLL input frequency), so probably a range would
-be a better alternative. Given that host device won't always be able to set 
-this exact value...
-
-> sensor clock frequency from the FIMC driver you should reference a clock in
-> the sensor DT node. That obviously requires generic clock support, which might
-> not be available for your platform yet (that's one of the reasons the OMAP3
-> ISP driver doesn't support DT yet).
-
-I agree it might be better, but waiting unknown number of kernel releases
-for the platforms to get converted to common clock API is not a good 
-alternative either. I guess we could have some transitional solutions
-while other subsystems are getting adapted. 
-
-Yet we need to specify the clock frequency range per sensor, so
-
-1. either we specify it at a sensor node and host device driver references
-   it, or
-2. it could be added to a sensor specific child node of a host device
-   mode, and then only the host would reference it, and sensor would
-   reference a clock in its DT node; I guess it's not a problem that
-   in most cases the camera host device is a clock provider.
-
---
-
-Regards,
-Sylwester
+	Arnd
