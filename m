@@ -1,159 +1,42 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: RE: [PATCH 1/2] ARM: EXYNOS: Fix ARM PMU irq numbers
-Date: Thu, 26 Jul 2012 16:12:32 +0900
-Message-ID: <003201cd6afe$06407f20$12c17d60$@samsung.com>
-References: <1343262902-19073-1-git-send-email-chanho61.park@samsung.com>
- <1343262902-19073-2-git-send-email-chanho61.park@samsung.com>
- <CAK9yfHyXzSp1Q75neuC0Q2=7RhXQXmKAQOPxE522SCsupwixTw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+From: Vinayak Holikatti <vinholikatti@gmail.com>
+Subject: [PATCH V3 0/4] [SCSI] ufs: Adds glue drivers to ufshcd
+Date: Thu, 26 Jul 2012 14:12:46 +0530
+Message-ID: <1343292170-2599-1-git-send-email-vinholikatti@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:43668 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750868Ab2GZHLr convert rfc822-to-8bit (ORCPT
+Received: from mail-gg0-f174.google.com ([209.85.161.174]:43363 "EHLO
+	mail-gg0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750867Ab2GZIna (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jul 2012 03:11:47 -0400
-Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M7R00GWEANLRX40@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jul 2012 16:11:45 +0900 (KST)
-Received: from DOCHANHO61P01 ([10.90.51.44])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M7R005AQANK6H20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 26 Jul 2012 16:11:45 +0900 (KST)
-In-reply-to: <CAK9yfHyXzSp1Q75neuC0Q2=7RhXQXmKAQOPxE522SCsupwixTw@mail.gmail.com>
-Content-language: en-us
+	Thu, 26 Jul 2012 04:43:30 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, 'Kyungmin Park' <kyungmin.park@samsung.com>, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, ben-linux@fluff.org
+To: James.Bottomley@hansenpartnership.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Vinayak Holikatti <vinholikatti@gmail.com>
 
-> -----Original Message-----
-> From: linux-arm-kernel-bounces@lists.infradead.org [mailto:linux-arm-
-> kernel-bounces@lists.infradead.org] On Behalf Of Sachin Kamat
-> Sent: Thursday, July 26, 2012 12:53 PM
-> To: Chanho Park
-> Cc: linux-samsung-soc@vger.kernel.org; Kyungmin Park;
-> kgene.kim@samsung.com; linux-arm-kernel@lists.infradead.org; ben-
-> linux@fluff.org
-> Subject: Re: [PATCH 1/2] ARM: EXYNOS: Fix ARM PMU irq numbers
-> 
-> On 26 July 2012 06:05, Chanho Park <chanho61.park@samsung.com> wrote:
-> > This patch fixes irq numbers of ARM PMU(Perfromance Monitoring Unit).
-> > We need to seperate arm-pmu(performance measurement unit) and
-> > exynos-pmu(power management unit). I decide to change
-> EXYNOS4_IRQ_PMU
-> > to EXYNOS4_IRQ_POWER_PMU because there are no one use it.
-> > A max cpu number of exynos4 is four in case of exynos44xx. So we
-> > should define 3 additional pmu irq numbers and enable it according to the
-> number of cpus.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/include/mach/irqs.h |   18 ++++++++++++++++--
-> >  arch/arm/plat-samsung/devs.c             |    9 ++++++++-
-> >  2 files changed, 24 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/include/mach/irqs.h
-> > b/arch/arm/mach-exynos/include/mach/irqs.h
-> > index 35bced6..329b07d 100644
-> > --- a/arch/arm/mach-exynos/include/mach/irqs.h
-> > +++ b/arch/arm/mach-exynos/include/mach/irqs.h
-> > @@ -128,7 +128,7 @@
-> >  #define EXYNOS4_IRQ_ADC1               IRQ_SPI(107)
-> >  #define EXYNOS4_IRQ_PEN1               IRQ_SPI(108)
-> >  #define EXYNOS4_IRQ_KEYPAD             IRQ_SPI(109)
-> > -#define EXYNOS4_IRQ_PMU                        IRQ_SPI(110)
-> > +#define EXYNOS4_IRQ_POWER_PMU          IRQ_SPI(110)
-> >  #define EXYNOS4_IRQ_GPS                        IRQ_SPI(111)
-> >  #define EXYNOS4_IRQ_INTFEEDCTRL_SSS    IRQ_SPI(112)
-> >  #define EXYNOS4_IRQ_SLIMBUS            IRQ_SPI(113)
-> > @@ -136,6 +136,11 @@
-> >  #define EXYNOS4_IRQ_TSI                        IRQ_SPI(115)
-> >  #define EXYNOS4_IRQ_SATA               IRQ_SPI(116)
-> >
-> > +#define EXYNOS4_IRQ_PMU                        COMBINER_IRQ(2, 2)
-> > +#define EXYNOS4_IRQ_PMU_CPU1           COMBINER_IRQ(3, 2)
-> > +#define EXYNOS4_IRQ_PMU_CPU2           COMBINER_IRQ(18, 2)
-> > +#define EXYNOS4_IRQ_PMU_CPU3           COMBINER_IRQ(19, 2)
-> > +
-> >  #define EXYNOS4_IRQ_SYSMMU_MDMA0_0     COMBINER_IRQ(4, 0)
-> >  #define EXYNOS4_IRQ_SYSMMU_SSS_0       COMBINER_IRQ(4, 1)
-> >  #define EXYNOS4_IRQ_SYSMMU_FIMC0_0     COMBINER_IRQ(4, 2)
-> > @@ -230,7 +235,6 @@
-> >  #define IRQ_TC                         EXYNOS4_IRQ_PEN0
-> >
-> >  #define IRQ_KEYPAD                     EXYNOS4_IRQ_KEYPAD
-> > -#define IRQ_PMU                                EXYNOS4_IRQ_PMU
-> >
-> >  #define IRQ_FIMD0_FIFO                 EXYNOS4_IRQ_FIMD0_FIFO
-> >  #define IRQ_FIMD0_VSYNC                        EXYNOS4_IRQ_FIMD0_VSYNC
-> > @@ -453,6 +457,16 @@
-> >  #define EXYNOS5_IRQ_GPIO3_NR_GROUPS    5
-> >  #define EXYNOS5_IRQ_GPIO4_NR_GROUPS    1
-> >
-> > +#if defined(CONFIG_ARCH_EXYNOS4)
-> > +#define IRQ_PMU                                EXYNOS4_IRQ_PMU
-> > +#define IRQ_PMU1                       EXYNOS4_IRQ_PMU_CPU1
-> > +#define IRQ_PMU2                       EXYNOS4_IRQ_PMU_CPU2
-> > +#define IRQ_PMU3                       EXYNOS4_IRQ_PMU_CPU3
-> > +#elif defined(CONFIG_ARCH_EXYNOS5)
-> > +#define IRQ_PMU                                EXYNOS5_IRQ_PMU
-> > +#define IRQ_PMU1                       EXYNOS5_IRQ_PMU_CPU1
-> > +#endif
-> 
-> This will not work when both Exynos 4 and 5 are enabled.
+This patch set adds following features
+ - Seggregate PCI specific code in ufshcd.c
+ - Adds PCI glue driver ufshcd-pci.c and ufshcd.c become core module
+ - Adds Platform glue driver ufshcd-pltfrm.c
+ - Update correct transfer size in Command UPIU
 
-Hmm. I think we need to identify exynos4 and 5 types dynamically using soc_is_exynosXXX() function.
-I'll change it at once.
+Vinayak Holikatti (4):
+  [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
+  [SCSI] drivers/scsi/ufs: Separate PCI code into glue driver
+  [SCSI] ufs: Add Platform glue driver for ufshcd
+  [SCSI] ufs: Correct the expected data transfer size
 
-> 
-> > +
-> >  #define MAX_COMBINER_NR                        (EXYNOS4_MAX_COMBINER_NR
-> > EXYNOS5_MAX_COMBINER_NR ? \
-> >                                         EXYNOS4_MAX_COMBINER_NR :
-> > EXYNOS5_MAX_COMBINER_NR)
-> >
-> > diff --git a/arch/arm/plat-samsung/devs.c
-> > b/arch/arm/plat-samsung/devs.c index 74e31ce..91048a6 100644
-> > --- a/arch/arm/plat-samsung/devs.c
-> > +++ b/arch/arm/plat-samsung/devs.c
-> > @@ -1100,7 +1100,14 @@ struct platform_device s5p_device_onenand = {
-> >
-> >  #ifdef CONFIG_PLAT_S5P
-> >  static struct resource s5p_pmu_resource[] = {
-> > -       DEFINE_RES_IRQ(IRQ_PMU)
-> > +       DEFINE_RES_IRQ(IRQ_PMU),
-> > +#if (CONFIG_NR_CPUS > 1)
-> > +       DEFINE_RES_IRQ(IRQ_PMU1),
-> > +#elif (CONFIG_NR_CPUS > 2)
-> > +       DEFINE_RES_IRQ(IRQ_PMU2),
-> > +#elif (CONFIG_NR_CPUS > 3)
-> > +       DEFINE_RES_IRQ(IRQ_PMU3),
-> > +#endif
-> >  };
-> >
-> >  static struct platform_device s5p_device_pmu = {
-> > --
-> > 1.7.9.5
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe
-> > linux-samsung-soc" in the body of a message to
-> > majordomo@vger.kernel.org More majordomo info at
-> > http://vger.kernel.org/majordomo-info.html
-> 
-> 
-> 
-> --
-> With warm regards,
-> Sachin
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+ drivers/scsi/ufs/Kconfig         |   37 +++-
+ drivers/scsi/ufs/Makefile        |    2 +
+ drivers/scsi/ufs/ufshcd-pci.c    |  228 ++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd-pltfrm.c |  222 ++++++++++++++++++++
+ drivers/scsi/ufs/ufshcd.c        |  422 ++++++--------------------------------
+ drivers/scsi/ufs/ufshcd.h        |  206 +++++++++++++++++++
+ drivers/scsi/ufs/ufshcd_common.h |   53 +++++
+ 7 files changed, 813 insertions(+), 357 deletions(-)
+ create mode 100644 drivers/scsi/ufs/ufshcd-pci.c
+ create mode 100644 drivers/scsi/ufs/ufshcd-pltfrm.c
+ create mode 100644 drivers/scsi/ufs/ufshcd.h
+ create mode 100644 drivers/scsi/ufs/ufshcd_common.h
+
+-- 
+1.7.9.5
