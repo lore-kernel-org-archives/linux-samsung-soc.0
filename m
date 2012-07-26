@@ -1,46 +1,121 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 4/8 v2] ARM: EXYNOS5: Add EHCI device from device tree
-Date: Thu, 26 Jul 2012 11:57:13 +0000
-Message-ID: <201207261157.14441.arnd@arndb.de>
-References: <1342866729-30460-1-git-send-email-gautam.vivek@samsung.com> <1342866729-30460-5-git-send-email-gautam.vivek@samsung.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 5/8 v2] ARM: EXYNOS5: Add PHY initialization code for usb
+ 2.0
+Date: Thu, 26 Jul 2012 12:08:13 +0000
+Message-ID: <201207261208.13874.arnd@arndb.de>
+References: <1342866729-30460-1-git-send-email-gautam.vivek@samsung.com>
+ <1342866729-30460-6-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-1"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:58476 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753252Ab2GZVpA (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jul 2012 17:45:00 -0400
-In-Reply-To: <1342866729-30460-5-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1342866729-30460-6-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, boyko.lee-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, olofj-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, av.tikhomirov-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, prashanth.g-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Vivek Gautam <gautam.vivek@samsung.com>, kgene.kim@samsung.com, l.majewski@samsung.com, kyungmin.park@samsung.com, thomas.abraham@linaro.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, m.szyprowski@samsung.com, yulgon.kim@samsung.com, av.tikhomirov@samsung.com, prashanth.g@samsung.com, boyko.lee@samsung.com, joshi@samsung.com, a.kesavan@samsung.com, olofj@google.com, ajaykumar.rs@samsung.com
 
 On Saturday 21 July 2012, Vivek Gautam wrote:
-> @@ -28,6 +29,11 @@ static struct exynos4_ohci_platdata smdk5250_ohci_pdata = {
->         .phy_exit = s5p_usb_phy_exit,
->  };
+> This patch adds PHY setup functions usb 2.0 support on exynos5
+> 
+> Signed-off-by: Yulgon Kim <yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  arch/arm/mach-exynos/Kconfig                     |    1 +
+>  arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   86 ++++++++
+>  arch/arm/mach-exynos/setup-usb-phy.c             |  232 +++++++++++++++++++++-
+>  3 files changed, 311 insertions(+), 8 deletions(-)
+
+This looks very much like a new device driver, not some code you can just stick
+into platform code. We're trying hard to move driver code out of the platform
+directories, so please don't add any new stuff for a driver and soc that doesn't
+have to deal with legacy code.
+
 >  
-> +static struct s5p_ehci_platdata smdk5250_ehci_pdata = {
-> +       .phy_init = s5p_usb_phy_init,
-> +       .phy_exit = s5p_usb_phy_exit,
-> +};
+>  static int exynos4_usb_host_phy_is_on(void)
+>  {
+> -	return (readl(EXYNOS4_PHYPWR) & PHY1_STD_ANALOG_POWERDOWN) ? 0 : 1;
+> +	if (soc_is_exynos5250()) {
+> +		return (readl(EXYNOS5_PHY_HOST_CTRL0) &
+> +				HOST_CTRL0_PHYSWRSTALL) ? 0 : 1;
+> +	} else {
+> +		return (readl(EXYNOS4_PHYPWR) &
+> +				PHY1_STD_ANALOG_POWERDOWN) ? 0 : 1;
+> +	}
+> +}
+
+Never hardcode register locations like this.
+Also you clearly have two SoC that do different things here, so putting them
+into the same function is a bit strange.
+
+>  
+>  static struct clk *exynos_usb_clock_enable(struct platform_device *pdev)
+> @@ -31,7 +56,10 @@ static struct clk *exynos_usb_clock_enable(struct platform_device *pdev)
+>  	struct clk *usb_clk = NULL;
+>  	int err = 0;
+>  
+> -	usb_clk = clk_get(&pdev->dev, "otg");
+> +	if (soc_is_exynos5250())
+> +		usb_clk = clk_get(&pdev->dev, "usbhost");
+> +	else
+> +		usb_clk = clk_get(&pdev->dev, "otg");
+>  	if (IS_ERR(usb_clk)) {
+>  		dev_err(&pdev->dev, "Failed to get otg clock\n");
+>  		return NULL;
+
+Why do you have different names for the same clock on different SoCs?
+
+If the clock has the same purpose, just give it the same name.
+
+> @@ -50,7 +78,11 @@ static int exynos4210_usb_phy_clkset(struct platform_device *pdev)
+>  	struct clk *xusbxti_clk;
+>  	u32 phyclk = 0;
+>  
+> -	xusbxti_clk = clk_get(&pdev->dev, "xusbxti");
+> +	if (soc_is_exynos5250())
+> +		xusbxti_clk = clk_get(&pdev->dev, "ext_xtal");
+> +	else
+> +		xusbxti_clk = clk_get(&pdev->dev, "xusbxti");
 > +
->  /*
->   * The following lookup table is used to override device names when devices
->   * are registered from device tree. This is temporarily added to enable
+>  	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
+>  		if (soc_is_exynos4210()) {
+>  			/* set clock frequency for PLL */
 
-I'm a bit confused of the purpose of setting the function pointers here
-when the pointers are always to the same s5p_usb_phy_init/s5p_usb_phy_exit
-identifiers, but you have different definitions of those functions
-depending on which platforms you are building for.
+same here.
 
-What is the idea here? Are you going to unify the three definitions of
-s5p_usb_phy_init, or is that function going away eventually when we
-get to the point of building exynos/s5p/s3c64xx into the same kernel
-binary?
+> @@ -218,8 +431,11 @@ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
+>  {
+>  	if (type == S5P_USB_PHY_DEVICE)
+>  		return exynos4210_usb_phy0_exit(pdev);
+> -	else if (type == S5P_USB_PHY_HOST)
+> -		return exynos4210_usb_phy1_exit(pdev);
+> -
+> +	else if (type == S5P_USB_PHY_HOST) {
+> +		if (soc_is_exynos5250())
+> +			return exynos5_usb_phy20_exit(pdev);
+> +		else
+> +			return exynos4210_usb_phy1_exit(pdev);
+> +	}
+>  	return -EINVAL;
+>  }
+
+You are doing completely different things here. None of these are actually
+s5p, so better make these different functions for each soc.
+
+If you have a driver that has some common code and some hardware specific
+code, we generally structure the code so that the entry points are different
+for the each kind of hardware and they call into common code from there.
+
+This code is done in the opposite way and should be changed over time,
+so please don't add to the mess.
 
 	Arnd
