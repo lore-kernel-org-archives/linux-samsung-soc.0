@@ -1,117 +1,123 @@
-From: Girish K S <girish.shivananjappa@linaro.org>
-Subject: Re: [PATCH] mmc: dw_mmc: add busmode selection support
-Date: Thu, 26 Jul 2012 09:11:33 +0530
-Message-ID: <CAGxe1ZHntoDfm3CBxx2q=yERhqZa7jnKjDeEA0bevQ_WFpOgbQ@mail.gmail.com>
-References: <1343042200-19524-1-git-send-email-girish.shivananjappa@linaro.org>
-	<500E8251.906@samsung.com>
-	<CAGxe1ZHA80qYj=vOhx5YYBhyVE_wG55PrK6DpLvA-KKef9g_GA@mail.gmail.com>
-	<CAGxe1ZFK96HRRN=42R4nwk3i26mONrTYN86TKsVMhCx94Oug9g@mail.gmail.com>
-	<CAELcNGT6CmbzmcbGB+-ZuYnjmy+vrumgb9CQxYntZYRwyJ8m6A@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: EXYNOS: Fix ARM PMU irq numbers
+Date: Thu, 26 Jul 2012 09:22:43 +0530
+Message-ID: <CAK9yfHyXzSp1Q75neuC0Q2=7RhXQXmKAQOPxE522SCsupwixTw@mail.gmail.com>
+References: <1343262902-19073-1-git-send-email-chanho61.park@samsung.com>
+	<1343262902-19073-2-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAELcNGT6CmbzmcbGB+-ZuYnjmy+vrumgb9CQxYntZYRwyJ8m6A@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jae hoon Chung <jh80.chung@gmail.com>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, cjb@laptop.org, will.newton@imgtec.com, patches@linaro.org, linux-samsung-soc@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:57820 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751345Ab2GZDwo (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 25 Jul 2012 23:52:44 -0400
+Received: by vcbfk26 with SMTP id fk26so1280313vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 25 Jul 2012 20:52:43 -0700 (PDT)
+In-Reply-To: <1343262902-19073-2-git-send-email-chanho61.park@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org, Kyungmin Park <kyungmin.park@samsung.com>
 
-On 24 July 2012 18:37, Jae hoon Chung <jh80.chung@gmail.com> wrote:
-> Hi Girish,
+On 26 July 2012 06:05, Chanho Park <chanho61.park@samsung.com> wrote:
+> This patch fixes irq numbers of ARM PMU(Perfromance Monitoring Unit).
+> We need to seperate arm-pmu(performance measurement unit) and exynos-pmu(power
+> management unit). I decide to change EXYNOS4_IRQ_PMU to EXYNOS4_IRQ_POWER_PMU
+> because there are no one use it.
+> A max cpu number of exynos4 is four in case of exynos44xx. So we should define 3
+> additional pmu irq numbers and enable it according to the number of cpus.
 >
-> Right, it be mentioned about the open-drain mode in synopsys spec.
-> But if didn't work on other board, there is some problem.
-> We can consider the location of set_busmode() .
-Sure. Currently i am setting the bus mode after sending the command
-during the clock setting. since the bus mode has affect on the cmd
-line i will try to move the location of calling bus mode before
-setting the clock.
-you can just check whether card gets detected by moving the set mode
-function just below the switch statement of bus width.
-On my board irrespective of the set bus mode location it works fine
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/include/mach/irqs.h |   18 ++++++++++++++++--
+>  arch/arm/plat-samsung/devs.c             |    9 ++++++++-
+>  2 files changed, 24 insertions(+), 3 deletions(-)
 >
-> Best Regards,
-> Jaehoon Chung
+> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+> index 35bced6..329b07d 100644
+> --- a/arch/arm/mach-exynos/include/mach/irqs.h
+> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
+> @@ -128,7 +128,7 @@
+>  #define EXYNOS4_IRQ_ADC1               IRQ_SPI(107)
+>  #define EXYNOS4_IRQ_PEN1               IRQ_SPI(108)
+>  #define EXYNOS4_IRQ_KEYPAD             IRQ_SPI(109)
+> -#define EXYNOS4_IRQ_PMU                        IRQ_SPI(110)
+> +#define EXYNOS4_IRQ_POWER_PMU          IRQ_SPI(110)
+>  #define EXYNOS4_IRQ_GPS                        IRQ_SPI(111)
+>  #define EXYNOS4_IRQ_INTFEEDCTRL_SSS    IRQ_SPI(112)
+>  #define EXYNOS4_IRQ_SLIMBUS            IRQ_SPI(113)
+> @@ -136,6 +136,11 @@
+>  #define EXYNOS4_IRQ_TSI                        IRQ_SPI(115)
+>  #define EXYNOS4_IRQ_SATA               IRQ_SPI(116)
 >
-> 2012/7/24 Girish K S <girish.shivananjappa@linaro.org>:
->> On 24 July 2012 17:06, Girish K S <girish.shivananjappa@linaro.org> wrote:
->>> On 24 July 2012 16:39, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>> Hi Girish,
->>>>
->>>> Well..just tested on my board.
->>>> this patch didn't work.(eMMC card didn't initialize)
->>>> meaning of ios->bus_mode and synosys's bus_mode is same?
->> Yes it is same. synopsys spec says this is specific to MMC
->> initialization. when the card core sets this mode during
->> initialization. the host has to set this bit
->>>> How did you test this patch?
->>> Tested it on exynos5 board using dt patches of thomas (with some
->>> modification to his patch)
->>>>
->>>> Best Regards,
->>>> Jaehoon Chung
->>>>
->>>> On 07/23/2012 08:16 PM, Girish K S wrote:
->>>>> Synopsis Designware host controller has suppport for open
->>>>> drain mode selection. During the mmc card initialization the
->>>>> host controller can select the open-drain bit to allow the device
->>>>> initialization in the open-drain mode. Once the device enters
->>>>> the standby mode this bit can be reset to enter push-pull mode.
->>>>>
->>>>> Signed-off-by: Girish K S <girish.shivananjappa@linaro.org>
->>>>> ---
->>>>>  drivers/mmc/host/dw_mmc.c |   14 ++++++++++++++
->>>>>  drivers/mmc/host/dw_mmc.h |    1 +
->>>>>  2 files changed, 15 insertions(+), 0 deletions(-)
->>>>>
->>>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>>> index 72dc3cd..da11e5a 100644
->>>>> --- a/drivers/mmc/host/dw_mmc.c
->>>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>>> @@ -773,6 +773,18 @@ static void dw_mci_request(struct mmc_host *mmc, struct mmc_request *mrq)
->>>>>       spin_unlock_bh(&host->lock);
->>>>>  }
->>>>>
->>>>> +static void dw_mci_set_busmode(struct dw_mci_slot *slot)
->>>>> +{
->>>>> +     struct mmc_ios *ios = &slot->mmc->ios;
->>>>> +     u32 reg;
->>>>> +
->>>>> +     reg = mci_readl(slot->host, CTRL);
->>>>> +     if (ios->bus_mode == MMC_BUSMODE_OPENDRAIN)
->>>>> +             mci_writel(slot->host, CTRL, reg | SDMMC_CTRL_ENABLE_OD);
->>>>> +     else
->>>>> +             mci_writel(slot->host, CTRL, reg & ~SDMMC_CTRL_ENABLE_OD);
->>>>> +}
->>>>> +
->>>>>  static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>>>>  {
->>>>>       struct dw_mci_slot *slot = mmc_priv(mmc);
->>>>> @@ -818,6 +830,8 @@ static void dw_mci_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->>>>>       default:
->>>>>               break;
->>>>>       }
->>>>> +
->>>>> +     dw_mci_set_busmode(slot);
->>>>>  }
->>>>>
->>>>>  static int dw_mci_get_ro(struct mmc_host *mmc)
->>>>> diff --git a/drivers/mmc/host/dw_mmc.h b/drivers/mmc/host/dw_mmc.h
->>>>> index 15c27e1..1a53fb2 100644
->>>>> --- a/drivers/mmc/host/dw_mmc.h
->>>>> +++ b/drivers/mmc/host/dw_mmc.h
->>>>> @@ -67,6 +67,7 @@
->>>>>
->>>>>  /* Control register defines */
->>>>>  #define SDMMC_CTRL_USE_IDMAC         BIT(25)
->>>>> +#define SDMMC_CTRL_ENABLE_OD         BIT(24)
->>>>>  #define SDMMC_CTRL_CEATA_INT_EN              BIT(11)
->>>>>  #define SDMMC_CTRL_SEND_AS_CCSD              BIT(10)
->>>>>  #define SDMMC_CTRL_SEND_CCSD         BIT(9)
->>>>>
->>>>
->>>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +#define EXYNOS4_IRQ_PMU                        COMBINER_IRQ(2, 2)
+> +#define EXYNOS4_IRQ_PMU_CPU1           COMBINER_IRQ(3, 2)
+> +#define EXYNOS4_IRQ_PMU_CPU2           COMBINER_IRQ(18, 2)
+> +#define EXYNOS4_IRQ_PMU_CPU3           COMBINER_IRQ(19, 2)
+> +
+>  #define EXYNOS4_IRQ_SYSMMU_MDMA0_0     COMBINER_IRQ(4, 0)
+>  #define EXYNOS4_IRQ_SYSMMU_SSS_0       COMBINER_IRQ(4, 1)
+>  #define EXYNOS4_IRQ_SYSMMU_FIMC0_0     COMBINER_IRQ(4, 2)
+> @@ -230,7 +235,6 @@
+>  #define IRQ_TC                         EXYNOS4_IRQ_PEN0
+>
+>  #define IRQ_KEYPAD                     EXYNOS4_IRQ_KEYPAD
+> -#define IRQ_PMU                                EXYNOS4_IRQ_PMU
+>
+>  #define IRQ_FIMD0_FIFO                 EXYNOS4_IRQ_FIMD0_FIFO
+>  #define IRQ_FIMD0_VSYNC                        EXYNOS4_IRQ_FIMD0_VSYNC
+> @@ -453,6 +457,16 @@
+>  #define EXYNOS5_IRQ_GPIO3_NR_GROUPS    5
+>  #define EXYNOS5_IRQ_GPIO4_NR_GROUPS    1
+>
+> +#if defined(CONFIG_ARCH_EXYNOS4)
+> +#define IRQ_PMU                                EXYNOS4_IRQ_PMU
+> +#define IRQ_PMU1                       EXYNOS4_IRQ_PMU_CPU1
+> +#define IRQ_PMU2                       EXYNOS4_IRQ_PMU_CPU2
+> +#define IRQ_PMU3                       EXYNOS4_IRQ_PMU_CPU3
+> +#elif defined(CONFIG_ARCH_EXYNOS5)
+> +#define IRQ_PMU                                EXYNOS5_IRQ_PMU
+> +#define IRQ_PMU1                       EXYNOS5_IRQ_PMU_CPU1
+> +#endif
+
+This will not work when both Exynos 4 and 5 are enabled.
+
+> +
+>  #define MAX_COMBINER_NR                        (EXYNOS4_MAX_COMBINER_NR > EXYNOS5_MAX_COMBINER_NR ? \
+>                                         EXYNOS4_MAX_COMBINER_NR : EXYNOS5_MAX_COMBINER_NR)
+>
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 74e31ce..91048a6 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -1100,7 +1100,14 @@ struct platform_device s5p_device_onenand = {
+>
+>  #ifdef CONFIG_PLAT_S5P
+>  static struct resource s5p_pmu_resource[] = {
+> -       DEFINE_RES_IRQ(IRQ_PMU)
+> +       DEFINE_RES_IRQ(IRQ_PMU),
+> +#if (CONFIG_NR_CPUS > 1)
+> +       DEFINE_RES_IRQ(IRQ_PMU1),
+> +#elif (CONFIG_NR_CPUS > 2)
+> +       DEFINE_RES_IRQ(IRQ_PMU2),
+> +#elif (CONFIG_NR_CPUS > 3)
+> +       DEFINE_RES_IRQ(IRQ_PMU3),
+> +#endif
+>  };
+>
+>  static struct platform_device s5p_device_pmu = {
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+With warm regards,
+Sachin
