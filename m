@@ -1,116 +1,52 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree based instantiation
-Date: Fri, 27 Jul 2012 00:50:13 +0200
-Message-ID: <1451056.l0aSnQP8f4@avalon>
-References: <4FBFE1EC.9060209@samsung.com> <1393020.I6XBuRyBXi@avalon> <5011AB03.2070900@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+From: Chanho Park <chanho61.park@samsung.com>
+Subject: [PATCHv2 0/3] Add support to enable ARM PMU for EXYNOS4/5
+Date: Fri, 27 Jul 2012 17:08:26 +0900
+Message-ID: <1343376509-5881-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:55387 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752729Ab2GZWuI (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:44318 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752203Ab2G0IIg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 26 Jul 2012 18:50:08 -0400
-In-Reply-To: <5011AB03.2070900@gmail.com>
+	Fri, 27 Jul 2012 04:08:36 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M7T00BV37YBRVO0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Jul 2012 17:08:35 +0900 (KST)
+Received: from localhost.localdomain ([10.90.51.45])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M7T007T07Y88OC0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 27 Jul 2012 17:08:35 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, sakari.ailus@iki.fi
+To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: sachin.kamat@linaro.org, linux@arm.linux.org.uk, will.deacon@arm.com, Chanho Park <chanho61.park@samsung.com>
 
-Hi Sylwester,
+This patchset fixes irq numbers of ARM Performance Monitoring unit and enable it
+for Perf(Performance Counter) on the exynos 4 and 5. The exynos4 and 5 use 2
+more cpu core which has its own pmu. We should define pmu irq numbers according
+to the number of cpus.
+The pmu irq of exynos4 and 5 uses combiner-irq type.
+The exynos4412 especially has 4 extra combined irq groups. We should enable the
+groups beacuse two pmu irqs are there. To enable perf, we need also to implement
+a set_irq_affinity function about the combiner-irq.
+After this patch, we can use the perf for the exynos machine.
 
-On Thursday 26 July 2012 22:39:31 Sylwester Nawrocki wrote:
-> On 07/26/2012 05:21 PM, Laurent Pinchart wrote:
-> > On Friday 25 May 2012 21:52:48 Sylwester Nawrocki wrote:
-> >> The driver initializes all board related properties except the s_power()
-> >> callback to board code. The platforms that require this callback are not
-> >> supported by this driver yet for CONFIG_OF=y.
-> >> 
-> >> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
-> >> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
-> >> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
-> >> ---
-> >> 
-> >>   .../bindings/camera/samsung-s5k6aafx.txt           |   57 +++++++++
-> >>   drivers/media/video/s5k6aa.c                       |  129 +++++++++----
-> >>   2 files changed, 146 insertions(+), 40 deletions(-)
-> >>   create mode 100644
-> >> 
-> >> Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
-> >> 
-> >> diff --git
-> >> a/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
-> >> b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt new file
-> >> mode 100644
-> >> index 0000000..6685a9c
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
-> >> @@ -0,0 +1,57 @@
-> >> +Samsung S5K6AAFX camera sensor
-> >> +------------------------------
-> >> +
-> >> +Required properties:
-> >> +
-> >> +- compatible : "samsung,s5k6aafx";
-> >> +- reg : base address of the device on I2C bus;
-> >> +- video-itu-601-bus : parallel bus with HSYNC and VSYNC - ITU-R BT.601;
-> >> +- vdd_core-supply : digital core voltage supply 1.5V (1.4V to 1.6V);
-> >> +- vdda-supply : analog power voltage supply 2.8V (2.6V to 3.0V);
-> >> +- vdd_reg-supply : regulator input power voltage supply 1.8V (1.7V to
-> >> 1.9V) +		   or 2.8V (2.6V to 3.0);
-> >> +- vddio-supply : I/O voltage supply 1.8V (1.65V to 1.95V)
-> >> +		 or 2.8V (2.5V to 3.1V);
-> >> +
-> >> +Optional properties:
-> >> +
-> >> +- clock-frequency : the IP's main (system bus) clock frequency in Hz,
-> >> the default
-> > 
-> > Is that the input clock frequency ? Can't it vary ? Instead of accessing
-> > the
-> Yes, the description is incorrect in this patch, it should read:
-> 
-> +- clock-frequency : the sensor's master clock frequency in Hz;
-> 
-> and be a required property. As in this patch:
-> https://github.com/snawrocki/linux/commit/e8a5f890dec0d7414b656bb1d1ac97d5e7
-> abe563
-> 
-> It could vary (as this is a PLL input frequency), so probably a range would
-> be a better alternative. Given that host device won't always be able to set
-> this exact value...
+Changes from v1:
+ - Split arm-pmu init of exynos from plat-samsung
+ - Correct combined irqs of exynos4412
+ - Use soc_is_xxx function instead of CONFIG_XXX to identify dynamically
 
-A range sounds good, or perhaps a list of ranges. Sakari, what would you need 
-for the SMIA++ driver ?
+Chanho Park (3):
+  ARM: EXYNOS: Add set_irq_affinity function for combiner_irq
+  ARM: EXYNOS: Correct combined IRQs for exynos4412
+  ARM: EXYNOS: Enable PMUs for exynos4/5
 
-> > sensor clock frequency from the FIMC driver you should reference a clock
-> > in the sensor DT node. That obviously requires generic clock support,
-> > which might not be available for your platform yet (that's one of the
-> > reasons the OMAP3 ISP driver doesn't support DT yet).
-> 
-> I agree it might be better, but waiting unknown number of kernel releases
-> for the platforms to get converted to common clock API is not a good
-> alternative either. I guess we could have some transitional solutions while
-> other subsystems are getting adapted.
-
-I agree, we need an interim solution.
-
-> Yet we need to specify the clock frequency range per sensor, so
-> 
-> 1. either we specify it at a sensor node and host device driver references
->    it, or
-> 2. it could be added to a sensor specific child node of a host device
->    mode, and then only the host would reference it, and sensor would
->    reference a clock in its DT node; I guess it's not a problem that
->    in most cases the camera host device is a clock provider.
-
-The sensor will need to configure the clock rate, so a (list of) clock 
-frequency range(s) will be needed in the sensor node anyway. As an interim 
-solution the host can access that property. When the platform will be ported 
-to the common clock API no modification to the DT will be needed.
+ arch/arm/mach-exynos/common.c            |  137 +++++++++++++++++++++++++++---
+ arch/arm/mach-exynos/include/mach/irqs.h |   11 ++-
+ arch/arm/plat-samsung/devs.c             |    3 +-
+ 3 files changed, 135 insertions(+), 16 deletions(-)
 
 -- 
-Regards,
-
-Laurent Pinchart
+1.7.9.5
