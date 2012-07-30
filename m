@@ -1,47 +1,57 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 2/8 v2] ARM: EXYNOS5: Add machine data for USB 2.0
-Date: Sun, 29 Jul 2012 13:11:07 +0000
-Message-ID: <201207291311.08012.arnd@arndb.de>
-References: <1342866729-30460-1-git-send-email-gautam.vivek@samsung.com> <201207261124.50141.arnd@arndb.de> <CAFp+6iH0c=LogUXnpg0pD05X+mMGP9XiWDDxiTyNQAxJq_srJg@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="iso-8859-15"
-Content-Transfer-Encoding: 7bit
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/3] ARM: SAMSUNG: Move FIMD headers to include/video/
+Date: Mon, 30 Jul 2012 14:15:02 +0530
+Message-ID: <1343637905-17764-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.187]:60788 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753363Ab2G2UYL (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:14506 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752466Ab2G3I3l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 29 Jul 2012 16:24:11 -0400
-In-Reply-To: <CAFp+6iH0c=LogUXnpg0pD05X+mMGP9XiWDDxiTyNQAxJq_srJg@mail.gmail.com>
+	Mon, 30 Jul 2012 04:29:41 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautamvivek1987@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, l.majewski@samsung.com, kgene.kim@samsung.com, boyko.lee@samsung.com, devicetree-discuss@lists.ozlabs.org, yulgon.kim@samsung.com, joshi@samsung.com, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, Vivek Gautam <gautam.vivek@samsung.com>, olofj@google.com, a.kesavan@samsung.com, av.tikhomirov@samsung.com, prashanth.g@samsung.com, ajaykumar.rs@samsung.com, m.szyprowski@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, jg1.han@samsung.com
 
-On Saturday 28 July 2012, Vivek Gautam wrote:
-> > Can you pleae explain why this is done in the changelog?
-> >
-> > We try hard to do such mappings from the device driver instead,
-> > so I'm surprised that this is necessary fo rthe USB phy.
-> >
-> 
-> We are doing the mapping for device address in the driver, but this memory
-> mapping for USB PHY registers that need to be programmed by the software
-> is done here. This is similar to what we see for exynos4 also. Is it
-> something
-> that i can still change? Please suggest.
+This patchset moves the contents of regs-fb-v4.h and regs-fb.h from arch side
+to include/video/samsung_fimd.h
 
+This patchset is created and rebased against master branch of torvalds tree.
+Tested on smdk5250 board, build tested for other boards.
 
-Yes, I think the USB PHY handling for all exynos chips should be changed
-from an ad-hoc method to a more formal device driver. As I commented
-in another patch of this series, I think the main problem is that
-treat the USB PHY as a property of the "platform", which it really isn't.
+Leela Krishna Amudala (3):
+  Move FIMD register headers to include/video/
+  arm: samsung: Include the modified FIMD header file
+  driver: Include the modified FIMD header file
 
-We have a bunch of other USB PHY drivers for other platforms that are
-inside of the drivers/usb hierarchy. For all I know, there is no formal
-USB PHY driver API yet, and it seems that it would be a good idea to
-introduce one now, but for now, just move the code to
-drivers/usb/phy/ and make it one file per different kind of PHY.
-
-	Arnd
+ arch/arm/mach-exynos/mach-nuri.c                |    2 +-
+ arch/arm/mach-exynos/mach-origen.c              |    2 +-
+ arch/arm/mach-exynos/mach-smdk4x12.c            |    2 +-
+ arch/arm/mach-exynos/mach-smdkv310.c            |    2 +-
+ arch/arm/mach-exynos/mach-universal_c210.c      |    2 +-
+ arch/arm/mach-exynos/setup-fimd0.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-anw6410.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c                |    2 +-
+ arch/arm/mach-s3c64xx/mach-mini6410.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-ncp.c                |    2 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-smartq5.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-smartq7.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c           |    2 +-
+ arch/arm/mach-s5p64x0/mach-smdk6440.c           |    2 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c           |    2 +-
+ arch/arm/mach-s5pc100/mach-smdkc100.c           |    2 +-
+ arch/arm/mach-s5pv210/mach-aquila.c             |    2 +-
+ arch/arm/mach-s5pv210/mach-goni.c               |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c           |    2 +-
+ arch/arm/plat-samsung/include/plat/regs-fb-v4.h |  159 -------
+ arch/arm/plat-samsung/include/plat/regs-fb.h    |  403 -----------------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c        |    2 +-
+ drivers/video/s3c-fb.c                          |    2 +-
+ include/video/samsung_fimd.h                    |  533 +++++++++++++++++++++++
+ 27 files changed, 557 insertions(+), 586 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb.h
+ create mode 100644 include/video/samsung_fimd.h
