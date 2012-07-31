@@ -1,43 +1,54 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V2 2/5] include/video: Add Exynos5 specific FIMD register
- offsets
-Date: Tue, 31 Jul 2012 17:53:02 +0530
-Message-ID: <1343737385-23337-3-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH V2 4/5] driver: Include the modified FIMD header file
+Date: Tue, 31 Jul 2012 17:53:04 +0530
+Message-ID: <1343737385-23337-5-git-send-email-l.krishna@samsung.com>
 References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:18235 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:18258 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756100Ab2GaMHk (ORCPT
+	with ESMTP id S1756100Ab2GaMHn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 08:07:40 -0400
+	Tue, 31 Jul 2012 08:07:43 -0400
 In-reply-to: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, jg1.han@samsung.com, m.szyprowski@samsung.com
 
-Exynos5 has VIDTCON and VIDCON registers at different offsets
-from the previous SOCs. Hence, adding the macros.
+The fimd register headers have been moved to include/video/
+hence, modifying the driver files accordingly.
 
 Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 ---
- include/video/samsung_fimd.h |    7 +++++++
- 1 files changed, 7 insertions(+), 0 deletions(-)
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |    2 +-
+ drivers/video/s3c-fb.c                   |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/video/samsung_fimd.h b/include/video/samsung_fimd.h
-index e979f42..820f190 100644
---- a/include/video/samsung_fimd.h
-+++ b/include/video/samsung_fimd.h
-@@ -524,3 +524,10 @@
-  * 1110		-none-	 -none-	  -none-   -none-    -none-
-  * 1111		-none-	 -none-   -none-   -none-    -none-
- */
-+
-+/*EXYNOS5 FIMD REG OFFSET */
-+#define EXYNOS5_VIDTCON0	(0x20010)
-+#define EXYNOS5_VIDTCON1	(0x20014)
-+#define EXYNOS5_VIDTCON2	(0x20018)
-+#define EXYNOS5_VIDTCON3	(0x2001C)
-+#define EXYNOS5_VIDCON1		(0x20004)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 29fdbfe..8da90f9 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -20,7 +20,7 @@
+ #include <linux/pm_runtime.h>
+ 
+ #include <drm/exynos_drm.h>
+-#include <plat/regs-fb-v4.h>
++#include <video/samsung_fimd.h>
+ 
+ #include "exynos_drm_drv.h"
+ #include "exynos_drm_fbdev.h"
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 69bf9d0..1226fdd 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -26,7 +26,7 @@
+ #include <linux/pm_runtime.h>
+ 
+ #include <mach/map.h>
+-#include <plat/regs-fb-v4.h>
++#include <video/samsung_fimd.h>
+ #include <plat/fb.h>
+ 
+ /* This driver will export a number of framebuffer interfaces depending
 -- 
 1.7.0.4
