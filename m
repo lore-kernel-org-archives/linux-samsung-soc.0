@@ -1,71 +1,31 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree based
- instantiation
-Date: Tue, 31 Jul 2012 15:28:52 +0200
-Message-ID: <5017DD94.8040100@samsung.com>
-References: <4FBFE1EC.9060209@samsung.com> <3336686.TMIyoLDix4@avalon>
- <Pine.LNX.4.64.1207311326250.27888@axis700.grange> <7305269.IxTKyOjUBg@avalon>
- <Pine.LNX.4.64.1207311416160.27888@axis700.grange>
- <5017D3A5.5000503@samsung.com>
- <Pine.LNX.4.64.1207311452180.27888@axis700.grange>
+From: "roboth roli company" <info@roli.com>
+Subject: inquiry
+Date: Tue, 31 Jul 2012 16:25:19 +0700 (ICT)
+Message-ID: <49484.209.188.18.159.1343726719.squirrel__48901.8412809402$1343757500$gmane$org@123.30.138.40>
+Reply-To: robothrollilimited@yahoo.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.w1.samsung.com ([210.118.77.13]:46888 "EHLO
-	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752809Ab2GaN24 (ORCPT
+Received: from static.vdc.vn ([123.30.138.40]:46837 "EHLO nguyenkimonline.com"
+	rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
+	id S1753979Ab2GaR5w (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 09:28:56 -0400
-In-reply-to: <Pine.LNX.4.64.1207311452180.27888@axis700.grange>
+	Tue, 31 Jul 2012 13:57:52 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
 
-On 07/31/2012 02:59 PM, Guennadi Liakhovetski wrote:
-> On Tue, 31 Jul 2012, Sylwester Nawrocki wrote:
->> On 07/31/2012 02:26 PM, Guennadi Liakhovetski wrote:
->>>>>> But should we allow host probe() to succeed if the sensor isn't present ?
->>>>>
->>>>> I think we should, yes. The host hardware is there and functional -
->>>>> whether or not all or some of the clients are failing. Theoretically
->>>>> clients can also be hot-plugged. Whether and how many video device nodes
->>>>> we create, that's a different question.
->>>>
->>>> I think I can agree with you on this (although I could change my mind if this 
->>>> architecture turns out to result in unsolvable technical issues). That will 
->>>> involve a lot of work though.
->>>
->>> There's however at least one more gotcha that occurs to me with this 
->>> approach: if clients fail to probe, how do we find out about that and turn 
->>> clocks back off? One improvement to turning clocks on immediately in 
->>
->> Hmm, wouldn't it be the client that turns a clock on/off when needed ?
->> I'd like to preserve this functionality, so client drivers can have
->> full control on the power up/down sequences. While we are trying to
->> improve the current situation...
-> 
-> Eventually, when the clock API is available - yes, the client would just 
-> call clk_enable() / clk_disable(). But for now isn't it host's job to do 
-> that? Or you want to add new API for that?
 
-Indeed, looking at existing drivers, the clocks' handling is now mostly
-done in the host drivers. Only the omap3isp appears to do the right thing,
-i.e. delegating control over the clock to client drivers, but it does it
-with platform_data callbacks.
 
-We've already discussed adding a new API for that,
-http://www.mail-archive.com/linux-media@vger.kernel.org/msg35359.html
 
-However using common clock API and binding a clock to client device
-(either DT based or not) sounds like a best approach to me.
+i am robothroli, Purchase manager from roli Merchant Ltd. We are
+Import/export Company based in taiwan. We are interested in purchasing
+your product and I would like to make an inquiry. Please inform me on:
 
-Waiting for the common clock API to be generally available maybe we
-could add some clock ops at the v4l2_device ? Just a humble suggestion,
-I'm not sure whether it is really good and needed or not.
+Sample availability and price
+Minimum order quantity
+FOB Prices
 
---
-
-Thanks,
-Sylwester
+Sincerely
+Purchase Manager
+robothroli
