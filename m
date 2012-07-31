@@ -1,18 +1,19 @@
 From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [RFC/PATCH 02/13] media: s5p-csis: Add device tree support
-Date: Tue, 31 Jul 2012 11:34:43 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.1207311134000.27888@axis700.grange>
-References: <4FBFE1EC.9060209@samsung.com> <Pine.LNX.4.64.1207161031000.12302@axis700.grange>
- <5005ABF7.6020008@gmail.com> <24426306.kyhKLGOJzl@avalon>
+Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree
+ based instantiation
+Date: Tue, 31 Jul 2012 11:56:44 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.1207311144470.27888@axis700.grange>
+References: <4FBFE1EC.9060209@samsung.com> <Pine.LNX.4.64.1207161122390.12302@axis700.grange>
+ <50067F69.6080501@gmail.com> <6250402.9RzN62tRPe@avalon>
 Mime-Version: 1.0
 Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:49169 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.171]:50136 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752887Ab2GaJev (ORCPT
+	with ESMTP id S1751713Ab2GaJ4w (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 05:34:51 -0400
-In-Reply-To: <24426306.kyhKLGOJzl@avalon>
+	Tue, 31 Jul 2012 05:56:52 -0400
+In-Reply-To: <6250402.9RzN62tRPe@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -22,103 +23,65 @@ On Thu, 26 Jul 2012, Laurent Pinchart wrote:
 
 > Hi Sylwester,
 > 
-> On Tuesday 17 July 2012 20:16:23 Sylwester Nawrocki wrote:
-> > On 07/16/2012 10:55 AM, Guennadi Liakhovetski wrote:
-> > > Hi Sylwester
-> > > 
-> > > Thanks for your comments to my RFC and for pointing out to this your
-> > > earlier patch series. Unfortunately, I missed in in May, let me try to
-> > > provide some thoughts about this, we should really try to converge our
-> > > proposals. Maybe a discussion at KS would help too.
-> > 
-> > Thank you for the review. I was happy to see your RFC, as previously
-> > there seemed to be not much interest in DT among the media guys.
-> > Certainly, we need to work on a common approach to ensure interoperability
-> > of existing drivers and to avoid having people inventing different
-> > bindings for common features. I would also expect some share of device
-> > specific bindings, as diversity of media devices is significant.
-> > 
-> > I'd be great to discuss these things at KS, especially support for
-> > proper suspend/resume sequences. Also having common sessions with
-> > other subsystems folks, like ASoC, for example, might be a good idea.
-> > 
-> > I'm not sure if I'll be travelling to the KS though. :)
-> > 
+> On Wednesday 18 July 2012 11:18:33 Sylwester Nawrocki wrote:
+> > On 07/16/2012 11:42 AM, Guennadi Liakhovetski wrote:
 > > > On Fri, 25 May 2012, Sylwester Nawrocki wrote:
-> > >> s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
-> > >> (camera host interface DMA engine and image processor). This patch
-> > >> adds support for instantiating the MIPI-CSIS devices from DT and
-> > >> parsing all SoC and board specific properties from device tree.
-> > >> The MIPI DPHY control callback is now called directly from within
-> > >> the driver, the platform code must ensure this callback does the
-> > >> right thing for each SoC.
-> > >> 
-> > >> The cell-index property is used to ensure proper signal routing,
-> > >> from physical camera port, through MIPI-CSI2 receiver to the DMA
-> > >> engine (FIMC?). It's also helpful in exposing the device topology
-> > >> in user space at /dev/media? devnode (Media Controller API).
-> > >> 
-> > >> This patch also defines a common property ("data-lanes") for MIPI-CSI
-> > >> receivers and transmitters.
+> > >> The driver initializes all board related properties except the s_power()
+> > >> callback to board code. The platforms that require this callback are not
+> > >> supported by this driver yet for CONFIG_OF=y.
 > > >> 
 > > >> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> > >> Signed-off-by: Bartlomiej Zolnierkiewicz<b.zolnierkie@samsung.com>
 > > >> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
 > > >> ---
 > > >> 
-> > >>   Documentation/devicetree/bindings/video/mipi.txt   |    5 +
-> > >>   .../bindings/video/samsung-mipi-csis.txt           |   47 ++++++++++
-> > >>   drivers/media/video/s5p-fimc/mipi-csis.c           |   97
-> > >>   +++++++++++++++----- drivers/media/video/s5p-fimc/mipi-csis.h         
-> > >>    |    1 +
-> > >>   4 files changed, 126 insertions(+), 24 deletions(-)
-> > >>   create mode 100644 Documentation/devicetree/bindings/video/mipi.txt
+> > >>   .../bindings/camera/samsung-s5k6aafx.txt           |   57 +++++++++
+> > >>   drivers/media/video/s5k6aa.c                       |  129
+> > >>   ++++++++++++++------ 2 files changed, 146 insertions(+), 40
+> > >>   deletions(-)
 > > >>   create mode 100644
-> > >>   Documentation/devicetree/bindings/video/samsung-mipi-csis.txt>> 
-> > >> diff --git a/Documentation/devicetree/bindings/video/mipi.txt
-> > >> b/Documentation/devicetree/bindings/video/mipi.txt new file mode 100644
-> > >> index 0000000..5aed285
+> > >>   Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt>> 
+> > >> diff --git
+> > >> a/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
+> > >> b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt new file
+> > >> mode 100644
+> > >> index 0000000..6685a9c
 > > >> --- /dev/null
-> > >> +++ b/Documentation/devicetree/bindings/video/mipi.txt
-> > >> @@ -0,0 +1,5 @@
-> > >> +Common properties of MIPI-CSI1 and MIPI-CSI2 receivers and transmitters
+> > >> +++ b/Documentation/devicetree/bindings/camera/samsung-s5k6aafx.txt
+> > >> @@ -0,0 +1,57 @@
+> > >> +Samsung S5K6AAFX camera sensor
+> > >> +------------------------------
 > > >> +
-> > >> + - data-lanes : number of differential data lanes wired and actively
-> > >> used in
-> > >> +		communication between the transmitter and the receiver, this
-> > >> +		excludes the clock lane;
+> > >> +Required properties:
+> > >> +
+> > >> +- compatible : "samsung,s5k6aafx";
+> > >> +- reg : base address of the device on I2C bus;
 > > > 
-> > > Wouldn't it be better to use the standard "bus-width" DT property?
+> > > You said you ended up putting your sensors outside of I2C busses, is this
+> > > one of changes, that are present in your git-tree but not in this series?
 > > 
-> > I can't see any problems with using "bus-width". It seems sufficient
-> > and could indeed be better, without a need to invent new MIPI-CSI
-> > specific names. That was my first RFC on that and my perspective
-> > wasn't probably broad enough. :)
+> > No, I must have been not clear enough on that. Our idea was to keep
+> > I2C slave device nodes as an I2C controller's child nodes, according
+> > to the current convention.
+> > The 'sensor' nodes (the 'camera''s children) would only contain a phandle
+> > to a respective I2C slave node.
+> > 
+> > This implies that we cannot access I2C bus in I2C client's device probe()
+> > callback. An actual H/W access could begin only from within and after
+> > invocation of v4l2_subdev .registered callback..
 > 
-> What about CSI receivers that can reroute the lanes internally ? We would need 
-> to specify lane indices for each lane then, maybe with something like
-> 
-> clock-lane = <0>;
+> That's how I've envisioned the DT bindings for sensors as well, this sounds 
+> good. The real challenge will be to get hold of the subdev to register it 
+> without race conditions.
 
-"clock-lanes" for uniformity?
-
-> data-lanes = <2 3 1>;
-
-Are there transmitters, that can reroute lanes too?
+Hrm... That's how early pre-subdev versions of soc-camera used to work, 
+that's where all the <device>_video_probe() functions come from. But then 
+we switched to dynamic i2c device registration. Do we want to switch all 
+drivers back now?... Couldn't we "temporarily" use references from subdevs 
+to hosts until the clock API is available?
 
 Thanks
 Guennadi
-
-> For receivers that can't reroute lanes internally, the data-lanes property 
-> would be need to specify lanes in sequence.
-> 
-> data-lanes = <1 2 3>;
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
-> 
-
 ---
 Guennadi Liakhovetski, Ph.D.
 Freelance Open-Source Software Developer
