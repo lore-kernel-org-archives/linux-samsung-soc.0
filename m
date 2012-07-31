@@ -1,101 +1,125 @@
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: RE: [PATCH 1/3] Move FIMD register headers to include/video/
-Date: Tue, 31 Jul 2012 10:32:06 +0200
-Message-ID: <033c01cd6ef6$fb514570$f1f3d050$%szyprowski@samsung.com>
-References: <1343637905-17764-1-git-send-email-l.krishna@samsung.com>
- <1343637905-17764-2-git-send-email-l.krishna@samsung.com>
- <000001cd6e30$da849520$8f8dbf60$%han@samsung.com>
- <CAL1wa8e7Joghf9S=SgbQLJFWcYOrP5uK6qYXsV_N6rX1MVEALg@mail.gmail.com>
- <000a01cd6eb6$2113a050$633ae0f0$%han@samsung.com>
- <032201cd6ee5$ad4a0d50$07de27f0$%szyprowski@samsung.com>
- <000701cd6ef5$24315c70$6c941550$%han@samsung.com>
+From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
+Subject: Re: [RFC/PATCH 02/13] media: s5p-csis: Add device tree support
+Date: Tue, 31 Jul 2012 11:34:43 +0200 (CEST)
+Message-ID: <Pine.LNX.4.64.1207311134000.27888@axis700.grange>
+References: <4FBFE1EC.9060209@samsung.com> <Pine.LNX.4.64.1207161031000.12302@axis700.grange>
+ <5005ABF7.6020008@gmail.com> <24426306.kyhKLGOJzl@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51953 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751339Ab2GaIcV (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.186]:49169 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752887Ab2GaJev (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 04:32:21 -0400
-In-reply-to: <000701cd6ef5$24315c70$6c941550$%han@samsung.com>
-Content-language: pl
+	Tue, 31 Jul 2012 05:34:51 -0400
+In-Reply-To: <24426306.kyhKLGOJzl@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
 
-Hello,
+On Thu, 26 Jul 2012, Laurent Pinchart wrote:
 
-On Tuesday, July 31, 2012 10:19 AM Jingoo Han wrote:
-
-> On Tuesday, July 31, 2012 3:28 PM Marek Szyprowski wrote:
-> >
-> > Hello,
-> >
-> > On Tuesday, July 31, 2012 2:48 AM Jingoo Han wrote:
-> >
-> > > On Monday, July 30, 2012 8:16 PM, Leela Krishna Amudala wrote:
-> > > >
-> > > > Hello Jingoo Han,
-> > > >
-> > > > On Mon, Jul 30, 2012 at 2:23 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> > > > > On Monday, July 30, 2012 5:45 PM, Leela Krishna Amudala wrote:
-> > > > >>
-> > > > >> Moved the contents of regs-fb-v4.h and regs-fb.h from arch side
-> > > > >> to include/video/samsung_fimd.h
-> > > > >>
-> > > > >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> > > > >> ---
-> > > > >>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |  159 -------
-> > > > >>  arch/arm/plat-samsung/include/plat/regs-fb.h    |  403 -----------------
-> > > > >>  include/video/samsung_fimd.h                    |  533 +++++++++++++++++++++++
-> > > > >>  3 files changed, 533 insertions(+), 562 deletions(-)
-> > > > >>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-> > > > >>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb.h
-> > > > >>  create mode 100644 include/video/samsung_fimd.h
-> > > > >>
-> > > > >> +*/
-> > > > >> +
-> > > > >> +/*FIMD V8 REG OFFSET */
-> > > > >> +#define FIMD_V8_VIDTCON0     (0x20010)
-> > > > >> +#define FIMD_V8_VIDTCON1     (0x20014)
-> > > > >> +#define FIMD_V8_VIDTCON2     (0x20018)
-> > > > >> +#define FIMD_V8_VIDTCON3     (0x2001C)
-> > > > >> +#define FIMD_V8_VIDCON1              (0x20004)
-> > >
-> > >
-> > > How about using soc_is_exynos5250()?
-> > >
-> > > +#define VIDTCON0				(soc_is_exynos5250() ? \
-> > > +						(0x20010) : (0x10))
-> > >
-> > > In this case, the FIMD driver does not need to change.
-> > > Also, one binary is available.
-> >
-> > Please don't mix two methods of runtime detection. FIMD driver (s3c-fb) already
-> > has runtime hw detection based on platform device id. Adding such detection for
-> > exynos5 to DRM FIMD driver should not be a big issue too.
+> Hi Sylwester,
 > 
-> Marek,
-> Then, do you want use like this?
+> On Tuesday 17 July 2012 20:16:23 Sylwester Nawrocki wrote:
+> > On 07/16/2012 10:55 AM, Guennadi Liakhovetski wrote:
+> > > Hi Sylwester
+> > > 
+> > > Thanks for your comments to my RFC and for pointing out to this your
+> > > earlier patch series. Unfortunately, I missed in in May, let me try to
+> > > provide some thoughts about this, we should really try to converge our
+> > > proposals. Maybe a discussion at KS would help too.
+> > 
+> > Thank you for the review. I was happy to see your RFC, as previously
+> > there seemed to be not much interest in DT among the media guys.
+> > Certainly, we need to work on a common approach to ensure interoperability
+> > of existing drivers and to avoid having people inventing different
+> > bindings for common features. I would also expect some share of device
+> > specific bindings, as diversity of media devices is significant.
+> > 
+> > I'd be great to discuss these things at KS, especially support for
+> > proper suspend/resume sequences. Also having common sessions with
+> > other subsystems folks, like ASoC, for example, might be a good idea.
+> > 
+> > I'm not sure if I'll be travelling to the KS though. :)
+> > 
+> > > On Fri, 25 May 2012, Sylwester Nawrocki wrote:
+> > >> s5p-csis is platform device driver for MIPI-CSI frontend to the FIMC
+> > >> (camera host interface DMA engine and image processor). This patch
+> > >> adds support for instantiating the MIPI-CSIS devices from DT and
+> > >> parsing all SoC and board specific properties from device tree.
+> > >> The MIPI DPHY control callback is now called directly from within
+> > >> the driver, the platform code must ensure this callback does the
+> > >> right thing for each SoC.
+> > >> 
+> > >> The cell-index property is used to ensure proper signal routing,
+> > >> from physical camera port, through MIPI-CSI2 receiver to the DMA
+> > >> engine (FIMC?). It's also helpful in exposing the device topology
+> > >> in user space at /dev/media? devnode (Media Controller API).
+> > >> 
+> > >> This patch also defines a common property ("data-lanes") for MIPI-CSI
+> > >> receivers and transmitters.
+> > >> 
+> > >> Signed-off-by: Sylwester Nawrocki<s.nawrocki@samsung.com>
+> > >> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> > >> ---
+> > >> 
+> > >>   Documentation/devicetree/bindings/video/mipi.txt   |    5 +
+> > >>   .../bindings/video/samsung-mipi-csis.txt           |   47 ++++++++++
+> > >>   drivers/media/video/s5p-fimc/mipi-csis.c           |   97
+> > >>   +++++++++++++++----- drivers/media/video/s5p-fimc/mipi-csis.h         
+> > >>    |    1 +
+> > >>   4 files changed, 126 insertions(+), 24 deletions(-)
+> > >>   create mode 100644 Documentation/devicetree/bindings/video/mipi.txt
+> > >>   create mode 100644
+> > >>   Documentation/devicetree/bindings/video/samsung-mipi-csis.txt>> 
+> > >> diff --git a/Documentation/devicetree/bindings/video/mipi.txt
+> > >> b/Documentation/devicetree/bindings/video/mipi.txt new file mode 100644
+> > >> index 0000000..5aed285
+> > >> --- /dev/null
+> > >> +++ b/Documentation/devicetree/bindings/video/mipi.txt
+> > >> @@ -0,0 +1,5 @@
+> > >> +Common properties of MIPI-CSI1 and MIPI-CSI2 receivers and transmitters
+> > >> +
+> > >> + - data-lanes : number of differential data lanes wired and actively
+> > >> used in
+> > >> +		communication between the transmitter and the receiver, this
+> > >> +		excludes the clock lane;
+> > > 
+> > > Wouldn't it be better to use the standard "bus-width" DT property?
+> > 
+> > I can't see any problems with using "bus-width". It seems sufficient
+> > and could indeed be better, without a need to invent new MIPI-CSI
+> > specific names. That was my first RFC on that and my perspective
+> > wasn't probably broad enough. :)
 > 
-> #define VIDTCON0				(0x10)
-> +#define FIMD_V8_VIDTCON0			(0x20010)
+> What about CSI receivers that can reroute the lanes internally ? We would need 
+> to specify lane indices for each lane then, maybe with something like
 > 
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -1924,7 +1924,7 @@ static struct s3c_fb_driverdata s3c_fb_data_exynos4 = {
->  static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
->         .variant = {
->                 .nr_windows     = 5,
-> -               .vidtcon        = VIDTCON0,
-> +               .vidtcon        = FIMD_V8_VIDTCON0,
+> clock-lane = <0>;
 
-Yes, this method looks good imo. Maybe even having something like vidtcon_base in 
-variant structure will be enough to cover all VIDTCON0-3 registers.
+"clock-lanes" for uniformity?
 
-Best regards
--- 
-Marek Szyprowski
-Samsung Poland R&D Center
+> data-lanes = <2 3 1>;
+
+Are there transmitters, that can reroute lanes too?
+
+Thanks
+Guennadi
+
+> For receivers that can't reroute lanes internally, the data-lanes property 
+> would be need to specify lanes in sequence.
+> 
+> data-lanes = <1 2 3>;
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
+> 
+
+---
+Guennadi Liakhovetski, Ph.D.
+Freelance Open-Source Software Developer
+http://www.open-technology.de/
