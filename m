@@ -1,31 +1,70 @@
-From: "roboth roli company" <info@roli.com>
-Subject: inquiry
-Date: Tue, 31 Jul 2012 16:25:19 +0700 (ICT)
-Message-ID: <49484.209.188.18.159.1343726719.squirrel__48901.8412809402$1343757500$gmane$org@123.30.138.40>
-Reply-To: robothrollilimited@yahoo.com
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [RFC/PATCH 02/13] media: s5p-csis: Add device tree support
+Date: Tue, 31 Jul 2012 23:37:20 +0200
+Message-ID: <1964196.hivxX7VrnL@avalon>
+References: <4FBFE1EC.9060209@samsung.com> <4835930.8zRiqxUPR0@avalon> <5017D1CB.80709@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from static.vdc.vn ([123.30.138.40]:46837 "EHLO nguyenkimonline.com"
-	rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org with ESMTP
-	id S1753979Ab2GaR5w (ORCPT
+Received: from perceval.ideasonboard.com ([95.142.166.194]:60800 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751789Ab2GaVhP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 13:57:52 -0400
+	Tue, 31 Jul 2012 17:37:15 -0400
+In-Reply-To: <5017D1CB.80709@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
 
+Hi Sylwester,
 
+On Tuesday 31 July 2012 14:38:35 Sylwester Nawrocki wrote:
+> On 07/31/2012 01:05 PM, Laurent Pinchart wrote:
+> >>>>> What about CSI receivers that can reroute the lanes internally ? We
+> >>>>> would need to specify lane indices for each lane then, maybe with
+> >>>>> something like
+> >>>>> 
+> >>>>> clock-lane =<0>;
+> >>>>> data-lanes =<2 3 1>;
+> >>>> 
+> >>>> Sounds good to me. And the clock-lane could be made optional, as not
+> >>>> all devices would need it.
+> >>>> 
+> >>>> However, as far as I can see, there is currently no generic API for
+> >>>> handling this kind of data structure. E.g. number of cells for the
+> >>>> "interrupts" property is specified with an additional
+> >>>> "#interrupt-cells" property.
+> >>>> 
+> >>>> It would have been much easier to handle something like:
+> >>>> 
+> >>>> data-lanes = <2>, <3>, <1>;
+> >>>> 
+> >>>> i.e. an array of the lane indexes.
+> >>> 
+> >>> I'm fine with that.
+> >> 
+> >> ...on a second thought: shouldn't this be handled by pinctrl? Or is it
+> >> some CSI-2 module internal lane switching, not the global SoC pin
+> >> function configuration?
+> > 
+> > On the hardware I came across, it's handled by the CSI2 receiver, not the
+> > SoC pinmux feature.
+> 
+> Same here. Is there any hardware known to mux those MIPI-CSI
+> D-PHY high speed differential signals with general purpose IO pins ?
+> 
+> Or are there mostly dedicated pins used ?
 
+The OMAP3 multiplexes the CSI pins with other functions.
 
-i am robothroli, Purchase manager from roli Merchant Ltd. We are
-Import/export Company based in taiwan. We are interested in purchasing
-your product and I would like to make an inquiry. Please inform me on:
+> However, if there are cases the lane configuration is done solely at CSI2
+> receiver level, there seems little point in involving the pinctrl API.
 
-Sample availability and price
-Minimum order quantity
-FOB Prices
+The OMAP3 handles lane routing in the CSI2 receiver.
 
-Sincerely
-Purchase Manager
-robothroli
+-- 
+Regards,
+
+Laurent Pinchart
