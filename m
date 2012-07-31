@@ -1,18 +1,18 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC/PATCH 02/13] media: s5p-csis: Add device tree support
-Date: Tue, 31 Jul 2012 23:37:20 +0200
-Message-ID: <1964196.hivxX7VrnL@avalon>
-References: <4FBFE1EC.9060209@samsung.com> <4835930.8zRiqxUPR0@avalon> <5017D1CB.80709@samsung.com>
+Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree based instantiation
+Date: Tue, 31 Jul 2012 23:46:46 +0200
+Message-ID: <5948378.3Gs2pPiBLX@avalon>
+References: <4FBFE1EC.9060209@samsung.com> <Pine.LNX.4.64.1207311452180.27888@axis700.grange> <5017DD94.8040100@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:60800 "EHLO
+Received: from perceval.ideasonboard.com ([95.142.166.194]:46815 "EHLO
 	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751789Ab2GaVhP (ORCPT
+	with ESMTP id S1754370Ab2GaVqk (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 17:37:15 -0400
-In-Reply-To: <5017D1CB.80709@samsung.com>
+	Tue, 31 Jul 2012 17:46:40 -0400
+In-Reply-To: <5017DD94.8040100@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Sylwester Nawrocki <s.nawrocki@samsung.com>
@@ -20,49 +20,53 @@ Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Sylwester Nawrocki <sylvester
 
 Hi Sylwester,
 
-On Tuesday 31 July 2012 14:38:35 Sylwester Nawrocki wrote:
-> On 07/31/2012 01:05 PM, Laurent Pinchart wrote:
-> >>>>> What about CSI receivers that can reroute the lanes internally ? We
-> >>>>> would need to specify lane indices for each lane then, maybe with
-> >>>>> something like
+On Tuesday 31 July 2012 15:28:52 Sylwester Nawrocki wrote:
+> On 07/31/2012 02:59 PM, Guennadi Liakhovetski wrote:
+> > On Tue, 31 Jul 2012, Sylwester Nawrocki wrote:
+> >> On 07/31/2012 02:26 PM, Guennadi Liakhovetski wrote:
+> >>>>>> But should we allow host probe() to succeed if the sensor isn't
+> >>>>>> present ?
 > >>>>> 
-> >>>>> clock-lane =<0>;
-> >>>>> data-lanes =<2 3 1>;
+> >>>>> I think we should, yes. The host hardware is there and functional -
+> >>>>> whether or not all or some of the clients are failing. Theoretically
+> >>>>> clients can also be hot-plugged. Whether and how many video device
+> >>>>> nodes
+> >>>>> we create, that's a different question.
 > >>>> 
-> >>>> Sounds good to me. And the clock-lane could be made optional, as not
-> >>>> all devices would need it.
-> >>>> 
-> >>>> However, as far as I can see, there is currently no generic API for
-> >>>> handling this kind of data structure. E.g. number of cells for the
-> >>>> "interrupts" property is specified with an additional
-> >>>> "#interrupt-cells" property.
-> >>>> 
-> >>>> It would have been much easier to handle something like:
-> >>>> 
-> >>>> data-lanes = <2>, <3>, <1>;
-> >>>> 
-> >>>> i.e. an array of the lane indexes.
+> >>>> I think I can agree with you on this (although I could change my mind
+> >>>> if this architecture turns out to result in unsolvable technical
+> >>>> issues). That will involve a lot of work though.
 > >>> 
-> >>> I'm fine with that.
+> >>> There's however at least one more gotcha that occurs to me with this
+> >>> approach: if clients fail to probe, how do we find out about that and
+> >>> turn
+> >>> clocks back off? One improvement to turning clocks on immediately in
 > >> 
-> >> ...on a second thought: shouldn't this be handled by pinctrl? Or is it
-> >> some CSI-2 module internal lane switching, not the global SoC pin
-> >> function configuration?
+> >> Hmm, wouldn't it be the client that turns a clock on/off when needed ?
+> >> I'd like to preserve this functionality, so client drivers can have
+> >> full control on the power up/down sequences. While we are trying to
+> >> improve the current situation...
 > > 
-> > On the hardware I came across, it's handled by the CSI2 receiver, not the
-> > SoC pinmux feature.
+> > Eventually, when the clock API is available - yes, the client would just
+> > call clk_enable() / clk_disable(). But for now isn't it host's job to do
+> > that? Or you want to add new API for that?
 > 
-> Same here. Is there any hardware known to mux those MIPI-CSI
-> D-PHY high speed differential signals with general purpose IO pins ?
+> Indeed, looking at existing drivers, the clocks' handling is now mostly
+> done in the host drivers. Only the omap3isp appears to do the right thing,
+> i.e. delegating control over the clock to client drivers, but it does it
+> with platform_data callbacks.
 > 
-> Or are there mostly dedicated pins used ?
+> We've already discussed adding a new API for that,
+> http://www.mail-archive.com/linux-media@vger.kernel.org/msg35359.html
+> 
+> However using common clock API and binding a clock to client device
+> (either DT based or not) sounds like a best approach to me.
+> 
+> Waiting for the common clock API to be generally available maybe we
+> could add some clock ops at the v4l2_device ? Just a humble suggestion,
+> I'm not sure whether it is really good and needed or not.
 
-The OMAP3 multiplexes the CSI pins with other functions.
-
-> However, if there are cases the lane configuration is done solely at CSI2
-> receiver level, there seems little point in involving the pinctrl API.
-
-The OMAP3 handles lane routing in the CSI2 receiver.
+I'm fine with that (or something similar) as an interim solution.
 
 -- 
 Regards,
