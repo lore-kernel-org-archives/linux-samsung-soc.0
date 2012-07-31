@@ -1,62 +1,49 @@
-From: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree
- based instantiation
-Date: Tue, 31 Jul 2012 14:59:45 +0200 (CEST)
-Message-ID: <Pine.LNX.4.64.1207311452180.27888@axis700.grange>
-References: <4FBFE1EC.9060209@samsung.com> <3336686.TMIyoLDix4@avalon>
- <Pine.LNX.4.64.1207311326250.27888@axis700.grange> <7305269.IxTKyOjUBg@avalon>
- <Pine.LNX.4.64.1207311416160.27888@axis700.grange> <5017D3A5.5000503@samsung.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: Re: [PATCH V2 2/5] include/video: Add Exynos5 specific FIMD register
+ offsets
+Date: Tue, 31 Jul 2012 15:03:47 +0200
+Message-ID: <5017D7B3.1080001@samsung.com>
+References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
+ <1343737385-23337-3-git-send-email-l.krishna@samsung.com>
+ <5017D4D7.3040303@mvista.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.9]:52299 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753356Ab2GaM7s (ORCPT
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:34880 "EHLO
+	mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753356Ab2GaNDv (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 08:59:48 -0400
-In-Reply-To: <5017D3A5.5000503@samsung.com>
+	Tue, 31 Jul 2012 09:03:51 -0400
+In-reply-to: <5017D4D7.3040303@mvista.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+To: Sergei Shtylyov <sshtylyov@mvista.com>, Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, kgene.kim@samsung.com, jg1.han@samsung.com, joshi@samsung.com, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, ben-linux@fluff.org, m.szyprowski@samsung.com
 
-On Tue, 31 Jul 2012, Sylwester Nawrocki wrote:
+Hi,
 
-> On 07/31/2012 02:26 PM, Guennadi Liakhovetski wrote:
-> >>>> But should we allow host probe() to succeed if the sensor isn't present ?
-> >>>
-> >>> I think we should, yes. The host hardware is there and functional -
-> >>> whether or not all or some of the clients are failing. Theoretically
-> >>> clients can also be hot-plugged. Whether and how many video device nodes
-> >>> we create, that's a different question.
-> >>
-> >> I think I can agree with you on this (although I could change my mind if this 
-> >> architecture turns out to result in unsolvable technical issues). That will 
-> >> involve a lot of work though.
-> > 
-> > There's however at least one more gotcha that occurs to me with this 
-> > approach: if clients fail to probe, how do we find out about that and turn 
-> > clocks back off? One improvement to turning clocks on immediately in 
+On 07/31/2012 02:51 PM, Sergei Shtylyov wrote:
+>> +/*EXYNOS5 FIMD REG OFFSET */
+
+How about changing it to, e.g.
+
+/* EXYNOS5 specific register offset definitions */
+
+(but just in case you happen to resend this patch series)
+
+>> +#define EXYNOS5_VIDTCON0    (0x20010)
+>> +#define EXYNOS5_VIDTCON1    (0x20014)
+>> +#define EXYNOS5_VIDTCON2    (0x20018)
+>> +#define EXYNOS5_VIDTCON3    (0x2001C)
+>> +#define EXYNOS5_VIDCON1        (0x20004)
 > 
-> Hmm, wouldn't it be the client that turns a clock on/off when needed ?
-> I'd like to preserve this functionality, so client drivers can have
-> full control on the power up/down sequences. While we are trying to
-> improve the current situation...
+>    Parens not needed around simple literals.
 
-Eventually, when the clock API is available - yes, the client would just 
-call clk_enable() / clk_disable(). But for now isn't it host's job to do 
-that? Or you want to add new API for that?
+Yes, I agree it looks insane. But, I think we could allow
+this for consistency with the remaining definitions.
 
-Thanks
-Guennadi
+-- 
 
-> > host's probe() is to only do it in a BUS_NOTIFY_BIND_DRIVER notifier. But 
-> > how do we find out, that probing failed? No notifier is called in this 
-> > case. We could use a time-out, but that's ugly. I think, we could ever 
-> > request a new notifier for this case. We could also require client drivers 
-> > to call a V4L2 function in this case, but that's not very pretty either.
-
----
-Guennadi Liakhovetski, Ph.D.
-Freelance Open-Source Software Developer
-http://www.open-technology.de/
+Regards,
+Sylwester
