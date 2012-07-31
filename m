@@ -1,66 +1,103 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [RFC/PATCH 05/13] media: s5p-fimc: Add device tree support for
- FIMC devices
-Date: Mon, 30 Jul 2012 23:35:37 +0200
-Message-ID: <5016FE29.9020406@gmail.com>
-References: <4FBFE1EC.9060209@samsung.com> <Pine.LNX.4.64.1207180958540.8472@axis700.grange> <5007143E.8040807@gmail.com> <3360710.ek62A7CVxd@avalon>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: RE: [PATCH 1/3] Move FIMD register headers to include/video/
+Date: Tue, 31 Jul 2012 09:47:57 +0900
+Message-ID: <000a01cd6eb6$2113a050$633ae0f0$%han@samsung.com>
+References: <1343637905-17764-1-git-send-email-l.krishna@samsung.com>
+ <1343637905-17764-2-git-send-email-l.krishna@samsung.com>
+ <000001cd6e30$da849520$8f8dbf60$%han@samsung.com>
+ <CAL1wa8e7Joghf9S=SgbQLJFWcYOrP5uK6qYXsV_N6rX1MVEALg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:57776 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752524Ab2G3Vfl (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:60007 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752959Ab2GaAsA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 30 Jul 2012 17:35:41 -0400
-In-Reply-To: <3360710.ek62A7CVxd@avalon>
+	Mon, 30 Jul 2012 20:48:00 -0400
+In-reply-to: <CAL1wa8e7Joghf9S=SgbQLJFWcYOrP5uK6qYXsV_N6rX1MVEALg@mail.gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com, Karol Lewandowski <k.lewandowsk@samsung.com>
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Laurent,
-
-On 07/26/2012 04:54 PM, Laurent Pinchart wrote:
-> On Wednesday 18 July 2012 21:53:34 Sylwester Nawrocki wrote:
->> I think we need a one combined RFC and continue discussions in one thread.
+On Monday, July 30, 2012 8:16 PM, Leela Krishna Amudala wrote:
 > 
-> Agreed.
+> Hello Jingoo Han,
 > 
->> Still, our proposals are quite different, but I believe we need something
->> in between. I presume we should focus more to have common bindings for
->> subdevs that are reused among different host/ISP devices, i.e. sensors and
->> encoders. For simple host interfaces we can likely come up with common
->> binding patterns, but more complex processing pipelines may require
->> a sort of individual approach.
->>
->> The suspend/resume handling is still something I don't have an idea
->> on how the solution for might look like..
->> Instantiating all devices from a top level driver could help, but it
->> is only going to work when platforms are converted to the common clock
->> framework and have their clocks instantiated from device tree.
->>
->> This week I'm out of office, and next one or two I have some pending
->> assignments. So there might be some delay before I can dedicate some
->> reasonable amount of time to carry on with that topic.
->>
->> I unfortunately won't be attending KS this time.
+> On Mon, Jul 30, 2012 at 2:23 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> > On Monday, July 30, 2012 5:45 PM, Leela Krishna Amudala wrote:
+> >>
+> >> Moved the contents of regs-fb-v4.h and regs-fb.h from arch side
+> >> to include/video/samsung_fimd.h
+> >>
+> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> >> ---
+> >>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |  159 -------
+> >>  arch/arm/plat-samsung/include/plat/regs-fb.h    |  403 -----------------
+> >>  include/video/samsung_fimd.h                    |  533 +++++++++++++++++++++++
+> >>  3 files changed, 533 insertions(+), 562 deletions(-)
+> >>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+> >>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb.h
+> >>  create mode 100644 include/video/samsung_fimd.h
+> >>
+> >> +*/
+> >> +
+> >> +/*FIMD V8 REG OFFSET */
+> >> +#define FIMD_V8_VIDTCON0     (0x20010)
+> >> +#define FIMD_V8_VIDTCON1     (0x20014)
+> >> +#define FIMD_V8_VIDTCON2     (0x20018)
+> >> +#define FIMD_V8_VIDTCON3     (0x2001C)
+> >> +#define FIMD_V8_VIDCON1              (0x20004)
+
+
+How about using soc_is_exynos5250()?
+
++#define VIDTCON0				(soc_is_exynos5250() ? \
++						(0x20010) : (0x10))
+
+In this case, the FIMD driver does not need to change.
+Also, one binary is available.
+
+
+Best regards,
+Jingoo Han
+
+
+> >
+> >
+> > CC'ed Marek.
+> >
+> > To Leela Krishna Amudala,
+> >
+> > Don't add these definitions for FIMD_V8_xxx registers, which arenot related to current "regs-fb-v4.h
+> and regs-fb.h".
+> > Just "move" and "merge" regs-fb-v4.h and regs-fb.h to one header file, not "add" new definitions.
+> > If you want to add these definitions, please make new patch for this.
+> >
 > 
-> That's bad news :-( I still think this topic should be discussed during KS, I
-
-Yeah, shit happens.. :) I guess -ENOBUDGET this time... I didn't really 
-plan early to attend KS, I might be coming to ELCE though. However it's 
-a rather distant event and we'll probably get most things settled by 
-that time.
-
-> expect several developers to be interested. The media workshop might not be
-> the best venue though, as we might need quite a lot of time.
->
-> Until KS let's continue the discussion by e-mail.
-
-OK, thank you for taking time to review the RFCs.
-
---
-
-Regards,
-Sylwester
+> Will do it in the suggested way,
+> 
+> 
+> > Also, "#define FIMD_V8_xxx" is ugly.
+> > I think that there is better way.
+> > Please, find other way.
+> >
+> >
+> 
+> I used FIMD_V8_xxx instead of  EXYNOS5_FIMD_*, because in future,
+> there is a possibility that version 8 FIMD can be used in other
+> application processors also.
+> Thanks for reviewing the patch.
+> 
+> Best Wishes,
+> Leela Krishna.
+> 
+> >> --
+> >> 1.7.0.4
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-fbdev" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
