@@ -1,91 +1,33 @@
 From: Padma Venkat <padma.kvr@gmail.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Add static mapping for EXYNOS Audio Subsystem
-Date: Wed, 1 Aug 2012 18:45:20 +0530
-Message-ID: <CAAgF-BcoSoUGjPaFaa2Jd=j+8DYSZk0u7dY65dBWzvnHF0fR9g@mail.gmail.com>
-References: <1343218009-30400-1-git-send-email-padma.v@samsung.com>
-	<030e01cd6f95$68272ae0$387580a0$%kim@samsung.com>
+Subject: Re: Re: [PATCH] ARM: EXYNOS: Add I2S SFR base addresses
+Date: Wed, 1 Aug 2012 18:51:20 +0530
+Message-ID: <CAAgF-Bd+R=a_AxE+CCBqT25Bzt5zMzqR0U3Jz60dRVO90MOcwA@mail.gmail.com>
+References: <0M7R00MY1GHTPK20@ms14.samsung.com>
+	<030801cd6f92$55370570$ffa51050$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:64175 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751356Ab2HANPV (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:60019 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752081Ab2HANVV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Aug 2012 09:15:21 -0400
-Received: by lahd3 with SMTP id d3so4649532lah.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Aug 2012 06:15:20 -0700 (PDT)
-In-Reply-To: <030e01cd6f95$68272ae0$387580a0$%kim@samsung.com>
+	Wed, 1 Aug 2012 09:21:21 -0400
+Received: by lbbgm6 with SMTP id gm6so334091lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Aug 2012 06:21:20 -0700 (PDT)
+In-Reply-To: <030801cd6f92$55370570$ffa51050$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rcsekar@samsung.com, sbkim73@samsung.com, sangsu4u.park@samsung.com, ben-linux@fluff.org, olofj@google.com, thutt@chromium.org, joshi@samsung.com
+Cc: padma.v@samsung.com, Sachin Kamat <sachin.kamat@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, CHANDRASEKAR RAMAKRISHNAN <rcsekar@samsung.com>, Sangbeom Kim <sbkim73@samsung.com>, SangSu Park <sangsu4u.park@samsung.com>, ben-linux@fluff.org, olofj@google.com, thutt@chromium.org, SUNIL JOSHI <joshi@samsung.com>
 
-On Wed, Aug 1, 2012 at 8:56 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Padmavathi Venna wrote:
->>
->> The CMU of EXYNOS can't control Audio Subsystem's clocks because
->> AUDSS SFRs aren't located in CMU. But AUDSS is a kind of CMU for
->> Audio Subsystem and need to use clock framework. This mapping
->> address will be used for AUDSS clock control.
->>
->> Signed-off-by: sangsu4u.park <sangsu4u.park@samsung.com>
+On Wed, Aug 1, 2012 at 8:34 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> PADMAVATHI VENNA wrote:
 >
-> Maybe Sangsu Park?
+> Padma, don't post with html styled :(
+Sorry for the inconvenience. I will take care.
 >
->> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->> ---
->>  arch/arm/mach-exynos/common.c                |    5 +++++
->>  arch/arm/mach-exynos/include/mach/map.h      |    1 +
->>  arch/arm/plat-samsung/include/plat/map-s5p.h |    2 ++
->>  3 files changed, 8 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
->> index 4eb39cd..4070c79 100644
->> --- a/arch/arm/mach-exynos/common.c
->> +++ b/arch/arm/mach-exynos/common.c
->> @@ -109,6 +109,11 @@ static struct map_desc exynos_iodesc[] __initdata = {
->>               .pfn            = __phys_to_pfn(EXYNOS_PA_CHIPID),
->>               .length         = SZ_4K,
->>               .type           = MT_DEVICE,
->> +     }, {
->> +             .virtual        = (unsigned long)S5P_VA_AUDSS,
->> +             .pfn            = __phys_to_pfn(EXYNOS_PA_AUDSS),
->> +             .length         = SZ_4K,
->> +             .type           = MT_DEVICE,
->>       },
->>  };
->>
->> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-
->> exynos/include/mach/map.h
->> index 5cf7d91..9c044a0 100644
->> --- a/arch/arm/mach-exynos/include/mach/map.h
->> +++ b/arch/arm/mach-exynos/include/mach/map.h
->> @@ -39,6 +39,7 @@
->>
->>  #define EXYNOS4_PA_G2D                       0x12800000
->>
->> +#define EXYNOS_PA_AUDSS                      0x03810000
->>  #define EXYNOS_PA_I2S0                       0x03830000
->>  #define EXYNOS4_PA_I2S1                      0xE2100000
->>  #define EXYNOS4_PA_I2S2                      0xE2A00000
->> diff --git a/arch/arm/plat-samsung/include/plat/map-s5p.h b/arch/arm/plat-
->> samsung/include/plat/map-s5p.h
->> index c2d7bda..3558277 100644
->> --- a/arch/arm/plat-samsung/include/plat/map-s5p.h
->> +++ b/arch/arm/plat-samsung/include/plat/map-s5p.h
->> @@ -40,6 +40,8 @@
->>  #define S5P_VA_GIC_CPU               S3C_ADDR(0x02810000)
->>  #define S5P_VA_GIC_DIST              S3C_ADDR(0x02820000)
->>
->> +#define S5P_VA_AUDSS         S3C_ADDR(0x02910000)
->
-> Is there any reason to use the offset, 0x02910000?
->
-> [...]
->
-> And I think, this patch should be patch-set with your '[PATCH] ARM: EXYNOS:
-> Add clocks for EXYNOS Audio Subsystem.'
-Okay. In the next version I will send it along with clock support for audio.
+> And you need to check the regarding addresses as per Sachin commented.
+Okay.
 >
 > Thanks.
 >
@@ -97,6 +39,74 @@ Padma
 > --
 > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 > SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+> ------- Original Message -------
+> Sender : Sachin Kamat<sachin.kamat@linaro.org>
+> Date : Jul 26, 2012 13:41 (GMT+09:00)
+> Title : Re: [PATCH] ARM: EXYNOS: Add I2S SFR base addresses
+>
+> On 25 July 2012 17:35, Padmavathi Venna wrote:
+>> The base address of I2S 0 controller is similar in exynos4 and exynos5
+>> platforms. So this patch defines a common macro for the I2S controller
+>> 0 base address in both the platforms and use the same macro.
+>>
+>> This patch also defines the I2S controller 1,2 base addresses in exynos5
+>> and correct the I2S controller 1 base address in exynos4
+>>
+>> Signed-off-by: Padmavathi Venna
+>> ---
+>>  arch/arm/mach-exynos/dev-audio.c        |    2 +-
+>>  arch/arm/mach-exynos/include/mach/map.h |    6 ++++--
+>>  2 files changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/dev-audio.c
+> b/arch/arm/mach-exynos/dev-audio.c
+>> index b33a5b6..5dbc9a2 100644
+>> --- a/arch/arm/mach-exynos/dev-audio.c
+>> +++ b/arch/arm/mach-exynos/dev-audio.c
+>> @@ -62,7 +62,7 @@ static struct s3c_audio_pdata i2sv5_pdata = {
+>>  };
+>>
+>>  static struct resource exynos4_i2s0_resource[] = {
+>> -       [0] = DEFINE_RES_MEM(EXYNOS4_PA_I2S0, SZ_256),
+>> +       [0] = DEFINE_RES_MEM(EXYNOS_PA_I2S0, SZ_256),
+>>         [1] = DEFINE_RES_DMA(DMACH_I2S0_TX),
+>>         [2] = DEFINE_RES_DMA(DMACH_I2S0_RX),
+>>         [3] = DEFINE_RES_DMA(DMACH_I2S0S_TX),
+>> diff --git a/arch/arm/mach-exynos/include/mach/map.h
+> b/arch/arm/mach-exynos/include/mach/map.h
+>> index c72b675..5cf7d91 100644
+>> --- a/arch/arm/mach-exynos/include/mach/map.h
+>> +++ b/arch/arm/mach-exynos/include/mach/map.h
+>> @@ -39,9 +39,11 @@
+>>
+>>  #define EXYNOS4_PA_G2D                 0x12800000
+>>
+>> -#define EXYNOS4_PA_I2S0                        0x03830000
+>> -#define EXYNOS4_PA_I2S1                        0xE3100000
+>> +#define EXYNOS_PA_I2S0                 0x03830000
+>> +#define EXYNOS4_PA_I2S1                        0xE2100000
+>>  #define EXYNOS4_PA_I2S2                        0xE2A00000
+>
+> As per the TRM, these addresses (I2S1 and I2S2) are 0x13960000 and
+> 0x13970000 respectively on Exynos4412 SoC.
+> Please verify.
+> I didn't verify Exynos4412 before. I will send a new patch for this.
+>
+>
+>> +#define EXYNOS5_PA_I2S1                        0x12D60000
+>> +#define EXYNOS5_PA_I2S2                        0x12D70000
+>>
+>>  #define EXYNOS4_PA_PCM0                        0x03840000
+>>  #define EXYNOS4_PA_PCM1                        0x13980000
+>> --
+>> 1.7.4.4
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe
+> linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 >
 > --
 > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
