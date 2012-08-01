@@ -1,48 +1,75 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH 0/5] usb: phy: samsung: Introducing usb phy driver for
- samsung SoCs
-Date: Wed, 1 Aug 2012 15:20:01 +0000
-Message-ID: <201208011520.02353.arnd@arndb.de>
-References: <1343826351-8756-1-git-send-email-p.paneri@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
+Date: Wed, 01 Aug 2012 21:03:02 +0200
+Message-ID: <50197D66.1050108@gmail.com>
+References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com> <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com> <033301cd6fb0$7ac4af90$704e0eb0$%kim@samsung.com> <CAJuYYwTy5zkeM_cJO7HMm+=v=ORPHD26nQYZwXK6v1noWm1EuA@mail.gmail.com> <5018E656.3070803@samsung.com> <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <1343826351-8756-1-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:44766 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754421Ab2HATDG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 1 Aug 2012 15:03:06 -0400
+Received: by bkwj10 with SMTP id j10so3926587bkw.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Aug 2012 12:03:05 -0700 (PDT)
+In-Reply-To: <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, shaik.samsung@gmail.com, sungchun.kang@samsung.com, Rob Herring <rob.herring@calxeda.com>
 
-On Wednesday 01 August 2012, Praveen Paneri wrote:
-> This patch set introduces a phy driver for samsung SoCs. It uses the existing
-> transceiver infrastructure to provide phy control functions. Use of this driver
-> can be extended for usb host phy as well. Over the period of time all the phy
-> related code for most of the samsung SoCs can be integrated here.
-> Removing the existing phy code from mach-s3c64xx but not from other machine 
-> code.This driver is tested with smdk6410 and Exynos4210(with DT).
+Hi Kgene,
 
-This looks very nice overall, great work!
+Cc: Rob Herring
 
-We will still have to take care of the pmu isolation callback in the
-long run, when we get to the point of removing all auxdata. Do you
-have a plan on how to do that? If yes, it would be good to mention
-that in the changelog.
+On 08/01/2012 11:00 AM, Kukjin Kim wrote:
+>>>>> +* Samsung Exynos5 Gscaler device
+>>>>> +
+>>>>> +Gscaler is used for scaling and color space conversion on EXYNOS5
+>> SoCs.
+>>>>> +
+>>>>> +Required properties:
+>>>>> +- compatible: should be "samsung,exynos5250-gsc"
+>>>>
+>>>> IMO, should be "samsung,exynos5-gsc" because upcoming EXYNOS5 SoCs can
+>> use
+>>>> same gscaler driver.
+>>
+>> In addition to the below explanation, perhaps it's obvious, but the driver
+>> can claim compatibility with multiple devices, i.e. match with multiple
+>> 'compatible' properties.
+>>
+> 
+> The name of exact model is 'gscaler' for EXYNOS5 SoCs not only for
+> EXYNOS5250. So the driver which has been submitted is also 'exynos-gsc' not
+> 'exynos5250-gsc'. Note that there is no gscaler on EXYNOS4 SoCs now, it can
+> be either 'exynos5-gsc' or 'exynos-gsc'. In addition, since some
+> peripherals/drivers can be used for multiple SoCs and actually it does, I'm
+> still thinking the compatible should be represent its usage. I don't know
+> why restricted name is much clearer. And if multiple 'compatible' is
+> required, we can add it later.
 
-My guess is that the PMU code should be moved into a higher-level
-abstraction. I don't know if you would use one of those we already
-have or whether you'd introduce a new subsystem for those. Apparently
-other platforms have similar issues, so I'd suggest you leave the
-callback for now, but we should at some point discuss what to to
-about it.
+Sorry, but I cannot agree with that. :) There is no exynos5 SoC, it's just
+a common name for the whole series that includes: exynos5250, exynos5450 ones 
+and more. We shouldn't use such common name for just a subset of exynos5 chips, 
+in case different GScaler versions get deployed in future SoCs.
 
-	Arnd
+It wouldn't be clear what specific SoCs the "samsung,exynos5-gsc" compatible 
+string applies to, would it ? I believe there are already minor differences
+in GScaler parameters on currently available exynos5 SoC. The variant data
+structures are used to handle this and the compatible string determines which
+variant data structure is selected during driver's initialization.
+If you use a wildcard 'compatible' string this won't be possible any more.
+
+Also it would look odd IMO to have two compatible strings like:
+compatible = "samsung,exynos5-gsc", "samsung,exynos5400-gsc";
+
+Please also see:
+http://devicetree.org/Device_Tree_Usage#Understanding_the_compatible_Property
+
+--
+
+Regards,
+Sylwester
