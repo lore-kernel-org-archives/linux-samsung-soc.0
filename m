@@ -1,88 +1,98 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 5/5] arm: samsung: delete frame buffer header files from
- platform
-Date: Wed, 01 Aug 2012 19:09:01 +0900
-Message-ID: <037d01cd6fcd$ac64d300$052e7900$%kim@samsung.com>
-References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
- <1343737385-23337-6-git-send-email-l.krishna@samsung.com>
- <02ee01cd6f89$f218b2c0$d64a1840$%kim@samsung.com>
- <CAL1wa8cShB7zDj-CPvfEncX+Up7enKM9MJOt-488dThj_tXbMA@mail.gmail.com>
- <037101cd6fc9$85386e30$8fa94a90$%kim@samsung.com>
- <5018FE28.8070907@samsung.com>
+Subject: RE: [PATCH 1/3] ARM: exynos: Save combiner registers on suspend
+Date: Wed, 01 Aug 2012 20:38:55 +0900
+Message-ID: <038e01cd6fda$3bba6f40$b32f4dc0$%kim@samsung.com>
+References: <1342808076-29985-1-git-send-email-kliegs@chromium.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57316 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753427Ab2HAKJD (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:55799 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751818Ab2HALi5 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Aug 2012 06:09:03 -0400
-In-reply-to: <5018FE28.8070907@samsung.com>
+	Wed, 1 Aug 2012 07:38:57 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M8200DLRR0WPJV0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 01 Aug 2012 20:38:56 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M820024KR0VBR40@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 01 Aug 2012 20:38:55 +0900 (KST)
+In-reply-to: <1342808076-29985-1-git-send-email-kliegs@chromium.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, joshi@samsung.com, jg1.han@samsung.com, m.szyprowski@samsung.com
+To: 'Jonathan Kliegman' <kliegs@chromium.org>, linux-samsung-soc@vger.kernel.org
 
-Sylwester Nawrocki wrote:
+Jonathan Kliegman wrote:
 > 
-> Hi,
+> The interupt combiner registers need to be saved on suspend resume
+> or its interrupts (trackpad and keyboard most noticeably) won't work
+> after resume.
 > 
-> On 08/01/2012 11:39 AM, Kukjin Kim wrote:
-> > Leela Krishna Amudala wrote:
-> >> On Wed, Aug 1, 2012 at 7:34 AM, Kukjin Kim <kgene.kim@samsung.com>
-> wrote:
-> >>> Leela Krishna Amudala wrote:
-> >>>>
-> >>>> The FIMD register headers are moved to include/video/
-> >>>> hence, deleting these files from platform side
-> >>>>
-> >>>> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> >>>> ---
-> >>>>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |  159 ---------
-> >>>>  arch/arm/plat-samsung/include/plat/regs-fb.h    |  403
-> >>> -------------------
-> >>>> ----
-> >>>>  2 files changed, 0 insertions(+), 562 deletions(-)
-> >>>>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-> >>>>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb.h
-> >>>>
-> >>> No. This should be squashed into first patch on this series. See
-below.
-> >>>
-> >>>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h    |  159
-> >>> --------------------
-> >>>  .../plat/regs-fb.h => include/video/samsung_fimd.h |  145
-> >>> ++++++++++++++++--
-> >>>  2 files changed, 134 insertions(+), 170 deletions(-)
-> >>>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
-> >>>  rename arch/arm/plat-samsung/include/plat/regs-fb.h =>
-> >>> include/video/samsung_fimd.h (74%)
-> >>>
-> >>
-> >> If I squash it with the first patch and if somebody set that as a head
-> >> commit, it will break the build. Hence, splitted it up from the first
-> >> patch.
-> >>
-> > NACK. your changes are not adding just moving. So should be squashed. If
-> > required, you could create just one patch for moving them, probably,
-1st,
-> > 3rd, 4th and 5th patches into one patch.
-> 
-> Yes, this patch series is mainly moving files around. But to avoid git
-> bisect breakage, it should be split as it is done now, or the whole
-> series should be squashed into one patch. The latter might be even easier
-> to handle, but having a single patch touching arch/arm/ and drivers/
-> might not be a good idea. If you're fine handling that, then we just
-> need to squash this series into single patch.
-> It just need to be ensured, IMO, there is no bisection breakage.
-> 
-I know you meant. But we don't need to keep the changes 'adding and
-removing' for just moving on this.
+> Signed-off-by: Jonathan Kliegman <kliegs@chromium.org>
+> ---
+>  arch/arm/mach-exynos/common.c |   74
+> +++++++++++++++++++++++++++++++++++++----
+>  1 files changed, 67 insertions(+), 7 deletions(-)
 
-I commented on 0/5 patch in this series before, if this is ready, I will
-create topic branch so that it could be merged into both mine and Florian's.
+[...]
+
+> +#ifdef CONFIG_PM
+
+#ifdef CONFIG_CPU_PM?
+
+> +static void combiner_save(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < rt_max_combiner_nr; i++) {
+> +		if (combiner_data[i].irq_mask &
+> +		    __raw_readl(combiner_data[i].base +
+COMBINER_ENABLE_SET))
+> {
+> +			combiner_data[i].saved_on = true;
+> +		} else {
+> +			combiner_data[i].saved_on = false;
+> +		}
+> +	}
+> +}
+> +
+> +static void combiner_restore(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i < rt_max_combiner_nr; i++) {
+> +		if (!combiner_data[i].saved_on)
+> +			continue;
+> +
+> +		__raw_writel(combiner_data[i].irq_mask,
+> +			     combiner_data[i].base + COMBINER_ENABLE_SET);
+> +	}
+> +}
+> +
+> +
+
+No need double empty lines :)
+
+> +static int combiner_notifier(struct notifier_block *self, unsigned long
+> cmd,
+> +			     void *v)
+> +{
+> +	switch (cmd) {
+> +	case CPU_PM_ENTER:
+
+Should be CPU_CLUSTER_PM_ENTER?
+
+> +		combiner_save();
+> +		break;
+> +	case CPU_PM_EXIT:
+
+CPU_CLUSTER_PM_EXIT?
 
 Thanks.
 
