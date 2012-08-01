@@ -1,52 +1,51 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] Move FIMD register headers to include/video/
-Date: Wed, 01 Aug 2012 10:56:26 +0900
-Message-ID: <02ed01cd6f88$dc91caf0$95b560d0$%kim@samsung.com>
-References: <1343637905-17764-1-git-send-email-l.krishna@samsung.com>
- <1343637905-17764-2-git-send-email-l.krishna@samsung.com>
- <000001cd6e30$da849520$8f8dbf60$%han@samsung.com>
- <CAL1wa8e7Joghf9S=SgbQLJFWcYOrP5uK6qYXsV_N6rX1MVEALg@mail.gmail.com>
- <000a01cd6eb6$2113a050$633ae0f0$%han@samsung.com>
- <032201cd6ee5$ad4a0d50$07de27f0$%szyprowski@samsung.com>
- <000701cd6ef5$24315c70$6c941550$%han@samsung.com>
- <033c01cd6ef6$fb514570$f1f3d050$%szyprowski@samsung.com>
+Subject: RE: [PATCH V2 5/5] arm: samsung: delete frame buffer header files from
+ platform
+Date: Wed, 01 Aug 2012 11:04:12 +0900
+Message-ID: <02ee01cd6f89$f218b2c0$d64a1840$%kim@samsung.com>
+References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
+ <1343737385-23337-6-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:54293 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:59300 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753424Ab2HAB42 (ORCPT
+	with ESMTP id S1752961Ab2HACEO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 21:56:28 -0400
-In-reply-to: <033c01cd6ef6$fb514570$f1f3d050$%szyprowski@samsung.com>
+	Tue, 31 Jul 2012 22:04:14 -0400
+In-reply-to: <1343737385-23337-6-git-send-email-l.krishna@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Marek Szyprowski' <m.szyprowski@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, joshi@samsung.com
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, joshi@samsung.com, jg1.han@samsung.com, m.szyprowski@samsung.com
 
-Marek Szyprowski wrote:
+Leela Krishna Amudala wrote:
 > 
-> Hello,
+> The FIMD register headers are moved to include/video/
+> hence, deleting these files from platform side
 > 
-Hi all,
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h |  159 ---------
+>  arch/arm/plat-samsung/include/plat/regs-fb.h    |  403
+-------------------
+> ----
+>  2 files changed, 0 insertions(+), 562 deletions(-)
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb.h
+> 
+No. This should be squashed into first patch on this series. See below.
 
-[...]
-
-> >  static struct s3c_fb_driverdata s3c_fb_data_exynos5 = {
-> >         .variant = {
-> >                 .nr_windows     = 5,
-> > -               .vidtcon        = VIDTCON0,
-> > +               .vidtcon        = FIMD_V8_VIDTCON0,
-> 
-> Yes, this method looks good imo. Maybe even having something like
-> vidtcon_base in
-> variant structure will be enough to cover all VIDTCON0-3 registers.
-> 
-Yes, I agree. And how about changing the name of s3c_fb_drvierdata to
-xxx_fimd_v8 not xxx_fimd_exynos5? It's time to use independent from SoC name
-because we don't have any guarantee of same address on all of EXYNOS5 SoCs.
+ arch/arm/plat-samsung/include/plat/regs-fb-v4.h    |  159
+--------------------
+ .../plat/regs-fb.h => include/video/samsung_fimd.h |  145
+++++++++++++++++--
+ 2 files changed, 134 insertions(+), 170 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+ rename arch/arm/plat-samsung/include/plat/regs-fb.h =>
+include/video/samsung_fimd.h (74%)
 
 Thanks.
 
