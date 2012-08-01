@@ -1,50 +1,43 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH V2 4/5] driver: Include the modified FIMD header file
-Date: Wed, 01 Aug 2012 11:20:35 +0900
-Message-ID: <02f601cd6f8c$3c9b55d0$b5d20170$%kim@samsung.com>
+Subject: RE: [PATCH V2 0/5] arm: samsung: Move FIMD headers to include/video/
+Date: Wed, 01 Aug 2012 11:28:39 +0900
+Message-ID: <02f701cd6f8d$5ca3e850$15ebb8f0$%kim@samsung.com>
 References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
- <1343737385-23337-5-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:36617 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752676Ab2HACUh (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:14696 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752676Ab2HAC2l (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 22:20:37 -0400
-In-reply-to: <1343737385-23337-5-git-send-email-l.krishna@samsung.com>
+	Tue, 31 Jul 2012 22:28:41 -0400
+In-reply-to: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, joshi@samsung.com, jg1.han@samsung.com, m.szyprowski@samsung.com
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, joshi@samsung.com, jg1.han@samsung.com, m.szyprowski@samsung.com, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>
 
 Leela Krishna Amudala wrote:
 > 
-> The fimd register headers have been moved to include/video/
-> hence, modifying the driver files accordingly.
+> This patchset moves the contents of regs-fb-v4.h and regs-fb.h from arch
+> side
+> to include/video/samsung_fimd.h
 > 
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    2 +-
->  drivers/video/s3c-fb.c                   |    2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+> This patchset is created and rebased against master branch of torvalds
+> tree.
+> Tested on smdk5250 board, build tested for other boards.
 > 
+(Cc'ed Florian Tobias Schandinat)
 
-[...]
-
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -26,7 +26,7 @@
->  #include <linux/pm_runtime.h>
-> 
->  #include <mach/map.h>
-> -#include <plat/regs-fb-v4.h>
-> +#include <video/samsung_fimd.h>
->  #include <plat/fb.h>
-> 
-See my previous comments.
+Yeah, since it's merge window, this series could be created against on
+mainline. And IMO, would be helpful to us if this series could be sent to
+upstream via samsung tree after reviewing, because this touches too many
+files in samsung tree and just adds include/video/samsung_fimd.h. But I'm
+not sure the added inclusion will be used in other file of drivers/video. If
+so, I can provide some topic branch can be merged into Florian's tree.
+Florian, how about?
 
 Thanks.
 
@@ -53,3 +46,48 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> Changes from version 1:
+> 	- Split the patches as per Sylwester comments
+> 	- Changed FIMD_V8_xxx macro to EXYNOS5_xxx
+> 
+> Leela Krishna Amudala (5):
+>   include/video: Add samsung FIMD register header
+>   include/video: Add Exynos5 specific FIMD register offsets
+>   arm: samsung: Include the modified FIMD header file
+>   driver: Include the modified FIMD header file
+>   arm: samsung: delete frame buffer header files from platform
+> 
+>  arch/arm/mach-exynos/mach-nuri.c                   |    2 +-
+>  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    2 +-
+>  arch/arm/mach-exynos/setup-fimd0.c                 |    2 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smartq5.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smartq7.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |    2 +-
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |    2 +-
+>  arch/arm/mach-s5pv210/mach-aquila.c                |    2 +-
+>  arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
+>  arch/arm/mach-s5pv210/mach-smdkv210.c              |    2 +-
+>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h    |  159
+----------------
+> ----
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |    2 +-
+>  drivers/video/s3c-fb.c                             |    2 +-
+>  .../plat/regs-fb.h => include/video/samsung_fimd.h |  152
+> +++++++++++++++++--
+>  26 files changed, 165 insertions(+), 194 deletions(-)
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>  rename arch/arm/plat-samsung/include/plat/regs-fb.h =>
+> include/video/samsung_fimd.h (74%)
