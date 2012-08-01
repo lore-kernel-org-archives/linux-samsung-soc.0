@@ -1,103 +1,53 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 1/3] ARM: exynos: Save combiner registers on suspend
-Date: Wed, 01 Aug 2012 20:38:55 +0900
-Message-ID: <038e01cd6fda$3bba6f40$b32f4dc0$%kim@samsung.com>
-References: <1342808076-29985-1-git-send-email-kliegs@chromium.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55799 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751818Ab2HALi5 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Aug 2012 07:38:57 -0400
-Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M8200DLRR0WPJV0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Aug 2012 20:38:56 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M820024KR0VBR40@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 01 Aug 2012 20:38:55 +0900 (KST)
-In-reply-to: <1342808076-29985-1-git-send-email-kliegs@chromium.org>
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 0/5] usb: phy: samsung: Introducing usb phy driver for samsung
+ SoCs
+Date: Wed, 01 Aug 2012 18:35:46 +0530
+Message-ID: <1343826351-8756-1-git-send-email-p.paneri@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jonathan Kliegman' <kliegs@chromium.org>, linux-samsung-soc@vger.kernel.org
 
-Jonathan Kliegman wrote:
-> 
-> The interupt combiner registers need to be saved on suspend resume
-> or its interrupts (trackpad and keyboard most noticeably) won't work
-> after resume.
-> 
-> Signed-off-by: Jonathan Kliegman <kliegs@chromium.org>
-> ---
->  arch/arm/mach-exynos/common.c |   74
-> +++++++++++++++++++++++++++++++++++++----
->  1 files changed, 67 insertions(+), 7 deletions(-)
+This patch set introduces a phy driver for samsung SoCs. It uses the existing
+transceiver infrastructure to provide phy control functions. Use of this driver
+can be extended for usb host phy as well. Over the period of time all the phy
+related code for most of the samsung SoCs can be integrated here.
+Removing the existing phy code from mach-s3c64xx but not from other machine 
+code.This driver is tested with smdk6410 and Exynos4210(with DT).
 
-[...]
+Praveen Paneri (5):
+  usb: phy: samsung: Introducing usb phy driver for hsotg
+  usb: s3c-hsotg: Adding phy driver support
+  ARM: S3C64XX: Removing old phy setup code
+  ARM: S3C64XX: Enabling sec_usbphy driver
+  ARM: Exynos4210: Enabling sec_usbphy driver
 
-> +#ifdef CONFIG_PM
+ .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |    5 +
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    8 +
+ arch/arm/mach-exynos/setup-usb-phy.c               |   13 +
+ arch/arm/mach-s3c64xx/include/mach/map.h           |    2 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    5 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |    6 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |    5 +-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c              |   79 +----
+ arch/arm/plat-samsung/devs.c                       |   32 ++
+ arch/arm/plat-samsung/include/plat/devs.h          |    1 +
+ arch/arm/plat-samsung/include/plat/usb-phy.h       |    1 +
+ drivers/usb/gadget/s3c-hsotg.c                     |   38 ++-
+ drivers/usb/phy/Kconfig                            |    8 +
+ drivers/usb/phy/Makefile                           |    1 +
+ drivers/usb/phy/sec_usbphy.c                       |  354 ++++++++++++++++++++
+ drivers/usb/phy/sec_usbphy.h                       |   48 +++
+ include/linux/platform_data/s3c-hsotg.h            |    5 +
+ 19 files changed, 533 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+ create mode 100644 drivers/usb/phy/sec_usbphy.c
+ create mode 100644 drivers/usb/phy/sec_usbphy.h
 
-#ifdef CONFIG_CPU_PM?
-
-> +static void combiner_save(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < rt_max_combiner_nr; i++) {
-> +		if (combiner_data[i].irq_mask &
-> +		    __raw_readl(combiner_data[i].base +
-COMBINER_ENABLE_SET))
-> {
-> +			combiner_data[i].saved_on = true;
-> +		} else {
-> +			combiner_data[i].saved_on = false;
-> +		}
-> +	}
-> +}
-> +
-> +static void combiner_restore(void)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < rt_max_combiner_nr; i++) {
-> +		if (!combiner_data[i].saved_on)
-> +			continue;
-> +
-> +		__raw_writel(combiner_data[i].irq_mask,
-> +			     combiner_data[i].base + COMBINER_ENABLE_SET);
-> +	}
-> +}
-> +
-> +
-
-No need double empty lines :)
-
-> +static int combiner_notifier(struct notifier_block *self, unsigned long
-> cmd,
-> +			     void *v)
-> +{
-> +	switch (cmd) {
-> +	case CPU_PM_ENTER:
-
-Should be CPU_CLUSTER_PM_ENTER?
-
-> +		combiner_save();
-> +		break;
-> +	case CPU_PM_EXIT:
-
-CPU_CLUSTER_PM_EXIT?
-
-Thanks.
-
-Best regards,
-Kgene.
 --
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
