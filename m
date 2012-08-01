@@ -1,74 +1,76 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [RFC/PATCH 09/13] media: s5k6aa: Add support for device tree based instantiation
-Date: Tue, 31 Jul 2012 23:46:46 +0200
-Message-ID: <5948378.3Gs2pPiBLX@avalon>
-References: <4FBFE1EC.9060209@samsung.com> <Pine.LNX.4.64.1207311452180.27888@axis700.grange> <5017DD94.8040100@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V2 4/5] driver: Include the modified FIMD header file
+Date: Wed, 01 Aug 2012 10:36:32 +0900
+Message-ID: <003101cd6f86$14ca1060$3e5e3120$%han@samsung.com>
+References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com>
+ <1343737385-23337-5-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:46815 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754370Ab2GaVqk (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48638 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752729Ab2HABge (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 31 Jul 2012 17:46:40 -0400
-In-Reply-To: <5017DD94.8040100@samsung.com>
+	Tue, 31 Jul 2012 21:36:34 -0400
+In-reply-to: <1343737385-23337-5-git-send-email-l.krishna@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, linux-media@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, riverful.kim@samsung.com, sw0312.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, b.zolnierkie@samsung.com
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, inki.dae@samsung.com, kgene.kim@samsung.com, joshi@samsung.com, m.szyprowski@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi Sylwester,
-
-On Tuesday 31 July 2012 15:28:52 Sylwester Nawrocki wrote:
-> On 07/31/2012 02:59 PM, Guennadi Liakhovetski wrote:
-> > On Tue, 31 Jul 2012, Sylwester Nawrocki wrote:
-> >> On 07/31/2012 02:26 PM, Guennadi Liakhovetski wrote:
-> >>>>>> But should we allow host probe() to succeed if the sensor isn't
-> >>>>>> present ?
-> >>>>> 
-> >>>>> I think we should, yes. The host hardware is there and functional -
-> >>>>> whether or not all or some of the clients are failing. Theoretically
-> >>>>> clients can also be hot-plugged. Whether and how many video device
-> >>>>> nodes
-> >>>>> we create, that's a different question.
-> >>>> 
-> >>>> I think I can agree with you on this (although I could change my mind
-> >>>> if this architecture turns out to result in unsolvable technical
-> >>>> issues). That will involve a lot of work though.
-> >>> 
-> >>> There's however at least one more gotcha that occurs to me with this
-> >>> approach: if clients fail to probe, how do we find out about that and
-> >>> turn
-> >>> clocks back off? One improvement to turning clocks on immediately in
-> >> 
-> >> Hmm, wouldn't it be the client that turns a clock on/off when needed ?
-> >> I'd like to preserve this functionality, so client drivers can have
-> >> full control on the power up/down sequences. While we are trying to
-> >> improve the current situation...
-> > 
-> > Eventually, when the clock API is available - yes, the client would just
-> > call clk_enable() / clk_disable(). But for now isn't it host's job to do
-> > that? Or you want to add new API for that?
+On Tuesday, July 31, 2012 9:23 PM Leela Krishna Amudala wrote:
 > 
-> Indeed, looking at existing drivers, the clocks' handling is now mostly
-> done in the host drivers. Only the omap3isp appears to do the right thing,
-> i.e. delegating control over the clock to client drivers, but it does it
-> with platform_data callbacks.
+> The fimd register headers have been moved to include/video/
+> hence, modifying the driver files accordingly.
 > 
-> We've already discussed adding a new API for that,
-> http://www.mail-archive.com/linux-media@vger.kernel.org/msg35359.html
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c |    2 +-
+>  drivers/video/s3c-fb.c                   |    2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> However using common clock API and binding a clock to client device
-> (either DT based or not) sounds like a best approach to me.
+> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> index 29fdbfe..8da90f9 100644
+> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+> @@ -20,7 +20,7 @@
+>  #include <linux/pm_runtime.h>
 > 
-> Waiting for the common clock API to be generally available maybe we
-> could add some clock ops at the v4l2_device ? Just a humble suggestion,
-> I'm not sure whether it is really good and needed or not.
+>  #include <drm/exynos_drm.h>
+> -#include <plat/regs-fb-v4.h>
+> +#include <video/samsung_fimd.h>
+> 
+>  #include "exynos_drm_drv.h"
+>  #include "exynos_drm_fbdev.h"
+> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> index 69bf9d0..1226fdd 100644
+> --- a/drivers/video/s3c-fb.c
+> +++ b/drivers/video/s3c-fb.c
+> @@ -26,7 +26,7 @@
+>  #include <linux/pm_runtime.h>
+> 
+>  #include <mach/map.h>
+> -#include <plat/regs-fb-v4.h>
+> +#include <video/samsung_fimd.h>
+>  #include <plat/fb.h>
 
-I'm fine with that (or something similar) as an interim solution.
 
--- 
-Regards,
+Please move header include to proper place as bellows:
 
-Laurent Pinchart
+#include <linux/pm_runtime.h>
+
+#include <video/samsung_fimd.h>
+
+#include <mach/map.h>
+#include <plat/fb.h>
+
+
+Best regards,
+Jingoo Han
+
+> 
+>  /* This driver will export a number of framebuffer interfaces depending
+> --
+> 1.7.0.4
