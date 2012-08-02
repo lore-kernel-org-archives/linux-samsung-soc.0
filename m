@@ -1,41 +1,43 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: Samsung: Make uart_save static in pm.c file
-Date: Thu,  2 Aug 2012 12:10:44 +0530
-Message-ID: <1343889644-27266-1-git-send-email-sachin.kamat@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 0/5] usb: phy: samsung: Introducing usb phy driver for samsung SoCs
+Date: Thu, 2 Aug 2012 11:26:52 +0000
+Message-ID: <201208021126.52307.arnd@arndb.de>
+References: <1343826351-8756-1-git-send-email-p.paneri@samsung.com> <201208011520.02353.arnd@arndb.de> <CAD6zSYN-prJO=dp8tJT8+4qcC3TxCXyVTU6-Xf5p20650Zb-ow@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-yw0-f46.google.com ([209.85.213.46]:36326 "EHLO
-	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751237Ab2HBGl7 (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.186]:62848 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752558Ab2HBL06 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 2 Aug 2012 02:41:59 -0400
-Received: by yhmm54 with SMTP id m54so8314175yhm.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Aug 2012 23:41:59 -0700 (PDT)
+	Thu, 2 Aug 2012 07:26:58 -0400
+In-Reply-To: <CAD6zSYN-prJO=dp8tJT8+4qcC3TxCXyVTU6-Xf5p20650Zb-ow@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
+To: Praveen Paneri <p.paneri@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org
 
-Fixes the following sparse warning:
-arch/arm/plat-samsung/pm.c:77:21:
-warning: symbol 'uart_save' was not declared. Should it be static?
+On Thursday 02 August 2012, Praveen Paneri wrote:
+> Yes! I understand this problem and this is the reason these patches
+> were sitting in my system for couple of weeks. In a  discussion with
+> Thomas an idea of using the existing regulator framework to
+> enable/disable numerous PHYs came up. For example the PMU unit
+> of Exynos4210 has a register set dedicated just to control USBD_PHY,
+> HDMI_PHY, MIPI_PHY, DAC_PHY and more. If a regulator with
+> each phy control register as LDO is written, the phy driver becomes a
+> static consumer and will modify as below.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
----
- arch/arm/plat-samsung/pm.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+This is roughly what I had in mind, yes. The part I'm not sure about
+is the subsystem to use. One could obviously express the same logic
+using the clock or gpio framework, which would work but be conceptually
+wrong.
 
-diff --git a/arch/arm/plat-samsung/pm.c b/arch/arm/plat-samsung/pm.c
-index 64ab65f..1507028 100644
---- a/arch/arm/plat-samsung/pm.c
-+++ b/arch/arm/plat-samsung/pm.c
-@@ -74,7 +74,7 @@ unsigned char pm_uart_udivslot;
- 
- #ifdef CONFIG_SAMSUNG_PM_DEBUG
- 
--struct pm_uart_save uart_save[CONFIG_SERIAL_SAMSUNG_UARTS];
-+static struct pm_uart_save uart_save[CONFIG_SERIAL_SAMSUNG_UARTS];
- 
- static void s3c_pm_save_uart(unsigned int uart, struct pm_uart_save *save)
- {
--- 
-1.7.4.1
+Some other parts of the PMU functionality are provided through
+pm-domains rather than regulators and I guess in theory it could
+all be controlled through pm-domains. Maybe someone else has a better
+understanding than me what the tradeoffs are here and which subsystem
+should be used for the PMU.
+
+	Arnd
