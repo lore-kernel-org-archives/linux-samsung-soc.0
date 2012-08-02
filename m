@@ -1,75 +1,160 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
-Date: Wed, 01 Aug 2012 21:03:02 +0200
-Message-ID: <50197D66.1050108@gmail.com>
-References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com> <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com> <033301cd6fb0$7ac4af90$704e0eb0$%kim@samsung.com> <CAJuYYwTy5zkeM_cJO7HMm+=v=ORPHD26nQYZwXK6v1noWm1EuA@mail.gmail.com> <5018E656.3070803@samsung.com> <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com>
+From: Praveen Paneri <p.paneri@samsung.com>
+Subject: Re: [PATCH 0/5] usb: phy: samsung: Introducing usb phy driver for
+ samsung SoCs
+Date: Thu, 2 Aug 2012 11:14:13 +0530
+Message-ID: <CAD6zSYN-prJO=dp8tJT8+4qcC3TxCXyVTU6-Xf5p20650Zb-ow@mail.gmail.com>
+References: <1343826351-8756-1-git-send-email-p.paneri@samsung.com>
+	<201208011520.02353.arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:44766 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754421Ab2HATDG (ORCPT
+Received: from mail-gh0-f174.google.com ([209.85.160.174]:50525 "EHLO
+	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751480Ab2HBFoO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 1 Aug 2012 15:03:06 -0400
-Received: by bkwj10 with SMTP id j10so3926587bkw.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 01 Aug 2012 12:03:05 -0700 (PDT)
-In-Reply-To: <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com>
+	Thu, 2 Aug 2012 01:44:14 -0400
+In-Reply-To: <201208011520.02353.arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, shaik.samsung@gmail.com, sungchun.kang@samsung.com, Rob Herring <rob.herring@calxeda.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org
 
-Hi Kgene,
+Hi Arnd,
 
-Cc: Rob Herring
+On Wed, Aug 1, 2012 at 8:50 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Wednesday 01 August 2012, Praveen Paneri wrote:
+>> This patch set introduces a phy driver for samsung SoCs. It uses the existing
+>> transceiver infrastructure to provide phy control functions. Use of this driver
+>> can be extended for usb host phy as well. Over the period of time all the phy
+>> related code for most of the samsung SoCs can be integrated here.
+>> Removing the existing phy code from mach-s3c64xx but not from other machine
+>> code.This driver is tested with smdk6410 and Exynos4210(with DT).
+>
+> This looks very nice overall, great work!
+Thank you!
+>
+> We will still have to take care of the pmu isolation callback in the
+> long run, when we get to the point of removing all auxdata. Do you
+> have a plan on how to do that? If yes, it would be good to mention
+> that in the changelog.
+Yes! I understand this problem and this is the reason these patches
+were sitting in my system for couple of weeks. In a  discussion with
+Thomas an idea of using the existing regulator framework to
+enable/disable numerous PHYs came up. For example the PMU unit
+of Exynos4210 has a register set dedicated just to control USBD_PHY,
+HDMI_PHY, MIPI_PHY, DAC_PHY and more. If a regulator with
+each phy control register as LDO is written, the phy driver becomes a
+static consumer and will modify as below.
 
-On 08/01/2012 11:00 AM, Kukjin Kim wrote:
->>>>> +* Samsung Exynos5 Gscaler device
->>>>> +
->>>>> +Gscaler is used for scaling and color space conversion on EXYNOS5
->> SoCs.
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible: should be "samsung,exynos5250-gsc"
->>>>
->>>> IMO, should be "samsung,exynos5-gsc" because upcoming EXYNOS5 SoCs can
->> use
->>>> same gscaler driver.
->>
->> In addition to the below explanation, perhaps it's obvious, but the driver
->> can claim compatibility with multiple devices, i.e. match with multiple
->> 'compatible' properties.
->>
-> 
-> The name of exact model is 'gscaler' for EXYNOS5 SoCs not only for
-> EXYNOS5250. So the driver which has been submitted is also 'exynos-gsc' not
-> 'exynos5250-gsc'. Note that there is no gscaler on EXYNOS4 SoCs now, it can
-> be either 'exynos5-gsc' or 'exynos-gsc'. In addition, since some
-> peripherals/drivers can be used for multiple SoCs and actually it does, I'm
-> still thinking the compatible should be represent its usage. I don't know
-> why restricted name is much clearer. And if multiple 'compatible' is
-> required, we can add it later.
+diff --git a/drivers/usb/phy/sec_usbphy.c b/drivers/usb/phy/sec_usbphy.c
+index 33119eb..4f69675 100644
+--- a/drivers/usb/phy/sec_usbphy.c
++++ b/drivers/usb/phy/sec_usbphy.c
+@@ -28,8 +28,8 @@
+ #include <linux/err.h>
+ #include <linux/io.h>
+ #include <linux/of.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/usb/otg.h>
+-#include <linux/platform_data/s3c-hsotg.h>
 
-Sorry, but I cannot agree with that. :) There is no exynos5 SoC, it's just
-a common name for the whole series that includes: exynos5250, exynos5450 ones 
-and more. We shouldn't use such common name for just a subset of exynos5 chips, 
-in case different GScaler versions get deployed in future SoCs.
+ #include "sec_usbphy.h"
 
-It wouldn't be clear what specific SoCs the "samsung,exynos5-gsc" compatible 
-string applies to, would it ? I believe there are already minor differences
-in GScaler parameters on currently available exynos5 SoC. The variant data
-structures are used to handle this and the compatible string determines which
-variant data structure is selected during driver's initialization.
-If you use a wildcard 'compatible' string this won't be possible any more.
+@@ -41,7 +41,7 @@ enum sec_cpu_type {
+ /*
+  * struct sec_usbphy - transceiver driver state
+  * @phy: transceiver structure
+- * @plat: platform data
++ * @vusbphy: PMU regulator for usb phy
+  * @dev: The parent device supplied to the probe function
+  * @clk: usb phy clock
+  * @regs: usb phy register memory base
+@@ -49,7 +49,7 @@ enum sec_cpu_type {
+  */
+ struct sec_usbphy {
+ 	struct usb_phy	phy;
+-	struct s3c_usbphy_plat *plat;
++	struct regulator *vusbphy;
+ 	struct device	*dev;
+ 	struct clk	*clk;
+ 	void __iomem	*regs;
+@@ -187,8 +187,11 @@ static int sec_usbphy_init(struct usb_phy *phy)
+ 	}
 
-Also it would look odd IMO to have two compatible strings like:
-compatible = "samsung,exynos5-gsc", "samsung,exynos5400-gsc";
+ 	/* Disable phy isolation */
+-	if (sec->plat && sec->plat->pmu_isolation)
+-		sec->plat->pmu_isolation(false);
++	ret = regulator_enable(sec->vusbphy);
++	if (ret) {
++		dev_err(sec->dev, "Failed to enable regulator for USBPHY\n");
++		return ret;
++	}
 
-Please also see:
-http://devicetree.org/Device_Tree_Usage#Understanding_the_compatible_Property
+ 	/* Initialize usb phy registers */
+ 	sec_usbphy_enable(sec);
+@@ -208,8 +211,8 @@ static void sec_usbphy_shutdown(struct usb_phy *phy)
+ 	sec_usbphy_disable(sec);
 
---
+ 	/* Enable phy isolation */
+-	if (sec->plat && sec->plat->pmu_isolation)
+-		sec->plat->pmu_isolation(true);
++	if (regulator_disable(sec->vusbphy))
++		dev_err(sec->dev, "Failed to disable regulator for USBPHY\n");
 
-Regards,
-Sylwester
+ 	/* Disable the phy clock */
+ 	sec_usbphy_clk_control(sec, false);
+@@ -263,7 +266,6 @@ static int __devinit sec_usbphy_probe(struct
+platform_device *pdev)
+ 		return -ENOMEM;
+
+ 	sec->dev		= &pdev->dev;
+-	sec->plat		= pdata;
+ 	sec->regs		= phy_base;
+ 	sec->phy.dev		= sec->dev;
+ 	sec->phy.label		= "sec-usbphy";
+@@ -271,6 +273,14 @@ static int __devinit sec_usbphy_probe(struct
+platform_device *pdev)
+ 	sec->phy.shutdown	= sec_usbphy_shutdown;
+ 	sec->cpu_type		= sec_usbphy_get_driver_data(pdev);
+
++	/* acquire regulator */
++	sec->vusbphy = regulator_get(sec->dev, "usbdphy");
++	if (IS_ERR_OR_NULL(sec->vusbphy)) {
++		dev_err(dev, "failed to get regulator 'usbdphy'\n");
++		ret = -ENXIO;
++		goto err;
++	}
++
+ 	ret = usb_add_phy(&sec->phy, USB_PHY_TYPE_USB2);
+ 	if (ret)
+ 		goto err;
+@@ -292,6 +302,7 @@ static int __exit sec_usbphy_remove(struct
+platform_device *pdev)
+ 		clk_put(sec->clk);
+ 		sec->clk = NULL;
+ 	}
++	regulator_put(sec->vusbphy);
+
+ 	return 0;
+ }
+
+This kind of regulator, if generalised can be useful.
+Please comment.
+>
+> My guess is that the PMU code should be moved into a higher-level
+> abstraction. I don't know if you would use one of those we already
+Could you please point out the location of the code.
+> have or whether you'd introduce a new subsystem for those. Apparently.
+Havent thought about it. Trying to work it out with the existing infra of the
+kernel.
+> other platforms have similar issues, so I'd suggest you leave the
+> callback for now, but we should at some point discuss what to to
+> about it.
+>
+>         Arnd
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Praveen
