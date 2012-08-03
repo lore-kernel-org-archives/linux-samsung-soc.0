@@ -1,53 +1,178 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: s5p-fimc capturing interlaced BT656
-Date: Fri, 03 Aug 2012 22:28:28 +0200
-Message-ID: <501C346C.9000204@gmail.com>
-References: <1343911731.4113.5.camel@edge> <501C23D7.3020307@gmail.com> <1344024117.1907.8.camel@edge.config>
+Subject: Re: [PATCH v2 1/3] ARM: exynos: Save combiner registers on suspend
+Date: Fri, 03 Aug 2012 23:27:12 +0200
+Message-ID: <501C4230.9080306@gmail.com>
+References: <038e01cd6fda$3bba6f40$b32f4dc0$%kim@samsung.com> <1344024333-27159-1-git-send-email-kliegs@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:49942 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753604Ab2HCU2b (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:54339 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752377Ab2HCV1P (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Aug 2012 16:28:31 -0400
-In-Reply-To: <1344024117.1907.8.camel@edge.config>
+	Fri, 3 Aug 2012 17:27:15 -0400
+Received: by wibhr14 with SMTP id hr14so1042000wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Aug 2012 14:27:14 -0700 (PDT)
+In-Reply-To: <1344024333-27159-1-git-send-email-kliegs@chromium.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Dyer <mike.dyer@md-soft.co.uk>
-Cc: LMML <linux-media@vger.kernel.org>, linux-samsung-soc@vger.kernel.org
+To: Jonathan Kliegman <kliegs@chromium.org>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com
 
-On 08/03/2012 10:01 PM, Mike Dyer wrote:
-> I have indeed tried setting that, but with no effect.  However, checking
-> through the datasheet for the FIMC I discovered a DMA output (CIOCTRL)
-> register bit called 'Weave_Out'. The description is:
+Hi Jonathan,
+
+On 08/03/2012 10:05 PM, Jonathan Kliegman wrote:
+> The interupt combiner registers need to be saved on suspend and restored
+> on resume or combiner-based intterupts won't work after resume.
+
+intterupts -> interrupts
+ 
+> Signed-off-by: Jonathan Kliegman<kliegs@chromium.org>
+> ---
+>   arch/arm/mach-exynos/common.c |   74 +++++++++++++++++++++++++++++++++++++----
+>   1 files changed, 67 insertions(+), 7 deletions(-)
 > 
-> "Even and Odd fields can be weaved together and combined to form a
-> complete progressive frame by hardware. This field is useful for
-> interlace DMA output mode (Interlace_out or CAM_INTERLACE). Even field
-> address (1st frame start address) is used weave address. Odd fields
-> address (2nd frame start address) is ignored."
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 4eb39cd..af296e5 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -22,6 +22,7 @@
+>   #include<linux/export.h>
+>   #include<linux/irqdomain.h>
+>   #include<linux/of_address.h>
+> +#include<linux/cpu_pm.h>
 > 
-> This does produce full sized frames, but I still seem to only be getting
-> one field per frame, with a blank line inserted between each real line.
-> Setting both interlace and weave doesn't seem to help. So, something
-> still missing...
+>   #include<asm/proc-fns.h>
+>   #include<asm/exception.h>
+> @@ -405,10 +406,14 @@ struct combiner_chip_data {
+>   	unsigned int irq_offset;
+>   	unsigned int irq_mask;
+>   	void __iomem *base;
+> +#ifdef CONFIG_CPU_PM
+> +	bool saved_on;
+> +#endif
+>   };
 > 
-> I wonder if the irq handler is getting called for each field, maybe we
-> need to wait for two interrupts before dequeing the frame?
+>   static struct irq_domain *combiner_irq_domain;
+>   static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
+> +static unsigned int rt_max_combiner_nr;
+> 
+>   static inline void __iomem *combiner_base(struct irq_data *data)
+>   {
+> @@ -535,6 +540,55 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
+>   	return 0;
+>   }
+> 
+> +#ifdef CONFIG_CPU_PM
+> +static void combiner_save(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i<  rt_max_combiner_nr; i++) {
+> +		if (combiner_data[i].irq_mask&
+> +		    __raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET)) {
+> +			combiner_data[i].saved_on = true;
+> +		} else {
+> +			combiner_data[i].saved_on = false;
+> +		}
+> +	}
+> +}
+> +
+> +static void combiner_restore(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i<  rt_max_combiner_nr; i++) {
+> +		if (!combiner_data[i].saved_on)
+> +			continue;
+> +
+> +		__raw_writel(combiner_data[i].irq_mask,
+> +			     combiner_data[i].base + COMBINER_ENABLE_SET);
+> +	}
+> +}
+> +
+> +
+> +static int combiner_notifier(struct notifier_block *self, unsigned long cmd,
+> +			     void *v)
+> +{
+> +	switch (cmd) {
+> +	case CPU_CLUSTER_PM_ENTER:
+> +		combiner_save();
+> +		break;
+> +	case CPU_CLSUTER_PM_EXIT:
 
-Hmm, might be worth to try. But I'm wondering if the output DMA handling
-doesn't need to be reworked for that. According to the datasheet (Figure 
-2-20 Frame Buffer Control), even fields are written to DMA buffer with 
-even index (e.g. 0) and odd fields are written to DMA buffer with odd 
-index (e.g. 1). So possibly, if we set same address at two DMA buffer 
-start address registers (e.g. FIMC_REG_CIOYSA(0), FIMC_REG_CIOYSA(1)) 
-then even and odd frame will be written to proper memory location ?
+Looks like this part of code wasn't compiled or some last minute changes
+introduced this typo ?
 
-This might not be very difficult to implement.
+> +		combiner_restore();
+> +		break;
+> +	}
+> +
+> +	return NOTIFY_OK;
+> +}
+> +
+> +static struct notifier_block combiner_notifier_block = {
+> +	.notifier_call = combiner_notifier,
+> +};
+> +#endif
+> +
+>   static struct irq_domain_ops combiner_irq_domain_ops = {
+>   	.xlate	= combiner_irq_domain_xlate,
+>   	.map	= combiner_irq_domain_map,
+> @@ -544,20 +598,21 @@ static void __init combiner_init(void __iomem *combiner_base,
+>   				 struct device_node *np)
+>   {
+>   	int i, irq, irq_base;
+> -	unsigned int max_nr, nr_irq;
+> +	unsigned int nr_irq;
+> 
+>   	if (np) {
+> -		if (of_property_read_u32(np, "samsung,combiner-nr",&max_nr)) {
+> +		if (of_property_read_u32(np, "samsung,combiner-nr",
+> +					&rt_max_combiner_nr)) {
+>   			pr_warning("%s: number of combiners not specified, "
+>   				"setting default as %d.\n",
+>   				__func__, EXYNOS4_MAX_COMBINER_NR);
+> -			max_nr = EXYNOS4_MAX_COMBINER_NR;
+> +			rt_max_combiner_nr = EXYNOS4_MAX_COMBINER_NR;
+>   		}
+>   	} else {
+> -		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
+> -						EXYNOS4_MAX_COMBINER_NR;
+> +		rt_max_combiner_nr = soc_is_exynos5250() ?
+> +			EXYNOS5_MAX_COMBINER_NR : EXYNOS4_MAX_COMBINER_NR;
+>   	}
+> -	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
+> +	nr_irq = rt_max_combiner_nr * MAX_IRQ_IN_COMBINER;
+> 
+>   	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
+>   	if (IS_ERR_VALUE(irq_base)) {
+> @@ -572,7 +627,7 @@ static void __init combiner_init(void __iomem *combiner_base,
+>   		return;
+>   	}
+> 
+> -	for (i = 0; i<  max_nr; i++) {
+> +	for (i = 0; i<  rt_max_combiner_nr; i++) {
+>   		combiner_init_one(i, combiner_base + (i>>  2) * 0x10);
+>   		irq = IRQ_SPI(i);
+>   #ifdef CONFIG_OF
+> @@ -581,6 +636,11 @@ static void __init combiner_init(void __iomem *combiner_base,
+>   #endif
+>   		combiner_cascade_irq(i, irq);
+>   	}
+> +
+> +#ifdef CONFIG_PM
 
---
+Shouldn't this also be CONFIG_CPU_PM ? Declaration of combiner_notifier_block
+is compiled in only when CONFIG_CPU_PM is defined.
 
-Regards,
+> +	/* Setup suspend/resume combiner saving */
+> +	cpu_pm_register_notifier(&combiner_notifier_block);
+> +#endif
+>   }
+> 
+>   #ifdef CONFIG_OF
+
+Thanks,
 Sylwester
