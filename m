@@ -1,91 +1,161 @@
-From: Mike Dyer <mike.dyer@md-soft.co.uk>
-Subject: Re: s5p-fimc capturing interlaced BT656
-Date: Fri, 03 Aug 2012 21:01:57 +0100
-Message-ID: <1344024117.1907.8.camel@edge.config>
-References: <1343911731.4113.5.camel@edge> <501C23D7.3020307@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Jonathan Kliegman <kliegs@chromium.org>
+Subject: [PATCH v2 1/3] ARM: exynos: Save combiner registers on suspend
+Date: Fri,  3 Aug 2012 16:05:33 -0400
+Message-ID: <1344024333-27159-1-git-send-email-kliegs@chromium.org>
+References: <038e01cd6fda$3bba6f40$b32f4dc0$%kim@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:47807 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753469Ab2HCUCB (ORCPT
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:51010 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752496Ab2HCUGr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Aug 2012 16:02:01 -0400
-Received: by weyx8 with SMTP id x8so668400wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Aug 2012 13:01:59 -0700 (PDT)
-In-Reply-To: <501C23D7.3020307@gmail.com>
+	Fri, 3 Aug 2012 16:06:47 -0400
+Received: by yhmm54 with SMTP id m54so1283869yhm.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Aug 2012 13:06:46 -0700 (PDT)
+In-Reply-To: <038e01cd6fda$3bba6f40$b32f4dc0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, Jonathan Kliegman <kliegs@chromium.org>
 
-Hi Sylwester,
+The interupt combiner registers need to be saved on suspend and restored
+on resume or combiner-based intterupts won't work after resume.
 
-On Fri, 2012-08-03 at 21:17 +0200, Sylwester Nawrocki wrote:
-> Hi Mike,
-> 
-> On 08/02/2012 02:48 PM, Mike Dyer wrote:
-> > Hi All,
-> > 
-> > I'm using the S5PV210 camera IF and capturing BT656 video from a TVP5150
-> > video decoder.
-> > 
-> > I notice that the capture driver ignores the field interlace flags
-> > reported by the 'sensor' and always uses 'V4L2_FIELD_NONE'.  It also
-> > seems each field ends up in it's own frame, using only half the height.
-> 
-> s5p-fimc driver doesn't support the interlaced video capture, as we had
-> no such use case yet. Patches adding it are welcome.
->  
-> > What would need to be done to store both fields in a single frame, for
-> > example in a V4L2_FIELD_INTERLACE_TB/BT format?
-> 
-> Firstly, it would good to figure out FIMC register settings that would
-> allow storing both fields in a single frame. I _suspect_ it's as simple
-> as setting CAM_INTERLACE bit in CIGCTRL register. Have you perhaps tried
-> it already ?
-> 
-> For a quick test a patch as below might be sufficient.
-> 
-> 
-> diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-> index 1fc4ce8..19afa1a 100644
-> --- a/drivers/media/video/s5p-fimc/fimc-reg.c
-> +++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-> @@ -576,6 +576,8 @@ int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
->  	if (cam->flags & V4L2_MBUS_FIELD_EVEN_LOW)
->  		cfg |= FIMC_REG_CIGCTRL_INVPOLFIELD;
->  
-> +	cfg |= FIMC_REG_CIGCTRL_INTERLACE;
-> +
->  	writel(cfg, fimc->regs + FIMC_REG_CIGCTRL);
->  
->  	return 0;
-> 
-> 
-> --
-> 
-> Thanks,
-> Sylwester
+Signed-off-by: Jonathan Kliegman <kliegs@chromium.org>
+---
+ arch/arm/mach-exynos/common.c |   74 +++++++++++++++++++++++++++++++++++++----
+ 1 files changed, 67 insertions(+), 7 deletions(-)
 
-I have indeed tried setting that, but with no effect.  However, checking
-through the datasheet for the FIMC I discovered a DMA output (CIOCTRL)
-register bit called 'Weave_Out'. The description is:
-
-"Even and Odd fields can be weaved together and combined to form a
-complete progressive frame by hardware. This field is useful for
-interlace DMA output mode (Interlace_out or CAM_INTERLACE). Even field
-address (1st frame start address) is used weave address. Odd fields
-address (2nd frame start address) is ignored."
-
-This does produce full sized frames, but I still seem to only be getting
-one field per frame, with a blank line inserted between each real line.
-Setting both interlace and weave doesn't seem to help. So, something
-still missing...  
-
-I wonder if the irq handler is getting called for each field, maybe we
-need to wait for two interrupts before dequeing the frame?
-
-Cheers,
-Mike
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 4eb39cd..af296e5 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -22,6 +22,7 @@
+ #include <linux/export.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
++#include <linux/cpu_pm.h>
+ 
+ #include <asm/proc-fns.h>
+ #include <asm/exception.h>
+@@ -405,10 +406,14 @@ struct combiner_chip_data {
+ 	unsigned int irq_offset;
+ 	unsigned int irq_mask;
+ 	void __iomem *base;
++#ifdef CONFIG_CPU_PM
++	bool saved_on;
++#endif
+ };
+ 
+ static struct irq_domain *combiner_irq_domain;
+ static struct combiner_chip_data combiner_data[MAX_COMBINER_NR];
++static unsigned int rt_max_combiner_nr;
+ 
+ static inline void __iomem *combiner_base(struct irq_data *data)
+ {
+@@ -535,6 +540,55 @@ static int combiner_irq_domain_map(struct irq_domain *d, unsigned int irq,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_CPU_PM
++static void combiner_save(void)
++{
++	int i;
++
++	for (i = 0; i < rt_max_combiner_nr; i++) {
++		if (combiner_data[i].irq_mask &
++		    __raw_readl(combiner_data[i].base + COMBINER_ENABLE_SET)) {
++			combiner_data[i].saved_on = true;
++		} else {
++			combiner_data[i].saved_on = false;
++		}
++	}
++}
++
++static void combiner_restore(void)
++{
++	int i;
++
++	for (i = 0; i < rt_max_combiner_nr; i++) {
++		if (!combiner_data[i].saved_on)
++			continue;
++
++		__raw_writel(combiner_data[i].irq_mask,
++			     combiner_data[i].base + COMBINER_ENABLE_SET);
++	}
++}
++
++
++static int combiner_notifier(struct notifier_block *self, unsigned long cmd,
++			     void *v)
++{
++	switch (cmd) {
++	case CPU_CLUSTER_PM_ENTER:
++		combiner_save();
++		break;
++	case CPU_CLSUTER_PM_EXIT:
++		combiner_restore();
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block combiner_notifier_block = {
++	.notifier_call = combiner_notifier,
++};
++#endif
++
+ static struct irq_domain_ops combiner_irq_domain_ops = {
+ 	.xlate	= combiner_irq_domain_xlate,
+ 	.map	= combiner_irq_domain_map,
+@@ -544,20 +598,21 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 				 struct device_node *np)
+ {
+ 	int i, irq, irq_base;
+-	unsigned int max_nr, nr_irq;
++	unsigned int nr_irq;
+ 
+ 	if (np) {
+-		if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
++		if (of_property_read_u32(np, "samsung,combiner-nr",
++					 &rt_max_combiner_nr)) {
+ 			pr_warning("%s: number of combiners not specified, "
+ 				"setting default as %d.\n",
+ 				__func__, EXYNOS4_MAX_COMBINER_NR);
+-			max_nr = EXYNOS4_MAX_COMBINER_NR;
++			rt_max_combiner_nr = EXYNOS4_MAX_COMBINER_NR;
+ 		}
+ 	} else {
+-		max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
+-						EXYNOS4_MAX_COMBINER_NR;
++		rt_max_combiner_nr = soc_is_exynos5250() ?
++			EXYNOS5_MAX_COMBINER_NR : EXYNOS4_MAX_COMBINER_NR;
+ 	}
+-	nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
++	nr_irq = rt_max_combiner_nr * MAX_IRQ_IN_COMBINER;
+ 
+ 	irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
+ 	if (IS_ERR_VALUE(irq_base)) {
+@@ -572,7 +627,7 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 		return;
+ 	}
+ 
+-	for (i = 0; i < max_nr; i++) {
++	for (i = 0; i < rt_max_combiner_nr; i++) {
+ 		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
+ 		irq = IRQ_SPI(i);
+ #ifdef CONFIG_OF
+@@ -581,6 +636,11 @@ static void __init combiner_init(void __iomem *combiner_base,
+ #endif
+ 		combiner_cascade_irq(i, irq);
+ 	}
++
++#ifdef CONFIG_PM
++	/* Setup suspend/resume combiner saving */
++	cpu_pm_register_notifier(&combiner_notifier_block);
++#endif
+ }
+ 
+ #ifdef CONFIG_OF
+-- 
+1.7.7.3
