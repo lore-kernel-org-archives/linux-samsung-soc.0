@@ -1,65 +1,91 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+From: Mike Dyer <mike.dyer@md-soft.co.uk>
 Subject: Re: s5p-fimc capturing interlaced BT656
-Date: Fri, 03 Aug 2012 21:17:43 +0200
-Message-ID: <501C23D7.3020307@gmail.com>
-References: <1343911731.4113.5.camel@edge>
+Date: Fri, 03 Aug 2012 21:01:57 +0100
+Message-ID: <1344024117.1907.8.camel@edge.config>
+References: <1343911731.4113.5.camel@edge> <501C23D7.3020307@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:58502 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752328Ab2HCTRr (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:47807 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753469Ab2HCUCB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Aug 2012 15:17:47 -0400
-In-Reply-To: <1343911731.4113.5.camel@edge>
+	Fri, 3 Aug 2012 16:02:01 -0400
+Received: by weyx8 with SMTP id x8so668400wey.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 03 Aug 2012 13:01:59 -0700 (PDT)
+In-Reply-To: <501C23D7.3020307@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mike Dyer <mike.dyer@md-soft.co.uk>
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 Cc: LMML <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hi Mike,
+Hi Sylwester,
 
-On 08/02/2012 02:48 PM, Mike Dyer wrote:
-> Hi All,
+On Fri, 2012-08-03 at 21:17 +0200, Sylwester Nawrocki wrote:
+> Hi Mike,
 > 
-> I'm using the S5PV210 camera IF and capturing BT656 video from a TVP5150
-> video decoder.
+> On 08/02/2012 02:48 PM, Mike Dyer wrote:
+> > Hi All,
+> > 
+> > I'm using the S5PV210 camera IF and capturing BT656 video from a TVP5150
+> > video decoder.
+> > 
+> > I notice that the capture driver ignores the field interlace flags
+> > reported by the 'sensor' and always uses 'V4L2_FIELD_NONE'.  It also
+> > seems each field ends up in it's own frame, using only half the height.
 > 
-> I notice that the capture driver ignores the field interlace flags
-> reported by the 'sensor' and always uses 'V4L2_FIELD_NONE'.  It also
-> seems each field ends up in it's own frame, using only half the height.
+> s5p-fimc driver doesn't support the interlaced video capture, as we had
+> no such use case yet. Patches adding it are welcome.
+>  
+> > What would need to be done to store both fields in a single frame, for
+> > example in a V4L2_FIELD_INTERLACE_TB/BT format?
+> 
+> Firstly, it would good to figure out FIMC register settings that would
+> allow storing both fields in a single frame. I _suspect_ it's as simple
+> as setting CAM_INTERLACE bit in CIGCTRL register. Have you perhaps tried
+> it already ?
+> 
+> For a quick test a patch as below might be sufficient.
+> 
+> 
+> diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
+> index 1fc4ce8..19afa1a 100644
+> --- a/drivers/media/video/s5p-fimc/fimc-reg.c
+> +++ b/drivers/media/video/s5p-fimc/fimc-reg.c
+> @@ -576,6 +576,8 @@ int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
+>  	if (cam->flags & V4L2_MBUS_FIELD_EVEN_LOW)
+>  		cfg |= FIMC_REG_CIGCTRL_INVPOLFIELD;
+>  
+> +	cfg |= FIMC_REG_CIGCTRL_INTERLACE;
+> +
+>  	writel(cfg, fimc->regs + FIMC_REG_CIGCTRL);
+>  
+>  	return 0;
+> 
+> 
+> --
+> 
+> Thanks,
+> Sylwester
 
-s5p-fimc driver doesn't support the interlaced video capture, as we had
-no such use case yet. Patches adding it are welcome.
- 
-> What would need to be done to store both fields in a single frame, for
-> example in a V4L2_FIELD_INTERLACE_TB/BT format?
+I have indeed tried setting that, but with no effect.  However, checking
+through the datasheet for the FIMC I discovered a DMA output (CIOCTRL)
+register bit called 'Weave_Out'. The description is:
 
-Firstly, it would good to figure out FIMC register settings that would
-allow storing both fields in a single frame. I _suspect_ it's as simple
-as setting CAM_INTERLACE bit in CIGCTRL register. Have you perhaps tried
-it already ?
+"Even and Odd fields can be weaved together and combined to form a
+complete progressive frame by hardware. This field is useful for
+interlace DMA output mode (Interlace_out or CAM_INTERLACE). Even field
+address (1st frame start address) is used weave address. Odd fields
+address (2nd frame start address) is ignored."
 
-For a quick test a patch as below might be sufficient.
+This does produce full sized frames, but I still seem to only be getting
+one field per frame, with a blank line inserted between each real line.
+Setting both interlace and weave doesn't seem to help. So, something
+still missing...  
 
+I wonder if the irq handler is getting called for each field, maybe we
+need to wait for two interrupts before dequeing the frame?
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
-index 1fc4ce8..19afa1a 100644
---- a/drivers/media/video/s5p-fimc/fimc-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-reg.c
-@@ -576,6 +576,8 @@ int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
- 	if (cam->flags & V4L2_MBUS_FIELD_EVEN_LOW)
- 		cfg |= FIMC_REG_CIGCTRL_INVPOLFIELD;
- 
-+	cfg |= FIMC_REG_CIGCTRL_INTERLACE;
-+
- 	writel(cfg, fimc->regs + FIMC_REG_CIGCTRL);
- 
- 	return 0;
-
-
---
-
-Thanks,
-Sylwester
+Cheers,
+Mike
