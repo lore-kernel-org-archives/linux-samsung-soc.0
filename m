@@ -1,66 +1,65 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: [PATCH v2 3/3] pwm: samsung: replace pwm_id with hwpwm memeber of
- pwm_device
-Date: Fri, 03 Aug 2012 15:47:21 +0900
-Message-ID: <001801cd7143$d4dc0930$7e941b90$%han@samsung.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: s5p-fimc capturing interlaced BT656
+Date: Fri, 03 Aug 2012 21:17:43 +0200
+Message-ID: <501C23D7.3020307@gmail.com>
+References: <1343911731.4113.5.camel@edge>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:28669 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751175Ab2HCGrW (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:58502 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752328Ab2HCTRr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 3 Aug 2012 02:47:22 -0400
-Content-language: ko
+	Fri, 3 Aug 2012 15:17:47 -0400
+In-Reply-To: <1343911731.4113.5.camel@edge>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thierry Reding' <thierry.reding@avionic-design.de>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Mike Dyer <mike.dyer@md-soft.co.uk>
+Cc: LMML <linux-media@vger.kernel.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-This patch replaces pwm_id with hwpwm memeber of pwm_device.
-The pwm_id of struct s3c_chip is unncessary, since hwpwm can
-do same thing.
+Hi Mike,
 
-Signed-off-by: Jingoo Han <jg1.han@samsung.com>
----
-Tested on SMDKV310 board
- drivers/pwm/pwm-samsung.c |    9 ++++-----
- 1 files changed, 4 insertions(+), 5 deletions(-)
+On 08/02/2012 02:48 PM, Mike Dyer wrote:
+> Hi All,
+> 
+> I'm using the S5PV210 camera IF and capturing BT656 video from a TVP5150
+> video decoder.
+> 
+> I notice that the capture driver ignores the field interlace flags
+> reported by the 'sensor' and always uses 'V4L2_FIELD_NONE'.  It also
+> seems each field ends up in it's own frame, using only half the height.
 
-diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
-index aa0fe6b..8888841 100644
---- a/drivers/pwm/pwm-samsung.c
-+++ b/drivers/pwm/pwm-samsung.c
-@@ -39,7 +39,6 @@ struct s3c_chip {
- 	unsigned int		 duty_ns;
+s5p-fimc driver doesn't support the interlaced video capture, as we had
+no such use case yet. Patches adding it are welcome.
  
- 	unsigned char		 tcon_base;
--	unsigned char		 pwm_id;
- 	struct pwm_chip		 chip;
- };
+> What would need to be done to store both fields in a single frame, for
+> example in a V4L2_FIELD_INTERLACE_TB/BT format?
+
+Firstly, it would good to figure out FIMC register settings that would
+allow storing both fields in a single frame. I _suspect_ it's as simple
+as setting CAM_INTERLACE bit in CIGCTRL register. Have you perhaps tried
+it already ?
+
+For a quick test a patch as below might be sufficient.
+
+
+diff --git a/drivers/media/video/s5p-fimc/fimc-reg.c b/drivers/media/video/s5p-fimc/fimc-reg.c
+index 1fc4ce8..19afa1a 100644
+--- a/drivers/media/video/s5p-fimc/fimc-reg.c
++++ b/drivers/media/video/s5p-fimc/fimc-reg.c
+@@ -576,6 +576,8 @@ int fimc_hw_set_camera_polarity(struct fimc_dev *fimc,
+ 	if (cam->flags & V4L2_MBUS_FIELD_EVEN_LOW)
+ 		cfg |= FIMC_REG_CIGCTRL_INVPOLFIELD;
  
-@@ -138,8 +137,8 @@ static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	/* The TCMP and TCNT can be read without a lock, they're not
- 	 * shared between the timers. */
++	cfg |= FIMC_REG_CIGCTRL_INTERLACE;
++
+ 	writel(cfg, fimc->regs + FIMC_REG_CIGCTRL);
  
--	tcmp = __raw_readl(S3C2410_TCMPB(s3c->pwm_id));
--	tcnt = __raw_readl(S3C2410_TCNTB(s3c->pwm_id));
-+	tcmp = __raw_readl(S3C2410_TCMPB(pwm->hwpwm));
-+	tcnt = __raw_readl(S3C2410_TCNTB(pwm->hwpwm));
- 
- 	period = NS_IN_HZ / period_ns;
- 
-@@ -182,8 +181,8 @@ static int s3c_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 
- 	local_irq_save(flags);
- 
--	__raw_writel(tcmp, S3C2410_TCMPB(s3c->pwm_id));
--	__raw_writel(tcnt, S3C2410_TCNTB(s3c->pwm_id));
-+	__raw_writel(tcmp, S3C2410_TCMPB(pwm->hwpwm));
-+	__raw_writel(tcnt, S3C2410_TCNTB(pwm->hwpwm));
- 
- 	tcon = __raw_readl(S3C2410_TCON);
- 	tcon |= pwm_tcon_manulupdate(s3c);
--- 
-1.7.1
+ 	return 0;
+
+
+--
+
+Thanks,
+Sylwester
