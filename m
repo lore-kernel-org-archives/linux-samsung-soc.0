@@ -1,48 +1,34 @@
-From: vinayak holikatti <vinholikatti@gmail.com>
-Subject: Re: [PATCH V3 1/4] [SCSI] drivers/scsi/ufs: Seggregate PCI Specific Code
-Date: Sat, 4 Aug 2012 20:15:54 +0530
-Message-ID: <CAKVbJB_n7pivdNLq_3Q6auSKpnMOErd9eJgGJXBtbJ6NbAqG_g@mail.gmail.com>
-References: <1343292170-2599-1-git-send-email-vinholikatti@gmail.com>
-	<1343292170-2599-2-git-send-email-vinholikatti@gmail.com>
-	<201208011438.28719.arnd@arndb.de>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH 0/2] ARM: S3C24XX: Fix compilation errors with 3.6-rc1
+Date: Sun, 5 Aug 2012 17:38:27 +0200
+Message-ID: <201208051738.27728.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <201208011438.28719.arnd@arndb.de>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: James.Bottomley@hansenpartnership.com, linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, patches@linaro.org, linux-samsung-soc@vger.kernel.org, arnd@linaro.org, girish.shivananjappa@linaro.org, saugata.das@linaro.org, vishak.g@samsung.com, venkat@linaro.org, k.rajesh@samsung.com, dsaxena@linaro.org, ilho215.lee@samsung.com, nala.la@samsung.com, sreekumar.c@samsung.com, Santosh Yaraganavi <santoshsy@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: kgene.kim@samsung.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Wed, Aug 1, 2012 at 8:08 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Thursday 26 July 2012, Vinayak Holikatti wrote:
->
->> -static void ufshcd_remove(struct pci_dev *pdev)
->> +void ufshcd_remove(struct ufs_hba *hba)
->>  {
->> -     struct ufs_hba *hba = pci_get_drvdata(pdev);
->> -
->>       /* disable interrupts */
->>       ufshcd_int_config(hba, UFSHCD_INT_DISABLE);
->> -     free_irq(pdev->irq, hba);
->>
->>       ufshcd_hba_stop(hba);
->>       ufshcd_hba_free(hba);
->>
->>       scsi_remove_host(hba->host);
->>       scsi_host_put(hba->host);
->> +}
->> +EXPORT_SYMBOL(ufshcd_remove);
->
-> For driver internal symbols, you should always use "EXPORT_SYMBOL_GPL"
-> here.
-Ok, will use EXPORT_SYMBOL_GPL
->
->         Arnd
->
+Small fallout from from the s3c64xx spi changes and from a dma change from
+last year, that only surfaced after a gcc update.
 
+Heiko Stuebner (2):
+  ARM: S3C24XX: Add missing DMACH_DT_PROP
+  ARM: S3C24XX: Fix s3c2410_dma_enqueue parameters
 
+ arch/arm/mach-s3c24xx/include/mach/dma.h |    3 ++-
+ arch/arm/plat-s3c24xx/dma.c              |    2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
 -- 
-Regards,
-Vinayak Holikatti
+1.7.2.3
