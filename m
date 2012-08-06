@@ -1,37 +1,41 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: =?UTF-8?Q?Re=3A_=ED=9A=8C=EC=8B=A0=3A_=5BPATCH=5D_ODROID=2DX=3A_hkdk4412=3A_Add_new_hard?=
-	=?UTF-8?Q?ware_based_on_Exynos4412?=
-Date: Mon, 6 Aug 2012 11:33:21 -0700
-Message-ID: <CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
-References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
-	<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
-	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
+Date: Mon, 06 Aug 2012 21:09:02 +0200
+Message-ID: <5020164E.90007@gmail.com>
+References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com> <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com> <033301cd6fb0$7ac4af90$704e0eb0$%kim@samsung.com> <CAJuYYwTy5zkeM_cJO7HMm+=v=ORPHD26nQYZwXK6v1noWm1EuA@mail.gmail.com> <5018E656.3070803@samsung.com> <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com> <50197D66.1050108@gmail.com> <CAOesGMiZMrv4GY=v1WPn_qGZgg=vduO2TbsUOQ6sCah-ZvOg_A@mail.gmail.com> <501B1003.1090003@gmail.com> <CAOD6ATomKE3WYtGrBTSyjfkNr5ZK+3=NRrZLX0p5pOzPykOikQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ey0-f174.google.com ([209.85.215.174]:50181 "EHLO
+	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932380Ab2HFTJG (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Aug 2012 15:09:06 -0400
+Received: by eaac11 with SMTP id c11so949651eaa.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Aug 2012 12:09:05 -0700 (PDT)
+In-Reply-To: <CAOD6ATomKE3WYtGrBTSyjfkNr5ZK+3=NRrZLX0p5pOzPykOikQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shaik Ameer Basha <shaik.samsung@gmail.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, sungchun.kang@samsung.com, Rob Herring <rob.herring@calxeda.com>
 
-Hi,
+On 08/06/2012 08:27 AM, Shaik Ameer Basha wrote:
+> After all this discussion, I can see two possibilities here.
+> 1] If Kukjin Kim is sure about G-Scaler remains unchanged, across all
+> the exynos5 series SoCs,
+>          It is fine to go with the compatible string  "samsung,exynos5-gsc".
+> 2] Otherwise in case of any doubts about G-Scaler is going to change,
+>          It is safe to go with the compatible string specific to
+> current SoC i.e., "samsung,exynos5250-gsc".
+> 
+> If we all can agree on this, lets Kukjin Kim decide which string to
+> use as he has good knowledge about upcoming exynos5 series SoCs.
 
-On Mon, Aug 6, 2012 at 11:16 AM, Dongjin Kim
-<Dongjin.Kim@agreeyamobility.net> wrote:
-> Hello Tomas,
->
-> I am agree with you to look at using device tree and I have some plan for it.
-> But as of now I am focusing to bring up the hardware itself with mainline kernel and merge into it.
-> I also need some time to look at the requirement of device tree, because I am not familiar with it yet.
->
-> Any advice will be welcomed.
+I don't have strong opinion on this, but my vote goes for using more 
+specific properties. Of course the final word belongs to Mr. Kim.
 
-Basic rule (that has some flexibility for legacy platforms) is that
-the net movement of board support should move from board files to
-device-tree based. Introduction of a brand new board like this is a
-prime example of something that should be using device tree from day
-1.
+--
 
-
--Olof
+Regards,
+Sylwester
