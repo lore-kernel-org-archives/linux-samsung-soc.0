@@ -1,52 +1,37 @@
-From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
-Subject: =?utf-8?B?7ZqM7IugOiBbUEFUQ0hdIE9EUk9JRC1YOiBoa2RrNDQxMjogQWRkIG5ldyBo?=
- =?utf-8?Q?ardware_based_on_Exynos4412?=
-Date: Mon, 6 Aug 2012 18:16:18 +0000
-Message-ID: <A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
-References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>,<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: =?UTF-8?Q?Re=3A_=ED=9A=8C=EC=8B=A0=3A_=5BPATCH=5D_ODROID=2DX=3A_hkdk4412=3A_Add_new_hard?=
+	=?UTF-8?Q?ware_based_on_Exynos4412?=
+Date: Mon, 6 Aug 2012 11:33:21 -0700
+Message-ID: <CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
+References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
+	<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
+	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from co1ehsobe004.messaging.microsoft.com ([216.32.180.187]:48383
-	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S932114Ab2HFSQY (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Aug 2012 14:16:24 -0400
-In-Reply-To: <CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
-Content-Language: ko-KR
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-SGVsbG8gVG9tYXMsDQoNCkkgYW0gYWdyZWUgd2l0aCB5b3UgdG8gbG9vayBhdCB1c2luZyBkZXZp
-Y2UgdHJlZSBhbmQgSSBoYXZlIHNvbWUgcGxhbiBmb3IgaXQuDQpCdXQgYXMgb2Ygbm93IEkgYW0g
-Zm9jdXNpbmcgdG8gYnJpbmcgdXAgdGhlIGhhcmR3YXJlIGl0c2VsZiB3aXRoIG1haW5saW5lIGtl
-cm5lbCBhbmQgbWVyZ2UgaW50byBpdC4NCkkgYWxzbyBuZWVkIHNvbWUgdGltZSB0byBsb29rIGF0
-IHRoZSByZXF1aXJlbWVudCBvZiBkZXZpY2UgdHJlZSwgYmVjYXVzZSBJIGFtIG5vdCBmYW1pbGlh
-ciB3aXRoIGl0IHlldC4NCg0KQW55IGFkdmljZSB3aWxsIGJlIHdlbGNvbWVkLg0KDQpUaGFua3Ms
-DQpEb25namluLg0KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXw0K67O0
-64K4IOyCrOuejDogVGhvbWFzIEFicmFoYW0gW3Rob21hcy5hYnJhaGFtQGxpbmFyby5vcmddDQrr
-s7Trgrgg64Kg7KecOiAyMDEy64WEIDjsm5QgN+ydvCDtmZTsmpTsnbwg7Jik7KCEIDI6MzcNCuuw
-m+uKlCDsgqzrnow6IERvbmdqaW4gS2ltDQrssLjsobA6IERvbmdqaW4gS2ltOyBLdWtqaW4gS2lt
-OyBSdXNzZWxsIEtpbmc7IFRvbnkgTGluZGdyZW47IEpvbiBNZWRodXJzdDsgU2hhd24gR3VvOyBV
-d2UgS2xlaW5lLUvDtm5pZzsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOyBs
-aW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmcNCuygnOuqqTogUmU6IFtQQVRDSF0gT0RST0lELVg6IGhrZGs0NDEyOiBBZGQgbmV3IGhh
-cmR3YXJlIGJhc2VkIG9uIEV4eW5vczQ0MTINCg0KT24gNiBBdWd1c3QgMjAxMiAxOTo0MCwgRG9u
-Z2ppbiBLaW0gPHRvYmV0dGVyQGdtYWlsLmNvbT4gd3JvdGU6DQo+IFRoZSBIS0RLNDQxMiBpcyB0
-aGUgQ1BVIG1vZHVsZSBkZXZlbG9wZWQgYnkgSGFyZGtlcm5lbCB3aGljaCBpcyBiYXNlZCBvbg0K
-PiBFeHlub3MgNDQxMi4gIG1hY2hfaGtkazQ0MTIuYyBpcyB0byBydW4gb24gT0RST0lELVggaGFy
-ZHdhcmUgYW5kIE1hY2hpbmUgSUQNCj4gKDQyODkpIGlzIHJlZ2lzdGVyZWQuDQo+DQo+IENoYW5n
-ZS1JZDogSTNhZjAyODA4YzAzYjlhY2VhOTE2YzMxMDM5MGE0OTA0YWQ5MmQ3NjENCj4gU2lnbmVk
-LW9mZi1ieTogRG9uZ2ppbiBLaW0gPGRvbmdqaW4ua2ltQGFncmVleWFtb2JpbGl0eS5uZXQ+DQo+
-IC0tLQ0KPiAgYXJjaC9hcm0vbWFjaC1leHlub3MvS2NvbmZpZyAgICAgICAgIHwgICAyMyArDQo+
-ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9NYWtlZmlsZSAgICAgICAgfCAgICAxICsNCj4gIGFyY2gv
-YXJtL21hY2gtZXh5bm9zL21hY2gtaGtkazQ0MTIuYyB8ICA5NzkgKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKw0KPiAgYXJjaC9hcm0vdG9vbHMvbWFjaC10eXBlcyAgICAgICAgICAg
-IHwgICAgMSArDQo+ICA0IGZpbGVzIGNoYW5nZWQsIDEwMDQgaW5zZXJ0aW9ucygrKQ0KPiAgY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGFyY2gvYXJtL21hY2gtZXh5bm9zL21hY2gtaGtkazQ0MTIuYw0KDQpI
-b3cgYWJvdXQgbG9va2luZyBhdCB1c2luZyBkZXZpY2UgdHJlZSBvcHRpb24gZm9yIHRoaXMgYm9h
-cmQuIFRoYXQNCm1pZ2h0IHJlcXVpcmUgYWRkaXRpb25hbCBlZmZvcnQgYnV0IHdvdWxkIGJlIGhl
-bHBmdWwgaW4gdGhlIGxvbmcgcnVuLg0KDQpUaGFua3MsDQpUaG9tYXMuDQoNCg==
+Hi,
+
+On Mon, Aug 6, 2012 at 11:16 AM, Dongjin Kim
+<Dongjin.Kim@agreeyamobility.net> wrote:
+> Hello Tomas,
+>
+> I am agree with you to look at using device tree and I have some plan for it.
+> But as of now I am focusing to bring up the hardware itself with mainline kernel and merge into it.
+> I also need some time to look at the requirement of device tree, because I am not familiar with it yet.
+>
+> Any advice will be welcomed.
+
+Basic rule (that has some flexibility for legacy platforms) is that
+the net movement of board support should move from board files to
+device-tree based. Introduction of a brand new board like this is a
+prime example of something that should be using device tree from day
+1.
+
+
+-Olof
