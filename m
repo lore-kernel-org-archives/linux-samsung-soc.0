@@ -1,799 +1,1077 @@
 From: Dongjin Kim <tobetter@gmail.com>
-Subject: [PATCH] ARM: EXYNOS: Add USB HSIC device
-Date: Mon,  6 Aug 2012 22:57:40 +0900
-Message-ID: <1344261462-14183-3-git-send-email-dongjin.kim@agreeyamobility.net>
-References: <1344261462-14183-1-git-send-email-dongjin.kim@agreeyamobility.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1344261462-14183-1-git-send-email-dongjin.kim@agreeyamobility.net>
-Sender: linux-kernel-owner@vger.kernel.org
-Cc: Dongjin Kim <dongjin.kim@agreeyamobility.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jongpill Lee <boyko.lee@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Sachin Kamat <sachin.kamat@linaro.org>, Hauke Mehrtens <hauke@hauke-m.de>, Felipe Balbi <balbi@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Neil Zhang <zhangwm@marvell.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Subject: [PATCH] ODROID-X: hkdk4412: Add new hardware based on Exynos4412
+Date: Mon,  6 Aug 2012 23:10:51 +0900
+Message-ID: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:44145 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756240Ab2HFOLT (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 6 Aug 2012 10:11:19 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+Cc: Dongjin Kim <dongjin.kim@agreeyamobility.net>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-This patch support to control USB HSIC of EXYNOS4,
-edited based on Samsung's GT-i9100 ICS Opensource Update7.
+The HKDK4412 is the CPU module developed by Hardkernel which is based on
+Exynos 4412.  mach_hkdk4412.c is to run on ODROID-X hardware and Machine ID
+(4289) is registered.
 
-Change-Id: Ifba33c6a5166abf3644794eee6abe528bd71f521
+Change-Id: I3af02808c03b9acea916c310390a4904ad92d761
 Signed-off-by: Dongjin Kim <dongjin.kim@agreeyamobility.net>
 ---
- arch/arm/mach-exynos/common.c                    |    5 +
- arch/arm/mach-exynos/include/mach/regs-pmu.h     |   12 +
- arch/arm/mach-exynos/include/mach/regs-usb-phy.h |   97 +++++
- arch/arm/mach-exynos/setup-usb-phy.c             |  493 ++++++++++++++++------
- drivers/usb/host/Kconfig                         |   14 +
- 5 files changed, 501 insertions(+), 120 deletions(-)
+ arch/arm/mach-exynos/Kconfig         |   23 +
+ arch/arm/mach-exynos/Makefile        |    1 +
+ arch/arm/mach-exynos/mach-hkdk4412.c |  979 ++++++++++++++++++++++++++++++++++
+ arch/arm/tools/mach-types            |    1 +
+ 4 files changed, 1004 insertions(+)
+ create mode 100644 arch/arm/mach-exynos/mach-hkdk4412.c
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4eb39cd..94d58af 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -179,6 +179,11 @@ static struct map_desc exynos4_iodesc[] __initdata = {
- 		.length		= SZ_4K,
- 		.type		= MT_DEVICE,
- 	}, {
-+		.virtual	= (unsigned long)S5P_VA_GPIO2,
-+		.pfn		= __phys_to_pfn(EXYNOS4_PA_GPIO2),
-+		.length		= SZ_4K,
-+		.type		= MT_DEVICE,
-+	}, {
- 		.virtual	= (unsigned long)S5P_VA_DMC0,
- 		.pfn		= __phys_to_pfn(EXYNOS4_PA_DMC0),
- 		.length		= SZ_64K,
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index 0bb21e2..d98c2fe 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -185,6 +185,15 @@
- #define S5P_PMU_LCD1_CONF		S5P_PMUREG(0x3CA0)
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index b5b4c8c..ae90773 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -54,6 +54,9 @@ config SOC_EXYNOS4412
+ 	default y
+ 	depends on ARCH_EXYNOS4
+ 	select SAMSUNG_DMADEV
++	select S5P_PM if PM
++	select S5P_SLEEP if PM
++	select PM_GENERIC_DOMAINS
+ 	help
+ 	  Enable EXYNOS4412 SoC support
  
- /* Only for EXYNOS4x12 */
-+#define S5P_USB_PHY_CONTROL			S5P_PMUREG(0x0704)
-+#define S5P_USB_PHY_ENABLE			(0x1 << 0)
+@@ -394,6 +397,26 @@ config MACH_SMDK4412
+ 	select MACH_SMDK4212
+ 	help
+ 	  Machine support for Samsung SMDK4412
 +
-+#define S5P_HSIC_1_PHY_CONTROL			S5P_PMUREG(0x0708)
-+#define S5P_HSIC_1_PHY_ENABLE			(0x1 << 0)
++config MACH_HKDK4412
++	bool "HKDK4412"
++	select SOC_EXYNOS4412
++	select MACH_SMDK4212
++	select S3C_DEV_HSMMC
++	select S3C_DEV_HSMMC1
++	select S3C_DEV_USB_HSOTG
++	select S5P_DEV_CSIS0
++	select S5P_DEV_G2D
++	select S5P_DEV_JPEG
++	select S5P_DEV_USB_EHCI
++	select S5P_DEV_I2C_HDMIPHY
++	select S5P_DEV_TV
++	select S5P_GPIO_INT
++	select EXYNOS4_DEV_USB_OHCI
++	select SAMSUNG_DEV_ADC
++	help
++	  Machine support for Odroid-X based on Samsung EXYNOS4412
 +
-+#define S5P_HSIC_2_PHY_CONTROL			S5P_PMUREG(0x070C)
-+#define S5P_HSIC_2_PHY_ENABLE			(0x1 << 0)
-+
- #define S5P_ISP_ARM_LOWPWR			S5P_PMUREG(0x1050)
- #define S5P_DIS_IRQ_ISP_ARM_LOCAL_LOWPWR	S5P_PMUREG(0x1054)
- #define S5P_DIS_IRQ_ISP_ARM_CENTRAL_LOWPWR	S5P_PMUREG(0x1058)
-@@ -242,6 +251,9 @@
+ endif
  
- #define EXYNOS5_SYS_WDTRESET					(1 << 20)
+ comment "Flattened Device Tree based board for EXYNOS SoCs"
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 9b58024..dccc381 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -41,6 +41,7 @@ obj-$(CONFIG_MACH_ORIGEN)		+= mach-origen.o
  
-+#define EXYNOS5_USBDEV_PHY_CONTROL			S5P_PMUREG(0x0704)
-+#define EXYNOS5_USBHOST_PHY_CONTROL			S5P_PMUREG(0x0708)
-+
- #define EXYNOS5_ARM_CORE0_SYS_PWR_REG				S5P_PMUREG(0x1000)
- #define EXYNOS5_DIS_IRQ_ARM_CORE0_LOCAL_SYS_PWR_REG		S5P_PMUREG(0x1004)
- #define EXYNOS5_DIS_IRQ_ARM_CORE0_CENTRAL_SYS_PWR_REG		S5P_PMUREG(0x1008)
-diff --git a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-index 0727773..79021a0 100644
---- a/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-usb-phy.h
-@@ -43,6 +43,43 @@
- #define EXYNOS4210_CLKSEL_12M		(0x2 << 0)
- #define EXYNOS4210_CLKSEL_24M		(0x3 << 0)
+ obj-$(CONFIG_MACH_SMDK4212)		+= mach-smdk4x12.o
+ obj-$(CONFIG_MACH_SMDK4412)		+= mach-smdk4x12.o
++obj-$(CONFIG_MACH_HKDK4412)		+= mach-hkdk4412.o
  
-+#define EXYNOS4210_HSIC1_NORMAL_MASK            (0x3 << 11)
-+#define EXYNOS4210_HSIC1_SLEEP                  (1 << 12)
-+#define EXYNOS4210_HSIC1_FORCE_SUSPEND          (1 << 11)
-+#define EXYNOS4210_HSIC0_NORMAL_MASK            (0x3 << 9)
-+#define EXYNOS4210_HSIC0_SLEEP                  (1 << 10)
-+#define EXYNOS4210_HSIC0_FORCE_SUSPEND          (1 << 9)
+ obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
+ obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
+diff --git a/arch/arm/mach-exynos/mach-hkdk4412.c b/arch/arm/mach-exynos/mach-hkdk4412.c
+new file mode 100644
+index 0000000..3b090ae
+--- /dev/null
++++ b/arch/arm/mach-exynos/mach-hkdk4412.c
+@@ -0,0 +1,979 @@
++/*
++ * linux/arch/arm/mach-exynos4/mach-hkdk4412.c
++ *
++ * Copyright (c) 2012 AgreeYa Mobility Co., Ltd.
++ *		http://www.agreeyamobility.net
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
 +
-+#define EXYNOS4210_HOST_LINK_PORT_SWRST_MASK    (0xf << 6)
-+#define EXYNOS4210_HOST_LINK_PORT2_SWRST        (1 << 9)
-+#define EXYNOS4210_HOST_LINK_PORT1_SWRST        (1 << 8)
-+#define EXYNOS4210_HOST_LINK_PORT0_SWRST        (1 << 7)
-+#define EXYNOS4210_HOST_LINK_ALL_SWRST          (1 << 6)
-+#define EXYNOS4210_PHY1_SWRST_MASK              (0x7 << 3)
-+#define EXYNOS4210_PHY1_HSIC_SWRST              (1 << 5)
-+#define EXYNOS4210_PHY1_STD_SWRST               (1 << 4)
-+#define EXYNOS4210_PHY1_ALL_SWRST               (1 << 3)
++#include <linux/gpio.h>
++#include <linux/i2c.h>
++#include <linux/input.h>
++#include <linux/io.h>
++#include <linux/mfd/max77686.h>
++#include <linux/mmc/host.h>
++#include <linux/platform_device.h>
++#include <linux/pwm_backlight.h>
++#include <linux/regulator/machine.h>
++#include <linux/serial_core.h>
++#include <linux/platform_data/s3c-hsotg.h>
 +
-+#define EXYNOS4X12_HSIC1_NORMAL_MASK		(0x7 << 12)
-+#define EXYNOS4X12_HSIC1_SLEEP			(1 << 14)
-+#define EXYNOS4X12_HSIC1_ANALOG_POWERDOWN	(1 << 13)
-+#define EXYNOS4X12_HSIC1_FORCE_SUSPEND		(1 << 12)
-+#define EXYNOS4X12_HSIC0_NORMAL_MASK		(0x7 << 9)
-+#define EXYNOS4X12_HSIC0_SLEEP			(1 << 11)
-+#define EXYNOS4X12_HSIC0_ANALOG_POWERDOWN	(1 << 10)
-+#define EXYNOS4X12_HSIC0_FORCE_SUSPEND		(1 << 9)
++#include <asm/mach/arch.h>
++#include <asm/hardware/gic.h>
++#include <asm/mach-types.h>
 +
-+#define EXYNOS4X12_HOST_LINK_PORT_SWRST_MASK	(0xf << 7)
-+#define EXYNOS4X12_HOST_LINK_PORT2_SWRST	(1 << 10)
-+#define EXYNOS4X12_HOST_LINK_PORT1_SWRST	(1 << 9)
-+#define EXYNOS4X12_HOST_LINK_PORT0_SWRST	(1 << 8)
-+#define EXYNOS4X12_HOST_LINK_ALL_SWRST		(1 << 7)
-+#define EXYNOS4X12_PHY1_SWRST_MASK		(0xf << 3)
-+#define EXYNOS4X12_PHY1_HSIC1_SWRST		(1 << 6)
-+#define EXYNOS4X12_PHY1_HSIC0_SWRST		(1 << 5)
-+#define EXYNOS4X12_PHY1_SWRST			(1 << 4)
-+#define EXYNOS4X12_HOST_PHY_SWRST		(1 << 3)
++#include <plat/backlight.h>
++#include <plat/clock.h>
++#include <plat/cpu.h>
++#include <plat/devs.h>
++#include <plat/gpio-cfg.h>
++#include <plat/iic.h>
++#include <plat/keypad.h>
++#include <plat/mfc.h>
++#include <plat/regs-serial.h>
++#include <plat/sdhci.h>
++#include <plat/ehci.h>
 +
- #define EXYNOS4X12_CLKSEL_MASK		(0x7 << 0)
- #define EXYNOS4X12_CLKSEL_9600K		(0x0 << 0)
- #define EXYNOS4X12_CLKSEL_10M		(0x1 << 0)
-@@ -71,4 +108,64 @@
- #define EXYNOS4_PHY1CON			EXYNOS4_HSOTG_PHYREG(0x34)
- #define FPENABLEN			(1 << 0)
- 
-+/* For Exynos5 */
-+#define EXYNOS5_PHY_HOST_CTRL0                  EXYNOS4_HSOTG_PHYREG(0x00)
-+#define HOST_CTRL0_PHYSWRSTALL                  (0x1 << 31)
-+#define HOST_CTRL0_REFCLKSEL(val)               (val << 19)
-+#define EXYNOS5_CLKSEL_50M                      (0x7)
-+#define EXYNOS5_CLKSEL_24M                      (0x5)
-+#define EXYNOS5_CLKSEL_20M                      (0x4)
-+#define EXYNOS5_CLKSEL_19200K                   (0x3)
-+#define EXYNOS5_CLKSEL_12M                      (0x2)
-+#define EXYNOS5_CLKSEL_10M                      (0x1)
-+#define EXYNOS5_CLKSEL_9600K                    (0x0)
-+#define HOST_CTRL0_CLKSEL_SHIFT                 (16)
-+#define HOST_CTRL0_FSEL_MASK                    (0x7 << 16)
++#include <mach/ohci.h>
++#include <mach/map.h>
 +
-+#define HOST_CTRL0_COMMONON_N                   (0x1 << 9)
-+#define HOST_CTRL0_SIDDQ                        (0x1 << 6)
-+#define HOST_CTRL0_FORCESLEEP                   (0x1 << 5)
-+#define HOST_CTRL0_FORCESUSPEND                 (0x1 << 4)
-+#define HOST_CTRL0_WORDINTERFACE                (0x1 << 3)
-+#define HOST_CTRL0_UTMISWRST                    (0x1 << 2)
-+#define HOST_CTRL0_LINKSWRST                    (0x1 << 1)
-+#define HOST_CTRL0_PHYSWRST                     (0x1 << 0)
++#include "common.h"
 +
-+#define EXYNOS5_PHY_HOST_TUNE0                  EXYNOS4_HSOTG_PHYREG(0x04)
-+#define EXYNOS5_PHY_HOST_TEST0                  EXYNOS4_HSOTG_PHYREG(0x08)
++/* Following are default values for UCON, ULCON and UFCON UART registers */
++#define HKDK4412_UCON_DEFAULT	(S3C2410_UCON_TXILEVEL |	\
++				 S3C2410_UCON_RXILEVEL |	\
++				 S3C2410_UCON_TXIRQMODE |	\
++				 S3C2410_UCON_RXIRQMODE |	\
++				 S3C2410_UCON_RXFIFO_TOI |	\
++				 S3C2443_UCON_RXERR_IRQEN)
 +
-+#define EXYNOS5_PHY_HSIC_CTRL1                  EXYNOS4_HSOTG_PHYREG(0x10)
-+#define EXYNOS5_PHY_HSIC_CTRL2                  EXYNOS4_HSOTG_PHYREG(0x20)
-+#define HSIC_CTRL_REFCLKSEL(val)                ((val&0x3) << 23)
-+#define HSIC_CTRL_REFCLKDIV(val)                ((val&0x7f) << 16)
-+#define HSIC_CTRL_SIDDQ                         (0x1 << 6)
-+#define HSIC_CTRL_FORCESLEEP                    (0x1 << 5)
-+#define HSIC_CTRL_FORCESUSPEND                  (0x1 << 4)
-+#define HSIC_CTRL_WORDINTERFACE                 (0x1 << 3)
-+#define HSIC_CTRL_UTMISWRST                     (0x1 << 2)
-+#define HSIC_CTRL_PHYSWRST                      (0x1 << 0)
++#define HKDK4412_ULCON_DEFAULT	S3C2410_LCON_CS8
 +
-+#define EXYNOS5_PHY_HOST_EHCICTRL               EXYNOS4_HSOTG_PHYREG(0x30)
-+#define EHCICTRL_ENAINCRXALIGN                  (0x1 << 29)
-+#define EHCICTRL_ENAINCR4                       (0x1 << 28)
-+#define EHCICTRL_ENAINCR8                       (0x1 << 27)
-+#define EHCICTRL_ENAINCR16                      (0x1 << 26)
++#define HKDK4412_UFCON_DEFAULT	(S3C2410_UFCON_FIFOMODE |	\
++				 S5PV210_UFCON_TXTRIG4 |	\
++				 S5PV210_UFCON_RXTRIG4)
 +
-+#define EXYNOS5_PHY_HOST_OHCICTRL               EXYNOS4_HSOTG_PHYREG(0x34)
-+
-+#define EXYNOS5_PHY_OTG_SYS                     EXYNOS4_HSOTG_PHYREG(0x38)
-+#define OTG_SYS_PHYLINK_SW_RESET                (0x1 << 14)
-+#define OTG_SYS_LINK_SW_RST_UOTG                (0x1 << 13)
-+#define OTG_SYS_PHY0_SW_RST                     (0x1 << 12)
-+#define OTG_SYS_REF_CLK_SEL(val)                ((val&0x3) << 9)
-+#define OTG_SYS_REF_CLK_SEL_MASK                (0x3 << 9)
-+#define OTG_SYS_IP_PULLUP_UOTG                  (0x1 << 8)
-+#define OTG_SYS_COMMON_ON                       (0x1 << 7)
-+#define OTG_SYS_CLKSEL_SHIFT                    (4)
-+#define OTG_SYS_CTRL0_FSEL_MASK                 (0x7 << 4)
-+#define OTG_SYS_FORCE_SLEEP                     (0x1 << 3)
-+#define OTG_SYS_OTGDISABLE                      (0x1 << 2)
-+#define OTG_SYS_SIDDQ_UOTG                      (0x1 << 1)
-+#define OTG_SYS_FORCE_SUSPEND                   (0x1 << 0)
-+
- #endif /* __PLAT_S5P_REGS_USB_PHY_H */
-diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
-index b81cc56..c725745 100644
---- a/arch/arm/mach-exynos/setup-usb-phy.c
-+++ b/arch/arm/mach-exynos/setup-usb-phy.c
-@@ -1,5 +1,6 @@
- /*
-  * Copyright (C) 2011 Samsung Electronics Co.Ltd
-+ * Author: Yulgon Kim <yulgon.kim@samsung.com>
-  * Author: Joonyoung Shim <jy0922.shim@samsung.com>
-  *
-  *  This program is free software; you can redistribute  it and/or modify it
-@@ -19,205 +20,457 @@
- #include <plat/cpu.h>
- #include <plat/usb-phy.h>
- 
-+#define ETC6PUD		(S5P_VA_GPIO2 + 0x228)
-+#define EXYNOS4_USB_CFG	(S3C_VA_SYS + 0x21C)
-+
-+#define PHY_ENABLE	(1 << 0)
-+#define PHY_DISABLE	(0)
-+
-+enum usb_host_type {
-+	HOST_PHY_EHCI	= (0x1 << 0),
-+	HOST_PHY_OHCI	= (0x1 << 1),
++static struct s3c2410_uartcfg hkdk4412_uartcfgs[] __initdata = {
++	[0] = {
++		.hwport		= 0,
++		.flags		= 0,
++		.ucon		= HKDK4412_UCON_DEFAULT,
++		.ulcon		= HKDK4412_ULCON_DEFAULT,
++		.ufcon		= HKDK4412_UFCON_DEFAULT,
++	},
++	[1] = {
++		.hwport		= 1,
++		.flags		= 0,
++		.ucon		= HKDK4412_UCON_DEFAULT,
++		.ulcon		= HKDK4412_ULCON_DEFAULT,
++		.ufcon		= HKDK4412_UFCON_DEFAULT,
++	},
++	[2] = {
++		.hwport		= 2,
++		.flags		= 0,
++		.ucon		= HKDK4412_UCON_DEFAULT,
++		.ulcon		= HKDK4412_ULCON_DEFAULT,
++		.ufcon		= HKDK4412_UFCON_DEFAULT,
++	},
++	[3] = {
++		.hwport		= 3,
++		.flags		= 0,
++		.ucon		= HKDK4412_UCON_DEFAULT,
++		.ulcon		= HKDK4412_ULCON_DEFAULT,
++		.ufcon		= HKDK4412_UFCON_DEFAULT,
++	},
 +};
 +
-+enum usb_phy_type {
-+	USB_PHY		= (0x1 << 0),
-+	USB_PHY0	= (0x1 << 0),
-+	USB_PHY1	= (0x1 << 1),
-+	USB_PHY_HSIC0	= (0x1 << 1),
-+	USB_PHY_HSIC1	= (0x1 << 2),
++static struct s3c_sdhci_platdata hkdk4412_hsmmc2_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_INTERNAL,
++#ifdef CONFIG_EXYNOS4_SDHCI_CH2_8BIT
++	.max_width	= 8,
++	.host_caps	= MMC_CAP_8_BIT_DATA,
++#endif
 +};
 +
- static atomic_t host_usage;
-+static DEFINE_MUTEX(phy_lock);
-+static struct clk *phy_clk;
- 
- static int exynos4_usb_host_phy_is_on(void)
- {
- 	return (readl(EXYNOS4_PHYPWR) & PHY1_STD_ANALOG_POWERDOWN) ? 0 : 1;
- }
- 
--static void exynos4210_usb_phy_clkset(struct platform_device *pdev)
-+static int exynos4_usb_phy20_is_on(void)
- {
--	struct clk *xusbxti_clk;
--	u32 phyclk;
-+	return exynos4_usb_host_phy_is_on();
-+}
++static struct s3c_sdhci_platdata hkdk4412_hsmmc3_pdata __initdata = {
++	.cd_type	= S3C_SDHCI_CD_INTERNAL,
++};
 +
-+static int exynos_usb_phy_clock_enable(struct platform_device *pdev)
-+{
-+	int err;
++static struct regulator_consumer_supply __initdata max77686_buck1_consumer[] = {
++	REGULATOR_SUPPLY("vdd_mif", NULL),
++};
 +
-+	if (!phy_clk) {
-+		if (soc_is_exynos4210() ||
-+				soc_is_exynos4212() || soc_is_exynos4412())
-+			phy_clk = clk_get(&pdev->dev, "otg");
-+		else
-+			phy_clk = clk_get(&pdev->dev, "usbhost");
++static struct regulator_consumer_supply __initdata max77686_buck2_consumer[] = {
++	REGULATOR_SUPPLY("vdd_arm", NULL),
++};
 +
-+		if (IS_ERR(phy_clk)) {
-+			dev_err(&pdev->dev, "Failed to get phy clock\n");
-+			return PTR_ERR(phy_clk);
-+		}
++static struct regulator_consumer_supply __initdata max77686_buck3_consumer[] = {
++	REGULATOR_SUPPLY("vdd_int", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_buck4_consumer[] = {
++	REGULATOR_SUPPLY("vdd_g3d", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo1_consumer[] = {
++	REGULATOR_SUPPLY("vdd_alive", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo3_consumer[] = {
++	REGULATOR_SUPPLY("vddq_aud", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo4_consumer[] = {
++	REGULATOR_SUPPLY("vddq_mmc2", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo5_consumer[] = {
++	REGULATOR_SUPPLY("vddq_mmc1", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo8_consumer[] = {
++	REGULATOR_SUPPLY("vdd10_mipi", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo10_consumer[] = {
++	REGULATOR_SUPPLY("vdd18_mipi", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo11_consumer[] = {
++	REGULATOR_SUPPLY("vdd_ldo11", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo13_consumer[] = {
++	REGULATOR_SUPPLY("vdd18_mipihsi", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo14_consumer[] = {
++	REGULATOR_SUPPLY("vdd_ldo14", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo17_consumer[] = {
++	REGULATOR_SUPPLY("vddq_cam", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo18_consumer[] = {
++	REGULATOR_SUPPLY("vddq_isp", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo19_consumer[] = {
++	REGULATOR_SUPPLY("vt_cam", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo23_consumer[] = {
++	REGULATOR_SUPPLY("vdd_touch", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo24_consumer[] = {
++	REGULATOR_SUPPLY("vdd_touchled", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo25_consumer[] = {
++	REGULATOR_SUPPLY("vddq_lcd", NULL),
++};
++
++static struct regulator_consumer_supply __initdata max77686_ldo26_consumer[] = {
++	REGULATOR_SUPPLY("vdd_motor", NULL),
++};
++
++static struct regulator_init_data __initdata max77686_buck1_data = {
++	.constraints = {
++		.name		= "vdd_mif range",
++		.min_uV		= 800000,
++		.max_uV		= 1050000,
++		.always_on	= 1,
++		.boot_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				REGULATOR_CHANGE_STATUS,
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_buck1_consumer),
++	.consumer_supplies = max77686_buck1_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_buck2_data = {
++	.constraints = {
++		.name		= "vdd_arm range",
++		.min_uV		= 800000,
++		.max_uV		= 1350000,
++		.always_on	= 1,
++		.boot_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_buck2_consumer),
++	.consumer_supplies = max77686_buck2_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_buck3_data = {
++	.constraints = {
++		.name		= "vdd_int range",
++		.min_uV		= 800000,
++		.max_uV		= 1150000,
++		.always_on	= 1,
++		.boot_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE,
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_buck3_consumer),
++	.consumer_supplies = max77686_buck3_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_buck4_data = {
++	.constraints = {
++		.name		= "vdd_g3d range",
++		.min_uV		= 850000,
++		.max_uV		= 1200000,
++		.boot_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_VOLTAGE |
++				  REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.disabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_buck4_consumer),
++	.consumer_supplies = max77686_buck4_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_buck5_data = {
++	.constraints = {
++		.name		= "BUCK5 VDDQ_CKEM1_2",
++		.min_uV		= 1200000,
++		.max_uV		= 1200000,
++		.always_on	= 1,
++		.apply_uV	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1200000,
++			.mode	= REGULATOR_MODE_NORMAL,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_buck6_data = {
++	.constraints = {
++		.name		= "BUCK6 1V35",
++		.min_uV		= 1350000,
++		.max_uV		= 1350000,
++		.always_on	= 1,
++		.apply_uV	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1350000,
++			.mode	= REGULATOR_MODE_NORMAL,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_buck7_data = {
++	.constraints = {
++		.name		= "BUCK7 2V0",
++		.min_uV		= 2000000,
++		.max_uV		= 2000000,
++		.always_on	= 1,
++		.apply_uV	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 2000000,
++			.mode	= REGULATOR_MODE_NORMAL,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_buck8_data = {
++	.constraints = {
++		.name		= "BUCK8 3V3",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.always_on	= 1,
++		.apply_uV	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 3300000,
++			.mode	= REGULATOR_MODE_NORMAL,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_buck9_data = {
++	.constraints = {
++		.name		= "BUCK9 1V2",
++		.min_uV		= 1200000,
++		.max_uV		= 1200000,
++		.always_on	= 1,
++		.apply_uV	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1200000,
++			.mode	= REGULATOR_MODE_NORMAL,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo1_data = {
++	.constraints = {
++		.name		= "LDO1 VDD_ALIVE",
++		.min_uV		= 1000000,
++		.max_uV		= 1000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1000000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo1_consumer),
++	.consumer_supplies = max77686_ldo1_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo2_data = {
++	.constraints = {
++		.name		= "LDO2 VDDQ_M1_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo3_data = {
++	.constraints = {
++		.name		= "LDO3 VDDQ_AUD_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo3_consumer),
++	.consumer_supplies = max77686_ldo3_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo4_data = {
++	.constraints = {
++		.name		= "LDO4 VDDQ_MMC2_2V8",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 2800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo4_consumer),
++	.consumer_supplies = max77686_ldo4_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo5_data = {
++	.constraints = {
++		.name		= "LDO5 VDDQ_MMC1_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo5_consumer),
++	.consumer_supplies = max77686_ldo5_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo6_data = {
++	.constraints = {
++		.name		= "LDO6 VDD10_MPLL_1V0",
++		.min_uV		= 1000000,
++		.max_uV		= 1000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1000000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo7_data = {
++	.constraints = {
++		.name		= "LDO7 VDD10_EPLL_1V0",
++		.min_uV		= 1000000,
++		.max_uV		= 1000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1000000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo8_data = {
++	.constraints = {
++		.name		= "LDO8 VDD10_MIPI_1V0",
++		.min_uV		= 1000000,
++		.max_uV		= 1000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1000000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo8_consumer),
++	.consumer_supplies = max77686_ldo8_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo9_data = {
++	.constraints = {
++		.name		= "LDO9 VT_CORE_1V0",
++		.min_uV		= 1000000,
++		.max_uV		= 1000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1000000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo10_data = {
++	.constraints = {
++		.name		= "LDO10 VDD18_MIPI_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo10_consumer),
++	.consumer_supplies = max77686_ldo10_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo11_data = {
++	.constraints = {
++		.name		= "vdd_ldo11 range",
++		.min_uV		= 1900000,
++		.max_uV		= 1900000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem = {
++			.uV	= 1900000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(max77686_ldo11_consumer),
++	.consumer_supplies	= max77686_ldo11_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo12_data = {
++	.constraints = {
++		.name		= "LDO12 VDD33_UOTG_3V3",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 3300000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo13_data = {
++	.constraints = {
++		.name		= "LDO13 VDD18_MIPIHSI_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo13_consumer),
++	.consumer_supplies = max77686_ldo13_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo14_data = {
++	.constraints = {
++		.name		= "vdd_ldo14 range",
++		.min_uV		= 1900000,
++		.max_uV		= 1900000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.state_mem = {
++			.uV	= 1900000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies	= ARRAY_SIZE(max77686_ldo14_consumer),
++	.consumer_supplies	= max77686_ldo14_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo15_data = {
++	.constraints = {
++		.name		= "LDO15 VDD10_OTG",
++		.min_uV		= 1000000,
++		.max_uV		= 1000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1000000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo16_data = {
++	.constraints = {
++		.name		= "LDO16 VDD18_HSIC",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo17_data = {
++	.constraints = {
++		.name		= "LDO17 VDDQ_CAM_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo17_consumer),
++	.consumer_supplies = max77686_ldo17_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo18_data = {
++	.constraints = {
++		.name		= "LDO18 VDDQ_ISP_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo18_consumer),
++	.consumer_supplies = max77686_ldo18_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo19_data = {
++	.constraints = {
++		.name		= "LDO19 VT_CAM_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 0,
++		.always_on	= 0,
++		.boot_on	= 0,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1800000,
++			.enabled = 0,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo19_consumer),
++	.consumer_supplies = max77686_ldo19_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo20_data = {
++	.constraints = {
++		.name		= "LDO20 EMMC_IO_1V8",
++		.min_uV		= 1900000,
++		.max_uV		= 1900000,
++		.always_on	= 1,
++		.boot_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 1900000,
++			.enabled = 0,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo21_data = {
++	.constraints = {
++		.name		= "LDO21 TFLASH_2V8",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 2800000,
++			.enabled = 1,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo22_data = {
++	.constraints = {
++		.name		= "LDO22",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.apply_uV	= 1,
++		.always_on	= 0,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 3300000,
++			.enabled = 0,
++		},
++	},
++};
++
++static struct regulator_init_data __initdata max77686_ldo23_data = {
++	.constraints = {
++		.name		= "LDO23 VDD_TOUCH_2V8",
++		.min_uV		= 2800000,
++		.max_uV		= 2800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 2800000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo23_consumer),
++	.consumer_supplies = max77686_ldo23_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo24_data = {
++	.constraints = {
++		.name		= "LDO24 VDD_TOUCHLED_3V3",
++		.min_uV		= 3300000,
++		.max_uV		= 3300000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.uV	= 3300000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo24_consumer),
++	.consumer_supplies = max77686_ldo24_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo25_data = {
++	.constraints = {
++		.name		= "LDO25 VDDQ_LCD_1V8",
++		.min_uV		= 1800000,
++		.max_uV		= 1800000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem = {
++			.disabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo25_consumer),
++	.consumer_supplies = max77686_ldo25_consumer,
++};
++
++static struct regulator_init_data __initdata max77686_ldo26_data = {
++	.constraints = {
++		.name		= "LDO26 VDD_MOTOR_3V0",
++		.min_uV		= 3000000,
++		.max_uV		= 3000000,
++		.apply_uV	= 1,
++		.always_on	= 1,
++		.valid_ops_mask = REGULATOR_CHANGE_STATUS,
++		.state_mem	= {
++			.uV	= 3000000,
++			.enabled = 1,
++		},
++	},
++	.num_consumer_supplies = ARRAY_SIZE(max77686_ldo26_consumer),
++	.consumer_supplies = max77686_ldo26_consumer,
++};
++
++struct max77686_opmode_data max77686_opmode_data[MAX77686_REG_MAX] = {
++	[MAX77686_LDO11] = {MAX77686_LDO11, MAX77686_OPMODE_STANDBY},
++	[MAX77686_LDO14] = {MAX77686_LDO14, MAX77686_OPMODE_STANDBY},
++	[MAX77686_BUCK1] = {MAX77686_BUCK1, MAX77686_OPMODE_STANDBY},
++	[MAX77686_BUCK2] = {MAX77686_BUCK2, MAX77686_OPMODE_STANDBY},
++	[MAX77686_BUCK3] = {MAX77686_BUCK3, MAX77686_OPMODE_STANDBY},
++	[MAX77686_BUCK4] = {MAX77686_BUCK4, MAX77686_OPMODE_STANDBY},
++};
++
++static struct max77686_regulator_data max77686_regulators[] = {
++	{ MAX77686_LDO1,	&max77686_ldo1_data },
++	{ MAX77686_LDO2,	&max77686_ldo2_data },
++	{ MAX77686_LDO3,	&max77686_ldo3_data },
++	{ MAX77686_LDO4,	&max77686_ldo4_data },
++	{ MAX77686_LDO5,	&max77686_ldo5_data },
++	{ MAX77686_LDO6,	&max77686_ldo6_data },
++	{ MAX77686_LDO7,	&max77686_ldo7_data },
++	{ MAX77686_LDO8,	&max77686_ldo8_data },
++	{ MAX77686_LDO9,	&max77686_ldo9_data },
++	{ MAX77686_LDO10,	&max77686_ldo10_data },
++	{ MAX77686_LDO11,	&max77686_ldo11_data },
++	{ MAX77686_LDO12,	&max77686_ldo12_data },
++	{ MAX77686_LDO13,	&max77686_ldo13_data },
++	{ MAX77686_LDO14,	&max77686_ldo14_data },
++	{ MAX77686_LDO15,	&max77686_ldo15_data },
++	{ MAX77686_LDO16,	&max77686_ldo16_data },
++	{ MAX77686_LDO17,	&max77686_ldo17_data },
++	{ MAX77686_LDO18,	&max77686_ldo18_data },
++	{ MAX77686_LDO19,	&max77686_ldo19_data },
++	{ MAX77686_LDO20,	&max77686_ldo20_data },
++	{ MAX77686_LDO21,	&max77686_ldo21_data },
++	{ MAX77686_LDO22,	&max77686_ldo22_data },
++	{ MAX77686_LDO23,	&max77686_ldo23_data },
++	{ MAX77686_LDO24,	&max77686_ldo24_data },
++	{ MAX77686_LDO25,	&max77686_ldo25_data },
++	{ MAX77686_LDO26,	&max77686_ldo26_data },
++
++	{ MAX77686_BUCK1,	&max77686_buck1_data },
++	{ MAX77686_BUCK2,	&max77686_buck2_data },
++	{ MAX77686_BUCK3,	&max77686_buck3_data },
++	{ MAX77686_BUCK4,	&max77686_buck4_data },
++	{ MAX77686_BUCK5,	&max77686_buck5_data },
++	{ MAX77686_BUCK6,	&max77686_buck6_data },
++	{ MAX77686_BUCK7,	&max77686_buck7_data },
++	{ MAX77686_BUCK8,	&max77686_buck8_data },
++	{ MAX77686_BUCK9,	&max77686_buck9_data },
++};
++
++static struct max77686_platform_data hkdk4412_max77686_info = {
++	.num_regulators	= ARRAY_SIZE(max77686_regulators),
++	.regulators	= max77686_regulators,
++	.irq_gpio	= 0,
++	.wakeup		= 0,
++
++	.opmode_data	= max77686_opmode_data,
++
++	.buck234_gpio_dvs[0]	= EXYNOS4_GPX2(3),
++	.buck234_gpio_dvs[1]	= EXYNOS4_GPX2(4),
++	.buck234_gpio_dvs[2]	= EXYNOS4_GPX2(5),
++
++	.buck2_voltage[0] = 1300000,	/* 1.3V */
++	.buck2_voltage[1] = 1000000,	/* 1.0V */
++	.buck2_voltage[2] = 950000,	/* 0.95V */
++	.buck2_voltage[3] = 900000,	/* 0.9V */
++	.buck2_voltage[4] = 1000000,	/* 1.0V */
++	.buck2_voltage[5] = 1000000,	/* 1.0V */
++	.buck2_voltage[6] = 950000,	/* 0.95V */
++	.buck2_voltage[7] = 900000,	/* 0.9V */
++
++	.buck3_voltage[0] = 1037500,	/* 1.0375V */
++	.buck3_voltage[1] = 1000000,	/* 1.0V */
++	.buck3_voltage[2] = 950000,	/* 0.95V */
++	.buck3_voltage[3] = 900000,	/* 0.9V */
++	.buck3_voltage[4] = 1000000,	/* 1.0V */
++	.buck3_voltage[5] = 1000000,	/* 1.0V */
++	.buck3_voltage[6] = 950000,	/* 0.95V */
++	.buck3_voltage[7] = 900000,	/* 0.9V */
++
++	.buck4_voltage[0] = 1100000,	/* 1.1V */
++	.buck4_voltage[1] = 1000000,	/* 1.0V */
++	.buck4_voltage[2] = 950000,	/* 0.95V */
++	.buck4_voltage[3] = 900000,	/* 0.9V */
++	.buck4_voltage[4] = 1000000,	/* 1.0V */
++	.buck4_voltage[5] = 1000000,	/* 1.0V */
++	.buck4_voltage[6] = 950000,	/* 0.95V */
++	.buck4_voltage[7] = 900000,	/* 0.9V */
++};
++
++static struct i2c_board_info hkdk4412_i2c_devs0[] __initdata = {
++	{
++		I2C_BOARD_INFO("max77686", (0x12 >> 1)),
++		.platform_data	= &hkdk4412_max77686_info,
 +	}
++};
 +
-+	err = clk_enable(phy_clk);
++static struct i2c_board_info hkdk4412_i2c_devs1[] __initdata = {
++};
 +
-+	return err;
-+}
- 
--	xusbxti_clk = clk_get(&pdev->dev, "xusbxti");
--	if (xusbxti_clk && !IS_ERR(xusbxti_clk)) {
--		if (soc_is_exynos4210()) {
--			/* set clock frequency for PLL */
--			phyclk = readl(EXYNOS4_PHYCLK) & ~EXYNOS4210_CLKSEL_MASK;
--
--			switch (clk_get_rate(xusbxti_clk)) {
--			case 12 * MHZ:
--				phyclk |= EXYNOS4210_CLKSEL_12M;
--				break;
--			case 48 * MHZ:
--				phyclk |= EXYNOS4210_CLKSEL_48M;
--				break;
--			default:
--			case 24 * MHZ:
--				phyclk |= EXYNOS4210_CLKSEL_24M;
--				break;
--			}
--			writel(phyclk, EXYNOS4_PHYCLK);
--		} else if (soc_is_exynos4212() || soc_is_exynos4412()) {
--			/* set clock frequency for PLL */
--			phyclk = readl(EXYNOS4_PHYCLK) & ~EXYNOS4X12_CLKSEL_MASK;
--
--			switch (clk_get_rate(xusbxti_clk)) {
--			case 9600 * KHZ:
--				phyclk |= EXYNOS4X12_CLKSEL_9600K;
--				break;
--			case 10 * MHZ:
--				phyclk |= EXYNOS4X12_CLKSEL_10M;
--				break;
--			case 12 * MHZ:
--				phyclk |= EXYNOS4X12_CLKSEL_12M;
--				break;
--			case 19200 * KHZ:
--				phyclk |= EXYNOS4X12_CLKSEL_19200K;
--				break;
--			case 20 * MHZ:
--				phyclk |= EXYNOS4X12_CLKSEL_20M;
--				break;
--			default:
--			case 24 * MHZ:
--				/* default reference clock */
--				phyclk |= EXYNOS4X12_CLKSEL_24M;
--				break;
--			}
--			writel(phyclk, EXYNOS4_PHYCLK);
-+static int exynos_usb_phy_clock_disable(struct platform_device *pdev)
++static struct i2c_board_info hkdk4412_i2c_devs3[] __initdata = {
++	/* nothing here yet */
++};
++
++static struct i2c_board_info hkdk4412_i2c_devs7[] __initdata = {
++	/* nothing here yet */
++};
++
++static struct gpio_led hkdk4412_gpio_leds[] = {
++	{
++		.name		= "led1",	/* D5 on ODROID-X */
++		.default_trigger	= "oneshot",
++		.gpio		= EXYNOS4_GPC1(0),
++		.active_low	= 1,
++	},
++	{
++		.name		= "led2",	/* D6 on ODROID-X */
++		.default_trigger	= "heartbeat",
++		.gpio		= EXYNOS4_GPC1(2),
++		.active_low	= 1,
++	},
++};
++
++static struct gpio_led_platform_data hkdk4412_gpio_led_info = {
++	.leds		= hkdk4412_gpio_leds,
++	.num_leds	= ARRAY_SIZE(hkdk4412_gpio_leds),
++};
++
++static struct platform_device hkdk4412_leds_gpio = {
++	.name	= "leds-gpio",
++	.id	= -1,
++	.dev	= {
++		.platform_data	= &hkdk4412_gpio_led_info,
++	},
++};
++
++/* USB EHCI */
++static struct s5p_ehci_platdata hkdk4412_ehci_pdata;
++
++static void __init hkdk4412_ehci_init(void)
 +{
-+	if (!phy_clk) {
-+		if (soc_is_exynos4210() ||
-+				soc_is_exynos4212() || soc_is_exynos4412())
-+			phy_clk = clk_get(&pdev->dev, "otg");
-+		else
-+			phy_clk = clk_get(&pdev->dev, "usbhost");
-+		if (IS_ERR(phy_clk)) {
-+			dev_err(&pdev->dev, "Failed to get phy clock\n");
-+			return PTR_ERR(phy_clk);
- 		}
--		clk_put(xusbxti_clk);
- 	}
++	struct s5p_ehci_platdata *pdata = &hkdk4412_ehci_pdata;
 +
-+	clk_disable(phy_clk);
-+
-+	return 0;
- }
- 
--static int exynos4210_usb_phy0_init(struct platform_device *pdev)
-+static u32 exynos_usb_phy_set_clock(struct platform_device *pdev)
- {
-+	struct clk *ref_clk;
-+	u32 refclk_freq = 0;
-+
-+	if (soc_is_exynos4210() || soc_is_exynos4212() || soc_is_exynos4412())
-+		ref_clk = clk_get(&pdev->dev, "xusbxti");
-+	else
-+		ref_clk = clk_get(&pdev->dev, "ext_xtal");
-+
-+	if (IS_ERR(ref_clk)) {
-+		dev_err(&pdev->dev, "Failed to get reference clock\n");
-+		return PTR_ERR(ref_clk);
-+	}
-+
-+	if (soc_is_exynos4210()) {
-+		switch (clk_get_rate(ref_clk)) {
-+		case 12 * MHZ:
-+			refclk_freq = EXYNOS4210_CLKSEL_12M;
-+			break;
-+		case 48 * MHZ:
-+			refclk_freq = EXYNOS4210_CLKSEL_48M;
-+			break;
-+		case 24 * MHZ:
-+		default:
-+			/* default reference clock */
-+			refclk_freq = EXYNOS4210_CLKSEL_24M;
-+			break;
-+		}
-+	} else if (soc_is_exynos4212() | soc_is_exynos4412()) {
-+		switch (clk_get_rate(ref_clk)) {
-+		case 96 * 100000:
-+			refclk_freq = EXYNOS4X12_CLKSEL_9600K;
-+			break;
-+		case 10 * MHZ:
-+			refclk_freq = EXYNOS4X12_CLKSEL_10M;
-+			break;
-+		case 12 * MHZ:
-+			refclk_freq = EXYNOS4X12_CLKSEL_12M;
-+			break;
-+		case 192 * 100000:
-+			refclk_freq = EXYNOS4X12_CLKSEL_19200K;
-+			break;
-+		case 20 * MHZ:
-+			refclk_freq = EXYNOS4X12_CLKSEL_20M;
-+			break;
-+		case 24 * MHZ:
-+		default:
-+			/* default reference clock */
-+			refclk_freq = EXYNOS4X12_CLKSEL_24M;
-+			break;
-+		}
-+	} else {
-+		switch (clk_get_rate(ref_clk)) {
-+		case 96 * 100000:
-+			refclk_freq = EXYNOS5_CLKSEL_9600K;
-+			break;
-+		case 10 * MHZ:
-+			refclk_freq = EXYNOS5_CLKSEL_10M;
-+			break;
-+		case 12 * MHZ:
-+			refclk_freq = EXYNOS5_CLKSEL_12M;
-+			break;
-+		case 192 * 100000:
-+			refclk_freq = EXYNOS5_CLKSEL_19200K;
-+			break;
-+		case 20 * MHZ:
-+			refclk_freq = EXYNOS5_CLKSEL_20M;
-+			break;
-+		case 50 * MHZ:
-+			refclk_freq = EXYNOS5_CLKSEL_50M;
-+			break;
-+		case 24 * MHZ:
-+		default:
-+			/* default reference clock */
-+			refclk_freq = EXYNOS5_CLKSEL_24M;
-+			break;
-+		}
-+	}
-+	clk_put(ref_clk);
-+
-+	return refclk_freq;
++	s5p_ehci_set_platdata(pdata);
 +}
 +
-+static void exynos_usb_phy_control(enum usb_phy_type phy_type , int on)
++/* USB OHCI */
++static struct exynos4_ohci_platdata hkdk4412_ohci_pdata;
++
++static void __init hkdk4412_ohci_init(void)
 +{
-+	if (soc_is_exynos4210()) {
-+		if (phy_type & USB_PHY0)
-+			writel(on, S5P_USBDEVICE_PHY_CONTROL);
-+		if (phy_type & USB_PHY1)
-+			writel(on, S5P_USBHOST_PHY_CONTROL);
-+	} else if (soc_is_exynos4212() | soc_is_exynos4412()) {
-+		if (phy_type & USB_PHY)
-+			writel(on, S5P_USB_PHY_CONTROL);
-+#ifdef CONFIG_USB_S5P_HSIC0
-+		if (phy_type & USB_PHY_HSIC0)
-+			writel(on, S5P_HSIC_1_PHY_CONTROL);
-+#endif
-+#ifdef CONFIG_USB_S5P_HSIC1
-+		if (phy_type & USB_PHY_HSIC1)
-+			writel(on, S5P_HSIC_2_PHY_CONTROL);
-+#endif
-+	} else {
-+		if (phy_type & USB_PHY0)
-+			writel(on, EXYNOS5_USBDEV_PHY_CONTROL);
-+		if (phy_type & USB_PHY1)
-+			writel(on, EXYNOS5_USBHOST_PHY_CONTROL);
-+	}
++	struct exynos4_ohci_platdata *pdata = &hkdk4412_ohci_pdata;
++
++	exynos4_ohci_set_platdata(pdata);
 +}
 +
-+static int exynos4_usb_phy0_init(struct platform_device *pdev)
++/* USB OTG */
++static struct s3c_hsotg_plat hkdk4412_hsotg_pdata;
++
++static struct platform_device *hkdk4412_devices[] __initdata = {
++	&s3c_device_hsmmc2,
++	&s3c_device_hsmmc3,
++	&s3c_device_i2c0,
++	&s3c_device_i2c1,
++	&s3c_device_i2c3,
++	&s3c_device_i2c7,
++	&s3c_device_rtc,
++	&s3c_device_usb_hsotg,
++	&s3c_device_wdt,
++	&s5p_device_ehci,
++	&s5p_device_fimc0,
++	&s5p_device_fimc1,
++	&s5p_device_fimc2,
++	&s5p_device_fimc3,
++	&s5p_device_fimc_md,
++	&s5p_device_mfc,
++	&s5p_device_mfc_l,
++	&s5p_device_mfc_r,
++	&exynos4_device_ohci,
++	&hkdk4412_leds_gpio,
++};
++
++static void __init hkdk4412_map_io(void)
 +{
-+	u32 phypwr;
-+	u32 phyclk;
- 	u32 rstcon;
- 
--	writel(readl(S5P_USBDEVICE_PHY_CONTROL) | S5P_USBDEVICE_PHY_ENABLE,
--			S5P_USBDEVICE_PHY_CONTROL);
-+	exynos_usb_phy_control(USB_PHY0, PHY_ENABLE);
- 
--	exynos4210_usb_phy_clkset(pdev);
-+	/* set clock frequency for PLL */
-+	phyclk = exynos_usb_phy_set_clock(pdev);
-+	phyclk &= ~(PHY0_COMMON_ON_N);
-+	writel(phyclk, EXYNOS4_PHYCLK);
- 
--	/* set to normal PHY0 */
--	writel((readl(EXYNOS4_PHYPWR) & ~PHY0_NORMAL_MASK), EXYNOS4_PHYPWR);
-+	/* set to normal of PHY0 */
-+	phypwr = readl(EXYNOS4_PHYPWR) & ~PHY0_NORMAL_MASK;
-+	writel(phypwr, EXYNOS4_PHYPWR);
- 
--	/* reset PHY0 and Link */
-+	/* reset all ports of both PHY and Link */
- 	rstcon = readl(EXYNOS4_RSTCON) | PHY0_SWRST_MASK;
- 	writel(rstcon, EXYNOS4_RSTCON);
- 	udelay(10);
--
- 	rstcon &= ~PHY0_SWRST_MASK;
- 	writel(rstcon, EXYNOS4_RSTCON);
- 
- 	return 0;
- }
- 
--static int exynos4210_usb_phy0_exit(struct platform_device *pdev)
-+static int exynos4_usb_phy0_exit(struct platform_device *pdev)
- {
--	writel((readl(EXYNOS4_PHYPWR) | PHY0_ANALOG_POWERDOWN |
--				PHY0_OTG_DISABLE), EXYNOS4_PHYPWR);
-+	/* unset to normal of PHY0 */
-+	writel((readl(EXYNOS4_PHYPWR) | PHY0_NORMAL_MASK),
-+			EXYNOS4_PHYPWR);
- 
--	writel(readl(S5P_USBDEVICE_PHY_CONTROL) & ~S5P_USBDEVICE_PHY_ENABLE,
--			S5P_USBDEVICE_PHY_CONTROL);
-+	exynos_usb_phy_control(USB_PHY0, PHY_DISABLE);
- 
- 	return 0;
- }
- 
--static int exynos4210_usb_phy1_init(struct platform_device *pdev)
-+static int exynos4_usb_phy1_init(struct platform_device *pdev)
- {
--	struct clk *otg_clk;
-+	u32 phypwr;
-+	u32 phyclk;
- 	u32 rstcon;
--	int err;
- 
- 	atomic_inc(&host_usage);
- 
--	otg_clk = clk_get(&pdev->dev, "otg");
--	if (IS_ERR(otg_clk)) {
--		dev_err(&pdev->dev, "Failed to get otg clock\n");
--		return PTR_ERR(otg_clk);
-+	if (exynos4_usb_host_phy_is_on()) {
-+		dev_err(&pdev->dev, "Already power on PHY\n");
-+		return 0;
- 	}
- 
--	err = clk_enable(otg_clk);
--	if (err) {
--		clk_put(otg_clk);
--		return err;
--	}
-+	/*
-+	 *  set XuhostOVERCUR to in-active by controlling ET6PUD[15:14]
-+	 *  0x0 : pull-up/down disabled
-+	 *  0x1 : pull-down enabled
-+	 *  0x2 : reserved
-+	 *  0x3 : pull-up enabled
-+	 */
-+	writel((__raw_readl(ETC6PUD) & ~(0x3 << 14)) | (0x3 << 14),
-+		ETC6PUD);
- 
--	if (exynos4_usb_host_phy_is_on())
--		return 0;
-+	exynos_usb_phy_control(USB_PHY1, PHY_ENABLE);
- 
--	writel(readl(S5P_USBHOST_PHY_CONTROL) | S5P_USBHOST_PHY_ENABLE,
--			S5P_USBHOST_PHY_CONTROL);
-+	/* set clock frequency for PLL */
-+	phyclk = exynos_usb_phy_set_clock(pdev);
-+	phyclk &= ~(PHY1_COMMON_ON_N);
-+	writel(phyclk, EXYNOS4_PHYCLK);
- 
--	exynos4210_usb_phy_clkset(pdev);
-+	/* set to normal HSIC 0 and 1 of PHY1 */
-+	phypwr = readl(EXYNOS4_PHYPWR);
-+	phypwr &= ~(PHY1_STD_NORMAL_MASK
-+		| EXYNOS4210_HSIC0_NORMAL_MASK);
-+	writel(phypwr, EXYNOS4_PHYPWR);
- 
- 	/* floating prevention logic: disable */
- 	writel((readl(EXYNOS4_PHY1CON) | FPENABLEN), EXYNOS4_PHY1CON);
- 
--	/* set to normal HSIC 0 and 1 of PHY1 */
--	writel((readl(EXYNOS4_PHYPWR) & ~PHY1_HSIC_NORMAL_MASK),
--			EXYNOS4_PHYPWR);
--
--	/* set to normal standard USB of PHY1 */
--	writel((readl(EXYNOS4_PHYPWR) & ~PHY1_STD_NORMAL_MASK), EXYNOS4_PHYPWR);
--
- 	/* reset all ports of both PHY and Link */
--	rstcon = readl(EXYNOS4_RSTCON) | HOST_LINK_PORT_SWRST_MASK |
--		PHY1_SWRST_MASK;
-+	rstcon = readl(EXYNOS4_RSTCON)
-+		| EXYNOS4210_HOST_LINK_PORT_SWRST_MASK
-+		| EXYNOS4210_PHY1_SWRST_MASK;
- 	writel(rstcon, EXYNOS4_RSTCON);
- 	udelay(10);
- 
--	rstcon &= ~(HOST_LINK_PORT_SWRST_MASK | PHY1_SWRST_MASK);
-+	rstcon &= ~(EXYNOS4210_HOST_LINK_PORT_SWRST_MASK
-+		| EXYNOS4210_PHY1_SWRST_MASK);
- 	writel(rstcon, EXYNOS4_RSTCON);
- 	udelay(80);
- 
--	clk_disable(otg_clk);
--	clk_put(otg_clk);
-+	return 0;
++	clk_xusbxti.rate = 24000000;
++
++	exynos_init_io(NULL, 0);
++	s3c24xx_init_clocks(clk_xusbxti.rate);
++	s3c24xx_init_uarts(hkdk4412_uartcfgs, ARRAY_SIZE(hkdk4412_uartcfgs));
 +}
 +
-+static int exynos4_usb_phy1_exit(struct platform_device *pdev)
++static void __init hkdk4412_reserve(void)
 +{
-+	u32 phypwr;
-+
-+	if (atomic_dec_return(&host_usage) > 0) {
-+		dev_info(&pdev->dev, "still being used\n");
-+		return -EBUSY;
-+	}
-+
-+	phypwr = readl(EXYNOS4_PHYPWR)
-+		| PHY1_STD_NORMAL_MASK
-+		| EXYNOS4210_HSIC0_NORMAL_MASK;
-+	writel(phypwr, EXYNOS4_PHYPWR);
-+
-+	exynos_usb_phy_control(USB_PHY1, PHY_DISABLE);
- 
- 	return 0;
- }
- 
--static int exynos4210_usb_phy1_exit(struct platform_device *pdev)
-+static int exynos4_usb_phy20_init(struct platform_device *pdev)
- {
--	struct clk *otg_clk;
--	int err;
-+	u32 phypwr, phyclk, rstcon;
- 
--	if (atomic_dec_return(&host_usage) > 0)
--		return 0;
-+	atomic_inc(&host_usage);
- 
--	otg_clk = clk_get(&pdev->dev, "otg");
--	if (IS_ERR(otg_clk)) {
--		dev_err(&pdev->dev, "Failed to get otg clock\n");
--		return PTR_ERR(otg_clk);
-+	if (exynos4_usb_phy20_is_on()) {
-+		dev_err(&pdev->dev, "Already power on PHY\n");
-+		return 0;
- 	}
- 
--	err = clk_enable(otg_clk);
--	if (err) {
--		clk_put(otg_clk);
--		return err;
-+	/*
-+	 *  set XuhostOVERCUR to in-active by controlling ET6PUD[15:14]
-+	 *  0x0 : pull-up/down disabled
-+	 *  0x1 : pull-down enabled
-+	 *  0x2 : reserved
-+	 *  0x3 : pull-up enabled
-+	 */
-+	writel((__raw_readl(ETC6PUD) & ~(0x3 << 14)) | (0x3 << 14),
-+		ETC6PUD);
-+
-+	exynos_usb_phy_control(USB_PHY
-+		| USB_PHY_HSIC0,
-+		PHY_ENABLE);
-+
-+	/* set clock frequency for PLL */
-+	phyclk = exynos_usb_phy_set_clock(pdev);
-+	/* COMMON Block configuration during suspend */
-+	phyclk &= ~(PHY0_COMMON_ON_N | PHY1_COMMON_ON_N);
-+	writel(phyclk, EXYNOS4_PHYCLK);
-+
-+	/* set to normal of Device */
-+	phypwr = readl(EXYNOS4_PHYPWR) & ~PHY0_NORMAL_MASK;
-+	writel(phypwr, EXYNOS4_PHYPWR);
-+
-+	/* set to normal of Host */
-+	phypwr = readl(EXYNOS4_PHYPWR);
-+	phypwr &= ~(PHY1_STD_NORMAL_MASK
-+		| EXYNOS4X12_HSIC0_NORMAL_MASK);
-+	writel(phypwr, EXYNOS4_PHYPWR);
-+
-+	/* reset both PHY and Link of Device */
-+	rstcon = readl(EXYNOS4_RSTCON) | PHY0_SWRST_MASK;
-+	writel(rstcon, EXYNOS4_RSTCON);
-+	udelay(10);
-+	rstcon &= ~PHY0_SWRST_MASK;
-+	writel(rstcon, EXYNOS4_RSTCON);
-+
-+	/* reset both PHY and Link of Host */
-+	rstcon = readl(EXYNOS4_RSTCON)
-+		| EXYNOS4X12_HOST_LINK_PORT_SWRST_MASK
-+		| EXYNOS4X12_PHY1_SWRST_MASK;
-+	writel(rstcon, EXYNOS4_RSTCON);
-+	udelay(10);
-+
-+	rstcon &= ~(EXYNOS4X12_HOST_LINK_PORT_SWRST_MASK
-+		| EXYNOS4X12_PHY1_SWRST_MASK);
-+	writel(rstcon, EXYNOS4_RSTCON);
-+	udelay(80);
-+
-+	return 0;
++	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
 +}
 +
-+static int exynos4_usb_phy20_exit(struct platform_device *pdev)
++static void __init hkdk4412_gpio_init(void)
 +{
-+	u32 phypwr;
-+
-+	if (atomic_dec_return(&host_usage) > 0) {
-+		dev_info(&pdev->dev, "still being used\n");
-+		return -EBUSY;
- 	}
- 
--	writel((readl(EXYNOS4_PHYPWR) | PHY1_STD_ANALOG_POWERDOWN),
-+	/* unset to normal of Device */
-+	writel((readl(EXYNOS4_PHYPWR) | PHY0_NORMAL_MASK),
- 			EXYNOS4_PHYPWR);
- 
--	writel(readl(S5P_USBHOST_PHY_CONTROL) & ~S5P_USBHOST_PHY_ENABLE,
--			S5P_USBHOST_PHY_CONTROL);
-+	/* unset to normal of Host */
-+	phypwr = readl(EXYNOS4_PHYPWR)
-+		| PHY1_STD_NORMAL_MASK
-+		| EXYNOS4X12_HSIC0_NORMAL_MASK;
-+	writel(phypwr, EXYNOS4_PHYPWR);
- 
--	clk_disable(otg_clk);
--	clk_put(otg_clk);
-+	exynos_usb_phy_control(USB_PHY
-+		| USB_PHY_HSIC0,
-+		PHY_DISABLE);
-+
-+	return 0;
++	/* Peripheral power enable (P3V3) */
++	gpio_request_one(EXYNOS4_GPA1(1), GPIOF_OUT_INIT_HIGH, "p3v3_en");
 +}
 +
-+static int exynos_usb_dev_phy20_init(struct platform_device *pdev)
++static void __init hkdk4412_machine_init(void)
 +{
-+	if (soc_is_exynos4212() || soc_is_exynos4412())
-+		exynos4_usb_phy20_init(pdev);
++	hkdk4412_gpio_init();
 +
-+	writel(0, EXYNOS4_USB_CFG);
++	s3c_i2c0_set_platdata(NULL);
++	i2c_register_board_info(0, hkdk4412_i2c_devs0,
++				ARRAY_SIZE(hkdk4412_i2c_devs0));
 +
-+	return 0;
++	s3c_i2c1_set_platdata(NULL);
++	i2c_register_board_info(1, hkdk4412_i2c_devs1,
++				ARRAY_SIZE(hkdk4412_i2c_devs1));
++
++	s3c_i2c3_set_platdata(NULL);
++	i2c_register_board_info(3, hkdk4412_i2c_devs3,
++				ARRAY_SIZE(hkdk4412_i2c_devs3));
++
++	s3c_i2c7_set_platdata(NULL);
++	i2c_register_board_info(7, hkdk4412_i2c_devs7,
++				ARRAY_SIZE(hkdk4412_i2c_devs7));
++
++	s3c_sdhci2_set_platdata(&hkdk4412_hsmmc2_pdata);
++	s3c_sdhci3_set_platdata(&hkdk4412_hsmmc3_pdata);
++
++	hkdk4412_ehci_init();
++	hkdk4412_ohci_init();
++	s3c_hsotg_set_platdata(&hkdk4412_hsotg_pdata);
++
++	platform_add_devices(hkdk4412_devices, ARRAY_SIZE(hkdk4412_devices));
 +}
 +
-+static int exynos_usb_dev_phy20_exit(struct platform_device *pdev)
-+{
-+	if (soc_is_exynos4212() || soc_is_exynos4412())
-+		exynos4_usb_phy20_exit(pdev);
- 
- 	return 0;
- }
- 
- int s5p_usb_phy_init(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
--		return exynos4210_usb_phy0_init(pdev);
--	else if (type == S5P_USB_PHY_HOST)
--		return exynos4210_usb_phy1_init(pdev);
-+	int ret = -EINVAL;
-+
-+	if (exynos_usb_phy_clock_enable(pdev))
-+		return ret;
-+
-+	mutex_lock(&phy_lock);
-+	if (type == S5P_USB_PHY_HOST) {
-+		if (soc_is_exynos4210())
-+			ret = exynos4_usb_phy1_init(pdev);
-+		else if (soc_is_exynos4212() || soc_is_exynos4412())
-+			ret = exynos4_usb_phy20_init(pdev);
-+	} else if (type == S5P_USB_PHY_DEVICE) {
-+		if (soc_is_exynos4210())
-+			ret = exynos4_usb_phy0_init(pdev);
-+		else
-+			ret = exynos_usb_dev_phy20_init(pdev);
-+	}
-+
-+	mutex_unlock(&phy_lock);
-+	exynos_usb_phy_clock_disable(pdev);
- 
--	return -EINVAL;
-+	return ret;
- }
- 
- int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- {
--	if (type == S5P_USB_PHY_DEVICE)
--		return exynos4210_usb_phy0_exit(pdev);
--	else if (type == S5P_USB_PHY_HOST)
--		return exynos4210_usb_phy1_exit(pdev);
-+	int ret = -EINVAL;
-+
-+	if (exynos_usb_phy_clock_enable(pdev))
-+		return ret;
-+
-+	mutex_lock(&phy_lock);
-+
-+	if (type == S5P_USB_PHY_HOST) {
-+		if (soc_is_exynos4210())
-+			ret = exynos4_usb_phy1_exit(pdev);
-+		else if (soc_is_exynos4212() || soc_is_exynos4412())
-+			ret = exynos4_usb_phy20_exit(pdev);
-+	} else if (type == S5P_USB_PHY_DEVICE) {
-+		if (soc_is_exynos4210())
-+			ret = exynos4_usb_phy0_exit(pdev);
-+		else
-+			ret = exynos_usb_dev_phy20_exit(pdev);
-+	}
-+
-+	mutex_unlock(&phy_lock);
-+	exynos_usb_phy_clock_disable(pdev);
- 
--	return -EINVAL;
-+	return ret;
- }
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 075d2ec..5f69041 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -199,6 +199,20 @@ config USB_EHCI_S5P
-        help
- 	 Enable support for the S5P SOC's on-chip EHCI controller.
- 
-+config USB_S5P_HSIC0
-+    boolean "S5P HSIC0 support"
-+    depends on USB_EHCI_HCD && PLAT_S5P && USB_EHCI_S5P
-+    default n
-+    help
-+      Enable support for the S5P SOC's on-chip HSIC PHY.
-+
-+config USB_S5P_HSIC1
-+    boolean "S5P HSIC1 support"
-+    depends on USB_EHCI_HCD && PLAT_S5P && USB_EHCI_S5P
-+    default n
-+    help
-+      Enable support for the S5P SOC's on-chip HSIC PHY.
-+
- config USB_EHCI_MV
- 	bool "EHCI support for Marvell on-chip controller"
- 	depends on USB_EHCI_HCD && (ARCH_PXA || ARCH_MMP)
++MACHINE_START(ODROIDX, "ODROID-X")
++	/* Maintainer: Dongjin Kim <dongjin.kim@agreeyamobiity.net> */
++	.atag_offset	= 0x100,
++	.init_irq	= exynos4_init_irq,
++	.map_io		= hkdk4412_map_io,
++	.handle_irq	= gic_handle_irq,
++	.init_machine	= hkdk4412_machine_init,
++	.init_late	= exynos_init_late,
++	.timer		= &exynos4_timer,
++	.restart	= exynos4_restart,
++	.reserve	= &hkdk4412_reserve,
++MACHINE_END
+diff --git a/arch/arm/tools/mach-types b/arch/arm/tools/mach-types
+index 2997e56..e80ed9f 100644
+--- a/arch/arm/tools/mach-types
++++ b/arch/arm/tools/mach-types
+@@ -1206,3 +1206,4 @@ baileys			MACH_BAILEYS		BAILEYS			4169
+ familybox		MACH_FAMILYBOX		FAMILYBOX		4170
+ ensemble_mx35		MACH_ENSEMBLE_MX35	ENSEMBLE_MX35		4171
+ sc_sps_1		MACH_SC_SPS_1		SC_SPS_1		4172
++odroidx		MACH_ODROIDX		ODROIDX			4289
 -- 
 1.7.9.5
