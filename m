@@ -1,167 +1,131 @@
-From: Praveen Paneri <p.paneri@samsung.com>
-Subject: Re: [PATCH v2 2/5] usb: s3c-hsotg: Adding phy driver support
-Date: Tue, 7 Aug 2012 15:39:45 +0530
-Message-ID: <CAD6zSYPoSxVSrkgr9RMV03DwVvg70oxdTV_5SeUifMFtQA09cQ@mail.gmail.com>
-References: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
-	<1344324524-2286-3-git-send-email-p.paneri@samsung.com>
-	<CAK9yfHyJtM8p1wdS1B4LZPNL8SstP-tsgjKPyLtG4fQtBZyOUg@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
+Date: Tue, 07 Aug 2012 19:33:15 +0900
+Message-ID: <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
+References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-gh0-f174.google.com ([209.85.160.174]:44038 "EHLO
-	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751999Ab2HGKJq (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:48905 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750708Ab2HGKdQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 06:09:46 -0400
-In-Reply-To: <CAK9yfHyJtM8p1wdS1B4LZPNL8SstP-tsgjKPyLtG4fQtBZyOUg@mail.gmail.com>
+	Tue, 7 Aug 2012 06:33:16 -0400
+In-reply-to: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca
+To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: s.hauer@pengutronix.de, patches@linaro.org
 
-Thanks Sachin! Will incorporate.
+Tushar Behera wrote:
+> 
+> Commit 2663e766c56a "ARM Samsung: Move s3c pwm driver to pwm framework"
+> moved Samsung PWM driver to drivers/pwm and the config option to select
+> this driver has changed.
+> 
+> This patch fixes following build-error with s3c2410_defconfig.
+> arch/arm/mach-s3c24xx/mach-rx1950.c:430: undefined reference to
+> `pwm_config'
+> 
 
-On Tue, Aug 7, 2012 at 1:33 PM, Sachin Kamat <sachin.kamat@linaro.org> wrote:
-> Hi Praveen,
->
-> Some minor comments:
->
-> On 7 August 2012 12:58, Praveen Paneri <p.paneri@samsung.com> wrote:
->> Adding the transceiver to hsotg driver. Keeping the platform data
->> for continuing the smooth operation for boards which still uses it
->>
->> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
->> ---
->>  drivers/usb/gadget/s3c-hsotg.c |   38 ++++++++++++++++++++++++++++----------
->>  1 files changed, 28 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
->> index b13e0bb..f4ba9a3 100644
->> --- a/drivers/usb/gadget/s3c-hsotg.c
->> +++ b/drivers/usb/gadget/s3c-hsotg.c
->> @@ -32,6 +32,7 @@
->>
->>  #include <linux/usb/ch9.h>
->>  #include <linux/usb/gadget.h>
->> +#include <linux/usb/otg.h>
->>  #include <linux/platform_data/s3c-hsotg.h>
->>
->>  #include <mach/map.h>
->> @@ -133,7 +134,9 @@ struct s3c_hsotg_ep {
->>   * struct s3c_hsotg - driver state.
->>   * @dev: The parent device supplied to the probe function
->>   * @driver: USB gadget driver
->> - * @plat: The platform specific configuration data.
->> + * @phy: The otg phy transeiver structure for phy control.
->
-> s/transeiver/transceiver
->
->> + * @plat: The platform specific configuration data. This can be removed once
->> + * all SoCs support usb transceiver.
->>   * @regs: The memory area mapped for accessing registers.
->>   * @irq: The IRQ number we are using
->>   * @supplies: Definition of USB power supplies
->> @@ -153,6 +156,7 @@ struct s3c_hsotg_ep {
->>  struct s3c_hsotg {
->>         struct device            *dev;
->>         struct usb_gadget_driver *driver;
->> +       struct usb_phy          *phy;
->>         struct s3c_hsotg_plat    *plat;
->>
->>         spinlock_t              lock;
->> @@ -2854,7 +2858,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
->>         struct platform_device *pdev = to_platform_device(hsotg->dev);
->>
->>         dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
->> -       if (hsotg->plat->phy_init)
->> +
->> +       if (hsotg->phy)
->> +               usb_phy_init(hsotg->phy);
->> +       else if (hsotg->plat->phy_init)
->>                 hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
->>  }
->>
->> @@ -2869,7 +2876,9 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
->>  {
->>         struct platform_device *pdev = to_platform_device(hsotg->dev);
->>
->> -       if (hsotg->plat->phy_exit)
->> +       if (hsotg->phy)
->> +               usb_phy_shutdown(hsotg->phy);
->> +       else if (hsotg->plat->phy_exit)
->>                 hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
->>  }
->>
->> @@ -3493,6 +3502,7 @@ static void s3c_hsotg_release(struct device *dev)
->>  static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
->>  {
->>         struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
->> +       struct usb_phy *phy;
->>         struct device *dev = &pdev->dev;
->>         struct s3c_hsotg_ep *eps;
->>         struct s3c_hsotg *hsotg;
->> @@ -3501,20 +3511,25 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
->>         int ret;
->>         int i;
->>
->> -       plat = pdev->dev.platform_data;
->> -       if (!plat) {
->> -               dev_err(&pdev->dev, "no platform data defined\n");
->> -               return -EINVAL;
->> -       }
->> -
->>         hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg), GFP_KERNEL);
->>         if (!hsotg) {
->>                 dev_err(dev, "cannot get memory\n");
->>                 return -ENOMEM;
->>         }
->>
->> +       phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
->> +       if (!phy) {
->> +               /* Fallback for platform data */
->> +               plat = pdev->dev.platform_data;
->> +               if (!plat) {
->> +                       dev_err(&pdev->dev, "no platform data or transceiver defined\n");
->> +                       return -ENODEV;
->> +               } else
->> +                       hsotg->plat = plat;
->> +       } else
->> +               hsotg->phy = phy;
->
-> Braces needed around the above 2 else statements.
-> Please refer to: Documentation/CodingStyle
->
->
->> +
->>         hsotg->dev = dev;
->> -       hsotg->plat = plat;
->>
->>         hsotg->clk = clk_get(&pdev->dev, "otg");
->>         if (IS_ERR(hsotg->clk)) {
->> @@ -3689,6 +3704,9 @@ static int __devexit s3c_hsotg_remove(struct platform_device *pdev)
->>         s3c_hsotg_phy_disable(hsotg);
->>         regulator_bulk_free(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
->>
->> +       if (hsotg->phy)
->> +               devm_usb_put_phy(&pdev->dev, hsotg->phy);
->> +
->>         clk_disable_unprepare(hsotg->clk);
->>         clk_put(hsotg->clk);
->>
->> --
->> 1.7.1
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
->
->
+Yes, need to fix...
+
+arch/arm/mach-s3c24xx/built-in.o: In function `rx1950_lcd_power':
+arch/arm/mach-s3c24xx/mach-rx1950.c:430: undefined reference to `pwm_config'
+arch/arm/mach-s3c24xx/mach-rx1950.c:431: undefined reference to
+`pwm_disable'
+arch/arm/mach-s3c24xx/mach-rx1950.c:437: undefined reference to `pwm_config'
+arch/arm/mach-s3c24xx/mach-rx1950.c:438: undefined reference to `pwm_enable'
+arch/arm/mach-s3c24xx/built-in.o: In function `rx1950_backlight_exit':
+arch/arm/mach-s3c24xx/mach-rx1950.c:504: undefined reference to `pwm_free'
+arch/arm/mach-s3c24xx/built-in.o: In function `rx1950_backlight_init':
+arch/arm/mach-s3c24xx/mach-rx1950.c:487: undefined reference to
+`pwm_request'
+
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+> ---
+>  arch/arm/mach-s3c24xx/Kconfig |    4 ++--
+>  arch/arm/plat-samsung/Kconfig |    3 ++-
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+> index e249611..d56b0f7 100644
+> --- a/arch/arm/mach-s3c24xx/Kconfig
+> +++ b/arch/arm/mach-s3c24xx/Kconfig
+> @@ -483,7 +483,7 @@ config MACH_NEO1973_GTA02
+>  	select I2C
+>  	select POWER_SUPPLY
+>  	select MACH_NEO1973
+> -	select S3C2410_PWM
+> +	select S3C24XX_PWM
+>  	select S3C_DEV_USB_HOST
+>  	help
+>  	   Say Y here if you are using the Openmoko GTA02 / Freerunner GSM
+> Phone
+> @@ -493,7 +493,7 @@ config MACH_RX1950
+>  	select S3C24XX_DCLK
+>  	select PM_H1940 if PM
+>  	select I2C
+> -	select S3C2410_PWM
+> +	select S3C24XX_PWM
+>  	select S3C_DEV_NAND
+>  	select S3C2410_IOTIMING if S3C2440_CPUFREQ
+>  	select S3C2440_XTAL_16934400
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 7aca31c..9c3b90c 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -403,7 +403,8 @@ config S5P_DEV_USB_EHCI
+> 
+>  config S3C24XX_PWM
+>  	bool "PWM device support"
+> -	select HAVE_PWM
+> +	select PWM
+> +	select PWM_SAMSUNG
+>  	help
+>  	  Support for exporting the PWM timer blocks via the pwm device
+>  	  system
 > --
-> With best regards,
-> Sachin
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 1.7.4.1
+
+I think, following would be better? Or ...
+
+---
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 7aca31c..dcdfb77 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -403,7 +403,7 @@ config S5P_DEV_USB_EHCI
+ 
+ config S3C24XX_PWM
+ 	bool "PWM device support"
+-	select HAVE_PWM
++	select PWM
+ 	help
+ 	  Support for exporting the PWM timer blocks via the pwm device
+ 	  system
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 8fc3808..34c8ec1 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -59,7 +59,7 @@ config PWM_PXA
+ 
+ config PWM_SAMSUNG
+ 	tristate "Samsung pwm support"
+-	depends on PLAT_SAMSUNG
++	def_bool PLAT_SAMSUNG
+ 	help
+ 	  Generic PWM framework driver for Samsung.
+---
+
+
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
