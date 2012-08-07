@@ -1,76 +1,132 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Add HDMIPHY I2C adaptor
-Date: Tue, 7 Aug 2012 12:26:57 +0530
-Message-ID: <CAK9yfHz_q22JgkULR9V8bR5W_TXVRn5qs5u2MiJJpa-Br_YQUQ@mail.gmail.com>
-References: <1344261462-14183-1-git-send-email-dongjin.kim@agreeyamobility.net>
-	<1344261462-14183-2-git-send-email-dongjin.kim@agreeyamobility.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:47615 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750917Ab2HGG47 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 02:56:59 -0400
-Received: by vcbfk26 with SMTP id fk26so3673036vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Aug 2012 23:56:58 -0700 (PDT)
-In-Reply-To: <1344261462-14183-2-git-send-email-dongjin.kim@agreeyamobility.net>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH v2 2/5] usb: s3c-hsotg: Adding phy driver support
+Date: Tue, 07 Aug 2012 12:58:41 +0530
+Message-ID: <1344324524-2286-3-git-send-email-p.paneri@samsung.com>
+References: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-reply-to: <1344324524-2286-1-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dongjin Kim <tobetter@gmail.com>
-Cc: Dongjin Kim <dongjin.kim@agreeyamobility.net>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-Hi Dongjin,
+Adding the transceiver to hsotg driver. Keeping the platform data
+for continuing the smooth operation for boards which still uses it
 
-A patch series to add HDMI platform data support is already under consideration.
+Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/usb/gadget/s3c-hsotg.c |   38 ++++++++++++++++++++++++++++----------
+ 1 files changed, 28 insertions(+), 10 deletions(-)
 
-http://comments.gmane.org/gmane.linux.kernel.samsung-soc/11352
-
-
-
-On 6 August 2012 19:27, Dongjin Kim <tobetter@gmail.com> wrote:
-> This patch assign the I2C channel for HDMIPHY for Exynos4x12
-> in s5p_i2c_hdmiphy_set_platdata() and s5p_hdmi_set_platdata()
->
-> Change-Id: I7e66c8f9327e2f7dce7440efb8583b506d65831a
-> Signed-off-by: Dongjin Kim <dongjin.kim@agreeyamobility.net>
-> ---
->  arch/arm/plat-samsung/devs.c |    4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index a199e55..54614d0 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -752,6 +752,8 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *pd)
->
->                 if (soc_is_exynos4210())
->                         pd->bus_num = 8;
-> +               else if (soc_is_exynos4212() || soc_is_exynos4412())
-> +                       pd->bus_num = 8;
->                 else if (soc_is_s5pv210())
->                         pd->bus_num = 3;
->                 else
-> @@ -771,6 +773,8 @@ void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
->
->         if (soc_is_exynos4210())
->                 pd->hdmiphy_bus = 8;
-> +       else if (soc_is_exynos4212() || soc_is_exynos4412())
-> +               pd->hdmiphy_bus = 8;
->         else if (soc_is_s5pv210())
->                 pd->hdmiphy_bus = 3;
->         else
-> --
-> 1.7.9.5
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
-
-
-
+diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+index b13e0bb..f4ba9a3 100644
+--- a/drivers/usb/gadget/s3c-hsotg.c
++++ b/drivers/usb/gadget/s3c-hsotg.c
+@@ -32,6 +32,7 @@
+ 
+ #include <linux/usb/ch9.h>
+ #include <linux/usb/gadget.h>
++#include <linux/usb/otg.h>
+ #include <linux/platform_data/s3c-hsotg.h>
+ 
+ #include <mach/map.h>
+@@ -133,7 +134,9 @@ struct s3c_hsotg_ep {
+  * struct s3c_hsotg - driver state.
+  * @dev: The parent device supplied to the probe function
+  * @driver: USB gadget driver
+- * @plat: The platform specific configuration data.
++ * @phy: The otg phy transeiver structure for phy control.
++ * @plat: The platform specific configuration data. This can be removed once
++ * all SoCs support usb transceiver.
+  * @regs: The memory area mapped for accessing registers.
+  * @irq: The IRQ number we are using
+  * @supplies: Definition of USB power supplies
+@@ -153,6 +156,7 @@ struct s3c_hsotg_ep {
+ struct s3c_hsotg {
+ 	struct device		 *dev;
+ 	struct usb_gadget_driver *driver;
++	struct usb_phy		*phy;
+ 	struct s3c_hsotg_plat	 *plat;
+ 
+ 	spinlock_t              lock;
+@@ -2854,7 +2858,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
+ 	struct platform_device *pdev = to_platform_device(hsotg->dev);
+ 
+ 	dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
+-	if (hsotg->plat->phy_init)
++
++	if (hsotg->phy)
++		usb_phy_init(hsotg->phy);
++	else if (hsotg->plat->phy_init)
+ 		hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
+ }
+ 
+@@ -2869,7 +2876,9 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
+ {
+ 	struct platform_device *pdev = to_platform_device(hsotg->dev);
+ 
+-	if (hsotg->plat->phy_exit)
++	if (hsotg->phy)
++		usb_phy_shutdown(hsotg->phy);
++	else if (hsotg->plat->phy_exit)
+ 		hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
+ }
+ 
+@@ -3493,6 +3502,7 @@ static void s3c_hsotg_release(struct device *dev)
+ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ {
+ 	struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
++	struct usb_phy *phy;
+ 	struct device *dev = &pdev->dev;
+ 	struct s3c_hsotg_ep *eps;
+ 	struct s3c_hsotg *hsotg;
+@@ -3501,20 +3511,25 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+ 	int ret;
+ 	int i;
+ 
+-	plat = pdev->dev.platform_data;
+-	if (!plat) {
+-		dev_err(&pdev->dev, "no platform data defined\n");
+-		return -EINVAL;
+-	}
+-
+ 	hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg), GFP_KERNEL);
+ 	if (!hsotg) {
+ 		dev_err(dev, "cannot get memory\n");
+ 		return -ENOMEM;
+ 	}
+ 
++	phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
++	if (!phy) {
++		/* Fallback for platform data */
++		plat = pdev->dev.platform_data;
++		if (!plat) {
++			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
++			return -ENODEV;
++		} else
++			hsotg->plat = plat;
++	} else
++		hsotg->phy = phy;
++
+ 	hsotg->dev = dev;
+-	hsotg->plat = plat;
+ 
+ 	hsotg->clk = clk_get(&pdev->dev, "otg");
+ 	if (IS_ERR(hsotg->clk)) {
+@@ -3689,6 +3704,9 @@ static int __devexit s3c_hsotg_remove(struct platform_device *pdev)
+ 	s3c_hsotg_phy_disable(hsotg);
+ 	regulator_bulk_free(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
+ 
++	if (hsotg->phy)
++		devm_usb_put_phy(&pdev->dev, hsotg->phy);
++
+ 	clk_disable_unprepare(hsotg->clk);
+ 	clk_put(hsotg->clk);
+ 
 -- 
-With warm regards,
-Sachin
+1.7.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
