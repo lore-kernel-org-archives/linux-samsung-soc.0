@@ -1,170 +1,57 @@
 From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 3/5] ARM: S3C64XX: Removing old phy setup code
-Date: Tue, 07 Aug 2012 12:58:42 +0530
-Message-ID: <1344324524-2286-4-git-send-email-p.paneri@samsung.com>
-References: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
+Subject: [PATCH v2 0/5] usb: phy: samsung: Introducing usb phy driver for
+ samsung SoCs
+Date: Tue, 07 Aug 2012 12:58:39 +0530
+Message-ID: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
 Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1344324524-2286-1-git-send-email-p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This patch removes old phy code from platform side. 'setup-usb-phy.c'
-will be used for providing transceiver platform data in next
-patch. Not all of the platform data code is removed as there are others
-making use of platform_data defined for hsotg. That can be removed once
-all the SoCs start using the new transceiver for usb phy setup.
+Changes from v1:
+Rebased patches to latest usb-next branch
+Changed the name 'sec_usbphy' to 'samsung_usbphy'
 
-Signed-off-by: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
----
- arch/arm/mach-s3c64xx/mach-crag6410.c |    2 -
- arch/arm/mach-s3c64xx/mach-smartq.c   |    2 -
- arch/arm/mach-s3c64xx/mach-smdk6410.c |    2 -
- arch/arm/mach-s3c64xx/setup-usb-phy.c |   79 ---------------------------------
- 4 files changed, 0 insertions(+), 85 deletions(-)
+This patch set introduces a phy driver for samsung SoCs. It uses the existing
+transceiver infrastructure to provide phy control functions. Use of this driver
+can be extended for usb host phy as well. Over the period of time all the phy
+related code for most of the samsung SoCs can be integrated here.
+Removing the existing phy code from mach-s3c64xx but not from other machine 
+code.This driver is tested with smdk6410 and Exynos4210(with DT).
 
-diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
-index 09cd812..3bb0327 100644
---- a/arch/arm/mach-s3c64xx/mach-crag6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
-@@ -766,7 +766,6 @@ static const struct gpio_led_platform_data gpio_leds_pdata = {
- 	.num_leds = ARRAY_SIZE(gpio_leds),
- };
- 
--static struct s3c_hsotg_plat crag6410_hsotg_pdata;
- 
- static void __init crag6410_machine_init(void)
- {
-@@ -792,7 +791,6 @@ static void __init crag6410_machine_init(void)
- 	s3c_i2c0_set_platdata(&i2c0_pdata);
- 	s3c_i2c1_set_platdata(&i2c1_pdata);
- 	s3c_fb_set_platdata(&crag6410_lcd_pdata);
--	s3c_hsotg_set_platdata(&crag6410_hsotg_pdata);
- 
- 	i2c_register_board_info(0, i2c_devs0, ARRAY_SIZE(i2c_devs0));
- 	i2c_register_board_info(1, i2c_devs1, ARRAY_SIZE(i2c_devs1));
-diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
-index ceeb1de..3647202 100644
---- a/arch/arm/mach-s3c64xx/mach-smartq.c
-+++ b/arch/arm/mach-s3c64xx/mach-smartq.c
-@@ -187,7 +187,6 @@ static struct s3c_hwmon_pdata smartq_hwmon_pdata __initdata = {
- 	},
- };
- 
--static struct s3c_hsotg_plat smartq_hsotg_pdata;
- 
- static int __init smartq_lcd_setup_gpio(void)
- {
-@@ -385,7 +384,6 @@ void __init smartq_map_io(void)
- void __init smartq_machine_init(void)
- {
- 	s3c_i2c0_set_platdata(NULL);
--	s3c_hsotg_set_platdata(&smartq_hsotg_pdata);
- 	s3c_hwmon_set_platdata(&smartq_hwmon_pdata);
- 	s3c_sdhci1_set_platdata(&smartq_internal_hsmmc_pdata);
- 	s3c_sdhci2_set_platdata(&smartq_internal_hsmmc_pdata);
-diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-index 0fe4f15..1a2db14 100644
---- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
-+++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
-@@ -627,7 +627,6 @@ static struct platform_pwm_backlight_data smdk6410_bl_data = {
- 	.pwm_id = 1,
- };
- 
--static struct s3c_hsotg_plat smdk6410_hsotg_pdata;
- 
- static void __init smdk6410_map_io(void)
- {
-@@ -657,7 +656,6 @@ static void __init smdk6410_machine_init(void)
- 	s3c_i2c0_set_platdata(NULL);
- 	s3c_i2c1_set_platdata(NULL);
- 	s3c_fb_set_platdata(&smdk6410_lcd_pdata);
--	s3c_hsotg_set_platdata(&smdk6410_hsotg_pdata);
- 
- 	samsung_keypad_set_platdata(&smdk6410_keypad_data);
- 
-diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-index f6757e0..7a09553 100644
---- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-+++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-@@ -9,82 +9,3 @@
-  *
-  */
- 
--#include <linux/clk.h>
--#include <linux/delay.h>
--#include <linux/err.h>
--#include <linux/io.h>
--#include <linux/platform_device.h>
--#include <mach/map.h>
--#include <mach/regs-sys.h>
--#include <plat/cpu.h>
--#include <plat/regs-usb-hsotg-phy.h>
--#include <plat/usb-phy.h>
--
--static int s3c_usb_otgphy_init(struct platform_device *pdev)
--{
--	struct clk *xusbxti;
--	u32 phyclk;
--
--	writel(readl(S3C64XX_OTHERS) | S3C64XX_OTHERS_USBMASK, S3C64XX_OTHERS);
--
--	/* set clock frequency for PLL */
--	phyclk = readl(S3C_PHYCLK) & ~S3C_PHYCLK_CLKSEL_MASK;
--
--	xusbxti = clk_get(&pdev->dev, "xusbxti");
--	if (xusbxti && !IS_ERR(xusbxti)) {
--		switch (clk_get_rate(xusbxti)) {
--		case 12 * MHZ:
--			phyclk |= S3C_PHYCLK_CLKSEL_12M;
--			break;
--		case 24 * MHZ:
--			phyclk |= S3C_PHYCLK_CLKSEL_24M;
--			break;
--		default:
--		case 48 * MHZ:
--			/* default reference clock */
--			break;
--		}
--		clk_put(xusbxti);
--	}
--
--	/* TODO: select external clock/oscillator */
--	writel(phyclk | S3C_PHYCLK_CLK_FORCE, S3C_PHYCLK);
--
--	/* set to normal OTG PHY */
--	writel((readl(S3C_PHYPWR) & ~S3C_PHYPWR_NORMAL_MASK), S3C_PHYPWR);
--	mdelay(1);
--
--	/* reset OTG PHY and Link */
--	writel(S3C_RSTCON_PHY | S3C_RSTCON_HCLK | S3C_RSTCON_PHYCLK,
--			S3C_RSTCON);
--	udelay(20);	/* at-least 10uS */
--	writel(0, S3C_RSTCON);
--
--	return 0;
--}
--
--static int s3c_usb_otgphy_exit(struct platform_device *pdev)
--{
--	writel((readl(S3C_PHYPWR) | S3C_PHYPWR_ANALOG_POWERDOWN |
--				S3C_PHYPWR_OTG_DISABLE), S3C_PHYPWR);
--
--	writel(readl(S3C64XX_OTHERS) & ~S3C64XX_OTHERS_USBMASK, S3C64XX_OTHERS);
--
--	return 0;
--}
--
--int s5p_usb_phy_init(struct platform_device *pdev, int type)
--{
--	if (type == S5P_USB_PHY_DEVICE)
--		return s3c_usb_otgphy_init(pdev);
--
--	return -EINVAL;
--}
--
--int s5p_usb_phy_exit(struct platform_device *pdev, int type)
--{
--	if (type == S5P_USB_PHY_DEVICE)
--		return s3c_usb_otgphy_exit(pdev);
+Praveen Paneri (5):
+  usb: phy: samsung: Introducing usb phy driver for hsotg
+  usb: s3c-hsotg: Adding phy driver support
+  ARM: S3C64XX: Removing old phy setup code
+  ARM: S3C64XX: Enabling samsung_usbphy driver
+  ARM: Exynos4210: Enabling samsung_usbphy driver
+
+ .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |    5 +
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    8 +
+ arch/arm/mach-exynos/setup-usb-phy.c               |   13 +
+ arch/arm/mach-s3c64xx/include/mach/map.h           |    2 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    5 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |    6 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |    5 +-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c              |   79 +----
+ arch/arm/plat-samsung/devs.c                       |   32 ++
+ arch/arm/plat-samsung/include/plat/devs.h          |    1 +
+ arch/arm/plat-samsung/include/plat/usb-phy.h       |    1 +
+ drivers/usb/gadget/s3c-hsotg.c                     |   38 ++-
+ drivers/usb/phy/Kconfig                            |    8 +
+ drivers/usb/phy/Makefile                           |    1 +
+ drivers/usb/phy/samsung_usbphy.c                   |  355 ++++++++++++++++++++
+ drivers/usb/phy/samsung_usbphy.h                   |   48 +++
+ include/linux/platform_data/s3c-hsotg.h            |    5 +
+ 19 files changed, 534 insertions(+), 88 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+ create mode 100644 drivers/usb/phy/samsung_usbphy.c
+ create mode 100644 drivers/usb/phy/samsung_usbphy.h
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
