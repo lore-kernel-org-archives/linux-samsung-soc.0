@@ -1,56 +1,67 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V3 4/5] driver: Include the modified FIMD header file
-Date: Tue, 07 Aug 2012 15:07:58 +0530
-Message-ID: <1344332279-16736-5-git-send-email-l.krishna@samsung.com>
-References: <1344332279-16736-1-git-send-email-l.krishna@samsung.com>
+Subject: [PATCH V3 0/5] arm: samsung: Move FIMD headers to include/video/
+Date: Tue, 07 Aug 2012 15:07:54 +0530
+Message-ID: <1344332279-16736-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:58468 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753383Ab2HGJWV (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:47767 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753372Ab2HGJWS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 05:22:21 -0400
-In-reply-to: <1344332279-16736-1-git-send-email-l.krishna@samsung.com>
+	Tue, 7 Aug 2012 05:22:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, kgene.kim@samsung.com, m.szyprowski@samsung.com
 
-The fimd register headers have been moved to include/video/
-hence, modifying the driver files accordingly.
+This patchset moves the contents of regs-fb-v4.h and regs-fb.h from arch side
+to include/video/samsung_fimd.h
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
----
- drivers/gpu/drm/exynos/exynos_drm_fimd.c |    2 +-
- drivers/video/s3c-fb.c                   |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This patchset is created and rebased against master branch of torvalds tree.
+Tested on smdk5250 board, build tested for other boards.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-index a68d2b3..24c0bd4 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-@@ -19,8 +19,8 @@
- #include <linux/clk.h>
- #include <linux/pm_runtime.h>
- 
-+#include <video/samsung_fimd.h>
- #include <drm/exynos_drm.h>
--#include <plat/regs-fb-v4.h>
- 
- #include "exynos_drm_drv.h"
- #include "exynos_drm_fbdev.h"
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 69bf9d0..901729e 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -25,8 +25,8 @@
- #include <linux/interrupt.h>
- #include <linux/pm_runtime.h>
- 
-+#include <video/samsung_fimd.h>
- #include <mach/map.h>
--#include <plat/regs-fb-v4.h>
- #include <plat/fb.h>
- 
- /* This driver will export a number of framebuffer interfaces depending
--- 
-1.7.0.4
+Changes from version 2:
+	- Changed the EXYNOS5_xxx macro name to FIMD_V8_xxx
+	- Moved the header inclusion under same kind
+
+Changes from version 1:
+	- Split the patches as per Sylwester comments
+	- Changed FIMD_V8_xxx macro to EXYNOS5_xxx	
+
+Leela Krishna Amudala (5):
+  include/video: Add samsung FIMD register header
+  include/video: Add Exynos5 specific FIMD register offsets
+  arm: samsung: Include the modified FIMD header file
+  driver: Include the modified FIMD header file
+  arm: samsung: delete frame buffer header files from platform
+
+ arch/arm/mach-exynos/mach-nuri.c                |    2 +-
+ arch/arm/mach-exynos/mach-origen.c              |    2 +-
+ arch/arm/mach-exynos/mach-smdk4x12.c            |    2 +-
+ arch/arm/mach-exynos/mach-smdkv310.c            |    2 +-
+ arch/arm/mach-exynos/mach-universal_c210.c      |    2 +-
+ arch/arm/mach-exynos/setup-fimd0.c              |    2 +-
+ arch/arm/mach-s3c24xx/mach-smdk2416.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-anw6410.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-hmt.c                |    2 +-
+ arch/arm/mach-s3c64xx/mach-mini6410.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-ncp.c                |    2 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c           |    2 +-
+ arch/arm/mach-s3c64xx/mach-smartq5.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-smartq7.c            |    2 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c           |    2 +-
+ arch/arm/mach-s5p64x0/mach-smdk6440.c           |    2 +-
+ arch/arm/mach-s5p64x0/mach-smdk6450.c           |    2 +-
+ arch/arm/mach-s5pc100/mach-smdkc100.c           |    2 +-
+ arch/arm/mach-s5pv210/mach-aquila.c             |    2 +-
+ arch/arm/mach-s5pv210/mach-goni.c               |    2 +-
+ arch/arm/mach-s5pv210/mach-smdkv210.c           |    2 +-
+ arch/arm/plat-samsung/include/plat/regs-fb-v4.h |  159 -------
+ arch/arm/plat-samsung/include/plat/regs-fb.h    |  403 -----------------
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c        |    2 +-
+ drivers/video/s3c-fb.c                          |    2 +-
+ include/video/samsung_fimd.h                    |  533 +++++++++++++++++++++++
+ 27 files changed, 557 insertions(+), 586 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+ delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb.h
+ create mode 100644 include/video/samsung_fimd.h
