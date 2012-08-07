@@ -1,68 +1,161 @@
-From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
-Subject: RE: [PATCH] ARM: EXYNOS: Add HDMIPHY I2C adaptor
-Date: Tue, 7 Aug 2012 07:28:02 +0000
-Message-ID: <b937n0skj9tqmbg6tctdu48x.1344324481459@email.android.com>
-References: <1344261462-14183-1-git-send-email-dongjin.kim@agreeyamobility.net>
-	<1344261462-14183-2-git-send-email-dongjin.kim@agreeyamobility.net>,<CAK9yfHz_q22JgkULR9V8bR5W_TXVRn5qs5u2MiJJpa-Br_YQUQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH v2 2/5] usb: s3c-hsotg: Adding phy driver support
+Date: Tue, 7 Aug 2012 13:33:22 +0530
+Message-ID: <CAK9yfHyJtM8p1wdS1B4LZPNL8SstP-tsgjKPyLtG4fQtBZyOUg@mail.gmail.com>
+References: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
+	<1344324524-2286-3-git-send-email-p.paneri@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ks_c_5601-1987"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from ch1ehsobe002.messaging.microsoft.com ([216.32.181.182]:46466
-	"EHLO ch1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752498Ab2HGH2H (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:60868 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751124Ab2HGIDX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 03:28:07 -0400
-In-Reply-To: <CAK9yfHz_q22JgkULR9V8bR5W_TXVRn5qs5u2MiJJpa-Br_YQUQ@mail.gmail.com>
-Content-Language: en-US
+	Tue, 7 Aug 2012 04:03:23 -0400
+Received: by vcbfk26 with SMTP id fk26so3738955vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Aug 2012 01:03:22 -0700 (PDT)
+In-Reply-To: <1344324524-2286-3-git-send-email-p.paneri@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Dongjin Kim <tobetter@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Praveen Paneri <p.paneri@samsung.com>
+Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca
 
-SGkgU2FjaGluLA0KDQpUaGFua3MgZm9yIHlvdXIgZmVlZGJhY2ssIEkgY291bGRudCBmaW5kIHRo
-ZSBwYXRjaCBzZXJpZXMgZWFyaWxlci4gOykNCg0KUmVnYXJkcywNCkRvbmdqaW4uDQoNClNlbnQg
-ZnJvbSBNb3hpZXIgTWFpbA0KKGh0dHA6Ly93d3cubW94aWVyLmNvbSkNCg0KDQotLS0tLSC/+Lq7
-ILjevcPB9iAtLS0tLQ0KurizvSC757b3OlNhY2hpbiBLYW1hdCA8c2FjaGluLmthbWF0QGxpbmFy
-by5vcmc+DQq53rTCILvntvc6RG9uZ2ppbiBLaW0gPHRvYmV0dGVyQGdtYWlsLmNvbT4NCsL8wbY6
-RG9uZ2ppbiBLaW0gPERvbmdqaW4uS2ltQGFncmVleWFtb2JpbGl0eS5uZXQ+LCBCZW4gRG9va3Mg
-PGJlbi1saW51eEBmbHVmZi5vcmc+LCBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+
-LCBSdXNzZWxsIEtpbmcgPGxpbnV4QGFybS5saW51eC5vcmcudWs+LCAibGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnIiA8bGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQu
-b3JnPiwgImxpbnV4LXNhbXN1bmctc29jQHZnZXIua2VybmVsLm9yZyIgPGxpbnV4LXNhbXN1bmct
-c29jQHZnZXIua2VybmVsLm9yZz4sICJsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnIiA8bGlu
-dXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4NCrq4s70gvcOwozoyMDEyLiA4LiA3LiAzOjU3IL/A
-yMQNCsGmuPE6UmU6IFtQQVRDSF0gQVJNOiBFWFlOT1M6IEFkZCBIRE1JUEhZIEkyQyBhZGFwdG9y
-DQoNCg0KDQpIaSBEb25namluLA0KDQpBIHBhdGNoIHNlcmllcyB0byBhZGQgSERNSSBwbGF0Zm9y
-bSBkYXRhIHN1cHBvcnQgaXMgYWxyZWFkeSB1bmRlciBjb25zaWRlcmF0aW9uLg0KDQpodHRwOi8v
-Y29tbWVudHMuZ21hbmUub3JnL2dtYW5lLmxpbnV4Lmtlcm5lbC5zYW1zdW5nLXNvYy8xMTM1Mg0K
-DQoNCg0KT24gNiBBdWd1c3QgMjAxMiAxOToyNywgRG9uZ2ppbiBLaW0gPHRvYmV0dGVyQGdtYWls
-LmNvbT4gd3JvdGU6DQo+IFRoaXMgcGF0Y2ggYXNzaWduIHRoZSBJMkMgY2hhbm5lbCBmb3IgSERN
-SVBIWSBmb3IgRXh5bm9zNHgxMg0KPiBpbiBzNXBfaTJjX2hkbWlwaHlfc2V0X3BsYXRkYXRhKCkg
-YW5kIHM1cF9oZG1pX3NldF9wbGF0ZGF0YSgpDQo+DQo+IENoYW5nZS1JZDogSTdlNjZjOGY5MzI3
-ZTJmN2RjZTc0NDBlZmI4NTgzYjUwNmQ2NTgzMWENCj4gU2lnbmVkLW9mZi1ieTogRG9uZ2ppbiBL
-aW0gPGRvbmdqaW4ua2ltQGFncmVleWFtb2JpbGl0eS5uZXQ+DQo+IC0tLQ0KPiAgYXJjaC9hcm0v
-cGxhdC1zYW1zdW5nL2RldnMuYyB8ICAgIDQgKysrKw0KPiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5z
-ZXJ0aW9ucygrKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vcGxhdC1zYW1zdW5nL2RldnMu
-YyBiL2FyY2gvYXJtL3BsYXQtc2Ftc3VuZy9kZXZzLmMNCj4gaW5kZXggYTE5OWU1NS4uNTQ2MTRk
-MCAxMDA2NDQNCj4gLS0tIGEvYXJjaC9hcm0vcGxhdC1zYW1zdW5nL2RldnMuYw0KPiArKysgYi9h
-cmNoL2FybS9wbGF0LXNhbXN1bmcvZGV2cy5jDQo+IEBAIC03NTIsNiArNzUyLDggQEAgdm9pZCBf
-X2luaXQgczVwX2kyY19oZG1pcGh5X3NldF9wbGF0ZGF0YShzdHJ1Y3QgczNjMjQxMF9wbGF0Zm9y
-bV9pMmMgKnBkKQ0KPg0KPiAgICAgICAgICAgICAgICAgaWYgKHNvY19pc19leHlub3M0MjEwKCkp
-DQo+ICAgICAgICAgICAgICAgICAgICAgICAgIHBkLT5idXNfbnVtID0gODsNCj4gKyAgICAgICAg
-ICAgICAgIGVsc2UgaWYgKHNvY19pc19leHlub3M0MjEyKCkgfHwgc29jX2lzX2V4eW5vczQ0MTIo
-KSkNCj4gKyAgICAgICAgICAgICAgICAgICAgICAgcGQtPmJ1c19udW0gPSA4Ow0KPiAgICAgICAg
-ICAgICAgICAgZWxzZSBpZiAoc29jX2lzX3M1cHYyMTAoKSkNCj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgcGQtPmJ1c19udW0gPSAzOw0KPiAgICAgICAgICAgICAgICAgZWxzZQ0KPiBAQCAtNzcx
-LDYgKzc3Myw4IEBAIHZvaWQgX19pbml0IHM1cF9oZG1pX3NldF9wbGF0ZGF0YShzdHJ1Y3QgaTJj
-X2JvYXJkX2luZm8gKmhkbWlwaHlfaW5mbywNCj4NCj4gICAgICAgICBpZiAoc29jX2lzX2V4eW5v
-czQyMTAoKSkNCj4gICAgICAgICAgICAgICAgIHBkLT5oZG1pcGh5X2J1cyA9IDg7DQo+ICsgICAg
-ICAgZWxzZSBpZiAoc29jX2lzX2V4eW5vczQyMTIoKSB8fCBzb2NfaXNfZXh5bm9zNDQxMigpKQ0K
-PiArICAgICAgICAgICAgICAgcGQtPmhkbWlwaHlfYnVzID0gODsNCj4gICAgICAgICBlbHNlIGlm
-IChzb2NfaXNfczVwdjIxMCgpKQ0KPiAgICAgICAgICAgICAgICAgcGQtPmhkbWlwaHlfYnVzID0g
-MzsNCj4gICAgICAgICBlbHNlDQo+IC0tDQo+IDEuNy45LjUNCj4NCj4gLS0NCj4gVG8gdW5zdWJz
-Y3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LWtl
-cm5lbCIgaW4NCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5l
-bC5vcmcNCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9t
-YWpvcmRvbW8taW5mby5odG1sDQo+IFBsZWFzZSByZWFkIHRoZSBGQVEgYXQgIGh0dHA6Ly93d3cu
-dHV4Lm9yZy9sa21sLw0KDQoNCg0KLS0NCldpdGggd2FybSByZWdhcmRzLA0KU2FjaGluDQoNCg==
+Hi Praveen,
+
+Some minor comments:
+
+On 7 August 2012 12:58, Praveen Paneri <p.paneri@samsung.com> wrote:
+> Adding the transceiver to hsotg driver. Keeping the platform data
+> for continuing the smooth operation for boards which still uses it
+>
+> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
+> ---
+>  drivers/usb/gadget/s3c-hsotg.c |   38 ++++++++++++++++++++++++++++----------
+>  1 files changed, 28 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
+> index b13e0bb..f4ba9a3 100644
+> --- a/drivers/usb/gadget/s3c-hsotg.c
+> +++ b/drivers/usb/gadget/s3c-hsotg.c
+> @@ -32,6 +32,7 @@
+>
+>  #include <linux/usb/ch9.h>
+>  #include <linux/usb/gadget.h>
+> +#include <linux/usb/otg.h>
+>  #include <linux/platform_data/s3c-hsotg.h>
+>
+>  #include <mach/map.h>
+> @@ -133,7 +134,9 @@ struct s3c_hsotg_ep {
+>   * struct s3c_hsotg - driver state.
+>   * @dev: The parent device supplied to the probe function
+>   * @driver: USB gadget driver
+> - * @plat: The platform specific configuration data.
+> + * @phy: The otg phy transeiver structure for phy control.
+
+s/transeiver/transceiver
+
+> + * @plat: The platform specific configuration data. This can be removed once
+> + * all SoCs support usb transceiver.
+>   * @regs: The memory area mapped for accessing registers.
+>   * @irq: The IRQ number we are using
+>   * @supplies: Definition of USB power supplies
+> @@ -153,6 +156,7 @@ struct s3c_hsotg_ep {
+>  struct s3c_hsotg {
+>         struct device            *dev;
+>         struct usb_gadget_driver *driver;
+> +       struct usb_phy          *phy;
+>         struct s3c_hsotg_plat    *plat;
+>
+>         spinlock_t              lock;
+> @@ -2854,7 +2858,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
+>         struct platform_device *pdev = to_platform_device(hsotg->dev);
+>
+>         dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
+> -       if (hsotg->plat->phy_init)
+> +
+> +       if (hsotg->phy)
+> +               usb_phy_init(hsotg->phy);
+> +       else if (hsotg->plat->phy_init)
+>                 hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
+>  }
+>
+> @@ -2869,7 +2876,9 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
+>  {
+>         struct platform_device *pdev = to_platform_device(hsotg->dev);
+>
+> -       if (hsotg->plat->phy_exit)
+> +       if (hsotg->phy)
+> +               usb_phy_shutdown(hsotg->phy);
+> +       else if (hsotg->plat->phy_exit)
+>                 hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
+>  }
+>
+> @@ -3493,6 +3502,7 @@ static void s3c_hsotg_release(struct device *dev)
+>  static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+>  {
+>         struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
+> +       struct usb_phy *phy;
+>         struct device *dev = &pdev->dev;
+>         struct s3c_hsotg_ep *eps;
+>         struct s3c_hsotg *hsotg;
+> @@ -3501,20 +3511,25 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
+>         int ret;
+>         int i;
+>
+> -       plat = pdev->dev.platform_data;
+> -       if (!plat) {
+> -               dev_err(&pdev->dev, "no platform data defined\n");
+> -               return -EINVAL;
+> -       }
+> -
+>         hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg), GFP_KERNEL);
+>         if (!hsotg) {
+>                 dev_err(dev, "cannot get memory\n");
+>                 return -ENOMEM;
+>         }
+>
+> +       phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
+> +       if (!phy) {
+> +               /* Fallback for platform data */
+> +               plat = pdev->dev.platform_data;
+> +               if (!plat) {
+> +                       dev_err(&pdev->dev, "no platform data or transceiver defined\n");
+> +                       return -ENODEV;
+> +               } else
+> +                       hsotg->plat = plat;
+> +       } else
+> +               hsotg->phy = phy;
+
+Braces needed around the above 2 else statements.
+Please refer to: Documentation/CodingStyle
+
+
+> +
+>         hsotg->dev = dev;
+> -       hsotg->plat = plat;
+>
+>         hsotg->clk = clk_get(&pdev->dev, "otg");
+>         if (IS_ERR(hsotg->clk)) {
+> @@ -3689,6 +3704,9 @@ static int __devexit s3c_hsotg_remove(struct platform_device *pdev)
+>         s3c_hsotg_phy_disable(hsotg);
+>         regulator_bulk_free(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
+>
+> +       if (hsotg->phy)
+> +               devm_usb_put_phy(&pdev->dev, hsotg->phy);
+> +
+>         clk_disable_unprepare(hsotg->clk);
+>         clk_put(hsotg->clk);
+>
+> --
+> 1.7.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+With best regards,
+Sachin
