@@ -1,91 +1,68 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 0/5] usb: phy: samsung: Introducing usb phy driver for
- samsung SoCs
-Date: Tue, 07 Aug 2012 19:00:04 +0900
-Message-ID: <098c01cd7483$6a93eeb0$3fbbcc10$%kim@samsung.com>
-References: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
+Date: Tue,  7 Aug 2012 15:29:06 +0530
+Message-ID: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:15698 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753492Ab2HGKAG (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:49927 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752165Ab2HGKAe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 06:00:06 -0400
-In-reply-to: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
-Content-language: ko
+	Tue, 7 Aug 2012 06:00:34 -0400
+Received: by pbbrr13 with SMTP id rr13so4071413pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Aug 2012 03:00:34 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Praveen Paneri' <p.paneri@samsung.com>, linux-usb@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kgene.kim@samsung.com, s.hauer@pengutronix.de, patches@linaro.org
 
-Praveen Paneri wrote:
-> 
-> Changes from v1:
-> Rebased patches to latest usb-next branch
-> Changed the name 'sec_usbphy' to 'samsung_usbphy'
-> 
-Yes, looks better. But I'm not sure Felipe or Greg would prefer to use '_'
-not '-'...you used samsung-usbphy as a name in your patch.
+Commit 2663e766c56a "ARM Samsung: Move s3c pwm driver to pwm framework"
+moved Samsung PWM driver to drivers/pwm and the config option to select
+this driver has changed.
 
-> This patch set introduces a phy driver for samsung SoCs. It uses the
-> existing
-> transceiver infrastructure to provide phy control functions. Use of this
-> driver
-> can be extended for usb host phy as well. Over the period of time all the
-> phy
-> related code for most of the samsung SoCs can be integrated here.
-> Removing the existing phy code from mach-s3c64xx but not from other
-> machine
+This patch fixes following build-error with s3c2410_defconfig.
+arch/arm/mach-s3c24xx/mach-rx1950.c:430: undefined reference to `pwm_config'
 
-Why? Is there any reason? After quick looking at your patches, seems this
-can remove all of setup-usb-phy in arch/arm/ for Samsung stuff. In addition,
-the isolation hook function also can be put in this by using platform_data
-or dt parsing.
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/mach-s3c24xx/Kconfig |    4 ++--
+ arch/arm/plat-samsung/Kconfig |    3 ++-
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-> code.This driver is tested with smdk6410 and Exynos4210(with DT).
-> 
-I and my colleague, Yulgon will comment on this series soon.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-
-> Praveen Paneri (5):
->   usb: phy: samsung: Introducing usb phy driver for hsotg
->   usb: s3c-hsotg: Adding phy driver support
->   ARM: S3C64XX: Removing old phy setup code
->   ARM: S3C64XX: Enabling samsung_usbphy driver
->   ARM: Exynos4210: Enabling samsung_usbphy driver
-> 
->  .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
->  arch/arm/boot/dts/exynos4210.dtsi                  |    5 +
->  arch/arm/mach-exynos/include/mach/map.h            |    1 +
->  arch/arm/mach-exynos/mach-exynos4-dt.c             |    8 +
->  arch/arm/mach-exynos/setup-usb-phy.c               |   13 +
->  arch/arm/mach-s3c64xx/include/mach/map.h           |    2 +
->  arch/arm/mach-s3c64xx/mach-crag6410.c              |    5 +-
->  arch/arm/mach-s3c64xx/mach-smartq.c                |    6 +-
->  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    5 +-
->  arch/arm/mach-s3c64xx/setup-usb-phy.c              |   79 +----
->  arch/arm/plat-samsung/devs.c                       |   32 ++
->  arch/arm/plat-samsung/include/plat/devs.h          |    1 +
->  arch/arm/plat-samsung/include/plat/usb-phy.h       |    1 +
->  drivers/usb/gadget/s3c-hsotg.c                     |   38 ++-
->  drivers/usb/phy/Kconfig                            |    8 +
->  drivers/usb/phy/Makefile                           |    1 +
->  drivers/usb/phy/samsung_usbphy.c                   |  355
-++++++++++++++++++++
->  drivers/usb/phy/samsung_usbphy.h                   |   48 +++
->  include/linux/platform_data/s3c-hsotg.h            |    5 +
->  19 files changed, 534 insertions(+), 88 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/usb/samsung-
-> usbphy.txt
->  create mode 100644 drivers/usb/phy/samsung_usbphy.c
->  create mode 100644 drivers/usb/phy/samsung_usbphy.h
+diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+index e249611..d56b0f7 100644
+--- a/arch/arm/mach-s3c24xx/Kconfig
++++ b/arch/arm/mach-s3c24xx/Kconfig
+@@ -483,7 +483,7 @@ config MACH_NEO1973_GTA02
+ 	select I2C
+ 	select POWER_SUPPLY
+ 	select MACH_NEO1973
+-	select S3C2410_PWM
++	select S3C24XX_PWM
+ 	select S3C_DEV_USB_HOST
+ 	help
+ 	   Say Y here if you are using the Openmoko GTA02 / Freerunner GSM Phone
+@@ -493,7 +493,7 @@ config MACH_RX1950
+ 	select S3C24XX_DCLK
+ 	select PM_H1940 if PM
+ 	select I2C
+-	select S3C2410_PWM
++	select S3C24XX_PWM
+ 	select S3C_DEV_NAND
+ 	select S3C2410_IOTIMING if S3C2440_CPUFREQ
+ 	select S3C2440_XTAL_16934400
+diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+index 7aca31c..9c3b90c 100644
+--- a/arch/arm/plat-samsung/Kconfig
++++ b/arch/arm/plat-samsung/Kconfig
+@@ -403,7 +403,8 @@ config S5P_DEV_USB_EHCI
+ 
+ config S3C24XX_PWM
+ 	bool "PWM device support"
+-	select HAVE_PWM
++	select PWM
++	select PWM_SAMSUNG
+ 	help
+ 	  Support for exporting the PWM timer blocks via the pwm device
+ 	  system
+-- 
+1.7.4.1
