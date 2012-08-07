@@ -1,41 +1,56 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
-Date: Mon, 06 Aug 2012 21:09:02 +0200
-Message-ID: <5020164E.90007@gmail.com>
-References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com> <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com> <033301cd6fb0$7ac4af90$704e0eb0$%kim@samsung.com> <CAJuYYwTy5zkeM_cJO7HMm+=v=ORPHD26nQYZwXK6v1noWm1EuA@mail.gmail.com> <5018E656.3070803@samsung.com> <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com> <50197D66.1050108@gmail.com> <CAOesGMiZMrv4GY=v1WPn_qGZgg=vduO2TbsUOQ6sCah-ZvOg_A@mail.gmail.com> <501B1003.1090003@gmail.com> <CAOD6ATomKE3WYtGrBTSyjfkNr5ZK+3=NRrZLX0p5pOzPykOikQ@mail.gmail.com>
+From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
+Subject: =?utf-8?B?7ZqM7IugOiDtmozsi6A6IFtQQVRDSF0gT0RST0lELVg6IGhrZGs0NDEyOiBB?=
+ =?utf-8?Q?dd_new_hardware_based_on_Exynos4412?=
+Date: Tue, 7 Aug 2012 02:05:56 +0000
+Message-ID: <A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
+References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
+	<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
+	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>,<CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ey0-f174.google.com ([209.85.215.174]:50181 "EHLO
-	mail-ey0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932380Ab2HFTJG (ORCPT
+Received: from db3ehsobe004.messaging.microsoft.com ([213.199.154.142]:51313
+	"EHLO db3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753755Ab2HGCGC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Aug 2012 15:09:06 -0400
-Received: by eaac11 with SMTP id c11so949651eaa.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Aug 2012 12:09:05 -0700 (PDT)
-In-Reply-To: <CAOD6ATomKE3WYtGrBTSyjfkNr5ZK+3=NRrZLX0p5pOzPykOikQ@mail.gmail.com>
+	Mon, 6 Aug 2012 22:06:02 -0400
+In-Reply-To: <CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
+Content-Language: ko-KR
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Shaik Ameer Basha <shaik.samsung@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Olof Johansson <olof@lixom.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>, Shaik Ameer Basha <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, sungchun.kang@samsung.com, Rob Herring <rob.herring@calxeda.com>
+To: Olof Johansson <olof@lixom.net>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-On 08/06/2012 08:27 AM, Shaik Ameer Basha wrote:
-> After all this discussion, I can see two possibilities here.
-> 1] If Kukjin Kim is sure about G-Scaler remains unchanged, across all
-> the exynos5 series SoCs,
->          It is fine to go with the compatible string  "samsung,exynos5-gsc".
-> 2] Otherwise in case of any doubts about G-Scaler is going to change,
->          It is safe to go with the compatible string specific to
-> current SoC i.e., "samsung,exynos5250-gsc".
-> 
-> If we all can agree on this, lets Kukjin Kim decide which string to
-> use as he has good knowledge about upcoming exynos5 series SoCs.
-
-I don't have strong opinion on this, but my vote goes for using more 
-specific properties. Of course the final word belongs to Mr. Kim.
-
---
-
-Regards,
-Sylwester
+SGVsbG8sDQoNCkkgYW0gdHJ5aW5nIHRvIHVuZGVyc3RhbmQgd2hhdCBJIGhhdmUgdG8gZG8gZm9y
+IGRldmljZSB0cmVlLg0KDQpJbiBvcmRlciB0byBjcmVhdGUgZHRzIGZpbGUgZm9yIE9EUk9JRC1Y
+IGhhcmR3YXJlLCBpdCBzZWVtcyBJIG1heSBuZWVkIGR0cyBmaWxlIG9mIEVYWU5PUzQ0MTIgU29D
+Lg0KQnV0IG1heWJlIGV4eW5vczQ0MTIuZHRzaSBpcyBub3QgbWVyZ2VkIHlldCBvciBub3QgZXhp
+c3QsIGxpa2UgZXh5bm9zNDIxMC5kdHNpIG9yIGV4eW5vczUyNTAuZHRzaS4NCk9idmlvdXNseSBp
+dCBzZWVtcyBub3QgZWFzeSB0byBjcmVhdGUgc3VjaCBhIGZpbGUgd2l0aG91dCBTb0MgZGF0YXNo
+ZWV0LCBhbmQgSSBkbyBub3QgaGF2ZSBpdC4NCg0KU28gZG8gSSB3YWl0IGZvciB0aGUgZmlsZSB0
+byBiZSBtZXJnZWQgYnkgU2Ftc3VuZyBvciBiZXR0ZXIgdG8gY3JlYXRlIGluaXRpYWwgZHRzIGZp
+bGUgY2xvbmVkIGZyb20gZXh5bm9zNDIxMC5kdHNpIGFuZCBtb2RpZnkgdG8gaGF2ZSB2ZXJpZmll
+ZCBub2RlcyB3aXRoIHRoZSBzb3VyY2UvaGVhZGVyIGZpbGVzPw0KDQpXaGF0J3MgeW91ciBzdWdn
+ZXN0aW9uPw0KDQpSZWdhcmRzLA0KRG9uZ2ppbi4NCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18NCuuztOuCuCDsgqzrnow6IE9sb2YgSm9oYW5zc29uIFtvbG9mQGxpeG9t
+Lm5ldF0NCuuztOuCuCDrgqDsp5w6IDIwMTLrhYQgOOyblCA37J28IO2ZlOyalOydvCDsmKTsoIQg
+MzozMw0K67Cb64qUIOyCrOuejDogRG9uZ2ppbiBLaW0NCuywuOyhsDogVGhvbWFzIEFicmFoYW07
+IERvbmdqaW4gS2ltOyBLdWtqaW4gS2ltOyBSdXNzZWxsIEtpbmc7IFRvbnkgTGluZGdyZW47IEpv
+biBNZWRodXJzdDsgU2hhd24gR3VvOyBVd2UgS2xlaW5lLUvDtm5pZzsgbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCuygnOuqqTogUmU6IO2ajOyLoDogW1BBVENI
+XSBPRFJPSUQtWDogaGtkazQ0MTI6IEFkZCBuZXcgaGFyZHdhcmUgYmFzZWQgb24gRXh5bm9zNDQx
+Mg0KDQpIaSwNCg0KT24gTW9uLCBBdWcgNiwgMjAxMiBhdCAxMToxNiBBTSwgRG9uZ2ppbiBLaW0N
+CjxEb25namluLktpbUBhZ3JlZXlhbW9iaWxpdHkubmV0PiB3cm90ZToNCj4gSGVsbG8gVG9tYXMs
+DQo+DQo+IEkgYW0gYWdyZWUgd2l0aCB5b3UgdG8gbG9vayBhdCB1c2luZyBkZXZpY2UgdHJlZSBh
+bmQgSSBoYXZlIHNvbWUgcGxhbiBmb3IgaXQuDQo+IEJ1dCBhcyBvZiBub3cgSSBhbSBmb2N1c2lu
+ZyB0byBicmluZyB1cCB0aGUgaGFyZHdhcmUgaXRzZWxmIHdpdGggbWFpbmxpbmUga2VybmVsIGFu
+ZCBtZXJnZSBpbnRvIGl0Lg0KPiBJIGFsc28gbmVlZCBzb21lIHRpbWUgdG8gbG9vayBhdCB0aGUg
+cmVxdWlyZW1lbnQgb2YgZGV2aWNlIHRyZWUsIGJlY2F1c2UgSSBhbSBub3QgZmFtaWxpYXIgd2l0
+aCBpdCB5ZXQuDQo+DQo+IEFueSBhZHZpY2Ugd2lsbCBiZSB3ZWxjb21lZC4NCg0KQmFzaWMgcnVs
+ZSAodGhhdCBoYXMgc29tZSBmbGV4aWJpbGl0eSBmb3IgbGVnYWN5IHBsYXRmb3JtcykgaXMgdGhh
+dA0KdGhlIG5ldCBtb3ZlbWVudCBvZiBib2FyZCBzdXBwb3J0IHNob3VsZCBtb3ZlIGZyb20gYm9h
+cmQgZmlsZXMgdG8NCmRldmljZS10cmVlIGJhc2VkLiBJbnRyb2R1Y3Rpb24gb2YgYSBicmFuZCBu
+ZXcgYm9hcmQgbGlrZSB0aGlzIGlzIGENCnByaW1lIGV4YW1wbGUgb2Ygc29tZXRoaW5nIHRoYXQg
+c2hvdWxkIGJlIHVzaW5nIGRldmljZSB0cmVlIGZyb20gZGF5DQoxLg0KDQoNCi1PbG9mDQo=
