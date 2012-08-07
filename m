@@ -1,56 +1,59 @@
-From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
-Subject: =?utf-8?B?7ZqM7IugOiDtmozsi6A6IFtQQVRDSF0gT0RST0lELVg6IGhrZGs0NDEyOiBB?=
- =?utf-8?Q?dd_new_hardware_based_on_Exynos4412?=
-Date: Tue, 7 Aug 2012 02:05:56 +0000
-Message-ID: <A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: =?EUC-KR?B?UmU6IMi4vcU6IMi4vcU6IFtQQVRDSF0gT0RST0lELVg6IGhrZGs0NDEyOiBBZGQg?=
+	=?EUC-KR?B?bmV3IGhhcmR3YXJlIGJhc2VkIG9uIEV4eW5vczQ0MTI=?=
+Date: Mon, 6 Aug 2012 19:28:03 -0700
+Message-ID: <CAOesGMj6BafLCpZjmtyn_ASbpeic_8E0CdYjQGOf3A4_NHfy=Q@mail.gmail.com>
 References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
 	<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
-	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>,<CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
+	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
+	<CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
+	<A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from db3ehsobe004.messaging.microsoft.com ([213.199.154.142]:51313
-	"EHLO db3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1753755Ab2HGCGC (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:38529 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932211Ab2HGC2E (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Aug 2012 22:06:02 -0400
-In-Reply-To: <CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
-Content-Language: ko-KR
+	Mon, 6 Aug 2012 22:28:04 -0400
+Received: by pbbrr13 with SMTP id rr13so3515550pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Aug 2012 19:28:04 -0700 (PDT)
+In-Reply-To: <A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-SGVsbG8sDQoNCkkgYW0gdHJ5aW5nIHRvIHVuZGVyc3RhbmQgd2hhdCBJIGhhdmUgdG8gZG8gZm9y
-IGRldmljZSB0cmVlLg0KDQpJbiBvcmRlciB0byBjcmVhdGUgZHRzIGZpbGUgZm9yIE9EUk9JRC1Y
-IGhhcmR3YXJlLCBpdCBzZWVtcyBJIG1heSBuZWVkIGR0cyBmaWxlIG9mIEVYWU5PUzQ0MTIgU29D
-Lg0KQnV0IG1heWJlIGV4eW5vczQ0MTIuZHRzaSBpcyBub3QgbWVyZ2VkIHlldCBvciBub3QgZXhp
-c3QsIGxpa2UgZXh5bm9zNDIxMC5kdHNpIG9yIGV4eW5vczUyNTAuZHRzaS4NCk9idmlvdXNseSBp
-dCBzZWVtcyBub3QgZWFzeSB0byBjcmVhdGUgc3VjaCBhIGZpbGUgd2l0aG91dCBTb0MgZGF0YXNo
-ZWV0LCBhbmQgSSBkbyBub3QgaGF2ZSBpdC4NCg0KU28gZG8gSSB3YWl0IGZvciB0aGUgZmlsZSB0
-byBiZSBtZXJnZWQgYnkgU2Ftc3VuZyBvciBiZXR0ZXIgdG8gY3JlYXRlIGluaXRpYWwgZHRzIGZp
-bGUgY2xvbmVkIGZyb20gZXh5bm9zNDIxMC5kdHNpIGFuZCBtb2RpZnkgdG8gaGF2ZSB2ZXJpZmll
-ZCBub2RlcyB3aXRoIHRoZSBzb3VyY2UvaGVhZGVyIGZpbGVzPw0KDQpXaGF0J3MgeW91ciBzdWdn
-ZXN0aW9uPw0KDQpSZWdhcmRzLA0KRG9uZ2ppbi4NCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18NCuuztOuCuCDsgqzrnow6IE9sb2YgSm9oYW5zc29uIFtvbG9mQGxpeG9t
-Lm5ldF0NCuuztOuCuCDrgqDsp5w6IDIwMTLrhYQgOOyblCA37J28IO2ZlOyalOydvCDsmKTsoIQg
-MzozMw0K67Cb64qUIOyCrOuejDogRG9uZ2ppbiBLaW0NCuywuOyhsDogVGhvbWFzIEFicmFoYW07
-IERvbmdqaW4gS2ltOyBLdWtqaW4gS2ltOyBSdXNzZWxsIEtpbmc7IFRvbnkgTGluZGdyZW47IEpv
-biBNZWRodXJzdDsgU2hhd24gR3VvOyBVd2UgS2xlaW5lLUvDtm5pZzsgbGludXgtYXJtLWtlcm5l
-bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmc7
-IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCuygnOuqqTogUmU6IO2ajOyLoDogW1BBVENI
-XSBPRFJPSUQtWDogaGtkazQ0MTI6IEFkZCBuZXcgaGFyZHdhcmUgYmFzZWQgb24gRXh5bm9zNDQx
-Mg0KDQpIaSwNCg0KT24gTW9uLCBBdWcgNiwgMjAxMiBhdCAxMToxNiBBTSwgRG9uZ2ppbiBLaW0N
-CjxEb25namluLktpbUBhZ3JlZXlhbW9iaWxpdHkubmV0PiB3cm90ZToNCj4gSGVsbG8gVG9tYXMs
-DQo+DQo+IEkgYW0gYWdyZWUgd2l0aCB5b3UgdG8gbG9vayBhdCB1c2luZyBkZXZpY2UgdHJlZSBh
-bmQgSSBoYXZlIHNvbWUgcGxhbiBmb3IgaXQuDQo+IEJ1dCBhcyBvZiBub3cgSSBhbSBmb2N1c2lu
-ZyB0byBicmluZyB1cCB0aGUgaGFyZHdhcmUgaXRzZWxmIHdpdGggbWFpbmxpbmUga2VybmVsIGFu
-ZCBtZXJnZSBpbnRvIGl0Lg0KPiBJIGFsc28gbmVlZCBzb21lIHRpbWUgdG8gbG9vayBhdCB0aGUg
-cmVxdWlyZW1lbnQgb2YgZGV2aWNlIHRyZWUsIGJlY2F1c2UgSSBhbSBub3QgZmFtaWxpYXIgd2l0
-aCBpdCB5ZXQuDQo+DQo+IEFueSBhZHZpY2Ugd2lsbCBiZSB3ZWxjb21lZC4NCg0KQmFzaWMgcnVs
-ZSAodGhhdCBoYXMgc29tZSBmbGV4aWJpbGl0eSBmb3IgbGVnYWN5IHBsYXRmb3JtcykgaXMgdGhh
-dA0KdGhlIG5ldCBtb3ZlbWVudCBvZiBib2FyZCBzdXBwb3J0IHNob3VsZCBtb3ZlIGZyb20gYm9h
-cmQgZmlsZXMgdG8NCmRldmljZS10cmVlIGJhc2VkLiBJbnRyb2R1Y3Rpb24gb2YgYSBicmFuZCBu
-ZXcgYm9hcmQgbGlrZSB0aGlzIGlzIGENCnByaW1lIGV4YW1wbGUgb2Ygc29tZXRoaW5nIHRoYXQg
-c2hvdWxkIGJlIHVzaW5nIGRldmljZSB0cmVlIGZyb20gZGF5DQoxLg0KDQoNCi1PbG9mDQo=
+Hi,
+
+On Mon, Aug 6, 2012 at 7:05 PM, Dongjin Kim
+<Dongjin.Kim@agreeyamobility.net> wrote:
+> Hello,
+>
+> I am trying to understand what I have to do for device tree.
+>
+> In order to create dts file for ODROID-X hardware, it seems I may need dts file of EXYNOS4412 SoC.
+> But maybe exynos4412.dtsi is not merged yet or not exist, like exynos4210.dtsi or exynos5250.dtsi.
+> Obviously it seems not easy to create such a file without SoC datasheet, and I do not have it.
+>
+> So do I wait for the file to be merged by Samsung or better to create initial dts file cloned from exynos4210.dtsi and modify to have verified nodes with the source/header files?
+
+Ideally they already have one waiting to be submitted, but that might
+not be the case. Given that the origenboard design with 4412 is not
+yet shipping, I'm guessing the Linaro Samsung engineers might not have
+done much work on 4412 yet. Kukjin? Thomas?
+
+> What's your suggestion?
+
+The alternative is to use the data you have available -- i.e. sources
+and patches, and craft the device tree from there. The design of 4412
+is a derivative from 4210, so that's a good start. Next step would be
+to describe the board on top of the SoC, peripherals, etc. Take a look
+at how the origen board support was added, and so on.
+
+I ordered an odroid-x several weeks ago but I haven't have a confirmed
+shipping date yet. :( I'm not sure how long it'll be before I can help
+out, unfortunately.
+
+
+-Olof
