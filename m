@@ -1,128 +1,52 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
-Date: Tue, 07 Aug 2012 19:33:15 +0900
-Message-ID: <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
-References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
+Subject: RE: [PATCH 0/2] ARM: S3C24XX: Fix compilation errors with 3.6-rc1
+Date: Tue, 07 Aug 2012 19:37:40 +0900
+Message-ID: <099001cd7488$ab7c3270$02749750$%kim@samsung.com>
+References: <201208051738.27728.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:48905 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750708Ab2HGKdQ (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37702 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750937Ab2HGKhm convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 06:33:16 -0400
-In-reply-to: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
+	Tue, 7 Aug 2012 06:37:42 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M8D001GSS6G8U40@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Aug 2012 19:37:40 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M8D00F68S6SMG40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Aug 2012 19:37:40 +0900 (KST)
+In-reply-to: <201208051738.27728.heiko@sntech.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: s.hauer@pengutronix.de, patches@linaro.org
+To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-Tushar Behera wrote:
-> 
-> Commit 2663e766c56a "ARM Samsung: Move s3c pwm driver to pwm framework"
-> moved Samsung PWM driver to drivers/pwm and the config option to select
-> this driver has changed.
-> 
-> This patch fixes following build-error with s3c2410_defconfig.
-> arch/arm/mach-s3c24xx/mach-rx1950.c:430: undefined reference to
-> `pwm_config'
-> 
-
-Yes, need to fix...
-
-arch/arm/mach-s3c24xx/built-in.o: In function `rx1950_lcd_power':
-arch/arm/mach-s3c24xx/mach-rx1950.c:430: undefined reference to `pwm_config'
-arch/arm/mach-s3c24xx/mach-rx1950.c:431: undefined reference to
-`pwm_disable'
-arch/arm/mach-s3c24xx/mach-rx1950.c:437: undefined reference to `pwm_config'
-arch/arm/mach-s3c24xx/mach-rx1950.c:438: undefined reference to `pwm_enable'
-arch/arm/mach-s3c24xx/built-in.o: In function `rx1950_backlight_exit':
-arch/arm/mach-s3c24xx/mach-rx1950.c:504: undefined reference to `pwm_free'
-arch/arm/mach-s3c24xx/built-in.o: In function `rx1950_backlight_init':
-arch/arm/mach-s3c24xx/mach-rx1950.c:487: undefined reference to
-`pwm_request'
-
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
->  arch/arm/mach-s3c24xx/Kconfig |    4 ++--
->  arch/arm/plat-samsung/Kconfig |    3 ++-
->  2 files changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
-> index e249611..d56b0f7 100644
-> --- a/arch/arm/mach-s3c24xx/Kconfig
-> +++ b/arch/arm/mach-s3c24xx/Kconfig
-> @@ -483,7 +483,7 @@ config MACH_NEO1973_GTA02
->  	select I2C
->  	select POWER_SUPPLY
->  	select MACH_NEO1973
-> -	select S3C2410_PWM
-> +	select S3C24XX_PWM
->  	select S3C_DEV_USB_HOST
->  	help
->  	   Say Y here if you are using the Openmoko GTA02 / Freerunner GSM
-> Phone
-> @@ -493,7 +493,7 @@ config MACH_RX1950
->  	select S3C24XX_DCLK
->  	select PM_H1940 if PM
->  	select I2C
-> -	select S3C2410_PWM
-> +	select S3C24XX_PWM
->  	select S3C_DEV_NAND
->  	select S3C2410_IOTIMING if S3C2440_CPUFREQ
->  	select S3C2440_XTAL_16934400
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index 7aca31c..9c3b90c 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -403,7 +403,8 @@ config S5P_DEV_USB_EHCI
-> 
->  config S3C24XX_PWM
->  	bool "PWM device support"
-> -	select HAVE_PWM
-> +	select PWM
-> +	select PWM_SAMSUNG
->  	help
->  	  Support for exporting the PWM timer blocks via the pwm device
->  	  system
+Heiko St=C3=BCbner wrote:
+>=20
+> Small fallout from from the s3c64xx spi changes and from a dma change=
+ from
+> last year, that only surfaced after a gcc update.
+>=20
+> Heiko Stuebner (2):
+>   ARM: S3C24XX: Add missing DMACH_DT_PROP
+>   ARM: S3C24XX: Fix s3c2410_dma_enqueue parameters
+>=20
+>  arch/arm/mach-s3c24xx/include/mach/dma.h |    3 ++-
+>  arch/arm/plat-s3c24xx/dma.c              |    2 +-
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+>=20
 > --
-> 1.7.4.1
+> 1.7.2.3
 
-I think, following would be better? Or ...
-
----
-diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-index 7aca31c..dcdfb77 100644
---- a/arch/arm/plat-samsung/Kconfig
-+++ b/arch/arm/plat-samsung/Kconfig
-@@ -403,7 +403,7 @@ config S5P_DEV_USB_EHCI
- 
- config S3C24XX_PWM
- 	bool "PWM device support"
--	select HAVE_PWM
-+	select PWM
- 	help
- 	  Support for exporting the PWM timer blocks via the pwm device
- 	  system
-diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-index 8fc3808..34c8ec1 100644
---- a/drivers/pwm/Kconfig
-+++ b/drivers/pwm/Kconfig
-@@ -59,7 +59,7 @@ config PWM_PXA
- 
- config PWM_SAMSUNG
- 	tristate "Samsung pwm support"
--	depends on PLAT_SAMSUNG
-+	def_bool PLAT_SAMSUNG
- 	help
- 	  Generic PWM framework driver for Samsung.
----
-
-
-
-Thanks.
+Applied this series, thanks.
 
 Best regards,
 Kgene.
