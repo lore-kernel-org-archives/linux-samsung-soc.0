@@ -1,109 +1,76 @@
-From: Kyungmin Park <kmpark@infradead.org>
-Subject: =?EUC-KR?B?UmU6IMi4vcU6IMi4vcU6IFtQQVRDSF0gT0RST0lELVg6IGhrZGs0NDEyOiBBZGQg?=
-	=?EUC-KR?B?bmV3IGhhcmR3YXJlIGJhc2VkIG9uIEV4eW5vczQ0MTI=?=
-Date: Tue, 7 Aug 2012 13:38:53 +0900
-Message-ID: <CAH9JG2Wg=6Y=qirPM_BaHEgKQ2bbJtuXHiqdgU8XToGM4HBtWw@mail.gmail.com>
-References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
-	<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
-	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
-	<CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
-	<A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
-	<CAOesGMj6BafLCpZjmtyn_ASbpeic_8E0CdYjQGOf3A4_NHfy=Q@mail.gmail.com>
-	<CAJuYYwT2rrJkrkOSekV+DjpVAHas33_gUGULTjzsYtcq1UAyoQ@mail.gmail.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Add HDMIPHY I2C adaptor
+Date: Tue, 7 Aug 2012 12:26:57 +0530
+Message-ID: <CAK9yfHz_q22JgkULR9V8bR5W_TXVRn5qs5u2MiJJpa-Br_YQUQ@mail.gmail.com>
+References: <1344261462-14183-1-git-send-email-dongjin.kim@agreeyamobility.net>
+	<1344261462-14183-2-git-send-email-dongjin.kim@agreeyamobility.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:56539 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750858Ab2HGEi4 (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:47615 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750917Ab2HGG47 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 00:38:56 -0400
-In-Reply-To: <CAJuYYwT2rrJkrkOSekV+DjpVAHas33_gUGULTjzsYtcq1UAyoQ@mail.gmail.com>
+	Tue, 7 Aug 2012 02:56:59 -0400
+Received: by vcbfk26 with SMTP id fk26so3673036vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Aug 2012 23:56:58 -0700 (PDT)
+In-Reply-To: <1344261462-14183-2-git-send-email-dongjin.kim@agreeyamobility.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Olof Johansson <olof@lixom.net>, Dongjin Kim <Dongjin.Kim@agreeyamobility.net>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Dongjin Kim <tobetter@gmail.com>
+Cc: Dongjin Kim <dongjin.kim@agreeyamobility.net>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On 8/7/12, Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> On 7 August 2012 07:58, Olof Johansson <olof@lixom.net> wrote:
->> Hi,
->>
->> On Mon, Aug 6, 2012 at 7:05 PM, Dongjin Kim
->> <Dongjin.Kim@agreeyamobility.net> wrote:
->>> Hello,
->>>
->>> I am trying to understand what I have to do for device tree.
->>>
->>> In order to create dts file for ODROID-X hardware, it seems I may need
->>> dts file of EXYNOS4412 SoC.
->>> But maybe exynos4412.dtsi is not merged yet or not exist, like
->>> exynos4210.dtsi or exynos5250.dtsi.
->>> Obviously it seems not easy to create such a file without SoC datasheet,
->>> and I do not have it.
->>>
->>> So do I wait for the file to be merged by Samsung or better to create
->>> initial dts file cloned from exynos4210.dtsi and modify to have verified
->>> nodes with the source/header files?
->>
->> Ideally they already have one waiting to be submitted, but that might
->> not be the case. Given that the origenboard design with 4412 is not
->> yet shipping, I'm guessing the Linaro Samsung engineers might not have
->> done much work on 4412 yet. Kukjin? Thomas?
->>
->>> What's your suggestion?
->>
->> The alternative is to use the data you have available -- i.e. sources
->> and patches, and craft the device tree from there. The design of 4412
->> is a derivative from 4210, so that's a good start. Next step would be
->> to describe the board on top of the SoC, peripherals, etc. Take a look
->> at how the origen board support was added, and so on.
->>
->> I ordered an odroid-x several weeks ago but I haven't have a confirmed
->> shipping date yet. :( I'm not sure how long it'll be before I can help
->> out, unfortunately.
->>
->>
->> -Olof
->
-> Most of the Exynos4210 device tree support can be reused for
-> Exynos4412 as well. Looking at the hardware differences between the
-> two, it might be better to create a new exynos4.dtsi file (kind of
-> creating it out of the existing exynos4210.dtsi) which will have all
-> the common bits across all SoC's in the Exynos4 family.
->
-> Further, there can be exynos4210.dtsi and exynos4412.dtsi which would
-> specify SoC specific differences such as the GIC cpu-offset property
-> and the additional groups available in the interrupt combiner.
->
-> There are differences in the gpio/pinmux controllers as well which
-> have to be described using device tree. The current gpio/pinmux device
-> tree support depends entirely on the gpio-samsung driver which handles
-> both gpio and pinmux but requires listing all the banks available in
-> Exynos4412. I would prefer not to do that since we are switching over
-> to using a pin controller driver and I am currently working on this
-> driver.
->
-> The pin controller driver is important without which the
-> gpio/pinmux/pinconf setting for devices such as i2c and sdhci
-> controller cannot be setup. The basic pinctrl driver for Exynos4 has
-> already been posted and now I am working on adding gpio and wakeup
-> interrupt support into that driver (hoping to complete it this week).
->
-> So the probable steps in getting started with using device tree for
-> Exynos4412 would be
->
-> 1. Create a new exynos4.dtsi file with all the Exynos4 common
-> properties for all dt supported controllers.
-> 2. Update the exynos4210.dtsi file accordingly and add the new
-> exynos4412.dtsi file.
-> 3. With this, it will be possible to boot the kernel and test
-> peripherals that do not depend on gpio/pinmux (rtc, wdt, etc).
-> 4. When the Exynos4 pinctrl driver is available, start adding device
-> nodes for i2c and sdhci controllers.
-> 5. Incrementally add device tree coverage for the board and other
-> peripherals on Exynos4412.
-Nice!
-Good plan as I thnk.
+Hi Dongjin,
 
-Thank you,
-Kyungmin Park
+A patch series to add HDMI platform data support is already under consideration.
+
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/11352
+
+
+
+On 6 August 2012 19:27, Dongjin Kim <tobetter@gmail.com> wrote:
+> This patch assign the I2C channel for HDMIPHY for Exynos4x12
+> in s5p_i2c_hdmiphy_set_platdata() and s5p_hdmi_set_platdata()
+>
+> Change-Id: I7e66c8f9327e2f7dce7440efb8583b506d65831a
+> Signed-off-by: Dongjin Kim <dongjin.kim@agreeyamobility.net>
+> ---
+>  arch/arm/plat-samsung/devs.c |    4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index a199e55..54614d0 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -752,6 +752,8 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct s3c2410_platform_i2c *pd)
+>
+>                 if (soc_is_exynos4210())
+>                         pd->bus_num = 8;
+> +               else if (soc_is_exynos4212() || soc_is_exynos4412())
+> +                       pd->bus_num = 8;
+>                 else if (soc_is_s5pv210())
+>                         pd->bus_num = 3;
+>                 else
+> @@ -771,6 +773,8 @@ void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>
+>         if (soc_is_exynos4210())
+>                 pd->hdmiphy_bus = 8;
+> +       else if (soc_is_exynos4212() || soc_is_exynos4412())
+> +               pd->hdmiphy_bus = 8;
+>         else if (soc_is_s5pv210())
+>                 pd->hdmiphy_bus = 3;
+>         else
+> --
+> 1.7.9.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+
+-- 
+With warm regards,
+Sachin
