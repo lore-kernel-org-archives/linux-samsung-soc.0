@@ -1,59 +1,66 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: =?EUC-KR?B?UmU6IMi4vcU6IMi4vcU6IFtQQVRDSF0gT0RST0lELVg6IGhrZGs0NDEyOiBBZGQg?=
-	=?EUC-KR?B?bmV3IGhhcmR3YXJlIGJhc2VkIG9uIEV4eW5vczQ0MTI=?=
-Date: Mon, 6 Aug 2012 19:28:03 -0700
-Message-ID: <CAOesGMj6BafLCpZjmtyn_ASbpeic_8E0CdYjQGOf3A4_NHfy=Q@mail.gmail.com>
+From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
+Subject: =?utf-8?B?7ZqM7IugOiDtmozsi6A6IO2ajOyLoDogW1BBVENIXSBPRFJPSUQtWDogaGtk?=
+ =?utf-8?Q?k4412:_Add_new_hardware_based_on_Exynos4412?=
+Date: Tue, 7 Aug 2012 02:56:06 +0000
+Message-ID: <A6A3B7488C419F488E5B13FFD03C08AD2F4369FF@SN2PRD0510MB370.namprd05.prod.outlook.com>
 References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
 	<CAJuYYwSjnQ6z0iUaLCV9guC7yyKH3_pbd1QZe3ELKF-fYNfaqQ@mail.gmail.com>
 	<A6A3B7488C419F488E5B13FFD03C08AD2F4362EE@SN2PRD0510MB370.namprd05.prod.outlook.com>
 	<CAOesGMh=6QrCmL4EqnSqTxi1nH+8Wn+x=z9BYq8QJCznH3a=zQ@mail.gmail.com>
-	<A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
+	<A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>,<CAOesGMj6BafLCpZjmtyn_ASbpeic_8E0CdYjQGOf3A4_NHfy=Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:38529 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932211Ab2HGC2E (ORCPT
+Received: from co1ehsobe001.messaging.microsoft.com ([216.32.180.184]:54632
+	"EHLO co1outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S932591Ab2HGC4L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 6 Aug 2012 22:28:04 -0400
-Received: by pbbrr13 with SMTP id rr13so3515550pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 06 Aug 2012 19:28:04 -0700 (PDT)
-In-Reply-To: <A6A3B7488C419F488E5B13FFD03C08AD2F43688D@SN2PRD0510MB370.namprd05.prod.outlook.com>
+	Mon, 6 Aug 2012 22:56:11 -0400
+In-Reply-To: <CAOesGMj6BafLCpZjmtyn_ASbpeic_8E0CdYjQGOf3A4_NHfy=Q@mail.gmail.com>
+Content-Language: ko-KR
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?ISO-8859-1?Q?Uwe_Kleine=2DK=F6nig?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Olof Johansson <olof@lixom.net>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Dongjin Kim <tobetter@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Tony Lindgren <tony@atomide.com>, Jon Medhurst <tixy@yxit.co.uk>, Shawn Guo <shawn.guo@linaro.org>, =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Hi,
-
-On Mon, Aug 6, 2012 at 7:05 PM, Dongjin Kim
-<Dongjin.Kim@agreeyamobility.net> wrote:
-> Hello,
->
-> I am trying to understand what I have to do for device tree.
->
-> In order to create dts file for ODROID-X hardware, it seems I may need dts file of EXYNOS4412 SoC.
-> But maybe exynos4412.dtsi is not merged yet or not exist, like exynos4210.dtsi or exynos5250.dtsi.
-> Obviously it seems not easy to create such a file without SoC datasheet, and I do not have it.
->
-> So do I wait for the file to be merged by Samsung or better to create initial dts file cloned from exynos4210.dtsi and modify to have verified nodes with the source/header files?
-
-Ideally they already have one waiting to be submitted, but that might
-not be the case. Given that the origenboard design with 4412 is not
-yet shipping, I'm guessing the Linaro Samsung engineers might not have
-done much work on 4412 yet. Kukjin? Thomas?
-
-> What's your suggestion?
-
-The alternative is to use the data you have available -- i.e. sources
-and patches, and craft the device tree from there. The design of 4412
-is a derivative from 4210, so that's a good start. Next step would be
-to describe the board on top of the SoC, peripherals, etc. Take a look
-at how the origen board support was added, and so on.
-
-I ordered an odroid-x several weeks ago but I haven't have a confirmed
-shipping date yet. :( I'm not sure how long it'll be before I can help
-out, unfortunately.
-
-
--Olof
+SGksDQoNClRoYW5rIHlvdSBmb3IgeW91ciBhZHZpY2UuDQpGb3J0dW5hdGVseSBJIGdvdCBPRFJP
+SUQtWCBoYXJkd2FyZSBlYXJsaWVyIGFuZCBhbSBhYmxlIHRvIGJvb3Qgd2l0aCBtYWlubGluZSBr
+ZXJuZWwuDQoNCkkgd2lsbCB0cnkgdG8gZG8gYWx0ZXJuYXRpdmUgd2F5IGZpcnN0IHdpdGggc291
+cmNlIGNvZGUga2VybmVsIDMuMC4xNSwgYW5kIGhvcGUgeW91IHJldmlldyB0aGUgcGF0Y2ggaWYg
+cmVhZHkuDQoNClJlZ2FyZHMsDQpEb25namluLg0KX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXw0K67O064K4IOyCrOuejDogT2xvZiBKb2hhbnNzb24gW29sb2ZAbGl4b20u
+bmV0XQ0K67O064K4IOuCoOynnDogMjAxMuuFhCA47JuUIDfsnbwg7ZmU7JqU7J28IOyYpOyghCAx
+MToyOA0K67Cb64qUIOyCrOuejDogRG9uZ2ppbiBLaW0NCuywuOyhsDogVGhvbWFzIEFicmFoYW07
+IERvbmdqaW4gS2ltOyBLdWtqaW4gS2ltOyBSdXNzZWxsIEtpbmc7IFRvbnkgTGluZGdyZW47IEpv
+biBNZWRodXJzdDsgU2hhd24gR3VvOyBVd2UgS2xlaW5lLUvDtm5pZzsgbGludXgtYXJtLWtlcm5l
+bEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zYW1zdW5nLXNvY0B2Z2VyLmtlcm5lbC5vcmc7
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCuygnOuqqTogUmU6IO2ajOyLoDog7ZqM7Iug
+OiBbUEFUQ0hdIE9EUk9JRC1YOiBoa2RrNDQxMjogQWRkIG5ldyBoYXJkd2FyZSBiYXNlZCBvbiBF
+eHlub3M0NDEyDQoNCkhpLA0KDQpPbiBNb24sIEF1ZyA2LCAyMDEyIGF0IDc6MDUgUE0sIERvbmdq
+aW4gS2ltDQo8RG9uZ2ppbi5LaW1AYWdyZWV5YW1vYmlsaXR5Lm5ldD4gd3JvdGU6DQo+IEhlbGxv
+LA0KPg0KPiBJIGFtIHRyeWluZyB0byB1bmRlcnN0YW5kIHdoYXQgSSBoYXZlIHRvIGRvIGZvciBk
+ZXZpY2UgdHJlZS4NCj4NCj4gSW4gb3JkZXIgdG8gY3JlYXRlIGR0cyBmaWxlIGZvciBPRFJPSUQt
+WCBoYXJkd2FyZSwgaXQgc2VlbXMgSSBtYXkgbmVlZCBkdHMgZmlsZSBvZiBFWFlOT1M0NDEyIFNv
+Qy4NCj4gQnV0IG1heWJlIGV4eW5vczQ0MTIuZHRzaSBpcyBub3QgbWVyZ2VkIHlldCBvciBub3Qg
+ZXhpc3QsIGxpa2UgZXh5bm9zNDIxMC5kdHNpIG9yIGV4eW5vczUyNTAuZHRzaS4NCj4gT2J2aW91
+c2x5IGl0IHNlZW1zIG5vdCBlYXN5IHRvIGNyZWF0ZSBzdWNoIGEgZmlsZSB3aXRob3V0IFNvQyBk
+YXRhc2hlZXQsIGFuZCBJIGRvIG5vdCBoYXZlIGl0Lg0KPg0KPiBTbyBkbyBJIHdhaXQgZm9yIHRo
+ZSBmaWxlIHRvIGJlIG1lcmdlZCBieSBTYW1zdW5nIG9yIGJldHRlciB0byBjcmVhdGUgaW5pdGlh
+bCBkdHMgZmlsZSBjbG9uZWQgZnJvbSBleHlub3M0MjEwLmR0c2kgYW5kIG1vZGlmeSB0byBoYXZl
+IHZlcmlmaWVkIG5vZGVzIHdpdGggdGhlIHNvdXJjZS9oZWFkZXIgZmlsZXM/DQoNCklkZWFsbHkg
+dGhleSBhbHJlYWR5IGhhdmUgb25lIHdhaXRpbmcgdG8gYmUgc3VibWl0dGVkLCBidXQgdGhhdCBt
+aWdodA0Kbm90IGJlIHRoZSBjYXNlLiBHaXZlbiB0aGF0IHRoZSBvcmlnZW5ib2FyZCBkZXNpZ24g
+d2l0aCA0NDEyIGlzIG5vdA0KeWV0IHNoaXBwaW5nLCBJJ20gZ3Vlc3NpbmcgdGhlIExpbmFybyBT
+YW1zdW5nIGVuZ2luZWVycyBtaWdodCBub3QgaGF2ZQ0KZG9uZSBtdWNoIHdvcmsgb24gNDQxMiB5
+ZXQuIEt1a2ppbj8gVGhvbWFzPw0KDQo+IFdoYXQncyB5b3VyIHN1Z2dlc3Rpb24/DQoNClRoZSBh
+bHRlcm5hdGl2ZSBpcyB0byB1c2UgdGhlIGRhdGEgeW91IGhhdmUgYXZhaWxhYmxlIC0tIGkuZS4g
+c291cmNlcw0KYW5kIHBhdGNoZXMsIGFuZCBjcmFmdCB0aGUgZGV2aWNlIHRyZWUgZnJvbSB0aGVy
+ZS4gVGhlIGRlc2lnbiBvZiA0NDEyDQppcyBhIGRlcml2YXRpdmUgZnJvbSA0MjEwLCBzbyB0aGF0
+J3MgYSBnb29kIHN0YXJ0LiBOZXh0IHN0ZXAgd291bGQgYmUNCnRvIGRlc2NyaWJlIHRoZSBib2Fy
+ZCBvbiB0b3Agb2YgdGhlIFNvQywgcGVyaXBoZXJhbHMsIGV0Yy4gVGFrZSBhIGxvb2sNCmF0IGhv
+dyB0aGUgb3JpZ2VuIGJvYXJkIHN1cHBvcnQgd2FzIGFkZGVkLCBhbmQgc28gb24uDQoNCkkgb3Jk
+ZXJlZCBhbiBvZHJvaWQteCBzZXZlcmFsIHdlZWtzIGFnbyBidXQgSSBoYXZlbid0IGhhdmUgYSBj
+b25maXJtZWQNCnNoaXBwaW5nIGRhdGUgeWV0LiA6KCBJJ20gbm90IHN1cmUgaG93IGxvbmcgaXQn
+bGwgYmUgYmVmb3JlIEkgY2FuIGhlbHANCm91dCwgdW5mb3J0dW5hdGVseS4NCg0KDQotT2xvZg0K
+DQo=
