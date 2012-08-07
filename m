@@ -1,13 +1,13 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
 Subject: [PATCH V4 0/2] arm: samsung: Move FIMD headers to include/video/
-Date: Tue, 07 Aug 2012 17:56:45 +0530
-Message-ID: <1344342407-9970-1-git-send-email-l.krishna@samsung.com>
+Date: Tue, 07 Aug 2012 18:04:30 +0530
+Message-ID: <1344342872-7904-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:42655 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:44389 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753378Ab2HGMMA (ORCPT
+	with ESMTP id S1752548Ab2HGMT3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 08:12:00 -0400
+	Tue, 7 Aug 2012 08:19:29 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
