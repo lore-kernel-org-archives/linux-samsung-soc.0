@@ -1,161 +1,237 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH v2 2/5] usb: s3c-hsotg: Adding phy driver support
-Date: Tue, 7 Aug 2012 13:33:22 +0530
-Message-ID: <CAK9yfHyJtM8p1wdS1B4LZPNL8SstP-tsgjKPyLtG4fQtBZyOUg@mail.gmail.com>
-References: <1344324524-2286-1-git-send-email-p.paneri@samsung.com>
-	<1344324524-2286-3-git-send-email-p.paneri@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: EXYYNOS: Use EXYNOS4210_GPEx instead of
+ EXYNOS4_GPEx
+Date: Tue, 07 Aug 2012 17:09:28 +0900
+Message-ID: <097501cd7473$f73e51d0$e5baf570$%kim@samsung.com>
+References: <1337307497-15777-1-git-send-email-jy0922.shim@samsung.com>
+ <4FB5B9A1.2030606@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:60868 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751124Ab2HGIDX (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:23817 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751274Ab2HGIJ3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 04:03:23 -0400
-Received: by vcbfk26 with SMTP id fk26so3738955vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Aug 2012 01:03:22 -0700 (PDT)
-In-Reply-To: <1344324524-2286-3-git-send-email-p.paneri@samsung.com>
+	Tue, 7 Aug 2012 04:09:29 -0400
+Received: from epcpsbgm2.samsung.com (mailout1.samsung.com [203.254.224.24])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M8D002A6LBPOK30@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Aug 2012 17:09:28 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M8D002JMLBSK100@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 07 Aug 2012 17:09:28 +0900 (KST)
+In-reply-to: 
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Praveen Paneri <p.paneri@samsung.com>
-Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Joonyoung Shim' <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, linus.walleij@stericsson.com, 'Sangsu Park' <sangsu4u.park@samsung.com>
 
-Hi Praveen,
-
-Some minor comments:
-
-On 7 August 2012 12:58, Praveen Paneri <p.paneri@samsung.com> wrote:
-> Adding the transceiver to hsotg driver. Keeping the platform data
-> for continuing the smooth operation for boards which still uses it
->
-> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
-> ---
->  drivers/usb/gadget/s3c-hsotg.c |   38 ++++++++++++++++++++++++++++----------
->  1 files changed, 28 insertions(+), 10 deletions(-)
->
-> diff --git a/drivers/usb/gadget/s3c-hsotg.c b/drivers/usb/gadget/s3c-hsotg.c
-> index b13e0bb..f4ba9a3 100644
-> --- a/drivers/usb/gadget/s3c-hsotg.c
-> +++ b/drivers/usb/gadget/s3c-hsotg.c
-> @@ -32,6 +32,7 @@
->
->  #include <linux/usb/ch9.h>
->  #include <linux/usb/gadget.h>
-> +#include <linux/usb/otg.h>
->  #include <linux/platform_data/s3c-hsotg.h>
->
->  #include <mach/map.h>
-> @@ -133,7 +134,9 @@ struct s3c_hsotg_ep {
->   * struct s3c_hsotg - driver state.
->   * @dev: The parent device supplied to the probe function
->   * @driver: USB gadget driver
-> - * @plat: The platform specific configuration data.
-> + * @phy: The otg phy transeiver structure for phy control.
-
-s/transeiver/transceiver
-
-> + * @plat: The platform specific configuration data. This can be removed once
-> + * all SoCs support usb transceiver.
->   * @regs: The memory area mapped for accessing registers.
->   * @irq: The IRQ number we are using
->   * @supplies: Definition of USB power supplies
-> @@ -153,6 +156,7 @@ struct s3c_hsotg_ep {
->  struct s3c_hsotg {
->         struct device            *dev;
->         struct usb_gadget_driver *driver;
-> +       struct usb_phy          *phy;
->         struct s3c_hsotg_plat    *plat;
->
->         spinlock_t              lock;
-> @@ -2854,7 +2858,10 @@ static void s3c_hsotg_phy_enable(struct s3c_hsotg *hsotg)
->         struct platform_device *pdev = to_platform_device(hsotg->dev);
->
->         dev_dbg(hsotg->dev, "pdev 0x%p\n", pdev);
-> -       if (hsotg->plat->phy_init)
-> +
-> +       if (hsotg->phy)
-> +               usb_phy_init(hsotg->phy);
-> +       else if (hsotg->plat->phy_init)
->                 hsotg->plat->phy_init(pdev, hsotg->plat->phy_type);
->  }
->
-> @@ -2869,7 +2876,9 @@ static void s3c_hsotg_phy_disable(struct s3c_hsotg *hsotg)
->  {
->         struct platform_device *pdev = to_platform_device(hsotg->dev);
->
-> -       if (hsotg->plat->phy_exit)
-> +       if (hsotg->phy)
-> +               usb_phy_shutdown(hsotg->phy);
-> +       else if (hsotg->plat->phy_exit)
->                 hsotg->plat->phy_exit(pdev, hsotg->plat->phy_type);
->  }
->
-> @@ -3493,6 +3502,7 @@ static void s3c_hsotg_release(struct device *dev)
->  static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
->  {
->         struct s3c_hsotg_plat *plat = pdev->dev.platform_data;
-> +       struct usb_phy *phy;
->         struct device *dev = &pdev->dev;
->         struct s3c_hsotg_ep *eps;
->         struct s3c_hsotg *hsotg;
-> @@ -3501,20 +3511,25 @@ static int __devinit s3c_hsotg_probe(struct platform_device *pdev)
->         int ret;
->         int i;
->
-> -       plat = pdev->dev.platform_data;
-> -       if (!plat) {
-> -               dev_err(&pdev->dev, "no platform data defined\n");
-> -               return -EINVAL;
-> -       }
-> -
->         hsotg = devm_kzalloc(&pdev->dev, sizeof(struct s3c_hsotg), GFP_KERNEL);
->         if (!hsotg) {
->                 dev_err(dev, "cannot get memory\n");
->                 return -ENOMEM;
->         }
->
-> +       phy = devm_usb_get_phy(dev, USB_PHY_TYPE_USB2);
-> +       if (!phy) {
-> +               /* Fallback for platform data */
-> +               plat = pdev->dev.platform_data;
-> +               if (!plat) {
-> +                       dev_err(&pdev->dev, "no platform data or transceiver defined\n");
-> +                       return -ENODEV;
-> +               } else
-> +                       hsotg->plat = plat;
-> +       } else
-> +               hsotg->phy = phy;
-
-Braces needed around the above 2 else statements.
-Please refer to: Documentation/CodingStyle
-
-
-> +
->         hsotg->dev = dev;
-> -       hsotg->plat = plat;
->
->         hsotg->clk = clk_get(&pdev->dev, "otg");
->         if (IS_ERR(hsotg->clk)) {
-> @@ -3689,6 +3704,9 @@ static int __devexit s3c_hsotg_remove(struct platform_device *pdev)
->         s3c_hsotg_phy_disable(hsotg);
->         regulator_bulk_free(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
->
-> +       if (hsotg->phy)
-> +               devm_usb_put_phy(&pdev->dev, hsotg->phy);
-> +
->         clk_disable_unprepare(hsotg->clk);
->         clk_put(hsotg->clk);
->
+Kukjin Kim wrote:
+> 
+> Joonyoung Shim wrote:
+> >
+> > Add to cc Grant Likely and Linus Walleij
+> >
+> > On 05/18/2012 11:18 AM, Joonyoung Shim wrote:
+> > > Also use EXYNOS4210_GPIO_Ex instead of EXYNOS4_GPIO_Ex. The GPEx gpios
+> > > exist only on Exynos4210 and there are no on Exynos4x12. Redefine them
+> > > to exact SoC name.
+> > >
+> > > Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
+> > > Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
+> > > ---
+> > >   arch/arm/mach-exynos/include/mach/gpio.h   |   32
+++++++++++++++------
 > --
-> 1.7.1
->
+> > ------
+> > >   arch/arm/mach-exynos/mach-nuri.c           |   16 +++++++-------
+> > >   arch/arm/mach-exynos/mach-origen.c         |    6 ++--
+> > >   arch/arm/mach-exynos/mach-universal_c210.c |   32
+++++++++++++++-----
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > -------
+> > >   arch/arm/mach-exynos/setup-fimc.c          |    4 +-
+> > >   drivers/gpio/gpio-samsung.c                |   20 ++++++++--------
+> > >   6 files changed, 55 insertions(+), 55 deletions(-)
+> > >
+> > > diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-
+> > exynos/include/mach/gpio.h
+> > > index eb24f1e..21c9bf1 100644
+> > > --- a/arch/arm/mach-exynos/include/mach/gpio.h
+> > > +++ b/arch/arm/mach-exynos/include/mach/gpio.h
+> > > @@ -26,11 +26,11 @@
+> > >   #define EXYNOS4_GPIO_C1_NR	(5)
+> > >   #define EXYNOS4_GPIO_D0_NR	(4)
+> > >   #define EXYNOS4_GPIO_D1_NR	(4)
+> > > -#define EXYNOS4_GPIO_E0_NR	(5)
+> > > -#define EXYNOS4_GPIO_E1_NR	(8)
+> > > -#define EXYNOS4_GPIO_E2_NR	(6)
+> > > -#define EXYNOS4_GPIO_E3_NR	(8)
+> > > -#define EXYNOS4_GPIO_E4_NR	(8)
+> > > +#define EXYNOS4210_GPIO_E0_NR	(5)
+> > > +#define EXYNOS4210_GPIO_E1_NR	(8)
+> > > +#define EXYNOS4210_GPIO_E2_NR	(6)
+> > > +#define EXYNOS4210_GPIO_E3_NR	(8)
+> > > +#define EXYNOS4210_GPIO_E4_NR	(8)
+> 
+> I think, splitting the gpios like following(common exynos4 and exynos4210
+> or exynos4x12). So please just put the definitions for EXYNOS4210 GPIO
+> after EXYNOS4_GPIO_XXX.
+> 
+> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-
+> exynos/include/mach/gpio.h
+> index eb24f1e..910b611 100644
+> --- a/arch/arm/mach-exynos/include/mach/gpio.h
+> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
+> @@ -26,17 +26,10 @@
+>  #define EXYNOS4_GPIO_C1_NR	(5)
+>  #define EXYNOS4_GPIO_D0_NR	(4)
+>  #define EXYNOS4_GPIO_D1_NR	(4)
+> -#define EXYNOS4_GPIO_E0_NR	(5)
+> -#define EXYNOS4_GPIO_E1_NR	(8)
+> -#define EXYNOS4_GPIO_E2_NR	(6)
+> -#define EXYNOS4_GPIO_E3_NR	(8)
+> -#define EXYNOS4_GPIO_E4_NR	(8)
+>  #define EXYNOS4_GPIO_F0_NR	(8)
+>  #define EXYNOS4_GPIO_F1_NR	(8)
+>  #define EXYNOS4_GPIO_F2_NR	(8)
+>  #define EXYNOS4_GPIO_F3_NR	(6)
+> -#define EXYNOS4_GPIO_J0_NR	(8)
+> -#define EXYNOS4_GPIO_J1_NR	(5)
+>  #define EXYNOS4_GPIO_K0_NR	(7)
+>  #define EXYNOS4_GPIO_K1_NR	(7)
+>  #define EXYNOS4_GPIO_K2_NR	(7)
+> @@ -57,6 +50,31 @@
+>  #define EXYNOS4_GPIO_Y6_NR	(8)
+>  #define EXYNOS4_GPIO_Z_NR	(7)
+> 
+> +/* For EXYNOS4210 GPIO bank sizes */
+> +
+> +#define EXYNOS4210_GPIO_E0_NR	(5)
+> +#define EXYNOS4210_GPIO_E1_NR	(8)
+> +#define EXYNOS4210_GPIO_E2_NR	(6)
+> +#define EXYNOS4210_GPIO_E3_NR	(8)
+> +#define EXYNOS4210_GPIO_E4_NR	(8)
+> +#define EXYNOS4210_GPIO_J0_NR	(8)
+> +#define EXYNOS4210_GPIO_J1_NR	(5)
+> 
+> [...]
+> 
+> And we can add EXYNOS4X12 GPIO like following in other patch.
+> 
+> +/* For EXYNOS4X12 GPIO bank sizes */
+> +
+> +#define EXYNOS4X12_GPIO_J0_NR	(8)
+> +#define EXYNOS4X12_GPIO_J1_NR	(5)
+> +#define EXYNOS4X12_GPIO_M0_NR	(8)
+> +#define EXYNOS4X12_GPIO_M1_NR	(7)
+> +#define EXYNOS4X12_GPIO_M2_NR	(5)
+> +#define EXYNOS4X12_GPIO_M3_NR	(8)
+> +#define EXYNOS4X12_GPIO_M4_NR	(8)
+> +#define EXYNOS4X12_GPIO_V0_NR	(8)
+> +#define EXYNOS4X12_GPIO_V1_NR	(8)
+> +#define EXYNOS4X12_GPIO_V2_NR	(8)
+> +#define EXYNOS4X12_GPIO_V3_NR	(8)
+> +#define EXYNOS4X12_GPIO_V4_NR	(2)
+> 
+> > >   #define EXYNOS4_GPIO_F0_NR	(8)
+> > >   #define EXYNOS4_GPIO_F1_NR	(8)
+> > >   #define EXYNOS4_GPIO_F2_NR	(8)
+> > > @@ -67,12 +67,12 @@ enum exynos4_gpio_number {
+> > >   	EXYNOS4_GPIO_C1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C0),
+> > >   	EXYNOS4_GPIO_D0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C1),
+> > >   	EXYNOS4_GPIO_D1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D0),
+> > > -	EXYNOS4_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
+> > > -	EXYNOS4_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E0),
+> > > -	EXYNOS4_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E1),
+> > > -	EXYNOS4_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E2),
+> > > -	EXYNOS4_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E3),
+> > > -	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E4),
+> > > +	EXYNOS4210_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
+> > > +	EXYNOS4210_GPIO_E1_START	=
+EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E0),
+> > > +	EXYNOS4210_GPIO_E2_START	=
+EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E1),
+> > > +	EXYNOS4210_GPIO_E3_START	=
+EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E2),
+> > > +	EXYNOS4210_GPIO_E4_START	=
+EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E3),
+> > > +	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E4),
+> > >   	EXYNOS4_GPIO_F1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F0),
+> > >   	EXYNOS4_GPIO_F2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F1),
+> > >   	EXYNOS4_GPIO_F3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F2),
+> 
+> Same as above.
+> 
+> @@ -99,6 +117,31 @@ enum exynos4_gpio_number {
+>  	EXYNOS4_GPIO_Z_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y6),
+>  };
+> 
+> +enum exynos4210_gpio_number {
+> +	EXYNOS4210_GPIO_E0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Z),
+> +	EXYNOS4210_GPIO_E1_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E0),
+> +	EXYNOS4210_GPIO_E2_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E1),
+> +	EXYNOS4210_GPIO_E3_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E2),
+> +	EXYNOS4210_GPIO_E4_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E3),
+> +	EXYNOS4210_GPIO_J0_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E4),
+> +	EXYNOS4210_GPIO_J1_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_J0),
+> +};
+> 
+> [...]
+> 
+> And following is possible for EXYNOS4X12...
+> 
+> +enum exynos4x12_gpio_number {
+> +	EXYNOS4X12_GPIO_J0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Z),
+> +	EXYNOS4X12_GPIO_J1_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_J0),
+> +	EXYNOS4X12_GPIO_M0_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_J1),
+> +	EXYNOS4X12_GPIO_M1_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M0),
+> +	EXYNOS4X12_GPIO_M2_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M1),
+> +	EXYNOS4X12_GPIO_M3_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M2),
+> +	EXYNOS4X12_GPIO_M4_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M3),
+> +	EXYNOS4X12_GPIO_V0_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M4),
+> +	EXYNOS4X12_GPIO_V1_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V0),
+> +	EXYNOS4X12_GPIO_V2_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V1),
+> +	EXYNOS4X12_GPIO_V3_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V2),
+> +	EXYNOS4X12_GPIO_V4_START	=
+EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V3),
+> +};
+> +
+>  /* EXYNOS4 GPIO number definitions */
+> 
+>  #define EXYNOS4_GPA0(_nr)	(EXYNOS4_GPIO_A0_START + (_nr))
+> 
+> [...]
+> 
+> Of course, need to update other regarding gpio part accordingly.
+> 
+Joonyoung, any updates on this?
 
+Thanks.
 
-
--- 
-With best regards,
-Sachin
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
