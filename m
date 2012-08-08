@@ -1,114 +1,122 @@
-From: Praveen Paneri <p.paneri@samsung.com>
-Subject: [PATCH v3 5/5] ARM: Exynos4210: Enabling samsung-usbphy driver
-Date: Wed, 08 Aug 2012 13:11:01 +0530
-Message-ID: <1344411661-17821-6-git-send-email-p.paneri@samsung.com>
-References: <1344411661-17821-1-git-send-email-p.paneri@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
+Date: Wed, 08 Aug 2012 19:25:17 +0900
+Message-ID: <0af001cd7550$1af66040$50e320c0$%kim@samsung.com>
+References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
+ <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
+ <5020F568.5020204@linaro.org>
+ <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
+ <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
+ <0abe01cd752f$4f96ad80$eec40880$%kim@samsung.com>
+ <20120808065046.GA30832@avionic-0098.mockup.avionic-design.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:58085 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757848Ab2HHHcS (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:37009 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752788Ab2HHKZT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Aug 2012 03:32:18 -0400
-In-reply-to: <1344411661-17821-1-git-send-email-p.paneri@samsung.com>
+	Wed, 8 Aug 2012 06:25:19 -0400
+In-reply-to: <20120808065046.GA30832@avionic-0098.mockup.avionic-design.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-usb@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de
+To: 'Thierry Reding' <thierry.reding@avionic-design.de>
+Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Adding usbphy node for Exynos4210 along with the platform data.
+Thierry Reding wrote:
+> 
+> On Wed, Aug 08, 2012 at 03:30:32PM +0900, Kukjin Kim wrote:
 
-Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
+[...]
+
+> > Yeah, your pointing out is correct, but in this case, it should be
+> 'bool'
+> > not 'tristate' because the PWM driver cannot support module now.
+> 
+> Is there any reason why that is so?
+
+I mean, current pwm-samsung.c does not support module, as you know, the
+pwm_init() of pwm-samsung is called by arch_initcall().
+
+> Looking at the driver it seems like
+> it should be easy to turn it into a module.
+
+Yeah, I know :)
+
+> I know that Jingoo (Cc'ed)
+> has been working on the driver and I've asked him the same question
+> already.
+> 
+I didn't know, would be helpful to me if you could add me in Cc for
+discussion of pwm-samsung. And he is my team member, so I will talk to him
+about the plan.
+
+> Anyway I don't want to force the issue, I just think you should consider
+> it.
+> 
+Thanks.
+
+> > > solve this problem would be to add a default line, like so:
+> > >
+> > > 	default PLAT_SAMSUNG
+> > >
+> > > I've checked this with a s3c2410_defconfig and this causes PWM_SAMSUNG
+> > > to be selected =y, which I guess is what you want.
+> > >
+> > How do you think following, just adding from original one?
+> >
+> > -	tristate "Samsung pwm support"
+> > +	bool "SAMSUNG PWM support"
+> >
+> > Thanks.
+> 
+> If you convert this to bool anyway, then maybe you can still use
+> def_bool:
+> 
+> 	config PWM_SAMSUNG
+> 		prompt "SAMSUNG PWM support" if PLAT_SAMSUNG
+> 		def_bool PLAT_SAMSUNG
+> 
+> Any particular reason why you want "SAMSUNG" capitalized?
+> 
+No, there is no reason, just because...
+
+So, how about following? If PWM is selected on Samsung SoCs, the PWM_SAMSUNG
+will be selected automatically. Of course, it can be de-selected in kernel
+menuconfig. Note that, I think, using 'bool <expr>' and 'depends on <expr>'
+is more clear than 'prompt <prompt> ["if" <expr>]'. However if any your
+preference here, please kindly let me know.
+
 ---
- arch/arm/boot/dts/exynos4210.dtsi       |    5 +++++
- arch/arm/mach-exynos/include/mach/map.h |    1 +
- arch/arm/mach-exynos/mach-exynos4-dt.c  |    8 ++++++++
- arch/arm/mach-exynos/setup-usb-phy.c    |   13 +++++++++++++
- 4 files changed, 27 insertions(+), 0 deletions(-)
+diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+index 8fc3808..c74d055 100644
+--- a/drivers/pwm/Kconfig
++++ b/drivers/pwm/Kconfig
+@@ -58,14 +58,12 @@ config PWM_PXA
+ 	will be called pwm-pxa.
 
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 02891fe..e28cf10 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -62,6 +62,11 @@
- 		interrupts = <0 44 0>, <0 45 0>;
- 	};
+ config PWM_SAMSUNG
+-	tristate "Samsung pwm support"
++	bool "Samsung PWM support"
+ 	depends on PLAT_SAMSUNG
++	default y
+ 	help
+ 	  Generic PWM framework driver for Samsung.
  
-+	usbphy@125B0000 {
-+		compatible = "samsung,exynos4210-usbphy";
-+		reg = <0x125B0000 0x100>;
-+	};
-+
- 	keypad@100A0000 {
- 		compatible = "samsung,s5pv210-keypad";
- 		reg = <0x100A0000 0x100>;
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index c72b675..0625c0a 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -234,6 +234,7 @@
- #define S3C_PA_SPI1			EXYNOS4_PA_SPI1
- #define S3C_PA_SPI2			EXYNOS4_PA_SPI2
- #define S3C_PA_USB_HSOTG		EXYNOS4_PA_HSOTG
-+#define S3C_PA_USB_PHY			EXYNOS4_PA_HSPHY
- 
- #define S5P_PA_EHCI			EXYNOS4_PA_EHCI
- #define S5P_PA_FIMC0			EXYNOS4_PA_FIMC0
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index b2b5d5f..a652db0 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/platform_data/samsung-usbphy.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -20,9 +21,14 @@
- 
- #include <plat/cpu.h>
- #include <plat/regs-serial.h>
-+#include <plat/usb-phy.h>
- 
- #include "common.h"
- 
-+static struct samsung_usbphy_data exynos4_usbphy_pdata = {
-+	.pmu_isolation = s5p_usb_phy_pmu_isolation,
-+};
-+
- /*
-  * The following lookup table is used to override device names when devices
-  * are registered from device tree. This is temporarily added to enable
-@@ -63,6 +69,8 @@ static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
- 				"exynos4210-spi.2", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos4210-usbphy", EXYNOS4_PA_HSPHY,
-+			"s3c-usbphy", &exynos4_usbphy_pdata),
- 	{},
- };
- 
-diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
-index b81cc56..1c62d20 100644
---- a/arch/arm/mach-exynos/setup-usb-phy.c
-+++ b/arch/arm/mach-exynos/setup-usb-phy.c
-@@ -221,3 +221,16 @@ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- 
- 	return -EINVAL;
- }
-+
-+void s5p_usb_phy_pmu_isolation(int on)
-+{
-+	if (on) {
-+		writel(readl(S5P_USBDEVICE_PHY_CONTROL)
-+			& ~S5P_USBDEVICE_PHY_ENABLE,
-+				S5P_USBDEVICE_PHY_CONTROL);
-+	} else {
-+		writel(readl(S5P_USBDEVICE_PHY_CONTROL)
-+			| S5P_USBDEVICE_PHY_ENABLE,
-+				S5P_USBDEVICE_PHY_CONTROL);
-+	}
-+}
--- 
-1.7.1
+-	  To compile this driver as a module, choose M here: the module
+-	  will be called pwm-samsung.
+-
+ config PWM_TEGRA
+ 	tristate "NVIDIA Tegra PWM support"
+ 	depends on ARCH_TEGRA
+---
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
