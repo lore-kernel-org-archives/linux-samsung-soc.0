@@ -1,91 +1,90 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: Fix compilation error with
- s3c2410_defconfig
-Date: Wed, 8 Aug 2012 13:39:35 +0200
-Message-ID: <20120808113935.GA20963@avionic-0098.mockup.avionic-design.de>
-References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
- <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
- <5020F568.5020204@linaro.org>
- <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
- <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
- <0abe01cd752f$4f96ad80$eec40880$%kim@samsung.com>
- <20120808065046.GA30832@avionic-0098.mockup.avionic-design.de>
- <0af001cd7550$1af66040$50e320c0$%kim@samsung.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] ASoC: Samsung: Fix build error
+Date: Wed, 8 Aug 2012 17:14:01 +0530
+Message-ID: <CAK9yfHw7pYBJ=5E4EX9OzApz0YM=_2PNSCqspTT=rRTR1UrneQ@mail.gmail.com>
+References: <1344405883-27603-1-git-send-email-sachin.kamat@linaro.org>
+	<20120808110926.GK16861@opensource.wolfsonmicro.com>
+	<CAK9yfHzE4sRKj7uUKAEWtonV2uVBcg5_JhL1Ny4d1ohS5g+5yw@mail.gmail.com>
+	<0b1401cd755a$552fb9f0$ff8f2dd0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="TB36FDmn/VVEgNH/"
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.10]:65272 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754825Ab2HHLjj (ORCPT
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:45875 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754825Ab2HHLoC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Aug 2012 07:39:39 -0400
-Content-Disposition: inline
-In-Reply-To: <0af001cd7550$1af66040$50e320c0$%kim@samsung.com>
+	Wed, 8 Aug 2012 07:44:02 -0400
+Received: by lagy9 with SMTP id y9so338967lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Aug 2012 04:44:01 -0700 (PDT)
+In-Reply-To: <0b1401cd755a$552fb9f0$ff8f2dd0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, patches@linaro.org, sbkim73@samsung.com
+
+On 8 August 2012 17:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Sachin Kamat wrote:
+>>
+>> Hi Mark,
+>>
+>> On 8 August 2012 16:39, Mark Brown <broonie@opensource.wolfsonmicro.com>
+>> wrote:
+>> > On Wed, Aug 08, 2012 at 11:34:43AM +0530, Sachin Kamat wrote:
+>> >> Fixes the following build error:
+>> >> In file included from arch/arm/mach-exynos/include/mach/dma.h:24:0,
+>> >>               from arch/arm/plat-samsung/include/plat/dma-ops.h:17,
+>> >>               from arch/arm/plat-samsung/include/plat/dma.h:128,
+>> >>               from sound/soc/samsung/pcm.c:23:
+>> >> arch/arm/plat-samsung/include/plat/dma-pl330.h:106:8:
+>> >>                       error: redefinition of 'struct
+> s3c2410_dma_client'
+>> >> arch/arm/plat-samsung/include/plat/dma.h:40:8: note: originally defined
+>> here
+>> >> make[3]: *** [sound/soc/samsung/pcm.o] Error 1
+>> >
+>> > Shouldn't this be being fixed in the headers?  It looks like they
+>> > reference and disagree with each other on Exynos (my primary development
+>> > platform is S3C6410 based so I'd notice if it was a generic Samsung
+>> > issue.
+>> >
+>> > Pasting the error message isn't really that useful unless the fix is
+>> > obvious, it's better to explain in words what's wrong.
+>>
+>> I had sent the initial patch trying to fix this in the headers and it
+>> worked for exynos4 config. However Kukjin pointed out that the patch
+>> created similar errors with 2410 and 6400 configs. Fixing it further
+>> in the headers did not look quite straight forward as there are many
+>> headers trying to include one another. Hence I felt it is better
+>> handled in the current way. I understand i should have added this
+>> information in the commit message. Below is the link for your
+>> reference that provides the complete discussion.
+>>
+>> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/11274
+>>
+>> Please let me know your opinion about this.
+>>
+>>
+> I also agree with Mark's opinion and current Sachin's approach cannot avoid
+> whole similar build error.
+
+With the current change I did not see any build error with the configs
+(2410, 6400, 64x0 and exyno4) i checked with (after enabling audio).
+Please let me know if you observed any such build error after adding
+this patch.
 
 
---TB36FDmn/VVEgNH/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
 
-On Wed, Aug 08, 2012 at 07:25:17PM +0900, Kukjin Kim wrote:
-> So, how about following? If PWM is selected on Samsung SoCs, the PWM_SAMS=
-UNG
-> will be selected automatically. Of course, it can be de-selected in kernel
-> menuconfig. Note that, I think, using 'bool <expr>' and 'depends on <expr=
->'
-> is more clear than 'prompt <prompt> ["if" <expr>]'. However if any your
-> preference here, please kindly let me know.
->=20
-> ---
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 8fc3808..c74d055 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -58,14 +58,12 @@ config PWM_PXA
->  	will be called pwm-pxa.
->=20
->  config PWM_SAMSUNG
-> -	tristate "Samsung pwm support"
-> +	bool "Samsung PWM support"
->  	depends on PLAT_SAMSUNG
-> +	default y
->  	help
->  	  Generic PWM framework driver for Samsung.
-> =20
-> -	  To compile this driver as a module, choose M here: the module
-> -	  will be called pwm-samsung.
-> -
->  config PWM_TEGRA
->  	tristate "NVIDIA Tegra PWM support"
->  	depends on ARCH_TEGRA
 
-Acked-by: Thierry Reding <thierry.reding@avionic-design.de>
 
---TB36FDmn/VVEgNH/
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQIk/3AAoJEN0jrNd/PrOhvxUQAIBt2ijCeYKWoSUh6Y3PT+5t
-HmCCkUyXfi6VNnKNDd5z8NNrO6PDdRw3QTAXbYJGoe32gH3ehPkKbE+SMvXmXduV
-dUaTkHCX9fGVwNNHdHF079E0tdJ+n0Kt6pbA4ktAA+0oORqK8LF6uDyPGyU8h7z6
-QFl4TgKqBDgGRxTK1mbZwo9EaN5mwm5X3ZvXWpANFfSmF/HP8d/LlTKJ6j4N5Roc
-hecYq9b8ujvbHXvh/0Gi99Vdm0r4J0Q5wGM6ua3pITpU14y5BUpptkQuYKJ7Rn30
-i8gD89NJt5zoahU4hblCmGb7bGyQQ4aFpN35sx+upPMIG3V87gH3W5bzu8DF4XMr
-2D5MvsQhRmhwCaezbaa8Sobj74ifNIJhkEmnlr9TgiUE6OB6KNVj7YyRQ1VLx+Ku
-ubpajGjzaEaWjMiwmMUbqLHIHFiMUEVsHIyFJYXml8LPl4H6TmlUMGQx/bJENnGF
-Mlc2LCU9xTxPPbGNpLWKdNqtw3LZKWLgHCz7KCXrkS2xUGsg1EQ4778ZjAbjw7HO
-yZMPcSn3wbWiLzZu+qdu1btr8FUjnoR9A3mrRaB2FgdqW1O1kLBWpYArC+Gx5Dhr
-j7znpOB5EzmDEY+2aF+5glZL2aqGfj0M8fHtQSUU9DARe90gQvv3ByNS14UXRc2S
-B9Qyfj0u8ciuKBtYO7+3
-=bc1g
------END PGP SIGNATURE-----
-
---TB36FDmn/VVEgNH/--
+-- 
+With warm regards,
+Sachin
