@@ -1,63 +1,140 @@
-From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
-Subject: =?utf-8?B?7ZqM7IugOiBbUEFUQ0ggdjJdIE9EUk9JRC1YOiBoa2RrNDQxMjogQWRkIG5l?=
- =?utf-8?Q?w_hardware_based_on_Exynos4412?=
-Date: Wed, 8 Aug 2012 02:41:03 +0000
-Message-ID: <A6A3B7488C419F488E5B13FFD03C08AD2F43CB39@BL2PRD0510MB363.namprd05.prod.outlook.com>
-References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
- <1344365401-18591-1-git-send-email-dongjin.kim@agreeyamobility.net>,<0a4301cd750c$cd29d2e0$677d78a0$%kim@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
+Date: Wed, 08 Aug 2012 08:28:31 +0530
+Message-ID: <5021D5D7.9080804@linaro.org>
+References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org> <098f01cd7488$0d66d630$28348290$%kim@samsung.com> <5020F568.5020204@linaro.org> <0a3701cd7505$a852fe30$f8f8fa90$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from db3ehsobe004.messaging.microsoft.com ([213.199.154.142]:27988
-	"EHLO db3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754477Ab2HHClP (ORCPT
+Received: from mail-gh0-f174.google.com ([209.85.160.174]:44943 "EHLO
+	mail-gh0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755734Ab2HHC6j (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 22:41:15 -0400
-In-Reply-To: <0a4301cd750c$cd29d2e0$677d78a0$%kim@samsung.com>
-Content-Language: ko-KR
+	Tue, 7 Aug 2012 22:58:39 -0400
+Received: by ghrr11 with SMTP id r11so320931ghr.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Aug 2012 19:58:39 -0700 (PDT)
+In-Reply-To: <0a3701cd7505$a852fe30$f8f8fa90$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, 'Dongjin Kim' <tobetter@gmail.com>
-Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Tony Lindgren' <tony@atomide.com>, 'Jon Medhurst' <tixy@yxit.co.uk>, 'Shawn Guo' <shawn.guo@linaro.org>, =?utf-8?B?J1V3ZSBLbGVpbmUtS8O2bmlnJw==?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: thierry.reding@avionic-design.de, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org
 
-SGksDQoNClRoYW5rIHlvdSBmb3IgeW91ciBhZHZpY2UuDQoNCkFuZCBJIGRpZG4ndCBrbm93IG5v
-bi1EVCBib2FyZCBmaWxlIHdpbGwgbm90IGJlIG1lcmdlZCBhbnkgbW9yZS4NClJ1bGUgaXMgcnVs
-ZSwgSSBjYW4gbWFuYWdlIHRoZSBmaWxlIGluIG15IGdpdCBvbmx5Lg0KDQpJIGFtIHZlcnkgbmV3
-IHRvIHNlbmQgZ2l0IHBhdGNoZXMgdG8gb3BlbiBjb21tdW5pdHksIGV2ZW4gSSB1c2UgZ2l0IG9u
-IG15IHByZXZpb3VzIHByb2plY3QuDQpJIHdpbGwgcGF5IGF0dGVudGlvbiB0byBteSBuZXh0IHBh
-dGNoZXMgaWYgSSBoYXZlIG1vcmUuIDopDQoNClRoYW5rcyBhZ2Fpbi4NCg0KUmVnYXJkcywNCkRv
-bmdqaW4uDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQrrs7Trgrgg
-7IKs656MOiBLdWtqaW4gS2ltIFtrZ2VuZS5raW1Ac2Ftc3VuZy5jb21dDQrrs7Trgrgg64Kg7Kec
-OiAyMDEy64WEIDjsm5QgOOydvCDsiJjsmpTsnbwg7Jik7KCEIDExOjIzDQrrsJvripQg7IKs656M
-OiAnRG9uZ2ppbiBLaW0nDQrssLjsobA6IERvbmdqaW4gS2ltOyAnUnVzc2VsbCBLaW5nJzsgJ1Rv
-bnkgTGluZGdyZW4nOyAnSm9uIE1lZGh1cnN0JzsgJ1NoYXduIEd1byc7ICdVd2UgS2xlaW5lLUvD
-tm5pZyc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtc2Ftc3Vu
-Zy1zb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQrsoJzr
-qqk6IFJFOiBbUEFUQ0ggdjJdIE9EUk9JRC1YOiBoa2RrNDQxMjogQWRkIG5ldyBoYXJkd2FyZSBi
-YXNlZCBvbiBFeHlub3M0NDEyDQoNCkRvbmdqaW4gS2ltIHdyb3RlOg0KPg0KSGksDQoNCkJhc2lj
-YWxseSwgd2UgZG9uJ3QgYWRkIG1vcmUgYm9hcmQgZmlsZSBmb3Igbm9uLURUIGZvciBFWFlOT1Mg
-U29Dcy4uLg0KDQo+IFRoZSBIS0RLNDQxMiBpcyB0aGUgQ1BVIG1vZHVsZSBkZXZlbG9wZWQgYnkg
-SGFyZGtlcm5lbCB3aGljaCBpcyBiYXNlZCBvbg0KPiBFeHlub3MgNDQxMi4gIG1hY2hfaGtkazQ0
-MTIuYyBpcyB0byBydW4gb24gT0RST0lELVggaGFyZHdhcmUgYW5kIE1hY2hpbmUNCj4gSUQNCj4g
-KDQyODkpIGlzIHJlZ2lzdGVyZWQuDQo+DQpUaGlzIHNob3VsZCBiZSBkb25lIGF0IHRoZSBsaW5r
-OiBodHRwOi8vd3d3LmFybS5saW51eC5vcmcudWsvZGV2ZWxvcGVyL21hY2hpbmVzLyBieSBSdXNz
-ZWxsIEtpbmcuDQoNCkJ1dCBJJ20gbm90IHN1cmUgd2hldGhlciBpdCBpcyB3b3J0aCB0byB5b3Ug
-d2l0aG91dCB0aGlzIHBhdGNoIGZvciBib2FyZCBmaWxlIGluIG1haW5saW5lLg0KDQo+IENoYW5n
-ZXMgaW4gdjI6DQo+ICAgLS4gQ2hhbmdlIHJlZ3VsYXRvcidzIGRpc3BsYXkgbmFtZXMNCj4NCj4g
-Q2hhbmdlLUlkOiBJZWE2ODI1YTE3YjJlMTNmOTZiYzZkODkyZGQ1MTM1Y2FkODk5YjVkZg0KDQpO
-byBuZWVkIGdlcnJpdCBDaGFuZ2UtSWQgaGVyZS4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBEb25namlu
-IEtpbSA8ZG9uZ2ppbi5raW1AYWdyZWV5YW1vYmlsaXR5Lm5ldD4NCg0KSWYgdGhlcmUgaXMgbm8g
-cmVhc29uLCBwbGVhc2UgdXNlIHNhbWUgZS1tYWlsIGFkZHJlc3MgaW4gdGhlIGZpZWxkIG9mIGF1
-dGhvciBhbmQgc2lnbi1vZmYuDQoNCk5vdGUsIGlmIHlvdSB3YW50IHRvIHVzZSBlLW1haWwgJ2Fn
-cmVleWFtb2JpbGl0eS5uZXQnLCBqdXN0IGFkZCAnRnJvbTogRG9uZ2ppbiBLaW0gPGRvbmdqaW4u
-a2ltQGFncmVleWFtb2JpbGl0eS5uZXQ+JywgaXQncyBvay4NCg0KPiAtLS0NCj4gIGFyY2gvYXJt
-L21hY2gtZXh5bm9zL0tjb25maWcgICAgICAgICB8ICAgMjMgKw0KPiAgYXJjaC9hcm0vbWFjaC1l
-eHlub3MvTWFrZWZpbGUgICAgICAgIHwgICAgMSArDQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9t
-YWNoLWhrZGs0NDEyLmMgfCAgOTY0DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysNCj4gIGFyY2gvYXJtL3Rvb2xzL21hY2gtdHlwZXMgICAgICAgICAgICB8ICAgIDEgKw0KPiAg
-NCBmaWxlcyBjaGFuZ2VkLCA5ODkgaW5zZXJ0aW9ucygrKQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0
-IGFyY2gvYXJtL21hY2gtZXh5bm9zL21hY2gtaGtkazQ0MTIuYw0KPg0KDQpUaGFua3MuDQoNCkJl
-c3QgcmVnYXJkcywNCktnZW5lLg0KLS0NCkt1a2ppbiBLaW0gPGtnZW5lLmtpbUBzYW1zdW5nLmNv
-bT4sIFNlbmlvciBFbmdpbmVlciwNClNXIFNvbHV0aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1
-bmcgRWxlY3Ryb25pY3MgQ28uLCBMdGQuDQoNCg0K
+On 08/08/2012 07:02 AM, Kukjin Kim wrote:
+> Kukjin Kim wrote:
+>>
+> 
+> [...]
+> 
+>>
+>> From: Tushar Behera <tushar.behera@linaro.org>
+>> Subject: [PATCH] ARM: SAMSUNG: Fix compilation error with
+>> s3c2410_defconfig
+>>
+>> Commit 2663e766c56a ("ARM Samsung: Move s3c pwm driver to pwm framework")
+> 
+> Oops, this should be "215c29d3d0e9"...
+> 
+
+My mistake, the first version of the patch was made w.r.t. linux-next
+tree. Though I build-tested it on v3.6-rc1, I forgot to change the
+commit ID.
+
+The patch below looks good to me.
+
+Thanks.
+
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+>> moved Samsung PWM driver to drivers/pwm and the config option to select
+>> this driver has changed.
+>>
+>> This patch fixes following build-error with s3c2410_defconfig.
+>>
+>> arch/arm/mach-s3c24xx/built-in.o: In function 'rx1950_lcd_power':
+>> arch/arm/mach-s3c24xx/mach-rx1950.c:430: undefined reference to
+>> 'pwm_config'
+>> arch/arm/mach-s3c24xx/mach-rx1950.c:431: undefined reference to
+>> 'pwm_disable'
+>> arch/arm/mach-s3c24xx/mach-rx1950.c:437: undefined reference to
+>> 'pwm_config'
+>> arch/arm/mach-s3c24xx/mach-rx1950.c:438: undefined reference to
+>> 'pwm_enable'
+>> arch/arm/mach-s3c24xx/built-in.o: In function 'rx1950_backlight_exit':
+>> arch/arm/mach-s3c24xx/mach-rx1950.c:504: undefined reference to 'pwm_free'
+>> arch/arm/mach-s3c24xx/built-in.o: In function 'rx1950_backlight_init':
+>> arch/arm/mach-s3c24xx/mach-rx1950.c:487: undefined reference to
+>> 'pwm_request'
+>>
+>> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+>> [kgene.kim@samsung.com: re-worked as per review comments]
+>> Cc: Thierry Reding <thierry.reding@avionic-design.de>
+>> Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+>> ---
+>>  arch/arm/mach-s3c24xx/Kconfig |    4 ++--
+>>  arch/arm/plat-samsung/Kconfig |    2 +-
+>>  drivers/pwm/Kconfig           |    2 +-
+>>  3 files changed, 4 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-s3c24xx/Kconfig b/arch/arm/mach-s3c24xx/Kconfig
+>> index e249611..d56b0f7 100644
+>> --- a/arch/arm/mach-s3c24xx/Kconfig
+>> +++ b/arch/arm/mach-s3c24xx/Kconfig
+>> @@ -483,7 +483,7 @@ config MACH_NEO1973_GTA02
+>>  	select I2C
+>>  	select POWER_SUPPLY
+>>  	select MACH_NEO1973
+>> -	select S3C2410_PWM
+>> +	select S3C24XX_PWM
+>>  	select S3C_DEV_USB_HOST
+>>  	help
+>>  	   Say Y here if you are using the Openmoko GTA02 / Freerunner GSM
+>> Phone
+>> @@ -493,7 +493,7 @@ config MACH_RX1950
+>>  	select S3C24XX_DCLK
+>>  	select PM_H1940 if PM
+>>  	select I2C
+>> -	select S3C2410_PWM
+>> +	select S3C24XX_PWM
+>>  	select S3C_DEV_NAND
+>>  	select S3C2410_IOTIMING if S3C2440_CPUFREQ
+>>  	select S3C2440_XTAL_16934400
+>> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+>> index 7aca31c..dcdfb77 100644
+>> --- a/arch/arm/plat-samsung/Kconfig
+>> +++ b/arch/arm/plat-samsung/Kconfig
+>> @@ -403,7 +403,7 @@ config S5P_DEV_USB_EHCI
+>>
+>>  config S3C24XX_PWM
+>>  	bool "PWM device support"
+>> -	select HAVE_PWM
+>> +	select PWM
+>>  	help
+>>  	  Support for exporting the PWM timer blocks via the pwm device
+>>  	  system
+>> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+>> index 8fc3808..34c8ec1 100644
+>> --- a/drivers/pwm/Kconfig
+>> +++ b/drivers/pwm/Kconfig
+>> @@ -59,7 +59,7 @@ config PWM_PXA
+>>
+>>  config PWM_SAMSUNG
+>>  	tristate "Samsung pwm support"
+>> -	depends on PLAT_SAMSUNG
+>> +	def_bool PLAT_SAMSUNG
+>>  	help
+>>  	  Generic PWM framework driver for Samsung.
+>>
+>> --
+>> 1.7.4.1
+> 
+
+
+-- 
+Tushar Behera
