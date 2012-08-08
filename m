@@ -1,66 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
-Date: Wed, 08 Aug 2012 20:36:08 +0900
-Message-ID: <0b1301cd755a$011e1eb0$035a5c10$%kim@samsung.com>
-References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
- <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
- <5020F568.5020204@linaro.org>
- <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
- <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
- <0abe01cd752f$4f96ad80$eec40880$%kim@samsung.com>
- <20120808065046.GA30832@avionic-0098.mockup.avionic-design.de>
- <0af001cd7550$1af66040$50e320c0$%kim@samsung.com>
- <20120808110713.GC20296@avionic-0098.mockup.avionic-design.de>
+Subject: Re: [PATCH] ASoC: Samsung: Fix build error
+Date: Wed, 08 Aug 2012 20:38:29 +0900
+Message-ID: <0b1401cd755a$552fb9f0$ff8f2dd0$%kim@samsung.com>
+References: <1344405883-27603-1-git-send-email-sachin.kamat@linaro.org>
+ <20120808110926.GK16861@opensource.wolfsonmicro.com>
+ <CAK9yfHzE4sRKj7uUKAEWtonV2uVBcg5_JhL1Ny4d1ohS5g+5yw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:58091 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754615Ab2HHLgK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Aug 2012 07:36:10 -0400
-In-reply-to: <20120808110713.GC20296@avionic-0098.mockup.avionic-design.de>
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-reply-to: <CAK9yfHzE4sRKj7uUKAEWtonV2uVBcg5_JhL1Ny4d1ohS5g+5yw@mail.gmail.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: sbkim73@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thierry Reding' <thierry.reding@avionic-design.de>
-Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-Thierry Reding wrote:
+Sachin Kamat wrote:
 > 
-> On Wed, Aug 08, 2012 at 07:25:17PM +0900, Kukjin Kim wrote:
-> > Thierry Reding wrote:
-> > >
-> > > On Wed, Aug 08, 2012 at 03:30:32PM +0900, Kukjin Kim wrote:
+> Hi Mark,
+> 
+> On 8 August 2012 16:39, Mark Brown <broonie@opensource.wolfsonmicro.com>
+> wrote:
+> > On Wed, Aug 08, 2012 at 11:34:43AM +0530, Sachin Kamat wrote:
+> >> Fixes the following build error:
+> >> In file included from arch/arm/mach-exynos/include/mach/dma.h:24:0,
+> >>               from arch/arm/plat-samsung/include/plat/dma-ops.h:17,
+> >>               from arch/arm/plat-samsung/include/plat/dma.h:128,
+> >>               from sound/soc/samsung/pcm.c:23:
+> >> arch/arm/plat-samsung/include/plat/dma-pl330.h:106:8:
+> >>                       error: redefinition of 'struct
+s3c2410_dma_client'
+> >> arch/arm/plat-samsung/include/plat/dma.h:40:8: note: originally defined
+> here
+> >> make[3]: *** [sound/soc/samsung/pcm.o] Error 1
 > >
-
-[...]
-
-> He (she?) sent two patches:
+> > Shouldn't this be being fixed in the headers?  It looks like they
+> > reference and disagree with each other on Exynos (my primary development
+> > platform is S3C6410 based so I'd notice if it was a generic Samsung
+> > issue.
+> >
+> > Pasting the error message isn't really that useful unless the fix is
+> > obvious, it's better to explain in words what's wrong.
 > 
-He :-)
-
-> 	https://lkml.org/lkml/2012/8/2/108
-> 	https://lkml.org/lkml/2012/8/2/109
+> I had sent the initial patch trying to fix this in the headers and it
+> worked for exynos4 config. However Kukjin pointed out that the patch
+> created similar errors with 2410 and 6400 configs. Fixing it further
+> in the headers did not look quite straight forward as there are many
+> headers trying to include one another. Hence I felt it is better
+> handled in the current way. I understand i should have added this
+> information in the commit message. Below is the link for your
+> reference that provides the complete discussion.
 > 
-> And followed-up with the following three:
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/11274
 > 
-> 	https://lkml.org/lkml/2012/8/3/47
-> 	https://lkml.org/lkml/2012/8/3/44
-> 	https://lkml.org/lkml/2012/8/3/45
+> Please let me know your opinion about this.
 > 
-Thanks for above list-up and if any comments, let you know.
-
-[...]
-
-
-> Yes, that looks good to me. Do you want me to take that through the PWM
-> tree or would you rather take it through yours?
 > 
-Thanks. Since the error happens in arch/arm/ part and this patch touches
-some arch/arm/ files, would be better if this could be sent to upstream via
-samsung tree. Of course, if your ack, would be nice to me ;-)
+I also agree with Mark's opinion and current Sachin's approach cannot avoid
+whole similar build error.
+
+Thanks.
 
 Best regards,
 Kgene.
