@@ -1,90 +1,94 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH] ARM: SAMSUNG: Fix compilation error with
- s3c2410_defconfig
-Date: Wed, 8 Aug 2012 08:11:02 +0200
-Message-ID: <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
-References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
- <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
- <5020F568.5020204@linaro.org>
- <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH V4 0/2] arm: samsung: Move FIMD headers to include/video/
+Date: Wed, 08 Aug 2012 15:20:16 +0900
+Message-ID: <0ab701cd752d$e0d1db00$a2759100$%kim@samsung.com>
+References: <1344342872-7904-1-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org
-List-Id: linux-samsung-soc@vger.kernel.org
-
-
---FCuugMFkClbJLl1L
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:41842 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756936Ab2HHGUS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Aug 2012 02:20:18 -0400
+In-reply-to: <1344342872-7904-1-git-send-email-l.krishna@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, ben-linux@fluff.org, m.szyprowski@samsung.com, 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>
 
-On Wed, Aug 08, 2012 at 09:54:13AM +0900, Kukjin Kim wrote:
-> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
-> index 7aca31c..dcdfb77 100644
-> --- a/arch/arm/plat-samsung/Kconfig
-> +++ b/arch/arm/plat-samsung/Kconfig
-> @@ -403,7 +403,7 @@ config S5P_DEV_USB_EHCI
-> =20
->  config S3C24XX_PWM
->  	bool "PWM device support"
-> -	select HAVE_PWM
-> +	select PWM
->  	help
->  	  Support for exporting the PWM timer blocks via the pwm device
->  	  system
+Leela Krishna Amudala wrote:
+> 
+> This patchset moves the contents of regs-fb-v4.h and regs-fb.h from arch
+> side
+> to include/video/samsung_fimd.h
+> 
+> This patchset is created and rebased against master branch of torvalds
+> tree.
+> Tested on smdk5250 board, build tested for other boards.
+> 
+> Changes from version 3:
+> 	- Squashed 1st, 3rd, 4th and 5th patches from version 3
+> 
+> Changes from version 2:
+> 	- Changed the EXYNOS5_xxx macro name to FIMD_V8_xxx
+> 	- Moved the header inclusion under same kind
+> 
+> Changes from version 1:
+> 	- Split the patches as per Sylwester comments
+> 	- Changed FIMD_V8_xxx macro to EXYNOS5_xxx
+> 
+> Leela Krishna Amudala (2):
+>   include/video: move fimd register headers from platform to
+>     include/video
+>   include/video: Add register offsets for FIMD version 8
+> 
+>  arch/arm/mach-exynos/mach-nuri.c                   |    2 +-
+>  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    2 +-
+>  arch/arm/mach-exynos/setup-fimd0.c                 |    2 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smartq5.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smartq7.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |    2 +-
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |    2 +-
+>  arch/arm/mach-s5pv210/mach-aquila.c                |    2 +-
+>  arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
+>  arch/arm/mach-s5pv210/mach-smdkv210.c              |    2 +-
+>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h    |  159
+----------------
+> ----
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |    2 +-
+>  drivers/video/s3c-fb.c                             |    2 +-
+>  .../plat/regs-fb.h => include/video/samsung_fimd.h |  152
+> +++++++++++++++++--
+>  26 files changed, 165 insertions(+), 194 deletions(-)
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>  rename arch/arm/plat-samsung/include/plat/regs-fb.h =>
+> include/video/samsung_fimd.h (73%)
 
-You could add
+Looks OK to me. Will apply into topic branch, 'v3.7-for-florian' for
+Florian's pulling.
 
-	select PWM_SAMSUNG
+If there is no objection for a couple of days, I will merge this into
+for-next and send to Florian.
 
-here to side-step the issue below.
+Thanks.
 
-> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
-> index 8fc3808..34c8ec1 100644
-> --- a/drivers/pwm/Kconfig
-> +++ b/drivers/pwm/Kconfig
-> @@ -59,7 +59,7 @@ config PWM_PXA
-> =20
->  config PWM_SAMSUNG
->  	tristate "Samsung pwm support"
-> -	depends on PLAT_SAMSUNG
-> +	def_bool PLAT_SAMSUNG
-
-tristate and def_bool conflict, don't they? I think the easiest way to
-solve this problem would be to add a default line, like so:
-
-	default PLAT_SAMSUNG
-
-I've checked this with a s3c2410_defconfig and this causes PWM_SAMSUNG
-to be selected =3Dy, which I guess is what you want.
-
-Thierry
-
---FCuugMFkClbJLl1L
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQIgL2AAoJEN0jrNd/PrOhN7oP+wQ7NLlEROotXlnefUf1Hs+M
-ANRtdLlnnbiHxGEjKjKYh0g87b52aIPIz8rcNsO0ivfszHTqVJQc5KgiGPWK9HmS
-ij5ri9/kA57PsQEWROEdhNHESycrktGaW27OkV9+TZP7PmQKA13Qn1MLKHGPwyqQ
-hzFPHQQXK7Ekj426rptEjER1EBObSTBUzJj4uRvcTLJVY6euHtNRRwOYUPtjwK+M
-30y2VlymWsZjPsGLyCLJx6YIb3ewwr+q1ftdwRO3lC5Cgyhmd4DA2yfvozJACcOj
-nqH5kt9+Qth97qEnHpK71OdL4or8G721Fuwa3rX5RswKgJ83rRHuHPucuB6yugM2
-TOmjiQa0VjMNtm2mTbDaW5ya0Z6ynXjgpHb7btrXqi5W/0W8dD9xrsTr41gf9r6b
-mtwD36EzalesqRAMLGUhHTuQKBZMXK8i8lbhjpsxtfraRFfBFUXBlfAdbCt7Zg5b
-4ah3R3R4WhV/6/2fEB1JAiRtPyJHLn8eMb3wTo80DbFJiyeYHbtSdYv4g65uc3J4
-QQbLqquKJNlUFXscrlNuKHTdfxgVFUM9ppkWEafuWAYxT06g5zgGoQEEuXjZvWYm
-UbO17aCPkKvL3kALKZep6naPB4Wc6Y0Jrs6DXTJL4SEcVD7Y7tTQU1vcRtNSgUCM
-R+Z/ChvmlJ/y0FuCVWCk
-=Ny56
------END PGP SIGNATURE-----
-
---FCuugMFkClbJLl1L--
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
