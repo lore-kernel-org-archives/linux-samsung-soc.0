@@ -1,229 +1,87 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: EXYYNOS: Use EXYNOS4210_GPEx instead of
- EXYNOS4_GPEx
-Date: Wed, 08 Aug 2012 15:27:56 +0900
-Message-ID: <502206EC.4030303@samsung.com>
-References: <1337307497-15777-1-git-send-email-jy0922.shim@samsung.com>
- <4FB5B9A1.2030606@samsung.com>
- <097501cd7473$f73e51d0$e5baf570$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Fix compilation error with s3c2410_defconfig
+Date: Wed, 08 Aug 2012 15:30:32 +0900
+Message-ID: <0abe01cd752f$4f96ad80$eec40880$%kim@samsung.com>
+References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
+ <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
+ <5020F568.5020204@linaro.org>
+ <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
+ <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:44938 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757830Ab2HHG1q (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:30493 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751051Ab2HHGae (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Aug 2012 02:27:46 -0400
-Received: from epcpsbgm1.samsung.com (mailout2.samsung.com [203.254.224.25])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M8F0089OBA55JN0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Aug 2012 15:27:44 +0900 (KST)
-Received: from [10.90.51.60] by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0M8F000ZKBA89K30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 08 Aug 2012 15:27:44 +0900 (KST)
-In-reply-to: <097501cd7473$f73e51d0$e5baf570$%kim@samsung.com>
+	Wed, 8 Aug 2012 02:30:34 -0400
+In-reply-to: <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, linus.walleij@stericsson.com, 'Sangsu Park' <sangsu4u.park@samsung.com>
+To: 'Thierry Reding' <thierry.reding@avionic-design.de>
+Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org
 
-On 08/07/2012 05:09 PM, Kukjin Kim wrote:
-> Kukjin Kim wrote:
->> Joonyoung Shim wrote:
->>> Add to cc Grant Likely and Linus Walleij
->>>
->>> On 05/18/2012 11:18 AM, Joonyoung Shim wrote:
->>>> Also use EXYNOS4210_GPIO_Ex instead of EXYNOS4_GPIO_Ex. The GPEx gpios
->>>> exist only on Exynos4210 and there are no on Exynos4x12. Redefine them
->>>> to exact SoC name.
->>>>
->>>> Signed-off-by: Joonyoung Shim<jy0922.shim@samsung.com>
->>>> Signed-off-by: Kyungmin Park<kyungmin.park@samsung.com>
->>>> ---
->>>>    arch/arm/mach-exynos/include/mach/gpio.h   |   32
-> ++++++++++++++------
->> --
->>> ------
->>>>    arch/arm/mach-exynos/mach-nuri.c           |   16 +++++++-------
->>>>    arch/arm/mach-exynos/mach-origen.c         |    6 ++--
->>>>    arch/arm/mach-exynos/mach-universal_c210.c |   32
-> ++++++++++++++-----
->> --
->>> -------
->>>>    arch/arm/mach-exynos/setup-fimc.c          |    4 +-
->>>>    drivers/gpio/gpio-samsung.c                |   20 ++++++++--------
->>>>    6 files changed, 55 insertions(+), 55 deletions(-)
->>>>
->>>> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-
->>> exynos/include/mach/gpio.h
->>>> index eb24f1e..21c9bf1 100644
->>>> --- a/arch/arm/mach-exynos/include/mach/gpio.h
->>>> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
->>>> @@ -26,11 +26,11 @@
->>>>    #define EXYNOS4_GPIO_C1_NR	(5)
->>>>    #define EXYNOS4_GPIO_D0_NR	(4)
->>>>    #define EXYNOS4_GPIO_D1_NR	(4)
->>>> -#define EXYNOS4_GPIO_E0_NR	(5)
->>>> -#define EXYNOS4_GPIO_E1_NR	(8)
->>>> -#define EXYNOS4_GPIO_E2_NR	(6)
->>>> -#define EXYNOS4_GPIO_E3_NR	(8)
->>>> -#define EXYNOS4_GPIO_E4_NR	(8)
->>>> +#define EXYNOS4210_GPIO_E0_NR	(5)
->>>> +#define EXYNOS4210_GPIO_E1_NR	(8)
->>>> +#define EXYNOS4210_GPIO_E2_NR	(6)
->>>> +#define EXYNOS4210_GPIO_E3_NR	(8)
->>>> +#define EXYNOS4210_GPIO_E4_NR	(8)
->> I think, splitting the gpios like following(common exynos4 and exynos4210
->> or exynos4x12). So please just put the definitions for EXYNOS4210 GPIO
->> after EXYNOS4_GPIO_XXX.
->>
->> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-
->> exynos/include/mach/gpio.h
->> index eb24f1e..910b611 100644
->> --- a/arch/arm/mach-exynos/include/mach/gpio.h
->> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
->> @@ -26,17 +26,10 @@
->>   #define EXYNOS4_GPIO_C1_NR	(5)
->>   #define EXYNOS4_GPIO_D0_NR	(4)
->>   #define EXYNOS4_GPIO_D1_NR	(4)
->> -#define EXYNOS4_GPIO_E0_NR	(5)
->> -#define EXYNOS4_GPIO_E1_NR	(8)
->> -#define EXYNOS4_GPIO_E2_NR	(6)
->> -#define EXYNOS4_GPIO_E3_NR	(8)
->> -#define EXYNOS4_GPIO_E4_NR	(8)
->>   #define EXYNOS4_GPIO_F0_NR	(8)
->>   #define EXYNOS4_GPIO_F1_NR	(8)
->>   #define EXYNOS4_GPIO_F2_NR	(8)
->>   #define EXYNOS4_GPIO_F3_NR	(6)
->> -#define EXYNOS4_GPIO_J0_NR	(8)
->> -#define EXYNOS4_GPIO_J1_NR	(5)
->>   #define EXYNOS4_GPIO_K0_NR	(7)
->>   #define EXYNOS4_GPIO_K1_NR	(7)
->>   #define EXYNOS4_GPIO_K2_NR	(7)
->> @@ -57,6 +50,31 @@
->>   #define EXYNOS4_GPIO_Y6_NR	(8)
->>   #define EXYNOS4_GPIO_Z_NR	(7)
->>
->> +/* For EXYNOS4210 GPIO bank sizes */
->> +
->> +#define EXYNOS4210_GPIO_E0_NR	(5)
->> +#define EXYNOS4210_GPIO_E1_NR	(8)
->> +#define EXYNOS4210_GPIO_E2_NR	(6)
->> +#define EXYNOS4210_GPIO_E3_NR	(8)
->> +#define EXYNOS4210_GPIO_E4_NR	(8)
->> +#define EXYNOS4210_GPIO_J0_NR	(8)
->> +#define EXYNOS4210_GPIO_J1_NR	(5)
->>
->> [...]
->>
->> And we can add EXYNOS4X12 GPIO like following in other patch.
->>
->> +/* For EXYNOS4X12 GPIO bank sizes */
->> +
->> +#define EXYNOS4X12_GPIO_J0_NR	(8)
->> +#define EXYNOS4X12_GPIO_J1_NR	(5)
->> +#define EXYNOS4X12_GPIO_M0_NR	(8)
->> +#define EXYNOS4X12_GPIO_M1_NR	(7)
->> +#define EXYNOS4X12_GPIO_M2_NR	(5)
->> +#define EXYNOS4X12_GPIO_M3_NR	(8)
->> +#define EXYNOS4X12_GPIO_M4_NR	(8)
->> +#define EXYNOS4X12_GPIO_V0_NR	(8)
->> +#define EXYNOS4X12_GPIO_V1_NR	(8)
->> +#define EXYNOS4X12_GPIO_V2_NR	(8)
->> +#define EXYNOS4X12_GPIO_V3_NR	(8)
->> +#define EXYNOS4X12_GPIO_V4_NR	(2)
->>
->>>>    #define EXYNOS4_GPIO_F0_NR	(8)
->>>>    #define EXYNOS4_GPIO_F1_NR	(8)
->>>>    #define EXYNOS4_GPIO_F2_NR	(8)
->>>> @@ -67,12 +67,12 @@ enum exynos4_gpio_number {
->>>>    	EXYNOS4_GPIO_C1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C0),
->>>>    	EXYNOS4_GPIO_D0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_C1),
->>>>    	EXYNOS4_GPIO_D1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D0),
->>>> -	EXYNOS4_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
->>>> -	EXYNOS4_GPIO_E1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E0),
->>>> -	EXYNOS4_GPIO_E2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E1),
->>>> -	EXYNOS4_GPIO_E3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E2),
->>>> -	EXYNOS4_GPIO_E4_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E3),
->>>> -	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_E4),
->>>> +	EXYNOS4210_GPIO_E0_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_D1),
->>>> +	EXYNOS4210_GPIO_E1_START	=
-> EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E0),
->>>> +	EXYNOS4210_GPIO_E2_START	=
-> EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E1),
->>>> +	EXYNOS4210_GPIO_E3_START	=
-> EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E2),
->>>> +	EXYNOS4210_GPIO_E4_START	=
-> EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E3),
->>>> +	EXYNOS4_GPIO_F0_START	= EXYNOS_GPIO_NEXT(EXYNOS4210_GPIO_E4),
->>>>    	EXYNOS4_GPIO_F1_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F0),
->>>>    	EXYNOS4_GPIO_F2_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F1),
->>>>    	EXYNOS4_GPIO_F3_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_F2),
->> Same as above.
->>
->> @@ -99,6 +117,31 @@ enum exynos4_gpio_number {
->>   	EXYNOS4_GPIO_Z_START	= EXYNOS_GPIO_NEXT(EXYNOS4_GPIO_Y6),
->>   };
->>
->> +enum exynos4210_gpio_number {
->> +	EXYNOS4210_GPIO_E0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Z),
->> +	EXYNOS4210_GPIO_E1_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E0),
->> +	EXYNOS4210_GPIO_E2_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E1),
->> +	EXYNOS4210_GPIO_E3_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E2),
->> +	EXYNOS4210_GPIO_E4_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E3),
->> +	EXYNOS4210_GPIO_J0_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_E4),
->> +	EXYNOS4210_GPIO_J1_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4210_GPIO_J0),
->> +};
->>
->> [...]
->>
->> And following is possible for EXYNOS4X12...
->>
->> +enum exynos4x12_gpio_number {
->> +	EXYNOS4X12_GPIO_J0_START	= EXYNOS4_GPIO_NEXT(EXYNOS4_GPIO_Z),
->> +	EXYNOS4X12_GPIO_J1_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_J0),
->> +	EXYNOS4X12_GPIO_M0_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_J1),
->> +	EXYNOS4X12_GPIO_M1_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M0),
->> +	EXYNOS4X12_GPIO_M2_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M1),
->> +	EXYNOS4X12_GPIO_M3_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M2),
->> +	EXYNOS4X12_GPIO_M4_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M3),
->> +	EXYNOS4X12_GPIO_V0_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_M4),
->> +	EXYNOS4X12_GPIO_V1_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V0),
->> +	EXYNOS4X12_GPIO_V2_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V1),
->> +	EXYNOS4X12_GPIO_V3_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V2),
->> +	EXYNOS4X12_GPIO_V4_START	=
-> EXYNOS4_GPIO_NEXT(EXYNOS4X12_GPIO_V3),
->> +};
->> +
->>   /* EXYNOS4 GPIO number definitions */
->>
->>   #define EXYNOS4_GPA0(_nr)	(EXYNOS4_GPIO_A0_START + (_nr))
->>
->> [...]
->>
->> Of course, need to update other regarding gpio part accordingly.
->>
-> Joonyoung, any updates on this?
+Thierry Reding wrote:
+> 
+> On Wed, Aug 08, 2012 at 09:54:13AM +0900, Kukjin Kim wrote:
+> > diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-
+> samsung/Kconfig
+> > index 7aca31c..dcdfb77 100644
+> > --- a/arch/arm/plat-samsung/Kconfig
+> > +++ b/arch/arm/plat-samsung/Kconfig
+> > @@ -403,7 +403,7 @@ config S5P_DEV_USB_EHCI
+> >
+> >  config S3C24XX_PWM
+> >  	bool "PWM device support"
+> > -	select HAVE_PWM
+> > +	select PWM
+> >  	help
+> >  	  Support for exporting the PWM timer blocks via the pwm device
+> >  	  system
+> 
+> You could add
+> 
+> 	select PWM_SAMSUNG
+> 
+Well, the 'PWM_SAMSUNG' depends on 'PWM', so I think, it'd better to select
+PWM_SAMSUNG for building pwm-samsung.c automatically when PWM is selected.
 
-Sorry for late response, but i don't have any progress for this.
+> here to side-step the issue below.
+> 
+> > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> > index 8fc3808..34c8ec1 100644
+> > --- a/drivers/pwm/Kconfig
+> > +++ b/drivers/pwm/Kconfig
+> > @@ -59,7 +59,7 @@ config PWM_PXA
+> >
+> >  config PWM_SAMSUNG
+> >  	tristate "Samsung pwm support"
+> > -	depends on PLAT_SAMSUNG
+> > +	def_bool PLAT_SAMSUNG
+> 
+> tristate and def_bool conflict, don't they? I think the easiest way to
+
+Yeah, your pointing out is correct, but in this case, it should be 'bool'
+not 'tristate' because the PWM driver cannot support module now.
+
+> solve this problem would be to add a default line, like so:
+> 
+> 	default PLAT_SAMSUNG
+> 
+> I've checked this with a s3c2410_defconfig and this causes PWM_SAMSUNG
+> to be selected =y, which I guess is what you want.
+> 
+How do you think following, just adding from original one?
+
+-	tristate "Samsung pwm support"
++	bool "SAMSUNG PWM support"
 
 Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
