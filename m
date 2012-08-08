@@ -1,43 +1,66 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+From: Sachin Kamat <sachin.kamat@linaro.org>
 Subject: Re: [PATCH] ASoC: Samsung: Fix build error
-Date: Wed, 8 Aug 2012 12:09:26 +0100
-Message-ID: <20120808110926.GK16861@opensource.wolfsonmicro.com>
+Date: Wed, 8 Aug 2012 17:03:09 +0530
+Message-ID: <CAK9yfHzE4sRKj7uUKAEWtonV2uVBcg5_JhL1Ny4d1ohS5g+5yw@mail.gmail.com>
 References: <1344405883-27603-1-git-send-email-sachin.kamat@linaro.org>
+	<20120808110926.GK16861@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <alsa-devel-bounces@alsa-project.org>
-Content-Disposition: inline
-In-Reply-To: <1344405883-27603-1-git-send-email-sachin.kamat@linaro.org>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Sachin Kamat <sachin.kamat@linaro.org>
-Cc: sbkim73@samsung.com, kgene.kim@samsung.com, alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:42834 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757632Ab2HHLdL convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 8 Aug 2012 07:33:11 -0400
+Received: by lboi8 with SMTP id i8so403408lbo.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Aug 2012 04:33:09 -0700 (PDT)
+In-Reply-To: <20120808110926.GK16861@opensource.wolfsonmicro.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, kgene.kim@samsung.com, patches@linaro.org, sbkim73@samsung.com
 
-T24gV2VkLCBBdWcgMDgsIDIwMTIgYXQgMTE6MzQ6NDNBTSArMDUzMCwgU2FjaGluIEthbWF0IHdy
-b3RlOgo+IEZpeGVzIHRoZSBmb2xsb3dpbmcgYnVpbGQgZXJyb3I6Cj4gSW4gZmlsZSBpbmNsdWRl
-ZCBmcm9tIGFyY2gvYXJtL21hY2gtZXh5bm9zL2luY2x1ZGUvbWFjaC9kbWEuaDoyNDowLAo+IAkJ
-ZnJvbSBhcmNoL2FybS9wbGF0LXNhbXN1bmcvaW5jbHVkZS9wbGF0L2RtYS1vcHMuaDoxNywKPiAJ
-CWZyb20gYXJjaC9hcm0vcGxhdC1zYW1zdW5nL2luY2x1ZGUvcGxhdC9kbWEuaDoxMjgsCj4gCQlm
-cm9tIHNvdW5kL3NvYy9zYW1zdW5nL3BjbS5jOjIzOgo+IGFyY2gvYXJtL3BsYXQtc2Ftc3VuZy9p
-bmNsdWRlL3BsYXQvZG1hLXBsMzMwLmg6MTA2Ojg6Cj4gCQkJZXJyb3I6IHJlZGVmaW5pdGlvbiBv
-ZiDigJhzdHJ1Y3QgczNjMjQxMF9kbWFfY2xpZW504oCZCj4gYXJjaC9hcm0vcGxhdC1zYW1zdW5n
-L2luY2x1ZGUvcGxhdC9kbWEuaDo0MDo4OiBub3RlOiBvcmlnaW5hbGx5IGRlZmluZWQgaGVyZQo+
-IG1ha2VbM106ICoqKiBbc291bmQvc29jL3NhbXN1bmcvcGNtLm9dIEVycm9yIDEKClNob3VsZG4n
-dCB0aGlzIGJlIGJlaW5nIGZpeGVkIGluIHRoZSBoZWFkZXJzPyAgSXQgbG9va3MgbGlrZSB0aGV5
-CnJlZmVyZW5jZSBhbmQgZGlzYWdyZWUgd2l0aCBlYWNoIG90aGVyIG9uIEV4eW5vcyAobXkgcHJp
-bWFyeSBkZXZlbG9wbWVudApwbGF0Zm9ybSBpcyBTM0M2NDEwIGJhc2VkIHNvIEknZCBub3RpY2Ug
-aWYgaXQgd2FzIGEgZ2VuZXJpYyBTYW1zdW5nCmlzc3VlLgoKUGFzdGluZyB0aGUgZXJyb3IgbWVz
-c2FnZSBpc24ndCByZWFsbHkgdGhhdCB1c2VmdWwgdW5sZXNzIHRoZSBmaXggaXMKb2J2aW91cywg
-aXQncyBiZXR0ZXIgdG8gZXhwbGFpbiBpbiB3b3JkcyB3aGF0J3Mgd3JvbmcuCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkFsc2EtZGV2ZWwgbWFpbGluZyBs
-aXN0CkFsc2EtZGV2ZWxAYWxzYS1wcm9qZWN0Lm9yZwpodHRwOi8vbWFpbG1hbi5hbHNhLXByb2pl
-Y3Qub3JnL21haWxtYW4vbGlzdGluZm8vYWxzYS1kZXZlbAo=
+Hi Mark,
+
+On 8 August 2012 16:39, Mark Brown <broonie@opensource.wolfsonmicro.com=
+> wrote:
+> On Wed, Aug 08, 2012 at 11:34:43AM +0530, Sachin Kamat wrote:
+>> Fixes the following build error:
+>> In file included from arch/arm/mach-exynos/include/mach/dma.h:24:0,
+>>               from arch/arm/plat-samsung/include/plat/dma-ops.h:17,
+>>               from arch/arm/plat-samsung/include/plat/dma.h:128,
+>>               from sound/soc/samsung/pcm.c:23:
+>> arch/arm/plat-samsung/include/plat/dma-pl330.h:106:8:
+>>                       error: redefinition of =91struct s3c2410_dma_c=
+lient=92
+>> arch/arm/plat-samsung/include/plat/dma.h:40:8: note: originally defi=
+ned here
+>> make[3]: *** [sound/soc/samsung/pcm.o] Error 1
+>
+> Shouldn't this be being fixed in the headers?  It looks like they
+> reference and disagree with each other on Exynos (my primary developm=
+ent
+> platform is S3C6410 based so I'd notice if it was a generic Samsung
+> issue.
+>
+> Pasting the error message isn't really that useful unless the fix is
+> obvious, it's better to explain in words what's wrong.
+
+I had sent the initial patch trying to fix this in the headers and it
+worked for exynos4 config. However Kukjin pointed out that the patch
+created similar errors with 2410 and 6400 configs. Fixing it further
+in the headers did not look quite straight forward as there are many
+headers trying to include one another. Hence I felt it is better
+handled in the current way. I understand i should have added this
+information in the commit message. Below is the link for your
+reference that provides the complete discussion.
+
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/11274
+
+Please let me know your opinion about this.
+
+
+--=20
+With warm regards,
+Sachin
