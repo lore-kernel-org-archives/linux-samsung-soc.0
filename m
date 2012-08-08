@@ -1,111 +1,77 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: Re: [PATCH 1/1] ARM: SAMSUNG: Fix compilation error
-Date: Wed, 8 Aug 2012 10:27:22 +0530
-Message-ID: <CAK9yfHwXFQ2M586AVezpYXBcM=47hrNzK2Yvabib=SMS4F6R_A@mail.gmail.com>
-References: <1340165950-8996-1-git-send-email-sachin.kamat@linaro.org>
-	<0a1e01cd74fe$14ecc970$3ec65c50$%kim@samsung.com>
-	<CAK9yfHx7tC4e0dvyeaMs8J6JJfjZGvvnZoyyc_0JgpOLohPZEA@mail.gmail.com>
-	<0a5301cd7522$260e6d70$722b4850$%kim@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Add HDMIPHY I2C adaptor
+Date: Wed, 08 Aug 2012 14:01:19 +0900
+Message-ID: <0a6a01cd7522$d8d75160$8a85f420$%kim@samsung.com>
+References: <1344261462-14183-1-git-send-email-dongjin.kim@agreeyamobility.net>
+ <1344261462-14183-2-git-send-email-dongjin.kim@agreeyamobility.net>
+ <CAK9yfHz_q22JgkULR9V8bR5W_TXVRn5qs5u2MiJJpa-Br_YQUQ@mail.gmail.com>
+ <b937n0skj9tqmbg6tctdu48x.1344324481459@email.android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:53507 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751109Ab2HHE5X (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:35166 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751109Ab2HHFBU convert rfc822-to-8bit (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Aug 2012 00:57:23 -0400
-Received: by lagy9 with SMTP id y9so186774lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Aug 2012 21:57:22 -0700 (PDT)
-In-Reply-To: <0a5301cd7522$260e6d70$722b4850$%kim@samsung.com>
+	Wed, 8 Aug 2012 01:01:20 -0400
+In-reply-to: <b937n0skj9tqmbg6tctdu48x.1344324481459@email.android.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org
+To: 'Dongjin Kim' <Dongjin.Kim@agreeyamobility.net>, 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: 'Ben Dooks' <ben-linux@fluff.org>, 'Russell King' <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Dongjin Kim' <tobetter@gmail.com>, linux-arm-kernel@lists.infradead.org
 
-On 8 August 2012 10:26, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Sachin Kamat wrote:
->>
->> On 8 August 2012 06:08, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> > Kukjin Kim wrote:
->> >>
->> >> Sachin Kamat wrote:
->> >> >
->> >> > Fixes the following build error:
->> >> > In file included from arch/arm/mach-exynos/include/mach/dma.h:24:0,
->> >> >                  from
-> arch/arm/plat-samsung/include/plat/dma-ops.h:17,
->> >> >                  from arch/arm/plat-samsung/include/plat/dma.h:128,
->> >> >                  from sound/soc/samsung/pcm.c:23:
->> >> > arch/arm/plat-samsung/include/plat/dma-pl330.h:106:8: error:
->> >> redefinition
->> >> > of 'struct s3c2410_dma_client'
->> >> > arch/arm/plat-samsung/include/plat/dma.h:40:8: note: originally
->> defined
->> >> > here
->> >> >
->> >> > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
->> >> > ---
->> >> >  arch/arm/plat-samsung/include/plat/dma.h |    5 +----
->> >> >  1 files changed, 1 insertions(+), 4 deletions(-)
->> >> >
->> >> > diff --git a/arch/arm/plat-samsung/include/plat/dma.h
->> b/arch/arm/plat-
->> >> > samsung/include/plat/dma.h
->> >> > index 7b02143..fdf34bc 100644
->> >> > --- a/arch/arm/plat-samsung/include/plat/dma.h
->> >> > +++ b/arch/arm/plat-samsung/include/plat/dma.h
->> >> > @@ -37,10 +37,7 @@ enum s3c2410_chan_op {
->> >> >     S3C2410_DMAOP_STARTED,          /* indicate channel started */
->> >> >  };
->> >> >
->> >> > -struct s3c2410_dma_client {
->> >> > -   char                *name;
->> >> > -};
->> >> > -
->> >> > +struct s3c2410_dma_client;
->> >> >  struct s3c2410_dma_chan;
->> >> >  enum dma_ch;
->> >> >
->> >> > --
->> >> > 1.7.4.1
->> >>
->> >> Applied, thanks.
->> >>
->> > Oops, this brings following error :(
->> >
->> > drivers/spi/spi-s3c64xx.c:205: error: variable 's3c64xx_spi_dma_client'
->> has initializer but incomplete type
->> > drivers/spi/spi-s3c64xx.c:206: error: unknown field 'name' specified in
->> initializer
->> > drivers/spi/spi-s3c64xx.c:206: warning: excess elements in struct
->> initializer
->> > drivers/spi/spi-s3c64xx.c:206: warning: (near initialization for
->> 's3c64xx_spi_dma_client')
->> >
->> > As you know, the 'struct s3c2410_dma_client' is defined at the
->> <plat/dma-pl330.h>  after applying this patch but S3C24XX and S3C64XX are
->> not including 'plat/dma-pl330.h' so above error happened.
->>
->> So in that case, can we include this header in those files?
->>
-> No, the <plat/dma-pl330.h> is only for PL330 not S3C24XX/S3C64XX and it
-> means above build error you reported should be fixed with another way.
+I applied the patches Sachin pointed out, so we could drop this patch.
 
-Ok. Let me test this and see if I can come out with something.
+Note, Dongjin, please don't use Korean character in your e-mail and kee=
+p
+the new line for over 80 columns, actually 76 or 78? anyways.
 
+Thanks.
 
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-
-
--- 
-With warm regards,
-Sachin
+Dongjin Kim wrote:
+>=20
+> Hi Sachin,
+>=20
+> Thanks for your feedback, I couldnt find the patch series eariler. ;)
+>=20
+> Regards,
+> Dongjin.
+>=20
+> Sent from Moxier Mail
+> (http://www.moxier.com)
+>=20
+>=20
+> ----- =BF=F8=BA=BB =B8=DE=BD=C3=C1=F6 -----
+> =BA=B8=B3=BD =BB=E7=B6=F7:Sachin Kamat <sachin.kamat@linaro.org> =B9=DE=
+=B4=C2 =BB=E7=B6=F7:Dongjin Kim
+> <tobetter@gmail.com> =C2=FC=C1=B6:Dongjin Kim <Dongjin.Kim@agreeyamob=
+ility.net>,
+> Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>,
+> Russell King <linux@arm.linux.org.uk>, "linux-arm-
+> kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+> "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.or=
+g>,
+> "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org> =BA=B8=B3=
+=BD
+=BD=C3=B0=A3:2012.
+> 8. 7. 3:57 =BF=C0=C8=C4
+> =C1=A6=B8=F1:Re: [PATCH] ARM: EXYNOS: Add HDMIPHY I2C adaptor
+>=20
+>=20
+>=20
+> Hi Dongjin,
+>=20
+> A patch series to add HDMI platform data support is already under
+> consideration.
+>=20
+> http://comments.gmane.org/gmane.linux.kernel.samsung-soc/11352
+>=20
+[...]
