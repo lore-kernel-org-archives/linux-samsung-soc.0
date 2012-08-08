@@ -1,53 +1,90 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ASoC: Samsung: Fix build error
-Date: Wed,  8 Aug 2012 11:34:43 +0530
-Message-ID: <1344405883-27603-1-git-send-email-sachin.kamat@linaro.org>
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH] ARM: SAMSUNG: Fix compilation error with
+ s3c2410_defconfig
+Date: Wed, 8 Aug 2012 08:11:02 +0200
+Message-ID: <20120808061102.GA22417@avionic-0098.mockup.avionic-design.de>
+References: <1344333546-16995-1-git-send-email-tushar.behera@linaro.org>
+ <098f01cd7488$0d66d630$28348290$%kim@samsung.com>
+ <5020F568.5020204@linaro.org>
+ <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:36058 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751415Ab2HHGGQ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 8 Aug 2012 02:06:16 -0400
-Received: by pbbrr13 with SMTP id rr13so926142pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 07 Aug 2012 23:06:16 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="FCuugMFkClbJLl1L"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0a2d01cd7500$53e26c50$fba744f0$%kim@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, s.hauer@pengutronix.de, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org
-Cc: kgene.kim@samsung.com, broonie@opensource.wolfsonmicro.com, sachin.kamat@linaro.org, patches@linaro.org, sbkim73@samsung.com
 
-=46ixes the following build error:
-In file included from arch/arm/mach-exynos/include/mach/dma.h:24:0,
-		from arch/arm/plat-samsung/include/plat/dma-ops.h:17,
-		from arch/arm/plat-samsung/include/plat/dma.h:128,
-		from sound/soc/samsung/pcm.c:23:
-arch/arm/plat-samsung/include/plat/dma-pl330.h:106:8:
-			error: redefinition of =E2=80=98struct s3c2410_dma_client=E2=80=99
-arch/arm/plat-samsung/include/plat/dma.h:40:8: note: originally defined=
- here
-make[3]: *** [sound/soc/samsung/pcm.o] Error 1
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
----
- sound/soc/samsung/pcm.c |    2 +-
- 1 files changed, 1 insertions(+), 1 deletions(-)
+--FCuugMFkClbJLl1L
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
-index b7b2a1f..89b0646 100644
---- a/sound/soc/samsung/pcm.c
-+++ b/sound/soc/samsung/pcm.c
-@@ -20,7 +20,7 @@
- #include <sound/pcm_params.h>
-=20
- #include <plat/audio.h>
--#include <plat/dma.h>
-+#include <mach/dma.h>
-=20
- #include "dma.h"
- #include "pcm.h"
---=20
-1.7.4.1
+On Wed, Aug 08, 2012 at 09:54:13AM +0900, Kukjin Kim wrote:
+> diff --git a/arch/arm/plat-samsung/Kconfig b/arch/arm/plat-samsung/Kconfig
+> index 7aca31c..dcdfb77 100644
+> --- a/arch/arm/plat-samsung/Kconfig
+> +++ b/arch/arm/plat-samsung/Kconfig
+> @@ -403,7 +403,7 @@ config S5P_DEV_USB_EHCI
+> =20
+>  config S3C24XX_PWM
+>  	bool "PWM device support"
+> -	select HAVE_PWM
+> +	select PWM
+>  	help
+>  	  Support for exporting the PWM timer blocks via the pwm device
+>  	  system
+
+You could add
+
+	select PWM_SAMSUNG
+
+here to side-step the issue below.
+
+> diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> index 8fc3808..34c8ec1 100644
+> --- a/drivers/pwm/Kconfig
+> +++ b/drivers/pwm/Kconfig
+> @@ -59,7 +59,7 @@ config PWM_PXA
+> =20
+>  config PWM_SAMSUNG
+>  	tristate "Samsung pwm support"
+> -	depends on PLAT_SAMSUNG
+> +	def_bool PLAT_SAMSUNG
+
+tristate and def_bool conflict, don't they? I think the easiest way to
+solve this problem would be to add a default line, like so:
+
+	default PLAT_SAMSUNG
+
+I've checked this with a s3c2410_defconfig and this causes PWM_SAMSUNG
+to be selected =3Dy, which I guess is what you want.
+
+Thierry
+
+--FCuugMFkClbJLl1L
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQIgL2AAoJEN0jrNd/PrOhN7oP+wQ7NLlEROotXlnefUf1Hs+M
+ANRtdLlnnbiHxGEjKjKYh0g87b52aIPIz8rcNsO0ivfszHTqVJQc5KgiGPWK9HmS
+ij5ri9/kA57PsQEWROEdhNHESycrktGaW27OkV9+TZP7PmQKA13Qn1MLKHGPwyqQ
+hzFPHQQXK7Ekj426rptEjER1EBObSTBUzJj4uRvcTLJVY6euHtNRRwOYUPtjwK+M
+30y2VlymWsZjPsGLyCLJx6YIb3ewwr+q1ftdwRO3lC5Cgyhmd4DA2yfvozJACcOj
+nqH5kt9+Qth97qEnHpK71OdL4or8G721Fuwa3rX5RswKgJ83rRHuHPucuB6yugM2
+TOmjiQa0VjMNtm2mTbDaW5ya0Z6ynXjgpHb7btrXqi5W/0W8dD9xrsTr41gf9r6b
+mtwD36EzalesqRAMLGUhHTuQKBZMXK8i8lbhjpsxtfraRFfBFUXBlfAdbCt7Zg5b
+4ah3R3R4WhV/6/2fEB1JAiRtPyJHLn8eMb3wTo80DbFJiyeYHbtSdYv4g65uc3J4
+QQbLqquKJNlUFXscrlNuKHTdfxgVFUM9ppkWEafuWAYxT06g5zgGoQEEuXjZvWYm
+UbO17aCPkKvL3kALKZep6naPB4Wc6Y0Jrs6DXTJL4SEcVD7Y7tTQU1vcRtNSgUCM
+R+Z/ChvmlJ/y0FuCVWCk
+=Ny56
+-----END PGP SIGNATURE-----
+
+--FCuugMFkClbJLl1L--
