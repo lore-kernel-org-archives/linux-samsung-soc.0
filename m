@@ -1,67 +1,63 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] ODROID-X: hkdk4412: Add new hardware based on Exynos4412
-Date: Wed, 08 Aug 2012 11:23:30 +0900
-Message-ID: <0a4301cd750c$cd29d2e0$677d78a0$%kim@samsung.com>
+From: Dongjin Kim <Dongjin.Kim@agreeyamobility.net>
+Subject: =?utf-8?B?7ZqM7IugOiBbUEFUQ0ggdjJdIE9EUk9JRC1YOiBoa2RrNDQxMjogQWRkIG5l?=
+ =?utf-8?Q?w_hardware_based_on_Exynos4412?=
+Date: Wed, 8 Aug 2012 02:41:03 +0000
+Message-ID: <A6A3B7488C419F488E5B13FFD03C08AD2F43CB39@BL2PRD0510MB363.namprd05.prod.outlook.com>
 References: <1344262254-14648-1-git-send-email-dongjin.kim@agreeyamobility.net>
- <1344365401-18591-1-git-send-email-dongjin.kim@agreeyamobility.net>
+ <1344365401-18591-1-git-send-email-dongjin.kim@agreeyamobility.net>,<0a4301cd750c$cd29d2e0$677d78a0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30162 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753587Ab2HHCXc convert rfc822-to-8bit (ORCPT
+Received: from db3ehsobe004.messaging.microsoft.com ([213.199.154.142]:27988
+	"EHLO db3outboundpool.messaging.microsoft.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1754477Ab2HHClP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 7 Aug 2012 22:23:32 -0400
-In-reply-to: <1344365401-18591-1-git-send-email-dongjin.kim@agreeyamobility.net>
-Content-language: ko
+	Tue, 7 Aug 2012 22:41:15 -0400
+In-Reply-To: <0a4301cd750c$cd29d2e0$677d78a0$%kim@samsung.com>
+Content-Language: ko-KR
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Dongjin Kim' <tobetter@gmail.com>
-Cc: 'Dongjin Kim' <dongjin.kim@agreeyamobility.net>, 'Russell King' <linux@arm.linux.org.uk>, 'Tony Lindgren' <tony@atomide.com>, 'Jon Medhurst' <tixy@yxit.co.uk>, 'Shawn Guo' <shawn.guo@linaro.org>, =?UTF-8?Q?'Uwe_Kleine-K=C3=B6nig'?= <u.kleine-koenig@pengutronix.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Dongjin Kim' <tobetter@gmail.com>
+Cc: 'Russell King' <linux@arm.linux.org.uk>, 'Tony Lindgren' <tony@atomide.com>, 'Jon Medhurst' <tixy@yxit.co.uk>, 'Shawn Guo' <shawn.guo@linaro.org>, =?utf-8?B?J1V3ZSBLbGVpbmUtS8O2bmlnJw==?= <u.kleine-koenig@pengutronix.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 
-Dongjin Kim wrote:
-> 
-Hi,
-
-Basically, we don't add more board file for non-DT for EXYNOS SoCs...
-
-> The HKDK4412 is the CPU module developed by Hardkernel which is based on
-> Exynos 4412.  mach_hkdk4412.c is to run on ODROID-X hardware and Machine
-> ID
-> (4289) is registered.
-> 
-This should be done at the link: http://www.arm.linux.org.uk/developer/machines/ by Russell King.
-
-But I'm not sure whether it is worth to you without this patch for board file in mainline.
-
-> Changes in v2:
->   -. Change regulator's display names
-> 
-> Change-Id: Iea6825a17b2e13f96bc6d892dd5135cad899b5df
-
-No need gerrit Change-Id here.
-
-> Signed-off-by: Dongjin Kim <dongjin.kim@agreeyamobility.net>
-
-If there is no reason, please use same e-mail address in the field of author and sign-off.
-
-Note, if you want to use e-mail 'agreeyamobility.net', just add 'From: Dongjin Kim <dongjin.kim@agreeyamobility.net>', it's ok.
-
-> ---
->  arch/arm/mach-exynos/Kconfig         |   23 +
->  arch/arm/mach-exynos/Makefile        |    1 +
->  arch/arm/mach-exynos/mach-hkdk4412.c |  964
-> ++++++++++++++++++++++++++++++++++
->  arch/arm/tools/mach-types            |    1 +
->  4 files changed, 989 insertions(+)
->  create mode 100644 arch/arm/mach-exynos/mach-hkdk4412.c
-> 
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+SGksDQoNClRoYW5rIHlvdSBmb3IgeW91ciBhZHZpY2UuDQoNCkFuZCBJIGRpZG4ndCBrbm93IG5v
+bi1EVCBib2FyZCBmaWxlIHdpbGwgbm90IGJlIG1lcmdlZCBhbnkgbW9yZS4NClJ1bGUgaXMgcnVs
+ZSwgSSBjYW4gbWFuYWdlIHRoZSBmaWxlIGluIG15IGdpdCBvbmx5Lg0KDQpJIGFtIHZlcnkgbmV3
+IHRvIHNlbmQgZ2l0IHBhdGNoZXMgdG8gb3BlbiBjb21tdW5pdHksIGV2ZW4gSSB1c2UgZ2l0IG9u
+IG15IHByZXZpb3VzIHByb2plY3QuDQpJIHdpbGwgcGF5IGF0dGVudGlvbiB0byBteSBuZXh0IHBh
+dGNoZXMgaWYgSSBoYXZlIG1vcmUuIDopDQoNClRoYW5rcyBhZ2Fpbi4NCg0KUmVnYXJkcywNCkRv
+bmdqaW4uDQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQrrs7Trgrgg
+7IKs656MOiBLdWtqaW4gS2ltIFtrZ2VuZS5raW1Ac2Ftc3VuZy5jb21dDQrrs7Trgrgg64Kg7Kec
+OiAyMDEy64WEIDjsm5QgOOydvCDsiJjsmpTsnbwg7Jik7KCEIDExOjIzDQrrsJvripQg7IKs656M
+OiAnRG9uZ2ppbiBLaW0nDQrssLjsobA6IERvbmdqaW4gS2ltOyAnUnVzc2VsbCBLaW5nJzsgJ1Rv
+bnkgTGluZGdyZW4nOyAnSm9uIE1lZGh1cnN0JzsgJ1NoYXduIEd1byc7ICdVd2UgS2xlaW5lLUvD
+tm5pZyc7IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgbGludXgtc2Ftc3Vu
+Zy1zb2NAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQrsoJzr
+qqk6IFJFOiBbUEFUQ0ggdjJdIE9EUk9JRC1YOiBoa2RrNDQxMjogQWRkIG5ldyBoYXJkd2FyZSBi
+YXNlZCBvbiBFeHlub3M0NDEyDQoNCkRvbmdqaW4gS2ltIHdyb3RlOg0KPg0KSGksDQoNCkJhc2lj
+YWxseSwgd2UgZG9uJ3QgYWRkIG1vcmUgYm9hcmQgZmlsZSBmb3Igbm9uLURUIGZvciBFWFlOT1Mg
+U29Dcy4uLg0KDQo+IFRoZSBIS0RLNDQxMiBpcyB0aGUgQ1BVIG1vZHVsZSBkZXZlbG9wZWQgYnkg
+SGFyZGtlcm5lbCB3aGljaCBpcyBiYXNlZCBvbg0KPiBFeHlub3MgNDQxMi4gIG1hY2hfaGtkazQ0
+MTIuYyBpcyB0byBydW4gb24gT0RST0lELVggaGFyZHdhcmUgYW5kIE1hY2hpbmUNCj4gSUQNCj4g
+KDQyODkpIGlzIHJlZ2lzdGVyZWQuDQo+DQpUaGlzIHNob3VsZCBiZSBkb25lIGF0IHRoZSBsaW5r
+OiBodHRwOi8vd3d3LmFybS5saW51eC5vcmcudWsvZGV2ZWxvcGVyL21hY2hpbmVzLyBieSBSdXNz
+ZWxsIEtpbmcuDQoNCkJ1dCBJJ20gbm90IHN1cmUgd2hldGhlciBpdCBpcyB3b3J0aCB0byB5b3Ug
+d2l0aG91dCB0aGlzIHBhdGNoIGZvciBib2FyZCBmaWxlIGluIG1haW5saW5lLg0KDQo+IENoYW5n
+ZXMgaW4gdjI6DQo+ICAgLS4gQ2hhbmdlIHJlZ3VsYXRvcidzIGRpc3BsYXkgbmFtZXMNCj4NCj4g
+Q2hhbmdlLUlkOiBJZWE2ODI1YTE3YjJlMTNmOTZiYzZkODkyZGQ1MTM1Y2FkODk5YjVkZg0KDQpO
+byBuZWVkIGdlcnJpdCBDaGFuZ2UtSWQgaGVyZS4NCg0KPiBTaWduZWQtb2ZmLWJ5OiBEb25namlu
+IEtpbSA8ZG9uZ2ppbi5raW1AYWdyZWV5YW1vYmlsaXR5Lm5ldD4NCg0KSWYgdGhlcmUgaXMgbm8g
+cmVhc29uLCBwbGVhc2UgdXNlIHNhbWUgZS1tYWlsIGFkZHJlc3MgaW4gdGhlIGZpZWxkIG9mIGF1
+dGhvciBhbmQgc2lnbi1vZmYuDQoNCk5vdGUsIGlmIHlvdSB3YW50IHRvIHVzZSBlLW1haWwgJ2Fn
+cmVleWFtb2JpbGl0eS5uZXQnLCBqdXN0IGFkZCAnRnJvbTogRG9uZ2ppbiBLaW0gPGRvbmdqaW4u
+a2ltQGFncmVleWFtb2JpbGl0eS5uZXQ+JywgaXQncyBvay4NCg0KPiAtLS0NCj4gIGFyY2gvYXJt
+L21hY2gtZXh5bm9zL0tjb25maWcgICAgICAgICB8ICAgMjMgKw0KPiAgYXJjaC9hcm0vbWFjaC1l
+eHlub3MvTWFrZWZpbGUgICAgICAgIHwgICAgMSArDQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9t
+YWNoLWhrZGs0NDEyLmMgfCAgOTY0DQo+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+KysNCj4gIGFyY2gvYXJtL3Rvb2xzL21hY2gtdHlwZXMgICAgICAgICAgICB8ICAgIDEgKw0KPiAg
+NCBmaWxlcyBjaGFuZ2VkLCA5ODkgaW5zZXJ0aW9ucygrKQ0KPiAgY3JlYXRlIG1vZGUgMTAwNjQ0
+IGFyY2gvYXJtL21hY2gtZXh5bm9zL21hY2gtaGtkazQ0MTIuYw0KPg0KDQpUaGFua3MuDQoNCkJl
+c3QgcmVnYXJkcywNCktnZW5lLg0KLS0NCkt1a2ppbiBLaW0gPGtnZW5lLmtpbUBzYW1zdW5nLmNv
+bT4sIFNlbmlvciBFbmdpbmVlciwNClNXIFNvbHV0aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1
+bmcgRWxlY3Ryb25pY3MgQ28uLCBMdGQuDQoNCg0K
