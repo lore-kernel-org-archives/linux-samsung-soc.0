@@ -1,93 +1,55 @@
-From: Sachin Kamat <sachin.kamat@linaro.org>
-Subject: [PATCH] ARM: Exynos: Enable DT support by default for Exynos5 SoC
-Date: Thu,  9 Aug 2012 09:45:19 +0530
-Message-ID: <1344485719-26111-1-git-send-email-sachin.kamat@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:46115 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751684Ab2HIEQx (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Aug 2012 00:16:53 -0400
-Received: by pbbrr13 with SMTP id rr13so221434pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 08 Aug 2012 21:16:52 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thierry Reding <thierry.reding@avionic-design.de>
+Subject: Re: [PATCH v2 1/3] pwm: samsung: add missing device pointer to
+ struct pwm_chip
+Date: Thu, 9 Aug 2012 07:44:33 +0200
+Message-ID: <20120809054433.GB29806@avionic-0098.mockup.avionic-design.de>
+References: <001601cd7143$a29d0780$e7d71680$%han@samsung.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <001601cd7143$a29d0780$e7d71680$%han@samsung.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-Since support for Exynos5 SoC based boards is going to be only
-device tree (DT) based, it makes no sense to provide DT as a user
-selectable feature in menuconfig (De-selecting it gives
-"no machine record defined" linker error). Hence enabling it along with
-ARCH_EXYNOS5 option.
 
-Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
----
- arch/arm/mach-exynos/Kconfig       |   17 +++++------------
- arch/arm/mach-exynos/Makefile      |    2 +-
- arch/arm/mach-exynos/Makefile.boot |    2 +-
- 3 files changed, 7 insertions(+), 14 deletions(-)
+--ZoaI/ZTpAVc4A5k6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index b5b4c8c..72abbb8 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -20,10 +20,13 @@ config ARCH_EXYNOS4
- 	  Samsung EXYNOS4 SoCs based systems
- 
- config ARCH_EXYNOS5
--	bool "SAMSUNG EXYNOS5"
-+	bool "SAMSUNG EXYNOS5 (using DT)"
- 	select HAVE_SMP
-+	select USE_OF
-+	select ARM_AMBA
- 	help
--	  Samsung EXYNOS5 (Cortex-A15) SoC based systems
-+	  Samsung EXYNOS5 (Cortex-A15) SoC based systems using
-+	  device tree (DT)
- 
- comment "EXYNOS SoCs"
- 
-@@ -411,16 +414,6 @@ config MACH_EXYNOS4_DT
- 	  Note: This is under development and not all peripherals can be supported
- 	  with this machine file.
- 
--config MACH_EXYNOS5_DT
--	bool "SAMSUNG EXYNOS5 Machine using device tree"
--	depends on ARCH_EXYNOS5
--	select SOC_EXYNOS5250
--	select USE_OF
--	select ARM_AMBA
--	help
--	  Machine support for Samsung Exynos4 machine with device tree enabled.
--	  Select this if a fdt blob is available for the EXYNOS4 SoC based board.
--
- if ARCH_EXYNOS4
- 
- comment "Configuration for HSMMC 8-bit bus width"
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 9b58024..5f04692 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -43,7 +43,7 @@ obj-$(CONFIG_MACH_SMDK4212)		+= mach-smdk4x12.o
- obj-$(CONFIG_MACH_SMDK4412)		+= mach-smdk4x12.o
- 
- obj-$(CONFIG_MACH_EXYNOS4_DT)		+= mach-exynos4-dt.o
--obj-$(CONFIG_MACH_EXYNOS5_DT)		+= mach-exynos5-dt.o
-+obj-$(CONFIG_ARCH_EXYNOS5)		+= mach-exynos5-dt.o
- 
- # device support
- 
-diff --git a/arch/arm/mach-exynos/Makefile.boot b/arch/arm/mach-exynos/Makefile.boot
-index 31bd181..2fc5b8c 100644
---- a/arch/arm/mach-exynos/Makefile.boot
-+++ b/arch/arm/mach-exynos/Makefile.boot
-@@ -2,4 +2,4 @@
- params_phys-y	:= 0x40000100
- 
- dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb
--dtb-$(CONFIG_MACH_EXYNOS5_DT) += exynos5250-smdk5250.dtb
-+dtb-$(CONFIG_ARCH_EXYNOS5) += exynos5250-smdk5250.dtb
--- 
-1.7.4.1
+On Fri, Aug 03, 2012 at 03:45:56PM +0900, Jingoo Han wrote:
+> This patch adds missing device pointer to struct pwm_chip. If the
+> device pointer is NULL, pwmchip_add() will return error.
+>=20
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+
+Thanks, applied to for-next and master.
+
+Thierry
+
+--ZoaI/ZTpAVc4A5k6
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2.0.19 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQI05BAAoJEN0jrNd/PrOhWesQAMFrYxor0rg11Wk0UN2CIQBl
+W3sFO8/5mur23lXNbxZNGLgfHr+T7nVxbzSNCoK4FKMWHTVKSIXPKgT1H1aNCVZi
+1ViV5fpS1ZMhH3Nlf2qjTMxe/U7P73cprgAkDYuy3sv4VICuyXecnG+wjeURifnf
+YW461/zWld3zIhC6s197KKdNSqhvCoznPdLT8cnSrF0S5jweSNeHi1IQi0o3oFio
+8ObeGbRM4zKw8VQ/ic4X+r4EHqZ/4WvpwJZYZw8bQ40XPXJ7qEa7hAGG9yENwVqK
+j+UdRcooba4JPSaRpCGtifyk1hIjtH8B2J4X7dXl3JRJSrM2aNcJvcW/MtTsj3PG
+r+haK2LQRwBWyuxwyvKyZEPfgrzu0C34jOSAVLIFwgDCb/IZ+XOy4FGizQrrSfhG
+W+4Ja8BViPeQCq/OJk59MCp49UZGbo57O36YnWg5VKnHlguUZjY3SDKLuItOOZoZ
+VQ5al9ddcdKQA0hcdydFzXWLpP297uBUA2wLC5f2+QwwpJ3ZYXDBlozExhJQzJi7
+WmTo7nlJQQepd8iqiSKC7by1shwGaGTR8BUa0pbZ7099XBtmoCuCCamWMgu/5PFE
+awlHMWJA3ShozIkU4ZcS73Wh5SvKiyUuOwSKYDj4babr7V0GZX8dd/ojdWL9g14p
+nCrP46kbRnRqr47xQOcJ
+=6rB7
+-----END PGP SIGNATURE-----
+
+--ZoaI/ZTpAVc4A5k6--
