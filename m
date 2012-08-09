@@ -1,55 +1,74 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH v2 1/3] pwm: samsung: add missing device pointer to
- struct pwm_chip
-Date: Thu, 9 Aug 2012 07:44:33 +0200
-Message-ID: <20120809054433.GB29806@avionic-0098.mockup.avionic-design.de>
-References: <001601cd7143$a29d0780$e7d71680$%han@samsung.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ZoaI/ZTpAVc4A5k6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <001601cd7143$a29d0780$e7d71680$%han@samsung.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: [PATCH] ARM: EXYNOS: Use generic pwm driver in Origen board
+Date: Thu,  9 Aug 2012 14:33:55 +0530
+Message-ID: <1344503035-18127-1-git-send-email-tushar.behera@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:64797 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754073Ab2HIJFZ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 9 Aug 2012 05:05:25 -0400
+Received: by pbbrr13 with SMTP id rr13so590173pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Aug 2012 02:05:25 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, linux-kernel@lists.infradead.org
+Cc: thierry.reding@avionic-design.de, kgene.kim@samsung.com, patches@linaro.org
 
+Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
+---
+ arch/arm/mach-exynos/mach-origen.c |   11 +++++++++++
+ 1 files changed, 11 insertions(+), 0 deletions(-)
 
---ZoaI/ZTpAVc4A5k6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Aug 03, 2012 at 03:45:56PM +0900, Jingoo Han wrote:
-> This patch adds missing device pointer to struct pwm_chip. If the
-> device pointer is NULL, pwmchip_add() will return error.
->=20
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-
-Thanks, applied to for-next and master.
-
-Thierry
-
---ZoaI/ZTpAVc4A5k6
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQI05BAAoJEN0jrNd/PrOhWesQAMFrYxor0rg11Wk0UN2CIQBl
-W3sFO8/5mur23lXNbxZNGLgfHr+T7nVxbzSNCoK4FKMWHTVKSIXPKgT1H1aNCVZi
-1ViV5fpS1ZMhH3Nlf2qjTMxe/U7P73cprgAkDYuy3sv4VICuyXecnG+wjeURifnf
-YW461/zWld3zIhC6s197KKdNSqhvCoznPdLT8cnSrF0S5jweSNeHi1IQi0o3oFio
-8ObeGbRM4zKw8VQ/ic4X+r4EHqZ/4WvpwJZYZw8bQ40XPXJ7qEa7hAGG9yENwVqK
-j+UdRcooba4JPSaRpCGtifyk1hIjtH8B2J4X7dXl3JRJSrM2aNcJvcW/MtTsj3PG
-r+haK2LQRwBWyuxwyvKyZEPfgrzu0C34jOSAVLIFwgDCb/IZ+XOy4FGizQrrSfhG
-W+4Ja8BViPeQCq/OJk59MCp49UZGbo57O36YnWg5VKnHlguUZjY3SDKLuItOOZoZ
-VQ5al9ddcdKQA0hcdydFzXWLpP297uBUA2wLC5f2+QwwpJ3ZYXDBlozExhJQzJi7
-WmTo7nlJQQepd8iqiSKC7by1shwGaGTR8BUa0pbZ7099XBtmoCuCCamWMgu/5PFE
-awlHMWJA3ShozIkU4ZcS73Wh5SvKiyUuOwSKYDj4babr7V0GZX8dd/ojdWL9g14p
-nCrP46kbRnRqr47xQOcJ
-=6rB7
------END PGP SIGNATURE-----
-
---ZoaI/ZTpAVc4A5k6--
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 5ca8030..4c4048d 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -15,6 +15,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/io.h>
+ #include <linux/input.h>
++#include <linux/pwm.h>
+ #include <linux/pwm_backlight.h>
+ #include <linux/gpio_keys.h>
+ #include <linux/i2c.h>
+@@ -613,6 +614,10 @@ static struct platform_device origen_lcd_hv070wsa = {
+ 	.dev.platform_data	= &origen_lcd_hv070wsa_data,
+ };
+ 
++static struct pwm_lookup origen_pwm_lookup[] = {
++	PWM_LOOKUP("s3c24xx-pwm.0", 0, "pwm-backlight.0", NULL),
++};
++
+ #ifdef CONFIG_DRM_EXYNOS
+ static struct exynos_drm_fimd_pdata drm_fimd_pdata = {
+ 	.panel	= {
+@@ -681,6 +686,10 @@ static struct platform_device origen_device_bluetooth = {
+ 	},
+ };
+ 
++static struct platform_device origen_device_pwm = {
++	.name = "s3c24xx-pwm.0",
++};
++
+ static struct platform_device *origen_devices[] __initdata = {
+ 	&s3c_device_hsmmc2,
+ 	&s3c_device_hsmmc0,
+@@ -711,6 +720,7 @@ static struct platform_device *origen_devices[] __initdata = {
+ 	&origen_lcd_hv070wsa,
+ 	&origen_leds_gpio,
+ 	&origen_device_bluetooth,
++	&origen_device_pwm,
+ };
+ 
+ /* LCD Backlight data */
+@@ -791,6 +801,7 @@ static void __init origen_machine_init(void)
+ 
+ 	platform_add_devices(origen_devices, ARRAY_SIZE(origen_devices));
+ 
++	pwm_add_table(origen_pwm_lookup, ARRAY_SIZE(origen_pwm_lookup));
+ 	samsung_bl_set(&origen_bl_gpio_info, &origen_bl_data);
+ 
+ 	origen_bt_setup();
+-- 
+1.7.4.1
