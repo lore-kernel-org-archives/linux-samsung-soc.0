@@ -1,106 +1,78 @@
-From: Thierry Reding <thierry.reding@avionic-design.de>
-Subject: Re: [PATCH] ARM: EXYNOS: Use generic pwm driver in Origen board
-Date: Thu, 9 Aug 2012 13:32:56 +0200
-Message-ID: <20120809113256.GA15402@avionic-0098.mockup.avionic-design.de>
-References: <1344503035-18127-1-git-send-email-tushar.behera@linaro.org>
- <20120809091526.GA693@avionic-0098.mockup.avionic-design.de>
- <50239DEB.5080209@linaro.org>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: [PATCH 1/2] ARM: S3C64XX: Update configuration for WM5102 module on Cragganmore
+Date: Thu,  9 Aug 2012 19:05:48 +0100
+Message-ID: <1344535549-4371-1-git-send-email-broonie@opensource.wolfsonmicro.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.17.8]:57302 "EHLO
-	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932073Ab2HILdE (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:50641 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1758823Ab2HISFz (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Aug 2012 07:33:04 -0400
-Content-Disposition: inline
-In-Reply-To: <50239DEB.5080209@linaro.org>
+	Thu, 9 Aug 2012 14:05:55 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tushar Behera <tushar.behera@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, Jingoo Han <jg1.han@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, Mark Brown <broonie@opensource.wolfsonmicro.com>
 
+SPI is also connected on the board, use that instead of I2C as it's much
+faster. Also define platform data now the core driver is in mainline.
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Mark Brown <broonie@opensource.wolfsonmicro.com>
+---
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c |   35 ++++++++++++++++++++++----
+ 1 file changed, 30 insertions(+), 5 deletions(-)
 
-On Thu, Aug 09, 2012 at 04:54:27PM +0530, Tushar Behera wrote:
-> + linux-kernel@vger.kernel.org
-> - linux-kernel@lists.infradead.org
->=20
-> On 08/09/2012 02:45 PM, Thierry Reding wrote:
-> > On Thu, Aug 09, 2012 at 02:33:55PM +0530, Tushar Behera wrote:
-> >> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> >> ---
-> >>  arch/arm/mach-exynos/mach-origen.c |   11 +++++++++++
-> >>  1 files changed, 11 insertions(+), 0 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos=
-/mach-origen.c
-> >> index 5ca8030..4c4048d 100644
-> >> --- a/arch/arm/mach-exynos/mach-origen.c
-> >> +++ b/arch/arm/mach-exynos/mach-origen.c
-> > [...]
-> >> @@ -613,6 +614,10 @@ static struct platform_device origen_lcd_hv070wsa=
- =3D {
-> >>  	.dev.platform_data	=3D &origen_lcd_hv070wsa_data,
-> >>  };
-> >> =20
-> >> +static struct pwm_lookup origen_pwm_lookup[] =3D {
-> >> +	PWM_LOOKUP("s3c24xx-pwm.0", 0, "pwm-backlight.0", NULL),
-> >> +};
-> >> +
-> >=20
-> > This might conflict with some other patches that Jingoo (Cc'ed) is
-> > working on. His patches were going to rework the Samsung PWM driver to
-> > register multiple PWM devices per chip. In that case the s3c24xx-pwm
-> > device should probably be modified to use .id =3D -1 and then the .0 can
-> > be dropped from the provider name above.
-> >=20
-> > Otherwise this patch looks good to me.
-> >=20
-> > Thierry
-> >=20
-> Thanks for your review.
->=20
-> It was wrong for me to create s3c24xx-pwm platform device as it is
-> already created in samsung_bl_set(). Hence I would be dropping that.
->=20
-> However, dropping .0 from provider name results in following. (as the
-> device name is s3c24xx-pwm.N).
->=20
-> [    0.240000] pwm-backlight pwm-backlight.0: unable to request PWM,
-> trying legacy API
-
-That's to be expected. Dropping the .0 requires further changes to the
-driver and in arch/arm/plat-samsung/devs.c to register only a single
-instance of the s3c24xx-pwm device which can handle all 5 PWM devices.
-This should be done separately, though.
-
-Thierry
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2.0.19 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQI5/oAAoJEN0jrNd/PrOhe7IP/2s0omYmQ1QHaopg1fjEOJk1
-SOYa1Q0cZJ/yLdhm9nWorgRXRsFlCU54TXp6ltINCVePp8b6Rplw5YOY6leCIbi7
-D/XdAXFA3RGZ2PBFvwxt/AeqjTR2KF5oHAuoycwPH3KkeXFt+hSzyVsEzj93JapL
-IFW6zwCrCM0Li5U7qMLgvDEYpjO5Jiv0TbVWnAKddm0y3WxE38VZ/uFMHTY+dDUM
-a81/QwNQRBVWodBZftmjBaBGLeDachws9sTq0sVBIflmae/6wwYr6y9aWV6Wyj1w
-DNF8oSwQ5JQAhLXv+LDbaNi7dnB6rgL0wjVFe939fN8hHvAywR7Hrc31bPFJILrj
-8lEWD+2zCYEApcrRpqRO8SmJMPxCta9gJ4KKrAN8vgXflX98i329UpHI55iqvfJ2
-xI6DX/elnemfkbo80ilejPAzCClJSKKeDjT0m0VJfjPliqKJ9hRzlSko3Wm5G/au
-St/I4ieYxYGl+N3WpYwzu7stdQFwEn5aRqazEK00quGh7t6qbCCSmAXNdx0eMDMN
-elSmf8dPrX806I2QG74X7UpFJUUOmtHqHYKlqKVtOJhATH20yyjRsCgTF9ZZ3ha3
-5fmVavCRudpaLrIr9YKm9h0opgCpXQSrTd/2H0+xehLeXoPHvd51c1tYO6OSJLnB
-XlAtJ1h/bgEf3u35DI+y
-=1oFd
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index f81f089..22dd77b 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -192,9 +192,33 @@ static const struct i2c_board_info wm1277_devs[] = {
+ 	},
+ };
+ 
+-static const struct i2c_board_info wm5102_devs[] = {
+-	{ I2C_BOARD_INFO("wm5102", 0x1a),
+-	  .irq = GLENFARCLAS_PMIC_IRQ_BASE + WM831X_IRQ_GPIO_2, },
++static struct arizona_pdata wm5102_pdata = {
++	.ldoena = S3C64XX_GPN(7),
++	.gpio_base = CODEC_GPIO_BASE,
++	.irq_active_high = true,
++	.micd_pol_gpio = CODEC_GPIO_BASE + 4,
++	.gpio_defaults = {
++		[2] = 0x10000, /* AIF3TXLRCLK */
++		[3] = 0x4,     /* OPCLK */
++	},
++};
++
++static struct s3c64xx_spi_csinfo wm5102_spi_csinfo = {
++	.line = S3C64XX_GPN(5),
++};
++
++static struct spi_board_info wm5102_spi_devs[] = {
++	[0] = {
++		.modalias	= "wm5102",
++		.max_speed_hz	= 10 * 1000 * 1000,
++		.bus_num	= 0,
++		.chip_select	= 0,
++		.mode		= SPI_MODE_0,
++		.irq            = GLENFARCLAS_PMIC_IRQ_BASE +
++				  WM831X_IRQ_GPIO_2,
++		.controller_data = &wm5102_spi_csinfo,
++		.platform_data = &wm5102_pdata,
++	},
+ };
+ 
+ static const struct i2c_board_info wm6230_i2c_devs[] = {
+@@ -234,8 +258,9 @@ static __devinitdata const struct {
+ 	{ .id = 0x3c, .name = "1273-EV1 Longmorn" },
+ 	{ .id = 0x3d, .name = "1277-EV1 Littlemill",
+ 	  .i2c_devs = wm1277_devs, .num_i2c_devs = ARRAY_SIZE(wm1277_devs) },
+-	{ .id = 0x3e, .name = "WM5102-6271-EV1-CS127",
+-	  .i2c_devs = wm5102_devs, .num_i2c_devs = ARRAY_SIZE(wm5102_devs) },
++	{ .id = 0x3e, .name = "WM5102-6271-EV1-CS127 Amrut",
++	  .spi_devs = wm5102_spi_devs,
++	  .num_spi_devs = ARRAY_SIZE(wm5102_spi_devs) },
+ };
+ 
+ static __devinit int wlf_gf_module_probe(struct i2c_client *i2c,
+-- 
+1.7.10.4
