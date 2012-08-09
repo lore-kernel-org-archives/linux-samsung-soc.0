@@ -1,69 +1,36 @@
-From: Felipe Balbi <balbi@ti.com>
-Subject: Re: [PATCH v3 2/5] usb: s3c-hsotg: Adding phy driver support
-Date: Thu, 9 Aug 2012 12:29:39 +0300
-Message-ID: <20120809092938.GK12174@arwen.pp.htv.fi>
+From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v3 1/5] usb: phy: samsung: Introducing usb phy driver for hsotg
+Date: Thu, 9 Aug 2012 15:26:48 +0530
+Message-ID: <CAD6zSYO4b6FXAdAKBnz1xU1TW3=rtqLdnD+X7-K8jxFVTaPtuA@mail.gmail.com>
 References: <1344411661-17821-1-git-send-email-p.paneri@samsung.com>
- <1344411661-17821-3-git-send-email-p.paneri@samsung.com>
-Reply-To: balbi@ti.com
+	<1344411661-17821-2-git-send-email-p.paneri@samsung.com>
+	<20120809092853.GJ12174@arwen.pp.htv.fi>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="SLauP2uySp+9cKYP"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog111.obsmtp.com ([74.125.149.205]:59840 "EHLO
-	na3sys009aog111.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756548Ab2HIJdS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 9 Aug 2012 05:33:18 -0400
-Received: by lbbgg6 with SMTP id gg6so186266lbb.31
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Aug 2012 02:33:15 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1344411661-17821-3-git-send-email-p.paneri@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20120809092853.GJ12174-S8G//mZuvNWo5Im9Ml3/Zg@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: balbi-l0cyMroinI0@public.gmane.org
+Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Praveen Paneri <p.paneri@samsung.com>
-Cc: linux-usb@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de
 
+On Thu, Aug 9, 2012 at 2:58 PM, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org> wrote:
+> On Wed, Aug 08, 2012 at 01:10:57PM +0530, Praveen Paneri wrote:
+>> +static int __init samsung_usbphy_driver_init(void)
+>> +{
+>> +     return platform_driver_register(&samsung_usbphy_driver);
+>> +}
+>> +subsys_initcall(samsung_usbphy_driver_init);
+>
+> let's make use of the module_platform_driver() and have dependent
+> drivers return -EPROBE_DEFER until this has registered.
+Thanks! I will modify accordingly and resend.
 
---SLauP2uySp+9cKYP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Aug 08, 2012 at 01:10:58PM +0530, Praveen Paneri wrote:
-> @@ -3689,6 +3706,9 @@ static int __devexit s3c_hsotg_remove(struct platfo=
-rm_device *pdev)
->  	s3c_hsotg_phy_disable(hsotg);
->  	regulator_bulk_free(ARRAY_SIZE(hsotg->supplies), hsotg->supplies);
-> =20
-> +	if (hsotg->phy)
-> +		devm_usb_put_phy(&pdev->dev, hsotg->phy);
-
-unnecessary. This will be called for you when the platform_device object
-is detroyed.
-
---=20
-balbi
-
---SLauP2uySp+9cKYP
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.12 (GNU/Linux)
-
-iQIcBAEBAgAGBQJQI4MCAAoJEIaOsuA1yqREbL8QAIB9AfQJJzseM2wD3v2u6dWK
-m6BjfOfDlRM5KVGAWlzbe6cOTIzcxfmw9IOE4lh3aVZDxTG95V4gYCcRoE9hYHR0
-OElsR4gEvvFb97rciC4InWwrA+W6o06vx8Qm57P5dxoSonpV9cyEYg8vFsHglU5g
-dsx5TyHDjtgug8MuwDc2ncrIjVxLLd8RFtDJ0Ntx/O1prkn/FGT/Jy6zIbT/jrJQ
-6ZPNvGaTTYEuNMv38C4c9oVaumdHAMnhGfBavfA4K13uSPSHBCbYmd/XT3son/8s
-+PVtPYCYsAy2Psl9az+Um43oWteJVaIbupxYBM71seik1n7atPwBfpgq61/JDtFh
-KAtJB505FOGOUgX0KwkdgF2qySMsDZl7CGeG8nV1HUooZbMsrIjtg3IuY6HwOeiC
-g9QC9JK38yWdROwlzCWO3lwhidnCPF85II3rchASYXyT8cnyzrCsuLjGiuKQHuYI
-JZSNydFU8lAp/Xp2UPsYnaU6GA05subI/rD3CO+NNqe77gJ9WXOzaALh/kY5qqsF
-cq0fMB6EjoXm3to3WpjEFMDzpwVZy+t0kVxr4FdvPXDZ1OD3lTqdc/4sRfySaiFX
-TQqDIRPIrh5ZmrtFG30I8zG0KcKwU+BJrGJ5AkgXHk+JgKZk78tVyj88BPOTGzqb
-25wphfQGn62semXxbqMn
-=o1se
------END PGP SIGNATURE-----
-
---SLauP2uySp+9cKYP--
+Praveen
+>
+> --
+> balbi
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
