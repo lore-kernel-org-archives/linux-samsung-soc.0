@@ -1,75 +1,73 @@
-From: Praveen Paneri <p.paneri@samsung.com>
-Subject: Re: [PATCH v3 0/5] usb: phy: samsung: Introducing usb phy driver for
- samsung SoCs
-Date: Fri, 10 Aug 2012 11:54:32 +0530
-Message-ID: <CAD6zSYMC072bMqMPTmsH4ZzTAd4OmFk5TVpcxAAu82b7J9jNHw@mail.gmail.com>
-References: <1344411661-17821-1-git-send-email-p.paneri@samsung.com>
-	<502464FE.3000908@samsung.com>
-	<CAD6zSYP33PDrXwifQM=7q+Esk1X7m5+DNG_=A2a-qTENk4zq8w@mail.gmail.com>
-	<20120810061616.GC1689@arwen.pp.htv.fi>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: Re: [PATCH] ARM: Exynos: Enable DT support by default for Exynos5 SoC
+Date: Fri, 10 Aug 2012 11:57:25 +0530
+Message-ID: <CAK9yfHzH-gP0ym7JSe9f25X+V_DM4q=S-JCKuwOjav+U8Jn0CA@mail.gmail.com>
+References: <1344485719-26111-1-git-send-email-sachin.kamat@linaro.org>
+	<0dd501cd76bf$69f271a0$3dd754e0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:52298 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752849Ab2HJGYd (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:62889 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754355Ab2HJG10 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 10 Aug 2012 02:24:33 -0400
-In-Reply-To: <20120810061616.GC1689@arwen.pp.htv.fi>
+	Fri, 10 Aug 2012 02:27:26 -0400
+Received: by vbbff1 with SMTP id ff1so815999vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 09 Aug 2012 23:27:26 -0700 (PDT)
+In-Reply-To: <0dd501cd76bf$69f271a0$3dd754e0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: balbi@ti.com
-Cc: Joonyoung Shim <jy0922.shim@samsung.com>, linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-On Fri, Aug 10, 2012 at 11:46 AM, Felipe Balbi <balbi@ti.com> wrote:
-> HI,
->
-> On Fri, Aug 10, 2012 at 11:17:29AM +0530, Praveen Paneri wrote:
->> On Fri, Aug 10, 2012 at 7:03 AM, Joonyoung Shim <jy0922.shim@samsung.com> wrote:
->> > Hi, Praveen.
->> >
->> >
->> > On 08/08/2012 04:40 PM, Praveen Paneri wrote:
->> >>
->> >> Changes from v2:
->> >> Changed the driver filenames to samsung-usbphy
->> >> Changed 's3c' to 'samsung' for platform device as well as platform data
->> >> Moved platform data structure to a separate file
->> >> Rectified coding style related errors
->> >>
->> >> Changes from v1:
->> >> Rebased patches to latest usb-next branch
->> >> Changed the name 'sec_usbphy' to 'samsung_usbphy'
->> >>
->> >> This patch set introduces a phy driver for samsung SoCs. It uses the
->> >> existing
->> >> transceiver infrastructure to provide phy control functions. Use of this
->> >> driver
->> >> can be extended for usb host phy as well.
->> >
->> >
->> > How can you support usb host phy? I cannot choose to use which phy when
->> > call init or shutdown of phy at current phy framework.
->
-> correct. Curretly that's not supported. We are trying to come up with
-> proper DeviceTree bindings to allow that. Kishon has been working on
-> providing devm_usb_get_phy_by_phandle() would should help achieving what
-> you need.
->
->> If you are talking about choosing between PHY0 (for device) and PHY1
->> (for host), I think you can make use of the flags available in usb_phy
->> to pass that information to phy driver and that can be handled there.
->
-> I rather you didn't do it that way. Those flags are used to pass
-> features to the PHY. See drivers/usb/otg/ulpi.c, for instance.
->
->> This is just one way I have successfully implement two different phy
->> control. There might be a better way to do that.
->
-> I guess using DT phandles is the way to go here.
-off-course! That is why I haven't included host support as of now.
+On 10 August 2012 11:44, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> Sachin Kamat wrote:
+>>
+>> Since support for Exynos5 SoC based boards is going to be only
+>> device tree (DT) based, it makes no sense to provide DT as a user
+>> selectable feature in menuconfig (De-selecting it gives
+>> "no machine record defined" linker error). Hence enabling it along with
+>> ARCH_EXYNOS5 option.
+>>
+> Yeah, it's true supporting EXYNOS5 SoCs is available only on DT. But I think
+> this is not needed and current method is more clear with EXYNOS4.
 
-Praveen
+Exynos4 supports both DT as well as non-DT platforms. Hence it is
+appropriate to have DT as a user selectable option in Exynos4 case.
+
 >
+> Note, 'exynos_defconfig' in mainline is supporting EXYNOS4 and EXYNOS5 DT
+> together.
+
+Even this config provides a user selectable DT option for Exynos5.
+When there is no possibility of having a non-DT platform for Exynos5
+(atleast as of now), I do not see the need to provide a user
+selectable option (it also leads to build errors with played around
+with as mentioned in my patch) for DT for Exynos5 as it _has_ to be
+enabled if one needs to build the kernel for Exynos5 machines.
+
+>
+>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+>> Signed-off-by: Sachin Kamat <sachin.kamat@samsung.com>
+>
+> BTW, I commented on other patch, I don't see why you need to keep the
+> duplicated signoff?
+
+Please refer to my reply to previous patch.
+
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
 > --
-> balbi
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+
+
+
+-- 
+With warm regards,
+Sachin
