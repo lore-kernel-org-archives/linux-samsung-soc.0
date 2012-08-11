@@ -1,70 +1,50 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v3 2/2] ARM: EXYNOS: Add Gscaler device from DT
-Date: Sat, 11 Aug 2012 13:08:20 +0900
-Message-ID: <0efb01cd7776$f1b6fcc0$d524f640$%kim@samsung.com>
-References: <1342789723-3949-1-git-send-email-shaik.ameer@samsung.com>
- <1342789723-3949-3-git-send-email-shaik.ameer@samsung.com>
- <033301cd6fb0$7ac4af90$704e0eb0$%kim@samsung.com>
- <CAJuYYwTy5zkeM_cJO7HMm+=v=ORPHD26nQYZwXK6v1noWm1EuA@mail.gmail.com>
- <5018E656.3070803@samsung.com>
- <036f01cd6fc4$120a9910$361fcb30$%kim@samsung.com> <50197D66.1050108@gmail.com>
- <CAOesGMiZMrv4GY=v1WPn_qGZgg=vduO2TbsUOQ6sCah-ZvOg_A@mail.gmail.com>
- <501B1003.1090003@gmail.com>
- <CAOD6ATomKE3WYtGrBTSyjfkNr5ZK+3=NRrZLX0p5pOzPykOikQ@mail.gmail.com>
- <5020164E.90007@gmail.com>
+Subject: RE: [PATCH 1/2] ARM: S3C64XX: Update configuration for WM5102 module
+ on Cragganmore
+Date: Sat, 11 Aug 2012 14:08:09 +0900
+Message-ID: <0eff01cd777f$4c9d1f90$e5d75eb0$%kim@samsung.com>
+References: <1344535549-4371-1-git-send-email-broonie@opensource.wolfsonmicro.com>
+ <0db901cd76b4$7daf1730$790d4590$%kim@samsung.com>
+ <20120810100713.GH24328@opensource.wolfsonmicro.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:20137 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750850Ab2HKEIX (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57469 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750943Ab2HKFIL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 11 Aug 2012 00:08:23 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
+	Sat, 11 Aug 2012 01:08:11 -0400
+Received: from epcpsbgm1.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M8K00G02OTXMH00@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 11 Aug 2012 13:08:21 +0900 (KST)
+ 17 2011)) with ESMTP id <0M8K000YLRLFE700@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 11 Aug 2012 14:08:09 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M8K005K1OTW9D30@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 11 Aug 2012 13:08:21 +0900 (KST)
-In-reply-to: 
+ with ESMTPA id <0M8K008RURLL8V10@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 11 Aug 2012 14:08:09 +0900 (KST)
+In-reply-to: <20120810100713.GH24328@opensource.wolfsonmicro.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Shaik Ameer Basha' <shaik.samsung@gmail.com>
-Cc: 'Olof Johansson' <olof@lixom.net>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, sy0816.kang@samsung.com, olofj@google.com, thomas.ab@samsung.com, sachin.kamat@linaro.org, joshi@samsung.com, sungchun.kang@samsung.com, 'Rob Herring' <rob.herring@calxeda.com>
+To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
 
-Kukjin Kim wrote:
+Mark Brown wrote:
 > 
-> Sylwester Nawrocki wrote:
-> >
-> > On 08/06/2012 08:27 AM, Shaik Ameer Basha wrote:
-> > > After all this discussion, I can see two possibilities here.
-> > > 1] If Kukjin Kim is sure about G-Scaler remains unchanged, across all
-> > > the exynos5 series SoCs,
-> > >          It is fine to go with the compatible string
-"samsung,exynos5-
-> gsc".
-> > > 2] Otherwise in case of any doubts about G-Scaler is going to change,
-> > >          It is safe to go with the compatible string specific to
-> > > current SoC i.e., "samsung,exynos5250-gsc".
-> > >
-> > > If we all can agree on this, lets Kukjin Kim decide which string to
-> > > use as he has good knowledge about upcoming exynos5 series SoCs.
-> >
-> > I don't have strong opinion on this, but my vote goes for using more
-> > specific properties. Of course the final word belongs to Mr. Kim.
-> >
-> Thanks, and I will discuss with exynos hardware chip designers about that,
-> then let you know.
+> On Fri, Aug 10, 2012 at 01:56:23PM +0900, Kukjin Kim wrote:
 > 
-'exynos5-gsc' should be ok on EXYNOS5250 and upcoming EXYNOS5 SoCs.
+> > Probably, this patch needs following?
+> 
+> > If you're ok, I will fix build error by above when I apply.
+> 
+> Yes, thanks.
 
-If any updates, I'll let you know.
+Applied.
+
+BTW, don't you need to enable your Cragganmore board in the defconfig?
 
 Thanks.
 
@@ -73,3 +53,42 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [PATCH] ARM: s3c6400_defconfig: enable more boards in defconfig
+
+This enables all of s3c64xx boards in the s3c6400_defconfig.
+In this time, MINI6410, REAL6410, and WLF_CRAGG_6410 are
+added in the defconfig.
+
+Cc: Darius Augulis <augulis.darius@gmail.com>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
+---
+ arch/arm/configs/s3c6400_defconfig |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/configs/s3c6400_defconfig
+b/arch/arm/configs/s3c6400_defconfig
+index ba6a515..3a186d6 100644
+--- a/arch/arm/configs/s3c6400_defconfig
++++ b/arch/arm/configs/s3c6400_defconfig
+@@ -9,11 +9,14 @@ CONFIG_ARCH_S3C64XX=y
+ CONFIG_S3C_BOOT_ERROR_RESET=y
+ CONFIG_MACH_SMDK6400=y
+ CONFIG_MACH_ANW6410=y
++CONFIG_MACH_MINI6410=y
++CONFIG_MACH_REAL6410=y
+ CONFIG_MACH_SMDK6410=y
+ CONFIG_MACH_NCP=y
+ CONFIG_MACH_HMT=y
+ CONFIG_MACH_SMARTQ5=y
+ CONFIG_MACH_SMARTQ7=y
++CONFIG_MACH_WLF_CRAGG_6410=y
+ CONFIG_CPU_32v6K=y
+ CONFIG_AEABI=y
+ CONFIG_CMDLINE="console=ttySAC0,115200 root=/dev/ram init=/linuxrc
+initrd=0x51000000,6M ramdisk_size=6144"
+-- 
+1.7.4.1
