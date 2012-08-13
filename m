@@ -1,30 +1,40 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH 1/2] ARM: S3C64XX: Update configuration for WM5102 module
- on Cragganmore
-Date: Mon, 13 Aug 2012 13:24:00 +0100
-Message-ID: <20120813122359.GA13446@opensource.wolfsonmicro.com>
-References: <1344535549-4371-1-git-send-email-broonie@opensource.wolfsonmicro.com>
- <0db901cd76b4$7daf1730$790d4590$%kim@samsung.com>
- <20120810100713.GH24328@opensource.wolfsonmicro.com>
- <0eff01cd777f$4c9d1f90$e5d75eb0$%kim@samsung.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Unbalanced calls to spi_master_get in coldfire-qspi and s3c64xx SPI
+ master drivers
+Date: Mon, 13 Aug 2012 14:44:25 -0700
+Message-ID: <20120813214425.GA19547@roeck-us.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:46405 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751665Ab2HMMYD (ORCPT
+Received: from mail.active-venture.com ([67.228.131.205]:55058 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752688Ab2HMVoZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Aug 2012 08:24:03 -0400
+	Mon, 13 Aug 2012 17:44:25 -0400
 Content-Disposition: inline
-In-Reply-To: <0eff01cd777f$4c9d1f90$e5d75eb0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com
+To: spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>, Grant Likely <grant.likely@secretlab.ca>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
 
-On Sat, Aug 11, 2012 at 02:08:09PM +0900, Kukjin Kim wrote:
+Hi all,
 
-> BTW, don't you need to enable your Cragganmore board in the defconfig?
+looking through SPI master drivers, I noticed that the following drivers call
+spi_master_get() in their suspend and resume functions. Yet, there is no
+matching call to spi_master_put(), meaning the reference count will increase
+with each suspend/resume cycle.
+	spi-coldfire-qspi.c
+	spi-s3c64xx.c
+Other SPI master drivers also support suspend and resume, but do not call
+spi_master_get() in the suspend/resume functions. The spi-pl022 driver calls
+spi_master_suspend() and spi_master_resume() like the above, but does not
+call spi_master_get() either.
 
-Well, it doesn't really matter that much to us - it's more a question
-for whoever uses the defconfig.
+This leads me to believe that the above drivers will hang on unload after a
+suspend/resume cycle due to the extra references.
+
+Can someone please have a look and confirm if my understanding is correct ?
+If so I'll send a set of patches to fix the problems.
+
+Thanks,
+Guenter
