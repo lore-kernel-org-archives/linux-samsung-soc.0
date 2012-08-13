@@ -1,55 +1,150 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH] ARM: S5PV310: Set bit 22 in the PL310 (cache
- controller) AuxCtlr register
-Date: Mon, 13 Aug 2012 08:39:44 +0100
-Message-ID: <20120813073944.GA13508@arm.com>
-References: <1289976931-9759-1-git-send-email-kgene.kim@samsung.com>
- <1289984848.2351.2.camel@e102109-lin.cambridge.arm.com>
- <CAPub14_9vNoiOMEeBDSkJo6NQaazcNvAYu8oD_E2ReEYLfrX+A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Shaik Ameer Basha <shaik.ameer@samsung.com>
+Subject: [PATCH v4 1/2] ARM: EXYNOS: Add clock support for G-Scaler
+Date: Mon, 13 Aug 2012 15:32:23 +0530
+Message-ID: <1344852144-25598-2-git-send-email-shaik.ameer@samsung.com>
+References: <1344852144-25598-1-git-send-email-shaik.ameer@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:55414 "EHLO
-	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751797Ab2HMHzn (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:34256 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751379Ab2HMJUh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 13 Aug 2012 03:55:43 -0400
-Content-Disposition: inline
-In-Reply-To: <CAPub14_9vNoiOMEeBDSkJo6NQaazcNvAYu8oD_E2ReEYLfrX+A@mail.gmail.com>
+	Mon, 13 Aug 2012 05:20:37 -0400
+Received: from epcpsbgm2.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M8O004EBSLWS7M0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 13 Aug 2012 18:20:36 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M8O00L6USLWO650@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 13 Aug 2012 18:20:36 +0900 (KST)
+In-reply-to: <1344852144-25598-1-git-send-email-shaik.ameer@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: shiraz hashim <shiraz.linux.kernel@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "ben-linux@fluff.org" <ben-linux@fluff.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Changhwan Youn <chaos.youn@samsung.com>, "stable@kernel.org" <stable@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, olofj@google.com, thomas.ab@samsung.com, sylvester.nawrocki@gmail.com, joshi@samsung.com, shaik.samsung@gmail.com, shaik.ameer@samsung.com
 
-On Mon, Aug 13, 2012 at 08:21:14AM +0100, shiraz hashim wrote:
-> On Wed, Nov 17, 2010 at 2:37 PM, Catalin Marinas
-> <catalin.marinas@arm.com> wrote:
-> >
-> > On Wed, 2010-11-17 at 06:55 +0000, Kukjin Kim wrote:
-> > > --- a/arch/arm/mach-s5pv310/cpu.c
-> > > +++ b/arch/arm/mach-s5pv310/cpu.c
-> > > @@ -168,7 +168,7 @@ static int __init s5pv310_l2x0_cache_init(void)
-> > >         __raw_writel(L2X0_DYNAMIC_CLK_GATING_EN | L2X0_STNDBY_MODE_EN,
-> > >                      S5P_VA_L2CC + L2X0_POWER_CTRL);
-> > >
-> > > -       l2x0_init(S5P_VA_L2CC, 0x7C070001, 0xC200ffff);
-> > > +       l2x0_init(S5P_VA_L2CC, 0x7C470001, 0xC200ffff);
-> >
-> > The patch is fine.
-> >
-> > But I think we should also set this bit in the cache-l2x0.c file if
-> > PL310. That's such a fundamental issue and it's easy to miss in the
-> > platform code.
-> 
-> Sorry for reviving this old patch but any reasons why it didn't
-> go to the cache-l2x0.c directly (for PL310).
+Add required clock support for G-Scaler for exynos5
 
-The cache-l2x0.c patch has been around for a while:
+Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+Signed-off-by: Prathyush K <prathyush.k@samsung.com>
+Signed-off-by: Shaik Ameer Basha <shaik.ameer@samsung.com>
+---
+ arch/arm/mach-exynos/clock-exynos5.c |   86 ++++++++++++++++++++++++++++++++++
+ 1 files changed, 86 insertions(+), 0 deletions(-)
 
-http://www.arm.linux.org.uk/developer/patches/viewpatch.php?id=6529/1
-
-It may no longer apply cleanly but I haven't revived it since it wasn't
-accepted at the time.
-
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index 3b00e29..eb3f4fc 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -547,6 +547,68 @@ static struct clksrc_clk exynos5_clk_aclk_66 = {
+ 	.reg_div = { .reg = EXYNOS5_CLKDIV_TOP0, .shift = 0, .size = 3 },
+ };
+ 
++static struct clksrc_clk exynos5_clk_mout_aclk_300_gscl_mid = {
++	.clk	= {
++		.name		= "mout_aclk_300_gscl_mid",
++	},
++	.sources = &exynos5_clkset_aclk,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP0, .shift = 24, .size = 1 },
++};
++
++static struct clk *exynos5_clkset_aclk_300_mid1_list[] = {
++	[0] = &exynos5_clk_sclk_vpll.clk,
++	[1] = &exynos5_clk_mout_cpll.clk,
++};
++
++static struct clksrc_sources exynos5_clkset_aclk_300_gscl_mid1 = {
++	.sources	= exynos5_clkset_aclk_300_mid1_list,
++	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_300_mid1_list),
++};
++
++static struct clksrc_clk exynos5_clk_mout_aclk_300_gscl_mid1 = {
++	.clk	= {
++		.name		= "mout_aclk_300_gscl_mid1",
++	},
++	.sources = &exynos5_clkset_aclk_300_gscl_mid1,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP1, .shift = 12, .size = 1 },
++};
++
++static struct clk *exynos5_clkset_aclk_300_gscl_list[] = {
++	[0] = &exynos5_clk_mout_aclk_300_gscl_mid.clk,
++	[1] = &exynos5_clk_mout_aclk_300_gscl_mid1.clk,
++};
++
++static struct clksrc_sources exynos5_clkset_aclk_300_gscl = {
++	.sources	= exynos5_clkset_aclk_300_gscl_list,
++	.nr_sources	= ARRAY_SIZE(exynos5_clkset_aclk_300_gscl_list),
++};
++
++static struct clksrc_clk exynos5_clk_mout_aclk_300_gscl = {
++	.clk	= {
++		.name		= "mout_aclk_300_gscl",
++	},
++	.sources = &exynos5_clkset_aclk_300_gscl,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP0, .shift = 25, .size = 1 },
++};
++
++static struct clk *exynos5_clk_src_gscl_300_list[] = {
++	[0] = &clk_ext_xtal_mux,
++	[1] = &exynos5_clk_mout_aclk_300_gscl.clk,
++};
++
++static struct clksrc_sources exynos5_clk_src_gscl_300 = {
++	.sources	= exynos5_clk_src_gscl_300_list,
++	.nr_sources	= ARRAY_SIZE(exynos5_clk_src_gscl_300_list),
++};
++
++static struct clksrc_clk exynos5_clk_aclk_300_gscl = {
++	.clk	= {
++		.name		= "aclk_300_gscl",
++	},
++	.sources = &exynos5_clk_src_gscl_300,
++	.reg_src = { .reg = EXYNOS5_CLKSRC_TOP3, .shift = 10, .size = 1 },
++};
++
+ static struct clk exynos5_init_clocks_off[] = {
+ 	{
+ 		.name		= "timers",
+@@ -755,6 +817,26 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.enable		= exynos5_clk_ip_peric_ctrl,
+ 		.ctrlbit	= (1 << 18),
+ 	}, {
++		.name		= "gscl",
++		.devname	= "exynos-gsc.0",
++		.enable		= exynos5_clk_ip_gscl_ctrl,
++		.ctrlbit	= (1 << 0),
++	}, {
++		.name		= "gscl",
++		.devname	= "exynos-gsc.1",
++		.enable		= exynos5_clk_ip_gscl_ctrl,
++		.ctrlbit	= (1 << 1),
++	}, {
++		.name		= "gscl",
++		.devname	= "exynos-gsc.2",
++		.enable		= exynos5_clk_ip_gscl_ctrl,
++		.ctrlbit	= (1 << 2),
++	}, {
++		.name		= "gscl",
++		.devname	= "exynos-gsc.3",
++		.enable		= exynos5_clk_ip_gscl_ctrl,
++		.ctrlbit	= (1 << 3),
++	}, {
+ 		.name		= SYSMMU_CLOCK_NAME,
+ 		.devname	= SYSMMU_CLOCK_DEVNAME(mfc_l, 0),
+ 		.enable		= &exynos5_clk_ip_mfc_ctrl,
+@@ -1216,6 +1298,10 @@ static struct clksrc_clk *exynos5_sysclks[] = {
+ 	&exynos5_clk_aclk_266,
+ 	&exynos5_clk_aclk_200,
+ 	&exynos5_clk_aclk_166,
++	&exynos5_clk_aclk_300_gscl,
++	&exynos5_clk_mout_aclk_300_gscl,
++	&exynos5_clk_mout_aclk_300_gscl_mid,
++	&exynos5_clk_mout_aclk_300_gscl_mid1,
+ 	&exynos5_clk_aclk_66_pre,
+ 	&exynos5_clk_aclk_66,
+ 	&exynos5_clk_dout_mmc0,
 -- 
-Catalin
+1.7.0.4
