@@ -1,73 +1,50 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH 0/1] S3C244X/S3C64XX SoC camera host interface driver
-Date: Sun, 12 Aug 2012 00:22:51 +0200
-Message-ID: <1744040.LQ4tYRekV8@flatron>
-References: <50269F15.4030504@gmail.com> <9609498.7r78ladCdh@flatron> <5026B33F.3030605@gmail.com>
+From: shiraz hashim <shiraz.linux.kernel@gmail.com>
+Subject: Re: [PATCH] ARM: S5PV310: Set bit 22 in the PL310 (cache controller)
+ AuxCtlr register
+Date: Mon, 13 Aug 2012 12:51:14 +0530
+Message-ID: <CAPub14_9vNoiOMEeBDSkJo6NQaazcNvAYu8oD_E2ReEYLfrX+A@mail.gmail.com>
+References: <1289976931-9759-1-git-send-email-kgene.kim@samsung.com>
+	<1289984848.2351.2.camel@e102109-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-media-owner@vger.kernel.org>
-In-Reply-To: <5026B33F.3030605@gmail.com>
-Sender: linux-media-owner@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: LMML <linux-media@vger.kernel.org>, oselas@community.pengutronix.de, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-yw0-f46.google.com ([209.85.213.46]:55185 "EHLO
+	mail-yw0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752758Ab2HMHVP (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 13 Aug 2012 03:21:15 -0400
+Received: by yhmm54 with SMTP id m54so2870875yhm.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 13 Aug 2012 00:21:15 -0700 (PDT)
+In-Reply-To: <1289984848.2351.2.camel@e102109-lin.cambridge.arm.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, Russell King <rmk+kernel@arm.linux.org.uk>, Changhwan Youn <chaos.youn@samsung.com>, stable@kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Saturday 11 of August 2012 21:32:15 Sylwester Nawrocki wrote:
-> On 08/11/2012 08:39 PM, Tomasz Figa wrote:
-> > Hi,
-> > 
-> > On Saturday 11 of August 2012 20:06:13 Sylwester Nawrocki wrote:
-> >> Hi all,
-> >> 
-> >> This patch adds a driver for Samsung S3C244X/S3C64XX SoC series camera
-> >> host interface. My intention was to create a V4L2 driver that would
-> >> work
-> >> with standard applications like Gstreamer or mplayer, and yet exposing
-> >> possibly all features available in the hardware.
-> >> 
-> >> It took me several weeks to do this work in my (limited) spare time.
-> >> Finally I've got something that is functional and I think might be
-> >> useful for others, so I'm publishing this initial version. It
-> >> hopefully doesn't need much tweaking or corrections, at least as far
-> >> as S3C244X is concerned. It has not been tested on S3C64XX SoCs, as I
-> >> don't have the hardware. However, the driver has been designed with
-> >> covering S3C64XX as well in mind, and I've already taken care of some
-> >> differences between S3C2444X and S3C64XX. Mem-to-mem features are not
-> >> yet supported, but these are quite separate issue and could be easily
-> >> added as a next step.> 
-> > I will try to test it on S3C6410 in some reasonably near future and
-> > report any needed corrections.
-> 
-> Sounds great, thanks.
+Hi Catalin,
 
-I have not tested the driver yet, but I am looking through the code and it 
-seems like S3C6410 (at least according to the documentation) supports far 
-more pixel formats than defined in the driver.
+On Wed, Nov 17, 2010 at 2:37 PM, Catalin Marinas
+<catalin.marinas@arm.com> wrote:
+>
+> On Wed, 2010-11-17 at 06:55 +0000, Kukjin Kim wrote:
+> > --- a/arch/arm/mach-s5pv310/cpu.c
+> > +++ b/arch/arm/mach-s5pv310/cpu.c
+> > @@ -168,7 +168,7 @@ static int __init s5pv310_l2x0_cache_init(void)
+> >         __raw_writel(L2X0_DYNAMIC_CLK_GATING_EN | L2X0_STNDBY_MODE_EN,
+> >                      S5P_VA_L2CC + L2X0_POWER_CTRL);
+> >
+> > -       l2x0_init(S5P_VA_L2CC, 0x7C070001, 0xC200ffff);
+> > +       l2x0_init(S5P_VA_L2CC, 0x7C470001, 0xC200ffff);
+>
+> The patch is fine.
+>
+> But I think we should also set this bit in the cache-l2x0.c file if
+> PL310. That's such a fundamental issue and it's easy to miss in the
+> platform code.
 
-Both preview and scaler paths are supposed to support 420/422 planar, 422 
-interleaved and 565/666/888 formats.
+Sorry for reviving this old patch but any reasons why it didn't
+go to the cache-l2x0.c directly (for PL310).
 
-Also two distinct planar 420 formats exist that simply differ by plane 
-order YUV420 (currently supported in your driver) and YVU420 (with Cb and 
-Cr planes swapped). It should be pretty straightforward to add support for 
-the latter.
-
-Best regards,
-Tomasz Figa
-
-> 
-> > Currently I am using a modified s5p-fimc driver in my project, but it
-> > supports only the codec path of S3C64xx and any needed stream
-> > duplication and rescaling is done in later processing, so it might be
-> > wise to migrate to yours.
-> 
-> Yeah, the s3c camif is quite different from the s5p one. Thus the
-> s3c-camif driver might be a much better starting point for S3C6410. I
-> could test any changes for s3c6410 back on s3c2440 and incorporate the
-> verified ones into some common stable git branch.
-> 
-> --
-> 
-> Regards,
-> Sylwester
+--
+regards
+Shiraz Hashim
