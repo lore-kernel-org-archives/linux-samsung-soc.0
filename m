@@ -1,99 +1,70 @@
-From: Mandeep Singh Baines <msb@chromium.org>
-Subject: [PATCH] ARM: SAMSUNG: use spin_lock_irqsave() in clk_set_parent
-Date: Wed, 15 Aug 2012 12:16:27 -0700
-Message-ID: <1345058187-18843-1-git-send-email-msb@chromium.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v2 0/4] pinctrl: add support for samsung pinctrl driver
+Date: Thu, 16 Aug 2012 01:27:32 +0530
+Message-ID: <1345060656-32201-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f74.google.com ([209.85.214.74]:56543 "EHLO
-	mail-bk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753873Ab2HOTQg (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:26005 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751026Ab2HOTkb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 15 Aug 2012 15:16:36 -0400
-Received: by bkcjc3 with SMTP id jc3so93531bkc.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 15 Aug 2012 12:16:34 -0700 (PDT)
+	Wed, 15 Aug 2012 15:40:31 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: Mandeep Singh Baines <msb@chromium.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, Minho Ban <mhban@samsung.com>, Jaecheol Lee <jc.lee@samsung.com>, Sunyoung Kang <sy0816.kang@samsung.com>, Olof Johansson <olofj@chromium.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
 
->From 0cdf3aff, "ARM: SAMSUNG: use spin_lock_irqsave() in
-clk_{enable,disable}":
+Changes since v1:
+- Added support for external gpio and wakeup interrupts for Exynos4.
 
-  The clk_enable()and clk_disable() can be used process and ISR either.
-  And actually it is used for real product and other platforms use it
-  now. So spin_lock_irqsave() should be used instead.
+This patch series adds a common pinctrl driver for all Samsung platforms and
+enables the pinctrl driver support for Exynos4210 based device tree enabled
+platforms. The scope of this driver is limited to only device tree enabled
+platforms.
 
-We need to make a similar change in clk_set_parent(). Otherwise,
-you can potentially get spinlock recursion:
+The intention of this driver is to replace the existing gpiolib driver and
+provide pinctrl subsystem interface to configure the pins/mux instead
+of existing platform callbacks.
 
-BUG: spinlock recursion on CPU#0, kinteractive/68
- lock: 807832a8, .magic: dead4ead, .owner: kinteractive/68, .owner_cpu: 0
-[<80015f54>] (unwind_backtrace+0x0/0x128) from [<804f2914>] (dump_stack+0x20/0x24)
-[<804f2914>] (dump_stack+0x20/0x24) from [<804f57b8>] (spin_dump+0x80/0x94)
-[<804f57b8>] (spin_dump+0x80/0x94) from [<804f57f8>] (spin_bug+0x2c/0x30)
-[<804f57f8>] (spin_bug+0x2c/0x30) from [<80222730>] (do_raw_spin_lock+0x54/0x150)
-[<80222730>] (do_raw_spin_lock+0x54/0x150) from [<804f96ec>] (_raw_spin_lock_irqsave+0x20/0x28)
-[<804f96ec>] (_raw_spin_lock_irqsave+0x20/0x28) from [<80022ea4>] (clk_enable+0x3c/0x84)
-[<80022ea4>] (clk_enable+0x3c/0x84) from [<8038336c>] (s5p_mfc_clock_on+0x60/0x74)
-[<8038336c>] (s5p_mfc_clock_on+0x60/0x74) from [<8038645c>] (s5p_mfc_read_info+0x20/0x38)
-[<8038645c>] (s5p_mfc_read_info+0x20/0x38) from [<8037ca3c>] (s5p_mfc_handle_frame+0x2e4/0x4bc)
-[<8037ca3c>] (s5p_mfc_handle_frame+0x2e4/0x4bc) from [<8037d420>] (s5p_mfc_irq+0x1ec/0x6cc)
-[<8037d420>] (s5p_mfc_irq+0x1ec/0x6cc) from [<8007fc74>] (handle_irq_event_percpu+0x8c/0x244)
-[<8007fc74>] (handle_irq_event_percpu+0x8c/0x244) from [<8007fe78>] (handle_irq_event+0x4c/0x6c)
-[<8007fe78>] (handle_irq_event+0x4c/0x6c) from [<80082dd8>] (handle_fasteoi_irq+0xe4/0x150)
-[<80082dd8>] (handle_fasteoi_irq+0xe4/0x150) from [<8007f424>] (generic_handle_irq+0x3c/0x50)
-[<8007f424>] (generic_handle_irq+0x3c/0x50) from [<8000f7c4>] (handle_IRQ+0x88/0xc8)
-[<8000f7c4>] (handle_IRQ+0x88/0xc8) from [<80008564>] (gic_handle_irq+0x44/0x68)
-[<80008564>] (gic_handle_irq+0x44/0x68) from [<8000e400>] (__irq_svc+0x40/0x60)
-Exception stack(0xef3cbe68 to 0xef3cbeb0)
-[<8000e400>] (__irq_svc+0x40/0x60) from [<80022cfc>] (clk_set_parent+0x30/0x74)
-[<80022cfc>] (clk_set_parent+0x30/0x74) from [<803ac7f8>] (set_apll.isra.0+0x28/0xb0)
-[<803ac7f8>] (set_apll.isra.0+0x28/0xb0) from [<803ac8e4>] (exynos5250_set_frequency+0x64/0xb8)
-[<803ac8e4>] (exynos5250_set_frequency+0x64/0xb8) from [<803ac280>] (exynos_target+0x1b0/0x220)
-[<803ac280>] (exynos_target+0x1b0/0x220) from [<803a4a0c>] (__cpufreq_driver_target+0xb0/0xd4)
-[<803a4a0c>] (__cpufreq_driver_target+0xb0/0xd4) from [<803aab80>] (cpufreq_interactive_updown_task+0x214/0x264)
-[<803aab80>] (cpufreq_interactive_updown_task+0x214/0x264) from [<80047d04>] (kthread+0x9c/0xa8)
-[<80047d04>] (kthread+0x9c/0xa8) from [<8000fa48>] (kernel_thread_exit+0x0/0x8)
+Note that, the Samsung pinctrl driver is usable only on device tree enabled
+Samsung platforms. Legacy platforms would still continue to use the older
+gpiolib driver and hence updates to device drivers to use the pinctrl api
+should ensure that support for legacy platforms is maintained.
 
-Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
-Suggested-by: Sunil Mazhavanchery <sunilm@samsung.com>
-CC: linux-arm-kernel@lists.infradead.org
-CC: linux-samsung-soc@vger.kernel.org
-CC: Ben Dooks <ben-linux@fluff.org>
-CC: Kukjin Kim <kgene.kim@samsung.com>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Minho Ban <mhban@samsung.com>
-CC: Jaecheol Lee <jc.lee@samsung.com>
-CC: Sunyoung Kang <sy0816.kang@samsung.com>
-CC: Kukjin Kim <kgene.kim@samsung.com>
-CC: Olof Johansson <olofj@chromium.org>
----
- arch/arm/plat-samsung/clock.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
+The first patch adds a new pinctrl driver for Samsung. It provides interfaces
+to the pinctrl and gpiolib subsystems. This driver provides a common framework
+for all Samsung SoC's to enable the pinctrl and gpiolib support. The driver
+accepts the information about pins, groups and functions from the device tree
+and the information about gpio banks is supplied using driver data.
 
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index 65c5eca..80eacca 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -173,17 +173,18 @@ struct clk *clk_get_parent(struct clk *clk)
- 
- int clk_set_parent(struct clk *clk, struct clk *parent)
- {
-+	unsigned long flags;
- 	int ret = 0;
- 
- 	if (IS_ERR(clk))
- 		return -EINVAL;
- 
--	spin_lock(&clocks_lock);
-+	spin_lock_irqsave(&clocks_lock, flags);
- 
- 	if (clk->ops && clk->ops->set_parent)
- 		ret = (clk->ops->set_parent)(clk, parent);
- 
--	spin_unlock(&clocks_lock);
-+	spin_unlock_irqrestore(&clocks_lock, flags);
- 
- 	return ret;
- }
--- 
-1.7.7.3
+The second patch adds the driver data required to operate the pinctrl driver
+on Exynos4210 based platforms. It allows includes support for Exynos4210
+specific external gpio and wakeup interrupts which are provides to the Samsung
+pinctrl driver as extensions.
+
+The third patch modifies the existing gpiolib driver to skip the gpio pin
+registrations if pinctrl driver support is found to be enabled. The fourth
+patch skips the external wakeup interrupt configuration process in the
+Exynos4 platform code if the external wakeup interrupt support is provided
+by the pin-control driver.
+
+Thomas Abraham (4):
+  pinctrl: add samsung pinctrl and gpiolib driver
+  pinctrl: add exynos4210 specific extensions for samsung pinctrl driver
+  gpio: exynos4: skip gpiolib registration if pinctrl driver is used
+  ARM: EXYNOS: skip wakeup interrupt setup if pinctrl driver is used
+
+.../bindings/pinctrl/samsung-pinctrl.txt           |  176 ++++
+ arch/arm/mach-exynos/common.c                      |   26 +
+ drivers/gpio/gpio-samsung.c                        |   21 +
+ drivers/pinctrl/Kconfig                            |   11 +
+ drivers/pinctrl/Makefile                           |    2 +
+ drivers/pinctrl/pinctrl-exynos.c                   |  555 +++++++++++++
+ drivers/pinctrl/pinctrl-exynos.h                   |  213 +++++
+ drivers/pinctrl/pinctrl-samsung.c                  |  873 ++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.h                  |  215 +++++
+ 9 files changed, 2092 insertions(+), 0 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+ create mode 100644 drivers/pinctrl/pinctrl-exynos.c
+ create mode 100644 drivers/pinctrl/pinctrl-exynos.h
+ create mode 100644 drivers/pinctrl/pinctrl-samsung.c
+ create mode 100644 drivers/pinctrl/pinctrl-samsung.h
