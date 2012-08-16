@@ -1,828 +1,266 @@
-From: "Valentin, Eduardo" <eduardo.valentin@ti.com>
-Subject: Re: [PATCH v6 1/6] thermal: add generic cpufreq cooling
-	implementation
-Date: Thu, 16 Aug 2012 17:52:33 +0300
-Message-ID: <CAGF5oy8wLjU0-nnqyv1KfxtpzBZV6h8ksyBHpm-nfNVMyfB5kA@mail.gmail.com>
-References: <1345117305-8299-1-git-send-email-amit.kachhap@linaro.org>
-	<1345117305-8299-2-git-send-email-amit.kachhap@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <1345117305-8299-2-git-send-email-amit.kachhap@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: Guenter Roeck <guenter.roeck@ericsson.com>, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kmpark@infradead.org>, SangWook Ju <sw.ju@samsung.com>, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Jean Delvare <khali@linux-fr.org>, linux-pm@lists.linux-foundation.org, lm-sensors@lm-sensors.org, Andrew Morton <akpm@linux-foundation.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] mmc: sdhci-s3c: Add device tree support
+Date: Thu, 16 Aug 2012 21:19:29 +0530
+Message-ID: <1345132169-21066-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Amit,
+Add device tree based discovery support for Samsung's sdhci controller
 
-Thanks again for keeping this up.
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Chris Ball <cjb@laptop.org>
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+---
+ drivers/mmc/host/sdhci-s3c.c |  146 ++++++++++++++++++++++++++++++++++++++++--
+ 1 files changed, 140 insertions(+), 6 deletions(-)
 
-On Thu, Aug 16, 2012 at 2:41 PM, Amit Daniel Kachhap
-<amit.kachhap@linaro.org> wrote:
-> This patchset introduces a new generic cooling device based on cpufreq
-> that can be used on non-ACPI platforms.  As a proof of concept, we have
-> drivers for the following platforms using this mechanism now:
->
->  * Samsung Exynos (Exynos4 and Exynos5) in the current patchset.
->  * Freescale i.MX (git://git.linaro.org/people/amitdanielk/linux.git imx6q_thermal)
-
-FYI, the OMAP code is under drivers/staging/omap-thermal/. The file
-omap-thermal-common.c is the one which is using your generic cooling
-device. But it needs to be updated accordingly to the API change you
-mention.
-
->
-> There is a small change in cpufreq cooling registration APIs, so a minor
-> change is needed for Freescale platforms.
->
-> Brief Description:
->
-> 1) The generic cooling devices code is placed inside driver/thermal/*
->    as placing inside acpi folder will need un-necessary enabling of acpi
->    code.  This code is architecture independent.
->
-> 2) This patchset adds generic cpu cooling low level implementation
->    through frequency clipping.  In future, other cpu related cooling
->    devices may be added here.  An ACPI version of this already exists
->    (drivers/acpi/processor_thermal.c) .But this will be useful for
->    platforms like ARM using the generic thermal interface along with the
->    generic cpu cooling devices.  The cooling device registration API's
->    return cooling device pointers which can be easily binded with the
->    thermal zone trip points.  The important APIs exposed are,
->
->    a) struct thermal_cooling_device *cpufreq_cooling_register(
->         struct cpumask *clip_cpus)
->    b) void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
->
-> 3) Samsung exynos platform thermal implementation is done using the
->    generic cpu cooling APIs and the new trip type.  The temperature sensor
->    driver present in the hwmon folder(registered as hwmon driver) is moved
->    to thermal folder and registered as a thermal driver.
->
-> A simple data/control flow diagrams is shown below,
->
-> Core Linux thermal <----->  Exynos thermal interface <----- Temperature Sensor
->           |                             |
->          \|/                            |
->   Cpufreq cooling device <---------------
->
-> TODO:
-> *Will send the DT enablement patches later after the driver is merged.
->
-> This patch:
->
-> Add support for generic cpu thermal cooling low level implementations
-> using frequency scaling up/down based on the registration parameters.
-> Different cpu related cooling devices can be registered by the user and
-> the binding of these cooling devices to the corresponding trip points can
-> be easily done as the registration APIs return the cooling device pointer.
-> The user of these APIs are responsible for passing clipping frequency .
-> The drivers can also register to recieve notification about any cooling
-> action called.
->
-> [akpm@linux-foundation.org: fix comment layout]
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> Cc: Guenter Roeck <guenter.roeck@ericsson.com>
-> Cc: SangWook Ju <sw.ju@samsung.com>
-> Cc: Durgadoss <durgadoss.r@intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Jean Delvare <khali@linux-fr.org>
-> Cc: Kyungmin Park <kmpark@infradead.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-
-
-Reviewed-by: Eduardo Valentin <eduardo.valentin@ti.com>
-
-
-> ---
->  Documentation/thermal/cpu-cooling-api.txt |   52 +++
->  drivers/thermal/Kconfig                   |   11 +
->  drivers/thermal/Makefile                  |    1 +
->  drivers/thermal/cpu_cooling.c             |  512 +++++++++++++++++++++++++++++
->  include/linux/cpu_cooling.h               |   79 +++++
->  5 files changed, 655 insertions(+), 0 deletions(-)
->  create mode 100644 Documentation/thermal/cpu-cooling-api.txt
->  create mode 100644 drivers/thermal/cpu_cooling.c
->  create mode 100644 include/linux/cpu_cooling.h
->
-> diff --git a/Documentation/thermal/cpu-cooling-api.txt b/Documentation/thermal/cpu-cooling-api.txt
-> new file mode 100644
-> index 0000000..a1f2a6b
-> --- /dev/null
-> +++ b/Documentation/thermal/cpu-cooling-api.txt
-> @@ -0,0 +1,52 @@
-> +CPU cooling APIs How To
-> +===================================
-> +
-> +Written by Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> +
-> +Updated: 12 May 2012
-> +
-> +Copyright (c)  2012 Samsung Electronics Co., Ltd(http://www.samsung.com)
-> +
-> +0. Introduction
-> +
-> +The generic cpu cooling(freq clipping) provides registration/unregistration APIs
-> +to the caller. The binding of the cooling devices to the trip point is left for
-> +the user. The registration APIs returns the cooling device pointer.
-> +
-> +1. cpu cooling APIs
-> +
-> +1.1 cpufreq registration/unregistration APIs
-> +1.1.1 struct thermal_cooling_device *cpufreq_cooling_register(
-> +       struct cpumask *clip_cpus)
-> +
-> +    This interface function registers the cpufreq cooling device with the name
-> +    "thermal-cpufreq-%x". This api can support multiple instances of cpufreq
-> +    cooling devices.
-> +
-> +   clip_cpus: cpumask of cpus where the frequency constraints will happen.
-> +
-> +1.1.2 void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
-> +
-> +    This interface function unregisters the "thermal-cpufreq-%x" cooling device.
-> +
-> +    cdev: Cooling device pointer which has to be unregistered.
-> +
-> +
-> +1.2 CPU cooling action notifier register/unregister interface
-> +1.2.1 int cputherm_register_notifier(struct notifier_block *nb,
-> +       unsigned int list)
-> +
-> +    This interface registers a driver with cpu cooling layer. The driver will
-> +    be notified when any cpu cooling action is called.
-> +
-> +    nb: notifier function to register
-> +    list: CPUFREQ_COOLING_START or CPUFREQ_COOLING_STOP
-> +
-> +1.2.2 int cputherm_unregister_notifier(struct notifier_block *nb,
-> +       unsigned int list)
-> +
-> +    This interface registers a driver with cpu cooling layer. The driver will
-> +    be notified when any cpu cooling action is called.
-> +
-> +    nb: notifier function to register
-> +    list: CPUFREQ_COOLING_START or CPUFREQ_COOLING_STOP
-> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> index 7dd8c34..996003b 100644
-> --- a/drivers/thermal/Kconfig
-> +++ b/drivers/thermal/Kconfig
-> @@ -19,6 +19,17 @@ config THERMAL_HWMON
->         depends on HWMON=y || HWMON=THERMAL
->         default y
->
-> +config CPU_THERMAL
-> +       bool "generic cpu cooling support"
-> +       depends on THERMAL && CPU_FREQ
-> +       help
-> +         This implements the generic cpu cooling mechanism through frequency
-> +         reduction, cpu hotplug and any other ways of reducing temperature. An
-> +         ACPI version of this already exists(drivers/acpi/processor_thermal.c).
-> +         This will be useful for platforms using the generic thermal interface
-> +         and not the ACPI interface.
-> +         If you want this support, you should say Y here.
-> +
->  config SPEAR_THERMAL
->         bool "SPEAr thermal sensor driver"
->         depends on THERMAL
-> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> index fd9369a..aae59ad 100644
-> --- a/drivers/thermal/Makefile
-> +++ b/drivers/thermal/Makefile
-> @@ -3,5 +3,6 @@
->  #
->
->  obj-$(CONFIG_THERMAL)          += thermal_sys.o
-> +obj-$(CONFIG_CPU_THERMAL)              += cpu_cooling.o
->  obj-$(CONFIG_SPEAR_THERMAL)            += spear_thermal.o
->  obj-$(CONFIG_RCAR_THERMAL)     += rcar_thermal.o
-> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_cooling.c
-> new file mode 100644
-> index 0000000..c42e557
-> --- /dev/null
-> +++ b/drivers/thermal/cpu_cooling.c
-> @@ -0,0 +1,512 @@
-> +/*
-> + *  linux/drivers/thermal/cpu_cooling.c
-> + *
-> + *  Copyright (C) 2012 Samsung Electronics Co., Ltd(http://www.samsung.com)
-> + *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
-> + *
-> + * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU General Public License as published by
-> + *  the Free Software Foundation; version 2 of the License.
-> + *
-> + *  This program is distributed in the hope that it will be useful, but
-> + *  WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> + *  General Public License for more details.
-> + *
-> + *  You should have received a copy of the GNU General Public License along
-> + *  with this program; if not, write to the Free Software Foundation, Inc.,
-> + *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-> + *
-> + * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> + */
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/thermal.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/cpufreq.h>
-> +#include <linux/err.h>
-> +#include <linux/slab.h>
-> +#include <linux/cpu.h>
-> +#include <linux/cpu_cooling.h>
-> +
-> +/**
-> + * struct cpufreq_cooling_device
-> + * @id: unique integer value corresponding to each cpufreq_cooling_device
-> + *     registered.
-> + * @cool_dev: thermal_cooling_device pointer to keep track of the the
-> + *     egistered cooling device.
-> + * @cpufreq_state: integer value representing the current state of cpufreq
-> + *     cooling devices.
-> + * @cpufreq_val: integer value representing the absolute value of the clipped
-> + *     frequency.
-> + * @allowed_cpus: all the cpus involved for this cpufreq_cooling_device.
-> + * @node: list_head to link all cpufreq_cooling_device together.
-> + *
-> + * This structure is required for keeping information of each
-> + * cpufreq_cooling_device registered as a list whose head is represented by
-> + * cooling_cpufreq_list. In order to prevent corruption of this list a
-> + * mutex lock cooling_cpufreq_lock is used.
-> + */
-> +struct cpufreq_cooling_device {
-> +       int id;
-> +       struct thermal_cooling_device *cool_dev;
-> +       unsigned int cpufreq_state;
-> +       unsigned int cpufreq_val;
-> +       struct cpumask allowed_cpus;
-> +       struct list_head node;
-> +};
-> +static LIST_HEAD(cooling_cpufreq_list);
-> +static DEFINE_IDR(cpufreq_idr);
-> +
-> +static struct mutex cooling_cpufreq_lock;
-> +
-> +/* notify_table passes value to the CPUFREQ_ADJUST callback function. */
-> +#define NOTIFY_INVALID NULL
-> +struct cpufreq_cooling_device *notify_device;
-> +
-> +/* Head of the blocking notifier chain to inform about frequency clamping */
-> +static BLOCKING_NOTIFIER_HEAD(cputherm_state_notifier_list);
-> +
-> +/**
-> + * get_idr - function to get a unique id.
-> + * @idr: struct idr * handle used to create a id.
-> + * @id: int * value generated by this function.
-> + */
-> +static int get_idr(struct idr *idr, int *id)
-> +{
-> +       int err;
-> +again:
-> +       if (unlikely(idr_pre_get(idr, GFP_KERNEL) == 0))
-> +               return -ENOMEM;
-> +
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       err = idr_get_new(idr, NULL, id);
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +
-> +       if (unlikely(err == -EAGAIN))
-> +               goto again;
-> +       else if (unlikely(err))
-> +               return err;
-> +
-> +       *id = *id & MAX_ID_MASK;
-> +       return 0;
-> +}
-> +
-> +/**
-> + * release_idr - function to free the unique id.
-> + * @idr: struct idr * handle used for creating the id.
-> + * @id: int value representing the unique id.
-> + */
-> +static void release_idr(struct idr *idr, int id)
-> +{
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       idr_remove(idr, id);
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +}
-> +
-> +/**
-> + * cputherm_register_notifier - Register a notifier with cpu cooling interface.
-> + * @nb:        struct notifier_block * with callback info.
-> + * @list: integer value for which notification is needed. possible values are
-> + *     CPUFREQ_COOLING_START and CPUFREQ_COOLING_STOP.
-> + *
-> + * This exported function registers a driver with cpu cooling layer. The driver
-> + * will be notified when any cpu cooling action is called.
-> + */
-> +int cputherm_register_notifier(struct notifier_block *nb, unsigned int list)
-> +{
-> +       int ret = 0;
-> +
-> +       switch (list) {
-> +       case CPUFREQ_COOLING_START:
-> +       case CPUFREQ_COOLING_STOP:
-> +               ret = blocking_notifier_chain_register(
-> +                               &cputherm_state_notifier_list, nb);
-> +               break;
-> +       default:
-> +               ret = -EINVAL;
-> +       }
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(cputherm_register_notifier);
-> +
-> +/**
-> + * cputherm_unregister_notifier - Un-register a notifier.
-> + * @nb:        struct notifier_block * with callback info.
-> + * @list: integer value for which notification is needed. values possible are
-> + *     CPUFREQ_COOLING_START or CPUFREQ_COOLING_STOP.
-> + *
-> + * This exported function un-registers a driver with cpu cooling layer.
-> + */
-> +int cputherm_unregister_notifier(struct notifier_block *nb, unsigned int list)
-> +{
-> +       int ret = 0;
-> +
-> +       switch (list) {
-> +       case CPUFREQ_COOLING_START:
-> +       case CPUFREQ_COOLING_STOP:
-> +               ret = blocking_notifier_chain_unregister(
-> +                               &cputherm_state_notifier_list, nb);
-> +               break;
-> +       default:
-> +               ret = -EINVAL;
-> +       }
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL(cputherm_unregister_notifier);
-> +
-> +/* Below code defines functions to be used for cpufreq as cooling device */
-> +
-> +/**
-> + * is_cpufreq_valid - function to check if a cpu has frequency transition policy.
-> + * @cpu: cpu for which check is needed.
-> + */
-> +static int is_cpufreq_valid(int cpu)
-> +{
-> +       struct cpufreq_policy policy;
-> +       return !cpufreq_get_policy(&policy, cpu);
-> +}
-> +
-> +/**
-> + * get_cpu_frequency - get the absolute value of frequency from level.
-> + * @cpu: cpu for which frequency is fetched.
-> + * @level: level of frequency of the CPU
-> + *     e.g level=1 --> 1st MAX FREQ, LEVEL=2 ---> 2nd MAX FREQ, .... etc
-> + */
-> +static unsigned int get_cpu_frequency(unsigned int cpu, unsigned long level)
-
-
-I like this. With previous implemention I had to write a similar
-function, but with output of the required freq  clip table. Now that
-you have the freq walk here it simplifies the zone setup code.
-
-
-> +{
-> +       int ret = 0, i = 0;
-> +       unsigned long level_index;
-> +       bool descend = false;
-> +       struct cpufreq_frequency_table *table =
-> +                                       cpufreq_frequency_get_table(cpu);
-> +       if (!table)
-> +               return ret;
-> +
-> +       while (table[i].frequency != CPUFREQ_TABLE_END) {
-> +               if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
-> +                       continue;
-> +
-> +               /*check if table in ascending or descending order*/
-> +               if ((table[i + 1].frequency != CPUFREQ_TABLE_END) &&
-> +                       (table[i + 1].frequency < table[i].frequency)
-> +                       && !descend) {
-> +                       descend = true;
-> +               }
-> +
-> +               /*return if level matched and table in descending order*/
-> +               if (descend && i == level)
-> +                       return table[i].frequency;
-> +               i++;
-> +       }
-> +       i--;
-> +
-> +       if (level > i || descend)
-> +               return ret;
-> +       level_index = i - level;
-> +
-> +       /*Scan the table in reverse order and match the level*/
-> +       while (i >= 0) {
-> +               if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
-> +                       continue;
-> +               /*return if level matched*/
-> +               if (i == level_index)
-> +                       return table[i].frequency;
-> +               i--;
-> +       }
-> +       return ret;
-> +}
-> +
-> +/**
-> + * cpufreq_apply_cooling - function to apply frequency clipping.
-> + * @cpufreq_device: cpufreq_cooling_device pointer containing frequency
-> + *     clipping data.
-> + * @cooling_state: value of the cooling state.
-> + */
-> +static int cpufreq_apply_cooling(struct cpufreq_cooling_device *cpufreq_device,
-> +                               unsigned long cooling_state)
-> +{
-> +       unsigned int event, cpuid, clip_freq;
-> +       struct cpumask *maskPtr = &cpufreq_device->allowed_cpus;
-> +       unsigned int cpu = cpumask_any(maskPtr);
-> +
-> +
-> +       /* Check if the old cooling action is same as new cooling action */
-> +       if (cpufreq_device->cpufreq_state == cooling_state)
-> +               return 0;
-> +
-> +       clip_freq = get_cpu_frequency(cpu, cooling_state);
-> +       if (!clip_freq)
-> +               return -EINVAL;
-> +
-> +       cpufreq_device->cpufreq_state = cooling_state;
-> +       cpufreq_device->cpufreq_val = clip_freq;
-> +       notify_device = cpufreq_device;
-> +
-> +       if (cooling_state != 0)
-> +               event = CPUFREQ_COOLING_START;
-> +       else
-> +               event = CPUFREQ_COOLING_STOP;
-> +
-> +       blocking_notifier_call_chain(&cputherm_state_notifier_list,
-> +                                               event, &clip_freq);
-> +
-> +       for_each_cpu(cpuid, maskPtr) {
-> +               if (is_cpufreq_valid(cpuid))
-> +                       cpufreq_update_policy(cpuid);
-> +       }
-> +
-> +       notify_device = NOTIFY_INVALID;
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * cpufreq_thermal_notifier - notifier callback for cpufreq policy change.
-> + * @nb:        struct notifier_block * with callback info.
-> + * @event: value showing cpufreq event for which this function invoked.
-> + * @data: callback-specific data
-> + */
-> +static int cpufreq_thermal_notifier(struct notifier_block *nb,
-> +                                       unsigned long event, void *data)
-> +{
-> +       struct cpufreq_policy *policy = data;
-> +       unsigned long max_freq = 0;
-> +
-> +       if (event != CPUFREQ_ADJUST || notify_device == NOTIFY_INVALID)
-> +               return 0;
-> +
-> +       if (cpumask_test_cpu(policy->cpu, &notify_device->allowed_cpus))
-> +               max_freq = notify_device->cpufreq_val;
-> +
-> +       /* Never exceed user_policy.max*/
-> +       if (max_freq > policy->user_policy.max)
-> +               max_freq = policy->user_policy.max;
-> +
-> +       if (policy->max != max_freq)
-> +               cpufreq_verify_within_limits(policy, 0, max_freq);
-> +
-> +       return 0;
-> +}
-> +
-> +/*
-> + * cpufreq cooling device callback functions are defined below
-> + */
-> +
-> +/**
-> + * cpufreq_get_max_state - callback function to get the max cooling state.
-> + * @cdev: thermal cooling device pointer.
-> + * @state: fill this variable with the max cooling state.
-> + */
-> +static int cpufreq_get_max_state(struct thermal_cooling_device *cdev,
-> +                                unsigned long *state)
-> +{
-> +       int ret = -EINVAL, i = 0;
-> +       struct cpufreq_cooling_device *cpufreq_device;
-> +       struct cpumask *maskPtr;
-> +       unsigned int cpu;
-> +       struct cpufreq_frequency_table *table;
-> +
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       list_for_each_entry(cpufreq_device, &cooling_cpufreq_list, node) {
-> +               if (cpufreq_device && cpufreq_device->cool_dev == cdev)
-> +                       break;
-> +       }
-> +       if (cpufreq_device == NULL)
-> +               goto return_get_max_state;
-> +
-> +       maskPtr = &cpufreq_device->allowed_cpus;
-> +       cpu = cpumask_any(maskPtr);
-> +       table = cpufreq_frequency_get_table(cpu);
-> +       if (!table) {
-> +               *state = 0;
-> +               ret = 0;
-> +               goto return_get_max_state;
-> +       }
-> +
-> +       while (table[i].frequency != CPUFREQ_TABLE_END) {
-> +               if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
-> +                       continue;
-> +               i++;
-> +       }
-> +       if (i > 0) {
-> +               *state = --i;
-> +               ret = 0;
-> +       }
-> +
-> +return_get_max_state:
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +       return ret;
-> +}
-> +
-> +/**
-> + * cpufreq_get_cur_state - callback function to get the current cooling state.
-> + * @cdev: thermal cooling device pointer.
-> + * @state: fill this variable with the current cooling state.
-> + */
-> +static int cpufreq_get_cur_state(struct thermal_cooling_device *cdev,
-> +                                unsigned long *state)
-> +{
-> +       int ret = -EINVAL;
-> +       struct cpufreq_cooling_device *cpufreq_device;
-> +
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       list_for_each_entry(cpufreq_device, &cooling_cpufreq_list, node) {
-> +               if (cpufreq_device && cpufreq_device->cool_dev == cdev) {
-> +                       *state = cpufreq_device->cpufreq_state;
-> +                       ret = 0;
-> +                       break;
-> +               }
-> +       }
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +
-> +       return ret;
-> +}
-> +
-> +/**
-> + * cpufreq_set_cur_state - callback function to set the current cooling state.
-> + * @cdev: thermal cooling device pointer.
-> + * @state: set this variable to the current cooling state.
-> + */
-> +static int cpufreq_set_cur_state(struct thermal_cooling_device *cdev,
-> +                                unsigned long state)
-> +{
-> +       int ret = -EINVAL;
-> +       struct cpufreq_cooling_device *cpufreq_device;
-> +
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       list_for_each_entry(cpufreq_device, &cooling_cpufreq_list, node) {
-> +               if (cpufreq_device && cpufreq_device->cool_dev == cdev) {
-> +                       ret = 0;
-> +                       break;
-> +               }
-> +       }
-> +       if (!ret)
-> +               ret = cpufreq_apply_cooling(cpufreq_device, state);
-> +
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +
-> +       return ret;
-> +}
-> +
-> +/* Bind cpufreq callbacks to thermal cooling device ops */
-> +static struct thermal_cooling_device_ops const cpufreq_cooling_ops = {
-> +       .get_max_state = cpufreq_get_max_state,
-> +       .get_cur_state = cpufreq_get_cur_state,
-> +       .set_cur_state = cpufreq_set_cur_state,
-> +};
-> +
-> +/* Notifier for cpufreq policy change */
-> +static struct notifier_block thermal_cpufreq_notifier_block = {
-> +       .notifier_call = cpufreq_thermal_notifier,
-> +};
-> +
-> +/**
-> + * cpufreq_cooling_register - function to create cpufreq cooling device.
-> + * @clip_cpus: cpumask of cpus where the frequency constraints will happen.
-> + */
-> +struct thermal_cooling_device *cpufreq_cooling_register(
-> +       struct cpumask *clip_cpus)
-> +{
-> +       struct thermal_cooling_device *cool_dev;
-> +       struct cpufreq_cooling_device *cpufreq_dev = NULL;
-> +       unsigned int cpufreq_dev_count = 0, min = 0, max = 0;
-> +       char dev_name[THERMAL_NAME_LENGTH];
-> +       int ret = 0, id = 0, i;
-> +       struct cpufreq_policy policy;
-> +
-> +       list_for_each_entry(cpufreq_dev, &cooling_cpufreq_list, node)
-> +               cpufreq_dev_count++;
-> +
-> +       /*Verify that all the clip cpus have same freq_min, freq_max limit*/
-> +       for_each_cpu(i, clip_cpus) {
-> +               /*continue if cpufreq policy not found and not return error*/
-> +               if (!cpufreq_get_policy(&policy, i))
-> +                       continue;
-> +               if (min == 0 && max == 0) {
-> +                       min = policy.cpuinfo.min_freq;
-> +                       max = policy.cpuinfo.max_freq;
-> +               } else {
-> +                       if (min != policy.cpuinfo.min_freq ||
-> +                               max != policy.cpuinfo.max_freq)
-> +                               return ERR_PTR(-EINVAL);
-> +}
-> +       }
-> +       cpufreq_dev = kzalloc(sizeof(struct cpufreq_cooling_device),
-> +                       GFP_KERNEL);
-> +       if (!cpufreq_dev)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       cpumask_copy(&cpufreq_dev->allowed_cpus, clip_cpus);
-> +
-> +       if (cpufreq_dev_count == 0)
-> +               mutex_init(&cooling_cpufreq_lock);
-> +
-> +       ret = get_idr(&cpufreq_idr, &cpufreq_dev->id);
-> +       if (ret) {
-> +               kfree(cpufreq_dev);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       sprintf(dev_name, "thermal-cpufreq-%d", cpufreq_dev->id);
-> +
-> +       cool_dev = thermal_cooling_device_register(dev_name, cpufreq_dev,
-> +                                               &cpufreq_cooling_ops);
-> +       if (!cool_dev) {
-> +               release_idr(&cpufreq_idr, cpufreq_dev->id);
-> +               kfree(cpufreq_dev);
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +       cpufreq_dev->id = id;
-> +       cpufreq_dev->cool_dev = cool_dev;
-> +       cpufreq_dev->cpufreq_state = 0;
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       list_add_tail(&cpufreq_dev->node, &cooling_cpufreq_list);
-> +
-> +       /* Register the notifier for first cpufreq cooling device */
-> +       if (cpufreq_dev_count == 0)
-> +               cpufreq_register_notifier(&thermal_cpufreq_notifier_block,
-> +                                               CPUFREQ_POLICY_NOTIFIER);
-> +
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +       return cool_dev;
-> +}
-> +EXPORT_SYMBOL(cpufreq_cooling_register);
-> +
-> +/**
-> + * cpufreq_cooling_unregister - function to remove cpufreq cooling device.
-> + * @cdev: thermal cooling device pointer.
-> + */
-> +void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
-> +{
-> +       struct cpufreq_cooling_device *cpufreq_dev = NULL;
-> +       unsigned int cpufreq_dev_count = 0;
-> +
-> +       mutex_lock(&cooling_cpufreq_lock);
-> +       list_for_each_entry(cpufreq_dev, &cooling_cpufreq_list, node) {
-> +               if (cpufreq_dev && cpufreq_dev->cool_dev == cdev)
-> +                       break;
-> +               cpufreq_dev_count++;
-> +       }
-> +
-> +       if (!cpufreq_dev || cpufreq_dev->cool_dev != cdev) {
-> +               mutex_unlock(&cooling_cpufreq_lock);
-> +               return;
-> +       }
-> +
-> +       list_del(&cpufreq_dev->node);
-> +
-> +       /* Unregister the notifier for the last cpufreq cooling device */
-> +       if (cpufreq_dev_count == 1) {
-> +               cpufreq_unregister_notifier(&thermal_cpufreq_notifier_block,
-> +                                       CPUFREQ_POLICY_NOTIFIER);
-> +       }
-> +       mutex_unlock(&cooling_cpufreq_lock);
-> +       thermal_cooling_device_unregister(cpufreq_dev->cool_dev);
-> +       release_idr(&cpufreq_idr, cpufreq_dev->id);
-> +       if (cpufreq_dev_count == 1)
-> +               mutex_destroy(&cooling_cpufreq_lock);
-> +       kfree(cpufreq_dev);
-> +}
-> +EXPORT_SYMBOL(cpufreq_cooling_unregister);
-> diff --git a/include/linux/cpu_cooling.h b/include/linux/cpu_cooling.h
-> new file mode 100644
-> index 0000000..555b917
-> --- /dev/null
-> +++ b/include/linux/cpu_cooling.h
-> @@ -0,0 +1,79 @@
-> +/*
-> + *  linux/include/linux/cpu_cooling.h
-> + *
-> + *  Copyright (C) 2012 Samsung Electronics Co., Ltd(http://www.samsung.com)
-> + *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
-> + *
-> + * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU General Public License as published by
-> + *  the Free Software Foundation; version 2 of the License.
-> + *
-> + *  This program is distributed in the hope that it will be useful, but
-> + *  WITHOUT ANY WARRANTY; without even the implied warranty of
-> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-> + *  General Public License for more details.
-> + *
-> + *  You should have received a copy of the GNU General Public License along
-> + *  with this program; if not, write to the Free Software Foundation, Inc.,
-> + *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-> + *
-> + * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> + */
-> +
-> +#ifndef __CPU_COOLING_H__
-> +#define __CPU_COOLING_H__
-> +
-> +#include <linux/thermal.h>
-> +
-> +#define CPUFREQ_COOLING_START          0
-> +#define CPUFREQ_COOLING_STOP           1
-> +
-> +/**
-> + * cputherm_register_notifier - Register a notifier with cpu cooling interface.
-> + * @nb:        struct notifier_block * with callback info.
-> + * @list: integer value for which notification is needed. possible values are
-> + *     CPUFREQ_COOLING_START and CPUFREQ_COOLING_STOP.
-> + *
-> + * This exported function registers a driver with cpu cooling layer. The driver
-> + * will be notified when any cpu cooling action is called.
-> + */
-> +int cputherm_register_notifier(struct notifier_block *nb, unsigned int list);
-> +
-> +/**
-> + * cputherm_unregister_notifier - Un-register a notifier.
-> + * @nb:        struct notifier_block * with callback info.
-> + * @list: integer value for which notification is needed. values possible are
-> + *     CPUFREQ_COOLING_START and CPUFREQ_COOLING_STOP.
-> + *
-> + * This exported function un-registers a driver with cpu cooling layer.
-> + */
-> +int cputherm_unregister_notifier(struct notifier_block *nb, unsigned int list);
-> +
-> +#ifdef CONFIG_CPU_THERMAL
-> +/**
-> + * cpufreq_cooling_register - function to create cpufreq cooling device.
-> + * @clip_cpus: cpumask of cpus where the frequency constraints will happen
-> + */
-> +struct thermal_cooling_device *cpufreq_cooling_register(
-> +               struct cpumask *clip_cpus);
-> +
-> +/**
-> + * cpufreq_cooling_unregister - function to remove cpufreq cooling device.
-> + * @cdev: thermal cooling device pointer.
-> + */
-> +void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev);
-> +#else /* !CONFIG_CPU_THERMAL */
-> +static inline struct thermal_cooling_device *cpufreq_cooling_register(
-> +       struct cpumask *clip_cpus)
-> +{
-> +       return NULL;
-> +}
-> +static inline void cpufreq_cooling_unregister(
-> +               struct thermal_cooling_device *cdev)
-> +{
-> +       return;
-> +}
-> +#endif /* CONFIG_CPU_THERMAL */
-> +
-> +#endif /* __CPU_COOLING_H__ */
-> --
-> 1.7.1
->
-
-
-
+diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+index a50c205..7fcc642 100644
+--- a/drivers/mmc/host/sdhci-s3c.c
++++ b/drivers/mmc/host/sdhci-s3c.c
+@@ -34,6 +34,9 @@
+ 
+ #define MAX_BUS_CLK	(4)
+ 
++/* Number of gpio's used is max data bus width + command and clock lines */
++#define NUM_GPIOS(x)	(x + 2)
++
+ /**
+  * struct sdhci_s3c - S3C SDHCI instance
+  * @host: The SDHCI host created
+@@ -41,6 +44,7 @@
+  * @ioarea: The resource created when we claimed the IO area.
+  * @pdata: The platform data for this controller.
+  * @cur_clk: The index of the current bus clock.
++ * @gpios: List of gpio numbers parsed from device tree.
+  * @clk_io: The clock for the internal bus interface.
+  * @clk_bus: The clocks that are available for the SD/MMC bus clock.
+  */
+@@ -52,6 +56,7 @@ struct sdhci_s3c {
+ 	unsigned int		cur_clk;
+ 	int			ext_cd_irq;
+ 	int			ext_cd_gpio;
++	int			*gpios;
+ 
+ 	struct clk		*clk_io;
+ 	struct clk		*clk_bus[MAX_BUS_CLK];
+@@ -419,9 +424,109 @@ static void sdhci_s3c_setup_card_detect_gpio(struct sdhci_s3c *sc)
+ 	}
+ }
+ 
++#ifdef CONFIG_OF
++static int __devinit sdhci_s3c_parse_dt(struct device *dev,
++		struct sdhci_host *host, struct s3c_sdhci_platdata *pdata)
++{
++	struct device_node *node = dev->of_node;
++	struct sdhci_s3c *ourhost = to_s3c(host);
++	u32 max_width;
++	int gpio, cnt, ret;
++
++	/* if the bus-width property is not specified, assume width as 1 */
++	if (of_property_read_u32(node, "bus-width", &max_width))
++		max_width = 1;
++	pdata->max_width = max_width;
++
++	ourhost->gpios = devm_kzalloc(dev, NUM_GPIOS(pdata->max_width) *
++				sizeof(int), GFP_KERNEL);
++	if (!ourhost->gpios)
++		return -ENOMEM;
++
++	/* get the card detection method */
++	if (of_get_property(node, "samsung,sdhci-cd-internal", NULL))
++		pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
++	else if (of_get_property(node, "samsung,sdhci-cd-gpio", NULL))
++		pdata->cd_type = S3C_SDHCI_CD_GPIO;
++	else if (of_get_property(node, "samsung,sdhci-cd-none", NULL))
++		pdata->cd_type = S3C_SDHCI_CD_NONE;
++	else if (of_get_property(node, "samsung,sdhci-cd-permanent", NULL))
++		pdata->cd_type = S3C_SDHCI_CD_PERMANENT;
++	else
++		pdata->cd_type = S3C_SDHCI_CD_NONE;
++
++	/* get the gpio used for card detection */
++	if (pdata->cd_type == S3C_SDHCI_CD_GPIO ||
++			pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
++		gpio = of_get_named_gpio(node, "cd-gpios", 0);
++		if (!gpio_is_valid(gpio)) {
++			dev_err(dev, "invalid card detect gpio specified\n");
++			return -EINVAL;
++		}
++	}
++
++	if (pdata->cd_type == S3C_SDHCI_CD_GPIO) {
++		pdata->ext_cd_gpio = gpio;
++		ourhost->ext_cd_gpio = -1;
++		if (of_get_property(node, "cd-inverted", NULL))
++			pdata->ext_cd_gpio_invert = 1;
++	} else if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
++		ret = gpio_request(gpio, "sdhci-cd");
++		if (ret) {
++			dev_err(dev, "card detect gpio request failed\n");
++			return -EINVAL;
++		}
++		ourhost->ext_cd_gpio = gpio;
++	}
++
++	/* get the gpios for command, clock and data lines */
++	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
++		gpio = of_get_gpio(node, cnt);
++		if (!gpio_is_valid(gpio)) {
++			dev_err(dev, "invalid gpio[%d]\n", cnt);
++			goto err_free_dt_cd_gpio;
++		}
++		ourhost->gpios[cnt] = gpio;
++	}
++
++	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
++		ret = gpio_request(ourhost->gpios[cnt], "sdhci-gpio");
++		if (ret) {
++			dev_err(dev, "gpio[%d] request failed\n", cnt);
++			goto err_free_dt_gpios;
++		}
++	}
++
++	return 0;
++
++ err_free_dt_gpios:
++	while (--cnt >= 0)
++		gpio_free(ourhost->gpios[cnt]);
++ err_free_dt_cd_gpio:
++	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL)
++		gpio_free(ourhost->ext_cd_gpio);
++	return -EINVAL;
++}
++#else
++static int __devinit sdhci_s3c_parse_dt(struct device *dev,
++		struct sdhci_host *host, struct s3c_sdhci_platdata *pdata)
++{
++	return -EINVAL;
++}
++#endif
++
++static const struct of_device_id sdhci_s3c_dt_match[];
++
+ static inline struct sdhci_s3c_drv_data *sdhci_s3c_get_driver_data(
+ 			struct platform_device *pdev)
+ {
++#ifdef CONFIG_OF
++	if (pdev->dev.of_node) {
++		const struct of_device_id *match;
++		match = of_match_node(sdhci_s3c_dt_match, pdev->dev.of_node);
++		return (struct sdhci_s3c_drv_data *)match->data;
++	}
++#endif
+ 	return (struct sdhci_s3c_drv_data *)
+ 			platform_get_device_id(pdev)->driver_data;
+ }
+@@ -436,7 +541,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	int ret, irq, ptr, clks;
+ 
+-	if (!pdev->dev.platform_data) {
++	if (!pdev->dev.platform_data && !pdev->dev.of_node) {
+ 		dev_err(dev, "no device data specified\n");
+ 		return -ENOENT;
+ 	}
+@@ -452,21 +557,28 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 		dev_err(dev, "sdhci_alloc_host() failed\n");
+ 		return PTR_ERR(host);
+ 	}
++	sc = sdhci_priv(host);
+ 
+ 	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata) {
+ 		ret = -ENOMEM;
+-		goto err_io_clk;
++		goto err_pdata;
++	}
++
++	if (pdev->dev.of_node) {
++		ret = sdhci_s3c_parse_dt(&pdev->dev, host, pdata);
++		if (ret)
++			goto err_pdata;
++	} else {
++		memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
++		sc->ext_cd_gpio = -1; /* invalid gpio number */
+ 	}
+-	memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
+ 
+ 	drv_data = sdhci_s3c_get_driver_data(pdev);
+-	sc = sdhci_priv(host);
+ 
+ 	sc->host = host;
+ 	sc->pdev = pdev;
+ 	sc->pdata = pdata;
+-	sc->ext_cd_gpio = -1; /* invalid gpio number */
+ 
+ 	platform_set_drvdata(pdev, host);
+ 
+@@ -631,6 +743,12 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 	clk_put(sc->clk_io);
+ 
+  err_io_clk:
++	for (ptr = 0; ptr < NUM_GPIOS(sc->pdata->max_width); ptr++)
++		gpio_free(sc->gpios[ptr]);
++	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL)
++		gpio_free(sc->ext_cd_gpio);
++
++ err_pdata:
+ 	sdhci_free_host(host);
+ 
+ 	return ret;
+@@ -638,9 +756,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+ 
+ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+ {
+-	struct s3c_sdhci_platdata *pdata = pdev->dev.platform_data;
+ 	struct sdhci_host *host =  platform_get_drvdata(pdev);
+ 	struct sdhci_s3c *sc = sdhci_priv(host);
++	struct s3c_sdhci_platdata *pdata = sc->pdata;
+ 	int ptr;
+ 
+ 	if (pdata->cd_type == S3C_SDHCI_CD_EXTERNAL && pdata->ext_cd_cleanup)
+@@ -665,6 +783,11 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+ 	clk_disable(sc->clk_io);
+ 	clk_put(sc->clk_io);
+ 
++	if (pdev->dev.of_node) {
++		for (ptr = 0; ptr < NUM_GPIOS(sc->pdata->max_width); ptr++)
++			gpio_free(sc->gpios[ptr]);
++	}
++
+ 	sdhci_free_host(host);
+ 	platform_set_drvdata(pdev, NULL);
+ 
+@@ -737,6 +860,16 @@ static struct platform_device_id sdhci_s3c_driver_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
+ 
++#ifdef CONFIG_OF
++static const struct of_device_id sdhci_s3c_dt_match[] = {
++	{ .compatible = "samsung,s3c6410-sdhci", },
++	{ .compatible = "samsung,exynos4210-sdhci",
++		.data = &exynos4_sdhci_drv_data },
++	{},
++};
++MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
++#endif
++
+ static struct platform_driver sdhci_s3c_driver = {
+ 	.probe		= sdhci_s3c_probe,
+ 	.remove		= __devexit_p(sdhci_s3c_remove),
+@@ -744,6 +877,7 @@ static struct platform_driver sdhci_s3c_driver = {
+ 	.driver		= {
+ 		.owner	= THIS_MODULE,
+ 		.name	= "s3c-sdhci",
++		.of_match_table = of_match_ptr(sdhci_s3c_dt_match),
+ 		.pm	= SDHCI_S3C_PMOPS,
+ 	},
+ };
 -- 
+1.6.6.rc2
 
-Eduardo Valentin
