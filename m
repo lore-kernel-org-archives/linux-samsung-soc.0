@@ -1,237 +1,64 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add MFC device tree support
-Date: Thu, 16 Aug 2012 18:01:12 +0530
-Message-ID: <1345120273-22913-2-git-send-email-arun.kk@samsung.com>
-References: <1345120273-22913-1-git-send-email-arun.kk@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12034 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751132Ab2HPLYS (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 16 Aug 2012 07:24:18 -0400
-Received: from epcpsbgm1.samsung.com (mailout1.samsung.com [203.254.224.24])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M8U00KOJIC86OR0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 16 Aug 2012 20:24:16 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M8U00FASI8QMJ00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 16 Aug 2012 20:24:16 +0900 (KST)
-In-reply-to: <1345120273-22913-1-git-send-email-arun.kk@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Subject: [PATCH v6 0/6] thermal: Add kernel thermal support for exynos platform
+Date: Thu, 16 Aug 2012 17:11:39 +0530
+Message-ID: <1345117305-8299-1-git-send-email-amit.kachhap@linaro.org>
+Return-path: <linux-acpi-owner@vger.kernel.org>
+Sender: linux-acpi-owner@vger.kernel.org
+To: linux-pm@lists.linux-foundation.org, Andrew Morton <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lm-sensors@lm-sensors.org, amit.kachhap@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, joshi@samsung.com
 
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Hi Andrew/Zhang/Len,
 
-This patch adds device tree entry for MFC in the Exynos
-machines. Exynos4 SoCs support MFC v5 version and Exynos5 has
-MFC v6.x version. So making the required changes in the clock
-files and adds MFC to the DT device list.
+This current patchset is based on 3.6-rc1 and Zhang Rui's core thermal
+enhancement patches(http://permalink.gmane.org/gmane.linux.acpi.devel/54564).
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- .../devicetree/bindings/media/s5p-mfc.txt          |   24 ++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi                  |   10 ++++++++
- arch/arm/boot/dts/exynos5250.dtsi                  |   10 ++++++++
- arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
- arch/arm/mach-exynos/mach-exynos4-dt.c             |   22 ++++++++++++++++++
- arch/arm/mach-exynos/mach-exynos5-dt.c             |   22 ++++++++++++++++++
- 6 files changed, 89 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
+Version V5 is present in linux-next tree. Since Zhang Rui's implementation are
+already present in linux-next so requesting Andrew to add this V6 series and drop
+earlier V5 version.
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-new file mode 100644
-index 0000000..b9bd266
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -0,0 +1,24 @@
-+* Samsung Multi Format Codec (MFC)
-+
-+Mult Format Codec (MFC) is the IP present in Samsung SoCs which
-+supports high resolution decoding and encoding functionalities.
-+
-+Required properties:
-+  - compatible : value should be either one among the following
-+	(a) "samsung,s5p-mfc-v5" for MFC v5 present in Exynos4 SoCs
-+	(b) "samsung,s5p-mfc-v6" for MFC v6.x present in Exynos5 SoCs
-+
-+  - reg : Physical base address of the IP registers and length of memory
-+	  mapped region.
-+
-+  - interrupts : MFC interupt number to the CPU.
-+
-+  - samsung,mfc-r : Base address of the first memory bank used by MFC
-+		    for DMA contiguous memory allocation.
-+
-+  - samsung,mfc-r-size : Size of the first memory bank.
-+
-+  - samsung,mfc-l : Base address of the second memory bank used by MFC
-+		    for DMA contiguous memory allocation.
-+
-+  - samsung,mfc-l-size : Size of the second memory bank.
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 02891fe..b5ee43d 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -56,6 +56,16 @@
- 		interrupts = <0 43 0>;
- 	};
- 
-+	mfc {
-+		compatible = "samsung,s5p-mfc";
-+		reg = <0x13400000 0x10000>;
-+		interrupts = <0 94 0>;
-+		samsung,mfc-r = <0x43000000>;
-+		samsung,mfc-r-size = <8388608>;
-+		samsung,mfc-l = <0x51000000>;
-+		samsung,mfc-l-size = <8388608>;
-+	};
-+
- 	rtc@10070000 {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 004aaa8..3c762a4 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -58,6 +58,16 @@
- 		interrupts = <0 42 0>;
- 	};
- 
-+	mfc {
-+		compatible = "samsung,s5p-mfc-v6";
-+		reg = <0x11000000 0x10000>;
-+		interrupts = <0 96 0>;
-+		samsung,mfc-r = <0x43000000>;
-+		samsung,mfc-r-size = <8388608>;
-+		samsung,mfc-l = <0x51000000>;
-+		samsung,mfc-l-size = <8388608>;
-+	};
-+
- 	rtc {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x101E0000 0x100>;
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 3b00e29..c85e7b2 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -607,7 +607,7 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.ctrlbit	= (1 << 25),
- 	}, {
- 		.name		= "mfc",
--		.devname	= "s5p-mfc",
-+		.devname	= "s5p-mfc-v6",
- 		.enable		= exynos5_clk_ip_mfc_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index b2b5d5f..c4a0e16 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -13,6 +13,7 @@
- 
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/memblock.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -63,6 +64,7 @@ static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
- 				"exynos4210-spi.2", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
-+	OF_DEV_AUXDATA("samsung,s5p-mfc", 0x13400000, "s5p-mfc", NULL),
- 	{},
- };
- 
-@@ -83,6 +85,25 @@ static char const *exynos4210_dt_compat[] __initdata = {
- 	NULL
- };
- 
-+static void s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
-+		phys_addr_t lbase, unsigned int lsize) {
-+
-+	if (memblock_remove(lbase, lsize)) {
-+		pr_err("Failed to reserve bank1 memory for MFC device\n");
-+		WARN_ON(1);
-+	}
-+
-+	if (memblock_remove(rbase, rsize)) {
-+		pr_err("Failed to reserve bank2 memory for MFC device\n");
-+		WARN_ON(1);
-+	}
-+}
-+
-+static void __init exynos4_reserve(void)
-+{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-+}
-+
- DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
- 	.init_irq	= exynos4_init_irq,
-@@ -93,4 +114,5 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	.timer		= &exynos4_timer,
- 	.dt_compat	= exynos4210_dt_compat,
- 	.restart        = exynos4_restart,
-+	.reserve	= exynos4_reserve,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index ef770bc..898d2de 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/memblock.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -56,6 +57,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-+	OF_DEV_AUXDATA("samsung,s5p-mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
- 	{},
- };
- 
-@@ -76,6 +78,25 @@ static char const *exynos5250_dt_compat[] __initdata = {
- 	NULL
- };
- 
-+static void s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
-+		phys_addr_t lbase, unsigned int lsize) {
-+
-+	if (memblock_remove(lbase, lsize)) {
-+		pr_err("Failed to reserve bank1 memory for MFC device\n");
-+		WARN_ON(1);
-+	}
-+
-+	if (memblock_remove(rbase, rsize)) {
-+		pr_err("Failed to reserve bank2 memory for MFC device\n");
-+		WARN_ON(1);
-+	}
-+}
-+
-+static void __init exynos5_reserve(void)
-+{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-+}
-+
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.init_irq	= exynos5_init_irq,
-@@ -86,4 +107,5 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	.timer		= &exynos4_timer,
- 	.dt_compat	= exynos5250_dt_compat,
- 	.restart        = exynos5_restart,
-+	.reserve	= exynos5_reserve,
- MACHINE_END
--- 
-1.7.0.4
+Changes since v5:
+This patchset basically simplifies the cpufreq cooling API's to take just
+cpumask as an input parameter and also removes the state management logic as they
+are now taken care in the core thermal layer.
+
+All these patches over Zhang Rui's work can be found in the git link
+git://git.linaro.org/people/amitdanielk/linux.git exynos_v6_thermal_tree
+
+Thanks,
+Amit Daniel
+
+Amit Daniel Kachhap (6):
+  thermal: add generic cpufreq cooling implementation
+  hwmon: exynos4: move thermal sensor driver to driver/thermal
+    directory
+  thermal: exynos5: add exynos5250 thermal sensor driver support
+  thermal: exynos: register the tmu sensor with the kernel thermal
+    layer
+  ARM: exynos: add thermal sensor driver platform data support
+  thermal: exynos: Use devm_* functions
+
+ Documentation/hwmon/exynos4_tmu              |   81 ---
+ Documentation/thermal/cpu-cooling-api.txt    |   52 ++
+ Documentation/thermal/exynos_thermal         |   52 ++
+ drivers/hwmon/Kconfig                        |   10 -
+ drivers/hwmon/Makefile                       |    1 -
+ drivers/hwmon/exynos4_tmu.c                  |  518 --------------
+ drivers/thermal/Kconfig                      |   18 +
+ drivers/thermal/Makefile                     |    2 +
+ drivers/thermal/cpu_cooling.c                |  512 +++++++++++++
+ drivers/thermal/exynos_thermal.c             |  994 ++++++++++++++++++++++++++
+ include/linux/cpu_cooling.h                  |   79 ++
+ include/linux/platform_data/exynos4_tmu.h    |   83 ---
+ include/linux/platform_data/exynos_thermal.h |  116 +++
+ 13 files changed, 1825 insertions(+), 693 deletions(-)
+ delete mode 100644 Documentation/hwmon/exynos4_tmu
+ create mode 100644 Documentation/thermal/cpu-cooling-api.txt
+ create mode 100644 Documentation/thermal/exynos_thermal
+ delete mode 100644 drivers/hwmon/exynos4_tmu.c
+ create mode 100644 drivers/thermal/cpu_cooling.c
+ create mode 100644 drivers/thermal/exynos_thermal.c
+ create mode 100644 include/linux/cpu_cooling.h
+ delete mode 100644 include/linux/platform_data/exynos4_tmu.h
+ create mode 100644 include/linux/platform_data/exynos_thermal.h
+
