@@ -1,567 +1,266 @@
-From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Subject: [PATCH v6 4/6] thermal: exynos: register the tmu sensor
-	with the kernel thermal layer
-Date: Thu, 16 Aug 2012 17:11:43 +0530
-Message-ID: <1345117305-8299-5-git-send-email-amit.kachhap@linaro.org>
-References: <1345117305-8299-1-git-send-email-amit.kachhap@linaro.org>
-Return-path: <linux-pm-bounces@lists.linux-foundation.org>
-In-Reply-To: <1345117305-8299-1-git-send-email-amit.kachhap@linaro.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
-List-Post: <mailto:linux-pm@lists.linux-foundation.org>
-List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
-	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
-Sender: linux-pm-bounces@lists.linux-foundation.org
-Errors-To: linux-pm-bounces@lists.linux-foundation.org
-To: linux-pm@lists.linux-foundation.org, Andrew Morton <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, SangWook Ju <sw.ju@samsung.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Jean Delvare <khali@linux-fr.org>, Kyungmin Park <kmpark@infradead.org>
+From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
+Date: Thu, 16 Aug 2012 17:12:37 +0530
+Message-ID: <CAJuYYwRG5SsPHsF5BA5ix7_kBh_Wvn_b9HvjyKP77g5omY1r=g@mail.gmail.com>
+References: <1345120273-22913-1-git-send-email-arun.kk@samsung.com>
+ <1345120273-22913-2-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1345120273-22913-2-git-send-email-arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: k.debski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, joshi-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jtp.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-This code added creates a link between temperature sensors, linux thermal
-framework and cooling devices for samsung exynos platform.  This layer
-monitors the temperature from the sensor and informs the generic thermal
-layer to take the necessary cooling action.
+On 16 August 2012 18:01, Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+> From: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>
+> This patch adds device tree entry for MFC in the Exynos
+> machines. Exynos4 SoCs support MFC v5 version and Exynos5 has
+> MFC v6.x version. So making the required changes in the clock
+> files and adds MFC to the DT device list.
+>
+> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Arun Kumar K <arun.kk-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>  .../devicetree/bindings/media/s5p-mfc.txt          |   24 ++++++++++++++++++++
+>  arch/arm/boot/dts/exynos4210.dtsi                  |   10 ++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |   10 ++++++++
+>  arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
+>  arch/arm/mach-exynos/mach-exynos4-dt.c             |   22 ++++++++++++++++++
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |   22 ++++++++++++++++++
+>  6 files changed, 89 insertions(+), 1 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
+>
+> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> new file mode 100644
+> index 0000000..b9bd266
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> @@ -0,0 +1,24 @@
+> +* Samsung Multi Format Codec (MFC)
+> +
+> +Mult Format Codec (MFC) is the IP present in Samsung SoCs which
+> +supports high resolution decoding and encoding functionalities.
 
-[akpm@linux-foundation.org: fix comment layout]
-Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Acked-by: Guenter Roeck <guenter.roeck@ericsson.com>
-Cc: SangWook Ju <sw.ju@samsung.com>
-Cc: Durgadoss <durgadoss.r@intel.com>
-Cc: Len Brown <lenb@kernel.org>
-Cc: Jean Delvare <khali@linux-fr.org>
-Cc: Kyungmin Park <kmpark@infradead.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
----
- drivers/thermal/exynos_thermal.c             |  406 +++++++++++++++++++++++++-
- include/linux/platform_data/exynos_thermal.h |   22 ++
- 2 files changed, 426 insertions(+), 2 deletions(-)
+In addition to this, specifying that mfc is used for video
+encode/decode would be informative.
 
-diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-index c9a33dd..e79cdc9 100644
---- a/drivers/thermal/exynos_thermal.c
-+++ b/drivers/thermal/exynos_thermal.c
-@@ -34,6 +34,9 @@
- #include <linux/io.h>
- #include <linux/mutex.h>
- #include <linux/platform_data/exynos_thermal.h>
-+#include <linux/thermal.h>
-+#include <linux/cpufreq.h>
-+#include <linux/cpu_cooling.h>
- #include <linux/of.h>
- 
- #include <plat/cpu.h>
-@@ -94,6 +97,7 @@
- 
- #define ACTIVE_INTERVAL 500
- #define IDLE_INTERVAL 10000
-+#define MCELSIUS	1000
- 
- /* CPU Zone information */
- #define PANIC_ZONE      4
-@@ -104,6 +108,8 @@
- #define GET_ZONE(trip) (trip + 2)
- #define GET_TRIP(zone) (zone - 2)
- 
-+#define EXYNOS_ZONE_COUNT	3
-+
- struct exynos_tmu_data {
- 	struct exynos_tmu_platform_data *pdata;
- 	struct resource *mem;
-@@ -116,6 +122,371 @@ struct exynos_tmu_data {
- 	u8 temp_error1, temp_error2;
- };
- 
-+struct	thermal_trip_point_conf {
-+	int trip_val[MAX_TRIP_COUNT];
-+	int trip_count;
-+};
-+
-+struct	thermal_cooling_conf {
-+	struct freq_clip_table freq_data[MAX_TRIP_COUNT];
-+	int freq_clip_count;
-+};
-+
-+struct thermal_sensor_conf {
-+	char name[SENSOR_NAME_LEN];
-+	int (*read_temperature)(void *data);
-+	struct thermal_trip_point_conf trip_data;
-+	struct thermal_cooling_conf cooling_data;
-+	void *private_data;
-+};
-+
-+struct exynos_thermal_zone {
-+	enum thermal_device_mode mode;
-+	struct thermal_zone_device *therm_dev;
-+	struct thermal_cooling_device *cool_dev[MAX_COOLING_DEVICE];
-+	unsigned int cool_dev_size;
-+	struct platform_device *exynos4_dev;
-+	struct thermal_sensor_conf *sensor_conf;
-+	bool bind;
-+};
-+
-+static struct exynos_thermal_zone *th_zone;
-+static void exynos_unregister_thermal(void);
-+static int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf);
-+
-+/* Get mode callback functions for thermal zone */
-+static int exynos_get_mode(struct thermal_zone_device *thermal,
-+			enum thermal_device_mode *mode)
-+{
-+	if (th_zone)
-+		*mode = th_zone->mode;
-+	return 0;
-+}
-+
-+/* Set mode callback functions for thermal zone */
-+static int exynos_set_mode(struct thermal_zone_device *thermal,
-+			enum thermal_device_mode mode)
-+{
-+	if (!th_zone->therm_dev) {
-+		pr_notice("thermal zone not registered\n");
-+		return 0;
-+	}
-+
-+	mutex_lock(&th_zone->therm_dev->lock);
-+
-+	if (mode == THERMAL_DEVICE_ENABLED)
-+		th_zone->therm_dev->polling_delay = IDLE_INTERVAL;
-+	else
-+		th_zone->therm_dev->polling_delay = 0;
-+
-+	mutex_unlock(&th_zone->therm_dev->lock);
-+
-+	th_zone->mode = mode;
-+	thermal_zone_device_update(th_zone->therm_dev);
-+	pr_info("thermal polling set for duration=%d msec\n",
-+				th_zone->therm_dev->polling_delay);
-+	return 0;
-+}
-+
-+
-+/* Get trip type callback functions for thermal zone */
-+static int exynos_get_trip_type(struct thermal_zone_device *thermal, int trip,
-+				 enum thermal_trip_type *type)
-+{
-+	switch (GET_ZONE(trip)) {
-+	case MONITOR_ZONE:
-+	case WARN_ZONE:
-+		*type = THERMAL_TRIP_ACTIVE;
-+		break;
-+	case PANIC_ZONE:
-+		*type = THERMAL_TRIP_CRITICAL;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
-+/* Get trip temperature callback functions for thermal zone */
-+static int exynos_get_trip_temp(struct thermal_zone_device *thermal, int trip,
-+				unsigned long *temp)
-+{
-+	if (trip < GET_TRIP(MONITOR_ZONE) || trip > GET_TRIP(PANIC_ZONE))
-+		return -EINVAL;
-+
-+	*temp = th_zone->sensor_conf->trip_data.trip_val[trip];
-+	/* convert the temperature into millicelsius */
-+	*temp = *temp * MCELSIUS;
-+
-+	return 0;
-+}
-+
-+/* Get critical temperature callback functions for thermal zone */
-+static int exynos_get_crit_temp(struct thermal_zone_device *thermal,
-+				unsigned long *temp)
-+{
-+	int ret;
-+	/* Panic zone */
-+	ret = exynos_get_trip_temp(thermal, GET_TRIP(PANIC_ZONE), temp);
-+	return ret;
-+}
-+
-+static int exynos_get_frequency_level(unsigned int cpu, unsigned int freq)
-+{
-+	int i = 0, ret = -EINVAL;
-+	struct cpufreq_frequency_table *table = NULL;
-+#ifdef CONFIG_CPU_FREQ
-+	table = cpufreq_frequency_get_table(cpu);
-+#endif
-+	if (!table)
-+		return ret;
-+
-+	while (table[i].frequency != CPUFREQ_TABLE_END) {
-+		if (table[i].frequency == CPUFREQ_ENTRY_INVALID)
-+			continue;
-+		if (table[i].frequency == freq)
-+			return i;
-+		i++;
-+	}
-+	return ret;
-+}
-+
-+/* Bind callback functions for thermal zone */
-+static int exynos_bind(struct thermal_zone_device *thermal,
-+			struct thermal_cooling_device *cdev)
-+{
-+	int ret = 0, i, tab_size, level;
-+	struct freq_clip_table *tab_ptr, *clip_data;
-+	struct thermal_sensor_conf *data = th_zone->sensor_conf;
-+
-+	tab_ptr = (struct freq_clip_table *)data->cooling_data.freq_data;
-+	tab_size = data->cooling_data.freq_clip_count;
-+
-+	if (tab_ptr == NULL || tab_size == 0)
-+		return -EINVAL;
-+
-+	/* find the cooling device registered*/
-+	for (i = 0; i < th_zone->cool_dev_size; i++)
-+		if (cdev == th_zone->cool_dev[i])
-+			break;
-+
-+	/* No matching cooling device */
-+	if (i == th_zone->cool_dev_size)
-+		return 0;
-+
-+	/* Bind the thermal zone to the cpufreq cooling device */
-+	for (i = 0; i < tab_size; i++) {
-+		clip_data = (struct freq_clip_table *)&(tab_ptr[i]);
-+		level = exynos_get_frequency_level(0, clip_data->freq_clip_max);
-+		if (level < 0)
-+			return 0;
-+		switch (GET_ZONE(i)) {
-+		case MONITOR_ZONE:
-+		case WARN_ZONE:
-+			if (thermal_zone_bind_cooling_device(thermal, i, cdev,
-+								level, level)) {
-+				pr_err("error binding cdev inst %d\n", i);
-+				ret = -EINVAL;
-+			}
-+			th_zone->bind = true;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+/* Unbind callback functions for thermal zone */
-+static int exynos_unbind(struct thermal_zone_device *thermal,
-+			struct thermal_cooling_device *cdev)
-+{
-+	int ret = 0, i, tab_size;
-+	struct thermal_sensor_conf *data = th_zone->sensor_conf;
-+
-+	if (th_zone->bind == false)
-+		return 0;
-+
-+	tab_size = data->cooling_data.freq_clip_count;
-+
-+	if (tab_size == 0)
-+		return -EINVAL;
-+
-+	/* find the cooling device registered*/
-+	for (i = 0; i < th_zone->cool_dev_size; i++)
-+		if (cdev == th_zone->cool_dev[i])
-+			break;
-+
-+	/* No matching cooling device */
-+	if (i == th_zone->cool_dev_size)
-+		return 0;
-+
-+	/* Bind the thermal zone to the cpufreq cooling device */
-+	for (i = 0; i < tab_size; i++) {
-+		switch (GET_ZONE(i)) {
-+		case MONITOR_ZONE:
-+		case WARN_ZONE:
-+			if (thermal_zone_unbind_cooling_device(thermal, i,
-+								cdev)) {
-+				pr_err("error unbinding cdev inst=%d\n", i);
-+				ret = -EINVAL;
-+			}
-+			th_zone->bind = false;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+		}
-+	}
-+	return ret;
-+}
-+
-+/* Get temperature callback functions for thermal zone */
-+static int exynos_get_temp(struct thermal_zone_device *thermal,
-+			unsigned long *temp)
-+{
-+	void *data;
-+
-+	if (!th_zone->sensor_conf) {
-+		pr_info("Temperature sensor not initialised\n");
-+		return -EINVAL;
-+	}
-+	data = th_zone->sensor_conf->private_data;
-+	*temp = th_zone->sensor_conf->read_temperature(data);
-+	/* convert the temperature into millicelsius */
-+	*temp = *temp * MCELSIUS;
-+	return 0;
-+}
-+
-+/* Get the temperature trend */
-+static int exynos_get_trend(struct thermal_zone_device *thermal,
-+			int trip, enum thermal_trend *trend)
-+{
-+	if (thermal->temperature >= trip)
-+		*trend = THERMAL_TREND_RAISING;
-+	else
-+		*trend = THERMAL_TREND_DROPPING;
-+
-+	return 0;
-+}
-+/* Operation callback functions for thermal zone */
-+static struct thermal_zone_device_ops const exynos_dev_ops = {
-+	.bind = exynos_bind,
-+	.unbind = exynos_unbind,
-+	.get_temp = exynos_get_temp,
-+	.get_trend = exynos_get_trend,
-+	.get_mode = exynos_get_mode,
-+	.set_mode = exynos_set_mode,
-+	.get_trip_type = exynos_get_trip_type,
-+	.get_trip_temp = exynos_get_trip_temp,
-+	.get_crit_temp = exynos_get_crit_temp,
-+};
-+
-+/*
-+ * This function may be called from interrupt based temperature sensor
-+ * when threshold is changed.
-+ */
-+static void exynos_report_trigger(void)
-+{
-+	unsigned int i;
-+	char data[10];
-+	char *envp[] = { data, NULL };
-+
-+	if (!th_zone || !th_zone->therm_dev)
-+		return;
-+	if (th_zone->bind == false) {
-+		for (i = 0; i < th_zone->cool_dev_size; i++) {
-+			if (!th_zone->cool_dev[i])
-+				continue;
-+			exynos_bind(th_zone->therm_dev,
-+					th_zone->cool_dev[i]);
-+		}
-+	}
-+
-+	thermal_zone_device_update(th_zone->therm_dev);
-+
-+	mutex_lock(&th_zone->therm_dev->lock);
-+	/* Find the level for which trip happened */
-+	for (i = 0; i < th_zone->sensor_conf->trip_data.trip_count; i++) {
-+		if (th_zone->therm_dev->last_temperature <
-+			th_zone->sensor_conf->trip_data.trip_val[i] * MCELSIUS)
-+			break;
-+	}
-+
-+	if (th_zone->mode == THERMAL_DEVICE_ENABLED) {
-+		if (i > 0)
-+			th_zone->therm_dev->polling_delay = ACTIVE_INTERVAL;
-+		else
-+			th_zone->therm_dev->polling_delay = IDLE_INTERVAL;
-+	}
-+
-+	snprintf(data, sizeof(data), "%u", i);
-+	kobject_uevent_env(&th_zone->therm_dev->device.kobj, KOBJ_CHANGE, envp);
-+	mutex_unlock(&th_zone->therm_dev->lock);
-+}
-+
-+/* Register with the in-kernel thermal management */
-+static int exynos_register_thermal(struct thermal_sensor_conf *sensor_conf)
-+{
-+	int ret;
-+	struct cpumask mask_val;
-+
-+	if (!sensor_conf || !sensor_conf->read_temperature) {
-+		pr_err("Temperature sensor not initialised\n");
-+		return -EINVAL;
-+	}
-+
-+	th_zone = kzalloc(sizeof(struct exynos_thermal_zone), GFP_KERNEL);
-+	if (!th_zone)
-+		return -ENOMEM;
-+
-+	th_zone->sensor_conf = sensor_conf;
-+	cpumask_set_cpu(0, &mask_val);
-+	th_zone->cool_dev[0] = cpufreq_cooling_register(&mask_val);
-+	if (IS_ERR(th_zone->cool_dev[0])) {
-+		pr_err("Failed to register cpufreq cooling device\n");
-+		ret = -EINVAL;
-+		goto err_unregister;
-+	}
-+	th_zone->cool_dev_size++;
-+
-+	th_zone->therm_dev = thermal_zone_device_register(sensor_conf->name,
-+			EXYNOS_ZONE_COUNT, 0, NULL, &exynos_dev_ops, 0,
-+			IDLE_INTERVAL);
-+
-+	if (IS_ERR(th_zone->therm_dev)) {
-+		pr_err("Failed to register thermal zone device\n");
-+		ret = -EINVAL;
-+		goto err_unregister;
-+	}
-+	th_zone->mode = THERMAL_DEVICE_ENABLED;
-+
-+	pr_info("Exynos: Kernel Thermal management registered\n");
-+
-+	return 0;
-+
-+err_unregister:
-+	exynos_unregister_thermal();
-+	return ret;
-+}
-+
-+/* Un-Register with the in-kernel thermal management */
-+static void exynos_unregister_thermal(void)
-+{
-+	int i;
-+
-+	if (th_zone && th_zone->therm_dev)
-+		thermal_zone_device_unregister(th_zone->therm_dev);
-+
-+	for (i = 0; i < th_zone->cool_dev_size; i++) {
-+		if (th_zone && th_zone->cool_dev[i])
-+			cpufreq_cooling_unregister(th_zone->cool_dev[i]);
-+	}
-+
-+	kfree(th_zone);
-+	pr_info("Exynos: Kernel Thermal management unregistered\n");
-+}
-+
- /*
-  * TMU treats temperature as a mapped temperature code.
-  * The temperature is converted differently depending on the calibration type.
-@@ -336,6 +707,7 @@ static void exynos_tmu_work(struct work_struct *work)
- 
- 	clk_disable(data->clk);
- 	mutex_unlock(&data->lock);
-+	exynos_report_trigger();
- 	enable_irq(data->irq);
- }
- 
-@@ -348,12 +720,16 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
- 
- 	return IRQ_HANDLED;
- }
--
-+static struct thermal_sensor_conf exynos_sensor_conf = {
-+	.name			= "exynos-therm",
-+	.read_temperature	= (int (*)(void *))exynos_tmu_read,
-+}
-+;
- static int __devinit exynos_tmu_probe(struct platform_device *pdev)
- {
- 	struct exynos_tmu_data *data;
- 	struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
--	int ret;
-+	int ret, i;
- 
- 	if (!pdata) {
- 		dev_err(&pdev->dev, "No platform init data supplied.\n");
-@@ -431,6 +807,30 @@ static int __devinit exynos_tmu_probe(struct platform_device *pdev)
- 
- 	exynos_tmu_control(pdev, true);
- 
-+	/* Register the sensor with thermal management interface */
-+	(&exynos_sensor_conf)->private_data = data;
-+	exynos_sensor_conf.trip_data.trip_count = pdata->trigger_level0_en +
-+			pdata->trigger_level1_en + pdata->trigger_level2_en +
-+			pdata->trigger_level3_en;
-+
-+	for (i = 0; i < exynos_sensor_conf.trip_data.trip_count; i++)
-+		exynos_sensor_conf.trip_data.trip_val[i] =
-+			pdata->threshold + pdata->trigger_levels[i];
-+
-+	exynos_sensor_conf.cooling_data.freq_clip_count =
-+						pdata->freq_tab_count;
-+	for (i = 0; i < pdata->freq_tab_count; i++) {
-+		exynos_sensor_conf.cooling_data.freq_data[i].freq_clip_max =
-+					pdata->freq_tab[i].freq_clip_max;
-+		exynos_sensor_conf.cooling_data.freq_data[i].temp_level =
-+					pdata->freq_tab[i].temp_level;
-+	}
-+
-+	ret = exynos_register_thermal(&exynos_sensor_conf);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to register thermal interface\n");
-+		goto err_clk;
-+	}
- 	return 0;
- err_clk:
- 	platform_set_drvdata(pdev, NULL);
-@@ -453,6 +853,8 @@ static int __devexit exynos_tmu_remove(struct platform_device *pdev)
- 
- 	exynos_tmu_control(pdev, false);
- 
-+	exynos_unregister_thermal();
-+
- 	clk_put(data->clk);
- 
- 	free_irq(data->irq, data);
-diff --git a/include/linux/platform_data/exynos_thermal.h b/include/linux/platform_data/exynos_thermal.h
-index a9e960a..a7bdb2f 100644
---- a/include/linux/platform_data/exynos_thermal.h
-+++ b/include/linux/platform_data/exynos_thermal.h
-@@ -21,6 +21,7 @@
- 
- #ifndef _LINUX_EXYNOS_THERMAL_H
- #define _LINUX_EXYNOS_THERMAL_H
-+#include <linux/cpu_cooling.h>
- 
- enum calibration_type {
- 	TYPE_ONE_POINT_TRIMMING,
-@@ -33,6 +34,22 @@ enum soc_type {
- 	SOC_ARCH_EXYNOS,
- };
- /**
-+ * struct freq_clip_table
-+ * @freq_clip_max: maximum frequency allowed for this cooling state.
-+ * @temp_level: Temperature level at which the temperature clipping will
-+ *	happen.
-+ * @mask_val: cpumask of the allowed cpu's where the clipping will take place.
-+ *
-+ * This structure is required to be filled and passed to the
-+ * cpufreq_cooling_unregister function.
-+ */
-+struct freq_clip_table {
-+	unsigned int freq_clip_max;
-+	unsigned int temp_level;
-+	const struct cpumask *mask_val;
-+};
-+
-+/**
-  * struct exynos_tmu_platform_data
-  * @threshold: basic temperature for generating interrupt
-  *	       25 <= threshold <= 125 [unit: degree Celsius]
-@@ -72,6 +89,9 @@ enum soc_type {
-  * @type: determines the type of SOC
-  * @efuse_value: platform defined fuse value
-  * @cal_type: calibration type for temperature
-+ * @freq_clip_table: Table representing frequency reduction percentage.
-+ * @freq_tab_count: Count of the above table as frequency reduction may
-+ *	applicable to only some of the trigger levels.
-  *
-  * This structure is required for configuration of exynos_tmu driver.
-  */
-@@ -90,5 +110,7 @@ struct exynos_tmu_platform_data {
- 
- 	enum calibration_type cal_type;
- 	enum soc_type type;
-+	struct freq_clip_table freq_tab[4];
-+	unsigned int freq_tab_count;
- };
- #endif /* _LINUX_EXYNOS_THERMAL_H */
--- 
-1.7.1
+> +
+> +Required properties:
+> +  - compatible : value should be either one among the following
+> +       (a) "samsung,s5p-mfc-v5" for MFC v5 present in Exynos4 SoCs
+> +       (b) "samsung,s5p-mfc-v6" for MFC v6.x present in Exynos5 SoCs
+
+"s5p" should be dropped from the compatible values. For example, it
+should be "samsung,mfc-v5", which is sufficient to identify the
+version of the mfc controller.
+
+> +
+> +  - reg : Physical base address of the IP registers and length of memory
+> +         mapped region.
+> +
+> +  - interrupts : MFC interupt number to the CPU.
+> +
+> +  - samsung,mfc-r : Base address of the first memory bank used by MFC
+> +                   for DMA contiguous memory allocation.
+> +
+> +  - samsung,mfc-r-size : Size of the first memory bank.
+
+It is not allowed to pass buffer base address and size from device
+tree. Device tree node should describe only the MFC controller
+hardware. Any memory management related information should be handled
+outside of device tree. This helps the bindings to be reusable across
+multiple operating systems.
+
+> +
+> +  - samsung,mfc-l : Base address of the second memory bank used by MFC
+> +                   for DMA contiguous memory allocation.
+> +
+> +  - samsung,mfc-l-size : Size of the second memory bank.
+
+Same comment as above. And the bindings documentation is usually
+included in the same patch that adds device tree support for the
+driver.
+
+> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+> index 02891fe..b5ee43d 100644
+> --- a/arch/arm/boot/dts/exynos4210.dtsi
+> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> @@ -56,6 +56,16 @@
+>                 interrupts = <0 43 0>;
+>         };
+>
+> +       mfc {
+> +               compatible = "samsung,s5p-mfc";
+> +               reg = <0x13400000 0x10000>;
+> +               interrupts = <0 94 0>;
+> +               samsung,mfc-r = <0x43000000>;
+> +               samsung,mfc-r-size = <8388608>;
+> +               samsung,mfc-l = <0x51000000>;
+> +               samsung,mfc-l-size = <8388608>;
+> +       };
+> +
+>         rtc@10070000 {
+>                 compatible = "samsung,s3c6410-rtc";
+>                 reg = <0x10070000 0x100>;
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 004aaa8..3c762a4 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -58,6 +58,16 @@
+>                 interrupts = <0 42 0>;
+>         };
+>
+> +       mfc {
+> +               compatible = "samsung,s5p-mfc-v6";
+> +               reg = <0x11000000 0x10000>;
+> +               interrupts = <0 96 0>;
+> +               samsung,mfc-r = <0x43000000>;
+> +               samsung,mfc-r-size = <8388608>;
+> +               samsung,mfc-l = <0x51000000>;
+> +               samsung,mfc-l-size = <8388608>;
+> +       };
+> +
+>         rtc {
+>                 compatible = "samsung,s3c6410-rtc";
+>                 reg = <0x101E0000 0x100>;
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+> index 3b00e29..c85e7b2 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -607,7 +607,7 @@ static struct clk exynos5_init_clocks_off[] = {
+>                 .ctrlbit        = (1 << 25),
+>         }, {
+>                 .name           = "mfc",
+> -               .devname        = "s5p-mfc",
+> +               .devname        = "s5p-mfc-v6",
+>                 .enable         = exynos5_clk_ip_mfc_ctrl,
+>                 .ctrlbit        = (1 << 0),
+>         }, {
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> index b2b5d5f..c4a0e16 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -13,6 +13,7 @@
+>
+>  #include <linux/of_platform.h>
+>  #include <linux/serial_core.h>
+> +#include <linux/memblock.h>
+>
+>  #include <asm/mach/arch.h>
+>  #include <asm/hardware/gic.h>
+> @@ -63,6 +64,7 @@ static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
+>                                 "exynos4210-spi.2", NULL),
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
+> +       OF_DEV_AUXDATA("samsung,s5p-mfc", 0x13400000, "s5p-mfc", NULL),
+>         {},
+>  };
+>
+> @@ -83,6 +85,25 @@ static char const *exynos4210_dt_compat[] __initdata = {
+>         NULL
+>  };
+>
+> +static void s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
+> +               phys_addr_t lbase, unsigned int lsize) {
+> +
+> +       if (memblock_remove(lbase, lsize)) {
+> +               pr_err("Failed to reserve bank1 memory for MFC device\n");
+> +               WARN_ON(1);
+> +       }
+> +
+> +       if (memblock_remove(rbase, rsize)) {
+> +               pr_err("Failed to reserve bank2 memory for MFC device\n");
+> +               WARN_ON(1);
+> +       }
+> +}
+
+It would be better to split the device tree related changes and the
+driver buffer management related changes in separate patches.
+
+> +
+> +static void __init exynos4_reserve(void)
+> +{
+> +       s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+> +}
+> +
+>  DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+>         /* Maintainer: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> */
+>         .init_irq       = exynos4_init_irq,
+> @@ -93,4 +114,5 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+>         .timer          = &exynos4_timer,
+>         .dt_compat      = exynos4210_dt_compat,
+>         .restart        = exynos4_restart,
+> +       .reserve        = exynos4_reserve,
+>  MACHINE_END
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> index ef770bc..898d2de 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -11,6 +11,7 @@
+>
+>  #include <linux/of_platform.h>
+>  #include <linux/serial_core.h>
+> +#include <linux/memblock.h>
+>
+>  #include <asm/mach/arch.h>
+>  #include <asm/hardware/gic.h>
+> @@ -56,6 +57,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
+> +       OF_DEV_AUXDATA("samsung,s5p-mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
+>         {},
+>  };
+>
+> @@ -76,6 +78,25 @@ static char const *exynos5250_dt_compat[] __initdata = {
+>         NULL
+>  };
+>
+> +static void s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
+> +               phys_addr_t lbase, unsigned int lsize) {
+> +
+> +       if (memblock_remove(lbase, lsize)) {
+> +               pr_err("Failed to reserve bank1 memory for MFC device\n");
+> +               WARN_ON(1);
+> +       }
+> +
+> +       if (memblock_remove(rbase, rsize)) {
+> +               pr_err("Failed to reserve bank2 memory for MFC device\n");
+> +               WARN_ON(1);
+> +       }
+> +}
+> +
+> +static void __init exynos5_reserve(void)
+> +{
+> +       s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+> +}
+> +
+>  DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+>         /* Maintainer: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> */
+>         .init_irq       = exynos5_init_irq,
+> @@ -86,4 +107,5 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+>         .timer          = &exynos4_timer,
+>         .dt_compat      = exynos5250_dt_compat,
+>         .restart        = exynos5_restart,
+> +       .reserve        = exynos5_reserve,
+>  MACHINE_END
+> --
+> 1.7.0.4
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
