@@ -1,194 +1,210 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v6 5/6] ARM: exynos: add thermal sensor driver platform
- data support
-Date: Fri, 17 Aug 2012 09:25:24 +0530
-Message-ID: <CAJuYYwQiEHgmn8iJfuENDTAhVQof8M29WHGYePE3a_x3eAZt2Q@mail.gmail.com>
-References: <1345117305-8299-1-git-send-email-amit.kachhap@linaro.org>
-	<1345117305-8299-6-git-send-email-amit.kachhap@linaro.org>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
+Date: Fri, 17 Aug 2012 04:50:14 +0000 (GMT)
+Message-ID: <22088923.161871345179014012.JavaMail.weblogic@epml10>
+Reply-To: arun.kk@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <1345117305-8299-6-git-send-email-amit.kachhap@linaro.org>
-Sender: linux-acpi-owner@vger.kernel.org
-To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-Cc: linux-pm@lists.linux-foundation.org, Andrew Morton <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lm-sensors@lm-sensors.org, SangWook Ju <sw.ju@samsung.com>, Durgadoss <durgadoss.r@intel.com>, Jean Delvare <khali@linux-fr.org>, jonghwa lee <jonghwa3.lee@samsung.com>, Kyungmin Park <kmpark@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:65446 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751381Ab2HQEuQ (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 17 Aug 2012 00:50:16 -0400
+Received: from epcpsbge3.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M8V00IVMUROUMM0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 17 Aug 2012 13:50:14 +0900 (KST)
+MIME-version: 1.0
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
 
-On 16 August 2012 17:11, Amit Daniel Kachhap <amit.kachhap@linaro.org> wrote:
-> Add necessary default platform data support needed for TMU driver.  The
-> supplied dt/non-dt values are tested for origen exynos4210 and smdk exynos5250
-> platforms and only compile tested for exynos4412.
->
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@linaro.org>
-> Acked-by: Guenter Roeck <guenter.roeck@ericsson.com>
-> Cc: SangWook Ju <sw.ju@samsung.com>
-> Cc: Durgadoss <durgadoss.r@intel.com>
-> Cc: Len Brown <lenb@kernel.org>
-> Cc: Jean Delvare <khali@linux-fr.org>
-> Cc: jonghwa lee <jonghwa3.lee@samsung.com>
-> Cc: Kyungmin Park <kmpark@infradead.org>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
-> ---
->  drivers/thermal/exynos_thermal.c |  111 +++++++++++++++++++++++++++++++++++++-
->  1 files changed, 110 insertions(+), 1 deletions(-)
-
-Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
-
-Few minor comments inline below.
-
->
-> diff --git a/drivers/thermal/exynos_thermal.c b/drivers/thermal/exynos_thermal.c
-> index e79cdc9..03a99e4 100644
-> --- a/drivers/thermal/exynos_thermal.c
-> +++ b/drivers/thermal/exynos_thermal.c
-> @@ -723,14 +723,121 @@ static irqreturn_t exynos_tmu_irq(int irq, void *id)
->  static struct thermal_sensor_conf exynos_sensor_conf = {
->         .name                   = "exynos-therm",
->         .read_temperature       = (int (*)(void *))exynos_tmu_read,
-> +};
-> +
-> +#if defined(CONFIG_CPU_EXYNOS4210)
-> +static struct exynos_tmu_platform_data const exynos4210_default_tmu_data = {
-> +       .threshold = 80,
-> +       .trigger_levels[0] = 5,
-> +       .trigger_levels[1] = 20,
-> +       .trigger_levels[2] = 30,
-> +       .trigger_level0_en = 1,
-> +       .trigger_level1_en = 1,
-> +       .trigger_level2_en = 1,
-> +       .trigger_level3_en = 0,
-> +       .gain = 15,
-> +       .reference_voltage = 7,
-> +       .cal_type = TYPE_ONE_POINT_TRIMMING,
-> +       .freq_tab[0] = {
-> +               .freq_clip_max = 800 * 1000,
-> +               .temp_level = 85,
-> +       },
-> +       .freq_tab[1] = {
-> +               .freq_clip_max = 200 * 1000,
-> +               .temp_level = 100,
-> +       },
-> +       .freq_tab_count = 2,
-> +       .type = SOC_ARCH_EXYNOS4210,
-> +};
-> +#define EXYNOS4210_TMU_DRV_DATA (&exynos4210_default_tmu_data)
-> +#else
-> +#define EXYNOS4210_TMU_DRV_DATA (NULL)
-> +#endif
-> +
-> +#if defined(CONFIG_SOC_EXYNOS5250) || defined(CONFIG_SOC_EXYNOS4412)
-> +static struct exynos_tmu_platform_data const exynos_default_tmu_data = {
-> +       .trigger_levels[0] = 85,
-> +       .trigger_levels[1] = 103,
-> +       .trigger_levels[2] = 110,
-> +       .trigger_level0_en = 1,
-> +       .trigger_level1_en = 1,
-> +       .trigger_level2_en = 1,
-> +       .trigger_level3_en = 0,
-> +       .gain = 8,
-> +       .reference_voltage = 16,
-> +       .noise_cancel_mode = 4,
-> +       .cal_type = TYPE_ONE_POINT_TRIMMING,
-> +       .efuse_value = 55,
-> +       .freq_tab[0] = {
-> +               .freq_clip_max = 800 * 1000,
-> +               .temp_level = 85,
-> +       },
-> +       .freq_tab[1] = {
-> +               .freq_clip_max = 200 * 1000,
-> +               .temp_level = 103,
-> +       },
-> +       .freq_tab_count = 2,
-> +       .type = SOC_ARCH_EXYNOS,
-> +};
-> +#define EXYNOS_TMU_DRV_DATA (&exynos_default_tmu_data)
-> +#else
-> +#define EXYNOS_TMU_DRV_DATA (NULL)
-> +#endif
-> +
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id exynos_tmu_match[] = {
-> +       {
-> +               .compatible = "samsung,exynos4210-tmu",
-> +               .data = (void *)EXYNOS4210_TMU_DRV_DATA,
-> +       },
-> +       {
-
-This can be  }, {
-
-> +               .compatible = "samsung,exynos5250-tmu",
-> +               .data = (void *)EXYNOS_TMU_DRV_DATA,
-> +       },
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(of, exynos_tmu_match);
-> +#else
-> +#define  exynos_tmu_match NULL
-> +#endif
-> +
-> +static struct platform_device_id exynos_tmu_driver_ids[] = {
-> +       {
-> +               .name           = "exynos4210-tmu",
-> +               .driver_data    = (kernel_ulong_t)EXYNOS4210_TMU_DRV_DATA,
-> +       },
-> +       {
-> +               .name           = "exynos5250-tmu",
-> +               .driver_data    = (kernel_ulong_t)EXYNOS_TMU_DRV_DATA,
-> +       },
-
-Since Exynos5250 platforms are dt based, the above entry could be left out.
-
-> +       { },
-> +};
-> +MODULE_DEVICE_TABLE(platform, exynos4_tmu_driver_ids);
-> +
-> +static inline struct  exynos_tmu_platform_data *exynos_get_driver_data(
-> +                       struct platform_device *pdev)
-> +{
-> +#ifdef CONFIG_OF
-> +       if (pdev->dev.of_node) {
-> +               const struct of_device_id *match;
-> +               match = of_match_node(exynos_tmu_match, pdev->dev.of_node);
-> +               if (!match)
-> +                       return NULL;
-> +               return (struct exynos_tmu_platform_data *) match->data;
-> +       }
-> +#endif
-> +       return (struct exynos_tmu_platform_data *)
-> +                       platform_get_device_id(pdev)->driver_data;
->  }
-> -;
->  static int __devinit exynos_tmu_probe(struct platform_device *pdev)
->  {
->         struct exynos_tmu_data *data;
->         struct exynos_tmu_platform_data *pdata = pdev->dev.platform_data;
->         int ret, i;
->
-> +       if (!pdata)
-> +               pdata = exynos_get_driver_data(pdev);
-> +
->         if (!pdata) {
->                 dev_err(&pdev->dev, "No platform init data supplied.\n");
->                 return -ENODEV;
-> @@ -899,9 +1006,11 @@ static struct platform_driver exynos_tmu_driver = {
->                 .name   = "exynos-tmu",
->                 .owner  = THIS_MODULE,
->                 .pm     = EXYNOS_TMU_PM,
-> +               .of_match_table = exynos_tmu_match,
->         },
->         .probe = exynos_tmu_probe,
->         .remove = __devexit_p(exynos_tmu_remove),
-> +       .id_table = exynos_tmu_driver_ids,
->  };
->
->  module_platform_driver(exynos_tmu_driver);
-> --
-> 1.7.1
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+SGkgVGhvbWFzLA0KVGhhbmsgeW91IGZvciB0aGUgY29tbWVudHMuDQpQbGVhc2UgZmluZCBteSBy
+ZXNwb25zZSBpbmxpbmUuDQoNCi0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tDQpTZW5k
+ZXIgOiBUaG9tYXMgQWJyYWhhbTx0aG9tYXMuYWJyYWhhbUBsaW5hcm8ub3JnPiANCkRhdGUgICA6
+IEF1ZyAxNiwgMjAxMiAxNzoxMiAoR01UKzA1OjMwKQ0KVGl0bGUgIDogUmU6IFtQQVRDSF0gQVJN
+OiBFWFlOT1M6IEFkZCBNRkMgZGV2aWNlIHRyZWUgc3VwcG9ydA0KDQpPbiAxNiBBdWd1c3QgMjAx
+MiAxODowMSwgQXJ1biBLdW1hciBLIDxhcnVuLmtrQHNhbXN1bmcuY29tPiB3cm90ZToNCj4gRnJv
+bTogTmF2ZWVuIEtyaXNobmEgQ2hhdHJhZGhpIDxjaC5uYXZlZW5Ac2Ftc3VuZy5jb20+DQo+DQo+
+IFRoaXMgcGF0Y2ggYWRkcyBkZXZpY2UgdHJlZSBlbnRyeSBmb3IgTUZDIGluIHRoZSBFeHlub3MN
+Cj4gbWFjaGluZXMuIEV4eW5vczQgU29DcyBzdXBwb3J0IE1GQyB2NSB2ZXJzaW9uIGFuZCBFeHlu
+b3M1IGhhcw0KPiBNRkMgdjYueCB2ZXJzaW9uLiBTbyBtYWtpbmcgdGhlIHJlcXVpcmVkIGNoYW5n
+ZXMgaW4gdGhlIGNsb2NrDQo+IGZpbGVzIGFuZCBhZGRzIE1GQyB0byB0aGUgRFQgZGV2aWNlIGxp
+c3QuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IE5hdmVlbiBLcmlzaG5hIENoYXRyYWRoaSA8Y2gubmF2
+ZWVuQHNhbXN1bmcuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBBcnVuIEt1bWFyIEsgPGFydW4ua2tA
+c2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVw
+LW1mYy50eHQgICAgICAgICAgfCAgIDI0ICsrKysrKysrKysrKysrKysrKysrDQo+ICBhcmNoL2Fy
+bS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kgICAgICAgICAgICAgICAgICB8ICAgMTAgKysrKysr
+KysNCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSAgICAgICAgICAgICAgICAg
+IHwgICAxMCArKysrKysrKw0KPiAgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNS5j
+ICAgICAgICAgICAgICAgfCAgICAyICstDQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4
+eW5vczQtZHQuYyAgICAgICAgICAgICB8ICAgMjIgKysrKysrKysrKysrKysrKysrDQo+ICBhcmNo
+L2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4eW5vczUtZHQuYyAgICAgICAgICAgICB8ICAgMjIgKysr
+KysrKysrKysrKysrKysrDQo+ICA2IGZpbGVzIGNoYW5nZWQsIDg5IGluc2VydGlvbnMoKyksIDEg
+ZGVsZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0
+cmVlL2JpbmRpbmdzL21lZGlhL3M1cC1tZmMudHh0DQo+DQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLW1mYy50eHQgYi9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLW1mYy50eHQNCj4gbmV3IGZpbGUgbW9k
+ZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMC4uYjliZDI2Ng0KPiAtLS0gL2Rldi9udWxsDQo+ICsr
+KyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zNXAtbWZjLnR4dA0K
+PiBAQCAtMCwwICsxLDI0IEBADQo+ICsqIFNhbXN1bmcgTXVsdGkgRm9ybWF0IENvZGVjIChNRkMp
+DQo+ICsNCj4gK011bHQgRm9ybWF0IENvZGVjIChNRkMpIGlzIHRoZSBJUCBwcmVzZW50IGluIFNh
+bXN1bmcgU29DcyB3aGljaA0KPiArc3VwcG9ydHMgaGlnaCByZXNvbHV0aW9uIGRlY29kaW5nIGFu
+ZCBlbmNvZGluZyBmdW5jdGlvbmFsaXRpZXMuDQo+DQo+IEluIGFkZGl0aW9uIHRvIHRoaXMsIHNw
+ZWNpZnlpbmcgdGhhdCBtZmMgaXMgdXNlZCBmb3IgdmlkZW8NCj4gZW5jb2RlL2RlY29kZSB3b3Vs
+ZCBiZSBpbmZvcm1hdGl2ZS4NCg0KT2suIEkgd2lsbCBtYWtlIGl0IG1vcmUgZGVzY3JpcHRpdmUu
+DQoNCj4gKw0KPiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4gKyAgLSBjb21wYXRpYmxlIDogdmFs
+dWUgc2hvdWxkIGJlIGVpdGhlciBvbmUgYW1vbmcgdGhlIGZvbGxvd2luZw0KPiArICAgICAgIChh
+KSAic2Ftc3VuZyxzNXAtbWZjLXY1IiBmb3IgTUZDIHY1IHByZXNlbnQgaW4gRXh5bm9zNCBTb0Nz
+DQo+ICsgICAgICAgKGIpICJzYW1zdW5nLHM1cC1tZmMtdjYiIGZvciBNRkMgdjYueCBwcmVzZW50
+IGluIEV4eW5vczUgU29Dcw0KPg0KPiAiczVwIiBzaG91bGQgYmUgZHJvcHBlZCBmcm9tIHRoZSBj
+b21wYXRpYmxlIHZhbHVlcy4gRm9yIGV4YW1wbGUsIGl0DQo+IHNob3VsZCBiZSAic2Ftc3VuZyxt
+ZmMtdjUiLCB3aGljaCBpcyBzdWZmaWNpZW50IHRvIGlkZW50aWZ5IHRoZQ0KPiB2ZXJzaW9uIG9m
+IHRoZSBtZmMgY29udHJvbGxlci4NCg0KT2sgd2lsbCByZW1vdmUgczVwLg0KDQo+ICsNCj4gKyAg
+LSByZWcgOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3Mgb2YgdGhlIElQIHJlZ2lzdGVycyBhbmQgbGVu
+Z3RoIG9mIG1lbW9yeQ0KPiArICAgICAgICAgbWFwcGVkIHJlZ2lvbi4NCj4gKw0KPiArICAtIGlu
+dGVycnVwdHMgOiBNRkMgaW50ZXJ1cHQgbnVtYmVyIHRvIHRoZSBDUFUuDQo+ICsNCj4gKyAgLSBz
+YW1zdW5nLG1mYy1yIDogQmFzZSBhZGRyZXNzIG9mIHRoZSBmaXJzdCBtZW1vcnkgYmFuayB1c2Vk
+IGJ5IE1GQw0KPiArICAgICAgICAgICAgICAgICAgIGZvciBETUEgY29udGlndW91cyBtZW1vcnkg
+YWxsb2NhdGlvbi4NCj4gKw0KPiArICAtIHNhbXN1bmcsbWZjLXItc2l6ZSA6IFNpemUgb2YgdGhl
+IGZpcnN0IG1lbW9yeSBiYW5rLg0KPg0KPiBJdCBpcyBub3QgYWxsb3dlZCB0byBwYXNzIGJ1ZmZl
+ciBiYXNlIGFkZHJlc3MgYW5kIHNpemUgZnJvbSBkZXZpY2UNCj4gdHJlZS4gRGV2aWNlIHRyZWUg
+bm9kZSBzaG91bGQgZGVzY3JpYmUgb25seSB0aGUgTUZDIGNvbnRyb2xsZXINCj4gaGFyZHdhcmUu
+IEFueSBtZW1vcnkgbWFuYWdlbWVudCByZWxhdGVkIGluZm9ybWF0aW9uIHNob3VsZCBiZSBoYW5k
+bGVkDQo+IG91dHNpZGUgb2YgZGV2aWNlIHRyZWUuIFRoaXMgaGVscHMgdGhlIGJpbmRpbmdzIHRv
+IGJlIHJldXNhYmxlIGFjcm9zcw0KPiBtdWx0aXBsZSBvcGVyYXRpbmcgc3lzdGVtcy4NCg0KVGhl
+IG1mYy1sIGFuZCBtZmMtciBiYXNlIGFkZHJlc3MgYW5kIHNpemUgaXMgYm9hcmQgc3BlY2lmaWMg
+aW5mbyB3aGljaCBoYXMgdG8NCmJlIHBhc3NlZCB0byB0aGUgZHJpdmVyLiBUaGlzIGlzIHVzZWQg
+Zm9yIERNQSBjb250aWd1b3VzIGFsbG9jYXRpb24gYnkgZHJpdmVyIGFuZCB0aGlzIHZhbHVlDQpj
+YW4gY2hhbmdlIG9uIGEgZGlmZmVyZW50IGJvYXJkLiANClNvIGluIHRoYXQgY2FzZSwgaSB3aWxs
+IHBhc3MgaXQgYXMgcGxhdGZvcm0gZGF0YSB0byB0aGUgZHJpdmVyIGZyb20gbWFjaC1leHlub3M1
+LWR0LmMgZmlsZS4NCkkgaG9wZSB0aGF0IHdvdWxkIGJlIG9rLg0KDQo+ICsNCj4gKyAgLSBzYW1z
+dW5nLG1mYy1sIDogQmFzZSBhZGRyZXNzIG9mIHRoZSBzZWNvbmQgbWVtb3J5IGJhbmsgdXNlZCBi
+eSBNRkMNCj4gKyAgICAgICAgICAgICAgICAgICBmb3IgRE1BIGNvbnRpZ3VvdXMgbWVtb3J5IGFs
+bG9jYXRpb24uDQo+ICsNCj4gKyAgLSBzYW1zdW5nLG1mYy1sLXNpemUgOiBTaXplIG9mIHRoZSBz
+ZWNvbmQgbWVtb3J5IGJhbmsuDQo+DQo+IFNhbWUgY29tbWVudCBhcyBhYm92ZS4gQW5kIHRoZSBi
+aW5kaW5ncyBkb2N1bWVudGF0aW9uIGlzIHVzdWFsbHkNCj4gaW5jbHVkZWQgaW4gdGhlIHNhbWUg
+cGF0Y2ggdGhhdCBhZGRzIGRldmljZSB0cmVlIHN1cHBvcnQgZm9yIHRoZQ0KPiBkcml2ZXIuDQoN
+Ck9rDQoNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaSBi
+L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaQ0KPiBpbmRleCAwMjg5MWZlLi5iNWVl
+NDNkIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kNCj4g
+KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC5kdHNpDQo+IEBAIC01Niw2ICs1Niwx
+NiBAQA0KPiAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDQzIDA+Ow0KPiAgICAgICAg
+IH07DQo+DQo+ICsgICAgICAgbWZjIHsNCj4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAi
+c2Ftc3VuZyxzNXAtbWZjIjsNCj4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweDEzNDAwMDAwIDB4
+MTAwMDA+Ow0KPiArICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDk0IDA+Ow0KPiArICAg
+ICAgICAgICAgICAgc2Ftc3VuZyxtZmMtciA9IDwweDQzMDAwMDAwPjsNCj4gKyAgICAgICAgICAg
+ICAgIHNhbXN1bmcsbWZjLXItc2l6ZSA9IDw4Mzg4NjA4PjsNCj4gKyAgICAgICAgICAgICAgIHNh
+bXN1bmcsbWZjLWwgPSA8MHg1MTAwMDAwMD47DQo+ICsgICAgICAgICAgICAgICBzYW1zdW5nLG1m
+Yy1sLXNpemUgPSA8ODM4ODYwOD47DQo+ICsgICAgICAgfTsNCj4gKw0KPiAgICAgICAgIHJ0Y0Ax
+MDA3MDAwMCB7DQo+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInNhbXN1bmcsczNjNjQx
+MC1ydGMiOw0KPiAgICAgICAgICAgICAgICAgcmVnID0gPDB4MTAwNzAwMDAgMHgxMDA+Ow0KPiBk
+aWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpIGIvYXJjaC9hcm0v
+Ym9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpDQo+IGluZGV4IDAwNGFhYTguLjNjNzYyYTQgMTAwNjQ0
+DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQ0KPiArKysgYi9hcmNo
+L2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kNCj4gQEAgLTU4LDYgKzU4LDE2IEBADQo+ICAg
+ICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgNDIgMD47DQo+ICAgICAgICAgfTsNCj4NCj4g
+KyAgICAgICBtZmMgew0KPiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM1
+cC1tZmMtdjYiOw0KPiArICAgICAgICAgICAgICAgcmVnID0gPDB4MTEwMDAwMDAgMHgxMDAwMD47
+DQo+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgOTYgMD47DQo+ICsgICAgICAgICAg
+ICAgICBzYW1zdW5nLG1mYy1yID0gPDB4NDMwMDAwMDA+Ow0KPiArICAgICAgICAgICAgICAgc2Ft
+c3VuZyxtZmMtci1zaXplID0gPDgzODg2MDg+Ow0KPiArICAgICAgICAgICAgICAgc2Ftc3VuZyxt
+ZmMtbCA9IDwweDUxMDAwMDAwPjsNCj4gKyAgICAgICAgICAgICAgIHNhbXN1bmcsbWZjLWwtc2l6
+ZSA9IDw4Mzg4NjA4PjsNCj4gKyAgICAgICB9Ow0KPiArDQo+ICAgICAgICAgcnRjIHsNCj4gICAg
+ICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2M2NDEwLXJ0YyI7DQo+ICAgICAg
+ICAgICAgICAgICByZWcgPSA8MHgxMDFFMDAwMCAweDEwMD47DQo+IGRpZmYgLS1naXQgYS9hcmNo
+L2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M1LmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vcy9j
+bG9jay1leHlub3M1LmMNCj4gaW5kZXggM2IwMGUyOS4uYzg1ZTdiMiAxMDA2NDQNCj4gLS0tIGEv
+YXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNS5jDQo+ICsrKyBiL2FyY2gvYXJtL21h
+Y2gtZXh5bm9zL2Nsb2NrLWV4eW5vczUuYw0KPiBAQCAtNjA3LDcgKzYwNyw3IEBAIHN0YXRpYyBz
+dHJ1Y3QgY2xrIGV4eW5vczVfaW5pdF9jbG9ja3Nfb2ZmW10gPSB7DQo+ICAgICAgICAgICAgICAg
+ICAuY3RybGJpdCAgICAgICAgPSAoMSA8PCAyNSksDQo+ICAgICAgICAgfSwgew0KPiAgICAgICAg
+ICAgICAgICAgLm5hbWUgICAgICAgICAgID0gIm1mYyIsDQo+IC0gICAgICAgICAgICAgICAuZGV2
+bmFtZSAgICAgICAgPSAiczVwLW1mYyIsDQo+ICsgICAgICAgICAgICAgICAuZGV2bmFtZSAgICAg
+ICAgPSAiczVwLW1mYy12NiIsDQo+ICAgICAgICAgICAgICAgICAuZW5hYmxlICAgICAgICAgPSBl
+eHlub3M1X2Nsa19pcF9tZmNfY3RybCwNCj4gICAgICAgICAgICAgICAgIC5jdHJsYml0ICAgICAg
+ICA9ICgxIDw8IDApLA0KPiAgICAgICAgIH0sIHsNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21h
+Y2gtZXh5bm9zL21hY2gtZXh5bm9zNC1kdC5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1l
+eHlub3M0LWR0LmMNCj4gaW5kZXggYjJiNWQ1Zi4uYzRhMGUxNiAxMDA2NDQNCj4gLS0tIGEvYXJj
+aC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlub3M0LWR0LmMNCj4gKysrIGIvYXJjaC9hcm0vbWFj
+aC1leHlub3MvbWFjaC1leHlub3M0LWR0LmMNCj4gQEAgLTEzLDYgKzEzLDcgQEANCj4NCj4gICNp
+bmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3NlcmlhbF9j
+b3JlLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbWVtYmxvY2suaD4NCj4NCj4gICNpbmNsdWRlIDxh
+c20vbWFjaC9hcmNoLmg+DQo+ICAjaW5jbHVkZSA8YXNtL2hhcmR3YXJlL2dpYy5oPg0KPiBAQCAt
+NjMsNiArNjQsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldl9hdXhkYXRhIGV4eW5vczQy
+MTBfYXV4ZGF0YV9sb29rdXBbXSBfX2luaXRjb25zdCA9IHsNCj4gICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAiZXh5bm9zNDIxMC1zcGkuMiIsIE5VTEwpLA0KPiAgICAgICAgIE9GX0RF
+Vl9BVVhEQVRBKCJhcm0scGwzMzAiLCBFWFlOT1M0X1BBX1BETUEwLCAiZG1hLXBsMzMwLjAiLCBO
+VUxMKSwNCj4gICAgICAgICBPRl9ERVZfQVVYREFUQSgiYXJtLHBsMzMwIiwgRVhZTk9TNF9QQV9Q
+RE1BMSwgImRtYS1wbDMzMC4xIiwgTlVMTCksDQo+ICsgICAgICAgT0ZfREVWX0FVWERBVEEoInNh
+bXN1bmcsczVwLW1mYyIsIDB4MTM0MDAwMDAsICJzNXAtbWZjIiwgTlVMTCksDQo+ICAgICAgICAg
+e30sDQo+ICB9Ow0KPg0KPiBAQCAtODMsNiArODUsMjUgQEAgc3RhdGljIGNoYXIgY29uc3QgKmV4
+eW5vczQyMTBfZHRfY29tcGF0W10gX19pbml0ZGF0YSA9IHsNCj4gICAgICAgICBOVUxMDQo+ICB9
+Ow0KPg0KPiArc3RhdGljIHZvaWQgczVwX21mY19yZXNlcnZlX21lbShwaHlzX2FkZHJfdCByYmFz
+ZSwgdW5zaWduZWQgaW50IHJzaXplLA0KPiArICAgICAgICAgICAgICAgcGh5c19hZGRyX3QgbGJh
+c2UsIHVuc2lnbmVkIGludCBsc2l6ZSkgew0KPiArDQo+ICsgICAgICAgaWYgKG1lbWJsb2NrX3Jl
+bW92ZShsYmFzZSwgbHNpemUpKSB7DQo+ICsgICAgICAgICAgICAgICBwcl9lcnIoIkZhaWxlZCB0
+byByZXNlcnZlIGJhbmsxIG1lbW9yeSBmb3IgTUZDIGRldmljZQ0KIik7DQo+ICsgICAgICAgICAg
+ICAgICBXQVJOX09OKDEpOw0KPiArICAgICAgIH0NCj4gKw0KPiArICAgICAgIGlmIChtZW1ibG9j
+a19yZW1vdmUocmJhc2UsIHJzaXplKSkgew0KPiArICAgICAgICAgICAgICAgcHJfZXJyKCJGYWls
+ZWQgdG8gcmVzZXJ2ZSBiYW5rMiBtZW1vcnkgZm9yIE1GQyBkZXZpY2UNCiIpOw0KPiArICAgICAg
+ICAgICAgICAgV0FSTl9PTigxKTsNCj4gKyAgICAgICB9DQo+ICt9DQo+DQo+IEl0IHdvdWxkIGJl
+IGJldHRlciB0byBzcGxpdCB0aGUgZGV2aWNlIHRyZWUgcmVsYXRlZCBjaGFuZ2VzIGFuZCB0aGUN
+Cj4gZHJpdmVyIGJ1ZmZlciBtYW5hZ2VtZW50IHJlbGF0ZWQgY2hhbmdlcyBpbiBzZXBhcmF0ZSBw
+YXRjaGVzLg0KDQpPay4NCg0KPiArDQo+ICtzdGF0aWMgdm9pZCBfX2luaXQgZXh5bm9zNF9yZXNl
+cnZlKHZvaWQpDQo+ICt7DQo+ICsgICAgICAgczVwX21mY19yZXNlcnZlX21lbSgweDQzMDAwMDAw
+LCA4IDw8IDIwLCAweDUxMDAwMDAwLCA4IDw8IDIwKTsNCj4gK30NCj4gKw0KPiAgRFRfTUFDSElO
+RV9TVEFSVChFWFlOT1M0MjEwX0RULCAiU2Ftc3VuZyBFeHlub3M0IChGbGF0dGVuZWQgRGV2aWNl
+IFRyZWUpIikNCj4gICAgICAgICAvKiBNYWludGFpbmVyOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFz
+LmFicmFoYW1AbGluYXJvLm9yZz4gKi8NCj4gICAgICAgICAuaW5pdF9pcnEgICAgICAgPSBleHlu
+b3M0X2luaXRfaXJxLA0KPiBAQCAtOTMsNCArMTE0LDUgQEAgRFRfTUFDSElORV9TVEFSVChFWFlO
+T1M0MjEwX0RULCAiU2Ftc3VuZyBFeHlub3M0IChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpIikNCj4g
+ICAgICAgICAudGltZXIgICAgICAgICAgPSAmZXh5bm9zNF90aW1lciwNCj4gICAgICAgICAuZHRf
+Y29tcGF0ICAgICAgPSBleHlub3M0MjEwX2R0X2NvbXBhdCwNCj4gICAgICAgICAucmVzdGFydCAg
+ICAgICAgPSBleHlub3M0X3Jlc3RhcnQsDQo+ICsgICAgICAgLnJlc2VydmUgICAgICAgID0gZXh5
+bm9zNF9yZXNlcnZlLA0KPiAgTUFDSElORV9FTkQNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21h
+Y2gtZXh5bm9zL21hY2gtZXh5bm9zNS1kdC5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1l
+eHlub3M1LWR0LmMNCj4gaW5kZXggZWY3NzBiYy4uODk4ZDJkZSAxMDA2NDQNCj4gLS0tIGEvYXJj
+aC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4gKysrIGIvYXJjaC9hcm0vbWFj
+aC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4gQEAgLTExLDYgKzExLDcgQEANCj4NCj4gICNp
+bmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3NlcmlhbF9j
+b3JlLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbWVtYmxvY2suaD4NCj4NCj4gICNpbmNsdWRlIDxh
+c20vbWFjaC9hcmNoLmg+DQo+ICAjaW5jbHVkZSA8YXNtL2hhcmR3YXJlL2dpYy5oPg0KPiBAQCAt
+NTYsNiArNTcsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldl9hdXhkYXRhIGV4eW5vczUy
+NTBfYXV4ZGF0YV9sb29rdXBbXSBfX2luaXRjb25zdCA9IHsNCj4gICAgICAgICBPRl9ERVZfQVVY
+REFUQSgiYXJtLHBsMzMwIiwgRVhZTk9TNV9QQV9QRE1BMCwgImRtYS1wbDMzMC4wIiwgTlVMTCks
+DQo+ICAgICAgICAgT0ZfREVWX0FVWERBVEEoImFybSxwbDMzMCIsIEVYWU5PUzVfUEFfUERNQTEs
+ICJkbWEtcGwzMzAuMSIsIE5VTEwpLA0KPiAgICAgICAgIE9GX0RFVl9BVVhEQVRBKCJhcm0scGwz
+MzAiLCBFWFlOT1M1X1BBX01ETUExLCAiZG1hLXBsMzMwLjIiLCBOVUxMKSwNCj4gKyAgICAgICBP
+Rl9ERVZfQVVYREFUQSgic2Ftc3VuZyxzNXAtbWZjLXY2IiwgMHgxMTAwMDAwMCwgInM1cC1tZmMt
+djYiLCBOVUxMKSwNCj4gICAgICAgICB7fSwNCj4gIH07DQo+DQo+IEBAIC03Niw2ICs3OCwyNSBA
+QCBzdGF0aWMgY2hhciBjb25zdCAqZXh5bm9zNTI1MF9kdF9jb21wYXRbXSBfX2luaXRkYXRhID0g
+ew0KPiAgICAgICAgIE5VTEwNCj4gIH07DQo+DQo+ICtzdGF0aWMgdm9pZCBzNXBfbWZjX3Jlc2Vy
+dmVfbWVtKHBoeXNfYWRkcl90IHJiYXNlLCB1bnNpZ25lZCBpbnQgcnNpemUsDQo+ICsgICAgICAg
+ICAgICAgICBwaHlzX2FkZHJfdCBsYmFzZSwgdW5zaWduZWQgaW50IGxzaXplKSB7DQo+ICsNCj4g
+KyAgICAgICBpZiAobWVtYmxvY2tfcmVtb3ZlKGxiYXNlLCBsc2l6ZSkpIHsNCj4gKyAgICAgICAg
+ICAgICAgIHByX2VycigiRmFpbGVkIHRvIHJlc2VydmUgYmFuazEgbWVtb3J5IGZvciBNRkMgZGV2
+aWNlDQoiKTsNCj4gKyAgICAgICAgICAgICAgIFdBUk5fT04oMSk7DQo+ICsgICAgICAgfQ0KPiAr
+DQo+ICsgICAgICAgaWYgKG1lbWJsb2NrX3JlbW92ZShyYmFzZSwgcnNpemUpKSB7DQo+ICsgICAg
+ICAgICAgICAgICBwcl9lcnIoIkZhaWxlZCB0byByZXNlcnZlIGJhbmsyIG1lbW9yeSBmb3IgTUZD
+IGRldmljZQ0KIik7DQo+ICsgICAgICAgICAgICAgICBXQVJOX09OKDEpOw0KPiArICAgICAgIH0N
+Cj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgX19pbml0IGV4eW5vczVfcmVzZXJ2ZSh2b2lkKQ0K
+PiArew0KPiArICAgICAgIHM1cF9tZmNfcmVzZXJ2ZV9tZW0oMHg0MzAwMDAwMCwgOCA8PCAyMCwg
+MHg1MTAwMDAwMCwgOCA8PCAyMCk7DQo+ICt9DQo+ICsNCj4gIERUX01BQ0hJTkVfU1RBUlQoRVhZ
+Tk9TNV9EVCwgIlNBTVNVTkcgRVhZTk9TNSAoRmxhdHRlbmVkIERldmljZSBUcmVlKSIpDQo+ICAg
+ICAgICAgLyogTWFpbnRhaW5lcjogS3VramluIEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiAq
+Lw0KPiAgICAgICAgIC5pbml0X2lycSAgICAgICA9IGV4eW5vczVfaW5pdF9pcnEsDQo+IEBAIC04
+Niw0ICsxMDcsNSBAQCBEVF9NQUNISU5FX1NUQVJUKEVYWU5PUzVfRFQsICJTQU1TVU5HIEVYWU5P
+UzUgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkiKQ0KPiAgICAgICAgIC50aW1lciAgICAgICAgICA9
+ICZleHlub3M0X3RpbWVyLA0KPiAgICAgICAgIC5kdF9jb21wYXQgICAgICA9IGV4eW5vczUyNTBf
+ZHRfY29tcGF0LA0KPiAgICAgICAgIC5yZXN0YXJ0ICAgICAgICA9IGV4eW5vczVfcmVzdGFydCwN
+Cj4gKyAgICAgICAucmVzZXJ2ZSAgICAgICAgPSBleHlub3M1X3Jlc2VydmUsDQo+ICBNQUNISU5F
+X0VORA0KPiAtLQ0KPiAxLjcuMC40DQo+DQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
+cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4N
+Cj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4g
+TW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8t
+aW5mby5odG1sDQo8cD4mbmJzcDs8L3A+PHA+Jm5ic3A7PC9wPg==
