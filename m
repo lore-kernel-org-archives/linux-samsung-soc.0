@@ -1,210 +1,606 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
-Date: Fri, 17 Aug 2012 04:50:14 +0000 (GMT)
-Message-ID: <22088923.161871345179014012.JavaMail.weblogic@epml10>
-Reply-To: arun.kk@samsung.com
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 1/2] ARM: dts: Add pinctrl node entries for Samsung
+ Exynos4210 SoC
+Date: Fri, 17 Aug 2012 10:50:24 +0530
+Message-ID: <CAJuYYwTG=GgricAJRHiSQBn6ZAOy+sucFCdDX3QhgfSQFwuKaw@mail.gmail.com>
+References: <1345061442-32378-1-git-send-email-thomas.abraham@linaro.org>
+	<1345061442-32378-2-git-send-email-thomas.abraham@linaro.org>
+	<CAKGA1b=nXbTU70tFWWwvKoA6N4bMjG9R-vs2egppzQbwgkxAVw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:65446 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751381Ab2HQEuQ (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:35233 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751126Ab2HQFU1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Aug 2012 00:50:16 -0400
-Received: from epcpsbge3.samsung.com (mailout4.samsung.com [203.254.224.34])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M8V00IVMUROUMM0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 17 Aug 2012 13:50:14 +0900 (KST)
-MIME-version: 1.0
+	Fri, 17 Aug 2012 01:20:27 -0400
+Received: by lbbgj3 with SMTP id gj3so1917567lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Aug 2012 22:20:25 -0700 (PDT)
+In-Reply-To: <CAKGA1b=nXbTU70tFWWwvKoA6N4bMjG9R-vs2egppzQbwgkxAVw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
+To: Matt Sealey <matt@genesi-usa.com>
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linus.walleij@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org
 
-SGkgVGhvbWFzLA0KVGhhbmsgeW91IGZvciB0aGUgY29tbWVudHMuDQpQbGVhc2UgZmluZCBteSBy
-ZXNwb25zZSBpbmxpbmUuDQoNCi0tLS0tLS0gT3JpZ2luYWwgTWVzc2FnZSAtLS0tLS0tDQpTZW5k
-ZXIgOiBUaG9tYXMgQWJyYWhhbTx0aG9tYXMuYWJyYWhhbUBsaW5hcm8ub3JnPiANCkRhdGUgICA6
-IEF1ZyAxNiwgMjAxMiAxNzoxMiAoR01UKzA1OjMwKQ0KVGl0bGUgIDogUmU6IFtQQVRDSF0gQVJN
-OiBFWFlOT1M6IEFkZCBNRkMgZGV2aWNlIHRyZWUgc3VwcG9ydA0KDQpPbiAxNiBBdWd1c3QgMjAx
-MiAxODowMSwgQXJ1biBLdW1hciBLIDxhcnVuLmtrQHNhbXN1bmcuY29tPiB3cm90ZToNCj4gRnJv
-bTogTmF2ZWVuIEtyaXNobmEgQ2hhdHJhZGhpIDxjaC5uYXZlZW5Ac2Ftc3VuZy5jb20+DQo+DQo+
-IFRoaXMgcGF0Y2ggYWRkcyBkZXZpY2UgdHJlZSBlbnRyeSBmb3IgTUZDIGluIHRoZSBFeHlub3MN
-Cj4gbWFjaGluZXMuIEV4eW5vczQgU29DcyBzdXBwb3J0IE1GQyB2NSB2ZXJzaW9uIGFuZCBFeHlu
-b3M1IGhhcw0KPiBNRkMgdjYueCB2ZXJzaW9uLiBTbyBtYWtpbmcgdGhlIHJlcXVpcmVkIGNoYW5n
-ZXMgaW4gdGhlIGNsb2NrDQo+IGZpbGVzIGFuZCBhZGRzIE1GQyB0byB0aGUgRFQgZGV2aWNlIGxp
-c3QuDQo+DQo+IFNpZ25lZC1vZmYtYnk6IE5hdmVlbiBLcmlzaG5hIENoYXRyYWRoaSA8Y2gubmF2
-ZWVuQHNhbXN1bmcuY29tPg0KPiBTaWduZWQtb2ZmLWJ5OiBBcnVuIEt1bWFyIEsgPGFydW4ua2tA
-c2Ftc3VuZy5jb20+DQo+IC0tLQ0KPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVw
-LW1mYy50eHQgICAgICAgICAgfCAgIDI0ICsrKysrKysrKysrKysrKysrKysrDQo+ICBhcmNoL2Fy
-bS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kgICAgICAgICAgICAgICAgICB8ICAgMTAgKysrKysr
-KysNCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaSAgICAgICAgICAgICAgICAg
-IHwgICAxMCArKysrKysrKw0KPiAgYXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNS5j
-ICAgICAgICAgICAgICAgfCAgICAyICstDQo+ICBhcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4
-eW5vczQtZHQuYyAgICAgICAgICAgICB8ICAgMjIgKysrKysrKysrKysrKysrKysrDQo+ICBhcmNo
-L2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4eW5vczUtZHQuYyAgICAgICAgICAgICB8ICAgMjIgKysr
-KysrKysrKysrKysrKysrDQo+ICA2IGZpbGVzIGNoYW5nZWQsIDg5IGluc2VydGlvbnMoKyksIDEg
-ZGVsZXRpb25zKC0pDQo+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL21lZGlhL3M1cC1tZmMudHh0DQo+DQo+IGRpZmYgLS1naXQgYS9Eb2N1bWVu
-dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLW1mYy50eHQgYi9Eb2N1bWVudGF0
-aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLW1mYy50eHQNCj4gbmV3IGZpbGUgbW9k
-ZSAxMDA2NDQNCj4gaW5kZXggMDAwMDAwMC4uYjliZDI2Ng0KPiAtLS0gL2Rldi9udWxsDQo+ICsr
-KyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9zNXAtbWZjLnR4dA0K
-PiBAQCAtMCwwICsxLDI0IEBADQo+ICsqIFNhbXN1bmcgTXVsdGkgRm9ybWF0IENvZGVjIChNRkMp
-DQo+ICsNCj4gK011bHQgRm9ybWF0IENvZGVjIChNRkMpIGlzIHRoZSBJUCBwcmVzZW50IGluIFNh
-bXN1bmcgU29DcyB3aGljaA0KPiArc3VwcG9ydHMgaGlnaCByZXNvbHV0aW9uIGRlY29kaW5nIGFu
-ZCBlbmNvZGluZyBmdW5jdGlvbmFsaXRpZXMuDQo+DQo+IEluIGFkZGl0aW9uIHRvIHRoaXMsIHNw
-ZWNpZnlpbmcgdGhhdCBtZmMgaXMgdXNlZCBmb3IgdmlkZW8NCj4gZW5jb2RlL2RlY29kZSB3b3Vs
-ZCBiZSBpbmZvcm1hdGl2ZS4NCg0KT2suIEkgd2lsbCBtYWtlIGl0IG1vcmUgZGVzY3JpcHRpdmUu
-DQoNCj4gKw0KPiArUmVxdWlyZWQgcHJvcGVydGllczoNCj4gKyAgLSBjb21wYXRpYmxlIDogdmFs
-dWUgc2hvdWxkIGJlIGVpdGhlciBvbmUgYW1vbmcgdGhlIGZvbGxvd2luZw0KPiArICAgICAgIChh
-KSAic2Ftc3VuZyxzNXAtbWZjLXY1IiBmb3IgTUZDIHY1IHByZXNlbnQgaW4gRXh5bm9zNCBTb0Nz
-DQo+ICsgICAgICAgKGIpICJzYW1zdW5nLHM1cC1tZmMtdjYiIGZvciBNRkMgdjYueCBwcmVzZW50
-IGluIEV4eW5vczUgU29Dcw0KPg0KPiAiczVwIiBzaG91bGQgYmUgZHJvcHBlZCBmcm9tIHRoZSBj
-b21wYXRpYmxlIHZhbHVlcy4gRm9yIGV4YW1wbGUsIGl0DQo+IHNob3VsZCBiZSAic2Ftc3VuZyxt
-ZmMtdjUiLCB3aGljaCBpcyBzdWZmaWNpZW50IHRvIGlkZW50aWZ5IHRoZQ0KPiB2ZXJzaW9uIG9m
-IHRoZSBtZmMgY29udHJvbGxlci4NCg0KT2sgd2lsbCByZW1vdmUgczVwLg0KDQo+ICsNCj4gKyAg
-LSByZWcgOiBQaHlzaWNhbCBiYXNlIGFkZHJlc3Mgb2YgdGhlIElQIHJlZ2lzdGVycyBhbmQgbGVu
-Z3RoIG9mIG1lbW9yeQ0KPiArICAgICAgICAgbWFwcGVkIHJlZ2lvbi4NCj4gKw0KPiArICAtIGlu
-dGVycnVwdHMgOiBNRkMgaW50ZXJ1cHQgbnVtYmVyIHRvIHRoZSBDUFUuDQo+ICsNCj4gKyAgLSBz
-YW1zdW5nLG1mYy1yIDogQmFzZSBhZGRyZXNzIG9mIHRoZSBmaXJzdCBtZW1vcnkgYmFuayB1c2Vk
-IGJ5IE1GQw0KPiArICAgICAgICAgICAgICAgICAgIGZvciBETUEgY29udGlndW91cyBtZW1vcnkg
-YWxsb2NhdGlvbi4NCj4gKw0KPiArICAtIHNhbXN1bmcsbWZjLXItc2l6ZSA6IFNpemUgb2YgdGhl
-IGZpcnN0IG1lbW9yeSBiYW5rLg0KPg0KPiBJdCBpcyBub3QgYWxsb3dlZCB0byBwYXNzIGJ1ZmZl
-ciBiYXNlIGFkZHJlc3MgYW5kIHNpemUgZnJvbSBkZXZpY2UNCj4gdHJlZS4gRGV2aWNlIHRyZWUg
-bm9kZSBzaG91bGQgZGVzY3JpYmUgb25seSB0aGUgTUZDIGNvbnRyb2xsZXINCj4gaGFyZHdhcmUu
-IEFueSBtZW1vcnkgbWFuYWdlbWVudCByZWxhdGVkIGluZm9ybWF0aW9uIHNob3VsZCBiZSBoYW5k
-bGVkDQo+IG91dHNpZGUgb2YgZGV2aWNlIHRyZWUuIFRoaXMgaGVscHMgdGhlIGJpbmRpbmdzIHRv
-IGJlIHJldXNhYmxlIGFjcm9zcw0KPiBtdWx0aXBsZSBvcGVyYXRpbmcgc3lzdGVtcy4NCg0KVGhl
-IG1mYy1sIGFuZCBtZmMtciBiYXNlIGFkZHJlc3MgYW5kIHNpemUgaXMgYm9hcmQgc3BlY2lmaWMg
-aW5mbyB3aGljaCBoYXMgdG8NCmJlIHBhc3NlZCB0byB0aGUgZHJpdmVyLiBUaGlzIGlzIHVzZWQg
-Zm9yIERNQSBjb250aWd1b3VzIGFsbG9jYXRpb24gYnkgZHJpdmVyIGFuZCB0aGlzIHZhbHVlDQpj
-YW4gY2hhbmdlIG9uIGEgZGlmZmVyZW50IGJvYXJkLiANClNvIGluIHRoYXQgY2FzZSwgaSB3aWxs
-IHBhc3MgaXQgYXMgcGxhdGZvcm0gZGF0YSB0byB0aGUgZHJpdmVyIGZyb20gbWFjaC1leHlub3M1
-LWR0LmMgZmlsZS4NCkkgaG9wZSB0aGF0IHdvdWxkIGJlIG9rLg0KDQo+ICsNCj4gKyAgLSBzYW1z
-dW5nLG1mYy1sIDogQmFzZSBhZGRyZXNzIG9mIHRoZSBzZWNvbmQgbWVtb3J5IGJhbmsgdXNlZCBi
-eSBNRkMNCj4gKyAgICAgICAgICAgICAgICAgICBmb3IgRE1BIGNvbnRpZ3VvdXMgbWVtb3J5IGFs
-bG9jYXRpb24uDQo+ICsNCj4gKyAgLSBzYW1zdW5nLG1mYy1sLXNpemUgOiBTaXplIG9mIHRoZSBz
-ZWNvbmQgbWVtb3J5IGJhbmsuDQo+DQo+IFNhbWUgY29tbWVudCBhcyBhYm92ZS4gQW5kIHRoZSBi
-aW5kaW5ncyBkb2N1bWVudGF0aW9uIGlzIHVzdWFsbHkNCj4gaW5jbHVkZWQgaW4gdGhlIHNhbWUg
-cGF0Y2ggdGhhdCBhZGRzIGRldmljZSB0cmVlIHN1cHBvcnQgZm9yIHRoZQ0KPiBkcml2ZXIuDQoN
-Ck9rDQoNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaSBi
-L2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaQ0KPiBpbmRleCAwMjg5MWZlLi5iNWVl
-NDNkIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FybS9ib290L2R0cy9leHlub3M0MjEwLmR0c2kNCj4g
-KysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC5kdHNpDQo+IEBAIC01Niw2ICs1Niwx
-NiBAQA0KPiAgICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDQzIDA+Ow0KPiAgICAgICAg
-IH07DQo+DQo+ICsgICAgICAgbWZjIHsNCj4gKyAgICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAi
-c2Ftc3VuZyxzNXAtbWZjIjsNCj4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweDEzNDAwMDAwIDB4
-MTAwMDA+Ow0KPiArICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDk0IDA+Ow0KPiArICAg
-ICAgICAgICAgICAgc2Ftc3VuZyxtZmMtciA9IDwweDQzMDAwMDAwPjsNCj4gKyAgICAgICAgICAg
-ICAgIHNhbXN1bmcsbWZjLXItc2l6ZSA9IDw4Mzg4NjA4PjsNCj4gKyAgICAgICAgICAgICAgIHNh
-bXN1bmcsbWZjLWwgPSA8MHg1MTAwMDAwMD47DQo+ICsgICAgICAgICAgICAgICBzYW1zdW5nLG1m
-Yy1sLXNpemUgPSA8ODM4ODYwOD47DQo+ICsgICAgICAgfTsNCj4gKw0KPiAgICAgICAgIHJ0Y0Ax
-MDA3MDAwMCB7DQo+ICAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInNhbXN1bmcsczNjNjQx
-MC1ydGMiOw0KPiAgICAgICAgICAgICAgICAgcmVnID0gPDB4MTAwNzAwMDAgMHgxMDA+Ow0KPiBk
-aWZmIC0tZ2l0IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpIGIvYXJjaC9hcm0v
-Ym9vdC9kdHMvZXh5bm9zNTI1MC5kdHNpDQo+IGluZGV4IDAwNGFhYTguLjNjNzYyYTQgMTAwNjQ0
-DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL2V4eW5vczUyNTAuZHRzaQ0KPiArKysgYi9hcmNo
-L2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kNCj4gQEAgLTU4LDYgKzU4LDE2IEBADQo+ICAg
-ICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgNDIgMD47DQo+ICAgICAgICAgfTsNCj4NCj4g
-KyAgICAgICBtZmMgew0KPiArICAgICAgICAgICAgICAgY29tcGF0aWJsZSA9ICJzYW1zdW5nLHM1
-cC1tZmMtdjYiOw0KPiArICAgICAgICAgICAgICAgcmVnID0gPDB4MTEwMDAwMDAgMHgxMDAwMD47
-DQo+ICsgICAgICAgICAgICAgICBpbnRlcnJ1cHRzID0gPDAgOTYgMD47DQo+ICsgICAgICAgICAg
-ICAgICBzYW1zdW5nLG1mYy1yID0gPDB4NDMwMDAwMDA+Ow0KPiArICAgICAgICAgICAgICAgc2Ft
-c3VuZyxtZmMtci1zaXplID0gPDgzODg2MDg+Ow0KPiArICAgICAgICAgICAgICAgc2Ftc3VuZyxt
-ZmMtbCA9IDwweDUxMDAwMDAwPjsNCj4gKyAgICAgICAgICAgICAgIHNhbXN1bmcsbWZjLWwtc2l6
-ZSA9IDw4Mzg4NjA4PjsNCj4gKyAgICAgICB9Ow0KPiArDQo+ICAgICAgICAgcnRjIHsNCj4gICAg
-ICAgICAgICAgICAgIGNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2M2NDEwLXJ0YyI7DQo+ICAgICAg
-ICAgICAgICAgICByZWcgPSA8MHgxMDFFMDAwMCAweDEwMD47DQo+IGRpZmYgLS1naXQgYS9hcmNo
-L2FybS9tYWNoLWV4eW5vcy9jbG9jay1leHlub3M1LmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vcy9j
-bG9jay1leHlub3M1LmMNCj4gaW5kZXggM2IwMGUyOS4uYzg1ZTdiMiAxMDA2NDQNCj4gLS0tIGEv
-YXJjaC9hcm0vbWFjaC1leHlub3MvY2xvY2stZXh5bm9zNS5jDQo+ICsrKyBiL2FyY2gvYXJtL21h
-Y2gtZXh5bm9zL2Nsb2NrLWV4eW5vczUuYw0KPiBAQCAtNjA3LDcgKzYwNyw3IEBAIHN0YXRpYyBz
-dHJ1Y3QgY2xrIGV4eW5vczVfaW5pdF9jbG9ja3Nfb2ZmW10gPSB7DQo+ICAgICAgICAgICAgICAg
-ICAuY3RybGJpdCAgICAgICAgPSAoMSA8PCAyNSksDQo+ICAgICAgICAgfSwgew0KPiAgICAgICAg
-ICAgICAgICAgLm5hbWUgICAgICAgICAgID0gIm1mYyIsDQo+IC0gICAgICAgICAgICAgICAuZGV2
-bmFtZSAgICAgICAgPSAiczVwLW1mYyIsDQo+ICsgICAgICAgICAgICAgICAuZGV2bmFtZSAgICAg
-ICAgPSAiczVwLW1mYy12NiIsDQo+ICAgICAgICAgICAgICAgICAuZW5hYmxlICAgICAgICAgPSBl
-eHlub3M1X2Nsa19pcF9tZmNfY3RybCwNCj4gICAgICAgICAgICAgICAgIC5jdHJsYml0ICAgICAg
-ICA9ICgxIDw8IDApLA0KPiAgICAgICAgIH0sIHsNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21h
-Y2gtZXh5bm9zL21hY2gtZXh5bm9zNC1kdC5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1l
-eHlub3M0LWR0LmMNCj4gaW5kZXggYjJiNWQ1Zi4uYzRhMGUxNiAxMDA2NDQNCj4gLS0tIGEvYXJj
-aC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlub3M0LWR0LmMNCj4gKysrIGIvYXJjaC9hcm0vbWFj
-aC1leHlub3MvbWFjaC1leHlub3M0LWR0LmMNCj4gQEAgLTEzLDYgKzEzLDcgQEANCj4NCj4gICNp
-bmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3NlcmlhbF9j
-b3JlLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbWVtYmxvY2suaD4NCj4NCj4gICNpbmNsdWRlIDxh
-c20vbWFjaC9hcmNoLmg+DQo+ICAjaW5jbHVkZSA8YXNtL2hhcmR3YXJlL2dpYy5oPg0KPiBAQCAt
-NjMsNiArNjQsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldl9hdXhkYXRhIGV4eW5vczQy
-MTBfYXV4ZGF0YV9sb29rdXBbXSBfX2luaXRjb25zdCA9IHsNCj4gICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAiZXh5bm9zNDIxMC1zcGkuMiIsIE5VTEwpLA0KPiAgICAgICAgIE9GX0RF
-Vl9BVVhEQVRBKCJhcm0scGwzMzAiLCBFWFlOT1M0X1BBX1BETUEwLCAiZG1hLXBsMzMwLjAiLCBO
-VUxMKSwNCj4gICAgICAgICBPRl9ERVZfQVVYREFUQSgiYXJtLHBsMzMwIiwgRVhZTk9TNF9QQV9Q
-RE1BMSwgImRtYS1wbDMzMC4xIiwgTlVMTCksDQo+ICsgICAgICAgT0ZfREVWX0FVWERBVEEoInNh
-bXN1bmcsczVwLW1mYyIsIDB4MTM0MDAwMDAsICJzNXAtbWZjIiwgTlVMTCksDQo+ICAgICAgICAg
-e30sDQo+ICB9Ow0KPg0KPiBAQCAtODMsNiArODUsMjUgQEAgc3RhdGljIGNoYXIgY29uc3QgKmV4
-eW5vczQyMTBfZHRfY29tcGF0W10gX19pbml0ZGF0YSA9IHsNCj4gICAgICAgICBOVUxMDQo+ICB9
-Ow0KPg0KPiArc3RhdGljIHZvaWQgczVwX21mY19yZXNlcnZlX21lbShwaHlzX2FkZHJfdCByYmFz
-ZSwgdW5zaWduZWQgaW50IHJzaXplLA0KPiArICAgICAgICAgICAgICAgcGh5c19hZGRyX3QgbGJh
-c2UsIHVuc2lnbmVkIGludCBsc2l6ZSkgew0KPiArDQo+ICsgICAgICAgaWYgKG1lbWJsb2NrX3Jl
-bW92ZShsYmFzZSwgbHNpemUpKSB7DQo+ICsgICAgICAgICAgICAgICBwcl9lcnIoIkZhaWxlZCB0
-byByZXNlcnZlIGJhbmsxIG1lbW9yeSBmb3IgTUZDIGRldmljZQ0KIik7DQo+ICsgICAgICAgICAg
-ICAgICBXQVJOX09OKDEpOw0KPiArICAgICAgIH0NCj4gKw0KPiArICAgICAgIGlmIChtZW1ibG9j
-a19yZW1vdmUocmJhc2UsIHJzaXplKSkgew0KPiArICAgICAgICAgICAgICAgcHJfZXJyKCJGYWls
-ZWQgdG8gcmVzZXJ2ZSBiYW5rMiBtZW1vcnkgZm9yIE1GQyBkZXZpY2UNCiIpOw0KPiArICAgICAg
-ICAgICAgICAgV0FSTl9PTigxKTsNCj4gKyAgICAgICB9DQo+ICt9DQo+DQo+IEl0IHdvdWxkIGJl
-IGJldHRlciB0byBzcGxpdCB0aGUgZGV2aWNlIHRyZWUgcmVsYXRlZCBjaGFuZ2VzIGFuZCB0aGUN
-Cj4gZHJpdmVyIGJ1ZmZlciBtYW5hZ2VtZW50IHJlbGF0ZWQgY2hhbmdlcyBpbiBzZXBhcmF0ZSBw
-YXRjaGVzLg0KDQpPay4NCg0KPiArDQo+ICtzdGF0aWMgdm9pZCBfX2luaXQgZXh5bm9zNF9yZXNl
-cnZlKHZvaWQpDQo+ICt7DQo+ICsgICAgICAgczVwX21mY19yZXNlcnZlX21lbSgweDQzMDAwMDAw
-LCA4IDw8IDIwLCAweDUxMDAwMDAwLCA4IDw8IDIwKTsNCj4gK30NCj4gKw0KPiAgRFRfTUFDSElO
-RV9TVEFSVChFWFlOT1M0MjEwX0RULCAiU2Ftc3VuZyBFeHlub3M0IChGbGF0dGVuZWQgRGV2aWNl
-IFRyZWUpIikNCj4gICAgICAgICAvKiBNYWludGFpbmVyOiBUaG9tYXMgQWJyYWhhbSA8dGhvbWFz
-LmFicmFoYW1AbGluYXJvLm9yZz4gKi8NCj4gICAgICAgICAuaW5pdF9pcnEgICAgICAgPSBleHlu
-b3M0X2luaXRfaXJxLA0KPiBAQCAtOTMsNCArMTE0LDUgQEAgRFRfTUFDSElORV9TVEFSVChFWFlO
-T1M0MjEwX0RULCAiU2Ftc3VuZyBFeHlub3M0IChGbGF0dGVuZWQgRGV2aWNlIFRyZWUpIikNCj4g
-ICAgICAgICAudGltZXIgICAgICAgICAgPSAmZXh5bm9zNF90aW1lciwNCj4gICAgICAgICAuZHRf
-Y29tcGF0ICAgICAgPSBleHlub3M0MjEwX2R0X2NvbXBhdCwNCj4gICAgICAgICAucmVzdGFydCAg
-ICAgICAgPSBleHlub3M0X3Jlc3RhcnQsDQo+ICsgICAgICAgLnJlc2VydmUgICAgICAgID0gZXh5
-bm9zNF9yZXNlcnZlLA0KPiAgTUFDSElORV9FTkQNCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL21h
-Y2gtZXh5bm9zL21hY2gtZXh5bm9zNS1kdC5jIGIvYXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1l
-eHlub3M1LWR0LmMNCj4gaW5kZXggZWY3NzBiYy4uODk4ZDJkZSAxMDA2NDQNCj4gLS0tIGEvYXJj
-aC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4gKysrIGIvYXJjaC9hcm0vbWFj
-aC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4gQEAgLTExLDYgKzExLDcgQEANCj4NCj4gICNp
-bmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0KPiAgI2luY2x1ZGUgPGxpbnV4L3NlcmlhbF9j
-b3JlLmg+DQo+ICsjaW5jbHVkZSA8bGludXgvbWVtYmxvY2suaD4NCj4NCj4gICNpbmNsdWRlIDxh
-c20vbWFjaC9hcmNoLmg+DQo+ICAjaW5jbHVkZSA8YXNtL2hhcmR3YXJlL2dpYy5oPg0KPiBAQCAt
-NTYsNiArNTcsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IG9mX2Rldl9hdXhkYXRhIGV4eW5vczUy
-NTBfYXV4ZGF0YV9sb29rdXBbXSBfX2luaXRjb25zdCA9IHsNCj4gICAgICAgICBPRl9ERVZfQVVY
-REFUQSgiYXJtLHBsMzMwIiwgRVhZTk9TNV9QQV9QRE1BMCwgImRtYS1wbDMzMC4wIiwgTlVMTCks
-DQo+ICAgICAgICAgT0ZfREVWX0FVWERBVEEoImFybSxwbDMzMCIsIEVYWU5PUzVfUEFfUERNQTEs
-ICJkbWEtcGwzMzAuMSIsIE5VTEwpLA0KPiAgICAgICAgIE9GX0RFVl9BVVhEQVRBKCJhcm0scGwz
-MzAiLCBFWFlOT1M1X1BBX01ETUExLCAiZG1hLXBsMzMwLjIiLCBOVUxMKSwNCj4gKyAgICAgICBP
-Rl9ERVZfQVVYREFUQSgic2Ftc3VuZyxzNXAtbWZjLXY2IiwgMHgxMTAwMDAwMCwgInM1cC1tZmMt
-djYiLCBOVUxMKSwNCj4gICAgICAgICB7fSwNCj4gIH07DQo+DQo+IEBAIC03Niw2ICs3OCwyNSBA
-QCBzdGF0aWMgY2hhciBjb25zdCAqZXh5bm9zNTI1MF9kdF9jb21wYXRbXSBfX2luaXRkYXRhID0g
-ew0KPiAgICAgICAgIE5VTEwNCj4gIH07DQo+DQo+ICtzdGF0aWMgdm9pZCBzNXBfbWZjX3Jlc2Vy
-dmVfbWVtKHBoeXNfYWRkcl90IHJiYXNlLCB1bnNpZ25lZCBpbnQgcnNpemUsDQo+ICsgICAgICAg
-ICAgICAgICBwaHlzX2FkZHJfdCBsYmFzZSwgdW5zaWduZWQgaW50IGxzaXplKSB7DQo+ICsNCj4g
-KyAgICAgICBpZiAobWVtYmxvY2tfcmVtb3ZlKGxiYXNlLCBsc2l6ZSkpIHsNCj4gKyAgICAgICAg
-ICAgICAgIHByX2VycigiRmFpbGVkIHRvIHJlc2VydmUgYmFuazEgbWVtb3J5IGZvciBNRkMgZGV2
-aWNlDQoiKTsNCj4gKyAgICAgICAgICAgICAgIFdBUk5fT04oMSk7DQo+ICsgICAgICAgfQ0KPiAr
-DQo+ICsgICAgICAgaWYgKG1lbWJsb2NrX3JlbW92ZShyYmFzZSwgcnNpemUpKSB7DQo+ICsgICAg
-ICAgICAgICAgICBwcl9lcnIoIkZhaWxlZCB0byByZXNlcnZlIGJhbmsyIG1lbW9yeSBmb3IgTUZD
-IGRldmljZQ0KIik7DQo+ICsgICAgICAgICAgICAgICBXQVJOX09OKDEpOw0KPiArICAgICAgIH0N
-Cj4gK30NCj4gKw0KPiArc3RhdGljIHZvaWQgX19pbml0IGV4eW5vczVfcmVzZXJ2ZSh2b2lkKQ0K
-PiArew0KPiArICAgICAgIHM1cF9tZmNfcmVzZXJ2ZV9tZW0oMHg0MzAwMDAwMCwgOCA8PCAyMCwg
-MHg1MTAwMDAwMCwgOCA8PCAyMCk7DQo+ICt9DQo+ICsNCj4gIERUX01BQ0hJTkVfU1RBUlQoRVhZ
-Tk9TNV9EVCwgIlNBTVNVTkcgRVhZTk9TNSAoRmxhdHRlbmVkIERldmljZSBUcmVlKSIpDQo+ICAg
-ICAgICAgLyogTWFpbnRhaW5lcjogS3VramluIEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiAq
-Lw0KPiAgICAgICAgIC5pbml0X2lycSAgICAgICA9IGV4eW5vczVfaW5pdF9pcnEsDQo+IEBAIC04
-Niw0ICsxMDcsNSBAQCBEVF9NQUNISU5FX1NUQVJUKEVYWU5PUzVfRFQsICJTQU1TVU5HIEVYWU5P
-UzUgKEZsYXR0ZW5lZCBEZXZpY2UgVHJlZSkiKQ0KPiAgICAgICAgIC50aW1lciAgICAgICAgICA9
-ICZleHlub3M0X3RpbWVyLA0KPiAgICAgICAgIC5kdF9jb21wYXQgICAgICA9IGV4eW5vczUyNTBf
-ZHRfY29tcGF0LA0KPiAgICAgICAgIC5yZXN0YXJ0ICAgICAgICA9IGV4eW5vczVfcmVzdGFydCwN
-Cj4gKyAgICAgICAucmVzZXJ2ZSAgICAgICAgPSBleHlub3M1X3Jlc2VydmUsDQo+ICBNQUNISU5F
-X0VORA0KPiAtLQ0KPiAxLjcuMC40DQo+DQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhp
-cyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4N
-Cj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4g
-TW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8t
-aW5mby5odG1sDQo8cD4mbmJzcDs8L3A+PHA+Jm5ic3A7PC9wPg==
+On 17 August 2012 00:26, Matt Sealey <matt@genesi-usa.com> wrote:
+> Re: samsung,pin-function samsung,pin-pud samsung,pin-drv - why can't
+> these be one property, why take the space to define them individually
+> instead of in an array of 3 values under one property name?
+
+Samsung pinctrl driver was written to be usable on all of the Samsung
+application processors starting from 24xx series to the latest
+Exynos5.
+
+The gpio/pinmux/pinconfig controllers on these SoC have varying
+capabilities. Some of the banks in s3c24xx series support mux function
+but do not support pull up/down (pud) or driver strength (drv).
+s3c64xx soc's have banks that support pin mux and 'pud' but do not
+support 'drv'. And there are banks that do not support mux function
+but support 'pud' and 'drv'. Further, a given SoC can have multiple
+combinations of different bank types.
+
+In addition to this, there are two more properties for mux and pud
+values in power down mode in some of the samsung SoC's.
+
+To keep the bindings common across all the possible Samsung SoC's, the
+mux, pud and drv properties were split so that the parsing code in the
+Samsung pinctrl driver remains generic for all the possible
+combinations of pin banks and SoC's.
+
+Thanks,
+Thomas.
+
+
+>
+> --
+> Matt Sealey <matt@genesi-usa.com>
+> Product Development Analyst, Genesi USA, Inc.
+>
+>
+> On Wed, Aug 15, 2012 at 3:10 PM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+>> Add pinctrl driver nodes for the three instances of pin controllers
+>> in Samsung Exynos4210 SoC and add the pin group nodes available in the
+>> each of those three instances.
+>>
+>> Cc: Kukjin Kim <kgene.kim@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  457 +++++++++++++++++++++++++++++
+>>  arch/arm/boot/dts/exynos4210.dtsi         |   37 +++
+>>  2 files changed, 494 insertions(+), 0 deletions(-)
+>>  create mode 100644 arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+>>
+>> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+>> new file mode 100644
+>> index 0000000..b12cf27
+>> --- /dev/null
+>> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+>> @@ -0,0 +1,457 @@
+>> +/*
+>> + * Samsung's Exynos4210 SoC pin-mux and pin-config device tree source
+>> + *
+>> + * Copyright (c) 2011-2012 Samsung Electronics Co., Ltd.
+>> + *             http://www.samsung.com
+>> + * Copyright (c) 2011-2012 Linaro Ltd.
+>> + *             www.linaro.org
+>> + *
+>> + * Samsung's Exynos4210 SoC pin-mux and pin-config optiosn are listed as device
+>> + * tree nodes are listed in this file.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> +*/
+>> +
+>> +/ {
+>> +       pinctrl@11400000 {
+>> +               uart0_data: uart0-data {
+>> +                       samsung,pins = "gpa0-0", "gpa0-1";
+>> +                       samsung,pin-function = <0x2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart0_fctl: uart0-fctl {
+>> +                       samsung,pins = "gpa0-2", "gpa0-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart1_data: uart1-data {
+>> +                       samsung,pins = "gpa0-4", "gpa0-5";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart1_fctl: uart1-fctl {
+>> +                       samsung,pins = "gpa0-6", "gpa0-7";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c2_bus: i2c2-bus {
+>> +                       samsung,pins = "gpa0-6", "gpa0-7";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart2_data: uart2-data {
+>> +                       samsung,pins = "gpa1-0", "gpa1-1";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart2_fctl: uart2-fctl {
+>> +                       samsung,pins = "gpa1-2", "gpa1-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart_audio_a: uart-audio-a {
+>> +                       samsung,pins = "gpa1-0", "gpa1-1";
+>> +                       samsung,pin-function = <4>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c3_bus: i2c3-bus {
+>> +                       samsung,pins = "gpa1-2", "gpa1-3";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart3_data: uart3-data {
+>> +                       samsung,pins = "gpa1-4", "gpa1-5";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               uart_audio_b: uart-audio-b {
+>> +                       samsung,pins = "gpa1-4", "gpa1-5";
+>> +                       samsung,pin-function = <4>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               spi0_bus: spi0-bus {
+>> +                       samsung,pins = "gpb-0", "gpb-2", "gpb-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c4_bus: i2c4-bus {
+>> +                       samsung,pins = "gpb-2", "gpb-3";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               spi1_bus: spi1-bus {
+>> +                       samsung,pins = "gpb-4", "gpb-6", "gpb-7";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c5_bus: i2c5-bus {
+>> +                       samsung,pins = "gpb-6", "gpb-7";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2s1_bus: i2s1-bus {
+>> +                       samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
+>> +                                       "gpc0-4";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               pcm1_bus: pcm1-bus {
+>> +                       samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
+>> +                                       "gpc0-4";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               ac97_bus: ac97-bus {
+>> +                       samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
+>> +                                       "gpc0-4";
+>> +                       samsung,pin-function = <4>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2s2_bus: i2s2-bus {
+>> +                       samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
+>> +                                       "gpc1-4";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               pcm2_bus: pcm2-bus {
+>> +                       samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
+>> +                                       "gpc1-4";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               spdif_bus: spdif-bus {
+>> +                       samsung,pins = "gpc1-0", "gpc1-1";
+>> +                       samsung,pin-function = <4>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c6_bus: i2c6-bus {
+>> +                       samsung,pins = "gpc1-3", "gpc1-4";
+>> +                       samsung,pin-function = <4>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               spi2_bus: spi2-bus {
+>> +                       samsung,pins = "gpc1-1", "gpc1-2", "gpc1-3", "gpc1-4";
+>> +                       samsung,pin-function = <5>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c7_bus: i2c7-bus {
+>> +                       samsung,pins = "gpd0-2", "gpd0-3";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c0_bus: i2c0-bus {
+>> +                       samsung,pins = "gpd1-0", "gpd1-1";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               i2c1_bus: i2c1-bus {
+>> +                       samsung,pins = "gpd1-2", "gpd1-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +       };
+>> +
+>> +       pinctrl@11000000 {
+>> +               sd0_clk: sd0-clk {
+>> +                       samsung,pins = "gpk0-0";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd0_cmd: sd0-cmd {
+>> +                       samsung,pins = "gpk0-1";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd0_cd: sd0-cd {
+>> +                       samsung,pins = "gpk0-2";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd0_bus1: sd0-bus-width1 {
+>> +                       samsung,pins = "gpk0-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd0_bus4: sd0-bus-width4 {
+>> +                       samsung,pins = "gpk0-3", "gpk0-4", "gpk0-5", "gpk0-6";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd0_bus8: sd0-bus-width8 {
+>> +                       samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd4_clk: sd4-clk {
+>> +                       samsung,pins = "gpk0-0";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd4_cmd: sd4-cmd {
+>> +                       samsung,pins = "gpk0-1";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd4_cd: sd4-cd {
+>> +                       samsung,pins = "gpk0-2";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd4_bus1: sd4-bus-width1 {
+>> +                       samsung,pins = "gpk0-3";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd4_bus4: sd4-bus-width4 {
+>> +                       samsung,pins = "gpk0-3", "gpk0-4", "gpk0-5", "gpk0-6";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd4_bus8: sd4-bus-width8 {
+>> +                       samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <4>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd1_clk: sd1-clk {
+>> +                       samsung,pins = "gpk1-0";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd1_cmd: sd1-cmd {
+>> +                       samsung,pins = "gpk1-1";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd1_cd: sd1-cd {
+>> +                       samsung,pins = "gpk1-2";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd1_bus1: sd1-bus-width1 {
+>> +                       samsung,pins = "gpk1-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd1_bus4: sd1-bus-width4 {
+>> +                       samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd2_clk: sd2-clk {
+>> +                       samsung,pins = "gpk2-0";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd2_cmd: sd2-cmd {
+>> +                       samsung,pins = "gpk2-1";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd2_cd: sd2-cd {
+>> +                       samsung,pins = "gpk2-2";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd2_bus1: sd2-bus-width1 {
+>> +                       samsung,pins = "gpk2-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd2_bus4: sd2-bus-width4 {
+>> +                       samsung,pins = "gpk2-3", "gpk2-4", "gpk2-5", "gpk2-6";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd2_bus8: sd2-bus-width8 {
+>> +                       samsung,pins = "gpk3-3", "gpk3-4", "gpk3-5", "gpk3-6";
+>> +                       samsung,pin-function = <3>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd3_clk: sd3-clk {
+>> +                       samsung,pins = "gpk3-0";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd3_cmd: sd3-cmd {
+>> +                       samsung,pins = "gpk3-1";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd3_cd: sd3-cd {
+>> +                       samsung,pins = "gpk3-2";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd3_bus1: sd3-bus-width1 {
+>> +                       samsung,pins = "gpk3-3";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               sd3_bus4: sd3-bus-width4 {
+>> +                       samsung,pins = "gpk3-3", "gpk3-4", "gpk3-5", "gpk3-6";
+>> +                       samsung,pin-function = <2>;
+>> +                       samsung,pin-pud = <3>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               eint0: ext-int0 {
+>> +                       samsung,pins = "gpx0-0";
+>> +                       samsung,pin-function = <0xf>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               eint8: ext-int8 {
+>> +                       samsung,pins = "gpx1-0";
+>> +                       samsung,pin-function = <0xf>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               eint15: ext-int15 {
+>> +                       samsung,pins = "gpx1-7";
+>> +                       samsung,pin-function = <0xf>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               eint16: ext-int16 {
+>> +                       samsung,pins = "gpx2-0";
+>> +                       samsung,pin-function = <0xf>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               eint31: ext-int31 {
+>> +                       samsung,pins = "gpx3-7";
+>> +                       samsung,pin-function = <0xf>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +       };
+>> +
+>> +       pinctrl@03860000 {
+>> +               i2s0_bus: i2s0-bus {
+>> +                       samsung,pins = "gpz-0", "gpz-1", "gpz-2", "gpz-3",
+>> +                                       "gpz-4", "gpz-5", "gpz-6";
+>> +                       samsung,pin-function = <0x2>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +
+>> +               pcm0_bus: pcm0-bus {
+>> +                       samsung,pins = "gpz-0", "gpz-1", "gpz-2", "gpz-3",
+>> +                                       "gpz-4";
+>> +                       samsung,pin-function = <0x3>;
+>> +                       samsung,pin-pud = <0>;
+>> +                       samsung,pin-drv = <0>;
+>> +               };
+>> +       };
+>> +};
+>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
+>> index 02891fe..a4bd0c9 100644
+>> --- a/arch/arm/boot/dts/exynos4210.dtsi
+>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+>> @@ -20,6 +20,7 @@
+>>  */
+>>
+>>  /include/ "skeleton.dtsi"
+>> +/include/ "exynos4210-pinctrl.dtsi"
+>>
+>>  / {
+>>         compatible = "samsung,exynos4210";
+>> @@ -29,6 +30,9 @@
+>>                 spi0 = &spi_0;
+>>                 spi1 = &spi_1;
+>>                 spi2 = &spi_2;
+>> +               pinctrl0 = &pinctrl_0;
+>> +               pinctrl1 = &pinctrl_1;
+>> +               pinctrl2 = &pinctrl_2;
+>>         };
+>>
+>>         gic:interrupt-controller@10490000 {
+>> @@ -50,6 +54,39 @@
+>>                              <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
+>>         };
+>>
+>> +       pinctrl_0: pinctrl@11400000 {
+>> +               compatible = "samsung,pinctrl-exynos4210";
+>> +               reg = <0x11400000 0x1000>;
+>> +               interrupts = <0 47 0>;
+>> +               interrupt-controller;
+>> +               #interrupt-cells = <2>;
+>> +       };
+>> +
+>> +       pinctrl_1: pinctrl@11000000 {
+>> +               compatible = "samsung,pinctrl-exynos4210";
+>> +               reg = <0x11000000 0x1000>;
+>> +               interrupts = <0 46 0>;
+>> +               interrupt-controller;
+>> +               #interrupt-cells = <2>;
+>> +
+>> +               wakup_eint: wakeup-interrupt-controller {
+>> +                       compatible = "samsung,exynos4210-wakeup-eint";
+>> +                       interrupt-parent = <&gic>;
+>> +                       interrupt-controller;
+>> +                       #interrupt-cells = <2>;
+>> +                       interrupts = <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
+>> +                                       <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
+>> +                                       <0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
+>> +                                       <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>,
+>> +                                       <0 32 0>;
+>> +               };
+>> +       };
+>> +
+>> +       pinctrl_2: pinctrl@03860000 {
+>> +               compatible = "samsung,pinctrl-exynos4210";
+>> +               reg = <0x03860000 0x1000>;
+>> +       };
+>> +
+>>         watchdog@10060000 {
+>>                 compatible = "samsung,s3c2410-wdt";
+>>                 reg = <0x10060000 0x100>;
+>> --
+>> 1.6.6.rc2
+>>
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
