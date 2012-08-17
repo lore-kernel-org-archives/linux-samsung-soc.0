@@ -1,606 +1,348 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Add pinctrl node entries for Samsung
- Exynos4210 SoC
-Date: Fri, 17 Aug 2012 10:50:24 +0530
-Message-ID: <CAJuYYwTG=GgricAJRHiSQBn6ZAOy+sucFCdDX3QhgfSQFwuKaw@mail.gmail.com>
-References: <1345061442-32378-1-git-send-email-thomas.abraham@linaro.org>
-	<1345061442-32378-2-git-send-email-thomas.abraham@linaro.org>
-	<CAKGA1b=nXbTU70tFWWwvKoA6N4bMjG9R-vs2egppzQbwgkxAVw@mail.gmail.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] mmc: sdhci-s3c: Add device tree support
+Date: Fri, 17 Aug 2012 12:00:58 +0530
+Message-ID: <502DE522.8010505@linaro.org>
+References: <CAJuYYwQjN9UtXcfjNXf1Ezw3igfUSQDNEP8X038L4=br6EROUA@mail.gmail.com> <1345134914-21635-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:35233 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751126Ab2HQFU1 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 17 Aug 2012 01:20:27 -0400
-Received: by lbbgj3 with SMTP id gj3so1917567lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 16 Aug 2012 22:20:25 -0700 (PDT)
-In-Reply-To: <CAKGA1b=nXbTU70tFWWwvKoA6N4bMjG9R-vs2egppzQbwgkxAVw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1345134914-21635-1-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, ben-linux@fluff.org, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Matt Sealey <matt@genesi-usa.com>
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linus.walleij@linaro.org, rob.herring@calxeda.com, grant.likely@secretlab.ca, linux-arm-kernel@lists.infradead.org
 
-On 17 August 2012 00:26, Matt Sealey <matt@genesi-usa.com> wrote:
-> Re: samsung,pin-function samsung,pin-pud samsung,pin-drv - why can't
-> these be one property, why take the space to define them individually
-> instead of in an array of 3 values under one property name?
+On 08/16/2012 10:05 PM, Thomas Abraham wrote:
+> Add device tree based discovery support for Samsung's sdhci controller
+> 
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Cc: Chris Ball <cjb@laptop.org>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+> Changes since v3:
+> 
+> The patch series that adds device tree support for Samsung sdhci controller
+> had six patches in total, of which, the first five patches have been accepted.
+> The sixth patch in the series was dropped since it was using custom Samsung
+> properties for descrbing the bus-width and card-detect gpio, but had otherwise
+> addressed all the comments.
+> 
+> This patch reworks the sixth patch in v3 of the sdhci device tree support
+> patch series. The only change in this patch from the v3 version is the use of
+> generic mmc bindings for descrbing the bus-width and card-detect gpio.
+> 
+>  .../devicetree/bindings/mmc/samsung-sdhci.txt      |   51 +++++++
+>  drivers/mmc/host/sdhci-s3c.c                       |  146 +++++++++++++++++++-
+>  2 files changed, 191 insertions(+), 6 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> new file mode 100644
+> index 0000000..398540b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/samsung-sdhci.txt
+> @@ -0,0 +1,51 @@
+> +* Samsung's SDHCI Controller device tree bindings
+> +
+> +Samsung's SDHCI controller is used as a connectivity interface with external
+> +MMC, SD and eMMC storage mediums. This file documents differences between the
+> +core mmc properties described by mmc.txt and the properties used by the
+> +Samsung implmentation of the SDHCI controller.
+> +
+> +Required SoC Specific Properties:
+> +- compatible: should be one of the following
+> +  - "samsung,s3c6410-sdhci": For controllers compatible with s3c6410 sdhci
+> +    controller.
+> +  - "samsung,exynos4210-sdhci": For controllers compatible with Exynos4 sdhci
+> +    controller.
+> +
+> +Required Board Specific Properties:
+> +- gpios: Should specify the gpios used for clock, command and data lines. The
+> +  gpio specifier format depends on the gpio controller.
+> +
+> +Optional Board Specific Properties:
+> +- One of the following properties for card detect type.
+> +  - samsung,sdhci-cd-internal: Card detect line from the card slot  is
+> +    connected to the card detect pad of the sdhci controller. A gpio is
+> +    used for this connection (with possible pin function settings).
+> +  - samsung,sdhci-cd-gpio: A gpio line (with possible pin function settings)
+> +    is used a card detect line. This gpio line is not connected to card detect
+> +    pad of the sdhci controller.
+> +  - samsung,sdhci-cd-none: There is no card detect line. Polling is used to
+> +    detect the presence of the card. (DEFAULT, if no card detect property
+> +    is specified).
+> +  - samsung,sdhci-cd-permanent: There is no card detect line. The card is
+> +    permanently connected to the sdhci controller.
+> +
+> +Example:
+> +	sdhci@12530000 {
+> +		compatible = "samsung,exynos4210-sdhci";
+> +		reg = <0x12530000 0x100>;
+> +		interrupts = <<0 75 0>;
 
-Samsung pinctrl driver was written to be usable on all of the Samsung
-application processors starting from 24xx series to the latest
-Exynos5.
+Typo: interrupts = <0 75 0>;
 
-The gpio/pinmux/pinconfig controllers on these SoC have varying
-capabilities. Some of the banks in s3c24xx series support mux function
-but do not support pull up/down (pud) or driver strength (drv).
-s3c64xx soc's have banks that support pin mux and 'pud' but do not
-support 'drv'. And there are banks that do not support mux function
-but support 'pud' and 'drv'. Further, a given SoC can have multiple
-combinations of different bank types.
+> +		bus-width = <4>;
+> +		samsung,sdhci-cd-internal;
+> +		cd-gpios = <&gpk2 2 2 3 3>;
+> +		gpios = <&gpk2 0 2 0 3>,  /* clock line */
+> +			<&gpk2 1 2 0 3>,  /* command line */
+> +			<&gpk2 3 2 3 3>,  /* data line 0 */
+> +			<&gpk2 4 2 3 3>,  /* data line 1 */
+> +			<&gpk2 5 2 3 3>,  /* data line 2 */
+> +			<&gpk2 6 2 3 3>;  /* data line 3 */
+> +	};
+> +
+> +	Note: This example shows both SoC specific and board specific properties
+> +	in a single device node. The properties can be actually be seperated
+> +	into SoC specific node and board specific node.
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index a50c205..7fcc642 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -34,6 +34,9 @@
+>  
+>  #define MAX_BUS_CLK	(4)
+>  
+> +/* Number of gpio's used is max data bus width + command and clock lines */
+> +#define NUM_GPIOS(x)	(x + 2)
+> +
+>  /**
+>   * struct sdhci_s3c - S3C SDHCI instance
+>   * @host: The SDHCI host created
+> @@ -41,6 +44,7 @@
+>   * @ioarea: The resource created when we claimed the IO area.
+>   * @pdata: The platform data for this controller.
+>   * @cur_clk: The index of the current bus clock.
+> + * @gpios: List of gpio numbers parsed from device tree.
+>   * @clk_io: The clock for the internal bus interface.
+>   * @clk_bus: The clocks that are available for the SD/MMC bus clock.
+>   */
+> @@ -52,6 +56,7 @@ struct sdhci_s3c {
+>  	unsigned int		cur_clk;
+>  	int			ext_cd_irq;
+>  	int			ext_cd_gpio;
+> +	int			*gpios;
+>  
+>  	struct clk		*clk_io;
+>  	struct clk		*clk_bus[MAX_BUS_CLK];
+> @@ -419,9 +424,109 @@ static void sdhci_s3c_setup_card_detect_gpio(struct sdhci_s3c *sc)
+>  	}
+>  }
+>  
+> +#ifdef CONFIG_OF
+> +static int __devinit sdhci_s3c_parse_dt(struct device *dev,
+> +		struct sdhci_host *host, struct s3c_sdhci_platdata *pdata)
+> +{
+> +	struct device_node *node = dev->of_node;
+> +	struct sdhci_s3c *ourhost = to_s3c(host);
+> +	u32 max_width;
+> +	int gpio, cnt, ret;
+> +
+> +	/* if the bus-width property is not specified, assume width as 1 */
+> +	if (of_property_read_u32(node, "bus-width", &max_width))
+> +		max_width = 1;
+> +	pdata->max_width = max_width;
+> +
+> +	ourhost->gpios = devm_kzalloc(dev, NUM_GPIOS(pdata->max_width) *
+> +				sizeof(int), GFP_KERNEL);
+> +	if (!ourhost->gpios)
+> +		return -ENOMEM;
+> +
+> +	/* get the card detection method */
+> +	if (of_get_property(node, "samsung,sdhci-cd-internal", NULL))
+> +		pdata->cd_type = S3C_SDHCI_CD_INTERNAL;
+> +	else if (of_get_property(node, "samsung,sdhci-cd-gpio", NULL))
+> +		pdata->cd_type = S3C_SDHCI_CD_GPIO;
+> +	else if (of_get_property(node, "samsung,sdhci-cd-none", NULL))
+> +		pdata->cd_type = S3C_SDHCI_CD_NONE;
+> +	else if (of_get_property(node, "samsung,sdhci-cd-permanent", NULL))
+> +		pdata->cd_type = S3C_SDHCI_CD_PERMANENT;
+> +	else
+> +		pdata->cd_type = S3C_SDHCI_CD_NONE;
+> +
+> +	/* get the gpio used for card detection */
+> +	if (pdata->cd_type == S3C_SDHCI_CD_GPIO ||
+> +			pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+> +		gpio = of_get_named_gpio(node, "cd-gpios", 0);
+> +		if (!gpio_is_valid(gpio)) {
+> +			dev_err(dev, "invalid card detect gpio specified\n");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (pdata->cd_type == S3C_SDHCI_CD_GPIO) {
+> +		pdata->ext_cd_gpio = gpio;
+> +		ourhost->ext_cd_gpio = -1;
+> +		if (of_get_property(node, "cd-inverted", NULL))
+> +			pdata->ext_cd_gpio_invert = 1;
+> +	} else if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL) {
+> +		ret = gpio_request(gpio, "sdhci-cd");
+> +		if (ret) {
+> +			dev_err(dev, "card detect gpio request failed\n");
+> +			return -EINVAL;
+> +		}
+> +		ourhost->ext_cd_gpio = gpio;
+> +	}
+> +
+> +	/* get the gpios for command, clock and data lines */
+> +	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
+> +		gpio = of_get_gpio(node, cnt);
+> +		if (!gpio_is_valid(gpio)) {
+> +			dev_err(dev, "invalid gpio[%d]\n", cnt);
+> +			goto err_free_dt_cd_gpio;
+> +		}
+> +		ourhost->gpios[cnt] = gpio;
+> +	}
+> +
+> +	for (cnt = 0; cnt < NUM_GPIOS(pdata->max_width); cnt++) {
+> +		ret = gpio_request(ourhost->gpios[cnt], "sdhci-gpio");
+> +		if (ret) {
+> +			dev_err(dev, "gpio[%d] request failed\n", cnt);
+> +			goto err_free_dt_gpios;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> + err_free_dt_gpios:
+> +	while (--cnt >= 0)
+> +		gpio_free(ourhost->gpios[cnt]);
+> + err_free_dt_cd_gpio:
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL)
+> +		gpio_free(ourhost->ext_cd_gpio);
+> +	return -EINVAL;
+> +}
+> +#else
+> +static int __devinit sdhci_s3c_parse_dt(struct device *dev,
+> +		struct sdhci_host *host, struct s3c_sdhci_platdata *pdata)
+> +{
+> +	return -EINVAL;
+> +}
+> +#endif
+> +
+> +static const struct of_device_id sdhci_s3c_dt_match[];
+> +
+>  static inline struct sdhci_s3c_drv_data *sdhci_s3c_get_driver_data(
+>  			struct platform_device *pdev)
+>  {
+> +#ifdef CONFIG_OF
+> +	if (pdev->dev.of_node) {
+> +		const struct of_device_id *match;
+> +		match = of_match_node(sdhci_s3c_dt_match, pdev->dev.of_node);
+> +		return (struct sdhci_s3c_drv_data *)match->data;
+> +	}
+> +#endif
+>  	return (struct sdhci_s3c_drv_data *)
+>  			platform_get_device_id(pdev)->driver_data;
+>  }
+> @@ -436,7 +541,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>  	struct resource *res;
+>  	int ret, irq, ptr, clks;
+>  
+> -	if (!pdev->dev.platform_data) {
+> +	if (!pdev->dev.platform_data && !pdev->dev.of_node) {
+>  		dev_err(dev, "no device data specified\n");
+>  		return -ENOENT;
+>  	}
+> @@ -452,21 +557,28 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>  		dev_err(dev, "sdhci_alloc_host() failed\n");
+>  		return PTR_ERR(host);
+>  	}
+> +	sc = sdhci_priv(host);
+>  
+>  	pdata = devm_kzalloc(&pdev->dev, sizeof(*pdata), GFP_KERNEL);
+>  	if (!pdata) {
+>  		ret = -ENOMEM;
+> -		goto err_io_clk;
+> +		goto err_pdata;
+> +	}
+> +
+> +	if (pdev->dev.of_node) {
+> +		ret = sdhci_s3c_parse_dt(&pdev->dev, host, pdata);
+> +		if (ret)
+> +			goto err_pdata;
+> +	} else {
+> +		memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
+> +		sc->ext_cd_gpio = -1; /* invalid gpio number */
+>  	}
+> -	memcpy(pdata, pdev->dev.platform_data, sizeof(*pdata));
+>  
+>  	drv_data = sdhci_s3c_get_driver_data(pdev);
+> -	sc = sdhci_priv(host);
+>  
+>  	sc->host = host;
+>  	sc->pdev = pdev;
+>  	sc->pdata = pdata;
+> -	sc->ext_cd_gpio = -1; /* invalid gpio number */
+>  
+>  	platform_set_drvdata(pdev, host);
+>  
+> @@ -631,6 +743,12 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>  	clk_put(sc->clk_io);
+>  
+>   err_io_clk:
+> +	for (ptr = 0; ptr < NUM_GPIOS(sc->pdata->max_width); ptr++)
+> +		gpio_free(sc->gpios[ptr]);
+> +	if (pdata->cd_type == S3C_SDHCI_CD_INTERNAL)
+> +		gpio_free(sc->ext_cd_gpio);
+> +
+> + err_pdata:
+>  	sdhci_free_host(host);
+>  
+>  	return ret;
+> @@ -638,9 +756,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+>  
+>  static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+>  {
+> -	struct s3c_sdhci_platdata *pdata = pdev->dev.platform_data;
+>  	struct sdhci_host *host =  platform_get_drvdata(pdev);
+>  	struct sdhci_s3c *sc = sdhci_priv(host);
+> +	struct s3c_sdhci_platdata *pdata = sc->pdata;
+>  	int ptr;
+>  
+>  	if (pdata->cd_type == S3C_SDHCI_CD_EXTERNAL && pdata->ext_cd_cleanup)
+> @@ -665,6 +783,11 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
+>  	clk_disable(sc->clk_io);
+>  	clk_put(sc->clk_io);
+>  
+> +	if (pdev->dev.of_node) {
+> +		for (ptr = 0; ptr < NUM_GPIOS(sc->pdata->max_width); ptr++)
+> +			gpio_free(sc->gpios[ptr]);
+> +	}
+> +
+>  	sdhci_free_host(host);
+>  	platform_set_drvdata(pdev, NULL);
+>  
+> @@ -737,6 +860,16 @@ static struct platform_device_id sdhci_s3c_driver_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(platform, sdhci_s3c_driver_ids);
+>  
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id sdhci_s3c_dt_match[] = {
+> +	{ .compatible = "samsung,s3c6410-sdhci", },
+> +	{ .compatible = "samsung,exynos4210-sdhci",
+> +		.data = &exynos4_sdhci_drv_data },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, sdhci_s3c_dt_match);
+> +#endif
+> +
+>  static struct platform_driver sdhci_s3c_driver = {
+>  	.probe		= sdhci_s3c_probe,
+>  	.remove		= __devexit_p(sdhci_s3c_remove),
+> @@ -744,6 +877,7 @@ static struct platform_driver sdhci_s3c_driver = {
+>  	.driver		= {
+>  		.owner	= THIS_MODULE,
+>  		.name	= "s3c-sdhci",
+> +		.of_match_table = of_match_ptr(sdhci_s3c_dt_match),
+>  		.pm	= SDHCI_S3C_PMOPS,
+>  	},
+>  };
+> 
 
-In addition to this, there are two more properties for mux and pud
-values in power down mode in some of the samsung SoC's.
 
-To keep the bindings common across all the possible Samsung SoC's, the
-mux, pud and drv properties were split so that the parsing code in the
-Samsung pinctrl driver remains generic for all the possible
-combinations of pin banks and SoC's.
-
-Thanks,
-Thomas.
-
-
->
-> --
-> Matt Sealey <matt@genesi-usa.com>
-> Product Development Analyst, Genesi USA, Inc.
->
->
-> On Wed, Aug 15, 2012 at 3:10 PM, Thomas Abraham
-> <thomas.abraham@linaro.org> wrote:
->> Add pinctrl driver nodes for the three instances of pin controllers
->> in Samsung Exynos4210 SoC and add the pin group nodes available in the
->> each of those three instances.
->>
->> Cc: Kukjin Kim <kgene.kim@samsung.com>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->>  arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  457 +++++++++++++++++++++++++++++
->>  arch/arm/boot/dts/exynos4210.dtsi         |   37 +++
->>  2 files changed, 494 insertions(+), 0 deletions(-)
->>  create mode 100644 arch/arm/boot/dts/exynos4210-pinctrl.dtsi
->>
->> diff --git a/arch/arm/boot/dts/exynos4210-pinctrl.dtsi b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
->> new file mode 100644
->> index 0000000..b12cf27
->> --- /dev/null
->> +++ b/arch/arm/boot/dts/exynos4210-pinctrl.dtsi
->> @@ -0,0 +1,457 @@
->> +/*
->> + * Samsung's Exynos4210 SoC pin-mux and pin-config device tree source
->> + *
->> + * Copyright (c) 2011-2012 Samsung Electronics Co., Ltd.
->> + *             http://www.samsung.com
->> + * Copyright (c) 2011-2012 Linaro Ltd.
->> + *             www.linaro.org
->> + *
->> + * Samsung's Exynos4210 SoC pin-mux and pin-config optiosn are listed as device
->> + * tree nodes are listed in this file.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> +*/
->> +
->> +/ {
->> +       pinctrl@11400000 {
->> +               uart0_data: uart0-data {
->> +                       samsung,pins = "gpa0-0", "gpa0-1";
->> +                       samsung,pin-function = <0x2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart0_fctl: uart0-fctl {
->> +                       samsung,pins = "gpa0-2", "gpa0-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart1_data: uart1-data {
->> +                       samsung,pins = "gpa0-4", "gpa0-5";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart1_fctl: uart1-fctl {
->> +                       samsung,pins = "gpa0-6", "gpa0-7";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c2_bus: i2c2-bus {
->> +                       samsung,pins = "gpa0-6", "gpa0-7";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart2_data: uart2-data {
->> +                       samsung,pins = "gpa1-0", "gpa1-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart2_fctl: uart2-fctl {
->> +                       samsung,pins = "gpa1-2", "gpa1-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart_audio_a: uart-audio-a {
->> +                       samsung,pins = "gpa1-0", "gpa1-1";
->> +                       samsung,pin-function = <4>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c3_bus: i2c3-bus {
->> +                       samsung,pins = "gpa1-2", "gpa1-3";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart3_data: uart3-data {
->> +                       samsung,pins = "gpa1-4", "gpa1-5";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               uart_audio_b: uart-audio-b {
->> +                       samsung,pins = "gpa1-4", "gpa1-5";
->> +                       samsung,pin-function = <4>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               spi0_bus: spi0-bus {
->> +                       samsung,pins = "gpb-0", "gpb-2", "gpb-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c4_bus: i2c4-bus {
->> +                       samsung,pins = "gpb-2", "gpb-3";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               spi1_bus: spi1-bus {
->> +                       samsung,pins = "gpb-4", "gpb-6", "gpb-7";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c5_bus: i2c5-bus {
->> +                       samsung,pins = "gpb-6", "gpb-7";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2s1_bus: i2s1-bus {
->> +                       samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
->> +                                       "gpc0-4";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               pcm1_bus: pcm1-bus {
->> +                       samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
->> +                                       "gpc0-4";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               ac97_bus: ac97-bus {
->> +                       samsung,pins = "gpc0-0", "gpc0-1", "gpc0-2", "gpc0-3",
->> +                                       "gpc0-4";
->> +                       samsung,pin-function = <4>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2s2_bus: i2s2-bus {
->> +                       samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
->> +                                       "gpc1-4";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               pcm2_bus: pcm2-bus {
->> +                       samsung,pins = "gpc1-0", "gpc1-1", "gpc1-2", "gpc1-3",
->> +                                       "gpc1-4";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               spdif_bus: spdif-bus {
->> +                       samsung,pins = "gpc1-0", "gpc1-1";
->> +                       samsung,pin-function = <4>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c6_bus: i2c6-bus {
->> +                       samsung,pins = "gpc1-3", "gpc1-4";
->> +                       samsung,pin-function = <4>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               spi2_bus: spi2-bus {
->> +                       samsung,pins = "gpc1-1", "gpc1-2", "gpc1-3", "gpc1-4";
->> +                       samsung,pin-function = <5>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c7_bus: i2c7-bus {
->> +                       samsung,pins = "gpd0-2", "gpd0-3";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c0_bus: i2c0-bus {
->> +                       samsung,pins = "gpd1-0", "gpd1-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               i2c1_bus: i2c1-bus {
->> +                       samsung,pins = "gpd1-2", "gpd1-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +       };
->> +
->> +       pinctrl@11000000 {
->> +               sd0_clk: sd0-clk {
->> +                       samsung,pins = "gpk0-0";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd0_cmd: sd0-cmd {
->> +                       samsung,pins = "gpk0-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd0_cd: sd0-cd {
->> +                       samsung,pins = "gpk0-2";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd0_bus1: sd0-bus-width1 {
->> +                       samsung,pins = "gpk0-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd0_bus4: sd0-bus-width4 {
->> +                       samsung,pins = "gpk0-3", "gpk0-4", "gpk0-5", "gpk0-6";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd0_bus8: sd0-bus-width8 {
->> +                       samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd4_clk: sd4-clk {
->> +                       samsung,pins = "gpk0-0";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd4_cmd: sd4-cmd {
->> +                       samsung,pins = "gpk0-1";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd4_cd: sd4-cd {
->> +                       samsung,pins = "gpk0-2";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd4_bus1: sd4-bus-width1 {
->> +                       samsung,pins = "gpk0-3";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd4_bus4: sd4-bus-width4 {
->> +                       samsung,pins = "gpk0-3", "gpk0-4", "gpk0-5", "gpk0-6";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd4_bus8: sd4-bus-width8 {
->> +                       samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <4>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd1_clk: sd1-clk {
->> +                       samsung,pins = "gpk1-0";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd1_cmd: sd1-cmd {
->> +                       samsung,pins = "gpk1-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd1_cd: sd1-cd {
->> +                       samsung,pins = "gpk1-2";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd1_bus1: sd1-bus-width1 {
->> +                       samsung,pins = "gpk1-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd1_bus4: sd1-bus-width4 {
->> +                       samsung,pins = "gpk1-3", "gpk1-4", "gpk1-5", "gpk1-6";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd2_clk: sd2-clk {
->> +                       samsung,pins = "gpk2-0";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd2_cmd: sd2-cmd {
->> +                       samsung,pins = "gpk2-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd2_cd: sd2-cd {
->> +                       samsung,pins = "gpk2-2";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd2_bus1: sd2-bus-width1 {
->> +                       samsung,pins = "gpk2-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd2_bus4: sd2-bus-width4 {
->> +                       samsung,pins = "gpk2-3", "gpk2-4", "gpk2-5", "gpk2-6";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd2_bus8: sd2-bus-width8 {
->> +                       samsung,pins = "gpk3-3", "gpk3-4", "gpk3-5", "gpk3-6";
->> +                       samsung,pin-function = <3>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd3_clk: sd3-clk {
->> +                       samsung,pins = "gpk3-0";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd3_cmd: sd3-cmd {
->> +                       samsung,pins = "gpk3-1";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd3_cd: sd3-cd {
->> +                       samsung,pins = "gpk3-2";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd3_bus1: sd3-bus-width1 {
->> +                       samsung,pins = "gpk3-3";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               sd3_bus4: sd3-bus-width4 {
->> +                       samsung,pins = "gpk3-3", "gpk3-4", "gpk3-5", "gpk3-6";
->> +                       samsung,pin-function = <2>;
->> +                       samsung,pin-pud = <3>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               eint0: ext-int0 {
->> +                       samsung,pins = "gpx0-0";
->> +                       samsung,pin-function = <0xf>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               eint8: ext-int8 {
->> +                       samsung,pins = "gpx1-0";
->> +                       samsung,pin-function = <0xf>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               eint15: ext-int15 {
->> +                       samsung,pins = "gpx1-7";
->> +                       samsung,pin-function = <0xf>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               eint16: ext-int16 {
->> +                       samsung,pins = "gpx2-0";
->> +                       samsung,pin-function = <0xf>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               eint31: ext-int31 {
->> +                       samsung,pins = "gpx3-7";
->> +                       samsung,pin-function = <0xf>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +       };
->> +
->> +       pinctrl@03860000 {
->> +               i2s0_bus: i2s0-bus {
->> +                       samsung,pins = "gpz-0", "gpz-1", "gpz-2", "gpz-3",
->> +                                       "gpz-4", "gpz-5", "gpz-6";
->> +                       samsung,pin-function = <0x2>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +
->> +               pcm0_bus: pcm0-bus {
->> +                       samsung,pins = "gpz-0", "gpz-1", "gpz-2", "gpz-3",
->> +                                       "gpz-4";
->> +                       samsung,pin-function = <0x3>;
->> +                       samsung,pin-pud = <0>;
->> +                       samsung,pin-drv = <0>;
->> +               };
->> +       };
->> +};
->> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
->> index 02891fe..a4bd0c9 100644
->> --- a/arch/arm/boot/dts/exynos4210.dtsi
->> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->> @@ -20,6 +20,7 @@
->>  */
->>
->>  /include/ "skeleton.dtsi"
->> +/include/ "exynos4210-pinctrl.dtsi"
->>
->>  / {
->>         compatible = "samsung,exynos4210";
->> @@ -29,6 +30,9 @@
->>                 spi0 = &spi_0;
->>                 spi1 = &spi_1;
->>                 spi2 = &spi_2;
->> +               pinctrl0 = &pinctrl_0;
->> +               pinctrl1 = &pinctrl_1;
->> +               pinctrl2 = &pinctrl_2;
->>         };
->>
->>         gic:interrupt-controller@10490000 {
->> @@ -50,6 +54,39 @@
->>                              <0 12 0>, <0 13 0>, <0 14 0>, <0 15 0>;
->>         };
->>
->> +       pinctrl_0: pinctrl@11400000 {
->> +               compatible = "samsung,pinctrl-exynos4210";
->> +               reg = <0x11400000 0x1000>;
->> +               interrupts = <0 47 0>;
->> +               interrupt-controller;
->> +               #interrupt-cells = <2>;
->> +       };
->> +
->> +       pinctrl_1: pinctrl@11000000 {
->> +               compatible = "samsung,pinctrl-exynos4210";
->> +               reg = <0x11000000 0x1000>;
->> +               interrupts = <0 46 0>;
->> +               interrupt-controller;
->> +               #interrupt-cells = <2>;
->> +
->> +               wakup_eint: wakeup-interrupt-controller {
->> +                       compatible = "samsung,exynos4210-wakeup-eint";
->> +                       interrupt-parent = <&gic>;
->> +                       interrupt-controller;
->> +                       #interrupt-cells = <2>;
->> +                       interrupts = <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
->> +                                       <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
->> +                                       <0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
->> +                                       <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>,
->> +                                       <0 32 0>;
->> +               };
->> +       };
->> +
->> +       pinctrl_2: pinctrl@03860000 {
->> +               compatible = "samsung,pinctrl-exynos4210";
->> +               reg = <0x03860000 0x1000>;
->> +       };
->> +
->>         watchdog@10060000 {
->>                 compatible = "samsung,s3c2410-wdt";
->>                 reg = <0x10060000 0x100>;
->> --
->> 1.6.6.rc2
->>
->>
->> _______________________________________________
->> linux-arm-kernel mailing list
->> linux-arm-kernel@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-- 
+Tushar Behera
