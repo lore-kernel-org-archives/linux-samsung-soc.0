@@ -1,584 +1,118 @@
-From: Zhang Rui <rui.zhang@intel.com>
-Subject: Re: [PATCH v6 1/6] thermal: add generic cpufreq cooling
- implementation
-Date: Mon, 20 Aug 2012 10:16:03 +0800
-Message-ID: <1345428963.1682.899.camel@rui.sh.intel.com>
-References: <1345117305-8299-1-git-send-email-amit.kachhap@linaro.org>
-	 <1345117305-8299-2-git-send-email-amit.kachhap@linaro.org>
-	 <1345188250.1682.887.camel@rui.sh.intel.com>
-	 <CAK44p21qxbpvi0Qtu89ac8ciuJRWDvn44Z8=DggMMxiwjKcczw@mail.gmail.com>
-	 <CAGF5oy_uhgbzTQeXPyJP51JXxbszX1cL+B=V0mzfRt7bcSi_sQ@mail.gmail.com>
+From: Karol Lewandowski <k.lewandowsk@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
+Date: Mon, 20 Aug 2012 15:17:23 +0900
+Message-ID: <5031D673.6060104@samsung.com>
+References: <1345120273-22913-1-git-send-email-arun.kk@samsung.com>
+ <1345120273-22913-2-git-send-email-arun.kk@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-acpi-owner@vger.kernel.org>
-In-Reply-To: <CAGF5oy_uhgbzTQeXPyJP51JXxbszX1cL+B=V0mzfRt7bcSi_sQ@mail.gmail.com>
-Sender: linux-acpi-owner@vger.kernel.org
-To: "Valentin, Eduardo" <eduardo.valentin@ti.com>
-Cc: Amit Kachhap <amit.kachhap@linaro.org>, linux-pm@lists.linux-foundation.org, Andrew Morton <akpm@linux-foundation.org>, Len Brown <lenb@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lm-sensors@lm-sensors.org, Guenter Roeck <guenter.roeck@ericsson.com>, SangWook Ju <sw.ju@samsung.com>, Durgadoss <durgadoss.r@intel.com>, Jean Delvare <khali@linux-fr.org>, Kyungmin Park <kmpark@infradead.org>, Kukjin Kim <kgene.kim@samsung.com>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.w1.samsung.com ([210.118.77.13]:23713 "EHLO
+	mailout3.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751673Ab2HTGRa (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 20 Aug 2012 02:17:30 -0400
+Received: from eusync1.samsung.com (mailout3.w1.samsung.com [210.118.77.13])
+ by mailout3.w1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M91004VLIU0UX00@mailout3.w1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Aug 2012 07:18:00 +0100 (BST)
+Received: from [10.0.2.15] ([10.90.7.33])
+ by eusync1.samsung.com (Oracle Communications Messaging Server 7u4-23.01
+ (7.0.4.23.0) 64bit (built Aug 10 2011))
+ with ESMTPA id <0M9100573ISZQ150@eusync1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 20 Aug 2012 07:17:28 +0100 (BST)
+In-reply-to: <1345120273-22913-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, ch.naveen@samsung.com, joshi@samsung.com
 
-On =E4=BA=94, 2012-08-17 at 11:56 +0300, Valentin, Eduardo wrote:
-> Hello,
+On 08/16/2012 08:42 PM, Thomas Abraham wrote:
+> On 16 August 2012 18:01, Arun Kumar K <arun.kk ... @public.gmane.org> wrote:
 
-> >>> +
-> >>> +
-> >>> +1.2 CPU cooling action notifier register/unregister interface
-> >>> +1.2.1 int cputherm_register_notifier(struct notifier_block *nb,
-> >>> +     unsigned int list)
-> >>> +
-> >>> +    This interface registers a driver with cpu cooling layer. Th=
-e driver will
-> >>> +    be notified when any cpu cooling action is called.
-> >>> +
-> >>> +    nb: notifier function to register
-> >>> +    list: CPUFREQ_COOLING_START or CPUFREQ_COOLING_STOP
-> >>> +
-> >>> +1.2.2 int cputherm_unregister_notifier(struct notifier_block *nb=
-,
-> >>> +     unsigned int list)
-> >>> +
-> >>> +    This interface registers a driver with cpu cooling layer. Th=
-e driver will
-> >>> +    be notified when any cpu cooling action is called.
-> >>> +
-> >>> +    nb: notifier function to register
-> >>> +    list: CPUFREQ_COOLING_START or CPUFREQ_COOLING_STOP
-> >>
-> >> what are these two APIs used for?
-> >> I did not see they are used in your patch set, do I miss something=
-?
-> > No currently they are not used by my patches. I added them on reque=
-st
-> > from Eduardo and others
->=20
-> Yeah, this was a suggestion as we didn't really know how the FW part
-> would evolve by that time.
->=20
-> The reasoning is to allow any interested user (in kernel) to be
-> notified when max frequency changes.
+>> +  - interrupts : MFC interupt number to the CPU.
+>> +
+>> +  - samsung,mfc-r : Base address of the first memory bank used by MFC
+>> +                   for DMA contiguous memory allocation.
+>> +
+>> +  - samsung,mfc-r-size : Size of the first memory bank.
+> 
+> It is not allowed to pass buffer base address and size from device
+> tree. Device tree node should describe only the MFC controller
+> hardware. Any memory management related information should be handled
+> outside of device tree. This helps the bindings to be reusable across
+> multiple operating systems.
 
-in this case, the cooling device should be updated.
-Say all the target of the thermal_instances of a cooling devices is 0,
-which means they want the cpu to run at maximum frequency, when the max
-frequency changes, we should set the processor to the new max frequency
-as well.
-Using notification is not a good idea as user can not handle this
-without interacting with the thermal framework.
+The question is where elsewhere this should be described as this is strictly
+board-dependent option (number and size of RAM banks are important here).
 
-IMO, we should introduce a new API to handle this, rather than just
-notifications to users.
+I agree that base addresses are bad, but I'm not aware of any functionality
+that would allow driver (actually, its platform dependent part in
+exynosN_reserve() function) to enumerate available memory banks and grab
+memory chunks from two distinct banks.
 
->  Actually, the use case behind
-> this is to allow such users to perform some handshaking or stop their
-> activities or even change some paramenters, in case the max frequency
-> would change.
-
-It is the cooling device driver that notice this change first, and it
-should invoke something like thermal_cooling_device_update/rebind() to
-tell the thermal framework this change.
-
->  Ideally it would be possible to nack the cooling
-> transition. But that is yet a wider discussion. So far we don't have
-> users for this.
->=20
-yep.
-I thought about this before, but I'd prefer to do this when there is a
-real user. Or else, we are kind of over-designing here.
-how about removing this piece of code for now?
-
-thanks,
-rui
-
-> >>
-> >>> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
-> >>> index 7dd8c34..996003b 100644
-> >>> --- a/drivers/thermal/Kconfig
-> >>> +++ b/drivers/thermal/Kconfig
-> >>> @@ -19,6 +19,17 @@ config THERMAL_HWMON
-> >>>       depends on HWMON=3Dy || HWMON=3DTHERMAL
-> >>>       default y
-> >>>
-> >>> +config CPU_THERMAL
-> >>> +     bool "generic cpu cooling support"
-> >>> +     depends on THERMAL && CPU_FREQ
-> >>> +     help
-> >>> +       This implements the generic cpu cooling mechanism through=
- frequency
-> >>> +       reduction, cpu hotplug and any other ways of reducing tem=
-perature. An
-> >>> +       ACPI version of this already exists(drivers/acpi/processo=
-r_thermal.c).
-> >>> +       This will be useful for platforms using the generic therm=
-al interface
-> >>> +       and not the ACPI interface.
-> >>> +       If you want this support, you should say Y here.
-> >>> +
-> >>>  config SPEAR_THERMAL
-> >>>       bool "SPEAr thermal sensor driver"
-> >>>       depends on THERMAL
-> >>> diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
-> >>> index fd9369a..aae59ad 100644
-> >>> --- a/drivers/thermal/Makefile
-> >>> +++ b/drivers/thermal/Makefile
-> >>> @@ -3,5 +3,6 @@
-> >>>  #
-> >>>
-> >>>  obj-$(CONFIG_THERMAL)                +=3D thermal_sys.o
-> >>> +obj-$(CONFIG_CPU_THERMAL)            +=3D cpu_cooling.o
-> >>>  obj-$(CONFIG_SPEAR_THERMAL)          +=3D spear_thermal.o
-> >>>  obj-$(CONFIG_RCAR_THERMAL)   +=3D rcar_thermal.o
-> >>> diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_=
-cooling.c
-> >>> new file mode 100644
-> >>> index 0000000..c42e557
-> >>> --- /dev/null
-> >>> +++ b/drivers/thermal/cpu_cooling.c
-> >>> @@ -0,0 +1,512 @@
-> >>> +/*
-> >>> + *  linux/drivers/thermal/cpu_cooling.c
-> >>> + *
-> >>> + *  Copyright (C) 2012       Samsung Electronics Co., Ltd(http:/=
-/www.samsung.com)
-> >>> + *  Copyright (C) 2012  Amit Daniel <amit.kachhap@linaro.org>
-> >>> + *
-> >>> + * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~~
-> >>> + *  This program is free software; you can redistribute it and/o=
-r modify
-> >>> + *  it under the terms of the GNU General Public License as publ=
-ished by
-> >>> + *  the Free Software Foundation; version 2 of the License.
-> >>> + *
-> >>> + *  This program is distributed in the hope that it will be usef=
-ul, but
-> >>> + *  WITHOUT ANY WARRANTY; without even the implied warranty of
-> >>> + *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See th=
-e GNU
-> >>> + *  General Public License for more details.
-> >>> + *
-> >>> + *  You should have received a copy of the GNU General Public Li=
-cense along
-> >>> + *  with this program; if not, write to the Free Software Founda=
-tion, Inc.,
-> >>> + *  59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-> >>> + *
-> >>> + * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~~~~~~~~~
-> >>> + */
-> >>> +#include <linux/kernel.h>
-> >>> +#include <linux/module.h>
-> >>> +#include <linux/thermal.h>
-> >>> +#include <linux/platform_device.h>
-> >>> +#include <linux/cpufreq.h>
-> >>> +#include <linux/err.h>
-> >>> +#include <linux/slab.h>
-> >>> +#include <linux/cpu.h>
-> >>> +#include <linux/cpu_cooling.h>
-> >>> +
-> >>> +/**
-> >>> + * struct cpufreq_cooling_device
-> >>> + * @id: unique integer value corresponding to each cpufreq_cooli=
-ng_device
-> >>> + *   registered.
-> >>> + * @cool_dev: thermal_cooling_device pointer to keep track of th=
-e the
-> >>> + *   egistered cooling device.
-> >>> + * @cpufreq_state: integer value representing the current state =
-of cpufreq
-> >>> + *   cooling devices.
-> >>> + * @cpufreq_val: integer value representing the absolute value o=
-f the clipped
-> >>> + *   frequency.
-> >>> + * @allowed_cpus: all the cpus involved for this cpufreq_cooling=
-_device.
-> >>> + * @node: list_head to link all cpufreq_cooling_device together.
-> >>> + *
-> >>> + * This structure is required for keeping information of each
-> >>> + * cpufreq_cooling_device registered as a list whose head is rep=
-resented by
-> >>> + * cooling_cpufreq_list. In order to prevent corruption of this =
-list a
-> >>> + * mutex lock cooling_cpufreq_lock is used.
-> >>> + */
-> >>> +struct cpufreq_cooling_device {
-> >>> +     int id;
-> >>> +     struct thermal_cooling_device *cool_dev;
-> >>> +     unsigned int cpufreq_state;
-> >>> +     unsigned int cpufreq_val;
-> >>> +     struct cpumask allowed_cpus;
-> >>> +     struct list_head node;
-> >>> +};
-> >>> +static LIST_HEAD(cooling_cpufreq_list);
-> >>> +static DEFINE_IDR(cpufreq_idr);
-> >>> +
-> >>> +static struct mutex cooling_cpufreq_lock;
-> >>> +
-> >>> +/* notify_table passes value to the CPUFREQ_ADJUST callback func=
-tion. */
-> >>> +#define NOTIFY_INVALID NULL
-> >>> +struct cpufreq_cooling_device *notify_device;
-> >>> +
-> >>> +/* Head of the blocking notifier chain to inform about frequency=
- clamping */
-> >>> +static BLOCKING_NOTIFIER_HEAD(cputherm_state_notifier_list);
-> >>> +
-> >>> +/**
-> >>> + * get_idr - function to get a unique id.
-> >>> + * @idr: struct idr * handle used to create a id.
-> >>> + * @id: int * value generated by this function.
-> >>> + */
-> >>> +static int get_idr(struct idr *idr, int *id)
-> >>> +{
-> >>> +     int err;
-> >>> +again:
-> >>> +     if (unlikely(idr_pre_get(idr, GFP_KERNEL) =3D=3D 0))
-> >>> +             return -ENOMEM;
-> >>> +
-> >>> +     mutex_lock(&cooling_cpufreq_lock);
-> >>> +     err =3D idr_get_new(idr, NULL, id);
-> >>> +     mutex_unlock(&cooling_cpufreq_lock);
-> >>> +
-> >>> +     if (unlikely(err =3D=3D -EAGAIN))
-> >>> +             goto again;
-> >>> +     else if (unlikely(err))
-> >>> +             return err;
-> >>> +
-> >>> +     *id =3D *id & MAX_ID_MASK;
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>> +/**
-> >>> + * release_idr - function to free the unique id.
-> >>> + * @idr: struct idr * handle used for creating the id.
-> >>> + * @id: int value representing the unique id.
-> >>> + */
-> >>> +static void release_idr(struct idr *idr, int id)
-> >>> +{
-> >>> +     mutex_lock(&cooling_cpufreq_lock);
-> >>> +     idr_remove(idr, id);
-> >>> +     mutex_unlock(&cooling_cpufreq_lock);
-> >>> +}
-> >>> +
-> >>> +/**
-> >>> + * cputherm_register_notifier - Register a notifier with cpu coo=
-ling interface.
-> >>> + * @nb:      struct notifier_block * with callback info.
-> >>> + * @list: integer value for which notification is needed. possib=
-le values are
-> >>> + *   CPUFREQ_COOLING_START and CPUFREQ_COOLING_STOP.
-> >>> + *
-> >>> + * This exported function registers a driver with cpu cooling la=
-yer. The driver
-> >>> + * will be notified when any cpu cooling action is called.
-> >>> + */
-> >>> +int cputherm_register_notifier(struct notifier_block *nb, unsign=
-ed int list)
-> >>> +{
-> >>> +     int ret =3D 0;
-> >>> +
-> >>> +     switch (list) {
-> >>> +     case CPUFREQ_COOLING_START:
-> >>> +     case CPUFREQ_COOLING_STOP:
-> >>> +             ret =3D blocking_notifier_chain_register(
-> >>> +                             &cputherm_state_notifier_list, nb);
-> >>> +             break;
-> >>> +     default:
-> >>> +             ret =3D -EINVAL;
-> >>> +     }
-> >>> +     return ret;
-> >>> +}
-> >>> +EXPORT_SYMBOL(cputherm_register_notifier);
-> >>> +
-> >>> +/**
-> >>> + * cputherm_unregister_notifier - Un-register a notifier.
-> >>> + * @nb:      struct notifier_block * with callback info.
-> >>> + * @list: integer value for which notification is needed. values=
- possible are
-> >>> + *   CPUFREQ_COOLING_START or CPUFREQ_COOLING_STOP.
-> >>> + *
-> >>> + * This exported function un-registers a driver with cpu cooling=
- layer.
-> >>> + */
-> >>> +int cputherm_unregister_notifier(struct notifier_block *nb, unsi=
-gned int list)
-> >>> +{
-> >>> +     int ret =3D 0;
-> >>> +
-> >>> +     switch (list) {
-> >>> +     case CPUFREQ_COOLING_START:
-> >>> +     case CPUFREQ_COOLING_STOP:
-> >>> +             ret =3D blocking_notifier_chain_unregister(
-> >>> +                             &cputherm_state_notifier_list, nb);
-> >>> +             break;
-> >>> +     default:
-> >>> +             ret =3D -EINVAL;
-> >>> +     }
-> >>> +     return ret;
-> >>> +}
-> >>> +EXPORT_SYMBOL(cputherm_unregister_notifier);
-> >>> +
-> >>> +/* Below code defines functions to be used for cpufreq as coolin=
-g device */
-> >>> +
-> >>> +/**
-> >>> + * is_cpufreq_valid - function to check if a cpu has frequency t=
-ransition policy.
-> >>> + * @cpu: cpu for which check is needed.
-> >>> + */
-> >>> +static int is_cpufreq_valid(int cpu)
-> >>> +{
-> >>> +     struct cpufreq_policy policy;
-> >>> +     return !cpufreq_get_policy(&policy, cpu);
-> >>> +}
-> >>> +
-> >>> +/**
-> >>> + * get_cpu_frequency - get the absolute value of frequency from =
-level.
-> >>> + * @cpu: cpu for which frequency is fetched.
-> >>> + * @level: level of frequency of the CPU
-> >>> + *   e.g level=3D1 --> 1st MAX FREQ, LEVEL=3D2 ---> 2nd MAX FREQ=
-, .... etc
-> >>> + */
-> >>> +static unsigned int get_cpu_frequency(unsigned int cpu, unsigned=
- long level)
-> >>> +{
-> >>> +     int ret =3D 0, i =3D 0;
-> >>> +     unsigned long level_index;
-> >>> +     bool descend =3D false;
-> >>> +     struct cpufreq_frequency_table *table =3D
-> >>> +                                     cpufreq_frequency_get_table=
-(cpu);
-> >>> +     if (!table)
-> >>> +             return ret;
-> >>> +
-> >>> +     while (table[i].frequency !=3D CPUFREQ_TABLE_END) {
-> >>> +             if (table[i].frequency =3D=3D CPUFREQ_ENTRY_INVALID=
-)
-> >>> +                     continue;
-> >>> +
-> >>> +             /*check if table in ascending or descending order*/
-> >>> +             if ((table[i + 1].frequency !=3D CPUFREQ_TABLE_END)=
- &&
-> >>> +                     (table[i + 1].frequency < table[i].frequenc=
-y)
-> >>> +                     && !descend) {
-> >>> +                     descend =3D true;
-> >>> +             }
-> >>> +
-> >>> +             /*return if level matched and table in descending o=
-rder*/
-> >>> +             if (descend && i =3D=3D level)
-> >>> +                     return table[i].frequency;
-> >>> +             i++;
-> >>> +     }
-> >>> +     i--;
-> >>> +
-> >>> +     if (level > i || descend)
-> >>> +             return ret;
-> >>> +     level_index =3D i - level;
-> >>> +
-> >>> +     /*Scan the table in reverse order and match the level*/
-> >>> +     while (i >=3D 0) {
-> >>> +             if (table[i].frequency =3D=3D CPUFREQ_ENTRY_INVALID=
-)
-> >>> +                     continue;
-> >>> +             /*return if level matched*/
-> >>> +             if (i =3D=3D level_index)
-> >>> +                     return table[i].frequency;
-> >>> +             i--;
-> >>> +     }
-> >>> +     return ret;
-> >>> +}
-> >>> +
-> >>> +/**
-> >>> + * cpufreq_apply_cooling - function to apply frequency clipping.
-> >>> + * @cpufreq_device: cpufreq_cooling_device pointer containing fr=
-equency
-> >>> + *   clipping data.
-> >>> + * @cooling_state: value of the cooling state.
-> >>> + */
-> >>> +static int cpufreq_apply_cooling(struct cpufreq_cooling_device *=
-cpufreq_device,
-> >>> +                             unsigned long cooling_state)
-> >>> +{
-> >>> +     unsigned int event, cpuid, clip_freq;
-> >>> +     struct cpumask *maskPtr =3D &cpufreq_device->allowed_cpus;
-> >>> +     unsigned int cpu =3D cpumask_any(maskPtr);
-> >>> +
-> >>> +
-> >>> +     /* Check if the old cooling action is same as new cooling a=
-ction */
-> >>> +     if (cpufreq_device->cpufreq_state =3D=3D cooling_state)
-> >>> +             return 0;
-> >>> +
-> >>> +     clip_freq =3D get_cpu_frequency(cpu, cooling_state);
-> >>> +     if (!clip_freq)
-> >>> +             return -EINVAL;
-> >>> +
-> >>> +     cpufreq_device->cpufreq_state =3D cooling_state;
-> >>> +     cpufreq_device->cpufreq_val =3D clip_freq;
-> >>> +     notify_device =3D cpufreq_device;
-> >>> +
-> >>> +     if (cooling_state !=3D 0)
-> >>> +             event =3D CPUFREQ_COOLING_START;
-> >>> +     else
-> >>> +             event =3D CPUFREQ_COOLING_STOP;
-> >>> +
-> >>> +     blocking_notifier_call_chain(&cputherm_state_notifier_list,
-> >>> +                                             event, &clip_freq);
-> >>> +
-> >>> +     for_each_cpu(cpuid, maskPtr) {
-> >>> +             if (is_cpufreq_valid(cpuid))
-> >>> +                     cpufreq_update_policy(cpuid);
-> >>> +     }
-> >>> +
-> >>> +     notify_device =3D NOTIFY_INVALID;
-> >>> +
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>> +/**
-> >>> + * cpufreq_thermal_notifier - notifier callback for cpufreq poli=
-cy change.
-> >>> + * @nb:      struct notifier_block * with callback info.
-> >>> + * @event: value showing cpufreq event for which this function i=
-nvoked.
-> >>> + * @data: callback-specific data
-> >>> + */
-> >>> +static int cpufreq_thermal_notifier(struct notifier_block *nb,
-> >>> +                                     unsigned long event, void *=
-data)
-> >>> +{
-> >>> +     struct cpufreq_policy *policy =3D data;
-> >>> +     unsigned long max_freq =3D 0;
-> >>> +
-> >>> +     if (event !=3D CPUFREQ_ADJUST || notify_device =3D=3D NOTIF=
-Y_INVALID)
-> >>> +             return 0;
-> >>> +
-> >>> +     if (cpumask_test_cpu(policy->cpu, &notify_device->allowed_c=
-pus))
-> >>> +             max_freq =3D notify_device->cpufreq_val;
-> >>> +
-> >>> +     /* Never exceed user_policy.max*/
-> >>> +     if (max_freq > policy->user_policy.max)
-> >>> +             max_freq =3D policy->user_policy.max;
-> >>> +
-> >>> +     if (policy->max !=3D max_freq)
-> >>> +             cpufreq_verify_within_limits(policy, 0, max_freq);
-> >>> +
-> >>> +     return 0;
-> >>> +}
-> >>> +
-> >>> +/*
-> >>> + * cpufreq cooling device callback functions are defined below
-> >>> + */
-> >>> +
-> >>> +/**
-> >>> + * cpufreq_get_max_state - callback function to get the max cool=
-ing state.
-> >>> + * @cdev: thermal cooling device pointer.
-> >>> + * @state: fill this variable with the max cooling state.
-> >>> + */
-> >>> +static int cpufreq_get_max_state(struct thermal_cooling_device *=
-cdev,
-> >>> +                              unsigned long *state)
-> >>> +{
-> >>> +     int ret =3D -EINVAL, i =3D 0;
-> >>> +     struct cpufreq_cooling_device *cpufreq_device;
-> >>> +     struct cpumask *maskPtr;
-> >>> +     unsigned int cpu;
-> >>> +     struct cpufreq_frequency_table *table;
-> >>> +
-> >>> +     mutex_lock(&cooling_cpufreq_lock);
-> >>> +     list_for_each_entry(cpufreq_device, &cooling_cpufreq_list, =
-node) {
-> >>> +             if (cpufreq_device && cpufreq_device->cool_dev =3D=3D=
- cdev)
-> >>> +                     break;
-> >>> +     }
-> >>> +     if (cpufreq_device =3D=3D NULL)
-> >>> +             goto return_get_max_state;
-> >>> +
-> >>> +     maskPtr =3D &cpufreq_device->allowed_cpus;
-> >>> +     cpu =3D cpumask_any(maskPtr);
-> >>> +     table =3D cpufreq_frequency_get_table(cpu);
-> >>> +     if (!table) {
-> >>> +             *state =3D 0;
-> >>> +             ret =3D 0;
-> >>> +             goto return_get_max_state;
-> >>> +     }
-> >>> +
-> >>> +     while (table[i].frequency !=3D CPUFREQ_TABLE_END) {
-> >>> +             if (table[i].frequency =3D=3D CPUFREQ_ENTRY_INVALID=
-)
-> >>> +                     continue;
-> >>> +             i++;
-> >>> +     }
-> >>> +     if (i > 0) {
-> >>> +             *state =3D --i;
-> >>> +             ret =3D 0;
-> >>> +     }
-> >>> +
-> >>> +return_get_max_state:
-> >>> +     mutex_unlock(&cooling_cpufreq_lock);
-> >>> +     return ret;
-> >>> +}
-> >>> +
-> >>> +/**
-> >>> + * cpufreq_get_cur_state - callback function to get the current =
-cooling state.
-> >>> + * @cdev: thermal cooling device pointer.
-> >>> + * @state: fill this variable with the current cooling state.
-> >>> + */
-> >>> +static int cpufreq_get_cur_state(struct thermal_cooling_device *=
-cdev,
-> >>> +                              unsigned long *state)
-> >>> +{
-> >>> +     int ret =3D -EINVAL;
-> >>> +     struct cpufreq_cooling_device *cpufreq_device;
-> >>> +
-> >>> +     mutex_lock(&cooling_cpufreq_lock);
-> >>> +     list_for_each_entry(cpufreq_device, &cooling_cpufreq_list, =
-node) {
-> >>> +             if (cpufreq_device && cpufreq_device->cool_dev =3D=3D=
- cdev) {
-> >>> +                     *state =3D cpufreq_device->cpufreq_state;
-> >>> +                     ret =3D 0;
-> >>> +                     break;
-> >>> +             }
-> >>> +     }
-> >>> +     mutex_unlock(&cooling_cpufreq_lock);
-> >>> +
-> >>
-> >> as cpufreq may be changed in other places, e.g. via sysfs I/F, we =
-should
-> >> use the current cpu frequency to get the REAL cooling state, rathe=
-r than
-> >> using a cached value.
-> >
-> > Yes agreed , I will repost with your suggestion.
-> >
-> > Thanks,
-> > Amit
-> >>
-> >> thanks,
-> >> rui
-> >>
-> >>
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-acp=
-i" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
->=20
->=20
+My (lack of) knowledge ARM might be to blame here but I simply don't know
+how to achieve this. Any suggestions?
 
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
-n
-the body of a message to majordomo@vger.kernel.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On 08/16/2012 09:31 PM, Arun Kumar K wrote:
+
+> +static void s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
+> +		phys_addr_t lbase, unsigned int lsize) {
+> +
+> +	if (memblock_remove(lbase, lsize)) {
+> +		pr_err("Failed to reserve bank1 memory for MFC device\n");
+> +		WARN_ON(1);
+> +	}
+> +
+> +	if (memblock_remove(rbase, rsize)) {
+> +		pr_err("Failed to reserve bank2 memory for MFC device\n");
+> +		WARN_ON(1);
+> +	}
+> +}
+
+
+non-static function with the same name is already defined in
+arch/arm/plat-samsung/s5p-dev-mfc.c. Please don't duplicate it,
+especially that you seem to be trying to do that twice!
+
+
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+
+> index ef770bc..898d2de 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+...
+> +static void s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
+> +		phys_addr_t lbase, unsigned int lsize) {
+> +
+> +	if (memblock_remove(lbase, lsize)) {
+> +		pr_err("Failed to reserve bank1 memory for MFC device\n");
+> +		WARN_ON(1);
+> +	}
+> +
+> +	if (memblock_remove(rbase, rsize)) {
+> +		pr_err("Failed to reserve bank2 memory for MFC device\n");
+> +		WARN_ON(1);
+> +	}
+> +}
+
+
+See above.
+
+> +
+> +static void __init exynos5_reserve(void)
+> +{
+> +	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
+
+
+I think it would make sense to make this memory reservation dependent
+on "mfc*" node being present in DTS.  It's to early to use of_* functions
+(because tree is not populated at this stage) but fdt_* family of functions
+work just fine.
+
+Regards,
+-- 
+Karol Lewandowski | Samsung Poland R&D Center | Linux/Platform
