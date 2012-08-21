@@ -1,39 +1,41 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] ARM: dts: Add pinctrl node entries for Samsung
- Exynos4210 SoC
-Date: Tue, 21 Aug 2012 14:54:16 +0200
-Message-ID: <CACRpkdbuqtPKMTEziPfMYfSssjWxPeMEP7=wJD4WtEHNppcOZA@mail.gmail.com>
-References: <1345061442-32378-1-git-send-email-thomas.abraham@linaro.org>
-	<1345061442-32378-2-git-send-email-thomas.abraham@linaro.org>
+From: Rob Herring <robherring2@gmail.com>
+Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
+Date: Tue, 21 Aug 2012 09:21:47 -0500
+Message-ID: <5033997B.9010605@gmail.com>
+References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org> <CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com> <87k3ws5uhs.fsf@octavius.laptop.org> <201208211208.49987.arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:64615 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751013Ab2HUMyR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Aug 2012 08:54:17 -0400
-Received: by vcbfk26 with SMTP id fk26so6063380vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Aug 2012 05:54:16 -0700 (PDT)
-In-Reply-To: <1345061442-32378-2-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <201208211208.49987.arnd@arndb.de>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Chris Ball <cjb@laptop.org>, Thomas Abraham <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
 
-On Wed, Aug 15, 2012 at 10:10 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
+On 08/21/2012 07:08 AM, Arnd Bergmann wrote:
+> On Tuesday 21 August 2012, Chris Ball wrote:
+>> How about this?
+>>
+>> broken-cd: No CD available, use polling.
+>>
+>> cd-gpios: The CD pin on the host is working and brought out to a GPIO.
+>>
+>> external-cd-gpios: The CD pin on the host is broken, but there's an
+>>                    independent external GPIO available.
+>>
+>>
+>> (Each host should only have one of these properties.)
+> 
+> The fsl-imx-esdhc.txt binding already has all three cases, but
+> describes them differently:
+> 
+> fsl,cd-internal: when present, the CD pin on the host is working
+> cd-gpios: when present, contains the gpio line that CD is connected to
+> If both are absent, it has to use polling.
 
-> +       pinctrl@11400000 {
-> +               uart0_data: uart0-data {
-> +                       samsung,pins = "gpa0-0", "gpa0-1";
-> +                       samsung,pin-function = <0x2>;
-> +                       samsung,pin-pud = <0>;
-> +                       samsung,pin-drv = <0>;
-> +               };
+This makes the most sense to me. However, I prefer broken-cd over
+cd-internal. The binding should add properties for exceptions, not SDHCI
+spec compliant implementations.
 
-Apart from the pin-pud and pin-drv stuff this patch looks fine. These two
-things I want to discuss in the other mail thread (controller core) first.
-
-Yours,
-Linus Walleij
+Rob
