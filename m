@@ -1,40 +1,37 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2 3/4] gpio: exynos4: skip gpiolib registration if
- pinctrl driver is used
-Date: Tue, 21 Aug 2012 14:05:22 +0200
-Message-ID: <CACRpkdYc-iMgKBNfRmxUFftK78G77qQ8h_Rr5td1-95NGo7wZg@mail.gmail.com>
-References: <1345060656-32201-1-git-send-email-thomas.abraham@linaro.org>
-	<1345060656-32201-4-git-send-email-thomas.abraham@linaro.org>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
+Date: Tue, 21 Aug 2012 12:08:49 +0000
+Message-ID: <201208211208.49987.arnd@arndb.de>
+References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org> <CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com> <87k3ws5uhs.fsf@octavius.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:49702 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757202Ab2HUMFW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 21 Aug 2012 08:05:22 -0400
-Received: by vbbff1 with SMTP id ff1so6396882vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Aug 2012 05:05:22 -0700 (PDT)
-In-Reply-To: <1345060656-32201-4-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-15"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <87k3ws5uhs.fsf@octavius.laptop.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
 
-On Wed, Aug 15, 2012 at 9:57 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
+On Tuesday 21 August 2012, Chris Ball wrote:
+> How about this?
+> 
+> broken-cd: No CD available, use polling.
+> 
+> cd-gpios: The CD pin on the host is working and brought out to a GPIO.
+> 
+> external-cd-gpios: The CD pin on the host is broken, but there's an
+>                    independent external GPIO available.
+> 
+> 
+> (Each host should only have one of these properties.)
 
-> Pinctrl driver, when enabled, registers all the gpio pins and hence the
-> registration of gpio pins by this driver can be skipped.
->
-> Acked-by: Grant Likely <grant.likely@secretlab.ca>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+The fsl-imx-esdhc.txt binding already has all three cases, but
+describes them differently:
 
-> +#ifdef CONFIG_OF
+fsl,cd-internal: when present, the CD pin on the host is working
+cd-gpios: when present, contains the gpio line that CD is connected to
+If both are absent, it has to use polling.
 
-Wouldn't it be better to use
-#ifdef CONFIG_PINCTRL_SAMSUNG?
-
-Yours,
-Linus Walleij
+	Arnd
