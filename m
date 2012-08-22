@@ -1,67 +1,69 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v2 1/4] pinctrl: add samsung pinctrl and gpiolib driver
-Date: Wed, 22 Aug 2012 10:30:02 +0530
-Message-ID: <CAJuYYwQx35bNJdNeNexGoxzenstT7GaOLa3=+6uYMMGoYrCtRQ@mail.gmail.com>
-References: <1345060656-32201-1-git-send-email-thomas.abraham@linaro.org>
-	<1345060656-32201-2-git-send-email-thomas.abraham@linaro.org>
-	<CACRpkdYqPYesgE-YxPLZqROw1T2fsPWR6R+aDTTz2=XbP7oe9A@mail.gmail.com>
-	<5033FFE0.5070209@wwwdotorg.org>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
+Date: Wed, 22 Aug 2012 13:51:53 +0800
+Message-ID: <20120822055151.GT24242@S2101-09.ap.freescale.net>
+References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org>
+ <CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
+ <87k3ws5uhs.fsf@octavius.laptop.org>
+ <201208211208.49987.arnd@arndb.de>
+ <87393g5mic.fsf@octavius.laptop.org>
+ <5033A34E.7040201@gmail.com>
+ <87pq6k46jg.fsf@octavius.laptop.org>
+ <5033B0F0.7050506@gmail.com>
+ <CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:47597 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751422Ab2HVFAE (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:57108 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756699Ab2HVFva (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Aug 2012 01:00:04 -0400
-Received: by lbbgj3 with SMTP id gj3so417294lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Aug 2012 22:00:02 -0700 (PDT)
-In-Reply-To: <5033FFE0.5070209@wwwdotorg.org>
+	Wed, 22 Aug 2012 01:51:30 -0400
+Received: by pbbrr13 with SMTP id rr13so983071pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 21 Aug 2012 22:51:30 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, Dong Aisheng <dong.aisheng@linaro.org>
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Rob Herring <robherring2@gmail.com>, Chris Ball <cjb@laptop.org>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
 
-On 22 August 2012 03:08, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 08/21/2012 05:25 AM, Linus Walleij wrote:
->> On Wed, Aug 15, 2012 at 9:57 PM, Thomas Abraham
->> <thomas.abraham@linaro.org> wrote:
->>
->>> Add a new device tree enabled pinctrl and gpiolib driver for Samsung
->>> SoC's.
-> ...
->>> +  The child node can also optionally specify one or more of the pin
->>> +  configuration that should be applied on all the pins listed in the
->>> +  "samsung,pins" property of the child node. The following pin configuration
->>> +  properties are supported.
->>> +
->>> +  - samsung,pin-pud: Pull up/down configuration.
->>> +  - samsung,pin-drv: Drive strength configuration.
->>> +  - samsung,pin-pud-pdn: Pull up/down configuration in power down mode.
->>> +  - samsung,pin-drv-pdn: Drive strength configuration in power down mode.
->>
->> This looks a bit scary, as it seems to be orthogonal to the pin config
->> interface. I.e. this will be programmed "behind the back" of the
->> pin config system. However as long as the pin config implementation
->> reads back these things from the registers it will work, too.
->>
->> In the U300 and Ux500 I explicitly use pin config hogs to set up
->> the pin configuration, and when we enter a state such as
->> "default" the mux setting and config settings are set from the
->> framework separately.
->
-> I know that some HW has a separate set of registers (or fields) for the
-> "awake" and "sleep" configuration, and the HW switches between the two
-> automatically when sleeping. I have no idea if the Samsung SoCs do this,
-> but I think if this were the case, it'd be quite legitimate to define
-> both these HW states as separate sets of properties within a single
-> pinctrl SW state. So, that might be the explanation here?
->
+On Tue, Aug 21, 2012 at 11:03:59PM +0530, Thomas Abraham wrote:
+> Ok, I agree with Rob. I was mixing pin muxing here. So if we have
+> 'cd-gpios' and 'broken-cd' as generic bindings, would the following be
+> valid?
+> 
+> [A] cd-gpios not present ,  broken-cd not present : This means that
+> there is no card detect pin available. Controller drivers are free to
+> infer this as "card detection is broken" and use implementation
+> specific behavior.
+> 
+> [B] cd-gpio not present , broken-cd present :  This means that there
+> is nothing connected to the card-detect pad of the mmc host
+> controller. Controller drivers are free to use implementation specific
+> behavior to deal with card detection.
+> 
+> [C] cd-gpio present, broken-cd not present : This means that 'cd-gpio'
+> line connects card-detect pad of the controller to the card-detect pin
+> of the mmc slot.
+> 
+> [D] cd-gpio present, broken-cd present : This means that there is
+> nothing connected to the card-detect pad of the mmc host controller.
+> Controller drivers are free to use the 'cd-gpio' line in any
+> implementation specific way.
+> 
+The following is what I have on my mind.
 
-Hi Stephen,
+broken-cd	cd-gpios	implication
+-------------------------------------------
+no		no		SDHCI CD
+no		yes		GPIO CD
+yes		no		NO CD / Broken CD
+yes		yes		Invalid
 
-Yes, Samsung SoC support the "awake" and "sleep" configuration in that
-way you described.
+yes: property presents
+no: property does not present
 
-Thanks,
-Thomas.
+-- 
+Regards,
+Shawn
