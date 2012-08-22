@@ -1,72 +1,85 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
-Date: Wed, 22 Aug 2012 14:00:32 +0800
-Message-ID: <20120822060030.GU24242@S2101-09.ap.freescale.net>
-References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org>
- <CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
- <87k3ws5uhs.fsf@octavius.laptop.org>
- <201208211208.49987.arnd@arndb.de>
- <87393g5mic.fsf@octavius.laptop.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 14/14] drivers/spi/spi-s3c24xx.c: fix error return code
+Date: Wed, 22 Aug 2012 18:38:36 +0900
+Message-ID: <1b3201cd8049$e753f720$b5fbe560$%kim@samsung.com>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1345365870-29831-15-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <87393g5mic.fsf@octavius.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:21050 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757346Ab2HVJii (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Aug 2012 05:38:38 -0400
+In-reply-to: <1345365870-29831-15-git-send-email-Julia.Lawall@lip6.fr>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Julia Lawall' <Julia.Lawall@lip6.fr>, 'Ben Dooks' <ben-linux@fluff.org>
+Cc: kernel-janitors@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
 
-On Tue, Aug 21, 2012 at 10:48:43AM -0400, Chris Ball wrote:
-> Aside: the bindings do not match the code.  The bindings document says
-> to use "fsl,cd-internal", and imx51-babbage.dts does so -- but the code
-> doesn't check for "fsl,cd-internal", it checks for "fsl,cd-controller":
+Julia Lawall wrote:
 > 
->         if (of_get_property(np, "fsl,cd-controller", NULL))
->                 boarddata->cd_type = ESDHC_CD_CONTROLLER;
+> From: Julia Lawall <Julia.Lawall@lip6.fr>
 > 
-> The same confusion is present for fsl,wp-{controller,internal}.
+> Initialize return variable before exiting on an error path.
 > 
-Thanks for spotting it.  I will submit a patch to fix binding doc and
-dts.
+> A simplified version of the semantic match that finds this problem is as
+> follows: (http://coccinelle.lip6.fr/)
+> 
+> // <smpl>
+> (
+> if@p1 (\(ret < 0\|ret != 0\))
+>  { ... return ret; }
+> |
+> ret@p1 = 0
+> )
+> ... when != ret = e1
+>     when != &ret
+> *if(...)
+> {
+>   ... when != ret = e2
+>       when forall
+>  return ret;
+> }
+> 
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-> Ignoring that, these bindings are similar, but not the same -- imx-esdhc
-> only allows one of the cd_type cases to be true, so you either have
-> cd-internal or you have cd-gpios:
-> 
->         if (of_get_property(np, "fsl,cd-controller", NULL))
->                 boarddata->cd_type = ESDHC_CD_CONTROLLER;
-> 
->         boarddata->cd_gpio = of_get_named_gpio(np, "cd-gpios", 0);
->         if (gpio_is_valid(boarddata->cd_gpio))
->                 boarddata->cd_type = ESDHC_CD_GPIO;
-> 
-> This differs from Thomas's binding -- he wants a way to say "the cd-gpio
-> mentioned in cd-gpios is [internal/external] to the card's CD pin".
-> 
-> Rob Herring said:
-> > This makes the most sense to me. However, I prefer broken-cd over
-> > cd-internal. The binding should add properties for exceptions, not SDHCI
-> > spec compliant implementations.
-> 
-> Agreed, I was going to say the same thing.  Putting it all together, it
-> sounds like we want:
-> 
-> no extra properties:  the CD pin on the host just works.
-> broken-cd:            the CD pin on the host is broken; use polling.
-> cd-gpios:             the GPIO listed is the CD pin on the host being
->                       brought out directly to a GPIO.
-> cd-external:          when used with cd-gpios, specifies that the GPIO
->                       in cd-gpios is external to the CD pin on the host.
-> 
-> cd-gpios and cd-external can be present on the same node.  if broken-cd
-> is present, it must be the only one of these nodes used.
-> 
-> Shawn, I guess I'll leave it up to you on whether/when you'd like to
-> move away from the "fsl," properties to the new common ones?
-> 
-Ok, I will move to the common one once it appears on your tree.
+(Cc'ed Mark Brown who is handling spi for a moment)
 
--- 
-Regards,
-Shawn
+> ---
+> Perhaps -EINVAL is not the right value in this case.
+> 
+Well, if (pin_cs < 0) is true, it is really invalid value. So I think, it
+makes sense :-)
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+>  drivers/spi/spi-s3c24xx.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/spi/spi-s3c24xx.c b/drivers/spi/spi-s3c24xx.c
+> index 8ee7d79..a2a080b 100644
+> --- a/drivers/spi/spi-s3c24xx.c
+> +++ b/drivers/spi/spi-s3c24xx.c
+> @@ -611,6 +611,7 @@ static int __devinit s3c24xx_spi_probe(struct
+> platform_device *pdev)
+>  	if (!pdata->set_cs) {
+>  		if (pdata->pin_cs < 0) {
+>  			dev_err(&pdev->dev, "No chipselect pin\n");
+> +			err = -EINVAL;
+>  			goto err_register;
+>  		}
+> 
