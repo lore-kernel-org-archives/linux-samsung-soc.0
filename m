@@ -1,57 +1,56 @@
-From: Shawn Guo <shawn.guo@linaro.org>
+From: Chris Ball <cjb@laptop.org>
 Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
-Date: Wed, 22 Aug 2012 20:26:56 +0800
-Message-ID: <20120822122655.GW24242@S2101-09.ap.freescale.net>
+Date: Wed, 22 Aug 2012 09:54:30 -0400
+Message-ID: <87txvv3ucp.fsf@octavius.laptop.org>
 References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org>
- <CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
- <87k3ws5uhs.fsf@octavius.laptop.org>
- <201208211208.49987.arnd@arndb.de>
- <87393g5mic.fsf@octavius.laptop.org>
+	<CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
+	<87k3ws5uhs.fsf@octavius.laptop.org>
+	<201208211208.49987.arnd@arndb.de>
+	<87393g5mic.fsf@octavius.laptop.org>
+	<20120822122655.GW24242@S2101-09.ap.freescale.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <87393g5mic.fsf@octavius.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from void.printf.net ([89.145.121.20]:47988 "EHLO void.printf.net"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1751766Ab2HVNyr (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Aug 2012 09:54:47 -0400
+In-Reply-To: <20120822122655.GW24242@S2101-09.ap.freescale.net> (Shawn Guo's
+	message of "Wed, 22 Aug 2012 20:26:56 +0800")
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Shawn Guo <shawn.guo@linaro.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Abraham <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
 
-Hi Chris,
+Hi Shawn,
 
-On Tue, Aug 21, 2012 at 10:48:43AM -0400, Chris Ball wrote:
-> Aside: the bindings do not match the code.  The bindings document says
-> to use "fsl,cd-internal", and imx51-babbage.dts does so -- but the code
-> doesn't check for "fsl,cd-internal", it checks for "fsl,cd-controller":
-> 
->         if (of_get_property(np, "fsl,cd-controller", NULL))
->                 boarddata->cd_type = ESDHC_CD_CONTROLLER;
-> 
-> The same confusion is present for fsl,wp-{controller,internal}.
-> 
-I'm trying to fix the mismatch between dts and code, but seeing that
-the "controller" mode has been broken for quite a while.  I just ran
-a bisect and was told as below.
+On Wed, Aug 22 2012, Shawn Guo wrote:
+>     mmc: sdhci: Always pass clock request value zero to set_clock host op
+>
+>     To allow the set_clock host op to disable the SDCLK source when not
+>     needed, always call the host op when the requested clock speed is
+>     zero.  Do this even if host->clock already equals zero, because
+>     the SDHCI driver may set that value (without calling the host op)
+>     to force an update at the next (non-zero-speed) call.
+>
+>     Signed-off-by: Todd Poynor <toddpoynor@google.com>
+>     Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>     Signed-off-by: Chris Ball <cjb@laptop.org>
+>
+> Reverting the commit will get "controller" mode back to work.
 
-30832ab56c80d96cfaf5a786524f0d8c57fadfa1 is the first bad commit
-commit 30832ab56c80d96cfaf5a786524f0d8c57fadfa1
-Author: Todd Poynor <toddpoynor@google.com>
-Date:   Tue Dec 27 15:48:46 2011 +0200
+Weird; I wonder how that's related to card detection.
 
-    mmc: sdhci: Always pass clock request value zero to set_clock host op
+I'm afraid it's ultimately a driver bug -- esdhc should be able to
+handle having set_clock called with a value of 0.  It seems to have
+a case in esdhc_set_clock() for 0, so I'm surprised it's not working.
 
-    To allow the set_clock host op to disable the SDCLK source when not
-    needed, always call the host op when the requested clock speed is
-    zero.  Do this even if host->clock already equals zero, because
-    the SDHCI driver may set that value (without calling the host op)
-    to force an update at the next (non-zero-speed) call.
+What's the symptom of the failure?  Can you debug some more?
 
-    Signed-off-by: Todd Poynor <toddpoynor@google.com>
-    Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-    Signed-off-by: Chris Ball <cjb@laptop.org>
+Thanks,
 
-Reverting the commit will get "controller" mode back to work.
-
+- Chris.
 -- 
-Regards,
-Shawn
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
