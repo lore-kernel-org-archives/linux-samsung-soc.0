@@ -1,63 +1,62 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
-Date: Wed, 22 Aug 2012 07:08:26 -0400
-Message-ID: <87y5l7421h.fsf@octavius.laptop.org>
-References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org>
-	<CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
-	<87k3ws5uhs.fsf@octavius.laptop.org>
-	<201208211208.49987.arnd@arndb.de>
-	<87393g5mic.fsf@octavius.laptop.org> <5033A34E.7040201@gmail.com>
-	<87pq6k46jg.fsf@octavius.laptop.org> <5033B0F0.7050506@gmail.com>
-	<CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
-	<20120822055151.GT24242@S2101-09.ap.freescale.net>
-	<877gsr5iz1.fsf@octavius.laptop.org>
-	<CAJuYYwQz00ZzB5MxRG66XEPZApAtS6bwJAafmw3b=7DD7u+Crg@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 14/14] drivers/spi/spi-s3c24xx.c: fix error return code
+Date: Wed, 22 Aug 2012 12:40:15 +0100
+Message-ID: <20120822114015.GI7995@opensource.wolfsonmicro.com>
+References: <1345365870-29831-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1345365870-29831-15-git-send-email-Julia.Lawall@lip6.fr>
+ <1b3201cd8049$e753f720$b5fbe560$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAJuYYwQz00ZzB5MxRG66XEPZApAtS6bwJAafmw3b=7DD7u+Crg@mail.gmail.com>
-	(Thomas Abraham's message of "Wed, 22 Aug 2012 16:21:33 +0530")
-Sender: linux-mmc-owner@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Rob Herring <robherring2@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="faJ0ivz08JzDjTH2"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:60652 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751484Ab2HVLkS (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 22 Aug 2012 07:40:18 -0400
+Content-Disposition: inline
+In-Reply-To: <1b3201cd8049$e753f720$b5fbe560$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Julia Lawall' <Julia.Lawall@lip6.fr>, 'Ben Dooks' <ben-linux@fluff.org>, kernel-janitors@vger.kernel.org, 'Grant Likely' <grant.likely@secretlab.ca>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, spi-devel-general@lists.sourceforge.net, linux-kernel@vger.kernel.org
 
-Hi Thomas,
 
-On Wed, Aug 22 2012, Thomas Abraham wrote:
->> This matches Mitch's last suggestion exactly -- I think we're all agreed
->> on these properties now.  The only remaining question is how to handle
->> the pinctrl for CD in Thomas's case.
->
-> Hi Chris,
->
-> For sdhci-s3c driver, the 'broken-cd' and 'cd-gpios' bindings are
-> sufficient. But, are drivers free to use implementation specific
-> behavior when using these bindings. Or do we strictly adhere to the
-> table which Shawn has listed. For sdhci-s3c driver, I would like to
-> deviate from the "implication" column listed above.
+--faJ0ivz08JzDjTH2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I'd rather you use the implications described above for the names
-described above; there's not much point in defining named behaviors
-across the subsystem if they're actually different in each driver.
+On Wed, Aug 22, 2012 at 06:38:36PM +0900, Kukjin Kim wrote:
+> Julia Lawall wrote:
 
-But I think you can still use driver-internal properties that change the
-interpretation of those names in a documented way.  If the meaning of
-cd-gpios is modified when coupled with your "samsung,sdhci-cd-external",
-that's okay with me.  That should cover all the cases you need until you
-migrate to using pinctrl, right?  So, you could immediately support:
+> > Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
 
-none          -> currently "samsung,sdhci-cd-internal"
-broken-cd     -> currently "samsung,sdhci-cd-none"
-cd-gpios      -> currently "samsung,sdhci-cd-gpios"
-non-removable -> currently "samsung,sdhci-cd-permanent"
-cd-gpios + samsung,sdhci-cd-external -> currently "samsung,sdhci-cd-external"
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-How does that sound?
+> (Cc'ed Mark Brown who is handling spi for a moment)
 
-Thanks,
+Please resend the patch to me so I can apply this.
 
-- Chris.
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+--faJ0ivz08JzDjTH2
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAEBAgAGBQJQNMUYAAoJEFJkBDiqVpZ45xQQAIWvPsMbnRa1fHnVQe1R1mmM
+rO35Lc41I+XnRD8/Ye6wm3/qAwV3ug3wny48IbXFzKgboTyHHOZzkmAOA270bIPG
+IM+75uKi9WOf7fbmF35MIcoFj4v1+2DM+pwEBV93dlli+VR8wDicpEimQ++JWg6e
+IB1sFr3RpxZxPaS3TglrpPVhCYBDOdAhf0CWLy9jLECsOWJU0xh93S8Ujcwc4YNG
+rjV9QKi5Q4CJHhFsldw3imy4D9SMFvkeqD/pwREtnqeMCi01FqFvgJyym7+szK1h
+Q8v7dpaKPjSlxhtdJ/FZV8RBnRRLy5g2CoarSBQHlVRyoKyJgvqaSaWfd0SOYAz4
+hId3PhDKwCz927yjbKeINgmDBwobgDQhn6yN4gfxwpLGc3j7+MK2oKhye/oiF0Jr
+BGPGA7WBM5TIIun8li9KR+FlbZ4L2i/J8EpN+cppBw2Z9vz0y+u/z/Jl9X18QYrC
+zdajXQM5JNGyrhgp3xwip12yVLX5Ej9hISD1Unwa9u3MdEQD+bSUuoi4KCeAOpl0
+Or0yp07JUgtwyxa5MHxDnyJpTMhYUqlhapd3ZnLFYvJA8Cz6oS8lFH3apQS+Cp2p
+pe28/J/OCjZCofqgTFzCJhSuljh2dbgp0QJquZdIBT9B9W/ND9psiU8qqh6q9LFM
+QGyjpPjbtkhVIkXpzY0V
+=W7/D
+-----END PGP SIGNATURE-----
+
+--faJ0ivz08JzDjTH2--
