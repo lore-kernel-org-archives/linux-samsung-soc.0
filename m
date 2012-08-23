@@ -1,71 +1,41 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL] Samsung fixes for v3.6
-Date: Thu, 23 Aug 2012 20:06:35 +0900
-Message-ID: <1d5f01cd811f$5c5de8c0$1519ba40$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-language: ko
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v2 0/2] ARM: Exynos4-DT: Enable pinctrl driver support
+Date: Thu, 23 Aug 2012 16:54:56 +0530
+Message-ID: <1345721098-32459-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:20128 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756333Ab2HWLIO (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Aug 2012 07:08:14 -0400
+Received: from epcpsbgm2.samsung.com (mailout4.samsung.com [203.254.224.34])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M970064BG9NBF90@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Aug 2012 20:08:13 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.37])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M9700CFKG7RAC20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Aug 2012 20:08:12 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
 
-Hi Arnd, Olof,
+This patch series enables support for pin controller driver for Exynos4210 SoC
+based device tree enabled platforms. The first patch in this series adds the
+pin group nodes for each of the three pin controller instances, but it is not
+a exhaustive list of all possible pin group nodes. As the coverage of pinctrl
+driver is extended device drivers used on Exynos4210 platforms, additional
+pin group nodes can be added as required.
 
-Here are Samsung fixes for v3.6
+Thomas Abraham (2):
+  ARM: dts: Add pinctrl node entries for Samsung Exynos4210 SoC
+  ARM: EXYNOS: Enable pinctrl driver support for Exynos4 device tree enabled platform
 
-For HDMI, already HDMI support for EXYNOS in mainline kernel is broken
-because its configuration moved to platform data but regarding platform data
-didn't support yet. And others are for fix warnings.
-
-If any problems, please kindly let me know.
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
-
-The following changes since commit 0d7614f09c1ebdbaa1599a5aba7593f147bf96ee:
-
-  Linux 3.6-rc1 (2012-08-02 16:38:10 -0700)
-
-are available in the git repository at:
-  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-v3.6-samsung-fixes-1
-
-Heiko Stuebner (2):
-      ARM: S3C24XX: Add missing DMACH_DT_PROP
-      ARM: S3C24XX: Fix s3c2410_dma_enqueue parameters
-
-Sachin Kamat (3):
-      ARM: Samsung: Make uart_save static in pm.c file
-      ARM: SAMSUNG: Set HDMI platform data for Exynos4x12 SoCs
-      ARM: EXYNOS: Set HDMI platform data in SMDKV310
-
-Tushar Behera (2):
-      ARM: SAMSUNG: Add API to set platform data for s5p-tv driver
-      ARM: EXYNOS: Set HDMI platform data in Origen board
-
- arch/arm/mach-exynos/mach-origen.c        |    7 +++++++
- arch/arm/mach-exynos/mach-smdkv310.c      |    7 +++++++
- arch/arm/mach-s3c24xx/include/mach/dma.h  |    3 ++-
- arch/arm/plat-s3c24xx/dma.c               |    2 +-
- arch/arm/plat-samsung/devs.c              |   29
-++++++++++++++++++++++++++++-
- arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
- arch/arm/plat-samsung/pm.c                |    2 +-
- 7 files changed, 62 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi |  457 +++++++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi         |   37 +++
+ arch/arm/mach-exynos/Kconfig              |    2 +
+ 3 files changed, 496 insertions(+), 0 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4210-pinctrl.dtsi
