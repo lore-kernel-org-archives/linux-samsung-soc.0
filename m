@@ -1,52 +1,107 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v2 2/2] ARM: EXYNOS: Enable pinctrl driver support for Exynos4
- device tree enabled platform
-Date: Thu, 23 Aug 2012 16:54:58 +0530
-Message-ID: <1345721098-32459-3-git-send-email-thomas.abraham@linaro.org>
-References: <1345721098-32459-1-git-send-email-thomas.abraham@linaro.org>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH] spi/s3c64xx: Drop extra calls to spi_master_get in
+ suspend/remove functions
+Date: Thu, 23 Aug 2012 06:39:31 -0700
+Message-ID: <20120823133931.GB24319@roeck-us.net>
+References: <1345173265-1721-1-git-send-email-linux@roeck-us.net>
+ <1d0b01cd80f1$d77eaf90$867c0eb0$%kim@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:51725 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756548Ab2HWLJb (ORCPT
+Received: from mail.active-venture.com ([67.228.131.205]:56534 "EHLO
+	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758806Ab2HWNjh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Aug 2012 07:09:31 -0400
-Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M97003YQGBU99A0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Aug 2012 20:09:30 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9700CFKG7RAC20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 23 Aug 2012 20:09:30 +0900 (KST)
-In-reply-to: <1345721098-32459-1-git-send-email-thomas.abraham@linaro.org>
+	Thu, 23 Aug 2012 09:39:37 -0400
+Content-Disposition: inline
+In-Reply-To: <1d0b01cd80f1$d77eaf90$867c0eb0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: spi-devel-general@lists.sourceforge.net, 'Ben Dooks' <ben-linux@fluff.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
 
-This enables support for Samsung and Exynos4 pinctrl driver for device
-tree enabled Exynos4 platforms.
+On Thu, Aug 23, 2012 at 02:40:45PM +0900, Kukjin Kim wrote:
+> Guenter Roeck wrote:
+> > 
+> > Suspend and resume functions call spi_master_get() without matching
+> > spi_master_put(). The extra references are unnecessary and cause
+> > subsequent
+> > module unload attempts to fail. Drop the calls.
+> > 
+> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> 
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+> 
+> (Cc'ed Mark Brown who is handling spi now)
+> 
+> Guenter, maybe you need to re-send this patch to Mark so that he can apply
+> ;-)
+> 
+Guess you are right - and I did copy Mark on my later patches. Mark, I just
+bounced the patch to you, so you should have it now.
 
-Cc: Kukjin Kim <kgene.kim@samsung.com>
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/mach-exynos/Kconfig |    2 ++
- 1 files changed, 2 insertions(+), 0 deletions(-)
+Thanks,
+Guenter
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index b5b4c8c..195b50e 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -405,6 +405,8 @@ config MACH_EXYNOS4_DT
- 	select USE_OF
- 	select ARM_AMBA
- 	select HAVE_SAMSUNG_KEYPAD if INPUT_KEYBOARD
-+	select PINCTRL
-+	select PINCTRL_EXYNOS4
- 	help
- 	  Machine support for Samsung Exynos4 machine with device tree enabled.
- 	  Select this if a fdt blob is available for the Exynos4 SoC based board.
--- 
-1.6.6.rc2
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> > ---
+> >  drivers/spi/spi-s3c64xx.c |    8 ++++----
+> >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> > index 646a765..d7a87df 100644
+> > --- a/drivers/spi/spi-s3c64xx.c
+> > +++ b/drivers/spi/spi-s3c64xx.c
+> > @@ -1409,7 +1409,7 @@ static int s3c64xx_spi_remove(struct platform_device
+> > *pdev)
+> >  #ifdef CONFIG_PM
+> >  static int s3c64xx_spi_suspend(struct device *dev)
+> >  {
+> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> > +	struct spi_master *master = dev_get_drvdata(dev);
+> >  	struct s3c64xx_spi_driver_data *sdd =
+> > spi_master_get_devdata(master);
+> > 
+> >  	spi_master_suspend(master);
+> > @@ -1428,7 +1428,7 @@ static int s3c64xx_spi_suspend(struct device *dev)
+> > 
+> >  static int s3c64xx_spi_resume(struct device *dev)
+> >  {
+> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> > +	struct spi_master *master = dev_get_drvdata(dev);
+> >  	struct s3c64xx_spi_driver_data *sdd =
+> > spi_master_get_devdata(master);
+> >  	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+> > 
+> > @@ -1452,7 +1452,7 @@ static int s3c64xx_spi_resume(struct device *dev)
+> >  #ifdef CONFIG_PM_RUNTIME
+> >  static int s3c64xx_spi_runtime_suspend(struct device *dev)
+> >  {
+> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> > +	struct spi_master *master = dev_get_drvdata(dev);
+> >  	struct s3c64xx_spi_driver_data *sdd =
+> > spi_master_get_devdata(master);
+> > 
+> >  	clk_disable(sdd->clk);
+> > @@ -1463,7 +1463,7 @@ static int s3c64xx_spi_runtime_suspend(struct device
+> > *dev)
+> > 
+> >  static int s3c64xx_spi_runtime_resume(struct device *dev)
+> >  {
+> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> > +	struct spi_master *master = dev_get_drvdata(dev);
+> >  	struct s3c64xx_spi_driver_data *sdd =
+> > spi_master_get_devdata(master);
+> > 
+> >  	clk_enable(sdd->src_clk);
+> > --
+> > 1.7.9.7
+> 
+> 
