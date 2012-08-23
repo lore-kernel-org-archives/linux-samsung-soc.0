@@ -1,107 +1,29 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH] spi/s3c64xx: Drop extra calls to spi_master_get in
- suspend/remove functions
-Date: Thu, 23 Aug 2012 06:39:31 -0700
-Message-ID: <20120823133931.GB24319@roeck-us.net>
-References: <1345173265-1721-1-git-send-email-linux@roeck-us.net>
- <1d0b01cd80f1$d77eaf90$867c0eb0$%kim@samsung.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [GIT PULL] Samsung fixes for v3.6
+Date: Thu, 23 Aug 2012 15:04:48 +0000
+Message-ID: <201208231504.49021.arnd@arndb.de>
+References: <1d5f01cd811f$5c5de8c0$1519ba40$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: Text/Plain;
+  charset="iso-8859-1"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail.active-venture.com ([67.228.131.205]:56534 "EHLO
-	mail.active-venture.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758806Ab2HWNjh (ORCPT
+Received: from moutng.kundenserver.de ([212.227.126.171]:52814 "EHLO
+	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752646Ab2HWPE4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 23 Aug 2012 09:39:37 -0400
-Content-Disposition: inline
-In-Reply-To: <1d0b01cd80f1$d77eaf90$867c0eb0$%kim@samsung.com>
+	Thu, 23 Aug 2012 11:04:56 -0400
+In-Reply-To: <1d5f01cd811f$5c5de8c0$1519ba40$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: spi-devel-general@lists.sourceforge.net, 'Ben Dooks' <ben-linux@fluff.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
+Cc: 'Olof Johansson' <olof@lixom.net>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On Thu, Aug 23, 2012 at 02:40:45PM +0900, Kukjin Kim wrote:
-> Guenter Roeck wrote:
-> > 
-> > Suspend and resume functions call spi_master_get() without matching
-> > spi_master_put(). The extra references are unnecessary and cause
-> > subsequent
-> > module unload attempts to fail. Drop the calls.
-> > 
-> > Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> 
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-> 
-> (Cc'ed Mark Brown who is handling spi now)
-> 
-> Guenter, maybe you need to re-send this patch to Mark so that he can apply
-> ;-)
-> 
-Guess you are right - and I did copy Mark on my later patches. Mark, I just
-bounced the patch to you, so you should have it now.
+On Thursday 23 August 2012, Kukjin Kim wrote:
+> For HDMI, already HDMI support for EXYNOS in mainline kernel is broken
+> because its configuration moved to platform data but regarding platform data
+> didn't support yet. And others are for fix warnings.
 
-Thanks,
-Guenter
+Pulled into fixes branch. Thanks,
 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> > ---
-> >  drivers/spi/spi-s3c64xx.c |    8 ++++----
-> >  1 file changed, 4 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-> > index 646a765..d7a87df 100644
-> > --- a/drivers/spi/spi-s3c64xx.c
-> > +++ b/drivers/spi/spi-s3c64xx.c
-> > @@ -1409,7 +1409,7 @@ static int s3c64xx_spi_remove(struct platform_device
-> > *pdev)
-> >  #ifdef CONFIG_PM
-> >  static int s3c64xx_spi_suspend(struct device *dev)
-> >  {
-> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
-> > +	struct spi_master *master = dev_get_drvdata(dev);
-> >  	struct s3c64xx_spi_driver_data *sdd =
-> > spi_master_get_devdata(master);
-> > 
-> >  	spi_master_suspend(master);
-> > @@ -1428,7 +1428,7 @@ static int s3c64xx_spi_suspend(struct device *dev)
-> > 
-> >  static int s3c64xx_spi_resume(struct device *dev)
-> >  {
-> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
-> > +	struct spi_master *master = dev_get_drvdata(dev);
-> >  	struct s3c64xx_spi_driver_data *sdd =
-> > spi_master_get_devdata(master);
-> >  	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
-> > 
-> > @@ -1452,7 +1452,7 @@ static int s3c64xx_spi_resume(struct device *dev)
-> >  #ifdef CONFIG_PM_RUNTIME
-> >  static int s3c64xx_spi_runtime_suspend(struct device *dev)
-> >  {
-> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
-> > +	struct spi_master *master = dev_get_drvdata(dev);
-> >  	struct s3c64xx_spi_driver_data *sdd =
-> > spi_master_get_devdata(master);
-> > 
-> >  	clk_disable(sdd->clk);
-> > @@ -1463,7 +1463,7 @@ static int s3c64xx_spi_runtime_suspend(struct device
-> > *dev)
-> > 
-> >  static int s3c64xx_spi_runtime_resume(struct device *dev)
-> >  {
-> > -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
-> > +	struct spi_master *master = dev_get_drvdata(dev);
-> >  	struct s3c64xx_spi_driver_data *sdd =
-> > spi_master_get_devdata(master);
-> > 
-> >  	clk_enable(sdd->src_clk);
-> > --
-> > 1.7.9.7
-> 
-> 
+	Arnd
