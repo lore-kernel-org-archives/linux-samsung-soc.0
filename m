@@ -1,74 +1,71 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: [PATCH v3 4/4] ARM: EXYNOS: skip wakeup interrupt setup if pinctrl
- driver is used
-Date: Thu, 23 Aug 2012 16:45:29 +0530
-Message-ID: <1345720529-32315-5-git-send-email-thomas.abraham@linaro.org>
-References: <1345720529-32315-1-git-send-email-thomas.abraham@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL] Samsung fixes for v3.6
+Date: Thu, 23 Aug 2012 20:06:35 +0900
+Message-ID: <1d5f01cd811f$5c5de8c0$1519ba40$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-reply-to: <1345720529-32315-1-git-send-email-thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-language: ko
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-Pinctrl driver includes support for configuring the external wakeup
-interrupts. On exynos platforms that use pinctrl driver, the setup
-of wakeup interrupts in the exynos platform code can be skipped.
+Hi Arnd, Olof,
 
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
----
- arch/arm/mach-exynos/common.c |   26 ++++++++++++++++++++++++++
- 1 files changed, 26 insertions(+), 0 deletions(-)
+Here are Samsung fixes for v3.6
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4eb39cd..715b690 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -980,6 +980,32 @@ static int __init exynos_init_irq_eint(void)
- {
- 	int irq;
- 
-+#ifdef CONFIG_PINCTRL_SAMSUNG
-+	/*
-+	 * The Samsung pinctrl driver provides an integrated gpio/pinmux/pinconf
-+	 * functionality along with support for external gpio and wakeup
-+	 * interrupts. If the samsung pinctrl driver is enabled and includes
-+	 * the wakeup interrupt support, then the setting up external wakeup
-+	 * interrupts here can be skipped. This check here is temporary to
-+	 * allow exynos4 platforms that do not use Samsung pinctrl driver to
-+	 * co-exist with platforms that do. When all of the Samsung Exynos4
-+	 * platforms switch over to using the pinctrl driver, the wakeup
-+	 * interrupt support code here can be completely removed.
-+	 */
-+	struct device_node *pctrl_np, *wkup_np;
-+	const char *pctrl_compat = "samsung,pinctrl-exynos4210";
-+	const char *wkup_compat = "samsung,exynos4210-wakeup-eint";
-+
-+	for_each_compatible_node(pctrl_np, NULL, pctrl_compat) {
-+		if (of_device_is_available(pctrl_np)) {
-+			wkup_np = of_find_compatible_node(pctrl_np, NULL,
-+							wkup_compat);
-+			if (wkup_np)
-+				return -ENODEV;
-+		}
-+	}
-+#endif
-+
- 	if (soc_is_exynos5250())
- 		exynos_eint_base = ioremap(EXYNOS5_PA_GPIO1, SZ_4K);
- 	else
--- 
-1.6.6.rc2
+For HDMI, already HDMI support for EXYNOS in mainline kernel is broken
+because its configuration moved to platform data but regarding platform data
+didn't support yet. And others are for fix warnings.
+
+If any problems, please kindly let me know.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 0d7614f09c1ebdbaa1599a5aba7593f147bf96ee:
+
+  Linux 3.6-rc1 (2012-08-02 16:38:10 -0700)
+
+are available in the git repository at:
+  git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+v3.6-samsung-fixes-1
+
+Heiko Stuebner (2):
+      ARM: S3C24XX: Add missing DMACH_DT_PROP
+      ARM: S3C24XX: Fix s3c2410_dma_enqueue parameters
+
+Sachin Kamat (3):
+      ARM: Samsung: Make uart_save static in pm.c file
+      ARM: SAMSUNG: Set HDMI platform data for Exynos4x12 SoCs
+      ARM: EXYNOS: Set HDMI platform data in SMDKV310
+
+Tushar Behera (2):
+      ARM: SAMSUNG: Add API to set platform data for s5p-tv driver
+      ARM: EXYNOS: Set HDMI platform data in Origen board
+
+ arch/arm/mach-exynos/mach-origen.c        |    7 +++++++
+ arch/arm/mach-exynos/mach-smdkv310.c      |    7 +++++++
+ arch/arm/mach-s3c24xx/include/mach/dma.h  |    3 ++-
+ arch/arm/plat-s3c24xx/dma.c               |    2 +-
+ arch/arm/plat-samsung/devs.c              |   29
+++++++++++++++++++++++++++++-
+ arch/arm/plat-samsung/include/plat/hdmi.h |   16 ++++++++++++++++
+ arch/arm/plat-samsung/pm.c                |    2 +-
+ 7 files changed, 62 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/plat-samsung/include/plat/hdmi.h
