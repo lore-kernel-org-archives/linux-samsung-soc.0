@@ -1,55 +1,177 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH] mmc: dt: Add 'broken-cd' DT binding
-Date: Thu, 23 Aug 2012 12:29:52 +0530
-Message-ID: <CAJuYYwRDPU=m=XkYx8FPts=ar0pWyN7iTH5+6Kmb5KWMdT8pPg@mail.gmail.com>
-References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org>
-	<CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
-	<87k3ws5uhs.fsf@octavius.laptop.org>
-	<201208211208.49987.arnd@arndb.de>
-	<87393g5mic.fsf@octavius.laptop.org>
-	<5033A34E.7040201@gmail.com>
-	<87pq6k46jg.fsf@octavius.laptop.org>
-	<5033B0F0.7050506@gmail.com>
-	<CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
-	<20120822055151.GT24242@S2101-09.ap.freescale.net>
-	<877gsr5iz1.fsf@octavius.laptop.org>
-	<CAJuYYwQz00ZzB5MxRG66XEPZApAtS6bwJAafmw3b=7DD7u+Crg@mail.gmail.com>
-	<87y5l7421h.fsf@octavius.laptop.org>
-	<CAJuYYwQLUs5qb8NqtPf3=ytNHJ_VdnN8Z4yWwyk2+OTftdWFXw@mail.gmail.com>
-	<50351256.60507@firmworks.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Add MFC device tree support
+Date: Thu, 23 Aug 2012 17:16:11 +0900
+Message-ID: <1d4801cd8107$8e5769e0$ab063da0$%kim@samsung.com>
+References: <22088923.161871345179014012.JavaMail.weblogic@epml10>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <50351256.60507@firmworks.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Mitch Bradley <wmb@firmworks.com>
-Cc: Chris Ball <cjb@laptop.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, devicetree-discuss@lists.ozlabs.org, linux-mmc@vger.kernel.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:38965 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S933655Ab2HWIQN (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 23 Aug 2012 04:16:13 -0400
+Received: from epcpsbgm1.samsung.com (mailout3.samsung.com [203.254.224.33])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M97003HU8AY9930@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Aug 2012 17:16:11 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M97004BT8AZR940@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 23 Aug 2012 17:16:11 +0900 (KST)
+In-reply-to: <22088923.161871345179014012.JavaMail.weblogic@epml10>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: arun.kk@samsung.com, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Kamil Debski' <k.debski@samsung.com>, 'Jeongtae Park' <jtp.park@samsung.com>, 'NAVEEN KRISHNA CHATRADHI' <ch.naveen@samsung.com>, 'SUNIL JOSHI' <joshi@samsung.com>
 
-On 22 August 2012 22:39, Mitch Bradley <wmb@firmworks.com> wrote:
-> Sorry to interject on a topic that seems to have already been decided,
-> but I'm confused by one thing and would like clarification.  I
-> understand that you need to use a GPIO-style specifier as a surrogate
-> for a pinmux specification - that much is clear.  What is not clear is
-> why it's necessary to (ab)use the name "cd-gpios" for it.
->
-> Why not use a different property name, e.g. "samsung,cd-pinmux-gpio =
-> <gpio-specifier>" for the "cd-gpios + samsung,sdhci-cd-internal" case?
-> Then both "samsung,sdhci-cdi-internal" and "samsung,sdhci-cd-external"
-> could go away.  There would only be one system-dependent property
-> "samsung,cd-pinmux-gpio" whose name would make it clear that it's
-> conflating pinmuxing and gpios.
+Arun Kumar K wrote:
+> 
+> Hi Thomas,
+> Thank you for the comments.
+> Please find my response inline.
+> 
+> ------- Original Message -------
+> Sender : Thomas Abraham<thomas.abraham@linaro.org>
+> Date   : Aug 16, 2012 17:12 (GMT+05:30)
+> Title  : Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
+> 
+> On 16 August 2012 18:01, Arun Kumar K <arun.kk@samsung.com> wrote:
+> > From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> >
+> > This patch adds device tree entry for MFC in the Exynos
+> > machines. Exynos4 SoCs support MFC v5 version and Exynos5 has
+> > MFC v6.x version. So making the required changes in the clock
 
-Right, I agree. I will prepare the sdhci-s3c based on Chris's new
-generic binding patch and your suggestion.
+Since v6.1 is not used anywhere so just MFC v6 should be ok.
 
->
-> I think the scheme I propose would be clearer, less likely to confuse
-> other people who try to use the driver as a model, require less
-> hand-waving in the documentation, and easier to change to a proper
-> pinmuxing scheme should that become available later.
+> > files and adds MFC to the DT device list.
+> >
+> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+> > ---
+> >  .../devicetree/bindings/media/s5p-mfc.txt          |   24
+> ++++++++++++++++++++
+> >  arch/arm/boot/dts/exynos4210.dtsi                  |   10 ++++++++
+> >  arch/arm/boot/dts/exynos5250.dtsi                  |   10 ++++++++
+> >  arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
+> >  arch/arm/mach-exynos/mach-exynos4-dt.c             |   22
+> ++++++++++++++++++
+> >  arch/arm/mach-exynos/mach-exynos5-dt.c             |   22
+> ++++++++++++++++++
+> >  6 files changed, 89 insertions(+), 1 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> > new file mode 100644
+> > index 0000000..b9bd266
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> > @@ -0,0 +1,24 @@
+> > +* Samsung Multi Format Codec (MFC)
+> > +
+> > +Mult Format Codec (MFC) is the IP present in Samsung SoCs which
+> > +supports high resolution decoding and encoding functionalities.
+> >
+> > In addition to this, specifying that mfc is used for video
+> > encode/decode would be informative.
+> 
+> Ok. I will make it more descriptive.
+> 
+> > +
+> > +Required properties:
+> > +  - compatible : value should be either one among the following
+> > +       (a) "samsung,s5p-mfc-v5" for MFC v5 present in Exynos4 SoCs
+> > +       (b) "samsung,s5p-mfc-v6" for MFC v6.x present in Exynos5 SoCs
+> >
+> > "s5p" should be dropped from the compatible values. For example, it
+> > should be "samsung,mfc-v5", which is sufficient to identify the
+> > version of the mfc controller.
+> 
+> Ok will remove s5p.
+> 
+Yeah, I agree, just 'mfc-vX' is enough.
 
-Thanks for your time.
+> > +
+> > +  - reg : Physical base address of the IP registers and length of
+> memory
+> > +         mapped region.
+> > +
+> > +  - interrupts : MFC interupt number to the CPU.
+> > +
+> > +  - samsung,mfc-r : Base address of the first memory bank used by MFC
+> > +                   for DMA contiguous memory allocation.
+> > +
+> > +  - samsung,mfc-r-size : Size of the first memory bank.
+> >
+> > It is not allowed to pass buffer base address and size from device
+> > tree. Device tree node should describe only the MFC controller
+> > hardware. Any memory management related information should be handled
+> > outside of device tree. This helps the bindings to be reusable across
+> > multiple operating systems.
+> 
+> The mfc-l and mfc-r base address and size is board specific info which has
+> to
+> be passed to the driver. This is used for DMA contiguous allocation by
+> driver and this value
+> can change on a different board.
+> So in that case, i will pass it as platform data to the driver from mach-
+> exynos5-dt.c file.
+> I hope that would be ok.
+> 
+I don't think so. The mach-exynos5-dt is for all EXYNOS5 SoCs not
+platform_data. As I know, the addresses and sizes for buffer passed via
+platform data before, so it can be passed via device tree for board(.dtsi)?
+not SoC. In addition, it depends on board.
 
-Regards,
-Thomas.
+> > +
+> > +  - samsung,mfc-l : Base address of the second memory bank used by MFC
+> > +                   for DMA contiguous memory allocation.
+> > +
+> > +  - samsung,mfc-l-size : Size of the second memory bank.
+> >
+> > Same comment as above. And the bindings documentation is usually
+> > included in the same patch that adds device tree support for the
+> > driver.
+> 
+> Ok
+> 
+> > diff --git a/arch/arm/boot/dts/exynos4210.dtsi
+> b/arch/arm/boot/dts/exynos4210.dtsi
+> > index 02891fe..b5ee43d 100644
+> > --- a/arch/arm/boot/dts/exynos4210.dtsi
+> > +++ b/arch/arm/boot/dts/exynos4210.dtsi
+> > @@ -56,6 +56,16 @@
+> >                 interrupts = <0 43 0>;
+> >         };
+> >
+> > +       mfc {
+> > +               compatible = "samsung,s5p-mfc";
+
+Maybe
++	compatible = "samsung,mfc-v5"; ?
+
+> > +               reg = <0x13400000 0x10000>;
+> > +               interrupts = <0 94 0>;
+> > +               samsung,mfc-r = <0x43000000>;
+> > +               samsung,mfc-r-size = <8388608>;
+> > +               samsung,mfc-l = <0x51000000>;
+> > +               samsung,mfc-l-size = <8388608>;
+
+As I commented, the size depends on each board not SoC. So should be removed
+here.
+
+[...]
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
