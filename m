@@ -1,64 +1,108 @@
-From: Chris Ball <cjb@laptop.org>
-Subject: [PATCH] mmc: dt: Add card-detection properties to core binding.
-Date: Wed, 22 Aug 2012 14:05:35 -0400
-Message-ID: <874nnu245s.fsf_-_@octavius.laptop.org>
-References: <1345547371-6784-1-git-send-email-thomas.abraham@linaro.org>
-	<CAJuYYwSv+dum8RP9xy+AZCH9pTU0peDpwjt7TA5zn3MFsG1uWA@mail.gmail.com>
-	<87k3ws5uhs.fsf@octavius.laptop.org>
-	<201208211208.49987.arnd@arndb.de>
-	<87393g5mic.fsf@octavius.laptop.org> <5033A34E.7040201@gmail.com>
-	<87pq6k46jg.fsf@octavius.laptop.org> <5033B0F0.7050506@gmail.com>
-	<CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
-	<20120822055151.GT24242@S2101-09.ap.freescale.net>
-	<877gsr5iz1.fsf@octavius.laptop.org>
-	<CAJuYYwQz00ZzB5MxRG66XEPZApAtS6bwJAafmw3b=7DD7u+Crg@mail.gmail.com>
-	<87y5l7421h.fsf@octavius.laptop.org>
-	<CAJuYYwQLUs5qb8NqtPf3=ytNHJ_VdnN8Z4yWwyk2+OTftdWFXw@mail.gmail.com>
-	<87393f3rkj.fsf@octavius.laptop.org>
+From: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: RE: [PATCH] spi/s3c64xx: Drop extra calls to spi_master_get in
+	suspend/remove functions
+Date: Thu, 23 Aug 2012 14:40:45 +0900
+Message-ID: <1d0b01cd80f1$d77eaf90$867c0eb0$%kim@samsung.com>
+References: <1345173265-1721-1-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from void.printf.net ([89.145.121.20]:59612 "EHLO void.printf.net"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755191Ab2HVSFu (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 22 Aug 2012 14:05:50 -0400
-In-Reply-To: <87393f3rkj.fsf@octavius.laptop.org> (Chris Ball's message of
-	"Wed, 22 Aug 2012 10:54:36 -0400")
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-reply-to: <1345173265-1721-1-git-send-email-linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Content-language: ko
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: 'Guenter Roeck' <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, 'Mark Brown' <broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org>, 'Thomas Abraham' <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, 'Ben Dooks' <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: Shawn Guo <shawn.guo@linaro.org>, Rob Herring <robherring2@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
 
-Signed-off-by: Chris Ball <cjb@laptop.org>
----
- Documentation/devicetree/bindings/mmc/mmc.txt | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Guenter Roeck wrote:
+> 
+> Suspend and resume functions call spi_master_get() without matching
+> spi_master_put(). The extra references are unnecessary and cause
+> subsequent
+> module unload attempts to fail. Drop the calls.
+> 
+> Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 
-diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
-index 8a6811f..8e2e0ba 100644
---- a/Documentation/devicetree/bindings/mmc/mmc.txt
-+++ b/Documentation/devicetree/bindings/mmc/mmc.txt
-@@ -9,12 +9,17 @@ Interpreted by the OF core:
- Required properties:
- - bus-width: Number of data lines, can be <1>, <4>, or <8>
- 
-+Card detection:
-+If no property below is supplied, standard SDHCI card detect is used.
-+Only one of the properties in this section should be supplied:
-+  - broken-cd: There is no card detection available; polling must be used.
-+  - cd-gpios: Specify GPIOs for card detection, see gpio binding
-+  - non-removable: non-removable slot (like eMMC); assume always present.
-+
- Optional properties:
--- cd-gpios: Specify GPIOs for card detection, see gpio binding
- - wp-gpios: Specify GPIOs for write protection, see gpio binding
- - cd-inverted: when present, polarity on the cd gpio line is inverted
- - wp-inverted: when present, polarity on the wp gpio line is inverted
--- non-removable: non-removable slot (like eMMC)
- - max-frequency: maximum operating clock frequency
- 
- Example:
--- 
-Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-One Laptop Per Child
+Acked-by: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+(Cc'ed Mark Brown who is handling spi now)
+
+Guenter, maybe you need to re-send this patch to Mark so that he can apply
+;-)
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+> ---
+>  drivers/spi/spi-s3c64xx.c |    8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+> index 646a765..d7a87df 100644
+> --- a/drivers/spi/spi-s3c64xx.c
+> +++ b/drivers/spi/spi-s3c64xx.c
+> @@ -1409,7 +1409,7 @@ static int s3c64xx_spi_remove(struct platform_device
+> *pdev)
+>  #ifdef CONFIG_PM
+>  static int s3c64xx_spi_suspend(struct device *dev)
+>  {
+> -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct s3c64xx_spi_driver_data *sdd =
+> spi_master_get_devdata(master);
+> 
+>  	spi_master_suspend(master);
+> @@ -1428,7 +1428,7 @@ static int s3c64xx_spi_suspend(struct device *dev)
+> 
+>  static int s3c64xx_spi_resume(struct device *dev)
+>  {
+> -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct s3c64xx_spi_driver_data *sdd =
+> spi_master_get_devdata(master);
+>  	struct s3c64xx_spi_info *sci = sdd->cntrlr_info;
+> 
+> @@ -1452,7 +1452,7 @@ static int s3c64xx_spi_resume(struct device *dev)
+>  #ifdef CONFIG_PM_RUNTIME
+>  static int s3c64xx_spi_runtime_suspend(struct device *dev)
+>  {
+> -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct s3c64xx_spi_driver_data *sdd =
+> spi_master_get_devdata(master);
+> 
+>  	clk_disable(sdd->clk);
+> @@ -1463,7 +1463,7 @@ static int s3c64xx_spi_runtime_suspend(struct device
+> *dev)
+> 
+>  static int s3c64xx_spi_runtime_resume(struct device *dev)
+>  {
+> -	struct spi_master *master = spi_master_get(dev_get_drvdata(dev));
+> +	struct spi_master *master = dev_get_drvdata(dev);
+>  	struct s3c64xx_spi_driver_data *sdd =
+> spi_master_get_devdata(master);
+> 
+>  	clk_enable(sdd->src_clk);
+> --
+> 1.7.9.7
+
+
+------------------------------------------------------------------------------
+Live Security Virtual Conference
+Exclusive live event will cover all the ways today's security and 
+threat landscape has changed and how IT managers can respond. Discussions 
+will include endpoint security, mobile security and the latest in malware 
+threats. http://www.accelacomm.com/jaw/sfrnl04242012/114/50122263/
