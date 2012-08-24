@@ -1,65 +1,63 @@
-From: Shawn Guo <shawn.guo@linaro.org>
-Subject: Re: [PATCH] mmc: dt: Add card-detection properties to core binding.
-Date: Fri, 24 Aug 2012 13:44:51 +0800
-Message-ID: <20120824054449.GP24242@S2101-09.ap.freescale.net>
-References: <87pq6k46jg.fsf@octavius.laptop.org>
- <5033B0F0.7050506@gmail.com>
- <CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
- <20120822055151.GT24242@S2101-09.ap.freescale.net>
- <877gsr5iz1.fsf@octavius.laptop.org>
- <CAJuYYwQz00ZzB5MxRG66XEPZApAtS6bwJAafmw3b=7DD7u+Crg@mail.gmail.com>
- <87y5l7421h.fsf@octavius.laptop.org>
- <CAJuYYwQLUs5qb8NqtPf3=ytNHJ_VdnN8Z4yWwyk2+OTftdWFXw@mail.gmail.com>
- <87393f3rkj.fsf@octavius.laptop.org>
- <874nnu245s.fsf_-_@octavius.laptop.org>
+From: Artem Bityutskiy <dedekind1@gmail.com>
+Subject: Re: [PATCH] mtd: use %*ph[CN] to dump small buffers
+Date: Fri, 24 Aug 2012 14:25:37 +0300
+Message-ID: <1345807537.2848.280.camel@sauron.fi.intel.com>
+References: <1343912807-29355-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Reply-To: dedekind1@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <874nnu245s.fsf_-_@octavius.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Rob Herring <robherring2@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
+Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
+	boundary="=-zJYI8ltl+wBg7WW8Ue5k"
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mga11.intel.com ([192.55.52.93]:58977 "EHLO mga11.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752060Ab2HXLU7 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 24 Aug 2012 07:20:59 -0400
+In-Reply-To: <1343912807-29355-1-git-send-email-andriy.shevchenko@linux.intel.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-mtd@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Jiandong Zheng <jdzheng@broadcom.com>, Ben Dooks <ben-linux@fluff.org>, David Woodhouse <dwmw2@infradead.org>, linux-arm-kernel@lists.infradead.org
 
-On Wed, Aug 22, 2012 at 02:05:35PM -0400, Chris Ball wrote:
-> Signed-off-by: Chris Ball <cjb@laptop.org>
 
-Acked-by: Shawn Guo <shawn.guo@linaro.org>
+--=-zJYI8ltl+wBg7WW8Ue5k
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Will move sdhci-esdhc-imx driver to this soon.
+On Thu, 2012-08-02 at 16:06 +0300, Andy Shevchenko wrote:
+> There is new format specified that helps to dump small buffers. It makes =
+the
+> code simplier and nicer.
+>=20
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-Regards,
-Shawn
+Pushed to l2-mtd.git, thanks!
 
-> ---
->  Documentation/devicetree/bindings/mmc/mmc.txt | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
-> index 8a6811f..8e2e0ba 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/mmc.txt
-> @@ -9,12 +9,17 @@ Interpreted by the OF core:
->  Required properties:
->  - bus-width: Number of data lines, can be <1>, <4>, or <8>
->  
-> +Card detection:
-> +If no property below is supplied, standard SDHCI card detect is used.
-> +Only one of the properties in this section should be supplied:
-> +  - broken-cd: There is no card detection available; polling must be used.
-> +  - cd-gpios: Specify GPIOs for card detection, see gpio binding
-> +  - non-removable: non-removable slot (like eMMC); assume always present.
-> +
->  Optional properties:
-> -- cd-gpios: Specify GPIOs for card detection, see gpio binding
->  - wp-gpios: Specify GPIOs for write protection, see gpio binding
->  - cd-inverted: when present, polarity on the cd gpio line is inverted
->  - wp-inverted: when present, polarity on the wp gpio line is inverted
-> -- non-removable: non-removable slot (like eMMC)
->  - max-frequency: maximum operating clock frequency
->  
->  Example:
-> -- 
-> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-> One Laptop Per Child
+--=20
+Best Regards,
+Artem Bityutskiy
+
+--=-zJYI8ltl+wBg7WW8Ue5k
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.12 (GNU/Linux)
+
+iQIcBAABAgAGBQJQN2SxAAoJECmIfjd9wqK0GtQQAKJ9DOU+TleuZGZtBTBRFWVc
+XtfG1NEeKoJySxmS1e3xUQBwkTITbbBZJ2DqmMWP3cFfk6GwASP4IXh87gOF0qh/
+Re1sV7pDkaBhfdoOIlmpPFJE5H0/9BbYNEojdvIyErLO0kbFpE3mr0uyLDRZinmM
+X2xNclBbwcdRHyBBWMXsXuIVlqYY7iXVE8fQ0oMxsYgOQj7mKfTThERR7EER8+jI
+aaFdR2VJE/o7T8tQHM8DrDOenxxsnektDJ5UVxrutinGrGIGSVIkzENn02cXsVV1
+AEsMSQEMU6ktr8NnWmCxJ731RQiL5gRv5VXr5CETFFXQwYZ+TouRJZilKv11lLTQ
+VZbHFhRtMOX8qrWtTfJffg1XZHPmhbl9vcJYR0yQe/bLflVF69WudmB/dsq9E1yW
+uhvtzhhh9W3f+x1F07PUKHQ2j9c7/BCXum0w8Sll2mr3iW5HYQdZVSzBo5y4/erv
+12g6BPKVbEtJUWnQYs4NHbAQ4XyXjhROHcTX8hbr587eco9GckY/cunW64BlWVZ3
+Vq67tI5zCKbefIrC8s2KZgMpb5IVylQubCUvasE7bQ7EYoOtF4ZxTqwMnOvFO02+
+948QYTTiil81wKlUUD4q/5meaxlSA1gFHEzu6N54MWC185GN1lrLJr5ToABx1RmL
+rsDic7+lwWdcv77Imi50
+=83hJ
+-----END PGP SIGNATURE-----
+
+--=-zJYI8ltl+wBg7WW8Ue5k--
