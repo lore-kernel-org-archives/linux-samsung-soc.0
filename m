@@ -1,193 +1,65 @@
-From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v3 1/4] pinctrl: add samsung pinctrl and gpiolib driver
-Date: Fri, 24 Aug 2012 09:55:16 +0530
-Message-ID: <CAJuYYwQ2fGxVddWiaUGXQWfSUCw9LBBpYF=pKPFkU5RmZfpJRg@mail.gmail.com>
-References: <1345720529-32315-1-git-send-email-thomas.abraham@linaro.org>
- <1345720529-32315-2-git-send-email-thomas.abraham@linaro.org>
- <5036B8EB.5050502@wwwdotorg.org>
+From: Shawn Guo <shawn.guo@linaro.org>
+Subject: Re: [PATCH] mmc: dt: Add card-detection properties to core binding.
+Date: Fri, 24 Aug 2012 13:44:51 +0800
+Message-ID: <20120824054449.GP24242@S2101-09.ap.freescale.net>
+References: <87pq6k46jg.fsf@octavius.laptop.org>
+ <5033B0F0.7050506@gmail.com>
+ <CAJuYYwR+oCQUcgoy6ZuHp0XAa+EAj9d-FvLtwsQcP3muFMrKLA@mail.gmail.com>
+ <20120822055151.GT24242@S2101-09.ap.freescale.net>
+ <877gsr5iz1.fsf@octavius.laptop.org>
+ <CAJuYYwQz00ZzB5MxRG66XEPZApAtS6bwJAafmw3b=7DD7u+Crg@mail.gmail.com>
+ <87y5l7421h.fsf@octavius.laptop.org>
+ <CAJuYYwQLUs5qb8NqtPf3=ytNHJ_VdnN8Z4yWwyk2+OTftdWFXw@mail.gmail.com>
+ <87393f3rkj.fsf@octavius.laptop.org>
+ <874nnu245s.fsf_-_@octavius.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <5036B8EB.5050502-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <874nnu245s.fsf_-_@octavius.laptop.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Chris Ball <cjb@laptop.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Rob Herring <robherring2@gmail.com>, Arnd Bergmann <arnd@arndb.de>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, patches@linaro.org, Wolfram Sang <w.sang@pengutronix.de>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 24 August 2012 04:42, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 08/23/2012 05:15 AM, Thomas Abraham wrote:
->> Add a new device tree enabled pinctrl and gpiolib driver for Samsung
->> SoC's. This driver provides a common and extensible framework for all
->> Samsung SoC's to interface with the pinctrl and gpiolib subsystems. This
->> driver supports only device tree based instantiation and hence can be
->> used only on those Samsung platforms that have device tree enabled.
->>
->> This driver is split into two parts: the pinctrl interface and the gpiolib
->> interface. The pinctrl interface registers pinctrl devices with the pinctrl
->> subsystem and gpiolib interface registers gpio chips with the gpiolib
->> subsystem. The information about the pins, pin groups, pin functions and
->> gpio chips, which are SoC specific, are parsed from device tree node.
->
->> diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
->
-> BTW, this is a very nicely written and complete/precise binding
-> document. Well done.
+On Wed, Aug 22, 2012 at 02:05:35PM -0400, Chris Ball wrote:
+> Signed-off-by: Chris Ball <cjb@laptop.org>
 
-Thank you!
+Acked-by: Shawn Guo <shawn.guo@linaro.org>
 
->
->> +Samsung GPIO and Pin Mux/Config controller
->> +
->> +Samsung's ARM based SoC's integrates a GPIO and Pin mux/config hardware
->> +controller. It controls the input/output settings on the available pads/pins
->> +and also provides ability to multiplex and configure the output of various
->> +on-chip controllers onto these pads.
->> +
->> +Required Properties:
->> +- compatible: should be one of the following.
->> +  - "samsung,pinctrl-exynos4210": for Exynos4210 compatible pin-controller.
->> +  - "samsung,pinctrl-exynos5250": for Exynos5250 compatible pin-controller.
->> +
->> +- reg: Base address of the pin controller hardware module and length of
->> +  the address space it occupies.
->> +
->> +- interrupts: interrupt specifier for the controller. The format and value of
->> +  the interrupt specifier depends on the interrupt parent for the controller.
->> +
->> +- Pin mux/config groups as child nodes: The pin mux (selecting pin function
->
-> Direct child nodes of the pin-controller, not a second level?
-
-The child nodes would be direct child nodes.
-
->
-> While that's quite legal, it means that if you need a particular client
-> module to use 4 pins, 2 of which need one samsung,pin-function value and
-> 2 of which need a different pin-function value, then the client device's
-> pinctrl-0 property has to have two entries.
->
-> i.e. a completely hypothetical example roughly based on yours below:
->
->         pinctrl_1: pinctrl@11000000 {
->                 uart0_rxd: uart0-rxd {
->                         samsung,pins = "gpa0-0";
->                         samsung,pin-function = <2>;
->                         samsung,pin-pud = <0>;
->                         samsung,pin-drv = <0>;
->                 };
->
->                 uart0_txd: uart0-txd {
->                         samsung,pins = "gpa0-1";
->                         samsung,pin-function = <1>;
->                         samsung,pin-pud = <0>;
->                         samsung,pin-drv = <0>;
->                 };
->         };
->
->         uart@13800000 {
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&uart0_rxd &uart0_txd>;
->         };
->
-> rather than:
->
->         pinctrl_1: pinctrl@11000000 {
->                 uart0_opt1: uart0-opt1 {
->                         uart0_rxd: uart0-rxd {
->                                 samsung,pins = "gpa0-0";
->                                 samsung,pin-function = <2>;
->                                 samsung,pin-pud = <0>;
->                                 samsung,pin-drv = <0>;
->                         };
->
->                         uart0_txd: uart0-txd {
->                                 samsung,pins = "gpa0-1";
->                                 samsung,pin-function = <1>;
->                                 samsung,pin-pud = <0>;
->                                 samsung,pin-drv = <0>;
->                         };
->                 };
->         };
->
->         uart@13800000 {
->                 pinctrl-names = "default";
->                 pinctrl-0 = <&uart0_opt1;
->         };
->
-> The latter layout simplifies writing the client nodes, since all the
-> related settings can be grouped together by whoever writes the pinctrl
-> node, rather than every client author having to work out all the entries
-> to include in the list.
->
-> That all said, the way you've defined the binding is perfectly
-> legitimate, and I don't have any kind of issue with it; it's just
-> something you might want to consider.
-
-Thanks for suggesting this alternate method. I do agree with your
-point. But, for now, I would prefer to stabilize this driver without
-changing the dt parsing code and make it usable for client nodes. I
-will revisit your suggested approach at a later point. I assume for
-now that the author's of client nodes know which pin settings to
-select.
-
->
-> Irrespective of whether you choose to keep the binding as-is, or change
-> it, please consider it:
->
-> Acked-by: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-
-Thanks.
-
->
->> +  The values specified by these config properties should be dervied from the
->
-> s/dervied/derived/
-
-Ok.
-
->
->> +External GPIO and Wakeup Interrupts:
->> +
->> +The controller supports two types of external interrupts over gpio. The first
->> +is the external gpio interrupt and second is the external wakeup interrupts.
->> +The difference between the two is that the external wakeup interrupts can be
->> +used as system wakeup events.
->> +
->> +A. External GPIO Interrupts: For supporting external gpio interrupts, the
->> +   properties should be specified in the pin-controller device node.
->
-> s/the properties/the following properties/ ?
-
-Ok.
-
->
->> +Aliases:
->> +
->> +All the pin controller nodes should be represented in the aliases node using
->> +the following format 'pinctrl{n}' where n is a unique number for the alias.
->
-> There /should/ be an alias, or there /may/ be; I'm not sure why
-> requiring or recommending an alias would be particularly important for
-> this device?
-
-The alias is required since the SoC data for a particular instance is
-dependent on the instance number. And the instance number is derived
-from the alias.
-
->
-> I've only had time to review the binding document so far.
-
-Ok. Thanks Stephen for your comments on this patch.
+Will move sdhci-esdhc-imx driver to this soon.
 
 Regards,
-Thomas.
+Shawn
+
+> ---
+>  Documentation/devicetree/bindings/mmc/mmc.txt | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
+> index 8a6811f..8e2e0ba 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/mmc.txt
+> @@ -9,12 +9,17 @@ Interpreted by the OF core:
+>  Required properties:
+>  - bus-width: Number of data lines, can be <1>, <4>, or <8>
+>  
+> +Card detection:
+> +If no property below is supplied, standard SDHCI card detect is used.
+> +Only one of the properties in this section should be supplied:
+> +  - broken-cd: There is no card detection available; polling must be used.
+> +  - cd-gpios: Specify GPIOs for card detection, see gpio binding
+> +  - non-removable: non-removable slot (like eMMC); assume always present.
+> +
+>  Optional properties:
+> -- cd-gpios: Specify GPIOs for card detection, see gpio binding
+>  - wp-gpios: Specify GPIOs for write protection, see gpio binding
+>  - cd-inverted: when present, polarity on the cd gpio line is inverted
+>  - wp-inverted: when present, polarity on the wp gpio line is inverted
+> -- non-removable: non-removable slot (like eMMC)
+>  - max-frequency: maximum operating clock frequency
+>  
+>  Example:
+> -- 
+> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+> One Laptop Per Child
