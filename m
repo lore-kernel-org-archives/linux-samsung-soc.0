@@ -1,162 +1,91 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 3/3] ARM: dts: Add nodes for dw_mmc controllers for Samsung
- Exynos5250 platforms
-Date: Sun, 26 Aug 2012 17:29:31 +0530
-Message-ID: <1345982371-26483-4-git-send-email-thomas.abraham@linaro.org>
-References: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:22876 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752126Ab2HZLlc (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Aug 2012 07:41:32 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9D0080D1T02H10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 26 Aug 2012 20:41:31 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9D00JEH1SVN450@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 26 Aug 2012 20:41:31 +0900 (KST)
-In-reply-to: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/1] S3C244X/S3C64XX SoC camera host interface
+	driver
+Date: Sun, 26 Aug 2012 18:56:43 +0200
+Message-ID: <503A554B.6080003@gmail.com>
+References: <50269F15.4030504@gmail.com> <9609498.7r78ladCdh@flatron>
+	<5026B33F.3030605@gmail.com> <1744040.LQ4tYRekV8@flatron>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <oselas-bounces+gcepoc-oselas=m.gmane.org-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org>
+In-Reply-To: <1744040.LQ4tYRekV8@flatron>
+List-Unsubscribe: <http://metis.pengutronix.de/cgi-bin/mailman/options/oselas>,
+	<mailto:oselas-request-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://metis.pengutronix.de/pipermail/oselas>
+List-Post: <mailto:oselas-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org>
+List-Help: <mailto:oselas-request-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org?subject=help>
+List-Subscribe: <http://metis.pengutronix.de/cgi-bin/mailman/listinfo/oselas>,
+	<mailto:oselas-request-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org?subject=subscribe>
+Sender: oselas-bounces-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org
+Errors-To: oselas-bounces+gcepoc-oselas=m.gmane.org-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org
+To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: oselas-/6JGXy0y6WNX4V3MAk3apN53zsg1cpMQ@public.gmane.org, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, LMML <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
 
-Add device nodes for the four instances of dw_mmc controllers in Exynos5250
-and enable instance 0 and 2 for the smdk5250 board.
+Hi Tomasz,
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   57 ++++++++++++++++++++++++++++-
- arch/arm/boot/dts/exynos5250.dtsi         |   32 ++++++++++++++++
- 2 files changed, 88 insertions(+), 1 deletions(-)
+On 08/12/2012 12:22 AM, Tomasz Figa wrote:
+> On Saturday 11 of August 2012 21:32:15 Sylwester Nawrocki wrote:
+>> On 08/11/2012 08:39 PM, Tomasz Figa wrote:
+>>> Hi,
+>>>
+>>> On Saturday 11 of August 2012 20:06:13 Sylwester Nawrocki wrote:
+>>>> Hi all,
+>>>>
+>>>> This patch adds a driver for Samsung S3C244X/S3C64XX SoC series camera
+>>>> host interface. My intention was to create a V4L2 driver that would
+>>>> work
+>>>> with standard applications like Gstreamer or mplayer, and yet exposing
+>>>> possibly all features available in the hardware.
+>>>>
+>>>> It took me several weeks to do this work in my (limited) spare time.
+>>>> Finally I've got something that is functional and I think might be
+>>>> useful for others, so I'm publishing this initial version. It
+>>>> hopefully doesn't need much tweaking or corrections, at least as far
+>>>> as S3C244X is concerned. It has not been tested on S3C64XX SoCs, as I
+>>>> don't have the hardware. However, the driver has been designed with
+>>>> covering S3C64XX as well in mind, and I've already taken care of some
+>>>> differences between S3C2444X and S3C64XX. Mem-to-mem features are not
+>>>> yet supported, but these are quite separate issue and could be easily
+>>>> added as a next step.>
+>>> I will try to test it on S3C6410 in some reasonably near future and
+>>> report any needed corrections.
+>>
+>> Sounds great, thanks.
+> 
+> I have not tested the driver yet, but I am looking through the code and it
+> seems like S3C6410 (at least according to the documentation) supports far
+> more pixel formats than defined in the driver.
+> 
+> Both preview and scaler paths are supposed to support 420/422 planar, 422
+> interleaved and 565/666/888 formats.
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 8a5e348..6dc9faf 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -16,12 +16,19 @@
- 	model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
- 	compatible = "samsung,smdk5250", "samsung,exynos5250";
- 
-+	aliases {
-+		mshc0 = &mshc_0;
-+		mshc1 = &mshc_1;
-+		mshc2 = &mshc_2;
-+		mshc3 = &mshc_3;
-+	};
-+
- 	memory {
- 		reg = <0x40000000 0x80000000>;
- 	};
- 
- 	chosen {
--		bootargs = "root=/dev/ram0 rw ramdisk=8192 console=ttySAC1,115200";
-+		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
- 	};
- 
- 	i2c@12C60000 {
-@@ -72,6 +79,54 @@
- 		status = "disabled";
- 	};
- 
-+	mshc_0: dwmmc0@12200000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		broken-cd;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-sdr-timing = <2 3 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2 3>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
-+				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
-+				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
-+				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
-+				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
-+		};
-+	};
-+
-+	mshc_1: dwmmc1@12210000 {
-+		status = "disabled";
-+	};
-+
-+	mshc_2: dwmmc2@12220000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-sdr-timing = <2 3 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2 3>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
-+			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
-+				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
-+				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
-+				<&gpc4 3 3 3 3>, <&gpc4 3 3 3 3>,
-+				<&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
-+		};
-+	};
-+
-+	mshc_3: dwmmc3@12230000 {
-+		status = "disabled";
-+	};
-+
- 	spi_0: spi@12d20000 {
- 		status = "disabled";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 004aaa8..f69e389 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -182,6 +182,38 @@
- 		#size-cells = <0>;
- 	};
- 
-+	dwmmc0@12200000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12200000 0x1000>;
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	dwmmc1@12210000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12210000 0x1000>;
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	dwmmc2@12220000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12220000 0x1000>;
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	dwmmc3@12230000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12230000 0x1000>;
-+		interrupts = <0 78 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--- 
-1.6.6.rc2
+Indeed, somehow I missed that s3c64xx supports most of the pixel formats
+on both: the preview and the codec data paths. I've updated the pixel 
+format definitions to reflect that, but it still needs to be verified 
+with proper tests. I just didn't add YUV422 packed format, I expect it 
+to be done by someone who actually verifies that it works, after 
+checking/updating camif-regs.c as well.
+
+> Also two distinct planar 420 formats exist that simply differ by plane
+> order YUV420 (currently supported in your driver) and YVU420 (with Cb and
+> Cr planes swapped). It should be pretty straightforward to add support for
+> the latter.
+
+Yeah, thanks for the suggestion. I've added support for YVU420 - it yields 
+more options where setting up gstreamer pipelines, along with a few fixes 
+for issues I've found after some more testing, including LKM build. It can 
+be pulled from following git tree:
+
+git://linuxtv.org/snawrocki/media.git s3c-camif-devel
+
+It's based off of staging/for_v3.7 branch (3.6-rc3). I consider it more or
+less stable. The final branch for mainline is 's3c-camif', the difference
+is only that the fixes were squashed to a single commit adding the whole 
+driver there.
+
+--
+
+Thanks,
+Sylwester
