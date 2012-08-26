@@ -1,145 +1,70 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v3 1/3] ARM: Samsung: Add support for MSHC controller clocks
-Date: Sun, 26 Aug 2012 17:29:29 +0530
-Message-ID: <1345982371-26483-2-git-send-email-thomas.abraham@linaro.org>
+Subject: [PATCH v3 2/3] ARM: Exynos5: Add AUXDATA support for MSHC controllers
+Date: Sun, 26 Aug 2012 17:29:30 +0530
+Message-ID: <1345982371-26483-3-git-send-email-thomas.abraham@linaro.org>
 References: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:20785 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:20788 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752126Ab2HZLl1 (ORCPT
+	with ESMTP id S1752142Ab2HZLl3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sun, 26 Aug 2012 07:41:27 -0400
+	Sun, 26 Aug 2012 07:41:29 -0400
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0M9D008141SXU2C0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 26 Aug 2012 20:41:26 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Sun, 26 Aug 2012 20:41:28 +0900 (KST)
 Received: from localhost.localdomain ([107.108.73.37])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M9D00JEH1SVN450@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sun, 26 Aug 2012 20:41:26 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Sun, 26 Aug 2012 20:41:28 +0900 (KST)
 In-reply-to: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
 
-Add clock instances for bus interface unit clock and card interface unit
-clock of the all four MSHC controller instances.
+Add entries if MSHC controllers in AUXDATA table for correct device name
+initialization.
 
 Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/clock-exynos5.c |   45 ++++++++++++----------------------
- 1 files changed, 16 insertions(+), 29 deletions(-)
+ arch/arm/mach-exynos/include/mach/map.h |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c  |    8 ++++++++
+ 2 files changed, 9 insertions(+), 0 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 3b00e29..16d8bef 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -564,35 +564,30 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.enable		= exynos5_clk_ip_peris_ctrl,
- 		.ctrlbit	= (1 << 19),
- 	}, {
--		.name		= "hsmmc",
--		.devname	= "exynos4-sdhci.0",
-+		.name		= "biu",
-+		.devname	= "dw_mmc.0",
- 		.parent		= &exynos5_clk_aclk_200.clk,
- 		.enable		= exynos5_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 12),
- 	}, {
--		.name		= "hsmmc",
--		.devname	= "exynos4-sdhci.1",
-+		.name		= "biu",
-+		.devname	= "dw_mmc.1",
- 		.parent		= &exynos5_clk_aclk_200.clk,
- 		.enable		= exynos5_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 13),
- 	}, {
--		.name		= "hsmmc",
--		.devname	= "exynos4-sdhci.2",
-+		.name		= "biu",
-+		.devname	= "dw_mmc.2",
- 		.parent		= &exynos5_clk_aclk_200.clk,
- 		.enable		= exynos5_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 14),
- 	}, {
--		.name		= "hsmmc",
--		.devname	= "exynos4-sdhci.3",
-+		.name		= "biu",
-+		.devname	= "dw_mmc.3",
- 		.parent		= &exynos5_clk_aclk_200.clk,
- 		.enable		= exynos5_clk_ip_fsys_ctrl,
- 		.ctrlbit	= (1 << 15),
- 	}, {
--		.name		= "dwmci",
--		.parent		= &exynos5_clk_aclk_200.clk,
--		.enable		= exynos5_clk_ip_fsys_ctrl,
--		.ctrlbit	= (1 << 16),
--	}, {
- 		.name		= "sata",
- 		.devname	= "ahci",
- 		.enable		= exynos5_clk_ip_fsys_ctrl,
-@@ -1006,8 +1001,8 @@ static struct clksrc_clk exynos5_clk_sclk_uart3 = {
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+index 9d1f3ac..5b0ee41 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -172,6 +172,7 @@
  
- static struct clksrc_clk exynos5_clk_sclk_mmc0 = {
- 	.clk	= {
--		.name		= "sclk_mmc",
--		.devname	= "exynos4-sdhci.0",
-+		.name		= "ciu",
-+		.devname	= "dw_mmc.0",
- 		.parent		= &exynos5_clk_dout_mmc0.clk,
- 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 0),
-@@ -1017,8 +1012,8 @@ static struct clksrc_clk exynos5_clk_sclk_mmc0 = {
+ #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
+ #define EXYNOS4_PA_DWMCI		0x12550000
++#define EXYNOS5_PA_DWMCI(x)		(0x12200000 + ((x) * 0x10000))
  
- static struct clksrc_clk exynos5_clk_sclk_mmc1 = {
- 	.clk	= {
--		.name		= "sclk_mmc",
--		.devname	= "exynos4-sdhci.1",
-+		.name		= "ciu",
-+		.devname	= "dw_mmc.1",
- 		.parent		= &exynos5_clk_dout_mmc1.clk,
- 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 4),
-@@ -1028,8 +1023,8 @@ static struct clksrc_clk exynos5_clk_sclk_mmc1 = {
- 
- static struct clksrc_clk exynos5_clk_sclk_mmc2 = {
- 	.clk	= {
--		.name		= "sclk_mmc",
--		.devname	= "exynos4-sdhci.2",
-+		.name		= "ciu",
-+		.devname	= "dw_mmc.2",
- 		.parent		= &exynos5_clk_dout_mmc2.clk,
- 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 8),
-@@ -1039,8 +1034,8 @@ static struct clksrc_clk exynos5_clk_sclk_mmc2 = {
- 
- static struct clksrc_clk exynos5_clk_sclk_mmc3 = {
- 	.clk	= {
--		.name		= "sclk_mmc",
--		.devname	= "exynos4-sdhci.3",
-+		.name		= "ciu",
-+		.devname	= "dw_mmc.3",
- 		.parent		= &exynos5_clk_dout_mmc3.clk,
- 		.enable		= exynos5_clksrc_mask_fsys_ctrl,
- 		.ctrlbit	= (1 << 12),
-@@ -1114,14 +1109,6 @@ static struct clksrc_clk exynos5_clk_sclk_spi2 = {
- static struct clksrc_clk exynos5_clksrcs[] = {
- 	{
- 		.clk	= {
--			.name		= "sclk_dwmci",
--			.parent		= &exynos5_clk_dout_mmc4.clk,
--			.enable		= exynos5_clksrc_mask_fsys_ctrl,
--			.ctrlbit	= (1 << 16),
--		},
--		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS3, .shift = 8, .size = 8 },
--	}, {
--		.clk	= {
- 			.name		= "sclk_fimd",
- 			.devname	= "s3cfb.1",
- 			.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
+ #define EXYNOS4_PA_HSOTG		0x12480000
+ #define EXYNOS4_PA_USB_HSPHY		0x125B0000
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index ef770bc..4257cc1 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -47,6 +47,14 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 				"s3c2440-i2c.0", NULL),
+ 	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(1),
+ 				"s3c2440-i2c.1", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(0),
++				"dw_mmc.0", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(1),
++				"dw_mmc.1", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(2),
++				"dw_mmc.2", NULL),
++	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(3),
++				"dw_mmc.3", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI0,
+ 				"exynos4210-spi.0", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI1,
 -- 
 1.6.6.rc2
