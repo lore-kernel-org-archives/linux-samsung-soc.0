@@ -1,59 +1,45 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: [PATCH] ARM: S3C24XX: Add .get_rate callback for "camif-upll" clock
-Date: Mon, 27 Aug 2012 22:12:09 +0200
-Message-ID: <1346098329-32059-1-git-send-email-sylvester.nawrocki@gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH] ASoC: SAMSUNG: Add SND_SOC_DAIFMT_CONT option for
+ snd_soc_set_fmt()
+Date: Mon, 27 Aug 2012 13:45:51 -0700
+Message-ID: <20120827204550.GA4400@opensource.wolfsonmicro.com>
+References: <003101cd8367$3476e650$9d64b2f0$@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:33329 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754411Ab2H0UM2 (ORCPT
+Received: from opensource.wolfsonmicro.com ([80.75.67.52]:51492 "EHLO
+	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752256Ab2H0Up4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Aug 2012 16:12:28 -0400
-Received: by wgbdr13 with SMTP id dr13so3925316wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 13:12:27 -0700 (PDT)
+	Mon, 27 Aug 2012 16:45:56 -0400
+Content-Disposition: inline
+In-Reply-To: <003101cd8367$3476e650$9d64b2f0$@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+To: =?utf-8?B?77+92rvvv73vv73vv70=?= <sangsu4u.park@samsung.com>
+Cc: alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@ti.com, sbkim73@samsung.com, ben-linux@fluff.org, Kukjin Kim <kgene.kim@samsung.com>
 
-Add missing get_rate callback for the "camif-upll" clock, so frequency
-of this clock is properly reported with clk_get_rate().
+On Sun, Aug 26, 2012 at 05:45:54PM +0900, =EF=BF=BD=DA=BB=EF=BF=BD=EF=BF=
+=BD=EF=BF=BD wrote:
+> SND_SOC_DAIFMT_CONT option is now needed because of below commit:
+>=20
+> ASoC: Allow DAI formats to be specified in the dai_link
 
-Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
----
- arch/arm/mach-s3c24xx/clock-s3c2440.c |   14 ++++++++++++++
- 1 files changed, 14 insertions(+), 0 deletions(-)
+Clearly it's not a direct consequence of this commit, that just
+introduces a new optional facility which...
 
-diff --git a/arch/arm/mach-s3c24xx/clock-s3c2440.c b/arch/arm/mach-s3c24xx/clock-s3c2440.c
-index cb2883d..749220f 100644
---- a/arch/arm/mach-s3c24xx/clock-s3c2440.c
-+++ b/arch/arm/mach-s3c24xx/clock-s3c2440.c
-@@ -87,6 +87,19 @@ static int s3c2440_camif_upll_setrate(struct clk *clk, unsigned long rate)
- 	return 0;
- }
+>  	/* Set the cpu DAI configuration */
+>  	ret =3D snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_DSP_B
+> +				| SND_SOC_DAIFMT_CONT
+>  				| SND_SOC_DAIFMT_IB_NF
+>  				| SND_SOC_DAIFMT_CBS_CFS);
 
-+static unsigned long s3c2440_camif_upll_getrate(struct clk *clk)
-+{
-+	unsigned long parent_rate = clk_get_rate(clk->parent);
-+	unsigned long camdivn =  __raw_readl(S3C2440_CAMDIVN);
-+
-+	if (!(camdivn & S3C2440_CAMDIVN_CAMCLK_SEL))
-+		return parent_rate;
-+
-+	camdivn &= S3C2440_CAMDIVN_CAMCLK_MASK;
-+
-+	return parent_rate / (camdivn + 1) / 2;
-+}
-+
- /* Extra S3C2440 clocks */
+=2E..isn't being used by the driver.
 
- static struct clk s3c2440_clk_cam = {
-@@ -99,6 +112,7 @@ static struct clk s3c2440_clk_cam_upll = {
- 	.name		= "camif-upll",
- 	.ops		= &(struct clk_ops) {
- 		.set_rate	= s3c2440_camif_upll_setrate,
-+		.get_rate	= s3c2440_camif_upll_getrate,
- 		.round_rate	= s3c2440_camif_upll_round,
- 	},
- };
---
-1.7.4.1
+Looking at the above it looks like the PCM driver is doing something
+very odd - _CONT doesn't make a whole lot of sense on the slave side,
+it's related to the clock generation so should have no effect at all on
+the slave side.  The driver code looks reasonably sensible though.
+
+What specifically is going wrong here?
