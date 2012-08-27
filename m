@@ -1,37 +1,76 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: ASoC: SAMSUNG: Change Kconfig to support all EXYNOSs
-Date: Mon, 27 Aug 2012 15:59:58 -0700
-Message-ID: <503BFBEE.9050401@samsung.com>
-References: <003001cd8361$7016a110$5043e330$@samsung.com> <503BB737.7090004@samsung.com> <20120827180851.GS4339@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH v3 2/3] ARM: Exynos5: Add AUXDATA support for MSHC controllers
+Date: Mon, 27 Aug 2012 16:11:32 -0700
+Message-ID: <503BFEA4.1070601@samsung.com>
+References: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org> <1345982371-26483-3-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61072 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:47930 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754867Ab2H0XAE (ORCPT
+	with ESMTP id S1754153Ab2H0XLh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Aug 2012 19:00:04 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rr13so8239394pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 16:00:02 -0700 (PDT)
-In-Reply-To: <20120827180851.GS4339@opensource.wolfsonmicro.com>
+	Mon, 27 Aug 2012 19:11:37 -0400
+Received: by pbbrr13 with SMTP id rr13so8253555pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 16:11:37 -0700 (PDT)
+In-Reply-To: <1345982371-26483-3-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, =?UTF-8?B?67CV7IOB7IiY?= <sangsu4u.park@samsung.com>, alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, lrg@ti.com, sbkim73@samsung.com, ben-linux@fluff.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
 
-On 08/27/12 11:08, Mark Brown wrote:
-> On Mon, Aug 27, 2012 at 11:06:47AM -0700, Kukjin Kim wrote:
+On 08/26/12 04:59, Thomas Abraham wrote:
+> Add entries if MSHC controllers in AUXDATA table for correct device name
+> initialization.
 >
->> Hmm, all of Samsung stuff is available...so how about?
->>
->> +	depends on PLAT_SAMSUNG
+> Signed-off-by: Abhilash Kesavan<a.kesavan@samsung.com>
+> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+> ---
+>   arch/arm/mach-exynos/include/mach/map.h |    1 +
+>   arch/arm/mach-exynos/mach-exynos5-dt.c  |    8 ++++++++
+>   2 files changed, 9 insertions(+), 0 deletions(-)
 >
-> Yes, that's a very good idea!
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index 9d1f3ac..5b0ee41 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -172,6 +172,7 @@
+>
+>   #define EXYNOS4_PA_HSMMC(x)		(0x12510000 + ((x) * 0x10000))
+>   #define EXYNOS4_PA_DWMCI		0x12550000
+> +#define EXYNOS5_PA_DWMCI(x)		(0x12200000 + ((x) * 0x10000))
 
-Mark, thanks.
+Just, how about EXYNOS5_PA_DWMMC0, EXYNOS5_PA_DWMMC1, ... EXYNOS_PA_DWMMC3?
 
-Sangsu, could you please re-submit as per my suggestion?
+And if the addresses are different on other EXYNOS5 SoC, how do we 
+handle it for auxdata?
+
+>
+>   #define EXYNOS4_PA_HSOTG		0x12480000
+>   #define EXYNOS4_PA_USB_HSPHY		0x125B0000
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> index ef770bc..4257cc1 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -47,6 +47,14 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>   				"s3c2440-i2c.0", NULL),
+>   	OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS5_PA_IIC(1),
+>   				"s3c2440-i2c.1", NULL),
+> +	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(0),
+
+As I commented, how about just 'samsung,dw-mmc'? but I'm not sure.
+
+> +				"dw_mmc.0", NULL),
+> +	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(1),
+> +				"dw_mmc.1", NULL),
+> +	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(2),
+> +				"dw_mmc.2", NULL),
+> +	OF_DEV_AUXDATA("samsung,exynos5250-dw-mshc", EXYNOS5_PA_DWMCI(3),
+> +				"dw_mmc.3", NULL),
+>   	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI0,
+>   				"exynos4210-spi.0", NULL),
+>   	OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS5_PA_SPI1,
 
 Thanks.
 
