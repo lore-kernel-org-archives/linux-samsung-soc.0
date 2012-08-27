@@ -1,66 +1,179 @@
-From: Will Newton <will.newton@gmail.com>
-Subject: Re: [PATCH v4 0/9] mmc: dw_mmc: add support for device tree based instantiation
-Date: Mon, 27 Aug 2012 10:31:45 +0100
-Message-ID: <CAFbHwiQgs4fwGWMRNWct0xo1JrGwzr2SYRkDyGA5iXpCp+9UJg@mail.gmail.com>
-References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: Re: [PATCH] gpio: samsung: add devicetree init for s3c24xx arches
+Date: Mon, 27 Aug 2012 11:44:03 +0200
+Message-ID: <201208271144.03681.heiko@sntech.de>
+References: <201208252353.59345.heiko@sntech.de> <201208271001.05026.heiko@sntech.de> <CA+E=qVfV1DL1ikjVnLd7qTeCx9C8Z7dGvhh_9NSgxPYrOCJ=0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:61947 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753240Ab2H0Jbq (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Aug 2012 05:31:46 -0400
-In-Reply-To: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <CA+E=qVfV1DL1ikjVnLd7qTeCx9C8Z7dGvhh_9NSgxPYrOCJ=0g@mail.gmail.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Vasily Khoruzhick <anarsoul@gmail.com>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Landley <rob@landley.net>, Olof Johansson <olof@lixom.net>, arm-linux <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
 
-On Sun, Aug 26, 2012 at 12:51 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> This is the fourth version of the patch series that adds device tree support
-> for Synopsis Designware Mobile Storage Host Controller. In this version, the
-> significant change is the spliting of Exynos specific code into a seperate
-> file, as suggested by Seungwon Jeon <tgih.jun@samsung.com>. Spliting the
-> Exynos specific code into a seperate file did infact keeps the core driver
-> code clean, which otherwise was littered with Exynos specific code. I hope
-> the changes look sane, though. This has been tested only on smdk5250 board.
->
-> Thomas Abraham (9):
->   mmc: dw_mmc: convert copy of struct device in struct dw_mci to a reference
->   mmc: dw_mmc: Use devm_* functions in dw_mmc platform driver
->   mmc: dw_mmc: allow probe to succeed even if one slot is initialized
->   mmc: dw_mmc: lookup for optional biu and ciu clocks
->   mmc: dw_mmc: add quirk to indicate missing write protect line
->   mmc: dw_mmc: add device tree support
->   mmc: dw_mmc: prepare functions in dw_mmc-pltfm for reuse
->   mmc: dw_mmc: add support for implementation specific callbacks
->   mmc: dw_mmc: add support for exynos specific implementation of dw-mshc
->
->  .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   79 ++++++
->  .../devicetree/bindings/mmc/synposis-dw-mshc.txt   |   90 ++++++
->  drivers/mmc/host/Kconfig                           |    9 +
->  drivers/mmc/host/Makefile                          |    3 +-
->  drivers/mmc/host/dw_mmc-exynos.c                   |  247 +++++++++++++++++
->  drivers/mmc/host/dw_mmc-pci.c                      |    2 +-
->  drivers/mmc/host/dw_mmc-pltfm.c                    |   62 +++--
->  drivers/mmc/host/dw_mmc-pltfm.h                    |   20 ++
->  drivers/mmc/host/dw_mmc.c                          |  287 ++++++++++++++++----
->  drivers/mmc/host/dw_mmc.h                          |   22 ++
->  include/linux/mmc/dw_mmc.h                         |   13 +-
->  11 files changed, 757 insertions(+), 77 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
->  create mode 100644 Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
->  create mode 100644 drivers/mmc/host/dw_mmc-exynos.c
->  create mode 100644 drivers/mmc/host/dw_mmc-pltfm.h
+Hi Vasily,
 
-This series looks good to me, although I am not familiar enough with
-the device tree stuff to review it in a meaningful way.
+Am Montag, 27. August 2012, 10:57:04 schrieb Vasily Khoruzhick:
+> Hi,
+>=20
+> On Mon, Aug 27, 2012 at 11:01 AM, Heiko St=C3=BCbner <heiko@sntech.de=
+> wrote:
+> > Hi Thomas,
+> >=20
+> > thanks for your review:
+> >=20
+> > Hmmm, but the logic to drive the gpio controller is the same for al=
+l
+> > arches. The only difference is the number to use for the different =
+pull
+> > up/down settings. So I think the "samsung,s3c24xx-gpio" is ok but t=
+he
+> > documentation should simply reflect the different pull settings.
+>=20
+> Also s3c2410 and s3c2440 has different count of GPIOs. And that could
+> be a problem on machines
+> with GPIO-expanders (h1940 machine)
 
-Acked-by: Will Newton <will.newton@imgtec.com>
+I'm not sure I follow :-) .=20
 
-Note that the platform driver changes will conflict with Jaehoon
-Chung's patch to fix a section mismatch in that file. Have you tried
-building this as a module and with section mismatch debugging to make
-sure the new code does not add any mismatches?
+The compatible property here only sets the mechanism on how to handle t=
+he=20
+gpios defined in the devicetree - here to use the s3c24xx-style. As you=
+ can=20
+see in gpio-samsung.c the handling is already unified for all the s3c24=
+xx=20
+architectures.
+
+The definition of what gpio banks exist is then done in the respective=20
+devicetree file for the individual SoC. And of course here one would ha=
+ve=20
+individual definitions, depending on the banks present.
+
+=46or reference my quite empty s3c2416.dtsi file currently looks like:
+
+/include/ "skeleton.dtsi"
+
+/ {
+	compatible =3D "samsung,s3c2416";
+
+	cpus {
+		cpu@0 {
+			compatible =3D "arm,arm926ejs";
+		};
+	};
+
+	gpio-controllers {
+		#address-cells =3D <1>;
+		#size-cells =3D <1>;
+		gpio-controller;
+		ranges;
+
+		gpa: gpio-controller@56000000 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000000 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpb: gpio-controller@56000010 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000010 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpc: gpio-controller@56000020 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000020 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpd: gpio-controller@56000030 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000030 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpe: gpio-controller@56000040 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000040 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpf: gpio-controller@56000050 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000050 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpg: gpio-controller@56000060 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000060 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gph: gpio-controller@56000070 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000070 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		/* s3c2443 and later */
+		gpj: gpio-controller@560000D0 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x560000D0 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpk: gpio-controller@560000E0 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x560000E0 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpl: gpio-controller@560000F0 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x560000F0 0x10>;
+			#gpio-cells =3D <3>;
+		};
+
+		gpm: gpio-controller@56000100 {
+			compatible =3D "samsung,s3c24xx-gpio";
+			reg =3D <0x56000100 0x10>;
+			#gpio-cells =3D <3>;
+		};
+	};
+};
+
+Other s3c24xx SoCs would of course need to define their own.
+
+> >> It would be informative to add information about the 'mux function=
+'
+> >> cell here as well. Specifically, on how to handle the banks that h=
+ave
+> >> an extended GPxSEL register that allow additional pin function
+> >> selection.
+> >=20
+> > Will add a mux function description.
+> >=20
+> > Until now I've never realised the existence of the GPxSEL registers=
+, so
+> > thanks for the pointer :-).
+> >=20
+> > But is this used in the driver at all? All the setcfg/getcfg functi=
+ons in
+> > gpio-samsung.c only handle the GPxCON registers - I haven't found c=
+ode to
+> > handle the GPxSEL registers at all. So my guess is that this was ne=
+ver
+> > implemented - or that I'm blind ;-) .
+>=20
+> There're no GPxSEL registers on s3c2410/s3c2440/s3c2442. Is it
+> something s3c2412/sec2416 specific?
+
+s3c2412 also does not have it ... it seems entirely specific to=20
+s3c2416/s3c2450 and as written also seems to be unused.
+So I would tend to ignore it for now :-) .
+
+
+Heiko
