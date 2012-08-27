@@ -1,130 +1,127 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH] gpio: samsung: add devicetree init for s3c24xx arches
-Date: Mon, 27 Aug 2012 12:12:19 +0200
-Message-ID: <201208271212.20016.heiko@sntech.de>
-References: <201208252353.59345.heiko@sntech.de> <201208271144.03681.heiko@sntech.de> <CA+E=qVf9+J1rtvr7snhfRgqKHgWZ+g7TfcQuP8qm00+HH86CDQ@mail.gmail.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Add MFC device tree support
+Date: Mon, 27 Aug 2012 11:37:25 +0000 (GMT)
+Message-ID: <15678049.36841346067444384.JavaMail.weblogic@epml04>
+Reply-To: arun.kk@samsung.com
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:44121 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1751465Ab2H0KMa (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:59125 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751274Ab2H0Lh0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 27 Aug 2012 06:12:30 -0400
-In-Reply-To: <CA+E=qVf9+J1rtvr7snhfRgqKHgWZ+g7TfcQuP8qm00+HH86CDQ@mail.gmail.com>
+	Mon, 27 Aug 2012 07:37:26 -0400
+Received: from epcpsbge3.samsung.com (epcpsbge3 [203.254.230.13])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9E00DEEWA302O0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 27 Aug 2012 20:37:25 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasily Khoruzhick <anarsoul@gmail.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Landley <rob@landley.net>, Olof Johansson <olof@lixom.net>, arm-linux <linux-arm-kernel@lists.infradead.org>
+To: Kukjin Kim <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
 
-Am Montag, 27. August 2012, 11:51:27 schrieb Vasily Khoruzhick:
-> On Mon, Aug 27, 2012 at 12:44 PM, Heiko St=C3=BCbner <heiko@sntech.de=
-> wrote:
-> > Hi Vasily,
-> >=20
-> > I'm not sure I follow :-) .
-> >=20
-> > The compatible property here only sets the mechanism on how to hand=
-le the
-> > gpios defined in the devicetree - here to use the s3c24xx-style. As=
- you
-> > can see in gpio-samsung.c the handling is already unified for all t=
-he
-> > s3c24xx architectures.
-> >=20
-> > The definition of what gpio banks exist is then done in the respect=
-ive
-> > devicetree file for the individual SoC. And of course here one woul=
-d have
-> > individual definitions, depending on the banks present.
-> >=20
-> > For reference my quite empty s3c2416.dtsi file currently looks like=
-:
-> >=20
-> > /include/ "skeleton.dtsi"
-> >=20
-> > / {
-> >=20
-> >         compatible =3D "samsung,s3c2416";
-> >        =20
-> >         cpus {
-> >        =20
-> >                 cpu@0 {
-> >                =20
-> >                         compatible =3D "arm,arm926ejs";
-> >                =20
-> >                 };
-> >        =20
-> >         };
-> >        =20
-> >         gpio-controllers {
-> >        =20
-> >                 #address-cells =3D <1>;
-> >                 #size-cells =3D <1>;
-> >                 gpio-controller;
-> >                 ranges;
-> >                =20
-> >                 gpa: gpio-controller@56000000 {
-> >                =20
-> >                         compatible =3D "samsung,s3c24xx-gpio";
-> >                         reg =3D <0x56000000 0x10>;
-> >                         #gpio-cells =3D <3>;
-> >                =20
-> >                 };
-> >                =20
-> >                 gpb: gpio-controller@56000010 {
-> >                =20
-> >                         compatible =3D "samsung,s3c24xx-gpio";
-> >                         reg =3D <0x56000010 0x10>;
-> >                         #gpio-cells =3D <3>;
-> >                =20
-> >                 };
-
-[ ... ]
-
-> >         };
-> >=20
-> > };
-> >=20
-> > Other s3c24xx SoCs would of course need to define their own.
->=20
-> I see. But how does it handle GPA bank (which is output-only, and
-> GPACON differs a bit from GP{B-J}CON? And some banks has lower number
-> (not 16) of GPIOs, like GPH.
->=20
-> Also, what would be value for S3C_GPIO_END?
-
-The creation of the banks is still done in gpio-samsung.c and the speci=
-al=20
-handling of bank-a is still sitting in the s3c24xx_gpios[] array there.
-
-In general the gpios are still created completely like before and the=20
-devicetree information is only attached to them so that dt-devices can=20
-reference them.
-
-As you can see in the original patch, after the respective chip got cre=
-ated in=20
-s3c24xx_gpiolib_add_chips, s3c24xx_gpiolib_attach_ofnode searches for t=
-he=20
-representation of it in the device tree and attaches this to the chip.
-
-So nothing really changed, except that dt-devices can now reference gpi=
-os and=20
-if they do s3c24xx_gpio_xlate will get called to configure them with th=
-e=20
-target values from the dt.
-
-Currently I'm also only using it in a mixed mode configuration [1],=20
-supplementing a normal machine file with some devices from the devicetr=
-ee -=20
-especially as I still need to figure out, what to do about the interrup=
-t=20
-controller.
-
-
-Heiko
-
-
-[1] https://github.com/mmind/linux-es600/blob/topic/es600-
-devel/arch/arm/boot/dts/s3c24xx-sg06.dts
+SGkgS2dlbmUsDQpUaGFuayB5b3UgZm9yIHRoZSByZXZpZXcgY29tbWVudHMuDQpQbGVhc2UgZmlu
+ZCBteSByZXNwb25zZSBpbmxpbmUuDQoNCk9uIFRodSwgQXVnIDIzLCAyMDEyIGF0IDE6NDYgUE0s
+IEt1a2ppbiBLaW0gPGtnZW5lLmtpbUBzYW1zdW5nLmNvbT4gd3JvdGU6DQo+IEFydW4gS3VtYXIg
+SyB3cm90ZToNCj4+DQo+PiBIaSBUaG9tYXMsDQo+PiBUaGFuayB5b3UgZm9yIHRoZSBjb21tZW50
+cy4NCj4+IFBsZWFzZSBmaW5kIG15IHJlc3BvbnNlIGlubGluZS4NCj4+DQo+PiAtLS0tLS0tIE9y
+aWdpbmFsIE1lc3NhZ2UgLS0tLS0tLQ0KPj4gU2VuZGVyIDogVGhvbWFzIEFicmFoYW08dGhvbWFz
+LmFicmFoYW1AbGluYXJvLm9yZz4NCj4+IERhdGUgICA6IEF1ZyAxNiwgMjAxMiAxNzoxMiAoR01U
+KzA1OjMwKQ0KPj4gVGl0bGUgIDogUmU6IFtQQVRDSF0gQVJNOiBFWFlOT1M6IEFkZCBNRkMgZGV2
+aWNlIHRyZWUgc3VwcG9ydA0KPj4NCj4+IE9uIDE2IEF1Z3VzdCAyMDEyIDE4OjAxLCBBcnVuIEt1
+bWFyIEsgPGFydW4ua2tAc2Ftc3VuZy5jb20+IHdyb3RlOg0KPj4gPiBGcm9tOiBOYXZlZW4gS3Jp
+c2huYSBDaGF0cmFkaGkgPGNoLm5hdmVlbkBzYW1zdW5nLmNvbT4NCj4+ID4NCj4+ID4gVGhpcyBw
+YXRjaCBhZGRzIGRldmljZSB0cmVlIGVudHJ5IGZvciBNRkMgaW4gdGhlIEV4eW5vcw0KPj4gPiBt
+YWNoaW5lcy4gRXh5bm9zNCBTb0NzIHN1cHBvcnQgTUZDIHY1IHZlcnNpb24gYW5kIEV4eW5vczUg
+aGFzDQo+PiA+IE1GQyB2Ni54IHZlcnNpb24uIFNvIG1ha2luZyB0aGUgcmVxdWlyZWQgY2hhbmdl
+cyBpbiB0aGUgY2xvY2sNCj4NCj4gU2luY2UgdjYuMSBpcyBub3QgdXNlZCBhbnl3aGVyZSBzbyBq
+dXN0IE1GQyB2NiBzaG91bGQgYmUgb2suDQo+DQoNCk9rLg0KDQo+PiA+IGZpbGVzIGFuZCBhZGRz
+IE1GQyB0byB0aGUgRFQgZGV2aWNlIGxpc3QuDQo+PiA+DQo+PiA+IFNpZ25lZC1vZmYtYnk6IE5h
+dmVlbiBLcmlzaG5hIENoYXRyYWRoaSA8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiBBcnVuIEt1bWFyIEsgPGFydW4ua2tAc2Ftc3VuZy5jb20+DQo+PiA+IC0tLQ0K
+Pj4gPiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLW1mYy50eHQgICAgICAgICAg
+fCAgIDI0DQo+PiArKysrKysrKysrKysrKysrKysrKw0KPj4gPiAgYXJjaC9hcm0vYm9vdC9kdHMv
+ZXh5bm9zNDIxMC5kdHNpICAgICAgICAgICAgICAgICAgfCAgIDEwICsrKysrKysrDQo+PiA+ICBh
+cmNoL2FybS9ib290L2R0cy9leHlub3M1MjUwLmR0c2kgICAgICAgICAgICAgICAgICB8ICAgMTAg
+KysrKysrKysNCj4+ID4gIGFyY2gvYXJtL21hY2gtZXh5bm9zL2Nsb2NrLWV4eW5vczUuYyAgICAg
+ICAgICAgICAgIHwgICAgMiArLQ0KPj4gPiAgYXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlu
+b3M0LWR0LmMgICAgICAgICAgICAgfCAgIDIyDQo+PiArKysrKysrKysrKysrKysrKysNCj4+ID4g
+IGFyY2gvYXJtL21hY2gtZXh5bm9zL21hY2gtZXh5bm9zNS1kdC5jICAgICAgICAgICAgIHwgICAy
+Mg0KPj4gKysrKysrKysrKysrKysrKysrDQo+PiA+ICA2IGZpbGVzIGNoYW5nZWQsIDg5IGluc2Vy
+dGlvbnMoKyksIDEgZGVsZXRpb25zKC0pDQo+PiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3M1cC1tZmMudHh0DQo+PiA+DQo+PiA+
+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVw
+LW1mYy50eHQNCj4+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3M1
+cC1tZmMudHh0DQo+PiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+PiA+IGluZGV4IDAwMDAwMDAu
+LmI5YmQyNjYNCj4+ID4gLS0tIC9kZXYvbnVsbA0KPj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvbWVkaWEvczVwLW1mYy50eHQNCj4+ID4gQEAgLTAsMCArMSwyNCBA
+QA0KPj4gPiArKiBTYW1zdW5nIE11bHRpIEZvcm1hdCBDb2RlYyAoTUZDKQ0KPj4gPiArDQo+PiA+
+ICtNdWx0IEZvcm1hdCBDb2RlYyAoTUZDKSBpcyB0aGUgSVAgcHJlc2VudCBpbiBTYW1zdW5nIFNv
+Q3Mgd2hpY2gNCj4+ID4gK3N1cHBvcnRzIGhpZ2ggcmVzb2x1dGlvbiBkZWNvZGluZyBhbmQgZW5j
+b2RpbmcgZnVuY3Rpb25hbGl0aWVzLg0KPj4gPg0KPj4gPiBJbiBhZGRpdGlvbiB0byB0aGlzLCBz
+cGVjaWZ5aW5nIHRoYXQgbWZjIGlzIHVzZWQgZm9yIHZpZGVvDQo+PiA+IGVuY29kZS9kZWNvZGUg
+d291bGQgYmUgaW5mb3JtYXRpdmUuDQo+Pg0KPj4gT2suIEkgd2lsbCBtYWtlIGl0IG1vcmUgZGVz
+Y3JpcHRpdmUuDQo+Pg0KPj4gPiArDQo+PiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPj4gPiAr
+ICAtIGNvbXBhdGlibGUgOiB2YWx1ZSBzaG91bGQgYmUgZWl0aGVyIG9uZSBhbW9uZyB0aGUgZm9s
+bG93aW5nDQo+PiA+ICsgICAgICAgKGEpICJzYW1zdW5nLHM1cC1tZmMtdjUiIGZvciBNRkMgdjUg
+cHJlc2VudCBpbiBFeHlub3M0IFNvQ3MNCj4+ID4gKyAgICAgICAoYikgInNhbXN1bmcsczVwLW1m
+Yy12NiIgZm9yIE1GQyB2Ni54IHByZXNlbnQgaW4gRXh5bm9zNSBTb0NzDQo+PiA+DQo+PiA+ICJz
+NXAiIHNob3VsZCBiZSBkcm9wcGVkIGZyb20gdGhlIGNvbXBhdGlibGUgdmFsdWVzLiBGb3IgZXhh
+bXBsZSwgaXQNCj4+ID4gc2hvdWxkIGJlICJzYW1zdW5nLG1mYy12NSIsIHdoaWNoIGlzIHN1ZmZp
+Y2llbnQgdG8gaWRlbnRpZnkgdGhlDQo+PiA+IHZlcnNpb24gb2YgdGhlIG1mYyBjb250cm9sbGVy
+Lg0KPj4NCj4+IE9rIHdpbGwgcmVtb3ZlIHM1cC4NCj4+DQo+IFllYWgsIEkgYWdyZWUsIGp1c3Qg
+J21mYy12WCcgaXMgZW5vdWdoLg0KPg0KDQpPay4gV2lsbCBjaGFuZ2UgaXQuDQoNCj4+ID4gKw0K
+Pj4gPiArICAtIHJlZyA6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBvZiB0aGUgSVAgcmVnaXN0ZXJz
+IGFuZCBsZW5ndGggb2YNCj4+IG1lbW9yeQ0KPj4gPiArICAgICAgICAgbWFwcGVkIHJlZ2lvbi4N
+Cj4+ID4gKw0KPj4gPiArICAtIGludGVycnVwdHMgOiBNRkMgaW50ZXJ1cHQgbnVtYmVyIHRvIHRo
+ZSBDUFUuDQo+PiA+ICsNCj4+ID4gKyAgLSBzYW1zdW5nLG1mYy1yIDogQmFzZSBhZGRyZXNzIG9m
+IHRoZSBmaXJzdCBtZW1vcnkgYmFuayB1c2VkIGJ5IE1GQw0KPj4gPiArICAgICAgICAgICAgICAg
+ICAgIGZvciBETUEgY29udGlndW91cyBtZW1vcnkgYWxsb2NhdGlvbi4NCj4+ID4gKw0KPj4gPiAr
+ICAtIHNhbXN1bmcsbWZjLXItc2l6ZSA6IFNpemUgb2YgdGhlIGZpcnN0IG1lbW9yeSBiYW5rLg0K
+Pj4gPg0KPj4gPiBJdCBpcyBub3QgYWxsb3dlZCB0byBwYXNzIGJ1ZmZlciBiYXNlIGFkZHJlc3Mg
+YW5kIHNpemUgZnJvbSBkZXZpY2UNCj4+ID4gdHJlZS4gRGV2aWNlIHRyZWUgbm9kZSBzaG91bGQg
+ZGVzY3JpYmUgb25seSB0aGUgTUZDIGNvbnRyb2xsZXINCj4+ID4gaGFyZHdhcmUuIEFueSBtZW1v
+cnkgbWFuYWdlbWVudCByZWxhdGVkIGluZm9ybWF0aW9uIHNob3VsZCBiZSBoYW5kbGVkDQo+PiA+
+IG91dHNpZGUgb2YgZGV2aWNlIHRyZWUuIFRoaXMgaGVscHMgdGhlIGJpbmRpbmdzIHRvIGJlIHJl
+dXNhYmxlIGFjcm9zcw0KPj4gPiBtdWx0aXBsZSBvcGVyYXRpbmcgc3lzdGVtcy4NCj4+DQo+PiBU
+aGUgbWZjLWwgYW5kIG1mYy1yIGJhc2UgYWRkcmVzcyBhbmQgc2l6ZSBpcyBib2FyZCBzcGVjaWZp
+YyBpbmZvIHdoaWNoIGhhcw0KPj4gdG8NCj4+IGJlIHBhc3NlZCB0byB0aGUgZHJpdmVyLiBUaGlz
+IGlzIHVzZWQgZm9yIERNQSBjb250aWd1b3VzIGFsbG9jYXRpb24gYnkNCj4+IGRyaXZlciBhbmQg
+dGhpcyB2YWx1ZQ0KPj4gY2FuIGNoYW5nZSBvbiBhIGRpZmZlcmVudCBib2FyZC4NCj4+IFNvIGlu
+IHRoYXQgY2FzZSwgaSB3aWxsIHBhc3MgaXQgYXMgcGxhdGZvcm0gZGF0YSB0byB0aGUgZHJpdmVy
+IGZyb20gbWFjaC0NCj4+IGV4eW5vczUtZHQuYyBmaWxlLg0KPj4gSSBob3BlIHRoYXQgd291bGQg
+YmUgb2suDQo+Pg0KPiBJIGRvbid0IHRoaW5rIHNvLiBUaGUgbWFjaC1leHlub3M1LWR0IGlzIGZv
+ciBhbGwgRVhZTk9TNSBTb0NzIG5vdA0KPiBwbGF0Zm9ybV9kYXRhLiBBcyBJIGtub3csIHRoZSBh
+ZGRyZXNzZXMgYW5kIHNpemVzIGZvciBidWZmZXIgcGFzc2VkIHZpYQ0KPiBwbGF0Zm9ybSBkYXRh
+IGJlZm9yZSwgc28gaXQgY2FuIGJlIHBhc3NlZCB2aWEgZGV2aWNlIHRyZWUgZm9yIGJvYXJkKC5k
+dHNpKT8NCj4gbm90IFNvQy4gSW4gYWRkaXRpb24sIGl0IGRlcGVuZHMgb24gYm9hcmQuDQo+DQoN
+Ck9rLiBTbyBhcyBzdWdnZXN0ZWQgdGhlIGJlc3Qgb3B0aW9uIHdvdWxkIGJlIHRvIG1vdmUgdGhl
+IG1mYy1sIGFuZCByIA0KYmFzZSBhZGRyZXNzIGFuZCBzaXplIGluZm9ybWF0aW9uIHRvIGJvYXJk
+IGR0cyBmaWxlIA0KKGV4eW5vczUyNTAtc21kazUyNTAuZHRzKSBmcm9tIGV4eW5vczUyNTAuZHRz
+aS4gSG9wZSB0aGlzIHdvdWxkIGJlDQpnb29kLg0KDQoNCj4+ID4gKw0KPj4gPiArICAtIHNhbXN1
+bmcsbWZjLWwgOiBCYXNlIGFkZHJlc3Mgb2YgdGhlIHNlY29uZCBtZW1vcnkgYmFuayB1c2VkIGJ5
+IE1GQw0KPj4gPiArICAgICAgICAgICAgICAgICAgIGZvciBETUEgY29udGlndW91cyBtZW1vcnkg
+YWxsb2NhdGlvbi4NCj4+ID4gKw0KPj4gPiArICAtIHNhbXN1bmcsbWZjLWwtc2l6ZSA6IFNpemUg
+b2YgdGhlIHNlY29uZCBtZW1vcnkgYmFuay4NCj4+ID4NCj4+ID4gU2FtZSBjb21tZW50IGFzIGFi
+b3ZlLiBBbmQgdGhlIGJpbmRpbmdzIGRvY3VtZW50YXRpb24gaXMgdXN1YWxseQ0KPj4gPiBpbmNs
+dWRlZCBpbiB0aGUgc2FtZSBwYXRjaCB0aGF0IGFkZHMgZGV2aWNlIHRyZWUgc3VwcG9ydCBmb3Ig
+dGhlDQo+PiA+IGRyaXZlci4NCj4+DQo+PiBPaw0KPj4NCj4+ID4gZGlmZiAtLWdpdCBhL2FyY2gv
+YXJtL2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaQ0KPj4gYi9hcmNoL2FybS9ib290L2R0cy9leHlu
+b3M0MjEwLmR0c2kNCj4+ID4gaW5kZXggMDI4OTFmZS4uYjVlZTQzZCAxMDA2NDQNCj4+ID4gLS0t
+IGEvYXJjaC9hcm0vYm9vdC9kdHMvZXh5bm9zNDIxMC5kdHNpDQo+PiA+ICsrKyBiL2FyY2gvYXJt
+L2Jvb3QvZHRzL2V4eW5vczQyMTAuZHRzaQ0KPj4gPiBAQCAtNTYsNiArNTYsMTYgQEANCj4+ID4g
+ICAgICAgICAgICAgICAgIGludGVycnVwdHMgPSA8MCA0MyAwPjsNCj4+ID4gICAgICAgICB9Ow0K
+Pj4gPg0KPj4gPiArICAgICAgIG1mYyB7DQo+PiA+ICsgICAgICAgICAgICAgICBjb21wYXRpYmxl
+ID0gInNhbXN1bmcsczVwLW1mYyI7DQo+DQo+IE1heWJlDQo+ICsgICAgICAgY29tcGF0aWJsZSA9
+ICJzYW1zdW5nLG1mYy12NSI7ID8NCj4NCj4+ID4gKyAgICAgICAgICAgICAgIHJlZyA9IDwweDEz
+NDAwMDAwIDB4MTAwMDA+Ow0KPj4gPiArICAgICAgICAgICAgICAgaW50ZXJydXB0cyA9IDwwIDk0
+IDA+Ow0KPj4gPiArICAgICAgICAgICAgICAgc2Ftc3VuZyxtZmMtciA9IDwweDQzMDAwMDAwPjsN
+Cj4+ID4gKyAgICAgICAgICAgICAgIHNhbXN1bmcsbWZjLXItc2l6ZSA9IDw4Mzg4NjA4PjsNCj4+
+ID4gKyAgICAgICAgICAgICAgIHNhbXN1bmcsbWZjLWwgPSA8MHg1MTAwMDAwMD47DQo+PiA+ICsg
+ICAgICAgICAgICAgICBzYW1zdW5nLG1mYy1sLXNpemUgPSA8ODM4ODYwOD47DQo+DQo+IEFzIEkg
+Y29tbWVudGVkLCB0aGUgc2l6ZSBkZXBlbmRzIG9uIGVhY2ggYm9hcmQgbm90IFNvQy4gU28gc2hv
+dWxkIGJlIHJlbW92ZWQNCj4gaGVyZS4NCj4NCg0KT2sNCg0KPiBbLi4uXQ0KPg0KDQpUaGFua3Mg
+YW5kIHJlZ2FyZHMNCkFydW4NCg==
