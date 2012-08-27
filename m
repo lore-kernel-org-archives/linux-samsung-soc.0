@@ -1,62 +1,106 @@
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: Re: [PATCH] gpio: samsung: add devicetree init for s3c24xx arches
-Date: Mon, 27 Aug 2012 11:57:04 +0300
-Message-ID: <CA+E=qVfV1DL1ikjVnLd7qTeCx9C8Z7dGvhh_9NSgxPYrOCJ=0g@mail.gmail.com>
-References: <201208252353.59345.heiko@sntech.de> <CAJuYYwQBOP7-D0fepDsCr+43ASKQ3CmMBMH-M79QH7r=xS85Eg@mail.gmail.com>
- <201208271001.05026.heiko@sntech.de>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH v4 9/9] mmc: dw_mmc: add support for exynos specific
+ implementation of dw-mshc
+Date: Mon, 27 Aug 2012 17:58:56 +0900
+Message-ID: <503B36D0.4030208@samsung.com>
+References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
+ <1345981927-26359-10-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <201208271001.05026.heiko@sntech.de>
-Sender: linux-doc-owner@vger.kernel.org
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Rob Landley <rob@landley.net>, Olof Johansson <olof@lixom.net>, arm-linux <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:9064 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751312Ab2H0I7W (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 27 Aug 2012 04:59:22 -0400
+In-reply-to: <1345981927-26359-10-git-send-email-thomas.abraham@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
 
-Hi,
+Hi Thomas,
 
-On Mon, Aug 27, 2012 at 11:01 AM, Heiko St=C3=BCbner <heiko@sntech.de> =
-wrote:
-> Hi Thomas,
->
-> thanks for your review:
->
-> Hmmm, but the logic to drive the gpio controller is the same for all =
-arches.
-> The only difference is the number to use for the different pull up/do=
-wn
-> settings. So I think the "samsung,s3c24xx-gpio" is ok but the documen=
-tation
-> should simply reflect the different pull settings.
->
+> +	gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
+> +	if (gpio_is_valid(gpio)) {
+> +		if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
+> +			dev_info(host->dev, "gpio [%d] request failed\n",
+> +						gpio);
+> +	} else {
+> +		dev_info(host->dev, "wp gpio not available");
+> +		host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
+> +	}
+> +
+> +	if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
+> +		return 0;
+> +
+> +	gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
+> +	if (gpio_is_valid(gpio)) {
+> +		if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
+I'm not sure, but i saw mmc_gpio_request_cd() into drivers/mmc/core/slot-gpio.c.
+Can we use this? i think we can use them.
+Just my opinion.
 
-Also s3c2410 and s3c2440 has different count of GPIOs. And that could
-be a problem on machines
-with GPIO-expanders (h1940 machine)
-
->> It would be informative to add information about the 'mux function'
->> cell here as well. Specifically, on how to handle the banks that hav=
-e
->> an extended GPxSEL register that allow additional pin function
->> selection.
->
-> Will add a mux function description.
->
-> Until now I've never realised the existence of the GPxSEL registers, =
-so thanks
-> for the pointer :-).
->
-> But is this used in the driver at all? All the setcfg/getcfg function=
-s in
-> gpio-samsung.c only handle the GPxCON registers - I haven't found cod=
-e to
-> handle the GPxSEL registers at all. So my guess is that this was neve=
-r
-> implemented - or that I'm blind ;-) .
-
-There're no GPxSEL registers on s3c2410/s3c2440/s3c2442. Is it
-something s3c2412/sec2416 specific?
-
-Regards
-Vasily
+Best Regards,
+Jaehoon Chung
+> +			dev_err(host->dev, "gpio [%d] request failed\n", gpio);
+> +	} else {
+> +		dev_info(host->dev, "cd gpio not available");
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +/* Exynos5250 controller specific capabilities */
+> +static unsigned long exynos5250_dwmmc_caps[4] = {
+> +	MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
+> +		MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
+> +	MMC_CAP_CMD23,
+> +	MMC_CAP_CMD23,
+> +	MMC_CAP_CMD23,
+> +};
+> +
+> +static struct dw_mci_drv_data exynos5250_drv_data = {
+> +	.caps			= exynos5250_dwmmc_caps,
+> +	.init			= dw_mci_exynos_priv_init,
+> +	.prepare_command	= dw_mci_exynos_prepare_command,
+> +	.set_ios		= dw_mci_exynos_set_ios,
+> +	.parse_dt		= dw_mci_exynos_parse_dt,
+> +	.setup_bus		= dw_mci_exynos_setup_bus,
+> +};
+> +
+> +static const struct of_device_id dw_mci_exynos_match[] = {
+> +	{ .compatible = "samsung,exynos5250-dw-mshc",
+> +			.data = (void *)&exynos5250_drv_data, },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, dw_mci_pltfm_match);
+> +
+> +int dw_mci_exynos_probe(struct platform_device *pdev)
+> +{
+> +	struct dw_mci_drv_data *drv_data;
+> +	const struct of_device_id *match;
+> +
+> +	match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
+> +	drv_data = match->data;
+> +	return dw_mci_pltfm_register(pdev, drv_data);
+> +}
+> +
+> +static struct platform_driver dw_mci_exynos_pltfm_driver = {
+> +	.probe		= dw_mci_exynos_probe,
+> +	.remove		= __exit_p(dw_mci_pltfm_remove),
+> +	.driver		= {
+> +		.name		= "dwmmc_exynos",
+> +		.of_match_table	= of_match_ptr(dw_mci_exynos_match),
+> +		.pm		= &dw_mci_pltfm_pmops,
+> +	},
+> +};
+> +
+> +module_platform_driver(dw_mci_exynos_pltfm_driver);
+> +
+> +MODULE_DESCRIPTION("Samsung Specific DW-MSHC Driver Extension");
+> +MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:dwmmc-exynos");
+> 
