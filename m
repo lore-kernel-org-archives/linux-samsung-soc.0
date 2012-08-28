@@ -1,80 +1,77 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v4 9/9] mmc: dw_mmc: add support for exynos specific
- implementation of dw-mshc
-Date: Tue, 28 Aug 2012 10:50:03 +0530
-Message-ID: <CAJuYYwR4hnr+GykJmEj+9Tmo6QknOQ11_1CbbuHehTNhRuXAhQ@mail.gmail.com>
-References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
-	<1345981927-26359-10-git-send-email-thomas.abraham@linaro.org>
-	<503B36D0.4030208@samsung.com>
-	<CAJuYYwTKXuJe-8N3kOkkUg_bCzAdG-cG4yjk67zF7dmrg+eGpw@mail.gmail.com>
-	<503C4F5D.8050302@samsung.com>
-	<CAJuYYwSCJ4M6-49ELvgBz-o42kvvExTs=U+qrG_KSF2--zrD4g@mail.gmail.com>
-	<CAJuYYwTShXkEJHHUtsSSzQc13b+uYg80iN5H6s4XRRmxk8rRQQ@mail.gmail.com>
-	<503C542E.9080301@samsung.com>
+Subject: Re: [PATCH v2 1/4] pinctrl: add samsung pinctrl and gpiolib driver
+Date: Tue, 28 Aug 2012 10:55:52 +0530
+Message-ID: <CAJuYYwRRQ-kd3ABrK82x2onFRFvHYnbVznuSssW_hXYhncDNWg@mail.gmail.com>
+References: <1345060656-32201-1-git-send-email-thomas.abraham@linaro.org>
+	<1345060656-32201-2-git-send-email-thomas.abraham@linaro.org>
+	<CACRpkdYqPYesgE-YxPLZqROw1T2fsPWR6R+aDTTz2=XbP7oe9A@mail.gmail.com>
+	<CAJuYYwQu7OXQEWCumuMeSKJ2RZD7e==pLKDE1=bvPgfXtO=AUw@mail.gmail.com>
+	<CACRpkdbVY1mmzb9H4ZfmVScW1ZNf1FTMLdgo5UFgqTftycMyrQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <503C542E.9080301@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:47751 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750744Ab2H1FZy (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 28 Aug 2012 01:25:54 -0400
+Received: by lbbgj3 with SMTP id gj3so2997825lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 22:25:53 -0700 (PDT)
+In-Reply-To: <CACRpkdbVY1mmzb9H4ZfmVScW1ZNf1FTMLdgo5UFgqTftycMyrQ@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, Stephen Warren <swarren@wwwdotorg.org>, Dong Aisheng <dong.aisheng@linaro.org>
 
-On 28 August 2012 10:46, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 08/28/2012 02:10 PM, Thomas Abraham wrote:
->> On 28 August 2012 10:40, Thomas Abraham <thomas.abraham@linaro.org> wrote:
->>> On 28 August 2012 10:25, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>> Hi Thomas,
->>>>
->>>> On 08/28/2012 01:48 PM, Thomas Abraham wrote:
->>>>> On 27 August 2012 14:28, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>>>> Hi Thomas,
->>>>>>
->>>>>>> +     gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
->>>>>>> +     if (gpio_is_valid(gpio)) {
->>>>>>> +             if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
->>>>>>> +                     dev_info(host->dev, "gpio [%d] request failed\n",
->>>>>>> +                                             gpio);
->>>>>>> +     } else {
->>>>>>> +             dev_info(host->dev, "wp gpio not available");
->>>>>>> +             host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
->>>>>>> +     }
->>>>>>> +
->>>>>>> +     if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
->>>>>>> +             return 0;
->>>>>>> +
->>>>>>> +     gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
->>>>>>> +     if (gpio_is_valid(gpio)) {
->>>>>>> +             if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
->>>>>> I'm not sure, but i saw mmc_gpio_request_cd() into drivers/mmc/core/slot-gpio.c.
->>>>>> Can we use this? i think we can use them.
->>>>>> Just my opinion.
->>>>>
->>>>> Thanks for letting me know about this, I was not aware of this.
->>>>> Looking into this code, it is usable for controllers that use a gpio
->>>>> (specified using cd-gpios property) as card-detect line. As you know,
->>>>> the dw-mmc driver does not support this feature yet. In case of
->>>>> exynos, the card-detect pin of the mmc slot is connected to the
->>>>> card-detect pad of the dw-mmc controller using pinmux, which is not
->>>>> considered as a gpio. Hence, mmc_gpio_request_cd() is not applicable
->>>>> in this case.
->>>> But In case of external card-detect-pin, we can use the mmc_gpio_request_cd().
+On 28 August 2012 04:52, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Aug 21, 2012 at 9:22 PM, Thomas Abraham
+> <thomas.abraham@linaro.org> wrote:
+
+[...]
+
+>>>> +/* list of all possible config options supported */
+>>>> +struct pin_config {
+>>>> +       char            *prop_cfg;
+>>>> +       unsigned int    cfg_type;
+>>>> +} pcfgs[] = {
+>>>> +       { "samsung,pin-pud", PINCFG_TYPE_PUD },
+>>>> +       { "samsung,pin-drv", PINCFG_TYPE_DRV },
+>>>> +       { "samsung,pin-pud-pdn", PINCFG_TYPE_CON_PND },
+>>>> +       { "samsung,pin-drv-pdn", PINCFG_TYPE_PUD_PND },
+>>>> +};
 >>>
->>> Yes, we can use. But the current dw-mmc controller driver does not
->>> support this feature yet. The existing driver considers that (a)
->>> card-detect line is connected to the card-detect pad of the controller
->>> or (b) it is broken. For Exynos5250, it is case (a). There is no
+>>> Hmmmmm it looks very much like this controller could make use of
+>>> the generic pinconf library, but it's not mandatory so just a suggestion.
 >>
->> Sorry, I meant smdk5250, not Exynos5250.
-> Already i tested with my exynos5 board.
-> If you want, i will share the patch.
+>> Ok. The last two entries in the above table are Samsung specific and
+>> not covered by generic-pinconf. So, I am not sure if it can be added
+>> to generic-pinconf.
+>
+> What is so Samsung-specific about them?
+>
+> If you tell us the electrical property of setting them we can figure out
+> if they should be generic or not...
+>
 
-But did you use "samsung,cd-pinmux-gpio" binding or "cd-gpios" binding
-for specifying the card-detect line. I think, for your board, you have
-to use "cd-gpios". But this patch series does not add support for
-"cd-gpios".
+The PINCFG_TYPE_CON_PND and PINCFG_TYPE_PUD_PND are "mux function" and
+"pull up/down" settings that are automatically applied to the pin in
+powert-down mode. It is same as the usual "mux function" and "pull
+up/down" settings, but just that it is applied at suspend.
 
-Sure, I will like to have a look at your patch and understand more.
+[...]
+
+>
+> OK whatever... looking formward to next iteration!
+
+I have posted the updated version of this patch series based on your
+comments (https://lkml.org/lkml/2012/8/23/183).
+
+The only pending comment to be addressed at this point is about the
+use of generic-pinconf as mentioned in the comment above. If
+PINCFG_TYPE_CON_PND and PINCFG_TYPE_PUD_PND is available in
+generic-pinconf, I wil switch to using generic-pinconf. Will that
+qualify this Samsung pinctrl driver to be merged into your -devel
+branch?
 
 Thanks,
 Thomas.
