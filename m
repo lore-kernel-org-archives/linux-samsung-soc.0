@@ -1,79 +1,67 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: S3C64XX: Update configuration for WM5102 module
- on Cragganmore
-Date: Tue, 28 Aug 2012 16:30:45 -0700
-Message-ID: <503D54A5.8010003@samsung.com>
-References: <1344535549-4371-1-git-send-email-broonie@opensource.wolfsonmicro.com> <0db901cd76b4$7daf1730$790d4590$%kim@samsung.com> <20120810100713.GH24328@opensource.wolfsonmicro.com> <0eff01cd777f$4c9d1f90$e5d75eb0$%kim@samsung.com> <20120813122359.GA13446@opensource.wolfsonmicro.com> <1d5901cd8114$023550f0$069ff2d0$%kim@samsung.com> <20120823152031.GH7995@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS: Use EXYNOS4210_GPEx instead of EXYNOS4_GPEx
+Date: Tue, 28 Aug 2012 16:44:47 -0700
+Message-ID: <503D57EF.2090402@samsung.com>
+References: <4648723.rWnut7F0uJ@amdc1227> <14029212.D3MKvQZpbq@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:37679 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750832Ab2H1Xas (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:41885 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751149Ab2H1Xov (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 19:30:48 -0400
-Received: by pbbrr13 with SMTP id rr13so73241pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 16:30:47 -0700 (PDT)
-In-Reply-To: <20120823152031.GH7995@opensource.wolfsonmicro.com>
+	Tue, 28 Aug 2012 19:44:51 -0400
+Received: by dady13 with SMTP id y13so3648527dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 16:44:51 -0700 (PDT)
+In-Reply-To: <14029212.D3MKvQZpbq@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, linux-samsung-soc@vger.kernel.org, patches@opensource.wolfsonmicro.com, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, Kyungmin Park <kyungmin.park@samsung.com>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 08/23/12 08:20, Mark Brown wrote:
-> On Thu, Aug 23, 2012 at 06:45:19PM +0900, Kukjin Kim wrote:
+On 08/28/12 03:06, Tomasz Figa wrote:
+> The GPEx gpios are specific to Exynos4210 and do not exist on Exynos4x12.
+> Redefine them to use the exact SoC name.
 >
->> Yeah, actually SoC defconfig in mainline doesn't cover _real_ requirements
->> for (mass) product. But I think, it's time we need to sort out the
->> defconfigs so that we could use them efficiently on product. BTW, if
->> enabling board in defconfig, at least, unexpected build breakages could be
->> detected by testing defconfig before merge for mainline...
+> Based on "ARM: EXYYNOS: Use EXYNOS4210_GPEx instead of EXYNOS4_GPEx" by
+> Joonyoung Shim, see:
+> http://lists.infradead.org/pipermail/linux-arm-kernel/2012-May/100738.html
 >
-> Right, sure.  I guess the main thing I'm saying here is that I don't
-> mind what happens here, it's certainly no problem for me turn them on in
-> the build if that's what people wants.
+> Signed-off-by: Tomasz Figa<t.figa@samsung.com>
+> ---
+>   arch/arm/mach-exynos/include/mach/gpio.h   | 32 +++++++++++++++---------------
+>   arch/arm/mach-exynos/mach-nuri.c           | 16 +++++++--------
+>   arch/arm/mach-exynos/mach-origen.c         |  6 +++---
+>   arch/arm/mach-exynos/mach-trats.c          |  4 ++--
+>   arch/arm/mach-exynos/mach-universal_c210.c | 32 +++++++++++++++---------------
+>   arch/arm/mach-exynos/setup-fimc.c          |  4 ++--
+>   drivers/gpio/gpio-samsung.c                | 20 +++++++++----------
+>   7 files changed, 57 insertions(+), 57 deletions(-)
 >
-Hmm...I want? :)
+> diff --git a/arch/arm/mach-exynos/include/mach/gpio.h b/arch/arm/mach-exynos/include/mach/gpio.h
+> index eb24f1e..21c9bf1 100644
+> --- a/arch/arm/mach-exynos/include/mach/gpio.h
+> +++ b/arch/arm/mach-exynos/include/mach/gpio.h
+> @@ -26,11 +26,11 @@
+>   #define EXYNOS4_GPIO_C1_NR	(5)
+>   #define EXYNOS4_GPIO_D0_NR	(4)
+>   #define EXYNOS4_GPIO_D1_NR	(4)
+> -#define EXYNOS4_GPIO_E0_NR	(5)
+> -#define EXYNOS4_GPIO_E1_NR	(8)
+> -#define EXYNOS4_GPIO_E2_NR	(6)
+> -#define EXYNOS4_GPIO_E3_NR	(8)
+> -#define EXYNOS4_GPIO_E4_NR	(8)
+> +#define EXYNOS4210_GPIO_E0_NR	(5)
+> +#define EXYNOS4210_GPIO_E1_NR	(8)
+> +#define EXYNOS4210_GPIO_E2_NR	(6)
+> +#define EXYNOS4210_GPIO_E3_NR	(8)
+> +#define EXYNOS4210_GPIO_E4_NR	(8)
 
---->
+Please see my comments on Joonyoung Shim's previous patch...
+http://lists.infradead.org/pipermail/linux-arm-kernel/2012-May/101522.html
 
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: s3c6400_defconfig: enable more boards in defconfig
-
-This enables all of s3c64xx boards in the s3c6400_defconfig.
-In this time, MINI6410, REAL6410, and WLF_CRAGG_6410 are
-added in the defconfig.
-
-Cc: Darius Augulis <augulis.darius@gmail.com>
-Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
-  arch/arm/configs/s3c6400_defconfig |    3 +++
-  1 files changed, 3 insertions(+), 0 deletions(-)
-
-diff --git a/arch/arm/configs/s3c6400_defconfig 
-b/arch/arm/configs/s3c6400_defconfig
-index ba6a515..3a186d6 100644
---- a/arch/arm/configs/s3c6400_defconfig
-+++ b/arch/arm/configs/s3c6400_defconfig
-@@ -9,11 +9,14 @@ CONFIG_ARCH_S3C64XX=y
-  CONFIG_S3C_BOOT_ERROR_RESET=y
-  CONFIG_MACH_SMDK6400=y
-  CONFIG_MACH_ANW6410=y
-+CONFIG_MACH_MINI6410=y
-+CONFIG_MACH_REAL6410=y
-  CONFIG_MACH_SMDK6410=y
-  CONFIG_MACH_NCP=y
-  CONFIG_MACH_HMT=y
-  CONFIG_MACH_SMARTQ5=y
-  CONFIG_MACH_SMARTQ7=y
-+CONFIG_MACH_WLF_CRAGG_6410=y
-  CONFIG_CPU_32v6K=y
-  CONFIG_AEABI=y
-  CONFIG_CMDLINE="console=ttySAC0,115200 root=/dev/ram init=/linuxrc 
-initrd=0x51000000,6M ramdisk_size=6144"
--- 
+[...]
 
 Thanks.
 
