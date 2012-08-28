@@ -1,71 +1,100 @@
 From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH 0/3] Removal of obsolete s3c2410_* GPIO API
-Date: Tue, 28 Aug 2012 22:13:46 +0200
-Message-ID: <503D267A.2090406@gmail.com>
-References: <1345897243-15619-1-git-send-email-sylvester.nawrocki@gmail.com> <503C03D7.5050801@samsung.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Add .get_rate callback for "camif-upll"
+ clock
+Date: Tue, 28 Aug 2012 22:58:48 +0200
+Message-ID: <503D3108.1030804@gmail.com>
+References: <1346098329-32059-1-git-send-email-sylvester.nawrocki@gmail.com> <503BFB86.20607@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:63226 "EHLO
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:50490 "EHLO
 	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751937Ab2H1UNu (ORCPT
+	with ESMTP id S1752667Ab2H1U6w (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 16:13:50 -0400
-Received: by bkwj10 with SMTP id j10so1831078bkw.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 13:13:49 -0700 (PDT)
-In-Reply-To: <503C03D7.5050801@samsung.com>
+	Tue, 28 Aug 2012 16:58:52 -0400
+Received: by bkwj10 with SMTP id j10so1843887bkw.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 13:58:51 -0700 (PDT)
+In-Reply-To: <503BFB86.20607@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linus.walleij@stericsson.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/28/2012 01:33 AM, Kukjin Kim wrote:
-> On 08/25/12 05:20, Sylwester Nawrocki wrote:
->> This short patch series converts remaining users of the s3c24xx SoC
->> specific gpiolib functions to the gpiolib API and finally removes
->> all s3c2410_* functions from drivers/gpio/gpio-samsung.c.
+On 08/28/2012 12:58 AM, Kukjin Kim wrote:
+> On 08/27/12 13:12, Sylwester Nawrocki wrote:
+>> Add missing get_rate callback for the "camif-upll" clock, so frequen=
+cy
+>> of this clock is properly reported with clk_get_rate().
 >>
->> Sylwester Nawrocki (3):
->> ARM: S3C24XX: Convert users of s3c2410_gpio_setpin to gpiolib API
->> ARM: S3C24XX: Remove obsolete GPIO API declarations
->> gpio-samsung: Remove now unused s3c2410_gpio* API
+>> Signed-off-by: Sylwester Nawrocki<sylvester.nawrocki@gmail.com>
+>> ---
+>> arch/arm/mach-s3c24xx/clock-s3c2440.c | 14 ++++++++++++++
+>> 1 files changed, 14 insertions(+), 0 deletions(-)
 >>
->> arch/arm/mach-s3c24xx/mach-anubis.c | 3 +-
->> arch/arm/mach-s3c24xx/mach-jive.c | 12 ++--
->> arch/arm/mach-s3c24xx/mach-mini2440.c | 4 +-
->> arch/arm/mach-s3c24xx/mach-nexcoder.c | 22 +++---
->> arch/arm/mach-s3c24xx/mach-osiris.c | 7 +-
->> arch/arm/plat-samsung/include/plat/gpio-fns.h | 97 
->> -------------------------
->> drivers/gpio/gpio-samsung.c | 40 ----------
->> 7 files changed, 25 insertions(+), 160 deletions(-)
+>> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2440.c=20
+>> b/arch/arm/mach-s3c24xx/clock-s3c2440.c
+>> index cb2883d..749220f 100644
+>> --- a/arch/arm/mach-s3c24xx/clock-s3c2440.c
+>> +++ b/arch/arm/mach-s3c24xx/clock-s3c2440.c
+>> @@ -87,6 +87,19 @@ static int s3c2440_camif_upll_setrate(struct clk=20
+>> *clk, unsigned long rate)
+>> return 0;
+>> }
 >>
-> 
-> Nice cleanup.
+>> +static unsigned long s3c2440_camif_upll_getrate(struct clk *clk)
+>> +{
+>> + unsigned long parent_rate =3D clk_get_rate(clk->parent);
+>> + unsigned long camdivn =3D __raw_readl(S3C2440_CAMDIVN);
+>> +
+>> + if (!(camdivn& S3C2440_CAMDIVN_CAMCLK_SEL))
+>> + return parent_rate;
+>> +
+>> + camdivn&=3D S3C2440_CAMDIVN_CAMCLK_MASK;
+>> +
+>> + return parent_rate / (camdivn + 1) / 2;
+>=20
+> Well, why do we need '/ 2' here?
 
-Thanks for taking care of this whole series. 
+I simply followed documentation of the camera clock divider register
+(CAMDIVN). This is how CAMCLK_SEL and CAMCLK_DIV bit fields are describ=
+ed
+there:
 
-I thought it needs to be done as we go adding more and more new 
-code.. For time being it is my last GPIO cleanup patch series ;)
+CAMDIVN      |  Bit  |       Description
+-----------------------------------------------------------------------=
+---
+CAMCLK_SEL   | [4]   | 0 : Use CAMCLK with UPLL output(CAMCLK=3DUPLL ou=
+tput)
+             |       | 1 : CAMCLK is divided by CAMCLK_DIV value
+-------------+-------+-------------------------------------------------=
+---
+CAMCLK_DIV   | [3:0] | CAMCLK divide factor setting register(0 =96 15).
+             |       | Camera clock =3D UPLL / [(CAMCLK_DIV +1)x2].
+             |       | This bit is valid when CAMCLK_SEL=3D1.
 
-> Accordingly, we need to sort out the 
-> 'Documentation/arm/Samsung-S3C24XX/GPIO.txt' later?
+So, camera clock frequency =3D parent_rate / ((camdivn + 1) * 2).
+This is exactly same as 'parent_rate / ( camdivn + 1) / 2'.
 
-Indeed, I let this out for a moment. Let me tidy this up as well, when 
-I find some time.
+To be 1000% sure I compared frequency values reported from clk_get_rate=
+()
+in the driver with values measured with an oscilloscope at the CAMCLKOU=
+T
+pin. Everything was as expected (UPLL - 48 MHz, CAMCLKOUT - 12 MHz).
 
+Also, it's easy to confirm correctness of this code by inversing equati=
+ons
+found in function s3c2440_camif_upll_setrate(), i.e.
 
-Thanks,
+ camdivn &=3D ~(S3C2440_CAMDIVN_CAMCLK_SEL | S3C2440_CAMDIVN_CAMCLK_MAS=
+K);
+ if (rate !=3D parent_rate) {
+ 	camdivn |=3D S3C2440_CAMDIVN_CAMCLK_SEL;
+ 	camdivn |=3D (((parent_rate / rate) / 2) - 1);
+ }
+
+ __raw_writel(camdivn, S3C2440_CAMDIVN);
+
+--
+Regards,
 Sylwester
-
-> Linus, this series should be sent to upstream via both trees, samsung 
-> and gpio to avoid useless merge conflicts. How do you think?
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
-> -- 
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
