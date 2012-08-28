@@ -1,95 +1,82 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Add support for secondary CPU bring-up on
- Exynos4412
-Date: Tue, 28 Aug 2012 13:13:40 +0200
-Message-ID: <1422318.SfZfh0XoVo@amdc1227>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v4 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Tue, 28 Aug 2012 16:53:23 +0530
+Message-ID: <CAJuYYwQe1R7=Tj_pg8u2Wc9XwjeZP9jYbTDtUk7vVTomQTW_qg@mail.gmail.com>
+References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
+	<1345981927-26359-5-git-send-email-thomas.abraham@linaro.org>
+	<002501cd8509$e97dad60$bc790820$%jun@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:65479 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751588Ab2H1LNr (ORCPT
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:64144 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1750876Ab2H1LXZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 07:13:47 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9G000Y8PUXIH90@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 20:13:45 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9G00ALPPUTFV60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 20:13:45 +0900 (KST)
+	Tue, 28 Aug 2012 07:23:25 -0400
+Received: by lagy9 with SMTP id y9so3190973lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 04:23:23 -0700 (PDT)
+In-Reply-To: <002501cd8509$e97dad60$bc790820$%jun@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Seungwon Jeon <tgih.jun@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, patches@linaro.org
 
-Exynos4412 uses different information register for each core. This patch
-adjusts the bring-up code to take that into account.
+On 28 August 2012 16:13, Seungwon Jeon <tgih.jun@samsung.com> wrote:
+> On Sunday, August 26, 2012 Thomas Abraham <thomas.abraham@linaro.org> wrote:
+>> Some platforms allow for clock gating and control of bus interface unit clock
+>> and card interface unit clock. Add support for clock lookup of optional biu
+>> and ciu clocks for clock gating and clock speed determination.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c  |   42 +++++++++++++++++++++++++++++++++++++++---
+>>  include/linux/mmc/dw_mmc.h |    4 ++++
+>>  2 files changed, 43 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index cd58063..679473c 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -1953,18 +1953,38 @@ int dw_mci_probe(struct dw_mci *host)
+>>               return -ENODEV;
+>>       }
+>>
+>> -     if (!host->pdata->bus_hz) {
+>> +     host->biu_clk = clk_get(host->dev, "biu");
+>> +     if (IS_ERR(host->biu_clk))
+>> +             dev_dbg(host->dev, "biu clock not available\n");
+>> +     else
+>> +             clk_prepare_enable(host->biu_clk);
+>> +
+>> +     host->ciu_clk = clk_get(host->dev, "ciu");
+>> +     if (IS_ERR(host->ciu_clk))
+>> +             dev_dbg(host->dev, "ciu clock not available\n");
+>> +     else
+>> +             clk_prepare_enable(host->ciu_clk);
+>> +
+>> +     if (IS_ERR(host->ciu_clk))
+>> +             host->bus_hz = host->pdata->bus_hz;
+>> +     else
+>> +             host->bus_hz = clk_get_rate(host->ciu_clk);
+> I have remained comment in [PATCH 3/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+> Could I get your opinion?
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c | 25 ++++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+Are you referring to the following comment.
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 36c3984..1114ced 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -34,8 +34,19 @@
- 
- extern void exynos4_secondary_startup(void);
- 
--#define CPU1_BOOT_REG		(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--				S5P_INFORM5 : S5P_VA_SYSRAM)
-+static inline volatile void *cpu_boot_reg_base(void)
-+{
-+	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-+		return S5P_INFORM5;
-+	return S5P_VA_SYSRAM;
-+}
-+
-+static inline volatile void *cpu_boot_reg(int cpu)
-+{
-+	if (soc_is_exynos4412())
-+		return cpu_boot_reg_base() + 4*cpu;
-+	return cpu_boot_reg_base();
-+}
- 
- /*
-  * control for which core is the next to come out of the secondary
-@@ -138,7 +149,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 		smp_rmb();
- 
- 		__raw_writel(virt_to_phys(exynos4_secondary_startup),
--			CPU1_BOOT_REG);
-+							cpu_boot_reg(cpu));
- 		gic_raise_softirq(cpumask_of(cpu), 1);
- 
- 		if (pen_release == -1)
-@@ -186,6 +197,8 @@ void __init smp_init_cpus(void)
- 
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
-+	int i;
-+
- 	if (!soc_is_exynos5250())
- 		scu_enable(scu_base_addr());
- 
-@@ -195,6 +208,8 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- 	 * until it receives a soft interrupt, and then the
- 	 * secondary CPU branches to this address.
- 	 */
--	__raw_writel(virt_to_phys(exynos4_secondary_startup),
--			CPU1_BOOT_REG);
-+	for (i = 1; i < max_cpus; ++i) {
-+		__raw_writel(virt_to_phys(exynos4_secondary_startup),
-+							cpu_boot_reg(i));
-+	}
- }
--- 
-1.7.12
+> I have posted similar patch some time back.
+> bus_hz represents input rate for cclk_in of mshc.
+> Host of samsung soc doesn't use input clock from system directly.
+> As you have introduced CLKSEL in your another patch, input clock can be
+> changed prior to cclk_in.
+> For non-samsung  host, we don't need to consider this with generic way?
+
+The biu and ciu clocks are generic clocks which a platform can
+instantiate. The other option being to use the platform data to
+specify the clock speed using pdata->bus_hz.
+
+The use CLKSEL register is now moved into exynos specific code. So
+non-samsung host is not affected in any way.
+
+Thanks,
+Thomas.
