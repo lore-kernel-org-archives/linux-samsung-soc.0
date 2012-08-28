@@ -1,100 +1,167 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] ARM: S3C24XX: Add .get_rate callback for "camif-upll"
- clock
-Date: Tue, 28 Aug 2012 22:58:48 +0200
-Message-ID: <503D3108.1030804@gmail.com>
-References: <1346098329-32059-1-git-send-email-sylvester.nawrocki@gmail.com> <503BFB86.20607@samsung.com>
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Subject: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
+Date: Tue, 28 Aug 2012 23:55:43 +0200
+Message-ID: <201208282355.44268.heiko@sntech.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:50490 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752667Ab2H1U6w (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 16:58:52 -0400
-Received: by bkwj10 with SMTP id j10so1843887bkw.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 13:58:51 -0700 (PDT)
-In-Reply-To: <503BFB86.20607@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Grant Likely <grant.likely@secretlab.ca>, Rob Herring <rob.herring@calxeda.com>, Rob Landley <rob@landley.net>, Linus Walleij <linus.walleij@stericsson.com>, Olof Johansson <olof@lixom.net>, Thomas Abraham <thomas.abraham@linaro.org>, Kukjin Kim <kgene.kim@samsung.com>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 08/28/2012 12:58 AM, Kukjin Kim wrote:
-> On 08/27/12 13:12, Sylwester Nawrocki wrote:
->> Add missing get_rate callback for the "camif-upll" clock, so frequen=
-cy
->> of this clock is properly reported with clk_get_rate().
->>
->> Signed-off-by: Sylwester Nawrocki<sylvester.nawrocki@gmail.com>
->> ---
->> arch/arm/mach-s3c24xx/clock-s3c2440.c | 14 ++++++++++++++
->> 1 files changed, 14 insertions(+), 0 deletions(-)
->>
->> diff --git a/arch/arm/mach-s3c24xx/clock-s3c2440.c=20
->> b/arch/arm/mach-s3c24xx/clock-s3c2440.c
->> index cb2883d..749220f 100644
->> --- a/arch/arm/mach-s3c24xx/clock-s3c2440.c
->> +++ b/arch/arm/mach-s3c24xx/clock-s3c2440.c
->> @@ -87,6 +87,19 @@ static int s3c2440_camif_upll_setrate(struct clk=20
->> *clk, unsigned long rate)
->> return 0;
->> }
->>
->> +static unsigned long s3c2440_camif_upll_getrate(struct clk *clk)
->> +{
->> + unsigned long parent_rate =3D clk_get_rate(clk->parent);
->> + unsigned long camdivn =3D __raw_readl(S3C2440_CAMDIVN);
->> +
->> + if (!(camdivn& S3C2440_CAMDIVN_CAMCLK_SEL))
->> + return parent_rate;
->> +
->> + camdivn&=3D S3C2440_CAMDIVN_CAMCLK_MASK;
->> +
->> + return parent_rate / (camdivn + 1) / 2;
->=20
-> Well, why do we need '/ 2' here?
+Until now the Exynos-SoC was the only Samsung-SoC supporting the GPIOs
+via the device tree. This patch implements dt-support for the
+s3c24xx arches.
 
-I simply followed documentation of the camera clock divider register
-(CAMDIVN). This is how CAMCLK_SEL and CAMCLK_DIV bit fields are describ=
-ed
-there:
+The controllers contain only 3 cells, as the underlying gpio controller
+does not support controlling the drive strength on a gpio level.
 
-CAMDIVN      |  Bit  |       Description
------------------------------------------------------------------------=
+Tested with the gpio-keys driver on a s3c2416 based machine.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
-CAMCLK_SEL   | [4]   | 0 : Use CAMCLK with UPLL output(CAMCLK=3DUPLL ou=
-tput)
-             |       | 1 : CAMCLK is divided by CAMCLK_DIV value
--------------+-------+-------------------------------------------------=
----
-CAMCLK_DIV   | [3:0] | CAMCLK divide factor setting register(0 =96 15).
-             |       | Camera clock =3D UPLL / [(CAMCLK_DIV +1)x2].
-             |       | This bit is valid when CAMCLK_SEL=3D1.
+changes since v1:
+update bindings documentation to address SoC specific issues
 
-So, camera clock frequency =3D parent_rate / ((camdivn + 1) * 2).
-This is exactly same as 'parent_rate / ( camdivn + 1) / 2'.
+ .../devicetree/bindings/gpio/gpio-samsung.txt      |   43 +++++++++++++
+ drivers/gpio/gpio-samsung.c                        |   63 ++++++++++++++++++++
+ 2 files changed, 106 insertions(+), 0 deletions(-)
 
-To be 1000% sure I compared frequency values reported from clk_get_rate=
-()
-in the driver with values measured with an oscilloscope at the CAMCLKOU=
-T
-pin. Everything was as expected (UPLL - 48 MHz, CAMCLKOUT - 12 MHz).
-
-Also, it's easy to confirm correctness of this code by inversing equati=
-ons
-found in function s3c2440_camif_upll_setrate(), i.e.
-
- camdivn &=3D ~(S3C2440_CAMDIVN_CAMCLK_SEL | S3C2440_CAMDIVN_CAMCLK_MAS=
-K);
- if (rate !=3D parent_rate) {
- 	camdivn |=3D S3C2440_CAMDIVN_CAMCLK_SEL;
- 	camdivn |=3D (((parent_rate / rate) / 2) - 1);
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+index 5375625..f1e5dfe 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio-samsung.txt
+@@ -39,3 +39,46 @@ Example:
+ 		#gpio-cells = <4>;
+ 		gpio-controller;
+ 	};
++
++
++Samsung S3C24XX GPIO Controller
++
++Required properties:
++- compatible: Compatible property value should be "samsung,s3c24xx-gpio".
++
++- reg: Physical base address of the controller and length of memory mapped
++  region.
++
++- #gpio-cells: Should be 3. The syntax of the gpio specifier used by client nodes
++  should be the following with values derived from the SoC user manual.
++     <[phandle of the gpio controller node]
++      [pin number within the gpio controller]
++      [mux function]
++      [flags and pull up/down]
++
++  Values for gpio specifier:
++  - Pin number: depending on the controller a number from 0 up to 15.
++  - Mux function: Depending on the SoC and the gpio bank the gpio can be set
++                  as input, output or a special function
++  - Flags and Pull Up/Down: the values to use differ for the individual SoCs
++                    example S3C2416/S3C2450:
++                            0 - Pull Up/Down Disabled.
++                            1 - Pull Down Enabled.
++                            2 - Pull Up Enabled.
++          Bit 16 (0x00010000) - Input is active low.
++  Consult the user manual for the correct values of Mux and Pull Up/Down.
++
++- gpio-controller: Specifies that the node is a gpio controller.
++- #address-cells: should be 1.
++- #size-cells: should be 1.
++
++Example:
++
++	gpa: gpio-controller@56000000 {
++		#address-cells = <1>;
++		#size-cells = <1>;
++		compatible = "samsung,s3c24xx-gpio";
++		reg = <0x56000000 0x10>;
++		#gpio-cells = <3>;
++		gpio-controller;
++	};
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index ba126cc..54f6663 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -938,6 +938,67 @@ static void __init samsung_gpiolib_add(struct samsung_gpio_chip *chip)
+ 		s3c_gpiolib_track(chip);
  }
+ 
++#if defined(CONFIG_PLAT_S3C24XX) && defined(CONFIG_OF)
++static int s3c24xx_gpio_xlate(struct gpio_chip *gc,
++			const struct of_phandle_args *gpiospec, u32 *flags)
++{
++	unsigned int pin;
++
++	if (WARN_ON(gc->of_gpio_n_cells < 3))
++		return -EINVAL;
++
++	if (WARN_ON(gpiospec->args_count < gc->of_gpio_n_cells))
++		return -EINVAL;
++
++	if (gpiospec->args[0] > gc->ngpio)
++		return -EINVAL;
++
++	pin = gc->base + gpiospec->args[0];
++
++	if (s3c_gpio_cfgpin(pin, S3C_GPIO_SFN(gpiospec->args[1])))
++		pr_warn("gpio_xlate: failed to set pin function\n");
++	if (s3c_gpio_setpull(pin, gpiospec->args[2] & 0xffff))
++		pr_warn("gpio_xlate: failed to set pin pull up/down\n");
++
++	if (flags)
++		*flags = gpiospec->args[2] >> 16;
++
++	return gpiospec->args[0];
++}
++
++static const struct of_device_id s3c24xx_gpio_dt_match[] __initdata = {
++	{ .compatible = "samsung,s3c24xx-gpio", },
++	{}
++};
++
++static __init void s3c24xx_gpiolib_attach_ofnode(struct samsung_gpio_chip *chip,
++						 u64 base, u64 offset)
++{
++	struct gpio_chip *gc =  &chip->chip;
++	u64 address;
++
++	if (!of_have_populated_dt())
++		return;
++
++	address = chip->base ? base + ((u32)chip->base & 0xfff) : base + offset;
++	gc->of_node = of_find_matching_node_by_address(NULL,
++			s3c24xx_gpio_dt_match, address);
++	if (!gc->of_node) {
++		pr_info("gpio: device tree node not found for gpio controller"
++			" with base address %08llx\n", address);
++		return;
++	}
++	gc->of_gpio_n_cells = 3;
++	gc->of_xlate = s3c24xx_gpio_xlate;
++}
++#elif defined(CONFIG_PLAT_S3C24XX)
++static __init void s3c24xx_gpiolib_attach_ofnode(struct samsung_gpio_chip *chip,
++						 u64 base, u64 offset)
++{
++	return;
++}
++#endif /* defined(CONFIG_PLAT_S3C24XX) && defined(CONFIG_OF) */
++
+ static void __init s3c24xx_gpiolib_add_chips(struct samsung_gpio_chip *chip,
+ 					     int nr_chips, void __iomem *base)
+ {
+@@ -962,6 +1023,8 @@ static void __init s3c24xx_gpiolib_add_chips(struct samsung_gpio_chip *chip,
+ 			gc->direction_output = samsung_gpiolib_2bit_output;
+ 
+ 		samsung_gpiolib_add(chip);
++
++		s3c24xx_gpiolib_attach_ofnode(chip, S3C24XX_PA_GPIO, i * 0x10);
+ 	}
+ }
+ 
+-- 
+1.7.2.3
 
- __raw_writel(camdivn, S3C2440_CAMDIVN);
-
---
-Regards,
-Sylwester
