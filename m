@@ -1,159 +1,68 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v4 9/9] mmc: dw_mmc: add support for exynos specific
- implementation of dw-mshc
-Date: Tue, 28 Aug 2012 19:43:54 +0900
-Message-ID: <002601cd850a$050dcc90$0f2965b0$%jun@samsung.com>
-References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
- <1345981927-26359-10-git-send-email-thomas.abraham@linaro.org>
- <002201cd84eb$a26dfab0$e749f010$%jun@samsung.com>
- <CAJuYYwSPuWmJb-7NFU1DGxLcVak1EUTxJgzAyRnAY7FQSFNUfg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] ARM: EXYNOS: Use non-secure MDMA1
+Date: Tue, 28 Aug 2012 13:08:28 +0200
+Message-ID: <5886686.Vz6SVkoRWm@amdc1227>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56117 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750761Ab2H1KoX (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:59879 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751956Ab2H1LIc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 06:44:23 -0400
-In-reply-to: <CAJuYYwSPuWmJb-7NFU1DGxLcVak1EUTxJgzAyRnAY7FQSFNUfg@mail.gmail.com>
-Content-language: ko
+	Tue, 28 Aug 2012 07:08:32 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9G00ITVPM5Q9B0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 20:08:31 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M9G002CDPM50ZA0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 20:08:31 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, patches@linaro.org
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On Tuesday, August 28, 2012 Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> Hi Seungwon,
-> 
-> On 28 August 2012 12:36, Seungwon Jeon <tgih.jun@samsung.com> wrote:
-> > Hi Thomas,
-> >
-> > Thank you for your effort.
-> > Some reviews seems like to be omitted. Please check more.
-> >
-> > On Sunday, August 26, 2012 Thomas Abraham <thomas.abraham@linaro.org> wrote:
-> >> Samsung Exynos SoC's extend the dw-mshc controller for additional clock and bus
-> >> control. Add support for these extensions and include provide device tree based
-> >> discovery suppory as well.
-> 
-> [...]
-> 
-> >> +static struct dw_mci_exynos_compatible {
-> >> +     char                            *compatible;
-> >> +     enum dw_mci_exynos_type         ctrl_type;
-> >> +} exynos_compat[] = {
-> >> +     {
-> >> +             .compatible     = "samsung,exynos4210-dw-mshc",
-> >> +             .ctrl_type      = DW_MCI_TYPE_EXYNOS4210,
-> >> +     }, {
-> >> +             .compatible     = "samsung,exynos4210-dw-mshc",
-> > typo? exynos4412-dw-mshc is expected.
-> 
-> Yes, that was a typo. I will fix it.
-> 
-> [...]
-> 
-> >> +static void dw_mci_exynos_prepare_command(struct dw_mci *host, u32 *cmdr)
-> >> +{
-> >> +     struct dw_mci_exynos_priv_data *priv = host->priv;
-> >> +     u8 drv;
-> >> +
-> >> +     /*
-> >> +      * Exynos4412 and Exynos5250 extends the use of CMD register with the
-> >> +      * use of bit 29 (which is reserved on standard MSHC controllers) for
-> >> +      * optionally bypassing the HOLD register for command and data. The
-> >> +      * HOLD register should be bypassed in case there is no phase shift
-> >> +      * applied on CMD/DATA that is sent to the card.
-> >> +      */
-> >> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS4412)
-> >> +             drv = SDMMC_CLKSEL_GET_DRV_WD2(mci_readl(host, CLKSEL));
-> > As it  has been mentioned previously,  only exynos4210 uses 2-bit.
-> > So SDMMC_CLKSEL_GET_DRV_WD3 will be right in exynos4412.
-> 
-> In the Exynos4412 user manual that I referred, the SelClk_Drv and
-> SelClk_Sample bit fields of the CLKSEL register are 2 bits wide. Could
-> you please confirm that these two bit-fields are in fact 3 bits wide?
-I think you are referring old manual. 3-bit is right.
-I hope you find this.
+Using secure MDMA1 on TrustZone-enabled boards causes early boot crash,
+so use non-secure instead.
 
-> 
-> >
-> >> +     else if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5250)
-> >> +             drv = SDMMC_CLKSEL_GET_DRV_WD3(mci_readl(host, CLKSEL));
-> >> +     else
-> >> +             return;
-> >> +     if (drv)
-> >> +             *cmdr |= SDMMC_CMD_USE_HOLD_REG;
-> >> +}
-> >> +
-> >> +static void dw_mci_exynos_set_ios(struct dw_mci *host, struct mmc_ios *ios)
-> >> +{
-> >> +     struct dw_mci_exynos_priv_data *priv = host->priv;
-> >> +
-> >> +     if (ios->timing == MMC_TIMING_UHS_DDR50)
-> >> +             mci_writel(host, CLKSEL, priv->ddr_timing);
-> >> +     else
-> >> +             mci_writel(host, CLKSEL, priv->sdr_timing);
-> >> +
-> >> +     host->bus_hz = clk_get_rate(host->ciu_clk);
-> >> +     if (priv->ctrl_type == DW_MCI_TYPE_EXYNOS5250)
-> >> +             host->bus_hz /= SDMMC_CLKSEL_GET_DIVRATIO(
-> >> +                                     mci_readl(host, CLKSEL));
-> > bus_hz should be recalculated for exynoxs4 as well.
-> > Could you check the previous mailing?
-> 
-> Exynos4 does not have the additional clock divisor, as in Exynos5250.
-> Could you please explain why the bus_hz clock should be divided in
-> Exynos4?
-Yes, clock divisor is used in Exynos5250.
-In case of Exynos4 SoC's, divider value(DIVRATIO) isn't exposed to register.
-But  SDCLKIN is divided by fixed divider value internally.
-As mentioned previously, divider is used like below.
-Exynos4210 : 2
-Exynos4X12 : 4
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/dma.c              | 2 +-
+ arch/arm/mach-exynos/include/mach/map.h | 3 ++-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-> 
-> >
-> >> +}
-> >> +
-> >> +static int dw_mci_exynos_parse_dt(struct dw_mci *host)
-> >> +{
-> >> +     struct dw_mci_exynos_priv_data *priv = host->priv;
-> >> +     u32 timing[3];
-> >> +
-> >> +     if (of_property_read_u32_array(host->dev->of_node,
-> >> +                     "samsung,dw-mshc-sdr-timing", timing, 3))
-> >> +             priv->sdr_timing = DW_MCI_DEF_SDR_TIMING;
-> >> +     else
-> >> +             priv->sdr_timing = SDMMC_CLKSEL_TIMING(timing[0],
-> >> +                                     timing[1], timing[2]);
-> >> +
-> >> +     if (of_property_read_u32_array(host->dev->of_node,
-> >> +                     "samsung,dw-mshc-ddr-timing", timing, 3))
-> >> +             priv->ddr_timing = DW_MCI_DEF_DDR_TIMING;
-> >> +     else
-> >> +             priv->ddr_timing = SDMMC_CLKSEL_TIMING(timing[0],
-> >> +                                     timing[1], timing[2]);
-> >> +     return 0;
-> > DW_MCI_DEF_SDR_TIMING and DW_MCI_DEF_DDR_TIMING are board-specific timing values.
-> > So, these values can't be used commonly. It has been already discussed.
-> > If this property is empty, returning error with message will be fine.
-> > Currently just 0 is always returned.
-> 
-> Yes, you had mentioned this previously. But these are only default
-> values. In case, a board cannot work with these default values, the
-> board's dtsi file should provide the correct values by using these
-> bindings. What is your opinion on this, please let me know.
-Is there any basis for these value which you chose?
-If these can be acceptable for the most part, we can consider it for default value.
-But it depends on host of SOC and target board.
-
-Thanks,
-Seungwon Jeon
-
-> 
-> Thanks for your time reviewing this patch series.
-> 
-> Regards,
-> Thomas.
+diff --git a/arch/arm/mach-exynos/dma.c b/arch/arm/mach-exynos/dma.c
+index f60b66d..8858df5 100644
+--- a/arch/arm/mach-exynos/dma.c
++++ b/arch/arm/mach-exynos/dma.c
+@@ -261,7 +261,7 @@ static struct dma_pl330_platdata exynos_mdma1_pdata = {
+ };
+ 
+ static AMBA_AHB_DEVICE(exynos_mdma1,  "dma-pl330.2", 0x00041330,
+-	EXYNOS4_PA_MDMA1, {EXYNOS4_IRQ_MDMA1}, &exynos_mdma1_pdata);
++	EXYNOS4_PA_NS_MDMA1, {EXYNOS4_IRQ_MDMA1}, &exynos_mdma1_pdata);
+ 
+ static int __init exynos_dma_init(void)
+ {
+diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-
+exynos/include/mach/map.h
+index 51943f2..5df5910 100644
+--- a/arch/arm/mach-exynos/include/mach/map.h
++++ b/arch/arm/mach-exynos/include/mach/map.h
+@@ -89,7 +89,8 @@
+ #define EXYNOS4_PA_L2CC			0x10502000
+ 
+ #define EXYNOS4_PA_MDMA0		0x10810000
+-#define EXYNOS4_PA_MDMA1		0x12840000
++#define EXYNOS4_PA_S_MDMA1		0x12840000
++#define EXYNOS4_PA_NS_MDMA1		0x12850000
+ #define EXYNOS4_PA_PDMA0		0x12680000
+ #define EXYNOS4_PA_PDMA1		0x12690000
+ #define EXYNOS5_PA_MDMA0		0x10800000
+-- 
+1.7.12
