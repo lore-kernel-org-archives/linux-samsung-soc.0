@@ -1,44 +1,74 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: Re: [PATCH 0/3] Removal of obsolete s3c2410_* GPIO API
-Date: Tue, 28 Aug 2012 16:12:45 -0700
-Message-ID: <503D506D.9090201@samsung.com>
-References: <1345897243-15619-1-git-send-email-sylvester.nawrocki@gmail.com> <CACRpkdaspHBDUjwf_bPtZoFeYK7q97oX4Jat=pmX810RtGJOpA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: Exynos4: Turn off clocks for NAND, OneNAND and TSI
+ controllers
+Date: Tue, 28 Aug 2012 16:20:18 -0700
+Message-ID: <503D5232.5040101@samsung.com>
+References: <1345819936-6503-1-git-send-email-chander.kashyap@linaro.org> <CAJuYYwSFMR1cJm7SB-eF_aYM9SPMaopvw3K9stiPvabCfjH=QA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:41773 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751021Ab2H1XMs (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:40118 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752145Ab2H1XUX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 19:12:48 -0400
-Received: by pbbrr13 with SMTP id rr13so49419pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 16:12:48 -0700 (PDT)
-In-Reply-To: <CACRpkdaspHBDUjwf_bPtZoFeYK7q97oX4Jat=pmX810RtGJOpA@mail.gmail.com>
+	Tue, 28 Aug 2012 19:20:23 -0400
+Received: by dady13 with SMTP id y13so3637444dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 16:20:23 -0700 (PDT)
+In-Reply-To: <CAJuYYwSFMR1cJm7SB-eF_aYM9SPMaopvw3K9stiPvabCfjH=QA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, kgene.kim@samsung.com, linus.walleij@stericsson.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Chander Kashyap <chander.kashyap@linaro.org>, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, patches@linaro.org
 
-On 08/27/12 17:13, Linus Walleij wrote:
-> On Sat, Aug 25, 2012 at 5:20 AM, Sylwester Nawrocki
-> <sylvester.nawrocki@gmail.com>  wrote:
+On 08/28/12 01:15, Thomas Abraham wrote:
+> On 24 August 2012 20:22, Chander Kashyap<chander.kashyap@linaro.org>  wrote:
+>> The clocks for NAND, OneNAND and Transport Stream Interface(TSI)
+>> controllers could be either enabled or disabled at boot. To ensure
+>> that these are turned off until used, add them to the list of clocks
+>> to be turned off during boot.
+>>
+>> Signed-off-by: Chander Kashyap<chander.kashyap@linaro.org>
+>> ---
+>>   arch/arm/mach-exynos/clock-exynos4.c |   12 ++++++++++++
+>>   1 file changed, 12 insertions(+)
+>>
+>> diff --git a/arch/arm/mach-exynos/clock-exynos4.c b/arch/arm/mach-exynos/clock-exynos4.c
+>> index 2f51293..7cc5491 100644
+>> --- a/arch/arm/mach-exynos/clock-exynos4.c
+>> +++ b/arch/arm/mach-exynos/clock-exynos4.c
+>> @@ -501,6 +501,10 @@ static struct clk exynos4_init_clocks_off[] = {
+>>                  .enable         = exynos4_clk_ip_cam_ctrl,
+>>                  .ctrlbit        = (1<<  3),
+>>          }, {
+>> +               .name           = "tsi",
+>> +               .enable         = exynos4_clk_ip_fsys_ctrl,
+>> +               .ctrlbit        = (1<<  4),
+>> +       }, {
+>>                  .name           = "hsmmc",
+>>                  .devname        = "exynos4-sdhci.0",
+>>                  .parent         =&exynos4_clk_aclk_133.clk,
+>> @@ -530,6 +534,14 @@ static struct clk exynos4_init_clocks_off[] = {
+>>                  .enable         = exynos4_clk_ip_fsys_ctrl,
+>>                  .ctrlbit        = (1<<  9),
+>>          }, {
+>> +               .name           = "onenand",
+>> +               .enable         = exynos4_clk_ip_fsys_ctrl,
+>> +               .ctrlbit        = (1<<  15),
+>> +       }, {
+>> +               .name           = "nfcon",
+>> +               .enable         = exynos4_clk_ip_fsys_ctrl,
+>> +               .ctrlbit        = (1<<  16),
+>> +       }, {
+>>                  .name           = "dac",
+>>                  .devname        = "s5p-sdo",
+>>                  .enable         = exynos4_clk_ip_tv_ctrl,
+>> --
+>> 1.7.9.5
 >
->> This short patch series converts remaining users of the s3c24xx SoC
->> specific gpiolib functions to the gpiolib API and finally removes
->> all s3c2410_* functions from drivers/gpio/gpio-samsung.c.
->
-> I'm fine with this as long as the Samsung maintainer is, so
-> Acked-by: Linus Walleij<linus.walleij@linaro.org>
->
-Thanks, applied this series with your ack.
+> Reviewed-by: Thomas Abraham<thomas.abraham@linaro.org>
 
-> But I suspect this will be merged through the Samsung SoC tree?
->
-Yes, then will be sent to upstream via arm-soc. If any problems, please 
-let me know.
-
-Thanks.
+Applied, thanks.
 
 Best regards,
 Kgene.
