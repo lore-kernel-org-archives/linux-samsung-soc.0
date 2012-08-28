@@ -1,131 +1,71 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v3 3/3] ARM: dts: Add nodes for dw_mmc controllers for
- Samsung Exynos5250 platforms
-Date: Tue, 28 Aug 2012 10:36:45 +0530
-Message-ID: <CAJuYYwTHXbWLchv-426hZjkqP9-eS_hg10G4CJuKox96Q2JQXQ@mail.gmail.com>
-References: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org>
-	<1345982371-26483-4-git-send-email-thomas.abraham@linaro.org>
-	<503BF8D3.9060507@samsung.com>
+Subject: Re: [PATCH v4 9/9] mmc: dw_mmc: add support for exynos specific
+ implementation of dw-mshc
+Date: Tue, 28 Aug 2012 10:40:01 +0530
+Message-ID: <CAJuYYwSCJ4M6-49ELvgBz-o42kvvExTs=U+qrG_KSF2--zrD4g@mail.gmail.com>
+References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
+	<1345981927-26359-10-git-send-email-thomas.abraham@linaro.org>
+	<503B36D0.4030208@samsung.com>
+	<CAJuYYwTKXuJe-8N3kOkkUg_bCzAdG-cG4yjk67zF7dmrg+eGpw@mail.gmail.com>
+	<503C4F5D.8050302@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:61347 "EHLO
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:43647 "EHLO
 	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1750894Ab2H1FGr (ORCPT
+	by vger.kernel.org with ESMTP id S1751334Ab2H1FKE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 01:06:47 -0400
-Received: by lagy9 with SMTP id y9so3016233lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 22:06:46 -0700 (PDT)
-In-Reply-To: <503BF8D3.9060507@samsung.com>
+	Tue, 28 Aug 2012 01:10:04 -0400
+Received: by lagy9 with SMTP id y9so3017372lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 22:10:02 -0700 (PDT)
+In-Reply-To: <503C4F5D.8050302@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
 
-On 28 August 2012 04:16, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> On 08/26/12 04:59, Thomas Abraham wrote:
->>
->> Add device nodes for the four instances of dw_mmc controllers in
->> Exynos5250
->> and enable instance 0 and 2 for the smdk5250 board.
->>
->> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
->> ---
->>   arch/arm/boot/dts/exynos5250-smdk5250.dts |   57
->> ++++++++++++++++++++++++++++-
->>   arch/arm/boot/dts/exynos5250.dtsi         |   32 ++++++++++++++++
->>   2 files changed, 88 insertions(+), 1 deletions(-)
->>
->> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> index 8a5e348..6dc9faf 100644
->> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
->> @@ -16,12 +16,19 @@
->>         model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
->>         compatible = "samsung,smdk5250", "samsung,exynos5250";
->>
->> +       aliases {
->> +               mshc0 =&mshc_0;
->> +               mshc1 =&mshc_1;
->> +               mshc2 =&mshc_2;
->> +               mshc3 =&mshc_3;
->> +       };
->> +
->>         memory {
->>                 reg =<0x40000000 0x80000000>;
->>         };
->>
->>         chosen {
->> -               bootargs = "root=/dev/ram0 rw ramdisk=8192
->> console=ttySAC1,115200";
->> +               bootargs = "root=/dev/ram0 rw ramdisk=8192
->> initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
+On 28 August 2012 10:25, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi Thomas,
 >
->
-> Yes, we need to sort out the 'bootargs' for using uart2 as a console, but
-> you know, this should be separated :-)
->
+> On 08/28/2012 01:48 PM, Thomas Abraham wrote:
+>> On 27 August 2012 14:28, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+>>> Hi Thomas,
+>>>
+>>>> +     gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
+>>>> +     if (gpio_is_valid(gpio)) {
+>>>> +             if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
+>>>> +                     dev_info(host->dev, "gpio [%d] request failed\n",
+>>>> +                                             gpio);
+>>>> +     } else {
+>>>> +             dev_info(host->dev, "wp gpio not available");
+>>>> +             host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
+>>>> +     }
+>>>> +
+>>>> +     if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
+>>>> +             return 0;
+>>>> +
+>>>> +     gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
+>>>> +     if (gpio_is_valid(gpio)) {
+>>>> +             if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
+>>> I'm not sure, but i saw mmc_gpio_request_cd() into drivers/mmc/core/slot-gpio.c.
+>>> Can we use this? i think we can use them.
+>>> Just my opinion.
+>>
+>> Thanks for letting me know about this, I was not aware of this.
+>> Looking into this code, it is usable for controllers that use a gpio
+>> (specified using cd-gpios property) as card-detect line. As you know,
+>> the dw-mmc driver does not support this feature yet. In case of
+>> exynos, the card-detect pin of the mmc slot is connected to the
+>> card-detect pad of the dw-mmc controller using pinmux, which is not
+>> considered as a gpio. Hence, mmc_gpio_request_cd() is not applicable
+>> in this case.
+> But In case of external card-detect-pin, we can use the mmc_gpio_request_cd().
 
-Sorry, that was never intended to be in this patch. My mistake.
-
->
->>         };
->>
->>         i2c@12C60000 {
->> @@ -72,6 +79,54 @@
->>                 status = "disabled";
->>         };
->>
->> +       mshc_0: dwmmc0@12200000 {
->
->
-> How about to keep the consistent naming? dwmmc or dw_mmc? I think, 'dw_mmc'
-> makes more sense?
-
-Ok.
-
->
->
->> +               num-slots =<1>;
->> +               supports-highspeed;
->> +               broken-cd;
->> +               fifo-depth =<0x80>;
->> +               card-detect-delay =<200>;
->> +               samsung,dw-mshc-sdr-timing =<2 3 3>;
->> +               samsung,dw-mshc-ddr-timing =<1 2 3>;
->
->
-> We need to think again the name of dw-mshc-sdr-timing, dw-mshc-ddr-timing?
-
-Synopsis calls this controller "Mobile Storage Host Controller (MSHC)"
-in their online data sheets. Hence, all the bindings (which are used
-on non-samsung platforms as well) follow the this name. For any
-Samsung specific code for this controller, we are free to choose any
-name.
-
->
-> [...]
->
->
->> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
->> b/arch/arm/boot/dts/exynos5250.dtsi
->> index 004aaa8..f69e389 100644
->> --- a/arch/arm/boot/dts/exynos5250.dtsi
->> +++ b/arch/arm/boot/dts/exynos5250.dtsi
->> @@ -182,6 +182,38 @@
->>                 #size-cells =<0>;
->>         };
->>
->> +       dwmmc0@12200000 {
->> +               compatible = "samsung,exynos5250-dw-mshc";
->
->
-> I'm not sure, 'exynos5250-dw-mshc' is right here. Because it is just dw_mmc
-> controller on exynos5250. So...hmm...
-
-There are differences in the implementation of the dw-mmc controller
-in Exynos SoC's. So it has to be exynos5250-dw-mshc.
+Yes, we can use. But the current dw-mmc controller driver does not
+support this feature yet. The existing driver considers that (a)
+card-detect line is connected to the card-detect pad of the controller
+or (b) it is broken. For Exynos5250, it is case (a). There is no
+support for using a gpio as an card-detect line.
 
 Thanks,
 Thomas.
