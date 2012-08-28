@@ -1,95 +1,140 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
-Date: Tue, 28 Aug 2012 10:08:25 +0000 (GMT)
-Message-ID: <31269552.67881346148504997.JavaMail.weblogic@epml04>
-Reply-To: arun.kk@samsung.com
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v4 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Tue, 28 Aug 2012 19:43:07 +0900
+Message-ID: <002501cd8509$e97dad60$bc790820$%jun@samsung.com>
+References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
+ <1345981927-26359-5-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20991 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750761Ab2H1KI1 (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:57138 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750876Ab2H1KnK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 06:08:27 -0400
-Received: from epcpsbge3.samsung.com (epcpsbge3 [203.254.230.13])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9G00MRMMU25K60@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 19:08:26 +0900 (KST)
-MIME-version: 1.0
+	Tue, 28 Aug 2012 06:43:10 -0400
+In-reply-to: <1345981927-26359-5-git-send-email-thomas.abraham@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, patches@linaro.org
 
-SGkgS2Fyb2wsDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudHMuIA0KUGxlYXNlIGZpbmQgbXkgcmVz
-cG9uc2UgaW5saW5lLg0KDQpPbiBNb24sIEF1ZyAyMCwgMjAxMiBhdCAxMTo0NyBBTSwgS2Fyb2wg
-TGV3YW5kb3dza2kgPGsubGV3YW5kb3dza0BzYW1zdW5nLmNvbT4gd3JvdGU6DQo+IE9uIDA4LzE2
-LzIwMTIgMDg6NDIgUE0sIFRob21hcyBBYnJhaGFtIHdyb3RlOg0KPj4gT24gMTYgQXVndXN0IDIw
-MTIgMTg6MDEsIEFydW4gS3VtYXIgSyA8YXJ1bi5rayAuLi4gQHB1YmxpYy5nbWFuZS5vcmc+IHdy
-b3RlOg0KPg0KPj4+ICsgIC0gaW50ZXJydXB0cyA6IE1GQyBpbnRlcnVwdCBudW1iZXIgdG8gdGhl
-IENQVS4NCj4+PiArDQo+Pj4gKyAgLSBzYW1zdW5nLG1mYy1yIDogQmFzZSBhZGRyZXNzIG9mIHRo
-ZSBmaXJzdCBtZW1vcnkgYmFuayB1c2VkIGJ5IE1GQw0KPj4+ICsgICAgICAgICAgICAgICAgICAg
-Zm9yIERNQSBjb250aWd1b3VzIG1lbW9yeSBhbGxvY2F0aW9uLg0KPj4+ICsNCj4+PiArICAtIHNh
-bXN1bmcsbWZjLXItc2l6ZSA6IFNpemUgb2YgdGhlIGZpcnN0IG1lbW9yeSBiYW5rLg0KPj4NCj4+
-IEl0IGlzIG5vdCBhbGxvd2VkIHRvIHBhc3MgYnVmZmVyIGJhc2UgYWRkcmVzcyBhbmQgc2l6ZSBm
-cm9tIGRldmljZQ0KPj4gdHJlZS4gRGV2aWNlIHRyZWUgbm9kZSBzaG91bGQgZGVzY3JpYmUgb25s
-eSB0aGUgTUZDIGNvbnRyb2xsZXINCj4+IGhhcmR3YXJlLiBBbnkgbWVtb3J5IG1hbmFnZW1lbnQg
-cmVsYXRlZCBpbmZvcm1hdGlvbiBzaG91bGQgYmUgaGFuZGxlZA0KPj4gb3V0c2lkZSBvZiBkZXZp
-Y2UgdHJlZS4gVGhpcyBoZWxwcyB0aGUgYmluZGluZ3MgdG8gYmUgcmV1c2FibGUgYWNyb3NzDQo+
-PiBtdWx0aXBsZSBvcGVyYXRpbmcgc3lzdGVtcy4NCj4NCj4gVGhlIHF1ZXN0aW9uIGlzIHdoZXJl
-IGVsc2V3aGVyZSB0aGlzIHNob3VsZCBiZSBkZXNjcmliZWQgYXMgdGhpcyBpcyBzdHJpY3RseQ0K
-PiBib2FyZC1kZXBlbmRlbnQgb3B0aW9uIChudW1iZXIgYW5kIHNpemUgb2YgUkFNIGJhbmtzIGFy
-ZSBpbXBvcnRhbnQgaGVyZSkuDQo+DQo+IEkgYWdyZWUgdGhhdCBiYXNlIGFkZHJlc3NlcyBhcmUg
-YmFkLCBidXQgSSdtIG5vdCBhd2FyZSBvZiBhbnkgZnVuY3Rpb25hbGl0eQ0KPiB0aGF0IHdvdWxk
-IGFsbG93IGRyaXZlciAoYWN0dWFsbHksIGl0cyBwbGF0Zm9ybSBkZXBlbmRlbnQgcGFydCBpbg0K
-PiBleHlub3NOX3Jlc2VydmUoKSBmdW5jdGlvbikgdG8gZW51bWVyYXRlIGF2YWlsYWJsZSBtZW1v
-cnkgYmFua3MgYW5kIGdyYWINCj4gbWVtb3J5IGNodW5rcyBmcm9tIHR3byBkaXN0aW5jdCBiYW5r
-cy4NCj4NCj4gTXkgKGxhY2sgb2YpIGtub3dsZWRnZSBBUk0gbWlnaHQgYmUgdG8gYmxhbWUgaGVy
-ZSBidXQgSSBzaW1wbHkgZG9uJ3Qga25vdw0KPiBob3cgdG8gYWNoaWV2ZSB0aGlzLiBBbnkgc3Vn
-Z2VzdGlvbnM/DQo+DQoNCkFzIHN1Z2dlc3RlZCBieSBrZ2VuZSwgSSB3aWxsIHBhc3MgaXQgZnJv
-bSB0aGUgYm9hcmQgc3BlY2lmaWMgZHRzIGZpbGUuDQoNCj4NCj4gT24gMDgvMTYvMjAxMiAwOToz
-MSBQTSwgQXJ1biBLdW1hciBLIHdyb3RlOg0KPg0KPj4gK3N0YXRpYyB2b2lkIHM1cF9tZmNfcmVz
-ZXJ2ZV9tZW0ocGh5c19hZGRyX3QgcmJhc2UsIHVuc2lnbmVkIGludCByc2l6ZSwNCj4+ICsgICAg
-ICAgICAgICAgcGh5c19hZGRyX3QgbGJhc2UsIHVuc2lnbmVkIGludCBsc2l6ZSkgew0KPj4gKw0K
-Pj4gKyAgICAgaWYgKG1lbWJsb2NrX3JlbW92ZShsYmFzZSwgbHNpemUpKSB7DQo+PiArICAgICAg
-ICAgICAgIHByX2VycigiRmFpbGVkIHRvIHJlc2VydmUgYmFuazEgbWVtb3J5IGZvciBNRkMgZGV2
-aWNlXG4iKTsNCj4+ICsgICAgICAgICAgICAgV0FSTl9PTigxKTsNCj4+ICsgICAgIH0NCj4+ICsN
-Cj4+ICsgICAgIGlmIChtZW1ibG9ja19yZW1vdmUocmJhc2UsIHJzaXplKSkgew0KPj4gKyAgICAg
-ICAgICAgICBwcl9lcnIoIkZhaWxlZCB0byByZXNlcnZlIGJhbmsyIG1lbW9yeSBmb3IgTUZDIGRl
-dmljZVxuIik7DQo+PiArICAgICAgICAgICAgIFdBUk5fT04oMSk7DQo+PiArICAgICB9DQo+PiAr
-fQ0KPg0KPg0KPiBub24tc3RhdGljIGZ1bmN0aW9uIHdpdGggdGhlIHNhbWUgbmFtZSBpcyBhbHJl
-YWR5IGRlZmluZWQgaW4NCj4gYXJjaC9hcm0vcGxhdC1zYW1zdW5nL3M1cC1kZXYtbWZjLmMuIFBs
-ZWFzZSBkb24ndCBkdXBsaWNhdGUgaXQsDQo+IGVzcGVjaWFsbHkgdGhhdCB5b3Ugc2VlbSB0byBi
-ZSB0cnlpbmcgdG8gZG8gdGhhdCB0d2ljZSENCj4NCg0KT2ssIEkgd2lsbCB1c2UgdGhlIGV4aXN0
-aW5nIGZ1bmN0aW9uLg0KDQo+DQo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3Mv
-bWFjaC1leHlub3M1LWR0LmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4eW5vczUtZHQu
-Yw0KPg0KPj4gaW5kZXggZWY3NzBiYy4uODk4ZDJkZSAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvYXJt
-L21hY2gtZXh5bm9zL21hY2gtZXh5bm9zNS1kdC5jDQo+PiArKysgYi9hcmNoL2FybS9tYWNoLWV4
-eW5vcy9tYWNoLWV4eW5vczUtZHQuYw0KPiAuLi4NCj4+ICtzdGF0aWMgdm9pZCBzNXBfbWZjX3Jl
-c2VydmVfbWVtKHBoeXNfYWRkcl90IHJiYXNlLCB1bnNpZ25lZCBpbnQgcnNpemUsDQo+PiArICAg
-ICAgICAgICAgIHBoeXNfYWRkcl90IGxiYXNlLCB1bnNpZ25lZCBpbnQgbHNpemUpIHsNCj4+ICsN
-Cj4+ICsgICAgIGlmIChtZW1ibG9ja19yZW1vdmUobGJhc2UsIGxzaXplKSkgew0KPj4gKyAgICAg
-ICAgICAgICBwcl9lcnIoIkZhaWxlZCB0byByZXNlcnZlIGJhbmsxIG1lbW9yeSBmb3IgTUZDIGRl
-dmljZVxuIik7DQo+PiArICAgICAgICAgICAgIFdBUk5fT04oMSk7DQo+PiArICAgICB9DQo+PiAr
-DQo+PiArICAgICBpZiAobWVtYmxvY2tfcmVtb3ZlKHJiYXNlLCByc2l6ZSkpIHsNCj4+ICsgICAg
-ICAgICAgICAgcHJfZXJyKCJGYWlsZWQgdG8gcmVzZXJ2ZSBiYW5rMiBtZW1vcnkgZm9yIE1GQyBk
-ZXZpY2VcbiIpOw0KPj4gKyAgICAgICAgICAgICBXQVJOX09OKDEpOw0KPj4gKyAgICAgfQ0KPj4g
-K30NCj4NCj4NCj4gU2VlIGFib3ZlLg0KPg0KPj4gKw0KPj4gK3N0YXRpYyB2b2lkIF9faW5pdCBl
-eHlub3M1X3Jlc2VydmUodm9pZCkNCj4+ICt7DQo+PiArICAgICBzNXBfbWZjX3Jlc2VydmVfbWVt
-KDB4NDMwMDAwMDAsIDggPDwgMjAsIDB4NTEwMDAwMDAsIDggPDwgMjApOw0KPg0KPg0KPiBJIHRo
-aW5rIGl0IHdvdWxkIG1ha2Ugc2Vuc2UgdG8gbWFrZSB0aGlzIG1lbW9yeSByZXNlcnZhdGlvbiBk
-ZXBlbmRlbnQNCj4gb24gIm1mYyoiIG5vZGUgYmVpbmcgcHJlc2VudCBpbiBEVFMuICBJdCdzIHRv
-IGVhcmx5IHRvIHVzZSBvZl8qIGZ1bmN0aW9ucw0KPiAoYmVjYXVzZSB0cmVlIGlzIG5vdCBwb3B1
-bGF0ZWQgYXQgdGhpcyBzdGFnZSkgYnV0IGZkdF8qIGZhbWlseSBvZiBmdW5jdGlvbnMNCj4gd29y
-ayBqdXN0IGZpbmUuDQo+DQoNCkFzIEkgY2FuIHNlZSB0aGUgZmR0XyogZnVuY3Rpb25zIGFyZSBu
-b3QgdXNlZCBpbiBhbnkgb2YgdGhlIEFSTSBiYXNlZCBTb0MNCmluaXQgY29kZXMuIFRob3VnaCBJ
-IGNhbiBzZWUgc29tZSByZWZlcmVuY2VzIGluIHBvd2VycGMuDQpUaGUgaW1wbGVtZW50YXRpb24g
-YW5kIGluY2x1ZGVzIGFyZSBwcmVzZW50IGluIGFyY2gvYXJtL2Jvb3QvY29tcHJlc3NlZC8NCndo
-aWNoIEkgdGhpbmsgY2Fubm90IGJlIHVzZWQgZGlyZWN0bHkgaW4gbWFjaC1leHlub3MgdW5sZXNz
-IHdlIG1ha2Ugc29tZQ0KY29tb24gbWFrZWZpbGUgY2hhbmdlcy4gDQpQbGVhc2UgY2xhcmlmeSB3
-aGV0aGVyIGl0cyBvayB0byB1c2UgZmR0XyogZnVuY3Rpb25zIHRvIHBhcnNlIHRoZSBkdHMgaW4g
-DQpleHlub3MgbWFjaGluZSBpbml0IG9yIHBsZWFzZSBwb2ludCBtZSB0byBzb21lIHNhbXBsZSBp
-bXBsZW1lbnRhdGlvbnMNCndoaWNoIEkgY2FuIHJlZmVyIHRvLg0KDQpSZWdhcmRzDQpBcnVuDQoN
-ClJlZ2FyZHMNCkFydW4=
+On Sunday, August 26, 2012 Thomas Abraham <thomas.abraham@linaro.org> wrote:
+> Some platforms allow for clock gating and control of bus interface unit clock
+> and card interface unit clock. Add support for clock lookup of optional biu
+> and ciu clocks for clock gating and clock speed determination.
+> 
+> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
+>  drivers/mmc/host/dw_mmc.c  |   42 +++++++++++++++++++++++++++++++++++++++---
+>  include/linux/mmc/dw_mmc.h |    4 ++++
+>  2 files changed, 43 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+> index cd58063..679473c 100644
+> --- a/drivers/mmc/host/dw_mmc.c
+> +++ b/drivers/mmc/host/dw_mmc.c
+> @@ -1953,18 +1953,38 @@ int dw_mci_probe(struct dw_mci *host)
+>  		return -ENODEV;
+>  	}
+> 
+> -	if (!host->pdata->bus_hz) {
+> +	host->biu_clk = clk_get(host->dev, "biu");
+> +	if (IS_ERR(host->biu_clk))
+> +		dev_dbg(host->dev, "biu clock not available\n");
+> +	else
+> +		clk_prepare_enable(host->biu_clk);
+> +
+> +	host->ciu_clk = clk_get(host->dev, "ciu");
+> +	if (IS_ERR(host->ciu_clk))
+> +		dev_dbg(host->dev, "ciu clock not available\n");
+> +	else
+> +		clk_prepare_enable(host->ciu_clk);
+> +
+> +	if (IS_ERR(host->ciu_clk))
+> +		host->bus_hz = host->pdata->bus_hz;
+> +	else
+> +		host->bus_hz = clk_get_rate(host->ciu_clk);
+I have remained comment in [PATCH 3/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Could I get your opinion?
+
+Thanks,
+Seungwon Jeon
+
+> +
+> +	if (!host->bus_hz) {
+>  		dev_err(host->dev,
+>  			"Platform data must supply bus speed\n");
+> -		return -ENODEV;
+> +		ret = -ENODEV;
+> +		goto err_clk;
+>  	}
+> 
+> -	host->bus_hz = host->pdata->bus_hz;
+>  	host->quirks = host->pdata->quirks;
+> 
+>  	spin_lock_init(&host->lock);
+>  	INIT_LIST_HEAD(&host->queue);
+> 
+> +	host->dma_ops = host->pdata->dma_ops;
+> +	dw_mci_init_dma(host);
+> +
+>  	/*
+>  	 * Get the host data width - this assumes that HCON has been set with
+>  	 * the correct values.
+> @@ -2109,6 +2129,16 @@ err_dmaunmap:
+>  		regulator_disable(host->vmmc);
+>  		regulator_put(host->vmmc);
+>  	}
+> +
+> +err_clk:
+> +	if (!IS_ERR(host->ciu_clk)) {
+> +		clk_disable_unprepare(host->ciu_clk);
+> +		clk_put(host->ciu_clk);
+> +	}
+> +	if (!IS_ERR(host->biu_clk)) {
+> +		clk_disable_unprepare(host->biu_clk);
+> +		clk_put(host->biu_clk);
+> +	}
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(dw_mci_probe);
+> @@ -2142,6 +2172,12 @@ void dw_mci_remove(struct dw_mci *host)
+>  		regulator_put(host->vmmc);
+>  	}
+> 
+> +	if (!IS_ERR(host->ciu_clk))
+> +		clk_disable_unprepare(host->ciu_clk);
+> +	if (!IS_ERR(host->biu_clk))
+> +		clk_disable_unprepare(host->biu_clk);
+> +	clk_put(host->ciu_clk);
+> +	clk_put(host->biu_clk);
+>  }
+>  EXPORT_SYMBOL(dw_mci_remove);
+> 
+> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+> index a37a573..787ad56 100644
+> --- a/include/linux/mmc/dw_mmc.h
+> +++ b/include/linux/mmc/dw_mmc.h
+> @@ -78,6 +78,8 @@ struct mmc_data;
+>   * @data_offset: Set the offset of DATA register according to VERID.
+>   * @dev: Device associated with the MMC controller.
+>   * @pdata: Platform data associated with the MMC controller.
+> + * @biu_clk: Pointer to bus interface unit clock instance.
+> + * @ciu_clk: Pointer to card interface unit clock instance.
+>   * @slot: Slots sharing this MMC controller.
+>   * @fifo_depth: depth of FIFO.
+>   * @data_shift: log2 of FIFO item size.
+> @@ -158,6 +160,8 @@ struct dw_mci {
+>  	u16			data_offset;
+>  	struct device		*dev;
+>  	struct dw_mci_board	*pdata;
+> +	struct clk		*biu_clk;
+> +	struct clk		*ciu_clk;
+>  	struct dw_mci_slot	*slot[MAX_MCI_SLOTS];
+> 
+>  	/* FIFO push and pull */
+> --
+> 1.6.6.rc2
