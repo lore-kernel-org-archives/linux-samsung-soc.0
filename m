@@ -1,50 +1,69 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: EXYNOS: Add support for GPIO on Exynos4x12
-Date: Tue, 28 Aug 2012 20:28:30 +0530
-Message-ID: <CAJuYYwTBeCczF7M=9pJzYUgGB3Xg1md2kRDKbYEU-ji-C1_hug@mail.gmail.com>
-References: <4648723.rWnut7F0uJ@amdc1227>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH] ARM: EXYNOS: Add support for secondary CPU bring-up on
+ Exynos4412
+Date: Tue, 28 Aug 2012 09:21:40 -0700
+Message-ID: <503CF014.8010503@codeaurora.org>
+References: <1422318.SfZfh0XoVo@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:57493 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751807Ab2H1O6c (ORCPT
+Received: from wolverine01.qualcomm.com ([199.106.114.254]:33355 "EHLO
+	wolverine01.qualcomm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752963Ab2H1QVl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 10:58:32 -0400
-Received: by lagy9 with SMTP id y9so3346585lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 07:58:30 -0700 (PDT)
-In-Reply-To: <4648723.rWnut7F0uJ@amdc1227>
+	Tue, 28 Aug 2012 12:21:41 -0400
+In-Reply-To: <1422318.SfZfh0XoVo@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 28 August 2012 15:31, Tomasz Figa <t.figa@samsung.com> wrote:
-> This patch series makes necessary preparations and adds support for GPIO on
-> Exynos4x12 SoCs.
->
-> Tomasz Figa (3):
->   ARM: EXYNOS: Use EXYNOS4210_GPEx instead of EXYNOS4_GPEx
->   gpio: samsung: Add support for Exynos4x12 SoCs
->   ARM: EXYNOS: Add support for FIMC cam port B GPIO setup on Exynos4x12
->
->  arch/arm/mach-exynos/include/mach/gpio.h   |   58 ++++--
->  arch/arm/mach-exynos/include/mach/irqs.h   |    6 -
->  arch/arm/mach-exynos/mach-nuri.c           |   16 +-
->  arch/arm/mach-exynos/mach-origen.c         |    6 +-
->  arch/arm/mach-exynos/mach-trats.c          |    4 +-
->  arch/arm/mach-exynos/mach-universal_c210.c |   32 ++--
->  arch/arm/mach-exynos/setup-fimc.c          |   21 ++-
->  drivers/gpio/gpio-samsung.c                |  351
-> ++++++++++++++++++++++++----
->  8 files changed, 399 insertions(+), 95 deletions(-)
->
-> --
-> 1.7.8.6
+On 8/28/2012 4:13 AM, Tomasz Figa wrote:
+> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+> index 36c3984..1114ced 100644
+> --- a/arch/arm/mach-exynos/platsmp.c
+> +++ b/arch/arm/mach-exynos/platsmp.c
+> @@ -34,8 +34,19 @@
+>  
+>  extern void exynos4_secondary_startup(void);
+>  
+> -#define CPU1_BOOT_REG		(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+> -				S5P_INFORM5 : S5P_VA_SYSRAM)
+> +static inline volatile void *cpu_boot_reg_base(void)
 
-Hopefully, we can get device tree support merged for Exynos4412 soon
-and then switch over to using pinctrl driver. That can simplfy the
-gpio/pinmux support for Exynos4 SoC's.
+__iomem?
 
-Thanks,
-Thomas.
+> +{
+> +	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
+> +		return S5P_INFORM5;
+> +	return S5P_VA_SYSRAM;
+> +}
+> +
+> +static inline volatile void *cpu_boot_reg(int cpu)
+
+__iomem? And why volatile?
+
+> +{
+> +	if (soc_is_exynos4412())
+> +		return cpu_boot_reg_base() + 4*cpu;
+> +	return cpu_boot_reg_base();
+> +}
+>  
+>  /*
+>   * control for which core is the next to come out of the secondary
+> @@ -195,6 +208,8 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+>  	 * until it receives a soft interrupt, and then the
+>  	 * secondary CPU branches to this address.
+>  	 */
+> -	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> -			CPU1_BOOT_REG);
+> +	for (i = 1; i < max_cpus; ++i) {
+> +		__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> +							cpu_boot_reg(i));
+
+Do you need to use cpu_logical_map()?
+
+-- 
+Sent by an employee of the Qualcomm Innovation Center, Inc.
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum.
