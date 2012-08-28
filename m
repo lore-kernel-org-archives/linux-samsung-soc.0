@@ -1,76 +1,95 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/3] ARM: EXYNOS: Add support for FIMC cam port B GPIO setup on
- Exynos4x12
-Date: Tue, 28 Aug 2012 12:07:32 +0200
-Message-ID: <2273077.MFzyvUNijr@amdc1227>
-References: <4648723.rWnut7F0uJ@amdc1227>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
+Date: Tue, 28 Aug 2012 10:08:25 +0000 (GMT)
+Message-ID: <31269552.67881346148504997.JavaMail.weblogic@epml04>
+Reply-To: arun.kk@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52218 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750761Ab2H1KIW (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:20991 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750761Ab2H1KI1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 06:08:22 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+	Tue, 28 Aug 2012 06:08:27 -0400
+Received: from epcpsbge3.samsung.com (epcpsbge3 [203.254.230.13])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9G00I7FMSGXVA0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 19:07:39 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9G007S4MSLVP40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 19:07:39 +0900 (KST)
-In-reply-to: <4648723.rWnut7F0uJ@amdc1227>
+ 17 2011)) with ESMTP id <0M9G00MRMMU25K60@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 28 Aug 2012 19:08:26 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Linus Walleij <linus.walleij@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Karol Lewandowski <k.lewandowsk@samsung.com>, Thomas Abraham <thomas.abraham@linaro.org>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
 
-Exynos4x12 SoCs use different GPIO pins for FIMC cam port B and this patch
-modifies the setup code to take it into account.
-
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/mach-exynos/setup-fimc.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
-
-diff --git a/arch/arm/mach-exynos/setup-fimc.c b/arch/arm/mach-exynos/setup-fimc.c
-index d74843e..4b0cce5 100644
---- a/arch/arm/mach-exynos/setup-fimc.c
-+++ b/arch/arm/mach-exynos/setup-fimc.c
-@@ -11,6 +11,7 @@
- #include <linux/gpio.h>
- #include <plat/gpio-cfg.h>
- #include <plat/camport.h>
-+#include <plat/cpu.h>
- 
- int exynos4_fimc_setup_gpio(enum s5p_camport_id id)
- {
-@@ -26,6 +27,22 @@ int exynos4_fimc_setup_gpio(enum s5p_camport_id id)
- 		break;
- 
- 	case S5P_CAMPORT_B:
-+		if (soc_is_exynos4212() || soc_is_exynos4412()) {
-+			sfn = S3C_GPIO_SFN(3);
-+
-+			/* PCLK, DATA[0-6] */
-+			ret = s3c_gpio_cfgrange_nopull(EXYNOS4X12_GPM0(0), 8, sfn);
-+			/* FIELD, DATA[7]*/
-+			if (!ret)
-+				ret = s3c_gpio_cfgrange_nopull(EXYNOS4X12_GPM1(0),
-+							       2, sfn);
-+			/* VSYNC, HREF, CLKOUT*/
-+			if (!ret)
-+				ret = s3c_gpio_cfgrange_nopull(EXYNOS4X12_GPM2(0),
-+							       3, sfn);
-+			return ret;
-+		}
-+
- 		gpio8 = EXYNOS4210_GPE0(0); /* DATA[0:7] */
- 		gpio5 = EXYNOS4210_GPE1(0); /* PCLK, VSYNC, HREF, CLKOUT, FIELD */
- 		sfn = S3C_GPIO_SFN(3);
--- 
-1.7.12
+SGkgS2Fyb2wsDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudHMuIA0KUGxlYXNlIGZpbmQgbXkgcmVz
+cG9uc2UgaW5saW5lLg0KDQpPbiBNb24sIEF1ZyAyMCwgMjAxMiBhdCAxMTo0NyBBTSwgS2Fyb2wg
+TGV3YW5kb3dza2kgPGsubGV3YW5kb3dza0BzYW1zdW5nLmNvbT4gd3JvdGU6DQo+IE9uIDA4LzE2
+LzIwMTIgMDg6NDIgUE0sIFRob21hcyBBYnJhaGFtIHdyb3RlOg0KPj4gT24gMTYgQXVndXN0IDIw
+MTIgMTg6MDEsIEFydW4gS3VtYXIgSyA8YXJ1bi5rayAuLi4gQHB1YmxpYy5nbWFuZS5vcmc+IHdy
+b3RlOg0KPg0KPj4+ICsgIC0gaW50ZXJydXB0cyA6IE1GQyBpbnRlcnVwdCBudW1iZXIgdG8gdGhl
+IENQVS4NCj4+PiArDQo+Pj4gKyAgLSBzYW1zdW5nLG1mYy1yIDogQmFzZSBhZGRyZXNzIG9mIHRo
+ZSBmaXJzdCBtZW1vcnkgYmFuayB1c2VkIGJ5IE1GQw0KPj4+ICsgICAgICAgICAgICAgICAgICAg
+Zm9yIERNQSBjb250aWd1b3VzIG1lbW9yeSBhbGxvY2F0aW9uLg0KPj4+ICsNCj4+PiArICAtIHNh
+bXN1bmcsbWZjLXItc2l6ZSA6IFNpemUgb2YgdGhlIGZpcnN0IG1lbW9yeSBiYW5rLg0KPj4NCj4+
+IEl0IGlzIG5vdCBhbGxvd2VkIHRvIHBhc3MgYnVmZmVyIGJhc2UgYWRkcmVzcyBhbmQgc2l6ZSBm
+cm9tIGRldmljZQ0KPj4gdHJlZS4gRGV2aWNlIHRyZWUgbm9kZSBzaG91bGQgZGVzY3JpYmUgb25s
+eSB0aGUgTUZDIGNvbnRyb2xsZXINCj4+IGhhcmR3YXJlLiBBbnkgbWVtb3J5IG1hbmFnZW1lbnQg
+cmVsYXRlZCBpbmZvcm1hdGlvbiBzaG91bGQgYmUgaGFuZGxlZA0KPj4gb3V0c2lkZSBvZiBkZXZp
+Y2UgdHJlZS4gVGhpcyBoZWxwcyB0aGUgYmluZGluZ3MgdG8gYmUgcmV1c2FibGUgYWNyb3NzDQo+
+PiBtdWx0aXBsZSBvcGVyYXRpbmcgc3lzdGVtcy4NCj4NCj4gVGhlIHF1ZXN0aW9uIGlzIHdoZXJl
+IGVsc2V3aGVyZSB0aGlzIHNob3VsZCBiZSBkZXNjcmliZWQgYXMgdGhpcyBpcyBzdHJpY3RseQ0K
+PiBib2FyZC1kZXBlbmRlbnQgb3B0aW9uIChudW1iZXIgYW5kIHNpemUgb2YgUkFNIGJhbmtzIGFy
+ZSBpbXBvcnRhbnQgaGVyZSkuDQo+DQo+IEkgYWdyZWUgdGhhdCBiYXNlIGFkZHJlc3NlcyBhcmUg
+YmFkLCBidXQgSSdtIG5vdCBhd2FyZSBvZiBhbnkgZnVuY3Rpb25hbGl0eQ0KPiB0aGF0IHdvdWxk
+IGFsbG93IGRyaXZlciAoYWN0dWFsbHksIGl0cyBwbGF0Zm9ybSBkZXBlbmRlbnQgcGFydCBpbg0K
+PiBleHlub3NOX3Jlc2VydmUoKSBmdW5jdGlvbikgdG8gZW51bWVyYXRlIGF2YWlsYWJsZSBtZW1v
+cnkgYmFua3MgYW5kIGdyYWINCj4gbWVtb3J5IGNodW5rcyBmcm9tIHR3byBkaXN0aW5jdCBiYW5r
+cy4NCj4NCj4gTXkgKGxhY2sgb2YpIGtub3dsZWRnZSBBUk0gbWlnaHQgYmUgdG8gYmxhbWUgaGVy
+ZSBidXQgSSBzaW1wbHkgZG9uJ3Qga25vdw0KPiBob3cgdG8gYWNoaWV2ZSB0aGlzLiBBbnkgc3Vn
+Z2VzdGlvbnM/DQo+DQoNCkFzIHN1Z2dlc3RlZCBieSBrZ2VuZSwgSSB3aWxsIHBhc3MgaXQgZnJv
+bSB0aGUgYm9hcmQgc3BlY2lmaWMgZHRzIGZpbGUuDQoNCj4NCj4gT24gMDgvMTYvMjAxMiAwOToz
+MSBQTSwgQXJ1biBLdW1hciBLIHdyb3RlOg0KPg0KPj4gK3N0YXRpYyB2b2lkIHM1cF9tZmNfcmVz
+ZXJ2ZV9tZW0ocGh5c19hZGRyX3QgcmJhc2UsIHVuc2lnbmVkIGludCByc2l6ZSwNCj4+ICsgICAg
+ICAgICAgICAgcGh5c19hZGRyX3QgbGJhc2UsIHVuc2lnbmVkIGludCBsc2l6ZSkgew0KPj4gKw0K
+Pj4gKyAgICAgaWYgKG1lbWJsb2NrX3JlbW92ZShsYmFzZSwgbHNpemUpKSB7DQo+PiArICAgICAg
+ICAgICAgIHByX2VycigiRmFpbGVkIHRvIHJlc2VydmUgYmFuazEgbWVtb3J5IGZvciBNRkMgZGV2
+aWNlXG4iKTsNCj4+ICsgICAgICAgICAgICAgV0FSTl9PTigxKTsNCj4+ICsgICAgIH0NCj4+ICsN
+Cj4+ICsgICAgIGlmIChtZW1ibG9ja19yZW1vdmUocmJhc2UsIHJzaXplKSkgew0KPj4gKyAgICAg
+ICAgICAgICBwcl9lcnIoIkZhaWxlZCB0byByZXNlcnZlIGJhbmsyIG1lbW9yeSBmb3IgTUZDIGRl
+dmljZVxuIik7DQo+PiArICAgICAgICAgICAgIFdBUk5fT04oMSk7DQo+PiArICAgICB9DQo+PiAr
+fQ0KPg0KPg0KPiBub24tc3RhdGljIGZ1bmN0aW9uIHdpdGggdGhlIHNhbWUgbmFtZSBpcyBhbHJl
+YWR5IGRlZmluZWQgaW4NCj4gYXJjaC9hcm0vcGxhdC1zYW1zdW5nL3M1cC1kZXYtbWZjLmMuIFBs
+ZWFzZSBkb24ndCBkdXBsaWNhdGUgaXQsDQo+IGVzcGVjaWFsbHkgdGhhdCB5b3Ugc2VlbSB0byBi
+ZSB0cnlpbmcgdG8gZG8gdGhhdCB0d2ljZSENCj4NCg0KT2ssIEkgd2lsbCB1c2UgdGhlIGV4aXN0
+aW5nIGZ1bmN0aW9uLg0KDQo+DQo+PiBkaWZmIC0tZ2l0IGEvYXJjaC9hcm0vbWFjaC1leHlub3Mv
+bWFjaC1leHlub3M1LWR0LmMgYi9hcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4eW5vczUtZHQu
+Yw0KPg0KPj4gaW5kZXggZWY3NzBiYy4uODk4ZDJkZSAxMDA2NDQNCj4+IC0tLSBhL2FyY2gvYXJt
+L21hY2gtZXh5bm9zL21hY2gtZXh5bm9zNS1kdC5jDQo+PiArKysgYi9hcmNoL2FybS9tYWNoLWV4
+eW5vcy9tYWNoLWV4eW5vczUtZHQuYw0KPiAuLi4NCj4+ICtzdGF0aWMgdm9pZCBzNXBfbWZjX3Jl
+c2VydmVfbWVtKHBoeXNfYWRkcl90IHJiYXNlLCB1bnNpZ25lZCBpbnQgcnNpemUsDQo+PiArICAg
+ICAgICAgICAgIHBoeXNfYWRkcl90IGxiYXNlLCB1bnNpZ25lZCBpbnQgbHNpemUpIHsNCj4+ICsN
+Cj4+ICsgICAgIGlmIChtZW1ibG9ja19yZW1vdmUobGJhc2UsIGxzaXplKSkgew0KPj4gKyAgICAg
+ICAgICAgICBwcl9lcnIoIkZhaWxlZCB0byByZXNlcnZlIGJhbmsxIG1lbW9yeSBmb3IgTUZDIGRl
+dmljZVxuIik7DQo+PiArICAgICAgICAgICAgIFdBUk5fT04oMSk7DQo+PiArICAgICB9DQo+PiAr
+DQo+PiArICAgICBpZiAobWVtYmxvY2tfcmVtb3ZlKHJiYXNlLCByc2l6ZSkpIHsNCj4+ICsgICAg
+ICAgICAgICAgcHJfZXJyKCJGYWlsZWQgdG8gcmVzZXJ2ZSBiYW5rMiBtZW1vcnkgZm9yIE1GQyBk
+ZXZpY2VcbiIpOw0KPj4gKyAgICAgICAgICAgICBXQVJOX09OKDEpOw0KPj4gKyAgICAgfQ0KPj4g
+K30NCj4NCj4NCj4gU2VlIGFib3ZlLg0KPg0KPj4gKw0KPj4gK3N0YXRpYyB2b2lkIF9faW5pdCBl
+eHlub3M1X3Jlc2VydmUodm9pZCkNCj4+ICt7DQo+PiArICAgICBzNXBfbWZjX3Jlc2VydmVfbWVt
+KDB4NDMwMDAwMDAsIDggPDwgMjAsIDB4NTEwMDAwMDAsIDggPDwgMjApOw0KPg0KPg0KPiBJIHRo
+aW5rIGl0IHdvdWxkIG1ha2Ugc2Vuc2UgdG8gbWFrZSB0aGlzIG1lbW9yeSByZXNlcnZhdGlvbiBk
+ZXBlbmRlbnQNCj4gb24gIm1mYyoiIG5vZGUgYmVpbmcgcHJlc2VudCBpbiBEVFMuICBJdCdzIHRv
+IGVhcmx5IHRvIHVzZSBvZl8qIGZ1bmN0aW9ucw0KPiAoYmVjYXVzZSB0cmVlIGlzIG5vdCBwb3B1
+bGF0ZWQgYXQgdGhpcyBzdGFnZSkgYnV0IGZkdF8qIGZhbWlseSBvZiBmdW5jdGlvbnMNCj4gd29y
+ayBqdXN0IGZpbmUuDQo+DQoNCkFzIEkgY2FuIHNlZSB0aGUgZmR0XyogZnVuY3Rpb25zIGFyZSBu
+b3QgdXNlZCBpbiBhbnkgb2YgdGhlIEFSTSBiYXNlZCBTb0MNCmluaXQgY29kZXMuIFRob3VnaCBJ
+IGNhbiBzZWUgc29tZSByZWZlcmVuY2VzIGluIHBvd2VycGMuDQpUaGUgaW1wbGVtZW50YXRpb24g
+YW5kIGluY2x1ZGVzIGFyZSBwcmVzZW50IGluIGFyY2gvYXJtL2Jvb3QvY29tcHJlc3NlZC8NCndo
+aWNoIEkgdGhpbmsgY2Fubm90IGJlIHVzZWQgZGlyZWN0bHkgaW4gbWFjaC1leHlub3MgdW5sZXNz
+IHdlIG1ha2Ugc29tZQ0KY29tb24gbWFrZWZpbGUgY2hhbmdlcy4gDQpQbGVhc2UgY2xhcmlmeSB3
+aGV0aGVyIGl0cyBvayB0byB1c2UgZmR0XyogZnVuY3Rpb25zIHRvIHBhcnNlIHRoZSBkdHMgaW4g
+DQpleHlub3MgbWFjaGluZSBpbml0IG9yIHBsZWFzZSBwb2ludCBtZSB0byBzb21lIHNhbXBsZSBp
+bXBsZW1lbnRhdGlvbnMNCndoaWNoIEkgY2FuIHJlZmVyIHRvLg0KDQpSZWdhcmRzDQpBcnVuDQoN
+ClJlZ2FyZHMNCkFydW4=
