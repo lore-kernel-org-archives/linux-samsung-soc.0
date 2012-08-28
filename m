@@ -1,132 +1,74 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v4 9/9] mmc: dw_mmc: add support for exynos specific
- implementation of dw-mshc
-Date: Tue, 28 Aug 2012 13:55:57 +0900
-Message-ID: <503C4F5D.8050302@samsung.com>
-References: <1345981927-26359-1-git-send-email-thomas.abraham@linaro.org>
- <1345981927-26359-10-git-send-email-thomas.abraham@linaro.org>
- <503B36D0.4030208@samsung.com>
- <CAJuYYwTKXuJe-8N3kOkkUg_bCzAdG-cG4yjk67zF7dmrg+eGpw@mail.gmail.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v3 1/3] ARM: Samsung: Add support for MSHC controller clocks
+Date: Tue, 28 Aug 2012 10:29:17 +0530
+Message-ID: <CAJuYYwT6L+Nfd_k2f9hCyJTbrqzedgOUcr7F2MbPvmstin=y4g@mail.gmail.com>
+References: <1345982371-26483-1-git-send-email-thomas.abraham@linaro.org>
+	<1345982371-26483-2-git-send-email-thomas.abraham@linaro.org>
+	<503BFF8E.80503@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:53395 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750855Ab2H1E4C (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:36535 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750855Ab2H1E7T (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 00:56:02 -0400
-In-reply-to: <CAJuYYwTKXuJe-8N3kOkkUg_bCzAdG-cG4yjk67zF7dmrg+eGpw@mail.gmail.com>
+	Tue, 28 Aug 2012 00:59:19 -0400
+Received: by lbbgj3 with SMTP id gj3so2989212lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 27 Aug 2012 21:59:18 -0700 (PDT)
+In-Reply-To: <503BFF8E.80503@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
 
-Hi Thomas,
+On 28 August 2012 04:45, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> On 08/26/12 04:59, Thomas Abraham wrote:
+>>
+>> Add clock instances for bus interface unit clock and card interface unit
+>> clock of the all four MSHC controller instances.
+>>
+>> Signed-off-by: Abhilash Kesavan<a.kesavan@samsung.com>
+>> Signed-off-by: Thomas Abraham<thomas.abraham@linaro.org>
+>> ---
+>>   arch/arm/mach-exynos/clock-exynos5.c |   45
+>> ++++++++++++----------------------
+>>   1 files changed, 16 insertions(+), 29 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/clock-exynos5.c
+>> b/arch/arm/mach-exynos/clock-exynos5.c
+>> index 3b00e29..16d8bef 100644
+>> --- a/arch/arm/mach-exynos/clock-exynos5.c
+>> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+>> @@ -564,35 +564,30 @@ static struct clk exynos5_init_clocks_off[] = {
+>>                 .enable         = exynos5_clk_ip_peris_ctrl,
+>>                 .ctrlbit        = (1<<  19),
+>>         }, {
+>> -               .name           = "hsmmc",
+>> -               .devname        = "exynos4-sdhci.0",
+>> +               .name           = "biu",
+>
+>
+> I have no idea why we change the clock name to 'biu' (bus interface unit).
+> Just let me know.
 
-On 08/28/2012 01:48 PM, Thomas Abraham wrote:
-> On 27 August 2012 14:28, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> Hi Thomas,
->>
->>> +     gpio = of_get_named_gpio(slot_np, "wp-gpios", 0);
->>> +     if (gpio_is_valid(gpio)) {
->>> +             if (devm_gpio_request(host->dev, gpio, "dw-mci-wp"))
->>> +                     dev_info(host->dev, "gpio [%d] request failed\n",
->>> +                                             gpio);
->>> +     } else {
->>> +             dev_info(host->dev, "wp gpio not available");
->>> +             host->pdata->quirks |= DW_MCI_QUIRK_NO_WRITE_PROTECT;
->>> +     }
->>> +
->>> +     if (host->pdata->quirks & DW_MCI_QUIRK_BROKEN_CARD_DETECTION)
->>> +             return 0;
->>> +
->>> +     gpio = of_get_named_gpio(slot_np, "samsung,cd-pinmux-gpio", 0);
->>> +     if (gpio_is_valid(gpio)) {
->>> +             if (devm_gpio_request(host->dev, gpio, "dw-mci-cd"))
->> I'm not sure, but i saw mmc_gpio_request_cd() into drivers/mmc/core/slot-gpio.c.
->> Can we use this? i think we can use them.
->> Just my opinion.
-> 
-> Thanks for letting me know about this, I was not aware of this.
-> Looking into this code, it is usable for controllers that use a gpio
-> (specified using cd-gpios property) as card-detect line. As you know,
-> the dw-mmc driver does not support this feature yet. In case of
-> exynos, the card-detect pin of the mmc slot is connected to the
-> card-detect pad of the dw-mmc controller using pinmux, which is not
-> considered as a gpio. Hence, mmc_gpio_request_cd() is not applicable
-> in this case.
-But In case of external card-detect-pin, we can use the mmc_gpio_request_cd().
+The dw-mmc controller requires two clocks - bus interface unit and
+card interface unit clock. Since this controller driver can be used on
+platforms other than exynos, the name of the clock has to be generic.
+Hence the name of the clocks used are "biu" and "ciu" as the per the
+dw-mmc data sheet.
 
-Best Regards,
-Jaehoon Chung
-> 
-> Thanks,
-> Thomas.
-> 
-> 
->>
->> Best Regards,
->> Jaehoon Chung
->>> +                     dev_err(host->dev, "gpio [%d] request failed\n", gpio);
->>> +     } else {
->>> +             dev_info(host->dev, "cd gpio not available");
->>> +     }
->>> +
->>> +     return 0;
->>> +}
->>> +
->>> +/* Exynos5250 controller specific capabilities */
->>> +static unsigned long exynos5250_dwmmc_caps[4] = {
->>> +     MMC_CAP_UHS_DDR50 | MMC_CAP_1_8V_DDR |
->>> +             MMC_CAP_8_BIT_DATA | MMC_CAP_CMD23,
->>> +     MMC_CAP_CMD23,
->>> +     MMC_CAP_CMD23,
->>> +     MMC_CAP_CMD23,
->>> +};
->>> +
->>> +static struct dw_mci_drv_data exynos5250_drv_data = {
->>> +     .caps                   = exynos5250_dwmmc_caps,
->>> +     .init                   = dw_mci_exynos_priv_init,
->>> +     .prepare_command        = dw_mci_exynos_prepare_command,
->>> +     .set_ios                = dw_mci_exynos_set_ios,
->>> +     .parse_dt               = dw_mci_exynos_parse_dt,
->>> +     .setup_bus              = dw_mci_exynos_setup_bus,
->>> +};
->>> +
->>> +static const struct of_device_id dw_mci_exynos_match[] = {
->>> +     { .compatible = "samsung,exynos5250-dw-mshc",
->>> +                     .data = (void *)&exynos5250_drv_data, },
->>> +     {},
->>> +};
->>> +MODULE_DEVICE_TABLE(of, dw_mci_pltfm_match);
->>> +
->>> +int dw_mci_exynos_probe(struct platform_device *pdev)
->>> +{
->>> +     struct dw_mci_drv_data *drv_data;
->>> +     const struct of_device_id *match;
->>> +
->>> +     match = of_match_node(dw_mci_exynos_match, pdev->dev.of_node);
->>> +     drv_data = match->data;
->>> +     return dw_mci_pltfm_register(pdev, drv_data);
->>> +}
->>> +
->>> +static struct platform_driver dw_mci_exynos_pltfm_driver = {
->>> +     .probe          = dw_mci_exynos_probe,
->>> +     .remove         = __exit_p(dw_mci_pltfm_remove),
->>> +     .driver         = {
->>> +             .name           = "dwmmc_exynos",
->>> +             .of_match_table = of_match_ptr(dw_mci_exynos_match),
->>> +             .pm             = &dw_mci_pltfm_pmops,
->>> +     },
->>> +};
->>> +
->>> +module_platform_driver(dw_mci_exynos_pltfm_driver);
->>> +
->>> +MODULE_DESCRIPTION("Samsung Specific DW-MSHC Driver Extension");
->>> +MODULE_AUTHOR("Thomas Abraham <thomas.ab@samsung.com");
->>> +MODULE_LICENSE("GPL v2");
->>> +MODULE_ALIAS("platform:dwmmc-exynos");
->>>
->>
-> 
+>
+> [...]
+>
+>
+>>   static struct clksrc_clk exynos5_clk_sclk_mmc0 = {
+>>         .clk    = {
+>> -               .name           = "sclk_mmc",
+>> -               .devname        = "exynos4-sdhci.0",
+>> +               .name           = "ciu",
+>
+>
+> Same as above.
+
+Thanks,
+Thomas.
