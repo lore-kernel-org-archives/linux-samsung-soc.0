@@ -1,95 +1,57 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: EXYNOS: Add clocks for EXYNOS Audio Subsystem.
-Date: Wed, 29 Aug 2012 17:37:13 +0530
-Message-ID: <503E05F1.8050903@linaro.org>
-References: <1343218056-30432-1-git-send-email-padma.v@samsung.com> <031501cd6f98$dd67c550$98374ff0$%kim@samsung.com> <CAAgF-Bdp817_RD3n6Sdo9zi=OrB4-Uiu5PDt4UB1BL-f0M4aJg@mail.gmail.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS: Use EXYNOS4210_GPEx instead of
+ EXYNOS4_GPEx
+Date: Wed, 29 Aug 2012 15:52:23 +0200
+Message-ID: <3351890.rVcxVBV0WB@amdc1227>
+References: <4648723.rWnut7F0uJ@amdc1227> <503D57EF.2090402@samsung.com>
+ <CAH9JG2UF6cqPcX4idYLRBHwLvs27ErtbwsjEFvMZbyfz_KNsZw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:47393 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752801Ab2H2MHX (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:30045 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753710Ab2H2Nw3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 08:07:23 -0400
-Received: by pbbrr13 with SMTP id rr13so1092483pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Aug 2012 05:07:22 -0700 (PDT)
-In-Reply-To: <CAAgF-Bdp817_RD3n6Sdo9zi=OrB4-Uiu5PDt4UB1BL-f0M4aJg@mail.gmail.com>
+	Wed, 29 Aug 2012 09:52:29 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9I007NIRVB0A10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 22:52:27 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M9I00531RVC7GA0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 22:52:27 +0900 (KST)
+In-reply-to: <CAH9JG2UF6cqPcX4idYLRBHwLvs27ErtbwsjEFvMZbyfz_KNsZw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padma Venkat <padma.kvr@gmail.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Padmavathi Venna <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, rcsekar@samsung.com, sbkim73@samsung.com, sangsu4u.park@samsung.com, ben-linux@fluff.org, olofj@google.com, thutt@chromium.org, joshi@samsung.com
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
 
-On 08/01/2012 06:39 PM, Padma Venkat wrote:
-> Hi,
+Hi,
+
+On Wednesday 29 of August 2012 09:03:12 Kyungmin Park wrote:
+> On 8/29/12, Kukjin Kim <kgene.kim@samsung.com> wrote:
+> > Please see my comments on Joonyoung Shim's previous patch...
+> > http://lists.infradead.org/pipermail/linux-arm-kernel/2012-May/101522.h
+> > tml
+> It's perference issue. some person like this style. others doesn't.
+> Moreever vender, System LSI, provided codes have whole different style.
+> It lists up whole gpios for each SoCs.
 > 
-> On Wed, Aug 1, 2012 at 9:21 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
->> Padmavathi Venna wrote:
->>>
->>> Audiocdclk frequency is 16.9344MHz in SMDK5250 and this clock is
->>> board specific. So this patch adds a function to set the required
->>> audio codec clk frequency from machine file.
->>>
->>> This patch also adds all the required clock instances for audio
->>> subsystem and adds the clock alias names for i2sclk and busclk.
->>>
->>> Signed-off-by: Taylor Hutt <thutt@chromium.org>
->>> Signed-off-by: sangsu4u.park <sangsu4u.park@samsung.com>
->>> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
->>> ---
->>>  arch/arm/mach-exynos/clock-exynos5.c           |  129
->>> ++++++++++++++++++++++++
->>>  arch/arm/mach-exynos/common.h                  |    1 +
->>>  arch/arm/mach-exynos/include/mach/regs-audss.h |   12 ++
->>>  arch/arm/mach-exynos/mach-exynos5-dt.c         |    1 +
->>>  4 files changed, 143 insertions(+), 0 deletions(-)
->>>
-
-[...]
-
->>> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
->>> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
->>> @@ -69,6 +69,7 @@ static void __init exynos5250_dt_machine_init(void)
->>>  {
->>>       of_platform_populate(NULL, of_default_bus_match_table,
->>>                               exynos5250_auxdata_lookup, NULL);
->>> +     exynos5_set_audiocdclk_rate(16934400);
->>
->> As you commented, the value of clock can be changed according to the board,
->> and this file, mach-exynos5-dt.c is not only for smdk5250, now there is no
->> board for exynos5250 though.
-> Please suggest me some file where I can call this function then.
->>
-
-Will it be a good idea to split this into two patches, one adding basic
-audio subsystem defines and another one adding specific support for EXYNOS5?
-
-
->> [...]
->>
->> Thanks.
->>
->> Best regards,
->> Kgene.
+> EXYNOS4210_{A0, .... Z}
+> EXYNOS4412_{A0, .... V4}
+> EXYNOS5250_{A0, .... Z}
 > 
-> Thanks for your review.
-> 
-> Best Regards
-> Padma
->> --
->> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
->> SW Solution Development Team, Samsung Electronics Co., Ltd.
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> anyway, just remain it as broken, and try to use pinctl as Thomas
+> mentioned.
 
+OK, I will drop this patchset for the time being. Let's get the pinctrl 
+driver merged first and then investigate Exynos4x12 support in it.
 
+Best regards,
 -- 
-Tushar Behera
+Tomasz Figa
+Samsung Poland R&D Center
