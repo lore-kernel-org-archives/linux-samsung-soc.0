@@ -1,418 +1,145 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: SAMSUNG: Remove redundant return code from s3c24xx_register_clock
-Date: Wed, 29 Aug 2012 11:01:47 +0530
-Message-ID: <1346218307-671-1-git-send-email-tushar.behera@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:46844 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750914Ab2H2FeO (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 01:34:14 -0400
-Received: by pbbrr13 with SMTP id rr13so526049pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 28 Aug 2012 22:34:13 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
+Date: Wed, 29 Aug 2012 09:41:31 +0200
+Message-ID: <201208290941.32071.heiko@sntech.de>
+References: <201208282355.44268.heiko@sntech.de> <503D4FB1.1020206@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <503D4FB1.1020206-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: ben-linux@fluff.org, kgene.kim@samsung.com, patches@linaro.org
 
-s3c24xx_register_clock(struct clk *clk) always returns 0, so checking
-its return value has no meaning.
-
-There are a few other functions which also return the error code of
-s3c24xx_register_clock.
-
-Forcing all these functions to return void would help us save some
-line of code.
-
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
-
-This patch is rebased on v3.6-rc3.
-
- arch/arm/mach-s3c24xx/clock-s3c2412.c      |   31 ++-------------
- arch/arm/mach-s3c24xx/clock-s3c244x.c      |    7 +---
- arch/arm/plat-s3c24xx/s3c2410-clock.c      |   15 +------
- arch/arm/plat-samsung/clock-clksrc.c       |    9 +----
- arch/arm/plat-samsung/clock.c              |   59 ++++++---------------------
- arch/arm/plat-samsung/include/plat/clock.h |    8 ++--
- arch/arm/plat-samsung/pwm-clock.c          |   19 ++-------
- arch/arm/plat-samsung/s5p-clock.c          |    6 +--
- 8 files changed, 32 insertions(+), 122 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/clock-s3c2412.c b/arch/arm/mach-s3c24xx/clock-s3c2412.c
-index d10b695..bd2bcc0 100644
---- a/arch/arm/mach-s3c24xx/clock-s3c2412.c
-+++ b/arch/arm/mach-s3c24xx/clock-s3c2412.c
-@@ -634,14 +634,9 @@ static void __init s3c2412_clk_initparents(void)
- 	struct clk_init *cip = clks_src;
- 	struct clk *src;
- 	int ptr;
--	int ret;
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(clks_src); ptr++, cip++) {
--		ret = s3c24xx_register_clock(cip->clk);
--		if (ret < 0) {
--			printk(KERN_ERR "Failed to register clock %s (%d)\n",
--			       cip->clk->name, ret);
--		}
-+		s3c24xx_register_clock(cip->clk);
- 
- 		src = (clksrc & cip->bit) ? cip->src_1 : cip->src_0;
- 
-@@ -670,7 +665,6 @@ int __init s3c2412_baseclk_add(void)
- 	unsigned long clkcon  = __raw_readl(S3C2410_CLKCON);
- 	unsigned int dvs;
- 	struct clk *clkp;
--	int ret;
- 	int ptr;
- 
- 	clk_upll.enable = s3c2412_upll_enable;
-@@ -683,12 +677,7 @@ int __init s3c2412_baseclk_add(void)
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(clks); ptr++) {
- 		clkp = clks[ptr];
--
--		ret = s3c24xx_register_clock(clkp);
--		if (ret < 0) {
--			printk(KERN_ERR "Failed to register clock %s (%d)\n",
--			       clkp->name, ret);
--		}
-+		s3c24xx_register_clock(clkp);
- 	}
- 
- 	/* set the dvs state according to what we got at boot time */
-@@ -723,14 +712,8 @@ int __init s3c2412_baseclk_add(void)
- 	clkp = init_clocks;
- 	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks); ptr++, clkp++) {
- 		/* ensure that we note the clock state */
--
- 		clkp->usage = clkcon & clkp->ctrlbit ? 1 : 0;
--
--		ret = s3c24xx_register_clock(clkp);
--		if (ret < 0) {
--			printk(KERN_ERR "Failed to register clock %s (%d)\n",
--			       clkp->name, ret);
--		}
-+		s3c24xx_register_clock(clkp);
- 	}
- 
- 	/* We must be careful disabling the clocks we are not intending to
-@@ -747,13 +730,7 @@ int __init s3c2412_baseclk_add(void)
- 
- 	clkp = init_clocks_disable;
- 	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks_disable); ptr++, clkp++) {
--
--		ret = s3c24xx_register_clock(clkp);
--		if (ret < 0) {
--			printk(KERN_ERR "Failed to register clock %s (%d)\n",
--			       clkp->name, ret);
--		}
--
-+		s3c24xx_register_clock(clkp);
- 		s3c2412_clkcon_enable(clkp, 0);
- 	}
- 
-diff --git a/arch/arm/mach-s3c24xx/clock-s3c244x.c b/arch/arm/mach-s3c24xx/clock-s3c244x.c
-index 6d9b688..cd40d89 100644
---- a/arch/arm/mach-s3c24xx/clock-s3c244x.c
-+++ b/arch/arm/mach-s3c24xx/clock-s3c244x.c
-@@ -77,18 +77,13 @@ static int s3c244x_clk_add(struct device *dev, struct subsys_interface *sif)
- 	unsigned long camdivn = __raw_readl(S3C2440_CAMDIVN);
- 	unsigned long clkdivn;
- 	struct clk *clock_upll;
--	int ret;
- 
- 	printk("S3C244X: Clock Support, DVS %s\n",
- 	       (camdivn & S3C2440_CAMDIVN_DVSEN) ? "on" : "off");
- 
- 	clk_arm.parent = (camdivn & S3C2440_CAMDIVN_DVSEN) ? &clk_h : &clk_f;
- 
--	ret = s3c24xx_register_clock(&clk_arm);
--	if (ret < 0) {
--		printk(KERN_ERR "S3C24XX: Failed to add armclk (%d)\n", ret);
--		return ret;
--	}
-+	s3c24xx_register_clock(&clk_arm);
- 
- 	clock_upll = clk_get(NULL, "upll");
- 	if (IS_ERR(clock_upll)) {
-diff --git a/arch/arm/plat-s3c24xx/s3c2410-clock.c b/arch/arm/plat-s3c24xx/s3c2410-clock.c
-index 25dc4d4..a174922 100644
---- a/arch/arm/plat-s3c24xx/s3c2410-clock.c
-+++ b/arch/arm/plat-s3c24xx/s3c2410-clock.c
-@@ -193,33 +193,25 @@ static struct clk init_clocks[] = {
-  * done.
- */
- 
--int __init s3c2410_baseclk_add(void)
-+void __init s3c2410_baseclk_add(void)
- {
- 	unsigned long clkslow = __raw_readl(S3C2410_CLKSLOW);
- 	unsigned long clkcon  = __raw_readl(S3C2410_CLKCON);
- 	struct clk *clkp;
- 	struct clk *xtal;
--	int ret;
- 	int ptr;
- 
- 	clk_upll.enable = s3c2410_upll_enable;
- 
--	if (s3c24xx_register_clock(&clk_usb_bus) < 0)
--		printk(KERN_ERR "failed to register usb bus clock\n");
-+	s3c24xx_register_clock(&clk_usb_bus);
- 
- 	/* register clocks from clock array */
- 
- 	clkp = init_clocks;
- 	for (ptr = 0; ptr < ARRAY_SIZE(init_clocks); ptr++, clkp++) {
- 		/* ensure that we note the clock state */
--
- 		clkp->usage = clkcon & clkp->ctrlbit ? 1 : 0;
--
--		ret = s3c24xx_register_clock(clkp);
--		if (ret < 0) {
--			printk(KERN_ERR "Failed to register clock %s (%d)\n",
--			       clkp->name, ret);
--		}
-+		s3c24xx_register_clock(clkp);
- 	}
- 
- 	/* We must be careful disabling the clocks we are not intending to
-@@ -249,5 +241,4 @@ int __init s3c2410_baseclk_add(void)
- 	       (clkslow & S3C2410_CLKSLOW_UCLK_OFF) ? "off" : "on");
- 
- 	s3c_pwmclk_init();
--	return 0;
- }
-diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-index 786a410..27c00d9 100644
---- a/arch/arm/plat-samsung/clock-clksrc.c
-+++ b/arch/arm/plat-samsung/clock-clksrc.c
-@@ -177,8 +177,6 @@ static struct clk_ops clksrc_ops_nosrc = {
- 
- void __init s3c_register_clksrc(struct clksrc_clk *clksrc, int size)
- {
--	int ret;
--
- 	for (; size > 0; size--, clksrc++) {
- 		if (!clksrc->reg_div.reg && !clksrc->reg_src.reg)
- 			printk(KERN_ERR "%s: clock %s has no registers set\n",
-@@ -202,11 +200,6 @@ void __init s3c_register_clksrc(struct clksrc_clk *clksrc, int size)
- 		 */
- 		s3c_set_clksrc(clksrc, false);
- 
--		ret = s3c24xx_register_clock(&clksrc->clk);
--
--		if (ret < 0) {
--			printk(KERN_ERR "%s: failed to register %s (%d)\n",
--			       __func__, clksrc->clk.name, ret);
--		}
-+		s3c24xx_register_clock(&clksrc->clk);
- 	}
- }
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index 65c5eca..dd39f3b 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -276,7 +276,7 @@ struct clk s3c24xx_uclk = {
-  *
-  * Add the specified clock to the list of clocks known by the system.
-  */
--int s3c24xx_register_clock(struct clk *clk)
-+void s3c24xx_register_clock(struct clk *clk)
- {
- 	if (clk->enable == NULL)
- 		clk->enable = clk_null_enable;
-@@ -286,8 +286,6 @@ int s3c24xx_register_clock(struct clk *clk)
- 	clk->lookup.con_id = clk->name;
- 	clk->lookup.clk = clk;
- 	clkdev_add(&clk->lookup);
--
--	return 0;
- }
- 
- /**
-@@ -298,20 +296,10 @@ int s3c24xx_register_clock(struct clk *clk)
-  * Call s3c24xx_register_clock() for all the clock pointers contained
-  * in the @clks list. Returns the number of failures.
-  */
--int s3c24xx_register_clocks(struct clk **clks, int nr_clks)
-+void s3c24xx_register_clocks(struct clk **clks, int nr_clks)
- {
--	int fails = 0;
--
--	for (; nr_clks > 0; nr_clks--, clks++) {
--		if (s3c24xx_register_clock(*clks) < 0) {
--			struct clk *clk = *clks;
--			printk(KERN_ERR "%s: failed to register %p: %s\n",
--			       __func__, clk, clk->name);
--			fails++;
--		}
--	}
--
--	return fails;
-+	for (; nr_clks > 0; nr_clks--, clks++)
-+		s3c24xx_register_clock(*clks);
- }
- 
- /**
-@@ -324,16 +312,8 @@ int s3c24xx_register_clocks(struct clk **clks, int nr_clks)
-  */
- void __init s3c_register_clocks(struct clk *clkp, int nr_clks)
- {
--	int ret;
--
--	for (; nr_clks > 0; nr_clks--, clkp++) {
--		ret = s3c24xx_register_clock(clkp);
--
--		if (ret < 0) {
--			printk(KERN_ERR "Failed to register clock %s (%d)\n",
--			       clkp->name, ret);
--		}
--	}
-+	for (; nr_clks > 0; nr_clks--, clkp++)
-+		s3c24xx_register_clock(clkp);
- }
- 
- /**
-@@ -353,7 +333,7 @@ void __init s3c_disable_clocks(struct clk *clkp, int nr_clks)
- 
- /* initialise all the clocks */
- 
--int __init s3c24xx_register_baseclocks(unsigned long xtal)
-+void __init s3c24xx_register_baseclocks(unsigned long xtal)
- {
- 	printk(KERN_INFO "S3C24XX Clocks, Copyright 2004 Simtec Electronics\n");
- 
-@@ -361,25 +341,12 @@ int __init s3c24xx_register_baseclocks(unsigned long xtal)
- 
- 	/* register our clocks */
- 
--	if (s3c24xx_register_clock(&clk_xtal) < 0)
--		printk(KERN_ERR "failed to register master xtal\n");
--
--	if (s3c24xx_register_clock(&clk_mpll) < 0)
--		printk(KERN_ERR "failed to register mpll clock\n");
--
--	if (s3c24xx_register_clock(&clk_upll) < 0)
--		printk(KERN_ERR "failed to register upll clock\n");
--
--	if (s3c24xx_register_clock(&clk_f) < 0)
--		printk(KERN_ERR "failed to register cpu fclk\n");
--
--	if (s3c24xx_register_clock(&clk_h) < 0)
--		printk(KERN_ERR "failed to register cpu hclk\n");
--
--	if (s3c24xx_register_clock(&clk_p) < 0)
--		printk(KERN_ERR "failed to register cpu pclk\n");
--
--	return 0;
-+	s3c24xx_register_clock(&clk_xtal);
-+	s3c24xx_register_clock(&clk_mpll);
-+	s3c24xx_register_clock(&clk_upll);
-+	s3c24xx_register_clock(&clk_f);
-+	s3c24xx_register_clock(&clk_h);
-+	s3c24xx_register_clock(&clk_p);
- }
- 
- #if defined(CONFIG_PM_DEBUG) && defined(CONFIG_DEBUG_FS)
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-index a62753d..bed3c73 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -101,13 +101,13 @@ extern spinlock_t clocks_lock;
- 
- extern int s3c2410_clkcon_enable(struct clk *clk, int enable);
- 
--extern int s3c24xx_register_clock(struct clk *clk);
--extern int s3c24xx_register_clocks(struct clk **clk, int nr_clks);
-+extern void s3c24xx_register_clock(struct clk *clk);
-+extern void s3c24xx_register_clocks(struct clk **clk, int nr_clks);
- 
- extern void s3c_register_clocks(struct clk *clk, int nr_clks);
- extern void s3c_disable_clocks(struct clk *clkp, int nr_clks);
- 
--extern int s3c24xx_register_baseclocks(unsigned long xtal);
-+extern void s3c24xx_register_baseclocks(unsigned long xtal);
- 
- extern void s5p_register_clocks(unsigned long xtal_freq);
- 
-@@ -121,7 +121,7 @@ extern void s3c244x_setup_clocks(void);
- 
- /* S3C2410 specific clock functions */
- 
--extern int s3c2410_baseclk_add(void);
-+extern void s3c2410_baseclk_add(void);
- 
- /* S3C2443/S3C2416 specific clock functions */
- 
-diff --git a/arch/arm/plat-samsung/pwm-clock.c b/arch/arm/plat-samsung/pwm-clock.c
-index a35ff3b..e9ac985 100644
---- a/arch/arm/plat-samsung/pwm-clock.c
-+++ b/arch/arm/plat-samsung/pwm-clock.c
-@@ -307,7 +307,7 @@ static struct pwm_tdiv_clk clk_timer_tdiv[] = {
- 	},
- };
- 
--static int __init clk_pwm_tdiv_register(unsigned int id)
-+static void __init clk_pwm_tdiv_register(unsigned int id)
- {
- 	struct pwm_tdiv_clk *divclk = &clk_timer_tdiv[id];
- 	unsigned long tcfg1 = __raw_readl(S3C2410_TCFG1);
-@@ -318,7 +318,7 @@ static int __init clk_pwm_tdiv_register(unsigned int id)
- 	divclk->clk.id = id;
- 	divclk->divisor = tcfg_to_divisor(tcfg1);
- 
--	return s3c24xx_register_clock(&divclk->clk);
-+	s3c24xx_register_clock(&divclk->clk);
- }
- 
- static inline struct clk *s3c24xx_pwmclk_tclk(unsigned int id)
-@@ -411,11 +411,8 @@ static __init int clk_pwm_tin_register(struct clk *pwm)
- 	unsigned int id = pwm->id;
- 
- 	struct clk *parent;
--	int ret;
- 
--	ret = s3c24xx_register_clock(pwm);
--	if (ret < 0)
--		return ret;
-+	s3c24xx_register_clock(pwm);
- 
- 	tcfg1 >>= S3C2410_TCFG1_SHIFT(id);
- 	tcfg1 &= S3C2410_TCFG1_MUX_MASK;
-@@ -455,14 +452,8 @@ __init void s3c_pwmclk_init(void)
- 	s3c_register_clocks(clk_timer_scaler, ARRAY_SIZE(clk_timer_scaler));
- 	s3c_register_clocks(clk_timer_tclk, ARRAY_SIZE(clk_timer_tclk));
- 
--	for (clk = 0; clk < ARRAY_SIZE(clk_timer_tdiv); clk++) {
--		ret = clk_pwm_tdiv_register(clk);
--
--		if (ret < 0) {
--			printk(KERN_ERR "error adding pwm%d tdiv clock\n", clk);
--			return;
--		}
--	}
-+	for (clk = 0; clk < ARRAY_SIZE(clk_timer_tdiv); clk++)
-+		clk_pwm_tdiv_register(clk);
- 
- 	for (clk = 0; clk < ARRAY_SIZE(clk_tin); clk++) {
- 		ret = clk_pwm_tin_register(&clk_tin[clk]);
-diff --git a/arch/arm/plat-samsung/s5p-clock.c b/arch/arm/plat-samsung/s5p-clock.c
-index 48a1599..4b7ac92 100644
---- a/arch/arm/plat-samsung/s5p-clock.c
-+++ b/arch/arm/plat-samsung/s5p-clock.c
-@@ -284,11 +284,7 @@ static struct clk *s5p_clks[] __initdata = {
- 
- void __init s5p_register_clocks(unsigned long xtal_freq)
- {
--	int ret;
--
- 	clk_ext_xtal_mux.rate = xtal_freq;
- 
--	ret = s3c24xx_register_clocks(s5p_clks, ARRAY_SIZE(s5p_clks));
--	if (ret > 0)
--		printk(KERN_ERR "Failed to register s5p clocks\n");
-+	s3c24xx_register_clocks(s5p_clks, ARRAY_SIZE(s5p_clks));
- }
--- 
-1.7.4.1
+QW0gTWl0dHdvY2gsIDI5LiBBdWd1c3QgMjAxMiwgMDE6MDk6Mzcgc2NocmllYiBLdWtqaW4gS2lt
+Ogo+IE9uIDA4LzI4LzEyIDE0OjU1LCBIZWlrbyBTdMO8Ym5lciB3cm90ZToKPiA+IFVudGlsIG5v
+dyB0aGUgRXh5bm9zLVNvQyB3YXMgdGhlIG9ubHkgU2Ftc3VuZy1Tb0Mgc3VwcG9ydGluZyB0aGUg
+R1BJT3MKPiA+IHZpYSB0aGUgZGV2aWNlIHRyZWUuIFRoaXMgcGF0Y2ggaW1wbGVtZW50cyBkdC1z
+dXBwb3J0IGZvciB0aGUKPiA+IHMzYzI0eHggYXJjaGVzLgo+ID4gCj4gPiBUaGUgY29udHJvbGxl
+cnMgY29udGFpbiBvbmx5IDMgY2VsbHMsIGFzIHRoZSB1bmRlcmx5aW5nIGdwaW8gY29udHJvbGxl
+cgo+ID4gZG9lcyBub3Qgc3VwcG9ydCBjb250cm9sbGluZyB0aGUgZHJpdmUgc3RyZW5ndGggb24g
+YSBncGlvIGxldmVsLgo+ID4gCj4gPiBUZXN0ZWQgd2l0aCB0aGUgZ3Bpby1rZXlzIGRyaXZlciBv
+biBhIHMzYzI0MTYgYmFzZWQgbWFjaGluZS4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogSGVpa28g
+U3R1ZWJuZXI8aGVpa29Ac250ZWNoLmRlPgo+ID4gUmV2aWV3ZWQtYnk6IFRob21hcyBBYnJhaGFt
+PHRob21hcy5hYnJhaGFtQGxpbmFyby5vcmc+Cj4gCj4gWWVhaCwgbG9va3MgZ29vZCB0byBtZS4u
+Lgo+IAo+IEFja2VkLWJ5OiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+Cj4gCj4g
+QlRXLCBJJ20gbm90IHN1cmUgd2hlbiB3ZSBjYW4gc3VwcG9ydCBkZXZpY2UgdHJlZSBmb3IgUzND
+MjRYWCA6LSkKCkFzIHlvdSBtaWdodCd2ZSBndWVzc2VkLCBJJ20gd29ya2luZyBvbiBpdCA6LSkg
+LgoKVGhhbmtzIHRvIHNvbWUgZW5naW5lZXJzIG9mIHlvdXJzIGF0IGxlYXN0IHRoZSBzM2MyNDE2
+L3MzYzI0NTAgU29DcyBzaGFyZSBhIApsb3Qgb2YgY29tcG9uZW50cyB3aXRoIGFsbCB0aGUgbmV3
+ZXIgb25lcyBhbmQgdGhlaXIgZHJpdmVycyBhbHJlYWR5IGNvbnRhaW4gCnRoZSBkdCBiaW5kaW5n
+cyAtIG1vc3RseSB0aGFua3MgdG8gVGhvbWFzIEkgdGhpbmsuCgpTbyB0aGUgb25seSByZWFsIGhh
+cmQgcGFydCBJIG5lZWQgdG8gZmlndXJlIG91dCBmb3Igbm93IGlzLCBob3cgdG8gaW1wbGVtZW50
+IAp0aGUgaW50ZXJydXB0IGJpbmRpbmdzLiBUaGVuIEknbGwgYWxyZWFkeSBoYXZlIHNkaGNpLCBy
+dGMsIHdhdGNoZG9nLCBzZXJpYWwgCmFuZCBpMmMgYXZhaWxhYmxlLgoKQW5kIGlmIEkgYWxzbyBt
+YW5hZ2UgdG8gZ2V0IHRoZSBkbWEgaW50byBkdCwgSSdsbCBhbHNvIGhhdmUgdGhlIHMzYzY0eHgt
+c3BpIAphdmFpbGFibGUuCgpTbywgYWxsIGluIGFsbCwgdGhpcyBkb2VzIHNvdW5kIHNvbHZhYmxl
+IDotKQoKCkhlaWtvCgoKPiBUaGFua3MuCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtnZW5lLgo+IC0t
+Cj4gS3VramluIEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiwgU2VuaW9yIEVuZ2luZWVyLAo+
+IFNXIFNvbHV0aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25pY3MgQ28uLCBM
+dGQuCj4gCj4gPiAtLS0KPiA+IGNoYW5nZXMgc2luY2UgdjE6Cj4gPiB1cGRhdGUgYmluZGluZ3Mg
+ZG9jdW1lbnRhdGlvbiB0byBhZGRyZXNzIFNvQyBzcGVjaWZpYyBpc3N1ZXMKPiA+IAo+ID4gICAu
+Li4vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8tc2Ftc3VuZy50eHQgICAgICB8ICAgNDMg
+KysrKysrKysrKysrKwo+ID4gICBkcml2ZXJzL2dwaW8vZ3Bpby1zYW1zdW5nLmMgICAgICAgICAg
+ICAgICAgICAgICAgICB8ICAgNjMKPiA+ICAgKysrKysrKysrKysrKysrKysrKysgMiBmaWxlcyBj
+aGFuZ2VkLCAxMDYgaW5zZXJ0aW9ucygrKSwgMAo+ID4gICBkZWxldGlvbnMoLSkKPiA+IAo+ID4g
+ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8t
+c2Ftc3VuZy50eHQKPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8v
+Z3Bpby1zYW1zdW5nLnR4dCBpbmRleAo+ID4gNTM3NTYyNS4uZjFlNWRmZSAxMDA2NDQKPiA+IC0t
+LSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8tc2Ftc3VuZy50
+eHQKPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8t
+c2Ftc3VuZy50eHQKPiA+IAo+ID4gQEAgLTM5LDMgKzM5LDQ2IEBAIEV4YW1wbGU6Cj4gPiAgIAkJ
+I2dwaW8tY2VsbHMgPTw0PjsKPiA+ICAgCQlncGlvLWNvbnRyb2xsZXI7Cj4gPiAgIAkKPiA+ICAg
+CX07Cj4gPiAKPiA+ICsKPiA+ICsKPiA+ICtTYW1zdW5nIFMzQzI0WFggR1BJTyBDb250cm9sbGVy
+Cj4gPiArCj4gPiArUmVxdWlyZWQgcHJvcGVydGllczoKPiA+ICstIGNvbXBhdGlibGU6IENvbXBh
+dGlibGUgcHJvcGVydHkgdmFsdWUgc2hvdWxkIGJlCj4gPiAic2Ftc3VuZyxzM2MyNHh4LWdwaW8i
+LiArCj4gPiArLSByZWc6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBvZiB0aGUgY29udHJvbGxlciBh
+bmQgbGVuZ3RoIG9mIG1lbW9yeQo+ID4gbWFwcGVkICsgIHJlZ2lvbi4KPiA+ICsKPiA+ICstICNn
+cGlvLWNlbGxzOiBTaG91bGQgYmUgMy4gVGhlIHN5bnRheCBvZiB0aGUgZ3BpbyBzcGVjaWZpZXIg
+dXNlZCBieQo+ID4gY2xpZW50IG5vZGVzICsgIHNob3VsZCBiZSB0aGUgZm9sbG93aW5nIHdpdGgg
+dmFsdWVzIGRlcml2ZWQgZnJvbSB0aGUgU29DCj4gPiB1c2VyIG1hbnVhbC4gKzxbcGhhbmRsZSBv
+ZiB0aGUgZ3BpbyBjb250cm9sbGVyIG5vZGVdCj4gPiArICAgICAgW3BpbiBudW1iZXIgd2l0aGlu
+IHRoZSBncGlvIGNvbnRyb2xsZXJdCj4gPiArICAgICAgW211eCBmdW5jdGlvbl0KPiA+ICsgICAg
+ICBbZmxhZ3MgYW5kIHB1bGwgdXAvZG93bl0KPiA+ICsKPiA+ICsgIFZhbHVlcyBmb3IgZ3BpbyBz
+cGVjaWZpZXI6Cj4gPiArICAtIFBpbiBudW1iZXI6IGRlcGVuZGluZyBvbiB0aGUgY29udHJvbGxl
+ciBhIG51bWJlciBmcm9tIDAgdXAgdG8gMTUuCj4gPiArICAtIE11eCBmdW5jdGlvbjogRGVwZW5k
+aW5nIG9uIHRoZSBTb0MgYW5kIHRoZSBncGlvIGJhbmsgdGhlIGdwaW8gY2FuIGJlCj4gPiBzZXQg
+KyAgICAgICAgICAgICAgICAgIGFzIGlucHV0LCBvdXRwdXQgb3IgYSBzcGVjaWFsIGZ1bmN0aW9u
+Cj4gPiArICAtIEZsYWdzIGFuZCBQdWxsIFVwL0Rvd246IHRoZSB2YWx1ZXMgdG8gdXNlIGRpZmZl
+ciBmb3IgdGhlIGluZGl2aWR1YWwKPiA+IFNvQ3MgKyAgICAgICAgICAgICAgICAgICAgZXhhbXBs
+ZSBTM0MyNDE2L1MzQzI0NTA6Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgLSBQ
+dWxsIFVwL0Rvd24gRGlzYWJsZWQuCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIDEg
+LSBQdWxsIERvd24gRW5hYmxlZC4KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgMiAt
+IFB1bGwgVXAgRW5hYmxlZC4KPiA+ICsgICAgICAgICAgQml0IDE2ICgweDAwMDEwMDAwKSAtIElu
+cHV0IGlzIGFjdGl2ZSBsb3cuCj4gPiArICBDb25zdWx0IHRoZSB1c2VyIG1hbnVhbCBmb3IgdGhl
+IGNvcnJlY3QgdmFsdWVzIG9mIE11eCBhbmQgUHVsbAo+ID4gVXAvRG93bi4gKwo+ID4gKy0gZ3Bp
+by1jb250cm9sbGVyOiBTcGVjaWZpZXMgdGhhdCB0aGUgbm9kZSBpcyBhIGdwaW8gY29udHJvbGxl
+ci4KPiA+ICstICNhZGRyZXNzLWNlbGxzOiBzaG91bGQgYmUgMS4KPiA+ICstICNzaXplLWNlbGxz
+OiBzaG91bGQgYmUgMS4KPiA+ICsKPiA+ICtFeGFtcGxlOgo+ID4gKwo+ID4gKwlncGE6IGdwaW8t
+Y29udHJvbGxlckA1NjAwMDAwMCB7Cj4gPiArCQkjYWRkcmVzcy1jZWxscyA9PDE+Owo+ID4gKwkJ
+I3NpemUtY2VsbHMgPTwxPjsKPiA+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2MyNHh4LWdw
+aW8iOwo+ID4gKwkJcmVnID08MHg1NjAwMDAwMCAweDEwPjsKPiA+ICsJCSNncGlvLWNlbGxzID08
+Mz47Cj4gPiArCQlncGlvLWNvbnRyb2xsZXI7Cj4gPiArCX07Cj4gPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncGlvL2dwaW8tc2Ftc3VuZy5jIGIvZHJpdmVycy9ncGlvL2dwaW8tc2Ftc3VuZy5jCj4g
+PiBpbmRleCBiYTEyNmNjLi41NGY2NjYzIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncGlvL2dw
+aW8tc2Ftc3VuZy5jCj4gPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1zYW1zdW5nLmMKPiA+IEBA
+IC05MzgsNiArOTM4LDY3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzYW1zdW5nX2dwaW9saWJfYWRk
+KHN0cnVjdAo+ID4gc2Ftc3VuZ19ncGlvX2NoaXAgKmNoaXApCj4gPiAKPiA+ICAgCQlzM2NfZ3Bp
+b2xpYl90cmFjayhjaGlwKTsKPiA+ICAgCj4gPiAgIH0KPiA+IAo+ID4gKyNpZiBkZWZpbmVkKENP
+TkZJR19QTEFUX1MzQzI0WFgpJiYgIGRlZmluZWQoQ09ORklHX09GKQo+ID4gK3N0YXRpYyBpbnQg
+czNjMjR4eF9ncGlvX3hsYXRlKHN0cnVjdCBncGlvX2NoaXAgKmdjLAo+ID4gKwkJCWNvbnN0IHN0
+cnVjdCBvZl9waGFuZGxlX2FyZ3MgKmdwaW9zcGVjLCB1MzIgKmZsYWdzKQo+ID4gK3sKPiA+ICsJ
+dW5zaWduZWQgaW50IHBpbjsKPiA+ICsKPiA+ICsJaWYgKFdBUk5fT04oZ2MtPm9mX2dwaW9fbl9j
+ZWxsczwgIDMpKQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiArCWlmIChXQVJOX09O
+KGdwaW9zcGVjLT5hcmdzX2NvdW50PCAgZ2MtPm9mX2dwaW9fbl9jZWxscykpCj4gPiArCQlyZXR1
+cm4gLUVJTlZBTDsKPiA+ICsKPiA+ICsJaWYgKGdwaW9zcGVjLT5hcmdzWzBdPiAgZ2MtPm5ncGlv
+KQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiArCXBpbiA9IGdjLT5iYXNlICsgZ3Bp
+b3NwZWMtPmFyZ3NbMF07Cj4gPiArCj4gPiArCWlmIChzM2NfZ3Bpb19jZmdwaW4ocGluLCBTM0Nf
+R1BJT19TRk4oZ3Bpb3NwZWMtPmFyZ3NbMV0pKSkKPiA+ICsJCXByX3dhcm4oImdwaW9feGxhdGU6
+IGZhaWxlZCB0byBzZXQgcGluIGZ1bmN0aW9uXG4iKTsKPiA+ICsJaWYgKHMzY19ncGlvX3NldHB1
+bGwocGluLCBncGlvc3BlYy0+YXJnc1syXSYgIDB4ZmZmZikpCj4gPiArCQlwcl93YXJuKCJncGlv
+X3hsYXRlOiBmYWlsZWQgdG8gc2V0IHBpbiBwdWxsIHVwL2Rvd25cbiIpOwo+ID4gKwo+ID4gKwlp
+ZiAoZmxhZ3MpCj4gPiArCQkqZmxhZ3MgPSBncGlvc3BlYy0+YXJnc1syXT4+ICAxNjsKPiA+ICsK
+PiA+ICsJcmV0dXJuIGdwaW9zcGVjLT5hcmdzWzBdOwo+ID4gK30KPiA+ICsKPiA+ICtzdGF0aWMg
+Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBzM2MyNHh4X2dwaW9fZHRfbWF0Y2hbXSBfX2luaXRk
+YXRhID0gewo+ID4gKwl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsczNjMjR4eC1ncGlvIiwgfSwK
+PiA+ICsJe30KPiA+ICt9Owo+ID4gKwo+ID4gK3N0YXRpYyBfX2luaXQgdm9pZCBzM2MyNHh4X2dw
+aW9saWJfYXR0YWNoX29mbm9kZShzdHJ1Y3QKPiA+IHNhbXN1bmdfZ3Bpb19jaGlwICpjaGlwLCAr
+CQkJCQkJIHU2NCBiYXNlLCB1NjQgb2Zmc2V0KQo+ID4gK3sKPiA+ICsJc3RydWN0IGdwaW9fY2hp
+cCAqZ2MgPSZjaGlwLT5jaGlwOwo+ID4gKwl1NjQgYWRkcmVzczsKPiA+ICsKPiA+ICsJaWYgKCFv
+Zl9oYXZlX3BvcHVsYXRlZF9kdCgpKQo+ID4gKwkJcmV0dXJuOwo+ID4gKwo+ID4gKwlhZGRyZXNz
+ID0gY2hpcC0+YmFzZSA/IGJhc2UgKyAoKHUzMiljaGlwLT5iYXNlJiAgMHhmZmYpIDogYmFzZSAr
+Cj4gPiBvZmZzZXQ7ICsJZ2MtPm9mX25vZGUgPSBvZl9maW5kX21hdGNoaW5nX25vZGVfYnlfYWRk
+cmVzcyhOVUxMLAo+ID4gKwkJCXMzYzI0eHhfZ3Bpb19kdF9tYXRjaCwgYWRkcmVzcyk7Cj4gPiAr
+CWlmICghZ2MtPm9mX25vZGUpIHsKPiA+ICsJCXByX2luZm8oImdwaW86IGRldmljZSB0cmVlIG5v
+ZGUgbm90IGZvdW5kIGZvciBncGlvIGNvbnRyb2xsZXIiCj4gPiArCQkJIiB3aXRoIGJhc2UgYWRk
+cmVzcyAlMDhsbHhcbiIsIGFkZHJlc3MpOwo+ID4gKwkJcmV0dXJuOwo+ID4gKwl9Cj4gPiArCWdj
+LT5vZl9ncGlvX25fY2VsbHMgPSAzOwo+ID4gKwlnYy0+b2ZfeGxhdGUgPSBzM2MyNHh4X2dwaW9f
+eGxhdGU7Cj4gPiArfQo+ID4gKyNlbGlmIGRlZmluZWQoQ09ORklHX1BMQVRfUzNDMjRYWCkKPiA+
+ICtzdGF0aWMgX19pbml0IHZvaWQgczNjMjR4eF9ncGlvbGliX2F0dGFjaF9vZm5vZGUoc3RydWN0
+Cj4gPiBzYW1zdW5nX2dwaW9fY2hpcCAqY2hpcCwgKwkJCQkJCSB1NjQgYmFzZSwgdTY0IG9mZnNl
+dCkKPiA+ICt7Cj4gPiArCXJldHVybjsKPiA+ICt9Cj4gPiArI2VuZGlmIC8qIGRlZmluZWQoQ09O
+RklHX1BMQVRfUzNDMjRYWCkmJiAgZGVmaW5lZChDT05GSUdfT0YpICovCj4gPiArCj4gPiAKPiA+
+ICAgc3RhdGljIHZvaWQgX19pbml0IHMzYzI0eHhfZ3Bpb2xpYl9hZGRfY2hpcHMoc3RydWN0IHNh
+bXN1bmdfZ3Bpb19jaGlwCj4gPiAgICpjaGlwLAo+ID4gICAKPiA+ICAgCQkJCQkgICAgIGludCBu
+cl9jaGlwcywgdm9pZCBfX2lvbWVtICpiYXNlKQo+ID4gICAKPiA+ICAgewo+ID4gCj4gPiBAQCAt
+OTYyLDYgKzEwMjMsOCBAQCBzdGF0aWMgdm9pZCBfX2luaXQgczNjMjR4eF9ncGlvbGliX2FkZF9j
+aGlwcyhzdHJ1Y3QKPiA+IHNhbXN1bmdfZ3Bpb19jaGlwICpjaGlwLAo+ID4gCj4gPiAgIAkJCWdj
+LT5kaXJlY3Rpb25fb3V0cHV0ID0gc2Ftc3VuZ19ncGlvbGliXzJiaXRfb3V0cHV0Owo+ID4gICAJ
+CQo+ID4gICAJCXNhbXN1bmdfZ3Bpb2xpYl9hZGQoY2hpcCk7Cj4gPiAKPiA+ICsKPiA+ICsJCXMz
+YzI0eHhfZ3Bpb2xpYl9hdHRhY2hfb2Zub2RlKGNoaXAsIFMzQzI0WFhfUEFfR1BJTywgaSAqIDB4
+MTApOwo+ID4gCj4gPiAgIAl9Cj4gPiAgIAo+ID4gICB9CgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZpY2V0cmVlLWRpc2N1c3MgbWFpbGluZyBsaXN0
+CmRldmljZXRyZWUtZGlzY3Vzc0BsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJz
+Lm9yZy9saXN0aW5mby9kZXZpY2V0cmVlLWRpc2N1c3MK
