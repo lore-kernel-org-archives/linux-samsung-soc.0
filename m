@@ -1,111 +1,82 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2] ARM: EXYNOS: Add support for secondary CPU bring-up on
- Exynos4412
-Date: Wed, 29 Aug 2012 16:08:53 +0200
-Message-ID: <1393767.3tjq8gL245@amdc1227>
+From: Will Deacon <will.deacon@arm.com>
+Subject: Re: [PATCH v3 3/4] ARM: EXYNOS: Enable PMUs for exynos4
+Date: Wed, 29 Aug 2012 22:34:05 +0100
+Message-ID: <20120829213405.GC13868@mudshark.cambridge.arm.com>
+References: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
+ <1346202897-27306-4-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:31245 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753400Ab2H2OJB (ORCPT
+Received: from cam-admin0.cambridge.arm.com ([217.140.96.50]:56104 "EHLO
+	cam-admin0.cambridge.arm.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752628Ab2H2VeX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 10:09:01 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9I0061WSMSG220@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 23:09:00 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9I007AZSMUB620@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 23:08:59 +0900 (KST)
+	Wed, 29 Aug 2012 17:34:23 -0400
+Content-Disposition: inline
+In-Reply-To: <1346202897-27306-4-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: "kgene.kim@samsung.com" <kgene.kim@samsung.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "linux@arm.linux.org.uk" <linux@arm.linux.org.uk>, "sachin.kamat@linaro.org" <sachin.kamat@linaro.org>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, Kyungmin Park <kyungmin.park@samsung.com>
 
-Exynos4412 uses different information register for each core. This patch
-adjusts the bring-up code to take that into account.
+On Wed, Aug 29, 2012 at 02:14:56AM +0100, Chanho Park wrote:
+> This patch define irq numbers of ARM performance monitoring unit for exynos4.
+> The number of CPU cores and PMU irq numbers are vary according to soc types.
+> So we need to identify each soc type using soc_is_xxx function and define the
+> pmu irqs dynamically. In case of exynos4412, there are 4 cpu cores and pmus.
+> 
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.c            |   45 ++++++++++++++++++++++++++++++
+>  arch/arm/mach-exynos/include/mach/irqs.h |    8 ++++--
+>  arch/arm/plat-samsung/devs.c             |    2 +-
+>  3 files changed, 52 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index be61564..24b78bd 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -30,11 +30,13 @@
+>  #include <asm/mach/map.h>
+>  #include <asm/mach/irq.h>
+>  #include <asm/cacheflush.h>
+> +#include <asm/pmu.h>
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/platsmp.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+Why do you need this header file?
 
-diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-index 36c3984..816a27d 100644
---- a/arch/arm/mach-exynos/platsmp.c
-+++ b/arch/arm/mach-exynos/platsmp.c
-@@ -34,8 +34,19 @@
- 
- extern void exynos4_secondary_startup(void);
- 
--#define CPU1_BOOT_REG		(samsung_rev() == EXYNOS4210_REV_1_1 ? \
--				S5P_INFORM5 : S5P_VA_SYSRAM)
-+static inline void __iomem *cpu_boot_reg_base(void)
-+{
-+	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
-+		return S5P_INFORM5;
-+	return S5P_VA_SYSRAM;
-+}
-+
-+static inline void __iomem *cpu_boot_reg(int cpu)
-+{
-+	if (soc_is_exynos4412())
-+		return cpu_boot_reg_base() + 4*cpu;
-+	return cpu_boot_reg_base();
-+}
- 
- /*
-  * control for which core is the next to come out of the secondary
-@@ -89,6 +100,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
- int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- {
- 	unsigned long timeout;
-+	unsigned long phys_cpu = cpu_logical_map(cpu);
- 
- 	/*
- 	 * Set synchronisation state between this boot processor
-@@ -104,7 +116,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 	 * Note that "pen_release" is the hardware CPU ID, whereas
- 	 * "cpu" is Linux's internal ID.
- 	 */
--	write_pen_release(cpu_logical_map(cpu));
-+	write_pen_release(phys_cpu);
- 
- 	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
- 		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
-@@ -138,7 +150,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
- 		smp_rmb();
- 
- 		__raw_writel(virt_to_phys(exynos4_secondary_startup),
--			CPU1_BOOT_REG);
-+							cpu_boot_reg(phys_cpu));
- 		gic_raise_softirq(cpumask_of(cpu), 1);
- 
- 		if (pen_release == -1)
-@@ -186,6 +198,8 @@ void __init smp_init_cpus(void)
- 
- void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- {
-+	int i;
-+
- 	if (!soc_is_exynos5250())
- 		scu_enable(scu_base_addr());
- 
-@@ -195,6 +209,7 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
- 	 * until it receives a soft interrupt, and then the
- 	 * secondary CPU branches to this address.
- 	 */
--	__raw_writel(virt_to_phys(exynos4_secondary_startup),
--			CPU1_BOOT_REG);
-+	for (i = 1; i < max_cpus; ++i)
-+		__raw_writel(virt_to_phys(exynos4_secondary_startup),
-+					cpu_boot_reg(cpu_logical_map(i)));
- }
--- 
-1.7.12
+>  #include <mach/regs-irq.h>
+>  #include <mach/regs-pmu.h>
+>  #include <mach/regs-gpio.h>
+>  #include <mach/pmu.h>
+> +#include <mach/irqs.h>
+>  
+>  #include <plat/cpu.h>
+>  #include <plat/clock.h>
+> @@ -1056,3 +1058,46 @@ static int __init exynos_init_irq_eint(void)
+>  	return 0;
+>  }
+>  arch_initcall(exynos_init_irq_eint);
+> +
+> +#if defined(CONFIG_CPU_EXYNOS4210) || defined(CONFIG_SOC_EXYNOS4212)
+> +static struct resource exynos42xx_pmu_resource[] = {
+> +	DEFINE_RES_IRQ(EXYNOS4_IRQ_PMU),
+> +	DEFINE_RES_IRQ(EXYNOS4_IRQ_PMU_CPU1),
+> +};
+> +
+> +static struct platform_device exynos42xx_device_pmu = {
+> +	.name		= "arm-pmu",
+> +	.num_resources	= ARRAY_SIZE(exynos42xx_pmu_resource),
+> +	.resource	= exynos42xx_pmu_resource,
+> +};
+> +#endif
+
+Given that you don't pass an id and your device-tree binding is that for
+Cortex A15, I assume this patch series is based on my perf/updates branch?
+
+That's good because it reduces the potential for conflicts, but you should
+make sure that whoever you send this to is aware of the dependency.
+
+Cheers,
+
+Will
