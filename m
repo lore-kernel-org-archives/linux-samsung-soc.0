@@ -1,57 +1,111 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS: Use EXYNOS4210_GPEx instead of
- EXYNOS4_GPEx
-Date: Wed, 29 Aug 2012 15:52:23 +0200
-Message-ID: <3351890.rVcxVBV0WB@amdc1227>
-References: <4648723.rWnut7F0uJ@amdc1227> <503D57EF.2090402@samsung.com>
- <CAH9JG2UF6cqPcX4idYLRBHwLvs27ErtbwsjEFvMZbyfz_KNsZw@mail.gmail.com>
+Subject: [PATCH v2] ARM: EXYNOS: Add support for secondary CPU bring-up on
+ Exynos4412
+Date: Wed, 29 Aug 2012 16:08:53 +0200
+Message-ID: <1393767.3tjq8gL245@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:30045 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:31245 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753710Ab2H2Nw3 (ORCPT
+	with ESMTP id S1753400Ab2H2OJB (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 09:52:29 -0400
+	Wed, 29 Aug 2012 10:09:01 -0400
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9I007NIRVB0A10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 22:52:27 +0900 (KST)
+ 17 2011)) with ESMTP id <0M9I0061WSMSG220@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 23:09:00 +0900 (KST)
 Received: from amdc1227.localnet ([106.116.147.199])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9I00531RVC7GA0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 22:52:27 +0900 (KST)
-In-reply-to: <CAH9JG2UF6cqPcX4idYLRBHwLvs27ErtbwsjEFvMZbyfz_KNsZw@mail.gmail.com>
+ with ESMTPA id <0M9I007AZSMUB620@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 23:08:59 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kyungmin.park@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, linux-arm-kernel@lists.infradead.org, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
+Cc: linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kyungmin Park <kyungmin.park@samsung.com>, Kukjin Kim <kgene.kim@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>
 
-Hi,
+Exynos4412 uses different information register for each core. This patch
+adjusts the bring-up code to take that into account.
 
-On Wednesday 29 of August 2012 09:03:12 Kyungmin Park wrote:
-> On 8/29/12, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Please see my comments on Joonyoung Shim's previous patch...
-> > http://lists.infradead.org/pipermail/linux-arm-kernel/2012-May/101522.h
-> > tml
-> It's perference issue. some person like this style. others doesn't.
-> Moreever vender, System LSI, provided codes have whole different style.
-> It lists up whole gpios for each SoCs.
-> 
-> EXYNOS4210_{A0, .... Z}
-> EXYNOS4412_{A0, .... V4}
-> EXYNOS5250_{A0, .... Z}
-> 
-> anyway, just remain it as broken, and try to use pinctl as Thomas
-> mentioned.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/platsmp.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
-OK, I will drop this patchset for the time being. Let's get the pinctrl 
-driver merged first and then investigate Exynos4x12 support in it.
-
-Best regards,
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index 36c3984..816a27d 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -34,8 +34,19 @@
+ 
+ extern void exynos4_secondary_startup(void);
+ 
+-#define CPU1_BOOT_REG		(samsung_rev() == EXYNOS4210_REV_1_1 ? \
+-				S5P_INFORM5 : S5P_VA_SYSRAM)
++static inline void __iomem *cpu_boot_reg_base(void)
++{
++	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
++		return S5P_INFORM5;
++	return S5P_VA_SYSRAM;
++}
++
++static inline void __iomem *cpu_boot_reg(int cpu)
++{
++	if (soc_is_exynos4412())
++		return cpu_boot_reg_base() + 4*cpu;
++	return cpu_boot_reg_base();
++}
+ 
+ /*
+  * control for which core is the next to come out of the secondary
+@@ -89,6 +100,7 @@ void __cpuinit platform_secondary_init(unsigned int cpu)
+ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ {
+ 	unsigned long timeout;
++	unsigned long phys_cpu = cpu_logical_map(cpu);
+ 
+ 	/*
+ 	 * Set synchronisation state between this boot processor
+@@ -104,7 +116,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 	 * Note that "pen_release" is the hardware CPU ID, whereas
+ 	 * "cpu" is Linux's internal ID.
+ 	 */
+-	write_pen_release(cpu_logical_map(cpu));
++	write_pen_release(phys_cpu);
+ 
+ 	if (!(__raw_readl(S5P_ARM_CORE1_STATUS) & S5P_CORE_LOCAL_PWR_EN)) {
+ 		__raw_writel(S5P_CORE_LOCAL_PWR_EN,
+@@ -138,7 +150,7 @@ int __cpuinit boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 		smp_rmb();
+ 
+ 		__raw_writel(virt_to_phys(exynos4_secondary_startup),
+-			CPU1_BOOT_REG);
++							cpu_boot_reg(phys_cpu));
+ 		gic_raise_softirq(cpumask_of(cpu), 1);
+ 
+ 		if (pen_release == -1)
+@@ -186,6 +198,8 @@ void __init smp_init_cpus(void)
+ 
+ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ {
++	int i;
++
+ 	if (!soc_is_exynos5250())
+ 		scu_enable(scu_base_addr());
+ 
+@@ -195,6 +209,7 @@ void __init platform_smp_prepare_cpus(unsigned int max_cpus)
+ 	 * until it receives a soft interrupt, and then the
+ 	 * secondary CPU branches to this address.
+ 	 */
+-	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+-			CPU1_BOOT_REG);
++	for (i = 1; i < max_cpus; ++i)
++		__raw_writel(virt_to_phys(exynos4_secondary_startup),
++					cpu_boot_reg(cpu_logical_map(i)));
+ }
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
+1.7.12
