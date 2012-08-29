@@ -1,56 +1,112 @@
 From: Chanho Park <chanho61.park@samsung.com>
-Subject: [PATCH v3 0/4] Add support to enable ARM PMU for EXYNOS
-Date: Wed, 29 Aug 2012 10:14:53 +0900
-Message-ID: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
+Subject: [PATCH v3 1/4] ARM: EXYNOS: Add set_irq_affinity function for
+ combiner_irq
+Date: Wed, 29 Aug 2012 10:14:54 +0900
+Message-ID: <1346202897-27306-2-git-send-email-chanho61.park@samsung.com>
+References: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14144 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751239Ab2H2BPN (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16739 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751600Ab2H2BPP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 28 Aug 2012 21:15:13 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
+	Tue, 28 Aug 2012 21:15:15 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9H00MHFSPQEE30@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 10:15:11 +0900 (KST)
+ 17 2011)) with ESMTP id <0M9H00FKKST8WE70@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 10:15:13 +0900 (KST)
 Received: from localhost.localdomain ([10.90.51.45])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M9H00IO5ST8BV20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 10:15:11 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 10:15:13 +0900 (KST)
+In-reply-to: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, thomas.abraham@linaro.org, Chanho Park <chanho61.park@samsung.com>
+Cc: linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, thomas.abraham@linaro.org, Chanho Park <chanho61.park@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-This patchset fixes irq numbers of ARM Performance Monitoring unit and enable it
-for Perf(Performance Counter) on the exynos 4 and 5. The exynos4 and 5 use 2
-more cpu cores which has its own pmu.
-The exynos uses combiner-irq type for arm-pmu. Especially, the exynos4412 has 4
-extra combined irq groups. So, we need to change a max combiner number.
-To enable perf, we need also to implement a set_irq_affinity function about the
-combiner-irq. After applying this patch, we can use the perf for the exynos
-machine.
+This patch adds set_irq_affinity function for combiner_irq. We need this
+function to enable a arm-pmu because the pmu of exynos has combined type irqs.
 
-Changes from v2:
- - Convert to dt binding of exynos5250
+Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/common.c |   30 +++++++++++++++++++++++++-----
+ 1 file changed, 25 insertions(+), 5 deletions(-)
 
-Changes from v1:
- - Split arm-pmu init of exynos from plat-samsung
- - Correct combined irqs of exynos4412
- - Use soc_is_xxx function instead of CONFIG_XXX to identify dynamically
-
-Chanho Park (4):
-  ARM: EXYNOS: Add set_irq_affinity function for combiner_irq
-  ARM: EXYNOS: Correct combined IRQs for exynos4412
-  ARM: EXYNOS: Enable PMUs for exynos4
-  ARM: EXYNOS: Add arm-pmu DT binding for exynos5250
-
- arch/arm/boot/dts/exynos5250.dtsi        |    6 ++
- arch/arm/mach-exynos/common.c            |  106 ++++++++++++++++++++++++++----
- arch/arm/mach-exynos/include/mach/irqs.h |   10 ++-
- arch/arm/plat-samsung/devs.c             |    2 +-
- 4 files changed, 109 insertions(+), 15 deletions(-)
-
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 4eb39cd..f194bbc 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -405,6 +405,7 @@ struct combiner_chip_data {
+ 	unsigned int irq_offset;
+ 	unsigned int irq_mask;
+ 	void __iomem *base;
++	unsigned int parent_irq;
+ };
+ 
+ static struct irq_domain *combiner_irq_domain;
+@@ -461,10 +462,28 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
++#ifdef CONFIG_SMP
++static int combiner_set_affinity(struct irq_data *d,
++				 const struct cpumask *mask_val, bool force)
++{
++	struct combiner_chip_data *chip_data = irq_data_get_irq_chip_data(d);
++	struct irq_chip *chip = irq_get_chip(chip_data->parent_irq);
++	struct irq_data *data = irq_get_irq_data(chip_data->parent_irq);
++
++	if (chip && chip->irq_set_affinity)
++		return chip->irq_set_affinity(data, mask_val, force);
++	else
++		return -EINVAL;
++}
++#endif
++
+ static struct irq_chip combiner_chip = {
+-	.name		= "COMBINER",
+-	.irq_mask	= combiner_mask_irq,
+-	.irq_unmask	= combiner_unmask_irq,
++	.name			= "COMBINER",
++	.irq_mask		= combiner_mask_irq,
++	.irq_unmask		= combiner_unmask_irq,
++#ifdef CONFIG_SMP
++	.irq_set_affinity	= combiner_set_affinity,
++#endif
+ };
+ 
+ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
+@@ -484,12 +503,13 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
+ }
+ 
+ static void __init combiner_init_one(unsigned int combiner_nr,
+-				     void __iomem *base)
++				     void __iomem *base, unsigned int irq)
+ {
+ 	combiner_data[combiner_nr].base = base;
+ 	combiner_data[combiner_nr].irq_offset = irq_find_mapping(
+ 		combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
+ 	combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
++	combiner_data[combiner_nr].parent_irq = irq;
+ 
+ 	/* Disable all interrupts */
+ 	__raw_writel(combiner_data[combiner_nr].irq_mask,
+@@ -573,12 +593,12 @@ static void __init combiner_init(void __iomem *combiner_base,
+ 	}
+ 
+ 	for (i = 0; i < max_nr; i++) {
+-		combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
+ 		irq = IRQ_SPI(i);
+ #ifdef CONFIG_OF
+ 		if (np)
+ 			irq = irq_of_parse_and_map(np, i);
+ #endif
++		combiner_init_one(i, combiner_base + (i >> 2) * 0x10, irq);
+ 		combiner_cascade_irq(i, irq);
+ 	}
+ }
 -- 
 1.7.9.5
