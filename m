@@ -1,86 +1,123 @@
-From: Sangsu Park <sangsu4u.park@samsung.com>
-Subject: RE: [PATCH] ASoC: SAMSUNG: Add SND_SOC_DAIFMT_CONT option for
- snd_soc_set_fmt()
-Date: Wed, 29 Aug 2012 20:06:32 +0900
-Message-ID: <001d01cd85d6$59298040$0b7c80c0$@samsung.com>
-References: <003101cd8367$3476e650$9d64b2f0$@samsung.com>
- <20120827204550.GA4400@opensource.wolfsonmicro.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v3 2/4] ARM: EXYNOS: Correct combined IRQs for exynos4412
+Date: Wed, 29 Aug 2012 16:39:35 +0530
+Message-ID: <CAJuYYwSH19-GmNo7jZyXd9TC4VeKGxVCd=N0Vi4=kUNZPZNx6g@mail.gmail.com>
+References: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
+	<1346202897-27306-3-git-send-email-chanho61.park@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:46205 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752541Ab2H2LGf convert rfc822-to-8bit (ORCPT
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:60121 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752541Ab2H2LJh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 07:06:35 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9I001ZCK6U2M30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 20:06:33 +0900 (KST)
-Received: from DOSANGSU4UP02 ([12.23.118.226])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9I006XXK6WKU40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 20:06:33 +0900 (KST)
-In-reply-to: <20120827204550.GA4400@opensource.wolfsonmicro.com>
-Content-language: ko
+	Wed, 29 Aug 2012 07:09:37 -0400
+Received: by lagy9 with SMTP id y9so424372lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Aug 2012 04:09:35 -0700 (PDT)
+In-Reply-To: <1346202897-27306-3-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Mark Brown' <broonie@opensource.wolfsonmicro.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>, ben-linux@fluff.org, lrg@ti.com, linux-arm-kernel@lists.infradead.org
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, Kyungmin Park <kyungmin.park@samsung.com>
 
-On Sun, Aug 26, 2012 at 05:45:54PM +0900, Mark Brown wrote:
-> On Sun, Aug 26, 2012 at 05:45:54PM +0900,  =DA=BB    wrote:
-> > SND_SOC_DAIFMT_CONT option is now needed because of below commit:
-> >
-> > ASoC: Allow DAI formats to be specified in the dai_link
->=20
-> Clearly it's not a direct consequence of this commit, that just intro=
-duces a new optional facility
-> which...
-OK, I'll change it.
->=20
-> >  	/* Set the cpu DAI configuration */
-> >  	ret =3D snd_soc_dai_set_fmt(cpu_dai, SND_SOC_DAIFMT_DSP_B
-> > +				| SND_SOC_DAIFMT_CONT
-> >  				| SND_SOC_DAIFMT_IB_NF
-> >  				| SND_SOC_DAIFMT_CBS_CFS);
->=20
-> ...isn't being used by the driver.
->=20
-> Looking at the above it looks like the PCM driver is doing something =
-very odd - _CONT doesn't make
-> a whole lot of sense on the slave side, it's related to the clock gen=
-eration so should have no
-> effect at all on the slave side.  The driver code looks reasonably se=
-nsible though.
-You mean cpu side is slave?=20
-And I think that pcm driver can be changed to solve this issue.
->=20
-> What specifically is going wrong here?
-SND_SOC_DAIFMT_CONT is used sound/soc/Samsung/pcm.c (s3c_pcm_set_fmt())=
- like below.
+On 29 August 2012 06:44, Chanho Park <chanho61.park@samsung.com> wrote:
+> This patch corrects combined IRQs for exynos4412 platform. The exynos4412 has
+> four extra combined irq group. Each irq is mapped to IRQ_SPI(xx). Unfortunately,
+> extra combined IRQs isn't sequential. So, we need to map the irq manually.
+>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.c            |   31 ++++++++++++++++++++++++------
+>  arch/arm/mach-exynos/include/mach/irqs.h |    2 +-
+>  2 files changed, 26 insertions(+), 7 deletions(-)
+>
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index f194bbc..be61564 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -560,23 +560,39 @@ static struct irq_domain_ops combiner_irq_domain_ops = {
+>         .map    = combiner_irq_domain_map,
+>  };
+>
+> +static unsigned int get_combiner_extra_irq(int group)
+> +{
+> +       switch (group) {
+> +       case 16:
+> +               return IRQ_SPI(107);
+> +       case 17:
+> +               return IRQ_SPI(108);
+> +       case 18:
+> +               return IRQ_SPI(48);
+> +       case 19:
+> +               return IRQ_SPI(42);
+> +       default:
+> +               return 0;
+> +       }
+> +}
+> +
+>  static void __init combiner_init(void __iomem *combiner_base,
+>                                  struct device_node *np)
+>  {
+>         int i, irq, irq_base;
+>         unsigned int max_nr, nr_irq;
+>
+> +       max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
+> +                                       EXYNOS4_MAX_COMBINER_NR;
+> +
+>         if (np) {
+>                 if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr)) {
+>                         pr_warning("%s: number of combiners not specified, "
+>                                 "setting default as %d.\n",
+> -                               __func__, EXYNOS4_MAX_COMBINER_NR);
+> -                       max_nr = EXYNOS4_MAX_COMBINER_NR;
+> +                               __func__, max_nr);
+>                 }
+> -       } else {
+> -               max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
+> -                                               EXYNOS4_MAX_COMBINER_NR;
+>         }
+> +
+>         nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
 
-switch (fmt & SND_SOC_DAIFMT_CLOCK_MASK) {
-        case SND_SOC_DAIFMT_CONT:
-                pcm->idleclk =3D 1;
-                break;
-        case SND_SOC_DAIFMT_GATED:
-                pcm->idleclk =3D 0;
-                break;
-        default:
-                dev_err(pcm->dev, "Invalid Clock gating request!\n");
-                ret =3D -EINVAL;
-                goto exit;
-        }
+Along with this change, this patch should update the default value
+"samsung,combiner-nr" binding in device tree binding documentation for
+combiner. It should state that is Exynos5 will use 32 and Exynos4 will
+use 20 as the default value.
 
-If fmt argument has no SND_SOC_DAIFMT_ option, s3c_pcm_set_fmt() return=
- -EINVAL.
+>
+>         irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
+> @@ -593,7 +609,10 @@ static void __init combiner_init(void __iomem *combiner_base,
+>         }
+>
+>         for (i = 0; i < max_nr; i++) {
+> -               irq = IRQ_SPI(i);
+> +               if (i < 16 || soc_is_exynos5250())
+> +                       irq = IRQ_SPI(i);
+> +               else
+> +                       irq = get_combiner_extra_irq(i);
+>  #ifdef CONFIG_OF
+>                 if (np)
+>                         irq = irq_of_parse_and_map(np, i);
+> diff --git a/arch/arm/mach-exynos/include/mach/irqs.h b/arch/arm/mach-exynos/include/mach/irqs.h
+> index 35bced6..357ed7f 100644
+> --- a/arch/arm/mach-exynos/include/mach/irqs.h
+> +++ b/arch/arm/mach-exynos/include/mach/irqs.h
+> @@ -165,7 +165,7 @@
+>  #define EXYNOS4_IRQ_FIMD0_VSYNC                COMBINER_IRQ(11, 1)
+>  #define EXYNOS4_IRQ_FIMD0_SYSTEM       COMBINER_IRQ(11, 2)
+>
+> -#define EXYNOS4_MAX_COMBINER_NR                16
+> +#define EXYNOS4_MAX_COMBINER_NR                20
 
->=20
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Will this not break Exynos4210 which has only 16 combiners? This is
+fine in case max-combiner values is listed in dt mode, but in non-dt
+mode or if max-combiner is not specified in dt, this will not be
+correct.
+
+>
+>  #define EXYNOS4_IRQ_GPIO1_NR_GROUPS    16
+>  #define EXYNOS4_IRQ_GPIO2_NR_GROUPS    9
+> --
+> 1.7.9.5
+>
