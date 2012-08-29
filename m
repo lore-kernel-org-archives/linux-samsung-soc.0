@@ -1,145 +1,44 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
-Date: Wed, 29 Aug 2012 09:41:31 +0200
-Message-ID: <201208290941.32071.heiko@sntech.de>
-References: <201208282355.44268.heiko@sntech.de> <503D4FB1.1020206@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <503D4FB1.1020206-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-0IS4wlFg1OjSUeElwK9/Pw@public.gmane.org>, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, Rob Herring <rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH v5 0/9] mmc: dw_mmc: add support for device tree based
+ instantiation
+Date: Wed, 29 Aug 2012 16:18:06 +0530
+Message-ID: <1346237295-7116-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: will.newton@imgtec.com, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-QW0gTWl0dHdvY2gsIDI5LiBBdWd1c3QgMjAxMiwgMDE6MDk6Mzcgc2NocmllYiBLdWtqaW4gS2lt
-Ogo+IE9uIDA4LzI4LzEyIDE0OjU1LCBIZWlrbyBTdMO8Ym5lciB3cm90ZToKPiA+IFVudGlsIG5v
-dyB0aGUgRXh5bm9zLVNvQyB3YXMgdGhlIG9ubHkgU2Ftc3VuZy1Tb0Mgc3VwcG9ydGluZyB0aGUg
-R1BJT3MKPiA+IHZpYSB0aGUgZGV2aWNlIHRyZWUuIFRoaXMgcGF0Y2ggaW1wbGVtZW50cyBkdC1z
-dXBwb3J0IGZvciB0aGUKPiA+IHMzYzI0eHggYXJjaGVzLgo+ID4gCj4gPiBUaGUgY29udHJvbGxl
-cnMgY29udGFpbiBvbmx5IDMgY2VsbHMsIGFzIHRoZSB1bmRlcmx5aW5nIGdwaW8gY29udHJvbGxl
-cgo+ID4gZG9lcyBub3Qgc3VwcG9ydCBjb250cm9sbGluZyB0aGUgZHJpdmUgc3RyZW5ndGggb24g
-YSBncGlvIGxldmVsLgo+ID4gCj4gPiBUZXN0ZWQgd2l0aCB0aGUgZ3Bpby1rZXlzIGRyaXZlciBv
-biBhIHMzYzI0MTYgYmFzZWQgbWFjaGluZS4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogSGVpa28g
-U3R1ZWJuZXI8aGVpa29Ac250ZWNoLmRlPgo+ID4gUmV2aWV3ZWQtYnk6IFRob21hcyBBYnJhaGFt
-PHRob21hcy5hYnJhaGFtQGxpbmFyby5vcmc+Cj4gCj4gWWVhaCwgbG9va3MgZ29vZCB0byBtZS4u
-Lgo+IAo+IEFja2VkLWJ5OiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+Cj4gCj4g
-QlRXLCBJJ20gbm90IHN1cmUgd2hlbiB3ZSBjYW4gc3VwcG9ydCBkZXZpY2UgdHJlZSBmb3IgUzND
-MjRYWCA6LSkKCkFzIHlvdSBtaWdodCd2ZSBndWVzc2VkLCBJJ20gd29ya2luZyBvbiBpdCA6LSkg
-LgoKVGhhbmtzIHRvIHNvbWUgZW5naW5lZXJzIG9mIHlvdXJzIGF0IGxlYXN0IHRoZSBzM2MyNDE2
-L3MzYzI0NTAgU29DcyBzaGFyZSBhIApsb3Qgb2YgY29tcG9uZW50cyB3aXRoIGFsbCB0aGUgbmV3
-ZXIgb25lcyBhbmQgdGhlaXIgZHJpdmVycyBhbHJlYWR5IGNvbnRhaW4gCnRoZSBkdCBiaW5kaW5n
-cyAtIG1vc3RseSB0aGFua3MgdG8gVGhvbWFzIEkgdGhpbmsuCgpTbyB0aGUgb25seSByZWFsIGhh
-cmQgcGFydCBJIG5lZWQgdG8gZmlndXJlIG91dCBmb3Igbm93IGlzLCBob3cgdG8gaW1wbGVtZW50
-IAp0aGUgaW50ZXJydXB0IGJpbmRpbmdzLiBUaGVuIEknbGwgYWxyZWFkeSBoYXZlIHNkaGNpLCBy
-dGMsIHdhdGNoZG9nLCBzZXJpYWwgCmFuZCBpMmMgYXZhaWxhYmxlLgoKQW5kIGlmIEkgYWxzbyBt
-YW5hZ2UgdG8gZ2V0IHRoZSBkbWEgaW50byBkdCwgSSdsbCBhbHNvIGhhdmUgdGhlIHMzYzY0eHgt
-c3BpIAphdmFpbGFibGUuCgpTbywgYWxsIGluIGFsbCwgdGhpcyBkb2VzIHNvdW5kIHNvbHZhYmxl
-IDotKQoKCkhlaWtvCgoKPiBUaGFua3MuCj4gCj4gQmVzdCByZWdhcmRzLAo+IEtnZW5lLgo+IC0t
-Cj4gS3VramluIEtpbSA8a2dlbmUua2ltQHNhbXN1bmcuY29tPiwgU2VuaW9yIEVuZ2luZWVyLAo+
-IFNXIFNvbHV0aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25pY3MgQ28uLCBM
-dGQuCj4gCj4gPiAtLS0KPiA+IGNoYW5nZXMgc2luY2UgdjE6Cj4gPiB1cGRhdGUgYmluZGluZ3Mg
-ZG9jdW1lbnRhdGlvbiB0byBhZGRyZXNzIFNvQyBzcGVjaWZpYyBpc3N1ZXMKPiA+IAo+ID4gICAu
-Li4vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8tc2Ftc3VuZy50eHQgICAgICB8ICAgNDMg
-KysrKysrKysrKysrKwo+ID4gICBkcml2ZXJzL2dwaW8vZ3Bpby1zYW1zdW5nLmMgICAgICAgICAg
-ICAgICAgICAgICAgICB8ICAgNjMKPiA+ICAgKysrKysrKysrKysrKysrKysrKysgMiBmaWxlcyBj
-aGFuZ2VkLCAxMDYgaW5zZXJ0aW9ucygrKSwgMAo+ID4gICBkZWxldGlvbnMoLSkKPiA+IAo+ID4g
-ZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8t
-c2Ftc3VuZy50eHQKPiA+IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8v
-Z3Bpby1zYW1zdW5nLnR4dCBpbmRleAo+ID4gNTM3NTYyNS4uZjFlNWRmZSAxMDA2NDQKPiA+IC0t
-LSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8tc2Ftc3VuZy50
-eHQKPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2dwaW8t
-c2Ftc3VuZy50eHQKPiA+IAo+ID4gQEAgLTM5LDMgKzM5LDQ2IEBAIEV4YW1wbGU6Cj4gPiAgIAkJ
-I2dwaW8tY2VsbHMgPTw0PjsKPiA+ICAgCQlncGlvLWNvbnRyb2xsZXI7Cj4gPiAgIAkKPiA+ICAg
-CX07Cj4gPiAKPiA+ICsKPiA+ICsKPiA+ICtTYW1zdW5nIFMzQzI0WFggR1BJTyBDb250cm9sbGVy
-Cj4gPiArCj4gPiArUmVxdWlyZWQgcHJvcGVydGllczoKPiA+ICstIGNvbXBhdGlibGU6IENvbXBh
-dGlibGUgcHJvcGVydHkgdmFsdWUgc2hvdWxkIGJlCj4gPiAic2Ftc3VuZyxzM2MyNHh4LWdwaW8i
-LiArCj4gPiArLSByZWc6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBvZiB0aGUgY29udHJvbGxlciBh
-bmQgbGVuZ3RoIG9mIG1lbW9yeQo+ID4gbWFwcGVkICsgIHJlZ2lvbi4KPiA+ICsKPiA+ICstICNn
-cGlvLWNlbGxzOiBTaG91bGQgYmUgMy4gVGhlIHN5bnRheCBvZiB0aGUgZ3BpbyBzcGVjaWZpZXIg
-dXNlZCBieQo+ID4gY2xpZW50IG5vZGVzICsgIHNob3VsZCBiZSB0aGUgZm9sbG93aW5nIHdpdGgg
-dmFsdWVzIGRlcml2ZWQgZnJvbSB0aGUgU29DCj4gPiB1c2VyIG1hbnVhbC4gKzxbcGhhbmRsZSBv
-ZiB0aGUgZ3BpbyBjb250cm9sbGVyIG5vZGVdCj4gPiArICAgICAgW3BpbiBudW1iZXIgd2l0aGlu
-IHRoZSBncGlvIGNvbnRyb2xsZXJdCj4gPiArICAgICAgW211eCBmdW5jdGlvbl0KPiA+ICsgICAg
-ICBbZmxhZ3MgYW5kIHB1bGwgdXAvZG93bl0KPiA+ICsKPiA+ICsgIFZhbHVlcyBmb3IgZ3BpbyBz
-cGVjaWZpZXI6Cj4gPiArICAtIFBpbiBudW1iZXI6IGRlcGVuZGluZyBvbiB0aGUgY29udHJvbGxl
-ciBhIG51bWJlciBmcm9tIDAgdXAgdG8gMTUuCj4gPiArICAtIE11eCBmdW5jdGlvbjogRGVwZW5k
-aW5nIG9uIHRoZSBTb0MgYW5kIHRoZSBncGlvIGJhbmsgdGhlIGdwaW8gY2FuIGJlCj4gPiBzZXQg
-KyAgICAgICAgICAgICAgICAgIGFzIGlucHV0LCBvdXRwdXQgb3IgYSBzcGVjaWFsIGZ1bmN0aW9u
-Cj4gPiArICAtIEZsYWdzIGFuZCBQdWxsIFVwL0Rvd246IHRoZSB2YWx1ZXMgdG8gdXNlIGRpZmZl
-ciBmb3IgdGhlIGluZGl2aWR1YWwKPiA+IFNvQ3MgKyAgICAgICAgICAgICAgICAgICAgZXhhbXBs
-ZSBTM0MyNDE2L1MzQzI0NTA6Cj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIDAgLSBQ
-dWxsIFVwL0Rvd24gRGlzYWJsZWQuCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgIDEg
-LSBQdWxsIERvd24gRW5hYmxlZC4KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgMiAt
-IFB1bGwgVXAgRW5hYmxlZC4KPiA+ICsgICAgICAgICAgQml0IDE2ICgweDAwMDEwMDAwKSAtIElu
-cHV0IGlzIGFjdGl2ZSBsb3cuCj4gPiArICBDb25zdWx0IHRoZSB1c2VyIG1hbnVhbCBmb3IgdGhl
-IGNvcnJlY3QgdmFsdWVzIG9mIE11eCBhbmQgUHVsbAo+ID4gVXAvRG93bi4gKwo+ID4gKy0gZ3Bp
-by1jb250cm9sbGVyOiBTcGVjaWZpZXMgdGhhdCB0aGUgbm9kZSBpcyBhIGdwaW8gY29udHJvbGxl
-ci4KPiA+ICstICNhZGRyZXNzLWNlbGxzOiBzaG91bGQgYmUgMS4KPiA+ICstICNzaXplLWNlbGxz
-OiBzaG91bGQgYmUgMS4KPiA+ICsKPiA+ICtFeGFtcGxlOgo+ID4gKwo+ID4gKwlncGE6IGdwaW8t
-Y29udHJvbGxlckA1NjAwMDAwMCB7Cj4gPiArCQkjYWRkcmVzcy1jZWxscyA9PDE+Owo+ID4gKwkJ
-I3NpemUtY2VsbHMgPTwxPjsKPiA+ICsJCWNvbXBhdGlibGUgPSAic2Ftc3VuZyxzM2MyNHh4LWdw
-aW8iOwo+ID4gKwkJcmVnID08MHg1NjAwMDAwMCAweDEwPjsKPiA+ICsJCSNncGlvLWNlbGxzID08
-Mz47Cj4gPiArCQlncGlvLWNvbnRyb2xsZXI7Cj4gPiArCX07Cj4gPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncGlvL2dwaW8tc2Ftc3VuZy5jIGIvZHJpdmVycy9ncGlvL2dwaW8tc2Ftc3VuZy5jCj4g
-PiBpbmRleCBiYTEyNmNjLi41NGY2NjYzIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncGlvL2dw
-aW8tc2Ftc3VuZy5jCj4gPiArKysgYi9kcml2ZXJzL2dwaW8vZ3Bpby1zYW1zdW5nLmMKPiA+IEBA
-IC05MzgsNiArOTM4LDY3IEBAIHN0YXRpYyB2b2lkIF9faW5pdCBzYW1zdW5nX2dwaW9saWJfYWRk
-KHN0cnVjdAo+ID4gc2Ftc3VuZ19ncGlvX2NoaXAgKmNoaXApCj4gPiAKPiA+ICAgCQlzM2NfZ3Bp
-b2xpYl90cmFjayhjaGlwKTsKPiA+ICAgCj4gPiAgIH0KPiA+IAo+ID4gKyNpZiBkZWZpbmVkKENP
-TkZJR19QTEFUX1MzQzI0WFgpJiYgIGRlZmluZWQoQ09ORklHX09GKQo+ID4gK3N0YXRpYyBpbnQg
-czNjMjR4eF9ncGlvX3hsYXRlKHN0cnVjdCBncGlvX2NoaXAgKmdjLAo+ID4gKwkJCWNvbnN0IHN0
-cnVjdCBvZl9waGFuZGxlX2FyZ3MgKmdwaW9zcGVjLCB1MzIgKmZsYWdzKQo+ID4gK3sKPiA+ICsJ
-dW5zaWduZWQgaW50IHBpbjsKPiA+ICsKPiA+ICsJaWYgKFdBUk5fT04oZ2MtPm9mX2dwaW9fbl9j
-ZWxsczwgIDMpKQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiArCWlmIChXQVJOX09O
-KGdwaW9zcGVjLT5hcmdzX2NvdW50PCAgZ2MtPm9mX2dwaW9fbl9jZWxscykpCj4gPiArCQlyZXR1
-cm4gLUVJTlZBTDsKPiA+ICsKPiA+ICsJaWYgKGdwaW9zcGVjLT5hcmdzWzBdPiAgZ2MtPm5ncGlv
-KQo+ID4gKwkJcmV0dXJuIC1FSU5WQUw7Cj4gPiArCj4gPiArCXBpbiA9IGdjLT5iYXNlICsgZ3Bp
-b3NwZWMtPmFyZ3NbMF07Cj4gPiArCj4gPiArCWlmIChzM2NfZ3Bpb19jZmdwaW4ocGluLCBTM0Nf
-R1BJT19TRk4oZ3Bpb3NwZWMtPmFyZ3NbMV0pKSkKPiA+ICsJCXByX3dhcm4oImdwaW9feGxhdGU6
-IGZhaWxlZCB0byBzZXQgcGluIGZ1bmN0aW9uXG4iKTsKPiA+ICsJaWYgKHMzY19ncGlvX3NldHB1
-bGwocGluLCBncGlvc3BlYy0+YXJnc1syXSYgIDB4ZmZmZikpCj4gPiArCQlwcl93YXJuKCJncGlv
-X3hsYXRlOiBmYWlsZWQgdG8gc2V0IHBpbiBwdWxsIHVwL2Rvd25cbiIpOwo+ID4gKwo+ID4gKwlp
-ZiAoZmxhZ3MpCj4gPiArCQkqZmxhZ3MgPSBncGlvc3BlYy0+YXJnc1syXT4+ICAxNjsKPiA+ICsK
-PiA+ICsJcmV0dXJuIGdwaW9zcGVjLT5hcmdzWzBdOwo+ID4gK30KPiA+ICsKPiA+ICtzdGF0aWMg
-Y29uc3Qgc3RydWN0IG9mX2RldmljZV9pZCBzM2MyNHh4X2dwaW9fZHRfbWF0Y2hbXSBfX2luaXRk
-YXRhID0gewo+ID4gKwl7IC5jb21wYXRpYmxlID0gInNhbXN1bmcsczNjMjR4eC1ncGlvIiwgfSwK
-PiA+ICsJe30KPiA+ICt9Owo+ID4gKwo+ID4gK3N0YXRpYyBfX2luaXQgdm9pZCBzM2MyNHh4X2dw
-aW9saWJfYXR0YWNoX29mbm9kZShzdHJ1Y3QKPiA+IHNhbXN1bmdfZ3Bpb19jaGlwICpjaGlwLCAr
-CQkJCQkJIHU2NCBiYXNlLCB1NjQgb2Zmc2V0KQo+ID4gK3sKPiA+ICsJc3RydWN0IGdwaW9fY2hp
-cCAqZ2MgPSZjaGlwLT5jaGlwOwo+ID4gKwl1NjQgYWRkcmVzczsKPiA+ICsKPiA+ICsJaWYgKCFv
-Zl9oYXZlX3BvcHVsYXRlZF9kdCgpKQo+ID4gKwkJcmV0dXJuOwo+ID4gKwo+ID4gKwlhZGRyZXNz
-ID0gY2hpcC0+YmFzZSA/IGJhc2UgKyAoKHUzMiljaGlwLT5iYXNlJiAgMHhmZmYpIDogYmFzZSAr
-Cj4gPiBvZmZzZXQ7ICsJZ2MtPm9mX25vZGUgPSBvZl9maW5kX21hdGNoaW5nX25vZGVfYnlfYWRk
-cmVzcyhOVUxMLAo+ID4gKwkJCXMzYzI0eHhfZ3Bpb19kdF9tYXRjaCwgYWRkcmVzcyk7Cj4gPiAr
-CWlmICghZ2MtPm9mX25vZGUpIHsKPiA+ICsJCXByX2luZm8oImdwaW86IGRldmljZSB0cmVlIG5v
-ZGUgbm90IGZvdW5kIGZvciBncGlvIGNvbnRyb2xsZXIiCj4gPiArCQkJIiB3aXRoIGJhc2UgYWRk
-cmVzcyAlMDhsbHhcbiIsIGFkZHJlc3MpOwo+ID4gKwkJcmV0dXJuOwo+ID4gKwl9Cj4gPiArCWdj
-LT5vZl9ncGlvX25fY2VsbHMgPSAzOwo+ID4gKwlnYy0+b2ZfeGxhdGUgPSBzM2MyNHh4X2dwaW9f
-eGxhdGU7Cj4gPiArfQo+ID4gKyNlbGlmIGRlZmluZWQoQ09ORklHX1BMQVRfUzNDMjRYWCkKPiA+
-ICtzdGF0aWMgX19pbml0IHZvaWQgczNjMjR4eF9ncGlvbGliX2F0dGFjaF9vZm5vZGUoc3RydWN0
-Cj4gPiBzYW1zdW5nX2dwaW9fY2hpcCAqY2hpcCwgKwkJCQkJCSB1NjQgYmFzZSwgdTY0IG9mZnNl
-dCkKPiA+ICt7Cj4gPiArCXJldHVybjsKPiA+ICt9Cj4gPiArI2VuZGlmIC8qIGRlZmluZWQoQ09O
-RklHX1BMQVRfUzNDMjRYWCkmJiAgZGVmaW5lZChDT05GSUdfT0YpICovCj4gPiArCj4gPiAKPiA+
-ICAgc3RhdGljIHZvaWQgX19pbml0IHMzYzI0eHhfZ3Bpb2xpYl9hZGRfY2hpcHMoc3RydWN0IHNh
-bXN1bmdfZ3Bpb19jaGlwCj4gPiAgICpjaGlwLAo+ID4gICAKPiA+ICAgCQkJCQkgICAgIGludCBu
-cl9jaGlwcywgdm9pZCBfX2lvbWVtICpiYXNlKQo+ID4gICAKPiA+ICAgewo+ID4gCj4gPiBAQCAt
-OTYyLDYgKzEwMjMsOCBAQCBzdGF0aWMgdm9pZCBfX2luaXQgczNjMjR4eF9ncGlvbGliX2FkZF9j
-aGlwcyhzdHJ1Y3QKPiA+IHNhbXN1bmdfZ3Bpb19jaGlwICpjaGlwLAo+ID4gCj4gPiAgIAkJCWdj
-LT5kaXJlY3Rpb25fb3V0cHV0ID0gc2Ftc3VuZ19ncGlvbGliXzJiaXRfb3V0cHV0Owo+ID4gICAJ
-CQo+ID4gICAJCXNhbXN1bmdfZ3Bpb2xpYl9hZGQoY2hpcCk7Cj4gPiAKPiA+ICsKPiA+ICsJCXMz
-YzI0eHhfZ3Bpb2xpYl9hdHRhY2hfb2Zub2RlKGNoaXAsIFMzQzI0WFhfUEFfR1BJTywgaSAqIDB4
-MTApOwo+ID4gCj4gPiAgIAl9Cj4gPiAgIAo+ID4gICB9CgpfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkZXZpY2V0cmVlLWRpc2N1c3MgbWFpbGluZyBsaXN0
-CmRldmljZXRyZWUtZGlzY3Vzc0BsaXN0cy5vemxhYnMub3JnCmh0dHBzOi8vbGlzdHMub3psYWJz
-Lm9yZy9saXN0aW5mby9kZXZpY2V0cmVlLWRpc2N1c3MK
+This is the fifth version of the patch series that adds device tree support
+for Synopsis Designware Mobile Storage Host Controller. All the review comments
+from the v4 version have been addressed and rebased on mmc-next branch. Since v4,
+patches 6/9 and 9/9 have been modified. This has been tested on only smdk5250.
+
+Thomas Abraham (9):
+  mmc: dw_mmc: convert copy of struct device in struct dw_mci to a reference
+  mmc: dw_mmc: Use devm_* functions in dw_mmc platform driver
+  mmc: dw_mmc: allow probe to succeed even if one slot is initialized
+  mmc: dw_mmc: lookup for optional biu and ciu clocks
+  mmc: dw_mmc: add quirk to indicate missing write protect line
+  mmc: dw_mmc: add device tree support
+  mmc: dw_mmc: prepare functions in dw_mmc-pltfm for reuse
+  mmc: dw_mmc: add support for implementation specific callbacks
+  mmc: dw_mmc: add support for exynos specific implementation of dw-mshc
+
+ .../devicetree/bindings/mmc/exynos-dw-mshc.txt     |   85 ++++++
+ .../devicetree/bindings/mmc/synposis-dw-mshc.txt   |   79 ++++++
+ drivers/mmc/host/Kconfig                           |    9 +
+ drivers/mmc/host/Makefile                          |    1 +
+ drivers/mmc/host/dw_mmc-exynos.c                   |  243 ++++++++++++++++
+ drivers/mmc/host/dw_mmc-pci.c                      |    2 +-
+ drivers/mmc/host/dw_mmc-pltfm.c                    |   60 +++--
+ drivers/mmc/host/dw_mmc-pltfm.h                    |   20 ++
+ drivers/mmc/host/dw_mmc.c                          |  289 ++++++++++++++++----
+ drivers/mmc/host/dw_mmc.h                          |   22 ++
+ include/linux/mmc/dw_mmc.h                         |   13 +-
+ 11 files changed, 748 insertions(+), 75 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/exynos-dw-mshc.txt
+ create mode 100644 Documentation/devicetree/bindings/mmc/synposis-dw-mshc.txt
+ create mode 100644 drivers/mmc/host/dw_mmc-exynos.c
+ create mode 100644 drivers/mmc/host/dw_mmc-pltfm.h
+
