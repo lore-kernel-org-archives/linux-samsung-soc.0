@@ -1,155 +1,111 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH v4 3/3] ARM: dts: Add nodes for dw_mmc controllers for Samsung
- Exynos5250 platforms
-Date: Wed, 29 Aug 2012 16:31:12 +0530
-Message-ID: <1346238072-7324-4-git-send-email-thomas.abraham@linaro.org>
-References: <1346238072-7324-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH v3 1/4] ARM: EXYNOS: Add set_irq_affinity function for combiner_irq
+Date: Wed, 29 Aug 2012 16:31:18 +0530
+Message-ID: <CAJuYYwRab+BvZhE+vcUGtsrfpxHW_LfhtHGYj3W6eX6TjEFbvA@mail.gmail.com>
+References: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
+	<1346202897-27306-2-git-send-email-chanho61.park@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:43951 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751794Ab2H2Knt (ORCPT
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:55023 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1752676Ab2H2LBU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 06:43:49 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9I0014IJ4K2O30@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 19:43:49 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.37])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9I00K0KJ3AVK60@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 29 Aug 2012 19:43:48 +0900 (KST)
-In-reply-to: <1346238072-7324-1-git-send-email-thomas.abraham@linaro.org>
+	Wed, 29 Aug 2012 07:01:20 -0400
+Received: by lagy9 with SMTP id y9so417462lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 29 Aug 2012 04:01:18 -0700 (PDT)
+In-Reply-To: <1346202897-27306-2-git-send-email-chanho61.park@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, tgih.jun@samsung.com, patches@linaro.org
+To: Chanho Park <chanho61.park@samsung.com>
+Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, Kyungmin Park <kyungmin.park@samsung.com>
 
-Add device nodes for the four instances of dw_mmc controllers in Exynos5250
-and enable instance 0 and 2 for the smdk5250 board.
+On 29 August 2012 06:44, Chanho Park <chanho61.park@samsung.com> wrote:
+> This patch adds set_irq_affinity function for combiner_irq. We need this
+> function to enable a arm-pmu because the pmu of exynos has combined type irqs.
+>
+> Signed-off-by: Chanho Park <chanho61.park@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/common.c |   30 +++++++++++++++++++++++++-----
+>  1 file changed, 25 insertions(+), 5 deletions(-)
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- arch/arm/boot/dts/exynos5250-smdk5250.dts |   55 +++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos5250.dtsi         |   32 +++++++++++++++++
- 2 files changed, 87 insertions(+), 0 deletions(-)
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 8a5e348..d57e8e0 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -16,6 +16,13 @@
- 	model = "SAMSUNG SMDK5250 board based on EXYNOS5250";
- 	compatible = "samsung,smdk5250", "samsung,exynos5250";
- 
-+	aliases {
-+		mshc0 = &dwmmc_0;
-+		mshc1 = &dwmmc_1;
-+		mshc2 = &dwmmc_2;
-+		mshc3 = &dwmmc_3;
-+	};
-+
- 	memory {
- 		reg = <0x40000000 0x80000000>;
- 	};
-@@ -72,6 +79,54 @@
- 		status = "disabled";
- 	};
- 
-+	dwmmc_0: dwmmc0@12200000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		broken-cd;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-sdr-timing = <2 3 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2 3>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <8>;
-+			gpios = <&gpc0 0 2 0 3>, <&gpc0 1 2 0 3>,
-+				<&gpc1 0 2 3 3>, <&gpc1 1 2 3 3>,
-+				<&gpc1 2 2 3 3>, <&gpc1 3 2 3 3>,
-+				<&gpc0 3 2 3 3>, <&gpc0 4 2 3 3>,
-+				<&gpc0 5 2 3 3>, <&gpc0 6 2 3 3>;
-+		};
-+	};
-+
-+	dwmmc_1: dwmmc1@12210000 {
-+		status = "disabled";
-+	};
-+
-+	dwmmc_2: dwmmc2@12220000 {
-+		num-slots = <1>;
-+		supports-highspeed;
-+		fifo-depth = <0x80>;
-+		card-detect-delay = <200>;
-+		samsung,dw-mshc-sdr-timing = <2 3 3>;
-+		samsung,dw-mshc-ddr-timing = <1 2 3>;
-+
-+		slot@0 {
-+			reg = <0>;
-+			bus-width = <4>;
-+			samsung,cd-pinmux-gpio = <&gpc3 2 2 3 3>;
-+			gpios = <&gpc3 0 2 0 3>, <&gpc3 1 2 0 3>,
-+				<&gpc3 3 2 3 3>, <&gpc3 4 2 3 3>,
-+				<&gpc3 5 2 3 3>, <&gpc3 6 2 3 3>,
-+				<&gpc4 3 3 3 3>, <&gpc4 3 3 3 3>,
-+				<&gpc4 5 3 3 3>, <&gpc4 6 3 3 3>;
-+		};
-+	};
-+
-+	dwmmc_3: dwmmc3@12230000 {
-+		status = "disabled";
-+	};
-+
- 	spi_0: spi@12d20000 {
- 		status = "disabled";
- 	};
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 004aaa8..f69e389 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -182,6 +182,38 @@
- 		#size-cells = <0>;
- 	};
- 
-+	dwmmc0@12200000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12200000 0x1000>;
-+		interrupts = <0 75 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	dwmmc1@12210000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12210000 0x1000>;
-+		interrupts = <0 76 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	dwmmc2@12220000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12220000 0x1000>;
-+		interrupts = <0 77 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
-+	dwmmc3@12230000 {
-+		compatible = "samsung,exynos5250-dw-mshc";
-+		reg = <0x12230000 0x1000>;
-+		interrupts = <0 78 0>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
--- 
-1.6.6.rc2
+>
+> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+> index 4eb39cd..f194bbc 100644
+> --- a/arch/arm/mach-exynos/common.c
+> +++ b/arch/arm/mach-exynos/common.c
+> @@ -405,6 +405,7 @@ struct combiner_chip_data {
+>         unsigned int irq_offset;
+>         unsigned int irq_mask;
+>         void __iomem *base;
+> +       unsigned int parent_irq;
+>  };
+>
+>  static struct irq_domain *combiner_irq_domain;
+> @@ -461,10 +462,28 @@ static void combiner_handle_cascade_irq(unsigned int irq, struct irq_desc *desc)
+>         chained_irq_exit(chip, desc);
+>  }
+>
+> +#ifdef CONFIG_SMP
+> +static int combiner_set_affinity(struct irq_data *d,
+> +                                const struct cpumask *mask_val, bool force)
+> +{
+> +       struct combiner_chip_data *chip_data = irq_data_get_irq_chip_data(d);
+> +       struct irq_chip *chip = irq_get_chip(chip_data->parent_irq);
+> +       struct irq_data *data = irq_get_irq_data(chip_data->parent_irq);
+> +
+> +       if (chip && chip->irq_set_affinity)
+> +               return chip->irq_set_affinity(data, mask_val, force);
+> +       else
+> +               return -EINVAL;
+> +}
+> +#endif
+> +
+>  static struct irq_chip combiner_chip = {
+> -       .name           = "COMBINER",
+> -       .irq_mask       = combiner_mask_irq,
+> -       .irq_unmask     = combiner_unmask_irq,
+> +       .name                   = "COMBINER",
+> +       .irq_mask               = combiner_mask_irq,
+> +       .irq_unmask             = combiner_unmask_irq,
+> +#ifdef CONFIG_SMP
+> +       .irq_set_affinity       = combiner_set_affinity,
+> +#endif
+>  };
+>
+>  static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int irq)
+> @@ -484,12 +503,13 @@ static void __init combiner_cascade_irq(unsigned int combiner_nr, unsigned int i
+>  }
+>
+>  static void __init combiner_init_one(unsigned int combiner_nr,
+> -                                    void __iomem *base)
+> +                                    void __iomem *base, unsigned int irq)
+>  {
+>         combiner_data[combiner_nr].base = base;
+>         combiner_data[combiner_nr].irq_offset = irq_find_mapping(
+>                 combiner_irq_domain, combiner_nr * MAX_IRQ_IN_COMBINER);
+>         combiner_data[combiner_nr].irq_mask = 0xff << ((combiner_nr % 4) << 3);
+> +       combiner_data[combiner_nr].parent_irq = irq;
+>
+>         /* Disable all interrupts */
+>         __raw_writel(combiner_data[combiner_nr].irq_mask,
+> @@ -573,12 +593,12 @@ static void __init combiner_init(void __iomem *combiner_base,
+>         }
+>
+>         for (i = 0; i < max_nr; i++) {
+> -               combiner_init_one(i, combiner_base + (i >> 2) * 0x10);
+>                 irq = IRQ_SPI(i);
+>  #ifdef CONFIG_OF
+>                 if (np)
+>                         irq = irq_of_parse_and_map(np, i);
+>  #endif
+> +               combiner_init_one(i, combiner_base + (i >> 2) * 0x10, irq);
+>                 combiner_cascade_irq(i, irq);
+>         }
+>  }
+> --
+> 1.7.9.5
+>
