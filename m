@@ -1,105 +1,345 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/6] ARM: Exynos4: dts: Specify address and size cells for i2c
- controllers
-Date: Thu, 30 Aug 2012 09:31:40 +0200
-Message-ID: <1346311903-15920-4-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 6/6] ARM: Exynos: Add basic dts file for Samsung Trats board
+Date: Thu, 30 Aug 2012 09:31:43 +0200
+Message-ID: <1346311903-15920-7-git-send-email-t.figa@samsung.com>
 References: <1346311903-15920-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37306 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751191Ab2H3HcS (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:33724 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751194Ab2H3Hc1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Aug 2012 03:32:18 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
+	Thu, 30 Aug 2012 03:32:27 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9K00DL24X4I4B0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 16:32:18 +0900 (KST)
+ 17 2011)) with ESMTP id <0M9K00I9W4WU26C0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 16:32:26 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0M9K00G074XCNR40@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 16:32:17 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 16:32:26 +0900 (KST)
 In-reply-to: <1346311903-15920-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
+This commit adds basic device tree for Exynos4210-based Trats board.
+
+Currently it provides support for eMMC over sdhci and MAX8997 PMIC.
+
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/boot/dts/exynos4.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm/boot/dts/exynos4210-trats.dts | 287 +++++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/Makefile.boot     |   2 +-
+ 2 files changed, 288 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm/boot/dts/exynos4210-trats.dts
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index 5e99503..5935588 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -116,48 +116,64 @@
- 	};
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+new file mode 100644
+index 0000000..a9cd2d0
+--- /dev/null
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -0,0 +1,287 @@
++/*
++ * Samsung's Exynos4210 based Trats board device tree source
++ *
++ * Copyright (c) 2012 Samsung Electronics Co., Ltd.
++ *		http://www.samsung.com
++ *
++ * Device tree source file for Samsung's Trats board which is based on
++ * Samsung's Exynos4210 SoC.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++*/
++
++/dts-v1/;
++/include/ "exynos4210.dtsi"
++
++/ {
++	model = "Samsung Trats based on Exynos4210";
++	compatible = "samsung,trats", "samsung,exynos4210";
++
++	memory {
++		reg =  <0x40000000 0x20000000
++			0x60000000 0x20000000>;
++	};
++
++	chosen {
++		bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
++	};
++
++	wakeup_eint: interrupt-controller-wakeup-eint {
++		compatible = "samsung,exynos4210-wakeup-eint";
++		reg = <0x11000000 0x1000>;
++		#interrupt-cells = <2>;
++		interrupt-controller;
++		interrupts =	<0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
++				<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
++				<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
++				<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>,
++				<0 32 0>;
++	};
++
++	vemmc_reg: voltage-regulator@0 {
++	        compatible = "regulator-fixed";
++		regulator-name = "VMEM_VDD_2.8V";
++		regulator-min-microvolt = <2800000>;
++		regulator-max-microvolt = <2800000>;
++		gpio = <&gpk0 2 1 0 0>;
++	};
++
++	sdhci_emmc: sdhci@12510000 {
++		bus-width = <8>;
++		non-removable;
++		gpios = <&gpk0 0 2 0 3>,
++			<&gpk0 1 2 0 3>,
++			<&gpk0 3 2 2 3>,
++			<&gpk0 4 2 2 3>,
++			<&gpk0 5 2 2 3>,
++			<&gpk0 6 2 2 3>,
++			<&gpk1 3 3 3 3>,
++			<&gpk1 4 3 3 3>,
++			<&gpk1 5 3 3 3>,
++			<&gpk1 6 3 3 3>;
++		vmmc-supply = &vemmc_reg;
++	};
++
++	i2c@138B0000 {
++		samsung,i2c-sda-delay = <100>;
++		samsung,i2c-slave-addr = <0x10>;
++		samsung,i2c-max-bus-freq = <100000>;
++		gpios = <&gpb 6 3 3 0>,
++			<&gpb 7 3 3 0>;
++
++		max8997_pmic@66 {
++			compatible = "maxim,max8997-pmic";
++			interrupt-parent = <&wakeup_eint>;
++
++			reg = <0x66>;
++			interrupts = <4 0>, <3 0>;
++
++			max8997,pmic-buck1-uses-gpio-dvs;
++			max8997,pmic-buck2-uses-gpio-dvs;
++			max8997,pmic-buck5-uses-gpio-dvs;
++
++			max8997,pmic-ignore-gpiodvs-side-effect;
++			max8997,pmic-buck125-default-dvs-idx = <0>;
++
++			max8997,pmic-buck125-dvs-gpios = <&gpx0 5 1 0 0>,
++						         <&gpx0 6 1 0 0>,
++							 <&gpl0 0 1 0 0>;
++
++			max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
++							 <1250000>, <1200000>,
++							 <1150000>, <1100000>,
++							 <1000000>, <950000>;
++
++			max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
++							 <950000>,  <900000>,
++							 <1100000>, <1000000>,
++							 <950000>,  <900000>;
++
++			max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>,
++							 <1200000>, <1200000>;
++
++			regulators {
++				valive_reg: LDO2 {
++				     regulator-name = "VALIVE_1.1V_C210";
++				     regulator-min-microvolt = <1100000>;
++				     regulator-max-microvolt = <1100000>;
++				     regulator-always-on;
++				};
++
++				vusb_reg: LDO3 {
++				     regulator-name = "VUSB_1.1V_C210";
++				     regulator-min-microvolt = <1100000>;
++				     regulator-max-microvolt = <1100000>;
++				};
++
++				vmipi_reg: LDO4 {
++				     regulator-name = "VMIPI_1.8V";
++				     regulator-min-microvolt = <1800000>;
++				     regulator-max-microvolt = <1800000>;
++				};
++
++				vpda_reg: LDO6 {
++				     regulator-name = "VCC_1.8V_PDA";
++				     regulator-min-microvolt = <1800000>;
++				     regulator-max-microvolt = <1800000>;
++				     regulator-always-on;
++				};
++
++				vcam_reg: LDO7 {
++				     regulator-name = "CAM_ISP_1.8V";
++				     regulator-min-microvolt = <1800000>;
++				     regulator-max-microvolt = <1800000>;
++				};
++
++				vusbdac_reg: LDO8 {
++				     regulator-name = "VUSB/VDAC_3.3V_C210";
++				     regulator-min-microvolt = <3300000>;
++				     regulator-max-microvolt = <3300000>;
++				};
++
++				vccpda_reg: LDO9 {
++				     regulator-name = "VCC_2.8V_PDA";
++				     regulator-min-microvolt = <2800000>;
++				     regulator-max-microvolt = <2800000>;
++				     regulator-always-on;
++				};
++
++				vpll_reg: LDO10 {
++				     regulator-name = "VPLL_1.1V_C210";
++				     regulator-min-microvolt = <1100000>;
++				     regulator-max-microvolt = <1100000>;
++				     regulator-always-on;
++				};
++
++				vcclcd_reg: LDO13 {
++				     regulator-name = "VCC_3.3V_LCD";
++				     regulator-min-microvolt = <3300000>;
++				     regulator-max-microvolt = <3300000>;
++				};
++
++				vlcd_reg: LDO15 {
++				     regulator-name = "VLCD_2.2V";
++				     regulator-min-microvolt = <2200000>;
++				     regulator-max-microvolt = <2200000>;
++				};
++
++				camsensor_reg: LDO16 {
++				     regulator-name = "CAM_SENSOR_IO_1.8V";
++				     regulator-min-microvolt = <1800000>;
++				     regulator-max-microvolt = <1800000>;
++				};
++
++				vddq_reg: LDO21 {
++				     regulator-name = "VDDQ_M1M2_1.2V";
++				     regulator-min-microvolt = <1200000>;
++				     regulator-max-microvolt = <1200000>;
++				     regulator-always-on;
++				};
++
++				varm_breg: BUCK1 {
++				     regulator-name = "VARM_1.2V_C210";
++				     regulator-min-microvolt = <900000>;
++				     regulator-max-microvolt = <1350000>;
++				     regulator-always-on;
++				};
++
++				vint_breg: BUCK2 {
++				     regulator-name = "VINT_1.1V_C210";
++				     regulator-min-microvolt = <900000>;
++				     regulator-max-microvolt = <1100000>;
++				     regulator-always-on;
++				};
++
++				camisp_breg: BUCK4 {
++				     regulator-name = "CAM_ISP_CORE_1.2V";
++				     regulator-min-microvolt = <1200000>;
++				     regulator-max-microvolt = <1200000>;
++				};
++
++				vmem_breg: BUCK5 {
++				     regulator-name = "VMEM_1.2V_C210";
++				     regulator-min-microvolt = <1200000>;
++				     regulator-max-microvolt = <1200000>;
++				     regulator-always-on;
++				};
++
++				vccsub_breg: BUCK7 {
++				     regulator-name = "VCC_SUB_2.0V";
++				     regulator-min-microvolt = <2000000>;
++				     regulator-max-microvolt = <2000000>;
++				     regulator-always-on;
++				};
++
++				safe1_sreg: ESAFEOUT1 {
++				     regulator-name = "SAFEOUT1";
++				     regulator-always-on;
++				};
++
++				safe2_sreg: ESAFEOUT2 {
++				     regulator-name = "SAFEOUT2";
++				     regulator-boot-on;
++				};
++			};
++		};
++	};
++
++	keypad@100A0000 {
++		status = "disabled";
++	};
++
++	sdhci@12520000 {
++		status = "disabled";
++	};
++
++	sdhci@12530000 {
++		status = "disabled";
++	};
++
++	sdhci@12540000 {
++		status = "disabled";
++	};
++
++	i2c@13860000 {
++		status = "disabled";
++	};
++
++	i2c@13870000 {
++		status = "disabled";
++	};
++
++	i2c@13880000 {
++		status = "disabled";
++	};
++
++	i2c@13890000 {
++		status = "disabled";
++	};
++
++	i2c@138A0000 {
++		status = "disabled";
++	};
++
++	i2c@138C0000 {
++		status = "disabled";
++	};
++
++	i2c@138D0000 {
++		status = "disabled";
++	};
++
++	spi_0: spi@13920000 {
++		status = "disabled";
++	};
++
++	spi_1: spi@13930000 {
++		status = "disabled";
++	};
++
++	spi_2: spi@13940000 {
++		status = "disabled";
++	};
++};
+diff --git a/arch/arm/mach-exynos/Makefile.boot b/arch/arm/mach-exynos/Makefile.boot
+index 31bd181..a79d999 100644
+--- a/arch/arm/mach-exynos/Makefile.boot
++++ b/arch/arm/mach-exynos/Makefile.boot
+@@ -1,5 +1,5 @@
+    zreladdr-y	+= 0x40008000
+ params_phys-y	:= 0x40000100
  
- 	i2c@13860000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13860000 0x100>;
- 		interrupts = <0 58 0>;
- 	};
- 
- 	i2c@13870000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13870000 0x100>;
- 		interrupts = <0 59 0>;
- 	};
- 
- 	i2c@13880000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13880000 0x100>;
- 		interrupts = <0 60 0>;
- 	};
- 
- 	i2c@13890000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13890000 0x100>;
- 		interrupts = <0 61 0>;
- 	};
- 
- 	i2c@138A0000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138A0000 0x100>;
- 		interrupts = <0 62 0>;
- 	};
- 
- 	i2c@138B0000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138B0000 0x100>;
- 		interrupts = <0 63 0>;
- 	};
- 
- 	i2c@138C0000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138C0000 0x100>;
- 		interrupts = <0 64 0>;
- 	};
- 
- 	i2c@138D0000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138D0000 0x100>;
- 		interrupts = <0 65 0>;
+-dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb
++dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb exynos4210-trats.dtb
+ dtb-$(CONFIG_MACH_EXYNOS5_DT) += exynos5250-smdk5250.dtb
 -- 
 1.7.12
