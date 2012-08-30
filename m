@@ -1,157 +1,99 @@
-From: Chanho Park <chanho61.park@samsung.com>
-Subject: RE: [PATCH v3 2/4] ARM: EXYNOS: Correct combined IRQs for exynos4412
-Date: Thu, 30 Aug 2012 11:53:51 +0900
-Message-ID: <003701cd865a$af73c170$0e5b4450$@samsung.com>
-References: <1346202897-27306-1-git-send-email-chanho61.park@samsung.com>
- <1346202897-27306-3-git-send-email-chanho61.park@samsung.com>
- <CAJuYYwSH19-GmNo7jZyXd9TC4VeKGxVCd=N0Vi4=kUNZPZNx6g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH 2/6] ARM: EXYNOS: exynos4-dt: Use exynos4 prefix instead of
+ exynos4210
+Date: Thu, 30 Aug 2012 09:31:39 +0200
+Message-ID: <1346311903-15920-3-git-send-email-t.figa@samsung.com>
+References: <1346311903-15920-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:40081 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:33686 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754024Ab2H3Cwx convert rfc822-to-8bit (ORCPT
+	with ESMTP id S1751194Ab2H3HcT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 29 Aug 2012 22:52:53 -0400
+	Thu, 30 Aug 2012 03:32:19 -0400
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9J00B7NRZVHUL0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 11:52:51 +0900 (KST)
-Received: from DOCHANHO61P01 ([10.90.51.44])
+ 17 2011)) with ESMTP id <0M9K00I9W4WU26C0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 16:32:14 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9J0040LS020310@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 11:52:50 +0900 (KST)
-In-reply-to: <CAJuYYwSH19-GmNo7jZyXd9TC4VeKGxVCd=N0Vi4=kUNZPZNx6g@mail.gmail.com>
-Content-language: en-us
+ with ESMTPA id <0M9K00G074XCNR40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 30 Aug 2012 16:32:14 +0900 (KST)
+In-reply-to: <1346311903-15920-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux@arm.linux.org.uk, sachin.kamat@linaro.org, will.deacon@arm.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
 
-> -----Original Message-----
-> From: Thomas Abraham [mailto:thomas.abraham@linaro.org]
-> Sent: Wednesday, August 29, 2012 8:10 PM
-> To: Chanho Park
-> Cc: kgene.kim@samsung.com; linux-arm-kernel@lists.infradead.org; linux-
-> samsung-soc@vger.kernel.org; linux@arm.linux.org.uk;
-> sachin.kamat@linaro.org; will.deacon@arm.com; Kyungmin Park
-> Subject: Re: [PATCH v3 2/4] ARM: EXYNOS: Correct combined IRQs for
-> exynos4412
-> 
-> On 29 August 2012 06:44, Chanho Park <chanho61.park@samsung.com>
-> wrote:
-> > This patch corrects combined IRQs for exynos4412 platform. The
-> > exynos4412 has four extra combined irq group. Each irq is mapped to
-> > IRQ_SPI(xx). Unfortunately, extra combined IRQs isn't sequential. So, we
-> need to map the irq manually.
-> >
-> > Signed-off-by: Chanho Park <chanho61.park@samsung.com>
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > ---
-> >  arch/arm/mach-exynos/common.c            |   31
-> ++++++++++++++++++++++++------
-> >  arch/arm/mach-exynos/include/mach/irqs.h |    2 +-
-> >  2 files changed, 26 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/arch/arm/mach-exynos/common.c
-> > b/arch/arm/mach-exynos/common.c index f194bbc..be61564 100644
-> > --- a/arch/arm/mach-exynos/common.c
-> > +++ b/arch/arm/mach-exynos/common.c
-> > @@ -560,23 +560,39 @@ static struct irq_domain_ops
-> combiner_irq_domain_ops = {
-> >         .map    = combiner_irq_domain_map,
-> >  };
-> >
-> > +static unsigned int get_combiner_extra_irq(int group) {
-> > +       switch (group) {
-> > +       case 16:
-> > +               return IRQ_SPI(107);
-> > +       case 17:
-> > +               return IRQ_SPI(108);
-> > +       case 18:
-> > +               return IRQ_SPI(48);
-> > +       case 19:
-> > +               return IRQ_SPI(42);
-> > +       default:
-> > +               return 0;
-> > +       }
-> > +}
-> > +
-> >  static void __init combiner_init(void __iomem *combiner_base,
-> >                                  struct device_node *np)  {
-> >         int i, irq, irq_base;
-> >         unsigned int max_nr, nr_irq;
-> >
-> > +       max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
-> > +                                       EXYNOS4_MAX_COMBINER_NR;
-> > +
-> >         if (np) {
-> >                 if (of_property_read_u32(np, "samsung,combiner-nr", &max_nr))
-> {
-> >                         pr_warning("%s: number of combiners not specified, "
-> >                                 "setting default as %d.\n",
-> > -                               __func__, EXYNOS4_MAX_COMBINER_NR);
-> > -                       max_nr = EXYNOS4_MAX_COMBINER_NR;
-> > +                               __func__, max_nr);
-> >                 }
-> > -       } else {
-> > -               max_nr = soc_is_exynos5250() ? EXYNOS5_MAX_COMBINER_NR :
-> > -                                               EXYNOS4_MAX_COMBINER_NR;
-> >         }
-> > +
-> >         nr_irq = max_nr * MAX_IRQ_IN_COMBINER;
-> 
-> Along with this change, this patch should update the default value
-> "samsung,combiner-nr" binding in device tree binding documentation for
-> combiner. It should state that is Exynos5 will use 32 and Exynos4 will use 20 as
-> the default value.
-> 
-> >
-> >         irq_base = irq_alloc_descs(COMBINER_IRQ(0, 0), 1, nr_irq, 0);
-> > @@ -593,7 +609,10 @@ static void __init combiner_init(void __iomem
-> *combiner_base,
-> >         }
-> >
-> >         for (i = 0; i < max_nr; i++) {
-> > -               irq = IRQ_SPI(i);
-> > +               if (i < 16 || soc_is_exynos5250())
-> > +                       irq = IRQ_SPI(i);
-> > +               else
-> > +                       irq = get_combiner_extra_irq(i);
-> >  #ifdef CONFIG_OF
-> >                 if (np)
-> >                         irq = irq_of_parse_and_map(np, i); diff --git
-> > a/arch/arm/mach-exynos/include/mach/irqs.h
-> > b/arch/arm/mach-exynos/include/mach/irqs.h
-> > index 35bced6..357ed7f 100644
-> > --- a/arch/arm/mach-exynos/include/mach/irqs.h
-> > +++ b/arch/arm/mach-exynos/include/mach/irqs.h
-> > @@ -165,7 +165,7 @@
-> >  #define EXYNOS4_IRQ_FIMD0_VSYNC                COMBINER_IRQ(11, 1)
-> >  #define EXYNOS4_IRQ_FIMD0_SYSTEM       COMBINER_IRQ(11, 2)
-> >
-> > -#define EXYNOS4_MAX_COMBINER_NR                16
-> > +#define EXYNOS4_MAX_COMBINER_NR                20
-> 
-> Will this not break Exynos4210 which has only 16 combiners? This is fine in
-> case max-combiner values is listed in dt mode, but in non-dt mode or if max-
-> combiner is not specified in dt, this will not be correct.
+Since mach-exynos4-dt.c is also going to be used for other SoCs from Exynos4
+line, rename internal structures and functions to use exynos4_ prefix, instead
+of exynos4210_.
 
-I didn't have test about exynos4210 because I don't have the 4210 board.
-However, there is no problem of exynos4212 which has 18 combiner.
-On second thought, it might break by accessing undefined area.
-Ok, I'll resolve it and resubmit patch.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ arch/arm/mach-exynos/mach-exynos4-dt.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-Best regards,
-Chanho Park
-
-> 
-> >
-> >  #define EXYNOS4_IRQ_GPIO1_NR_GROUPS    16
-> >  #define EXYNOS4_IRQ_GPIO2_NR_GROUPS    9
-> > --
-> > 1.7.9.5
-> >
+diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+index b2b5d5f..8dad4ec 100644
+--- a/arch/arm/mach-exynos/mach-exynos4-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+@@ -1,5 +1,5 @@
+ /*
+- * Samsung's Exynos4210 flattened device tree enabled machine
++ * Samsung's Exynos4 flattened device tree enabled machine
+  *
+  * Copyright (c) 2010-2011 Samsung Electronics Co., Ltd.
+  *		http://www.samsung.com
+@@ -36,7 +36,7 @@
+  * at some point, the drivers should be capable of parsing all the platform
+  * data from the device tree.
+  */
+-static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
++static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+ 	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART0,
+ 				"exynos4210-uart.0", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos4210-uart", EXYNOS4_PA_UART1,
+@@ -66,19 +66,19 @@ static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
+ 	{},
+ };
+ 
+-static void __init exynos4210_dt_map_io(void)
++static void __init exynos4_dt_map_io(void)
+ {
+ 	exynos_init_io(NULL, 0);
+ 	s3c24xx_init_clocks(24000000);
+ }
+ 
+-static void __init exynos4210_dt_machine_init(void)
++static void __init exynos4_dt_machine_init(void)
+ {
+ 	of_platform_populate(NULL, of_default_bus_match_table,
+-				exynos4210_auxdata_lookup, NULL);
++				exynos4_auxdata_lookup, NULL);
+ }
+ 
+-static char const *exynos4210_dt_compat[] __initdata = {
++static char const *exynos4_dt_compat[] __initdata = {
+ 	"samsung,exynos4210",
+ 	NULL
+ };
+@@ -86,11 +86,11 @@ static char const *exynos4210_dt_compat[] __initdata = {
+ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
+ 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
+ 	.init_irq	= exynos4_init_irq,
+-	.map_io		= exynos4210_dt_map_io,
++	.map_io		= exynos4_dt_map_io,
+ 	.handle_irq	= gic_handle_irq,
+-	.init_machine	= exynos4210_dt_machine_init,
++	.init_machine	= exynos4_dt_machine_init,
+ 	.init_late	= exynos_init_late,
+ 	.timer		= &exynos4_timer,
+-	.dt_compat	= exynos4210_dt_compat,
++	.dt_compat	= exynos4_dt_compat,
+ 	.restart        = exynos4_restart,
+ MACHINE_END
+-- 
+1.7.12
