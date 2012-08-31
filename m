@@ -1,7 +1,7 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
 Subject: Re: [PATCH v5 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Fri, 31 Aug 2012 12:02:40 +0530
-Message-ID: <CAJuYYwTG05ZiQGuE__h+UnSyQ1H5tJ_VxP-tsLOaf2O4ErrZLg@mail.gmail.com>
+Date: Fri, 31 Aug 2012 12:02:42 +0530
+Message-ID: <CAJuYYwSokqAegg1Z-jovYzanBYR-oZZaL2W=_nOSNVAsrM_PMw@mail.gmail.com>
 References: <1346237295-7116-1-git-send-email-thomas.abraham@linaro.org>
 	<1346237295-7116-5-git-send-email-thomas.abraham@linaro.org>
 	<503F28E7.1060608@samsung.com>
@@ -9,19 +9,12 @@ References: <1346237295-7116-1-git-send-email-thomas.abraham@linaro.org>
 	<5040536C.30407@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:35357 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751147Ab2HaGcl (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Aug 2012 02:32:41 -0400
-Received: by vbbff1 with SMTP id ff1so2837639vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Aug 2012 23:32:40 -0700 (PDT)
+Return-path: <linux-mmc-owner@vger.kernel.org>
 In-Reply-To: <5040536C.30407@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
 To: Jaehoon Chung <jh80.chung@samsung.com>
 Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 On 31 August 2012 11:32, Jaehoon Chung <jh80.chung@samsung.com> wrote:
 > On 08/31/2012 02:29 PM, Thomas Abraham wrote:
