@@ -1,21 +1,21 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 3/6] ARM: Exynos4: dts: Specify address and size cells for
- i2c controllers
-Date: Fri, 31 Aug 2012 09:23:40 +0530
-Message-ID: <CAJuYYwT7RQrQhqw1GXcFxnucLa1OZzEdHX2GWZ92=-3D6_Rr0g@mail.gmail.com>
+Subject: Re: [PATCH 4/6] ARM: Exynos4: Add OF compatibility lookups for
+ Exynos4 i2c adapters
+Date: Fri, 31 Aug 2012 09:29:42 +0530
+Message-ID: <CAJuYYwT+diyXX0O2WOJ3=yFMJwEXLbb30rmcYfbomjaFEQmOuQ@mail.gmail.com>
 References: <1346311903-15920-1-git-send-email-t.figa@samsung.com>
-	<1346311903-15920-4-git-send-email-t.figa@samsung.com>
+	<1346311903-15920-5-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:40197 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752008Ab2HaDxl (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:63682 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751890Ab2HaD7p (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Aug 2012 23:53:41 -0400
-Received: by lagy9 with SMTP id y9so2012661lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Aug 2012 20:53:40 -0700 (PDT)
-In-Reply-To: <1346311903-15920-4-git-send-email-t.figa@samsung.com>
+	Thu, 30 Aug 2012 23:59:45 -0400
+Received: by lbbgj3 with SMTP id gj3so960011lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Aug 2012 20:59:43 -0700 (PDT)
+In-Reply-To: <1346311903-15920-5-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
@@ -25,9 +25,42 @@ On 30 August 2012 13:01, Tomasz Figa <t.figa@samsung.com> wrote:
 > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > ---
->  arch/arm/boot/dts/exynos4.dtsi | 16 ++++++++++++++++
+>  arch/arm/mach-exynos/mach-exynos4-dt.c | 16 ++++++++++++++++
 >  1 file changed, 16 insertions(+)
+>
+> diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> index 8dad4ec..0391c84 100644
+> --- a/arch/arm/mach-exynos/mach-exynos4-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
+> @@ -61,6 +61,22 @@ static const struct of_dev_auxdata exynos4_auxdata_lookup[] __initconst = {
+>                                 "exynos4210-spi.1", NULL),
+>         OF_DEV_AUXDATA("samsung,exynos4210-spi", EXYNOS4_PA_SPI2,
+>                                 "exynos4210-spi.2", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(0),
+> +                               "s3c2440-i2c.0", NULL),
+
+i2c0 lookup information is already in this list. So the above line
+should not be included in this patch.
+
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(1),
+> +                               "s3c2440-i2c.1", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(2),
+> +                               "s3c2440-i2c.2", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(3),
+> +                               "s3c2440-i2c.3", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(4),
+> +                               "s3c2440-i2c.4", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(5),
+> +                               "s3c2440-i2c.5", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(6),
+> +                               "s3c2440-i2c.6", NULL),
+> +       OF_DEV_AUXDATA("samsung,s3c2440-i2c", EXYNOS4_PA_IIC(7),
+> +                               "s3c2440-i2c.7", NULL),
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
+>         OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
+>         {},
+> --
+> 1.7.12
+>
 
 Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
-
-[...]
