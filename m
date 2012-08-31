@@ -1,40 +1,44 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 0/3] ARM: EXYNOS: Add support for GPIO on Exynos4x12
-Date: Sat, 1 Sep 2012 00:46:50 +0200
-Message-ID: <CACRpkdaMqvQOUETPKFuzBw1bW+GciHLE1uvtdkPV5FoxrowftQ@mail.gmail.com>
-References: <4648723.rWnut7F0uJ@amdc1227>
-	<CAJuYYwTBeCczF7M=9pJzYUgGB3Xg1md2kRDKbYEU-ji-C1_hug@mail.gmail.com>
+Subject: Re: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
+Date: Sat, 1 Sep 2012 01:07:50 +0200
+Message-ID: <CACRpkdYqYhtHHVw8C5HhDr96V6diV-0M+55xCHnoATOiyDp3Jg@mail.gmail.com>
+References: <201208282355.44268.heiko@sntech.de>
+	<503D4FB1.1020206@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:60166 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753961Ab2HaWqv (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Aug 2012 18:46:51 -0400
-Received: by weyx8 with SMTP id x8so1914249wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Aug 2012 15:46:50 -0700 (PDT)
-In-Reply-To: <CAJuYYwTBeCczF7M=9pJzYUgGB3Xg1md2kRDKbYEU-ji-C1_hug@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <503D4FB1.1020206@samsung.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: =?ISO-8859-1?Q?Heiko_St=FCbner?= <heiko@sntech.de>, Linus Walleij <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, Rob Herring <rob.herring@calxeda.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Kyungmin Park <kyungmin.park@samsung.com>, Marek Szyprowski <m.szyprowski@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
 
-On Tue, Aug 28, 2012 at 4:58 PM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
-> On 28 August 2012 15:31, Tomasz Figa <t.figa@samsung.com> wrote:
-
->> This patch series makes necessary preparations and adds support for GPIO on
->> Exynos4x12 SoCs.
+On Wed, Aug 29, 2012 at 1:09 AM, Kukjin Kim <kgene.kim@samsung.com> wro=
+te:
+> On 08/28/12 14:55, Heiko St=FCbner wrote:
+>>
+>> Until now the Exynos-SoC was the only Samsung-SoC supporting the GPI=
+Os
+>> via the device tree. This patch implements dt-support for the
+>> s3c24xx arches.
+>>
+>> The controllers contain only 3 cells, as the underlying gpio control=
+ler
+>> does not support controlling the drive strength on a gpio level.
+>>
+>> Tested with the gpio-keys driver on a s3c2416 based machine.
+>>
+>> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
+>> Reviewed-by: Thomas Abraham<thomas.abraham@linaro.org>
 >
-> Hopefully, we can get device tree support merged for Exynos4412 soon
-> and then switch over to using pinctrl driver. That can simplfy the
-> gpio/pinmux support for Exynos4 SoC's.
+>
+> Yeah, looks good to me...
+>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-This sounds like a NACK.
-
-I will not merge these patches until Ben or Kukjin (the Samsung
-maintainers listed in MAINTAINERS) ACK it.
+OK are you taking this into the Samsung tree or shall I take care of it=
+?
 
 Yours,
 Linus Walleij
