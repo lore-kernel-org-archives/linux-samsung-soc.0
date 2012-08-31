@@ -1,62 +1,42 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] ASoC: SAMSUNG: Add SND_SOC_DAIFMT_CONT option for
- snd_soc_set_fmt()
-Date: Thu, 30 Aug 2012 10:43:18 -0700
-Message-ID: <20120830174317.GG4356@opensource.wolfsonmicro.com>
-References: <003101cd8367$3476e650$9d64b2f0$@samsung.com>
- <20120827204550.GA4400@opensource.wolfsonmicro.com>
- <001d01cd85d6$59298040$0b7c80c0$@samsung.com>
+From: Vinod Koul <vkoul@infradead.org>
+Subject: Re: [PATCH 0/2] ARM: EXYNOS: Set the capability of pdm0 and pdm1 as
+ DMA_PRIVATE
+Date: Fri, 31 Aug 2012 06:22:10 +0530
+Message-ID: <1346374330.15463.5.camel@vkoul-mobl4>
+References: <1346215585-31023-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:55103 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751088Ab2H3RnW (ORCPT
+Received: from casper.infradead.org ([85.118.1.10]:38231 "EHLO
+	casper.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753021Ab2HaAo7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 30 Aug 2012 13:43:22 -0400
-Content-Disposition: inline
-In-Reply-To: <001d01cd85d6$59298040$0b7c80c0$@samsung.com>
+	Thu, 30 Aug 2012 20:44:59 -0400
+In-Reply-To: <1346215585-31023-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sangsu Park <sangsu4u.park@samsung.com>
-Cc: alsa-devel@alsa-project.org, linux-samsung-soc@vger.kernel.org, sbkim73@samsung.com, 'Kukjin Kim' <kgene.kim@samsung.com>, ben-linux@fluff.org, lrg@ti.com, linux-arm-kernel@lists.infradead.org
+To: Tushar Behera <tushar.behera@linaro.org>
+Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org, kgene.kim@samsung.com, patches@linaro.org
 
-On Wed, Aug 29, 2012 at 08:06:32PM +0900, Sangsu Park wrote:
+On Wed, 2012-08-29 at 10:16 +0530, Tushar Behera wrote:
+> DMA clients pdma0 and pdma1 are internal to the SoC and are used only
+> by dedicated peripherals. Since they cannot be used for generic
+> purpose, their capability should be set as DMA_PRIVATE.
+> 
+> The patches are rebased on top of v3.6-rc3.
+Kukjin, if you ack them I can take thru my tree, other way round is fine
+with me too.
+> 
+> Tushar Behera (2):
+>   ARM: EXYNOS: Set the capability of pdm0 and pdm1 as DMA_PRIVATE
+>   DMA: PL330: Set the capability of pdm0 and pdm1 as DMA_PRIVATE
+> 
+>  arch/arm/mach-exynos/dma.c |    2 ++
+>  drivers/dma/pl330.c        |    1 +
+>  2 files changed, 3 insertions(+), 0 deletions(-)
+> 
 
-Please check your mailer configuration, it looks like it's reformatting
-all the text with much longer line widths.
-
-> On Sun, Aug 26, 2012 at 05:45:54PM +0900, Mark Brown wrote:
-
-> > a whole lot of sense on the slave side, it's related to the clock generation so should have no
-> > effect at all on the slave side.  The driver code looks reasonably sensible though.
-
-> You mean cpu side is slave? 
-
-Yes.
-
-
-> > What specifically is going wrong here?
-
-> SND_SOC_DAIFMT_CONT is used sound/soc/Samsung/pcm.c (s3c_pcm_set_fmt()) like below.
-
-> switch (fmt & SND_SOC_DAIFMT_CLOCK_MASK) {
->         case SND_SOC_DAIFMT_CONT:
->                 pcm->idleclk = 1;
->                 break;
->         case SND_SOC_DAIFMT_GATED:
->                 pcm->idleclk = 0;
->                 break;
->         default:
->                 dev_err(pcm->dev, "Invalid Clock gating request!\n");
->                 ret = -EINVAL;
->                 goto exit;
->         }
-
-> If fmt argument has no SND_SOC_DAIFMT_ option, s3c_pcm_set_fmt() return -EINVAL.
-
-So, clearly this is unrelated to the change you mentioned in your commit
-message - it looks like this is just a plain issue in the machine
-driver.  That said the above code should be changed to at least ignore
-the setting in slave mode (since the clock shouldn't be being driven and
-it doesn't matter).
+-- 
+~Vinod Koul
+Intel Corp.
