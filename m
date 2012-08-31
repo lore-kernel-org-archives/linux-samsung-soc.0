@@ -1,105 +1,80 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v5 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Fri, 31 Aug 2012 12:02:42 +0530
-Message-ID: <CAJuYYwSokqAegg1Z-jovYzanBYR-oZZaL2W=_nOSNVAsrM_PMw@mail.gmail.com>
-References: <1346237295-7116-1-git-send-email-thomas.abraham@linaro.org>
-	<1346237295-7116-5-git-send-email-thomas.abraham@linaro.org>
-	<503F28E7.1060608@samsung.com>
-	<CAJuYYwQtAe7kC4DC5Ao04qU_9TSjcREw7ktuf6KNmgXHAvUzKg@mail.gmail.com>
-	<5040536C.30407@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: dts: Use active low flag for gpio-keys on Origen
+Date: Fri, 31 Aug 2012 13:03:08 +0530
+Message-ID: <CAJuYYwRq6Ckb-a_cKF7c7cteP1m5h7SuXOEHgMSC_WsjFy+8rA@mail.gmail.com>
+References: <1346386430-3619-1-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <5040536C.30407@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:53411 "EHLO
+	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1751774Ab2HaHdK (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 31 Aug 2012 03:33:10 -0400
+Received: by lagy9 with SMTP id y9so2089345lag.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 31 Aug 2012 00:33:08 -0700 (PDT)
+In-Reply-To: <1346386430-3619-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sachin Kamat <sachin.kamat@linaro.org>
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, patches@linaro.org, Olof Johansson <olof@lixom.net>
 
-On 31 August 2012 11:32, Jaehoon Chung <jh80.chung@samsung.com> wrote:
-> On 08/31/2012 02:29 PM, Thomas Abraham wrote:
->> On 30 August 2012 14:18, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>> Hi Thomas,
->>>
->>> On 08/29/2012 07:48 PM, Thomas Abraham wrote:
->>>> Some platforms allow for clock gating and control of bus interface unit clock
->>>> and card interface unit clock. Add support for clock lookup of optional biu
->>>> and ciu clocks for clock gating and clock speed determination.
->>>>
->>>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
->>>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->>>> Acked-by: Will Newton <will.newton@imgtec.com>
->>>> ---
->>>>  drivers/mmc/host/dw_mmc.c  |   42 +++++++++++++++++++++++++++++++++++++++---
->>>>  include/linux/mmc/dw_mmc.h |    4 ++++
->>>>  2 files changed, 43 insertions(+), 3 deletions(-)
->>>>
->>>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
->>>> index 227c42e..90c7c7b 100644
->>>> --- a/drivers/mmc/host/dw_mmc.c
->>>> +++ b/drivers/mmc/host/dw_mmc.c
->>>> @@ -1960,18 +1960,38 @@ int dw_mci_probe(struct dw_mci *host)
->>>>               return -ENODEV;
->>>>       }
->>>>
->>>> -     if (!host->pdata->bus_hz) {
->>>> +     host->biu_clk = clk_get(host->dev, "biu");
->>>> +     if (IS_ERR(host->biu_clk))
->>>> +             dev_dbg(host->dev, "biu clock not available\n");
->>>> +     else
->>>> +             clk_prepare_enable(host->biu_clk);
->>> biu is clock for bus interface?
->>> if didn't get "biu_clk" or didn't clk_prepare_enable(), then can we initialize the card?
->>
->> Hi Jaehoon,
->>
->> Yes, the biu clock is for bus interface. The biu and ciu clock lookup
->> and enable here is optional in the above change. If a platform does
->> not define these clocks, then the platform code is responsible for
->> enabling these clocks.
-> If biu_clk is presented...
-> Is there no probability that clk_prepare_enable is failed?
-
-Yes, clk_prepare_enable can fail. I will fix this by setting biu_clk
-and ciu_clk to NULL, in case the clk_prepare_enable fails.
-
->>
->>>> +
->>>> +     host->ciu_clk = clk_get(host->dev, "ciu");
->>>> +     if (IS_ERR(host->ciu_clk))
->>>> +             dev_dbg(host->dev, "ciu clock not available\n");
->>>> +     else
->>>> +             clk_prepare_enable(host->ciu_clk);
->>>> +
->>>> +     if (IS_ERR(host->ciu_clk))
->>>> +             host->bus_hz = host->pdata->bus_hz;
->>>> +     else
->>>> +             host->bus_hz = clk_get_rate(host->ciu_clk);
->>> if clk_get_rate() is incorrect value(ex,400MHz),
->>> then mmc->f_min value is too high.
->>> because mmc->f_min is assigned to DIV_ROUND_UP(host->bus_hz, 510) into dw_mc_init_slot.
->>> Do you have any opinion for solving this?
->>
->> One option on Exynos5250 is to use the clock divider in the CLKSEL
->> register to divide the ciu clock to a lower value. For Exynos4, since
->> there is no clock divider in CLKSEL register, the platform code should
->> ensure that the ciu clock has a valid range.
-> I know that can use div-ratio filed at the clksel register.
-> On Exynos5, i known that is used the div-ratio at CLKSEL register.
-> If ciu-clock is 400MHz, host->bus_hz is assigned to 400MHz.
-> 1) host->bus_hz -> 400MHz (at dw-mmc-pltfm.c)
-> 2) mmc->f_min = DIV_ROUND_UP(host->bus_hz, 510) then mmc->f_min is set to 784KHz.
-> 3) then host->bus_hz is re-assigned to value that is divided to div-ratio at CLKSEL register.
->    at this time, host->bus_hz = 100MHz...
+On 31 August 2012 09:43, Sachin Kamat <sachin.kamat@linaro.org> wrote:
+> Commit: f447ed8b31d (gpio: samsung: add flags specifier to
+> device-tree binding) adds a flag to represent active low state
+> for gpio line. Since gpio-keys on Origen board are active low,
+> using this flag to represent the same.
 >
-> I think this sequence is something wrong.
-> (Is 784KHz too high for init card?)
+> Cc: Olof Johansson <olof@lixom.net>
+> Cc: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/boot/dts/exynos4210-origen.dts |   10 +++++-----
+>  1 files changed, 5 insertions(+), 5 deletions(-)
 >
-> It's just my thinking..if my understanding is wrong, let me know plz.
+> diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+> index 0c49caa..c37edf0 100644
+> --- a/arch/arm/boot/dts/exynos4210-origen.dts
+> +++ b/arch/arm/boot/dts/exynos4210-origen.dts
+> @@ -62,31 +62,31 @@
+>
+>                 up {
+>                         label = "Up";
+> -                       gpios = <&gpx2 0 0 0 2>;
+> +                       gpios = <&gpx2 0 0 0x10000 2>;
+>                         linux,code = <103>;
+>                 };
+>
+>                 down {
+>                         label = "Down";
+> -                       gpios = <&gpx2 1 0 0 2>;
+> +                       gpios = <&gpx2 1 0 0x10000 2>;
+>                         linux,code = <108>;
+>                 };
+>
+>                 back {
+>                         label = "Back";
+> -                       gpios = <&gpx1 7 0 0 2>;
+> +                       gpios = <&gpx1 7 0 0x10000 2>;
+>                         linux,code = <158>;
+>                 };
+>
+>                 home {
+>                         label = "Home";
+> -                       gpios = <&gpx1 6 0 0 2>;
+> +                       gpios = <&gpx1 6 0 0x10000 2>;
+>                         linux,code = <102>;
+>                 };
+>
+>                 menu {
+>                         label = "Menu";
+> -                       gpios = <&gpx1 5 0 0 2>;
+> +                       gpios = <&gpx1 5 0 0x10000 2>;
+>                         linux,code = <139>;
+>                 };
+>         };
+> --
+> 1.7.4.1
+>
 
-You have listed the steps 1 to 3 correctly. So, as per step 3, 100Mhz
-/ 510 ~= 196KHz. Which is well within 400KHz. So do you still see a
-problem here?
-
-Thanks,
-Thomas.
+Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
