@@ -1,76 +1,48 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v5 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
-Date: Fri, 31 Aug 2012 14:18:17 +0530
-Message-ID: <CAJuYYwQ50HCSrDgxrvhRh5X2ECxi_g=_akoa6o9FYCQ5GqHUCQ@mail.gmail.com>
-References: <1346237295-7116-1-git-send-email-thomas.abraham@linaro.org>
-	<1346237295-7116-5-git-send-email-thomas.abraham@linaro.org>
-	<503F28E7.1060608@samsung.com>
-	<CAJuYYwQtAe7kC4DC5Ao04qU_9TSjcREw7ktuf6KNmgXHAvUzKg@mail.gmail.com>
-	<5040536C.30407@samsung.com>
-	<CAJuYYwSokqAegg1Z-jovYzanBYR-oZZaL2W=_nOSNVAsrM_PMw@mail.gmail.com>
-	<50406EE9.1040004@samsung.com>
+From: Barry Song <Barry.Song@csr.com>
+Subject: [PATCH 1/2] ARM: exynos: delete redundant HAVE_SCHED_CLOCK option in
+ Kconfig
+Date: Fri, 31 Aug 2012 17:44:55 +0800
+Message-ID: <1346406296-16223-1-git-send-email-Barry.Song@csr.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <50406EE9.1040004@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jaehoon Chung <jh80.chung@samsung.com>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: olof@lixom.net, arnd@arndb.de, kgene.kim@samsung.com, rob.herring@calxeda.com
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, workgroup.linux@csr.com, Barry Song <Baohua.Song@csr.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On 31 August 2012 13:29, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->>>>>> +
->>>>>> +     host->ciu_clk = clk_get(host->dev, "ciu");
->>>>>> +     if (IS_ERR(host->ciu_clk))
->>>>>> +             dev_dbg(host->dev, "ciu clock not available\n");
->>>>>> +     else
->>>>>> +             clk_prepare_enable(host->ciu_clk);
->>>>>> +
->>>>>> +     if (IS_ERR(host->ciu_clk))
->>>>>> +             host->bus_hz = host->pdata->bus_hz;
->>>>>> +     else
->>>>>> +             host->bus_hz = clk_get_rate(host->ciu_clk);
->>>>> if clk_get_rate() is incorrect value(ex,400MHz),
->>>>> then mmc->f_min value is too high.
->>>>> because mmc->f_min is assigned to DIV_ROUND_UP(host->bus_hz, 510) into dw_mc_init_slot.
->>>>> Do you have any opinion for solving this?
->>>>
->>>> One option on Exynos5250 is to use the clock divider in the CLKSEL
->>>> register to divide the ciu clock to a lower value. For Exynos4, since
->>>> there is no clock divider in CLKSEL register, the platform code should
->>>> ensure that the ciu clock has a valid range.
->>> I know that can use div-ratio filed at the clksel register.
->>> On Exynos5, i known that is used the div-ratio at CLKSEL register.
->>> If ciu-clock is 400MHz, host->bus_hz is assigned to 400MHz.
->>> 1) host->bus_hz -> 400MHz (at dw-mmc-pltfm.c)
->>> 2) mmc->f_min = DIV_ROUND_UP(host->bus_hz, 510) then mmc->f_min is set to 784KHz.
->>> 3) then host->bus_hz is re-assigned to value that is divided to div-ratio at CLKSEL register.
->>>    at this time, host->bus_hz = 100MHz...
->>>
->>> I think this sequence is something wrong.
->>> (Is 784KHz too high for init card?)
->>>
->>> It's just my thinking..if my understanding is wrong, let me know plz.
->>
->> You have listed the steps 1 to 3 correctly. So, as per step 3, 100Mhz
->> / 510 ~= 196KHz. Which is well within 400KHz. So do you still see a
->> problem here?
-> How do you think about this?
-> [ 4.620000] mmc_host mmc0: Bus speed (slot 0) = 100000000Hz (slot req 784314Hz, actual 781250HZ div = 64)
+From: Barry Song <Baohua.Song@csr.com>
 
-You are right, the sequence is wrong. The host->bus_hz is set to the
-correct value of 100Mhz in set_ios callback of exynos. But much prior
-to that, the dw_mci_init_slot is called and that initializes
-mmc->f_min to host->bus_hz / 510 = 400Mhz / 510 = 768KHz.
+Signed-off-by: Barry Song <Baohua.Song@csr.com>
+---
+ arch/arm/mach-exynos/Kconfig |    1 -
+ 1 files changed, 0 insertions(+), 1 deletions(-)
 
-To fix this, I am planning to add another implementation specific
-callback function that will adjust the host->bus_clk as per
-implementation specific extensions. This callback will be called right
-from dw_mci_probe right after the host->bus_hz is set using the
-clk_get_rate() call.
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index b5b4c8c..3fd4ab3 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -243,7 +243,6 @@ config MACH_UNIVERSAL_C210
+ 	select CPU_EXYNOS4210
+ 	select S5P_HRT
+ 	select CLKSRC_MMIO
+-	select HAVE_SCHED_CLOCK
+ 	select S5P_GPIO_INT
+ 	select S5P_DEV_FIMC0
+ 	select S5P_DEV_FIMC1
+-- 
+1.7.0.4
 
-Sorry, I was not paying proper attention to the log messages. Thanks
-for your correction.
 
-Regards,
-Thomas.
+
+Member of the CSR plc group of companies. CSR plc registered in England and Wales, registered number 4187346, registered office Churchill House, Cambridge Business Park, Cowley Road, Cambridge, CB4 0WZ, United Kingdom
+More information can be found at www.csr.com. Follow CSR on Twitter at http://twitter.com/CSR_PLC and read our blog at www.csr.com/blog
