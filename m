@@ -1,357 +1,81 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 6/6] ARM: Exynos: Add basic dts file for Samsung Trats board
-Date: Fri, 31 Aug 2012 09:54:20 +0530
-Message-ID: <CAJuYYwSPfEk7fkcR=vP0GmSe924BJPNwoO=1CaSXX3zUFWwBoQ@mail.gmail.com>
-References: <1346311903-15920-1-git-send-email-t.figa@samsung.com>
-	<1346311903-15920-7-git-send-email-t.figa@samsung.com>
+Subject: Re: [PATCH v5 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Fri, 31 Aug 2012 10:59:07 +0530
+Message-ID: <CAJuYYwQtAe7kC4DC5Ao04qU_9TSjcREw7ktuf6KNmgXHAvUzKg@mail.gmail.com>
+References: <1346237295-7116-1-git-send-email-thomas.abraham@linaro.org>
+	<1346237295-7116-5-git-send-email-thomas.abraham@linaro.org>
+	<503F28E7.1060608@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:38651 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750766Ab2HaEYW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 31 Aug 2012 00:24:22 -0400
-Received: by lbbgj3 with SMTP id gj3so967389lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 30 Aug 2012 21:24:20 -0700 (PDT)
-In-Reply-To: <1346311903-15920-7-git-send-email-t.figa@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <503F28E7.1060608@samsung.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com
 
-On 30 August 2012 13:01, Tomasz Figa <t.figa@samsung.com> wrote:
-> This commit adds basic device tree for Exynos4210-based Trats board.
+On 30 August 2012 14:18, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> Hi Thomas,
 >
-> Currently it provides support for eMMC over sdhci and MAX8997 PMIC.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-trats.dts | 287 +++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/Makefile.boot     |   2 +-
->  2 files changed, 288 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/exynos4210-trats.dts
->
-> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-> new file mode 100644
-> index 0000000..a9cd2d0
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
-> @@ -0,0 +1,287 @@
-> +/*
-> + * Samsung's Exynos4210 based Trats board device tree source
-> + *
-> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * Device tree source file for Samsung's Trats board which is based on
-> + * Samsung's Exynos4210 SoC.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +/include/ "exynos4210.dtsi"
-> +
-> +/ {
-> +       model = "Samsung Trats based on Exynos4210";
-> +       compatible = "samsung,trats", "samsung,exynos4210";
-> +
-> +       memory {
-> +               reg =  <0x40000000 0x20000000
-> +                       0x60000000 0x20000000>;
-> +       };
-> +
-> +       chosen {
-> +               bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
-> +       };
-> +
-> +       wakeup_eint: interrupt-controller-wakeup-eint {
-> +               compatible = "samsung,exynos4210-wakeup-eint";
-> +               reg = <0x11000000 0x1000>;
-> +               #interrupt-cells = <2>;
-> +               interrupt-controller;
-> +               interrupts =    <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
-> +                               <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
-> +                               <0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
-> +                               <0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>,
-> +                               <0 32 0>;
-> +       };
+> On 08/29/2012 07:48 PM, Thomas Abraham wrote:
+>> Some platforms allow for clock gating and control of bus interface unit clock
+>> and card interface unit clock. Add support for clock lookup of optional biu
+>> and ciu clocks for clock gating and clock speed determination.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> Acked-by: Will Newton <will.newton@imgtec.com>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c  |   42 +++++++++++++++++++++++++++++++++++++++---
+>>  include/linux/mmc/dw_mmc.h |    4 ++++
+>>  2 files changed, 43 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 227c42e..90c7c7b 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -1960,18 +1960,38 @@ int dw_mci_probe(struct dw_mci *host)
+>>               return -ENODEV;
+>>       }
+>>
+>> -     if (!host->pdata->bus_hz) {
+>> +     host->biu_clk = clk_get(host->dev, "biu");
+>> +     if (IS_ERR(host->biu_clk))
+>> +             dev_dbg(host->dev, "biu clock not available\n");
+>> +     else
+>> +             clk_prepare_enable(host->biu_clk);
+> biu is clock for bus interface?
+> if didn't get "biu_clk" or didn't clk_prepare_enable(), then can we initialize the card?
 
-The external wakeup node should be in the exynos4.dtsi file since this
-is common across all Exynos4 SoC's. Besides, the device tree support
-patches for wakeup-interrupts is not being pursed anymore, since it is
-now handled in pinctrl driver itself. So it would be better not to
-include this node.
+Hi Jaehoon,
 
-> +
-> +       vemmc_reg: voltage-regulator@0 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "VMEM_VDD_2.8V";
-> +               regulator-min-microvolt = <2800000>;
-> +               regulator-max-microvolt = <2800000>;
-> +               gpio = <&gpk0 2 1 0 0>;
-> +       };
-> +
-> +       sdhci_emmc: sdhci@12510000 {
-> +               bus-width = <8>;
-> +               non-removable;
-> +               gpios = <&gpk0 0 2 0 3>,
-> +                       <&gpk0 1 2 0 3>,
-> +                       <&gpk0 3 2 2 3>,
-> +                       <&gpk0 4 2 2 3>,
-> +                       <&gpk0 5 2 2 3>,
-> +                       <&gpk0 6 2 2 3>,
-> +                       <&gpk1 3 3 3 3>,
-> +                       <&gpk1 4 3 3 3>,
-> +                       <&gpk1 5 3 3 3>,
-> +                       <&gpk1 6 3 3 3>;
-> +               vmmc-supply = &vemmc_reg;
-> +       };
-> +
-> +       i2c@138B0000 {
-> +               samsung,i2c-sda-delay = <100>;
-> +               samsung,i2c-slave-addr = <0x10>;
-> +               samsung,i2c-max-bus-freq = <100000>;
-> +               gpios = <&gpb 6 3 3 0>,
-> +                       <&gpb 7 3 3 0>;
-> +
-> +               max8997_pmic@66 {
-> +                       compatible = "maxim,max8997-pmic";
-> +                       interrupt-parent = <&wakeup_eint>;
-> +
-> +                       reg = <0x66>;
-> +                       interrupts = <4 0>, <3 0>;
-> +
-> +                       max8997,pmic-buck1-uses-gpio-dvs;
-> +                       max8997,pmic-buck2-uses-gpio-dvs;
-> +                       max8997,pmic-buck5-uses-gpio-dvs;
-> +
-> +                       max8997,pmic-ignore-gpiodvs-side-effect;
-> +                       max8997,pmic-buck125-default-dvs-idx = <0>;
-> +
-> +                       max8997,pmic-buck125-dvs-gpios = <&gpx0 5 1 0 0>,
-> +                                                        <&gpx0 6 1 0 0>,
-> +                                                        <&gpl0 0 1 0 0>;
-> +
-> +                       max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
-> +                                                        <1250000>, <1200000>,
-> +                                                        <1150000>, <1100000>,
-> +                                                        <1000000>, <950000>;
-> +
-> +                       max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
-> +                                                        <950000>,  <900000>,
-> +                                                        <1100000>, <1000000>,
-> +                                                        <950000>,  <900000>;
-> +
-> +                       max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
-> +                                                        <1200000>, <1200000>,
-> +                                                        <1200000>, <1200000>,
-> +                                                        <1200000>, <1200000>;
-> +
-> +                       regulators {
-> +                               valive_reg: LDO2 {
-> +                                    regulator-name = "VALIVE_1.1V_C210";
-> +                                    regulator-min-microvolt = <1100000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vusb_reg: LDO3 {
-> +                                    regulator-name = "VUSB_1.1V_C210";
-> +                                    regulator-min-microvolt = <1100000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                               };
-> +
-> +                               vmipi_reg: LDO4 {
-> +                                    regulator-name = "VMIPI_1.8V";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                               };
-> +
-> +                               vpda_reg: LDO6 {
-> +                                    regulator-name = "VCC_1.8V_PDA";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vcam_reg: LDO7 {
-> +                                    regulator-name = "CAM_ISP_1.8V";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                               };
-> +
-> +                               vusbdac_reg: LDO8 {
-> +                                    regulator-name = "VUSB/VDAC_3.3V_C210";
-> +                                    regulator-min-microvolt = <3300000>;
-> +                                    regulator-max-microvolt = <3300000>;
-> +                               };
-> +
-> +                               vccpda_reg: LDO9 {
-> +                                    regulator-name = "VCC_2.8V_PDA";
-> +                                    regulator-min-microvolt = <2800000>;
-> +                                    regulator-max-microvolt = <2800000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vpll_reg: LDO10 {
-> +                                    regulator-name = "VPLL_1.1V_C210";
-> +                                    regulator-min-microvolt = <1100000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vcclcd_reg: LDO13 {
-> +                                    regulator-name = "VCC_3.3V_LCD";
-> +                                    regulator-min-microvolt = <3300000>;
-> +                                    regulator-max-microvolt = <3300000>;
-> +                               };
-> +
-> +                               vlcd_reg: LDO15 {
-> +                                    regulator-name = "VLCD_2.2V";
-> +                                    regulator-min-microvolt = <2200000>;
-> +                                    regulator-max-microvolt = <2200000>;
-> +                               };
-> +
-> +                               camsensor_reg: LDO16 {
-> +                                    regulator-name = "CAM_SENSOR_IO_1.8V";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                               };
-> +
-> +                               vddq_reg: LDO21 {
-> +                                    regulator-name = "VDDQ_M1M2_1.2V";
-> +                                    regulator-min-microvolt = <1200000>;
-> +                                    regulator-max-microvolt = <1200000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               varm_breg: BUCK1 {
-> +                                    regulator-name = "VARM_1.2V_C210";
-> +                                    regulator-min-microvolt = <900000>;
-> +                                    regulator-max-microvolt = <1350000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vint_breg: BUCK2 {
-> +                                    regulator-name = "VINT_1.1V_C210";
-> +                                    regulator-min-microvolt = <900000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               camisp_breg: BUCK4 {
-> +                                    regulator-name = "CAM_ISP_CORE_1.2V";
-> +                                    regulator-min-microvolt = <1200000>;
-> +                                    regulator-max-microvolt = <1200000>;
-> +                               };
-> +
-> +                               vmem_breg: BUCK5 {
-> +                                    regulator-name = "VMEM_1.2V_C210";
-> +                                    regulator-min-microvolt = <1200000>;
-> +                                    regulator-max-microvolt = <1200000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vccsub_breg: BUCK7 {
-> +                                    regulator-name = "VCC_SUB_2.0V";
-> +                                    regulator-min-microvolt = <2000000>;
-> +                                    regulator-max-microvolt = <2000000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               safe1_sreg: ESAFEOUT1 {
-> +                                    regulator-name = "SAFEOUT1";
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               safe2_sreg: ESAFEOUT2 {
-> +                                    regulator-name = "SAFEOUT2";
-> +                                    regulator-boot-on;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +
-> +       keypad@100A0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       sdhci@12520000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       sdhci@12530000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       sdhci@12540000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@13860000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@13870000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@13880000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@13890000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@138A0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@138C0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       i2c@138D0000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       spi_0: spi@13920000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       spi_1: spi@13930000 {
-> +               status = "disabled";
-> +       };
-> +
-> +       spi_2: spi@13940000 {
-> +               status = "disabled";
-> +       };
-> +};
+Yes, the biu clock is for bus interface. The biu and ciu clock lookup
+and enable here is optional in the above change. If a platform does
+not define these clocks, then the platform code is responsible for
+enabling these clocks.
 
-If we choose to mark the nodes in dtsi files as "disabled" then we can
-avoid these here.
+>> +
+>> +     host->ciu_clk = clk_get(host->dev, "ciu");
+>> +     if (IS_ERR(host->ciu_clk))
+>> +             dev_dbg(host->dev, "ciu clock not available\n");
+>> +     else
+>> +             clk_prepare_enable(host->ciu_clk);
+>> +
+>> +     if (IS_ERR(host->ciu_clk))
+>> +             host->bus_hz = host->pdata->bus_hz;
+>> +     else
+>> +             host->bus_hz = clk_get_rate(host->ciu_clk);
+> if clk_get_rate() is incorrect value(ex,400MHz),
+> then mmc->f_min value is too high.
+> because mmc->f_min is assigned to DIV_ROUND_UP(host->bus_hz, 510) into dw_mc_init_slot.
+> Do you have any opinion for solving this?
 
-> diff --git a/arch/arm/mach-exynos/Makefile.boot b/arch/arm/mach-exynos/Makefile.boot
-> index 31bd181..a79d999 100644
-> --- a/arch/arm/mach-exynos/Makefile.boot
-> +++ b/arch/arm/mach-exynos/Makefile.boot
-> @@ -1,5 +1,5 @@
->     zreladdr-y  += 0x40008000
->  params_phys-y  := 0x40000100
->
-> -dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb
-> +dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb exynos4210-trats.dtb
->  dtb-$(CONFIG_MACH_EXYNOS5_DT) += exynos5250-smdk5250.dtb
-> --
-> 1.7.12
->
+One option on Exynos5250 is to use the clock divider in the CLKSEL
+register to divide the ciu clock to a lower value. For Exynos4, since
+there is no clock divider in CLKSEL register, the platform code should
+ensure that the ciu clock has a valid range.
 
-The rest of the additions looks fine.
+Thanks,
+Thomas.
 
-Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+[...]
