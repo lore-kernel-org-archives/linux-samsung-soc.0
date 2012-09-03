@@ -1,57 +1,50 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: Re: [PATCH] ARM: S3C24XX: Add WIZnet W5300E01-ARM board support
-Date: Mon, 03 Sep 2012 10:54:06 +0200
-Message-ID: <5044702E.3070209@samsung.com>
-References: <1346653236-19728-1-git-send-email-kth3321@gmail.com>
- <CA+E=qVfGN9_Lj5GWqERfZGQsTtnnK_fARgXuCujdVeZ0PBoJEQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v3 1/4] pinctrl: add samsung pinctrl and gpiolib driver
+Date: Mon, 3 Sep 2012 13:14:44 +0200
+Message-ID: <CACRpkdbVe77pAYdOw0+_2G2FWVWcn4GKQty6R-LXXEz-OkUdUg@mail.gmail.com>
+References: <1345720529-32315-1-git-send-email-thomas.abraham@linaro.org>
+	<1345720529-32315-2-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:17873 "EHLO
-	mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752208Ab2ICIyK (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:60172 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756295Ab2ICLOp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Sep 2012 04:54:10 -0400
-In-reply-to: <CA+E=qVfGN9_Lj5GWqERfZGQsTtnnK_fARgXuCujdVeZ0PBoJEQ@mail.gmail.com>
+	Mon, 3 Sep 2012 07:14:45 -0400
+Received: by wgbdr13 with SMTP id dr13so4572546wgb.1
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 03 Sep 2012 04:14:44 -0700 (PDT)
+In-Reply-To: <1345720529-32315-2-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Taehun Kim <kth3321@gmail.com>
-Cc: Vasily Khoruzhick <anarsoul@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, dong.aisheng@linaro.org, swarren@wwwdotorg.org, patches@linaro.org
 
-Hi,
+On Thu, Aug 23, 2012 at 1:15 PM, Thomas Abraham
+<thomas.abraham@linaro.org> wrote:
 
-On 09/03/2012 09:56 AM, Vasily Khoruzhick wrote:
->> +static void __init w5300e01_init(void)
->> +{
->> +       s3c_nand_set_platdata(&w5300e01_nand_info);
->> +       platform_add_devices(w5300e01_devices, ARRAY_SIZE(w5300e01_devices));
->> +
->> +       /* W5300 interrupt pin. */
->> +       s3c2410_gpio_cfgpin(S3C2410_GPF(0), S3C2410_GPIO_IRQ);
->> +
->> +       s3c2410_gpio_cfgpin(S3C2410_GPF(4), S3C2410_GPIO_OUTPUT);
->> +       s3c2410_gpio_cfgpin(S3C2410_GPF(5), S3C2410_GPIO_OUTPUT);
->> +       s3c2410_gpio_cfgpin(S3C2410_GPF(6), S3C2410_GPIO_OUTPUT);
->> +       s3c2410_gpio_cfgpin(S3C2410_GPF(7), S3C2410_GPIO_OUTPUT);
->> +
->> +       s3c2410_gpio_setpin(S3C2410_GPF(0), 1);
->> +       s3c2410_gpio_setpin(S3C2410_GPF(4), 1);
->> +       s3c2410_gpio_setpin(S3C2410_GPF(5), 1);
->> +       s3c2410_gpio_setpin(S3C2410_GPF(6), 1);
->> +       s3c2410_gpio_setpin(S3C2410_GPF(7), 1);
->> +
-> 
-> Please use gpiolib API, legacy s3c2410_gpio_* API will be removed soon.
+> Add a new device tree enabled pinctrl and gpiolib driver for Samsung
+> SoC's. This driver provides a common and extensible framework for all
+> Samsung SoC's to interface with the pinctrl and gpiolib subsystems. This
+> driver supports only device tree based instantiation and hence can be
+> used only on those Samsung platforms that have device tree enabled.
+>
+> This driver is split into two parts: the pinctrl interface and the gpiolib
+> interface. The pinctrl interface registers pinctrl devices with the pinctrl
+> subsystem and gpiolib interface registers gpio chips with the gpiolib
+> subsystem. The information about the pins, pin groups, pin functions and
+> gpio chips, which are SoC specific, are parsed from device tree node.
+>
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-Right, you'll find some information about this in
-Documentation/arm/Samsung-S3C24XX/GPIO.txt.
+Looks good to me, I saw Stephen had some minor comments and
+I expect that you probably fix them before applying to the Samsung
+tree so:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-These links may be useful as well:
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg11985.html
-http://www.spinics.net/lists/arm-kernel/msg192119.html
+Feel free to push this through ARM SoC, I guess that's the plan?
 
---
-
-Regards,
-Sylwester
+Yours,
+Linus Walleij
