@@ -1,97 +1,61 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4: Enable serial controllers on Origen and
- SMDKV310
-Date: Mon, 03 Sep 2012 15:28:05 +0200
-Message-ID: <1808225.QZz0WEipT7@amdc1227>
-References: <1346675674-16034-1-git-send-email-t.figa@samsung.com>
- <1346675674-16034-4-git-send-email-t.figa@samsung.com>
+From: Taehun Kim <kth3321@gmail.com>
+Subject: Re: [PATCH] ARM: S3C24XX: Add WIZnet W5300E01-ARM board support
+Date: Tue, 4 Sep 2012 00:39:00 +0900
+Message-ID: <CAOkfWjeDY2nh2vZoNZVc7PFKjmqCdbSMjnJVntT2uQPHoJ8Uxg@mail.gmail.com>
+References: <1346653236-19728-1-git-send-email-kth3321@gmail.com>
+	<CA+E=qVfGN9_Lj5GWqERfZGQsTtnnK_fARgXuCujdVeZ0PBoJEQ@mail.gmail.com>
+	<5044702E.3070209@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:63180 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754686Ab2ICN2J (ORCPT
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:34377 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756482Ab2ICPjD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Sep 2012 09:28:09 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9S009HY02STOA0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Sep 2012 22:28:07 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9S00H3302TXMD0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Sep 2012 22:28:07 +0900 (KST)
-In-reply-to: <1346675674-16034-4-git-send-email-t.figa@samsung.com>
+	Mon, 3 Sep 2012 11:39:03 -0400
+In-Reply-To: <5044702E.3070209@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, thomas.abraham@linaro.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Vasily Khoruzhick <anarsoul@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-This patch adds status override of serial nodes to enable used serial ports
-on Origen and SMDKV310 board.
+2012/9/3 Sylwester Nawrocki <s.nawrocki@samsung.com>:
+> Hi,
+>
+> On 09/03/2012 09:56 AM, Vasily Khoruzhick wrote:
+>>> +static void __init w5300e01_init(void)
+>>> +{
+>>> +       s3c_nand_set_platdata(&w5300e01_nand_info);
+>>> +       platform_add_devices(w5300e01_devices, ARRAY_SIZE(w5300e01_devices));
+>>> +
+>>> +       /* W5300 interrupt pin. */
+>>> +       s3c2410_gpio_cfgpin(S3C2410_GPF(0), S3C2410_GPIO_IRQ);
+>>> +
+>>> +       s3c2410_gpio_cfgpin(S3C2410_GPF(4), S3C2410_GPIO_OUTPUT);
+>>> +       s3c2410_gpio_cfgpin(S3C2410_GPF(5), S3C2410_GPIO_OUTPUT);
+>>> +       s3c2410_gpio_cfgpin(S3C2410_GPF(6), S3C2410_GPIO_OUTPUT);
+>>> +       s3c2410_gpio_cfgpin(S3C2410_GPF(7), S3C2410_GPIO_OUTPUT);
+>>> +
+>>> +       s3c2410_gpio_setpin(S3C2410_GPF(0), 1);
+>>> +       s3c2410_gpio_setpin(S3C2410_GPF(4), 1);
+>>> +       s3c2410_gpio_setpin(S3C2410_GPF(5), 1);
+>>> +       s3c2410_gpio_setpin(S3C2410_GPF(6), 1);
+>>> +       s3c2410_gpio_setpin(S3C2410_GPF(7), 1);
+>>> +
+>>
+>> Please use gpiolib API, legacy s3c2410_gpio_* API will be removed soon.
+>
+> Right, you'll find some information about this in
+> Documentation/arm/Samsung-S3C24XX/GPIO.txt.
+>
+> These links may be useful as well:
+> http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg11985.html
+> http://www.spinics.net/lists/arm-kernel/msg192119.html
+>
+> --
+>
+> Regards,
+> Sylwester
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos4210-origen.dts   | 16 ++++++++++++++++
- arch/arm/boot/dts/exynos4210-smdkv310.dts | 16 ++++++++++++++++
- 2 files changed, 32 insertions(+)
-
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index d1a1101..c7295fb 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -57,6 +57,22 @@
- 		status = "okay";
- 	};
- 
-+	serial@13800000 {
-+		status = "okay";
-+	};
-+
-+	serial@13810000 {
-+		status = "okay";
-+	};
-+
-+	serial@13820000 {
-+		status = "okay";
-+	};
-+
-+	serial@13830000 {
-+		status = "okay";
-+	};
-+
- 	gpio_keys {
- 		compatible = "gpio-keys";
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index b87cca2..f634907 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -43,6 +43,22 @@
- 		status = "okay";
- 	};
- 
-+	serial@13800000 {
-+		status = "okay";
-+	};
-+
-+	serial@13810000 {
-+		status = "okay";
-+	};
-+
-+	serial@13820000 {
-+		status = "okay";
-+	};
-+
-+	serial@13830000 {
-+		status = "okay";
-+	};
-+
- 	keypad@100A0000 {
- 		samsung,keypad-num-rows = <2>;
- 		samsung,keypad-num-columns = <8>;
--- 
-1.7.12
+Thank you for the feedback. I will rewrite the gpio functions and
+propose the new patch soon.
