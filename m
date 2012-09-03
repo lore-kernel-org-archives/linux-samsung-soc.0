@@ -1,230 +1,212 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v1 1/2] ARM: EXYNOS: Add MFC device tree support
-Date: Mon, 03 Sep 2012 22:22:57 +0530
-Message-ID: <1346691178-29580-2-git-send-email-arun.kk@samsung.com>
+Subject: [PATCH v1 2/2] [media] s5p-mfc: Add device tree support
+Date: Mon, 03 Sep 2012 22:22:58 +0530
+Message-ID: <1346691178-29580-3-git-send-email-arun.kk@samsung.com>
 References: <1346691178-29580-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8421 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754370Ab2ICNGy (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:10244 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751171Ab2ICNHh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Sep 2012 09:06:54 -0400
+	Mon, 3 Sep 2012 09:07:37 -0400
 In-reply-to: <1346691178-29580-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-media@vger.kernel.org
 Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, thomas.abraham@linaro.org, kmpark@infradead.org, joshi@samsung.com
 
-From: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+This patch will add the device tree support for MFC driver.
 
-This patch adds device tree entry for MFC in the Exynos
-machines. Exynos4 SoCs support MFC v5 version and Exynos5 has
-MFC v6 version. So making the required changes in the clock
-files and adds MFC to the DT device list.
-
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
 Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
 ---
- arch/arm/boot/dts/exynos4210-origen.dts   |    7 +++++++
- arch/arm/boot/dts/exynos4210.dtsi         |    6 ++++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    7 +++++++
- arch/arm/boot/dts/exynos5250.dtsi         |    6 ++++++
- arch/arm/mach-exynos/Kconfig              |    2 ++
- arch/arm/mach-exynos/clock-exynos5.c      |    2 +-
- arch/arm/mach-exynos/mach-exynos4-dt.c    |    9 +++++++++
- arch/arm/mach-exynos/mach-exynos5-dt.c    |    9 +++++++++
- 8 files changed, 47 insertions(+), 1 deletions(-)
+ .../devicetree/bindings/media/s5p-mfc.txt          |   27 +++++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |  104 +++++++++++++++++---
+ 2 files changed, 115 insertions(+), 16 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 0c49caa..5cf9e93 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -146,4 +146,11 @@
- 	spi_2: spi@13940000 {
- 		status = "disabled";
- 	};
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+new file mode 100644
+index 0000000..9a74d09
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+@@ -0,0 +1,27 @@
++* Samsung Multi Format Codec (MFC)
 +
-+	mfc {
-+		samsung,mfc-r = <0x43000000>;
-+		samsung,mfc-r-size = <8388608>;
-+		samsung,mfc-l = <0x51000000>;
-+		samsung,mfc-l-size = <8388608>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 02891fe..5d57348 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -56,6 +56,12 @@
- 		interrupts = <0 43 0>;
- 	};
- 
-+	mfc {
-+		compatible = "samsung,mfc-v5";
-+		reg = <0x13400000 0x10000>;
-+		interrupts = <0 94 0>;
-+	};
++Mult Format Codec (MFC) is the IP present in Samsung SoCs which
++supports high resolution decoding and encoding functionalities.
++The MFC device driver is a v4l2 driver which can encode/decode
++video raw/elementary streams and has support for all popular
++video codecs.
 +
- 	rtc@10070000 {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 8a5e348..5824c97 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -109,4 +109,11 @@
- 	spi_2: spi@12d40000 {
- 		status = "disabled";
- 	};
++Required properties:
++  - compatible : value should be either one among the following
++	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
++	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
 +
-+	mfc {
-+		samsung,mfc-r = <0x43000000>;
-+		samsung,mfc-r-size = <8388608>;
-+		samsung,mfc-l = <0x51000000>;
-+		samsung,mfc-l-size = <8388608>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index 004aaa8..d727b8b 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -58,6 +58,12 @@
- 		interrupts = <0 42 0>;
- 	};
- 
-+	mfc {
-+		compatible = "samsung,mfc-v6";
-+		reg = <0x11000000 0x10000>;
-+		interrupts = <0 96 0>;
-+	};
++  - reg : Physical base address of the IP registers and length of memory
++	  mapped region.
 +
- 	rtc {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x101E0000 0x100>;
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index b5b4c8c..19e8313 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -36,6 +36,7 @@ config CPU_EXYNOS4210
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
- 	select PM_GENERIC_DOMAINS
-+	select S5P_DEV_MFC
- 	help
- 	  Enable EXYNOS4210 CPU support
++  - interrupts : MFC interupt number to the CPU.
++
++  - samsung,mfc-r : Base address of the first memory bank used by MFC
++		    for DMA contiguous memory allocation.
++
++  - samsung,mfc-r-size : Size of the first memory bank.
++
++  - samsung,mfc-l : Base address of the second memory bank used by MFC
++		    for DMA contiguous memory allocation.
++
++  - samsung,mfc-l-size : Size of the second memory bank.
+diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc.c b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+index 80f0555..365b6f5 100644
+--- a/drivers/media/platform/s5p-mfc/s5p_mfc.c
++++ b/drivers/media/platform/s5p-mfc/s5p_mfc.c
+@@ -957,6 +957,8 @@ static int match_child(struct device *dev, void *data)
+ 	return !strcmp(dev_name(dev), (char *)data);
+ }
  
-@@ -64,6 +65,7 @@ config SOC_EXYNOS5250
- 	select SAMSUNG_DMADEV
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
-+	select S5P_DEV_MFC
- 	help
- 	  Enable EXYNOS5250 SoC support
++static void *mfc_get_drv_data(struct platform_device *pdev);
++
+ /* MFC probe function */
+ static int s5p_mfc_probe(struct platform_device *pdev)
+ {
+@@ -964,6 +966,8 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 	struct video_device *vfd;
+ 	struct resource *res;
+ 	int ret;
++	unsigned int base_addr;
++	unsigned int bank_size;
  
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 774533c..480c251 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -612,7 +612,7 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.ctrlbit	= (1 << 25),
- 	}, {
- 		.name		= "mfc",
--		.devname	= "s5p-mfc",
-+		.devname	= "s5p-mfc-v6",
- 		.enable		= exynos5_clk_ip_mfc_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index b2b5d5f..44bcfa4 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -13,6 +13,7 @@
+ 	pr_debug("%s++\n", __func__);
+ 	dev = devm_kzalloc(&pdev->dev, sizeof *dev, GFP_KERNEL);
+@@ -980,8 +984,7 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
  
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/memblock.h>
+-	dev->variant = (struct s5p_mfc_variant *)
+-		platform_get_device_id(pdev)->driver_data;
++	dev->variant = mfc_get_drv_data(pdev);
  
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -20,6 +21,7 @@
+ 	ret = s5p_mfc_init_pm(dev);
+ 	if (ret < 0) {
+@@ -1011,20 +1014,59 @@ static int s5p_mfc_probe(struct platform_device *pdev)
+ 		goto err_res;
+ 	}
  
- #include <plat/cpu.h>
- #include <plat/regs-serial.h>
-+#include <plat/mfc.h>
+-	dev->mem_dev_l = device_find_child(&dev->plat_dev->dev, "s5p-mfc-l",
+-					   match_child);
+-	if (!dev->mem_dev_l) {
+-		mfc_err("Mem child (L) device get failed\n");
+-		ret = -ENODEV;
+-		goto err_res;
+-	}
++	if (pdev->dev.of_node) {
++		dev->mem_dev_l = kzalloc(sizeof(struct device), GFP_KERNEL);
++		if (!dev->mem_dev_l) {
++			mfc_err("Not enough memory\n");
++			ret = -ENOMEM;
++			goto err_res;
++		}
++		of_property_read_u32(pdev->dev.of_node, "samsung,mfc-l",
++				&base_addr);
++		of_property_read_u32(pdev->dev.of_node, "samsung,mfc-l-size",
++				&bank_size);
++		if (dma_declare_coherent_memory(dev->mem_dev_l, base_addr,
++				base_addr, bank_size,
++				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
++			mfc_err("Failed to declare coherent memory for\n"
++					"MFC device\n");
++			ret = -ENOMEM;
++			goto err_res;
++		}
  
- #include "common.h"
+-	dev->mem_dev_r = device_find_child(&dev->plat_dev->dev, "s5p-mfc-r",
+-					   match_child);
+-	if (!dev->mem_dev_r) {
+-		mfc_err("Mem child (R) device get failed\n");
+-		ret = -ENODEV;
+-		goto err_res;
++		dev->mem_dev_r = kzalloc(sizeof(struct device), GFP_KERNEL);
++		if (!dev->mem_dev_r) {
++			mfc_err("Not enough memory\n");
++			ret = -ENOMEM;
++			goto err_res;
++		}
++		of_property_read_u32(pdev->dev.of_node, "samsung,mfc-r",
++				&base_addr);
++		of_property_read_u32(pdev->dev.of_node, "samsung,mfc-r-size",
++				&bank_size);
++		if (dma_declare_coherent_memory(dev->mem_dev_r, base_addr,
++				base_addr, bank_size,
++				DMA_MEMORY_MAP | DMA_MEMORY_EXCLUSIVE) == 0) {
++			pr_err("Failed to declare coherent memory for\n"
++					"MFC device\n");
++			ret = -ENOMEM;
++			goto err_res;
++		}
++	} else {
++		dev->mem_dev_l = device_find_child(&dev->plat_dev->dev,
++				"s5p-mfc-l", match_child);
++		if (!dev->mem_dev_l) {
++			mfc_err("Mem child (L) device get failed\n");
++			ret = -ENODEV;
++			goto err_res;
++		}
++		dev->mem_dev_r = device_find_child(&dev->plat_dev->dev,
++				"s5p-mfc-r", match_child);
++		if (!dev->mem_dev_r) {
++			mfc_err("Mem child (R) device get failed\n");
++			ret = -ENODEV;
++			goto err_res;
++		}
+ 	}
  
-@@ -63,6 +65,7 @@ static const struct of_dev_auxdata exynos4210_auxdata_lookup[] __initconst = {
- 				"exynos4210-spi.2", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS4_PA_PDMA1, "dma-pl330.1", NULL),
-+	OF_DEV_AUXDATA("samsung,mfc-v5", 0x13400000, "s5p-mfc", NULL),
- 	{},
+ 	dev->alloc_ctx[0] = vb2_dma_contig_init_ctx(dev->mem_dev_l);
+@@ -1293,6 +1335,35 @@ static struct platform_device_id mfc_driver_ids[] = {
  };
+ MODULE_DEVICE_TABLE(platform, mfc_driver_ids);
  
-@@ -83,6 +86,11 @@ static char const *exynos4210_dt_compat[] __initdata = {
- 	NULL
- };
- 
-+static void __init exynos4_reserve(void)
++static const struct of_device_id exynos_mfc_match[] = {
++	{
++		.compatible = "samsung,mfc-v5",
++		.data = &mfc_drvdata_v5,
++	}, {
++		.compatible = "samsung,mfc-v6",
++		.data = &mfc_drvdata_v6,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos_mfc_match);
++
++static void *mfc_get_drv_data(struct platform_device *pdev)
 +{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
++	struct s5p_mfc_variant *driver_data = NULL;
++
++	if (pdev->dev.of_node) {
++		const struct of_device_id *match;
++		match = of_match_node(of_match_ptr(exynos_mfc_match),
++				pdev->dev.of_node);
++		if (match)
++			driver_data = match->data;
++	} else {
++		driver_data = (struct s5p_mfc_variant *)
++			platform_get_device_id(pdev)->driver_data;
++	}
++	return driver_data;
 +}
 +
- DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	/* Maintainer: Thomas Abraham <thomas.abraham@linaro.org> */
- 	.init_irq	= exynos4_init_irq,
-@@ -93,4 +101,5 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	.timer		= &exynos4_timer,
- 	.dt_compat	= exynos4210_dt_compat,
- 	.restart        = exynos4_restart,
-+	.reserve	= exynos4_reserve,
- MACHINE_END
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index ef770bc..e258db4 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/memblock.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -18,6 +19,7 @@
- 
- #include <plat/cpu.h>
- #include <plat/regs-serial.h>
-+#include <plat/mfc.h>
- 
- #include "common.h"
- 
-@@ -56,6 +58,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA0, "dma-pl330.0", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_PDMA1, "dma-pl330.1", NULL),
- 	OF_DEV_AUXDATA("arm,pl330", EXYNOS5_PA_MDMA1, "dma-pl330.2", NULL),
-+	OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
- 	{},
+ static struct platform_driver s5p_mfc_driver = {
+ 	.probe		= s5p_mfc_probe,
+ 	.remove		= __devexit_p(s5p_mfc_remove),
+@@ -1300,7 +1371,8 @@ static struct platform_driver s5p_mfc_driver = {
+ 	.driver	= {
+ 		.name	= S5P_MFC_NAME,
+ 		.owner	= THIS_MODULE,
+-		.pm	= &s5p_mfc_pm_ops
++		.pm	= &s5p_mfc_pm_ops,
++		.of_match_table = exynos_mfc_match,
+ 	},
  };
  
-@@ -76,6 +79,11 @@ static char const *exynos5250_dt_compat[] __initdata = {
- 	NULL
- };
- 
-+static void __init exynos5_reserve(void)
-+{
-+	s5p_mfc_reserve_mem(0x43000000, 8 << 20, 0x51000000, 8 << 20);
-+}
-+
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.init_irq	= exynos5_init_irq,
-@@ -86,4 +94,5 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	.timer		= &exynos4_timer,
- 	.dt_compat	= exynos5250_dt_compat,
- 	.restart        = exynos5_restart,
-+	.reserve	= exynos5_reserve,
- MACHINE_END
 -- 
 1.7.0.4
