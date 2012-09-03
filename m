@@ -1,381 +1,46 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 3/3] ARM: dts: exynos4: Assume status of all optional nodes as
- disabled
-Date: Mon, 03 Sep 2012 14:34:34 +0200
-Message-ID: <1346675674-16034-4-git-send-email-t.figa@samsung.com>
-References: <1346675674-16034-1-git-send-email-t.figa@samsung.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v1 0/2] Add MFC device tree support
+Date: Mon, 03 Sep 2012 22:22:56 +0530
+Message-ID: <1346691178-29580-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:24511 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:26908 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753782Ab2ICMfH (ORCPT
+	with ESMTP id S1754370Ab2ICNF6 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Sep 2012 08:35:07 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9R00GOXXLYQV21@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Sep 2012 21:35:05 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9R00H05XLX9920@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 03 Sep 2012 21:35:05 +0900 (KST)
-In-reply-to: <1346675674-16034-1-git-send-email-t.figa@samsung.com>
+	Mon, 3 Sep 2012 09:05:58 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, jy0922.shim@samsung.com, thomas.abraham@linaro.org, Tomasz Figa <t.figa@samsung.com>
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-media@vger.kernel.org
+Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, thomas.abraham@linaro.org, kmpark@infradead.org, joshi@samsung.com
 
-Currently all boards must explicitly disable all unused device tree
-nodes of unused components (e.g. i2c, sdhci, etc...). This makes it
-necessary to all boards to be aware of all components on the SoC, which
-in turns makes board dts files longer and more difficult to maintain
-(e.g. adding new components to SoC-level tree requires adding nodes with
-status="disabled" to every board).
+This patchset adds device tree support for s5p-mfc driver.
+The first patch adds DT support for both Exynos4 and 5 SoCs
+which has different versions of MFC. The second patch which
+adds DT support for the driver has to be applied over the 
+patchset [1] which adds the MFCv6 support.
 
-This patch changes "status" of all optional components in SoC-level dts
-file to "disabled", adds status="okay" to respective nodes of used
-components in dts of all boards and removes all nodes with only
-status="disabled" from boards dts.
+Changelog:
+- Moved board specific DT information to different dtsi file
+- Changed compatible name for the device
+- Addressed other review comments
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi            | 22 ++++++++++++
- arch/arm/boot/dts/exynos4210-origen.dts   | 58 ++-----------------------------
- arch/arm/boot/dts/exynos4210-smdkv310.dts | 52 +++------------------------
- 3 files changed, 28 insertions(+), 104 deletions(-)
+[1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg51284.html
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index e446fe7..9b71b61 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -48,114 +48,133 @@
- 		compatible = "samsung,s3c2410-wdt";
- 		reg = <0x10060000 0x100>;
- 		interrupts = <0 43 0>;
-+		status = "disabled";
- 	};
- 
- 	rtc@10070000 {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x10070000 0x100>;
- 		interrupts = <0 44 0>, <0 45 0>;
-+		status = "disabled";
- 	};
- 
- 	keypad@100A0000 {
- 		compatible = "samsung,s5pv210-keypad";
- 		reg = <0x100A0000 0x100>;
- 		interrupts = <0 109 0>;
-+		status = "disabled";
- 	};
- 
- 	sdhci@12510000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12510000 0x100>;
- 		interrupts = <0 73 0>;
-+		status = "disabled";
- 	};
- 
- 	sdhci@12520000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12520000 0x100>;
- 		interrupts = <0 74 0>;
-+		status = "disabled";
- 	};
- 
- 	sdhci@12530000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12530000 0x100>;
- 		interrupts = <0 75 0>;
-+		status = "disabled";
- 	};
- 
- 	sdhci@12540000 {
- 		compatible = "samsung,exynos4210-sdhci";
- 		reg = <0x12540000 0x100>;
- 		interrupts = <0 76 0>;
-+		status = "disabled";
- 	};
- 
- 	serial@13800000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13800000 0x100>;
- 		interrupts = <0 52 0>;
-+		status = "disabled";
- 	};
- 
- 	serial@13810000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13810000 0x100>;
- 		interrupts = <0 53 0>;
-+		status = "disabled";
- 	};
- 
- 	serial@13820000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13820000 0x100>;
- 		interrupts = <0 54 0>;
-+		status = "disabled";
- 	};
- 
- 	serial@13830000 {
- 		compatible = "samsung,exynos4210-uart";
- 		reg = <0x13830000 0x100>;
- 		interrupts = <0 55 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@13860000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13860000 0x100>;
- 		interrupts = <0 58 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@13870000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13870000 0x100>;
- 		interrupts = <0 59 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@13880000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13880000 0x100>;
- 		interrupts = <0 60 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@13890000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x13890000 0x100>;
- 		interrupts = <0 61 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@138A0000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138A0000 0x100>;
- 		interrupts = <0 62 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@138B0000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138B0000 0x100>;
- 		interrupts = <0 63 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@138C0000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138C0000 0x100>;
- 		interrupts = <0 64 0>;
-+		status = "disabled";
- 	};
- 
- 	i2c@138D0000 {
- 		compatible = "samsung,s3c2440-i2c";
- 		reg = <0x138D0000 0x100>;
- 		interrupts = <0 65 0>;
-+		status = "disabled";
- 	};
- 
- 	spi_0: spi@13920000 {
-@@ -166,6 +185,7 @@
- 		rx-dma-channel = <&pdma0 6>; /* preliminary */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disabled";
- 	};
- 
- 	spi_1: spi@13930000 {
-@@ -176,6 +196,7 @@
- 		rx-dma-channel = <&pdma1 6>; /* preliminary */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disabled";
- 	};
- 
- 	spi_2: spi@13940000 {
-@@ -186,6 +207,7 @@
- 		rx-dma-channel = <&pdma0 8>; /* preliminary */
- 		#address-cells = <1>;
- 		#size-cells = <0>;
-+		status = "disabled";
- 	};
- 
- 	amba {
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 0c49caa..d1a1101 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -40,6 +40,7 @@
- 			<&gpk2 4 2 3 3>,
- 			<&gpk2 5 2 3 3>,
- 			<&gpk2 6 2 3 3>;
-+		status = "okay";
- 	};
- 
- 	sdhci@12510000 {
-@@ -53,6 +54,7 @@
- 			<&gpk0 4 2 3 3>,
- 			<&gpk0 5 2 3 3>,
- 			<&gpk0 6 2 3 3>;
-+		status = "okay";
- 	};
- 
- 	gpio_keys {
-@@ -90,60 +92,4 @@
- 			linux,code = <139>;
- 		};
- 	};
--
--	keypad@100A0000 {
--		status = "disabled";
--	};
--
--	sdhci@12520000 {
--		status = "disabled";
--	};
--
--	sdhci@12540000 {
--		status = "disabled";
--	};
--
--	i2c@13860000 {
--		status = "disabled";
--	};
--
--	i2c@13870000 {
--		status = "disabled";
--	};
--
--	i2c@13880000 {
--		status = "disabled";
--	};
--
--	i2c@13890000 {
--		status = "disabled";
--	};
--
--	i2c@138A0000 {
--		status = "disabled";
--	};
--
--	i2c@138B0000 {
--		status = "disabled";
--	};
--
--	i2c@138C0000 {
--		status = "disabled";
--	};
--
--	i2c@138D0000 {
--		status = "disabled";
--	};
--
--	spi_0: spi@13920000 {
--		status = "disabled";
--	};
--
--	spi_1: spi@13930000 {
--		status = "disabled";
--	};
--
--	spi_2: spi@13940000 {
--		status = "disabled";
--	};
- };
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 1beccc8..b87cca2 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -40,6 +40,7 @@
- 			<&gpk2 4 2 3 3>,
- 			<&gpk2 5 2 3 3>,
- 			<&gpk2 6 2 3 3>;
-+		status = "okay";
- 	};
- 
- 	keypad@100A0000 {
-@@ -47,6 +48,7 @@
- 		samsung,keypad-num-columns = <8>;
- 		linux,keypad-no-autorepeat;
- 		linux,keypad-wakeup;
-+		status = "okay";
- 
- 		row-gpios = <&gpx2 0 3 3 0>,
- 			    <&gpx2 1 3 3 0>;
-@@ -128,6 +130,7 @@
- 		samsung,i2c-max-bus-freq = <20000>;
- 		gpios = <&gpd1 0 2 3 0>,
- 			<&gpd1 1 2 3 0>;
-+		status = "okay";
- 
- 		eeprom@50 {
- 			compatible = "samsung,24ad0xd1";
-@@ -140,58 +143,11 @@
- 		};
- 	};
- 
--	sdhci@12510000 {
--		status = "disabled";
--	};
--
--	sdhci@12520000 {
--		status = "disabled";
--	};
--
--	sdhci@12540000 {
--		status = "disabled";
--	};
--
--	i2c@13870000 {
--		status = "disabled";
--	};
--
--	i2c@13880000 {
--		status = "disabled";
--	};
--
--	i2c@13890000 {
--		status = "disabled";
--	};
--
--	i2c@138A0000 {
--		status = "disabled";
--	};
--
--	i2c@138B0000 {
--		status = "disabled";
--	};
--
--	i2c@138C0000 {
--		status = "disabled";
--	};
--
--	i2c@138D0000 {
--		status = "disabled";
--	};
--
--	spi_0: spi@13920000 {
--		status = "disabled";
--	};
--
--	spi_1: spi@13930000 {
--		status = "disabled";
--	};
--
- 	spi_2: spi@13940000 {
- 		gpios = <&gpc1 1 5 3 0>,
- 			<&gpc1 3 5 3 0>,
- 			<&gpc1 4 5 3 0>;
-+		status = "okay";
- 
- 		w25x80@0 {
- 			#address-cells = <1>;
--- 
-1.7.12
+Arun Kumar K (1):
+  [media] s5p-mfc: Add device tree support
+
+Naveen Krishna Chatradhi (1):
+  ARM: EXYNOS: Add MFC device tree support
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |   27 +++++
+ arch/arm/boot/dts/exynos4210-origen.dts            |    7 ++
+ arch/arm/boot/dts/exynos4210.dtsi                  |    6 +
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    7 ++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    6 +
+ arch/arm/mach-exynos/Kconfig                       |    2 +
+ arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    9 ++
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |    9 ++
+ drivers/media/platform/s5p-mfc/s5p_mfc.c           |  104 +++++++++++++++++---
+ 10 files changed, 162 insertions(+), 17 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
