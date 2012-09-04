@@ -1,63 +1,67 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] gpio: samsung: Update documentation
-Date: Wed, 05 Sep 2012 06:39:56 +0900
-Message-ID: <226401cd8ae5$d3e0ee90$7ba2cbb0$%kim@samsung.com>
-References: <503D267A.2090406@gmail.com>
- <1346603089-14122-1-git-send-email-sylvester.nawrocki@gmail.com>
- <CACRpkdbudOv9AvS1XuyPB+BZ63+Ymu5dhkBBWFCo2qYDV+jAmw@mail.gmail.com>
- <5045B89D.50503@samsung.com>
+Subject: RE: [PATCH v3 1/4] pinctrl: add samsung pinctrl and gpiolib driver
+Date: Wed, 05 Sep 2012 06:45:16 +0900
+Message-ID: <226e01cd8ae6$928010b0$b7803210$%kim@samsung.com>
+References: <1345720529-32315-1-git-send-email-thomas.abraham@linaro.org>
+ <1345720529-32315-2-git-send-email-thomas.abraham@linaro.org>
+ <CACRpkdbVe77pAYdOw0+_2G2FWVWcn4GKQty6R-LXXEz-OkUdUg@mail.gmail.com>
+ <CAJuYYwTD+vMg=YjUj4G0E-uakk=Y_SD+cUU22QSx0yRC50V75w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:35991 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932503Ab2IDVj6 (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:40198 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753762Ab2IDVpS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 4 Sep 2012 17:39:58 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9U004YWHIGK920@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Sep 2012 06:39:57 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9U00DN7HIKRTA0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Sep 2012 06:39:57 +0900 (KST)
-In-reply-to: <5045B89D.50503@samsung.com>
+	Tue, 4 Sep 2012 17:45:18 -0400
+In-reply-to: <CAJuYYwTD+vMg=YjUj4G0E-uakk=Y_SD+cUU22QSx0yRC50V75w@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Linus Walleij' <linus.walleij@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, dong.aisheng@linaro.org, swarren@wwwdotorg.org, patches@linaro.org
 
-Sylwester Nawrocki wrote:
+Thomas Abraham wrote:
 > 
-> On 09/04/2012 09:27 AM, Linus Walleij wrote:
-> > On Sun, Sep 2, 2012 at 6:24 PM, Sylwester Nawrocki
-> > <sylvester.nawrocki@gmail.com> wrote:
+> On 3 September 2012 16:44, Linus Walleij <linus.walleij@linaro.org> wrote:
+> > On Thu, Aug 23, 2012 at 1:15 PM, Thomas Abraham
+> > <thomas.abraham@linaro.org> wrote:
 > >
-> >> Update Samsung GPIO API documentation to reflect removal of
-> >> the s3c24xx specific gpio API. While at it, fix some typos.
+> >> Add a new device tree enabled pinctrl and gpiolib driver for Samsung
+> >> SoC's. This driver provides a common and extensible framework for all
+> >> Samsung SoC's to interface with the pinctrl and gpiolib subsystems.
+> This
+> >> driver supports only device tree based instantiation and hence can be
+> >> used only on those Samsung platforms that have device tree enabled.
 > >>
-> >> The notes on conversion from s3c2410_* functions to the gpiolib
-> >> API are left here just in case there is any out of tree code that
-> >> still needs to be converted.
+> >> This driver is split into two parts: the pinctrl interface and the
+> gpiolib
+> >> interface. The pinctrl interface registers pinctrl devices with the
+> pinctrl
+> >> subsystem and gpiolib interface registers gpio chips with the gpiolib
+> >> subsystem. The information about the pins, pin groups, pin functions
+> and
+> >> gpio chips, which are SoC specific, are parsed from device tree node.
 > >>
-> >> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+> >> Cc: Linus Walleij <linus.walleij@linaro.org>
+> >> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> >> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 > >
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> > Looks good to me, I saw Stephen had some minor comments and
+> > I expect that you probably fix them before applying to the Samsung
+> > tree so:
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > >
-> > Get the Samsung maintainers to apply this patch since they carry
-> > the API changes.
+> > Feel free to push this through ARM SoC, I guess that's the plan?
 > 
-Linus, thanks for your ack.
-
-> Thanks Linus. Kgene, this is the documentation update we talked about
-> previously. Can you please pick this patch as well ?
+> Hi Linus,
 > 
-Sure, I will apply this into Samsung tree.
+> Thanks for reviewing the Samsung pinctrl driver patches. I will do the
+> changes that Stephen has listed and resubmit. I will request Samsung
+> maintainer to consider the support for pinctrl driver for 3.7.
+> 
+Looks OK, I will apply updated patches Thomas said into Samsung tree.
 
 Thanks.
 
