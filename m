@@ -1,69 +1,41 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH v2] ARM: S3C24XX: Add WIZnet W5300E01-ARM board support
-Date: Mon, 03 Sep 2012 21:26:42 +0200
-Message-ID: <50450472.5090603@gmail.com>
-References: <1346653236-19728-1-git-send-email-kth3321@gmail.com> <1346693799.3485.2.camel@taehun-desktop>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: samsung: Update documentation
+Date: Tue, 4 Sep 2012 09:27:55 +0200
+Message-ID: <CACRpkdbudOv9AvS1XuyPB+BZ63+Ymu5dhkBBWFCo2qYDV+jAmw@mail.gmail.com>
+References: <503D267A.2090406@gmail.com>
+	<1346603089-14122-1-git-send-email-sylvester.nawrocki@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:47303 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756293Ab2ICT0r (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:45280 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753816Ab2IDH14 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 3 Sep 2012 15:26:47 -0400
-In-Reply-To: <1346693799.3485.2.camel@taehun-desktop>
+	Tue, 4 Sep 2012 03:27:56 -0400
+Received: by wgbdr13 with SMTP id dr13so5320754wgb.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Sep 2012 00:27:55 -0700 (PDT)
+In-Reply-To: <1346603089-14122-1-git-send-email-sylvester.nawrocki@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Taehun Kim <kth3321@gmail.com>
-Cc: Ben Dooks <ben-linux@fluff.org>, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On 09/03/2012 07:36 PM, Taehun Kim wrote:
-> +static void __init w5300e01_init(void)
-> +{
-> +	s3c_nand_set_platdata(&w5300e01_nand_info);
-> +	platform_add_devices(w5300e01_devices, ARRAY_SIZE(w5300e01_devices));
-> +
-> +	/* W5300 interrupt pin. */
-> +	s3c_gpio_cfgpin(S3C2410_GPF(0), S3C2410_GPIO_IRQ);
-> +
-> +	s3c_gpio_cfgpin(S3C2410_GPF(4), S3C2410_GPIO_OUTPUT);
-> +	s3c_gpio_cfgpin(S3C2410_GPF(5), S3C2410_GPIO_OUTPUT);
-> +	s3c_gpio_cfgpin(S3C2410_GPF(6), S3C2410_GPIO_OUTPUT);
-> +	s3c_gpio_cfgpin(S3C2410_GPF(7), S3C2410_GPIO_OUTPUT);
+On Sun, Sep 2, 2012 at 6:24 PM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
 
-Please don't use these obsolete S3C2410_GPIO_* defines, they will be
-gone soon, if aren't yet.
+> Update Samsung GPIO API documentation to reflect removal of
+> the s3c24xx specific gpio API. While at it, fix some typos.
+>
+> The notes on conversion from s3c2410_* functions to the gpiolib
+> API are left here just in case there is any out of tree code that
+> still needs to be converted.
+>
+> Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
 
-> +	gpio_set_value(S3C2410_GPF(0), 1);
-> +	gpio_set_value(S3C2410_GPF(4), 1);
-> +	gpio_set_value(S3C2410_GPF(5), 1);
-> +	gpio_set_value(S3C2410_GPF(6), 1);
-> +	gpio_set_value(S3C2410_GPF(7), 1);
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Instead I would do something like:
+Get the Samsung maintainers to apply this patch since they carry
+the API changes.
 
-8<-----------------------------------------------------------------
-
-static const struct gpio gpios[] = {
-	{ S3C2410_GPF(4), GPIOF_OUT_INIT_HIGH, NULL },
-	{ S3C2410_GPF(5), GPIOF_OUT_INIT_HIGH, NULL },
-	{ S3C2410_GPF(6), GPIOF_OUT_INIT_HIGH, NULL },
-	{ S3C2410_GPF(7), GPIOF_OUT_INIT_HIGH, NULL },
-};
-
-if (!WARN_ON(gpio_request_array(gpios, ARRAY_SIZE(gpios)))
-	gpios_free_array(gpios);
-
-/* W5300 interrupt pin. */
-if (!WARN_ON(gpio_request(S3C2410_GPF(0), GPIOF_IN, NULL))) {
-	s3c_gpio_cfgpin(S3C2410_GPF(0), S3C_GPIO_SFN(2)); /* EINT0 */
-	gpio_free(S3C2410_GPF(0));
-}
-
-8<-----------------------------------------------------------------
-
---
-
-Regards,
-Sylwester
+Yours,
+Linus Walleij
