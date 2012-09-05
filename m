@@ -1,60 +1,62 @@
-From: ~@samsung.com
-Subject: video: exynos_dp: Add device tree based discovery support
-Date: Wed, 05 Sep 2012 14:24:11 +0530
-Message-ID: <1346835251-1276-1-git-send-email-~@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 5/5] ARM: Exynos: Add basic dts file for Samsung Trats board
+Date: Wed, 05 Sep 2012 07:53:25 +0200
+Message-ID: <3039444.Ol4zGlGWJ2@flatron>
+References: <1346748609-11115-1-git-send-email-t.figa@samsung.com> <1346748609-11115-6-git-send-email-t.figa@samsung.com> <CAJuYYwTV1giNYJ7RTz=DHqK=i6FD2GsV4rNY2p5scVAnQz0kdg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:47827 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750841Ab2IEEvr (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:40136 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750903Ab2IEFx3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Sep 2012 00:51:47 -0400
+	Wed, 5 Sep 2012 01:53:29 -0400
+Received: by wgbdr13 with SMTP id dr13so211469wgb.1
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Sep 2012 22:53:28 -0700 (PDT)
+In-Reply-To: <CAJuYYwTV1giNYJ7RTz=DHqK=i6FD2GsV4rNY2p5scVAnQz0kdg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com
-Cc: FlorianSchandinat@gmx.de
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, kgene.kim@samsung.com
 
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
+Hi,
 
-Add device tree match table for Exynos DP
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- drivers/video/exynos/exynos_dp_core.c |   10 ++++++++++
- 1 files changed, 10 insertions(+), 0 deletions(-)
+Thanks for reviewing the patch.
 
-diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-index c6c016a..3bccd6b 100644
---- a/drivers/video/exynos/exynos_dp_core.c
-+++ b/drivers/video/exynos/exynos_dp_core.c
-@@ -18,6 +18,7 @@
- #include <linux/io.h>
- #include <linux/interrupt.h>
- #include <linux/delay.h>
-+#include <linux/of.h>
- 
- #include <video/exynos_dp.h>
- 
-@@ -1019,6 +1020,14 @@ static const struct dev_pm_ops exynos_dp_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(exynos_dp_suspend, exynos_dp_resume)
- };
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id exynos_dp_match[] = {
-+	{ .compatible = "samsung,exynos5-dp" },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, exynos_dp_match);
-+#endif
-+
- static struct platform_driver exynos_dp_driver = {
- 	.probe		= exynos_dp_probe,
- 	.remove		= __devexit_p(exynos_dp_remove),
-@@ -1026,6 +1035,7 @@ static struct platform_driver exynos_dp_driver = {
- 		.name	= "exynos-dp",
- 		.owner	= THIS_MODULE,
- 		.pm	= &exynos_dp_pm_ops,
-+		.of_match_table = of_match_ptr(exynos_dp_match),
- 	},
- };
- 
--- 
-1.7.0.4
+On Wednesday 05 of September 2012 09:35:49 Thomas Abraham wrote:
+> > +
+> > +       memory {
+> > +               reg =  <0x40000000 0x20000000
+> > +                       0x60000000 0x20000000>;
+> > +       };
+> 
+> Why does this have to be split. Why not have a single entry with the
+> size as 0x40000000?
+
+The memory node corresponds to struct meminfo and each entry (with two 
+values) makes one struct membank defining a memory bank.
+
+I've been talking with Kyungmin about this. Originally bootloaders used to 
+report 4 banks of 256 MiB, but it turned out that real bank configuration 
+on Trats is 2 banks of 512 MiB.
+
+I'm not into memory management internals, so I don't know if this has any 
+significance, but I defined the node to represent the real configuration 
+(otherwise I would have probably used 4 banks of 256 MiB and drop the 4th 
+patch).
+
+> > +               max8997_pmic@66 {
+> > +                       compatible = "maxim,max8997-pmic";
+> > +
+> > +                       reg = <0x66>;
+> 
+> Probably, the interrupts can be listed when we have pinctrl driver
+> merged in Samsung tree.
+> 
+
+Right.
+
+--
+Best regards,
+Tomasz Figa
