@@ -1,51 +1,67 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 2/2] s5p-fimc: fimc-lite: Propagate frame format on the subdev
-Date: Wed, 05 Sep 2012 15:25:08 +0200
-Message-ID: <1346851508-16705-2-git-send-email-s.nawrocki@samsung.com>
-References: <1346851508-16705-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-media-owner@vger.kernel.org>
-In-reply-to: <1346851508-16705-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH v3 1/4] pinctrl: add samsung pinctrl and gpiolib driver
+Date: Wed, 05 Sep 2012 15:50:40 +0200
+Message-ID: <k27lbg$hrj$1@ger.gmane.org>
+References: <1345720529-32315-1-git-send-email-thomas.abraham@linaro.org>
+ <1345720529-32315-2-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@ozlabs.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
 
-When setting image format on subdev's sink pad there was no
-propagation to the source pad. This resulted in wrong reported
-format on the source pad and wrong device configuration when
-used from subdev interace level only. Correct this by propagating
-format from the sink to the source pad.
+Hi Thomas,
 
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/video/s5p-fimc/fimc-lite.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thomas Abraham wrote:
+> Add a new device tree enabled pinctrl and gpiolib driver for Samsung
+> SoC's. This driver provides a common and extensible framework for all
+> Samsung SoC's to interface with the pinctrl and gpiolib subsystems. This
+> driver supports only device tree based instantiation and hence can be
+> used only on those Samsung platforms that have device tree enabled.
+> 
+> This driver is split into two parts: the pinctrl interface and the gpiolib
+> interface. The pinctrl interface registers pinctrl devices with the
+> pinctrl subsystem and gpiolib interface registers gpio chips with the
+> gpiolib subsystem. The information about the pins, pin groups, pin
+> functions and gpio chips, which are SoC specific, are parsed from device
+> tree node.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-lite.c b/drivers/media/video/s5p-fimc/fimc-lite.c
-index 9289008..cd4cf12 100644
---- a/drivers/media/video/s5p-fimc/fimc-lite.c
-+++ b/drivers/media/video/s5p-fimc/fimc-lite.c
-@@ -1064,6 +1064,7 @@ static int fimc_lite_subdev_set_fmt(struct v4l2_subdev *sd,
- 	struct fimc_lite *fimc = v4l2_get_subdevdata(sd);
- 	struct v4l2_mbus_framefmt *mf = &fmt->format;
- 	struct flite_frame *sink = &fimc->inp_frame;
-+	struct flite_frame *source = &fimc->out_frame;
- 	const struct fimc_fmt *ffmt;
- 
- 	v4l2_dbg(1, debug, sd, "pad%d: code: 0x%x, %dx%d",
-@@ -1097,8 +1098,10 @@ static int fimc_lite_subdev_set_fmt(struct v4l2_subdev *sd,
- 		sink->rect.height = mf->height;
- 		sink->rect.left = 0;
- 		sink->rect.top = 0;
--		/* Reset source crop rectangle */
--		fimc->out_frame.rect = sink->rect;
-+		/* Reset source format and crop rectangle */
-+		source->rect = sink->rect;
-+		source->f_width = mf->width;
-+		source->f_height = mf->height;
- 	} else {
- 		/* Allow changing format only on sink pad */
- 		mf->code = fimc->fmt->mbus_code;
+Does the driver provide any kind of compatibility with current gpiolib 
+users?
+
+Let me show an example of what I mean. We have a fixed voltage regulator 
+defined in device tree of an imaginary board
+
+	vemmc_reg: voltage-regulator@0 {
+	        compatible = "regulator-fixed";
+		regulator-name = "VMEM_VDD_2.8V";
+		regulator-min-microvolt = <2800000>;
+		regulator-max-microvolt = <2800000>;
+		gpio = <&gpk0 2 1 0 0>;
+		enable-active-high;
+	};
+
+The gpio pin used to control status of the regulator is defined using the 
+gpio property and regulator-fixed driver uses of_get_named_gpio to get the 
+pin number from device tree.
+
+Is this kind of setup also valid when using your pinctrl driver?
+
+Best regards,
 -- 
-1.7.11.3
+Tomasz Figa
+Samsung Poland R&D Center
