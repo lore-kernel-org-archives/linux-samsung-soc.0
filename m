@@ -1,44 +1,51 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 1/2] s5p-fimc: fimc-lite: Correct Bayer pixel format definitions
-Date: Wed, 05 Sep 2012 15:25:07 +0200
-Message-ID: <1346851508-16705-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16119 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751336Ab2IENZh (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Sep 2012 09:25:37 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH 2/2] s5p-fimc: fimc-lite: Propagate frame format on the subdev
+Date: Wed, 05 Sep 2012 15:25:08 +0200
+Message-ID: <1346851508-16705-2-git-send-email-s.nawrocki@samsung.com>
+References: <1346851508-16705-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1346851508-16705-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-Replace erroneous V4L2_PIX_FMT_* entries with their V4L2_MBUS_FMT_*
-counterparts. This enables use of raw Bayer formats on FIMC-LITE.?
-subdevs.
+When setting image format on subdev's sink pad there was no
+propagation to the source pad. This resulted in wrong reported
+format on the source pad and wrong device configuration when
+used from subdev interace level only. Correct this by propagating
+format from the sink to the source pad.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/media/video/s5p-fimc/fimc-lite-reg.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/media/video/s5p-fimc/fimc-lite.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/video/s5p-fimc/fimc-lite-reg.c b/drivers/media/video/s5p-fimc/fimc-lite-reg.c
-index 09dc71e..a22d7eb 100644
---- a/drivers/media/video/s5p-fimc/fimc-lite-reg.c
-+++ b/drivers/media/video/s5p-fimc/fimc-lite-reg.c
-@@ -118,9 +118,9 @@ static const u32 src_pixfmt_map[8][3] = {
- 	  FLITE_REG_CIGCTRL_YUV422_1P },
- 	{ V4L2_MBUS_FMT_VYUY8_2X8, FLITE_REG_CISRCSIZE_ORDER422_IN_CRYCBY,
- 	  FLITE_REG_CIGCTRL_YUV422_1P },
--	{ V4L2_PIX_FMT_SGRBG8, 0, FLITE_REG_CIGCTRL_RAW8 },
--	{ V4L2_PIX_FMT_SGRBG10, 0, FLITE_REG_CIGCTRL_RAW10 },
--	{ V4L2_PIX_FMT_SGRBG12, 0, FLITE_REG_CIGCTRL_RAW12 },
-+	{ V4L2_MBUS_FMT_SGRBG8_1X8, 0, FLITE_REG_CIGCTRL_RAW8 },
-+	{ V4L2_MBUS_FMT_SGRBG10_1X10, 0, FLITE_REG_CIGCTRL_RAW10 },
-+	{ V4L2_MBUS_FMT_SGRBG12_1X12, 0, FLITE_REG_CIGCTRL_RAW12 },
- 	{ V4L2_MBUS_FMT_JPEG_1X8, 0, FLITE_REG_CIGCTRL_USER(1) },
- };
+diff --git a/drivers/media/video/s5p-fimc/fimc-lite.c b/drivers/media/video/s5p-fimc/fimc-lite.c
+index 9289008..cd4cf12 100644
+--- a/drivers/media/video/s5p-fimc/fimc-lite.c
++++ b/drivers/media/video/s5p-fimc/fimc-lite.c
+@@ -1064,6 +1064,7 @@ static int fimc_lite_subdev_set_fmt(struct v4l2_subdev *sd,
+ 	struct fimc_lite *fimc = v4l2_get_subdevdata(sd);
+ 	struct v4l2_mbus_framefmt *mf = &fmt->format;
+ 	struct flite_frame *sink = &fimc->inp_frame;
++	struct flite_frame *source = &fimc->out_frame;
+ 	const struct fimc_fmt *ffmt;
  
+ 	v4l2_dbg(1, debug, sd, "pad%d: code: 0x%x, %dx%d",
+@@ -1097,8 +1098,10 @@ static int fimc_lite_subdev_set_fmt(struct v4l2_subdev *sd,
+ 		sink->rect.height = mf->height;
+ 		sink->rect.left = 0;
+ 		sink->rect.top = 0;
+-		/* Reset source crop rectangle */
+-		fimc->out_frame.rect = sink->rect;
++		/* Reset source format and crop rectangle */
++		source->rect = sink->rect;
++		source->f_width = mf->width;
++		source->f_height = mf->height;
+ 	} else {
+ 		/* Allow changing format only on sink pad */
+ 		mf->code = fimc->fmt->mbus_code;
 -- 
 1.7.11.3
