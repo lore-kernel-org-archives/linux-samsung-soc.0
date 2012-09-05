@@ -1,96 +1,52 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS: Add MFC device tree support
-Date: Wed, 05 Sep 2012 09:15:21 +0000 (GMT)
-Message-ID: <15525795.211061346836521012.JavaMail.weblogic@epml27>
-Reply-To: arun.kk@samsung.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: base64
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH 1/2] ARM: S3C24XX: Use module_platform_driver macro in h1940-bluetooth.c
+Date: Wed,  5 Sep 2012 15:09:28 +0530
+Message-ID: <1346837969-11344-1-git-send-email-sachin.kamat@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16667 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758196Ab2IEJPY (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:41290 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751429Ab2IEJmQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Sep 2012 05:15:24 -0400
-Received: from epcpsbge7.samsung.com (epcpsbge7 [203.254.230.17])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9V0041JDO3W6N0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 05 Sep 2012 18:15:22 +0900 (KST)
-MIME-version: 1.0
+	Wed, 5 Sep 2012 05:42:16 -0400
+Received: by pbbrr13 with SMTP id rr13so648137pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Sep 2012 02:42:16 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: Thomas Abraham <thomas.abraham@linaro.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
+To: linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, sachin.kamat@linaro.org, patches@linaro.org
 
-SGkgS2Fyb2wsDQpUaGFuayB5b3UgdmVyeSBtdWNoIGZvciB0aGUgZGV0YWlsZWQgZXhwbGFuYXRp
-b24uDQpJdHMgaW5kZWVkIHZlcnkgd2VsbCBleHBsYWluZWQgYW5kIHNlZW1zIGxpa2UgYSBncmVh
-dCBhcHByb2FjaCANCnRvIHJlbW92ZSB0aGUgaGFyZCBjb2RpbmdzLg0KSSB3aWxsIGdvIGFoZWFk
-IHdpdGggdGhpcyBpbXBsZW1lbnRhdGlvbiBhbmQgcG9zdCB0aGUgdXBkYXRlZCBwYXRjaC4NCg0K
-UmVnYXJkcw0KQXJ1bg0KDQpPbiBXZWQsIFNlcCA1LCAyMDEyIGF0IDg6MTIgQU0sIEthcm9sIExl
-d2FuZG93c2tpIDxrLmxld2FuZG93c2tAc2Ftc3VuZy5jb20+IHdyb3RlOg0KPiBPbiAwOC8yOC8y
-MDEyIDA3OjA4IFBNLCBBcnVuIEt1bWFyIEsgd3JvdGU6DQo+DQo+PiBIaSBLYXJvbCwNCj4+IFRo
-YW5rcyBmb3IgeW91ciBjb21tZW50cy4NCj4+IFBsZWFzZSBmaW5kIG15IHJlc3BvbnNlIGlubGlu
-ZS4NCj4NCj4gSGkuLi4gYW5kIHNvcnJ5IGZvciBzbyBtdWNoIGRlbGF5ZWQgcmVzcG9uc2UuDQo+
-DQo+Pj4+ICsNCj4+Pj4gK3N0YXRpYyB2b2lkIF9faW5pdCBleHlub3M1X3Jlc2VydmUodm9pZCkN
-Cj4+Pj4gK3sNCj4+Pj4gKyAgICAgczVwX21mY19yZXNlcnZlX21lbSgweDQzMDAwMDAwLCA4IDw8
-IDIwLCAweDUxMDAwMDAwLCA4IDw8IDIwKTsNCj4+Pg0KPj4+DQo+Pj4gSSB0aGluayBpdCB3b3Vs
-ZCBtYWtlIHNlbnNlIHRvIG1ha2UgdGhpcyBtZW1vcnkgcmVzZXJ2YXRpb24gZGVwZW5kZW50DQo+
-Pj4gb24gIm1mYyoiIG5vZGUgYmVpbmcgcHJlc2VudCBpbiBEVFMuICBJdCdzIHRvIGVhcmx5IHRv
-IHVzZSBvZl8qIGZ1bmN0aW9ucw0KPj4+IChiZWNhdXNlIHRyZWUgaXMgbm90IHBvcHVsYXRlZCBh
-dCB0aGlzIHN0YWdlKSBidXQgZmR0XyogZmFtaWx5IG9mIGZ1bmN0aW9ucw0KPj4+IHdvcmsganVz
-dCBmaW5lLg0KPj4+DQo+Pg0KPj4gQXMgSSBjYW4gc2VlIHRoZSBmZHRfKiBmdW5jdGlvbnMgYXJl
-IG5vdCB1c2VkIGluIGFueSBvZiB0aGUgQVJNIGJhc2VkIFNvQw0KPj4gaW5pdCBjb2Rlcy4gVGhv
-dWdoIEkgY2FuIHNlZSBzb21lIHJlZmVyZW5jZXMgaW4gcG93ZXJwYy4NCj4+IFRoZSBpbXBsZW1l
-bnRhdGlvbiBhbmQgaW5jbHVkZXMgYXJlIHByZXNlbnQgaW4gYXJjaC9hcm0vYm9vdC9jb21wcmVz
-c2VkLw0KPj4gd2hpY2ggSSB0aGluayBjYW5ub3QgYmUgdXNlZCBkaXJlY3RseSBpbiBtYWNoLWV4
-eW5vcyB1bmxlc3Mgd2UgbWFrZSBzb21lDQo+PiBjb21vbiBtYWtlZmlsZSBjaGFuZ2VzLg0KPg0K
-Pg0KPiBJdCBsb29rcyBsaWtlIEkgd2FzIHdyaXRpbmcgZnJvbSBtZW1vcnksIGFuZCBJIGFjdHVh
-bGx5IG1peGVkIHRoaW5ncw0KPiB1cC4gIFRvIGJlIGNsZWFyIHRoaXMgdGltZSAtIHdlIGNhbid0
-IHVzZSByZWd1bGFyIGRldmljZSB0cmVlIGhhbmRsaW5nDQo+IGZ1bmN0aW9ucyBpbiByZXNlcnZl
-KCkgYXMgaXQncyB0b28gZWFybHkuICBOYW1lbHksIGZsYXR0ZW5lZCBkZXZpY2UgdHJlZQ0KPiBp
-cyBub3QgeWV0IGNvbnZlcnRlZCB0byBrZXJuZWwncy1uYXR1cmFsIHJlcHJlc2VudGF0aW9uLiAg
-SG93ZXZlciwNCj4gSSB0aGluayB3ZSBjYW4gc2NhbiBmZHQganVzdCBmaW5lLiAgVG8gZG8gc28g
-b25lIGp1c3QgbmVlZHMgdG8gdXNlDQo+IGZ1bmN0aW9ucyBkZWNsYXJlZCBoZXJlDQo+DQo+ICAg
-I2luY2x1ZGUgPGxpbnV4L29mX2ZkdC5oPg0KPg0KPiBBY3R1YWwgYXJjaGl0ZWN0dXJlLWluZGVw
-ZW5kZW50IGNvZGUgaXMgaW4gZHJpdmVycy9vZi9mZHQuYy4gIFRoaXMNCj4gcHJvdmlkZXMgb2Zf
-ZmR0XyBmYW1pbHkgb2YgZnVuY3Rpb25zLiBQbGVhc2Ugc2VlIGJlbG93IGZvciBleGFtcGxlLg0K
-Pg0KPg0KPj4gUGxlYXNlIGNsYXJpZnkgd2hldGhlciBpdHMgb2sgdG8gdXNlIGZkdF8qIGZ1bmN0
-aW9ucyB0byBwYXJzZSB0aGUgZHRzIGluDQo+PiBleHlub3MgbWFjaGluZSBpbml0IG9yIHBsZWFz
-ZSBwb2ludCBtZSB0byBzb21lIHNhbXBsZSBpbXBsZW1lbnRhdGlvbnMNCj4+IHdoaWNoIEkgY2Fu
-IHJlZmVyIHRvLg0KPg0KPg0KPiBJdCBzaG91bGQgYmUgb2sgdG8gdXNlIGFueXRoaW5nIHRoYXQg
-d29ya3Mgb24gZmxhdHRlbmVkIGRldmljZSB0cmVlDQo+IHJhdGhlciB0aGFuIGl0cyB1bmNvbXBy
-ZXNzZWQgdmVyc2lvbi4gIEkndmUgZXhwZXJpbWVudGVkIGEgYml0IGFuZA0KPiBzb21ldGhpbmcg
-bGlrZSB0aGlzIHdvcmtlZCBmb3IgbWUganVzdCBmaW5lIChpdCB3YXMgYXJvdW5kIDMuMy1rZXJu
-ZWwNCj4gdGltZWZyYW1lLCBidXQgSSBkb24ndCB0aGluayB0aGF0IGZkdCBhcGkgaGFzIGNoYW5n
-ZWQpOg0KPg0KPiBbbWFjaC1leHlub3M0LWR0LmNdDQo+DQo+ICNpbmNsdWRlIDxsaW51eC9vZl9m
-ZHQuaD4NCj4NCj4gaW50IGZkdF9maW5kX2NvbXBhdCh1bnNpZ25lZCBsb25nIG5vZGUsIGNvbnN0
-IGNoYXIgKnVuYW1lLCBpbnQgZGVwdGgsIHZvaWQgKmRhdGEpDQo+IHsNCj4gICAgICAgICBpZiAo
-b2ZfZmxhdF9kdF9pc19jb21wYXRpYmxlKG5vZGUsIChjaGFyICopZGF0YSkpDQo+ICAgICAgICAg
-ICAgICAgICByZXR1cm4gMTsNCj4NCj4gICAgICAgICByZXR1cm4gMDsNCj4gfQ0KPg0KPiBzdGF0
-aWMgdm9pZCBfX2luaXQgZXh5bm9zNDIxMF9kdF9yZXNlcnZlKHZvaWQpDQo+IHsNCj4gICAgICAg
-ICAvKiBSZXNlcnZlIG1lbW9yeSBmb3IgTUZDIG9ubHkgaWYgaXQncyBhdmFpbGFibGUgKi8NCj4g
-ICAgICAgICBpZiAob2Zfc2Nhbl9mbGF0X2R0KGZkdF9maW5kX2NvbXBhdCwgInNhbXN1bmcsczVw
-djIxMC1tZmMiKSkgew0KPiAgICAgICAgICAgICAgICAgcHJpbnRrKEtFUk5fTk9USUNFICJleHlu
-b3M0LWR0OiBtZmMgZGV2aWNlIG5vZGUgZm91bmQgLSBzZXR0aW5nIHVwIG1lbW9yeSBhcmVhIGZv
-ciBkbWFcbiIpOw0KPiAgICAgICAgICAgICAgICAgczVwX21mY19yZXNlcnZlX21lbSgweDQzMDAw
-MDAwLCA4IDw8IDIwLCAweDUxMDAwMDAwLCA4IDw8IDIwKTsNCj4gICAgICAgICB9DQo+IH0NCj4N
-Cj4gWy5kdHNdDQo+DQo+ICBjb2RlY0Bzb21lLWFkZHIgew0KPiAgICAgICBjb21wYXRpYmxlID0g
-InNhbXN1bmcsczVwdjIxMC1tZmMiOw0KPiAgfTsNCj4NCj4NCj4gU28sIGluIGFib3ZlIGNvZGUg
-ZnJhZ21lbnQgSSBqdXN0IGNoZWNrIGlmIG1mYyB3YXMgZGVmaW5lZCBpbiBkdHMuDQo+IFRoaXMg
-Y291bGQgcHJvYmFibHkgc3RheSBhcyBpdCBpcy4NCj4NCj4gVGhlbiBJIGFsbG9jYXRlIF9wcmVk
-ZWZpbmVkXyByZWdpb24gLSBhbmQgdGhpcyBwYXJ0IHNob3VsZCBiZSBmaXhlZC4NCj4NCj4gSWYg
-eW91IGhhdmUgbm9kZXMgbGlrZSAibWZjLXItc2l6ZSIvb2Zmc2V0LCB0aGVuIHlvdSBjb3VsZCBq
-dXN0IGdldA0KPiB0aGlzIGluZm9ybWF0aW9uIGRpcmVjdGx5IGZyb20gKGYpZHQgcmF0aGVyIHRo
-YW4gaGFyZGNvZGluZyBpdCBpbiB0aGUgY29kZS4NCj4gUHJlY2lzZWx5LCBhZnRlciB3ZSBmaW5k
-IGNvbXBhdGlibGUgbm9kZSB3ZSBjb3VsZCBkbyBzb21ldGhpbmcgbGlrZQ0KPiBmb2xsb3dpbmcg
-KHVudGVzdGVkKToNCj4NCj4gdW5zaWduZWQgbG9uZyBsc2l6ZSwgbG9mZiwgcnNpemUsIHJvZmYg
-bGVuOw0KPiBfX2JlMzIgKnByb3A7DQo+DQo+IHByb3AgPSBvZl9nZXRfZmxhdF9kdF9wcm9wKG5v
-ZGUsICJzYW1zdW5nLG1mYy1sLXNpemUiLCAmbGVuKTsNCj4gaWYgKCFwcm9wKQ0KPiAgICByZXR1
-cm47DQo+IGxzaXplID0gb2ZfcmVhZF91bG9uZyhwcm9wLCBsZW4vNCk7DQo+IC4uLg0KPg0KPiBS
-ZWdhcmRzLA0KPiAtLQ0KPiBLYXJvbCBMZXdhbmRvd3NraSB8IFNhbXN1bmcgUG9sYW5kIFImRCBD
-ZW50ZXIgfCBMaW51eC9QbGF0Zm9ybQ0KPiAtLQ0KPiBUbyB1bnN1YnNjcmliZSBmcm9tIHRoaXMg
-bGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgbGludXgtc2Ftc3VuZy1zb2MiIGluDQo+
-IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1v
-cmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFqb3Jkb21vLWlu
-Zm8uaHRtbA==
+module_platform_driver simplifies the code by eliminating
+module_init and module_exit calls.
+
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/mach-s3c24xx/h1940-bluetooth.c |   14 +-------------
+ 1 files changed, 1 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/mach-s3c24xx/h1940-bluetooth.c b/arch/arm/mach-s3c24xx/h1940-bluetooth.c
+index a5eeb62..57aee91 100644
+--- a/arch/arm/mach-s3c24xx/h1940-bluetooth.c
++++ b/arch/arm/mach-s3c24xx/h1940-bluetooth.c
+@@ -138,19 +138,7 @@ static struct platform_driver h1940bt_driver = {
+ 	.remove		= h1940bt_remove,
+ };
+ 
+-
+-static int __init h1940bt_init(void)
+-{
+-	return platform_driver_register(&h1940bt_driver);
+-}
+-
+-static void __exit h1940bt_exit(void)
+-{
+-	platform_driver_unregister(&h1940bt_driver);
+-}
+-
+-module_init(h1940bt_init);
+-module_exit(h1940bt_exit);
++module_platform_driver(h1940bt_driver);
+ 
+ MODULE_AUTHOR("Arnaud Patard <arnaud.patard@rtp-net.org>");
+ MODULE_DESCRIPTION("Driver for the iPAQ H1940 bluetooth chip");
+-- 
+1.7.4.1
