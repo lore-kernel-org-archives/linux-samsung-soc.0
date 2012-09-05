@@ -1,62 +1,64 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v2 1/5] mmc: host: sdhci-s3c: Add broken-voltage DT
- property for broken voltage quirk
-Date: Wed, 05 Sep 2012 17:36:52 +0900
-Message-ID: <50470F24.1010506@samsung.com>
-References: <1346748609-11115-1-git-send-email-t.figa@samsung.com>
- <1346748609-11115-2-git-send-email-t.figa@samsung.com>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH 1/2] ARM: exynos: delete redundant HAVE_SCHED_CLOCK option
+ in Kconfig
+Date: Wed, 5 Sep 2012 17:05:28 +0800
+Message-ID: <CAGsJ_4xCct_7H3oU6goNsXNqOxRZ57N_6qsAdoU37q1gLhUbTg@mail.gmail.com>
+References: <1346406296-16223-1-git-send-email-Barry.Song@csr.com> <227101cd8aea$06a06e10$13e14a30$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <1346748609-11115-2-git-send-email-t.figa@samsung.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, Ben Dooks <ben-linux@fluff.org>, Chris Ball <cjb@laptop.org>, linux-mmc@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:42483 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750765Ab2IEJFv (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 5 Sep 2012 05:05:51 -0400
+Received: by lbbgj3 with SMTP id gj3so208781lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Sep 2012 02:05:50 -0700 (PDT)
+In-Reply-To: <227101cd8aea$06a06e10$13e14a30$%kim@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, olof@lixom.net
+Cc: rob.herring@calxeda.com, workgroup.linux@csr.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, Barry Song <Baohua.Song@csr.com>
 
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+2012/9/5 Kukjin Kim <kgene.kim@samsung.com>:
+> Barry Song wrote:
+>>
+>> From: Barry Song <Baohua.Song@csr.com>
+>>
+>> Signed-off-by: Barry Song <Baohua.Song@csr.com>
+>
+> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-On 09/04/2012 05:50 PM, Tomasz Figa wrote:
-> Some boards use fixed voltage regulator for vmmc supply (e.g. for eMMC
-> memories). MMC_CAP2_BROKEN_VOLTAGE must be enabled for them to operate
-> correctly.
-> 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Cc: Chris Ball <cjb@laptop.org>
-> CC: linux-mmc@vger.kernel.org
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  Documentation/devicetree/bindings/mmc/mmc.txt | 1 +
->  drivers/mmc/host/sdhci-s3c.c                  | 3 +++
->  2 files changed, 4 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
-> index 8a6811f..ecbde68 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc.txt
-> +++ b/Documentation/devicetree/bindings/mmc/mmc.txt
-> @@ -16,6 +16,7 @@ Optional properties:
->  - wp-inverted: when present, polarity on the wp gpio line is inverted
->  - non-removable: non-removable slot (like eMMC)
->  - max-frequency: maximum operating clock frequency
-> +- broken-voltage: vmmc regulator does not allow voltage control
->  
->  Example:
->  
-> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-> index 445910e..39715b8 100644
-> --- a/drivers/mmc/host/sdhci-s3c.c
-> +++ b/drivers/mmc/host/sdhci-s3c.c
-> @@ -443,6 +443,9 @@ static int __devinit sdhci_s3c_parse_dt(struct device *dev,
->  	if (!ourhost->gpios)
->  		return -ENOMEM;
->  
-> +	if (of_get_property(node, "broken-voltage", 0))
-> +		pdata->host_caps2 |= MMC_CAP2_BROKEN_VOLTAGE;
-> +
->  	/* get the card detection method */
->  	if (of_get_property(node, "broken-cd", 0)) {
->  		pdata->cd_type = S3C_SDHCI_CD_NONE;
-> 
+Kukjin, Thanks. i assume this will be taken by samsung tree. Who will
+take care the other one:
+http://www.spinics.net/lists/arm-kernel/msg191939.html
 
+>
+> Thanks.
+>
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+>
+>> ---
+>>  arch/arm/mach-exynos/Kconfig |    1 -
+>>  1 files changed, 0 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+>> index b5b4c8c..3fd4ab3 100644
+>> --- a/arch/arm/mach-exynos/Kconfig
+>> +++ b/arch/arm/mach-exynos/Kconfig
+>> @@ -243,7 +243,6 @@ config MACH_UNIVERSAL_C210
+>>       select CPU_EXYNOS4210
+>>       select S5P_HRT
+>>       select CLKSRC_MMIO
+>> -     select HAVE_SCHED_CLOCK
+>>       select S5P_GPIO_INT
+>>       select S5P_DEV_FIMC0
+>>       select S5P_DEV_FIMC1
+>> --
+>> 1.7.0.4
+
+-barry
