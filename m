@@ -1,302 +1,60 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH v2 5/5] ARM: Exynos: Add basic dts file for Samsung Trats board
-Date: Wed, 5 Sep 2012 09:35:49 +0530
-Message-ID: <CAJuYYwTV1giNYJ7RTz=DHqK=i6FD2GsV4rNY2p5scVAnQz0kdg@mail.gmail.com>
-References: <1346748609-11115-1-git-send-email-t.figa@samsung.com>
-	<1346748609-11115-6-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: ~@samsung.com
+Subject: video: exynos_dp: Add device tree based discovery support
+Date: Wed, 05 Sep 2012 14:24:11 +0530
+Message-ID: <1346835251-1276-1-git-send-email-~@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lb0-f174.google.com ([209.85.217.174]:36779 "EHLO
-	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750739Ab2IEEFu (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47827 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750841Ab2IEEvr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Sep 2012 00:05:50 -0400
-Received: by lbbgj3 with SMTP id gj3so88396lbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 04 Sep 2012 21:05:49 -0700 (PDT)
-In-Reply-To: <1346748609-11115-6-git-send-email-t.figa@samsung.com>
+	Wed, 5 Sep 2012 00:51:47 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, kgene.kim@samsung.com
+To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com
+Cc: FlorianSchandinat@gmx.de
 
-On 4 September 2012 14:20, Tomasz Figa <t.figa@samsung.com> wrote:
-> This commit adds basic device tree for Exynos4210-based Trats board.
->
-> Currently it provides support for eMMC over sdhci and MAX8997 PMIC.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-trats.dts | 237 +++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/Makefile.boot     |   2 +-
->  2 files changed, 238 insertions(+), 1 deletion(-)
->  create mode 100644 arch/arm/boot/dts/exynos4210-trats.dts
->
-> diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-> new file mode 100644
-> index 0000000..73567b8
-> --- /dev/null
-> +++ b/arch/arm/boot/dts/exynos4210-trats.dts
-> @@ -0,0 +1,237 @@
-> +/*
-> + * Samsung's Exynos4210 based Trats board device tree source
-> + *
-> + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> + *             http://www.samsung.com
-> + *
-> + * Device tree source file for Samsung's Trats board which is based on
-> + * Samsung's Exynos4210 SoC.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> +*/
-> +
-> +/dts-v1/;
-> +/include/ "exynos4210.dtsi"
-> +
-> +/ {
-> +       model = "Samsung Trats based on Exynos4210";
-> +       compatible = "samsung,trats", "samsung,exynos4210";
-> +
-> +       memory {
-> +               reg =  <0x40000000 0x20000000
-> +                       0x60000000 0x20000000>;
-> +       };
+From: Ajay Kumar <ajaykumar.rs@samsung.com>
 
-Why does this have to be split. Why not have a single entry with the
-size as 0x40000000?
+Add device tree match table for Exynos DP
+Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
+---
+ drivers/video/exynos/exynos_dp_core.c |   10 ++++++++++
+ 1 files changed, 10 insertions(+), 0 deletions(-)
 
-> +
-> +       chosen {
-> +               bootargs = "console=ttySAC2,115200N8 root=/dev/mmcblk0p5 rootwait earlyprintk panic=5";
-> +       };
-> +
-> +       vemmc_reg: voltage-regulator@0 {
-> +               compatible = "regulator-fixed";
-> +               regulator-name = "VMEM_VDD_2.8V";
-> +               regulator-min-microvolt = <2800000>;
-> +               regulator-max-microvolt = <2800000>;
-> +               gpio = <&gpk0 2 1 0 0>;
-> +               enable-active-high;
-> +       };
-> +
-> +       sdhci_emmc: sdhci@12510000 {
-> +               bus-width = <8>;
-> +               non-removable;
-> +               broken-voltage;
-> +               gpios = <&gpk0 0 2 0 3>,
-> +                       <&gpk0 1 2 0 3>,
-> +                       <&gpk0 3 2 2 3>,
-> +                       <&gpk0 4 2 2 3>,
-> +                       <&gpk0 5 2 2 3>,
-> +                       <&gpk0 6 2 2 3>,
-> +                       <&gpk1 3 3 3 3>,
-> +                       <&gpk1 4 3 3 3>,
-> +                       <&gpk1 5 3 3 3>,
-> +                       <&gpk1 6 3 3 3>;
-> +               vmmc-supply = <&vemmc_reg>;
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13800000 {
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13810000 {
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13820000 {
-> +               status = "okay";
-> +       };
-> +
-> +       serial@13830000 {
-> +               status = "okay";
-> +       };
-> +
-> +       i2c@138B0000 {
-> +               samsung,i2c-sda-delay = <100>;
-> +               samsung,i2c-slave-addr = <0x10>;
-> +               samsung,i2c-max-bus-freq = <100000>;
-> +               gpios = <&gpb 6 3 3 0>,
-> +                       <&gpb 7 3 3 0>;
-> +               status = "okay";
-> +
-> +               max8997_pmic@66 {
-> +                       compatible = "maxim,max8997-pmic";
-> +
-> +                       reg = <0x66>;
-
-Probably, the interrupts can be listed when we have pinctrl driver
-merged in Samsung tree.
-
-> +
-> +                       max8997,pmic-buck1-uses-gpio-dvs;
-> +                       max8997,pmic-buck2-uses-gpio-dvs;
-> +                       max8997,pmic-buck5-uses-gpio-dvs;
-> +
-> +                       max8997,pmic-ignore-gpiodvs-side-effect;
-> +                       max8997,pmic-buck125-default-dvs-idx = <0>;
-> +
-> +                       max8997,pmic-buck125-dvs-gpios = <&gpx0 5 1 0 0>,
-> +                                                        <&gpx0 6 1 0 0>,
-> +                                                        <&gpl0 0 1 0 0>;
-> +
-> +                       max8997,pmic-buck1-dvs-voltage = <1350000>, <1300000>,
-> +                                                        <1250000>, <1200000>,
-> +                                                        <1150000>, <1100000>,
-> +                                                        <1000000>, <950000>;
-> +
-> +                       max8997,pmic-buck2-dvs-voltage = <1100000>, <1000000>,
-> +                                                        <950000>,  <900000>,
-> +                                                        <1100000>, <1000000>,
-> +                                                        <950000>,  <900000>;
-> +
-> +                       max8997,pmic-buck5-dvs-voltage = <1200000>, <1200000>,
-> +                                                        <1200000>, <1200000>,
-> +                                                        <1200000>, <1200000>,
-> +                                                        <1200000>, <1200000>;
-> +
-> +                       regulators {
-> +                               valive_reg: LDO2 {
-> +                                    regulator-name = "VALIVE_1.1V_C210";
-> +                                    regulator-min-microvolt = <1100000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vusb_reg: LDO3 {
-> +                                    regulator-name = "VUSB_1.1V_C210";
-> +                                    regulator-min-microvolt = <1100000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                               };
-> +
-> +                               vmipi_reg: LDO4 {
-> +                                    regulator-name = "VMIPI_1.8V";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                               };
-> +
-> +                               vpda_reg: LDO6 {
-> +                                    regulator-name = "VCC_1.8V_PDA";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vcam_reg: LDO7 {
-> +                                    regulator-name = "CAM_ISP_1.8V";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                               };
-> +
-> +                               vusbdac_reg: LDO8 {
-> +                                    regulator-name = "VUSB/VDAC_3.3V_C210";
-> +                                    regulator-min-microvolt = <3300000>;
-> +                                    regulator-max-microvolt = <3300000>;
-> +                               };
-> +
-> +                               vccpda_reg: LDO9 {
-> +                                    regulator-name = "VCC_2.8V_PDA";
-> +                                    regulator-min-microvolt = <2800000>;
-> +                                    regulator-max-microvolt = <2800000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vpll_reg: LDO10 {
-> +                                    regulator-name = "VPLL_1.1V_C210";
-> +                                    regulator-min-microvolt = <1100000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vcclcd_reg: LDO13 {
-> +                                    regulator-name = "VCC_3.3V_LCD";
-> +                                    regulator-min-microvolt = <3300000>;
-> +                                    regulator-max-microvolt = <3300000>;
-> +                               };
-> +
-> +                               vlcd_reg: LDO15 {
-> +                                    regulator-name = "VLCD_2.2V";
-> +                                    regulator-min-microvolt = <2200000>;
-> +                                    regulator-max-microvolt = <2200000>;
-> +                               };
-> +
-> +                               camsensor_reg: LDO16 {
-> +                                    regulator-name = "CAM_SENSOR_IO_1.8V";
-> +                                    regulator-min-microvolt = <1800000>;
-> +                                    regulator-max-microvolt = <1800000>;
-> +                               };
-> +
-> +                               vddq_reg: LDO21 {
-> +                                    regulator-name = "VDDQ_M1M2_1.2V";
-> +                                    regulator-min-microvolt = <1200000>;
-> +                                    regulator-max-microvolt = <1200000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               varm_breg: BUCK1 {
-> +                                    regulator-name = "VARM_1.2V_C210";
-> +                                    regulator-min-microvolt = <900000>;
-> +                                    regulator-max-microvolt = <1350000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vint_breg: BUCK2 {
-> +                                    regulator-name = "VINT_1.1V_C210";
-> +                                    regulator-min-microvolt = <900000>;
-> +                                    regulator-max-microvolt = <1100000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               camisp_breg: BUCK4 {
-> +                                    regulator-name = "CAM_ISP_CORE_1.2V";
-> +                                    regulator-min-microvolt = <1200000>;
-> +                                    regulator-max-microvolt = <1200000>;
-> +                               };
-> +
-> +                               vmem_breg: BUCK5 {
-> +                                    regulator-name = "VMEM_1.2V_C210";
-> +                                    regulator-min-microvolt = <1200000>;
-> +                                    regulator-max-microvolt = <1200000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               vccsub_breg: BUCK7 {
-> +                                    regulator-name = "VCC_SUB_2.0V";
-> +                                    regulator-min-microvolt = <2000000>;
-> +                                    regulator-max-microvolt = <2000000>;
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               safe1_sreg: ESAFEOUT1 {
-> +                                    regulator-name = "SAFEOUT1";
-> +                                    regulator-always-on;
-> +                               };
-> +
-> +                               safe2_sreg: ESAFEOUT2 {
-> +                                    regulator-name = "SAFEOUT2";
-> +                                    regulator-boot-on;
-> +                               };
-> +                       };
-> +               };
-> +       };
-> +};
-> diff --git a/arch/arm/mach-exynos/Makefile.boot b/arch/arm/mach-exynos/Makefile.boot
-> index 31bd181..a79d999 100644
-> --- a/arch/arm/mach-exynos/Makefile.boot
-> +++ b/arch/arm/mach-exynos/Makefile.boot
-> @@ -1,5 +1,5 @@
->     zreladdr-y  += 0x40008000
->  params_phys-y  := 0x40000100
->
-> -dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb
-> +dtb-$(CONFIG_MACH_EXYNOS4_DT) += exynos4210-origen.dtb exynos4210-smdkv310.dtb exynos4210-trats.dtb
->  dtb-$(CONFIG_MACH_EXYNOS5_DT) += exynos5250-smdk5250.dtb
-> --
-> 1.7.12
->
-
-Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
+index c6c016a..3bccd6b 100644
+--- a/drivers/video/exynos/exynos_dp_core.c
++++ b/drivers/video/exynos/exynos_dp_core.c
+@@ -18,6 +18,7 @@
+ #include <linux/io.h>
+ #include <linux/interrupt.h>
+ #include <linux/delay.h>
++#include <linux/of.h>
+ 
+ #include <video/exynos_dp.h>
+ 
+@@ -1019,6 +1020,14 @@ static const struct dev_pm_ops exynos_dp_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(exynos_dp_suspend, exynos_dp_resume)
+ };
+ 
++#ifdef CONFIG_OF
++static const struct of_device_id exynos_dp_match[] = {
++	{ .compatible = "samsung,exynos5-dp" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, exynos_dp_match);
++#endif
++
+ static struct platform_driver exynos_dp_driver = {
+ 	.probe		= exynos_dp_probe,
+ 	.remove		= __devexit_p(exynos_dp_remove),
+@@ -1026,6 +1035,7 @@ static struct platform_driver exynos_dp_driver = {
+ 		.name	= "exynos-dp",
+ 		.owner	= THIS_MODULE,
+ 		.pm	= &exynos_dp_pm_ops,
++		.of_match_table = of_match_ptr(exynos_dp_match),
+ 	},
+ };
+ 
+-- 
+1.7.0.4
