@@ -1,24 +1,21 @@
 From: Mandeep Singh Baines <msb@chromium.org>
 Subject: [PATCH] ARM: exynos: mct: cache mct upper count
-Date: Wed,  5 Sep 2012 14:34:54 -0700
-Message-ID: <1346880894-31316-1-git-send-email-msb@chromium.org>
+Date: Wed,  5 Sep 2012 14:36:13 -0700
+Message-ID: <1346880973-31519-1-git-send-email-msb@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f74.google.com ([209.85.214.74]:64872 "EHLO
-	mail-bk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1759528Ab2IEVfI (ORCPT
+Received: from mail-fa0-f74.google.com ([209.85.161.74]:55614 "EHLO
+	mail-fa0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759528Ab2IEVgQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Sep 2012 17:35:08 -0400
-Received: by bkcjc3 with SMTP id jc3so64446bkc.1
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Sep 2012 14:35:07 -0700 (PDT)
+	Wed, 5 Sep 2012 17:36:16 -0400
+Received: by fass10 with SMTP id s10so64109fas.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Sep 2012 14:36:15 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org
 Cc: Mandeep Singh Baines <msb@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Olof Johansson <olofj@chromium.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
 Saves one register read.
-
-BUG=none
-TEST=See below.
 
 Before (perf report):
 
