@@ -1,40 +1,66 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Subject: Re: [PATCH] ARM: Samsung: Remove unused code for the clocks debug-fs
- interface
-Date: Wed, 05 Sep 2012 21:42:23 +0200
-Message-ID: <5047AB1F.8020308@gmail.com>
-References: <1346603823-14422-1-git-send-email-sylvester.nawrocki@gmail.com> <227c01cd8aee$638ee0d0$2aaca270$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Mandeep Singh Baines <msb@chromium.org>
+Subject: [PATCH] ARM: exynos: mct: cache mct upper count
+Date: Wed,  5 Sep 2012 14:34:54 -0700
+Message-ID: <1346880894-31316-1-git-send-email-msb@chromium.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:62026 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754756Ab2IETm2 (ORCPT
+Received: from mail-bk0-f74.google.com ([209.85.214.74]:64872 "EHLO
+	mail-bk0-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759528Ab2IEVfI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 5 Sep 2012 15:42:28 -0400
-Received: by bkwj10 with SMTP id j10so450853bkw.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Sep 2012 12:42:26 -0700 (PDT)
-In-Reply-To: <227c01cd8aee$638ee0d0$2aaca270$%kim@samsung.com>
+	Wed, 5 Sep 2012 17:35:08 -0400
+Received: by bkcjc3 with SMTP id jc3so64446bkc.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 05 Sep 2012 14:35:07 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: thomas.abraham@linaro.org, amit.daniel@samsung.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, jhbird.choi@samsung.com, arve@android.com
+To: Kukjin Kim <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org
+Cc: Mandeep Singh Baines <msb@chromium.org>, Sonny Rao <sonnyrao@chromium.org>, Olof Johansson <olofj@chromium.org>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-On 09/05/2012 12:41 AM, Kukjin Kim wrote:
-> Yeah, could be. BTW, following will fix it on Samsung platforms?
+Saves one register read.
 
-Yes, that might be better. I tried something similar but thought
-it might not be worth to invest in a dead horse.. Anyway, since
-converting all Samsung platforms is expected to take some time
-(also all this out of tree code) probably better to apply this
-fix now, before we have an alternative solution.
+BUG=none
+TEST=See below.
 
-I noticed the most of clocks hove now reported wrong "rate" value
-in this debugs-fs tree, due to not calling get_rate when needed.
-It's not really important though (looks like it's by design).
+Before (perf report):
 
---
+     1.40%  [k] exynos4_frc_read
+            |
+            |--87.20%-- ktime_get_ts
+            |          |
+            |          |--93.60%-- posix_ktime_get_ts
 
-Regards,
-Sylwester
+After (perf report):
+
+     1.00%  [k] exynos4_frc_read
+            |
+            |--88.61%-- ktime_get_ts
+            |          |
+            |          |--92.70%-- posix_ktime_get_ts
+
+Signed-off-by: Mandeep Singh Baines <msb@chromium.org>
+CC: Sonny Rao <sonnyrao@chromium.org>
+CC: Olof Johansson <olofj@chromium.org>
+CC: Kukjin Kim <kgene.kim@samsung.com>
+CC: Russell King <linux@arm.linux.org.uk>
+CC: linux-arm-kernel@lists.infradead.org
+CC: linux-samsung-soc@vger.kernel.org
+---
+ arch/arm/mach-exynos/mct.c |    4 ++--
+ 1 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm/mach-exynos/mct.c b/arch/arm/mach-exynos/mct.c
+index b601fb8..2bbd533 100644
+--- a/arch/arm/mach-exynos/mct.c
++++ b/arch/arm/mach-exynos/mct.c
+@@ -128,8 +128,8 @@ static void exynos4_mct_frc_start(u32 hi, u32 lo)
+ 
+ static cycle_t exynos4_frc_read(struct clocksource *cs)
+ {
+-	unsigned int lo, hi;
+-	u32 hi2 = __raw_readl(EXYNOS4_MCT_G_CNT_U);
++	u32 lo, hi;
++	static u32 hi2;
+ 
+ 	do {
+ 		hi = hi2;
+-- 
+1.7.7.3
