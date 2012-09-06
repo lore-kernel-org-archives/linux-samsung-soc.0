@@ -1,72 +1,46 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 1/2] i2c: s3c2410: add optional pin configuration using
- pinctrl interface
-Date: Thu, 6 Sep 2012 16:36:08 +0530
-Message-ID: <CAJuYYwQCQDTnpPR5WABtbozZOgc6_SZRBv3b6D8KY78tzMt-Eg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] ARM: dts: exynos4: allow i2c0 bus to be configured
+ using pinctrl interface
+Date: Thu, 6 Sep 2012 16:44:54 +0530
+Message-ID: <CAJuYYwSC6nvs4eJ7GOTD2Ti8EvcTPPGZ7Fj7reT2eY65nvq22Q@mail.gmail.com>
 References: <1346923381-14144-1-git-send-email-thomas.abraham@linaro.org>
-	<1346923381-14144-2-git-send-email-thomas.abraham@linaro.org>
-	<2444562.GB3nOHUb9M@amdc1227>
+	<1346923381-14144-3-git-send-email-thomas.abraham@linaro.org>
+	<5320531.svfjn4BD9X@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:65340 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1754849Ab2IFLGK (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:44234 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751301Ab2IFLO4 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Sep 2012 07:06:10 -0400
-Received: by lagy9 with SMTP id y9so1001326lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 04:06:08 -0700 (PDT)
-In-Reply-To: <2444562.GB3nOHUb9M@amdc1227>
+	Thu, 6 Sep 2012 07:14:56 -0400
+Received: by lbbgj3 with SMTP id gj3so1045277lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 04:14:54 -0700 (PDT)
+In-Reply-To: <5320531.svfjn4BD9X@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, dong.aisheng@linaro.org, swarren@wwwdotorg.org, kgene.kim@samsung.com, patches@linaro.org, w.sang@pengutronix.de, ben-linux@fluff.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, w.sang@pengutronix.de, linux-samsung-soc@vger.kernel.org, ben-linux@fluff.org, dong.aisheng@linaro.org
 
-On 6 September 2012 15:04, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi,
+On 6 September 2012 15:43, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi Thomas,
 >
-> This patch shows the problem of the need to explicitly migrate all drivers
-> to pinctrl.
+> On Thursday 06 of September 2012 14:53:01 Thomas Abraham wrote:
+>>               compatible = "samsung,s3c2440-i2c";
+>>               reg = <0x13860000 0x100>;
+>>               interrupts = <0 58 0>;
+>> +             pinctrl-names = "default";
+>> +             pinctrl-0 = <&i2c0_bus>;
 >
-> Maybe we should consider extending the pinctrl subsystem to set the default
-> state automatically before binding a driver to a device, at least in case
-> of DT-based platforms?
+> If pinctrl-names property is omitted then the state index is used as a name
+> (e.g. pinctrl-0 would be named "0"). Maybe it would be better to use this
+> approach (with respective adjustment in first patch)? What do you think?
 
-The pinctrl driver allows for activating default pin configuration
-when the pinctrl driver loads. This is referred to as "hogging". But
-should hog be used or not is something that needs to be decided. Some
-of the factors which favor the driver explicitly setting up the pin
-configuration are
-
-1. After a suspend and resume cycle, the pin configuration registers
-may be reset to default values. Hence, during resume, the pin
-configuration has be redone.
-
-2. Runtime muxing/config is possible.
-
-3. Setting some of the config options such as pull-up by default might
-start consuming power from boot time itself, which could be avoided if
-such setup is done only when needed.
-
-Adding pinctrl driver support in device drivers seems to be simple
-task. And it is just one time effort which can be reused on multiple
-SoC's.
-
->
-> This would be similar to what is done currently with samsung-gpio bindings
-> - the pin is being configured by custom xlate callback based on additional
-> cells in GPIO specifier, when the driver retrieves the pin using
-> of_get{_named,}_gpio without the need of setting it up in the driver.
-
-The Samsung gpio dt bindings was just a bootstrap method to get device
-tree support going for Samsung platforms. The gpio xlate callback was
-used as a back door to setup the pinmux/pinconfig due to lack of
-generic driver interface to setup the pinmux/pinconfig for Samsung
-platforms. From a linux perspective, gpio and pinmux/pinconfig are
-separate entities. So using gpio xlate to setup pinmux/pinconfig was
-not correct but helped getting device tree enabled for Samsung
-platforms. With the pinctrl framework available now, there are generic
-interfaces to setup gpio and pinmux /pinconfig.
+I tend to prefer to name the states because it is easier to
+cross-reference code and dts files. i2c was a simple one, but for mmc
+controllers, there will 1-bit state, 4-bit state and 8-bit state, and
+it will be nicer to name then accordingly. So I prefer to use names
+but if there is wider consensus on not using names, we can drop names.
 
 Thanks,
 Thomas.
@@ -76,69 +50,4 @@ Thomas.
 > --
 > Tomasz Figa
 > Samsung Poland R&D Center
->
-> On Thursday 06 of September 2012 14:53:00 Thomas Abraham wrote:
->> Add optional support for i2c bus pin configuration using pinctrl
->> interface
->>
->> Cc: Ben Dooks <ben-linux@fluff.org>
->> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->> ---
->>  drivers/i2c/busses/i2c-s3c2410.c |   19 ++++++++++++++++---
->>  1 files changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
->> b/drivers/i2c/busses/i2c-s3c2410.c index 5ae3b02..f4b2d6f 100644
->> --- a/drivers/i2c/busses/i2c-s3c2410.c
->> +++ b/drivers/i2c/busses/i2c-s3c2410.c
->> @@ -38,6 +38,7 @@
->>  #include <linux/io.h>
->>  #include <linux/of_i2c.h>
->>  #include <linux/of_gpio.h>
->> +#include <linux/pinctrl/consumer.h>
->>
->>  #include <asm/irq.h>
->>
->> @@ -83,6 +84,8 @@ struct s3c24xx_i2c {
->>
->>       struct s3c2410_platform_i2c     *pdata;
->>       int                     gpios[2];
->> +     struct pinctrl          *pctrl;
->> +     struct pinctrl_state    *pctrl_state;
->>  #ifdef CONFIG_CPU_FREQ
->>       struct notifier_block   freq_transition;
->>  #endif
->> @@ -859,11 +862,17 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c
->> *i2c)
->>
->>       /* inititalise the gpio */
->>
->> -     if (pdata->cfg_gpio)
->> +     if (pdata->cfg_gpio) {
->>               pdata->cfg_gpio(to_platform_device(i2c->dev));
->> -     else
->> -             if (s3c24xx_i2c_parse_dt_gpio(i2c))
->> +     } else if (!IS_ERR_OR_NULL(i2c->pctrl) &&
->> +                     !IS_ERR_OR_NULL(i2c->pctrl_state)) {
->> +             if (pinctrl_select_state(i2c->pctrl, i2c->pctrl_state)) {
->> +                     dev_err(i2c->dev, "failed to configure io-pins\n");
->> +                     return -ENXIO;
->> +             }
->> +     } else if (s3c24xx_i2c_parse_dt_gpio(i2c)) {
->>                       return -EINVAL;
->> +     }
->>
->>       /* write slave address */
->>
->> @@ -1013,6 +1022,10 @@ static int s3c24xx_i2c_probe(struct
->> platform_device *pdev) i2c->adap.algo_data = i2c;
->>       i2c->adap.dev.parent = &pdev->dev;
->>
->> +     i2c->pctrl = devm_pinctrl_get(i2c->dev);
->> +     if (!IS_ERR_OR_NULL(i2c->pctrl))
->> +             i2c->pctrl_state = pinctrl_lookup_state(i2c->pctrl, "default");
->> +
->>       /* initialise the i2c controller */
->>
->>       ret = s3c24xx_i2c_init(i2c);
 >
