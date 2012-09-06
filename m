@@ -1,54 +1,38 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] ARM: EXYNOS: no duplicate mask/unmask in eint0_15
-Date: Thu, 6 Sep 2012 08:43:45 -0700
-Message-ID: <CAD=FV=UTa4a8wewEdqu=ZnOKe-M5Brv-ex8ZGWfkTb6fqsRB_w@mail.gmail.com>
-References: <1346944864-12434-1-git-send-email-djkurtz@chromium.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 1/4] pinctrl: add samsung pinctrl and gpiolib driver
+Date: Thu, 06 Sep 2012 11:33:55 -0600
+Message-ID: <5048DE83.4050203@wwwdotorg.org>
+References: <226e01cd8ae6$928010b0$b7803210$%kim@samsung.com> <1346826046-30484-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-qc0-f174.google.com ([209.85.216.174]:49136 "EHLO
-	mail-qc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758383Ab2IFPnq (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:44662 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932521Ab2IFRd7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Sep 2012 11:43:46 -0400
-Received: by qcro28 with SMTP id o28so852029qcr.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 08:43:45 -0700 (PDT)
-In-Reply-To: <1346944864-12434-1-git-send-email-djkurtz@chromium.org>
+	Thu, 6 Sep 2012 13:33:59 -0400
+In-Reply-To: <1346826046-30484-1-git-send-email-thomas.abraham@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Daniel Kurtz <djkurtz@chromium.org>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>, olofj@chromium.org
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: linux-kernel@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, kgene.kim@samsung.com, dong.aisheng@linaro.org, patches@linaro.org
 
-On Thu, Sep 6, 2012 at 8:21 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> chained_irq_enter/exit() already mask&ack/unmask the chained interrupt.
-> There is no need to also explicitly do it in the handler.
->
-> Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> ---
->  arch/arm/mach-exynos/common.c |    7 -------
->  1 files changed, 0 insertions(+), 7 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-> index 4eb39cd..0a85aec 100644
-> --- a/arch/arm/mach-exynos/common.c
-> +++ b/arch/arm/mach-exynos/common.c
-> @@ -965,14 +965,7 @@ static void exynos_irq_eint0_15(unsigned int irq, struct irq_desc *desc)
->         struct irq_chip *chip = irq_get_chip(irq);
->
->         chained_irq_enter(chip, desc);
-> -       chip->irq_mask(&desc->irq_data);
-> -
-> -       if (chip->irq_ack)
-> -               chip->irq_ack(&desc->irq_data);
-> -
->         generic_handle_irq(*irq_data);
-> -
-> -       chip->irq_unmask(&desc->irq_data);
->         chained_irq_exit(chip, desc);
->  }
->
-> --
-> 1.7.7.3
->
+On 09/05/2012 12:20 AM, Thomas Abraham wrote:
+> Add a new device tree enabled pinctrl and gpiolib driver for Samsung
+> SoC's. This driver provides a common and extensible framework for all
+> Samsung SoC's to interface with the pinctrl and gpiolib subsystems. This
+> driver supports only device tree based instantiation and hence can be
+> used only on those Samsung platforms that have device tree enabled.
+> 
+> This driver is split into two parts: the pinctrl interface and the gpiolib
+> interface. The pinctrl interface registers pinctrl devices with the pinctrl
+> subsystem and gpiolib interface registers gpio chips with the gpiolib
+> subsystem. The information about the pins, pin groups, pin functions and
+> gpio chips, which are SoC specific, are parsed from device tree node.
+> 
+> Cc: Linus Walleij <linus.walleij@linaro.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-Acked-by: Doug Anderson <dianders@chromium.org>
+Acked-by: Stephen Warren <swarren@nvidia.com>
