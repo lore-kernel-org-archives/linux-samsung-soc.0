@@ -1,105 +1,87 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 1/2] i2c: s3c2410: add optional pin configuration using
- pinctrl interface
-Date: Thu, 06 Sep 2012 11:34:25 +0200
-Message-ID: <2444562.GB3nOHUb9M@amdc1227>
-References: <1346923381-14144-1-git-send-email-thomas.abraham@linaro.org>
- <1346923381-14144-2-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH 1/3] ARM: EXYNOS: pm_domain: Detect domain state on
+ registration from DT
+Date: Thu, 06 Sep 2012 11:38:04 +0200
+Message-ID: <1346924286-9584-2-git-send-email-t.figa@samsung.com>
+References: <1346924286-9584-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:56812 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756510Ab2IFJea (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:64754 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756843Ab2IFJiV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Sep 2012 05:34:30 -0400
-In-reply-to: <1346923381-14144-2-git-send-email-thomas.abraham@linaro.org>
+	Thu, 6 Sep 2012 05:38:21 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9X00EBP9FBPF50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Sep 2012 18:38:20 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M9X00K2L9FLF240@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 06 Sep 2012 18:38:20 +0900 (KST)
+In-reply-to: <1346924286-9584-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, dong.aisheng@linaro.org, swarren@wwwdotorg.org, kgene.kim@samsung.com, patches@linaro.org, w.sang@pengutronix.de, ben-linux@fluff.org
+To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl, Tomasz Figa <t.figa@samsung.com>
 
-Hi,
+Initial state of power domains might vary on different boards and with
+different bootloaders. This patch adds detection of initial state of
+power domains when being registered from DT.
 
-This patch shows the problem of the need to explicitly migrate all drivers 
-to pinctrl.
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ Documentation/devicetree/bindings/arm/exynos/power_domain.txt | 4 ----
+ arch/arm/mach-exynos/pm_domains.c                             | 8 +++++---
+ 2 files changed, 5 insertions(+), 7 deletions(-)
 
-Maybe we should consider extending the pinctrl subsystem to set the default 
-state automatically before binding a driver to a device, at least in case 
-of DT-based platforms?
-
-This would be similar to what is done currently with samsung-gpio bindings 
-- the pin is being configured by custom xlate callback based on additional 
-cells in GPIO specifier, when the driver retrieves the pin using 
-of_get{_named,}_gpio without the need of setting it up in the driver.
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+index 6528e21..843b546 100644
+--- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
++++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
+@@ -9,10 +9,6 @@ Required Properties:
+ - reg: physical base address of the controller and length of memory mapped
+     region.
+ 
+-Optional Properties:
+-- samsung,exynos4210-pd-off: Specifies that the power domain is in turned-off
+-    state during boot and remains to be turned-off until explicitly turned-on.
+-
+ Example:
+ 
+ 	lcd0: power-domain-lcd0 {
+diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+index c0bc83a..d1abc1a 100644
+--- a/arch/arm/mach-exynos/pm_domains.c
++++ b/arch/arm/mach-exynos/pm_domains.c
+@@ -89,6 +89,7 @@ static __init int exynos_pm_dt_parse_domains(void)
+ 
+ 	for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
+ 		struct exynos_pm_domain *pd;
++		int on;
+ 
+ 		pd = kzalloc(sizeof(*pd), GFP_KERNEL);
+ 		if (!pd) {
+@@ -97,14 +98,15 @@ static __init int exynos_pm_dt_parse_domains(void)
+ 			return -ENOMEM;
+ 		}
+ 
+-		if (of_get_property(np, "samsung,exynos4210-pd-off", NULL))
+-			pd->is_off = true;
+ 		pd->name = np->name;
+ 		pd->base = of_iomap(np, 0);
+ 		pd->pd.power_off = exynos_pd_power_off;
+ 		pd->pd.power_on = exynos_pd_power_on;
+ 		pd->pd.of_node = np;
+-		pm_genpd_init(&pd->pd, NULL, false);
++
++		on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
++
++		pm_genpd_init(&pd->pd, NULL, !on);
+ 	}
+ 	return 0;
+ }
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
-
-On Thursday 06 of September 2012 14:53:00 Thomas Abraham wrote:
-> Add optional support for i2c bus pin configuration using pinctrl
-> interface
-> 
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/i2c/busses/i2c-s3c2410.c |   19 ++++++++++++++++---
->  1 files changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c
-> b/drivers/i2c/busses/i2c-s3c2410.c index 5ae3b02..f4b2d6f 100644
-> --- a/drivers/i2c/busses/i2c-s3c2410.c
-> +++ b/drivers/i2c/busses/i2c-s3c2410.c
-> @@ -38,6 +38,7 @@
->  #include <linux/io.h>
->  #include <linux/of_i2c.h>
->  #include <linux/of_gpio.h>
-> +#include <linux/pinctrl/consumer.h>
-> 
->  #include <asm/irq.h>
-> 
-> @@ -83,6 +84,8 @@ struct s3c24xx_i2c {
-> 
->  	struct s3c2410_platform_i2c	*pdata;
->  	int			gpios[2];
-> +	struct pinctrl		*pctrl;
-> +	struct pinctrl_state	*pctrl_state;
->  #ifdef CONFIG_CPU_FREQ
->  	struct notifier_block	freq_transition;
->  #endif
-> @@ -859,11 +862,17 @@ static int s3c24xx_i2c_init(struct s3c24xx_i2c
-> *i2c)
-> 
->  	/* inititalise the gpio */
-> 
-> -	if (pdata->cfg_gpio)
-> +	if (pdata->cfg_gpio) {
->  		pdata->cfg_gpio(to_platform_device(i2c->dev));
-> -	else
-> -		if (s3c24xx_i2c_parse_dt_gpio(i2c))
-> +	} else if (!IS_ERR_OR_NULL(i2c->pctrl) &&
-> +			!IS_ERR_OR_NULL(i2c->pctrl_state)) {
-> +		if (pinctrl_select_state(i2c->pctrl, i2c->pctrl_state)) {
-> +			dev_err(i2c->dev, "failed to configure io-pins\n");
-> +			return -ENXIO;
-> +		}
-> +	} else if (s3c24xx_i2c_parse_dt_gpio(i2c)) {
->  			return -EINVAL;
-> +	}
-> 
->  	/* write slave address */
-> 
-> @@ -1013,6 +1022,10 @@ static int s3c24xx_i2c_probe(struct
-> platform_device *pdev) i2c->adap.algo_data = i2c;
->  	i2c->adap.dev.parent = &pdev->dev;
-> 
-> +	i2c->pctrl = devm_pinctrl_get(i2c->dev);
-> +	if (!IS_ERR_OR_NULL(i2c->pctrl))
-> +		i2c->pctrl_state = pinctrl_lookup_state(i2c->pctrl, "default");
-> +
->  	/* initialise the i2c controller */
-> 
->  	ret = s3c24xx_i2c_init(i2c);
+1.7.12
