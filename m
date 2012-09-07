@@ -1,56 +1,140 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH V5 0/2] video: drm: Add Device tree support to DRM-FIMD
-Date: Fri, 07 Sep 2012 14:37:36 +0530
-Message-ID: <1347008858-12069-1-git-send-email-l.krishna@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:62659 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752105Ab2IGEsD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 00:48:03 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9Y00DKWQNF1PC0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 13:48:01 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9Y003HDQN3MW30@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 13:48:00 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH V5 1/2] drm/exynos: add platform_device_id table and driver
+ data for drm fimd
+Date: Fri, 07 Sep 2012 14:37:37 +0530
+Message-ID: <1347008858-12069-2-git-send-email-l.krishna@samsung.com>
+References: <1347008858-12069-1-git-send-email-l.krishna@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-reply-to: <1347008858-12069-1-git-send-email-l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: dri-devel@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, laurent.pinchart@ideasonboard.com
 
-This patch set adds device tree support for DRM-FIMD for Samsung's Exynos5250.
-It includes parsing platform data from dts file. Also, adds the driver data
-for exynos4 and exynos5 devices.
+Two device ids are created for exynos4-fb and exynos5-fb.
+Also, added driver data for exynos4 and exynos5 to pick the timing base address
+at runtime to write data into appropriate register address.
 
-This patchset is based and tested on top of v3.6-rc4 on smdk5250 board
-Also depends on below patchset
-http://lists.freedesktop.org/archives/dri-devel/2012-August/026076.html
+Signed-off-by: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c |   43 +++++++++++++++++++++++++++---
+ 1 files changed, 39 insertions(+), 4 deletions(-)
 
-Changes since V4:
-	- Changed the compatible string from "samsung,exynos4-fb" to
-	  "samsung,exynos4-fimd".
-
-Changes since V3:
-        - Removed the fimd version from driver data and using timing base
-          address instead
-        - Removed the drm_ prefixes to the structures and fucntions
-
-Changes since V2:
-        - Added driver data to exynos5-drm-fimd as per Marek Szyprowski suggestion
-
-Changes since V1:
-        - Corrected typo errors and changed compatibility string
-
-Leela Krishna Amudala (2):
-  drm/exynos: add platform_device_id table and driver data for drm fimd
-  video: drm: exynos: Add device tree support
-
- Documentation/devicetree/bindings/fb/drm-fimd.txt |   80 ++++++++++++
- drivers/gpu/drm/exynos/exynos_drm_fimd.c          |  138 ++++++++++++++++++++-
- 2 files changed, 212 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/fb/drm-fimd.txt
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+index 24c0bd4..65e927b 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
+@@ -57,6 +57,18 @@
+ 
+ #define get_fimd_context(dev)	platform_get_drvdata(to_platform_device(dev))
+ 
++struct fimd_driver_data {
++	unsigned int timing_base;
++};
++
++struct fimd_driver_data exynos4_fimd_driver_data = {
++	.timing_base = 0x0,
++};
++
++struct fimd_driver_data exynos5_fimd_driver_data = {
++	.timing_base = 0x20000,
++};
++
+ struct fimd_win_data {
+ 	unsigned int		offset_x;
+ 	unsigned int		offset_y;
+@@ -91,6 +103,13 @@ struct fimd_context {
+ 	struct exynos_drm_panel_info *panel;
+ };
+ 
++static inline struct fimd_driver_data *drm_fimd_get_driver_data(
++	struct platform_device *pdev)
++{
++	return (struct fimd_driver_data *)
++		platform_get_device_id(pdev)->driver_data;
++}
++
+ static bool fimd_display_is_connected(struct device *dev)
+ {
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+@@ -194,32 +213,35 @@ static void fimd_commit(struct device *dev)
+ 	struct fimd_context *ctx = get_fimd_context(dev);
+ 	struct exynos_drm_panel_info *panel = ctx->panel;
+ 	struct fb_videomode *timing = &panel->timing;
++	struct fimd_driver_data *driver_data;
++	struct platform_device *pdev = to_platform_device(dev);
+ 	u32 val;
+ 
++	driver_data = drm_fimd_get_driver_data(pdev);
+ 	if (ctx->suspended)
+ 		return;
+ 
+ 	DRM_DEBUG_KMS("%s\n", __FILE__);
+ 
+ 	/* setup polarity values from machine code. */
+-	writel(ctx->vidcon1, ctx->regs + VIDCON1);
++	writel(ctx->vidcon1, ctx->regs + driver_data->timing_base + VIDCON1);
+ 
+ 	/* setup vertical timing values. */
+ 	val = VIDTCON0_VBPD(timing->upper_margin - 1) |
+ 	       VIDTCON0_VFPD(timing->lower_margin - 1) |
+ 	       VIDTCON0_VSPW(timing->vsync_len - 1);
+-	writel(val, ctx->regs + VIDTCON0);
++	writel(val, ctx->regs + driver_data->timing_base + VIDTCON0);
+ 
+ 	/* setup horizontal timing values.  */
+ 	val = VIDTCON1_HBPD(timing->left_margin - 1) |
+ 	       VIDTCON1_HFPD(timing->right_margin - 1) |
+ 	       VIDTCON1_HSPW(timing->hsync_len - 1);
+-	writel(val, ctx->regs + VIDTCON1);
++	writel(val, ctx->regs + driver_data->timing_base + VIDTCON1);
+ 
+ 	/* setup horizontal and vertical display size. */
+ 	val = VIDTCON2_LINEVAL(timing->yres - 1) |
+ 	       VIDTCON2_HOZVAL(timing->xres - 1);
+-	writel(val, ctx->regs + VIDTCON2);
++	writel(val, ctx->regs + driver_data->timing_base + VIDTCON2);
+ 
+ 	/* setup clock source, clock divider, enable dma. */
+ 	val = ctx->vidcon0;
+@@ -982,6 +1004,18 @@ static int fimd_runtime_resume(struct device *dev)
+ }
+ #endif
+ 
++static struct platform_device_id fimd_driver_ids[] = {
++	{
++		.name		= "exynos4-fb",
++		.driver_data	= (unsigned long)&exynos4_fimd_driver_data,
++	}, {
++		.name		= "exynos5-fb",
++		.driver_data	= (unsigned long)&exynos5_fimd_driver_data,
++	},
++	{},
++};
++MODULE_DEVICE_TABLE(platform, fimd_driver_ids);
++
+ static const struct dev_pm_ops fimd_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(fimd_suspend, fimd_resume)
+ 	SET_RUNTIME_PM_OPS(fimd_runtime_suspend, fimd_runtime_resume, NULL)
+@@ -990,6 +1024,7 @@ static const struct dev_pm_ops fimd_pm_ops = {
+ struct platform_driver fimd_driver = {
+ 	.probe		= fimd_probe,
+ 	.remove		= __devexit_p(fimd_remove),
++	.id_table       = fimd_driver_ids,
+ 	.driver		= {
+ 		.name	= "exynos4-fb",
+ 		.owner	= THIS_MODULE,
+-- 
+1.7.0.4
