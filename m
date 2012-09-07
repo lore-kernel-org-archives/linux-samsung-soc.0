@@ -1,77 +1,156 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Fix HDMI related warnings
-Date: Fri, 07 Sep 2012 15:16:57 +0900
-Message-ID: <244901cd8cc0$62934300$27b9c900$%kim@samsung.com>
-References: <1346136077-1226-1-git-send-email-sachin.kamat@linaro.org>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH v5 4/9] mmc: dw_mmc: lookup for optional biu and ciu clocks
+Date: Fri, 7 Sep 2012 11:56:34 +0530
+Message-ID: <CAJuYYwQhzgntE6dY_pKcEzBVshAwcxi9AMjG9YN0ebqEh8dSeQ@mail.gmail.com>
+References: <CAJuYYwQ50HCSrDgxrvhRh5X2ECxi_g=_akoa6o9FYCQ5GqHUCQ@mail.gmail.com>
+	<1346787968-23709-1-git-send-email-thomas.abraham@linaro.org>
+	<50470DAE.4020300@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12814 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932381Ab2IGGQ7 (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:38345 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1760106Ab2IGG0g (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 02:16:59 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9Y00AKZURXPP10@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 15:16:57 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9Y00G1TUS9GY00@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 15:16:57 +0900 (KST)
-In-reply-to: <1346136077-1226-1-git-send-email-sachin.kamat@linaro.org>
-Content-language: ko
+	Fri, 7 Sep 2012 02:26:36 -0400
+Received: by lbbgj3 with SMTP id gj3so1658816lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 23:26:34 -0700 (PDT)
+In-Reply-To: <50470DAE.4020300@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
-Cc: patches@linaro.org
+To: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, cjb@laptop.org, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, tgih.jun@samsung.com, patches@linaro.org
 
-Sachin Kamat wrote:
-> 
-> Silences the following warnings:
-> arch/arm/plat-samsung/devs.c:765:31: warning:
-> symbol 's5p_hdmi_def_platdata' was not declared. Should it be static?
-> arch/arm/plat-samsung/devs.c:767:13: warning:
-> symbol 's5p_hdmi_set_platdata' was not declared. Should it be static?
-> 
-> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> ---
->  arch/arm/plat-samsung/devs.c |    3 ++-
->  1 files changed, 2 insertions(+), 1 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index 6ff45d5..565cea7 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -51,6 +51,7 @@
->  #include <plat/ehci.h>
->  #include <plat/fb.h>
->  #include <plat/fb-s3c2410.h>
-> +#include <plat/hdmi.h>
->  #include <plat/hwmon.h>
->  #include <plat/iic.h>
->  #include <plat/keypad.h>
-> @@ -762,7 +763,7 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
-> s3c2410_platform_i2c *pd)
->  			       &s5p_device_i2c_hdmiphy);
->  }
-> 
-> -struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
-> +static struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
-> 
->  void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
->  				  struct i2c_board_info *mhl_info, int
-mhl_bus)
-> --
-> 1.7.4.1
+Hi Jaehoon,
 
-Applied, thanks.
+Thanks for reviewing the patch.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+On 5 September 2012 14:00, Jaehoon Chung <jh80.chung@samsung.com> wrote:
+> On 09/05/2012 04:46 AM, Thomas Abraham wrote:
+>> Some platforms allow for clock gating and control of bus interface unit clock
+>> and card interface unit clock. Add support for clock lookup of optional biu
+>> and ciu clocks for clock gating and clock speed determination.
+>>
+>> Signed-off-by: Abhilash Kesavan <a.kesavan@samsung.com>
+>> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+>> Acked-by: Will Newton <will.newton@imgtec.com>
+>> ---
+>>  drivers/mmc/host/dw_mmc.c  |   50 +++++++++++++++++++++++++++++++++++++++++--
+>>  include/linux/mmc/dw_mmc.h |    4 +++
+>>  2 files changed, 51 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+>> index 227c42e..e8c8491 100644
+>> --- a/drivers/mmc/host/dw_mmc.c
+>> +++ b/drivers/mmc/host/dw_mmc.c
+>> @@ -1960,13 +1960,40 @@ int dw_mci_probe(struct dw_mci *host)
+>>               return -ENODEV;
+>>       }
+>>
+>> -     if (!host->pdata->bus_hz) {
+>> +     host->biu_clk = clk_get(host->dev, "biu");
+>> +     if (IS_ERR(host->biu_clk)) {
+>> +             dev_dbg(host->dev, "biu clock not available\n");
+>> +     } else {
+>> +             ret = clk_prepare_enable(host->biu_clk);
+>> +             if (ret) {
+>> +                     dev_err(host->dev, "failed to enable biu clock\n");
+>> +                     return ret;
+> didn't clk_put() for biu_clk?
+
+Yes, I missed that. Thanks for pointing this out. I will fix this.
+
+>> +             }
+>> +     }
+>> +
+>> +     host->ciu_clk = clk_get(host->dev, "ciu");
+>> +     if (IS_ERR(host->ciu_clk)) {
+>> +             dev_dbg(host->dev, "ciu clock not available\n");
+>> +     } else {
+>> +             ret = clk_prepare_enable(host->ciu_clk);
+>> +             if (ret) {
+>> +                     dev_err(host->dev, "failed to enable ciu clock\n");
+>> +                     goto err_clk_biu;
+>> +             }
+>> +     }
+>> +
+>> +     if (IS_ERR(host->ciu_clk))
+>> +             host->bus_hz = host->pdata->bus_hz;
+>> +     else
+>> +             host->bus_hz = clk_get_rate(host->ciu_clk);
+>> +
+>> +     if (!host->bus_hz) {
+>>               dev_err(host->dev,
+>>                       "Platform data must supply bus speed\n");
+>> -             return -ENODEV;
+>> +             ret = -ENODEV;
+>> +             goto err_clk_ciu;
+>>       }
+>>
+>> -     host->bus_hz = host->pdata->bus_hz;
+>>       host->quirks = host->pdata->quirks;
+>>
+>>       spin_lock_init(&host->lock);
+>> @@ -2116,6 +2143,17 @@ err_dmaunmap:
+>>               regulator_disable(host->vmmc);
+>>               regulator_put(host->vmmc);
+>>       }
+>> +
+>> +err_clk_ciu:
+>> +     if (!IS_ERR(host->ciu_clk)) {
+>> +             clk_disable_unprepare(host->ciu_clk);
+>> +             clk_put(host->ciu_clk);
+>> +     }
+>> +err_clk_biu:
+> I think right that is located the clk_put(host->ciu_clk) at here
+
+In the next version of this patch, if clk_prepare_enable() fails for
+host->ciu_clk, the put(host->ciu_clk) is also done before returning.
+
+Thanks,
+Thomas.
+
+>> +     if (!IS_ERR(host->biu_clk)) {
+>> +             clk_disable_unprepare(host->biu_clk);
+>> +             clk_put(host->biu_clk);
+>> +     }
+>>       return ret;
+>>  }
+>>  EXPORT_SYMBOL(dw_mci_probe);
+>> @@ -2149,6 +2187,12 @@ void dw_mci_remove(struct dw_mci *host)
+>>               regulator_put(host->vmmc);
+>>       }
+>>
+>> +     if (!IS_ERR(host->ciu_clk))
+>> +             clk_disable_unprepare(host->ciu_clk);
+>> +     if (!IS_ERR(host->biu_clk))
+>> +             clk_disable_unprepare(host->biu_clk);
+>> +     clk_put(host->ciu_clk);
+>> +     clk_put(host->biu_clk);
+>>  }
+>>  EXPORT_SYMBOL(dw_mci_remove);
+>>
+>> diff --git a/include/linux/mmc/dw_mmc.h b/include/linux/mmc/dw_mmc.h
+>> index a37a573..787ad56 100644
+>> --- a/include/linux/mmc/dw_mmc.h
+>> +++ b/include/linux/mmc/dw_mmc.h
+>> @@ -78,6 +78,8 @@ struct mmc_data;
+>>   * @data_offset: Set the offset of DATA register according to VERID.
+>>   * @dev: Device associated with the MMC controller.
+>>   * @pdata: Platform data associated with the MMC controller.
+>> + * @biu_clk: Pointer to bus interface unit clock instance.
+>> + * @ciu_clk: Pointer to card interface unit clock instance.
+>>   * @slot: Slots sharing this MMC controller.
+>>   * @fifo_depth: depth of FIFO.
+>>   * @data_shift: log2 of FIFO item size.
+>> @@ -158,6 +160,8 @@ struct dw_mci {
+>>       u16                     data_offset;
+>>       struct device           *dev;
+>>       struct dw_mci_board     *pdata;
+>> +     struct clk              *biu_clk;
+>> +     struct clk              *ciu_clk;
+>>       struct dw_mci_slot      *slot[MAX_MCI_SLOTS];
+>>
+>>       /* FIFO push and pull */
+>>
+>
