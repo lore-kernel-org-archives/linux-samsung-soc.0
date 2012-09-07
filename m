@@ -1,79 +1,56 @@
 From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: Re: [PATCH V4 2/2] video: drm: exynos: Add device tree support
-Date: Fri, 7 Sep 2012 09:16:42 +0530
-Message-ID: <CAL1wa8cyhxCObHbMa+8X6DmsD8svt=W8s+JMrPx5cAEoWd4Lig@mail.gmail.com>
-References: <1346859555-13527-1-git-send-email-l.krishna@samsung.com>
- <1346859555-13527-3-git-send-email-l.krishna@samsung.com> <CAH9JG2X_3iUTiGWv2cxjiX-s_VUtptVbzxhAJTub70W_2Dxecg@mail.gmail.com>
- <CAAQKjZNmizjZ-=JN9_AysPMPHTOh7eydfE_OCYE6-v0JAJMydw@mail.gmail.com> <5048837B.6020903@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Subject: [PATCH V5 0/2] video: drm: Add Device tree support to DRM-FIMD
+Date: Fri, 07 Sep 2012 14:37:36 +0530
+Message-ID: <1347008858-12069-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:41986 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752564Ab2IGDrD (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:62659 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752105Ab2IGEsD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 6 Sep 2012 23:47:03 -0400
-Received: by pbbrr13 with SMTP id rr13so3423938pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 20:47:02 -0700 (PDT)
-In-Reply-To: <5048837B.6020903@samsung.com>
+	Fri, 7 Sep 2012 00:48:03 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9Y00DKWQNF1PC0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 13:48:01 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M9Y003HDQN3MW30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 13:48:00 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: InKi Dae <inki.dae@samsung.com>, Kyungmin Park <kmpark@infradead.org>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: dri-devel@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, kgene.kim@samsung.com, m.szyprowski@samsung.com, laurent.pinchart@ideasonboard.com
 
-Hi,
+This patch set adds device tree support for DRM-FIMD for Samsung's Exynos5250.
+It includes parsing platform data from dts file. Also, adds the driver data
+for exynos4 and exynos5 devices.
 
-On Thu, Sep 6, 2012 at 4:35 PM, Sylwester Nawrocki
-<s.nawrocki@samsung.com> wrote:
-> Hi,
->
-> On 09/06/2012 09:21 AM, InKi Dae wrote:
->>>> +Required properties:
->>>> + - compatible: Should be "samsung,exynos5-fimd" or "samsung,exynos4-fb" for
->>> Doesn't better to use single word? fimd or fb?. I think 'fb' is used
->>> for framebuffer historically.
->>> but now it's used both fb and drm, so fimd is neutral and architecture
->>> specific.
->>>
->>> To do this, Modify arch-exynos first and update it at each drivers it properly.
->>>
->>> Thank you,
->>> Kyungmin Park
->>>
->>
->> I agree with Kyungmin but I'd like to use as is. the reason we used
->> 'exynos4-fb' as device name, is for that it uses fimd driver's
->> platform device commonly and gets fimd clock. so I think that dts file
->> should be defined with hardware specific name but not driver name such
->> as 'exynos4-fb'. but with this, we can't get fimd clock with device's
->> name because 'exynos4-fb' is used as device name of fimd clock. so to
->> use 'exynos4-fimd', we should modify the device name of fimd clock
->> from 'exynos4-fb'  to 'exynos4-fimd' and also ids definitions of
->> s3c-fb and drm fimd driver. so my conclusion is that it merges this
->
-> I think it's good moment to put those things in order, i.e. use uniform
-> 'compatible' names: "samsung,exynos4-fimd", "samsung,exynos5-fimd".
-> Platform device names are separate issue, but could perhaps be unified
-> at this time as well.
+This patchset is based and tested on top of v3.6-rc4 on smdk5250 board
+Also depends on below patchset
+http://lists.freedesktop.org/archives/dri-devel/2012-August/026076.html
 
-Yes, Platform device name is independent of compatible string.
-Will change the compatible string to "samsung,exynos4-fimd" and will keep the
-device name as exynos4-fb for now. Will change the platform device
-names to exynosX-fimd
-later.
+Changes since V4:
+	- Changed the compatible string from "samsung,exynos4-fb" to
+	  "samsung,exynos4-fimd".
 
->
->> patch set as is and then let's modify related things later.
->> any opinions, welcome~ anytime.
->>
->> Thanks.
->> Inki Dae
->
-> --
->
-> Regards,
-> Sylwester
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Changes since V3:
+        - Removed the fimd version from driver data and using timing base
+          address instead
+        - Removed the drm_ prefixes to the structures and fucntions
+
+Changes since V2:
+        - Added driver data to exynos5-drm-fimd as per Marek Szyprowski suggestion
+
+Changes since V1:
+        - Corrected typo errors and changed compatibility string
+
+Leela Krishna Amudala (2):
+  drm/exynos: add platform_device_id table and driver data for drm fimd
+  video: drm: exynos: Add device tree support
+
+ Documentation/devicetree/bindings/fb/drm-fimd.txt |   80 ++++++++++++
+ drivers/gpu/drm/exynos/exynos_drm_fimd.c          |  138 ++++++++++++++++++++-
+ 2 files changed, 212 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/fb/drm-fimd.txt
