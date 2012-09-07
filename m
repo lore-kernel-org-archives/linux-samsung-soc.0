@@ -1,44 +1,55 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/2] ARM: EXYNOS: Set the capability of pdm0 and pdm1 as
- DMA_PRIVATE
-Date: Fri, 07 Sep 2012 14:30:53 +0900
-Message-ID: <243801cd8cb9$f303e6d0$d90bb470$%kim@samsung.com>
-References: <1346215585-31023-1-git-send-email-tushar.behera@linaro.org>
- <1346374330.15463.5.camel@vkoul-mobl4>
+Subject: RE: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
+Date: Fri, 07 Sep 2012 14:38:52 +0900
+Message-ID: <243901cd8cbb$10ad0580$32071080$%kim@samsung.com>
+References: <201208282355.44268.heiko@sntech.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:35896 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751530Ab2IGFaz (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 01:30:55 -0400
-In-reply-to: <1346374330.15463.5.camel@vkoul-mobl4>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-reply-to: <201208282355.44268.heiko@sntech.de>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-doc-owner@vger.kernel.org
+To: =?UTF-8?Q?'Heiko_St=C3=BCbner'?= <heiko@sntech.de>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Rob Herring' <rob.herring@calxeda.com>, 'Rob Landley' <rob@landley.net>, 'Linus Walleij' <linus.walleij@stericsson.com>, 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vinod Koul' <vkoul@infradead.org>, 'Tushar Behera' <tushar.behera@linaro.org>
-Cc: vinod.koul@intel.com, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org, patches@linaro.org
 
-Vinod Koul wrote:
-> 
-> On Wed, 2012-08-29 at 10:16 +0530, Tushar Behera wrote:
-> > DMA clients pdma0 and pdma1 are internal to the SoC and are used only
-> > by dedicated peripherals. Since they cannot be used for generic
-> > purpose, their capability should be set as DMA_PRIVATE.
-> >
-> > The patches are rebased on top of v3.6-rc3.
-> Kukjin, if you ack them I can take thru my tree, other way round is fine
-> with me too.
+Heiko St=C3=BCbner wrote:
+>=20
+> Until now the Exynos-SoC was the only Samsung-SoC supporting the GPIO=
+s
+> via the device tree. This patch implements dt-support for the
+> s3c24xx arches.
+>=20
+> The controllers contain only 3 cells, as the underlying gpio controll=
+er
+> does not support controlling the drive strength on a gpio level.
+>=20
+> Tested with the gpio-keys driver on a s3c2416 based machine.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+> ---
 
-Hi Vinod,
+[...]
 
-Looks good to me, please pick them into your tree with my ack.
+> +#if defined(CONFIG_PLAT_S3C24XX) && defined(CONFIG_OF)
 
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+[...]
 
-If any problems, please kindly let me know.
+> +static __init void s3c24xx_gpiolib_attach_ofnode(struct samsung_gpio=
+_chip
+> *chip,
+> +						 u64 base, u64 offset)
+> +{
+
+[...]
+
+> +}
+> +#elif defined(CONFIG_PLAT_S3C24XX)
+
+Heiko, above line breaks building for other samsung stuff except s3c24x=
+x. I fixed with following which has been amended in your patch. If any =
+problems, please let me know.
 
 Thanks.
 
@@ -48,16 +59,48 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-> >
-> > Tushar Behera (2):
-> >   ARM: EXYNOS: Set the capability of pdm0 and pdm1 as DMA_PRIVATE
-> >   DMA: PL330: Set the capability of pdm0 and pdm1 as DMA_PRIVATE
-> >
-> >  arch/arm/mach-exynos/dma.c |    2 ++
-> >  drivers/dma/pl330.c        |    1 +
-> >  2 files changed, 3 insertions(+), 0 deletions(-)
-> >
-> 
+diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
+index 5dcdcda..a006f0d 100644
+--- a/drivers/gpio/gpio-samsung.c
++++ b/drivers/gpio/gpio-samsung.c
+@@ -991,7 +991,7 @@ static __init void s3c24xx_gpiolib_attach_ofnode(st=
+ruct samsun
+ 	gc->of_gpio_n_cells =3D 3;
+ 	gc->of_xlate =3D s3c24xx_gpio_xlate;
+ }
+-#elif defined(CONFIG_PLAT_S3C24XX)
++#else
+ static __init void s3c24xx_gpiolib_attach_ofnode(struct samsung_gpio_c=
+hip *chip,
+ 						u64 base, u64 offset)
+ {
+
+> +static __init void s3c24xx_gpiolib_attach_ofnode(struct samsung_gpio=
+_chip
+> *chip,
+> +						 u64 base, u64 offset)
+> +{
+> +	return;
+> +}
+> +#endif /* defined(CONFIG_PLAT_S3C24XX) && defined(CONFIG_OF) */
+> +
+>  static void __init s3c24xx_gpiolib_add_chips(struct samsung_gpio_chi=
+p
+> *chip,
+>  					     int nr_chips, void __iomem *base)
+>  {
+> @@ -962,6 +1023,8 @@ static void __init s3c24xx_gpiolib_add_chips(str=
+uct
+> samsung_gpio_chip *chip,
+>  			gc->direction_output =3D samsung_gpiolib_2bit_output;
+>=20
+>  		samsung_gpiolib_add(chip);
+> +
+> +		s3c24xx_gpiolib_attach_ofnode(chip, S3C24XX_PA_GPIO, i *
+> 0x10);
+>  	}
+>  }
+>=20
 > --
-> ~Vinod Koul
-> Intel Corp.
+> 1.7.2.3
+
