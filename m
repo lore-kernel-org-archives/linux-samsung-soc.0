@@ -1,78 +1,77 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: SAMSUNG: Use spin_lock_{irqsave,irqrestore} in clk_set_rate
-Date: Fri,  7 Sep 2012 11:38:22 +0530
-Message-ID: <1346998102-5317-1-git-send-email-tushar.behera@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Fix HDMI related warnings
+Date: Fri, 07 Sep 2012 15:16:57 +0900
+Message-ID: <244901cd8cc0$62934300$27b9c900$%kim@samsung.com>
+References: <1346136077-1226-1-git-send-email-sachin.kamat@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:42356 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751501Ab2IGGLO (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:12814 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932381Ab2IGGQ7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 02:11:14 -0400
-Received: by pbbrr13 with SMTP id rr13so3554311pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 23:11:13 -0700 (PDT)
+	Fri, 7 Sep 2012 02:16:59 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0M9Y00AKZURXPP10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 15:16:57 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.119.152])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0M9Y00G1TUS9GY00@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 15:16:57 +0900 (KST)
+In-reply-to: <1346136077-1226-1-git-send-email-sachin.kamat@linaro.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: 'Sachin Kamat' <sachin.kamat@linaro.org>, linux-samsung-soc@vger.kernel.org
+Cc: patches@linaro.org
 
-The spinlock clocks_lock can be held during ISR, hence it is not safe to
-hold that lock with disabling interrupts.
+Sachin Kamat wrote:
+> 
+> Silences the following warnings:
+> arch/arm/plat-samsung/devs.c:765:31: warning:
+> symbol 's5p_hdmi_def_platdata' was not declared. Should it be static?
+> arch/arm/plat-samsung/devs.c:767:13: warning:
+> symbol 's5p_hdmi_set_platdata' was not declared. Should it be static?
+> 
+> Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+> ---
+>  arch/arm/plat-samsung/devs.c |    3 ++-
+>  1 files changed, 2 insertions(+), 1 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index 6ff45d5..565cea7 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -51,6 +51,7 @@
+>  #include <plat/ehci.h>
+>  #include <plat/fb.h>
+>  #include <plat/fb-s3c2410.h>
+> +#include <plat/hdmi.h>
+>  #include <plat/hwmon.h>
+>  #include <plat/iic.h>
+>  #include <plat/keypad.h>
+> @@ -762,7 +763,7 @@ void __init s5p_i2c_hdmiphy_set_platdata(struct
+> s3c2410_platform_i2c *pd)
+>  			       &s5p_device_i2c_hdmiphy);
+>  }
+> 
+> -struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
+> +static struct s5p_hdmi_platform_data s5p_hdmi_def_platdata;
+> 
+>  void __init s5p_hdmi_set_platdata(struct i2c_board_info *hdmiphy_info,
+>  				  struct i2c_board_info *mhl_info, int
+mhl_bus)
+> --
+> 1.7.4.1
 
-It fixes following potential deadlock.
+Applied, thanks.
 
-=========================================================
-[ INFO: possible irq lock inversion dependency detected ]
-3.6.0-rc4+ #2 Not tainted
----------------------------------------------------------
-swapper/0/1 just changed the state of lock:
- (&(&host->lock)->rlock){-.....}, at: [<c027fb0d>] sdhci_irq+0x15/0x564
-but this lock took another, HARDIRQ-unsafe lock in the past:
- (clocks_lock){+.+...}
-
-and interrupts could create inverse lock ordering between them.
-
-other info that might help us debug this:
- Possible interrupt unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(clocks_lock);
-                               local_irq_disable();
-                               lock(&(&host->lock)->rlock);
-                               lock(clocks_lock);
-  <Interrupt>
-    lock(&(&host->lock)->rlock);
-
- *** DEADLOCK ***
-
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/plat-samsung/clock.c |    5 +++--
- 1 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-index 65c5eca..9b71719 100644
---- a/arch/arm/plat-samsung/clock.c
-+++ b/arch/arm/plat-samsung/clock.c
-@@ -144,6 +144,7 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
- 
- int clk_set_rate(struct clk *clk, unsigned long rate)
- {
-+	unsigned long flags;
- 	int ret;
- 
- 	if (IS_ERR(clk))
-@@ -159,9 +160,9 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
- 	if (clk->ops == NULL || clk->ops->set_rate == NULL)
- 		return -EINVAL;
- 
--	spin_lock(&clocks_lock);
-+	spin_lock_irqsave(&clocks_lock, flags);
- 	ret = (clk->ops->set_rate)(clk, rate);
--	spin_unlock(&clocks_lock);
-+	spin_unlock_irqrestore(&clocks_lock, flags);
- 
- 	return ret;
- }
--- 
-1.7.4.1
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
