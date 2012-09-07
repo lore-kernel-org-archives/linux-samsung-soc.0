@@ -1,147 +1,117 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH 2/2] DMA: PL330: Remove redundant runtime_suspend/resume functions
-Date: Fri,  7 Sep 2012 12:14:48 +0530
-Message-ID: <1347000288-20441-3-git-send-email-inderpal.singh@linaro.org>
-References: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: kgene.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, boojin.kim@samsung.com, jassisinghbrar@gmail.com, Inderpal Singh <inderpal.singh@linaro.org>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH V4 2/2] video: drm: exynos: Add device tree support
+Date: Fri, 7 Sep 2012 16:09:44 +0900
+Message-ID: <CAAQKjZOzcyEVY2qCKW7pzS_jZW+xbEjhjT5Tuvbvmvrmtz2rCQ@mail.gmail.com>
+References: <1346859555-13527-1-git-send-email-l.krishna@samsung.com>
+	<1346859555-13527-3-git-send-email-l.krishna@samsung.com>
+	<CAH9JG2X_3iUTiGWv2cxjiX-s_VUtptVbzxhAJTub70W_2Dxecg@mail.gmail.com>
+	<CAAQKjZNmizjZ-=JN9_AysPMPHTOh7eydfE_OCYE6-v0JAJMydw@mail.gmail.com>
+	<5048837B.6020903@samsung.com>
+	<CAL1wa8cyhxCObHbMa+8X6DmsD8svt=W8s+JMrPx5cAEoWd4Lig@mail.gmail.com>
+	<CAAQKjZN_n5QfBTibk8+jNwvZzPU_yvxJN70F3VrvZN_Pitm9ag@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:51077 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757911Ab2IGHJp (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Sep 2012 03:09:45 -0400
+Received: by pbbrr13 with SMTP id rr13so3618072pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Sep 2012 00:09:44 -0700 (PDT)
+In-Reply-To: <CAAQKjZN_n5QfBTibk8+jNwvZzPU_yvxJN70F3VrvZN_Pitm9ag@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-The driver's  runtime_suspend/resume functions just disable/enable
-the clock which is already being managed at AMBA bus level
-runtime_suspend/resume functions.
+2012/9/7 Inki Dae <inki.dae@samsung.com>:
+> Hi
+>
+> 2012/9/7 Leela Krishna Amudala <l.krishna@samsung.com>:
+>> Hi,
+>>
+>> On Thu, Sep 6, 2012 at 4:35 PM, Sylwester Nawrocki
+>> <s.nawrocki@samsung.com> wrote:
+>>> Hi,
+>>>
+>>> On 09/06/2012 09:21 AM, InKi Dae wrote:
+>>>>>> +Required properties:
+>>>>>> + - compatible: Should be "samsung,exynos5-fimd" or "samsung,exynos4-fb" for
+>>>>> Doesn't better to use single word? fimd or fb?. I think 'fb' is used
+>>>>> for framebuffer historically.
+>>>>> but now it's used both fb and drm, so fimd is neutral and architecture
+>>>>> specific.
+>>>>>
+>>>>> To do this, Modify arch-exynos first and update it at each drivers it properly.
+>>>>>
+>>>>> Thank you,
+>>>>> Kyungmin Park
+>>>>>
+>>>>
+>>>> I agree with Kyungmin but I'd like to use as is. the reason we used
+>>>> 'exynos4-fb' as device name, is for that it uses fimd driver's
+>>>> platform device commonly and gets fimd clock. so I think that dts file
+>>>> should be defined with hardware specific name but not driver name such
+>>>> as 'exynos4-fb'. but with this, we can't get fimd clock with device's
+>>>> name because 'exynos4-fb' is used as device name of fimd clock. so to
+>>>> use 'exynos4-fimd', we should modify the device name of fimd clock
+>>>> from 'exynos4-fb'  to 'exynos4-fimd' and also ids definitions of
+>>>> s3c-fb and drm fimd driver. so my conclusion is that it merges this
+>>>
+>>> I think it's good moment to put those things in order, i.e. use uniform
+>>> 'compatible' names: "samsung,exynos4-fimd", "samsung,exynos5-fimd".
+>>> Platform device names are separate issue, but could perhaps be unified
+>>> at this time as well.
+>>
+>> Yes, Platform device name is independent of compatible string.
+>> Will change the compatible string to "samsung,exynos4-fimd" and will keep the
+>> device name as exynos4-fb for now. Will change the platform device
+>> names to exynosX-fimd
+>> later.
+>>
+>
+> I'm not sure that clk_get is worked well with this change. I think,
+> when driver called clk_get(), first of all, it tries to get a clk from
+> the registered list of clock providers in the dts file and next in
+> legacy way. but now legacy way(needing clock name and device' name)
+> would be failed if the dts file has no the list because platform
+> device's name differs from device name of clock. so I think we should
+> change device name of clock and also ids of related drivers for
+> compatibility with non-dt. for this, we need some patch sets, changing
+> arch/arm/mach-exynos/common.c and changing
+> arch/arm/mach-exynos/clock-exynos4/5.c and changing s3c-fb.c and last
+> this patch. if there are no other opinions, I'd like to merge this
+> patch set(v5) and next we can update others(maybe common.c,
+> clock-exynos4/5.c and s3c-fb.c) later.
+>
 
-Hence, remove the driver's runtime_suspend/resume functions.
+there is my missing point. with dt, platform device's name is set by
+OF_DEV_AUXDATA's name so it doesn't need to modify things related to
+exynos4 anymore. we just need to update things related to exynos5.
 
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
----
- drivers/dma/pl330.c |   61 +++++----------------------------------------------
- 1 file changed, 5 insertions(+), 56 deletions(-)
+Thanks.
+Inki Dae
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index f70e783..d9e1433 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -23,7 +23,6 @@
- #include <linux/dmaengine.h>
- #include <linux/amba/bus.h>
- #include <linux/amba/pl330.h>
--#include <linux/pm_runtime.h>
- #include <linux/scatterlist.h>
- #include <linux/of.h>
- 
-@@ -586,8 +585,6 @@ struct dma_pl330_dmac {
- 
- 	/* Peripheral channels connected to this DMAC */
- 	struct dma_pl330_chan *peripherals; /* keep at end */
--
--	struct clk *clk;
- };
- 
- struct dma_pl330_desc {
-@@ -2887,24 +2884,17 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 		goto probe_err1;
- 	}
- 
--	pdmac->clk = clk_get(&adev->dev, "dma");
--	if (IS_ERR(pdmac->clk)) {
--		dev_err(&adev->dev, "Cannot get operation clock.\n");
--		ret = -EINVAL;
--		goto probe_err2;
--	}
--
- 	amba_set_drvdata(adev, pdmac);
- 
- 	irq = adev->irq[0];
- 	ret = request_irq(irq, pl330_irq_handler, 0,
- 			dev_name(&adev->dev), pi);
- 	if (ret)
--		goto probe_err3;
-+		goto probe_err2;
- 
- 	ret = pl330_add(pi);
- 	if (ret)
--		goto probe_err4;
-+		goto probe_err3;
- 
- 	INIT_LIST_HEAD(&pdmac->desc_pool);
- 	spin_lock_init(&pdmac->pool_lock);
-@@ -2964,7 +2954,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 	ret = dma_async_device_register(pd);
- 	if (ret) {
- 		dev_err(&adev->dev, "unable to register DMAC\n");
--		goto probe_err5;
-+		goto probe_err4;
- 	}
- 
- 	dev_info(&adev->dev,
-@@ -2977,12 +2967,10 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	return 0;
- 
--probe_err5:
--	pl330_del(pi);
- probe_err4:
--	free_irq(irq, pi);
-+	pl330_del(pi);
- probe_err3:
--	clk_put(pdmac->clk);
-+	free_irq(irq, pi);
- probe_err2:
- 	iounmap(pi->base);
- probe_err1:
-@@ -3044,49 +3032,10 @@ static struct amba_id pl330_ids[] = {
- 
- MODULE_DEVICE_TABLE(amba, pl330_ids);
- 
--#ifdef CONFIG_PM_RUNTIME
--static int pl330_runtime_suspend(struct device *dev)
--{
--	struct dma_pl330_dmac *pdmac = dev_get_drvdata(dev);
--
--	if (!pdmac) {
--		dev_err(dev, "failed to get dmac\n");
--		return -ENODEV;
--	}
--
--	clk_disable(pdmac->clk);
--
--	return 0;
--}
--
--static int pl330_runtime_resume(struct device *dev)
--{
--	struct dma_pl330_dmac *pdmac = dev_get_drvdata(dev);
--
--	if (!pdmac) {
--		dev_err(dev, "failed to get dmac\n");
--		return -ENODEV;
--	}
--
--	clk_enable(pdmac->clk);
--
--	return 0;
--}
--#else
--#define pl330_runtime_suspend	NULL
--#define pl330_runtime_resume	NULL
--#endif /* CONFIG_PM_RUNTIME */
--
--static const struct dev_pm_ops pl330_pm_ops = {
--	.runtime_suspend = pl330_runtime_suspend,
--	.runtime_resume = pl330_runtime_resume,
--};
--
- static struct amba_driver pl330_driver = {
- 	.drv = {
- 		.owner = THIS_MODULE,
- 		.name = "dma-pl330",
--		.pm = &pl330_pm_ops,
- 	},
- 	.id_table = pl330_ids,
- 	.probe = pl330_probe,
--- 
-1.7.9.5
+> Thanks.
+> Inki Dae
+>
+>>>
+>>>> patch set as is and then let's modify related things later.
+>>>> any opinions, welcome~ anytime.
+>>>>
+>>>> Thanks.
+>>>> Inki Dae
+>>>
+>>> --
+>>>
+>>> Regards,
+>>> Sylwester
+>>> --
+>>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>>> the body of a message to majordomo@vger.kernel.org
+>>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> _______________________________________________
+>> dri-devel mailing list
+>> dri-devel@lists.freedesktop.org
+>> http://lists.freedesktop.org/mailman/listinfo/dri-devel
