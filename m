@@ -1,56 +1,79 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
-Date: Fri, 07 Sep 2012 07:25:38 +0900
-Message-ID: <241b01cd8c7e$8b07bb00$a1173100$%kim@samsung.com>
-References: <201208282355.44268.heiko@sntech.de> <503D4FB1.1020206@samsung.com>
- <CACRpkdYqYhtHHVw8C5HhDr96V6diV-0M+55xCHnoATOiyDp3Jg@mail.gmail.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V4 2/2] video: drm: exynos: Add device tree support
+Date: Fri, 7 Sep 2012 09:16:42 +0530
+Message-ID: <CAL1wa8cyhxCObHbMa+8X6DmsD8svt=W8s+JMrPx5cAEoWd4Lig@mail.gmail.com>
+References: <1346859555-13527-1-git-send-email-l.krishna@samsung.com>
+ <1346859555-13527-3-git-send-email-l.krishna@samsung.com> <CAH9JG2X_3iUTiGWv2cxjiX-s_VUtptVbzxhAJTub70W_2Dxecg@mail.gmail.com>
+ <CAAQKjZNmizjZ-=JN9_AysPMPHTOh7eydfE_OCYE6-v0JAJMydw@mail.gmail.com> <5048837B.6020903@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-reply-to: <CACRpkdYqYhtHHVw8C5HhDr96V6diV-0M+55xCHnoATOiyDp3Jg@mail.gmail.com>
-Content-language: ko
-Sender: linux-doc-owner@vger.kernel.org
-To: 'Linus Walleij' <linus.walleij@linaro.org>
-Cc: =?ISO-8859-1?Q?'Heiko_St=FCbner'?= <heiko@sntech.de>, 'Linus Walleij' <linus.walleij@stericsson.com>, linux-doc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, 'Rob Herring' <rob.herring@calxeda.com>, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:41986 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752564Ab2IGDrD (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 6 Sep 2012 23:47:03 -0400
+Received: by pbbrr13 with SMTP id rr13so3423938pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 20:47:02 -0700 (PDT)
+In-Reply-To: <5048837B.6020903@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: InKi Dae <inki.dae@samsung.com>, Kyungmin Park <kmpark@infradead.org>, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-Linus Walleij wrote:
->=20
-> On Wed, Aug 29, 2012 at 1:09 AM, Kukjin Kim <kgene.kim@samsung.com> w=
-rote:
-> > On 08/28/12 14:55, Heiko St=FCbner wrote:
-> >>
-> >> Until now the Exynos-SoC was the only Samsung-SoC supporting the G=
-PIOs
-> >> via the device tree. This patch implements dt-support for the
-> >> s3c24xx arches.
-> >>
-> >> The controllers contain only 3 cells, as the underlying gpio contr=
-oller
-> >> does not support controlling the drive strength on a gpio level.
-> >>
-> >> Tested with the gpio-keys driver on a s3c2416 based machine.
-> >>
-> >> Signed-off-by: Heiko Stuebner<heiko@sntech.de>
-> >> Reviewed-by: Thomas Abraham<thomas.abraham@linaro.org>
-> >
-> >
-> > Yeah, looks good to me...
-> >
-> > Acked-by: Kukjin Kim <kgene.kim@samsung.com>
->=20
-> OK are you taking this into the Samsung tree or shall I take care of =
-it?
->=20
-Hmm...yeah, Samsung tree is better.
-Applied with your ack :-)
+Hi,
 
-Thanks.
+On Thu, Sep 6, 2012 at 4:35 PM, Sylwester Nawrocki
+<s.nawrocki@samsung.com> wrote:
+> Hi,
+>
+> On 09/06/2012 09:21 AM, InKi Dae wrote:
+>>>> +Required properties:
+>>>> + - compatible: Should be "samsung,exynos5-fimd" or "samsung,exynos4-fb" for
+>>> Doesn't better to use single word? fimd or fb?. I think 'fb' is used
+>>> for framebuffer historically.
+>>> but now it's used both fb and drm, so fimd is neutral and architecture
+>>> specific.
+>>>
+>>> To do this, Modify arch-exynos first and update it at each drivers it properly.
+>>>
+>>> Thank you,
+>>> Kyungmin Park
+>>>
+>>
+>> I agree with Kyungmin but I'd like to use as is. the reason we used
+>> 'exynos4-fb' as device name, is for that it uses fimd driver's
+>> platform device commonly and gets fimd clock. so I think that dts file
+>> should be defined with hardware specific name but not driver name such
+>> as 'exynos4-fb'. but with this, we can't get fimd clock with device's
+>> name because 'exynos4-fb' is used as device name of fimd clock. so to
+>> use 'exynos4-fimd', we should modify the device name of fimd clock
+>> from 'exynos4-fb'  to 'exynos4-fimd' and also ids definitions of
+>> s3c-fb and drm fimd driver. so my conclusion is that it merges this
+>
+> I think it's good moment to put those things in order, i.e. use uniform
+> 'compatible' names: "samsung,exynos4-fimd", "samsung,exynos5-fimd".
+> Platform device names are separate issue, but could perhaps be unified
+> at this time as well.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+Yes, Platform device name is independent of compatible string.
+Will change the compatible string to "samsung,exynos4-fimd" and will keep the
+device name as exynos4-fb for now. Will change the platform device
+names to exynosX-fimd
+later.
 
+>
+>> patch set as is and then let's modify related things later.
+>> any opinions, welcome~ anytime.
+>>
+>> Thanks.
+>> Inki Dae
+>
+> --
+>
+> Regards,
+> Sylwester
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
