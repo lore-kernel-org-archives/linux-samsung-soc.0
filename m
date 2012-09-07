@@ -1,50 +1,107 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4 0/2] Add device tree and clock support for G-Scaler
-Date: Fri, 07 Sep 2012 14:47:55 +0900
-Message-ID: <244001cd8cbc$54609b10$fd21d130$%kim@samsung.com>
-References: <1344852144-25598-1-git-send-email-shaik.ameer@samsung.com>
- <227001cd8ae9$9b76ce40$d2646ac0$%kim@samsung.com>
- <CAOD6ATrzuXqkpKYNE3mWxjekN41U32oF0Kx4zYVbwykMNd7ziw@mail.gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH V4 2/2] video: drm: exynos: Add device tree support
+Date: Fri, 7 Sep 2012 15:07:06 +0900
+Message-ID: <CAAQKjZN_n5QfBTibk8+jNwvZzPU_yvxJN70F3VrvZN_Pitm9ag@mail.gmail.com>
+References: <1346859555-13527-1-git-send-email-l.krishna@samsung.com>
+	<1346859555-13527-3-git-send-email-l.krishna@samsung.com>
+	<CAH9JG2X_3iUTiGWv2cxjiX-s_VUtptVbzxhAJTub70W_2Dxecg@mail.gmail.com>
+	<CAAQKjZNmizjZ-=JN9_AysPMPHTOh7eydfE_OCYE6-v0JAJMydw@mail.gmail.com>
+	<5048837B.6020903@samsung.com>
+	<CAL1wa8cyhxCObHbMa+8X6DmsD8svt=W8s+JMrPx5cAEoWd4Lig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:23807 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751530Ab2IGFr5 (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:63252 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1759922Ab2IGGHG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 01:47:57 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0M9Y00F1HTFP9IM0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 14:47:56 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0M9Y0068WTFVWI00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 07 Sep 2012 14:47:56 +0900 (KST)
-In-reply-to: <CAOD6ATrzuXqkpKYNE3mWxjekN41U32oF0Kx4zYVbwykMNd7ziw@mail.gmail.com>
-Content-language: ko
+	Fri, 7 Sep 2012 02:07:06 -0400
+Received: by dady13 with SMTP id y13so1583176dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 06 Sep 2012 23:07:06 -0700 (PDT)
+In-Reply-To: <CAL1wa8cyhxCObHbMa+8X6DmsD8svt=W8s+JMrPx5cAEoWd4Lig@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Shaik Ameer Basha' <shaik.samsung@gmail.com>
-Cc: 'Shaik Ameer Basha' <shaik.ameer@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, olofj@google.com, thomas.ab@samsung.com, sylvester.nawrocki@gmail.com, joshi@samsung.com
+To: Leela Krishna Amudala <l.krishna@samsung.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-Shaik Ameer Basha wrote:
-> > BTW, just wondering...the sign-chain is right? Hoping you know, if sign-
-> off
-> > has been added without their handling on the patches, it's wrong.
-> >
-> 
-> This sign-chain is fine. Please apply this series to your tree.
-> 
-OK, applied.
+Hi
+
+2012/9/7 Leela Krishna Amudala <l.krishna@samsung.com>:
+> Hi,
+>
+> On Thu, Sep 6, 2012 at 4:35 PM, Sylwester Nawrocki
+> <s.nawrocki@samsung.com> wrote:
+>> Hi,
+>>
+>> On 09/06/2012 09:21 AM, InKi Dae wrote:
+>>>>> +Required properties:
+>>>>> + - compatible: Should be "samsung,exynos5-fimd" or "samsung,exynos4-fb" for
+>>>> Doesn't better to use single word? fimd or fb?. I think 'fb' is used
+>>>> for framebuffer historically.
+>>>> but now it's used both fb and drm, so fimd is neutral and architecture
+>>>> specific.
+>>>>
+>>>> To do this, Modify arch-exynos first and update it at each drivers it properly.
+>>>>
+>>>> Thank you,
+>>>> Kyungmin Park
+>>>>
+>>>
+>>> I agree with Kyungmin but I'd like to use as is. the reason we used
+>>> 'exynos4-fb' as device name, is for that it uses fimd driver's
+>>> platform device commonly and gets fimd clock. so I think that dts file
+>>> should be defined with hardware specific name but not driver name such
+>>> as 'exynos4-fb'. but with this, we can't get fimd clock with device's
+>>> name because 'exynos4-fb' is used as device name of fimd clock. so to
+>>> use 'exynos4-fimd', we should modify the device name of fimd clock
+>>> from 'exynos4-fb'  to 'exynos4-fimd' and also ids definitions of
+>>> s3c-fb and drm fimd driver. so my conclusion is that it merges this
+>>
+>> I think it's good moment to put those things in order, i.e. use uniform
+>> 'compatible' names: "samsung,exynos4-fimd", "samsung,exynos5-fimd".
+>> Platform device names are separate issue, but could perhaps be unified
+>> at this time as well.
+>
+> Yes, Platform device name is independent of compatible string.
+> Will change the compatible string to "samsung,exynos4-fimd" and will keep the
+> device name as exynos4-fb for now. Will change the platform device
+> names to exynosX-fimd
+> later.
+>
+
+I'm not sure that clk_get is worked well with this change. I think,
+when driver called clk_get(), first of all, it tries to get a clk from
+the registered list of clock providers in the dts file and next in
+legacy way. but now legacy way(needing clock name and device' name)
+would be failed if the dts file has no the list because platform
+device's name differs from device name of clock. so I think we should
+change device name of clock and also ids of related drivers for
+compatibility with non-dt. for this, we need some patch sets, changing
+arch/arm/mach-exynos/common.c and changing
+arch/arm/mach-exynos/clock-exynos4/5.c and changing s3c-fb.c and last
+this patch. if there are no other opinions, I'd like to merge this
+patch set(v5) and next we can update others(maybe common.c,
+clock-exynos4/5.c and s3c-fb.c) later.
 
 Thanks.
+Inki Dae
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+>>
+>>> patch set as is and then let's modify related things later.
+>>> any opinions, welcome~ anytime.
+>>>
+>>> Thanks.
+>>> Inki Dae
+>>
+>> --
+>>
+>> Regards,
+>> Sylwester
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
