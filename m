@@ -1,59 +1,47 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: Re: [PATCH v2] gpio: samsung: add devicetree init for s3c24xx arches
-Date: Fri, 7 Sep 2012 09:27:27 +0200
-Message-ID: <201209070927.28405.heiko@sntech.de>
-References: <201208282355.44268.heiko@sntech.de> <243901cd8cbb$10ad0580$32071080$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <243901cd8cbb$10ad0580$32071080$%kim@samsung.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Grant Likely' <grant.likely@secretlab.ca>, 'Rob Herring' <rob.herring@calxeda.com>, 'Rob Landley' <rob@landley.net>, 'Linus Walleij' <linus.walleij@stericsson.com>, 'Olof Johansson' <olof@lixom.net>, 'Thomas Abraham' <thomas.abraham@linaro.org>, devicetree-discuss@lists.ozlabs.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 'linux-samsung-soc' <linux-samsung-soc@vger.kernel.org>
+From: Sachin Kamat <sachin.kamat@linaro.org>
+Subject: [PATCH Resend 2/2] ARM: dts: Add heartbeat gpio-leds support to Origen
+Date: Fri,  7 Sep 2012 14:36:10 +0530
+Message-ID: <1347008770-11421-2-git-send-email-sachin.kamat@linaro.org>
+References: <1347008770-11421-1-git-send-email-sachin.kamat@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:33877 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755052Ab2IGJJI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 7 Sep 2012 05:09:08 -0400
+Received: by pbbrr13 with SMTP id rr13so3755207pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 07 Sep 2012 02:09:08 -0700 (PDT)
+In-Reply-To: <1347008770-11421-1-git-send-email-sachin.kamat@linaro.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, sachin.kamat@linaro.org, kgene.kim@samsung.com
 
-Am Freitag, 7. September 2012, 07:38:52 schrieb Kukjin Kim:
-> Heiko St=C3=BCbner wrote:
-> > Until now the Exynos-SoC was the only Samsung-SoC supporting the GP=
-IOs
-> > via the device tree. This patch implements dt-support for the
-> > s3c24xx arches.
-> >=20
-> > The controllers contain only 3 cells, as the underlying gpio contro=
-ller
-> > does not support controlling the drive strength on a gpio level.
-> >=20
-> > Tested with the gpio-keys driver on a s3c2416 based machine.
-> >=20
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
-> > ---
->=20
-> [...]
->=20
-> > +#if defined(CONFIG_PLAT_S3C24XX) && defined(CONFIG_OF)
->=20
-> [...]
->=20
-> > +static __init void s3c24xx_gpiolib_attach_ofnode(struct
-> > samsung_gpio_chip *chip,
-> > +						 u64 base, u64 offset)
-> > +{
->=20
-> [...]
->=20
-> > +}
-> > +#elif defined(CONFIG_PLAT_S3C24XX)
->=20
-> Heiko, above line breaks building for other samsung stuff except s3c2=
-4xx. I
-> fixed with following which has been amended in your patch. If any
-> problems, please let me know.
+Adds heartbeat gpio-leds support to Origen board.
 
-yeah, I see the problem now. Thanks for the fix and sorry to have cause=
-d=20
-additional work.
+Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
+---
+ arch/arm/boot/dts/exynos4210-origen.dts |    8 ++++++++
+ 1 files changed, 8 insertions(+), 0 deletions(-)
 
-
-Heiko
+diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
+index c37edf0..d69a799 100644
+--- a/arch/arm/boot/dts/exynos4210-origen.dts
++++ b/arch/arm/boot/dts/exynos4210-origen.dts
+@@ -91,6 +91,14 @@
+ 		};
+ 	};
+ 
++	leds {
++		compatible = "gpio-leds";
++		status {
++			gpios = <&gpx1 3 0 0x10000 2>;
++			linux,default-trigger = "heartbeat";
++		};
++	};
++
+ 	keypad@100A0000 {
+ 		status = "disabled";
+ 	};
+-- 
+1.7.4.1
