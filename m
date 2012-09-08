@@ -1,86 +1,66 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 5/5] ARM: Exynos: Add basic dts file for Samsung Trats
- board
-Date: Sat, 08 Sep 2012 11:47:15 +0900
-Message-ID: <24dd01cd8d6c$41586970$c4093c50$%kim@samsung.com>
-References: <1346748609-11115-1-git-send-email-t.figa@samsung.com>
- <1346748609-11115-6-git-send-email-t.figa@samsung.com>
- <CAJuYYwTV1giNYJ7RTz=DHqK=i6FD2GsV4rNY2p5scVAnQz0kdg@mail.gmail.com>
- <3039444.Ol4zGlGWJ2@flatron>
+Subject: RE: [PATCH 0/3] ARM: dts: Exynos4 dts reorganization
+Date: Sat, 08 Sep 2012 12:03:29 +0900
+Message-ID: <24de01cd8d6e$860fe500$922faf00$%kim@samsung.com>
+References: <1346675674-16034-1-git-send-email-t.figa@samsung.com>
+ <CAJuYYwRWqvzw_MdLa7NfE9ppbPiz8=HTXUW+-mXedvu2GPQWBg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:59118 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103Ab2IHCrS (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:17035 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751949Ab2IHDDc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 22:47:18 -0400
+	Fri, 7 Sep 2012 23:03:32 -0400
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MA0004T3FQSBD80@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:47:16 +0900 (KST)
+ 17 2011)) with ESMTP id <0MA000E9AGHQRQ30@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 12:03:30 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MA0002SDFQS3010@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:47:16 +0900 (KST)
-In-reply-to: <3039444.Ol4zGlGWJ2@flatron>
+ with ESMTPA id <0MA0002S0GHU3030@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 12:03:30 +0900 (KST)
+In-reply-to: <CAJuYYwRWqvzw_MdLa7NfE9ppbPiz8=HTXUW+-mXedvu2GPQWBg@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, 'Dongjin Kim' <tobetter@gmail.com>
 
-Tomasz Figa wrote:
+Thomas Abraham wrote:
 > 
-> Hi,
-> 
-> Thanks for reviewing the patch.
-> 
-> On Wednesday 05 of September 2012 09:35:49 Thomas Abraham wrote:
-> > > +
-> > > +       memory {
-> > > +               reg =  <0x40000000 0x20000000
-> > > +                       0x60000000 0x20000000>;
-> > > +       };
+> On 3 September 2012 18:04, Tomasz Figa <t.figa@samsung.com> wrote:
+> > This patch series prepares existing Exynos4210 DT infrastructure to be
+> > further extended for new SoCs from Exynos4 line and new boards.
 > >
-> > Why does this have to be split. Why not have a single entry with the
-> > size as 0x40000000?
-> 
-> The memory node corresponds to struct meminfo and each entry (with two
-> values) makes one struct membank defining a memory bank.
-> 
-Well...
-
-> I've been talking with Kyungmin about this. Originally bootloaders used to
-> report 4 banks of 256 MiB, but it turned out that real bank configuration
-> on Trats is 2 banks of 512 MiB.
-> 
-I think, following should ok here.
-
-memory {
-	reg = <0x40000000 0x40000000>;
-};
-
-> I'm not into memory management internals, so I don't know if this has any
-> significance, but I defined the node to represent the real configuration
-> (otherwise I would have probably used 4 banks of 256 MiB and drop the 4th
-> patch).
-> 
-> > > +               max8997_pmic@66 {
-> > > +                       compatible = "maxim,max8997-pmic";
-> > > +
-> > > +                       reg = <0x66>;
+> > Tomasz Figa (3):
+> >   ARM: dts: Move parts common to Exynos4 from Exynos4210.dtsi to
+> >     Exynos4.dtsi
+> >   ARM: EXYNOS: exynos4-dt: Use exynos4 prefix instead of exynos4210
+> >   ARM: dts: exynos4: Assume status of all optional nodes as disabled
 > >
-> > Probably, the interrupts can be listed when we have pinctrl driver
-> > merged in Samsung tree.
+> >  arch/arm/boot/dts/exynos4.dtsi            | 232
+> ++++++++++++++++++++++++++++++
+> >  arch/arm/boot/dts/exynos4210-origen.dts   |  58 +-------
+> >  arch/arm/boot/dts/exynos4210-smdkv310.dts |  52 +------
+> >  arch/arm/boot/dts/exynos4210.dtsi         | 181 +----------------------
+> >  arch/arm/mach-exynos/mach-exynos4-dt.c    |  18 +--
+> >  5 files changed, 248 insertions(+), 293 deletions(-)
+> >  create mode 100644 arch/arm/boot/dts/exynos4.dtsi
 > >
 > 
-> Right.
+> Thanks, we can build Exynos4412 device tree support on top of this series.
 > 
-Note, you can do it on top of samsung tree :-)
+> Acked-by: Thomas Abraham <thomas.abraham@linaro.org>
+
+Thomas, thanks for your ack on this series and I'm OK on this series.
+
+But you know, Donjin Kim submitted almost same patch except gpio stuff one
+month before this series but needs to update something though. So would be
+nice if either Tomasz or Dongjin could ack on the other patch?
 
 Thanks.
 
