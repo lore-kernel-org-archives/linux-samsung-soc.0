@@ -1,39 +1,53 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH] ARM: dts: exynos4: Enable serial controllers on Origen and SMDKV310
-Date: Sat, 08 Sep 2012 10:07:01 +0200
-Message-ID: <1448000.LeaitbqYWR@flatron>
-References: <1346675674-16034-1-git-send-email-t.figa@samsung.com> <1808225.QZz0WEipT7@amdc1227> <24d901cd8d6a$c10c9710$4325c530$%kim@samsung.com>
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: Re: [PATCH 2/3] ARM: EXYNOS: pm_domain: Fix power domain name initialization
+Date: Sat, 8 Sep 2012 13:37:59 +0530
+Message-ID: <CAJuYYwQWEN3FiNwQdugeKRV53cA65WdW79trcmP2kqqOPbz+sg@mail.gmail.com>
+References: <1346924286-9584-1-git-send-email-t.figa@samsung.com>
+	<1346924286-9584-3-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f178.google.com ([209.85.212.178]:54169 "EHLO
-	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751955Ab2IHIHI (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:64455 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751712Ab2IHIIA (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Sep 2012 04:07:08 -0400
-Received: by wibhr14 with SMTP id hr14so291472wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Sep 2012 01:07:06 -0700 (PDT)
-In-Reply-To: <24d901cd8d6a$c10c9710$4325c530$%kim@samsung.com>
+	Sat, 8 Sep 2012 04:08:00 -0400
+Received: by vbbff1 with SMTP id ff1so405122vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Sep 2012 01:07:59 -0700 (PDT)
+In-Reply-To: <1346924286-9584-3-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, thomas.abraham@linaro.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rjw@sisk.pl
 
-Hi Kgene,
+On 6 September 2012 15:08, Tomasz Figa <t.figa@samsung.com> wrote:
+> This patch adds initialization of name field in generic power domain
+> struct.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/pm_domains.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
+> index d1abc1a..5b7ce7e 100644
+> --- a/arch/arm/mach-exynos/pm_domains.c
+> +++ b/arch/arm/mach-exynos/pm_domains.c
+> @@ -98,7 +98,8 @@ static __init int exynos_pm_dt_parse_domains(void)
+>                         return -ENOMEM;
+>                 }
+>
+> -               pd->name = np->name;
+> +               pd->pd.name = kstrdup(np->name, GFP_KERNEL);
+> +               pd->name = pd->pd.name;
 
-On Saturday 08 of September 2012 11:36:30 Kukjin Kim wrote:
-> Tomasz Figa wrote:
-> > This patch adds status override of serial nodes to enable used serial
-> > ports
-> > on Origen and SMDKV310 board.
-> 
-> Well...I'm not sure about the status of Origen serial, but all of the
-> serials are enabled on SMDKV310, is it right?
+Since device tree blob is always resident, why not just use np->name
+instead of copying it to a new place?
 
-According to arrays of struct s3c2410_uartcfg in mach-origen.c and mach-
-smdkv310.c, all the four serial ports are enabled on both boards.
-
---
-Best regards,
-Tomasz Figa
+>                 pd->base = of_iomap(np, 0);
+>                 pd->pd.power_off = exynos_pd_power_off;
+>                 pd->pd.power_on = exynos_pd_power_on;
+> --
+> 1.7.12
+>
