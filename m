@@ -1,209 +1,63 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: Re: [PATCH 3/3] ARM: EXYNOS: pm_domain: Bind devices to power domains
- using DT
-Date: Sat, 8 Sep 2012 13:48:24 +0530
-Message-ID: <CAJuYYwQjuYZHYFig56OQ_rniExywekyKrN=6rw6rmfviGqOCig@mail.gmail.com>
-References: <1346924286-9584-1-git-send-email-t.figa@samsung.com>
-	<1346924286-9584-4-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH v2 5/5] ARM: Exynos: Add basic dts file for Samsung Trats board
+Date: Sat, 08 Sep 2012 10:21:35 +0200
+Message-ID: <7700294.NPoOn06yTZ@flatron>
+References: <1346748609-11115-1-git-send-email-t.figa@samsung.com> <3039444.Ol4zGlGWJ2@flatron> <24dd01cd8d6c$41586970$c4093c50$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:51201 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751917Ab2IHISZ (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:52928 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751478Ab2IHIVl (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 8 Sep 2012 04:18:25 -0400
-Received: by vbbff1 with SMTP id ff1so413779vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Sep 2012 01:18:24 -0700 (PDT)
-In-Reply-To: <1346924286-9584-4-git-send-email-t.figa@samsung.com>
+	Sat, 8 Sep 2012 04:21:41 -0400
+Received: by wibhi8 with SMTP id hi8so310117wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 08 Sep 2012 01:21:40 -0700 (PDT)
+In-Reply-To: <24dd01cd8d6c$41586970$c4093c50$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, rjw@sisk.pl
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com
 
-On 6 September 2012 15:08, Tomasz Figa <t.figa@samsung.com> wrote:
-> This patch adds a way to specify bindings between devices and power
-> domains using device tree.
->
-> A device can be bound to particular power domain by adding a
-> power-domain property containing a phandle to the domain. The device
-> will be bound to the domain before binding a driver to it and unbound
-> after unbinding a driver from it.
->
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> ---
->  .../bindings/arm/exynos/power_domain.txt           | 13 +++-
->  arch/arm/mach-exynos/pm_domains.c                  | 82 ++++++++++++++++++++++
->  2 files changed, 94 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> index 843b546..8ed914f 100644
-> --- a/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> +++ b/Documentation/devicetree/bindings/arm/exynos/power_domain.txt
-> @@ -4,14 +4,25 @@ Exynos processors include support for multiple power domains which are used
->  to gate power to one or more peripherals on the processor.
->
->  Required Properties:
-> -- compatiable: should be one of the following.
-> +- compatible: should be one of the following.
->      * samsung,exynos4210-pd - for exynos4210 type power domain.
->  - reg: physical base address of the controller and length of memory mapped
->      region.
->
-> +Node of a device using power domains must have a power-domain property defined
-> +with a phandle to respective power domain.
-> +
->  Example:
->
->         lcd0: power-domain-lcd0 {
->                 compatible = "samsung,exynos4210-pd";
->                 reg = <0x10023C00 0x10>;
->         };
-> +
-> +Example of the node using power domain:
-> +
-> +       node {
-> +               /* ... */
-> +               power-domain = <&lcd0>;
-> +               /* ... */
-> +       };
+Hi Kgene,
 
-Since the value of power-domain property is mostly samsung specific,
-should this be "samsung,power-domain" ?
+On Saturday 08 of September 2012 11:47:15 Kukjin Kim wrote:
+> > > > +       memory {
+> > > > +               reg =  <0x40000000 0x20000000
+> > > > +                       0x60000000 0x20000000>;
+> > > > +       };
+> > > 
+> > > Why does this have to be split. Why not have a single entry with the
+> > > size as 0x40000000?
+> > 
+> > The memory node corresponds to struct meminfo and each entry (with two
+> > values) makes one struct membank defining a memory bank.
+> 
+> Well...
+> 
+> > I've been talking with Kyungmin about this. Originally bootloaders used
+> > to report 4 banks of 256 MiB, but it turned out that real bank
+> > configuration on Trats is 2 banks of 512 MiB.
+> 
+> I think, following should ok here.
+> 
+> memory {
+> 	reg = <0x40000000 0x40000000>;
+> };
 
-> diff --git a/arch/arm/mach-exynos/pm_domains.c b/arch/arm/mach-exynos/pm_domains.c
-> index 5b7ce7e..7b3b8a3 100644
-> --- a/arch/arm/mach-exynos/pm_domains.c
-> +++ b/arch/arm/mach-exynos/pm_domains.c
-> @@ -19,6 +19,8 @@
->  #include <linux/pm_domain.h>
->  #include <linux/delay.h>
->  #include <linux/of_address.h>
-> +#include <linux/of_platform.h>
-> +#include <linux/sched.h>
->
->  #include <mach/regs-pmu.h>
->  #include <plat/devs.h>
-> @@ -83,14 +85,89 @@ static struct exynos_pm_domain PD = {                       \
->  }
->
->  #ifdef CONFIG_OF
-> +static void exynos_add_device_to_domain(struct exynos_pm_domain *pd,
-> +                                                       struct device *dev)
-> +{
-> +       int ret;
-> +
-> +       dev_dbg(dev, "adding to power domain %s\n", pd->pd.name);
-> +
-> +       while(1) {
-> +               ret = pm_genpd_add_device(&pd->pd, dev);
-> +               if (ret != -EAGAIN)
-> +                       break;
-> +               cond_resched();
-> +       }
-> +
-> +       pm_genpd_dev_need_restore(dev, true);
-> +}
-> +
-> +static void exynos_remove_device_from_domain(struct device *dev)
-> +{
-> +       struct generic_pm_domain *genpd = dev_to_genpd(dev);
-> +       int ret;
-> +
-> +       dev_dbg(dev, "removing from power domain %s\n", genpd->name);
-> +
-> +       while(1) {
-> +               ret = pm_genpd_remove_device(genpd, dev);
-> +               if (ret != -EAGAIN)
-> +                       break;
-> +               cond_resched();
-> +       }
-> +}
-> +
-> +static void exynos_read_domain_from_dt(struct device *dev)
-> +{
-> +       struct platform_device *pd_pdev;
-> +       struct exynos_pm_domain *pd;
-> +       struct device_node *node;
-> +
-> +       node = of_parse_phandle(dev->of_node, "power-domain", 0);
-> +       if (!node)
-> +               return;
-> +       pd_pdev = of_find_device_by_node(node);
-> +       if (!pd_pdev)
-> +               return;
-> +       pd = platform_get_drvdata(pd_pdev);
-> +       exynos_add_device_to_domain(pd, dev);
-> +}
+This will not boot with CONFIG_SPARSEMEM, unless maximum section size is 
+increased to 1024MiB.
 
-The function "exynos_read_domain_from_dt" does more than reading the
-domain from dt. It associates a device with a power domain. So should
-it be renamed accordingly?
+> > > Probably, the interrupts can be listed when we have pinctrl driver
+> > > merged in Samsung tree.
+> > 
+> > Right.
+> 
+> Note, you can do it on top of samsung tree :-)
 
-> +
-> +static int exynos_pm_notifier_call(struct notifier_block *nb,
-> +                                   unsigned long event, void *data)
-> +{
-> +       struct device *dev = data;
-> +
-> +       switch (event) {
-> +       case BUS_NOTIFY_BIND_DRIVER:
-> +               if (dev->of_node)
-> +                       exynos_read_domain_from_dt(dev);
-> +
-> +               break;
-> +
-> +       case BUS_NOTIFY_UNBOUND_DRIVER:
-> +               exynos_remove_device_from_domain(dev);
-> +
-> +               break;
-> +       }
-> +       return NOTIFY_DONE;
-> +}
-> +
-> +static struct notifier_block platform_nb = {
-> +       .notifier_call = exynos_pm_notifier_call,
-> +};
+OK.
 
-All the functions above are so generic (or can be made generic with
-minor modifications) that it can be placed outside of mach-exynos. Or
-better still, reusable for all platforms.
-
-> +
->  static __init int exynos_pm_dt_parse_domains(void)
->  {
-> +       struct platform_device *pdev;
->         struct device_node *np;
->
->         for_each_compatible_node(np, NULL, "samsung,exynos4210-pd") {
->                 struct exynos_pm_domain *pd;
->                 int on;
->
-> +               pdev = of_find_device_by_node(np);
-> +
->                 pd = kzalloc(sizeof(*pd), GFP_KERNEL);
->                 if (!pd) {
->                         pr_err("%s: failed to allocate memory for domain\n",
-> @@ -105,10 +182,15 @@ static __init int exynos_pm_dt_parse_domains(void)
->                 pd->pd.power_on = exynos_pd_power_on;
->                 pd->pd.of_node = np;
->
-> +               platform_set_drvdata(pdev, pd);
-> +
->                 on = __raw_readl(pd->base + 0x4) & S5P_INT_LOCAL_PWR_EN;
->
->                 pm_genpd_init(&pd->pd, NULL, !on);
->         }
-> +
-> +       bus_register_notifier(&platform_bus_type, &platform_nb);
-> +
->         return 0;
->  }
->  #else
-> --
-> 1.7.12
->
-
-This patch looks so nice. I learned a thing or two from this patch.
-Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
+--
+Best regards,
+Tomasz Figa
