@@ -1,29 +1,30 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH Resend 1/2] ARM: dts: Use active low flag for gpio-keys on
+Subject: RE: [PATCH Resend 2/2] ARM: dts: Add heartbeat gpio-leds support to
  Origen
-Date: Sat, 08 Sep 2012 11:30:48 +0900
-Message-ID: <24d601cd8d69$f4f3e700$dedbb500$%kim@samsung.com>
+Date: Sat, 08 Sep 2012 11:31:12 +0900
+Message-ID: <24d701cd8d6a$03804480$0a80cd80$%kim@samsung.com>
 References: <1347008770-11421-1-git-send-email-sachin.kamat@linaro.org>
+ <1347008770-11421-2-git-send-email-sachin.kamat@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:14414 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751825Ab2IHCav (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:25170 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751030Ab2IHCbP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 22:30:51 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+	Fri, 7 Sep 2012 22:31:15 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MA0009I9EZDA6C0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:30:49 +0900 (KST)
+ 17 2011)) with ESMTP id <0MA00049SEZ82P30@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:31:13 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MA0001YLEZDL930@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:30:49 +0900 (KST)
-In-reply-to: <1347008770-11421-1-git-send-email-sachin.kamat@linaro.org>
+ with ESMTPA id <0MA000G0RF01TX00@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:31:13 +0900 (KST)
+In-reply-to: <1347008770-11421-2-git-send-email-sachin.kamat@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -32,58 +33,32 @@ Cc: devicetree-discuss@lists.ozlabs.org
 
 Sachin Kamat wrote:
 > 
-> Commit: f447ed8b31d (gpio: samsung: add flags specifier to
-> device-tree binding) adds a flag to represent active low state
-> for gpio line. Since gpio-keys on Origen board are active low,
-> using this flag to represent the same.
+> Adds heartbeat gpio-leds support to Origen board.
 > 
 > Signed-off-by: Sachin Kamat <sachin.kamat@linaro.org>
-> Reviewed-by: Thomas Abraham <thomas.abraham@linaro.org>
 > ---
->  arch/arm/boot/dts/exynos4210-origen.dts |   10 +++++-----
->  1 files changed, 5 insertions(+), 5 deletions(-)
+>  arch/arm/boot/dts/exynos4210-origen.dts |    8 ++++++++
+>  1 files changed, 8 insertions(+), 0 deletions(-)
 > 
 > diff --git a/arch/arm/boot/dts/exynos4210-origen.dts
 > b/arch/arm/boot/dts/exynos4210-origen.dts
-> index 0c49caa..c37edf0 100644
+> index c37edf0..d69a799 100644
 > --- a/arch/arm/boot/dts/exynos4210-origen.dts
 > +++ b/arch/arm/boot/dts/exynos4210-origen.dts
-> @@ -62,31 +62,31 @@
-> 
->  		up {
->  			label = "Up";
-> -			gpios = <&gpx2 0 0 0 2>;
-> +			gpios = <&gpx2 0 0 0x10000 2>;
->  			linux,code = <103>;
+> @@ -91,6 +91,14 @@
 >  		};
+>  	};
 > 
->  		down {
->  			label = "Down";
-> -			gpios = <&gpx2 1 0 0 2>;
-> +			gpios = <&gpx2 1 0 0x10000 2>;
->  			linux,code = <108>;
->  		};
-> 
->  		back {
->  			label = "Back";
-> -			gpios = <&gpx1 7 0 0 2>;
-> +			gpios = <&gpx1 7 0 0x10000 2>;
->  			linux,code = <158>;
->  		};
-> 
->  		home {
->  			label = "Home";
-> -			gpios = <&gpx1 6 0 0 2>;
-> +			gpios = <&gpx1 6 0 0x10000 2>;
->  			linux,code = <102>;
->  		};
-> 
->  		menu {
->  			label = "Menu";
-> -			gpios = <&gpx1 5 0 0 2>;
-> +			gpios = <&gpx1 5 0 0x10000 2>;
->  			linux,code = <139>;
->  		};
+> +	leds {
+> +		compatible = "gpio-leds";
+> +		status {
+> +			gpios = <&gpx1 3 0 0x10000 2>;
+> +			linux,default-trigger = "heartbeat";
+> +		};
+> +	};
+> +
+>  	keypad@100A0000 {
+>  		status = "disabled";
 >  	};
 > --
 > 1.7.4.1
