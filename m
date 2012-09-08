@@ -1,31 +1,31 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v2 2/5] ARM: Exynos4: dts: Specify address and size cells
- for i2c controllers
-Date: Sat, 08 Sep 2012 11:37:50 +0900
-Message-ID: <24da01cd8d6a$f07631a0$d16294e0$%kim@samsung.com>
+Subject: RE: [PATCH v2 3/5] ARM: Exynos4: Add OF compatibility lookups for
+ Exynos4 i2c adapters
+Date: Sat, 08 Sep 2012 11:38:42 +0900
+Message-ID: <24db01cd8d6b$0f816dd0$2e844970$%kim@samsung.com>
 References: <1346748609-11115-1-git-send-email-t.figa@samsung.com>
- <1346748609-11115-3-git-send-email-t.figa@samsung.com>
- <CAJuYYwSDcVTi=4dmgQ_FrN7hiWxoPiEy4_dUFRe9JYrcBx9BgA@mail.gmail.com>
+ <1346748609-11115-4-git-send-email-t.figa@samsung.com>
+ <CAJuYYwR3GEHjQ9UVUW_+ycDnqGHR2Wt9J0m2vQnqHi-UPvNZpQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15020 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751103Ab2IHChw (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:58394 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751103Ab2IHCio (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 7 Sep 2012 22:37:52 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+	Fri, 7 Sep 2012 22:38:44 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MA000MXVFAY1DE0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:37:51 +0900 (KST)
+ 17 2011)) with ESMTP id <0MA00085UFCJZ780@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:38:43 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.119.152])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MA000GAEFB36R50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:37:51 +0900 (KST)
-In-reply-to: <CAJuYYwSDcVTi=4dmgQ_FrN7hiWxoPiEy4_dUFRe9JYrcBx9BgA@mail.gmail.com>
+ with ESMTPA id <0MA0001KWFCJ4470@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 08 Sep 2012 11:38:43 +0900 (KST)
+In-reply-to: <CAJuYYwR3GEHjQ9UVUW_+ycDnqGHR2Wt9J0m2vQnqHi-UPvNZpQ@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
@@ -38,12 +38,12 @@ Thomas Abraham wrote:
 > > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 > > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 > > ---
-> >  arch/arm/boot/dts/exynos4.dtsi | 16 ++++++++++++++++
-> >  1 file changed, 16 insertions(+)
+> >  arch/arm/mach-exynos/mach-exynos4-dt.c | 14 ++++++++++++++
+> >  1 file changed, 14 insertions(+)
 > 
 > Acked-by: Thomas Abraham <thomas.abraham@linaro.org>
 > 
-Looks OK to me, will apply.
+OK, will apply.
 
 Thanks.
 
