@@ -1,135 +1,80 @@
-From: Leela Krishna Amudala <l.krishna@samsung.com>
-Subject: [PATCH] ARM: EXYNOS5: Add bus clock and set parent clock for FIMD
-Date: Tue, 11 Sep 2012 01:41:06 +0530
-Message-ID: <1347307866-30641-1-git-send-email-l.krishna@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] i2c: s3c2410: add optional pin configuration using
+ pinctrl interface
+Date: Mon, 10 Sep 2012 13:21:30 -0600
+Message-ID: <504E3DBA.3080603@wwwdotorg.org>
+References: <1346923381-14144-1-git-send-email-thomas.abraham@linaro.org> <1346923381-14144-2-git-send-email-thomas.abraham@linaro.org> <2444562.GB3nOHUb9M@amdc1227> <CAJuYYwQCQDTnpPR5WABtbozZOgc6_SZRBv3b6D8KY78tzMt-Eg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59046 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751930Ab2IJPVo (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:40869 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758097Ab2IJTVe (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Sep 2012 11:21:44 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MA500AD6407XDQ0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Sep 2012 00:21:43 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MA500E2I3YG1QB0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 11 Sep 2012 00:21:42 +0900 (KST)
+	Mon, 10 Sep 2012 15:21:34 -0400
+In-Reply-To: <CAJuYYwQCQDTnpPR5WABtbozZOgc6_SZRBv3b6D8KY78tzMt-Eg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, inki.dae@samsung.com, jg1.han@samsung.com
+To: Thomas Abraham <thomas.abraham@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linus.walleij@linaro.org, dong.aisheng@linaro.org, kgene.kim@samsung.com, patches@linaro.org, w.sang@pengutronix.de, ben-linux@fluff.org
 
-This patch adds the bus clock for FIMD and changes the device name for lcd clock
-also sets mout_mpll_user as parent clock to fimd
+On 09/06/2012 05:06 AM, Thomas Abraham wrote:
+> On 6 September 2012 15:04, Tomasz Figa <t.figa@samsung.com> wrote:
+>> Hi,
+>>
+>> This patch shows the problem of the need to explicitly migrate all drivers
+>> to pinctrl.
+>>
+>> Maybe we should consider extending the pinctrl subsystem to set the default
+>> state automatically before binding a driver to a device, at least in case
+>> of DT-based platforms?
+> 
+> The pinctrl driver allows for activating default pin configuration
+> when the pinctrl driver loads. This is referred to as "hogging". But
+> should hog be used or not is something that needs to be decided. Some
+> of the factors which favor the driver explicitly setting up the pin
+> configuration are
+> 
+> 1. After a suspend and resume cycle, the pin configuration registers
+> may be reset to default values. Hence, during resume, the pin
+> configuration has be redone.
 
-Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
----
- arch/arm/mach-exynos/clock-exynos5.c       |   34 +++++++++++++++++++--------
- arch/arm/plat-samsung/include/plat/clock.h |    2 +
- 2 files changed, 26 insertions(+), 10 deletions(-)
+I'd think it's the pinctrl driver's responsibility to make hogging work
+correctly across suspend/resume.
 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index 774533c..f1281cf 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -891,6 +891,13 @@ static struct clk exynos5_clk_mdma1 = {
- 	.ctrlbit	= (1 << 4),
- };
- 
-+static struct clk exynos5_clk_fimd = {
-+	.name		= "fimd",
-+	.devname	= "exynos5-fb",
-+	.enable		= exynos5_clk_ip_disp1_ctrl,
-+	.ctrlbit	= (1 << 0),
-+};
-+
- struct clk *exynos5_clkset_group_list[] = {
- 	[0] = &clk_ext_xtal_mux,
- 	[1] = NULL,
-@@ -1120,6 +1127,18 @@ static struct clksrc_clk exynos5_clk_sclk_spi2 = {
- 	.reg_div = { .reg = EXYNOS5_CLKDIV_PERIC2, .shift = 8, .size = 8 },
- };
- 
-+struct clksrc_clk exynos5_clk_sclk_fimd = {
-+	.clk	= {
-+		.name	        = "sclk_fimd",
-+		.devname        = "exynos5-fb",
-+		.enable         = exynos5_clksrc_mask_disp1_0_ctrl,
-+		.ctrlbit        = (1 << 0),
-+	},
-+	.sources = &exynos5_clkset_group,
-+	.reg_src = { .reg = EXYNOS5_CLKSRC_DISP1_0, .shift = 0, .size = 4 },
-+	.reg_div = { .reg = EXYNOS5_CLKDIV_DISP1_0, .shift = 0, .size = 4 },
-+};
-+
- static struct clksrc_clk exynos5_clksrcs[] = {
- 	{
- 		.clk	= {
-@@ -1131,16 +1150,6 @@ static struct clksrc_clk exynos5_clksrcs[] = {
- 		.reg_div = { .reg = EXYNOS5_CLKDIV_FSYS3, .shift = 8, .size = 8 },
- 	}, {
- 		.clk	= {
--			.name		= "sclk_fimd",
--			.devname	= "s3cfb.1",
--			.enable		= exynos5_clksrc_mask_disp1_0_ctrl,
--			.ctrlbit	= (1 << 0),
--		},
--		.sources = &exynos5_clkset_group,
--		.reg_src = { .reg = EXYNOS5_CLKSRC_DISP1_0, .shift = 0, .size = 4 },
--		.reg_div = { .reg = EXYNOS5_CLKDIV_DISP1_0, .shift = 0, .size = 4 },
--	}, {
--		.clk	= {
- 			.name		= "aclk_266_gscl",
- 		},
- 		.sources = &clk_src_gscl_266,
-@@ -1240,12 +1249,14 @@ static struct clksrc_clk *exynos5_sysclks[] = {
- 	&exynos5_clk_mdout_spi0,
- 	&exynos5_clk_mdout_spi1,
- 	&exynos5_clk_mdout_spi2,
-+	&exynos5_clk_sclk_fimd,
- };
- 
- static struct clk *exynos5_clk_cdev[] = {
- 	&exynos5_clk_pdma0,
- 	&exynos5_clk_pdma1,
- 	&exynos5_clk_mdma1,
-+	&exynos5_clk_fimd,
- };
- 
- static struct clksrc_clk *exynos5_clksrc_cdev[] = {
-@@ -1274,6 +1285,7 @@ static struct clk_lookup exynos5_clk_lookup[] = {
- 	CLKDEV_INIT("dma-pl330.0", "apb_pclk", &exynos5_clk_pdma0),
- 	CLKDEV_INIT("dma-pl330.1", "apb_pclk", &exynos5_clk_pdma1),
- 	CLKDEV_INIT("dma-pl330.2", "apb_pclk", &exynos5_clk_mdma1),
-+	CLKDEV_INIT("exynos5-fb", "lcd", &exynos5_clk_fimd),
- };
- 
- static unsigned long exynos5_epll_get_rate(struct clk *clk)
-@@ -1492,6 +1504,8 @@ void __init_or_cpufreq exynos5_setup_clocks(void)
- 
- 	clk_set_rate(&exynos5_clk_aclk_acp.clk, 267000000);
- 	clk_set_rate(&exynos5_clk_pclk_acp.clk, 134000000);
-+	clk_set_parent(&exynos5_clk_sclk_fimd.clk,
-+			&exynos5_clk_mout_mpll_user.clk);
- 
- 	for (ptr = 0; ptr < ARRAY_SIZE(exynos5_clksrcs); ptr++)
- 		s3c_set_clksrc(&exynos5_clksrcs[ptr], true);
-diff --git a/arch/arm/plat-samsung/include/plat/clock.h b/arch/arm/plat-samsung/include/plat/clock.h
-index a62753d..3d27783 100644
---- a/arch/arm/plat-samsung/include/plat/clock.h
-+++ b/arch/arm/plat-samsung/include/plat/clock.h
-@@ -83,6 +83,8 @@ extern struct clk clk_ext;
- extern struct clksrc_clk clk_epllref;
- extern struct clksrc_clk clk_esysclk;
- 
-+extern struct clksrc_clk exynos5_clk_sclk_fimd;
-+
- /* S3C64XX specific clocks */
- extern struct clk clk_h2;
- extern struct clk clk_27m;
--- 
-1.7.0.4
+> 2. Runtime muxing/config is possible.
+
+The "client" driver would definitely have to be involved there, I agree.
+
+> 3. Setting some of the config options such as pull-up by default might
+> start consuming power from boot time itself, which could be avoided if
+> such setup is done only when needed.
+
+Well, the difference in time between "just before driver binding" and
+"during probe" is minimal. If the driver/HW really needs to explicitly
+differentiate between those states to save power, I'd assert that it's
+covered by case (2) above.
+
+> Adding pinctrl driver support in device drivers seems to be simple
+> task. And it is just one time effort which can be reused on multiple
+> SoC's.
+> 
+>>
+>> This would be similar to what is done currently with samsung-gpio bindings
+>> - the pin is being configured by custom xlate callback based on additional
+>> cells in GPIO specifier, when the driver retrieves the pin using
+>> of_get{_named,}_gpio without the need of setting it up in the driver.
+> 
+> The Samsung gpio dt bindings was just a bootstrap method to get device
+> tree support going for Samsung platforms. The gpio xlate callback was
+> used as a back door to setup the pinmux/pinconfig due to lack of
+> generic driver interface to setup the pinmux/pinconfig for Samsung
+> platforms. From a linux perspective, gpio and pinmux/pinconfig are
+> separate entities. So using gpio xlate to setup pinmux/pinconfig was
+> not correct but helped getting device tree enabled for Samsung
+> platforms. With the pinctrl framework available now, there are generic
+> interfaces to setup gpio and pinmux /pinconfig.
+
+I agree; the Samsung GPIO bindings were surprising to me when I first
+realized what was in the GPIO specifiers...
