@@ -1,71 +1,101 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 1/2] i2c: s3c2410: add optional pin configuration using
- pinctrl interface
-Date: Mon, 10 Sep 2012 22:02:41 +0200
-Message-ID: <CACRpkdZ7kjfDQ-CNCcCv5fQwSqMez6sKSMUMLB=0Aviboiz=2g@mail.gmail.com>
-References: <1346923381-14144-1-git-send-email-thomas.abraham@linaro.org>
-	<1346923381-14144-2-git-send-email-thomas.abraham@linaro.org>
+From: "Rafael J. Wysocki" <rjw@sisk.pl>
+Subject: Re: [PATCH RESEND] thermal: add generic cpufreq cooling
+	implementation
+Date: Mon, 10 Sep 2012 22:23:52 +0200
+Message-ID: <201209102223.53094.rjw@sisk.pl>
+References: <1347258341.1682.1062.camel@rui.sh.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:48956 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751741Ab2IJUCm (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 10 Sep 2012 16:02:42 -0400
-Received: by weyx8 with SMTP id x8so1525314wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Mon, 10 Sep 2012 13:02:41 -0700 (PDT)
-In-Reply-To: <1346923381-14144-2-git-send-email-thomas.abraham@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: Text/Plain;
+  charset="iso-8859-2"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-bounces@lists.linux-foundation.org>
+In-Reply-To: <1347258341.1682.1062.camel@rui.sh.intel.com>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/linux-pm/>
+List-Post: <mailto:linux-pm@lists.linux-foundation.org>
+List-Help: <mailto:linux-pm-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/linux-pm>,
+	<mailto:linux-pm-request@lists.linux-foundation.org?subject=subscribe>
+Sender: linux-pm-bounces@lists.linux-foundation.org
+Errors-To: linux-pm-bounces@lists.linux-foundation.org
+To: linux-pm@lists.linux-foundation.org
+Cc: linux-samsung-soc@vger.kernel.org, Kyungmin Park <kmpark@infradead.org>, SangWook Ju <sw.ju@samsung.com>, linux-kernel@vger.kernel.org, lm-sensors@lm-sensors.org, linux-acpi@vger.kernel.org, Jean Delvare <khali@linux-fr.org>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <guenter.roeck@ericsson.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dong.aisheng@linaro.org, swarren@wwwdotorg.org, kgene.kim@samsung.com, patches@linaro.org, w.sang@pengutronix.de, ben-linux@fluff.org
 
-On Thu, Sep 6, 2012 at 11:23 AM, Thomas Abraham
-<thomas.abraham@linaro.org> wrote:
+On Monday, September 10, 2012, Zhang Rui wrote:
+> Refreshed to remove the notifier mechanism as we do not have a real user of it.
+> if there is no problem, I'll apply the whole patch set to thermal next tree.
+> 
+> From: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+> Date: Thu, 16 Aug 2012 17:11:40 +0530
+> 
+> This patchset introduces a new generic cooling device based on cpufreq
+> that can be used on non-ACPI platforms.  As a proof of concept, we have
+> drivers for the following platforms using this mechanism now:
+> 
+>  * Samsung Exynos (Exynos4 and Exynos5) in the current patchset.
+>  * Freescale i.MX (git://git.linaro.org/people/amitdanielk/linux.git imx6q_thermal)
+> 
+> There is a small change in cpufreq cooling registration APIs, so a minor
+> change is needed for Freescale platforms.
+> 
+> Brief Description:
+> 
+> 1) The generic cooling devices code is placed inside driver/thermal/*
+>    as placing inside acpi folder will need un-necessary enabling of acpi
+>    code.  This code is architecture independent.
+> 
+> 2) This patchset adds generic cpu cooling low level implementation
+>    through frequency clipping.  In future, other cpu related cooling
+>    devices may be added here.  An ACPI version of this already exists
+>    (drivers/acpi/processor_thermal.c) .But this will be useful for
+>    platforms like ARM using the generic thermal interface along with the
+>    generic cpu cooling devices.  The cooling device registration API's
+>    return cooling device pointers which can be easily binded with the
+>    thermal zone trip points.  The important APIs exposed are,
+> 
+>    a) struct thermal_cooling_device *cpufreq_cooling_register(
+>         struct cpumask *clip_cpus)
+>    b) void cpufreq_cooling_unregister(struct thermal_cooling_device *cdev)
+> 
+> 3) Samsung exynos platform thermal implementation is done using the
+>    generic cpu cooling APIs and the new trip type.  The temperature sensor
+>    driver present in the hwmon folder(registered as hwmon driver) is moved
+>    to thermal folder and registered as a thermal driver.
+> 
+> A simple data/control flow diagrams is shown below,
+> 
+> Core Linux thermal <----->  Exynos thermal interface <----- Temperature Sensor
+>           |                             |
+>          \|/                            |
+>   Cpufreq cooling device <---------------
+> 
+> TODO:
+> *Will send the DT enablement patches later after the driver is merged.
+> 
+> This patch:
+> 
+> Add support for generic cpu thermal cooling low level implementations
+> using frequency scaling up/down based on the registration parameters.
+> Different cpu related cooling devices can be registered by the user and
+> the binding of these cooling devices to the corresponding trip points can
+> be easily done as the registration APIs return the cooling device pointer.
+> The user of these APIs are responsible for passing clipping frequency .
+> The drivers can also register to recieve notification about any cooling
+> action called.
+> 
+> Cc: Guenter Roeck <guenter.roeck@ericsson.com>
+> Cc: SangWook Ju <sw.ju@samsung.com>
+> Cc: Durgadoss <durgadoss.r@intel.com>
+> Cc: Len Brown <lenb@kernel.org>
+> Cc: Jean Delvare <khali@linux-fr.org>
+> Cc: Kyungmin Park <kmpark@infradead.org>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+> Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> Signed-off-by: Amit Daniel Kachhap <amit.daniel@samsung.com>
 
-> Add optional support for i2c bus pin configuration using pinctrl interface
->
-> Cc: Ben Dooks <ben-linux@fluff.org>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-(...)
-> diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
-(...)
-> -       else
-> -               if (s3c24xx_i2c_parse_dt_gpio(i2c))
-> +       } else if (!IS_ERR_OR_NULL(i2c->pctrl) &&
-> +                       !IS_ERR_OR_NULL(i2c->pctrl_state)) {
+Can you please resend the patch inline (i.e. not as an attachment)?
 
-You don't need to check i2c->pctrl here, just check i2c->pctrl_state.
-
-If i2c->pctrl failed the other one will be null too, anyway.
-(Or the struct isn't kzalloc:ed properly... which I assume.)
-
-> +               if (pinctrl_select_state(i2c->pctrl, i2c->pctrl_state)) {
-> +                       dev_err(i2c->dev, "failed to configure io-pins\n");
-> +                       return -ENXIO;
-> +               }
-> +       } else if (s3c24xx_i2c_parse_dt_gpio(i2c)) {
->                         return -EINVAL;
-> +       }
->
->         /* write slave address */
->
-> @@ -1013,6 +1022,10 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
->         i2c->adap.algo_data = i2c;
->         i2c->adap.dev.parent = &pdev->dev;
->
-> +       i2c->pctrl = devm_pinctrl_get(i2c->dev);
-> +       if (!IS_ERR_OR_NULL(i2c->pctrl))
-> +               i2c->pctrl_state = pinctrl_lookup_state(i2c->pctrl, "default");
-> +
-
-If all you do is select the default state (later, in the init function)
-the use devm_pinctrl_get_select_default() and be done
-with it.
-
-In any case do not open code the string "default", use
-PINCTRL_STATE_DEFAULT which defines to that string.
-
-Yours,
-Linus Walleij
+Rafael
