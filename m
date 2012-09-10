@@ -1,27 +1,87 @@
-From: Mike Dyer <mike.dyer@md-soft.co.uk>
-Subject: MFC Encode on S5PV210 hangs
-Date: Sun, 09 Sep 2012 20:21:54 +0100
-Message-ID: <1347218514.1641.4.camel@edge.config>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: video: exynos_dp: Add device tree based discovery support
+Date: Mon, 10 Sep 2012 10:31:22 +0900
+Message-ID: <001301cd8ef3$fc594b80$f50be280$%han@samsung.com>
+References: <1346835251-1276-1-git-send-email-~@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-media@vger.kernel.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout2.samsung.com ([203.254.224.25]:28319 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753313Ab2IJBbY (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sun, 9 Sep 2012 21:31:24 -0400
+In-reply-to: <1346835251-1276-1-git-send-email-~@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, 'Jingoo Han' <jg1.han@samsung.com>
 
-Hi All,
+On Wednesday, September 05, 2012 5:54 PM Ajay Kumar wrote
+> 
+> From: Ajay Kumar <ajaykumar.rs@samsung.com>
+> 
+> Add device tree match table for Exynos DP
+> Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
 
-I'm trying to use the MFC encoder to generate an H264 bitstream using
-the V4L2 interface.  I've tried using my own application, and also the
-example encode application here:
-git://git.infradead.org/users/kmpark/public-apps
+Please insert one line between the commit message and Signed-off-by.
 
-Both exhibit the same behavior.  Input frames are queued up until the
-input queue is full, but only one frame is emitted (which I guess is the
-H264 header).  The encoder then just sits there.
+Also, add '[PATCH]' to subject as follow:
+     [PATCH] video: exynos_dp: Add device tree based discovery support
 
-I'm not sure where to start looking, so any advice is appreciated.
+Last, pay attention of your mail address and name.
+Um, now, you are using "~@samsung.com" as mail address and name.
+Please configure your mail program in order to set "Ajay Kumar"
+and "ajaykumar.rs@samsung.com".
 
-Cheers,
-Mike
+If you want to get reviewed, please keep the basic rules
+as I mentioned above.
+
+
+Best regards,
+Jingoo Han
+
+
+> ---
+>  drivers/video/exynos/exynos_dp_core.c |   10 ++++++++++
+>  1 files changed, 10 insertions(+), 0 deletions(-)
+> 
+> diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
+> index c6c016a..3bccd6b 100644
+> --- a/drivers/video/exynos/exynos_dp_core.c
+> +++ b/drivers/video/exynos/exynos_dp_core.c
+> @@ -18,6 +18,7 @@
+>  #include <linux/io.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/delay.h>
+> +#include <linux/of.h>
+> 
+>  #include <video/exynos_dp.h>
+> 
+> @@ -1019,6 +1020,14 @@ static const struct dev_pm_ops exynos_dp_pm_ops = {
+>  	SET_SYSTEM_SLEEP_PM_OPS(exynos_dp_suspend, exynos_dp_resume)
+>  };
+> 
+> +#ifdef CONFIG_OF
+> +static const struct of_device_id exynos_dp_match[] = {
+> +	{ .compatible = "samsung,exynos5-dp" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_dp_match);
+> +#endif
+> +
+>  static struct platform_driver exynos_dp_driver = {
+>  	.probe		= exynos_dp_probe,
+>  	.remove		= __devexit_p(exynos_dp_remove),
+> @@ -1026,6 +1035,7 @@ static struct platform_driver exynos_dp_driver = {
+>  		.name	= "exynos-dp",
+>  		.owner	= THIS_MODULE,
+>  		.pm	= &exynos_dp_pm_ops,
+> +		.of_match_table = of_match_ptr(exynos_dp_match),
+>  	},
+>  };
+> 
+> --
+> 1.7.0.4
