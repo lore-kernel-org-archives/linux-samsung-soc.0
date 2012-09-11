@@ -1,125 +1,57 @@
 From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 00/16] ARM: big platform data header rename
-Date: Tue, 11 Sep 2012 14:59:10 +0200
-Message-ID: <1347368350-31212-1-git-send-email-arnd@arndb.de>
-References: <1347368245-30989-1-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Subject: [PATCH 15/16] ARM: samsung: move platform_data definitions
+Date: Tue, 11 Sep 2012 15:02:38 +0200
+Message-ID: <1347368559-31329-3-git-send-email-arnd@arndb.de>
+References: <1347368350-31212-1-git-send-email-arnd@arndb.de>
+ <1347368559-31329-1-git-send-email-arnd@arndb.de>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from moutng.kundenserver.de ([212.227.126.186]:59525 "EHLO
+Received: from moutng.kundenserver.de ([212.227.126.187]:58331 "EHLO
 	moutng.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751040Ab2IKM7X (ORCPT
+	with ESMTP id S1752269Ab2IKNEG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Sep 2012 08:59:23 -0400
-In-Reply-To: <1347368245-30989-1-git-send-email-arnd@arndb.de>
+	Tue, 11 Sep 2012 09:04:06 -0400
+In-Reply-To: <1347368559-31329-1-git-send-email-arnd@arndb.de>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, netdev@vger.kernel.org, openezx-devel@lists.openezx.org, spear-devel@list.st.com, davinci-linux-open-source@linux.davincidsp.com, linux-arm-msm@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Arnd Bergmann <arnd@arndb.de>, Kukjin Kim <kgene.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Ben Dooks <ben-linux@fluff.org>, Mark Brown <broonie@opensource.wolfsonmicro.com>, Jeff Garzik <jgarzik@pobox.com>, Guenter Roeck <linux@roeck-us.net>, "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Bryan Wu <bryan.wu@canonical.com>, Richard Purdie <rpurdie@rpsys.net>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Mauro Carvalho Chehab <mchehab@infradead.org>, Chris Ball <cjb@laptop.org>, David Woodhouse <dwmw2@infradead.org>, Grant Likely <grant.likely@secretlab.ca>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alan Stern <stern@rowland.harvard.edu>, Sangbeom Kim <sbkim73@samsung.com>, Liam
 
-As we discussed at the ARM mini summit in San Diego, we are
-going to move all platform specific header files that are used
-in drivers out of the mach-* directories, at least for those
-platforms that we want to have in a multiplatform kernel.
+Platform data for device drivers should be defined in
+include/linux/platform_data/*.h, not in the architecture
+and platform specific directories.
 
-A big step in this direction is to move all the platform_data
-definitions into include/linux/platform_data/. This takes
-care of about a third of the header files in question and
-should be relatively uncontroversial.
+This moves such data out of the samsung include directories
 
-I changed the file names after the rename to be
-include/linux/${subsystem}-${driver}.h where possible, to
-have a more consistent naming there.
-
-I would like to merge the series through the arm-soc tree
-as an early branch so other branches can be based on top
-or merge this branch into the other one to avoid conflicts.
-
-Platform maintainers: please provide ACKs so I can take
-it into the for-next branch as a stable sub-branch.
-
-Driver maintainers: There should be nothing controversial
-here, just a heads-up so you know that some one-line changes
-are coming through the arm-soc tree that might cause an
-occasional merge conflict. I've put a lot of people on
-bcc in this mail so they know what the individual ones are
-about. If you have specific comments, please reply on the
-patches you are Cc'd on.
-
-	Arnd
-
-Arnd Bergmann (16):
-  ARM: at91: move platform_data definitions
-  ARM: davinci: move platform_data definitions
-  ARM: ep93xx: move platform_data definitions
-  ARM: imx: move platform_data definitions
-  ARM: msm: move platform_data definitions
-  ARM: netx: move platform_data definitions
-  ARM: pxa: move platform_data definitions
-  ARM: sa1100: move platform_data definitions
-  ARM: tegra: move platform_data definitions
-  ARM: vt8500: move platform_data definitions
-  ARM: w90x900: move platform_data definitions
-  ARM: nomadik: move platform_data definitions
-  ARM: omap: move platform_data definitions
-  ARM: orion: move platform_data definitions
-  ARM: samsung: move platform_data definitions
-  ARM: spear: move platform_data definitions
-
- Documentation/spi/ep93xx_spi                       |    2 +-
- arch/arm/mach-at91/at91sam9g45_devices.c           |    2 +-
- arch/arm/mach-at91/at91sam9rl_devices.c            |    2 +-
- arch/arm/mach-at91/include/mach/at_hdmac.h         |   61 -------
- arch/arm/mach-at91/include/mach/atmel-mci.h        |    2 +-
- arch/arm/mach-davinci/aemif.c                      |    2 +-
- arch/arm/mach-davinci/board-da830-evm.c            |    8 +-
- arch/arm/mach-davinci/board-da850-evm.c            |    6 +-
- arch/arm/mach-davinci/board-dm355-evm.c            |    8 +-
- arch/arm/mach-davinci/board-dm355-leopard.c        |    8 +-
- arch/arm/mach-davinci/board-dm365-evm.c            |    8 +-
- arch/arm/mach-davinci/board-dm644x-evm.c           |   10 +-
- arch/arm/mach-davinci/board-dm646x-evm.c           |    6 +-
- arch/arm/mach-davinci/board-mityomapl138.c         |    4 +-
- arch/arm/mach-davinci/board-neuros-osd2.c          |    8 +-
- arch/arm/mach-davinci/board-sffsdr.c               |    4 +-
- arch/arm/mach-davinci/davinci.h                    |    4 +-
- arch/arm/mach-davinci/devices.c                    |    4 +-
- arch/arm/mach-davinci/dm355.c                      |    4 +-
- arch/arm/mach-davinci/dm365.c                      |    6 +-
- arch/arm/mach-davinci/dm644x.c                     |    2 +-
- arch/arm/mach-davinci/dm646x.c                     |    2 +-
- arch/arm/mach-davinci/include/mach/aemif.h         |   36 ----
- arch/arm/mach-davinci/include/mach/asp.h           |  137 ------------=
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: Jeff Garzik <jgarzik@pobox.com>
+Cc: Guenter Roeck <linux@roeck-us.net>
+Cc: "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>
+Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Bryan Wu <bryan.wu@canonical.com>
+Cc: Richard Purdie <rpurdie@rpsys.net>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
+Cc: Chris Ball <cjb@laptop.org>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Cc: Felipe Balbi <balbi@ti.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>
+Cc: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Liam Girdwood <lrg@ti.com>
+Cc: linux-samsung-soc@vger.kernel.org
 ---
- arch/arm/mach-davinci/include/mach/da8xx.h         |   10 +-
- arch/arm/mach-davinci/include/mach/i2c.h           |   26 ---
- arch/arm/mach-davinci/include/mach/keyscan.h       |   42 -----
- arch/arm/mach-davinci/include/mach/mmc.h           |   39 -----
- arch/arm/mach-davinci/include/mach/nand.h          |   90 ----------
- arch/arm/mach-davinci/include/mach/spi.h           |   89 ----------
- arch/arm/mach-davinci/include/mach/tnetv107x.h     |    4 +-
- arch/arm/mach-davinci/include/mach/usb.h           |   59 -------
- arch/arm/mach-davinci/usb.c                        |    2 +-
- arch/arm/mach-dove/common.c                        |    2 +-
- arch/arm/mach-ep93xx/core.c                        |    6 +-
- arch/arm/mach-ep93xx/dma.c                         |    2 +-
- arch/arm/mach-ep93xx/edb93xx.c                     |    4 +-
- arch/arm/mach-ep93xx/include/mach/dma.h            |   93 -----------
- arch/arm/mach-ep93xx/include/mach/ep93xx_keypad.h  |   35 ----
- arch/arm/mach-ep93xx/include/mach/ep93xx_spi.h     |   29 ----
- arch/arm/mach-ep93xx/include/mach/fb.h             |   56 -------
- arch/arm/mach-ep93xx/simone.c                      |    2 +-
- arch/arm/mach-ep93xx/snappercl15.c                 |    2 +-
- arch/arm/mach-ep93xx/vision_ep9307.c               |    4 +-
  arch/arm/mach-exynos/dev-audio.c                   |    2 +-
  arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
- arch/arm/mach-exynos/include/mach/ohci.h           |   21 ---
- arch/arm/mach-exynos/mach-nuri.c                   |    6 +-
- arch/arm/mach-exynos/mach-origen.c                 |    6 +-
+ arch/arm/mach-exynos/mach-nuri.c                   |    6 +++---
+ arch/arm/mach-exynos/mach-origen.c                 |    6 +++---
  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 +-
- arch/arm/mach-exynos/mach-smdkv310.c               |    6 +-
- arch/arm/mach-exynos/mach-universal_c210.c         |    4 +-
+ arch/arm/mach-exynos/mach-smdkv310.c               |    6 +++---
+ arch/arm/mach-exynos/mach-universal_c210.c         |    4 ++--
  arch/arm/mach-exynos/setup-i2c0.c                  |    2 +-
  arch/arm/mach-exynos/setup-i2c1.c                  |    2 +-
  arch/arm/mach-exynos/setup-i2c2.c                  |    2 +-
@@ -128,819 +60,1651 @@ Arnd Bergmann (16):
  arch/arm/mach-exynos/setup-i2c5.c                  |    2 +-
  arch/arm/mach-exynos/setup-i2c6.c                  |    2 +-
  arch/arm/mach-exynos/setup-i2c7.c                  |    2 +-
- arch/arm/mach-imx/ehci-imx25.c                     |    2 +-
- arch/arm/mach-imx/ehci-imx27.c                     |    2 +-
- arch/arm/mach-imx/ehci-imx31.c                     |    2 +-
- arch/arm/mach-imx/ehci-imx35.c                     |    2 +-
- arch/arm/mach-imx/ehci-imx5.c                      |    2 +-
- arch/arm/mach-imx/mach-mx31moboard.c               |    2 +-
- arch/arm/mach-imx/mx1-camera-fiq-ksym.c            |    2 +-
- arch/arm/mach-kirkwood/board-dreamplug.c           |    2 +-
- arch/arm/mach-kirkwood/board-goflexnet.c           |    2 +-
- arch/arm/mach-kirkwood/common.c                    |   10 +-
- arch/arm/mach-kirkwood/d2net_v2-setup.c            |    2 +-
- arch/arm/mach-kirkwood/db88f6281-bp-setup.c        |    2 +-
- arch/arm/mach-kirkwood/dockstar-setup.c            |    2 +-
- arch/arm/mach-kirkwood/guruplug-setup.c            |    2 +-
- arch/arm/mach-kirkwood/include/mach/leds-netxbig.h |   55 ------
- arch/arm/mach-kirkwood/include/mach/leds-ns2.h     |   26 ---
- arch/arm/mach-kirkwood/netspace_v2-setup.c         |    2 +-
- arch/arm/mach-kirkwood/netxbig_v2-setup.c          |    2 +-
- arch/arm/mach-kirkwood/openrd-setup.c              |    2 +-
- arch/arm/mach-kirkwood/rd88f6281-setup.c           |    2 +-
- arch/arm/mach-kirkwood/sheevaplug-setup.c          |    2 +-
- arch/arm/mach-mmp/aspenite.c                       |    2 +-
- arch/arm/mach-mmp/include/mach/mmp2.h              |    2 +-
- arch/arm/mach-mmp/include/mach/pxa168.h            |    4 +-
- arch/arm/mach-mmp/include/mach/pxa910.h            |    2 +-
- arch/arm/mach-mmp/include/mach/sram.h              |   35 ----
- arch/arm/mach-mmp/sram.c                           |    2 +-
- arch/arm/mach-mmp/teton_bga.c                      |    2 +-
- arch/arm/mach-msm/board-qsd8x50.c                  |    2 +-
- arch/arm/mach-msm/board-trout-mmc.c                |    2 +-
- arch/arm/mach-msm/board-trout-panel.c              |    2 +-
- arch/arm/mach-msm/devices-msm7x00.c                |    2 +-
- arch/arm/mach-msm/devices-msm7x30.c                |    2 +-
- arch/arm/mach-msm/devices-qsd8x50.c                |    2 +-
- arch/arm/mach-msm/include/mach/board.h             |    2 +-
- arch/arm/mach-msm/include/mach/mmc.h               |   30 ----
- arch/arm/mach-msm/include/mach/msm_fb.h            |  147 ------------=
-----
- arch/arm/mach-mv78xx0/common.c                     |    4 +-
- arch/arm/mach-netx/include/mach/eth.h              |   27 ---
- arch/arm/mach-netx/nxdb500.c                       |    2 +-
- arch/arm/mach-netx/nxdkn.c                         |    2 +-
- arch/arm/mach-netx/nxeb500hmi.c                    |    2 +-
- arch/arm/mach-nomadik/board-nhk8815.c              |    2 +-
- arch/arm/mach-nomadik/include/mach/nand.h          |   16 --
- arch/arm/mach-omap1/board-ams-delta.c              |    2 +-
- arch/arm/mach-omap1/board-fsample.c                |    2 +-
- arch/arm/mach-omap1/board-h2.c                     |    2 +-
- arch/arm/mach-omap1/board-h3.c                     |    2 +-
- arch/arm/mach-omap1/board-htcherald.c              |    2 +-
- arch/arm/mach-omap1/board-innovator.c              |    2 +-
- arch/arm/mach-omap1/board-nokia770.c               |    4 +-
- arch/arm/mach-omap1/board-osk.c                    |    2 +-
- arch/arm/mach-omap1/board-palmte.c                 |    2 +-
- arch/arm/mach-omap1/board-palmtt.c                 |    2 +-
- arch/arm/mach-omap1/board-palmz71.c                |    2 +-
- arch/arm/mach-omap1/board-perseus2.c               |    2 +-
- arch/arm/mach-omap1/board-sx1.c                    |    2 +-
- arch/arm/mach-omap1/mcbsp.c                        |    2 +-
- arch/arm/mach-omap2/board-3430sdp.c                |    2 +-
- arch/arm/mach-omap2/board-cm-t35.c                 |    4 +-
- arch/arm/mach-omap2/board-cm-t3517.c               |    2 +-
- arch/arm/mach-omap2/board-devkit8000.c             |    4 +-
- arch/arm/mach-omap2/board-flash.c                  |    4 +-
- arch/arm/mach-omap2/board-igep0020.c               |    2 +-
- arch/arm/mach-omap2/board-ldp.c                    |    2 +-
- arch/arm/mach-omap2/board-n8x0.c                   |    4 +-
- arch/arm/mach-omap2/board-omap3beagle.c            |    2 +-
- arch/arm/mach-omap2/board-omap3evm.c               |    4 +-
- arch/arm/mach-omap2/board-omap3pandora.c           |    4 +-
- arch/arm/mach-omap2/board-omap3stalker.c           |    4 +-
- arch/arm/mach-omap2/board-omap3touchbook.c         |    4 +-
- arch/arm/mach-omap2/board-overo.c                  |    4 +-
- arch/arm/mach-omap2/board-rm680.c                  |    2 +-
- arch/arm/mach-omap2/board-rx51-peripherals.c       |    4 +-
- arch/arm/mach-omap2/board-rx51-video.c             |    2 +-
- arch/arm/mach-omap2/board-rx51.c                   |    2 +-
- arch/arm/mach-omap2/board-zoom-display.c           |    2 +-
- arch/arm/mach-omap2/common-board-devices.c         |    4 +-
- arch/arm/mach-omap2/devices.c                      |    2 +-
- arch/arm/mach-omap2/dsp.c                          |    2 +-
- arch/arm/mach-omap2/gpmc-nand.c                    |    2 +-
- arch/arm/mach-omap2/gpmc-onenand.c                 |    2 +-
- arch/arm/mach-omap2/mcbsp.c                        |    2 +-
- arch/arm/mach-omap2/omap_hwmod_2420_data.c         |    2 +-
- arch/arm/mach-omap2/omap_hwmod_2430_data.c         |    4 +-
- arch/arm/mach-omap2/omap_hwmod_2xxx_ipblock_data.c |    2 +-
- arch/arm/mach-omap2/omap_hwmod_3xxx_data.c         |    4 +-
- arch/arm/mach-omap2/omap_hwmod_44xx_data.c         |    4 +-
- arch/arm/mach-omap2/voltage.h                      |    2 +-
- arch/arm/mach-orion5x/common.c                     |    4 +-
- arch/arm/mach-orion5x/db88f5281-setup.c            |    2 +-
- arch/arm/mach-orion5x/kurobox_pro-setup.c          |    2 +-
- arch/arm/mach-pxa/am200epd.c                       |    2 +-
- arch/arm/mach-pxa/am300epd.c                       |    2 +-
- arch/arm/mach-pxa/balloon3.c                       |    8 +-
- arch/arm/mach-pxa/cm-x270.c                        |    4 +-
- arch/arm/mach-pxa/cm-x2xx.c                        |    2 +-
- arch/arm/mach-pxa/cm-x300.c                        |   10 +-
- arch/arm/mach-pxa/colibri-evalboard.c              |    4 +-
- arch/arm/mach-pxa/colibri-pxa270-income.c          |    6 +-
- arch/arm/mach-pxa/colibri-pxa300.c                 |    4 +-
- arch/arm/mach-pxa/colibri-pxa320.c                 |    4 +-
- arch/arm/mach-pxa/colibri-pxa3xx.c                 |    6 +-
- arch/arm/mach-pxa/corgi.c                          |    4 +-
- arch/arm/mach-pxa/csb726.c                         |    4 +-
- arch/arm/mach-pxa/devices.c                        |   16 +-
- arch/arm/mach-pxa/em-x270.c                        |   10 +-
- arch/arm/mach-pxa/eseries.c                        |    4 +-
- arch/arm/mach-pxa/ezx.c                            |    8 +-
- arch/arm/mach-pxa/gumstix.c                        |    2 +-
- arch/arm/mach-pxa/hx4700.c                         |    2 +-
- arch/arm/mach-pxa/idp.c                            |    4 +-
- arch/arm/mach-pxa/include/mach/arcom-pcmcia.h      |   11 --
- arch/arm/mach-pxa/include/mach/camera.h            |   44 -----
- arch/arm/mach-pxa/include/mach/irda.h              |   25 ---
- arch/arm/mach-pxa/include/mach/mmc.h               |   28 ----
- arch/arm/mach-pxa/include/mach/ohci.h              |   36 ----
- arch/arm/mach-pxa/include/mach/palmasoc.h          |    8 -
- arch/arm/mach-pxa/include/mach/pata_pxa.h          |   33 ----
- arch/arm/mach-pxa/include/mach/pxa3xx-u2d.h        |   35 ----
- arch/arm/mach-pxa/include/mach/pxa930_rotary.h     |   20 ---
- arch/arm/mach-pxa/include/mach/pxa930_trkball.h    |   10 --
- arch/arm/mach-pxa/include/mach/pxafb.h             |  175 ------------=
---------
- arch/arm/mach-pxa/littleton.c                      |    8 +-
- arch/arm/mach-pxa/lpd270.c                         |    8 +-
- arch/arm/mach-pxa/lubbock.c                        |    6 +-
- arch/arm/mach-pxa/magician.c                       |    8 +-
- arch/arm/mach-pxa/mainstone.c                      |   10 +-
- arch/arm/mach-pxa/mioa701.c                        |    8 +-
- arch/arm/mach-pxa/mxm8x10.c                        |    8 +-
- arch/arm/mach-pxa/palm27x.c                        |    8 +-
- arch/arm/mach-pxa/palmld.c                         |   10 +-
- arch/arm/mach-pxa/palmt5.c                         |   10 +-
- arch/arm/mach-pxa/palmtc.c                         |    6 +-
- arch/arm/mach-pxa/palmte2.c                        |    8 +-
- arch/arm/mach-pxa/palmtreo.c                       |   14 +-
- arch/arm/mach-pxa/palmtx.c                         |   10 +-
- arch/arm/mach-pxa/palmz72.c                        |   12 +-
- arch/arm/mach-pxa/pcm990-baseboard.c               |    8 +-
- arch/arm/mach-pxa/poodle.c                         |    6 +-
- arch/arm/mach-pxa/pxa27x.c                         |    2 +-
- arch/arm/mach-pxa/pxa2xx.c                         |    2 +-
- arch/arm/mach-pxa/pxa3xx-ulpi.c                    |    2 +-
- arch/arm/mach-pxa/pxa3xx.c                         |    2 +-
- arch/arm/mach-pxa/raumfeld.c                       |    8 +-
- arch/arm/mach-pxa/saar.c                           |    2 +-
- arch/arm/mach-pxa/spitz.c                          |    8 +-
- arch/arm/mach-pxa/stargate2.c                      |    2 +-
- arch/arm/mach-pxa/tavorevb.c                       |    4 +-
- arch/arm/mach-pxa/tosa.c                           |    4 +-
- arch/arm/mach-pxa/trizeps4.c                       |    8 +-
- arch/arm/mach-pxa/viper.c                          |    4 +-
- arch/arm/mach-pxa/vpac270.c                        |    8 +-
- arch/arm/mach-pxa/z2.c                             |    6 +-
- arch/arm/mach-pxa/zeus.c                           |    8 +-
- arch/arm/mach-pxa/zylonite.c                       |   10 +-
- arch/arm/mach-s3c24xx/common-smdk.c                |    4 +-
- arch/arm/mach-s3c24xx/include/mach/leds-gpio.h     |   28 ----
+ arch/arm/mach-s3c24xx/common-smdk.c                |    4 ++--
  arch/arm/mach-s3c24xx/mach-amlm5900.c              |    2 +-
- arch/arm/mach-s3c24xx/mach-anubis.c                |    6 +-
- arch/arm/mach-s3c24xx/mach-at2440evb.c             |    6 +-
- arch/arm/mach-s3c24xx/mach-bast.c                  |    8 +-
- arch/arm/mach-s3c24xx/mach-gta02.c                 |   10 +-
- arch/arm/mach-s3c24xx/mach-h1940.c                 |    8 +-
- arch/arm/mach-s3c24xx/mach-jive.c                  |    6 +-
- arch/arm/mach-s3c24xx/mach-mini2440.c              |   10 +-
- arch/arm/mach-s3c24xx/mach-n30.c                   |    8 +-
+ arch/arm/mach-s3c24xx/mach-anubis.c                |    6 +++---
+ arch/arm/mach-s3c24xx/mach-at2440evb.c             |    6 +++---
+ arch/arm/mach-s3c24xx/mach-bast.c                  |    8 ++++----
+ arch/arm/mach-s3c24xx/mach-gta02.c                 |   10 +++++-----
+ arch/arm/mach-s3c24xx/mach-h1940.c                 |    8 ++++----
+ arch/arm/mach-s3c24xx/mach-jive.c                  |    6 +++---
+ arch/arm/mach-s3c24xx/mach-mini2440.c              |   10 +++++-----
+ arch/arm/mach-s3c24xx/mach-n30.c                   |    8 ++++----
  arch/arm/mach-s3c24xx/mach-nexcoder.c              |    2 +-
- arch/arm/mach-s3c24xx/mach-osiris.c                |    4 +-
+ arch/arm/mach-s3c24xx/mach-osiris.c                |    4 ++--
  arch/arm/mach-s3c24xx/mach-otom.c                  |    2 +-
- arch/arm/mach-s3c24xx/mach-qt2410.c                |    8 +-
- arch/arm/mach-s3c24xx/mach-rx1950.c                |   10 +-
+ arch/arm/mach-s3c24xx/mach-qt2410.c                |    8 ++++----
+ arch/arm/mach-s3c24xx/mach-rx1950.c                |   10 +++++-----
  arch/arm/mach-s3c24xx/mach-rx3715.c                |    2 +-
  arch/arm/mach-s3c24xx/mach-smdk2410.c              |    2 +-
- arch/arm/mach-s3c24xx/mach-smdk2413.c              |    4 +-
- arch/arm/mach-s3c24xx/mach-smdk2416.c              |    8 +-
+ arch/arm/mach-s3c24xx/mach-smdk2413.c              |    4 ++--
+ arch/arm/mach-s3c24xx/mach-smdk2416.c              |    8 ++++----
  arch/arm/mach-s3c24xx/mach-smdk2440.c              |    2 +-
  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    2 +-
  arch/arm/mach-s3c24xx/mach-tct_hammer.c            |    2 +-
- arch/arm/mach-s3c24xx/mach-vr1000.c                |    6 +-
- arch/arm/mach-s3c24xx/mach-vstms.c                 |    4 +-
+ arch/arm/mach-s3c24xx/mach-vr1000.c                |    6 +++---
+ arch/arm/mach-s3c24xx/mach-vstms.c                 |    4 ++--
  arch/arm/mach-s3c24xx/setup-i2c.c                  |    2 +-
  arch/arm/mach-s3c24xx/simtec-audio.c               |    2 +-
  arch/arm/mach-s3c24xx/simtec-usb.c                 |    2 +-
  arch/arm/mach-s3c64xx/dev-audio.c                  |    2 +-
  arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
  arch/arm/mach-s3c64xx/mach-crag6410-module.c       |    2 +-
- arch/arm/mach-s3c64xx/mach-crag6410.c              |    4 +-
- arch/arm/mach-s3c64xx/mach-hmt.c                   |    4 +-
- arch/arm/mach-s3c64xx/mach-mini6410.c              |    4 +-
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |    4 ++--
+ arch/arm/mach-s3c64xx/mach-hmt.c                   |    4 ++--
+ arch/arm/mach-s3c64xx/mach-mini6410.c              |    4 ++--
  arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
- arch/arm/mach-s3c64xx/mach-real6410.c              |    4 +-
- arch/arm/mach-s3c64xx/mach-smartq.c                |    8 +-
+ arch/arm/mach-s3c64xx/mach-real6410.c              |    4 ++--
+ arch/arm/mach-s3c64xx/mach-smartq.c                |    8 ++++----
  arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
- arch/arm/mach-s3c64xx/mach-smdk6410.c              |    6 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |    6 +++---
  arch/arm/mach-s3c64xx/setup-i2c0.c                 |    2 +-
  arch/arm/mach-s3c64xx/setup-i2c1.c                 |    2 +-
  arch/arm/mach-s3c64xx/setup-ide.c                  |    2 +-
  arch/arm/mach-s5p64x0/dev-audio.c                  |    2 +-
- arch/arm/mach-s5p64x0/mach-smdk6440.c              |    4 +-
- arch/arm/mach-s5p64x0/mach-smdk6450.c              |    4 +-
+ arch/arm/mach-s5p64x0/mach-smdk6440.c              |    4 ++--
+ arch/arm/mach-s5p64x0/mach-smdk6450.c              |    4 ++--
  arch/arm/mach-s5p64x0/setup-i2c0.c                 |    2 +-
  arch/arm/mach-s5p64x0/setup-i2c1.c                 |    2 +-
  arch/arm/mach-s5pc100/dev-audio.c                  |    2 +-
- arch/arm/mach-s5pc100/mach-smdkc100.c              |    8 +-
+ arch/arm/mach-s5pc100/mach-smdkc100.c              |    8 ++++----
  arch/arm/mach-s5pc100/setup-i2c0.c                 |    2 +-
  arch/arm/mach-s5pc100/setup-i2c1.c                 |    2 +-
  arch/arm/mach-s5pv210/dev-audio.c                  |    2 +-
  arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
- arch/arm/mach-s5pv210/mach-smdkc110.c              |    4 +-
- arch/arm/mach-s5pv210/mach-smdkv210.c              |    6 +-
+ arch/arm/mach-s5pv210/mach-smdkc110.c              |    4 ++--
+ arch/arm/mach-s5pv210/mach-smdkv210.c              |    6 +++---
  arch/arm/mach-s5pv210/mach-torbreck.c              |    2 +-
  arch/arm/mach-s5pv210/setup-i2c0.c                 |    2 +-
  arch/arm/mach-s5pv210/setup-i2c1.c                 |    2 +-
  arch/arm/mach-s5pv210/setup-i2c2.c                 |    2 +-
- arch/arm/mach-sa1100/assabet.c                     |    2 +-
- arch/arm/mach-sa1100/cerf.c                        |    2 +-
- arch/arm/mach-sa1100/collie.c                      |    2 +-
- arch/arm/mach-sa1100/include/mach/mcp.h            |   22 ---
- arch/arm/mach-sa1100/lart.c                        |    2 +-
- arch/arm/mach-sa1100/shannon.c                     |    2 +-
- arch/arm/mach-sa1100/simpad.c                      |    2 +-
- arch/arm/mach-tegra/board-harmony.c                |    4 +-
- arch/arm/mach-tegra/board-paz00.c                  |    2 +-
- arch/arm/mach-tegra/board-trimslice.c              |    2 +-
- arch/arm/mach-tegra/include/mach/kbc.h             |   62 -------
- arch/arm/mach-tegra/include/mach/sdhci.h           |   30 ----
- .../mach-tegra/include/mach/tegra_wm8903_pdata.h   |   23 ---
- arch/arm/mach-u300/core.c                          |    2 +-
- arch/arm/mach-u300/include/mach/gpio-u300.h        |   37 -----
- arch/arm/mach-ux500/board-mop500.c                 |    2 +-
- arch/arm/mach-ux500/cpu-db8500.c                   |    2 +-
- arch/arm/mach-ux500/devices-common.h               |    2 +-
- arch/arm/mach-ux500/include/mach/crypto-ux500.h    |   22 ---
- arch/arm/mach-ux500/include/mach/usb.h             |   25 ---
- arch/arm/mach-ux500/usb.c                          |    2 +-
- arch/arm/mach-vt8500/devices.c                     |    2 +-
- arch/arm/mach-vt8500/include/mach/vt8500fb.h       |   31 ----
- arch/arm/mach-w90x900/dev.c                        |    6 +-
- arch/arm/mach-w90x900/include/mach/fb.h            |   83 ----------
- arch/arm/mach-w90x900/include/mach/i2c.h           |    9 -
- arch/arm/mach-w90x900/include/mach/nuc900_spi.h    |   35 ----
- .../arm/mach-w90x900/include/mach/w90p910_keypad.h |   15 --
- arch/arm/mach-w90x900/mach-nuc950evb.c             |    2 +-
- .../plat-mxc/devices/platform-sdhci-esdhc-imx.c    |    2 +-
- arch/arm/plat-mxc/include/mach/devices-common.h    |   32 ++--
- arch/arm/plat-mxc/include/mach/dma.h               |   67 --------
- arch/arm/plat-mxc/include/mach/esdhc.h             |   43 -----
- arch/arm/plat-mxc/include/mach/i2c.h               |   21 ---
- arch/arm/plat-mxc/include/mach/imx-uart.h          |   35 ----
- arch/arm/plat-mxc/include/mach/imxfb.h             |   84 ----------
- arch/arm/plat-mxc/include/mach/mmc.h               |   39 -----
- arch/arm/plat-mxc/include/mach/mx1_camera.h        |   35 ----
- arch/arm/plat-mxc/include/mach/mx21-usbhost.h      |   38 -----
- arch/arm/plat-mxc/include/mach/mx2_cam.h           |   46 -----
- arch/arm/plat-mxc/include/mach/mx3_camera.h        |   48 ------
- arch/arm/plat-mxc/include/mach/mx3fb.h             |   53 ------
- arch/arm/plat-mxc/include/mach/mxc_ehci.h          |   59 -------
- arch/arm/plat-mxc/include/mach/mxc_nand.h          |   32 ----
- arch/arm/plat-mxc/include/mach/sdma.h              |   59 -------
- arch/arm/plat-mxc/include/mach/spi.h               |   27 ---
- arch/arm/plat-mxc/include/mach/ssi.h               |   21 ---
- arch/arm/plat-mxc/include/mach/usb.h               |   23 ---
- arch/arm/plat-mxc/ssi-fiq-ksym.c                   |    2 +-
- arch/arm/plat-nomadik/include/plat/ske.h           |   50 ------
- arch/arm/plat-omap/common.c                        |    2 +-
- arch/arm/plat-omap/include/plat/dsp.h              |   34 ----
- arch/arm/plat-omap/include/plat/keypad.h           |   52 ------
- arch/arm/plat-omap/include/plat/lcd_mipid.h        |   29 ----
- arch/arm/plat-omap/include/plat/mcbsp.h            |   62 -------
- arch/arm/plat-omap/include/plat/mcspi.h            |   23 ---
- arch/arm/plat-omap/include/plat/nand.h             |   44 -----
- arch/arm/plat-omap/include/plat/onenand.h          |   53 ------
- arch/arm/plat-omap/include/plat/remoteproc.h       |   57 -------
- arch/arm/plat-omap/include/plat/voltage.h          |   39 -----
- arch/arm/plat-orion/common.c                       |    4 +-
- arch/arm/plat-orion/include/plat/audio.h           |    7 -
- arch/arm/plat-orion/include/plat/ehci-orion.h      |   26 ---
- arch/arm/plat-orion/include/plat/mv_xor.h          |   24 ---
- arch/arm/plat-orion/include/plat/mvsdio.h          |   20 ---
- arch/arm/plat-orion/include/plat/orion_nand.h      |   26 ---
- arch/arm/plat-pxa/include/plat/pxa27x_keypad.h     |   73 --------
- arch/arm/plat-pxa/include/plat/pxa3xx_nand.h       |   79 ---------
- arch/arm/plat-samsung/devs.c                       |   20 +--
- arch/arm/plat-samsung/include/plat/ata.h           |   36 ----
- arch/arm/plat-samsung/include/plat/audio-simtec.h  |   34 ----
- arch/arm/plat-samsung/include/plat/audio.h         |   59 -------
- arch/arm/plat-samsung/include/plat/ehci.h          |   21 ---
- arch/arm/plat-samsung/include/plat/hwmon.h         |   51 ------
- arch/arm/plat-samsung/include/plat/iic.h           |   77 ---------
- arch/arm/plat-samsung/include/plat/mci.h           |   52 ------
- arch/arm/plat-samsung/include/plat/mipi_csis.h     |   43 -----
- arch/arm/plat-samsung/include/plat/nand.h          |   67 --------
- arch/arm/plat-samsung/include/plat/s3c64xx-spi.h   |   68 --------
- arch/arm/plat-samsung/include/plat/ts.h            |   25 ---
- arch/arm/plat-samsung/include/plat/udc.h           |   44 -----
- arch/arm/plat-samsung/include/plat/usb-control.h   |   43 -----
- arch/arm/plat-spear/include/plat/keyboard.h        |  164 ------------=
-------
- drivers/ata/pata_ep93xx.c                          |    2 +-
- drivers/ata/pata_pxa.c                             |    2 +-
+ arch/arm/plat-samsung/devs.c                       |   20 ++++++++++----------
  drivers/ata/pata_samsung_cf.c                      |    2 +-
- drivers/crypto/ux500/cryp/cryp_core.c              |    2 +-
- drivers/crypto/ux500/hash/hash_core.c              |    2 +-
- drivers/dma/at_hdmac_regs.h                        |    2 +-
- drivers/dma/ep93xx_dma.c                           |    2 +-
- drivers/dma/imx-dma.c                              |    2 +-
- drivers/dma/imx-sdma.c                             |    4 +-
- drivers/dma/mmp_tdma.c                             |    2 +-
- drivers/dma/mv_xor.c                               |    2 +-
  drivers/hwmon/s3c-hwmon.c                          |    2 +-
- drivers/i2c/busses/i2c-davinci.c                   |    2 +-
- drivers/i2c/busses/i2c-imx.c                       |    2 +-
- drivers/i2c/busses/i2c-nuc900.c                    |    2 +-
  drivers/i2c/busses/i2c-s3c2410.c                   |    2 +-
- drivers/input/keyboard/davinci_keyscan.c           |    2 +-
- drivers/input/keyboard/ep93xx_keypad.c             |    2 +-
- drivers/input/keyboard/nomadik-ske-keypad.c        |    2 +-
- drivers/input/keyboard/omap-keypad.c               |    2 +-
- drivers/input/keyboard/pxa27x_keypad.c             |    2 +-
- drivers/input/keyboard/pxa930_rotary.c             |    2 +-
- drivers/input/keyboard/spear-keyboard.c            |    2 +-
- drivers/input/keyboard/tegra-kbc.c                 |    2 +-
- drivers/input/keyboard/w90p910_keypad.c            |    2 +-
- drivers/input/mouse/pxa930_trkball.c               |    2 +-
  drivers/input/touchscreen/s3c2410_ts.c             |    2 +-
- drivers/leds/leds-netxbig.c                        |    2 +-
- drivers/leds/leds-ns2.c                            |    2 +-
  drivers/leds/leds-s3c24xx.c                        |    2 +-
- drivers/media/video/davinci/vpbe_venc.c            |    2 +-
- drivers/media/video/mx1_camera.c                   |    2 +-
- drivers/media/video/mx2_camera.c                   |    2 +-
- drivers/media/video/mx3_camera.c                   |    4 +-
- drivers/media/video/pxa_camera.c                   |    2 +-
  drivers/media/video/s5p-fimc/mipi-csis.c           |    2 +-
- drivers/mfd/mcp-sa11x0.c                           |    2 +-
- drivers/mmc/host/davinci_mmc.c                     |    2 +-
- drivers/mmc/host/msm_sdcc.c                        |    2 +-
- drivers/mmc/host/mvsdio.c                          |    2 +-
- drivers/mmc/host/mxcmmc.c                          |    4 +-
- drivers/mmc/host/pxamci.c                          |    2 +-
  drivers/mmc/host/s3cmci.c                          |    2 +-
- drivers/mmc/host/sdhci-esdhc-imx.c                 |    2 +-
- drivers/mmc/host/sdhci-tegra.c                     |    2 +-
- drivers/mtd/nand/davinci_nand.c                    |    4 +-
- drivers/mtd/nand/mxc_nand.c                        |    2 +-
- drivers/mtd/nand/nomadik_nand.c                    |    2 +-
- drivers/mtd/nand/omap2.c                           |    2 +-
- drivers/mtd/nand/orion_nand.c                      |    2 +-
- drivers/mtd/nand/pxa3xx_nand.c                     |    2 +-
  drivers/mtd/nand/s3c2410.c                         |    2 +-
- drivers/mtd/onenand/omap2.c                        |    2 +-
- drivers/net/ethernet/netx-eth.c                    |    2 +-
- drivers/net/irda/pxaficp_ir.c                      |    2 +-
- drivers/pcmcia/pxa2xx_viper.c                      |    2 +-
- drivers/pinctrl/pinctrl-coh901.c                   |    2 +-
- drivers/remoteproc/omap_remoteproc.c               |    2 +-
- drivers/spi/spi-davinci.c                          |    2 +-
- drivers/spi/spi-ep93xx.c                           |    4 +-
- drivers/spi/spi-imx.c                              |    2 +-
- drivers/spi/spi-nuc900.c                           |    2 +-
- drivers/spi/spi-omap2-mcspi.c                      |    2 +-
  drivers/spi/spi-s3c64xx.c                          |    2 +-
- drivers/staging/tidspbridge/core/dsp-clock.c       |    2 +-
- drivers/staging/tidspbridge/core/tiomap3430.c      |    2 +-
- drivers/staging/tidspbridge/core/tiomap3430_pwr.c  |    2 +-
- drivers/staging/tidspbridge/core/tiomap_io.c       |    2 +-
- drivers/staging/tidspbridge/rmgr/drv_interface.c   |    2 +-
- drivers/tty/serial/imx.c                           |    2 +-
- drivers/usb/gadget/imx_udc.c                       |    2 +-
  drivers/usb/gadget/s3c2410_udc.c                   |    2 +-
- drivers/usb/host/ehci-mxc.c                        |    2 +-
- drivers/usb/host/ehci-orion.c                      |    2 +-
  drivers/usb/host/ehci-s5p.c                        |    2 +-
- drivers/usb/host/imx21-hcd.h                       |    2 +-
- drivers/usb/host/ohci-da8xx.c                      |    2 +-
  drivers/usb/host/ohci-exynos.c                     |    2 +-
- drivers/usb/host/ohci-pxa27x.c                     |    4 +-
  drivers/usb/host/ohci-s3c2410.c                    |    2 +-
- drivers/usb/musb/da8xx.c                           |    2 +-
- drivers/usb/musb/ux500_dma.c                       |    2 +-
- drivers/video/ep93xx-fb.c                          |    2 +-
- drivers/video/imxfb.c                              |    2 +-
- drivers/video/msm/mddi.c                           |    2 +-
- drivers/video/msm/mddi_client_dummy.c              |    2 +-
- drivers/video/msm/mddi_client_nt35399.c            |    2 +-
- drivers/video/msm/mddi_client_toshiba.c            |    2 +-
- drivers/video/msm/mdp.c                            |    2 +-
- drivers/video/msm/mdp_hw.h                         |    2 +-
- drivers/video/msm/mdp_ppp.c                        |    2 +-
- drivers/video/msm/msm_fb.c                         |    2 +-
- drivers/video/mx3fb.c                              |    4 +-
- drivers/video/nuc900fb.c                           |    2 +-
- drivers/video/nuc900fb.h                           |    2 +-
- drivers/video/omap/lcd_mipid.c                     |    2 +-
- drivers/video/pxafb.c                              |    2 +-
- drivers/video/vt8500lcdfb.c                        |    2 +-
- drivers/video/wm8505fb.c                           |    2 +-
- include/linux/platform_data/asoc-davinci-evm.h     |  137 ++++++++++++=
-+++
- include/linux/platform_data/asoc-imx-ssi.h         |   21 +++
- include/linux/platform_data/asoc-kirkwood.h        |    7 +
- include/linux/platform_data/asoc-palm27x.h         |    8 +
- include/linux/platform_data/asoc-s3c.h             |   59 +++++++
- include/linux/platform_data/asoc-s3c24xx_simtec.h  |   34 ++++
- include/linux/platform_data/asoc-tegra_wm8903.h    |   23 +++
- include/linux/platform_data/ata-pxa.h              |   33 ++++
- include/linux/platform_data/ata-samsung_cf.h       |   36 ++++
- include/linux/platform_data/atmel-aes.h            |    2 +-
- include/linux/platform_data/camera-mx1.h           |   35 ++++
- include/linux/platform_data/camera-mx2.h           |   46 +++++
- include/linux/platform_data/camera-mx3.h           |   48 ++++++
- include/linux/platform_data/camera-pxa.h           |   44 +++++
- include/linux/platform_data/crypto-ux500.h         |   22 +++
- include/linux/platform_data/dma-atmel.h            |   61 +++++++
- include/linux/platform_data/dma-ep93xx.h           |   93 +++++++++++
- include/linux/platform_data/dma-imx-sdma.h         |   59 +++++++
- include/linux/platform_data/dma-imx.h              |   67 ++++++++
- include/linux/platform_data/dma-mmp_tdma.h         |   35 ++++
- include/linux/platform_data/dma-mv_xor.h           |   24 +++
- include/linux/platform_data/dsp-mcbsp.h            |   62 +++++++
- include/linux/platform_data/dsp-omap.h             |   34 ++++
- include/linux/platform_data/eth-netx.h             |   27 +++
- include/linux/platform_data/hwmon-s3c.h            |   51 ++++++
- include/linux/platform_data/i2c-davinci.h          |   26 +++
- include/linux/platform_data/i2c-imx.h              |   21 +++
- include/linux/platform_data/i2c-nuc900.h           |    9 +
- include/linux/platform_data/i2c-s3c2410.h          |   77 +++++++++
- include/linux/platform_data/irda-pxaficp.h         |   25 +++
- .../linux/platform_data/keyboard-pxa930_rotary.h   |   20 +++
- include/linux/platform_data/keyboard-spear.h       |  164 ++++++++++++=
-++++++
- include/linux/platform_data/keyboard-tegra-kbc.h   |   62 +++++++
- include/linux/platform_data/keypad-ep93xx.h        |   35 ++++
- include/linux/platform_data/keypad-nomadik-ske.h   |   50 ++++++
- include/linux/platform_data/keypad-omap.h          |   52 ++++++
- include/linux/platform_data/keypad-pxa27x.h        |   73 ++++++++
- include/linux/platform_data/keypad-w90p910.h       |   15 ++
- include/linux/platform_data/keyscan-davinci.h      |   42 +++++
- include/linux/platform_data/lcd-mipid.h            |   29 ++++
- .../linux/platform_data/leds-kirkwood-netxbig.h    |   55 ++++++
- include/linux/platform_data/leds-kirkwood-ns2.h    |   26 +++
- include/linux/platform_data/leds-s3c24xx.h         |   28 ++++
- include/linux/platform_data/mfd-mcp-sa11x0.h       |   22 +++
- include/linux/platform_data/mipi-csis.h            |   43 +++++
- include/linux/platform_data/mmc-davinci.h          |   39 +++++
- include/linux/platform_data/mmc-esdhc-imx.h        |   43 +++++
- include/linux/platform_data/mmc-msm_sdcc.h         |   30 ++++
- include/linux/platform_data/mmc-mvsdio.h           |   20 +++
- include/linux/platform_data/mmc-mxcmmc.h           |   39 +++++
- include/linux/platform_data/mmc-pxamci.h           |   28 ++++
- include/linux/platform_data/mmc-s3cmci.h           |   52 ++++++
- include/linux/platform_data/mmc-sdhci-tegra.h      |   30 ++++
- include/linux/platform_data/mouse-pxa930_trkball.h |   10 ++
- include/linux/platform_data/mtd-davinci-aemif.h    |   36 ++++
- include/linux/platform_data/mtd-davinci.h          |   90 ++++++++++
- include/linux/platform_data/mtd-mxc_nand.h         |   32 ++++
- include/linux/platform_data/mtd-nand-omap2.h       |   44 +++++
- include/linux/platform_data/mtd-nand-pxa3xx.h      |   79 +++++++++
- include/linux/platform_data/mtd-nand-s3c2410.h     |   67 ++++++++
- include/linux/platform_data/mtd-nomadik-nand.h     |   16 ++
- include/linux/platform_data/mtd-onenand-omap2.h    |   53 ++++++
- include/linux/platform_data/mtd-orion_nand.h       |   26 +++
- include/linux/platform_data/pcmcia-pxa2xx_viper.h  |   11 ++
- include/linux/platform_data/pinctrl-coh901.h       |   37 +++++
- include/linux/platform_data/remoteproc-omap.h      |   57 +++++++
- include/linux/platform_data/serial-imx.h           |   35 ++++
- include/linux/platform_data/smartreflex-omap.h     |   39 +++++
- include/linux/platform_data/spi-davinci.h          |   89 ++++++++++
- include/linux/platform_data/spi-ep93xx.h           |   29 ++++
- include/linux/platform_data/spi-imx.h              |   27 +++
- include/linux/platform_data/spi-nuc900.h           |   35 ++++
- include/linux/platform_data/spi-omap2-mcspi.h      |   23 +++
- include/linux/platform_data/spi-s3c64xx.h          |   68 ++++++++
- include/linux/platform_data/touchscreen-s3c2410.h  |   25 +++
- include/linux/platform_data/usb-davinci.h          |   59 +++++++
- include/linux/platform_data/usb-ehci-mxc.h         |   59 +++++++
- include/linux/platform_data/usb-ehci-orion.h       |   26 +++
- include/linux/platform_data/usb-ehci-s5p.h         |   21 +++
- include/linux/platform_data/usb-exynos.h           |   21 +++
- include/linux/platform_data/usb-imx_udc.h          |   23 +++
- include/linux/platform_data/usb-musb-ux500.h       |   25 +++
- include/linux/platform_data/usb-mx2.h              |   38 +++++
- include/linux/platform_data/usb-ohci-pxa27x.h      |   36 ++++
- include/linux/platform_data/usb-ohci-s3c2410.h     |   43 +++++
- include/linux/platform_data/usb-pxa3xx-ulpi.h      |   35 ++++
- include/linux/platform_data/usb-s3c2410_udc.h      |   44 +++++
- include/linux/platform_data/video-ep93xx.h         |   56 +++++++
- include/linux/platform_data/video-imxfb.h          |   84 ++++++++++
- include/linux/platform_data/video-msm_fb.h         |  147 ++++++++++++=
-++++
- include/linux/platform_data/video-mx3fb.h          |   53 ++++++
- include/linux/platform_data/video-nuc900fb.h       |   83 ++++++++++
- include/linux/platform_data/video-pxafb.h          |  175 ++++++++++++=
-++++++++
- include/linux/platform_data/video-vt8500lcdfb.h    |   31 ++++
- include/linux/power/smartreflex.h                  |    2 +-
- sound/soc/davinci/davinci-evm.c                    |    2 +-
- sound/soc/davinci/davinci-i2s.c                    |    2 +-
- sound/soc/davinci/davinci-mcasp.h                  |    2 +-
- sound/soc/davinci/davinci-pcm.h                    |    2 +-
- sound/soc/ep93xx/ep93xx-ac97.c                     |    2 +-
- sound/soc/ep93xx/ep93xx-i2s.c                      |    2 +-
- sound/soc/ep93xx/ep93xx-pcm.c                      |    2 +-
- sound/soc/fsl/imx-pcm-dma.c                        |    2 +-
- sound/soc/fsl/imx-pcm-fiq.c                        |    2 +-
- sound/soc/fsl/imx-ssi.c                            |    2 +-
- sound/soc/fsl/imx-ssi.h                            |    2 +-
- sound/soc/kirkwood/kirkwood-i2s.c                  |    2 +-
- sound/soc/kirkwood/kirkwood-openrd.c               |    2 +-
- sound/soc/kirkwood/kirkwood-t5325.c                |    2 +-
- sound/soc/omap/am3517evm.c                         |    2 +-
- sound/soc/omap/ams-delta.c                         |    2 +-
- sound/soc/omap/igep0020.c                          |    2 +-
- sound/soc/omap/mcbsp.c                             |    2 +-
- sound/soc/omap/n810.c                              |    2 +-
- sound/soc/omap/omap-mcbsp.c                        |    2 +-
- sound/soc/omap/omap3beagle.c                       |    2 +-
- sound/soc/omap/omap3evm.c                          |    2 +-
- sound/soc/omap/omap3pandora.c                      |    2 +-
- sound/soc/omap/osk5912.c                           |    2 +-
- sound/soc/omap/overo.c                             |    2 +-
- sound/soc/omap/rx51.c                              |    2 +-
- sound/soc/omap/sdp3430.c                           |    2 +-
- sound/soc/omap/zoom2.c                             |    2 +-
- sound/soc/pxa/palm27x.c                            |    2 +-
+ .../linux/platform_data/asoc-s3c.h                 |    0
+ .../linux/platform_data/asoc-s3c24xx_simtec.h      |    0
+ .../linux/platform_data/ata-samsung_cf.h           |    0
+ .../linux/platform_data/hwmon-s3c.h                |    0
+ .../linux/platform_data/i2c-s3c2410.h              |    0
+ .../linux/platform_data/leds-s3c24xx.h             |    0
+ .../linux/platform_data/mipi-csis.h                |    0
+ .../linux/platform_data/mmc-s3cmci.h               |    0
+ .../linux/platform_data/mtd-nand-s3c2410.h         |    0
+ .../linux/platform_data/spi-s3c64xx.h              |    0
+ .../linux/platform_data/touchscreen-s3c2410.h      |    0
+ .../linux/platform_data/usb-ehci-s5p.h             |    0
+ .../linux/platform_data/usb-exynos.h               |    0
+ .../linux/platform_data/usb-ohci-s3c2410.h         |    0
+ .../linux/platform_data/usb-s3c2410_udc.h          |    0
  sound/soc/samsung/ac97.c                           |    2 +-
  sound/soc/samsung/i2s.c                            |    2 +-
  sound/soc/samsung/pcm.c                            |    2 +-
  sound/soc/samsung/s3c24xx_simtec.c                 |    2 +-
  sound/soc/samsung/spdif.c                          |    2 +-
- sound/soc/tegra/tegra_wm8903.c                     |    2 +-
- 587 files changed, 4882 insertions(+), 4882 deletions(-)
- delete mode 100644 arch/arm/mach-at91/include/mach/at_hdmac.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/aemif.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/asp.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/i2c.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/keyscan.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/mmc.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/nand.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/spi.h
- delete mode 100644 arch/arm/mach-davinci/include/mach/usb.h
- delete mode 100644 arch/arm/mach-ep93xx/include/mach/dma.h
- delete mode 100644 arch/arm/mach-ep93xx/include/mach/ep93xx_keypad.h
- delete mode 100644 arch/arm/mach-ep93xx/include/mach/ep93xx_spi.h
- delete mode 100644 arch/arm/mach-ep93xx/include/mach/fb.h
- delete mode 100644 arch/arm/mach-exynos/include/mach/ohci.h
- delete mode 100644 arch/arm/mach-kirkwood/include/mach/leds-netxbig.h
- delete mode 100644 arch/arm/mach-kirkwood/include/mach/leds-ns2.h
- delete mode 100644 arch/arm/mach-mmp/include/mach/sram.h
- delete mode 100644 arch/arm/mach-msm/include/mach/mmc.h
- delete mode 100644 arch/arm/mach-msm/include/mach/msm_fb.h
- delete mode 100644 arch/arm/mach-netx/include/mach/eth.h
- delete mode 100644 arch/arm/mach-nomadik/include/mach/nand.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/arcom-pcmcia.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/camera.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/irda.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/mmc.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/ohci.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/palmasoc.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/pata_pxa.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/pxa3xx-u2d.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/pxa930_rotary.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/pxa930_trkball.h
- delete mode 100644 arch/arm/mach-pxa/include/mach/pxafb.h
- delete mode 100644 arch/arm/mach-s3c24xx/include/mach/leds-gpio.h
- delete mode 100644 arch/arm/mach-sa1100/include/mach/mcp.h
- delete mode 100644 arch/arm/mach-tegra/include/mach/kbc.h
- delete mode 100644 arch/arm/mach-tegra/include/mach/sdhci.h
- delete mode 100644 arch/arm/mach-tegra/include/mach/tegra_wm8903_pdata=
-=2Eh
- delete mode 100644 arch/arm/mach-u300/include/mach/gpio-u300.h
- delete mode 100644 arch/arm/mach-ux500/include/mach/crypto-ux500.h
- delete mode 100644 arch/arm/mach-ux500/include/mach/usb.h
- delete mode 100644 arch/arm/mach-vt8500/include/mach/vt8500fb.h
- delete mode 100644 arch/arm/mach-w90x900/include/mach/fb.h
- delete mode 100644 arch/arm/mach-w90x900/include/mach/i2c.h
- delete mode 100644 arch/arm/mach-w90x900/include/mach/nuc900_spi.h
- delete mode 100644 arch/arm/mach-w90x900/include/mach/w90p910_keypad.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/dma.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/esdhc.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/i2c.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/imx-uart.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/imxfb.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mmc.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mx1_camera.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mx21-usbhost.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mx2_cam.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mx3_camera.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mx3fb.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mxc_ehci.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/mxc_nand.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/sdma.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/spi.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/ssi.h
- delete mode 100644 arch/arm/plat-mxc/include/mach/usb.h
- delete mode 100644 arch/arm/plat-nomadik/include/plat/ske.h
- delete mode 100644 arch/arm/plat-omap/include/plat/dsp.h
- delete mode 100644 arch/arm/plat-omap/include/plat/keypad.h
- delete mode 100644 arch/arm/plat-omap/include/plat/lcd_mipid.h
- delete mode 100644 arch/arm/plat-omap/include/plat/mcbsp.h
- delete mode 100644 arch/arm/plat-omap/include/plat/mcspi.h
- delete mode 100644 arch/arm/plat-omap/include/plat/nand.h
- delete mode 100644 arch/arm/plat-omap/include/plat/onenand.h
- delete mode 100644 arch/arm/plat-omap/include/plat/remoteproc.h
- delete mode 100644 arch/arm/plat-omap/include/plat/voltage.h
- delete mode 100644 arch/arm/plat-orion/include/plat/audio.h
- delete mode 100644 arch/arm/plat-orion/include/plat/ehci-orion.h
- delete mode 100644 arch/arm/plat-orion/include/plat/mv_xor.h
- delete mode 100644 arch/arm/plat-orion/include/plat/mvsdio.h
- delete mode 100644 arch/arm/plat-orion/include/plat/orion_nand.h
- delete mode 100644 arch/arm/plat-pxa/include/plat/pxa27x_keypad.h
- delete mode 100644 arch/arm/plat-pxa/include/plat/pxa3xx_nand.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/ata.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/audio-simtec.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/audio.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/ehci.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/hwmon.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/iic.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/mci.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/mipi_csis.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/nand.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/ts.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/udc.h
- delete mode 100644 arch/arm/plat-samsung/include/plat/usb-control.h
- delete mode 100644 arch/arm/plat-spear/include/plat/keyboard.h
- create mode 100644 include/linux/platform_data/asoc-davinci-evm.h
- create mode 100644 include/linux/platform_data/asoc-imx-ssi.h
- create mode 100644 include/linux/platform_data/asoc-kirkwood.h
- create mode 100644 include/linux/platform_data/asoc-palm27x.h
- create mode 100644 include/linux/platform_data/asoc-s3c.h
- create mode 100644 include/linux/platform_data/asoc-s3c24xx_simtec.h
- create mode 100644 include/linux/platform_data/asoc-tegra_wm8903.h
- create mode 100644 include/linux/platform_data/ata-pxa.h
- create mode 100644 include/linux/platform_data/ata-samsung_cf.h
- create mode 100644 include/linux/platform_data/camera-mx1.h
- create mode 100644 include/linux/platform_data/camera-mx2.h
- create mode 100644 include/linux/platform_data/camera-mx3.h
- create mode 100644 include/linux/platform_data/camera-pxa.h
- create mode 100644 include/linux/platform_data/crypto-ux500.h
- create mode 100644 include/linux/platform_data/dma-atmel.h
- create mode 100644 include/linux/platform_data/dma-ep93xx.h
- create mode 100644 include/linux/platform_data/dma-imx-sdma.h
- create mode 100644 include/linux/platform_data/dma-imx.h
- create mode 100644 include/linux/platform_data/dma-mmp_tdma.h
- create mode 100644 include/linux/platform_data/dma-mv_xor.h
- create mode 100644 include/linux/platform_data/dsp-mcbsp.h
- create mode 100644 include/linux/platform_data/dsp-omap.h
- create mode 100644 include/linux/platform_data/eth-netx.h
- create mode 100644 include/linux/platform_data/hwmon-s3c.h
- create mode 100644 include/linux/platform_data/i2c-davinci.h
- create mode 100644 include/linux/platform_data/i2c-imx.h
- create mode 100644 include/linux/platform_data/i2c-nuc900.h
- create mode 100644 include/linux/platform_data/i2c-s3c2410.h
- create mode 100644 include/linux/platform_data/irda-pxaficp.h
- create mode 100644 include/linux/platform_data/keyboard-pxa930_rotary.=
-h
- create mode 100644 include/linux/platform_data/keyboard-spear.h
- create mode 100644 include/linux/platform_data/keyboard-tegra-kbc.h
- create mode 100644 include/linux/platform_data/keypad-ep93xx.h
- create mode 100644 include/linux/platform_data/keypad-nomadik-ske.h
- create mode 100644 include/linux/platform_data/keypad-omap.h
- create mode 100644 include/linux/platform_data/keypad-pxa27x.h
- create mode 100644 include/linux/platform_data/keypad-w90p910.h
- create mode 100644 include/linux/platform_data/keyscan-davinci.h
- create mode 100644 include/linux/platform_data/lcd-mipid.h
- create mode 100644 include/linux/platform_data/leds-kirkwood-netxbig.h
- create mode 100644 include/linux/platform_data/leds-kirkwood-ns2.h
- create mode 100644 include/linux/platform_data/leds-s3c24xx.h
- create mode 100644 include/linux/platform_data/mfd-mcp-sa11x0.h
- create mode 100644 include/linux/platform_data/mipi-csis.h
- create mode 100644 include/linux/platform_data/mmc-davinci.h
- create mode 100644 include/linux/platform_data/mmc-esdhc-imx.h
- create mode 100644 include/linux/platform_data/mmc-msm_sdcc.h
- create mode 100644 include/linux/platform_data/mmc-mvsdio.h
- create mode 100644 include/linux/platform_data/mmc-mxcmmc.h
- create mode 100644 include/linux/platform_data/mmc-pxamci.h
- create mode 100644 include/linux/platform_data/mmc-s3cmci.h
- create mode 100644 include/linux/platform_data/mmc-sdhci-tegra.h
- create mode 100644 include/linux/platform_data/mouse-pxa930_trkball.h
- create mode 100644 include/linux/platform_data/mtd-davinci-aemif.h
- create mode 100644 include/linux/platform_data/mtd-davinci.h
- create mode 100644 include/linux/platform_data/mtd-mxc_nand.h
- create mode 100644 include/linux/platform_data/mtd-nand-omap2.h
- create mode 100644 include/linux/platform_data/mtd-nand-pxa3xx.h
- create mode 100644 include/linux/platform_data/mtd-nand-s3c2410.h
- create mode 100644 include/linux/platform_data/mtd-nomadik-nand.h
- create mode 100644 include/linux/platform_data/mtd-onenand-omap2.h
- create mode 100644 include/linux/platform_data/mtd-orion_nand.h
- create mode 100644 include/linux/platform_data/pcmcia-pxa2xx_viper.h
- create mode 100644 include/linux/platform_data/pinctrl-coh901.h
- create mode 100644 include/linux/platform_data/remoteproc-omap.h
- create mode 100644 include/linux/platform_data/serial-imx.h
- create mode 100644 include/linux/platform_data/smartreflex-omap.h
- create mode 100644 include/linux/platform_data/spi-davinci.h
- create mode 100644 include/linux/platform_data/spi-ep93xx.h
- create mode 100644 include/linux/platform_data/spi-imx.h
- create mode 100644 include/linux/platform_data/spi-nuc900.h
- create mode 100644 include/linux/platform_data/spi-omap2-mcspi.h
- create mode 100644 include/linux/platform_data/spi-s3c64xx.h
- create mode 100644 include/linux/platform_data/touchscreen-s3c2410.h
- create mode 100644 include/linux/platform_data/usb-davinci.h
- create mode 100644 include/linux/platform_data/usb-ehci-mxc.h
- create mode 100644 include/linux/platform_data/usb-ehci-orion.h
- create mode 100644 include/linux/platform_data/usb-ehci-s5p.h
- create mode 100644 include/linux/platform_data/usb-exynos.h
- create mode 100644 include/linux/platform_data/usb-imx_udc.h
- create mode 100644 include/linux/platform_data/usb-musb-ux500.h
- create mode 100644 include/linux/platform_data/usb-mx2.h
- create mode 100644 include/linux/platform_data/usb-ohci-pxa27x.h
- create mode 100644 include/linux/platform_data/usb-ohci-s3c2410.h
- create mode 100644 include/linux/platform_data/usb-pxa3xx-ulpi.h
- create mode 100644 include/linux/platform_data/usb-s3c2410_udc.h
- create mode 100644 include/linux/platform_data/video-ep93xx.h
- create mode 100644 include/linux/platform_data/video-imxfb.h
- create mode 100644 include/linux/platform_data/video-msm_fb.h
- create mode 100644 include/linux/platform_data/video-mx3fb.h
- create mode 100644 include/linux/platform_data/video-nuc900fb.h
- create mode 100644 include/linux/platform_data/video-pxafb.h
- create mode 100644 include/linux/platform_data/video-vt8500lcdfb.h
+ 107 files changed, 164 insertions(+), 164 deletions(-)
+ rename arch/arm/plat-samsung/include/plat/audio.h => include/linux/platform_data/asoc-s3c.h (100%)
+ rename arch/arm/plat-samsung/include/plat/audio-simtec.h => include/linux/platform_data/asoc-s3c24xx_simtec.h (100%)
+ rename arch/arm/plat-samsung/include/plat/ata.h => include/linux/platform_data/ata-samsung_cf.h (100%)
+ rename arch/arm/plat-samsung/include/plat/hwmon.h => include/linux/platform_data/hwmon-s3c.h (100%)
+ rename arch/arm/plat-samsung/include/plat/iic.h => include/linux/platform_data/i2c-s3c2410.h (100%)
+ rename arch/arm/mach-s3c24xx/include/mach/leds-gpio.h => include/linux/platform_data/leds-s3c24xx.h (100%)
+ rename arch/arm/plat-samsung/include/plat/mipi_csis.h => include/linux/platform_data/mipi-csis.h (100%)
+ rename arch/arm/plat-samsung/include/plat/mci.h => include/linux/platform_data/mmc-s3cmci.h (100%)
+ rename arch/arm/plat-samsung/include/plat/nand.h => include/linux/platform_data/mtd-nand-s3c2410.h (100%)
+ rename arch/arm/plat-samsung/include/plat/s3c64xx-spi.h => include/linux/platform_data/spi-s3c64xx.h (100%)
+ rename arch/arm/plat-samsung/include/plat/ts.h => include/linux/platform_data/touchscreen-s3c2410.h (100%)
+ rename arch/arm/plat-samsung/include/plat/ehci.h => include/linux/platform_data/usb-ehci-s5p.h (100%)
+ rename arch/arm/mach-exynos/include/mach/ohci.h => include/linux/platform_data/usb-exynos.h (100%)
+ rename arch/arm/plat-samsung/include/plat/usb-control.h => include/linux/platform_data/usb-ohci-s3c2410.h (100%)
+ rename arch/arm/plat-samsung/include/plat/udc.h => include/linux/platform_data/usb-s3c2410_udc.h (100%)
 
-Cc: netdev@vger.kernel.org
-Cc: openezx-devel@lists.openezx.org
-Cc: spear-devel@list.st.com
-Cc: davinci-linux-open-source@linux.davincidsp.com
-Cc: linux-arm-msm@vger.kernel.org
-Cc: linux-omap@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Bcc: "Ben Dooks" <ben-linux@fluff.org>
-Bcc: "Beno=C3=AEt Cousson" <b-cousson@ti.com>
-Bcc: "David S. Miller" <davem@davemloft.net>
-Bcc: "Wolfram Sang" <w.sang@pengutronix.de>
-Bcc: Alan Cox <alan@linux.intel.com>
-Bcc: Alan Stern <stern@rowland.harvard.edu>
-Bcc: Alessandro Rubini <rubini@unipv.it>
-Bcc: Andreas Westin <andreas.westin@stericsson.com>
-Bcc: Andrew Lunn <andrew@lunn.ch>
-Bcc: Artem Bityutskiy <artem.bityutskiy@linux.intel.com>
-Bcc: Axel Lin <axel.lin@gmail.com>
-Bcc: Ben Dooks <ben-linux@fluff.org>
-Bcc: Bryan Huntsman <bryanh@codeaurora.org>
-Bcc: Bryan Wu <bryan.wu@canonical.com>
-Bcc: Chris Ball <cjb@laptop.org>
-Bcc: Colin Cross <ccross@android.com>
-Bcc: Dan Williams <djbw@fb.com>
-Bcc: Daniel Ribeiro <drwyrm@gmail.com>
-Bcc: Daniel Walker <dwalker@fifo99.com>
-Bcc: David Brown <davidb@codeaurora.org>
-Bcc: David Woodhouse <dwmw2@infradead.org>
-Bcc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Bcc: Eric Miao <eric.y.miao@gmail.com>
-Bcc: Felipe Balbi <balbi@ti.com>
-Bcc: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Bcc: Grant Likely <grant.likely@secretlab.ca>
-Bcc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Bcc: Guennadi Liakhovetski <g.liakhovetski@gmx.de>
-Bcc: Guenter Roeck <linux@roeck-us.net>
-Bcc: Haojian Zhuang <haojian.zhuang@gmail.com>
-Bcc: Harald Welte <laforge@openezx.org>
-Bcc: Hartley Sweeten <hsweeten@visionengravers.com>
-Bcc: Herbert Xu <herbert@gondor.apana.org.au>
-Bcc: J Keerthy <j-keerthy@ti.com>
-Bcc: Jarkko Nikula <jarkko.nikula@bitmer.com>
-Bcc: Jaroslav Kysela <perex@perex.cz>
-Bcc: Jason Cooper <jason@lakedaemon.net>
-Bcc: Javier Martin <javier.martin@vista-silicon.com>
-Bcc: Jean Pihet <j-pihet@ti.com>
-Bcc: Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>
-Bcc: Jeff Garzik <jgarzik@pobox.com>
-Bcc: Jochen Friedrich <jochen@scram.de>
-Bcc: Jonathan Cameron <jic23@cam.ac.uk>
-Bcc: Kevin Hilman <khilman@ti.com>
-Bcc: Kukjin Kim <kgene.kim@samsung.com>
-Bcc: Kyungmin Park <kyungmin.park@samsung.com>
-Bcc: Liam Girdwood <lrg@ti.com>
-Bcc: Linus Walleij <linus.walleij@linaro.org>
-Bcc: Marek Vasut <marek.vasut@gmail.com>
-Bcc: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Bcc: Mauro Carvalho Chehab <mchehab@infradead.org>
-Bcc: Mika Westerberg <mika.westerberg@iki.fi>
-Bcc: Nicolas Ferre <nicolas.ferre@atmel.com>
-Bcc: Nicolas Pitre <nico@fluxnic.net>
-Bcc: Ohad Ben-Cohen <ohad@wizery.com>
-Bcc: Olof Johansson <olof@lixom.net>
-Bcc: Omar Ramirez Luna <omar.ramirez@ti.com>
-Bcc: Paul Parsons <lost.distance@yahoo.com>
-Bcc: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Bcc: Philipp Zabel <philipp.zabel@gmail.com>
-Bcc: Richard Purdie <rpurdie@rpsys.net>
-Bcc: Robert Jarzmik <robert.jarzmik@free.fr>
-Bcc: Russell King <linux@arm.linux.org.uk>
-Bcc: Ryan Mallon <rmallon@gmail.com>
-Bcc: STEricsson <STEricsson_nomadik_linux@list.st.com>
-Bcc: Samuel Ortiz <samuel@sortiz.org>
-Bcc: Sangbeom Kim <sbkim73@samsung.com>
-Bcc: Sascha Hauer <s.hauer@pengutronix.de>
-Bcc: Sekhar Nori <nsekhar@ti.com>
-Bcc: Sergey Lapin <slapin@ossfans.org>
-Bcc: Shawn Guo <shawn.guo@linaro.org>
-Bcc: Shiraz Hashim <shiraz.hashim@st.com>
-Bcc: Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>
-Bcc: Stefan Schmidt <stefan@openezx.org>
-Bcc: Stephen Warren <swarren@wwwdotorg.org>
-Bcc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Bcc: Takashi Iwai <tiwai@suse.de>
-Bcc: Tomas Cech <sleep_walker@suse.cz>
-Bcc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Bcc: Tony Lindgren <tony@atomide.com>
-Bcc: Tony Prisk <linux@prisktech.co.nz>
-Bcc: Vinod Koul <vinod.koul@intel.com>
-Bcc: Viresh Kumar <viresh.linux@gmail.com>
-Bcc: Wan ZongShun <mcuos.com@gmail.com>
+diff --git a/arch/arm/mach-exynos/dev-audio.c b/arch/arm/mach-exynos/dev-audio.c
+index b33a5b6..ae321c7 100644
+--- a/arch/arm/mach-exynos/dev-audio.c
++++ b/arch/arm/mach-exynos/dev-audio.c
+@@ -16,7 +16,7 @@
+ #include <linux/gpio.h>
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include <mach/map.h>
+ #include <mach/dma.h>
+diff --git a/arch/arm/mach-exynos/dev-ohci.c b/arch/arm/mach-exynos/dev-ohci.c
+index b8e7530..14ed795 100644
+--- a/arch/arm/mach-exynos/dev-ohci.c
++++ b/arch/arm/mach-exynos/dev-ohci.c
+@@ -15,7 +15,7 @@
+ 
+ #include <mach/irqs.h>
+ #include <mach/map.h>
+-#include <mach/ohci.h>
++#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/usb-phy.h>
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index ea785fc..393d2ce 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -45,14 +45,14 @@
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <plat/sdhci.h>
+-#include <plat/ehci.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/clock.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/mfc.h>
+ #include <plat/fimc-core.h>
+ #include <plat/camport.h>
+-#include <plat/mipi_csis.h>
++#include <linux/platform_data/mipi-csis.h>
+ 
+ #include <mach/map.h>
+ 
+diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
+index 5ca8030..4a531dc 100644
+--- a/arch/arm/mach-exynos/mach-origen.c
++++ b/arch/arm/mach-exynos/mach-origen.c
+@@ -35,15 +35,15 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/sdhci.h>
+-#include <plat/iic.h>
+-#include <plat/ehci.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/clock.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+ 
+-#include <mach/ohci.h>
++#include <linux/platform_data/usb-exynos.h>
+ #include <mach/map.h>
+ 
+ #include <drm/exynos_drm.h>
+diff --git a/arch/arm/mach-exynos/mach-smdk4x12.c b/arch/arm/mach-exynos/mach-smdk4x12.c
+index b26beb1..6a791fd 100644
+--- a/arch/arm/mach-exynos/mach-smdk4x12.c
++++ b/arch/arm/mach-exynos/mach-smdk4x12.c
+@@ -32,7 +32,7 @@
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/keypad.h>
+ #include <plat/mfc.h>
+ #include <plat/regs-fb.h>
+diff --git a/arch/arm/mach-exynos/mach-smdkv310.c b/arch/arm/mach-exynos/mach-smdkv310.c
+index 3cfa688..fa2ada6 100644
+--- a/arch/arm/mach-exynos/mach-smdkv310.c
++++ b/arch/arm/mach-exynos/mach-smdkv310.c
+@@ -34,15 +34,15 @@
+ #include <plat/fb.h>
+ #include <plat/keypad.h>
+ #include <plat/sdhci.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/backlight.h>
+ #include <plat/mfc.h>
+-#include <plat/ehci.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/clock.h>
+ 
+ #include <mach/map.h>
+-#include <mach/ohci.h>
++#include <linux/platform_data/usb-exynos.h>
+ 
+ #include <drm/exynos_drm.h>
+ #include "common.h"
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 4d1f40d..bc49e5a 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -34,7 +34,7 @@
+ #include <plat/clock.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/fb.h>
+ #include <plat/mfc.h>
+@@ -43,7 +43,7 @@
+ #include <plat/fimc-core.h>
+ #include <plat/s5p-time.h>
+ #include <plat/camport.h>
+-#include <plat/mipi_csis.h>
++#include <linux/platform_data/mipi-csis.h>
+ 
+ #include <mach/map.h>
+ 
+diff --git a/arch/arm/mach-exynos/setup-i2c0.c b/arch/arm/mach-exynos/setup-i2c0.c
+index b90d94c..5700f23 100644
+--- a/arch/arm/mach-exynos/setup-i2c0.c
++++ b/arch/arm/mach-exynos/setup-i2c0.c
+@@ -14,7 +14,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/cpu.h>
+ 
+diff --git a/arch/arm/mach-exynos/setup-i2c1.c b/arch/arm/mach-exynos/setup-i2c1.c
+index fd7235a..8d2279c 100644
+--- a/arch/arm/mach-exynos/setup-i2c1.c
++++ b/arch/arm/mach-exynos/setup-i2c1.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c2.c b/arch/arm/mach-exynos/setup-i2c2.c
+index 2694b19..0ed62fc 100644
+--- a/arch/arm/mach-exynos/setup-i2c2.c
++++ b/arch/arm/mach-exynos/setup-i2c2.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c2_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c3.c b/arch/arm/mach-exynos/setup-i2c3.c
+index 379bd30..7787fd2 100644
+--- a/arch/arm/mach-exynos/setup-i2c3.c
++++ b/arch/arm/mach-exynos/setup-i2c3.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c3_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c4.c b/arch/arm/mach-exynos/setup-i2c4.c
+index 9f3c048..edc847f 100644
+--- a/arch/arm/mach-exynos/setup-i2c4.c
++++ b/arch/arm/mach-exynos/setup-i2c4.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c4_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c5.c b/arch/arm/mach-exynos/setup-i2c5.c
+index 77e1a1e..d88af7f 100644
+--- a/arch/arm/mach-exynos/setup-i2c5.c
++++ b/arch/arm/mach-exynos/setup-i2c5.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c5_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c6.c b/arch/arm/mach-exynos/setup-i2c6.c
+index 284d12b..c590286 100644
+--- a/arch/arm/mach-exynos/setup-i2c6.c
++++ b/arch/arm/mach-exynos/setup-i2c6.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c6_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-exynos/setup-i2c7.c b/arch/arm/mach-exynos/setup-i2c7.c
+index b7611ee..1bba755 100644
+--- a/arch/arm/mach-exynos/setup-i2c7.c
++++ b/arch/arm/mach-exynos/setup-i2c7.c
+@@ -13,7 +13,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c7_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s3c24xx/common-smdk.c b/arch/arm/mach-s3c24xx/common-smdk.c
+index 87e75a2..3b2cf6d 100644
+--- a/arch/arm/mach-s3c24xx/common-smdk.c
++++ b/arch/arm/mach-s3c24xx/common-smdk.c
+@@ -37,9 +37,9 @@
+ #include <asm/irq.h>
+ 
+ #include <mach/regs-gpio.h>
+-#include <mach/leds-gpio.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ 
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ 
+ #include <plat/common-smdk.h>
+ #include <plat/gpio-cfg.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-amlm5900.c b/arch/arm/mach-s3c24xx/mach-amlm5900.c
+index ea2c4b00..f4ad99c 100644
+--- a/arch/arm/mach-s3c24xx/mach-amlm5900.c
++++ b/arch/arm/mach-s3c24xx/mach-amlm5900.c
+@@ -53,7 +53,7 @@
+ #include <mach/regs-lcd.h>
+ #include <mach/regs-gpio.h>
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/gpio-cfg.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-anubis.c b/arch/arm/mach-s3c24xx/mach-anubis.c
+index 5a7d0c0..df890fb 100644
+--- a/arch/arm/mach-s3c24xx/mach-anubis.c
++++ b/arch/arm/mach-s3c24xx/mach-anubis.c
+@@ -40,8 +40,8 @@
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+@@ -53,7 +53,7 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/audio-simtec.h>
++#include <linux/platform_data/asoc-s3c24xx_simtec.h>
+ 
+ #include "simtec.h"
+ #include "common.h"
+diff --git a/arch/arm/mach-s3c24xx/mach-at2440evb.c b/arch/arm/mach-s3c24xx/mach-at2440evb.c
+index 7a05abf..00381fe 100644
+--- a/arch/arm/mach-s3c24xx/mach-at2440evb.c
++++ b/arch/arm/mach-s3c24xx/mach-at2440evb.c
+@@ -36,8 +36,8 @@
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+@@ -47,7 +47,7 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/mci.h>
++#include <linux/platform_data/mmc-s3cmci.h>
+ 
+ #include "common.h"
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-bast.c b/arch/arm/mach-s3c24xx/mach-bast.c
+index 1cf1720..6a30ce7 100644
+--- a/arch/arm/mach-s3c24xx/mach-bast.c
++++ b/arch/arm/mach-s3c24xx/mach-bast.c
+@@ -45,9 +45,9 @@
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+ 
+-#include <plat/hwmon.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/hwmon-s3c.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <mach/fb.h>
+ 
+ #include <linux/mtd/mtd.h>
+@@ -62,7 +62,7 @@
+ #include <plat/cpu.h>
+ #include <plat/cpu-freq.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/audio-simtec.h>
++#include <linux/platform_data/asoc-s3c24xx_simtec.h>
+ 
+ #include "simtec.h"
+ #include "common.h"
+diff --git a/arch/arm/mach-s3c24xx/mach-gta02.c b/arch/arm/mach-s3c24xx/mach-gta02.c
+index 92e1f93..4a96346 100644
+--- a/arch/arm/mach-s3c24xx/mach-gta02.c
++++ b/arch/arm/mach-s3c24xx/mach-gta02.c
+@@ -73,21 +73,21 @@
+ #include <mach/regs-gpio.h>
+ #include <mach/fb.h>
+ 
+-#include <plat/usb-control.h>
++#include <linux/platform_data/usb-ohci-s3c2410.h>
+ #include <mach/regs-mem.h>
+ #include <mach/hardware.h>
+ 
+ #include <mach/gta02.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/pm.h>
+-#include <plat/udc.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/iic.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ 
+ #include "common.h"
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index bb8d008..9638b33 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -56,8 +56,8 @@
+ #include <mach/h1940.h>
+ #include <mach/h1940-latch.h>
+ #include <mach/fb.h>
+-#include <plat/udc.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/gpio-cfg.h>
+ #include <plat/clock.h>
+@@ -65,8 +65,8 @@
+ #include <plat/cpu.h>
+ #include <plat/pll.h>
+ #include <plat/pm.h>
+-#include <plat/mci.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/mmc-s3cmci.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ 
+ #include <sound/uda1380.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-jive.c b/arch/arm/mach-s3c24xx/mach-jive.c
+index ae73ba3..28ad25b 100644
+--- a/arch/arm/mach-s3c24xx/mach-jive.c
++++ b/arch/arm/mach-s3c24xx/mach-jive.c
+@@ -32,8 +32,8 @@
+ #include <asm/mach/irq.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <mach/regs-power.h>
+ #include <mach/regs-gpio.h>
+@@ -54,7 +54,7 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/pm.h>
+-#include <plat/udc.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
+ 
+ static struct map_desc jive_iodesc[] __initdata = {
+ };
+diff --git a/arch/arm/mach-s3c24xx/mach-mini2440.c b/arch/arm/mach-s3c24xx/mach-mini2440.c
+index bd6d252..c676b8e 100644
+--- a/arch/arm/mach-s3c24xx/mach-mini2440.c
++++ b/arch/arm/mach-s3c24xx/mach-mini2440.c
+@@ -39,14 +39,14 @@
+ 
+ #include <plat/regs-serial.h>
+ #include <mach/regs-gpio.h>
+-#include <mach/leds-gpio.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+ #include <mach/irqs.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
+-#include <plat/mci.h>
+-#include <plat/udc.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/mmc-s3cmci.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-n30.c b/arch/arm/mach-s3c24xx/mach-n30.c
+index 383d00c..c53a9bf 100644
+--- a/arch/arm/mach-s3c24xx/mach-n30.c
++++ b/arch/arm/mach-s3c24xx/mach-n30.c
+@@ -33,7 +33,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <mach/fb.h>
+-#include <mach/leds-gpio.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-lcd.h>
+ 
+@@ -41,15 +41,15 @@
+ #include <asm/mach/irq.h>
+ #include <asm/mach/map.h>
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/regs-serial.h>
+ 
+ #include <plat/clock.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+-#include <plat/mci.h>
++#include <linux/platform_data/mmc-s3cmci.h>
+ #include <plat/s3c2410.h>
+-#include <plat/udc.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
+ 
+ #include "common.h"
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-nexcoder.c b/arch/arm/mach-s3c24xx/mach-nexcoder.c
+index 5c05ba1..7841321 100644
+--- a/arch/arm/mach-s3c24xx/mach-nexcoder.c
++++ b/arch/arm/mach-s3c24xx/mach-nexcoder.c
+@@ -38,7 +38,7 @@
+ //#include <asm/debug-ll.h>
+ #include <mach/regs-gpio.h>
+ #include <plat/regs-serial.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/gpio-cfg.h>
+ #include <plat/s3c2410.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-osiris.c b/arch/arm/mach-s3c24xx/mach-osiris.c
+index 95d0772..63c20019 100644
+--- a/arch/arm/mach-s3c24xx/mach-osiris.c
++++ b/arch/arm/mach-s3c24xx/mach-osiris.c
+@@ -41,8 +41,8 @@
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-mem.h>
+ #include <mach/regs-lcd.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <linux/mtd/mtd.h>
+ #include <linux/mtd/nand.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-otom.c b/arch/arm/mach-s3c24xx/mach-otom.c
+index bc4b6ef..bca39f0 100644
+--- a/arch/arm/mach-s3c24xx/mach-otom.c
++++ b/arch/arm/mach-s3c24xx/mach-otom.c
+@@ -35,7 +35,7 @@
+ #include <plat/s3c2410.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/cpu.h>
+ 
+ #include "common.h"
+diff --git a/arch/arm/mach-s3c24xx/mach-qt2410.c b/arch/arm/mach-s3c24xx/mach-qt2410.c
+index 678bbca..7b6ba13 100644
+--- a/arch/arm/mach-s3c24xx/mach-qt2410.c
++++ b/arch/arm/mach-s3c24xx/mach-qt2410.c
+@@ -47,13 +47,13 @@
+ #include <asm/irq.h>
+ #include <asm/mach-types.h>
+ 
+-#include <mach/leds-gpio.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ #include <mach/regs-lcd.h>
+ #include <plat/regs-serial.h>
+ #include <mach/fb.h>
+-#include <plat/nand.h>
+-#include <plat/udc.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/common-smdk.h>
+ #include <plat/gpio-cfg.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-rx1950.c b/arch/arm/mach-s3c24xx/mach-rx1950.c
+index 7ee73f2..379fde5 100644
+--- a/arch/arm/mach-s3c24xx/mach-rx1950.c
++++ b/arch/arm/mach-s3c24xx/mach-rx1950.c
+@@ -49,15 +49,15 @@
+ #include <plat/clock.h>
+ #include <plat/regs-serial.h>
+ #include <plat/regs-iic.h>
+-#include <plat/mci.h>
+-#include <plat/udc.h>
+-#include <plat/nand.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/mmc-s3cmci.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/pm.h>
+ #include <plat/irq.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ 
+ #include <sound/uda1380.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-rx3715.c b/arch/arm/mach-s3c24xx/mach-rx3715.c
+index 56af354..dacbb9a 100644
+--- a/arch/arm/mach-s3c24xx/mach-rx3715.c
++++ b/arch/arm/mach-s3c24xx/mach-rx3715.c
+@@ -43,7 +43,7 @@
+ #include <mach/regs-lcd.h>
+ 
+ #include <mach/h1940.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <mach/fb.h>
+ 
+ #include <plat/clock.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2410.c b/arch/arm/mach-s3c24xx/mach-smdk2410.c
+index bdc27e7..82796b9 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2410.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2410.c
+@@ -47,7 +47,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2413.c b/arch/arm/mach-s3c24xx/mach-smdk2413.c
+index b11451b..ce99fd8 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2413.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2413.c
+@@ -38,8 +38,8 @@
+ #include <mach/regs-lcd.h>
+ 
+ #include <mach/idle.h>
+-#include <plat/udc.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <mach/fb.h>
+ 
+ #include <plat/s3c2410.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2416.c b/arch/arm/mach-s3c24xx/mach-smdk2416.c
+index c3100a0..db2787a 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2416.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2416.c
+@@ -39,17 +39,17 @@
+ #include <mach/regs-s3c2443-clock.h>
+ 
+ #include <mach/idle.h>
+-#include <mach/leds-gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/leds-s3c24xx.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/s3c2416.h>
+ #include <plat/gpio-cfg.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <plat/sdhci.h>
+-#include <plat/udc.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
+ #include <linux/platform_data/s3c-hsudc.h>
+ 
+ #include <plat/regs-fb-v4.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2440.c b/arch/arm/mach-s3c24xx/mach-smdk2440.c
+index 83a1036..b7ff882 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2440.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2440.c
+@@ -37,7 +37,7 @@
+ 
+ #include <mach/idle.h>
+ #include <mach/fb.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/s3c2410.h>
+ #include <plat/s3c244x.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-smdk2443.c b/arch/arm/mach-s3c24xx/mach-smdk2443.c
+index 2092369..2568656 100644
+--- a/arch/arm/mach-s3c24xx/mach-smdk2443.c
++++ b/arch/arm/mach-s3c24xx/mach-smdk2443.c
+@@ -37,7 +37,7 @@
+ 
+ #include <mach/idle.h>
+ #include <mach/fb.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <plat/s3c2410.h>
+ #include <plat/s3c2443.h>
+diff --git a/arch/arm/mach-s3c24xx/mach-tct_hammer.c b/arch/arm/mach-s3c24xx/mach-tct_hammer.c
+index fe99028..495bf5c 100644
+--- a/arch/arm/mach-s3c24xx/mach-tct_hammer.c
++++ b/arch/arm/mach-s3c24xx/mach-tct_hammer.c
+@@ -45,7 +45,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/mach-vr1000.c b/arch/arm/mach-s3c24xx/mach-vr1000.c
+index bd5f189..14d5b12 100644
+--- a/arch/arm/mach-s3c24xx/mach-vr1000.c
++++ b/arch/arm/mach-s3c24xx/mach-vr1000.c
+@@ -43,13 +43,13 @@
+ 
+ #include <plat/regs-serial.h>
+ #include <mach/regs-gpio.h>
+-#include <mach/leds-gpio.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ 
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/iic.h>
+-#include <plat/audio-simtec.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/asoc-s3c24xx_simtec.h>
+ 
+ #include "simtec.h"
+ #include "common.h"
+diff --git a/arch/arm/mach-s3c24xx/mach-vstms.c b/arch/arm/mach-s3c24xx/mach-vstms.c
+index 94bfaa1..f1d44ae 100644
+--- a/arch/arm/mach-s3c24xx/mach-vstms.c
++++ b/arch/arm/mach-s3c24xx/mach-vstms.c
+@@ -39,8 +39,8 @@
+ #include <mach/idle.h>
+ #include <mach/fb.h>
+ 
+-#include <plat/iic.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ 
+ #include <plat/s3c2410.h>
+ #include <plat/s3c2412.h>
+diff --git a/arch/arm/mach-s3c24xx/setup-i2c.c b/arch/arm/mach-s3c24xx/setup-i2c.c
+index 9e90a7c..7b4f333 100644
+--- a/arch/arm/mach-s3c24xx/setup-i2c.c
++++ b/arch/arm/mach-s3c24xx/setup-i2c.c
+@@ -16,7 +16,7 @@
+ struct platform_device;
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
+ 
+diff --git a/arch/arm/mach-s3c24xx/simtec-audio.c b/arch/arm/mach-s3c24xx/simtec-audio.c
+index 11881c9..fd0ef05 100644
+--- a/arch/arm/mach-s3c24xx/simtec-audio.c
++++ b/arch/arm/mach-s3c24xx/simtec-audio.c
+@@ -24,7 +24,7 @@
+ #include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
+ 
+-#include <plat/audio-simtec.h>
++#include <linux/platform_data/asoc-s3c24xx_simtec.h>
+ #include <plat/devs.h>
+ 
+ #include "simtec.h"
+diff --git a/arch/arm/mach-s3c24xx/simtec-usb.c b/arch/arm/mach-s3c24xx/simtec-usb.c
+index d91c1a7..17f8356 100644
+--- a/arch/arm/mach-s3c24xx/simtec-usb.c
++++ b/arch/arm/mach-s3c24xx/simtec-usb.c
+@@ -34,7 +34,7 @@
+ #include <mach/hardware.h>
+ #include <asm/irq.h>
+ 
+-#include <plat/usb-control.h>
++#include <linux/platform_data/usb-ohci-s3c2410.h>
+ #include <plat/devs.h>
+ 
+ #include "simtec.h"
+diff --git a/arch/arm/mach-s3c64xx/dev-audio.c b/arch/arm/mach-s3c64xx/dev-audio.c
+index 124fd5d..35f3e07 100644
+--- a/arch/arm/mach-s3c64xx/dev-audio.c
++++ b/arch/arm/mach-s3c64xx/dev-audio.c
+@@ -20,7 +20,7 @@
+ #include <mach/dma.h>
+ 
+ #include <plat/devs.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ #include <plat/gpio-cfg.h>
+ 
+ static const char *rclksrc[] = {
+diff --git a/arch/arm/mach-s3c64xx/mach-anw6410.c b/arch/arm/mach-s3c64xx/mach-anw6410.c
+index ffa29dd..15c58df 100644
+--- a/arch/arm/mach-s3c64xx/mach-anw6410.c
++++ b/arch/arm/mach-s3c64xx/mach-anw6410.c
+@@ -42,7 +42,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/fb.h>
+ #include <plat/regs-fb-v4.h>
+ 
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 9e382e7..181aa994 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -24,7 +24,7 @@
+ #include <sound/wm8962.h>
+ #include <sound/wm9081.h>
+ 
+-#include <plat/s3c64xx-spi.h>
++#include <linux/platform_data/spi-s3c64xx.h>
+ 
+ #include <mach/crag6410.h>
+ 
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410.c b/arch/arm/mach-s3c64xx/mach-crag6410.c
+index 09cd812..717d675 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410.c
+@@ -61,14 +61,14 @@
+ #include <plat/fb.h>
+ #include <plat/sdhci.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/s3c64xx-spi.h>
++#include <linux/platform_data/spi-s3c64xx.h>
+ 
+ #include <plat/keypad.h>
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/adc.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/pm.h>
+ 
+ #include "common.h"
+diff --git a/arch/arm/mach-s3c64xx/mach-hmt.c b/arch/arm/mach-s3c64xx/mach-hmt.c
+index 6890881..02222b3 100644
+--- a/arch/arm/mach-s3c64xx/mach-hmt.c
++++ b/arch/arm/mach-s3c64xx/mach-hmt.c
+@@ -34,9 +34,9 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/fb.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ 
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+diff --git a/arch/arm/mach-s3c64xx/mach-mini6410.c b/arch/arm/mach-s3c64xx/mach-mini6410.c
+index 5539a255..09311cc 100644
+--- a/arch/arm/mach-s3c64xx/mach-mini6410.c
++++ b/arch/arm/mach-s3c64xx/mach-mini6410.c
+@@ -38,9 +38,9 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <plat/regs-serial.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <plat/regs-fb-v4.h>
+ 
+ #include <video/platform_lcd.h>
+diff --git a/arch/arm/mach-s3c64xx/mach-ncp.c b/arch/arm/mach-s3c64xx/mach-ncp.c
+index cad2e05..46ee88d 100644
+--- a/arch/arm/mach-s3c64xx/mach-ncp.c
++++ b/arch/arm/mach-s3c64xx/mach-ncp.c
+@@ -37,7 +37,7 @@
+ #include <asm/mach-types.h>
+ 
+ #include <plat/regs-serial.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/fb.h>
+ 
+ #include <plat/clock.h>
+diff --git a/arch/arm/mach-s3c64xx/mach-real6410.c b/arch/arm/mach-s3c64xx/mach-real6410.c
+index 326b216..6daca20 100644
+--- a/arch/arm/mach-s3c64xx/mach-real6410.c
++++ b/arch/arm/mach-s3c64xx/mach-real6410.c
+@@ -39,9 +39,9 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/fb.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <plat/regs-serial.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <plat/regs-fb-v4.h>
+ 
+ #include <video/platform_lcd.h>
+diff --git a/arch/arm/mach-s3c64xx/mach-smartq.c b/arch/arm/mach-s3c64xx/mach-smartq.c
+index ceeb1de..c6d7390 100644
+--- a/arch/arm/mach-s3c64xx/mach-smartq.c
++++ b/arch/arm/mach-s3c64xx/mach-smartq.c
+@@ -30,13 +30,13 @@
+ #include <plat/clock.h>
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/hwmon.h>
++#include <linux/platform_data/hwmon-s3c.h>
+ #include <plat/regs-serial.h>
+-#include <plat/usb-control.h>
++#include <linux/platform_data/usb-ohci-s3c2410.h>
+ #include <plat/sdhci.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ 
+ #include <video/platform_lcd.h>
+ 
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6400.c b/arch/arm/mach-s3c64xx/mach-smdk6400.c
+index b0f4525..a928fae 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6400.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6400.c
+@@ -35,7 +35,7 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include "common.h"
+ 
+diff --git a/arch/arm/mach-s3c64xx/mach-smdk6410.c b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+index 0fe4f15..2547a88 100644
+--- a/arch/arm/mach-s3c64xx/mach-smdk6410.c
++++ b/arch/arm/mach-s3c64xx/mach-smdk6410.c
+@@ -60,8 +60,8 @@
+ #include <mach/regs-gpio.h>
+ #include <mach/regs-sys.h>
+ #include <mach/regs-srom.h>
+-#include <plat/ata.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/ata-samsung_cf.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/fb.h>
+ #include <plat/gpio-cfg.h>
+ 
+@@ -69,7 +69,7 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/adc.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <plat/keypad.h>
+ #include <plat/backlight.h>
+ #include <plat/regs-fb-v4.h>
+diff --git a/arch/arm/mach-s3c64xx/setup-i2c0.c b/arch/arm/mach-s3c64xx/setup-i2c0.c
+index 241af94..40666ba 100644
+--- a/arch/arm/mach-s3c64xx/setup-i2c0.c
++++ b/arch/arm/mach-s3c64xx/setup-i2c0.c
+@@ -18,7 +18,7 @@
+ 
+ struct platform_device; /* don't need the contents */
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s3c64xx/setup-i2c1.c b/arch/arm/mach-s3c64xx/setup-i2c1.c
+index 3d13a96..3fdb24c 100644
+--- a/arch/arm/mach-s3c64xx/setup-i2c1.c
++++ b/arch/arm/mach-s3c64xx/setup-i2c1.c
+@@ -18,7 +18,7 @@
+ 
+ struct platform_device; /* don't need the contents */
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s3c64xx/setup-ide.c b/arch/arm/mach-s3c64xx/setup-ide.c
+index 41b4256..648d8b8 100644
+--- a/arch/arm/mach-s3c64xx/setup-ide.c
++++ b/arch/arm/mach-s3c64xx/setup-ide.c
+@@ -17,7 +17,7 @@
+ #include <mach/map.h>
+ #include <mach/regs-clock.h>
+ #include <plat/gpio-cfg.h>
+-#include <plat/ata.h>
++#include <linux/platform_data/ata-samsung_cf.h>
+ 
+ void s3c64xx_ide_setup_gpio(void)
+ {
+diff --git a/arch/arm/mach-s5p64x0/dev-audio.c b/arch/arm/mach-s5p64x0/dev-audio.c
+index 91113dd..a0d6edf 100644
+--- a/arch/arm/mach-s5p64x0/dev-audio.c
++++ b/arch/arm/mach-s5p64x0/dev-audio.c
+@@ -13,7 +13,7 @@
+ #include <linux/gpio.h>
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include <mach/map.h>
+ #include <mach/dma.h>
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6440.c b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+index 92fefad..dea78a8 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6440.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6440.c
+@@ -45,10 +45,10 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/pll.h>
+ #include <plat/adc.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <plat/s5p-time.h>
+ #include <plat/backlight.h>
+ #include <plat/fb.h>
+diff --git a/arch/arm/mach-s5p64x0/mach-smdk6450.c b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+index e2335ec..6f14fc7 100644
+--- a/arch/arm/mach-s5p64x0/mach-smdk6450.c
++++ b/arch/arm/mach-s5p64x0/mach-smdk6450.c
+@@ -45,10 +45,10 @@
+ #include <plat/clock.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/pll.h>
+ #include <plat/adc.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ #include <plat/s5p-time.h>
+ #include <plat/backlight.h>
+ #include <plat/fb.h>
+diff --git a/arch/arm/mach-s5p64x0/setup-i2c0.c b/arch/arm/mach-s5p64x0/setup-i2c0.c
+index 46b4639..a32edc5 100644
+--- a/arch/arm/mach-s5p64x0/setup-i2c0.c
++++ b/arch/arm/mach-s5p64x0/setup-i2c0.c
+@@ -19,7 +19,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <mach/i2c.h>
+ 
+diff --git a/arch/arm/mach-s5p64x0/setup-i2c1.c b/arch/arm/mach-s5p64x0/setup-i2c1.c
+index 6ad3b98..ca2c5c7 100644
+--- a/arch/arm/mach-s5p64x0/setup-i2c1.c
++++ b/arch/arm/mach-s5p64x0/setup-i2c1.c
+@@ -19,7 +19,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ #include <mach/i2c.h>
+ 
+diff --git a/arch/arm/mach-s5pc100/dev-audio.c b/arch/arm/mach-s5pc100/dev-audio.c
+index 9d4bde3..1cc252c 100644
+--- a/arch/arm/mach-s5pc100/dev-audio.c
++++ b/arch/arm/mach-s5pc100/dev-audio.c
+@@ -13,7 +13,7 @@
+ #include <linux/gpio.h>
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include <mach/map.h>
+ #include <mach/dma.h>
+diff --git a/arch/arm/mach-s5pc100/mach-smdkc100.c b/arch/arm/mach-s5pc100/mach-smdkc100.c
+index 0c3ae38..5d2c093 100644
+--- a/arch/arm/mach-s5pc100/mach-smdkc100.c
++++ b/arch/arm/mach-s5pc100/mach-smdkc100.c
+@@ -44,12 +44,12 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/fb.h>
+-#include <plat/iic.h>
+-#include <plat/ata.h>
++#include <linux/platform_data/i2c-s3c2410.h>
++#include <linux/platform_data/ata-samsung_cf.h>
+ #include <plat/adc.h>
+ #include <plat/keypad.h>
+-#include <plat/ts.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
++#include <linux/platform_data/asoc-s3c.h>
+ #include <plat/backlight.h>
+ #include <plat/regs-fb-v4.h>
+ 
+diff --git a/arch/arm/mach-s5pc100/setup-i2c0.c b/arch/arm/mach-s5pc100/setup-i2c0.c
+index eaef7a3..89a6a76 100644
+--- a/arch/arm/mach-s5pc100/setup-i2c0.c
++++ b/arch/arm/mach-s5pc100/setup-i2c0.c
+@@ -18,7 +18,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s5pc100/setup-i2c1.c b/arch/arm/mach-s5pc100/setup-i2c1.c
+index aaff74a..faa667e 100644
+--- a/arch/arm/mach-s5pc100/setup-i2c1.c
++++ b/arch/arm/mach-s5pc100/setup-i2c1.c
+@@ -18,7 +18,7 @@
+ struct platform_device; /* don't need the contents */
+ 
+ #include <linux/gpio.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s5pv210/dev-audio.c b/arch/arm/mach-s5pv210/dev-audio.c
+index 8367749..0a5480b 100644
+--- a/arch/arm/mach-s5pv210/dev-audio.c
++++ b/arch/arm/mach-s5pv210/dev-audio.c
+@@ -13,7 +13,7 @@
+ #include <linux/gpio.h>
+ 
+ #include <plat/gpio-cfg.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include <mach/map.h>
+ #include <mach/dma.h>
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index 822a559..00f1e47 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -43,7 +43,7 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/fb.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/keypad.h>
+ #include <plat/sdhci.h>
+ #include <plat/clock.h>
+diff --git a/arch/arm/mach-s5pv210/mach-smdkc110.c b/arch/arm/mach-s5pv210/mach-smdkc110.c
+index dfc2923..d9c99fc 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkc110.c
++++ b/arch/arm/mach-s5pv210/mach-smdkc110.c
+@@ -27,8 +27,8 @@
+ #include <plat/regs-serial.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/ata.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/ata-samsung_cf.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/pm.h>
+ #include <plat/s5p-time.h>
+ #include <plat/mfc.h>
+diff --git a/arch/arm/mach-s5pv210/mach-smdkv210.c b/arch/arm/mach-s5pv210/mach-smdkv210.c
+index 918b23d..7d6fab4 100644
+--- a/arch/arm/mach-s5pv210/mach-smdkv210.c
++++ b/arch/arm/mach-s5pv210/mach-smdkv210.c
+@@ -38,9 +38,9 @@
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+ #include <plat/adc.h>
+-#include <plat/ts.h>
+-#include <plat/ata.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
++#include <linux/platform_data/ata-samsung_cf.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/keypad.h>
+ #include <plat/pm.h>
+ #include <plat/fb.h>
+diff --git a/arch/arm/mach-s5pv210/mach-torbreck.c b/arch/arm/mach-s5pv210/mach-torbreck.c
+index 74e99bc..18785cb 100644
+--- a/arch/arm/mach-s5pv210/mach-torbreck.c
++++ b/arch/arm/mach-s5pv210/mach-torbreck.c
+@@ -26,7 +26,7 @@
+ #include <plat/regs-serial.h>
+ #include <plat/devs.h>
+ #include <plat/cpu.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/s5p-time.h>
+ 
+ #include "common.h"
+diff --git a/arch/arm/mach-s5pv210/setup-i2c0.c b/arch/arm/mach-s5pv210/setup-i2c0.c
+index 0f1cc3a..4a15849 100644
+--- a/arch/arm/mach-s5pv210/setup-i2c0.c
++++ b/arch/arm/mach-s5pv210/setup-i2c0.c
+@@ -18,7 +18,7 @@
+ 
+ struct platform_device; /* don't need the contents */
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c0_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s5pv210/setup-i2c1.c b/arch/arm/mach-s5pv210/setup-i2c1.c
+index f61365a..4777f6b 100644
+--- a/arch/arm/mach-s5pv210/setup-i2c1.c
++++ b/arch/arm/mach-s5pv210/setup-i2c1.c
+@@ -18,7 +18,7 @@
+ 
+ struct platform_device; /* don't need the contents */
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c1_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/mach-s5pv210/setup-i2c2.c b/arch/arm/mach-s5pv210/setup-i2c2.c
+index 2f91b5c..bbce6c7 100644
+--- a/arch/arm/mach-s5pv210/setup-i2c2.c
++++ b/arch/arm/mach-s5pv210/setup-i2c2.c
+@@ -18,7 +18,7 @@
+ 
+ struct platform_device; /* don't need the contents */
+ 
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/gpio-cfg.h>
+ 
+ void s3c_i2c2_cfg_gpio(struct platform_device *dev)
+diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+index 74e31ce..07913ac 100644
+--- a/arch/arm/plat-samsung/devs.c
++++ b/arch/arm/plat-samsung/devs.c
+@@ -46,24 +46,24 @@
+ #include <plat/cpu.h>
+ #include <plat/devs.h>
+ #include <plat/adc.h>
+-#include <plat/ata.h>
+-#include <plat/ehci.h>
++#include <linux/platform_data/ata-samsung_cf.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/fb.h>
+ #include <plat/fb-s3c2410.h>
+-#include <plat/hwmon.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/hwmon-s3c.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ #include <plat/keypad.h>
+-#include <plat/mci.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mmc-s3cmci.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ #include <plat/sdhci.h>
+-#include <plat/ts.h>
+-#include <plat/udc.h>
+-#include <plat/usb-control.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
++#include <linux/platform_data/usb-ohci-s3c2410.h>
+ #include <plat/usb-phy.h>
+ #include <plat/regs-iic.h>
+ #include <plat/regs-serial.h>
+ #include <plat/regs-spi.h>
+-#include <plat/s3c64xx-spi.h>
++#include <linux/platform_data/spi-s3c64xx.h>
+ 
+ static u64 samsung_device_dma_mask = DMA_BIT_MASK(32);
+ 
+diff --git a/drivers/ata/pata_samsung_cf.c b/drivers/ata/pata_samsung_cf.c
+index 1b372c2..63ffb00 100644
+--- a/drivers/ata/pata_samsung_cf.c
++++ b/drivers/ata/pata_samsung_cf.c
+@@ -23,7 +23,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ 
+-#include <plat/ata.h>
++#include <linux/platform_data/ata-samsung_cf.h>
+ #include <plat/regs-ata.h>
+ 
+ #define DRV_NAME "pata_samsung_cf"
+diff --git a/drivers/hwmon/s3c-hwmon.c b/drivers/hwmon/s3c-hwmon.c
+index b7975f8..fe11b95 100644
+--- a/drivers/hwmon/s3c-hwmon.c
++++ b/drivers/hwmon/s3c-hwmon.c
+@@ -34,7 +34,7 @@
+ #include <linux/hwmon-sysfs.h>
+ 
+ #include <plat/adc.h>
+-#include <plat/hwmon.h>
++#include <linux/platform_data/hwmon-s3c.h>
+ 
+ struct s3c_hwmon_attr {
+ 	struct sensor_device_attribute	in;
+diff --git a/drivers/i2c/busses/i2c-s3c2410.c b/drivers/i2c/busses/i2c-s3c2410.c
+index 5ae3b02..4d07dea 100644
+--- a/drivers/i2c/busses/i2c-s3c2410.c
++++ b/drivers/i2c/busses/i2c-s3c2410.c
+@@ -42,7 +42,7 @@
+ #include <asm/irq.h>
+ 
+ #include <plat/regs-iic.h>
+-#include <plat/iic.h>
++#include <linux/platform_data/i2c-s3c2410.h>
+ 
+ /* Treat S3C2410 as baseline hardware, anything else is supported via quirks */
+ #define QUIRK_S3C2440		(1 << 0)
+diff --git a/drivers/input/touchscreen/s3c2410_ts.c b/drivers/input/touchscreen/s3c2410_ts.c
+index bf1a064..df9e816 100644
+--- a/drivers/input/touchscreen/s3c2410_ts.c
++++ b/drivers/input/touchscreen/s3c2410_ts.c
+@@ -37,7 +37,7 @@
+ 
+ #include <plat/adc.h>
+ #include <plat/regs-adc.h>
+-#include <plat/ts.h>
++#include <linux/platform_data/touchscreen-s3c2410.h>
+ 
+ #define TSC_SLEEP  (S3C2410_ADCTSC_PULL_UP_DISABLE | S3C2410_ADCTSC_XY_PST(0))
+ 
+diff --git a/drivers/leds/leds-s3c24xx.c b/drivers/leds/leds-s3c24xx.c
+index 942f0ea..e1a0df6 100644
+--- a/drivers/leds/leds-s3c24xx.c
++++ b/drivers/leds/leds-s3c24xx.c
+@@ -21,7 +21,7 @@
+ 
+ #include <mach/hardware.h>
+ #include <mach/regs-gpio.h>
+-#include <mach/leds-gpio.h>
++#include <linux/platform_data/leds-s3c24xx.h>
+ 
+ /* our context */
+ 
+diff --git a/drivers/media/video/s5p-fimc/mipi-csis.c b/drivers/media/video/s5p-fimc/mipi-csis.c
+index 2f73d9e..5e89843 100644
+--- a/drivers/media/video/s5p-fimc/mipi-csis.c
++++ b/drivers/media/video/s5p-fimc/mipi-csis.c
+@@ -26,7 +26,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/videodev2.h>
+ #include <media/v4l2-subdev.h>
+-#include <plat/mipi_csis.h>
++#include <linux/platform_data/mipi-csis.h>
+ #include "mipi-csis.h"
+ 
+ static int debug;
+diff --git a/drivers/mmc/host/s3cmci.c b/drivers/mmc/host/s3cmci.c
+index bd5a5cc..4638dda 100644
+--- a/drivers/mmc/host/s3cmci.c
++++ b/drivers/mmc/host/s3cmci.c
+@@ -27,7 +27,7 @@
+ 
+ #include <mach/regs-sdi.h>
+ 
+-#include <plat/mci.h>
++#include <linux/platform_data/mmc-s3cmci.h>
+ 
+ #include "s3cmci.h"
+ 
+diff --git a/drivers/mtd/nand/s3c2410.c b/drivers/mtd/nand/s3c2410.c
+index 91121f3..d804061 100644
+--- a/drivers/mtd/nand/s3c2410.c
++++ b/drivers/mtd/nand/s3c2410.c
+@@ -46,7 +46,7 @@
+ #include <asm/io.h>
+ 
+ #include <plat/regs-nand.h>
+-#include <plat/nand.h>
++#include <linux/platform_data/mtd-nand-s3c2410.h>
+ 
+ #ifdef CONFIG_MTD_NAND_S3C2410_HWECC
+ static int hardware_ecc = 1;
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index d1c8441f..0e2a022 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -32,7 +32,7 @@
+ #include <linux/of_gpio.h>
+ 
+ #include <mach/dma.h>
+-#include <plat/s3c64xx-spi.h>
++#include <linux/platform_data/spi-s3c64xx.h>
+ 
+ #define MAX_SPI_PORTS		3
+ 
+diff --git a/drivers/usb/gadget/s3c2410_udc.c b/drivers/usb/gadget/s3c2410_udc.c
+index f2e51f5..f006045 100644
+--- a/drivers/usb/gadget/s3c2410_udc.c
++++ b/drivers/usb/gadget/s3c2410_udc.c
+@@ -43,7 +43,7 @@
+ #include <mach/hardware.h>
+ 
+ #include <plat/regs-udc.h>
+-#include <plat/udc.h>
++#include <linux/platform_data/usb-s3c2410_udc.h>
+ 
+ 
+ #include "s3c2410_udc.h"
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 9d8f1dd..dfb14c7 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -16,7 +16,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/of_gpio.h>
+-#include <plat/ehci.h>
++#include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/usb-phy.h>
+ 
+ #define EHCI_INSNREG00(base)			(base + 0x90)
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index fc3091b..20a5008 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -14,7 +14,7 @@
+ #include <linux/clk.h>
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+-#include <mach/ohci.h>
++#include <linux/platform_data/usb-exynos.h>
+ #include <plat/usb-phy.h>
+ 
+ struct exynos_ohci_hcd {
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index 664c869..0d2309c 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -21,7 +21,7 @@
+ 
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+-#include <plat/usb-control.h>
++#include <linux/platform_data/usb-ohci-s3c2410.h>
+ 
+ #define valid_port(idx) ((idx) == 1 || (idx) == 2)
+ 
+diff --git a/arch/arm/plat-samsung/include/plat/audio.h b/include/linux/platform_data/asoc-s3c.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/audio.h
+rename to include/linux/platform_data/asoc-s3c.h
+diff --git a/arch/arm/plat-samsung/include/plat/audio-simtec.h b/include/linux/platform_data/asoc-s3c24xx_simtec.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/audio-simtec.h
+rename to include/linux/platform_data/asoc-s3c24xx_simtec.h
+diff --git a/arch/arm/plat-samsung/include/plat/ata.h b/include/linux/platform_data/ata-samsung_cf.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/ata.h
+rename to include/linux/platform_data/ata-samsung_cf.h
+diff --git a/arch/arm/plat-samsung/include/plat/hwmon.h b/include/linux/platform_data/hwmon-s3c.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/hwmon.h
+rename to include/linux/platform_data/hwmon-s3c.h
+diff --git a/arch/arm/plat-samsung/include/plat/iic.h b/include/linux/platform_data/i2c-s3c2410.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/iic.h
+rename to include/linux/platform_data/i2c-s3c2410.h
+diff --git a/arch/arm/mach-s3c24xx/include/mach/leds-gpio.h b/include/linux/platform_data/leds-s3c24xx.h
+similarity index 100%
+rename from arch/arm/mach-s3c24xx/include/mach/leds-gpio.h
+rename to include/linux/platform_data/leds-s3c24xx.h
+diff --git a/arch/arm/plat-samsung/include/plat/mipi_csis.h b/include/linux/platform_data/mipi-csis.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/mipi_csis.h
+rename to include/linux/platform_data/mipi-csis.h
+diff --git a/arch/arm/plat-samsung/include/plat/mci.h b/include/linux/platform_data/mmc-s3cmci.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/mci.h
+rename to include/linux/platform_data/mmc-s3cmci.h
+diff --git a/arch/arm/plat-samsung/include/plat/nand.h b/include/linux/platform_data/mtd-nand-s3c2410.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/nand.h
+rename to include/linux/platform_data/mtd-nand-s3c2410.h
+diff --git a/arch/arm/plat-samsung/include/plat/s3c64xx-spi.h b/include/linux/platform_data/spi-s3c64xx.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/s3c64xx-spi.h
+rename to include/linux/platform_data/spi-s3c64xx.h
+diff --git a/arch/arm/plat-samsung/include/plat/ts.h b/include/linux/platform_data/touchscreen-s3c2410.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/ts.h
+rename to include/linux/platform_data/touchscreen-s3c2410.h
+diff --git a/arch/arm/plat-samsung/include/plat/ehci.h b/include/linux/platform_data/usb-ehci-s5p.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/ehci.h
+rename to include/linux/platform_data/usb-ehci-s5p.h
+diff --git a/arch/arm/mach-exynos/include/mach/ohci.h b/include/linux/platform_data/usb-exynos.h
+similarity index 100%
+rename from arch/arm/mach-exynos/include/mach/ohci.h
+rename to include/linux/platform_data/usb-exynos.h
+diff --git a/arch/arm/plat-samsung/include/plat/usb-control.h b/include/linux/platform_data/usb-ohci-s3c2410.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/usb-control.h
+rename to include/linux/platform_data/usb-ohci-s3c2410.h
+diff --git a/arch/arm/plat-samsung/include/plat/udc.h b/include/linux/platform_data/usb-s3c2410_udc.h
+similarity index 100%
+rename from arch/arm/plat-samsung/include/plat/udc.h
+rename to include/linux/platform_data/usb-s3c2410_udc.h
+diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
+index 3d04c1f..14fbcd3 100644
+--- a/sound/soc/samsung/ac97.c
++++ b/sound/soc/samsung/ac97.c
+@@ -21,7 +21,7 @@
+ 
+ #include <mach/dma.h>
+ #include <plat/regs-ac97.h>
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include "dma.h"
+ 
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 6ac7b82..40b00a1 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -20,7 +20,7 @@
+ #include <sound/soc.h>
+ #include <sound/pcm_params.h>
+ 
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ 
+ #include "dma.h"
+ #include "idma.h"
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index 89b0646..c860819 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -19,7 +19,7 @@
+ #include <sound/soc.h>
+ #include <sound/pcm_params.h>
+ 
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ #include <mach/dma.h>
+ 
+ #include "dma.h"
+diff --git a/sound/soc/samsung/s3c24xx_simtec.c b/sound/soc/samsung/s3c24xx_simtec.c
+index 656d5af..335a7d8 100644
+--- a/sound/soc/samsung/s3c24xx_simtec.c
++++ b/sound/soc/samsung/s3c24xx_simtec.c
+@@ -13,7 +13,7 @@
+ 
+ #include <sound/soc.h>
+ 
+-#include <plat/audio-simtec.h>
++#include <linux/platform_data/asoc-s3c24xx_simtec.h>
+ 
+ #include "s3c24xx-i2s.h"
+ #include "s3c24xx_simtec.h"
+diff --git a/sound/soc/samsung/spdif.c b/sound/soc/samsung/spdif.c
+index a5a56a1..bc24c7a 100644
+--- a/sound/soc/samsung/spdif.c
++++ b/sound/soc/samsung/spdif.c
+@@ -17,7 +17,7 @@
+ #include <sound/soc.h>
+ #include <sound/pcm_params.h>
+ 
+-#include <plat/audio.h>
++#include <linux/platform_data/asoc-s3c.h>
+ #include <mach/dma.h>
+ 
+ #include "dma.h"
+-- 
+1.7.10
