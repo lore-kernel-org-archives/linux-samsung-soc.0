@@ -1,41 +1,48 @@
-From: "Burke, Zachary" <Zachary.Burke@digimarc.com>
-Subject: Exynos 4xxx Camera Image Filtering
-Date: Wed, 12 Sep 2012 18:43:10 +0000
-Message-ID: <7F1C005B6D42174DB9BF844CD0F55B9D257C3AE8@PDX-P-EX-C2A.corp.digimarc.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from smtp4.digimarc.com ([12.232.235.203]:57912 "EHLO
-	smtp4.digimarc.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755322Ab2ILSnM convert rfc822-to-8bit (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Sep 2012 14:43:12 -0400
-Content-Language: en-US
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH] arch/arm/mach-s3c24xx/mach-h1940.c: delete double assignment
+Date: Wed, 12 Sep 2012 21:28:55 +0200
+Message-ID: <1347478135-744-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Ben Dooks <ben-linux@fluff.org>
+Cc: kernel-janitors@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-Hello, I am looking for someone with knowledge of the camera image proc=
-essing path on Exynos 4xxx chips.=A0 On the devices available to us (Ex=
-ynos 4412 and 4212 in the Galaxy Note 10.1 and Galaxy S3) there appears=
- to be noise reduction/filtering occurring in the camera image acquisit=
-ion processing path.
+From: Julia Lawall <Julia.Lawall@lip6.fr>
 
-This is problematic for us as our embedded watermarks are being filtere=
-d out of preview frames along with the noise.=A0 In the past we found T=
-I doing similar filtering on the omap4xxx chip, these chips exposed ima=
-ge post-processing parameters to disable the noise suppression filter.=A0=
- These parameters are defined in:
-hardware/ti/omap4xxx/camera/TICameraParameters.cpp
+Delete successive assignments to the same location.
 
-I am looking for similar functionality on Exynos chips.=A0 I have looke=
-d through the kernel source for the galaxy tab (GT-N8013_ICS_Opensource=
-) but cannot find evidence of post-processing parameters exposed in the=
- camera driver.
+A simplified version of the semantic match that finds this problem is as
+follows: (http://coccinelle.lip6.fr/)
 
-Can anyone answer the question - Can I disable noise filtering on Exyno=
-s?
+// <smpl>
+@@
+expression i;
+@@
 
-Regards,
-Zachary
+*i = ...;
+ i = ...;
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+Not compiled, and this may change the behavior of the code.  Without this
+change, check_gpio2 could possibly be used uninitialized later.
+
+ arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
+index bb8d008..477778c 100644
+--- a/arch/arm/mach-s3c24xx/mach-h1940.c
++++ b/arch/arm/mach-s3c24xx/mach-h1940.c
+@@ -380,7 +380,7 @@ int h1940_led_blink_set(unsigned gpio, int state,
+ 	default:
+ 		blink_gpio = S3C2410_GPA(3);
+ 		check_gpio1 = S3C2410_GPA(1);
+-		check_gpio1 = S3C2410_GPA(7);
++		check_gpio2 = S3C2410_GPA(7);
+ 		break;
+ 	}
+ 
