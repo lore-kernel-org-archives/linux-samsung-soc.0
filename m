@@ -1,98 +1,374 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH] ARM: EXYNOS5: Add bus clock and set parent clock for FIMD
-Date: Wed, 12 Sep 2012 10:58:53 +0900
-Message-ID: <002001cd908a$29540070$7bfc0150$%han@samsung.com>
-References: <1347307866-30641-1-git-send-email-l.krishna@samsung.com>
- <000101cd8fb3$90d10db0$b2732910$%han@samsung.com>
- <CAL1wa8f1=hVMYrw2qdnQK5wFh8CtLxjP79+8POOG7HHqOBU5yA@mail.gmail.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 15/16] ARM: samsung: move platform_data definitions
+Date: Wed, 12 Sep 2012 11:20:54 +0900
+Message-ID: <010001cd908d$3e7a3fc0$bb6ebf40$%kim@samsung.com>
+References: <1347368350-31212-1-git-send-email-arnd@arndb.de>
+ <1347368559-31329-1-git-send-email-arnd@arndb.de>
+ <1347368559-31329-3-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:17056 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:21817 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754613Ab2ILB6z (ORCPT
+	with ESMTP id S1755706Ab2ILCVH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 11 Sep 2012 21:58:55 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MA7006I3S46O4A0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Sep 2012 10:58:53 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.119.56])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MA700GXLS65FP90@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 12 Sep 2012 10:58:53 +0900 (KST)
-In-reply-to: <CAL1wa8f1=hVMYrw2qdnQK5wFh8CtLxjP79+8POOG7HHqOBU5yA@mail.gmail.com>
+	Tue, 11 Sep 2012 22:21:07 -0400
+In-reply-to: <1347368559-31329-3-git-send-email-arnd@arndb.de>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Leela Krishna Amudala' <l.krishna@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, 'Russell King' <linux@arm.linux.org.uk>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Mark Brown' <broonie@opensource.wolfsonmicro.com>, 'Jeff Garzik' <jgarzik@pobox.com>, 'Guenter Roeck' <linux@roeck-us.net>, "'Wolfram Sang (embedded platforms)'" <w.sang@pengutronix.de>, 'Dmitry Torokhov' <dmitry.torokhov@gmail.com>, 'Bryan Wu' <bryan.wu@canonical.com>, 'Richard Purdie' <rpurdie@rpsys.net>, 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, 'Mauro Carvalho Chehab' <mchehab@infradead.org>, 'Chris Ball' <cjb@laptop.org>, 'David Woodhouse' <dwmw2@infradead.org>, 'Grant Likely' <grant.likely@secretlab.ca>, 'Felipe Balbi' <balbi@ti.com>, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Alan Stern' <stern@rowland.harvard.edu>, 'Sangbeom Kim' <sbkim73@samsung.com>, 'Liam Girdwood' <lrg@ti.com>, linux-samsu
 
-On Tuesday, September 11, 2012 6:20 PM Leela Krishna Amudala wrote
+Arnd Bergmann wrote:
 > 
-> Hello Jingoo Han,
+> Platform data for device drivers should be defined in
+> include/linux/platform_data/*.h, not in the architecture
+> and platform specific directories.
 > 
-> On Tue, Sep 11, 2012 at 5:52 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> > On Tuesday, September 11, 2012 5:11 AM Leela Krishna Amudala wrote
-> >>
-> >> This patch adds the bus clock for FIMD and changes the device name for lcd clock
-> >> also sets mout_mpll_user as parent clock to fimd
-> >>
-> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> >> ---
-> >>  arch/arm/mach-exynos/clock-exynos5.c       |   34 +++++++++++++++++++--------
-> >>  arch/arm/plat-samsung/include/plat/clock.h |    2 +
-> >>  2 files changed, 26 insertions(+), 10 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-> >> index 774533c..f1281cf 100644
-> >> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> >> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> >> @@ -891,6 +891,13 @@ static struct clk exynos5_clk_mdma1 = {
-> >>       .ctrlbit        = (1 << 4),
-> >>  };
-> >>
-> >> +static struct clk exynos5_clk_fimd = {
-> >> +     .name           = "fimd",
-> >> +     .devname        = "exynos5-fb",
-> >
-> >
-> > Replace 'exynos5-fb' with 'exynos5-fb.1', as exynos4 fimd uses exynos4-fb.0
-> > as devname. Exynos5 can use fimd0 or fimd1. Also, Exynos5250 uses fimd1.
-> >
-> >
-> Currently s3c-fb driver using "exynos5-fb" as device name, hence used
-> the same name in the clock.
-> This code is tested with both drm-fimd and s3c-fb fimd and it is
-> working fine showing the display on LCD.
-> If I change the device name in clock file then I have to change it in
-> s3c-fb driver also.
-> So I feel it is better to keep the name as "exynos5-fb" in clock file
-> instead of changing in the driver.
-
-No, there is no need to change the device name in s3c-fb driver.
-Please refer to the patch that I sent 3 months ago.
-	http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg11002.html
-
-Now, Exynos5250 has only 1 FIMD IP; however, other Exynos5 SoCs
-have 2 FIMD IPs. These SoCs have two different clock paths for
-2 FIMD IPs. Therefore, we need to consider it.
-
-
+> This moves such data out of the samsung include directories
 > 
-> Thanks,
-> Leela Krishna Amudala.
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Kukjin Kim <kgene.kim@samsung.com>
+
+Yeah, basically looks OK on this.
+
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
+
+BTW, how about re-ordering inclusion <linux/platform_data/xxx.h> after
+<linux/xxx.h> rather than just replacing like following?
+
+---
+#include <linux/xxx.h>
+...
+#include <linux/platform_data/xxx.h>
+...
+#include <mach/xxx.h>
+...
+#include <plat/xxx.h>
+...
+---
+
+And there are small comments...
+
+> Cc: Kyungmin Park <kyungmin.park@samsung.com>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Mark Brown <broonie@opensource.wolfsonmicro.com>
+> Cc: Jeff Garzik <jgarzik@pobox.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: "Wolfram Sang (embedded platforms)" <w.sang@pengutronix.de>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Bryan Wu <bryan.wu@canonical.com>
+> Cc: Richard Purdie <rpurdie@rpsys.net>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@infradead.org>
+> Cc: Chris Ball <cjb@laptop.org>
+> Cc: David Woodhouse <dwmw2@infradead.org>
+> Cc: Grant Likely <grant.likely@secretlab.ca>
+> Cc: Felipe Balbi <balbi@ti.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Sangbeom Kim <sbkim73@samsung.com>
+> Cc: Liam Girdwood <lrg@ti.com>
+> Cc: linux-samsung-soc@vger.kernel.org
+> ---
+>  arch/arm/mach-exynos/dev-audio.c                   |    2 +-
+>  arch/arm/mach-exynos/dev-ohci.c                    |    2 +-
+>  arch/arm/mach-exynos/mach-nuri.c                   |    6 +++---
+>  arch/arm/mach-exynos/mach-origen.c                 |    6 +++---
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    6 +++---
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    4 ++--
+>  arch/arm/mach-exynos/setup-i2c0.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c1.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c2.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c3.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c4.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c5.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c6.c                  |    2 +-
+>  arch/arm/mach-exynos/setup-i2c7.c                  |    2 +-
+>  arch/arm/mach-s3c24xx/common-smdk.c                |    4 ++--
+>  arch/arm/mach-s3c24xx/mach-amlm5900.c              |    2 +-
+>  arch/arm/mach-s3c24xx/mach-anubis.c                |    6 +++---
+>  arch/arm/mach-s3c24xx/mach-at2440evb.c             |    6 +++---
+>  arch/arm/mach-s3c24xx/mach-bast.c                  |    8 ++++----
+>  arch/arm/mach-s3c24xx/mach-gta02.c                 |   10 +++++-----
+>  arch/arm/mach-s3c24xx/mach-h1940.c                 |    8 ++++----
+>  arch/arm/mach-s3c24xx/mach-jive.c                  |    6 +++---
+>  arch/arm/mach-s3c24xx/mach-mini2440.c              |   10 +++++-----
+>  arch/arm/mach-s3c24xx/mach-n30.c                   |    8 ++++----
+>  arch/arm/mach-s3c24xx/mach-nexcoder.c              |    2 +-
+>  arch/arm/mach-s3c24xx/mach-osiris.c                |    4 ++--
+>  arch/arm/mach-s3c24xx/mach-otom.c                  |    2 +-
+>  arch/arm/mach-s3c24xx/mach-qt2410.c                |    8 ++++----
+>  arch/arm/mach-s3c24xx/mach-rx1950.c                |   10 +++++-----
+>  arch/arm/mach-s3c24xx/mach-rx3715.c                |    2 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2410.c              |    2 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2413.c              |    4 ++--
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    8 ++++----
+>  arch/arm/mach-s3c24xx/mach-smdk2440.c              |    2 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2443.c              |    2 +-
+>  arch/arm/mach-s3c24xx/mach-tct_hammer.c            |    2 +-
+>  arch/arm/mach-s3c24xx/mach-vr1000.c                |    6 +++---
+>  arch/arm/mach-s3c24xx/mach-vstms.c                 |    4 ++--
+>  arch/arm/mach-s3c24xx/setup-i2c.c                  |    2 +-
+>  arch/arm/mach-s3c24xx/simtec-audio.c               |    2 +-
+>  arch/arm/mach-s3c24xx/simtec-usb.c                 |    2 +-
+>  arch/arm/mach-s3c64xx/dev-audio.c                  |    2 +-
+>  arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410-module.c       |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |    4 ++--
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |    4 ++--
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |    4 ++--
+>  arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |    4 ++--
+>  arch/arm/mach-s3c64xx/mach-smartq.c                |    8 ++++----
+>  arch/arm/mach-s3c64xx/mach-smdk6400.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    6 +++---
+>  arch/arm/mach-s3c64xx/setup-i2c0.c                 |    2 +-
+>  arch/arm/mach-s3c64xx/setup-i2c1.c                 |    2 +-
+>  arch/arm/mach-s3c64xx/setup-ide.c                  |    2 +-
+>  arch/arm/mach-s5p64x0/dev-audio.c                  |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |    4 ++--
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |    4 ++--
+>  arch/arm/mach-s5p64x0/setup-i2c0.c                 |    2 +-
+>  arch/arm/mach-s5p64x0/setup-i2c1.c                 |    2 +-
+>  arch/arm/mach-s5pc100/dev-audio.c                  |    2 +-
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |    8 ++++----
+>  arch/arm/mach-s5pc100/setup-i2c0.c                 |    2 +-
+>  arch/arm/mach-s5pc100/setup-i2c1.c                 |    2 +-
+>  arch/arm/mach-s5pv210/dev-audio.c                  |    2 +-
+>  arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
+>  arch/arm/mach-s5pv210/mach-smdkc110.c              |    4 ++--
+>  arch/arm/mach-s5pv210/mach-smdkv210.c              |    6 +++---
+>  arch/arm/mach-s5pv210/mach-torbreck.c              |    2 +-
+>  arch/arm/mach-s5pv210/setup-i2c0.c                 |    2 +-
+>  arch/arm/mach-s5pv210/setup-i2c1.c                 |    2 +-
+>  arch/arm/mach-s5pv210/setup-i2c2.c                 |    2 +-
+>  arch/arm/plat-samsung/devs.c                       |   20
+++++++++++----------
+>  drivers/ata/pata_samsung_cf.c                      |    2 +-
+>  drivers/hwmon/s3c-hwmon.c                          |    2 +-
+>  drivers/i2c/busses/i2c-s3c2410.c                   |    2 +-
+>  drivers/input/touchscreen/s3c2410_ts.c             |    2 +-
+>  drivers/leds/leds-s3c24xx.c                        |    2 +-
+>  drivers/media/video/s5p-fimc/mipi-csis.c           |    2 +-
+>  drivers/mmc/host/s3cmci.c                          |    2 +-
+>  drivers/mtd/nand/s3c2410.c                         |    2 +-
+>  drivers/spi/spi-s3c64xx.c                          |    2 +-
+>  drivers/usb/gadget/s3c2410_udc.c                   |    2 +-
+>  drivers/usb/host/ehci-s5p.c                        |    2 +-
+>  drivers/usb/host/ohci-exynos.c                     |    2 +-
+>  drivers/usb/host/ohci-s3c2410.c                    |    2 +-
+>  .../linux/platform_data/asoc-s3c.h                 |    0
+>  .../linux/platform_data/asoc-s3c24xx_simtec.h      |    0
+>  .../linux/platform_data/ata-samsung_cf.h           |    0
+>  .../linux/platform_data/hwmon-s3c.h                |    0
+>  .../linux/platform_data/i2c-s3c2410.h              |    0
+>  .../linux/platform_data/leds-s3c24xx.h             |    0
+>  .../linux/platform_data/mipi-csis.h                |    0
+>  .../linux/platform_data/mmc-s3cmci.h               |    0
+>  .../linux/platform_data/mtd-nand-s3c2410.h         |    0
+>  .../linux/platform_data/spi-s3c64xx.h              |    0
+>  .../linux/platform_data/touchscreen-s3c2410.h      |    0
+>  .../linux/platform_data/usb-ehci-s5p.h             |    0
+>  .../linux/platform_data/usb-exynos.h               |    0
+>  .../linux/platform_data/usb-ohci-s3c2410.h         |    0
+>  .../linux/platform_data/usb-s3c2410_udc.h          |    0
+>  sound/soc/samsung/ac97.c                           |    2 +-
+>  sound/soc/samsung/i2s.c                            |    2 +-
+>  sound/soc/samsung/pcm.c                            |    2 +-
+>  sound/soc/samsung/s3c24xx_simtec.c                 |    2 +-
+>  sound/soc/samsung/spdif.c                          |    2 +-
+>  107 files changed, 164 insertions(+), 164 deletions(-)
+>  rename arch/arm/plat-samsung/include/plat/audio.h =>
+> include/linux/platform_data/asoc-s3c.h (100%)
+
+I'd prefer asoc-samsung.h and...
+
+>  rename arch/arm/plat-samsung/include/plat/audio-simtec.h =>
+> include/linux/platform_data/asoc-s3c24xx_simtec.h (100%)
+
+This will be merged into above header.
+
+
+arch/arm/plat-samsung/include/plat/audio-simtec.h  |   34 ----------------
+ .../linux/platform_data/asoc-samsung.h             |   42
+++++++++++++++++---
+ 2 files changed, 35 insertions(+), 41 deletions(-)
+ delete mode 100644 arch/arm/plat-samsung/include/plat/audio-simtec.h
+ rename arch/arm/plat-samsung/include/plat/audio.h =>
+include/linux/platform_data/asoc-samsung.h (63%)
+
+diff --git a/arch/arm/plat-samsung/include/plat/audio-simtec.h
+b/arch/arm/plat-samsung/include/plat/audio-simtec.h
+deleted file mode 100644
+index 376af52..0000000
+--- a/arch/arm/plat-samsung/include/plat/audio-simtec.h
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/* arch/arm/plat-samsung/include/plat/audio-simtec.h
+- *
+- * Copyright 2008 Simtec Electronics
+- *	http://armlinux.simtec.co.uk/
+- *	Ben Dooks <ben@simtec.co.uk>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 as
+- * published by the Free Software Foundation.
+- *
+- * Simtec Audio support.
+-*/
+-
+-/**
+- * struct s3c24xx_audio_simtec_pdata - platform data for simtec audio
+- * @use_mpllin: Select codec clock from MPLLin
+- * @output_cdclk: Need to output CDCLK to the codec
+- * @have_mic: Set if we have a MIC socket
+- * @have_lout: Set if we have a LineOut socket
+- * @amp_gpio: GPIO pin to enable the AMP
+- * @amp_gain: Option GPIO to control AMP gain
+- */
+-struct s3c24xx_audio_simtec_pdata {
+-	unsigned int	use_mpllin:1;
+-	unsigned int	output_cdclk:1;
+-
+-	unsigned int	have_mic:1;
+-	unsigned int	have_lout:1;
+-
+-	int		amp_gpio;
+-	int		amp_gain[2];
+-
+-	void	(*startup)(void);
+-};
+diff --git a/arch/arm/plat-samsung/include/plat/audio.h
+b/include/linux/platform_data/asoc-samsung.h
+similarity index 63%
+rename from arch/arm/plat-samsung/include/plat/audio.h
+rename to include/linux/platform_data/asoc-samsung.h
+index aa9875f..6b1d947 100644
+--- a/arch/arm/plat-samsung/include/plat/audio.h
++++ b/include/linux/platform_data/asoc-samsung.h
+@@ -1,5 +1,4 @@
+-/* arch/arm/plat-samsung/include/plat/audio.h
+- *
++/*
+  * Copyright (c) 2009 Samsung Electronics Co. Ltd
+  * Author: Jaswinder Singh <jassi.brar@samsung.com>
+  *
+@@ -8,12 +7,13 @@
+  * published by the Free Software Foundation.
+  */
+ 
+-/* The machine init code calls s3c*_ac97_setup_gpio with
++/*
++ * The machine init code calls s3c*_ac97_setup_gpio with
+  * one of these defines in order to select appropriate bank
+  * of GPIO for AC97 pins
+  */
+-#define S3C64XX_AC97_GPD  0
+-#define S3C64XX_AC97_GPE  1
++#define S3C64XX_AC97_GPD	0
++#define S3C64XX_AC97_GPE	1
+ extern void s3c64xx_ac97_setup_gpio(int);
+ 
+ /*
+@@ -21,8 +21,8 @@ extern void s3c64xx_ac97_setup_gpio(int);
+  * one of these defines in order to select appropriate bank
+  * of GPIO for S/PDIF pins
+  */
+-#define S5PC100_SPDIF_GPD  0
+-#define S5PC100_SPDIF_GPG3 1
++#define S5PC100_SPDIF_GPD	0
++#define S5PC100_SPDIF_GPG3	1
+ extern void s5pc100_spdif_setup_gpio(int);
+ 
+ struct samsung_i2s {
+@@ -57,3 +57,31 @@ struct s3c_audio_pdata {
+ 		struct samsung_i2s i2s;
+ 	} type;
+ };
++
++/**
++ * Simtec Audio support
++ 
++ * Copyright 2008 Simtec Electronics
++ *	http://armlinux.simtec.co.uk/
++ *	Ben Dooks <ben@simtec.co.uk>
++ *
++ * struct s3c24xx_audio_simtec_pdata - platform data for simtec audio
++ * @use_mpllin: Select codec clock from MPLLin
++ * @output_cdclk: Need to output CDCLK to the codec
++ * @have_mic: Set if we have a MIC socket
++ * @have_lout: Set if we have a LineOut socket
++ * @amp_gpio: GPIO pin to enable the AMP
++ * @amp_gain: Option GPIO to control AMP gain
++ */
++struct s3c24xx_audio_simtec_pdata {
++	unsigned int	use_mpllin:1;
++	unsigned int	output_cdclk:1;
++
++	unsigned int	have_mic:1;
++	unsigned int	have_lout:1;
++
++	int		amp_gpio;
++	int		amp_gain[2];
++
++	void	(*startup)(void);
++};
+--
+
+And I think, need to check what header name is better like following?...But
+if any policy on the naming, I'm OK :-)
+
+>  rename arch/arm/plat-samsung/include/plat/ata.h =>
+> include/linux/platform_data/ata-samsung_cf.h (100%)
+
+ata-samsung.h?
+
+>  rename arch/arm/plat-samsung/include/plat/hwmon.h =>
+> include/linux/platform_data/hwmon-s3c.h (100%)
+
+s3c-hwmon.h? 
+
+>  rename arch/arm/plat-samsung/include/plat/iic.h =>
+> include/linux/platform_data/i2c-s3c2410.h (100%)
+>  rename arch/arm/mach-s3c24xx/include/mach/leds-gpio.h =>
+> include/linux/platform_data/leds-s3c24xx.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/mipi_csis.h =>
+> include/linux/platform_data/mipi-csis.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/mci.h =>
+> include/linux/platform_data/mmc-s3cmci.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/nand.h =>
+> include/linux/platform_data/mtd-nand-s3c2410.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/s3c64xx-spi.h =>
+> include/linux/platform_data/spi-s3c64xx.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/ts.h =>
+> include/linux/platform_data/touchscreen-s3c2410.h (100%)
+
+s3c2410-ts.h?
+
+>  rename arch/arm/plat-samsung/include/plat/ehci.h =>
+> include/linux/platform_data/usb-ehci-s5p.h (100%)
+>  rename arch/arm/mach-exynos/include/mach/ohci.h =>
+> include/linux/platform_data/usb-exynos.h (100%)
+
+usb-ohci-exynos.h?
+
+>  rename arch/arm/plat-samsung/include/plat/usb-control.h =>
+> include/linux/platform_data/usb-ohci-s3c2410.h (100%)
+>  rename arch/arm/plat-samsung/include/plat/udc.h =>
+> include/linux/platform_data/usb-s3c2410_udc.h (100%)
 > 
-> >> +     .enable         = exynos5_clk_ip_disp1_ctrl,
-> >> +     .ctrlbit        = (1 << 0),
-> >> +};
-> >> +
-> >
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> > the body of a message to majordomo@vger.kernel.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+And just note that conflicts will be happened when merge this into Samsung
+tree.
+
+Thanks.
+
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
