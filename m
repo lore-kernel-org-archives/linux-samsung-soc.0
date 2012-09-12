@@ -1,48 +1,124 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH] arch/arm/mach-s3c24xx/mach-h1940.c: delete double assignment
-Date: Wed, 12 Sep 2012 21:28:55 +0200
-Message-ID: <1347478135-744-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: kernel-janitors@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH v2] ARM: EXYNOS: Add MFC device tree support
+Date: Wed, 12 Sep 2012 22:24:31 +0200
+Message-ID: <5050EF7F.9040802@gmail.com>
+References: <1347456857-27584-1-git-send-email-arun.kk@samsung.com> <1347456857-27584-2-git-send-email-arun.kk@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:55363 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751489Ab2ILUYg (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Sep 2012 16:24:36 -0400
+Received: by bkwj10 with SMTP id j10so131900bkw.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Sep 2012 13:24:35 -0700 (PDT)
+In-Reply-To: <1347456857-27584-2-git-send-email-arun.kk@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Arun Kumar K <arun.kk@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, ch.naveen@samsung.com, joshi@samsung.com
 
-From: Julia Lawall <Julia.Lawall@lip6.fr>
+Just a few small comments...
 
-Delete successive assignments to the same location.
+On 09/12/2012 03:34 PM, Arun Kumar K wrote:
+> This patch adds device tree entry for MFC v6 in the Exynos5
+> SoC. Makes the required changes in the clock files and adds
+> MFC to the DT device list.
+>
+> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
+> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
+> ---
+...
+> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> new file mode 100644
+> index 0000000..9a74d09
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+> @@ -0,0 +1,27 @@
+> +* Samsung Multi Format Codec (MFC)
+> +
+> +Mult Format Codec (MFC) is the IP present in Samsung SoCs which
 
-A simplified version of the semantic match that finds this problem is as
-follows: (http://coccinelle.lip6.fr/)
+Mult -> Multi
 
-// <smpl>
-@@
-expression i;
-@@
+> +supports high resolution decoding and encoding functionalities.
+> +The MFC device driver is a v4l2 driver which can encode/decode
+> +video raw/elementary streams and has support for all popular
+> +video codecs.
+> +
+> +Required properties:
+> +  - compatible : value should be either one among the following
+> +	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
+> +	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
+> +
+> +  - reg : Physical base address of the IP registers and length of memory
+> +	  mapped region.
+> +
+> +  - interrupts : MFC interupt number to the CPU.
 
-*i = ...;
- i = ...;
-// </smpl>
+interupt -> interrupt
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> +
+> +  - samsung,mfc-r : Base address of the first memory bank used by MFC
+> +		    for DMA contiguous memory allocation.
+> +
+> +  - samsung,mfc-r-size : Size of the first memory bank.
+> +
+> +  - samsung,mfc-l : Base address of the second memory bank used by MFC
+> +		    for DMA contiguous memory allocation.
+> +
+...
+> +struct mfc_dt_meminfo {
+> +	unsigned long loff;
+> +	unsigned long lsize;
+> +	unsigned long roff;
+> +	unsigned long rsize;
+> +};
+> +
+> +int fdt_find_mfc_mem(unsigned long node, const char *uname, int depth,
+> +		void *data)
+> +{
+> +	__be32 *prop;
+> +	unsigned long len;
+> +	struct mfc_dt_meminfo *mfc_mem = (struct mfc_dt_meminfo *)data;
 
----
-Not compiled, and this may change the behavior of the code.  Without this
-change, check_gpio2 could possibly be used uninitialized later.
+No need for explicit cast from void *.
 
- arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> +	if (of_flat_dt_is_compatible(node, "samsung,mfc-v6")) {
 
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index bb8d008..477778c 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -380,7 +380,7 @@ int h1940_led_blink_set(unsigned gpio, int state,
- 	default:
- 		blink_gpio = S3C2410_GPA(3);
- 		check_gpio1 = S3C2410_GPA(1);
--		check_gpio1 = S3C2410_GPA(7);
-+		check_gpio2 = S3C2410_GPA(7);
- 		break;
- 	}
- 
+Might be worth to change it to
+
+	if (!of_flat_dt_is_compatible(node, "samsung,mfc-v6"))
+		return 0;
+
+and avoid indentation.
+> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-l",&len);
+> +		if (!prop)
+> +			return 0;
+> +		mfc_mem->loff = of_read_ulong(prop, len/4);
+> +
+> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-l-size",&len);
+> +		if (!prop)
+> +			return 0;
+> +		mfc_mem->lsize = of_read_ulong(prop, len/4);
+> +
+> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-r",&len);
+> +		if (!prop)
+> +			return 0;
+> +		mfc_mem->roff = of_read_ulong(prop, len/4);
+> +
+> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-r-size",&len);
+> +		if (!prop)
+> +			return 0;
+> +		mfc_mem->rsize = of_read_ulong(prop, len/4);
+> +
+> +		return 1;
+> +	}
+> +	return 0;
+> +}
+
+--
+Regards,
+Sylwester
