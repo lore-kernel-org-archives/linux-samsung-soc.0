@@ -1,35 +1,41 @@
-From: Peter Senna Tschudin <peter.senna@gmail.com>
-Subject: [PATCH 9/15] arch/arm/mach-s3c24xx/mach-h1940.c: removes unnecessary semicolon
-Date: Wed, 12 Sep 2012 19:03:16 +0200
-Message-ID: <1347469402-27557-9-git-send-email-peter.senna@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ben Dooks <ben-linux@fluff.org>
-Cc: trivial@kernel.org, kernel-janitors@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>, Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+From: "Burke, Zachary" <Zachary.Burke@digimarc.com>
+Subject: Exynos 4xxx Camera Image Filtering
+Date: Wed, 12 Sep 2012 18:43:10 +0000
+Message-ID: <7F1C005B6D42174DB9BF844CD0F55B9D257C3AE8@PDX-P-EX-C2A.corp.digimarc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from smtp4.digimarc.com ([12.232.235.203]:57912 "EHLO
+	smtp4.digimarc.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755322Ab2ILSnM convert rfc822-to-8bit (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 12 Sep 2012 14:43:12 -0400
+Content-Language: en-US
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-From: Peter Senna Tschudin <peter.senna@gmail.com>
+Hello, I am looking for someone with knowledge of the camera image proc=
+essing path on Exynos 4xxx chips.=A0 On the devices available to us (Ex=
+ynos 4412 and 4212 in the Galaxy Note 10.1 and Galaxy S3) there appears=
+ to be noise reduction/filtering occurring in the camera image acquisit=
+ion processing path.
 
-removes unnecessary semicolon
+This is problematic for us as our embedded watermarks are being filtere=
+d out of preview frames along with the noise.=A0 In the past we found T=
+I doing similar filtering on the omap4xxx chip, these chips exposed ima=
+ge post-processing parameters to disable the noise suppression filter.=A0=
+ These parameters are defined in:
+hardware/ti/omap4xxx/camera/TICameraParameters.cpp
 
-Found by Coccinelle: http://coccinelle.lip6.fr/
+I am looking for similar functionality on Exynos chips.=A0 I have looke=
+d through the kernel source for the galaxy tab (GT-N8013_ICS_Opensource=
+) but cannot find evidence of post-processing parameters exposed in the=
+ camera driver.
 
-Signed-off-by: Peter Senna Tschudin <peter.senna@gmail.com>
+Can anyone answer the question - Can I disable noise filtering on Exyno=
+s?
 
----
- arch/arm/mach-s3c24xx/mach-h1940.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/mach-s3c24xx/mach-h1940.c b/arch/arm/mach-s3c24xx/mach-h1940.c
-index bb8d008..02ef7d5 100644
---- a/arch/arm/mach-s3c24xx/mach-h1940.c
-+++ b/arch/arm/mach-s3c24xx/mach-h1940.c
-@@ -460,7 +460,7 @@ static void h1940_set_mmc_power(unsigned char power_mode, unsigned short vdd)
- 		break;
- 	default:
- 		break;
--	};
-+	}
- }
- 
- static struct s3c24xx_mci_pdata h1940_mmc_cfg __initdata = {
+Regards,
+Zachary
