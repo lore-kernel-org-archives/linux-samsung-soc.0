@@ -1,124 +1,95 @@
-From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+From: Arun Kumar K <arun.kk@samsung.com>
 Subject: Re: [PATCH v2] ARM: EXYNOS: Add MFC device tree support
-Date: Wed, 12 Sep 2012 22:24:31 +0200
-Message-ID: <5050EF7F.9040802@gmail.com>
-References: <1347456857-27584-1-git-send-email-arun.kk@samsung.com> <1347456857-27584-2-git-send-email-arun.kk@samsung.com>
+Date: Thu, 13 Sep 2012 04:22:09 +0000 (GMT)
+Message-ID: <8407236.410361347510128765.JavaMail.weblogic@epml14>
+Reply-To: arun.kk@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-bk0-f46.google.com ([209.85.214.46]:55363 "EHLO
-	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751489Ab2ILUYg (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:24817 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750783Ab2IMEWL (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 12 Sep 2012 16:24:36 -0400
-Received: by bkwj10 with SMTP id j10so131900bkw.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 12 Sep 2012 13:24:35 -0700 (PDT)
-In-Reply-To: <1347456857-27584-2-git-send-email-arun.kk@samsung.com>
+	Thu, 13 Sep 2012 00:22:11 -0400
+Received: from epcpsbge3.samsung.com (epcpsbge3 [203.254.230.13])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MA9006W6TC1CYG0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 13 Sep 2012 13:22:09 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, ch.naveen@samsung.com, joshi@samsung.com
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, Karol Lewandowski <k.lewandowsk@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
 
-Just a few small comments...
-
-On 09/12/2012 03:34 PM, Arun Kumar K wrote:
-> This patch adds device tree entry for MFC v6 in the Exynos5
-> SoC. Makes the required changes in the clock files and adds
-> MFC to the DT device list.
->
-> Signed-off-by: Naveen Krishna Chatradhi<ch.naveen@samsung.com>
-> Signed-off-by: Arun Kumar K<arun.kk@samsung.com>
-> ---
-...
-> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> new file mode 100644
-> index 0000000..9a74d09
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> @@ -0,0 +1,27 @@
-> +* Samsung Multi Format Codec (MFC)
-> +
-> +Mult Format Codec (MFC) is the IP present in Samsung SoCs which
-
-Mult -> Multi
-
-> +supports high resolution decoding and encoding functionalities.
-> +The MFC device driver is a v4l2 driver which can encode/decode
-> +video raw/elementary streams and has support for all popular
-> +video codecs.
-> +
-> +Required properties:
-> +  - compatible : value should be either one among the following
-> +	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
-> +	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
-> +
-> +  - reg : Physical base address of the IP registers and length of memory
-> +	  mapped region.
-> +
-> +  - interrupts : MFC interupt number to the CPU.
-
-interupt -> interrupt
-
-> +
-> +  - samsung,mfc-r : Base address of the first memory bank used by MFC
-> +		    for DMA contiguous memory allocation.
-> +
-> +  - samsung,mfc-r-size : Size of the first memory bank.
-> +
-> +  - samsung,mfc-l : Base address of the second memory bank used by MFC
-> +		    for DMA contiguous memory allocation.
-> +
-...
-> +struct mfc_dt_meminfo {
-> +	unsigned long loff;
-> +	unsigned long lsize;
-> +	unsigned long roff;
-> +	unsigned long rsize;
-> +};
-> +
-> +int fdt_find_mfc_mem(unsigned long node, const char *uname, int depth,
-> +		void *data)
-> +{
-> +	__be32 *prop;
-> +	unsigned long len;
-> +	struct mfc_dt_meminfo *mfc_mem = (struct mfc_dt_meminfo *)data;
-
-No need for explicit cast from void *.
-
-> +	if (of_flat_dt_is_compatible(node, "samsung,mfc-v6")) {
-
-Might be worth to change it to
-
-	if (!of_flat_dt_is_compatible(node, "samsung,mfc-v6"))
-		return 0;
-
-and avoid indentation.
-> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-l",&len);
-> +		if (!prop)
-> +			return 0;
-> +		mfc_mem->loff = of_read_ulong(prop, len/4);
-> +
-> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-l-size",&len);
-> +		if (!prop)
-> +			return 0;
-> +		mfc_mem->lsize = of_read_ulong(prop, len/4);
-> +
-> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-r",&len);
-> +		if (!prop)
-> +			return 0;
-> +		mfc_mem->roff = of_read_ulong(prop, len/4);
-> +
-> +		prop = of_get_flat_dt_prop(node, "samsung,mfc-r-size",&len);
-> +		if (!prop)
-> +			return 0;
-> +		mfc_mem->rsize = of_read_ulong(prop, len/4);
-> +
-> +		return 1;
-> +	}
-> +	return 0;
-> +}
-
---
-Regards,
-Sylwester
+SGkgU3lsd2VzdGVyLA0KVGhhbmsgeW91IGZvciB0aGUgY29tbWVudHMuDQpXaWxsIG1ha2UgdGhl
+IG5lY2Vzc2FyeSBjaGFuZ2VzLg0KDQpSZWdhcmRzDQpBcnVuDQoNCk9uIFRodSwgU2VwIDEzLCAy
+MDEyIGF0IDE6NTQgQU0sIFN5bHdlc3RlciBOYXdyb2NraSA8c3lsdmVzdGVyLm5hd3JvY2tpQGdt
+YWlsLmNvbT4gd3JvdGU6DQo+IEp1c3QgYSBmZXcgc21hbGwgY29tbWVudHMuLi4NCj4NCj4NCj4g
+T24gMDkvMTIvMjAxMiAwMzozNCBQTSwgQXJ1biBLdW1hciBLIHdyb3RlOg0KPj4NCj4+IFRoaXMg
+cGF0Y2ggYWRkcyBkZXZpY2UgdHJlZSBlbnRyeSBmb3IgTUZDIHY2IGluIHRoZSBFeHlub3M1DQo+
+PiBTb0MuIE1ha2VzIHRoZSByZXF1aXJlZCBjaGFuZ2VzIGluIHRoZSBjbG9jayBmaWxlcyBhbmQg
+YWRkcw0KPj4gTUZDIHRvIHRoZSBEVCBkZXZpY2UgbGlzdC4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5
+OiBOYXZlZW4gS3Jpc2huYSBDaGF0cmFkaGk8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPj4gU2ln
+bmVkLW9mZi1ieTogQXJ1biBLdW1hciBLPGFydW4ua2tAc2Ftc3VuZy5jb20+DQo+PiAtLS0NCj4N
+Cj4gLi4uDQo+Pg0KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
+aW5ncy9tZWRpYS9zNXAtbWZjLnR4dA0KPj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
+ZGluZ3MvbWVkaWEvczVwLW1mYy50eHQNCj4+DQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4g
+aW5kZXggMDAwMDAwMC4uOWE3NGQwOQ0KPj4gLS0tIC9kZXYvbnVsbA0KPj4gKysrIGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21lZGlhL3M1cC1tZmMudHh0DQo+PiBAQCAtMCww
+ICsxLDI3IEBADQo+PiArKiBTYW1zdW5nIE11bHRpIEZvcm1hdCBDb2RlYyAoTUZDKQ0KPj4gKw0K
+Pj4gK011bHQgRm9ybWF0IENvZGVjIChNRkMpIGlzIHRoZSBJUCBwcmVzZW50IGluIFNhbXN1bmcg
+U29DcyB3aGljaA0KPg0KPg0KPiBNdWx0IC0+IE11bHRpDQo+DQo+DQo+PiArc3VwcG9ydHMgaGln
+aCByZXNvbHV0aW9uIGRlY29kaW5nIGFuZCBlbmNvZGluZyBmdW5jdGlvbmFsaXRpZXMuDQo+PiAr
+VGhlIE1GQyBkZXZpY2UgZHJpdmVyIGlzIGEgdjRsMiBkcml2ZXIgd2hpY2ggY2FuIGVuY29kZS9k
+ZWNvZGUNCj4+ICt2aWRlbyByYXcvZWxlbWVudGFyeSBzdHJlYW1zIGFuZCBoYXMgc3VwcG9ydCBm
+b3IgYWxsIHBvcHVsYXINCj4+ICt2aWRlbyBjb2RlY3MuDQo+PiArDQo+PiArUmVxdWlyZWQgcHJv
+cGVydGllczoNCj4+ICsgIC0gY29tcGF0aWJsZSA6IHZhbHVlIHNob3VsZCBiZSBlaXRoZXIgb25l
+IGFtb25nIHRoZSBmb2xsb3dpbmcNCj4+ICsgICAgICAgKGEpICJzYW1zdW5nLG1mYy12NSIgZm9y
+IE1GQyB2NSBwcmVzZW50IGluIEV4eW5vczQgU29Dcw0KPj4gKyAgICAgICAoYikgInNhbXN1bmcs
+bWZjLXY2IiBmb3IgTUZDIHY2IHByZXNlbnQgaW4gRXh5bm9zNSBTb0NzDQo+PiArDQo+PiArICAt
+IHJlZyA6IFBoeXNpY2FsIGJhc2UgYWRkcmVzcyBvZiB0aGUgSVAgcmVnaXN0ZXJzIGFuZCBsZW5n
+dGggb2YgbWVtb3J5DQo+PiArICAgICAgICAgbWFwcGVkIHJlZ2lvbi4NCj4+ICsNCj4+ICsgIC0g
+aW50ZXJydXB0cyA6IE1GQyBpbnRlcnVwdCBudW1iZXIgdG8gdGhlIENQVS4NCj4NCj4NCj4gaW50
+ZXJ1cHQgLT4gaW50ZXJydXB0DQo+DQo+DQo+PiArDQo+PiArICAtIHNhbXN1bmcsbWZjLXIgOiBC
+YXNlIGFkZHJlc3Mgb2YgdGhlIGZpcnN0IG1lbW9yeSBiYW5rIHVzZWQgYnkgTUZDDQo+PiArICAg
+ICAgICAgICAgICAgICAgIGZvciBETUEgY29udGlndW91cyBtZW1vcnkgYWxsb2NhdGlvbi4NCj4+
+ICsNCj4+ICsgIC0gc2Ftc3VuZyxtZmMtci1zaXplIDogU2l6ZSBvZiB0aGUgZmlyc3QgbWVtb3J5
+IGJhbmsuDQo+PiArDQo+PiArICAtIHNhbXN1bmcsbWZjLWwgOiBCYXNlIGFkZHJlc3Mgb2YgdGhl
+IHNlY29uZCBtZW1vcnkgYmFuayB1c2VkIGJ5IE1GQw0KPj4gKyAgICAgICAgICAgICAgICAgICBm
+b3IgRE1BIGNvbnRpZ3VvdXMgbWVtb3J5IGFsbG9jYXRpb24uDQo+PiArDQo+DQo+IC4uLg0KPg0K
+Pj4gK3N0cnVjdCBtZmNfZHRfbWVtaW5mbyB7DQo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgbG9m
+ZjsNCj4+ICsgICAgICAgdW5zaWduZWQgbG9uZyBsc2l6ZTsNCj4+ICsgICAgICAgdW5zaWduZWQg
+bG9uZyByb2ZmOw0KPj4gKyAgICAgICB1bnNpZ25lZCBsb25nIHJzaXplOw0KPj4gK307DQo+PiAr
+DQo+PiAraW50IGZkdF9maW5kX21mY19tZW0odW5zaWduZWQgbG9uZyBub2RlLCBjb25zdCBjaGFy
+ICp1bmFtZSwgaW50IGRlcHRoLA0KPj4gKyAgICAgICAgICAgICAgIHZvaWQgKmRhdGEpDQo+PiAr
+ew0KPj4gKyAgICAgICBfX2JlMzIgKnByb3A7DQo+PiArICAgICAgIHVuc2lnbmVkIGxvbmcgbGVu
+Ow0KPj4gKyAgICAgICBzdHJ1Y3QgbWZjX2R0X21lbWluZm8gKm1mY19tZW0gPSAoc3RydWN0IG1m
+Y19kdF9tZW1pbmZvICopZGF0YTsNCj4NCj4NCj4gTm8gbmVlZCBmb3IgZXhwbGljaXQgY2FzdCBm
+cm9tIHZvaWQgKi4NCj4NCj4NCj4+ICsgICAgICAgaWYgKG9mX2ZsYXRfZHRfaXNfY29tcGF0aWJs
+ZShub2RlLCAic2Ftc3VuZyxtZmMtdjYiKSkgew0KPg0KPg0KPiBNaWdodCBiZSB3b3J0aCB0byBj
+aGFuZ2UgaXQgdG8NCj4NCj4gICAgICAgICBpZiAoIW9mX2ZsYXRfZHRfaXNfY29tcGF0aWJsZShu
+b2RlLCAic2Ftc3VuZyxtZmMtdjYiKSkNCj4gICAgICAgICAgICAgICAgIHJldHVybiAwOw0KPg0K
+PiBhbmQgYXZvaWQgaW5kZW50YXRpb24uDQo+DQo+PiArICAgICAgICAgICAgICAgcHJvcCA9IG9m
+X2dldF9mbGF0X2R0X3Byb3Aobm9kZSwgInNhbXN1bmcsbWZjLWwiLCZsZW4pOw0KPj4gKyAgICAg
+ICAgICAgICAgIGlmICghcHJvcCkNCj4+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAw
+Ow0KPj4gKyAgICAgICAgICAgICAgIG1mY19tZW0tPmxvZmYgPSBvZl9yZWFkX3Vsb25nKHByb3As
+IGxlbi80KTsNCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBwcm9wID0gb2ZfZ2V0X2ZsYXRfZHRf
+cHJvcChub2RlLA0KPj4gInNhbXN1bmcsbWZjLWwtc2l6ZSIsJmxlbik7DQo+PiArICAgICAgICAg
+ICAgICAgaWYgKCFwcm9wKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIDA7DQo+
+PiArICAgICAgICAgICAgICAgbWZjX21lbS0+bHNpemUgPSBvZl9yZWFkX3Vsb25nKHByb3AsIGxl
+bi80KTsNCj4+ICsNCj4+ICsgICAgICAgICAgICAgICBwcm9wID0gb2ZfZ2V0X2ZsYXRfZHRfcHJv
+cChub2RlLCAic2Ftc3VuZyxtZmMtciIsJmxlbik7DQo+PiArICAgICAgICAgICAgICAgaWYgKCFw
+cm9wKQ0KPj4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIDA7DQo+PiArICAgICAgICAg
+ICAgICAgbWZjX21lbS0+cm9mZiA9IG9mX3JlYWRfdWxvbmcocHJvcCwgbGVuLzQpOw0KPj4gKw0K
+Pj4gKyAgICAgICAgICAgICAgIHByb3AgPSBvZl9nZXRfZmxhdF9kdF9wcm9wKG5vZGUsDQo+PiAi
+c2Ftc3VuZyxtZmMtci1zaXplIiwmbGVuKTsNCj4+ICsgICAgICAgICAgICAgICBpZiAoIXByb3Ap
+DQo+PiArICAgICAgICAgICAgICAgICAgICAgICByZXR1cm4gMDsNCj4+ICsgICAgICAgICAgICAg
+ICBtZmNfbWVtLT5yc2l6ZSA9IG9mX3JlYWRfdWxvbmcocHJvcCwgbGVuLzQpOw0KPj4gKw0KPj4g
+KyAgICAgICAgICAgICAgIHJldHVybiAxOw0KPj4gKyAgICAgICB9DQo+PiArICAgICAgIHJldHVy
+biAwOw0KPj4gK30NCj4NCj4NCj4gLS0NCj4gUmVnYXJkcywNCj4gU3lsd2VzdGVyDQo+DQo+DQo+
+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1
+YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyINCj4gaW4NCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdl
+IHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpvcmRvbW8gaW5mbyBhdCAg
+aHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
