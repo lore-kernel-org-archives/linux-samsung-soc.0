@@ -1,33 +1,90 @@
 From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [RFC] [PATCH 0/2] ARM: EXYNOS4: Add new cpuidle state
-Date: Thu, 13 Sep 2012 17:25:33 +0530
-Message-ID: <1347537335-26657-1-git-send-email-chander.kashyap@linaro.org>
+Subject: [RFC] [PATCH 1/2] ARM: Exynos4: CPUIDLE: Add generic function for exynos4 cpuidle
+Date: Thu, 13 Sep 2012 17:25:34 +0530
+Message-ID: <1347537335-26657-2-git-send-email-chander.kashyap@linaro.org>
+References: <1347537335-26657-1-git-send-email-chander.kashyap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pz0-f46.google.com ([209.85.210.46]:44367 "EHLO
-	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757617Ab2IML4Z (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:48714 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757704Ab2IML4d (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Sep 2012 07:56:25 -0400
-Received: by dady13 with SMTP id y13so1660018dad.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Sep 2012 04:56:24 -0700 (PDT)
+	Thu, 13 Sep 2012 07:56:33 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rr13so3833928pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Sep 2012 04:56:33 -0700 (PDT)
+In-Reply-To: <1347537335-26657-1-git-send-email-chander.kashyap@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: kgene.kim@samsung.com, ksoo.yu@samsung.com, jc.lee@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
+Cc: kgene.kim@samsung.com, ksoo.yu@samsung.com, jc.lee@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>, Inderpal Singh <inderpal.singh@linaro.org>
 
-This patchset does following:
+Moved out the code from exynos4_enter_core0_aftr to a separate
+function "exynos4_do_idle" in order to make it usable for other
+idle states.
 
-Patch 1: Segregate and move common code to new function
-Patch 2: Adds C2 idle state
+Also update the wakeup mask without touching reserved bits.
 
-It has been tested on Kukjin's for-next branch on Origen board.
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
+---
+ arch/arm/mach-exynos/cpuidle.c |   24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
 
-Chander Kashyap (2):
-  ARM: Exynos4: CPUIDLE: Add generic function for exynos4 cpuidle
-  ARM: EXYNOS4: CPUIDLE: Add C2 state
-
- arch/arm/mach-exynos/cpuidle.c |  385 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 373 insertions(+), 12 deletions(-)
-
+diff --git a/arch/arm/mach-exynos/cpuidle.c b/arch/arm/mach-exynos/cpuidle.c
+index cff0595..5e489a7 100644
+--- a/arch/arm/mach-exynos/cpuidle.c
++++ b/arch/arm/mach-exynos/cpuidle.c
+@@ -60,9 +60,11 @@ static struct cpuidle_driver exynos4_idle_driver = {
+ };
+ 
+ /* Ext-GIC nIRQ/nFIQ is the only wakeup source in AFTR */
+-static void exynos4_set_wakeupmask(void)
++static void exynos4_set_wakeupmask(int index)
+ {
+-	__raw_writel(0x0000ff3e, S5P_WAKEUP_MASK);
++	unsigned long mask = __raw_readl(S5P_WAKEUP_MASK) & 0xFFF00000;
++	if (index == 1)
++		__raw_writel(mask | 0x0000ff3e, S5P_WAKEUP_MASK);
+ }
+ 
+ static unsigned int g_pwr_ctrl, g_diag_reg;
+@@ -91,19 +93,17 @@ static int idle_finisher(unsigned long flags)
+ 	return 1;
+ }
+ 
+-static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+-				struct cpuidle_driver *drv,
+-				int index)
++static void exynos4_do_idle(int index, int pd_conf, int lp_mode_magic)
+ {
+ 	unsigned long tmp;
+ 
+-	exynos4_set_wakeupmask();
++	exynos4_set_wakeupmask(index);
+ 
+-	/* Set value of power down register for aftr mode */
+-	exynos_sys_powerdown_conf(SYS_AFTR);
++	/* Set value of power down register for requested LP mode */
++	exynos_sys_powerdown_conf(pd_conf);
+ 
+ 	__raw_writel(virt_to_phys(s3c_cpu_resume), REG_DIRECTGO_ADDR);
+-	__raw_writel(S5P_CHECK_AFTR, REG_DIRECTGO_FLAG);
++	__raw_writel(lp_mode_magic, REG_DIRECTGO_FLAG);
+ 
+ 	save_cpu_arch_register();
+ 
+@@ -136,7 +136,13 @@ static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
+ 
+ 	/* Clear wakeup state register */
+ 	__raw_writel(0x0, S5P_WAKEUP_STAT);
++}
+ 
++static int exynos4_enter_core0_aftr(struct cpuidle_device *dev,
++				struct cpuidle_driver *drv,
++				int index)
++{
++	exynos4_do_idle(index, SYS_AFTR, S5P_CHECK_AFTR);
+ 	return index;
+ }
+ 
 -- 
 1.7.9.5
