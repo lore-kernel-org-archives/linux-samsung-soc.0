@@ -1,86 +1,295 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH] spi: s3c64xx: Don't free controller_data on non-dt platforms
-Date: Thu, 13 Sep 2012 16:31:30 +0200
-Message-ID: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:37050 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758012Ab2IMOcC (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Sep 2012 10:32:02 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAA00JZ4LPD2RM0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Sep 2012 23:32:01 +0900 (KST)
-Received: from amdc248.digital.local ([106.116.147.32])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAA00108LP1LAC0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Sep 2012 23:32:01 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Subject: [PATCH] s5p-csis: Add transmission errors logging
+Date: Thu, 13 Sep 2012 16:42:10 +0200
+Message-ID: <1347547330-22326-1-git-send-email-s.nawrocki@samsung.com>
+Return-path: <linux-media-owner@vger.kernel.org>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: broonie@opensource.wolfsonmicro.com
-Cc: thomas.abraham@linaro.org, spi-devel-general@lists.sourceforge.net, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, Sylwester Nawrocki <s.nawrocki@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>
 
-When s3c64xx-spi is instantiated from device tree an instance of
-struct s3c64xx_spi_csinfo is dynamically allocated in the driver.
-For non-dt platform it is passed from board code through
-spi_register_board_info(). On error path in s3c64xx_spi_setup()
-function there is an attempt to free this data struct
-s3c64xx_spi_csinfo object as it would have been allocated in the
-driver for both, dt and non-dt based platforms. This leads to
-following bug when gpio request fails:
-
-spi spi1.0: Failed to get /CS gpio [21]: -16
-kernel BUG at mm/slub.c:3478!
-Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-Modules linked in:
-CPU: 0    Not tainted  (3.6.0-rc5-00092-g9b0b493-dirty #6111)
-PC is at kfree+0x148/0x158
-LR is at s3c64xx_spi_setup+0xac/0x290
-pc : [<c00a513c>]    lr : [<c0227014>]    psr: 40000013
-sp : ee043e10  ip : c032883c  fp : c0481f7c
-r10: ee0abd80  r9 : 00000063  r8 : 00000000
-r7 : ee129e78  r6 : ee104a00  r5 : fffffff0  r4 : c047bc64
-r3 : 40000400  r2 : c047bc64  r1 : c04def60  r0 : 0004047b
-Flags: nZcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-Control: 10c5387d  Table: 4000404a  DAC: 00000015
-Process swapper/0 (pid: 1, stack limit = 0xee0422f0)
-Stack: (0xee043e10 to 0xee044000)
-...
-[<c00a513c>] (kfree+0x148/0x158) from [<c0227014>] (s3c64xx_spi_setup+0xac/0x290)
-[<c0227014>] (s3c64xx_spi_setup+0xac/0x290) from [<c02251a4>] (spi_setup+0x34/0x4c)
-[<c02251a4>] (spi_setup+0x34/0x4c) from [<c02258d0>] (spi_add_device+0x98/0x128)
-[<c02258d0>] (spi_add_device+0x98/0x128) from [<c02259d4>] (spi_new_device+0x74/0xa8)
-[<c02259d4>] (spi_new_device+0x74/0xa8) from [<c0225a2c>] (spi_match_master_to_boardinfo+0x24/0x44)
-[<c0225a2c>] (spi_match_master_to_boardinfo+0x24/0x44) from [<c0225b40>] (spi_register_master+0xf4/0x2a8)
-[<c0225b40>] (spi_register_master+0xf4/0x2a8) from [<c043fe0c>] (s3c64xx_spi_probe+0x34c/0x42c)
-[<c043fe0c>] (s3c64xx_spi_probe+0x34c/0x42c) from [<c01fc198>] (platform_drv_probe+0x18/0x1c)
-
-There should be no attempt to kfree controller_data when it was
-externally provided through the board code. Fix this by freeing
-controller_data only when dev->of_node is not null.
+Add hardware event/error counters which can be dumped into the kernel
+log through VIDIOC_LOG_STATUS ioctl. The counters are reset  in each
+s_stream(1) call. Any errors are logged after streaming is turned off.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/spi/spi-s3c64xx.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/s5p-fimc/mipi-csis.c | 159 ++++++++++++++++++++++++----
+ 1 file changed, 139 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
-index d1c8441f..7f75d4e 100644
---- a/drivers/spi/spi-s3c64xx.c
-+++ b/drivers/spi/spi-s3c64xx.c
-@@ -976,7 +976,8 @@ err_msgq:
- 	spi_set_ctldata(spi, NULL);
-
- err_gpio_req:
--	kfree(cs);
-+	if (spi->dev.of_node)
-+		kfree(cs);
-
- 	return err;
+diff --git a/drivers/media/platform/s5p-fimc/mipi-csis.c b/drivers/media/platform/s5p-fimc/mipi-csis.c
+index 2f73d9e..3bfee3a 100644
+--- a/drivers/media/platform/s5p-fimc/mipi-csis.c
++++ b/drivers/media/platform/s5p-fimc/mipi-csis.c
+@@ -31,7 +31,7 @@
+ 
+ static int debug;
+ module_param(debug, int, 0644);
+-MODULE_PARM_DESC(debug, "Debug level (0-1)");
++MODULE_PARM_DESC(debug, "Debug level (0-2)");
+ 
+ /* Register map definition */
+ 
+@@ -60,10 +60,38 @@ MODULE_PARM_DESC(debug, "Debug level (0-1)");
+ #define S5PCSIS_CFG_FMT_MASK		(0x3f << 2)
+ #define S5PCSIS_CFG_NR_LANE_MASK	3
+ 
+-/* Interrupt mask. */
++/* Interrupt mask */
+ #define S5PCSIS_INTMSK			0x10
+-#define S5PCSIS_INTMSK_EN_ALL		0xf000003f
++#define S5PCSIS_INTMSK_EN_ALL		0xf000103f
++#define S5PCSIS_INTMSK_EVEN_BEFORE	(1 << 31)
++#define S5PCSIS_INTMSK_EVEN_AFTER	(1 << 30)
++#define S5PCSIS_INTMSK_ODD_BEFORE	(1 << 29)
++#define S5PCSIS_INTMSK_ODD_AFTER	(1 << 28)
++#define S5PCSIS_INTMSK_ERR_SOT_HS	(1 << 12)
++#define S5PCSIS_INTMSK_ERR_LOST_FS	(1 << 5)
++#define S5PCSIS_INTMSK_ERR_LOST_FE	(1 << 4)
++#define S5PCSIS_INTMSK_ERR_OVER		(1 << 3)
++#define S5PCSIS_INTMSK_ERR_ECC		(1 << 2)
++#define S5PCSIS_INTMSK_ERR_CRC		(1 << 1)
++#define S5PCSIS_INTMSK_ERR_UNKNOWN	(1 << 0)
++
++/* Interrupt source */
+ #define S5PCSIS_INTSRC			0x14
++#define S5PCSIS_INTSRC_EVEN_BEFORE	(1 << 31)
++#define S5PCSIS_INTSRC_EVEN_AFTER	(1 << 30)
++#define S5PCSIS_INTSRC_EVEN		(0x3 << 30)
++#define S5PCSIS_INTSRC_ODD_BEFORE	(1 << 29)
++#define S5PCSIS_INTSRC_ODD_AFTER	(1 << 28)
++#define S5PCSIS_INTSRC_ODD		(0x3 << 28)
++#define S5PCSIS_INTSRC_NON_IMAGE_DATA	(0xff << 28)
++#define S5PCSIS_INTSRC_ERR_SOT_HS	(0xf << 12)
++#define S5PCSIS_INTSRC_ERR_LOST_FS	(1 << 5)
++#define S5PCSIS_INTSRC_ERR_LOST_FE	(1 << 4)
++#define S5PCSIS_INTSRC_ERR_OVER		(1 << 3)
++#define S5PCSIS_INTSRC_ERR_ECC		(1 << 2)
++#define S5PCSIS_INTSRC_ERR_CRC		(1 << 1)
++#define S5PCSIS_INTSRC_ERR_UNKNOWN	(1 << 0)
++#define S5PCSIS_INTSRC_ERRORS		0xf03f
+ 
+ /* Pixel resolution */
+ #define S5PCSIS_RESOL			0x2c
+@@ -93,6 +121,29 @@ enum {
+ 	ST_SUSPENDED	= 4,
+ };
+ 
++struct s5pcsis_event {
++	u32 mask;
++	const char * const name;
++	unsigned int counter;
++};
++
++static const struct s5pcsis_event s5pcsis_events[] = {
++	/* Errors */
++	{ S5PCSIS_INTSRC_ERR_SOT_HS,	"SOT Error" },
++	{ S5PCSIS_INTSRC_ERR_LOST_FS,	"Lost Frame Start Error" },
++	{ S5PCSIS_INTSRC_ERR_LOST_FE,	"Lost Frame End Error" },
++	{ S5PCSIS_INTSRC_ERR_OVER,	"FIFO Overflow Error" },
++	{ S5PCSIS_INTSRC_ERR_ECC,	"ECC Error" },
++	{ S5PCSIS_INTSRC_ERR_CRC,	"CRC Error" },
++	{ S5PCSIS_INTSRC_ERR_UNKNOWN,	"Unknown Error" },
++	/* Non-image data receive events */
++	{ S5PCSIS_INTSRC_EVEN_BEFORE,	"Non-image data before even frame" },
++	{ S5PCSIS_INTSRC_EVEN_AFTER,	"Non-image data after even frame" },
++	{ S5PCSIS_INTSRC_ODD_BEFORE,	"Non-image data before odd frame" },
++	{ S5PCSIS_INTSRC_ODD_AFTER,	"Non-image data after odd frame" },
++};
++#define S5PCSIS_NUM_EVENTS ARRAY_SIZE(s5pcsis_events)
++
+ /**
+  * struct csis_state - the driver's internal state data structure
+  * @lock: mutex serializing the subdev and power management operations,
+@@ -101,11 +152,14 @@ enum {
+  * @sd: v4l2_subdev associated with CSIS device instance
+  * @pdev: CSIS platform device
+  * @regs: mmaped I/O registers memory
++ * @supplies: CSIS regulator supplies
+  * @clock: CSIS clocks
+  * @irq: requested s5p-mipi-csis irq number
+  * @flags: the state variable for power and streaming control
+  * @csis_fmt: current CSIS pixel format
+  * @format: common media bus format for the source and sink pad
++ * @slock: spinlock protecting structure members below
++ * @events: MIPI-CSIS event (error) counters
+  */
+ struct csis_state {
+ 	struct mutex lock;
+@@ -119,6 +173,9 @@ struct csis_state {
+ 	u32 flags;
+ 	const struct csis_pix_format *csis_fmt;
+ 	struct v4l2_mbus_framefmt format;
++
++	struct spinlock slock;
++	struct s5pcsis_event events[S5PCSIS_NUM_EVENTS];
+ };
+ 
+ /**
+@@ -292,17 +349,6 @@ err:
+ 	return -ENXIO;
  }
---
+ 
+-static int s5pcsis_s_power(struct v4l2_subdev *sd, int on)
+-{
+-	struct csis_state *state = sd_to_csis_state(sd);
+-	struct device *dev = &state->pdev->dev;
+-
+-	if (on)
+-		return pm_runtime_get_sync(dev);
+-
+-	return pm_runtime_put_sync(dev);
+-}
+-
+ static void s5pcsis_start_stream(struct csis_state *state)
+ {
+ 	s5pcsis_reset(state);
+@@ -317,7 +363,47 @@ static void s5pcsis_stop_stream(struct csis_state *state)
+ 	s5pcsis_system_enable(state, false);
+ }
+ 
+-/* v4l2_subdev operations */
++static void s5pcsis_clear_counters(struct csis_state *state)
++{
++	unsigned long flags;
++	int i;
++
++	spin_lock_irqsave(&state->slock, flags);
++	for (i = 0; i < S5PCSIS_NUM_EVENTS; i++)
++		state->events[i].counter = 0;
++	spin_unlock_irqrestore(&state->slock, flags);
++}
++
++static void s5pcsis_log_counters(struct csis_state *state, bool non_errors)
++{
++	int i = non_errors ? S5PCSIS_NUM_EVENTS : S5PCSIS_NUM_EVENTS - 4;
++	unsigned long flags;
++
++	spin_lock_irqsave(&state->slock, flags);
++
++	for (i--; i >= 0; i--)
++		if (state->events[i].counter >= 0)
++			v4l2_info(&state->sd, "%s events: %d\n",
++				  state->events[i].name,
++				  state->events[i].counter);
++
++	spin_unlock_irqrestore(&state->slock, flags);
++}
++
++/*
++ * V4L2 subdev operations
++ */
++static int s5pcsis_s_power(struct v4l2_subdev *sd, int on)
++{
++	struct csis_state *state = sd_to_csis_state(sd);
++	struct device *dev = &state->pdev->dev;
++
++	if (on)
++		return pm_runtime_get_sync(dev);
++
++	return pm_runtime_put_sync(dev);
++}
++
+ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
+ {
+ 	struct csis_state *state = sd_to_csis_state(sd);
+@@ -327,10 +413,12 @@ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
+ 		 __func__, enable, state->flags);
+ 
+ 	if (enable) {
++		s5pcsis_clear_counters(state);
+ 		ret = pm_runtime_get_sync(&state->pdev->dev);
+ 		if (ret && ret != 1)
+ 			return ret;
+ 	}
++
+ 	mutex_lock(&state->lock);
+ 	if (enable) {
+ 		if (state->flags & ST_SUSPENDED) {
+@@ -342,6 +430,7 @@ static int s5pcsis_s_stream(struct v4l2_subdev *sd, int enable)
+ 	} else {
+ 		s5pcsis_stop_stream(state);
+ 		state->flags &= ~ST_STREAMING;
++		s5pcsis_log_counters(state, true);
+ 	}
+ unlock:
+ 	mutex_unlock(&state->lock);
+@@ -439,6 +528,14 @@ static int s5pcsis_get_fmt(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh,
+ 	return 0;
+ }
+ 
++static int s5pcsis_log_status(struct v4l2_subdev *sd)
++{
++	struct csis_state *state = sd_to_csis_state(sd);
++
++	s5pcsis_log_counters(state, true);
++	return 0;
++}
++
+ static int s5pcsis_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ {
+ 	struct v4l2_mbus_framefmt *format = v4l2_subdev_get_try_format(fh, 0);
+@@ -458,6 +555,7 @@ static const struct v4l2_subdev_internal_ops s5pcsis_sd_internal_ops = {
+ 
+ static struct v4l2_subdev_core_ops s5pcsis_core_ops = {
+ 	.s_power = s5pcsis_s_power,
++	.log_status = s5pcsis_log_status,
+ };
+ 
+ static struct v4l2_subdev_pad_ops s5pcsis_pad_ops = {
+@@ -479,12 +577,29 @@ static struct v4l2_subdev_ops s5pcsis_subdev_ops = {
+ static irqreturn_t s5pcsis_irq_handler(int irq, void *dev_id)
+ {
+ 	struct csis_state *state = dev_id;
+-	u32 val;
+-
+-	/* Just clear the interrupt pending bits. */
+-	val = s5pcsis_read(state, S5PCSIS_INTSRC);
+-	s5pcsis_write(state, S5PCSIS_INTSRC, val);
++	unsigned long flags;
++	u32 status;
++
++	status = s5pcsis_read(state, S5PCSIS_INTSRC);
++
++	spin_lock_irqsave(&state->slock, flags);
++
++	/* Update the event/error counters */
++	if ((status & S5PCSIS_INTSRC_ERRORS) || debug) {
++		int i;
++		for (i = 0; i < S5PCSIS_NUM_EVENTS; i++) {
++			if (!(status & state->events[i].mask))
++				continue;
++			state->events[i].counter++;
++			v4l2_dbg(2, debug, &state->sd, "%s: %d\n",
++				 state->events[i].name,
++				 state->events[i].counter);
++		}
++		v4l2_dbg(2, debug, &state->sd, "status: %08x\n", status);
++	}
++	spin_unlock_irqrestore(&state->slock, flags);
+ 
++	s5pcsis_write(state, S5PCSIS_INTSRC, status);
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -501,6 +616,8 @@ static int __devinit s5pcsis_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	mutex_init(&state->lock);
++	spin_lock_init(&state->slock);
++
+ 	state->pdev = pdev;
+ 
+ 	pdata = pdev->dev.platform_data;
+@@ -577,6 +694,8 @@ static int __devinit s5pcsis_probe(struct platform_device *pdev)
+ 	/* .. and a pointer to the subdev. */
+ 	platform_set_drvdata(pdev, &state->sd);
+ 
++	memcpy(state->events, s5pcsis_events, sizeof(state->events));
++
+ 	pm_runtime_enable(&pdev->dev);
+ 	return 0;
+ 
+-- 
 1.7.11.3
