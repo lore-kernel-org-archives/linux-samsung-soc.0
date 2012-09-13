@@ -1,47 +1,33 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/5] ARM: Add interface for registering and calling
- firmware-specific operations
-Date: Thu, 13 Sep 2012 10:25:19 +0200
-Message-ID: <7531144.4Y7oHlfebV@amdc1227>
-References: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
- <1347524018-19301-3-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: [RFC] [PATCH 0/2] ARM: EXYNOS4: Add new cpuidle state
+Date: Thu, 13 Sep 2012 17:25:33 +0530
+Message-ID: <1347537335-26657-1-git-send-email-chander.kashyap@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:15310 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754254Ab2IMIZz (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:44367 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757617Ab2IML4Z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Sep 2012 04:25:55 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAA00J7C4QCA1W0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Sep 2012 17:25:24 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAA00APQ4Q91X10@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 13 Sep 2012 17:25:24 +0900 (KST)
-In-reply-to: <1347524018-19301-3-git-send-email-t.figa@samsung.com>
+	Thu, 13 Sep 2012 07:56:25 -0400
+Received: by dady13 with SMTP id y13so1660018dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Sep 2012 04:56:24 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: kgene.kim@samsung.com, ksoo.yu@samsung.com, jc.lee@samsung.com, Chander Kashyap <chander.kashyap@linaro.org>
 
-On Thursday 13 of September 2012 10:13:35 Tomasz Figa wrote:
-> In code using firmware ops:
-> 
-> 	__raw_writel(virt_to_phys(exynos4_secondary_startup),
-> 		CPU1_BOOT_REG);
-> 
-> 	/* Call Exynos specific smc call */
-> 	do_firmware_op(cpu_boot, cpu);
+This patchset does following:
 
-Typo, s/do_/call_/ .
+Patch 1: Segregate and move common code to new function
+Patch 2: Adds C2 idle state
 
-Best regards,
+It has been tested on Kukjin's for-next branch on Origen board.
+
+Chander Kashyap (2):
+  ARM: Exynos4: CPUIDLE: Add generic function for exynos4 cpuidle
+  ARM: EXYNOS4: CPUIDLE: Add C2 state
+
+ arch/arm/mach-exynos/cpuidle.c |  385 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 373 insertions(+), 12 deletions(-)
+
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
+1.7.9.5
