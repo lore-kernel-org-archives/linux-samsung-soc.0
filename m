@@ -1,116 +1,56 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH 1/3] mmc: sdhci-s3c: Enable only required bus clock
-Date: Fri, 14 Sep 2012 19:49:03 +0900
-Message-ID: <50530B9F.3050803@samsung.com>
-References: <1347613731-29428-1-git-send-email-chander.kashyap@linaro.org>
- <1347613731-29428-2-git-send-email-chander.kashyap@linaro.org>
- <5052FF1C.3060803@samsung.com>
- <CANuQgHG6mp3-oOB=nYLLQu-rqwfmoXJ6V_uiC75NK+NrNd0FPg@mail.gmail.com>
+From: Chander Kashyap <chander.kashyap@linaro.org>
+Subject: Re: [PATCH 0/2] DMA: PL330: Clock and runtime cleanup
+Date: Fri, 14 Sep 2012 16:55:26 +0530
+Message-ID: <CANuQgHEz1jt=gmhxUsLev8Vu1G9EeZUqiaREYEhLPBtJj257=Q@mail.gmail.com>
+References: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
+	<1347592503.1943.17.camel@vkoul-udesk3>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44386 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753189Ab2INKtO (ORCPT
+Received: from mail-pz0-f46.google.com ([209.85.210.46]:62877 "EHLO
+	mail-pz0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758240Ab2INLZ1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Sep 2012 06:49:14 -0400
-In-reply-to: <CANuQgHG6mp3-oOB=nYLLQu-rqwfmoXJ6V_uiC75NK+NrNd0FPg@mail.gmail.com>
+	Fri, 14 Sep 2012 07:25:27 -0400
+Received: by dady13 with SMTP id y13so2361256dad.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 14 Sep 2012 04:25:26 -0700 (PDT)
+In-Reply-To: <1347592503.1943.17.camel@vkoul-udesk3>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Chander Kashyap <chander.kashyap@linaro.org>
-Cc: Jaehoon Chung <jh80.chung@samsung.com>, linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org, cjb@laptop.org, ben@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: Inderpal Singh <inderpal.singh@linaro.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, boojin.kim@samsung.com, jassisinghbrar@gmail.com
 
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
+On 14 September 2012 08:45, Vinod Koul <vinod.koul@linux.intel.com> wrote:
+> On Fri, 2012-09-07 at 12:14 +0530, Inderpal Singh wrote:
+>> The controller clock is being managed at AMBA bus level probe/remove and
+>> pm_runtime/suspend functions. The existing driver does the clock enable/disable
+>> again in the same code paths, which unneccessarily increments the usage count of
+>> the clock for the same device.
+>>
+>> The following patches remove the redundant clock enable/disable from the driver.
+> Looks good, any tested by before I apply this.. Kukjin?
+if it matters,
+Tested-by: Chander Kashyap <chander.kashyap@linaro.org>
 
-On 09/14/2012 07:46 PM, Chander Kashyap wrote:
-> Hi Jaehoon Chung,
-> 
-> On 14 September 2012 15:25, Jaehoon Chung <jh80.chung@samsung.com> wrote:
->> Hi Chander,
 >>
->> Could you add the error control for clk_enable()?
-> It is maintained as original and clk is already checked for error using IS_ERR.
+>> Inderpal Singh (2):
+>>   DMA: PL330: Remove controller clock enable/disable
+>>   DMA: PL330: Remove redundant runtime_suspend/resume functions
 >>
->> On 09/14/2012 06:08 PM, Chander Kashyap wrote:
->>> In case of multiple bus clock sources, all the clock sources were
->>> getting enabled. As only one clock source is needed at the time hence
->>> enable only the required bus clock.
->>>
->>> This patch does as follows:
->>> 1.    In sdhci_s3c_probe enable only required bus clock source.
->>>
->>> 2.    Handle the disabling of old bus clock and enables the
->>>       best clock selected in sdhci_s3c_set_clock().
->>>
->>> Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
->>> ---
->>>  drivers/mmc/host/sdhci-s3c.c |   12 +++++++-----
->>>  1 file changed, 7 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
->>> index 00969ba..0cbb4c2 100644
->>> --- a/drivers/mmc/host/sdhci-s3c.c
->>> +++ b/drivers/mmc/host/sdhci-s3c.c
->>> @@ -203,10 +203,12 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
->>>                best_src, clock, best);
->>>
->>>       /* select the new clock source */
->>> -
->>>       if (ourhost->cur_clk != best_src) {
->>>               struct clk *clk = ourhost->clk_bus[best_src];
->>>
->>> +             clk_enable(clk);
->>> +             clk_disable(ourhost->clk_bus[ourhost->cur_clk]);
->>> +
->> Did you consider the case that set_clock is assigned the sdhci_cmu_set_clock()?
-> Yes considered.
+>>  drivers/dma/pl330.c |   73 ++++-----------------------------------------------
+>>  1 file changed, 5 insertions(+), 68 deletions(-)
 >>
->>>               /* turn clock off to card before changing clock source */
->>>               writew(0, host->ioaddr + SDHCI_CLOCK_CONTROL);
->>>
->>> @@ -501,8 +503,6 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->>>                */
->>>               sc->cur_clk = ptr;
->>>
->>> -             clk_enable(clk);
->>> -
->>>               dev_info(dev, "clock source %d: %s (%ld Hz)\n",
->>>                        ptr, name, clk_get_rate(clk));
->>>       }
->>> @@ -513,6 +513,8 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->>>               goto err_no_busclks;
->>>       }
->>>
->>> +     clk_enable(sc->clk_bus[sc->cur_clk]);
->>> +
->>>       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>>       host->ioaddr = devm_request_and_ioremap(&pdev->dev, res);
->>>       if (!host->ioaddr) {
->>> @@ -621,9 +623,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
->>>       return 0;
->>>
->>>   err_req_regs:
->>> +     clk_disable(sc->clk_bus[sc->cur_clk]);
->>>       for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
->>>               if (sc->clk_bus[ptr]) {
->>> -                     clk_disable(sc->clk_bus[ptr]);
->>>                       clk_put(sc->clk_bus[ptr]);
->>>               }
->>>       }
->>> @@ -658,9 +660,9 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
->>>
->>>       pm_runtime_disable(&pdev->dev);
->>>
->>> +     clk_disable(sc->clk_bus[sc->cur_clk]);
->>>       for (ptr = 0; ptr < 3; ptr++) {
->>>               if (sc->clk_bus[ptr]) {
->>> -                     clk_disable(sc->clk_bus[ptr]);
->>>                       clk_put(sc->clk_bus[ptr]);
->>>               }
->>>       }
->>>
->>
-> 
-> 
-> 
+>
+>
+> --
+> ~Vinod
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+-- 
+with warm regards,
+Chander Kashyap
