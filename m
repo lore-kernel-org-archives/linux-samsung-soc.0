@@ -1,92 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] spi: s3c64xx: Don't free controller_data on non-dt
- platforms
-Date: Fri, 14 Sep 2012 13:27:40 +0900
-Message-ID: <01a801cd9231$471c9240$d555b6c0$%kim@samsung.com>
-References: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
+Subject: RE: [PATCH] ARM: SAMSUNG: Add missing variable declaration in
+ s3c64xx_spi1_set_platdata()
+Date: Fri, 14 Sep 2012 13:41:38 +0900
+Message-ID: <01af01cd9233$3a4b4050$aee1c0f0$%kim@samsung.com>
+References: <1347542282-11954-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33748 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750702Ab2INE1m (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:9522 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751390Ab2INElj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Sep 2012 00:27:42 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
+	Fri, 14 Sep 2012 00:41:39 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAB0070TOD86FH0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:27:41 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAB00ME7P0YOPK0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:41:38 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAB00HQZOE4TMB0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:27:40 +0900 (KST)
-In-reply-to: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
+ with ESMTPA id <0MAB00IGHP1EBLE0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:41:38 +0900 (KST)
+In-reply-to: <1347542282-11954-1-git-send-email-s.nawrocki@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, broonie@opensource.wolfsonmicro.com
-Cc: thomas.abraham@linaro.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
 Sylwester Nawrocki wrote:
 > 
-> When s3c64xx-spi is instantiated from device tree an instance of
-> struct s3c64xx_spi_csinfo is dynamically allocated in the driver.
-> For non-dt platform it is passed from board code through
-> spi_register_board_info(). On error path in s3c64xx_spi_setup()
-> function there is an attempt to free this data struct
-> s3c64xx_spi_csinfo object as it would have been allocated in the
-> driver for both, dt and non-dt based platforms. This leads to
-> following bug when gpio request fails:
-> 
-> spi spi1.0: Failed to get /CS gpio [21]: -16
-> kernel BUG at mm/slub.c:3478!
-> Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
-> Modules linked in:
-> CPU: 0    Not tainted  (3.6.0-rc5-00092-g9b0b493-dirty #6111)
-> PC is at kfree+0x148/0x158
-> LR is at s3c64xx_spi_setup+0xac/0x290
-> pc : [<c00a513c>]    lr : [<c0227014>]    psr: 40000013
-> sp : ee043e10  ip : c032883c  fp : c0481f7c
-> r10: ee0abd80  r9 : 00000063  r8 : 00000000
-> r7 : ee129e78  r6 : ee104a00  r5 : fffffff0  r4 : c047bc64
-> r3 : 40000400  r2 : c047bc64  r1 : c04def60  r0 : 0004047b
-> Flags: nZcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
-> Control: 10c5387d  Table: 4000404a  DAC: 00000015
-> Process swapper/0 (pid: 1, stack limit = 0xee0422f0)
-> Stack: (0xee043e10 to 0xee044000)
-> ...
-> [<c00a513c>] (kfree+0x148/0x158) from [<c0227014>]
-> (s3c64xx_spi_setup+0xac/0x290)
-> [<c0227014>] (s3c64xx_spi_setup+0xac/0x290) from [<c02251a4>]
-> (spi_setup+0x34/0x4c)
-> [<c02251a4>] (spi_setup+0x34/0x4c) from [<c02258d0>]
-> (spi_add_device+0x98/0x128)
-> [<c02258d0>] (spi_add_device+0x98/0x128) from [<c02259d4>]
-> (spi_new_device+0x74/0xa8)
-> [<c02259d4>] (spi_new_device+0x74/0xa8) from [<c0225a2c>]
-> (spi_match_master_to_boardinfo+0x24/0x44)
-> [<c0225a2c>] (spi_match_master_to_boardinfo+0x24/0x44) from [<c0225b40>]
-> (spi_register_master+0xf4/0x2a8)
-> [<c0225b40>] (spi_register_master+0xf4/0x2a8) from [<c043fe0c>]
-> (s3c64xx_spi_probe+0x34c/0x42c)
-> [<c043fe0c>] (s3c64xx_spi_probe+0x34c/0x42c) from [<c01fc198>]
-> (platform_drv_probe+0x18/0x1c)
-> 
-> There should be no attempt to kfree controller_data when it was
-> externally provided through the board code. Fix this by freeing
-> controller_data only when dev->of_node is not null.
+> Fixes regression introduced in commit 4d0efdd5889b1c81a62aa07a
+> "ARM: SAMSUNG: Modify s3c64xx_spi{0|1|2}_set_platdata function"
 > 
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/plat-samsung/devs.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
+> index fc49f3d..2195209 100644
+> --- a/arch/arm/plat-samsung/devs.c
+> +++ b/arch/arm/plat-samsung/devs.c
+> @@ -1591,6 +1591,8 @@ struct platform_device s3c64xx_device_spi1 = {
+>  void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int
+> src_clk_nr,
+>  						int num_cs)
+>  {
+> +	struct s3c64xx_spi_info pd;
+> +
+>  	/* Reject invalid configuration */
+>  	if (!num_cs || src_clk_nr < 0) {
+>  		pr_err("%s: Invalid SPI configuration\n", __func__);
+> --
+> 1.7.11.3
 
-Yes, correct. Need to check it.
-
-Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-
-Thanks.
+Applied, thanks.
 
 Best regards,
 Kgene.
