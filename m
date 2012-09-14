@@ -1,44 +1,39 @@
 From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: RE: [PATCH 0/2] ARM: EXYNOS: Set the capability of pdm0 and pdm1
- as DMA_PRIVATE
-Date: Fri, 14 Sep 2012 08:43:11 +0530
-Message-ID: <1347592391.1943.16.camel@vkoul-udesk3>
-References: <1346215585-31023-1-git-send-email-tushar.behera@linaro.org>
-	 <1346374330.15463.5.camel@vkoul-mobl4>
-	 <243801cd8cb9$f303e6d0$d90bb470$%kim@samsung.com>
+Subject: Re: [PATCH 0/2] DMA: PL330: Clock and runtime cleanup
+Date: Fri, 14 Sep 2012 08:45:03 +0530
+Message-ID: <1347592503.1943.17.camel@vkoul-udesk3>
+References: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga11.intel.com ([192.55.52.93]:41422 "EHLO mga11.intel.com"
+Received: from mga02.intel.com ([134.134.136.20]:38652 "EHLO mga02.intel.com"
 	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1755269Ab2INDQ6 (ORCPT
+	id S1754777Ab2INDS3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Sep 2012 23:16:58 -0400
-In-Reply-To: <243801cd8cb9$f303e6d0$d90bb470$%kim@samsung.com>
+	Thu, 13 Sep 2012 23:18:29 -0400
+In-Reply-To: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Tushar Behera' <tushar.behera@linaro.org>, linux-samsung-soc@vger.kernel.org, patches@linaro.org, linux-kernel@vger.kernel.org, jaswinder.singh@linaro.org, linux-arm-kernel@lists.infradead.org
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, boojin.kim@samsung.com, jassisinghbrar@gmail.com
 
-On Fri, 2012-09-07 at 14:30 +0900, Kukjin Kim wrote:
-> Vinod Koul wrote:
-> > 
-> > On Wed, 2012-08-29 at 10:16 +0530, Tushar Behera wrote:
-> > > DMA clients pdma0 and pdma1 are internal to the SoC and are used only
-> > > by dedicated peripherals. Since they cannot be used for generic
-> > > purpose, their capability should be set as DMA_PRIVATE.
-> > >
-> > > The patches are rebased on top of v3.6-rc3.
-> > Kukjin, if you ack them I can take thru my tree, other way round is fine
-> > with me too.
+On Fri, 2012-09-07 at 12:14 +0530, Inderpal Singh wrote:
+> The controller clock is being managed at AMBA bus level probe/remove and
+> pm_runtime/suspend functions. The existing driver does the clock enable/disable
+> again in the same code paths, which unneccessarily increments the usage count of
+> the clock for the same device. 
 > 
-> Hi Vinod,
+> The following patches remove the redundant clock enable/disable from the driver.
+Looks good, any tested by before I apply this.. Kukjin?
 > 
-> Looks good to me, please pick them into your tree with my ack.
+> Inderpal Singh (2):
+>   DMA: PL330: Remove controller clock enable/disable
+>   DMA: PL330: Remove redundant runtime_suspend/resume functions
 > 
-> Acked-by: Kukjin Kim <kgene.kim@samsung.com>
-Okay applied both.
+>  drivers/dma/pl330.c |   73 ++++-----------------------------------------------
+>  1 file changed, 5 insertions(+), 68 deletions(-)
+> 
 
 
 -- 
