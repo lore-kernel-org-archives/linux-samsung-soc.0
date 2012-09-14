@@ -1,67 +1,89 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: SAMSUNG: Add missing variable declaration in
- s3c64xx_spi1_set_platdata()
-Date: Fri, 14 Sep 2012 13:41:38 +0900
-Message-ID: <01af01cd9233$3a4b4050$aee1c0f0$%kim@samsung.com>
-References: <1347542282-11954-1-git-send-email-s.nawrocki@samsung.com>
+From: Tushar Behera <tushar.behera@linaro.org>
+Subject: Re: [PATCH] ARM: SAMSUNG: Use spin_lock_{irqsave,irqrestore} in clk_set_rate
+Date: Fri, 14 Sep 2012 10:32:20 +0530
+Message-ID: <5052BA5C.2040900@linaro.org>
+References: <1346998102-5317-1-git-send-email-tushar.behera@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:9522 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751390Ab2INElj (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:53744 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751112Ab2INFC1 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Sep 2012 00:41:39 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAB00ME7P0YOPK0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:41:38 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAB00IGHP1EBLE0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:41:38 +0900 (KST)
-In-reply-to: <1347542282-11954-1-git-send-email-s.nawrocki@samsung.com>
-Content-language: ko
+	Fri, 14 Sep 2012 01:02:27 -0400
+Received: by pbbrr13 with SMTP id rr13so5051425pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Sep 2012 22:02:27 -0700 (PDT)
+In-Reply-To: <1346998102-5317-1-git-send-email-tushar.behera@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, patches@linaro.org
 
-Sylwester Nawrocki wrote:
+Ping !
+
+On 09/07/2012 11:38 AM, Tushar Behera wrote:
+> The spinlock clocks_lock can be held during ISR, hence it is not safe to
+> hold that lock with disabling interrupts.
 > 
-> Fixes regression introduced in commit 4d0efdd5889b1c81a62aa07a
-> "ARM: SAMSUNG: Modify s3c64xx_spi{0|1|2}_set_platdata function"
+> It fixes following potential deadlock.
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> =========================================================
+> [ INFO: possible irq lock inversion dependency detected ]
+> 3.6.0-rc4+ #2 Not tainted
+> ---------------------------------------------------------
+> swapper/0/1 just changed the state of lock:
+>  (&(&host->lock)->rlock){-.....}, at: [<c027fb0d>] sdhci_irq+0x15/0x564
+> but this lock took another, HARDIRQ-unsafe lock in the past:
+>  (clocks_lock){+.+...}
+> 
+> and interrupts could create inverse lock ordering between them.
+> 
+> other info that might help us debug this:
+>  Possible interrupt unsafe locking scenario:
+> 
+>        CPU0                    CPU1
+>        ----                    ----
+>   lock(clocks_lock);
+>                                local_irq_disable();
+>                                lock(&(&host->lock)->rlock);
+>                                lock(clocks_lock);
+>   <Interrupt>
+>     lock(&(&host->lock)->rlock);
+> 
+>  *** DEADLOCK ***
+> 
+> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
 > ---
->  arch/arm/plat-samsung/devs.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  arch/arm/plat-samsung/clock.c |    5 +++--
+>  1 files changed, 3 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-> index fc49f3d..2195209 100644
-> --- a/arch/arm/plat-samsung/devs.c
-> +++ b/arch/arm/plat-samsung/devs.c
-> @@ -1591,6 +1591,8 @@ struct platform_device s3c64xx_device_spi1 = {
->  void __init s3c64xx_spi1_set_platdata(int (*cfg_gpio)(void), int
-> src_clk_nr,
->  						int num_cs)
+> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
+> index 65c5eca..9b71719 100644
+> --- a/arch/arm/plat-samsung/clock.c
+> +++ b/arch/arm/plat-samsung/clock.c
+> @@ -144,6 +144,7 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
+>  
+>  int clk_set_rate(struct clk *clk, unsigned long rate)
 >  {
-> +	struct s3c64xx_spi_info pd;
-> +
->  	/* Reject invalid configuration */
->  	if (!num_cs || src_clk_nr < 0) {
->  		pr_err("%s: Invalid SPI configuration\n", __func__);
-> --
-> 1.7.11.3
+> +	unsigned long flags;
+>  	int ret;
+>  
+>  	if (IS_ERR(clk))
+> @@ -159,9 +160,9 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
+>  	if (clk->ops == NULL || clk->ops->set_rate == NULL)
+>  		return -EINVAL;
+>  
+> -	spin_lock(&clocks_lock);
+> +	spin_lock_irqsave(&clocks_lock, flags);
+>  	ret = (clk->ops->set_rate)(clk, rate);
+> -	spin_unlock(&clocks_lock);
+> +	spin_unlock_irqrestore(&clocks_lock, flags);
+>  
+>  	return ret;
+>  }
+> 
 
-Applied, thanks.
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+-- 
+Tushar Behera
