@@ -1,40 +1,64 @@
-From: Vinod Koul <vinod.koul@linux.intel.com>
-Subject: Re: [PATCH 0/2] DMA: PL330: Clock and runtime cleanup
-Date: Fri, 14 Sep 2012 08:45:03 +0530
-Message-ID: <1347592503.1943.17.camel@vkoul-udesk3>
-References: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
+From: kgene@kernel.org
+Subject: RE: [PATCH 0/3] ARM: EXYNOS: Add generic PWM lookup support
+Date: Fri, 14 Sep 2012 13:02:34 +0900
+Message-ID: <01a101cd922d$c59592b0$50c0b810$@org>
+References: <1347449612-382-1-git-send-email-sachin.kamat@linaro.org>
+ <20120912121741.GA3491@avionic-0098.mockup.avionic-design.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mga02.intel.com ([134.134.136.20]:38652 "EHLO mga02.intel.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1754777Ab2INDS3 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:60145 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750769Ab2INECg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 13 Sep 2012 23:18:29 -0400
-In-Reply-To: <1347000288-20441-1-git-send-email-inderpal.singh@linaro.org>
+	Fri, 14 Sep 2012 00:02:36 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAB00MCCN8BOPI0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:02:35 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAB007DYN8AZM30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:02:35 +0900 (KST)
+In-reply-to: <20120912121741.GA3491@avionic-0098.mockup.avionic-design.de>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, patches@linaro.org, boojin.kim@samsung.com, jassisinghbrar@gmail.com
+To: 'Thierry Reding' <thierry.reding@avionic-design.de>, 'Sachin Kamat' <sachin.kamat@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, tushar.behera@linaro.org, patches@linaro.org
 
-On Fri, 2012-09-07 at 12:14 +0530, Inderpal Singh wrote:
-> The controller clock is being managed at AMBA bus level probe/remove and
-> pm_runtime/suspend functions. The existing driver does the clock enable/disable
-> again in the same code paths, which unneccessarily increments the usage count of
-> the clock for the same device. 
+> On Wed, Sep 12, 2012 at 05:03:29PM +0530, Sachin Kamat wrote:
+> > This series adds support for generic PWM framework which requires
+> > that the board setup code register a static mapping that can be
+> > used to match PWM consumers to providers.
+> >
+> > This series is based on for-next branch of Kukjin's tree.
+> >
+> > Sachin Kamat (2):
+> >   ARM: EXYNOS: Add generic PWM lookup support for SMDK4X12
+> >   ARM: EXYNOS: Add generic PWM lookup support for SMDKV310
+> >
+> > Tushar Behera (1):
+> >   ARM: EXYNOS: Use generic pwm driver in Origen board
+> >
+> >  arch/arm/mach-exynos/Kconfig         |    3 +++
+> >  arch/arm/mach-exynos/mach-origen.c   |    6 ++++++
+> >  arch/arm/mach-exynos/mach-smdk4x12.c |    6 ++++++
+> >  arch/arm/mach-exynos/mach-smdkv310.c |    7 +++++++
+> >  4 files changed, 22 insertions(+), 0 deletions(-)
 > 
-> The following patches remove the redundant clock enable/disable from the driver.
-Looks good, any tested by before I apply this.. Kukjin?
+> These look great. I'm glad somebody's starting to convert boards to use
+> the lookup tables. Eventually when every board has been converted we can
+> transition to the new API by getting rid of pwm_request() and pwm_free()
+> in the user drivers and using only the counterparts from the new API.
 > 
-> Inderpal Singh (2):
->   DMA: PL330: Remove controller clock enable/disable
->   DMA: PL330: Remove redundant runtime_suspend/resume functions
-> 
->  drivers/dma/pl330.c |   73 ++++-----------------------------------------------
->  1 file changed, 5 insertions(+), 68 deletions(-)
-> 
+Yeah, agree :-)
 
+> All three patches: Reviewed-by: <thierry.reding@avionic-design.de>
 
--- 
-~Vinod
+Thanks, applied this series.
+
+K-Gene <kgene@kernel.org>
