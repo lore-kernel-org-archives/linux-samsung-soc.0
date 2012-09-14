@@ -1,89 +1,83 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: Re: [PATCH] ARM: SAMSUNG: Use spin_lock_{irqsave,irqrestore} in clk_set_rate
-Date: Fri, 14 Sep 2012 10:32:20 +0530
-Message-ID: <5052BA5C.2040900@linaro.org>
-References: <1346998102-5317-1-git-send-email-tushar.behera@linaro.org>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH] ARM: EXYNOS4: Fix soft reboot hang after suspend/resume
+Date: Fri, 14 Sep 2012 10:44:25 +0530
+Message-ID: <CAG17yqQC5Sbcia1xUtWGJJQq0KVSW=HJrwRAFjJN8Ht-R3r3Dw@mail.gmail.com>
+References: <1332929866-31489-1-git-send-email-inderpal.singh@linaro.org>
+	<065f01cd31a9$c5f38f80$51daae80$%kim@samsung.com>
+	<CAG17yqQ8o3mDCP2k0OE5PG2SXWTyWDh+_xbvKjnvmrgkxqKgZg@mail.gmail.com>
+	<4FB10BEE.1010302@samsung.com>
+	<CAG17yqR3v=UpT0cb4797CTLhDv5Wxe=NvB84LkMfRixv0206BA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:53744 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751112Ab2INFC1 (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:33128 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750884Ab2INFO0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Sep 2012 01:02:27 -0400
-Received: by pbbrr13 with SMTP id rr13so5051425pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Sep 2012 22:02:27 -0700 (PDT)
-In-Reply-To: <1346998102-5317-1-git-send-email-tushar.behera@linaro.org>
+	Fri, 14 Sep 2012 01:14:26 -0400
+Received: by vcbfo13 with SMTP id fo13so3451451vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 13 Sep 2012 22:14:26 -0700 (PDT)
+In-Reply-To: <CAG17yqR3v=UpT0cb4797CTLhDv5Wxe=NvB84LkMfRixv0206BA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, patches@linaro.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: samsung@lists.linaro.org, linux-samsung-soc@vger.kernel.org, patches@linaro.org
 
-Ping !
+Hi Kukjin,
 
-On 09/07/2012 11:38 AM, Tushar Behera wrote:
-> The spinlock clocks_lock can be held during ISR, hence it is not safe to
-> hold that lock with disabling interrupts.
-> 
-> It fixes following potential deadlock.
-> 
-> =========================================================
-> [ INFO: possible irq lock inversion dependency detected ]
-> 3.6.0-rc4+ #2 Not tainted
-> ---------------------------------------------------------
-> swapper/0/1 just changed the state of lock:
->  (&(&host->lock)->rlock){-.....}, at: [<c027fb0d>] sdhci_irq+0x15/0x564
-> but this lock took another, HARDIRQ-unsafe lock in the past:
->  (clocks_lock){+.+...}
-> 
-> and interrupts could create inverse lock ordering between them.
-> 
-> other info that might help us debug this:
->  Possible interrupt unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(clocks_lock);
->                                local_irq_disable();
->                                lock(&(&host->lock)->rlock);
->                                lock(clocks_lock);
->   <Interrupt>
->     lock(&(&host->lock)->rlock);
-> 
->  *** DEADLOCK ***
-> 
-> Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
-> ---
->  arch/arm/plat-samsung/clock.c |    5 +++--
->  1 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/plat-samsung/clock.c b/arch/arm/plat-samsung/clock.c
-> index 65c5eca..9b71719 100644
-> --- a/arch/arm/plat-samsung/clock.c
-> +++ b/arch/arm/plat-samsung/clock.c
-> @@ -144,6 +144,7 @@ long clk_round_rate(struct clk *clk, unsigned long rate)
->  
->  int clk_set_rate(struct clk *clk, unsigned long rate)
->  {
-> +	unsigned long flags;
->  	int ret;
->  
->  	if (IS_ERR(clk))
-> @@ -159,9 +160,9 @@ int clk_set_rate(struct clk *clk, unsigned long rate)
->  	if (clk->ops == NULL || clk->ops->set_rate == NULL)
->  		return -EINVAL;
->  
-> -	spin_lock(&clocks_lock);
-> +	spin_lock_irqsave(&clocks_lock, flags);
->  	ret = (clk->ops->set_rate)(clk, rate);
-> -	spin_unlock(&clocks_lock);
-> +	spin_unlock_irqrestore(&clocks_lock, flags);
->  
->  	return ret;
->  }
-> 
+On 15 May 2012 10:01, Inderpal Singh <inderpal.singh@linaro.org> wrote:
+> Hi Kukjin,
+>
+> On 14 May 2012 19:13, Kukjin Kim <kgene.kim@samsung.com> wrote:
+>> On 05/14/12 17:42, Inderpal Singh wrote:
+>>>
+>>> Hi Kukjin,
+>>>
+>>> On 14 May 2012 13:45, Kukjin Kim<kgene.kim@samsung.com>  wrote:
+>>>>
+>>>> Inderpal Singh wrote:
+>>>>>
+>>>>>
+>>>>> Upon wake-up, clear the sleep mode set in INFORM1 register.
+>>>>>
+>>>> Is this for wake-up or _really_ software reset? And is this available on
+>>>> all
+>>>> of EXYNOS4 SoCs?
+>>>
+>>>
+>>> This is for soft reboot hang after one cycle of suspend/resume is
+>>> complete.
+>>> And yes this is applicable for all exynos SOCs.
+>>>
+>> Hi,
+>>
+>> As I know, we don't need it for all of EXYNOS SoCs but let me check about
+>> the situation you said with hardware engineer tomorrow. If any updates, let
+>> you know.
+>>
+>
 
+Any updates on this ?
+As i mentioned below, Its applicable for Origen, Pegasus and 5250 as well.
 
--- 
-Tushar Behera
+> The issue happens because u-boot checks INFROM1 register to know if
+> its wake-up from sleep. Hence if INFORM1 is not cleared, the soft
+> reboot after one suspend/resume cycle will be understood by u-boot as
+> wake-up from sleep, so it will try to resume and will hang up.
+>
+> I have faced this issue on Origen, Pegasus SMDK and 5250 SMDK.
+>
+> Thanks,
+> Inder
+>
+>>
+>> Thanks.
+>>
+>> Best regards,
+>> Kgene.
+>> --
+>> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+>> SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+With Regards,
+Inder
