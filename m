@@ -1,72 +1,95 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V2] ARM: EXYNOS5: Add bus clock and set parent clock for
- FIMD
-Date: Fri, 14 Sep 2012 13:27:17 +0900
-Message-ID: <001101cd9231$3927b9d0$ab772d70$%han@samsung.com>
-References: <1347450536-21843-1-git-send-email-l.krishna@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH] spi: s3c64xx: Don't free controller_data on non-dt
+ platforms
+Date: Fri, 14 Sep 2012 13:27:40 +0900
+Message-ID: <01a801cd9231$471c9240$d555b6c0$%kim@samsung.com>
+References: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:33669 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:33748 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750702Ab2INE1T (ORCPT
+	with ESMTP id S1750702Ab2INE1m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 14 Sep 2012 00:27:19 -0400
+	Fri, 14 Sep 2012 00:27:42 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MAB0070TOD86FH0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:27:17 +0900 (KST)
-Received: from DOJG1HAN02 ([12.23.119.56])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:27:41 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAB0097QODHFF10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:27:17 +0900 (KST)
-In-reply-to: <1347450536-21843-1-git-send-email-l.krishna@samsung.com>
+ with ESMTPA id <0MAB00HQZOE4TMB0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 13:27:40 +0900 (KST)
+In-reply-to: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Leela Krishna Amudala' <l.krishna@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Sylwester Nawrocki' <s.nawrocki@samsung.com>, broonie@opensource.wolfsonmicro.com
+Cc: thomas.abraham@linaro.org, spi-devel-general@lists.sourceforge.net, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, 'Kyungmin Park' <kyungmin.park@samsung.com>
 
-On Wednesday, September 12, 2012 8:49 PM Leela Krishna Amudala wrote
+Sylwester Nawrocki wrote:
 > 
-> This patch adds the bus clock for FIMD and changes the device name for lcd clock
-> also sets mout_mpll_user as parent clock to fimd
+> When s3c64xx-spi is instantiated from device tree an instance of
+> struct s3c64xx_spi_csinfo is dynamically allocated in the driver.
+> For non-dt platform it is passed from board code through
+> spi_register_board_info(). On error path in s3c64xx_spi_setup()
+> function there is an attempt to free this data struct
+> s3c64xx_spi_csinfo object as it would have been allocated in the
+> driver for both, dt and non-dt based platforms. This leads to
+> following bug when gpio request fails:
 > 
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  arch/arm/mach-exynos/clock-exynos5.c       |   34 +++++++++++++++++++--------
->  arch/arm/plat-samsung/include/plat/clock.h |    2 +
->  2 files changed, 26 insertions(+), 10 deletions(-)
+> spi spi1.0: Failed to get /CS gpio [21]: -16
+> kernel BUG at mm/slub.c:3478!
+> Internal error: Oops - BUG: 0 [#1] PREEMPT SMP ARM
+> Modules linked in:
+> CPU: 0    Not tainted  (3.6.0-rc5-00092-g9b0b493-dirty #6111)
+> PC is at kfree+0x148/0x158
+> LR is at s3c64xx_spi_setup+0xac/0x290
+> pc : [<c00a513c>]    lr : [<c0227014>]    psr: 40000013
+> sp : ee043e10  ip : c032883c  fp : c0481f7c
+> r10: ee0abd80  r9 : 00000063  r8 : 00000000
+> r7 : ee129e78  r6 : ee104a00  r5 : fffffff0  r4 : c047bc64
+> r3 : 40000400  r2 : c047bc64  r1 : c04def60  r0 : 0004047b
+> Flags: nZcv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+> Control: 10c5387d  Table: 4000404a  DAC: 00000015
+> Process swapper/0 (pid: 1, stack limit = 0xee0422f0)
+> Stack: (0xee043e10 to 0xee044000)
+> ...
+> [<c00a513c>] (kfree+0x148/0x158) from [<c0227014>]
+> (s3c64xx_spi_setup+0xac/0x290)
+> [<c0227014>] (s3c64xx_spi_setup+0xac/0x290) from [<c02251a4>]
+> (spi_setup+0x34/0x4c)
+> [<c02251a4>] (spi_setup+0x34/0x4c) from [<c02258d0>]
+> (spi_add_device+0x98/0x128)
+> [<c02258d0>] (spi_add_device+0x98/0x128) from [<c02259d4>]
+> (spi_new_device+0x74/0xa8)
+> [<c02259d4>] (spi_new_device+0x74/0xa8) from [<c0225a2c>]
+> (spi_match_master_to_boardinfo+0x24/0x44)
+> [<c0225a2c>] (spi_match_master_to_boardinfo+0x24/0x44) from [<c0225b40>]
+> (spi_register_master+0xf4/0x2a8)
+> [<c0225b40>] (spi_register_master+0xf4/0x2a8) from [<c043fe0c>]
+> (s3c64xx_spi_probe+0x34c/0x42c)
+> [<c043fe0c>] (s3c64xx_spi_probe+0x34c/0x42c) from [<c01fc198>]
+> (platform_drv_probe+0x18/0x1c)
 > 
-> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-> index 774533c..205d19f 100644
-> --- a/arch/arm/mach-exynos/clock-exynos5.c
-> +++ b/arch/arm/mach-exynos/clock-exynos5.c
-> @@ -891,6 +891,13 @@ static struct clk exynos5_clk_mdma1 = {
+> There should be no attempt to kfree controller_data when it was
+> externally provided through the board code. Fix this by freeing
+> controller_data only when dev->of_node is not null.
+> 
+> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 
-[.....]
+Yes, correct. Need to check it.
 
-> 
-> +struct clksrc_clk exynos5_clk_sclk_fimd = {
+Acked-by: Kukjin Kim <kgene.kim@samsung.com>
 
-Replace 'exynos5_clk_sclk_fimd' with 'exynos5_clk_sclk_fimd1'.
-This is because 'exynos5_clk_sclk_fimd0' can be added for other
-Exynos5 SoCs later.
+Thanks.
 
 Best regards,
-Jingoo Han
-
-> +	.clk	= {
-> +		.name	        = "sclk_fimd",
-> +		.devname        = "exynos5-fb.1",
-> +		.enable         = exynos5_clksrc_mask_disp1_0_ctrl,
-> +		.ctrlbit        = (1 << 0),
-> +	},
-> +	.sources = &exynos5_clkset_group,
-> +	.reg_src = { .reg = EXYNOS5_CLKSRC_DISP1_0, .shift = 0, .size = 4 },
-> +	.reg_div = { .reg = EXYNOS5_CLKDIV_DISP1_0, .shift = 0, .size = 4 },
-> +};
-> +
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
