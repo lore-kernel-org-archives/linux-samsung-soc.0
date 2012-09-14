@@ -1,49 +1,51 @@
-From: Praveen Paneri <p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v5 1/5] usb: phy: samsung: Introducing usb phy driver for hsotg
-Date: Fri, 14 Sep 2012 15:29:14 +0530
-Message-ID: <CAD6zSYOjpfZX4w6-ZR24QDoga7bQq9bzC8Yie=xX2BZPK3ta3A@mail.gmail.com>
-References: <1347446757-20519-1-git-send-email-p.paneri@samsung.com>
-	<1347446757-20519-2-git-send-email-p.paneri@samsung.com>
-	<50506D2A.7040908@pengutronix.de>
-	<33690123.AyeJMS7yMW@flatron>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <33690123.AyeJMS7yMW@flatron>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Marc Kleine-Budde <mkl-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org, broonie-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, l.majewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v3] Add MFC device tree support
+Date: Fri, 14 Sep 2012 21:08:16 +0530
+Message-ID: <1347637097-15015-1-git-send-email-arun.kk@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:40129 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1758497Ab2INKPd (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Fri, 14 Sep 2012 06:15:33 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAC00EXU4H7LF40@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 19:15:31 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAC00ARO4G9R9A0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 14 Sep 2012 19:15:31 +0900 (KST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, s.nawrocki@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, joshi@samsung.com
 
-On Wed, Sep 12, 2012 at 9:51 PM, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> Hi Praveen, Marc,
->
-> On Wednesday 12 of September 2012 13:08:26 Marc Kleine-Budde wrote:
->> > +static const struct of_device_id samsung_usbphy_dt_match[];
->> > +
->> > +static inline int samsung_usbphy_get_driver_data(struct
->> > platform_device *pdev) +{
->> > +#ifdef CONFIG_OF
->>
->> if (IS_ENABLED(CONFIG_OF) && pdev->dev.of_node)
->
-> Is this check needed at all?
->
-> In case of CONFIG_OF disabled, of_node should always be NULL and there is a
-but I guess it can also be NULL when CONFIG_OF is enabled but the
-driver is probed non DT way.
-> dummy macro provided for of_match_node, so it should compile and work just
-> fine.
->
-> --
-> Best regards,
-> Tomasz Figa
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+This patch adds the device tree entries for MFC on Exynos5.
+This is rebased to the linux-samsung for-next branch.
+
+Changelog v3
+- Addressed review comments given by Sylwester Nawrocki
+http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12340.html
+
+Changelog v2
+- Use fdt functions to parse dtsi file for mfc memory info
+
+Changelog v1
+- Moved board specific DT information to different dtsi file
+- Changed compatible name for the device
+- Addressed other review comments
+
+Arun Kumar K (1):
+  ARM: EXYNOS: Add MFC device tree support
+
+ .../devicetree/bindings/media/s5p-mfc.txt          |   27 ++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    7 +++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   55 ++++++++++++++++++++
+ 6 files changed, 97 insertions(+), 1 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
