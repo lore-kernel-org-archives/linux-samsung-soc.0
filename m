@@ -1,49 +1,50 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH] DMA: PL330: return ENOMEM instead of 0 from pl330_alloc_chan_resources
-Date: Mon, 17 Sep 2012 11:17:28 +0530
-Message-ID: <CABb+yY1-_NVHfGnRNpNpN1g8Xk399SRjippR_8DQ2pBYRxx47w@mail.gmail.com>
-References: <1347856065-14027-1-git-send-email-inderpal.singh@linaro.org>
+From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] i2c: s3c2410: add optional pin configuration using
+ pinctrl interface
+Date: Mon, 17 Sep 2012 12:58:44 +0530
+Message-ID: <CAJuYYwQDw1zbprdTW=SC-+DvfcK9RDE-C8bJOzcy39QukRWHBg@mail.gmail.com>
+References: <1346923381-14144-1-git-send-email-thomas.abraham@linaro.org>
+	<1346923381-14144-2-git-send-email-thomas.abraham@linaro.org>
+	<2444562.GB3nOHUb9M@amdc1227>
+	<CAJuYYwQCQDTnpPR5WABtbozZOgc6_SZRBv3b6D8KY78tzMt-Eg@mail.gmail.com>
+	<504E3DBA.3080603@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:46505 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751038Ab2IQFr3 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 01:47:29 -0400
-In-Reply-To: <1347856065-14027-1-git-send-email-inderpal.singh@linaro.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <504E3DBA.3080603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dong.aisheng-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, patches-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, w.sang-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, kgene.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, boojin.kim@samsung.com
 
-On Mon, Sep 17, 2012 at 9:57 AM, Inderpal Singh
-<inderpal.singh@linaro.org> wrote:
-> Since 0 is not considered as error at dmaengine level, return ENOMEM
-> from pl330_alloc_chan_resources in case of failure.
+On 11 September 2012 00:51, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 09/06/2012 05:06 AM, Thomas Abraham wrote:
+>> On 6 September 2012 15:04, Tomasz Figa <t.figa-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org> wrote:
+>>> Hi,
+>>>
+>>> This patch shows the problem of the need to explicitly migrate all drivers
+>>> to pinctrl.
+>>>
+>>> Maybe we should consider extending the pinctrl subsystem to set the default
+>>> state automatically before binding a driver to a device, at least in case
+>>> of DT-based platforms?
+>>
+>> The pinctrl driver allows for activating default pin configuration
+>> when the pinctrl driver loads. This is referred to as "hogging". But
+>> should hog be used or not is something that needs to be decided. Some
+>> of the factors which favor the driver explicitly setting up the pin
+>> configuration are
+>>
+>> 1. After a suspend and resume cycle, the pin configuration registers
+>> may be reset to default values. Hence, during resume, the pin
+>> configuration has be redone.
 >
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> I'd think it's the pinctrl driver's responsibility to make hogging work
+> correctly across suspend/resume.
 
-Acked-by: Jassi Brar <jassisinghbrar@gmail.com>
+Ok. I will add this functionality in the Samsung pinctrl driver.
 
+Thanks,
+Thomas.
 
-> ---
->  drivers/dma/pl330.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index e4feba6..14d881c 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2393,7 +2393,7 @@ static int pl330_alloc_chan_resources(struct dma_chan *chan)
->         pch->pl330_chid = pl330_request_channel(&pdmac->pif);
->         if (!pch->pl330_chid) {
->                 spin_unlock_irqrestore(&pch->lock, flags);
-> -               return 0;
-> +               return -ENOMEM;
->         }
->
->         tasklet_init(&pch->task, pl330_tasklet, (unsigned long) pch);
-> --
-> 1.7.9.5
->
+[...]
