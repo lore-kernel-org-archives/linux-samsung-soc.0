@@ -1,65 +1,80 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [PATCH] ARM: dts: use uart2 for console on smdkv310 and smdk5250
-Date: Mon, 17 Sep 2012 20:46:06 +0900
-Message-ID: <052601cd94ca$058db4d0$10a91e70$%kim@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Praveen Paneri <p.paneri@samsung.com>
+Subject: [PATCH v6 0/5] usb: phy: samsung: Introducing usb phy driver for
+ samsung SoCs
+Date: Mon, 17 Sep 2012 18:24:39 +0530
+Message-ID: <1347886484-16064-1-git-send-email-p.paneri@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:32117 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755887Ab2IQLqI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:39728 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753244Ab2IQMp0 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 07:46:08 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAH007Q6SOVQYY0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 20:46:07 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAH006HUSOU7450@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 20:46:07 +0900 (KST)
-Content-language: ko
+	Mon, 17 Sep 2012 08:45:26 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Kukjin Kim' <kgene.kim@samsung.com>
+To: linux-usb@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, balbi@ti.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de
 
+Changes from v5:
+Moved clk_get() to driver's probe function. Now reference clock frequency
+selection value is stored in samsung_usbphy structure for later use. Used
+IS_ENABLED() instead of #ifdef in samsung_usbphy_get_driver_data().
 
-Cc: Thomas Abraham <thomas.abraham@linaro.org>
-Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
----
- arch/arm/boot/dts/exynos4210-smdkv310.dts |    2 +-
- arch/arm/boot/dts/exynos5250-smdk5250.dts |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Changes from v4:
+Moved header file contents to driver's source file
+Removed unnecessary print message from driver's probe function
+Dropped the Free Software Foundation address from the header
+Changed the platform data code to use __initdata
 
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index 1beccc8..cb01e3d 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -26,7 +26,7 @@
- 	};
- 
- 	chosen {
--		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC1,115200 init=/linuxrc";
-+		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
- 	};
- 
- 	sdhci@12530000 {
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index 8a5e348..62e1039 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -21,7 +21,7 @@
- 	};
- 
- 	chosen {
--		bootargs = "root=/dev/ram0 rw ramdisk=8192 console=ttySAC1,115200";
-+		bootargs = "root=/dev/ram0 rw ramdisk=8192 initrd=0x41000000,8M console=ttySAC2,115200 init=/linuxrc";
- 	};
- 
- 	i2c@12C60000 {
--- 
-1.7.4.1
+Changes from v3:
+Replaced susbsys_initcall()/module_exit() by module_platform_driver().
+Accordingly in the hsotg driver returned -EPROBE_DEFER until phy driver
+is registered
+Removed unnecessary devm_usb_put_phy() call from the hsotg driver remove.
+
+Changes from v2:
+Changed the driver filenames to samsung-usbphy
+Changed 's3c' to 'samsung' for platform device as well as platform data
+Moved platform data structure to a separate file
+Rectified coding style related errors
+
+Changes from v1:
+Rebased patches to latest usb-next branch
+Changed the name 'sec_usbphy' to 'samsung_usbphy'
+
+This patch set introduces a phy driver for samsung SoCs. It uses the existing
+transceiver infrastructure to provide phy control functions. Use of this driver
+can be extended for usb host phy as well. Over the period of time all the phy
+related code for most of the samsung SoCs can be integrated here.
+Removing the existing phy code from mach-s3c64xx. Same can be done for other SoCs
+when they start supporting this phy driver. 
+This driver is tested with smdk6410 and Exynos4210(with DT).
+
+Praveen Paneri (5):
+  usb: phy: samsung: Introducing usb phy driver for hsotg
+  usb: s3c-hsotg: Adding phy driver support
+  ARM: S3C64XX: Removing old phy setup code
+  ARM: S3C64XX: Enabling samsung-usbphy driver
+  ARM: Exynos4210: Enabling samsung-usbphy driver
+
+ .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
+ arch/arm/boot/dts/exynos4210.dtsi                  |    5 +
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/mach-exynos4-dt.c             |    8 +
+ arch/arm/mach-exynos/setup-usb-phy.c               |   13 +
+ arch/arm/mach-s3c64xx/include/mach/map.h           |    2 +
+ arch/arm/mach-s3c64xx/mach-crag6410.c              |   10 +-
+ arch/arm/mach-s3c64xx/mach-smartq.c                |   11 +-
+ arch/arm/mach-s3c64xx/mach-smdk6410.c              |   10 +-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c              |   79 +----
+ arch/arm/plat-samsung/devs.c                       |   28 ++
+ arch/arm/plat-samsung/include/plat/devs.h          |    1 +
+ arch/arm/plat-samsung/include/plat/usb-phy.h       |    1 +
+ drivers/usb/gadget/s3c-hsotg.c                     |   37 ++-
+ drivers/usb/phy/Kconfig                            |    8 +
+ drivers/usb/phy/Makefile                           |    1 +
+ drivers/usb/phy/samsung-usbphy.c                   |  360 ++++++++++++++++++++
+ include/linux/platform_data/samsung-usbphy.h       |   27 ++
+ 18 files changed, 520 insertions(+), 91 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+ create mode 100644 drivers/usb/phy/samsung-usbphy.c
+ create mode 100644 include/linux/platform_data/samsung-usbphy.h
