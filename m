@@ -1,92 +1,48 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 5/7] s5p-fimc: Remove unused platform data structure fields
-Date: Mon, 17 Sep 2012 12:54:31 +0200
-Message-ID: <1347879273-30463-2-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 7/7] s5p-csis: Change regulator supply names
+Date: Mon, 17 Sep 2012 12:54:33 +0200
+Message-ID: <1347879273-30463-4-git-send-email-s.nawrocki@samsung.com>
 References: <1347878888-30001-1-git-send-email-s.nawrocki@samsung.com>
  <1347879273-30463-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:42525 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754909Ab2IQKys (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 06:54:48 -0400
+Return-path: <linux-media-owner@vger.kernel.org>
 In-reply-to: <1347879273-30463-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Sender: linux-media-owner@vger.kernel.org
 To: linux-media@vger.kernel.org
 Cc: kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+List-Id: linux-samsung-soc@vger.kernel.org
 
-alignment, fixed_phy_vdd and phy_enable fields are now unused
-so removed them. The data alignment is now derived directly
-from media bus pixel code, phy_enable callback has been replaced
-with direct function call and fixed_phy_vdd was dropped in commit
-438df3ebe5f0ce408490a777a758d5905f0dd58f
-"[media] s5p-csis: Handle all available power supplies".
+Rename the regulator supply names to more meaningful ones.
+It's a prerequisite for adding device tree support.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- include/linux/platform_data/mipi-csis.h | 15 ++++-----------
- include/media/s5p_fimc.h                |  2 --
- 2 files changed, 4 insertions(+), 13 deletions(-)
+ drivers/media/video/s5p-fimc/mipi-csis.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/include/linux/platform_data/mipi-csis.h b/include/linux/platform_data/mipi-csis.h
-index 2e59e43..8b703e1 100644
---- a/include/linux/platform_data/mipi-csis.h
-+++ b/include/linux/platform_data/mipi-csis.h
-@@ -1,7 +1,7 @@
- /*
-  * Copyright (C) 2010-2011 Samsung Electronics Co., Ltd.
+diff --git a/drivers/media/video/s5p-fimc/mipi-csis.c b/drivers/media/video/s5p-fimc/mipi-csis.c
+index fbfe739..4bf7a68 100644
+--- a/drivers/media/video/s5p-fimc/mipi-csis.c
++++ b/drivers/media/video/s5p-fimc/mipi-csis.c
+@@ -2,7 +2,7 @@
+  * Samsung S5P/EXYNOS4 SoC series MIPI-CSI receiver driver
   *
-- * S5P series MIPI CSI slave device support
-+ * Samsung S5P/Exynos SoC series MIPI CSIS device support
+  * Copyright (C) 2011 - 2012 Samsung Electronics Co., Ltd.
+- * Sylwester Nawrocki, <s.nawrocki@samsung.com>
++ * Sylwester Nawrocki <s.nawrocki@samsung.com>
   *
   * This program is free software; you can redistribute it and/or modify
   * it under the terms of the GNU General Public License version 2 as
-@@ -13,21 +13,14 @@
+@@ -110,8 +110,8 @@ static char *csi_clock_name[] = {
+ #define NUM_CSIS_CLOCKS	ARRAY_SIZE(csi_clock_name)
  
- /**
-  * struct s5p_platform_mipi_csis - platform data for S5P MIPI-CSIS driver
-- * @clk_rate: bus clock frequency
-- * @lanes: number of data lanes used
-- * @alignment: data alignment in bits
-- * @hs_settle: HS-RX settle time
-- * @fixed_phy_vdd: false to enable external D-PHY regulator management in the
-- *		   driver or true in case this regulator has no enable function
-- * @phy_enable: pointer to a callback controlling D-PHY enable/reset
-+ * @clk_rate:    bus clock frequency
-+ * @lanes:       number of data lanes used
-+ * @hs_settle:   HS-RX settle time
-  */
- struct s5p_platform_mipi_csis {
- 	unsigned long clk_rate;
- 	u8 lanes;
--	u8 alignment;
- 	u8 hs_settle;
--	bool fixed_phy_vdd;
--	int (*phy_enable)(struct platform_device *pdev, bool on);
+ static const char * const csis_supply_name[] = {
+-	"vdd11", /* 1.1V or 1.2V (s5pc100) MIPI CSI suppply */
+-	"vdd18", /* VDD 1.8V and MIPI CSI PLL supply */
++	"vddcore",  /* CSIS Core (1.0V, 1.1V or 1.2V) suppply */
++	"vddio",    /* CSIS I/O and PLL (1.8V) supply */
  };
+ #define CSIS_NUM_SUPPLIES ARRAY_SIZE(csis_supply_name)
  
- /**
-diff --git a/include/media/s5p_fimc.h b/include/media/s5p_fimc.h
-index 09421a61..eaea62a 100644
---- a/include/media/s5p_fimc.h
-+++ b/include/media/s5p_fimc.h
-@@ -30,7 +30,6 @@ struct i2c_board_info;
-  * @board_info: pointer to I2C subdevice's board info
-  * @clk_frequency: frequency of the clock the host interface provides to sensor
-  * @bus_type: determines bus type, MIPI, ITU-R BT.601 etc.
-- * @csi_data_align: MIPI-CSI interface data alignment in bits
-  * @i2c_bus_num: i2c control bus id the sensor is attached to
-  * @mux_id: FIMC camera interface multiplexer index (separate for MIPI and ITU)
-  * @clk_id: index of the SoC peripheral clock for sensors
-@@ -40,7 +39,6 @@ struct s5p_fimc_isp_info {
- 	struct i2c_board_info *board_info;
- 	unsigned long clk_frequency;
- 	enum cam_bus_type bus_type;
--	u16 csi_data_align;
- 	u16 i2c_bus_num;
- 	u16 mux_id;
- 	u16 flags;
 -- 
 1.7.11.3
