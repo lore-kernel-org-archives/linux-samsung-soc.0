@@ -1,94 +1,47 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [GIT PULL] Samsung fixes-3 for v3.6
-Date: Tue, 18 Sep 2012 08:05:24 +0900
-Message-ID: <05c501cd9528$eb916fe0$c2b44fa0$%kim@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [GIT PULL] Samsung fixes-3 for v3.6
+Date: Mon, 17 Sep 2012 16:17:26 -0700
+Message-ID: <CAOesGMgu-me77fj85apd3X9SZvTPU5+EVD2MOWwuZoaCPF9cvQ@mail.gmail.com>
 References: <05be01cd9527$b35c3480$1a149d80$%kim@samsung.com>
- <CAOesGMiJGihDWpQbgJo9FYSM8FF0WY-B4PtnbE2uWwJcjWzjUA@mail.gmail.com>
+	<CAOesGMiJGihDWpQbgJo9FYSM8FF0WY-B4PtnbE2uWwJcjWzjUA@mail.gmail.com>
+	<05c501cd9528$eb916fe0$c2b44fa0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:55186 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932082Ab2IQXFZ (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:56094 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754975Ab2IQXR2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 19:05:25 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAI00IOXO4WBV50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Sep 2012 08:05:23 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAI00DB7O4ZSNA0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 18 Sep 2012 08:05:23 +0900 (KST)
-In-reply-to: <CAOesGMiJGihDWpQbgJo9FYSM8FF0WY-B4PtnbE2uWwJcjWzjUA@mail.gmail.com>
-Content-language: ko
+	Mon, 17 Sep 2012 19:17:28 -0400
+Received: by lbbgj3 with SMTP id gj3so4583704lbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 17 Sep 2012 16:17:27 -0700 (PDT)
+In-Reply-To: <05c501cd9528$eb916fe0$c2b44fa0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Olof Johansson' <olof@lixom.net>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
 
-Olof Johansson wrote:
-> 
-> Hi,
-> 
-> 
-> On Mon, Sep 17, 2012 at 3:56 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> > Hi Arnd and Olof,
-> >
-> > Here is second Samsung fixes for v3.6.
-> >
-> > This includes using spin_lock_irqsave in clk_set_parent() to avoid
-> spinlock
-> > recursion and fixing wrong definitions.
-> >
-> > If any problems, please kindly let me know.
-> >
-> > Thanks.
-> >
-> > Best regards,
-> > Kgene.
-> > --
-> > Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> > SW Solution Development Team, Samsung Electronics Co., Ltd.
-> >
-> > The following changes since commit
-> 4cbe5a555fa58a79b6ecbb6c531b8bab0650778d:
-> >
-> >   Linux 3.6-rc4 (2012-09-01 10:39:58 -0700)
-> >
-> > are available in the git repository at:
-> >   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > v3.6-samsung-fixes-2
-> >
-> > Julia Lawall (1):
-> >       ARM: S3C24xx: delete double assignment
-> >
-> > Mandeep Singh Baines (1):
-> >       ARM: SAMSUNG: use spin_lock_irqsave() in clk_set_parent
-> >
-> > Peter Senna Tschudin (1):
-> >       ARM: S3C24XX: removes unnecessary semicolon
-> >
-> > Seung-Woo Kim (1):
-> >       ARM: EXYNOS: fixed SYSMMU setup definition to mate parameter name
-> 
-> We're very late in the release cycle for 3.6, and only critical fixes
-> should go in -- no cleanups. Please queue those in a
-> fixes-non-critical branch for 3.7 instead.
-> 
-> Only the one from Mandeep seems to be a real bug fix, I think?
-> 
-Well...I don't think so, others also should be fixed before v3.6 because as
-you can see, it can occur unexpected behavior and must be wrong. But last
-one is small thing...
+Hi,
 
-Thanks.
+On Mon, Sep 17, 2012 at 4:05 PM, Kukjin Kim <kgene.kim@samsung.com> wrote:
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> Well...I don't think so, others also should be fixed before v3.6 because as
+> you can see, it can occur unexpected behavior and must be wrong. But last
+> one is small thing...
+
+"ARM: EXYNOS: fixed SYSMMU setup definition to mate parameter name" is
+a valid cleanup, but it has zero functional impact, it just reorders
+two unused arguments to a stub macro.
+
+"ARM: S3C24xx: delete double assignment" is a valid bugfix, but the
+bug was introduced in "ARM: S3C2410: H1940: Use leds-gpio driver for
+LEDs managing" in 2.6.39 so fixing it in 3.7 seems just as fine as
+3.6, in my opinion -- it's gone unnoticed so far and was just found by
+tools.
+
+"ARM: S3C24XX: removes unnecessary semicolon" fixes a harmless extra
+semicolon after a switch statement. Valid cleanup but definitely not
+urgent for 3.6.
+
+
+-Olof
