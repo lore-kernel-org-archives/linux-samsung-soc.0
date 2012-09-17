@@ -1,76 +1,64 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/3] ARM: dts: Exynos4 dts reorganization
-Date: Mon, 17 Sep 2012 19:39:18 +0900
-Message-ID: <04f501cd94c0$b0a61b00$11f25100$%kim@samsung.com>
-References: <1346675674-16034-1-git-send-email-t.figa@samsung.com>
- <CAJuYYwRWqvzw_MdLa7NfE9ppbPiz8=HTXUW+-mXedvu2GPQWBg@mail.gmail.com>
+Subject: RE: [PATCH] ARM: EXYNOS: Add dp clock support for EXYNOS5
+Date: Mon, 17 Sep 2012 19:41:18 +0900
+Message-ID: <04f601cd94c0$f8918350$e9b489f0$%kim@samsung.com>
+References: <006601cd917c$00b07930$02116b90$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:46146 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753294Ab2IQKjT (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:41415 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753804Ab2IQKlU (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 06:39:19 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
+	Mon, 17 Sep 2012 06:41:20 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAH00M9BPLJ5P80@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:39:19 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAH00FSKPOI2FQ0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:41:19 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAH0030RPLIWP20@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:39:18 +0900 (KST)
-In-reply-to: 
+ with ESMTPA id <0MAH0025DPOVQL90@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:41:19 +0900 (KST)
+In-reply-to: <006601cd917c$00b07930$02116b90$%han@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, 'Dongjin Kim' <tobetter@gmail.com>
+To: 'Jingoo Han' <jg1.han@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Kukjin Kim wrote:
+Jingoo Han wrote:
 > 
-> Thomas Abraham wrote:
-> >
-> > On 3 September 2012 18:04, Tomasz Figa <t.figa@samsung.com> wrote:
-> > > This patch series prepares existing Exynos4210 DT infrastructure to be
-> > > further extended for new SoCs from Exynos4 line and new boards.
-> > >
-> > > Tomasz Figa (3):
-> > >   ARM: dts: Move parts common to Exynos4 from Exynos4210.dtsi to
-> > >     Exynos4.dtsi
-> > >   ARM: EXYNOS: exynos4-dt: Use exynos4 prefix instead of exynos4210
-> > >   ARM: dts: exynos4: Assume status of all optional nodes as disabled
-> > >
-> > >  arch/arm/boot/dts/exynos4.dtsi            | 232
-> > ++++++++++++++++++++++++++++++
-> > >  arch/arm/boot/dts/exynos4210-origen.dts   |  58 +-------
-> > >  arch/arm/boot/dts/exynos4210-smdkv310.dts |  52 +------
-> > >  arch/arm/boot/dts/exynos4210.dtsi         | 181
-+----------------------
-> > >  arch/arm/mach-exynos/mach-exynos4-dt.c    |  18 +--
-> > >  5 files changed, 248 insertions(+), 293 deletions(-)
-> > >  create mode 100644 arch/arm/boot/dts/exynos4.dtsi
-> > >
-> >
-> > Thanks, we can build Exynos4412 device tree support on top of this
-> series.
-> >
-> > Acked-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Add dp clock instance for EXYNOS5 dp controller.
 > 
-> Thomas, thanks for your ack on this series and I'm OK on this series.
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+> ---
+>  arch/arm/mach-exynos/clock-exynos5.c |    5 +++++
+>  1 files changed, 5 insertions(+), 0 deletions(-)
 > 
-> But you know, Donjin Kim submitted almost same patch except gpio stuff one
-> month before this series but needs to update something though. So would be
-> nice if either Tomasz or Dongjin could ack on the other patch?
-> 
-Hmm...OK, I couldn't get any response from anyone so I will pick up this
-patches. If any objection, please let me know.
+> diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-
+> exynos/clock-exynos5.c
+> index eb3f4fc..d688abe 100644
+> --- a/arch/arm/mach-exynos/clock-exynos5.c
+> +++ b/arch/arm/mach-exynos/clock-exynos5.c
+> @@ -683,6 +683,11 @@ static struct clk exynos5_init_clocks_off[] = {
+>  		.enable		= exynos5_clk_ip_disp1_ctrl,
+>  		.ctrlbit	= (1 << 5),
+>  	}, {
+> +		.name		= "dp",
+> +		.devname	= "exynos-dp",
+> +		.enable		= exynos5_clk_ip_disp1_ctrl,
+> +		.ctrlbit	= (1 << 4),
+> +	}, {
+>  		.name		= "jpeg",
+>  		.enable		= exynos5_clk_ip_gen_ctrl,
+>  		.ctrlbit	= (1 << 2),
+> --
+> 1.7.1
 
-Of course, if any regarding patches, need to work against on them.
-
+OK, applied.
 Thanks.
 
 Best regards,
