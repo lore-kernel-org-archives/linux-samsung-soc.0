@@ -1,99 +1,127 @@
 From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH 3/7] ARM: EXYNOS: Change MIPI-CSIS device regulator supply names
-Date: Mon, 17 Sep 2012 12:51:40 +0200
-Message-ID: <1347879100-30150-3-git-send-email-s.nawrocki@samsung.com>
+Subject: [PATCH 4/7] s5p-csis: Replace phy_enable platform data callback with
+ direct call
+Date: Mon, 17 Sep 2012 12:54:30 +0200
+Message-ID: <1347879273-30463-1-git-send-email-s.nawrocki@samsung.com>
 References: <1347878888-30001-1-git-send-email-s.nawrocki@samsung.com>
- <1347879100-30150-1-git-send-email-s.nawrocki@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29430 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754909Ab2IQKwd (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 06:52:33 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAH00EBCQ6DAKO0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:52:32 +0900 (KST)
-Received: from amdc248.digital.local ([106.116.147.32])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAH003D4Q6Z1L90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:52:32 +0900 (KST)
-In-reply-to: <1347879100-30150-1-git-send-email-s.nawrocki@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-media-owner@vger.kernel.org>
+In-reply-to: <1347878888-30001-1-git-send-email-s.nawrocki@samsung.com>
+Sender: linux-media-owner@vger.kernel.org
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: kgene.kim@samsung.com
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-Rename MIPI-CSIS regulator supply names to match definitions in
-the driver after commit "s5p-csis: Change regulator supply names".
+The phy_enable callback is common for all Samsung SoC platforms,
+replace it with direct function call so the MIPI-CSI2 DPHY control
+is also possible on device tree instantiated platforms.
 
 Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- arch/arm/mach-exynos/mach-nuri.c           | 4 ++--
- arch/arm/mach-exynos/mach-origen.c         | 4 ++--
- arch/arm/mach-exynos/mach-universal_c210.c | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/media/video/s5p-fimc/mipi-csis.c | 13 +++++++------
+ include/linux/platform_data/mipi-csis.h  | 11 +++++------
+ 2 files changed, 12 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index da6e7ce..bfe6955 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -378,10 +378,10 @@ static struct regulator_consumer_supply __initdata max8997_ldo1_[] = {
- };
- static struct regulator_consumer_supply __initdata max8997_ldo3_[] = {
- 	REGULATOR_SUPPLY("vusb_d", "s3c-hsotg"), /* USB */
--	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
-+	REGULATOR_SUPPLY("vddcore", "s5p-mipi-csis.0"), /* MIPI */
- };
- static struct regulator_consumer_supply __initdata max8997_ldo4_[] = {
--	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"), /* MIPI */
-+	REGULATOR_SUPPLY("vddio", "s5p-mipi-csis.0"), /* MIPI */
- };
- static struct regulator_consumer_supply __initdata max8997_ldo5_[] = {
- 	REGULATOR_SUPPLY("vhsic", "modemctl"), /* MODEM */
-diff --git a/arch/arm/mach-exynos/mach-origen.c b/arch/arm/mach-exynos/mach-origen.c
-index 65ac45b..b58bbca 100644
---- a/arch/arm/mach-exynos/mach-origen.c
-+++ b/arch/arm/mach-exynos/mach-origen.c
-@@ -96,12 +96,12 @@ static struct s3c2410_uartcfg origen_uartcfgs[] __initdata = {
- };
- 
- static struct regulator_consumer_supply __initdata ldo3_consumer[] = {
--	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"), /* MIPI */
-+	REGULATOR_SUPPLY("vddcore", "s5p-mipi-csis.0"), /* MIPI */
- 	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"), /* HDMI */
- 	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"), /* HDMI */
- };
- static struct regulator_consumer_supply __initdata ldo6_consumer[] = {
--	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"), /* MIPI */
-+	REGULATOR_SUPPLY("vddio", "s5p-mipi-csis.0"), /* MIPI */
- };
- static struct regulator_consumer_supply __initdata ldo7_consumer[] = {
- 	REGULATOR_SUPPLY("avdd", "alc5625"), /* Realtek ALC5625 */
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 0b0a2d0..ac00757 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -211,7 +211,7 @@ static struct regulator_consumer_supply lp3974_ldo3_consumer[] = {
- 	REGULATOR_SUPPLY("vusb_a", "s3c-hsotg"),
- 	REGULATOR_SUPPLY("vdd", "exynos4-hdmi"),
- 	REGULATOR_SUPPLY("vdd_pll", "exynos4-hdmi"),
--	REGULATOR_SUPPLY("vdd11", "s5p-mipi-csis.0"),
-+	REGULATOR_SUPPLY("vddcore", "s5p-mipi-csis.0"),
- };
- 
- static struct regulator_init_data lp3974_ldo3_data = {
-@@ -275,7 +275,7 @@ static struct regulator_init_data lp3974_ldo6_data = {
- };
- 
- static struct regulator_consumer_supply lp3974_ldo7_consumer[] = {
--	REGULATOR_SUPPLY("vdd18", "s5p-mipi-csis.0"),
-+	REGULATOR_SUPPLY("vddio", "s5p-mipi-csis.0"),
- };
- 
- static struct regulator_init_data lp3974_ldo7_data = {
--- 
+diff --git a/drivers/media/video/s5p-fimc/mipi-csis.c b/drivers/media/video/s5p-fimc/mipi-csis.c
+index c9afb05..1a2db5d 100644
+--- a/drivers/media/video/s5p-fimc/mipi-csis.c
++++ b/drivers/media/video/s5p-fimc/mipi-csis.c
+@@ -150,6 +150,7 @@ static const struct s5pcsis_event s5pcsis_events[] = {
+  *        protecting @format and @flags members
+  * @pads: CSIS pads array
+  * @sd: v4l2_subdev associated with CSIS device instance
++ * @index: the hardware instance index
+  * @pdev: CSIS platform device
+  * @regs: mmaped I/O registers memory
+  * @supplies: CSIS regulator supplies
+@@ -165,6 +166,7 @@ struct csis_state {
+ 	struct mutex lock;
+ 	struct media_pad pads[CSIS_PADS_NUM];
+ 	struct v4l2_subdev sd;
++	u8 index;
+ 	struct platform_device *pdev;
+ 	void __iomem *regs;
+ 	struct regulator_bulk_data supplies[CSIS_NUM_SUPPLIES];
+@@ -619,14 +621,15 @@ static int __devinit s5pcsis_probe(struct platform_device *pdev)
+ 	spin_lock_init(&state->slock);
+
+ 	state->pdev = pdev;
++	state->index = max(0, pdev->id);
+
+ 	pdata = pdev->dev.platform_data;
+-	if (pdata == NULL || pdata->phy_enable == NULL) {
++	if (pdata == NULL) {
+ 		dev_err(&pdev->dev, "Platform data not fully specified\n");
+ 		return -EINVAL;
+ 	}
+
+-	if ((pdev->id == 1 && pdata->lanes > CSIS1_MAX_LANES) ||
++	if ((state->index == 1 && pdata->lanes > CSIS1_MAX_LANES) ||
+ 	    pdata->lanes > CSIS0_MAX_LANES) {
+ 		dev_err(&pdev->dev, "Unsupported number of data lanes: %d\n",
+ 			pdata->lanes);
+@@ -709,7 +712,6 @@ e_clkput:
+
+ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
+ {
+-	struct s5p_platform_mipi_csis *pdata = dev->platform_data;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
+ 	struct csis_state *state = sd_to_csis_state(sd);
+@@ -721,7 +723,7 @@ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
+ 	mutex_lock(&state->lock);
+ 	if (state->flags & ST_POWERED) {
+ 		s5pcsis_stop_stream(state);
+-		ret = pdata->phy_enable(state->pdev, false);
++		ret = s5p_csis_phy_enable(state->index, false);
+ 		if (ret)
+ 			goto unlock;
+ 		ret = regulator_bulk_disable(CSIS_NUM_SUPPLIES,
+@@ -740,7 +742,6 @@ static int s5pcsis_pm_suspend(struct device *dev, bool runtime)
+
+ static int s5pcsis_pm_resume(struct device *dev, bool runtime)
+ {
+-	struct s5p_platform_mipi_csis *pdata = dev->platform_data;
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct v4l2_subdev *sd = platform_get_drvdata(pdev);
+ 	struct csis_state *state = sd_to_csis_state(sd);
+@@ -758,7 +759,7 @@ static int s5pcsis_pm_resume(struct device *dev, bool runtime)
+ 					    state->supplies);
+ 		if (ret)
+ 			goto unlock;
+-		ret = pdata->phy_enable(state->pdev, true);
++		ret = s5p_csis_phy_enable(state->index, true);
+ 		if (!ret) {
+ 			state->flags |= ST_POWERED;
+ 		} else {
+diff --git a/include/linux/platform_data/mipi-csis.h b/include/linux/platform_data/mipi-csis.h
+index c45b1e8..2e59e43 100644
+--- a/include/linux/platform_data/mipi-csis.h
++++ b/include/linux/platform_data/mipi-csis.h
+@@ -11,8 +11,6 @@
+ #ifndef __PLAT_SAMSUNG_MIPI_CSIS_H_
+ #define __PLAT_SAMSUNG_MIPI_CSIS_H_ __FILE__
+
+-struct platform_device;
+-
+ /**
+  * struct s5p_platform_mipi_csis - platform data for S5P MIPI-CSIS driver
+  * @clk_rate: bus clock frequency
+@@ -34,10 +32,11 @@ struct s5p_platform_mipi_csis {
+
+ /**
+  * s5p_csis_phy_enable - global MIPI-CSI receiver D-PHY control
+- * @pdev: MIPI-CSIS platform device
+- * @on: true to enable D-PHY and deassert its reset
+- *	false to disable D-PHY
++ * @id:     MIPI-CSIS harware instance index (0...1)
++ * @on:     true to enable D-PHY and deassert its reset
++ *          false to disable D-PHY
++ * @return: 0 on success, or negative error code on failure
+  */
+-int s5p_csis_phy_enable(struct platform_device *pdev, bool on);
++int s5p_csis_phy_enable(int id, bool on);
+
+ #endif /* __PLAT_SAMSUNG_MIPI_CSIS_H_ */
+--
 1.7.11.3
