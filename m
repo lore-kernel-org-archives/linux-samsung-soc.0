@@ -1,105 +1,75 @@
-From: Kukjin Kim <kgene@kernel.org>
-Subject: RE: [PATCH V4] ARM: EXYNOS5: Add bus clock and set parent clock for
- FIMD
-Date: Mon, 17 Sep 2012 19:37:19 +0900
-Message-ID: <04f401cd94c0$6a13da10$3e3b8e30$@org>
-References: <1347892995-17924-1-git-send-email-l.krishna@samsung.com>
- <002001cd94bc$05177bc0$0f467340$%han@samsung.com>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: RE: [PATCH 0/3] ARM: dts: Exynos4 dts reorganization
+Date: Mon, 17 Sep 2012 19:39:18 +0900
+Message-ID: <04f501cd94c0$b0a61b00$11f25100$%kim@samsung.com>
+References: <1346675674-16034-1-git-send-email-t.figa@samsung.com>
+ <CAJuYYwRWqvzw_MdLa7NfE9ppbPiz8=HTXUW+-mXedvu2GPQWBg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:41061 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751575Ab2IQKhV (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:46146 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753294Ab2IQKjT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 17 Sep 2012 06:37:21 -0400
+	Mon, 17 Sep 2012 06:39:19 -0400
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAH00FP8PI82FQ0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:37:20 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAH00M9BPLJ5P80@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:39:19 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAH0037BPI8WP10@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:37:20 +0900 (KST)
-In-reply-to: <002001cd94bc$05177bc0$0f467340$%han@samsung.com>
+ with ESMTPA id <0MAH0030RPLIWP20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 17 Sep 2012 19:39:18 +0900 (KST)
+In-reply-to: 
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Jingoo Han' <jg1.han@samsung.com>, 'Leela Krishna Amudala' <l.krishna@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com
+To: 'Kukjin Kim' <kgene.kim@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Tomasz Figa' <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, 'Dongjin Kim' <tobetter@gmail.com>
 
-Jingoo Han wrote:
+Kukjin Kim wrote:
 > 
-> On Monday, September 17, 2012 11:43 PM Leela Krishna Amudala wrote
+> Thomas Abraham wrote:
 > >
-> > This patch adds the bus clock for FIMD and changes the device name for
-> lcd clock
-> > also sets mout_mpll_user as parent clock to fimd
+> > On 3 September 2012 18:04, Tomasz Figa <t.figa@samsung.com> wrote:
+> > > This patch series prepares existing Exynos4210 DT infrastructure to be
+> > > further extended for new SoCs from Exynos4 line and new boards.
+> > >
+> > > Tomasz Figa (3):
+> > >   ARM: dts: Move parts common to Exynos4 from Exynos4210.dtsi to
+> > >     Exynos4.dtsi
+> > >   ARM: EXYNOS: exynos4-dt: Use exynos4 prefix instead of exynos4210
+> > >   ARM: dts: exynos4: Assume status of all optional nodes as disabled
+> > >
+> > >  arch/arm/boot/dts/exynos4.dtsi            | 232
+> > ++++++++++++++++++++++++++++++
+> > >  arch/arm/boot/dts/exynos4210-origen.dts   |  58 +-------
+> > >  arch/arm/boot/dts/exynos4210-smdkv310.dts |  52 +------
+> > >  arch/arm/boot/dts/exynos4210.dtsi         | 181
++----------------------
+> > >  arch/arm/mach-exynos/mach-exynos4-dt.c    |  18 +--
+> > >  5 files changed, 248 insertions(+), 293 deletions(-)
+> > >  create mode 100644 arch/arm/boot/dts/exynos4.dtsi
+> > >
 > >
-> > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> 
-> Acked-by: Jingoo Han <jg1.han@samsung.com>
-> 
-In this case, since Leela addressed comments from you, seems it should be
-'Reviewed-by'?
-
-> It looks good.
-> 
-> 
-> > ---
-> >  arch/arm/mach-exynos/clock-exynos5.c |   35
-++++++++++++++++++++++++----
-> -----
-> >  arch/arm/mach-exynos/clock-exynos5.h |   17 ++++++++++++++++
-> >  2 files changed, 42 insertions(+), 10 deletions(-)
-> >  create mode 100644 arch/arm/mach-exynos/clock-exynos5.h
-
-[snip]
-
-> >  	clk_set_rate(&exynos5_clk_aclk_acp.clk, 267000000);
-> >  	clk_set_rate(&exynos5_clk_pclk_acp.clk, 134000000);
-> > +	clk_set_parent(&exynos5_clk_sclk_fimd1.clk,
-> > +			&exynos5_clk_mout_mpll_user.clk);
-
-Well, do we _really_ need to set same parent clock for fimd1 here on all of
-exynos5? I don't think so.
-
+> > Thanks, we can build Exynos4412 device tree support on top of this
+> series.
 > >
-> >  	for (ptr = 0; ptr < ARRAY_SIZE(exynos5_clksrcs); ptr++)
-> >  		s3c_set_clksrc(&exynos5_clksrcs[ptr], true);
-> > diff --git a/arch/arm/mach-exynos/clock-exynos5.h b/arch/arm/mach-
-> exynos/clock-exynos5.h
-> > new file mode 100644
-> > index 0000000..6f78f5d
-> > --- /dev/null
-> > +++ b/arch/arm/mach-exynos/clock-exynos5.h
-> > @@ -0,0 +1,17 @@
-> > +/*
-> > + * Copyright (c) 2012 Samsung Electronics Co., Ltd.
-> > + *		http://www.samsung.com
-> > + *
-> > + * Header file for exynos5 clock support
-> > + *
-> > + * This program is free software; you can redistribute it and/or modify
-> > + * it under the terms of the GNU General Public License version 2 as
-> > + * published by the Free Software Foundation.
-> > +*/
-> > +
-> > +#ifndef __ASM_ARCH_EXYNOS5_CLOCK_H
-> > +#define __ASM_ARCH_EXYNOS5_CLOCK_H __FILE__
-> > +
-> > +extern struct clksrc_clk exynos5_clk_sclk_fimd1;
-> > +
+> > Acked-by: Thomas Abraham <thomas.abraham@linaro.org>
+> 
+> Thomas, thanks for your ack on this series and I'm OK on this series.
+> 
+> But you know, Donjin Kim submitted almost same patch except gpio stuff one
+> month before this series but needs to update something though. So would be
+> nice if either Tomasz or Dongjin could ack on the other patch?
+> 
+Hmm...OK, I couldn't get any response from anyone so I will pick up this
+patches. If any objection, please let me know.
 
-I don't have any idea why we need this.
-
-Note, the 'clock-exynos4.h' is for supporting common exynos4 and specific
-exynos4210 and exynos4x12.
-
-[snip]
+Of course, if any regarding patches, need to work against on them.
 
 Thanks.
 
