@@ -1,67 +1,45 @@
-From: Tushar Behera <tushar.behera@linaro.org>
-Subject: [PATCH] ARM: dts: exynos4210-origen: Enable on-board keys as wakeup source
-Date: Tue, 18 Sep 2012 15:39:08 +0530
-Message-ID: <1347962948-30984-1-git-send-email-tushar.behera@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: [PATCH 0/3] Add device tree based discovery support for drm-fimd
+Date: Tue, 18 Sep 2012 23:52:08 +0530
+Message-ID: <1347992531-27279-1-git-send-email-l.krishna@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:38238 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756559Ab2IRKM1 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:20978 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932954Ab2IRMXX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Sep 2012 06:12:27 -0400
-Received: by pbbrr13 with SMTP id rr13so10766847pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Sep 2012 03:12:27 -0700 (PDT)
+	Tue, 18 Sep 2012 08:23:23 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAJ00JWKP2L0J80@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Sep 2012 21:23:22 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAJ004DPP1JBZB0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 18 Sep 2012 21:23:21 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org, patches@linaro.org
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, inki.dae@samsung.com, jg1.han@samsung.com
 
-On board keys on Origen board can serve as wakeup sources, hence they
-are marked accordingly in the device tree file.
+This patch set adds arch side support for device tree based discovery
+for drm-fimd.
 
-Signed-off-by: Tushar Behera <tushar.behera@linaro.org>
----
- arch/arm/boot/dts/exynos4210-origen.dts |    5 +++++
- 1 files changed, 5 insertions(+), 0 deletions(-)
+The patches are created against "for-next" branch of Kukjin Kim's tree on 3.6-rc6 at:
+ git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index 0c49caa..e867eb7 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -64,30 +64,35 @@
- 			label = "Up";
- 			gpios = <&gpx2 0 0 0 2>;
- 			linux,code = <103>;
-+			gpio-key,wakeup;
- 		};
- 
- 		down {
- 			label = "Down";
- 			gpios = <&gpx2 1 0 0 2>;
- 			linux,code = <108>;
-+			gpio-key,wakeup;
- 		};
- 
- 		back {
- 			label = "Back";
- 			gpios = <&gpx1 7 0 0 2>;
- 			linux,code = <158>;
-+			gpio-key,wakeup;
- 		};
- 
- 		home {
- 			label = "Home";
- 			gpios = <&gpx1 6 0 0 2>;
- 			linux,code = <102>;
-+			gpio-key,wakeup;
- 		};
- 
- 		menu {
- 			label = "Menu";
- 			gpios = <&gpx1 5 0 0 2>;
- 			linux,code = <139>;
-+			gpio-key,wakeup;
- 		};
- 	};
- 
--- 
-1.7.4.1
+This patchset has been tested on smdk5250 board and seen the bootup logo on LCD
+using the patchset http://www.spinics.net/lists/arm-kernel/msg193348.html which was 
+applied on inki-dae's next branch
+
+Leela Krishna Amudala (3):
+  ARM: EXYNOS5: Add fimd node to the exynos5250 dtsi file
+  ARM: EXYNOS: add device tree based discovery support for FIMD
+  ARM: EXYNOS: Add drm-device node to the dtsi file
+
+ arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++++++++++++++
+ arch/arm/boot/dts/exynos5250.dtsi         |   11 +++++++++++
+ arch/arm/mach-exynos/include/mach/map.h   |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
+ 4 files changed, 30 insertions(+), 0 deletions(-)
