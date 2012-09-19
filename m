@@ -1,84 +1,64 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 0/5] ARM: EXYNOS: Add secure firmware support
-Date: Wed, 19 Sep 2012 15:29:17 +0200
-Message-ID: <32882618.QIYkyWltBx@amdc1227>
-References: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
+From: Seungwon Jeon <tgih.jun@samsung.com>
+Subject: RE: [PATCH v6 0/9] mmc: dw_mmc: add support for device tree based
+ instantiation
+Date: Wed, 19 Sep 2012 22:39:09 +0900
+Message-ID: <001201cd966c$25b18e00$7114aa00$%jun@samsung.com>
+References: <1347905803-22742-1-git-send-email-thomas.abraham@linaro.org>
+ <CAJuYYwRcoOv5X=XK8wiVb9fzSAdY_d=+kvJhqMdiT1Fey0JCLw@mail.gmail.com>
+ <CAJuYYwSBtjtEvTMUw9UNZRTbMoMwLio_YLKbTu=daaamS5t5Lg@mail.gmail.com>
+ <m3y5k6h4qj.fsf@pullcord.laptop.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:33642 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755149Ab2ISN3Y (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47221 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753308Ab2ISNjS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Sep 2012 09:29:24 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAL007PEMSTCQP0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Sep 2012 22:29:23 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAL00GLDMSXEE90@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 19 Sep 2012 22:29:23 +0900 (KST)
-In-reply-to: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
+	Wed, 19 Sep 2012 09:39:18 -0400
+In-reply-to: <m3y5k6h4qj.fsf@pullcord.laptop.org>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net
+To: 'Chris Ball' <cjb@laptop.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
+Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, patches@linaro.org
 
-Hi,
+> Hi Thomas,
+> 
+> On Wed, Sep 19 2012, Thomas Abraham wrote:
+> >> Hi Jaehoon, Seungwon,
+> >>
+> >> All the changes you have suggested for this patch series has been
+> >> completed. If you could ack this series, it would be great.
+> >>
+> >> Thanks,
+> >> Thomas.
+> >
+> > Hi Chris,
+> >
+> > I have addressed all the comments received for the v5 of the dw-mmc
+> > device tree support patch series. Will Newton has acked this patch
+> > series. Can this series be merged for v3.7 ?
+> 
+> Yes, looks good; pushed to mmc-next for 3.7.  Jaehoon and Seungwon,
+> if you reply soon with your ACK then I'll add it to this patchset.
 
-On Thursday 13 of September 2012 10:13:33 Tomasz Figa wrote:
-> Some Exynos-based boards are running with secure firmware running in
-> TrustZone secure world, which changes the way some things have to be
-> initialized.
-> 
-> This series adds support for specifying firmware operations, implements
-> some firmware operations for Exynos secure firmware and adds a method of
-> enabling secure firmware operations on Exynos-based boards through board
-> file and device tree.
-> 
-> This is a continuation of the patch series by Kyungmin Park:
-> [PATCH v5 1/2] ARM: Make a compile firmware conditionally
-> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183607
-> [PATCH v5 2/2] ARM: EXYNOS: SMC instruction (aka firmware) support
-> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183608/focus=184109
-> 
-> Tomasz Figa (5):
->   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
->   ARM: Add interface for registering and calling firmware-specific
->     operations
->   ARM: EXYNOS: Add support for secure monitor calls
->   ARM: EXYNOS: Add support for Exynos secure firmware
->   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
-> 
->  .../devicetree/bindings/arm/samsung-boards.txt     |  8 ++++
->  arch/arm/common/Makefile                           |  2 +
->  arch/arm/common/firmware.c                         | 18 ++++++++
->  arch/arm/include/asm/firmware.h                    | 30 +++++++++++++
->  arch/arm/mach-exynos/Makefile                      |  6 +++
->  arch/arm/mach-exynos/common.c                      | 34 ++++++++++++++
->  arch/arm/mach-exynos/common.h                      |  2 +
->  arch/arm/mach-exynos/exynos-smc.S                  | 22 +++++++++
->  arch/arm/mach-exynos/firmware.c                    | 52
-> ++++++++++++++++++++++ arch/arm/mach-exynos/include/mach/map.h          
->  |  3 ++
->  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
->  arch/arm/mach-exynos/platsmp.c                     |  8 ++++
->  arch/arm/mach-exynos/smc.h                         | 31 +++++++++++++
->  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
->  14 files changed, 218 insertions(+)
->  create mode 100644 arch/arm/common/firmware.c
->  create mode 100644 arch/arm/include/asm/firmware.h
->  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
->  create mode 100644 arch/arm/mach-exynos/firmware.c
->  create mode 100644 arch/arm/mach-exynos/smc.h
 
-Any further comments for this series? Maybe we could merge it for 3.7?
+Also, looks good to me.
+But please check several patches before merging.
+Sorry for late review.
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
+Thanks,
+Seungwon Jeon
+
+> 
+> Thanks,
+> 
+> - Chris.
+> --
+> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+> One Laptop Per Child
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
