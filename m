@@ -1,36 +1,37 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 5/7] Samsung board for v3.7
-Date: Thu, 20 Sep 2012 08:18:59 +0900
-Message-ID: <099c01cd96bd$263a9050$72afb0f0$%kim@samsung.com>
+Subject: [GIT PULL 3/7] Samsung pinctrl for v3.7
+Date: Thu, 20 Sep 2012 08:18:46 +0900
+Message-ID: <099a01cd96bd$1e0baf40$5a230dc0$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:23334 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:23297 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752868Ab2ISXTB (ORCPT
+	with ESMTP id S1752865Ab2ISXSr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Sep 2012 19:19:01 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Wed, 19 Sep 2012 19:18:47 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAM006Q9E3O7MB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 08:19:00 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAM005B1E3A2PC0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 08:18:46 +0900 (KST)
 Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAM009M3E3N4680@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 08:19:00 +0900 (KST)
+ with ESMTPA id <0MAM00JCNE3ANYC0@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 08:18:46 +0900 (KST)
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Arnd Bergmann' <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Linus Walleij' <linus.walleij@linaro.org>
 
-Hi Arnd, Olof,
+Hi Arnd, Olof
 
-This is for updating non-DT Samsung board files for v3.7, there are adding
-generic PWM lookup support and some updates.
+This branch is for supporting pinctrl for Samsung EXYNOS. Now this can
+support EXYNOS4210 and other EXYNOS SoCs such as EXYNOS4X12 will be
+supported next time.
 
 If any problems, please kindly let me know.
 
@@ -42,33 +43,41 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-The following changes since commit 0d7614f09c1ebdbaa1599a5aba7593f147bf96ee:
+The following changes since commit 4cbe5a555fa58a79b6ecbb6c531b8bab0650778d:
 
-  Linux 3.6-rc1 (2012-08-02 16:38:10 -0700)
+  Linux 3.6-rc4 (2012-09-01 10:39:58 -0700)
 
 are available in the git repository at:
   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-next/board-samsung
+next/pinctrl-samsung
 
-Mark Brown (2):
-      ARM: S3C64XX: Update configuration for WM5102 module on Cragganmore
-      ARM: S3C64XX: Register audio platform devices for Bells on Cragganmore
+Thomas Abraham (6):
+      pinctrl: add samsung pinctrl and gpiolib driver
+      pinctrl: add exynos4210 specific extensions for samsung pinctrl driver
+      gpio: exynos4: skip gpiolib registration if pinctrl driver is used
+      ARM: EXYNOS: skip wakeup interrupt setup if pinctrl driver is used
+      ARM: dts: Add pinctrl node entries for SAMSUNG EXYNOS4210 SoC
+      ARM: EXYNOS: Enable pinctrl driver support for EXYNOS4 device tree
+enabled platform
 
-Sachin Kamat (4):
-      ARM: dts: Use active low flag for gpio-keys on Origen
-      ARM: dts: Add heartbeat gpio-leds support to Origen
-      ARM: EXYNOS: Add generic PWM lookup support for SMDK4X12
-      ARM: EXYNOS: Add generic PWM lookup support for SMDKV310
-
-Tushar Behera (1):
-      ARM: EXYNOS: Use generic pwm driver in Origen board
-
- arch/arm/boot/dts/exynos4210-origen.dts      |   18 +++++++++---
- arch/arm/mach-exynos/Kconfig                 |    3 ++
- arch/arm/mach-exynos/mach-origen.c           |    6 ++++
- arch/arm/mach-exynos/mach-smdk4x12.c         |    6 ++++
- arch/arm/mach-exynos/mach-smdkv310.c         |    7 +++++
- arch/arm/mach-s3c64xx/mach-crag6410-module.c |   36
-++++++++++++++++++++++---
- arch/arm/mach-s3c64xx/mach-crag6410.c        |   12 ++++++++
- 7 files changed, 78 insertions(+), 10 deletions(-)
+ .../bindings/pinctrl/samsung-pinctrl.txt           |  196 +++++
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi          |  457 ++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  |   37 +
+ arch/arm/mach-exynos/Kconfig                       |    2 +
+ arch/arm/mach-exynos/common.c                      |   26 +
+ drivers/gpio/gpio-samsung.c                        |   21 +
+ drivers/pinctrl/Kconfig                            |    9 +
+ drivers/pinctrl/Makefile                           |    2 +
+ drivers/pinctrl/pinctrl-exynos.c                   |  560 ++++++++++++
+ drivers/pinctrl/pinctrl-exynos.h                   |  217 +++++
+ drivers/pinctrl/pinctrl-samsung.c                  |  888
+++++++++++++++++++++
+ drivers/pinctrl/pinctrl-samsung.h                  |  239 ++++++
+ 12 files changed, 2654 insertions(+), 0 deletions(-)
+ create mode 100644
+Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+ create mode 100644 arch/arm/boot/dts/exynos4210-pinctrl.dtsi
+ create mode 100644 drivers/pinctrl/pinctrl-exynos.c
+ create mode 100644 drivers/pinctrl/pinctrl-exynos.h
+ create mode 100644 drivers/pinctrl/pinctrl-samsung.c
+ create mode 100644 drivers/pinctrl/pinctrl-samsung.h
