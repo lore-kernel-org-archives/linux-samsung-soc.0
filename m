@@ -1,60 +1,54 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH v2 1/5] mmc: host: sdhci-s3c: Add broken-voltage DT
- property for broken voltage quirk
-Date: Wed, 19 Sep 2012 20:02:37 +0900
-Message-ID: <5059A64D.6000700@samsung.com>
-References: <1346748609-11115-1-git-send-email-t.figa@samsung.com>
- <1587150.uFGRdL0s8e@amdc1227> <m3a9wmgvip.fsf@pullcord.laptop.org>
- <1907099.4JSZthrgh2@amdc1227> <m3627aguhl.fsf@pullcord.laptop.org>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 0/3] ARM: EXYNOS: Power domain DT support extension
+Date: Wed, 19 Sep 2012 15:28:13 +0200
+Message-ID: <269615331.sxeOnu1O9R@amdc1227>
+References: <1346924286-9584-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-reply-to: <m3627aguhl.fsf@pullcord.laptop.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Chris Ball <cjb@laptop.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, Ben Dooks <ben-linux@fluff.org>, linux-mmc@vger.kernel.org, Jaehoon Chung <jh80.chung@samsung.com>, Adrian Hunter <adrian.hunter@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:33561 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754310Ab2ISN2U (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Wed, 19 Sep 2012 09:28:20 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAL007OPMR5CQP0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Sep 2012 22:28:19 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAL004GLMR5E1A0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 19 Sep 2012 22:28:19 +0900 (KST)
+In-reply-to: <1346924286-9584-1-git-send-email-t.figa@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl
 
 Hi,
 
-On 09/19/2012 07:47 PM, Chris Ball wrote:
-> Hi,
+On Thursday 06 of September 2012 11:38:03 Tomasz Figa wrote:
+> This patch series fixes two issues with existing DT support for Exynos
+> power domains and extends it with the ability of binding devices to
+> domains, basically making it possible to use power domains when using
+> DT.
 > 
-> On Wed, Sep 19 2012, Tomasz Figa wrote:
->> We could just check if the regulator provides the capability to change the 
->> voltage.
->>
->> I don't see any direct way of querying the regulator for provided 
->> capabilities (correct me if I'm just blind), but calling 
->> regulator_count_voltages() on the regulator and checking if the returned 
->> value is 1 should be enough to assume that the regulator is fixed.
+> Tomasz Figa (3):
+>   ARM: EXYNOS: pm_domain: Detect domain state on registration from DT
+>   ARM: EXYNOS: pm_domain: Fix power domain name initialization
+>   ARM: EXYNOS: pm_domain: Bind devices to power domains using DT
 > 
-> Sounds good, I agree.  Are you able to test that the obvious patch below
-> works on your fixed-regulator board?
-> 
-> Jaehoon and Adrian, can you think of any reason why we shouldn't replace
-> MMC_CAP2_BROKEN_VOLTAGE with the regulator_count_voltages() call below?
-> Thanks.
-I think this is better than using MMC_CAP2_BROKEN_VOLTAGE.
-I tested with this..and working fine.
+>  .../bindings/arm/exynos/power_domain.txt           | 15 +++-
+>  arch/arm/mach-exynos/pm_domains.c                  | 93
+> +++++++++++++++++++++- 2 files changed, 100 insertions(+), 8
+> deletions(-)
 
-Best Regards,
-Jaehoon Chung
-> 
-> 
-> diff --git a/drivers/mmc/core/core.c b/drivers/mmc/core/core.c
-> index 044cd01..a3cc740 100644
-> --- a/drivers/mmc/core/core.c
-> +++ b/drivers/mmc/core/core.c
-> @@ -1132,7 +1132,7 @@ int mmc_regulator_set_ocr(struct mmc_host *mmc,
->  		 */
->  		voltage = regulator_get_voltage(supply);
->  
-> -		if (mmc->caps2 & MMC_CAP2_BROKEN_VOLTAGE)
-> +		if (regulator_count_voltages(supply) == 1)
->  			min_uV = max_uV = voltage;
->  
->  		if (voltage < 0)
-> 
+Any further comments for this series? Could we merge it for 3.7?
 
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
