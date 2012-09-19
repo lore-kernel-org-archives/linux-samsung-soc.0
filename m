@@ -1,52 +1,68 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] Samsung fixes-3 for v3.6
-Date: Tue, 18 Sep 2012 07:40:23 -0700
-Message-ID: <CAOesGMgEPJ2XRN7_TDtpbw=-iyjD-yHtN=NYLjK6KWo16yj7Wg@mail.gmail.com>
-References: <50587612.4030304@samsung.com>
+From: Chris Ball <cjb@laptop.org>
+Subject: Re: [PATCH v2 1/5] mmc: host: sdhci-s3c: Add broken-voltage DT property for broken voltage quirk
+Date: Wed, 19 Sep 2012 01:42:01 -0400
+Message-ID: <m38vc6k1qu.fsf@pullcord.laptop.org>
+References: <1346748609-11115-1-git-send-email-t.figa@samsung.com>
+	<1346748609-11115-2-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-lpp01m010-f46.google.com ([209.85.215.46]:58111 "EHLO
-	mail-lpp01m010-f46.google.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1751070Ab2IROkZ (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 18 Sep 2012 10:40:25 -0400
-Received: by lagy9 with SMTP id y9so4979276lag.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 18 Sep 2012 07:40:24 -0700 (PDT)
-In-Reply-To: <50587612.4030304@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1346748609-11115-2-git-send-email-t.figa@samsung.com> (Tomasz
+	Figa's message of "Tue, 04 Sep 2012 10:50:05 +0200")
+Sender: linux-mmc-owner@vger.kernel.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, jy0922.shim@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, Ben Dooks <ben-linux@fluff.org>, linux-mmc@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-On Tue, Sep 18, 2012 at 6:24 AM, Kukjin Kim <kgene.kim@samsung.com> wrote:
-> Hi Arnd, Olof
->
-> This is re-sending Samsung fixes-3 I talked to Olof before.
->
-> The branch is including two commits are using spin_lock_{irqsave,
-> irqrestore} in clk_set_parent() and clk_set_rate() to avoid spinlock
-> recursion/locking.
->
-> If any problems, please kindly let me know.
->
-> Thanks.
->
-> Best regards,
-> Kgene.
-> --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
->
-> The following changes since commit 4cbe5a555fa58a79b6ecbb6c531b8bab0650778d:
->
->   Linux 3.6-rc4 (2012-09-01 10:39:58 -0700)
->
-> are available in the git repository at:
->   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> v3.6-samsung-fixes-3
+Hi,
 
-Thanks, pulled!
+On Tue, Sep 04 2012, Tomasz Figa wrote:
+> Some boards use fixed voltage regulator for vmmc supply (e.g. for eMMC
+> memories). MMC_CAP2_BROKEN_VOLTAGE must be enabled for them to operate
+> correctly.
+>
+> Cc: Ben Dooks <ben-linux@fluff.org>
+> Cc: Chris Ball <cjb@laptop.org>
+> CC: linux-mmc@vger.kernel.org
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  Documentation/devicetree/bindings/mmc/mmc.txt | 1 +
+>  drivers/mmc/host/sdhci-s3c.c                  | 3 +++
+>  2 files changed, 4 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/mmc.txt b/Documentation/devicetree/bindings/mmc/mmc.txt
+> index 8a6811f..ecbde68 100644
+> --- a/Documentation/devicetree/bindings/mmc/mmc.txt
+> +++ b/Documentation/devicetree/bindings/mmc/mmc.txt
+> @@ -16,6 +16,7 @@ Optional properties:
+>  - wp-inverted: when present, polarity on the wp gpio line is inverted
+>  - non-removable: non-removable slot (like eMMC)
+>  - max-frequency: maximum operating clock frequency
+> +- broken-voltage: vmmc regulator does not allow voltage control
+>  
+>  Example:
+>  
+> diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
+> index 445910e..39715b8 100644
+> --- a/drivers/mmc/host/sdhci-s3c.c
+> +++ b/drivers/mmc/host/sdhci-s3c.c
+> @@ -443,6 +443,9 @@ static int __devinit sdhci_s3c_parse_dt(struct device *dev,
+>  	if (!ourhost->gpios)
+>  		return -ENOMEM;
+>  
+> +	if (of_get_property(node, "broken-voltage", 0))
+> +		pdata->host_caps2 |= MMC_CAP2_BROKEN_VOLTAGE;
+> +
+>  	/* get the card detection method */
+>  	if (of_get_property(node, "broken-cd", 0)) {
+>  		pdata->cd_type = S3C_SDHCI_CD_NONE;
 
+Is there a reason we can't make this a property on the regulator instead?
 
--Olof
+Thanks,
+
+- Chris.
+-- 
+Chris Ball   <cjb@laptop.org>   <http://printf.net/>
+One Laptop Per Child
