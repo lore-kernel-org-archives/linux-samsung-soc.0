@@ -1,68 +1,61 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH] ARM: EXYNOS: no duplicate mask/unmask in eint0_15
-Date: Thu, 20 Sep 2012 08:59:16 +0900
-Message-ID: <09aa01cd96c2$c6cedd00$546c9700$%kim@samsung.com>
-References: <1346944864-12434-1-git-send-email-djkurtz@chromium.org>
- <CAD=FV=UTa4a8wewEdqu=ZnOKe-M5Brv-ex8ZGWfkTb6fqsRB_w@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V4] ARM: EXYNOS5: Add bus clock and set parent clock for
+ FIMD
+Date: Thu, 20 Sep 2012 10:28:53 +0900
+Message-ID: <006e01cd96cf$4bfb75e0$e3f261a0$%han@samsung.com>
+References: <1347892995-17924-1-git-send-email-l.krishna@samsung.com>
+ <002001cd94bc$05177bc0$0f467340$%han@samsung.com>
+ <04f401cd94c0$6a13da10$3e3b8e30$@org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:56644 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752930Ab2ISX7S (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:47770 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751231Ab2ITB2z (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 19 Sep 2012 19:59:18 -0400
-In-reply-to: <CAD=FV=UTa4a8wewEdqu=ZnOKe-M5Brv-ex8ZGWfkTb6fqsRB_w@mail.gmail.com>
+	Wed, 19 Sep 2012 21:28:55 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAM008BZK3DUFH0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 10:28:54 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.119.56])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAM00FISK46L350@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 10:28:54 +0900 (KST)
+In-reply-to: <04f401cd94c0$6a13da10$3e3b8e30$@org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Doug Anderson' <dianders@chromium.org>, 'Daniel Kurtz' <djkurtz@chromium.org>
-Cc: 'Russell King' <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, olofj@chromium.org
+To: 'Kukjin Kim' <kgene.kim@samsung.com>
+Cc: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, inki.dae@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-Doug Anderson wrote:
+On Monday, September 17, 2012 7:37 PM Kukjin Kim wrote
 > 
-> On Thu, Sep 6, 2012 at 8:21 AM, Daniel Kurtz <djkurtz@chromium.org> wrote:
-> > chained_irq_enter/exit() already mask&ack/unmask the chained interrupt.
-> > There is no need to also explicitly do it in the handler.
+> Jingoo Han wrote:
 > >
-> > Signed-off-by: Daniel Kurtz <djkurtz@chromium.org>
-> > ---
-> >  arch/arm/mach-exynos/common.c |    7 -------
-> >  1 files changed, 0 insertions(+), 7 deletions(-)
+> > On Monday, September 17, 2012 11:43 PM Leela Krishna Amudala wrote
+> > >
+> > > This patch adds the bus clock for FIMD and changes the device name for
+> > lcd clock
+> > > also sets mout_mpll_user as parent clock to fimd
+> > >
+> > > Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
 > >
-> > diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-
-> exynos/common.c
-> > index 4eb39cd..0a85aec 100644
-> > --- a/arch/arm/mach-exynos/common.c
-> > +++ b/arch/arm/mach-exynos/common.c
-> > @@ -965,14 +965,7 @@ static void exynos_irq_eint0_15(unsigned int irq,
-> struct irq_desc *desc)
-> >         struct irq_chip *chip = irq_get_chip(irq);
+> > Acked-by: Jingoo Han <jg1.han@samsung.com>
 > >
-> >         chained_irq_enter(chip, desc);
-> > -       chip->irq_mask(&desc->irq_data);
-> > -
-> > -       if (chip->irq_ack)
-> > -               chip->irq_ack(&desc->irq_data);
-> > -
-> >         generic_handle_irq(*irq_data);
-> > -
-> > -       chip->irq_unmask(&desc->irq_data);
-> >         chained_irq_exit(chip, desc);
-> >  }
-> >
-> > --
-> > 1.7.7.3
-> >
+> In this case, since Leela addressed comments from you, seems it should be
+> 'Reviewed-by'?
 > 
-> Acked-by: Doug Anderson <dianders@chromium.org>
 
-Yes, will apply.
-Thanks.
+According to 'Documentation/SubmittingPatches',
 
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+402 Acked-by: is often used by the maintainer of the affected code when that
+403 maintainer neither contributed to nor forwarded the patch.
+
+I just use 'Acked-by' as Samsung Framebuffer maintainer, because
+this patch affects Samsung Framebuffer driver directly.
+
+Good luck.
