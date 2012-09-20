@@ -1,287 +1,58 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH V4 2/2] video: drm: exynos: Add device tree support
-Date: Thu, 20 Sep 2012 15:29:44 +0900
-Message-ID: <CAAQKjZOX-taoq9FTvDNuP4zzOq2wq6pKmbrHRne82v0gNL1u2A@mail.gmail.com>
-References: <1346859555-13527-1-git-send-email-l.krishna@samsung.com>
-	<1346859555-13527-3-git-send-email-l.krishna@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: In-Bae Jeong <kukyakya@gmail.com>
+Subject: [PATCH] samsung: clock: Modify for the case with the only parent
+Date: Thu, 20 Sep 2012 15:50:59 +0900
+Message-ID: <1348123859-13842-1-git-send-email-kukyakya@gmail.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:54310 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:61546 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751833Ab2ITG3o (ORCPT
+	with ESMTP id S1751728Ab2ITGve (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 02:29:44 -0400
-Received: by pbbrr13 with SMTP id rr13so4339487pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Sep 2012 23:29:44 -0700 (PDT)
-In-Reply-To: <1346859555-13527-3-git-send-email-l.krishna@samsung.com>
+	Thu, 20 Sep 2012 02:51:34 -0400
+Received: by pbbrr13 with SMTP id rr13so4378585pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Sep 2012 23:51:34 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: In-Bae Jeong <kukyakya@gmail.com>
 
-Hi,
+'camera' clock has the only parent and thus has no reg_src.
+It has a parent clock but it prints 'No parent clock specified' message.
+This patch is to deal with the case with the only parent clock.
+---
+ arch/arm/plat-samsung/clock-clksrc.c |   17 +++++++++--------
+ 1 files changed, 9 insertions(+), 8 deletions(-)
 
-I had merged this patch set but I realizes this patch has no
-descriptions enough so please add the descriptions what is this patch.
-
-
-2012/9/6 Leela Krishna Amudala <l.krishna@samsung.com>:
-> Add device tree based discovery support for DRM-FIMD driver.
->
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  Documentation/devicetree/bindings/fb/drm-fimd.txt |   80 +++++++++++++++++
-
-and, how about making drm folder instead of fb? so like below;
-                     Documentation/devicetree/bindings/drm/exynos/fimd.txt
-
-Thanks,
-Inki Dae
-
->  drivers/gpu/drm/exynos/exynos_drm_fimd.c          |   95 ++++++++++++++++++++-
->  2 files changed, 173 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/fb/drm-fimd.txt
->
-> diff --git a/Documentation/devicetree/bindings/fb/drm-fimd.txt b/Documentation/devicetree/bindings/fb/drm-fimd.txt
-> new file mode 100644
-> index 0000000..4ff1829
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/fb/drm-fimd.txt
-> @@ -0,0 +1,80 @@
-> +* Samsung Display Controller using DRM frame work
-> +
-> +The display controller is used to transfer image data from memory to an
-> +external LCD driver interface. It supports various color formats such as
-> +rgb and yuv.
-> +
-> +Required properties:
-> + - compatible: Should be "samsung,exynos5-fimd" or "samsung,exynos4-fb" for
-> +   fimd using DRM frame work.
-> + - reg: physical base address of the controller and length of memory
-> +   mapped region.
-> + - interrupts: Three interrupts should be specified. The interrupts should be
-> +   specified in the following order.
-> +   - VSYNC interrupt
-> +   - FIFO level interrupt
-> +   - FIMD System Interrupt
-> +
-> + - samsung,fimd-display: This property should specify the phandle of the
-> +   display device node which holds the video interface timing with the
-> +   below mentioned properties.
-> +
-> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
-> +     horizontal timing includes four parameters in the following order.
-> +
-> +     - horizontal back porch (in number of lcd clocks)
-> +     - horizontal front porch (in number of lcd clocks)
-> +     - hsync pulse width (in number of lcd clocks)
-> +     - Display panels X resolution.
-> +
-> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
-> +     vertical timing includes four parameters in the following order.
-> +
-> +     - vertical back porch (in number of lcd lines)
-> +     - vertical front porch (in number of lcd lines)
-> +     - vsync pulse width (in number of lcd clocks)
-> +     - Display panels Y resolution.
-> +
-> +
-> + - samsung,default-window: Specifies the default window number of the fimd controller.
-> +
-> + - samsung,fimd-win-bpp: Specifies the bits per pixel.
-> +
-> +Optional properties:
-> + - samsung,fimd-vidout-rgb: Video output format is RGB.
-> + - samsung,fimd-inv-vclk: invert video clock polarity.
-> + - samsung,fimd-frame-rate: Number of video frames per second.
-> +
-> +Example:
-> +
-> +       The following is an example for the fimd controller is split into
-> +       two portions. The SoC specific portion can be specified in the SoC
-> +       specific dts file. The board specific portion can be specified in the
-> +       board specific dts file.
-> +
-> +       - SoC Specific portion
-> +
-> +       fimd {
-> +               compatible = "samsung,exynos5-fimd";
-> +               interrupt-parent = <&combiner>;
-> +               reg = <0x14400000 0x40000>;
-> +               interrupts = <18 5>, <18 4>, <18 6>;
-> +       };
-> +
-> +       - Board Specific portion
-> +
-> +       lcd_fimd0: lcd_panel0 {
-> +                       lcd-htiming = <4 4 4 480>;
-> +                       lcd-vtiming = <4 4 4 320>;
-> +                       supports-mipi-panel;
-> +       };
-> +
-> +       fimd {
-> +               samsung,fimd-display = <&lcd_fimd0>;
-> +               samsung,fimd-vidout-rgb;
-> +               samsung,fimd-inv-vclk;
-> +               samsung,fimd-frame-rate = <60>;
-> +               samsung,default-window = <0>;
-> +               samsung,fimd-win-bpp = <32>;
-> +       };
-> +
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_fimd.c b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> index 3701fbe..a4fa8e9 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_fimd.c
-> @@ -18,6 +18,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/clk.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/of.h>
->
->  #include <video/samsung_fimd.h>
->  #include <drm/exynos_drm.h>
-> @@ -103,9 +104,18 @@ struct fimd_context {
->         struct exynos_drm_panel_info *panel;
->  };
->
-> +static const struct of_device_id fimd_dt_match[];
-> +
->  static inline struct fimd_driver_data *drm_fimd_get_driver_data(
->         struct platform_device *pdev)
->  {
-> +#ifdef CONFIG_OF
-> +       if (pdev->dev.of_node) {
-> +               const struct of_device_id *match;
-> +               match = of_match_ptr(fimd_dt_match);
-> +               return (struct fimd_driver_data *)match->data;
-> +       }
-> +#endif
->         return (struct fimd_driver_data *)
->                 platform_get_device_id(pdev)->driver_data;
->  }
-> @@ -809,12 +819,77 @@ static int fimd_power_on(struct fimd_context *ctx, bool enable)
->         return 0;
->  }
->
-> +#ifdef CONFIG_OF
-> +static struct exynos_drm_fimd_pdata *drm_fimd_dt_parse_pdata(struct device *dev)
-> +{
-> +       struct device_node *np = dev->of_node;
-> +       struct device_node *disp_np;
-> +       struct exynos_drm_fimd_pdata *pd;
-> +       u32 data[4];
-> +
-> +       pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
-> +       if (!pd) {
-> +               dev_err(dev, "memory allocation for pdata failed\n");
-> +               return ERR_PTR(-ENOMEM);
-> +       }
-> +
-> +       if (of_get_property(np, "samsung,fimd-vidout-rgb", NULL))
-> +               pd->vidcon0 |= VIDCON0_VIDOUT_RGB | VIDCON0_PNRMODE_RGB;
-> +       if (of_get_property(np, "samsung,fimd-inv-hsync", NULL))
-> +               pd->vidcon1 |= VIDCON1_INV_HSYNC;
-> +       if (of_get_property(np, "samsung,fimd-inv-vsync", NULL))
-> +               pd->vidcon1 |= VIDCON1_INV_VSYNC;
-> +       if (of_get_property(np, "samsung,fimd-inv-vclk", NULL))
-> +               pd->vidcon1 |= VIDCON1_INV_VCLK;
-> +       if (of_get_property(np, "samsung,fimd-inv-vden", NULL))
-> +               pd->vidcon1 |= VIDCON1_INV_VDEN;
-> +
-> +       disp_np = of_parse_phandle(np, "samsung,fimd-display", 0);
-> +       if (!disp_np) {
-> +               dev_err(dev, "unable to find display panel info\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +
-> +       if (of_property_read_u32_array(disp_np, "lcd-htiming", data, 4)) {
-> +               dev_err(dev, "invalid horizontal timing\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +       pd->panel.timing.left_margin = data[0];
-> +       pd->panel.timing.right_margin = data[1];
-> +       pd->panel.timing.hsync_len = data[2];
-> +       pd->panel.timing.xres = data[3];
-> +
-> +       if (of_property_read_u32_array(disp_np, "lcd-vtiming", data, 4)) {
-> +               dev_err(dev, "invalid vertical timing\n");
-> +               return ERR_PTR(-EINVAL);
-> +       }
-> +       pd->panel.timing.upper_margin = data[0];
-> +       pd->panel.timing.lower_margin = data[1];
-> +       pd->panel.timing.vsync_len = data[2];
-> +       pd->panel.timing.yres = data[3];
-> +
-> +       of_property_read_u32(np, "samsung,fimd-frame-rate",
-> +                               &pd->panel.timing.refresh);
-> +
-> +       of_property_read_u32(np, "samsung,default-window", &pd->default_win);
-> +
-> +       of_property_read_u32(np, "samsung,fimd-win-bpp", &pd->bpp);
-> +
-> +       return pd;
-> +}
-> +#else
-> +static struct exynos_drm_fimd_pdata *drm_fimd_dt_parse_pdata(struct device *dev)
-> +{
-> +       return NULL;
-> +}
-> +#endif /* CONFIG_OF */
-> +
->  static int __devinit fimd_probe(struct platform_device *pdev)
->  {
->         struct device *dev = &pdev->dev;
->         struct fimd_context *ctx;
->         struct exynos_drm_subdrv *subdrv;
-> -       struct exynos_drm_fimd_pdata *pdata;
-> +       struct exynos_drm_fimd_pdata *pdata = pdev->dev.platform_data;
->         struct exynos_drm_panel_info *panel;
->         struct resource *res;
->         int win;
-> @@ -822,7 +897,11 @@ static int __devinit fimd_probe(struct platform_device *pdev)
->
->         DRM_DEBUG_KMS("%s\n", __FILE__);
->
-> -       pdata = pdev->dev.platform_data;
-> +       if (pdev->dev.of_node) {
-> +               pdata = drm_fimd_dt_parse_pdata(&pdev->dev);
-> +               if (IS_ERR(pdata))
-> +                       return PTR_ERR(pdata);
-> +       }
->         if (!pdata) {
->                 dev_err(dev, "no platform data specified\n");
->                 return -EINVAL;
-> @@ -1016,6 +1095,17 @@ static struct platform_device_id fimd_driver_ids[] = {
->  };
->  MODULE_DEVICE_TABLE(platform, fimd_driver_ids);
->
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id fimd_dt_match[] = {
-> +       { .compatible = "samsung,exynos5-fimd",
-> +         .data = &exynos5_fimd_driver_data },
-> +       { .compatible = "samsung,exynos4-fb",
-> +         .data = &exynos4_fimd_driver_data },
-> +       {},
-> +};
-> +MODULE_DEVICE_TABLE(of, fimd_dt_match);
-> +#endif
-> +
->  static const struct dev_pm_ops fimd_pm_ops = {
->         SET_SYSTEM_SLEEP_PM_OPS(fimd_suspend, fimd_resume)
->         SET_RUNTIME_PM_OPS(fimd_runtime_suspend, fimd_runtime_resume, NULL)
-> @@ -1029,5 +1119,6 @@ struct platform_driver fimd_driver = {
->                 .name   = "exynos-drm-fimd",
->                 .owner  = THIS_MODULE,
->                 .pm     = &fimd_pm_ops,
-> +               .of_match_table = of_match_ptr(fimd_dt_match),
->         },
->  };
-> --
-> 1.7.0.4
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
+index 786a410..c00bd86 100644
+--- a/arch/arm/plat-samsung/clock-clksrc.c
++++ b/arch/arm/plat-samsung/clock-clksrc.c
+@@ -131,18 +131,19 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
+ {
+ 	struct clksrc_sources *srcs = clk->sources;
+ 	u32 mask = bit_mask(clk->reg_src.shift, clk->reg_src.size);
+-	u32 clksrc;
++	u32 clksrc = 0;
+ 
+-	if (!clk->reg_src.reg) {
+-		if (!clk->clk.parent)
+-			printk(KERN_ERR "%s: no parent clock specified\n",
+-				clk->clk.name);
++	if (!clk->reg_src.reg && !clk->clk.parent && !srcs->nr_sources) {
++		printk(KERN_ERR "%s: no parent clock specified\n",
++		       clk->clk.name);
+ 		return;
+ 	}
+ 
+-	clksrc = __raw_readl(clk->reg_src.reg);
+-	clksrc &= mask;
+-	clksrc >>= clk->reg_src.shift;
++	if (srcs->nr_sources > 1) {
++		clksrc = __raw_readl(clk->reg_src.reg);
++		clksrc &= mask;
++		clksrc >>= clk->reg_src.shift;
++	}
+ 
+ 	if (clksrc > srcs->nr_sources || !srcs->sources[clksrc]) {
+ 		printk(KERN_ERR "%s: bad source %d\n",
+-- 
+1.7.8.6
