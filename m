@@ -1,58 +1,64 @@
-From: In-Bae Jeong <kukyakya@gmail.com>
-Subject: [PATCH] samsung: clock: Modify for the case with the only parent
-Date: Thu, 20 Sep 2012 15:50:59 +0900
-Message-ID: <1348123859-13842-1-git-send-email-kukyakya@gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/3] ARM: EXYNOS5: Add fimd node to the exynos5250 dtsi file
+Date: Thu, 20 Sep 2012 17:03:11 +0900
+Message-ID: <008201cd9706$60e7e2e0$22b7a8a0$%han@samsung.com>
+References: <1347992531-27279-1-git-send-email-l.krishna@samsung.com>
+ <1347992531-27279-2-git-send-email-l.krishna@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61546 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751728Ab2ITGve (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:49998 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751221Ab2ITIDN (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 02:51:34 -0400
-Received: by pbbrr13 with SMTP id rr13so4378585pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 19 Sep 2012 23:51:34 -0700 (PDT)
+	Thu, 20 Sep 2012 04:03:13 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAN006LP2C5L1V0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:03:11 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.119.56])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAN009D52DBRDH0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:03:11 +0900 (KST)
+In-reply-to: <1347992531-27279-2-git-send-email-l.krishna@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: In-Bae Jeong <kukyakya@gmail.com>
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-'camera' clock has the only parent and thus has no reg_src.
-It has a parent clock but it prints 'No parent clock specified' message.
-This patch is to deal with the case with the only parent clock.
----
- arch/arm/plat-samsung/clock-clksrc.c |   17 +++++++++--------
- 1 files changed, 9 insertions(+), 8 deletions(-)
+On Wednesday, September 19, 2012 3:22 AM Leela Krishna Amudala wrote
+> 
+> This patch adds the fimd node with compatibility string, hardware address,
+> interrupt line numbers to the exynos5250 dtsi file.
+> 
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |    7 +++++++
+>  1 files changed, 7 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index b55794b..6d27ca4 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -488,4 +488,11 @@
+>  		reg = <0x13e30000 0x1000>;
+>  		interrupts = <0 88 0>;
+>  	};
+> +
+> +	fimd {
+> +		compatible = "samsung,exynos5-drm";
 
-diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
-index 786a410..c00bd86 100644
---- a/arch/arm/plat-samsung/clock-clksrc.c
-+++ b/arch/arm/plat-samsung/clock-clksrc.c
-@@ -131,18 +131,19 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
- {
- 	struct clksrc_sources *srcs = clk->sources;
- 	u32 mask = bit_mask(clk->reg_src.shift, clk->reg_src.size);
--	u32 clksrc;
-+	u32 clksrc = 0;
- 
--	if (!clk->reg_src.reg) {
--		if (!clk->clk.parent)
--			printk(KERN_ERR "%s: no parent clock specified\n",
--				clk->clk.name);
-+	if (!clk->reg_src.reg && !clk->clk.parent && !srcs->nr_sources) {
-+		printk(KERN_ERR "%s: no parent clock specified\n",
-+		       clk->clk.name);
- 		return;
- 	}
- 
--	clksrc = __raw_readl(clk->reg_src.reg);
--	clksrc &= mask;
--	clksrc >>= clk->reg_src.shift;
-+	if (srcs->nr_sources > 1) {
-+		clksrc = __raw_readl(clk->reg_src.reg);
-+		clksrc &= mask;
-+		clksrc >>= clk->reg_src.shift;
-+	}
- 
- 	if (clksrc > srcs->nr_sources || !srcs->sources[clksrc]) {
- 		printk(KERN_ERR "%s: bad source %d\n",
--- 
-1.7.8.6
+Should it be "samsung,exynos5-fimd"?
+
+
+> +		interrupt-parent = <&combiner>;
+> +		reg = <0x14400000 0x40000>;
+> +		interrupts = <18 5>, <18 4>, <18 6>;
+> +	};
+>  };
+> --
+> 1.7.0.4
