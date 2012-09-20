@@ -1,52 +1,70 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 6/6] pinctrl: samsung: Uninline samsung_pinctrl_get_soc_data
-Date: Thu, 20 Sep 2012 10:51:44 +0200
-Message-ID: <1348131104-24828-7-git-send-email-t.figa@samsung.com>
-References: <1348131104-24828-1-git-send-email-t.figa@samsung.com>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH] ARM: exynos: remove the MMC_CAP2_BROKEN_VOLTAGE
+Date: Thu, 20 Sep 2012 17:52:56 +0900
+Message-ID: <505AD968.9070106@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:13923 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:14054 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752181Ab2ITIwd (ORCPT
+	with ESMTP id S1752181Ab2ITIxS (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 04:52:33 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAN00CF94NHCNI0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:52:32 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAN001S64MRTC90@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:52:32 +0900 (KST)
-In-reply-to: <1348131104-24828-1-git-send-email-t.figa@samsung.com>
+	Thu, 20 Sep 2012 04:53:18 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com
+To: linux-samsung-soc@vger.kernel.org
+Cc: linux-mmc <linux-mmc@vger.kernel.org>, 'kgene kim' <kgene.kim@samsung.com>, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Adrian Hunter <adrian.hunter@intel.com>
 
-Although the function is used only a single time, it is not performance
-critical and it is pretty heavy, so let the compiler decide whether to
-inline it instead.
+This patch is dependency with Chris's patch.
+"[PATCH] mmc: core: Replace MMC_CAP2_BROKEN_VOLTAGE with test for fixed regulator"
+http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=421fc8e70079b8b9e473a55a6267302695641dcc
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+After applied that patch, it needs not to set MMC_CAP2_BROKEN_VOLTAGE.
+
+Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 ---
- drivers/pinctrl/pinctrl-samsung.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-exynos/mach-nuri.c           |    1 -
+ arch/arm/mach-exynos/mach-universal_c210.c |    1 -
+ arch/arm/mach-s5pv210/mach-goni.c          |    1 -
+ 3 files changed, 0 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 8a24223..dd108a9 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -776,7 +776,7 @@ static int __init samsung_gpiolib_unregister(struct platform_device *pdev,
- static const struct of_device_id samsung_pinctrl_dt_match[];
+diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
+index 90d8daa..6e0b0fa 100644
+--- a/arch/arm/mach-exynos/mach-nuri.c
++++ b/arch/arm/mach-exynos/mach-nuri.c
+@@ -113,7 +113,6 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
+ 	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
+ 				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+ 				MMC_CAP_ERASE),
+-	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+ 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+ };
  
- /* retrieve the soc specific data */
--static inline struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
-+static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
- 				struct platform_device *pdev)
- {
- 	int id;
+diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
+index 8139cd2..865be0a 100644
+--- a/arch/arm/mach-exynos/mach-universal_c210.c
++++ b/arch/arm/mach-exynos/mach-universal_c210.c
+@@ -754,7 +754,6 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data __initdata = {
+ 	.max_width		= 8,
+ 	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
+ 				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
+-	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+ 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+ };
+ 
+diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
+index c552581..239e896 100644
+--- a/arch/arm/mach-s5pv210/mach-goni.c
++++ b/arch/arm/mach-s5pv210/mach-goni.c
+@@ -774,7 +774,6 @@ static void __init goni_pmic_init(void)
+ /* MoviNAND */
+ static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
+ 	.max_width		= 4,
+-	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+ 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+ };
+ 
 -- 
-1.7.12
+1.7.4.1
