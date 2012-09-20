@@ -1,64 +1,138 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 1/3] ARM: EXYNOS5: Add fimd node to the exynos5250 dtsi file
-Date: Thu, 20 Sep 2012 17:03:11 +0900
-Message-ID: <008201cd9706$60e7e2e0$22b7a8a0$%han@samsung.com>
+Subject: Re: [PATCH 2/3] ARM: EXYNOS: add device tree based discovery support
+ for FIMD
+Date: Thu, 20 Sep 2012 17:23:12 +0900
+Message-ID: <008301cd9709$2d198740$874c95c0$%han@samsung.com>
 References: <1347992531-27279-1-git-send-email-l.krishna@samsung.com>
- <1347992531-27279-2-git-send-email-l.krishna@samsung.com>
+ <1347992531-27279-3-git-send-email-l.krishna@samsung.com>
+ <007801cd96ed$1b408080$51c18180$%han@samsung.com>
+ <CAL1wa8dj_Tm0QdbKh=xTqkvqhHu3tpuOFWRwMpiqY_1nx1Swgg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:49998 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:53827 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751221Ab2ITIDN (ORCPT
+	with ESMTP id S1752106Ab2ITIXO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 04:03:13 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+	Thu, 20 Sep 2012 04:23:14 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAN006LP2C5L1V0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:03:11 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAN00EBU3ANPU20@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:23:13 +0900 (KST)
 Received: from DOJG1HAN02 ([12.23.119.56])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAN009D52DBRDH0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:03:11 +0900 (KST)
-In-reply-to: <1347992531-27279-2-git-send-email-l.krishna@samsung.com>
+ with ESMTPA id <0MAN0007Q3AOTE70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:23:13 +0900 (KST)
+In-reply-to: <CAL1wa8dj_Tm0QdbKh=xTqkvqhHu3tpuOFWRwMpiqY_1nx1Swgg@mail.gmail.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: 'Leela Krishna Amudala' <l.krishna@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, inki.dae@samsung.com, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Kukjin Kim' <kgene.kim@samsung.com>, 'Inki Dae' <inki.dae@samsung.com>, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Wednesday, September 19, 2012 3:22 AM Leela Krishna Amudala wrote
+On Thursday, September 20, 2012 2:54 PM Leela Krishna Amudala wrote
 > 
-> This patch adds the fimd node with compatibility string, hardware address,
-> interrupt line numbers to the exynos5250 dtsi file.
+> Hi Jingoo Han,
 > 
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250.dtsi |    7 +++++++
->  1 files changed, 7 insertions(+), 0 deletions(-)
+> On Thu, Sep 20, 2012 at 10:32 AM, Jingoo Han <jg1.han@samsung.com> wrote:
+> > On Wednesday, September 19, 2012 3:22 AM Leela Krishna Amudala wrote
+> >>
+> >> This patch adds support for device tree based discovery for Samsung's
+> >> display controller. Adds DRM-Fimd plat data for smdk5250
+> >> evt1 to the corresponding dts file
+> >>
+> >> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> >> ---
+> >>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   16 ++++++++++++++++
+> >>  arch/arm/mach-exynos/include/mach/map.h   |    1 +
+> >>  arch/arm/mach-exynos/mach-exynos5-dt.c    |    2 ++
+> >>  3 files changed, 19 insertions(+), 0 deletions(-)
+> >>
+> >> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >> index 8a5e348..c8d32f5 100644
+> >> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> >> @@ -109,4 +109,20 @@
+> >>       spi_2: spi@12d40000 {
+> >>               status = "disabled";
+> >>       };
+> >> +
+> >> +     lcd_fimd0: lcd_panel0 {
+> >> +                     lcd-htiming = <4 4 4 1280>;
+> >> +                     lcd-vtiming = <4 4 4 800>;
+> >> +                     supports-mipi-panel;
+> >> +     };
+> >> +
+> >> +     fimd {
+> >> +             samsung,fimd-display = <&lcd_fimd0>;
+> >> +             samsung,fimd-vidout-rgb;
+> >> +             samsung,fimd-inv-vclk;
+> >> +             samsung,fimd-frame-rate = <60>;
+> >> +             samsung,default-window = <0>;
+> >> +             samsung,fimd-win-bpp = <32>;
+> >> +     };
+> >> +
+> >>  };
+> >> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> >> index b2021bd..dd9cea3 100644
+> >> --- a/arch/arm/mach-exynos/include/mach/map.h
+> >> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> >> @@ -174,6 +174,7 @@
+> >>  #define EXYNOS4_PA_MIPI_CSIS1                0x11890000
+> >>
+> >>  #define EXYNOS4_PA_FIMD0             0x11C00000
+> >> +#define EXYNOS5_PA_FIMD                      0x14400000
+> >
+> > CC'ed Thomas Abraham
+> >
+> > Please, replace EXYNOS5_PA_FIMD with EXYNOS5_PA_FIMD1.
+> >
+> > As I mentioned before, Other Exynos5 SoCs can have 2 FIMD IPs.
+> > Also, Exynos5250 uses FIMD1.
+> >
+> >
 > 
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index b55794b..6d27ca4 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -488,4 +488,11 @@
->  		reg = <0x13e30000 0x1000>;
->  		interrupts = <0 88 0>;
->  	};
-> +
-> +	fimd {
-> +		compatible = "samsung,exynos5-drm";
+> As per Joonyoung Shim's comment on my previous patches I renamed it
+> from EXYNOS5_PA_FIMD1 to EXYNOS5_PA_FIMD. Will change it in next
+> version.
+> Thanks for reviewing the patch set.
 
-Should it be "samsung,exynos5-fimd"?
+Let me explain why FIMD1 is right.
 
+Exynos5 SoCs have 2 FIMD IPs, and its address are 0x13800000
+And 0x14400000, respectively. Therefore, if address of FIMD IP
+Is 0x14400000, it means FIMD1.
 
-> +		interrupt-parent = <&combiner>;
-> +		reg = <0x14400000 0x40000>;
-> +		interrupts = <18 5>, <18 4>, <18 6>;
-> +	};
->  };
-> --
-> 1.7.0.4
+Best regards,
+Jingoo Han
+
+> 
+> Best Wishes,
+> Leela Krishna Amudala.
+> 
+> >>
+> >>  #define EXYNOS4_PA_HSMMC(x)          (0x12510000 + ((x) * 0x10000))
+> >>  #define EXYNOS4_PA_DWMCI             0x12550000
+> >> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> >> index e707eb1..0d35d31 100644
+> >> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> >> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> >> @@ -64,6 +64,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+> >>                               "exynos-gsc.2", NULL),
+> >>       OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
+> >>                               "exynos-gsc.3", NULL),
+> >> +     OF_DEV_AUXDATA("samsung,exynos5-fimd", EXYNOS5_PA_FIMD,
+> >> +                             "exynos5-fb.1", NULL),
+> >>       {},
+> >>  };
+> >>
+> >> --
+> >> 1.7.0.4
+> >
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> > the body of a message to majordomo@vger.kernel.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
