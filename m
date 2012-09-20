@@ -1,67 +1,32 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH 0/6] pinctrl: samsung: Various fixes
-Date: Fri, 21 Sep 2012 07:13:33 +0900
-Message-ID: <0abf01cd977d$2c9dfcf0$85d9f6d0$%kim@samsung.com>
-References: <1348131104-24828-1-git-send-email-t.figa@samsung.com>
- <CACRpkdbTPQvGSHJU_odGFtr5snb=U+L2Yuo-AhgX55hF6V5Lqw@mail.gmail.com>
- <505B2839.1040600@samsung.com> <2771354.x9C40TPfJ1@amdc1227>
+Subject: RE: [PATCH] ARM: exynos: remove the MMC_CAP2_BROKEN_VOLTAGE
+Date: Fri, 21 Sep 2012 08:36:36 +0900
+Message-ID: <0ad401cd9788$c6a41180$53ec3480$%kim@samsung.com>
+References: <505AD968.9070106@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:16577 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752366Ab2ITWNe (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 18:13:34 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAO000835QL1C20@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Sep 2012 07:13:33 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAO00DSM5QKXVB0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Sep 2012 07:13:33 +0900 (KST)
-In-reply-to: <2771354.x9C40TPfJ1@amdc1227>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-reply-to: <505AD968.9070106@samsung.com>
 Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Sender: linux-mmc-owner@vger.kernel.org
+To: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Adrian Hunter' <adrian.hunter@intel.com>
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Tomasz Figa' <t.figa@samsung.com>
-Cc: 'Linus Walleij' <linus.walleij@linaro.org>, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
 
-Tomasz Figa wrote:
+Jaehoon Chung wrote:
 > 
-> Hi Kukjin,
+> This patch is dependency with Chris's patch.
+> "[PATCH] mmc: core: Replace MMC_CAP2_BROKEN_VOLTAGE with test for fixed
+> regulator"
+> http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=421fc8e70
+> 079b8b9e473a55a6267302695641dcc
 > 
-Hi,
-
-> On Thursday 20 of September 2012 23:29:13 Kukjin Kim wrote:
-> > On 09/20/12 19:25, Linus Walleij wrote:
-> > > On Thu, Sep 20, 2012 at 10:51 AM, Tomasz Figa<t.figa@samsung.com>
-> wrote:
-> > >> This patch series contains various fixes of problems and nitpicks
-> > >> spotted when working on adding support for Exynos4x12. See each patch
-> > >> for more detailed information.
-> > >
-> > > This all looks good, do you want me to take this into the pinctrl tree
-> > > or will it go through Samsung ARM SoC (Kyungmin)?
-> > >
-> > > In the latter case, Acked-by: Linus Walleij<linus.walleij@linaro.org>
-> > > for all, else poke me and I'll apply them.
-> >
-> > Linus, thanks for your ack and looks OK to me. Since now pinctrl-exynos
-> > driver is in my tree so let me pick this series on top of it into
-> > Samsung tree with your ack.
+> After applied that patch, it needs not to set MMC_CAP2_BROKEN_VOLTAGE.
 > 
-> I just posted an additional last minute trivial patch which fixes another
-> typo I found.
-> 
-> Could you take it with this series?
-> 
-Sure, your "[PATCH 7/6] pinctrl: exynos: Fix wakeup IRQ domain registration
-check" is correct. I will pick that up with this series.
+Yeah, we don't need more this. This will be queued into -late branch for
+v3.7 or can be queued into cleanup for next merge window because this is not
+critical.
 
 Thanks.
 
@@ -70,3 +35,59 @@ Kgene.
 --
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+
+> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> ---
+>  arch/arm/mach-exynos/mach-nuri.c           |    1 -
+>  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
+>  arch/arm/mach-s5pv210/mach-goni.c          |    1 -
+>  3 files changed, 0 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
+> nuri.c
+> index 90d8daa..6e0b0fa 100644
+> --- a/arch/arm/mach-exynos/mach-nuri.c
+> +++ b/arch/arm/mach-exynos/mach-nuri.c
+> @@ -113,7 +113,6 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data
+> __initdata = {
+>  	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
+>  				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED
+|
+>  				MMC_CAP_ERASE),
+> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+>  };
+> 
+> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
+> exynos/mach-universal_c210.c
+> index 8139cd2..865be0a 100644
+> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+> @@ -754,7 +754,6 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data
+> __initdata = {
+>  	.max_width		= 8,
+>  	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
+>  				MMC_CAP_MMC_HIGHSPEED |
+MMC_CAP_SD_HIGHSPEED),
+> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+>  };
+> 
+> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-
+> s5pv210/mach-goni.c
+> index c552581..239e896 100644
+> --- a/arch/arm/mach-s5pv210/mach-goni.c
+> +++ b/arch/arm/mach-s5pv210/mach-goni.c
+> @@ -774,7 +774,6 @@ static void __init goni_pmic_init(void)
+>  /* MoviNAND */
+>  static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
+>  	.max_width		= 4,
+> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+>  };
+> 
+> --
+> 1.7.4.1
+
