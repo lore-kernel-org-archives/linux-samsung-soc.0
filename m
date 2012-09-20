@@ -1,70 +1,67 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH] ARM: exynos: remove the MMC_CAP2_BROKEN_VOLTAGE
-Date: Thu, 20 Sep 2012 17:52:56 +0900
-Message-ID: <505AD968.9070106@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [RFC 0/6] pinctrl: samsung: Remove static platform-specific data
+Date: Thu, 20 Sep 2012 10:53:11 +0200
+Message-ID: <1348131197-25506-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:14054 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:14102 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752181Ab2ITIxS (ORCPT
+	with ESMTP id S1752181Ab2ITIxa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 04:53:18 -0400
+	Thu, 20 Sep 2012 04:53:30 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAN00CFE4NSCNI0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:53:29 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAN00DG64OWJ930@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 20 Sep 2012 17:53:29 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-mmc <linux-mmc@vger.kernel.org>, 'kgene kim' <kgene.kim@samsung.com>, Chris Ball <cjb@laptop.org>, Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, Adrian Hunter <adrian.hunter@intel.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com
 
-This patch is dependency with Chris's patch.
-"[PATCH] mmc: core: Replace MMC_CAP2_BROKEN_VOLTAGE with test for fixed regulator"
-http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=421fc8e70079b8b9e473a55a6267302695641dcc
+This RFC series is a work on replacing static platform-specific data in
+pinctrl-samsung driver with data dynamically parsed from device tree.
 
-After applied that patch, it needs not to set MMC_CAP2_BROKEN_VOLTAGE.
+It aims at reducing the SoC-specific part of the driver and thus the
+amount of modifications to driver sources when adding support for next
+SoCs (like Exynos4x12).
 
-Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/mach-exynos/mach-nuri.c           |    1 -
- arch/arm/mach-exynos/mach-universal_c210.c |    1 -
- arch/arm/mach-s5pv210/mach-goni.c          |    1 -
- 3 files changed, 0 insertions(+), 3 deletions(-)
+Furthermore, moving definitions of pin banks to device tree will allow
+to simplify GPIO and GEINT specification to a format similar to used
+previously by gpiolib-based implementation, using a phandle to the bank
+and pin index inside the bank, e.g.
+	gpios = <&gpa1 4 0>;
+	interrupt-parent = <&gpa1>;
+	interrupts = <4 0>;
 
-diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-nuri.c
-index 90d8daa..6e0b0fa 100644
---- a/arch/arm/mach-exynos/mach-nuri.c
-+++ b/arch/arm/mach-exynos/mach-nuri.c
-@@ -113,7 +113,6 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data __initdata = {
- 	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
- 				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
- 				MMC_CAP_ERASE),
--	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
- 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
- };
- 
-diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-exynos/mach-universal_c210.c
-index 8139cd2..865be0a 100644
---- a/arch/arm/mach-exynos/mach-universal_c210.c
-+++ b/arch/arm/mach-exynos/mach-universal_c210.c
-@@ -754,7 +754,6 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data __initdata = {
- 	.max_width		= 8,
- 	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
- 				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED),
--	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
- 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
- };
- 
-diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-s5pv210/mach-goni.c
-index c552581..239e896 100644
---- a/arch/arm/mach-s5pv210/mach-goni.c
-+++ b/arch/arm/mach-s5pv210/mach-goni.c
-@@ -774,7 +774,6 @@ static void __init goni_pmic_init(void)
- /* MoviNAND */
- static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
- 	.max_width		= 4,
--	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
- 	.cd_type		= S3C_SDHCI_CD_PERMANENT,
- };
- 
+Any comments are welcome.
+
+TODO:
+ - bindings documentation
+ - per-bank GPIO and GEINT specification
+
+Tomasz Figa (6):
+  pinctrl: exynos: Parse wakeup-eint parameters from DT
+  pinctrl: samsung: Parse pin banks from DT
+  pinctrl: exynos: Remove static platform-specific data
+  pinctrl: samsung: Parse bank-specific eint offset from DT
+  ARM: dts: exynos4210: Remove legacy gpio nodes
+  ARM: dts: exynos4210: Add platform-specific descriptions for pin
+    controllers
+
+ arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi | 605 ++++++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi       |   2 +
+ arch/arm/boot/dts/exynos4210.dtsi               | 241 +---------
+ drivers/pinctrl/pinctrl-exynos.c                | 124 ++---
+ drivers/pinctrl/pinctrl-exynos.h                | 157 ------
+ drivers/pinctrl/pinctrl-samsung.c               | 153 +++++-
+ drivers/pinctrl/pinctrl-samsung.h               |  19 +-
+ 7 files changed, 813 insertions(+), 488 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi
+
 -- 
-1.7.4.1
+1.7.12
