@@ -1,65 +1,81 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
-Date: Fri, 21 Sep 2012 16:22:29 +0900
-Message-ID: <CAAQKjZN7B1spgoD+LJjDU=PDd9jFk6g7PekuiKEeKpXLT-X4UA@mail.gmail.com>
-References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
-	<1348226536-22899-3-git-send-email-l.krishna@samsung.com>
-	<505BF79A.8060802@wwwdotorg.org>
+From: Kyungmin Park <kyungmin.park@samsung.com>
+Subject: Re: [PATCH 0/5] ARM: EXYNOS: Add secure firmware support
+Date: Fri, 21 Sep 2012 17:39:41 +0900
+Message-ID: <CAH9JG2VFk5ZRCHDxwj6L0jEhAkwHx_MwWcYFw5g=+8cvEiZGPg@mail.gmail.com>
+References: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
+	<32882618.QIYkyWltBx@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:61967 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753783Ab2IUHW3 (ORCPT
+Received: from mail-wi0-f172.google.com ([209.85.212.172]:63104 "EHLO
+	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754940Ab2IUIjn (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 03:22:29 -0400
-Received: by pbbrr4 with SMTP id rr4so2015069pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Sep 2012 00:22:29 -0700 (PDT)
-In-Reply-To: <505BF79A.8060802@wwwdotorg.org>
+	Fri, 21 Sep 2012 04:39:43 -0400
+Received: by wibhi8 with SMTP id hi8so1816177wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Sep 2012 01:39:41 -0700 (PDT)
+In-Reply-To: <32882618.QIYkyWltBx@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>, arnd@arndb.de, olof@lixom.net
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk
 
-2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
-> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
->> This patch adds device tree based discovery support for exynos DRM-FIMD
->> driver which includes driver modification to handle platform data in
->> both the cases with DT and non-DT, Also adds the documentation for bindings.
+On 9/19/12, Tomasz Figa <t.figa@samsung.com> wrote:
+> Hi,
 >
->> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
-> ...
->> + - samsung,fimd-display: This property should specify the phandle of the
->> +   display device node which holds the video interface timing with the
->> +   below mentioned properties.
->> +
->> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
->> +     horizontal timing includes four parameters in the following order.
->> +
->> +     - horizontal back porch (in number of lcd clocks)
->> +     - horizontal front porch (in number of lcd clocks)
->> +     - hsync pulse width (in number of lcd clocks)
->> +     - Display panels X resolution.
->> +
->> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
->> +     vertical timing includes four parameters in the following order.
->> +
->> +     - vertical back porch (in number of lcd lines)
->> +     - vertical front porch (in number of lcd lines)
->> +     - vsync pulse width (in number of lcd clocks)
->> +     - Display panels Y resolution.
+> On Thursday 13 of September 2012 10:13:33 Tomasz Figa wrote:
+>> Some Exynos-based boards are running with secure firmware running in
+>> TrustZone secure world, which changes the way some things have to be
+>> initialized.
+>>
+>> This series adds support for specifying firmware operations, implements
+>> some firmware operations for Exynos secure firmware and adds a method of
+>> enabling secure firmware operations on Exynos-based boards through board
+>> file and device tree.
+>>
+>> This is a continuation of the patch series by Kyungmin Park:
+>> [PATCH v5 1/2] ARM: Make a compile firmware conditionally
+>> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183607
+>> [PATCH v5 2/2] ARM: EXYNOS: SMC instruction (aka firmware) support
+>> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183608/focus=184109
+>>
+>> Tomasz Figa (5):
+>>   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
+>>   ARM: Add interface for registering and calling firmware-specific
+>>     operations
+>>   ARM: EXYNOS: Add support for secure monitor calls
+>>   ARM: EXYNOS: Add support for Exynos secure firmware
+>>   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
+>>
+>>  .../devicetree/bindings/arm/samsung-boards.txt     |  8 ++++
+>>  arch/arm/common/Makefile                           |  2 +
+>>  arch/arm/common/firmware.c                         | 18 ++++++++
+>>  arch/arm/include/asm/firmware.h                    | 30 +++++++++++++
+>>  arch/arm/mach-exynos/Makefile                      |  6 +++
+>>  arch/arm/mach-exynos/common.c                      | 34 ++++++++++++++
+>>  arch/arm/mach-exynos/common.h                      |  2 +
+>>  arch/arm/mach-exynos/exynos-smc.S                  | 22 +++++++++
+>>  arch/arm/mach-exynos/firmware.c                    | 52
+>> ++++++++++++++++++++++ arch/arm/mach-exynos/include/mach/map.h
+>>  |  3 ++
+>>  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
+>>  arch/arm/mach-exynos/platsmp.c                     |  8 ++++
+>>  arch/arm/mach-exynos/smc.h                         | 31 +++++++++++++
+>>  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
+>>  14 files changed, 218 insertions(+)
+>>  create mode 100644 arch/arm/common/firmware.c
+>>  create mode 100644 arch/arm/include/asm/firmware.h
+>>  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
+>>  create mode 100644 arch/arm/mach-exynos/firmware.c
+>>  create mode 100644 arch/arm/mach-exynos/smc.h
 >
-> Should this not use the new videomode timings that are under discussion at:
+> Any further comments for this series? Maybe we could merge it for 3.7?
 >
-> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
->
+Hi Arnd, Olof,
+Can you merge it for 3.7? If exynos implementation still has issues,
+it's okay only merge firmware implementation.
 
-ok, I agree with you. then the videomode helper is going to be merged
-to mainline(3.6)? if so, this patch should be reworked based on the
-videomode helper.
+Can you give your opinions?
 
-
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Thank you,
+Kyungmin Park
