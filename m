@@ -1,73 +1,63 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [RFC PATCH 1/6] pinctrl: samsung: Hold OF node of pin bank in bank
- struct
-Date: Fri, 21 Sep 2012 16:22:52 +0200
-Message-ID: <1348237377-21299-2-git-send-email-t.figa@samsung.com>
-References: <1348237377-21299-1-git-send-email-t.figa@samsung.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Fri, 21 Sep 2012 10:06:10 -0600
+Message-ID: <505C9072.2010204@wwwdotorg.org>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com> <1348226536-22899-3-git-send-email-l.krishna@samsung.com> <505BF79A.8060802@wwwdotorg.org> <CAAQKjZN7B1spgoD+LJjDU=PDd9jFk6g7PekuiKEeKpXLT-X4UA@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:49926 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753113Ab2IUOYA (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:39781 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755631Ab2IUQGO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 10:24:00 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAP006QLEMV2O50@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Sep 2012 23:23:26 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAP0020KEMM3N30@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 21 Sep 2012 23:23:26 +0900 (KST)
-In-reply-to: <1348237377-21299-1-git-send-email-t.figa@samsung.com>
+	Fri, 21 Sep 2012 12:06:14 -0400
+In-Reply-To: <CAAQKjZN7B1spgoD+LJjDU=PDd9jFk6g7PekuiKEeKpXLT-X4UA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
 
-The node pointer will be used in extensions added by patches that will
-follow.
+On 09/21/2012 01:22 AM, Inki Dae wrote:
+> 2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
+>> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
+>>> This patch adds device tree based discovery support for exynos DRM-FIMD
+>>> driver which includes driver modification to handle platform data in
+>>> both the cases with DT and non-DT, Also adds the documentation for bindings.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
+>> ...
+>>> + - samsung,fimd-display: This property should specify the phandle of the
+>>> +   display device node which holds the video interface timing with the
+>>> +   below mentioned properties.
+>>> +
+>>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
+>>> +     horizontal timing includes four parameters in the following order.
+>>> +
+>>> +     - horizontal back porch (in number of lcd clocks)
+>>> +     - horizontal front porch (in number of lcd clocks)
+>>> +     - hsync pulse width (in number of lcd clocks)
+>>> +     - Display panels X resolution.
+>>> +
+>>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
+>>> +     vertical timing includes four parameters in the following order.
+>>> +
+>>> +     - vertical back porch (in number of lcd lines)
+>>> +     - vertical front porch (in number of lcd lines)
+>>> +     - vsync pulse width (in number of lcd clocks)
+>>> +     - Display panels Y resolution.
+>>
+>> Should this not use the new videomode timings that are under discussion at:
+>>
+>> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+>>
+> 
+> ok, I agree with you. then the videomode helper is going to be merged
+> to mainline(3.6)? if so, this patch should be reworked based on the
+> videomode helper.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- drivers/pinctrl/pinctrl-samsung.c | 2 ++
- drivers/pinctrl/pinctrl-samsung.h | 3 +++
- 2 files changed, 5 insertions(+)
-
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 03bf743..846b277 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -825,6 +825,8 @@ static int samsung_pinctrl_parse_dt_bank(struct samsung_pin_bank *bank,
- 	if (!ret)
- 		bank->pudpdn_width = val;
- 
-+	bank->of_node = np;
-+
- 	if (!of_find_property(np, "interrupt-controller", NULL)) {
- 		bank->eint_type = EINT_TYPE_NONE;
- 		return 0;
-diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index 72303f1..b7b74cc 100644
---- a/drivers/pinctrl/pinctrl-samsung.h
-+++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -111,6 +111,7 @@ struct samsung_pinctrl_drv_data;
-  * @eint_type: type of the external interrupt supported by the bank.
-  * @irq_base: starting controller local irq number of the bank.
-  * @name: name to be prefixed for each pin in this pin bank.
-+ * @of_node: node of pin bank in device tree
-  */
- struct samsung_pin_bank {
- 	u32		pctl_offset;
-@@ -125,6 +126,8 @@ struct samsung_pin_bank {
- 	u32		eint_offset;
- 	u32		irq_base;
- 	const char	*name;
-+
-+	struct device_node *of_node;
- };
- 
- /**
--- 
-1.7.12
+I think the videomode helpers would be merged for 3.7 at the very
+earliest; 3.6 is cooked already. Given there are still some comments on
+the binding, perhaps it won't happen until 3.8, but it'd be best to ask
+on that thread so that people more directly involved with the status can
+answer.
