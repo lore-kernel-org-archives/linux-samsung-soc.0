@@ -1,62 +1,87 @@
-From: Srinivas KANDAGATLA <srinivas.kandagatla@st.com>
-Subject: Re: [PATCH V2] drm/exynos: Add match table for drm platform device
-Date: Fri, 21 Sep 2012 13:20:55 +0100
-Message-ID: <505C5BA7.6020302@st.com>
-References: <1348252661-6983-1-git-send-email-l.krishna@samsung.com>
-Reply-To: srinivas.kandagatla@st.com
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [RFC PATCH 0/6] pinctrl: samsung: Convert the driver to use per-bank
+ GPIO and interrupt specifiers
+Date: Fri, 21 Sep 2012 16:22:51 +0200
+Message-ID: <1348237377-21299-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from eu1sys200aog114.obsmtp.com ([207.126.144.137]:36230 "EHLO
-	eu1sys200aog114.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752084Ab2IUMYZ (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:21354 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752843Ab2IUOXX (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 08:24:25 -0400
-In-Reply-To: <1348252661-6983-1-git-send-email-l.krishna@samsung.com>
+	Fri, 21 Sep 2012 10:23:23 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAP007P5EMVREC0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Sep 2012 23:23:22 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAP0020KEMM3N30@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 21 Sep 2012 23:23:22 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Leela Krishna Amudala <l.krishna@samsung.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, kgene.kim@samsung.com, jg1.han@samsung.com, linux-samsung-soc@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-On 21/09/12 19:37, Leela Krishna Amudala wrote:
-> This patch is a part of moving the driver to support DT style probing
-> of exynos drm device. The compatible name should match with the
-> entry in the dtsi file.
->
-> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
-> ---
->  drivers/gpu/drm/exynos/exynos_drm_drv.c |   11 +++++++++++
->  1 files changed, 11 insertions(+), 0 deletions(-)
->
-> diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.c b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> index d070719..495be89 100644
-> --- a/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> +++ b/drivers/gpu/drm/exynos/exynos_drm_drv.c
-> @@ -294,12 +294,23 @@ static int exynos_drm_platform_remove(struct platform_device *pdev)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_OF
-> +static const struct of_device_id drm_device_dt_match[] = {
-> +	{ .compatible = "samsung,exynos-drm-device"},
-> +	{},
-> +};
-> +MODULE_DEVICE_TABLE(of, drm_device_dt_match);
-> +#else
-> +#define drm_device_dt_match NULL
-> +#endif
+This is a continuation of work focused on improving the pinctrl-samsung
+driver.
 
-No need of else here as you are using of_match_ptr.
+First part on which this one depends:
+[RFC 0/6] pinctrl: samsung: Remove static platform-specific data
+http://article.gmane.org/gmane.linux.kernel.samsung-soc/12759
 
-> +
->  static struct platform_driver exynos_drm_platform_driver = {
->  	.probe		= exynos_drm_platform_probe,
->  	.remove		= __devexit_p(exynos_drm_platform_remove),
->  	.driver		= {
->  		.owner	= THIS_MODULE,
->  		.name	= "exynos-drm",
-> +		.of_match_table = of_match_ptr(drm_device_dt_match),
->  	},
->  };
->  
+This series attempts to simplify usage of the driver and fix several
+problems of current implementation, in particular:
+
+  - Simplifies GPIO pin specification in device tree by using pin
+    namespace local to pin bank instead of local to pin controller, e.g.
+
+    	gpios = <&gpj0 3 0>;
+
+    instead of
+
+	gpios = <&pinctrl0 115 0>;
+
+  - Simplifies GPIO interrupt specification in device tree by using
+    namespace local to pin bank (and equal to GPIO namespace), e.g.
+
+    	interrupt-parent = <&gpj0>;
+	interrupts = <3 0>;
+
+    instead of
+
+	interrupt-parent = <&pinctrl0>;
+	interrupts = <115 0>;
+
+  - Simplifies internal GPIO pin to bank translation thanks to
+    correspondence of particular GPIO chips to pin banks. This allows
+    to remove the (costly in case of GPIO bit-banging drivers) lookup
+    over all banks to find the one that the pin is from.
+
+Any comments are welcome.
+
+To do:
+  - Bindings documentation
+  - Per-bank interrupt specifiers for wake-up interrupts
+  - Configuration of pins used as wake-up interrupts to EINT function
+
+Tomasz Figa (6):
+  pinctrl: samsung: Hold OF node of pin bank in bank struct
+  pinctrl: samsung: Hold pointer to driver data in bank struct
+  pinctrl: exynos: Use one IRQ domain per pin bank
+  pinctrl: samsung: Do not pass gpio_chip to pin_to_reg_bank
+  pinctrl: samsung: Use one GPIO chip per pin bank
+  ARM: dts: exynos4210: Update pin bank nodes to reflect per-bank GPIO
+    chips and IRQ domains
+
+ arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi |  72 ++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi               |   4 -
+ drivers/pinctrl/pinctrl-exynos.c                | 118 +++++------------
+ drivers/pinctrl/pinctrl-exynos.h                |  12 --
+ drivers/pinctrl/pinctrl-samsung.c               | 168 ++++++++++++++----------
+ drivers/pinctrl/pinctrl-samsung.h               |  18 ++-
+ 6 files changed, 220 insertions(+), 172 deletions(-)
+
+-- 
+1.7.12
