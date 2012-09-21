@@ -1,121 +1,97 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 6/6] ARM: dts: exynos4210: Add platform-specific descriptions
- for pin controllers
-Date: Fri, 21 Sep 2012 12:56:41 -0600
-Message-ID: <505CB869.5030307@wwwdotorg.org>
-References: <1348131197-25506-1-git-send-email-t.figa@samsung.com> <1348131197-25506-7-git-send-email-t.figa@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [RFC 0/6] pinctrl: samsung: Remove static platform-specific data
+Date: Fri, 21 Sep 2012 21:31:15 +0200
+Message-ID: <3531529.1enE84BHSJ@flatron>
+References: <1348131197-25506-1-git-send-email-t.figa@samsung.com> <505CB4A3.9050707@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:33937 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932774Ab2IUS4p (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:56673 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753152Ab2IUTbT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 14:56:45 -0400
-In-Reply-To: <1348131197-25506-7-git-send-email-t.figa@samsung.com>
+	Fri, 21 Sep 2012 15:31:19 -0400
+Received: by wibhr14 with SMTP id hr14so2468438wib.1
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Sep 2012 12:31:18 -0700 (PDT)
+In-Reply-To: <505CB4A3.9050707@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
 
-On 09/20/2012 02:53 AM, Tomasz Figa wrote:
-> The patch "pinctrl: samsung: Parse pin banks from DT" introduced
-> platform-specific data parsing from DT.
+Hi Stephen,
+
+Thanks for your comments.
+
+On Friday 21 of September 2012 12:40:35 Stephen Warren wrote:
+> On 09/20/2012 02:53 AM, Tomasz Figa wrote:
+> > This RFC series is a work on replacing static platform-specific data in
+> > pinctrl-samsung driver with data dynamically parsed from device tree.
 > 
-> This patch adds all necessary nodes and properties to exynos4210 device
-> tree sources.
+> Hmm. I tend to think this is exactly the opposite of the correct
+> direction; you end up wasting a whole ton of time during the boot
+> process parsing data out of the device tree only to end up with exactly
+> the same tables that you would have just put into the kernel anyway.
 
-> +++ b/arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi
+Yes, I'm aware that parsing all those information from device tree won't be 
+free. I have even considering simplifying the binding to something like
 
-> +/ {
-> +	pinctrl@11400000 {
-> +		gpa0: pin-bank@0 {
+	samsung,pin-bank = <offset count func pud drv conpdn pudpdn>;
 
-If you're going to put a unit address ("@0")into the DT node name, the
-node should have a reg property containing the same value, and the
-parent node should have #address-cells and #size-cells properties.
+listing widths of fields in fixed order, with some fields allowed to be 
+zero, meaning that given bank doesn't support this control. It would 
+simplify the parsing to just iterating over a table under a single 
+property. What do you think?
 
-However, I believe you can actually get unique node names without using
-a unit address; instead name the nodes after the object they represent,
-so e.g. s/pin-bank@0/gpa0/ above.
+I have decided to post the original variant to get some comments earlier, 
+as I already had all the rest of patches based on it.
 
-> +			gpio-controller;
+> Is
+> it really likely that future SoCs will change information such as the
+> width of the pullup/pulldown bitfield, but not change anything else
+> that's not already in this binding. If that isn't the case, the binding
+> won't be complete enough to describe any new features on future SoCs
+> anyway.
 
-You need a #gpio-cells property too.
+Looking at the history of Samsung SoCs and specifics of this subsystem, 
+there isn't much likely to change other than the bindings already account 
+for (and the binding represents whatever the driver accounts for).
 
-> +			samsung,pctl-offset = <0x000>;
-> +			samsung,pin-bank = "gpa0";
-> +			samsung,pin-count = <8>;
-> +			samsung,func-width = <4>;
-> +			samsung,pud-width = <2>;
-> +			samsung,drv-width = <2>;
-> +			samsung,conpdn-width = <2>;
-> +			samsung,pudpdn-width = <2>;
+> > It aims at reducing the SoC-specific part of the driver and thus the
+> > amount of modifications to driver sources when adding support for next
+> > SoCs (like Exynos4x12).
+> > 
+> > Furthermore, moving definitions of pin banks to device tree will allow
+> > to simplify GPIO and GEINT specification to a format similar to used
+> > previously by gpiolib-based implementation, using a phandle to the bank
+> > and pin index inside the bank, e.g.
+> > 
+> > 	gpios = <&gpa1 4 0>;
+> > 	interrupt-parent = <&gpa1>;
+> > 	interrupts = <4 0>;
+> 
+> I don't think those two are correlated; the GPIO specifier format could
+> just as easily be <bank pin> irrespective of whether the pinctrl driver
+> contains SoC-specific tables or not.
 
-The properties above represent the width of the fields. Must all fields
-always be packed together into say the LSB of the registers? What if
-there are gaps between the fields in a future SoC variant, or the order
-of the fields in the register changes? I think you want to add either a
-samsung,func-bit/samsung,func-position property for each of the fields,
-or change from samsung,func-width=<4> to samsung,field-mask=<0xf>. IIRC,
-the generic pinctrl binding used a mask for this purpose.
+Correct me if I'm wrong, but each bank needs to have its own subnode to be 
+able to address pins like this. That was the starting point of the whole 
+series and the idea that if all the banks (which are SoC-specific) have to 
+be defined anyway, maybe it wouldn't be too bad to put all the SoC-specific 
+parameters there too.
 
-What if a future SoC variant adds more fields to the register? At that
-point, you'd need to edit the driver anyway in order to define a new DT
-property to represent the new field. Perhaps instead of having an
-explicit named property per field in the register, you want a simple
-list of fields:
+> > Any comments are welcome.
+> > 
+> > TODO:
+> >  - bindings documentation
+> 
+> That's unfortunate; it would be the most interesting part to review. I
+> guess I'll try to work out the binding from the examples in patch 6.
 
-samsung,pin-property-names = "func", "pud", "drv", "conpdn", "pudpdn";
-samsung,pin-propert-masks = <0xf 0x30 0xc0 0x300 0xc00>;
+Sorry about that. I thought the examples would be sufficient. Still, I was 
+focused at getting comments about the idea of moving such data to DT in 
+general, not the bindings, which are most likely to change, in particular.
 
-That would allow a completely arbitrary number of fields and layouts to
-be described.
-
-I wonder if for absolute generality you want a samsung,pin-stride
-property to represent the difference in register address per pin. I
-assume that's hard-coded as 4 right now.
-
-> +			interrupt-controller;
-
-You need a #interrupt-cells property too.
-
-> +		gpd0: pin-bank@5 {
-> +			gpio-controller;
-> +			samsung,pctl-offset = <0x0A0>;
-
-I think hex number are usually lower-case in DT, but I may be
-extrapolating a generality from a limited set of examples.
-
-> +		gpy5: pin-bank@19{
-
-Missing a space before the { there.
-
-> diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-> index ecbc707..0e93717 100644
-> --- a/arch/arm/boot/dts/exynos4210.dtsi
-> +++ b/arch/arm/boot/dts/exynos4210.dtsi
-> @@ -59,6 +59,10 @@
->  		reg = <0x11400000 0x1000>;
->  		interrupts = <0 47 0>;
->  		interrupt-controller;
-> +		samsung,geint-con = <0x700>;
-> +		samsung,geint-mask = <0x900>;
-> +		samsung,geint-pend = <0xA00>;
-> +		samsung,svc = <0xB08>;
-
-I assume those new properties represent register addresses within the
-block. If not, I don't understand what they are.
-
-It's unclear to me why those properties aren't all part of
-exynos4210-pinctrl-banks.dtsi. Do you really have multiple SoCs where
-the register addresses for the pinctrl registers are the same (hence can
-be in a shared exynos4210-pinctrl-banks.dtsi), yet the register
-addresses for the geint registers are different (hence must be in
-non-shared exynos4210.dtsi)?
-
-Do these properties interact with samsung,eint-offset at all? Oh,
-perhaps these properties are defining a top-level interrupt controller
-that aggregates all the banks together, whereas samsung,eint-offset is
-per-bank?
+Best regards,
+Tomasz Figa
