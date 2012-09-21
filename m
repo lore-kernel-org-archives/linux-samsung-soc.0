@@ -1,51 +1,109 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: [GIT PULL 6/7] Samsung cleanup fimd header for v3.7
-Date: Fri, 21 Sep 2012 00:35:30 +0000
-Message-ID: <505BB652.0@gmx.de>
-References: <099d01cd96bd$2f625050$8e26f0f0$%kim@samsung.com> <20120920235949.GB13788@quad.lixom.net>
+From: Jaehoon Chung <jh80.chung@samsung.com>
+Subject: Re: [PATCH] ARM: exynos: remove the MMC_CAP2_BROKEN_VOLTAGE
+Date: Fri, 21 Sep 2012 10:19:36 +0900
+Message-ID: <505BC0A8.7050408@samsung.com>
+References: <505AD968.9070106@samsung.com>
+ <0ad401cd9788$c6a41180$53ec3480$%kim@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.22]:49081 "HELO
-	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1756656Ab2IUAfn (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:13886 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753393Ab2IUBUD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 20:35:43 -0400
-In-Reply-To: <20120920235949.GB13788@quad.lixom.net>
+	Thu, 20 Sep 2012 21:20:03 -0400
+In-reply-to: <0ad401cd9788$c6a41180$53ec3480$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Kukjin Kim <kgene.kim@samsung.com>, 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Leela Krishna Amudala' <l.krishna@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Adrian Hunter' <adrian.hunter@intel.com>
 
-Hi,
+Thanks Kukjin.
 
-On 09/20/2012 11:59 PM, Olof Johansson wrote:
-> On Thu, Sep 20, 2012 at 08:19:15AM +0900, Kukjin Kim wrote:
->> Hi Arnd, Olof.
+Best Regards,
+Jaehoon Chung
+
+On 09/21/2012 08:36 AM, Kukjin Kim wrote:
+> Jaehoon Chung wrote:
 >>
->> This is for moving header file is related to fimd from platform to
->> include/video.
+>> This patch is dependency with Chris's patch.
+>> "[PATCH] mmc: core: Replace MMC_CAP2_BROKEN_VOLTAGE with test for fixed
+>> regulator"
+>> http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=421fc8e70
+>> 079b8b9e473a55a6267302695641dcc
 >>
->> Since this touches many Samsung stuff, it is included in samsung tree and I
->> requested to pull into Florian's tree and he already agreed. So its name is
->> 'v3.7-for-florian'.
+>> After applied that patch, it needs not to set MMC_CAP2_BROKEN_VOLTAGE.
+>>
+> Yeah, we don't need more this. This will be queued into -late branch for
+> v3.7 or can be queued into cleanup for next merge window because this is not
+> critical.
 > 
-> Hi,
+> Thanks.
 > 
-> So, it seems like there's no need to pull this through arm-soc; there are no
-> conflicts with other patches as far as I can see, and it can just go in through
-> Florian's tree.
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
 > 
-> Florian, if you want, you can add:
 > 
-> Acked-by: Olof Johansson <olof@lixom.net>
+>> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
+>> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+>> ---
+>>  arch/arm/mach-exynos/mach-nuri.c           |    1 -
+>>  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
+>>  arch/arm/mach-s5pv210/mach-goni.c          |    1 -
+>>  3 files changed, 0 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
+>> nuri.c
+>> index 90d8daa..6e0b0fa 100644
+>> --- a/arch/arm/mach-exynos/mach-nuri.c
+>> +++ b/arch/arm/mach-exynos/mach-nuri.c
+>> @@ -113,7 +113,6 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data
+>> __initdata = {
+>>  	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
+>>  				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED
+> |
+>>  				MMC_CAP_ERASE),
+>> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+>>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+>>  };
+>>
+>> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
+>> exynos/mach-universal_c210.c
+>> index 8139cd2..865be0a 100644
+>> --- a/arch/arm/mach-exynos/mach-universal_c210.c
+>> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
+>> @@ -754,7 +754,6 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data
+>> __initdata = {
+>>  	.max_width		= 8,
+>>  	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
+>>  				MMC_CAP_MMC_HIGHSPEED |
+> MMC_CAP_SD_HIGHSPEED),
+>> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+>>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+>>  };
+>>
+>> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-
+>> s5pv210/mach-goni.c
+>> index c552581..239e896 100644
+>> --- a/arch/arm/mach-s5pv210/mach-goni.c
+>> +++ b/arch/arm/mach-s5pv210/mach-goni.c
+>> @@ -774,7 +774,6 @@ static void __init goni_pmic_init(void)
+>>  /* MoviNAND */
+>>  static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
+>>  	.max_width		= 4,
+>> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
+>>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
+>>  };
+>>
+>> --
+>> 1.7.4.1
 > 
-> on the merge you do.
-
-Works for me. I already merged it.
-
-
-Best regards,
-
-Florian Tobias Schandinat
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
