@@ -1,63 +1,56 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
-Date: Fri, 21 Sep 2012 10:06:10 -0600
-Message-ID: <505C9072.2010204@wwwdotorg.org>
-References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com> <1348226536-22899-3-git-send-email-l.krishna@samsung.com> <505BF79A.8060802@wwwdotorg.org> <CAAQKjZN7B1spgoD+LJjDU=PDd9jFk6g7PekuiKEeKpXLT-X4UA@mail.gmail.com>
+Subject: Re: [RFC 0/6] pinctrl: samsung: Remove static platform-specific data
+Date: Fri, 21 Sep 2012 12:40:35 -0600
+Message-ID: <505CB4A3.9050707@wwwdotorg.org>
+References: <1348131197-25506-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:39781 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:33131 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755631Ab2IUQGO (ORCPT
+	with ESMTP id S1757369Ab2IUSkj (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 12:06:14 -0400
-In-Reply-To: <CAAQKjZN7B1spgoD+LJjDU=PDd9jFk6g7PekuiKEeKpXLT-X4UA@mail.gmail.com>
+	Fri, 21 Sep 2012 14:40:39 -0400
+In-Reply-To: <1348131197-25506-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Leela Krishna Amudala <l.krishna@samsung.com>, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
 
-On 09/21/2012 01:22 AM, Inki Dae wrote:
-> 2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
->> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
->>> This patch adds device tree based discovery support for exynos DRM-FIMD
->>> driver which includes driver modification to handle platform data in
->>> both the cases with DT and non-DT, Also adds the documentation for bindings.
->>
->>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
->> ...
->>> + - samsung,fimd-display: This property should specify the phandle of the
->>> +   display device node which holds the video interface timing with the
->>> +   below mentioned properties.
->>> +
->>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
->>> +     horizontal timing includes four parameters in the following order.
->>> +
->>> +     - horizontal back porch (in number of lcd clocks)
->>> +     - horizontal front porch (in number of lcd clocks)
->>> +     - hsync pulse width (in number of lcd clocks)
->>> +     - Display panels X resolution.
->>> +
->>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
->>> +     vertical timing includes four parameters in the following order.
->>> +
->>> +     - vertical back porch (in number of lcd lines)
->>> +     - vertical front porch (in number of lcd lines)
->>> +     - vsync pulse width (in number of lcd clocks)
->>> +     - Display panels Y resolution.
->>
->> Should this not use the new videomode timings that are under discussion at:
->>
->> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
->>
+On 09/20/2012 02:53 AM, Tomasz Figa wrote:
+> This RFC series is a work on replacing static platform-specific data in
+> pinctrl-samsung driver with data dynamically parsed from device tree.
+
+Hmm. I tend to think this is exactly the opposite of the correct
+direction; you end up wasting a whole ton of time during the boot
+process parsing data out of the device tree only to end up with exactly
+the same tables that you would have just put into the kernel anyway. Is
+it really likely that future SoCs will change information such as the
+width of the pullup/pulldown bitfield, but not change anything else
+that's not already in this binding. If that isn't the case, the binding
+won't be complete enough to describe any new features on future SoCs anyway.
+
+> It aims at reducing the SoC-specific part of the driver and thus the
+> amount of modifications to driver sources when adding support for next
+> SoCs (like Exynos4x12).
 > 
-> ok, I agree with you. then the videomode helper is going to be merged
-> to mainline(3.6)? if so, this patch should be reworked based on the
-> videomode helper.
+> Furthermore, moving definitions of pin banks to device tree will allow
+> to simplify GPIO and GEINT specification to a format similar to used
+> previously by gpiolib-based implementation, using a phandle to the bank
+> and pin index inside the bank, e.g.
+> 	gpios = <&gpa1 4 0>;
+> 	interrupt-parent = <&gpa1>;
+> 	interrupts = <4 0>;
 
-I think the videomode helpers would be merged for 3.7 at the very
-earliest; 3.6 is cooked already. Given there are still some comments on
-the binding, perhaps it won't happen until 3.8, but it'd be best to ask
-on that thread so that people more directly involved with the status can
-answer.
+I don't think those two are correlated; the GPIO specifier format could
+just as easily be <bank pin> irrespective of whether the pinctrl driver
+contains SoC-specific tables or not.
+
+> Any comments are welcome.
+> 
+> TODO:
+>  - bindings documentation
+
+That's unfortunate; it would be the most interesting part to review. I
+guess I'll try to work out the binding from the examples in patch 6.
