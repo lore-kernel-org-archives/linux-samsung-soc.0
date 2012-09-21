@@ -1,26 +1,28 @@
 From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: [GIT PULL 1/4] Samsung fixes for v3.7
-Date: Fri, 21 Sep 2012 15:21:37 +0900
-Message-ID: <505C0771.7040103@samsung.com>
+Subject: [GIT PULL 2/4] Samsung pinctrl-2 for v3.7
+Date: Fri, 21 Sep 2012 15:22:18 +0900
+Message-ID: <505C079A.8020801@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:39396 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:53605 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751728Ab2IUGVr (ORCPT
+	with ESMTP id S1752189Ab2IUGW2 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 02:21:47 -0400
-Received: by pbbrr4 with SMTP id rr4so1910725pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Sep 2012 23:21:47 -0700 (PDT)
+	Fri, 21 Sep 2012 02:22:28 -0400
+Received: by pbbrr4 with SMTP id rr4so1911825pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Sep 2012 23:22:28 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, Tomasz Figa <t.figa@samsung.com>
 
 Hi Arnd, Olof
 
-This is non-critical Samsung fixes for v3.7.
+This is for fix typo and correct fucntion for Samsung pinctrl and since 
+this has a dependency with previous pinctrl branch I created this based 
+on that.
 
 If any problems, please kindly let me know.
 
@@ -32,32 +34,27 @@ Kgene.
 Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
 SW Solution Development Team, Samsung Electronics Co., Ltd.
 
-The following changes since commit 5698bd757d55b1bb87edd1a9744ab09c142abfc2:
+The following changes since commit 011527b45f8e3092e1f3192e5aea94187a6ca269:
 
-   Linux 3.6-rc6 (2012-09-16 14:58:51 -0700)
+   ARM: EXYNOS: Enable pinctrl driver support for EXYNOS4 device tree 
+enabled platform (2012-09-07 06:14:26 +0900)
 
 are available in the git repository at:
    git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
-v3.7-samsung-fixes-1
+next/pinctrl-samsung-2
 
-Julia Lawall (1):
-       ARM: S3C24xx: delete double assignment
+Tomasz Figa (7):
+       pinctrl: exynos: Set pin function to EINT in irq_set_type of GPIO 
+EINTa
+       pinctrl: exynos: Fix typos in gpio/wkup _irq_mask
+       pinctrl: exynos: Handle only unmasked wakeup interrupts
+       pinctrl: exynos: Mark exynos_irq_demux_eint as inline
+       pinctrl: exynos: Correct the detection of wakeup-eint node
+       pinctrl: samsung: Uninline samsung_pinctrl_get_soc_data
+       pinctrl: exynos: Fix wakeup IRQ domain registration check
 
-Kukjin Kim (1):
-       ARM: EXYNOS: fix address for EXYNOS4 MDMA1
-
-Peter Senna Tschudin (1):
-       ARM: S3C24XX: removes unnecessary semicolon
-
-Seung-Woo Kim (1):
-       ARM: EXYNOS: fixed SYSMMU setup definition to mate parameter name
-
-Sylwester Nawrocki (1):
-       ARM: SAMSUNG: Add missing variable declaration in 
-s3c64xx_spi1_set_platdata()
-
-  arch/arm/mach-exynos/include/mach/map.h    |    2 +-
-  arch/arm/mach-exynos/include/mach/sysmmu.h |    2 +-
-  arch/arm/mach-s3c24xx/mach-h1940.c         |    4 ++--
-  arch/arm/plat-samsung/devs.c               |    2 ++
-  4 files changed, 6 insertions(+), 4 deletions(-)
+  drivers/pinctrl/pinctrl-exynos.c  |   41 
++++++++++++++++++++++++++++----------
+  drivers/pinctrl/pinctrl-exynos.h  |    1 +
+  drivers/pinctrl/pinctrl-samsung.c |    2 +-
+  3 files changed, 32 insertions(+), 12 deletions(-)
