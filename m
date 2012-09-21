@@ -1,81 +1,44 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH 0/5] ARM: EXYNOS: Add secure firmware support
-Date: Fri, 21 Sep 2012 17:39:41 +0900
-Message-ID: <CAH9JG2VFk5ZRCHDxwj6L0jEhAkwHx_MwWcYFw5g=+8cvEiZGPg@mail.gmail.com>
-References: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
-	<32882618.QIYkyWltBx@amdc1227>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH 1/2] m5mols: Remove unneeded control ops assignments
+Date: Fri, 21 Sep 2012 11:01:22 +0200
+Message-ID: <1348218083-32201-1-git-send-email-s.nawrocki@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:63104 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754940Ab2IUIjn (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:60391 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932070Ab2IUJBg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 04:39:43 -0400
-Received: by wibhi8 with SMTP id hi8so1816177wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Sep 2012 01:39:41 -0700 (PDT)
-In-Reply-To: <32882618.QIYkyWltBx@amdc1227>
+	Fri, 21 Sep 2012 05:01:36 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, arnd@arndb.de, olof@lixom.net
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk
+To: linux-media@vger.kernel.org
+Cc: kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-On 9/19/12, Tomasz Figa <t.figa@samsung.com> wrote:
-> Hi,
->
-> On Thursday 13 of September 2012 10:13:33 Tomasz Figa wrote:
->> Some Exynos-based boards are running with secure firmware running in
->> TrustZone secure world, which changes the way some things have to be
->> initialized.
->>
->> This series adds support for specifying firmware operations, implements
->> some firmware operations for Exynos secure firmware and adds a method of
->> enabling secure firmware operations on Exynos-based boards through board
->> file and device tree.
->>
->> This is a continuation of the patch series by Kyungmin Park:
->> [PATCH v5 1/2] ARM: Make a compile firmware conditionally
->> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183607
->> [PATCH v5 2/2] ARM: EXYNOS: SMC instruction (aka firmware) support
->> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183608/focus=184109
->>
->> Tomasz Figa (5):
->>   ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
->>   ARM: Add interface for registering and calling firmware-specific
->>     operations
->>   ARM: EXYNOS: Add support for secure monitor calls
->>   ARM: EXYNOS: Add support for Exynos secure firmware
->>   ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
->>
->>  .../devicetree/bindings/arm/samsung-boards.txt     |  8 ++++
->>  arch/arm/common/Makefile                           |  2 +
->>  arch/arm/common/firmware.c                         | 18 ++++++++
->>  arch/arm/include/asm/firmware.h                    | 30 +++++++++++++
->>  arch/arm/mach-exynos/Makefile                      |  6 +++
->>  arch/arm/mach-exynos/common.c                      | 34 ++++++++++++++
->>  arch/arm/mach-exynos/common.h                      |  2 +
->>  arch/arm/mach-exynos/exynos-smc.S                  | 22 +++++++++
->>  arch/arm/mach-exynos/firmware.c                    | 52
->> ++++++++++++++++++++++ arch/arm/mach-exynos/include/mach/map.h
->>  |  3 ++
->>  arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
->>  arch/arm/mach-exynos/platsmp.c                     |  8 ++++
->>  arch/arm/mach-exynos/smc.h                         | 31 +++++++++++++
->>  arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
->>  14 files changed, 218 insertions(+)
->>  create mode 100644 arch/arm/common/firmware.c
->>  create mode 100644 arch/arm/include/asm/firmware.h
->>  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
->>  create mode 100644 arch/arm/mach-exynos/firmware.c
->>  create mode 100644 arch/arm/mach-exynos/smc.h
->
-> Any further comments for this series? Maybe we could merge it for 3.7?
->
-Hi Arnd, Olof,
-Can you merge it for 3.7? If exynos implementation still has issues,
-it's okay only merge firmware implementation.
+Since all host drivers using this subdev are already using
+the control framework these compatibility ops can be removed.
 
-Can you give your opinions?
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+---
+ drivers/media/video/m5mols/m5mols_core.c | 7 -------
+ 1 file changed, 7 deletions(-)
 
-Thank you,
-Kyungmin Park
+diff --git a/drivers/media/video/m5mols/m5mols_core.c b/drivers/media/video/m5mols/m5mols_core.c
+index ac7d28b..cbb6381 100644
+--- a/drivers/media/video/m5mols/m5mols_core.c
++++ b/drivers/media/video/m5mols/m5mols_core.c
+@@ -822,13 +822,6 @@ static int m5mols_log_status(struct v4l2_subdev *sd)
+ 
+ static const struct v4l2_subdev_core_ops m5mols_core_ops = {
+ 	.s_power	= m5mols_s_power,
+-	.g_ctrl		= v4l2_subdev_g_ctrl,
+-	.s_ctrl		= v4l2_subdev_s_ctrl,
+-	.queryctrl	= v4l2_subdev_queryctrl,
+-	.querymenu	= v4l2_subdev_querymenu,
+-	.g_ext_ctrls	= v4l2_subdev_g_ext_ctrls,
+-	.try_ext_ctrls	= v4l2_subdev_try_ext_ctrls,
+-	.s_ext_ctrls	= v4l2_subdev_s_ext_ctrls,
+ 	.log_status	= m5mols_log_status,
+ };
+ 
+-- 
+1.7.11.3
