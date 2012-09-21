@@ -1,115 +1,63 @@
-From: Chander Kashyap <chander.kashyap@linaro.org>
-Subject: [PATCH v2 3/3] mmc: sdhci-s3c: Add clk_(enable/disable) in runtime suspend/resume
-Date: Fri, 21 Sep 2012 11:12:08 +0530
-Message-ID: <1348206128-11083-1-git-send-email-chander.kashyap@linaro.org>
-References: <1347613731-29428-4-git-send-email-chander.kashyap@linaro.org>
+From: Kukjin Kim <kgene.kim@samsung.com>
+Subject: [GIT PULL 1/4] Samsung fixes for v3.7
+Date: Fri, 21 Sep 2012 15:21:37 +0900
+Message-ID: <505C0771.7040103@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:62536 "EHLO
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:39396 "EHLO
 	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753936Ab2IUFnj (ORCPT
+	with ESMTP id S1751728Ab2IUGVr (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 21 Sep 2012 01:43:39 -0400
-Received: by pbbrr4 with SMTP id rr4so1844519pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Sep 2012 22:43:39 -0700 (PDT)
-In-Reply-To: <1347613731-29428-4-git-send-email-chander.kashyap@linaro.org>
+	Fri, 21 Sep 2012 02:21:47 -0400
+Received: by pbbrr4 with SMTP id rr4so1910725pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Thu, 20 Sep 2012 23:21:47 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc: cjb@laptop.org, ben@simtec.co.uk, broonie@opensource.wolfsonmicro.com, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, patches@linaro.org, Chander Kashyap <chander.kashyap@gmail.com>, Chander Kashyap <chander.kashyap@linaro.org>
+To: Arnd Bergmann <arnd@arndb.de>, 'Olof Johansson' <olof@lixom.net>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>
 
-From: Chander Kashyap <chander.kashyap@gmail.com>
+Hi Arnd, Olof
 
-Perform clock disable/enable in runtime suspend/resume.
+This is non-critical Samsung fixes for v3.7.
 
-Signed-off-by: Chander Kashyap <chander.kashyap@linaro.org>
-Acked-by: Jaehoon Chung <jh80.chung@samsung.com>
----
-Changelog:
-v2:
-- Wrapped clk_disable in probe and clk_enable in remove with
-  #ifdef CONFIG_PM_RUNTIME conditional check.
+If any problems, please kindly let me know.
 
- drivers/mmc/host/sdhci-s3c.c |   29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+Thanks.
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index e019672..3726c18 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -637,7 +637,9 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 		goto err_no_busclks;
- 	}
- 
-+#ifndef CONFIG_PM_RUNTIME
- 	clk_enable(sc->clk_bus[sc->cur_clk]);
-+#endif
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	host->ioaddr = devm_request_and_ioremap(&pdev->dev, res);
-@@ -744,10 +746,15 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	    gpio_is_valid(pdata->ext_cd_gpio))
- 		sdhci_s3c_setup_card_detect_gpio(sc);
- 
-+#ifdef CONFIG_PM_RUNTIME
-+	clk_disable(sc->clk_io);
-+#endif
- 	return 0;
- 
-  err_req_regs:
-+#ifndef CONFIG_PM_RUNTIME
- 	clk_disable(sc->clk_bus[sc->cur_clk]);
-+#endif
- 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		if (sc->clk_bus[ptr]) {
- 			clk_put(sc->clk_bus[ptr]);
-@@ -786,12 +793,17 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
- 	if (gpio_is_valid(sc->ext_cd_gpio))
- 		gpio_free(sc->ext_cd_gpio);
- 
-+#ifdef CONFIG_PM_RUNTIME
-+	clk_enable(sc->clk_io);
-+#endif
- 	sdhci_remove_host(host, 1);
- 
- 	pm_runtime_dont_use_autosuspend(&pdev->dev);
- 	pm_runtime_disable(&pdev->dev);
- 
-+#ifndef CONFIG_PM_RUNTIME
- 	clk_disable(sc->clk_bus[sc->cur_clk]);
-+#endif
- 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		if (sc->clk_bus[ptr]) {
- 			clk_put(sc->clk_bus[ptr]);
-@@ -831,15 +843,28 @@ static int sdhci_s3c_resume(struct device *dev)
- static int sdhci_s3c_runtime_suspend(struct device *dev)
- {
- 	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+	struct clk *busclk = ourhost->clk_io;
-+	int ret;
-+
-+	ret = sdhci_runtime_suspend_host(host);
- 
--	return sdhci_runtime_suspend_host(host);
-+	clk_disable(ourhost->clk_bus[ourhost->cur_clk]);
-+	clk_disable(busclk);
-+	return ret;
- }
- 
- static int sdhci_s3c_runtime_resume(struct device *dev)
- {
- 	struct sdhci_host *host = dev_get_drvdata(dev);
-+	struct sdhci_s3c *ourhost = to_s3c(host);
-+	struct clk *busclk = ourhost->clk_io;
-+	int ret;
- 
--	return sdhci_runtime_resume_host(host);
-+	clk_enable(busclk);
-+	clk_enable(ourhost->clk_bus[ourhost->cur_clk]);
-+	ret = sdhci_runtime_resume_host(host);
-+	return ret;
- }
- #endif
- 
--- 
-1.7.9.5
+Best regards,
+Kgene.
+--
+Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+SW Solution Development Team, Samsung Electronics Co., Ltd.
+
+The following changes since commit 5698bd757d55b1bb87edd1a9744ab09c142abfc2:
+
+   Linux 3.6-rc6 (2012-09-16 14:58:51 -0700)
+
+are available in the git repository at:
+   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git 
+v3.7-samsung-fixes-1
+
+Julia Lawall (1):
+       ARM: S3C24xx: delete double assignment
+
+Kukjin Kim (1):
+       ARM: EXYNOS: fix address for EXYNOS4 MDMA1
+
+Peter Senna Tschudin (1):
+       ARM: S3C24XX: removes unnecessary semicolon
+
+Seung-Woo Kim (1):
+       ARM: EXYNOS: fixed SYSMMU setup definition to mate parameter name
+
+Sylwester Nawrocki (1):
+       ARM: SAMSUNG: Add missing variable declaration in 
+s3c64xx_spi1_set_platdata()
+
+  arch/arm/mach-exynos/include/mach/map.h    |    2 +-
+  arch/arm/mach-exynos/include/mach/sysmmu.h |    2 +-
+  arch/arm/mach-s3c24xx/mach-h1940.c         |    4 ++--
+  arch/arm/plat-samsung/devs.c               |    2 ++
+  4 files changed, 6 insertions(+), 4 deletions(-)
