@@ -1,109 +1,81 @@
-From: Jaehoon Chung <jh80.chung@samsung.com>
-Subject: Re: [PATCH] ARM: exynos: remove the MMC_CAP2_BROKEN_VOLTAGE
-Date: Fri, 21 Sep 2012 10:19:36 +0900
-Message-ID: <505BC0A8.7050408@samsung.com>
-References: <505AD968.9070106@samsung.com>
- <0ad401cd9788$c6a41180$53ec3480$%kim@samsung.com>
+From: jonghwa3.lee@samsung.com
+Subject: Re: [PATCH v6 1/6] thermal: add generic cpufreq cooling implementation
+Date: Fri, 21 Sep 2012 11:23:47 +0900
+Message-ID: <505BCFB3.3040004@samsung.com>
+References: <0MAO00DCVFKI4NS0@ms2.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:13886 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753393Ab2IUBUD (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 20 Sep 2012 21:20:03 -0400
-In-reply-to: <0ad401cd9788$c6a41180$53ec3480$%kim@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-acpi-owner@vger.kernel.org>
+In-reply-to: <0MAO00DCVFKI4NS0@ms2.samsung.com>
+Sender: linux-acpi-owner@vger.kernel.org
+To: Amit Daniel Kachhap <amit.kachhap@linaro.org>
+Cc: linux-pm@lists.linux-foundation.org, Andrew Morton <akpm@linux-foundation.org>, Zhang Rui <rui.zhang@intel.com>, Len Brown <lenb@kernel.org>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, lm-sensors@lm-sensors.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Jaehoon Chung' <jh80.chung@samsung.com>, linux-samsung-soc@vger.kernel.org, 'linux-mmc' <linux-mmc@vger.kernel.org>, 'Chris Ball' <cjb@laptop.org>, 'Kyungmin Park' <kyungmin.park@samsung.com>, 'Tomasz Figa' <t.figa@samsung.com>, 'Adrian Hunter' <adrian.hunter@intel.com>
 
-Thanks Kukjin.
+Hi, Amit,
+On 2012=B3=E2 08=BF=F9 16=C0=CF 20:41, Amit Daniel Kachhap wrote:
 
-Best Regards,
-Jaehoon Chung
+>  diff --git a/drivers/thermal/cpu_cooling.c b/drivers/thermal/cpu_coo=
+ling.c
+>  new file mode 100644
+>  index 0000000..66cbd52
+>  --- /dev/null
+>  +++ b/drivers/thermal/cpu_cooling.c
+>  @@ -0,0 +1,586 @@
 
-On 09/21/2012 08:36 AM, Kukjin Kim wrote:
-> Jaehoon Chung wrote:
->>
->> This patch is dependency with Chris's patch.
->> "[PATCH] mmc: core: Replace MMC_CAP2_BROKEN_VOLTAGE with test for fixed
->> regulator"
->> http://git.kernel.org/?p=linux/kernel/git/cjb/mmc.git;a=commit;h=421fc8e70
->> 079b8b9e473a55a6267302695641dcc
->>
->> After applied that patch, it needs not to set MMC_CAP2_BROKEN_VOLTAGE.
->>
-> Yeah, we don't need more this. This will be queued into -late branch for
-> v3.7 or can be queued into cleanup for next merge window because this is not
-> critical.
-> 
-> Thanks.
-> 
-> Best regards,
-> Kgene.
+>  +/**
+>  + * cpufreq_cooling_register - function to create cpufreq cooling de=
+vice.
+>  + * @clip_cpus: cpumask of cpus where the frequency constraints will=
+ happen.
+>  + */
+>  +struct thermal_cooling_device *cpufreq_cooling_register(
+>  +       struct cpumask *clip_cpus)
+>  +{
+>  +       struct thermal_cooling_device *cool_dev;
+>  +       struct cpufreq_cooling_device *cpufreq_dev =3D NULL;
+>  +       unsigned int cpufreq_dev_count =3D 0, min =3D 0, max =3D 0;
+>  +       char dev_name[THERMAL_NAME_LENGTH];
+>  +       int ret =3D 0, id =3D 0, i;
+>  +       struct cpufreq_policy policy;
+>  +       ret =3D get_idr(&cpufreq_idr,&cpufreq_dev->id);
+>  +       if (ret) {
+>  +               kfree(cpufreq_dev);
+>  +               return ERR_PTR(-EINVAL);
+>  +       }
+>  +
+>  +       sprintf(dev_name, "thermal-cpufreq-%d", cpufreq_dev->id);
+>  +
+>  +       cool_dev =3D thermal_cooling_device_register(dev_name, cpufr=
+eq_dev,
+>  +&cpufreq_cooling_ops);
+>  +       if (!cool_dev) {
+>  +               release_idr(&cpufreq_idr, cpufreq_dev->id);
+>  +               kfree(cpufreq_dev);
+>  +               return ERR_PTR(-EINVAL);
+>  +       }
+>  +       cpufreq_dev->id =3D id;
+
+
+Why is this needed? Should every cpufreq_dev instance's id be same for
+zero? It looks odd. And it also has problem which can be occurred when
+it release id during unregistering cpufreq_dev. I think it should keep
+the idr value taken before.
+
+
+>  1.7.1
+>
 > --
-> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-> SW Solution Development Team, Samsung Electronics Co., Ltd.
-> 
-> 
->> Signed-off-by: Jaehoon Chung <jh80.chung@samsung.com>
->> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
->> ---
->>  arch/arm/mach-exynos/mach-nuri.c           |    1 -
->>  arch/arm/mach-exynos/mach-universal_c210.c |    1 -
->>  arch/arm/mach-s5pv210/mach-goni.c          |    1 -
->>  3 files changed, 0 insertions(+), 3 deletions(-)
->>
->> diff --git a/arch/arm/mach-exynos/mach-nuri.c b/arch/arm/mach-exynos/mach-
->> nuri.c
->> index 90d8daa..6e0b0fa 100644
->> --- a/arch/arm/mach-exynos/mach-nuri.c
->> +++ b/arch/arm/mach-exynos/mach-nuri.c
->> @@ -113,7 +113,6 @@ static struct s3c_sdhci_platdata nuri_hsmmc0_data
->> __initdata = {
->>  	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
->>  				MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED
-> |
->>  				MMC_CAP_ERASE),
->> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
->>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
->>  };
->>
->> diff --git a/arch/arm/mach-exynos/mach-universal_c210.c b/arch/arm/mach-
->> exynos/mach-universal_c210.c
->> index 8139cd2..865be0a 100644
->> --- a/arch/arm/mach-exynos/mach-universal_c210.c
->> +++ b/arch/arm/mach-exynos/mach-universal_c210.c
->> @@ -754,7 +754,6 @@ static struct s3c_sdhci_platdata universal_hsmmc0_data
->> __initdata = {
->>  	.max_width		= 8,
->>  	.host_caps		= (MMC_CAP_8_BIT_DATA | MMC_CAP_4_BIT_DATA |
->>  				MMC_CAP_MMC_HIGHSPEED |
-> MMC_CAP_SD_HIGHSPEED),
->> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
->>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
->>  };
->>
->> diff --git a/arch/arm/mach-s5pv210/mach-goni.c b/arch/arm/mach-
->> s5pv210/mach-goni.c
->> index c552581..239e896 100644
->> --- a/arch/arm/mach-s5pv210/mach-goni.c
->> +++ b/arch/arm/mach-s5pv210/mach-goni.c
->> @@ -774,7 +774,6 @@ static void __init goni_pmic_init(void)
->>  /* MoviNAND */
->>  static struct s3c_sdhci_platdata goni_hsmmc0_data __initdata = {
->>  	.max_width		= 4,
->> -	.host_caps2		= MMC_CAP2_BROKEN_VOLTAGE,
->>  	.cd_type		= S3C_SDHCI_CD_PERMANENT,
->>  };
->>
->> --
->> 1.7.4.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
 > the body of a message to majordomo@vger.kernel.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+> Please read the FAQ at  http://www.tux.org/lkml/
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-acpi" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
