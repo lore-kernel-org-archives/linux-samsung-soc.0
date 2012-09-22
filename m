@@ -1,91 +1,271 @@
-From: Kyungmin Park <kyungmin.park@samsung.com>
-Subject: Re: [PATCH 4/5] ARM: EXYNOS: Add support for Exynos secure firmware
-Date: Sat, 22 Sep 2012 15:39:27 +0900
-Message-ID: <CAH9JG2WSJ5btV82e4t7xd3j9qB8VL-i_7astoUMDbNOxq35D_Q@mail.gmail.com>
-References: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
-	<1347524018-19301-5-git-send-email-t.figa@samsung.com>
-	<20120916004455.GD7028@quad.lixom.net>
-	<3910462.8Opr7bJoeX@amdc1227>
-	<CAOesGMivzmbNxCeScBAhAzv+eOiF-bagLsW3WJzECaZEg5jFPg@mail.gmail.com>
-	<CAH9JG2WQ0ec0ytR1vTo+kFA88YPZYpSpCMBTuyCAX6tFafWY2A@mail.gmail.com>
-	<CAOesGMisdiSvoDh1-ZQTxASRS=rKGuJYLEbiwTfzXkiEtLE3PA@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: [PATCH v4] ARM: EXYNOS: Add MFC device tree support
+Date: Sat, 22 Sep 2012 23:37:17 +0530
+Message-ID: <1348337237-15426-2-git-send-email-arun.kk@samsung.com>
+References: <1348337237-15426-1-git-send-email-arun.kk@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wi0-f172.google.com ([209.85.212.172]:57691 "EHLO
-	mail-wi0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752354Ab2IVGj2 (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:8631 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753830Ab2IVLcy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Sep 2012 02:39:28 -0400
-Received: by wibhi8 with SMTP id hi8so2931703wib.1
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Sep 2012 23:39:27 -0700 (PDT)
-In-Reply-To: <CAOesGMisdiSvoDh1-ZQTxASRS=rKGuJYLEbiwTfzXkiEtLE3PA@mail.gmail.com>
+	Sat, 22 Sep 2012 07:32:54 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAR00EN01EQ7VB0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 22 Sep 2012 20:32:53 +0900 (KST)
+Received: from localhost.localdomain ([107.108.73.106])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAR001KW1EL9H70@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Sat, 22 Sep 2012 20:32:52 +0900 (KST)
+In-reply-to: <1348337237-15426-1-git-send-email-arun.kk@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux@arm.linux.org.uk, arnd@arndb.de
+To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
+Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, s.nawrocki@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, joshi@samsung.com
 
-On 9/22/12, Olof Johansson <olof@lixom.net> wrote:
-> On Fri, Sep 21, 2012 at 10:57 PM, Kyungmin Park
-> <kyungmin.park@samsung.com> wrote:
->> On 9/22/12, Olof Johansson <olof@lixom.net> wrote:
->>> On Wed, Sep 19, 2012 at 3:10 AM, Tomasz Figa <t.figa@samsung.com> wrote:
->>>> Hi Olof,
->>>>
->>>> On Saturday 15 of September 2012 17:44:55 Olof Johansson wrote:
->>>>> On Thu, Sep 13, 2012 at 10:13:37AM +0200, Tomasz Figa wrote:
->>>>> > +static void __iomem *exynos_cpu_boot_reg(int cpu)
->>>>> > +{
->>>>> > +   return S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
->>>>> > +}
->>>>>
->>>>> This communication area in sysram should probably be seen as a part of
->>>>> the firmware interface. It should thus be defined as part of the
->>>>> binding
->>>>> instead, i.e.  through a reg property or similar there. That also
->>>>> would
->>>>> make it easy to convert to using ioremap() instead of iodesc tables,
->>>>> which always a nice thing.
->>>>
->>>> The problem with SYSRAM_NS is that it might be also used in other code,
->>>> not
->>>> related to firmware only. I don't know exactly all the use cases for
->>>> it.
->>>
->>> If you don't know the use cases, and the use cases are not in the
->>> kernel tree that we care about here (upstream), then there's really
->>> nothing to worry about. It's after all just a define that's moved to
->>> an ioremap, if there's some out of tree code that needs the old legacy
->>> define then it can be added in whatever out-of-tree code that uses it.
->>> Right?
->> Now this address is used at cpu boot, cpuidle, inform at this time.
->> As it touched at several places, it's defined at iodesc. if it changed
->> with ioremap, it has to export remaped address and each codes should
->> use it.
->
-> Won't you have to push down all the references to VA_SYSRAM vs
-> VA_SYSRAM_NS into the firmware interface anyway, since you will need
-> to use different addresses for whether you have firmware enabled or
-> not? I.e. you'll have a "firmware call" at the appropriate level for
-> the non-trustzone cases that uses the equivalent of VA_SYSRAM, and for
-> the trustzone firmware op you'll use VA_SYSRAM_NS?
-Right, in case of no firmware, it uses VA_SYSRAM, but VA_SYSRAM_NS is
-used at firmware case.
->
->
->> As I wrote at cover letter, if you want to use ioremap, it can be
->> modified. however can you merge firmware codes itself? since ioremap
->> is not related with trustzone  or firmware issues and it's exynos
->> specific implementation issues. Right?
->
-> I'm not quite sure which part you are asking me to merge, if it's the
-> infrastructure pieces or the exynos-specific pieces.
->
-> Either way, one isn't really usable without the other, and it doesn't
-> make sense to merge code that can't be used. Infrastructure is best
-> merged together with the first user of it.
+This patch adds device tree entry for MFC v6 in the Exynos5
+SoC. Makes the required changes in the clock files and adds
+MFC to the DT device list.
 
-Okay, we will fix it.
+Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
+Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
+---
+ .../devicetree/bindings/media/s5p-mfc.txt          |   27 ++++++++++++++
+ arch/arm/boot/dts/exynos5250-smdk5250.dts          |    7 ++++
+ arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
+ arch/arm/mach-exynos/common.c                      |   37 ++++++++++++++++++++
+ arch/arm/mach-exynos/common.h                      |   10 +++++
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   16 ++++++++
+ 8 files changed, 105 insertions(+), 1 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
 
-Thank you,
-Kyungmin Park
+diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+new file mode 100644
+index 0000000..f95e775
+--- /dev/null
++++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
+@@ -0,0 +1,27 @@
++* Samsung Multi Format Codec (MFC)
++
++Multi Format Codec (MFC) is the IP present in Samsung SoCs which
++supports high resolution decoding and encoding functionalities.
++The MFC device driver is a v4l2 driver which can encode/decode
++video raw/elementary streams and has support for all popular
++video codecs.
++
++Required properties:
++  - compatible : value should be either one among the following
++	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
++	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
++
++  - reg : Physical base address of the IP registers and length of memory
++	  mapped region.
++
++  - interrupts : MFC interrupt number to the CPU.
++
++  - samsung,mfc-r : Base address of the first memory bank used by MFC
++		    for DMA contiguous memory allocation.
++
++  - samsung,mfc-r-size : Size of the first memory bank.
++
++  - samsung,mfc-l : Base address of the second memory bank used by MFC
++		    for DMA contiguous memory allocation.
++
++  - samsung,mfc-l-size : Size of the second memory bank.
+diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+index 8a5e348..99890ec 100644
+--- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
++++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+@@ -109,4 +109,11 @@
+ 	spi_2: spi@12d40000 {
+ 		status = "disabled";
+ 	};
++
++	codec@11000000 {
++		samsung,mfc-r = <0x43000000>;
++		samsung,mfc-r-size = <8388608>;
++		samsung,mfc-l = <0x51000000>;
++		samsung,mfc-l-size = <8388608>;
++	};
+ };
+diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+index b55794b..d2ae4ff 100644
+--- a/arch/arm/boot/dts/exynos5250.dtsi
++++ b/arch/arm/boot/dts/exynos5250.dtsi
+@@ -62,6 +62,12 @@
+ 		interrupts = <0 42 0>;
+ 	};
+ 
++	codec@11000000 {
++		compatible = "samsung,mfc-v6";
++		reg = <0x11000000 0x10000>;
++		interrupts = <0 96 0>;
++	};
++
+ 	rtc {
+ 		compatible = "samsung,s3c6410-rtc";
+ 		reg = <0x101E0000 0x100>;
+diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
+index 4372075..a0677f6 100644
+--- a/arch/arm/mach-exynos/Kconfig
++++ b/arch/arm/mach-exynos/Kconfig
+@@ -64,6 +64,7 @@ config SOC_EXYNOS5250
+ 	select SAMSUNG_DMADEV
+ 	select S5P_PM if PM
+ 	select S5P_SLEEP if PM
++	select S5P_DEV_MFC
+ 	help
+ 	  Enable EXYNOS5250 SoC support
+ 
+diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
+index f3171c3..452316b 100644
+--- a/arch/arm/mach-exynos/clock-exynos5.c
++++ b/arch/arm/mach-exynos/clock-exynos5.c
+@@ -669,7 +669,7 @@ static struct clk exynos5_init_clocks_off[] = {
+ 		.ctrlbit	= (1 << 25),
+ 	}, {
+ 		.name		= "mfc",
+-		.devname	= "s5p-mfc",
++		.devname	= "s5p-mfc-v6",
+ 		.enable		= exynos5_clk_ip_mfc_ctrl,
+ 		.ctrlbit	= (1 << 0),
+ 	}, {
+diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
+index 715b690..90e484e 100644
+--- a/arch/arm/mach-exynos/common.c
++++ b/arch/arm/mach-exynos/common.c
+@@ -22,6 +22,7 @@
+ #include <linux/export.h>
+ #include <linux/irqdomain.h>
+ #include <linux/of_address.h>
++#include <linux/of_fdt.h>
+ 
+ #include <asm/proc-fns.h>
+ #include <asm/exception.h>
+@@ -1043,3 +1044,39 @@ static int __init exynos_init_irq_eint(void)
+ 	return 0;
+ }
+ arch_initcall(exynos_init_irq_eint);
++
++int exynos_fdt_find_mfc_mem(unsigned long node, const char *uname,
++		int depth, void *data)
++{
++	__be32 *prop;
++	unsigned long len;
++	struct mfc_dt_meminfo *mfc_mem = data;
++
++	if (!data)
++		return 0;
++
++	if (!of_flat_dt_is_compatible(node, mfc_mem->compatible))
++		return 0;
++
++	prop = of_get_flat_dt_prop(node, "samsung,mfc-l", &len);
++	if (!prop)
++		return 0;
++	mfc_mem->loff = of_read_ulong(prop, len/4);
++
++	prop = of_get_flat_dt_prop(node, "samsung,mfc-l-size", &len);
++	if (!prop)
++		return 0;
++	mfc_mem->lsize = of_read_ulong(prop, len/4);
++
++	prop = of_get_flat_dt_prop(node, "samsung,mfc-r", &len);
++	if (!prop)
++		return 0;
++	mfc_mem->roff = of_read_ulong(prop, len/4);
++
++	prop = of_get_flat_dt_prop(node, "samsung,mfc-r-size", &len);
++	if (!prop)
++		return 0;
++	mfc_mem->rsize = of_read_ulong(prop, len/4);
++
++	return 1;
++}
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index aed2eeb..c56d352 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -12,6 +12,14 @@
+ #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ 
++struct mfc_dt_meminfo {
++	unsigned long	loff;
++	unsigned long	lsize;
++	unsigned long	roff;
++	unsigned long	rsize;
++	char		*compatible;
++};
++
+ extern struct sys_timer exynos4_timer;
+ 
+ void exynos_init_io(struct map_desc *mach_desc, int size);
+@@ -20,6 +28,8 @@ void exynos5_init_irq(void);
+ void exynos4_restart(char mode, const char *cmd);
+ void exynos5_restart(char mode, const char *cmd);
+ void exynos_init_late(void);
++int exynos_fdt_find_mfc_mem(unsigned long node, const char *uname,
++		int depth, void *data);
+ 
+ #ifdef CONFIG_PM_GENERIC_DOMAINS
+ int exynos_pm_late_initcall(void);
+diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+index e707eb1..17fd144 100644
+--- a/arch/arm/mach-exynos/mach-exynos5-dt.c
++++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+@@ -11,6 +11,8 @@
+ 
+ #include <linux/of_platform.h>
+ #include <linux/serial_core.h>
++#include <linux/memblock.h>
++#include <linux/of_fdt.h>
+ 
+ #include <asm/mach/arch.h>
+ #include <asm/hardware/gic.h>
+@@ -18,6 +20,7 @@
+ 
+ #include <plat/cpu.h>
+ #include <plat/regs-serial.h>
++#include <plat/mfc.h>
+ 
+ #include "common.h"
+ 
+@@ -64,6 +67,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+ 				"exynos-gsc.2", NULL),
+ 	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
+ 				"exynos-gsc.3", NULL),
++	OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
+ 	{},
+ };
+ 
+@@ -84,6 +88,17 @@ static char const *exynos5250_dt_compat[] __initdata = {
+ 	NULL
+ };
+ 
++static void __init exynos5_reserve(void)
++{
++	struct mfc_dt_meminfo mfc_mem;
++
++	/* Reserve memory for MFC only if it's available */
++	mfc_mem.compatible = "samsung,mfc-v6";
++	if (of_scan_flat_dt(exynos_fdt_find_mfc_mem, &mfc_mem))
++		s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
++				mfc_mem.lsize);
++}
++
+ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
+ 	.init_irq	= exynos5_init_irq,
+@@ -94,4 +109,5 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
+ 	.timer		= &exynos4_timer,
+ 	.dt_compat	= exynos5250_dt_compat,
+ 	.restart        = exynos5_restart,
++	.reserve	= exynos5_reserve,
+ MACHINE_END
+-- 
+1.7.0.4
