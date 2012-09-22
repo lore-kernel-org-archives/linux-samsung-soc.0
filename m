@@ -1,111 +1,204 @@
-From: Doug Anderson <dianders@chromium.org>
-Subject: [PATCH] serial: samsung: Add poll_get_char & poll_put_char
-Date: Fri, 21 Sep 2012 23:22:31 -0700
-Message-ID: <1348294951-28617-1-git-send-email-dianders@chromium.org>
-References: <20120212182201.GA17975@debian>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20120212182201.GA17975@debian>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Julien Pichon <pichon.jln@gmail.com>, Alan Cox <alan@linux.intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, kgene.kim@samsung.com, GNUtoo@no-log.org, heiko@sntech.de, ben-linux@fluff.org, Doug Anderson <dianders@chromium.org>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/5] ARM: Add interface for registering and calling
+ firmware-specific operations
+Date: Fri, 21 Sep 2012 23:23:22 -0700
+Message-ID: <20120922062322.GA6264@quad.lixom.net>
+References: <1347524018-19301-1-git-send-email-t.figa@samsung.com>
+ <1347524018-19301-3-git-send-email-t.figa@samsung.com>
+ <20120922055015.GD32245@quad.lixom.net>
+ <CAH9JG2XFVzyZH8rsBogVYRdD4dzWpKjX8JAQw0Sf7qJqgueqAg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:52385 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753685Ab2IVGXX (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Sat, 22 Sep 2012 02:23:23 -0400
+Received: by pbbrr4 with SMTP id rr4so4032317pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Fri, 21 Sep 2012 23:23:22 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <CAH9JG2XFVzyZH8rsBogVYRdD4dzWpKjX8JAQw0Sf7qJqgueqAg@mail.gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de
 
-From: Julien Pichon <pichon.jln@gmail.com>
+On Sat, Sep 22, 2012 at 03:01:56PM +0900, Kyungmin Park wrote:
+> On 9/22/12, Olof Johansson <olof@lixom.net> wrote:
+> > On Thu, Sep 13, 2012 at 10:13:35AM +0200, Tomasz Figa wrote:
+> >> Some boards are running with secure firmware running in TrustZone secure
+> >> world, which changes the way some things have to be initialized.
+> >>
+> >> This patch adds an interface for platforms to specify available firmware
+> >> operations and call them.
+> >>
+> >> A wrapper macro, call_firmware_op(), checks if the operation is provided
+> >> and calls it if so, otherwise returns 0.
+> >>
+> >> By default no operations are provided.
+> >>
+> >> This is a follow-up on the patch by Kyungmin Park:
+> >> [PATCH v5 1/2] ARM: Make a compile firmware conditionally
+> >> http://thread.gmane.org/gmane.linux.ports.arm.kernel/183607/focus=183988
+> >>
+> >> Example of use:
+> >>
+> >> In code using firmware ops:
+> >>
+> >> 	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+> >> 		CPU1_BOOT_REG);
+> >>
+> >> 	/* Call Exynos specific smc call */
+> >> 	do_firmware_op(cpu_boot, cpu);
+> >>
+> >> 	gic_raise_softirq(cpumask_of(cpu), 1);
+> >>
+> >> In board-/platform-specific code:
+> >>
+> >> 	static int platformX_do_idle(void)
+> >> 	{
+> >> 		/* tell platformX firmware to enter idle */
+> >> 	        return 0;
+> >> 	}
+> >>
+> >> 	static void platformX_cpu_boot(int i)
+> >> 	{
+> >> 		/* tell platformX firmware to boot CPU i */
+> >> 	}
+> >>
+> >> 	static const struct firmware_ops platformX_firmware_ops __initdata = {
+> >> 		.do_idle	= exynos_do_idle,
+> >> 		.cpu_boot	= exynos_cpu_boot,
+> >> 		/* cpu_boot_reg not available on platformX */
+> >> 	};
+> >>
+> >> 	static void __init board_init_early(void)
+> >> 	{
+> >> 	        register_firmware_ops(&platformX_firmware_ops);
+> >> 	}
+> >>
+> >> Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+> >> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+> >> ---
+> >>  arch/arm/common/Makefile        |  2 ++
+> >>  arch/arm/common/firmware.c      | 18 ++++++++++++++++++
+> >>  arch/arm/include/asm/firmware.h | 30 ++++++++++++++++++++++++++++++
+> >>  3 files changed, 50 insertions(+)
+> >>  create mode 100644 arch/arm/common/firmware.c
+> >>  create mode 100644 arch/arm/include/asm/firmware.h
+> >>
+> >> diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+> >> index e8a4e58..55d4182 100644
+> >> --- a/arch/arm/common/Makefile
+> >> +++ b/arch/arm/common/Makefile
+> >> @@ -2,6 +2,8 @@
+> >>  # Makefile for the linux kernel.
+> >>  #
+> >>
+> >> +obj-y += firmware.o
+> >> +
+> >>  obj-$(CONFIG_ARM_GIC)		+= gic.o
+> >>  obj-$(CONFIG_ARM_VIC)		+= vic.o
+> >>  obj-$(CONFIG_ICST)		+= icst.o
+> >> diff --git a/arch/arm/common/firmware.c b/arch/arm/common/firmware.c
+> >> new file mode 100644
+> >> index 0000000..27ddccb
+> >> --- /dev/null
+> >> +++ b/arch/arm/common/firmware.c
+> >> @@ -0,0 +1,18 @@
+> >> +/*
+> >> + * Copyright (C) 2012 Samsung Electronics.
+> >> + * Kyungmin Park <kyungmin.park@samsung.com>
+> >> + * Tomasz Figa <t.figa@samsung.com>
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or modify
+> >> + * it under the terms of the GNU General Public License version 2 as
+> >> + * published by the Free Software Foundation.
+> >> + */
+> >> +
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/suspend.h>
+> >> +
+> >> +#include <asm/firmware.h>
+> >> +
+> >> +static const struct firmware_ops default_firmware_ops;
+> >> +
+> >> +const struct firmware_ops *firmware_ops = &default_firmware_ops;
+> >> diff --git a/arch/arm/include/asm/firmware.h
+> >> b/arch/arm/include/asm/firmware.h
+> >> new file mode 100644
+> >> index 0000000..ed51b02
+> >> --- /dev/null
+> >> +++ b/arch/arm/include/asm/firmware.h
+> >> @@ -0,0 +1,30 @@
+> >> +/*
+> >> + * Copyright (C) 2012 Samsung Electronics.
+> >> + * Kyungmin Park <kyungmin.park@samsung.com>
+> >> + * Tomasz Figa <t.figa@samsung.com>
+> >> + *
+> >> + * This program is free software; you can redistribute it and/or modify
+> >> + * it under the terms of the GNU General Public License version 2 as
+> >> + * published by the Free Software Foundation.
+> >> + */
+> >> +
+> >> +#ifndef __ASM_ARM_FIRMWARE_H
+> >> +#define __ASM_ARM_FIRMWARE_H
+> >> +
+> >> +struct firmware_ops {
+> >> +	int (*do_idle)(void);
+> >> +	void (*cpu_boot)(int cpu);
+> >> +	void __iomem *(*cpu_boot_reg)(int cpu);
+> >> +};
+> >> +
+> >> +extern const struct firmware_ops *firmware_ops;
+> >> +
+> >> +#define call_firmware_op(op, ...)					\
+> >> +	((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : 0)
+> >
+> > I think this will cause sparse warnings for call_firmware_op(cpu_boot_reg)
+> > if there are no ops defined, since the '0' isn't annotated as __iomem. And
+> > you can't annotate it since the other function pointers don't need it.
+> >
+> > I think you might be better off with stub functions as fallbacks instead of
+> > allowing and checking for NULL here.
+> do you mean like this?
+> 
+> #Ifdef CONFIG_ARM_FIRMWARE
+> #define call_firmware_op(op, ...) ((firmware_ops->op) ?
+> firmware_ops->op(__VA_ARGS__) : 0)
+> #else
+> #define call_firmware_op(op, ...) do { } while (0)
+> #endif
+> 
+> No problem to modify it.
 
-The following patch allows users to use KGDB over serial console on
-board based on Samsung SOC. It has been tested on a board using
-exynos5.
+To get the types and return values right you still need to do something
+like:
 
-Signed-off-by: Julien Pichon <pichon.jln@gmail.com>
-Signed-off-by: Doug Anderson <dianders@chromium.org>
-(dianders changed poll to return NO_POLL_CHAR, which appears to
-fix 'help' in kgdb; also updated commit message)
----
-This is pulled from an email on <linux-samsung-soc@vger.kernel.org>
-from Feb 18, 2012. It's never landed anywhere. I've made a small modification
-that make it so that kgdb's "help" doesn't crash.
+#define call_firmware_op(op, ...) (firmware_ops->op(__VA_ARGS))
 
-See: http://comments.gmane.org/gmane.linux.kernel.samsung-soc/9477
+And then, in firmware.c:
 
- drivers/tty/serial/samsung.c |   47 ++++++++++++++++++++++++++++++++++++++++++
- 1 files changed, 47 insertions(+), 0 deletions(-)
+static int default_do_idle(void)
+{
+	return 0;
+}
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 8eef114..7f04717 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -876,11 +876,24 @@ s3c24xx_serial_verify_port(struct uart_port *port, struct serial_struct *ser)
- 
- static struct console s3c24xx_serial_console;
- 
-+static int __init s3c24xx_serial_console_init(void)
-+{
-+	register_console(&s3c24xx_serial_console);
-+	return 0;
-+}
-+console_initcall(s3c24xx_serial_console_init);
-+
- #define S3C24XX_SERIAL_CONSOLE &s3c24xx_serial_console
- #else
- #define S3C24XX_SERIAL_CONSOLE NULL
- #endif
- 
-+#ifdef CONFIG_CONSOLE_POLL
-+static int s3c24xx_serial_get_poll_char(struct uart_port *port);
-+static void s3c24xx_serial_put_poll_char(struct uart_port *port,
-+			 unsigned char c);
-+#endif
-+
- static struct uart_ops s3c24xx_serial_ops = {
- 	.pm		= s3c24xx_serial_pm,
- 	.tx_empty	= s3c24xx_serial_tx_empty,
-@@ -899,6 +912,10 @@ static struct uart_ops s3c24xx_serial_ops = {
- 	.request_port	= s3c24xx_serial_request_port,
- 	.config_port	= s3c24xx_serial_config_port,
- 	.verify_port	= s3c24xx_serial_verify_port,
-+#ifdef CONFIG_CONSOLE_POLL
-+	.poll_get_char = s3c24xx_serial_get_poll_char,
-+	.poll_put_char = s3c24xx_serial_put_poll_char,
-+#endif
- };
- 
- static struct uart_driver s3c24xx_uart_drv = {
-@@ -1316,6 +1333,36 @@ s3c24xx_serial_console_txrdy(struct uart_port *port, unsigned int ufcon)
- 	return (utrstat & S3C2410_UTRSTAT_TXE) ? 1 : 0;
- }
- 
-+#ifdef CONFIG_CONSOLE_POLL
-+/*
-+ * Console polling routines for writing and reading from the uart while
-+ * in an interrupt or debug context.
-+ */
-+
-+static int s3c24xx_serial_get_poll_char(struct uart_port *port)
-+{
-+	struct s3c24xx_uart_port *ourport = to_ourport(port);
-+	unsigned int ufstat;
-+
-+	ufstat = rd_regl(port, S3C2410_UFSTAT);
-+	if (s3c24xx_serial_rx_fifocnt(ourport, ufstat) == 0)
-+		return NO_POLL_CHAR;
-+
-+	return rd_regb(port, S3C2410_URXH);
-+}
-+
-+static void s3c24xx_serial_put_poll_char(struct uart_port *port,
-+		unsigned char c)
-+{
-+	unsigned int ufcon = rd_regl(cons_uart, S3C2410_UFCON);
-+
-+	while (!s3c24xx_serial_console_txrdy(port, ufcon))
-+		cpu_relax();
-+	wr_regb(cons_uart, S3C2410_UTXH, c);
-+}
-+
-+#endif /* CONFIG_CONSOLE_POLL */
-+
- static void
- s3c24xx_serial_console_putchar(struct uart_port *port, int ch)
- {
--- 
-1.7.7.3
+static default_cpu_boot(int cpu)
+{
+	return;
+}
+
+static void __iomem *default_cpu_boot_reg(int cpu)
+{
+	return (void __iomem *)0;
+}
+
+static const struct firmware_ops default_firmware_ops = {
+	.do_idle = default_do_idle,
+	.cpu_boot = default_cpu_boot,
+	.cpu_boot_reg = default_cpu_boot_reg,
+}
+
+const struct firmware_ops *firmware_ops = &default_firmware_ops;
