@@ -1,57 +1,87 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v4] Add MFC device tree support
-Date: Sat, 22 Sep 2012 23:37:16 +0530
-Message-ID: <1348337237-15426-1-git-send-email-arun.kk@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH 2/5] ARM: Add interface for registering and calling firmware-specific operations
+Date: Sat, 22 Sep 2012 15:17:14 +0200
+Message-ID: <2370637.l5XxG4tm0Y@flatron>
+References: <1347524018-19301-1-git-send-email-t.figa@samsung.com> <CAH9JG2XFVzyZH8rsBogVYRdD4dzWpKjX8JAQw0Sf7qJqgueqAg@mail.gmail.com> <20120922062322.GA6264@quad.lixom.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:8630 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753830Ab2IVLcw (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:53865 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751307Ab2IVNRT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Sep 2012 07:32:52 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAR00EN01EQ7VB0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 22 Sep 2012 20:32:50 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAR001KW1EL9H70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Sat, 22 Sep 2012 20:32:50 +0900 (KST)
+	Sat, 22 Sep 2012 09:17:19 -0400
+Received: by weyx8 with SMTP id x8so2476572wey.19
+        for <linux-samsung-soc@vger.kernel.org>; Sat, 22 Sep 2012 06:17:18 -0700 (PDT)
+In-Reply-To: <20120922062322.GA6264@quad.lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, s.nawrocki@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, joshi@samsung.com
+To: Olof Johansson <olof@lixom.net>
+Cc: Kyungmin Park <kyungmin.park@samsung.com>, Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de
 
-This patch adds the device tree entries for MFC on Exynos5.
-This is rebased to the linux-samsung for-next branch.
+Hi Olof, Kyungmin,
 
-Changelog v4
-- Addressed review comments from Karol Lewandowski
-http://permalink.gmane.org/gmane.linux.kernel.samsung-soc/12703
+On Friday 21 of September 2012 23:23:22 Olof Johansson wrote:
+> On Sat, Sep 22, 2012 at 03:01:56PM +0900, Kyungmin Park wrote:
+> > On 9/22/12, Olof Johansson <olof@lixom.net> wrote:
+> > > On Thu, Sep 13, 2012 at 10:13:35AM +0200, Tomasz Figa wrote:
+> > >> +#define call_firmware_op(op, ...)					\
+> > >> +	((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : 0)
+> > > 
+> > > I think this will cause sparse warnings for
+> > > call_firmware_op(cpu_boot_reg) if there are no ops defined, since
+> > > the '0' isn't annotated as __iomem. And you can't annotate it since
+> > > the other function pointers don't need it.
+> > > 
+> > > I think you might be better off with stub functions as fallbacks
+> > > instead of allowing and checking for NULL here.
+> > 
+> > do you mean like this?
+> > 
+> > #Ifdef CONFIG_ARM_FIRMWARE
+> > #define call_firmware_op(op, ...) ((firmware_ops->op) ?
+> > firmware_ops->op(__VA_ARGS__) : 0)
+> > #else
+> > #define call_firmware_op(op, ...) do { } while (0)
+> > #endif
+> > 
+> > No problem to modify it.
+> 
+> To get the types and return values right you still need to do something
+> like:
+> 
+> #define call_firmware_op(op, ...) (firmware_ops->op(__VA_ARGS))
+> 
+> And then, in firmware.c:
+> 
+> static int default_do_idle(void)
+> {
+> 	return 0;
+> }
+> 
+> static default_cpu_boot(int cpu)
+> {
+> 	return;
+> }
+> 
+> static void __iomem *default_cpu_boot_reg(int cpu)
+> {
+> 	return (void __iomem *)0;
+> }
+> 
+> static const struct firmware_ops default_firmware_ops = {
+> 	.do_idle = default_do_idle,
+> 	.cpu_boot = default_cpu_boot,
+> 	.cpu_boot_reg = default_cpu_boot_reg,
+> }
 
-Changelog v3
-- Addressed review comments given by Sylwester Nawrocki
-http://www.mail-archive.com/linux-samsung-soc@vger.kernel.org/msg12340.html
+Thanks for pointing this out. I will address it in next version of the 
+series.
 
-Changelog v2
-- Use fdt functions to parse dtsi file for mfc memory info
+Also it might be useful to be able to check if an operation was provided, 
+so maybe an unimplemented operation should return an error value (which one 
+would be the most appropriate? -ENOSYS?)? What do you think?
 
-Changelog v1
-- Moved board specific DT information to different dtsi file
-- Changed compatible name for the device
-- Addressed other review comments
-
-Arun Kumar K (1):
-  ARM: EXYNOS: Add MFC device tree support
-
- .../devicetree/bindings/media/s5p-mfc.txt          |   27 ++++++++++++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |    7 ++++
- arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++
- arch/arm/mach-exynos/Kconfig                       |    1 +
- arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
- arch/arm/mach-exynos/common.c                      |   37 ++++++++++++++++++++
- arch/arm/mach-exynos/common.h                      |   10 +++++
- arch/arm/mach-exynos/mach-exynos5-dt.c             |   16 ++++++++
- 8 files changed, 105 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
+Best regards,
+Tomasz Figa
