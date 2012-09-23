@@ -1,26 +1,128 @@
-From: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Subject: Re: [PATCH] spi: s3c64xx: Don't free controller_data on non-dt
- platforms
-Date: Sat, 22 Sep 2012 12:12:10 -0400
-Message-ID: <20120922161209.GV4495@opensource.wolfsonmicro.com>
-References: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
+From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
+Subject: Re: [PATCH V2 0/5] arm: samsung: Move FIMD headers to include/video/
+Date: Sun, 23 Sep 2012 19:26:05 +0000
+Message-ID: <505F624D.6020909@gmx.de>
+References: <1343737385-23337-1-git-send-email-l.krishna@samsung.com> <02f701cd6f8d$5ca3e850$15ebb8f0$%kim@samsung.com> <5018FDF6.4020205@gmx.de> <1d5a01cd8115$7251eb40$56f5c1c0$%kim@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from opensource.wolfsonmicro.com ([80.75.67.52]:38969 "EHLO
-	opensource.wolfsonmicro.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1752511Ab2IVQMN (ORCPT
+Received: from mailout-de.gmx.net ([213.165.64.23]:59065 "HELO
+	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with SMTP id S1752279Ab2IWT0Q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 22 Sep 2012 12:12:13 -0400
-Content-Disposition: inline
-In-Reply-To: <1347546690-21848-1-git-send-email-s.nawrocki@samsung.com>
+	Sun, 23 Sep 2012 15:26:16 -0400
+In-Reply-To: <1d5a01cd8115$7251eb40$56f5c1c0$%kim@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: thomas.abraham@linaro.org, spi-devel-general@lists.sourceforge.net, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, sw0312.kim@samsung.com, Kyungmin Park <kyungmin.park@samsung.com>
+To: Kukjin Kim <kgene.kim@samsung.com>
+Cc: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
 
-On Thu, Sep 13, 2012 at 04:31:30PM +0200, Sylwester Nawrocki wrote:
-> When s3c64xx-spi is instantiated from device tree an instance of
-> struct s3c64xx_spi_csinfo is dynamically allocated in the driver.
+On 08/23/2012 09:55 AM, Kukjin Kim wrote:
+> Florian Tobias Schandinat wrote:
+>>
+>> On 08/01/2012 02:28 AM, Kukjin Kim wrote:
+>>> Leela Krishna Amudala wrote:
+>>>>
+>>>> This patchset moves the contents of regs-fb-v4.h and regs-fb.h from
+>> arch
+>>>> side
+>>>> to include/video/samsung_fimd.h
+>>>>
+>>>> This patchset is created and rebased against master branch of torvalds
+>>>> tree.
+>>>> Tested on smdk5250 board, build tested for other boards.
+>>>>
+>>> (Cc'ed Florian Tobias Schandinat)
+>>>
+>>> Yeah, since it's merge window, this series could be created against on
+>>> mainline. And IMO, would be helpful to us if this series could be sent
+>> to
+>>> upstream via samsung tree after reviewing, because this touches too many
+>>> files in samsung tree and just adds include/video/samsung_fimd.h. But
+>> I'm
+>>> not sure the added inclusion will be used in other file of
+> drivers/video.
+>> If
+>>> so, I can provide some topic branch can be merged into Florian's tree.
+>>> Florian, how about?
+>>
+>> Using a topic branch to merge it in both trees sounds like a good plan
+>> to me.
+>>
+> Florian,
+> 
+> Please pull following topic branch we talked. I already merged it into my
+> -next.
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> v3.7-for-florian
+> 
+> Note, I applied Leela's V4 patches not this V2 series.
 
-Applied, thanks.
+Merged, just as I wrote in another thread. Took a bit longer as I was
+writing my thesis...
+
+
+Best regards,
+
+Florian Tobias Schandinat
+
+> 
+> If any problems, please kindly let me know.
+> 
+> Thanks.
+> 
+> Best regards,
+> Kgene.
+> --
+> Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
+> SW Solution Development Team, Samsung Electronics Co., Ltd.
+> 
+> The following changes since commit 0d7614f09c1ebdbaa1599a5aba7593f147bf96ee:
+> 
+>   Linux 3.6-rc1 (2012-08-02 16:38:10 -0700)
+> 
+> are available in the git repository at:
+>   git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
+> v3.7-for-florian
+> 
+> Leela Krishna Amudala (2):
+>       include/video: move fimd register headers from platform to
+> include/video
+>       include/video: Add register offsets for FIMD version 8
+> 
+>  arch/arm/mach-exynos/mach-nuri.c                   |    2 +-
+>  arch/arm/mach-exynos/mach-origen.c                 |    2 +-
+>  arch/arm/mach-exynos/mach-smdk4x12.c               |    2 +-
+>  arch/arm/mach-exynos/mach-smdkv310.c               |    2 +-
+>  arch/arm/mach-exynos/mach-universal_c210.c         |    2 +-
+>  arch/arm/mach-exynos/setup-fimd0.c                 |    2 +-
+>  arch/arm/mach-s3c24xx/mach-smdk2416.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-anw6410.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-crag6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-hmt.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-mini6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-ncp.c                   |    2 +-
+>  arch/arm/mach-s3c64xx/mach-real6410.c              |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smartq5.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smartq7.c               |    2 +-
+>  arch/arm/mach-s3c64xx/mach-smdk6410.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6440.c              |    2 +-
+>  arch/arm/mach-s5p64x0/mach-smdk6450.c              |    2 +-
+>  arch/arm/mach-s5pc100/mach-smdkc100.c              |    2 +-
+>  arch/arm/mach-s5pv210/mach-aquila.c                |    2 +-
+>  arch/arm/mach-s5pv210/mach-goni.c                  |    2 +-
+>  arch/arm/mach-s5pv210/mach-smdkv210.c              |    2 +-
+>  arch/arm/plat-samsung/include/plat/regs-fb-v4.h    |  159
+> --------------------
+>  drivers/gpu/drm/exynos/exynos_drm_fimd.c           |    2 +-
+>  drivers/video/s3c-fb.c                             |    2 +-
+>  .../plat/regs-fb.h => include/video/samsung_fimd.h |  152
+> +++++++++++++++++--
+>  26 files changed, 165 insertions(+), 194 deletions(-)
+>  delete mode 100644 arch/arm/plat-samsung/include/plat/regs-fb-v4.h
+>  rename arch/arm/plat-samsung/include/plat/regs-fb.h =>
+> include/video/samsung_fimd.h (73%)
+> 
+> 
