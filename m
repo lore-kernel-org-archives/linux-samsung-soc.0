@@ -1,58 +1,34 @@
-From: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Subject: [PATCH RFC] s5p-tv: Report only multi-plane capabilities in
- vidioc_querycap
-Date: Mon, 24 Sep 2012 12:04:09 +0200
-Message-ID: <1348481049-19145-1-git-send-email-s.nawrocki@samsung.com>
-References: <201209211207.46679.hverkuil@xs4all.nl>
+From: "ABRAHAM, KISHON VIJAY" <kishon@ti.com>
+Subject: Re: [PATCH v6 1/5] usb: phy: samsung: Introducing usb phy driver for hsotg
+Date: Mon, 24 Sep 2012 16:09:34 +0530
+Message-ID: <CAAe_U6JVZPXyTo=AjhX9_FjqeK5Sidk=xPPJyptSwCSrGMDHfQ@mail.gmail.com>
+References: <1347886484-16064-1-git-send-email-p.paneri@samsung.com>
+	<1347886484-16064-2-git-send-email-p.paneri@samsung.com>
+	<CAD6zSYP0seNbwYB1VMLBH++gXKs3ZkJg-ztx6_2263OxPn7M6g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:59010 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751181Ab2IXKEZ (ORCPT
+Received: from na3sys009aog113.obsmtp.com ([74.125.149.209]:41626 "EHLO
+	na3sys009aog113.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1753883Ab2IXKjg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Sep 2012 06:04:25 -0400
-In-reply-to: <201209211207.46679.hverkuil@xs4all.nl>
+	Mon, 24 Sep 2012 06:39:36 -0400
+Received: by vbbff1 with SMTP id ff1so5912715vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Sep 2012 03:39:34 -0700 (PDT)
+In-Reply-To: <CAD6zSYP0seNbwYB1VMLBH++gXKs3ZkJg-ztx6_2263OxPn7M6g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: t.stanislaws@samsung.com, hverkuil@xs4all.nl, kyungmin.park@samsung.com, sw0312.kim@samsung.com, linux-samsung-soc@vger.kernel.org, Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Praveen Paneri <p.paneri@samsung.com>
+Cc: linux-usb@vger.kernel.org, balbi@ti.com, devicetree-discuss@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, gregkh@linuxfoundation.org, thomas.abraham@linaro.org, ben-linux@fluff.org, broonie@opensource.wolfsonmicro.com, l.majewski@samsung.com, kyungmin.park@samsung.com, grant.likely@secretlab.ca, heiko@sntech.de
 
-The mixer video node supports only multi-planar API so the driver
-should not be setting V4L2_CAP_VIDEO_OUTPUT flags. Fix this and
-also switch to device_caps. Additionally fix the VIDIOC_ENUM_FMT
-ioctl handler which now works for V4L2_BUF_TYPE_CAPTURE, rather
-than expected V4L2_BUF_TYPE_CAPTURE_MPLANE.
+Hi,
 
-Cc: Tomasz Stanislawski <t.stanislaws@samsung.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- drivers/media/platform/s5p-tv/mixer_video.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+On Mon, Sep 24, 2012 at 3:08 PM, Praveen Paneri <p.paneri@samsung.com> wrote:
+> Hi Kishon, Felipe,
+>
+> Any further comments on these patches? Can they be merged now?
 
-diff --git a/drivers/media/platform/s5p-tv/mixer_video.c b/drivers/media/platform/s5p-tv/mixer_video.c
-index 8649de01..9876bd9 100644
---- a/drivers/media/platform/s5p-tv/mixer_video.c
-+++ b/drivers/media/platform/s5p-tv/mixer_video.c
-@@ -164,9 +164,8 @@ static int mxr_querycap(struct file *file, void *priv,
- 	strlcpy(cap->driver, MXR_DRIVER_NAME, sizeof cap->driver);
- 	strlcpy(cap->card, layer->vfd.name, sizeof cap->card);
- 	sprintf(cap->bus_info, "%d", layer->idx);
--	cap->version = KERNEL_VERSION(0, 1, 0);
--	cap->capabilities = V4L2_CAP_STREAMING |
--		V4L2_CAP_VIDEO_OUTPUT | V4L2_CAP_VIDEO_OUTPUT_MPLANE;
-+	cap->device_caps = V4L2_CAP_STREAMING | V4L2_CAP_VIDEO_OUTPUT_MPLANE;
-+	cap->capabilities = cap->device_caps | V4L2_CAP_DEVICE_CAPS;
+I don't have any other comments.
 
- 	return 0;
- }
-@@ -727,7 +726,7 @@ static int mxr_streamoff(struct file *file, void *priv, enum v4l2_buf_type i)
- static const struct v4l2_ioctl_ops mxr_ioctl_ops = {
- 	.vidioc_querycap = mxr_querycap,
- 	/* format handling */
--	.vidioc_enum_fmt_vid_out = mxr_enum_fmt,
-+	.vidioc_enum_fmt_vid_out_mplane = mxr_enum_fmt,
- 	.vidioc_s_fmt_vid_out_mplane = mxr_s_fmt,
- 	.vidioc_g_fmt_vid_out_mplane = mxr_g_fmt,
- 	/* buffer control */
---
-1.7.11.3
+Thanks
+Kishon
