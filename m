@@ -1,115 +1,35 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 6/6] ARM: dts: exynos4210: Add platform-specific descriptions
- for pin controllers
-Date: Mon, 24 Sep 2012 11:42:15 -0600
-Message-ID: <50609B77.2060406@wwwdotorg.org>
-References: <1348131197-25506-1-git-send-email-t.figa@samsung.com> <1348131197-25506-7-git-send-email-t.figa@samsung.com> <505CB869.5030307@wwwdotorg.org> <2359157.SFB7x6fWGY@flatron>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 7/6] pinctrl: exynos: Fix wakeup IRQ domain registration check
+Date: Mon, 24 Sep 2012 21:57:26 +0200
+Message-ID: <CACRpkdYkVicrUk-H2Tx=tCDRxquq2B=n6O5UNZ8QoXLfMEDV=g@mail.gmail.com>
+References: <1348131104-24828-1-git-send-email-t.figa@samsung.com>
+	<2737662.uE6StcAj33@amdc1227>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:55142 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757330Ab2IXRmT (ORCPT
+Received: from mail-vb0-f46.google.com ([209.85.212.46]:45591 "EHLO
+	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751017Ab2IXT51 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Sep 2012 13:42:19 -0400
-In-Reply-To: <2359157.SFB7x6fWGY@flatron>
+	Mon, 24 Sep 2012 15:57:27 -0400
+Received: by vbbff1 with SMTP id ff1so6544841vbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 24 Sep 2012 12:57:26 -0700 (PDT)
+In-Reply-To: <2737662.uE6StcAj33@amdc1227>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com
 
-On 09/21/2012 01:54 PM, Tomasz Figa wrote:
-> On Friday 21 of September 2012 12:56:41 Stephen Warren wrote:
->> On 09/20/2012 02:53 AM, Tomasz Figa wrote:
->>> The patch "pinctrl: samsung: Parse pin banks from DT" introduced
->>> platform-specific data parsing from DT.
->>>
->>> This patch adds all necessary nodes and properties to exynos4210 device
->>> tree sources.
->>>
->>> +++ b/arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi
+On Thu, Sep 20, 2012 at 4:53 PM, Tomasz Figa <t.figa@samsung.com> wrote:
 
->>> +			samsung,pctl-offset = <0x000>;
->>> +			samsung,pin-bank = "gpa0";
->>> +			samsung,pin-count = <8>;
->>> +			samsung,func-width = <4>;
->>> +			samsung,pud-width = <2>;
->>> +			samsung,drv-width = <2>;
->>> +			samsung,conpdn-width = <2>;
->>> +			samsung,pudpdn-width = <2>;
->>
->> The properties above represent the width of the fields. Must all fields
->> always be packed together into say the LSB of the registers? What if
->> there are gaps between the fields in a future SoC variant, or the order
->> of the fields in the register changes? I think you want to add either a
->> samsung,func-bit/samsung,func-position property for each of the fields,
->> or change from samsung,func-width=<4> to samsung,field-mask=<0xf>. IIRC,
->> the generic pinctrl binding used a mask for this purpose.
->>
->> What if a future SoC variant adds more fields to the register? At that
->> point, you'd need to edit the driver anyway in order to define a new DT
->> property to represent the new field. Perhaps instead of having an
->> explicit named property per field in the register, you want a simple
->> list of fields:
->>
->> samsung,pin-property-names = "func", "pud", "drv", "conpdn", "pudpdn";
->> samsung,pin-propert-masks = <0xf 0x30 0xc0 0x300 0xc00>;
->>
->> That would allow a completely arbitrary number of fields and layouts to
->> be described.
->>
->> I wonder if for absolute generality you want a samsung,pin-stride
->> property to represent the difference in register address per pin. I
->> assume that's hard-coded as 4 right now.
-> 
-> Hmm, considering so many different possible changes, maybe a more 
-> conservative solution would be better, like reducing the amount of 
-> information held in DT to bank type, e.g.
-> 
-> 	samsung,bank-type = "exynos4";
-> 
-> or maybe
-> 
-> 	compatible = "samsung,exynos4-pin-bank*;
-> 
-> and then define supported bank types in the driver. SoC-specific data would 
-> remain in DT, i.e. pctl-offset, pin-bank, pin-count, eint-offset, etc.
+> Because of a typo, incorrect field of a structure was being checked.
+> This patch fixes the check to use correct field.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 
-Yes, removing much of the data from DT and putting it into a tiny table
-in the driver makes sense to me in this case.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
->>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
->>> b/arch/arm/boot/dts/exynos4210.dtsi index ecbc707..0e93717 100644
->>> --- a/arch/arm/boot/dts/exynos4210.dtsi
->>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
->>> @@ -59,6 +59,10 @@
->>>
->>>  		reg = <0x11400000 0x1000>;
->>>  		interrupts = <0 47 0>;
->>>  		interrupt-controller;
->>>
->>> +		samsung,geint-con = <0x700>;
->>> +		samsung,geint-mask = <0x900>;
->>> +		samsung,geint-pend = <0xA00>;
->>> +		samsung,svc = <0xB08>;
->>
->> I assume those new properties represent register addresses within the
->> block. If not, I don't understand what they are.
-> 
-> Yes, they do.
-> 
->> It's unclear to me why those properties aren't all part of
->> exynos4210-pinctrl-banks.dtsi. Do you really have multiple SoCs where
->> the register addresses for the pinctrl registers are the same (hence can
->> be in a shared exynos4210-pinctrl-banks.dtsi), yet the register
->> addresses for the geint registers are different (hence must be in
->> non-shared exynos4210.dtsi)?
-> 
-> Exynos4210-pincstrl-banks.dtsi isn't shared, it's specific to Exynos4210. 
-> Other SoCs are going to have their own whatever-pinctrl-banks.dtsi.
+I assume you'll take this through the Samsung tree.
 
-OK, so my point here is: why not put all the pinctrl-related properties
-into a single file, rather than spreading them across different files.
-Having separate files makes sense if they can be re-used in different
-places, but not if they're single-use.
+Yours,
+Linus Walleij
