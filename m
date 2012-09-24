@@ -1,181 +1,174 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 5/6] ARM: EXYNOS: Add support for Exynos secure firmware
-Date: Mon, 24 Sep 2012 16:28:32 +0200
-Message-ID: <1348496913-25422-6-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 1/6] ARM: Add interface for registering and calling
+ firmware-specific operations
+Date: Mon, 24 Sep 2012 16:28:28 +0200
+Message-ID: <1348496913-25422-2-git-send-email-t.figa@samsung.com>
 References: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
 Received: from mailout4.samsung.com ([203.254.224.34]:25369 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753143Ab2IXO3W (ORCPT
+	with ESMTP id S1753143Ab2IXO3U (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Sep 2012 10:29:22 -0400
+	Mon, 24 Sep 2012 10:29:20 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MAU00LMGYVTDP10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:29:03 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:28:48 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MAU0018OYVOXC80@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:29:03 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:28:48 +0900 (KST)
 In-reply-to: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net, m.szyprowski@samsung.com, t.figa@samsung.com
 
-Some Exynos-based boards contain secure firmware and must use firmware
-operations to set up some hardware.
+Some boards are running with secure firmware running in TrustZone secur=
+e
+world, which changes the way some things have to be initialized.
 
-This patch adds firmware operations for Exynos secure firmware and a way
-for board code and device tree to specify that they must be used.
+This patch adds an interface for platforms to specify available firmwar=
+e
+operations and call them.
+
+A wrapper macro, call_firmware_op(), checks if the operation is provide=
+d
+and calls it if so, otherwise returns -ENOSYS to allow fallback to l
+
+By default no operations are provided.
 
 Example of use:
 
-In board code:
+In code using firmware ops:
 
-	...MACHINE_START(...)
-		/* ... */
-		.init_early	= exynos_firmware_init,
-		/* ... */
-	MACHINE_END
+	__raw_writel(virt_to_phys(exynos4_secondary_startup),
+		CPU1_BOOT_REG);
 
-In device tree:
+	/* Call Exynos specific smc call */
+	if (call_firmware_op(cpu_boot, cpu) =3D=3D -ENOSYS)
+		cpu_boot_legacy(cpu); /* Try legacy way */
 
-	/ {
-		/* ... */
+	gic_raise_softirq(cpumask_of(cpu), 1);
 
-		firmware {
-			compatible = "samsung,secure-firmware";
-		};
+In board-/platform-specific code:
 
-		/* ... */
+	static int platformX_do_idle(void)
+	{
+		/* tell platformX firmware to enter idle */
+	        return 0;
+	}
+
+	static int platformX_cpu_boot(int i)
+	{
+		/* tell platformX firmware to boot CPU i */
+		return 0;
+	}
+
+	static const struct firmware_ops platformX_firmware_ops =3D {
+		.do_idle	=3D exynos_do_idle,
+		.cpu_boot	=3D exynos_cpu_boot,
+		/* cpu_boot_reg not available on platformX */
 	};
+
+	static void __init board_init_early(void)
+	{
+	=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0register_firmware_ops(=
+&platformX_firmware_ops);
+	}
 
 Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- .../devicetree/bindings/arm/samsung-boards.txt     |  8 ++++
- arch/arm/mach-exynos/Makefile                      |  1 +
- arch/arm/mach-exynos/common.h                      |  2 +
- arch/arm/mach-exynos/firmware.c                    | 54 ++++++++++++++++++++++
- arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
- 5 files changed, 66 insertions(+)
- create mode 100644 arch/arm/mach-exynos/firmware.c
+ arch/arm/common/Makefile        |  2 ++
+ arch/arm/common/firmware.c      | 18 ++++++++++++++++++
+ arch/arm/include/asm/firmware.h | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 51 insertions(+)
+ create mode 100644 arch/arm/common/firmware.c
+ create mode 100644 arch/arm/include/asm/firmware.h
 
-diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-index 0bf68be..f447059 100644
---- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-+++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-@@ -6,3 +6,11 @@ Required root node properties:
-     - compatible = should be one or more of the following.
-         (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
-         (b) "samsung,exynos4210"  - for boards based on Exynos4210 SoC.
+diff --git a/arch/arm/common/Makefile b/arch/arm/common/Makefile
+index e8a4e58..55d4182 100644
+--- a/arch/arm/common/Makefile
++++ b/arch/arm/common/Makefile
+@@ -2,6 +2,8 @@
+ # Makefile for the linux kernel.
+ #
+=20
++obj-y +=3D firmware.o
 +
-+Optional:
-+    - firmware node, specifying presence and type of secure firmware, currently
-+        supported value of compatible property is "samsung,secure-firmware":
-+
-+	firmware {
-+		compatible = "samsung,secure-firmware";
-+	};
-diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
-index 5c1de47..b464333 100644
---- a/arch/arm/mach-exynos/Makefile
-+++ b/arch/arm/mach-exynos/Makefile
-@@ -31,6 +31,7 @@ obj-$(CONFIG_EXYNOS4_MCT)	+= mct.o
- obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
- 
- obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-smc.o
-+obj-$(CONFIG_ARCH_EXYNOS)	+= firmware.o
- 
- plus_sec := $(call as-instr,.arch_extension sec,+sec)
- AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
-diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-index aed2eeb..540918f 100644
---- a/arch/arm/mach-exynos/common.h
-+++ b/arch/arm/mach-exynos/common.h
-@@ -21,6 +21,8 @@ void exynos4_restart(char mode, const char *cmd);
- void exynos5_restart(char mode, const char *cmd);
- void exynos_init_late(void);
- 
-+void exynos_firmware_init(void);
-+
- #ifdef CONFIG_PM_GENERIC_DOMAINS
- int exynos_pm_late_initcall(void);
- #else
-diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+ obj-$(CONFIG_ARM_GIC)		+=3D gic.o
+ obj-$(CONFIG_ARM_VIC)		+=3D vic.o
+ obj-$(CONFIG_ICST)		+=3D icst.o
+diff --git a/arch/arm/common/firmware.c b/arch/arm/common/firmware.c
 new file mode 100644
-index 0000000..67d975d
+index 0000000..27ddccb
 --- /dev/null
-+++ b/arch/arm/mach-exynos/firmware.c
-@@ -0,0 +1,54 @@
++++ b/arch/arm/common/firmware.c
+@@ -0,0 +1,18 @@
 +/*
 + * Copyright (C) 2012 Samsung Electronics.
 + * Kyungmin Park <kyungmin.park@samsung.com>
 + * Tomasz Figa <t.figa@samsung.com>
 + *
-+ * This program is free software,you can redistribute it and/or modify
++ * This program is free software; you can redistribute it and/or modif=
+y
 + * it under the terms of the GNU General Public License version 2 as
 + * published by the Free Software Foundation.
 + */
 +
 +#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/of.h>
++#include <linux/suspend.h>
 +
 +#include <asm/firmware.h>
 +
-+#include <mach/map.h>
++static const struct firmware_ops default_firmware_ops;
 +
-+#include "smc.h"
++const struct firmware_ops *firmware_ops =3D &default_firmware_ops;
+diff --git a/arch/arm/include/asm/firmware.h b/arch/arm/include/asm/fir=
+mware.h
+new file mode 100644
+index 0000000..5d87d8e
+--- /dev/null
++++ b/arch/arm/include/asm/firmware.h
+@@ -0,0 +1,31 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics.
++ * Kyungmin Park <kyungmin.park@samsung.com>
++ * Tomasz Figa <t.figa@samsung.com>
++ *
++ * This program is free software; you can redistribute it and/or modif=
+y
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
 +
-+static int exynos_do_idle(void)
-+{
-+        exynos_smc(SMC_CMD_SLEEP, 0, 0, 0);
-+        return 0;
-+}
++#ifndef __ASM_ARM_FIRMWARE_H
++#define __ASM_ARM_FIRMWARE_H
 +
-+static int exynos_cpu_boot(int cpu)
-+{
-+	exynos_smc(SMC_CMD_CPU1BOOT, cpu, 0, 0);
-+	return 0;
-+}
-+
-+static int exynos_cpu_boot_reg(int cpu, void __iomem **ptr)
-+{
-+	*ptr = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
-+	return 0;
-+}
-+
-+static const struct firmware_ops exynos_firmware_ops = {
-+	.do_idle	= exynos_do_idle,
-+	.cpu_boot	= exynos_cpu_boot,
-+	.cpu_boot_reg	= exynos_cpu_boot_reg,
++struct firmware_ops {
++	int (*do_idle)(void);
++	int (*cpu_boot)(int cpu);
++	int (*cpu_boot_reg)(int cpu, void __iomem **ptr);
++	int (*l2x0_init)(void);
 +};
 +
-+void __init exynos_firmware_init(void)
++extern const struct firmware_ops *firmware_ops;
++
++#define call_firmware_op(op, ...)					\
++	((firmware_ops->op) ? firmware_ops->op(__VA_ARGS__) : (-ENOSYS))
++
++static inline void register_firmware_ops(const struct firmware_ops *op=
+s)
 +{
-+	if (of_have_populated_dt() &&
-+	    !of_find_compatible_node(NULL, NULL, "samsung,secure-firmware"))
-+		return;
-+
-+	pr_info("Running under secure firmware.\n");
-+
-+	register_firmware_ops(&exynos_firmware_ops);
++	firmware_ops =3D ops;
 +}
-diff --git a/arch/arm/mach-exynos/mach-exynos4-dt.c b/arch/arm/mach-exynos/mach-exynos4-dt.c
-index b2b5d5f..a244e4a 100644
---- a/arch/arm/mach-exynos/mach-exynos4-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos4-dt.c
-@@ -88,6 +88,7 @@ DT_MACHINE_START(EXYNOS4210_DT, "Samsung Exynos4 (Flattened Device Tree)")
- 	.init_irq	= exynos4_init_irq,
- 	.map_io		= exynos4210_dt_map_io,
- 	.handle_irq	= gic_handle_irq,
-+	.init_early	= exynos_firmware_init,
- 	.init_machine	= exynos4210_dt_machine_init,
- 	.init_late	= exynos_init_late,
- 	.timer		= &exynos4_timer,
--- 
++
++#endif
+--=20
 1.7.12
