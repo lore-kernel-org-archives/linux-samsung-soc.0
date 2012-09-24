@@ -1,75 +1,126 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 0/6] ARM: EXYNOS: Add secure firmware support
-Date: Mon, 24 Sep 2012 16:28:27 +0200
-Message-ID: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Subject: [PATCH 2/6] ARM: EXYNOS: Add support for secure monitor calls
+Date: Mon, 24 Sep 2012 16:28:29 +0200
+Message-ID: <1348496913-25422-3-git-send-email-t.figa@samsung.com>
+References: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:25355 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752252Ab2IXO2q (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:18065 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752330Ab2IXO2x (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Sep 2012 10:28:46 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+	Mon, 24 Sep 2012 10:28:53 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAU00LMGYVTDP10@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:28:44 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAU004SPYVRKX10@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:28:52 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MAU0018OYVOXC80@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:28:44 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Mon, 24 Sep 2012 23:28:52 +0900 (KST)
+In-reply-to: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, olof@lixom.net, m.szyprowski@samsung.com, t.figa@samsung.com
 
-Some Exynos-based boards are running with secure firmware running in
-TrustZone secure world, which changes the way some things have to be
-initialized.
+Some boards use secure monitor calls to communicate with secure
+firmware.
 
-This series adds support for specifying firmware operations, implements
-some firmware operations for Exynos secure firmware and adds a method of
-enabling secure firmware operations on Exynos-based boards through board
-file and device tree.
+This patch adds exynos_smc function which uses smc assembly instruction
+to do secure monitor calls.
 
-Changes since v1
-http://thread.gmane.org/gmane.linux.kernel.samsung-soc/12583/focus=12820
-  - Changed return types of all operations to int
-  - Defined all operations to return 0 on success, -ENOSYS when not
-    implemented or appropriate error code on error
-
-Tomasz Figa (6):
-  ARM: Add interface for registering and calling firmware-specific
-    operations
-  ARM: EXYNOS: Add support for secure monitor calls
-  ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
-  ARM: EXYNOS: Add IO mapping for non-secure SYSRAM.
-  ARM: EXYNOS: Add support for Exynos secure firmware
-  ARM: EXYNOS: Add secure firmware support to secondary CPU bring-up
-
- .../devicetree/bindings/arm/samsung-boards.txt     |  8 ++++
- arch/arm/common/Makefile                           |  2 +
- arch/arm/common/firmware.c                         | 18 ++++++++
- arch/arm/include/asm/firmware.h                    | 31 +++++++++++++
- arch/arm/mach-exynos/Makefile                      |  6 +++
- arch/arm/mach-exynos/common.c                      | 34 ++++++++++++++
- arch/arm/mach-exynos/common.h                      |  2 +
- arch/arm/mach-exynos/exynos-smc.S                  | 22 +++++++++
- arch/arm/mach-exynos/firmware.c                    | 54 ++++++++++++++++++++++
- arch/arm/mach-exynos/include/mach/map.h            |  3 ++
- arch/arm/mach-exynos/mach-exynos4-dt.c             |  1 +
- arch/arm/mach-exynos/platsmp.c                     | 36 ++++++++++++---
- arch/arm/mach-exynos/smc.h                         | 31 +++++++++++++
- arch/arm/plat-samsung/include/plat/map-s5p.h       |  1 +
- 14 files changed, 243 insertions(+), 6 deletions(-)
- create mode 100644 arch/arm/common/firmware.c
- create mode 100644 arch/arm/include/asm/firmware.h
+Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/mach-exynos/Makefile     |  5 +++++
+ arch/arm/mach-exynos/exynos-smc.S | 22 ++++++++++++++++++++++
+ arch/arm/mach-exynos/smc.h        | 31 +++++++++++++++++++++++++++++++
+ 3 files changed, 58 insertions(+)
  create mode 100644 arch/arm/mach-exynos/exynos-smc.S
- create mode 100644 arch/arm/mach-exynos/firmware.c
  create mode 100644 arch/arm/mach-exynos/smc.h
 
+diff --git a/arch/arm/mach-exynos/Makefile b/arch/arm/mach-exynos/Makefile
+index 9b58024..5c1de47 100644
+--- a/arch/arm/mach-exynos/Makefile
++++ b/arch/arm/mach-exynos/Makefile
+@@ -30,6 +30,11 @@ obj-$(CONFIG_EXYNOS4_MCT)	+= mct.o
+ 
+ obj-$(CONFIG_HOTPLUG_CPU)	+= hotplug.o
+ 
++obj-$(CONFIG_ARCH_EXYNOS)	+= exynos-smc.o
++
++plus_sec := $(call as-instr,.arch_extension sec,+sec)
++AFLAGS_exynos-smc.o		:=-Wa,-march=armv7-a$(plus_sec)
++
+ # machine support
+ 
+ obj-$(CONFIG_MACH_SMDKC210)		+= mach-smdkv310.o
+diff --git a/arch/arm/mach-exynos/exynos-smc.S b/arch/arm/mach-exynos/exynos-smc.S
+new file mode 100644
+index 0000000..2e27aa3
+--- /dev/null
++++ b/arch/arm/mach-exynos/exynos-smc.S
+@@ -0,0 +1,22 @@
++/*
++ * Copyright (C) 2012 Samsung Electronics.
++ *
++ * Copied from omap-smc.S Copyright (C) 2010 Texas Instruments, Inc.
++ *
++ * This program is free software,you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/linkage.h>
++
++/*
++ * Function signature: void exynos_smc(u32 cmd, u32 arg1, u32 arg2, u32 arg3)
++ */
++
++ENTRY(exynos_smc)
++	stmfd	sp!, {r4-r11, lr}
++	dsb
++	smc	#0
++	ldmfd	sp!, {r4-r11, pc}
++ENDPROC(exynos_smc)
+diff --git a/arch/arm/mach-exynos/smc.h b/arch/arm/mach-exynos/smc.h
+new file mode 100644
+index 0000000..e972390
+--- /dev/null
++++ b/arch/arm/mach-exynos/smc.h
+@@ -0,0 +1,31 @@
++/*
++ *  Copyright (c) 2012 Samsung Electronics.
++ *
++ * EXYNOS - SMC Call
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef __ASM_ARCH_EXYNOS_SMC_H
++#define __ASM_ARCH_EXYNOS_SMC_H
++
++#define SMC_CMD_INIT            (-1)
++#define SMC_CMD_INFO            (-2)
++/* For Power Management */
++#define SMC_CMD_SLEEP           (-3)
++#define SMC_CMD_CPU1BOOT        (-4)
++#define SMC_CMD_CPU0AFTR        (-5)
++/* For CP15 Access */
++#define SMC_CMD_C15RESUME       (-11)
++/* For L2 Cache Access */
++#define SMC_CMD_L2X0CTRL        (-21)
++#define SMC_CMD_L2X0SETUP1      (-22)
++#define SMC_CMD_L2X0SETUP2      (-23)
++#define SMC_CMD_L2X0INVALL      (-24)
++#define SMC_CMD_L2X0DEBUG       (-25)
++
++extern void exynos_smc(u32 cmd, u32 arg1, u32 arg2, u32 arg3);
++
++#endif
 -- 
 1.7.12
