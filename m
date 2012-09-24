@@ -1,72 +1,115 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 0/6] pinctrl: samsung: Remove static platform-specific data
-Date: Mon, 24 Sep 2012 11:34:12 -0600
-Message-ID: <50609994.8040005@wwwdotorg.org>
-References: <1348131197-25506-1-git-send-email-t.figa@samsung.com> <505CB4A3.9050707@wwwdotorg.org> <3531529.1enE84BHSJ@flatron>
+Subject: Re: [RFC 6/6] ARM: dts: exynos4210: Add platform-specific descriptions
+ for pin controllers
+Date: Mon, 24 Sep 2012 11:42:15 -0600
+Message-ID: <50609B77.2060406@wwwdotorg.org>
+References: <1348131197-25506-1-git-send-email-t.figa@samsung.com> <1348131197-25506-7-git-send-email-t.figa@samsung.com> <505CB869.5030307@wwwdotorg.org> <2359157.SFB7x6fWGY@flatron>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:54667 "EHLO
+Received: from avon.wwwdotorg.org ([70.85.31.133]:55142 "EHLO
 	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757174Ab2IXReQ (ORCPT
+	with ESMTP id S1757330Ab2IXRmT (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 24 Sep 2012 13:34:16 -0400
-In-Reply-To: <3531529.1enE84BHSJ@flatron>
+	Mon, 24 Sep 2012 13:42:19 -0400
+In-Reply-To: <2359157.SFB7x6fWGY@flatron>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Tomasz Figa <tomasz.figa@gmail.com>
 Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
 
-On 09/21/2012 01:31 PM, Tomasz Figa wrote:
-> On Friday 21 of September 2012 12:40:35 Stephen Warren wrote:
+On 09/21/2012 01:54 PM, Tomasz Figa wrote:
+> On Friday 21 of September 2012 12:56:41 Stephen Warren wrote:
 >> On 09/20/2012 02:53 AM, Tomasz Figa wrote:
->>> This RFC series is a work on replacing static platform-specific data in
->>> pinctrl-samsung driver with data dynamically parsed from device tree.
-...
->>> It aims at reducing the SoC-specific part of the driver and thus the
->>> amount of modifications to driver sources when adding support for next
->>> SoCs (like Exynos4x12).
+>>> The patch "pinctrl: samsung: Parse pin banks from DT" introduced
+>>> platform-specific data parsing from DT.
 >>>
->>> Furthermore, moving definitions of pin banks to device tree will allow
->>> to simplify GPIO and GEINT specification to a format similar to used
->>> previously by gpiolib-based implementation, using a phandle to the bank
->>> and pin index inside the bank, e.g.
+>>> This patch adds all necessary nodes and properties to exynos4210 device
+>>> tree sources.
 >>>
->>> 	gpios = <&gpa1 4 0>;
->>> 	interrupt-parent = <&gpa1>;
->>> 	interrupts = <4 0>;
+>>> +++ b/arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi
+
+>>> +			samsung,pctl-offset = <0x000>;
+>>> +			samsung,pin-bank = "gpa0";
+>>> +			samsung,pin-count = <8>;
+>>> +			samsung,func-width = <4>;
+>>> +			samsung,pud-width = <2>;
+>>> +			samsung,drv-width = <2>;
+>>> +			samsung,conpdn-width = <2>;
+>>> +			samsung,pudpdn-width = <2>;
 >>
->> I don't think those two are correlated; the GPIO specifier format could
->> just as easily be <bank pin> irrespective of whether the pinctrl driver
->> contains SoC-specific tables or not.
+>> The properties above represent the width of the fields. Must all fields
+>> always be packed together into say the LSB of the registers? What if
+>> there are gaps between the fields in a future SoC variant, or the order
+>> of the fields in the register changes? I think you want to add either a
+>> samsung,func-bit/samsung,func-position property for each of the fields,
+>> or change from samsung,func-width=<4> to samsung,field-mask=<0xf>. IIRC,
+>> the generic pinctrl binding used a mask for this purpose.
+>>
+>> What if a future SoC variant adds more fields to the register? At that
+>> point, you'd need to edit the driver anyway in order to define a new DT
+>> property to represent the new field. Perhaps instead of having an
+>> explicit named property per field in the register, you want a simple
+>> list of fields:
+>>
+>> samsung,pin-property-names = "func", "pud", "drv", "conpdn", "pudpdn";
+>> samsung,pin-propert-masks = <0xf 0x30 0xc0 0x300 0xc00>;
+>>
+>> That would allow a completely arbitrary number of fields and layouts to
+>> be described.
+>>
+>> I wonder if for absolute generality you want a samsung,pin-stride
+>> property to represent the difference in register address per pin. I
+>> assume that's hard-coded as 4 right now.
 > 
-> Correct me if I'm wrong, but each bank needs to have its own subnode to be 
-> able to address pins like this. That was the starting point of the whole 
-> series and the idea that if all the banks (which are SoC-specific) have to 
-> be defined anyway, maybe it wouldn't be too bad to put all the SoC-specific 
-> parameters there too.
+> Hmm, considering so many different possible changes, maybe a more 
+> conservative solution would be better, like reducing the amount of 
+> information held in DT to bank type, e.g.
+> 
+> 	samsung,bank-type = "exynos4";
+> 
+> or maybe
+> 
+> 	compatible = "samsung,exynos4-pin-bank*;
+> 
+> and then define supported bank types in the driver. SoC-specific data would 
+> remain in DT, i.e. pctl-offset, pin-bank, pin-count, eint-offset, etc.
 
-If you write your own custom .xlate function, I think you can do
-basically anything you want; all of the following are possible, I believe:
+Yes, removing much of the data from DT and putting it into a tiny table
+in the driver makes sense to me in this case.
 
-a) Single DT node covering all banks, with GPIO specifier being <n>
-where n is some linearized GPIO ID across all banks.
+>>> diff --git a/arch/arm/boot/dts/exynos4210.dtsi
+>>> b/arch/arm/boot/dts/exynos4210.dtsi index ecbc707..0e93717 100644
+>>> --- a/arch/arm/boot/dts/exynos4210.dtsi
+>>> +++ b/arch/arm/boot/dts/exynos4210.dtsi
+>>> @@ -59,6 +59,10 @@
+>>>
+>>>  		reg = <0x11400000 0x1000>;
+>>>  		interrupts = <0 47 0>;
+>>>  		interrupt-controller;
+>>>
+>>> +		samsung,geint-con = <0x700>;
+>>> +		samsung,geint-mask = <0x900>;
+>>> +		samsung,geint-pend = <0xA00>;
+>>> +		samsung,svc = <0xB08>;
+>>
+>> I assume those new properties represent register addresses within the
+>> block. If not, I don't understand what they are.
+> 
+> Yes, they do.
+> 
+>> It's unclear to me why those properties aren't all part of
+>> exynos4210-pinctrl-banks.dtsi. Do you really have multiple SoCs where
+>> the register addresses for the pinctrl registers are the same (hence can
+>> be in a shared exynos4210-pinctrl-banks.dtsi), yet the register
+>> addresses for the geint registers are different (hence must be in
+>> non-shared exynos4210.dtsi)?
+> 
+> Exynos4210-pincstrl-banks.dtsi isn't shared, it's specific to Exynos4210. 
+> Other SoCs are going to have their own whatever-pinctrl-banks.dtsi.
 
-b) Single DT node covering all banks, with GPIO specifier being <b n>
-where b is the bank number, and n is the GPIO ID within the bank (xlate
-would presumably calculate "(b * MAX_GPIOS_PER_BANK) + n" and up with
-the same data as in (a) above.
-
-c) One DT node per bank, one gpio_chip registered per node, with the
-GPIO specifier being <n> where n is the GPIO ID within the bank the
-phandle points at.
-
-d) One DT node per bank, all contained within a single parent DT node,
-one gpio_chip registered per node (one for each bank node, and one for
-the parent node), with GPIO phandles pointing at the parent node, with
-GPIO specifier in the format of either (a) or (b) above, and the
-top-level node's .xlate returning a different gpio_chip (for one of the
-child bank-specific nodes) rather than the parent chip. At least, IIRC,
-Grant Likely was going to extend a gpio_chip's .xlate to be able to
-return a different chip; I'm not sure if that was implemented yet or not.
+OK, so my point here is: why not put all the pinctrl-related properties
+into a single file, rather than spreading them across different files.
+Having separate files makes sense if they can be re-used in different
+places, but not if they're single-use.
