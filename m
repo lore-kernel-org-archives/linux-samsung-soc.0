@@ -1,133 +1,41 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH 2/3] DMA: PL330: Change allocation method to properly free
- DMA descriptors
-Date: Tue, 25 Sep 2012 20:56:45 +0530
-Message-ID: <CAG17yqS7u0PoTdXMyOm8sr1sscOvv=P4SdQFsO0tkfr3yFEoug@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-3-git-send-email-inderpal.singh@linaro.org>
-	<CABb+yY06kmPgrcv6-GyPmyKLo+ed90qJuakrYijacAD0k8wRYQ@mail.gmail.com>
+From: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Tue, 25 Sep 2012 16:31:09 +0100
+Message-ID: <20120925153109.GA8834@sirena.org.uk>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
+ <505C9072.2010204@wwwdotorg.org>
+ <CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
+ <2368486.hLKA5vLF0M@avalon>
+ <CAAQKjZN++zZ9cfNCB21TeQwPZgFVU-Cmo9ZhVwaaMz+HO2vHig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:63073 "EHLO
-	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754052Ab2IYP0q (ORCPT
+Received: from cassiel.sirena.org.uk ([80.68.93.111]:58321 "EHLO
+	cassiel.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757207Ab2IYPbM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 11:26:46 -0400
-Received: by vcbfo13 with SMTP id fo13so7779200vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 08:26:45 -0700 (PDT)
-In-Reply-To: <CABb+yY06kmPgrcv6-GyPmyKLo+ed90qJuakrYijacAD0k8wRYQ@mail.gmail.com>
+	Tue, 25 Sep 2012 11:31:12 -0400
+Content-Disposition: inline
+In-Reply-To: <CAAQKjZN++zZ9cfNCB21TeQwPZgFVU-Cmo9ZhVwaaMz+HO2vHig@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-On 25 September 2012 18:39, Jassi Brar <jassisinghbrar@gmail.com> wrote:
-> On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
-> <inderpal.singh@linaro.org> wrote:
->> In probe, memory for multiple DMA descriptors were being allocated at once
->> and then it was being split and added into DMA pool one by one. The address
->> of this memory allocation is not being saved anywhere. To free this memory,
->> the address is required. Initially the first node of the pool will be
->> pointed by this address but as we use this pool the descs will shuffle and
->> hence we will lose the track of the address.
->>
->> This patch does following:
->>
->> 1. Allocates DMA descs one by one and then adds them to pool so that all
->>    descs can be fetched and memory freed one by one. This way runtime
->>    added descs can also be freed.
->> 2. Free DMA descs in case of error in probe and in module's remove function
->>
->> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
->> ---
->>  drivers/dma/pl330.c |   28 +++++++++++++++++++++-------
->>  1 file changed, 21 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
->> index 10c6b6a..04d83e6 100644
->> --- a/drivers/dma/pl330.c
->> +++ b/drivers/dma/pl330.c
->> @@ -2541,20 +2541,19 @@ static int add_desc(struct dma_pl330_dmac *pdmac, gfp_t flg, int count)
->>         if (!pdmac)
->>                 return 0;
->>
->> -       desc = kmalloc(count * sizeof(*desc), flg);
->> -       if (!desc)
->> -               return 0;
->> -
->>         spin_lock_irqsave(&pdmac->pool_lock, flags);
->>
->>         for (i = 0; i < count; i++) {
->> -               _init_desc(&desc[i]);
->> -               list_add_tail(&desc[i].node, &pdmac->desc_pool);
->> +               desc = kmalloc(sizeof(*desc), flg);
->> +               if (!desc)
->> +                       break;
->> +               _init_desc(desc);
->> +               list_add_tail(&desc->node, &pdmac->desc_pool);
->>         }
->>
->>         spin_unlock_irqrestore(&pdmac->pool_lock, flags);
->>
->> -       return count;
->> +       return i;
->>  }
->>
-> OK, but the kmalloc shouldn't be done with irqs disabled. Please
-> protect only the list_add_tail()
->
-Yes, I missed it. I will update and send it again.
+On Wed, Sep 26, 2012 at 12:03:44AM +0900, Inki Dae wrote:
+> 2012/9/25 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
 
-Thanks,
-Inder
+> > Aren't DT bindings considered as an ABI, and required to be supported more or
+> > less forever ? If you merge this DT binding you'll have to keep supporting it.
+> > That's why DT bindings should not be rushed in.
 
-> thanks.
->
->>  static struct dma_pl330_desc *
->> @@ -2857,6 +2856,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>         struct dma_pl330_platdata *pdat;
->>         struct dma_pl330_dmac *pdmac;
->>         struct dma_pl330_chan *pch;
->> +       struct dma_pl330_desc *desc;
->>         struct pl330_info *pi;
->>         struct dma_device *pd;
->>         struct resource *res;
->> @@ -2978,6 +2978,12 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>  probe_err5:
->>         kfree(pdmac->peripherals);
->>  probe_err4:
->> +       while (!list_empty(&pdmac->desc_pool)) {
->> +               desc = list_entry(pdmac->desc_pool.next,
->> +                               struct dma_pl330_desc, node);
->> +               list_del(&desc->node);
->> +               kfree(desc);
->> +       }
->>         pl330_del(pi);
->>  probe_err3:
->>         free_irq(irq, pi);
->> @@ -2994,6 +3000,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
->>  {
->>         struct dma_pl330_dmac *pdmac = amba_get_drvdata(adev);
->>         struct dma_pl330_chan *pch, *_p;
->> +       struct dma_pl330_desc *desc;
->>         struct pl330_info *pi;
->>         struct resource *res;
->>         int irq;
->> @@ -3015,6 +3022,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
->>                 pl330_free_chan_resources(&pch->chan);
->>         }
->>
->> +       while (!list_empty(&pdmac->desc_pool)) {
->> +               desc = list_entry(pdmac->desc_pool.next,
->> +                               struct dma_pl330_desc, node);
->> +               list_del(&desc->node);
->> +               kfree(desc);
->> +       }
->> +
->>         pi = &pdmac->pif;
->>
->>         pl330_del(pi);
->> --
->> 1.7.9.5
->>
+> is ABI required for DT binding?  I know DT binding parses just lcd
+> timing data from device tree file so ABI isn't needed. but when it
+> comes to DT, I'm novice yet so there may be my missing point. could
+> you tell me why DT bindings are considered as an ABI? if there is my
+> missing point, will consider it again.
+
+It's supposed to be possible to ship a DT with a board and then boot any
+OS or OS version on the board.  If the meaning of the DT keeps changing
+then this becomes impossible, you need to keep changing the DT when you
+change the thing that parses it (rendering the whole exercise pointless).
