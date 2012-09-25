@@ -1,55 +1,98 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
-Date: Tue, 25 Sep 2012 18:47:09 +0530
-Message-ID: <CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+From: "ABRAHAM, KISHON VIJAY" <kishon@ti.com>
+Subject: Re: [PATCH v6 1/5] usb: phy: samsung: Introducing usb phy driver for hsotg
+Date: Tue, 25 Sep 2012 18:47:24 +0530
+Message-ID: <CAAe_U6J7j1_kLz3kUaOQqXmpR1JbS3wQypaPe=MTae8JUs5LDw@mail.gmail.com>
+References: <1347886484-16064-1-git-send-email-p.paneri@samsung.com>
+	<1347886484-16064-2-git-send-email-p.paneri@samsung.com>
+	<50605A69.2070201@gmail.com>
+	<CAD6zSYOABTwTGXgFwGwLX-NhjDjDvtqUDVYTMGDng3nuTgLeZg@mail.gmail.com>
+	<5061A131.9010905@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from na3sys009aog115.obsmtp.com ([74.125.149.238]:45548 "EHLO
+	na3sys009aog115.obsmtp.com" rhost-flags-OK-OK-OK-OK)
+	by vger.kernel.org with ESMTP id S1756429Ab2IYNR0 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Sep 2012 09:17:26 -0400
+Received: by vcbfo13 with SMTP id fo13so7584571vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 06:17:25 -0700 (PDT)
+In-Reply-To: <5061A131.9010905@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Rob Herring <robherring2@gmail.com>
+Cc: Praveen Paneri <p.paneri@samsung.com>, linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
-<inderpal.singh@linaro.org> wrote:
-> Since peripheral channel resources are not being allocated at probe,
-> no need to flush the channels and free the resources in remove function.
->
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
->  drivers/dma/pl330.c |    8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
->
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 04d83e6..6f06080 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -3012,16 +3012,10 @@ static int __devexit pl330_remove(struct amba_device *adev)
->
->         /* Idle the DMAC */
->         list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
-> -                       chan.device_node) {
-> -
-> +                       chan.device_node)
->                 /* Remove the channel */
->                 list_del(&pch->chan.device_node);
->
-> -               /* Flush the channel */
-> -               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
-> -               pl330_free_chan_resources(&pch->chan);
-> -       }
-> -
->         while (!list_empty(&pdmac->desc_pool)) {
->                 desc = list_entry(pdmac->desc_pool.next,
->                                 struct dma_pl330_desc, node);
+Hi,
 
-I am not sure about this patch. The DMA_TERMINATE_ALL is only called
-by the client and if the pl330 module is forced unloaded while some
-client is queued, we have to manually do DMA_TERMINATE_ALL.
-A better option could be to simply fail pl330_remove if some client is
-queued on the DMAC.
+On Tue, Sep 25, 2012 at 5:48 PM, Rob Herring <robherring2@gmail.com> wrote:
+> On 09/25/2012 06:23 AM, Praveen Paneri wrote:
+>> Hi Rob,
+>>
+>> On Mon, Sep 24, 2012 at 6:34 PM, Rob Herring <robherring2@gmail.com> wrote:
+>>> On 09/17/2012 07:54 AM, Praveen Paneri wrote:
+>>>> This driver uses usb_phy interface to interact with s3c-hsotg. Supports
+>>>> phy_init and phy_shutdown functions to enable/disable phy. Tested with
+>>>> smdk6410 and smdkv310. More SoCs can be brought under later.
+>>>>
+>>>> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
+>>>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>>>> ---
+>>>>  .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
+>>>>  drivers/usb/phy/Kconfig                            |    8 +
+>>>>  drivers/usb/phy/Makefile                           |    1 +
+>>>>  drivers/usb/phy/samsung-usbphy.c                   |  360 ++++++++++++++++++++
+>>>>  include/linux/platform_data/samsung-usbphy.h       |   27 ++
+>>>>  5 files changed, 405 insertions(+), 0 deletions(-)
+>>>>  create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>>  create mode 100644 drivers/usb/phy/samsung-usbphy.c
+>>>>  create mode 100644 include/linux/platform_data/samsung-usbphy.h
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>> new file mode 100644
+>>>> index 0000000..fefd9c8
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>> @@ -0,0 +1,9 @@
+>>>> +* Samsung's usb phy transceiver
+>>>> +
+>>>> +The Samsung's phy transceiver is used for controlling usb otg phy for
+>>>> +s3c-hsotg usb device controller.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible : should be "samsung,exynos4210-usbphy"
+>>>> +- reg : base physical address of the phy registers and length of memory mapped
+>>>> +     region.
+>>>
+>>> What's missing here is describing the connection of phys to host
+>>> controllers. We've got several people adding usb phy bindings and need
+>>> to define them in a common way.
+>> yes! it just covers the generic binding. I will update it accordingly
+>> as the generic phy framework takes its final shape.
+>
+> That sounds like the wrong way to define a binding... Figuring out how
+> to describe the h/w should not be dependent on changes in the kernel.
+> Bindings are an ABI and should not be evolving.
 
--jassi
+There can be multiple ways to define the binding. For e.g. We
+discussed few ways of binding the phys to the controller
+
+controller {
+              phy0 = <&phandle1_name>;
+              phy1 = <&phandle2_name>;
+}
+
+phy0 and phy1 are any name given to obtain a reference to the phy and
+the controller should send the phandle name like
+get_phy_by_phandle("phy0");. Then we thought of standardizing that
+name.
+
+and then finally we settled on something like this
+controller {
+              phy = <&phandle0_name>, <&phandle1_name>;
+}
+so that controller can obtain a reference to the PHY using
+*of_phy_get(struct device *dev, const char *phandle, u8 index)*
+
+Thanks
+Kishon
