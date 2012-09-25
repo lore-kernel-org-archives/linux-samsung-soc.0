@@ -1,44 +1,200 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
-Date: Tue, 25 Sep 2012 14:27:36 +0530
-Message-ID: <1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jassisinghbrar@gmail.com, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [RFC 6/6] ARM: dts: exynos4210: Add platform-specific descriptions
+ for pin controllers
+Date: Tue, 25 Sep 2012 11:37:49 +0200
+Message-ID: <40868705.kP2fEHozCi@amdc1227>
+References: <1348131197-25506-1-git-send-email-t.figa@samsung.com>
+ <7891903.Qpoh0EJCQr@flatron> <5060E95E.5030601@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout3.samsung.com ([203.254.224.33]:41039 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752136Ab2IYJiE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 25 Sep 2012 05:38:04 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAW001UJG3E7GW0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Sep 2012 18:38:03 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAW00BXTG370O20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 25 Sep 2012 18:38:02 +0900 (KST)
+In-reply-to: <5060E95E.5030601@wwwdotorg.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Tomasz Figa <tomasz.figa@gmail.com>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
 
-Since peripheral channel resources are not being allocated at probe,
-no need to flush the channels and free the resources in remove function.
+Hi Stephen,
 
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
----
- drivers/dma/pl330.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+On Monday 24 of September 2012 17:14:38 Stephen Warren wrote:
+> On 09/24/2012 03:31 PM, Tomasz Figa wrote:
+> > On Monday 24 of September 2012 11:42:15 Stephen Warren wrote:
+> >> On 09/21/2012 01:54 PM, Tomasz Figa wrote:
+> >>> On Friday 21 of September 2012 12:56:41 Stephen Warren wrote:
+> >>>> On 09/20/2012 02:53 AM, Tomasz Figa wrote:
+> >>>>> The patch "pinctrl: samsung: Parse pin banks from DT" introduced
+> >>>>> platform-specific data parsing from DT.
+> >>>>> 
+> >>>>> This patch adds all necessary nodes and properties to exynos4210
+> >>>>> device
+> >>>>> tree sources.
+> >>>>> 
+> >>>>> +++ b/arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi
+> >>>>> 
+> >>>>> +			samsung,pctl-offset = <0x000>;
+> >>>>> +			samsung,pin-bank = "gpa0";
+> >>>>> +			samsung,pin-count = <8>;
+> >>>>> +			samsung,func-width = <4>;
+> >>>>> +			samsung,pud-width = <2>;
+> >>>>> +			samsung,drv-width = <2>;
+> >>>>> +			samsung,conpdn-width = <2>;
+> >>>>> +			samsung,pudpdn-width = <2>;
+> >>>> 
+> >>>> The properties above represent the width of the fields. Must all
+> >>>> fields
+> >>>> always be packed together into say the LSB of the registers? What if
+> >>>> there are gaps between the fields in a future SoC variant, or the
+> >>>> order
+> >>>> of the fields in the register changes? I think you want to add
+> >>>> either
+> >>>> a
+> >>>> samsung,func-bit/samsung,func-position property for each of the
+> >>>> fields,
+> >>>> or change from samsung,func-width=<4> to samsung,field-mask=<0xf>.
+> >>>> IIRC,
+> >>>> the generic pinctrl binding used a mask for this purpose.
+> >>>> 
+> >>>> What if a future SoC variant adds more fields to the register? At
+> >>>> that
+> >>>> point, you'd need to edit the driver anyway in order to define a new
+> >>>> DT
+> >>>> property to represent the new field. Perhaps instead of having an
+> >>>> explicit named property per field in the register, you want a simple
+> >>>> list of fields:
+> >>>> 
+> >>>> samsung,pin-property-names = "func", "pud", "drv", "conpdn",
+> >>>> "pudpdn";
+> >>>> samsung,pin-propert-masks = <0xf 0x30 0xc0 0x300 0xc00>;
+> >>>> 
+> >>>> That would allow a completely arbitrary number of fields and layouts
+> >>>> to
+> >>>> be described.
+> >>>> 
+> >>>> I wonder if for absolute generality you want a samsung,pin-stride
+> >>>> property to represent the difference in register address per pin. I
+> >>>> assume that's hard-coded as 4 right now.
+> >>> 
+> >>> Hmm, considering so many different possible changes, maybe a more
+> >>> conservative solution would be better, like reducing the amount of
+> >>> information held in DT to bank type, e.g.
+> >>> 
+> >>> 	samsung,bank-type = "exynos4";
+> >>> 
+> >>> or maybe
+> >>> 
+> >>> 	compatible = "samsung,exynos4-pin-bank*;
+> >>> 
+> >>> and then define supported bank types in the driver. SoC-specific data
+> >>> would remain in DT, i.e. pctl-offset, pin-bank, pin-count,
+> >>> eint-offset, etc.
+> >> 
+> >> Yes, removing much of the data from DT and putting it into a tiny
+> >> table
+> >> in the driver makes sense to me in this case.
+> > 
+> > A hybrid solution came to my mind, define bank types in device tree
+> > once
+> > 
+> > and then reference them in banks. Something like:
+> > 	pinctrl-bank-types {
+> > 	
+> > 		bank_off: bank-off {
+> > 		
+> > 			samsung,func-width = <4>;
+> > 			samsung,pud-width = <2>;
+> > 			samsung,drv-width = <2>;
+> > 			samsung,conpdn-width = <2>;
+> > 			samsung,pudpdn-width = <2>;
+> > 		
+> > 		};
+> > 		
+> > 		bank_alive: bank-alive {
+> > 		
+> > 			samsung,func-width = <4>;
+> > 			samsung,pud-width = <2>;
+> > 			samsung,drv-width = <2>;
+> > 		
+> > 		};
+> > 	
+> > 	};
+> > 	
+> > 	/* ... */
+> > 	
+> > 	pinctrl@12345678 {
+> > 	
+> > 		/* ... */
+> > 		gpa0: gpa0 {
+> > 		
+> > 			/* ... */
+> > 			samsung,bank-type = <&bank_off>;
+> > 			/* ... */
+> > 		
+> > 		};
+> > 		/* ... */
+> > 	
+> > 	};
+> > 
+> > This would add the possibility to define new banks types quickly, but
+> > would not add too much overhead.
+> > 
+> > What do you think?
+> 
+> That does solve the issue of parsing those same values over and over,
+> but at the cost of making the binding a lot more conceptually complex.
+> 
+> However, it doesn't solve any of the extensibility issues I raised such
+> as whether pos+size or mask would be a better representation, what about
+> if the fields end up being in different (separate) registers on newer
+> SoCs, etc.
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 04d83e6..6f06080 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -3012,16 +3012,10 @@ static int __devexit pl330_remove(struct amba_device *adev)
- 
- 	/* Idle the DMAC */
- 	list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
--			chan.device_node) {
--
-+			chan.device_node)
- 		/* Remove the channel */
- 		list_del(&pch->chan.device_node);
- 
--		/* Flush the channel */
--		pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
--		pl330_free_chan_resources(&pch->chan);
--	}
--
- 	while (!list_empty(&pdmac->desc_pool)) {
- 		desc = list_entry(pdmac->desc_pool.next,
- 				struct dma_pl330_desc, node);
--- 
-1.7.9.5
+Hmm, could you elaborate on the idea of using mask instead of field widths? 
+I don't see how this could be better and there is an additional drawback of 
+having to calculate width and pos from every mask.
+
+Anyway, back to your concern, the values that are written to the bit fields 
+specified by those bindings are arbitrary SoC-specific values anyway, so 
+if, for example, we get a SoC with following register layout:
+
+bits:    7 | 6 - 4  | 3 | 2 - 0
+meaning: 0 | func 1 | 0 | func 0
+
+or
+
+bits:    7 - 5  | 4 | 3 - 1  | 0
+meaning: func 1 | 0 | func 0 | 0
+
+we can easily define the width as 4 and use appropriate 4-bit function 
+values with zeroes on reserved positions.
+
+> I forget, do you actually have multiple different SoCs right now (or in
+> the near future where the HW design is known now for certain even if the
+> chip isn't available) that have different values for all these *-width
+> properties and hence can be represented just using this binding and
+> without altering the driver at all? If so, I suppose the original
+> binding is at least useful (although I would certainly still request to
+> use *-mask instead of *-width properties).
+
+The binding I proposed covers all Samsung SoCs currently available, 
+starting from s3c24xx, through s3c64xx (except 4bit2 bank type, with two 
+function registers), to the whole Exynos series, including latest Exynos5.
+
+Best regards,
+--
+Tomasz Figa
+Samsung Poland R&D Center
