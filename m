@@ -1,84 +1,124 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
-Date: Tue, 25 Sep 2012 15:03:45 +0200
-Message-ID: <2368486.hLKA5vLF0M@avalon>
-References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com> <505C9072.2010204@wwwdotorg.org> <CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 2/3] DMA: PL330: Change allocation method to properly free
+ DMA descriptors
+Date: Tue, 25 Sep 2012 18:39:36 +0530
+Message-ID: <CABb+yY06kmPgrcv6-GyPmyKLo+ed90qJuakrYijacAD0k8wRYQ@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-3-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from perceval.ideasonboard.com ([95.142.166.194]:44267 "EHLO
-	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750863Ab2IYNDJ (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:64160 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756099Ab2IYNJg (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 09:03:09 -0400
-In-Reply-To: <CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
+	Tue, 25 Sep 2012 09:09:36 -0400
+In-Reply-To: <1348563456-30569-3-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inki Dae <inki.dae@samsung.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, kgene.kim@samsung.com, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 
-On Monday 24 September 2012 21:35:46 Inki Dae wrote:
-> 2012/9/22 Stephen Warren <swarren@wwwdotorg.org>:
-> > On 09/21/2012 01:22 AM, Inki Dae wrote:
-> >> 2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
-> >>> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
-> >>>> This patch adds device tree based discovery support for exynos DRM-FIMD
-> >>>> driver which includes driver modification to handle platform data in
-> >>>> both the cases with DT and non-DT, Also adds the documentation for
-> >>>> bindings.
-> >>>> 
-> >>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt
-> >>>> b/Documentation/devicetree/bindings/drm/exynos/fimd.txt>>> 
-> >>> ...
-> >>> 
-> >>>> + - samsung,fimd-display: This property should specify the phandle of
-> >>>> the
-> >>>> +   display device node which holds the video interface timing with the
-> >>>> +   below mentioned properties.
-> >>>> +
-> >>>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
-> >>>> +     horizontal timing includes four parameters in the following
-> >>>> order.
-> >>>> +
-> >>>> +     - horizontal back porch (in number of lcd clocks)
-> >>>> +     - horizontal front porch (in number of lcd clocks)
-> >>>> +     - hsync pulse width (in number of lcd clocks)
-> >>>> +     - Display panels X resolution.
-> >>>> +
-> >>>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
-> >>>> +     vertical timing includes four parameters in the following order.
-> >>>> +
-> >>>> +     - vertical back porch (in number of lcd lines)
-> >>>> +     - vertical front porch (in number of lcd lines)
-> >>>> +     - vsync pulse width (in number of lcd clocks)
-> >>>> +     - Display panels Y resolution.
-> >>> 
-> >>> Should this not use the new videomode timings that are under discussion
-> >>> at:
-> >>> 
-> >>> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
-> >> 
-> >> ok, I agree with you. then the videomode helper is going to be merged
-> >> to mainline(3.6)? if so, this patch should be reworked based on the
-> >> videomode helper.
-> > 
-> > I think the videomode helpers would be merged for 3.7 at the very
-> > earliest; 3.6 is cooked already. Given there are still some comments on
-> > the binding, perhaps it won't happen until 3.8, but it'd be best to ask
-> > on that thread so that people more directly involved with the status can
-> > answer.
-> 
-> as I mentioned before, it's better to use videomode helper instead but
-> for this, we should wait for that the videomode helper are merged to
-> mainline so I think it's better to merge it as is and then modify it
-> for videomode helper to be used later.
+On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
+<inderpal.singh@linaro.org> wrote:
+> In probe, memory for multiple DMA descriptors were being allocated at once
+> and then it was being split and added into DMA pool one by one. The address
+> of this memory allocation is not being saved anywhere. To free this memory,
+> the address is required. Initially the first node of the pool will be
+> pointed by this address but as we use this pool the descs will shuffle and
+> hence we will lose the track of the address.
+>
+> This patch does following:
+>
+> 1. Allocates DMA descs one by one and then adds them to pool so that all
+>    descs can be fetched and memory freed one by one. This way runtime
+>    added descs can also be freed.
+> 2. Free DMA descs in case of error in probe and in module's remove function
+>
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+>  drivers/dma/pl330.c |   28 +++++++++++++++++++++-------
+>  1 file changed, 21 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 10c6b6a..04d83e6 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -2541,20 +2541,19 @@ static int add_desc(struct dma_pl330_dmac *pdmac, gfp_t flg, int count)
+>         if (!pdmac)
+>                 return 0;
+>
+> -       desc = kmalloc(count * sizeof(*desc), flg);
+> -       if (!desc)
+> -               return 0;
+> -
+>         spin_lock_irqsave(&pdmac->pool_lock, flags);
+>
+>         for (i = 0; i < count; i++) {
+> -               _init_desc(&desc[i]);
+> -               list_add_tail(&desc[i].node, &pdmac->desc_pool);
+> +               desc = kmalloc(sizeof(*desc), flg);
+> +               if (!desc)
+> +                       break;
+> +               _init_desc(desc);
+> +               list_add_tail(&desc->node, &pdmac->desc_pool);
+>         }
+>
+>         spin_unlock_irqrestore(&pdmac->pool_lock, flags);
+>
+> -       return count;
+> +       return i;
+>  }
+>
+OK, but the kmalloc shouldn't be done with irqs disabled. Please
+protect only the list_add_tail()
 
-Aren't DT bindings considered as an ABI, and required to be supported more or 
-less forever ? If you merge this DT binding you'll have to keep supporting it. 
-That's why DT bindings should not be rushed in.
+thanks.
 
--- 
-Regards,
-
-Laurent Pinchart
+>  static struct dma_pl330_desc *
+> @@ -2857,6 +2856,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>         struct dma_pl330_platdata *pdat;
+>         struct dma_pl330_dmac *pdmac;
+>         struct dma_pl330_chan *pch;
+> +       struct dma_pl330_desc *desc;
+>         struct pl330_info *pi;
+>         struct dma_device *pd;
+>         struct resource *res;
+> @@ -2978,6 +2978,12 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>  probe_err5:
+>         kfree(pdmac->peripherals);
+>  probe_err4:
+> +       while (!list_empty(&pdmac->desc_pool)) {
+> +               desc = list_entry(pdmac->desc_pool.next,
+> +                               struct dma_pl330_desc, node);
+> +               list_del(&desc->node);
+> +               kfree(desc);
+> +       }
+>         pl330_del(pi);
+>  probe_err3:
+>         free_irq(irq, pi);
+> @@ -2994,6 +3000,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>  {
+>         struct dma_pl330_dmac *pdmac = amba_get_drvdata(adev);
+>         struct dma_pl330_chan *pch, *_p;
+> +       struct dma_pl330_desc *desc;
+>         struct pl330_info *pi;
+>         struct resource *res;
+>         int irq;
+> @@ -3015,6 +3022,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>                 pl330_free_chan_resources(&pch->chan);
+>         }
+>
+> +       while (!list_empty(&pdmac->desc_pool)) {
+> +               desc = list_entry(pdmac->desc_pool.next,
+> +                               struct dma_pl330_desc, node);
+> +               list_del(&desc->node);
+> +               kfree(desc);
+> +       }
+> +
+>         pi = &pdmac->pif;
+>
+>         pl330_del(pi);
+> --
+> 1.7.9.5
+>
