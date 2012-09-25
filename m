@@ -1,87 +1,133 @@
 From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH 1/3] DMA: PL330: Free memory allocated for peripheral channels
-Date: Tue, 25 Sep 2012 20:53:47 +0530
-Message-ID: <CAG17yqQ3EZ98uWd0apM-205BTLZ7x4wn26__+YdycR5pNCDddQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] DMA: PL330: Change allocation method to properly free
+ DMA descriptors
+Date: Tue, 25 Sep 2012 20:56:45 +0530
+Message-ID: <CAG17yqS7u0PoTdXMyOm8sr1sscOvv=P4SdQFsO0tkfr3yFEoug@mail.gmail.com>
 References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-2-git-send-email-inderpal.singh@linaro.org>
-	<CABb+yY1DiWT6-faPe24wVYLwO9vP0W7KswcAyqAWd5VH-JfizA@mail.gmail.com>
+	<1348563456-30569-3-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY06kmPgrcv6-GyPmyKLo+ed90qJuakrYijacAD0k8wRYQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vc0-f174.google.com ([209.85.220.174]:62449 "EHLO
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:63073 "EHLO
 	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754646Ab2IYPXs (ORCPT
+	with ESMTP id S1754052Ab2IYP0q (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 11:23:48 -0400
-Received: by vcbfo13 with SMTP id fo13so7774479vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 08:23:47 -0700 (PDT)
-In-Reply-To: <CABb+yY1DiWT6-faPe24wVYLwO9vP0W7KswcAyqAWd5VH-JfizA@mail.gmail.com>
+	Tue, 25 Sep 2012 11:26:46 -0400
+Received: by vcbfo13 with SMTP id fo13so7779200vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 08:26:45 -0700 (PDT)
+In-Reply-To: <CABb+yY06kmPgrcv6-GyPmyKLo+ed90qJuakrYijacAD0k8wRYQ@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jassi Brar <jassisinghbrar@gmail.com>
 Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 
-On 25 September 2012 18:17, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+On 25 September 2012 18:39, Jassi Brar <jassisinghbrar@gmail.com> wrote:
 > On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
 > <inderpal.singh@linaro.org> wrote:
->> The allocated memory for peripheral channels is not being freed upon
->> failure in probe and in module's remove funtion. It will lead to memory
->> leakage. Hence free the allocated memory.
+>> In probe, memory for multiple DMA descriptors were being allocated at once
+>> and then it was being split and added into DMA pool one by one. The address
+>> of this memory allocation is not being saved anywhere. To free this memory,
+>> the address is required. Initially the first node of the pool will be
+>> pointed by this address but as we use this pool the descs will shuffle and
+>> hence we will lose the track of the address.
+>>
+>> This patch does following:
+>>
+>> 1. Allocates DMA descs one by one and then adds them to pool so that all
+>>    descs can be fetched and memory freed one by one. This way runtime
+>>    added descs can also be freed.
+>> 2. Free DMA descs in case of error in probe and in module's remove function
 >>
 >> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
 >> ---
->>  drivers/dma/pl330.c |    5 ++++-
->>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>  drivers/dma/pl330.c |   28 +++++++++++++++++++++-------
+>>  1 file changed, 21 insertions(+), 7 deletions(-)
 >>
 >> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
->> index 2ebd4cd..10c6b6a 100644
+>> index 10c6b6a..04d83e6 100644
 >> --- a/drivers/dma/pl330.c
 >> +++ b/drivers/dma/pl330.c
->> @@ -2962,7 +2962,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>         ret = dma_async_device_register(pd);
->>         if (ret) {
->>                 dev_err(&adev->dev, "unable to register DMAC\n");
->> -               goto probe_err4;
->> +               goto probe_err5;
+>> @@ -2541,20 +2541,19 @@ static int add_desc(struct dma_pl330_dmac *pdmac, gfp_t flg, int count)
+>>         if (!pdmac)
+>>                 return 0;
+>>
+>> -       desc = kmalloc(count * sizeof(*desc), flg);
+>> -       if (!desc)
+>> -               return 0;
+>> -
+>>         spin_lock_irqsave(&pdmac->pool_lock, flags);
+>>
+>>         for (i = 0; i < count; i++) {
+>> -               _init_desc(&desc[i]);
+>> -               list_add_tail(&desc[i].node, &pdmac->desc_pool);
+>> +               desc = kmalloc(sizeof(*desc), flg);
+>> +               if (!desc)
+>> +                       break;
+>> +               _init_desc(desc);
+>> +               list_add_tail(&desc->node, &pdmac->desc_pool);
 >>         }
 >>
-> Sorry this patch seems malformed. Against which tree did you prepare it ?
+>>         spin_unlock_irqrestore(&pdmac->pool_lock, flags);
+>>
+>> -       return count;
+>> +       return i;
+>>  }
+>>
+> OK, but the kmalloc shouldn't be done with irqs disabled. Please
+> protect only the list_add_tail()
 >
-This patch depends on "61c6e7531d3b66b3 ........DMA: PL330: Check the
-pointer returned by kzalloc" which is on vinod's slave-dma's "fixes"
-branch. So I merged slave-dma's "next" and "fixes" branches. Now after
-merging, build error occurs due to some conflict so I had to apply the
-patch sent by Sachin at [1]
-
-Same had been mentioned in the cover letter.
-
-[1] http://permalink.gmane.org/gmane.linux.kernel.next/24274
+Yes, I missed it. I will update and send it again.
 
 Thanks,
 Inder
 
-> -jassi
+> thanks.
 >
->
->
->>         dev_info(&adev->dev,
->> @@ -2975,6 +2975,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->>
->>         return 0;
->>
->> +probe_err5:
->> +       kfree(pdmac->peripherals);
+>>  static struct dma_pl330_desc *
+>> @@ -2857,6 +2856,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>>         struct dma_pl330_platdata *pdat;
+>>         struct dma_pl330_dmac *pdmac;
+>>         struct dma_pl330_chan *pch;
+>> +       struct dma_pl330_desc *desc;
+>>         struct pl330_info *pi;
+>>         struct dma_device *pd;
+>>         struct resource *res;
+>> @@ -2978,6 +2978,12 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>>  probe_err5:
+>>         kfree(pdmac->peripherals);
 >>  probe_err4:
+>> +       while (!list_empty(&pdmac->desc_pool)) {
+>> +               desc = list_entry(pdmac->desc_pool.next,
+>> +                               struct dma_pl330_desc, node);
+>> +               list_del(&desc->node);
+>> +               kfree(desc);
+>> +       }
 >>         pl330_del(pi);
 >>  probe_err3:
->> @@ -3025,6 +3027,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
->>         res = &adev->res;
->>         release_mem_region(res->start, resource_size(res));
+>>         free_irq(irq, pi);
+>> @@ -2994,6 +3000,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>>  {
+>>         struct dma_pl330_dmac *pdmac = amba_get_drvdata(adev);
+>>         struct dma_pl330_chan *pch, *_p;
+>> +       struct dma_pl330_desc *desc;
+>>         struct pl330_info *pi;
+>>         struct resource *res;
+>>         int irq;
+>> @@ -3015,6 +3022,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>>                 pl330_free_chan_resources(&pch->chan);
+>>         }
 >>
->> +       kfree(pdmac->peripherals);
->>         kfree(pdmac);
+>> +       while (!list_empty(&pdmac->desc_pool)) {
+>> +               desc = list_entry(pdmac->desc_pool.next,
+>> +                               struct dma_pl330_desc, node);
+>> +               list_del(&desc->node);
+>> +               kfree(desc);
+>> +       }
+>> +
+>>         pi = &pdmac->pif;
 >>
->>         return 0;
+>>         pl330_del(pi);
 >> --
 >> 1.7.9.5
 >>
