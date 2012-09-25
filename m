@@ -1,104 +1,87 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
-Date: Wed, 26 Sep 2012 00:03:44 +0900
-Message-ID: <CAAQKjZN++zZ9cfNCB21TeQwPZgFVU-Cmo9ZhVwaaMz+HO2vHig@mail.gmail.com>
-References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
-	<505C9072.2010204@wwwdotorg.org>
-	<CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
-	<2368486.hLKA5vLF0M@avalon>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH 1/3] DMA: PL330: Free memory allocated for peripheral channels
+Date: Tue, 25 Sep 2012 20:53:47 +0530
+Message-ID: <CAG17yqQ3EZ98uWd0apM-205BTLZ7x4wn26__+YdycR5pNCDddQ@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-2-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY1DiWT6-faPe24wVYLwO9vP0W7KswcAyqAWd5VH-JfizA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:52551 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750840Ab2IYPDp (ORCPT
+Received: from mail-vc0-f174.google.com ([209.85.220.174]:62449 "EHLO
+	mail-vc0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754646Ab2IYPXs (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 11:03:45 -0400
-Received: by pbbrr4 with SMTP id rr4so250547pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 08:03:44 -0700 (PDT)
-In-Reply-To: <2368486.hLKA5vLF0M@avalon>
+	Tue, 25 Sep 2012 11:23:48 -0400
+Received: by vcbfo13 with SMTP id fo13so7774479vcb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 08:23:47 -0700 (PDT)
+In-Reply-To: <CABb+yY1DiWT6-faPe24wVYLwO9vP0W7KswcAyqAWd5VH-JfizA@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 
-2012/9/25 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
-> On Monday 24 September 2012 21:35:46 Inki Dae wrote:
->> 2012/9/22 Stephen Warren <swarren@wwwdotorg.org>:
->> > On 09/21/2012 01:22 AM, Inki Dae wrote:
->> >> 2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
->> >>> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
->> >>>> This patch adds device tree based discovery support for exynos DRM-FIMD
->> >>>> driver which includes driver modification to handle platform data in
->> >>>> both the cases with DT and non-DT, Also adds the documentation for
->> >>>> bindings.
->> >>>>
->> >>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt
->> >>>> b/Documentation/devicetree/bindings/drm/exynos/fimd.txt>>>
->> >>> ...
->> >>>
->> >>>> + - samsung,fimd-display: This property should specify the phandle of
->> >>>> the
->> >>>> +   display device node which holds the video interface timing with the
->> >>>> +   below mentioned properties.
->> >>>> +
->> >>>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
->> >>>> +     horizontal timing includes four parameters in the following
->> >>>> order.
->> >>>> +
->> >>>> +     - horizontal back porch (in number of lcd clocks)
->> >>>> +     - horizontal front porch (in number of lcd clocks)
->> >>>> +     - hsync pulse width (in number of lcd clocks)
->> >>>> +     - Display panels X resolution.
->> >>>> +
->> >>>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
->> >>>> +     vertical timing includes four parameters in the following order.
->> >>>> +
->> >>>> +     - vertical back porch (in number of lcd lines)
->> >>>> +     - vertical front porch (in number of lcd lines)
->> >>>> +     - vsync pulse width (in number of lcd clocks)
->> >>>> +     - Display panels Y resolution.
->> >>>
->> >>> Should this not use the new videomode timings that are under discussion
->> >>> at:
->> >>>
->> >>> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
->> >>
->> >> ok, I agree with you. then the videomode helper is going to be merged
->> >> to mainline(3.6)? if so, this patch should be reworked based on the
->> >> videomode helper.
->> >
->> > I think the videomode helpers would be merged for 3.7 at the very
->> > earliest; 3.6 is cooked already. Given there are still some comments on
->> > the binding, perhaps it won't happen until 3.8, but it'd be best to ask
->> > on that thread so that people more directly involved with the status can
->> > answer.
+On 25 September 2012 18:17, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+> On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
+> <inderpal.singh@linaro.org> wrote:
+>> The allocated memory for peripheral channels is not being freed upon
+>> failure in probe and in module's remove funtion. It will lead to memory
+>> leakage. Hence free the allocated memory.
 >>
->> as I mentioned before, it's better to use videomode helper instead but
->> for this, we should wait for that the videomode helper are merged to
->> mainline so I think it's better to merge it as is and then modify it
->> for videomode helper to be used later.
+>> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+>> ---
+>>  drivers/dma/pl330.c |    5 ++++-
+>>  1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+>> index 2ebd4cd..10c6b6a 100644
+>> --- a/drivers/dma/pl330.c
+>> +++ b/drivers/dma/pl330.c
+>> @@ -2962,7 +2962,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>>         ret = dma_async_device_register(pd);
+>>         if (ret) {
+>>                 dev_err(&adev->dev, "unable to register DMAC\n");
+>> -               goto probe_err4;
+>> +               goto probe_err5;
+>>         }
+>>
+> Sorry this patch seems malformed. Against which tree did you prepare it ?
 >
-> Aren't DT bindings considered as an ABI, and required to be supported more or
-> less forever ? If you merge this DT binding you'll have to keep supporting it.
-> That's why DT bindings should not be rushed in.
->
+This patch depends on "61c6e7531d3b66b3 ........DMA: PL330: Check the
+pointer returned by kzalloc" which is on vinod's slave-dma's "fixes"
+branch. So I merged slave-dma's "next" and "fixes" branches. Now after
+merging, build error occurs due to some conflict so I had to apply the
+patch sent by Sachin at [1]
 
-is ABI required for DT binding?  I know DT binding parses just lcd
-timing data from device tree file so ABI isn't needed. but when it
-comes to DT, I'm novice yet so there may be my missing point. could
-you tell me why DT bindings are considered as an ABI? if there is my
-missing point, will consider it again.
+Same had been mentioned in the cover letter.
+
+[1] http://permalink.gmane.org/gmane.linux.kernel.next/24274
 
 Thanks,
-Inki Dae
+Inder
 
-> --
-> Regards,
+> -jassi
 >
-> Laurent Pinchart
 >
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>>         dev_info(&adev->dev,
+>> @@ -2975,6 +2975,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>>
+>>         return 0;
+>>
+>> +probe_err5:
+>> +       kfree(pdmac->peripherals);
+>>  probe_err4:
+>>         pl330_del(pi);
+>>  probe_err3:
+>> @@ -3025,6 +3027,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>>         res = &adev->res;
+>>         release_mem_region(res->start, resource_size(res));
+>>
+>> +       kfree(pdmac->peripherals);
+>>         kfree(pdmac);
+>>
+>>         return 0;
+>> --
+>> 1.7.9.5
+>>
