@@ -1,70 +1,70 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v6 1/5] usb: phy: samsung: Introducing usb phy driver
- for hsotg
-Date: Tue, 25 Sep 2012 07:18:57 -0500
-Message-ID: <5061A131.9010905@gmail.com>
-References: <1347886484-16064-1-git-send-email-p.paneri@samsung.com> <1347886484-16064-2-git-send-email-p.paneri@samsung.com> <50605A69.2070201@gmail.com> <CAD6zSYOABTwTGXgFwGwLX-NhjDjDvtqUDVYTMGDng3nuTgLeZg@mail.gmail.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 1/3] DMA: PL330: Free memory allocated for peripheral channels
+Date: Tue, 25 Sep 2012 18:17:22 +0530
+Message-ID: <CABb+yY1DiWT6-faPe24wVYLwO9vP0W7KswcAyqAWd5VH-JfizA@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-2-git-send-email-inderpal.singh@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:56939 "EHLO
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:44457 "EHLO
 	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753469Ab2IYMTA (ORCPT
+	with ESMTP id S1753957Ab2IYMrW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 08:19:00 -0400
-In-Reply-To: <CAD6zSYOABTwTGXgFwGwLX-NhjDjDvtqUDVYTMGDng3nuTgLeZg@mail.gmail.com>
+	Tue, 25 Sep 2012 08:47:22 -0400
+In-Reply-To: <1348563456-30569-2-git-send-email-inderpal.singh@linaro.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Praveen Paneri <p.paneri@samsung.com>
-Cc: linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 
-On 09/25/2012 06:23 AM, Praveen Paneri wrote:
-> Hi Rob,
-> 
-> On Mon, Sep 24, 2012 at 6:34 PM, Rob Herring <robherring2@gmail.com> wrote:
->> On 09/17/2012 07:54 AM, Praveen Paneri wrote:
->>> This driver uses usb_phy interface to interact with s3c-hsotg. Supports
->>> phy_init and phy_shutdown functions to enable/disable phy. Tested with
->>> smdk6410 and smdkv310. More SoCs can be brought under later.
->>>
->>> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
->>> Acked-by: Heiko Stuebner <heiko@sntech.de>
->>> ---
->>>  .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
->>>  drivers/usb/phy/Kconfig                            |    8 +
->>>  drivers/usb/phy/Makefile                           |    1 +
->>>  drivers/usb/phy/samsung-usbphy.c                   |  360 ++++++++++++++++++++
->>>  include/linux/platform_data/samsung-usbphy.h       |   27 ++
->>>  5 files changed, 405 insertions(+), 0 deletions(-)
->>>  create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
->>>  create mode 100644 drivers/usb/phy/samsung-usbphy.c
->>>  create mode 100644 include/linux/platform_data/samsung-usbphy.h
->>>
->>> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
->>> new file mode 100644
->>> index 0000000..fefd9c8
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
->>> @@ -0,0 +1,9 @@
->>> +* Samsung's usb phy transceiver
->>> +
->>> +The Samsung's phy transceiver is used for controlling usb otg phy for
->>> +s3c-hsotg usb device controller.
->>> +
->>> +Required properties:
->>> +- compatible : should be "samsung,exynos4210-usbphy"
->>> +- reg : base physical address of the phy registers and length of memory mapped
->>> +     region.
->>
->> What's missing here is describing the connection of phys to host
->> controllers. We've got several people adding usb phy bindings and need
->> to define them in a common way.
-> yes! it just covers the generic binding. I will update it accordingly
-> as the generic phy framework takes its final shape.
+On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
+<inderpal.singh@linaro.org> wrote:
+> The allocated memory for peripheral channels is not being freed upon
+> failure in probe and in module's remove funtion. It will lead to memory
+> leakage. Hence free the allocated memory.
+>
+> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+> ---
+>  drivers/dma/pl330.c |    5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+> index 2ebd4cd..10c6b6a 100644
+> --- a/drivers/dma/pl330.c
+> +++ b/drivers/dma/pl330.c
+> @@ -2962,7 +2962,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>         ret = dma_async_device_register(pd);
+>         if (ret) {
+>                 dev_err(&adev->dev, "unable to register DMAC\n");
+> -               goto probe_err4;
+> +               goto probe_err5;
+>         }
+>
+Sorry this patch seems malformed. Against which tree did you prepare it ?
 
-That sounds like the wrong way to define a binding... Figuring out how
-to describe the h/w should not be dependent on changes in the kernel.
-Bindings are an ABI and should not be evolving.
+-jassi
 
-Rob
+
+
+>         dev_info(&adev->dev,
+> @@ -2975,6 +2975,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
+>
+>         return 0;
+>
+> +probe_err5:
+> +       kfree(pdmac->peripherals);
+>  probe_err4:
+>         pl330_del(pi);
+>  probe_err3:
+> @@ -3025,6 +3027,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>         res = &adev->res;
+>         release_mem_region(res->start, resource_size(res));
+>
+> +       kfree(pdmac->peripherals);
+>         kfree(pdmac);
+>
+>         return 0;
+> --
+> 1.7.9.5
+>
