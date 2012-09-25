@@ -1,98 +1,104 @@
-From: "ABRAHAM, KISHON VIJAY" <kishon@ti.com>
-Subject: Re: [PATCH v6 1/5] usb: phy: samsung: Introducing usb phy driver for hsotg
-Date: Tue, 25 Sep 2012 18:47:24 +0530
-Message-ID: <CAAe_U6J7j1_kLz3kUaOQqXmpR1JbS3wQypaPe=MTae8JUs5LDw@mail.gmail.com>
-References: <1347886484-16064-1-git-send-email-p.paneri@samsung.com>
-	<1347886484-16064-2-git-send-email-p.paneri@samsung.com>
-	<50605A69.2070201@gmail.com>
-	<CAD6zSYOABTwTGXgFwGwLX-NhjDjDvtqUDVYTMGDng3nuTgLeZg@mail.gmail.com>
-	<5061A131.9010905@gmail.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Wed, 26 Sep 2012 00:03:44 +0900
+Message-ID: <CAAQKjZN++zZ9cfNCB21TeQwPZgFVU-Cmo9ZhVwaaMz+HO2vHig@mail.gmail.com>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
+	<505C9072.2010204@wwwdotorg.org>
+	<CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
+	<2368486.hLKA5vLF0M@avalon>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from na3sys009aog115.obsmtp.com ([74.125.149.238]:45548 "EHLO
-	na3sys009aog115.obsmtp.com" rhost-flags-OK-OK-OK-OK)
-	by vger.kernel.org with ESMTP id S1756429Ab2IYNR0 (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:52551 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750840Ab2IYPDp (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 09:17:26 -0400
-Received: by vcbfo13 with SMTP id fo13so7584571vcb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 06:17:25 -0700 (PDT)
-In-Reply-To: <5061A131.9010905@gmail.com>
+	Tue, 25 Sep 2012 11:03:45 -0400
+Received: by pbbrr4 with SMTP id rr4so250547pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 08:03:44 -0700 (PDT)
+In-Reply-To: <2368486.hLKA5vLF0M@avalon>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: Praveen Paneri <p.paneri@samsung.com>, linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, linux-arm-kernel@lists.infradead.org
 
-Hi,
-
-On Tue, Sep 25, 2012 at 5:48 PM, Rob Herring <robherring2@gmail.com> wrote:
-> On 09/25/2012 06:23 AM, Praveen Paneri wrote:
->> Hi Rob,
+2012/9/25 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+> On Monday 24 September 2012 21:35:46 Inki Dae wrote:
+>> 2012/9/22 Stephen Warren <swarren@wwwdotorg.org>:
+>> > On 09/21/2012 01:22 AM, Inki Dae wrote:
+>> >> 2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
+>> >>> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
+>> >>>> This patch adds device tree based discovery support for exynos DRM-FIMD
+>> >>>> driver which includes driver modification to handle platform data in
+>> >>>> both the cases with DT and non-DT, Also adds the documentation for
+>> >>>> bindings.
+>> >>>>
+>> >>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt
+>> >>>> b/Documentation/devicetree/bindings/drm/exynos/fimd.txt>>>
+>> >>> ...
+>> >>>
+>> >>>> + - samsung,fimd-display: This property should specify the phandle of
+>> >>>> the
+>> >>>> +   display device node which holds the video interface timing with the
+>> >>>> +   below mentioned properties.
+>> >>>> +
+>> >>>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
+>> >>>> +     horizontal timing includes four parameters in the following
+>> >>>> order.
+>> >>>> +
+>> >>>> +     - horizontal back porch (in number of lcd clocks)
+>> >>>> +     - horizontal front porch (in number of lcd clocks)
+>> >>>> +     - hsync pulse width (in number of lcd clocks)
+>> >>>> +     - Display panels X resolution.
+>> >>>> +
+>> >>>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
+>> >>>> +     vertical timing includes four parameters in the following order.
+>> >>>> +
+>> >>>> +     - vertical back porch (in number of lcd lines)
+>> >>>> +     - vertical front porch (in number of lcd lines)
+>> >>>> +     - vsync pulse width (in number of lcd clocks)
+>> >>>> +     - Display panels Y resolution.
+>> >>>
+>> >>> Should this not use the new videomode timings that are under discussion
+>> >>> at:
+>> >>>
+>> >>> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+>> >>
+>> >> ok, I agree with you. then the videomode helper is going to be merged
+>> >> to mainline(3.6)? if so, this patch should be reworked based on the
+>> >> videomode helper.
+>> >
+>> > I think the videomode helpers would be merged for 3.7 at the very
+>> > earliest; 3.6 is cooked already. Given there are still some comments on
+>> > the binding, perhaps it won't happen until 3.8, but it'd be best to ask
+>> > on that thread so that people more directly involved with the status can
+>> > answer.
 >>
->> On Mon, Sep 24, 2012 at 6:34 PM, Rob Herring <robherring2@gmail.com> wrote:
->>> On 09/17/2012 07:54 AM, Praveen Paneri wrote:
->>>> This driver uses usb_phy interface to interact with s3c-hsotg. Supports
->>>> phy_init and phy_shutdown functions to enable/disable phy. Tested with
->>>> smdk6410 and smdkv310. More SoCs can be brought under later.
->>>>
->>>> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
->>>> Acked-by: Heiko Stuebner <heiko@sntech.de>
->>>> ---
->>>>  .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
->>>>  drivers/usb/phy/Kconfig                            |    8 +
->>>>  drivers/usb/phy/Makefile                           |    1 +
->>>>  drivers/usb/phy/samsung-usbphy.c                   |  360 ++++++++++++++++++++
->>>>  include/linux/platform_data/samsung-usbphy.h       |   27 ++
->>>>  5 files changed, 405 insertions(+), 0 deletions(-)
->>>>  create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
->>>>  create mode 100644 drivers/usb/phy/samsung-usbphy.c
->>>>  create mode 100644 include/linux/platform_data/samsung-usbphy.h
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
->>>> new file mode 100644
->>>> index 0000000..fefd9c8
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
->>>> @@ -0,0 +1,9 @@
->>>> +* Samsung's usb phy transceiver
->>>> +
->>>> +The Samsung's phy transceiver is used for controlling usb otg phy for
->>>> +s3c-hsotg usb device controller.
->>>> +
->>>> +Required properties:
->>>> +- compatible : should be "samsung,exynos4210-usbphy"
->>>> +- reg : base physical address of the phy registers and length of memory mapped
->>>> +     region.
->>>
->>> What's missing here is describing the connection of phys to host
->>> controllers. We've got several people adding usb phy bindings and need
->>> to define them in a common way.
->> yes! it just covers the generic binding. I will update it accordingly
->> as the generic phy framework takes its final shape.
+>> as I mentioned before, it's better to use videomode helper instead but
+>> for this, we should wait for that the videomode helper are merged to
+>> mainline so I think it's better to merge it as is and then modify it
+>> for videomode helper to be used later.
 >
-> That sounds like the wrong way to define a binding... Figuring out how
-> to describe the h/w should not be dependent on changes in the kernel.
-> Bindings are an ABI and should not be evolving.
+> Aren't DT bindings considered as an ABI, and required to be supported more or
+> less forever ? If you merge this DT binding you'll have to keep supporting it.
+> That's why DT bindings should not be rushed in.
+>
 
-There can be multiple ways to define the binding. For e.g. We
-discussed few ways of binding the phys to the controller
+is ABI required for DT binding?  I know DT binding parses just lcd
+timing data from device tree file so ABI isn't needed. but when it
+comes to DT, I'm novice yet so there may be my missing point. could
+you tell me why DT bindings are considered as an ABI? if there is my
+missing point, will consider it again.
 
-controller {
-              phy0 = <&phandle1_name>;
-              phy1 = <&phandle2_name>;
-}
+Thanks,
+Inki Dae
 
-phy0 and phy1 are any name given to obtain a reference to the phy and
-the controller should send the phandle name like
-get_phy_by_phandle("phy0");. Then we thought of standardizing that
-name.
-
-and then finally we settled on something like this
-controller {
-              phy = <&phandle0_name>, <&phandle1_name>;
-}
-so that controller can obtain a reference to the PHY using
-*of_phy_get(struct device *dev, const char *phandle, u8 index)*
-
-Thanks
-Kishon
+> --
+> Regards,
+>
+> Laurent Pinchart
+>
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
