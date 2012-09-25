@@ -1,70 +1,84 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 1/3] DMA: PL330: Free memory allocated for peripheral channels
-Date: Tue, 25 Sep 2012 18:17:22 +0530
-Message-ID: <CABb+yY1DiWT6-faPe24wVYLwO9vP0W7KswcAyqAWd5VH-JfizA@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-2-git-send-email-inderpal.singh@linaro.org>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Tue, 25 Sep 2012 15:03:45 +0200
+Message-ID: <2368486.hLKA5vLF0M@avalon>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com> <505C9072.2010204@wwwdotorg.org> <CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:44457 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753957Ab2IYMrW (ORCPT
+Received: from perceval.ideasonboard.com ([95.142.166.194]:44267 "EHLO
+	perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750863Ab2IYNDJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 08:47:22 -0400
-In-Reply-To: <1348563456-30569-2-git-send-email-inderpal.singh@linaro.org>
+	Tue, 25 Sep 2012 09:03:09 -0400
+In-Reply-To: <CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+To: Inki Dae <inki.dae@samsung.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, kgene.kim@samsung.com, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
-<inderpal.singh@linaro.org> wrote:
-> The allocated memory for peripheral channels is not being freed upon
-> failure in probe and in module's remove funtion. It will lead to memory
-> leakage. Hence free the allocated memory.
->
-> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
-> ---
->  drivers/dma/pl330.c |    5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-> index 2ebd4cd..10c6b6a 100644
-> --- a/drivers/dma/pl330.c
-> +++ b/drivers/dma/pl330.c
-> @@ -2962,7 +2962,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->         ret = dma_async_device_register(pd);
->         if (ret) {
->                 dev_err(&adev->dev, "unable to register DMAC\n");
-> -               goto probe_err4;
-> +               goto probe_err5;
->         }
->
-Sorry this patch seems malformed. Against which tree did you prepare it ?
+On Monday 24 September 2012 21:35:46 Inki Dae wrote:
+> 2012/9/22 Stephen Warren <swarren@wwwdotorg.org>:
+> > On 09/21/2012 01:22 AM, Inki Dae wrote:
+> >> 2012/9/21 Stephen Warren <swarren@wwwdotorg.org>:
+> >>> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
+> >>>> This patch adds device tree based discovery support for exynos DRM-FIMD
+> >>>> driver which includes driver modification to handle platform data in
+> >>>> both the cases with DT and non-DT, Also adds the documentation for
+> >>>> bindings.
+> >>>> 
+> >>>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt
+> >>>> b/Documentation/devicetree/bindings/drm/exynos/fimd.txt>>> 
+> >>> ...
+> >>> 
+> >>>> + - samsung,fimd-display: This property should specify the phandle of
+> >>>> the
+> >>>> +   display device node which holds the video interface timing with the
+> >>>> +   below mentioned properties.
+> >>>> +
+> >>>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
+> >>>> +     horizontal timing includes four parameters in the following
+> >>>> order.
+> >>>> +
+> >>>> +     - horizontal back porch (in number of lcd clocks)
+> >>>> +     - horizontal front porch (in number of lcd clocks)
+> >>>> +     - hsync pulse width (in number of lcd clocks)
+> >>>> +     - Display panels X resolution.
+> >>>> +
+> >>>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
+> >>>> +     vertical timing includes four parameters in the following order.
+> >>>> +
+> >>>> +     - vertical back porch (in number of lcd lines)
+> >>>> +     - vertical front porch (in number of lcd lines)
+> >>>> +     - vsync pulse width (in number of lcd clocks)
+> >>>> +     - Display panels Y resolution.
+> >>> 
+> >>> Should this not use the new videomode timings that are under discussion
+> >>> at:
+> >>> 
+> >>> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+> >> 
+> >> ok, I agree with you. then the videomode helper is going to be merged
+> >> to mainline(3.6)? if so, this patch should be reworked based on the
+> >> videomode helper.
+> > 
+> > I think the videomode helpers would be merged for 3.7 at the very
+> > earliest; 3.6 is cooked already. Given there are still some comments on
+> > the binding, perhaps it won't happen until 3.8, but it'd be best to ask
+> > on that thread so that people more directly involved with the status can
+> > answer.
+> 
+> as I mentioned before, it's better to use videomode helper instead but
+> for this, we should wait for that the videomode helper are merged to
+> mainline so I think it's better to merge it as is and then modify it
+> for videomode helper to be used later.
 
--jassi
+Aren't DT bindings considered as an ABI, and required to be supported more or 
+less forever ? If you merge this DT binding you'll have to keep supporting it. 
+That's why DT bindings should not be rushed in.
 
+-- 
+Regards,
 
-
->         dev_info(&adev->dev,
-> @@ -2975,6 +2975,8 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
->
->         return 0;
->
-> +probe_err5:
-> +       kfree(pdmac->peripherals);
->  probe_err4:
->         pl330_del(pi);
->  probe_err3:
-> @@ -3025,6 +3027,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
->         res = &adev->res;
->         release_mem_region(res->start, resource_size(res));
->
-> +       kfree(pdmac->peripherals);
->         kfree(pdmac);
->
->         return 0;
-> --
-> 1.7.9.5
->
+Laurent Pinchart
