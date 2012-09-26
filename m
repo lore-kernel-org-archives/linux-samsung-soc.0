@@ -1,74 +1,133 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
-Date: Wed, 26 Sep 2012 22:19:02 +0530
-Message-ID: <CABb+yY0dvtOZoa=T+gyTeWy3XyAictXJnqSkbF39E=peHSXDuQ@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
-	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
-	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
-	<CABb+yY36pQ7oXC1OKEQ-1V55c2SZurcTAPaZ=_PWugqxdL2rgg@mail.gmail.com>
-	<CAG17yqQ5NDr4sLvWbA85q5y079j2M2OV-uRjXSSL=OFPfCw3Zg@mail.gmail.com>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH] samsung: clock: Modify for the case with the only parent
+Date: Wed, 26 Sep 2012 23:45:17 +0200
+Message-ID: <5063776D.4030609@gmail.com>
+References: <1348123859-13842-1-git-send-email-kukyakya@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ob0-f174.google.com ([209.85.214.174]:42776 "EHLO
-	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750902Ab2IZQtD (ORCPT
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:33447 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751116Ab2IZVpW (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Sep 2012 12:49:03 -0400
-In-Reply-To: <CAG17yqQ5NDr4sLvWbA85q5y079j2M2OV-uRjXSSL=OFPfCw3Zg@mail.gmail.com>
+	Wed, 26 Sep 2012 17:45:22 -0400
+Received: by bkcjk13 with SMTP id jk13so709401bkc.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Sep 2012 14:45:21 -0700 (PDT)
+In-Reply-To: <1348123859-13842-1-git-send-email-kukyakya@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+To: In-Bae Jeong <kukyakya@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 
-On Wed, Sep 26, 2012 at 4:25 PM, Inderpal Singh
-<inderpal.singh@linaro.org> wrote:
-> On 26 September 2012 15:02, Jassi Brar <jassisinghbrar@gmail.com> wrote:
->> On Wed, Sep 26, 2012 at 12:11 PM, Inderpal Singh
->> <inderpal.singh@linaro.org> wrote:
->>
->>> How about conditionally DMA_TERMINATE_ALL and free resources like below ?
->>>
->>> @@ -3017,9 +3017,11 @@ static int __devexit pl330_remove(struct
->>> amba_device *adev)
->>>                 /* Remove the channel */
->>>                 list_del(&pch->chan.device_node);
->>>
->>> -               /* Flush the channel */
->>> -               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
->>> -               pl330_free_chan_resources(&pch->chan);
->>> +               if (pch->chan.client_count != 0) {
->>> +                       /* Flush the channel */
->>> +                       pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
->>> +                       pl330_free_chan_resources(&pch->chan);
->>> +               }
->>>         }
->>>
->> It is perfectly safe to flush the channels that have client_count == 0
->> as well. Which is already the case.
->
-> As per my understanding, if client_count ==0, It may mean following:
->
-> 1. This channel was never allocated to any client. Hence
-> alloc_chan_resources was not done for it.
-> So, no need to flush and free resources if it was never allocated at
-> the first place. If we free_chan_resources, it will not be balanced
-> against alloc_chan_resources. Scenario: insmod and then rmmod.
->
-> Or,
->
-> 2. The channel was allocated to some client, alloc_chan_resource was
-> done, the work for the client is completed and free_chan_resources was
-> performed. Now  since resources have already been freed, no need to
-> flush and free_chan_resources again in remove.
->
-> The whole idea of this patch is to balance alloc_chan_resources and
-> free_chan_resources.
->
-Do you see any issue with channels that have zero client_count ?
-AFAIU there are already enough checks in the path to weed out unused
-channels, so let us please not uglify the code by adding new
-unnecessary checks.
+On 09/20/2012 08:50 AM, In-Bae Jeong wrote:
+> 'camera' clock has the only parent and thus has no reg_src.
+> It has a parent clock but it prints 'No parent clock specified' message.
+> This patch is to deal with the case with the only parent clock.
 
-thanks.
+Please make sure there is your Signed-off-by tag when submitting patches.
+
+I think we could avoid your changes as below, which would have added 
+some additional overhead at the clock API and would have affected all 
+Samsung SoCs.
+
+I think 'No parent clock specified' message really means what it says.
+AFAIU for cases where there is only one parent clock we need to define
+the parent statically.
+
+Then s3c_set_clksrc() should just return doing nothing, since the parent
+is already set. 
+
+void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
+{
+	...
+
+	if (!clk->reg_src.reg) {
+		if (!clk->clk.parent)
+			printk(KERN_ERR "%s: no parent clock specified\n",
+				clk->clk.name);
+		return;
+	}
+
+In our case clk->reg_src.reg == NULL, so when clk->clk.parent is set
+the printk() will be skipped and the mux control register (non-existent
+in our case) will not be touched. Could you try and see if the patch 
+below helps in your case ?
+
+8<-----------------------------------------------------------------------
+>From c287280672565895b627c51ca8865cf43b37af28 Mon Sep 17 00:00:00 2001
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Date: Wed, 26 Sep 2012 23:28:10 +0200
+Subject: [PATCH] ARM: S3C64XX: Statically define parent clock of the "camera" clock
+
+The "camera" clock defined in arch/arm/mach-s3c64xx/clock.c has null
+clock source mux control register as it can have only one parent
+clock. In such cases there is a need to configure the parent clock
+statically, otherwise s3c_set_clksrc() bails out with an error message
+"no parent clock specified" leaving the parent clock not configured.
+Define statically the parent clock so it is possible to get or set rate
+of the "camera" clock.
+
+Reported-by: In-Bae Jeong <kukyakya@gmail.com>
+Signed-off-by: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+---
+ arch/arm/mach-s3c64xx/clock.c |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/arch/arm/mach-s3c64xx/clock.c b/arch/arm/mach-s3c64xx/clock.c
+index 28041e8..85b9cf1 100644
+--- a/arch/arm/mach-s3c64xx/clock.c
++++ b/arch/arm/mach-s3c64xx/clock.c
+@@ -744,6 +744,7 @@ static struct clksrc_clk clksrcs[] = {
+ 			.name		= "camera",
+ 			.ctrlbit        = S3C_CLKCON_SCLK_CAM,
+ 			.enable		= s3c64xx_sclk_ctrl,
++			.parent		= &clk_h2,
+ 		},
+ 		.reg_div	= { .reg = S3C_CLK_DIV0, .shift = 20, .size = 4  },
+ 		.reg_src	= { .reg = NULL, .shift = 0, .size = 0  },
+-- 
+1.7.4.1
+8<-----------------------------------------------------------------------
+
+> ---
+>   arch/arm/plat-samsung/clock-clksrc.c |   17 +++++++++--------
+>   1 files changed, 9 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/arm/plat-samsung/clock-clksrc.c b/arch/arm/plat-samsung/clock-clksrc.c
+> index 786a410..c00bd86 100644
+> --- a/arch/arm/plat-samsung/clock-clksrc.c
+> +++ b/arch/arm/plat-samsung/clock-clksrc.c
+> @@ -131,18 +131,19 @@ void __init_or_cpufreq s3c_set_clksrc(struct clksrc_clk *clk, bool announce)
+>   {
+>   	struct clksrc_sources *srcs = clk->sources;
+>   	u32 mask = bit_mask(clk->reg_src.shift, clk->reg_src.size);
+> -	u32 clksrc;
+> +	u32 clksrc = 0;
+> 
+> -	if (!clk->reg_src.reg) {
+> -		if (!clk->clk.parent)
+> -			printk(KERN_ERR "%s: no parent clock specified\n",
+> -				clk->clk.name);
+> +	if (!clk->reg_src.reg&&  !clk->clk.parent&&  !srcs->nr_sources) {
+> +		printk(KERN_ERR "%s: no parent clock specified\n",
+> +		       clk->clk.name);
+>   		return;
+>   	}
+> 
+> -	clksrc = __raw_readl(clk->reg_src.reg);
+> -	clksrc&= mask;
+> -	clksrc>>= clk->reg_src.shift;
+> +	if (srcs->nr_sources>  1) {
+> +		clksrc = __raw_readl(clk->reg_src.reg);
+> +		clksrc&= mask;
+> +		clksrc>>= clk->reg_src.shift;
+> +	}
+> 
+>   	if (clksrc>  srcs->nr_sources || !srcs->sources[clksrc]) {
+>   		printk(KERN_ERR "%s: bad source %d\n",
+
+--
+
+Regards,
+Sylwester
