@@ -1,67 +1,37 @@
 From: Arun Kumar K <arun.kk@samsung.com>
-Subject: RE: [PATCH v4] ARM: EXYNOS: Add MFC device tree support
-Date: Wed, 26 Sep 2012 11:00:06 +0000 (GMT)
-Message-ID: <20232973.290871348657205865.JavaMail.weblogic@epml02>
+Subject: Re: [PATCH v4] ARM: EXYNOS: Add MFC device tree support
+Date: Wed, 26 Sep 2012 12:57:42 +0000 (GMT)
+Message-ID: <6434789.294181348664261514.JavaMail.weblogic@epml02>
 Reply-To: arun.kk@samsung.com
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:12820 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753220Ab2IZLAH (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:65095 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754166Ab2IZM5t (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Sep 2012 07:00:07 -0400
-Received: from epcpsbge2.samsung.com (epcpsbge2 [203.254.230.12])
- by mailout1.samsung.com
+	Wed, 26 Sep 2012 08:57:49 -0400
+Received: from epcpsbge3.samsung.com (epcpsbge3 [203.254.230.13])
+ by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAY009MVEK5QF01@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 20:00:06 +0900 (KST)
+ 17 2011)) with ESMTP id <0MAY000I0K0BKNB0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 21:57:47 +0900 (KST)
 MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>, Karol Lewandowski <k.lewandowsk@samsung.com>
-Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>
+To: Tomasz Figa <tomasz.figa@gmail.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, Karol Lewandowski <k.lewandowsk@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>
 
-SGkgS3VramluLA0KDQpBcyBzdWdnZXN0ZWQgYnkgeW91LCB0aGUgZnVuY3Rpb24gZXh5bm9zX2Zk
-dF9maW5kX21mY19tZW0oKSBjYW4gYmUgbW92ZWQgdG8gcGxhdC1zYW1zdW5nLg0KSSBmZWVsIHBs
-YXQtc2Ftc3VuZy9zNXAtZGV2LW1mYy5jIHdvdWxkIGJlIGEgZ29vZCBwbGFjZS4gSG9wZSBpdCBp
-cyBvaz8NCkFsc28gSSB3aWxsIHdyYXAgaXQgd2l0aCAjaWZkZWYgQ09ORklHX09GIGZvciBub24t
-ZHQgbW9kZS4NCkkgd2lsbCBwb3N0IHRoZSB1cGRhdGVkIHBhdGNoIHdpdGggdGhlIHN1Z2dlc3Rl
-ZCBjaGFuZ2VzLg0KDQpSZWdhcmRzDQpBcnVuDQoNCk9uIFdlZCwgU2VwIDI2LCAyMDEyIGF0IDc6
-NDIgQU0sIEt1a2ppbiBLaW0gPGtnZW5lLmtpbUBzYW1zdW5nLmNvbT4gd3JvdGU6DQo+IEthcm9s
-IExld2FuZG93c2tpIHdyb3RlOg0KPj4NCj4+IE9uIDA5LzIyLzIwMTIgMDg6MDcgUE0sIEFydW4g
-S3VtYXIgSyB3cm90ZToNCj4+DQo+PiA+IFRoaXMgcGF0Y2ggYWRkcyBkZXZpY2UgdHJlZSBlbnRy
-eSBmb3IgTUZDIHY2IGluIHRoZSBFeHlub3M1DQo+PiA+IFNvQy4gTWFrZXMgdGhlIHJlcXVpcmVk
-IGNoYW5nZXMgaW4gdGhlIGNsb2NrIGZpbGVzIGFuZCBhZGRzDQo+PiA+IE1GQyB0byB0aGUgRFQg
-ZGV2aWNlIGxpc3QuDQo+PiA+DQo+PiA+IFNpZ25lZC1vZmYtYnk6IE5hdmVlbiBLcmlzaG5hIENo
-YXRyYWRoaSA8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPj4gPiBTaWduZWQtb2ZmLWJ5OiBBcnVu
-IEt1bWFyIEsgPGFydW4ua2tAc2Ftc3VuZy5jb20+DQo+Pg0KPj4NCj4+IExvb2tzIGdvb2QgZm9y
-IG1lLiBGV0lXLCBJIGNvdWxkIHByb2JhYmx5IGFkZA0KPj4NCj4+IEFja2VkLWJ5OiBLYXJvbCBM
-ZXdhbmRvd3NraSA8ay5sZXdhbmRvd3NrQHNhbXN1bmcuY29tPg0KPj4NCj4gSGFwcGVucyBmb2xs
-b3dpbmcgYnVpbGQgZXJyb3Igd2l0aCBleHlub3M0X2RlZmNvbmZpZyBiZWNhdXNlIG9mIG5vbi1E
-VCA/DQo+DQo+IGFyY2gvYXJtL21hY2gtZXh5bm9zL2NvbW1vbi5jOiBJbiBmdW5jdGlvbiAnZXh5
-bm9zX2ZkdF9maW5kX21mY19tZW0nOg0KPiBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uYzox
-MDU4OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ29mX2ZsYXRfZHRf
-aXNfY29tcGF0aWJsZScNCj4gYXJjaC9hcm0vbWFjaC1leHlub3MvY29tbW9uLmM6MTA2MTogZXJy
-b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdvZl9nZXRfZmxhdF9kdF9wcm9w
-Jw0KPiBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uYzoxMDYxOiB3YXJuaW5nOiBhc3NpZ25t
-ZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIHdpdGhvdXQgYSBjYXN0DQo+IGFyY2gvYXJt
-L21hY2gtZXh5bm9zL2NvbW1vbi5jOjEwNjQ6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBv
-ZiBmdW5jdGlvbiAnb2ZfcmVhZF91bG9uZycNCj4gYXJjaC9hcm0vbWFjaC1leHlub3MvY29tbW9u
-LmM6MTA2Njogd2FybmluZzogYXNzaWdubWVudCBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdlciB3
-aXRob3V0IGEgY2FzdA0KPiBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uYzoxMDcxOiB3YXJu
-aW5nOiBhc3NpZ25tZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIHdpdGhvdXQgYSBjYXN0
-DQo+IGFyY2gvYXJtL21hY2gtZXh5bm9zL2NvbW1vbi5jOjEwNzY6IHdhcm5pbmc6IGFzc2lnbm1l
-bnQgbWFrZXMgcG9pbnRlciBmcm9tIGludGVnZXIgd2l0aG91dCBhIGNhc3QNCj4gbWFrZVsxXTog
-KioqIFthcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24ub10gRXJyb3IgMQ0KPg0KPiBBbmQgSSB0
-aGluaywgZmlyc3RseSB3ZSBjb3VsZCBtb3ZlIHRoZSBmdW5jdGlvbiBleHlub3NfZmR0X2ZpbmRf
-bWZjX21lbSgpIGludG8gcGxhdC1zYW1zdW5nLyBmb3IgdXNpbmcgb24gb3RoZXIgU2Ftc3VuZyBz
-dHVmZiBzdWNoIGFzIHM1cHYyMTAgYW5kIG5lZWQgdG8gZW5jbG9zZSAnI2lmZGVmIENPTkZJR19P
-RiIgZm9yIG5vbi1EVD8NCj4NCj4gVGhhbmtzLg0KPg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtnZW5l
-Lg0KPiAtLQ0KPiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+LCBTZW5pb3IgRW5n
-aW5lZXIsDQo+IFNXIFNvbHV0aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25p
-Y3MgQ28uLCBMdGQuDQo+DQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
-ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4NCj4gdGhlIGJv
-ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpv
-cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+SGkgVG9tYXN6LA0KDQo+IE1heWJlIHRoZSBiYXNlIGFkZHJlc3MgYW5kIHNpemUgY291bGQgYmUg
+bWVyZ2VkIGludG8gb25lIHByb3BlcnR5IHdpdGggdHdvDQo+IHZhbHVlcywgYXMgaXQgaXMgZG9u
+ZSB3aXRoIHRoZSByZWcgcHJvcGVydHk/IFdoYXQgZG8geW91IHRoaW5rPw0KPg0KPj4gKyAgICAg
+Y29kZWNAMTEwMDAwMDAgew0KPj4gKyAgICAgICAgICAgICBzYW1zdW5nLG1mYy1yID0gPDB4NDMw
+MDAwMDA+Ow0KPj4gKyAgICAgICAgICAgICBzYW1zdW5nLG1mYy1yLXNpemUgPSA8ODM4ODYwOD47
+DQo+PiArICAgICAgICAgICAgIHNhbXN1bmcsbWZjLWwgPSA8MHg1MTAwMDAwMD47DQo+PiArICAg
+ICAgICAgICAgIHNhbXN1bmcsbWZjLWwtc2l6ZSA9IDw4Mzg4NjA4PjsNCj4NCj4gSXQgd291bGQg
+bG9vayBsaWtlIHRoaXM6DQo+DQo+ICAgICAgICAgICAgICAgICBzYW1zdW5nLW1mYy1yID0gPDB4
+NDMwMDAwMDAgMHg4MDAwMDA+Ow0KPiAgICAgICAgICAgICAgICAgc2Ftc3VuZy1tZmMtbCA9IDww
+eDUxMDAwMDAwIDB4ODAwMDAwPjsNCj4NCg0KVGhhbmtzIGZvciB0aGUgc3VnZ2VzdGlvbi4gSXQg
+c3VyZSBsb29rcyBiZXR0ZXIgdGhpcyB3YXkuDQpJIHdpbGwgaW5jbHVkZSB0aGlzIGNoYW5nZSBh
+bmQgcG9zdCB1cGRhdGVkIHBhdGNoLg0KDQpSZWdhcmRzDQpBcnVu
