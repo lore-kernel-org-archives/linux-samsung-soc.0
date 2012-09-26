@@ -1,55 +1,84 @@
-From: Inki Dae <inki.dae@samsung.com>
-Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
-Date: Wed, 26 Sep 2012 13:32:10 +0900
-Message-ID: <CAAQKjZNRJHuA4+B-tP5vTaDfmMMxC+VKLDJU4gtpvtu=srzgAg@mail.gmail.com>
-References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
-	<505C9072.2010204@wwwdotorg.org>
-	<CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
-	<2368486.hLKA5vLF0M@avalon>
-	<CAAQKjZN++zZ9cfNCB21TeQwPZgFVU-Cmo9ZhVwaaMz+HO2vHig@mail.gmail.com>
-	<20120925153109.GA8834@sirena.org.uk>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
+Date: Wed, 26 Sep 2012 12:11:05 +0530
+Message-ID: <CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:60607 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750772Ab2IZEcK (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Sep 2012 00:32:10 -0400
-Received: by padhz1 with SMTP id hz1so140005pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 21:32:10 -0700 (PDT)
-In-Reply-To: <20120925153109.GA8834@sirena.org.uk>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Mark Brown <broonie@opensource.wolfsonmicro.com>
-Cc: linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org
 
-2012/9/26 Mark Brown <broonie@opensource.wolfsonmicro.com>:
-> On Wed, Sep 26, 2012 at 12:03:44AM +0900, Inki Dae wrote:
->> 2012/9/25 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+On 25 September 2012 18:47, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+> On Tue, Sep 25, 2012 at 2:27 PM, Inderpal Singh
+> <inderpal.singh@linaro.org> wrote:
+>> Since peripheral channel resources are not being allocated at probe,
+>> no need to flush the channels and free the resources in remove function.
+>>
+>> Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+>> ---
+>>  drivers/dma/pl330.c |    8 +-------
+>>  1 file changed, 1 insertion(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+>> index 04d83e6..6f06080 100644
+>> --- a/drivers/dma/pl330.c
+>> +++ b/drivers/dma/pl330.c
+>> @@ -3012,16 +3012,10 @@ static int __devexit pl330_remove(struct amba_device *adev)
+>>
+>>         /* Idle the DMAC */
+>>         list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
+>> -                       chan.device_node) {
+>> -
+>> +                       chan.device_node)
+>>                 /* Remove the channel */
+>>                 list_del(&pch->chan.device_node);
+>>
+>> -               /* Flush the channel */
+>> -               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
+>> -               pl330_free_chan_resources(&pch->chan);
+>> -       }
+>> -
+>>         while (!list_empty(&pdmac->desc_pool)) {
+>>                 desc = list_entry(pdmac->desc_pool.next,
+>>                                 struct dma_pl330_desc, node);
 >
->> > Aren't DT bindings considered as an ABI, and required to be supported more or
->> > less forever ? If you merge this DT binding you'll have to keep supporting it.
->> > That's why DT bindings should not be rushed in.
+> I am not sure about this patch. The DMA_TERMINATE_ALL is only called
+> by the client and if the pl330 module is forced unloaded while some
+> client is queued, we have to manually do DMA_TERMINATE_ALL.
+> A better option could be to simply fail pl330_remove if some client is
+> queued on the DMAC.
 >
->> is ABI required for DT binding?  I know DT binding parses just lcd
->> timing data from device tree file so ABI isn't needed. but when it
->> comes to DT, I'm novice yet so there may be my missing point. could
->> you tell me why DT bindings are considered as an ABI? if there is my
->> missing point, will consider it again.
->
-> It's supposed to be possible to ship a DT with a board and then boot any
-> OS or OS version on the board.  If the meaning of the DT keeps changing
-> then this becomes impossible, you need to keep changing the DT when you
-> change the thing that parses it (rendering the whole exercise pointless).
->
+If we fail pl330_remove while some client is queued, the force unload
+will fail and the
+force unload will lose its purpose.
+How about conditionally DMA_TERMINATE_ALL and free resources like below ?
 
-thank you for your comments. got it. DT is built as an binary(dtb) and
-the dtb file should be re-used without any modifications. will keep
-this patch until the videomode helper will be merged to mainline so
-that this could be modified based on videomode helper later.
+@@ -3017,9 +3017,11 @@ static int __devexit pl330_remove(struct
+amba_device *adev)
+                /* Remove the channel */
+                list_del(&pch->chan.device_node);
 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+-               /* Flush the channel */
+-               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
+-               pl330_free_chan_resources(&pch->chan);
++               if (pch->chan.client_count != 0) {
++                       /* Flush the channel */
++                       pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
++                       pl330_free_chan_resources(&pch->chan);
++               }
+        }
+
+        while (!list_empty(&pdmac->desc_pool)) {
+
+
+Thanks,
+Inder
+
+
+> -jassi
