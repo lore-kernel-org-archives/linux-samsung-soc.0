@@ -1,70 +1,55 @@
-From: Kukjin Kim <kgene.kim@samsung.com>
-Subject: RE: [PATCH v4] ARM: EXYNOS: Add MFC device tree support
-Date: Wed, 26 Sep 2012 11:12:25 +0900
-Message-ID: <136b01cd9b8c$5edd98c0$1c98ca40$%kim@samsung.com>
-References: <1348337237-15426-1-git-send-email-arun.kk@samsung.com>
- <1348337237-15426-2-git-send-email-arun.kk@samsung.com>
- <50601831.1020400@samsung.com>
+From: Inki Dae <inki.dae@samsung.com>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Wed, 26 Sep 2012 13:32:10 +0900
+Message-ID: <CAAQKjZNRJHuA4+B-tP5vTaDfmMMxC+VKLDJU4gtpvtu=srzgAg@mail.gmail.com>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
+	<505C9072.2010204@wwwdotorg.org>
+	<CAAQKjZMZBDpKinZkDUX7CU4yTXmu9GrP1+OiZJKW4Gx1BTno3Q@mail.gmail.com>
+	<2368486.hLKA5vLF0M@avalon>
+	<CAAQKjZN++zZ9cfNCB21TeQwPZgFVU-Cmo9ZhVwaaMz+HO2vHig@mail.gmail.com>
+	<20120925153109.GA8834@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:20119 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751034Ab2IZCM0 convert rfc822-to-8bit (ORCPT
+Received: from mail-pa0-f46.google.com ([209.85.220.46]:60607 "EHLO
+	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750772Ab2IZEcK (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 22:12:26 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAX0050PQ4D8PH0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 11:12:25 +0900 (KST)
-Received: from DOKGENEKIM03 ([12.23.120.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAX00BDOQ4P1R00@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 11:12:25 +0900 (KST)
-In-reply-to: <50601831.1020400@samsung.com>
-Content-language: ko
+	Wed, 26 Sep 2012 00:32:10 -0400
+Received: by padhz1 with SMTP id hz1so140005pad.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 21:32:10 -0700 (PDT)
+In-Reply-To: <20120925153109.GA8834@sirena.org.uk>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Karol Lewandowski' <k.lewandowsk@samsung.com>, 'Arun Kumar K' <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, s.nawrocki@samsung.com, ch.naveen@samsung.com, joshi@samsung.com, thomas.ab@samsung.com
+To: Mark Brown <broonie@opensource.wolfsonmicro.com>
+Cc: linux-samsung-soc@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Leela Krishna Amudala <l.krishna@samsung.com>, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, kgene.kim@samsung.com, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-arm-kernel@lists.infradead.org
 
-Karol Lewandowski wrote:
-> 
-> On 09/22/2012 08:07 PM, Arun Kumar K wrote:
-> 
-> > This patch adds device tree entry for MFC v6 in the Exynos5
-> > SoC. Makes the required changes in the clock files and adds
-> > MFC to the DT device list.
-> >
-> > Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> > Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> 
-> 
-> Looks good for me. FWIW, I could probably add
-> 
-> Acked-by: Karol Lewandowski <k.lewandowsk@samsung.com>
-> 
-Happens following build error with exynos4_defconfig because of non-DT ?
+2012/9/26 Mark Brown <broonie@opensource.wolfsonmicro.com>:
+> On Wed, Sep 26, 2012 at 12:03:44AM +0900, Inki Dae wrote:
+>> 2012/9/25 Laurent Pinchart <laurent.pinchart@ideasonboard.com>:
+>
+>> > Aren't DT bindings considered as an ABI, and required to be supported more or
+>> > less forever ? If you merge this DT binding you'll have to keep supporting it.
+>> > That's why DT bindings should not be rushed in.
+>
+>> is ABI required for DT binding?  I know DT binding parses just lcd
+>> timing data from device tree file so ABI isn't needed. but when it
+>> comes to DT, I'm novice yet so there may be my missing point. could
+>> you tell me why DT bindings are considered as an ABI? if there is my
+>> missing point, will consider it again.
+>
+> It's supposed to be possible to ship a DT with a board and then boot any
+> OS or OS version on the board.  If the meaning of the DT keeps changing
+> then this becomes impossible, you need to keep changing the DT when you
+> change the thing that parses it (rendering the whole exercise pointless).
+>
 
-arch/arm/mach-exynos/common.c: In function 'exynos_fdt_find_mfc_mem':
-arch/arm/mach-exynos/common.c:1058: error: implicit declaration of function 'of_flat_dt_is_compatible'
-arch/arm/mach-exynos/common.c:1061: error: implicit declaration of function 'of_get_flat_dt_prop'
-arch/arm/mach-exynos/common.c:1061: warning: assignment makes pointer from integer without a cast
-arch/arm/mach-exynos/common.c:1064: error: implicit declaration of function 'of_read_ulong'
-arch/arm/mach-exynos/common.c:1066: warning: assignment makes pointer from integer without a cast
-arch/arm/mach-exynos/common.c:1071: warning: assignment makes pointer from integer without a cast
-arch/arm/mach-exynos/common.c:1076: warning: assignment makes pointer from integer without a cast
-make[1]: *** [arch/arm/mach-exynos/common.o] Error 1
+thank you for your comments. got it. DT is built as an binary(dtb) and
+the dtb file should be re-used without any modifications. will keep
+this patch until the videomode helper will be merged to mainline so
+that this could be modified based on videomode helper later.
 
-And I think, firstly we could move the function exynos_fdt_find_mfc_mem() into plat-samsung/ for using on other Samsung stuff such as s5pv210 and need to enclose '#ifdef CONFIG_OF" for non-DT?
-
-Thanks.
-
-Best regards,
-Kgene.
---
-Kukjin Kim <kgene.kim@samsung.com>, Senior Engineer,
-SW Solution Development Team, Samsung Electronics Co., Ltd.
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
