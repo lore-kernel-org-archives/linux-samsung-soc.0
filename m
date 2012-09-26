@@ -1,55 +1,68 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 6/6] ARM: dts: exynos4210: Add platform-specific descriptions
- for pin controllers
-Date: Tue, 25 Sep 2012 16:52:39 -0600
-Message-ID: <506235B7.7020507@wwwdotorg.org>
-References: <1348131197-25506-1-git-send-email-t.figa@samsung.com> <6920043.WDO1laKTfY@flatron> <5061F64B.5@wwwdotorg.org> <1634883.GDdJlvHhnl@flatron>
+From: Kukjin Kim <kgene@kernel.org>
+Subject: RE: [PATCH V2 3/3] ARM: EXYNOS: Add drm-device node to the dtsi file
+Date: Wed, 26 Sep 2012 10:46:01 +0900
+Message-ID: <135e01cd9b88$aea81140$0bf833c0$@org>
+References: <1348232397-2477-1-git-send-email-l.krishna@samsung.com>
+ <1348232397-2477-4-git-send-email-l.krishna@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:51089 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751309Ab2IYWwm (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:29998 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750824Ab2IZBqD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 25 Sep 2012 18:52:42 -0400
-In-Reply-To: <1634883.GDdJlvHhnl@flatron>
+	Tue, 25 Sep 2012 21:46:03 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAX009QWOW9QF90@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 10:46:01 +0900 (KST)
+Received: from DOKGENEKIM03 ([12.23.120.199])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MAX00M5DOWPJ170@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 10:46:01 +0900 (KST)
+In-reply-to: <1348232397-2477-4-git-send-email-l.krishna@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, linus.walleij@linaro.org, m.szyprowski@samsung.com
+To: 'Leela Krishna Amudala' <l.krishna@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: inki.dae@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org
 
-On 09/25/2012 12:35 PM, Tomasz Figa wrote:
-> On Tuesday 25 of September 2012 12:22:03 Stephen Warren wrote:
-...
->> BTW, how does the driver know what register addresses to use; I can see
->> the base for each pin controller bank is in samsung,pctl-offset, but
->> what describes the offset for each of the func, pud, drv, ... registers
->> from there? Are the offsets the same for all current Samsung SoCs?
+Leela Krishna Amudala wrote:
 > 
-> The offsets are defined as constants in the driver.
+> This patch adds platform drm-device node to the dtsi file
 > 
-> They are the same in all cases, but the "4bit2" bank type of S3C64xx, which 
-> can have up to 16 pins with 4-bit function specifiers, so two registers are 
-> required for function configuration. In this case all the remaining 
-> registers are offset by 0x04.
+> Signed-off-by: Leela Krishna Amudala <l.krishna@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250.dtsi |    4 ++++
+>  1 files changed, 4 insertions(+), 0 deletions(-)
 > 
-> I couldn't think about any good solution for this special case, but still, 
-> I haven't been thinking a lot about it, as the driver is targetted at 
-> current Exynos SoCs primarily.
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi
+> b/arch/arm/boot/dts/exynos5250.dtsi
+> index 6401c94..f0cc06d 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -495,4 +495,8 @@
+>  		reg = <0x14400000 0x40000>;
+>  		interrupts = <18 5>, <18 4>, <18 6>;
+>  	};
+> +
+> +	drm-device {
+> +		compatible = "samsung,exynos-drm-device";
+> +	};
+>  };
+> --
 
-I suppose if you always assume that the registers will appear in a
-specific order, and never have gaps between them, then you can simply
-always calculate the addresses as e.g.:
+Please check below comments from Thomas Abraham and I agree with his
+opinion.
 
-reg_func = reg_base
-reg_pud = reg_func + round_up(num_pins / (32 / func_width))
-reg_drv = reg_pud + round_up(num_pins / (32 / func_width))
-...
+There cannot be a node that represents a virtual device. Device tree should
+ideally describe the hardware but the above node does not represent a
+hardware device. The creation of the platform device instance for the above
+device should handled inside the kernel code.
 
-Then, there wouldn't ever be any special cases - that calculation would
-always work.
+Thanks.
 
-An alternative would be to put each register's address in DT rather than
-just the base of the register block. It'd certainly be more
-future-flexible, even if not strictly necessary.
+K-Gene <kgene@kernel.org>
