@@ -1,106 +1,110 @@
-From: Tomasz Figa <tomasz.figa@gmail.com>
-Subject: Re: [PATCH v4] ARM: EXYNOS: Add MFC device tree support
-Date: Wed, 26 Sep 2012 08:54:59 +0200
-Message-ID: <1504455.8j02SeYi2o@flatron>
-References: <1348337237-15426-1-git-send-email-arun.kk@samsung.com> <1348337237-15426-2-git-send-email-arun.kk@samsung.com>
+From: Praveen Paneri <p.paneri@samsung.com>
+Subject: Re: [PATCH v6 1/5] usb: phy: samsung: Introducing usb phy driver for hsotg
+Date: Wed, 26 Sep 2012 12:44:38 +0530
+Message-ID: <CAD6zSYMPB=i3RKy7r6MGoz+bxr0PNnOW6gvcrrMKNy7UA4U4Zw@mail.gmail.com>
+References: <1347886484-16064-1-git-send-email-p.paneri@samsung.com>
+	<1347886484-16064-2-git-send-email-p.paneri@samsung.com>
+	<50605A69.2070201@gmail.com>
+	<CAD6zSYOABTwTGXgFwGwLX-NhjDjDvtqUDVYTMGDng3nuTgLeZg@mail.gmail.com>
+	<5061A131.9010905@gmail.com>
+	<CAAe_U6J7j1_kLz3kUaOQqXmpR1JbS3wQypaPe=MTae8JUs5LDw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-wg0-f44.google.com ([74.125.82.44]:54348 "EHLO
-	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752861Ab2IZGzF (ORCPT
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:36254 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752628Ab2IZHOi (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Sep 2012 02:55:05 -0400
-Received: by wgbdr13 with SMTP id dr13so229052wgb.1
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 25 Sep 2012 23:55:03 -0700 (PDT)
-In-Reply-To: <1348337237-15426-2-git-send-email-arun.kk@samsung.com>
+	Wed, 26 Sep 2012 03:14:38 -0400
+In-Reply-To: <CAAe_U6J7j1_kLz3kUaOQqXmpR1JbS3wQypaPe=MTae8JUs5LDw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Arun Kumar K <arun.kk@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, s.nawrocki@samsung.com, ch.naveen@samsung.com, joshi@samsung.com
+To: "ABRAHAM, KISHON VIJAY" <kishon@ti.com>
+Cc: Rob Herring <robherring2@gmail.com>, linux-usb@vger.kernel.org, l.majewski@samsung.com, kgene.kim@samsung.com, heiko@sntech.de, gregkh@linuxfoundation.org, devicetree-discuss@lists.ozlabs.org, broonie@opensource.wolfsonmicro.com, balbi@ti.com, grant.likely@secretlab.ca, kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, thomas.abraham@linaro.org, ben-linux@fluff.org, linux-arm-kernel@lists.infradead.org
 
-Hi Arun,
+Hi,
 
-A little nitpick inline.
+On Tue, Sep 25, 2012 at 6:47 PM, ABRAHAM, KISHON VIJAY <kishon@ti.com> wrote:
+> Hi,
+>
+> On Tue, Sep 25, 2012 at 5:48 PM, Rob Herring <robherring2@gmail.com> wrote:
+>> On 09/25/2012 06:23 AM, Praveen Paneri wrote:
+>>> Hi Rob,
+>>>
+>>> On Mon, Sep 24, 2012 at 6:34 PM, Rob Herring <robherring2@gmail.com> wrote:
+>>>> On 09/17/2012 07:54 AM, Praveen Paneri wrote:
+>>>>> This driver uses usb_phy interface to interact with s3c-hsotg. Supports
+>>>>> phy_init and phy_shutdown functions to enable/disable phy. Tested with
+>>>>> smdk6410 and smdkv310. More SoCs can be brought under later.
+>>>>>
+>>>>> Signed-off-by: Praveen Paneri <p.paneri@samsung.com>
+>>>>> Acked-by: Heiko Stuebner <heiko@sntech.de>
+>>>>> ---
+>>>>>  .../devicetree/bindings/usb/samsung-usbphy.txt     |    9 +
+>>>>>  drivers/usb/phy/Kconfig                            |    8 +
+>>>>>  drivers/usb/phy/Makefile                           |    1 +
+>>>>>  drivers/usb/phy/samsung-usbphy.c                   |  360 ++++++++++++++++++++
+>>>>>  include/linux/platform_data/samsung-usbphy.h       |   27 ++
+>>>>>  5 files changed, 405 insertions(+), 0 deletions(-)
+>>>>>  create mode 100644 Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>>>  create mode 100644 drivers/usb/phy/samsung-usbphy.c
+>>>>>  create mode 100644 include/linux/platform_data/samsung-usbphy.h
+>>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>>> new file mode 100644
+>>>>> index 0000000..fefd9c8
+>>>>> --- /dev/null
+>>>>> +++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
+>>>>> @@ -0,0 +1,9 @@
+>>>>> +* Samsung's usb phy transceiver
+>>>>> +
+>>>>> +The Samsung's phy transceiver is used for controlling usb otg phy for
+>>>>> +s3c-hsotg usb device controller.
+>>>>> +
+>>>>> +Required properties:
+>>>>> +- compatible : should be "samsung,exynos4210-usbphy"
+>>>>> +- reg : base physical address of the phy registers and length of memory mapped
+>>>>> +     region.
+>>>>
+>>>> What's missing here is describing the connection of phys to host
+>>>> controllers. We've got several people adding usb phy bindings and need
+>>>> to define them in a common way.
+>>> yes! it just covers the generic binding. I will update it accordingly
+>>> as the generic phy framework takes its final shape.
+>>
+>> That sounds like the wrong way to define a binding... Figuring out how
+>> to describe the h/w should not be dependent on changes in the kernel.
+>> Bindings are an ABI and should not be evolving.
+But since Kishon is getting the generic bindings ready, I can use them
+when those are ready. So do we need to hold the merge of this patch
+until then?
 
-On Saturday 22 of September 2012 23:37:17 Arun Kumar K wrote:
-> This patch adds device tree entry for MFC v6 in the Exynos5
-> SoC. Makes the required changes in the clock files and adds
-> MFC to the DT device list.
-> 
-> Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-> Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
-> ---
->  .../devicetree/bindings/media/s5p-mfc.txt          |   27 ++++++++++++++
-> arch/arm/boot/dts/exynos5250-smdk5250.dts          |    7 ++++
-> arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++
->  arch/arm/mach-exynos/Kconfig                       |    1 +
->  arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
->  arch/arm/mach-exynos/common.c                      |   37
-> ++++++++++++++++++++ arch/arm/mach-exynos/common.h                     
-> |   10 +++++ arch/arm/mach-exynos/mach-exynos5-dt.c             |   16
-> ++++++++ 8 files changed, 105 insertions(+), 1 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> b/Documentation/devicetree/bindings/media/s5p-mfc.txt new file mode
-> 100644
-> index 0000000..f95e775
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-> @@ -0,0 +1,27 @@
-> +* Samsung Multi Format Codec (MFC)
-> +
-> +Multi Format Codec (MFC) is the IP present in Samsung SoCs which
-> +supports high resolution decoding and encoding functionalities.
-> +The MFC device driver is a v4l2 driver which can encode/decode
-> +video raw/elementary streams and has support for all popular
-> +video codecs.
-> +
-> +Required properties:
-> +  - compatible : value should be either one among the following
-> +	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
-> +	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
-> +
-> +  - reg : Physical base address of the IP registers and length of memory
-> +	  mapped region.
-> +
-> +  - interrupts : MFC interrupt number to the CPU.
-> +
-> +  - samsung,mfc-r : Base address of the first memory bank used by MFC
-> +		    for DMA contiguous memory allocation.
-> +
-> +  - samsung,mfc-r-size : Size of the first memory bank.
-> +
-> +  - samsung,mfc-l : Base address of the second memory bank used by MFC
-> +		    for DMA contiguous memory allocation.
-> +
-> +  - samsung,mfc-l-size : Size of the second memory bank.
-
-Maybe the base address and size could be merged into one property with two 
-values, as it is done with the reg property? What do you think?
-
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> b/arch/arm/boot/dts/exynos5250-smdk5250.dts index 8a5e348..99890ec
-> 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -109,4 +109,11 @@
->  	spi_2: spi@12d40000 {
->  		status = "disabled";
->  	};
-> +
-> +	codec@11000000 {
-> +		samsung,mfc-r = <0x43000000>;
-> +		samsung,mfc-r-size = <8388608>;
-> +		samsung,mfc-l = <0x51000000>;
-> +		samsung,mfc-l-size = <8388608>;
-
-It would look like this:
-
-		samsung-mfc-r = <0x43000000 0x800000>;
-		samsung-mfc-l = <0x51000000 0x800000>;
-
-Best regards,
-Tomasz Figa
+Thanks,
+Praveen
+>
+> There can be multiple ways to define the binding. For e.g. We
+> discussed few ways of binding the phys to the controller
+>
+> controller {
+>               phy0 = <&phandle1_name>;
+>               phy1 = <&phandle2_name>;
+> }
+>
+> phy0 and phy1 are any name given to obtain a reference to the phy and
+> the controller should send the phandle name like
+> get_phy_by_phandle("phy0");. Then we thought of standardizing that
+> name.
+>
+> and then finally we settled on something like this
+> controller {
+>               phy = <&phandle0_name>, <&phandle1_name>;
+> }
+> so that controller can obtain a reference to the PHY using
+> *of_phy_get(struct device *dev, const char *phandle, u8 index)*
+>
+> Thanks
+> Kishon
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
