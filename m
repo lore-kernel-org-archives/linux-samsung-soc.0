@@ -1,69 +1,67 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
-Date: Wed, 26 Sep 2012 16:25:22 +0530
-Message-ID: <CAG17yqQ5NDr4sLvWbA85q5y079j2M2OV-uRjXSSL=OFPfCw3Zg@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
-	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
-	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
-	<CABb+yY36pQ7oXC1OKEQ-1V55c2SZurcTAPaZ=_PWugqxdL2rgg@mail.gmail.com>
+From: Arun Kumar K <arun.kk@samsung.com>
+Subject: RE: [PATCH v4] ARM: EXYNOS: Add MFC device tree support
+Date: Wed, 26 Sep 2012 11:00:06 +0000 (GMT)
+Message-ID: <20232973.290871348657205865.JavaMail.weblogic@epml02>
+Reply-To: arun.kk@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:35951 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753911Ab2IZKzX (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:12820 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753220Ab2IZLAH (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Sep 2012 06:55:23 -0400
-Received: by vbbff1 with SMTP id ff1so434181vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 26 Sep 2012 03:55:22 -0700 (PDT)
-In-Reply-To: <CABb+yY36pQ7oXC1OKEQ-1V55c2SZurcTAPaZ=_PWugqxdL2rgg@mail.gmail.com>
+	Wed, 26 Sep 2012 07:00:07 -0400
+Received: from epcpsbge2.samsung.com (epcpsbge2 [203.254.230.12])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MAY009MVEK5QF01@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Wed, 26 Sep 2012 20:00:06 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+To: Kukjin Kim <kgene.kim@samsung.com>, Karol Lewandowski <k.lewandowsk@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kamil Debski <k.debski@samsung.com>, Jeongtae Park <jtp.park@samsung.com>, "thomas.abraham@linaro.org" <thomas.abraham@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, NAVEEN KRISHNA CHATRADHI <ch.naveen@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, Thomas P Abraham <thomas.ab@samsung.com>
 
-On 26 September 2012 15:02, Jassi Brar <jassisinghbrar@gmail.com> wrote:
-> On Wed, Sep 26, 2012 at 12:11 PM, Inderpal Singh
-> <inderpal.singh@linaro.org> wrote:
->
->> How about conditionally DMA_TERMINATE_ALL and free resources like below ?
->>
->> @@ -3017,9 +3017,11 @@ static int __devexit pl330_remove(struct
->> amba_device *adev)
->>                 /* Remove the channel */
->>                 list_del(&pch->chan.device_node);
->>
->> -               /* Flush the channel */
->> -               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
->> -               pl330_free_chan_resources(&pch->chan);
->> +               if (pch->chan.client_count != 0) {
->> +                       /* Flush the channel */
->> +                       pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
->> +                       pl330_free_chan_resources(&pch->chan);
->> +               }
->>         }
->>
-> It is perfectly safe to flush the channels that have client_count == 0
-> as well. Which is already the case.
-
-As per my understanding, if client_count ==0, It may mean following:
-
-1. This channel was never allocated to any client. Hence
-alloc_chan_resources was not done for it.
-So, no need to flush and free resources if it was never allocated at
-the first place. If we free_chan_resources, it will not be balanced
-against alloc_chan_resources. Scenario: insmod and then rmmod.
-
-Or,
-
-2. The channel was allocated to some client, alloc_chan_resource was
-done, the work for the client is completed and free_chan_resources was
-performed. Now  since resources have already been freed, no need to
-flush and free_chan_resources again in remove.
-
-The whole idea of this patch is to balance alloc_chan_resources and
-free_chan_resources.
-
-Thanks,
-Inder
+SGkgS3VramluLA0KDQpBcyBzdWdnZXN0ZWQgYnkgeW91LCB0aGUgZnVuY3Rpb24gZXh5bm9zX2Zk
+dF9maW5kX21mY19tZW0oKSBjYW4gYmUgbW92ZWQgdG8gcGxhdC1zYW1zdW5nLg0KSSBmZWVsIHBs
+YXQtc2Ftc3VuZy9zNXAtZGV2LW1mYy5jIHdvdWxkIGJlIGEgZ29vZCBwbGFjZS4gSG9wZSBpdCBp
+cyBvaz8NCkFsc28gSSB3aWxsIHdyYXAgaXQgd2l0aCAjaWZkZWYgQ09ORklHX09GIGZvciBub24t
+ZHQgbW9kZS4NCkkgd2lsbCBwb3N0IHRoZSB1cGRhdGVkIHBhdGNoIHdpdGggdGhlIHN1Z2dlc3Rl
+ZCBjaGFuZ2VzLg0KDQpSZWdhcmRzDQpBcnVuDQoNCk9uIFdlZCwgU2VwIDI2LCAyMDEyIGF0IDc6
+NDIgQU0sIEt1a2ppbiBLaW0gPGtnZW5lLmtpbUBzYW1zdW5nLmNvbT4gd3JvdGU6DQo+IEthcm9s
+IExld2FuZG93c2tpIHdyb3RlOg0KPj4NCj4+IE9uIDA5LzIyLzIwMTIgMDg6MDcgUE0sIEFydW4g
+S3VtYXIgSyB3cm90ZToNCj4+DQo+PiA+IFRoaXMgcGF0Y2ggYWRkcyBkZXZpY2UgdHJlZSBlbnRy
+eSBmb3IgTUZDIHY2IGluIHRoZSBFeHlub3M1DQo+PiA+IFNvQy4gTWFrZXMgdGhlIHJlcXVpcmVk
+IGNoYW5nZXMgaW4gdGhlIGNsb2NrIGZpbGVzIGFuZCBhZGRzDQo+PiA+IE1GQyB0byB0aGUgRFQg
+ZGV2aWNlIGxpc3QuDQo+PiA+DQo+PiA+IFNpZ25lZC1vZmYtYnk6IE5hdmVlbiBLcmlzaG5hIENo
+YXRyYWRoaSA8Y2gubmF2ZWVuQHNhbXN1bmcuY29tPg0KPj4gPiBTaWduZWQtb2ZmLWJ5OiBBcnVu
+IEt1bWFyIEsgPGFydW4ua2tAc2Ftc3VuZy5jb20+DQo+Pg0KPj4NCj4+IExvb2tzIGdvb2QgZm9y
+IG1lLiBGV0lXLCBJIGNvdWxkIHByb2JhYmx5IGFkZA0KPj4NCj4+IEFja2VkLWJ5OiBLYXJvbCBM
+ZXdhbmRvd3NraSA8ay5sZXdhbmRvd3NrQHNhbXN1bmcuY29tPg0KPj4NCj4gSGFwcGVucyBmb2xs
+b3dpbmcgYnVpbGQgZXJyb3Igd2l0aCBleHlub3M0X2RlZmNvbmZpZyBiZWNhdXNlIG9mIG5vbi1E
+VCA/DQo+DQo+IGFyY2gvYXJtL21hY2gtZXh5bm9zL2NvbW1vbi5jOiBJbiBmdW5jdGlvbiAnZXh5
+bm9zX2ZkdF9maW5kX21mY19tZW0nOg0KPiBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uYzox
+MDU4OiBlcnJvcjogaW1wbGljaXQgZGVjbGFyYXRpb24gb2YgZnVuY3Rpb24gJ29mX2ZsYXRfZHRf
+aXNfY29tcGF0aWJsZScNCj4gYXJjaC9hcm0vbWFjaC1leHlub3MvY29tbW9uLmM6MTA2MTogZXJy
+b3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0aW9uICdvZl9nZXRfZmxhdF9kdF9wcm9w
+Jw0KPiBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uYzoxMDYxOiB3YXJuaW5nOiBhc3NpZ25t
+ZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIHdpdGhvdXQgYSBjYXN0DQo+IGFyY2gvYXJt
+L21hY2gtZXh5bm9zL2NvbW1vbi5jOjEwNjQ6IGVycm9yOiBpbXBsaWNpdCBkZWNsYXJhdGlvbiBv
+ZiBmdW5jdGlvbiAnb2ZfcmVhZF91bG9uZycNCj4gYXJjaC9hcm0vbWFjaC1leHlub3MvY29tbW9u
+LmM6MTA2Njogd2FybmluZzogYXNzaWdubWVudCBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdlciB3
+aXRob3V0IGEgY2FzdA0KPiBhcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24uYzoxMDcxOiB3YXJu
+aW5nOiBhc3NpZ25tZW50IG1ha2VzIHBvaW50ZXIgZnJvbSBpbnRlZ2VyIHdpdGhvdXQgYSBjYXN0
+DQo+IGFyY2gvYXJtL21hY2gtZXh5bm9zL2NvbW1vbi5jOjEwNzY6IHdhcm5pbmc6IGFzc2lnbm1l
+bnQgbWFrZXMgcG9pbnRlciBmcm9tIGludGVnZXIgd2l0aG91dCBhIGNhc3QNCj4gbWFrZVsxXTog
+KioqIFthcmNoL2FybS9tYWNoLWV4eW5vcy9jb21tb24ub10gRXJyb3IgMQ0KPg0KPiBBbmQgSSB0
+aGluaywgZmlyc3RseSB3ZSBjb3VsZCBtb3ZlIHRoZSBmdW5jdGlvbiBleHlub3NfZmR0X2ZpbmRf
+bWZjX21lbSgpIGludG8gcGxhdC1zYW1zdW5nLyBmb3IgdXNpbmcgb24gb3RoZXIgU2Ftc3VuZyBz
+dHVmZiBzdWNoIGFzIHM1cHYyMTAgYW5kIG5lZWQgdG8gZW5jbG9zZSAnI2lmZGVmIENPTkZJR19P
+RiIgZm9yIG5vbi1EVD8NCj4NCj4gVGhhbmtzLg0KPg0KPiBCZXN0IHJlZ2FyZHMsDQo+IEtnZW5l
+Lg0KPiAtLQ0KPiBLdWtqaW4gS2ltIDxrZ2VuZS5raW1Ac2Ftc3VuZy5jb20+LCBTZW5pb3IgRW5n
+aW5lZXIsDQo+IFNXIFNvbHV0aW9uIERldmVsb3BtZW50IFRlYW0sIFNhbXN1bmcgRWxlY3Ryb25p
+Y3MgQ28uLCBMdGQuDQo+DQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBz
+ZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1zYW1zdW5nLXNvYyIgaW4NCj4gdGhlIGJv
+ZHkgb2YgYSBtZXNzYWdlIHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcNCj4gTW9yZSBtYWpv
+cmRvbW8gaW5mbyBhdCAgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
