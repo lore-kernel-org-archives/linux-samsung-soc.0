@@ -1,106 +1,33 @@
-From: Joonyoung Shim <jy0922.shim@samsung.com>
-Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Insert bitmap_gpio_int member in
- samsung_gpio_chip
-Date: Thu, 27 Sep 2012 13:50:05 +0900
-Message-ID: <5063DAFD.1040903@samsung.com>
-References: <000001cd9c63$e95c7b60$bc157220$@com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
+Date: Thu, 27 Sep 2012 10:35:20 +0530
+Message-ID: <CABb+yY0YAkaKaFRO14wYR52-Si5S=qfVczXs_2Z+jZYEpXFh2Q@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
+	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
+	<CABb+yY36pQ7oXC1OKEQ-1V55c2SZurcTAPaZ=_PWugqxdL2rgg@mail.gmail.com>
+	<CAG17yqQ5NDr4sLvWbA85q5y079j2M2OV-uRjXSSL=OFPfCw3Zg@mail.gmail.com>
+	<CABb+yY0dvtOZoa=T+gyTeWy3XyAictXJnqSkbF39E=peHSXDuQ@mail.gmail.com>
+	<CAG17yqQbRMaaEFyTBngMwdiKVBsGaOit1ufv3t5TdwLBgSKmfw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41773 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751241Ab2I0EuJ (ORCPT
+Received: from mail-oa0-f46.google.com ([209.85.219.46]:45597 "EHLO
+	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752026Ab2I0FFV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Sep 2012 00:50:09 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAZ004BYS3EHVH0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 13:50:08 +0900 (KST)
-Received: from [10.90.51.60] by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MAZ00EQ3S3HBA90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 13:50:06 +0900 (KST)
-In-reply-to: <000001cd9c63$e95c7b60$bc157220$@com>
+	Thu, 27 Sep 2012 01:05:21 -0400
+In-Reply-To: <CAG17yqQbRMaaEFyTBngMwdiKVBsGaOit1ufv3t5TdwLBgSKmfw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Eunki Kim <eunki_kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, linus.walleij@linaro.org, kgene.kim@samsung.com
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 
-On 09/27/2012 12:55 PM, Eunki Kim wrote:
-> When a device uses GPIO interrupt, its driver assumes that GPIO
-> should be INPUT mode. However, GPIO of SAMSUNG SoC is sepated to
-> INPUT mode and INTERRUPT mode. They are set by 0x0 and 0xF in GPIO
-> control register. If the register is set to INPUT mode, the
-> interrupt never occur. Therefore, it's necessary to set INTERRUPT
-> mode instead of INPUT mode when the pin is used for GPIO interrupt.
-
-If for this, already the patch was posted.
-
-http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/074387.html
-
-Thanks.
-
-> This patch inserts the bitmap_gpio_int member in struct samsung_
-> gpio_chip in order to represent use of GPIO interrupt for each pin
-> and sets the related bit when s5p_register_gpio_interrupt function
-> is called.
+On Thu, Sep 27, 2012 at 9:43 AM, Inderpal Singh
+<inderpal.singh@linaro.org> wrote:
 >
-> Signed-off-by: Eunki Kim <eunki_kim@samsung.com>
-> Cc: Grant Likely <grant.likely@secretlab.ca>
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> ---
->   arch/arm/plat-samsung/include/plat/gpio-core.h |    2 ++
->   arch/arm/plat-samsung/s5p-irq-gpioint.c        |    8 ++++++--
->   2 files changed, 8 insertions(+), 2 deletions(-)
+> Don't you think free_chan_resource should be done __only if__
+> alloc_chan_resource was successful ?
 >
-> diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h
-> b/arch/arm/plat-samsung/include/plat/gpio-core.h
-> index 1fe6917..dfd8b7a 100644
-> --- a/arch/arm/plat-samsung/include/plat/gpio-core.h
-> +++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
-> @@ -48,6 +48,7 @@ struct samsung_gpio_cfg;
->    * @config: special function and pull-resistor control information.
->    * @lock: Lock for exclusive access to this gpio bank.
->    * @pm_save: Save information for suspend/resume support.
-> + * @bitmap_gpio_int: Bitmap for representing GPIO interrupt or not.
->    *
->    * This wrapper provides the necessary information for the Samsung
->    * specific gpios being registered with gpiolib.
-> @@ -71,6 +72,7 @@ struct samsung_gpio_chip {
->   #ifdef CONFIG_PM
->   	u32			pm_save[4];
->   #endif
-> +	u32			bitmap_gpio_int;
->   };
->   
->   static inline struct samsung_gpio_chip *to_samsung_gpio(struct gpio_chip *gpc)
-> diff --git a/arch/arm/plat-samsung/s5p-irq-gpioint.c b/arch/arm/plat-samsung/s5p-irq-gpioint.c
-> index f9431fe..d981c61 100644
-> --- a/arch/arm/plat-samsung/s5p-irq-gpioint.c
-> +++ b/arch/arm/plat-samsung/s5p-irq-gpioint.c
-> @@ -185,7 +185,7 @@ int __init s5p_register_gpio_interrupt(int pin)
->   
->   	/* check if the group has been already registered */
->   	if (my_chip->irq_base)
-> -		return my_chip->irq_base + offset;
-> +		goto success;
->   
->   	/* register gpio group */
->   	ret = s5p_gpioint_add(my_chip);
-> @@ -193,9 +193,13 @@ int __init s5p_register_gpio_interrupt(int pin)
->   		my_chip->chip.to_irq = samsung_gpiolib_to_irq;
->   		printk(KERN_INFO "Registered interrupt support for gpio group %d.\n",
->   		       group);
-> -		return my_chip->irq_base + offset;
-> +		goto success;
->   	}
->   	return ret;
-> +success:
-> +	my_chip->bitmap_gpio_int |= BIT(offset);
-> +
-> +	return my_chip->irq_base + offset;
->   }
->   
->   int __init s5p_register_gpioint_bank(int chain_irq, int start, int nr_groups)
+No, I don't think so. Thanks.
