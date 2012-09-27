@@ -1,44 +1,45 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2] ASoC: SAMSUNG: Add DT support for i2s
-Date: Thu, 27 Sep 2012 09:28:37 -0600
-Message-ID: <506470A5.3070307@wwwdotorg.org>
-References: <1348741532-29412-1-git-send-email-padma.v@samsung.com>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
+Date: Thu, 27 Sep 2012 21:11:19 +0530
+Message-ID: <CAG17yqRxZFsKpx+gpEGoZTbs4x7ijmqywX39=ezq2+RZkvk=TA@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
+	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
+	<1348739292.1648.15.camel@vkoul-udesk3>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from avon.wwwdotorg.org ([70.85.31.133]:44299 "EHLO
-	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754992Ab2I0P2m (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Sep 2012 11:28:42 -0400
-In-Reply-To: <1348741532-29412-1-git-send-email-padma.v@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1348739292.1648.15.camel@vkoul-udesk3>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinod Koul <vinod.koul@linux.intel.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Padmavathi Venna <padma.v@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org, sbkim73@samsung.com, sangsu4u.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-On 09/27/2012 04:25 AM, Padmavathi Venna wrote:
-> Add support for device based discovery.
+On 27 September 2012 15:18, Vinod Koul <vinod.koul@linux.intel.com> wrote:
+> On Wed, 2012-09-26 at 12:11 +0530, Inderpal Singh wrote:
+>> If we fail pl330_remove while some client is queued, the force unload
+>> will fail and the
+>> force unload will lose its purpose.
+>> How about conditionally DMA_TERMINATE_ALL and free resources like
+>> below ?
+> Why would you want to remove the driver when it is doing something
+> useful? You have to ensure driver is not doing anything.
+>
+> What is point here?
+>
+As mentioned by jassi,  if the pl330 module is forced unloaded while
+some client is queued, we have to manually do DMA_TERMINATE_ALL.
 
-> +++ b/Documentation/devicetree/bindings/sound/samsung-i2s.txt
+If failing remove is a better option in case some client is queued, we
+can do away with DMA_TERMINATE_ALL and free_chan_resources and simply
+return a suitable error code from remove.
 
-> +i2s@03830000 {
-> +	compatible = "samsung,samsung-i2s";
-> +	reg = <0x03830000 0x100>;
+Kindly suggest.
 
-> +	tx-dma-channel-secondary = <&pdma0 8>;
-> +	tx-dma-channel = <&pdma0 10>;
-> +	rx-dma-channel = <&pdma0 9>;
-> +	supports-6ch;
-> +	supports-rstclr;
-> +	supports-secdai;
+Thanks,
+Inder
 
-Those 6 properties are custom to this binding so should have a vendor
-prefix, e.g. "samsung,supports-6ch".
-
-Also, I wonder if this shouldn't wait for the forthcoming standardized
-DT DMA bindings (or perhaps document custom bindings that are identical
-to the new standardized bindings)? Otherwise, the DMA stuff will all
-have to be redefined again. Apparently it's hoped the bindings will be
-in 3.7, or if not there, in 3.8.
+> --
+> ~Vinod
+>
