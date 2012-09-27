@@ -1,75 +1,193 @@
-From: Padmavathi Venna <padma.v@samsung.com>
-Subject: [PATCH v2] ASoC: Samsung: Update Kconfig for Exynos5250 and Exynos4412
-Date: Thu, 27 Sep 2012 15:59:37 +0530
-Message-ID: <1348741777-29569-1-git-send-email-padma.v@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:63448 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755945Ab2I0KY4 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Sep 2012 06:24:56 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MB0006QG7KZPDC0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 19:24:55 +0900 (KST)
-Received: from padma-linuxpc.sisodomain.com ([107.108.83.35])
- by mmp2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MB000MXK7L80X20@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 19:24:55 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Sylwester Nawrocki <sylvester.nawrocki-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3] video: exynos_dp: Add device tree support to DP driver
+Date: Thu, 27 Sep 2012 15:44:40 +0200
+Message-ID: <50645848.6080102@gmail.com>
+References: <1348515385-22332-1-git-send-email-ajaykumar.rs@samsung.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <1348515385-22332-1-git-send-email-ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Ajay Kumar <ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, FlorianSchandinat-Mmb7MZpHnFY@public.gmane.org, devicetree-discuss <devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.ab-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: padma.v@samsung.com, sbkim73@samsung.com, sangsu4u.park@samsung.com, ben-linux@fluff.org, kgene.kim@samsung.com, olofj@google.com
 
-Update Kconfig file to support the Exynos5250 and Exynos4412
+Hi,
 
-Signed-off-by: Sangsu Park <sangsu4u.park@samsung.com>
-Signed-off-by: Sangbeom Kim <sbkim73@samsung.com>
-Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
----
- sound/soc/samsung/Kconfig |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+Cc: devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 
-diff --git a/sound/soc/samsung/Kconfig b/sound/soc/samsung/Kconfig
-index fe3995c..430783b 100644
---- a/sound/soc/samsung/Kconfig
-+++ b/sound/soc/samsung/Kconfig
-@@ -1,6 +1,6 @@
- config SND_SOC_SAMSUNG
- 	tristate "ASoC support for Samsung"
--	depends on ARCH_S3C24XX || ARCH_S3C64XX || ARCH_S5PC100 || ARCH_S5PV210 || ARCH_S5P64X0 || ARCH_EXYNOS4
-+	depends on PLAT_SAMSUNG
- 	select S3C64XX_DMA if ARCH_S3C64XX
- 	select S3C2410_DMA if ARCH_S3C24XX
- 	help
-@@ -63,7 +63,7 @@ config SND_SOC_SAMSUNG_SMDK_WM8580
- 
- config SND_SOC_SAMSUNG_SMDK_WM8994
- 	tristate "SoC I2S Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG && (MACH_SMDKV310 || MACH_SMDKC210 || MACH_SMDK4212 || MACH_SMDK4412 || MACH_EXYNOS5_DT)
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
-@@ -162,7 +162,7 @@ config SND_SOC_GONI_AQUILA_WM8994
- 
- config SND_SOC_SAMSUNG_SMDK_SPDIF
- 	tristate "SoC S/PDIF Audio support for SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG && (MACH_SMDKC100 || MACH_SMDKC110 || MACH_SMDKV210 || MACH_SMDKV310 || MACH_SMDK4212 || MACH_SMDK4412 || SOC_EXYNOS5250)
- 	select SND_SAMSUNG_SPDIF
- 	help
- 	  Say Y if you want to add support for SoC S/PDIF audio on the SMDK.
-@@ -177,7 +177,7 @@ config SND_SOC_SMDK_WM8580_PCM
- 
- config SND_SOC_SMDK_WM8994_PCM
- 	tristate "SoC PCM Audio support for WM8994 on SMDK"
--	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212)
-+	depends on SND_SOC_SAMSUNG && (MACH_SMDKC210 || MACH_SMDKV310 || MACH_SMDK4212 || MACH_SMDK4412 || MACH_EXYNOS5_DT)
- 	depends on I2C=y && GENERIC_HARDIRQS
- 	select MFD_WM8994
- 	select SND_SOC_WM8994
--- 
-1.7.4.4
+On 09/24/2012 09:36 PM, Ajay Kumar wrote:
+> This patch enables device tree based discovery support for DP driver.
+> The driver is modified to handle platform data in both the cases:
+> with DT and non-DT.
+> Documentation is also added for the DT bindings.
+> 
+> DP-PHY should be regarded as a seperate device node while
+> being passed from device tree list, and device node for
+> DP should contain DP-PHY as child node with property name "dp-phy"
+> associated with it.
+> 
+> Signed-off-by: Ajay Kumar<ajaykumar.rs-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> ---
+>   .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++
+>   drivers/video/exynos/exynos_dp_core.c              |  168 ++++++++++++++++++--
+>   drivers/video/exynos/exynos_dp_core.h              |    2 +
+>   3 files changed, 239 insertions(+), 14 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> new file mode 100644
+> index 0000000..c27f892
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> @@ -0,0 +1,83 @@
+> +Exynos Displayport driver should configure the displayport interface
+
+Don't we need a whitespace between 'display' and 'port' ?
+
+> +based on the type of panel connected to it.
+> +
+> +We use two nodes:
+> +	-dptx_phy node
+> +	-display-port-controller node
+> +
+> +For the dp-phy initialization, we use a dptx_phy node.
+> +Required properties for dptx_phy:
+> +	-compatible:
+> +		Should be "samsung,dp-phy".
+> +	-samsung,dptx_phy_reg:
+> +		Base address of DP PHY register.
+
+Couldn't just 'reg' be used for this one ?
+
+> +	-samsung,enable_bit:
+> +		The bit used to enable/disable DP PHY.
+
+Is this the bit mask or the bit index ? In the code it's used as 
+a bitmask. But from description it is not clear whether it is 
+an index or a mask. Is it different across various SoCs ?
+
+Perhaps it's better to name it samsung,enable_mask (in case some
+SoC need more than one bit) ?
+
+> +
+> +For the Panel initialization, we read data from display-port-controller node.
+> +Required properties for display-port-controller:
+> +	-compatible:
+> +		Should be "samsung,exynos5-dp".
+> +	-reg:
+> +		physical base address of the controller and length
+> +		of memory mapped region.
+> +	-interrupts:
+> +		Internet combiner values.
+
+what? :)
+
+> +	-interrupt-parent:
+> +		Address of Interrupt combiner node.
+> +	-dp_phy:
+> +		Address of dptx_phy node.
+
+"A phandle to dptx_phy node" ?
+
+> +	-samsung,color_space:
+> +		input video data format.
+> +			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+
+Can this be changed at run time ?
+
+> +	-samsung,dynamic_range:
+> +		dynamic range for input video data.
+> +			VESA = 0, CEA = 1
+
+Why is it in the device tree ? Shouldn't it be configurable at runtime ?
+My apologies if this an obvious question, I don't have much experience 
+with DP.
+
+> +	-samsung,ycbcr_coeff:
+> +		YCbCr co-efficients for input video.
+> +			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+> +	-samsung,color_depth:
+> +		Bit per color component.
+
+"Number of bits per colour component" ? Also same remark as above.
+
+> +			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> +	-samsung,link_rate:
+> +		link rates supportd by the panel.
+
+typo: supportd -> supported
+
+> +			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+
+Is this really a property of a panel ? Why it is in the PHY node ?
+Also I can see this is just a single property, so "link rates" is a bit 
+misleading.
+
+> +	-samsung,lane_count:
+> +		number of lanes supported by the panel.
+> +			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+
+What do these symbolic names are needed for ? Is lane_count a number or a 
+mask, is this really a _maximum_ number of lanes ? What are the valid values, 
+1, 2 and 4 ? Or maybe 0x3 is also valid which  would indicate that we can 
+use 1 or 2 data lanes ?
+
+> +	-samsung,interlaced:
+> +		Interlace scan mode.
+> +			Progressive if defined, Interlaced if not defined
+
+Why do we need this in the device tree ? Is this really a default scan mode ?
+Can it be the changed at runtime ?
+
+> +	-samsung,v_sync_polarity:
+> +		VSYNC polarity configuration.
+> +			High if defined, Low if not defined
+> +	-samsung,h_sync_polarity:
+> +		HSYNC polarity configuration.
+> +			High if defined, Low if not defined
+> +
+> +Example:
+> +
+> +SOC specific portion:
+> +	dptx_phy: dptx_phy@0x10040720 {
+> +		compatible = "samsung,dp-phy";
+> +		samsung,dptx_phy_reg =<0x10040720>;
+> +		samsung,enable_bit =<1>;
+> +	};
+> +
+> +	display-port-controller {
+> +		compatible = "samsung,exynos5-dp";
+> +		reg =<0x145B0000 0x10000>;
+> +		interrupts =<10 3>;
+> +		interrupt-parent =<&combiner>;
+> +		dp_phy =<&dptx_phy>;
+
+Shouldn't it be "samsung,dp_phy" ?
+
+> +        };
+> +
+> +Board Specific portion:
+> +	display-port-controller {
+> +		samsung,color_space =<0>;
+> +		samsung,dynamic_range =<0>;
+> +		samsung,ycbcr_coeff =<0>;
+> +		samsung,color_depth =<1>;
+> +		samsung,link_rate =<0x0a>;
+> +		samsung,lane_count =<2>;
+> +	};
+
+--
+
+Regards,
+Sylwester
