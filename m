@@ -1,274 +1,37 @@
-From: Arun Kumar K <arun.kk@samsung.com>
-Subject: [PATCH v5] ARM: EXYNOS: Add MFC device tree support
-Date: Thu, 27 Sep 2012 22:39:44 +0530
-Message-ID: <1348765784-7508-2-git-send-email-arun.kk@samsung.com>
-References: <1348765784-7508-1-git-send-email-arun.kk@samsung.com>
+From: Vinod Koul <vinod.koul@linux.intel.com>
+Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with
+ probe
+Date: Thu, 27 Sep 2012 15:18:12 +0530
+Message-ID: <1348739292.1648.15.camel@vkoul-udesk3>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	 <1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+	 <CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
+	 <CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:44900 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754407Ab2I0JwC (ORCPT
+Received: from mga03.intel.com ([143.182.124.21]:40706 "EHLO mga03.intel.com"
+	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+	id S1752070Ab2I0JyI (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Sep 2012 05:52:02 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout3.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MB000CRU61RDST0@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 18:52:01 +0900 (KST)
-Received: from localhost.localdomain ([107.108.73.106])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MB00065N62G7V30@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 18:52:00 +0900 (KST)
-In-reply-to: <1348765784-7508-1-git-send-email-arun.kk@samsung.com>
+	Thu, 27 Sep 2012 05:54:08 -0400
+In-Reply-To: <CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org
-Cc: kgene.kim@samsung.com, k.debski@samsung.com, jtp.park@samsung.com, thomas.abraham@linaro.org, k.lewandowsk@samsung.com, s.nawrocki@samsung.com, ch.naveen@samsung.com, arun.kk@samsung.com, joshi@samsung.com
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 
-This patch adds device tree entry for MFC v6 in the Exynos5
-SoC. Makes the required changes in the clock files and adds
-MFC to the DT device list.
+On Wed, 2012-09-26 at 12:11 +0530, Inderpal Singh wrote:
+> If we fail pl330_remove while some client is queued, the force unload
+> will fail and the
+> force unload will lose its purpose.
+> How about conditionally DMA_TERMINATE_ALL and free resources like
+> below ? 
+Why would you want to remove the driver when it is doing something
+useful? You have to ensure driver is not doing anything.
 
-Signed-off-by: Naveen Krishna Chatradhi <ch.naveen@samsung.com>
-Signed-off-by: Arun Kumar K <arun.kk@samsung.com>
----
- .../devicetree/bindings/media/s5p-mfc.txt          |   23 +++++++++++++
- arch/arm/boot/dts/exynos5250-smdk5250.dts          |    5 +++
- arch/arm/boot/dts/exynos5250.dtsi                  |    6 +++
- arch/arm/mach-exynos/Kconfig                       |    1 +
- arch/arm/mach-exynos/clock-exynos5.c               |    2 +-
- arch/arm/mach-exynos/mach-exynos5-dt.c             |   16 +++++++++
- arch/arm/plat-samsung/devs.c                       |    1 +
- arch/arm/plat-samsung/include/plat/mfc.h           |   11 ++++++
- arch/arm/plat-samsung/s5p-dev-mfc.c                |   34 ++++++++++++++++++++
- 9 files changed, 98 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/s5p-mfc.txt
+What is point here?
 
-diff --git a/Documentation/devicetree/bindings/media/s5p-mfc.txt b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-new file mode 100644
-index 0000000..67ec3d4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/media/s5p-mfc.txt
-@@ -0,0 +1,23 @@
-+* Samsung Multi Format Codec (MFC)
-+
-+Multi Format Codec (MFC) is the IP present in Samsung SoCs which
-+supports high resolution decoding and encoding functionalities.
-+The MFC device driver is a v4l2 driver which can encode/decode
-+video raw/elementary streams and has support for all popular
-+video codecs.
-+
-+Required properties:
-+  - compatible : value should be either one among the following
-+	(a) "samsung,mfc-v5" for MFC v5 present in Exynos4 SoCs
-+	(b) "samsung,mfc-v6" for MFC v6 present in Exynos5 SoCs
-+
-+  - reg : Physical base address of the IP registers and length of memory
-+	  mapped region.
-+
-+  - interrupts : MFC interrupt number to the CPU.
-+
-+  - samsung,mfc-r : Base address of the first memory bank used by MFC
-+		    for DMA contiguous memory allocation and its size.
-+
-+  - samsung,mfc-l : Base address of the second memory bank used by MFC
-+		    for DMA contiguous memory allocation and its size.
-diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-index a352df4..21d4ccd 100644
---- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-+++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-@@ -166,4 +166,9 @@
- 	spi_2: spi@12d40000 {
- 		status = "disabled";
- 	};
-+
-+	codec@11000000 {
-+		samsung,mfc-r = <0x43000000 0x800000>;
-+		samsung,mfc-l = <0x51000000 0x800000>;
-+	};
- };
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index dddfd6e..49546bc 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -62,6 +62,12 @@
- 		interrupts = <0 42 0>;
- 	};
- 
-+	codec@11000000 {
-+		compatible = "samsung,mfc-v6";
-+		reg = <0x11000000 0x10000>;
-+		interrupts = <0 96 0>;
-+	};
-+
- 	rtc {
- 		compatible = "samsung,s3c6410-rtc";
- 		reg = <0x101E0000 0x100>;
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 4372075..a0677f6 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -64,6 +64,7 @@ config SOC_EXYNOS5250
- 	select SAMSUNG_DMADEV
- 	select S5P_PM if PM
- 	select S5P_SLEEP if PM
-+	select S5P_DEV_MFC
- 	help
- 	  Enable EXYNOS5250 SoC support
- 
-diff --git a/arch/arm/mach-exynos/clock-exynos5.c b/arch/arm/mach-exynos/clock-exynos5.c
-index bab6140..46dfea6 100644
---- a/arch/arm/mach-exynos/clock-exynos5.c
-+++ b/arch/arm/mach-exynos/clock-exynos5.c
-@@ -664,7 +664,7 @@ static struct clk exynos5_init_clocks_off[] = {
- 		.ctrlbit	= (1 << 25),
- 	}, {
- 		.name		= "mfc",
--		.devname	= "s5p-mfc",
-+		.devname	= "s5p-mfc-v6",
- 		.enable		= exynos5_clk_ip_mfc_ctrl,
- 		.ctrlbit	= (1 << 0),
- 	}, {
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index fee9dcd..b4ed43a 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -11,6 +11,8 @@
- 
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/memblock.h>
-+#include <linux/of_fdt.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -18,6 +20,7 @@
- 
- #include <plat/cpu.h>
- #include <plat/regs-serial.h>
-+#include <plat/mfc.h>
- 
- #include "common.h"
- 
-@@ -72,6 +75,7 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos-gsc.2", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
- 				"exynos-gsc.3", NULL),
-+	OF_DEV_AUXDATA("samsung,mfc-v6", 0x11000000, "s5p-mfc-v6", NULL),
- 	{},
- };
- 
-@@ -92,6 +96,17 @@ static char const *exynos5250_dt_compat[] __initdata = {
- 	NULL
- };
- 
-+static void __init exynos5_reserve(void)
-+{
-+	struct s5p_mfc_dt_meminfo mfc_mem;
-+
-+	/* Reserve memory for MFC only if it's available */
-+	mfc_mem.compatible = "samsung,mfc-v6";
-+	if (of_scan_flat_dt(s5p_fdt_find_mfc_mem, &mfc_mem))
-+		s5p_mfc_reserve_mem(mfc_mem.roff, mfc_mem.rsize, mfc_mem.loff,
-+				mfc_mem.lsize);
-+}
-+
- DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	/* Maintainer: Kukjin Kim <kgene.kim@samsung.com> */
- 	.init_irq	= exynos5_init_irq,
-@@ -102,4 +117,5 @@ DT_MACHINE_START(EXYNOS5_DT, "SAMSUNG EXYNOS5 (Flattened Device Tree)")
- 	.timer		= &exynos4_timer,
- 	.dt_compat	= exynos5250_dt_compat,
- 	.restart        = exynos5_restart,
-+	.reserve	= exynos5_reserve,
- MACHINE_END
-diff --git a/arch/arm/plat-samsung/devs.c b/arch/arm/plat-samsung/devs.c
-index 2df7af8..081621a 100644
---- a/arch/arm/plat-samsung/devs.c
-+++ b/arch/arm/plat-samsung/devs.c
-@@ -934,6 +934,7 @@ struct platform_device s5p_device_mfc_r = {
- 		.coherent_dma_mask	= DMA_BIT_MASK(32),
- 	},
- };
-+
- #endif /* CONFIG_S5P_DEV_MFC */
- 
- /* MIPI CSIS */
-diff --git a/arch/arm/plat-samsung/include/plat/mfc.h b/arch/arm/plat-samsung/include/plat/mfc.h
-index ac13227..128b719 100644
---- a/arch/arm/plat-samsung/include/plat/mfc.h
-+++ b/arch/arm/plat-samsung/include/plat/mfc.h
-@@ -10,6 +10,14 @@
- #ifndef __PLAT_SAMSUNG_MFC_H
- #define __PLAT_SAMSUNG_MFC_H __FILE__
- 
-+struct s5p_mfc_dt_meminfo {
-+	unsigned long	loff;
-+	unsigned long	lsize;
-+	unsigned long	roff;
-+	unsigned long	rsize;
-+	char		*compatible;
-+};
-+
- /**
-  * s5p_mfc_reserve_mem - function to early reserve memory for MFC driver
-  * @rbase:	base address for MFC 'right' memory interface
-@@ -24,4 +32,7 @@
- void __init s5p_mfc_reserve_mem(phys_addr_t rbase, unsigned int rsize,
- 				phys_addr_t lbase, unsigned int lsize);
- 
-+int s5p_fdt_find_mfc_mem(unsigned long node, const char *uname,
-+		int depth, void *data);
-+
- #endif /* __PLAT_SAMSUNG_MFC_H */
-diff --git a/arch/arm/plat-samsung/s5p-dev-mfc.c b/arch/arm/plat-samsung/s5p-dev-mfc.c
-index ad60894..ef9f470 100644
---- a/arch/arm/plat-samsung/s5p-dev-mfc.c
-+++ b/arch/arm/plat-samsung/s5p-dev-mfc.c
-@@ -14,6 +14,8 @@
- #include <linux/dma-mapping.h>
- #include <linux/memblock.h>
- #include <linux/ioport.h>
-+#include <linux/of_fdt.h>
-+#include <linux/of.h>
- 
- #include <mach/map.h>
- #include <plat/devs.h>
-@@ -69,3 +71,35 @@ static int __init s5p_mfc_memory_init(void)
- 	return 0;
- }
- device_initcall(s5p_mfc_memory_init);
-+
-+#ifdef CONFIG_OF
-+int s5p_fdt_find_mfc_mem(unsigned long node, const char *uname,
-+		int depth, void *data)
-+{
-+	__be32 *prop;
-+	unsigned long len;
-+	struct s5p_mfc_dt_meminfo *mfc_mem = data;
-+
-+	if (!data)
-+		return 0;
-+
-+	if (!of_flat_dt_is_compatible(node, mfc_mem->compatible))
-+		return 0;
-+
-+	prop = of_get_flat_dt_prop(node, "samsung,mfc-l", &len);
-+	if (!prop || (len != 2 * sizeof(unsigned long)))
-+		return 0;
-+
-+	mfc_mem->loff = be32_to_cpu(prop[0]);
-+	mfc_mem->lsize = be32_to_cpu(prop[1]);
-+
-+	prop = of_get_flat_dt_prop(node, "samsung,mfc-r", &len);
-+	if (!prop || (len != 2 * sizeof(unsigned long)))
-+		return 0;
-+
-+	mfc_mem->roff = be32_to_cpu(prop[0]);
-+	mfc_mem->rsize = be32_to_cpu(prop[1]);
-+
-+	return 1;
-+}
-+#endif
 -- 
-1.7.0.4
+~Vinod
