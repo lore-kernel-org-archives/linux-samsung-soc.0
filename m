@@ -1,68 +1,100 @@
-From: Eunki Kim <eunki_kim@samsung.com>
-Subject: [PATCH 2/2] gpio: samsung: Fix input mode setting function for GPIO int
-Date: Thu, 27 Sep 2012 12:55:24 +0900
-Message-ID: <000101cd9c63$ecb606a0$c62213e0$@com>
+From: Inderpal Singh <inderpal.singh@linaro.org>
+Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
+Date: Thu, 27 Sep 2012 09:43:13 +0530
+Message-ID: <CAG17yqQbRMaaEFyTBngMwdiKVBsGaOit1ufv3t5TdwLBgSKmfw@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
+	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
+	<CABb+yY36pQ7oXC1OKEQ-1V55c2SZurcTAPaZ=_PWugqxdL2rgg@mail.gmail.com>
+	<CAG17yqQ5NDr4sLvWbA85q5y079j2M2OV-uRjXSSL=OFPfCw3Zg@mail.gmail.com>
+	<CABb+yY0dvtOZoa=T+gyTeWy3XyAictXJnqSkbF39E=peHSXDuQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:50228 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753744Ab2I0Dz0 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 26 Sep 2012 23:55:26 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MAZ00HZ3PK2X3L0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 12:55:25 +0900 (KST)
-Received: from DOEUNKIKIM03 ([12.23.118.132])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MAZ003Q8PKC5G60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 27 Sep 2012 12:55:25 +0900 (KST)
-Content-language: ko
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CABb+yY0dvtOZoa=T+gyTeWy3XyAictXJnqSkbF39E=peHSXDuQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, grant.likely@secretlab.ca, linus.walleij@linaro.org, eunki_kim@samsung.com
 
-This patch makes GPIO pin to INTERRUPT mode or INPUT mode according
-to bitmap_gpio_int. When the related bit of bitmap_gpio_int is set,
-it makes GPIO pin to INTERRUPT mode instrad of INPUT mode in the
-samsung_gpiolib_4bit_input function.
+On 26 September 2012 22:19, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+> On Wed, Sep 26, 2012 at 4:25 PM, Inderpal Singh
+> <inderpal.singh@linaro.org> wrote:
+>> On 26 September 2012 15:02, Jassi Brar <jassisinghbrar@gmail.com> wrote:
+>>> On Wed, Sep 26, 2012 at 12:11 PM, Inderpal Singh
+>>> <inderpal.singh@linaro.org> wrote:
+>>>
+>>>> How about conditionally DMA_TERMINATE_ALL and free resources like below ?
+>>>>
+>>>> @@ -3017,9 +3017,11 @@ static int __devexit pl330_remove(struct
+>>>> amba_device *adev)
+>>>>                 /* Remove the channel */
+>>>>                 list_del(&pch->chan.device_node);
+>>>>
+>>>> -               /* Flush the channel */
+>>>> -               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
+>>>> -               pl330_free_chan_resources(&pch->chan);
+>>>> +               if (pch->chan.client_count != 0) {
+>>>> +                       /* Flush the channel */
+>>>> +                       pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
+>>>> +                       pl330_free_chan_resources(&pch->chan);
+>>>> +               }
+>>>>         }
+>>>>
+>>> It is perfectly safe to flush the channels that have client_count == 0
+>>> as well. Which is already the case.
+>>
+>> As per my understanding, if client_count ==0, It may mean following:
+>>
+>> 1. This channel was never allocated to any client. Hence
+>> alloc_chan_resources was not done for it.
+>> So, no need to flush and free resources if it was never allocated at
+>> the first place. If we free_chan_resources, it will not be balanced
+>> against alloc_chan_resources. Scenario: insmod and then rmmod.
+>>
+>> Or,
+>>
+>> 2. The channel was allocated to some client, alloc_chan_resource was
+>> done, the work for the client is completed and free_chan_resources was
+>> performed. Now  since resources have already been freed, no need to
+>> flush and free_chan_resources again in remove.
+>>
+>> The whole idea of this patch is to balance alloc_chan_resources and
+>> free_chan_resources.
+>>
+> Do you see any issue with channels that have zero client_count ?
 
-Signed-off-by: Eunki Kim <eunki_kim@samsung.com>
-Cc: Kukjin Kim <kgene.kim@samsung.com>
----
- drivers/gpio/gpio-samsung.c |    7 ++++++-
- 1 files changed, 6 insertions(+), 1 deletions(-)
+As I explained in my previous mail, If the client_count is zero,
+either the alloc_chan_resources is not done(or failed) for that
+channel or the free_chan_resource have already been done. Please refer
+below code from dmaengine.c
 
-diff --git a/drivers/gpio/gpio-samsung.c b/drivers/gpio/gpio-samsung.c
-index ba126cc..19caef4 100644
---- a/drivers/gpio/gpio-samsung.c
-+++ b/drivers/gpio/gpio-samsung.c
-@@ -596,7 +596,10 @@ static int samsung_gpiolib_4bit_input(struct gpio_chip *chip,
- 	unsigned long con;
- 
- 	con = __raw_readl(base + GPIOCON_OFF);
--	con &= ~(0xf << con_4bit_shift(offset));
-+	if (ourchip->bitmap_gpio_int & BIT(offset))
-+		con |= 0xf << con_4bit_shift(offset);
-+	else
-+		con &= ~(0xf << con_4bit_shift(offset));
- 	__raw_writel(con, base + GPIOCON_OFF);
- 
- 	gpio_dbg("%s: %p: CON now %08lx\n", __func__, base, con);
-@@ -1018,6 +1021,8 @@ static void __init samsung_gpiolib_add_4bit_chips(struct samsung_gpio_chip
-*chip
- 		if ((base != NULL) && (chip->base == NULL))
- 			chip->base = base + ((i) * 0x20);
- 
-+		chip->bitmap_gpio_int = 0;
-+
- 		samsung_gpiolib_add(chip);
- 	}
- }
--- 
-1.7.1
+static void dma_chan_put(struct dma_chan *chan)
+{
+        if (!chan->client_count)
+                return; /* this channel failed alloc_chan_resources */
+        chan->client_count--;
+        module_put(dma_chan_to_owner(chan));
+        if (chan->client_count == 0)
+                chan->device->device_free_chan_resources(chan);
+}
+
+As you mentioned channel flush is needed if some client is queued and
+force unload happens.
+I am not against flushing and freeing channels. I am __only__
+suggesting to flush and free channels for which alloc_chan_resource
+was successful, which can be decided by "chan->client_count" as being
+done in above function.
+
+Don't you think free_chan_resource should be done __only if__
+alloc_chan_resource was successful ?
+
+Thanks,
+Inder
+
+> AFAIU there are already enough checks in the path to weed out unused
+> channels, so let us please not uglify the code by adding new
+> unnecessary checks.
+>
+> thanks.
