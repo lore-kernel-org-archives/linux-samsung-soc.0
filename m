@@ -1,92 +1,44 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
-Date: Fri, 28 Sep 2012 10:03:39 +0530
-Message-ID: <CAG17yqTSj4wg0f-9kuzqYDicpD50mjZ2vuWCm+s4vfCTcQs_1g@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
-	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
-	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
-	<1348739292.1648.15.camel@vkoul-udesk3>
-	<CAG17yqRxZFsKpx+gpEGoZTbs4x7ijmqywX39=ezq2+RZkvk=TA@mail.gmail.com>
-	<CABb+yY1qbs_s7a-rb91wehEUbO1Azax+-PCaH2QQ=gr+Mc5ioA@mail.gmail.com>
+From: Sangbeom Kim <sbkim73@samsung.com>
+Subject: RE: [PATCH V2] ASoC: SAMSUNG: Add DT support for i2s
+Date: Fri, 28 Sep 2012 15:29:33 +0900
+Message-ID: <000d01cd9d42$9fbd7b50$df3871f0$@com>
+References: <1348741532-29412-1-git-send-email-padma.v@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-vb0-f46.google.com ([209.85.212.46]:54405 "EHLO
-	mail-vb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753473Ab2I1Edk (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:22654 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751093Ab2I1G3W (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Sep 2012 00:33:40 -0400
-Received: by vbbff1 with SMTP id ff1so2742986vbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Thu, 27 Sep 2012 21:33:39 -0700 (PDT)
-In-Reply-To: <CABb+yY1qbs_s7a-rb91wehEUbO1Azax+-PCaH2QQ=gr+Mc5ioA@mail.gmail.com>
+	Fri, 28 Sep 2012 02:29:22 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MB100IYLRAHZFL0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 15:29:21 +0900 (KST)
+Received: from DOSBKIM7302 ([10.90.35.108])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MB100HJERCX8070@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 15:29:21 +0900 (KST)
+In-reply-to: <1348741532-29412-1-git-send-email-padma.v@samsung.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jassi Brar <jassisinghbrar@gmail.com>
-Cc: Vinod Koul <vinod.koul@linux.intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
+To: 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org
+Cc: sangsu4u.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
 
-On 27 September 2012 21:36, Jassi Brar <jassisinghbrar@gmail.com> wrote:
-> On Thu, Sep 27, 2012 at 9:11 PM, Inderpal Singh
-> <inderpal.singh@linaro.org> wrote:
->> On 27 September 2012 15:18, Vinod Koul <vinod.koul@linux.intel.com> wrote:
->>> On Wed, 2012-09-26 at 12:11 +0530, Inderpal Singh wrote:
->>>> If we fail pl330_remove while some client is queued, the force unload
->>>> will fail and the
->>>> force unload will lose its purpose.
->>>> How about conditionally DMA_TERMINATE_ALL and free resources like
->>>> below ?
->>> Why would you want to remove the driver when it is doing something
->>> useful? You have to ensure driver is not doing anything.
->>>
->>> What is point here?
->>>
->> As mentioned by jassi,  if the pl330 module is forced unloaded while
->> some client is queued, we have to manually do DMA_TERMINATE_ALL.
->>
-> I meant that in the current situation. Not ideally.
->
->> If failing remove is a better option in case some client is queued, we
->> can do away with DMA_TERMINATE_ALL and free_chan_resources and simply
->> return a suitable error code from remove.
->>
-> That was exactly what I suggested as an alternative.
+Hi!
+On Thu, Sep 27, 2012 at 07:26 PM, Padmavathi Venna wrote:
 
-Yes, but our discussion went about continue doing DMA_TERMINATE_ALL and freeing.
+> Subject: [PATCH V2] ASoC: SAMSUNG: Add DT support for i2s
+> 
+> Add support for device based discovery.
+> 
+> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
 
-Now, if we have to check if any client is using the channel and then
-decide. We will have to traverse the channel list twice once to check
-the usage and second time to delete the nodes from the list if we go
-ahead with remove.
-The remove will look like below:
-
-@@ -3008,18 +3008,19 @@ static int __devexit pl330_remove(struct
-amba_device *adev)
-        if (!pdmac)
-                return 0;
-
-+       /* check if any client is using any channel */
-+       list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
-+                       chan.device_node) {
-+
-+               if (pch->chan.client_count)
-+                       return -EBUSY;
-+       }
-+
-        amba_set_drvdata(adev, NULL);
-
--       /* Idle the DMAC */
-        list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
-                        chan.device_node) {
-
-                /* Remove the channel */
-                list_del(&pch->chan.device_node);
--
--               /* Flush the channel */
--               pl330_control(&pch->chan, DMA_TERMINATE_ALL, 0);
--               pl330_free_chan_resources(&pch->chan);
-        }
-
-Please suggest if there is any better way to do it.
+Please describe the difference between v1 and v2.
 
 Thanks,
-Inder
+Sangbeom.
