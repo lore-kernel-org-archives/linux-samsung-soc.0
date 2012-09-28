@@ -1,248 +1,169 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3] video: exynos_dp: Add device tree support to DP driver
-Date: Fri, 28 Sep 2012 09:11:09 +0900
-Message-ID: <000601cd9d0d$c3296ca0$497c45e0$%han@samsung.com>
-References: <1348515385-22332-1-git-send-email-ajaykumar.rs@samsung.com>
- <50645848.6080102@gmail.com>
+From: Eunki Kim <eunki_kim@samsung.com>
+Subject: RE: [PATCH 1/2] ARM: SAMSUNG: Insert bitmap_gpio_int member in
+ samsung_gpio_chip
+Date: Fri, 28 Sep 2012 11:41:02 +0900
+Message-ID: <002d01cd9d22$b335d170$19a17450$@com>
+References: <000001cd9c63$e95c7b60$bc157220$@com>
+ <5063DAFD.1040903@samsung.com> <000101cd9c74$b64cfa90$22e6efb0$@com>
+ <50640338.9000808@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:53093 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751493Ab2I1ALM (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:26040 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756274Ab2I1ClE (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Sep 2012 20:11:12 -0400
-In-reply-to: <50645848.6080102@gmail.com>
+	Thu, 27 Sep 2012 22:41:04 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MB100IJGGRJ08G0@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 11:41:02 +0900 (KST)
+Received: from DOEUNKIKIM03 ([12.23.118.132])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MB1006ERGSED290@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 11:41:02 +0900 (KST)
+In-reply-to: <50640338.9000808@samsung.com>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>
-Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, thomas.ab@samsung.com, 'devicetree-discuss' <devicetree-discuss@lists.ozlabs.org>, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Joonyoung Shim' <jy0922.shim@samsung.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, grant.likely@secretlab.ca, linus.walleij@linaro.org, kgene.kim@samsung.com
 
-On Thursday, September 27, 2012 10:45 PM Sylwester Nawrocki wrote
+> -----Original Message-----
+> From: Joonyoung Shim [mailto:jy0922.shim@samsung.com]
+> Sent: Thursday, September 27, 2012 4:42 PM
+> To: Eunki Kim
+> Cc: linux-arm-kernel@lists.infradead.org; linux-samsung-soc@vger.kernel.org;
+> grant.likely@secretlab.ca; linus.walleij@linaro.org; kgene.kim@samsung.com
+> Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Insert bitmap_gpio_int member in samsung_gpio_chip
 > 
-> Hi,
-> 
-> Cc: devicetree-discuss@lists.ozlabs.org
-> 
-> On 09/24/2012 09:36 PM, Ajay Kumar wrote:
-> > This patch enables device tree based discovery support for DP driver.
-> > The driver is modified to handle platform data in both the cases:
-> > with DT and non-DT.
-> > Documentation is also added for the DT bindings.
+> On 09/27/2012 02:55 PM, Eunki Kim wrote:
+> >> -----Original Message-----
+> >> From: Joonyoung Shim [mailto:jy0922.shim@samsung.com]
+> >> Sent: Thursday, September 27, 2012 1:50 PM
+> >> To: Eunki Kim
+> >> Cc: linux-arm-kernel@lists.infradead.org;
+> >> linux-samsung-soc@vger.kernel.org;
+> >> grant.likely@secretlab.ca; linus.walleij@linaro.org;
+> >> kgene.kim@samsung.com
+> >> Subject: Re: [PATCH 1/2] ARM: SAMSUNG: Insert bitmap_gpio_int member
+> >> in samsung_gpio_chip
+> >>
+> >> On 09/27/2012 12:55 PM, Eunki Kim wrote:
+> >>> When a device uses GPIO interrupt, its driver assumes that GPIO
+> >>> should be INPUT mode. However, GPIO of SAMSUNG SoC is sepated to
+> >>> INPUT mode and INTERRUPT mode. They are set by 0x0 and 0xF in GPIO
+> >>> control register. If the register is set to INPUT mode, the
+> >>> interrupt never occur. Therefore, it's necessary to set INTERRUPT
+> >>> mode instead of INPUT mode when the pin is used for GPIO interrupt.
+> >> If for this, already the patch was posted.
+> >>
+> >> http://lists.infradead.org/pipermail/linux-arm-kernel/2011-November/0
+> >> 74387.html
+> >>
+> >> Thanks.
+> >>
+> > The old posted patch and my new patches solve the same problem.
 > >
-> > DP-PHY should be regarded as a seperate device node while
-> > being passed from device tree list, and device node for
-> > DP should contain DP-PHY as child node with property name "dp-phy"
-> > associated with it.
+> > However, the old patch fixes s5p_gpioint_set_type function which is
+> > irq_set_type function of GPIO int. The objective of irq_set_type function is setting IRQ type as
+> rising, falling, level and etc.
+> > It's not setting GPIO pin configuration.
+> 
+> Ok, it's reasonable but s5p_irq_eint_set_type() does it. So, do we need to remove it in
+> s5p_irq_eint_set_type() later?
+> 
+
+What do you mean? The old patch was not merged to mainline. I have checked 3.6-rc7 kernel source,
+but there isn't.
+
 > >
-> > Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
-> > ---
-> >   .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++
-> >   drivers/video/exynos/exynos_dp_core.c              |  168 ++++++++++++++++++--
-> >   drivers/video/exynos/exynos_dp_core.h              |    2 +
-> >   3 files changed, 239 insertions(+), 14 deletions(-)
-> >   create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+> > The new patches solve the problem root. It monitors use of GPIO int
+> > for each pin. If then, it sets INTERRUPT mode instead of INPUT mode
+> > when gpio_direction_input function is called. As you know, the objective of gpio_direction_input
+> function is setting the GPIO configuration.
+> 
+> Ok. It is minor concern, we will have to take care of the function call order dependency because
+> s5p_register_gpio_interrupt() should be called prior to gpio_direction_input().
+> 
+> Thanks.
+> 
+
+The s5p_register_gpio_interrupt function is called from the board file like mach-nuri.c
+mach-universal_c210.c. mach-goni.c generally. And also, setting GPIO pin to INTERRUPT mode codes
+(ex: s3c_gpio_cfgpin(gpio, S3C_GPIO_SFN(0xf));) follow the s5p_register_gpio_interrupt function.
+It's better to remain setting INTERRUPT mode. This patch just prevents from changing to INPUT mode
+by gpio_direction_input in any driver's probe function.
+
+Thanks.
+
 > >
-> > diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt
-> b/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > new file mode 100644
-> > index 0000000..c27f892
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-> > @@ -0,0 +1,83 @@
-> > +Exynos Displayport driver should configure the displayport interface
-> 
-> Don't we need a whitespace between 'display' and 'port' ?
-
-Either 'display port' or 'DisplayPort' is commonly used. 
-For clarity, display port would be better.
-
-> 
-> > +based on the type of panel connected to it.
-> > +
-> > +We use two nodes:
-> > +	-dptx_phy node
-> > +	-display-port-controller node
-> > +
-> > +For the dp-phy initialization, we use a dptx_phy node.
-> > +Required properties for dptx_phy:
-> > +	-compatible:
-> > +		Should be "samsung,dp-phy".
-> > +	-samsung,dptx_phy_reg:
-> > +		Base address of DP PHY register.
-> 
-> Couldn't just 'reg' be used for this one ?
-> 
-> > +	-samsung,enable_bit:
-> > +		The bit used to enable/disable DP PHY.
-> 
-> Is this the bit mask or the bit index ? In the code it's used as
-> a bitmask. But from description it is not clear whether it is
-> an index or a mask. Is it different across various SoCs ?
-> 
-> Perhaps it's better to name it samsung,enable_mask (in case some
-> SoC need more than one bit) ?
-
-It's the bit mask.
-It is different across various SoCs.
-OK, enable_mask would be better.
-
-> 
-> > +
-> > +For the Panel initialization, we read data from display-port-controller node.
-> > +Required properties for display-port-controller:
-> > +	-compatible:
-> > +		Should be "samsung,exynos5-dp".
-> > +	-reg:
-> > +		physical base address of the controller and length
-> > +		of memory mapped region.
-> > +	-interrupts:
-> > +		Internet combiner values.
-> 
-> what? :)
-
-Ajay: Please, fix it.
-
-> 
-> > +	-interrupt-parent:
-> > +		Address of Interrupt combiner node.
-> > +	-dp_phy:
-> > +		Address of dptx_phy node.
-> 
-> "A phandle to dptx_phy node" ?
-
-Yes, you're right.
-
-Ajay: Please, replace 'Address of dptx_phy node'
-       with 'phandle of dptx_phy node'.
-
-> 
-> > +	-samsung,color_space:
-> > +		input video data format.
-> > +			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-> 
-> Can this be changed at run time ?
-
-No, it is not changeable.
-It's a default setting according to eDP panel.
-
-> 
-> > +	-samsung,dynamic_range:
-> > +		dynamic range for input video data.
-> > +			VESA = 0, CEA = 1
-> 
-> Why is it in the device tree ? Shouldn't it be configurable at runtime ?
-> My apologies if this an obvious question, I don't have much experience
-> with DP.
-
-Same above.
-
-> 
-> > +	-samsung,ycbcr_coeff:
-> > +		YCbCr co-efficients for input video.
-> > +			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
-> > +	-samsung,color_depth:
-> > +		Bit per color component.
-> 
-> "Number of bits per colour component" ? Also same remark as above.
-
-Same above.
-
-> 
-> > +			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-> > +	-samsung,link_rate:
-> > +		link rates supportd by the panel.
-> 
-> typo: supportd -> supported
-
-Ajay: Please fix it.
-
-> 
-> > +			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
-> 
-> Is this really a property of a panel ? Why it is in the PHY node ?
-> Also I can see this is just a single property, so "link rates" is a bit
-> misleading.
->
-
-Yes, It's a property of LCD panel.
-It is not in the 'PHY' node, but 'display-port-controller' node.
-
-Ajay: Please replace 'link rates' with 'link rate'.
-
-> > +	-samsung,lane_count:
-> > +		number of lanes supported by the panel.
-> > +			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
-> 
-> What do these symbolic names are needed for ? Is lane_count a number or a
-> mask, is this really a _maximum_ number of lanes ? What are the valid values,
-> 1, 2 and 4 ? Or maybe 0x3 is also valid which  would indicate that we can
-> use 1 or 2 data lanes ?
->
-
-These symbolic names are defined in './include/video/exynos_dp.h'.
-It seems that Ajay used these definitions.
-
-'lane_count' is a number of used lanes of main link which transfer data
-streams as video. The number of lanes of Main Link is 1, 2, or 4 lanes.
-It is dependent on eDP panel.
-
-
-> > +	-samsung,interlaced:
-> > +		Interlace scan mode.
-> > +			Progressive if defined, Interlaced if not defined
-> 
-> Why do we need this in the device tree ? Is this really a default scan mode ?
-> Can it be the changed at runtime ?
-
-No, it is not changeable.
-It's a default setting according to eDP panel.
-
-> 
-> > +	-samsung,v_sync_polarity:
-> > +		VSYNC polarity configuration.
-> > +			High if defined, Low if not defined
-> > +	-samsung,h_sync_polarity:
-> > +		HSYNC polarity configuration.
-> > +			High if defined, Low if not defined
-> > +
-> > +Example:
-> > +
-> > +SOC specific portion:
-> > +	dptx_phy: dptx_phy@0x10040720 {
-> > +		compatible = "samsung,dp-phy";
-> > +		samsung,dptx_phy_reg =<0x10040720>;
-> > +		samsung,enable_bit =<1>;
-> > +	};
-> > +
-> > +	display-port-controller {
-> > +		compatible = "samsung,exynos5-dp";
-> > +		reg =<0x145B0000 0x10000>;
-> > +		interrupts =<10 3>;
-> > +		interrupt-parent =<&combiner>;
-> > +		dp_phy =<&dptx_phy>;
-> 
-> Shouldn't it be "samsung,dp_phy" ?
-
-Do you mean this ? It is not working.
-+		dp_phy = "samsung,dp_phy";
-
-> 
-> > +        };
-> > +
-> > +Board Specific portion:
-> > +	display-port-controller {
-> > +		samsung,color_space =<0>;
-> > +		samsung,dynamic_range =<0>;
-> > +		samsung,ycbcr_coeff =<0>;
-> > +		samsung,color_depth =<1>;
-> > +		samsung,link_rate =<0x0a>;
-> > +		samsung,lane_count =<2>;
-> > +	};
-> 
-> --
-> 
-> Regards,
-> Sylwester
+> >>> This patch inserts the bitmap_gpio_int member in struct samsung_
+> >>> gpio_chip in order to represent use of GPIO interrupt for each pin
+> >>> and sets the related bit when s5p_register_gpio_interrupt function
+> >>> is called.
+> >>>
+> >>> Signed-off-by: Eunki Kim <eunki_kim@samsung.com>
+> >>> Cc: Grant Likely <grant.likely@secretlab.ca>
+> >>> Cc: Linus Walleij <linus.walleij@linaro.org>
+> >>> ---
+> >>>    arch/arm/plat-samsung/include/plat/gpio-core.h |    2 ++
+> >>>    arch/arm/plat-samsung/s5p-irq-gpioint.c        |    8 ++++++--
+> >>>    2 files changed, 8 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/arch/arm/plat-samsung/include/plat/gpio-core.h
+> >>> b/arch/arm/plat-samsung/include/plat/gpio-core.h
+> >>> index 1fe6917..dfd8b7a 100644
+> >>> --- a/arch/arm/plat-samsung/include/plat/gpio-core.h
+> >>> +++ b/arch/arm/plat-samsung/include/plat/gpio-core.h
+> >>> @@ -48,6 +48,7 @@ struct samsung_gpio_cfg;
+> >>>     * @config: special function and pull-resistor control information.
+> >>>     * @lock: Lock for exclusive access to this gpio bank.
+> >>>     * @pm_save: Save information for suspend/resume support.
+> >>> + * @bitmap_gpio_int: Bitmap for representing GPIO interrupt or not.
+> >>>     *
+> >>>     * This wrapper provides the necessary information for the Samsung
+> >>>     * specific gpios being registered with gpiolib.
+> >>> @@ -71,6 +72,7 @@ struct samsung_gpio_chip {
+> >>>    #ifdef CONFIG_PM
+> >>>    	u32			pm_save[4];
+> >>>    #endif
+> >>> +	u32			bitmap_gpio_int;
+> >>>    };
+> >>>
+> >>>    static inline struct samsung_gpio_chip *to_samsung_gpio(struct
+> >>> gpio_chip *gpc) diff --git a/arch/arm/plat-samsung/s5p-irq-gpioint.c
+> >>> b/arch/arm/plat-samsung/s5p-irq-gpioint.c
+> >>> index f9431fe..d981c61 100644
+> >>> --- a/arch/arm/plat-samsung/s5p-irq-gpioint.c
+> >>> +++ b/arch/arm/plat-samsung/s5p-irq-gpioint.c
+> >>> @@ -185,7 +185,7 @@ int __init s5p_register_gpio_interrupt(int pin)
+> >>>
+> >>>    	/* check if the group has been already registered */
+> >>>    	if (my_chip->irq_base)
+> >>> -		return my_chip->irq_base + offset;
+> >>> +		goto success;
+> >>>
+> >>>    	/* register gpio group */
+> >>>    	ret = s5p_gpioint_add(my_chip);
+> >>> @@ -193,9 +193,13 @@ int __init s5p_register_gpio_interrupt(int pin)
+> >>>    		my_chip->chip.to_irq = samsung_gpiolib_to_irq;
+> >>>    		printk(KERN_INFO "Registered interrupt support for gpio group %d.\n",
+> >>>    		       group);
+> >>> -		return my_chip->irq_base + offset;
+> >>> +		goto success;
+> >>>    	}
+> >>>    	return ret;
+> >>> +success:
+> >>> +	my_chip->bitmap_gpio_int |= BIT(offset);
+> >>> +
+> >>> +	return my_chip->irq_base + offset;
+> >>>    }
+> >>>
+> >>>    int __init s5p_register_gpioint_bank(int chain_irq, int start,
+> >>> int
+> >>> nr_groups)
+> >
