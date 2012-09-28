@@ -1,56 +1,50 @@
-From: Sangsu Park <sangsu4u.park@samsung.com>
-Subject: [PATCH] ARM: EXYNOS: Remove wrong I2S0 clock from peril clock
-Date: Fri, 28 Sep 2012 19:39:49 +0900
-Message-ID: <003501cd9d65$9611d060$c2357120$@samsung.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
+Date: Fri, 28 Sep 2012 16:28:40 +0530
+Message-ID: <CABb+yY3QfZEyvn4jvwdbgf6OBy++XMNZoeN0zrzHrCy=f4iwzw@mail.gmail.com>
+References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
+	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
+	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
+	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
+	<1348739292.1648.15.camel@vkoul-udesk3>
+	<CAG17yqRxZFsKpx+gpEGoZTbs4x7ijmqywX39=ezq2+RZkvk=TA@mail.gmail.com>
+	<CABb+yY1qbs_s7a-rb91wehEUbO1Azax+-PCaH2QQ=gr+Mc5ioA@mail.gmail.com>
+	<CAG17yqTSj4wg0f-9kuzqYDicpD50mjZ2vuWCm+s4vfCTcQs_1g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:64419 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753011Ab2I1Kjv (ORCPT
+Received: from mail-ob0-f174.google.com ([209.85.214.174]:44913 "EHLO
+	mail-ob0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757454Ab2I1K6k (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Sep 2012 06:39:51 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MB2008WA2YCFB01@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 19:39:50 +0900 (KST)
-Received: from DOSANGSU4UP02 ([12.23.118.226])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MB200IP12YDJTA0@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 19:39:49 +0900 (KST)
-Content-language: ko
+	Fri, 28 Sep 2012 06:58:40 -0400
+In-Reply-To: <CAG17yqTSj4wg0f-9kuzqYDicpD50mjZ2vuWCm+s4vfCTcQs_1g@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Inderpal Singh <inderpal.singh@linaro.org>
+Cc: Vinod Koul <vinod.koul@linux.intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
 
-Remove I2S0 clock from peril since peril doesn't have I2S0 clock for EXYNOS4.
-Audio Subsystem block has I2S0 clk.
-
-Signed-off-by: sangsu <sangsu@sangsu-P560.(none)>
----
- arch/arm/mach-exynos/clock-exynos4.c |    5 -----
- 1 file changed, 5 deletions(-)
-
-diff --git a/arch/arm/mach-exynos/clock-exynos4.c
-b/arch/arm/mach-exynos/clock-exynos4.c
-index 6a45c9a..fa8a134 100644
---- a/arch/arm/mach-exynos/clock-exynos4.c
-+++ b/arch/arm/mach-exynos/clock-exynos4.c
-@@ -613,11 +613,6 @@ static struct clk exynos4_init_clocks_off[] = {
- 		.ctrlbit	= (1 << 18),
- 	}, {
- 		.name		= "iis",
--		.devname	= "samsung-i2s.0",
--		.enable		= exynos4_clk_ip_peril_ctrl,
--		.ctrlbit	= (1 << 19),
--	}, {
--		.name		= "iis",
- 		.devname	= "samsung-i2s.1",
- 		.enable		= exynos4_clk_ip_peril_ctrl,
- 		.ctrlbit	= (1 << 20),
--- 
-1.7.9.5
+On Fri, Sep 28, 2012 at 10:03 AM, Inderpal Singh
+<inderpal.singh@linaro.org> wrote:
+>
+> Now, if we have to check if any client is using the channel and then
+> decide. We will have to traverse the channel list twice once to check
+> the usage and second time to delete the nodes from the list if we go
+> ahead with remove.
+> The remove will look like below:
+>
+> @@ -3008,18 +3008,19 @@ static int __devexit pl330_remove(struct
+> amba_device *adev)
+>         if (!pdmac)
+>                 return 0;
+>
+> +       /* check if any client is using any channel */
+> +       list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
+> +                       chan.device_node) {
+> +
+> +               if (pch->chan.client_count)
+> +                       return -EBUSY;
+> +       }
+> +
+The iteration doesn't have to be the 'safe' version here. Other than
+that it seems OK.
