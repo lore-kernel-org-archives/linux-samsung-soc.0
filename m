@@ -1,44 +1,54 @@
-From: Sangbeom Kim <sbkim73@samsung.com>
-Subject: RE: [PATCH V2] ASoC: SAMSUNG: Add DT support for i2s
-Date: Fri, 28 Sep 2012 15:29:33 +0900
-Message-ID: <000d01cd9d42$9fbd7b50$df3871f0$@com>
-References: <1348741532-29412-1-git-send-email-padma.v@samsung.com>
+From: Tomasz Figa <tomasz.figa@gmail.com>
+Subject: Re: [PATCH V3] video: exynos_dp: Add device tree support to DP driver
+Date: Fri, 28 Sep 2012 08:48:22 +0200
+Message-ID: <1511551.R6uMubmq1B@flatron>
+References: <1348515385-22332-1-git-send-email-ajaykumar.rs@samsung.com> <50645848.6080102@gmail.com> <000601cd9d0d$c3296ca0$497c45e0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:22654 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751093Ab2I1G3W (ORCPT
+Received: from mail-wi0-f178.google.com ([209.85.212.178]:34526 "EHLO
+	mail-wi0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751152Ab2I1Gs3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Sep 2012 02:29:22 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MB100IYLRAHZFL0@mailout1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 15:29:21 +0900 (KST)
-Received: from DOSBKIM7302 ([10.90.35.108])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MB100HJERCX8070@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 15:29:21 +0900 (KST)
-In-reply-to: <1348741532-29412-1-git-send-email-padma.v@samsung.com>
-Content-language: ko
+	Fri, 28 Sep 2012 02:48:29 -0400
+In-Reply-To: <000601cd9d0d$c3296ca0$497c45e0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Padmavathi Venna' <padma.v@samsung.com>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, alsa-devel@alsa-project.org, devicetree-discuss@lists.ozlabs.org
-Cc: sangsu4u.park@samsung.com, kgene.kim@samsung.com, ben-linux@fluff.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, thomas.ab@samsung.com, 'devicetree-discuss' <devicetree-discuss@lists.ozlabs.org>
 
-Hi!
-On Thu, Sep 27, 2012 at 07:26 PM, Padmavathi Venna wrote:
+Hi,
 
-> Subject: [PATCH V2] ASoC: SAMSUNG: Add DT support for i2s
+On Friday 28 of September 2012 09:11:09 Jingoo Han wrote:
+> On Thursday, September 27, 2012 10:45 PM Sylwester Nawrocki wrote
+> > > +Example:
+> > > +
+> > > +SOC specific portion:
+> > > +	dptx_phy: dptx_phy@0x10040720 {
+> > > +		compatible = "samsung,dp-phy";
+> > > +		samsung,dptx_phy_reg =<0x10040720>;
+> > > +		samsung,enable_bit =<1>;
+> > > +	};
+> > > +
+> > > +	display-port-controller {
+> > > +		compatible = "samsung,exynos5-dp";
+> > > +		reg =<0x145B0000 0x10000>;
+> > > +		interrupts =<10 3>;
+> > > +		interrupt-parent =<&combiner>;
+> > > +		dp_phy =<&dptx_phy>;
+> > 
+> > Shouldn't it be "samsung,dp_phy" ?
 > 
-> Add support for device based discovery.
-> 
-> Signed-off-by: Padmavathi Venna <padma.v@samsung.com>
+> Do you mean this ? It is not working.
+> +		dp_phy = "samsung,dp_phy";
 
-Please describe the difference between v1 and v2.
+I believe he meant:
 
-Thanks,
-Sangbeom.
+-+		dp_phy =<&dptx_phy>;
+++		samsung,dp_phy =<&dptx_phy>;
+
+to mark that this is a Samsung-specific property.
+
+Best regards,
+Tomasz Figa
