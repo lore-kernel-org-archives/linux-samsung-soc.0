@@ -1,48 +1,248 @@
-From: Jassi Brar <jassisinghbrar@gmail.com>
-Subject: Re: [PATCH 3/3] DMA: PL330: Balance module remove function with probe
-Date: Thu, 27 Sep 2012 21:36:25 +0530
-Message-ID: <CABb+yY1qbs_s7a-rb91wehEUbO1Azax+-PCaH2QQ=gr+Mc5ioA@mail.gmail.com>
-References: <1348563456-30569-1-git-send-email-inderpal.singh@linaro.org>
-	<1348563456-30569-4-git-send-email-inderpal.singh@linaro.org>
-	<CABb+yY3TcVr=0Po0N7TLCkQ9TmMJuvQhKJj3aQ1bP9+68T+Ogw@mail.gmail.com>
-	<CAG17yqSOWhg_4KrQNojdYcpygkznvrzO74qnh8yasK=UH1f05Q@mail.gmail.com>
-	<1348739292.1648.15.camel@vkoul-udesk3>
-	<CAG17yqRxZFsKpx+gpEGoZTbs4x7ijmqywX39=ezq2+RZkvk=TA@mail.gmail.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH V3] video: exynos_dp: Add device tree support to DP driver
+Date: Fri, 28 Sep 2012 09:11:09 +0900
+Message-ID: <000601cd9d0d$c3296ca0$497c45e0$%han@samsung.com>
+References: <1348515385-22332-1-git-send-email-ajaykumar.rs@samsung.com>
+ <50645848.6080102@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-oa0-f46.google.com ([209.85.219.46]:37988 "EHLO
-	mail-oa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751299Ab2I0QG1 (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:53093 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751493Ab2I1ALM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 27 Sep 2012 12:06:27 -0400
-In-Reply-To: <CAG17yqRxZFsKpx+gpEGoZTbs4x7ijmqywX39=ezq2+RZkvk=TA@mail.gmail.com>
+	Thu, 27 Sep 2012 20:11:12 -0400
+In-reply-to: <50645848.6080102@gmail.com>
+Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Inderpal Singh <inderpal.singh@linaro.org>
-Cc: Vinod Koul <vinod.koul@linux.intel.com>, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, boojin.kim@samsung.com, patches@linaro.org, kgene.kim@samsung.com
+To: 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Ajay Kumar' <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, FlorianSchandinat@gmx.de, thomas.ab@samsung.com, 'devicetree-discuss' <devicetree-discuss@lists.ozlabs.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Thu, Sep 27, 2012 at 9:11 PM, Inderpal Singh
-<inderpal.singh@linaro.org> wrote:
-> On 27 September 2012 15:18, Vinod Koul <vinod.koul@linux.intel.com> wrote:
->> On Wed, 2012-09-26 at 12:11 +0530, Inderpal Singh wrote:
->>> If we fail pl330_remove while some client is queued, the force unload
->>> will fail and the
->>> force unload will lose its purpose.
->>> How about conditionally DMA_TERMINATE_ALL and free resources like
->>> below ?
->> Why would you want to remove the driver when it is doing something
->> useful? You have to ensure driver is not doing anything.
->>
->> What is point here?
->>
-> As mentioned by jassi,  if the pl330 module is forced unloaded while
-> some client is queued, we have to manually do DMA_TERMINATE_ALL.
->
-I meant that in the current situation. Not ideally.
+On Thursday, September 27, 2012 10:45 PM Sylwester Nawrocki wrote
+> 
+> Hi,
+> 
+> Cc: devicetree-discuss@lists.ozlabs.org
+> 
+> On 09/24/2012 09:36 PM, Ajay Kumar wrote:
+> > This patch enables device tree based discovery support for DP driver.
+> > The driver is modified to handle platform data in both the cases:
+> > with DT and non-DT.
+> > Documentation is also added for the DT bindings.
+> >
+> > DP-PHY should be regarded as a seperate device node while
+> > being passed from device tree list, and device node for
+> > DP should contain DP-PHY as child node with property name "dp-phy"
+> > associated with it.
+> >
+> > Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
+> > ---
+> >   .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++
+> >   drivers/video/exynos/exynos_dp_core.c              |  168 ++++++++++++++++++--
+> >   drivers/video/exynos/exynos_dp_core.h              |    2 +
+> >   3 files changed, 239 insertions(+), 14 deletions(-)
+> >   create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt
+> b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> > new file mode 100644
+> > index 0000000..c27f892
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> > @@ -0,0 +1,83 @@
+> > +Exynos Displayport driver should configure the displayport interface
+> 
+> Don't we need a whitespace between 'display' and 'port' ?
 
-> If failing remove is a better option in case some client is queued, we
-> can do away with DMA_TERMINATE_ALL and free_chan_resources and simply
-> return a suitable error code from remove.
+Either 'display port' or 'DisplayPort' is commonly used. 
+For clarity, display port would be better.
+
+> 
+> > +based on the type of panel connected to it.
+> > +
+> > +We use two nodes:
+> > +	-dptx_phy node
+> > +	-display-port-controller node
+> > +
+> > +For the dp-phy initialization, we use a dptx_phy node.
+> > +Required properties for dptx_phy:
+> > +	-compatible:
+> > +		Should be "samsung,dp-phy".
+> > +	-samsung,dptx_phy_reg:
+> > +		Base address of DP PHY register.
+> 
+> Couldn't just 'reg' be used for this one ?
+> 
+> > +	-samsung,enable_bit:
+> > +		The bit used to enable/disable DP PHY.
+> 
+> Is this the bit mask or the bit index ? In the code it's used as
+> a bitmask. But from description it is not clear whether it is
+> an index or a mask. Is it different across various SoCs ?
+> 
+> Perhaps it's better to name it samsung,enable_mask (in case some
+> SoC need more than one bit) ?
+
+It's the bit mask.
+It is different across various SoCs.
+OK, enable_mask would be better.
+
+> 
+> > +
+> > +For the Panel initialization, we read data from display-port-controller node.
+> > +Required properties for display-port-controller:
+> > +	-compatible:
+> > +		Should be "samsung,exynos5-dp".
+> > +	-reg:
+> > +		physical base address of the controller and length
+> > +		of memory mapped region.
+> > +	-interrupts:
+> > +		Internet combiner values.
+> 
+> what? :)
+
+Ajay: Please, fix it.
+
+> 
+> > +	-interrupt-parent:
+> > +		Address of Interrupt combiner node.
+> > +	-dp_phy:
+> > +		Address of dptx_phy node.
+> 
+> "A phandle to dptx_phy node" ?
+
+Yes, you're right.
+
+Ajay: Please, replace 'Address of dptx_phy node'
+       with 'phandle of dptx_phy node'.
+
+> 
+> > +	-samsung,color_space:
+> > +		input video data format.
+> > +			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+> 
+> Can this be changed at run time ?
+
+No, it is not changeable.
+It's a default setting according to eDP panel.
+
+> 
+> > +	-samsung,dynamic_range:
+> > +		dynamic range for input video data.
+> > +			VESA = 0, CEA = 1
+> 
+> Why is it in the device tree ? Shouldn't it be configurable at runtime ?
+> My apologies if this an obvious question, I don't have much experience
+> with DP.
+
+Same above.
+
+> 
+> > +	-samsung,ycbcr_coeff:
+> > +		YCbCr co-efficients for input video.
+> > +			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+> > +	-samsung,color_depth:
+> > +		Bit per color component.
+> 
+> "Number of bits per colour component" ? Also same remark as above.
+
+Same above.
+
+> 
+> > +			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> > +	-samsung,link_rate:
+> > +		link rates supportd by the panel.
+> 
+> typo: supportd -> supported
+
+Ajay: Please fix it.
+
+> 
+> > +			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+> 
+> Is this really a property of a panel ? Why it is in the PHY node ?
+> Also I can see this is just a single property, so "link rates" is a bit
+> misleading.
 >
-That was exactly what I suggested as an alternative.
+
+Yes, It's a property of LCD panel.
+It is not in the 'PHY' node, but 'display-port-controller' node.
+
+Ajay: Please replace 'link rates' with 'link rate'.
+
+> > +	-samsung,lane_count:
+> > +		number of lanes supported by the panel.
+> > +			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+> 
+> What do these symbolic names are needed for ? Is lane_count a number or a
+> mask, is this really a _maximum_ number of lanes ? What are the valid values,
+> 1, 2 and 4 ? Or maybe 0x3 is also valid which  would indicate that we can
+> use 1 or 2 data lanes ?
+>
+
+These symbolic names are defined in './include/video/exynos_dp.h'.
+It seems that Ajay used these definitions.
+
+'lane_count' is a number of used lanes of main link which transfer data
+streams as video. The number of lanes of Main Link is 1, 2, or 4 lanes.
+It is dependent on eDP panel.
+
+
+> > +	-samsung,interlaced:
+> > +		Interlace scan mode.
+> > +			Progressive if defined, Interlaced if not defined
+> 
+> Why do we need this in the device tree ? Is this really a default scan mode ?
+> Can it be the changed at runtime ?
+
+No, it is not changeable.
+It's a default setting according to eDP panel.
+
+> 
+> > +	-samsung,v_sync_polarity:
+> > +		VSYNC polarity configuration.
+> > +			High if defined, Low if not defined
+> > +	-samsung,h_sync_polarity:
+> > +		HSYNC polarity configuration.
+> > +			High if defined, Low if not defined
+> > +
+> > +Example:
+> > +
+> > +SOC specific portion:
+> > +	dptx_phy: dptx_phy@0x10040720 {
+> > +		compatible = "samsung,dp-phy";
+> > +		samsung,dptx_phy_reg =<0x10040720>;
+> > +		samsung,enable_bit =<1>;
+> > +	};
+> > +
+> > +	display-port-controller {
+> > +		compatible = "samsung,exynos5-dp";
+> > +		reg =<0x145B0000 0x10000>;
+> > +		interrupts =<10 3>;
+> > +		interrupt-parent =<&combiner>;
+> > +		dp_phy =<&dptx_phy>;
+> 
+> Shouldn't it be "samsung,dp_phy" ?
+
+Do you mean this ? It is not working.
++		dp_phy = "samsung,dp_phy";
+
+> 
+> > +        };
+> > +
+> > +Board Specific portion:
+> > +	display-port-controller {
+> > +		samsung,color_space =<0>;
+> > +		samsung,dynamic_range =<0>;
+> > +		samsung,ycbcr_coeff =<0>;
+> > +		samsung,color_depth =<1>;
+> > +		samsung,link_rate =<0x0a>;
+> > +		samsung,lane_count =<2>;
+> > +	};
+> 
+> --
+> 
+> Regards,
+> Sylwester
