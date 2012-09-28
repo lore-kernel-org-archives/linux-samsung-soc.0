@@ -1,70 +1,117 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [RFC PATCH 06/16] pinctrl: samsung: Hold OF node of pin bank in bank
- struct
-Date: Fri, 28 Sep 2012 16:28:37 +0200
-Message-ID: <1348842527-22460-7-git-send-email-t.figa@samsung.com>
+Subject: [RFC PATCH 07/16] pinctrl: samsung: Hold pointer to driver data in
+ bank struct
+Date: Fri, 28 Sep 2012 16:28:38 +0200
+Message-ID: <1348842527-22460-8-git-send-email-t.figa@samsung.com>
 References: <1348842527-22460-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:16705 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758076Ab2I1O3h (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:23599 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757916Ab2I1O3m (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 28 Sep 2012 10:29:37 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
+	Fri, 28 Sep 2012 10:29:42 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MB2009Y9DKZWD10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 23:29:36 +0900 (KST)
+ 17 2011)) with ESMTP id <0MB200ISDDKYMT10@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 23:29:41 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MB200E7BDK3XB70@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 23:29:36 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Fri, 28 Sep 2012 23:29:40 +0900 (KST)
 In-reply-to: <1348842527-22460-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-The node pointer will be used in extensions added by patches that will
-follow.
+The pointer will be used by further extensions added to the driver.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- drivers/pinctrl/pinctrl-samsung.c | 1 +
- drivers/pinctrl/pinctrl-samsung.h | 3 +++
- 2 files changed, 4 insertions(+)
+ drivers/pinctrl/pinctrl-samsung.c | 20 +++++++++++---------
+ drivers/pinctrl/pinctrl-samsung.h |  2 ++
+ 2 files changed, 13 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 962320b..c988a4e 100644
+index c988a4e..63c76ec 100644
 --- a/drivers/pinctrl/pinctrl-samsung.c
 +++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -850,6 +850,7 @@ static int samsung_pinctrl_parse_dt_bank(struct samsung_pin_bank *bank,
- 		return ret;
- 	bank->nr_pins = val;
+@@ -870,11 +870,12 @@ static int samsung_pinctrl_parse_dt_bank(struct samsung_pin_bank *bank,
  
-+	bank->of_node = np;
- 	bank->name = np->name;
+ /* retrieve the soc specific data */
+ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
+-				struct platform_device *pdev)
++					struct platform_device *pdev,
++					struct samsung_pinctrl_drv_data *d)
+ {
+ 	int id;
+ 	const struct of_device_id *match;
+-	const struct device_node *node = pdev->dev.of_node;
++	struct device_node *node = pdev->dev.of_node;
+ 	struct device_node *bank_np;
+ 	struct samsung_pin_ctrl *ctrl;
+ 	struct samsung_pin_bank *banks, *b;
+@@ -884,7 +885,7 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
+ 	u32 val;
+ 	int ret;
  
- 	if (!of_find_property(np, "interrupt-controller", NULL)) {
+-	id = of_alias_get_id(pdev->dev.of_node, "pinctrl");
++	id = of_alias_get_id(node, "pinctrl");
+ 	if (id < 0) {
+ 		dev_err(&pdev->dev, "failed to get alias id\n");
+ 		return NULL;
+@@ -922,6 +923,7 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
+ 			continue;
+ 		if (samsung_pinctrl_parse_dt_bank(b, bank_np))
+ 			return NULL;
++		b->drvdata = d;
+ 		b->pin_base = ctrl->nr_pins;
+ 		ctrl->nr_pins += b->nr_pins;
+ 		if (b->eint_type == EINT_TYPE_GPIO) {
+@@ -979,18 +981,18 @@ static int __devinit samsung_pinctrl_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	ctrl = samsung_pinctrl_get_soc_data(pdev);
+-	if (!ctrl) {
+-		dev_err(&pdev->dev, "driver data not available\n");
+-		return -EINVAL;
+-	}
+-
+ 	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
+ 	if (!drvdata) {
+ 		dev_err(dev, "failed to allocate memory for driver's "
+ 				"private data\n");
+ 		return -ENOMEM;
+ 	}
++
++	ctrl = samsung_pinctrl_get_soc_data(pdev, drvdata);
++	if (!ctrl) {
++		dev_err(&pdev->dev, "driver data not available\n");
++		return -EINVAL;
++	}
+ 	drvdata->ctrl = ctrl;
+ 	drvdata->dev = dev;
+ 
 diff --git a/drivers/pinctrl/pinctrl-samsung.h b/drivers/pinctrl/pinctrl-samsung.h
-index 72303f1..b7b74cc 100644
+index b7b74cc..9e30081 100644
 --- a/drivers/pinctrl/pinctrl-samsung.h
 +++ b/drivers/pinctrl/pinctrl-samsung.h
-@@ -111,6 +111,7 @@ struct samsung_pinctrl_drv_data;
-  * @eint_type: type of the external interrupt supported by the bank.
+@@ -112,6 +112,7 @@ struct samsung_pinctrl_drv_data;
   * @irq_base: starting controller local irq number of the bank.
   * @name: name to be prefixed for each pin in this pin bank.
-+ * @of_node: node of pin bank in device tree
+  * @of_node: node of pin bank in device tree
++ * @drvdata: link to controller driver data
   */
  struct samsung_pin_bank {
  	u32		pctl_offset;
-@@ -125,6 +126,8 @@ struct samsung_pin_bank {
- 	u32		eint_offset;
- 	u32		irq_base;
+@@ -128,6 +129,7 @@ struct samsung_pin_bank {
  	const char	*name;
-+
-+	struct device_node *of_node;
+ 
+ 	struct device_node *of_node;
++	struct samsung_pinctrl_drv_data *drvdata;
  };
  
  /**
