@@ -1,69 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 4/4] Samsung DT for v3.7
-Date: Sat, 29 Sep 2012 11:36:39 -0700
-Message-ID: <20120929183639.GA29547@quad.lixom.net>
-References: <505C089C.4050801@samsung.com>
- <505C22CD.9030401@samsung.com>
- <146201cd9c4c$1a219b30$4e64d190$%kim@samsung.com>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Mon, 1 Oct 2012 10:59:04 +0530
+Message-ID: <CAL1wa8eOA6eV-9EoeUFrSFaFwq5sEVnYXn9yKnPRv=0mSU5WvQ@mail.gmail.com>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
+ <1348226536-22899-3-git-send-email-l.krishna@samsung.com> <505BF79A.8060802@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:40166 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757448Ab2I2SgZ (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:62096 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750822Ab2JAF30 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Sat, 29 Sep 2012 14:36:25 -0400
-Received: by pbbrr4 with SMTP id rr4so6387434pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Sat, 29 Sep 2012 11:36:24 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <146201cd9c4c$1a219b30$4e64d190$%kim@samsung.com>
+	Mon, 1 Oct 2012 01:29:26 -0400
+Received: by lbon3 with SMTP id n3so3666678lbo.19
+        for <linux-samsung-soc@vger.kernel.org>; Sun, 30 Sep 2012 22:29:24 -0700 (PDT)
+In-Reply-To: <505BF79A.8060802@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: 'Arnd Bergmann' <arnd@arndb.de>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree-discuss@lists.ozlabs.org, inki.dae@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
 
-On Thu, Sep 27, 2012 at 10:04:53AM +0900, Kukjin Kim wrote:
-> Kukjin Kim wrote:
-> > 
-> > On 09/21/12 15:26, Kukjin Kim wrote:
-> > > Hi Arnd, Olof
-> > >
-> > > This is for updating Samsung DT for v3.7.
-> > >
-> > > But now this makes many conflicts with pinctrl dt because of moving file
-> > > so I'm sorting them out to avoid useless conflicts.
-> > >
-> > > I'll re-send this soon again.
-> > > This is jut for your information.
-> > >
-> > I created following branch which is merged on top of Samsung pinctrl and
-> > board branches already are pulled into arm-soc.
-> > 
-> > This includes moving common exynos4 dt for supporting other exynos4xxxx
-> > SoCs easily and adding exynos43210-trats board support and some updates.
-> > 
-> > Please pull from:
-> > git://git.kernel.org/pub/scm/linux/kernel/git/kgene/linux-samsung.git
-> > next/dt-samsung-new
-> > 
-> > If any problems, please kindly let me know.
-> > 
-> Hi Arnd and Olof,
-> 
-> Maybe, you missed this one?
-> 
-> Note, this will make conflicts with Rob's change, move all dtb targets.
+Hello Stephen Warren,
 
-Kukjin,
+The binding names that I use in my dts file should match with the
+names given in http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+right?
+I think that is the only thing I have to take care, and as I'm not
+using "struct drm_display_mode"  in my driver its my wish whether to
+use the helper function or not.
+Please clarify me if I miss something.
 
-The branch contents is not the same as your repeated pull request, it had
-patches added on the 26th and the original request was sent on the 21st. I've
-pulled it anyway after reviewing those patches, but please be more transparent
-with what you do to your branch if you update it after pull requests have been
-sent.
+Best Regards,
+Leela Krishna Amudala.
 
-Also, next time please do a full re-send of the pull request, I probably missed
-it because it was a reply with just a new link and not the full diffstat, etc.
-
-
--Olof
+On Fri, Sep 21, 2012 at 10:44 AM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 09/21/2012 05:22 AM, Leela Krishna Amudala wrote:
+>> This patch adds device tree based discovery support for exynos DRM-FIMD
+>> driver which includes driver modification to handle platform data in
+>> both the cases with DT and non-DT, Also adds the documentation for bindings.
+>
+>> diff --git a/Documentation/devicetree/bindings/drm/exynos/fimd.txt b/Documentation/devicetree/bindings/drm/exynos/fimd.txt
+> ...
+>> + - samsung,fimd-display: This property should specify the phandle of the
+>> +   display device node which holds the video interface timing with the
+>> +   below mentioned properties.
+>> +
+>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
+>> +     horizontal timing includes four parameters in the following order.
+>> +
+>> +     - horizontal back porch (in number of lcd clocks)
+>> +     - horizontal front porch (in number of lcd clocks)
+>> +     - hsync pulse width (in number of lcd clocks)
+>> +     - Display panels X resolution.
+>> +
+>> +   - lcd-vtiming: Specifies the vertical timing for the overlay. The
+>> +     vertical timing includes four parameters in the following order.
+>> +
+>> +     - vertical back porch (in number of lcd lines)
+>> +     - vertical front porch (in number of lcd lines)
+>> +     - vsync pulse width (in number of lcd clocks)
+>> +     - Display panels Y resolution.
+>
+> Should this not use the new videomode timings that are under discussion at:
+>
+> http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
