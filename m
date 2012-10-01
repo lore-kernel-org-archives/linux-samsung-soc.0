@@ -1,62 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
-Date: Mon, 01 Oct 2012 10:20:44 -0600
-Message-ID: <5069C2DC.8080905@wwwdotorg.org>
-References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
- <1348226536-22899-3-git-send-email-l.krishna@samsung.com>
- <505BF79A.8060802@wwwdotorg.org>
- <CAL1wa8eOA6eV-9EoeUFrSFaFwq5sEVnYXn9yKnPRv=0mSU5WvQ@mail.gmail.com>
+From: Matthew Leach <matthew@mattleach.net>
+Subject: Spurious IPIs on secondary cpu bringup with EXYNOS 4412
+Date: Mon, 01 Oct 2012 17:48:04 +0100
+Message-ID: <87obkmjfzv.fsf@mattleach.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-In-Reply-To: <CAL1wa8eOA6eV-9EoeUFrSFaFwq5sEVnYXn9yKnPRv=0mSU5WvQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
-List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
- <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
-Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
-Sender: "devicetree-discuss"
- <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
-To: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from honeysuckle.london.02.net ([87.194.255.144]:48544 "EHLO
+	honeysuckle.london.02.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753303Ab2JAQz4 (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 1 Oct 2012 12:55:56 -0400
+Received: from mail.mattleach.net (93.97.29.167) by honeysuckle.london.02.net (8.5.140)
+        id 4FFD9654024ABBE2 for linux-samsung-soc@vger.kernel.org; Mon, 1 Oct 2012 17:48:06 +0100
+Received: from matt-laptop.mattleach.net (unknown [192.168.0.20])
+	by mail.mattleach.net (Postfix) with ESMTPSA id C3B397EC25
+	for <linux-samsung-soc@vger.kernel.org>; Mon,  1 Oct 2012 17:47:37 +0100 (BST)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-samsung-soc@vger.kernel.org
 
-On 09/30/2012 11:29 PM, Leela Krishna Amudala wrote:
-> Hello Stephen Warren,
-> 
-> The binding names that I use in my dts file should match with the
-> names given in http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
-> right?
+Hi,
 
-I don't think so; the binding in that link is for example:
+I applied the secondary CPU bringup patch [1] to mainline, however when
+booting I get the following spurious IPIs after each core has booted:
 
-> + - xres, yres: Display resolution
-> + - left-margin, right-margin, hsync-len: Horizontal Display timing parameters
-> +   in pixels
-> +   upper-margin, lower-margin, vsync-len: Vertical display timing parameters in
-> +   lines
-> + - clock: displayclock in Hz
+[    0.050000] CPU1: Booted secondary processor
+[    0.075000] CPU1: thread -1, cpu 1, socket 10, mpidr 80000a01
+[    0.080000] CPU1: Unknown IPI message 0x1
+[    0.090000] CPU2: Booted secondary processor
+[    0.115000] CPU2: thread -1, cpu 2, socket 10, mpidr 80000a02
+[    0.120000] CPU2: Unknown IPI message 0x1
+[    0.130000] CPU3: Booted secondary processor
+[    0.155000] CPU3: thread -1, cpu 3, socket 10, mpidr 80000a03
+[    0.160000] CPU3: Unknown IPI message 0x1
 
-i.e. a bunch of separate properties, one for each value needed to
-describe the display timing. However, your patch contains:
+Has anyone that has access to the documentation for the 4412 know what
+this could be?
 
->>> + - samsung,fimd-display: This property should specify the phandle of the
->>> +   display device node which holds the video interface timing with the
->>> +   below mentioned properties.
->>> +
->>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
->>> +     horizontal timing includes four parameters in the following order.
->>> +
->>> +     - horizontal back porch (in number of lcd clocks)
->>> +     - horizontal front porch (in number of lcd clocks)
->>> +     - hsync pulse width (in number of lcd clocks)
->>> +     - Display panels X resolution.
+[1]: ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
 
-A single lcd-htiming property, which contains 4 values. (and a similar
-construct for the vertical timing).
+---
 
-That seems entirely different to me...
+Thanks,
+Matt
