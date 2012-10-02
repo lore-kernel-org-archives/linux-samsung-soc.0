@@ -1,95 +1,163 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH v2 4/4] ARM: dts: exynos4: Set up power domains
-Date: Tue, 02 Oct 2012 11:24:06 +0200
-Message-ID: <1349169846-30385-5-git-send-email-t.figa@samsung.com>
-References: <1349169846-30385-1-git-send-email-t.figa@samsung.com>
+Subject: [PATCH] input: touchscreen: mms114: Add device tree bindings
+Date: Tue, 02 Oct 2012 11:33:47 +0200
+Message-ID: <1349170427-1625-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:19911 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753266Ab2JBJYl (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:16527 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753112Ab2JBJd7 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Oct 2012 05:24:41 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MB900KYKE4HGZ10@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Oct 2012 18:24:40 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MB900MEOE4G7Q90@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 02 Oct 2012 18:24:40 +0900 (KST)
-In-reply-to: <1349169846-30385-1-git-send-email-t.figa@samsung.com>
+	Tue, 2 Oct 2012 05:33:59 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: kyungmin.park@samsung.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, rjw@sisk.pl, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
+To: linux-input@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, jy0922.shim@samsung.com, tomasz.figa@gmail.com
 
-This patch adds device tree nodes for power domains of Exynos4 SoCs.
+This patch adds device tree bindings for mms114 touchscreen.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
----
- arch/arm/boot/dts/exynos4.dtsi    | 30 ++++++++++++++++++++++++++++++
- arch/arm/boot/dts/exynos4210.dtsi |  5 +++++
- 2 files changed, 35 insertions(+)
 
-diff --git a/arch/arm/boot/dts/exynos4.dtsi b/arch/arm/boot/dts/exynos4.dtsi
-index a26c3dd..0c14f50 100644
---- a/arch/arm/boot/dts/exynos4.dtsi
-+++ b/arch/arm/boot/dts/exynos4.dtsi
-@@ -30,6 +30,36 @@
- 		spi2 = &spi_2;
- 	};
+---
+ .../bindings/input/touchscreen/mms114.txt          | 34 ++++++++++++++
+ drivers/input/touchscreen/mms114.c                 | 52 +++++++++++++++++++++-
+ 2 files changed, 84 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/mms114.txt b/Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+new file mode 100644
+index 0000000..f89d382
+--- /dev/null
++++ b/Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+@@ -0,0 +1,34 @@
++* MELFAS MMS114 touchscreen controller
++
++Required properties:
++- compatible: must be "melfas,mms114"
++- reg: I2C address of the chip
++- interrupts: interrupt to which the chip is connected
++- x-size: horizontal resolution of touchscreen
++- y-size: vertical resolution of touchscreen
++
++Optional properties:
++- contact-threshold: 
++- moving-threshold:
++- x-invert: invert X axis
++- y-invert: invert Y axis
++
++Example:
++
++	i2c@00000000 {
++		/* ... */
++
++		touchscreen@48 {
++			compatible = "melfas,mms114";
++			reg = <0x48>;
++			interrupts = <39 0>;
++			x-size = <720>;
++			y-size = <1280>;
++			contact-threshold = <10>;
++			moving-threshold = <10>;
++			x-invert;
++			y-invert;
++		};
++
++		/* ... */
++	};
+diff --git a/drivers/input/touchscreen/mms114.c b/drivers/input/touchscreen/mms114.c
+index 49c44bb..fb66f7a 100644
+--- a/drivers/input/touchscreen/mms114.c
++++ b/drivers/input/touchscreen/mms114.c
+@@ -10,6 +10,7 @@
+ #include <linux/module.h>
+ #include <linux/init.h>
+ #include <linux/delay.h>
++#include <linux/of.h>
+ #include <linux/i2c.h>
+ #include <linux/i2c/mms114.h>
+ #include <linux/input/mt.h>
+@@ -360,14 +361,55 @@ static void mms114_input_close(struct input_dev *dev)
+ 	mms114_stop(data);
+ }
  
-+	pd_mfc: mfc-power-domain@10023C40 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023C40 0x20>;
++static struct mms114_platform_data *mms114_parse_dt(struct device *dev)
++{
++	struct mms114_platform_data *pdata;
++	struct device_node *np = dev->of_node;
++
++	if (!np)
++		return NULL;
++
++	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
++	if (!pdata) {
++		dev_err(dev, "failed to allocate platform data\n");
++		return NULL;
++	}
++
++	if (of_property_read_u32(np, "x-size", &pdata->x_size)) {
++		dev_err(dev, "failed to get x-size property\n");
++		return NULL;
 +	};
 +
-+	pd_g3d: g3d-power-domain@10023C60 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023C60 0x20>;
++	if (of_property_read_u32(np, "y-size", &pdata->y_size)) {
++		dev_err(dev, "failed to get y-size property\n");
++		return NULL;
 +	};
 +
-+	pd_lcd0: lcd0-power-domain@10023C80 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023C80 0x20>;
-+	};
++	of_property_read_u32(np, "contact-threshold",
++						&pdata->contact_threshold);
++	of_property_read_u32(np, "moving-threshold",
++						&pdata->moving_threshold);
 +
-+	pd_tv: tv-power-domain@10023C20 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023C20 0x20>;
-+	};
++	if (of_find_property(np, "x-invert", NULL))
++		pdata->x_invert = true;
++	if (of_find_property(np, "y-invert", NULL))
++		pdata->y_invert = true;
 +
-+	pd_cam: cam-power-domain@10023C00 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023C00 0x20>;
-+	};
++	return pdata;
++}
 +
-+	pd_gps: gps-power-domain@10023CE0 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023CE0 0x20>;
-+	};
-+
- 	gic:interrupt-controller@10490000 {
- 		compatible = "arm,cortex-a9-gic";
- 		#interrupt-cells = <3>;
-diff --git a/arch/arm/boot/dts/exynos4210.dtsi b/arch/arm/boot/dts/exynos4210.dtsi
-index 214c557..f9f840e 100644
---- a/arch/arm/boot/dts/exynos4210.dtsi
-+++ b/arch/arm/boot/dts/exynos4210.dtsi
-@@ -31,6 +31,11 @@
- 		pinctrl2 = &pinctrl_2;
- 	};
+ static int __devinit mms114_probe(struct i2c_client *client,
+ 				  const struct i2c_device_id *id)
+ {
+ 	struct mms114_data *data;
+ 	struct input_dev *input_dev;
++	struct mms114_platform_data *pdata = client->dev.platform_data;
+ 	int error;
  
-+	pd_lcd1: lcd1-power-domain@10023CA0 {
-+		compatible = "samsung,exynos4210-pd";
-+		reg = <0x10023CA0 0x20>;
-+	};
+-	if (!client->dev.platform_data) {
++	if (!pdata)
++		pdata = mms114_parse_dt(&client->dev);
 +
- 	gic:interrupt-controller@10490000 {
- 		cpu-offset = <0x8000>;
- 	};
++	if (!pdata) {
+ 		dev_err(&client->dev, "Need platform data\n");
+ 		return -EINVAL;
+ 	}
+@@ -389,7 +431,7 @@ static int __devinit mms114_probe(struct i2c_client *client,
+ 
+ 	data->client = client;
+ 	data->input_dev = input_dev;
+-	data->pdata = client->dev.platform_data;
++	data->pdata = pdata;
+ 
+ 	input_dev->name = "MELPAS MMS114 Touchscreen";
+ 	input_dev->id.bustype = BUS_I2C;
+@@ -525,11 +567,17 @@ static const struct i2c_device_id mms114_id[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, mms114_id);
+ 
++static struct of_device_id __devinitdata mms114_dt_match[] = {
++	{ .compatible = "melfas,mms114" },
++	{ }
++};
++
+ static struct i2c_driver mms114_driver = {
+ 	.driver = {
+ 		.name	= "mms114",
+ 		.owner	= THIS_MODULE,
+ 		.pm	= &mms114_pm_ops,
++		.of_match_table = mms114_dt_match,
+ 	},
+ 	.probe		= mms114_probe,
+ 	.remove		= __devexit_p(mms114_remove),
 -- 
 1.7.12
