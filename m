@@ -1,51 +1,124 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] [media] s5p-jpeg: use clk_prepare_enable and clk_disable_unprepare
-Date: Wed,  3 Oct 2012 08:55:02 +0900
-Message-ID: <1349222102-3183-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-media-owner@vger.kernel.org>
-Sender: linux-media-owner@vger.kernel.org
-To: linux-media@vger.kernel.org
-Cc: mchehab@infradead.org, andrzej.p@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] video: s3c-fb: use clk_prepare_enable and clk_disable_unprepare
+Date: Wed,  3 Oct 2012 08:57:40 +0900
+Message-ID: <1349222260-3248-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-da0-f46.google.com ([209.85.210.46]:34202 "EHLO
+	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932747Ab2JCAAc (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 2 Oct 2012 20:00:32 -0400
+Received: by dakn41 with SMTP id n41so977636dak.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Oct 2012 17:00:31 -0700 (PDT)
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-fbdev@vger.kernel.org
+Cc: FlorianSchandinat@gmx.de, jg1.han@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
 Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
 calls as required by common clock framework.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- drivers/media/platform/s5p-jpeg/jpeg-core.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/video/s3c-fb.c |   28 ++++++++++++++--------------
+ 1 files changed, 14 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/media/platform/s5p-jpeg/jpeg-core.c b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-index 90459cef..9df35b2 100644
---- a/drivers/media/platform/s5p-jpeg/jpeg-core.c
-+++ b/drivers/media/platform/s5p-jpeg/jpeg-core.c
-@@ -1353,7 +1353,7 @@ static int s5p_jpeg_probe(struct platform_device *pdev)
- 		return ret;
+diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+index 52b744f..2ed7b63 100644
+--- a/drivers/video/s3c-fb.c
++++ b/drivers/video/s3c-fb.c
+@@ -1404,7 +1404,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 		return PTR_ERR(sfb->bus_clk);
  	}
- 	dev_dbg(&pdev->dev, "clock source %p\n", jpeg->clk);
--	clk_enable(jpeg->clk);
-+	clk_prepare_enable(jpeg->clk);
  
- 	/* v4l2 device */
- 	ret = v4l2_device_register(&pdev->dev, &jpeg->v4l2_dev);
-@@ -1459,7 +1459,7 @@ device_register_rollback:
- 	v4l2_device_unregister(&jpeg->v4l2_dev);
+-	clk_enable(sfb->bus_clk);
++	clk_prepare_enable(sfb->bus_clk);
  
- clk_get_rollback:
--	clk_disable(jpeg->clk);
-+	clk_disable_unprepare(jpeg->clk);
- 	clk_put(jpeg->clk);
+ 	if (!sfb->variant.has_clksel) {
+ 		sfb->lcd_clk = devm_clk_get(dev, "sclk_fimd");
+@@ -1414,7 +1414,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+ 			goto err_bus_clk;
+ 		}
+ 
+-		clk_enable(sfb->lcd_clk);
++		clk_prepare_enable(sfb->lcd_clk);
+ 	}
+ 
+ 	pm_runtime_enable(sfb->dev);
+@@ -1504,10 +1504,10 @@ err_lcd_clk:
+ 	pm_runtime_disable(sfb->dev);
+ 
+ 	if (!sfb->variant.has_clksel)
+-		clk_disable(sfb->lcd_clk);
++		clk_disable_unprepare(sfb->lcd_clk);
+ 
+ err_bus_clk:
+-	clk_disable(sfb->bus_clk);
++	clk_disable_unprepare(sfb->bus_clk);
  
  	return ret;
-@@ -1479,7 +1479,7 @@ static int s5p_jpeg_remove(struct platform_device *pdev)
- 	v4l2_m2m_release(jpeg->m2m_dev);
- 	v4l2_device_unregister(&jpeg->v4l2_dev);
+ }
+@@ -1531,9 +1531,9 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
+ 			s3c_fb_release_win(sfb, sfb->windows[win]);
  
--	clk_disable(jpeg->clk);
-+	clk_disable_unprepare(jpeg->clk);
- 	clk_put(jpeg->clk);
+ 	if (!sfb->variant.has_clksel)
+-		clk_disable(sfb->lcd_clk);
++		clk_disable_unprepare(sfb->lcd_clk);
+ 
+-	clk_disable(sfb->bus_clk);
++	clk_disable_unprepare(sfb->bus_clk);
+ 
+ 	pm_runtime_put_sync(sfb->dev);
+ 	pm_runtime_disable(sfb->dev);
+@@ -1561,9 +1561,9 @@ static int s3c_fb_suspend(struct device *dev)
+ 	}
+ 
+ 	if (!sfb->variant.has_clksel)
+-		clk_disable(sfb->lcd_clk);
++		clk_disable_unprepare(sfb->lcd_clk);
+ 
+-	clk_disable(sfb->bus_clk);
++	clk_disable_unprepare(sfb->bus_clk);
+ 
+ 	pm_runtime_put_sync(sfb->dev);
+ 
+@@ -1581,10 +1581,10 @@ static int s3c_fb_resume(struct device *dev)
+ 
+ 	pm_runtime_get_sync(sfb->dev);
+ 
+-	clk_enable(sfb->bus_clk);
++	clk_prepare_enable(sfb->bus_clk);
+ 
+ 	if (!sfb->variant.has_clksel)
+-		clk_enable(sfb->lcd_clk);
++		clk_prepare_enable(sfb->lcd_clk);
+ 
+ 	/* setup gpio and output polarity controls */
+ 	pd->setup_gpio();
+@@ -1640,9 +1640,9 @@ static int s3c_fb_runtime_suspend(struct device *dev)
+ 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+ 
+ 	if (!sfb->variant.has_clksel)
+-		clk_disable(sfb->lcd_clk);
++		clk_disable_unprepare(sfb->lcd_clk);
+ 
+-	clk_disable(sfb->bus_clk);
++	clk_disable_unprepare(sfb->bus_clk);
  
  	return 0;
+ }
+@@ -1653,10 +1653,10 @@ static int s3c_fb_runtime_resume(struct device *dev)
+ 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+ 	struct s3c_fb_platdata *pd = sfb->pdata;
+ 
+-	clk_enable(sfb->bus_clk);
++	clk_prepare_enable(sfb->bus_clk);
+ 
+ 	if (!sfb->variant.has_clksel)
+-		clk_enable(sfb->lcd_clk);
++		clk_prepare_enable(sfb->lcd_clk);
+ 
+ 	/* setup gpio and output polarity controls */
+ 	pd->setup_gpio();
 -- 
 1.7.4.1
