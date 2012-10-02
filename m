@@ -1,133 +1,74 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] mmc: sdhci-s3c: use clk_prepare_enable and clk_disable_unprepare
-Date: Wed,  3 Oct 2012 08:35:43 +0900
-Message-ID: <1349220943-2636-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:49691 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754131Ab2JBXif (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Oct 2012 19:38:35 -0400
-Received: by pbbrr4 with SMTP id rr4so9250405pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Oct 2012 16:38:35 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] usb: ehci-s5p: use clk_prepare_enable and clk_disable_unprepare
+Date: Wed,  3 Oct 2012 08:40:42 +0900
+Message-ID: <1349221242-2771-1-git-send-email-thomas.abraham@linaro.org>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-mmc@vger.kernel.org
-Cc: cjb@laptop.org, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
 
 Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
 calls as required by common clock framework.
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Signed-off-by: Thomas Abraham <thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
- drivers/mmc/host/sdhci-s3c.c |   28 ++++++++++++++--------------
- 1 files changed, 14 insertions(+), 14 deletions(-)
+ drivers/usb/host/ehci-s5p.c |   10 +++++-----
+ 1 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/mmc/host/sdhci-s3c.c b/drivers/mmc/host/sdhci-s3c.c
-index 2903949..a093e2e 100644
---- a/drivers/mmc/host/sdhci-s3c.c
-+++ b/drivers/mmc/host/sdhci-s3c.c
-@@ -211,8 +211,8 @@ static void sdhci_s3c_set_clock(struct sdhci_host *host, unsigned int clock)
- 	if (ourhost->cur_clk != best_src) {
- 		struct clk *clk = ourhost->clk_bus[best_src];
- 
--		clk_enable(clk);
--		clk_disable(ourhost->clk_bus[ourhost->cur_clk]);
-+		clk_prepare_enable(clk);
-+		clk_disable_unprepare(ourhost->clk_bus[ourhost->cur_clk]);
- 
- 		/* turn clock off to card before changing clock source */
- 		writew(0, host->ioaddr + SDHCI_CLOCK_CONTROL);
-@@ -607,7 +607,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 85b74be..abc178d 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -136,7 +136,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 		goto fail_clk;
  	}
  
- 	/* enable the local io clock and keep it running for the moment. */
--	clk_enable(sc->clk_io);
-+	clk_prepare_enable(sc->clk_io);
+-	err = clk_enable(s5p_ehci->clk);
++	err = clk_prepare_enable(s5p_ehci->clk);
+ 	if (err)
+ 		goto fail_clk;
  
- 	for (clks = 0, ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		struct clk *clk;
-@@ -638,7 +638,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	}
- 
- #ifndef CONFIG_PM_RUNTIME
--	clk_enable(sc->clk_bus[sc->cur_clk]);
-+	clk_prepare_enable(sc->clk_bus[sc->cur_clk]);
- #endif
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-@@ -747,13 +747,13 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 		sdhci_s3c_setup_card_detect_gpio(sc);
- 
- #ifdef CONFIG_PM_RUNTIME
--	clk_disable(sc->clk_io);
-+	clk_disable_unprepare(sc->clk_io);
- #endif
+@@ -183,7 +183,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
  	return 0;
  
-  err_req_regs:
- #ifndef CONFIG_PM_RUNTIME
--	clk_disable(sc->clk_bus[sc->cur_clk]);
-+	clk_disable_unprepare(sc->clk_bus[sc->cur_clk]);
- #endif
- 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		if (sc->clk_bus[ptr]) {
-@@ -762,7 +762,7 @@ static int __devinit sdhci_s3c_probe(struct platform_device *pdev)
- 	}
+ fail_io:
+-	clk_disable(s5p_ehci->clk);
++	clk_disable_unprepare(s5p_ehci->clk);
+ fail_clk:
+ 	usb_put_hcd(hcd);
+ 	return err;
+@@ -200,7 +200,7 @@ static int __devexit s5p_ehci_remove(struct platform_device *pdev)
+ 	if (pdata && pdata->phy_exit)
+ 		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
  
-  err_no_busclks:
--	clk_disable(sc->clk_io);
-+	clk_disable_unprepare(sc->clk_io);
- 	clk_put(sc->clk_io);
+-	clk_disable(s5p_ehci->clk);
++	clk_disable_unprepare(s5p_ehci->clk);
  
-  err_io_clk:
-@@ -794,7 +794,7 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
- 		gpio_free(sc->ext_cd_gpio);
+ 	usb_put_hcd(hcd);
  
- #ifdef CONFIG_PM_RUNTIME
--	clk_enable(sc->clk_io);
-+	clk_prepare_enable(sc->clk_io);
- #endif
- 	sdhci_remove_host(host, 1);
+@@ -231,7 +231,7 @@ static int s5p_ehci_suspend(struct device *dev)
+ 	if (pdata && pdata->phy_exit)
+ 		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
  
-@@ -802,14 +802,14 @@ static int __devexit sdhci_s3c_remove(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
+-	clk_disable(s5p_ehci->clk);
++	clk_disable_unprepare(s5p_ehci->clk);
  
- #ifndef CONFIG_PM_RUNTIME
--	clk_disable(sc->clk_bus[sc->cur_clk]);
-+	clk_disable_unprepare(sc->clk_bus[sc->cur_clk]);
- #endif
- 	for (ptr = 0; ptr < MAX_BUS_CLK; ptr++) {
- 		if (sc->clk_bus[ptr]) {
- 			clk_put(sc->clk_bus[ptr]);
- 		}
- 	}
--	clk_disable(sc->clk_io);
-+	clk_disable_unprepare(sc->clk_io);
- 	clk_put(sc->clk_io);
- 
- 	if (pdev->dev.of_node) {
-@@ -849,8 +849,8 @@ static int sdhci_s3c_runtime_suspend(struct device *dev)
- 
- 	ret = sdhci_runtime_suspend_host(host);
- 
--	clk_disable(ourhost->clk_bus[ourhost->cur_clk]);
--	clk_disable(busclk);
-+	clk_disable_unprepare(ourhost->clk_bus[ourhost->cur_clk]);
-+	clk_disable_unprepare(busclk);
- 	return ret;
+ 	return rc;
  }
+@@ -243,7 +243,7 @@ static int s5p_ehci_resume(struct device *dev)
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
  
-@@ -861,8 +861,8 @@ static int sdhci_s3c_runtime_resume(struct device *dev)
- 	struct clk *busclk = ourhost->clk_io;
- 	int ret;
+-	clk_enable(s5p_ehci->clk);
++	clk_prepare_enable(s5p_ehci->clk);
  
--	clk_enable(busclk);
--	clk_enable(ourhost->clk_bus[ourhost->cur_clk]);
-+	clk_prepare_enable(busclk);
-+	clk_prepare_enable(ourhost->clk_bus[ourhost->cur_clk]);
- 	ret = sdhci_runtime_resume_host(host);
- 	return ret;
- }
+ 	if (pdata && pdata->phy_init)
+ 		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
 -- 
 1.7.4.1
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
