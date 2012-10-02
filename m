@@ -1,58 +1,72 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] ASoC: SAMSUNG: ac97: use clk_prepare_enable and clk_disable_unprepare
-Date: Wed,  3 Oct 2012 08:46:01 +0900
-Message-ID: <1349221561-2896-1-git-send-email-thomas.abraham@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:53061 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756730Ab2JBXsw (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Oct 2012 19:48:52 -0400
-Received: by padhz1 with SMTP id hz1so5726012pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Oct 2012 16:48:51 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH] ASoC: SAMSUNG: i2s: use clk_prepare_enable and
+	clk_disable_unprepare
+Date: Wed,  3 Oct 2012 08:46:58 +0900
+Message-ID: <1349221618-2943-1-git-send-email-thomas.abraham@linaro.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
 To: alsa-devel@alsa-project.org
-Cc: lrg@ti.com, broonie@opensource.wolfsonmicro.com, jassisinghbrar@gmail.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, jassisinghbrar@gmail.com, broonie@opensource.wolfsonmicro.com, lrg@ti.com, linux-samsung-soc@vger.kernel.org
+List-Id: linux-samsung-soc@vger.kernel.org
 
 Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
 calls as required by common clock framework.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- sound/soc/samsung/ac97.c |    6 +++---
- 1 files changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/samsung/i2s.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/sound/soc/samsung/ac97.c b/sound/soc/samsung/ac97.c
-index 14fbcd3..386bab1 100644
---- a/sound/soc/samsung/ac97.c
-+++ b/sound/soc/samsung/ac97.c
-@@ -442,7 +442,7 @@ static __devinit int s3c_ac97_probe(struct platform_device *pdev)
- 		ret = -ENODEV;
- 		goto err2;
+diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
+index 40b00a1..547b919 100644
+--- a/sound/soc/samsung/i2s.c
++++ b/sound/soc/samsung/i2s.c
+@@ -423,7 +423,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 			if (i2s->op_clk) {
+ 				if ((clk_id && !(mod & MOD_IMS_SYSMUX)) ||
+ 					(!clk_id && (mod & MOD_IMS_SYSMUX))) {
+-					clk_disable(i2s->op_clk);
++					clk_disable_unprepare(i2s->op_clk);
+ 					clk_put(i2s->op_clk);
+ 				} else {
+ 					i2s->rclk_srcrate =
+@@ -434,7 +434,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
+ 
+ 			i2s->op_clk = clk_get(&i2s->pdev->dev,
+ 						i2s->src_clk[clk_id]);
+-			clk_enable(i2s->op_clk);
++			clk_prepare_enable(i2s->op_clk);
+ 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
+ 
+ 			/* Over-ride the other's */
+@@ -880,7 +880,7 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
+ 		iounmap(i2s->addr);
+ 		return -ENOENT;
  	}
--	clk_enable(s3c_ac97.ac97_clk);
-+	clk_prepare_enable(s3c_ac97.ac97_clk);
+-	clk_enable(i2s->clk);
++	clk_prepare_enable(i2s->clk);
  
- 	if (ac97_pdata->cfg_gpio(pdev)) {
- 		dev_err(&pdev->dev, "Unable to configure gpio\n");
-@@ -468,7 +468,7 @@ err5:
- 	free_irq(irq_res->start, NULL);
- err4:
- err3:
--	clk_disable(s3c_ac97.ac97_clk);
-+	clk_disable_unprepare(s3c_ac97.ac97_clk);
- 	clk_put(s3c_ac97.ac97_clk);
- err2:
- 	iounmap(s3c_ac97.regs);
-@@ -488,7 +488,7 @@ static __devexit int s3c_ac97_remove(struct platform_device *pdev)
- 	if (irq_res)
- 		free_irq(irq_res->start, NULL);
+ 	if (other) {
+ 		other->addr = i2s->addr;
+@@ -922,7 +922,7 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
+ 		if (i2s->quirks & QUIRK_NEED_RSTCLR)
+ 			writel(0, i2s->addr + I2SCON);
  
--	clk_disable(s3c_ac97.ac97_clk);
-+	clk_disable_unprepare(s3c_ac97.ac97_clk);
- 	clk_put(s3c_ac97.ac97_clk);
+-		clk_disable(i2s->clk);
++		clk_disable_unprepare(i2s->clk);
+ 		clk_put(i2s->clk);
  
- 	iounmap(s3c_ac97.regs);
+ 		iounmap(i2s->addr);
 -- 
 1.7.4.1
