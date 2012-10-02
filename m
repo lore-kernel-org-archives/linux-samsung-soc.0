@@ -1,8 +1,8 @@
 From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] ASoC: SAMSUNG: i2s: use clk_prepare_enable and
+Subject: [PATCH] ASoC: SAMSUNG: pcm: use clk_prepare_enable and
 	clk_disable_unprepare
-Date: Wed,  3 Oct 2012 08:46:58 +0900
-Message-ID: <1349221618-2943-1-git-send-email-thomas.abraham@linaro.org>
+Date: Wed,  3 Oct 2012 08:47:16 +0900
+Message-ID: <1349221636-2976-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -25,48 +25,58 @@ calls as required by common clock framework.
 
 Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- sound/soc/samsung/i2s.c |    8 ++++----
- 1 files changed, 4 insertions(+), 4 deletions(-)
+ sound/soc/samsung/pcm.c |   12 ++++++------
+ 1 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/samsung/i2s.c b/sound/soc/samsung/i2s.c
-index 40b00a1..547b919 100644
---- a/sound/soc/samsung/i2s.c
-+++ b/sound/soc/samsung/i2s.c
-@@ -423,7 +423,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 			if (i2s->op_clk) {
- 				if ((clk_id && !(mod & MOD_IMS_SYSMUX)) ||
- 					(!clk_id && (mod & MOD_IMS_SYSMUX))) {
--					clk_disable(i2s->op_clk);
-+					clk_disable_unprepare(i2s->op_clk);
- 					clk_put(i2s->op_clk);
- 				} else {
- 					i2s->rclk_srcrate =
-@@ -434,7 +434,7 @@ static int i2s_set_sysclk(struct snd_soc_dai *dai,
- 
- 			i2s->op_clk = clk_get(&i2s->pdev->dev,
- 						i2s->src_clk[clk_id]);
--			clk_enable(i2s->op_clk);
-+			clk_prepare_enable(i2s->op_clk);
- 			i2s->rclk_srcrate = clk_get_rate(i2s->op_clk);
- 
- 			/* Over-ride the other's */
-@@ -880,7 +880,7 @@ static int samsung_i2s_dai_probe(struct snd_soc_dai *dai)
- 		iounmap(i2s->addr);
- 		return -ENOENT;
+diff --git a/sound/soc/samsung/pcm.c b/sound/soc/samsung/pcm.c
+index c860819..45f4a75 100644
+--- a/sound/soc/samsung/pcm.c
++++ b/sound/soc/samsung/pcm.c
+@@ -543,7 +543,7 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 		ret = PTR_ERR(pcm->cclk);
+ 		goto err1;
  	}
--	clk_enable(i2s->clk);
-+	clk_prepare_enable(i2s->clk);
+-	clk_enable(pcm->cclk);
++	clk_prepare_enable(pcm->cclk);
  
- 	if (other) {
- 		other->addr = i2s->addr;
-@@ -922,7 +922,7 @@ static int samsung_i2s_dai_remove(struct snd_soc_dai *dai)
- 		if (i2s->quirks & QUIRK_NEED_RSTCLR)
- 			writel(0, i2s->addr + I2SCON);
+ 	/* record our pcm structure for later use in the callbacks */
+ 	dev_set_drvdata(&pdev->dev, pcm);
+@@ -568,7 +568,7 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 		ret = -ENOENT;
+ 		goto err4;
+ 	}
+-	clk_enable(pcm->pclk);
++	clk_prepare_enable(pcm->pclk);
  
--		clk_disable(i2s->clk);
-+		clk_disable_unprepare(i2s->clk);
- 		clk_put(i2s->clk);
+ 	s3c_pcm_stereo_in[pdev->id].dma_addr = mem_res->start
+ 							+ S3C_PCM_RXFIFO;
+@@ -592,14 +592,14 @@ static __devinit int s3c_pcm_dev_probe(struct platform_device *pdev)
+ 	return 0;
  
- 		iounmap(i2s->addr);
+ err5:
+-	clk_disable(pcm->pclk);
++	clk_disable_unprepare(pcm->pclk);
+ 	clk_put(pcm->pclk);
+ err4:
+ 	iounmap(pcm->regs);
+ err3:
+ 	release_mem_region(mem_res->start, resource_size(mem_res));
+ err2:
+-	clk_disable(pcm->cclk);
++	clk_disable_unprepare(pcm->cclk);
+ 	clk_put(pcm->cclk);
+ err1:
+ 	return ret;
+@@ -619,8 +619,8 @@ static __devexit int s3c_pcm_dev_remove(struct platform_device *pdev)
+ 	mem_res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	release_mem_region(mem_res->start, resource_size(mem_res));
+ 
+-	clk_disable(pcm->cclk);
+-	clk_disable(pcm->pclk);
++	clk_disable_unprepare(pcm->cclk);
++	clk_disable_unprepare(pcm->pclk);
+ 	clk_put(pcm->pclk);
+ 	clk_put(pcm->cclk);
+ 
 -- 
 1.7.4.1
