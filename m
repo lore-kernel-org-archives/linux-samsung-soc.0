@@ -1,111 +1,57 @@
-From: Heiko =?iso-8859-1?q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: Problem using S3C2416's HSSPI
-Date: Tue, 2 Oct 2012 01:47:46 +0200
-Message-ID: <201210020147.47512.heiko@sntech.de>
-References: <5069D39F.5010604@inov.pt> <201210012118.20657.heiko@sntech.de> <5069F1B3.8000203@gmail.com>
+From: Kyungmin Park <kmpark@infradead.org>
+Subject: Re: Spurious IPIs on secondary cpu bringup with EXYNOS 4412
+Date: Tue, 2 Oct 2012 09:21:01 +0900
+Message-ID: <CAH9JG2VgEtaFfMB8gw5ikTtRJQ4d4MKx9=sc+kjzc=R+8965Sg@mail.gmail.com>
+References: <87obkmjfzv.fsf@mattleach.net>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:54034 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1752407Ab2JAXrx (ORCPT
+Received: from mail-we0-f174.google.com ([74.125.82.174]:53157 "EHLO
+	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1751733Ab2JBAVD (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 1 Oct 2012 19:47:53 -0400
-In-Reply-To: <5069F1B3.8000203@gmail.com>
+	Mon, 1 Oct 2012 20:21:03 -0400
+Received: by weyt9 with SMTP id t9so3274088wey.19
+        for <linux-samsung-soc@vger.kernel.org>; Mon, 01 Oct 2012 17:21:01 -0700 (PDT)
+In-Reply-To: <87obkmjfzv.fsf@mattleach.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: =?iso-8859-1?q?Jos=E9_Miguel_Gon=E7alves?= <jose.goncalves@inov.pt>, linux-samsung-soc@vger.kernel.org, Kukjin Kim <kgene.kim@samsung.com>
+To: Matthew Leach <matthew@mattleach.net>
+Cc: linux-samsung-soc@vger.kernel.org
 
-Am Montag, 1. Oktober 2012, 21:40:35 schrieb Sylwester Nawrocki:
-> On 10/01/2012 09:18 PM, Heiko St=FCbner wrote:
-> > Hi Jos=E9,
-> >=20
-> > Am Montag, 1. Oktober 2012, 19:32:15 schrieb Jos=E9 Miguel Gon=E7al=
-ves:
-> >> I'm trying to use the HSSPI controller on a S3C2416 based board bu=
-t I'm
-> >> having some problems.
-> >>=20
-> >> I've added "&s3c64xx_device_spi0" to my array of platform devices =
-and
-> >> added a call to s3c64xx_spi0_set_platdata(NULL, 0, 1) before
-> >> platform_add_devices(). When the kernel starts I see the following
-> >> error:
-> >>=20
-> >> s3c64xx-spi s3c6410-spi.0: Unable to acquire clock 'spi'
-> >> s3c64xx-spi: probe of s3c6410-spi.0 failed with error -2
-> >=20
-> > what kernel version do you use?
-> >=20
-> > I.e. the clock support for the s3c64xx-spi on s3c2443 and s3c2416 w=
-as
-> > added through [1] in march - so it's not this old.
->=20
-> In this commit
->=20
-> commit a5238e360b715e9a1bb39d7d3537f78cc9e9e286
-> Author: Thomas Abraham <thomas.abraham@linaro.org>
-> Date:   Fri Jul 13 07:15:14 2012 +0900
->=20
->     spi: s3c64xx: move controller information into driver data
->=20
->     Platform data is used to specify controller hardware specific
-> information such as the tx/rx fifo level mask and bit offset of rx fi=
-fo
-> level. Such information is not suitable to be supplied from device tr=
-ee.
-> Instead, it can be moved into the driver data and removed from platfo=
-rm
-> data.
->=20
->     Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
->     Acked-by: Jaswinder Singh <jaswinder.singh@linaro.org>
->     Acked-by: Grant Likely <grant.likely@secretlab.ca>
->     Signed-off-by: Kukjin Kim <kgene.kim@samsung.com>
->=20
-> All "s3c64xx-spi.0" devname fields that you added were replaced with
-> "s3c24xx-spi.0". I wonder if that's not the reason clk_get(..., "spi"=
-);
-> fails in the spi-s3c64xx driver used on mach-s3c24xx. But it of cours=
-e
-> depends on the kernel version, we need to first clarify that.
->=20
-> diff --git a/arch/arm/mach-s3c24xx/common-s3c2443.c
-> b/arch/arm/mach-s3c24xx/common-s3c2443.c index aeeb2be..aeb4a24 10064=
-4
-> --- a/arch/arm/mach-s3c24xx/common-s3c2443.c
-> +++ b/arch/arm/mach-s3c24xx/common-s3c2443.c
-> @@ -559,7 +559,7 @@ static struct clk hsmmc1_clk =3D {
->=20
->  static struct clk hsspi_clk =3D {
->         .name           =3D "spi",
-> -       .devname        =3D "s3c64xx-spi.0",
-> +       .devname        =3D "s3c2443-spi.0",
->         .parent         =3D &clk_p,
->         .enable         =3D s3c2443_clkcon_enable_p,
->         .ctrlbit        =3D S3C2443_PCLKCON_HSSPI,
-> @@ -633,7 +633,7 @@ static struct clk_lookup s3c2443_clk_lookup[] =3D=
- {
->         CLKDEV_INIT(NULL, "clk_uart_baud2", &clk_p),
->         CLKDEV_INIT(NULL, "clk_uart_baud3", &clk_esys_uart.clk),
->         CLKDEV_INIT("s3c-sdhci.1", "mmc_busclk.0", &hsmmc1_clk),
-> -       CLKDEV_INIT("s3c64xx-spi.0", "spi_busclk0", &hsspi_clk),
-> +       CLKDEV_INIT("s3c2443-spi.0", "spi_busclk0", &hsspi_clk),
->  };
+On 10/2/12, Matthew Leach <matthew@mattleach.net> wrote:
+> Hi,
+>
+> I applied the secondary CPU bringup patch [1] to mainline, however when
+> booting I get the following spurious IPIs after each core has booted:
+>
+> [    0.050000] CPU1: Booted secondary processor
+> [    0.075000] CPU1: thread -1, cpu 1, socket 10, mpidr 80000a01
+> [    0.080000] CPU1: Unknown IPI message 0x1
+> [    0.090000] CPU2: Booted secondary processor
+> [    0.115000] CPU2: thread -1, cpu 2, socket 10, mpidr 80000a02
+> [    0.120000] CPU2: Unknown IPI message 0x1
+> [    0.130000] CPU3: Booted secondary processor
+> [    0.155000] CPU3: thread -1, cpu 3, socket 10, mpidr 80000a03
+> [    0.160000] CPU3: Unknown IPI message 0x1
+>
+> Has anyone that has access to the documentation for the 4412 know what
+> this could be?
+It's known issue, you can find the patch at arm mailing list to solve issue.
+IOW it's not exynos specific, but arm specific issue.
 
-ahaa ... that's the cause. As far as I was able to determine, in the pa=
-tchset=20
-only the clocks were renamed and the different device names introduced.
-
-The spi devices did not get a function to set the name, like for the rt=
-c, adc=20
-and nand. The devices are named s3c6410-spi by default, so it seems onl=
-y the=20
-s3c64xx machines should have a working spi currently.
-
-I'm working on a patch to fix this for all Samsung arches.
-
-
-Heiko
+Thank you,
+Kyungmin Park
+>
+> [1]: ARM: EXYNOS: Add support for secondary CPU bring-up on Exynos4412
+>
+> ---
+>
+> Thanks,
+> Matt
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc"
+> in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
