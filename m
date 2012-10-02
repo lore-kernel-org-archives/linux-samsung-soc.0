@@ -1,223 +1,58 @@
-From: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
-Subject: [PATCH] ARM: SAMSUNG: Add naming of s3c64xx-spi devices
-Date: Tue, 2 Oct 2012 14:43:54 +0200
-Message-ID: <201210021443.54897.heiko@sntech.de>
-Mime-Version: 1.0
-Content-Type: Text/Plain;
-  charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Thomas Abraham <thomas.abraham@linaro.org>
+Subject: [PATCH] watchdog: s3c2410_wdt: use clk_prepare_enable and clk_disable_unprepare
+Date: Wed,  3 Oct 2012 07:32:40 +0900
+Message-ID: <1349217160-2517-1-git-send-email-thomas.abraham@linaro.org>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from gloria.sntech.de ([95.129.55.99]:57977 "EHLO gloria.sntech.de"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1753114Ab2JBMoD (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:36333 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754124Ab2JBWfb (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Oct 2012 08:44:03 -0400
+	Tue, 2 Oct 2012 18:35:31 -0400
+Received: by pbbrr4 with SMTP id rr4so9211182pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Oct 2012 15:35:30 -0700 (PDT)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kukjin Kim <kgene.kim@samsung.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, =?utf-8?q?Jos=C3=A9_Miguel_Gon=C3=A7alves?= <jose.goncalves@inov.pt>, Sylwester Nawrocki <sylvester.nawrocki@gmail.com>, Thomas Abraham <thomas.abraham@linaro.org>
+To: linux-watchdog@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, wim@iguana.be, kgene.kim@samsung.com, ben-linux@fluff.org
 
-Commit a5238e360b71 (spi: s3c64xx: move controller information into driver
-data) introduced separate device names for the different subtypes of the
-spi controller but forgot to set these in the relevant machines.
+Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+calls as required by common clock framework.
 
-To fix this introduce a s3c64xx_spi_setname function and populate all
-Samsung arches with the correct names. The function resides in a new
-header, as the s3c64xx-spi.h contains driver platform data and should
-therefore at some later point move out of the Samsung include dir.
-
-Tested on a s3c2416-based machine.
-
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 ---
- arch/arm/mach-exynos/common.c                 |    5 ++++
- arch/arm/mach-s3c24xx/s3c2416.c               |    2 +
- arch/arm/mach-s3c24xx/s3c2443.c               |    4 +++
- arch/arm/mach-s5p64x0/common.c                |    3 ++
- arch/arm/mach-s5pc100/common.c                |    3 ++
- arch/arm/mach-s5pv210/common.c                |    3 ++
- arch/arm/plat-samsung/include/plat/spi-core.h |   30 +++++++++++++++++++++++++
- 7 files changed, 50 insertions(+), 0 deletions(-)
- create mode 100644 arch/arm/plat-samsung/include/plat/spi-core.h
+ drivers/watchdog/s3c2410_wdt.c |    6 +++---
+ 1 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-exynos/common.c b/arch/arm/mach-exynos/common.c
-index 4eb39cd..3e02ae6 100644
---- a/arch/arm/mach-exynos/common.c
-+++ b/arch/arm/mach-exynos/common.c
-@@ -47,6 +47,7 @@
- #include <plat/fimc-core.h>
- #include <plat/iic-core.h>
- #include <plat/tv-core.h>
-+#include <plat/spi-core.h>
- #include <plat/regs-serial.h>
+diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
+index 9245b4d..3cdaaff 100644
+--- a/drivers/watchdog/s3c2410_wdt.c
++++ b/drivers/watchdog/s3c2410_wdt.c
+@@ -354,7 +354,7 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 		goto err_map;
+ 	}
  
- #include "common.h"
-@@ -346,6 +347,8 @@ static void __init exynos4_map_io(void)
+-	clk_enable(wdt_clock);
++	clk_prepare_enable(wdt_clock);
  
- 	s5p_fb_setname(0, "exynos4-fb");
- 	s5p_hdmi_setname("exynos4-hdmi");
-+
-+	s3c64xx_spi_setname("exynos4210-spi");
- }
+ 	ret = s3c2410wdt_cpufreq_register();
+ 	if (ret < 0) {
+@@ -421,7 +421,7 @@ static int __devinit s3c2410wdt_probe(struct platform_device *pdev)
+ 	s3c2410wdt_cpufreq_deregister();
  
- static void __init exynos5_map_io(void)
-@@ -366,6 +369,8 @@ static void __init exynos5_map_io(void)
- 	s3c_i2c0_setname("s3c2440-i2c");
- 	s3c_i2c1_setname("s3c2440-i2c");
- 	s3c_i2c2_setname("s3c2440-i2c");
-+
-+	s3c64xx_spi_setname("exynos4210-spi");
- }
+  err_clk:
+-	clk_disable(wdt_clock);
++	clk_disable_unprepare(wdt_clock);
+ 	clk_put(wdt_clock);
+ 	wdt_clock = NULL;
  
- static void __init exynos4_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s3c24xx/s3c2416.c b/arch/arm/mach-s3c24xx/s3c2416.c
-index 20507c7..a24960c 100644
---- a/arch/arm/mach-s3c24xx/s3c2416.c
-+++ b/arch/arm/mach-s3c24xx/s3c2416.c
-@@ -61,6 +61,7 @@
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
- #include <plat/rtc-core.h>
-+#include <plat/spi-core.h>
+@@ -445,7 +445,7 @@ static int __devexit s3c2410wdt_remove(struct platform_device *dev)
  
- static struct map_desc s3c2416_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -147,6 +148,7 @@ void __init s3c2416_map_io(void)
- 	/* initialize device information early */
- 	s3c2416_default_sdhci0();
- 	s3c2416_default_sdhci1();
-+	s3c64xx_spi_setname("s3c2443-spi");
+ 	s3c2410wdt_cpufreq_deregister();
  
- 	iotable_init(s3c2416_iodesc, ARRAY_SIZE(s3c2416_iodesc));
- }
-diff --git a/arch/arm/mach-s3c24xx/s3c2443.c b/arch/arm/mach-s3c24xx/s3c2443.c
-index ab648ad..165b6a6 100644
---- a/arch/arm/mach-s3c24xx/s3c2443.c
-+++ b/arch/arm/mach-s3c24xx/s3c2443.c
-@@ -43,6 +43,7 @@
- #include <plat/nand-core.h>
- #include <plat/adc-core.h>
- #include <plat/rtc-core.h>
-+#include <plat/spi-core.h>
+-	clk_disable(wdt_clock);
++	clk_disable_unprepare(wdt_clock);
+ 	clk_put(wdt_clock);
+ 	wdt_clock = NULL;
  
- static struct map_desc s3c2443_iodesc[] __initdata = {
- 	IODESC_ENT(WATCHDOG),
-@@ -100,6 +101,9 @@ void __init s3c2443_map_io(void)
- 	s3c24xx_gpiocfg_default.set_pull = s3c2443_gpio_setpull;
- 	s3c24xx_gpiocfg_default.get_pull = s3c2443_gpio_getpull;
- 
-+	/* initialize device information early */
-+	s3c64xx_spi_setname("s3c2443-spi");
-+
- 	iotable_init(s3c2443_iodesc, ARRAY_SIZE(s3c2443_iodesc));
- }
- 
-diff --git a/arch/arm/mach-s5p64x0/common.c b/arch/arm/mach-s5p64x0/common.c
-index 6e6a0a9..111e404 100644
---- a/arch/arm/mach-s5p64x0/common.c
-+++ b/arch/arm/mach-s5p64x0/common.c
-@@ -44,6 +44,7 @@
- #include <plat/sdhci.h>
- #include <plat/adc-core.h>
- #include <plat/fb-core.h>
-+#include <plat/spi-core.h>
- #include <plat/gpio-cfg.h>
- #include <plat/regs-irqtype.h>
- #include <plat/regs-serial.h>
-@@ -179,6 +180,7 @@ void __init s5p6440_map_io(void)
- 	/* initialize any device information early */
- 	s3c_adc_setname("s3c64xx-adc");
- 	s3c_fb_setname("s5p64x0-fb");
-+	s3c64xx_spi_setname("s5p64x0-spi");
- 
- 	s5p64x0_default_sdhci0();
- 	s5p64x0_default_sdhci1();
-@@ -193,6 +195,7 @@ void __init s5p6450_map_io(void)
- 	/* initialize any device information early */
- 	s3c_adc_setname("s3c64xx-adc");
- 	s3c_fb_setname("s5p64x0-fb");
-+	s3c64xx_spi_setname("s5p64x0-spi");
- 
- 	s5p64x0_default_sdhci0();
- 	s5p64x0_default_sdhci1();
-diff --git a/arch/arm/mach-s5pc100/common.c b/arch/arm/mach-s5pc100/common.c
-index 6219086..cc6e561 100644
---- a/arch/arm/mach-s5pc100/common.c
-+++ b/arch/arm/mach-s5pc100/common.c
-@@ -45,6 +45,7 @@
- #include <plat/fb-core.h>
- #include <plat/iic-core.h>
- #include <plat/onenand-core.h>
-+#include <plat/spi-core.h>
- #include <plat/regs-serial.h>
- #include <plat/watchdog-reset.h>
- 
-@@ -165,6 +166,8 @@ void __init s5pc100_map_io(void)
- 	s3c_onenand_setname("s5pc100-onenand");
- 	s3c_fb_setname("s5pc100-fb");
- 	s3c_cfcon_setname("s5pc100-pata");
-+
-+	s3c64xx_spi_setname("s5pc100-spi");
- }
- 
- void __init s5pc100_init_clocks(int xtal)
-diff --git a/arch/arm/mach-s5pv210/common.c b/arch/arm/mach-s5pv210/common.c
-index 4c9e902..a0c50ef 100644
---- a/arch/arm/mach-s5pv210/common.c
-+++ b/arch/arm/mach-s5pv210/common.c
-@@ -43,6 +43,7 @@
- #include <plat/iic-core.h>
- #include <plat/keypad-core.h>
- #include <plat/tv-core.h>
-+#include <plat/spi-core.h>
- #include <plat/regs-serial.h>
- 
- #include "common.h"
-@@ -196,6 +197,8 @@ void __init s5pv210_map_io(void)
- 
- 	/* setup TV devices */
- 	s5p_hdmi_setname("s5pv210-hdmi");
-+
-+	s3c64xx_spi_setname("s5pv210-spi");
- }
- 
- void __init s5pv210_init_clocks(int xtal)
-diff --git a/arch/arm/plat-samsung/include/plat/spi-core.h b/arch/arm/plat-samsung/include/plat/spi-core.h
-new file mode 100644
-index 0000000..0b9428a
---- /dev/null
-+++ b/arch/arm/plat-samsung/include/plat/spi-core.h
-@@ -0,0 +1,30 @@
-+/*
-+ * Copyright (C) 2012 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef __PLAT_S3C_SPI_CORE_H
-+#define __PLAT_S3C_SPI_CORE_H
-+
-+/* These functions are only for use with the core support code, such as
-+ * the cpu specific initialisation code
-+ */
-+
-+/* re-define device name depending on support. */
-+static inline void s3c64xx_spi_setname(char *name)
-+{
-+#ifdef CONFIG_S3C64XX_DEV_SPI0
-+	s3c64xx_device_spi0.name = name;
-+#endif
-+#ifdef CONFIG_S3C64XX_DEV_SPI1
-+	s3c64xx_device_spi1.name = name;
-+#endif
-+#ifdef CONFIG_S3C64XX_DEV_SPI2
-+	s3c64xx_device_spi2.name = name;
-+#endif
-+}
-+
-+#endif /* __PLAT_S3C_SPI_CORE_H */
 -- 
-1.7.2.3
+1.7.4.1
