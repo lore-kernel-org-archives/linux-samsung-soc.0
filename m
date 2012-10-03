@@ -1,124 +1,68 @@
-From: Thomas Abraham <thomas.abraham@linaro.org>
-Subject: [PATCH] video: s3c-fb: use clk_prepare_enable and clk_disable_unprepare
-Date: Wed,  3 Oct 2012 08:57:40 +0900
-Message-ID: <1349222260-3248-1-git-send-email-thomas.abraham@linaro.org>
+From: Leela Krishna Amudala <l.krishna@samsung.com>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Wed, 3 Oct 2012 09:36:00 +0530
+Message-ID: <CAL1wa8egdA=1iu8Jr-TQLnSweOQoCL=TD4cvo1BHHNn9UyOSEQ@mail.gmail.com>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
+ <1348226536-22899-3-git-send-email-l.krishna@samsung.com> <505BF79A.8060802@wwwdotorg.org>
+ <CAL1wa8eOA6eV-9EoeUFrSFaFwq5sEVnYXn9yKnPRv=0mSU5WvQ@mail.gmail.com> <5069C2DC.8080905@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-da0-f46.google.com ([209.85.210.46]:34202 "EHLO
-	mail-da0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932747Ab2JCAAc (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:43049 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750704Ab2JCEGV (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 2 Oct 2012 20:00:32 -0400
-Received: by dakn41 with SMTP id n41so977636dak.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Oct 2012 17:00:31 -0700 (PDT)
+	Wed, 3 Oct 2012 00:06:21 -0400
+Received: by pbbrr4 with SMTP id rr4so9433082pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 02 Oct 2012 21:06:21 -0700 (PDT)
+In-Reply-To: <5069C2DC.8080905@wwwdotorg.org>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-fbdev@vger.kernel.org
-Cc: FlorianSchandinat@gmx.de, jg1.han@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, dri-devel@lists.freedesktop.org, inki.dae@samsung.com, kgene.kim@samsung.com, laurent.pinchart@ideasonboard.com, linux-arm-kernel@lists.infradead.org
 
-Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-calls as required by common clock framework.
+On Mon, Oct 1, 2012 at 9:50 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
+> On 09/30/2012 11:29 PM, Leela Krishna Amudala wrote:
+>> Hello Stephen Warren,
+>>
+>> The binding names that I use in my dts file should match with the
+>> names given in http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+>> right?
+>
+> I don't think so; the binding in that link is for example:
+>
+>> + - xres, yres: Display resolution
+>> + - left-margin, right-margin, hsync-len: Horizontal Display timing parameters
+>> +   in pixels
+>> +   upper-margin, lower-margin, vsync-len: Vertical display timing parameters in
+>> +   lines
+>> + - clock: displayclock in Hz
+>
+> i.e. a bunch of separate properties, one for each value needed to
+> describe the display timing. However, your patch contains:
+>
 
-Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
----
- drivers/video/s3c-fb.c |   28 ++++++++++++++--------------
- 1 files changed, 14 insertions(+), 14 deletions(-)
+I mean to say that even I have to use separate properties for each one
+instead of grouping them.
+Also the names should match with the ones given in the example..?
 
-diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-index 52b744f..2ed7b63 100644
---- a/drivers/video/s3c-fb.c
-+++ b/drivers/video/s3c-fb.c
-@@ -1404,7 +1404,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 		return PTR_ERR(sfb->bus_clk);
- 	}
- 
--	clk_enable(sfb->bus_clk);
-+	clk_prepare_enable(sfb->bus_clk);
- 
- 	if (!sfb->variant.has_clksel) {
- 		sfb->lcd_clk = devm_clk_get(dev, "sclk_fimd");
-@@ -1414,7 +1414,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
- 			goto err_bus_clk;
- 		}
- 
--		clk_enable(sfb->lcd_clk);
-+		clk_prepare_enable(sfb->lcd_clk);
- 	}
- 
- 	pm_runtime_enable(sfb->dev);
-@@ -1504,10 +1504,10 @@ err_lcd_clk:
- 	pm_runtime_disable(sfb->dev);
- 
- 	if (!sfb->variant.has_clksel)
--		clk_disable(sfb->lcd_clk);
-+		clk_disable_unprepare(sfb->lcd_clk);
- 
- err_bus_clk:
--	clk_disable(sfb->bus_clk);
-+	clk_disable_unprepare(sfb->bus_clk);
- 
- 	return ret;
- }
-@@ -1531,9 +1531,9 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
- 			s3c_fb_release_win(sfb, sfb->windows[win]);
- 
- 	if (!sfb->variant.has_clksel)
--		clk_disable(sfb->lcd_clk);
-+		clk_disable_unprepare(sfb->lcd_clk);
- 
--	clk_disable(sfb->bus_clk);
-+	clk_disable_unprepare(sfb->bus_clk);
- 
- 	pm_runtime_put_sync(sfb->dev);
- 	pm_runtime_disable(sfb->dev);
-@@ -1561,9 +1561,9 @@ static int s3c_fb_suspend(struct device *dev)
- 	}
- 
- 	if (!sfb->variant.has_clksel)
--		clk_disable(sfb->lcd_clk);
-+		clk_disable_unprepare(sfb->lcd_clk);
- 
--	clk_disable(sfb->bus_clk);
-+	clk_disable_unprepare(sfb->bus_clk);
- 
- 	pm_runtime_put_sync(sfb->dev);
- 
-@@ -1581,10 +1581,10 @@ static int s3c_fb_resume(struct device *dev)
- 
- 	pm_runtime_get_sync(sfb->dev);
- 
--	clk_enable(sfb->bus_clk);
-+	clk_prepare_enable(sfb->bus_clk);
- 
- 	if (!sfb->variant.has_clksel)
--		clk_enable(sfb->lcd_clk);
-+		clk_prepare_enable(sfb->lcd_clk);
- 
- 	/* setup gpio and output polarity controls */
- 	pd->setup_gpio();
-@@ -1640,9 +1640,9 @@ static int s3c_fb_runtime_suspend(struct device *dev)
- 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
- 
- 	if (!sfb->variant.has_clksel)
--		clk_disable(sfb->lcd_clk);
-+		clk_disable_unprepare(sfb->lcd_clk);
- 
--	clk_disable(sfb->bus_clk);
-+	clk_disable_unprepare(sfb->bus_clk);
- 
- 	return 0;
- }
-@@ -1653,10 +1653,10 @@ static int s3c_fb_runtime_resume(struct device *dev)
- 	struct s3c_fb *sfb = platform_get_drvdata(pdev);
- 	struct s3c_fb_platdata *pd = sfb->pdata;
- 
--	clk_enable(sfb->bus_clk);
-+	clk_prepare_enable(sfb->bus_clk);
- 
- 	if (!sfb->variant.has_clksel)
--		clk_enable(sfb->lcd_clk);
-+		clk_prepare_enable(sfb->lcd_clk);
- 
- 	/* setup gpio and output polarity controls */
- 	pd->setup_gpio();
--- 
-1.7.4.1
+>>>> + - samsung,fimd-display: This property should specify the phandle of the
+>>>> +   display device node which holds the video interface timing with the
+>>>> +   below mentioned properties.
+>>>> +
+>>>> +   - lcd-htiming: Specifies the horizontal timing for the overlay. The
+>>>> +     horizontal timing includes four parameters in the following order.
+>>>> +
+>>>> +     - horizontal back porch (in number of lcd clocks)
+>>>> +     - horizontal front porch (in number of lcd clocks)
+>>>> +     - hsync pulse width (in number of lcd clocks)
+>>>> +     - Display panels X resolution.
+>
+> A single lcd-htiming property, which contains 4 values. (and a similar
+> construct for the vertical timing).
+>
+> That seems entirely different to me...
+> _______________________________________________
+> devicetree-discuss mailing list
+> devicetree-discuss@lists.ozlabs.org
+> https://lists.ozlabs.org/listinfo/devicetree-discuss
