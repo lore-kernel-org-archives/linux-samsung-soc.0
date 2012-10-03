@@ -1,72 +1,56 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] input: keyboard: gpio-keys: Try to parse IRQ from device tree
-Date: Wed, 03 Oct 2012 13:20:00 +0200
-Message-ID: <1349263201-422-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:41489 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753138Ab2JCLUR (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Oct 2012 07:20:17 -0400
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V6 2/2] video: drm: exynos: Add device tree support
+Date: Wed, 03 Oct 2012 09:27:31 -0600
+Message-ID: <506C5963.50902@wwwdotorg.org>
+References: <1348226536-22899-1-git-send-email-l.krishna@samsung.com>
+ <1348226536-22899-3-git-send-email-l.krishna@samsung.com>
+ <505BF79A.8060802@wwwdotorg.org>
+ <CAL1wa8eOA6eV-9EoeUFrSFaFwq5sEVnYXn9yKnPRv=0mSU5WvQ@mail.gmail.com>
+ <5069C2DC.8080905@wwwdotorg.org>
+ <CAL1wa8egdA=1iu8Jr-TQLnSweOQoCL=TD4cvo1BHHNn9UyOSEQ@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+In-Reply-To: <CAL1wa8egdA=1iu8Jr-TQLnSweOQoCL=TD4cvo1BHHNn9UyOSEQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.ozlabs.org/options/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/devicetree-discuss/>
+List-Post: <mailto:devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+List-Help: <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/devicetree-discuss>,
+ <mailto:devicetree-discuss-request-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org?subject=subscribe>
+Errors-To: devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Sender: "devicetree-discuss"
+ <devicetree-discuss-bounces+gldd-devicetree-discuss=m.gmane.org-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org>
+To: Leela Krishna Amudala <l.krishna-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-input@vger.kernel.org
-Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, dmitry.torokhov@gmail.com
 
-On modern platforms using device tree and non-legacy IRQ domains there
-is usually no way to perform direct translation between GPIO and IRQ,
-because the IRQ of interest is not mapped yet into sparse IRQ namespace.
+On 10/02/2012 10:06 PM, Leela Krishna Amudala wrote:
+> On Mon, Oct 1, 2012 at 9:50 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 09/30/2012 11:29 PM, Leela Krishna Amudala wrote:
+>>> Hello Stephen Warren,
+>>>
+>>> The binding names that I use in my dts file should match with the
+>>> names given in http://lists.freedesktop.org/archives/dri-devel/2012-July/024875.html
+>>> right?
+>>
+>> I don't think so; the binding in that link is for example:
+>>
+>>> + - xres, yres: Display resolution
+>>> + - left-margin, right-margin, hsync-len: Horizontal Display timing parameters
+>>> +   in pixels
+>>> +   upper-margin, lower-margin, vsync-len: Vertical display timing parameters in
+>>> +   lines
+>>> + - clock: displayclock in Hz
+>>
+>> i.e. a bunch of separate properties, one for each value needed to
+>> describe the display timing. However, your patch contains:
+> 
+> I mean to say that even I have to use separate properties for each one
+> instead of grouping them.
+> Also the names should match with the ones given in the example..?
 
-This patch modifies the gpio_keys driver to parse IRQ from device tree
-and use gpio_to_irq only as a fallback.
-
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- Documentation/devicetree/bindings/gpio/gpio_keys.txt | 2 ++
- drivers/input/keyboard/gpio_keys.c                   | 4 +++-
- 2 files changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/gpio/gpio_keys.txt b/Documentation/devicetree/bindings/gpio/gpio_keys.txt
-index 5c2c021..7f318a5 100644
---- a/Documentation/devicetree/bindings/gpio/gpio_keys.txt
-+++ b/Documentation/devicetree/bindings/gpio/gpio_keys.txt
-@@ -20,6 +20,8 @@ Optional subnode-properties:
- 	- debounce-interval: Debouncing interval time in milliseconds.
- 	  If not specified defaults to 5.
- 	- gpio-key,wakeup: Boolean, button can wake-up the system.
-+	- interrupt: Interrupt used for this key (required if no translation
-+	  between GPIO and IRQ is available).
- 
- Example nodes:
- 
-diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
-index 6a68041..a33660c 100644
---- a/drivers/input/keyboard/gpio_keys.c
-+++ b/drivers/input/keyboard/gpio_keys.c
-@@ -28,6 +28,7 @@
- #include <linux/gpio.h>
- #include <linux/of_platform.h>
- #include <linux/of_gpio.h>
-+#include <linux/of_irq.h>
- #include <linux/spinlock.h>
- 
- struct gpio_button_data {
-@@ -464,7 +465,7 @@ static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
- 						button->debounce_interval;
- 		}
- 
--		irq = gpio_to_irq(button->gpio);
-+		irq = (button->irq) ? : gpio_to_irq(button->gpio);
- 		if (irq < 0) {
- 			error = irq;
- 			dev_err(dev,
-@@ -597,6 +598,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
- 
- 		button = &pdata->buttons[i++];
- 
-+		button->irq = irq_of_parse_and_map(pp, 0);
- 		button->gpio = of_get_gpio_flags(pp, 0, &flags);
- 		button->active_low = flags & OF_GPIO_ACTIVE_LOW;
- 
--- 
-1.7.12
+Yes. The patch I pointed to isn't supposed to be just an example, but
+/the/ standard way of representing display timings.
