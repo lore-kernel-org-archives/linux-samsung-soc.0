@@ -1,82 +1,72 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: Exynos4: Register clocks via common clock
- framework
-Date: Wed, 03 Oct 2012 12:40:10 +0200
-Message-ID: <2552746.GKROWAIKW8@amdc1227>
-References: <1349093361-18820-1-git-send-email-thomas.abraham@linaro.org>
- <1349093361-18820-3-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH] input: keyboard: gpio-keys: Try to parse IRQ from device tree
+Date: Wed, 03 Oct 2012 13:20:00 +0200
+Message-ID: <1349263201-422-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:44248 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754713Ab2JCKka (ORCPT
+Received: from mailout3.samsung.com ([203.254.224.33]:41489 "EHLO
+	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753138Ab2JCLUR (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Oct 2012 06:40:30 -0400
-In-reply-to: <1349093361-18820-3-git-send-email-thomas.abraham@linaro.org>
+	Wed, 3 Oct 2012 07:20:17 -0400
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: chander.kashyap@linaro.org
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, mturquette@ti.com, linux-kernel@vger.kernel.org, Thomas Abraham <thomas.abraham@linaro.org>
+To: linux-input@vger.kernel.org
+Cc: devicetree-discuss@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com, dmitry.torokhov@gmail.com
 
-Hi Chander, Thomas,
+On modern platforms using device tree and non-legacy IRQ domains there
+is usually no way to perform direct translation between GPIO and IRQ,
+because the IRQ of interest is not mapped yet into sparse IRQ namespace.
 
-I can see one more problem here.
+This patch modifies the gpio_keys driver to parse IRQ from device tree
+and use gpio_to_irq only as a fallback.
 
-Based on the fact that sdhci-s3c driver receives only the endpoint gate 
-clock (hsmmc), doesn't the following setup make the driver unable to change 
-the frequency of this clock?
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ Documentation/devicetree/bindings/gpio/gpio_keys.txt | 2 ++
+ drivers/input/keyboard/gpio_keys.c                   | 4 +++-
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-On Monday 01 of October 2012 17:39:21 chander.kashyap@linaro.org wrote:
-> +static struct samsung_mux_clock exynos4_mux_clks[] = {
-[snip]
-> +	MUXCLK("exynos4-sdhci.0", "mout_mmc0", group1_parents, 0,
-> +			EXYNOS4_CLKSRC_FSYS, 0, 4, 0),
-> +	MUXCLK("exynos4-sdhci.1", "mout_mmc1", group1_parents, 0,
-> +			EXYNOS4_CLKSRC_FSYS, 4, 4, 0),
-> +	MUXCLK("exynos4-sdhci.1", "mout_mmc2", group1_parents, 0,
-> +			EXYNOS4_CLKSRC_FSYS, 8, 4, 0),
-> +	MUXCLK("exynos4-sdhci.1", "mout_mmc3", group1_parents, 0,
-> +			EXYNOS4_CLKSRC_FSYS, 12, 4, 0),
-[snip]
-> +};
-> +
-> +static struct samsung_div_clock exynos4_div_clks[] = {
-[snip]
-> +	DIVCLK("exynos4-sdhci.0", "div_mmc0", "mout_mmc0", 0,
-> +			EXYNOS4_CLKDIV_FSYS1, 0, 4, 0),
-> +	DIVCLK("exynos4-sdhci.0", "div_mmc0_pre", "div_mmc0", 0,
-> +			EXYNOS4_CLKDIV_FSYS1, 8, 8, 0),
-> +	DIVCLK("exynos4-sdhci.1", "div_mmc1", "mout_mmc1", 0,
-> +			EXYNOS4_CLKDIV_FSYS1, 16, 4, 0),
-> +	DIVCLK("exynos4-sdhci.1", "div_mmc1_pre", "div_mmc1", 0,
-> +			EXYNOS4_CLKDIV_FSYS1, 24, 8, 0),
-> +	DIVCLK("exynos4-sdhci.2", "div_mmc2", "mout_mmc2", 0,
-> +			EXYNOS4_CLKDIV_FSYS2, 0, 4, 0),
-> +	DIVCLK("exynos4-sdhci.2", "div_mmc2_pre", "div_mmc2", 0,
-> +			EXYNOS4_CLKDIV_FSYS2, 8, 8, 0),
-> +	DIVCLK("exynos4-sdhci.3", "div_mmc3", "mout_mmc3", 0,
-> +			EXYNOS4_CLKDIV_FSYS2, 16, 4, 0),
-> +	DIVCLK("exynos4-sdhci.3", "div_mmc3_pre", "div_mmc3", 0,
-> +			EXYNOS4_CLKDIV_FSYS2, 24, 8, 0),
-[snip]
-> +};
-> +
-> +struct samsung_gate_clock exynos4_gate_clks[] = {
-[snip]
-> +	GATECLK("exynos4-sdhci.0", "hsmmc0", "aclk_133", 0,
-> +			EXYNOS4_CLKGATE_IP_FSYS, 5, "hsmmc"),
-> +	GATECLK("exynos4-sdhci.1", "hsmmc1", "aclk_133", 0,
-> +			EXYNOS4_CLKGATE_IP_FSYS, 6, "hsmmc"),
-> +	GATECLK("exynos4-sdhci.2", "hsmmc2", "aclk_133", 0,
-> +			EXYNOS4_CLKGATE_IP_FSYS, 7, "hsmmc"),
-> +	GATECLK("exynos4-sdhci.3", "hsmmc3", "aclk_133", 0,
-> +			EXYNOS4_CLKGATE_IP_FSYS, 8, "hsmmc"),
-[snip]
-> +};
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/gpio/gpio_keys.txt b/Documentation/devicetree/bindings/gpio/gpio_keys.txt
+index 5c2c021..7f318a5 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio_keys.txt
++++ b/Documentation/devicetree/bindings/gpio/gpio_keys.txt
+@@ -20,6 +20,8 @@ Optional subnode-properties:
+ 	- debounce-interval: Debouncing interval time in milliseconds.
+ 	  If not specified defaults to 5.
+ 	- gpio-key,wakeup: Boolean, button can wake-up the system.
++	- interrupt: Interrupt used for this key (required if no translation
++	  between GPIO and IRQ is available).
+ 
+ Example nodes:
+ 
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 6a68041..a33660c 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -28,6 +28,7 @@
+ #include <linux/gpio.h>
+ #include <linux/of_platform.h>
+ #include <linux/of_gpio.h>
++#include <linux/of_irq.h>
+ #include <linux/spinlock.h>
+ 
+ struct gpio_button_data {
+@@ -464,7 +465,7 @@ static int __devinit gpio_keys_setup_key(struct platform_device *pdev,
+ 						button->debounce_interval;
+ 		}
+ 
+-		irq = gpio_to_irq(button->gpio);
++		irq = (button->irq) ? : gpio_to_irq(button->gpio);
+ 		if (irq < 0) {
+ 			error = irq;
+ 			dev_err(dev,
+@@ -597,6 +598,7 @@ gpio_keys_get_devtree_pdata(struct device *dev)
+ 
+ 		button = &pdata->buttons[i++];
+ 
++		button->irq = irq_of_parse_and_map(pp, 0);
+ 		button->gpio = of_get_gpio_flags(pp, 0, &flags);
+ 		button->active_low = flags & OF_GPIO_ACTIVE_LOW;
+ 
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
+1.7.12
