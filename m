@@ -1,63 +1,142 @@
 From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH V3] video: exynos_dp: Add device tree support to DP driver
-Date: Thu, 04 Oct 2012 10:50:17 +0900
-Message-ID: <005f01cda1d2$9b123c00$d136b400$%han@samsung.com>
-References: <1348515385-22332-1-git-send-email-ajaykumar.rs@samsung.com>
- <50645848.6080102@gmail.com> <000601cd9d0d$c3296ca0$497c45e0$%han@samsung.com>
- <CAEC9eQNFos4Sw57eubX-USEjKBnKf9ETeWCU_sT1vdX3MgN4dA@mail.gmail.com>
+Subject: Re: [PATCH] video: s3c-fb: use clk_prepare_enable and
+ clk_disable_unprepare
+Date: Thu, 04 Oct 2012 15:18:12 +0900
+Message-ID: <006601cda1f8$0827cd80$18776880$%han@samsung.com>
+References: <1349222260-3248-1-git-send-email-thomas.abraham@linaro.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:47542 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753054Ab2JDBuT (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:22086 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1756017Ab2JDGSO (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 3 Oct 2012 21:50:19 -0400
-In-reply-to: <CAEC9eQNFos4Sw57eubX-USEjKBnKf9ETeWCU_sT1vdX3MgN4dA@mail.gmail.com>
+	Thu, 4 Oct 2012 02:18:14 -0400
+In-reply-to: <1349222260-3248-1-git-send-email-thomas.abraham@linaro.org>
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Ajay kumar' <ajaynumb@gmail.com>, linux-fbdev@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, FlorianSchandinat@gmx.de, thomas.ab@samsung.com, 'devicetree-discuss' <devicetree-discuss@lists.ozlabs.org>, 'Sylwester Nawrocki' <sylvester.nawrocki@gmail.com>, 'Tomasz Figa' <tomasz.figa@gmail.com>, 'Jingoo Han' <jg1.han@samsung.com>
+To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-fbdev@vger.kernel.org
+Cc: FlorianSchandinat@gmx.de, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
 
-On Monday, October 01, 2012 2:40 PM Ajay kumar wrote
+On Wednesday, October 03, 2012 8:58 AM Thomas Abraham wrote
 > 
-> On Fri, Sep 28, 2012 at 5:41 AM, Jingoo Han <jg1.han@samsung.com> wrote:
-> > On Thursday, September 27, 2012 10:45 PM Sylwester Nawrocki wrote
-> >> On 09/24/2012 09:36 PM, Ajay Kumar wrote:
+> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+> calls as required by common clock framework.
+> 
+> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
 
-[...]
 
-> >> > +Example:
-> >> > +
-> >> > +SOC specific portion:
-> >> > +   dptx_phy: dptx_phy@0x10040720 {
-> >> > +           compatible = "samsung,dp-phy";
-> >> > +           samsung,dptx_phy_reg =<0x10040720>;
-> >> > +           samsung,enable_bit =<1>;
-> >> > +   };
-> >> > +
-> >> > +   display-port-controller {
-> >> > +           compatible = "samsung,exynos5-dp";
-> >> > +           reg =<0x145B0000 0x10000>;
-> >> > +           interrupts =<10 3>;
-> >> > +           interrupt-parent =<&combiner>;
-> >> > +           dp_phy =<&dptx_phy>;
-> >>
-> >> Shouldn't it be "samsung,dp_phy" ?
-> >
-> > Do you mean this ? It is not working.
-> > +               dp_phy = "samsung,dp_phy";
-> I din't get this.
-> What do I need to change here?
+It looks good. Also, I have tested this patch with Exynos4210.
 
-As Tomasz Figa mentioned, it means that
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
--+		dp_phy =<&dptx_phy>;
-++		samsung,dp_phy =<&dptx_phy>;
-
-It is because this is a Samsung-specific property.
 
 Best regards,
 Jingoo Han
+
+
+> ---
+>  drivers/video/s3c-fb.c |   28 ++++++++++++++--------------
+>  1 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
+> index 52b744f..2ed7b63 100644
+> --- a/drivers/video/s3c-fb.c
+> +++ b/drivers/video/s3c-fb.c
+> @@ -1404,7 +1404,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+>  		return PTR_ERR(sfb->bus_clk);
+>  	}
+> 
+> -	clk_enable(sfb->bus_clk);
+> +	clk_prepare_enable(sfb->bus_clk);
+> 
+>  	if (!sfb->variant.has_clksel) {
+>  		sfb->lcd_clk = devm_clk_get(dev, "sclk_fimd");
+> @@ -1414,7 +1414,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
+>  			goto err_bus_clk;
+>  		}
+> 
+> -		clk_enable(sfb->lcd_clk);
+> +		clk_prepare_enable(sfb->lcd_clk);
+>  	}
+> 
+>  	pm_runtime_enable(sfb->dev);
+> @@ -1504,10 +1504,10 @@ err_lcd_clk:
+>  	pm_runtime_disable(sfb->dev);
+> 
+>  	if (!sfb->variant.has_clksel)
+> -		clk_disable(sfb->lcd_clk);
+> +		clk_disable_unprepare(sfb->lcd_clk);
+> 
+>  err_bus_clk:
+> -	clk_disable(sfb->bus_clk);
+> +	clk_disable_unprepare(sfb->bus_clk);
+> 
+>  	return ret;
+>  }
+> @@ -1531,9 +1531,9 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
+>  			s3c_fb_release_win(sfb, sfb->windows[win]);
+> 
+>  	if (!sfb->variant.has_clksel)
+> -		clk_disable(sfb->lcd_clk);
+> +		clk_disable_unprepare(sfb->lcd_clk);
+> 
+> -	clk_disable(sfb->bus_clk);
+> +	clk_disable_unprepare(sfb->bus_clk);
+> 
+>  	pm_runtime_put_sync(sfb->dev);
+>  	pm_runtime_disable(sfb->dev);
+> @@ -1561,9 +1561,9 @@ static int s3c_fb_suspend(struct device *dev)
+>  	}
+> 
+>  	if (!sfb->variant.has_clksel)
+> -		clk_disable(sfb->lcd_clk);
+> +		clk_disable_unprepare(sfb->lcd_clk);
+> 
+> -	clk_disable(sfb->bus_clk);
+> +	clk_disable_unprepare(sfb->bus_clk);
+> 
+>  	pm_runtime_put_sync(sfb->dev);
+> 
+> @@ -1581,10 +1581,10 @@ static int s3c_fb_resume(struct device *dev)
+> 
+>  	pm_runtime_get_sync(sfb->dev);
+> 
+> -	clk_enable(sfb->bus_clk);
+> +	clk_prepare_enable(sfb->bus_clk);
+> 
+>  	if (!sfb->variant.has_clksel)
+> -		clk_enable(sfb->lcd_clk);
+> +		clk_prepare_enable(sfb->lcd_clk);
+> 
+>  	/* setup gpio and output polarity controls */
+>  	pd->setup_gpio();
+> @@ -1640,9 +1640,9 @@ static int s3c_fb_runtime_suspend(struct device *dev)
+>  	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+> 
+>  	if (!sfb->variant.has_clksel)
+> -		clk_disable(sfb->lcd_clk);
+> +		clk_disable_unprepare(sfb->lcd_clk);
+> 
+> -	clk_disable(sfb->bus_clk);
+> +	clk_disable_unprepare(sfb->bus_clk);
+> 
+>  	return 0;
+>  }
+> @@ -1653,10 +1653,10 @@ static int s3c_fb_runtime_resume(struct device *dev)
+>  	struct s3c_fb *sfb = platform_get_drvdata(pdev);
+>  	struct s3c_fb_platdata *pd = sfb->pdata;
+> 
+> -	clk_enable(sfb->bus_clk);
+> +	clk_prepare_enable(sfb->bus_clk);
+> 
+>  	if (!sfb->variant.has_clksel)
+> -		clk_enable(sfb->lcd_clk);
+> +		clk_prepare_enable(sfb->lcd_clk);
+> 
+>  	/* setup gpio and output polarity controls */
+>  	pd->setup_gpio();
+> --
+> 1.7.4.1
