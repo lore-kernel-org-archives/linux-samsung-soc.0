@@ -1,59 +1,70 @@
-From: Seungwon Jeon <tgih.jun@samsung.com>
-Subject: RE: [PATCH v6 8/9] mmc: dw_mmc: add support for implementation
- specific callbacks
-Date: Thu, 04 Oct 2012 21:41:07 +0900
-Message-ID: <001e01cda22d$86383130$92a89390$%jun@samsung.com>
-References: <1347905803-22742-1-git-send-email-thomas.abraham@linaro.org>
- <1347905803-22742-9-git-send-email-thomas.abraham@linaro.org>
- <001401cd966c$5fe94590$1fbbd0b0$%jun@samsung.com>
- <CAJuYYwRUhK858ixLfZPz9UVmqJBe0=LdgjhLfazPNHE3zckDjQ@mail.gmail.com>
- <m3haqodsvb.fsf@pullcord.laptop.org>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: [PATCH] video: exynos_dp: use clk_prepare_enable and
+ clk_disable_unprepare
+Date: Thu, 04 Oct 2012 15:45:14 +0900
+Message-ID: <006701cda1fb$cee12fe0$6ca38fa0$%han@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ks_c_5601-1987
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:16844 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1756380Ab2JDMlI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:38071 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754964Ab2JDGpQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Oct 2012 08:41:08 -0400
-In-reply-to: <m3haqodsvb.fsf@pullcord.laptop.org>
+	Thu, 4 Oct 2012 02:45:16 -0400
 Content-language: ko
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Chris Ball' <cjb@laptop.org>, 'Thomas Abraham' <thomas.abraham@linaro.org>
-Cc: linux-mmc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, will.newton@imgtec.com, grant.likely@secretlab.ca, rob.herring@calxeda.com, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, girish.shivananjappa@linaro.org, jh80.chung@samsung.com, patches@linaro.org
+To: 'Florian Tobias Schandinat' <FlorianSchandinat@gmx.de>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>, 'Jingoo Han' <jg1.han@samsung.com>
 
-Monday, September 24, Chris Ball <cjb@laptop.org>
-> Hi,
-> 
-> On Thu, Sep 20 2012, Thomas Abraham wrote:
-> >> In non-Exynos platform, host->drv_data has NULL.
-> >
-> > Yes, sorry, I missed that.
-> >
-> > Chris, should I fix this and send the updated patch or shall I send a
-> > separate fix patch.
-> 
-> A separate fix patch would be good, please.
-> 
-> (I'd normally take an updated patch but Stephen Rothwell's asked for
-> people to hold off rebasing now that -rc7 is out, which is reasonable.)
-Thomas,
+Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
+calls as required by common clock framework.
 
-Is there any work for fix?
+Signed-off-by: Jingoo Han <jg1.han@samsung.com>
+---
+ drivers/video/exynos/exynos_dp_core.c |    8 ++++----
+ 1 files changed, 4 insertions(+), 4 deletions(-)
 
-Thanks,
-Seungwon Jeon
-
-> 
-> Thanks,
-> 
-> - Chris.
-> --
-> Chris Ball   <cjb@laptop.org>   <http://printf.net/>
-> One Laptop Per Child
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
+index cdc1398..d55470e 100644
+--- a/drivers/video/exynos/exynos_dp_core.c
++++ b/drivers/video/exynos/exynos_dp_core.c
+@@ -885,7 +885,7 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dp->clock);
+ 	}
+ 
+-	clk_enable(dp->clock);
++	clk_prepare_enable(dp->clock);
+ 
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 
+@@ -956,7 +956,7 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
+ 	if (pdata && pdata->phy_exit)
+ 		pdata->phy_exit();
+ 
+-	clk_disable(dp->clock);
++	clk_disable_unprepare(dp->clock);
+ 
+ 	return 0;
+ }
+@@ -971,7 +971,7 @@ static int exynos_dp_suspend(struct device *dev)
+ 	if (pdata && pdata->phy_exit)
+ 		pdata->phy_exit();
+ 
+-	clk_disable(dp->clock);
++	clk_disable_unprepare(dp->clock);
+ 
+ 	return 0;
+ }
+@@ -985,7 +985,7 @@ static int exynos_dp_resume(struct device *dev)
+ 	if (pdata && pdata->phy_init)
+ 		pdata->phy_init();
+ 
+-	clk_enable(dp->clock);
++	clk_prepare_enable(dp->clock);
+ 
+ 	exynos_dp_init_dp(dp);
+ 
+-- 
+1.7.1
