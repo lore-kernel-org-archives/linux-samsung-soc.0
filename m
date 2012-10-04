@@ -1,93 +1,172 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: RE: [PATCH] usb: ehci-s5p: use clk_prepare_enable and
- clk_disable_unprepare
-Date: Thu, 04 Oct 2012 14:57:54 +0900
-Message-ID: <006401cda1f5$32558fa0$9700aee0$%han@samsung.com>
-References: <1349221242-2771-1-git-send-email-thomas.abraham@linaro.org>
+From: Joonyoung Shim <jy0922.shim@samsung.com>
+Subject: Re: [PATCH] input: touchscreen: mms114: Add device tree bindings
+Date: Thu, 04 Oct 2012 10:21:49 +0900
+Message-ID: <506CE4AD.8000608@samsung.com>
+References: <1349170427-1625-1-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:29066 "EHLO
+Received: from mailout2.samsung.com ([203.254.224.25]:41861 "EHLO
 	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754964Ab2JDF54 (ORCPT
+	with ESMTP id S1750773Ab2JDBVq (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Oct 2012 01:57:56 -0400
-In-reply-to: <1349221242-2771-1-git-send-email-thomas.abraham@linaro.org>
-Content-language: ko
+	Wed, 3 Oct 2012 21:21:46 -0400
+In-reply-to: <1349170427-1625-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Thomas Abraham' <thomas.abraham@linaro.org>, linux-usb@vger.kernel.org
-Cc: gregkh@linuxfoundation.org, jy0922.shim@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Tomasz Figa <t.figa@samsung.com>
+Cc: linux-input@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-On Wednesday, October 03, 2012 8:41 AM Thomas Abraham wrote
-> 
-> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-> calls as required by common clock framework.
-> 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+Hi, Tomasz.
 
-
-It looks good. Also, I have tested this patch with Exynos4210.
-
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-
-
-Best regards,
-Jingoo Han
-
+On 10/02/2012 06:33 PM, Tomasz Figa wrote:
+> This patch adds device tree bindings for mms114 touchscreen.
+>
+> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+>
 > ---
->  drivers/usb/host/ehci-s5p.c |   10 +++++-----
->  1 files changed, 5 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-> index 85b74be..abc178d 100644
-> --- a/drivers/usb/host/ehci-s5p.c
-> +++ b/drivers/usb/host/ehci-s5p.c
-> @@ -136,7 +136,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
->  		goto fail_clk;
->  	}
-> 
-> -	err = clk_enable(s5p_ehci->clk);
-> +	err = clk_prepare_enable(s5p_ehci->clk);
->  	if (err)
->  		goto fail_clk;
-> 
-> @@ -183,7 +183,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
->  	return 0;
-> 
->  fail_io:
-> -	clk_disable(s5p_ehci->clk);
-> +	clk_disable_unprepare(s5p_ehci->clk);
->  fail_clk:
->  	usb_put_hcd(hcd);
->  	return err;
-> @@ -200,7 +200,7 @@ static int __devexit s5p_ehci_remove(struct platform_device *pdev)
->  	if (pdata && pdata->phy_exit)
->  		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> 
-> -	clk_disable(s5p_ehci->clk);
-> +	clk_disable_unprepare(s5p_ehci->clk);
-> 
->  	usb_put_hcd(hcd);
-> 
-> @@ -231,7 +231,7 @@ static int s5p_ehci_suspend(struct device *dev)
->  	if (pdata && pdata->phy_exit)
->  		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> 
-> -	clk_disable(s5p_ehci->clk);
-> +	clk_disable_unprepare(s5p_ehci->clk);
-> 
->  	return rc;
->  }
-> @@ -243,7 +243,7 @@ static int s5p_ehci_resume(struct device *dev)
->  	struct platform_device *pdev = to_platform_device(dev);
->  	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
-> 
-> -	clk_enable(s5p_ehci->clk);
-> +	clk_prepare_enable(s5p_ehci->clk);
-> 
->  	if (pdata && pdata->phy_init)
->  		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> --
-> 1.7.4.1
+>   .../bindings/input/touchscreen/mms114.txt          | 34 ++++++++++++++
+>   drivers/input/touchscreen/mms114.c                 | 52 +++++++++++++++++++++-
+>   2 files changed, 84 insertions(+), 2 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+>
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/mms114.txt b/Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> new file mode 100644
+> index 0000000..f89d382
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/mms114.txt
+> @@ -0,0 +1,34 @@
+> +* MELFAS MMS114 touchscreen controller
+> +
+> +Required properties:
+> +- compatible: must be "melfas,mms114"
+> +- reg: I2C address of the chip
+> +- interrupts: interrupt to which the chip is connected
+> +- x-size: horizontal resolution of touchscreen
+> +- y-size: vertical resolution of touchscreen
+> +
+> +Optional properties:
+> +- contact-threshold:
+> +- moving-threshold:
+> +- x-invert: invert X axis
+> +- y-invert: invert Y axis
+> +
+> +Example:
+> +
+> +	i2c@00000000 {
+> +		/* ... */
+> +
+> +		touchscreen@48 {
+> +			compatible = "melfas,mms114";
+> +			reg = <0x48>;
+> +			interrupts = <39 0>;
+> +			x-size = <720>;
+> +			y-size = <1280>;
+> +			contact-threshold = <10>;
+> +			moving-threshold = <10>;
+> +			x-invert;
+> +			y-invert;
+> +		};
+> +
+> +		/* ... */
+> +	};
+> diff --git a/drivers/input/touchscreen/mms114.c b/drivers/input/touchscreen/mms114.c
+> index 49c44bb..fb66f7a 100644
+> --- a/drivers/input/touchscreen/mms114.c
+> +++ b/drivers/input/touchscreen/mms114.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/module.h>
+>   #include <linux/init.h>
+>   #include <linux/delay.h>
+> +#include <linux/of.h>
+>   #include <linux/i2c.h>
+>   #include <linux/i2c/mms114.h>
+>   #include <linux/input/mt.h>
+> @@ -360,14 +361,55 @@ static void mms114_input_close(struct input_dev *dev)
+>   	mms114_stop(data);
+>   }
+>   
+> +static struct mms114_platform_data *mms114_parse_dt(struct device *dev)
+> +{
+> +	struct mms114_platform_data *pdata;
+> +	struct device_node *np = dev->of_node;
+> +
+> +	if (!np)
+> +		return NULL;
+> +
+> +	pdata = devm_kzalloc(dev, sizeof(*pdata), GFP_KERNEL);
+> +	if (!pdata) {
+> +		dev_err(dev, "failed to allocate platform data\n");
+> +		return NULL;
+> +	}
+> +
+> +	if (of_property_read_u32(np, "x-size", &pdata->x_size)) {
+> +		dev_err(dev, "failed to get x-size property\n");
+> +		return NULL;
+> +	};
+> +
+> +	if (of_property_read_u32(np, "y-size", &pdata->y_size)) {
+> +		dev_err(dev, "failed to get y-size property\n");
+> +		return NULL;
+> +	};
+> +
+> +	of_property_read_u32(np, "contact-threshold",
+> +						&pdata->contact_threshold);
+> +	of_property_read_u32(np, "moving-threshold",
+> +						&pdata->moving_threshold);
+> +
+> +	if (of_find_property(np, "x-invert", NULL))
+> +		pdata->x_invert = true;
+> +	if (of_find_property(np, "y-invert", NULL))
+> +		pdata->y_invert = true;
+> +
+> +	return pdata;
+> +}
+
+#ifdef CONFIG_OF needs.
+
+> +
+>   static int __devinit mms114_probe(struct i2c_client *client,
+>   				  const struct i2c_device_id *id)
+>   {
+>   	struct mms114_data *data;
+>   	struct input_dev *input_dev;
+> +	struct mms114_platform_data *pdata = client->dev.platform_data;
+>   	int error;
+>   
+> -	if (!client->dev.platform_data) {
+> +	if (!pdata)
+> +		pdata = mms114_parse_dt(&client->dev);
+> +
+> +	if (!pdata) {
+>   		dev_err(&client->dev, "Need platform data\n");
+>   		return -EINVAL;
+>   	}
+> @@ -389,7 +431,7 @@ static int __devinit mms114_probe(struct i2c_client *client,
+>   
+>   	data->client = client;
+>   	data->input_dev = input_dev;
+> -	data->pdata = client->dev.platform_data;
+> +	data->pdata = pdata;
+>   
+>   	input_dev->name = "MELPAS MMS114 Touchscreen";
+>   	input_dev->id.bustype = BUS_I2C;
+> @@ -525,11 +567,17 @@ static const struct i2c_device_id mms114_id[] = {
+>   };
+>   MODULE_DEVICE_TABLE(i2c, mms114_id);
+>   
+> +static struct of_device_id __devinitdata mms114_dt_match[] = {
+> +	{ .compatible = "melfas,mms114" },
+> +	{ }
+> +};
+> +
+>   static struct i2c_driver mms114_driver = {
+>   	.driver = {
+>   		.name	= "mms114",
+>   		.owner	= THIS_MODULE,
+>   		.pm	= &mms114_pm_ops,
+> +		.of_match_table = mms114_dt_match,
+>   	},
+>   	.probe		= mms114_probe,
+>   	.remove		= __devexit_p(mms114_remove),
