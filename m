@@ -1,47 +1,34 @@
 From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH v2 0/4] DMA: PL330: Fix mem leaks and balance probe/remove
-Date: Fri,  5 Oct 2012 15:47:52 +0530
-Message-ID: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:48437 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753291Ab2JEKR7 (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Oct 2012 06:17:59 -0400
-Received: by mail-pa0-f46.google.com with SMTP id hz1so1558866pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Oct 2012 03:17:58 -0700 (PDT)
-Sender: linux-samsung-soc-owner@vger.kernel.org
-List-Id: linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v2 4/4] DMA: PL330: unregister dma_device in module's remove function
+Date: Fri,  5 Oct 2012 15:47:56 +0530
+Message-ID: <1349432276-22919-5-git-send-email-inderpal.singh@linaro.org>
+References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc: jassisinghbrar@gmail.com, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+List-Id: linux-samsung-soc@vger.kernel.org
 
-The first 2 patches of this series fix memory leaks because the memory
-allocated for peripheral channels and DMA descriptors were not getting
-freed.
+unregister dma_device in module's remove function.
 
-The last 2 patches balance the module's remove function.
+Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+---
+ drivers/dma/pl330.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-This series depends on "61c6e7531d3b66b3 ........DMA: PL330: Check the
-pointer returned by kzalloc" which is on slave-dma's "fixes" branch. 
-Hence slave-dma tree's "next" branch was merged with "fixes" and 
-applied patch at [1] to fix the build error.
-
-[1] http://permalink.gmane.org/gmane.linux.kernel.next/24274
-
-Changes since v1:
- - Protect only list_add_tail with spin_locks
- - Return EBUSY from remove if channel is in use
- - unregister dma_device in remove
+diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
+index 4b7a34d..e7dc040 100644
+--- a/drivers/dma/pl330.c
++++ b/drivers/dma/pl330.c
+@@ -3017,6 +3017,8 @@ static int __devexit pl330_remove(struct amba_device *adev)
+ 			return -EBUSY;
+ 	}
  
-Inderpal Singh (4):
-  DMA: PL330: Free memory allocated for peripheral channels
-  DMA: PL330: Change allocation method to properly free  DMA
-    descriptors
-  DMA: PL330: Balance module remove function with probe
-  DMA: PL330: unregister dma_device in module's remove function
-
- drivers/dma/pl330.c |   53 ++++++++++++++++++++++++++++++++++++---------------
- 1 file changed, 38 insertions(+), 15 deletions(-)
-
++	dma_async_device_unregister(&pdmac->ddma);
++
+ 	amba_set_drvdata(adev, NULL);
+ 
+ 	list_for_each_entry_safe(pch, _p, &pdmac->ddma.channels,
 -- 
 1.7.9.5
