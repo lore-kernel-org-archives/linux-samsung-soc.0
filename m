@@ -1,118 +1,50 @@
-From: Inderpal Singh <inderpal.singh@linaro.org>
-Subject: [PATCH v2 2/4] DMA: PL330: Change allocation method to properly free  DMA descriptors
-Date: Fri,  5 Oct 2012 15:47:54 +0530
-Message-ID: <1349432276-22919-3-git-send-email-inderpal.singh@linaro.org>
-References: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH] ARM: EXYNOS5: Remove wrongly placed usb2.0 PHY_CFG definition
+ from PMU_REG
+Date: Fri, 05 Oct 2012 18:56:30 +0530
+Message-ID: <1349443590-29901-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:62685 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755250Ab2JEKSH (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:52921 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1755577Ab2JENVa (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Oct 2012 06:18:07 -0400
-Received: by mail-pa0-f46.google.com with SMTP id hz1so1558867pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Fri, 05 Oct 2012 03:18:07 -0700 (PDT)
-In-Reply-To: <1349432276-22919-1-git-send-email-inderpal.singh@linaro.org>
+	Fri, 5 Oct 2012 09:21:30 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBF00D1J93LMY60@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Oct 2012 22:21:28 +0900 (KST)
+Received: from vivekkumarg-linuxpc.sisodomain.com ([107.108.73.134])
+ by mmp1.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTPA id <0MBF0003N937ZSC0@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Oct 2012 22:21:27 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jassisinghbrar@gmail.com, boojin.kim@samsung.com, vinod.koul@intel.com, patches@linaro.org, kgene.kim@samsung.com
+To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org
 
-In probe, memory for multiple DMA descriptors were being allocated at once
-and then it was being split and added into DMA pool one by one. The address
-of this memory allocation is not being saved anywhere. To free this memory,
-the address is required. Initially the first node of the pool will be
-pointed by this address but as we use this pool the descs will shuffle and
-hence we will lose the track of the address.
+EXYNOS5_USB_CFG macro should actually point to USB20PHY_CFG
+system register (base addr + 0x230). It's wrongly placed in regs-pmu.
+Actual register at offset 0x230 in PMU is SEQ_TRANSITION4.
 
-This patch does following:
-
-1. Allocates DMA descs one by one and then adds them to pool so that all
-   descs can be fetched and memory freed one by one. This way runtime
-   added descs can also be freed.
-2. Free DMA descs in case of error in probe and in module's remove function
-
-Signed-off-by: Inderpal Singh <inderpal.singh@linaro.org>
+Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
- drivers/dma/pl330.c |   35 +++++++++++++++++++++++++----------
- 1 file changed, 25 insertions(+), 10 deletions(-)
+ arch/arm/mach-exynos/include/mach/regs-pmu.h |    2 --
+ 1 files changed, 0 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/dma/pl330.c b/drivers/dma/pl330.c
-index 10c6b6a..bf71ff7 100644
---- a/drivers/dma/pl330.c
-+++ b/drivers/dma/pl330.c
-@@ -2541,20 +2541,20 @@ static int add_desc(struct dma_pl330_dmac *pdmac, gfp_t flg, int count)
- 	if (!pdmac)
- 		return 0;
+diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+index d4e392b..70b2795 100644
+--- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
++++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
+@@ -230,8 +230,6 @@
  
--	desc = kmalloc(count * sizeof(*desc), flg);
--	if (!desc)
--		return 0;
-+	for (i = 0; i < count; i++) {
-+		desc = kmalloc(sizeof(*desc), flg);
-+		if (!desc)
-+			break;
-+		_init_desc(desc);
+ /* For EXYNOS5 */
  
--	spin_lock_irqsave(&pdmac->pool_lock, flags);
-+		spin_lock_irqsave(&pdmac->pool_lock, flags);
+-#define EXYNOS5_USB_CFG						S5P_PMUREG(0x0230)
+-
+ #define EXYNOS5_AUTO_WDTRESET_DISABLE				S5P_PMUREG(0x0408)
+ #define EXYNOS5_MASK_WDTRESET_REQUEST				S5P_PMUREG(0x040C)
  
--	for (i = 0; i < count; i++) {
--		_init_desc(&desc[i]);
--		list_add_tail(&desc[i].node, &pdmac->desc_pool);
--	}
-+		list_add_tail(&desc->node, &pdmac->desc_pool);
- 
--	spin_unlock_irqrestore(&pdmac->pool_lock, flags);
-+		spin_unlock_irqrestore(&pdmac->pool_lock, flags);
-+	}
- 
--	return count;
-+	return i;
- }
- 
- static struct dma_pl330_desc *
-@@ -2857,6 +2857,7 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- 	struct dma_pl330_platdata *pdat;
- 	struct dma_pl330_dmac *pdmac;
- 	struct dma_pl330_chan *pch;
-+	struct dma_pl330_desc *desc;
- 	struct pl330_info *pi;
- 	struct dma_device *pd;
- 	struct resource *res;
-@@ -2978,6 +2979,12 @@ pl330_probe(struct amba_device *adev, const struct amba_id *id)
- probe_err5:
- 	kfree(pdmac->peripherals);
- probe_err4:
-+	while (!list_empty(&pdmac->desc_pool)) {
-+		desc = list_entry(pdmac->desc_pool.next,
-+				struct dma_pl330_desc, node);
-+		list_del(&desc->node);
-+		kfree(desc);
-+	}
- 	pl330_del(pi);
- probe_err3:
- 	free_irq(irq, pi);
-@@ -2994,6 +3001,7 @@ static int __devexit pl330_remove(struct amba_device *adev)
- {
- 	struct dma_pl330_dmac *pdmac = amba_get_drvdata(adev);
- 	struct dma_pl330_chan *pch, *_p;
-+	struct dma_pl330_desc *desc;
- 	struct pl330_info *pi;
- 	struct resource *res;
- 	int irq;
-@@ -3015,6 +3023,13 @@ static int __devexit pl330_remove(struct amba_device *adev)
- 		pl330_free_chan_resources(&pch->chan);
- 	}
- 
-+	while (!list_empty(&pdmac->desc_pool)) {
-+		desc = list_entry(pdmac->desc_pool.next,
-+				struct dma_pl330_desc, node);
-+		list_del(&desc->node);
-+		kfree(desc);
-+	}
-+
- 	pi = &pdmac->pif;
- 
- 	pl330_del(pi);
 -- 
-1.7.9.5
+1.7.6.5
