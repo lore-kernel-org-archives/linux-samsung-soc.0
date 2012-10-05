@@ -1,294 +1,65 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 14/24] USB: ohci: merge ohci_finish_controller_resume with
- ohci_resume
-Date: Fri, 05 Oct 2012 10:38:38 +0900
-Message-ID: <000e01cda29a$251922c0$6f4b6840$%han@samsung.com>
-References: <1349363872-27004-1-git-send-email-florian@openwrt.org>
- <1349363872-27004-15-git-send-email-florian@openwrt.org>
+From: RAHUL SHARMA <rahul.sharma@samsung.com>
+Subject: Re: Re: [PATCH 6/8] arm: exynos: config exynos5 hdmi-hpd gpio
+Date: Fri, 05 Oct 2012 03:36:14 +0000 (GMT)
+Message-ID: <6144318.564701349408174292.JavaMail.weblogic@epml07>
+Reply-To: rahul.sharma@samsung.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: base64
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:11109 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:28376 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755791Ab2JEBjN (ORCPT
+	with ESMTP id S1750970Ab2JEDgQ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 4 Oct 2012 21:39:13 -0400
-In-reply-to: <1349363872-27004-15-git-send-email-florian@openwrt.org>
-Content-language: ko
+	Thu, 4 Oct 2012 23:36:16 -0400
+Received: from epcpsbge2.samsung.com (epcpsbge2 [203.254.230.12])
+ by mailout3.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBE0004GI06O930@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Fri, 05 Oct 2012 12:36:14 +0900 (KST)
+MIME-version: 1.0
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Florian Fainelli' <florian@openwrt.org>
-Cc: stern@rowland.harvard.edu, linux-usb@vger.kernel.org, 'Greg Kroah-Hartman' <gregkh@linuxfoundation.org>, 'Lennert Buytenhek' <kernel@wantstofly.org>, 'Felipe Balbi' <balbi@ti.com>, 'Ben Dooks' <ben-linux@fluff.org>, 'Kukjin Kim' <kgene.kim@samsung.com>, linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 'Jingoo Han' <jg1.han@samsung.com>
+To: Kyungmin Park <kyungmin.park@samsung.com>
+Cc: "linux-samsung-soc@vger.kernel.org" <linux-samsung-soc@vger.kernel.org>, "devicetree-discuss@lists.ozlabs.org" <devicetree-discuss@lists.ozlabs.org>, Kukjin Kim <kgene.kim@samsung.com>, Tomasz Stanislawski <t.stanislaws@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, In-Ki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, PRASHANTH GODREHAL <prashanth.g@samsung.com>, SUNIL JOSHI <joshi@samsung.com>, SHIRISH S <s.shirish@samsung.com>, FAHAD KUNNATHADI <fahad.k@samsung.com>, Leela Krishna Amudala <l.krishna@samsung.com>, "r.sh.open@gmail.com" <r.sh.open@gmail.com>
 
-On Friday, October 05, 2012 12:18 AM Florian Fainelli wrote
-> 
-> Merge ohci_finish_controller_resume with ohci_resume as suggested by Alan
-> Stern. Since ohci_finish_controller_resume no longer exists, update the
-> various OHCI drivers to call ohci_resume() instead. Some drivers used to set
-> themselves the bit HCD_FLAG_HW_ACCESSIBLE, which is now handled by
-> ohci_resume().
-> 
-> Signed-off-by: Florian Fainelli <florian@openwrt.org>
-
-For drivers/usb/host/ohci-exynos.c, it looks good.
-
-Acked-by: Jingoo Han <jg1.han@samsung.com>
-
-
-Best regards,
-Jingoo Han
-
-
-> ---
->  drivers/usb/host/ohci-at91.c     |    2 +-
->  drivers/usb/host/ohci-ep93xx.c   |    2 +-
->  drivers/usb/host/ohci-exynos.c   |    5 +----
->  drivers/usb/host/ohci-hcd.c      |   41 +++++++++++++++++++++++++++++++++++--
->  drivers/usb/host/ohci-hub.c      |   42 --------------------------------------
->  drivers/usb/host/ohci-omap.c     |    2 +-
->  drivers/usb/host/ohci-platform.c |    2 +-
->  drivers/usb/host/ohci-pxa27x.c   |    2 +-
->  drivers/usb/host/ohci-s3c2410.c  |    3 +--
->  drivers/usb/host/ohci-spear.c    |    2 +-
->  drivers/usb/host/ohci-tmio.c     |    2 +-
->  11 files changed, 48 insertions(+), 57 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
-> index 0bf72f9..908d84a 100644
-> --- a/drivers/usb/host/ohci-at91.c
-> +++ b/drivers/usb/host/ohci-at91.c
-> @@ -705,7 +705,7 @@ static int ohci_hcd_at91_drv_resume(struct platform_device *pdev)
->  	if (!clocked)
->  		at91_start_clock();
-> 
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
->  	return 0;
->  }
->  #else
-> diff --git a/drivers/usb/host/ohci-ep93xx.c b/drivers/usb/host/ohci-ep93xx.c
-> index dbfbd1d..a982f04 100644
-> --- a/drivers/usb/host/ohci-ep93xx.c
-> +++ b/drivers/usb/host/ohci-ep93xx.c
-> @@ -194,7 +194,7 @@ static int ohci_hcd_ep93xx_drv_resume(struct platform_device *pdev)
-> 
->  	ep93xx_start_hc(&pdev->dev);
-> 
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
->  	return 0;
->  }
->  #endif
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index fc3091b..53c5a989 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -252,10 +252,7 @@ static int exynos_ohci_resume(struct device *dev)
->  	if (pdata && pdata->phy_init)
->  		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> 
-> -	/* Mark hardware accessible again as we are out of D3 state by now */
-> -	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> -
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
-> 
->  	return 0;
->  }
-> diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
-> index 5d30992..568bdb3 100644
-> --- a/drivers/usb/host/ohci-hcd.c
-> +++ b/drivers/usb/host/ohci-hcd.c
-> @@ -1003,13 +1003,50 @@ static int __maybe_unused ohci_suspend(struct usb_hcd *hcd, bool do_wakeup)
-> 
->  static int __maybe_unused ohci_resume(struct usb_hcd *hcd, bool hibernated)
->  {
-> +	struct ohci_hcd		*ohci = hcd_to_ohci(hcd);
-> +	int			port;
-> +	bool			need_reinit = false;
-> +
->  	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> 
->  	/* Make sure resume from hibernation re-enumerates everything */
->  	if (hibernated)
-> -		ohci_usb_reset(hcd_to_ohci(hcd));
-> +		ohci_usb_reset(ohci);
-> +
-> +	/* See if the controller is already running or has been reset */
-> +	ohci->hc_control = ohci_readl(ohci, &ohci->regs->control);
-> +	if (ohci->hc_control & (OHCI_CTRL_IR | OHCI_SCHED_ENABLES)) {
-> +		need_reinit = true;
-> +	} else {
-> +		switch (ohci->hc_control & OHCI_CTRL_HCFS) {
-> +		case OHCI_USB_OPER:
-> +		case OHCI_USB_RESET:
-> +			need_reinit = true;
-> +		}
-> +	}
-> +
-> +	/* If needed, reinitialize and suspend the root hub */
-> +	if (need_reinit) {
-> +		spin_lock_irq(&ohci->lock);
-> +		ohci_rh_resume(ohci);
-> +		ohci_rh_suspend(ohci, 0);
-> +		spin_unlock_irq(&ohci->lock);
-> +	}
-> +
-> +	/* Normally just turn on port power and enable interrupts */
-> +	else {
-> +		ohci_dbg(ohci, "powerup ports\n");
-> +		for (port = 0; port < ohci->num_ports; port++)
-> +			ohci_writel(ohci, RH_PS_PPS,
-> +					&ohci->regs->roothub.portstatus[port]);
-> +
-> +		ohci_writel(ohci, OHCI_INTR_MIE, &ohci->regs->intrenable);
-> +		ohci_readl(ohci, &ohci->regs->intrenable);
-> +		msleep(20);
-> +	}
-> +
-> +	usb_hcd_resume_root_hub(hcd);
-> 
-> -	ohci_finish_controller_resume(hcd);
->  	return 0;
->  }
-> 
-> diff --git a/drivers/usb/host/ohci-hub.c b/drivers/usb/host/ohci-hub.c
-> index 2f3619e..db09dae 100644
-> --- a/drivers/usb/host/ohci-hub.c
-> +++ b/drivers/usb/host/ohci-hub.c
-> @@ -316,48 +316,6 @@ static int ohci_bus_resume (struct usb_hcd *hcd)
->  	return rc;
->  }
-> 
-> -/* Carry out the final steps of resuming the controller device */
-> -static void __maybe_unused ohci_finish_controller_resume(struct usb_hcd *hcd)
-> -{
-> -	struct ohci_hcd		*ohci = hcd_to_ohci(hcd);
-> -	int			port;
-> -	bool			need_reinit = false;
-> -
-> -	/* See if the controller is already running or has been reset */
-> -	ohci->hc_control = ohci_readl(ohci, &ohci->regs->control);
-> -	if (ohci->hc_control & (OHCI_CTRL_IR | OHCI_SCHED_ENABLES)) {
-> -		need_reinit = true;
-> -	} else {
-> -		switch (ohci->hc_control & OHCI_CTRL_HCFS) {
-> -		case OHCI_USB_OPER:
-> -		case OHCI_USB_RESET:
-> -			need_reinit = true;
-> -		}
-> -	}
-> -
-> -	/* If needed, reinitialize and suspend the root hub */
-> -	if (need_reinit) {
-> -		spin_lock_irq(&ohci->lock);
-> -		ohci_rh_resume(ohci);
-> -		ohci_rh_suspend(ohci, 0);
-> -		spin_unlock_irq(&ohci->lock);
-> -	}
-> -
-> -	/* Normally just turn on port power and enable interrupts */
-> -	else {
-> -		ohci_dbg(ohci, "powerup ports\n");
-> -		for (port = 0; port < ohci->num_ports; port++)
-> -			ohci_writel(ohci, RH_PS_PPS,
-> -					&ohci->regs->roothub.portstatus[port]);
-> -
-> -		ohci_writel(ohci, OHCI_INTR_MIE, &ohci->regs->intrenable);
-> -		ohci_readl(ohci, &ohci->regs->intrenable);
-> -		msleep(20);
-> -	}
-> -
-> -	usb_hcd_resume_root_hub(hcd);
-> -}
-> -
->  /* Carry out polling-, autostop-, and autoresume-related state changes */
->  static int ohci_root_hub_state_changes(struct ohci_hcd *ohci, int changed,
->  		int any_connected, int rhsc_status)
-> diff --git a/drivers/usb/host/ohci-omap.c b/drivers/usb/host/ohci-omap.c
-> index f8b2d91..9fab4d8 100644
-> --- a/drivers/usb/host/ohci-omap.c
-> +++ b/drivers/usb/host/ohci-omap.c
-> @@ -530,7 +530,7 @@ static int ohci_omap_resume(struct platform_device *dev)
->  	ohci->next_statechange = jiffies;
-> 
->  	omap_ohci_clock_power(1);
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
->  	return 0;
->  }
-> 
-> diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
-> index 1caaf65..99d1755 100644
-> --- a/drivers/usb/host/ohci-platform.c
-> +++ b/drivers/usb/host/ohci-platform.c
-> @@ -203,7 +203,7 @@ static int ohci_platform_resume(struct device *dev)
->  			return err;
->  	}
-> 
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
->  	return 0;
->  }
-> 
-> diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
-> index 77f4402..8bffde3 100644
-> --- a/drivers/usb/host/ohci-pxa27x.c
-> +++ b/drivers/usb/host/ohci-pxa27x.c
-> @@ -591,7 +591,7 @@ static int ohci_hcd_pxa27x_drv_resume(struct device *dev)
->  	/* Select Power Management Mode */
->  	pxa27x_ohci_select_pmm(ohci, inf->port_mode);
-> 
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
->  	return 0;
->  }
-> 
-> diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
-> index 664c869..8af53c6 100644
-> --- a/drivers/usb/host/ohci-s3c2410.c
-> +++ b/drivers/usb/host/ohci-s3c2410.c
-> @@ -524,8 +524,7 @@ static int ohci_hcd_s3c2410_drv_resume(struct device *dev)
-> 
->  	s3c2410_start_hc(pdev, hcd);
-> 
-> -	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
-> 
->  	return 0;
->  }
-> diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
-> index fc7305e..d607be3 100644
-> --- a/drivers/usb/host/ohci-spear.c
-> +++ b/drivers/usb/host/ohci-spear.c
-> @@ -231,7 +231,7 @@ static int spear_ohci_hcd_drv_resume(struct platform_device *dev)
->  	ohci->next_statechange = jiffies;
-> 
->  	spear_start_ohci(ohci_p);
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
->  	return 0;
->  }
->  #endif
-> diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
-> index 60c2b07..2c9ab8f 100644
-> --- a/drivers/usb/host/ohci-tmio.c
-> +++ b/drivers/usb/host/ohci-tmio.c
-> @@ -352,7 +352,7 @@ static int ohci_hcd_tmio_drv_resume(struct platform_device *dev)
-> 
->  	spin_unlock_irqrestore(&tmio->lock, flags);
-> 
-> -	ohci_finish_controller_resume(hcd);
-> +	ohci_resume(hcd, false);
-> 
->  	return 0;
->  }
-> --
-> 1.7.9.5
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+U3VyZSBNci4gcGFyaywNCg0KSSB3aWxsIGNvcnJlY3QgdGhpcyBpbiB2Mi4NCkkgd2FudCB0byBy
+ZXF1ZXN0IHlvdSBmb3IgcmV2aWV3aW5nIHRoZSBvdGhlciBwYXRjaGVzIGluIHRoZSBzZXQuDQoN
+CnJlZ2FyZHMsDQpSYWh1bCBTaGFybWENCg0KT24gVGh1LCBPY3QgNCwgMjAxMiBhdCAxOjQ1IFBN
+LCBLeXVuZ21pbiBQYXJrIDxreXVuZ21pbi5wYXJrQHNhbXN1bmcuY29tPiB3cm90ZToNCj4gT24g
+MTAvNS8xMiwgUmFodWwgU2hhcm1hIDxyYWh1bC5zaGFybWFAc2Ftc3VuZy5jb20+IHdyb3RlOg0K
+Pj4gVGhpcyBwYXRjaCBhZGRzIHN1cHBvcnQgZm9yIHRoZSBjb25maWd1cmF0aW9uIG9mIGV4eW5v
+czUgaGRtaS1ocGQgZ3Bpby4NCj4+IEl0IHNldHMgdGhlIGdwaW8gZnVjbnRpb24gdG8gRUlOVCB3
+aGljaCBpcyByZXF1aXJlZCBmb3IgcmVjaWV2aW5nDQo+PiBleHRlcm5hbCBocGQgaW50ZXJydXB0
+IGluIGRybSBoZG1pIGRyaXZlci4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBSYWh1bCBTaGFybWEg
+PHJhaHVsLnNoYXJtYUBzYW1zdW5nLmNvbT4NCj4+IC0tLQ0KPj4gIGFyY2gvYXJtL21hY2gtZXh5
+bm9zL21hY2gtZXh5bm9zNS1kdC5jIHwgICAgOSArKysrKysrKysNCj4+ICAxIGZpbGVzIGNoYW5n
+ZWQsIDkgaW5zZXJ0aW9ucygrKSwgMCBkZWxldGlvbnMoLSkNCj4+DQo+PiBkaWZmIC0tZ2l0IGEv
+YXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4+IGIvYXJjaC9hcm0vbWFj
+aC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4+IGluZGV4IDAwMzk2M2MuLjlhNmQ1NjkgMTAw
+NjQ0DQo+PiAtLS0gYS9hcmNoL2FybS9tYWNoLWV4eW5vcy9tYWNoLWV4eW5vczUtZHQuYw0KPj4g
+KysrIGIvYXJjaC9hcm0vbWFjaC1leHlub3MvbWFjaC1leHlub3M1LWR0LmMNCj4+IEBAIC0xMSw2
+ICsxMSw3IEBADQo+Pg0KPj4gICNpbmNsdWRlIDxsaW51eC9vZl9wbGF0Zm9ybS5oPg0KPj4gICNp
+bmNsdWRlIDxsaW51eC9zZXJpYWxfY29yZS5oPg0KPj4gKyNpbmNsdWRlIDxsaW51eC9ncGlvLmg+
+DQo+Pg0KPj4gICNpbmNsdWRlIDxhc20vbWFjaC9hcmNoLmg+DQo+PiAgI2luY2x1ZGUgPGFzbS9o
+YXJkd2FyZS9naWMuaD4NCj4+IEBAIC0xOCw2ICsxOSw3IEBADQo+Pg0KPj4gICNpbmNsdWRlIDxw
+bGF0L2NwdS5oPg0KPj4gICNpbmNsdWRlIDxwbGF0L3JlZ3Mtc2VyaWFsLmg+DQo+PiArI2luY2x1
+ZGUgPHBsYXQvZ3Bpby1jZmcuaD4NCj4+DQo+PiAgI2luY2x1ZGUgImNvbW1vbi5oIg0KPj4NCj4+
+IEBAIC04MSwxMCArODMsMTcgQEAgc3RhdGljIHZvaWQgX19pbml0IGV4eW5vczUyNTBfZHRfbWFw
+X2lvKHZvaWQpDQo+PiAgICAgICBzM2MyNHh4X2luaXRfY2xvY2tzKDI0MDAwMDAwKTsNCj4+ICB9
+DQo+Pg0KPj4gK3N0YXRpYyB2b2lkIHNtZGtfaHBkX3NldHVwKHZvaWQpDQo+PiArew0KPj4gKyAg
+ICAgczNjX2dwaW9fY2ZncGluKEVYWU5PUzVfR1BYMyg3KSwgUzNDX0dQSU9fU0ZOKDB4ZikpOw0K
+Pj4gKyAgICAgczNjX2dwaW9fc2V0cHVsbChFWFlOT1M1X0dQWDMoNyksIFMzQ19HUElPX1BVTExf
+RE9XTik7DQo+PiArfQ0KPiB0aGVzZSBzaG91bGQgYmUgZGVzY3JpYmVkIGF0IGR0cyBmaWxlIGlu
+c3RlYWQgb2YgaGVyZS4gYW5kIG5hbWUgaXMgbm90DQo+IGdvb2QuIHNtZGsuLi4NCj4NCj4gVGhh
+bmsgeW91LA0KPiBLeXVuZ21pbiBQYXJrDQo+PiArDQo+PiAgc3RhdGljIHZvaWQgX19pbml0IGV4
+eW5vczUyNTBfZHRfbWFjaGluZV9pbml0KHZvaWQpDQo+PiAgew0KPj4gICAgICAgb2ZfcGxhdGZv
+cm1fcG9wdWxhdGUoTlVMTCwgb2ZfZGVmYXVsdF9idXNfbWF0Y2hfdGFibGUsDQo+PiAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBleHlub3M1MjUwX2F1eGRhdGFfbG9va3VwLCBOVUxMKTsN
+Cj4+ICsgICAgIHNtZGtfaHBkX3NldHVwKCk7DQo+PiAgfQ0KPj4NCj4+ICBzdGF0aWMgY2hhciBj
+b25zdCAqZXh5bm9zNTI1MF9kdF9jb21wYXRbXSBfX2luaXRkYXRhID0gew0KPj4gLS0NCj4+IDEu
+Ny4wLjQNCj4+DQo+PiAtLQ0KPj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQg
+dGhlIGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LXNhbXN1bmctc29jIg0KPj4gaW4NCj4+IHRoZSBi
+b2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+PiBNb3JlIG1h
+am9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0
+bWwNCj4+DQoNCg==
