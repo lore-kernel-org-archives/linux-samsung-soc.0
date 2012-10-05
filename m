@@ -1,50 +1,62 @@
-From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH] ARM: EXYNOS5: Remove wrongly placed usb2.0 PHY_CFG definition
- from PMU_REG
-Date: Fri, 05 Oct 2012 18:56:30 +0530
-Message-ID: <1349443590-29901-1-git-send-email-gautam.vivek@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:52921 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1755577Ab2JENVa (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Fri, 5 Oct 2012 09:21:30 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBF00D1J93LMY60@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 05 Oct 2012 22:21:28 +0900 (KST)
-Received: from vivekkumarg-linuxpc.sisodomain.com ([107.108.73.134])
- by mmp1.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTPA id <0MBF0003N937ZSC0@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Fri, 05 Oct 2012 22:21:27 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH 15/16] spi/s3c64xx: use correct dma_transfer_direction type
+Date: Fri,  5 Oct 2012 16:55:29 +0200
+Message-ID: <1349448930-23976-16-git-send-email-arnd@arndb.de>
+References: <1349448930-23976-1-git-send-email-arnd@arndb.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1349448930-23976-1-git-send-email-arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, Grant Likely <grant.likely@secretlab.ca>, linux-samsung-soc@vger.kernel.org, arm@kernel.org, Ben Dooks <ben-linux@fluff.org>, spi-devel-general@lists.sourceforge.net
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Cc: kgene.kim@samsung.com, thomas.abraham@linaro.org
 
-EXYNOS5_USB_CFG macro should actually point to USB20PHY_CFG
-system register (base addr + 0x230). It's wrongly placed in regs-pmu.
-Actual register at offset 0x230 in PMU is SEQ_TRANSITION4.
+There is a subtle difference between dma_transfer_direction and
+dma_data_direction: the former is used by the dmaengine framework,
+while the latter is used by the dma-mapping API. Although the
+purpose is comparable, the actual values are different and must
+not be mixed. In this case, the driver just wants to use
+dma_transfer_direction.
 
-Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Without this patch, building s3c6400_defconfig results in:
+
+drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_dmacb':
+drivers/spi/spi-s3c64xx.c:239:21: warning: comparison between
+	'enum dma_data_direction' and 'enum dma_transfer_direction' [-Wenum-compare]
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Cc: Ben Dooks <ben-linux@fluff.org>
+Cc: Kukjin Kim <kgene.kim@samsung.com>
+Cc: Grant Likely <grant.likely@secretlab.ca>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: spi-devel-general@lists.sourceforge.net
 ---
- arch/arm/mach-exynos/include/mach/regs-pmu.h |    2 --
- 1 files changed, 0 insertions(+), 2 deletions(-)
+ drivers/spi/spi-s3c64xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-exynos/include/mach/regs-pmu.h b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-index d4e392b..70b2795 100644
---- a/arch/arm/mach-exynos/include/mach/regs-pmu.h
-+++ b/arch/arm/mach-exynos/include/mach/regs-pmu.h
-@@ -230,8 +230,6 @@
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index d1c8441f..2e44dd6 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -132,7 +132,7 @@
  
- /* For EXYNOS5 */
- 
--#define EXYNOS5_USB_CFG						S5P_PMUREG(0x0230)
--
- #define EXYNOS5_AUTO_WDTRESET_DISABLE				S5P_PMUREG(0x0408)
- #define EXYNOS5_MASK_WDTRESET_REQUEST				S5P_PMUREG(0x040C)
- 
+ struct s3c64xx_spi_dma_data {
+ 	unsigned		ch;
+-	enum dma_data_direction direction;
++	enum dma_transfer_direction direction;
+ 	enum dma_ch	dmach;
+ 	struct property		*dma_prop;
+ };
 -- 
-1.7.6.5
+1.7.10
