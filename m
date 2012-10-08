@@ -1,217 +1,178 @@
 From: Vivek Gautam <gautam.vivek@samsung.com>
-Subject: [PATCH 3/5] ARM: Exynos5250: Enabling samsung-usbphy driver
-Date: Mon, 08 Oct 2012 19:42:26 +0530
-Message-ID: <1349705548-15207-4-git-send-email-gautam.vivek@samsung.com>
+Subject: [PATCH 4/5] usb: s5p-ehci: Adding phy driver support
+Date: Mon, 08 Oct 2012 19:42:27 +0530
+Message-ID: <1349705548-15207-5-git-send-email-gautam.vivek@samsung.com>
 References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:26725 "EHLO
+Received: from mailout1.samsung.com ([203.254.224.24]:26781 "EHLO
 	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752956Ab2JHOJ4 (ORCPT
+	with ESMTP id S1750779Ab2JHOKc (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Oct 2012 10:09:56 -0400
+	Mon, 8 Oct 2012 10:10:32 -0400
 In-reply-to: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-usb@vger.kernel.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com, yulgon.kim@samsung.com
 
-Adding usbphy node for Exynos5250 along with the platform data.
+Adding the transceiver to ehci driver. Keeping the platform data
+for continuing the smooth operation for boards which still uses it
 
 Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 ---
- .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 ++++-
- arch/arm/boot/dts/exynos5250.dtsi                  |    5 ++
- arch/arm/mach-exynos/Kconfig                       |    1 +
- arch/arm/mach-exynos/include/mach/map.h            |    1 +
- arch/arm/mach-exynos/mach-exynos5-dt.c             |   10 ++++
- arch/arm/mach-exynos/setup-usb-phy.c               |   45 ++++++++++++++++----
- arch/arm/plat-samsung/include/plat/usb-phy.h       |    3 +-
- 7 files changed, 66 insertions(+), 11 deletions(-)
+ drivers/usb/host/ehci-s5p.c |   62 +++++++++++++++++++++++++++++-------------
+ 1 files changed, 43 insertions(+), 19 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-index 7d54d59..35aaf91 100644
---- a/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-+++ b/Documentation/devicetree/bindings/usb/samsung-usbphy.txt
-@@ -1,11 +1,19 @@
- * Samsung's usb phy transceiver
+diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+index 85b74be..ac22893 100644
+--- a/drivers/usb/host/ehci-s5p.c
++++ b/drivers/usb/host/ehci-s5p.c
+@@ -18,6 +18,7 @@
+ #include <linux/of_gpio.h>
+ #include <linux/platform_data/usb-ehci-s5p.h>
+ #include <plat/usb-phy.h>
++#include <linux/usb/phy.h>
  
--The Samsung's phy transceiver is used for controlling usb otg phy for
--s3c-hsotg usb device controller.
-+The Samsung's phy transceiver is used for controlling usb phy for
-+s3c-hsotg as well as s5p-ehci and exynos-ohci device controllers
-+across Samsung SOCs.
- TODO: Adding the PHY binding with controller(s) according to the under 
- developement generic PHY driver.
- 
-+Exynos4210:
- Required properties:
- - compatible : should be "samsung,exynos4210-usbphy"
- - reg : base physical address of the phy registers and length of memory mapped
- 	region.
-+
-+Exynos5250:
-+Required properties:
-+- compatible : should be "samsung,exynos5250-usbphy"
-+- reg : base physical address of the phy registers and length of memory mapped
-+	region.
-diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-index dddfd6e..82bf042 100644
---- a/arch/arm/boot/dts/exynos5250.dtsi
-+++ b/arch/arm/boot/dts/exynos5250.dtsi
-@@ -218,6 +218,11 @@
- 		#size-cells = <0>;
- 	};
- 
-+	usbphy {
-+		compatible = "samsung,exynos5250-usbphy";
-+		reg = <0x12130000 0x100>;
-+	};
-+
- 	amba {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index 4372075..e8e3d7b 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -422,6 +422,7 @@ config MACH_EXYNOS5_DT
- 	select SOC_EXYNOS5250
- 	select USE_OF
- 	select ARM_AMBA
-+	select EXYNOS4_SETUP_USB_PHY
- 	help
- 	  Machine support for Samsung EXYNOS5 machine with device tree enabled.
- 	  Select this if a fdt blob is available for the EXYNOS5 SoC based board.
-diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-index 9694424..7f5eb03 100644
---- a/arch/arm/mach-exynos/include/mach/map.h
-+++ b/arch/arm/mach-exynos/include/mach/map.h
-@@ -195,6 +195,7 @@
- #define EXYNOS4_PA_EHCI			0x12580000
- #define EXYNOS4_PA_OHCI			0x12590000
- #define EXYNOS4_PA_HSPHY		0x125B0000
-+#define EXYNOS5_PA_HSPHY		0x12130000
- #define EXYNOS4_PA_MFC			0x13400000
- 
- #define EXYNOS4_PA_UART			0x13800000
-diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
-index db1cd8e..6d9528a 100644
---- a/arch/arm/mach-exynos/mach-exynos5-dt.c
-+++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
-@@ -11,6 +11,7 @@
- 
- #include <linux/of_platform.h>
- #include <linux/serial_core.h>
-+#include <linux/platform_data/samsung-usbphy.h>
- 
- #include <asm/mach/arch.h>
- #include <asm/hardware/gic.h>
-@@ -18,9 +19,16 @@
- 
- #include <plat/cpu.h>
- #include <plat/regs-serial.h>
-+#include <plat/usb-phy.h>
- 
- #include "common.h"
- 
-+static struct samsung_usbphy_data exynos5_usbphy_pdata = {
-+	.pmu_isolation = s5p_usb_phy_pmu_isolation,
-+	.phy_cfg_sel = s5p_usb_phy_cfg_sel,
-+	.type = TYPE_HOST,
-+};
-+
- /*
-  * The following lookup table is used to override device names when devices
-  * are registered from device tree. This is temporarily added to enable
-@@ -72,6 +80,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
- 				"exynos-gsc.2", NULL),
- 	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
- 				"exynos-gsc.3", NULL),
-+	OF_DEV_AUXDATA("samsung,exynos5250-usbphy", EXYNOS5_PA_HSPHY,
-+					"s3c-usbphy", &exynos5_usbphy_pdata),
- 	{},
+ #define EHCI_INSNREG00(base)			(base + 0x90)
+ #define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
+@@ -32,6 +33,8 @@ struct s5p_ehci_hcd {
+ 	struct device *dev;
+ 	struct usb_hcd *hcd;
+ 	struct clk *clk;
++	struct usb_phy *phy;
++	struct s5p_ehci_platdata *pdata;
  };
  
-diff --git a/arch/arm/mach-exynos/setup-usb-phy.c b/arch/arm/mach-exynos/setup-usb-phy.c
-index 1c62d20..039d246 100644
---- a/arch/arm/mach-exynos/setup-usb-phy.c
-+++ b/arch/arm/mach-exynos/setup-usb-phy.c
-@@ -14,10 +14,14 @@
- #include <linux/err.h>
- #include <linux/io.h>
- #include <linux/platform_device.h>
-+#include <linux/platform_data/samsung-usbphy.h>
- #include <mach/regs-pmu.h>
- #include <mach/regs-usb-phy.h>
- #include <plat/cpu.h>
- #include <plat/usb-phy.h>
-+#include <plat/map-base.h>
-+
-+#define EXYNOS5_USB_CFG			(S3C_VA_SYS + (0x230))
+ static const struct hc_driver s5p_ehci_hc_driver = {
+@@ -65,6 +68,26 @@ static const struct hc_driver s5p_ehci_hc_driver = {
+ 	.clear_tt_buffer_complete	= ehci_clear_tt_buffer_complete,
+ };
  
- static atomic_t host_usage;
- 
-@@ -222,15 +226,40 @@ int s5p_usb_phy_exit(struct platform_device *pdev, int type)
- 	return -EINVAL;
- }
- 
--void s5p_usb_phy_pmu_isolation(int on)
-+void s5p_usb_phy_pmu_isolation(int on, int type)
- {
--	if (on) {
--		writel(readl(S5P_USBDEVICE_PHY_CONTROL)
--			& ~S5P_USBDEVICE_PHY_ENABLE,
--				S5P_USBDEVICE_PHY_CONTROL);
-+	if (type == TYPE_HOST) {
-+		if (on) {
-+			writel(readl(S5P_USBHOST_PHY_CONTROL)
-+				& ~S5P_USBHOST_PHY_ENABLE,
-+					S5P_USBHOST_PHY_CONTROL);
-+		} else {
-+			writel(readl(S5P_USBHOST_PHY_CONTROL)
-+				| S5P_USBHOST_PHY_ENABLE,
-+					S5P_USBHOST_PHY_CONTROL);
-+		}
- 	} else {
--		writel(readl(S5P_USBDEVICE_PHY_CONTROL)
--			| S5P_USBDEVICE_PHY_ENABLE,
--				S5P_USBDEVICE_PHY_CONTROL);
-+		if (on) {
-+			writel(readl(S5P_USBDEVICE_PHY_CONTROL)
-+				& ~S5P_USBDEVICE_PHY_ENABLE,
-+					S5P_USBDEVICE_PHY_CONTROL);
-+		} else {
-+			writel(readl(S5P_USBDEVICE_PHY_CONTROL)
-+				| S5P_USBDEVICE_PHY_ENABLE,
-+					S5P_USBDEVICE_PHY_CONTROL);
-+		}
- 	}
- }
-+
-+/* Switch between HOST or OTG link from PHY_CFG */
-+void s5p_usb_phy_cfg_sel(struct device *dev, int type)
++static void s5p_ehci_phy_enable(struct s5p_ehci_hcd *s5p_ehci)
 +{
-+	u32 is_host;
++	struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
 +
-+	is_host = readl(EXYNOS5_USB_CFG);
-+	writel(type, EXYNOS5_USB_CFG);
-+
-+	if (is_host != type)
-+		dev_dbg(dev, "Changed USB MUX from %s to %s",
-+			is_host ? "Host" : "Device", type ? "Host" : "Device");
++	if (s5p_ehci->phy)
++		usb_phy_init(s5p_ehci->phy);
++	else if (s5p_ehci->pdata->phy_init)
++		s5p_ehci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
 +}
-diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
-index 165ffe7..a57b8bb 100644
---- a/arch/arm/plat-samsung/include/plat/usb-phy.h
-+++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
-@@ -18,6 +18,7 @@ enum s5p_usb_phy_type {
++
++static void s5p_ehci_phy_disable(struct s5p_ehci_hcd *s5p_ehci)
++{
++	struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
++
++	if (s5p_ehci->phy)
++		usb_phy_shutdown(s5p_ehci->phy);
++	else if (s5p_ehci->pdata->phy_exit)
++		s5p_ehci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
++}
++
+ static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+ {
+ 	int err;
+@@ -92,15 +115,10 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 	struct usb_hcd *hcd;
+ 	struct ehci_hcd *ehci;
+ 	struct resource *res;
++	struct usb_phy *phy;
+ 	int irq;
+ 	int err;
  
- extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
- extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
--extern void s5p_usb_phy_pmu_isolation(int on);
-+extern void s5p_usb_phy_pmu_isolation(int on, int type);
-+extern void s5p_usb_phy_cfg_sel(struct device *dev, int type);
+-	pdata = pdev->dev.platform_data;
+-	if (!pdata) {
+-		dev_err(&pdev->dev, "No platform data defined\n");
+-		return -EINVAL;
+-	}
+-
+ 	/*
+ 	 * Right now device-tree probed devices don't get dma_mask set.
+ 	 * Since shared usb code relies on it, set it here for now.
+@@ -118,6 +136,20 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 	if (!s5p_ehci)
+ 		return -ENOMEM;
  
- #endif /* __PLAT_SAMSUNG_USB_PHY_H */
++	pdata = pdev->dev.platform_data;
++	if (!pdata) {
++		/* Fallback to Phy transceiver */
++		phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
++		if (IS_ERR_OR_NULL(phy)) {
++			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
++			return -EPROBE_DEFER;
++		} else {
++			s5p_ehci->phy = phy;
++		}
++	} else {
++		s5p_ehci->pdata = pdata;
++	}
++
+ 	s5p_ehci->dev = &pdev->dev;
+ 
+ 	hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
+@@ -163,8 +195,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 		goto fail_io;
+ 	}
+ 
+-	if (pdata->phy_init)
+-		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
++	s5p_ehci_phy_enable(s5p_ehci);
+ 
+ 	ehci = hcd_to_ehci(hcd);
+ 	ehci->caps = hcd->regs;
+@@ -184,6 +215,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+ 
+ fail_io:
+ 	clk_disable(s5p_ehci->clk);
++	s5p_ehci_phy_disable(s5p_ehci);
+ fail_clk:
+ 	usb_put_hcd(hcd);
+ 	return err;
+@@ -191,14 +223,12 @@ fail_clk:
+ 
+ static int __devexit s5p_ehci_remove(struct platform_device *pdev)
+ {
+-	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+ 	struct s5p_ehci_hcd *s5p_ehci = platform_get_drvdata(pdev);
+ 	struct usb_hcd *hcd = s5p_ehci->hcd;
+ 
+ 	usb_remove_hcd(hcd);
+ 
+-	if (pdata && pdata->phy_exit)
+-		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
++	s5p_ehci_phy_disable(s5p_ehci);
+ 
+ 	clk_disable(s5p_ehci->clk);
+ 
+@@ -222,14 +252,11 @@ static int s5p_ehci_suspend(struct device *dev)
+ 	struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
+ 	struct usb_hcd *hcd = s5p_ehci->hcd;
+ 	bool do_wakeup = device_may_wakeup(dev);
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+ 	int rc;
+ 
+ 	rc = ehci_suspend(hcd, do_wakeup);
+ 
+-	if (pdata && pdata->phy_exit)
+-		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
++	s5p_ehci_phy_disable(s5p_ehci);
+ 
+ 	clk_disable(s5p_ehci->clk);
+ 
+@@ -240,13 +267,10 @@ static int s5p_ehci_resume(struct device *dev)
+ {
+ 	struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
+ 	struct usb_hcd *hcd = s5p_ehci->hcd;
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+ 
+ 	clk_enable(s5p_ehci->clk);
+ 
+-	if (pdata && pdata->phy_init)
+-		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
++	s5p_ehci_phy_enable(s5p_ehci);
+ 
+ 	/* DMA burst Enable */
+ 	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
 -- 
 1.7.6.5
