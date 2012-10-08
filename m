@@ -1,91 +1,286 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4: Enable serial controllers on Origen and
- SMDKV310
-Date: Mon, 08 Oct 2012 15:12:48 +0200
-Message-ID: <1349701968-6675-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:30293 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752672Ab2JHNNE (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Oct 2012 09:13:04 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout4.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBK00ATUSP92640@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Oct 2012 22:13:02 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBK00L0NSPJMX60@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Oct 2012 22:13:02 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Florian Fainelli <florian@openwrt.org>
+Subject: [PATCH 15/32 v3] USB: ohci: merge ohci_finish_controller_resume with
+ ohci_resume
+Date: Mon,  8 Oct 2012 15:11:29 +0200
+Message-ID: <1349701906-16481-16-git-send-email-florian@openwrt.org>
+References: <1349701906-16481-1-git-send-email-florian@openwrt.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1349701906-16481-1-git-send-email-florian@openwrt.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: stern@rowland.harvard.edu
+Cc: Kukjin Kim <kgene.kim@samsung.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, Lennert Buytenhek <kernel@wantstofly.org>, linux-samsung-soc@vger.kernel.org, Ben Dooks <ben-linux@fluff.org>, linux-omap@vger.kernel.org, Florian Fainelli <florian@openwrt.org>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-This patch adds status override of serial nodes to enable used serial ports
-on Origen and SMDKV310 board.
+Merge ohci_finish_controller_resume with ohci_resume as suggested by Alan
+Stern. Since ohci_finish_controller_resume no longer exists, update the
+various OHCI drivers to call ohci_resume() instead. Some drivers used to set
+themselves the bit HCD_FLAG_HW_ACCESSIBLE, which is now handled by
+ohci_resume().
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+Acked-by: Jingoo Han <jg1.han@samsung.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@atmel.com>
+Signed-off-by: Florian Fainelli <florian@openwrt.org>
 ---
- arch/arm/boot/dts/exynos4210-origen.dts   | 16 ++++++++++++++++
- arch/arm/boot/dts/exynos4210-smdkv310.dts | 16 ++++++++++++++++
- 2 files changed, 32 insertions(+)
+Changes in v3:
+- rebased against greg's latest usb-next
 
-diff --git a/arch/arm/boot/dts/exynos4210-origen.dts b/arch/arm/boot/dts/exynos4210-origen.dts
-index d1a1101..c7295fb 100644
---- a/arch/arm/boot/dts/exynos4210-origen.dts
-+++ b/arch/arm/boot/dts/exynos4210-origen.dts
-@@ -57,6 +57,22 @@
- 		status = "okay";
- 	};
+Changes in v2:
+- added Nicolas and Jingoo's Acked-by
+
+ drivers/usb/host/ohci-at91.c     |    2 +-
+ drivers/usb/host/ohci-ep93xx.c   |    2 +-
+ drivers/usb/host/ohci-exynos.c   |    5 +----
+ drivers/usb/host/ohci-hcd.c      |   41 +++++++++++++++++++++++++++++++++++--
+ drivers/usb/host/ohci-hub.c      |   42 --------------------------------------
+ drivers/usb/host/ohci-omap.c     |    2 +-
+ drivers/usb/host/ohci-platform.c |    2 +-
+ drivers/usb/host/ohci-pxa27x.c   |    2 +-
+ drivers/usb/host/ohci-s3c2410.c  |    3 +--
+ drivers/usb/host/ohci-spear.c    |    2 +-
+ drivers/usb/host/ohci-tmio.c     |    2 +-
+ 11 files changed, 48 insertions(+), 57 deletions(-)
+
+diff --git a/drivers/usb/host/ohci-at91.c b/drivers/usb/host/ohci-at91.c
+index 0bf72f9..908d84a 100644
+--- a/drivers/usb/host/ohci-at91.c
++++ b/drivers/usb/host/ohci-at91.c
+@@ -705,7 +705,7 @@ static int ohci_hcd_at91_drv_resume(struct platform_device *pdev)
+ 	if (!clocked)
+ 		at91_start_clock();
  
-+	serial@13800000 {
-+		status = "okay";
-+	};
-+
-+	serial@13810000 {
-+		status = "okay";
-+	};
-+
-+	serial@13820000 {
-+		status = "okay";
-+	};
-+
-+	serial@13830000 {
-+		status = "okay";
-+	};
-+
- 	gpio_keys {
- 		compatible = "gpio-keys";
- 		#address-cells = <1>;
-diff --git a/arch/arm/boot/dts/exynos4210-smdkv310.dts b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-index b87cca2..f634907 100644
---- a/arch/arm/boot/dts/exynos4210-smdkv310.dts
-+++ b/arch/arm/boot/dts/exynos4210-smdkv310.dts
-@@ -43,6 +43,22 @@
- 		status = "okay";
- 	};
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 	return 0;
+ }
+ #else
+diff --git a/drivers/usb/host/ohci-ep93xx.c b/drivers/usb/host/ohci-ep93xx.c
+index dbfbd1d..a982f04 100644
+--- a/drivers/usb/host/ohci-ep93xx.c
++++ b/drivers/usb/host/ohci-ep93xx.c
+@@ -194,7 +194,7 @@ static int ohci_hcd_ep93xx_drv_resume(struct platform_device *pdev)
  
-+	serial@13800000 {
-+		status = "okay";
-+	};
+ 	ep93xx_start_hc(&pdev->dev);
+ 
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 	return 0;
+ }
+ #endif
+diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+index 20a5008..929a494 100644
+--- a/drivers/usb/host/ohci-exynos.c
++++ b/drivers/usb/host/ohci-exynos.c
+@@ -252,10 +252,7 @@ static int exynos_ohci_resume(struct device *dev)
+ 	if (pdata && pdata->phy_init)
+ 		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+ 
+-	/* Mark hardware accessible again as we are out of D3 state by now */
+-	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+-
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+index 31a4616..8e17f17 100644
+--- a/drivers/usb/host/ohci-hcd.c
++++ b/drivers/usb/host/ohci-hcd.c
+@@ -1007,13 +1007,50 @@ static int __maybe_unused ohci_suspend(struct usb_hcd *hcd, bool do_wakeup)
+ 
+ static int __maybe_unused ohci_resume(struct usb_hcd *hcd, bool hibernated)
+ {
++	struct ohci_hcd		*ohci = hcd_to_ohci(hcd);
++	int			port;
++	bool			need_reinit = false;
 +
-+	serial@13810000 {
-+		status = "okay";
-+	};
+ 	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+ 
+ 	/* Make sure resume from hibernation re-enumerates everything */
+ 	if (hibernated)
+-		ohci_usb_reset(hcd_to_ohci(hcd));
++		ohci_usb_reset(ohci);
 +
-+	serial@13820000 {
-+		status = "okay";
-+	};
++	/* See if the controller is already running or has been reset */
++	ohci->hc_control = ohci_readl(ohci, &ohci->regs->control);
++	if (ohci->hc_control & (OHCI_CTRL_IR | OHCI_SCHED_ENABLES)) {
++		need_reinit = true;
++	} else {
++		switch (ohci->hc_control & OHCI_CTRL_HCFS) {
++		case OHCI_USB_OPER:
++		case OHCI_USB_RESET:
++			need_reinit = true;
++		}
++	}
 +
-+	serial@13830000 {
-+		status = "okay";
-+	};
++	/* If needed, reinitialize and suspend the root hub */
++	if (need_reinit) {
++		spin_lock_irq(&ohci->lock);
++		ohci_rh_resume(ohci);
++		ohci_rh_suspend(ohci, 0);
++		spin_unlock_irq(&ohci->lock);
++	}
 +
- 	keypad@100A0000 {
- 		samsung,keypad-num-rows = <2>;
- 		samsung,keypad-num-columns = <8>;
++	/* Normally just turn on port power and enable interrupts */
++	else {
++		ohci_dbg(ohci, "powerup ports\n");
++		for (port = 0; port < ohci->num_ports; port++)
++			ohci_writel(ohci, RH_PS_PPS,
++					&ohci->regs->roothub.portstatus[port]);
++
++		ohci_writel(ohci, OHCI_INTR_MIE, &ohci->regs->intrenable);
++		ohci_readl(ohci, &ohci->regs->intrenable);
++		msleep(20);
++	}
++
++	usb_hcd_resume_root_hub(hcd);
+ 
+-	ohci_finish_controller_resume(hcd);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/host/ohci-hub.c b/drivers/usb/host/ohci-hub.c
+index 2f3619e..db09dae 100644
+--- a/drivers/usb/host/ohci-hub.c
++++ b/drivers/usb/host/ohci-hub.c
+@@ -316,48 +316,6 @@ static int ohci_bus_resume (struct usb_hcd *hcd)
+ 	return rc;
+ }
+ 
+-/* Carry out the final steps of resuming the controller device */
+-static void __maybe_unused ohci_finish_controller_resume(struct usb_hcd *hcd)
+-{
+-	struct ohci_hcd		*ohci = hcd_to_ohci(hcd);
+-	int			port;
+-	bool			need_reinit = false;
+-
+-	/* See if the controller is already running or has been reset */
+-	ohci->hc_control = ohci_readl(ohci, &ohci->regs->control);
+-	if (ohci->hc_control & (OHCI_CTRL_IR | OHCI_SCHED_ENABLES)) {
+-		need_reinit = true;
+-	} else {
+-		switch (ohci->hc_control & OHCI_CTRL_HCFS) {
+-		case OHCI_USB_OPER:
+-		case OHCI_USB_RESET:
+-			need_reinit = true;
+-		}
+-	}
+-
+-	/* If needed, reinitialize and suspend the root hub */
+-	if (need_reinit) {
+-		spin_lock_irq(&ohci->lock);
+-		ohci_rh_resume(ohci);
+-		ohci_rh_suspend(ohci, 0);
+-		spin_unlock_irq(&ohci->lock);
+-	}
+-
+-	/* Normally just turn on port power and enable interrupts */
+-	else {
+-		ohci_dbg(ohci, "powerup ports\n");
+-		for (port = 0; port < ohci->num_ports; port++)
+-			ohci_writel(ohci, RH_PS_PPS,
+-					&ohci->regs->roothub.portstatus[port]);
+-
+-		ohci_writel(ohci, OHCI_INTR_MIE, &ohci->regs->intrenable);
+-		ohci_readl(ohci, &ohci->regs->intrenable);
+-		msleep(20);
+-	}
+-
+-	usb_hcd_resume_root_hub(hcd);
+-}
+-
+ /* Carry out polling-, autostop-, and autoresume-related state changes */
+ static int ohci_root_hub_state_changes(struct ohci_hcd *ohci, int changed,
+ 		int any_connected, int rhsc_status)
+diff --git a/drivers/usb/host/ohci-omap.c b/drivers/usb/host/ohci-omap.c
+index 4531d03..733c77c 100644
+--- a/drivers/usb/host/ohci-omap.c
++++ b/drivers/usb/host/ohci-omap.c
+@@ -530,7 +530,7 @@ static int ohci_omap_resume(struct platform_device *dev)
+ 	ohci->next_statechange = jiffies;
+ 
+ 	omap_ohci_clock_power(1);
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/host/ohci-platform.c b/drivers/usb/host/ohci-platform.c
+index 1caaf65..99d1755 100644
+--- a/drivers/usb/host/ohci-platform.c
++++ b/drivers/usb/host/ohci-platform.c
+@@ -203,7 +203,7 @@ static int ohci_platform_resume(struct device *dev)
+ 			return err;
+ 	}
+ 
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/host/ohci-pxa27x.c b/drivers/usb/host/ohci-pxa27x.c
+index 2bf1144..156d289 100644
+--- a/drivers/usb/host/ohci-pxa27x.c
++++ b/drivers/usb/host/ohci-pxa27x.c
+@@ -591,7 +591,7 @@ static int ohci_hcd_pxa27x_drv_resume(struct device *dev)
+ 	/* Select Power Management Mode */
+ 	pxa27x_ohci_select_pmm(ohci, inf->port_mode);
+ 
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 	return 0;
+ }
+ 
+diff --git a/drivers/usb/host/ohci-s3c2410.c b/drivers/usb/host/ohci-s3c2410.c
+index 0d2309c..281d5c6 100644
+--- a/drivers/usb/host/ohci-s3c2410.c
++++ b/drivers/usb/host/ohci-s3c2410.c
+@@ -524,8 +524,7 @@ static int ohci_hcd_s3c2410_drv_resume(struct device *dev)
+ 
+ 	s3c2410_start_hc(pdev, hcd);
+ 
+-	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 
+ 	return 0;
+ }
+diff --git a/drivers/usb/host/ohci-spear.c b/drivers/usb/host/ohci-spear.c
+index fc7305e..d607be3 100644
+--- a/drivers/usb/host/ohci-spear.c
++++ b/drivers/usb/host/ohci-spear.c
+@@ -231,7 +231,7 @@ static int spear_ohci_hcd_drv_resume(struct platform_device *dev)
+ 	ohci->next_statechange = jiffies;
+ 
+ 	spear_start_ohci(ohci_p);
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 	return 0;
+ }
+ #endif
+diff --git a/drivers/usb/host/ohci-tmio.c b/drivers/usb/host/ohci-tmio.c
+index 60c2b07..2c9ab8f 100644
+--- a/drivers/usb/host/ohci-tmio.c
++++ b/drivers/usb/host/ohci-tmio.c
+@@ -352,7 +352,7 @@ static int ohci_hcd_tmio_drv_resume(struct platform_device *dev)
+ 
+ 	spin_unlock_irqrestore(&tmio->lock, flags);
+ 
+-	ohci_finish_controller_resume(hcd);
++	ohci_resume(hcd, false);
+ 
+ 	return 0;
+ }
 -- 
-1.7.12
+1.7.9.5
