@@ -1,45 +1,50 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH] ARM: dts: exynos4: Enable serial controllers on Origen and
- SMDKV310
-Date: Mon, 08 Oct 2012 15:15:04 +0200
-Message-ID: <1587144.mixS1B3zoJ@amdc1227>
-References: <1349701968-6675-1-git-send-email-t.figa@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-reply-to: <1349701968-6675-1-git-send-email-t.figa@samsung.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: kgene.kim@samsung.com
-Cc: kyungmin.park@samsung.com, linux-samsung-soc@vger.kernel.org, tomasz.figa@gmail.com, linux-arm-kernel@lists.infradead.org, m.szyprowski@samsung.com
+From: Vivek Gautam <gautam.vivek@samsung.com>
+Subject: [PATCH 0/5] Adding usb2.0 host-phy support for exynos5250
+Date: Mon, 08 Oct 2012 19:42:23 +0530
+Message-ID: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout1.samsung.com ([203.254.224.24]:26639 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752967Ab2JHOIE (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Mon, 8 Oct 2012 10:08:04 -0400
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com, yulgon.kim@samsung.com
 
-Hi Kgene,
+This patchset is based on the work by Praveen Paneri for
+samsung-usbphy driver:
+http://comments.gmane.org/gmane.linux.kernel.samsung-soc/12653
 
-On Monday 08 of October 2012 15:12:48 Tomasz Figa wrote:
-> This patch adds status override of serial nodes to enable used serial
-> ports on Origen and SMDKV310 board.
-> 
-> Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos4210-origen.dts   | 16 ++++++++++++++++
->  arch/arm/boot/dts/exynos4210-smdkv310.dts | 16 ++++++++++++++++
->  2 files changed, 32 insertions(+)
-> 
+Tested on smdk5250 target with usb-next branch along with
+arch patches for exynos5250:
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13042
+http://thread.gmane.org/gmane.linux.kernel.samsung-soc/13048
 
-I think you missed this patch when applying Exynos dts reorganization 
-patches. It is needed to enable serial ports on Origen and SMDKV310 boards. 
-Could you apply it as well?
+Also tested successfully on smdkv310 for any break.
 
-Best regards,
+Vivek Gautam (5):
+  usb: phy: samsung: Add host phy support to samsung-phy driver
+  ARM: S3C64XX: Add phy_type to pmu_isolation
+  ARM: Exynos5250: Enabling samsung-usbphy driver
+  usb: s5p-ehci: Adding phy driver support
+  usb: exynos-ohci: Adding phy driver support
+
+ .../devicetree/bindings/usb/samsung-usbphy.txt     |   12 +-
+ arch/arm/boot/dts/exynos5250.dtsi                  |    5 +
+ arch/arm/mach-exynos/Kconfig                       |    1 +
+ arch/arm/mach-exynos/include/mach/map.h            |    1 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c             |   10 +
+ arch/arm/mach-exynos/setup-usb-phy.c               |   45 ++-
+ arch/arm/mach-s3c64xx/setup-usb-phy.c              |    2 +-
+ arch/arm/plat-samsung/include/plat/usb-phy.h       |    3 +-
+ drivers/usb/host/ehci-s5p.c                        |   62 +++-
+ drivers/usb/host/ohci-exynos.c                     |   62 +++-
+ drivers/usb/phy/Kconfig                            |    1 -
+ drivers/usb/phy/samsung-usbphy.c                   |  362 ++++++++++++++++++--
+ include/linux/platform_data/samsung-usbphy.h       |    9 +-
+ 13 files changed, 497 insertions(+), 78 deletions(-)
+
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
+1.7.6.5
