@@ -1,78 +1,116 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH v2 2/5] clk: exynos4: register clocks using common clock
- framework
-Date: Mon, 08 Oct 2012 09:54:31 +0200
-Message-ID: <3056568.RZOfOW29pM@amdc1227>
-References: <1349629855-4962-1-git-send-email-thomas.abraham@linaro.org>
- <1349629855-4962-3-git-send-email-thomas.abraham@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
+Subject: [PATCH 00/16] pinctrl: samsung: Usability and extensibiltiy
+ improvements
+Date: Mon, 08 Oct 2012 10:39:00 +0200
+Message-ID: <1349685556-23718-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:47735 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753852Ab2JHHyn (ORCPT
+Received: from mailout1.samsung.com ([203.254.224.24]:51326 "EHLO
+	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753971Ab2JHIj3 (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Oct 2012 03:54:43 -0400
+	Mon, 8 Oct 2012 04:39:29 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout4.samsung.com
+ by mailout1.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBK009HVDYI7YU0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Oct 2012 16:54:41 +0900 (KST)
-Received: from amdc1227.localnet ([106.116.147.199])
+ 17 2011)) with ESMTP id <0MBK000XRFYO1XW0@mailout1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Oct 2012 17:39:28 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBK007AYDYY6P70@mmp2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Mon, 08 Oct 2012 16:54:41 +0900 (KST)
-In-reply-to: <1349629855-4962-3-git-send-email-thomas.abraham@linaro.org>
+ with ESMTPA id <0MBK0094QG1I1U90@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Mon, 08 Oct 2012 17:39:27 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, sylvester.nawrocki@gmail.com, mturquette@ti.com, mturquette@linaro.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-Hi Thomas,
+This patch series is a work on improving usability and extensibiltiy of the
+pinctrl-samsung driver. It consists of three main parts:
+ - moving SoC-specific data to device tree
+ - converting the driver to use one GPIO chip and one IRQ domain per pin bank
+ - introducing generic wake-up interrupt capability description
 
-The whole series looks much better now. Although there is still one more 
-thing from my comments to previous version unresolved, see the inline 
-comment.
+What the first part does is replacing static platform-specific data in
+pinctrl-samsung driver with data dynamically parsed from device tree.
 
-On Monday 08 of October 2012 02:10:52 Thomas Abraham wrote:
-> For legacy Exynos4 platforms, the available clocks are statically
-> listed and then registered using the common clock framework. On device
-> tree enabled exynos platfotms, the device tree is searched and all
-> clock nodes found are registered. Support for Exynos4210 and
-> Exynos4x12 platforms is included.
-> 
-> Cc: Mike Turquette <mturquette@ti.com>
-> Cc: Kukjin Kim <kgene.kim@samsung.com>
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
-> ---
->  drivers/clk/samsung/Makefile      |    1 +
->  drivers/clk/samsung/clk-exynos4.c |  647
-> +++++++++++++++++++++++++++++++++++++ 2 files changed, 648
-> insertions(+), 0 deletions(-)
->  create mode 100644 drivers/clk/samsung/clk-exynos4.c
-> 
-[snip]
-> +			EXYNOS4_CLKSRC_MASK_CAM, 28, "sclk_csis"),
-> +	GATECLK(NULL, "sclk_cam0", "div_cam0", 0,
-> +			EXYNOS4_CLKSRC_MASK_CAM, 16, NULL),
-> +	GATECLK(NULL, "sclk_cam1", "div_cam1", 0,
-> +			EXYNOS4_CLKSRC_MASK_CAM, 20, NULL),
-> +	GATECLK("exynos4-fimc.0", "sclk_fimc", "div_fimc0", 0,
-> +			EXYNOS4_CLKSRC_MASK_CAM, 0, "sclk_fimc"),
-> +	GATECLK("exynos4-fimc.1", "sclk_fimc", "div_fimc1", 0,
-> +			EXYNOS4_CLKSRC_MASK_CAM, 4, "sclk_fimc"),
-> +	GATECLK("exynos4-fimc.2", "sclk_fimc", "div_fimc2", 0,
-> +			EXYNOS4_CLKSRC_MASK_CAM, 8, "sclk_fimc"),
-> +	GATECLK("exynos4-fimc.3", "sclk_fimc", "div_fimc3", 0,
-> +			EXYNOS4_CLKSRC_MASK_CAM, 12, "sclk_fimc"),
+It aims at reducing the SoC-specific part of the driver and thus the
+amount of modifications to driver sources when adding support for next
+SoCs (like Exynos4x12).
 
-You cannot register more than one clock with the same platform name 
-(sclk_fimc). Shouldn't these names be appended with an index, just like 
-with div_fimc{0,1,2,3}?
+In addition, it extends the description of SoC-specific attributes to cover all
+mainlined Samsung SoCs, starting from s3c24xx and ending on latest Exynos5
+series, with the exception of 4-bit banks with more than 8 pins on S3C64xx,
+which will be covered by futher patch(es).
 
-Best regards,
+The second part attempts to simplify usage of the driver and fix several
+problems of current implementation, in particular:
+
+  - Simplifies GPIO pin specification in device tree by using pin
+    namespace local to pin bank instead of local to pin controller, e.g.
+
+        gpios = <&gpj0 3 0>;
+
+    instead of
+
+        gpios = <&pinctrl0 115 0>;
+
+  - Simplifies GPIO interrupt specification in device tree by using
+    namespace local to pin bank (and equal to GPIO namespace), e.g.
+
+        interrupt-parent = <&gpj0>;
+        interrupts = <3 0>;
+
+    instead of
+
+        interrupt-parent = <&pinctrl0>;
+        interrupts = <115 0>;
+
+  - Simplifies internal GPIO pin to bank translation thanks to
+    correspondence of particular GPIO chips to pin banks. This allows
+    to remove the (costly in case of GPIO bit-banging drivers) lookup
+    over all banks to find the one that the pin is from.
+
+Third part is focused on removing the static, hard-coded description of wake-up
+interrupt controller and wake-up interrupt layout.
+
+It defines a (mostly) generic (in scope of targetted SoCs) wake-up interrupt
+layout specification format that allows to specify which pin banks support
+wake-up interrupts and how they are handled (direct or multiplexed/chained).
+
+See particular patches for more detailed descriptions and the last patch for
+updated device tree bindings.
+
+Tomasz Figa (16):
+  ARM: dts: exynos4210: Replace legacy GPIO bank nodes with pinctrl
+    bank nodes
+  pinctrl: exynos: Parse wakeup-eint parameters from DT
+  pinctrl: samsung: Detect and handle unsupported configuration types
+  pinctrl: samsung: Parse pin banks from DT
+  pinctrl: exynos: Remove static SoC-specific data
+  pinctrl: samsung: Parse bank-specific eint offset from DT
+  pinctrl: samsung: Hold OF node of pin bank in bank struct
+  pinctrl: samsung: Hold pointer to driver data in bank struct
+  pinctrl: exynos: Use one IRQ domain per pin bank
+  pinctrl: samsung: Do not pass gpio_chip to pin_to_reg_bank
+  pinctrl: samsung: Use one GPIO chip per pin bank
+  pinctrl: samsung: Use per-bank IRQ domain for wake-up interrupts
+  pinctrl: exynos: Set pin function to EINT in irq_set_type of wake-up
+    EINT
+  pinctrl: samsung: Parse offsets of particular registers from DT
+  pinctrl: samsung: Add GPIO to IRQ translation
+  Documentation: Update samsung-pinctrl device tree bindings
+    documentation
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 212 ++++++++--
+ arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi    | 459 +++++++++++++++++++++
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi          |   2 +
+ arch/arm/boot/dts/exynos4210.dtsi                  | 254 +-----------
+ drivers/pinctrl/pinctrl-exynos.c                   | 399 ++++++++----------
+ drivers/pinctrl/pinctrl-exynos.h                   | 184 +--------
+ drivers/pinctrl/pinctrl-samsung.c                  | 392 ++++++++++++++----
+ drivers/pinctrl/pinctrl-samsung.h                  |  87 ++--
+ 8 files changed, 1205 insertions(+), 784 deletions(-)
+ create mode 100644 arch/arm/boot/dts/exynos4210-pinctrl-banks.dtsi
+
 -- 
-Tomasz Figa
-Samsung Poland R&D Center
+1.7.12
