@@ -1,49 +1,38 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 2/2] ARM: Exynos4: Register clocks via common clock
- framework
-Date: Mon, 08 Oct 2012 09:31:16 +0200
-Message-ID: <1888016.dshEnlClG6@amdc1227>
-References: <1349093361-18820-1-git-send-email-thomas.abraham@linaro.org>
- <2552746.GKROWAIKW8@amdc1227>
- <CAJuYYwQCPOFMnQrA-n42hQFtK3TXQtJSjkQZmVgh_4pqnMi8iw@mail.gmail.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH] ARM: sort select statements alphanumerically
+Date: Mon, 8 Oct 2012 08:53:08 +0100
+Message-ID: <20121008075308.GF28061@n2100.arm.linux.org.uk>
+References: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
+ <CAMPhdO-SuJwz4uN=1sQWtr3WOn656_M9iEGkMDjtOKTrsMUDpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:36063 "EHLO
-	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753750Ab2JHHbW (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Mon, 8 Oct 2012 03:31:22 -0400
-In-reply-to: <CAJuYYwQCPOFMnQrA-n42hQFtK3TXQtJSjkQZmVgh_4pqnMi8iw@mail.gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <CAMPhdO-SuJwz4uN=1sQWtr3WOn656_M9iEGkMDjtOKTrsMUDpg@mail.gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Eric Miao <eric.y.miao@gmail.com>
+Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Nicolas Ferre <nicolas.ferre@atmel.com>, Daniel Walker <dwalker@fifo99.com>, Kevin Hilman <khilman@ti.com>, linux-samsung-soc@vger.kernel.org, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Magnus Damm <magnus.damm@gmail.com>, David Brown <davidb@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alessandro Rubini <rubini@unipv.it>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, Sekhar Nori <nsekhar@ti.com>, Shiraz Hashim <shiraz.hashim@st.com>, Kukjin Kim <kgene.kim@samsung.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Ben Dooks <ben-linux@fluff.org>, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Andrew Victor <linux@maxim.org.za>, linux-arm-kern
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: chander.kashyap@linaro.org, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, mturquette@linaro.org, mturquette@ti.com, linux-kernel@vger.kernel.org
 
-On Monday 08 of October 2012 12:04:18 Thomas Abraham wrote:
-> Hi Tomasz,
-> 
-> On 3 October 2012 19:40, Tomasz Figa <t.figa@samsung.com> wrote:
-> > Hi Chander, Thomas,
-> > 
-> > I can see one more problem here.
-> > 
-> > Based on the fact that sdhci-s3c driver receives only the endpoint gate
-> > clock (hsmmc), doesn't the following setup make the driver unable to
-> > change the frequency of this clock?
-> 
-> The driver never changes the clock frequency of the core system clocks
-> nor of the endpoint. There are internal dividers inside the sdhci
-> controller which are divide to acheive required clock speed.
+On Mon, Oct 08, 2012 at 10:50:00AM +0800, Eric Miao wrote:
+> BTW, maybe we also need to sort the ARCH_XXX in alphanumeric order, so
+> new ARCH will find a better place to live?
 
-What is the use of sdhci_cmu_set_clock (which calls clk_set_rate) in sdhci-
-s3c, then?
+They should be sorted according to option text already - this is to
+allow people using the configuration tool to easily find the right
+option to select in that long list.  That's something I did well
+before arm-soc.
 
-I think you are missing CLK_SET_RATE_PARENT flags in clocks of which rate 
-can be changed by the driver.
+It looks pretty good at the moment, except for the following two:
 
-Best regards,
--- 
-Tomasz Figa
-Samsung Poland R&D Center
+        bool "Cavium Networks CNS3XXX family"
+        bool "NXP LPC32XX"
