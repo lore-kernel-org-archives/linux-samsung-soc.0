@@ -1,126 +1,141 @@
-From: Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH] ARM: sort select statements alphanumerically
-Date: Tue, 9 Oct 2012 14:18:25 +0800
-Message-ID: <CAGsJ_4zi1GNOAVW3dVrwHkjQEWrVTkNvpiq1R-=GVvN5VC-weA@mail.gmail.com>
-References: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 1/2] ARM: Exynos5250: Enabling ehci-s5p driver
+Date: Tue, 09 Oct 2012 17:27:49 +0900
+Message-ID: <003801cda5f7$f7fd9a30$e7f8ce90$%han@samsung.com>
+References: <1349431818-15639-1-git-send-email-gautam.vivek@samsung.com>
+ <1349431818-15639-2-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: linux-arm-kernel-bounces@lists.infradead.org
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Daniel Walker <dwalker@fifo99.com>, Kevin Hilman <khilman@ti.com>, linux-samsung-soc@vger.kernel.org, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Magnus Damm <magnus.damm@gmail.com>, David Brown <davidb@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alessandro Rubini <rubini@unipv.it>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, Haojian Zhuang <haojian.zhuang@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Kukjin Kim <kgene.kim@samsung.com>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Ben Dooks <ben-linux@fluff.org>, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Andrew Victor <linux@maxim.org.za>linux
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:53393 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752970Ab2JII1v (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Oct 2012 04:27:51 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout4.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBM00B7ZA3VXYI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Oct 2012 17:27:50 +0900 (KST)
+Received: from DOJG1HAN02 ([12.23.120.99])
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBM006BXA6DW140@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Oct 2012 17:27:50 +0900 (KST)
+In-reply-to: <1349431818-15639-2-git-send-email-gautam.vivek@samsung.com>
+Content-language: ko
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-samsung-soc@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
-2012/10/7 Russell King <rmk+kernel@arm.linux.org.uk>:
-> As suggested by Andrew Morton:
->
->   This is a pet peeve of mine.  Any time there's a long list of items
->   (header file inclusions, kconfig entries, array initalisers, etc) and
->   someone wants to add a new item, they *always* go and stick it at the
->   end of the list.
->   ...
->   Guys, don't do this.  Either put the new item into a randomly-chosen
->   position or, probably better, alphanumerically sort the list.
->
->   For this reason it looks like approximately 0% of the patchset will
->   apply, sorry.
->
-> lets sort all our select statements alphanumerically.  This commit was
-> created by the following script:
->
-> #!/usr/bin/perl
-> while (<>) {
->         while (/\\\s*$/) {
->                 $_ .= <>;
->         }
->         undef %selects if /^\s*config\s+/;
->         if (/^\s+select\s+(\w+).*/) {
->                 if (defined($selects{$1})) {
->                         if ($selects{$1} eq $_) {
->                                 print STDERR "Warning: removing duplicated $1 entry\n";
->                         } else {
->                                 print STDERR "Error: $1 differently selected\n".
->                                         "\tOld: $selects{$1}\n".
->                                         "\tNew: $_\n";
->                                 exit 1;
->                         }
->                 }
->                 $selects{$1} = $_;
->                 next;
->         }
->         if (%selects and (/^\s*$/ or /^\s+help/)) {
->                 foreach $k (sort (keys %selects)) {
->                         print "$selects{$k}";
->                 }
->                 undef %selects;
->         }
->         print;
-> }
-> if (%selects) {
->         foreach $k (sort (keys %selects)) {
->                 print "$selects{$k}";
->         }
-> }
->
-> It found two duplicates:
->
-> Warning: removing duplicated S5P_SETUP_MIPIPHY entry
-> Warning: removing duplicated HARDIRQS_SW_RESEND entry
->
-> and they are identical duplicates, hence the shrinkage in the diffstat
-> of two lines.
->
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+On Friday, October 05, 2012 7:10 PM Vivek Gautam wrote
+> 
+> Adding EHCI device tree node for Exynos5250 along with
+> the device base adress and gpio line for vbus.
+> 
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 
-Changes in CSR prima2 arch look fine,
+It looks good. Also I have tested this patch with Exynos5250.
 
-Acked-by: Barry Song <Baohua.Song@csr.com>
-
-BTW, i have a bundle of patches coming for new Marco platform which
-will also change the Kconfig.
+Acked-by: Jingoo Han <jg1.han@samsung.com>
 
 > ---
-> This commit is likely to change as we get closer to the end of the merge
-> window, as other changes get merged into Linus' tree.  I will be refreshing
-> this from time to time, and keeping it out of linux-next, as it will cause
-> more pain than its worth to put it into linux-next.
->
-> Anyone who wants to give this a review to check that it's correct are welcome,
-> but I don't think it would be appropriate to collect attributation tags for
-> it, as this won't be the final patch.
->
-> This patch is intentionally broken to prevent Linus from applying it - this
-> is information only!
->
-> Anyone who wants to apply it can do so by first running this patch through:
->
->         sed 's/^-- /@@ /'
->
->  arch/arm/Kconfig                  |  399 ++++++++++++++++++-------------------
->  arch/arm/common/Kconfig           |    4 +-
->  arch/arm/mach-at91/Kconfig        |   26 ++--
->  arch/arm/mach-clps711x/Kconfig    |    4 +-
->  arch/arm/mach-davinci/Kconfig     |   16 +-
->  arch/arm/mach-exynos/Kconfig      |  181 +++++++++---------
->  arch/arm/mach-footbridge/Kconfig  |    8 +-
->  arch/arm/mach-h720x/Kconfig       |    2 +-
->  arch/arm/mach-imx/Kconfig         |  120 ++++++------
->  arch/arm/mach-ixp4xx/Kconfig      |    2 +-
->  arch/arm/mach-mmp/Kconfig         |    6 +-
->  arch/arm/mach-msm/Kconfig         |   28 ++--
->  arch/arm/mach-nomadik/Kconfig     |    4 +-
->  arch/arm/mach-omap1/Kconfig       |    8 +-
->  arch/arm/mach-omap2/Kconfig       |   68 +++---
->  arch/arm/mach-prima2/Kconfig      |    2 +-
-
--barry
+>  .../devicetree/bindings/usb/exynos-usb.txt         |   25 ++++++++++++++++++++
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts          |    4 +++
+>  arch/arm/boot/dts/exynos5250.dtsi                  |    6 ++++
+>  arch/arm/mach-exynos/include/mach/map.h            |    1 +
+>  arch/arm/mach-exynos/mach-exynos5-dt.c             |    2 +
+>  5 files changed, 38 insertions(+), 0 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/usb/exynos-usb.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> new file mode 100644
+> index 0000000..56e35c7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/usb/exynos-usb.txt
+> @@ -0,0 +1,25 @@
+> +Samsung Exynos SoC USB controller
+> +
+> +The USB devices interface with USB controllers on Exynos SOCs.
+> +The device node has following properties.
+> +
+> +EHCI
+> +Required properties:
+> + - compatible: should be "samsung,exynos-ehci" for USB 2.0
+> +   EHCI controller in host mode.
+> + - reg: physical base address of the controller and length of memory mapped
+> +   region.
+> + - interrupts: interrupt number to the cpu.
+> +
+> +Optional properties:
+> + - samsung,vbus-gpio:  if present, specifies the GPIO that
+> +   needs to be pulled up for the bus to be powered.
+> +
+> +Example:
+> +
+> +	ehci {
+> +		compatible = "samsung,exynos-ehci";
+> +		reg = <0x12110000 0x100>;
+> +		interrupts = <0 71 0>;
+> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+> +	};
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index a352df4..089576b 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -166,4 +166,8 @@
+>  	spi_2: spi@12d40000 {
+>  		status = "disabled";
+>  	};
+> +
+> +	ehci {
+> +		samsung,vbus-gpio = <&gpx2 6 1 3 3>;
+> +	};
+>  };
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index dddfd6e..73ea844 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -218,6 +218,12 @@
+>  		#size-cells = <0>;
+>  	};
+> 
+> +	ehci {
+> +		compatible = "samsung,exynos-ehci";
+> +		reg = <0x12110000 0x100>;
+> +		interrupts = <0 71 0>;
+> +	};
+> +
+>  	amba {
+>  		#address-cells = <1>;
+>  		#size-cells = <1>;
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index 8480849..825fe40 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -195,6 +195,7 @@
+>  #define EXYNOS4_PA_EHCI			0x12580000
+>  #define EXYNOS4_PA_OHCI			0x12590000
+>  #define EXYNOS4_PA_HSPHY		0x125B0000
+> +#define EXYNOS5_PA_EHCI			0x12110000
+>  #define EXYNOS4_PA_MFC			0x13400000
+> 
+>  #define EXYNOS4_PA_UART			0x13800000
+> diff --git a/arch/arm/mach-exynos/mach-exynos5-dt.c b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> index fee9dcd..6d950d7b 100644
+> --- a/arch/arm/mach-exynos/mach-exynos5-dt.c
+> +++ b/arch/arm/mach-exynos/mach-exynos5-dt.c
+> @@ -72,6 +72,8 @@ static const struct of_dev_auxdata exynos5250_auxdata_lookup[] __initconst = {
+>  				"exynos-gsc.2", NULL),
+>  	OF_DEV_AUXDATA("samsung,exynos5-gsc", EXYNOS5_PA_GSC3,
+>  				"exynos-gsc.3", NULL),
+> +	OF_DEV_AUXDATA("samsung,exynos-ehci", EXYNOS5_PA_EHCI,
+> +					"s5p-ehci", NULL),
+>  	{},
+>  };
+> 
+> --
+> 1.7.6.5
