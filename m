@@ -1,56 +1,84 @@
-From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH] ARM: dts: exynos4210-trats: Split memory into 4 sections
-Date: Tue, 09 Oct 2012 12:39:59 +0200
-Message-ID: <1349779199-30665-1-git-send-email-t.figa@samsung.com>
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:30478 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1750780Ab2JIKkM (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Oct 2012 06:40:12 -0400
-Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
- by mailout2.samsung.com
- (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBM0099QGAUENL0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Oct 2012 19:40:10 +0900 (KST)
-Received: from mcdsrvbld02.digital.local ([106.116.37.23])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
- (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBM00HNLGAPB390@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Tue, 09 Oct 2012 19:40:10 +0900 (KST)
-Sender: linux-samsung-soc-owner@vger.kernel.org
+From: Vivek Gautam <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/5] ARM: S3C64XX: Add phy_type to pmu_isolation
+Date: Tue, 9 Oct 2012 16:21:20 +0530
+Message-ID: <CAFp+6iE6Er088dYwp8q7uQuZhw9bdYbJXQDbJp66W6tD7+C-Xw@mail.gmail.com>
+References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
+	<1349705548-15207-3-git-send-email-gautam.vivek@samsung.com>
+	<5073B743.9000200@ti.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5073B743.9000200-l0cyMroinI0@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: kishon <kishon-l0cyMroinI0@public.gmane.org>
+Cc: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-Since the maximum section size on mach-exynos is set to 256MiB, boards
-with memory configuration defined using sections bigger than 256MiB will
-fail to boot with a kernel panic.
+Hi Kishon,
 
-This patch modifies the dts file of Samsung Trats board to define four
-sections of 256MiB instead of two of 512MiB to fix the boot problem.
+Firstly, thanks for the quick review.
 
-Signed-off-by: Tomasz Figa <t.figa@samsung.com>
----
- arch/arm/boot/dts/exynos4210-trats.dts | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+On Tue, Oct 9, 2012 at 11:03 AM, kishon <kishon-l0cyMroinI0@public.gmane.org> wrote:
+> Hi,
+>
+>
+> On Monday 08 October 2012 07:42 PM, Vivek Gautam wrote:
+>>
+>> It adds 'type' argument to pmu_isolation function, aligning
+>> with other platforms, which keeps track of usbphy_type.
+>>
+>> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+>> ---
+>>   arch/arm/mach-s3c64xx/setup-usb-phy.c |    2 +-
+>>   1 files changed, 1 insertions(+), 1 deletions(-)
+>>
+>> diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c
+>> b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+>> index 3aee778..b7d1d95 100644
+>> --- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
+>> +++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
+>> @@ -13,7 +13,7 @@
+>>   #include <mach/map.h>
+>>   #include <mach/regs-sys.h>
+>>
+>> -void s5p_usb_phy_pmu_isolation(int on)
+>> +void s5p_usb_phy_pmu_isolation(int on, int type)
+>
+>
+> IMO, this patch should have been squashed with the previous patch. IIUC, you
+> have changed the call to this function for taking two arguments in your
+> previous patch. Wouldn't that introduce compilation break after applying
+> your first patch?
+Yes, that's right it will introduce compilation break, my fault.
+Just one querry, will it be good to put this arch change in [patch 1/5]?
+and then can i move similar change in [patch 3/5] as given below again
+in [patch 1/5]?
 
-diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
-index 73567b8..a21511c 100644
---- a/arch/arm/boot/dts/exynos4210-trats.dts
-+++ b/arch/arm/boot/dts/exynos4210-trats.dts
-@@ -20,8 +20,10 @@
- 	compatible = "samsung,trats", "samsung,exynos4210";
- 
- 	memory {
--		reg =  <0x40000000 0x20000000
--			0x60000000 0x20000000>;
-+		reg =  <0x40000000 0x10000000
-+			0x50000000 0x10000000
-+			0x60000000 0x10000000
-+			0x70000000 0x10000000>;
- 	};
- 
- 	chosen {
--- 
-1.7.12
+diff --git a/arch/arm/mach-exynos/setup-usb-phy.c
+b/arch/arm/mach-exynos/setup-usb-phy.c
+index 1c62d20..039d246 100644
+--- a/arch/arm/mach-exynos/setup-usb-phy.c
++++ b/arch/arm/mach-exynos/setup-usb-phy.c
+@@ -222,15 +226,40 @@ int s5p_usb_phy_exit(struct platform_device
+*pdev, int type)
+        return -EINVAL;
+ }
+
+-void s5p_usb_phy_pmu_isolation(int on)
++void s5p_usb_phy_pmu_isolation(int on, int type)
+
+>
+> Thanks
+> Kishon
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Best regards
+Vivek
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
