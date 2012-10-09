@@ -1,84 +1,176 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: [PATCH v2 0/8]  ARM: mostly harmless gcc warnings
-Date: Tue,  9 Oct 2012 22:13:50 +0200
-Message-ID: <1349813638-4617-1-git-send-email-arnd@arndb.de>
+From: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Subject: Re: [PATCH V4 2/2] video: exynos_dp: device tree documentation
+Date: Tue, 09 Oct 2012 23:29:11 +0200
+Message-ID: <50749727.1020103@gmail.com>
+References: <1349824101-32574-1-git-send-email-ajaykumar.rs@samsung.com> <1349824101-32574-3-git-send-email-ajaykumar.rs@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
-Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
-List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
-	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
-Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dominik Brodowski <linux-X3ehHDuj6sIIGcDfoQAp7OTW4wlIGRCZ@public.gmane.org>, Pavel Machek <pavel-AlSwsSmVLrQ@public.gmane.org>, Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Tobias Schandinat <FlorianSchandinat-Mmb7MZpHnFY@public.gmane.org>, Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>, "James E.J. Bottomley" <JBottomley-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-pcmcia-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pekka Enberg <penberg-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-bk0-f46.google.com ([209.85.214.46]:35323 "EHLO
+	mail-bk0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753278Ab2JIV3Q (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Oct 2012 17:29:16 -0400
+In-Reply-To: <1349824101-32574-3-git-send-email-ajaykumar.rs@samsung.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Ajay Kumar <ajaykumar.rs@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org, FlorianSchandinat@gmx.de, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, thomas.ab@samsung.com
 
-Most patches from the first time this was posted have been
-adopted by a subsystem maintainer or were show to be obsolete.
-Here are the remaining ones again.
+Hi Ajay,
 
-I'm planning to submit those patches that are still necessary
-by the time we have an -rc1 through the arm-soc tree, but
-my preference is still to have them go through the subsystem
-maintainers.
+On 10/10/2012 01:08 AM, Ajay Kumar wrote:
+> Add documentation for the DT bindings in exynos display port driver.
+> 
+> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
+> ---
+>   .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++++++++++++
+>   1 files changed, 83 insertions(+), 0 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> new file mode 100644
+> index 0000000..a021963
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+> @@ -0,0 +1,83 @@
+> +Exynos display port driver should configure the display port interface
+> +based on the type of panel connected to it.
 
-Olof: should we add it to for-next?
+The bindings are supposed to describe devices, not drivers. So it
+might be better to say:
 
-	Arnd
+"The Exynos display port interface should be configured based on the 
+type of panel connected to it."
 
-Arnd Bergmann (8):
-  SCSI: ARM: ncr5380/oak uses no interrupts
-  SCSI: ARM: make fas216_dumpinfo function conditional
-  mm/slob: use min_t() to compare ARCH_SLAB_MINALIGN
-  USB: EHCI: mark ehci_orion_conf_mbus_windows __devinit
-  clk: don't mark clkdev_add_table as init
-  pcmcia: sharpsl: don't discard sharpsl_pcmcia_ops
-  video: mark nuc900fb_map_video_memory as __devinit
-  spi/s3c64xx: use correct dma_transfer_direction type
+>From this documentation it is not clear which properties are required 
+and which are optional for each node.
 
- drivers/clk/clkdev.c            |    2 +-
- drivers/pcmcia/pxa2xx_sharpsl.c |    2 +-
- drivers/scsi/arm/fas216.c       |    2 +-
- drivers/scsi/arm/oak.c          |    1 +
- drivers/spi/spi-s3c64xx.c       |    2 +-
- drivers/usb/host/ehci-orion.c   |    2 +-
- drivers/video/nuc900fb.c        |    2 +-
- mm/slob.c                       |    6 +++---
- 8 files changed, 10 insertions(+), 9 deletions(-)
+I think, in the property names dashes should be used, rather than 
+underscores. Dashes are much more common among existing bindings.
 
--- 
-1.7.10
+> +We use two nodes:
+> +	-dptx_phy node
+> +	-display-port-controller node
+> +
+> +For the dp-phy initialization, we use a dptx_phy node.
+> +Required properties for dptx_phy:
+> +	-compatible:
+> +		Should be "samsung,dp-phy".
 
-Cc: "James E.J. Bottomley" <JBottomley-bzQdu9zFT3WakBO8gow8eQ@public.gmane.org>
-Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
-Cc: Dominik Brodowski <linux-X3ehHDuj6sIIGcDfoQAp7OTW4wlIGRCZ@public.gmane.org>
-Cc: Florian Tobias Schandinat <FlorianSchandinat-Mmb7MZpHnFY@public.gmane.org>
-Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>
-Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Pavel Machek <pavel-AlSwsSmVLrQ@public.gmane.org>
-Cc: Pekka Enberg <penberg-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Wan ZongShun <mcuos.com-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-pcmcia-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-scsi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
-Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Is there a separate dptx-phy driver that is being matched with this 
+compatible property ? Is the dptx-node going to be referenced by other
+nodes than display-port-controller ? If not, then you could likely drop 
+the compatible property entirely and make the dptx-phy node a child 
+node of display-port-controller, i.e.
 
-------------------------------------------------------------------------------
-Don't let slow site performance ruin your business. Deploy New Relic APM
-Deploy New Relic app performance management and know exactly
-what is happening inside your Ruby, Python, PHP, Java, and .NET app
-Try New Relic at no cost today and get our sweet Data Nerd shirt too!
-http://p.sf.net/sfu/newrelic-dev2dev
+	display-port-controller {
+		compatible = "samsung,exynos5-dp";
+		reg = <0x145b0000 0x10000>;
+		interrupts =<10 3>;
+		interrupt-parent =<&combiner>;
+
+		dptx-phy {
+			reg = <0x10040720>;
+			samsung,enable_mask = <1>;
+		};
+       };
+
+Then the driver could just look for a child node named "dptx-phy" with
+e.g. of_find_node_by_name().
+
+> +	-samsung,dptx_phy_reg:
+
+I think it's fine to use just 'reg' instead of this vendor specific name.
+
+> +		Base address of DP PHY register.
+> +	-samsung,enable_mask:
+> +		The bit-mask used to enable/disable DP PHY.
+> +
+> +For the Panel initialization, we read data from display-port-controller node.
+> +Required properties for display-port-controller:
+> +	-compatible:
+> +		Should be "samsung,exynos5-dp".
+> +	-reg:
+> +		physical base address of the controller and length
+> +		of memory mapped region.
+> +	-interrupts:
+> +		Interrupt combiner values.
+> +	-interrupt-parent:
+> +		phandle to Interrupt combiner node.
+> +	-samsung,dp_phy:
+> +		phandle to dptx_phy node.
+> +	-samsung,color_space:
+> +		input video data format.
+> +			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+> +	-samsung,dynamic_range:
+> +		dynamic range for input video data.
+> +			VESA = 0, CEA = 1
+> +	-samsung,ycbcr_coeff:
+> +		YCbCr co-efficients for input video.
+> +			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+> +	-samsung,color_depth:
+> +		Number of bits per colour component.
+> +			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+> +	-samsung,link_rate:
+> +		link rate supported by the panel.
+> +			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+> +	-samsung,lane_count:
+> +		number of lanes supported by the panel.
+> +			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+> +	-samsung,interlaced:
+> +		Interlace scan mode.
+> +			Progressive if defined, Interlaced if not defined
+> +	-samsung,v_sync_polarity:
+> +		VSYNC polarity configuration.
+> +			High if defined, Low if not defined
+> +	-samsung,h_sync_polarity:
+> +		HSYNC polarity configuration.
+> +			High if defined, Low if not defined
+
+So there is no common video bindings for things like these two ?
+In V4L2 we decided to use vsync-active, hsync-active [1], the video
+timings bindings [2] use hsync-active-high, hsync-active-high boolean
+properties. Perhaps it is worth to pick some of those standard 
+definitions and use instead of the vendor specific ones ?
+
+> +
+> +Example:
+> +
+> +SOC specific portion:
+> +	dptx_phy: dptx_phy@0x10040720 {
+> +		compatible = "samsung,dp-phy";
+> +		samsung,dptx_phy_reg =<0x10040720>;
+
+		reg = <0x10040720>;
+
+> +		samsung,enable_mask =<1>;
+> +	};
+> +
+> +	display-port-controller {
+> +		compatible = "samsung,exynos5-dp";
+> +		reg =<0x145B0000 0x10000>;
+
+I think lower case is preferred.
+
+> +		interrupts =<10 3>;
+> +		interrupt-parent =<&combiner>;
+> +		samsung,dp_phy =<&dptx_phy>;
+> +        };
+> +
+> +Board Specific portion:
+> +	display-port-controller {
+> +		samsung,color_space =<0>;
+> +		samsung,dynamic_range =<0>;
+> +		samsung,ycbcr_coeff =<0>;
+> +		samsung,color_depth =<1>;
+> +		samsung,link_rate =<0x0a>;
+> +		samsung,lane_count =<2>;
+> +	};
+
+Thanks,
+Sylwester
+
+[1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg52743.html
+[2] http://www.mail-archive.com/linux-media@vger.kernel.org/msg53323.html
