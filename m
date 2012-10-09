@@ -1,105 +1,243 @@
 From: Vivek Gautam <gautamvivek1987@gmail.com>
-Subject: Re: [PATCH 2/5] ARM: S3C64XX: Add phy_type to pmu_isolation
-Date: Tue, 9 Oct 2012 18:05:33 +0530
-Message-ID: <CAFp+6iGGH2-Ln2Cx2EKLtN+bz3zs18dEhEQf0zuGxLrCH+eLug@mail.gmail.com>
+Subject: Re: [PATCH 4/5] usb: s5p-ehci: Adding phy driver support
+Date: Tue, 9 Oct 2012 18:14:34 +0530
+Message-ID: <CAFp+6iEEQSNRCbXMneXWuosmuj8oq1dRGySW3_qgcK5xBZK5wA@mail.gmail.com>
 References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
-	<1349705548-15207-3-git-send-email-gautam.vivek@samsung.com>
-	<5073B743.9000200@ti.com>
-	<CAFp+6iE6Er088dYwp8q7uQuZhw9bdYbJXQDbJp66W6tD7+C-Xw@mail.gmail.com>
-	<004901cda60e$f3a45ac0$daed1040$%han@samsung.com>
+	<1349705548-15207-5-git-send-email-gautam.vivek@samsung.com>
+	<004301cda602$0f6c17a0$2e4446e0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-la0-f46.google.com ([209.85.215.46]:45746 "EHLO
-	mail-la0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751889Ab2JIMff (ORCPT
+Received: from mail-lb0-f174.google.com ([209.85.217.174]:64520 "EHLO
+	mail-lb0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754300Ab2JIMog (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Oct 2012 08:35:35 -0400
-In-Reply-To: <004901cda60e$f3a45ac0$daed1040$%han@samsung.com>
+	Tue, 9 Oct 2012 08:44:36 -0400
+In-Reply-To: <004301cda602$0f6c17a0$2e4446e0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Jingoo Han <jg1.han@samsung.com>
-Cc: kishon <kishon@ti.com>, Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, p.paneri@samsung.com, yulgon.kim@samsung.com
+Cc: Vivek Gautam <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com, yulgon.kim@samsung.com
 
 Hi,
 
-On Tue, Oct 9, 2012 at 4:42 PM, Jingoo Han <jg1.han@samsung.com> wrote:
-> On Tuesday, October 09, 2012 7:51 PM Vivek Gautam wrote
+On Tue, Oct 9, 2012 at 3:10 PM, Jingoo Han <jg1.han@samsung.com> wrote:
+> On Monday, October 08, 2012 11:12 PM Vivek Gautam wrote
 >>
->> Hi Kishon,
+>> Adding the transceiver to ehci driver. Keeping the platform data
+>> for continuing the smooth operation for boards which still uses it
 >>
->> Firstly, thanks for the quick review.
+>> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>
+> Hi Vivek Gautam,
+>
+> Could you replace the patch subject with
+> 'USB: ehci-s5p: Add phy driver support'.
+>
+Yeah, sure. I shall update this in the next patchset.
+
+> I also added some comments.
+>
+>> ---
+>>  drivers/usb/host/ehci-s5p.c |   62 +++++++++++++++++++++++++++++-------------
+>>  1 files changed, 43 insertions(+), 19 deletions(-)
 >>
->> On Tue, Oct 9, 2012 at 11:03 AM, kishon <kishon@ti.com> wrote:
->> > Hi,
->> >
->> >
->> > On Monday 08 October 2012 07:42 PM, Vivek Gautam wrote:
->> >>
->> >> It adds 'type' argument to pmu_isolation function, aligning
->> >> with other platforms, which keeps track of usbphy_type.
->> >>
->> >> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
->> >> ---
->> >>   arch/arm/mach-s3c64xx/setup-usb-phy.c |    2 +-
->> >>   1 files changed, 1 insertions(+), 1 deletions(-)
->> >>
->> >> diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c
->> >> b/arch/arm/mach-s3c64xx/setup-usb-phy.c
->> >> index 3aee778..b7d1d95 100644
->> >> --- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
->> >> +++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
->> >> @@ -13,7 +13,7 @@
->> >>   #include <mach/map.h>
->> >>   #include <mach/regs-sys.h>
->> >>
->> >> -void s5p_usb_phy_pmu_isolation(int on)
->> >> +void s5p_usb_phy_pmu_isolation(int on, int type)
->> >
->> >
->> > IMO, this patch should have been squashed with the previous patch. IIUC, you
->> > have changed the call to this function for taking two arguments in your
->> > previous patch. Wouldn't that introduce compilation break after applying
->> > your first patch?
->> Yes, that's right it will introduce compilation break, my fault.
->> Just one querry, will it be good to put this arch change in [patch 1/5]?
->> and then can i move similar change in [patch 3/5] as given below again
->> in [patch 1/5]?
+>> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
+>> index 85b74be..ac22893 100644
+>> --- a/drivers/usb/host/ehci-s5p.c
+>> +++ b/drivers/usb/host/ehci-s5p.c
+>> @@ -18,6 +18,7 @@
+>>  #include <linux/of_gpio.h>
+>>  #include <linux/platform_data/usb-ehci-s5p.h>
+>>  #include <plat/usb-phy.h>
+>> +#include <linux/usb/phy.h>
 >
-> In my opinion, it would be better.
-> This is because it can prevent build errors.
+> Please, move header include to proper place as bellows:
 >
-Sure, I shall update this in the next patchset.
->
-> Best regards,
-> Jingoo Han
+Sure, i will change this accordingly.
+
+> #include <linux/platform_data/usb-ehci-s5p.h>
+> +#include <linux/usb/phy.h>
+> ##include <plat/usb-phy.h>
 >
 >>
->> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c
->> b/arch/arm/mach-exynos/setup-usb-phy.c
->> index 1c62d20..039d246 100644
->> --- a/arch/arm/mach-exynos/setup-usb-phy.c
->> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
->> @@ -222,15 +226,40 @@ int s5p_usb_phy_exit(struct platform_device
->> *pdev, int type)
->>         return -EINVAL;
->>  }
+>>  #define EHCI_INSNREG00(base)                 (base + 0x90)
+>>  #define EHCI_INSNREG00_ENA_INCR16            (0x1 << 25)
+>> @@ -32,6 +33,8 @@ struct s5p_ehci_hcd {
+>>       struct device *dev;
+>>       struct usb_hcd *hcd;
+>>       struct clk *clk;
+>> +     struct usb_phy *phy;
+>> +     struct s5p_ehci_platdata *pdata;
+>>  };
 >>
->> -void s5p_usb_phy_pmu_isolation(int on)
->> +void s5p_usb_phy_pmu_isolation(int on, int type)
+>>  static const struct hc_driver s5p_ehci_hc_driver = {
+>> @@ -65,6 +68,26 @@ static const struct hc_driver s5p_ehci_hc_driver = {
+>>       .clear_tt_buffer_complete       = ehci_clear_tt_buffer_complete,
+>>  };
 >>
->> >
->> > Thanks
->> > Kishon
->> >
->> > --
->> > To unsubscribe from this list: send the line "unsubscribe linux-usb" in
->> > the body of a message to majordomo@vger.kernel.org
->> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>> +static void s5p_ehci_phy_enable(struct s5p_ehci_hcd *s5p_ehci)
+>> +{
+>> +     struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
+>> +
+>> +     if (s5p_ehci->phy)
+>> +             usb_phy_init(s5p_ehci->phy);
+>> +     else if (s5p_ehci->pdata->phy_init)
+>> +             s5p_ehci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+>> +}
+>> +
+>> +static void s5p_ehci_phy_disable(struct s5p_ehci_hcd *s5p_ehci)
+>> +{
+>> +     struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
+>> +
+>> +     if (s5p_ehci->phy)
+>> +             usb_phy_shutdown(s5p_ehci->phy);
+>> +     else if (s5p_ehci->pdata->phy_exit)
+>> +             s5p_ehci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+>> +}
+>> +
+>>  static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+>>  {
+>>       int err;
+>> @@ -92,15 +115,10 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>>       struct usb_hcd *hcd;
+>>       struct ehci_hcd *ehci;
+>>       struct resource *res;
+>> +     struct usb_phy *phy;
+>>       int irq;
+>>       int err;
 >>
->> Best regards
->> Vivek
+>> -     pdata = pdev->dev.platform_data;
+>> -     if (!pdata) {
+>> -             dev_err(&pdev->dev, "No platform data defined\n");
+>> -             return -EINVAL;
+>> -     }
+>> -
+>>       /*
+>>        * Right now device-tree probed devices don't get dma_mask set.
+>>        * Since shared usb code relies on it, set it here for now.
+>> @@ -118,6 +136,20 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>>       if (!s5p_ehci)
+>>               return -ENOMEM;
+>>
+>> +     pdata = pdev->dev.platform_data;
+>> +     if (!pdata) {
+>> +             /* Fallback to Phy transceiver */
+>> +             phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
+>> +             if (IS_ERR_OR_NULL(phy)) {
+>> +                     dev_err(&pdev->dev, "no platform data or transceiver defined\n");
+>> +                     return -EPROBE_DEFER;
+>> +             } else {
+>> +                     s5p_ehci->phy = phy;
+>> +             }
+>> +     } else {
+>> +             s5p_ehci->pdata = pdata;
+>> +     }
+>> +
+>>       s5p_ehci->dev = &pdev->dev;
+>>
+>>       hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
+>> @@ -163,8 +195,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>>               goto fail_io;
+>>       }
+>>
+>> -     if (pdata->phy_init)
+>> -             pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+>> +     s5p_ehci_phy_enable(s5p_ehci);
+>>
+>>       ehci = hcd_to_ehci(hcd);
+>>       ehci->caps = hcd->regs;
+>> @@ -184,6 +215,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>>
+>>  fail_io:
+>>       clk_disable(s5p_ehci->clk);
+>> +     s5p_ehci_phy_disable(s5p_ehci);
 >
+> This is wrong path for errors.
+> For example, when devm_ioremap() fails, s5p_ehci_phy_disable()
+> is called. However, in this case, s5p_ehci_phy_enable() is not
+> called. So, s5p_ehci_phy_disable() should not be called.
+>
+> Please fix them as follows:
+>
+>         err = usb_add_hcd(hcd, irq, IRQF_SHARED);
+>         if (err) {
+>                 dev_err(&pdev->dev, "Failed to add USB HCD\n");
+> -               goto fail_io;
+> +               goto fail_add_hcd;
+>         }
+>
+>         platform_set_drvdata(pdev, s5p_ehci);
+>
+>         return 0;
+>
+> +fail_add_hcd:
+> +       s5p_ehci_phy_disable(s5p_ehci);
+> fail_io:
+>         clk_disable(s5p_ehci->clk);
+> fail_clk:
+>         usb_put_hcd(hcd);
+>
+Right, nice catch, thanks. I shall modify this as suggested and update.
+
+>
+>>  fail_clk:
+>>       usb_put_hcd(hcd);
+>>       return err;
+>> @@ -191,14 +223,12 @@ fail_clk:
+>>
+>>  static int __devexit s5p_ehci_remove(struct platform_device *pdev)
+>>  {
+>> -     struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>>       struct s5p_ehci_hcd *s5p_ehci = platform_get_drvdata(pdev);
+>>       struct usb_hcd *hcd = s5p_ehci->hcd;
+>>
+>>       usb_remove_hcd(hcd);
+>>
+>> -     if (pdata && pdata->phy_exit)
+>> -             pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+>> +     s5p_ehci_phy_disable(s5p_ehci);
+>>
+>>       clk_disable(s5p_ehci->clk);
+>>
+>> @@ -222,14 +252,11 @@ static int s5p_ehci_suspend(struct device *dev)
+>>       struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
+>>       struct usb_hcd *hcd = s5p_ehci->hcd;
+>>       bool do_wakeup = device_may_wakeup(dev);
+>> -     struct platform_device *pdev = to_platform_device(dev);
+>> -     struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>>       int rc;
+>>
+>>       rc = ehci_suspend(hcd, do_wakeup);
+>>
+>> -     if (pdata && pdata->phy_exit)
+>> -             pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+>> +     s5p_ehci_phy_disable(s5p_ehci);
+>>
+>>       clk_disable(s5p_ehci->clk);
+>>
+>> @@ -240,13 +267,10 @@ static int s5p_ehci_resume(struct device *dev)
+>>  {
+>>       struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
+>>       struct usb_hcd *hcd = s5p_ehci->hcd;
+>> -     struct platform_device *pdev = to_platform_device(dev);
+>> -     struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+>>
+>>       clk_enable(s5p_ehci->clk);
+>>
+>> -     if (pdata && pdata->phy_init)
+>> -             pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+>> +     s5p_ehci_phy_enable(s5p_ehci);
+>>
+>>       /* DMA burst Enable */
+>>       writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
+>> --
+>> 1.7.6.5
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
 Thanks
 Vivek
