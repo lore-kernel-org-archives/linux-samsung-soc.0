@@ -1,96 +1,94 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 4/5] usb: s5p-ehci: Adding phy driver support
-Date: Tue, 09 Oct 2012 18:40:04 +0900
-Message-ID: <004301cda602$0f6c17a0$2e4446e0$%han@samsung.com>
+From: Jingoo Han <jg1.han@samsung.com>
+Subject: Re: [PATCH 5/5] usb: exynos-ohci: Adding phy driver support
+Date: Tue, 09 Oct 2012 18:46:07 +0900
+Message-ID: <004401cda602$e7c9a630$b75cf290$%han@samsung.com>
 References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
- <1349705548-15207-5-git-send-email-gautam.vivek@samsung.com>
+ <1349705548-15207-6-git-send-email-gautam.vivek@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <1349705548-15207-5-git-send-email-gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mailout4.samsung.com ([203.254.224.34]:11425 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754551Ab2JIJqI (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Tue, 9 Oct 2012 05:46:08 -0400
+In-reply-to: <1349705548-15207-6-git-send-email-gautam.vivek@samsung.com>
 Content-language: ko
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, kishon-l0cyMroinI0@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com, yulgon.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
 
 On Monday, October 08, 2012 11:12 PM Vivek Gautam wrote
 > 
-> Adding the transceiver to ehci driver. Keeping the platform data
+> Adding the transceiver to ohci driver. Keeping the platform data
 > for continuing the smooth operation for boards which still uses it
 > 
-> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
 
 Hi Vivek Gautam,
 
 Could you replace the patch subject with
-'USB: ehci-s5p: Add phy driver support'.
+'USB: ohci-exynos: Add phy driver support'?
 
-I also added some comments.
+I also added some comments, too.
 
 > ---
->  drivers/usb/host/ehci-s5p.c |   62 +++++++++++++++++++++++++++++-------------
+>  drivers/usb/host/ohci-exynos.c |   62 +++++++++++++++++++++++++++------------
 >  1 files changed, 43 insertions(+), 19 deletions(-)
 > 
-> diff --git a/drivers/usb/host/ehci-s5p.c b/drivers/usb/host/ehci-s5p.c
-> index 85b74be..ac22893 100644
-> --- a/drivers/usb/host/ehci-s5p.c
-> +++ b/drivers/usb/host/ehci-s5p.c
-> @@ -18,6 +18,7 @@
->  #include <linux/of_gpio.h>
->  #include <linux/platform_data/usb-ehci-s5p.h>
+> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
+> index 20a5008..e0ed594 100644
+> --- a/drivers/usb/host/ohci-exynos.c
+> +++ b/drivers/usb/host/ohci-exynos.c
+> @@ -16,13 +16,36 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/platform_data/usb-exynos.h>
 >  #include <plat/usb-phy.h>
 > +#include <linux/usb/phy.h>
 
 Please, move header include to proper place as bellows:
 
-#include <linux/platform_data/usb-ehci-s5p.h>
+#include <linux/platform_data/usb-exynos.h>
 +#include <linux/usb/phy.h>
 ##include <plat/usb-phy.h>
 
 > 
->  #define EHCI_INSNREG00(base)			(base + 0x90)
->  #define EHCI_INSNREG00_ENA_INCR16		(0x1 << 25)
-> @@ -32,6 +33,8 @@ struct s5p_ehci_hcd {
+>  struct exynos_ohci_hcd {
 >  	struct device *dev;
 >  	struct usb_hcd *hcd;
 >  	struct clk *clk;
 > +	struct usb_phy *phy;
-> +	struct s5p_ehci_platdata *pdata;
+> +	struct exynos4_ohci_platdata *pdata;
 >  };
 > 
->  static const struct hc_driver s5p_ehci_hc_driver = {
-> @@ -65,6 +68,26 @@ static const struct hc_driver s5p_ehci_hc_driver = {
->  	.clear_tt_buffer_complete	= ehci_clear_tt_buffer_complete,
->  };
-> 
-> +static void s5p_ehci_phy_enable(struct s5p_ehci_hcd *s5p_ehci)
+> +static void exynos_ohci_phy_enable(struct exynos_ohci_hcd *exynos_ohci)
 > +{
-> +	struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
+> +	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
 > +
-> +	if (s5p_ehci->phy)
-> +		usb_phy_init(s5p_ehci->phy);
-> +	else if (s5p_ehci->pdata->phy_init)
-> +		s5p_ehci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
+> +	if (exynos_ohci->phy)
+> +		usb_phy_init(exynos_ohci->phy);
+> +	else if (exynos_ohci->pdata->phy_init)
+> +		exynos_ohci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
 > +}
 > +
-> +static void s5p_ehci_phy_disable(struct s5p_ehci_hcd *s5p_ehci)
+> +static void exynos_ohci_phy_disable(struct exynos_ohci_hcd *exynos_ohci)
 > +{
-> +	struct platform_device *pdev = to_platform_device(s5p_ehci->dev);
+> +	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
 > +
-> +	if (s5p_ehci->phy)
-> +		usb_phy_shutdown(s5p_ehci->phy);
-> +	else if (s5p_ehci->pdata->phy_exit)
-> +		s5p_ehci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
+> +	if (exynos_ohci->phy)
+> +		usb_phy_shutdown(exynos_ohci->phy);
+> +	else if (exynos_ohci->pdata->phy_exit)
+> +		exynos_ohci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
 > +}
 > +
->  static void s5p_setup_vbus_gpio(struct platform_device *pdev)
+>  static int ohci_exynos_start(struct usb_hcd *hcd)
 >  {
->  	int err;
-> @@ -92,15 +115,10 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
+> @@ -81,15 +104,10 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
 >  	struct usb_hcd *hcd;
->  	struct ehci_hcd *ehci;
+>  	struct ohci_hcd *ohci;
 >  	struct resource *res;
 > +	struct usb_phy *phy;
 >  	int irq;
@@ -105,8 +103,8 @@ Please, move header include to proper place as bellows:
 >  	/*
 >  	 * Right now device-tree probed devices don't get dma_mask set.
 >  	 * Since shared usb code relies on it, set it here for now.
-> @@ -118,6 +136,20 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
->  	if (!s5p_ehci)
+> @@ -105,6 +123,20 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
+>  	if (!exynos_ohci)
 >  		return -ENOMEM;
 > 
 > +	pdata = pdev->dev.platform_data;
@@ -117,35 +115,32 @@ Please, move header include to proper place as bellows:
 > +			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
 > +			return -EPROBE_DEFER;
 > +		} else {
-> +			s5p_ehci->phy = phy;
+> +			exynos_ohci->phy = phy;
 > +		}
 > +	} else {
-> +		s5p_ehci->pdata = pdata;
+> +		exynos_ohci->pdata = pdata;
 > +	}
 > +
->  	s5p_ehci->dev = &pdev->dev;
+>  	exynos_ohci->dev = &pdev->dev;
 > 
->  	hcd = usb_create_hcd(&s5p_ehci_hc_driver, &pdev->dev,
-> @@ -163,8 +195,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  	hcd = usb_create_hcd(&exynos_ohci_hc_driver, &pdev->dev,
+> @@ -150,8 +182,7 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
 >  		goto fail_io;
 >  	}
 > 
 > -	if (pdata->phy_init)
 > -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +	s5p_ehci_phy_enable(s5p_ehci);
+> +	exynos_ohci_phy_enable(exynos_ohci);
 > 
->  	ehci = hcd_to_ehci(hcd);
->  	ehci->caps = hcd->regs;
-> @@ -184,6 +215,7 @@ static int __devinit s5p_ehci_probe(struct platform_device *pdev)
+>  	ohci = hcd_to_ohci(hcd);
+>  	ohci_hcd_init(ohci);
+> @@ -168,6 +199,7 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
 > 
 >  fail_io:
->  	clk_disable(s5p_ehci->clk);
-> +	s5p_ehci_phy_disable(s5p_ehci);
+>  	clk_disable(exynos_ohci->clk);
+> +	exynos_ohci_phy_disable(exynos_ohci);
 
-This is wrong path for errors.
-For example, when devm_ioremap() fails, s5p_ehci_phy_disable()
-is called. However, in this case, s5p_ehci_phy_enable() is not
-called. So, s5p_ehci_phy_disable() should not be called.
+As I mentioned, it is also wrong.
 
 Please fix them as follows:
 
@@ -156,72 +151,70 @@ Please fix them as follows:
 +		goto fail_add_hcd;
 	}
 
-	platform_set_drvdata(pdev, s5p_ehci);
+	platform_set_drvdata(pdev, exynos_ohci);
 
 	return 0;
 
 +fail_add_hcd:
-+	s5p_ehci_phy_disable(s5p_ehci);
++	exynos_ohci_phy_disable(exynos_ohci);
 fail_io:
-	clk_disable(s5p_ehci->clk);
-fail_clk:
-	usb_put_hcd(hcd);
+	clk_disable(exynos_ohci->clk);
+fail_clken:
+	clk_put(exynos_ohci->clk);
 
 
+>  fail_clken:
+>  	clk_put(exynos_ohci->clk);
 >  fail_clk:
->  	usb_put_hcd(hcd);
->  	return err;
-> @@ -191,14 +223,12 @@ fail_clk:
+> @@ -177,14 +209,12 @@ fail_clk:
 > 
->  static int __devexit s5p_ehci_remove(struct platform_device *pdev)
+>  static int __devexit exynos_ohci_remove(struct platform_device *pdev)
 >  {
-> -	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
->  	struct s5p_ehci_hcd *s5p_ehci = platform_get_drvdata(pdev);
->  	struct usb_hcd *hcd = s5p_ehci->hcd;
+> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
+>  	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
+>  	struct usb_hcd *hcd = exynos_ohci->hcd;
 > 
 >  	usb_remove_hcd(hcd);
 > 
 > -	if (pdata && pdata->phy_exit)
 > -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +	s5p_ehci_phy_disable(s5p_ehci);
+> +	exynos_ohci_phy_disable(exynos_ohci);
 > 
->  	clk_disable(s5p_ehci->clk);
-> 
-> @@ -222,14 +252,11 @@ static int s5p_ehci_suspend(struct device *dev)
->  	struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
->  	struct usb_hcd *hcd = s5p_ehci->hcd;
->  	bool do_wakeup = device_may_wakeup(dev);
+>  	clk_disable(exynos_ohci->clk);
+>  	clk_put(exynos_ohci->clk);
+> @@ -209,8 +239,6 @@ static int exynos_ohci_suspend(struct device *dev)
+>  	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
+>  	struct usb_hcd *hcd = exynos_ohci->hcd;
+>  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
 > -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
->  	int rc;
+> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
+>  	unsigned long flags;
+>  	int rc = 0;
 > 
->  	rc = ehci_suspend(hcd, do_wakeup);
+> @@ -229,8 +257,7 @@ static int exynos_ohci_suspend(struct device *dev)
+> 
+>  	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
 > 
 > -	if (pdata && pdata->phy_exit)
 > -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +	s5p_ehci_phy_disable(s5p_ehci);
+> +	exynos_ohci_phy_disable(exynos_ohci);
 > 
->  	clk_disable(s5p_ehci->clk);
+>  	clk_disable(exynos_ohci->clk);
 > 
-> @@ -240,13 +267,10 @@ static int s5p_ehci_resume(struct device *dev)
+> @@ -244,13 +271,10 @@ static int exynos_ohci_resume(struct device *dev)
 >  {
->  	struct s5p_ehci_hcd *s5p_ehci = dev_get_drvdata(dev);
->  	struct usb_hcd *hcd = s5p_ehci->hcd;
+>  	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
+>  	struct usb_hcd *hcd = exynos_ohci->hcd;
 > -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct s5p_ehci_platdata *pdata = pdev->dev.platform_data;
+> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
 > 
->  	clk_enable(s5p_ehci->clk);
+>  	clk_enable(exynos_ohci->clk);
 > 
 > -	if (pdata && pdata->phy_init)
 > -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +	s5p_ehci_phy_enable(s5p_ehci);
+> +	exynos_ohci_phy_enable(exynos_ohci);
 > 
->  	/* DMA burst Enable */
->  	writel(EHCI_INSNREG00_ENABLE_DMA_BURST, EHCI_INSNREG00(hcd->regs));
+>  	/* Mark hardware accessible again as we are out of D3 state by now */
+>  	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
 > --
 > 1.7.6.5
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
