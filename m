@@ -1,220 +1,56 @@
-From: Jingoo Han <jg1.han@samsung.com>
-Subject: Re: [PATCH 5/5] usb: exynos-ohci: Adding phy driver support
-Date: Tue, 09 Oct 2012 18:46:07 +0900
-Message-ID: <004401cda602$e7c9a630$b75cf290$%han@samsung.com>
-References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
- <1349705548-15207-6-git-send-email-gautam.vivek@samsung.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH] ARM: dts: exynos4210-trats: Split memory into 4 sections
+Date: Tue, 09 Oct 2012 12:39:59 +0200
+Message-ID: <1349779199-30665-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:11425 "EHLO
-	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754551Ab2JIJqI (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:30478 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1750780Ab2JIKkM (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Oct 2012 05:46:08 -0400
-In-reply-to: <1349705548-15207-6-git-send-email-gautam.vivek@samsung.com>
-Content-language: ko
+	Tue, 9 Oct 2012 06:40:12 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBM0099QGAUENL0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Oct 2012 19:40:10 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBM00HNLGAPB390@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Tue, 09 Oct 2012 19:40:10 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: 'Vivek Gautam' <gautam.vivek@samsung.com>, linux-usb@vger.kernel.org
-Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, thomas.abraham@linaro.org, kishon@ti.com, p.paneri@samsung.com, yulgon.kim@samsung.com, 'Jingoo Han' <jg1.han@samsung.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, kgene.kim@samsung.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-On Monday, October 08, 2012 11:12 PM Vivek Gautam wrote
-> 
-> Adding the transceiver to ohci driver. Keeping the platform data
-> for continuing the smooth operation for boards which still uses it
-> 
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+Since the maximum section size on mach-exynos is set to 256MiB, boards
+with memory configuration defined using sections bigger than 256MiB will
+fail to boot with a kernel panic.
 
-Hi Vivek Gautam,
+This patch modifies the dts file of Samsung Trats board to define four
+sections of 256MiB instead of two of 512MiB to fix the boot problem.
 
-Could you replace the patch subject with
-'USB: ohci-exynos: Add phy driver support'?
+Signed-off-by: Tomasz Figa <t.figa@samsung.com>
+---
+ arch/arm/boot/dts/exynos4210-trats.dts | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-I also added some comments, too.
-
-> ---
->  drivers/usb/host/ohci-exynos.c |   62 +++++++++++++++++++++++++++------------
->  1 files changed, 43 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/usb/host/ohci-exynos.c b/drivers/usb/host/ohci-exynos.c
-> index 20a5008..e0ed594 100644
-> --- a/drivers/usb/host/ohci-exynos.c
-> +++ b/drivers/usb/host/ohci-exynos.c
-> @@ -16,13 +16,36 @@
->  #include <linux/platform_device.h>
->  #include <linux/platform_data/usb-exynos.h>
->  #include <plat/usb-phy.h>
-> +#include <linux/usb/phy.h>
-
-Please, move header include to proper place as bellows:
-
-#include <linux/platform_data/usb-exynos.h>
-+#include <linux/usb/phy.h>
-##include <plat/usb-phy.h>
-
-> 
->  struct exynos_ohci_hcd {
->  	struct device *dev;
->  	struct usb_hcd *hcd;
->  	struct clk *clk;
-> +	struct usb_phy *phy;
-> +	struct exynos4_ohci_platdata *pdata;
->  };
-> 
-> +static void exynos_ohci_phy_enable(struct exynos_ohci_hcd *exynos_ohci)
-> +{
-> +	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-> +
-> +	if (exynos_ohci->phy)
-> +		usb_phy_init(exynos_ohci->phy);
-> +	else if (exynos_ohci->pdata->phy_init)
-> +		exynos_ohci->pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +}
-> +
-> +static void exynos_ohci_phy_disable(struct exynos_ohci_hcd *exynos_ohci)
-> +{
-> +	struct platform_device *pdev = to_platform_device(exynos_ohci->dev);
-> +
-> +	if (exynos_ohci->phy)
-> +		usb_phy_shutdown(exynos_ohci->phy);
-> +	else if (exynos_ohci->pdata->phy_exit)
-> +		exynos_ohci->pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +}
-> +
->  static int ohci_exynos_start(struct usb_hcd *hcd)
->  {
->  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-> @@ -81,15 +104,10 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  	struct usb_hcd *hcd;
->  	struct ohci_hcd *ohci;
->  	struct resource *res;
-> +	struct usb_phy *phy;
->  	int irq;
->  	int err;
-> 
-> -	pdata = pdev->dev.platform_data;
-> -	if (!pdata) {
-> -		dev_err(&pdev->dev, "No platform data defined\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	/*
->  	 * Right now device-tree probed devices don't get dma_mask set.
->  	 * Since shared usb code relies on it, set it here for now.
-> @@ -105,6 +123,20 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  	if (!exynos_ohci)
->  		return -ENOMEM;
-> 
-> +	pdata = pdev->dev.platform_data;
-> +	if (!pdata) {
-> +		/* Fallback to Phy transceiver */
-> +		phy = devm_usb_get_phy(&pdev->dev, USB_PHY_TYPE_USB2);
-> +		if (IS_ERR_OR_NULL(phy)) {
-> +			dev_err(&pdev->dev, "no platform data or transceiver defined\n");
-> +			return -EPROBE_DEFER;
-> +		} else {
-> +			exynos_ohci->phy = phy;
-> +		}
-> +	} else {
-> +		exynos_ohci->pdata = pdata;
-> +	}
-> +
->  	exynos_ohci->dev = &pdev->dev;
-> 
->  	hcd = usb_create_hcd(&exynos_ohci_hc_driver, &pdev->dev,
-> @@ -150,8 +182,7 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
->  		goto fail_io;
->  	}
-> 
-> -	if (pdata->phy_init)
-> -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_enable(exynos_ohci);
-> 
->  	ohci = hcd_to_ohci(hcd);
->  	ohci_hcd_init(ohci);
-> @@ -168,6 +199,7 @@ static int __devinit exynos_ohci_probe(struct platform_device *pdev)
-> 
->  fail_io:
->  	clk_disable(exynos_ohci->clk);
-> +	exynos_ohci_phy_disable(exynos_ohci);
-
-As I mentioned, it is also wrong.
-
-Please fix them as follows:
-
-	err = usb_add_hcd(hcd, irq, IRQF_SHARED);
-	if (err) {
-		dev_err(&pdev->dev, "Failed to add USB HCD\n");
--		goto fail_io;
-+		goto fail_add_hcd;
-	}
-
-	platform_set_drvdata(pdev, exynos_ohci);
-
-	return 0;
-
-+fail_add_hcd:
-+	exynos_ohci_phy_disable(exynos_ohci);
-fail_io:
-	clk_disable(exynos_ohci->clk);
-fail_clken:
-	clk_put(exynos_ohci->clk);
-
-
->  fail_clken:
->  	clk_put(exynos_ohci->clk);
->  fail_clk:
-> @@ -177,14 +209,12 @@ fail_clk:
-> 
->  static int __devexit exynos_ohci_remove(struct platform_device *pdev)
->  {
-> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
->  	struct exynos_ohci_hcd *exynos_ohci = platform_get_drvdata(pdev);
->  	struct usb_hcd *hcd = exynos_ohci->hcd;
-> 
->  	usb_remove_hcd(hcd);
-> 
-> -	if (pdata && pdata->phy_exit)
-> -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_disable(exynos_ohci);
-> 
->  	clk_disable(exynos_ohci->clk);
->  	clk_put(exynos_ohci->clk);
-> @@ -209,8 +239,6 @@ static int exynos_ohci_suspend(struct device *dev)
->  	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
->  	struct usb_hcd *hcd = exynos_ohci->hcd;
->  	struct ohci_hcd *ohci = hcd_to_ohci(hcd);
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
->  	unsigned long flags;
->  	int rc = 0;
-> 
-> @@ -229,8 +257,7 @@ static int exynos_ohci_suspend(struct device *dev)
-> 
->  	clear_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> 
-> -	if (pdata && pdata->phy_exit)
-> -		pdata->phy_exit(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_disable(exynos_ohci);
-> 
->  	clk_disable(exynos_ohci->clk);
-> 
-> @@ -244,13 +271,10 @@ static int exynos_ohci_resume(struct device *dev)
->  {
->  	struct exynos_ohci_hcd *exynos_ohci = dev_get_drvdata(dev);
->  	struct usb_hcd *hcd = exynos_ohci->hcd;
-> -	struct platform_device *pdev = to_platform_device(dev);
-> -	struct exynos4_ohci_platdata *pdata = pdev->dev.platform_data;
-> 
->  	clk_enable(exynos_ohci->clk);
-> 
-> -	if (pdata && pdata->phy_init)
-> -		pdata->phy_init(pdev, S5P_USB_PHY_HOST);
-> +	exynos_ohci_phy_enable(exynos_ohci);
-> 
->  	/* Mark hardware accessible again as we are out of D3 state by now */
->  	set_bit(HCD_FLAG_HW_ACCESSIBLE, &hcd->flags);
-> --
-> 1.7.6.5
+diff --git a/arch/arm/boot/dts/exynos4210-trats.dts b/arch/arm/boot/dts/exynos4210-trats.dts
+index 73567b8..a21511c 100644
+--- a/arch/arm/boot/dts/exynos4210-trats.dts
++++ b/arch/arm/boot/dts/exynos4210-trats.dts
+@@ -20,8 +20,10 @@
+ 	compatible = "samsung,trats", "samsung,exynos4210";
+ 
+ 	memory {
+-		reg =  <0x40000000 0x20000000
+-			0x60000000 0x20000000>;
++		reg =  <0x40000000 0x10000000
++			0x50000000 0x10000000
++			0x60000000 0x10000000
++			0x70000000 0x10000000>;
+ 	};
+ 
+ 	chosen {
+-- 
+1.7.12
