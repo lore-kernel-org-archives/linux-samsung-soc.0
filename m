@@ -1,49 +1,126 @@
-From: kishon <kishon@ti.com>
-Subject: Re: [PATCH 2/5] ARM: S3C64XX: Add phy_type to pmu_isolation
-Date: Tue, 9 Oct 2012 11:03:55 +0530
-Message-ID: <5073B743.9000200@ti.com>
-References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com> <1349705548-15207-3-git-send-email-gautam.vivek@samsung.com>
+From: Barry Song <21cnbao@gmail.com>
+Subject: Re: [PATCH] ARM: sort select statements alphanumerically
+Date: Tue, 9 Oct 2012 14:18:25 +0800
+Message-ID: <CAGsJ_4zi1GNOAVW3dVrwHkjQEWrVTkNvpiq1R-=GVvN5VC-weA@mail.gmail.com>
+References: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from comal.ext.ti.com ([198.47.26.152]:43414 "EHLO comal.ext.ti.com"
-	rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-	id S1750999Ab2JIFeU (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Oct 2012 01:34:20 -0400
-In-Reply-To: <1349705548-15207-3-git-send-email-gautam.vivek@samsung.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <E1TKX8k-0006QP-M5@rmk-PC.arm.linux.org.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: linux-arm-kernel-bounces@lists.infradead.org
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-sh@vger.kernel.org, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Daniel Walker <dwalker@fifo99.com>, Kevin Hilman <khilman@ti.com>, linux-samsung-soc@vger.kernel.org, Srinidhi Kasagar <srinidhi.kasagar@stericsson.com>, Magnus Damm <magnus.damm@gmail.com>, David Brown <davidb@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Alessandro Rubini <rubini@unipv.it>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, Haojian Zhuang <haojian.zhuang@gmail.com>, Shiraz Hashim <shiraz.hashim@st.com>, Kukjin Kim <kgene.kim@samsung.com>, DL-SHA-WorkGroupLinux <workgroup.linux@csr.com>, Ben Dooks <ben-linux@fluff.org>, Barry Song <baohua.song@csr.com>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Andrew Victor <linux@maxim.org.za>linux
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vivek Gautam <gautam.vivek@samsung.com>
-Cc: linux-usb@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, gregkh@linuxfoundation.org, stern@rowland.harvard.edu, balbi@ti.com, rob.herring@calxeda.com, kgene.kim@samsung.com, jg1.han@samsung.com, thomas.abraham@linaro.org, p.paneri@samsung.com, yulgon.kim@samsung.com
 
-Hi,
-
-On Monday 08 October 2012 07:42 PM, Vivek Gautam wrote:
-> It adds 'type' argument to pmu_isolation function, aligning
-> with other platforms, which keeps track of usbphy_type.
+2012/10/7 Russell King <rmk+kernel@arm.linux.org.uk>:
+> As suggested by Andrew Morton:
 >
-> Signed-off-by: Vivek Gautam <gautam.vivek@samsung.com>
+>   This is a pet peeve of mine.  Any time there's a long list of items
+>   (header file inclusions, kconfig entries, array initalisers, etc) and
+>   someone wants to add a new item, they *always* go and stick it at the
+>   end of the list.
+>   ...
+>   Guys, don't do this.  Either put the new item into a randomly-chosen
+>   position or, probably better, alphanumerically sort the list.
+>
+>   For this reason it looks like approximately 0% of the patchset will
+>   apply, sorry.
+>
+> lets sort all our select statements alphanumerically.  This commit was
+> created by the following script:
+>
+> #!/usr/bin/perl
+> while (<>) {
+>         while (/\\\s*$/) {
+>                 $_ .= <>;
+>         }
+>         undef %selects if /^\s*config\s+/;
+>         if (/^\s+select\s+(\w+).*/) {
+>                 if (defined($selects{$1})) {
+>                         if ($selects{$1} eq $_) {
+>                                 print STDERR "Warning: removing duplicated $1 entry\n";
+>                         } else {
+>                                 print STDERR "Error: $1 differently selected\n".
+>                                         "\tOld: $selects{$1}\n".
+>                                         "\tNew: $_\n";
+>                                 exit 1;
+>                         }
+>                 }
+>                 $selects{$1} = $_;
+>                 next;
+>         }
+>         if (%selects and (/^\s*$/ or /^\s+help/)) {
+>                 foreach $k (sort (keys %selects)) {
+>                         print "$selects{$k}";
+>                 }
+>                 undef %selects;
+>         }
+>         print;
+> }
+> if (%selects) {
+>         foreach $k (sort (keys %selects)) {
+>                 print "$selects{$k}";
+>         }
+> }
+>
+> It found two duplicates:
+>
+> Warning: removing duplicated S5P_SETUP_MIPIPHY entry
+> Warning: removing duplicated HARDIRQS_SW_RESEND entry
+>
+> and they are identical duplicates, hence the shrinkage in the diffstat
+> of two lines.
+>
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+
+Changes in CSR prima2 arch look fine,
+
+Acked-by: Barry Song <Baohua.Song@csr.com>
+
+BTW, i have a bundle of patches coming for new Marco platform which
+will also change the Kconfig.
+
 > ---
->   arch/arm/mach-s3c64xx/setup-usb-phy.c |    2 +-
->   1 files changed, 1 insertions(+), 1 deletions(-)
+> This commit is likely to change as we get closer to the end of the merge
+> window, as other changes get merged into Linus' tree.  I will be refreshing
+> this from time to time, and keeping it out of linux-next, as it will cause
+> more pain than its worth to put it into linux-next.
 >
-> diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> index 3aee778..b7d1d95 100644
-> --- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> +++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> @@ -13,7 +13,7 @@
->   #include <mach/map.h>
->   #include <mach/regs-sys.h>
+> Anyone who wants to give this a review to check that it's correct are welcome,
+> but I don't think it would be appropriate to collect attributation tags for
+> it, as this won't be the final patch.
 >
-> -void s5p_usb_phy_pmu_isolation(int on)
-> +void s5p_usb_phy_pmu_isolation(int on, int type)
+> This patch is intentionally broken to prevent Linus from applying it - this
+> is information only!
+>
+> Anyone who wants to apply it can do so by first running this patch through:
+>
+>         sed 's/^-- /@@ /'
+>
+>  arch/arm/Kconfig                  |  399 ++++++++++++++++++-------------------
+>  arch/arm/common/Kconfig           |    4 +-
+>  arch/arm/mach-at91/Kconfig        |   26 ++--
+>  arch/arm/mach-clps711x/Kconfig    |    4 +-
+>  arch/arm/mach-davinci/Kconfig     |   16 +-
+>  arch/arm/mach-exynos/Kconfig      |  181 +++++++++---------
+>  arch/arm/mach-footbridge/Kconfig  |    8 +-
+>  arch/arm/mach-h720x/Kconfig       |    2 +-
+>  arch/arm/mach-imx/Kconfig         |  120 ++++++------
+>  arch/arm/mach-ixp4xx/Kconfig      |    2 +-
+>  arch/arm/mach-mmp/Kconfig         |    6 +-
+>  arch/arm/mach-msm/Kconfig         |   28 ++--
+>  arch/arm/mach-nomadik/Kconfig     |    4 +-
+>  arch/arm/mach-omap1/Kconfig       |    8 +-
+>  arch/arm/mach-omap2/Kconfig       |   68 +++---
+>  arch/arm/mach-prima2/Kconfig      |    2 +-
 
-IMO, this patch should have been squashed with the previous patch. IIUC, 
-you have changed the call to this function for taking two arguments in 
-your previous patch. Wouldn't that introduce compilation break after 
-applying your first patch?
-
-Thanks
-Kishon
+-barry
