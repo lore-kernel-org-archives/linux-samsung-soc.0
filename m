@@ -1,155 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
-Date: Tue, 9 Oct 2012 11:28:28 -0700
-Message-ID: <20121009182828.GA20879@quad.lixom.net>
-References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
- <1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: [PATCH v2 v2 v2 8/8] spi/s3c64xx: use correct dma_transfer_direction
+	type
+Date: Tue,  9 Oct 2012 22:13:58 +0200
+Message-ID: <1349813638-4617-9-git-send-email-arnd@arndb.de>
+References: <1349813638-4617-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:63458 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1753631Ab2JIS2L (ORCPT
-	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Oct 2012 14:28:11 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rr4so5506050pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Oct 2012 11:28:11 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+In-Reply-To: <1349813638-4617-1-git-send-email-arnd-r2nGTMty4D4@public.gmane.org>
+List-Unsubscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://sourceforge.net/mailarchive/forum.php?forum_name=spi-devel-general>
+List-Post: <mailto:spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
+List-Help: <mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.sourceforge.net/lists/listinfo/spi-devel-general>,
+	<mailto:spi-devel-general-request-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org?subject=subscribe>
+Errors-To: spi-devel-general-bounces-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>, spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasanth Ananthan <vasanthananthan@gmail.com>
-Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
 
-Hi,
+There is a subtle difference between dma_transfer_direction and
+dma_data_direction: the former is used by the dmaengine framework,
+while the latter is used by the dma-mapping API. Although the
+purpose is comparable, the actual values are different and must
+not be mixed. In this case, the driver just wants to use
+dma_transfer_direction.
 
+Without this patch, building s3c6400_defconfig results in:
 
-On Tue, Oct 09, 2012 at 05:18:48PM +0530, Vasanth Ananthan wrote:
-> This patch adds Device Nodes for SATA and SATA PHY device.
-> 
-> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5250-smdk5250.dts |   11 +++++++++++
->  arch/arm/boot/dts/exynos5250.dtsi         |   20 ++++++++++++++++++++
->  arch/arm/mach-exynos/include/mach/map.h   |    7 +++++++
->  arch/arm/mach-exynos/mach-exynos5-dt.c    |    6 ++++++
->  4 files changed, 44 insertions(+), 0 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> index 8a5e348..bb262ce 100644
-> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
-> @@ -48,6 +48,17 @@
->  		};
->  	};
->  
-> +	i2c@121D0000 {
-> +		samsung,i2c-sda-delay = <100>;
-> +                samsung,i2c-max-bus-freq = <40000>;
-> +		samsung,i2c-slave-addr = <0x38>;
+drivers/spi/spi-s3c64xx.c: In function 's3c64xx_spi_dmacb':
+drivers/spi/spi-s3c64xx.c:239:21: warning: comparison between
+	'enum dma_data_direction' and 'enum dma_transfer_direction' [-Wenum-compare]
 
-Whitespace is off above.
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Ben Dooks <ben-linux-elnMNo+KYs3YtjvyW6yDsg@public.gmane.org>
+Cc: Kukjin Kim <kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Cc: Grant Likely <grant.likely-s3s/WqlpOiPyB63q8FvJNQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: spi-devel-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org
+---
+ drivers/spi/spi-s3c64xx.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +
-> +		sataphy@70 {
-
-sata-phy would be a more conventional name.
-
-> +			compatible = "samsung,i2c-phy";
-
-i2c-phy? Seems like an odd choice of name. What is this device?
-
-> +			reg = <0x38>;
-
-70 is unit address but here it's 0x38? One of them is wrong. No need for a unit
-address if it's a unique name, by the way.
+diff --git a/drivers/spi/spi-s3c64xx.c b/drivers/spi/spi-s3c64xx.c
+index d1c8441f..2e44dd6 100644
+--- a/drivers/spi/spi-s3c64xx.c
++++ b/drivers/spi/spi-s3c64xx.c
+@@ -132,7 +132,7 @@
+ 
+ struct s3c64xx_spi_dma_data {
+ 	unsigned		ch;
+-	enum dma_data_direction direction;
++	enum dma_transfer_direction direction;
+ 	enum dma_ch	dmach;
+ 	struct property		*dma_prop;
+ };
+-- 
+1.7.10
 
 
-> +		};
-> +	};
-> +
->  	i2c@12C80000 {
->  		status = "disabled";
->  	};
-> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
-> index 004aaa8..5a47a8f 100644
-> --- a/arch/arm/boot/dts/exynos5250.dtsi
-> +++ b/arch/arm/boot/dts/exynos5250.dtsi
-> @@ -88,6 +88,18 @@
->  		interrupts = <0 54 0>;
->  	};
->  
-> +	sata@122F0000 {
-> +                compatible = "samsung,exynos-sata-ahci";
-> +                reg = <0x122F0000 0x1ff>;
-> +		interrupts = <0 115 0>;
-
-More whitespace damage. And need binding.
-
-> +        };
-> +
-> +        sata-phy@12170000 {
-> +                compatible = "samsung,exynos-sata-phy";
-> +                reg = <0x12170000 0x1ff>;
-> +        };
-
-Should have binding too. How does this relate to the i2c device above.
-
-> +
->  	i2c@12C60000 {
->  		compatible = "samsung,s3c2440-i2c";
->  		reg = <0x12C60000 0x100>;
-> @@ -152,6 +164,13 @@
->  		#size-cells = <0>;
->  	};
->  
-> +	i2c@121D0000 {
-> +                compatible = "samsung,s3c2440-sataphy-i2c";
-
-Is this a unique i2c controller, or is it just another one like the others on
-the chip? If it's the latter, it should use the regular compatible string.
-
-> +                reg = <0x121D0000 0x100>;
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +        };
-> +
->  	spi_0: spi@12d20000 {
->  		compatible = "samsung,exynos4210-spi";
->  		reg = <0x12d20000 0x100>;
-> @@ -460,4 +479,5 @@
->  			#gpio-cells = <4>;
->  		};
->  	};
-> +
-
-Stray whitespace change.
-
->  };
-> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
-> index c72b675..6827190 100644
-> --- a/arch/arm/mach-exynos/include/mach/map.h
-> +++ b/arch/arm/mach-exynos/include/mach/map.h
-> @@ -177,9 +177,16 @@
->  #define EXYNOS4_PA_HSOTG		0x12480000
->  #define EXYNOS4_PA_USB_HSPHY		0x125B0000
->  
-> +#ifdef CONFIG_ARCH_EXYNOS4
-
-No need to ifdef since namespace isn't overlapped.
-
->  #define EXYNOS4_PA_SATA			0x12560000
->  #define EXYNOS4_PA_SATAPHY		0x125D0000
->  #define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
-> +#endif
-> +#ifdef CONFIG_ARCH_EXYNOS5
-
-Same here.
-
-> +#define EXYNOS5_PA_SATA_PHY_CTRL	0x12170000
-> +#define EXYNOS5_PA_SATA_PHY_I2C		0x121D0000
-> +#define EXYNOS5_PA_SATA_BASE		0x122F0000
-> +#endif
-
-
--Olof
+------------------------------------------------------------------------------
+Don't let slow site performance ruin your business. Deploy New Relic APM
+Deploy New Relic app performance management and know exactly
+what is happening inside your Ruby, Python, PHP, Java, and .NET app
+Try New Relic at no cost today and get our sweet Data Nerd shirt too!
+http://p.sf.net/sfu/newrelic-dev2dev
