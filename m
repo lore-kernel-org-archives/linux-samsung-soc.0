@@ -1,116 +1,155 @@
-From: Ajay Kumar <ajaykumar.rs@samsung.com>
-Subject: [PATCH V4 2/2] video: exynos_dp: device tree documentation
-Date: Wed, 10 Oct 2012 04:38:21 +0530
-Message-ID: <1349824101-32574-3-git-send-email-ajaykumar.rs@samsung.com>
-References: <1349824101-32574-1-git-send-email-ajaykumar.rs@samsung.com>
+From: Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
+Date: Tue, 9 Oct 2012 11:28:28 -0700
+Message-ID: <20121009182828.GA20879@quad.lixom.net>
+References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
+ <1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout1.samsung.com ([203.254.224.24]:21322 "EHLO
-	mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752262Ab2JIOFW (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:63458 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1753631Ab2JIS2L (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Tue, 9 Oct 2012 10:05:22 -0400
-In-reply-to: <1349824101-32574-1-git-send-email-ajaykumar.rs@samsung.com>
+	Tue, 9 Oct 2012 14:28:11 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rr4so5506050pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Tue, 09 Oct 2012 11:28:11 -0700 (PDT)
+Content-Disposition: inline
+In-Reply-To: <1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org
-Cc: FlorianSchandinat@gmx.de, sylvester.nawrocki@gmail.com, tomasz.figa@gmail.com, thomas.ab@samsung.com
+To: Vasanth Ananthan <vasanthananthan@gmail.com>
+Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
 
-Add documentation for the DT bindings in exynos display port driver.
+Hi,
 
-Signed-off-by: Ajay Kumar <ajaykumar.rs@samsung.com>
----
- .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++++++++++++
- 1 files changed, 83 insertions(+), 0 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
 
-diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
-new file mode 100644
-index 0000000..a021963
---- /dev/null
-+++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
-@@ -0,0 +1,83 @@
-+Exynos display port driver should configure the display port interface
-+based on the type of panel connected to it.
-+
-+We use two nodes:
-+	-dptx_phy node
-+	-display-port-controller node
-+
-+For the dp-phy initialization, we use a dptx_phy node.
-+Required properties for dptx_phy:
-+	-compatible:
-+		Should be "samsung,dp-phy".
-+	-samsung,dptx_phy_reg:
-+		Base address of DP PHY register.
-+	-samsung,enable_mask:
-+		The bit-mask used to enable/disable DP PHY.
-+
-+For the Panel initialization, we read data from display-port-controller node.
-+Required properties for display-port-controller:
-+	-compatible:
-+		Should be "samsung,exynos5-dp".
-+	-reg:
-+		physical base address of the controller and length
-+		of memory mapped region.
-+	-interrupts:
-+		Interrupt combiner values.
-+	-interrupt-parent:
-+		phandle to Interrupt combiner node.
-+	-samsung,dp_phy:
-+		phandle to dptx_phy node.
-+	-samsung,color_space:
-+		input video data format.
-+			COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
-+	-samsung,dynamic_range:
-+		dynamic range for input video data.
-+			VESA = 0, CEA = 1
-+	-samsung,ycbcr_coeff:
-+		YCbCr co-efficients for input video.
-+			COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
-+	-samsung,color_depth:
-+		Number of bits per colour component.
-+			COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
-+	-samsung,link_rate:
-+		link rate supported by the panel.
-+			LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
-+	-samsung,lane_count:
-+		number of lanes supported by the panel.
-+			LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
-+	-samsung,interlaced:
-+		Interlace scan mode.
-+			Progressive if defined, Interlaced if not defined
-+	-samsung,v_sync_polarity:
-+		VSYNC polarity configuration.
-+			High if defined, Low if not defined
-+	-samsung,h_sync_polarity:
-+		HSYNC polarity configuration.
-+			High if defined, Low if not defined
-+
-+Example:
-+
-+SOC specific portion:
-+	dptx_phy: dptx_phy@0x10040720 {
-+		compatible = "samsung,dp-phy";
-+		samsung,dptx_phy_reg = <0x10040720>;
-+		samsung,enable_mask = <1>;
-+	};
-+
-+	display-port-controller {
-+		compatible = "samsung,exynos5-dp";
-+		reg = <0x145B0000 0x10000>;
-+		interrupts = <10 3>;
-+		interrupt-parent = <&combiner>;
-+		samsung,dp_phy = <&dptx_phy>;
-+        };
-+
-+Board Specific portion:
-+	display-port-controller {
-+		samsung,color_space = <0>;
-+		samsung,dynamic_range = <0>;
-+		samsung,ycbcr_coeff = <0>;
-+		samsung,color_depth = <1>;
-+		samsung,link_rate = <0x0a>;
-+		samsung,lane_count = <2>;
-+	};
--- 
-1.7.0.4
+On Tue, Oct 09, 2012 at 05:18:48PM +0530, Vasanth Ananthan wrote:
+> This patch adds Device Nodes for SATA and SATA PHY device.
+> 
+> Signed-off-by: Vasanth Ananthan <vasanth.a@samsung.com>
+> ---
+>  arch/arm/boot/dts/exynos5250-smdk5250.dts |   11 +++++++++++
+>  arch/arm/boot/dts/exynos5250.dtsi         |   20 ++++++++++++++++++++
+>  arch/arm/mach-exynos/include/mach/map.h   |    7 +++++++
+>  arch/arm/mach-exynos/mach-exynos5-dt.c    |    6 ++++++
+>  4 files changed, 44 insertions(+), 0 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/exynos5250-smdk5250.dts b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> index 8a5e348..bb262ce 100644
+> --- a/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> +++ b/arch/arm/boot/dts/exynos5250-smdk5250.dts
+> @@ -48,6 +48,17 @@
+>  		};
+>  	};
+>  
+> +	i2c@121D0000 {
+> +		samsung,i2c-sda-delay = <100>;
+> +                samsung,i2c-max-bus-freq = <40000>;
+> +		samsung,i2c-slave-addr = <0x38>;
+
+Whitespace is off above.
+
+> +
+> +		sataphy@70 {
+
+sata-phy would be a more conventional name.
+
+> +			compatible = "samsung,i2c-phy";
+
+i2c-phy? Seems like an odd choice of name. What is this device?
+
+> +			reg = <0x38>;
+
+70 is unit address but here it's 0x38? One of them is wrong. No need for a unit
+address if it's a unique name, by the way.
+
+
+> +		};
+> +	};
+> +
+>  	i2c@12C80000 {
+>  		status = "disabled";
+>  	};
+> diff --git a/arch/arm/boot/dts/exynos5250.dtsi b/arch/arm/boot/dts/exynos5250.dtsi
+> index 004aaa8..5a47a8f 100644
+> --- a/arch/arm/boot/dts/exynos5250.dtsi
+> +++ b/arch/arm/boot/dts/exynos5250.dtsi
+> @@ -88,6 +88,18 @@
+>  		interrupts = <0 54 0>;
+>  	};
+>  
+> +	sata@122F0000 {
+> +                compatible = "samsung,exynos-sata-ahci";
+> +                reg = <0x122F0000 0x1ff>;
+> +		interrupts = <0 115 0>;
+
+More whitespace damage. And need binding.
+
+> +        };
+> +
+> +        sata-phy@12170000 {
+> +                compatible = "samsung,exynos-sata-phy";
+> +                reg = <0x12170000 0x1ff>;
+> +        };
+
+Should have binding too. How does this relate to the i2c device above.
+
+> +
+>  	i2c@12C60000 {
+>  		compatible = "samsung,s3c2440-i2c";
+>  		reg = <0x12C60000 0x100>;
+> @@ -152,6 +164,13 @@
+>  		#size-cells = <0>;
+>  	};
+>  
+> +	i2c@121D0000 {
+> +                compatible = "samsung,s3c2440-sataphy-i2c";
+
+Is this a unique i2c controller, or is it just another one like the others on
+the chip? If it's the latter, it should use the regular compatible string.
+
+> +                reg = <0x121D0000 0x100>;
+> +                #address-cells = <1>;
+> +                #size-cells = <0>;
+> +        };
+> +
+>  	spi_0: spi@12d20000 {
+>  		compatible = "samsung,exynos4210-spi";
+>  		reg = <0x12d20000 0x100>;
+> @@ -460,4 +479,5 @@
+>  			#gpio-cells = <4>;
+>  		};
+>  	};
+> +
+
+Stray whitespace change.
+
+>  };
+> diff --git a/arch/arm/mach-exynos/include/mach/map.h b/arch/arm/mach-exynos/include/mach/map.h
+> index c72b675..6827190 100644
+> --- a/arch/arm/mach-exynos/include/mach/map.h
+> +++ b/arch/arm/mach-exynos/include/mach/map.h
+> @@ -177,9 +177,16 @@
+>  #define EXYNOS4_PA_HSOTG		0x12480000
+>  #define EXYNOS4_PA_USB_HSPHY		0x125B0000
+>  
+> +#ifdef CONFIG_ARCH_EXYNOS4
+
+No need to ifdef since namespace isn't overlapped.
+
+>  #define EXYNOS4_PA_SATA			0x12560000
+>  #define EXYNOS4_PA_SATAPHY		0x125D0000
+>  #define EXYNOS4_PA_SATAPHY_CTRL		0x126B0000
+> +#endif
+> +#ifdef CONFIG_ARCH_EXYNOS5
+
+Same here.
+
+> +#define EXYNOS5_PA_SATA_PHY_CTRL	0x12170000
+> +#define EXYNOS5_PA_SATA_PHY_I2C		0x121D0000
+> +#define EXYNOS5_PA_SATA_BASE		0x122F0000
+> +#endif
+
+
+-Olof
