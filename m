@@ -1,98 +1,46 @@
-From: Jingoo Han <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-Subject: RE: [PATCH 2/5] ARM: S3C64XX: Add phy_type to pmu_isolation
-Date: Tue, 09 Oct 2012 20:12:20 +0900
-Message-ID: <004901cda60e$f3a45ac0$daed1040$%han@samsung.com>
-References: <1349705548-15207-1-git-send-email-gautam.vivek@samsung.com>
- <1349705548-15207-3-git-send-email-gautam.vivek@samsung.com>
- <5073B743.9000200@ti.com>
- <CAFp+6iE6Er088dYwp8q7uQuZhw9bdYbJXQDbJp66W6tD7+C-Xw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-reply-to: <CAFp+6iE6Er088dYwp8q7uQuZhw9bdYbJXQDbJp66W6tD7+C-Xw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-language: ko
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Vivek Gautam' <gautamvivek1987-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, 'kishon' <kishon-l0cyMroinI0@public.gmane.org>
-Cc: 'Vivek Gautam' <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-discuss-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, rob.herring-bsGFqQB8/DxBDgjK7y7TUQ@public.gmane.org, kgene.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, thomas.abraham-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, p.paneri-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, yulgon.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, 'Jingoo Han' <jg1.han-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+From: vasanthananthan@gmail.com
+Subject: [PATCH 0/6] Adding support for SATA in EXYNO5
+Date: Tue,  9 Oct 2012 17:17:13 +0530
+Message-ID: <50740e3a.694c420a.41d4.fffff550@mx.google.com>
+Return-path: <linux-ide-owner@vger.kernel.org>
+Sender: linux-ide-owner@vger.kernel.org
+To: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanthananthan@gmail.com>
 List-Id: linux-samsung-soc@vger.kernel.org
 
-On Tuesday, October 09, 2012 7:51 PM Vivek Gautam wrote
-> 
-> Hi Kishon,
-> 
-> Firstly, thanks for the quick review.
-> 
-> On Tue, Oct 9, 2012 at 11:03 AM, kishon <kishon-l0cyMroinI0@public.gmane.org> wrote:
-> > Hi,
-> >
-> >
-> > On Monday 08 October 2012 07:42 PM, Vivek Gautam wrote:
-> >>
-> >> It adds 'type' argument to pmu_isolation function, aligning
-> >> with other platforms, which keeps track of usbphy_type.
-> >>
-> >> Signed-off-by: Vivek Gautam <gautam.vivek-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
-> >> ---
-> >>   arch/arm/mach-s3c64xx/setup-usb-phy.c |    2 +-
-> >>   1 files changed, 1 insertions(+), 1 deletions(-)
-> >>
-> >> diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> >> b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> >> index 3aee778..b7d1d95 100644
-> >> --- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> >> +++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-> >> @@ -13,7 +13,7 @@
-> >>   #include <mach/map.h>
-> >>   #include <mach/regs-sys.h>
-> >>
-> >> -void s5p_usb_phy_pmu_isolation(int on)
-> >> +void s5p_usb_phy_pmu_isolation(int on, int type)
-> >
-> >
-> > IMO, this patch should have been squashed with the previous patch. IIUC, you
-> > have changed the call to this function for taking two arguments in your
-> > previous patch. Wouldn't that introduce compilation break after applying
-> > your first patch?
-> Yes, that's right it will introduce compilation break, my fault.
-> Just one querry, will it be good to put this arch change in [patch 1/5]?
-> and then can i move similar change in [patch 3/5] as given below again
-> in [patch 1/5]?
+From: Vasanth Ananthan <vasanthananthan@gmail.com>
 
-In my opinion, it would be better.
-This is because it can prevent build errors.
+The following set of patches provides drivers for SATA
+and SATA PHY controller and also an interface for the 
+two entity to interact. 
 
+Vasanth Ananthan (6):
+  ARM: EXYNOS5: Clock settings for SATA and SATA PHY
+  ARM: EXYNOS5: DT Support for SATA and SATA PHY
+  DRIVERS: ATA: SATA PHY utility framework
+  ARM: S3C2410: I2C driver polling mode support
+  ARM: EYNOS5: SATA controller driver
+  ARM: EXYNOS5: SATA PHY controller driver
 
-Best regards,
-Jingoo Han
+ arch/arm/boot/dts/exynos5250-smdk5250.dts    |   11 +
+ arch/arm/boot/dts/exynos5250.dtsi            |   20 ++
+ arch/arm/mach-exynos/clock-exynos5.c         |   19 ++-
+ arch/arm/mach-exynos/include/mach/map.h      |    7 +
+ arch/arm/mach-exynos/include/mach/regs-pmu.h |    3 +
+ arch/arm/mach-exynos/mach-exynos5-dt.c       |    6 +
+ drivers/ata/Kconfig                          |    9 +
+ drivers/ata/Makefile                         |    1 +
+ drivers/ata/sata_exynos.c                    |  274 +++++++++++++++++++++++
+ drivers/ata/sata_exynos_phy.c                |  303 ++++++++++++++++++++++++++
+ drivers/ata/sata_phy.c                       |   99 +++++++++
+ drivers/ata/sata_phy.h                       |   44 ++++
+ drivers/i2c/busses/i2c-s3c2410.c             |   84 ++++++--
+ 13 files changed, 859 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/ata/sata_exynos.c
+ create mode 100644 drivers/ata/sata_exynos_phy.c
+ create mode 100644 drivers/ata/sata_phy.c
+ create mode 100644 drivers/ata/sata_phy.h
 
-> 
-> diff --git a/arch/arm/mach-exynos/setup-usb-phy.c
-> b/arch/arm/mach-exynos/setup-usb-phy.c
-> index 1c62d20..039d246 100644
-> --- a/arch/arm/mach-exynos/setup-usb-phy.c
-> +++ b/arch/arm/mach-exynos/setup-usb-phy.c
-> @@ -222,15 +226,40 @@ int s5p_usb_phy_exit(struct platform_device
-> *pdev, int type)
->         return -EINVAL;
->  }
-> 
-> -void s5p_usb_phy_pmu_isolation(int on)
-> +void s5p_usb_phy_pmu_isolation(int on, int type)
-> 
-> >
-> > Thanks
-> > Kishon
-> >
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-> > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
-> Best regards
-> Vivek
+-- 
+1.7.5.4
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
