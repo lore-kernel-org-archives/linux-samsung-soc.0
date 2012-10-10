@@ -1,46 +1,102 @@
 From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH v2 0/6] ARM: EXYNOS: Add secure firmware support
-Date: Wed, 10 Oct 2012 09:11:36 -0700
-Message-ID: <20121010161136.GD582@quad.lixom.net>
-References: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
- <1647638.5fBfDOzz0u@amdc1227>
- <CAH9JG2V56eLCCX+9id1EWhKfZ-6qW-3O0j0mVpzOjz5S8QGQ7g@mail.gmail.com>
+Subject: Re: [PATCH 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
+Date: Wed, 10 Oct 2012 09:31:27 -0700
+Message-ID: <20121010163127.GA19433@quad.lixom.net>
+References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
+ <1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
+ <20121009182828.GA20879@quad.lixom.net>
+ <CAK1UHiyjyp8u-nFwU-19dds1uF7T1kkFNHyYQ6pWLFtUwGtR1w@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pa0-f46.google.com ([209.85.220.46]:63995 "EHLO
-	mail-pa0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751717Ab2JJQLS (ORCPT
+Received: from mail-pb0-f46.google.com ([209.85.160.46]:35458 "EHLO
+	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752752Ab2JJQbJ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Oct 2012 12:11:18 -0400
-Received: by mail-pa0-f46.google.com with SMTP id hz1so760591pad.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Oct 2012 09:11:18 -0700 (PDT)
+	Wed, 10 Oct 2012 12:31:09 -0400
+Received: by mail-pb0-f46.google.com with SMTP id rr4so890360pbb.19
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Oct 2012 09:31:09 -0700 (PDT)
 Content-Disposition: inline
-In-Reply-To: <CAH9JG2V56eLCCX+9id1EWhKfZ-6qW-3O0j0mVpzOjz5S8QGQ7g@mail.gmail.com>
+In-Reply-To: <CAK1UHiyjyp8u-nFwU-19dds1uF7T1kkFNHyYQ6pWLFtUwGtR1w@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Kyungmin Park <kmpark@infradead.org>
-Cc: Tomasz Figa <t.figa@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, m.szyprowski@samsung.com
+To: Vasanth Ananthan <vasanthananthan@gmail.com>
+Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
 
 Hi,
 
-On Thu, Oct 11, 2012 at 12:35:54AM +0900, Kyungmin Park wrote:
-> Hi Arnd or Olof,
+On Wed, Oct 10, 2012 at 02:08:31PM +0530, Vasanth Ananthan wrote:
+
+> > > +
+> > > +             sataphy@70 {
+> >
+> > sata-phy would be a more conventional name.
+> >
+> > > +                     compatible = "samsung,i2c-phy";
+> >
+> > i2c-phy? Seems like an odd choice of name. What is this device?
+> >
 > 
-> Can you pick up for v3.7?
+> The SATA physical layer controller is both a platform device and a i2c
+> slave device.
+> This compatible string is for the i2c client driver. Hence I have used
+> i2c-phy here.
+
+Ok, but samsung,i2c-phy is much too generic. Maybe something like
+samsung,exynos5-sata-phy  (and rename the MMIO-controlled phy controls
+to ...sata-phy-controller below).
+
+
+> > > +        };
+> > > +
+> > > +        sata-phy@12170000 {
+> > > +                compatible = "samsung,exynos-sata-phy";
+> > > +                reg = <0x12170000 0x1ff>;
+> > > +        };
+> >
+> > Should have binding too. How does this relate to the i2c device above.
+> >
 > 
-> To Tomasz,
-> Can you rebase it on the latest arm-soc tree?
+> As mentioned earlier SATA physical layer controller is both a platform
+> device and also an i2c slave device.
+> This Node is for the SATA physical layer platform device, the previous node
+> is for i2c slave device.
+> Certain initialization settings done directly and other settings has to be
+> done through i2c.
 
-This code should have been in arm-soc by the beginning of the merge window
-(and in linux-next) to be merged for 3.7, but we will be happy to queue
-it up for 3.8 once 3.7-rc1 is out. I have one outstanding comment on
-the DT binding but the rest looks OK to me.
+Wow, that's quite awkward. What needs to be done over i2c? I think I have
+seen use of SATA without touching the i2c side but it might have been for
+a simple setup.
 
-Tomasz, please rebase and send this to Kukjin so he can queue it up with other
-Samsung code.
+> > > +
+> > >       i2c@12C60000 {
+> > >               compatible = "samsung,s3c2440-i2c";
+> > >               reg = <0x12C60000 0x100>;
+> > > @@ -152,6 +164,13 @@
+> > >               #size-cells = <0>;
+> > >       };
+> > >
+> > > +     i2c@121D0000 {
+> > > +                compatible = "samsung,s3c2440-sataphy-i2c";
+> >
+> > Is this a unique i2c controller, or is it just another one like the others
+> > on
+> > the chip? If it's the latter, it should use the regular compatible string.
+> >
+> 
+> Yes, its a unique i2c controller which lacks an interrupt line while others
+> are interrupt driven.
+> Hence I have used a distinct compatible string for the driver to
+> distinguish the controller.
 
+It would be better to just make the i2c bus driver handle the case where there
+is no interrupt specifier and just use polling in those cases, especially if
+the rest of the device is identical and doesn't need special handling.
 
-Thanks!
+As a matter of fact, if that had been done for the hdmi phy, then you could
+have done this patch without modifying the driver at all, just device tree
+contents. And the same would go for the next time down the road when
+a "special" i2c bus is added.
+
 
 -Olof
