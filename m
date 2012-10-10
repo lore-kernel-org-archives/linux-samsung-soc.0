@@ -1,102 +1,70 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
-Date: Wed, 10 Oct 2012 09:31:27 -0700
-Message-ID: <20121010163127.GA19433@quad.lixom.net>
-References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
- <1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
- <20121009182828.GA20879@quad.lixom.net>
- <CAK1UHiyjyp8u-nFwU-19dds1uF7T1kkFNHyYQ6pWLFtUwGtR1w@mail.gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 01/16] ARM: dts: exynos4210: Replace legacy GPIO bank
+ nodes with pinctrl bank nodes
+Date: Wed, 10 Oct 2012 10:27:27 -0600
+Message-ID: <5075A1EF.60900@wwwdotorg.org>
+References: <1349685556-23718-1-git-send-email-t.figa@samsung.com> <1349685556-23718-2-git-send-email-t.figa@samsung.com> <CACRpkdZgH9TSr2uWQW+-8-U7BxJCscQgStVOndGixGmRz74TWw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-pb0-f46.google.com ([209.85.160.46]:35458 "EHLO
-	mail-pb0-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1752752Ab2JJQbJ (ORCPT
+Received: from avon.wwwdotorg.org ([70.85.31.133]:36416 "EHLO
+	avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752752Ab2JJQfP (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Oct 2012 12:31:09 -0400
-Received: by mail-pb0-f46.google.com with SMTP id rr4so890360pbb.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Oct 2012 09:31:09 -0700 (PDT)
-Content-Disposition: inline
-In-Reply-To: <CAK1UHiyjyp8u-nFwU-19dds1uF7T1kkFNHyYQ6pWLFtUwGtR1w@mail.gmail.com>
+	Wed, 10 Oct 2012 12:35:15 -0400
+In-Reply-To: <CACRpkdZgH9TSr2uWQW+-8-U7BxJCscQgStVOndGixGmRz74TWw@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Vasanth Ananthan <vasanthananthan@gmail.com>
-Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Tomasz Figa <t.figa@samsung.com>, Grant Likely <grant.likely@secretlab.ca>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-Hi,
-
-On Wed, Oct 10, 2012 at 02:08:31PM +0530, Vasanth Ananthan wrote:
-
-> > > +
-> > > +             sataphy@70 {
-> >
-> > sata-phy would be a more conventional name.
-> >
-> > > +                     compatible = "samsung,i2c-phy";
-> >
-> > i2c-phy? Seems like an odd choice of name. What is this device?
-> >
+On 10/10/2012 01:26 AM, Linus Walleij wrote:
+> On Mon, Oct 8, 2012 at 10:39 AM, Tomasz Figa <t.figa@samsung.com> wrote:
 > 
-> The SATA physical layer controller is both a platform device and a i2c
-> slave device.
-> This compatible string is for the i2c client driver. Hence I have used
-> i2c-phy here.
-
-Ok, but samsung,i2c-phy is much too generic. Maybe something like
-samsung,exynos5-sata-phy  (and rename the MMIO-controlled phy controls
-to ...sata-phy-controller below).
-
-
-> > > +        };
-> > > +
-> > > +        sata-phy@12170000 {
-> > > +                compatible = "samsung,exynos-sata-phy";
-> > > +                reg = <0x12170000 0x1ff>;
-> > > +        };
-> >
-> > Should have binding too. How does this relate to the i2c device above.
-> >
+>> Seuqential patches from this series introduce SoC-specific data parsing
+>> from device tree.
+>>
+>> This patch removes legacy GPIO bank nodes from exynos4210.dtsi and
+>> replaces them with nodes and properties required for these patches.
 > 
-> As mentioned earlier SATA physical layer controller is both a platform
-> device and also an i2c slave device.
-> This Node is for the SATA physical layer platform device, the previous node
-> is for i2c slave device.
-> Certain initialization settings done directly and other settings has to be
-> done through i2c.
-
-Wow, that's quite awkward. What needs to be done over i2c? I think I have
-seen use of SATA without touching the i2c side but it might have been for
-a simple setup.
-
-> > > +
-> > >       i2c@12C60000 {
-> > >               compatible = "samsung,s3c2440-i2c";
-> > >               reg = <0x12C60000 0x100>;
-> > > @@ -152,6 +164,13 @@
-> > >               #size-cells = <0>;
-> > >       };
-> > >
-> > > +     i2c@121D0000 {
-> > > +                compatible = "samsung,s3c2440-sataphy-i2c";
-> >
-> > Is this a unique i2c controller, or is it just another one like the others
-> > on
-> > the chip? If it's the latter, it should use the regular compatible string.
-> >
+> So to be clear:
 > 
-> Yes, its a unique i2c controller which lacks an interrupt line while others
-> are interrupt driven.
-> Hence I have used a distinct compatible string for the driver to
-> distinguish the controller.
+>> +       pinctrl-bank-types {
+>> +               bank_off: bank-off {
+>> +                       samsung,reg-names = "func", "dat", "pud",
+>> +                                               "drv", "conpdn", "pudpdn";
+>> +                       samsung,reg-params = <0x00 4>, <0x04 1>, <0x08 2>,
+>> +                                               <0x0C 2>, <0x10 2>, <0x14 2>;
+>> +               };
+> 
+> This is starting to look like a firmware language, I have mixed
+> feelings about this. Shall this be read:
+> 
+> "Poke 4 into 0x00, poke 1 into 0x04, poke 2 into 0x08" etc?
+> 
+> We really need to discuss this, Grant has already NACK:ed
+> such approaches once.
 
-It would be better to just make the i2c bus driver handle the case where there
-is no interrupt specifier and just use polling in those cases, especially if
-the rest of the device is identical and doesn't need special handling.
+Well, I don't think he NACK'd Tony Lindgren's generic pinctrl driver,
+which is doing this exact same thing. I did raise the same point about
+Tony's driver when he posted it, but nobody seemed inclined to NACK it
+based on that at the time, IIRC...
 
-As a matter of fact, if that had been done for the hdmi phy, then you could
-have done this patch without modifying the driver at all, just device tree
-contents. And the same would go for the next time down the road when
-a "special" i2c bus is added.
+BTW, the idea here is IIRC to create a generic Samsung pinctrl driver
+that works across N different Samsung SoCs, each with different register
+layout, without having to encode the register layout into tables in the
+kernel.
 
+> If you're still going to do this, it is mandatory
+> to NOT use magic hex numbers anymore, because Stephen has
+> merged preprocessor support to the DTC compiler so you
+> can use #defined macros.
+> 
+> See commit:
+> cd296721a9645f9f28800a072490fa15458d1fb7
 
--Olof
+That feature isn't enabled yet. While dtc has been modified to be able
+to accept input that's been generated/processed by cpp, there is still
+ongoing discussion about how/whether to actually enable *.dts to use
+that feature.
