@@ -1,78 +1,65 @@
-From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: [PATCH] video: exynos_dp: use clk_prepare_enable and clk_disable_unprepare
-Date: Wed, 10 Oct 2012 12:35:12 +0000
-Message-ID: <50756B80.7080306@gmx.de>
-References: <006701cda1fb$cee12fe0$6ca38fa0$%han@samsung.com>
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: Re: [PATCH 00/16] pinctrl: samsung: Usability and extensibiltiy
+ improvements
+Date: Wed, 10 Oct 2012 17:22:17 +0200
+Message-ID: <1574970.TNZCJfSix7@amdc1227>
+References: <1349685556-23718-1-git-send-email-t.figa@samsung.com>
+ <CACRpkdbUmM2=vhjhCq_qN2v=8RUDeWV4b8A8oXXPE4e8Z9C7zg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.23]:35510 "HELO
-	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1755724Ab2JJMfZ (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:63454 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S932335Ab2JJPWf (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Oct 2012 08:35:25 -0400
-In-Reply-To: <006701cda1fb$cee12fe0$6ca38fa0$%han@samsung.com>
+	Wed, 10 Oct 2012 11:22:35 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBO00KZMO1MQ870@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 00:22:34 +0900 (KST)
+Received: from amdc1227.localnet ([106.116.147.199])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBO0055KO180M20@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 00:22:34 +0900 (KST)
+In-reply-to: <CACRpkdbUmM2=vhjhCq_qN2v=8RUDeWV4b8A8oXXPE4e8Z9C7zg@mail.gmail.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Jingoo Han <jg1.han@samsung.com>
-Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Abraham <thomas.abraham@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, swarren@wwwdotorg.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
-On 10/04/2012 06:45 AM, Jingoo Han wrote:
-> Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
-> calls as required by common clock framework.
+On Wednesday 10 of October 2012 09:46:28 Linus Walleij wrote:
+> On Mon, Oct 8, 2012 at 10:39 AM, Tomasz Figa <t.figa@samsung.com> wrote:
+> > This patch series is a work on improving usability and extensibiltiy of
+> > the> 
+> > pinctrl-samsung driver. It consists of three main parts:
+> >  - moving SoC-specific data to device tree
+> >  - converting the driver to use one GPIO chip and one IRQ domain per
+> >  pin bank - introducing generic wake-up interrupt capability
+> >  description
 > 
-> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
-
-Applied.
-
-
-Thanks,
-
-Florian Tobias Schandinat
-
-
-> ---
->  drivers/video/exynos/exynos_dp_core.c |    8 ++++----
->  1 files changed, 4 insertions(+), 4 deletions(-)
+> So can you prepare a patch series which does all but the first
+> bullet to begin with, and a SoC-and register offset patch
+> on top of that as a separate series, because it is controversial?
 > 
-> diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
-> index cdc1398..d55470e 100644
-> --- a/drivers/video/exynos/exynos_dp_core.c
-> +++ b/drivers/video/exynos/exynos_dp_core.c
-> @@ -885,7 +885,7 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
->  		return PTR_ERR(dp->clock);
->  	}
->  
-> -	clk_enable(dp->clock);
-> +	clk_prepare_enable(dp->clock);
->  
->  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  
-> @@ -956,7 +956,7 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
->  	if (pdata && pdata->phy_exit)
->  		pdata->phy_exit();
->  
-> -	clk_disable(dp->clock);
-> +	clk_disable_unprepare(dp->clock);
->  
->  	return 0;
->  }
-> @@ -971,7 +971,7 @@ static int exynos_dp_suspend(struct device *dev)
->  	if (pdata && pdata->phy_exit)
->  		pdata->phy_exit();
->  
-> -	clk_disable(dp->clock);
-> +	clk_disable_unprepare(dp->clock);
->  
->  	return 0;
->  }
-> @@ -985,7 +985,7 @@ static int exynos_dp_resume(struct device *dev)
->  	if (pdata && pdata->phy_init)
->  		pdata->phy_init();
->  
-> -	clk_enable(dp->clock);
-> +	clk_prepare_enable(dp->clock);
->  
->  	exynos_dp_init_dp(dp);
->  
+> I don't like that these two things are mingled together like this
+> in an all-or-nothing manner.
+> 
+> So I'm OK with a patch series for bulle (2) and (3) but not (1).
+> 
+> And I'd like to have Thomas A:s ACK on the series too.
+> 
+
+I have managed to rework the changes to drop (1). I will send next version 
+of patches tomorrow. It would be nice to have them merged for 3.7, as they 
+are rather important for further work.
+
+Moving data from the driver to device tree is not as important, so it might 
+be discussed later.
+
+Best regards,
+-- 
+Tomasz Figa
+Samsung Poland R&D Center
