@@ -1,81 +1,56 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 01/16] ARM: dts: exynos4210: Replace legacy GPIO bank
- nodes with pinctrl bank nodes
-Date: Wed, 10 Oct 2012 09:26:51 +0200
-Message-ID: <CACRpkdZgH9TSr2uWQW+-8-U7BxJCscQgStVOndGixGmRz74TWw@mail.gmail.com>
+Subject: Re: [PATCH 04/16] pinctrl: samsung: Parse pin banks from DT
+Date: Wed, 10 Oct 2012 09:34:05 +0200
+Message-ID: <CACRpkdafuxbO_peOBgmrjXk7ioVBF6D-D7d=shUd-GpHOdNxqg@mail.gmail.com>
 References: <1349685556-23718-1-git-send-email-t.figa@samsung.com>
-	<1349685556-23718-2-git-send-email-t.figa@samsung.com>
+	<1349685556-23718-5-git-send-email-t.figa@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-we0-f174.google.com ([74.125.82.174]:50391 "EHLO
-	mail-we0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1751172Ab2JJH0x (ORCPT
+Received: from mail-wg0-f44.google.com ([74.125.82.44]:35380 "EHLO
+	mail-wg0-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1752667Ab2JJHeG (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Oct 2012 03:26:53 -0400
-Received: by mail-we0-f174.google.com with SMTP id t9so126481wey.19
-        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Oct 2012 00:26:52 -0700 (PDT)
-In-Reply-To: <1349685556-23718-2-git-send-email-t.figa@samsung.com>
+	Wed, 10 Oct 2012 03:34:06 -0400
+Received: by mail-wg0-f44.google.com with SMTP id dr13so235600wgb.1
+        for <linux-samsung-soc@vger.kernel.org>; Wed, 10 Oct 2012 00:34:05 -0700 (PDT)
+In-Reply-To: <1349685556-23718-5-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Tomasz Figa <t.figa@samsung.com>, Grant Likely <grant.likely@secretlab.ca>
+To: Tomasz Figa <t.figa@samsung.com>, ext Tony Lindgren <tony@atomide.com>, Grant Likely <grant.likely@secretlab.ca>
 Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, swarren@wwwdotorg.org, kyungmin.park@samsung.com, m.szyprowski@samsung.com, tomasz.figa@gmail.com
 
 On Mon, Oct 8, 2012 at 10:39 AM, Tomasz Figa <t.figa@samsung.com> wrote:
 
-> Seuqential patches from this series introduce SoC-specific data parsing
-> from device tree.
+> Currently SoC-specific properties such as list of pin banks, register
+> offsets and bitfield sizes are being taken from static data structures
+> residing in pinctrl-exynos.c.
 >
-> This patch removes legacy GPIO bank nodes from exynos4210.dtsi and
-> replaces them with nodes and properties required for these patches.
+> This patch modifies the pinctrl-samsung driver to parse all SoC-specific
+> data from device tree, which will allow to remove the static data
+> structures and facilitate adding of further SoC variants to the
+> pinctrl-samsung driver.
 
-So to be clear:
+So why? Two approaches:
 
-> +       pinctrl-bank-types {
-> +               bank_off: bank-off {
-> +                       samsung,reg-names = "func", "dat", "pud",
-> +                                               "drv", "conpdn", "pudpdn";
-> +                       samsung,reg-params = <0x00 4>, <0x04 1>, <0x08 2>,
-> +                                               <0x0C 2>, <0x10 2>, <0x14 2>;
-> +               };
+- Put as much info as possible into the device tree
+- Put as much info as possible into the driver
 
-This is starting to look like a firmware language, I have mixed
-feelings about this. Shall this be read:
+The first approach is currently only used by pinctrl-single.c.
 
-"Poke 4 into 0x00, poke 1 into 0x04, poke 2 into 0x08" etc?
+That driver is designed for the case where all info about
+the hardware arrives in some description language that
+can be translated into a simple DT description.
 
-We really need to discuss this, Grant has already NACK:ed
-such approaches once.
+If you want to use that approach, you should use that
+driver. If that driver does not work for you, then it's not
+fulfilling it's purpose as a one-stop shop for simple
+pin controllers entirely contained within the device tree,
+and should be renamed or redesigned.
 
-If you're still going to do this, it is mandatory
-to NOT use magic hex numbers anymore, because Stephen has
-merged preprocessor support to the DTC compiler so you
-can use #defined macros.
-
-See commit:
-cd296721a9645f9f28800a072490fa15458d1fb7
-
-> +       pinctrl@11400000 {
-> +               gpa0: gpa0 {
-> +                       gpio-controller;
-> +                       samsung,pctl-offset = <0x000>;
-> +                       samsung,pin-count = <8>;
-> +                       samsung,bank-type = <&bank_off>;
-> +                       #gpio-cells = <2>;
-
-This part is OK.
-
-> +
-> +                       interrupt-controller;
-> +                       samsung,eint-offset = <0x00>;
-
-This property is *NOT* OK. IMHO the driver should know these
-offsets, not the device tree. The driver only needs the offset to
-the register range, what registers there are and their names
-should be #defined.
-
-> +                       #interrupt-cells = <2>;
-> +               };
+If you will end up with a hybrid approach with some
+stuff in the device tree and some stuff in the code,
+it's better to keep the old driver.
 
 Yours,
 Linus Walleij
