@@ -1,28 +1,28 @@
 From: Florian Tobias Schandinat <FlorianSchandinat@gmx.de>
-Subject: Re: [PATCH] video: s3c-fb: use clk_prepare_enable and clk_disable_unprepare
-Date: Wed, 10 Oct 2012 12:33:58 +0000
-Message-ID: <50756B36.9020509@gmx.de>
-References: <1349222260-3248-1-git-send-email-thomas.abraham@linaro.org>
+Subject: Re: [PATCH] video: exynos_dp: use clk_prepare_enable and clk_disable_unprepare
+Date: Wed, 10 Oct 2012 12:35:12 +0000
+Message-ID: <50756B80.7080306@gmx.de>
+References: <006701cda1fb$cee12fe0$6ca38fa0$%han@samsung.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout-de.gmx.net ([213.165.64.22]:50435 "HELO
+Received: from mailout-de.gmx.net ([213.165.64.23]:35510 "HELO
 	mailout-de.gmx.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with SMTP id S1751790Ab2JJMeN (ORCPT
+	with SMTP id S1755724Ab2JJMfZ (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Wed, 10 Oct 2012 08:34:13 -0400
-In-Reply-To: <1349222260-3248-1-git-send-email-thomas.abraham@linaro.org>
+	Wed, 10 Oct 2012 08:35:25 -0400
+In-Reply-To: <006701cda1fb$cee12fe0$6ca38fa0$%han@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Thomas Abraham <thomas.abraham@linaro.org>
-Cc: linux-fbdev@vger.kernel.org, jg1.han@samsung.com, kgene.kim@samsung.com, linux-samsung-soc@vger.kernel.org
+To: Jingoo Han <jg1.han@samsung.com>
+Cc: linux-fbdev@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 'Thomas Abraham' <thomas.abraham@linaro.org>
 
-On 10/02/2012 11:57 PM, Thomas Abraham wrote:
+On 10/04/2012 06:45 AM, Jingoo Han wrote:
 > Convert clk_enable/clk_disable to clk_prepare_enable/clk_disable_unprepare
 > calls as required by common clock framework.
 > 
-> Signed-off-by: Thomas Abraham <thomas.abraham@linaro.org>
+> Signed-off-by: Jingoo Han <jg1.han@samsung.com>
 
 Applied.
 
@@ -33,103 +33,46 @@ Florian Tobias Schandinat
 
 
 > ---
->  drivers/video/s3c-fb.c |   28 ++++++++++++++--------------
->  1 files changed, 14 insertions(+), 14 deletions(-)
+>  drivers/video/exynos/exynos_dp_core.c |    8 ++++----
+>  1 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/video/s3c-fb.c b/drivers/video/s3c-fb.c
-> index 52b744f..2ed7b63 100644
-> --- a/drivers/video/s3c-fb.c
-> +++ b/drivers/video/s3c-fb.c
-> @@ -1404,7 +1404,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
->  		return PTR_ERR(sfb->bus_clk);
+> diff --git a/drivers/video/exynos/exynos_dp_core.c b/drivers/video/exynos/exynos_dp_core.c
+> index cdc1398..d55470e 100644
+> --- a/drivers/video/exynos/exynos_dp_core.c
+> +++ b/drivers/video/exynos/exynos_dp_core.c
+> @@ -885,7 +885,7 @@ static int __devinit exynos_dp_probe(struct platform_device *pdev)
+>  		return PTR_ERR(dp->clock);
 >  	}
 >  
-> -	clk_enable(sfb->bus_clk);
-> +	clk_prepare_enable(sfb->bus_clk);
+> -	clk_enable(dp->clock);
+> +	clk_prepare_enable(dp->clock);
 >  
->  	if (!sfb->variant.has_clksel) {
->  		sfb->lcd_clk = devm_clk_get(dev, "sclk_fimd");
-> @@ -1414,7 +1414,7 @@ static int __devinit s3c_fb_probe(struct platform_device *pdev)
->  			goto err_bus_clk;
->  		}
+>  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
 >  
-> -		clk_enable(sfb->lcd_clk);
-> +		clk_prepare_enable(sfb->lcd_clk);
->  	}
+> @@ -956,7 +956,7 @@ static int __devexit exynos_dp_remove(struct platform_device *pdev)
+>  	if (pdata && pdata->phy_exit)
+>  		pdata->phy_exit();
 >  
->  	pm_runtime_enable(sfb->dev);
-> @@ -1504,10 +1504,10 @@ err_lcd_clk:
->  	pm_runtime_disable(sfb->dev);
->  
->  	if (!sfb->variant.has_clksel)
-> -		clk_disable(sfb->lcd_clk);
-> +		clk_disable_unprepare(sfb->lcd_clk);
->  
->  err_bus_clk:
-> -	clk_disable(sfb->bus_clk);
-> +	clk_disable_unprepare(sfb->bus_clk);
->  
->  	return ret;
->  }
-> @@ -1531,9 +1531,9 @@ static int __devexit s3c_fb_remove(struct platform_device *pdev)
->  			s3c_fb_release_win(sfb, sfb->windows[win]);
->  
->  	if (!sfb->variant.has_clksel)
-> -		clk_disable(sfb->lcd_clk);
-> +		clk_disable_unprepare(sfb->lcd_clk);
->  
-> -	clk_disable(sfb->bus_clk);
-> +	clk_disable_unprepare(sfb->bus_clk);
->  
->  	pm_runtime_put_sync(sfb->dev);
->  	pm_runtime_disable(sfb->dev);
-> @@ -1561,9 +1561,9 @@ static int s3c_fb_suspend(struct device *dev)
->  	}
->  
->  	if (!sfb->variant.has_clksel)
-> -		clk_disable(sfb->lcd_clk);
-> +		clk_disable_unprepare(sfb->lcd_clk);
->  
-> -	clk_disable(sfb->bus_clk);
-> +	clk_disable_unprepare(sfb->bus_clk);
->  
->  	pm_runtime_put_sync(sfb->dev);
->  
-> @@ -1581,10 +1581,10 @@ static int s3c_fb_resume(struct device *dev)
->  
->  	pm_runtime_get_sync(sfb->dev);
->  
-> -	clk_enable(sfb->bus_clk);
-> +	clk_prepare_enable(sfb->bus_clk);
->  
->  	if (!sfb->variant.has_clksel)
-> -		clk_enable(sfb->lcd_clk);
-> +		clk_prepare_enable(sfb->lcd_clk);
->  
->  	/* setup gpio and output polarity controls */
->  	pd->setup_gpio();
-> @@ -1640,9 +1640,9 @@ static int s3c_fb_runtime_suspend(struct device *dev)
->  	struct s3c_fb *sfb = platform_get_drvdata(pdev);
->  
->  	if (!sfb->variant.has_clksel)
-> -		clk_disable(sfb->lcd_clk);
-> +		clk_disable_unprepare(sfb->lcd_clk);
->  
-> -	clk_disable(sfb->bus_clk);
-> +	clk_disable_unprepare(sfb->bus_clk);
+> -	clk_disable(dp->clock);
+> +	clk_disable_unprepare(dp->clock);
 >  
 >  	return 0;
 >  }
-> @@ -1653,10 +1653,10 @@ static int s3c_fb_runtime_resume(struct device *dev)
->  	struct s3c_fb *sfb = platform_get_drvdata(pdev);
->  	struct s3c_fb_platdata *pd = sfb->pdata;
+> @@ -971,7 +971,7 @@ static int exynos_dp_suspend(struct device *dev)
+>  	if (pdata && pdata->phy_exit)
+>  		pdata->phy_exit();
 >  
-> -	clk_enable(sfb->bus_clk);
-> +	clk_prepare_enable(sfb->bus_clk);
+> -	clk_disable(dp->clock);
+> +	clk_disable_unprepare(dp->clock);
 >  
->  	if (!sfb->variant.has_clksel)
-> -		clk_enable(sfb->lcd_clk);
-> +		clk_prepare_enable(sfb->lcd_clk);
+>  	return 0;
+>  }
+> @@ -985,7 +985,7 @@ static int exynos_dp_resume(struct device *dev)
+>  	if (pdata && pdata->phy_init)
+>  		pdata->phy_init();
 >  
->  	/* setup gpio and output polarity controls */
->  	pd->setup_gpio();
+> -	clk_enable(dp->clock);
+> +	clk_prepare_enable(dp->clock);
+>  
+>  	exynos_dp_init_dp(dp);
+>  
