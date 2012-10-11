@@ -1,120 +1,190 @@
-From: Vasanth Ananthan <vasanthananthan@gmail.com>
-Subject: Re: [PATCH 2/6] ARM: EXYNOS5: DT Support for SATA and SATA PHY
-Date: Thu, 11 Oct 2012 12:19:04 +0530
-Message-ID: <CAK1UHiwCQZJ--+urJmn6CURAYLx3-8uKPPLcdy7ufmKHTAm1sw@mail.gmail.com>
-References: <1349783332-18467-1-git-send-email-vasanthananthan@gmail.com>
-	<1349783332-18467-3-git-send-email-vasanthananthan@gmail.com>
-	<20121009182828.GA20879@quad.lixom.net>
-	<CAK1UHiyjyp8u-nFwU-19dds1uF7T1kkFNHyYQ6pWLFtUwGtR1w@mail.gmail.com>
-	<20121010163127.GA19433@quad.lixom.net>
+From: Ajay kumar <ajaynumb@gmail.com>
+Subject: Re: [PATCH V4 2/2] video: exynos_dp: device tree documentation
+Date: Thu, 11 Oct 2012 12:20:53 +0530
+Message-ID: <CAEC9eQO5s5VG_qwRbH4K7TD_Z_rYbks=s_GEOfY3TxDMk7gPzw@mail.gmail.com>
+References: <1349824101-32574-1-git-send-email-ajaykumar.rs@samsung.com>
+	<1349824101-32574-3-git-send-email-ajaykumar.rs@samsung.com>
+	<50749727.1020103@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=ISO-8859-1
-Return-path: <linux-ide-owner@vger.kernel.org>
-In-Reply-To: <20121010163127.GA19433@quad.lixom.net>
-Sender: linux-ide-owner@vger.kernel.org
-To: Olof Johansson <olof@lixom.net>
-Cc: kgene.kim@samsung.com, jgarzik@pobox.com, linux@arm.linux.org.uk, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-ide@vger.kernel.org, thomas.abraham@linaro.org, Vasanth Ananthan <vasanth.a@samsung.com>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+Received: from mail-ie0-f174.google.com ([209.85.223.174]:36675 "EHLO
+	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1754938Ab2JKGux (ORCPT
+	<rfc822;linux-samsung-soc@vger.kernel.org>);
+	Thu, 11 Oct 2012 02:50:53 -0400
+In-Reply-To: <50749727.1020103@gmail.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
+To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
+Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org, FlorianSchandinat@gmx.de, tomasz.figa@gmail.com, thomas.ab@samsung.com
 
-Hi,
+Hi Sylwester,
 
-On Wed, Oct 10, 2012 at 10:01 PM, Olof Johansson <olof@lixom.net> wrote:
-> Hi,
+On Wed, Oct 10, 2012 at 2:59 AM, Sylwester Nawrocki
+<sylvester.nawrocki@gmail.com> wrote:
+> Hi Ajay,
 >
-> On Wed, Oct 10, 2012 at 02:08:31PM +0530, Vasanth Ananthan wrote:
->
->> > > +
->> > > +             sataphy@70 {
->> >
->> > sata-phy would be a more conventional name.
->> >
->> > > +                     compatible = "samsung,i2c-phy";
->> >
->> > i2c-phy? Seems like an odd choice of name. What is this device?
->> >
+> On 10/10/2012 01:08 AM, Ajay Kumar wrote:
+>> Add documentation for the DT bindings in exynos display port driver.
 >>
->> The SATA physical layer controller is both a platform device and a i2c
->> slave device.
->> This compatible string is for the i2c client driver. Hence I have used
->> i2c-phy here.
->
-> Ok, but samsung,i2c-phy is much too generic. Maybe something like
-> samsung,exynos5-sata-phy  (and rename the MMIO-controlled phy controls
-> to ...sata-phy-controller below).
->
-
-I'll do so..
-
->
->> > > +        };
->> > > +
->> > > +        sata-phy@12170000 {
->> > > +                compatible = "samsung,exynos-sata-phy";
->> > > +                reg = <0x12170000 0x1ff>;
->> > > +        };
->> >
->> > Should have binding too. How does this relate to the i2c device above.
->> >
+>> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
+>> ---
+>>   .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++++++++++++
+>>   1 files changed, 83 insertions(+), 0 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
 >>
->> As mentioned earlier SATA physical layer controller is both a platform
->> device and also an i2c slave device.
->> This Node is for the SATA physical layer platform device, the previous node
->> is for i2c slave device.
->> Certain initialization settings done directly and other settings has to be
->> done through i2c.
+>> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
+>> new file mode 100644
+>> index 0000000..a021963
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
+>> @@ -0,0 +1,83 @@
+>> +Exynos display port driver should configure the display port interface
+>> +based on the type of panel connected to it.
 >
-> Wow, that's quite awkward. What needs to be done over i2c? I think I have
-> seen use of SATA without touching the i2c side but it might have been for
-> a simple setup.
-
-40 bit Interface setting is done through i2c. Internal setting address
-0x3A and data 0x0B.
-
+> The bindings are supposed to describe devices, not drivers. So it
+> might be better to say:
 >
->> > > +
->> > >       i2c@12C60000 {
->> > >               compatible = "samsung,s3c2440-i2c";
->> > >               reg = <0x12C60000 0x100>;
->> > > @@ -152,6 +164,13 @@
->> > >               #size-cells = <0>;
->> > >       };
->> > >
->> > > +     i2c@121D0000 {
->> > > +                compatible = "samsung,s3c2440-sataphy-i2c";
->> >
->> > Is this a unique i2c controller, or is it just another one like the others
->> > on
->> > the chip? If it's the latter, it should use the regular compatible string.
->> >
->>
->> Yes, its a unique i2c controller which lacks an interrupt line while others
->> are interrupt driven.
->> Hence I have used a distinct compatible string for the driver to
->> distinguish the controller.
+> "The Exynos display port interface should be configured based on the
+> type of panel connected to it."
+Ok. I will change it.
+> From this documentation it is not clear which properties are required
+> and which are optional for each node.
+> I think, in the property names dashes should be used, rather than
+> underscores. Dashes are much more common among existing bindings.
+Ok. Will make use of dashes and mention optional properties.
+>> +We use two nodes:
+>> +     -dptx_phy node
+>> +     -display-port-controller node
+>> +
+>> +For the dp-phy initialization, we use a dptx_phy node.
+>> +Required properties for dptx_phy:
+>> +     -compatible:
+>> +             Should be "samsung,dp-phy".
 >
-> It would be better to just make the i2c bus driver handle the case where there
-> is no interrupt specifier and just use polling in those cases, especially if
-> the rest of the device is identical and doesn't need special handling.
+> Is there a separate dptx-phy driver that is being matched with this
+> compatible property ? Is the dptx-node going to be referenced by other
+> nodes than display-port-controller ? If not, then you could likely drop
+> the compatible property entirely and make the dptx-phy node a child
+> node of display-port-controller, i.e.
 >
-> As a matter of fact, if that had been done for the hdmi phy, then you could
-> have done this patch without modifying the driver at all, just device tree
-> contents. And the same would go for the next time down the road when
-> a "special" i2c bus is added.
+>         display-port-controller {
+>                 compatible = "samsung,exynos5-dp";
+>                 reg = <0x145b0000 0x10000>;
+>                 interrupts =<10 3>;
+>                 interrupt-parent =<&combiner>;
 >
-
-
-Yes, It is the i2c bus driver thats handles this case. There is a
-subsequent patch
-that provides the polling support to the driver. As far as I know, the
-i2c controller for
-HDMI PHY is also interrupt driven.
-
+>                 dptx-phy {
+>                         reg = <0x10040720>;
+>                         samsung,enable_mask = <1>;
+>                 };
+>        };
 >
-> -Olof
-
-
-
--- 
+> Then the driver could just look for a child node named "dptx-phy" with
+> e.g. of_find_node_by_name().
+Ok. Will change it.
+>> +     -samsung,dptx_phy_reg:
+>
+> I think it's fine to use just 'reg' instead of this vendor specific name.
+Ok.
+>> +             Base address of DP PHY register.
+>> +     -samsung,enable_mask:
+>> +             The bit-mask used to enable/disable DP PHY.
+>> +
+>> +For the Panel initialization, we read data from display-port-controller node.
+>> +Required properties for display-port-controller:
+>> +     -compatible:
+>> +             Should be "samsung,exynos5-dp".
+>> +     -reg:
+>> +             physical base address of the controller and length
+>> +             of memory mapped region.
+>> +     -interrupts:
+>> +             Interrupt combiner values.
+>> +     -interrupt-parent:
+>> +             phandle to Interrupt combiner node.
+>> +     -samsung,dp_phy:
+>> +             phandle to dptx_phy node.
+>> +     -samsung,color_space:
+>> +             input video data format.
+>> +                     COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
+>> +     -samsung,dynamic_range:
+>> +             dynamic range for input video data.
+>> +                     VESA = 0, CEA = 1
+>> +     -samsung,ycbcr_coeff:
+>> +             YCbCr co-efficients for input video.
+>> +                     COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
+>> +     -samsung,color_depth:
+>> +             Number of bits per colour component.
+>> +                     COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
+>> +     -samsung,link_rate:
+>> +             link rate supported by the panel.
+>> +                     LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
+>> +     -samsung,lane_count:
+>> +             number of lanes supported by the panel.
+>> +                     LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
+>> +     -samsung,interlaced:
+>> +             Interlace scan mode.
+>> +                     Progressive if defined, Interlaced if not defined
+>> +     -samsung,v_sync_polarity:
+>> +             VSYNC polarity configuration.
+>> +                     High if defined, Low if not defined
+>> +     -samsung,h_sync_polarity:
+>> +             HSYNC polarity configuration.
+>> +                     High if defined, Low if not defined
+>
+> So there is no common video bindings for things like these two ?
+> In V4L2 we decided to use vsync-active, hsync-active [1], the video
+> timings bindings [2] use hsync-active-high, hsync-active-high boolean
+> properties. Perhaps it is worth to pick some of those standard
+> definitions and use instead of the vendor specific ones ?
+hsync-active-high and vsync-active-high seems to hold good in our case.
+Also, are you asking us to just use only the standard names or use standard
+helper functions as well? Since we use only hsync and vsync polarity and no
+other LCD timing properties, I think we need not use standard helper functions
+for parsing display timings!
+>> +
+>> +Example:
+>> +
+>> +SOC specific portion:
+>> +     dptx_phy: dptx_phy@0x10040720 {
+>> +             compatible = "samsung,dp-phy";
+>> +             samsung,dptx_phy_reg =<0x10040720>;
+>
+>                 reg = <0x10040720>;
+Ok.
+>> +             samsung,enable_mask =<1>;
+>> +     };
+>> +
+>> +     display-port-controller {
+>> +             compatible = "samsung,exynos5-dp";
+>> +             reg =<0x145B0000 0x10000>;
+>
+> I think lower case is preferred.
+Ok. Will change it.
+>> +             interrupts =<10 3>;
+>> +             interrupt-parent =<&combiner>;
+>> +             samsung,dp_phy =<&dptx_phy>;
+>> +        };
+>> +
+>> +Board Specific portion:
+>> +     display-port-controller {
+>> +             samsung,color_space =<0>;
+>> +             samsung,dynamic_range =<0>;
+>> +             samsung,ycbcr_coeff =<0>;
+>> +             samsung,color_depth =<1>;
+>> +             samsung,link_rate =<0x0a>;
+>> +             samsung,lane_count =<2>;
+>> +     };
+>
+> Thanks,
+> Sylwester
+>
+> [1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg52743.html
+> [2] http://www.mail-archive.com/linux-media@vger.kernel.org/msg53323.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 Regards,
-
-Vasanth K A
+Ajay
