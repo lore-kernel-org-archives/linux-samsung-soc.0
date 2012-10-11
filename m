@@ -1,121 +1,251 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 02/15] pinctrl: samsung: Do not pass gpio_chip to
- pin_to_reg_bank
-Date: Thu, 11 Oct 2012 10:11:08 +0200
-Message-ID: <1349943081-27939-3-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 03/15] pinctrl: samsung: Assing pin numbers dynamically
+Date: Thu, 11 Oct 2012 10:11:09 +0200
+Message-ID: <1349943081-27939-4-git-send-email-t.figa@samsung.com>
 References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout2.samsung.com ([203.254.224.25]:12395 "EHLO
-	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1757931Ab2JKILo (ORCPT
+Received: from mailout4.samsung.com ([203.254.224.34]:56801 "EHLO
+	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757931Ab2JKILt (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 04:11:44 -0400
-Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
- by mailout2.samsung.com
+	Thu, 11 Oct 2012 04:11:49 -0400
+Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
+ by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBP005P8YRAMOI0@mailout2.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:43 +0900 (KST)
+ 17 2011)) with ESMTP id <0MBP00EIPYR2YEI0@mailout4.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:47 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MBP005FVYR04E50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:42 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:47 +0900 (KST)
 In-reply-to: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-The pointer to gpio_chip passed to pin_to_reg_bank utility function is
-used only to retrieve a pointer to samsung_pinctrl_drv_data structure.
+This patch modifies the pinctrl-samsung driver to assign numbers to pins
+dynamically instead of static enumerations.
 
-This patch modifies the function and its users to pass a pointer to
-samsung_pinctrl_drv_data directly.
+Thanks to this change the amount of code requried to support a SoC can
+be greatly reduced and the code made more readable.
 
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- drivers/pinctrl/pinctrl-samsung.c | 25 ++++++++++++++++---------
- 1 file changed, 16 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pinctrl-exynos.c  | 83 +++++++++++++++++----------------------
+ drivers/pinctrl/pinctrl-exynos.h  | 11 ++----
+ drivers/pinctrl/pinctrl-samsung.c | 22 ++++++++++-
+ 3 files changed, 62 insertions(+), 54 deletions(-)
 
+diff --git a/drivers/pinctrl/pinctrl-exynos.c b/drivers/pinctrl/pinctrl-exynos.c
+index 21362f4..0ea2164 100644
+--- a/drivers/pinctrl/pinctrl-exynos.c
++++ b/drivers/pinctrl/pinctrl-exynos.c
+@@ -484,51 +484,51 @@ static int exynos_eint_wkup_init(struct samsung_pinctrl_drv_data *d)
+ 
+ /* pin banks of exynos4210 pin-controller 0 */
+ static struct samsung_pin_bank exynos4210_pin_banks0[] = {
+-	EXYNOS_PIN_BANK_EINTG(0x000, EXYNOS4210_GPIO_A0, "gpa0"),
+-	EXYNOS_PIN_BANK_EINTG(0x020, EXYNOS4210_GPIO_A1, "gpa1"),
+-	EXYNOS_PIN_BANK_EINTG(0x040, EXYNOS4210_GPIO_B, "gpb"),
+-	EXYNOS_PIN_BANK_EINTG(0x060, EXYNOS4210_GPIO_C0, "gpc0"),
+-	EXYNOS_PIN_BANK_EINTG(0x080, EXYNOS4210_GPIO_C1, "gpc1"),
+-	EXYNOS_PIN_BANK_EINTG(0x0A0, EXYNOS4210_GPIO_D0, "gpd0"),
+-	EXYNOS_PIN_BANK_EINTG(0x0C0, EXYNOS4210_GPIO_D1, "gpd1"),
+-	EXYNOS_PIN_BANK_EINTG(0x0E0, EXYNOS4210_GPIO_E0, "gpe0"),
+-	EXYNOS_PIN_BANK_EINTG(0x100, EXYNOS4210_GPIO_E1, "gpe1"),
+-	EXYNOS_PIN_BANK_EINTG(0x120, EXYNOS4210_GPIO_E2, "gpe2"),
+-	EXYNOS_PIN_BANK_EINTG(0x140, EXYNOS4210_GPIO_E3, "gpe3"),
+-	EXYNOS_PIN_BANK_EINTG(0x160, EXYNOS4210_GPIO_E4, "gpe4"),
+-	EXYNOS_PIN_BANK_EINTG(0x180, EXYNOS4210_GPIO_F0, "gpf0"),
+-	EXYNOS_PIN_BANK_EINTG(0x1A0, EXYNOS4210_GPIO_F1, "gpf1"),
+-	EXYNOS_PIN_BANK_EINTG(0x1C0, EXYNOS4210_GPIO_F2, "gpf2"),
+-	EXYNOS_PIN_BANK_EINTG(0x1E0, EXYNOS4210_GPIO_F3, "gpf3"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpa0"),
++	EXYNOS_PIN_BANK_EINTG(6, 0x020, "gpa1"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x040, "gpb"),
++	EXYNOS_PIN_BANK_EINTG(5, 0x060, "gpc0"),
++	EXYNOS_PIN_BANK_EINTG(5, 0x080, "gpc1"),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0A0, "gpd0"),
++	EXYNOS_PIN_BANK_EINTG(4, 0x0C0, "gpd1"),
++	EXYNOS_PIN_BANK_EINTG(5, 0x0E0, "gpe0"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpe1"),
++	EXYNOS_PIN_BANK_EINTG(6, 0x120, "gpe2"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x140, "gpe3"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x160, "gpe4"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x180, "gpf0"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x1A0, "gpf1"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x1C0, "gpf2"),
++	EXYNOS_PIN_BANK_EINTG(6, 0x1E0, "gpf3"),
+ };
+ 
+ /* pin banks of exynos4210 pin-controller 1 */
+ static struct samsung_pin_bank exynos4210_pin_banks1[] = {
+-	EXYNOS_PIN_BANK_EINTG(0x000, EXYNOS4210_GPIO_J0, "gpj0"),
+-	EXYNOS_PIN_BANK_EINTG(0x020, EXYNOS4210_GPIO_J1, "gpj1"),
+-	EXYNOS_PIN_BANK_EINTG(0x040, EXYNOS4210_GPIO_K0, "gpk0"),
+-	EXYNOS_PIN_BANK_EINTG(0x060, EXYNOS4210_GPIO_K1, "gpk1"),
+-	EXYNOS_PIN_BANK_EINTG(0x080, EXYNOS4210_GPIO_K2, "gpk2"),
+-	EXYNOS_PIN_BANK_EINTG(0x0A0, EXYNOS4210_GPIO_K3, "gpk3"),
+-	EXYNOS_PIN_BANK_EINTG(0x0C0, EXYNOS4210_GPIO_L0, "gpl0"),
+-	EXYNOS_PIN_BANK_EINTG(0x0E0, EXYNOS4210_GPIO_L1, "gpl1"),
+-	EXYNOS_PIN_BANK_EINTG(0x100, EXYNOS4210_GPIO_L2, "gpl2"),
+-	EXYNOS_PIN_BANK_EINTN(0x120, EXYNOS4210_GPIO_Y0, "gpy0"),
+-	EXYNOS_PIN_BANK_EINTN(0x140, EXYNOS4210_GPIO_Y1, "gpy1"),
+-	EXYNOS_PIN_BANK_EINTN(0x160, EXYNOS4210_GPIO_Y2, "gpy2"),
+-	EXYNOS_PIN_BANK_EINTN(0x180, EXYNOS4210_GPIO_Y3, "gpy3"),
+-	EXYNOS_PIN_BANK_EINTN(0x1A0, EXYNOS4210_GPIO_Y4, "gpy4"),
+-	EXYNOS_PIN_BANK_EINTN(0x1C0, EXYNOS4210_GPIO_Y5, "gpy5"),
+-	EXYNOS_PIN_BANK_EINTN(0x1E0, EXYNOS4210_GPIO_Y6, "gpy6"),
+-	EXYNOS_PIN_BANK_EINTN(0xC00, EXYNOS4210_GPIO_X0, "gpx0"),
+-	EXYNOS_PIN_BANK_EINTN(0xC20, EXYNOS4210_GPIO_X1, "gpx1"),
+-	EXYNOS_PIN_BANK_EINTN(0xC40, EXYNOS4210_GPIO_X2, "gpx2"),
+-	EXYNOS_PIN_BANK_EINTN(0xC60, EXYNOS4210_GPIO_X3, "gpx3"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x000, "gpj0"),
++	EXYNOS_PIN_BANK_EINTG(5, 0x020, "gpj1"),
++	EXYNOS_PIN_BANK_EINTG(7, 0x040, "gpk0"),
++	EXYNOS_PIN_BANK_EINTG(7, 0x060, "gpk1"),
++	EXYNOS_PIN_BANK_EINTG(7, 0x080, "gpk2"),
++	EXYNOS_PIN_BANK_EINTG(7, 0x0A0, "gpk3"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x0C0, "gpl0"),
++	EXYNOS_PIN_BANK_EINTG(3, 0x0E0, "gpl1"),
++	EXYNOS_PIN_BANK_EINTG(8, 0x100, "gpl2"),
++	EXYNOS_PIN_BANK_EINTN(6, 0x120, "gpy0"),
++	EXYNOS_PIN_BANK_EINTN(4, 0x140, "gpy1"),
++	EXYNOS_PIN_BANK_EINTN(6, 0x160, "gpy2"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x180, "gpy3"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x1A0, "gpy4"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x1C0, "gpy5"),
++	EXYNOS_PIN_BANK_EINTN(8, 0x1E0, "gpy6"),
++	EXYNOS_PIN_BANK_EINTN(8, 0xC00, "gpx0"),
++	EXYNOS_PIN_BANK_EINTN(8, 0xC20, "gpx1"),
++	EXYNOS_PIN_BANK_EINTN(8, 0xC40, "gpx2"),
++	EXYNOS_PIN_BANK_EINTN(8, 0xC60, "gpx3"),
+ };
+ 
+ /* pin banks of exynos4210 pin-controller 2 */
+ static struct samsung_pin_bank exynos4210_pin_banks2[] = {
+-	EXYNOS_PIN_BANK_EINTN(0x000, EXYNOS4210_GPIO_Z, "gpz"),
++	EXYNOS_PIN_BANK_EINTN(7, 0x000, "gpz"),
+ };
+ 
+ /*
+@@ -540,9 +540,6 @@ struct samsung_pin_ctrl exynos4210_pin_ctrl[] = {
+ 		/* pin-controller instance 0 data */
+ 		.pin_banks	= exynos4210_pin_banks0,
+ 		.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks0),
+-		.base		= EXYNOS4210_GPIO_A0_START,
+-		.nr_pins	= EXYNOS4210_GPIOA_NR_PINS,
+-		.nr_gint	= EXYNOS4210_GPIOA_NR_GINT,
+ 		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
+ 		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
+ 		.geint_pend	= EXYNOS_GPIO_EPEND_OFFSET,
+@@ -553,9 +550,6 @@ struct samsung_pin_ctrl exynos4210_pin_ctrl[] = {
+ 		/* pin-controller instance 1 data */
+ 		.pin_banks	= exynos4210_pin_banks1,
+ 		.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks1),
+-		.base		= EXYNOS4210_GPIOA_NR_PINS,
+-		.nr_pins	= EXYNOS4210_GPIOB_NR_PINS,
+-		.nr_gint	= EXYNOS4210_GPIOB_NR_GINT,
+ 		.nr_wint	= 32,
+ 		.geint_con	= EXYNOS_GPIO_ECON_OFFSET,
+ 		.geint_mask	= EXYNOS_GPIO_EMASK_OFFSET,
+@@ -571,9 +565,6 @@ struct samsung_pin_ctrl exynos4210_pin_ctrl[] = {
+ 		/* pin-controller instance 2 data */
+ 		.pin_banks	= exynos4210_pin_banks2,
+ 		.nr_banks	= ARRAY_SIZE(exynos4210_pin_banks2),
+-		.base		= EXYNOS4210_GPIOA_NR_PINS +
+-					EXYNOS4210_GPIOB_NR_PINS,
+-		.nr_pins	= EXYNOS4210_GPIOC_NR_PINS,
+ 		.label		= "exynos4210-gpio-ctrl2",
+ 	},
+ };
+diff --git a/drivers/pinctrl/pinctrl-exynos.h b/drivers/pinctrl/pinctrl-exynos.h
+index 31d0a06..1788467 100644
+--- a/drivers/pinctrl/pinctrl-exynos.h
++++ b/drivers/pinctrl/pinctrl-exynos.h
+@@ -165,11 +165,10 @@ enum exynos4210_gpio_xc_start {
+ #define EXYNOS_EINT_MAX_PER_BANK	8
+ #define EXYNOS_EINT_NR_WKUP_EINT
+ 
+-#define EXYNOS_PIN_BANK_EINTN(reg, __gpio, id)		\
++#define EXYNOS_PIN_BANK_EINTN(pins, reg, id)		\
+ 	{						\
+ 		.pctl_offset	= reg,			\
+-		.pin_base	= (__gpio##_START),	\
+-		.nr_pins	= (__gpio##_NR),	\
++		.nr_pins	= pins,			\
+ 		.func_width	= 4,			\
+ 		.pud_width	= 2,			\
+ 		.drv_width	= 2,			\
+@@ -179,18 +178,16 @@ enum exynos4210_gpio_xc_start {
+ 		.name		= id			\
+ 	}
+ 
+-#define EXYNOS_PIN_BANK_EINTG(reg, __gpio, id)		\
++#define EXYNOS_PIN_BANK_EINTG(pins, reg, id)		\
+ 	{						\
+ 		.pctl_offset	= reg,			\
+-		.pin_base	= (__gpio##_START),	\
+-		.nr_pins	= (__gpio##_NR),	\
++		.nr_pins	= pins,			\
+ 		.func_width	= 4,			\
+ 		.pud_width	= 2,			\
+ 		.drv_width	= 2,			\
+ 		.conpdn_width	= 2,			\
+ 		.pudpdn_width	= 2,			\
+ 		.eint_type	= EINT_TYPE_GPIO,	\
+-		.irq_base	= (__gpio##_IRQ),	\
+ 		.name		= id			\
+ 	}
+ 
 diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index c660fa5..aa42d54 100644
+index aa42d54..f219bb6 100644
 --- a/drivers/pinctrl/pinctrl-samsung.c
 +++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -250,14 +250,12 @@ static int samsung_pinmux_get_groups(struct pinctrl_dev *pctldev,
-  * given a pin number that is local to a pin controller, find out the pin bank
-  * and the register base of the pin bank.
-  */
--static void pin_to_reg_bank(struct gpio_chip *gc, unsigned pin,
--			void __iomem **reg, u32 *offset,
-+static void pin_to_reg_bank(struct samsung_pinctrl_drv_data *drvdata,
-+			unsigned pin, void __iomem **reg, u32 *offset,
- 			struct samsung_pin_bank **bank)
- {
--	struct samsung_pinctrl_drv_data *drvdata;
- 	struct samsung_pin_bank *b;
+@@ -46,6 +46,8 @@ struct pin_config {
+ 	{ "samsung,pin-pud-pdn", PINCFG_TYPE_PUD_PDN },
+ };
  
--	drvdata = dev_get_drvdata(gc->dev);
- 	b = drvdata->ctrl->pin_banks;
- 
- 	while ((pin >= b->pin_base) &&
-@@ -292,7 +290,7 @@ static void samsung_pinmux_setup(struct pinctrl_dev *pctldev, unsigned selector,
- 	 * pin function number in the config register.
- 	 */
- 	for (cnt = 0; cnt < drvdata->pin_groups[group].num_pins; cnt++) {
--		pin_to_reg_bank(drvdata->gc, pins[cnt] - drvdata->ctrl->base,
-+		pin_to_reg_bank(drvdata, pins[cnt] - drvdata->ctrl->base,
- 				&reg, &pin_offset, &bank);
- 		mask = (1 << bank->func_width) - 1;
- 		shift = pin_offset * bank->func_width;
-@@ -329,10 +327,13 @@ static int samsung_pinmux_gpio_set_direction(struct pinctrl_dev *pctldev,
- 		struct pinctrl_gpio_range *range, unsigned offset, bool input)
- {
- 	struct samsung_pin_bank *bank;
-+	struct samsung_pinctrl_drv_data *drvdata;
- 	void __iomem *reg;
- 	u32 data, pin_offset, mask, shift;
- 
--	pin_to_reg_bank(range->gc, offset, &reg, &pin_offset, &bank);
-+	drvdata = pinctrl_dev_get_drvdata(pctldev);
++static unsigned int pin_base = 0;
 +
-+	pin_to_reg_bank(drvdata, offset, &reg, &pin_offset, &bank);
- 	mask = (1 << bank->func_width) - 1;
- 	shift = pin_offset * bank->func_width;
- 
-@@ -366,7 +367,7 @@ static int samsung_pinconf_rw(struct pinctrl_dev *pctldev, unsigned int pin,
- 	u32 cfg_value, cfg_reg;
- 
- 	drvdata = pinctrl_dev_get_drvdata(pctldev);
--	pin_to_reg_bank(drvdata->gc, pin - drvdata->ctrl->base, &reg_base,
-+	pin_to_reg_bank(drvdata, pin - drvdata->ctrl->base, &reg_base,
- 					&pin_offset, &bank);
- 
- 	switch (cfg_type) {
-@@ -468,8 +469,11 @@ static void samsung_gpio_set(struct gpio_chip *gc, unsigned offset, int value)
+ /* check if the selector is a valid pin group selector */
+ static int samsung_get_group_count(struct pinctrl_dev *pctldev)
  {
- 	void __iomem *reg;
- 	u32 pin_offset, data;
-+	struct samsung_pinctrl_drv_data *drvdata;
+@@ -792,6 +794,9 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
+ 	int id;
+ 	const struct of_device_id *match;
+ 	const struct device_node *node = pdev->dev.of_node;
++	struct samsung_pin_ctrl *ctrl;
++	struct samsung_pin_bank *bank;
++	int i;
  
--	pin_to_reg_bank(gc, offset, &reg, &pin_offset, NULL);
-+	drvdata = dev_get_drvdata(gc->dev);
+ 	id = of_alias_get_id(pdev->dev.of_node, "pinctrl");
+ 	if (id < 0) {
+@@ -799,7 +804,22 @@ static struct samsung_pin_ctrl *samsung_pinctrl_get_soc_data(
+ 		return NULL;
+ 	}
+ 	match = of_match_node(samsung_pinctrl_dt_match, node);
+-	return (struct samsung_pin_ctrl *)match->data + id;
++	ctrl = (struct samsung_pin_ctrl *)match->data + id;
 +
-+	pin_to_reg_bank(drvdata, offset, &reg, &pin_offset, NULL);
- 	data = readl(reg + DAT_REG);
- 	data &= ~(1 << pin_offset);
- 	if (value)
-@@ -482,8 +486,11 @@ static int samsung_gpio_get(struct gpio_chip *gc, unsigned offset)
- {
- 	void __iomem *reg;
- 	u32 pin_offset, data;
-+	struct samsung_pinctrl_drv_data *drvdata;
++	bank = ctrl->pin_banks;
++	for (i = 0; i < ctrl->nr_banks; ++i, ++bank) {
++		bank->pin_base = ctrl->nr_pins;
++		ctrl->nr_pins += bank->nr_pins;
++		if (bank->eint_type == EINT_TYPE_GPIO) {
++			bank->irq_base = ctrl->nr_gint;
++			ctrl->nr_gint += bank->nr_pins;
++		}
++	}
 +
-+	drvdata = dev_get_drvdata(gc->dev);
++	ctrl->base = pin_base;
++	pin_base += ctrl->nr_pins;
++
++	return ctrl;
+ }
  
--	pin_to_reg_bank(gc, offset, &reg, &pin_offset, NULL);
-+	pin_to_reg_bank(drvdata, offset, &reg, &pin_offset, NULL);
- 	data = readl(reg + DAT_REG);
- 	data >>= pin_offset;
- 	data &= 1;
+ static int __devinit samsung_pinctrl_probe(struct platform_device *pdev)
 -- 
 1.7.12
