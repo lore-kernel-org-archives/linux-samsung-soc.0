@@ -1,190 +1,115 @@
-From: Ajay kumar <ajaynumb@gmail.com>
-Subject: Re: [PATCH V4 2/2] video: exynos_dp: device tree documentation
-Date: Thu, 11 Oct 2012 12:20:53 +0530
-Message-ID: <CAEC9eQO5s5VG_qwRbH4K7TD_Z_rYbks=s_GEOfY3TxDMk7gPzw@mail.gmail.com>
-References: <1349824101-32574-1-git-send-email-ajaykumar.rs@samsung.com>
-	<1349824101-32574-3-git-send-email-ajaykumar.rs@samsung.com>
-	<50749727.1020103@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
+From: Tomasz Figa <t.figa@samsung.com>
+Subject: [PATCH v2 00/15] pinctrl: samsung: Usability and extensibiltiy
+ improvements
+Date: Thu, 11 Oct 2012 10:11:06 +0200
+Message-ID: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mail-ie0-f174.google.com ([209.85.223.174]:36675 "EHLO
-	mail-ie0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1754938Ab2JKGux (ORCPT
+Received: from mailout2.samsung.com ([203.254.224.25]:12395 "EHLO
+	mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+	with ESMTP id S1757931Ab2JKILh (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 02:50:53 -0400
-In-Reply-To: <50749727.1020103@gmail.com>
+	Thu, 11 Oct 2012 04:11:37 -0400
+Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
+ by mailout2.samsung.com
+ (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
+ 17 2011)) with ESMTP id <0MBP005P8YRAMOI0@mailout2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:34 +0900 (KST)
+Received: from mcdsrvbld02.digital.local ([106.116.37.23])
+ by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ (7.0.4.24.0) 64bit (built Nov 17 2011))
+ with ESMTPA id <0MBP005FVYR04E50@mmp1.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:11:34 +0900 (KST)
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
-To: Sylwester Nawrocki <sylvester.nawrocki@gmail.com>
-Cc: Ajay Kumar <ajaykumar.rs@samsung.com>, linux-samsung-soc@vger.kernel.org, linux-fbdev@vger.kernel.org, jg1.han@samsung.com, devicetree-discuss@lists.ozlabs.org, FlorianSchandinat@gmx.de, tomasz.figa@gmail.com, thomas.ab@samsung.com
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-Hi Sylwester,
+This patch series is a work on improving usability and extensibiltiy of
+the pinctrl-samsung driver. It consists of three main parts:
+ - improving flexibility of SoC-specific data specification
+ - converting the driver to one GPIO chip and IRQ domain per pin bank
+ - improving wake-up IRQ setup and handling
 
-On Wed, Oct 10, 2012 at 2:59 AM, Sylwester Nawrocki
-<sylvester.nawrocki@gmail.com> wrote:
-> Hi Ajay,
->
-> On 10/10/2012 01:08 AM, Ajay Kumar wrote:
->> Add documentation for the DT bindings in exynos display port driver.
->>
->> Signed-off-by: Ajay Kumar<ajaykumar.rs@samsung.com>
->> ---
->>   .../devicetree/bindings/video/exynos_dp.txt        |   83 ++++++++++++++++++++
->>   1 files changed, 83 insertions(+), 0 deletions(-)
->>   create mode 100644 Documentation/devicetree/bindings/video/exynos_dp.txt
->>
->> diff --git a/Documentation/devicetree/bindings/video/exynos_dp.txt b/Documentation/devicetree/bindings/video/exynos_dp.txt
->> new file mode 100644
->> index 0000000..a021963
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/video/exynos_dp.txt
->> @@ -0,0 +1,83 @@
->> +Exynos display port driver should configure the display port interface
->> +based on the type of panel connected to it.
->
-> The bindings are supposed to describe devices, not drivers. So it
-> might be better to say:
->
-> "The Exynos display port interface should be configured based on the
-> type of panel connected to it."
-Ok. I will change it.
-> From this documentation it is not clear which properties are required
-> and which are optional for each node.
-> I think, in the property names dashes should be used, rather than
-> underscores. Dashes are much more common among existing bindings.
-Ok. Will make use of dashes and mention optional properties.
->> +We use two nodes:
->> +     -dptx_phy node
->> +     -display-port-controller node
->> +
->> +For the dp-phy initialization, we use a dptx_phy node.
->> +Required properties for dptx_phy:
->> +     -compatible:
->> +             Should be "samsung,dp-phy".
->
-> Is there a separate dptx-phy driver that is being matched with this
-> compatible property ? Is the dptx-node going to be referenced by other
-> nodes than display-port-controller ? If not, then you could likely drop
-> the compatible property entirely and make the dptx-phy node a child
-> node of display-port-controller, i.e.
->
->         display-port-controller {
->                 compatible = "samsung,exynos5-dp";
->                 reg = <0x145b0000 0x10000>;
->                 interrupts =<10 3>;
->                 interrupt-parent =<&combiner>;
->
->                 dptx-phy {
->                         reg = <0x10040720>;
->                         samsung,enable_mask = <1>;
->                 };
->        };
->
-> Then the driver could just look for a child node named "dptx-phy" with
-> e.g. of_find_node_by_name().
-Ok. Will change it.
->> +     -samsung,dptx_phy_reg:
->
-> I think it's fine to use just 'reg' instead of this vendor specific name.
-Ok.
->> +             Base address of DP PHY register.
->> +     -samsung,enable_mask:
->> +             The bit-mask used to enable/disable DP PHY.
->> +
->> +For the Panel initialization, we read data from display-port-controller node.
->> +Required properties for display-port-controller:
->> +     -compatible:
->> +             Should be "samsung,exynos5-dp".
->> +     -reg:
->> +             physical base address of the controller and length
->> +             of memory mapped region.
->> +     -interrupts:
->> +             Interrupt combiner values.
->> +     -interrupt-parent:
->> +             phandle to Interrupt combiner node.
->> +     -samsung,dp_phy:
->> +             phandle to dptx_phy node.
->> +     -samsung,color_space:
->> +             input video data format.
->> +                     COLOR_RGB = 0, COLOR_YCBCR422 = 1, COLOR_YCBCR444 = 2
->> +     -samsung,dynamic_range:
->> +             dynamic range for input video data.
->> +                     VESA = 0, CEA = 1
->> +     -samsung,ycbcr_coeff:
->> +             YCbCr co-efficients for input video.
->> +                     COLOR_YCBCR601 = 0, COLOR_YCBCR709 = 1
->> +     -samsung,color_depth:
->> +             Number of bits per colour component.
->> +                     COLOR_6 = 0, COLOR_8 = 1, COLOR_10 = 2, COLOR_12 = 3
->> +     -samsung,link_rate:
->> +             link rate supported by the panel.
->> +                     LINK_RATE_1_62GBPS = 0x6, LINK_RATE_2_70GBPS = 0x0A
->> +     -samsung,lane_count:
->> +             number of lanes supported by the panel.
->> +                     LANE_COUNT1 = 1, LANE_COUNT2 = 2, LANE_COUNT4 = 4
->> +     -samsung,interlaced:
->> +             Interlace scan mode.
->> +                     Progressive if defined, Interlaced if not defined
->> +     -samsung,v_sync_polarity:
->> +             VSYNC polarity configuration.
->> +                     High if defined, Low if not defined
->> +     -samsung,h_sync_polarity:
->> +             HSYNC polarity configuration.
->> +                     High if defined, Low if not defined
->
-> So there is no common video bindings for things like these two ?
-> In V4L2 we decided to use vsync-active, hsync-active [1], the video
-> timings bindings [2] use hsync-active-high, hsync-active-high boolean
-> properties. Perhaps it is worth to pick some of those standard
-> definitions and use instead of the vendor specific ones ?
-hsync-active-high and vsync-active-high seems to hold good in our case.
-Also, are you asking us to just use only the standard names or use standard
-helper functions as well? Since we use only hsync and vsync polarity and no
-other LCD timing properties, I think we need not use standard helper functions
-for parsing display timings!
->> +
->> +Example:
->> +
->> +SOC specific portion:
->> +     dptx_phy: dptx_phy@0x10040720 {
->> +             compatible = "samsung,dp-phy";
->> +             samsung,dptx_phy_reg =<0x10040720>;
->
->                 reg = <0x10040720>;
-Ok.
->> +             samsung,enable_mask =<1>;
->> +     };
->> +
->> +     display-port-controller {
->> +             compatible = "samsung,exynos5-dp";
->> +             reg =<0x145B0000 0x10000>;
->
-> I think lower case is preferred.
-Ok. Will change it.
->> +             interrupts =<10 3>;
->> +             interrupt-parent =<&combiner>;
->> +             samsung,dp_phy =<&dptx_phy>;
->> +        };
->> +
->> +Board Specific portion:
->> +     display-port-controller {
->> +             samsung,color_space =<0>;
->> +             samsung,dynamic_range =<0>;
->> +             samsung,ycbcr_coeff =<0>;
->> +             samsung,color_depth =<1>;
->> +             samsung,link_rate =<0x0a>;
->> +             samsung,lane_count =<2>;
->> +     };
->
-> Thanks,
-> Sylwester
->
-> [1] http://www.mail-archive.com/linux-media@vger.kernel.org/msg52743.html
-> [2] http://www.mail-archive.com/linux-media@vger.kernel.org/msg53323.html
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-samsung-soc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-Regards,
-Ajay
+1) What the first part does, in addition to various related fixes, is
+removing any unnecessary static data from pinctrl-exynos driver.
+
+This is achieved mostly thanks to assigning pin numbers dynamically,
+with help of only pin counts of particular banks. It also simplifies
+adding next SoC variants, since much less static data needs to be
+specified.
+
+2) The second part attempts to simplify usage of the driver and fix several
+problems of current implementation, in particular:
+
+  - Simplifies GPIO pin specification in device tree by using pin
+    namespace local to pin bank instead of local to pin controller, e.g.
+
+        gpios = <&gpj0 3 0>;
+
+    instead of
+
+        gpios = <&pinctrl0 115 0>;
+
+  - Simplifies GPIO interrupt specification in device tree by using
+    namespace local to pin bank (and equal to GPIO namespace), e.g.
+
+        interrupt-parent = <&gpj0>;
+        interrupts = <3 0>;
+
+    instead of
+
+        interrupt-parent = <&pinctrl0>;
+        interrupts = <115 0>;
+
+  - Simplifies internal GPIO pin to bank translation thanks to
+    correspondence of particular GPIO chips to pin banks. This allows
+    to remove the (costly in case of GPIO bit-banging drivers) lookup
+    over all banks to find the one that the pin is from.
+
+3) Third part is focused on removing the hard-coded description of wake-up
+interrupt layout.
+
+It moves wake-up interrupt description to bank struct and device tree,
+which allows to specify which pin banks support wake-up interrupts and
+how they are handled (direct or multiplexed/chained).
+
+See particular patches for more detailed descriptions and the last patch for
+updated device tree bindings.
+
+Changes since v1:
+ - dropped moving SoC-specific data to device tree
+   (might be added in further patches)
+ - dropped per-bank specification of configuration register offsets
+   (thus limiting scope of the driver to Exynos SoCs; will be added in
+    further patches)
+
+Tomasz Figa (15):
+  pinctrl: samsung: Detect and handle unsupported configuration types
+  pinctrl: samsung: Do not pass gpio_chip to pin_to_reg_bank
+  pinctrl: samsung: Assing pin numbers dynamically
+  pinctrl: samsung: Remove static pin enumerations
+  pinctrl: samsung: Distinguish between pin group and bank nodes
+  ARM: dts: exynos4210-pinctrl: Add nodes for pin banks
+  pinctrl: samsung: Match pin banks with their device nodes
+  pinctrl: samsung: Hold pointer to driver data in bank struct
+  pinctrl: samsung: Include bank-specific eint offset in bank struct
+  pinctrl: exynos: Use one IRQ domain per pin bank
+  pinctrl: samsung: Use one GPIO chip per pin bank
+  pinctrl: samsung: Use per-bank IRQ domain for wake-up interrupts
+  pinctrl: exynos: Set pin function to EINT in irq_set_type of wake-up
+    EINT
+  pinctrl: samsung: Add GPIO to IRQ translation
+  Documentation: Update samsung-pinctrl device tree bindings
+    documentation
+
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 118 +++++--
+ arch/arm/boot/dts/exynos4210-pinctrl.dtsi          | 278 ++++++++++++++++
+ arch/arm/boot/dts/exynos4210.dtsi                  | 241 +-------------
+ drivers/pinctrl/pinctrl-exynos.c                   | 367 ++++++++++-----------
+ drivers/pinctrl/pinctrl-exynos.h                   | 170 ++--------
+ drivers/pinctrl/pinctrl-samsung.c                  | 203 ++++++++----
+ drivers/pinctrl/pinctrl-samsung.h                  |  29 +-
+ 7 files changed, 741 insertions(+), 665 deletions(-)
+
+-- 
+1.7.12
