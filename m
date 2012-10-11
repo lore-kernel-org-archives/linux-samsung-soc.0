@@ -1,84 +1,213 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: [PATCH 14/15] pinctrl: samsung: Add GPIO to IRQ translation
-Date: Thu, 11 Oct 2012 10:11:20 +0200
-Message-ID: <1349943081-27939-15-git-send-email-t.figa@samsung.com>
+Subject: [PATCH 15/15] Documentation: Update samsung-pinctrl device tree
+ bindings documentation
+Date: Thu, 11 Oct 2012 10:11:21 +0200
+Message-ID: <1349943081-27939-16-git-send-email-t.figa@samsung.com>
 References: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout4.samsung.com ([203.254.224.34]:57048 "EHLO
+Received: from mailout4.samsung.com ([203.254.224.34]:57081 "EHLO
 	mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S932131Ab2JKIMi (ORCPT
+	with ESMTP id S1756263Ab2JKINC (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 04:12:38 -0400
+	Thu, 11 Oct 2012 04:13:02 -0400
 Received: from epcpsbgm1.samsung.com (epcpsbgm1 [203.254.230.26])
  by mailout4.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
  17 2011)) with ESMTP id <0MBP00EIPYR2YEI0@mailout4.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:37 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:42 +0900 (KST)
 Received: from mcdsrvbld02.digital.local ([106.116.37.23])
  by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
  with ESMTPA id <0MBP005FVYR04E50@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:37 +0900 (KST)
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 17:12:41 +0900 (KST)
 In-reply-to: <1349943081-27939-1-git-send-email-t.figa@samsung.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
 Cc: linux-samsung-soc@vger.kernel.org, devicetree-discuss@lists.ozlabs.org, kgene.kim@samsung.com, thomas.abraham@linaro.org, linus.walleij@linaro.org, swarren@wwwdotorg.org, tony@atomide.com, kyungmin.park@samsung.com, m.szyprowski@samsung.com, t.figa@samsung.com, tomasz.figa@gmail.com
 
-Some drivers require a way to translate GPIO pins to their IRQ numbers.
-
-This patch adds the .to_irq() gpiolib callback to pinctrl-samsung
-driver, which creates (if not present yet) and returns an IRQ mapping
-for given GPIO pin.
-
 Signed-off-by: Tomasz Figa <t.figa@samsung.com>
 ---
- drivers/pinctrl/pinctrl-samsung.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ .../bindings/pinctrl/samsung-pinctrl.txt           | 118 ++++++++++++++++-----
+ 1 file changed, 93 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-samsung.c b/drivers/pinctrl/pinctrl-samsung.c
-index 0a38368..0db88bb 100644
---- a/drivers/pinctrl/pinctrl-samsung.c
-+++ b/drivers/pinctrl/pinctrl-samsung.c
-@@ -26,6 +26,7 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/gpio.h>
-+#include <linux/irqdomain.h>
+diff --git a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+index 03dee50..63806e2 100644
+--- a/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/samsung-pinctrl.txt
+@@ -13,8 +13,14 @@ Required Properties:
+ - reg: Base address of the pin controller hardware module and length of
+   the address space it occupies.
  
- #include "core.h"
- #include "pinctrl-samsung.h"
-@@ -528,6 +529,23 @@ static int samsung_gpio_direction_output(struct gpio_chip *gc, unsigned offset,
- }
+-- interrupts: interrupt specifier for the controller. The format and value of
+-  the interrupt specifier depends on the interrupt parent for the controller.
++- Pin banks as child nodes: Pin banks of the controller are represented by child
++  nodes of the controller node. Bank name is taken from name of the node. Each
++  bank node must contain following properties:
++
++  - gpio-controller: identifies the node as a gpio controller and pin bank.
++  - #gpio-cells: number of cells in GPIO specifier. Since the generic GPIO
++    binding is used, the amount of cells must be specified as 2. See generic
++    GPIO binding documentation for description of particular cells.
  
- /*
-+ * gpiolib gpio_to_irq callback function. Creates a mapping between a GPIO pin
-+ * and a virtual IRQ, if not already present.
-+ */
-+static int samsung_gpio_to_irq(struct gpio_chip *gc, unsigned offset)
-+{
-+	struct samsung_pin_bank *bank = gc_to_pin_bank(gc);
-+	unsigned int virq;
-+
-+	if (!bank->irq_domain)
-+		return -ENXIO;
-+
-+	virq = irq_create_mapping(bank->irq_domain, offset);
-+
-+	return (virq) ? : -ENXIO;
-+}
-+
-+/*
-  * Parse the pin names listed in the 'samsung,pins' property and convert it
-  * into a list of gpio numbers are create a pin group from it.
-  */
-@@ -755,6 +773,7 @@ static const struct gpio_chip samsung_gpiolib_chip = {
- 	.get = samsung_gpio_get,
- 	.direction_input = samsung_gpio_direction_input,
- 	.direction_output = samsung_gpio_direction_output,
-+	.to_irq = samsung_gpio_to_irq,
- 	.owner = THIS_MODULE,
- };
+ - Pin mux/config groups as child nodes: The pin mux (selecting pin function
+   mode) and pin config (pull up/down, driver strength) settings are represented
+@@ -72,16 +78,24 @@ used as system wakeup events.
+ A. External GPIO Interrupts: For supporting external gpio interrupts, the
+    following properties should be specified in the pin-controller device node.
  
+-- interrupt-controller: identifies the controller node as interrupt-parent.
+-- #interrupt-cells: the value of this property should be 2.
+-  - First Cell: represents the external gpio interrupt number local to the
+-    external gpio interrupt space of the controller.
+-  - Second Cell: flags to identify the type of the interrupt
+-    - 1 = rising edge triggered
+-    - 2 = falling edge triggered
+-    - 3 = rising and falling edge triggered
+-    - 4 = high level triggered
+-    - 8 = low level triggered
++   - interrupt-parent: phandle of the interrupt parent to which the external
++     GPIO interrupts are forwarded to.
++   - interrupts: interrupt specifier for the controller. The format and value of
++     the interrupt specifier depends on the interrupt parent for the controller.
++
++   In addition, following properties must be present in node of every bank
++   of pins supporting GPIO interrupts:
++
++   - interrupt-controller: identifies the controller node as interrupt-parent.
++   - #interrupt-cells: the value of this property should be 2.
++     - First Cell: represents the external gpio interrupt number local to the
++       external gpio interrupt space of the controller.
++     - Second Cell: flags to identify the type of the interrupt
++       - 1 = rising edge triggered
++       - 2 = falling edge triggered
++       - 3 = rising and falling edge triggered
++       - 4 = high level triggered
++       - 8 = low level triggered
+ 
+ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
+    child node representing the external wakeup interrupt controller should be
+@@ -94,6 +108,11 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
+        found on Samsung Exynos4210 SoC.
+    - interrupt-parent: phandle of the interrupt parent to which the external
+      wakeup interrupts are forwarded to.
++   - interrupts: interrupt used by multiplexed wakeup interrupts.
++
++   In addition, following properties must be present in node of every bank
++   of pins supporting wake-up interrupts:
++
+    - interrupt-controller: identifies the node as interrupt-parent.
+    - #interrupt-cells: the value of this property should be 2
+      - First Cell: represents the external wakeup interrupt number local to
+@@ -105,11 +124,63 @@ B. External Wakeup Interrupts: For supporting external wakeup interrupts, a
+        - 4 = high level triggered
+        - 8 = low level triggered
+ 
++   Node of every bank of pins supporting direct wake-up interrupts (without
++   multiplexing) must contain following properties:
++
++   - interrupt-parent: phandle of the interrupt parent to which the external
++     wakeup interrupts are forwarded to.
++   - interrupts: interrupts of the interrupt parent which are used for external
++     wakeup interrupts from pins of the bank, must contain interrupts for all
++     pins of the bank.
++
+ Aliases:
+ 
+ All the pin controller nodes should be represented in the aliases node using
+ the following format 'pinctrl{n}' where n is a unique number for the alias.
+ 
++Example: A pin-controller node with pin banks:
++
++	pinctrl_0: pinctrl@11400000 {
++		compatible = "samsung,pinctrl-exynos4210";
++		reg = <0x11400000 0x1000>;
++		interrupts = <0 47 0>;
++
++		/* ... */
++
++		/* Pin bank without external interrupts */
++		gpy0: gpy0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++		};
++
++		/* ... */
++
++		/* Pin bank with external GPIO or muxed wake-up interrupts */
++		gpj0: gpj0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			#interrupt-cells = <2>;
++		};
++
++		/* ... */
++
++		/* Pin bank with external direct wake-up interrupts */
++		gpx0: gpx0 {
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			interrupt-controller;
++			interrupt-parent = <&gic>;
++			interrupts = <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
++				     <0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>;
++			#interrupt-cells = <2>;
++		};
++
++		/* ... */
++	};
++
+ Example 1: A pin-controller node with pin groups.
+ 
+ 	pinctrl_0: pinctrl@11400000 {
+@@ -117,6 +188,8 @@ Example 1: A pin-controller node with pin groups.
+ 		reg = <0x11400000 0x1000>;
+ 		interrupts = <0 47 0>;
+ 
++		/* ... */
++
+ 		uart0_data: uart0-data {
+ 			samsung,pins = "gpa0-0", "gpa0-1";
+ 			samsung,pin-function = <2>;
+@@ -158,20 +231,14 @@ Example 2: A pin-controller node with external wakeup interrupt controller node.
+ 	pinctrl_1: pinctrl@11000000 {
+ 		compatible = "samsung,pinctrl-exynos4210";
+ 		reg = <0x11000000 0x1000>;
+-		interrupts = <0 46 0>;
+-		interrupt-controller;
+-		#interrupt-cells = <2>;
++		interrupts = <0 46 0>
+ 
+-		wakup_eint: wakeup-interrupt-controller {
++		/* ... */
++
++		wakeup-interrupt-controller {
+ 			compatible = "samsung,exynos4210-wakeup-eint";
+ 			interrupt-parent = <&gic>;
+-			interrupt-controller;
+-			#interrupt-cells = <2>;
+-			interrupts = <0 16 0>, <0 17 0>, <0 18 0>, <0 19 0>,
+-					<0 20 0>, <0 21 0>, <0 22 0>, <0 23 0>,
+-					<0 24 0>, <0 25 0>, <0 26 0>, <0 27 0>,
+-					<0 28 0>, <0 29 0>, <0 30 0>, <0 31 0>,
+-					<0 32 0>;
++			interrupts = <0 32 0>;
+ 		};
+ 	};
+ 
+@@ -190,7 +257,8 @@ Example 4: Set up the default pin state for uart controller.
+ 
+ 	static int s3c24xx_serial_probe(struct platform_device *pdev) {
+ 		struct pinctrl *pinctrl;
+-		...
+-		...
++
++		/* ... */
++
+ 		pinctrl = devm_pinctrl_get_select_default(&pdev->dev);
+ 	}
 -- 
 1.7.12
