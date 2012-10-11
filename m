@@ -1,143 +1,55 @@
 From: Tomasz Figa <t.figa@samsung.com>
-Subject: Re: [PATCH 5/6] ARM: EXYNOS: Add support for Exynos secure firmware
-Date: Thu, 11 Oct 2012 15:18:54 +0200
-Message-ID: <2052356.3jlgOizW0Z@amdc1227>
+Subject: Re: [PATCH v2 0/6] ARM: EXYNOS: Add secure firmware support
+Date: Thu, 11 Oct 2012 15:19:48 +0200
+Message-ID: <2426860.mxqKgi5l3N@amdc1227>
 References: <1348496913-25422-1-git-send-email-t.figa@samsung.com>
- <1348496913-25422-6-git-send-email-t.figa@samsung.com>
- <20121010160027.GA582@quad.lixom.net>
+ <CAH9JG2V56eLCCX+9id1EWhKfZ-6qW-3O0j0mVpzOjz5S8QGQ7g@mail.gmail.com>
+ <20121010161136.GD582@quad.lixom.net>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Received: from mailout3.samsung.com ([203.254.224.33]:37696 "EHLO
+Received: from mailout3.samsung.com ([203.254.224.33]:37775 "EHLO
 	mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-	with ESMTP id S1758568Ab2JKNTC (ORCPT
+	with ESMTP id S1751682Ab2JKNTy (ORCPT
 	<rfc822;linux-samsung-soc@vger.kernel.org>);
-	Thu, 11 Oct 2012 09:19:02 -0400
+	Thu, 11 Oct 2012 09:19:54 -0400
 Received: from epcpsbgm2.samsung.com (epcpsbgm2 [203.254.230.27])
  by mailout3.samsung.com
  (Oracle Communications Messaging Server 7u4-24.01(7.0.4.24.0) 64bit (built Nov
- 17 2011)) with ESMTP id <0MBQ00AF5CZ4ZI50@mailout3.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 22:19:00 +0900 (KST)
+ 17 2011)) with ESMTP id <0MBQ00AG2D15ZI50@mailout3.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 22:19:53 +0900 (KST)
 Received: from amdc1227.localnet ([106.116.147.199])
- by mmp1.samsung.com (Oracle Communications Messaging Server 7u4-24.01
+ by mmp2.samsung.com (Oracle Communications Messaging Server 7u4-24.01
  (7.0.4.24.0) 64bit (built Nov 17 2011))
- with ESMTPA id <0MBQ00J4ICZMTP40@mmp1.samsung.com> for
- linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 22:19:00 +0900 (KST)
-In-reply-to: <20121010160027.GA582@quad.lixom.net>
+ with ESMTPA id <0MBQ00FBTD138K40@mmp2.samsung.com> for
+ linux-samsung-soc@vger.kernel.org; Thu, 11 Oct 2012 22:19:53 +0900 (KST)
+In-reply-to: <20121010161136.GD582@quad.lixom.net>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 List-Id: linux-samsung-soc@vger.kernel.org
 To: Olof Johansson <olof@lixom.net>
-Cc: linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kyungmin.park@samsung.com, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, m.szyprowski@samsung.com
+Cc: Kyungmin Park <kmpark@infradead.org>, linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kgene.kim@samsung.com, linux@arm.linux.org.uk, arnd@arndb.de, m.szyprowski@samsung.com
 
 Hi Olof,
 
-On Wednesday 10 of October 2012 09:00:27 Olof Johansson wrote:
+On Wednesday 10 of October 2012 09:11:36 Olof Johansson wrote:
 > Hi,
 > 
-> On Mon, Sep 24, 2012 at 04:28:32PM +0200, Tomasz Figa wrote:
-> > Some Exynos-based boards contain secure firmware and must use firmware
-> > operations to set up some hardware.
+> On Thu, Oct 11, 2012 at 12:35:54AM +0900, Kyungmin Park wrote:
+> > Hi Arnd or Olof,
 > > 
-> > This patch adds firmware operations for Exynos secure firmware and a
-> > way
-> > for board code and device tree to specify that they must be used.
+> > Can you pick up for v3.7?
 > > 
-> > Example of use:
-> > 
-> > In board code:
-> > 	...MACHINE_START(...)
-> > 	
-> > 		/* ... */
-> > 		.init_early	= exynos_firmware_init,
-> > 		/* ... */
-> > 	
-> > 	MACHINE_END
-> > 
-> > In device tree:
-> > 	/ {
-> > 	
-> > 		/* ... */
-> > 		
-> > 		firmware {
-> > 		
-> > 			compatible = "samsung,secure-firmware";
-> > 		
-> > 		};
-> > 		
-> > 		/* ... */
-> > 	
-> > 	};
-> > 
-> > Signed-off-by: Kyungmin Park <kyungmin.park@samsung.com>
-> > Signed-off-by: Tomasz Figa <t.figa@samsung.com>
-> > ---
-> > 
-> >  .../devicetree/bindings/arm/samsung-boards.txt     |  8 ++++
-> >  arch/arm/mach-exynos/Makefile                      |  1 +
-> >  arch/arm/mach-exynos/common.h                      |  2 +
-> >  arch/arm/mach-exynos/firmware.c                    | 54
-> >  ++++++++++++++++++++++ arch/arm/mach-exynos/mach-exynos4-dt.c        
-> >      |  1 +
-> >  5 files changed, 66 insertions(+)
-> >  create mode 100644 arch/arm/mach-exynos/firmware.c
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> > b/Documentation/devicetree/bindings/arm/samsung-boards.txt index
-> > 0bf68be..f447059 100644
-> > --- a/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> > +++ b/Documentation/devicetree/bindings/arm/samsung-boards.txt
-> > 
-> > @@ -6,3 +6,11 @@ Required root node properties:
-> >      - compatible = should be one or more of the following.
-> >      
-> >          (a) "samsung,smdkv310" - for Samsung's SMDKV310 eval board.
-> >          (b) "samsung,exynos4210"  - for boards based on Exynos4210
-> >          SoC.
-> > 
-> > +
-> > +Optional:
-> > +    - firmware node, specifying presence and type of secure firmware,
-> > currently +        supported value of compatible property is
-> > "samsung,secure-firmware": +
-> > +	firmware {
-> > +		compatible = "samsung,secure-firmware";
-> > +	};
+> > To Tomasz,
+> > Can you rebase it on the latest arm-soc tree?
 > 
-> If you require the binding to specify the memory area, then you at least
-> allow for future work to move to a dynamic mapping without updating the
-> binding and all device trees. So, please do that even if the code is
-> hardcoded to the static address today.
-
-All right.
-
-> For extra credit, make sure that the reg property is matching the static
-> mapping when you setup your firmware interface on your platform.
-
-Hmm, do you know a way to look up physical address of such static mapping, 
-given only the virtual address? Additional problem is that the code is 
-executed very early (in init_early callback), before most of VM 
-initialization code.
-
-I could do something like
-
-	if (soc_is_exynos4210())
-		paddr = EXYNOS4210_PA_SYSRAM_NS;
-	else if (soc_is_exynos4212() || soc_is_exynos4412())
-		paddr = EXYNOS4x12_PA_SYSRAM_NS;
-	...
-
-and compare paddr with address received from device tree, but I don't 
-really like this construct.
- 
-> > +static int exynos_cpu_boot_reg(int cpu, void __iomem **ptr)
-> > +{
-> > +	*ptr = S5P_VA_SYSRAM_NS + 0x1c + 4*cpu;
-> > +	return 0;
-> > +}
+> This code should have been in arm-soc by the beginning of the merge
+> window (and in linux-next) to be merged for 3.7, but we will be happy to
+> queue it up for 3.8 once 3.7-rc1 is out. I have one outstanding comment
+> on the DT binding but the rest looks OK to me.
 > 
-> It would be nice to get a memory map for the SMC area in documentation
-> somewhere, but that can be done separately later.
+> Tomasz, please rebase and send this to Kukjin so he can queue it up with
+> other Samsung code.
 
 OK.
 
